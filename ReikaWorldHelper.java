@@ -784,6 +784,8 @@ public static double findSolidSurface(World world, double x, double y, double z)
 		}
     }
     
+    /** Takes a specified amount of XP and splits it randomly among a bunch of orbs. 
+     * Args: World, x, y, z, amount */
     public static void splitAndSpawnXP(World world, float x, float y, float z, int xp) {
     	int max = xp/5+1;
     	

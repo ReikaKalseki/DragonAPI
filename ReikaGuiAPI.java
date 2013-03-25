@@ -286,6 +286,8 @@ public class ReikaGuiAPI extends GuiScreen {
 
     }
     
+    /** Writes an itemstack to the chat.
+     * Args: World, itemstack */
     public static void writeItemStack(World world, ItemStack is) {
     	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
     		return;
@@ -299,6 +301,8 @@ public class ReikaGuiAPI extends GuiScreen {
     	ModLoader.getMinecraftInstance().thePlayer.addChatMessage(msg);
     }
     
+    /** Writes coordinates to the chat.
+     * Args: World, x, y, z */
     public static void writeCoords(World world, int x, int y, int z) {
     	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
     		return;
@@ -309,6 +313,8 @@ public class ReikaGuiAPI extends GuiScreen {
     	ModLoader.getMinecraftInstance().thePlayer.addChatMessage(msg);
     }
     
+    /** Writes a block ID:metadata and coordinates to the chat.
+     * Args: World, x, y, z */
     public static void writeBlockAtCoords(World world, int x, int y, int z) {
     	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
     		return;
@@ -321,6 +327,7 @@ public class ReikaGuiAPI extends GuiScreen {
     	ModLoader.getMinecraftInstance().thePlayer.addChatMessage(msg);
     }
     
+    /** Writes an integer to the chat. Args: Integer */
     public static void writeInt(int num) {
     	if (ModLoader.getMinecraftInstance().thePlayer != null)
     		ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.format("%d", num));
