@@ -1,0 +1,323 @@
+package Reika.DragonAPI;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.effect.EntityLightningBolt;
+import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.potion.Potion;
+import net.minecraft.util.DamageSource;
+import net.minecraft.world.World;
+
+public class ReikaMobHelper extends EntityLiving {
+	
+	/** Used to keep track of what attacked/killed this mob */
+	public DamageSource attacker;
+	public DamageSource killer;
+	
+	public ReikaMobHelper(World par1World)
+	{
+	    super(par1World);
+	    this.setSize(1F, 1F);
+	    
+	    this.ignoreFrustumCheck = false;
+	}
+	
+	public int getMaxHealth()
+	{
+	    return 20;	//Ten hearts
+	}
+	
+    /**
+     * Returns the volume for the sounds this mob makes.
+     */
+    protected float getSoundVolume()
+    {
+        return 1.0F;
+    }
+	
+    /**
+     * Gets the pitch of living sounds in living entities.
+     */
+    public float getSoundPitch()
+    {
+        return this.isChild() ? (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.5F : (this.rand.nextFloat() - this.rand.nextFloat()) * 0.2F + 1.0F;
+    }
+    
+    /**
+     * Returns the sound this mob makes while it's alive.
+     */
+    protected String getLivingSound()
+    {
+        return null;
+    }
+
+    /**
+     * Returns the sound this mob makes when it is hurt.
+     */
+    protected String getHurtSound()
+    {
+        return null;
+    }
+
+    /**
+     * Returns the sound this mob makes on death.
+     */
+    protected String getDeathSound()
+    {
+        return null;
+    }
+
+	
+    /** Used to make the current entity move towards or away from another entity.
+     * Args: Entity to seek, speed factor (blocks per tick for non-accel),
+     * faster-as-closer (like xp) yes/no, seek  (true) or flee (false) */
+    public void approach(Entity tofind, double speed, boolean accel, boolean seek) {
+    	if (tofind != null) {
+    		int dir = 1;
+    		if (!seek)
+    			dir = -1;
+    		if (accel) {
+	    		double dist = ReikaMathLibrary.py3d(this.posX-tofind.posX, this.posY-tofind.posY, this.posZ-tofind.posZ);
+	        	double var15 = 16D*(1/speed);	//search radius?
+	            double dx = (tofind.posX - this.posX) / var15;
+	            double dy = (tofind.posY - this.posY) / var15;
+	            double dz = (tofind.posZ - this.posZ) / var15;
+	            double var110 = ReikaMathLibrary.py3d(dx, dy, dz);
+	            double var112 = 1.0D - var110;
+	            var110 = 1;
+	
+	            if (var112 > 0.0D)
+	            {
+	                var112 *= var112;
+	                this.motionX += dx / var110 * var112 * 0.1D * dir;
+	                this.motionY += dy / var110 * var112 * 0.1D * dir;
+	                this.motionZ += dz / var110 * var112 * 0.1D * dir;
+	            }
+    		}
+    		else {	//Constant speed approach
+    			double dist = ReikaMathLibrary.py3d(this.posX-tofind.posX, this.posY-tofind.posY, this.posZ-tofind.posZ);
+    			this.motionX += dir*speed*(tofind.posX-this.posX)/dist;
+    			this.motionY += dir*speed*(tofind.posY-this.posY)/dist;
+    			this.motionZ += dir*speed*(tofind.posZ-this.posZ)/dist;
+    		}
+    	}    	
+    }
+    
+    /** Call this to cap the entity's max speed at a certain value in blocks/tick.
+     * Args: Speed cap (blocks/tick = 20m/s), per-axis (false) or 3D squared (true),
+     * XZ-plane only (false) or all 3 axes (true) */
+    public void capSpeed(double cap, boolean vpy3d, boolean xz) {
+    	double v3d = ReikaMathLibrary.py3d(this.motionX, this.motionY, this.motionZ);
+    	if (vpy3d) {
+    		if (v3d > cap) {
+    			this.motionX = this.motionX*cap/v3d;
+    			if (xz)
+    				this.motionY = this.motionY*cap/v3d;
+    			this.motionZ = this.motionZ*cap/v3d;
+    		}
+    	}
+    	else {
+    		if (this.motionX > cap)
+    			this.motionX = cap;
+    		if (this.motionY > cap && xz)
+    			this.motionY = cap;
+    		if (this.motionZ > cap)
+    			this.motionZ = cap;
+    	}
+    }
+    
+    /** Handles entity death timer, experience orb and particle creation;
+     * Used to override some default behavior, such as xp drops from non-player kills
+     * Args: Drops xp on custom damage sources, which damage sources drop xp
+     * (12-slot array), number of ticks to keep "corpse" in world, custom xp
+     * amount (-1 for default), particle to use on death, entity to leave on death,
+     * special actions on death,
+     * Special Action Library: Explode, Lightning, Repulsor */
+    protected void onDeathUpdate(boolean nonplayerxp, DamageSource[] accepted,
+    int deathticks, int xp, String deathparticle, Entity leftover, boolean[] special)
+    {
+    	if (xp < -1)
+    		xp = -1;
+    	boolean dropxp = false;
+    	for (int i = 0; i < 12 && dropxp == false; i++) {	//12 source of damage in 1.2.5
+    		if (this.killer == accepted[i])
+    			dropxp = true;
+    	}
+    	
+        ++this.deathTime;
+
+        if (this.deathTime >= deathticks)
+        {
+            int var1 = 0;
+
+            if (!this.worldObj.isRemote && (this.recentlyHit > 0 || !this.worldObj.isRemote && !this.isChild() && dropxp == true || this.isPlayer()) && !this.isChild())
+            {
+            	if (this.attackingPlayer != null && xp < 0)
+            		var1 = this.getExperiencePoints(this.attackingPlayer);
+            	if (xp >= 0)
+            		var1 = xp;
+
+                while (var1 > 0)
+                {
+                    int var2 = EntityXPOrb.getXPSplit(var1);
+                    var1 -= var2;
+                    this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, var2));
+                }
+            }
+
+            this.onDeath(attacker);
+            this.setDead();
+
+            for (var1 = 0; var1 < 20; ++var1)
+            {
+                double var8 = this.rand.nextGaussian() * 0.02D;
+                double var4 = this.rand.nextGaussian() * 0.02D;
+                double var6 = this.rand.nextGaussian() * 0.02D;
+                this.worldObj.spawnParticle(deathparticle, this.posX + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, this.posY + (double)(this.rand.nextFloat() * this.height), this.posZ + (double)(this.rand.nextFloat() * this.width * 2.0F) - (double)this.width, var8, var4, var6);
+            }
+            if (leftover != null) {
+            	this.worldObj.spawnEntityInWorld(new EntityXPOrb(this.worldObj, this.posX, this.posY, this.posZ, 0));
+            }
+            for (int j = 0; j < 3; j++) {
+            	if (special[j]) {
+            		switch (j) {
+            		case 0:
+            			this.worldObj.createExplosion(null, this.posX, this.posY, this.posZ, 3, true);
+            		break;
+            		case 1:
+                        EntityLightningBolt entitybolt = new EntityLightningBolt(this.worldObj, 0D, 0D, 0D);
+                        entitybolt.setLocationAndAngles(this.posX, this.posY, this.posZ, 0, 0.0F);
+                        this.worldObj.spawnEntityInWorld(entitybolt);
+                    break;
+            		case 2:
+            			EntityPlayer near = this.worldObj.getClosestPlayerToEntity(this, 16);
+            			if (near != null) {
+            				near.motionX = (near.posX-this.posX)*0.2;
+            				near.motionY = (near.posY-this.posY)*0.2;
+            				near.motionZ = (near.posZ-this.posZ)*0.2;
+            			}
+            		break;
+            		}
+            	}
+            }
+        }
+    }
+    
+    /** Called when the entity is attacked. Used to customize the actions taken and
+     * provide more "hooks". Args: Damage source, unknown int [default args!] */
+    public boolean attackEntityFrom(DamageSource par1DamageSource, int par2)
+    {
+        if (this.worldObj.isRemote)
+        {
+            return false;
+        }
+        else
+        {
+        	this.attacker = par1DamageSource;
+            this.entityAge = 0;
+
+            if (this.health <= 0)
+            {
+                return false;
+            }
+            else if (par1DamageSource.isFireDamage() && this.isPotionActive(Potion.fireResistance))
+            {
+                return false;
+            }
+            else
+            {
+                this.field_704_R = 1.5F;
+                boolean var3 = true;
+
+                if ((float)this.heartsLife > (float)this.heartsHalvesLife / 2.0F)
+                {
+                    if (par2 <= this.naturalArmorRating)
+                    {
+                        return false;
+                    }
+
+                    this.damageEntity(par1DamageSource, par2 - this.naturalArmorRating);
+                    this.naturalArmorRating = par2;
+                    var3 = false;
+                }
+                else
+                {
+                    this.naturalArmorRating = par2;
+                    this.prevHealth = this.health;
+                    this.heartsLife = this.heartsHalvesLife;
+                    this.damageEntity(par1DamageSource, par2);
+                    this.hurtTime = this.maxHurtTime = 10;
+                }
+
+                this.attackedAtYaw = 0.0F;
+                Entity var4 = par1DamageSource.getEntity();
+
+                if (var4 != null)
+                {
+                    if (var4 instanceof EntityLiving)
+                    {
+                        this.setRevengeTarget((EntityLiving)var4);
+                    }
+
+                    if (var4 instanceof EntityPlayer)
+                    {
+                        this.recentlyHit = 60;
+                        this.attackingPlayer = (EntityPlayer)var4;
+                    }
+                    else if (var4 instanceof EntityWolf)
+                    {
+                        EntityWolf var5 = (EntityWolf)var4;
+
+                        if (var5.isTamed())
+                        {
+                            this.recentlyHit = 60;
+                            this.attackingPlayer = null;
+                        }
+                    }
+                }
+
+                if (var3)
+                {
+                    this.worldObj.setEntityState(this, (byte)2);
+                    this.setBeenAttacked();
+
+                    if (var4 != null)
+                    {
+                        double var9 = var4.posX - this.posX;
+                        double var7;
+
+                        for (var7 = var4.posZ - this.posZ; var9 * var9 + var7 * var7 < 1.0E-4D; var7 = (Math.random() - Math.random()) * 0.01D)
+                        {
+                            var9 = (Math.random() - Math.random()) * 0.01D;
+                        }
+
+                        this.attackedAtYaw = (float)(Math.atan2(var7, var9) * 180.0D / Math.PI) - this.rotationYaw;
+                        this.knockBack(var4, par2, var9, var7);
+                    }
+                    else
+                    {
+                        this.attackedAtYaw = (float)((int)(Math.random() * 2.0D) * 180);
+                    }
+                }
+
+                if (this.health <= 0)
+                {
+                    if (var3)
+                    {
+                        this.worldObj.playSoundAtEntity(this, this.getDeathSound(), this.getSoundVolume(), this.getSoundPitch());
+                    }
+
+                    this.onDeath(par1DamageSource);
+                }
+                else if (var3)
+                {
+                    this.worldObj.playSoundAtEntity(this, this.getHurtSound(), this.getSoundVolume(), this.getSoundPitch());
+                }
+
+                return true;
+            }
+        }
+    }
+}
