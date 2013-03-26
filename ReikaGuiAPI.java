@@ -329,7 +329,17 @@ public class ReikaGuiAPI extends GuiScreen {
     
     /** Writes an integer to the chat. Args: Integer */
     public static void writeInt(int num) {
+    	writeString(String.format("%d", num));
+    }
+    
+    /** Writes any general-purpose string to the chat. Args: String */
+    public static void writeString(String sg) {
     	if (ModLoader.getMinecraftInstance().thePlayer != null)
-    		ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.format("%d", num));
+    		ModLoader.getMinecraftInstance().thePlayer.addChatMessage(sg);
+    }
+    
+    /** A general object-to-chat function. Args: Object */
+    public static void write(Object obj) {
+    	writeString(String.valueOf(obj));
     }
 }
