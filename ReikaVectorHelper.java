@@ -70,4 +70,10 @@ public class ReikaVectorHelper {
 		return false;
 	}
 	
+	public static double[] cartesianToSpherical(Vec3 vec) {
+		double[] xyz = new double[3];
+		//TODO This code is still being written
+		return xyz;
+	}
+	
 }
