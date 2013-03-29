@@ -1,4 +1,5 @@
 package Reika.DragonAPI;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -41,6 +42,43 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class ReikaEntityHelper {
+	
+	private static int[] mobColorArray = new int[201]; //Highest Entity ID (endercrystal)+1
+	
+	private static void setMobColors() {
+		mobColorArray[50] = ReikaGuiAPI.RGBtoHex(65, 183, 54);
+		mobColorArray[51] = ReikaGuiAPI.RGBtoHex(207); //Skeleton
+		mobColorArray[52] = ReikaGuiAPI.RGBtoHex(90, 71, 43); //Spider
+		mobColorArray[53] = ReikaGuiAPI.RGBtoHex(67, 109, 53); //Giant
+		mobColorArray[54] = ReikaGuiAPI.RGBtoHex(67, 109, 53); //Zombie
+		mobColorArray[55] = ReikaGuiAPI.RGBtoHex(90, 162, 68); //Slime
+		mobColorArray[56] = ReikaGuiAPI.RGBtoHex(240); //Ghast
+		mobColorArray[57] = ReikaGuiAPI.RGBtoHex(181, 131, 131); //PigZombie
+		mobColorArray[58] = ReikaGuiAPI.RGBtoHex(204, 15, 248); //Enderman
+		mobColorArray[59] = ReikaGuiAPI.RGBtoHex(18, 77, 90); //Cave Spider
+		mobColorArray[60] = ReikaGuiAPI.RGBtoHex(140); //Silverfish
+		mobColorArray[61] = ReikaGuiAPI.RGBtoHex(235, 180, 26); //Blaze
+		mobColorArray[62] = ReikaGuiAPI.RGBtoHex(84, 14, 0); //LavaSlime
+		mobColorArray[63] = ReikaGuiAPI.RGBtoHex(224, 121, 250); //Dragon
+		mobColorArray[64] = ReikaGuiAPI.RGBtoHex(79); //Wither
+		mobColorArray[65] = ReikaGuiAPI.RGBtoHex(118, 100, 61); //Bat
+		mobColorArray[66] = ReikaGuiAPI.RGBtoHex(163, 148, 131); //Witch
+		
+		mobColorArray[90] = ReikaGuiAPI.RGBtoHex(238, 158, 158); //Pig
+		mobColorArray[91] = ReikaGuiAPI.RGBtoHex(214); //Sheep
+		mobColorArray[92] = ReikaGuiAPI.RGBtoHex(67, 53, 37); //Cow
+		mobColorArray[93] = ReikaGuiAPI.RGBtoHex(193, 147, 67); //Chicken
+		mobColorArray[94] = ReikaGuiAPI.RGBtoHex(83, 108, 127); //Squid
+		mobColorArray[95] = ReikaGuiAPI.RGBtoHex(183, 179, 180); //Wolf
+		mobColorArray[96] = ReikaGuiAPI.RGBtoHex(151, 3, 4); //Mooshroom
+		mobColorArray[97] = ReikaGuiAPI.RGBtoHex(226, 143, 34); //Snow Golem
+		mobColorArray[98] = ReikaGuiAPI.RGBtoHex(242, 197, 110); //Ocelot
+		mobColorArray[99] = ReikaGuiAPI.RGBtoHex(208, 185, 168); //Iron Golem
+		
+		mobColorArray[120] = ReikaGuiAPI.RGBtoHex(178, 122, 98); //Villager
+		
+		
+	}
 	
 	/** Converts a string mobname to its respective id. Args: Name, world */
 	public static int mobNameToID(String name, World world) {
@@ -165,6 +203,15 @@ public class ReikaEntityHelper {
     		}
     	}
     	return null;
+    }
+    
+    /** Converts a mob ID to a color, based off the mob's color. Players return bright red.
+     * Args: Mob ID */
+    public static int mobToColor(int id) {
+    	if (EntityList.createEntityByID(id, null) instanceof EntityPlayer)
+    		return 0xffff0000;
+    	setMobColors();
+    	return mobColorArray[id];
     }
 	
 }

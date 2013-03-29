@@ -116,6 +116,37 @@ public class ReikaGuiAPI extends GuiScreen {
         GL11.glDisable(GL11.GL_BLEND);
     }
     
+    /** Draws a dotted line between two points. Args: start x,y, end x,y, thickness, color */
+    public void dottedLine(int x, int y, int x2, int y2, int t, int color) {
+    	if (x == x2 && y == y2)
+    		return;
+    	if (x != x2 && y == y2) {
+    		for (int i = x; i < x2-t; i++) {
+    			this.drawRect(i, y, i+t, y, color);
+    		}
+    	}
+    	if (y != y2 && x == x2) {
+    		for (int i = y; i < y2-t; i++) {
+    			this.drawRect(x, i, x, i+t, color);
+    		}
+    	}
+    	if (x != x2 && y != y2) {
+    		int xdiff = x2-x;
+    		int ydiff = y2-y;
+    		double slope = (double)ydiff/(double)xdiff;
+    		while (x < x2-t) {
+    			this.drawRect(x, y, x+t, y+t, color);
+    			x += xdiff;
+    			y += xdiff*slope;
+    		}
+    	}
+    }
+    
+    /** Draws a dashed line between two points. Args: start x,y, end x,y, thickness, color */
+    public void dashedLine(int x, int y, int x2, int y2, int t, int color) {
+    	
+    }
+    
     /**
      * Draws a "fill bar" (rectangle from bottom up).
      * Args: left x, top y, width, bottom y, color, height, maxheight, alpha on/off
