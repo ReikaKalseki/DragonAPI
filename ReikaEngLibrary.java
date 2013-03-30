@@ -1,17 +1,10 @@
 package Reika.DragonAPI;
 
-import Reika.DragonAPI.*;
-
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.lang.Math;
 
 public class ReikaEngLibrary {
 	
-	public static final double e = 2.718;				// s/e
-	public static final double pi = 3.1415926535;		// s/e
+	public static final double e = Math.E;				// s/e
+	public static final double pi = Math.PI;		// s/e
 	public static final double G = 6.67*0.00000000001;	// Grav Constant
 	public static final double patm = 101300;			// Atmosphere Sealevel pressure
 	public static final double rhog = 19300;			// Gold Density

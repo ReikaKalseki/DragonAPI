@@ -1,7 +1,9 @@
 package Reika.DragonAPI;
 
-import net.minecraft.item.ItemStack;
 import java.util.Random;
+
+import net.minecraft.item.ItemStack;
+import net.minecraft.src.ModLoader;
 
 public class ReikaInventoryHelper {
 	
@@ -180,6 +182,41 @@ public class ReikaInventoryHelper {
 				inv[slot] = null;
 			return inslot;
 		}
+	}
+	
+	/** Counts the number of separate stacks of the item in an inventory. 
+	 * Args: ID, metadata, inventory. Set meta to -1 for any. */
+	public static int countNumStacks(int id, int meta, ItemStack[] inv) {
+		int count = 0;
+		for (int i = 0; i < inv.length; i++) {
+			if (inv[i] != null) {
+				if (meta != -1) {
+					//ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.valueOf(id)+" = "+String.valueOf(inv[i].itemID));
+					if (inv[i].itemID == id && inv[i].getItemDamage() == meta)
+						count++;
+				}
+				else {
+					//ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.valueOf(id)+" == "+String.valueOf(inv[i].itemID));
+					if (inv[i].itemID == id)
+						count++;
+					//ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.valueOf(count));
+				}
+			}
+		}
+		return count;
+	}
+	
+	/** Counts the number of instances of an ItemStack in an inventory. Does not care about size. 
+	 * Args: ItemStack, inventory. Set meta to -1 for any. */
+	public static int countNumStacks(ItemStack item, ItemStack[] inv) {
+		int count = 0;
+		for (int i = 0; i < inv.length; i++) {
+			if (inv[i] != null) {
+				if (inv[i].itemID == item.itemID)
+					count++;
+			}
+		}
+		return count;
 	}
 	
 	/** Attempts to add an itemstack to an inventory. Is all-or-nothing - will not add a

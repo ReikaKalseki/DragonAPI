@@ -147,6 +147,11 @@ public class ReikaGuiAPI extends GuiScreen {
     	
     }
     
+    /** Draws a line between two points. Args: Start x,y, end x,y, color */
+    public void drawLine(int x, int y, int x2, int y2, int color) {
+    	
+    }
+    
     /**
      * Draws a "fill bar" (rectangle from bottom up).
      * Args: left x, top y, width, bottom y, color, height, maxheight, alpha on/off

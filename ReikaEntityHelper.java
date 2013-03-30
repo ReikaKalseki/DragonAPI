@@ -207,8 +207,9 @@ public class ReikaEntityHelper {
     
     /** Converts a mob ID to a color, based off the mob's color. Players return bright red.
      * Args: Mob ID */
-    public static int mobToColor(int id) {
-    	if (EntityList.createEntityByID(id, null) instanceof EntityPlayer)
+    public static int mobToColor(EntityLiving ent) {
+    	int id = EntityList.getEntityID(ent);
+    	if (ent instanceof EntityPlayer)
     		return 0xffff0000;
     	setMobColors();
     	return mobColorArray[id];

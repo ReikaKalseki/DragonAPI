@@ -4,8 +4,8 @@ import net.minecraft.util.MathHelper;
 
 public class ReikaMathLibrary {
 	
-	public static final double e = 2.718;				// s/e
-	public static final double pi = 3.1415926535;		// s/e
+	public static final double e = Math.E;				// s/e
+	public static final double pi = Math.PI;			// s/e
 	public static final double G = 6.67*0.00000000001;	// Grav Constant
 	public static final double patm = 101300;			// Atmosphere Sealevel pressure
 	public static final double rhog = 19300;			// Gold Density
@@ -200,5 +200,10 @@ public class ReikaMathLibrary {
 			b++;
 		}
 		return b;
+	}
+	
+	/** Returns true if a number is a power of another Args: Number, Base */
+	public static boolean isPowerOf(int num, int base) {
+		return (logbase(num, base) == (int)logbase(num, base));
 	}
 }
