@@ -149,7 +149,44 @@ public class ReikaGuiAPI extends GuiScreen {
     
     /** Draws a line between two points. Args: Start x,y, end x,y, color */
     public void drawLine(int x, int y, int x2, int y2, int color) {
-    	
+    	float alpha = Color.decode(String.valueOf(color)).getAlpha();
+    	float red = Color.decode(String.valueOf(color)).getRed();
+    	float green = Color.decode(String.valueOf(color)).getGreen();
+    	float blue = Color.decode(String.valueOf(color)).getBlue();
+    	GL11.glDisable(GL11.GL_LIGHTING);
+    	GL11.glDisable(GL11.GL_DEPTH_TEST);
+    	GL11.glEnable(GL11.GL_BLEND);
+    	GL11.glDisable(GL11.GL_TEXTURE_2D);
+    	GL11.glBegin(GL11.GL_LINE_LOOP);
+    	GL11.glColor4f(red/255F, green/255F, blue/255F, alpha/255F);
+    	GL11.glVertex2i(x, y);
+    	GL11.glVertex2i(x2, y2);
+    	GL11.glEnd();
+    	GL11.glEnable(GL11.GL_LIGHTING);
+    	GL11.glEnable(GL11.GL_DEPTH_TEST);
+    	GL11.glDisable(GL11.GL_BLEND);
+    	GL11.glEnable(GL11.GL_TEXTURE_2D);
+    }
+    
+    public void drawCircle(int x, int y, int radius, int color) {
+    	float alpha = Color.decode(String.valueOf(color)).getAlpha();
+    	float red = Color.decode(String.valueOf(color)).getRed();
+    	float green = Color.decode(String.valueOf(color)).getGreen();
+    	float blue = Color.decode(String.valueOf(color)).getBlue();
+    	GL11.glDisable(GL11.GL_LIGHTING);
+    	GL11.glDisable(GL11.GL_DEPTH_TEST);
+    	GL11.glEnable(GL11.GL_BLEND);
+    	GL11.glDisable(GL11.GL_TEXTURE_2D);
+    	GL11.glBegin(GL11.GL_LINE_LOOP);
+      	GL11.glColor4f(red/255F, green/255F, blue/255F, alpha/255F);
+    	for (int i = 0; i < 360; i++) {
+    		GL11.glVertex2i(x+(int)(radius*Math.cos(ReikaPhysicsHelper.degToRad(i))), y+(int)(radius*Math.sin(ReikaPhysicsHelper.degToRad(i))));
+    	}
+    	GL11.glEnd();
+    	GL11.glEnable(GL11.GL_LIGHTING);
+    	GL11.glEnable(GL11.GL_DEPTH_TEST);
+    	GL11.glDisable(GL11.GL_BLEND);
+    	GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
     
     /**

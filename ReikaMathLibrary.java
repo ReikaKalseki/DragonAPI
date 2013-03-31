@@ -1,5 +1,7 @@
 package Reika.DragonAPI;
 
+import java.util.Random;
+
 import net.minecraft.util.MathHelper;
 
 public class ReikaMathLibrary {
@@ -11,6 +13,8 @@ public class ReikaMathLibrary {
 	public static final double rhog = 19300;			// Gold Density
 	public static final double rhofe = 8200;			// Iron Density
 	public static final double rhow = 1000;				// Water density
+	
+	static Random par5Random = new Random();
 	
 	/** Returns the pythagorean sum of the three inputs. Used mainly for vector magnitudes.
 	 * Args: x,y,z */
@@ -205,5 +209,12 @@ public class ReikaMathLibrary {
 	/** Returns true if a number is a power of another Args: Number, Base */
 	public static boolean isPowerOf(int num, int base) {
 		return (logbase(num, base) == (int)logbase(num, base));
+	}
+	
+	public static boolean doWithChance(double num) {
+		double chance = (100*num)-100;
+		if (par5Random.nextInt(101) < chance)
+			return true;
+		return false;
 	}
 }

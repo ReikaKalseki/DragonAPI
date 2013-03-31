@@ -795,9 +795,9 @@ public static double findSolidSurface(World world, double x, double y, double z)
 	    		value = par5Random.nextInt(max)+1;
 	    	xp -= value;
 	    	EntityXPOrb orb = new EntityXPOrb(world, x, y, z, value);
+	    	orb.setVelocity(-0.2+0.4*par5Random.nextFloat(), 0.3*par5Random.nextFloat(), -0.2+0.4*par5Random.nextFloat());
 	    	if (world.isRemote)
 	    		return;
-	    	orb.setVelocity(-0.2+0.4*par5Random.nextFloat(), 0.3*par5Random.nextFloat(), -0.2+0.4*par5Random.nextFloat());
 	    	orb.velocityChanged = true;
 	    	world.spawnEntityInWorld(orb);
     	}
