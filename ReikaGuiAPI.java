@@ -149,6 +149,11 @@ public class ReikaGuiAPI extends GuiScreen {
     
     /** Draws a line between two points. Args: Start x,y, end x,y, color */
     public void drawLine(int x, int y, int x2, int y2, int color) {
+    	boolean light = GL11.glIsEnabled(GL11.GL_LIGHTING);
+    	boolean depth = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
+    	boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
+    	boolean tex = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
+    	
     	float alpha = Color.decode(String.valueOf(color)).getAlpha();
     	float red = Color.decode(String.valueOf(color)).getRed();
     	float green = Color.decode(String.valueOf(color)).getGreen();
@@ -162,13 +167,21 @@ public class ReikaGuiAPI extends GuiScreen {
     	GL11.glVertex2i(x, y);
     	GL11.glVertex2i(x2, y2);
     	GL11.glEnd();
-    	GL11.glEnable(GL11.GL_LIGHTING);
-    	GL11.glEnable(GL11.GL_DEPTH_TEST);
-    	GL11.glDisable(GL11.GL_BLEND);
-    	GL11.glEnable(GL11.GL_TEXTURE_2D);
+    	if (light)
+    		GL11.glEnable(GL11.GL_LIGHTING);
+    	if (depth)
+    		GL11.glEnable(GL11.GL_DEPTH_TEST);
+    	if (blend)
+    		GL11.glDisable(GL11.GL_BLEND);
+    	if (tex)
+    		GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
     
     public void drawCircle(int x, int y, int radius, int color) {
+    	boolean light = GL11.glIsEnabled(GL11.GL_LIGHTING);
+    	boolean depth = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
+    	boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
+    	boolean tex = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
     	float alpha = Color.decode(String.valueOf(color)).getAlpha();
     	float red = Color.decode(String.valueOf(color)).getRed();
     	float green = Color.decode(String.valueOf(color)).getGreen();
@@ -183,10 +196,14 @@ public class ReikaGuiAPI extends GuiScreen {
     		GL11.glVertex2i(x+(int)(radius*Math.cos(ReikaPhysicsHelper.degToRad(i))), y+(int)(radius*Math.sin(ReikaPhysicsHelper.degToRad(i))));
     	}
     	GL11.glEnd();
-    	GL11.glEnable(GL11.GL_LIGHTING);
-    	GL11.glEnable(GL11.GL_DEPTH_TEST);
-    	GL11.glDisable(GL11.GL_BLEND);
-    	GL11.glEnable(GL11.GL_TEXTURE_2D);
+    	if (light)
+    		GL11.glEnable(GL11.GL_LIGHTING);
+    	if (depth)
+    		GL11.glEnable(GL11.GL_DEPTH_TEST);
+    	if (blend)
+    		GL11.glDisable(GL11.GL_BLEND);
+    	if (tex)
+    		GL11.glEnable(GL11.GL_TEXTURE_2D);
     }
     
     /**

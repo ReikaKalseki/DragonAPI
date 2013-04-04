@@ -42,4 +42,10 @@ public class ReikaPhysicsHelper {
 		return v;
 	}
 	
+	/** Returns a modified value for the inverse-square law, based on the distance and initial magnitude.
+	 * Args: Distance x,y,z, initial magnitude */
+	public static double inverseSquare(double dx, double dy, double dz, double mag) {
+		return mag/(dx*dx+dy*dy+dz*dz);
+	}
+	
 }

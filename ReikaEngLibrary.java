@@ -6,11 +6,31 @@ public class ReikaEngLibrary {
 	public static final double e = Math.E;				// s/e
 	public static final double pi = Math.PI;		// s/e
 	public static final double G = 6.67*0.00000000001;	// Grav Constant
+	
+	/** Densities */
 	public static final double patm = 101300;			// Atmosphere Sealevel pressure
 	public static final double rhog = 19300;			// Gold Density
 	public static final double rhofe = 8200;			// Iron Density
 	public static final double rhow = 1000;				// Water density
 	public static final double rholava = 2700;			// Lava density
+	
+	/** Shear moduli */
+	public static final double Gsteel = 79.3*1000000000;
+	public static final double Gglass = 26.2*1000000000;
+	public static final double Gdiamond = 478*1000000000;
+	public static final double Galuminum = 25.5*1000000000;
+	public static final double Grubber = 0.6*1000000;
+	public static final double Gwood = 620*1000000;
+	public static final double Gconcrete = 79.3*1000000000;
+	public static final double Gstone = 8*1000000000; //varies widely
+	
+	/** Elastic Moduli */
+	
+	
+	/** Ultimate Tensile Strengths */
+
+
+	/** Ultimate Shear Strengths */
 	
 
 	/** Calculates an exponential decay. Args: Rate, initial value, time */
@@ -30,7 +50,7 @@ public class ReikaEngLibrary {
 	 * Args: Torque, radius of shaft, max shear stress */
 	public boolean mat_twistfailure(int torque, double radius, double taumax) {
 		double J = (pi/2)*ReikaMathLibrary.intpow(radius,4);
-		return ((torque*radius)/(J) > taumax);		//Currently an angle twist formula; NEEDS CORRECTION!!!
+		return ((torque*radius)/(J) > taumax);
 	}
 	
 	/** Returns true if the material would fail due to centripetal tensile forces.

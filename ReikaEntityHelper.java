@@ -4,6 +4,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.item.EntityFallingSand;
 import net.minecraft.entity.item.EntityItem;
@@ -157,7 +158,9 @@ public class ReikaEntityHelper {
     	if (ent instanceof EntityCaveSpider)
     		return 30;
     	if (ent instanceof EntityDragon)
-    		return 2000; //really conjectural
+    		return 10000; //really conjectural
+    	if (ent instanceof EntityWither)
+    		return 3000;  //even more conjectural
     	if (ent instanceof EntityWolf)
     		return 50;
     	if (ent instanceof EntityOcelot)
@@ -213,6 +216,123 @@ public class ReikaEntityHelper {
     		return 0xffff0000;
     	setMobColors();
     	return mobColorArray[id];
+    }
+    
+    /** Returns true if the given pitch falls within the given creature's hearing range. */
+    public static boolean isHearingRange(long freq, EntityLiving ent) {
+    	if (ent instanceof EntityPlayer || ent instanceof EntityWitch || ent instanceof EntityZombie) {
+    		if (freq < 20)
+    			return false;
+    		if (freq > 20000)
+    			return false;
+    	}
+    	if (ent instanceof EntitySlime)
+    		return false; //deaf
+    	if (ent instanceof EntityZombie || ent instanceof EntitySkeleton) {
+    		if (freq < 20)
+    			return false;
+    		if (freq > 5000) //high-frequency hearing loss
+    			return false;
+    	}
+    	if (ent instanceof EntitySpider) {
+    		if (freq < 1000)
+    			return false;
+    		if (freq > 100000)
+    			return false;
+    	}
+    	if (ent instanceof EntityCreeper) {
+    		if (freq < 500)
+    			return false;
+    		if (freq > 40000)
+    			return false;
+    	}
+    	if (ent instanceof EntityGhast) {
+    		if (freq < 200)
+    			return false;
+    		if (freq > 10000)
+    			return false;
+    	}
+    	if (ent instanceof EntityPigZombie) { //Overlap of pig and zombie hearing ranges
+    		if (freq < 64)
+    			return false;
+    		if (freq > 5000)
+    			return false;
+    	}
+    	if (ent instanceof EntityEnderman) {
+    		if (freq < 5)
+    			return false;
+    		if (freq > 2000)
+    			return false;
+    	}
+    	if (ent instanceof EntityBlaze) {
+    		if (freq > 500)
+    			return false;
+    	}
+    	if (ent instanceof EntitySilverfish) {
+    		if (freq < 1000)
+    			return false;
+    		if (freq > 35000)
+    			return false;
+    	}
+    	if (ent instanceof EntityDragon) {
+    		if (freq < 5)
+    			return false;
+    		if (freq > 8000)
+    			return false;
+    	}
+    	if (ent instanceof EntityWither) {
+    		if (freq < 2)
+    			return false;
+    		if (freq > 10000)
+    			return false;
+    	}
+    	if (ent instanceof EntityPig) {
+    		if (freq < 64)
+    			return false;
+    		if (freq > 32000)
+    			return false;
+    	}
+    	if (ent instanceof EntityCow || ent instanceof EntityMooshroom) {
+    		if (freq < 23)
+    			return false;
+    		if (freq > 35000)
+    			return false;
+    	}
+    	if (ent instanceof EntityChicken) {
+    		if (freq < 125)
+    			return false;
+    		if (freq > 2000)
+    			return false;
+    	}
+    	if (ent instanceof EntitySheep) {
+    		if (freq < 100)
+    			return false;
+    		if (freq > 30000)
+    			return false;
+    	}
+    	if (ent instanceof EntityBat) {
+    		if (freq < 2000)
+    			return false;
+    		if (freq > 110000)
+    			return false;
+    		
+    	}
+    	if (ent instanceof EntityOcelot) {
+    		if (freq < 45)
+    			return false;
+    		if (freq > 64000)
+    			return false;
+    	}
+    	if (ent instanceof EntityWolf) {
+    		if (freq < 67)
+    			return false;
+    		if (freq > 45000)
+    			return false;
+    	}
+    	if (ent instanceof EntitySquid)
+    		if (freq > 500)
+    			return false;
+    	return true;
     }
 	
 }

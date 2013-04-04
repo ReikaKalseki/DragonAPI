@@ -211,10 +211,34 @@ public class ReikaMathLibrary {
 		return (logbase(num, base) == (int)logbase(num, base));
 	}
 	
+	/** Returns true with a percentage probability. Args: chance (out of 1) */
 	public static boolean doWithChance(double num) {
+		if (num > 1)
+			num /= 100;
 		double chance = (100*num)-100;
 		if (par5Random.nextInt(101) < chance)
 			return true;
 		return false;
+	}
+	
+	/** Returns a multiplier (<1) based on how close the value is to the peak value of a
+	 * power distribution. (y = ax^n). Args: Peak x, peak y, required x, falloff factor, power */
+	public static double powerFalloff(double peakx, double peaky, double pos, double factor, double power) {
+		double distance = pos-peakx;
+		if (distance < 0)
+			distance = -distance;
+		distance = ReikaMathLibrary.doubpow(distance, power);
+		double reduction = factor*distance;
+		return (peaky-reduction);
+	}
+	
+	/** Returns a multiplier (<1) based on how close the value is to the peak value of an
+	 * exponential distribution (y = a*n^x). Args: Peak x, peak y, required x, falloff factor, base */
+	public static double expFalloff(double peakx, double peaky, double pos, double factor, double base) {
+		double distance = pos-peakx;
+		if (distance < 0)
+			distance = -distance;
+		double reduction = factor*ReikaMathLibrary.doubpow(base, distance);
+		return (peaky-reduction);
 	}
 }
