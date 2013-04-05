@@ -88,6 +88,8 @@ public class ReikaEngLibrary {
 		return ((Ftens/A) > sigmamax);
 	}
 	
+	/** Returns true if the material would fail due to centripetal tensile forces. Assumes a solid circular shaft.
+	 * Args: Density, radius, omega, Ultimate Tensile Strength */
 	public static boolean mat_rotfailure(double rho, double radius, double omega, double sigmamax) {
 		double sigma = rho*omega*omega*radius*radius/2;
 		//ReikaGuiAPI.write(sigma);
