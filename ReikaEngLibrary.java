@@ -19,6 +19,7 @@ public class ReikaEngLibrary {
 	
 	/** Shear moduli */
 	public static final double Gsteel = 79.3*1000000000;
+	public static final double Giron = 82*1000000000;
 	public static final double Gglass = 26.2*1000000000;
 	public static final double Gdiamond = 478*1000000000;
 	public static final double Galuminum = 25.5*1000000000;
@@ -26,9 +27,11 @@ public class ReikaEngLibrary {
 	public static final double Gwood = 620*1000000;
 	public static final double Gconcrete = 79.3*1000000000;
 	public static final double Gstone = 8*1000000000; //varies widely
+	public static final double Ggold = 27*1000000000;
 	
 	/** Elastic Moduli */
 	public static final double Esteel = 210*1000000000;
+	public static final double Eiron = 211*1000000000;
 	public static final double Eglass = 70*1000000000;
 	public static final double Ediamond = 1.220*1000000000000D; //1.22 TPa... O_O
 	public static final double Ealuminum = 69*1000000000;
@@ -36,9 +39,11 @@ public class ReikaEngLibrary {
 	public static final double Ewood = 11*1000000;
 	public static final double Econcrete = 30*1000000000;
 	public static final double Estone = 50*1000000000; //varies widely
+	public static final double Egold = 79*1000000000;
 	
 	/** Ultimate Tensile Strengths */
 	public static final double Tsteel = 400*1000000;
+	public static final double Tiron = 200*1000000;
 	public static final double Tglass = 33*1000000;
 	public static final double Tdiamond = 5*1000000000;
 	public static final double Taluminum = 110*1000000;
@@ -46,9 +51,11 @@ public class ReikaEngLibrary {
 	public static final double Twood = 20*1000000;
 	public static final double Tconcrete = 3*1000000;
 	public static final double Tstone = 100*10000000; //varies widely
+	public static final double Tgold = 108*10000000;
 
 	/** Ultimate Shear Strengths */
-	public static final double Ssteel = 116*1000000;
+	public static final double Ssteel = 232*1000000;
+	public static final double Siron = 116*1000000;
 	public static final double Sglass = 19.1*1000000;
 	public static final double Sdiamond = 2.9*1000000000;
 	public static final double Saluminum = 63.8*1000000;
@@ -56,6 +63,7 @@ public class ReikaEngLibrary {
 	public static final double Swood = 11.6*1000000;
 	public static final double Sconcrete = 1.74*1000000; //tensile; 30x stronger for compression
 	public static final double Sstone = 40*10000000; //varies widely
+	public static final double Sgold = 62.6*10000000;
 
 	/** Calculates an exponential decay. Args: Rate, initial value, time */
 	public static double decay(double rate, double ivp, double time) {
@@ -96,10 +104,11 @@ public class ReikaEngLibrary {
 		return (sigma > sigmamax);
 	}
 	
-	/** Calculates the rotational kinetic energy of a circular mass. Args: mass, rpm, radius */
-	public static double rotenergy(double m, int rpm, double radius) {
-		double omega = 120*pi*rpm;
-		double I = m*(pi/4)*ReikaMathLibrary.intpow(radius, 4);
+	/** Calculates the rotational kinetic energy of a circular mass. Args: density, thickness, omega, radius */
+	public static double rotenergy(double rho, double t, double omega, double radius) {
+		double V = pi*radius*radius*t;
+		double mass = rho*V;
+		double I = mass*(pi/4)*ReikaMathLibrary.intpow(radius, 4);
 		return 0.5*I*ReikaMathLibrary.intpow(omega, 2);
 	}
 }

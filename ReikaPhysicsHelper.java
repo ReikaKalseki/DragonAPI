@@ -2,6 +2,8 @@ package Reika.DragonAPI;
 
 public class ReikaPhysicsHelper {
 	
+	public static final double TNTenergy = 12420000000D;
+	
 	/** Converts 3D polar coordinates into cartesian ones. Use angles in degrees. Args: magnitude, theta, phi */
 	public static double[] polarToCartesian(double mag, double theta, double phi) {
 		double[] coords = new double[3];
@@ -48,4 +50,10 @@ public class ReikaPhysicsHelper {
 		return mag/(dx*dx+dy*dy+dz*dz);
 	}
 	
+	/** Returns a float value for MC-scaled explosion power, based off the input energy in joules. Recall TNT has
+	 * a float power of 4F, corresponding to a real-energy value of 12.4 Gigajoules. Args: Energy */
+	public static float getExplosionFromEnergy(double energy) {
+		double ratio = energy/TNTenergy;
+		return (float)(4*ratio);
+	}
 }
