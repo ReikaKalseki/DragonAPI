@@ -10,9 +10,10 @@ import org.lwjgl.opengl.GL11;
 public class ReikaAABBHelper {
 
 	/** Renders an AABB bounding box in the world. Very useful for debug purposes, or as a user-friendliness feature.
-	 * Args: World, AABB, Render par2,4,6, x,y,z of machine, root alpha value */
-	public static void renderAABB(World world, AxisAlignedBB box, double par2, double par4, double par6, int x, int y, int z, int a) {
-		int[] color = {255, 255, 255, a};
+	 * Args: World, AABB, Render par2,4,6, x,y,z of machine, root alpha value (-ve for solid color), RGB */
+	public static void renderAABB(World world, AxisAlignedBB box, double par2, double par4, double par6, int x, int y, int z, int a, int r, int g, int b) {
+		int[] color = {r, g, b, a};
+		ModLoader.getMinecraftInstance().entityRenderer.disableLightmap(1);
         GL11.glPushMatrix();
         GL11.glTranslatef((float)par2, (float)par4 + 2.0F, (float)par6 + 1.0F);
         GL11.glScalef(1.0F, -1.0F, -1.0F);
@@ -22,9 +23,11 @@ public class ReikaAABBHelper {
     	GL11.glDisable(GL11.GL_LIGHTING);
     	GL11.glEnable(GL11.GL_BLEND);
     	GL11.glDisable(GL11.GL_TEXTURE_2D);
-    	if (color[3] > 255)
+    	if (color[3] > 255 && color[3] > 0)
     		color[3] = 255;
-    	boolean filled = false;
+    	if (color[3] < 0)
+    		color[3] *= -1;
+    	boolean filled = true;
     	Tessellator var5 = new Tessellator();
 		double xdiff = box.minX-x;
 		double ydiff = box.minY-y;
@@ -38,7 +41,42 @@ public class ReikaAABBHelper {
 		double pz = par6+zdiff;
 		double px2 = par2+xdiff2;
 		double py2 = par4+ydiff2;
-		double pz2 = par6+zdiff2;
+		double pz2 = par6+zdiff2;	    	
+	    var5.startDrawing(GL11.GL_LINE_LOOP);
+	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+	    var5.addVertex(px2, py2, pz);
+	    var5.addVertex(px, py2, pz);
+	    var5.addVertex(px, py2, pz2);
+	    var5.addVertex(px2, py2, pz2);
+	    var5.draw();
+	    var5.startDrawing(GL11.GL_LINE_LOOP);
+	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+	    var5.addVertex(px2, py, pz);
+	    var5.addVertex(px, py, pz);
+	    var5.addVertex(px, py, pz2);
+	    var5.addVertex(px2, py, pz2);
+	    var5.draw();
+	    var5.startDrawing(GL11.GL_LINE_LOOP);
+	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+	    var5.addVertex(px, py, pz);
+	   	var5.addVertex(px, py2, pz);
+	   	var5.draw();
+	    var5.startDrawing(GL11.GL_LINE_LOOP);
+	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+	   	var5.addVertex(px2, py, pz);
+	   	var5.addVertex(px2, py2, pz);
+	   	var5.draw();
+	    var5.startDrawing(GL11.GL_LINE_LOOP);
+	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+	    var5.addVertex(px2, py, pz2);
+	    var5.addVertex(px2, py2, pz2);
+	    var5.draw();
+	    var5.startDrawing(GL11.GL_LINE_LOOP);
+	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+	    var5.addVertex(px, py, pz2);
+	    var5.addVertex(px, py2, pz2);
+	    var5.draw();
+	    
     	if (filled)
     	{
 	    	var5.startDrawing(GL11.GL_QUADS);
@@ -76,42 +114,8 @@ public class ReikaAABBHelper {
 	    	var5.addVertex(px2, py2, pz2);
 	    	var5.draw();
     	}
-	    	
-	    var5.startDrawing(GL11.GL_LINE_LOOP);
-	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-	    var5.addVertex(px2, py2, pz);
-	    var5.addVertex(px, py2, pz);
-	    var5.addVertex(px, py2, pz2);
-	    var5.addVertex(px2, py2, pz2);
-	    var5.draw();
-	    var5.startDrawing(GL11.GL_LINE_LOOP);
-	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-	    var5.addVertex(px2, py, pz);
-	    var5.addVertex(px, py, pz);
-	    var5.addVertex(px, py, pz2);
-	    var5.addVertex(px2, py, pz2);
-	    var5.draw();
-	    var5.startDrawing(GL11.GL_LINE_LOOP);
-	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-	    var5.addVertex(px, py, pz);
-	   	var5.addVertex(px, py2, pz);
-	   	var5.draw();
-	    var5.startDrawing(GL11.GL_LINE_LOOP);
-	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-	   	var5.addVertex(px2, py, pz);
-	   	var5.addVertex(px2, py2, pz);
-	   	var5.draw();
-	    var5.startDrawing(GL11.GL_LINE_LOOP);
-	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-	    var5.addVertex(px2, py, pz2);
-	    var5.addVertex(px2, py2, pz2);
-	    var5.draw();
-	    var5.startDrawing(GL11.GL_LINE_LOOP);
-	    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-	    var5.addVertex(px, py, pz2);
-	    var5.addVertex(px, py2, pz2);
-	    var5.draw();
-	    	
+
+    	ModLoader.getMinecraftInstance().entityRenderer.enableLightmap(1);
     	GL11.glEnable(GL11.GL_LIGHTING);
     	GL11.glEnable(GL11.GL_CULL_FACE);
     	GL11.glDisable(GL11.GL_BLEND); 

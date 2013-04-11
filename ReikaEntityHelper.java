@@ -334,5 +334,25 @@ public class ReikaEntityHelper {
     			return false;
     	return true;
     }
+    
+    /** Knocks one entity away from another. Args: Attacker, target, power */
+    public static void knockbackEntity(Entity a, Entity b, double power) {
+    	knockbackEntityFromPos(a.posX, a.posY, a.posZ, b, power);
+    }
+    
+    /** Knocks an entity away from a position. Args: x, y, z, entity, power */
+    public static void knockbackEntityFromPos(double x, double y, double z, Entity ent, double power) {
+    	double dx = x-ent.posX;
+    	//double dy = y-ent.posY;
+    	double dz = z-ent.posZ;
+    	double dd = ReikaMathLibrary.py3d(dx, 0, dz);
+    	ent.motionX -= dx/dd/2*power;
+    	//ent.motionY -= dy/10;
+    	if (ent.onGround || ent.posY > y)
+    		ent.motionY += 0.4*power;
+    	ent.motionZ -= dz/dd/2*power;
+    	//if (!ent.worldObj.isRemote)
+    		ent.velocityChanged = true;
+    }
 	
 }

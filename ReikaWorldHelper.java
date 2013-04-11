@@ -96,9 +96,9 @@ private static void setNonSolid() {
 	nonSolidArray[Block.flowerPot.blockID] = true;
 	nonSolidArray[Block.woodenButton.blockID] = true;
 	nonSolidArray[Block.skull.blockID] = true;
-	nonSolidArray[mod_RotaryCraft.canola.blockID] = true;
-	nonSolidArray[mod_RotaryCraft.lightblock.blockID] = true;
-	nonSolidArray[mod_RotaryCraft.lightbridge.blockID] = true;
+	//nonSolidArray[mod_RotaryCraft.canola.blockID] = true;
+	//nonSolidArray[mod_RotaryCraft.lightblock.blockID] = true;
+	//nonSolidArray[mod_RotaryCraft.lightbridge.blockID] = true;
 	//nonSolidArray[mod_RotaryCraft.sprinkler.blockID] = true;
 	
 }
@@ -761,7 +761,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
      * spark particles yes/no, number-of-sparks multiplier (default 20-40),
      * flaming explosion yes/no, smoking explosion yes/no, explosion force (0 for none) */
     public static void overheat(World world, int x, int y, int z, int id, int meta, int mindrops, int maxdrops, boolean sparks, float sparkmultiplier, boolean flaming, boolean smoke, float force) {
-    	if (force > 0) {
+    	if (force > 0 && !world.isRemote) {
 	    	if (flaming)
 	    		world.newExplosion(null, x, y, z, force, true, smoke);
 	    	else
@@ -801,5 +801,148 @@ public static double findSolidSurface(World world, double x, double y, double z)
 	    	orb.velocityChanged = true;
 	    	world.spawnEntityInWorld(orb);
     	}
+    }
+    
+    /** Returns true if the coordinate specified is a lava source block and would be recreated according to the lava-duplication rules
+     * that existed for a short time in Beta 1.9. Args: World, x, y, z */
+    public static boolean is1p9InfiniteLava(World world, int x, int y, int z) {
+    	if (world.getBlockMaterial(x, y, z) != Material.lava || world.getBlockMetadata(x, y, z) != 0)
+    		return false;
+    	if (world.getBlockMaterial(x+1, y, z) != Material.lava || world.getBlockMetadata(x+1, y, z) != 0)
+    		return false;
+    	if (world.getBlockMaterial(x, y, z+1) != Material.lava || world.getBlockMetadata(x, y, z+1) != 0)
+    		return false;
+    	if (world.getBlockMaterial(x-1, y, z) != Material.lava || world.getBlockMetadata(x-1, y, z) != 0)
+    		return false;
+    	if (world.getBlockMaterial(x, y, z-1) != Material.lava || world.getBlockMetadata(x, y, z-1) != 0)
+    		return false;
+    	return true;
+    }
+    
+    /** Returns the y-coordinate of the top non-air block at the given xz coordinates, at or
+     * below the specified y-coordinate. Returns -1 if none. Args: World, x, z, y */
+    public static int findTopBlockBelowY(World world, int x, int z, int y) {
+    	int id = world.getBlockId(x, y, z);
+    	while ((id == 0) && y >= 0) {
+    		y--;
+    		id = world.getBlockId(x, y, z);
+    	}
+    	return y;
+    }
+    
+    /** Returns true if the coordinate is a liquid source block. Args: World, x, y, z */
+    public static boolean isLiquidSourceBlock(World world, int x, int y, int z) {
+    	if (world.getBlockMetadata(x, y, z) != 0)
+    		return false;
+    	if (world.getBlockMaterial(x, y, z) != Material.lava && world.getBlockMaterial(x, y, z) != Material.water)
+    		return false;
+    	return true;
+    }
+    
+    /** Returns true if the Block ID corresponds to an ore block. Args: ID */
+    public static boolean isOre(int id) {
+    	if (id == Block.oreCoal.blockID)
+    		return true;
+    	if (id == Block.oreIron.blockID)
+    		return true;
+    	if (id == Block.oreGold.blockID)
+    		return true;
+    	if (id == Block.oreRedstone.blockID)
+    		return true;
+    	if (id == Block.oreLapis.blockID)
+    		return true;
+    	if (id == Block.oreDiamond.blockID)
+    		return true;
+    	if (id == Block.oreEmerald.blockID)
+    		return true;
+    	if (id == Block.oreRedstoneGlowing.blockID)
+    		return true;
+    	//if (id == Block.oreQuartz.blockID)
+    		//return true;
+    	return false;
+    }
+    
+    /** Breaks a contiguous area of blocks recursively (akin to a fill tool in image editors).
+     * Args: World, start x, start y, start z, id, metadata (-1 for any) */
+    public static void recursiveBreak(World world, int x, int y, int z, int id, int meta) {
+    	if (id == 0)
+    		return;
+    	if (world.getBlockId(x, y, z) != id)
+    		return;
+    	if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
+    		return;
+    	int metad = world.getBlockMetadata(x, y, z);
+    	Block.blocksList[id].dropBlockAsItem(world, x, y, z, id, metad);
+    	world.setBlockWithNotify(x, y, z, 0);
+    	world.markBlockForUpdate(x, y, z);
+    	recursiveBreak(world, x+1, y, z, id, meta);
+    	recursiveBreak(world, x-1, y, z, id, meta);
+    	recursiveBreak(world, x, y+1, z, id, meta);
+    	recursiveBreak(world, x, y-1, z, id, meta);
+    	recursiveBreak(world, x, y, z+1, id, meta);
+    	recursiveBreak(world, x, y, z-1, id, meta);
+    }
+    
+    /** Like the ordinary recursive break but with a bounded volume. Args: World, x, y, z,
+     * id to replace, metadata to replace (-1 for any), min x,y,z, max x,y,z */
+    public static void recursiveBreakWithBounds(World world, int x, int y, int z, int id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
+    	if (id == 0)
+    		return;
+    	if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
+    		return;
+    	if (world.getBlockId(x, y, z) != id)
+    		return;
+    	if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
+    		return;
+    	int metad = world.getBlockMetadata(x, y, z);
+    	Block.blocksList[id].dropBlockAsItem(world, x, y, z, id, metad);
+    	world.setBlockWithNotify(x, y, z, 0);
+    	world.markBlockForUpdate(x, y, z);
+    	recursiveBreakWithBounds(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
+    	recursiveBreakWithBounds(world, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
+    	recursiveBreakWithBounds(world, x, y+1, z, id, meta, x1, y1, z1, x2, y2, z2);
+    	recursiveBreakWithBounds(world, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2);
+    	recursiveBreakWithBounds(world, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2);
+    	recursiveBreakWithBounds(world, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2);
+    }
+    
+    /** Recursively fills a contiguous area of one block type with another, akin to a fill tool.
+     * Args: World, start x, start y, start z, id to replace, id to fill with,
+     * metadata to replace (-1 for any), metadata to fill with */
+    public static void recursiveFill(World world, int x, int y, int z, int id, int idto, int meta, int metato) {
+     	if (world.getBlockId(x, y, z) != id)
+    		return;
+    	if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
+    		return;
+    	int metad = world.getBlockMetadata(x, y, z);
+    	world.setBlockAndMetadataWithNotify(x, y, z, idto, metato);
+    	world.markBlockForUpdate(x, y, z);
+    	recursiveFill(world, x+1, y, z, id, idto, meta, metato);
+    	recursiveFill(world, x-1, y, z, id, idto, meta, metato);
+    	recursiveFill(world, x, y+1, z, id, idto, meta, metato);
+    	recursiveFill(world, x, y-1, z, id, idto, meta, metato);
+    	recursiveFill(world, x, y, z+1, id, idto, meta, metato);
+    	recursiveFill(world, x, y, z-1, id, idto, meta, metato);
+    }
+    
+    /** Like the ordinary recursive fill but with a bounded volume. Args: World, x, y, z,
+     * id to replace, id to fill with, metadata to replace (-1 for any),
+     * metadata to fill with, min x,y,z, max x,y,z */
+    public static void recursiveFillWithBounds(World world, int x, int y, int z, int id, int idto, int meta, int metato, int x1, int y1, int z1, int x2, int y2, int z2) {
+    	if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
+    		return;
+    	if (world.getBlockId(x, y, z) != id)
+    		return;
+    	if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
+    		return;
+    	int metad = world.getBlockMetadata(x, y, z);
+    	world.setBlockAndMetadataWithNotify(x, y, z, idto, metato);
+    	world.markBlockForUpdate(x, y, z);
+    	recursiveFillWithBounds(world, x+1, y, z, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
+    	recursiveFillWithBounds(world, x-1, y, z, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
+    	recursiveFillWithBounds(world, x, y+1, z, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
+    	recursiveFillWithBounds(world, x, y-1, z, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
+    	recursiveFillWithBounds(world, x, y, z+1, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
+    	recursiveFillWithBounds(world, x, y, z-1, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
     }
 }
