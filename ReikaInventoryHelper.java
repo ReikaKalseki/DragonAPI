@@ -363,4 +363,17 @@ public class ReikaInventoryHelper {
 			num--;
 		return num;
 	}
+	
+	/** Intelligently decrements a stack in an inventory, setting it to null if necessary.
+	 * Also performs sanity checks. Args: Inventory, Slot */
+	public static void decrStack(int slot, ItemStack[] inv) {
+		if (slot >= inv.length) {
+			ReikaGuiAPI.write("Tried to Access Slot "+slot+", which is larger than the inventory.");
+			return;
+		}
+		if (inv[slot].stackSize > 1)
+			inv[slot].stackSize--;
+		else
+			inv[slot] = null;
+	}
 }

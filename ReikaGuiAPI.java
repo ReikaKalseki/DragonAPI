@@ -432,4 +432,16 @@ public class ReikaGuiAPI extends GuiScreen {
     public static void write(Object obj) {
     	writeString(String.valueOf(obj));
     }
+    
+    public static void renderFraction(FontRenderer fr, String num, String den, int x, int y, int color, boolean shadow, boolean center) {
+    	
+    }
+    
+    public static void renderRoot(FontRenderer fr, String num, String root, int x, int y, int color, boolean shadow, boolean center) {
+    	
+    }
+    
+    public static void renderPower(FontRenderer fr, String base, String pow, int x, int y, int color, boolean shadow, boolean center) {
+    	
+    }
 }

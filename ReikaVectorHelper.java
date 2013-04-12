@@ -1,6 +1,8 @@
 package Reika.DragonAPI;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 public class ReikaVectorHelper {
 	
@@ -18,6 +20,36 @@ public class ReikaVectorHelper {
 		xyz[0] = vec.xCoord;
 		xyz[1] = vec.yCoord;
 		xyz[2] = vec.zCoord;
+		return xyz;
+	}
+	
+	public static double[] getPlayerLookCoords(EntityPlayer ep, double scale) {
+		Vec3 look = ep.getLookVec();
+		double dx = ep.posX;
+		double dy = ep.posY+ep.getEyeHeight();
+		double dz = ep.posZ;
+		look.xCoord *= scale;
+		look.yCoord *= scale;
+		look.zCoord *= scale;
+		double[] xyz = {dx+look.xCoord, dy+look.yCoord, dz+look.zCoord};
+		return xyz;
+	}
+	
+	public static int[] getPlayerLookBlock(World world, EntityPlayer ep, double range, boolean passthru) {
+		int[] xyz = new int[3];
+		for (float i = 0; i <= range; i += 0.5) {
+			double[] look = getPlayerLookCoords(ep, i);
+			int x = (int)look[0];
+			int y = (int)look[1];
+			int z = (int)look[2];
+			int id = world.getBlockId(x, y, z);
+			if (id == 0 || (passthru && ReikaWorldHelper.softBlocks(id))) {
+				xyz[0] = x;
+				xyz[1] = y;
+				xyz[2] = z;
+				return xyz;
+			}
+		}
 		return xyz;
 	}
 	
