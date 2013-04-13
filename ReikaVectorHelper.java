@@ -43,7 +43,7 @@ public class ReikaVectorHelper {
 			int y = (int)look[1];
 			int z = (int)look[2];
 			int id = world.getBlockId(x, y, z);
-			if (id == 0 || (passthru && ReikaWorldHelper.softBlocks(id))) {
+			if (id != 0 && !(passthru && ReikaWorldHelper.softBlocks(id))) {
 				xyz[0] = x;
 				xyz[1] = y;
 				xyz[2] = z;

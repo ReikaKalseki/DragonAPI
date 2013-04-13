@@ -70,19 +70,40 @@ public class ReikaRenderHelper {
     	GL11.glEnable(GL12.GL_RESCALE_NORMAL);
     	GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = new Tessellator();
-    	var5.setColorRGBA(color[0], color[1], color[2], 255);
-    	for (int k = 0; k < 360; k += 15) {
-        	var5.startDrawing(GL11.GL_LINE_LOOP);
-        	var5.setColorRGBA(color[0], color[1], color[2], 255);
-	    	for (int i = 0; i < 360; i++) {
-	    		int sign = 1;
-	    		double h = r*Math.cos(ReikaPhysicsHelper.degToRad(i));
-	    		if (i >= 180)
-	    			sign = -1;
-	    		var5.addVertex(x-Math.sin(phi)*(sign)*(Math.sqrt(r*r-h*h)), y+r*Math.cos(ReikaPhysicsHelper.degToRad(i)), z+r*Math.sin(ReikaPhysicsHelper.degToRad(i))*Math.cos(phi));
-	    	}
-	    	var5.draw();
+    	//var5.setColorRGBA(color[0], color[1], color[2], 255);
+        var5.startDrawing(GL11.GL_LINE_LOOP);
+        var5.setColorRGBA(color[0], color[1], color[2], 255);
+	    for (int i = 0; i < 360; i++) {
+	    	int sign = 1;
+	    	double h = r*Math.cos(ReikaPhysicsHelper.degToRad(i));
+	    	if (i >= 180)
+	    		sign = -1;
+	    	var5.addVertex(x-Math.sin(phi)*(sign)*(Math.sqrt(r*r-h*h)), y+r*Math.cos(ReikaPhysicsHelper.degToRad(i)), z+r*Math.sin(ReikaPhysicsHelper.degToRad(i))*Math.cos(phi));
     	}
+    	var5.draw();
+    	ModLoader.getMinecraftInstance().entityRenderer.enableLightmap(1);
+    	GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+    	GL11.glEnable(GL11.GL_LIGHTING);
+    	GL11.glEnable(GL11.GL_CULL_FACE);
+    	GL11.glDisable(GL11.GL_BLEND); 
+    	GL11.glEnable(GL11.GL_TEXTURE_2D);
+    	GL11.glEnable(GL11.GL_DEPTH_TEST);
+	}
+	
+	/** Renders a line between two points in the world. Args: Start xyz, End xyz, rgb */
+	public static void renderLine(double x1, double y1, double z1, double x2, double y2, double z2, int[] color) {
+        ModLoader.getMinecraftInstance().entityRenderer.disableLightmap(1);
+    	GL11.glDisable(GL11.GL_LIGHTING);
+    	GL11.glEnable(GL11.GL_BLEND);
+    	GL11.glDisable(GL11.GL_TEXTURE_2D);
+    	GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+    	GL11.glColor4f(1F, 1F, 1F, 1F);
+		Tessellator var5 = new Tessellator();
+        var5.startDrawing(GL11.GL_LINE_LOOP);
+        var5.setColorRGBA(color[0], color[1], color[2], 255);
+        var5.addVertex(x1, y1, z1);
+        var5.addVertex(x2, y2, z2);
+        var5.draw();
     	ModLoader.getMinecraftInstance().entityRenderer.enableLightmap(1);
     	GL11.glDisable(GL12.GL_RESCALE_NORMAL);
     	GL11.glEnable(GL11.GL_LIGHTING);

@@ -883,6 +883,29 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	recursiveBreak(world, x, y, z-1, id, meta);
     }
     
+    /** Like the ordinary recursive break but with a spherical bounded volume. Args: World, x, y, z,
+     * id to replace, metadata to replace (-1 for any), origin x,y,z, max radius */
+    public static void recursiveBreakWithinSphere(World world, int x, int y, int z, int id, int meta, int x0, int y0, int z0, double r) {
+    	if (id == 0)
+    		return;
+    	if (world.getBlockId(x, y, z) != id)
+    		return;
+    	if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
+    		return;
+    	if (ReikaMathLibrary.py3d(x-x0, y-y0, z-z0) > r)
+    		return;
+    	int metad = world.getBlockMetadata(x, y, z);
+    	Block.blocksList[id].dropBlockAsItem(world, x, y, z, id, metad);
+    	world.setBlockWithNotify(x, y, z, 0);
+    	world.markBlockForUpdate(x, y, z);
+    	recursiveBreakWithinSphere(world, x+1, y, z, id, meta, x0, y0, z0, r);
+    	recursiveBreakWithinSphere(world, x-1, y, z, id, meta, x0, y0, z0, r);
+    	recursiveBreakWithinSphere(world, x, y+1, z, id, meta, x0, y0, z0, r);
+    	recursiveBreakWithinSphere(world, x, y-1, z, id, meta, x0, y0, z0, r);
+    	recursiveBreakWithinSphere(world, x, y, z+1, id, meta, x0, y0, z0, r);
+    	recursiveBreakWithinSphere(world, x, y, z-1, id, meta, x0, y0, z0, r);
+    }
+    
     /** Like the ordinary recursive break but with a bounded volume. Args: World, x, y, z,
      * id to replace, metadata to replace (-1 for any), min x,y,z, max x,y,z */
     public static void recursiveBreakWithBounds(World world, int x, int y, int z, int id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
@@ -944,5 +967,26 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	recursiveFillWithBounds(world, x, y-1, z, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
     	recursiveFillWithBounds(world, x, y, z+1, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
     	recursiveFillWithBounds(world, x, y, z-1, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
+    }
+    
+    /** Like the ordinary recursive fill but with a spherical bounded volume. Args: World, x, y, z,
+     * id to replace, id to fill with, metadata to replace (-1 for any),
+     * metadata to fill with, origin x,y,z, max radius */
+    public static void recursiveFillWithinSphere(World world, int x, int y, int z, int id, int idto, int meta, int metato, int x0, int y0, int z0, double r) {
+    	if (world.getBlockId(x, y, z) != id)
+    		return;
+    	if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
+    		return;
+    	if (ReikaMathLibrary.py3d(x-x0, y-y0, z-z0) > r)
+    		return;
+    	int metad = world.getBlockMetadata(x, y, z);
+    	world.setBlockAndMetadataWithNotify(x, y, z, idto, metato);
+    	world.markBlockForUpdate(x, y, z);
+    	recursiveFillWithinSphere(world, x+1, y, z, id, idto, meta, metato, x0, y0, z0, r);
+    	recursiveFillWithinSphere(world, x-1, y, z, id, idto, meta, metato, x0, y0, z0, r);
+    	recursiveFillWithinSphere(world, x, y+1, z, id, idto, meta, metato, x0, y0, z0, r);
+    	recursiveFillWithinSphere(world, x, y-1, z, id, idto, meta, metato, x0, y0, z0, r);
+    	recursiveFillWithinSphere(world, x, y, z+1, id, idto, meta, metato, x0, y0, z0, r);
+    	recursiveFillWithinSphere(world, x, y, z-1, id, idto, meta, metato, x0, y0, z0, r);
     }
 }
