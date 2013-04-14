@@ -2,6 +2,9 @@ package Reika.DragonAPI;
 
 import java.util.Random;
 
+import Reika.RotaryCraft.ItemChargedTool;
+
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
 
@@ -375,5 +378,34 @@ public class ReikaInventoryHelper {
 			inv[slot].stackSize--;
 		else
 			inv[slot] = null;
+	}
+	
+	/** Checks a crafting inventory for a specific ID and metadata (-1 for any). Args: InventoryCrafting, int ID */
+	public static boolean checkForItem(InventoryCrafting ic, int id, int meta) {
+		for (int i = 0; i < ic.getSizeInventory(); i++) {
+			ItemStack is = ic.getStackInSlot(i);
+			if (is != null) {
+				if (is.getItem().itemID == id && (meta == -1 || is.getItemDamage() == meta))
+					return true;
+			}
+		}
+		return false;
+	}
+	
+	/** Converts a crafting inventory to a standard ItemStack array. Args: InventoryCrafting */
+	public static ItemStack[] convertCraftToItemStacks(InventoryCrafting ic) {
+		ItemStack[] slots = new ItemStack[ic.getSizeInventory()];
+		for (int i = 0; i < slots.length; i++)
+			slots[i] = ic.getStackInSlot(i);
+		return slots;
+	}
+	
+	/** Counts the number of empty slots in an inventory. Args: Inventory */
+	public static int countEmptySlots(ItemStack[] inv) {
+		int num = 0;
+		for (int i = 0; i < inv.length; i++)
+			if (inv[i] == null)
+				num++;
+		return num;
 	}
 }

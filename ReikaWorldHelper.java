@@ -2,13 +2,14 @@ package Reika.DragonAPI;
 
 import java.util.Random;
 
-import Reika.RotaryCraft.mod_RotaryCraft;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
@@ -988,5 +989,163 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	recursiveFillWithinSphere(world, x, y-1, z, id, idto, meta, metato, x0, y0, z0, r);
     	recursiveFillWithinSphere(world, x, y, z+1, id, idto, meta, metato, x0, y0, z0, r);
     	recursiveFillWithinSphere(world, x, y, z-1, id, idto, meta, metato, x0, y0, z0, r);
+    }
+    
+    /** Returns true if there is a clear line of sight between two points. Args: World, Start x,y,z, End x,y,z
+     * NOTE: If one point is a block, use canBlockSee instead, as this method will always return false. */
+    public static boolean lineOfSight(World world, double x1, double y1, double z1, double x2, double y2, double z2) {
+    	if (world.isRemote)
+    		return false;
+    	Vec3 v1 = Vec3.vec3dPool.getVecFromPool(x1, y1, z1);
+    	Vec3 v2 = Vec3.vec3dPool.getVecFromPool(x2, y2, z2);
+    	return (world.rayTraceBlocks(v1, v2) == null);
+    }
+    
+    /** Returns true if there is a clear line of sight between two entites. Args: World, Entity 1, Entity 2 */
+    public static boolean lineOfSight(World world, Entity e1, Entity e2) {
+    	if (world.isRemote)
+    		return false;
+    	Vec3 v1 = Vec3.vec3dPool.getVecFromPool(e1.posX, e1.posY+e1.getEyeHeight(), e1.posZ);
+    	Vec3 v2 = Vec3.vec3dPool.getVecFromPool(e2.posX, e2.posY+e2.getEyeHeight(), e2.posZ);
+    	return (world.rayTraceBlocks(v1, v2) == null);
+    }
+    
+    /** Returns true if a block can see an point. Args: World, block x,y,z, Point x,y,z, Max Range */
+    public static boolean canBlockSee(World world, int x, int y, int z, double x0, double y0, double z0, double range) {
+    	range += 2;
+    	for (int k = 0; k < 10; k++) {
+    		float a = 0; float b = 0; float c = 0;
+    		switch(k) {
+    		case 1:
+    			a = 1;
+    		break;
+    		case 2:
+    			b = 1;
+    		break;
+    		case 3:
+    			a = 1;
+    			b = 1;
+    		break;
+    		case 4:
+    			c = 1;
+    		break;
+    		case 5:
+    			a = 1;
+    			c = 1;
+    		break;
+    		case 6:
+    			b = 1;
+    			c = 1;
+    		break;
+    		case 7:
+    			a = 1;
+    			b = 1;
+    			c = 1;
+    		break;
+    		case 8:
+    			a = 0.5F;
+    			b = 0.5F;
+    			c = 0.5F;
+    		break;
+    		case 9:
+    			b = 0.5F;
+    		break;
+    		}
+	    	for (float i = 0; i <= range; i += 0.25) {
+		    	Vec3 vec2 = ReikaVectorHelper.getVec2Pt(x+a, y+b, z+c, x0, y0, z0).normalize();
+		    	vec2.xCoord *= i;
+		    	vec2.yCoord *= i;
+		    	vec2.zCoord *= i;
+		    	vec2.xCoord += x0;
+		    	vec2.yCoord += y0;
+		    	vec2.zCoord += z0;
+		    	//ReikaGuiAPI.write(String.format("%f -->  %.3f,  %.3f, %.3f", i, vec2.xCoord, vec2.yCoord, vec2.zCoord));
+		    	int id = world.getBlockId((int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
+		    	if ((int)vec2.xCoord == x && (int)vec2.yCoord == y && (int)vec2.zCoord == z) {
+		    		//ReikaGuiAPI.writeCoords(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
+		    		return true;
+		    	}
+		    	else if (id != 0 && isCollideable(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord)) {
+		    		i = (float)(range + 1);
+		    	}
+	    	}
+    	}
+    	return false;
+    }
+    
+    /** Returns true if the entity can see a block, or if it could be moved to a position where it could see the block.
+     * Args: World, Block x,y,z, Entity, Max Move Distance
+     * DO NOT USE THIS - CPU INTENSIVE TO ALL HELL! */
+    public static boolean canSeeOrMoveToSeeBlock(World world, int x, int y, int z, Entity ent, double r) {
+    	double d = 4;//+ReikaMathLibrary.py3d(x-ent.posX, y-ent.posY, z-ent.posZ);
+    	if (canBlockSee(world, x, y, z, ent.posX, ent.posY, ent.posZ, d))
+    		return true;
+    	double xmin; double ymin; double zmin;
+    	double xmax; double ymax; double zmax;
+    	double[] pos = new double[3];
+    	boolean[] signs = new boolean[3];
+    	boolean[] signs2 = new boolean[3];
+    	signs[0] = (ReikaMathLibrary.isSameSign(ent.posX, x));
+    	signs[1] = (ReikaMathLibrary.isSameSign(ent.posY, y));
+    	signs[2] = (ReikaMathLibrary.isSameSign(ent.posZ, z));
+    	for (double i = ent.posX-r; i <= ent.posX+r; i += 0.5) {
+        	for (double j = ent.posY-r; j <= ent.posY+r; j += 0.5) {
+            	for (double k = ent.posZ-r; k <= ent.posZ+r; k += 0.5) {
+            		if (canBlockSee(world, x, y, z, ent.posX+i, ent.posY+j, ent.posZ+k, d))
+            			return true;
+            	}
+        	}
+    	}
+    	/*
+    	for (double i = ent.posX; i > ent.posX-r; i -= 0.5) {
+    		int id = world.getBlockId((int)i, (int)ent.posY, (int)ent.posZ);
+    		if (isCollideable(world, (int)i, (int)ent.posY, (int)ent.posZ)) {
+    			xmin = i+Block.blocksList[id].getBlockBoundsMaxX();
+    		}
+    	}
+    	for (double i = ent.posX; i < ent.posX+r; i += 0.5) {
+    		int id = world.getBlockId((int)i, (int)ent.posY, (int)ent.posZ);
+    		if (isCollideable(world, (int)i, (int)ent.posY, (int)ent.posZ)) {
+    			xmax = i+Block.blocksList[id].getBlockBoundsMinX();
+    		}
+    	}
+    	for (double i = ent.posY; i > ent.posY-r; i -= 0.5) {
+    		int id = world.getBlockId((int)ent.posX, (int)i, (int)ent.posZ);
+    		if (isCollideable(world, (int)ent.posX, (int)i, (int)ent.posZ)) {
+    			ymin = i+Block.blocksList[id].getBlockBoundsMaxX();
+    		}
+    	}
+    	for (double i = ent.posY; i < ent.posY+r; i += 0.5) {
+    		int id = world.getBlockId((int)ent.posX, (int)i, (int)ent.posZ);
+    		if (isCollideable(world, (int)ent.posX, (int)i, (int)ent.posZ)) {
+    			ymax = i+Block.blocksList[id].getBlockBoundsMinX();
+    		}
+    	}
+    	for (double i = ent.posZ; i > ent.posZ-r; i -= 0.5) {
+    		int id = world.getBlockId((int)ent.posX, (int)ent.posY, (int)i);
+    		if (isCollideable(world, (int)ent.posX, (int)ent.posY, (int)i)) {
+    			zmin = i+Block.blocksList[id].getBlockBoundsMaxX();
+    		}
+    	}
+    	for (double i = ent.posZ; i < ent.posZ+r; i += 0.5) {
+    		int id = world.getBlockId((int)ent.posX, (int)ent.posY, (int)i);
+    		if (isCollideable(world, (int)ent.posX, (int)ent.posY, (int)i)) {
+    			zmax = i+Block.blocksList[id].getBlockBoundsMinX();
+    		}
+    	}*/
+    	signs2[0] = (ReikaMathLibrary.isSameSign(pos[0], x));
+    	signs2[1] = (ReikaMathLibrary.isSameSign(pos[1], y));
+    	signs2[2] = (ReikaMathLibrary.isSameSign(pos[2], z));
+    	if (signs[0] != signs2[0] || signs[1] != signs2[1] || signs[2] != signs2[2]) //Cannot pull the item "Across" (so that it moves away)
+    		return false;
+    	return false;
+    }
+    
+    /** Returns true if the block has a hitbox. Args: World, x, y, z */
+    public static boolean isCollideable(World world, int x, int y, int z) {
+    	if (world.getBlockId(x, y, z) == 0)
+    		return false;
+    	Block b = Block.blocksList[world.getBlockId(x, y, z)];
+    	return (b.getCollisionBoundingBoxFromPool(world, x, y, z) != null);
     }
 }

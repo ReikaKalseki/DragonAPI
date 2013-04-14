@@ -358,12 +358,12 @@ public class ReikaEntityHelper {
     }
     
     /** Returns true if all EntityLiving within the list are dead. Args: List
-     * The list MUST be of EntityLiving (or subclass) - any other type WILL cause 
-     * a classcast exception! */
-    public static boolean allAreDead(List mobs) {
+     * [The list MUST be of EntityLiving (or subclass) - any other type WILL cause 
+     * a classcast exception!], test isDead only yes/no */
+    public static boolean allAreDead(List mobs, boolean isDeadOnly) {
     	for (int i = 0; i < mobs.size(); i++) {
     		EntityLiving ent = (EntityLiving)mobs.get(i);
-    		if (!ent.isDead && ent.getHealth() > 0)
+    		if ((!ent.isDead && ent.getHealth() > 0) || (!ent.isDead && isDeadOnly))
     			return false;
     	}
     	return true;

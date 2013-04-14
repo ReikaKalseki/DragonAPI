@@ -428,9 +428,18 @@ public class ReikaGuiAPI extends GuiScreen {
     		ModLoader.getMinecraftInstance().thePlayer.addChatMessage(sg);
     }
     
-    /** A general object-to-chat function. Args: Object */
+    /** A general object-to-chat function. Autoclips doubles to 2 decimals. Args: Object */
     public static void write(Object obj) {
-    	writeString(String.valueOf(obj));
+    	if (obj == null) {
+    		writeString("null");
+    		return;
+    	}
+    	String str;
+    	if (obj.getClass() == Double.class)
+    		str = String.format("%.2f", obj);
+    	else
+    		str = String.valueOf(obj);
+    	writeString(str);
     }
     
     public static void renderFraction(FontRenderer fr, String num, String den, int x, int y, int color, boolean shadow, boolean center) {
