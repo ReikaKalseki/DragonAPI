@@ -102,7 +102,7 @@ public class ReikaChunkHelper {
 					int idread = world.getBlockId(x+i, k, z+j);
 					int metaread = world.getBlockMetadata(x+i, k, z+j);
 					if (idread == id && metaread == meta)
-						world.setBlockAndMetadataWithNotify(x+i, k, z+j, setid, setmeta);
+						ReikaWorldHelper.legacySetBlockAndMetadataWithNotify(world, x+i, k, z+j, setid, setmeta);
 				}
 			}
 		}
@@ -120,7 +120,7 @@ public class ReikaChunkHelper {
 				for (int k = 0; k < 256; k++) {
 					int idread = world.getBlockId(x+i, k, z+j);
 					if (idread == id)
-						world.setBlockAndMetadataWithNotify(x+i, k, z+j, setid, setmeta);
+						ReikaWorldHelper.legacySetBlockAndMetadataWithNotify(world, x+i, k, z+j, setid, setmeta);
 				}
 			}
 		}

@@ -408,4 +408,17 @@ public class ReikaInventoryHelper {
 				num++;
 		return num;
 	}
+	
+	/** Returns the highest metadata of a specific item/block ID in the specified inventory.
+	 * If there is none of that ID, it will return -1. Args: ID, inventory */
+	public static int findMaxMetadataOfID(int id, ItemStack[] inv) {
+		int max = -1;
+		for (int i = 0; i < inv.length; i++) {
+			if (inv[i] != null && inv[i].itemID == id) {
+				if (inv[i].getItemDamage() > max)
+					max = inv[i].getItemDamage();
+			}
+		}
+		return max;
+	}
 }

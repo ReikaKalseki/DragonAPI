@@ -8,6 +8,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -70,7 +71,7 @@ private static void setNonSolid() {
 	nonSolidArray[Block.signPost.blockID] = true;
 	nonSolidArray[Block.signWall.blockID] = true;
 	nonSolidArray[Block.doorWood.blockID] = true;
-	nonSolidArray[Block.doorSteel.blockID] = true;
+	nonSolidArray[Block.doorIron.blockID] = true;
 	nonSolidArray[Block.ladder.blockID] = true;
 	nonSolidArray[Block.pressurePlatePlanks.blockID] = true;
 	nonSolidArray[Block.pressurePlateStone.blockID] = true;
@@ -128,7 +129,7 @@ private static void setFlammable() {
 	flammableArray[Block.cloth.blockID] = true;
 	flammableArray[Block.tnt.blockID] = true;
 	flammableArray[Block.bookShelf.blockID] = true;
-	flammableArray[Block.stairCompactPlanks.blockID] = true;
+	flammableArray[Block.stairsWoodOak.blockID] = true;
 	flammableArray[Block.jukebox.blockID] = true;
 	flammableArray[Block.vine.blockID] = true;
 	flammableArray[Block.woodSingleSlab.blockID] = true;
@@ -539,22 +540,22 @@ public static double findSolidSurface(World world, double x, double y, double z)
     public static void changeAdjBlock(World world, int x, int y, int z, int side, int id) {
     	switch(side) {
     	case 0:
-    		world.setBlockWithNotify(x, y+1, z, id);
+    		legacySetBlockWithNotify(world, x, y+1, z, id);
     	break;
     	case 1:
-    		world.setBlockWithNotify(x, y-1, z, id);
+    		legacySetBlockWithNotify(world, x, y-1, z, id);
     	break;
     	case 2:
-    		world.setBlockWithNotify(x+1, y, z, id);
+    		legacySetBlockWithNotify(world, x+1, y, z, id);
     	break;
     	case 3:
-    		world.setBlockWithNotify(x-1, y, z, id);
+    		legacySetBlockWithNotify(world, x-1, y, z, id);
     	break;
     	case 4:
-    		world.setBlockWithNotify(x, y, z+1, id);
+    		legacySetBlockWithNotify(world, x, y, z+1, id);
     	break;
     	case 5:
-    		world.setBlockWithNotify(x, y, z-1, id);
+    		legacySetBlockWithNotify(world, x, y, z-1, id);
     	break;
     	}
     }
@@ -670,17 +671,17 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	if (temperature > 0)	{ // Melting snow/ice
     		for (int i = 0; i < 3; i++) {
     			if (world.getBlockMaterial(x-i, y, z) == Material.ice)
-    				world.setBlockWithNotify(x-i, y, z, Block.waterMoving.blockID);
+    				legacySetBlockWithNotify(world, x-i, y, z, Block.waterMoving.blockID);
     			if (world.getBlockMaterial(x+i, y, z) == Material.ice)
-    				world.setBlockWithNotify(x+i, y, z, Block.waterMoving.blockID);
+    				legacySetBlockWithNotify(world, x+i, y, z, Block.waterMoving.blockID);
     			if (world.getBlockMaterial(x, y-i, z) == Material.ice)
-    				world.setBlockWithNotify(x, y-i, z, Block.waterMoving.blockID);
+    				legacySetBlockWithNotify(world, x, y-i, z, Block.waterMoving.blockID);
     			if (world.getBlockMaterial(x, y+i, z) == Material.ice)
-    				world.setBlockWithNotify(x, y+i, z, Block.waterMoving.blockID);
+    				legacySetBlockWithNotify(world, x, y+i, z, Block.waterMoving.blockID);
     			if (world.getBlockMaterial(x, y, z-i) == Material.ice)
-    				world.setBlockWithNotify(x, y, z-i, Block.waterMoving.blockID);
+    				legacySetBlockWithNotify(world, x, y, z-i, Block.waterMoving.blockID);
     			if (world.getBlockMaterial(x, y, z+i) == Material.ice)
-    				world.setBlockWithNotify(x, y, z+i, Block.waterMoving.blockID);
+    				legacySetBlockWithNotify(world, x, y, z+i, Block.waterMoving.blockID);
     		}
     	}
     }
@@ -688,17 +689,17 @@ public static double findSolidSurface(World world, double x, double y, double z)
     /** Surrounds the block with fire. Args: World, x, y, z */
     public static void ignite(World world, int x, int y, int z) {
     	if (world.getBlockId		(x-1, y, z) == 0)
-    		world.setBlockWithNotify(x-1, y, z, Block.fire.blockID);
+    		legacySetBlockWithNotify(world, x-1, y, z, Block.fire.blockID);
     	if (world.getBlockId		(x+1, y, z) == 0)
-    		world.setBlockWithNotify(x+1, y, z, Block.fire.blockID);
+    		legacySetBlockWithNotify(world, x+1, y, z, Block.fire.blockID);
     	if (world.getBlockId		(x, y-1, z) == 0)
-    		world.setBlockWithNotify(x, y-1, z, Block.fire.blockID);
+    		legacySetBlockWithNotify(world, x, y-1, z, Block.fire.blockID);
     	if (world.getBlockId		(x, y+1, z) == 0)
-    		world.setBlockWithNotify(x, y+1, z, Block.fire.blockID);
+    		legacySetBlockWithNotify(world, x, y+1, z, Block.fire.blockID);
     	if (world.getBlockId		(x, y, z-1) == 0)
-    		world.setBlockWithNotify(x, y, z-1, Block.fire.blockID);
+    		legacySetBlockWithNotify(world, x, y, z-1, Block.fire.blockID);
     	if (world.getBlockId		(x, y, z+1) == 0)
-    		world.setBlockWithNotify(x, y, z+1, Block.fire.blockID);
+    		legacySetBlockWithNotify(world, x, y, z+1, Block.fire.blockID);
     }
     
     /** Returns the number of water blocks directly and continuously above the passed coordinates.
@@ -874,7 +875,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return;
     	int metad = world.getBlockMetadata(x, y, z);
     	Block.blocksList[id].dropBlockAsItem(world, x, y, z, id, metad);
-    	world.setBlockWithNotify(x, y, z, 0);
+    	legacySetBlockWithNotify(world, x, y, z, 0);
     	world.markBlockForUpdate(x, y, z);
     	recursiveBreak(world, x+1, y, z, id, meta);
     	recursiveBreak(world, x-1, y, z, id, meta);
@@ -897,7 +898,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return;
     	int metad = world.getBlockMetadata(x, y, z);
     	Block.blocksList[id].dropBlockAsItem(world, x, y, z, id, metad);
-    	world.setBlockWithNotify(x, y, z, 0);
+    	legacySetBlockWithNotify(world, x, y, z, 0);
     	world.markBlockForUpdate(x, y, z);
     	recursiveBreakWithinSphere(world, x+1, y, z, id, meta, x0, y0, z0, r);
     	recursiveBreakWithinSphere(world, x-1, y, z, id, meta, x0, y0, z0, r);
@@ -920,7 +921,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return;
     	int metad = world.getBlockMetadata(x, y, z);
     	Block.blocksList[id].dropBlockAsItem(world, x, y, z, id, metad);
-    	world.setBlockWithNotify(x, y, z, 0);
+    	legacySetBlockWithNotify(world, x, y, z, 0);
     	world.markBlockForUpdate(x, y, z);
     	recursiveBreakWithBounds(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
     	recursiveBreakWithBounds(world, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
@@ -939,7 +940,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
     		return;
     	int metad = world.getBlockMetadata(x, y, z);
-    	world.setBlockAndMetadataWithNotify(x, y, z, idto, metato);
+    	legacySetBlockAndMetadataWithNotify(world, x, y, z, idto, metato);
     	world.markBlockForUpdate(x, y, z);
     	recursiveFill(world, x+1, y, z, id, idto, meta, metato);
     	recursiveFill(world, x-1, y, z, id, idto, meta, metato);
@@ -960,7 +961,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
     		return;
     	int metad = world.getBlockMetadata(x, y, z);
-    	world.setBlockAndMetadataWithNotify(x, y, z, idto, metato);
+    	legacySetBlockAndMetadataWithNotify(world, x, y, z, idto, metato);
     	world.markBlockForUpdate(x, y, z);
     	recursiveFillWithBounds(world, x+1, y, z, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
     	recursiveFillWithBounds(world, x-1, y, z, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
@@ -974,14 +975,19 @@ public static double findSolidSurface(World world, double x, double y, double z)
      * id to replace, id to fill with, metadata to replace (-1 for any),
      * metadata to fill with, origin x,y,z, max radius */
     public static void recursiveFillWithinSphere(World world, int x, int y, int z, int id, int idto, int meta, int metato, int x0, int y0, int z0, double r) {
+    	ReikaGuiAPI.write(world.getBlockId(x, y, z)+" & "+id+" @ "+x0+", "+y0+", "+z0);
     	if (world.getBlockId(x, y, z) != id)
     		return;
+    	ReikaGuiAPI.write(1);
     	if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
     		return;
+    	ReikaGuiAPI.write(2);
     	if (ReikaMathLibrary.py3d(x-x0, y-y0, z-z0) > r)
     		return;
+    	ReikaGuiAPI.write(3);
     	int metad = world.getBlockMetadata(x, y, z);
-    	world.setBlockAndMetadataWithNotify(x, y, z, idto, metato);
+    	ReikaGuiAPI.write(id+" to "+idto);
+    	legacySetBlockAndMetadataWithNotify(world, x, y, z, idto, metato);
     	world.markBlockForUpdate(x, y, z);
     	recursiveFillWithinSphere(world, x+1, y, z, id, idto, meta, metato, x0, y0, z0, r);
     	recursiveFillWithinSphere(world, x-1, y, z, id, idto, meta, metato, x0, y0, z0, r);
@@ -996,8 +1002,8 @@ public static double findSolidSurface(World world, double x, double y, double z)
     public static boolean lineOfSight(World world, double x1, double y1, double z1, double x2, double y2, double z2) {
     	if (world.isRemote)
     		return false;
-    	Vec3 v1 = Vec3.vec3dPool.getVecFromPool(x1, y1, z1);
-    	Vec3 v2 = Vec3.vec3dPool.getVecFromPool(x2, y2, z2);
+    	Vec3 v1 = Vec3.fakePool.getVecFromPool(x1, y1, z1);
+    	Vec3 v2 = Vec3.fakePool.getVecFromPool(x2, y2, z2);
     	return (world.rayTraceBlocks(v1, v2) == null);
     }
     
@@ -1005,8 +1011,8 @@ public static double findSolidSurface(World world, double x, double y, double z)
     public static boolean lineOfSight(World world, Entity e1, Entity e2) {
     	if (world.isRemote)
     		return false;
-    	Vec3 v1 = Vec3.vec3dPool.getVecFromPool(e1.posX, e1.posY+e1.getEyeHeight(), e1.posZ);
-    	Vec3 v2 = Vec3.vec3dPool.getVecFromPool(e2.posX, e2.posY+e2.getEyeHeight(), e2.posZ);
+    	Vec3 v1 = Vec3.fakePool.getVecFromPool(e1.posX, e1.posY+e1.getEyeHeight(), e1.posZ);
+    	Vec3 v2 = Vec3.fakePool.getVecFromPool(e2.posX, e2.posY+e2.getEyeHeight(), e2.posZ);
     	return (world.rayTraceBlocks(v1, v2) == null);
     }
     
@@ -1065,7 +1071,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
 		    		//ReikaGuiAPI.writeCoords(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
 		    		return true;
 		    	}
-		    	else if (id != 0 && isCollideable(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord)) {
+		    	else if (id != 0 && (isCollideable(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord) && !softBlocks(id))) {
 		    		i = (float)(range + 1);
 		    	}
 	    	}
@@ -1141,6 +1147,134 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	return false;
     }
     
+    public static boolean lenientSeeThrough(World world, double x, double y, double z, double x0, double y0, double z0) {
+    	MovingObjectPosition pos;
+    	Vec3 par1Vec3 = Vec3.fakePool.getVecFromPool(x, y, z);
+    	Vec3 par2Vec3 = Vec3.fakePool.getVecFromPool(x0, y0, z0);
+        if (!Double.isNaN(par1Vec3.xCoord) && !Double.isNaN(par1Vec3.yCoord) && !Double.isNaN(par1Vec3.zCoord)) {
+            if (!Double.isNaN(par2Vec3.xCoord) && !Double.isNaN(par2Vec3.yCoord) && !Double.isNaN(par2Vec3.zCoord)) {
+                int var5 = MathHelper.floor_double(par2Vec3.xCoord);
+                int var6 = MathHelper.floor_double(par2Vec3.yCoord);
+                int var7 = MathHelper.floor_double(par2Vec3.zCoord);
+                int var8 = MathHelper.floor_double(par1Vec3.xCoord);
+                int var9 = MathHelper.floor_double(par1Vec3.yCoord);
+                int var10 = MathHelper.floor_double(par1Vec3.zCoord);
+                int var11 = world.getBlockId(var8, var9, var10);
+                int var12 = world.getBlockMetadata(var8, var9, var10);
+                Block var13 = Block.blocksList[var11];
+                //ReikaGuiAPI.write(var11);
+                if (var13 != null && (var11 > 0 && !ReikaWorldHelper.softBlocks(var11) && (var11 != Block.leaves.blockID) && (var11 != Block.web.blockID)) && var13.canCollideCheck(var12, false)) {
+                    MovingObjectPosition var14 = var13.collisionRayTrace(world, var8, var9, var10, par1Vec3, par2Vec3);
+                    if (var14 != null)
+                        pos = var14;
+                }
+                var11 = 200;
+                while (var11-- >= 0) {
+                    if (Double.isNaN(par1Vec3.xCoord) || Double.isNaN(par1Vec3.yCoord) || Double.isNaN(par1Vec3.zCoord))
+                        pos = null;
+                    if (var8 == var5 && var9 == var6 && var10 == var7)
+                        pos = null;
+                    boolean var39 = true;
+                    boolean var40 = true;
+                    boolean var41 = true;
+                    double var15 = 999.0D;
+                    double var17 = 999.0D;
+                    double var19 = 999.0D;
+                    if (var5 > var8)
+                        var15 = (double)var8 + 1.0D;
+                    else if (var5 < var8)
+                        var15 = (double)var8 + 0.0D;
+                    else
+                        var39 = false;
+                    if (var6 > var9)
+                        var17 = (double)var9 + 1.0D;
+                    else if (var6 < var9)
+                        var17 = (double)var9 + 0.0D;
+                    else
+                        var40 = false;
+                    if (var7 > var10)
+                        var19 = (double)var10 + 1.0D;
+                    else if (var7 < var10)
+                        var19 = (double)var10 + 0.0D;
+                    else
+                        var41 = false;
+                    double var21 = 999.0D;
+                    double var23 = 999.0D;
+                    double var25 = 999.0D;
+                    double var27 = par2Vec3.xCoord - par1Vec3.xCoord;
+                    double var29 = par2Vec3.yCoord - par1Vec3.yCoord;
+                    double var31 = par2Vec3.zCoord - par1Vec3.zCoord;
+                    if (var39)
+                        var21 = (var15 - par1Vec3.xCoord) / var27;
+                    if (var40)
+                        var23 = (var17 - par1Vec3.yCoord) / var29;
+                    if (var41)
+                        var25 = (var19 - par1Vec3.zCoord) / var31;
+                    boolean var33 = false;
+                    byte var42;
+                    if (var21 < var23 && var21 < var25) {
+                        if (var5 > var8)
+                            var42 = 4;
+                        else
+                            var42 = 5;
+                        par1Vec3.xCoord = var15;
+                        par1Vec3.yCoord += var29 * var21;
+                        par1Vec3.zCoord += var31 * var21;
+                    }
+                    else if (var23 < var25) {
+                        if (var6 > var9)
+                            var42 = 0;
+                        else
+                            var42 = 1;
+                        par1Vec3.xCoord += var27 * var23;
+                        par1Vec3.yCoord = var17;
+                        par1Vec3.zCoord += var31 * var23;
+                    }
+                    else {
+                        if (var7 > var10)
+                            var42 = 2;
+                        else
+                            var42 = 3;
+
+                        par1Vec3.xCoord += var27 * var25;
+                        par1Vec3.yCoord += var29 * var25;
+                        par1Vec3.zCoord = var19;
+                    }
+                    Vec3 var34 = world.getWorldVec3Pool().getVecFromPool(par1Vec3.xCoord, par1Vec3.yCoord, par1Vec3.zCoord);
+                    var8 = (int)(var34.xCoord = (double)MathHelper.floor_double(par1Vec3.xCoord));
+                    if (var42 == 5) {
+                        --var8;
+                        ++var34.xCoord;
+                    }
+                    var9 = (int)(var34.yCoord = (double)MathHelper.floor_double(par1Vec3.yCoord));
+                    if (var42 == 1) {
+                        --var9;
+                        ++var34.yCoord;
+                    }
+                    var10 = (int)(var34.zCoord = (double)MathHelper.floor_double(par1Vec3.zCoord));
+                    if (var42 == 3) {
+                        --var10;
+                        ++var34.zCoord;
+                    }
+                    int var35 = world.getBlockId(var8, var9, var10);
+                    int var36 = world.getBlockMetadata(var8, var9, var10);
+                    Block var37 = Block.blocksList[var35];
+                    if (var35 > 0 && var37.canCollideCheck(var36, false)) {
+                        MovingObjectPosition var38 = var37.collisionRayTrace(world, var8, var9, var10, par1Vec3, par2Vec3);
+                        if (var38 != null)
+                            pos = var38;
+                    }
+                }
+                pos = null;
+            }
+            else
+                pos = null;
+        }
+        else
+            pos = null;
+        return (pos == null);
+    }
+    
     /** Returns true if the block has a hitbox. Args: World, x, y, z */
     public static boolean isCollideable(World world, int x, int y, int z) {
     	if (world.getBlockId(x, y, z) == 0)
@@ -1148,4 +1282,16 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	Block b = Block.blocksList[world.getBlockId(x, y, z)];
     	return (b.getCollisionBoundingBoxFromPool(world, x, y, z) != null);
     }
+
+	public static boolean legacySetBlockMetadataWithNotify(World world, int x, int y, int z, int meta) {
+		return world.setBlockMetadataWithNotify(x, y, z, meta, 3);
+	}
+	
+	public static boolean legacySetBlockAndMetadataWithNotify(World world, int x, int y, int z, int id, int meta) {
+		return world.setBlock(x, y, z, id, meta, 3);
+	}
+	
+	public static boolean legacySetBlockWithNotify(World world, int x, int y, int z, int id) {
+		return world.setBlock(x, y, z, id, 0, 3);
+	}
 }

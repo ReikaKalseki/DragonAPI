@@ -2,9 +2,12 @@ package Reika.DragonAPI;
 
 import java.awt.Color;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.Entity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
@@ -12,7 +15,6 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 
 public class ReikaGuiAPI extends GuiScreen {
 	private int xSize;
@@ -57,7 +59,7 @@ public class ReikaGuiAPI extends GuiScreen {
     	
         float var7 = 0.00390625F;
         float var8 = 0.00390625F;
-        Tessellator var9 = Tessellator.instance;
+        Tessellator var9 = new Tessellator();
         var9.startDrawingQuads();
         var9.addVertexWithUV((double)(x + 0), (double)(y + height), (double)this.zLevel, (double)((float)(u + 0) * var7), (double)((float)(v + height) * var8));
         var9.addVertexWithUV((double)(x + width), (double)(y + height), (double)this.zLevel, (double)((float)(u + width) * var7), (double)((float)(v + height) * var8));
@@ -101,7 +103,7 @@ public class ReikaGuiAPI extends GuiScreen {
         float var6 = (float)(par5 >> 16 & 255) / 255.0F;
         float var7 = (float)(par5 >> 8 & 255) / 255.0F;
         float var8 = (float)(par5 & 255) / 255.0F;
-        Tessellator var9 = Tessellator.instance;
+        Tessellator var9 = new Tessellator();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -241,7 +243,7 @@ public class ReikaGuiAPI extends GuiScreen {
         float var6 = (float)(par5 >> 16 & 255) / 255.0F;
         float var7 = (float)(par5 >> 8 & 255) / 255.0F;
         float var8 = (float)(par5 & 255) / 255.0F;
-        Tessellator var9 = Tessellator.instance;
+        Tessellator var9 = new Tessellator();
         GL11.glEnable(GL11.GL_BLEND);
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -393,13 +395,13 @@ public class ReikaGuiAPI extends GuiScreen {
     
     /** Writes coordinates to the chat.
      * Args: World, x, y, z */
-    public static void writeCoords(World world, int x, int y, int z) {
+    public static void writeCoords(World world, double x, double y, double z) {
     	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
     		return;
     	if (world.isRemote)
     		return;
     	String msg;
-    	msg = String.format("%d, %d, %d", x, y, z);
+    	msg = String.format("%.2f, %.2f, %.2f", x, y, z);
     	ModLoader.getMinecraftInstance().thePlayer.addChatMessage(msg);
     }
     
@@ -440,6 +442,48 @@ public class ReikaGuiAPI extends GuiScreen {
     	else
     		str = String.valueOf(obj);
     	writeString(str);
+    }
+    
+    public static void writeEntity(World world, Entity ent) {
+    	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
+    		return;
+    	if (world.isRemote)
+    		return;
+    	if (ent == null)
+    		writeString("null");
+    	else
+    		writeString(ent.getEntityName()+" @ "+String.format("%.2f, %.2f, %.2f", ent.posX, ent.posY, ent.posZ));
+    }
+    
+    public static void writeItem(World world, int id, int dmg) {
+    	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
+    		return;
+    	if (world.isRemote)
+    		return;
+    	if (id == 0)
+    		writeString("Null Item");
+    	else if (id < 256)
+    		writeBlock(world, id, dmg);
+    	else
+    		writeString(id+":"+dmg+" is "+Item.itemsList[id].getLocalizedName(new ItemStack(id, 1, dmg)));
+    }
+    
+    public static void writeBlock(World world, int id, int meta) {
+    	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
+    		return;
+    	if (world.isRemote)
+    		return;
+    	if (id == 0)
+    		writeString("Null Item");
+    	else if (id > 4096)
+    		writeItem(world, id, meta);
+    	else
+    		writeString(id+":"+meta+" is "+Block.blocksList[id].getLocalizedName());
+    }
+    
+    public static void writeSide() {
+    	if (ModLoader.getMinecraftInstance().thePlayer != null)
+    		ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.valueOf(FMLCommonHandler.instance().getEffectiveSide()));
     }
     
     public static void renderFraction(FontRenderer fr, String num, String den, int x, int y, int color, boolean shadow, boolean center) {

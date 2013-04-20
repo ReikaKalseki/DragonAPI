@@ -6,11 +6,11 @@ import net.minecraft.world.World;
 
 public class ReikaVectorHelper {
 	
-	/** Returns a standard vec3d between two specified points, rather than from the origin.
+	/** Returns a standard fake between two specified points, rather than from the origin.
 	 * Args: start x,y,z, end x,y,z */
 	public static Vec3 getVec2Pt(double x1, double y1, double z1, double x2, double y2, double z2) {
-		Vec3 p1 = Vec3.vec3dPool.getVecFromPool(x1, y1, z1);
-		Vec3 p2 = Vec3.vec3dPool.getVecFromPool(x2, y2, z2);
+		Vec3 p1 = Vec3.fakePool.getVecFromPool(x1, y1, z1);
+		Vec3 p2 = Vec3.fakePool.getVecFromPool(x2, y2, z2);
 		return p2.subtract(p1);
 	}
 	
