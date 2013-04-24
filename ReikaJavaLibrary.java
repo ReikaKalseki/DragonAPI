@@ -11,7 +11,7 @@ public class ReikaJavaLibrary {
 			System.out.println("null");
 		}
 		Class cl = obj.getClass();
-		if (cl != String.class)
+		if (cl != String.class && cl != Integer.class)
 			System.out.println(String.valueOf(obj)+" of Class "+String.valueOf(cl));
 		else
 			System.out.println(String.valueOf(obj));

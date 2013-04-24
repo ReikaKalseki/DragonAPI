@@ -241,4 +241,14 @@ public class ReikaMathLibrary {
 		double reduction = factor*ReikaMathLibrary.doubpow(base, distance);
 		return (peaky-reduction);
 	}
+	
+	public static boolean isValueOutsideBounds(int low, int hi, int val) {
+		if (val >= low && val <= hi)
+			return false;
+		return true;
+	}
+	
+	public static boolean isValueInsideBounds(int low, int hi, int val) {
+		return (val < hi && val > low);
+	}
 }

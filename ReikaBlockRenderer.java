@@ -1,19 +1,12 @@
 package Reika.DragonAPI;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAnvil;
-import net.minecraft.block.BlockGrass;
-import net.minecraft.block.BlockHopper;
-import net.minecraft.client.renderer.ChestItemRenderHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.src.FMLRenderAccessLibrary;
-import net.minecraft.util.Icon;
+import net.minecraft.src.ModLoader;
 import net.minecraft.world.IBlockAccess;
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+
+import org.lwjgl.opengl.GL11;
 
 public class ReikaBlockRenderer extends RenderBlocks {
 	
@@ -47,7 +40,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	            GL11.glColor3d(1, 1, 1);
 	            v5.startDrawingQuads();
 	            v5.setNormal(0.0F, -1.0F, 0.0F);
-	            this.renderBottomFace(par1Block, 0.0D, 0.0D, 0.0D, indices[0]);
+	            this.renderBottomFace(par1Block, 0.0D, 0.0D, 0.0D, indices[0], false);
 	            v5.draw();
 	            if (flag && this.useInventoryTint) {
 	                k = par1Block.getRenderColor(par2);
@@ -58,25 +51,25 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	            }
 	            v5.startDrawingQuads();
 	            v5.setNormal(0.0F, 1.0F, 0.0F);
-	            this.renderTopFace(par1Block, 0.0D, 0.0D, 0.0D, indices[1]);
+	            this.renderTopFace(par1Block, 0.0D, 0.0D, 0.0D, indices[1], false);
 	            v5.draw();
 	            if (flag && this.useInventoryTint)
 	                GL11.glColor4f(par3, par3, par3, 1.0F);
 	            v5.startDrawingQuads();
 	            v5.setNormal(0.0F, 0.0F, -1.0F);
-	            this.renderEastFace(par1Block, 0.0D, 0.0D, 0.0D, indices[2]);
+	            this.renderEastFace(par1Block, 0.0D, 0.0D, 0.0D, indices[2], false);
 	            v5.draw();
 	            v5.startDrawingQuads();
 	            v5.setNormal(0.0F, 0.0F, 1.0F);
-	            this.renderWestFace(par1Block, 0.0D, 0.0D, 0.0D, indices[3]);
+	            this.renderWestFace(par1Block, 0.0D, 0.0D, 0.0D, indices[3], false);
 	            v5.draw();
 	            v5.startDrawingQuads();
 	            v5.setNormal(-1.0F, 0.0F, 0.0F);
-	            this.renderNorthFace(par1Block, 0.0D, 0.0D, 0.0D, indices[4]);
+	            this.renderNorthFace(par1Block, 0.0D, 0.0D, 0.0D, indices[4], false);
 	            v5.draw();
 	            v5.startDrawingQuads();
 	            v5.setNormal(1.0F, 0.0F, 0.0F);
-	            this.renderSouthFace(par1Block, 0.0D, 0.0D, 0.0D, indices[5]);
+	            this.renderSouthFace(par1Block, 0.0D, 0.0D, 0.0D, indices[5], false);
 	            v5.draw();
 	            GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 	    }
@@ -152,7 +145,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
     }*/
 	 
 	 
-	    public void renderBottomFace(Block par1Block, double par2, double par4, double par6, int index)
+	    public void renderBottomFace(Block par1Block, double par2, double par4, double par6, int index, boolean inWorld)
 	    {
 	        Tessellator v5 = Tessellator.instance;
 	        int row = index/16;
@@ -198,12 +191,13 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	        }
 	    }
 
-	    public void renderTopFace(Block par1Block, double par2, double par4, double par6, int index)
+	    public void renderTopFace(Block par1Block, double par2, double par4, double par6, int index, boolean inWorld)
 	    {
 	        Tessellator v5 = Tessellator.instance;
 	        //ReikaJavaLibrary.pConsole(index);
 	        int row = index/16;
 	        int col = index-16*row;
+
 	        
 	        double d3 = col/16D;
 	        double d4 = col/16D+0.0625;
@@ -245,7 +239,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	        }
 	    }
 
-	    public void renderEastFace(Block par1Block, double par2, double par4, double par6, int index)
+	    public void renderEastFace(Block par1Block, double par2, double par4, double par6, int index, boolean inWorld)
 	    {
 	        Tessellator v5 = Tessellator.instance;
 
@@ -292,7 +286,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	        }
 	    }
 
-	    public void renderWestFace(Block par1Block, double par2, double par4, double par6, int index)
+	    public void renderWestFace(Block par1Block, double par2, double par4, double par6, int index, boolean inWorld)
 	    {
 	        Tessellator v5 = Tessellator.instance;
 
@@ -339,7 +333,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	        }
 	    }
 
-	    public void renderNorthFace(Block par1Block, double par2, double par4, double par6, int index)
+	    public void renderNorthFace(Block par1Block, double par2, double par4, double par6, int index, boolean inWorld)
 	    {
 	        Tessellator v5 = Tessellator.instance;
 
@@ -386,7 +380,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	        }
 	    }
 
-	    public void renderSouthFace(Block par1Block, double par2, double par4, double par6, int index)
+	    public void renderSouthFace(Block par1Block, double par2, double par4, double par6, int index, boolean inWorld)
 	    {
 	        Tessellator v5 = Tessellator.instance;
 
@@ -408,7 +402,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	        double d13 = par4 + this.renderMaxY;
 	        double d14 = par6 + this.renderMinZ;
 	        double d15 = par6 + this.renderMaxZ;
-
+	        
 	        if (this.enableAO)
 	        {
 	            v5.setColorOpaque_F(this.colorRedTopLeft, this.colorGreenTopLeft, this.colorBlueTopLeft);
@@ -452,6 +446,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	        Tessellator v5 = Tessellator.instance;
 	        v5.draw();
 	        GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
+	        //ModLoader.getMinecraftInstance().renderEngine.bindTexture("/Reika/RotaryCraft/Textures/Terrain/textures.png");
 	        v5.startDrawingQuads();
 	        v5.setBrightness(983055);
 	        boolean flag2;
@@ -545,7 +540,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	            this.colorRedTopRight *= f6;
 	            this.colorGreenTopRight *= f6;
 	            this.colorBlueTopRight *= f6;
-	            this.renderBottomFace(par1Block, (double)par2, (double)par3, (double)par4, indices[0]);
+	            this.renderBottomFace(par1Block, (double)par2, (double)par3, (double)par4, indices[0], true);
 	            flag = true;
 	        }
 	        if (this.renderAllFaces || par1Block.shouldSideBeRendered(world, par2, par3 + 1, par4, 1)) {
@@ -624,7 +619,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	            this.colorRedTopRight *= f6;
 	            this.colorGreenTopRight *= f6;
 	            this.colorBlueTopRight *= f6;
-	            this.renderTopFace(par1Block, (double)par2, (double)par3, (double)par4, indices[1]);
+	            this.renderTopFace(par1Block, (double)par2, (double)par3, (double)par4, indices[1], true);
 	            flag = true;
 	        }
 	        if (this.renderAllFaces || par1Block.shouldSideBeRendered(world, par2, par3, par4 - 1, 2)) {
@@ -712,7 +707,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	            this.colorRedTopRight *= f6;
 	            this.colorGreenTopRight *= f6;
 	            this.colorBlueTopRight *= f6;
-	            this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, indices[2]);
+	            this.renderEastFace(par1Block, (double)par2, (double)par3, (double)par4, indices[2], true);
 	            flag = true;
 	        }
 	        if (this.renderAllFaces || par1Block.shouldSideBeRendered(world, par2, par3, par4 + 1, 3)) {
@@ -798,7 +793,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	            this.colorRedTopRight *= f6;
 	            this.colorGreenTopRight *= f6;
 	            this.colorBlueTopRight *= f6;
-	            this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, indices[3]);
+	            this.renderWestFace(par1Block, (double)par2, (double)par3, (double)par4, indices[3], true);
 	            flag = true;
 	        }
 	        if (this.renderAllFaces || par1Block.shouldSideBeRendered(world, par2 - 1, par3, par4, 4)) {
@@ -884,7 +879,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	            this.colorRedTopRight *= f6;
 	            this.colorGreenTopRight *= f6;
 	            this.colorBlueTopRight *= f6;
-	            this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, indices[4]);
+	            this.renderNorthFace(par1Block, (double)par2, (double)par3, (double)par4, indices[4], true);
 	            flag = true;
 	        }
 
@@ -973,7 +968,7 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	            this.colorRedTopRight *= f6;
 	            this.colorGreenTopRight *= f6;
 	            this.colorBlueTopRight *= f6;
-	            this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, indices[5]);
+	            this.renderSouthFace(par1Block, (double)par2, (double)par3, (double)par4, indices[5], true);
 	            flag = true;
 	        }
 	        this.enableAO = false;

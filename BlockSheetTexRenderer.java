@@ -11,6 +11,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import cpw.mods.fml.common.LoadController;
+import cpw.mods.fml.common.Loader;
 
 public class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler {
 	
@@ -59,7 +61,8 @@ public class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler {
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderblocks) {
 		int metadata = world.getBlockMetadata(x, y, z);
 		ReikaBlockRenderer.instance.renderCube(block, x, y, z, 1F, 1F, 1F, metadata, world, this.textureSheet);
-		ModLoader.getMinecraftInstance().renderEngine.bindTexture("/terrain.png");
+		//if (!Loader.isModLoaded("Optifine"))
+			ModLoader.getMinecraftInstance().renderEngine.bindTexture("/terrain.png");
         return true;
 	}
 
