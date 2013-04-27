@@ -8,7 +8,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
 
-public class ReikaInventoryHelper {
+public abstract class ReikaInventoryHelper {
 	
 	private static Random par5Random = new Random();
 	

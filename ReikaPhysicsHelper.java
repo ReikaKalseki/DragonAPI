@@ -1,6 +1,6 @@
 package Reika.DragonAPI;
 
-public class ReikaPhysicsHelper {
+public abstract class ReikaPhysicsHelper {
 	
 	public static final double TNTenergy = 12420000000D;
 	

@@ -6,7 +6,7 @@ import java.util.List;
 import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
 
-public class ReikaPotionHelper {
+public abstract class ReikaPotionHelper {
 	
 	
 	/** Returns a potion ID from the damage value. Returns -1 if invalid damage value. */

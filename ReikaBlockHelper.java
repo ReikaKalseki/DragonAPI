@@ -4,7 +4,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 
-public class ReikaBlockHelper {
+public abstract class ReikaBlockHelper {
 	
 	static Random par5Random = new Random();
 	

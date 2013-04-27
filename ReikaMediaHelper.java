@@ -4,7 +4,7 @@ import java.util.Random;
 
 import net.minecraft.world.World;
 
-public class ReikaMediaHelper {
+public abstract class ReikaMediaHelper {
 	
 	static Random par5Random = new Random();
 	

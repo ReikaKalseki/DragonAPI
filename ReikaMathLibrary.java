@@ -4,7 +4,7 @@ import java.util.Random;
 
 import net.minecraft.util.MathHelper;
 
-public class ReikaMathLibrary {
+public abstract class ReikaMathLibrary {
 	
 	public static final double e = Math.E;				// s/e
 	public static final double pi = Math.PI;			// s/e
@@ -242,12 +242,14 @@ public class ReikaMathLibrary {
 		return (peaky-reduction);
 	}
 	
+	/** Returns true if the value is not inside the bounds (inclusive). Args: Low Bound, Upper Bound, Value */
 	public static boolean isValueOutsideBounds(int low, int hi, int val) {
 		if (val >= low && val <= hi)
 			return false;
 		return true;
 	}
 	
+	/** Returns true if the value is inside the bounds (not nclusive). Args: Low Bound, Upper Bound, Value */
 	public static boolean isValueInsideBounds(int low, int hi, int val) {
 		return (val < hi && val > low);
 	}

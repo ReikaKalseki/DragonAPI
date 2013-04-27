@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
 
-public class ReikaCSVReader {
+public abstract class ReikaCSVReader {
 	
 	private final BufferedReader bf;
 	

@@ -8,7 +8,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-public class ReikaChunkHelper {
+public abstract class ReikaChunkHelper {
 	
 	/** Returns the chunk at the given coords. Args: World, x, z */
 	public static Chunk getChunk(World world, int x, int z) {

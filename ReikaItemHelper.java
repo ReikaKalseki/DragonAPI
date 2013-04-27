@@ -4,7 +4,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class ReikaItemHelper {
+public abstract class ReikaItemHelper {
 
 	/** Returns true if the block or item has metadata variants. Args: ID */
 	public static boolean hasMetadata(int id) {

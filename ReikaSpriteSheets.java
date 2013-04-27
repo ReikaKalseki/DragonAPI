@@ -15,7 +15,7 @@ import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-public class ReikaSpriteSheets {
+public abstract class ReikaSpriteSheets {
 
 	/** Call this from a registered ItemRenderer class that implements IItemRenderer to actually render the item.
 	 * It will automatically compensate for being used for inventory/entity/held items.

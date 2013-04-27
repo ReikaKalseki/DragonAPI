@@ -8,7 +8,7 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 
 
-public class ReikaRenderHelper {
+public abstract class ReikaRenderHelper {
 	
 	/** Converts an RGB array into a color multiplier. Args: RGB[], bit */
 	public static float RGBtoColorMultiplier(int[] RGB, int bit) {

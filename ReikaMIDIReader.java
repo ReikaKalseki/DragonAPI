@@ -15,7 +15,7 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-public class ReikaMIDIReader {
+public abstract class ReikaMIDIReader {
 	
     public static final int NOTE_ON = 0x90;
     public static final int INSTRU_CHANGE = 0xC0;
@@ -115,13 +115,13 @@ public class ReikaMIDIReader {
 	            if (msg instanceof ShortMessage) {
 	                ShortMessage sm = (ShortMessage) msg;
 	                if (sm.getCommand() == NOTE_ON) {
-	                	//ReikaJavaLibrary.pConsole(channel+" @  "+tr[channel].get(step).getTick()+"  for  "+time);
+	                	ReikaJavaLibrary.pConsole(channel+" @  "+tr[channel].get(step).getTick()+"  for  "+time);
 	                    int key = sm.getData1();
 	                    int octave = (key / 12)-1;
-	                    while (octave > 2)
-	                    	octave -= 2;
+	                    while (octave > 5)
+	                    	octave -= 5;
 	                    note = (key%12);
-	                    if (octave == 2 && note != 0)
+	                    if (octave == 5 && note != 0)
 	                    	octave = 0;
 	                    note += 12*octave;
 	                    vol = sm.getData2();

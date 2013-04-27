@@ -4,7 +4,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public class ReikaVectorHelper {
+public abstract class ReikaVectorHelper {
 	
 	/** Returns a standard fake between two specified points, rather than from the origin.
 	 * Args: start x,y,z, end x,y,z */

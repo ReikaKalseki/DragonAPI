@@ -3,7 +3,7 @@ package Reika.DragonAPI;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReikaJavaLibrary {
+public abstract class ReikaJavaLibrary {
 	
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Object obj) {

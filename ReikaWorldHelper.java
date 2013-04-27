@@ -14,7 +14,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
-public class ReikaWorldHelper {
+public abstract class ReikaWorldHelper {
 
 /** A catalogue of all flammable blocks by ID. */
 private static boolean[] flammableArray = new boolean[4096];

@@ -1,7 +1,7 @@
 package Reika.DragonAPI;
 
 
-public class ReikaEngLibrary {
+public abstract class ReikaEngLibrary {
 	
 	public static final double e = Math.E;				// s/e
 	public static final double pi = Math.PI;		// s/e

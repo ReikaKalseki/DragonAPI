@@ -2,7 +2,7 @@ package Reika.DragonAPI;
 
 import net.minecraft.item.ItemStack;
 
-public class ReikaArrayHelper {
+public abstract class ReikaArrayHelper {
 	/** Fills an array with the specified value and returns the array.
 	 * Args: array, value */
 	public static double[] fillArray(double[] arr, double val) {
