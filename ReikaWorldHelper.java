@@ -293,7 +293,7 @@ private static void setBlockColors(boolean renderOres) {
 	blockColorArray[150] = ReikaGuiAPI.RGBtoHex(-1);
 	blockColorArray[151] = ReikaGuiAPI.RGBtoHex(-1);
 	blockColorArray[152] = ReikaGuiAPI.RGBtoHex(255, 100, 0);
-	blockColorArray[153] = ReikaGuiAPI.RGBtoHex(92, 74, 63);
+	blockColorArray[153] = ReikaGuiAPI.RGBtoHex(163, 66, 66);
 	blockColorArray[154] = ReikaGuiAPI.RGBtoHex(75);
 	blockColorArray[156] = ReikaGuiAPI.RGBtoHex(-1);
 	blockColorArray[157] = ReikaGuiAPI.RGBtoHex(183, 12, 12);
@@ -307,7 +307,7 @@ private static void setBlockColors(boolean renderOres) {
 	blockColorArray[73] = ReikaGuiAPI.RGBtoHex(215, 0, 0);
 	blockColorArray[56] = ReikaGuiAPI.RGBtoHex(93, 235, 244);
 	blockColorArray[129] = ReikaGuiAPI.RGBtoHex(23, 221, 98);
-	blockColorArray[153] = ReikaGuiAPI.RGBtoHex(-1);
+	blockColorArray[153] = ReikaGuiAPI.RGBtoHex(203, 191, 177);
 }
 
 /** Converts the given block ID to a hex color. Renders ores (or disguises as stone) as requested.

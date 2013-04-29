@@ -5,6 +5,7 @@ import java.util.Random;
 import Reika.RotaryCraft.ItemChargedTool;
 
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
 
@@ -420,5 +421,31 @@ public abstract class ReikaInventoryHelper {
 			}
 		}
 		return max;
+	}
+	
+	/** Returns true if the inventory is full. Args: Inventory */
+	public static boolean isInventoryFull(ItemStack[] inv) {
+		if (countEmptySlots(inv) > 0)
+			return false;
+		for (int i = 0; i < inv.length; i++) {
+			if (inv[i].getMaxStackSize() > inv[i].stackSize)
+				return false;
+		}
+		return true;
+	}
+	
+	/** Returns true if the inventory has space for more of a specific item. Args: ID, metadata, inventory */
+	public static boolean canAcceptMoreOf(int id, int meta, ItemStack[] inv) {
+		if (countEmptySlots(inv) > 0)
+			return true;
+		if (locateInInventory(id, meta, inv) == -1)
+			return false;
+		int num = 0;
+		int maxnum = new ItemStack(id, 1, meta).getMaxStackSize()*countNumStacks(id, meta, inv);
+		for (int i = 0; i < inv.length; i++) {
+			if (inv[i].itemID == id && inv[i].getItemDamage() == meta)
+				num += inv[i].stackSize;
+		}
+		return (num < maxnum);
 	}
 }
