@@ -15,7 +15,9 @@ import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
-public abstract class ReikaMIDIReader {
+public final class ReikaMIDIReader {
+	
+	private ReikaMIDIReader() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
     public static final int NOTE_ON = 0x90;
     public static final int INSTRU_CHANGE = 0xC0;

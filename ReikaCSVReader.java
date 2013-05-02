@@ -5,7 +5,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.InputStream;
 
-public abstract class ReikaCSVReader {
+public final class ReikaCSVReader {
+	
+	private ReikaCSVReader() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	private final BufferedReader bf;
 	

@@ -14,7 +14,7 @@ import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.common.LoadController;
 import cpw.mods.fml.common.Loader;
 
-public class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler {
+public final class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler {
 	
 	private int textureSheet;
 	private boolean is3D;

@@ -4,9 +4,11 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 
-public abstract class ReikaBlockHelper {
+public final class ReikaBlockHelper {
 	
 	static Random par5Random = new Random();
+	
+	private ReikaBlockHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	public static boolean alwaysDropsSelf(int ID) {
 		int k = 0;

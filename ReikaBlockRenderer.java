@@ -8,9 +8,11 @@ import net.minecraft.world.IBlockAccess;
 
 import org.lwjgl.opengl.GL11;
 
-public class ReikaBlockRenderer extends RenderBlocks {
+public final class ReikaBlockRenderer extends RenderBlocks {
 	
 	public static ReikaBlockRenderer instance = new ReikaBlockRenderer();
+	
+	private ReikaBlockRenderer() {}
 	
 	 public void renderBlockInInventory(Block par1Block, int par2, float par3, int[] indices) {
 	        Tessellator v5 = Tessellator.instance;
@@ -38,6 +40,8 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	            GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
 	            GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 	            GL11.glColor3d(1, 1, 1);
+				if (v5.isDrawing)
+					v5.draw();
 	            v5.startDrawingQuads();
 	            v5.setNormal(0.0F, -1.0F, 0.0F);
 	            this.renderBottomFace(par1Block, 0.0D, 0.0D, 0.0D, indices[0], false);
@@ -444,7 +448,8 @@ public class ReikaBlockRenderer extends RenderBlocks {
 	        boolean flag1 = true;
 	        int l = par1Block.getMixedBrightnessForBlock(world, par2, par3, par4);
 	        Tessellator v5 = Tessellator.instance;
-	        v5.draw();
+			if (v5.isDrawing)
+				v5.draw();
 	        GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
 	        //ModLoader.getMinecraftInstance().renderEngine.bindTexture("/Reika/RotaryCraft/Textures/Terrain/textures.png");
 	        v5.startDrawingQuads();

@@ -1,6 +1,8 @@
 package Reika.DragonAPI;
 
-public abstract class ReikaPhysicsHelper {
+public final class ReikaPhysicsHelper {
+	
+	private ReikaPhysicsHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	public static final double TNTenergy = 12420000000D;
 	

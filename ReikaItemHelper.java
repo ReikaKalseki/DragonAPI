@@ -4,7 +4,9 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public abstract class ReikaItemHelper {
+public final class ReikaItemHelper {
+	
+	private ReikaItemHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	/** Returns true if the block or item has metadata variants. Args: ID */
 	public static boolean hasMetadata(int id) {
@@ -24,5 +26,5 @@ public abstract class ReikaItemHelper {
 		if (a == null || b == null)
 			return false;
 		return (a.itemID == b.itemID && a.getItemDamage() == b.getItemDamage());
-	}	
+	}
 }

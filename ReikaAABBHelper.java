@@ -7,7 +7,9 @@ import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
-public abstract class ReikaAABBHelper {
+public final class ReikaAABBHelper {
+	
+	private ReikaAABBHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	/** Renders an AABB bounding box in the world. Very useful for debug purposes, or as a user-friendliness feature.
 	 * Args: World, AABB, Render par2,4,6, x,y,z of machine, root alpha value (-ve for solid color), RGB, solid outline yes/no */
@@ -42,7 +44,8 @@ public abstract class ReikaAABBHelper {
 		double px2 = par2+xdiff2;
 		double py2 = par4+ydiff2;
 		double pz2 = par6+zdiff2;
-
+		if (var5.isDrawing)
+			var5.draw();
 		if (line) {
 		    var5.startDrawing(GL11.GL_LINE_LOOP);
 		    var5.setColorRGBA(color[0], color[1], color[2], color[3]);

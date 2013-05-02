@@ -14,7 +14,9 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
-public abstract class ReikaWorldHelper {
+public final class ReikaWorldHelper {
+	
+	private ReikaWorldHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 /** A catalogue of all flammable blocks by ID. */
 private static boolean[] flammableArray = new boolean[4096];
@@ -1289,5 +1291,81 @@ public static double findSolidSurface(World world, double x, double y, double z)
 	
 	public static boolean legacySetBlockWithNotify(World world, int x, int y, int z, int id) {
 		return world.setBlock(x, y, z, id, 0, 3);
+	}
+	
+	/** Returns true if the specified corner has at least one air block adjacent to it,
+	 * but is not surrounded by air on all sides or in the void. Args: World, x, y, z */
+	public static boolean cornerHasAirAdjacent(World world, int x, int y, int z) {
+		if (y <= 0)
+			return false;
+		int airs = 0;
+		if (world.getBlockId(x, y, z) == 0)
+			airs++;
+		if (world.getBlockId(x-1, y, z) == 0)
+			airs++;
+		if (world.getBlockId(x, y, z-1) == 0)
+			airs++;
+		if (world.getBlockId(x-1, y, z-1) == 0)
+			airs++;
+		if (world.getBlockId(x, y-1, z) == 0)
+			airs++;
+		if (world.getBlockId(x-1, y-1, z) == 0)
+			airs++;
+		if (world.getBlockId(x, y-1, z-1) == 0)
+			airs++;
+		if (world.getBlockId(x-1, y-1, z-1) == 0)
+			airs++;
+		return (airs > 0 && airs != 8);
+	}
+	
+	/** Returns true if the specified corner has at least one nonopaque block adjacent to it,
+	 * but is not surrounded by air on all sides or in the void. Args: World, x, y, z */
+	public static boolean cornerHasTransAdjacent(World world, int x, int y, int z) {
+		if (y <= 0)
+			return false;
+		int id;
+		int airs = 0;
+		boolean nonopq = false;
+		id = world.getBlockId(x, y, z);
+		if (id == 0)
+			airs++;
+		else if (!Block.blocksList[id].isOpaqueCube())
+			nonopq = true;
+		id = world.getBlockId(x-1, y, z);
+		if (id == 0)
+			airs++;
+		else if (!Block.blocksList[id].isOpaqueCube())
+			nonopq = true;
+		id = world.getBlockId(x, y, z-1);
+		if (id == 0)
+			airs++;
+		else if (!Block.blocksList[id].isOpaqueCube())
+			nonopq = true;
+		id = world.getBlockId(x-1, y, z-1);
+		if (id == 0)
+			airs++;
+		else if (!Block.blocksList[id].isOpaqueCube())
+			nonopq = true;
+		id = world.getBlockId(x, y-1, z);
+		if (id == 0)
+			airs++;
+		else if (!Block.blocksList[id].isOpaqueCube())
+			nonopq = true;
+		id = world.getBlockId(x-1, y-1, z);
+		if (id == 0)
+			airs++;
+		else if (!Block.blocksList[id].isOpaqueCube())
+			nonopq = true;
+		id = world.getBlockId(x, y-1, z-1);
+		if (id == 0)
+			airs++;
+		else if (!Block.blocksList[id].isOpaqueCube())
+			nonopq = true;
+		id = world.getBlockId(x-1, y-1, z-1);
+		if (id == 0)
+			airs++;
+		else if (!Block.blocksList[id].isOpaqueCube())
+			nonopq = true;
+		return (airs != 8 && nonopq);
 	}
 }

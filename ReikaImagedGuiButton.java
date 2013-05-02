@@ -7,7 +7,7 @@ import net.minecraft.src.ModLoader;
 
 import org.lwjgl.opengl.GL11;
 
-public class ReikaImagedGuiButton extends GuiButton {
+public final class ReikaImagedGuiButton extends GuiButton {
 	
 	private int u;
 	private int v;
@@ -54,7 +54,7 @@ public class ReikaImagedGuiButton extends GuiButton {
         
         this.u = par7;
         this.v = par8;
-        this.color = par9;
+        this.color = 0xffffff;
         this.shadow = par10;
         this.filepath = file;
     }
@@ -67,7 +67,7 @@ public class ReikaImagedGuiButton extends GuiButton {
         if (this.drawButton)
         {
             FontRenderer var4 = par1Minecraft.fontRenderer;
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, par1Minecraft.renderEngine.getTexture(String.format("%s", this.filepath)));
+            GL11.glBindTexture(GL11.GL_TEXTURE_2D, par1Minecraft.renderEngine.getTexture(this.filepath));
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
             boolean var5 = par2 >= this.xPosition && par3 >= this.yPosition && par2 < this.xPosition + this.width && par3 < this.yPosition + this.height;
             //int var6 = this.getHoverState(var5);
@@ -84,10 +84,16 @@ public class ReikaImagedGuiButton extends GuiButton {
             {
                 var7 = 16777120;
             }*/
+            float r = ReikaRenderHelper.HextoColorMultiplier(this.color, 0);
+            float g = ReikaRenderHelper.HextoColorMultiplier(this.color, 1);
+            float b = ReikaRenderHelper.HextoColorMultiplier(this.color, 2);
+            GL11.glColor4d(r, g, b, 1);
+            par1Minecraft.renderEngine.bindTexture("/font/glyph_AA.png");
             if (this.shadow)
             	this.drawCenteredString(var4, this.displayString, this.xPosition + this.width / 2, this.yPosition + (this.height - 8) / 2, this.color);
             else
             	this.drawCenteredStringNoShadow(var4, this.displayString, this.xPosition + this.width / 2 + 1, this.yPosition + (this.height - 8) / 2, this.color);
+            GL11.glColor4d(1, 1, 1, 1);
         }
     }
     

@@ -4,7 +4,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
-public abstract class ReikaVectorHelper {
+public final class ReikaVectorHelper {
+	
+	private ReikaVectorHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	/** Returns a standard fake between two specified points, rather than from the origin.
 	 * Args: start x,y,z, end x,y,z */

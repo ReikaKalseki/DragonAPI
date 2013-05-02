@@ -1,7 +1,9 @@
 package Reika.DragonAPI;
 
 
-public abstract class ReikaEngLibrary {
+public final class ReikaEngLibrary {
+	
+	private ReikaEngLibrary() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	public static final double e = Math.E;				// s/e
 	public static final double pi = Math.PI;		// s/e

@@ -8,7 +8,9 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 
-public abstract class ReikaChunkHelper {
+public final class ReikaChunkHelper {
+	
+	private ReikaChunkHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	/** Returns the chunk at the given coords. Args: World, x, z */
 	public static Chunk getChunk(World world, int x, int z) {

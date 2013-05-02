@@ -2,7 +2,7 @@ package Reika.DragonAPI;
 
 import javax.sound.midi.Sequence;
 
-public class MIDIInterface {
+public final class MIDIInterface {
 	
 	private final Sequence midi;
 	

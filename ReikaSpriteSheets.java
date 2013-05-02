@@ -15,7 +15,9 @@ import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-public abstract class ReikaSpriteSheets {
+public final class ReikaSpriteSheets {
+	
+	private ReikaSpriteSheets() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	/** Call this from a registered ItemRenderer class that implements IItemRenderer to actually render the item.
 	 * It will automatically compensate for being used for inventory/entity/held items.
@@ -27,7 +29,8 @@ public abstract class ReikaSpriteSheets {
 		int col = index-row*16;		
 		//ModLoader.getMinecraftInstance().entityRenderer.disableLightmap(1);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
-		GL11.glDisable(GL11.GL_LIGHTING);
+		if (type == type.INVENTORY)
+			GL11.glDisable(GL11.GL_LIGHTING);
         GL11.glPushMatrix();
         GL11.glEnable(GL12.GL_RESCALE_NORMAL);
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -37,6 +40,8 @@ public abstract class ReikaSpriteSheets {
         GL11.glPopMatrix();
 		Tessellator v5 = new Tessellator();
 		if (type == type.INVENTORY) {
+			if (v5.isDrawing)
+				v5.draw();
 			v5.startDrawingQuads();
 			v5.setTranslation(-1.125F, -1.375F, 0);
 			v5.addVertexWithUV(0, 0, 0, 0.0625F*col, 0.0625F+0.0625F*row);

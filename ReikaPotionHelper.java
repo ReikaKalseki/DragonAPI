@@ -6,8 +6,9 @@ import java.util.List;
 import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
 
-public abstract class ReikaPotionHelper {
+public final class ReikaPotionHelper {
 	
+	private ReikaPotionHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	/** Returns a potion ID from the damage value. Returns -1 if invalid damage value. */
 	public static int getPotionID(int dmg) {

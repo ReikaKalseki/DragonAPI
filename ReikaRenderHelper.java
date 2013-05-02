@@ -8,7 +8,9 @@ import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 
 
-public abstract class ReikaRenderHelper {
+public final class ReikaRenderHelper {
+	
+	private ReikaRenderHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	/** Converts an RGB array into a color multiplier. Args: RGB[], bit */
 	public static float RGBtoColorMultiplier(int[] RGB, int bit) {
@@ -46,6 +48,8 @@ public abstract class ReikaRenderHelper {
     	GL11.glEnable(GL12.GL_RESCALE_NORMAL);
     	GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = new Tessellator();
+		if (var5.isDrawing)
+			var5.draw();
 		var5.startDrawing(GL11.GL_LINE_LOOP);
     	var5.setColorRGBA(color[0], color[1], color[2], 255);
     	for (int i = 0; i < 360; i++) {
@@ -99,6 +103,8 @@ public abstract class ReikaRenderHelper {
     	GL11.glEnable(GL12.GL_RESCALE_NORMAL);
     	GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = new Tessellator();
+		if (var5.isDrawing)
+			var5.draw();
         var5.startDrawing(GL11.GL_LINE_LOOP);
         var5.setColorRGBA(color[0], color[1], color[2], 255);
         var5.addVertex(x1, y1, z1);

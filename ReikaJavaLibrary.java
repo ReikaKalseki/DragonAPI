@@ -6,12 +6,15 @@ import java.util.List;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
-public abstract class ReikaJavaLibrary {
+public final class ReikaJavaLibrary {
+	
+	private ReikaJavaLibrary() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Object obj) {
 		if (obj == null) {
 			System.out.println("null");
+			return;
 		}
 		Class cl = obj.getClass();
 		if (cl != String.class && cl != Integer.class)

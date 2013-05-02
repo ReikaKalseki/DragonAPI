@@ -4,7 +4,9 @@ import java.util.Random;
 
 import net.minecraft.util.MathHelper;
 
-public abstract class ReikaMathLibrary {
+public final class ReikaMathLibrary {
+	
+	private ReikaMathLibrary() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	public static final double e = Math.E;				// s/e
 	public static final double pi = Math.PI;			// s/e

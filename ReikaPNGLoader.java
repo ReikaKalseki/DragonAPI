@@ -9,7 +9,9 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-public abstract class ReikaPNGLoader {
+public final class ReikaPNGLoader {
+	
+	private ReikaPNGLoader() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	public static int textureMap;
 	public static BufferedImage missingtex = new BufferedImage(64, 64, 2);

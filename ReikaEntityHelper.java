@@ -45,7 +45,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
-public abstract class ReikaEntityHelper {
+public final class ReikaEntityHelper {
+	
+	private ReikaEntityHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	private static int[] mobColorArray = new int[201]; //Highest Entity ID (endercrystal)+1
 	private static Random par5Random = new Random();

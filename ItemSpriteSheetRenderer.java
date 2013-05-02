@@ -7,7 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.src.ModLoader;
 import net.minecraftforge.client.IItemRenderer;
 
-public class ItemSpriteSheetRenderer implements IItemRenderer {	
+public final class ItemSpriteSheetRenderer implements IItemRenderer {	
 	
 	protected int spritesheet;
 	protected int index;

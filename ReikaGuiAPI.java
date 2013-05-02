@@ -16,28 +16,14 @@ import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 
-public class ReikaGuiAPI extends GuiScreen {
+public final class ReikaGuiAPI extends GuiScreen {
 	private int xSize;
 	private int ySize;
 	protected FontRenderer fontRenderer;
 	
 	public static ReikaGuiAPI instance = new ReikaGuiAPI();
 	
-	public ReikaGuiAPI(int width2, int height2) {
-		this.width = width2;
-		this.height = height2;
-	}
-	
-	public ReikaGuiAPI() {
-		
-	}
-	
-	public ReikaGuiAPI(int xSize2, int ySize2, int width2, int height2) {
-		this.xSize = xSize2;
-		this.ySize = ySize2;
-		this.width = width2;
-		this.height = height2;
-	}
+	private ReikaGuiAPI() {}
 	
     /**
      * Renders the specified text to the screen, center-aligned.
@@ -60,6 +46,8 @@ public class ReikaGuiAPI extends GuiScreen {
         float var7 = 0.00390625F;
         float var8 = 0.00390625F;
         Tessellator var9 = new Tessellator();
+		if (var9.isDrawing)
+			var9.draw();
         var9.startDrawingQuads();
         var9.addVertexWithUV((double)(x + 0), (double)(y + height), (double)this.zLevel, (double)((float)(u + 0) * var7), (double)((float)(v + height) * var8));
         var9.addVertexWithUV((double)(x + width), (double)(y + height), (double)this.zLevel, (double)((float)(u + width) * var7), (double)((float)(v + height) * var8));
@@ -108,6 +96,8 @@ public class ReikaGuiAPI extends GuiScreen {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(var6, var7, var8, var10);
+		if (var9.isDrawing)
+			var9.draw();
         var9.startDrawingQuads();
         var9.addVertex((double)par1, (double)par4, 0.0D);
         var9.addVertex((double)par3, (double)par4, 0.0D);
@@ -248,6 +238,8 @@ public class ReikaGuiAPI extends GuiScreen {
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GL11.glColor4f(var6, var7, var8, var10);
+		if (var9.isDrawing)
+			var9.draw();
         var9.startDrawingQuads();
         var9.addVertex((double)par1, (double)par4, 0.0D);
         var9.addVertex((double)par3, (double)par4, 0.0D);

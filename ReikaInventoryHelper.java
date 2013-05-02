@@ -1,17 +1,17 @@
 package Reika.DragonAPI;
 
+import java.util.ArrayList;
 import java.util.Random;
 
-import Reika.RotaryCraft.ItemChargedTool;
-
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.InventoryCrafting;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.src.ModLoader;
 
-public abstract class ReikaInventoryHelper {
+public final class ReikaInventoryHelper {
 	
 	private static Random par5Random = new Random();
+	
+	private ReikaInventoryHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	/** Checks an itemstack array (eg an inventory) for an item of a specific id.
 	 * Returns true if found. Args: Item ID, Inventory */
@@ -447,5 +447,48 @@ public abstract class ReikaInventoryHelper {
 				num += inv[i].stackSize;
 		}
 		return (num < maxnum);
+	}
+
+	/** Adds a certain amount of a specified ID and metadata to an inventory slot, creating the itemstack if necessary.
+	 * Args: ID, number, metadata, inventory, slot */
+	public static void addOrSetStack(int id, int size, int meta, ItemStack[] inv, int slot) {
+		if (inv[slot] == null) {
+			inv[slot] = new ItemStack(id, size, meta);
+			return;
+		}
+		int max = inv[slot].getMaxStackSize();
+		if (inv[slot].itemID != id || inv[slot].getItemDamage() != meta || inv[slot].stackSize >= max)
+			return;
+		inv[slot].stackSize += size;
+		if (inv[slot].stackSize > max)
+			inv[slot].stackSize = max;
+	}
+	
+	/** Returns true if the player has the given ID and metadata in their inventory, or is in creative mode.
+	 * Args: Player, ID, metadata (-1 for any) */
+	public static boolean playerHasOrIsCreative(EntityPlayer ep, int id, int meta) {
+		if (ep.capabilities.isCreativeMode)
+			return true;
+		ItemStack[] ii = ep.inventory.mainInventory;
+		return (checkForItemStack(id, meta, ii));
+	}
+	
+	/** Returns the number of unique itemstacks in the inventory after sorting and cleaning. Args: Inventory */
+	public static int getTotalUniqueStacks(ItemStack[] inv) {
+		ItemStack[] cp = new ItemStack[inv.length];
+		for (int i = 0; i < cp.length; i++)
+			cp[i] = inv[i];
+		return 0;
+	}
+	
+	/** Sorts and cleans an inventory, combining identical items and arranging them. Args: Inventory */
+	public static void sortInventory(ItemStack[] inv) {
+		ArrayList<int[]> ids = new ArrayList<int[]>();
+		for (int i = 0; i < inv.length; i++) {
+			if (inv[i] != null) {
+				int[] entry = {inv[i].itemID, inv[i].getItemDamage(), inv[i].stackSize};
+				ids.add(entry);
+			}
+		}
 	}
 }

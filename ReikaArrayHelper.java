@@ -1,8 +1,68 @@
 package Reika.DragonAPI;
 
+import java.util.Arrays;
+import java.util.List;
+
 import net.minecraft.item.ItemStack;
 
-public abstract class ReikaArrayHelper {
+public final class ReikaArrayHelper {
+	
+	private ReikaArrayHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+	//TODO Condense functions into accept-all-primitive designs
+	/** Returns the sum of all values in an array. Args: Array */
+	public static int sumArray(int[] arr) {
+		int sum = 0;
+		for (int i = 0; i < arr.length; i++) {
+			sum += arr[i];
+		}
+		return sum;
+	}
+	
+	/** Returns the sum of all values in an array. Args: Array */
+	public static double sumArray(double[] arr) {
+		double sum = 0;
+		for (int i = 0; i < arr.length; i++) {
+			sum += arr[i];
+		}
+		return sum;
+	}
+	
+	/** Returns the sum of all values in an array. Args: Array */
+	public static float sumArray(float[] arr) {
+		float sum = 0;
+		for (int i = 0; i < arr.length; i++) {
+			sum += arr[i];
+		}
+		return sum;
+	}
+	
+	/** Returns the product of all values in an array. Args: Array */
+	public static int productArray(int[] arr) {
+		int product = 1;
+		for (int i = 0; i < arr.length; i++) {
+			product *= arr[i];
+		}
+		return product;
+	}
+	
+	/** Returns the product of all values in an array. Args: Array */
+	public static double productArray(double[] arr) {
+		double product = 1;
+		for (int i = 0; i < arr.length; i++) {
+			product *= arr[i];
+		}
+		return product;
+	}
+	
+	/** Returns the product of all values in an array. Args: Array */
+	public static float productArray(float[] arr) {
+		float product = 1;
+		for (int i = 0; i < arr.length; i++) {
+			product *= arr[i];
+		}
+		return product;
+	}
+	
 	/** Fills an array with the specified value and returns the array.
 	 * Args: array, value */
 	public static double[] fillArray(double[] arr, double val) {
@@ -208,5 +268,96 @@ public abstract class ReikaArrayHelper {
 	        }
 	    }
 	    return arr;
+	}
+
+	/** Returns true if all nonzero values in the array are equal. Args: Array */
+	//TODO Make scale for all array sizes
+	public static boolean allNonZerosEqual(int[] arr) {
+		Arrays.sort(arr);
+    	if (arr[0] != 0) {
+    		if (arr[1] != 0)
+    			if (arr[0] != arr[1])
+    				return false;
+    	}
+    	if (arr[0] != 0) {
+    		if (arr[2] != 0)
+    			if (arr[0] != arr[2])
+    				return false;
+    	}
+    	if (arr[0] != 0) {
+    		if (arr[3] != 0)
+    			if (arr[0] != arr[3])
+    				return false;
+    	}
+    	if (arr[0] != 0) {
+    		if (arr[4] != 0)
+    			if (arr[0] != arr[4])
+    				return false;
+    	}
+    	if (arr[0] != 0) {
+    		if (arr[5] != 0)
+    			if (arr[0] != arr[5])
+    				return false;
+    	}
+    	if (arr[1] != 0) {
+    		if (arr[2] != 0)
+    			if (arr[1] != arr[2])
+    				return false;
+    	}
+    	if (arr[1] != 0) {
+    		if (arr[3] != 0)
+    			if (arr[1] != arr[3])
+    				return false;
+    	}
+    	if (arr[1] != 0) {
+    		if (arr[4] != 0)
+    			if (arr[1] != arr[4])
+    				return false;
+    	}
+    	if (arr[1] != 0) {
+    		if (arr[5] != 0)
+    			if (arr[1] != arr[5])
+    				return false;
+    	}
+    	if (arr[2] != 0) {
+    		if (arr[3] != 0)
+    			if (arr[2] != arr[3])
+    				return false;
+    	}
+    	if (arr[2] != 0) {
+    		if (arr[4] != 0)
+    			if (arr[2] != arr[4])
+    				return false;
+    	}
+    	if (arr[2] != 0) {
+    		if (arr[5] != 0)
+    			if (arr[2] != arr[5])
+    				return false;
+    	}
+    	if (arr[3] != 0) {
+    		if (arr[4] != 0)
+    			if (arr[3] != arr[4])
+    				return false;
+    	}
+    	if (arr[3] != 0) {
+    		if (arr[5] != 0)
+    			if (arr[3] != arr[5])
+    				return false;
+    	}
+    	if (arr[4] != 0) {
+    		if (arr[5] != 0)
+    			if (arr[4] != arr[5])
+    				return false;
+    	}
+    	return true;
+	}
+	
+	/** Returns true if all values in the array are equal. Args: Array */
+	public static boolean allEqual(int[] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[0] != arr[i])
+				return false;
+		}
+		return true;
 	}
 }

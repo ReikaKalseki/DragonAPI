@@ -4,7 +4,9 @@ import java.util.Random;
 
 import net.minecraft.world.World;
 
-public abstract class ReikaMediaHelper {
+public final class ReikaMediaHelper {
+	
+	private ReikaMediaHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 	
 	static Random par5Random = new Random();
 	
