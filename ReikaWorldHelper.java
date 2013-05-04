@@ -5,17 +5,15 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.item.*;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
 public final class ReikaWorldHelper {
-	
+
 	private ReikaWorldHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 /** A catalogue of all flammable blocks by ID. */
@@ -104,7 +102,7 @@ private static void setNonSolid() {
 	//nonSolidArray[mod_RotaryCraft.lightblock.blockID] = true;
 	//nonSolidArray[mod_RotaryCraft.lightbridge.blockID] = true;
 	//nonSolidArray[mod_RotaryCraft.sprinkler.blockID] = true;
-	
+
 }
 
 private static void setSoft() {
@@ -360,13 +358,13 @@ public static int capMetadata(int meta, int cap) {
 
 /** Finds the top edge of the top solid (nonair) block in the column. Args: World, this.x,y,z */
 public static double findSolidSurface(World world, double x, double y, double z) { //Returns double y-coord of top surface of top block
-    	
+
     	int xp = (int)x;
     	int zp = (int)z;
     	boolean lowestsolid = false;
     	boolean solidup = false;
     	boolean soliddown = false;
-    	
+
     	while (!(!solidup && soliddown)) {
     		solidup = (world.getBlockMaterial(xp, (int)y, zp) != Material.air);
     		soliddown = (world.getBlockMaterial(xp, (int)y-1, zp) != Material.air);
@@ -379,33 +377,33 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		if (!solidup && !soliddown) //Neither solid -> above surface
     			y--;
     	}
-    	return (double)y;
+    	return y;
     }
-    
+
 /** Finds the top edge of the top water block in the column. Args: World, this.x,y,z */
     public static double findWaterSurface(World world, double x, double y, double z) { //Returns double y-coord of top surface of top block
-    	
+
     	int xp = (int)x;
     	int zp = (int)z;
     	boolean lowestwater = false;
     	boolean waterup = false;
     	boolean waterdown = false;
-    	
+
     	while (!(!waterup && waterdown)) {
     		waterup = (world.getBlockMaterial(xp, (int)y, zp) == Material.water);
     		waterdown = (world.getBlockMaterial(xp, (int)y-1, zp) == Material.water);
     		if (waterup && waterdown) //Both blocks are water -> below surface
     			y++;
     		if (waterup && !waterdown) //Upper only is water -> should never happen
-    			return (double)255;		//Return top of chunk and exit function
+    			return 255;		//Return top of chunk and exit function
     		if (!waterup && waterdown) // Water lower only
     			;						// the case we want
     		if (!waterup && !waterdown) //Neither water -> above surface
     			y--;
     	}
-    	return (double)y;
+    	return y;
     }
-    
+
     /** Search for a specific block in a range. Returns true if found. Cannot identify if
      * found more than one, or where the found one(s) is/are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id */
     public static boolean findNearBlock(World world, int x, int y, int z, int range, int id) {
@@ -422,7 +420,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	}
     	return false;
     }
-    
+
     /** Search for a specific block in a range. Returns number found. Cannot identify where they
      * are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id */
     public static int findNearBlocks(World world, int x, int y, int z, int range, int id) {
@@ -440,13 +438,13 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	}
     	return count;
     }
-    
+
     /** Tests for if a block of a certain id is in the "sights" of a directional block (eg dispenser).
      * Returns the number of blocks away it is. If not found, returns 0 (an impossibility).
      * Args: World, this.x,y,z, search range, target id, direction "f" */
     public static int isLookingAt(World world, int x, int y, int z, int range, int id, int f) {
     	int idfound = 0;
-    	
+
     	switch (f) {
     	case 0:		//facing north (-z);
     		for (int i = 0; i < range; i++) {
@@ -479,7 +477,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	}
     	return 0;
     }
-    
+
     /** Returns the direction in which a block of the specified ID was found.
      * Returns -1 if not found. Args: World, x,y,z, id to search.
      * Convention: 0 up 1 down 2 x+ 3 x- 4 z+ 5 z- */
@@ -498,7 +496,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return 5;
     	return -1;
     }
-    
+
     /** Returns the direction in which a block of the specified material was found.
      * Returns -1 if not found. Args: World, x,y,z, material to search.
      * Convention: 0 up 1 down 2 x+ 3 x- 4 z+ 5 z- */
@@ -517,7 +515,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return 5;
     	return -1;
     }
-    
+
     /** Returns the direction in which a source block of the specified liquid was found.
      * Returns -1 if not found. Args: World, x,y,z, material (water/lava) to search.
      * Convention: 0 up 1 down 2 x+ 3 x- 4 z+ 5 z- */
@@ -536,7 +534,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return 5;
     	return -1;
     }
-    
+
     /** Edits a block adjacent to the passed arguments, on the specified side.
      * Args: World, x, y, z, side, id to change to */
     public static void changeAdjBlock(World world, int x, int y, int z, int side, int id) {
@@ -561,7 +559,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	break;
     	}
     }
-    
+
     /** Returns true if the passed biome is a snow biome.  Args: Biome*/
     public static boolean isSnowBiome(BiomeGenBase biome) {
     	if (biome == BiomeGenBase.frozenOcean)
@@ -576,10 +574,10 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return true;
     	if (biome == BiomeGenBase.taigaHills)
     		return true;
-    	
+
     	return false;
     }
-    
+
     /** Returns true if the passed biome is a hot biome.  Args: Biome*/
     public static boolean isHotBiome(BiomeGenBase biome) {
     	if (biome == BiomeGenBase.desert)
@@ -592,10 +590,10 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return true;
     	if (biome == BiomeGenBase.jungleHills)
     		return true;
-    	
+
     	return false;
     }
-    
+
     /** Applies temperature effects to the environment. Args: World, x, y, z, temperature */
     public static void temperatureEnvironment(World world, int x, int y, int z, int temperature) {
     	if (temperature < 0) {
@@ -669,7 +667,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     				ignite(world, x, y, z+i);
     		}
     	}
-    	
+
     	if (temperature > 0)	{ // Melting snow/ice
     		for (int i = 0; i < 3; i++) {
     			if (world.getBlockMaterial(x-i, y, z) == Material.ice)
@@ -687,7 +685,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		}
     	}
     }
-    
+
     /** Surrounds the block with fire. Args: World, x, y, z */
     public static void ignite(World world, int x, int y, int z) {
     	if (world.getBlockId		(x-1, y, z) == 0)
@@ -703,7 +701,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	if (world.getBlockId		(x, y, z+1) == 0)
     		legacySetBlockWithNotify(world, x, y, z+1, Block.fire.blockID);
     }
-    
+
     /** Returns the number of water blocks directly and continuously above the passed coordinates.
      * Returns -1 if invalid liquid specified. Args: World, x, y, z */
     public static int getDepth(World world, int x, int y, int z, String liq) {
@@ -722,7 +720,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	}
     	return -1;
     }
-    
+
     /** Returns true if the block ID is one associated with caves, like air, cobwebs,
      * spawners, mushrooms, etc. Args: Block ID */
     public static boolean caveBlock(int id) {
@@ -732,7 +730,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return true;
     	return false;
     }
-    
+
     /** Returns a broad-stroke biome temperature in degrees centigrade.
      * Args: biome */
     public static int getBiomeTemp(BiomeGenBase biome) {
@@ -745,7 +743,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		Tamb = 300;	//boils water, so 300C (3 x 100)
     	return Tamb;
     }
-    
+
     /** Returns a broad-stroke biome temperature in degrees centigrade.
      * Args: World, x, z */
     public static int getBiomeTemp(World world, int x, int z) {
@@ -759,7 +757,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		Tamb = 300;	//boils water, so 300C (3 x 100)
     	return Tamb;
     }
-    
+
     /** Performs machine overheat effects (primarily intended for RotaryCraft).
      * Args: World, x, y, z, item drop id, item drop metadata, min drops, max drops,
      * spark particles yes/no, number-of-sparks multiplier (default 20-40),
@@ -787,12 +785,12 @@ public static double findSolidSurface(World world, double x, double y, double z)
 			}
 		}
     }
-    
-    /** Takes a specified amount of XP and splits it randomly among a bunch of orbs. 
+
+    /** Takes a specified amount of XP and splits it randomly among a bunch of orbs.
      * Args: World, x, y, z, amount */
     public static void splitAndSpawnXP(World world, float x, float y, float z, int xp) {
     	int max = xp/5+1;
-    	
+
     	while (xp > 0) {
 	    	int value = par5Random.nextInt(max)+1;
 	    	while (value > xp)
@@ -806,7 +804,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
 	    	world.spawnEntityInWorld(orb);
     	}
     }
-    
+
     /** Returns true if the coordinate specified is a lava source block and would be recreated according to the lava-duplication rules
      * that existed for a short time in Beta 1.9. Args: World, x, y, z */
     public static boolean is1p9InfiniteLava(World world, int x, int y, int z) {
@@ -822,7 +820,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return false;
     	return true;
     }
-    
+
     /** Returns the y-coordinate of the top non-air block at the given xz coordinates, at or
      * below the specified y-coordinate. Returns -1 if none. Args: World, x, z, y */
     public static int findTopBlockBelowY(World world, int x, int z, int y) {
@@ -833,7 +831,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	}
     	return y;
     }
-    
+
     /** Returns true if the coordinate is a liquid source block. Args: World, x, y, z */
     public static boolean isLiquidSourceBlock(World world, int x, int y, int z) {
     	if (world.getBlockMetadata(x, y, z) != 0)
@@ -842,7 +840,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return false;
     	return true;
     }
-    
+
     /** Returns true if the Block ID corresponds to an ore block. Args: ID */
     public static boolean isOre(int id) {
     	if (id == Block.oreCoal.blockID)
@@ -861,11 +859,11 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return true;
     	if (id == Block.oreRedstoneGlowing.blockID)
     		return true;
-    	//if (id == Block.oreQuartz.blockID)
-    		//return true;
+    	if (id == Block.oreNetherQuartz.blockID)
+    		return true;
     	return false;
     }
-    
+
     /** Breaks a contiguous area of blocks recursively (akin to a fill tool in image editors).
      * Args: World, start x, start y, start z, id, metadata (-1 for any) */
     public static void recursiveBreak(World world, int x, int y, int z, int id, int meta) {
@@ -886,7 +884,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	recursiveBreak(world, x, y, z+1, id, meta);
     	recursiveBreak(world, x, y, z-1, id, meta);
     }
-    
+
     /** Like the ordinary recursive break but with a spherical bounded volume. Args: World, x, y, z,
      * id to replace, metadata to replace (-1 for any), origin x,y,z, max radius */
     public static void recursiveBreakWithinSphere(World world, int x, int y, int z, int id, int meta, int x0, int y0, int z0, double r) {
@@ -909,7 +907,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	recursiveBreakWithinSphere(world, x, y, z+1, id, meta, x0, y0, z0, r);
     	recursiveBreakWithinSphere(world, x, y, z-1, id, meta, x0, y0, z0, r);
     }
-    
+
     /** Like the ordinary recursive break but with a bounded volume. Args: World, x, y, z,
      * id to replace, metadata to replace (-1 for any), min x,y,z, max x,y,z */
     public static void recursiveBreakWithBounds(World world, int x, int y, int z, int id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
@@ -932,7 +930,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	recursiveBreakWithBounds(world, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2);
     	recursiveBreakWithBounds(world, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2);
     }
-    
+
     /** Recursively fills a contiguous area of one block type with another, akin to a fill tool.
      * Args: World, start x, start y, start z, id to replace, id to fill with,
      * metadata to replace (-1 for any), metadata to fill with */
@@ -951,7 +949,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	recursiveFill(world, x, y, z+1, id, idto, meta, metato);
     	recursiveFill(world, x, y, z-1, id, idto, meta, metato);
     }
-    
+
     /** Like the ordinary recursive fill but with a bounded volume. Args: World, x, y, z,
      * id to replace, id to fill with, metadata to replace (-1 for any),
      * metadata to fill with, min x,y,z, max x,y,z */
@@ -972,7 +970,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	recursiveFillWithBounds(world, x, y, z+1, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
     	recursiveFillWithBounds(world, x, y, z-1, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
     }
-    
+
     /** Like the ordinary recursive fill but with a spherical bounded volume. Args: World, x, y, z,
      * id to replace, id to fill with, metadata to replace (-1 for any),
      * metadata to fill with, origin x,y,z, max radius */
@@ -994,7 +992,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	recursiveFillWithinSphere(world, x, y, z+1, id, idto, meta, metato, x0, y0, z0, r);
     	recursiveFillWithinSphere(world, x, y, z-1, id, idto, meta, metato, x0, y0, z0, r);
     }
-    
+
     /** Returns true if there is a clear line of sight between two points. Args: World, Start x,y,z, End x,y,z
      * NOTE: If one point is a block, use canBlockSee instead, as this method will always return false. */
     public static boolean lineOfSight(World world, double x1, double y1, double z1, double x2, double y2, double z2) {
@@ -1004,7 +1002,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	Vec3 v2 = Vec3.fakePool.getVecFromPool(x2, y2, z2);
     	return (world.rayTraceBlocks(v1, v2) == null);
     }
-    
+
     /** Returns true if there is a clear line of sight between two entites. Args: World, Entity 1, Entity 2 */
     public static boolean lineOfSight(World world, Entity e1, Entity e2) {
     	if (world.isRemote)
@@ -1013,7 +1011,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	Vec3 v2 = Vec3.fakePool.getVecFromPool(e2.posX, e2.posY+e2.getEyeHeight(), e2.posZ);
     	return (world.rayTraceBlocks(v1, v2) == null);
     }
-    
+
     /** Returns true if a block can see an point. Args: World, block x,y,z, Point x,y,z, Max Range */
     public static boolean canBlockSee(World world, int x, int y, int z, double x0, double y0, double z0, double range) {
     	range += 2;
@@ -1076,7 +1074,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	}
     	return false;
     }
-    
+
     /** Returns true if the entity can see a block, or if it could be moved to a position where it could see the block.
      * Args: World, Block x,y,z, Entity, Max Move Distance
      * DO NOT USE THIS - CPU INTENSIVE TO ALL HELL! */
@@ -1144,7 +1142,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
     		return false;
     	return false;
     }
-    
+
     public static boolean lenientSeeThrough(World world, double x, double y, double z, double x0, double y0, double z0) {
     	MovingObjectPosition pos;
     	Vec3 par1Vec3 = Vec3.fakePool.getVecFromPool(x, y, z);
@@ -1179,21 +1177,21 @@ public static double findSolidSurface(World world, double x, double y, double z)
                     double var17 = 999.0D;
                     double var19 = 999.0D;
                     if (var5 > var8)
-                        var15 = (double)var8 + 1.0D;
+                        var15 = var8 + 1.0D;
                     else if (var5 < var8)
-                        var15 = (double)var8 + 0.0D;
+                        var15 = var8 + 0.0D;
                     else
                         var39 = false;
                     if (var6 > var9)
-                        var17 = (double)var9 + 1.0D;
+                        var17 = var9 + 1.0D;
                     else if (var6 < var9)
-                        var17 = (double)var9 + 0.0D;
+                        var17 = var9 + 0.0D;
                     else
                         var40 = false;
                     if (var7 > var10)
-                        var19 = (double)var10 + 1.0D;
+                        var19 = var10 + 1.0D;
                     else if (var7 < var10)
-                        var19 = (double)var10 + 0.0D;
+                        var19 = var10 + 0.0D;
                     else
                         var41 = false;
                     double var21 = 999.0D;
@@ -1239,17 +1237,17 @@ public static double findSolidSurface(World world, double x, double y, double z)
                         par1Vec3.zCoord = var19;
                     }
                     Vec3 var34 = world.getWorldVec3Pool().getVecFromPool(par1Vec3.xCoord, par1Vec3.yCoord, par1Vec3.zCoord);
-                    var8 = (int)(var34.xCoord = (double)MathHelper.floor_double(par1Vec3.xCoord));
+                    var8 = (int)(var34.xCoord = MathHelper.floor_double(par1Vec3.xCoord));
                     if (var42 == 5) {
                         --var8;
                         ++var34.xCoord;
                     }
-                    var9 = (int)(var34.yCoord = (double)MathHelper.floor_double(par1Vec3.yCoord));
+                    var9 = (int)(var34.yCoord = MathHelper.floor_double(par1Vec3.yCoord));
                     if (var42 == 1) {
                         --var9;
                         ++var34.yCoord;
                     }
-                    var10 = (int)(var34.zCoord = (double)MathHelper.floor_double(par1Vec3.zCoord));
+                    var10 = (int)(var34.zCoord = MathHelper.floor_double(par1Vec3.zCoord));
                     if (var42 == 3) {
                         --var10;
                         ++var34.zCoord;
@@ -1272,7 +1270,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
             pos = null;
         return (pos == null);
     }
-    
+
     /** Returns true if the block has a hitbox. Args: World, x, y, z */
     public static boolean isCollideable(World world, int x, int y, int z) {
     	if (world.getBlockId(x, y, z) == 0)
@@ -1284,15 +1282,15 @@ public static double findSolidSurface(World world, double x, double y, double z)
 	public static boolean legacySetBlockMetadataWithNotify(World world, int x, int y, int z, int meta) {
 		return world.setBlockMetadataWithNotify(x, y, z, meta, 3);
 	}
-	
+
 	public static boolean legacySetBlockAndMetadataWithNotify(World world, int x, int y, int z, int id, int meta) {
 		return world.setBlock(x, y, z, id, meta, 3);
 	}
-	
+
 	public static boolean legacySetBlockWithNotify(World world, int x, int y, int z, int id) {
 		return world.setBlock(x, y, z, id, 0, 3);
 	}
-	
+
 	/** Returns true if the specified corner has at least one air block adjacent to it,
 	 * but is not surrounded by air on all sides or in the void. Args: World, x, y, z */
 	public static boolean cornerHasAirAdjacent(World world, int x, int y, int z) {
@@ -1317,7 +1315,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
 			airs++;
 		return (airs > 0 && airs != 8);
 	}
-	
+
 	/** Returns true if the specified corner has at least one nonopaque block adjacent to it,
 	 * but is not surrounded by air on all sides or in the void. Args: World, x, y, z */
 	public static boolean cornerHasTransAdjacent(World world, int x, int y, int z) {
@@ -1367,5 +1365,38 @@ public static double findSolidSurface(World world, double x, double y, double z)
 		else if (!Block.blocksList[id].isOpaqueCube())
 			nonopq = true;
 		return (airs != 8 && nonopq);
+	}
+
+	/** Spills the entire inventory of an ItemStack[] at the specified coordinates with a 1-block spread.
+	 * Args: World, x, y, z, inventory */
+	public static void spillAndEmptyInventory(World world, int x, int y, int z, ItemStack[] inventory) {
+		EntityItem ei;
+		ItemStack is;
+		for (int i = 0; i < inventory.length; i++) {
+			is = inventory[i];
+			inventory[i] = null;
+			if (is != null && !world.isRemote) {
+				ei = new EntityItem(world, x+par5Random.nextFloat(), y+par5Random.nextFloat(), z+par5Random.nextFloat(), is);
+				ReikaEntityHelper.addRandomDirVelocity(ei, 0.2);
+				world.spawnEntityInWorld(ei);
+			}
+		}
+	}
+
+	/** Spills the entire inventory of an ItemStack[] at the specified coordinates with a 1-block spread.
+	 * Args: World, x, y, z, IInventory */
+	public static void spillAndEmptyInventory(World world, int x, int y, int z, IInventory ii) {
+		int size = ii.getSizeInventory();
+		for (int i = 0; i < size; i++) {
+			ItemStack s = ii.getStackInSlot(i);
+			if (s != null) {
+				ii.setInventorySlotContents(i, null);
+				EntityItem ei = new EntityItem(world, x+par5Random.nextFloat(), y+par5Random.nextFloat(), z+par5Random.nextFloat(), s);
+				ReikaEntityHelper.addRandomDirVelocity(ei, 0.2);
+				ei.delayBeforeCanPickup = 10;
+				if (!world.isRemote)
+					world.spawnEntityInWorld(ei);
+			}
+		}
 	}
 }

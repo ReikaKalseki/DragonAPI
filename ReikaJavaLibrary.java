@@ -1,15 +1,14 @@
 package Reika.DragonAPI;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaJavaLibrary {
-	
+
 	private ReikaJavaLibrary() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
-	
+
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Object obj) {
 		if (obj == null) {
@@ -22,7 +21,12 @@ public final class ReikaJavaLibrary {
 		else
 			System.out.println(String.valueOf(obj));
 	}
-	
+
+	public static void spamConsole(Object obj) {
+		for (int i = 0; i < 16; i++)
+			System.out.println(String.valueOf(obj));
+	}
+
 	public static void pConsoleSideOnly(Object obj, int s) {
 		Side side;
 		switch (s) {
@@ -41,7 +45,7 @@ public final class ReikaJavaLibrary {
 		if (FMLCommonHandler.instance().getEffectiveSide() == side)
 			pConsole(obj);
 	}
-	
+
 	/** A complement to Java's built-in List-to-Array. Args: Array of any object (ints, strings, etc). */
 	public static List makeListFromArray(Object[] obj) {
 		List li = new ArrayList();
@@ -50,7 +54,7 @@ public final class ReikaJavaLibrary {
 		}
 		return li;
 	}
-	
+
 	public static List makeListFrom(Object obj) {
 		List li = new ArrayList();
 		li.add(obj);

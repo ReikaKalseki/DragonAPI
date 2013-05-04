@@ -1,19 +1,10 @@
 package Reika.DragonAPI;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
-import net.minecraft.client.renderer.ItemRenderer;
-import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.*;
 import net.minecraft.item.ItemStack;
-import net.minecraft.src.ModLoader;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.*;
 
 public final class ReikaSpriteSheets {
 	

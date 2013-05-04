@@ -1,9 +1,6 @@
 package Reika.DragonAPI;
 
-import java.io.File;
-
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.src.ModLoader;
 import net.minecraftforge.client.IItemRenderer;
 

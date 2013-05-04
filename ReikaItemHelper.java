@@ -1,8 +1,6 @@
 package Reika.DragonAPI;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 
 public final class ReikaItemHelper {
 	

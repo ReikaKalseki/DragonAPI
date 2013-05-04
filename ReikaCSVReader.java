@@ -1,9 +1,6 @@
 package Reika.DragonAPI;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.InputStream;
+import java.io.*;
 
 public final class ReikaCSVReader {
 	

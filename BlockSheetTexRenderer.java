@@ -2,17 +2,12 @@ package Reika.DragonAPI;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import cpw.mods.fml.common.LoadController;
-import cpw.mods.fml.common.Loader;
 
 public final class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler {
 	

@@ -1,57 +1,23 @@
 package Reika.DragonAPI;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.boss.EntityDragon;
-import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityFallingSand;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.item.EntityTNTPrimed;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.entity.monster.EntityCaveSpider;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityGolem;
-import net.minecraft.entity.monster.EntityIronGolem;
-import net.minecraft.entity.monster.EntityMagmaCube;
-import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.monster.EntitySilverfish;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.entity.monster.EntitySpider;
-import net.minecraft.entity.monster.EntityWitch;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.passive.EntityChicken;
-import net.minecraft.entity.passive.EntityCow;
-import net.minecraft.entity.passive.EntityMooshroom;
-import net.minecraft.entity.passive.EntityOcelot;
-import net.minecraft.entity.passive.EntityPig;
-import net.minecraft.entity.passive.EntitySheep;
-import net.minecraft.entity.passive.EntitySquid;
-import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.entity.*;
+import net.minecraft.entity.boss.*;
+import net.minecraft.entity.item.*;
+import net.minecraft.entity.monster.*;
+import net.minecraft.entity.passive.*;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.world.World;
 
 public final class ReikaEntityHelper {
-	
+
 	private ReikaEntityHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
-	
+
 	private static int[] mobColorArray = new int[201]; //Highest Entity ID (endercrystal)+1
 	private static Random par5Random = new Random();
-	
+
 	private static void setMobColors() {
 		mobColorArray[50] = ReikaGuiAPI.RGBtoHex(65, 183, 54);
 		mobColorArray[51] = ReikaGuiAPI.RGBtoHex(207); //Skeleton
@@ -70,7 +36,7 @@ public final class ReikaEntityHelper {
 		mobColorArray[64] = ReikaGuiAPI.RGBtoHex(79); //Wither
 		mobColorArray[65] = ReikaGuiAPI.RGBtoHex(118, 100, 61); //Bat
 		mobColorArray[66] = ReikaGuiAPI.RGBtoHex(163, 148, 131); //Witch
-		
+
 		mobColorArray[90] = ReikaGuiAPI.RGBtoHex(238, 158, 158); //Pig
 		mobColorArray[91] = ReikaGuiAPI.RGBtoHex(214); //Sheep
 		mobColorArray[92] = ReikaGuiAPI.RGBtoHex(67, 53, 37); //Cow
@@ -81,25 +47,42 @@ public final class ReikaEntityHelper {
 		mobColorArray[97] = ReikaGuiAPI.RGBtoHex(226, 143, 34); //Snow Golem
 		mobColorArray[98] = ReikaGuiAPI.RGBtoHex(242, 197, 110); //Ocelot
 		mobColorArray[99] = ReikaGuiAPI.RGBtoHex(208, 185, 168); //Iron Golem
-		
+
 		mobColorArray[120] = ReikaGuiAPI.RGBtoHex(178, 122, 98); //Villager
-		
-		
+
+
 	}
-	
+
+	/** Returns true if the mob is a hostile one. Args: EntityLiving mob */
+	public static boolean isHostile(EntityLiving mob) {
+		if (mob instanceof EntityMob)
+			return true;
+		if (mob instanceof EntityGhast)
+			return true;
+		if (mob instanceof EntitySlime)
+			return true;
+		if (mob instanceof EntityWitch)
+			return true;
+		if (mob instanceof EntityDragon)
+			return true;
+		if (mob instanceof EntityWither)
+			return true;
+		return false;
+	}
+
 	/** Converts a string mobname to its respective id. Args: Name, world */
 	public static int mobNameToID(String name, World world) {
 		Entity ent = EntityList.createEntityByName(name, world);
 		int id = ent.entityId;
 		return id;
 	}
-	
+
 	/** Converts a string mobname to its respective class file. Args: Name, world */
 	public static Class mobNameToClass(String name, World world) {
 		Entity ent = EntityList.createEntityByName(name, world);
 		return ent.getClass();
 	}
-	
+
 	/** Returns the number of mob-type entities in MineCraft. Args: World */
 	public static int getNumberMobsInMC(World world) {
 		int highestid = 0;
@@ -124,7 +107,7 @@ public final class ReikaEntityHelper {
 		}
 		return numbermobs;
 	}
-	
+
 	/** Returns the mass (in kg) of the entity. Args: Entity */
     public static double getEntityMass(Entity ent) {
     	if (ent instanceof EntityItem || ent instanceof EntityXPOrb)
@@ -191,7 +174,7 @@ public final class ReikaEntityHelper {
     		return 2000; //2 g/cc
     	return 0.1;
     }
-    
+
     /** Returns an itemstack (size 1 item) of the entity's breeding item. Args: Entity */
     public static ItemStack getBreedItem(EntityAnimal ent) {
     	int id;
@@ -213,7 +196,7 @@ public final class ReikaEntityHelper {
     	}
     	return null;
     }
-    
+
     /** Converts a mob ID to a color, based off the mob's color. Players return bright red.
      * Args: Mob ID */
     public static int mobToColor(EntityLiving ent) {
@@ -223,7 +206,7 @@ public final class ReikaEntityHelper {
     	setMobColors();
     	return mobColorArray[id];
     }
-    
+
     /** Returns true if the given pitch falls within the given creature's hearing range. */
     public static boolean isHearingRange(long freq, EntityLiving ent) {
     	if (ent instanceof EntityPlayer || ent instanceof EntityWitch || ent instanceof EntityZombie) {
@@ -321,7 +304,7 @@ public final class ReikaEntityHelper {
     			return false;
     		if (freq > 110000)
     			return false;
-    		
+
     	}
     	if (ent instanceof EntityOcelot) {
     		if (freq < 45)
@@ -340,12 +323,12 @@ public final class ReikaEntityHelper {
     			return false;
     	return true;
     }
-    
+
     /** Knocks one entity away from another. Args: Attacker, target, power */
     public static void knockbackEntity(Entity a, Entity b, double power) {
     	knockbackEntityFromPos(a.posX, a.posY, a.posZ, b, power);
     }
-    
+
     /** Knocks an entity away from a position. Args: x, y, z, entity, power */
     public static void knockbackEntityFromPos(double x, double y, double z, Entity ent, double power) {
     	double dx = x-ent.posX;
@@ -360,9 +343,9 @@ public final class ReikaEntityHelper {
     	//if (!ent.worldObj.isRemote)
     		ent.velocityChanged = true;
     }
-    
+
     /** Returns true if all EntityLiving within the list are dead. Args: List
-     * [The list MUST be of EntityLiving (or subclass) - any other type WILL cause 
+     * [The list MUST be of EntityLiving (or subclass) - any other type WILL cause
      * a classcast exception!], test isDead only yes/no */
     public static boolean allAreDead(List mobs, boolean isDeadOnly) {
     	for (int i = 0; i < mobs.size(); i++) {
@@ -372,12 +355,12 @@ public final class ReikaEntityHelper {
     	}
     	return true;
     }
-    
+
     /** Adds a small velocity in a random direction (akin to items' speeds when dropped) */
     public static void addRandomDirVelocity(Entity ent, double max) {
     	ent.motionX = -max+2*max*par5Random.nextFloat();
     	ent.motionZ = -max+2*max*par5Random.nextFloat();
     	ent.motionY = 2*max*par5Random.nextFloat();
     }
-	
+
 }

@@ -3,12 +3,10 @@ package Reika.DragonAPI;
 import java.awt.Color;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.src.ModLoader;
 import net.minecraft.world.World;
 

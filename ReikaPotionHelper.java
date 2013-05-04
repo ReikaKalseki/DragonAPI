@@ -1,7 +1,6 @@
 package Reika.DragonAPI;
 
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import net.minecraft.item.Item;
 import net.minecraft.potion.PotionEffect;
