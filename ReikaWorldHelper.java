@@ -1399,4 +1399,23 @@ public static double findSolidSurface(World world, double x, double y, double z)
 			}
 		}
 	}
+
+	/** Spawns a line of particles between two points. Args: World, start x,y,z, end x,y,z, particle type, particle speed x,y,z, number of particles */
+	public static void spawnParticleLine(World world, double x1, double y1, double z1, double x2, double y2, double z2, String name, double vx, double vy, double vz, int spacing) {
+		double dx = x2-x1;
+		double dy = y2-y1;
+		double dz = z2-z1;
+		double sx = dx/spacing;
+		double sy = dy/spacing;
+		double sz = dy/spacing;
+		double[][] parts = new double[spacing+1][3];
+		for (int i = 0; i <= spacing; i++) {
+			parts[i][0] = i*sx+x1;
+			parts[i][1] = i*sy+y1;
+			parts[i][2] = i*sz+z1;
+		}
+		for (int i = 0; i < parts.length; i++) {
+			world.spawnParticle(name, parts[i][0], parts[i][1], parts[i][2], vx, vy, vz);
+		}
+	}
 }

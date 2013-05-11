@@ -60,4 +60,16 @@ public final class ReikaJavaLibrary {
 		li.add(obj);
 		return li;
 	}
+
+	public static boolean isValidInteger(String s) {
+		if (s.contentEquals("-"))
+			return true;
+	    try {
+	        Integer.parseInt(s);
+	    }
+	    catch (NumberFormatException e) {
+	        return false;
+	    }
+	    return true;
+	}
 }

@@ -12,7 +12,7 @@ public final class ReikaMIDIReader {
     public static final int NOTE_OFF = 0x80;
     public static final int INSTRU_CHANGE = 0xC0;
     public static final int TEMPO = 0x51;
-    public static final String[] NOTE_NAMES = {"C", "C#", "D", "Eb", "E", "F", "F#", "G", "G#", "A", "Bb", "B"};
+    public static final String[] NOTE_NAMES = {"F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "Eb", "E", "F"};
 
 	public static Sequence getMIDIFromFile(Class root, String path, String back) {
 		ReikaJavaLibrary.pConsole("Reading MIDI at "+path+" with backup at "+back);
@@ -71,7 +71,7 @@ public final class ReikaMIDIReader {
 		return seq.getSequence();
 	}
 
-	/** Reads a parameter from a MIDI Sequence. Args: Sequence, channel (1-16), time, task (0 = note, 1 = voice, 2 = volume) */
+	/** Reads a parameter from a MIDI Sequence. Args: Sequence, channel (1-16), time, task (0 = note, 1 = voice, 2 = volume) *//*
 	public static int readMIDI(Sequence seq, int channel, int time, int task) {
 		int voice = -1;
 		int note = -1;
@@ -80,7 +80,7 @@ public final class ReikaMIDIReader {
 		 1 MC tick = 1 32nd; 2 MC tick = 1 16th; 4 MC tick = 1 8th; 8 MC tick = 1 qtr; 16 MC = 1 half; 32 MC tick = 1 whole = 1920
 		32 = 1920
 		1 MC tick = 60 MIDI ticks
-		*/
+		*//*
 		time *= 60;
 		time += 120;
 		Track[] tr = seq.getTracks();
@@ -166,7 +166,7 @@ public final class ReikaMIDIReader {
             }
     	}
     	return false;
-	}
+	}*/
 
     public static void debugMIDI(Sequence sequence) {
     	if (sequence == null) {
@@ -215,13 +215,7 @@ public final class ReikaMIDIReader {
     }
 
     public static int getMidiLength(Sequence seq) {
-    	Track[] tr = seq.getTracks();
-    	int maxl = 0;
-    	for (int i = 0; i < tr.length; i++) {
-    		if (tr[i].size() > maxl)
-    			maxl = tr[i].size();
-    	}
-    	return maxl;
+    	return getSequenceLength(seq);
     }
 
     private static int getSequenceLength(Sequence seq) {
@@ -295,7 +289,7 @@ public final class ReikaMIDIReader {
 		                break;
 	                }
 	                if (dataline[channel][0] != 0 && sm.getCommand() == NOTE_ON) {
-	                	ReikaJavaLibrary.pConsole("Event "+sm.getCommand()+" at time: "+time+"; Channel "+channel+": "+dataline[channel][0]+"  "+dataline[channel][1]+"  "+dataline[channel][2]);
+	                	//ReikaJavaLibrary.pConsole("Event "+sm.getCommand()+" at time: "+time+"; Channel "+channel+": "+dataline[channel][0]+"  "+dataline[channel][1]+"  "+dataline[channel][2]);
 	                	for (int k = 0; k < 16; k++) {
 	                		for (int l = 0; l < 3; l++) {
 	                			data[time][k][l] = dataline[k][l];
