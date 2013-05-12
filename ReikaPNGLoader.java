@@ -7,12 +7,12 @@ import java.io.*;
 import javax.imageio.ImageIO;
 
 public final class ReikaPNGLoader {
-	
+
 	private ReikaPNGLoader() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
-	
+
 	public static int textureMap;
 	public static BufferedImage missingtex = new BufferedImage(64, 64, 2);
-	
+
     /** Returns a BufferedImage read off the provided filepath, or, failing that, a backup hard-coded path.
      * Args: Root class, filepath, Backup Direct FilePath (include C:/ or other letter drive) */
     public static BufferedImage readTextureImage(Class root, String name, String back)
@@ -53,12 +53,27 @@ public final class ReikaPNGLoader {
 			}
 		}
     }
-    
+
+    public static boolean imageFileExists(Class root, String name) {
+    	InputStream inputfile = root.getResourceAsStream(name);
+    	if (inputfile == null) {
+    		return false;
+    	}
+        BufferedImage bufferedimage = null;
+		try {
+			bufferedimage = ImageIO.read(inputfile);
+		}
+		catch (IOException e) {
+				return false;
+		}
+    	return true;
+    }
+
     public static BufferedImage getMissingTex() {
     	setMissingTex();
     	return missingtex;
     }
-    
+
     private static void setMissingTex() {
         Graphics graphics = missingtex.getGraphics();
         graphics.setColor(Color.decode("0x2F0044"));

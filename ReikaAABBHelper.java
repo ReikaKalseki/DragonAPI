@@ -14,7 +14,7 @@ public final class ReikaAABBHelper {
 	 * Args: World, AABB, Render par2,4,6, x,y,z of machine, root alpha value (-ve for solid color), RGB, solid outline yes/no */
 	public static void renderAABB(World world, AxisAlignedBB box, double par2, double par4, double par6, int x, int y, int z, int a, int r, int g, int b, boolean line) {
 		int[] color = {r, g, b, a};
-		ReikaRenderHelper.prepareGeoDraw();
+		ReikaRenderHelper.prepareGeoDraw(true);
         GL11.glPushMatrix();
         GL11.glTranslatef((float)par2, (float)par4 + 2.0F, (float)par6 + 1.0F);
         GL11.glScalef(1.0F, -1.0F, -1.0F);
@@ -121,6 +121,16 @@ public final class ReikaAABBHelper {
     	GL11.glEnable(GL11.GL_CULL_FACE);
     	GL11.glDisable(GL11.GL_BLEND);
     	GL11.glEnable(GL11.GL_DEPTH_TEST);
+	}
+
+	/** Returns a 1-block bounding box. Args: x, y, z */
+	public static AxisAlignedBB getBlockAABB(int x, int y, int z) {
+		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1);
+	}
+
+	/** Returns a sized bounding box centered on a block. Args: x, y, z */
+	public static AxisAlignedBB getBlockCenteredAABB(int x, int y, int z, int range) {
+		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1).expand(range, range, range);
 	}
 
 }

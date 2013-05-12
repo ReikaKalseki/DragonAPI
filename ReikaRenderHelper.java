@@ -40,8 +40,7 @@ public final class ReikaRenderHelper {
 
 	/** Renders a flat circle in the world. Args: radius, center x,y,z, RGB*/
 	public static void renderCircle(double r, double x, double y, double z, int[] color) {
-		prepareGeoDraw();
-    	GL11.glEnable(GL11.GL_BLEND);
+		prepareGeoDraw(false);
     	GL11.glEnable(GL12.GL_RESCALE_NORMAL);
     	GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = new Tessellator();
@@ -56,14 +55,12 @@ public final class ReikaRenderHelper {
     	exitGeoDraw();
     	GL11.glDisable(GL12.GL_RESCALE_NORMAL);
     	GL11.glEnable(GL11.GL_CULL_FACE);
-    	GL11.glDisable(GL11.GL_BLEND);
     	GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	/** Renders a vertical-plane circle in the world. Args: radius, center x,y,z, RGB, phi */
 	public static void renderVCircle(double r, double x, double y, double z, int[] color, double phi) {
-		prepareGeoDraw();
-    	GL11.glEnable(GL11.GL_BLEND);
+		prepareGeoDraw(false);
     	GL11.glDisable(GL11.GL_TEXTURE_2D);
     	GL11.glEnable(GL12.GL_RESCALE_NORMAL);
     	GL11.glColor4f(1F, 1F, 1F, 1F);
@@ -82,14 +79,12 @@ public final class ReikaRenderHelper {
     	exitGeoDraw();
     	GL11.glDisable(GL12.GL_RESCALE_NORMAL);
     	GL11.glEnable(GL11.GL_CULL_FACE);
-    	GL11.glDisable(GL11.GL_BLEND);
     	GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	/** Renders a line between two points in the world. Args: Start xyz, End xyz, rgb */
 	public static void renderLine(double x1, double y1, double z1, double x2, double y2, double z2, int[] color) {
-		prepareGeoDraw();
-    	GL11.glEnable(GL11.GL_BLEND);
+		prepareGeoDraw(false);
     	GL11.glEnable(GL12.GL_RESCALE_NORMAL);
     	GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = new Tessellator();
@@ -103,7 +98,6 @@ public final class ReikaRenderHelper {
         exitGeoDraw();
     	GL11.glDisable(GL12.GL_RESCALE_NORMAL);
     	GL11.glEnable(GL11.GL_CULL_FACE);
-    	GL11.glDisable(GL11.GL_BLEND);
     	GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
@@ -119,17 +113,32 @@ public final class ReikaRenderHelper {
     	GL11.glEnable(GL11.GL_LIGHTING);
 	}
 
-	/** Prepare for drawing primitive geometry by disabling all lighting and textures. */
-	public static void prepareGeoDraw() {
+	/** Prepare for drawing primitive geometry by disabling all lighting and textures. Args: Is alpha going to be used */
+	public static void prepareGeoDraw(boolean alpha) {
 		disableLighting();
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glEnable(GL11.GL_BLEND);
+		if (alpha)
+			GL11.glEnable(GL11.GL_BLEND);
 	}
 
 	public static void exitGeoDraw() {
 		enableLighting();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glDisable(GL11.GL_BLEND);
+	}
+
+	/** Renders a rectangle in-world. Args: r,g,b,a, Start x,y,z, End x,y,z */
+	public static void renderRectangle(int r, int g, int b, int a, double x1, double y1, double z1, double x2, double y2, double z2) {
+		prepareGeoDraw(a < 255);
+		Tessellator v5 = new Tessellator();
+		v5.startDrawingQuads();
+		v5.setColorRGBA(r, g, b, a);
+		v5.addVertex(x1, y1, z1);
+		v5.addVertex(x2, y1, z2);
+		v5.addVertex(x2, y2, z2);
+		v5.addVertex(x1, y2, z1);
+		v5.draw();
+		exitGeoDraw();
 	}
 
 }
