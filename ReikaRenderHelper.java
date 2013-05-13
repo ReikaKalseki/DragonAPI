@@ -1,13 +1,21 @@
 package Reika.DragonAPI;
 
+import java.util.*;
+
+import net.minecraft.block.Block;
+import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.*;
 import net.minecraft.src.ModLoader;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 import org.lwjgl.opengl.*;
 
 
 public final class ReikaRenderHelper {
+
+	private static Random par5Random = new Random();
 
 	private ReikaRenderHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
@@ -139,6 +147,129 @@ public final class ReikaRenderHelper {
 		v5.addVertex(x1, y2, z1);
 		v5.draw();
 		exitGeoDraw();
+	}
+
+	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockDestroyEffects!
+	 * Args: Base path (contains TE textures, world, x, y, z, Block, EffectRenderer, Allowed Texture Regions<br><br>
+	 *
+	 * Explanation of Allowed Regions - Expects a list of size-4 double arrays, whose elements are as follows:<br>
+	 * allowed[0]: Lower X-coordinate of allowed region in texture file (left)<br>
+	 * allowed[1]: Lower Y-coordinate of allowed region in texture file (top)<br>
+	 * allowed[2]: Upper X-coordinate of allowed region in texture file (right)<br>
+	 * allowed[3]: Upper Y-coordinate of allowed region in texture file (bottom)<br>
+	 *
+	 * Note that these are referenced to a whole image, so [0,0,1,1] would be the entire image file.
+	 * @Author Reika
+	 * */
+	public static boolean addModelledBlockParticles(String basedir, World world, int x, int y, int z, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
+    	String name = null;
+    	if (world.getBlockId(x, y, z) == b.blockID) {
+    		TileEntity t = world.getBlockTileEntity(x, y, z);
+    		if (t instanceof RenderFetcher) {
+    			RenderFetcher te = (RenderFetcher)t;
+    			TextureFetcher r = te.getRenderer();
+    			if (r != null)
+    				name = r.getImageFileName(te);
+    		}
+    	}
+    	String file = basedir+name;
+    	for (int i = 0; i < 48; i++) {
+    		int k = par5Random.nextInt(allowedRegions.size());
+    		double[] p = allowedRegions.get(k);
+    		double px = p[0]+par5Random.nextDouble()*(p[2]-p[0]);
+    		double py = p[1]+par5Random.nextDouble()*(p[3]-p[1]);
+    		double overx = px+ReikaModelledBreakFX.pw-p[2];
+    		if (overx > 0)
+    			px -= overx;
+    		double overy = py+ReikaModelledBreakFX.pw-p[2];
+    		if (overy > 0)
+    			py -= overy;
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), ModLoader.getMinecraftInstance().renderEngine, file, px, py));
+    	}
+        return true;
+	}
+
+	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockHitEffects!
+	 * Args: Base path (contains TE textures, world, MovingObjectPosition, Block, EffectRenderer, Allowed Texture Regions <br>
+	 * See addModelledBlockParticles(basedir, world, x, y, z, b, eff, allowedRegions) for explanation of the regions. */
+	public static boolean addModelledBlockParticles(String basedir, World world, MovingObjectPosition mov, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
+		if (mov == null)
+			return false;
+		int x = mov.blockX;
+		int y = mov.blockY;
+		int z = mov.blockZ;
+    	String name = null;
+    	if (world.getBlockId(x, y, z) == b.blockID) {
+    		TileEntity t = world.getBlockTileEntity(x, y, z);
+    		if (t instanceof RenderFetcher) {
+    			RenderFetcher te = (RenderFetcher)t;
+    			TextureFetcher r = te.getRenderer();
+    			if (r != null)
+    				name = r.getImageFileName(te);
+    		}
+    	}
+    	int j = 1+par5Random.nextInt(2);
+    	String file = basedir+name;
+    	for (int i = 0; i < j; i++) {
+    		int k = par5Random.nextInt(allowedRegions.size());
+    		double[] p = allowedRegions.get(k);
+    		double px = p[0]+par5Random.nextDouble()*(p[2]-p[0]);
+    		double py = p[1]+par5Random.nextDouble()*(p[3]-p[1]);
+    		double overx = px+ReikaModelledBreakFX.pw-p[2];
+    		if (overx > 0)
+    			px -= overx;
+    		double overy = py+ReikaModelledBreakFX.pw-p[2];
+    		if (overy > 0)
+    			py -= overy;
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), ModLoader.getMinecraftInstance().renderEngine, file, px, py));
+    	}
+        return true;
+	}
+
+	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockDestroyEffects!
+	 * Args: Texture Path, world, x, y, z, Block, EffectRenderer, Allowed Texture Regions <br>
+	 * See addModelledBlockParticles(basedir, world, x, y, z, b, eff, allowedRegions) for explanation of the regions. */
+	public static boolean addModelledBlockParticlesDirect(String texture, World world, int x, int y, int z, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
+    	for (int i = 0; i < 48; i++) {
+    		int k = par5Random.nextInt(allowedRegions.size());
+    		double[] p = allowedRegions.get(k);
+    		double px = p[0]+par5Random.nextDouble()*(p[2]-p[0]);
+    		double py = p[1]+par5Random.nextDouble()*(p[3]-p[1]);
+    		double overx = px+ReikaModelledBreakFX.pw-p[2];
+    		if (overx > 0)
+    			px -= overx;
+    		double overy = py+ReikaModelledBreakFX.pw-p[2];
+    		if (overy > 0)
+    			py -= overy;
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), ModLoader.getMinecraftInstance().renderEngine, texture, px, py));
+    	}
+        return true;
+	}
+
+	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockHitEffects!
+	 * Args: Texture Path, world, MovingObjectPosition, Block, EffectRenderer, Allowed Texture Regions. <br>
+	 * See addModelledBlockParticles(basedir, world, x, y, z, b, eff, allowedRegions) for explanation of the regions. */
+	public static boolean addModelledBlockParticlesDirect(String texture, World world, MovingObjectPosition mov, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
+		if (mov == null)
+			return false;
+		int x = mov.blockX;
+		int y = mov.blockY;
+		int z = mov.blockZ;
+    	int j = 1+par5Random.nextInt(2);
+    	for (int i = 0; i < j; i++) {
+    		int k = par5Random.nextInt(allowedRegions.size());
+    		double[] p = allowedRegions.get(k);
+    		double px = p[0]+par5Random.nextDouble()*(p[2]-p[0]);
+    		double py = p[1]+par5Random.nextDouble()*(p[3]-p[1]);
+    		double overx = px+ReikaModelledBreakFX.pw-p[2];
+    		if (overx > 0)
+    			px -= overx;
+    		double overy = py+ReikaModelledBreakFX.pw-p[2];
+    		if (overy > 0)
+    			py -= overy;
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), ModLoader.getMinecraftInstance().renderEngine, texture, px, py));
+    	}
+        return true;
 	}
 
 }
