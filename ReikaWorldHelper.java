@@ -684,6 +684,35 @@ public static double findSolidSurface(World world, double x, double y, double z)
     				legacySetBlockWithNotify(world, x, y, z+i, Block.waterMoving.blockID);
     		}
     	}
+    	if (temperature > 0)	{ // Melting snow/ice
+    		for (int i = 0; i < 3; i++) {
+    			if (world.getBlockMaterial(x-i, y, z) == Material.snow)
+    				legacySetBlockWithNotify(world, x-i, y, z, 0);
+    			if (world.getBlockMaterial(x+i, y, z) == Material.snow)
+    				legacySetBlockWithNotify(world, x+i, y, z, 0);
+    			if (world.getBlockMaterial(x, y-i, z) == Material.snow)
+    				legacySetBlockWithNotify(world, x, y-i, z, 0);
+    			if (world.getBlockMaterial(x, y+i, z) == Material.snow)
+    				legacySetBlockWithNotify(world, x, y+i, z, 0);
+    			if (world.getBlockMaterial(x, y, z-i) == Material.snow)
+    				legacySetBlockWithNotify(world, x, y, z-i, 0);
+    			if (world.getBlockMaterial(x, y, z+i) == Material.snow)
+    				legacySetBlockWithNotify(world, x, y, z+i, 0);
+
+    			if (world.getBlockMaterial(x-i, y, z) == Material.craftedSnow)
+    				legacySetBlockWithNotify(world, x-i, y, z, 0);
+    			if (world.getBlockMaterial(x+i, y, z) == Material.craftedSnow)
+    				legacySetBlockWithNotify(world, x+i, y, z, 0);
+    			if (world.getBlockMaterial(x, y-i, z) == Material.craftedSnow)
+    				legacySetBlockWithNotify(world, x, y-i, z, 0);
+    			if (world.getBlockMaterial(x, y+i, z) == Material.craftedSnow)
+    				legacySetBlockWithNotify(world, x, y+i, z, 0);
+    			if (world.getBlockMaterial(x, y, z-i) == Material.craftedSnow)
+    				legacySetBlockWithNotify(world, x, y, z-i, 0);
+    			if (world.getBlockMaterial(x, y, z+i) == Material.craftedSnow)
+    				legacySetBlockWithNotify(world, x, y, z+i, 0);
+    		}
+    	}
     }
 
     /** Surrounds the block with fire. Args: World, x, y, z */
@@ -1014,6 +1043,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
 
     /** Returns true if a block can see an point. Args: World, block x,y,z, Point x,y,z, Max Range */
     public static boolean canBlockSee(World world, int x, int y, int z, double x0, double y0, double z0, double range) {
+    	int locid = world.getBlockId(x, y, z);
     	range += 2;
     	for (int k = 0; k < 10; k++) {
     		float a = 0; float b = 0; float c = 0;
@@ -1067,8 +1097,8 @@ public static double findSolidSurface(World world, double x, double y, double z)
 		    		//ReikaGuiAPI.writeCoords(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
 		    		return true;
 		    	}
-		    	else if (id != 0 && (isCollideable(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord) && !softBlocks(id))) {
-		    		i = (float)(range + 1);
+		    	else if (id != 0 && id != locid && (isCollideable(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord) && !softBlocks(id))) {
+		    		i = (float)(range + 1); //Hard loop break
 		    	}
 	    	}
     	}
@@ -1417,5 +1447,27 @@ public static double findSolidSurface(World world, double x, double y, double z)
 		for (int i = 0; i < parts.length; i++) {
 			world.spawnParticle(name, parts[i][0], parts[i][1], parts[i][2], vx, vy, vz);
 		}
+	}
+
+	/** Checks if a liquid block is part of a column (has same liquid above and below and none of them are source blocks).
+	 * Args: World, x, y, z */
+	public static boolean isLiquidAColumn(World world, int x, int y, int z) {
+		Material mat = world.getBlockMaterial(x, y, z);
+		if (isLiquidSourceBlock(world, x, y, z))
+			return false;
+		if (world.getBlockMaterial(x, y+1, z) != mat)
+			return false;
+		if (isLiquidSourceBlock(world, x, y+1, z))
+			return false;
+		if (world.getBlockMaterial(x, y-1, z) != mat)
+			return false;
+		if (isLiquidSourceBlock(world, x, y-1, z))
+			return false;
+		return true;
+	}
+
+	public static void causeAdjacentUpdates(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		world.notifyBlocksOfNeighborChange(x, y, z, id);
 	}
 }

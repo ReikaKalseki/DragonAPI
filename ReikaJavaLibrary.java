@@ -72,4 +72,8 @@ public final class ReikaJavaLibrary {
 	    }
 	    return true;
 	}
+
+	public static String stripSpaces(String s) {
+		return s.replaceAll("\\s","");
+	}
 }

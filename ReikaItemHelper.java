@@ -103,4 +103,30 @@ public final class ReikaItemHelper {
 			return false;
 		return (a.itemID == b.itemID && a.getItemDamage() == b.getItemDamage());
 	}
+
+	public static boolean isFireworkIngredient(int id) {
+		if (id == Item.diamond.itemID)
+			return true;
+		if (id == Item.dyePowder.itemID)
+			return true;
+		if (id == Item.lightStoneDust.itemID)
+			return true;
+		if (id == Item.feather.itemID)
+			return true;
+		if (id == Item.goldNugget.itemID)
+			return true;
+		if (id == Item.fireballCharge.itemID)
+			return true;
+		if (id == Item.diamond.itemID)
+			return true;
+		if (id == Item.skull.itemID)
+			return true;
+		if (id == Item.fireworkCharge.itemID)
+			return true;
+		if (id == Item.paper.itemID)
+			return true;
+		if (id == Item.gunpowder.itemID)
+			return true;
+		return false;
+	}
 }

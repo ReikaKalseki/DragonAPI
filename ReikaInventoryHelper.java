@@ -3,7 +3,7 @@ package Reika.DragonAPI;
 import java.util.*;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.*;
 import net.minecraft.item.ItemStack;
 
 public final class ReikaInventoryHelper {
@@ -449,18 +449,17 @@ public final class ReikaInventoryHelper {
 	}
 
 	/** Adds a certain amount of a specified ID and metadata to an inventory slot, creating the itemstack if necessary.
-	 * Args: ID, number, metadata, inventory, slot */
-	public static void addOrSetStack(int id, int size, int meta, ItemStack[] inv, int slot) {
+	 * Returns true if the whole stack fit and was added. Args: ID, number, metadata (-1 for any), inventory, slot */
+	public static boolean addOrSetStack(int id, int size, int meta, ItemStack[] inv, int slot) {
 		if (inv[slot] == null) {
 			inv[slot] = new ItemStack(id, size, meta);
-			return;
+			return true;
 		}
 		int max = inv[slot].getMaxStackSize();
-		if (inv[slot].itemID != id || inv[slot].getItemDamage() != meta || inv[slot].stackSize >= max)
-			return;
+		if (inv[slot].itemID != id || (inv[slot].getItemDamage() != meta && meta != -1) || inv[slot].stackSize+size > max)
+			return false;
 		inv[slot].stackSize += size;
-		if (inv[slot].stackSize > max)
-			inv[slot].stackSize = max;
+		return true;
 	}
 
 	/** Returns true if the player has the given ID and metadata in their inventory, or is in creative mode.
@@ -469,7 +468,10 @@ public final class ReikaInventoryHelper {
 		if (ep.capabilities.isCreativeMode)
 			return true;
 		ItemStack[] ii = ep.inventory.mainInventory;
-		return (checkForItemStack(id, meta, ii));
+		if (meta != -1)
+			return (checkForItemStack(id, meta, ii));
+		else
+			return (checkForItem(id, ii));
 	}
 
 	/** Returns the number of unique itemstacks in the inventory after sorting and cleaning. Args: Inventory */
@@ -489,5 +491,85 @@ public final class ReikaInventoryHelper {
 				ids.add(entry);
 			}
 		}
+	}
+
+	/** Returns true iff succeeded; adds iff can fit whole stack */
+	public static boolean addToIInv(ItemStack is, IInventory ii) {
+		if (!hasSpaceFor(is, ii))
+			return false;
+		int slot = locateNonFullStackOf(is, ii);
+		int e = getFirstEmptySlot(ii);
+		if (slot == -1 && e == -1) {
+			return false;
+		}
+		if (slot != -1) {
+			if (ii.getStackInSlot(slot).stackSize > is.getMaxStackSize()-is.stackSize) {
+				if (e == -1)
+					return false;
+				ii.setInventorySlotContents(e, is);
+				return true;
+			}
+			ItemStack i = ii.getStackInSlot(slot);
+			i.stackSize += is.stackSize;
+			ii.setInventorySlotContents(slot, i);
+			return true;
+		}
+		if (e != -1) {
+			ii.setInventorySlotContents(e, is);
+		}
+		return true;
+	}
+
+	public static boolean hasSpaceFor(ItemStack is, IInventory ii) {
+		if (getFirstEmptySlot(ii) != -1) {
+			return true;
+		}
+		if (!hasItemStack(is, ii))
+			return false;
+		return (hasNonFullStackOf(is, ii));
+	}
+
+	public static int getFirstEmptySlot(IInventory ii) {
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			if (ii.getStackInSlot(i) == null)
+				return i;
+		}
+		return -1;
+	}
+
+	public static boolean hasItemStack(ItemStack is, IInventory ii) {
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			if (ii.getStackInSlot(i) != null)
+			if (ii.getStackInSlot(i).itemID == is.itemID && ii.getStackInSlot(i).getItemDamage() == is.getItemDamage())
+				return true;
+		}
+		return false;
+	}
+
+	public static int locateNonFullStackOf(ItemStack is, IInventory ii) {
+		if (is == null)
+			return -1;
+		int slot = -1;
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			if (ii.getStackInSlot(i) != null) {
+				if (ii.getStackInSlot(i).itemID == is.itemID && ii.getStackInSlot(i).getItemDamage() == is.getItemDamage())
+					if (ii.getStackInSlot(i).stackSize < is.getMaxStackSize())
+						return i;
+			}
+		}
+		return -1;
+	}
+
+	public static boolean hasNonFullStackOf(ItemStack is, IInventory ii) {
+		return locateNonFullStackOf(is, ii) != -1;
+	}
+
+	public static boolean hasItem(int id, IInventory ii) {
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			if (ii.getStackInSlot(i) != null)
+			if (ii.getStackInSlot(i).itemID == id)
+				return true;
+		}
+		return false;
 	}
 }

@@ -217,7 +217,7 @@ public final class ReikaMathLibrary {
 	public static boolean doWithChance(double num) {
 		if (num > 1)
 			num /= 100;
-		double chance = (100*num)-100;
+		double chance = ((100*num)-1)*100;
 		if (par5Random.nextInt(101) < chance)
 			return true;
 		return false;

@@ -5,6 +5,7 @@ public final class ReikaPhysicsHelper {
 	private ReikaPhysicsHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	public static final double TNTenergy = 12420000000D;
+	public static final double g = 9.81D;
 
 	/** Converts 3D polar coordinates into cartesian ones. Use angles in degrees. Args: magnitude, theta, phi */
 	public static double[] polarToCartesian(double mag, double theta, double phi) {

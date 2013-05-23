@@ -357,10 +357,10 @@ public final class ReikaEntityHelper {
     }
 
     /** Adds a small velocity in a random direction (akin to items' speeds when dropped) */
-    public static void addRandomDirVelocity(Entity ent, double max) {
+    public static void addRandomDirVelocity(Entity ent, double max) {/*
     	ent.motionX = -max+2*max*par5Random.nextFloat();
     	ent.motionZ = -max+2*max*par5Random.nextFloat();
-    	ent.motionY = 2*max*par5Random.nextFloat();
+    	ent.motionY = 4*max*par5Random.nextFloat();*/
     }
 
 }
