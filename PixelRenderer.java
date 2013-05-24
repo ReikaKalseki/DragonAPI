@@ -3,6 +3,7 @@ package Reika.DragonAPI;
 import java.awt.Color;
 
 import net.minecraft.client.renderer.Tessellator;
+import Reika.DragonAPI.Libraries.ReikaRenderHelper;
 
 public class PixelRenderer {
 
@@ -52,7 +53,7 @@ public class PixelRenderer {
 		if (mirror) {
 
 		}
-		ReikaRenderHelper.prepareGeoDraw(rgba[0] < 255);
+		ReikaRenderHelper.prepareGeoDraw(rgba[3] < 255);
 		Tessellator v5 = new Tessellator();
 		if (flip) {
 			if (xy) {

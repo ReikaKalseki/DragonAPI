@@ -7,6 +7,9 @@ import net.minecraft.world.IBlockAccess;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.Auxiliary.ReikaBlockRenderer;
+import Reika.DragonAPI.IO.ReikaPNGLoader;
+import Reika.DragonAPI.Interfaces.SidedTextureIndex;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public final class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler {

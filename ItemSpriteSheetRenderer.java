@@ -3,6 +3,9 @@ package Reika.DragonAPI;
 import net.minecraft.item.*;
 import net.minecraft.src.ModLoader;
 import net.minecraftforge.client.IItemRenderer;
+import Reika.DragonAPI.Auxiliary.ReikaSpriteSheets;
+import Reika.DragonAPI.IO.ReikaPNGLoader;
+import Reika.DragonAPI.Interfaces.IndexedItemSprites;
 
 public final class ItemSpriteSheetRenderer implements IItemRenderer {	
 	
