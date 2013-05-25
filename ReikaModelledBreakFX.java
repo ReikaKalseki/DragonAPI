@@ -3,9 +3,10 @@ package Reika.DragonAPI;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityDiggingFX;
-import net.minecraft.client.renderer.*;
-import net.minecraft.src.ModLoader;
+import net.minecraft.client.renderer.RenderEngine;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.World;
 
 public class ReikaModelledBreakFX extends EntityDiggingFX {
@@ -68,7 +69,7 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
         float f13 = (float)(prevPosZ + (posZ - prevPosZ) * par2 - interpPosZ);
         float f14 = 1.0F;
 
-    	ModLoader.getMinecraftInstance().renderEngine.bindTexture(tex);
+        Minecraft.getMinecraft().renderEngine.bindTexture(tex);
     	//GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
     	Tessellator v5 = new Tessellator();
     	v5.startDrawingQuads();

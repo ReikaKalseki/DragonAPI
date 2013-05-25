@@ -1,8 +1,17 @@
 package Reika.DragonAPI.IO;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
-import javax.sound.midi.*;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiEvent;
+import javax.sound.midi.MidiMessage;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
+import javax.sound.midi.ShortMessage;
+import javax.sound.midi.Track;
 
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 

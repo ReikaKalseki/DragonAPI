@@ -1,7 +1,8 @@
 package Reika.DragonAPI;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 
 import org.lwjgl.opengl.GL11;
 

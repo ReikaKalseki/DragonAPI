@@ -1,8 +1,10 @@
 package Reika.DragonAPI.IO;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 

@@ -1,12 +1,16 @@
 package Reika.DragonAPI;
 
-import net.minecraft.item.*;
-import net.minecraft.src.ModLoader;
+import net.minecraft.client.Minecraft;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 import Reika.DragonAPI.Auxiliary.ReikaSpriteSheets;
 import Reika.DragonAPI.IO.ReikaPNGLoader;
 import Reika.DragonAPI.Interfaces.IndexedItemSprites;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public final class ItemSpriteSheetRenderer implements IItemRenderer {	
 	
 	protected int spritesheet;
@@ -36,7 +40,7 @@ public final class ItemSpriteSheetRenderer implements IItemRenderer {
 	        filename = path+file;
         }
         //ReikaJavaLibrary.pConsole("ITEM @ "+filename+" from "+file+" Exists: ");
-		this.spritesheet = ModLoader.getMinecraftInstance().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
+		this.spritesheet = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
 	}
 
 	@Override

@@ -2,19 +2,17 @@ package Reika.DragonAPI.Libraries;
 
 import java.awt.Color;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.entity.Entity;
-import net.minecraft.item.*;
-import net.minecraft.src.ModLoader;
-import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public final class ReikaGuiAPI extends GuiScreen {
 	private int xSize;
 	private int ySize;
@@ -271,114 +269,6 @@ public final class ReikaGuiAPI extends GuiScreen {
     	return color;
     }
 
-    /** Writes an itemstack to the chat.
-     * Args: World, itemstack */
-    public static void writeItemStack(World world, ItemStack is) {
-    	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
-    		return;
-    	if (world.isRemote)
-    		return;
-    	String msg;
-    	if (is == null)
-    		msg = "Null Stack!";
-    	else
-    		msg = String.format("%d, %d, %d", is.itemID, is.stackSize, is.getItemDamage());
-    	ModLoader.getMinecraftInstance().thePlayer.addChatMessage(msg);
-    }
-
-    /** Writes coordinates to the chat.
-     * Args: World, x, y, z */
-    public static void writeCoords(World world, double x, double y, double z) {
-    	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
-    		return;
-    	if (world.isRemote)
-    		return;
-    	String msg;
-    	msg = String.format("%.2f, %.2f, %.2f", x, y, z);
-    	ModLoader.getMinecraftInstance().thePlayer.addChatMessage(msg);
-    }
-
-    /** Writes a block ID:metadata and coordinates to the chat.
-     * Args: World, x, y, z */
-    public static void writeBlockAtCoords(World world, int x, int y, int z) {
-    	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
-    		return;
-    	if (world.isRemote)
-    		return;
-    	String msg;
-    	int id = world.getBlockId(x, y, z);
-    	int meta = world.getBlockMetadata(x, y, z);
-    	msg = String.format("%d:%d @ %d, %d, %d", id, meta, x, y, z);
-    	ModLoader.getMinecraftInstance().thePlayer.addChatMessage(msg);
-    }
-
-    /** Writes an integer to the chat. Args: Integer */
-    public static void writeInt(int num) {
-    	writeString(String.format("%d", num));
-    }
-
-    /** Writes any general-purpose string to the chat. Args: String */
-    public static void writeString(String sg) {
-    	if (ModLoader.getMinecraftInstance().thePlayer != null)
-    		ModLoader.getMinecraftInstance().thePlayer.addChatMessage(sg);
-    }
-
-    /** A general object-to-chat function. Autoclips doubles to 2 decimals. Args: Object */
-    public static void write(Object obj) {
-    	if (obj == null) {
-    		writeString("null");
-    		return;
-    	}
-    	String str;
-    	if (obj.getClass() == Double.class)
-    		str = String.format("%.2f", obj);
-    	else
-    		str = String.valueOf(obj);
-    	writeString(str);
-    }
-
-    public static void writeEntity(World world, Entity ent) {
-    	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
-    		return;
-    	if (world.isRemote)
-    		return;
-    	if (ent == null)
-    		writeString("null");
-    	else
-    		writeString(ent.getEntityName()+" @ "+String.format("%.2f, %.2f, %.2f", ent.posX, ent.posY, ent.posZ));
-    }
-
-    public static void writeItem(World world, int id, int dmg) {
-    	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
-    		return;
-    	if (world.isRemote)
-    		return;
-    	if (id == 0)
-    		writeString("Null Item");
-    	else if (id < 256)
-    		writeBlock(world, id, dmg);
-    	else
-    		writeString(id+":"+dmg+" is "+Item.itemsList[id].getLocalizedName(new ItemStack(id, 1, dmg)));
-    }
-
-    public static void writeBlock(World world, int id, int meta) {
-    	if (ModLoader.getMinecraftInstance().thePlayer == null || world == null)
-    		return;
-    	if (world.isRemote)
-    		return;
-    	if (id == 0)
-    		writeString("Null Item");
-    	else if (id > 4096)
-    		writeItem(world, id, meta);
-    	else
-    		writeString(id+":"+meta+" is "+Block.blocksList[id].getLocalizedName());
-    }
-
-    public static void writeSide() {
-    	if (ModLoader.getMinecraftInstance().thePlayer != null)
-    		ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.valueOf(FMLCommonHandler.instance().getEffectiveSide()));
-    }
-
     public static void renderFraction(FontRenderer fr, String num, String den, int x, int y, int color, boolean shadow, boolean center) {
 
     }
@@ -396,7 +286,7 @@ public final class ReikaGuiAPI extends GuiScreen {
      * shapeless t/f, icon textures.
      * Input icon indexes names MUST be a size-9 array, and textures must be a size-10 array! */
     public void drawRecipe(FontRenderer f, int x, int y, int[] in, int x2, int y2, int out, int amount, boolean shapeless, String[] tex) {
-    	Minecraft mc = ModLoader.getMinecraftInstance();
+    	Minecraft mc = Minecraft.getMinecraft();
         int j = (width - xSize) / 2;
         int k = (height - ySize) / 2 - 8;
         int rowsout, colsout;

@@ -1,21 +1,29 @@
 package Reika.DragonAPI.Libraries;
 
-import java.util.*;
+import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
-import org.lwjgl.opengl.*;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 import Reika.DragonAPI.ReikaModelledBreakFX;
-import Reika.DragonAPI.Interfaces.*;
+import Reika.DragonAPI.Interfaces.RenderFetcher;
+import Reika.DragonAPI.Interfaces.TextureFetcher;
 
-
+@SideOnly(Side.CLIENT)
 public final class ReikaRenderHelper {
 
 	private static Random par5Random = new Random();
@@ -113,13 +121,13 @@ public final class ReikaRenderHelper {
 	}
 
 	public static void disableLighting() {
-		ModLoader.getMinecraftInstance().entityRenderer.disableLightmap(1);
+		Minecraft.getMinecraft().entityRenderer.disableLightmap(1);
 		RenderHelper.disableStandardItemLighting();
     	GL11.glDisable(GL11.GL_LIGHTING);
 	}
 
 	public static void enableLighting() {
-		ModLoader.getMinecraftInstance().entityRenderer.enableLightmap(1);
+		Minecraft.getMinecraft().entityRenderer.enableLightmap(1);
 		RenderHelper.enableStandardItemLighting();
     	GL11.glEnable(GL11.GL_LIGHTING);
 	}
@@ -187,7 +195,7 @@ public final class ReikaRenderHelper {
     		double overy = py+ReikaModelledBreakFX.pw-p[2];
     		if (overy > 0)
     			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), ModLoader.getMinecraftInstance().renderEngine, file, px, py));
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
     	}
         return true;
 	}
@@ -224,7 +232,7 @@ public final class ReikaRenderHelper {
     		double overy = py+ReikaModelledBreakFX.pw-p[2];
     		if (overy > 0)
     			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), ModLoader.getMinecraftInstance().renderEngine, file, px, py));
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
     	}
         return true;
 	}
@@ -244,7 +252,7 @@ public final class ReikaRenderHelper {
     		double overy = py+ReikaModelledBreakFX.pw-p[2];
     		if (overy > 0)
     			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), ModLoader.getMinecraftInstance().renderEngine, texture, px, py));
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
     	}
         return true;
 	}
@@ -270,7 +278,7 @@ public final class ReikaRenderHelper {
     		double overy = py+ReikaModelledBreakFX.pw-p[2];
     		if (overy > 0)
     			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), ModLoader.getMinecraftInstance().renderEngine, texture, px, py));
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
     	}
         return true;
 	}

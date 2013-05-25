@@ -1,8 +1,8 @@
 package Reika.DragonAPI;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.src.ModLoader;
 import net.minecraft.world.IBlockAccess;
 
 import org.lwjgl.opengl.GL11;
@@ -11,7 +11,10 @@ import Reika.DragonAPI.Auxiliary.ReikaBlockRenderer;
 import Reika.DragonAPI.IO.ReikaPNGLoader;
 import Reika.DragonAPI.Interfaces.SidedTextureIndex;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public final class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler {
 	
 	private int textureSheet;
@@ -41,7 +44,7 @@ public final class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler
 	        filename = path+file;
         }
         //ReikaJavaLibrary.pConsole("BLOCK @ "+filename+" from "+file+" Exists:");
-		this.textureSheet = ModLoader.getMinecraftInstance().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
+		this.textureSheet = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
 	}
 
 	@Override
@@ -60,7 +63,7 @@ public final class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler
 		int metadata = world.getBlockMetadata(x, y, z);
 		ReikaBlockRenderer.instance.renderCube(block, x, y, z, 1F, 1F, 1F, metadata, world, this.textureSheet);
 		//if (!Loader.isModLoaded("Optifine"))
-			ModLoader.getMinecraftInstance().renderEngine.bindTexture("/terrain.png");
+			Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
         return true;
 	}
 

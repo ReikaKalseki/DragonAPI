@@ -1,6 +1,7 @@
 package Reika.DragonAPI.Libraries;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;

@@ -1,9 +1,11 @@
 package Reika.DragonAPI.Libraries;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.*;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 
 public final class ReikaInventoryHelper {
@@ -382,7 +384,7 @@ public final class ReikaInventoryHelper {
 	 * Also performs sanity checks. Args: Inventory, Slot */
 	public static void decrStack(int slot, ItemStack[] inv) {
 		if (slot >= inv.length) {
-			ReikaGuiAPI.write("Tried to Access Slot "+slot+", which is larger than the inventory.");
+			ReikaChatHelper.write("Tried to Access Slot "+slot+", which is larger than the inventory.");
 			return;
 		}
 		if (inv[slot].stackSize > 1)

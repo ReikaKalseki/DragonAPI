@@ -3,7 +3,8 @@ package Reika.DragonAPI.Libraries;
 import java.awt.Color;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public enum ReikaDyeHelper {
 

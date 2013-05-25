@@ -1,7 +1,8 @@
 package Reika.DragonAPI.Auxiliary;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.IBlockAccess;
 
