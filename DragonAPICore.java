@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika
+ * 
+ * This code is the property of and owned and copyrighted by Reika.
+ * Unless given explicit written permission - electronic writing is acceptable - no user may
+ * copy, edit, or redistribute this source code nor any derivative works.
+ * Failure to comply with these restrictions is a violation of
+ * copyright law and will be dealt with accordingly.
+ ******************************************************************************/
 package Reika.DragonAPI;
 
 import java.util.Random;
@@ -15,7 +24,7 @@ import java.util.Random;
 
 public class DragonAPICore {
 
-	public DragonAPICore() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+	protected DragonAPICore() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	protected static final Random rand = new Random();
 

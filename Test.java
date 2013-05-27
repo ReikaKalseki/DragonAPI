@@ -7,10 +7,12 @@
  * Failure to comply with these restrictions is a violation of
  * copyright law and will be dealt with accordingly.
  ******************************************************************************/
-package Reika.DragonAPI.Interfaces;
+package Reika.DragonAPI;
 
-public interface RenderFetcher {
+public class Test {
 
-	public abstract TextureFetcher getRenderer();
+	public Test() {
+		// TODO Auto-generated constructor stub
+	}
 
 }
