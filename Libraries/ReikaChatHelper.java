@@ -6,12 +6,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
-public final class ReikaChatHelper {
-
-	private ReikaChatHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaChatHelper extends DragonAPICore {
 
 	public static void clearChat() {
 		if (FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT)

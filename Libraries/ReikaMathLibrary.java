@@ -1,17 +1,12 @@
 package Reika.DragonAPI.Libraries;
 
-import java.util.Random;
-
 import net.minecraft.util.MathHelper;
+import Reika.DragonAPI.DragonAPICore;
 
-public final class ReikaMathLibrary {
-
-	private ReikaMathLibrary() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaMathLibrary extends DragonAPICore {
 
 	public static final double e = Math.E;				// s/e
 	public static final double pi = Math.PI;			// s/e
-
-	static Random par5Random = new Random();
 
 	/** Returns the pythagorean sum of the three inputs. Used mainly for vector magnitudes.
 	 * Args: x,y,z */
@@ -208,12 +203,12 @@ public final class ReikaMathLibrary {
 		return (logbase(num, base) == (int)logbase(num, base));
 	}
 
-	/** Returns true with a percentage probability. Args: chance (out of 1) */
+	/** Returns true with a percentage probability. Args: chance (out of 1 or a %) */
 	public static boolean doWithChance(double num) {
 		if (num > 1)
 			num /= 100;
 		double chance = ((100*num)-1)*100;
-		if (par5Random.nextInt(101) < chance)
+		if (rand.nextInt(101) < chance)
 			return true;
 		return false;
 	}

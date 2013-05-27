@@ -1,18 +1,14 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 
-public final class ReikaInventoryHelper {
-
-	private static Random par5Random = new Random();
-
-	private ReikaInventoryHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Checks an itemstack array (eg an inventory) for an item of a specific id.
 	 * Returns true if found. Args: Item ID, Inventory */
@@ -372,7 +368,7 @@ public final class ReikaInventoryHelper {
 	 * between min and max, but taking care to stay within stackSize limits.
 	 * Args: Intial slot contents, min items, max items */
 	public static int addUpToStack(ItemStack init, int min, int max) {
-		int num = min+par5Random.nextInt(max-min+1);
+		int num = min+rand.nextInt(max-min+1);
 		if (init == null)
 			return (num);
 		while (num+init.stackSize > init.getMaxStackSize())

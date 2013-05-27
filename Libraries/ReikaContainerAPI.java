@@ -1,7 +1,7 @@
 package Reika.DragonAPI.Libraries;
 
-public final class ReikaContainerAPI {
+import Reika.DragonAPI.DragonAPICore;
 
-	private ReikaContainerAPI() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaContainerAPI extends DragonAPICore {
 
 }

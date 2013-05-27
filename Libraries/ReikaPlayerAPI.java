@@ -4,10 +4,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
+import Reika.DragonAPI.DragonAPICore;
 
-public final class ReikaPlayerAPI {
-
-	private ReikaPlayerAPI() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaPlayerAPI extends DragonAPICore {
 
 	public static void transferInventoryToChest(EntityPlayer ep, ItemStack[] inv) {
 		int num = ReikaInventoryHelper.getTotalUniqueStacks(ep.inventory.mainInventory);

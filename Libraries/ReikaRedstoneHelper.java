@@ -1,8 +1,9 @@
 package Reika.DragonAPI.Libraries;
 
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
 
-public class ReikaRedstoneHelper {
+public final class ReikaRedstoneHelper extends DragonAPICore {
 
 	/** Returns true on the postive redstone edge. Args: World, x, y, z, last power state*/
 	public static boolean isPositiveEdge(World world, int x, int y, int z, boolean lastPower) {

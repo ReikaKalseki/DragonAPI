@@ -14,10 +14,9 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import Reika.DragonAPI.DragonAPICore;
 
-public final class ReikaWorldHelper {
-
-	private ReikaWorldHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaWorldHelper extends DragonAPICore {
 
 /** A catalogue of all flammable blocks by ID. */
 private static boolean[] flammableArray = new boolean[4096];
@@ -31,7 +30,7 @@ private static boolean[] nonSolidArray = new boolean[4096];
 /** A catalogue of all block colors by ID. */
 private static int[] blockColorArray = new int[4096];
 
-private static Random par5Random = new Random();
+private static Random rand = new Random();
 
 public static boolean softBlocks(int id) {
 	setSoft();
@@ -101,10 +100,6 @@ private static void setNonSolid() {
 	nonSolidArray[Block.flowerPot.blockID] = true;
 	nonSolidArray[Block.woodenButton.blockID] = true;
 	nonSolidArray[Block.skull.blockID] = true;
-	//nonSolidArray[mod_RotaryCraft.canola.blockID] = true;
-	//nonSolidArray[mod_RotaryCraft.lightblock.blockID] = true;
-	//nonSolidArray[mod_RotaryCraft.lightbridge.blockID] = true;
-	//nonSolidArray[mod_RotaryCraft.sprinkler.blockID] = true;
 
 }
 
@@ -801,18 +796,18 @@ public static double findSolidSurface(World world, double x, double y, double z)
 	    	else
 	    		world.createExplosion(null, x, y, z, force, smoke);
     	}
-		int numsparks = par5Random.nextInt(20)+20;
+		int numsparks = rand.nextInt(20)+20;
 		numsparks *= sparkmultiplier;
 		if (sparks)
 		for (int i = 0; i < numsparks; i++)
-			world.spawnParticle("lava", x+par5Random.nextFloat(), y+1, z+par5Random.nextFloat(), 0, 0, 0);
+			world.spawnParticle("lava", x+rand.nextFloat(), y+1, z+rand.nextFloat(), 0, 0, 0);
 		ItemStack scrap = new ItemStack(id, 1, meta);
-		int numdrops = par5Random.nextInt(maxdrops)+mindrops;
+		int numdrops = rand.nextInt(maxdrops)+mindrops;
 		if (!world.isRemote || id <= 0) {
 			for (int i = 0; i < numdrops; i++) {
-				EntityItem ent = new EntityItem(world, x+par5Random.nextFloat(), y+0.5, z+par5Random.nextFloat(), scrap);
-				ent.setVelocity(-0.2+0.4*par5Random.nextFloat(), 0.5*par5Random.nextFloat(), -0.2+0.4*par5Random.nextFloat());
-				//world.spawnEntityInWorld(ent);
+				EntityItem ent = new EntityItem(world, x+rand.nextFloat(), y+0.5, z+rand.nextFloat(), scrap);
+				ent.setVelocity(-0.2+0.4*rand.nextFloat(), 0.5*rand.nextFloat(), -0.2+0.4*rand.nextFloat());
+				world.spawnEntityInWorld(ent);
 				ent.velocityChanged = true;
 			}
 		}
@@ -824,12 +819,12 @@ public static double findSolidSurface(World world, double x, double y, double z)
     	int max = xp/5+1;
 
     	while (xp > 0) {
-	    	int value = par5Random.nextInt(max)+1;
+	    	int value = rand.nextInt(max)+1;
 	    	while (value > xp)
-	    		value = par5Random.nextInt(max)+1;
+	    		value = rand.nextInt(max)+1;
 	    	xp -= value;
 	    	EntityXPOrb orb = new EntityXPOrb(world, x, y, z, value);
-	    	orb.setVelocity(-0.2+0.4*par5Random.nextFloat(), 0.3*par5Random.nextFloat(), -0.2+0.4*par5Random.nextFloat());
+	    	orb.setVelocity(-0.2+0.4*rand.nextFloat(), 0.3*rand.nextFloat(), -0.2+0.4*rand.nextFloat());
 	    	if (world.isRemote)
 	    		return;
 	    	orb.velocityChanged = true;
@@ -1409,7 +1404,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
 			is = inventory[i];
 			inventory[i] = null;
 			if (is != null && !world.isRemote) {
-				ei = new EntityItem(world, x+par5Random.nextFloat(), y+par5Random.nextFloat(), z+par5Random.nextFloat(), is);
+				ei = new EntityItem(world, x+rand.nextFloat(), y+rand.nextFloat(), z+rand.nextFloat(), is);
 				ReikaEntityHelper.addRandomDirVelocity(ei, 0.2);
 				world.spawnEntityInWorld(ei);
 			}
@@ -1424,7 +1419,7 @@ public static double findSolidSurface(World world, double x, double y, double z)
 			ItemStack s = ii.getStackInSlot(i);
 			if (s != null) {
 				ii.setInventorySlotContents(i, null);
-				EntityItem ei = new EntityItem(world, x+par5Random.nextFloat(), y+par5Random.nextFloat(), z+par5Random.nextFloat(), s);
+				EntityItem ei = new EntityItem(world, x+rand.nextFloat(), y+rand.nextFloat(), z+rand.nextFloat(), s);
 				ReikaEntityHelper.addRandomDirVelocity(ei, 0.2);
 				ei.delayBeforeCanPickup = 10;
 				if (!world.isRemote)

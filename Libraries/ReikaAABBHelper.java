@@ -6,9 +6,9 @@ import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
-public final class ReikaAABBHelper {
+import Reika.DragonAPI.DragonAPICore;
 
-	private ReikaAABBHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaAABBHelper extends DragonAPICore {
 
 	/** Renders an AABB bounding box in the world. Very useful for debug purposes, or as a user-friendliness feature.
 	 * Args: World, AABB, Render par2,4,6, x,y,z of machine, root alpha value (-ve for solid color), RGB, solid outline yes/no */

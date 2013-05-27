@@ -22,7 +22,7 @@ public class CoreContainer extends Container {
         posY = tile.yCoord;
         posZ = tile.zCoord;
         ep = player;
-        this.detectAndSendChanges();
+        //this.detectAndSendChanges();
     }
 
     protected void addPlayerInventory(EntityPlayer player) {

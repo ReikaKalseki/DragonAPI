@@ -45,13 +45,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
 
-public final class ReikaEntityHelper {
-
-	private ReikaEntityHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaEntityHelper extends DragonAPICore {
 
 	private static int[] mobColorArray = new int[201]; //Highest Entity ID (endercrystal)+1
-	private static Random par5Random = new Random();
+	private static Random rand = new Random();
 
 	private static void setMobColors() {
 		mobColorArray[50] = ReikaGuiAPI.RGBtoHex(65, 183, 54);
@@ -393,9 +392,9 @@ public final class ReikaEntityHelper {
 
     /** Adds a small velocity in a random direction (akin to items' speeds when dropped) */
     public static void addRandomDirVelocity(Entity ent, double max) {/*
-    	ent.motionX = -max+2*max*par5Random.nextFloat();
-    	ent.motionZ = -max+2*max*par5Random.nextFloat();
-    	ent.motionY = 4*max*par5Random.nextFloat();*/
+    	ent.motionX = -max+2*max*rand.nextFloat();
+    	ent.motionZ = -max+2*max*rand.nextFloat();
+    	ent.motionY = 4*max*rand.nextFloat();*/
     }
 
 }

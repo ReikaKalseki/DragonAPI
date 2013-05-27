@@ -3,10 +3,9 @@ package Reika.DragonAPI.Libraries;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 
-public final class ReikaItemHelper {
-
-	private ReikaItemHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaItemHelper extends DragonAPICore {
 
 	public static final ItemStack inksac = new ItemStack(Item.dyePowder.itemID, 1, 0);
 	public static final ItemStack redDye = new ItemStack(Item.dyePowder.itemID, 1, 1);
@@ -129,5 +128,17 @@ public final class ReikaItemHelper {
 		if (id == Item.gunpowder.itemID)
 			return true;
 		return false;
+	}
+
+	public static ItemStack getSizedItemStack(ItemStack is, int num) {
+		return new ItemStack(is.itemID, num, is.getItemDamage());
+	}
+
+	public static boolean isMatch(ItemStack i1, ItemStack i2) {
+		if (i1 == null)
+			return i2 == null;
+		if (i2 == null)
+			return i1 == null;
+		return i1.itemID == i2.itemID && i1.getItemDamage() == i2.getItemDamage();
 	}
 }

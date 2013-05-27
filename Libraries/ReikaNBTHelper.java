@@ -3,10 +3,9 @@ package Reika.DragonAPI.Libraries;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import Reika.DragonAPI.DragonAPICore;
 
-public final class ReikaNBTHelper {
-
-	private ReikaNBTHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaNBTHelper extends DragonAPICore {
 
 	public static void writeInvToNBT(ItemStack[] inv, NBTTagCompound NBT) {
         NBTTagList nbttaglist = new NBTTagList();

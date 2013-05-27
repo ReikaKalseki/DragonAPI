@@ -1,14 +1,14 @@
 package Reika.DragonAPI.Libraries;
 
+import Reika.DragonAPI.DragonAPICore;
 
-public final class ReikaEngLibrary {
-	
-	private ReikaEngLibrary() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
-	
+
+public final class ReikaEngLibrary extends DragonAPICore {
+
 	public static final double e = Math.E;				// s/e
 	public static final double pi = Math.PI;		// s/e
 	public static final double G = 6.67*0.00000000001;	// Grav Constant
-	
+
 	/** Densities in kg/m^3 */
 	public static final double patm = 101300;			// Atmosphere Sealevel pressure
 	public static final double rhogold = 19300;			// Gold Density
@@ -18,7 +18,7 @@ public final class ReikaEngLibrary {
 	public static final double rhowood = 800;			// Wood density
 	public static final double rhorock = 3000;			// Rock density
 	public static final double rhodiamond = 3500;		// Diamond density
-	
+
 	/** Shear moduli */
 	public static final double Gsteel = 79.3*1000000000;
 	public static final double Giron = 82*1000000000;
@@ -30,7 +30,7 @@ public final class ReikaEngLibrary {
 	public static final double Gconcrete = 79.3*1000000000;
 	public static final double Gstone = 8*1000000000; //varies widely
 	public static final double Ggold = 27*1000000000;
-	
+
 	/** Elastic Moduli */
 	public static final double Esteel = 210*1000000000;
 	public static final double Eiron = 211*1000000000;
@@ -42,7 +42,7 @@ public final class ReikaEngLibrary {
 	public static final double Econcrete = 30*1000000000;
 	public static final double Estone = 50*1000000000; //varies widely
 	public static final double Egold = 79*1000000000;
-	
+
 	/** Ultimate Tensile Strengths */
 	public static final double Tsteel = 400*1000000;
 	public static final double Tiron = 200*1000000;
@@ -72,13 +72,13 @@ public final class ReikaEngLibrary {
 		double pow = -rate*time;
 		return (ivp*Math.pow(e, pow));
 	}
-	
+
 	/** Calculates the amount remaining after n halflives.
 	 * Args: Initial value,halflife, time */
 	public static double halflife(double init, double hlife, double time) {
 		return (init*Math.pow(2,time/hlife));
 	}
-	
+
 	/** Returns true if the material would fail due to torsional loading.
 	 * Assumes a circular shaft.
 	 * Args: Torque, radius of shaft, max shear stress */
@@ -87,7 +87,7 @@ public final class ReikaEngLibrary {
 		//ReikaGuiAPI.write((torque*radius)/(J));
 		return ((torque*radius)/(J) > taumax);
 	}
-	
+
 	/** Returns true if the material would fail due to centripetal tensile forces.
 	 * Assumes a circular disc.
 	 * Args: disc mass, rpm, radius, cross-sectional area, max tensile stress */
@@ -97,7 +97,7 @@ public final class ReikaEngLibrary {
 		double Ftens = omega*m*radius/ReikaMathLibrary.intpow(radius, 2);
 		return ((Ftens/A) > sigmamax);
 	}
-	
+
 	/** Returns true if the material would fail due to centripetal tensile forces. Assumes a solid circular shaft.
 	 * Args: Density, radius, omega, Ultimate Tensile Strength */
 	public static boolean mat_rotfailure(double rho, double radius, double omega, double sigmamax) {
@@ -105,7 +105,7 @@ public final class ReikaEngLibrary {
 		//ReikaGuiAPI.write(sigma);
 		return (sigma > sigmamax);
 	}
-	
+
 	/** Calculates the rotational kinetic energy of a circular mass. Args: density, thickness, omega, radius */
 	public static double rotenergy(double rho, double t, double omega, double radius) {
 		double V = pi*radius*radius*t;

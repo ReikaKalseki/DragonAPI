@@ -3,12 +3,11 @@ package Reika.DragonAPI.Libraries;
 import java.util.ArrayList;
 import java.util.List;
 
+import Reika.DragonAPI.DragonAPICore;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
-public final class ReikaJavaLibrary {
-
-	private ReikaJavaLibrary() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaJavaLibrary extends DragonAPICore {
 
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Object obj) {

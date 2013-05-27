@@ -3,11 +3,10 @@ package Reika.DragonAPI.Libraries;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
 
-public final class ReikaVectorHelper {
-	
-	private ReikaVectorHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
-	
+public final class ReikaVectorHelper extends DragonAPICore {
+
 	/** Returns a standard fake between two specified points, rather than from the origin.
 	 * Args: start x,y,z, end x,y,z */
 	public static Vec3 getVec2Pt(double x1, double y1, double z1, double x2, double y2, double z2) {
@@ -15,7 +14,7 @@ public final class ReikaVectorHelper {
 		Vec3 p2 = Vec3.fakePool.getVecFromPool(x2, y2, z2);
 		return p2.subtract(p1);
 	}
-	
+
 	/** Breaks a vector into a size-3 array of its components. Args: Vector */
 	public static double[] components(Vec3 vec) {
 		double[] xyz = new double[3];
@@ -24,7 +23,7 @@ public final class ReikaVectorHelper {
 		xyz[2] = vec.zCoord;
 		return xyz;
 	}
-	
+
 	public static double[] getPlayerLookCoords(EntityPlayer ep, double scale) {
 		Vec3 look = ep.getLookVec();
 		double dx = ep.posX;
@@ -36,7 +35,7 @@ public final class ReikaVectorHelper {
 		double[] xyz = {dx+look.xCoord, dy+look.yCoord, dz+look.zCoord};
 		return xyz;
 	}
-	
+
 	public static int[] getPlayerLookBlock(World world, EntityPlayer ep, double range, boolean passthru) {
 		int[] xyz = new int[3];
 		for (float i = 0; i <= range; i += 0.5) {
@@ -54,9 +53,9 @@ public final class ReikaVectorHelper {
 		}
 		return xyz;
 	}
-	
+
 	/** Extends two vectors to infinity and finds their intersection point. If they are
-	 * parallel (and thus never cross), it returns +infinity. If they are not parallel 
+	 * parallel (and thus never cross), it returns +infinity. If they are not parallel
 	 * but still never cross - one-axis parallel and displaced - it returns
 	 * -infinity. Args: Vec1, Vec2 */
 	public static double[] findIntersection(Vec3 v1, Vec3 v2) {
@@ -68,7 +67,7 @@ public final class ReikaVectorHelper {
 		//TODO This code is still being written
 		return xyz;
 	}
-	
+
 	/** Returns the slope of a vector as da/dl, where a is the specified axis.
 	 * Returns +infinity if invalid axis. Args: Vector, 0/1/2 for x/y/z*/
 	public static double getSlope(Vec3 vec, int axis) {
@@ -83,7 +82,7 @@ public final class ReikaVectorHelper {
 			return Double.POSITIVE_INFINITY;
 		}
 	}
-	
+
 	/** Returns true if two vectors are parallel. Args: Vec1, Vec2 */
 	public static boolean areParallel(Vec3 vec1, Vec3 vec2) {
 		for (int i = 0; i < 3; i++)
@@ -91,23 +90,23 @@ public final class ReikaVectorHelper {
 				return false;
 		return true;
 	}
-	
+
 	/** Returns true if the two vectors are not parallel but will never intersect due to
 	 * Being parallel in one axis and displaced. */
 	public static boolean areNonParallelNonIntersecting(Vec3 vec1, Vec3 vec2) {
 		if (areParallel(vec1, vec2))
 			return false;
 		if (getSlope(vec1, 0) == getSlope(vec2, 0)) {
-			
+
 		}
 		//TODO This code is still being written
 		return false;
 	}
-	
+
 	public static double[] cartesianToSpherical(Vec3 vec) {
 		double[] xyz = new double[3];
 		//TODO This code is still being written
 		return xyz;
 	}
-	
+
 }

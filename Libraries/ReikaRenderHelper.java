@@ -1,14 +1,12 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.List;
-import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.src.ModLoader;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
@@ -16,19 +14,15 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ReikaModelledBreakFX;
 import Reika.DragonAPI.Interfaces.RenderFetcher;
 import Reika.DragonAPI.Interfaces.TextureFetcher;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public final class ReikaRenderHelper {
-
-	private static Random par5Random = new Random();
-
-	private ReikaRenderHelper() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+public final class ReikaRenderHelper extends DragonAPICore {
 
 	/** Converts an RGB array into a color multiplier. Args: RGB[], bit */
 	public static float RGBtoColorMultiplier(int[] RGB, int bit) {
@@ -185,17 +179,17 @@ public final class ReikaRenderHelper {
     	}
     	String file = basedir+name;
     	for (int i = 0; i < 48; i++) {
-    		int k = par5Random.nextInt(allowedRegions.size());
+    		int k = rand.nextInt(allowedRegions.size());
     		double[] p = allowedRegions.get(k);
-    		double px = p[0]+par5Random.nextDouble()*(p[2]-p[0]);
-    		double py = p[1]+par5Random.nextDouble()*(p[3]-p[1]);
+    		double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
+    		double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
     		double overx = px+ReikaModelledBreakFX.pw-p[2];
     		if (overx > 0)
     			px -= overx;
     		double overy = py+ReikaModelledBreakFX.pw-p[2];
     		if (overy > 0)
     			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
     	}
         return true;
 	}
@@ -219,20 +213,20 @@ public final class ReikaRenderHelper {
     				name = r.getImageFileName(te);
     		}
     	}
-    	int j = 1+par5Random.nextInt(2);
+    	int j = 1+rand.nextInt(2);
     	String file = basedir+name;
     	for (int i = 0; i < j; i++) {
-    		int k = par5Random.nextInt(allowedRegions.size());
+    		int k = rand.nextInt(allowedRegions.size());
     		double[] p = allowedRegions.get(k);
-    		double px = p[0]+par5Random.nextDouble()*(p[2]-p[0]);
-    		double py = p[1]+par5Random.nextDouble()*(p[3]-p[1]);
+    		double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
+    		double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
     		double overx = px+ReikaModelledBreakFX.pw-p[2];
     		if (overx > 0)
     			px -= overx;
     		double overy = py+ReikaModelledBreakFX.pw-p[2];
     		if (overy > 0)
     			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
     	}
         return true;
 	}
@@ -242,17 +236,17 @@ public final class ReikaRenderHelper {
 	 * See addModelledBlockParticles(basedir, world, x, y, z, b, eff, allowedRegions) for explanation of the regions. */
 	public static boolean addModelledBlockParticlesDirect(String texture, World world, int x, int y, int z, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
     	for (int i = 0; i < 48; i++) {
-    		int k = par5Random.nextInt(allowedRegions.size());
+    		int k = rand.nextInt(allowedRegions.size());
     		double[] p = allowedRegions.get(k);
-    		double px = p[0]+par5Random.nextDouble()*(p[2]-p[0]);
-    		double py = p[1]+par5Random.nextDouble()*(p[3]-p[1]);
+    		double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
+    		double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
     		double overx = px+ReikaModelledBreakFX.pw-p[2];
     		if (overx > 0)
     			px -= overx;
     		double overy = py+ReikaModelledBreakFX.pw-p[2];
     		if (overy > 0)
     			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
     	}
         return true;
 	}
@@ -266,19 +260,19 @@ public final class ReikaRenderHelper {
 		int x = mov.blockX;
 		int y = mov.blockY;
 		int z = mov.blockZ;
-    	int j = 1+par5Random.nextInt(2);
+    	int j = 1+rand.nextInt(2);
     	for (int i = 0; i < j; i++) {
-    		int k = par5Random.nextInt(allowedRegions.size());
+    		int k = rand.nextInt(allowedRegions.size());
     		double[] p = allowedRegions.get(k);
-    		double px = p[0]+par5Random.nextDouble()*(p[2]-p[0]);
-    		double py = p[1]+par5Random.nextDouble()*(p[3]-p[1]);
+    		double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
+    		double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
     		double overx = px+ReikaModelledBreakFX.pw-p[2];
     		if (overx > 0)
     			px -= overx;
     		double overy = py+ReikaModelledBreakFX.pw-p[2];
     		if (overy > 0)
     			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+par5Random.nextDouble(), y+par5Random.nextDouble(), z+par5Random.nextDouble(), -1+par5Random.nextDouble()*2, 2, -1+par5Random.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
+    		eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
     	}
         return true;
 	}

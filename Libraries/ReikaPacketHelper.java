@@ -9,11 +9,12 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
+import Reika.DragonAPI.DragonAPICore;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 
-public class ReikaPacketHelper {
+public final class ReikaPacketHelper extends DragonAPICore {
 
 	public static void sendPacket(String ch, int id, TileEntity te, EntityPlayer player, List<Integer> data) {
 		int x = te.xCoord;
@@ -43,7 +44,7 @@ public class ReikaPacketHelper {
         }
         catch (Exception ex) {
             ex.printStackTrace();
-            throw new RuntimeException("Machine "+name+" threw a packet exception! Null data: "+(data == null)+"; Npars: "+npars);
+            throw new RuntimeException("TileEntity "+name+" threw a packet exception! Null data: "+(data == null)+"; Npars: "+npars);
         }
 
         Packet250CustomPayload packet = new Packet250CustomPayload();
@@ -94,7 +95,7 @@ public class ReikaPacketHelper {
         }
         catch (Exception ex) {
             ex.printStackTrace();
-            throw new RuntimeException("Machine "+name+" threw a long packet exception! Null data: "+(data == null)+"; Npars: "+npars);
+            throw new RuntimeException("TileEntity "+name+" threw a long packet exception! Null data: "+(data == null)+"; Npars: "+npars);
         }
 
         Packet250CustomPayload packet = new Packet250CustomPayload();
