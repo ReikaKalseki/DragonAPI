@@ -55,4 +55,8 @@ public class ReikaEnchantmentHelper {
 		return (enchants.containsKey(e.effectId));
 	}
 
+	public static float getEfficiencyMultiplier(int level) {
+		return (float)Math.pow(1.3, level);
+	}
+
 }

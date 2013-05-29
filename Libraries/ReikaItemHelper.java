@@ -10,8 +10,11 @@
 package Reika.DragonAPI.Libraries;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaItemHelper extends DragonAPICore {
@@ -149,5 +152,15 @@ public final class ReikaItemHelper extends DragonAPICore {
 		if (i2 == null)
 			return i1 == null;
 		return i1.itemID == i2.itemID && i1.getItemDamage() == i2.getItemDamage();
+	}
+
+	public static void dropItem(World world, double x, double y, double z, ItemStack is) {
+		EntityItem ei = new EntityItem(world, x, y, z, is);
+		ei.delayBeforeCanPickup = 10;
+		ei.motionX = -0.1+0.2*rand.nextDouble();
+		ei.motionZ = -0.1+0.2*rand.nextDouble();
+		ei.motionY = 0.2*rand.nextDouble();
+		if (!world.isRemote)
+			world.spawnEntityInWorld(ei);
 	}
 }
