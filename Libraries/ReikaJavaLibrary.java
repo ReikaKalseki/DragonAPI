@@ -12,9 +12,10 @@ package Reika.DragonAPI.Libraries;
 import java.util.ArrayList;
 import java.util.List;
 
-import Reika.DragonAPI.DragonAPICore;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+
+import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaJavaLibrary extends DragonAPICore {
 
@@ -29,6 +30,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			System.out.println(String.valueOf(obj)+" of "+String.valueOf(cl));
 		else
 			System.out.println(String.valueOf(obj));
+		//Thread.dumpStack();
 	}
 
 	public static void spamConsole(Object obj) {
@@ -41,13 +43,13 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		switch (s) {
 		case 0:
 			side = Side.SERVER;
-		break;
+			break;
 		case 1:
 			side = Side.CLIENT;
-		break;
+			break;
 		case 2:
 			side = Side.BUKKIT;
-		break;
+			break;
 		default:
 			side = FMLCommonHandler.instance().getEffectiveSide();
 		}
@@ -73,13 +75,13 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static boolean isValidInteger(String s) {
 		if (s.contentEquals("-"))
 			return true;
-	    try {
-	        Integer.parseInt(s);
-	    }
-	    catch (NumberFormatException e) {
-	        return false;
-	    }
-	    return true;
+		try {
+			Integer.parseInt(s);
+		}
+		catch (NumberFormatException e) {
+			return false;
+		}
+		return true;
 	}
 
 	public static String stripSpaces(String s) {

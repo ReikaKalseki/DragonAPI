@@ -176,4 +176,12 @@ public class BlockArray {
 		blocks = newList;
 	}
 
+	public void reverseBlockOrder() {
+		List<int[]> newList = new ArrayList<int[]>();
+		for (int i = 0; i < blocks.size(); i++) {
+			newList.add(blocks.get(blocks.size()-1-i));
+		}
+		blocks = newList;
+	}
+
 }
