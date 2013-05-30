@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
@@ -682,5 +683,12 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 		}
 		return -1;
+	}
+	
+	public static int[] getWholeInventoryForISided(ISidedInventory ii) {
+		int[] n = new int[ii.getSizeInventory()];
+		for (int i = 0; i < n.length; i++)
+			n[i] = i;
+		return n;
 	}
 }
