@@ -431,4 +431,9 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY, e.posZ, is);
 	}
 
+	public static void spawnParticlesAround(String part, World world, Entity e, int num) {
+		for (int k = 0; k < num; k++)
+			world.spawnParticle(part, e.posX-0.6+1.2*rand.nextDouble(), e.posY+e.height/2-0.6+1.2*rand.nextDouble(), e.posZ-0.6+1.2*rand.nextDouble(), -0.2+0.4*rand.nextDouble(), 0.4*rand.nextDouble(), -0.2+0.4*rand.nextDouble());
+	}
+
 }
