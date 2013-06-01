@@ -445,6 +445,51 @@ public final class ReikaWorldHelper extends DragonAPICore {
 					legacySetBlockWithNotify(world, x, y, z+i, 0);
 			}
 		}
+		if (temperature > 900)	{ // Melting sand, ground
+			for (int i = 0; i < 3; i++) {
+				if (world.getBlockMaterial(x-i, y, z) == Material.sand)
+					legacySetBlockWithNotify(world, x-i, y, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x+i, y, z) == Material.sand)
+					legacySetBlockWithNotify(world, x+i, y, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y-i, z) == Material.sand)
+					legacySetBlockWithNotify(world, x, y-i, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y+i, z) == Material.sand)
+					legacySetBlockWithNotify(world, x, y+i, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y, z-i) == Material.sand)
+					legacySetBlockWithNotify(world, x, y, z-i, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y, z+i) == Material.sand)
+					legacySetBlockWithNotify(world, x, y, z+i, Block.glass.blockID);
+
+				if (world.getBlockMaterial(x-i, y, z) == Material.ground)
+					legacySetBlockWithNotify(world, x-i, y, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x+i, y, z) == Material.ground)
+					legacySetBlockWithNotify(world, x+i, y, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y-i, z) == Material.ground)
+					legacySetBlockWithNotify(world, x, y-i, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y+i, z) == Material.ground)
+					legacySetBlockWithNotify(world, x, y+i, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y, z-i) == Material.ground)
+					legacySetBlockWithNotify(world, x, y, z-i, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y, z+i) == Material.ground)
+					legacySetBlockWithNotify(world, x, y, z+i, Block.glass.blockID);
+			}
+		}
+		if (temperature > 1700)	{ // Melting rock
+			for (int i = 0; i < 3; i++) {
+				if (world.getBlockMaterial(x-i, y, z) == Material.rock)
+					legacySetBlockWithNotify(world, x-i, y, z, Block.lavaMoving.blockID);
+				if (world.getBlockMaterial(x+i, y, z) == Material.rock)
+					legacySetBlockWithNotify(world, x+i, y, z, Block.lavaMoving.blockID);
+				if (world.getBlockMaterial(x, y-i, z) == Material.rock)
+					legacySetBlockWithNotify(world, x, y-i, z, Block.lavaMoving.blockID);
+				if (world.getBlockMaterial(x, y+i, z) == Material.rock)
+					legacySetBlockWithNotify(world, x, y+i, z, Block.lavaMoving.blockID);
+				if (world.getBlockMaterial(x, y, z-i) == Material.rock)
+					legacySetBlockWithNotify(world, x, y, z-i, Block.lavaMoving.blockID);
+				if (world.getBlockMaterial(x, y, z+i) == Material.rock)
+					legacySetBlockWithNotify(world, x, y, z+i, Block.lavaMoving.blockID);
+			}
+		}
 	}
 
 	/** Surrounds the block with fire. Args: World, x, y, z */
