@@ -4,13 +4,13 @@
  * Copyright 2013
  * 
  * All rights reserved.
- * Distribution of the software in any form is only allowed with
- * explicit, prior permission from the owner.
+ * 
+ * Distribution of the software in any form is only allowed
+ * with explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
 import java.util.List;
-import java.util.Random;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -54,13 +54,11 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 
 	private static int[] mobColorArray = new int[201]; //Highest Entity ID (endercrystal)+1
-	private static Random rand = new Random();
 
 	private static void setMobColors() {
 		mobColorArray[50] = ReikaGuiAPI.RGBtoHex(65, 183, 54);

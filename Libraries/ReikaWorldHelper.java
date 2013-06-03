@@ -4,8 +4,9 @@
  * Copyright 2013
  * 
  * All rights reserved.
- * Distribution of the software in any form is only allowed with
- * explicit, prior permission from the owner.
+ * 
+ * Distribution of the software in any form is only allowed
+ * with explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
@@ -679,8 +680,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return;
 		if (ReikaMathLibrary.py3d(x-x0, y-y0, z-z0) > r)
 			return;
-		int metad = world.getBlockMetadata(x, y, z);
-		Block.blocksList[id].dropBlockAsItem(world, x, y, z, id, metad);
+		int metad = capMetadata(world.getBlockMetadata(x, y, z), 4);
+		Block.blocksList[id].dropBlockAsItem(world, x, y, z, metad, 0);
 		legacySetBlockWithNotify(world, x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreakWithinSphere(world, x+1, y, z, id, meta, x0, y0, z0, r);

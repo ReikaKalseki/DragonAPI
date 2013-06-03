@@ -4,8 +4,9 @@
  * Copyright 2013
  * 
  * All rights reserved.
- * Distribution of the software in any form is only allowed with
- * explicit, prior permission from the owner.
+ * 
+ * Distribution of the software in any form is only allowed
+ * with explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
@@ -101,7 +102,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	 * Assumes a circular disc.
 	 * Args: disc mass, rpm, radius, cross-sectional area, max tensile stress */
 	public static boolean mat_rot_tensfailure(double m, int rpm, double radius, double A, double sigmamax) {
-	//	double I = m*(pi/4)*ReikaMathLibrary.intpow(radius, 4);
+		//	double I = m*(pi/4)*ReikaMathLibrary.intpow(radius, 4);
 		double omega = rpm*120*pi;
 		double Ftens = omega*m*radius/ReikaMathLibrary.intpow(radius, 2);
 		return ((Ftens/A) > sigmamax);
@@ -121,5 +122,9 @@ public final class ReikaEngLibrary extends DragonAPICore {
 		double mass = rho*V;
 		double I = mass*(pi/4)*ReikaMathLibrary.intpow(radius, 4);
 		return 0.5*I*ReikaMathLibrary.intpow(omega, 2);
+	}
+
+	public static double getHeatFromFriction(double Fnormal, double mu, double vSlip, double eta) {
+		return Fnormal*mu*vSlip*eta;
 	}
 }

@@ -4,8 +4,9 @@
  * Copyright 2013
  * 
  * All rights reserved.
- * Distribution of the software in any form is only allowed with
- * explicit, prior permission from the owner.
+ * 
+ * Distribution of the software in any form is only allowed
+ * with explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
@@ -16,7 +17,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-
 import Reika.DragonAPI.Libraries.ReikaMathLibrary;
 
 public class CoreContainer extends Container {
@@ -70,8 +70,8 @@ public class CoreContainer extends Container {
 		return this.isStandard8mReach(par1EntityPlayer);
 	}
 
-	public final boolean isStandard8mReach(EntityPlayer ep) {
-		double dist = ReikaMathLibrary.py3d(tile.xCoord+0.5-ep.posX, tile.yCoord+0.5-ep.posY, tile.zCoord+0.5-ep.posZ);
+	public final boolean isStandard8mReach(EntityPlayer player) {
+		double dist = ReikaMathLibrary.py3d(tile.xCoord+0.5-player.posX, tile.yCoord+0.5-player.posY, tile.zCoord+0.5-player.posZ);
 		return (dist <= 8);
 	}
 
