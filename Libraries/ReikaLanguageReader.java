@@ -10,10 +10,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.LanguageArray;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
-public class ReikaLanguageReader {
+public final class ReikaLanguageReader extends DragonAPICore {
 
 	public static boolean isValidLanguageFile(String name) {
 		return name.endsWith(LanguageArray.FILE_EXT);

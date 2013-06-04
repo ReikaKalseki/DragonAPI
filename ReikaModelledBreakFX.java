@@ -1,10 +1,10 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2013
- * 
+ *
  * All rights reserved.
- * 
+ *
  * Distribution of the software in any form is only allowed
  * with explicit, prior permission from the owner.
  ******************************************************************************/
@@ -78,7 +78,6 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
         float f12 = (float)(prevPosY + (posY - prevPosY) * par2 - interpPosY);
         float f13 = (float)(prevPosZ + (posZ - prevPosZ) * par2 - interpPosZ);
         float f14 = 1.0F;
-
         Minecraft.getMinecraft().renderEngine.bindTexture(tex);
     	//GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
     	Tessellator v5 = new Tessellator();

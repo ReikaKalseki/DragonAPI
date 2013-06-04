@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries;
 
 import java.awt.Color;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
@@ -28,7 +29,9 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	public static ReikaGuiAPI instance = new ReikaGuiAPI();
 
-	private ReikaGuiAPI() {}
+	private ReikaGuiAPI() {
+		mc = Minecraft.getMinecraft();
+	}
 
 	/**
 	 * Renders the specified text to the screen, center-aligned.
