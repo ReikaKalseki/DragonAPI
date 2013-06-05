@@ -1,10 +1,10 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2013
- * 
+ *
  * All rights reserved.
- * 
+ *
  * Distribution of the software in any form is only allowed
  * with explicit, prior permission from the owner.
  ******************************************************************************/
@@ -87,5 +87,10 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 
 	public static String stripSpaces(String s) {
 		return s.replaceAll("\\s","");
+	}
+
+	public static String subtractFrom(String src, String p) {
+		int len = p.length();
+		return src.substring(len);
 	}
 }
