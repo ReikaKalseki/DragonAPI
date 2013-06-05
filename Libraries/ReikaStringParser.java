@@ -4,7 +4,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-public class ReikaStringParser {
+import Reika.DragonAPI.DragonAPICore;
+
+public class ReikaStringParser extends DragonAPICore {
 
 	private static final String NUMBER_VARIABLE_CODE = "PARSE_NUMBER_VARIABLE";
 	private static final String NUMBER_METHOD_CODE = "PARSE_NUMBER_METHOD";
@@ -157,7 +159,4 @@ public class ReikaStringParser {
 			return true;
 		return false;
 	}
-
-
-
 }
