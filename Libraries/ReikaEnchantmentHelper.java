@@ -38,6 +38,20 @@ public class ReikaEnchantmentHelper {
 		return ench;
 	}
 
+	public static ItemStack applyEnchantments(ItemStack is, HashMap<Enchantment,Integer> en) {
+		ItemStack s = is.copy();
+		for (int i = 0; i < Enchantment.enchantmentsList.length; i++) {
+			if (Enchantment.enchantmentsList[i] != null) {
+				if (en.containsKey(Enchantment.enchantmentsList[i])) {
+					int level = en.get(Enchantment.enchantmentsList[i]);
+					if (level > 0)
+						s.addEnchantment(Enchantment.enchantmentsList[i], level);
+				}
+			}
+		}
+		return s;
+	}
+
 	public static int getEnchantmentLevel(Enchantment e, ItemStack is) {
 		Map enchants = EnchantmentHelper.getEnchantments(is);
 		if (enchants == null)
