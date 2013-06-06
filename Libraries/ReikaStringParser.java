@@ -78,8 +78,16 @@ public class ReikaStringParser extends DragonAPICore {
 		}
 	}
 
-	private static String parseStringFormat(String sg) {
-		return null;
+	public static String parseStringFormat(String sg) {
+		String[] parts = sg.split(",");
+		String str;
+		str = parts[0].replaceAll("\\s","");
+		Object[] args = new Object[parts.length-1];
+		for (int i = 1; i < parts.length; i++) {
+			parts[i].replaceAll("\\s","");
+			args[i-1] = parseReference(parts[i]);
+		}
+		return String.format(str, args);
 	}
 
 	private static String parseNumberMethod(String sg) {
