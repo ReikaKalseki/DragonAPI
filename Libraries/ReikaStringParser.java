@@ -14,19 +14,21 @@ public class ReikaStringParser extends DragonAPICore {
 	private static final String ENUM_FUNCTION_CODE = "PARSE_ENUM";
 
 	public static String getStringWithEmbeddedReferences(String sg) {
-		String[] parts = sg.split("+");
+		String[] parts = sg.split("\\+");
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < parts.length; i++) {
 			if (isReference(parts[i])) {
 				sb.append(parseReference(parts[i]));
 			}
+			else
+				sb.append(parts[i]);
 		}
-		return sb.toString();
+		return sb.toString().replaceAll("\\\\n", "\n").replaceAll("\\\\t", "\t");
 	}
 
 	private static String parseReference(String sg) {
 		if (sg.startsWith(NUMBER_VARIABLE_CODE))
-			return parseNumberVariable(sg);
+			return parseStaticNumberVariable(sg);
 		if (sg.startsWith(NUMBER_METHOD_CODE))
 			return parseNumberMethod(sg);
 		if (sg.startsWith(STRING_FORMAT_CODE))
@@ -37,7 +39,7 @@ public class ReikaStringParser extends DragonAPICore {
 	}
 
 	private static String parseEnum(String sg) {
-		String[] parts = sg.split(".");
+		String[] parts = sg.split("\\$");
 		if (parts.length != 3)
 			throw new RuntimeException("This method does not support multi-layer class calls! "+sg);
 		String enumClassName = ReikaJavaLibrary.subtractFrom(parts[0], ENUM_FUNCTION_CODE+"(");
@@ -81,7 +83,7 @@ public class ReikaStringParser extends DragonAPICore {
 	}
 
 	private static String parseNumberMethod(String sg) {
-		String[] parts = sg.split(".");
+		String[] parts = sg.split("\\$");
 		if (parts.length > 2)
 			throw new RuntimeException("This method does not support multi-layer class calls! "+sg);
 		parts[1] = parts[1].substring(0, parts[1].length()-1);
@@ -121,17 +123,33 @@ public class ReikaStringParser extends DragonAPICore {
 		return obj;
 	}
 
-	private static String parseNumberVariable(String sg) {
-		String[] parts = sg.split(".");
+	private static String parseStaticNumberVariable(String sg) {
+		String[] parts = sg.split("\\$");
 		if (parts.length > 2)
 			throw new RuntimeException("This method does not support multi-layer class calls! "+sg);
 		parts[1] = parts[1].substring(0, parts[1].length()-1);
 		String cl = ReikaJavaLibrary.subtractFrom(parts[0], NUMBER_VARIABLE_CODE+"(");
-		String obj;
+		String obj = "NOT FOUND";
 		try {
 			Class c = Class.forName(cl);
 			Field f = c.getField(parts[1]);
-			obj = f.toString();
+			Class type = f.getType();
+			if (type == int.class) {
+				int val = f.getInt(c);
+				obj = String.valueOf(val);
+			}
+			if (type == float.class) {
+				float val = f.getFloat(c);
+				obj = String.valueOf(val);
+			}
+			if (type == double.class) {
+				double val = f.getDouble(c);
+				obj = String.valueOf(val);
+			}
+			if (type == long.class) {
+				long val = f.getLong(c);
+				obj = String.valueOf(val);
+			}
 		}
 		catch (ClassNotFoundException e) {
 			e.printStackTrace();
@@ -144,6 +162,14 @@ public class ReikaStringParser extends DragonAPICore {
 		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Class "+cl+"'s field "+parts[1]+" threw security exception!");
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Class "+cl+"'s field "+parts[1]+" threw illegal argument exception!");
+		}
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Class "+cl+"'s field "+parts[1]+" threw illegal access exception!");
 		}
 		return obj;
 	}

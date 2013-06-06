@@ -13,7 +13,7 @@ public class ReikaFileReader extends DragonAPICore {
 		try {
 			LineNumberReader lnr = new LineNumberReader(new FileReader(f));
 			lnr.skip(Long.MAX_VALUE);
-			len = lnr.getLineNumber()+1;
+			len = lnr.getLineNumber()+1+1;
 			lnr.close();
 		}
 		catch (Exception e) {
