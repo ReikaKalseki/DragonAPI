@@ -29,14 +29,12 @@ public final class ReikaSpriteSheets {
 			return;
 		int row = index/16;
 		int col = index-row*16;
-		//ModLoader.getMinecraftInstance().entityRenderer.disableLightmap(1);
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
 		if (type == type.INVENTORY)
 			GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glPushMatrix();
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		//GL11.glTranslatef((float)1, (float)1 + 2.0F, (float)1 + 1.0F);
 		GL11.glScalef(1.0F, -1.0F, -1.0F);
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		GL11.glPopMatrix();
@@ -56,7 +54,6 @@ public final class ReikaSpriteSheets {
 			v5.draw();
 		}
 		if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
-			//Args: x-hi, z-lo, x-lo, z-hi, sheet width, sheet height, thickness
 			if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON) {
 				GL11.glTranslatef(0, 1.25F, 0.3125F);
 				GL11.glRotatef(60, 0, 1, 0);
@@ -68,18 +65,6 @@ public final class ReikaSpriteSheets {
 				GL11.glTranslatef(0.5F, 0, 0.25F);
 				GL11.glRotatef(-10, 0, 1, 0);
 				GL11.glTranslatef(-0.125F, -0.125F, 0F);
-
-				/*
-				 * 
-				GL11.glRotatef(90, 1, 0, 1);
-				GL11.glRotatef(90, 0, 1, 0);
-				GL11.glRotatef(-90, 0, 0, 1);
-				GL11.glTranslated(-0.75, 0, 0);
-				GL11.glTranslated(0, -1, 0);
-				GL11.glTranslated(0, 0, 1);
-				GL11.glScaled(1.5, 1.5, 1.5);
-				 * 
-				 */
 			}
 			else {
 				GL11.glTranslatef(-0.5F, 0, 0);
@@ -88,7 +73,6 @@ public final class ReikaSpriteSheets {
 			ItemRenderer.renderItemIn2D(v5, 0.0625F+0.0625F*col, 0.0625F*row, 0.0625F*col, 0.0625F+0.0625F*row, 256, 256, thick);
 		}
 		GL11.glEnable(GL11.GL_LIGHTING);
-		//ModLoader.getMinecraftInstance().entityRenderer.enableLightmap(1);
 	}
 
 }

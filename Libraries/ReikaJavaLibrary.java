@@ -41,17 +41,17 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static void pConsoleSideOnly(Object obj, int s) {
 		Side side;
 		switch (s) {
-		case 0:
-			side = Side.SERVER;
-			break;
-		case 1:
-			side = Side.CLIENT;
-			break;
-		case 2:
-			side = Side.BUKKIT;
-			break;
-		default:
-			side = FMLCommonHandler.instance().getEffectiveSide();
+			case 0:
+				side = Side.SERVER;
+				break;
+			case 1:
+				side = Side.CLIENT;
+				break;
+			case 2:
+				side = Side.BUKKIT;
+				break;
+			default:
+				side = FMLCommonHandler.instance().getEffectiveSide();
 		}
 		if (FMLCommonHandler.instance().getEffectiveSide() == side)
 			pConsole(obj);
@@ -91,5 +91,12 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static String subtractFrom(String src, String p) {
 		int len = p.length();
 		return src.substring(len);
+	}
+
+	public static void printLine(int length) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < length; i++)
+			sb.append("-");
+		pConsole(sb.toString());
 	}
 }

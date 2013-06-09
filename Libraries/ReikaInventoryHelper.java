@@ -16,6 +16,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaInventoryHelper extends DragonAPICore {
@@ -559,8 +560,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	public static boolean hasItemStack(ItemStack is, IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			if (ii.getStackInSlot(i) != null)
-			if (ii.getStackInSlot(i).itemID == is.itemID && ii.getStackInSlot(i).getItemDamage() == is.getItemDamage())
-				return true;
+				if (ii.getStackInSlot(i).itemID == is.itemID && ii.getStackInSlot(i).getItemDamage() == is.getItemDamage())
+					return true;
 		}
 		return false;
 	}
@@ -586,8 +587,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	public static boolean hasItem(int id, IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			if (ii.getStackInSlot(i) != null)
-			if (ii.getStackInSlot(i).itemID == id)
-				return true;
+				if (ii.getStackInSlot(i).itemID == id)
+					return true;
 		}
 		return false;
 	}
@@ -645,7 +646,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 		}
 	}
-	
+
 	public static boolean hasNEmptyStacks(IInventory ii, int n) {
 		int e = 0;
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
@@ -654,7 +655,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 		return e == n;
 	}
-	
+
 	/** Returns the location (array index) of an itemstack in the specified Iinventory.
 	 * Returns -1 if not present. Args: Itemstack to check, IInventory, Match size T/F */
 	public static int locateInInventory(ItemStack is, IInventory ii, boolean matchsize) {
@@ -674,7 +675,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 		return -1;
 	}
-	
+
 	public static int locateIDInInventory(int id, IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			if (ii.getStackInSlot(i) != null) {
@@ -684,11 +685,39 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 		return -1;
 	}
-	
+
 	public static int[] getWholeInventoryForISided(ISidedInventory ii) {
 		int[] n = new int[ii.getSizeInventory()];
 		for (int i = 0; i < n.length; i++)
 			n[i] = i;
 		return n;
+	}
+
+	/** Fill-in so one does not need to constantly rewrite the IInventory method */
+	public static ItemStack getStackInSlotOnClosing(IInventory ii, int slot) {
+		if (ii.getStackInSlot(slot) != null){
+			ItemStack itemstack = ii.getStackInSlot(slot);
+			ii.setInventorySlotContents(slot, null);
+			return itemstack;
+		}
+		else
+			return null;
+	}
+
+	/** Fill-in so one does not need to constantly rewrite the IInventory method */
+	public static ItemStack decrStackSize(IInventory ii, int slot, int decr) {
+		if (ii.getStackInSlot(slot) != null) {
+			if (ii.getStackInSlot(slot).stackSize <= decr) {
+				ItemStack itemstack = ii.getStackInSlot(slot);
+				ii.setInventorySlotContents(slot, null);
+				return itemstack;
+			}
+			ItemStack itemstack1 = ii.getStackInSlot(slot).splitStack(decr);
+			if (ii.getStackInSlot(slot).stackSize == 0)
+				ii.setInventorySlotContents(slot, null);
+			return itemstack1;
+		}
+		else
+			return null;
 	}
 }
