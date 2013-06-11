@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaPhysicsHelper extends DragonAPICore {
@@ -56,7 +59,28 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 	 * projectile motion from point A to point B. Args: start x,y,z end x,y,z, double g */
 	public static double[] targetPosn(double x, double y, double z, double x2, double y2, double z2, double ag) {
 		double[] v = new double[3];
-		//TODO This is still being written, as it depends on a reliable value for g
+		double[] target = {x2,y2,z2};
+		double velocity;
+		int theta;
+		int phi;
+		double dx = target[0]-x-0.5;
+		double dy = target[1]-y-1;
+		double dz = target[2]-z-0.5;
+		double dl = ReikaMathLibrary.py3d(dx, 0, dz); //Horiz distance
+		double g = 8.4695*ReikaMathLibrary.doubpow(dl, 0.2701);
+		if (dy > 0)
+			g *= (0.8951*ReikaMathLibrary.doubpow(dy, 0.0601));
+		velocity = 10;
+		theta = 0;
+		phi = (int)Math.toDegrees(Math.atan2(dz, dx));
+		while (theta <= 0) {
+			velocity++;
+			double s = ReikaMathLibrary.intpow(velocity, 4)-g*(g*dl*dl+2*dy*velocity*velocity);
+			double a = velocity*velocity+Math.sqrt(s);
+			theta = (int)Math.toDegrees(Math.atan(a/(g*dl)));
+			phi = (int)Math.toDegrees(Math.atan2(dz, dx));
+		}
+		v = polarToCartesian(velocity, theta, phi);
 		return v;
 	}
 
@@ -71,5 +95,55 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 	public static float getExplosionFromEnergy(double energy) {
 		double ratio = energy/TNTenergy;
 		return (float)(4*ratio);
+	}
+
+	public static double getBlockDensity(Block b) {
+		if (b.blockID == 0)
+			return 1;
+		if (b.blockID == Block.blockGold.blockID)
+			return ReikaEngLibrary.rhogold;
+		if (b.blockID == Block.blockIron.blockID)
+			return ReikaEngLibrary.rhoiron;
+		if (b.blockID == Block.blockDiamond.blockID)
+			return ReikaEngLibrary.rhodiamond;
+		if (b.blockID == Block.blockEmerald.blockID)
+			return 2740;
+		if (b.blockID == Block.blockLapis.blockID)
+			return 2800;
+		if (b.blockID == Block.gravel.blockID)
+			return 1680;
+		if (b.blockMaterial == Material.rock)
+			return ReikaEngLibrary.rhorock;
+		if (b.blockMaterial == Material.glass)
+			return ReikaEngLibrary.rhorock;
+		if (b.blockMaterial == Material.grass)
+			return 1250;
+		if (b.blockMaterial == Material.ground)
+			return 1220;
+		if (b.blockMaterial == Material.clay)
+			return 1650;
+		if (b.blockMaterial == Material.sand)
+			return 1555;
+		if (b.blockMaterial == Material.wood)
+			return ReikaEngLibrary.rhowood;
+		if (b.blockMaterial == Material.leaves)
+			return 100;
+		if (b.blockMaterial == Material.sponge)
+			return 280;
+		if (b.blockMaterial == Material.plants)
+			return 100;
+		if (b.blockMaterial == Material.coral)
+			return 100;
+		if (b.blockMaterial == Material.cloth)
+			return 1314;
+		if (b.blockMaterial == Material.iron)
+			return ReikaEngLibrary.rhoiron;
+		if (b.blockMaterial == Material.water)
+			return ReikaEngLibrary.rhowater;
+		if (b.blockMaterial == Material.lava)
+			return ReikaEngLibrary.rholava;
+		if (b.blockMaterial == Material.ice)
+			return 917;
+		return 2200;
 	}
 }

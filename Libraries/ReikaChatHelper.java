@@ -58,7 +58,7 @@ public final class ReikaChatHelper extends DragonAPICore {
 	 * Args: World, x, y, z */
 	public static void writeBlockAtCoords(World world, int x, int y, int z) {
 		if (FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT)
-			return;
+			;//return;
 		if (Minecraft.getMinecraft().thePlayer == null || world == null)
 			return;
 		String msg;

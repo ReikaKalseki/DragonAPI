@@ -163,4 +163,16 @@ public final class ReikaItemHelper extends DragonAPICore {
 		if (!world.isRemote)
 			world.spawnEntityInWorld(ei);
 	}
+
+	public static boolean isBlock(ItemStack is) {
+		if (is.itemID < 256)
+			return true;
+		try {
+			//ReikaJavaLibrary.pConsole(Block.blocksList[is.itemID].getLocalizedName());
+			return Block.blocksList[is.itemID] != null && !Block.blocksList[is.itemID].getLocalizedName().contains("tile.ForgeFiller.name");
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
 }
