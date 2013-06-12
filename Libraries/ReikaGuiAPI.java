@@ -363,7 +363,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		if (out != -1)
 			this.drawTexturedModalRect(x2+j, y2+k, colsout*16, rowsout*16, 16, 16);
 		if (amount > 1)
-			this.drawString(f, String.format("%3d", amount), x2+j+6, y2+k+16, 0xffffff);
+			this.drawString(f, String.format("%3d", amount), x2+j+2, y2+k+9, 0xffffff);
 	}
 
 	/** Draw an extractor recipe in the GUI. Args: x in, y in; icon indexes of top row;
