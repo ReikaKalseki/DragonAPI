@@ -15,10 +15,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-
-import Reika.DragonAPI.DragonAPICore;
 public final class ReikaChatHelper extends DragonAPICore {
 
 	public static void clearChat() {
@@ -58,7 +57,7 @@ public final class ReikaChatHelper extends DragonAPICore {
 	 * Args: World, x, y, z */
 	public static void writeBlockAtCoords(World world, int x, int y, int z) {
 		if (FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT)
-			;//return;
+			return;
 		if (Minecraft.getMinecraft().thePlayer == null || world == null)
 			return;
 		String msg;

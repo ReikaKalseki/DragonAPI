@@ -14,6 +14,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import Reika.DragonAPI.DragonAPICore;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaPlayerAPI extends DragonAPICore {
 
@@ -37,6 +39,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static MovingObjectPosition getLookedAtBlock(int range) {
 		return Minecraft.getMinecraft().thePlayer.rayTrace(range, 1);
 	}

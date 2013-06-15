@@ -10,12 +10,13 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
+import java.util.Map.Entry;
 
 import Reika.DragonAPI.DragonAPICore;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaJavaLibrary extends DragonAPICore {
 
@@ -41,17 +42,17 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static void pConsoleSideOnly(Object obj, int s) {
 		Side side;
 		switch (s) {
-			case 0:
-				side = Side.SERVER;
-				break;
-			case 1:
-				side = Side.CLIENT;
-				break;
-			case 2:
-				side = Side.BUKKIT;
-				break;
-			default:
-				side = FMLCommonHandler.instance().getEffectiveSide();
+		case 0:
+			side = Side.SERVER;
+			break;
+		case 1:
+			side = Side.CLIENT;
+			break;
+		case 2:
+			side = Side.BUKKIT;
+			break;
+		default:
+			side = FMLCommonHandler.instance().getEffectiveSide();
 		}
 		if (FMLCommonHandler.instance().getEffectiveSide() == side)
 			pConsole(obj);
@@ -98,5 +99,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		for (int i = 0; i < length; i++)
 			sb.append("-");
 		pConsole(sb.toString());
+	}
+
+	public static <T, E> T getHashMapKeyByValue(HashMap<T,E> map, E value) {
+		for (Entry<T, E> entry : map.entrySet()) {
+			if (value.equals(entry.getValue())) {
+				return entry.getKey();
+			}
+		}
+		return null;
 	}
 }

@@ -45,6 +45,25 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		return xyz;
 	}
 
+	public static int[] getPlayerLookBlockCoords(EntityPlayer ep, double scale) {
+		Vec3 look = ep.getLookVec();
+		double dx = ep.posX;
+		double dy = ep.posY+ep.getEyeHeight();
+		double dz = ep.posZ;
+		look.xCoord *= scale;
+		look.yCoord *= scale;
+		look.zCoord *= scale;
+		double[] xyz = {dx+look.xCoord, dy+look.yCoord, dz+look.zCoord};
+		int x = (int)xyz[0];
+		int y = (int)xyz[1];
+		int z = (int)xyz[2];
+		if (x < 0)
+			x--;
+		if (z < 0)
+			z--;
+		return new int[]{x, y, z};
+	}
+
 	public static int[] getPlayerLookBlock(World world, EntityPlayer ep, double range, boolean passthru) {
 		int[] xyz = new int[3];
 		for (float i = 0; i <= range; i += 0.5) {

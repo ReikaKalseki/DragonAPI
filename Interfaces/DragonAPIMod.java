@@ -7,15 +7,21 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI;
+package Reika.DragonAPI.Interfaces;
 
-import Reika.DragonAPI.Interfaces.DragonAPIMod;
+import java.net.MalformedURLException;
+import java.net.URL;
 
-public class WTFException extends IllegalArgumentException {
+public interface DragonAPIMod {
 
-	public WTFException(DragonAPIMod mod, String msg) {
-		super("Either you or "+mod.getDisplayName()+" did something really stupid: "+msg);
-		this.printStackTrace();
-	}
+	public String getDisplayName();
+
+	public String getModAuthorName();
+
+	public URL getDocumentationSite() throws MalformedURLException;
+
+	public boolean hasWiki();
+
+	public URL getWiki() throws MalformedURLException;
 
 }
