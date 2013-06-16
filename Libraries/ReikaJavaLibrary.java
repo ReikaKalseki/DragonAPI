@@ -39,22 +39,8 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			System.out.println(String.valueOf(obj));
 	}
 
-	public static void pConsoleSideOnly(Object obj, int s) {
-		Side side;
-		switch (s) {
-		case 0:
-			side = Side.SERVER;
-			break;
-		case 1:
-			side = Side.CLIENT;
-			break;
-		case 2:
-			side = Side.BUKKIT;
-			break;
-		default:
-			side = FMLCommonHandler.instance().getEffectiveSide();
-		}
-		if (FMLCommonHandler.instance().getEffectiveSide() == side)
+	public static void pConsoleSideOnly(Object obj, Side s) {
+		if (FMLCommonHandler.instance().getEffectiveSide() == s)
 			pConsole(obj);
 	}
 

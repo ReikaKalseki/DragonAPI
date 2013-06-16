@@ -14,7 +14,6 @@ import java.util.List;
 
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
-
 import Reika.DragonAPI.Libraries.ReikaMathLibrary;
 
 public class BlockArray {
@@ -31,6 +30,7 @@ public class BlockArray {
 			return;
 		int[] e = {x, y, z};
 		blocks.add(e);
+		//ReikaJavaLibrary.pConsole("Adding "+x+", "+y+", "+z);
 	}
 
 	public int[] getNextBlock() {
@@ -66,8 +66,8 @@ public class BlockArray {
 		return false;
 	}
 
-	/** Recursively fills a contiguous area of one block type with another, akin to a fill tool.
-	 * Args: World, start x, start y, start z, id to replace */
+	/** Recursively fills a contiguous area with one block type, akin to a fill tool.
+	 * Args: World, start x, start y, start z, id to follow */
 	public void recursiveFill(World world, int x, int y, int z, int id) {
 		if (world.getBlockId(x, y, z) != id)
 			return;
