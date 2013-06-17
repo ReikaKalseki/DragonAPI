@@ -63,76 +63,76 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	/** Renders a flat circle in the world. Args: radius, center x,y,z, RGB*/
 	public static void renderCircle(double r, double x, double y, double z, int[] color) {
 		prepareGeoDraw(false);
-    	GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-    	GL11.glColor4f(1F, 1F, 1F, 1F);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = new Tessellator();
 		if (var5.isDrawing)
 			var5.draw();
 		var5.startDrawing(GL11.GL_LINE_LOOP);
-    	var5.setColorRGBA(color[0], color[1], color[2], 255);
-    	for (int i = 0; i < 360; i++) {
-    		var5.addVertex(x+r*Math.cos(ReikaPhysicsHelper.degToRad(i)), y, z+r*Math.sin(ReikaPhysicsHelper.degToRad(i)));
-    	}
-    	var5.draw();
-    	exitGeoDraw();
-    	GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-    	GL11.glEnable(GL11.GL_CULL_FACE);
-    	GL11.glEnable(GL11.GL_DEPTH_TEST);
+		var5.setColorRGBA(color[0], color[1], color[2], 255);
+		for (int i = 0; i < 360; i++) {
+			var5.addVertex(x+r*Math.cos(ReikaPhysicsHelper.degToRad(i)), y, z+r*Math.sin(ReikaPhysicsHelper.degToRad(i)));
+		}
+		var5.draw();
+		exitGeoDraw();
+		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	/** Renders a vertical-plane circle in the world. Args: radius, center x,y,z, RGB, phi */
 	public static void renderVCircle(double r, double x, double y, double z, int[] color, double phi) {
 		prepareGeoDraw(false);
-    	GL11.glDisable(GL11.GL_TEXTURE_2D);
-    	GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-    	GL11.glColor4f(1F, 1F, 1F, 1F);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = new Tessellator();
-    	//var5.setColorRGBA(color[0], color[1], color[2], 255);
-        var5.startDrawing(GL11.GL_LINE_LOOP);
-        var5.setColorRGBA(color[0], color[1], color[2], 255);
-	    for (int i = 0; i < 360; i++) {
-	    	int sign = 1;
-	    	double h = r*Math.cos(ReikaPhysicsHelper.degToRad(i));
-	    	if (i >= 180)
-	    		sign = -1;
-	    	var5.addVertex(x-Math.sin(phi)*(sign)*(Math.sqrt(r*r-h*h)), y+r*Math.cos(ReikaPhysicsHelper.degToRad(i)), z+r*Math.sin(ReikaPhysicsHelper.degToRad(i))*Math.cos(phi));
-    	}
-    	var5.draw();
-    	exitGeoDraw();
-    	GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-    	GL11.glEnable(GL11.GL_CULL_FACE);
-    	GL11.glEnable(GL11.GL_DEPTH_TEST);
+		//var5.setColorRGBA(color[0], color[1], color[2], 255);
+		var5.startDrawing(GL11.GL_LINE_LOOP);
+		var5.setColorRGBA(color[0], color[1], color[2], 255);
+		for (int i = 0; i < 360; i++) {
+			int sign = 1;
+			double h = r*Math.cos(ReikaPhysicsHelper.degToRad(i));
+			if (i >= 180)
+				sign = -1;
+			var5.addVertex(x-Math.sin(phi)*(sign)*(Math.sqrt(r*r-h*h)), y+r*Math.cos(ReikaPhysicsHelper.degToRad(i)), z+r*Math.sin(ReikaPhysicsHelper.degToRad(i))*Math.cos(phi));
+		}
+		var5.draw();
+		exitGeoDraw();
+		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	/** Renders a line between two points in the world. Args: Start xyz, End xyz, rgb */
 	public static void renderLine(double x1, double y1, double z1, double x2, double y2, double z2, int[] color) {
 		prepareGeoDraw(false);
-    	GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-    	GL11.glColor4f(1F, 1F, 1F, 1F);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = new Tessellator();
 		if (var5.isDrawing)
 			var5.draw();
-        var5.startDrawing(GL11.GL_LINE_LOOP);
-        var5.setColorRGBA(color[0], color[1], color[2], 255);
-        var5.addVertex(x1, y1, z1);
-        var5.addVertex(x2, y2, z2);
-        var5.draw();
-        exitGeoDraw();
-    	GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-    	GL11.glEnable(GL11.GL_CULL_FACE);
-    	GL11.glEnable(GL11.GL_DEPTH_TEST);
+		var5.startDrawing(GL11.GL_LINE_LOOP);
+		var5.setColorRGBA(color[0], color[1], color[2], 255);
+		var5.addVertex(x1, y1, z1);
+		var5.addVertex(x2, y2, z2);
+		var5.draw();
+		exitGeoDraw();
+		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	public static void disableLighting() {
 		Minecraft.getMinecraft().entityRenderer.disableLightmap(1);
 		RenderHelper.disableStandardItemLighting();
-    	GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_LIGHTING);
 	}
 
 	public static void enableLighting() {
 		Minecraft.getMinecraft().entityRenderer.enableLightmap(1);
 		RenderHelper.enableStandardItemLighting();
-    	GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glEnable(GL11.GL_LIGHTING);
 	}
 
 	/** Prepare for drawing primitive geometry by disabling all lighting and textures. Args: Is alpha going to be used */
@@ -176,31 +176,31 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	 * @Author Reika
 	 * */
 	public static boolean addModelledBlockParticles(String basedir, World world, int x, int y, int z, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
-    	String name = null;
-    	if (world.getBlockId(x, y, z) == b.blockID) {
-    		TileEntity t = world.getBlockTileEntity(x, y, z);
-    		if (t instanceof RenderFetcher) {
-    			RenderFetcher te = (RenderFetcher)t;
-    			TextureFetcher r = te.getRenderer();
-    			if (r != null)
-    				name = r.getImageFileName(te);
-    		}
-    	}
-    	String file = basedir+name;
-    	for (int i = 0; i < 48; i++) {
-    		int k = rand.nextInt(allowedRegions.size());
-    		double[] p = allowedRegions.get(k);
-    		double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
-    		double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
-    		double overx = px+ReikaModelledBreakFX.pw-p[2];
-    		if (overx > 0)
-    			px -= overx;
-    		double overy = py+ReikaModelledBreakFX.pw-p[2];
-    		if (overy > 0)
-    			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
-    	}
-        return true;
+		String name = null;
+		if (world.getBlockId(x, y, z) == b.blockID) {
+			TileEntity t = world.getBlockTileEntity(x, y, z);
+			if (t instanceof RenderFetcher) {
+				RenderFetcher te = (RenderFetcher)t;
+				TextureFetcher r = te.getRenderer();
+				if (r != null)
+					name = r.getImageFileName(te);
+			}
+		}
+		String file = basedir+name;
+		for (int i = 0; i < 48; i++) {
+			int k = rand.nextInt(allowedRegions.size());
+			double[] p = allowedRegions.get(k);
+			double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
+			double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
+			double overx = px+ReikaModelledBreakFX.pw-p[2];
+			if (overx > 0)
+				px -= overx;
+			double overy = py+ReikaModelledBreakFX.pw-p[2];
+			if (overy > 0)
+				py -= overy;
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
+		}
+		return true;
 	}
 
 	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockHitEffects!
@@ -212,52 +212,52 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		int x = mov.blockX;
 		int y = mov.blockY;
 		int z = mov.blockZ;
-    	String name = null;
-    	if (world.getBlockId(x, y, z) == b.blockID) {
-    		TileEntity t = world.getBlockTileEntity(x, y, z);
-    		if (t instanceof RenderFetcher) {
-    			RenderFetcher te = (RenderFetcher)t;
-    			TextureFetcher r = te.getRenderer();
-    			if (r != null)
-    				name = r.getImageFileName(te);
-    		}
-    	}
-    	int j = 1+rand.nextInt(2);
-    	String file = basedir+name;
-    	for (int i = 0; i < j; i++) {
-    		int k = rand.nextInt(allowedRegions.size());
-    		double[] p = allowedRegions.get(k);
-    		double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
-    		double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
-    		double overx = px+ReikaModelledBreakFX.pw-p[2];
-    		if (overx > 0)
-    			px -= overx;
-    		double overy = py+ReikaModelledBreakFX.pw-p[2];
-    		if (overy > 0)
-    			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
-    	}
-        return true;
+		String name = null;
+		if (world.getBlockId(x, y, z) == b.blockID) {
+			TileEntity t = world.getBlockTileEntity(x, y, z);
+			if (t instanceof RenderFetcher) {
+				RenderFetcher te = (RenderFetcher)t;
+				TextureFetcher r = te.getRenderer();
+				if (r != null)
+					name = r.getImageFileName(te);
+			}
+		}
+		int j = 1+rand.nextInt(2);
+		String file = basedir+name;
+		for (int i = 0; i < j; i++) {
+			int k = rand.nextInt(allowedRegions.size());
+			double[] p = allowedRegions.get(k);
+			double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
+			double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
+			double overx = px+ReikaModelledBreakFX.pw-p[2];
+			if (overx > 0)
+				px -= overx;
+			double overy = py+ReikaModelledBreakFX.pw-p[2];
+			if (overy > 0)
+				py -= overy;
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
+		}
+		return true;
 	}
 
 	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockDestroyEffects!
 	 * Args: Texture Path, world, x, y, z, Block, EffectRenderer, Allowed Texture Regions <br>
 	 * See addModelledBlockParticles(basedir, world, x, y, z, b, eff, allowedRegions) for explanation of the regions. */
 	public static boolean addModelledBlockParticlesDirect(String texture, World world, int x, int y, int z, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
-    	for (int i = 0; i < 48; i++) {
-    		int k = rand.nextInt(allowedRegions.size());
-    		double[] p = allowedRegions.get(k);
-    		double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
-    		double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
-    		double overx = px+ReikaModelledBreakFX.pw-p[2];
-    		if (overx > 0)
-    			px -= overx;
-    		double overy = py+ReikaModelledBreakFX.pw-p[2];
-    		if (overy > 0)
-    			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
-    	}
-        return true;
+		for (int i = 0; i < 48; i++) {
+			int k = rand.nextInt(allowedRegions.size());
+			double[] p = allowedRegions.get(k);
+			double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
+			double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
+			double overx = px+ReikaModelledBreakFX.pw-p[2];
+			if (overx > 0)
+				px -= overx;
+			double overy = py+ReikaModelledBreakFX.pw-p[2];
+			if (overy > 0)
+				py -= overy;
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
+		}
+		return true;
 	}
 
 	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockHitEffects!
@@ -269,21 +269,21 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		int x = mov.blockX;
 		int y = mov.blockY;
 		int z = mov.blockZ;
-    	int j = 1+rand.nextInt(2);
-    	for (int i = 0; i < j; i++) {
-    		int k = rand.nextInt(allowedRegions.size());
-    		double[] p = allowedRegions.get(k);
-    		double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
-    		double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
-    		double overx = px+ReikaModelledBreakFX.pw-p[2];
-    		if (overx > 0)
-    			px -= overx;
-    		double overy = py+ReikaModelledBreakFX.pw-p[2];
-    		if (overy > 0)
-    			py -= overy;
-    		eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
-    	}
-        return true;
+		int j = 1+rand.nextInt(2);
+		for (int i = 0; i < j; i++) {
+			int k = rand.nextInt(allowedRegions.size());
+			double[] p = allowedRegions.get(k);
+			double px = p[0]+rand.nextDouble()*(p[2]-p[0]);
+			double py = p[1]+rand.nextDouble()*(p[3]-p[1]);
+			double overx = px+ReikaModelledBreakFX.pw-p[2];
+			if (overx > 0)
+				px -= overx;
+			double overy = py+ReikaModelledBreakFX.pw-p[2];
+			if (overy > 0)
+				py -= overy;
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
+		}
+		return true;
 	}
 
 }

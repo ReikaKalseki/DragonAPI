@@ -10,7 +10,6 @@
 package Reika.DragonAPI.Libraries;
 
 import net.minecraft.block.Block;
-
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaBlockHelper extends DragonAPICore {

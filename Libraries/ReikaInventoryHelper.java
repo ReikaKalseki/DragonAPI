@@ -16,7 +16,6 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaInventoryHelper extends DragonAPICore {

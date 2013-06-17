@@ -9,12 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaItemHelper extends DragonAPICore {
@@ -162,6 +163,11 @@ public final class ReikaItemHelper extends DragonAPICore {
 		ei.motionY = 0.2*rand.nextDouble();
 		if (!world.isRemote)
 			world.spawnEntityInWorld(ei);
+	}
+
+	public static void dropItems(World world, double x, double y, double z, List<ItemStack> li) {
+		for (int i = 0; i < li.size(); i++)
+			dropItem(world, x, y, z, li.get(i));
 	}
 
 	public static boolean isBlock(ItemStack is) {

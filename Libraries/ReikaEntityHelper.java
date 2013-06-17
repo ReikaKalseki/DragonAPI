@@ -173,11 +173,11 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return 300;
 		if (ent instanceof EntityMagmaCube) {
 			EntityMagmaCube cube = (EntityMagmaCube)ent;
-			return 400*cube.getSlimeSize();
+			return 400*cube.getSlimeSize()*cube.getSlimeSize();
 		}
 		if (ent instanceof EntitySlime) {
 			EntitySlime cube = (EntitySlime)ent;
-			return 200*cube.getSlimeSize();
+			return 200*cube.getSlimeSize()*cube.getSlimeSize();
 		}
 		if (ent instanceof EntityEnderman)
 			return 40;

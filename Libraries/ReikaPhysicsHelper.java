@@ -11,7 +11,6 @@ package Reika.DragonAPI.Libraries;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaPhysicsHelper extends DragonAPICore {

@@ -19,12 +19,11 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Auxiliary.PacketTypes;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
-
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Auxiliary.PacketTypes;
 
 public final class ReikaPacketHelper extends DragonAPICore {
 
@@ -68,6 +67,8 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		if (side == Side.SERVER) {
 			// We are on the server side.
 			EntityPlayerMP player2 = (EntityPlayerMP) player;
+			PacketDispatcher.sendPacketToServer(packet);
+			PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
@@ -156,6 +157,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 	public static void sendDataPacket(String ch, int id, TileEntity te, EntityPlayer player) {
 		sendDataPacket(ch, id, te, player, null);
+	}
+
+	public static void sendDataPacket(String ch, int id, TileEntity te) {
+		sendDataPacket(ch, id, te, null, null);
 	}
 
 	public static void sendSoundPacket(String ch, String path, double x, double y, double z, float vol, float pitch) {

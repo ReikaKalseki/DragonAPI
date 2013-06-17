@@ -64,8 +64,7 @@ public class CoreContainer extends Container {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer par1EntityPlayer)
-	{
+	public boolean canInteractWith(EntityPlayer par1EntityPlayer) {
 		return this.isStandard8mReach(par1EntityPlayer);
 	}
 

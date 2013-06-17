@@ -34,58 +34,58 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 		texpos[1] = v;
 	}
 
-    @Override
+	@Override
 	public int getFXLayer()
-    {
-        return 1;
-    }
+	{
+		return 1;
+	}
 
-    @Override
+	@Override
 	public void onUpdate()
-    {
-        prevPosX = posX;
-        prevPosY = posY;
-        prevPosZ = posZ;
+	{
+		prevPosX = posX;
+		prevPosY = posY;
+		prevPosZ = posZ;
 
-        if (particleAge++ >= particleMaxAge)
-        {
-            this.setDead();
-        }
+		if (particleAge++ >= particleMaxAge)
+		{
+			this.setDead();
+		}
 
-        motionY -= 0.04D * particleGravity;
-        this.moveEntity(motionX, motionY, motionZ);
-        motionX *= 0.9800000190734863D;
-        motionY *= 0.9800000190734863D;
-        motionZ *= 0.9800000190734863D;
+		motionY -= 0.04D * particleGravity;
+		this.moveEntity(motionX, motionY, motionZ);
+		motionX *= 0.9800000190734863D;
+		motionY *= 0.9800000190734863D;
+		motionZ *= 0.9800000190734863D;
 
-        if (onGround)
-        {
-            motionX *= 0.699999988079071D;
-            motionZ *= 0.699999988079071D;
-        }
-    }
+		if (onGround)
+		{
+			motionX *= 0.699999988079071D;
+			motionZ *= 0.699999988079071D;
+		}
+	}
 
-    @Override
+	@Override
 	public void renderParticle(Tessellator par1Tessellator, float par2, float par3, float par4, float par5, float par6, float par7)
-    {
-        float f6 = particleTextureIndexX / 16.0F;
-        float f7 = f6 + 0.0624375F;
-        float f8 = particleTextureIndexY / 16.0F;
-        float f9 = f8 + 0.0624375F;
-        float f10 = 0.1F * particleScale;
-        float f11 = (float)(prevPosX + (posX - prevPosX) * par2 - interpPosX);
-        float f12 = (float)(prevPosY + (posY - prevPosY) * par2 - interpPosY);
-        float f13 = (float)(prevPosZ + (posZ - prevPosZ) * par2 - interpPosZ);
-        float f14 = 1.0F;
-        Minecraft.getMinecraft().renderEngine.bindTexture(tex);
-    	//GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
-    	Tessellator v5 = new Tessellator();
-    	v5.startDrawingQuads();
-        par1Tessellator.addVertexWithUV(f11 - par3 * f10 - par6 * f10, f12 - par4 * f10, f13 - par5 * f10 - par7 * f10, texpos[0], texpos[1]);
-        par1Tessellator.addVertexWithUV(f11 - par3 * f10 + par6 * f10, f12 + par4 * f10, f13 - par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]);
-        par1Tessellator.addVertexWithUV(f11 + par3 * f10 + par6 * f10, f12 + par4 * f10, f13 + par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]+pw);
-        par1Tessellator.addVertexWithUV(f11 + par3 * f10 - par6 * f10, f12 - par4 * f10, f13 + par5 * f10 - par7 * f10, texpos[0], texpos[1]+pw);
-    	v5.draw();
-    }
+	{
+		float f6 = particleTextureIndexX / 16.0F;
+		float f7 = f6 + 0.0624375F;
+		float f8 = particleTextureIndexY / 16.0F;
+		float f9 = f8 + 0.0624375F;
+		float f10 = 0.1F * particleScale;
+		float f11 = (float)(prevPosX + (posX - prevPosX) * par2 - interpPosX);
+		float f12 = (float)(prevPosY + (posY - prevPosY) * par2 - interpPosY);
+		float f13 = (float)(prevPosZ + (posZ - prevPosZ) * par2 - interpPosZ);
+		float f14 = 1.0F;
+		Minecraft.getMinecraft().renderEngine.bindTexture(tex);
+		//GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
+		Tessellator v5 = new Tessellator();
+		v5.startDrawingQuads();
+		par1Tessellator.addVertexWithUV(f11 - par3 * f10 - par6 * f10, f12 - par4 * f10, f13 - par5 * f10 - par7 * f10, texpos[0], texpos[1]);
+		par1Tessellator.addVertexWithUV(f11 - par3 * f10 + par6 * f10, f12 + par4 * f10, f13 - par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]);
+		par1Tessellator.addVertexWithUV(f11 + par3 * f10 + par6 * f10, f12 + par4 * f10, f13 + par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]+pw);
+		par1Tessellator.addVertexWithUV(f11 + par3 * f10 - par6 * f10, f12 - par4 * f10, f13 + par5 * f10 - par7 * f10, texpos[0], texpos[1]+pw);
+		v5.draw();
+	}
 
 }
