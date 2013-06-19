@@ -12,7 +12,8 @@ package Reika.DragonAPI.Auxiliary;
 public enum PacketTypes {
 
 	DATA(),
-	SOUND();
+	SOUND(),
+	STRING();
 
 	private PacketTypes() {
 

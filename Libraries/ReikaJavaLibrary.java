@@ -95,4 +95,9 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 		return null;
 	}
+
+	public static <T> List<T> copyList(List<T> li) {
+		List<T> n = new ArrayList<T>(li);
+		return n;
+	}
 }
