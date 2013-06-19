@@ -584,7 +584,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (!world.isRemote || id <= 0) {
 			for (int i = 0; i < numdrops; i++) {
 				EntityItem ent = new EntityItem(world, x+rand.nextFloat(), y+0.5, z+rand.nextFloat(), scrap);
-				ent.setVelocity(-0.2+0.4*rand.nextFloat(), 0.5*rand.nextFloat(), -0.2+0.4*rand.nextFloat());
+				ent.motionX = -0.2+0.4*rand.nextFloat();
+				ent.motionY = 0.5*rand.nextFloat();
+				ent.motionZ = -0.2+0.4*rand.nextFloat();
 				world.spawnEntityInWorld(ent);
 				ent.velocityChanged = true;
 			}
@@ -602,7 +604,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				value = rand.nextInt(max)+1;
 			xp -= value;
 			EntityXPOrb orb = new EntityXPOrb(world, x, y, z, value);
-			orb.setVelocity(-0.2+0.4*rand.nextFloat(), 0.3*rand.nextFloat(), -0.2+0.4*rand.nextFloat());
+			orb.motionX = -0.2+0.4*rand.nextFloat();
+			orb.motionY = 0.3*rand.nextFloat();
+			orb.motionZ = -0.2+0.4*rand.nextFloat();
 			if (world.isRemote)
 				return;
 			orb.velocityChanged = true;
