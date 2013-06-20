@@ -259,4 +259,8 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static boolean isValueInsideBoundsIncl(int low, int hi, int val) {
 		return (val <= hi && val >= low);
 	}
+
+	public static boolean isValueInsideBoundsIncl(double low, double hi, double val) {
+		return (val <= hi && val >= low);
+	}
 }

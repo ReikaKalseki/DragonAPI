@@ -10,7 +10,7 @@
 package Reika.DragonAPI.Libraries;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.LanguageArray;
+import Reika.DragonAPI.Instantiable.LanguageArray;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public final class ReikaLanguageReader extends DragonAPICore {

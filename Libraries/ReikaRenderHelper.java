@@ -24,7 +24,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ReikaModelledBreakFX;
+import Reika.DragonAPI.Instantiable.ReikaModelledBreakFX;
 import Reika.DragonAPI.Interfaces.RenderFetcher;
 import Reika.DragonAPI.Interfaces.TextureFetcher;
 import cpw.mods.fml.relauncher.Side;
