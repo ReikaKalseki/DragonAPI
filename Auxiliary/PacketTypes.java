@@ -13,7 +13,8 @@ public enum PacketTypes {
 
 	DATA(),
 	SOUND(),
-	STRING();
+	STRING(),
+	UPDATE();
 
 	private PacketTypes() {
 
