@@ -10,7 +10,6 @@
 package Reika.DragonAPI.Auxiliary;
 
 import net.minecraft.block.Block;
-
 import Reika.DragonAPI.Libraries.ReikaGuiAPI;
 
 public class BlockProperties {
@@ -283,6 +282,7 @@ public class BlockProperties {
 		blockColorArray[14] = ReikaGuiAPI.RGBtoHex(251, 237, 76);
 		blockColorArray[21] = ReikaGuiAPI.RGBtoHex(40, 98, 175);
 		blockColorArray[73] = ReikaGuiAPI.RGBtoHex(215, 0, 0);
+		blockColorArray[74] = ReikaGuiAPI.RGBtoHex(215, 0, 0);
 		blockColorArray[56] = ReikaGuiAPI.RGBtoHex(93, 235, 244);
 		blockColorArray[129] = ReikaGuiAPI.RGBtoHex(23, 221, 98);
 		blockColorArray[153] = ReikaGuiAPI.RGBtoHex(203, 191, 177);

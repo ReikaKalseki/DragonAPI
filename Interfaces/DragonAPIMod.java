@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 
 public interface DragonAPIMod {
@@ -18,10 +17,10 @@ public interface DragonAPIMod {
 
 	public String getModAuthorName();
 
-	public URL getDocumentationSite() throws MalformedURLException;
+	public URL getDocumentationSite();
 
 	public boolean hasWiki();
 
-	public URL getWiki() throws MalformedURLException;
+	public URL getWiki();
 
 }
