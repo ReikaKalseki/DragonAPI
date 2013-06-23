@@ -10,16 +10,15 @@
 package Reika.DragonAPI.Exception;
 
 import Reika.DragonAPI.Interfaces.DragonAPIMod;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 
-
-public class RegistrationException extends RuntimeException {
+public class RegistrationException extends DragonAPIException {
 
 	public RegistrationException(DragonAPIMod mod, String msg) {
-		super(mod.getDisplayName()+" has a registration error: "+msg);
-		ReikaJavaLibrary.pConsole("Contact "+mod.getModAuthorName()+" immediately!");
-		ReikaJavaLibrary.pConsole("Include the following information:");
-		this.printStackTrace();
+		message.append(mod.getDisplayName()+" has a registration error:\n");
+		message.append(msg+"\n");
+		message.append("Contact "+mod.getModAuthorName()+" immediately!\n");
+		message.append("Include the following information:");
+		this.crash();
 	}
 
 }

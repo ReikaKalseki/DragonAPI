@@ -11,11 +11,17 @@ package Reika.DragonAPI.Exception;
 
 import Reika.DragonAPI.Interfaces.DragonAPIMod;
 
-public class ModIncompatibilityException extends RuntimeException {
+public class ModIncompatibilityException extends DragonAPIException {
 
-	public ModIncompatibilityException(DragonAPIMod mod, String otherModName, String msg) {
-		super(mod.getDisplayName()+" has compatibility issues with the following mod: "+otherModName+"\nReason: "+msg);
-		this.printStackTrace();
+	public ModIncompatibilityException(DragonAPIMod mod, String otherModName, String msg, boolean fatal) {
+		message.append(mod.getDisplayName()+" has compatibility issues with the following mod:\n");
+		message.append(otherModName+"\n");
+		message.append("Reason: "+msg+"\n");
+		message.append("Consult "+mod.getDocumentationSite().toString()+"for details.\n");
+		if (fatal) {
+			message.append("This is a fatal incompatibility. Loading cannot continue.");
+			this.crash();
+		}
 	}
 
 }

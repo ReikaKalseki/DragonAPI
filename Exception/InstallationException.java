@@ -11,11 +11,14 @@ package Reika.DragonAPI.Exception;
 
 import Reika.DragonAPI.Interfaces.DragonAPIMod;
 
-public class InstallationException extends RuntimeException {
+public class InstallationException extends DragonAPIException {
 
 	public InstallationException(DragonAPIMod mod, String msg) {
-		super(mod.getDisplayName()+" was not installed correctly:\n"+msg+"\n"+"Try consulting "+mod.getDocumentationSite().toString());
-		this.printStackTrace();
+		message.append(mod.getDisplayName()+" was not installed correctly:\n");
+		message.append(msg+"\n");
+		message.append("Try consulting "+mod.getDocumentationSite().toString()+"for information.\n");
+		message.append("This is not a RotaryCraft bug. Do not post it to "+mod.getDocumentationSite().toString()+" unless you are really stuck.");
+		this.crash();
 	}
 
 }

@@ -10,14 +10,15 @@
 package Reika.DragonAPI.Exception;
 
 import Reika.DragonAPI.Interfaces.DragonAPIMod;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 
-public class IDConflictException extends RuntimeException {
+public class IDConflictException extends DragonAPIException {
 
-	public IDConflictException(DragonAPIMod mod, Throwable src) {
-		super(mod.getDisplayName()+" was not installed correctly:\n"+"CONFLICT: "+src.getMessage());
-		ReikaJavaLibrary.pConsole("Check your IDs and change them if possible.");
-		this.printStackTrace();
+	public IDConflictException(DragonAPIMod mod, String msg) {
+		message.append(mod.getDisplayName()+" was not installed correctly:\n");
+		message.append("CONFLICT: "+msg+"\n");
+		message.append("Check your IDs and change them if possible.\n");
+		message.append("This is not a RotaryCraft bug. Do not post it to "+mod.getDocumentationSite().toString());
+		this.crash();
 	}
 
 }
