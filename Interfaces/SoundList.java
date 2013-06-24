@@ -7,16 +7,17 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI;
+package Reika.DragonAPI.Interfaces;
 
-import java.util.Random;
+import java.net.URL;
 
-public class DragonAPICore {
+/** This is an interface for ENUMS! */
+public interface SoundList {
 
-	protected DragonAPICore() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+	public String getName();
 
-	protected static final Random rand = new Random();
+	public String getPath();
 
-	//TODO Add handler for custom death messages
+	public URL getURL();
 
 }

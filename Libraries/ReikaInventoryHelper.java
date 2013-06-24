@@ -525,8 +525,12 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			if (ii.getStackInSlot(slot).stackSize > is.getMaxStackSize()-is.stackSize) {
 				if (e == -1)
 					return false;
-				ii.setInventorySlotContents(e, is);
-				return true;
+				if (ii.isStackValidForSlot(e, is)) {
+					ii.setInventorySlotContents(e, is);
+					return true;
+				}
+				else
+					return false;
 			}
 			ItemStack i = ii.getStackInSlot(slot);
 			i.stackSize += is.stackSize;
@@ -534,9 +538,14 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			return true;
 		}
 		if (e != -1) {
-			ii.setInventorySlotContents(e, is);
+			if (ii.isStackValidForSlot(e, is)) {
+				ii.setInventorySlotContents(e, is);
+				return true;
+			}
+			else
+				return false;
 		}
-		return true;
+		return false;
 	}
 
 	public static boolean hasSpaceFor(ItemStack is, IInventory ii) {
