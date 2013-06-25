@@ -11,8 +11,8 @@ package Reika.DragonAPI.Instantiable;
 
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.event.ForgeSubscribe;
+import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
-import Reika.DragonAPI.Interfaces.DragonAPIMod;
 import Reika.DragonAPI.Interfaces.SoundList;
 
 public class SoundLoader {

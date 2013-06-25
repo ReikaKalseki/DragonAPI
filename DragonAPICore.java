@@ -17,6 +17,10 @@ public class DragonAPICore {
 
 	protected static final Random rand = new Random();
 
+	public static final boolean hasAllClasses() {
+		return true;
+	}
+
 	//TODO Add handler for custom death messages
 
 }

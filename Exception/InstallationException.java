@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Exception;
 
-import Reika.DragonAPI.Interfaces.DragonAPIMod;
+import Reika.DragonAPI.Base.DragonAPIMod;
 
 public class InstallationException extends DragonAPIException {
 
