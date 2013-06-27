@@ -17,7 +17,7 @@ public class IDConflictException extends DragonAPIException {
 		message.append(mod.getDisplayName()+" was not installed correctly:\n");
 		message.append("CONFLICT: "+msg+"\n");
 		message.append("Check your IDs and change them if possible.\n");
-		message.append("This is not a RotaryCraft bug. Do not post it to "+mod.getDocumentationSite().toString());
+		message.append("This is NOT a mod bug. Do not post it to "+mod.getDocumentationSite().toString());
 		this.crash();
 	}
 
