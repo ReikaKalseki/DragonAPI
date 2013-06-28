@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
+import net.minecraft.item.ItemBlock;
+
 /** This is an interface for ENUMS! */
 public abstract interface RegistrationList {
 
@@ -28,5 +30,11 @@ public abstract interface RegistrationList {
 
 	/** Only used in item registration */
 	public int getNumberMetadatas();
+
+	/** Only used in block registration */
+	public Class<? extends ItemBlock> getItemBlock();
+
+	/** Only used in block registration */
+	public boolean hasItemBlock();
 
 }

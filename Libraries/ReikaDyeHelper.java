@@ -18,28 +18,35 @@ import net.minecraft.item.ItemStack;
 public enum ReikaDyeHelper {
 
 	BLACK(0x191919),
-	RED(0xCC4C4C),
+	RED(0x993333),
 	GREEN(0x667F33),
-	BROWN(0x7F664C),
-	BLUE(0x3366CC),
-	PURPLE(0xB266E5),
-	CYAN(0x4C99B2),
-	LIGHTGRAY(0x999999),
+	BROWN(0x664C33),
+	BLUE(0x334CB2),
+	PURPLE(0x7F3FB2),
+	CYAN(0x4C7F99),
+	LIGHTGRAY(0x999999, "Light Gray"),
 	GRAY(0x4C4C4C),
-	PINK(0xF2B2CC),
+	PINK(0xF27FA5),
 	LIME(0x7FCC19),
 	YELLOW(0xE5E533),
-	LIGHTBLUE(0x99B2F2),
-	MAGNETA(0xE57FD8),
-	ORANGE(0xF2B233),
+	LIGHTBLUE(0x6699D8, "Light Blue"),
+	MAGNETA(0xB24CD8),
+	ORANGE(0xD87F33),
 	WHITE(0xFFFFFF);
 
 	private int color;
+	private String colorName;
 
 	public static final ReikaDyeHelper[] dyes = ReikaDyeHelper.values();
 
 	private ReikaDyeHelper(int c) {
 		color = c;
+		colorName = this.name().substring(0, 1)+this.name().substring(1).toLowerCase();
+	}
+
+	private ReikaDyeHelper(int c, String n) {
+		color = c;
+		colorName = n;
 	}
 
 	public static ReikaDyeHelper getColorFromDamage(int damage) {
@@ -80,6 +87,15 @@ public enum ReikaDyeHelper {
 
 	public ItemStack getWoolStack() {
 		return new ItemStack(Block.cloth.blockID, 1, this.getWoolMeta());
+	}
+
+	public double[] getRedstoneParticleVelocityForColor() {
+		double[] c = new double[]{this.getRed()/255D, this.getGreen()/255D, this.getBlue()/255D};
+		return c;
+	}
+
+	public String getName() {
+		return colorName;
 	}
 
 }

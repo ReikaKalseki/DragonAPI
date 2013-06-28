@@ -26,10 +26,17 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		for (int i = 0; i < enumr.length; i++) {
 			target[i] = ReikaReflectionHelper.createBlockInstance(mod, enumr[i]);
 			String regname = enumr[i].getBasicName().toLowerCase().replaceAll("\\s","");
-			GameRegistry.registerBlock(target[i], regname);
+			if (enumr[i].hasItemBlock())
+				GameRegistry.registerBlock(target[i], enumr[i].getItemBlock(), regname);
+			else
+				GameRegistry.registerBlock(target[i], regname);
 			LanguageRegistry.addName(target[i], enumr[i].getBasicName());
-			if (log)
-				ReikaJavaLibrary.pConsole(mod.getDisplayName().toUpperCase()+": Instantiating Block "+enumr[i].getBasicName()+" with ID "+target[i].blockID+" to Block Variable "+target[i].getClass().getSimpleName()+" (slot "+i+")");
+			if (log) {
+				if (enumr[i].hasItemBlock())
+					ReikaJavaLibrary.pConsole(mod.getDisplayName().toUpperCase()+": Instantiating Block "+enumr[i].getBasicName()+" with ID "+target[i].blockID+" to Block Variable "+target[i].getClass().getSimpleName()+" (slot "+i+") with ItemBlock "+enumr[i].getItemBlock().getSimpleName());
+				else
+					ReikaJavaLibrary.pConsole(mod.getDisplayName().toUpperCase()+": Instantiating Block "+enumr[i].getBasicName()+" with ID "+target[i].blockID+" to Block Variable "+target[i].getClass().getSimpleName()+" (slot "+i+")");
+			}
 		}
 	}
 

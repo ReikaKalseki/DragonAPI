@@ -19,6 +19,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -278,6 +279,43 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			// We are on the client side.
 			PacketDispatcher.sendPacketToServer(packet);
 			PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
+	public static void sendUpdatePacket(String ch, int id, World world, int x, int y, int z) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(PacketTypes.UPDATE.ordinal());
+			outputStream.writeInt(id);
+			outputStream.writeInt(x);
+			outputStream.writeInt(y);
+			outputStream.writeInt(z);
+
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			throw new RuntimeException("Coordinates "+x+", "+y+", "+z+" threw an update packet exception!");
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = ch;
+		packet.data = bos.toByteArray();
+		packet.length = bos.size();
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			// We are on the server side.
+			PacketDispatcher.sendPacketToServer(packet);
+			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+		}
+		else if (side == Side.CLIENT) {
+			// We are on the client side.
+			PacketDispatcher.sendPacketToServer(packet);
+			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
 		}
 		else {
 			// We are on the Bukkit server.
