@@ -12,7 +12,7 @@ package Reika.DragonAPI.Interfaces;
 import net.minecraftforge.common.Configuration;
 
 /** This is an interface for ENUMS! */
-public interface ConfigRegistry {
+public interface ConfigList {
 
 	public boolean isBoolean();
 

@@ -15,7 +15,7 @@ import java.io.PrintWriter;
 
 import net.minecraftforge.common.Configuration;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Interfaces.ConfigRegistry;
+import Reika.DragonAPI.Interfaces.ConfigList;
 import Reika.DragonAPI.Interfaces.IDRegistry;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -31,7 +31,7 @@ public class ControlledConfig {
 
 	protected DragonAPIMod configMod;
 
-	private ConfigRegistry[] optionList;
+	private ConfigList[] optionList;
 	private IDRegistry[] blockList;
 	private IDRegistry[] itemList;
 	private IDRegistry[] IDList;
@@ -41,7 +41,7 @@ public class ControlledConfig {
 	protected int[] itemIDs;
 	protected int[] otherIDs;
 
-	public ControlledConfig(DragonAPIMod mod, ConfigRegistry[] option, IDRegistry[] blocks, IDRegistry[] items, IDRegistry[] id, int cfg) {
+	public ControlledConfig(DragonAPIMod mod, ConfigList[] option, IDRegistry[] blocks, IDRegistry[] items, IDRegistry[] id, int cfg) {
 		configMod = mod;
 		optionList = option;
 		blockList = blocks;
@@ -52,7 +52,7 @@ public class ControlledConfig {
 			controls = new Object[optionList.length];
 		else {
 			controls = new Object[0];
-			optionList = new ConfigRegistry[0];
+			optionList = new ConfigList[0];
 		}
 
 		if (blocks != null)
