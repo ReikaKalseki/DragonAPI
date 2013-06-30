@@ -22,8 +22,9 @@ public abstract class DragonAPIException extends RuntimeException {
 	}
 
 	protected void crash() {
-		Minecraft.getMinecraft().crashed(CrashReport.makeCrashReport(this, this.getMessage()));
-		this.printStackTrace();
+		//Minecraft.getMinecraft().crashed(CrashReport.makeCrashReport(this, this.getMessage()));
+		//this.printStackTrace();
+		throw (this);
 	}
 
 }

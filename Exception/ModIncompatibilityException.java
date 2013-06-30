@@ -22,6 +22,9 @@ public class ModIncompatibilityException extends DragonAPIException {
 			message.append("This is a fatal incompatibility. Loading cannot continue.");
 			this.crash();
 		}
+		else {
+			this.printStackTrace();
+		}
 	}
 
 }

@@ -30,7 +30,12 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 				GameRegistry.registerBlock(target[i], enumr[i].getItemBlock(), regname);
 			else
 				GameRegistry.registerBlock(target[i], regname);
-			LanguageRegistry.addName(target[i], enumr[i].getBasicName());
+			if (enumr[i].hasMultiValuedName()) {
+				for (int k = 0; k < enumr[i].getNumberMetadatas(); k++)
+					LanguageRegistry.addName(new ItemStack(target[i].blockID, 1, k), enumr[i].getMultiValuedName(k));
+			}
+			else
+				LanguageRegistry.addName(target[i], enumr[i].getBasicName());
 			if (log) {
 				if (enumr[i].hasItemBlock())
 					ReikaJavaLibrary.pConsole(mod.getDisplayName().toUpperCase()+": Instantiating Block "+enumr[i].getBasicName()+" with ID "+target[i].blockID+" to Block Variable "+target[i].getClass().getSimpleName()+" (slot "+i+") with ItemBlock "+enumr[i].getItemBlock().getSimpleName());

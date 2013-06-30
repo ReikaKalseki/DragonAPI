@@ -20,6 +20,9 @@ public class WTFException extends DragonAPIException {
 			message.append("What you did was so bad that the game cannot continue.");
 			this.crash();
 		}
+		else {
+			this.printStackTrace();
+		}
 	}
 
 }
