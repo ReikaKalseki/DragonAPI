@@ -761,7 +761,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	 * id to replace, id to fill with, metadata to replace (-1 for any),
 	 * metadata to fill with, origin x,y,z, max radius */
 	public static void recursiveFillWithinSphere(World world, int x, int y, int z, int id, int idto, int meta, int metato, int x0, int y0, int z0, double r) {
-		//ReikaGuiAPI.write(world.getBlockId(x, y, z)+" & "+id+" @ "+x0+", "+y0+", "+z0);
+		/*ReikaJavaLibrary.pConsole(world.getBlockId(x, y, z)+" & "+id+" @ "+x0+", "+y0+", "+z0);
+		ReikaJavaLibrary.pConsole(world.getBlockMetadata(x, y, z)+" & "+meta+" @ "+x0+", "+y0+", "+z0);
+		ReikaJavaLibrary.pConsole(ReikaMathLibrary.py3d(x-x0, y-y0, z-z0)+" & "+r+" @ "+x0+", "+y0+", "+z0);*/
 		if (world.getBlockId(x, y, z) != id)
 			return;
 		if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
