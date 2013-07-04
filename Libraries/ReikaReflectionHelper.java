@@ -48,7 +48,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			if (t instanceof IllegalArgumentException)
 				throw new IDConflictException(mod, t.getMessage());
 			else
-				throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" threw invocation target exception!");
+				throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" threw invocation target exception: "+e+" with "+e.getCause()+" ("+e.getCause().getMessage()+")");
 		}
 	}
 
@@ -79,7 +79,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			if (t instanceof IllegalArgumentException)
 				throw new IDConflictException(mod, t.getMessage());
 			else
-				throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" threw invocation target exception!");
+				throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" threw invocation target exception: "+e+" with "+e.getCause()+" ("+e.getCause().getMessage()+")");
 		}
 	}
 
