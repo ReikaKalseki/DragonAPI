@@ -10,7 +10,10 @@
 package Reika.DragonAPI.Libraries;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Auxiliary.ModOreList;
 
 public final class ReikaBlockHelper extends DragonAPICore {
 
@@ -40,30 +43,22 @@ public final class ReikaBlockHelper extends DragonAPICore {
 	}
 
 	/** Returns true if the Block ID corresponds to an ore block. Args: ID */
-	public static boolean isOre(int id) {
-		if (id == Block.oreCoal.blockID)
+	public static boolean isOre(ItemStack is) {
+		if (is.itemID == Block.oreRedstoneGlowing.blockID)
 			return true;
-		if (id == Block.oreIron.blockID)
+		if (ReikaOreHelper.isVanillaOre(is.itemID))
 			return true;
-		if (id == Block.oreGold.blockID)
-			return true;
-		if (id == Block.oreRedstone.blockID)
-			return true;
-		if (id == Block.oreLapis.blockID)
-			return true;
-		if (id == Block.oreDiamond.blockID)
-			return true;
-		if (id == Block.oreEmerald.blockID)
-			return true;
-		if (id == Block.oreRedstoneGlowing.blockID)
-			return true;
-		if (id == Block.oreNetherQuartz.blockID)
+		if (ModOreList.isModOre(is))
 			return true;
 		return false;
 	}
 
+	public static boolean isOre(int id, int meta) {
+		return isOre(new ItemStack(id, 1, meta));
+	}
+
 	public static boolean canSilkTouch(int id, int meta) {
-		if (isOre(id))
+		if (isOre(id, meta))
 			return true;
 		if (id == Block.stone.blockID)
 			return true;
@@ -82,6 +77,10 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		if (id == Block.silverfish.blockID)
 			return true;
 		return false;
+	}
+
+	public static ItemStack getWorldBlockAsItemStack(World world, int x, int y, int z) {
+		return new ItemStack(world.getBlockId(x, y, z), 1, world.getBlockMetadata(x, y, z));
 	}
 
 }
