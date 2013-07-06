@@ -45,7 +45,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	/** Converts a hex color code to a color multiplier. Args: Hex, bit */
 	public static float HextoColorMultiplier(int hex, int bit) {
 		float color = 1F;
-		int[] RGB = ReikaGuiAPI.HexToRGB(hex);
+		int[] RGB = ReikaColorAPI.HexToRGB(hex);
 		if (bit < 0 || bit > 2)
 			return 1F;
 		color = RGB[bit]/255F;

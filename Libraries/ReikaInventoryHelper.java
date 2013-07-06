@@ -664,6 +664,15 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return e == n;
 	}
 
+	public static boolean hasNEmptyStacks(ItemStack[] inv, int n) {
+		int e = 0;
+		for (int i = 0; i < inv.length; i++) {
+			if (inv[i] == null)
+				e++;
+		}
+		return e == n;
+	}
+
 	/** Returns the location (array index) of an itemstack in the specified Iinventory.
 	 * Returns -1 if not present. Args: Itemstack to check, IInventory, Match size T/F */
 	public static int locateInInventory(ItemStack is, IInventory ii, boolean matchsize) {

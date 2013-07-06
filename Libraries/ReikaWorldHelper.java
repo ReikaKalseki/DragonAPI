@@ -55,7 +55,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static int[] biomeToRGB(World world, int x, int z, String material) {
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 		int color = ReikaWorldHelper.biomeToHex(biome, material);
-		return ReikaGuiAPI.HexToRGB(color);
+		return ReikaColorAPI.HexToRGB(color);
 	}
 
 	/** Converts the given coordinates to a hex representation of those coordinates' biome's color, for the given material type.
@@ -850,10 +850,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				vec2.xCoord += x0;
 				vec2.yCoord += y0;
 				vec2.zCoord += z0;
-				//ReikaGuiAPI.write(String.format("%f -->  %.3f,  %.3f, %.3f", i, vec2.xCoord, vec2.yCoord, vec2.zCoord));
+				//ReikaColorAPI.write(String.format("%f -->  %.3f,  %.3f, %.3f", i, vec2.xCoord, vec2.yCoord, vec2.zCoord));
 				int id = world.getBlockId((int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
 				if ((int)vec2.xCoord == x && (int)vec2.yCoord == y && (int)vec2.zCoord == z) {
-					//ReikaGuiAPI.writeCoords(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
+					//ReikaColorAPI.writeCoords(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
 					return true;
 				}
 				else if (id != 0 && id != locid && (isCollideable(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord) && !softBlocks(id))) {
@@ -947,7 +947,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				int var11 = world.getBlockId(var8, var9, var10);
 				int var12 = world.getBlockMetadata(var8, var9, var10);
 				Block var13 = Block.blocksList[var11];
-				//ReikaGuiAPI.write(var11);
+				//ReikaColorAPI.write(var11);
 				if (var13 != null && (var11 > 0 && !ReikaWorldHelper.softBlocks(var11) && (var11 != Block.leaves.blockID) && (var11 != Block.web.blockID)) && var13.canCollideCheck(var12, false)) {
 					MovingObjectPosition var14 = var13.collisionRayTrace(world, var8, var9, var10, par1Vec3, par2Vec3);
 					if (var14 != null)

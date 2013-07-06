@@ -24,6 +24,8 @@ public class CoreContainer extends Container {
 	int posX; int posY; int posZ;
 	protected EntityPlayer ep;
 
+	protected ItemStack[] oldInv;
+
 	public CoreContainer(EntityPlayer player, TileEntity te)
 	{
 		tile = te;
@@ -32,6 +34,18 @@ public class CoreContainer extends Container {
 		posZ = tile.zCoord;
 		ep = player;
 		//this.detectAndSendChanges();
+	}
+
+	public boolean hasInventoryChanged(ItemStack[] inv) {
+		for (int i = 0; i < oldInv.length; i++)
+			if (!ItemStack.areItemStacksEqual(oldInv[i], inv[i]))
+				return true;
+		return false;
+	}
+
+	protected void updateInventory(ItemStack[] inv) {
+		for (int i = 0; i < oldInv.length; i++)
+			oldInv[i] = inv[i];
 	}
 
 	protected void addPlayerInventory(EntityPlayer player) {

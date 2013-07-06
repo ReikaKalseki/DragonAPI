@@ -257,28 +257,6 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
-	public static int RGBtoHex(int R, int G, int B) {
-		int color = (B | G << 8 | R << 16);
-		color += 0xff000000;
-		return color;
-	}
-
-	public static int RGBtoHex(int GS) {
-		if (GS == -1) //technical
-			return 0xffD47EFF;
-		int color = (GS | GS << 8 | GS << 16);
-		color += 0xff000000;
-		return color;
-	}
-
-	public static int[] HexToRGB (int hex) {
-		int[] color = new int[3];
-		color[0] = Color.decode(String.valueOf(hex)).getRed();
-		color[1] = Color.decode(String.valueOf(hex)).getGreen();
-		color[2] = Color.decode(String.valueOf(hex)).getBlue();
-		return color;
-	}
-
 	public static void renderFraction(FontRenderer fr, String num, String den, int x, int y, int color, boolean shadow, boolean center) {
 
 	}
@@ -413,17 +391,5 @@ public final class ReikaGuiAPI extends GuiScreen {
 			this.drawTexturedModalRect(x2+4+j, y2+4+k, colsout*16, rowsout*16, 16, 16);
 		if (amount > 1)
 			this.drawString(f, String.format("%3d", amount), x2+j+9, y2+k+16, 0xffffff);
-	}
-
-	public int getColorWithBrightnessMultiplier(int argb, float mult) {
-		int alpha = ((argb >> 24) & 0xFF);
-		int red = (int) (((argb >> 16) & 0xFF)*mult);
-		int green = (int) (((argb >> 8) & 0xFF)*mult);
-		int blue = (int) ((argb & 0xFF)*mult);
-		int color = alpha;
-		color = (color << 8) + red;
-		color = (color << 8) + green;
-		color = (color << 8) + blue;
-		return color;
 	}
 }

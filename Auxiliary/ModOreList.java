@@ -112,4 +112,26 @@ public enum ModOreList {
 	public int getDropCount() {
 		return dropCount;
 	}
+
+	public boolean isIngotType() {
+		return product.contains("ingot");
+	}
+
+	public boolean isDustType() {
+		return product.contains("dust");
+	}
+
+	public boolean isGemType() {
+		return product.contains("gem");
+	}
+
+	public String getTypeName() {
+		if (this.isIngotType())
+			return "Ingot";
+		if (this.isDustType())
+			return "Dust";
+		if (this.isGemType())
+			return "Gem";
+		return "Item";
+	}
 }
