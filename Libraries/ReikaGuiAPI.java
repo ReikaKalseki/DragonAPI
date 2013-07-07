@@ -10,14 +10,25 @@
 package Reika.DragonAPI.Libraries;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
+import Reika.DragonAPI.Exception.MisuseException;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -269,127 +280,169 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	}
 
-	/** Draw a crafting recipe in the GUI. Args: x in, y in; icon indexes of: top-left, top, top-right, left,
-	 * center, right, bottom-left, bottom, bottom right; x out, y out; icon index of output item, output number,
-	 * shapeless t/f, icon textures.
-	 * Input icon indexes names MUST be a size-9 array, and textures must be a size-10 array! */
-	public void drawRecipe(FontRenderer f, int x, int y, int[] in, int x2, int y2, int out, int amount, boolean shapeless, String[] tex) {
+	public void drawCustomRecipeList(RenderItem render, FontRenderer f, List<IRecipe> lr, int x, int y, int x2, int y2) {
+		if (lr.size() <= 0) {
+			//ReikaJavaLibrary.pConsole("No recipes found for "+out);
+			return;
+		}
+		//ReikaJavaLibrary.pConsole(lr.get(0).getRecipeOutput().toString());
+		ItemStack[] in = new ItemStack[9];
+		int k = ((int)(System.nanoTime()/2000000000))%lr.size();
+		//ReikaJavaLibrary.pConsole(k);
+		IRecipe ire = lr.get(k);
+		ItemStack isout = ire.getRecipeOutput();
+		ReikaRecipeHelper.copyRecipeToItemStackArray(in, ire);
+		//ReikaJavaLibrary.pConsole(Arrays.toString(in)+" to "+isout);
+		boolean noshape = false;
+		if (ire instanceof ShapelessRecipes)
+			noshape = true;
+		if (ire instanceof ShapelessOreRecipe)
+			noshape = true;
+		this.drawRecipe(render, f, x, y, in, x2, y2, isout, noshape);
+	}
+
+	public void drawCustomRecipes(RenderItem render, FontRenderer f, List<ItemStack> out, List<IRecipe> ir, int x, int y, int x2, int y2) {
+		List<IRecipe> lr = new ArrayList<IRecipe>();
+		for (int i = 0; i < out.size(); i++) {
+			lr.addAll(ReikaRecipeHelper.getAllRecipesByOutput(ir, out.get(i)));
+		}
+		if (lr.size() <= 0) {
+			//ReikaJavaLibrary.pConsole("No recipes found for "+out);
+			return;
+		}
+		//ReikaJavaLibrary.pConsole(lr.get(13).getRecipeOutput());
+		ItemStack[] in = new ItemStack[9];
+		IRecipe ire = lr.get(((int)(System.nanoTime()/2000000000))%lr.size());
+		ItemStack isout = ire.getRecipeOutput();
+		ReikaRecipeHelper.copyRecipeToItemStackArray(in, ire);
+		boolean noshape = false;
+		if (ire instanceof ShapelessRecipes)
+			noshape = true;
+		if (ire instanceof ShapelessOreRecipe)
+			noshape = true;
+		this.drawRecipe(render, f, x, y, in, x2, y2, isout, noshape);
+	}
+
+	/** Draw a crafting recipe in the GUI. Args: x in, y in; items of: top-left, top, top-right, left,
+	 * center, right, bottom-left, bottom, bottom right; x out, y out; output item, shapeless t/f.
+	 * Input items MUST be a size-9 array! */
+	private void drawRecipe(RenderItem render, FontRenderer f, int x, int y, ItemStack[] in, int x2, int y2, ItemStack out, boolean shapeless) {
+		if (in.length != 9)
+			throw new MisuseException("DrawRecipe() requires 9 input items!");
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2 - 8;
-		int rowsout, colsout;
-		int[] rowsin = new int[9];
-		int[] colsin = new int[9];
-		for (int ij = 0; ij < 9; ij++) {
-			rowsin[ij] = in[ij]/16;
-			colsin[ij] = in[ij]-16*rowsin[ij];
-		}
-		rowsout = out/16;
-		colsout = out-16*rowsout;
 		//ModLoader.getMinecraftInstance().ingameGUI.addChatMessage("DFD324");
 
 		for (int ii = 0; ii < 3; ii++) {
 			for (int jj = 0; jj < 3; jj++) {
 				//ModLoader.getMinecraftInstance().ingameGUI.addChatMessage("34342");
-				if (in[ii*3+jj] != -1) {
-					mc.renderEngine.bindTexture(tex[ii*3+jj]);
-					this.drawTexturedModalRect(x+j+18*jj, y+k+18*ii, 16*colsin[ii*3+jj], 16*rowsin[ii*3+jj], 16, 16);
+				if (in[ii*3+jj] != null) {
+					this.drawItemStack(render, f, in[ii*3+jj], x+j+18*jj, y+k+18*ii);
 					//ModLoader.getMinecraftInstance().ingameGUI.addChatMessage("DFD");
 				}
 			}
 		}
-		mc.renderEngine.bindTexture(tex[9]);
-		this.drawTexturedModalRect(x2+4+j, y2+4+k, colsout*16, rowsout*16, 16, 16);
-		int xdp = 0;
-		if (amount < 10)
-			xdp = 3;
-		if (amount > 1)
-			this.drawString(f, String.format("%3d", amount), x2+j+6+xdp, y2+k+16, 0xffffff);
+		if (out != null)
+			this.drawItemStack(render, f, out, x2+4+j, y2+4+k); /*
+		if (out != null && out.getItemDamage() > 0) {
+			int dx = 0;
+			if (out.getItemDamage() < 10)
+				dx = 6;
+			if (out.getItemDamage() >= 100)
+				dx = -6;
+			f.drawStringWithShadow(String.format("%d", out.getItemDamage()), x2+12+j+dx, y2+2+k, 0xffffff);
+		}*/
 		if (shapeless)
 			f.drawString("Shapeless", x2+j-35, y2+k+27, 0x000000);
 	}
 
-	/** Draw a smelting recipe in the GUI. Args: x in, y in, input icon index, x out, y out, output icon index, amount */
-	public void drawSmelting(FontRenderer f, int x, int y, int in, int x2, int y2, int out, int amount) {
+	/** Draw a smelting recipe in the GUI. Args: output item, x in, y in, x out, y out */
+	public void drawSmelting(RenderItem render, FontRenderer f, ItemStack out, int x, int y, int x2, int y2) {
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2 - 8;
-		int rowsin, rowsout, colsin, colsout;
-		rowsin = in/16;
-		colsin = in-16*rowsin;
-		rowsout = out/16;
-		colsout = out-16*rowsout;
-		if (in != -1)
-			this.drawTexturedModalRect(x+j, y+k, colsin*16, rowsin*16, 16, 16);
-		if (out != -1)
-			this.drawTexturedModalRect(x2+4+j, y2+4+k, colsout*16, rowsout*16, 16, 16);
-		if (amount > 1)
-			this.drawString(f, String.format("%3d", amount), x2+j+6, y2+k+16, 0xffffff);
+
+		ItemStack in = ReikaRecipeHelper.getFurnaceInput(out);
+
+		if (in != null)
+			this.drawItemStack(render, f, in, x+j, y+k);
+		if (out != null)
+			this.drawItemStack(render, f, out, x2+4+j, y2+4+k);
 	}
 
-	/** Draw a compactor recipe in the GUI. Args: x in, y in, input icon index, x out, y out, output icon index, amount. */
-	public void drawCompressor(FontRenderer f, int x, int y, int in, int x2, int y2, int out, int amount) {
+	/** Draw a compactor recipe in the GUI. Args: x in, y in, input itemstack, x out, y out, output itemstack */
+	public void drawCompressor(RenderItem render, FontRenderer f, int x, int y, ItemStack in, int x2, int y2, ItemStack out) {
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2 - 8;
-		int rowsin, rowsout, colsin, colsout;
-		rowsin = in/16;
-		colsin = in-16*rowsin;
-		rowsout = out/16;
-		colsout = out-16*rowsout;
-		if (in != -1) {
+
+		if (in != null) {
 			for (int ii = 0; ii < 4; ii++)
-				this.drawTexturedModalRect(x+j, y+k+ii*18, colsin*16, rowsin*16, 16, 16);
+				this.drawItemStack(render, f, in, x+j, y+k+ii*18);
 		}
-		if (out != -1)
-			this.drawTexturedModalRect(x2+j, y2+k, colsout*16, rowsout*16, 16, 16);
-		if (amount > 1)
-			this.drawString(f, String.format("%3d", amount), x2+j+2, y2+k+9, 0xffffff);
+		if (out != null)
+			this.drawItemStack(render, f, out, x2+j, y2+k);
 	}
 
-	/** Draw an extractor recipe in the GUI. Args: x in, y in; icon indexes of top row;
-	 * x out, y out; icon index of bottom row.
-	 * Icon indexes MUST be size-4 arrays! */
-	public void drawExtractor(FontRenderer f, int x, int y, int[] in, int x2, int y2, int[] out, int amount) {
+	/** Draw an extractor recipe in the GUI. Args: x in, y in; items of top row;
+	 * x out, y out; items of bottom row.
+	 * Items MUST be size-4 arrays! */
+	public void drawExtractor(RenderItem render, FontRenderer f, int x, int y, ItemStack[] in, int x2, int y2, ItemStack[] out) {
+		if (in.length != 4)
+			throw new MisuseException("DrawExtractor() requires 4 input items!");
+		if (out.length != 4)
+			throw new MisuseException("DrawExtactor() requires 4 output items!");
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2 - 8;
-		int[] rowsout = new int[4];
-		int[] colsout = new int[4];
-		int[] rowsin = new int[4];
-		int[] colsin = new int[4];
-		for (int ij = 0; ij < 4; ij++) {
-			rowsin[ij] = in[ij]/16;
-			colsin[ij] = in[ij]-16*rowsin[ij];
-		}
-		for (int ij = 0; ij < 4; ij++) {
-			rowsout[ij] = out[ij]/16;
-			colsout[ij] = out[ij]-16*rowsout[ij];
-		}
-		for (int ij = 0; ij < 4; ij++)
-			this.drawTexturedModalRect(x+j+36*ij, y+k, colsin[ij]*16, rowsin[ij]*16, 16, 16);
-		for (int ij = 0; ij < 4; ij++)
-			this.drawTexturedModalRect(x2+j+36*ij, y2+k, colsout[ij]*16, rowsout[ij]*16, 16, 16);
 
-		if (amount > 1)
-			this.drawString(f, String.format("%3d", amount), x2+j+6, y2+k+16, 0xffffff);
-
+		for (int ij = 0; ij < 4; ij++)
+			this.drawItemStack(render, f, in[ij], x+j+36*ij, y+k);
+		for (int ij = 0; ij < 4; ij++)
+			this.drawItemStack(render, f, out[ij], x2+j+36*ij, y2+k);
 	}
 
-	/** Draw a fermenter recipe in the GUI. Args: x,y of top input slot, icon indices of input slots,
-	 * x,y out, icon index of output, amount made. Icon index array must be size-3! */
-	public void drawFermenter(FontRenderer f, int x, int y, int[] in, int x2, int y2, int out, int amount) {
+	/** Draw a fermenter recipe in the GUI. Args: x,y of top input slot, items of input slots,
+	 * x,y out, item output. Item array must be size-3! */
+	public void drawFermenter(RenderItem render, FontRenderer f, int x, int y, ItemStack[] in, int x2, int y2, ItemStack out) {
+		if (in.length != 3)
+			throw new MisuseException("DrawFermenter() requires 3 input items!");
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2 - 8;
-		int rowsout = out/16;
-		int colsout = out-16*rowsout;
-		int[] rowsin = new int[3];
-		int[] colsin = new int[3];
-		for (int ij = 0; ij < 3; ij++) {
-			rowsin[ij] = in[ij]/16;
-			colsin[ij] = in[ij]-16*rowsin[ij];
-		}
+
 		for (int ij = 0; ij < 3; ij++)
-			this.drawTexturedModalRect(x+j, y+18*ij+k, colsin[ij]*16, rowsin[ij]*16, 16, 16);
-		if (out != -1)
-			this.drawTexturedModalRect(x2+4+j, y2+4+k, colsout*16, rowsout*16, 16, 16);
-		if (amount > 1)
-			this.drawString(f, String.format("%3d", amount), x2+j+9, y2+k+16, 0xffffff);
+			this.drawItemStack(render, f, in[ij], x+j, y+18*ij+k);
+		if (out != null)
+			this.drawItemStack(render, f, out, x2+4+j, y2+4+k);
+	}
+
+	public void drawItemStack(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
+		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
+		zLevel = 200.0F;
+		renderer.zLevel = 200.0F;
+		FontRenderer font = null;
+		if (is != null)
+			font = is.getItem().getFontRenderer(is);
+		if (font == null)
+			font = fr;
+
+		//ReikaJavaLibrary.pConsole(is.getItem().getLocalizedName(is)+" @ "+x+", "+y);
+
+		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+		RenderHelper.disableStandardItemLighting();
+		GL11.glDisable(GL11.GL_LIGHTING);
+		RenderHelper.enableGUIStandardItemLighting();
+		GL11.glPushMatrix();
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		short short1 = 240;
+		short short2 = 240;
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+
+		renderer.renderItemAndEffectIntoGUI(font, mc.renderEngine, is, x, y);
+		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, null);
+		zLevel = 0.0F;
+		renderer.zLevel = 0.0F;
+		GL11.glPopMatrix();
+
+		RenderHelper.disableStandardItemLighting();
 	}
 }

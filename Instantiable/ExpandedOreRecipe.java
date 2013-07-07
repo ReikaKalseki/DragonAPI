@@ -307,4 +307,19 @@ public final class ExpandedOreRecipe implements IRecipe {
 		return li;
 	}
 
+	public Object[] getInputCopy() {
+		Object[] in = new Object[input.length];
+		for (int i = 0; i < in.length; i++)
+			in[i] = input[i];
+		return in;
+	}
+
+	public int getWidth() {
+		return width;
+	}
+
+	public int getHeight() {
+		return height;
+	}
+
 }

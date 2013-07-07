@@ -11,9 +11,11 @@ package Reika.DragonAPI;
 
 import java.util.Random;
 
+import Reika.DragonAPI.Exception.MisuseException;
+
 public class DragonAPICore {
 
-	protected DragonAPICore() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+	protected DragonAPICore() {throw new MisuseException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	protected static final Random rand = new Random();
 

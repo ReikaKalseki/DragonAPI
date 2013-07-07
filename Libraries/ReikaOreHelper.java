@@ -80,4 +80,14 @@ public enum ReikaOreHelper {
 		return false;
 	}
 
+	public ItemStack getResource() {
+		if (!this.dropsSelf())
+			return this.getDrop();
+		if (this == IRON)
+			return new ItemStack(Item.ingotIron);
+		if (this == GOLD)
+			return new ItemStack(Item.ingotGold);
+		return null;
+	}
+
 }

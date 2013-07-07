@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -101,6 +102,10 @@ public final class ReikaChatHelper extends DragonAPICore {
 		else
 			str = String.valueOf(obj);
 		writeString(str);
+	}
+
+	public static void writeFormattedString(EnumChatFormatting fm, String str) {
+		writeString(fm.toString()+str);
 	}
 
 	public static void writeEntity(World world, Entity ent) {
