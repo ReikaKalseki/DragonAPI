@@ -737,4 +737,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		else
 			return null;
 	}
+
+	public static void addOrSetStack(ItemStack is, ItemStack[] inv, int i) {
+		addOrSetStack(is.itemID, is.stackSize, is.getItemDamage(), inv, i);
+	}
 }
