@@ -433,4 +433,9 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			world.spawnParticle(part, e.posX-0.6+1.2*rand.nextDouble(), e.posY+e.height/2-0.6+1.2*rand.nextDouble(), e.posZ-0.6+1.2*rand.nextDouble(), -0.2+0.4*rand.nextDouble(), 0.4*rand.nextDouble(), -0.2+0.4*rand.nextDouble());
 	}
 
+	public static int getEntityIDByClass(Class cl) {
+		String name = (String)EntityList.classToStringMapping.get(cl);
+		return mobNameToID(name, null);
+	}
+
 }

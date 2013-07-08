@@ -471,6 +471,19 @@ public final class ReikaWorldHelper extends DragonAPICore {
 					legacySetBlockWithNotify(world, x, y, z-i, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y, z+i) == Material.ground)
 					legacySetBlockWithNotify(world, x, y, z+i, Block.glass.blockID);
+
+				if (world.getBlockMaterial(x-i, y, z) == Material.grass)
+					legacySetBlockWithNotify(world, x-i, y, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x+i, y, z) == Material.grass)
+					legacySetBlockWithNotify(world, x+i, y, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y-i, z) == Material.grass)
+					legacySetBlockWithNotify(world, x, y-i, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y+i, z) == Material.grass)
+					legacySetBlockWithNotify(world, x, y+i, z, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y, z-i) == Material.grass)
+					legacySetBlockWithNotify(world, x, y, z-i, Block.glass.blockID);
+				if (world.getBlockMaterial(x, y, z+i) == Material.grass)
+					legacySetBlockWithNotify(world, x, y, z+i, Block.glass.blockID);
 			}
 		}
 		if (temperature > 1700)	{ // Melting rock

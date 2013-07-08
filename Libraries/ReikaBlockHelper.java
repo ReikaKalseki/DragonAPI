@@ -83,4 +83,16 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		return new ItemStack(world.getBlockId(x, y, z), 1, world.getBlockMetadata(x, y, z));
 	}
 
+	public static boolean isRail(int id) {
+		if (id == Block.rail.blockID)
+			return true;
+		if (id == Block.railActivator.blockID)
+			return true;
+		if (id == Block.railDetector.blockID)
+			return true;
+		if (id == Block.railPowered.blockID)
+			return true;
+		return false;
+	}
+
 }

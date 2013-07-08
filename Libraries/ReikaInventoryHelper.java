@@ -518,6 +518,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			return false;
 		int slot = locateNonFullStackOf(is, ii);
 		int e = getFirstEmptySlot(ii);
+		ReikaJavaLibrary.pConsole(ii.isStackValidForSlot(e, is));
 		if (slot == -1 && e == -1) {
 			return false;
 		}
