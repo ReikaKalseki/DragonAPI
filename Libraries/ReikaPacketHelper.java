@@ -243,6 +243,44 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
+	public static void sendStringPacket(String ch, int id, String sg, World world, int x, int y, int z) {
+		int length = 0;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(PacketTypes.STRING.ordinal());
+			outputStream.writeInt(id);
+			Packet.writeString(sg, outputStream);
+			outputStream.writeInt(x);
+			outputStream.writeInt(y);
+			outputStream.writeInt(z);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			throw new RuntimeException("String Packet for "+sg+" threw a packet exception!");
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = ch;
+		packet.data = bos.toByteArray();
+		packet.length = bos.size();
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			// We are on the server side.
+			PacketDispatcher.sendPacketToServer(packet);
+			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+		}
+		else if (side == Side.CLIENT) {
+			// We are on the client side.
+			PacketDispatcher.sendPacketToServer(packet);
+			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
 	public static void sendUpdatePacket(String ch, int id, TileEntity te) {
 		int x = te.xCoord;
 		int y = te.yCoord;

@@ -49,8 +49,16 @@ public enum ReikaDyeHelper {
 		colorName = n;
 	}
 
+	public static boolean isDyeItem(ItemStack is) {
+		return is != null && is.itemID == Item.dyePowder.itemID;
+	}
+
 	public static ReikaDyeHelper getColorFromDamage(int damage) {
 		return dyes[damage];
+	}
+
+	public static ReikaDyeHelper getColorFromItem(ItemStack is) {
+		return getColorFromDamage(is.getItemDamage());
 	}
 
 	public int getDamage() {
