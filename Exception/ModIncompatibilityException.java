@@ -14,7 +14,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 public class ModIncompatibilityException extends DragonAPIException {
 
 	public ModIncompatibilityException(DragonAPIMod mod, String otherModName, String msg, boolean fatal) {
-		message.append(mod.getDisplayName()+" has compatibility issues with the following mod:\n");
+		message.append(mod.getTechnicalName()+" has compatibility issues with the following mod:\n");
 		message.append(otherModName+"\n");
 		message.append("Reason: "+msg+"\n");
 		message.append("Consult "+mod.getDocumentationSite().toString()+"for details.\n");

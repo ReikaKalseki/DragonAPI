@@ -14,7 +14,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 public class RegistrationException extends DragonAPIException {
 
 	public RegistrationException(DragonAPIMod mod, String msg) {
-		message.append(mod.getDisplayName()+" has a registration error:\n");
+		message.append(mod.getTechnicalName()+" has a registration error:\n");
 		message.append(msg+"\n");
 		message.append("Contact "+mod.getModAuthorName()+" immediately!\n");
 		message.append("Include the following information:");

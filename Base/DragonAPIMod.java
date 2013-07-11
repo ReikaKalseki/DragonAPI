@@ -36,6 +36,17 @@ public abstract class DragonAPIMod {
 
 	public abstract URL getWiki();
 
+	public abstract boolean hasVersion();
+
+	public abstract String getVersionName();
+
+	public final String getTechnicalName() {
+		if (this.hasVersion())
+			return this.getDisplayName()+" "+this.getVersionName();
+		else
+			return this.getDisplayName();
+	}
+
 	protected final boolean checkForDragonAPI() {
 		try {
 			Class.forName("Reika.DragonAPI.DragonAPICore", false, this.getClass().getClassLoader());
