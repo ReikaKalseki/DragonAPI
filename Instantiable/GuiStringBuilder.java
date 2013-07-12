@@ -14,7 +14,6 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Libraries.ReikaPacketHelper;
-import Reika.RotaryCraft.TileEntities.TileEntityDisplay;
 
 public final class GuiStringBuilder extends GuiScreen {
 
@@ -24,10 +23,13 @@ public final class GuiStringBuilder extends GuiScreen {
 	private int y;
 	private int z;
 
+	private int displayHeight;
+	private int displayWidth;
+
 	private StringBuilder sb = new StringBuilder();
 	private Gui2DTextField text;
 
-	private int xSize = 176;
+	private int xSize = 256;
 	private int ySize = 166;
 
 	private String message;
@@ -35,14 +37,18 @@ public final class GuiStringBuilder extends GuiScreen {
 	private int packetID;
 	private String packetChannel;
 
-	public GuiStringBuilder(EntityPlayer player, World worldObj, int xCoord, int yCoord, int zCoord, String packet, int id) {
+	public GuiStringBuilder(EntityPlayer player, World worldObj, int xCoord, int yCoord, int zCoord, String packet, int id, int width, int height) {
 		ep = player;
 		world = worldObj;
 		x = xCoord;
 		y = yCoord;
 		z = zCoord;
+
 		packetChannel = packet;
 		packetID = id;
+
+		displayHeight = height;
+		displayWidth = width;
 	}
 
 	@Override
@@ -51,21 +57,19 @@ public final class GuiStringBuilder extends GuiScreen {
 		buttonList.clear();
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
-		text = new Gui2DTextField(fontRenderer, j+5, k+10, xSize-10, ySize-20, TileEntityDisplay.displayWidth, TileEntityDisplay.displayHeight);
+		text = new Gui2DTextField(fontRenderer, j+5, k+10, xSize-10, ySize-20, displayWidth, displayHeight);
 		text.setFocused(false);
-		//text.setMaxStringLength(TileEntityDisplay.displayWidth);
-		buttonList.add(new GuiButton(0, j+4, k-11, xSize/2-4, 20, "Save"));
-		buttonList.add(new GuiButton(1, j+xSize/2, k-11, xSize/2-4, 20, "Save To File"));
+		buttonList.add(new GuiButton(0, j+4, k-11, xSize/3, 20, "Save To Game"));
+		buttonList.add(new GuiButton(1, j+xSize/3+3, k-11, xSize/3-2, 20, "Save To File"));
+		buttonList.add(new GuiButton(2, j+2*xSize/3, k-11, xSize/3-2, 20, "Read From File"));
 	}
 
 	@Override
 	public void actionPerformed(GuiButton button) {
 		super.actionPerformed(button);
 		this.initGui();
-		if (button.id == 0)
-			this.sendPacket();
-		if (button.id == 1)
-			;//this.saveStringToFile();
+		if (button.id < 3)
+			this.sendPacket(button.id);
 	}
 
 	@Override
@@ -110,8 +114,8 @@ public final class GuiStringBuilder extends GuiScreen {
 		return message;
 	}
 
-	public void sendPacket() {
-		ReikaPacketHelper.sendStringPacket(packetChannel, packetID, this.getFinalString(), world, x, y, z);
+	public void sendPacket(int a) {
+		ReikaPacketHelper.sendStringPacket(packetChannel, packetID+a, this.getFinalString(), world, x, y, z);
 	}
 
 	@Override
