@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -19,6 +20,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.ReikaMathLibrary;
 
@@ -133,9 +135,41 @@ public abstract class TileEntityBase extends TileEntity {
 	public final void updateEntity() {
 		if (shutDown)
 			return;
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-		this.updateTileEntity();
-		this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
+		try {
+			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			this.updateTileEntity();
+			this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
+		}
+		catch (ArrayIndexOutOfBoundsException e) {
+			ReikaChatHelper.write(this+" is throwing ArrayIndexOutOfBounds Exception on update: "+e.getMessage());
+			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
+			ReikaChatHelper.write("");
+		}
+		catch (IndexOutOfBoundsException e) {
+			ReikaChatHelper.write(this+" is throwing IndexOutOfBounds Exception on update: "+e.getMessage());
+			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
+			ReikaChatHelper.write("");
+		}
+		catch (ArithmeticException e) {
+			ReikaChatHelper.write(this+" is throwing Arithmetic Exception on update: "+e.getMessage());
+			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
+			ReikaChatHelper.write("");
+		}
+		catch (NullPointerException e) {
+			ReikaChatHelper.write(this+" is throwing NullPointer Exception on update: "+e.getMessage());
+			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
+			ReikaChatHelper.write("");
+		}
+		catch (ClassCastException e) {
+			ReikaChatHelper.write(this+" is throwing ClassCast Exception on update: "+e.getMessage());
+			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
+			ReikaChatHelper.write("");
+		}
+		catch (IllegalArgumentException e) {
+			ReikaChatHelper.write(this+" is throwing IllegalArgument Exception on update: "+e.getMessage());
+			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
+			ReikaChatHelper.write("");
+		}
 	}
 
 	private final void updateTileEntity() {
@@ -161,5 +195,12 @@ public abstract class TileEntityBase extends TileEntity {
 	public Random getRandom() {
 		return par5Random;
 	}
+
+	@Override
+	public String toString() {
+		return "TileEntity "+this.getTEName()+" @ "+xCoord+", "+yCoord+", "+zCoord;
+	}
+
+	protected abstract String getTEName();
 
 }
