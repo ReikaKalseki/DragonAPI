@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Libraries.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.ReikaMathLibrary;
 
 public enum ModOreList {
@@ -20,7 +21,7 @@ public enum ModOreList {
 	TIN("Tin", "ingotTin", 1, "oreTin"),
 	COPPER("Copper", "ingotCopper", 1, "oreCopper"),
 	LEAD("Lead", "ingotLead", 1, "oreLead"),
-	FERROUS("Ferrous", "ingotFerrous", 1, "oreFerrous"),
+	FERROUS("Nickel", "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
 	SILVER("Silver", "ingotSilver", 1, "oreSilver"),
 	GALENA("Galena", "ingotGalena", 1, "oreGalena"),
 	ALUMINUM("Aluminum", "ingotAluminum", 1, "oreAluminum", "oreBauxite"),
@@ -70,10 +71,22 @@ public enum ModOreList {
 		if (is == null)
 			return false;
 		for (int i = 0; i < oreList.length; i++) {
-			if (oreList[i].ores.contains(is))
+			if (ReikaItemHelper.listContainsItemStack(oreList[i].ores, is)) {
 				return true;
+			}
 		}
 		return false;
+	}
+
+	public static ModOreList getModOreFromOre(ItemStack is) {
+		if (is == null)
+			return null;
+		for (int i = 0; i < oreList.length; i++) {
+			if (ReikaItemHelper.listContainsItemStack(oreList[i].ores, is)) {
+				return oreList[i];
+			}
+		}
+		return null;
 	}
 
 	public static ModOreList getEntryFromDamage(int dmg) {
@@ -98,7 +111,7 @@ public enum ModOreList {
 		for (int i = 0; i < oreList.length; i++) {
 			String[] ingots = oreList[i].getOreDictIngots();
 			for (int j = 0; j < ingots.length; j++) {
-				if (OreDictionary.getOres(ingots[j]).contains(is))
+				if (ReikaItemHelper.listContainsItemStack(OreDictionary.getOres(ingots[j]), is))
 					return true;
 			}
 		}

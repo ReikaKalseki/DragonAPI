@@ -29,6 +29,8 @@ public final class GuiStringBuilder extends GuiScreen {
 	private StringBuilder sb = new StringBuilder();
 	private Gui2DTextField text;
 
+	public static final String NEWLINE = "#N";
+
 	private int xSize = 256;
 	private int ySize = 166;
 
@@ -37,7 +39,7 @@ public final class GuiStringBuilder extends GuiScreen {
 	private int packetID;
 	private String packetChannel;
 
-	public GuiStringBuilder(EntityPlayer player, World worldObj, int xCoord, int yCoord, int zCoord, String packet, int id, int width, int height) {
+	public GuiStringBuilder(EntityPlayer player, World worldObj, int xCoord, int yCoord, int zCoord, String packet, int id, int width, int height, String init) {
 		ep = player;
 		world = worldObj;
 		x = xCoord;
@@ -49,6 +51,9 @@ public final class GuiStringBuilder extends GuiScreen {
 
 		displayHeight = height;
 		displayWidth = width;
+
+		//ReikaJavaLibrary.pConsole("Read: "+init);
+		message = init;
 	}
 
 	@Override
@@ -58,10 +63,13 @@ public final class GuiStringBuilder extends GuiScreen {
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
 		text = new Gui2DTextField(fontRenderer, j+5, k+10, xSize-10, ySize-20, displayWidth, displayHeight);
+		text.setText(message);
 		text.setFocused(false);
+		text.setMaxStringLength(width*height);
 		buttonList.add(new GuiButton(0, j+4, k-11, xSize/3, 20, "Save To Game"));
 		buttonList.add(new GuiButton(1, j+xSize/3+3, k-11, xSize/3-2, 20, "Save To File"));
 		buttonList.add(new GuiButton(2, j+2*xSize/3, k-11, xSize/3-2, 20, "Read From File"));
+		//ReikaJavaLibrary.pConsole("Stored: "+text.getText());
 	}
 
 	@Override
@@ -73,7 +81,7 @@ public final class GuiStringBuilder extends GuiScreen {
 	}
 
 	@Override
-	public void keyTyped(char c, int i){
+	public void keyTyped(char c, int i) {
 		super.keyTyped(c, i);
 		text.textboxKeyTyped(c, i);
 	}

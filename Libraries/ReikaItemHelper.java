@@ -181,4 +181,13 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return false;
 		}
 	}
+
+	public static boolean listContainsItemStack(List<ItemStack> li, ItemStack is) {
+		for (int i = 0; i < li.size(); i++) {
+			ItemStack is2 = li.get(i);
+			if (matchStacks(is, is2))
+				return true;
+		}
+		return false;
+	}
 }

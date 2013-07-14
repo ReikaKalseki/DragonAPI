@@ -11,6 +11,7 @@ package Reika.DragonAPI.Base;
 
 import java.net.URL;
 
+import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -47,6 +48,11 @@ public abstract class DragonAPIMod {
 			return this.getDisplayName();
 	}
 
+	protected final void checkAPI() {
+		if (!this.checkForDragonAPI())
+			this.hasNoDragonAPI();
+	}
+
 	protected final boolean checkForDragonAPI() {
 		try {
 			Class.forName("Reika.DragonAPI.DragonAPICore", false, this.getClass().getClassLoader());
@@ -57,11 +63,11 @@ public abstract class DragonAPIMod {
 		}
 	}
 
-	protected final void hasNoDragonAPI() {
-		throw new RuntimeException("Error loading "+this.getDisplayName()+": This mod needs DragonAPI to function correctly!");
+	protected void hasNoDragonAPI() {
+		throw new InstallationException(this, "This mod needs DragonAPI to function correctly!");
 	}
 
-	public final boolean isDeObfEnvironment() {
+	protected final boolean isDeObfEnvironment() {
 		try {
 			Class.forName("net.minecraft.world.gen.NoiseGeneratorOctaves");
 			ReikaJavaLibrary.pConsole(this.getDisplayName()+" is running in a deobfuscated environment!");

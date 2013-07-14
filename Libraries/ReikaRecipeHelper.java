@@ -271,4 +271,8 @@ public class ReikaRecipeHelper {
 		}
 		return null;
 	}
+
+	public static void addSmelting(ItemStack in, ItemStack out, float xp) {
+		FurnaceRecipes.smelting().addSmelting(in.itemID, in.getItemDamage(), out, xp);
+	}
 }
