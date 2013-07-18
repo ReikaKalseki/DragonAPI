@@ -147,7 +147,7 @@ public class BlockArray {
 		this.recursiveFillWithinSphere(world, x, y, z-1, id, x0, y0, z0, r);
 	}
 
-	public void sortBlocksByHeight() {
+	public void sortBlocksByHeight() { //O(n^2)
 		List<int[]> newList = new ArrayList<int[]>();
 		for (int i = 0; i < blocks.size(); i++) {
 			int[] a = blocks.get(i);
