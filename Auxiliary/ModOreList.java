@@ -44,7 +44,8 @@ public enum ModOreList {
 	GREENSAPPHIRE("Green Sapphire", "gemGreenSapphire", 1, "oreGreenSapphire"),
 	RUBY("Ruby", "gemRuby", 1, "oreRuby"),
 	SAPPHIRE("Sapphire", "gemSapphire", 1, "oreSapphire"),
-	MONAZIT("Monazit", "ingotMonazit", 1, "oreMonazit");
+	MONAZIT("Monazit", "ingotMonazit", 1, "oreMonazit"),
+	FORCE("Force", "gemForce", 3, "oreForce");
 
 	private ArrayList<ItemStack> ores;
 	private String name;

@@ -444,5 +444,6 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glPopMatrix();
 
 		RenderHelper.disableStandardItemLighting();
+		RenderHelper.enableGUIStandardItemLighting();
 	}
 }
