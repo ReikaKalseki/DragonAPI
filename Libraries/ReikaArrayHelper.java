@@ -16,6 +16,14 @@ import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaArrayHelper extends DragonAPICore {
 
+	public static boolean containsTrue(boolean[] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[i])
+				return true;
+		}
+		return false;
+	}
+
 	//TODO Condense functions into accept-all-primitive designs
 	/** Returns the sum of all values in an array. Args: Array */
 	public static int sumArray(int[] arr) {
@@ -154,18 +162,18 @@ public final class ReikaArrayHelper extends DragonAPICore {
 	/** Rotates a square matrix 90 degrees clockwise and returns it. Args: Matrix */
 	public static int[][] rotateMatrix(int[][] mat) {
 		int[][] temp = mat; //Ensures size match
-	    for (int i = 0; i < mat.length; i++) {
-	        for (int j = 0; j < mat.length; j++) {
-	            temp[i][j] = mat[mat.length-j-1][i];
-	        }
-	    }
+		for (int i = 0; i < mat.length; i++) {
+			for (int j = 0; j < mat.length; j++) {
+				temp[i][j] = mat[mat.length-j-1][i];
+			}
+		}
 		return temp;
 	}
 
 	/** Rotates a square matrix 90 degrees counterclockwise and returns it. Args: Matrix */
 	public static int[][] rotateMatrixM90(int[][] mat) {
 		int[][] temp = transposeMatrix(mat);
-	    temp = reverseColumns(temp);
+		temp = reverseColumns(temp);
 		return temp;
 	}
 
@@ -182,182 +190,182 @@ public final class ReikaArrayHelper extends DragonAPICore {
 	/** Rotates a square matrix 90 degrees clockwise and returns it. Args: Matrix */
 	public static boolean[][] rotateMatrix(boolean[][] mat) {
 		boolean[][] temp = mat; //Ensures size match
-	    for (int i = 0; i < mat.length; i++) {
-	        for (int j = 0; j < mat.length; j++) {
-	            temp[i][j] = mat[mat.length-j-1][i];
-	        }
-	    }
+		for (int i = 0; i < mat.length; i++) {
+			for (int j = 0; j < mat.length; j++) {
+				temp[i][j] = mat[mat.length-j-1][i];
+			}
+		}
 		return temp;
 	}
 
 	/** Transposes a 2D matrix and returns it. Args: Matrix */
 	public static int[][] transposeMatrix(int[][] mat) {
 		int[][] arr = mat;
-	    for (int i = 0; i < mat.length; i++) {
-	        for (int j = 0; j < mat.length; j++) {
-	        	arr[i][j] = mat[j][i];
-	        }
-	    }
-	    return arr;
+		for (int i = 0; i < mat.length; i++) {
+			for (int j = 0; j < mat.length; j++) {
+				arr[i][j] = mat[j][i];
+			}
+		}
+		return arr;
 	}
 
 	/** Transposes a 2D matrix and returns it. Args: Matrix */
 	public static boolean[][] transposeMatrix(boolean[][] mat) {
 		boolean[][] arr = mat;
-	    for (int i = 0; i < mat.length; i++) {
-	        for (int j = 0; j < mat.length; j++) {
-	        	arr[i][j] = mat[j][i];
-	        }
-	    }
-	    return arr;
+		for (int i = 0; i < mat.length; i++) {
+			for (int j = 0; j < mat.length; j++) {
+				arr[i][j] = mat[j][i];
+			}
+		}
+		return arr;
 	}
 
 	/** Rotates a square matrix 90 degrees clockwise and returns it. Args: Matrix */
 	public static double[][] rotateMatrix(double[][] mat) {
 		double[][] temp = mat; //Ensures size match
-	    for (int i = 0; i < mat.length; i++) {
-	        for (int j = 0; j < mat.length; j++) {
-	            temp[i][j] = mat[mat.length-j-1][i];
-	        }
-	    }
+		for (int i = 0; i < mat.length; i++) {
+			for (int j = 0; j < mat.length; j++) {
+				temp[i][j] = mat[mat.length-j-1][i];
+			}
+		}
 		return temp;
 	}
 
 	/** Transposes a 2D matrix and returns it. Args: Matrix */
 	public static double[][] transposeMatrix(double[][] mat) {
 		double[][] arr = mat;
-	    for (int i = 0; i < mat.length; i++) {
-	        for (int j = 0; j < mat.length; j++) {
-	        	arr[i][j] = mat[j][i];
-	        }
-	    }
-	    return arr;
+		for (int i = 0; i < mat.length; i++) {
+			for (int j = 0; j < mat.length; j++) {
+				arr[i][j] = mat[j][i];
+			}
+		}
+		return arr;
 	}
 
 	/** Rotates a square matrix 90 degrees clockwise and returns it. Args: Matrix */
 	public static String[][] rotateMatrix(String[][] mat) {
 		String[][] temp = mat; //Ensures size match
-	    for (int i = 0; i < mat.length; i++) {
-	        for (int j = 0; j < mat.length; j++) {
-	            temp[i][j] = mat[mat.length-j-1][i];
-	        }
-	    }
+		for (int i = 0; i < mat.length; i++) {
+			for (int j = 0; j < mat.length; j++) {
+				temp[i][j] = mat[mat.length-j-1][i];
+			}
+		}
 		return temp;
 	}
 
 	/** Transposes a 2D matrix and returns it. Args: Matrix */
 	public static String[][] transposeMatrix(String[][] mat) {
 		String[][] arr = mat;
-	    for (int i = 0; i < mat.length; i++) {
-	        for (int j = 0; j < mat.length; j++) {
-	        	arr[i][j] = mat[j][i];
-	        }
-	    }
-	    return arr;
+		for (int i = 0; i < mat.length; i++) {
+			for (int j = 0; j < mat.length; j++) {
+				arr[i][j] = mat[j][i];
+			}
+		}
+		return arr;
 	}
 
 	/** Rotates a square matrix 90 degrees clockwise and returns it. Args: Matrix */
 	public static ItemStack[][] rotateMatrix(ItemStack[][] mat) {
 		ItemStack[][] temp = mat; //Ensures size match
-	    for (int i = 0; i < mat.length; i++) {
-	        for (int j = 0; j < mat.length; j++) {
-	            temp[i][j] = mat[mat.length-j-1][i];
-	        }
-	    }
+		for (int i = 0; i < mat.length; i++) {
+			for (int j = 0; j < mat.length; j++) {
+				temp[i][j] = mat[mat.length-j-1][i];
+			}
+		}
 		return temp;
 	}
 
 	/** Transposes a 2D matrix and returns it. Args: Matrix */
 	public static ItemStack[][] transposeMatrix(ItemStack[][] mat) {
 		ItemStack[][] arr = mat;
-	    for (int i = 0; i < mat.length; i++) {
-	        for (int j = 0; j < mat.length; j++) {
-	        	arr[i][j] = mat[j][i];
-	        }
-	    }
-	    return arr;
+		for (int i = 0; i < mat.length; i++) {
+			for (int j = 0; j < mat.length; j++) {
+				arr[i][j] = mat[j][i];
+			}
+		}
+		return arr;
 	}
 
 	/** Returns true if all nonzero values in the array are equal. Args: Array */
 	//TODO Make scale for all array sizes
 	public static boolean allNonZerosEqual(int[] arr) {
 		Arrays.sort(arr);
-    	if (arr[0] != 0) {
-    		if (arr[1] != 0)
-    			if (arr[0] != arr[1])
-    				return false;
-    	}
-    	if (arr[0] != 0) {
-    		if (arr[2] != 0)
-    			if (arr[0] != arr[2])
-    				return false;
-    	}
-    	if (arr[0] != 0) {
-    		if (arr[3] != 0)
-    			if (arr[0] != arr[3])
-    				return false;
-    	}
-    	if (arr[0] != 0) {
-    		if (arr[4] != 0)
-    			if (arr[0] != arr[4])
-    				return false;
-    	}
-    	if (arr[0] != 0) {
-    		if (arr[5] != 0)
-    			if (arr[0] != arr[5])
-    				return false;
-    	}
-    	if (arr[1] != 0) {
-    		if (arr[2] != 0)
-    			if (arr[1] != arr[2])
-    				return false;
-    	}
-    	if (arr[1] != 0) {
-    		if (arr[3] != 0)
-    			if (arr[1] != arr[3])
-    				return false;
-    	}
-    	if (arr[1] != 0) {
-    		if (arr[4] != 0)
-    			if (arr[1] != arr[4])
-    				return false;
-    	}
-    	if (arr[1] != 0) {
-    		if (arr[5] != 0)
-    			if (arr[1] != arr[5])
-    				return false;
-    	}
-    	if (arr[2] != 0) {
-    		if (arr[3] != 0)
-    			if (arr[2] != arr[3])
-    				return false;
-    	}
-    	if (arr[2] != 0) {
-    		if (arr[4] != 0)
-    			if (arr[2] != arr[4])
-    				return false;
-    	}
-    	if (arr[2] != 0) {
-    		if (arr[5] != 0)
-    			if (arr[2] != arr[5])
-    				return false;
-    	}
-    	if (arr[3] != 0) {
-    		if (arr[4] != 0)
-    			if (arr[3] != arr[4])
-    				return false;
-    	}
-    	if (arr[3] != 0) {
-    		if (arr[5] != 0)
-    			if (arr[3] != arr[5])
-    				return false;
-    	}
-    	if (arr[4] != 0) {
-    		if (arr[5] != 0)
-    			if (arr[4] != arr[5])
-    				return false;
-    	}
-    	return true;
+		if (arr[0] != 0) {
+			if (arr[1] != 0)
+				if (arr[0] != arr[1])
+					return false;
+		}
+		if (arr[0] != 0) {
+			if (arr[2] != 0)
+				if (arr[0] != arr[2])
+					return false;
+		}
+		if (arr[0] != 0) {
+			if (arr[3] != 0)
+				if (arr[0] != arr[3])
+					return false;
+		}
+		if (arr[0] != 0) {
+			if (arr[4] != 0)
+				if (arr[0] != arr[4])
+					return false;
+		}
+		if (arr[0] != 0) {
+			if (arr[5] != 0)
+				if (arr[0] != arr[5])
+					return false;
+		}
+		if (arr[1] != 0) {
+			if (arr[2] != 0)
+				if (arr[1] != arr[2])
+					return false;
+		}
+		if (arr[1] != 0) {
+			if (arr[3] != 0)
+				if (arr[1] != arr[3])
+					return false;
+		}
+		if (arr[1] != 0) {
+			if (arr[4] != 0)
+				if (arr[1] != arr[4])
+					return false;
+		}
+		if (arr[1] != 0) {
+			if (arr[5] != 0)
+				if (arr[1] != arr[5])
+					return false;
+		}
+		if (arr[2] != 0) {
+			if (arr[3] != 0)
+				if (arr[2] != arr[3])
+					return false;
+		}
+		if (arr[2] != 0) {
+			if (arr[4] != 0)
+				if (arr[2] != arr[4])
+					return false;
+		}
+		if (arr[2] != 0) {
+			if (arr[5] != 0)
+				if (arr[2] != arr[5])
+					return false;
+		}
+		if (arr[3] != 0) {
+			if (arr[4] != 0)
+				if (arr[3] != arr[4])
+					return false;
+		}
+		if (arr[3] != 0) {
+			if (arr[5] != 0)
+				if (arr[3] != arr[5])
+					return false;
+		}
+		if (arr[4] != 0) {
+			if (arr[5] != 0)
+				if (arr[4] != arr[5])
+					return false;
+		}
+		return true;
 	}
 
 	/** Returns true if all values in the array are equal. Args: Array */

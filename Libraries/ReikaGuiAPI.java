@@ -16,7 +16,6 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -26,7 +25,6 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import cpw.mods.fml.relauncher.Side;
@@ -413,6 +411,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 			this.drawItemStack(render, f, out, x2+4+j, y2+4+k);
 	}
 
+	/** Note that this must be called after any and all texture and text rendering, as the lighting conditions are left a bit off */
 	public void drawItemStack(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
 		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
 		zLevel = 200.0F;
@@ -425,25 +424,26 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 		//ReikaJavaLibrary.pConsole(is.getItem().getLocalizedName(is)+" @ "+x+", "+y);
 
-		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-		RenderHelper.disableStandardItemLighting();
-		GL11.glDisable(GL11.GL_LIGHTING);
+		//GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+		//RenderHelper.disableStandardItemLighting();
+		//GL11.glDisable(GL11.GL_LIGHTING);
 		RenderHelper.enableGUIStandardItemLighting();
-		GL11.glPushMatrix();
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		//GL11.glPushMatrix();
+		//GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		//GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		short short1 = 240;
 		short short2 = 240;
-		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
+		//GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		renderer.renderItemAndEffectIntoGUI(font, mc.renderEngine, is, x, y);
 		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, null);
 		zLevel = 0.0F;
 		renderer.zLevel = 0.0F;
-		GL11.glPopMatrix();
+		//GL11.glPopMatrix();
 
 		RenderHelper.disableStandardItemLighting();
 		RenderHelper.enableGUIStandardItemLighting();
+		GL11.glColor4d(1, 1, 1, 1);
 	}
 }

@@ -24,10 +24,10 @@ public enum ModOreList {
 	FERROUS("Nickel", "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
 	SILVER("Silver", "ingotSilver", 1, "oreSilver"),
 	GALENA("Galena", "ingotGalena", 1, "oreGalena"),
-	ALUMINUM("Aluminum", "ingotAluminum", 1, "oreAluminum", "oreBauxite"),
+	ALUMINUM("Aluminum", "ingotNaturalAluminum", 1, "naturalAluminum", "oreNaturalAluminum", "oreBauxite"), //...
 	IRIDIUM("Iridium", "ingotIridium", 1, "oreIridium"),
 	PERIDOT("Peridot", "gemPeridot", 1, "orePeridot"),
-	CERTUSQUARTZ("Certus Quartz", "quartz", 3, "oreCertus"),
+	CERTUSQUARTZ("Certus Quartz", "crystalCertusQuartz", 3, "oreCertusQuartz"),
 	URANIUM("Uranium", "ingotUranium", 1, "oreUranium"),
 	CINNABAR("Cinnabar", "cinnabar", 1, "oreCinnabar"),
 	AMBER("Amber", "amber", 3, "oreAmber"),
@@ -44,7 +44,7 @@ public enum ModOreList {
 	GREENSAPPHIRE("Green Sapphire", "gemGreenSapphire", 1, "oreGreenSapphire"),
 	RUBY("Ruby", "gemRuby", 1, "oreRuby"),
 	SAPPHIRE("Sapphire", "gemSapphire", 1, "oreSapphire"),
-	MONAZIT("Monazit", "ingotMonazit", 1, "oreMonazit"),
+	MONAZIT("Monazit", "ForciciumItem", 1, "MonazitOre"),
 	FORCE("Force", "gemForce", 3, "oreForce");
 
 	private ArrayList<ItemStack> ores;
@@ -122,6 +122,10 @@ public enum ModOreList {
 
 	public String getName() {
 		return name;
+	}
+
+	public String getProductLabel() {
+		return product;
 	}
 
 	public int getDropCount() {

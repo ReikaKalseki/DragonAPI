@@ -44,6 +44,8 @@ public final class ReikaBlockHelper extends DragonAPICore {
 
 	/** Returns true if the Block ID corresponds to an ore block. Args: ID */
 	public static boolean isOre(ItemStack is) {
+		if (is == null)
+			return false;
 		if (is.itemID == Block.oreRedstoneGlowing.blockID)
 			return true;
 		if (ReikaOreHelper.isVanillaOre(is.itemID))
