@@ -24,13 +24,13 @@ public enum ModOreList {
 	FERROUS("Nickel", "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
 	SILVER("Silver", "ingotSilver", 1, "oreSilver"),
 	GALENA("Galena", "ingotGalena", 1, "oreGalena"),
-	ALUMINUM("Aluminum", "ingotNaturalAluminum", 1, "naturalAluminum", "oreNaturalAluminum", "oreBauxite"), //...
+	ALUMINUM("Aluminum", "ingotNaturalAluminum", 1, "oreAluminum", "naturalAluminum", "oreNaturalAluminum", "oreBauxite"), //...Why??
 	IRIDIUM("Iridium", "ingotIridium", 1, "oreIridium"),
 	PERIDOT("Peridot", "gemPeridot", 1, "orePeridot"),
 	CERTUSQUARTZ("Certus Quartz", "crystalCertusQuartz", 3, "oreCertusQuartz"),
 	URANIUM("Uranium", "ingotUranium", 1, "oreUranium"),
-	CINNABAR("Cinnabar", "cinnabar", 1, "oreCinnabar"),
-	AMBER("Amber", "amber", 3, "oreAmber"),
+	CINNABAR("Mercury", "itemQuicksilver", 1, "oreCinnabar"),
+	AMBER("Amber", "gemAmber", 3, "oreAmber"),
 	INFUSEDAIR("Air Infused", "infusedAir", 4, "oreInfusedAir"),
 	INFUSEDFIRE("Fire Infused", "infusedFire", 4, "oreInfusedFire"),
 	INFUSEDWATER("Water Infused", "infusedWater", 4, "oreInfusedWater"),

@@ -35,10 +35,12 @@ public class ConfigReader {
 	}
 
 	private void setFile() {
-		ReikaJavaLibrary.pConsole(1);
 		configFile = new File(filepath);
-		if (!configFile.exists())
-			throw new MisuseException("Config for "+modName+" does not exist at "+filepath+"!\nThis reader is only designed for force-reading of existing data!");
+		if (!configFile.exists()) {
+			//throw new MisuseException("Config for "+modName+" does not exist at "+filepath+"!\nThis reader is only designed for force-reading of existing data!");
+			ReikaJavaLibrary.pConsole("Config for "+modName+" does not exist at "+filepath+"!\nThis reader is only designed for force-reading of existing data!");
+			return;
+		}
 		config = new Configuration(configFile);
 	}
 
