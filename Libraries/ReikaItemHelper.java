@@ -16,6 +16,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaItemHelper extends DragonAPICore {
@@ -114,7 +115,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return true;
 		if (a == null || b == null)
 			return false;
-		return (a.itemID == b.itemID && a.getItemDamage() == b.getItemDamage());
+		return (a.itemID == b.itemID && (a.getItemDamage() == b.getItemDamage() || a.getItemDamage() == OreDictionary.WILDCARD_VALUE || b.getItemDamage() == OreDictionary.WILDCARD_VALUE));
 	}
 
 	public static boolean isFireworkIngredient(int id) {
