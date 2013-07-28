@@ -100,4 +100,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		List<T> n = new ArrayList<T>(li);
 		return n;
 	}
+
+	public static boolean doesClassExist(String cl) {
+		try {
+			Class.forName(cl);
+			return true;
+		}
+		catch (ClassNotFoundException e) {
+			return false;
+		}
+	}
 }

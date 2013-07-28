@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Exception;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.crash.CrashReport;
 
 public abstract class DragonAPIException extends RuntimeException {
 
@@ -24,7 +22,7 @@ public abstract class DragonAPIException extends RuntimeException {
 	protected void crash() {
 		//Minecraft.getMinecraft().crashed(CrashReport.makeCrashReport(this, this.getMessage()));
 		//this.printStackTrace();
-		throw (this);
+		throw this;
 	}
 
 }

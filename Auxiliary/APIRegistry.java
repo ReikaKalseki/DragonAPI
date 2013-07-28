@@ -14,12 +14,15 @@ import cpw.mods.fml.common.Loader;
 
 public enum APIRegistry {
 
-	BUILDCRAFT("BuildCraft|Energy"),
+	BUILDCRAFTENERGY("BuildCraft|Energy"),
+	BUILDCRAFTFACTORY("BuildCraft|Factory"),
+	BUILDCRAFTTRANSPORT("BuildCraft|Transport"),
 	THAUMCRAFT("Thaumcraft"),
 	INDUSTRIALCRAFT("IC2"),
 	GREGTECH("Gregtech"),
 	FORESTRY("Forestry"),
-	APPLIEDENERGISTICS("AppliedEnergistics");
+	APPLIEDENERGISTICS("AppliedEnergistics"),
+	MFFS("ModularForceFieldSystem");
 
 	private boolean condition;
 	private boolean preset = false;
@@ -33,9 +36,9 @@ public enum APIRegistry {
 		condition = c;
 		preset = true;
 		if (c)
-			ReikaJavaLibrary.pConsole(this+" detected in the MC installation. Adjusting behavior accordingly.");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" detected in the MC installation. Adjusting behavior accordingly.");
 		else
-			ReikaJavaLibrary.pConsole(this+" not detected in the MC installation. No special action taken.");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" not detected in the MC installation. No special action taken.");
 	}
 
 	public boolean conditionsMet() {
