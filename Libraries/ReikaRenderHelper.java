@@ -14,9 +14,11 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
@@ -27,10 +29,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.ReikaModelledBreakFX;
 import Reika.DragonAPI.Interfaces.RenderFetcher;
 import Reika.DragonAPI.Interfaces.TextureFetcher;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
 public final class ReikaRenderHelper extends DragonAPICore {
 
 	/** Converts an RGB array into a color multiplier. Args: RGB[], bit */
@@ -284,6 +283,21 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
 		}
 		return true;
+	}
+
+	public static void spawnInfusedDropParticles(World world, int x, int y, int z, int thaumOreID) {
+		Block ore = Block.blocksList[thaumOreID];
+		Icon ico = new RenderBlocks().getBlockIcon(ore);
+		for (int i = 0; i < 16; i++) {
+			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, ore, world.getBlockMetadata(x, y, z), 0, Minecraft.getMinecraft().renderEngine, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0)));
+		}
+	}
+
+	public static void spawnDropParticles(World world, int x, int y, int z, Block b, int meta) {
+		Icon ico = new RenderBlocks().getBlockIcon(b);
+		for (int i = 0; i < 16; i++) {
+			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, meta, 0, Minecraft.getMinecraft().renderEngine, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0)));
+		}
 	}
 
 }

@@ -12,7 +12,7 @@ package Reika.DragonAPI.Instantiable;
 import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.Auxiliary.ModOreList;
+import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public final class ThaumOreHandler {
 

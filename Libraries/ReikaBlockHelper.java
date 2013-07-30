@@ -13,7 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Auxiliary.ModOreList;
+import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public final class ReikaBlockHelper extends DragonAPICore {
 

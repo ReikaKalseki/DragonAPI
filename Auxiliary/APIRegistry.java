@@ -22,11 +22,18 @@ public enum APIRegistry {
 	GREGTECH("Gregtech"),
 	FORESTRY("Forestry"),
 	APPLIEDENERGISTICS("AppliedEnergistics"),
-	MFFS("ModularForceFieldSystem");
+	MFFS("ModularForceFieldSystem"),
+	REDPOWER("RedPower"),
+	TWILIGHT("TwilightForest"),
+	NATURA("Natura"),
+	BOP("Biomes O'Plenty"),
+	BXL("Biomes XL"),
+	MINEFACTORY("MineFactoryReloaded");
 
 	private boolean condition;
 	private boolean preset = false;
 	private String modlabel;
+	private Class modClass;
 
 	public static final APIRegistry[] apiList = APIRegistry.values();
 

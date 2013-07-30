@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Auxiliary;
+package Reika.DragonAPI.ModRegistry;
 
 import java.util.ArrayList;
 
@@ -36,7 +36,7 @@ public enum ModOreList {
 	URANIUM("Uranium", "ingotUranium", 1, "oreUranium"),
 	//THAUMCRAFT
 	CINNABAR("Mercury", "itemQuicksilver", 1, "oreCinnabar"),
-	AMBER("Amber", "gemAmber", 3, "oreAmber"),
+	AMBER("Amber", "gemAmber", 1, "oreAmber"),
 	INFUSEDAIR("Air Infused", "shardAir", 4, "oreInfusedAir"),
 	INFUSEDFIRE("Fire Infused", "shardFire", 4, "oreInfusedFire"),
 	INFUSEDWATER("Water Infused", "shardWater", 4, "oreInfusedWater"),
@@ -72,7 +72,7 @@ public enum ModOreList {
 	NETHERSILVER("Nether Silver", "ingotSilver", 1, "oreNetherSilver"),
 	NETHERNIKOLITE("Nether Nikolite", "dustNikolite", 5, "oreNetherNikolite"),
 	//TINKERER'S CONSTRUCT
-	NETHERCOBALT("Nether Cobalt", "ingotCobalt", 1, "oreNetherCobalt"),
+	NETHERCOBALT("Nether Cobalt", "ingotCobalt", 1, "oreCobalt"),
 	ARDITE("Ardite", "ingotArdite", 1, "oreArdite");
 
 	private ArrayList<ItemStack> ores;

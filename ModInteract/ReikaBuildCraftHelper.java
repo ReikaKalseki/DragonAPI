@@ -13,7 +13,7 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidDictionary;
 import net.minecraftforge.liquids.LiquidStack;
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import buildcraft.api.fuels.IronEngineFuel;
 
 public class ReikaBuildCraftHelper extends DragonAPICore {
@@ -25,7 +25,7 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	private static double gasEnergyPerKg = 46.9;
 
 	public static boolean doesBuildCraftExist() {
-		return APIRegistry.BUILDCRAFTENERGY.conditionsMet();
+		return ReikaJavaLibrary.doesClassExist("BuildCraftEnergy");
 	}
 
 	public static float getFuelMJPerTick() {
@@ -50,6 +50,8 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	}
 
 	public static double getWattsPerMJ() {
+		if (!doesBuildCraftExist())
+			return 56280; //default
 		double power = getFuelRealPower();
 		double mj = getFuelMJPerTick();
 		return power/mj; //as of 1.5.2, is 56.28kW per MJ

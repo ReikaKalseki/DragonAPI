@@ -20,11 +20,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public final class ItemSpriteSheetRenderer implements IItemRenderer {	
-	
+public final class ItemSpriteSheetRenderer implements IItemRenderer {
+
 	protected int spritesheet;
 	protected int index;
-	
+
 	public ItemSpriteSheetRenderer(Class root, String file, String backup) {
 		//this.spritesheet = ReikaSpriteSheets.setupTextures(root, file);
 		String filename;/*
@@ -38,18 +38,18 @@ public final class ItemSpriteSheetRenderer implements IItemRenderer {
 			filename = backup;
 		else
 			filename = root.getResource(file).getPath();*/
-		
-        if (root == null)
-        	return;
-        if (root.getResource(".") == null)
-        	filename = "";
-        else {
-	        String base = root.getResource(".").getPath();
-	        String path = base.substring(1, base.length()-1);
-	        filename = path+file;
-        }
-        //ReikaJavaLibrary.pConsole("ITEM @ "+filename+" from "+file+" Exists: ");
-		this.spritesheet = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
+
+		if (root == null)
+			return;
+		if (root.getResource(".") == null)
+			filename = "";
+		else {
+			String base = root.getResource(".").getPath();
+			String path = base.substring(1, base.length()-1);
+			filename = path+file;
+		}
+		//ReikaJavaLibrary.pConsole("ITEM @ "+filename+" from "+file+" Exists: ");
+		spritesheet = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
 	}
 
 	@Override
@@ -72,5 +72,9 @@ public final class ItemSpriteSheetRenderer implements IItemRenderer {
 			index = iis.getItemSpriteIndex(item);
 			ReikaSpriteSheets.renderItem(spritesheet, index, type, item, data);
 		}
+	}
+
+	public int getSpritesheet() {
+		return spritesheet;
 	}
 }
