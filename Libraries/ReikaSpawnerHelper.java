@@ -95,4 +95,15 @@ public class ReikaSpawnerHelper {
 		}
 	}
 
+	public static String getSpawnerFromItemNBT(ItemStack is) {
+		if (is == null)
+			return null;
+		if (is.stackTagCompound == null)
+			return null;
+		if (!is.stackTagCompound.hasKey("Spawner"))
+			return null;
+		String name = is.stackTagCompound.getString("Spawner");
+		return name;
+	}
+
 }

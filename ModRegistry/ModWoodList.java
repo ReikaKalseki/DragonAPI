@@ -12,8 +12,13 @@ package Reika.DragonAPI.ModRegistry;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityFallingSand;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Icon;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Libraries.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 
 public enum ModWoodList { //look through treecapitator config?
@@ -59,6 +64,14 @@ public enum ModWoodList { //look through treecapitator config?
 	public static final ModWoodList[] woodList = ModWoodList.values();
 
 	private ModWoodList(APIRegistry req, String className, String blockVar, int meta, Class type) {
+		if (className == null || className.isEmpty()) {
+			ReikaJavaLibrary.pConsole("Error loading wood "+this+": Empty parent class");
+			return;
+		}
+		if (blockVar == null || blockVar.isEmpty()) {
+			ReikaJavaLibrary.pConsole("Error loading wood "+this+": Empty variable name");
+			return;
+		}
 		try {
 			Class cl = Class.forName(className);
 			Field f = cl.getField(blockVar);
@@ -110,10 +123,6 @@ public enum ModWoodList { //look through treecapitator config?
 		return this.name()+" from "+mod;
 	}
 
-	private void readFromMod() {
-
-	}
-
 	public boolean exists() {
 		return exists;
 	}
@@ -126,8 +135,29 @@ public enum ModWoodList { //look through treecapitator config?
 		return Block.blocksList[blockID];
 	}
 
+	public static ModWoodList getModWood(ItemStack block) {
+		for (int i = 0; i < woodList.length; i++) {
+			if (ReikaItemHelper.matchStacks(block, woodList[i].getItem()))
+				return woodList[i];
+		}
+		return null;
+	}
+
 	public static boolean isModWood(ItemStack block) {
-		return false;
+		return getModWood(block) != null;
+	}
+
+	public Icon getWoodIcon(IBlockAccess iba, int x, int y, int z, int s) {
+		return this.getBlock().getBlockTexture(iba, x, y, z, s);
+	}
+
+	public Icon getSideIcon() {
+		return this.getBlock().getBlockTextureFromSide(2);
+	}
+
+	public EntityFallingSand getFallingBlock(World world, int x, int y, int z) {
+		EntityFallingSand e = new EntityFallingSand(world, x+0.5, y+0.5, z+0.5, blockID, blockMeta);
+		return e;
 	}
 
 }

@@ -26,8 +26,10 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Interfaces.IndexedItemSprites;
+import Reika.DragonAPI.Libraries.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
 import Reika.DragonAPI.Libraries.ReikaWorldHelper;
+import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 
 public class ItemSpawner extends Item implements IndexedItemSprites {
 
@@ -74,8 +76,10 @@ public class ItemSpawner extends Item implements IndexedItemSprites {
 
 	@Override
 	public boolean onItemUse(ItemStack is, EntityPlayer ep, World world, int x, int y, int z, int side, float par8, float par9, float par10) {
-		//if (world.blockHasTileEntity(x, y, z))
-		//return false;
+		if (!this.isValidDimensionForSpawner(is, world)) {
+			ReikaChatHelper.write(ReikaSpawnerHelper.getSpawnerFromItemNBT(is)+" cannot be placed in dimension "+world.provider.dimensionId+"!");
+			return false;
+		}
 		if (!ReikaWorldHelper.softBlocks(world.getBlockId(x, y, z)) && world.getBlockMaterial(x, y, z) != Material.water && world.getBlockMaterial(x, y, z) != Material.lava) {
 			if (side == 0)
 				--y;
@@ -89,8 +93,6 @@ public class ItemSpawner extends Item implements IndexedItemSprites {
 				--x;
 			if (side == 5)
 				++x;
-			//if (world.blockHasTileEntity(x, y, z))
-			//return false;
 			if (!ReikaWorldHelper.softBlocks(world.getBlockId(x, y, z)) && world.getBlockMaterial(x, y, z) != Material.water && world.getBlockMaterial(x, y, z) != Material.lava)
 				return false;
 		}
@@ -137,5 +139,22 @@ public class ItemSpawner extends Item implements IndexedItemSprites {
 
 	public int getItemSpriteIndex(ItemStack is) {
 		return 16*this.getIconY()+this.getIconX();
+	}
+
+	private boolean isValidDimensionForSpawner(ItemStack is, World world) {
+		String name = ReikaSpawnerHelper.getSpawnerFromItemNBT(is);
+		if (ReikaTwilightHelper.isTwilightForestBoss(name))
+			return world.provider.dimensionId == 7;
+		switch(world.provider.dimensionId) {
+		case 0:
+			break;
+		case 1: //end
+			break;
+		case -1: //nether
+			break;
+		case 7: //twilight forest
+			break;
+		}
+		return true;
 	}
 }

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
@@ -741,5 +742,17 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	public static void addOrSetStack(ItemStack is, ItemStack[] inv, int i) {
 		addOrSetStack(is.itemID, is.stackSize, is.getItemDamage(), inv, i);
+	}
+
+	public static List<ItemStack> getWholeInventory(IInventory ii) {
+		List<ItemStack> li = new ArrayList<ItemStack>();
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			li.add(ii.getStackInSlot(i));
+		}
+		return li;
+	}
+
+	public static void addMultipleItems(ItemStack[] inv, List<ItemStack> items) {
+
 	}
 }
