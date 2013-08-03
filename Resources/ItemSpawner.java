@@ -142,10 +142,13 @@ public class ItemSpawner extends Item implements IndexedItemSprites {
 	}
 
 	private boolean isValidDimensionForSpawner(ItemStack is, World world) {
+		int dim = world.provider.dimensionId;
 		String name = ReikaSpawnerHelper.getSpawnerFromItemNBT(is);
 		if (ReikaTwilightHelper.isTwilightForestBoss(name))
-			return world.provider.dimensionId == 7;
-		switch(world.provider.dimensionId) {
+			return dim == 7;
+		if (name.equals("EnderDragon"))
+			return dim == 1;
+		switch(dim) {
 		case 0:
 			break;
 		case 1: //end

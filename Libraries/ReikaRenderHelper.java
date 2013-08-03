@@ -285,11 +285,11 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		return true;
 	}
 
-	public static void spawnInfusedDropParticles(World world, int x, int y, int z, int thaumOreID) {
-		Block ore = Block.blocksList[thaumOreID];
-		Icon ico = new RenderBlocks().getBlockIcon(ore);
+	public static void spawnModBlockDropParticles(World world, int x, int y, int z, int blockID) {
+		Block b = Block.blocksList[blockID];
+		Icon ico = new RenderBlocks().getBlockIcon(b);
 		for (int i = 0; i < 16; i++) {
-			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, ore, world.getBlockMetadata(x, y, z), 0, Minecraft.getMinecraft().renderEngine, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0)));
+			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, world.getBlockMetadata(x, y, z), 0, Minecraft.getMinecraft().renderEngine, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0)));
 		}
 	}
 

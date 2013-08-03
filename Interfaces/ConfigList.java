@@ -18,9 +18,13 @@ public interface ConfigList {
 
 	public boolean isNumeric();
 
+	public boolean isDecimal();
+
 	public Class getPropertyType();
 
 	public int setValue(Configuration config);
+
+	public float setDecimal(Configuration config);
 
 	public String getLabel();
 
@@ -29,5 +33,7 @@ public interface ConfigList {
 	public boolean getState();
 
 	public int getValue();
+
+	public float getFloat();
 
 }

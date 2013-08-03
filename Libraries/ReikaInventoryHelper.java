@@ -515,11 +515,11 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Returns true iff succeeded; adds iff can fit whole stack */
 	public static boolean addToIInv(ItemStack is, IInventory ii) {
-		if (!hasSpaceFor(is, ii))
-			return false;
+		//if (!hasSpaceFor(is, ii))
+		//	return false;
 		int slot = locateNonFullStackOf(is, ii);
 		int e = getFirstEmptySlot(ii);
-		ReikaJavaLibrary.pConsole(ii.isStackValidForSlot(e, is));
+		//ReikaJavaLibrary.pConsole("Empty: "+e+",  Slot: "+slot+" for "+is+" on "+FMLCommonHandler.instance().getEffectiveSide());
 		if (slot == -1 && e == -1) {
 			return false;
 		}
@@ -528,7 +528,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 				if (e == -1)
 					return false;
 				if (ii.isStackValidForSlot(e, is)) {
-					ii.setInventorySlotContents(e, is);
+					ii.setInventorySlotContents(e, is.copy());
 					return true;
 				}
 				else
@@ -536,12 +536,13 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 			ItemStack i = ii.getStackInSlot(slot);
 			i.stackSize += is.stackSize;
-			ii.setInventorySlotContents(slot, i);
+			ii.setInventorySlotContents(slot, i.copy());
 			return true;
 		}
 		if (e != -1) {
+			//ReikaJavaLibrary.pConsole(ii.isStackValidForSlot(e, is)+" on "+FMLCommonHandler.instance().getEffectiveSide()+" to "+ii+" with "+is);
 			if (ii.isStackValidForSlot(e, is)) {
-				ii.setInventorySlotContents(e, is);
+				ii.setInventorySlotContents(e, is.copy());
 				return true;
 			}
 			else
@@ -751,6 +752,13 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 		return li;
 	}
+
+	public static void clearInventory(IInventory ii) {
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			ii.setInventorySlotContents(i, null);
+		}
+	}
+
 
 	public static void addMultipleItems(ItemStack[] inv, List<ItemStack> items) {
 

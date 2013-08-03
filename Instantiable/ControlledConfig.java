@@ -155,6 +155,8 @@ public class ControlledConfig {
 				controls[i] = optionList[i].setState(config);
 			if (optionList[i].isNumeric())
 				controls[i] = optionList[i].setValue(config);
+			if (optionList[i].isDecimal())
+				controls[i] = optionList[i].setDecimal(config);
 		}
 
 		for (int i = 0; i < blockList.length; i++) {

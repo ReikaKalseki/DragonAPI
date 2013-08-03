@@ -23,37 +23,39 @@ import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 
 public enum ModWoodList { //look through treecapitator config?
 
-	CANOPY(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", 1, Block.class),
-	DARKWOOD(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", 3, Block.class),
-	MANGROVE(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", 2, Block.class),
-	TWILIGHTOAK(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", 0, Block.class),
-	GREATWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", 0, Block.class),
-	SILVERWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", 1, Block.class),
-	EUCALYPTUS(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", 0, Block.class),
+	CANOPY(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", 1, Block.class),
+	DARKWOOD(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", 3, Block.class),
+	MANGROVE(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", 2, Block.class),
+	TWILIGHTOAK(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", 0, Block.class),
+	GREATWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLog", 0, Block.class),
+	SILVERWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLog", 1, Block.class),
+	EUCALYPTUS(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", 0, Block.class),
 	//BIGREDWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "redwood", 0, Block.class),
-	SAKURA(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", 1, Block.class),
-	GHOSTWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", 2, Block.class),
-	HOPSEED(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", 3, Block.class),
-	DARKNATURA(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", 0, Block.class),
-	BLOODWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "bloodwood", 0, Block.class),
-	FUSEWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", 1, Block.class),
-	TIGERWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", 3, Block.class),
-	SILVERBELL(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", 1, Block.class),
-	MAPLE(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", 0, Block.class),
-	WILLOW(APIRegistry.NATURA, "mods.natura.common.NContent", "willow", 0, Block.class),
-	AMARANTH(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", 2, Block.class),
-	REDWOOD(APIRegistry.BOP, null, null, 0, Block.class),
-	ACACIA(APIRegistry.BOP, null, null, 0, Block.class),
-	JACARANDA(APIRegistry.BOP, null, null, 0, Block.class),
-	AUTUMN(APIRegistry.BXL, null, null, 0, Block.class),
-	FIR(APIRegistry.BXL, null, null, 0, Block.class),
-	XLREDWOOD(APIRegistry.BXL, null, null, 0, Block.class),
-	RUBBER(APIRegistry.INDUSTRIALCRAFT, "ic2.core.Ic2Items", "rubberWood", 0, ItemStack.class),
-	MINERUBBER(APIRegistry.MINEFACTORY, "powercrystals.minefactoryreloaded.MineFactoryReloadedCore", "rubberWoodBlock", 0, Block.class);
+	SAKURA(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", 1, Block.class),
+	GHOSTWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", 2, Block.class),
+	HOPSEED(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", 3, Block.class),
+	DARKNATURA(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", 0, Block.class),
+	BLOODWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "bloodwood", "bloodwood", 0, 1, Block.class),
+	FUSEWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", 1, Block.class),
+	TIGERWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", 3, Block.class),
+	SILVERBELL(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", 1, Block.class),
+	MAPLE(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", 0, Block.class),
+	WILLOW(APIRegistry.NATURA, "mods.natura.common.NContent", "willow", "willow", 0, 1, Block.class),
+	AMARANTH(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", 2, Block.class),
+	REDWOOD(APIRegistry.BOP, null, null, null, 0, Block.class),
+	ACACIA(APIRegistry.BOP, null, null, null, 0, Block.class),
+	JACARANDA(APIRegistry.BOP, null, null, null, 0, Block.class),
+	AUTUMN(APIRegistry.BXL, null, null, null, 0, Block.class),
+	FIR(APIRegistry.BXL, null, null, null, 0, Block.class),
+	XLREDWOOD(APIRegistry.BXL, null, null, null, 0, Block.class),
+	RUBBER(APIRegistry.INDUSTRIALCRAFT, "ic2.core.Ic2Items", "rubberWood", "rubberLeaves", 0, ItemStack.class),
+	MINERUBBER(APIRegistry.MINEFACTORY, "powercrystals.minefactoryreloaded.MineFactoryReloadedCore", "rubberWoodBlock", "rubberLeavesBlock", 0, Block.class);
 
 	private APIRegistry mod;
-	private int blockID;
-	private int blockMeta;
+	private int blockID = -1;
+	private int leafID = -1;
+	private int blockMeta = -1;
+	private int leafMeta = -1;
 	private boolean hasPlanks;
 
 	private String varName;
@@ -63,57 +65,77 @@ public enum ModWoodList { //look through treecapitator config?
 
 	public static final ModWoodList[] woodList = ModWoodList.values();
 
-	private ModWoodList(APIRegistry req, String className, String blockVar, int meta, Class type) {
+	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, int meta, Class type) {
+		this(req, className, blockVar, leafVar, meta, meta, type);
+	}
+
+	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, int meta, int metaleaf, Class type) {
+		mod = req;
+		if (!mod.conditionsMet())
+			return;
 		if (className == null || className.isEmpty()) {
-			ReikaJavaLibrary.pConsole("Error loading wood "+this+": Empty parent class");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this+": Empty parent class");
 			return;
 		}
 		if (blockVar == null || blockVar.isEmpty()) {
-			ReikaJavaLibrary.pConsole("Error loading wood "+this+": Empty variable name");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this+": Empty variable name");
+			return;
+		}
+		if (leafVar == null || leafVar.isEmpty()) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading leaves for wood "+this+": Empty variable name");
 			return;
 		}
 		try {
 			Class cl = Class.forName(className);
-			Field f = cl.getField(blockVar);
+			Field w = cl.getField(blockVar);
+			Field l = cl.getField(leafVar);
 			int id;
+			int idleaf;
 			if (type == ItemStack.class) {
-				ItemStack is = (ItemStack)f.get(null);
-				id = is.itemID;
+				ItemStack wood = (ItemStack)w.get(null);
+				ItemStack leaf = (ItemStack)l.get(null);
+				id = wood.itemID;
+				idleaf = leaf.itemID;
 			}
 			else if (type == Block.class) {
-				Block b = (Block)f.get(null);
-				id = b.blockID;
+				Block wood = (Block)w.get(null);
+				Block leaf = (Block)l.get(null);
+				id = wood.blockID;
+				idleaf = leaf.blockID;
 			}
 			else if (type == Integer.class) {
-				id = f.getInt(null);
+				id = w.getInt(null);
+				idleaf = l.getInt(null);
 			}
 			else {
-				ReikaJavaLibrary.pConsole("Error loading wood "+this);
-				ReikaJavaLibrary.pConsole("Invalid variable type for "+f);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for "+w+" or "+l);
 				return;
 			}
 			blockID = id;
 			blockMeta = meta;
+			leafID = idleaf;
+			leafMeta = metaleaf;
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully loaded wood "+this);
 		}
 		catch (ClassNotFoundException e) {
-			ReikaJavaLibrary.pConsole("Error loading wood "+this);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
 			e.printStackTrace();
 		}
 		catch (NoSuchFieldException e) {
-			ReikaJavaLibrary.pConsole("Error loading wood "+this);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
 			e.printStackTrace();
 		}
 		catch (SecurityException e) {
-			ReikaJavaLibrary.pConsole("Error loading wood "+this);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
 			e.printStackTrace();
 		}
 		catch (IllegalAccessException e) {
-			ReikaJavaLibrary.pConsole("Error loading wood "+this);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
 			e.printStackTrace();
 		}
 		catch (IllegalArgumentException e) {
-			ReikaJavaLibrary.pConsole("Error loading wood "+this);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
 			e.printStackTrace();
 		}
 	}
@@ -158,6 +180,10 @@ public enum ModWoodList { //look through treecapitator config?
 	public EntityFallingSand getFallingBlock(World world, int x, int y, int z) {
 		EntityFallingSand e = new EntityFallingSand(world, x+0.5, y+0.5, z+0.5, blockID, blockMeta);
 		return e;
+	}
+
+	public ItemStack getCorrespondingLeaf() {
+		return new ItemStack(leafID, 1, leafMeta);
 	}
 
 }

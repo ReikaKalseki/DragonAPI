@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Instantiable;
+package Reika.DragonAPI.ModInteract;
 
 import java.util.ArrayList;
 
@@ -146,6 +146,16 @@ public final class ThaumOreHandler {
 	public boolean isShard(ItemStack is) {
 		//return ReikaItemHelper.listContainsItemStack(items, is) && is.itemID == shardID;
 		return is.itemID == shardID;
+	}
+
+	public boolean isShardOre(ItemStack block) {
+		if (!this.isThaumOre(block))
+			return false;
+		if (block.getItemDamage() == oreAmber.getItemDamage())
+			return false;
+		if (block.getItemDamage() == oreCinnabar.getItemDamage())
+			return false;
+		return true;
 	}
 
 }

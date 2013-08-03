@@ -9,18 +9,25 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-public class ReikaTwilightHelper {
+import net.minecraft.item.ItemStack;
 
-	public static boolean isTwilightForestBoss(String name) {
-		if (name == null)
-			return false;
-		if (name.equals("Ur-Ghast"))
-			return true;
-		if (name.equals("Hydra"))
-			return true;
-		if (name.equals("Naga"))
-			return true;
-		return false;
+public class DartOreHandler {
+
+	public final int oreID;
+
+	private final ItemStack oreItem;
+
+	public DartOreHandler(int ore) {
+		oreID = ore;
+		oreItem = new ItemStack(oreID, 1, 0);
+	}
+
+	public ItemStack getOre() {
+		return oreItem.copy();
+	}
+
+	public boolean isDartOre(ItemStack block) {
+		return block.itemID == oreID;
 	}
 
 }

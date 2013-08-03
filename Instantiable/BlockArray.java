@@ -78,25 +78,25 @@ public class BlockArray {
 		return false;
 	}
 
-	/** Recursively fills a contiguous area with one block type, akin to a fill tool.
+	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow */
-	public void recursiveFill(World world, int x, int y, int z, int id) {
+	public void recursiveAdd(World world, int x, int y, int z, int id) {
 		if (world.getBlockId(x, y, z) != id)
 			return;
 		if (this.hasBlock(x, y, z))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		this.recursiveFill(world, x+1, y, z, id);
-		this.recursiveFill(world, x-1, y, z, id);
-		this.recursiveFill(world, x, y+1, z, id);
-		this.recursiveFill(world, x, y-1, z, id);
-		this.recursiveFill(world, x, y, z+1, id);
-		this.recursiveFill(world, x, y, z-1, id);
+		this.recursiveAdd(world, x+1, y, z, id);
+		this.recursiveAdd(world, x-1, y, z, id);
+		this.recursiveAdd(world, x, y+1, z, id);
+		this.recursiveAdd(world, x, y-1, z, id);
+		this.recursiveAdd(world, x, y, z+1, id);
+		this.recursiveAdd(world, x, y, z-1, id);
 	}
 
-	/** Like the ordinary recursive fill but with a bounded volume. Args: World, x, y, z,
+	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	public void recursiveFillWithBounds(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void recursiveAddWithBounds(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2) {
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
 		if (world.getBlockId(x, y, z) != id) {
@@ -105,12 +105,29 @@ public class BlockArray {
 		if (this.hasBlock(x, y, z))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		this.recursiveFillWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2);
-		this.recursiveFillWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2);
-		this.recursiveFillWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2);
-		this.recursiveFillWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2);
-		this.recursiveFillWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2);
-		this.recursiveFillWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2);
+	}
+
+	public void recursiveAddWithBoundsMetadata(World world, int x, int y, int z, int id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
+		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
+			return;
+		if (world.getBlockId(x, y, z) != id || world.getBlockMetadata(x, y, z) != meta) {
+			return;
+		}
+		if (this.hasBlock(x, y, z))
+			return;
+		this.addBlockCoordinate(x, y, z);
+		this.recursiveAddWithBoundsMetadata(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBoundsMetadata(world, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBoundsMetadata(world, x, y+1, z, id, meta, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBoundsMetadata(world, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBoundsMetadata(world, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddWithBoundsMetadata(world, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2);
 	}
 
 	public void setLiquid(Material mat) {
@@ -120,9 +137,9 @@ public class BlockArray {
 			liquidID = 11;
 	}
 
-	/** Like the ordinary recursive fill but with a bounded volume. Args: World, x, y, z,
+	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	public void recursiveFillLiquidWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void recursiveAddLiquidWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2) {
 		//ReikaJavaLibrary.pConsole(liquidID+" and "+world.getBlockId(x, y, z));;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
@@ -133,17 +150,17 @@ public class BlockArray {
 		if (this.hasBlock(x, y, z))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		this.recursiveFillLiquidWithBounds(world, x+1, y, z, x1, y1, z1, x2, y2, z2);
-		this.recursiveFillLiquidWithBounds(world, x-1, y, z, x1, y1, z1, x2, y2, z2);
-		this.recursiveFillLiquidWithBounds(world, x, y+1, z, x1, y1, z1, x2, y2, z2);
-		this.recursiveFillLiquidWithBounds(world, x, y-1, z, x1, y1, z1, x2, y2, z2);
-		this.recursiveFillLiquidWithBounds(world, x, y, z+1, x1, y1, z1, x2, y2, z2);
-		this.recursiveFillLiquidWithBounds(world, x, y, z-1, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddLiquidWithBounds(world, x+1, y, z, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddLiquidWithBounds(world, x-1, y, z, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddLiquidWithBounds(world, x, y+1, z, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddLiquidWithBounds(world, x, y-1, z, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddLiquidWithBounds(world, x, y, z+1, x1, y1, z1, x2, y2, z2);
+		this.recursiveAddLiquidWithBounds(world, x, y, z-1, x1, y1, z1, x2, y2, z2);
 	}
 
-	/** Like the ordinary recursive fill but with a spherical bounded volume. Args: World, x, y, z,
+	/** Like the ordinary recursive add but with a spherical bounded volume. Args: World, x, y, z,
 	 * id to replace, origin x,y,z, max radius */
-	public void recursiveFillWithinSphere(World world, int x, int y, int z, int id, int x0, int y0, int z0, double r) {
+	public void recursiveAddWithinSphere(World world, int x, int y, int z, int id, int x0, int y0, int z0, double r) {
 		if (world.getBlockId(x, y, z) != id)
 			return;
 		if (this.hasBlock(x, y, z))
@@ -151,12 +168,12 @@ public class BlockArray {
 		if (ReikaMathLibrary.py3d(x-x0, y-y0, z-z0) > r)
 			return;
 		this.addBlockCoordinate(x, y, z);
-		this.recursiveFillWithinSphere(world, x+1, y, z, id, x0, y0, z0, r);
-		this.recursiveFillWithinSphere(world, x-1, y, z, id, x0, y0, z0, r);
-		this.recursiveFillWithinSphere(world, x, y+1, z, id, x0, y0, z0, r);
-		this.recursiveFillWithinSphere(world, x, y-1, z, id, x0, y0, z0, r);
-		this.recursiveFillWithinSphere(world, x, y, z+1, id, x0, y0, z0, r);
-		this.recursiveFillWithinSphere(world, x, y, z-1, id, x0, y0, z0, r);
+		this.recursiveAddWithinSphere(world, x+1, y, z, id, x0, y0, z0, r);
+		this.recursiveAddWithinSphere(world, x-1, y, z, id, x0, y0, z0, r);
+		this.recursiveAddWithinSphere(world, x, y+1, z, id, x0, y0, z0, r);
+		this.recursiveAddWithinSphere(world, x, y-1, z, id, x0, y0, z0, r);
+		this.recursiveAddWithinSphere(world, x, y, z+1, id, x0, y0, z0, r);
+		this.recursiveAddWithinSphere(world, x, y, z-1, id, x0, y0, z0, r);
 	}
 
 	public void sortBlocksByHeight() { //O(n^2)
@@ -307,12 +324,45 @@ public class BlockArray {
 	}
 
 	public void addSphere(World world, int x, int y, int z, int id, double r) {
-		this.recursiveFillWithinSphere(world, x+1, y, z, id, x, y, z, r);
-		this.recursiveFillWithinSphere(world, x, y+1, z, id, x, y, z, r);
-		this.recursiveFillWithinSphere(world, x, y, z+1, id, x, y, z, r);
-		this.recursiveFillWithinSphere(world, x-1, y, z, id, x, y, z, r);
-		this.recursiveFillWithinSphere(world, x, y-1, z, id, x, y, z, r);
-		this.recursiveFillWithinSphere(world, x, y, z-1, id, x, y, z, r);
+		this.recursiveAddWithinSphere(world, x+1, y, z, id, x, y, z, r);
+		this.recursiveAddWithinSphere(world, x, y+1, z, id, x, y, z, r);
+		this.recursiveAddWithinSphere(world, x, y, z+1, id, x, y, z, r);
+		this.recursiveAddWithinSphere(world, x-1, y, z, id, x, y, z, r);
+		this.recursiveAddWithinSphere(world, x, y-1, z, id, x, y, z, r);
+		this.recursiveAddWithinSphere(world, x, y, z-1, id, x, y, z, r);
+	}
+
+	public void addGenerousTree(World world, int x, int y, int z, int dw) {
+		if (this.hasBlock(x, y, z))
+			return;
+		int id = world.getBlockId(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		Material mat = world.getBlockMaterial(x, y, z);
+		ItemStack block = new ItemStack(id, 1, meta);
+		ModWoodList wood = ModWoodList.getModWood(block);
+		//ItemStack leaf = wood.getCorrespondingLeaf();
+		if (id == Block.wood.blockID || wood != null) {
+			this.addBlockCoordinate(x, y, z);
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1; j++) {
+					for (int k = -1; k <= 1; k++) {
+						if (!this.hasBlock(x+i, y+j, z+k)) {
+							Material read = world.getBlockMaterial(x+i, y+j, z+k);
+							int readid = world.getBlockId(x+i, y+j, z+k);
+							int readmeta = world.getBlockMetadata(x+i, y+j, z+k);
+							//ReikaJavaLibrary.pConsoleSideOnly(readid, Side.SERVER);
+							if (read == Material.leaves) {
+								int leafID = readid;
+								int leafMeta = readmeta;
+								this.recursiveAddWithBoundsMetadata(world, x+i, y+j, z+k, leafID, leafMeta, x-dw, 0, z-dw, x+dw, 256, z+dw);
+							}
+							else if (readid == Block.wood.blockID || ModWoodList.isModWood(new ItemStack(readid, 1, readmeta)))
+								this.addGenerousTree(world, x+i, y+j, z+k, dw);
+						}
+					}
+				}
+			}
+		}
 	}
 
 }

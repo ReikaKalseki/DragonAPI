@@ -28,7 +28,8 @@ public enum APIRegistry {
 	NATURA("Natura"),
 	BOP("Biomes O'Plenty"),
 	BXL("Biomes XL"),
-	MINEFACTORY("MineFactoryReloaded");
+	MINEFACTORY("MineFactoryReloaded"),
+	DARTCRAFT("DartCraft");
 
 	private boolean condition;
 	private boolean preset = false;
