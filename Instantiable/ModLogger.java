@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 
 public class ModLogger {
@@ -16,7 +17,10 @@ public class ModLogger {
 	private final boolean logLoading;
 	private final boolean printDebug;
 
-	public ModLogger(boolean load, boolean debug) {
+	private final DragonAPIMod mod;
+
+	public ModLogger(DragonAPIMod mod, boolean load, boolean debug) {
+		this.mod = mod;
 		logLoading = load;
 		printDebug = debug;
 	}
@@ -32,7 +36,16 @@ public class ModLogger {
 	}
 
 	public void logError(Object o) {
+		ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": There was an error:\n");
+		ReikaJavaLibrary.pConsole(o);
+	}
 
+	public boolean shouldLog() {
+		return logLoading;
+	}
+
+	public boolean shouldDebug() {
+		return printDebug;
 	}
 
 }

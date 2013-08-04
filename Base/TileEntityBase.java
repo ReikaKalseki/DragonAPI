@@ -192,7 +192,7 @@ public abstract class TileEntityBase extends TileEntity {
 			double vy = par5Random.nextDouble();
 			double vz = -1+par5Random.nextDouble()*2;
 			world.spawnParticle("reddust", -1+x+par5Random.nextDouble()*3, y+par5Random.nextDouble(), -1+z+par5Random.nextDouble()*3, vx, vy, vz);
-			EntityItem ei = new EntityItem(world, -1+x+par5Random.nextDouble()*3, y+par5Random.nextDouble(), -1+z+par5Random.nextDouble()*3, new ItemStack(Block.bedrock, 0, 0));
+			EntityItem ei = new EntityItem(world, -1+x+par5Random.nextDouble()*3, y+par5Random.nextDouble(), -1+z+par5Random.nextDouble()*3, new ItemStack(Block.bedrock.blockID, 0, 0));
 			world.spawnEntityInWorld(ei);
 		}
 	}

@@ -52,6 +52,8 @@ public class BlockArray {
 	}
 
 	public int[] getNextAndMoveOn() {
+		if (this.isEmpty())
+			return null;
 		int[] next = this.getNextBlock();
 		blocks.remove(0);
 		return next;
@@ -240,6 +242,8 @@ public class BlockArray {
 
 	@Override
 	public String toString() {
+		if (this.isEmpty())
+			return "Empty[]";
 		StringBuilder list = new StringBuilder();
 		for (int i = 0; i < this.getSize(); i++) {
 			list.append(Arrays.toString(blocks.get(i)));
@@ -324,6 +328,8 @@ public class BlockArray {
 	}
 
 	public void addSphere(World world, int x, int y, int z, int id, double r) {
+		if (r == 0)
+			return;
 		this.recursiveAddWithinSphere(world, x+1, y, z, id, x, y, z, r);
 		this.recursiveAddWithinSphere(world, x, y+1, z, id, x, y, z, r);
 		this.recursiveAddWithinSphere(world, x, y, z+1, id, x, y, z, r);

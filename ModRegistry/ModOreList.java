@@ -72,7 +72,7 @@ public enum ModOreList {
 	NETHERSILVER("Nether Silver", "ingotSilver", 1, "oreNetherSilver"),
 	NETHERNIKOLITE("Nether Nikolite", "dustNikolite", 5, "oreNetherNikolite"),
 	//TINKERER'S CONSTRUCT
-	NETHERCOBALT("Nether Cobalt", "ingotCobalt", 1, "oreCobalt"),
+	NETHERCOBALT("Cobalt", "ingotCobalt", 1, "oreCobalt"),
 	ARDITE("Ardite", "ingotArdite", 1, "oreArdite");
 
 	private ArrayList<ItemStack> ores;
