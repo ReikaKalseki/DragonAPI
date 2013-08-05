@@ -17,11 +17,11 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
-import Reika.DragonAPI.Exception.OreHandlerException;
+import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 
-public final class ThaumOreHandler {
+public final class ThaumOreHandler extends ModHandlerBase {
 
 	public final int oreID;
 	public final int oreItemID;
@@ -78,7 +78,7 @@ public final class ThaumOreHandler {
 		int iditem = -1;
 		int idshard = -1;
 
-		if (APIRegistry.THAUMCRAFT.conditionsMet()) {
+		if (this.hasMod()) {
 			try {
 				Class thaum = Class.forName("thaumcraft.common.Config");
 				Field ore = thaum.getField("blockCustomOre");
@@ -115,7 +115,7 @@ public final class ThaumOreHandler {
 			}
 		}
 		else {
-			throw new OreHandlerException(APIRegistry.THAUMCRAFT);
+			this.noMod();
 		}
 
 		oreID = idore;
@@ -164,8 +164,14 @@ public final class ThaumOreHandler {
 		return instance;
 	}
 
+	@Override
 	public boolean initializedProperly() {
 		return oreID != -1 && shardID != -1 && oreItemID != -1;
+	}
+
+	@Override
+	public APIRegistry getMod() {
+		return APIRegistry.THAUMCRAFT;
 	}
 
 	public ItemStack getOre(int meta) {

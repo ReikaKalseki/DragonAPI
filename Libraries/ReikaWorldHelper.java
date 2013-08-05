@@ -1242,4 +1242,18 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int id = world.getBlockId(x, y, z);
 		world.notifyBlocksOfNeighborChange(x, y, z, id);
 	}
+
+	public static boolean isDirtType(int id, int meta, Material mat) {
+		if (id == Block.dirt.blockID)
+			return true;
+		if (id == Block.grass.blockID)
+			return true;
+		if (id == Block.gravel.blockID)
+			return false;
+		if (mat == Material.ground)
+			return true;
+		if (mat == Material.grass)
+			return true;
+		return false;
+	}
 }

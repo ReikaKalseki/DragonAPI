@@ -14,6 +14,7 @@ import cpw.mods.fml.common.Loader;
 
 public enum APIRegistry {
 
+	ROTARYCRAFT("RotaryCraft"),
 	BUILDCRAFTENERGY("BuildCraft|Energy"),
 	BUILDCRAFTFACTORY("BuildCraft|Factory"),
 	BUILDCRAFTTRANSPORT("BuildCraft|Transport"),
@@ -29,7 +30,8 @@ public enum APIRegistry {
 	BOP("Biomes O'Plenty"),
 	BXL("Biomes XL"),
 	MINEFACTORY("MineFactoryReloaded"),
-	DARTCRAFT("DartCraft");
+	DARTCRAFT("DartCraft"),
+	TINKERER("TConstruct");
 
 	private boolean condition;
 	private boolean preset = false;

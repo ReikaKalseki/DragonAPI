@@ -11,10 +11,10 @@ package Reika.DragonAPI.Exception;
 
 import Reika.DragonAPI.Auxiliary.APIRegistry;
 
-public class OreHandlerException extends DragonAPIException {
+public class ModHandlerException extends DragonAPIException {
 
-	public OreHandlerException(APIRegistry mod) {
-		message.append("You cannot call an ore handler before its parent mod initializes!\n");
+	public ModHandlerException(APIRegistry mod) {
+		message.append("You cannot call a mod handler before its parent mod initializes!\n");
 		message.append("Target mod: "+mod);
 		this.crash();
 	}

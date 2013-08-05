@@ -17,46 +17,50 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
 import Reika.DragonAPI.Libraries.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 
 public enum ModWoodList { //look through treecapitator config?
 
-	CANOPY(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", 1, Block.class),
-	DARKWOOD(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", 3, Block.class),
-	MANGROVE(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", 2, Block.class),
-	TWILIGHTOAK(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", 0, Block.class),
-	GREATWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLog", 0, Block.class),
-	SILVERWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLog", 1, Block.class),
-	EUCALYPTUS(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", 0, Block.class),
-	//BIGREDWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "redwood", 0, Block.class),
-	SAKURA(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", 1, Block.class),
-	GHOSTWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", 2, Block.class),
-	HOPSEED(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", 3, Block.class),
-	DARKNATURA(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", 0, Block.class),
-	BLOODWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "bloodwood", "bloodwood", 0, 1, Block.class),
-	FUSEWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", 1, Block.class),
-	TIGERWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", 3, Block.class),
-	SILVERBELL(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", 1, Block.class),
-	MAPLE(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", 0, Block.class),
-	WILLOW(APIRegistry.NATURA, "mods.natura.common.NContent", "willow", "willow", 0, 1, Block.class),
-	AMARANTH(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", 2, Block.class),
-	REDWOOD(APIRegistry.BOP, null, null, null, 0, Block.class),
-	ACACIA(APIRegistry.BOP, null, null, null, 0, Block.class),
-	JACARANDA(APIRegistry.BOP, null, null, null, 0, Block.class),
-	AUTUMN(APIRegistry.BXL, null, null, null, 0, Block.class),
-	FIR(APIRegistry.BXL, null, null, null, 0, Block.class),
-	XLREDWOOD(APIRegistry.BXL, null, null, null, 0, Block.class),
-	RUBBER(APIRegistry.INDUSTRIALCRAFT, "ic2.core.Ic2Items", "rubberWood", "rubberLeaves", 0, ItemStack.class),
-	MINERUBBER(APIRegistry.MINEFACTORY, "powercrystals.minefactoryreloaded.MineFactoryReloadedCore", "rubberWoodBlock", "rubberLeavesBlock", 0, Block.class);
+	CANOPY(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", new int[]{1,13}, 1, 1, Block.class),
+	DARKWOOD(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "hedge", "sapling", 3, 1, 3, Block.class),
+	MANGROVE(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", 2, Block.class),
+	TWILIGHTOAK(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", 0, Block.class),
+	GREATWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLog", "blockCustomPlant", new int[]{0,4,8}, 0, 0, Block.class),
+	SILVERWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLog", "blockCustomPlant", new int[]{1,5,9}, 1, 1, Block.class),
+	EUCALYPTUS(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", "floraSapling", 0, 1, 1, Block.class),
+	SEQUOIA(APIRegistry.NATURA, "mods.natura.common.NContent", "redwood", "floraLeaves", "floraSapling", OreDictionary.WILDCARD_VALUE, OreDictionary.WILDCARD_VALUE, 0, Block.class),
+	SAKURA(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeavesNoColor", "floraSapling", new int[]{1,5,9}, 0, 3, Block.class),
+	GHOSTWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeavesNoColor", "floraSapling", 2, 1, 4, Block.class),
+	HOPSEED(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", "floraSapling", 3, 2, 2, Block.class),
+	DARKNATURA(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", "floraSapling", 0, 0, 6, Block.class),
+	BLOODWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "bloodwood", "floraLeavesNoColor", "floraSapling", 0, 2, 5, Block.class),
+	FUSEWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", "floraSapling", 1, 3, 7, Block.class),
+	TIGERWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 3, Block.class),
+	SILVERBELL(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 1, Block.class),
+	MAPLE(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 0, Block.class),
+	WILLOW(APIRegistry.NATURA, "mods.natura.common.NContent", "willow", "floraLeavesNoColor", "rareSapling", 0, 3, 4, Block.class),
+	AMARANTH(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 2, Block.class),
+	REDWOOD(APIRegistry.BOP, null, null, null, null, 0, Block.class),
+	ACACIA(APIRegistry.BOP, null, null, null, null, 0, Block.class),
+	JACARANDA(APIRegistry.BOP, null, null, null, null, 0, Block.class),
+	AUTUMN(APIRegistry.BXL, null, null, null, null, 0, Block.class),
+	FIR(APIRegistry.BXL, null, null, null, null, 0, Block.class),
+	XLREDWOOD(APIRegistry.BXL, null, null, null, null, 0, Block.class),
+	RUBBER(APIRegistry.INDUSTRIALCRAFT, "ic2.core.Ic2Items", "rubberWood", "rubberLeaves", "rubberSapling", 0, ItemStack.class),
+	MINERUBBER(APIRegistry.MINEFACTORY, "powercrystals.minefactoryreloaded.MineFactoryReloadedCore", "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", 0, Block.class);
 
 	private APIRegistry mod;
 	private int blockID = -1;
 	private int leafID = -1;
-	private int blockMeta = -1;
+	private int blockMeta[];
 	private int leafMeta = -1;
 	private boolean hasPlanks;
+
+	private int saplingID;
+	private int saplingMeta;
 
 	private String varName;
 	private Class containerClass;
@@ -65,11 +69,15 @@ public enum ModWoodList { //look through treecapitator config?
 
 	public static final ModWoodList[] woodList = ModWoodList.values();
 
-	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, int meta, Class type) {
-		this(req, className, blockVar, leafVar, meta, meta, type);
+	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, String saplingVar, int meta, int metaleaf, int metasapling, Class type) {
+		this(req, className, blockVar, leafVar, saplingVar, new int[]{meta}, metaleaf, metasapling, type);
 	}
 
-	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, int meta, int metaleaf, Class type) {
+	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, String saplingVar, int meta, Class type) {
+		this(req, className, blockVar, leafVar, saplingVar, new int[]{meta}, meta, meta, type);
+	}
+
+	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, String saplingVar, int[] meta, int metaleaf, int metasapling, Class type) {
 		mod = req;
 		if (!mod.conditionsMet())
 			return;
@@ -89,23 +97,30 @@ public enum ModWoodList { //look through treecapitator config?
 			Class cl = Class.forName(className);
 			Field w = cl.getField(blockVar);
 			Field l = cl.getField(leafVar);
+			Field s = cl.getField(saplingVar);
 			int id;
 			int idleaf;
+			int idsapling;
 			if (type == ItemStack.class) {
 				ItemStack wood = (ItemStack)w.get(null);
 				ItemStack leaf = (ItemStack)l.get(null);
+				ItemStack sapling = (ItemStack)s.get(null);
 				id = wood.itemID;
 				idleaf = leaf.itemID;
+				idsapling = sapling.itemID;
 			}
 			else if (type == Block.class) {
 				Block wood = (Block)w.get(null);
 				Block leaf = (Block)l.get(null);
+				Block sapling = (Block)s.get(null);
 				id = wood.blockID;
 				idleaf = leaf.blockID;
+				idsapling = sapling.blockID;
 			}
 			else if (type == Integer.class) {
 				id = w.getInt(null);
 				idleaf = l.getInt(null);
+				idsapling = s.getInt(null);
 			}
 			else {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
@@ -113,9 +128,11 @@ public enum ModWoodList { //look through treecapitator config?
 				return;
 			}
 			blockID = id;
-			blockMeta = meta;
+			System.arraycopy(meta, 0, blockMeta, 0, meta.length);
 			leafID = idleaf;
 			leafMeta = metaleaf;
+			saplingID = idsapling;
+			saplingMeta = metasapling;
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully loaded wood "+this);
 		}
 		catch (ClassNotFoundException e) {
@@ -150,16 +167,51 @@ public enum ModWoodList { //look through treecapitator config?
 	}
 
 	public ItemStack getItem() {
-		return new ItemStack(blockID, 1, blockMeta);
+		return new ItemStack(blockID, 1, blockMeta[0]);
+	}
+
+	public ItemStack getLogItemWithOffset(int i) {
+		return new ItemStack(blockID, 1, blockMeta[i]);
+	}
+
+	public boolean isLogBlock(ItemStack block) {
+		if (this == SEQUOIA) {
+			return block.itemID == blockID;
+		}
+		for (int i = 0; i < blockMeta.length; i++) {
+			if (ReikaItemHelper.matchStacks(block, this.getLogItemWithOffset(i)))
+				return true;
+		}
+		return false;
 	}
 
 	public Block getBlock() {
 		return Block.blocksList[blockID];
 	}
 
+	public static ModWoodList getModWood(int id, int meta) {
+		return getModWood(new ItemStack(id, 1, meta));
+	}
+
 	public static ModWoodList getModWood(ItemStack block) {
 		for (int i = 0; i < woodList.length; i++) {
-			if (ReikaItemHelper.matchStacks(block, woodList[i].getItem()))
+			if (woodList[i].isLogBlock(block))
+				return woodList[i];
+		}
+		return null;
+	}
+
+	public static ModWoodList getModWoodFromSapling(ItemStack block) {
+		for (int i = 0; i < woodList.length; i++) {
+			if (ReikaItemHelper.matchStacks(block, woodList[i].getCorrespondingSapling()))
+				return woodList[i];
+		}
+		return null;
+	}
+
+	public static ModWoodList getModWoodFromLeaf(ItemStack block) {
+		for (int i = 0; i < woodList.length; i++) {
+			if (ReikaItemHelper.matchStacks(block, woodList[i].getCorrespondingLeaf()))
 				return woodList[i];
 		}
 		return null;
@@ -167,6 +219,18 @@ public enum ModWoodList { //look through treecapitator config?
 
 	public static boolean isModWood(ItemStack block) {
 		return getModWood(block) != null;
+	}
+
+	public static boolean isModWood(int id, int meta) {
+		return getModWood(id, meta) != null;
+	}
+
+	public static boolean isModLeaf(ItemStack block) {
+		return getModWoodFromLeaf(block) != null;
+	}
+
+	public static boolean isModSapling(ItemStack block) {
+		return getModWoodFromSapling(block) != null;
 	}
 
 	public Icon getWoodIcon(IBlockAccess iba, int x, int y, int z, int s) {
@@ -178,12 +242,16 @@ public enum ModWoodList { //look through treecapitator config?
 	}
 
 	public EntityFallingSand getFallingBlock(World world, int x, int y, int z) {
-		EntityFallingSand e = new EntityFallingSand(world, x+0.5, y+0.5, z+0.5, blockID, blockMeta);
+		EntityFallingSand e = new EntityFallingSand(world, x+0.5, y+0.5, z+0.5, blockID, blockMeta[0]);
 		return e;
 	}
 
 	public ItemStack getCorrespondingLeaf() {
 		return new ItemStack(leafID, 1, leafMeta);
+	}
+
+	public ItemStack getCorrespondingSapling() {
+		return new ItemStack(saplingID, 1, saplingMeta);
 	}
 
 }

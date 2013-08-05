@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable;
 
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Libraries.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 
 public class ModLogger {
@@ -26,8 +27,10 @@ public class ModLogger {
 	}
 
 	public void debug(Object o) {
-		if (printDebug)
+		if (printDebug) {
 			ReikaJavaLibrary.pConsole(o);
+			ReikaChatHelper.write(o);
+		}
 	}
 
 	public void log(Object o) {

@@ -11,40 +11,26 @@ package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
-import Reika.DragonAPI.ModRegistry.ModOreList;
 
-public final class DartOreHandler extends ModHandlerBase {
+public final class DartItemHandler extends ModHandlerBase {
 
-	private static final DartOreHandler instance = new DartOreHandler();
+	private static final DartItemHandler instance = new DartItemHandler();
 
-	public final int oreID;
-	public final int gemID;
+	public final int wrenchID;
 
-	private final ItemStack oreItem;
-	private final ItemStack gemItem;
-
-	private boolean isOreDict = false;
-
-	private DartOreHandler() {
-		int idgem = -1;
-		int idore = -1;
+	private DartItemHandler() {
+		int idwrench = -1;
 
 		if (this.hasMod()) {
 			try {
-				Class block = Class.forName("bluedart.block.DartBlock");
 				Class item = Class.forName("bluedart.item.DartItem");
-				Field ore = block.getField("powerOre");
-				Field force = item.getField("gemForce");
-				Block powerOre = (Block)ore.get(null);
-				idgem = ((Item)force.get(null)).itemID;
-				idore = powerOre.blockID;
+				Field wrench = item.getField("forceWrench");
+				idwrench = ((Item)wrench.get(null)).itemID;
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
@@ -71,19 +57,16 @@ public final class DartOreHandler extends ModHandlerBase {
 			this.noMod();
 		}
 
-		gemID = idgem;
-		gemItem = new ItemStack(gemID, 1, 0);
-		oreID = idore;
-		oreItem = new ItemStack(oreID, 1, 0);
+		wrenchID = idwrench;
 	}
 
-	public static DartOreHandler getInstance() {
+	public static DartItemHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return gemID != -1 && oreID != -1;
+		return wrenchID != -1;
 	}
 
 	@Override
@@ -91,35 +74,10 @@ public final class DartOreHandler extends ModHandlerBase {
 		return APIRegistry.DARTCRAFT;
 	}
 
-	public ItemStack getOre() {
-		if (!this.initializedProperly())
-			return null;
-		return oreItem.copy();
-	}
-
-	public ItemStack getForceGem() {
-		if (!this.initializedProperly())
-			return null;
-		return gemItem.copy();
-	}
-
-	public boolean isDartOre(ItemStack block) {
+	public boolean isWrench(ItemStack held) {
 		if (!this.initializedProperly())
 			return false;
-		return block.itemID == oreID;
-	}
-
-	public void forceOreRegistration() {
-		if (!isOreDict) {
-			OreDictionary.registerOre(ModOreList.FORCE.getOreDictNames()[0], Block.blocksList[oreID]);
-			ModOreList.FORCE.reloadOreList();
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Power ore registered to ore dictionary!");
-			isOreDict = true;
-		}
-		else {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Power ore already registered to ore dictionary! No action taken!");
-			Thread.dumpStack();
-		}
+		return held.itemID == wrenchID;
 	}
 
 }

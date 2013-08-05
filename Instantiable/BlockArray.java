@@ -19,6 +19,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.ReikaMathLibrary;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 
@@ -344,8 +345,7 @@ public class BlockArray {
 		int id = world.getBlockId(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		Material mat = world.getBlockMaterial(x, y, z);
-		ItemStack block = new ItemStack(id, 1, meta);
-		ModWoodList wood = ModWoodList.getModWood(block);
+		ModWoodList wood = ModWoodList.getModWood(id, meta);
 		//ItemStack leaf = wood.getCorrespondingLeaf();
 		if (id == Block.wood.blockID || wood != null) {
 			this.addBlockCoordinate(x, y, z);
@@ -356,14 +356,39 @@ public class BlockArray {
 							Material read = world.getBlockMaterial(x+i, y+j, z+k);
 							int readid = world.getBlockId(x+i, y+j, z+k);
 							int readmeta = world.getBlockMetadata(x+i, y+j, z+k);
-							//ReikaJavaLibrary.pConsoleSideOnly(readid, Side.SERVER);
 							if (read == Material.leaves) {
 								int leafID = readid;
 								int leafMeta = readmeta;
 								this.recursiveAddWithBoundsMetadata(world, x+i, y+j, z+k, leafID, leafMeta, x-dw, 0, z-dw, x+dw, 256, z+dw);
 							}
-							else if (readid == Block.wood.blockID || ModWoodList.isModWood(new ItemStack(readid, 1, readmeta)))
+							else if (readid == Block.wood.blockID || ModWoodList.getModWood(readid, readmeta) == wood)
 								this.addGenerousTree(world, x+i, y+j, z+k, dw);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/** For natura's massive redwood trees. Warning: may lag-spike! */
+	public void addSequoia(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		ModWoodList wood = ModWoodList.getModWood(id, meta);
+		if (wood == ModWoodList.SEQUOIA) {
+			this.addBlockCoordinate(x, y, z);
+			for (int i = -20; i <= 20; i++) {
+				for (int j = 0; j < world.provider.getHeight(); j++) { //full height
+					for (int k = -20; k <= 20; k++) {
+						int idread = world.getBlockId(x, y, z);
+						int metaread = world.getBlockMetadata(x, y, z);
+						ItemStack blockread = new ItemStack(idread, 1, metaread);
+						ModWoodList woodread = ModWoodList.getModWood(blockread);
+						if (woodread == ModWoodList.SEQUOIA) {
+							this.addBlockCoordinate(x+i, j, z+k);
+						}
+						else if (ReikaItemHelper.matchStacks(ModWoodList.SEQUOIA.getCorrespondingLeaf(), blockread)) {
+							this.addBlockCoordinate(x+i, j, z+k);
 						}
 					}
 				}
