@@ -20,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.ReikaMathLibrary;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 
@@ -27,12 +28,15 @@ public class BlockArray {
 
 	private List<int[]> blocks = new ArrayList<int[]>();
 	private int liquidID;
+	private boolean isOverflowing = false;
 
 	public BlockArray() {
 
 	}
 
 	public void addBlockCoordinate(int x, int y, int z) {
+		if (isOverflowing)
+			return;
 		if (this.hasBlock(x, y, z))
 			return;
 		int[] e = {x, y, z};
@@ -57,6 +61,8 @@ public class BlockArray {
 			return null;
 		int[] next = this.getNextBlock();
 		blocks.remove(0);
+		if (this.isEmpty())
+			isOverflowing = false;
 		return next;
 	}
 
@@ -66,6 +72,7 @@ public class BlockArray {
 
 	public void clear() {
 		blocks.clear();
+		isOverflowing = false;
 	}
 
 	public boolean isEmpty() {
@@ -89,12 +96,18 @@ public class BlockArray {
 		if (this.hasBlock(x, y, z))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		this.recursiveAdd(world, x+1, y, z, id);
-		this.recursiveAdd(world, x-1, y, z, id);
-		this.recursiveAdd(world, x, y+1, z, id);
-		this.recursiveAdd(world, x, y-1, z, id);
-		this.recursiveAdd(world, x, y, z+1, id);
-		this.recursiveAdd(world, x, y, z-1, id);
+		try {
+			this.recursiveAdd(world, x+1, y, z, id);
+			this.recursiveAdd(world, x-1, y, z, id);
+			this.recursiveAdd(world, x, y+1, z, id);
+			this.recursiveAdd(world, x, y-1, z, id);
+			this.recursiveAdd(world, x, y, z+1, id);
+			this.recursiveAdd(world, x, y, z-1, id);
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
+		}
 	}
 
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
@@ -108,12 +121,18 @@ public class BlockArray {
 		if (this.hasBlock(x, y, z))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		this.recursiveAddWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2);
+		try {
+			this.recursiveAddWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2);
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
+		}
 	}
 
 	public void recursiveAddWithBoundsMetadata(World world, int x, int y, int z, int id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
@@ -125,12 +144,18 @@ public class BlockArray {
 		if (this.hasBlock(x, y, z))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		this.recursiveAddWithBoundsMetadata(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddWithBoundsMetadata(world, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddWithBoundsMetadata(world, x, y+1, z, id, meta, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddWithBoundsMetadata(world, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddWithBoundsMetadata(world, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddWithBoundsMetadata(world, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2);
+		try {
+			this.recursiveAddWithBoundsMetadata(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBoundsMetadata(world, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBoundsMetadata(world, x, y+1, z, id, meta, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBoundsMetadata(world, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBoundsMetadata(world, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBoundsMetadata(world, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2);
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
+		}
 	}
 
 	public void setLiquid(Material mat) {
@@ -153,12 +178,18 @@ public class BlockArray {
 		if (this.hasBlock(x, y, z))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		this.recursiveAddLiquidWithBounds(world, x+1, y, z, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddLiquidWithBounds(world, x-1, y, z, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddLiquidWithBounds(world, x, y+1, z, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddLiquidWithBounds(world, x, y-1, z, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddLiquidWithBounds(world, x, y, z+1, x1, y1, z1, x2, y2, z2);
-		this.recursiveAddLiquidWithBounds(world, x, y, z-1, x1, y1, z1, x2, y2, z2);
+		try {
+			this.recursiveAddLiquidWithBounds(world, x+1, y, z, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddLiquidWithBounds(world, x-1, y, z, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddLiquidWithBounds(world, x, y+1, z, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddLiquidWithBounds(world, x, y-1, z, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddLiquidWithBounds(world, x, y, z+1, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddLiquidWithBounds(world, x, y, z-1, x1, y1, z1, x2, y2, z2);
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
+		}
 	}
 
 	/** Like the ordinary recursive add but with a spherical bounded volume. Args: World, x, y, z,
@@ -171,12 +202,18 @@ public class BlockArray {
 		if (ReikaMathLibrary.py3d(x-x0, y-y0, z-z0) > r)
 			return;
 		this.addBlockCoordinate(x, y, z);
-		this.recursiveAddWithinSphere(world, x+1, y, z, id, x0, y0, z0, r);
-		this.recursiveAddWithinSphere(world, x-1, y, z, id, x0, y0, z0, r);
-		this.recursiveAddWithinSphere(world, x, y+1, z, id, x0, y0, z0, r);
-		this.recursiveAddWithinSphere(world, x, y-1, z, id, x0, y0, z0, r);
-		this.recursiveAddWithinSphere(world, x, y, z+1, id, x0, y0, z0, r);
-		this.recursiveAddWithinSphere(world, x, y, z-1, id, x0, y0, z0, r);
+		try {
+			this.recursiveAddWithinSphere(world, x+1, y, z, id, x0, y0, z0, r);
+			this.recursiveAddWithinSphere(world, x-1, y, z, id, x0, y0, z0, r);
+			this.recursiveAddWithinSphere(world, x, y+1, z, id, x0, y0, z0, r);
+			this.recursiveAddWithinSphere(world, x, y-1, z, id, x0, y0, z0, r);
+			this.recursiveAddWithinSphere(world, x, y, z+1, id, x0, y0, z0, r);
+			this.recursiveAddWithinSphere(world, x, y, z-1, id, x0, y0, z0, r);
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
+		}
 	}
 
 	public void sortBlocksByHeight() { //O(n^2)
@@ -231,13 +268,19 @@ public class BlockArray {
 			return;
 		this.addBlockCoordinate(x, y, z);
 
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
-				for (int k = -1; k <= 1; k++) {
-					if (i != 0 || j != 0 || k != 0)
-						this.addTree(world, x+i, y+j, z+k, blockID, blockMeta);
+		try {
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1; j++) {
+					for (int k = -1; k <= 1; k++) {
+						if (i != 0 || j != 0 || k != 0)
+							this.addTree(world, x+i, y+j, z+k, blockID, blockMeta);
+					}
 				}
 			}
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
 		}
 	}
 
@@ -331,42 +374,54 @@ public class BlockArray {
 	public void addSphere(World world, int x, int y, int z, int id, double r) {
 		if (r == 0)
 			return;
-		this.recursiveAddWithinSphere(world, x+1, y, z, id, x, y, z, r);
-		this.recursiveAddWithinSphere(world, x, y+1, z, id, x, y, z, r);
-		this.recursiveAddWithinSphere(world, x, y, z+1, id, x, y, z, r);
-		this.recursiveAddWithinSphere(world, x-1, y, z, id, x, y, z, r);
-		this.recursiveAddWithinSphere(world, x, y-1, z, id, x, y, z, r);
-		this.recursiveAddWithinSphere(world, x, y, z-1, id, x, y, z, r);
+		try {
+			this.recursiveAddWithinSphere(world, x+1, y, z, id, x, y, z, r);
+			this.recursiveAddWithinSphere(world, x, y+1, z, id, x, y, z, r);
+			this.recursiveAddWithinSphere(world, x, y, z+1, id, x, y, z, r);
+			this.recursiveAddWithinSphere(world, x-1, y, z, id, x, y, z, r);
+			this.recursiveAddWithinSphere(world, x, y-1, z, id, x, y, z, r);
+			this.recursiveAddWithinSphere(world, x, y, z-1, id, x, y, z, r);
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
+		}
 	}
 
 	public void addGenerousTree(World world, int x, int y, int z, int dw) {
 		if (this.hasBlock(x, y, z))
 			return;
-		int id = world.getBlockId(x, y, z);
-		int meta = world.getBlockMetadata(x, y, z);
-		Material mat = world.getBlockMaterial(x, y, z);
-		ModWoodList wood = ModWoodList.getModWood(id, meta);
-		//ItemStack leaf = wood.getCorrespondingLeaf();
-		if (id == Block.wood.blockID || wood != null) {
-			this.addBlockCoordinate(x, y, z);
-			for (int i = -1; i <= 1; i++) {
-				for (int j = -1; j <= 1; j++) {
-					for (int k = -1; k <= 1; k++) {
-						if (!this.hasBlock(x+i, y+j, z+k)) {
-							Material read = world.getBlockMaterial(x+i, y+j, z+k);
-							int readid = world.getBlockId(x+i, y+j, z+k);
-							int readmeta = world.getBlockMetadata(x+i, y+j, z+k);
-							if (read == Material.leaves) {
-								int leafID = readid;
-								int leafMeta = readmeta;
-								this.recursiveAddWithBoundsMetadata(world, x+i, y+j, z+k, leafID, leafMeta, x-dw, 0, z-dw, x+dw, 256, z+dw);
+		try {
+			int id = world.getBlockId(x, y, z);
+			int meta = world.getBlockMetadata(x, y, z);
+			Material mat = world.getBlockMaterial(x, y, z);
+			ModWoodList wood = ModWoodList.getModWood(id, meta);
+			//ItemStack leaf = wood.getCorrespondingLeaf();
+			if (id == Block.wood.blockID || wood != null) {
+				this.addBlockCoordinate(x, y, z);
+				for (int i = -1; i <= 1; i++) {
+					for (int j = -1; j <= 1; j++) {
+						for (int k = -1; k <= 1; k++) {
+							if (!this.hasBlock(x+i, y+j, z+k)) {
+								Material read = world.getBlockMaterial(x+i, y+j, z+k);
+								int readid = world.getBlockId(x+i, y+j, z+k);
+								int readmeta = world.getBlockMetadata(x+i, y+j, z+k);
+								if (read == Material.leaves) {
+									int leafID = readid;
+									int leafMeta = readmeta;
+									this.recursiveAddWithBoundsMetadata(world, x+i, y+j, z+k, leafID, leafMeta, x-dw, 0, z-dw, x+dw, 256, z+dw);
+								}
+								else if (readid == Block.wood.blockID || ModWoodList.getModWood(readid, readmeta) == wood)
+									this.addGenerousTree(world, x+i, y+j, z+k, dw);
 							}
-							else if (readid == Block.wood.blockID || ModWoodList.getModWood(readid, readmeta) == wood)
-								this.addGenerousTree(world, x+i, y+j, z+k, dw);
 						}
 					}
 				}
 			}
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
 		}
 	}
 
@@ -377,23 +432,35 @@ public class BlockArray {
 		ModWoodList wood = ModWoodList.getModWood(id, meta);
 		if (wood == ModWoodList.SEQUOIA) {
 			this.addBlockCoordinate(x, y, z);
-			for (int i = -20; i <= 20; i++) {
-				for (int j = 0; j < world.provider.getHeight(); j++) { //full height
-					for (int k = -20; k <= 20; k++) {
-						int idread = world.getBlockId(x, y, z);
-						int metaread = world.getBlockMetadata(x, y, z);
-						ItemStack blockread = new ItemStack(idread, 1, metaread);
-						ModWoodList woodread = ModWoodList.getModWood(blockread);
-						if (woodread == ModWoodList.SEQUOIA) {
-							this.addBlockCoordinate(x+i, j, z+k);
-						}
-						else if (ReikaItemHelper.matchStacks(ModWoodList.SEQUOIA.getCorrespondingLeaf(), blockread)) {
-							this.addBlockCoordinate(x+i, j, z+k);
+
+			try {
+				for (int i = -20; i <= 20; i++) {
+					for (int j = 0; j < world.provider.getHeight(); j++) { //full height
+						for (int k = -20; k <= 20; k++) {
+							int idread = world.getBlockId(x, y, z);
+							int metaread = world.getBlockMetadata(x, y, z);
+							ItemStack blockread = new ItemStack(idread, 1, metaread);
+							ModWoodList woodread = ModWoodList.getModWood(blockread);
+							if (woodread == ModWoodList.SEQUOIA) {
+								this.addBlockCoordinate(x+i, j, z+k);
+							}
+							else if (ReikaItemHelper.matchStacks(ModWoodList.SEQUOIA.getCorrespondingLeaf(), blockread)) {
+								this.addBlockCoordinate(x+i, j, z+k);
+							}
 						}
 					}
 				}
 			}
+			catch (StackOverflowError e) {
+				this.throwOverflow();
+				e.printStackTrace();
+			}
 		}
+	}
+
+	private void throwOverflow() {
+		isOverflowing = true;
+		ReikaJavaLibrary.pConsole("Stack overflow!");
 	}
 
 }

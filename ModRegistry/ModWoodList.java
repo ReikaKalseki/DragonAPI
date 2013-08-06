@@ -128,6 +128,7 @@ public enum ModWoodList { //look through treecapitator config?
 				return;
 			}
 			blockID = id;
+			blockMeta = new int[meta.length];
 			System.arraycopy(meta, 0, blockMeta, 0, meta.length);
 			leafID = idleaf;
 			leafMeta = metaleaf;
@@ -175,6 +176,8 @@ public enum ModWoodList { //look through treecapitator config?
 	}
 
 	public boolean isLogBlock(ItemStack block) {
+		if (blockMeta == null)
+			return false;
 		if (this == SEQUOIA) {
 			return block.itemID == blockID;
 		}

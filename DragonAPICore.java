@@ -67,7 +67,7 @@ public class DragonAPICore {
 	public static void addItem(DragonAPIMod mod, Class<? extends Item> cl, String name, String unloc) {
 		Item i = ReikaReflectionHelper.createBasicItemInstance(cl, IDs.get(unloc), unloc);
 		addItem(name, unloc, i);
-		ReikaJavaLibrary.pConsole("DRAGONAPI: "+mod.getTechnicalName()+"is adding item "+name+" with system name "+unloc+" to id "+i.itemID);
+		ReikaJavaLibrary.pConsole("DRAGONAPI: "+mod.getTechnicalName()+" is adding item "+name+" with system name "+unloc+" to id "+i.itemID);
 	}
 
 	public static Item getItem(String name) {
