@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
+import Reika.DragonAPI.ModInteract.TwilightBlockHandler;
 
 public enum ReikaPlantHelper {
 
@@ -56,6 +57,10 @@ public enum ReikaPlantHelper {
 		case MUSHROOM:
 			return idbelow == Block.dirt.blockID || idbelow == Block.mycelium.blockID;
 		case SAPLING:
+			if (idbelow == TwilightBlockHandler.getInstance().rootID) {
+				world.setBlock(x, y, z, Block.grass.blockID);
+				return true;
+			}
 			return ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow);
 		case SUGARCANE:
 			if (idbelow != Block.sand.blockID && !ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow))

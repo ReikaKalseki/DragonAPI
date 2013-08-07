@@ -77,7 +77,7 @@ public class ItemSpawner extends Item implements IndexedItemSprites {
 	@Override
 	public boolean onItemUse(ItemStack is, EntityPlayer ep, World world, int x, int y, int z, int side, float par8, float par9, float par10) {
 		if (!this.isValidDimensionForSpawner(is, world)) {
-			ReikaChatHelper.write(ReikaSpawnerHelper.getSpawnerFromItemNBT(is)+" cannot be placed in dimension "+world.provider.dimensionId+"!");
+			ReikaChatHelper.write(ReikaSpawnerHelper.getSpawnerFromItemNBT(is)+" cannot be placed in dimension "+world.provider.dimensionId+" ("+world.provider.getDimensionName()+")!");
 			return false;
 		}
 		if (!ReikaWorldHelper.softBlocks(world.getBlockId(x, y, z)) && world.getBlockMaterial(x, y, z) != Material.water && world.getBlockMaterial(x, y, z) != Material.lava) {

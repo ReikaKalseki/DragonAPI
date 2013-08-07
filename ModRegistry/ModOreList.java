@@ -80,7 +80,11 @@ public enum ModOreList {
 	PLATINUM("Platinum", "ingotPlatinum", 1, "orePlatinum"), //ThermalExpansion Shiny
 	NETHERPLATINUM("Nether Platinum", "ingotPlatinum", 1, "oreNetherPlatinum"),
 	//Gregtech?
-	ZINC("Zinc", "ingotZinc", 1, "oreZinc");
+	ZINC("Zinc", "ingotZinc", 1, "oreZinc"),
+	//Mekanism
+	OSMIUM("Osmium", "ingotOsmium", 1, "oreOsmium", "oreNetherOsmium"),
+	//?
+	NETHERPIGIRON("Nether Pig Iron", "ingotPigIron", 1, "oreNetherPigIron");
 
 	private ArrayList<ItemStack> ores;
 	private String name;

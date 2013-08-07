@@ -19,7 +19,6 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.ReikaTreeHelper;
@@ -515,7 +514,7 @@ public class BlockArray {
 		}
 	}
 
-	/** For natura's massive redwood trees. Warning: may lag-spike! */
+	/** For natura's massive redwood trees. Warning: may lag-spike! *//*
 	public void addSequoia(World world, int x, int y, int z, boolean debug) {
 		int id = world.getBlockId(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
@@ -556,6 +555,16 @@ public class BlockArray {
 				e.printStackTrace();
 			}
 		}
+	}*/
+
+	/** For Natura's massive redwood trees. Warning: may lag-spike! */
+	public void addSequoia(World world, int x, int y, int z, boolean debug) {
+
+	}
+
+	/** For Twilight's dark forests. */
+	public void addDarkForest(World world, int x, int y, int z, int minx, int maxx, int minz, int maxz, boolean debug) {
+
 	}
 
 	private void throwOverflow() {

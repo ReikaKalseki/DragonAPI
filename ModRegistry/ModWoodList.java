@@ -34,8 +34,8 @@ public enum ModWoodList { //look through treecapitator config?
 	SAKURA(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeavesNoColor", "floraSapling", new int[]{1,5,9}, new int[]{0,8}, 3, Block.class),
 	GHOSTWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeavesNoColor", "floraSapling", new int[]{2,6,10}, new int[]{1,9}, 4, Block.class),
 	HOPSEED(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", "floraSapling", 3, new int[]{2,10}, 2, Block.class),
-	DARKNATURA(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", "floraSapling", 0, new int[]{0,1,2,8}, 6, Block.class),
-	BLOODWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "bloodwood", "floraLeavesNoColor", "floraSapling", new int[]{0,1,2,3}, new int[]{2,10}, 5, Block.class),
+	DARKNATURA(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", "floraSapling", 0, new int[]{0,1,2,8,9,10}, 6, Block.class),
+	BLOODWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "bloodwood", "floraLeavesNoColor", "floraSapling", new int[]{0,1,2,3,4,5,15}, new int[]{2,10}, 5, Block.class),
 	FUSEWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", "floraSapling", 1, new int[]{3,11}, 7, Block.class),
 	TIGERWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 3, new int[]{3,11}, 3, Block.class),
 	SILVERBELL(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 1, new int[]{1,9}, 1, Block.class),
@@ -49,7 +49,7 @@ public enum ModWoodList { //look through treecapitator config?
 	FIR(APIRegistry.BXL, null, null, null, null, 0, Block.class),
 	XLREDWOOD(APIRegistry.BXL, null, null, null, null, 0, Block.class),
 	RUBBER(APIRegistry.INDUSTRIALCRAFT, "ic2.core.Ic2Items", "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, ItemStack.class),
-	MINERUBBER(APIRegistry.MINEFACTORY, "powercrystals.minefactoryreloaded.MineFactoryReloadedCore", "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", 0, Block.class);
+	MINERUBBER(APIRegistry.MINEFACTORY, "powercrystals.minefactoryreloaded.MineFactoryReloadedCore", "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, Block.class);
 
 	private APIRegistry mod;
 	private int blockID = -1;
