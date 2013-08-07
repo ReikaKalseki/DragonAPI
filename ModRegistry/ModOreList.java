@@ -26,7 +26,9 @@ public enum ModOreList {
 	SILVER("Silver", "ingotSilver", 1, "oreSilver"),
 	//GREGTECH
 	GALENA("Galena", "ingotGalena", 1, "oreGalena"),
+	//Also TC
 	ALUMINUM("Aluminum", "ingotNaturalAluminum", 1, "oreAluminum", "naturalAluminum", "oreNaturalAluminum", "oreBauxite"), //...Why??
+	//also IC2
 	IRIDIUM("Iridium", "ingotIridium", 1, "oreIridium"),
 	//?
 	PERIDOT("Peridot", "gemPeridot", 1, "orePeridot"),
@@ -73,7 +75,12 @@ public enum ModOreList {
 	NETHERNIKOLITE("Nether Nikolite", "dustNikolite", 5, "oreNetherNikolite"),
 	//TINKERER'S CONSTRUCT
 	NETHERCOBALT("Cobalt", "ingotCobalt", 1, "oreCobalt"),
-	ARDITE("Ardite", "ingotArdite", 1, "oreArdite");
+	ARDITE("Ardite", "ingotArdite", 1, "oreArdite"),
+	//?
+	PLATINUM("Platinum", "ingotPlatinum", 1, "orePlatinum"), //ThermalExpansion Shiny
+	NETHERPLATINUM("Nether Platinum", "ingotPlatinum", 1, "oreNetherPlatinum"),
+	//Gregtech?
+	ZINC("Zinc", "ingotZinc", 1, "oreZinc");
 
 	private ArrayList<ItemStack> ores;
 	private String name;

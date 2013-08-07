@@ -22,4 +22,6 @@ public interface IDRegistry {
 
 	public String getCategory();
 
+	public boolean isDummiedOut();
+
 }

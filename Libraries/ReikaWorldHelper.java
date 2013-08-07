@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.ArrayList;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
@@ -1255,5 +1257,26 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (mat == Material.grass)
 			return true;
 		return false;
+	}
+
+	public static boolean isLiquid(int id) {
+		if (id >= 8 && id <= 11)
+			return true;
+		Block b = Block.blocksList[id];
+		Material mat = b.blockMaterial;
+		if (mat == Material.lava || mat == Material.water)
+			return true;
+		return false;
+	}
+
+	public static void dropBlockAt(World world, int x, int y, int z, int fortune) {
+		int id = world.getBlockId(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		ArrayList<ItemStack> li = Block.blocksList[id].getBlockDropped(world, x, y, z, meta, fortune);
+		ReikaItemHelper.dropItems(world, x+0.5, y+0.5, z+0.5, li);
+	}
+
+	public static void dropBlockAt(World world, int x, int y, int z) {
+		dropBlockAt(world, x, y, z, 0);
 	}
 }

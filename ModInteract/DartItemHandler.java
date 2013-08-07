@@ -75,6 +75,8 @@ public final class DartItemHandler extends ModHandlerBase {
 	}
 
 	public boolean isWrench(ItemStack held) {
+		if (held == null)
+			return false;
 		if (!this.initializedProperly())
 			return false;
 		return held.itemID == wrenchID;

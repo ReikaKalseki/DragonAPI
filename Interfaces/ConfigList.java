@@ -36,4 +36,6 @@ public interface ConfigList {
 
 	public float getFloat();
 
+	public boolean isDummiedOut();
+
 }
