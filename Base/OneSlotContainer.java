@@ -21,7 +21,6 @@ public class OneSlotContainer extends CoreContainer {
 
 	public OneSlotContainer(EntityPlayer player, TileEntity te) {
 		super(player, te);
-		tile = te;
 		ep = player;
 		inv = (IInventory)te;
 		this.addSlotToContainer(new Slot(inv, 0, 80, 35));

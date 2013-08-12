@@ -84,7 +84,9 @@ public enum ModOreList {
 	//Mekanism
 	OSMIUM("Osmium", "ingotOsmium", 1, "oreOsmium", "oreNetherOsmium"),
 	//?
-	NETHERPIGIRON("Nether Pig Iron", "ingotPigIron", 1, "oreNetherPigIron");
+	NETHERPIGIRON("Nether Pig Iron", "ingotPigIron", 1, "oreNetherPigIron"),
+	//RAILCRAFT
+	SULFUR("Sulfur", "ingotSulfur", 3, "oreSulfur");
 
 	private ArrayList<ItemStack> ores;
 	private String name;

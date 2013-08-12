@@ -20,11 +20,13 @@ import Reika.DragonAPI.Libraries.ReikaMathLibrary;
 
 public class CoreContainer extends Container {
 
-	protected TileEntity tile;
+	protected final TileEntity tile;
 	int posX; int posY; int posZ;
 	protected EntityPlayer ep;
 
 	protected ItemStack[] oldInv;
+
+	protected final IInventory ii;
 
 	public CoreContainer(EntityPlayer player, TileEntity te)
 	{
@@ -34,6 +36,11 @@ public class CoreContainer extends Container {
 		posZ = tile.zCoord;
 		ep = player;
 		//this.detectAndSendChanges();
+
+		if (te instanceof IInventory)
+			ii = (IInventory)te;
+		else
+			ii = null;
 	}
 
 	public boolean hasInventoryChanged(ItemStack[] inv) {
@@ -124,6 +131,99 @@ public class CoreContainer extends Container {
 		}
 
 		return var3;
+	}
+
+	@Override
+	protected boolean mergeItemStack(ItemStack par1ItemStack, int par2, int par3, boolean par4)
+	{
+		boolean flag1 = false;
+		int k = par2;
+
+		if (par4)
+		{
+			k = par3 - 1;
+		}
+
+		Slot slot;
+		ItemStack itemstack1;
+
+		if (par1ItemStack.isStackable())
+		{
+			while (par1ItemStack.stackSize > 0 && (!par4 && k < par3 || par4 && k >= par2))
+			{
+				slot = (Slot)inventorySlots.get(k);
+				itemstack1 = slot.getStack();
+
+				//ReikaJavaLibrary.pConsole(par1ItemStack+" to "+slot+" ("+itemstack1+") - "+slot.isItemValid(par1ItemStack));
+
+				if (ii.isStackValidForSlot(k, par1ItemStack) && slot.isItemValid(par1ItemStack) && itemstack1 != null && itemstack1.itemID == par1ItemStack.itemID && (!par1ItemStack.getHasSubtypes() || par1ItemStack.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(par1ItemStack, itemstack1))
+				{
+					int l = itemstack1.stackSize + par1ItemStack.stackSize;
+
+					if (l <= par1ItemStack.getMaxStackSize())
+					{
+						par1ItemStack.stackSize = 0;
+						itemstack1.stackSize = l;
+						slot.onSlotChanged();
+						flag1 = true;
+					}
+					else if (itemstack1.stackSize < par1ItemStack.getMaxStackSize())
+					{
+						par1ItemStack.stackSize -= par1ItemStack.getMaxStackSize() - itemstack1.stackSize;
+						itemstack1.stackSize = par1ItemStack.getMaxStackSize();
+						slot.onSlotChanged();
+						flag1 = true;
+					}
+				}
+
+				if (par4)
+				{
+					--k;
+				}
+				else
+				{
+					++k;
+				}
+			}
+		}
+
+		if (par1ItemStack.stackSize > 0)
+		{
+			if (par4)
+			{
+				k = par3 - 1;
+			}
+			else
+			{
+				k = par2;
+			}
+
+			while (!par4 && k < par3 || par4 && k >= par2)
+			{
+				slot = (Slot)inventorySlots.get(k);
+				itemstack1 = slot.getStack();
+
+				if (ii.isStackValidForSlot(k, par1ItemStack) && slot.isItemValid(par1ItemStack) && itemstack1 == null)
+				{
+					slot.putStack(par1ItemStack.copy());
+					slot.onSlotChanged();
+					par1ItemStack.stackSize = 0;
+					flag1 = true;
+					break;
+				}
+
+				if (par4)
+				{
+					--k;
+				}
+				else
+				{
+					++k;
+				}
+			}
+		}
+
+		return flag1;
 	}
 
 }

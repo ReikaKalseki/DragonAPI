@@ -56,11 +56,11 @@ public enum ReikaPlantHelper {
 			return ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow);
 		case MUSHROOM:
 			return idbelow == Block.dirt.blockID || idbelow == Block.mycelium.blockID;
-		case SAPLING:
+		case SAPLING:/*
 			if (idbelow == TwilightBlockHandler.getInstance().rootID) {
 				world.setBlock(x, y, z, Block.grass.blockID);
 				return true;
-			}
+			}*/
 			return ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow);
 		case SUGARCANE:
 			if (idbelow != Block.sand.blockID && !ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow))

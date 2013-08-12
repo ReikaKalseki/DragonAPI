@@ -287,4 +287,23 @@ public class BlockProperties {
 		blockColorArray[129] = ReikaColorAPI.RGBtoHex(23, 221, 98);
 		blockColorArray[153] = ReikaColorAPI.RGBtoHex(203, 191, 177);
 	}
+
+	static {
+		setNonSolid();
+		setSoft();
+		setFlammable();
+		setBlockColors(false);
+	}
+
+	public static void setOreColors() {
+		blockColorArray[16] = ReikaColorAPI.RGBtoHex(70);
+		blockColorArray[15] = ReikaColorAPI.RGBtoHex(214, 173, 145);
+		blockColorArray[14] = ReikaColorAPI.RGBtoHex(251, 237, 76);
+		blockColorArray[21] = ReikaColorAPI.RGBtoHex(40, 98, 175);
+		blockColorArray[73] = ReikaColorAPI.RGBtoHex(215, 0, 0);
+		blockColorArray[74] = ReikaColorAPI.RGBtoHex(215, 0, 0);
+		blockColorArray[56] = ReikaColorAPI.RGBtoHex(93, 235, 244);
+		blockColorArray[129] = ReikaColorAPI.RGBtoHex(23, 221, 98);
+		blockColorArray[153] = ReikaColorAPI.RGBtoHex(203, 191, 177);
+	}
 }

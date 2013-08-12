@@ -23,30 +23,55 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
 
 public final class ReikaWorldHelper extends DragonAPICore {
 
-	public static boolean softBlocks(int id) {
-		BlockProperties.setSoft();
+	public static boolean softBlocks(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		if (id == 0)
+			return true;
+		Block b = Block.blocksList[id];
+		if (b.isBlockReplaceable(world, x, y, z))
+			return true;
 		return (BlockProperties.softBlocksArray[id]);
 	}
 
+	public static boolean softBlocks(int id) {
+		if (id == 0)
+			return true;
+		return (BlockProperties.softBlocksArray[id]);
+	}
+
+	public static boolean flammable(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		if (id == 0)
+			return false;
+		int meta = world.getBlockMetadata(x, y, z);
+		Block b = Block.blocksList[id];
+		if (b.getFlammability(world, x, y, z, meta, ForgeDirection.UP) > 0)
+			return true;
+		return (BlockProperties.flammableArray[id]);
+	}
+
 	public static boolean flammable(int id) {
-		BlockProperties.setFlammable();
+		if (id == 0)
+			return false;
 		return (BlockProperties.flammableArray[id]);
 	}
 
 	public static boolean nonSolidBlocks(int id) {
-		BlockProperties.setNonSolid();
 		return (BlockProperties.nonSolidArray[id]);
 	}
 
 	/** Converts the given block ID to a hex color. Renders ores (or disguises as stone) as requested.
 	 * Args: Block ID, Ore Rendering */
 	public static int blockColors(int id, boolean renderOres) {
-		BlockProperties.setBlockColors(renderOres);
+		if (renderOres)
+			BlockProperties.setOreColors();
+
 		if (BlockProperties.blockColorArray[id] == 0)
 			return 0xffD47EFF;
 		return BlockProperties.blockColorArray[id];

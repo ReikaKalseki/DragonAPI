@@ -21,7 +21,6 @@ public class ContainerBasicStorage extends CoreContainer {
 	public ContainerBasicStorage(EntityPlayer player, TileEntity te) {
 		super(player, te);
 		lowerInv = (IInventory)te;
-		tile = te;
 		int numRows = lowerInv.getSizeInventory() / 9;
 		lowerInv.openChest();
 		int var3 = (numRows - 4) * 18;

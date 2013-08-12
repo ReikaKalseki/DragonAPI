@@ -111,7 +111,10 @@ public final class DartOreHandler extends ModHandlerBase {
 
 	public void forceOreRegistration() {
 		if (!isOreDict) {
-			OreDictionary.registerOre(ModOreList.FORCE.getOreDictNames()[0], Block.blocksList[oreID]);
+			ItemStack overworld = new ItemStack(oreID, 1, 0);
+			ItemStack nether = new ItemStack(oreID, 1, 1);
+			OreDictionary.registerOre(ModOreList.FORCE.getOreDictNames()[0], overworld);
+			OreDictionary.registerOre(ModOreList.FORCE.getOreDictNames()[0], nether);
 			ModOreList.FORCE.reloadOreList();
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Power ore registered to ore dictionary!");
 			isOreDict = true;

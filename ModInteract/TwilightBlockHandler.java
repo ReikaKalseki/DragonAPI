@@ -23,7 +23,7 @@ public class TwilightBlockHandler extends ModHandlerBase {
 	public final int towerMachineID;
 	public final int towerWoodID;
 
-	public static final int breakerMeta = 9;
+	public final int breakerMeta;
 
 	private static final TwilightBlockHandler instance = new TwilightBlockHandler();
 
@@ -31,16 +31,20 @@ public class TwilightBlockHandler extends ModHandlerBase {
 		int idroot = -1;
 		int idmachine = -1;
 		int idtowerwood = -1;
+		int metabreaker = -1;
 
 		if (this.hasMod()) {
 			try {
 				Class twilight = Class.forName("twilightforest.block.TFBlocks");
+				Class devices = Class.forName("twilightforest.block.BlockTFTowerDevice");
 				Field root = twilight.getField("root");
 				Field machine = twilight.getField("towerDevice");
 				Field towerwood = twilight.getField("towerWood");
+				Field breaker = devices.getField("META_ANTIBUILDER");
 				idroot = ((Block)root.get(null)).blockID;
 				idmachine = ((Block)machine.get(null)).blockID;
 				idtowerwood = ((Block)towerwood.get(null)).blockID;
+				metabreaker = breaker.getInt(null);
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.spamConsole("DRAGONAPI: Twilight Forest class not found! Cannot read its contents!");
@@ -70,6 +74,7 @@ public class TwilightBlockHandler extends ModHandlerBase {
 		rootID = idroot;
 		towerMachineID = idmachine;
 		towerWoodID = idtowerwood;
+		breakerMeta = metabreaker;
 
 	}
 
@@ -79,7 +84,7 @@ public class TwilightBlockHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return rootID != -1 && towerMachineID != -1 && towerWoodID != -1;
+		return rootID != -1 && towerMachineID != -1 && towerWoodID != -1 && breakerMeta != -1;
 	}
 
 	@Override

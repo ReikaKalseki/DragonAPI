@@ -17,13 +17,15 @@ public class ModLogger {
 
 	private final boolean logLoading;
 	private final boolean printDebug;
+	private final boolean shouldWarn;
 
 	private final DragonAPIMod mod;
 
-	public ModLogger(DragonAPIMod mod, boolean load, boolean debug) {
+	public ModLogger(DragonAPIMod mod, boolean load, boolean debug, boolean warn) {
 		this.mod = mod;
 		logLoading = load;
 		printDebug = debug;
+		shouldWarn = warn;
 	}
 
 	public void debug(Object o) {
@@ -49,6 +51,15 @@ public class ModLogger {
 
 	public boolean shouldDebug() {
 		return printDebug;
+	}
+
+	public boolean shouldWarn() {
+		return shouldWarn;
+	}
+
+	public void warn(Object o) {
+		if (shouldWarn)
+			ReikaJavaLibrary.pConsole(o);
 	}
 
 }

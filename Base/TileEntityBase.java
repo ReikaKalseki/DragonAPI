@@ -13,9 +13,7 @@ import java.util.Arrays;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
@@ -143,58 +141,33 @@ public abstract class TileEntityBase extends TileEntity {
 			this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
 		}
 		catch (ArrayIndexOutOfBoundsException e) {
-			ReikaChatHelper.write(this+" is throwing ArrayIndexOutOfBounds Exception on update: "+e.getMessage());
-			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
-			ReikaChatHelper.write("");
-			e.printStackTrace();
-			this.spawnError(worldObj, xCoord, yCoord, zCoord);
+			this.writeError(e);
 		}
 		catch (IndexOutOfBoundsException e) {
-			ReikaChatHelper.write(this+" is throwing IndexOutOfBounds Exception on update: "+e.getMessage());
-			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
-			ReikaChatHelper.write("");
-			e.printStackTrace();
-			this.spawnError(worldObj, xCoord, yCoord, zCoord);
+			this.writeError(e);
 		}
 		catch (ArithmeticException e) {
-			ReikaChatHelper.write(this+" is throwing Arithmetic Exception on update: "+e.getMessage());
-			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
-			ReikaChatHelper.write("");
-			e.printStackTrace();
-			this.spawnError(worldObj, xCoord, yCoord, zCoord);
+			this.writeError(e);
 		}
 		catch (NullPointerException e) {
-			ReikaChatHelper.write(this+" is throwing NullPointer Exception on update: "+e.getMessage());
-			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
-			ReikaChatHelper.write("");
-			e.printStackTrace();
-			this.spawnError(worldObj, xCoord, yCoord, zCoord);
+			this.writeError(e);
 		}
 		catch (ClassCastException e) {
-			ReikaChatHelper.write(this+" is throwing ClassCast Exception on update: "+e.getMessage());
-			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
-			ReikaChatHelper.write("");
-			e.printStackTrace();
-			this.spawnError(worldObj, xCoord, yCoord, zCoord);
+			this.writeError(e);
 		}
 		catch (IllegalArgumentException e) {
-			ReikaChatHelper.write(this+" is throwing IllegalArgument Exception on update: "+e.getMessage());
-			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
-			ReikaChatHelper.write("");
-			e.printStackTrace();
-			this.spawnError(worldObj, xCoord, yCoord, zCoord);
+			this.writeError(e);
 		}
 	}
 
-	private void spawnError(World world, int x, int y, int z) {
-		for (int i = 0; i < 16; i++) {
-			double vx = -1+par5Random.nextDouble()*2;
-			double vy = par5Random.nextDouble();
-			double vz = -1+par5Random.nextDouble()*2;
-			world.spawnParticle("reddust", -1+x+par5Random.nextDouble()*3, y+par5Random.nextDouble(), -1+z+par5Random.nextDouble()*3, vx, vy, vz);
-			EntityItem ei = new EntityItem(world, -1+x+par5Random.nextDouble()*3, y+par5Random.nextDouble(), -1+z+par5Random.nextDouble()*3, new ItemStack(Block.bedrock.blockID, 0, 0));
-			world.spawnEntityInWorld(ei);
-		}
+	private void writeError(Exception e) {
+		ReikaChatHelper.write(this+" is throwing "+e.getClass()+" on update: "+e.getMessage());
+		ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
+		ReikaChatHelper.write("");
+
+		ReikaJavaLibrary.pConsole(this+" is throwing "+e.getClass()+" on update: "+e.getMessage());
+		e.printStackTrace();
+		ReikaJavaLibrary.pConsole("");
 	}
 
 	private final void updateTileEntity() {

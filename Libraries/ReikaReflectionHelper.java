@@ -30,7 +30,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			return (instance.setUnlocalizedName(list.getUnlocalizedName()));
 		}
 		catch (NoSuchMethodException e) {
-			throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" does not have the specified constructor! Check visibility!");
+			throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" does not have the specified constructor! Check visibility and material args!");
 		}
 		catch (SecurityException e) {
 			throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" threw security exception!");
