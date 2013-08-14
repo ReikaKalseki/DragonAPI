@@ -13,7 +13,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import thaumcraft.api.EnumTag;
 import thaumcraft.api.ObjectTags;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aura.AuraNode;
@@ -21,7 +23,26 @@ import thaumcraft.api.aura.EnumNodeType;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.ReikaMathLibrary;
 
-public class ReikaNodeHelper {
+public class ReikaThaumHelper {
+
+	public static void addAspects(ItemStack is, Object... aspects) {
+		if (aspects.length%2 != 0) {
+			ReikaJavaLibrary.pConsole("Could not add aspects to "+is+": You must specify a level for every aspect!");
+			Thread.dumpStack();
+			return;
+		}
+		ObjectTags ot = new ObjectTags();
+		try {
+			for (int i = 0; i < aspects.length; i += 2) {
+				ot.add((EnumTag)aspects[i], (Integer)aspects[i+1]);
+			}
+		}
+		catch (ClassCastException e) {
+			ReikaJavaLibrary.pConsole("Invalid parameters! Could not add aspects to "+is+"!");
+			e.printStackTrace();
+		}
+		ThaumcraftApi.registerObjectTag(is.itemID, is.getItemDamage(), ot);
+	}
 
 	public static List<Integer> getAllNodesNear(World world, double x, double y, double z, double range) {
 		List li = new ArrayList<Integer>();
