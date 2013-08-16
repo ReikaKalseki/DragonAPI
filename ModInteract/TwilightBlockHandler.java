@@ -22,6 +22,7 @@ public class TwilightBlockHandler extends ModHandlerBase {
 	public final int rootID;
 	public final int towerMachineID;
 	public final int towerWoodID;
+	public final int mazeStoneID;
 
 	public final int breakerMeta;
 
@@ -32,6 +33,7 @@ public class TwilightBlockHandler extends ModHandlerBase {
 		int idmachine = -1;
 		int idtowerwood = -1;
 		int metabreaker = -1;
+		int idmaze = -1;
 
 		if (this.hasMod()) {
 			try {
@@ -40,10 +42,12 @@ public class TwilightBlockHandler extends ModHandlerBase {
 				Field root = twilight.getField("root");
 				Field machine = twilight.getField("towerDevice");
 				Field towerwood = twilight.getField("towerWood");
+				Field maze = twilight.getField("mazestone");
 				Field breaker = devices.getField("META_ANTIBUILDER");
 				idroot = ((Block)root.get(null)).blockID;
 				idmachine = ((Block)machine.get(null)).blockID;
 				idtowerwood = ((Block)towerwood.get(null)).blockID;
+				idmaze = ((Block)maze.get(null)).blockID;
 				metabreaker = breaker.getInt(null);
 			}
 			catch (ClassNotFoundException e) {
@@ -75,6 +79,7 @@ public class TwilightBlockHandler extends ModHandlerBase {
 		towerMachineID = idmachine;
 		towerWoodID = idtowerwood;
 		breakerMeta = metabreaker;
+		mazeStoneID = idmaze;
 
 	}
 
@@ -84,7 +89,7 @@ public class TwilightBlockHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return rootID != -1 && towerMachineID != -1 && towerWoodID != -1 && breakerMeta != -1;
+		return rootID != -1 && towerMachineID != -1 && towerWoodID != -1 && breakerMeta != -1 && mazeStoneID != -1;
 	}
 
 	@Override

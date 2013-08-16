@@ -414,8 +414,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 	/** Note that this must be called after any and all texture and text rendering, as the lighting conditions are left a bit off */
 	public void drawItemStack(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
 		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
-		zLevel = 200.0F;
-		renderer.zLevel = 200.0F;
+		//zLevel = 200.0F;
+		//renderer.zLevel = 200.0F;
 		FontRenderer font = null;
 		if (is != null)
 			font = is.getItem().getFontRenderer(is);
@@ -438,8 +438,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 		renderer.renderItemAndEffectIntoGUI(font, mc.renderEngine, is, x, y);
 		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, null);
-		zLevel = 0.0F;
-		renderer.zLevel = 0.0F;
+		//zLevel = 0.0F;
+		//renderer.zLevel = 0.0F;
 		//GL11.glPopMatrix();
 
 		RenderHelper.disableStandardItemLighting();

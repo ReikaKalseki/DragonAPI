@@ -23,6 +23,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
@@ -1303,5 +1304,18 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	public static void dropBlockAt(World world, int x, int y, int z) {
 		dropBlockAt(world, x, y, z, 0);
+	}
+
+	public static void setBiomeForXZ(World world, int x, int z, BiomeGenBase biome) {
+		Chunk ch = world.getChunkFromBlockCoords(x, z);
+
+		int ax = x-ch.xPosition*16;
+		int az = z-ch.zPosition*16;
+
+		int index = az*16+ax;
+
+		byte[] biomes = ch.getBiomeArray();
+		biomes[index] = (byte)biome.biomeID;
+		ch.setBiomeArray(biomes);
 	}
 }

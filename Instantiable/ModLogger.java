@@ -37,7 +37,7 @@ public class ModLogger {
 
 	public void log(Object o) {
 		if (logLoading)
-			ReikaJavaLibrary.pConsole(o);
+			ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": "+o);
 	}
 
 	public void logError(Object o) {
@@ -58,8 +58,10 @@ public class ModLogger {
 	}
 
 	public void warn(Object o) {
-		if (shouldWarn)
+		if (shouldWarn) {
 			ReikaJavaLibrary.pConsole(o);
+			ReikaChatHelper.write(o);
+		}
 	}
 
 }

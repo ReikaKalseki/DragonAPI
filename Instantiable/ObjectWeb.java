@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 
 public class ObjectWeb {
@@ -21,11 +22,9 @@ public class ObjectWeb {
 
 	private final Class nodeClass;
 
-	public ObjectWeb() {
-		nodeClass = null;
-	}
-
 	public ObjectWeb(Class node) {
+		if (node == null)
+			throw new MisuseException("You must specify a node class!");
 		nodeClass = node;
 	}
 
@@ -46,11 +45,13 @@ public class ObjectWeb {
 	}
 
 	public List getChildren(Object obj) {
+		if (!this.hasNode(obj))
+			return new ArrayList();
 		return web.get(obj);
 	}
 
 	public void addNode(Object obj) {
-		if (nodeClass != null && nodeClass != obj.getClass()) {
+		if (!this.matchClass(obj)) {
 			ReikaJavaLibrary.pConsole("Node "+obj+" is an invalid class type!");
 			Thread.dumpStack();
 			return;
@@ -63,8 +64,16 @@ public class ObjectWeb {
 		return web.containsKey(obj);
 	}
 
+	private boolean matchClass(Object o) {
+		return nodeClass.isAssignableFrom(o.getClass());
+	}
+
+	private boolean matchClasses(Object o1, Object o2) {
+		return nodeClass.isAssignableFrom(o1.getClass()) && nodeClass.isAssignableFrom(o2.getClass());
+	}
+
 	public void addDirectionalConnection(Object parent, Object child) {
-		if (parent.getClass() != child.getClass()) {
+		if (!this.matchClasses(parent, child)) {
 			ReikaJavaLibrary.pConsole("Cannot add links between incompatible class types!");
 			Thread.dumpStack();
 			return;
@@ -75,7 +84,7 @@ public class ObjectWeb {
 	}
 
 	public void addBilateralConnection(Object a, Object b) {
-		if (a.getClass() != b.getClass()) {
+		if (!this.matchClasses(a, b)) {
 			ReikaJavaLibrary.pConsole("Cannot add links between incompatible class types!");
 			Thread.dumpStack();
 			return;
@@ -90,8 +99,8 @@ public class ObjectWeb {
 		this.addChild(b, a);
 	}
 
-	public void addChild(Object parent, Object child) {
-		if (parent.getClass() != child.getClass()) {
+	private void addChild(Object parent, Object child) {
+		if (!this.matchClasses(parent, child)) {
 			ReikaJavaLibrary.pConsole("Cannot add links between incompatible class types!");
 			Thread.dumpStack();
 			return;
@@ -113,7 +122,7 @@ public class ObjectWeb {
 	}
 
 	public void removeChild(Object parent, Object child) {
-		if (parent.getClass() != child.getClass()) {
+		if (!this.matchClasses(parent, child)) {
 			ReikaJavaLibrary.pConsole("Incompatible object class types!");
 			Thread.dumpStack();
 			return;

@@ -42,10 +42,7 @@ public abstract class DragonAPIMod {
 	public abstract String getVersionName();
 
 	public final String getTechnicalName() {
-		if (this.hasVersion())
-			return this.getDisplayName()+" "+this.getVersionName();
-		else
-			return this.getDisplayName();
+		return this.getDisplayName().toUpperCase();
 	}
 
 	protected final void checkAPI() {

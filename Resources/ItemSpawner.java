@@ -145,7 +145,7 @@ public class ItemSpawner extends Item implements IndexedItemSprites {
 		int dim = world.provider.dimensionId;
 		String name = ReikaSpawnerHelper.getSpawnerFromItemNBT(is);
 		if (ReikaTwilightHelper.isTwilightForestBoss(name))
-			return dim == 7;
+			return dim == ReikaTwilightHelper.TWILIGHT_ID;
 		if (name.equals("EnderDragon"))
 			return dim == 1;
 		switch(dim) {

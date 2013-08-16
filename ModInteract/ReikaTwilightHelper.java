@@ -11,6 +11,8 @@ package Reika.DragonAPI.ModInteract;
 
 public class ReikaTwilightHelper {
 
+	public static final int TWILIGHT_ID = 7;
+
 	public static boolean isTwilightForestBoss(String name) {
 		if (name == null)
 			return false;
