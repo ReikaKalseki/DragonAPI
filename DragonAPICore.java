@@ -16,16 +16,26 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
+import Reika.DragonAPI.Auxiliary.APIRegistry;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.ReikaReflectionHelper;
+import Reika.DragonAPI.ModInteract.BCMachineHandler;
+import Reika.DragonAPI.ModInteract.DartItemHandler;
+import Reika.DragonAPI.ModInteract.DartOreHandler;
+import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
+import Reika.DragonAPI.ModInteract.ThaumOreHandler;
+import Reika.DragonAPI.ModInteract.TinkerToolHandler;
+import Reika.DragonAPI.ModInteract.TwilightBlockHandler;
 import Reika.DragonAPI.Resources.TabDragonAPI;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class DragonAPICore {
 
 	private static boolean resourcesLoaded = false;
+
+	private static boolean loadedHandlers = false;
 
 	protected DragonAPICore() {throw new MisuseException("The class "+this.getClass()+" cannot be instantiated!");}
 
@@ -46,16 +56,6 @@ public class DragonAPICore {
 	public static void addIDMapping(String name, int id) {
 		IDs.put(name, id);
 	}
-	/*
-	public static void loadResources() {
-		if (resourcesLoaded) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Resources already loaded!");
-			return;
-		}
-		ReikaJavaLibrary.pConsole("DRAGONAPI: Loading Resources");
-		resourcesLoaded = true;
-		addItem("Spawner", "Monster Spawner", new ItemSpawner(IDs.get("Spawner")).setUnlocalizedName("spawner"));
-	}*/
 
 	private static void addItem(String name, String unloc, Item i) {
 		if (!items.containsKey(unloc)) {
@@ -79,5 +79,32 @@ public class DragonAPICore {
 			throw new MisuseException(unloc+" already has a specified render! "+renders.get(unloc));
 		MinecraftForgeClient.registerItemRenderer(getItem(unloc).itemID, render);
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding item render "+render+" for system name "+unloc);
+	}
+
+	public static void loadHandlers() {
+		if (loadedHandlers)
+			return;
+
+		loadedHandlers = true;
+
+		ReikaJavaLibrary.initClass(APIRegistry.class);
+
+		if (APIRegistry.BUILDCRAFTENERGY.conditionsMet()) {
+			ReikaJavaLibrary.initClass(BCMachineHandler.class);
+		}
+		if (APIRegistry.THAUMCRAFT.conditionsMet()) {
+			ReikaJavaLibrary.initClass(ThaumOreHandler.class);
+			ReikaJavaLibrary.initClass(ThaumBlockHandler.class);
+		}
+		if (APIRegistry.DARTCRAFT.conditionsMet()) {
+			ReikaJavaLibrary.initClass(DartOreHandler.class);
+			ReikaJavaLibrary.initClass(DartItemHandler.class);
+		}
+		if (APIRegistry.TINKERER.conditionsMet()) {
+			ReikaJavaLibrary.initClass(TinkerToolHandler.class);
+		}
+		if (APIRegistry.TWILIGHT.conditionsMet()) {
+			ReikaJavaLibrary.initClass(TwilightBlockHandler.class);
+		}
 	}
 }

@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2013
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
 import java.util.Random;
@@ -82,7 +91,7 @@ public class ItemReq {
 		else if (this.alwaysConsume())
 			return new ItemStack(itemID, 1, metadata);
 		else
-			return new ItemStack(itemID, (int)(100*chanceToUse), metadata);
+			return new ItemStack(itemID, 1, metadata);//return new ItemStack(itemID, (int)(100*chanceToUse), metadata);
 	}
 
 }
