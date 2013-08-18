@@ -16,7 +16,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
-import Reika.DragonAPI.ModInteract.TwilightBlockHandler;
 
 public enum ReikaPlantHelper {
 
@@ -28,7 +27,8 @@ public enum ReikaPlantHelper {
 	TALLGRASS(Block.tallGrass),
 	BUSH(Block.deadBush),
 	CROP(Block.crops, Block.carrot, Block.potato, Block.melonStem, Block.pumpkinStem),
-	NETHERWART(Block.netherStalk);
+	NETHERWART(Block.netherStalk),
+	LILYPAD(Block.waterlily);
 
 	private List<Integer> ids = new ArrayList<Integer>();
 
@@ -75,6 +75,8 @@ public enum ReikaPlantHelper {
 			return idbelow == Block.slowSand.blockID;
 		case TALLGRASS:
 			return ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow);
+		case LILYPAD:
+			return matbelow == Material.water && metabelow == 0;
 		}
 		return false;
 	}

@@ -44,6 +44,11 @@ public class ReikaThaumHelper {
 		ThaumcraftApi.registerObjectTag(is.itemID, is.getItemDamage(), ot);
 	}
 
+	public static void clearAspects(ItemStack is) {
+		ObjectTags ot = new ObjectTags();
+		ThaumcraftApi.registerObjectTag(is.itemID, is.getItemDamage(), ot);
+	}
+
 	public static List<Integer> getAllNodesNear(World world, double x, double y, double z, double range) {
 		List li = new ArrayList<Integer>();
 		double step = 2;

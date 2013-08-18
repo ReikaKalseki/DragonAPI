@@ -22,8 +22,10 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
@@ -1318,5 +1320,134 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		byte[] biomes = ch.getBiomeArray();
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
+	}
+
+	public static void setBiomeAndBlocksForXZ(World world, int x, int z, BiomeGenBase biome) {
+		Chunk ch = world.getChunkFromBlockCoords(x, z);
+
+		int ax = x-ch.xPosition*16;
+		int az = z-ch.zPosition*16;
+
+		int index = az*16+ax;
+
+		byte[] biomes = ch.getBiomeArray();
+
+		BiomeGenBase from = BiomeGenBase.biomeList[biomes[index]];
+
+		biomes[index] = (byte)biome.biomeID;
+		ch.setBiomeArray(biomes);
+
+		int fillerID = from.fillerBlock;
+		int topID = from.topBlock;
+
+		for (int y = 30; y < world.provider.getHeight(); y++) {
+			int id = world.getBlockId(x, y, z);
+			if (id == fillerID) {
+				world.setBlock(x, y, z, biome.fillerBlock);
+			}
+			if (id == topID && y == world.getTopSolidOrLiquidBlock(x, z)-1) {
+				world.setBlock(x, y, z, biome.topBlock);
+			}/*
+			else if (id == Block.wood.blockID)
+				world.setBlock(x, y, z, 0);
+			else if (id == Block.leaves.blockID)
+				world.setBlock(x, y, z, 0);*/
+			if (biome.getEnableSnow()) {
+				if (world.canBlockFreeze(x, y, z, false))
+					world.setBlock(x, y, z, Block.ice.blockID);
+				else if (world.canBlockSeeTheSky(x, y, z))
+					world.setBlock(x, y+1, z, Block.snow.blockID);
+			}
+			if (!biome.getEnableSnow()) {
+				if (id == Block.snow.blockID)
+					world.setBlock(x, y, z, 0);
+				if (id == Block.ice.blockID)
+					world.setBlock(x, y, z, Block.waterMoving.blockID);
+			}
+		}
+
+		if (world.isRemote)
+			return;
+
+		BiomeDecorator dec = biome.theBiomeDecorator;
+
+		int trees = dec.treesPerChunk;
+		int grass = dec.grassPerChunk;
+		int flowers = dec.flowersPerChunk;
+		int cactus = dec.cactiPerChunk;
+		int bushes = dec.deadBushPerChunk;
+		int sugar = dec.reedsPerChunk;
+		int mushrooms = dec.mushroomsPerChunk;
+		int lily = dec.waterlilyPerChunk;
+		int bigmush = dec.bigMushroomsPerChunk;
+
+		double fac = 1/3D;
+
+		if (ReikaMathLibrary.doWithChance(fac*trees/256D)) {
+			WorldGenerator gen = biome.getRandomWorldGenForTrees(rand);
+			gen.generate(world, rand, x, world.getTopSolidOrLiquidBlock(x, z), z);
+		}
+
+		if (ReikaMathLibrary.doWithChance(fac*grass/256D)) {
+			WorldGenerator gen = biome.getRandomWorldGenForGrass(rand);
+			gen.generate(world, rand, x, world.getTopSolidOrLiquidBlock(x, z), z);
+		}
+
+		if (ReikaMathLibrary.doWithChance(fac*cactus/256D)) {
+			int y = world.getTopSolidOrLiquidBlock(x, z);
+			if (ReikaPlantHelper.CACTUS.canPlantAt(world, x, y, z)) {
+				int h = 1+rand.nextInt(3);
+				for (int i = 0; i < h; i++)
+					world.setBlock(x, y+i, z, Block.cactus.blockID);
+			}
+		}
+
+		if (ReikaMathLibrary.doWithChance(fac*sugar/256D)) {
+			int y = world.getTopSolidOrLiquidBlock(x, z);
+			if (ReikaPlantHelper.SUGARCANE.canPlantAt(world, x, y, z)) {
+				int h = 1+rand.nextInt(3);
+				for (int i = 0; i < h; i++)
+					world.setBlock(x, y+i, z, Block.reed.blockID);
+			}
+		}
+
+		if (ReikaMathLibrary.doWithChance(fac*bushes/256D)) {
+			int y = world.getTopSolidOrLiquidBlock(x, z);
+			if (ReikaPlantHelper.BUSH.canPlantAt(world, x, y, z)) {
+				world.setBlock(x, y, z, Block.deadBush.blockID);
+			}
+		}
+
+		if (ReikaMathLibrary.doWithChance(fac*lily/256D)) {
+			int y = world.getTopSolidOrLiquidBlock(x, z);
+			if (ReikaPlantHelper.LILYPAD.canPlantAt(world, x, y, z)) {
+				world.setBlock(x, y, z, Block.waterlily.blockID);
+			}
+		}
+
+		if (ReikaMathLibrary.doWithChance(fac*flowers/256D)) {
+			int y = world.getTopSolidOrLiquidBlock(x, z);
+			if (ReikaPlantHelper.FLOWER.canPlantAt(world, x, y, z)) {
+				if (rand.nextInt(3) == 0)
+					world.setBlock(x, y, z, Block.plantRed.blockID);
+				else
+					world.setBlock(x, y, z, Block.plantYellow.blockID);
+			}
+		}
+
+		if (ReikaMathLibrary.doWithChance(fac*256*mushrooms/256D)) {
+			int y = world.getTopSolidOrLiquidBlock(x, z);
+			if (ReikaPlantHelper.MUSHROOM.canPlantAt(world, x, y, z)) {
+				if (rand.nextInt(4) == 0)
+					world.setBlock(x, y, z, Block.mushroomRed.blockID);
+				else
+					world.setBlock(x, y, z, Block.mushroomBrown.blockID);
+			}
+		}
+
+		for (int i = 40; i < 80; i++) {
+			world.markBlockForUpdate(x, i, z);
+			causeAdjacentUpdates(world, x, i, z);
+		}
 	}
 }
