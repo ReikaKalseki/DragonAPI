@@ -10,7 +10,6 @@
 package Reika.DragonAPI.Base;
 
 import Reika.DragonAPI.Auxiliary.APIRegistry;
-import Reika.DragonAPI.Exception.ModHandlerException;
 
 /** Reflection tools to read other mods. */
 public abstract class ModHandlerBase {
@@ -20,7 +19,7 @@ public abstract class ModHandlerBase {
 	public abstract APIRegistry getMod();
 
 	protected void noMod() {
-		throw new ModHandlerException(this.getMod());
+		//throw new ModHandlerException(this.getMod());
 	}
 
 	public boolean hasMod() {

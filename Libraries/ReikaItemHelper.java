@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
@@ -231,5 +232,17 @@ public final class ReikaItemHelper extends DragonAPICore {
 					while (true);
 				}
 		}
+	}
+
+	public static int getWorldBlockIDFromItem(ItemStack is) {
+		if (!(is.getItem() instanceof ItemBlock))
+			return 0;
+		return is.itemID;
+	}
+
+	public static int getWorldBlockMetaFromItem(ItemStack is) {
+		if (!(is.getItem() instanceof ItemBlock))
+			return 0;
+		return is.getItemDamage();
 	}
 }

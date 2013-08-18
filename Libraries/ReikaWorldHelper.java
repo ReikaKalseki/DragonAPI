@@ -139,7 +139,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return y;
 	}
 
-	/** Finds the top edge of the top water block in the column. Args: World, this.x,y,z */
+	/** Finds the top edge of the top water block in the column. Args: World, this.x,y,z.
+	 * DO NOT CALL if there is no water there, as there is a possibility of infinite loop. */
 	public static double findWaterSurface(World world, double x, double y, double z) { //Returns double y-coord of top surface of top block
 
 		int xp = (int)x;
@@ -154,7 +155,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			if (waterup && waterdown) //Both blocks are water -> below surface
 				y++;
 			if (waterup && !waterdown) //Upper only is water -> should never happen
-				return 255;		//Return top of chunk and exit function
+				return y+3;		//Return and exit function
 			if (!waterup && waterdown) // Water lower only
 				;						// the case we want
 			if (!waterup && !waterdown) //Neither water -> above surface

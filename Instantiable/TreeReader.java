@@ -63,6 +63,11 @@ public class TreeReader extends BlockArray {
 			Thread.dumpStack();
 			return;
 		}
+		if (wood == ModWoodList.DARKWOOD) {
+			ReikaJavaLibrary.pConsole("Use darkwood handler!");
+			Thread.dumpStack();
+			return;
+		}
 		if (wood == null) {
 			throw new MisuseException("You must set the mod tree type!");
 		}
@@ -72,6 +77,9 @@ public class TreeReader extends BlockArray {
 		int meta = world.getBlockMetadata(x, y, z);
 		ModWoodList get = ModWoodList.getModWood(id, meta);
 		ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
+
+		//ReikaJavaLibrary.pConsole("GET: "+get+"   WOOD: "+wood+"    LEAF: "+leaf);
+
 		if (get != wood && leaf != wood)
 			return;
 
@@ -165,12 +173,58 @@ public class TreeReader extends BlockArray {
 
 	/** For Natura's massive redwood trees. Warning: may lag-spike! */
 	public void addSequoia(World world, int x, int y, int z, boolean debug) {
+		this.setModTree(ModWoodList.SEQUOIA);
+		int r = 24;
+		int minx = x-r;
+		int maxx = x+r;
+		int minz = z-r;
+		int maxz = z+r;
 
+		int yr = 16;
+
+		for (int j = y; j <= y+yr; j++) {
+			for (int i = minx; i <= maxx; i++) {
+				for (int k = minz; k <= maxz; k++) {
+					int id = world.getBlockId(i, j, k);
+					int meta = world.getBlockMetadata(i, j, k);
+					ModWoodList get = ModWoodList.getModWood(id, meta);
+					ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
+
+					if (get == ModWoodList.SEQUOIA) {
+						logCount++;
+						this.addBlockCoordinate(i, j, k);
+					}
+					else if (leaf == ModWoodList.SEQUOIA) {
+						leafCount++;
+						this.addBlockCoordinate(i, j, k);
+					}
+				}
+			}
+		}
 	}
 
 	/** For Twilight's dark forests. */
 	public void addDarkForest(World world, int x, int y, int z, int minx, int maxx, int minz, int maxz, boolean debug) {
+		this.setModTree(ModWoodList.DARKWOOD);
+		for (int j = y; j <= y+16; j++) {
+			for (int i = minx; i <= maxx; i++) {
+				for (int k = minz; k <= maxz; k++) {
+					int id = world.getBlockId(i, j, k);
+					int meta = world.getBlockMetadata(i, j, k);
+					ModWoodList get = ModWoodList.getModWood(id, meta);
+					ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
 
+					if (get == ModWoodList.DARKWOOD) {
+						logCount++;
+						this.addBlockCoordinate(i, j, k);
+					}
+					else if (leaf == ModWoodList.DARKWOOD) {
+						leafCount++;
+						this.addBlockCoordinate(i, j, k);
+					}
+				}
+			}
+		}
 	}
 
 	public void addGenerousTree(World world, int x, int y, int z, int dw) {
@@ -280,6 +334,8 @@ public class TreeReader extends BlockArray {
 	}
 
 	public boolean isValidTree() {
+		if (wood == ModWoodList.SEQUOIA)
+			return true;
 		return this.getNumberLeaves() >= ReikaTreeHelper.TREE_MIN_LEAF && this.getNumberLogs() >= ReikaTreeHelper.TREE_MIN_LOG;
 	}
 

@@ -25,10 +25,10 @@ public enum ModWoodList { //look through treecapitator config?
 
 	CANOPY(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", new int[]{1,13}, 1, 1, Block.class),
 	DARKWOOD(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "hedge", "sapling", new int[]{3,15}, 1, 3, Block.class),
-	MANGROVE(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", 2, Block.class),
+	MANGROVE(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", new int[]{2,14}, new int[]{2,10}, 2, Block.class),
 	TWILIGHTOAK(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", new int[]{0,12}, 0, 0, Block.class),
-	GREATWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLog", "blockCustomPlant", new int[]{0,4,8}, new int[]{0,8}, 0, Block.class),
-	SILVERWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLog", "blockCustomPlant", new int[]{1,5,9}, new int[]{1,9}, 1, Block.class),
+	GREATWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{0,4,8}, new int[]{0,8}, 0, Block.class),
+	SILVERWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{1,5,9}, new int[]{1,9}, 1, Block.class),
 	EUCALYPTUS(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", "floraSapling", 0, new int[]{1,9}, 1, Block.class),
 	SEQUOIA(APIRegistry.NATURA, "mods.natura.common.NContent", "redwood", "floraLeaves", "floraSapling", new int[]{0,1,2}, new int[]{0,8}, 0, Block.class),
 	SAKURA(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeavesNoColor", "floraSapling", new int[]{1,5,9}, new int[]{0,8}, 3, Block.class),

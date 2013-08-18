@@ -16,6 +16,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 
@@ -391,7 +393,11 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	 * Also performs sanity checks. Args: Inventory, Slot */
 	public static void decrStack(int slot, ItemStack[] inv) {
 		if (slot >= inv.length) {
-			ReikaChatHelper.write("Tried to Access Slot "+slot+", which is larger than the inventory.");
+			ReikaChatHelper.write("Tried to access Slot "+slot+", which is larger than the inventory.");
+			return;
+		}
+		if (inv[slot] == null) {
+			ReikaChatHelper.write("Tried to access Slot "+slot+", which is empty.");
 			return;
 		}
 		if (inv[slot].stackSize > 1)
@@ -759,8 +765,28 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 	}
 
+	/** Add multiple items to an inventory. Args: IInventory, Items. Returns the ones that could not be added. */
+	public static List<ItemStack> addMultipleItems(IInventory ii, List<ItemStack> items) {
+		List<ItemStack> extra = new ArrayList<ItemStack>();
+		for (int i = 0; i < items.size(); i++) {
+			if (!addToIInv(items.get(i), ii))
+				extra.add(items.get(i));
+		}
+		return extra;
+	}
 
-	public static void addMultipleItems(ItemStack[] inv, List<ItemStack> items) {
-
+	public static ItemStack getNextBlockInInventory(ItemStack[] inv, boolean decr) {
+		for (int i = 0; i < inv.length; i++) {
+			ItemStack is = inv[i];
+			if (is != null) {
+				Item item = is.getItem();
+				if (item instanceof ItemBlock) {
+					if (decr)
+						decrStack(i, inv);
+					return inv[i];
+				}
+			}
+		}
+		return null;
 	}
 }

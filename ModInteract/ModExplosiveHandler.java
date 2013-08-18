@@ -41,10 +41,14 @@ public class ModExplosiveHandler {
 	}
 
 	private boolean isIC2Explosive(Entity e) {
+		if (ic2 == null)
+			return false;
 		return ic2.isAssignableFrom(e.getClass());
 	}
 
 	private boolean isExPlusExplosive(Entity e) {
+		if (exp_plus == null)
+			return false;
 		return exp_plus.isAssignableFrom(e.getClass());
 	}
 
