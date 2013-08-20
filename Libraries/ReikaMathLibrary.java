@@ -215,11 +215,13 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	/** Returns true with a percentage probability. Args: chance (out of 1 or a %) */
 	public static boolean doWithChance(double num) {
 		if (num > 1)
-			num /= 100;
-		double chance = ((100*num)-1)*100;
-		if (rand.nextInt(101) < chance)
+			num /= 100D;
+		if (num >= 1)
 			return true;
-		return false;
+		if (num <= 0)
+			return false;
+
+		return rand.nextDouble() < num;
 	}
 
 	/** Returns a multiplier (<1) based on how close the value is to the peak value of a

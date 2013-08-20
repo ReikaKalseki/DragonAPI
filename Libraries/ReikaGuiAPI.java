@@ -429,12 +429,12 @@ public final class ReikaGuiAPI extends GuiScreen {
 		//GL11.glDisable(GL11.GL_LIGHTING);
 		RenderHelper.enableGUIStandardItemLighting();
 		//GL11.glPushMatrix();
-		//GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		//GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		short short1 = 240;
 		short short2 = 240;
 		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
-		//GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		renderer.renderItemAndEffectIntoGUI(font, mc.renderEngine, is, x, y);
 		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, null);
@@ -442,7 +442,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		//renderer.zLevel = 0.0F;
 		//GL11.glPopMatrix();
 
-		RenderHelper.disableStandardItemLighting();
+		//RenderHelper.disableStandardItemLighting();
 		RenderHelper.enableGUIStandardItemLighting();
 		GL11.glColor4d(1, 1, 1, 1);
 	}

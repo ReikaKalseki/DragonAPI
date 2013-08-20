@@ -31,7 +31,8 @@ public enum APIRegistry {
 	BXL("Biomes XL"),
 	MINEFACTORY("MineFactoryReloaded"),
 	DARTCRAFT("DartCraft"),
-	TINKERER("TConstruct");
+	TINKERER("TConstruct"),
+	THERMAL("ThermalExpansion");
 
 	private boolean condition;
 	private boolean preset = false;
