@@ -32,7 +32,8 @@ public enum APIRegistry {
 	MINEFACTORY("MineFactoryReloaded"),
 	DARTCRAFT("DartCraft"),
 	TINKERER("TConstruct"),
-	THERMAL("ThermalExpansion");
+	THERMAL("ThermalExpansion"),
+	MEKANISM("Mekanism");
 
 	private boolean condition;
 	private boolean preset = false;
