@@ -789,4 +789,24 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 		return null;
 	}
+
+	public static boolean isEmpty(IInventory ii) {
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			ItemStack is = ii.getStackInSlot(i);
+			if (is != null)
+				return false;
+		}
+		return true;
+	}
+
+	public static boolean isFull(IInventory ii) {
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			ItemStack is = ii.getStackInSlot(i);
+			if (is == null)
+				return false;
+			if (is.stackSize < is.getMaxStackSize())
+				return false;
+		}
+		return true;
+	}
 }

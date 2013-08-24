@@ -39,6 +39,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		Block b = Block.blocksList[id];
 		if (b.isBlockReplaceable(world, x, y, z))
 			return true;
+		if (b.isAirBlock(world, x, y, z))
+			return true;
 		return (BlockProperties.softBlocksArray[id]);
 	}
 

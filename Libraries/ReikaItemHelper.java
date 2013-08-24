@@ -235,12 +235,16 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static int getWorldBlockIDFromItem(ItemStack is) {
+		if (is == null)
+			return 0;
 		if (!(is.getItem() instanceof ItemBlock))
 			return 0;
 		return is.itemID;
 	}
 
 	public static int getWorldBlockMetaFromItem(ItemStack is) {
+		if (is == null)
+			return 0;
 		if (!(is.getItem() instanceof ItemBlock))
 			return 0;
 		return is.getItemDamage();
