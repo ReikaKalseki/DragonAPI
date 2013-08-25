@@ -53,4 +53,8 @@ public class StepTimer {
 		return value;
 	}
 
+	public int getCap() {
+		return cap;
+	}
+
 }

@@ -9,7 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import net.minecraft.block.Block;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaRedstoneHelper extends DragonAPICore {
@@ -21,6 +23,17 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 		if (!world.isBlockIndirectlyGettingPowered(x, y, z))
 			return false;
 		return true;
+	}
+
+	public static boolean isPositiveEdgeOnSide(World world, int x, int y, int z, boolean lastPower, ForgeDirection side) {
+		boolean edge = isPositiveEdge(world, x+side.offsetX, y+side.offsetY, z+side.offsetZ, lastPower);
+		if (!edge)
+			return false;
+		int id = world.getBlockId(x+side.offsetX, y+side.offsetY, z+side.offsetZ);
+		if (id == 0)
+			return false;
+		Block b = Block.blocksList[id];
+		return b.isOpaqueCube() || id == Block.redstoneWire.blockID || id == Block.redstoneRepeaterActive.blockID;
 	}
 
 	/** Returns true on the negative redstone edge. Args: World, x, y, z, last power state*/

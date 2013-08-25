@@ -44,6 +44,11 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			pConsole(obj);
 	}
 
+	public static void pConsoleIf(Object obj, boolean con) {
+		if (con)
+			pConsole(obj);
+	}
+
 	/** A complement to Java's built-in List-to-Array. Args: Array of any object (ints, strings, etc). */
 	public static List makeListFromArray(Object[] obj) {
 		List li = new ArrayList();
