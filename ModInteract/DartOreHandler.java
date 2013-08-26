@@ -12,13 +12,13 @@ package Reika.DragonAPI.ModInteract;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import Reika.DragonAPI.ModRegistry.ModOreList;
+import bluedart.item.DartItem;
 
 public final class DartOreHandler extends ModHandlerBase {
 
@@ -35,16 +35,16 @@ public final class DartOreHandler extends ModHandlerBase {
 	private DartOreHandler() {
 		int idgem = -1;
 		int idore = -1;
-
 		if (this.hasMod()) {
 			try {
 				Class block = Class.forName("bluedart.block.DartBlock");
 				Class item = Class.forName("bluedart.item.DartItem");
 				Field ore = block.getField("powerOre");
-				Field force = item.getField("gemForce");
+				//Field force = item.getField("gemForce");
 				Block powerOre = (Block)ore.get(null);
-				idgem = ((Item)force.get(null)).itemID;
+				//idgem = ((Item)force.get(null)).itemID;
 				idore = powerOre.blockID;
+				idgem = DartItem.gemForce.itemID;
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");

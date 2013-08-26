@@ -33,4 +33,32 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		}
 		return li;
 	}
+
+	public static List<BiomeGenBase> getAllAssociatedBiomes(BiomeGenBase biome) {
+		List<BiomeGenBase> li = new ArrayList<BiomeGenBase>();
+		li.add(biome);
+
+		if (biome == BiomeGenBase.desert)
+			li.add(BiomeGenBase.desertHills);
+
+		if (biome == BiomeGenBase.extremeHills)
+			li.add(BiomeGenBase.extremeHillsEdge);
+
+		if (biome == BiomeGenBase.forest)
+			li.add(BiomeGenBase.forestHills);
+
+		if (biome == BiomeGenBase.taiga)
+			li.add(BiomeGenBase.taigaHills);
+
+		if (biome == BiomeGenBase.icePlains)
+			li.add(BiomeGenBase.iceMountains);
+
+		if (biome == BiomeGenBase.mushroomIsland)
+			li.add(BiomeGenBase.mushroomIslandShore);
+
+		if (biome == BiomeGenBase.jungle)
+			li.add(BiomeGenBase.jungleHills);
+
+		return li;
+	}
 }

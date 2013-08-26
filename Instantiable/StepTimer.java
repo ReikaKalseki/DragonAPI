@@ -57,4 +57,8 @@ public class StepTimer {
 		return cap;
 	}
 
+	public float getFraction() {
+		return (float)value/(float)cap;
+	}
+
 }

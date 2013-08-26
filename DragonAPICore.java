@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -106,5 +107,16 @@ public class DragonAPICore {
 		if (APIRegistry.TWILIGHT.conditionsMet()) {
 			ReikaJavaLibrary.initClass(TwilightBlockHandler.class);
 		}
+	}
+
+	public static boolean isReikasComputer() {
+		File user = new File("C:/Users/Reika");
+		File mcp = new File("C:/Users/Reika/Downloads/mcp");
+		return user.exists() && user.isDirectory() && mcp.exists() && mcp.isDirectory();
+	}
+
+	static {
+		if (isReikasComputer())
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading on Reika's computer; Dev features enabled.");
 	}
 }

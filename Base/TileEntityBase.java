@@ -20,6 +20,7 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.Libraries.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.ReikaMathLibrary;
@@ -30,6 +31,8 @@ public abstract class TileEntityBase extends TileEntity {
 	private int pseudometa;
 	public boolean shutDown;
 	public String placer;
+
+	protected static final ForgeDirection[] dirs = ForgeDirection.values();
 
 	public abstract int getTileEntityBlockID();
 

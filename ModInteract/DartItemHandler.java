@@ -9,13 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import bluedart.item.DartItem;
 
 public final class DartItemHandler extends ModHandlerBase {
 
@@ -29,17 +27,18 @@ public final class DartItemHandler extends ModHandlerBase {
 		if (this.hasMod()) {
 			try {
 				Class item = Class.forName("bluedart.item.DartItem");
-				Field wrench = item.getField("forceWrench");
-				idwrench = ((Item)wrench.get(null)).itemID;
+				//Field wrench = item.getField("forceWrench");
+				//idwrench = ((Item)wrench.get(null)).itemID;
+				idwrench = DartItem.forceWrench.itemID;
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
 				e.printStackTrace();
-			}
+			}/*
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft item field not found! "+e.getMessage());
 				e.printStackTrace();
-			}
+			}*/
 			catch (SecurityException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read DartCraft items (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
@@ -47,11 +46,11 @@ public final class DartItemHandler extends ModHandlerBase {
 			catch (IllegalArgumentException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading DartCraft items!");
 				e.printStackTrace();
-			}
+			}/*
 			catch (IllegalAccessException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading DartCraft items!");
 				e.printStackTrace();
-			}
+			}*/
 		}
 		else {
 			this.noMod();

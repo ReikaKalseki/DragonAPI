@@ -21,6 +21,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -85,6 +86,12 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Converts the given coordinates to an RGB representation of those coordinates' biome's color, for the given material type.
 	 * Args: World, x, z, material (String) */
 	public static int[] biomeToRGB(World world, int x, int z, String material) {
+		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
+		int color = ReikaWorldHelper.biomeToHex(biome, material);
+		return ReikaColorAPI.HexToRGB(color);
+	}
+
+	public static int[] biomeToRGB(IBlockAccess world, int x, int z, String material) {
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 		int color = ReikaWorldHelper.biomeToHex(biome, material);
 		return ReikaColorAPI.HexToRGB(color);
