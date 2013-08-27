@@ -80,6 +80,10 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return s.replaceAll("\\s","");
 	}
 
+	public static String capFirstChar(String s) {
+		return s.substring(0, 1)+s.toLowerCase().substring(1);
+	}
+
 	public static String subtractFrom(String src, String p) {
 		int len = p.length();
 		return src.substring(len);

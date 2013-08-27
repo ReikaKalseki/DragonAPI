@@ -96,5 +96,4 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		return false;
 	}
-
 }
