@@ -11,10 +11,17 @@ package Reika.DragonAPI.Libraries;
 
 import org.lwjgl.input.Keyboard;
 
+//We are assuming default bindings for now
 public class ReikaKeyHelper {
 
 	public static int getForwardKey() {
-		return 0;
+		//return Minecraft.getMinecraft().gameSettings.keyBindForward.keyCode;
+		return Keyboard.KEY_W;
+	}
+
+	public static int getJumpKey() {
+		//return Minecraft.getMinecraft().gameSettings.keyBindJump.keyCode;
+		return Keyboard.KEY_SPACE;
 	}
 
 	public static boolean isKeyPressed(int key) {
