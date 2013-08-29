@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneLogic;
+import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
@@ -26,20 +27,32 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 		return true;
 	}
 
-	public static boolean isPositiveEdgeOnSide(World world, int x, int y, int z, boolean lastPower, ForgeDirection side) {
+	public static boolean isPositiveEdgeOnSide(World world, int x, int y, int z, boolean lastPower, boolean lastRepeat, ForgeDirection side) {
 		boolean sided = world.getIndirectPowerOutput(x+side.offsetX, y+side.offsetY, z+side.offsetZ, side.getOpposite().ordinal());
 		boolean repeat = false;
+		repeat = false;
+		boolean pwr = world.isBlockIndirectlyGettingPowered(x, y, z);
+		boolean rpt = isReceivingPowerFromRepeater(world, x, y, z, side);
+		//ReikaJavaLibrary.pConsole(((sided || repeat) && pwr && !lastPower)+" for "+lastPower);
+		return ((sided && pwr) || rpt) && !lastPower && !lastRepeat;
+	}
+
+	public static boolean isReceivingPowerFromRepeater(World world, int x, int y, int z, ForgeDirection side) {
 		int id = world.getBlockId(x+side.offsetX, y+side.offsetY, z+side.offsetZ);
+		int meta = world.getBlockMetadata(x+side.offsetX, y+side.offsetY, z+side.offsetZ);
+		boolean dir = false;
 		if (id != 0) {
 			Block b = Block.blocksList[id];
 			if (b instanceof BlockRedstoneLogic) {
-				repeat = ((BlockRedstoneLogic) b).func_83011_d(world, x, y, z, side.ordinal());
+				BlockRedstoneLogic lgc = (BlockRedstoneLogic)b;
+				int direct = lgc.getDirection(meta);
+				int dx = Direction.offsetX[direct];
+				int dz = Direction.offsetZ[direct];
+				dir = (dx == side.offsetX && dz == side.offsetZ);
 			}
 		}
-		repeat = false;
-		boolean pwr = world.isBlockIndirectlyGettingPowered(x, y, z);
-		//ReikaJavaLibrary.pConsole(((sided || repeat) && pwr && !lastPower)+" for "+lastPower);
-		return (sided || repeat) && pwr && !lastPower;
+		boolean power = (id == Block.redstoneComparatorActive.blockID || id == Block.redstoneRepeaterActive.blockID);
+		return power && dir;
 	}
 
 	/** Returns true on the negative redstone edge. Args: World, x, y, z, last power state*/
