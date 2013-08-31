@@ -41,7 +41,8 @@ public final class ReikaPNGLoader {
 			ReikaJavaLibrary.pConsole("Default image filepath at "+name+" does not exist. Switching to backup at "+back+".");
 			try {
 				return ImageIO.read(inputback);
-			} catch (IOException e1) {
+			}
+			catch (IOException e1) {
 				ReikaJavaLibrary.pConsole("Backup image filepath at "+back+" not found. Loading \"MissingTexture\".");
 				//e1.printStackTrace();
 			}
@@ -59,7 +60,8 @@ public final class ReikaPNGLoader {
 			ReikaJavaLibrary.pConsole("Default image filepath at "+name+" not found. Switching to backup at "+back+".");
 			try {
 				return ImageIO.read(inputback);
-			} catch (IOException e1) {
+			}
+			catch (IOException e1) {
 				ReikaJavaLibrary.pConsole("Backup image filepath at "+back+" not found. Loading \"MissingTexture\".");
 				//e1.printStackTrace();
 				return missingtex;

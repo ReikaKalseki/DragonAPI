@@ -265,4 +265,23 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static boolean isValueInsideBoundsIncl(double low, double hi, double val) {
 		return (val <= hi && val >= low);
 	}
+
+	/** Returns a double expressed in scientific notation (ret[0] x 10^ret[1]). Args: Value */
+	public static double[] getScientificNotation(double val) {
+		int pow = 0;
+		while (val >= 1000) {
+			pow += 3;
+			val/= 1000D;
+		}
+		return new double[]{val, pow};
+	}
+
+	/** Returns a double's value when reduced until it is less than a thousand.
+	 * Equivalent to getScientificNotation[0]. Args: Value */
+	public static double getThousandBase(double val) {
+		while (val >= 1000) {
+			val/= 1000D;
+		}
+		return val;
+	}
 }

@@ -61,8 +61,8 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double Trubber = 5*1000000;
 	public static final double Twood = 20*1000000;
 	public static final double Tconcrete = 3*1000000;
-	public static final double Tstone = 100*10000000; //varies widely
-	public static final double Tgold = 108*10000000;
+	public static final double Tstone = 100*1000000; //varies widely
+	public static final double Tgold = 108*1000000;
 
 	/** Ultimate Shear Strengths */
 	public static final double Ssteel = 232*1000000;
@@ -73,8 +73,8 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double Srubber = 2.9*1000000;
 	public static final double Swood = 11.6*1000000;
 	public static final double Sconcrete = 1.74*1000000; //tensile; 30x stronger for compression
-	public static final double Sstone = 40*10000000; //varies widely
-	public static final double Sgold = 62.6*10000000;
+	public static final double Sstone = 40*1000000; //varies widely
+	public static final double Sgold = 62.6*1000000;
 
 	/** Calculates an exponential decay. Args: Rate, initial value, time */
 	public static double decay(double rate, double ivp, double time) {
@@ -125,5 +125,39 @@ public final class ReikaEngLibrary extends DragonAPICore {
 
 	public static double getHeatFromFriction(double Fnormal, double mu, double vSlip, double eta) {
 		return Fnormal*mu*vSlip*eta;
+	}
+
+	public static String getSIPrefix(double val) {
+		if (val < 10 && val >= 1)
+			return "";
+		int log = (int)ReikaMathLibrary.logbase(val, 1000);
+		switch(log) {
+		case 1:
+			return "k";
+		case 2:
+			return "M";
+		case 3:
+			return "G";
+		case 4:
+			return "T";
+		case 5:
+			return "P";
+		case 6:
+			return "E";
+
+		case -1:
+			return "m";
+		case -2:
+			return "micro";
+		case -3:
+			return "n";
+		case -4:
+			return "p";
+		case -5:
+			return "f";
+
+		default:
+			return "";
+		}
 	}
 }

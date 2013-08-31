@@ -9,41 +9,85 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import java.io.File;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.HashMap;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import Reika.DragonAPI.IO.ReikaXMLBase;
 
 public class XMLInterface {
 
 	private Document doc;
 
+	private final Class rootClass;
+	private final String filepath;
+
+	private final HashMap<String, String> data = new HashMap<String, String>();
+
 	public XMLInterface(Class root, String path) {
-		String filepath = root.getResource(path).getPath();
-		File xml = new File(filepath);
-		if (!xml.exists()) {
-			throw new RuntimeException("XML file does not exist at "+filepath+"!");
-		}
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-	        DocumentBuilder builder = factory.newDocumentBuilder();
-	        doc = builder.parse(xml);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("XML file failed to load!");
+		rootClass = root;
+		filepath = path;
+		doc = ReikaXMLBase.getXMLDocument(root, path);
+		this.readFileToMap();
+	}
+
+	public void reread() {
+		doc = ReikaXMLBase.getXMLDocument(rootClass, filepath);
+		this.readFileToMap();
+	}
+
+	private void readFileToMap() {
+		this.recursiveRead(doc);
+	}
+
+	private void recursiveRead(Node n) {
+		NodeList li = n.getChildNodes();
+		int len = li.getLength();
+		for (int i = 0; i < len; i++) {
+			Node ch = li.item(i);
+			if (ch.getNodeType() == Node.ELEMENT_NODE) {
+				//ReikaJavaLibrary.pConsole(ch.getNodeName());
+				this.recursiveRead(ch);
+			}
+			else if (ch.getNodeType() == Node.TEXT_NODE) {
+				String val = ch.getNodeValue();
+				if (val != null) {
+					if (val.equals("\n"))
+						val = null;
+					else {
+						if (val.startsWith("\n"))
+							val = val.substring(1);
+						if (val.endsWith("\n"))
+							val = val.substring(0, val.length()-1);
+					}
+					if (val != null && val.equals("\n"))
+						val = null;
+				}
+				if (val != null) {
+					val = val.replace("\t", "");
+					//ReikaJavaLibrary.pConsole("TREE: "+ReikaXMLBase.getNodeNameTree(ch));
+					String key = ReikaXMLBase.getNodeNameTree(ch);
+					if (data.containsKey(key))
+						;//throw new RuntimeException("Your input XML has multiple node trees with the EXACT same names! Resolve this!");
+					data.put(key, val);
+				}
+			}
 		}
 	}
 
-	public Object getValueAtNode() {
-		return null;
+	public String getValueAtNode(String name) {
+		String dat = data.get(name);
+		if (dat == null)
+			dat = "#NULL!";
+		return dat;
 	}
 
-	public NodeList getElementsByName(String name) {
-		return doc.getElementsByTagName(name);
+	@Override
+	public String toString() {
+		return data.toString();
 	}
+
 
 }
