@@ -94,6 +94,8 @@ public enum ModOreList {
 	private int dropCount;
 	private String product;
 
+	//private static final ArrayList<ItemStack> blocks = new ArrayList<ItemStack>();
+
 	public static final ModOreList[] oreList = ModOreList.values();
 
 	private ModOreList(String n, String prod, int count, String... ore) {
@@ -208,5 +210,13 @@ public enum ModOreList {
 		if (this.isGemType())
 			return "Gem";
 		return "Item";
+	}
+
+	public static ArrayList<ItemStack> getAllRegisteredOreBlocks() {
+		ArrayList<ItemStack> li = new ArrayList<ItemStack>();
+		for (int i = 0; i < oreList.length; i++) {
+			li.addAll(oreList[i].ores);
+		}
+		return li;
 	}
 }

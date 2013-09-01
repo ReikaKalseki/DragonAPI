@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.IO;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,15 +32,11 @@ public class ReikaXMLBase {
 	}
 
 	public static Document getXMLDocument(Class root, String path) {
-		String filepath = root.getResource(path).getPath();
-		File xml = new File(filepath);
-		if (!xml.exists()) {
-			throw new RuntimeException("XML file does not exist at "+filepath+"!");
-		}
+		InputStream in = root.getResourceAsStream(path);
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			return builder.parse(xml);
+			return builder.parse(in);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

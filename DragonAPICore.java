@@ -10,11 +10,16 @@
 package Reika.DragonAPI;
 
 import java.io.File;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemHoe;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
@@ -118,5 +123,15 @@ public class DragonAPICore {
 	static {
 		if (isReikasComputer())
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading on Reika's computer; Dev features enabled.");
+	}
+
+	public static boolean isDeObfEnvironment() {
+		try {
+			Method m = ItemHoe.class.getMethod("onItemUse", ItemStack.class, EntityPlayer.class, World.class, int.class, int.class, int.class, int.class, float.class, float.class, float.class);
+			return true;
+		}
+		catch (NoSuchMethodException e) {
+			return false;
+		}
 	}
 }
