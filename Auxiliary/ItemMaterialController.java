@@ -113,6 +113,8 @@ public class ItemMaterialController {
 		addVanillaItem(Block.blockGold, ItemMaterial.GOLD);
 		addVanillaItem(Block.stone, ItemMaterial.STONE);
 		addVanillaItem(Block.cobblestone, ItemMaterial.STONE);
+		addVanillaItem(Block.stoneBrick, ItemMaterial.STONE);
+		addVanillaItem(Block.brick, ItemMaterial.STONE);
 		addVanillaItem(Block.planks, ItemMaterial.WOOD);
 
 		addVanillaItem(Item.diamond, ItemMaterial.DIAMOND);

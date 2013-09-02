@@ -30,13 +30,14 @@ public class MultiBlockBlueprint {
 		metas = new int[x][y][z];
 	}
 
-	public void addBlockAt(int id, int meta, int x, int y, int z) {
+	public MultiBlockBlueprint addBlockAt(int id, int meta, int x, int y, int z) {
 		IDs[x][y][z] = id;
 		metas[x][y][z] = meta;
+		return this;
 	}
 
-	public void addBlockAt(int id, int x, int y, int z) {
-		this.addBlockAt(id, OreDictionary.WILDCARD_VALUE, x, y, z);
+	public MultiBlockBlueprint addBlockAt(int id, int x, int y, int z) {
+		return this.addBlockAt(id, OreDictionary.WILDCARD_VALUE, x, y, z);
 	}
 
 	public boolean isMatch(World world, int x0, int y0, int z0) {
@@ -59,7 +60,10 @@ public class MultiBlockBlueprint {
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
 				for (int k = 0; k < zSize; k++) {
-					world.setBlock(x0+i, y0+j, z0+k, IDs[i][j][k], metas[i][j][k], 3);
+					int meta = metas[i][j][k];
+					if (meta == OreDictionary.WILDCARD_VALUE)
+						meta = 0;
+					world.setBlock(x0+i, y0+j, z0+k, IDs[i][j][k], meta, 3);
 				}
 			}
 		}

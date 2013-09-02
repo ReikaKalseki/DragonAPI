@@ -329,27 +329,15 @@ public final class ReikaGuiAPI extends GuiScreen {
 			throw new MisuseException("DrawRecipe() requires 9 input items!");
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2 - 8;
-		//ModLoader.getMinecraftInstance().ingameGUI.addChatMessage("DFD324");
-
 		for (int ii = 0; ii < 3; ii++) {
 			for (int jj = 0; jj < 3; jj++) {
-				//ModLoader.getMinecraftInstance().ingameGUI.addChatMessage("34342");
 				if (in[ii*3+jj] != null) {
 					this.drawItemStack(render, f, in[ii*3+jj], x+j+18*jj, y+k+18*ii);
-					//ModLoader.getMinecraftInstance().ingameGUI.addChatMessage("DFD");
 				}
 			}
 		}
 		if (out != null)
-			this.drawItemStack(render, f, out, x2+4+j, y2+4+k); /*
-		if (out != null && out.getItemDamage() > 0) {
-			int dx = 0;
-			if (out.getItemDamage() < 10)
-				dx = 6;
-			if (out.getItemDamage() >= 100)
-				dx = -6;
-			f.drawStringWithShadow(String.format("%d", out.getItemDamage()), x2+12+j+dx, y2+2+k, 0xffffff);
-		}*/
+			this.drawItemStack(render, f, out, x2+4+j, y2+4+k);
 		if (shapeless)
 			f.drawString("Shapeless", x2+j-35, y2+k+27, 0x000000);
 	}

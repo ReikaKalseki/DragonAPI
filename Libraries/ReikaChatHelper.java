@@ -14,6 +14,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
@@ -57,11 +58,11 @@ public final class ReikaChatHelper extends DragonAPICore {
 	/** Writes a block ID:metadata and coordinates to the chat.
 	 * Args: World, x, y, z */
 	public static void writeBlockAtCoords(World world, int x, int y, int z) {
+		StringBuilder sb = new StringBuilder();
 		if (FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT)
 			return;
 		if (Minecraft.getMinecraft().thePlayer == null || world == null)
 			return;
-		String msg;
 		String name;
 		int id = world.getBlockId(x, y, z);
 		if (id != 0)
@@ -69,8 +70,16 @@ public final class ReikaChatHelper extends DragonAPICore {
 		else
 			name = "Air";
 		int meta = world.getBlockMetadata(x, y, z);
-		msg = String.format("Block "+name+" (ID %d Metadata %d) @ x=%d, y=%d, z=%d", id, meta, x, y, z);
-		Minecraft.getMinecraft().thePlayer.addChatMessage(msg);
+		sb.append(String.format("Block "+name+" (ID %d Metadata %d) @ x=%d, y=%d, z=%d", id, meta, x, y, z)+"\n");
+		TileEntity te = world.getBlockTileEntity(x, y, z);
+		if (te == null) {
+			sb.append("No Tile Entity at this location.");
+		}
+		else {
+			sb.append("Tile Entity at this location:\n");
+			sb.append(te.toString());
+		}
+		Minecraft.getMinecraft().thePlayer.addChatMessage(sb.toString());
 	}
 
 	/** Writes an integer to the chat. Args: Integer */

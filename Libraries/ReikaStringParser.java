@@ -51,7 +51,7 @@ public class ReikaStringParser extends DragonAPICore {
 		String[] parts = sg.split("\\$");
 		if (parts.length != 3)
 			throw new RuntimeException("This method does not support multi-layer class calls! "+sg);
-		String enumClassName = ReikaJavaLibrary.subtractFrom(parts[0], ENUM_FUNCTION_CODE+"(");
+		String enumClassName = subtractFrom(parts[0], ENUM_FUNCTION_CODE+"(");
 		parts[2] = parts[2].substring(0, parts[2].length()-1);
 		Class enumClass;
 		try {
@@ -104,7 +104,7 @@ public class ReikaStringParser extends DragonAPICore {
 		if (parts.length > 2)
 			throw new RuntimeException("This method does not support multi-layer class calls! "+sg);
 		parts[1] = parts[1].substring(0, parts[1].length()-1);
-		String cl = ReikaJavaLibrary.subtractFrom(parts[0], NUMBER_METHOD_CODE+"(");
+		String cl = subtractFrom(parts[0], NUMBER_METHOD_CODE+"(");
 		String obj;
 		try {
 			Class c = Class.forName(cl);
@@ -145,7 +145,7 @@ public class ReikaStringParser extends DragonAPICore {
 		if (parts.length > 2)
 			throw new RuntimeException("This method does not support multi-layer class calls! "+sg);
 		parts[1] = parts[1].substring(0, parts[1].length()-1);
-		String cl = ReikaJavaLibrary.subtractFrom(parts[0], NUMBER_VARIABLE_CODE+"(");
+		String cl = subtractFrom(parts[0], NUMBER_VARIABLE_CODE+"(");
 		String obj = "NOT FOUND";
 		try {
 			Class c = Class.forName(cl);
@@ -201,5 +201,25 @@ public class ReikaStringParser extends DragonAPICore {
 		if (sg.startsWith(ENUM_FUNCTION_CODE))
 			return true;
 		return false;
+	}
+
+	public static String splitCamelCase(String s) {
+		s = s.replaceAll(" ", "");
+		String cap = String.format("%s|%s|%s","(?<=[A-Z])(?=[A-Z][a-z])","(?<=[^A-Z])(?=[A-Z])","(?<=[A-Za-z])(?=[^A-Za-z])"	);
+		String spl = s.replaceAll(cap, " ");
+		return spl;
+	}
+
+	public static String stripSpaces(String s) {
+		return s.replaceAll("\\s","");
+	}
+
+	public static String capFirstChar(String s) {
+		return s.substring(0, 1)+s.toLowerCase().substring(1);
+	}
+
+	public static String subtractFrom(String src, String p) {
+		int len = p.length();
+		return src.substring(len);
 	}
 }

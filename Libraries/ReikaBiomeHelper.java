@@ -61,4 +61,46 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 		return li;
 	}
+
+	public static BiomeGenBase getParentBiomeType(BiomeGenBase biome) {
+		if (biome == BiomeGenBase.desertHills)
+			return (BiomeGenBase.desert);
+
+		if (biome == BiomeGenBase.extremeHillsEdge)
+			return (BiomeGenBase.extremeHills);
+
+		if (biome == BiomeGenBase.forestHills)
+			return (BiomeGenBase.forest);
+
+		if (biome == BiomeGenBase.taigaHills)
+			return (BiomeGenBase.taiga);
+
+		if (biome == BiomeGenBase.iceMountains)
+			return (BiomeGenBase.icePlains);
+
+		if (biome == BiomeGenBase.mushroomIslandShore)
+			return (BiomeGenBase.mushroomIsland);
+
+		if (biome == BiomeGenBase.jungleHills)
+			return (BiomeGenBase.jungle);
+		return biome;
+	}
+
+	public static boolean isChildBiome(BiomeGenBase biome) {
+		if (biome == BiomeGenBase.desertHills)
+			return true;
+		if (biome == BiomeGenBase.extremeHillsEdge)
+			return true;
+		if (biome == BiomeGenBase.forestHills)
+			return true;
+		if (biome == BiomeGenBase.taigaHills)
+			return true;
+		if (biome == BiomeGenBase.iceMountains)
+			return true;
+		if (biome == BiomeGenBase.mushroomIslandShore)
+			return true;
+		if (biome == BiomeGenBase.jungleHills)
+			return true;
+		return false;
+	}
 }

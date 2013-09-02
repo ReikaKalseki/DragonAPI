@@ -141,7 +141,8 @@ public final class ExpandedOreRecipe implements IRecipe {
 		int x = 0;
 		for (char chr : shape.toCharArray())
 		{
-			input[x++] = itemMap.get(chr);
+			input[x] = itemMap.get(chr);
+			x++;
 		}
 	}
 
@@ -184,7 +185,7 @@ public final class ExpandedOreRecipe implements IRecipe {
 
 	@Override
 	public ItemStack getRecipeOutput() {
-		return output;
+		return output.copy();
 	}
 
 	@Override
@@ -280,30 +281,55 @@ public final class ExpandedOreRecipe implements IRecipe {
 	public static final List<ItemStack> getWoodList() {
 		List<ItemStack> li = OreDictionary.getOres("plankWood");
 		li.addAll(OreDictionary.getOres("woodPlank"));
+		for (int i = 0; i < li.size(); i++) { //To cover a vanilla bug where vanilla planks are fetched as a stack of 2
+			ItemStack is = li.get(i);
+			if (is.stackSize > 1)
+				is.stackSize = 1;
+		}
 		return li;
 	}
 
 	public static final List<ItemStack> getLogList() {
 		List<ItemStack> li = OreDictionary.getOres("logWood");
 		li.addAll(OreDictionary.getOres("woodLog"));
+		for (int i = 0; i < li.size(); i++) {
+			ItemStack is = li.get(i);
+			if (is.stackSize > 1)
+				is.stackSize = 1;
+		}
 		return li;
 	}
 
 	public static final List<ItemStack> getStickList() {
 		List<ItemStack> li = OreDictionary.getOres("stickWood");
 		li.addAll(OreDictionary.getOres("woodStick"));
+		for (int i = 0; i < li.size(); i++) {
+			ItemStack is = li.get(i);
+			if (is.stackSize > 1)
+				is.stackSize = 1;
+		}
 		return li;
 	}
 
 	public static final List<ItemStack> getSlabList() {
 		List<ItemStack> li = OreDictionary.getOres("slabWood");
 		li.addAll(OreDictionary.getOres("woodSlab"));
+		for (int i = 0; i < li.size(); i++) {
+			ItemStack is = li.get(i);
+			if (is.stackSize > 1)
+				is.stackSize = 1;
+		}
 		return li;
 	}
 
 	public static final List<ItemStack> getStairList() {
 		List<ItemStack> li = OreDictionary.getOres("stairWood");
 		li.addAll(OreDictionary.getOres("woodStair"));
+		for (int i = 0; i < li.size(); i++) {
+			ItemStack is = li.get(i);
+			if (is.stackSize > 1)
+				is.stackSize = 1;
+		}
 		return li;
 	}
 

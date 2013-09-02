@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 public final class ColumnArray {
 
@@ -79,6 +80,12 @@ public final class ColumnArray {
 		int[] next = this.getNextColumn();
 		coords.remove(0);
 		return next;
+	}
+
+	public int[] getRandomColumn() {
+		Random r = new Random();
+		int s = this.getSize();
+		return this.getNthColumn(r.nextInt(s));
 	}
 
 }

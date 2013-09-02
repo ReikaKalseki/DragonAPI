@@ -249,6 +249,12 @@ public class ReikaRecipeHelper {
 			in[7] = isin[4];
 			in[8] = isin[5];
 		}
+		for (int i = 0; i < in.length; i++) {
+			if (in[i] != null) {
+				if (in[i].stackSize > 1)
+					in[1].stackSize = 1;
+			}
+		}
 	}
 
 	public static ItemStack getFurnaceInput(ItemStack out) {

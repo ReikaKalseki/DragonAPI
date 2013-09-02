@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
@@ -359,4 +360,13 @@ public class BlockArray {
 		ReikaJavaLibrary.pConsole("Stack overflow!");
 	}
 
+	public int[] getRandomBlock() {
+		Random r = new Random();
+		int s = this.getSize();
+		return this.getNthBlock(r.nextInt(s));
+	}
+
+	public void remove(int index) {
+		blocks.remove(index);
+	}
 }

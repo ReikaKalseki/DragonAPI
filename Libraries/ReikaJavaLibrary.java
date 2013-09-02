@@ -76,19 +76,6 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return true;
 	}
 
-	public static String stripSpaces(String s) {
-		return s.replaceAll("\\s","");
-	}
-
-	public static String capFirstChar(String s) {
-		return s.substring(0, 1)+s.toLowerCase().substring(1);
-	}
-
-	public static String subtractFrom(String src, String p) {
-		int len = p.length();
-		return src.substring(len);
-	}
-
 	public static void printLine(int length) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < length; i++)

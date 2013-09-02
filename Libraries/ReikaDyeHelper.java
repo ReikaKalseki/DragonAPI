@@ -41,7 +41,7 @@ public enum ReikaDyeHelper {
 
 	private ReikaDyeHelper(int c) {
 		color = c;
-		colorName = ReikaJavaLibrary.capFirstChar(this.name());
+		colorName = ReikaStringParser.capFirstChar(this.name());
 	}
 
 	private ReikaDyeHelper(int c, String n) {

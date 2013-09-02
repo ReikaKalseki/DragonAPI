@@ -41,8 +41,7 @@ public class ModLogger {
 	}
 
 	public void logError(Object o) {
-		ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": There was an error:");
-		ReikaJavaLibrary.pConsole(o);
+		ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": There was an error: "+o);
 	}
 
 	public boolean shouldLog() {
