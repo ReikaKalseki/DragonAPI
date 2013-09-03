@@ -24,6 +24,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Exception.MisuseException;
@@ -433,5 +434,13 @@ public final class ReikaGuiAPI extends GuiScreen {
 		//RenderHelper.disableStandardItemLighting();
 		RenderHelper.enableGUIStandardItemLighting();
 		GL11.glColor4d(1, 1, 1, 1);
+	}
+
+	public static int getMouseScreenY(int screen_height) {
+		return 2*screen_height-Mouse.getY();
+	}
+
+	public static int getMouseScreenX(int screen_width) {
+		return Mouse.getX();
 	}
 }

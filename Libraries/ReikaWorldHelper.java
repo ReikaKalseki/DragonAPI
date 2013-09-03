@@ -1459,4 +1459,20 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			causeAdjacentUpdates(world, x, i, z);
 		}
 	}
+
+	public static float getSunIntensity(World world) {
+		float ang = world.getCelestialAngle(0);
+		float base = 1.0F - (MathHelper.cos(ang * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
+
+		if (base < 0.0F)
+			base = 0.0F;
+
+		if (base > 1.0F)
+			base = 1.0F;
+
+		base = 1.0F - base;
+		base = (float)(base * (1.0D - world.getRainStrength(0) * 5.0F / 16.0D));
+		base = (float)(base * (1.0D - world.getWeightedThunderStrength(0) * 5.0F / 16.0D));
+		return base * 0.8F + 0.2F;
+	}
 }
