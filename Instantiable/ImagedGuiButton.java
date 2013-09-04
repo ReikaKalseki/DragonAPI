@@ -15,6 +15,8 @@ import net.minecraft.client.gui.GuiButton;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.Libraries.ReikaGuiAPI;
+
 public final class ImagedGuiButton extends GuiButton {
 
 	private int u;
@@ -140,14 +142,7 @@ public final class ImagedGuiButton extends GuiButton {
 	}
 
 	private void drawToolTip(Minecraft mc, int mx, int my) {
-		int w = mc.fontRenderer.getStringWidth(displayString);
-		int h = 8;
-		int o = 3;
-		int a = 0xcc000000;
-		this.drawRect(mx-6+o, my-12-o, mx-6-w-o, my-12+h+o, a+0x00440077);
-		o = 2;
-		this.drawRect(mx-6+o, my-12-o, mx-6-w-o, my-12+h+o, a+0x00050505);
-		this.drawString(mc.fontRenderer, displayString, mx-w-6, my-12, color);
+		ReikaGuiAPI.instance.drawTooltip(mc.fontRenderer, displayString);
 		mc.renderEngine.bindTexture("/font/glyph_AA.png");
 	}
 

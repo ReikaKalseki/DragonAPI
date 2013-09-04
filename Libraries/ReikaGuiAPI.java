@@ -336,12 +336,12 @@ public final class ReikaGuiAPI extends GuiScreen {
 		for (int ii = 0; ii < 3; ii++) {
 			for (int jj = 0; jj < 3; jj++) {
 				if (in[ii*3+jj] != null) {
-					this.drawItemStack(render, f, in[ii*3+jj], x+j+18*jj, y+k+18*ii);
+					this.drawItemStackWithTooltip(render, f, in[ii*3+jj], x+j+18*jj, y+k+18*ii);
 				}
 			}
 		}
 		if (out != null)
-			this.drawItemStack(render, f, out, x2+4+j, y2+4+k);
+			this.drawItemStackWithTooltip(render, f, out, x2+4+j, y2+4+k);
 		if (shapeless)
 			f.drawString("Shapeless", x2+j-35, y2+k+27, 0x000000);
 	}
@@ -354,9 +354,9 @@ public final class ReikaGuiAPI extends GuiScreen {
 		ItemStack in = ReikaRecipeHelper.getFurnaceInput(out);
 
 		if (in != null)
-			this.drawItemStack(render, f, in, x+j, y+k);
+			this.drawItemStackWithTooltip(render, f, in, x+j, y+k);
 		if (out != null)
-			this.drawItemStack(render, f, out, x2+4+j, y2+4+k);
+			this.drawItemStackWithTooltip(render, f, out, x2+4+j, y2+4+k);
 	}
 
 	/** Draw a compactor recipe in the GUI. Args: x in, y in, input itemstack, x out, y out, output itemstack */
@@ -366,10 +366,10 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 		if (in != null) {
 			for (int ii = 0; ii < 4; ii++)
-				this.drawItemStack(render, f, in, x+j, y+k+ii*18);
+				this.drawItemStackWithTooltip(render, f, in, x+j, y+k+ii*18);
 		}
 		if (out != null)
-			this.drawItemStack(render, f, out, x2+j, y2+k);
+			this.drawItemStackWithTooltip(render, f, out, x2+j, y2+k);
 	}
 
 	/** Draw an extractor recipe in the GUI. Args: x in, y in; items of top row;
@@ -384,9 +384,9 @@ public final class ReikaGuiAPI extends GuiScreen {
 		int k = (height - ySize) / 2 - 8;
 
 		for (int ij = 0; ij < 4; ij++)
-			this.drawItemStack(render, f, in[ij], x+j+36*ij, y+k);
+			this.drawItemStackWithTooltip(render, f, in[ij], x+j+36*ij, y+k);
 		for (int ij = 0; ij < 4; ij++)
-			this.drawItemStack(render, f, out[ij], x2+j+36*ij, y2+k);
+			this.drawItemStackWithTooltip(render, f, out[ij], x2+j+36*ij, y2+k);
 	}
 
 	/** Draw a fermenter recipe in the GUI. Args: x,y of top input slot, items of input slots,
@@ -398,9 +398,9 @@ public final class ReikaGuiAPI extends GuiScreen {
 		int k = (height - ySize) / 2 - 8;
 
 		for (int ij = 0; ij < 3; ij++)
-			this.drawItemStack(render, f, in[ij], x+j, y+18*ij+k);
+			this.drawItemStackWithTooltip(render, f, in[ij], x+j, y+18*ij+k);
 		if (out != null)
-			this.drawItemStack(render, f, out, x2+4+j, y2+4+k);
+			this.drawItemStackWithTooltip(render, f, out, x2+4+j, y2+4+k);
 	}
 
 	/** Note that this must be called after any and all texture and text rendering, as the lighting conditions are left a bit off */
@@ -425,7 +425,31 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 		renderer.renderItemAndEffectIntoGUI(font, mc.renderEngine, is, x, y);
 		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, null);
+	}
 
+	public void drawItemStackWithTooltip(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
+		this.drawItemStack(renderer, fr, is, x, y);
+
+		if (this.isMouseInBox(x, x+16, y, y+16)) {
+			this.drawTooltip(fr, is.getDisplayName());
+		}
+	}
+
+	public void drawTooltip(FontRenderer f, String s) {
+		double dz = 0;
+		GL11.glTranslated(0, 0, dz);
+		int mx = this.getMouseRealX();
+		int my = this.getMouseRealY();
+		int w = mc.fontRenderer.getStringWidth(s);
+		int h = 8;
+		int o = 3;
+		int a = 0xcc000000;
+		int dx = -Math.min(0, mx-6-o-w);
+		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
+		o = 2;
+		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
+		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
+		GL11.glTranslated(0, 0, -dz);
 	}
 
 	public float getMouseScreenY() {
