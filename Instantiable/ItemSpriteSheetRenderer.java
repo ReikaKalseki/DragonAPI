@@ -9,47 +9,58 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import java.io.IOException;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 import Reika.DragonAPI.Auxiliary.ReikaSpriteSheets;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaPNGLoader;
 import Reika.DragonAPI.Interfaces.IndexedItemSprites;
+import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.ReikaTextureHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class ItemSpriteSheetRenderer implements IItemRenderer {
 
-	protected int spritesheet;
-	protected int index;
+	protected final int spritesheet;
 
-	public ItemSpriteSheetRenderer(Class root, String file, String backup) {
+	public ItemSpriteSheetRenderer(DragonAPIMod mod, Class root, String file, String backup) {
 		//this.spritesheet = ReikaSpriteSheets.setupTextures(root, file);
-		String filename;/*
-		if (backup == null)
-			backup = "";
-		if (file == null || root == null)
-			return;
-		//if (root.getResource(file) == null && root.getResource(backup) == null)
-			//return;
-		if (root.getResource(file) == null)
-			filename = backup;
-		else
-			filename = root.getResource(file).getPath();*/
-
-		if (root == null)
-			return;
-		if (root.getResource(".") == null)
-			filename = "";
-		else {
-			String base = root.getResource(".").getPath();
-			String path = base.substring(1, base.length()-1);
-			filename = path+file;
+		if (ReikaTextureHelper.isUsingDefaultTexturePack()) {
+			String filename;
+			if (root == null) {
+				throw new MisuseException("You cannot fetch a render texture with reference to a null class!");
+			}
+			if (root.getResource(".") == null)
+				filename = "";
+			else {
+				String base = root.getResource(".").getPath();
+				String path = base.substring(1, base.length()-1);
+				filename = path+file;
+			}
+			spritesheet = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
 		}
-		//ReikaJavaLibrary.pConsole("ITEM @ "+filename+" from "+file+" Exists: ");
-		spritesheet = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
+		else {
+			String filename = "/"+mod.getDisplayName().toLowerCase()+"/"+file;
+			int sprite = 0;
+			try {
+				sprite = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTexturePackImage(ReikaTextureHelper.getCurrentTexturePack(), filename));
+				ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": Found alternate texture pack image in texturepack "+ReikaTextureHelper.getCurrentTexturePack().getTexturePackFileName()+".");
+			}
+			catch (IOException e) {
+				ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": IOException ("+e.getClass().getSimpleName()+") on loading texture pack image variant "+filename+" for texturepack "+ReikaTextureHelper.getCurrentTexturePack().getTexturePackFileName()+". Loading default textures.");
+				sprite = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
+			}
+			finally {
+				spritesheet = sprite;
+			}
+		}
 	}
 
 	@Override
@@ -69,7 +80,7 @@ public final class ItemSpriteSheetRenderer implements IItemRenderer {
 		Item cls = item.getItem();
 		if (cls instanceof IndexedItemSprites) {
 			IndexedItemSprites iis = (IndexedItemSprites)cls;
-			index = iis.getItemSpriteIndex(item);
+			int index = iis.getItemSpriteIndex(item);
 			ReikaSpriteSheets.renderItem(spritesheet, index, type, item, data);
 		}
 	}

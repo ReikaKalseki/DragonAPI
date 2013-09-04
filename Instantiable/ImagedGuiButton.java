@@ -148,6 +148,7 @@ public final class ImagedGuiButton extends GuiButton {
 		o = 2;
 		this.drawRect(mx-6+o, my-12-o, mx-6-w-o, my-12+h+o, a+0x00050505);
 		this.drawString(mc.fontRenderer, displayString, mx-w-6, my-12, color);
+		mc.renderEngine.bindTexture("/font/glyph_AA.png");
 	}
 
 	/**

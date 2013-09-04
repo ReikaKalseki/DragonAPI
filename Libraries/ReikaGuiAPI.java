@@ -16,6 +16,8 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
@@ -26,6 +28,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import cpw.mods.fml.relauncher.Side;
@@ -267,15 +270,15 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
-	public static void renderFraction(FontRenderer fr, String num, String den, int x, int y, int color, boolean shadow, boolean center) {
+	public void renderFraction(FontRenderer fr, String num, String den, int x, int y, int color, boolean shadow, boolean center) {
 
 	}
 
-	public static void renderRoot(FontRenderer fr, String num, String root, int x, int y, int color, boolean shadow, boolean center) {
+	public void renderRoot(FontRenderer fr, String num, String root, int x, int y, int color, boolean shadow, boolean center) {
 
 	}
 
-	public static void renderPower(FontRenderer fr, String base, String pow, int x, int y, int color, boolean shadow, boolean center) {
+	public void renderPower(FontRenderer fr, String base, String pow, int x, int y, int color, boolean shadow, boolean center) {
 
 	}
 
@@ -403,44 +406,55 @@ public final class ReikaGuiAPI extends GuiScreen {
 	/** Note that this must be called after any and all texture and text rendering, as the lighting conditions are left a bit off */
 	public void drawItemStack(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
 		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
-		//zLevel = 200.0F;
-		//renderer.zLevel = 200.0F;
 		FontRenderer font = null;
 		if (is != null)
 			font = is.getItem().getFontRenderer(is);
 		if (font == null)
 			font = fr;
 
-		//ReikaJavaLibrary.pConsole(is.getItem().getLocalizedName(is)+" @ "+x+", "+y);
-
-		//GL11.glDisable(GL12.GL_RESCALE_NORMAL);
-		//RenderHelper.disableStandardItemLighting();
-		//GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
+		RenderHelper.disableStandardItemLighting();
+		GL11.glDisable(GL11.GL_LIGHTING);
 		RenderHelper.enableGUIStandardItemLighting();
-		//GL11.glPushMatrix();
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		//GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		short short1 = 240;
 		short short2 = 240;
-		//OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
+		OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, short1 / 1.0F, short2 / 1.0F);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		renderer.renderItemAndEffectIntoGUI(font, mc.renderEngine, is, x, y);
 		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, null);
-		//zLevel = 0.0F;
-		//renderer.zLevel = 0.0F;
-		//GL11.glPopMatrix();
 
-		//RenderHelper.disableStandardItemLighting();
-		RenderHelper.enableGUIStandardItemLighting();
-		GL11.glColor4d(1, 1, 1, 1);
 	}
 
-	public static int getMouseScreenY(int screen_height) {
-		return 2*screen_height-Mouse.getY();
+	public float getMouseScreenY() {
+		return 1-(Mouse.getY()/(float)Minecraft.getMinecraft().displayHeight);
 	}
 
-	public static int getMouseScreenX(int screen_width) {
-		return Mouse.getX();
+	public float getMouseScreenX() {
+		return (Mouse.getX()/(float)Minecraft.getMinecraft().displayWidth);
+	}
+
+	public int getMouseRealX() {
+		Minecraft mc = Minecraft.getMinecraft();
+		ScaledResolution sr = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+		int w = sr.getScaledWidth();
+		int x = Mouse.getX() * w / mc.displayWidth;
+		return x;
+	}
+
+	public int getMouseRealY() {
+		Minecraft mc = Minecraft.getMinecraft();
+		ScaledResolution sr = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+		int h = sr.getScaledHeight();
+		int y = h - Mouse.getY() * h / mc.displayHeight - 1;
+		return y;
+	}
+
+	public boolean isMouseInBox(int minx, int maxx, int miny, int maxy) {
+		int x = this.getMouseRealX();
+		int y = this.getMouseRealY();
+		return x >= minx && x <= maxx && y >= miny && y <= maxy;
 	}
 }

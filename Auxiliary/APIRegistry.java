@@ -15,6 +15,7 @@ import cpw.mods.fml.common.Loader;
 public enum APIRegistry {
 
 	ROTARYCRAFT("RotaryCraft"),
+	REACTORCRAFT("ReactorCraft"),
 	BUILDCRAFTENERGY("BuildCraft|Energy"),
 	BUILDCRAFTFACTORY("BuildCraft|Factory"),
 	BUILDCRAFTTRANSPORT("BuildCraft|Transport"),

@@ -17,6 +17,7 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import net.minecraft.client.texturepacks.ITexturePack;
 import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
 
 public final class ReikaPNGLoader {
@@ -32,7 +33,7 @@ public final class ReikaPNGLoader {
 	{
 		InputStream inputfile = root.getResourceAsStream(name);
 		InputStream inputback = root.getResourceAsStream(back);
-		setMissingTex();
+
 		if (inputfile == null && inputback == null) {
 			ReikaJavaLibrary.pConsole("Neither default image filepath at "+name+" or backup at "+back+" found. Loading \"MissingTexture\".");
 			return missingtex;
@@ -69,6 +70,17 @@ public final class ReikaPNGLoader {
 		}
 	}
 
+	public static BufferedImage readTexturePackImage(ITexturePack ip, String name) throws IOException
+	{
+		InputStream inputfile;
+		inputfile = ip.getResourceAsStream(name);
+
+		if (inputfile == null) {
+			throw new IOException("IOException on loading texture pack image variant for texturepack "+ip.getTexturePackID()+". Loading default textures.");
+		}
+		return ImageIO.read(inputfile);
+	}
+
 	public static boolean imageFileExists(Class root, String name) {
 		InputStream inputfile = root.getResourceAsStream(name);
 		if (inputfile == null) {
@@ -85,11 +97,10 @@ public final class ReikaPNGLoader {
 	}
 
 	public static BufferedImage getMissingTex() {
-		setMissingTex();
 		return missingtex;
 	}
 
-	private static void setMissingTex() {
+	static {
 		Graphics graphics = missingtex.getGraphics();
 		graphics.setColor(Color.decode("0x2F0044"));
 		graphics.fillRect(0, 0, 64, 64);
