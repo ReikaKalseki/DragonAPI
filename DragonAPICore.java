@@ -87,7 +87,7 @@ public class DragonAPICore {
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding item render "+render+" for system name "+unloc);
 	}
 
-	public static void loadHandlers() {
+	private static void loadHandlers() {
 		if (loadedHandlers)
 			return;
 
@@ -123,6 +123,8 @@ public class DragonAPICore {
 	static {
 		if (isReikasComputer())
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading on Reika's computer; Dev features enabled.");
+
+		loadHandlers();
 	}
 
 	public static boolean isDeObfEnvironment() {

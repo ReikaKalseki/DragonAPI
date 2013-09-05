@@ -64,21 +64,6 @@ public abstract class DragonAPIMod {
 		return this.getDisplayName().toUpperCase();
 	}
 
-	protected final void checkAPI() {
-		if (!this.checkForDragonAPI())
-			this.hasNoDragonAPI();
-	}
-
-	protected final boolean checkForDragonAPI() {
-		try {
-			Class.forName("Reika.DragonAPI.DragonAPICore", false, this.getClass().getClassLoader());
-			return true;
-		}
-		catch (ClassNotFoundException e) {
-			return false;
-		}
-	}
-
 	protected void hasNoDragonAPI() {
 		throw new InstallationException(this, "This mod needs DragonAPI to function correctly!");
 	}

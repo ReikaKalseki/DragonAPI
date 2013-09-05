@@ -21,6 +21,7 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -32,6 +33,8 @@ public abstract class TileEntityBase extends TileEntity {
 	public boolean shutDown;
 	public String placer;
 
+	private final StepTimer updateTimer;
+
 	protected static final ForgeDirection[] dirs = ForgeDirection.values();
 
 	public abstract int getTileEntityBlockID();
@@ -39,6 +42,11 @@ public abstract class TileEntityBase extends TileEntity {
 	public abstract void updateEntity(World world, int x, int y, int z, int meta);
 
 	public abstract void animateWithTick(World world, int x, int y, int z);
+
+	public TileEntityBase() {
+		super();
+		updateTimer = new StepTimer(this.getBlockUpdateDelay());
+	}
 
 	public final Block getTEBlock() {
 		int id = this.getTileEntityBlockID();
@@ -139,7 +147,8 @@ public abstract class TileEntityBase extends TileEntity {
 		if (shutDown)
 			return;
 		try {
-			worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			if (par5Random.nextInt(20) == 0)
+				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			this.updateTileEntity();
 			this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
 		}
@@ -204,4 +213,12 @@ public abstract class TileEntityBase extends TileEntity {
 
 	protected abstract String getTEName();
 
+	public boolean needsBlockUpdates() {
+		return true;
+	}
+
+	/** Do not reference world, x, y, z, etc here, as this is called in the constructor */
+	public int getBlockUpdateDelay() {
+		return 20;
+	}
 }
