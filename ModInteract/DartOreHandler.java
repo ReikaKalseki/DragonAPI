@@ -33,6 +33,7 @@ public final class DartOreHandler extends ModHandlerBase {
 	private boolean isOreDict = false;
 
 	private DartOreHandler() {
+		super();
 		int idgem = -1;
 		int idore = -1;
 		if (this.hasMod()) {

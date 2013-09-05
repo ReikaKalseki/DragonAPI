@@ -74,6 +74,7 @@ public final class ThaumOreHandler extends ModHandlerBase {
 	private static final ThaumOreHandler instance = new ThaumOreHandler();
 
 	private ThaumOreHandler() {
+		super();
 		int idore = -1;
 		int iditem = -1;
 		int idshard = -1;

@@ -87,7 +87,7 @@ public class DragonAPICore {
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding item render "+render+" for system name "+unloc);
 	}
 
-	private static void loadHandlers() {
+	public static void loadHandlers() {
 		if (loadedHandlers)
 			return;
 
@@ -95,7 +95,7 @@ public class DragonAPICore {
 
 		ReikaJavaLibrary.initClass(APIRegistry.class);
 
-		if (APIRegistry.BUILDCRAFTENERGY.conditionsMet()) {
+		if (APIRegistry.BUILDCRAFTFACTORY.conditionsMet()) {
 			ReikaJavaLibrary.initClass(BCMachineHandler.class);
 		}
 		if (APIRegistry.THAUMCRAFT.conditionsMet()) {
@@ -123,8 +123,6 @@ public class DragonAPICore {
 	static {
 		if (isReikasComputer())
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading on Reika's computer; Dev features enabled.");
-
-		loadHandlers();
 	}
 
 	public static boolean isDeObfEnvironment() {

@@ -55,20 +55,25 @@ public class CoreContainer extends Container {
 			oldInv[i] = inv[i];
 	}
 
-	protected void addPlayerInventory(EntityPlayer player) {
+	protected void addPlayerInventoryWithOffset(EntityPlayer player, int dx, int dy) {
 		for (int i = 0; i < 3; i++)
 		{
 			for (int k = 0; k < 9; k++)
 			{
-				this.addSlotToContainer(new Slot(player.inventory, k + i * 9 + 9, 8 + k * 18, 84 + i * 18));
+				this.addSlotToContainer(new Slot(player.inventory, k + i * 9 + 9, dx+8 + k * 18, dy+84 + i * 18));
 			}
 		}
 
 		for (int j = 0; j < 9; j++)
 		{
-			this.addSlotToContainer(new Slot(player.inventory, j, 8 + j * 18, 142));
+			this.addSlotToContainer(new Slot(player.inventory, j, dx+8 + j * 18, dy+142));
 		}
 	}
+
+	protected void addPlayerInventory(EntityPlayer player) {
+		this.addPlayerInventoryWithOffset(player, 0, 0);
+	}
+
 
 	/**
 	 * Updates crafting matrix; called from onCraftMatrixChanged. Args: none

@@ -24,6 +24,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 	public final int totemID;
 
 	private ThaumBlockHandler() {
+		super();
 		int idtile = -1;
 
 		if (this.hasMod()) {

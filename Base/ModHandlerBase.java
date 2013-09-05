@@ -10,9 +10,14 @@
 package Reika.DragonAPI.Base;
 
 import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** Reflection tools to read other mods. */
 public abstract class ModHandlerBase {
+
+	protected ModHandlerBase() {
+		ReikaJavaLibrary.pConsole("Loading handler for mod "+this.getMod());
+	}
 
 	public abstract boolean initializedProperly();
 

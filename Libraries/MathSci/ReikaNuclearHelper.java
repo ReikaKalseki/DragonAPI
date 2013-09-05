@@ -20,7 +20,7 @@ public class ReikaNuclearHelper {
 	public static final double NEUTRON_MASS = 1.674/ReikaMathLibrary.doubpow(10, 27);
 	public static final double PROTON_MASS = 1.672/ReikaMathLibrary.doubpow(10, 27);
 
-	public static final double NEUTRON_ESCAPE_SPEED = 2752*4;
+	public static final double NEUTRON_ESCAPE_SPEED = 2752;
 
 	public static double getEnergyJ(double E) {
 		return E*ELECTRON_CHARGE;

@@ -21,7 +21,7 @@ public enum APIRegistry {
 	BUILDCRAFTTRANSPORT("BuildCraft|Transport"),
 	THAUMCRAFT("Thaumcraft"),
 	INDUSTRIALCRAFT("IC2"),
-	GREGTECH("Gregtech"),
+	GREGTECH("GregTech"),
 	FORESTRY("Forestry"),
 	APPLIEDENERGISTICS("AppliedEnergistics"),
 	MFFS("ModularForceFieldSystem"),

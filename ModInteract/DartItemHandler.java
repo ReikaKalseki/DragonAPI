@@ -22,6 +22,7 @@ public final class DartItemHandler extends ModHandlerBase {
 	public final int wrenchID;
 
 	private DartItemHandler() {
+		super();
 		int idwrench = -1;
 
 		if (this.hasMod()) {

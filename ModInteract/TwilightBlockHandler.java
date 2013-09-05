@@ -29,6 +29,7 @@ public class TwilightBlockHandler extends ModHandlerBase {
 	private static final TwilightBlockHandler instance = new TwilightBlockHandler();
 
 	private TwilightBlockHandler() {
+		super();
 		int idroot = -1;
 		int idmachine = -1;
 		int idtowerwood = -1;

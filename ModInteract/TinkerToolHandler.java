@@ -25,6 +25,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	public final int pickID;
 
 	private TinkerToolHandler() {
+		super();
 		int idpick = -1;
 
 		if (this.hasMod()) {

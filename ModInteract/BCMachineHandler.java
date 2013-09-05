@@ -24,8 +24,8 @@ public class BCMachineHandler extends ModHandlerBase {
 	private static final BCMachineHandler instance = new BCMachineHandler();
 
 	private BCMachineHandler() {
+		super();
 		int idtank = -1;
-
 		if (this.hasMod()) {
 			try {
 				Class factory = Class.forName("buildcraft.BuildCraftFactory");
