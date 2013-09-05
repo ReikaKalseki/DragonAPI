@@ -15,7 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public enum ModSpiderList {
 

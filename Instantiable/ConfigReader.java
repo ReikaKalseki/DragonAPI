@@ -13,7 +13,7 @@ import java.io.File;
 
 import net.minecraftforge.common.Configuration;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ConfigReader {
 

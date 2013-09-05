@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 public final class ReikaAABBHelper extends DragonAPICore {
 

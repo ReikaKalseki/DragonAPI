@@ -10,8 +10,8 @@
 package Reika.DragonAPI.Instantiable;
 
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Libraries.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ModLogger {
 

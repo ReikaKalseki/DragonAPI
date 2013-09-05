@@ -13,7 +13,7 @@ import java.net.URL;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.InstallationException;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.Mod.PostInit;
 import cpw.mods.fml.common.Mod.PreInit;

@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Objects;
 
-import Reika.DragonAPI.Libraries.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public enum ArrowCharacters {
 

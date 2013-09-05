@@ -19,8 +19,8 @@ import net.minecraft.block.BlockFluid;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public class BlockArray {
 

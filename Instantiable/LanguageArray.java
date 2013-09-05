@@ -11,7 +11,7 @@ package Reika.DragonAPI.Instantiable;
 
 import java.util.ArrayList;
 
-import Reika.DragonAPI.Libraries.ReikaLanguageReader;
+import Reika.DragonAPI.Libraries.IO.ReikaLanguageReader;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
 public class LanguageArray {

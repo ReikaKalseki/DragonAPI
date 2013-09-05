@@ -16,7 +16,7 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.Interfaces.WireBlock;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class CustomWireRenderer implements ISimpleBlockRenderingHandler {

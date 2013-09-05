@@ -12,7 +12,7 @@ package Reika.DragonAPI.Instantiable;
 import java.awt.Color;
 
 import net.minecraft.client.renderer.Tessellator;
-import Reika.DragonAPI.Libraries.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 public class PixelRenderer {
 

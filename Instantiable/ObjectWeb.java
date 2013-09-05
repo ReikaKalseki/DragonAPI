@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ObjectWeb {
 

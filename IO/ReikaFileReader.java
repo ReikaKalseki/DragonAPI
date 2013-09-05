@@ -17,7 +17,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReikaFileReader extends DragonAPICore {
 

@@ -18,7 +18,7 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.texturepacks.ITexturePack;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class ReikaPNGLoader {
 

@@ -17,7 +17,7 @@ import net.minecraftforge.common.Configuration;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Interfaces.ConfigList;
 import Reika.DragonAPI.Interfaces.IDRegistry;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ControlledConfig {

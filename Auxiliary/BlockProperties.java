@@ -10,7 +10,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import net.minecraft.block.Block;
-import Reika.DragonAPI.Libraries.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 
 public class BlockProperties {
 

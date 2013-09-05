@@ -13,7 +13,7 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidDictionary;
 import net.minecraftforge.liquids.LiquidStack;
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import buildcraft.api.fuels.IronEngineFuel;
 
 public class ReikaBuildCraftHelper extends DragonAPICore {
