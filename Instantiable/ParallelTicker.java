@@ -15,10 +15,6 @@ import java.util.List;
 
 public class ParallelTicker {
 
-	public static final int SECOND = 20;
-	public static final int MINUTE = 1200;
-	public static final int HOUR = 72000;
-
 	private final HashMap <String, Integer> tickers = new HashMap<String, Integer>();
 	private final HashMap <String, Integer> caps = new HashMap<String, Integer>();
 	private final List<String> keyList = new ArrayList<String>();

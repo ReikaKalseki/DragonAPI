@@ -11,10 +11,6 @@ package Reika.DragonAPI.Instantiable;
 
 public class StepTimer {
 
-	public static final int SECOND = 20;
-	public static final int MINUTE = 1200;
-	public static final int HOUR = 72000;
-
 	private int value;
 	private int cap;
 

@@ -19,7 +19,12 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 
 	public static final double g = 9.81D;
 
-	public static final double c = 299792458D;
+	public static final double LIGHT_SPEED = 299792458D;
+
+	public static final double ELECTRON_CHARGE = 1.602/ReikaMathLibrary.doubpow(10, 19);
+	public static final double ELECTRON_MASS = 9.11/ReikaMathLibrary.doubpow(10, 31);
+	public static final double NEUTRON_MASS = 1.674/ReikaMathLibrary.doubpow(10, 27);
+	public static final double PROTON_MASS = 1.672/ReikaMathLibrary.doubpow(10, 27);
 
 	/** Converts 3D polar coordinates into cartesian ones. Use angles in degrees. Args: magnitude, theta, phi */
 	public static double[] polarToCartesian(double mag, double theta, double phi) {

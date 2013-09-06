@@ -313,26 +313,26 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Edits a block adjacent to the passed arguments, on the specified side.
-	 * Args: World, x, y, z, side, id to change to */
-	public static void changeAdjBlock(World world, int x, int y, int z, int side, int id) {
+	 * Args: World, x, y, z, side, id to change to, metadata to change to */
+	public static void changeAdjBlock(World world, int x, int y, int z, int side, int id, int meta) {
 		switch(side) {
 		case 0:
-			legacySetBlockWithNotify(world, x, y+1, z, id);
+			world.setBlock(x, y+1, z, id, meta, 3);
 			break;
 		case 1:
-			legacySetBlockWithNotify(world, x, y-1, z, id);
+			world.setBlock(x, y-1, z, id, meta, 3);
 			break;
 		case 2:
-			legacySetBlockWithNotify(world, x+1, y, z, id);
+			world.setBlock(x+1, y, z, id, meta, 3);
 			break;
 		case 3:
-			legacySetBlockWithNotify(world, x-1, y, z, id);
+			world.setBlock(x-1, y, z, id, meta, 3);
 			break;
 		case 4:
-			legacySetBlockWithNotify(world, x, y, z+1, id);
+			world.setBlock(x, y, z+1, id, meta, 3);
 			break;
 		case 5:
-			legacySetBlockWithNotify(world, x, y, z-1, id);
+			world.setBlock(x, y, z-1, id, meta, 3);
 			break;
 		}
 	}
@@ -377,7 +377,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			for (int i = 0; i < 6; i++) {
 				int side = (ReikaWorldHelper.checkForAdjMaterial(world, x, y, z, Material.water));
 				if (side != -1)
-					ReikaWorldHelper.changeAdjBlock(world, x, y, z, side, Block.ice.blockID);
+					ReikaWorldHelper.changeAdjBlock(world, x, y, z, side, Block.ice.blockID, 0);
 			}
 		}
 		if (temperature > 450)	{ // Wood autoignition
