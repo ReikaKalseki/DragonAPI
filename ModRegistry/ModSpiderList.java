@@ -26,31 +26,33 @@ public enum ModSpiderList {
 	private Class entityClass;
 	private APIRegistry mod;
 	private int entityHealth;
-	private EntityLiving instance;
+	private final EntityLiving instance;
 
 	public static final ModSpiderList[] spiderList = ModSpiderList.values();
 
 	private ModSpiderList(APIRegistry req, String className) {
 		mod = req;
+		EntityLiving ent = null;
 		try {
 			entityClass = Class.forName(className);
-			this.instantiate();
+			ent = this.instantiate();
 		}
 		catch (ClassNotFoundException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: ERROR LOADING "+this);
 			e.printStackTrace();
 		}
+		instance = ent;
 	}
 
 	public int getHealth() {
 		return instance.getMaxHealth();
 	}
 
-	private void instantiate() {
+	private EntityLiving instantiate() {
 		Constructor c;
 		try {
 			c = entityClass.getConstructor(World.class);
-			instance = (EntityLiving)c.newInstance((Object[])null);
+			return (EntityLiving)c.newInstance((Object[])null);
 		}
 		catch (NoSuchMethodException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: ERROR LOADING "+this);
@@ -76,6 +78,7 @@ public enum ModSpiderList {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: ERROR LOADING "+this);
 			e.printStackTrace();
 		}
+		return null;
 	}
 
 	@Override
