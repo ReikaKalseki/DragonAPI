@@ -26,20 +26,27 @@ public class BlockArray {
 
 	private List<int[]> blocks = new ArrayList<int[]>();
 	private int liquidID;
-	private boolean isOverflowing = false;
+	private boolean overflow = false;
+	protected World refWorld;
 
 	public BlockArray() {
 
 	}
 
-	public void addBlockCoordinate(int x, int y, int z) {
-		if (isOverflowing)
-			return;
+	public BlockArray setWorld(World world) {
+		refWorld = world;
+		return this;
+	}
+
+	public boolean addBlockCoordinate(int x, int y, int z) {
+		if (overflow)
+			return false;
 		if (this.hasBlock(x, y, z))
-			return;
+			return false;
 		int[] e = {x, y, z};
 		blocks.add(e);
 		//ReikaJavaLibrary.pConsole("Adding "+x+", "+y+", "+z);
+		return true;
 	}
 
 	public int[] getNextBlock() {
@@ -60,7 +67,7 @@ public class BlockArray {
 		int[] next = this.getNextBlock();
 		blocks.remove(0);
 		if (this.isEmpty())
-			isOverflowing = false;
+			overflow = false;
 		return next;
 	}
 
@@ -70,7 +77,7 @@ public class BlockArray {
 
 	public void clear() {
 		blocks.clear();
-		isOverflowing = false;
+		overflow = false;
 	}
 
 	public boolean isEmpty() {
@@ -356,7 +363,7 @@ public class BlockArray {
 	}
 
 	protected void throwOverflow() {
-		isOverflowing = true;
+		overflow = true;
 		ReikaJavaLibrary.pConsole("Stack overflow!");
 	}
 
@@ -368,5 +375,13 @@ public class BlockArray {
 
 	public void remove(int index) {
 		blocks.remove(index);
+	}
+
+	public boolean isOverflowing() {
+		return overflow;
+	}
+
+	public boolean hasWorldReference() {
+		return refWorld != null;
 	}
 }

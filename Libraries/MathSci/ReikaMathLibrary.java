@@ -55,6 +55,15 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return val;
 	}
 
+	/** Returns the value of an integer raised to an integer power. Args: Base, power */
+	public static int intpow2(int base, int pow) {
+		int val = 1;
+		for (int i = 0; i < pow; i++) {
+			val *= base;
+		}
+		return val;
+	}
+
 	/** Returns the value of a double raised to an decimal power. Args: Base, power */
 	public static double doubpow(double base, double pow) {
 		double val = 1.0D;

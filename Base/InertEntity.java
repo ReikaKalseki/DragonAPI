@@ -42,6 +42,8 @@ public abstract class InertEntity extends Entity {
 		worldObj.theProfiler.endSection();
 
 		this.moveEntity(motionX, motionY, motionZ);
+
+		ticksExisted++;
 	}
 
 	@Override

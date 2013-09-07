@@ -221,4 +221,7 @@ public abstract class TileEntityBase extends TileEntity {
 	public int getBlockUpdateDelay() {
 		return 20;
 	}
+
+	@Override
+	public abstract boolean shouldRenderInPass(int pass);
 }

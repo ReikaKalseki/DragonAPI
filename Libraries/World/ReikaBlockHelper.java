@@ -97,4 +97,17 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		return false;
 	}
+
+	public static int getSilverfishImitatedBlock(int meta) {
+		switch(meta) {
+		case 0:
+			return Block.stone.blockID;
+		case 1:
+			return Block.cobblestone.blockID;
+		case 2:
+			return Block.stoneBrick.blockID;
+		default:
+			return 0;
+		}
+	}
 }

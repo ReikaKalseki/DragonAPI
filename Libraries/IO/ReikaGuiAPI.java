@@ -338,6 +338,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		for (int ii = 0; ii < 3; ii++) {
 			for (int jj = 0; jj < 3; jj++) {
 				if (in[ii*3+jj] != null) {
+					in[ii*3+jj].stackSize = 1;
 					this.drawItemStackWithTooltip(render, f, in[ii*3+jj], x+j+18*jj, y+k+18*ii);
 				}
 			}
@@ -442,6 +443,21 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glTranslated(0, 0, dz);
 		int mx = this.getMouseRealX();
 		int my = this.getMouseRealY();
+		int w = mc.fontRenderer.getStringWidth(s);
+		int h = 8;
+		int o = 3;
+		int a = 0xcc000000;
+		int dx = -Math.min(0, mx-6-o-w);
+		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
+		o = 2;
+		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
+		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
+		GL11.glTranslated(0, 0, -dz);
+	}
+
+	public void drawTooltipAt(FontRenderer f, String s, int mx, int my) {
+		double dz = 0;
+		GL11.glTranslated(0, 0, dz);
 		int w = mc.fontRenderer.getStringWidth(s);
 		int h = 8;
 		int o = 3;

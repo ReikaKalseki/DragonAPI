@@ -24,22 +24,18 @@ import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Interfaces.IndexedItemSprites;
 import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
+import Reika.RotaryCraft.RotaryCraft;
 
-public class ItemSpawner extends Item implements IndexedItemSprites {
-
-	private int[] xy = new int[2];
+public class ItemSpawner extends Item {
 
 	public ItemSpawner(int id) {
 		super(id);
 		this.setHasSubtypes(true);
-		//setItemName("spawner");
-		this.setCreativeTab(DragonAPICore.tab);
+		this.setCreativeTab(RotaryCraft.tabSpawner);
 	}
 
 	@Override
@@ -52,14 +48,14 @@ public class ItemSpawner extends Item implements IndexedItemSprites {
 
 	@Override
 	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List) {
-		for (int k = 50; k <= 66; k++) { //50-66, 90-99, 120
+		for (int k = 50; k <= 66; k++) { //50-66 hostile, 90-99 animal, 120 villager
 			ItemStack spw = new ItemStack(par1, 1, 0);
 			if (spw.stackTagCompound == null)
 				spw.setTagCompound(new NBTTagCompound());
 			spw.stackTagCompound.setString("Spawner", EntityList.getStringFromID(k));
 			par3List.add(spw);
 		}
-		for (int k = 90; k <= 99; k++) { //50-66, 90-99, 120
+		for (int k = 90; k <= 99; k++) {
 			ItemStack spw = new ItemStack(par1, 1, 0);
 			if (spw.stackTagCompound == null)
 				spw.setTagCompound(new NBTTagCompound());
@@ -77,7 +73,7 @@ public class ItemSpawner extends Item implements IndexedItemSprites {
 	@Override
 	public boolean onItemUse(ItemStack is, EntityPlayer ep, World world, int x, int y, int z, int side, float par8, float par9, float par10) {
 		if (!this.isValidDimensionForSpawner(is, world)) {
-			ReikaChatHelper.write(ReikaSpawnerHelper.getSpawnerFromItemNBT(is)+" cannot be placed in dimension "+world.provider.dimensionId+" ("+world.provider.getDimensionName()+")!");
+			ReikaChatHelper.write(ReikaSpawnerHelper.getSpawnerFromItemNBT(is)+" cannot be placed in dimension "+world.provider.getDimensionName()+"!");
 			return false;
 		}
 		if (!ReikaWorldHelper.softBlocks(world.getBlockId(x, y, z)) && world.getBlockMaterial(x, y, z) != Material.water && world.getBlockMaterial(x, y, z) != Material.lava) {
@@ -122,23 +118,6 @@ public class ItemSpawner extends Item implements IndexedItemSprites {
 	@Override
 	public int getMetadata (int damageValue) {
 		return damageValue;
-	}
-
-	public void setIcon(int icon) {
-		xy[0] = icon%16;
-		xy[1] = icon/16;
-	}
-
-	public int getIconX() {
-		return xy[0];
-	}
-
-	public int getIconY() {
-		return xy[1];
-	}
-
-	public int getItemSpriteIndex(ItemStack is) {
-		return 16*this.getIconY()+this.getIconX();
 	}
 
 	private boolean isValidDimensionForSpawner(ItemStack is, World world) {
