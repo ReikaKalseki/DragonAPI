@@ -12,12 +12,11 @@ package Reika.DragonAPI.Libraries.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public enum ReikaPlantHelper {
 

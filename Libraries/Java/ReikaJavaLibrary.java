@@ -76,6 +76,15 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return true;
 	}
 
+	public static int safeIntParse(String s) {
+		try {
+			return Integer.parseInt(s);
+		}
+		catch (NumberFormatException e) {
+			return 0;//Integer.MIN_VALUE;
+		}
+	}
+
 	public static void printLine(int length) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < length; i++)

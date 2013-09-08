@@ -11,11 +11,10 @@ package Reika.DragonAPI.Libraries.Registry;
 
 import java.awt.Color;
 
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public enum ReikaDyeHelper {
 
