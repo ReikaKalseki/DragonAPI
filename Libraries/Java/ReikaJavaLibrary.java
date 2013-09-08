@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.Java;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -121,5 +122,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			Class.forName(c.getCanonicalName(), true, c.getClassLoader());
 		}
 		catch (ClassNotFoundException e) {}
+	}
+
+	public static boolean listContainsArray(List<int[]> li, int[] arr) {
+		for(int i = 0; i < li.size(); i++) {
+			if (Arrays.equals(li.get(i), arr)){
+				return true;
+			}
+		}
+		return false;
 	}
 }

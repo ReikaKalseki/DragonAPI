@@ -28,7 +28,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public abstract class TileEntityBase extends TileEntity {
 
-	protected final Random par5Random = new Random();
+	protected static final Random par5Random = new Random();
 	private int pseudometa;
 	public boolean shutDown;
 	public String placer;
