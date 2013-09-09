@@ -90,8 +90,8 @@ public class CoreContainer extends Container {
 	}
 
 	@Override
-	public boolean canInteractWith(EntityPlayer par1EntityPlayer) {
-		return this.isStandard8mReach(par1EntityPlayer);
+	public boolean canInteractWith(EntityPlayer player) {
+		return this.isStandard8mReach(player);
 	}
 
 	public final boolean isStandard8mReach(EntityPlayer player) {
@@ -100,20 +100,20 @@ public class CoreContainer extends Container {
 	}
 
 	@Override
-	public final ItemStack transferStackInSlot(EntityPlayer par1EntityPlayer, int par2)
+	public final ItemStack transferStackInSlot(EntityPlayer player, int slot)
 	{
-		ItemStack var3 = null;
-		Slot var4 = (Slot)inventorySlots.get(par2);
+		ItemStack is = null;
+		Slot sl = (Slot)inventorySlots.get(slot);
 		if (!(tile instanceof IInventory))
 			return null;
 		int invsize = ((IInventory)tile).getSizeInventory();
 
-		if (var4 != null && var4.getHasStack())
+		if (sl != null && sl.getHasStack())
 		{
-			ItemStack var5 = var4.getStack();
-			var3 = var5.copy();
+			ItemStack var5 = sl.getStack();
+			is = var5.copy();
 
-			if (par2 < invsize)
+			if (slot < invsize)
 			{
 				if (!this.mergeItemStack(var5, invsize, inventorySlots.size(), true))
 				{
@@ -127,15 +127,15 @@ public class CoreContainer extends Container {
 
 			if (var5.stackSize == 0)
 			{
-				var4.putStack((ItemStack)null);
+				sl.putStack((ItemStack)null);
 			}
 			else
 			{
-				var4.onSlotChanged();
+				sl.onSlotChanged();
 			}
 		}
 
-		return var3;
+		return is;
 	}
 
 	@Override

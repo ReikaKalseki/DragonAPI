@@ -23,29 +23,27 @@ public class ContainerBasicStorage extends CoreContainer {
 		lowerInv = (IInventory)te;
 		int numRows = lowerInv.getSizeInventory() / 9;
 		lowerInv.openChest();
-		int var3 = (numRows - 4) * 18;
-		int var4;
-		int var5;
+		int dy = (numRows - 4) * 18;
 
-		for (var4 = 0; var4 < numRows; ++var4)
+		for (int i = 0; i < numRows; i++)
 		{
-			for (var5 = 0; var5 < 9; ++var5)
+			for (int j = 0; j < 9; j++)
 			{
-				this.addSlotToContainer(new Slot(lowerInv, var5 + var4 * 9, 8 + var5 * 18, 18 + var4 * 18));
+				this.addSlotToContainer(new Slot(lowerInv, j + i * 9, 8 + j * 18, 18 + i * 18));
 			}
 		}
 
-		for (var4 = 0; var4 < 3; ++var4)
+		for (int i = 0; i < 3; i++)
 		{
-			for (var5 = 0; var5 < 9; ++var5)
+			for (int j = 0; j < 9; j++)
 			{
-				this.addSlotToContainer(new Slot(player.inventory, var5 + var4 * 9 + 9, 8 + var5 * 18, 103 + var4 * 18 + var3));
+				this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 103 + i * 18 + dy));
 			}
 		}
 
-		for (var4 = 0; var4 < 9; ++var4)
+		for (int i = 0; i < 9; i++)
 		{
-			this.addSlotToContainer(new Slot(player.inventory, var4, 8 + var4 * 18, 161 + var3));
+			this.addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 161 + dy));
 		}
 	}
 
