@@ -46,4 +46,28 @@ public class ReikaColorAPI {
 		color = (color << 8) + blue;
 		return color;
 	}
+
+	public static Color getHigherSat(Color color) {
+		int r = (color.getRed());
+		int g = (color.getGreen());
+		int b = (color.getBlue());
+		int a = color.getAlpha();
+		if (r > 255)
+			r = 255;
+		if (g > 255)
+			g = 255;
+		if (b > 255)
+			b = 255;
+		Color color2 = new Color(r, g, b, a);
+		return color2;
+	}
+
+	public static Color getLowerSat(Color color) {
+		int r = color.getRed();
+		int g = color.getGreen();
+		int b = color.getBlue();
+		int a = color.getAlpha();
+		Color color2 = new Color(r, g, b, a);
+		return color2;
+	}
 }
