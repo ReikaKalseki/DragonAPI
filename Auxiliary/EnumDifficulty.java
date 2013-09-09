@@ -11,11 +11,11 @@ package Reika.DragonAPI.Auxiliary;
 
 public enum EnumDifficulty {
 
-	NOOB(),
-	EASY(),
-	MEDIUM(),
-	HARD(),
-	UNPLAYABLE();
+	NOOB,
+	EASY,
+	MEDIUM,
+	HARD,
+	UNPLAYABLE;
 
 	private static final EnumDifficulty[] difficultyList = EnumDifficulty.values();
 
