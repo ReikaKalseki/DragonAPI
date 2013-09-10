@@ -49,13 +49,21 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	/** Returns the value of a double raised to an integer power. Args: Base, power */
 	public static double intpow(double base, int pow) {
 		double val = 1.0D;
-		for (int i = 0; i < pow; i++) {
-			val *= base;
+		if (pow > 0) {
+			for (int i = 0; i < pow; i++) {
+				val *= base;
+			}
+		}
+		else {
+			pow = -pow;
+			for (int i = 0; i < pow; i++) {
+				val /= base;
+			}
 		}
 		return val;
 	}
 
-	/** Returns the value of an integer raised to an integer power. Args: Base, power */
+	/** Returns the value of an integer raised to a POSITIVE integer power. Args: Base, power */
 	public static int intpow2(int base, int pow) {
 		int val = 1;
 		for (int i = 0; i < pow; i++) {

@@ -32,6 +32,12 @@ public class ParallelTicker {
 		return tickers.get(key);
 	}
 
+	public int getCapOf(String key) {
+		if (!caps.containsKey(key))
+			return -1;
+		return caps.get(key);
+	}
+
 	public void updateTicker(String key) {
 		if (tickers.containsKey(key)) {
 			tickers.put(key, tickers.get(key)+1);
