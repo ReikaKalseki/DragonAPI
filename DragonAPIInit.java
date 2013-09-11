@@ -11,6 +11,7 @@ package Reika.DragonAPI;
 
 import java.net.URL;
 
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -50,7 +51,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	@Init
 	public void load(FMLInitializationEvent event) {
-
+		OreDictionary.initVanillaEntries();
 	}
 
 	@Override
