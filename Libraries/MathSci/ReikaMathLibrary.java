@@ -301,4 +301,14 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		}
 		return val;
 	}
+
+	/** Returns the factorial of a positive integer. Take care with this, given
+	 * how rapidly that function's output rises. */
+	public static int factorial(int val) {
+		int base = 1;
+		for (int i = val; i > 0; i--) {
+			base *= i;
+		}
+		return base;
+	}
 }

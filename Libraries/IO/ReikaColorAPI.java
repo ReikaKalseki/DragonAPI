@@ -52,6 +52,12 @@ public class ReikaColorAPI {
 		int g = (color.getGreen());
 		int b = (color.getBlue());
 		int a = color.getAlpha();
+		if (r > g && r > b)
+			r *= 1.2;
+		if (g > r && g > b)
+			g *= 1.2;
+		if (b > g && b > r)
+			b *= 1.2;
 		if (r > 255)
 			r = 255;
 		if (g > 255)

@@ -14,6 +14,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.texturepacks.ITexturePack;
 import net.minecraft.client.texturepacks.TexturePackList;
+import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -41,6 +42,14 @@ public class ReikaTextureHelper {
 
 	public static ITexturePack getCurrentTexturePack() {
 		return (Minecraft.getMinecraft().texturePackList.getSelectedTexturePack());
+	}
+
+	public static int getIconWidth(Icon ico) {
+		return (int)Math.ceil(ico.getSheetWidth()*(ico.getMaxU()-ico.getMinU()));
+	}
+
+	public static int getIconHeight(Icon ico) {
+		return (int)Math.ceil(ico.getSheetHeight()*(ico.getMaxV()-ico.getMinV()));
 	}
 
 }
