@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModRegistry;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -223,5 +224,23 @@ public enum ModOreList {
 			li.addAll(oreList[i].ores);
 		}
 		return li;
+	}
+
+	public boolean hasRegisteredBlock() {
+		return ores.size() > 0;
+	}
+
+	public ItemStack getFirstOreBlock() {
+		if (!this.hasRegisteredBlock())
+			return null;
+		return ores.get(0);
+	}
+
+	public ItemStack getRandomOreBlock() {
+		if (!this.hasRegisteredBlock())
+			return null;
+		int s = ores.size();
+		int index = new Random().nextInt(s);
+		return ores.get(index);
 	}
 }
