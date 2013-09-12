@@ -27,4 +27,16 @@ public class ReikaFormatHelper {
 		return String.format("%dh:%dm:%.2fs", hour, minute, second);
 	}
 
+	public static String getSecondsAsClock(int time) {
+		int hour = 0;
+		int minute = 0;
+		int second = 0;
+
+		hour = time*20/HOUR;
+		minute = (time*20-hour*HOUR)/MINUTE;
+		second = (time*20-hour*HOUR-minute*MINUTE)/SECOND;
+
+		return String.format("%02d:%02d:%02d", hour, minute, second);
+	}
+
 }
