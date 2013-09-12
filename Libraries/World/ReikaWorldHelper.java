@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.World;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -44,6 +45,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (id == 0)
 			return true;
 		Block b = Block.blocksList[id];
+		if (BlockFluid.class.isAssignableFrom(b.getClass()))
+			return true;
 		if (b.isBlockReplaceable(world, x, y, z))
 			return true;
 		if (b.isAirBlock(world, x, y, z))
