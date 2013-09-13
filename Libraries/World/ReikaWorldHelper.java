@@ -45,7 +45,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (id == 0)
 			return true;
 		Block b = Block.blocksList[id];
-		if (BlockFluid.class.isAssignableFrom(b.getClass()))
+		if (b instanceof BlockFluid)
 			return true;
 		if (b.isBlockReplaceable(world, x, y, z))
 			return true;
