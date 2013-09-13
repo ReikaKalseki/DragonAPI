@@ -110,22 +110,22 @@ public class CoreContainer extends Container {
 
 		if (sl != null && sl.getHasStack())
 		{
-			ItemStack var5 = sl.getStack();
-			is = var5.copy();
+			ItemStack inslot = sl.getStack();
+			is = inslot.copy();
 
 			if (slot < invsize)
 			{
-				if (!this.mergeItemStack(var5, invsize, inventorySlots.size(), true))
+				if (!this.mergeItemStack(inslot, invsize, inventorySlots.size(), true))
 				{
 					return null;
 				}
 			}
-			else if (!this.mergeItemStack(var5, 0, invsize, false))
+			else if (!this.mergeItemStack(inslot, 0, invsize, false))
 			{
 				return null;
 			}
 
-			if (var5.stackSize == 0)
+			if (inslot.stackSize == 0)
 			{
 				sl.putStack((ItemStack)null);
 			}
@@ -139,7 +139,7 @@ public class CoreContainer extends Container {
 	}
 
 	@Override
-	protected boolean mergeItemStack(ItemStack par1ItemStack, int par2, int par3, boolean par4)
+	protected boolean mergeItemStack(ItemStack is, int par2, int par3, boolean par4)
 	{
 		boolean flag1 = false;
 		int k = par2;
@@ -152,30 +152,30 @@ public class CoreContainer extends Container {
 		Slot slot;
 		ItemStack itemstack1;
 
-		if (par1ItemStack.isStackable())
+		if (is.isStackable())
 		{
-			while (par1ItemStack.stackSize > 0 && (!par4 && k < par3 || par4 && k >= par2))
+			while (is.stackSize > 0 && (!par4 && k < par3 || par4 && k >= par2))
 			{
 				slot = (Slot)inventorySlots.get(k);
 				itemstack1 = slot.getStack();
 
-				//ReikaJavaLibrary.pConsole(par1ItemStack+" to "+slot+" ("+itemstack1+") - "+slot.isItemValid(par1ItemStack));
+				//ReikaJavaLibrary.pConsole(is+" to "+slot+" ("+itemstack1+") - "+slot.isItemValid(is));
 
-				if (ii.isStackValidForSlot(k, par1ItemStack) && slot.isItemValid(par1ItemStack) && itemstack1 != null && itemstack1.itemID == par1ItemStack.itemID && (!par1ItemStack.getHasSubtypes() || par1ItemStack.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(par1ItemStack, itemstack1))
+				if (ii.isStackValidForSlot(k, is) && slot.isItemValid(is) && itemstack1 != null && itemstack1.itemID == is.itemID && (!is.getHasSubtypes() || is.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(is, itemstack1))
 				{
-					int l = itemstack1.stackSize + par1ItemStack.stackSize;
+					int l = itemstack1.stackSize + is.stackSize;
 
-					if (l <= par1ItemStack.getMaxStackSize())
+					if (l <= is.getMaxStackSize())
 					{
-						par1ItemStack.stackSize = 0;
+						is.stackSize = 0;
 						itemstack1.stackSize = l;
 						slot.onSlotChanged();
 						flag1 = true;
 					}
-					else if (itemstack1.stackSize < par1ItemStack.getMaxStackSize())
+					else if (itemstack1.stackSize < is.getMaxStackSize())
 					{
-						par1ItemStack.stackSize -= par1ItemStack.getMaxStackSize() - itemstack1.stackSize;
-						itemstack1.stackSize = par1ItemStack.getMaxStackSize();
+						is.stackSize -= is.getMaxStackSize() - itemstack1.stackSize;
+						itemstack1.stackSize = is.getMaxStackSize();
 						slot.onSlotChanged();
 						flag1 = true;
 					}
@@ -192,7 +192,7 @@ public class CoreContainer extends Container {
 			}
 		}
 
-		if (par1ItemStack.stackSize > 0)
+		if (is.stackSize > 0)
 		{
 			if (par4)
 			{
@@ -208,11 +208,11 @@ public class CoreContainer extends Container {
 				slot = (Slot)inventorySlots.get(k);
 				itemstack1 = slot.getStack();
 
-				if (ii.isStackValidForSlot(k, par1ItemStack) && slot.isItemValid(par1ItemStack) && itemstack1 == null)
+				if (ii.isStackValidForSlot(k, is) && slot.isItemValid(is) && itemstack1 == null)
 				{
-					slot.putStack(par1ItemStack.copy());
+					slot.putStack(is.copy());
 					slot.onSlotChanged();
-					par1ItemStack.stackSize = 0;
+					is.stackSize = 0;
 					flag1 = true;
 					break;
 				}
