@@ -397,6 +397,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			ReikaChatHelper.write("Tried to access Slot "+slot+", which is larger than the inventory.");
 			return;
 		}
+		if (slot < 0) {
+			ReikaChatHelper.write("Tried to access Slot "+slot+", which is < 0.");
+			return;
+		}
 		if (inv[slot] == null) {
 			ReikaChatHelper.write("Tried to access Slot "+slot+", which is empty.");
 			return;

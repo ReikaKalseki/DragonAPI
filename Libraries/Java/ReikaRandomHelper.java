@@ -24,4 +24,9 @@ public class ReikaRandomHelper extends DragonAPICore {
 		return (base+add);
 	}
 
+	public static int getRandomPlusMinus(int base, int range) {
+		int add = -range+rand.nextInt(range*2+1);
+		return base+add;
+	}
+
 }

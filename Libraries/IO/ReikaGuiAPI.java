@@ -439,8 +439,6 @@ public final class ReikaGuiAPI extends GuiScreen {
 	}
 
 	public void drawTooltip(FontRenderer f, String s) {
-		double dz = 0;
-		GL11.glTranslated(0, 0, dz);
 		int mx = this.getMouseRealX();
 		int my = this.getMouseRealY();
 		int w = mc.fontRenderer.getStringWidth(s);
@@ -451,13 +449,11 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
 		o = 2;
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
+		mc.renderEngine.bindTexture("/glyph/AA.png");
 		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
-		GL11.glTranslated(0, 0, -dz);
 	}
 
 	public void drawTooltipAt(FontRenderer f, String s, int mx, int my) {
-		double dz = 0;
-		GL11.glTranslated(0, 0, dz);
 		int w = mc.fontRenderer.getStringWidth(s);
 		int h = 8;
 		int o = 3;
@@ -466,8 +462,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
 		o = 2;
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
+		mc.renderEngine.bindTexture("/glyph/AA.png");
 		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
-		GL11.glTranslated(0, 0, -dz);
 	}
 
 	public float getMouseScreenY() {

@@ -49,6 +49,8 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	/** Returns the value of a double raised to an integer power. Args: Base, power */
 	public static double intpow(double base, int pow) {
 		double val = 1.0D;
+		if (pow == 0)
+			return val;
 		if (pow > 0) {
 			for (int i = 0; i < pow; i++) {
 				val *= base;
@@ -105,13 +107,13 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	 * as specified. Args: a, b, operation. Operations: "min", "absmin", "max",
 	 * "absmax". All other inputs will result in the method returning -987654321 */
 	public static int extrema(int a, int b, String control) {
-		if (control == "min") {
+		if ("min".equals(control)) {
 			if (a > b)
 				return b;
 			else
 				return a;
 		}
-		if (control == "absmin") {
+		if ("absmin".equals(control)) {
 			if (a < 0)
 				a *= -1;
 			if (b < 0)
@@ -121,13 +123,13 @@ public final class ReikaMathLibrary extends DragonAPICore {
 			else
 				return a;
 		}
-		if (control == "max") {
+		if ("max".equals(control)) {
 			if (a > b)
 				return a;
 			else
 				return b;
 		}
-		if (control == "absmax") {
+		if ("absmax".equals(control)) {
 			if (a < 0)
 				a *= -1;
 			if (b < 0)
@@ -310,5 +312,10 @@ public final class ReikaMathLibrary extends DragonAPICore {
 			base *= i;
 		}
 		return base;
+	}
+
+	/** Simple test to see if two number ranges overlap. Args: range 1 min/max; range 2 min/max */
+	public static boolean doRangesOverLap(int min1, int max1, int min2, int max2) {
+		return max2 >= min1 && min2 <= max1;
 	}
 }

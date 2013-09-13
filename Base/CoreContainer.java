@@ -115,7 +115,7 @@ public class CoreContainer extends Container {
 
 			if (slot < invsize)
 			{
-				if (!this.mergeItemStack(inslot, invsize, inventorySlots.size(), true))
+				if (!this.mergeItemStack(inslot, 0, player.inventory.getSizeInventory(), true))
 				{
 					return null;
 				}
@@ -139,14 +139,14 @@ public class CoreContainer extends Container {
 	}
 
 	@Override
-	protected boolean mergeItemStack(ItemStack is, int par2, int par3, boolean par4)
+	protected boolean mergeItemStack(ItemStack is, int firstslot, int maxslot, boolean toPlayer)
 	{
 		boolean flag1 = false;
-		int k = par2;
+		int k = firstslot;
 
-		if (par4)
+		if (toPlayer)
 		{
-			k = par3 - 1;
+			k = maxslot - 1;
 		}
 
 		Slot slot;
@@ -154,12 +154,12 @@ public class CoreContainer extends Container {
 
 		if (is.isStackable())
 		{
-			while (is.stackSize > 0 && (!par4 && k < par3 || par4 && k >= par2))
+			while (is.stackSize > 0 && (!toPlayer && k < maxslot || toPlayer && k >= firstslot))
 			{
 				slot = (Slot)inventorySlots.get(k);
 				itemstack1 = slot.getStack();
 
-				//ReikaJavaLibrary.pConsole(is+" to "+slot+" ("+itemstack1+") - "+slot.isItemValid(is));
+				//ReikaJavaLibrary.pConsole(toPlayer+" for "+is+" to "+slot+" ("+itemstack1+") - "+slot.isItemValid(is));
 
 				if (ii.isStackValidForSlot(k, is) && slot.isItemValid(is) && itemstack1 != null && itemstack1.itemID == is.itemID && (!is.getHasSubtypes() || is.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(is, itemstack1))
 				{
@@ -181,7 +181,7 @@ public class CoreContainer extends Container {
 					}
 				}
 
-				if (par4)
+				if (toPlayer)
 				{
 					--k;
 				}
@@ -194,21 +194,21 @@ public class CoreContainer extends Container {
 
 		if (is.stackSize > 0)
 		{
-			if (par4)
+			if (toPlayer)
 			{
-				k = par3 - 1;
+				k = maxslot - 1;
 			}
 			else
 			{
-				k = par2;
+				k = firstslot;
 			}
 
-			while (!par4 && k < par3 || par4 && k >= par2)
+			while (!toPlayer && k < maxslot || toPlayer && k >= firstslot)
 			{
 				slot = (Slot)inventorySlots.get(k);
 				itemstack1 = slot.getStack();
 
-				if (ii.isStackValidForSlot(k, is) && slot.isItemValid(is) && itemstack1 == null)
+				if ((toPlayer || ii.isStackValidForSlot(k, is) && slot.isItemValid(is)) && itemstack1 == null)
 				{
 					slot.putStack(is.copy());
 					slot.onSlotChanged();
@@ -217,7 +217,7 @@ public class CoreContainer extends Container {
 					break;
 				}
 
-				if (par4)
+				if (toPlayer)
 				{
 					--k;
 				}

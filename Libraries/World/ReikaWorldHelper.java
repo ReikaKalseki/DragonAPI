@@ -33,6 +33,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -1483,5 +1484,53 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		base = (float)(base * (1.0D - world.getRainStrength(0) * 5.0F / 16.0D));
 		base = (float)(base * (1.0D - world.getWeightedThunderStrength(0) * 5.0F / 16.0D));
 		return base * 0.8F + 0.2F;
+	}
+
+	public static boolean testBlockProximity(World world, int x, int y, int z, int id, int meta, int r) {
+		for (int i = -r; i <= r; i++) {
+			for (int j = -r; j <= r; j++) {
+				for (int k = -r; k <= r; k++) {
+					int rx = x+i;
+					int ry = y+j;
+					int rz = z+k;
+					int rid = world.getBlockId(rx, ry, rz);
+					int rmeta = world.getBlockMetadata(rx, ry, rz);
+					if (rid == id && (meta == -1 || rmeta == meta))
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean testLiquidProximity(World world, int x, int y, int z, Material mat, int r) {
+		for (int i = -r; i <= r; i++) {
+			for (int j = -r; j <= r; j++) {
+				for (int k = -r; k <= r; k++) {
+					int rx = x+i;
+					int ry = y+j;
+					int rz = z+k;
+					Material rmat = world.getBlockMaterial(rx, ry, rz);
+					if (rmat == mat)
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static boolean testBlockProximityLoose(World world, int x, int y, int z, int id, int meta, int r) {
+		int total = r*r*r*8; //(2r)^3
+		int frac = total/16;
+		for (int i = 0; i < frac; i++) {
+			int rx = ReikaRandomHelper.getRandomPlusMinus(x, r);
+			int ry = ReikaRandomHelper.getRandomPlusMinus(y, r);
+			int rz = ReikaRandomHelper.getRandomPlusMinus(z, r);
+			int rid = world.getBlockId(rx, ry, rz);
+			int rmeta = world.getBlockMetadata(rx, ry, rz);
+			if (rid == id && (meta == -1 || rmeta == meta))
+				return true;
+		}
+		return false;
 	}
 }
