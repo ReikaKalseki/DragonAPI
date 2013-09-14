@@ -318,7 +318,13 @@ public final class ReikaGuiAPI extends GuiScreen {
 		ItemStack[] in = new ItemStack[9];
 		IRecipe ire = lr.get(((int)(System.nanoTime()/2000000000))%lr.size());
 		ItemStack isout = ire.getRecipeOutput();
-		ReikaRecipeHelper.copyRecipeToItemStackArray(in, ire);
+		try {
+			ReikaRecipeHelper.copyRecipeToItemStackArray(in, ire);
+		}
+		catch (NullPointerException e) { //temporary fix...
+			e.printStackTrace();
+			return;
+		}
 		boolean noshape = false;
 		if (ire instanceof ShapelessRecipes)
 			noshape = true;
@@ -449,7 +455,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
 		o = 2;
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
-		mc.renderEngine.bindTexture("/glyph/AA.png");
+		mc.renderEngine.bindTexture("/font/glyph_AA.png");
 		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
 	}
 
@@ -462,7 +468,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
 		o = 2;
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
-		mc.renderEngine.bindTexture("/glyph/AA.png");
+		mc.renderEngine.bindTexture("/font/glyph_AA.png");
 		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
 	}
 

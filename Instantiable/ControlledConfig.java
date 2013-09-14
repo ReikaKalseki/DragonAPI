@@ -15,9 +15,11 @@ import java.io.PrintWriter;
 
 import net.minecraftforge.common.Configuration;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.ConfigList;
 import Reika.DragonAPI.Interfaces.IDRegistry;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ControlledConfig {
@@ -139,9 +141,25 @@ public class ControlledConfig {
 		}
 	}
 
-	public void initProps(FMLPreInitializationEvent event) {
-		//allocate the file to the config
+	public void loadCustomConfigFile(FMLPreInitializationEvent event, String file) {
+		configFile = new File(file);
+	}
+
+	public void loadSubfolderedConfigFile(FMLPreInitializationEvent event) {
+		String name = ReikaStringParser.stripSpaces(configMod.getDisplayName());
+		String author = ReikaStringParser.stripSpaces(configMod.getModAuthorName());
+		String file = event.getModConfigurationDirectory()+"/"+author+"/"+name+".cfg";
+		ReikaJavaLibrary.pConsole(file);
+		configFile = new File(file);
+	}
+
+	public void loadDefaultConfigFile(FMLPreInitializationEvent event) {
 		configFile = event.getSuggestedConfigurationFile();
+	}
+
+	public void initProps(FMLPreInitializationEvent event) {
+		if (configFile == null)
+			throw new MisuseException("Error loading "+configMod.getTechnicalName()+": You must load a config file before reading it!");
 		config = new Configuration(configFile);
 
 		//load data
