@@ -87,7 +87,7 @@ public enum ModOreList {
 	//?
 	NETHERPIGIRON("Nether Pig Iron", "ingotPigIron", 1, "oreNetherPigIron"),
 	//RAILCRAFT
-	SULFUR("Sulfur", "ingotSulfur", 3, "oreSulfur"),
+	SULFUR("Sulfur", "dustSulfur", 3, "oreSulfur"),
 	//REACTORCRAFT
 	PITCHBLENDE("Pitchblende", "ingotUranium", 1, "orePitchblende"),
 	CADMIUM("Cadmium", "ingotCadmium", 1, "oreCadmium"),
