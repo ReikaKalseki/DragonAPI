@@ -74,7 +74,7 @@ public final class ReikaSpriteSheets {
 			ItemRenderer.renderItemIn2D(v5, 0.0625F+0.0625F*col, 0.0625F*row, 0.0625F*col, 0.0625F+0.0625F*row, 256, 256, thick);
 		}
 		GL11.glEnable(GL11.GL_LIGHTING);
-		Minecraft.getMinecraft().renderEngine.bindTexture("/items.png");
+		Minecraft.getMinecraft().renderEngine.bindTexture("/gui/items.png");
 	}
 
 }
