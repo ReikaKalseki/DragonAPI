@@ -116,4 +116,10 @@ public class TwilightBlockHandler extends ModHandlerBase {
 		return b.blockID == towerWoodID;
 	}
 
+	public boolean isMazeStone(Block b) {
+		if (!this.initializedProperly())
+			return false;
+		return b.blockID == mazeStoneID;
+	}
+
 }
