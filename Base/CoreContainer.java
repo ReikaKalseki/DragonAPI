@@ -16,6 +16,8 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityChest;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public class CoreContainer extends Container {
@@ -229,6 +231,17 @@ public class CoreContainer extends Container {
 		}
 
 		return flag1;
+	}
+
+	@Override //To avoid a couple crashes with some mods not checking array bounds
+	public Slot getSlot(int index)
+	{
+		if (index >= inventorySlots.size() || index < 0) {
+			ReikaJavaLibrary.pConsole("A mod tried to access an invalid slot for "+this);
+			Thread.dumpStack();
+			return new Slot(new TileEntityChest(), index, -20, -20); //create new slot off screen; hacky fix, but should work
+		}
+		return (Slot)inventorySlots.get(index);
 	}
 
 }

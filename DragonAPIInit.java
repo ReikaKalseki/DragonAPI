@@ -9,11 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
@@ -42,16 +44,19 @@ public class DragonAPIInit extends DragonAPIMod {
 	@SidedProxy(clientSide="Reika.DragonAPI.APIProxyClient", serverSide="Reika.DragonAPI.APIProxy")
 	public static APIProxy proxy;
 
+	//@Instance
+	public static DragonAPIInit instance = new DragonAPIInit();
+
 	@Override
 	@PreInit
 	public void preload(FMLPreInitializationEvent evt) {
-
+		OreDictionary.initVanillaEntries();
 	}
 
 	@Override
 	@Init
 	public void load(FMLInitializationEvent event) {
-		OreDictionary.initVanillaEntries();
+
 	}
 
 	@Override
@@ -97,7 +102,12 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@Override
 	public URL getDocumentationSite() {
-		return null;
+		try {
+			return new URL("http://www.minecraftforum.net/topic/1969694-");
+		}
+		catch (MalformedURLException e) {
+			throw new RegistrationException(instance, "The mod provided a malformed URL for its documentation site!");
+		}
 	}
 
 	@Override
