@@ -361,4 +361,40 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
+	public static void sendFloatPacket(String ch, int id, World world, int x, int y, int z, float data) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(PacketTypes.FLOAT.ordinal());
+			outputStream.writeInt(id);
+			outputStream.writeFloat(data);
+			outputStream.writeInt(x);
+			outputStream.writeInt(y);
+			outputStream.writeInt(z);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = ch;
+		packet.data = bos.toByteArray();
+		packet.length = bos.size();
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			// We are on the server side.
+			PacketDispatcher.sendPacketToServer(packet);
+			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+		}
+		else if (side == Side.CLIENT) {
+			// We are on the client side.
+			PacketDispatcher.sendPacketToServer(packet);
+			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
 }
