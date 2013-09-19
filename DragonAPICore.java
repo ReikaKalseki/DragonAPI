@@ -16,9 +16,11 @@ import java.util.Random;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.dedicated.DedicatedServer;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import cpw.mods.fml.common.FMLCommonHandler;
 
 public class DragonAPICore {
 
@@ -51,5 +53,9 @@ public class DragonAPICore {
 		catch (NoSuchMethodException e) {
 			return false;
 		}
+	}
+
+	public static boolean isOnActualServer() {
+		return FMLCommonHandler.instance().getMinecraftServerInstance() instanceof DedicatedServer;
 	}
 }

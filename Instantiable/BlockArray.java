@@ -272,8 +272,8 @@ public class BlockArray {
 	}
 
 	public void addLineOfClear(World world, int x, int y, int z, int range, int stepx, int stepy, int stepz) {
-		if (stepy == 0 && stepy == 0 && stepz == 0)
-			return;
+		if (stepx == 0 && stepy == 0 && stepz == 0)
+			throw new MisuseException("The addLineOfClear() method requires a specified direction!");
 		if (stepx != 0) {
 			if (stepy != 0 || stepz != 0)
 				throw new MisuseException("The addLineOfClear() method is only designed for 1D lines!");
