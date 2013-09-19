@@ -11,66 +11,8 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.HashMap;
 
-import net.minecraft.block.*;
-import net.minecraft.block.material.Material;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.item.EntityPainting;
-import net.minecraft.item.EnumArmorMaterial;
-import net.minecraft.item.EnumToolMaterial;
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemAppleGold;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemAxe;
-import net.minecraft.item.ItemBed;
-import net.minecraft.item.ItemBoat;
-import net.minecraft.item.ItemBook;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemBucket;
-import net.minecraft.item.ItemBucketMilk;
-import net.minecraft.item.ItemCarrotOnAStick;
-import net.minecraft.item.ItemCoal;
-import net.minecraft.item.ItemDoor;
-import net.minecraft.item.ItemDye;
-import net.minecraft.item.ItemEditableBook;
-import net.minecraft.item.ItemEgg;
-import net.minecraft.item.ItemEmptyMap;
-import net.minecraft.item.ItemEnchantedBook;
-import net.minecraft.item.ItemEnderEye;
-import net.minecraft.item.ItemEnderPearl;
-import net.minecraft.item.ItemExpBottle;
-import net.minecraft.item.ItemFireball;
-import net.minecraft.item.ItemFirework;
-import net.minecraft.item.ItemFireworkCharge;
-import net.minecraft.item.ItemFishingRod;
-import net.minecraft.item.ItemFlintAndSteel;
-import net.minecraft.item.ItemFood;
-import net.minecraft.item.ItemGlassBottle;
-import net.minecraft.item.ItemHangingEntity;
-import net.minecraft.item.ItemHoe;
-import net.minecraft.item.ItemMap;
-import net.minecraft.item.ItemMinecart;
-import net.minecraft.item.ItemMonsterPlacer;
-import net.minecraft.item.ItemPickaxe;
-import net.minecraft.item.ItemPotion;
-import net.minecraft.item.ItemRecord;
-import net.minecraft.item.ItemRedstone;
-import net.minecraft.item.ItemReed;
-import net.minecraft.item.ItemSaddle;
-import net.minecraft.item.ItemSeedFood;
-import net.minecraft.item.ItemSeeds;
-import net.minecraft.item.ItemShears;
-import net.minecraft.item.ItemSign;
-import net.minecraft.item.ItemSimpleFoiled;
-import net.minecraft.item.ItemSkull;
-import net.minecraft.item.ItemSnowball;
-import net.minecraft.item.ItemSoup;
-import net.minecraft.item.ItemSpade;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemWritableBook;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionHelper;
-import net.minecraft.tileentity.TileEntitySign;
 
 public class IDMap {
 
@@ -78,7 +20,8 @@ public class IDMap {
 	private static final HashMap<Item, Integer> itemIDs = new HashMap();
 
 	static {
-		blockIDs.put(Block. stone = (new BlockStone(1)).setHardness(1.5F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("stone");
+		/*
+		blockIDs.put(Block.stone, 1);
 		blockIDs.put(Block.Grass grass = (BlockGrass)(new BlockGrass(2)).setHardness(0.6F).setStepSound(soundGrassFootstep).setUnlocalizedName("grass");
 		blockIDs.put(Block. dirt = (new BlockDirt(3)).setHardness(0.5F).setStepSound(soundGravelFootstep).setUnlocalizedName("dirt");
 		blockIDs.put(Block. cobblestone = (new Block(4, Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("stonebrick").setCreativeTab(CreativeTabs.tabBlock);
@@ -88,8 +31,6 @@ public class IDMap {
 		blockIDs.put(Block.Fluid waterMoving = (BlockFluid)(new BlockFlowing(8, Material.water)).setHardness(100.0F).setLightOpacity(3).setUnlocalizedName("water").disableStats();
 		blockIDs.put(Block. waterStill = (new BlockStationary(9, Material.water)).setHardness(100.0F).setLightOpacity(3).setUnlocalizedName("water").disableStats();
 		blockIDs.put(Block.Fluid lavaMoving = (BlockFluid)(new BlockFlowing(10, Material.lava)).setHardness(0.0F).setLightValue(1.0F).setUnlocalizedName("lava").disableStats();
-
-		/** Stationary lava source block */
 		blockIDs.put(Block. lavaStill = (new BlockStationary(11, Material.lava)).setHardness(100.0F).setLightValue(1.0F).setUnlocalizedName("lava").disableStats();
 		blockIDs.put(Block. sand = (new BlockSand(12)).setHardness(0.5F).setStepSound(soundSandFootstep).setUnlocalizedName("sand");
 		blockIDs.put(Block. gravel = (new BlockGravel(13)).setHardness(0.6F).setStepSound(soundGravelFootstep).setUnlocalizedName("gravel");
@@ -122,11 +63,7 @@ public class IDMap {
 		blockIDs.put(Block.Flower mushroomRed = (BlockFlower)(new BlockMushroom(40, "mushroom_red")).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("mushroom");
 		blockIDs.put(Block. blockGold = (new BlockOreStorage(41)).setHardness(3.0F).setResistance(10.0F).setStepSound(soundMetalFootstep).setUnlocalizedName("blockGold");
 		blockIDs.put(Block. blockIron = (new BlockOreStorage(42)).setHardness(5.0F).setResistance(10.0F).setStepSound(soundMetalFootstep).setUnlocalizedName("blockIron");
-
-		/** stoneDoubleSlab */
 		blockIDs.put(Block.HalfSlab stoneDoubleSlab = (BlockHalfSlab)(new BlockStep(43, true)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("stoneSlab");
-
-		/** stoneSingleSlab */
 		blockIDs.put(Block.HalfSlab stoneSingleSlab = (BlockHalfSlab)(new BlockStep(44, false)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("stoneSlab");
 		blockIDs.put(Block. brick = (new Block(45, Material.rock)).setHardness(2.0F).setResistance(10.0F).setStepSound(soundStoneFootstep).setUnlocalizedName("brick").setCreativeTab(CreativeTabs.tabBlock);
 		blockIDs.put(Block. tnt = (new BlockTNT(46)).setHardness(0.0F).setStepSound(soundGrassFootstep).setUnlocalizedName("tnt");
@@ -173,17 +110,11 @@ public class IDMap {
 		blockIDs.put(Block. netherrack = (new BlockNetherrack(87)).setHardness(0.4F).setStepSound(soundStoneFootstep).setUnlocalizedName("hellrock");
 		blockIDs.put(Block. slowSand = (new BlockSoulSand(88)).setHardness(0.5F).setStepSound(soundSandFootstep).setUnlocalizedName("hellsand");
 		blockIDs.put(Block. glowStone = (new BlockGlowStone(89, Material.glass)).setHardness(0.3F).setStepSound(soundGlassFootstep).setLightValue(1.0F).setUnlocalizedName("lightgem");
-
-		/** The purple teleport blocks inside the obsidian circle */
 		blockIDs.put(Block.Portal portal = (BlockPortal)(new BlockPortal(90)).setHardness(-1.0F).setStepSound(soundGlassFootstep).setLightValue(0.75F).setUnlocalizedName("portal");
 		blockIDs.put(Block. pumpkinLantern = (new BlockPumpkin(91, true)).setHardness(1.0F).setStepSound(soundWoodFootstep).setLightValue(1.0F).setUnlocalizedName("litpumpkin");
 		blockIDs.put(Block. cake = (new BlockCake(92)).setHardness(0.5F).setStepSound(soundClothFootstep).setUnlocalizedName("cake").disableStats();
 		blockIDs.put(Block.RedstoneRepeater redstoneRepeaterIdle = (BlockRedstoneRepeater)(new BlockRedstoneRepeater(93, false)).setHardness(0.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("diode").disableStats();
 		blockIDs.put(Block.RedstoneRepeater redstoneRepeaterActive = (BlockRedstoneRepeater)(new BlockRedstoneRepeater(94, true)).setHardness(0.0F).setLightValue(0.625F).setStepSound(soundWoodFootstep).setUnlocalizedName("diode").disableStats();
-
-		/**
-		 * April fools secret locked chest, only spawns on new chunks on 1st April.
-		 */
 		blockIDs.put(Block. lockedChest = (new BlockLockedChest(95)).setHardness(0.0F).setLightValue(1.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("lockedchest").setTickRandomly(true);
 		blockIDs.put(Block. trapdoor = (new BlockTrapDoor(96, Material.wood)).setHardness(3.0F).setStepSound(soundWoodFootstep).setUnlocalizedName("trapdoor").disableStats();
 		blockIDs.put(Block. silverfish = (new BlockSilverfish(97)).setHardness(0.75F).setUnlocalizedName("monsterStoneEgg");
@@ -352,10 +283,6 @@ public class IDMap {
 		public static Item redstoneRepeater = (new ItemReed(100, Block.redstoneRepeaterIdle)).setUnlocalizedName("diode").setCreativeTab(CreativeTabs.tabRedstone);
 		public static Item cookie = (new ItemFood(101, 2, 0.1F, false)).setUnlocalizedName("cookie");
 		public static ItemMap map = (ItemMap)(new ItemMap(102)).setUnlocalizedName("map");
-
-		/**
-		 * Item introduced on 1.7 version, is a shear to cut leaves (you can keep the block) or get wool from sheeps.
-		 */
 		public static ItemShears shears = (ItemShears)(new ItemShears(103)).setUnlocalizedName("shears");
 		public static Item melon = (new ItemFood(104, 2, 0.3F, false)).setUnlocalizedName("melon");
 		public static Item pumpkinSeeds = (new ItemSeeds(105, Block.pumpkinStem.blockID, Block.tilledField.blockID)).setUnlocalizedName("seeds_pumpkin");
@@ -381,15 +308,7 @@ public class IDMap {
 		public static Item eyeOfEnder = (new ItemEnderEye(125)).setUnlocalizedName("eyeOfEnder");
 		public static Item speckledMelon = (new Item(126)).setUnlocalizedName("speckledMelon").setPotionEffect(PotionHelper.speckledMelonEffect).setCreativeTab(CreativeTabs.tabBrewing);
 		public static Item monsterPlacer = (new ItemMonsterPlacer(127)).setUnlocalizedName("monsterPlacer");
-
-		/**
-		 * Bottle o' Enchanting. Drops between 1 and 3 experience orbs when thrown.
-		 */
 		public static Item expBottle = (new ItemExpBottle(128)).setUnlocalizedName("expBottle");
-
-		/**
-		 * Fire Charge. When used in a dispenser it fires a fireball similiar to a Ghast's.
-		 */
 		public static Item fireballCharge = (new ItemFireball(129)).setUnlocalizedName("fireball");
 		public static Item writableBook = (new ItemWritableBook(130)).setUnlocalizedName("writingBook").setCreativeTab(CreativeTabs.tabMisc);
 		public static Item writtenBook = (new ItemEditableBook(131)).setUnlocalizedName("writtenBook");
@@ -426,6 +345,7 @@ public class IDMap {
 		public static Item recordWard = (new ItemRecord(2009, "ward")).setUnlocalizedName("record");
 		public static Item record11 = (new ItemRecord(2010, "11")).setUnlocalizedName("record");
 		public static Item recordWait = (new ItemRecord(2011, "wait")).setUnlocalizedName("record");
+		 */
 	}
 
 }
