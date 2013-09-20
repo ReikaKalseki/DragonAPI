@@ -52,4 +52,8 @@ public class ReikaTextureHelper {
 		return (int)Math.ceil(ico.getSheetHeight()*(ico.getMaxV()-ico.getMinV()));
 	}
 
+	public static void bindTexture(String tex) {
+		Minecraft.getMinecraft().renderEngine.bindTexture(tex);
+	}
+
 }
