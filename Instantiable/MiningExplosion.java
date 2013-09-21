@@ -127,7 +127,7 @@ public class MiningExplosion extends Explosion {
 					d2 /= d8;
 					double d9 = world.getBlockDensity(vec3, entity.boundingBox);
 					double d10 = (1.0D - d7) * d9;
-					if (!(entity instanceof EntityItem || entity instanceof EntityXPOrb))
+					if (this.canDamageEntity(entity))
 						entity.attackEntityFrom(DamageSource.setExplosionSource(this), (int)((d10 * d10 + d10) / 2.0D * 8.0D * explosionSize + 1.0D));
 					double d11 = EnchantmentProtection.func_92092_a(entity, d10);
 					entity.motionX += d0 * d11;
@@ -203,12 +203,14 @@ public class MiningExplosion extends Explosion {
 				{
 					Block block = Block.blocksList[l];
 
-					if (block.canDropFromExplosion(this))
+					if (l == Block.tnt.blockID || block.canDropFromExplosion(this))
 					{
 						block.dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
 					}
 
-					block.onBlockExploded(world, i, j, k, this);
+					//block.onBlockExploded(world, i, j, k, this);
+					if (!world.isRemote)
+						world.setBlock(i, j, k, 0);
 				}
 			}
 		}
@@ -232,6 +234,10 @@ public class MiningExplosion extends Explosion {
 				}
 			}
 		}
+	}
+
+	public boolean canDamageEntity(Entity e) {
+		return !(e instanceof EntityItem || e instanceof EntityXPOrb) && !(e instanceof EntityPlayer);
 	}
 
 }

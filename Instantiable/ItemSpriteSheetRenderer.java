@@ -17,7 +17,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 import Reika.DragonAPI.Auxiliary.ReikaSpriteSheets;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaPNGLoader;
 import Reika.DragonAPI.Interfaces.IndexedItemSprites;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
@@ -33,17 +32,6 @@ public final class ItemSpriteSheetRenderer implements IItemRenderer {
 	public ItemSpriteSheetRenderer(DragonAPIMod mod, Class root, String file, String backup) {
 		//this.spritesheet = ReikaSpriteSheets.setupTextures(root, file);
 		if (ReikaTextureHelper.isUsingDefaultTexturePack()) {
-			String filename;
-			if (root == null) {
-				throw new MisuseException("You cannot fetch a render texture with reference to a null class!");
-			}
-			if (root.getResource(".") == null)
-				filename = "";
-			else {
-				String base = root.getResource(".").getPath();
-				String path = base.substring(1, base.length()-1);
-				filename = path+file;
-			}
 			spritesheet = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
 		}
 		else {
