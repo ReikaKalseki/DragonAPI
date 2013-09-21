@@ -22,7 +22,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			if (BiomeGenBase.biomeList[i] == null)
 				return i;
 		}
-		return -1;
+		throw new RuntimeException("Error: Biome Limit Exceeded!");
 	}
 
 	/** Note that this is affected by other mods, so exclusive calls on this will end up including mod biomes */

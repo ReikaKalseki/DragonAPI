@@ -76,4 +76,19 @@ public class ReikaColorAPI {
 		Color color2 = new Color(r, g, b, a);
 		return color2;
 	}
+
+	public static int getRedFromInteger(int color) {
+		int r = (color >> 16) & 0xFF;
+		return r;
+	}
+
+	public static int getGreenFromInteger(int color) {
+		int g = (color >> 8) & 0xFF;
+		return g;
+	}
+
+	public static int getBlueFromInteger(int color) {
+		int b = (color >> 0) & 0xFF;
+		return b;
+	}
 }
