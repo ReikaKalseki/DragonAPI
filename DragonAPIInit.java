@@ -11,7 +11,13 @@ package Reika.DragonAPI;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.logging.Level;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -50,6 +56,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	@PreInit
 	public void preload(FMLPreInitializationEvent evt) {
+		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		OreDictionary.initVanillaEntries();
 	}
 

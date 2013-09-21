@@ -149,7 +149,6 @@ public class ControlledConfig {
 		String name = ReikaStringParser.stripSpaces(configMod.getDisplayName());
 		String author = ReikaStringParser.stripSpaces(configMod.getModAuthorName());
 		String file = event.getModConfigurationDirectory()+"/"+author+"/"+name+".cfg";
-		ReikaJavaLibrary.pConsole(file);
 		configFile = new File(file);
 	}
 
