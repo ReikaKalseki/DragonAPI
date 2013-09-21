@@ -56,6 +56,9 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 	public static Item createItemInstance(DragonAPIMod mod, RegistrationList list) {
 		Item instance;
 		try {
+			int id = list.getID();
+			if (Item.itemsList[256+id] != null && !list.overwritingItem())
+				throw new IDConflictException(mod, id+" item slot already occupied by "+Item.itemsList[256+id]+" while adding "+list.getObjectClass());
 			Constructor c = list.getObjectClass().getConstructor(list.getConstructorParamTypes());
 			instance = (Item)(c.newInstance(list.getConstructorParams()));
 			return (instance.setUnlocalizedName(list.getUnlocalizedName()));

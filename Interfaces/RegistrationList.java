@@ -37,4 +37,9 @@ public abstract interface RegistrationList {
 	/** Only used in block registration */
 	public boolean hasItemBlock();
 
+	public int getID();
+
+	/** Only used in item registration */
+	public boolean overwritingItem();
+
 }

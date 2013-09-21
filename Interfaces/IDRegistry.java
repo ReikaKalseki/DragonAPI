@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
-
 public interface IDRegistry {
 
 	public String getConfigName();

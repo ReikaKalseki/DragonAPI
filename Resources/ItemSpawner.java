@@ -13,6 +13,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -139,4 +140,7 @@ public class ItemSpawner extends Item {
 		}
 		return true;
 	}
+
+	@Override
+	public final void registerIcons(IconRegister ico) {}
 }

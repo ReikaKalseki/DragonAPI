@@ -158,12 +158,17 @@ public class CoreContainer extends Container {
 		{
 			while (is.stackSize > 0 && (!toPlayer && k < maxslot || toPlayer && k >= firstslot))
 			{
-				slot = (Slot)inventorySlots.get(k);
+				try {
+					slot = (Slot)inventorySlots.get(k);
+				}
+				catch (Exception e) {
+					return false;
+				}
 				itemstack1 = slot.getStack();
 
 				//ReikaJavaLibrary.pConsole(toPlayer+" for "+is+" to "+slot+" ("+itemstack1+") - "+slot.isItemValid(is));
 
-				if (ii.isStackValidForSlot(k, is) && slot.isItemValid(is) && itemstack1 != null && itemstack1.itemID == is.itemID && (!is.getHasSubtypes() || is.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(is, itemstack1))
+				if (((!toPlayer && ii.isStackValidForSlot(k, is)) || toPlayer) && slot.isItemValid(is) && itemstack1 != null && itemstack1.itemID == is.itemID && (!is.getHasSubtypes() || is.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(is, itemstack1))
 				{
 					int l = itemstack1.stackSize + is.stackSize;
 
