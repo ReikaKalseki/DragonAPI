@@ -11,13 +11,8 @@ package Reika.DragonAPI;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.logging.Level;
 
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.world.ChunkDataEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.APIRegistry;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -26,6 +21,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
+import Reika.DragonAPI.ModInteract.MekanismHandler;
 import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
 import Reika.DragonAPI.ModInteract.TinkerToolHandler;
@@ -94,6 +90,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 		if (APIRegistry.TWILIGHT.conditionsMet()) {
 			ReikaJavaLibrary.initClass(TwilightBlockHandler.class);
+		}
+		if (APIRegistry.MEKANISM.conditionsMet()) {
+			ReikaJavaLibrary.initClass(MekanismHandler.class);
 		}
 	}
 

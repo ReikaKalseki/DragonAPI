@@ -23,35 +23,39 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	private static final TinkerToolHandler instance = new TinkerToolHandler();
 
 	public final int pickID;
+	public final int hammerID;
 
 	private TinkerToolHandler() {
 		super();
 		int idpick = -1;
+		int idhammer = -1;
 
 		if (this.hasMod()) {
 			try {
 				Class item = Class.forName("mods.tinker.tconstruct.common.TContent");
 				Field pick = item.getField("pickaxe");
+				Field hammer = item.getField("hammer");
 				idpick = ((Item)pick.get(null)).itemID;
+				idhammer = ((Item)hammer.get(null)).itemID;
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: TConstruct Item class not found! Cannot read its items!");
 				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft item field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: TConstruct item field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read DartCraft items (Security Exception)! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read TConstruct items (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading DartCraft items!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading TConstruct items!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading DartCraft items!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading TConstruct items!");
 				e.printStackTrace();
 			}
 		}
@@ -60,6 +64,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		}
 
 		pickID = idpick;
+		hammerID = idhammer;
 	}
 
 	public static TinkerToolHandler getInstance() {
@@ -68,7 +73,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return pickID != -1;
+		return pickID != -1 && hammerID != -1;
 	}
 
 	@Override
@@ -82,6 +87,12 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		return held.itemID == pickID;
 	}
 
+	public boolean isHammer(ItemStack held) {
+		if (!this.initializedProperly())
+			return false;
+		return held.itemID == hammerID;
+	}
+
 	public int getHarvestLevel(ItemStack is) {
 		if (is.stackTagCompound == null)
 			return 0;
@@ -89,16 +100,16 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		return tag.getInteger("HarvestLevel");
 	}
 
-	public boolean isStoneOrBetterPick(ItemStack is) {
-		return this.isPick(is) && this.getHarvestLevel(is) >= 1;
+	public boolean isStoneOrBetter(ItemStack is) {
+		return this.getHarvestLevel(is) >= 1;
 	}
 
-	public boolean isIronOrBetterPick(ItemStack is) {
-		return this.isPick(is) && this.getHarvestLevel(is) >= 2;
+	public boolean isIronOrBetter(ItemStack is) {
+		return this.getHarvestLevel(is) >= 2;
 	}
 
-	public boolean isDiamondOrBetterPick(ItemStack is) {
-		return this.isPick(is) && this.getHarvestLevel(is) >= 3;
+	public boolean isDiamondOrBetter(ItemStack is) {
+		return this.getHarvestLevel(is) >= 3;
 	}
 
 }
