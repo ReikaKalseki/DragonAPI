@@ -75,7 +75,7 @@ public enum ModOreList {
 	NETHERSILVER("Nether Silver", "ingotSilver", 1, "oreNetherSilver"),
 	NETHERNIKOLITE("Nether Nikolite", "dustNikolite", 5, "oreNetherNikolite"),
 	//TINKERER'S CONSTRUCT
-	NETHERCOBALT("Cobalt", "ingotCobalt", 1, "oreCobalt"),
+	COBALT("Cobalt", "ingotCobalt", 1, "oreCobalt"),
 	ARDITE("Ardite", "ingotArdite", 1, "oreArdite"),
 	//?
 	PLATINUM("Platinum", "ingotPlatinum", 1, "orePlatinum"), //ThermalExpansion Shiny
@@ -123,7 +123,7 @@ public enum ModOreList {
 	}
 
 	public boolean isNetherOres() {
-		return this.name().startsWith("NETHER") && !this.name().equals(NETHERCOBALT.name());
+		return this.name().startsWith("NETHER");
 	}
 
 	public void reloadOreList() {
@@ -137,6 +137,9 @@ public enum ModOreList {
 		if (is == null)
 			return false;
 		for (int i = 0; i < oreList.length; i++) {
+			if (oreList[i].ores.isEmpty()) {
+				oreList[i].reloadOreList();
+			}
 			if (ReikaItemHelper.listContainsItemStack(oreList[i].ores, is)) {
 				return true;
 			}
@@ -148,6 +151,9 @@ public enum ModOreList {
 		if (is == null)
 			return null;
 		for (int i = 0; i < oreList.length; i++) {
+			if (oreList[i].ores.isEmpty()) {
+				oreList[i].reloadOreList();
+			}
 			if (ReikaItemHelper.listContainsItemStack(oreList[i].ores, is)) {
 				return oreList[i];
 			}

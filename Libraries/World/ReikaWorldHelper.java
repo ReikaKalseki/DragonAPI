@@ -28,6 +28,7 @@ import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
@@ -355,7 +356,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return true;
 		if (biome == BiomeGenBase.taigaHills)
 			return true;
-
+		if (biome.getEnableSnow())
+			return true;
+		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
+		for (int i = 0; i < types.length; i++) {
+			if (types[i] == BiomeDictionary.Type.FROZEN)
+				return true;
+		}
 		return false;
 	}
 
@@ -371,7 +378,15 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return true;
 		if (biome == BiomeGenBase.jungleHills)
 			return true;
-
+		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
+		for (int i = 0; i < types.length; i++) {
+			if (types[i] == BiomeDictionary.Type.WASTELAND)
+				return true;
+			if (types[i] == BiomeDictionary.Type.DESERT)
+				return true;
+			if (types[i] == BiomeDictionary.Type.JUNGLE)
+				return true;
+		}
 		return false;
 	}
 
@@ -609,6 +624,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			Tamb = 40;
 		if (biome == BiomeGenBase.hell)
 			Tamb = 300;	//boils water, so 300C (3 x 100)
+		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
+		for (int i = 0; i < types.length; i++) {
+			if (types[i] == BiomeDictionary.Type.NETHER)
+				Tamb = 300;
+		}
 		return Tamb;
 	}
 
@@ -617,13 +637,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static int getBiomeTemp(World world, int x, int z) {
 		int Tamb = 25; //Most biomes = 25C
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-		if (ReikaWorldHelper.isSnowBiome(biome))
-			Tamb = -20; //-20C
-		if (ReikaWorldHelper.isHotBiome(biome))
-			Tamb = 40;
-		if (biome == BiomeGenBase.hell)
-			Tamb = 300;	//boils water, so 300C (3 x 100)
-		return Tamb;
+		return getBiomeTemp(biome);
 	}
 
 	/** Performs machine overheat effects (primarily intended for RotaryCraft).

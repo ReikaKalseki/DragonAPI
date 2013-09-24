@@ -223,6 +223,7 @@ public enum ModWoodList { //look through treecapitator config?
 	public static ModWoodList getModWoodFromLeaf(ItemStack block) {
 		for (int i = 0; i < woodList.length; i++) {
 			if (woodList[i].leafMeta != null) {
+				//ReikaJavaLibrary.pConsole(woodList[i]+" - "+woodList[i].getCorrespondingLeaf().itemID+":"+Arrays.toString(woodList[i].leafMeta));
 				for (int k = 0; k < woodList[i].leafMeta.length; k++) {
 					if (ReikaItemHelper.matchStacks(block, woodList[i].getCorrespondingDamagedLeaf(k)))
 						return woodList[i];
@@ -275,6 +276,10 @@ public enum ModWoodList { //look through treecapitator config?
 
 	public ItemStack getCorrespondingSapling() {
 		return new ItemStack(saplingID, 1, saplingMeta);
+	}
+
+	public APIRegistry getParentMod() {
+		return mod;
 	}
 
 }

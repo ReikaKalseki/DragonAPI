@@ -16,6 +16,11 @@ public enum APIRegistry {
 
 	ROTARYCRAFT("RotaryCraft"),
 	REACTORCRAFT("ReactorCraft"),
+	DYETREES("DyeTrees"),
+	EXPANDEDREDSTONE("ExpandedRedstone"),
+	GEOSTRATA("GeoStrata"),
+	REALBIOMES("RealBiomes"),
+	FURRY("FurryKingdoms"),
 	BUILDCRAFTENERGY("BuildCraft|Energy"),
 	BUILDCRAFTFACTORY("BuildCraft|Factory"),
 	BUILDCRAFTTRANSPORT("BuildCraft|Transport"),
@@ -34,7 +39,8 @@ public enum APIRegistry {
 	DARTCRAFT("DartCraft"),
 	TINKERER("TConstruct"),
 	THERMAL("ThermalExpansion"),
-	MEKANISM("Mekanism");
+	MEKANISM("Mekanism"),
+	MEKTOOLS("MekanismTools");
 
 	private boolean condition;
 	private boolean preset = false;
