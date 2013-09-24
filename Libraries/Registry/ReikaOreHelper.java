@@ -9,9 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 public enum ReikaOreHelper {
 
@@ -88,6 +92,12 @@ public enum ReikaOreHelper {
 		if (this == GOLD)
 			return new ItemStack(Item.ingotGold);
 		return null;
+	}
+
+	public List<ItemStack> getAlternateForms() {
+		List<ItemStack> li = new ArrayList();
+		li.addAll(OreDictionary.getOres(oreDict+"Gravel"));
+		return li;
 	}
 
 }

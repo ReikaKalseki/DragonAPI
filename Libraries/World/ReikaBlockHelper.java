@@ -53,7 +53,13 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		if (ModOreList.isModOre(is))
 			return true;
+		if (isAltVanillaOre(is))
+			return true;
 		return false;
+	}
+
+	public static boolean isAltVanillaOre(ItemStack is) {
+
 	}
 
 	public static boolean isOre(int id, int meta) {
