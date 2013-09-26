@@ -23,7 +23,11 @@ public final class ReikaVectorHelper extends DragonAPICore {
 	public static Vec3 getVec2Pt(double x1, double y1, double z1, double x2, double y2, double z2) {
 		Vec3 p1 = Vec3.fakePool.getVecFromPool(x1, y1, z1);
 		Vec3 p2 = Vec3.fakePool.getVecFromPool(x2, y2, z2);
-		return p2.subtract(p1);
+		return subtract(p2, p1);
+	}
+
+	private static Vec3 subtract(Vec3 p2, Vec3 p1) {
+		return Vec3.fakePool.getVecFromPool(p1.xCoord - p2.xCoord, p1.yCoord - p2.yCoord, p1.zCoord - p2.zCoord);
 	}
 
 	/** Breaks a vector into a size-3 array of its components. Args: Vector */

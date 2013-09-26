@@ -10,7 +10,6 @@
 package Reika.DragonAPI.Libraries.Registry;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -33,6 +32,7 @@ public enum ReikaOreHelper {
 	private Block ore;
 	private String oreDict;
 	private String dropOreDict;
+	private final ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 
 	public static final ReikaOreHelper[] oreList = ReikaOreHelper.values();
 
@@ -42,6 +42,7 @@ public enum ReikaOreHelper {
 		drop = is.copy();
 		oreDict = d;
 		dropOreDict = d2;
+		ores.addAll(OreDictionary.getOres(oreDict));
 	}
 
 	private ReikaOreHelper(String n, Block b, Item i, String d, String d2) {
@@ -94,10 +95,13 @@ public enum ReikaOreHelper {
 		return null;
 	}
 
-	public List<ItemStack> getAlternateForms() {
-		List<ItemStack> li = new ArrayList();
-		li.addAll(OreDictionary.getOres(oreDict+"Gravel"));
-		return li;
+	public static ReikaOreHelper getEntryByOreDict(ItemStack is) {
+		for (int i = 0; i < oreList.length; i++) {
+			ReikaOreHelper ore = oreList[i];
+			if (ReikaItemHelper.listContainsItemStack(ore.ores, is))
+				return ore;
+		}
+		return null;
 	}
 
 }

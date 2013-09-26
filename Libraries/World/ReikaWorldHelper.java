@@ -761,7 +761,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return;
 		int metad = capMetadata(world.getBlockMetadata(x, y, z), 4);
 		Block.blocksList[id].dropBlockAsItem(world, x, y, z, metad, 0);
-		legacySetBlockWithNotify(world, x, y, z, 0);
+		world.setBlock(x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreakWithinSphere(world, x+1, y, z, id, meta, x0, y0, z0, r);
 		recursiveBreakWithinSphere(world, x-1, y, z, id, meta, x0, y0, z0, r);
@@ -1154,7 +1154,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static boolean legacySetBlockWithNotify(World world, int x, int y, int z, int id) {
-		return world.setBlock(x, y, z, id, 0, 3);
+		boolean flag = world.setBlock(x, y, z, id, 0, 3);
+		world.markBlockForUpdate(x, y, z);
+		return flag;
 	}
 
 	/** Returns true if the specified corner has at least one air block adjacent to it,

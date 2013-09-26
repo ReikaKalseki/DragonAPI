@@ -20,8 +20,6 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class MekToolHandler extends ModHandlerBase {
 
-	private static final MekToolHandler instance = new MekToolHandler();
-
 	private static final String[] paxelVars = {
 		"WoodPaxel", "StonePaxel", "IronPaxel", "DiamondPaxel", "GoldPaxel", "GlowstonePaxel", "BronzePaxel", "OsmiumPaxel",
 		"ObsidianPaxel", "LazuliPaxel", "SteelPaxel"
@@ -31,12 +29,13 @@ public final class MekToolHandler extends ModHandlerBase {
 		"GlowstonePickaxe", "BronzePickaxe", "OsmiumPickaxe", "ObsidianPickaxe", "LazuliPickaxe", "SteelPickaxe"
 	};
 
+	private static final MekToolHandler instance = new MekToolHandler();
+
 	private final ArrayList<Integer> paxelIDs = new ArrayList();
 	private final ArrayList<Integer> pickIDs = new ArrayList();
 
 	private MekToolHandler() {
 		super();
-
 		if (this.hasMod()) {
 			try {
 				Class item = Class.forName("mekanism.tools.common.MekanismTools");

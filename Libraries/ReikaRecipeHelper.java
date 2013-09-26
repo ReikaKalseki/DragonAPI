@@ -254,9 +254,10 @@ public class ReikaRecipeHelper {
 			in[8] = isin[5];
 		}
 		for (int i = 0; i < in.length; i++) {
+			//ReikaJavaLibrary.pConsole(in[i]+" for "+i);
 			if (in[i] != null) {
 				if (in[i].stackSize > 1)
-					in[1].stackSize = 1;
+					in[i].stackSize = 1;//in[1] = new ItemStack(in[i].itemID, 4, in[i].getItemDamage());
 			}
 		}
 	}
