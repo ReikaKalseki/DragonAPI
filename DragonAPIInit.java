@@ -14,7 +14,7 @@ import java.net.URL;
 
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -26,6 +26,7 @@ import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
 import Reika.DragonAPI.ModInteract.TinkerToolHandler;
 import Reika.DragonAPI.ModInteract.TwilightBlockHandler;
+import Reika.DragonAPI.ModRegistry.ModCropList;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModSpiderList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
@@ -69,29 +70,30 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	private static void loadHandlers() {
-		ReikaJavaLibrary.initClass(APIRegistry.class);
+		ReikaJavaLibrary.initClass(ModList.class);
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);
+		ReikaJavaLibrary.initClass(ModCropList.class);
 		ReikaJavaLibrary.initClass(ModSpiderList.class);
 
-		if (APIRegistry.BUILDCRAFTFACTORY.conditionsMet()) {
+		if (ModList.BUILDCRAFTFACTORY.isLoaded()) {
 			ReikaJavaLibrary.initClass(BCMachineHandler.class);
 		}
-		if (APIRegistry.THAUMCRAFT.conditionsMet()) {
+		if (ModList.THAUMCRAFT.isLoaded()) {
 			ReikaJavaLibrary.initClass(ThaumOreHandler.class);
 			ReikaJavaLibrary.initClass(ThaumBlockHandler.class);
 		}
-		if (APIRegistry.DARTCRAFT.conditionsMet()) {
+		if (ModList.DARTCRAFT.isLoaded()) {
 			ReikaJavaLibrary.initClass(DartOreHandler.class);
 			ReikaJavaLibrary.initClass(DartItemHandler.class);
 		}
-		if (APIRegistry.TINKERER.conditionsMet()) {
+		if (ModList.TINKERER.isLoaded()) {
 			ReikaJavaLibrary.initClass(TinkerToolHandler.class);
 		}
-		if (APIRegistry.TWILIGHT.conditionsMet()) {
+		if (ModList.TWILIGHT.isLoaded()) {
 			ReikaJavaLibrary.initClass(TwilightBlockHandler.class);
 		}
-		if (APIRegistry.MEKANISM.conditionsMet()) {
+		if (ModList.MEKANISM.isLoaded()) {
 			ReikaJavaLibrary.initClass(MekToolHandler.class);
 		}
 	}

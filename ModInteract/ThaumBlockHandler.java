@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -72,8 +72,8 @@ public class ThaumBlockHandler extends ModHandlerBase {
 	}
 
 	@Override
-	public APIRegistry getMod() {
-		return APIRegistry.THAUMCRAFT;
+	public ModList getMod() {
+		return ModList.THAUMCRAFT;
 	}
 
 	public boolean isTotemBlock(ItemStack block) {

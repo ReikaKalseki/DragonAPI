@@ -249,4 +249,10 @@ public enum ModOreList {
 		int index = new Random().nextInt(s);
 		return ores.get(index);
 	}
+
+	public ArrayList<ItemStack> getAllOreBlocks() {
+		ArrayList<ItemStack> li = new ArrayList<ItemStack>();
+		li.addAll(ores);
+		return li;
+	}
 }

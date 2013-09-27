@@ -17,41 +17,41 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public enum ModWoodList { //look through treecapitator config?
 
-	CANOPY(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", new int[]{1,13}, 1, 1, Block.class),
-	DARKWOOD(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "hedge", "sapling", new int[]{3,15}, 1, 3, Block.class),
-	MANGROVE(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", new int[]{2,14}, new int[]{2,10}, 2, Block.class),
-	TWILIGHTOAK(APIRegistry.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", new int[]{0,12}, 0, 0, Block.class),
-	GREATWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{0,4,8}, new int[]{0,8}, 0, Block.class),
-	SILVERWOOD(APIRegistry.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{1,5,9}, new int[]{1,9}, 1, Block.class),
-	EUCALYPTUS(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", "floraSapling", 0, new int[]{1,9}, 1, Block.class),
-	SEQUOIA(APIRegistry.NATURA, "mods.natura.common.NContent", "redwood", "floraLeaves", "floraSapling", new int[]{0,1,2}, new int[]{0,8}, 0, Block.class),
-	SAKURA(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeavesNoColor", "floraSapling", new int[]{1,5,9}, new int[]{0,8}, 3, Block.class),
-	GHOSTWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeavesNoColor", "floraSapling", new int[]{2,6,10}, new int[]{1,9}, 4, Block.class),
-	HOPSEED(APIRegistry.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", "floraSapling", 3, new int[]{2,10}, 2, Block.class),
-	DARKNATURA(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", "floraSapling", 0, new int[]{0,1,2,8,9,10}, 6, Block.class),
-	BLOODWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "bloodwood", "floraLeavesNoColor", "floraSapling", new int[]{0,1,2,3,4,5,15}, new int[]{2,10}, 5, Block.class),
-	FUSEWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", "floraSapling", 1, new int[]{3,11}, 7, Block.class),
-	TIGERWOOD(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 3, new int[]{3,11}, 3, Block.class),
-	SILVERBELL(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 1, new int[]{1,9}, 1, Block.class),
-	MAPLE(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 0, new int[]{0,8}, 0, Block.class),
-	WILLOW(APIRegistry.NATURA, "mods.natura.common.NContent", "willow", "floraLeavesNoColor", "rareSapling", 0, new int[]{3,11}, 4, Block.class),
-	AMARANTH(APIRegistry.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 2, new int[]{2,10}, 2, Block.class),
-	REDWOOD(APIRegistry.BOP, null, null, null, null, 0, Block.class),
-	ACACIA(APIRegistry.BOP, null, null, null, null, 0, Block.class),
-	JACARANDA(APIRegistry.BOP, null, null, null, null, 0, Block.class),
-	AUTUMN(APIRegistry.BXL, null, null, null, null, 0, Block.class),
-	FIR(APIRegistry.BXL, null, null, null, null, 0, Block.class),
-	XLREDWOOD(APIRegistry.BXL, null, null, null, null, 0, Block.class),
-	RUBBER(APIRegistry.INDUSTRIALCRAFT, "ic2.core.Ic2Items", "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, ItemStack.class),
-	MINERUBBER(APIRegistry.MINEFACTORY, "powercrystals.minefactoryreloaded.MineFactoryReloadedCore", "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, Block.class);
+	CANOPY(ModList.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", new int[]{1,13}, 1, 1, Block.class),
+	DARKWOOD(ModList.TWILIGHT, "twilightforest.block.TFBlocks", "log", "hedge", "sapling", new int[]{3,15}, 1, 3, Block.class),
+	MANGROVE(ModList.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", new int[]{2,14}, new int[]{2,10}, 2, Block.class),
+	TWILIGHTOAK(ModList.TWILIGHT, "twilightforest.block.TFBlocks", "log", "leaves", "sapling", new int[]{0,12}, 0, 0, Block.class),
+	GREATWOOD(ModList.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{0,4,8}, new int[]{0,8}, 0, Block.class),
+	SILVERWOOD(ModList.THAUMCRAFT, "thaumcraft.common.Config", "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{1,5,9}, new int[]{1,9}, 1, Block.class),
+	EUCALYPTUS(ModList.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", "floraSapling", 0, new int[]{1,9}, 1, Block.class),
+	SEQUOIA(ModList.NATURA, "mods.natura.common.NContent", "redwood", "floraLeaves", "floraSapling", new int[]{0,1,2}, new int[]{0,8}, 0, Block.class),
+	SAKURA(ModList.NATURA, "mods.natura.common.NContent", "tree", "floraLeavesNoColor", "floraSapling", new int[]{1,5,9}, new int[]{0,8}, 3, Block.class),
+	GHOSTWOOD(ModList.NATURA, "mods.natura.common.NContent", "tree", "floraLeavesNoColor", "floraSapling", new int[]{2,6,10}, new int[]{1,9}, 4, Block.class),
+	HOPSEED(ModList.NATURA, "mods.natura.common.NContent", "tree", "floraLeaves", "floraSapling", 3, new int[]{2,10}, 2, Block.class),
+	DARKNATURA(ModList.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", "floraSapling", 0, new int[]{0,1,2,8,9,10}, 6, Block.class),
+	BLOODWOOD(ModList.NATURA, "mods.natura.common.NContent", "bloodwood", "floraLeavesNoColor", "floraSapling", new int[]{0,1,2,3,4,5,15}, new int[]{2,10}, 5, Block.class),
+	FUSEWOOD(ModList.NATURA, "mods.natura.common.NContent", "darkTree", "darkLeaves", "floraSapling", 1, new int[]{3,11}, 7, Block.class),
+	TIGERWOOD(ModList.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 3, new int[]{3,11}, 3, Block.class),
+	SILVERBELL(ModList.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 1, new int[]{1,9}, 1, Block.class),
+	MAPLE(ModList.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 0, new int[]{0,8}, 0, Block.class),
+	WILLOW(ModList.NATURA, "mods.natura.common.NContent", "willow", "floraLeavesNoColor", "rareSapling", 0, new int[]{3,11}, 4, Block.class),
+	AMARANTH(ModList.NATURA, "mods.natura.common.NContent", "rareTree", "rareLeaves", "rareSapling", 2, new int[]{2,10}, 2, Block.class),
+	REDWOOD(ModList.BOP, null, null, null, null, 0, Block.class),
+	ACACIA(ModList.BOP, null, null, null, null, 0, Block.class),
+	JACARANDA(ModList.BOP, null, null, null, null, 0, Block.class),
+	AUTUMN(ModList.BXL, null, null, null, null, 0, Block.class),
+	FIR(ModList.BXL, null, null, null, null, 0, Block.class),
+	XLREDWOOD(ModList.BXL, null, null, null, null, 0, Block.class),
+	RUBBER(ModList.INDUSTRIALCRAFT, "ic2.core.Ic2Items", "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, ItemStack.class),
+	MINERUBBER(ModList.MINEFACTORY, "powercrystals.minefactoryreloaded.MineFactoryReloadedCore", "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, Block.class);
 
-	private APIRegistry mod;
+	private ModList mod;
 	private int blockID = -1;
 	private int leafID = -1;
 	private int blockMeta[];
@@ -68,25 +68,25 @@ public enum ModWoodList { //look through treecapitator config?
 
 	public static final ModWoodList[] woodList = ModWoodList.values();
 
-	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, String saplingVar, int meta, int metaleaf, int metasapling, Class type) {
+	private ModWoodList(ModList req, String className, String blockVar, String leafVar, String saplingVar, int meta, int metaleaf, int metasapling, Class type) {
 		this(req, className, blockVar, leafVar, saplingVar, new int[]{meta}, new int[]{metaleaf}, metasapling, type);
 	}
 
-	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, String saplingVar, int meta, Class type) {
+	private ModWoodList(ModList req, String className, String blockVar, String leafVar, String saplingVar, int meta, Class type) {
 		this(req, className, blockVar, leafVar, saplingVar, new int[]{meta}, new int[]{meta}, meta, type);
 	}
 
-	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, String saplingVar, int[] meta, int metaleaf, int metasapling, Class type) {
+	private ModWoodList(ModList req, String className, String blockVar, String leafVar, String saplingVar, int[] meta, int metaleaf, int metasapling, Class type) {
 		this(req, className, blockVar, leafVar, saplingVar, meta, new int[]{metaleaf}, metasapling, type);
 	}
 
-	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, String saplingVar, int meta, int[] metaleaf, int metasapling, Class type) {
+	private ModWoodList(ModList req, String className, String blockVar, String leafVar, String saplingVar, int meta, int[] metaleaf, int metasapling, Class type) {
 		this(req, className, blockVar, leafVar, saplingVar, new int[]{meta}, metaleaf, metasapling, type);
 	}
 
-	private ModWoodList(APIRegistry req, String className, String blockVar, String leafVar, String saplingVar, int[] meta, int[] metaleaf, int metasapling, Class type) {
+	private ModWoodList(ModList req, String className, String blockVar, String leafVar, String saplingVar, int[] meta, int[] metaleaf, int metasapling, Class type) {
 		mod = req;
-		if (!mod.conditionsMet())
+		if (!mod.isLoaded())
 			return;
 		if (className == null || className.isEmpty()) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this+": Empty parent class");
@@ -278,7 +278,7 @@ public enum ModWoodList { //look through treecapitator config?
 		return new ItemStack(saplingID, 1, saplingMeta);
 	}
 
-	public APIRegistry getParentMod() {
+	public ModList getParentMod() {
 		return mod;
 	}
 

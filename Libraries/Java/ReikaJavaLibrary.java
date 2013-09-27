@@ -119,7 +119,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 
 	public static void initClass(Class c) {
 		try {
-			Class.forName(c.getCanonicalName(), true, c.getClassLoader());
+			Class.forName(c.getCanonicalName(), true, ReikaJavaLibrary.class.getClassLoader());
 		}
 		catch (ClassNotFoundException e) {}
 	}

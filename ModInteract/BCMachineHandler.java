@@ -13,7 +13,7 @@ import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -70,8 +70,8 @@ public class BCMachineHandler extends ModHandlerBase {
 	}
 
 	@Override
-	public APIRegistry getMod() {
-		return APIRegistry.BUILDCRAFTFACTORY;
+	public ModList getMod() {
+		return ModList.BUILDCRAFTFACTORY;
 	}
 
 	public ItemStack getTank() {

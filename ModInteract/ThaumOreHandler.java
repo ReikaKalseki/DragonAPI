@@ -16,7 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModRegistry.ModOreList;
@@ -171,8 +171,8 @@ public final class ThaumOreHandler extends ModHandlerBase {
 	}
 
 	@Override
-	public APIRegistry getMod() {
-		return APIRegistry.THAUMCRAFT;
+	public ModList getMod() {
+		return ModList.THAUMCRAFT;
 	}
 
 	public ItemStack getOre(int meta) {

@@ -14,28 +14,28 @@ import java.lang.reflect.InvocationTargetException;
 
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public enum ModSpiderList {
 
-	HEATSCAR(APIRegistry.NATURA, "mods.natura.entity.FlameSpider"),
-	KING(APIRegistry.TWILIGHT, "twilightforest.entity.EntityTFKingSpider"),
-	HEDGE(APIRegistry.TWILIGHT, "twilightforest.entity.EntityTFHedgeSpider");
+	HEATSCAR(ModList.NATURA, "mods.natura.entity.FlameSpider"),
+	KING(ModList.TWILIGHT, "twilightforest.entity.EntityTFKingSpider"),
+	HEDGE(ModList.TWILIGHT, "twilightforest.entity.EntityTFHedgeSpider");
 
 	private Class entityClass;
-	private APIRegistry mod;
+	private ModList mod;
 	private int entityHealth;
 	private final EntityLiving instance;
 
 	public static final ModSpiderList[] spiderList = ModSpiderList.values();
 
-	private ModSpiderList(APIRegistry req, String className) {
+	private ModSpiderList(ModList req, String className) {
 		mod = req;
 		EntityLiving ent = null;
 		try {
 			entityClass = Class.forName(className);
-			ent = this.instantiate();
+			//ent = this.instantiate();
 		}
 		catch (ClassNotFoundException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: ERROR LOADING "+this);

@@ -12,7 +12,7 @@ package Reika.DragonAPI.Auxiliary;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.Loader;
 
-public enum APIRegistry {
+public enum ModList {
 
 	ROTARYCRAFT("RotaryCraft"),
 	REACTORCRAFT("ReactorCraft"),
@@ -47,9 +47,9 @@ public enum APIRegistry {
 	private String modlabel;
 	private Class modClass;
 
-	public static final APIRegistry[] apiList = APIRegistry.values();
+	public static final ModList[] modList = ModList.values();
 
-	private APIRegistry(String s) {
+	private ModList(String s) {
 		modlabel = s;
 		boolean c = Loader.isModLoaded(modlabel);
 		condition = c;
@@ -60,7 +60,7 @@ public enum APIRegistry {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" not detected in the MC installation. No special action taken.");
 	}
 
-	public boolean conditionsMet() {
+	public boolean isLoaded() {
 		if (preset)
 			return condition;
 		return false;

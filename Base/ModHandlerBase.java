@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** Reflection tools to read other mods. */
@@ -21,14 +21,14 @@ public abstract class ModHandlerBase {
 
 	public abstract boolean initializedProperly();
 
-	public abstract APIRegistry getMod();
+	public abstract ModList getMod();
 
 	protected void noMod() {
 		//throw new ModHandlerException(this.getMod());
 	}
 
 	public boolean hasMod() {
-		return this.getMod().conditionsMet();
+		return this.getMod().isLoaded();
 	}
 
 }

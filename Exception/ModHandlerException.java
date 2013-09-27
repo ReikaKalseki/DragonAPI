@@ -9,11 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Exception;
 
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Auxiliary.ModList;
 
 public class ModHandlerException extends DragonAPIException {
 
-	public ModHandlerException(APIRegistry mod) {
+	public ModHandlerException(ModList mod) {
 		message.append("You cannot call a mod handler before its parent mod initializes!\n");
 		message.append("Target mod: "+mod);
 		this.crash();

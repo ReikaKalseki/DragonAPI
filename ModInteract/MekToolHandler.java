@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -88,8 +88,8 @@ public final class MekToolHandler extends ModHandlerBase {
 	}
 
 	@Override
-	public APIRegistry getMod() {
-		return APIRegistry.MEKTOOLS;
+	public ModList getMod() {
+		return ModList.MEKTOOLS;
 	}
 
 	public boolean isPickTypeTool(ItemStack held) {

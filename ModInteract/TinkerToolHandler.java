@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import Reika.DragonAPI.Auxiliary.APIRegistry;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -77,8 +77,8 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	}
 
 	@Override
-	public APIRegistry getMod() {
-		return APIRegistry.TINKERER;
+	public ModList getMod() {
+		return ModList.TINKERER;
 	}
 
 	public boolean isPick(ItemStack held) {
