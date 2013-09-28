@@ -17,6 +17,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import Reika.DragonAPI.Interfaces.XPProducer;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
@@ -105,19 +106,51 @@ public class CoreContainer extends Container {
 	public final ItemStack transferStackInSlot(EntityPlayer player, int slot)
 	{
 		ItemStack is = null;
-		Slot sl = (Slot)inventorySlots.get(slot);
+		Slot fromSlot = (Slot)inventorySlots.get(slot);
 		if (!(tile instanceof IInventory))
 			return null;
 		int invsize = ((IInventory)tile).getSizeInventory();
 
-		if (sl != null && sl.getHasStack())
+		if (fromSlot != null && fromSlot.getHasStack())
 		{
-			ItemStack inslot = sl.getStack();
+			ItemStack inslot = fromSlot.getStack();
 			is = inslot.copy();
-			sl.putStack(null);
+			boolean toPlayer = slot < invsize;
+			if (toPlayer) {
+				for (int i = invsize; i < inventorySlots.size(); i++) {
+					Slot toSlot = (Slot)inventorySlots.get(i);
+					if (toSlot.isItemValid(is) && (!toSlot.getHasStack() || (toSlot.getStack().itemID == is.itemID && toSlot.getStack().getItemDamage() == is.getItemDamage() && toSlot.getStack().stackSize+is.stackSize <= is.getMaxStackSize()))) {
+						if (!toSlot.getHasStack())
+							toSlot.putStack(is);
+						else
+							toSlot.putStack(new ItemStack(is.itemID, is.stackSize+toSlot.getStack().stackSize, is.getItemDamage()));
+						fromSlot.putStack(null);
+						is = null;
+						if (tile instanceof XPProducer) {
+							((XPProducer)tile).addXPToPlayer(player);
+							((XPProducer)tile).clearXP();
+						}
+						return is;
+					}
+				}
+			}
+			else {
+				for (int i = 0; i < invsize; i++) {
+					Slot toSlot = (Slot)inventorySlots.get(i);
+					if (toSlot.isItemValid(is) && (((IInventory)tile).isStackValidForSlot(i, is)) && (!toSlot.getHasStack() || (toSlot.getStack().itemID == is.itemID && toSlot.getStack().getItemDamage() == is.getItemDamage() && toSlot.getStack().stackSize+is.stackSize <= is.getMaxStackSize()))) {
+						if (!toSlot.getHasStack())
+							toSlot.putStack(is);
+						else
+							toSlot.putStack(new ItemStack(is.itemID, is.stackSize+toSlot.getStack().stackSize, is.getItemDamage()));
+						fromSlot.putStack(null);
+						is = null;
+						return is;
+					}
+				}
+			}
 		}
 
-		return is;
+		return null;
 	}
 
 	@Override

@@ -50,6 +50,7 @@ public enum ModWoodList { //look through treecapitator config?
 	XLREDWOOD(ModList.BXL, null, null, null, null, 0, Block.class),
 	RUBBER(ModList.INDUSTRIALCRAFT, "ic2.core.Ic2Items", "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, ItemStack.class),
 	MINERUBBER(ModList.MINEFACTORY, "powercrystals.minefactoryreloaded.MineFactoryReloadedCore", "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, Block.class);
+	//DYE(ModList.DYETREES, "Reika.DyeTrees.DyeTrees", "blocks", "blocks", "blocks", new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, Block[].class);
 
 	private ModList mod;
 	private int blockID = -1;
