@@ -114,27 +114,7 @@ public class CoreContainer extends Container {
 		{
 			ItemStack inslot = sl.getStack();
 			is = inslot.copy();
-
-			if (slot < invsize)
-			{
-				if (!this.mergeItemStack(inslot, 0, player.inventory.getSizeInventory(), true))
-				{
-					return null;
-				}
-			}
-			else if (!this.mergeItemStack(inslot, 0, invsize, false))
-			{
-				return null;
-			}
-
-			if (inslot.stackSize == 0)
-			{
-				sl.putStack((ItemStack)null);
-			}
-			else
-			{
-				sl.onSlotChanged();
-			}
+			sl.putStack(null);
 		}
 
 		return is;
@@ -145,7 +125,6 @@ public class CoreContainer extends Container {
 	{
 		boolean flag1 = false;
 		int k = firstslot;
-
 		if (toPlayer)
 		{
 			k = maxslot - 1;

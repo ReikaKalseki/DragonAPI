@@ -8,26 +8,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public enum ModCropList {
 
-	BARLEY(ModList.NATURA, "", "", 0, 0, Block.class),
-	COTTON(ModList.NATURA, "", "", 0, 0, Block.class),
-	FLAX(ModList.REDPOWER, "", "", 0, 0, Block.class),
-	CANOLA(ModList.ROTARYCRAFT, "Reika.RotaryCraft.RotaryCraft", "canola", 0, 9, Block.class);
+	BARLEY(ModList.NATURA, "mods.natura.common.NContent", "crops", 0, 0, 3, Block.class),
+	COTTON(ModList.NATURA, "mods.natura.common.NContent", "crops", 4, 6, 8, Block.class),
+	FLAX(ModList.REDPOWER, "", "", 0, 0, 0, Block.class),
+	CANOLA(ModList.ROTARYCRAFT, "Reika.RotaryCraft.RotaryCraft", "canola", 0, 0, 9, Block.class);
 
 	private ModList mod;
 	public final int blockID;
 	public final int ripeMeta;
 	/** Not necessarily zero; see cotton */
 	public final int harvestedMeta;
+	private int minmeta;
 
 	public static final ModCropList[] cropList = values();
 
-	private ModCropList(ModList api, String className, String blockVar, int metafresh, int metaripe, Class type) {
+	private ModCropList(ModList api, String className, String blockVar, int metamin, int metafresh, int metaripe, Class type) {
 		mod = api;
 		harvestedMeta = metafresh;
 		ripeMeta = metaripe;
+		minmeta = metamin;
 		int id = -1;
 		if (mod.isLoaded()) {
 			if (className == null || className.isEmpty()) {
@@ -95,17 +98,17 @@ public enum ModCropList {
 		return mod;
 	}
 
-	public static ModCropList getModCrop(int id) {
+	public static ModCropList getModCrop(int id, int meta) {
 		for (int i = 0; i < cropList.length; i++) {
 			ModCropList crop = cropList[i];
-			if (crop.blockID == id)
+			if (crop.blockID == id && ReikaMathLibrary.isValueInsideBoundsIncl(crop.minmeta, crop.ripeMeta, meta))
 				return crop;
 		}
 		return null;
 	}
 
-	public static boolean isModCrop(int id) {
-		return getModCrop(id) != null;
+	public static boolean isModCrop(int id, int meta) {
+		return getModCrop(id, meta) != null;
 	}
 
 	public boolean destroyOnHarvest() {

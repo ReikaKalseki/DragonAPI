@@ -255,4 +255,12 @@ public enum ModOreList {
 		li.addAll(ores);
 		return li;
 	}
+
+	public boolean hasLoadedOres() {
+		return !ores.isEmpty();
+	}
+
+	public boolean isRare() {
+		return this == ModOreList.PLATINUM || this == ModOreList.NETHERPLATINUM || this == ModOreList.IRIDIUM;
+	}
 }
