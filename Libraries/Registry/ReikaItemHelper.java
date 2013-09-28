@@ -247,6 +247,16 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return 0;
 		if (!(is.getItem() instanceof ItemBlock))
 			return 0;
-		return is.getItemDamage();
+		return is.getItem().getMetadata(is.getItemDamage());
+	}
+
+	public static boolean canCombineStacks(ItemStack is, ItemStack is2) {
+		if (is == null || is2 == null)
+			return false;
+		if (is.itemID != is2.itemID)
+			return false;
+		if (is.getItemDamage() != is2.getItemDamage())
+			return false;
+		return true;
 	}
 }

@@ -18,8 +18,10 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import Reika.DragonAPI.Interfaces.XPProducer;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class CoreContainer extends Container {
 
@@ -117,144 +119,81 @@ public class CoreContainer extends Container {
 			is = inslot.copy();
 			boolean toPlayer = slot < invsize;
 			if (toPlayer) {
-				for (int i = invsize; i < inventorySlots.size(); i++) {
+				for (int i = invsize; i < inventorySlots.size() && is.stackSize > 0; i++) {
 					Slot toSlot = (Slot)inventorySlots.get(i);
-					if (toSlot.isItemValid(is) && (!toSlot.getHasStack() || (toSlot.getStack().itemID == is.itemID && toSlot.getStack().getItemDamage() == is.getItemDamage() && toSlot.getStack().stackSize+is.stackSize <= is.getMaxStackSize()))) {
-						if (!toSlot.getHasStack())
-							toSlot.putStack(is);
-						else
-							toSlot.putStack(new ItemStack(is.itemID, is.stackSize+toSlot.getStack().stackSize, is.getItemDamage()));
-						fromSlot.putStack(null);
-						is = null;
+					if (toSlot.isItemValid(is) && this.canAdd(is, toSlot.getStack())) {
+						if (!toSlot.getHasStack()) {
+							toSlot.putStack(is.copy());
+							is.stackSize = 0;
+						}
+						else {
+							ItemStack inToSlot = toSlot.getStack();
+							int add = inToSlot.getMaxStackSize()-inToSlot.stackSize;
+							if (add > is.stackSize)
+								add = is.stackSize;
+							toSlot.putStack(new ItemStack(is.itemID, inToSlot.stackSize+add, is.getItemDamage()));
+							is.stackSize -= add;
+						}
 						if (tile instanceof XPProducer) {
 							((XPProducer)tile).addXPToPlayer(player);
 							((XPProducer)tile).clearXP();
 						}
-						return is;
 					}
 				}
+				if (is.stackSize <= 0) {
+					fromSlot.putStack(null);
+				}
+				else {
+					fromSlot.putStack(is.copy());
+				}
+				is = null;
+				return is;
 			}
 			else {
-				for (int i = 0; i < invsize; i++) {
+				for (int i = 0; i < invsize && is.stackSize > 0; i++) {
 					Slot toSlot = (Slot)inventorySlots.get(i);
-					if (toSlot.isItemValid(is) && (((IInventory)tile).isStackValidForSlot(i, is)) && (!toSlot.getHasStack() || (toSlot.getStack().itemID == is.itemID && toSlot.getStack().getItemDamage() == is.getItemDamage() && toSlot.getStack().stackSize+is.stackSize <= is.getMaxStackSize()))) {
-						if (!toSlot.getHasStack())
-							toSlot.putStack(is);
-						else
-							toSlot.putStack(new ItemStack(is.itemID, is.stackSize+toSlot.getStack().stackSize, is.getItemDamage()));
-						fromSlot.putStack(null);
-						is = null;
-						return is;
+					if (toSlot.isItemValid(is) && (((IInventory)tile).isStackValidForSlot(i, is)) && this.canAdd(is, toSlot.getStack())) {
+						if (!toSlot.getHasStack()) {
+							toSlot.putStack(is.copy());
+							is.stackSize = 0;
+						}
+						else {
+							ItemStack inToSlot = toSlot.getStack();
+							int add = inToSlot.getMaxStackSize()-inToSlot.stackSize;
+							if (add > is.stackSize)
+								add = is.stackSize;
+							toSlot.putStack(new ItemStack(is.itemID, inToSlot.stackSize+add, is.getItemDamage()));
+							is.stackSize -= add;
+						}
 					}
 				}
+				if (is.stackSize <= 0) {
+					fromSlot.putStack(null);
+				}
+				else {
+					fromSlot.putStack(is.copy());
+				}
+				is = null;
+				return is;
 			}
 		}
 
 		return null;
 	}
 
-	@Override
-	protected boolean mergeItemStack(ItemStack is, int firstslot, int maxslot, boolean toPlayer)
-	{
-		boolean flag1 = false;
-		int k = firstslot;
-		if (toPlayer)
-		{
-			k = maxslot - 1;
-		}
-
-		Slot slot;
-		ItemStack itemstack1;
-
-		if (is.isStackable())
-		{
-			while (is.stackSize > 0 && (!toPlayer && k < maxslot || toPlayer && k >= firstslot))
-			{
-				try {
-					slot = (Slot)inventorySlots.get(k);
-				}
-				catch (Exception e) {
-					return false;
-				}
-				itemstack1 = slot.getStack();
-
-				//ReikaJavaLibrary.pConsole(toPlayer+" for "+is+" to "+slot+" ("+itemstack1+") - "+slot.isItemValid(is));
-
-				if (((!toPlayer && ii.isStackValidForSlot(k, is)) || toPlayer) && slot.isItemValid(is) && itemstack1 != null && itemstack1.itemID == is.itemID && (!is.getHasSubtypes() || is.getItemDamage() == itemstack1.getItemDamage()) && ItemStack.areItemStackTagsEqual(is, itemstack1))
-				{
-					int l = itemstack1.stackSize + is.stackSize;
-
-					if (l <= is.getMaxStackSize())
-					{
-						is.stackSize = 0;
-						itemstack1.stackSize = l;
-						slot.onSlotChanged();
-						flag1 = true;
-					}
-					else if (itemstack1.stackSize < is.getMaxStackSize())
-					{
-						is.stackSize -= is.getMaxStackSize() - itemstack1.stackSize;
-						itemstack1.stackSize = is.getMaxStackSize();
-						slot.onSlotChanged();
-						flag1 = true;
-					}
-				}
-
-				if (toPlayer)
-				{
-					--k;
-				}
-				else
-				{
-					++k;
-				}
-			}
-		}
-
-		if (is.stackSize > 0)
-		{
-			if (toPlayer)
-			{
-				k = maxslot - 1;
-			}
-			else
-			{
-				k = firstslot;
-			}
-
-			while (!toPlayer && k < maxslot || toPlayer && k >= firstslot)
-			{
-				slot = (Slot)inventorySlots.get(k);
-				itemstack1 = slot.getStack();
-
-				if ((toPlayer || ii.isStackValidForSlot(k, is) && slot.isItemValid(is)) && itemstack1 == null)
-				{
-					slot.putStack(is.copy());
-					slot.onSlotChanged();
-					is.stackSize = 0;
-					flag1 = true;
-					break;
-				}
-
-				if (toPlayer)
-				{
-					--k;
-				}
-				else
-				{
-					++k;
-				}
-			}
-		}
-
-		return flag1;
+	private boolean canAdd(ItemStack is, ItemStack inslot) {
+		if (inslot == null)
+			return true;
+		return ReikaItemHelper.canCombineStacks(is, inslot);
 	}
 
 	@Override //To avoid a couple crashes with some mods not checking array bounds
 	public Slot getSlot(int index)
 	{
 		if (index >= inventorySlots.size() || index < 0) {
-			ReikaJavaLibrary.pConsole("A mod tried to access an invalid slot for "+this);
+			Object o = "A mod tried to access an invalid slot "+index+" for "+this;
+			ReikaJavaLibrary.pConsole(o);
+			ReikaChatHelper.write(o);
 			Thread.dumpStack();
 			return new Slot(new TileEntityChest(), index, -20, -20); //create new slot off screen; hacky fix, but should work
 		}
