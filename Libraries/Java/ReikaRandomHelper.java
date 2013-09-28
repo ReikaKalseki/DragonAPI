@@ -13,17 +13,20 @@ import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaRandomHelper extends DragonAPICore {
 
+	/** Like rand.getInt(), but will not crash for n <= 0 */
 	public static int getSafeRandomInt(int val) {
 		if (val <= 1)
 			return 0;
 		return rand.nextInt(val);
 	}
 
+	/** Gets a random double value within base +/- range. */
 	public static double getRandomPlusMinus(double base, double range) {
 		double add = -range+rand.nextDouble()*(range*2+1);
 		return (base+add);
 	}
 
+	/** Gets a random integer value within base +/- range. */
 	public static int getRandomPlusMinus(int base, int range) {
 		int add = -range+rand.nextInt(range*2+1);
 		return base+add;

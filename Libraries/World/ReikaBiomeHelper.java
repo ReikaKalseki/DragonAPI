@@ -17,6 +17,7 @@ import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaBiomeHelper extends DragonAPICore {
 
+	/** Returns the first empty biome index. */
 	public static int getFirstEmptyBiomeIndex() {
 		for (int i = 0; i < BiomeGenBase.biomeList.length; i++) {
 			if (BiomeGenBase.biomeList[i] == null)
@@ -34,6 +35,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		return li;
 	}
 
+	/** Returns the biome supplied and any associated ones (eg Desert+DesertHills). Args: Biome */
 	public static List<BiomeGenBase> getAllAssociatedBiomes(BiomeGenBase biome) {
 		List<BiomeGenBase> li = new ArrayList<BiomeGenBase>();
 		li.add(biome);
@@ -62,6 +64,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		return li;
 	}
 
+	/** Returns the biome's parent. Args: Biome */
 	public static BiomeGenBase getParentBiomeType(BiomeGenBase biome) {
 		if (biome == BiomeGenBase.desertHills)
 			return (BiomeGenBase.desert);
@@ -86,6 +89,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		return biome;
 	}
 
+	/** Returns whether the biome is a variant of a parent. Args: Biome */
 	public static boolean isChildBiome(BiomeGenBase biome) {
 		if (biome == BiomeGenBase.desertHills)
 			return true;

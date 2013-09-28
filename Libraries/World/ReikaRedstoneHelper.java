@@ -19,7 +19,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class ReikaRedstoneHelper extends DragonAPICore {
 
-	/** Returns true on the postive redstone edge. Args: World, x, y, z, last power state*/
+	/** Returns true on the postive redstone edge. Args: World, x, y, z, last power state */
 	public static boolean isPositiveEdge(World world, int x, int y, int z, boolean lastPower) {
 		if (world.isBlockIndirectlyGettingPowered(x, y, z) == lastPower)
 			return false;
@@ -28,6 +28,7 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 		return true;
 	}
 
+	/** Returns true on the postive redstone edge on a side. Args: World, x, y, z, last power state, last repeater-power state, side */
 	public static boolean isPositiveEdgeOnSide(World world, int x, int y, int z, boolean lastPower, boolean lastRepeat, ForgeDirection side) {
 		boolean sided = world.getIndirectPowerOutput(x+side.offsetX, y+side.offsetY, z+side.offsetZ, side.getOpposite().ordinal());
 		boolean repeat = false;
@@ -38,6 +39,7 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 		return ((sided && pwr) || rpt) && !lastPower && !lastRepeat;
 	}
 
+	/** Is the block receiving power from a repeater on a side. Args: World, x, y, z, side */
 	public static boolean isReceivingPowerFromRepeater(World world, int x, int y, int z, ForgeDirection side) {
 		int id = world.getBlockId(x+side.offsetX, y+side.offsetY, z+side.offsetZ);
 		int meta = world.getBlockMetadata(x+side.offsetX, y+side.offsetY, z+side.offsetZ);

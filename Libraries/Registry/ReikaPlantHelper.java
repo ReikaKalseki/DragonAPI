@@ -45,6 +45,7 @@ public enum ReikaPlantHelper {
 		}
 	}
 
+	/** Can a plant be planted at yes/no. Args: World, x, y, z */
 	public boolean canPlantAt(World world, int x, int y, int z) {
 		int idbelow = world.getBlockId(x, y-1, z);
 		int metabelow = world.getBlockMetadata(x, y-1, z);

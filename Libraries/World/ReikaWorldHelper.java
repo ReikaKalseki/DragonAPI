@@ -1304,11 +1304,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return true;
 	}
 
+	/** Updates all blocks adjacent to the coordinate given. Args: World, x, y, z */
 	public static void causeAdjacentUpdates(World world, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
 		world.notifyBlocksOfNeighborChange(x, y, z, id);
 	}
 
+	/** Tests if a block is a dirt-type one, such that non-farm plants can grow on it. Args: id, metadata, material */
 	public static boolean isDirtType(int id, int meta, Material mat) {
 		if (id == Block.dirt.blockID)
 			return true;
@@ -1316,23 +1318,23 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return true;
 		if (id == Block.gravel.blockID)
 			return false;
-		if (mat == Material.ground)
-			return true;
 		if (mat == Material.grass)
 			return true;
 		return false;
 	}
 
+	/** Tests if a block is a liquid block. Args: ID */
 	public static boolean isLiquid(int id) {
-		if (id >= 8 && id <= 11)
-			return true;
+		if (id == 0)
+			return false;
 		Block b = Block.blocksList[id];
 		Material mat = b.blockMaterial;
 		if (mat == Material.lava || mat == Material.water)
 			return true;
-		return false;
+		return b instanceof BlockFluid;
 	}
 
+	/** Drops all items from a given block. Args: World, x, y, z, fortune level */
 	public static void dropBlockAt(World world, int x, int y, int z, int fortune) {
 		int id = world.getBlockId(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
@@ -1340,10 +1342,12 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		ReikaItemHelper.dropItems(world, x+0.5, y+0.5, z+0.5, li);
 	}
 
+	/** Drops all items from a given block with no fortune effect. Args: World, x, y, z */
 	public static void dropBlockAt(World world, int x, int y, int z) {
 		dropBlockAt(world, x, y, z, 0);
 	}
 
+	/** Sets the biome type at an xz column. Args: World, x, z, biome */
 	public static void setBiomeForXZ(World world, int x, int z, BiomeGenBase biome) {
 		Chunk ch = world.getChunkFromBlockCoords(x, z);
 
@@ -1357,6 +1361,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		ch.setBiomeArray(biomes);
 	}
 
+	/** Sets the biome type at an xz column and mimics its generation. Args: World, x, z, biome */
 	public static void setBiomeAndBlocksForXZ(World world, int x, int z, BiomeGenBase biome) {
 		Chunk ch = world.getChunkFromBlockCoords(x, z);
 
@@ -1486,6 +1491,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 	}
 
+	/** Get the sun brightness as a fraction from 0-1. Args: World */
 	public static float getSunIntensity(World world) {
 		float ang = world.getCelestialAngle(0);
 		float base = 1.0F - (MathHelper.cos(ang * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
@@ -1502,6 +1508,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return base * 0.8F + 0.2F;
 	}
 
+	/** Tests if a block is nearby, yes/no. Args: World, x, y, z, id to test, meta to test, range */
 	public static boolean testBlockProximity(World world, int x, int y, int z, int id, int meta, int r) {
 		for (int i = -r; i <= r; i++) {
 			for (int j = -r; j <= r; j++) {
@@ -1519,6 +1526,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return false;
 	}
 
+	/** Tests if a liquid is nearby, yes/no. Args: World, x, y, z, liquid material, range */
 	public static boolean testLiquidProximity(World world, int x, int y, int z, Material mat, int r) {
 		for (int i = -r; i <= r; i++) {
 			for (int j = -r; j <= r; j++) {
@@ -1535,6 +1543,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return false;
 	}
 
+	/** A less intensive but less accurate block proximity test. Args: World, x, y, z, range */
 	public static boolean testBlockProximityLoose(World world, int x, int y, int z, int id, int meta, int r) {
 		int total = r*r*r*8; //(2r)^3
 		int frac = total/16;

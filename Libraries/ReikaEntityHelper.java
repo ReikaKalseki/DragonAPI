@@ -502,6 +502,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
     	ent.motionY = 4*max*rand.nextFloat();*/
 	}
 
+	/** Drop an entity's head. Args: EntityLiving */
 	public static void dropHead(EntityLiving e) {
 		if (e == null)
 			return;
@@ -526,11 +527,13 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY, e.posZ, is);
 	}
 
-	public static void spawnParticlesAround(String part, World world, Entity e, int num) {
+	/** Spawns a bunch of particles around an entity. Args: Particle Type, Entity, number of particles */
+	public static void spawnParticlesAround(String part, Entity e, int num) {
 		for (int k = 0; k < num; k++)
-			world.spawnParticle(part, e.posX-0.6+1.2*rand.nextDouble(), e.posY+e.height/2-0.6+1.2*rand.nextDouble(), e.posZ-0.6+1.2*rand.nextDouble(), -0.2+0.4*rand.nextDouble(), 0.4*rand.nextDouble(), -0.2+0.4*rand.nextDouble());
+			e.worldObj.spawnParticle(part, e.posX-0.6+1.2*rand.nextDouble(), e.posY+e.height/2-0.6+1.2*rand.nextDouble(), e.posZ-0.6+1.2*rand.nextDouble(), -0.2+0.4*rand.nextDouble(), 0.4*rand.nextDouble(), -0.2+0.4*rand.nextDouble());
 	}
 
+	/** Returns the Entity ID from entity class. Args: Entity Class */
 	public static int getEntityIDByClass(Class cl) {
 		String name = (String)EntityList.classToStringMapping.get(cl);
 		return mobNameToID(name);

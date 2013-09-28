@@ -23,14 +23,17 @@ import net.minecraft.world.World;
 
 public class ReikaSpawnerHelper {
 
+	/** Returns a mob spawner's type name. Args: Spawner TileEntity */
 	public static String getMobSpawnerMobName(TileEntityMobSpawner spw) {
 		return spw.func_98049_a().getEntityNameToSpawn();
 	}
 
+	/** Sets a mob spawner type. Args: Spawner TileEntity, Name */
 	public static void setMobSpawnerMob(TileEntityMobSpawner spw, String name) {
 		spw.func_98049_a().setMobID(name);
 	}
 
+	/** Returns a mob spawner's type name. Args: World, x, y, z */
 	public static String getSpawnerTypeName(World world, int x, int y, int z) {
 		TileEntity te = world.getBlockTileEntity(x, y, z);
 		if (!(te instanceof TileEntityMobSpawner))
@@ -38,6 +41,7 @@ public class ReikaSpawnerHelper {
 		return getMobSpawnerMobName((TileEntityMobSpawner)te);
 	}
 
+	/** Returns a mob spawner's entity ID. Args: World, x, y, z */
 	public static int getSpawnerTypeID(World world, int x, int y, int z) {
 		TileEntity te = world.getBlockTileEntity(x, y, z);
 		if (!(te instanceof TileEntityMobSpawner))
@@ -47,6 +51,7 @@ public class ReikaSpawnerHelper {
 		return ReikaEntityHelper.mobNameToID(name);
 	}
 
+	/** Copies a spawner's spawn type to an item. Args: Item, Spawner TileEntity */
 	public static void addMobNBTToItem(ItemStack is, TileEntityMobSpawner spw) {
 		if (is == null)
 			return;
@@ -58,6 +63,7 @@ public class ReikaSpawnerHelper {
 		}
 	}
 
+	/** Sets a spawner's spawn type from an item. Args: Item, Spawner TileEntity */
 	public static void setSpawnerFromItemNBT(ItemStack is, TileEntityMobSpawner spw) {
 		if (is == null)
 			return;
@@ -69,7 +75,9 @@ public class ReikaSpawnerHelper {
 		setMobSpawnerMob(spw, name);
 	}
 
-	public static void forceSpawn(TileEntityMobSpawner spw, World world, int num, PotionEffect... potions) {
+	/** Forcibly runs the spawn cycle for a spawner. Args: Spawner TileEntity, number of mobs, Potion effects */
+	public static void forceSpawn(TileEntityMobSpawner spw, int num, PotionEffect... potions) {
+		World world = spw.worldObj;
 		if (world.isRemote)
 			return;
 		Random r = new Random();
@@ -95,6 +103,7 @@ public class ReikaSpawnerHelper {
 		}
 	}
 
+	/** Gets a spawner type from an item. Args: Item */
 	public static String getSpawnerFromItemNBT(ItemStack is) {
 		if (is == null)
 			return null;

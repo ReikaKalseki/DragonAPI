@@ -31,10 +31,12 @@ public class ReikaRecipeHelper {
 	private static final CraftingManager cr = CraftingManager.getInstance();
 	private static final List<IRecipe> recipes = cr.getRecipeList();
 
+	/** Finds a recipe by its product. */
 	public static IRecipe getRecipeByOutput(ItemStack out) {
 		return recipes.get(recipes.indexOf(out));
 	}
 
+	/** Finds recipes by product. */
 	public static List<IRecipe> getRecipesByOutput(ItemStack out) {
 		List<IRecipe> li = new ArrayList<IRecipe>();
 		for (int i = 0; i < recipes.size(); i++) {
@@ -45,6 +47,7 @@ public class ReikaRecipeHelper {
 		return li;
 	}
 
+	/** Finds recipes by product. */
 	public static List<ShapedRecipes> getShapedRecipesByOutput(ItemStack out) {
 		List<ShapedRecipes> li = new ArrayList<ShapedRecipes>();
 		for (int i = 0; i < recipes.size(); i++) {
@@ -57,6 +60,7 @@ public class ReikaRecipeHelper {
 		return li;
 	}
 
+	/** Finds recipes by product. */
 	public static List<ShapedRecipes> getShapedRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ShapedRecipes> li = new ArrayList<ShapedRecipes>();
 		for (int i = 0; i < in.size(); i++) {
@@ -71,11 +75,13 @@ public class ReikaRecipeHelper {
 		return li;
 	}
 
+	/** Returns the item in a shaped recipe at x, y in the grid. */
 	public static ItemStack getItemInRecipeAtXY(ShapedRecipes r, int x, int y) {
 		int xy = x+r.recipeWidth*y;
 		return r.recipeItems[xy];
 	}
 
+	/** Finds recipes by product. */
 	public static List<IRecipe> getAllRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<IRecipe> li = new ArrayList<IRecipe>();
 		for (int i = 0; i < in.size(); i++) {
@@ -88,6 +94,7 @@ public class ReikaRecipeHelper {
 		return li;
 	}
 
+	/** Finds recipes by product. */
 	public static List<ShapedOreRecipe> getShapedOreRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ShapedOreRecipe> li = new ArrayList<ShapedOreRecipe>();
 		for (int i = 0; i < in.size(); i++) {
@@ -102,6 +109,7 @@ public class ReikaRecipeHelper {
 		return li;
 	}
 
+	/** Finds recipes by product. */
 	public static List<ExpandedOreRecipe> getExpandedOreRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ExpandedOreRecipe> li = new ArrayList<ExpandedOreRecipe>();
 		for (int i = 0; i < in.size(); i++) {
@@ -116,6 +124,7 @@ public class ReikaRecipeHelper {
 		return li;
 	}
 
+	/** Finds recipes by product. */
 	public static List<ShapelessRecipes> getShapelessRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ShapelessRecipes> li = new ArrayList<ShapelessRecipes>();
 		for (int i = 0; i < in.size(); i++) {
@@ -129,6 +138,7 @@ public class ReikaRecipeHelper {
 		return li;
 	}
 
+	/** Finds recipes by product. */
 	public static List<ShapelessOreRecipe> getShapelessOreRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ShapelessOreRecipe> li = new ArrayList<ShapelessOreRecipe>();
 		for (int i = 0; i < in.size(); i++) {
@@ -142,6 +152,7 @@ public class ReikaRecipeHelper {
 		return li;
 	}
 
+	/** Turns a recipe into a 3x3 itemstack array for rendering. Args: ItemStack[] array, Recipe */
 	public static void copyRecipeToItemStackArray(ItemStack[] in, IRecipe ire) {
 		ItemStack[] isin = new ItemStack[9];
 		int num;
@@ -262,6 +273,7 @@ public class ReikaRecipeHelper {
 		}
 	}
 
+	/** Get the smelting recipe of an item by output. Args: output */
 	public static ItemStack getFurnaceInput(ItemStack out) {
 		HashMap m = (HashMap)FurnaceRecipes.smelting().getMetaSmeltingList();
 		Set ks = m.keySet();
@@ -283,6 +295,7 @@ public class ReikaRecipeHelper {
 		return null;
 	}
 
+	/** Adds a smelting recipe. Args; Item in, item out, xp */
 	public static void addSmelting(ItemStack in, ItemStack out, float xp) {
 		FurnaceRecipes.smelting().addSmelting(in.itemID, in.getItemDamage(), out, xp);
 	}

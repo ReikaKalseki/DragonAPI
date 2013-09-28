@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.util.Random;
 
@@ -35,9 +34,14 @@ public class DragonAPICore {
 	//TODO Add handler for custom death messages
 
 	public static boolean isReikasComputer() {
-		File user = new File("C:/Users/Reika");
-		File mcp = new File("C:/Users/Reika/Downloads/mcp");
-		return user.exists() && user.isDirectory() && mcp.exists() && mcp.isDirectory();
+		try {
+			String username = System.getProperty("user.name");
+			boolean win = System.getProperty("os.name").toLowerCase().contains("win");
+			return win && "Reika".equals(username);
+		}
+		catch (SecurityException e) {
+			return false;
+		}
 	}
 
 	static {

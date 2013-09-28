@@ -18,6 +18,7 @@ import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public final class ReikaBlockHelper extends DragonAPICore {
 
+	/** Tests if a block always drops itself. Args: ID */
 	public static boolean alwaysDropsSelf(int ID) {
 		int k = 0;
 		//for (k = 0; k <= 20; k++)
@@ -30,6 +31,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		return true;
 	}
 
+	/** Tests if a block never drops itself. Args: ID */
 	public static boolean neverDropsSelf(int ID) {
 		boolean hasID = false;
 		boolean hasMeta = false;
@@ -43,7 +45,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		return (hasID && hasMeta);
 	}
 
-	/** Returns true if the Block ID corresponds to an ore block. Args: ID */
+	/** Returns true if the Block ID corresponds to an ore block. Args: ItemStack */
 	public static boolean isOre(ItemStack is) {
 		if (is == null)
 			return false;
@@ -58,48 +60,17 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		return false;
 	}
 
+	/** Returns true if the Block ID corresponds to an ore block. Args: ID, Metadata */
 	public static boolean isOre(int id, int meta) {
 		return isOre(new ItemStack(id, 1, meta));
 	}
 
-	public static boolean canSilkTouch(int id, int meta) {
-		if (isOre(id, meta))
-			return true;
-		if (id == Block.stone.blockID)
-			return true;
-		if (id == Block.grass.blockID)
-			return true;
-		if (id == Block.glass.blockID)
-			return true;
-		if (id == Block.glowStone.blockID)
-			return true;
-		if (id == Block.thinGlass.blockID)
-			return true;
-		if (id == Block.ice.blockID)
-			return true;
-		if (id == Block.leaves.blockID)
-			return true;
-		if (id == Block.silverfish.blockID)
-			return true;
-		return false;
-	}
-
+	/** Gets a world block as an itemstack. Args: World, x, y, z */
 	public static ItemStack getWorldBlockAsItemStack(World world, int x, int y, int z) {
 		return new ItemStack(world.getBlockId(x, y, z), 1, world.getBlockMetadata(x, y, z));
 	}
 
-	public static boolean isRail(int id) {
-		if (id == Block.rail.blockID)
-			return true;
-		if (id == Block.railActivator.blockID)
-			return true;
-		if (id == Block.railDetector.blockID)
-			return true;
-		if (id == Block.railPowered.blockID)
-			return true;
-		return false;
-	}
-
+	/** Get the block ID silverfish stone is imitating. Args; Metadata */
 	public static int getSilverfishImitatedBlock(int meta) {
 		switch(meta) {
 		case 0:

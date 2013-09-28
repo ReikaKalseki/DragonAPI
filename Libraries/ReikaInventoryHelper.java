@@ -780,6 +780,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return extra;
 	}
 
+	/** Gets the first block in an inventory, optionally consuming one. Args: Inventory, Decr yes/no */
 	public static ItemStack getNextBlockInInventory(ItemStack[] inv, boolean decr) {
 		for (int i = 0; i < inv.length; i++) {
 			ItemStack is = inv[i];
@@ -795,6 +796,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return null;
 	}
 
+	/** Returns whether an inventory is empty. Args: IInventory */
 	public static boolean isEmpty(IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			ItemStack is = ii.getStackInSlot(i);
@@ -804,6 +806,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return true;
 	}
 
+	/** Returns whether an inventory is full. Args: IInventory */
 	public static boolean isFull(IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			ItemStack is = ii.getStackInSlot(i);
