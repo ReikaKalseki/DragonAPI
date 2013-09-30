@@ -11,13 +11,16 @@ package Reika.DragonAPI;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
@@ -67,6 +70,33 @@ public class DragonAPIInit extends DragonAPIMod {
 	@PostInit
 	public void postload(FMLPostInitializationEvent evt) {
 		this.loadHandlers();
+		this.alCompat();
+	}
+
+	private static void alCompat() { //Why the hell are there three standards for aluminum?
+		List<ItemStack> al = OreDictionary.getOres("ingotNaturalAluminum");
+		for (int i = 0; i < al.size(); i++) {
+			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminum"), al.get(i)))
+				OreDictionary.registerOre("ingotAluminum", al.get(i));
+			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminium"), al.get(i)))
+				OreDictionary.registerOre("ingotAluminium", al.get(i));
+		}
+
+		al = OreDictionary.getOres("ingotAluminum");
+		for (int i = 0; i < al.size(); i++) {
+			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotNaturalAluminum"), al.get(i)))
+				OreDictionary.registerOre("ingotNaturalAluminum", al.get(i));
+			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminium"), al.get(i)))
+				OreDictionary.registerOre("ingotAluminium", al.get(i));
+		}
+
+		al = OreDictionary.getOres("ingotAluminium");
+		for (int i = 0; i < al.size(); i++) {
+			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotNaturalAluminum"), al.get(i)))
+				OreDictionary.registerOre("ingotNaturalAluminum", al.get(i));
+			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminum"), al.get(i)))
+				OreDictionary.registerOre("ingotAluminum", al.get(i));
+		}
 	}
 
 	private static void loadHandlers() {

@@ -168,31 +168,26 @@ public class ControlledConfig {
 
 		for (int i = 0; i < optionList.length; i++) {
 			String label = optionList[i].getLabel();
-			if (!optionList[i].isDummiedOut()) {
-				if (optionList[i].isBoolean())
-					controls[i] = optionList[i].setState(config);
-				if (optionList[i].isNumeric())
-					controls[i] = optionList[i].setValue(config);
-				if (optionList[i].isDecimal())
-					controls[i] = optionList[i].setDecimal(config);
-			}
+			if (optionList[i].isBoolean())
+				controls[i] = optionList[i].setState(config);
+			if (optionList[i].isNumeric())
+				controls[i] = optionList[i].setValue(config);
+			if (optionList[i].isDecimal())
+				controls[i] = optionList[i].setDecimal(config);
 		}
 
 		for (int i = 0; i < blockList.length; i++) {
 			String name = blockList[i].getConfigName();
-			if (!blockList[i].isDummiedOut())
-				blockIDs[i] = config.get(blockList[i].getCategory(), name, blockList[i].getDefaultID()).getInt();
+			blockIDs[i] = config.get(blockList[i].getCategory(), name, blockList[i].getDefaultID()).getInt();
 		}
 
 		for (int i = 0; i < itemList.length; i++) {
 			String name = itemList[i].getConfigName();
-			if (!itemList[i].isDummiedOut())
-				itemIDs[i] = config.get(itemList[i].getCategory(), name, itemList[i].getDefaultID()).getInt();
+			itemIDs[i] = config.get(itemList[i].getCategory(), name, itemList[i].getDefaultID()).getInt();
 		}
 
 		for (int i = 0; i < IDList.length; i++) {
-			if (!IDList[i].isDummiedOut())
-				otherIDs[i] = this.getValueFromConfig(IDList[i], config);
+			otherIDs[i] = this.getValueFromConfig(IDList[i], config);
 		}
 
 		/*******************************/

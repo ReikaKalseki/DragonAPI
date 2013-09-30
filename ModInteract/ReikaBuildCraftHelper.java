@@ -13,6 +13,7 @@ import net.minecraftforge.liquids.LiquidContainerRegistry;
 import net.minecraftforge.liquids.LiquidDictionary;
 import net.minecraftforge.liquids.LiquidStack;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import buildcraft.api.fuels.IronEngineFuel;
 
@@ -25,7 +26,7 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	private static double gasEnergyPerKg = 46.9;
 
 	public static boolean doesBuildCraftExist() {
-		return ReikaJavaLibrary.doesClassExist("BuildCraftEnergy");
+		return ModList.BUILDCRAFTENERGY.isLoaded();
 	}
 
 	public static float getFuelMJPerTick() {

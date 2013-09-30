@@ -42,4 +42,7 @@ public abstract interface RegistrationList {
 	/** Only used in item registration */
 	public boolean overwritingItem();
 
+	/** Whether to create it or not */
+	public boolean isDummiedOut();
+
 }

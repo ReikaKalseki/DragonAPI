@@ -40,7 +40,8 @@ public enum ModList {
 	TINKERER("TConstruct"),
 	THERMAL("ThermalExpansion"),
 	MEKANISM("Mekanism"),
-	MEKTOOLS("MekanismTools");
+	MEKTOOLS("MekanismTools"),
+	RAILCRAFT("Railcraft");
 
 	private boolean condition;
 	private boolean preset = false;

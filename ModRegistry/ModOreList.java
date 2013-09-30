@@ -19,25 +19,17 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public enum ModOreList {
 
-	//THERMAL EXPANSION
 	TIN("Tin", "ingotTin", 1, "oreTin"),
-	COPPER("Copper", "ingotCopper", 1, "oreCopper"),
+	COPPER("Copper", "ingotCopper", 1, "oreCopper", "oreTetrahedrite"),
 	LEAD("Lead", "ingotLead", 1, "oreLead"),
 	FERROUS("Nickel", "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
 	SILVER("Silver", "ingotSilver", 1, "oreSilver"),
-	//GREGTECH
 	GALENA("Galena", "ingotGalena", 1, "oreGalena"),
-	//Also TC
-	ALUMINUM("Aluminum", "ingotNaturalAluminum", 1, "oreAluminum", "naturalAluminum", "oreNaturalAluminum", "oreBauxite"), //...Why??
-	//also IC2
+	ALUMINUM("Aluminum", "ingotNaturalAluminum", 1, "oreAluminum", "naturalAluminum", "oreNaturalAluminum"), //...Why??
 	IRIDIUM("Iridium", "ingotIridium", 1, "oreIridium"),
-	//?
-	PERIDOT("Peridot", "gemPeridot", 1, "orePeridot"),
-	//APPLIED ENERGISTICS
+	NULL("Unused", "unused", 1, "unused"),
 	CERTUSQUARTZ("Certus Quartz", "crystalQuartz", 3, "oreCertusQuartz"),
-	//INDUSTRIALCRAFT
 	URANIUM("Uranium", "ingotUranium", 1, "oreUranium"),
-	//THAUMCRAFT
 	CINNABAR("Mercury", "itemQuicksilver", 1, "oreCinnabar"),
 	AMBER("Amber", "gemAmber", 1, "oreAmber"),
 	INFUSEDAIR("Air Infused", "shardAir", 4, "oreInfusedAir"),
@@ -46,21 +38,15 @@ public enum ModOreList {
 	INFUSEDEARTH("Earth Infused", "shardEarth", 4, "oreInfusedEarth"),
 	INFUSEDVIS("Vis Infused", "shardVis", 4, "oreInfusedVis"),
 	INFUSEDDULL("Dull Infused", "shardDull", 4, "oreInfusedDull"),
-	//FORESTRY
 	APATITE("Apatite", "gemApatite", 3, "oreApatite"),
-	//RAILCRAFT
 	SALTPETER("Saltpeter", "dustSaltpeter", 2, "oreSaltpeter"),
-	//REDPOWER
 	TUNGSTEN("Tungsten", "ingotTungsten", 1, "oreTungsten", "oreTungstate"),
 	NIKOLITE("Nikolite", "dustNikolite", 5, "oreNikolite"),
 	GREENSAPPHIRE("Green Sapphire", "gemGreenSapphire", 1, "oreGreenSapphire"),
 	RUBY("Ruby", "gemRuby", 1, "oreRuby"),
 	SAPPHIRE("Sapphire", "gemSapphire", 1, "oreSapphire"),
-	//MFFS
 	MONAZIT("Monazit", "ForciciumItem", 4, "MonazitOre"),
-	//DARTCRAFT
 	FORCE("Force", "gemForce", 3, "oreForce"),
-	//NETHER ORES
 	NETHERCOAL("Nether Coal", "itemCoal", 1, "oreNetherCoal"),
 	NETHERIRON("Nether Iron", "ingotIron", 1, "oreNetherIron"),
 	NETHERGOLD("Nether Gold", "ingotGold", 1, "oreNetherGold"),
@@ -74,25 +60,21 @@ public enum ModOreList {
 	NETHERNICKEL("Nether Nickel", "ingotNickel", 1, "oreNetherNickel"),
 	NETHERSILVER("Nether Silver", "ingotSilver", 1, "oreNetherSilver"),
 	NETHERNIKOLITE("Nether Nikolite", "dustNikolite", 5, "oreNetherNikolite"),
-	//TINKERER'S CONSTRUCT
 	COBALT("Cobalt", "ingotCobalt", 1, "oreCobalt"),
 	ARDITE("Ardite", "ingotArdite", 1, "oreArdite"),
-	//?
-	PLATINUM("Platinum", "ingotPlatinum", 1, "orePlatinum"), //ThermalExpansion Shiny
+	PLATINUM("Platinum", "ingotPlatinum", 1, "orePlatinum", "oreCooperite"), //WTF Greg..."Cooper" == "Sheldon"??
 	NETHERPLATINUM("Nether Platinum", "ingotPlatinum", 1, "oreNetherPlatinum"),
-	//Gregtech?
-	ZINC("Zinc", "ingotZinc", 1, "oreZinc"),
-	//Mekanism
+	ZINC("Zinc", "ingotZinc", 1, "oreZinc", "oreSphalerite"),
 	OSMIUM("Osmium", "ingotOsmium", 1, "oreOsmium", "oreNetherOsmium"),
-	//?
 	NETHERPIGIRON("Nether Pig Iron", "ingotPigIron", 1, "oreNetherPigIron"),
-	//RAILCRAFT
 	SULFUR("Sulfur", "dustSulfur", 3, "oreSulfur"),
-	//REACTORCRAFT
 	PITCHBLENDE("Pitchblende", "ingotUranium", 1, "orePitchblende"),
 	CADMIUM("Cadmium", "ingotCadmium", 1, "oreCadmium"),
 	INDIUM("Indium", "ingotIndium", 1, "oreIndium"),
-	FLUORITE("Fluorite", "shardFluorite", 1, "oreFluorite");
+	FLUORITE("Fluorite", "shardFluorite", 1, "oreFluorite"),
+	BAUXITE("Bauxite", "ingotAluminum", 1, "oreBauxite"),
+	SODALITE("Sodalite", "dustSodalite", 1, "oreSodalite"),
+	PYRITE("Pyrite", "dustPyrite", 1, "orePyrite");
 
 	private ArrayList<ItemStack> ores;
 	private String name;
