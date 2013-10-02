@@ -46,6 +46,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int id = world.getBlockId(x, y, z);
 		if (id == 0)
 			return true;
+		if (id == 36)
+			return false;
 		Block b = Block.blocksList[id];
 		if (b instanceof BlockFluid)
 			return true;
