@@ -158,8 +158,8 @@ public class ReikaRecipeHelper {
 		int num;
 		int w = 0;
 		int h = 0;
-		ReikaJavaLibrary.pConsoleIf("Recipe is null!", ire == null);
-		ReikaJavaLibrary.pConsoleIf("ItemStack array is null!", in == null);
+		ReikaJavaLibrary.pConsole("Recipe is null!", ire == null);
+		ReikaJavaLibrary.pConsole("ItemStack array is null!", in == null);
 		if (ire instanceof ShapedRecipes) {
 			ShapedRecipes r = (ShapedRecipes)ire;
 			num = r.recipeItems.length;

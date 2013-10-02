@@ -40,12 +40,12 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			System.out.println(String.valueOf(obj));
 	}
 
-	public static void pConsoleSideOnly(Object obj, Side s) {
+	public static void pConsole(Object obj, Side s) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == s)
 			pConsole(obj);
 	}
 
-	public static void pConsoleIf(Object obj, boolean con) {
+	public static void pConsole(Object obj, boolean con) {
 		if (con)
 			pConsole(obj);
 	}

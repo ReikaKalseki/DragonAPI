@@ -152,14 +152,21 @@ public class CoreContainer extends Container {
 			else {
 				for (int i = 0; i < invsize && is.stackSize > 0; i++) {
 					Slot toSlot = (Slot)inventorySlots.get(i);
+					int lim = ((IInventory)tile).getInventoryStackLimit();
 					if (toSlot.isItemValid(is) && (((IInventory)tile).isStackValidForSlot(i, is)) && this.canAdd(is, toSlot.getStack())) {
 						if (!toSlot.getHasStack()) {
-							toSlot.putStack(is.copy());
-							is.stackSize = 0;
+							if (is.stackSize <= lim) {
+								toSlot.putStack(is.copy());
+								is.stackSize = 0;
+							}
+							else {
+								toSlot.putStack(new ItemStack(is.itemID, lim, is.getItemDamage()));
+								is.stackSize -= lim;
+							}
 						}
 						else {
 							ItemStack inToSlot = toSlot.getStack();
-							int add = inToSlot.getMaxStackSize()-inToSlot.stackSize;
+							int add = Math.min(inToSlot.getMaxStackSize()-inToSlot.stackSize, lim);
 							if (add > is.stackSize)
 								add = is.stackSize;
 							toSlot.putStack(new ItemStack(is.itemID, inToSlot.stackSize+add, is.getItemDamage()));

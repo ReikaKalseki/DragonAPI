@@ -535,7 +535,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			return false;
 		}
 		if (slot != -1) {
-			if (ii.getStackInSlot(slot).stackSize > is.getMaxStackSize()-is.stackSize) {
+			int size = ii.getStackInSlot(slot).stackSize;
+			if (size > is.getMaxStackSize()-is.stackSize || size+is.stackSize > ii.getInventoryStackLimit()) {
 				if (e == -1)
 					return false;
 				if (ii.isStackValidForSlot(e, is)) {
