@@ -1510,6 +1510,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return base * 0.8F + 0.2F;
 	}
 
+	/** Returns the sun's declination, clamped to 0-90. Args: World */
+	public static float getSunAngle(World world) {
+		int time = (int)(world.getWorldTime()%12000);
+		float suntheta = 0.5F*(float)(90*Math.sin(Math.toRadians(time*90D/6000D)));
+		return suntheta;
+	}
+
 	/** Tests if a block is nearby, yes/no. Args: World, x, y, z, id to test, meta to test, range */
 	public static boolean testBlockProximity(World world, int x, int y, int z, int id, int meta, int r) {
 		for (int i = -r; i <= r; i++) {

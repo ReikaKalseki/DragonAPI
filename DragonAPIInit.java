@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
@@ -18,7 +17,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.BCMachineHandler;
@@ -140,12 +138,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@Override
 	public URL getDocumentationSite() {
-		try {
-			return new URL("http://www.minecraftforum.net/topic/1969694-");
-		}
-		catch (MalformedURLException e) {
-			throw new RegistrationException(instance, "The mod provided a malformed URL for its documentation site!");
-		}
+		return DragonAPICore.getReikaForumPage(instance);
 	}
 
 	@Override
