@@ -17,7 +17,7 @@ import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class TwilightBlockHandler extends ModHandlerBase {
+public class TwilightForestHandler extends ModHandlerBase {
 
 	public final int rootID;
 	public final int towerMachineID;
@@ -26,37 +26,43 @@ public class TwilightBlockHandler extends ModHandlerBase {
 
 	public final int breakerMeta;
 
-	private static final TwilightBlockHandler instance = new TwilightBlockHandler();
+	public final int dimensionID;
 
-	private TwilightBlockHandler() {
+	private static final TwilightForestHandler instance = new TwilightForestHandler();
+
+	private TwilightForestHandler() {
 		super();
 		int idroot = -1;
 		int idmachine = -1;
 		int idtowerwood = -1;
 		int metabreaker = -1;
 		int idmaze = -1;
+		int dim = 7;
 
 		if (this.hasMod()) {
 			try {
 				Class twilight = Class.forName("twilightforest.block.TFBlocks");
 				Class devices = Class.forName("twilightforest.block.BlockTFTowerDevice");
+				Class mod = Class.forName("twilightforest.TwilightForestMod");
 				Field root = twilight.getField("root");
 				Field machine = twilight.getField("towerDevice");
 				Field towerwood = twilight.getField("towerWood");
 				Field maze = twilight.getField("mazestone");
 				Field breaker = devices.getField("META_ANTIBUILDER");
+				Field dimension = mod.getField("dimensionID");
 				idroot = ((Block)root.get(null)).blockID;
 				idmachine = ((Block)machine.get(null)).blockID;
 				idtowerwood = ((Block)towerwood.get(null)).blockID;
 				idmaze = ((Block)maze.get(null)).blockID;
 				metabreaker = breaker.getInt(null);
+				dim = dimension.getInt(null);
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.spamConsole("DRAGONAPI: Twilight Forest class not found! Cannot read its contents!");
 				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Twilight Forest block field not found! "+e.getMessage());
+				ReikaJavaLibrary.spamConsole("DRAGONAPI: Twilight Forest field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
@@ -81,10 +87,10 @@ public class TwilightBlockHandler extends ModHandlerBase {
 		towerWoodID = idtowerwood;
 		breakerMeta = metabreaker;
 		mazeStoneID = idmaze;
-
+		dimensionID = dim;
 	}
 
-	public static TwilightBlockHandler getInstance() {
+	public static TwilightForestHandler getInstance() {
 		return instance;
 	}
 

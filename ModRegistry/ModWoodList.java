@@ -45,6 +45,7 @@ public enum ModWoodList { //look through treecapitator config?
 	REDWOOD(ModList.BOP, null, null, null, null, 0, Block.class),
 	ACACIA(ModList.BOP, null, null, null, null, 0, Block.class),
 	JACARANDA(ModList.BOP, null, null, null, null, 0, Block.class),
+	PALM(ModList.BOP, null, null, null, null, 0, Block.class),
 	AUTUMN(ModList.BXL, null, null, null, null, 0, Block.class),
 	FIR(ModList.BXL, null, null, null, null, 0, Block.class),
 	XLREDWOOD(ModList.BXL, null, null, null, null, 0, Block.class),
@@ -65,7 +66,7 @@ public enum ModWoodList { //look through treecapitator config?
 	private String varName;
 	private Class containerClass;
 
-	private boolean exists;
+	private boolean exists = false;
 
 	public static final ModWoodList[] woodList = ModWoodList.values();
 
@@ -113,6 +114,10 @@ public enum ModWoodList { //look through treecapitator config?
 				ItemStack wood = (ItemStack)w.get(null);
 				ItemStack leaf = (ItemStack)l.get(null);
 				ItemStack sapling = (ItemStack)s.get(null);
+				if (wood == null || leaf == null || sapling == null) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this+": Block not instantiated!");
+					return;
+				}
 				id = wood.itemID;
 				idleaf = leaf.itemID;
 				idsapling = sapling.itemID;
@@ -121,6 +126,10 @@ public enum ModWoodList { //look through treecapitator config?
 				Block wood = (Block)w.get(null);
 				Block leaf = (Block)l.get(null);
 				Block sapling = (Block)s.get(null);
+				if (wood == null || leaf == null || sapling == null) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this+": Block not instantiated!");
+					return;
+				}
 				id = wood.blockID;
 				idleaf = leaf.blockID;
 				idsapling = sapling.blockID;
@@ -144,6 +153,7 @@ public enum ModWoodList { //look through treecapitator config?
 			saplingID = idsapling;
 			saplingMeta = metasapling;
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully loaded wood "+this);
+			exists = true;
 		}
 		catch (ClassNotFoundException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
@@ -173,7 +183,7 @@ public enum ModWoodList { //look through treecapitator config?
 	}
 
 	public boolean exists() {
-		return exists;
+		return exists && this.getParentMod().isLoaded();
 	}
 
 	public ItemStack getItem() {

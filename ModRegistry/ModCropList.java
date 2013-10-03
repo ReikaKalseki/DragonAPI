@@ -54,11 +54,19 @@ public enum ModCropList {
 					Field b = cl.getField(blockVar);
 					if (type == ItemStack.class) {
 						ItemStack block = (ItemStack)b.get(null);
-						id = block.itemID;
+						if (block == null) {
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
+						}
+						else
+							id = block.itemID;
 					}
 					else if (type == Block.class) {
 						Block block = (Block)b.get(null);
-						id = block.blockID;
+						if (block == null) {
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
+						}
+						else
+							id = block.blockID;
 					}
 					else if (type == Integer.class) {
 						id = b.getInt(null);

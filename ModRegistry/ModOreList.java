@@ -16,6 +16,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModInteract.MekanismHandler;
 
 public enum ModOreList {
 
@@ -72,9 +73,9 @@ public enum ModOreList {
 	CADMIUM("Cadmium", "ingotCadmium", 1, "oreCadmium"),
 	INDIUM("Indium", "ingotIndium", 1, "oreIndium"),
 	FLUORITE("Fluorite", "shardFluorite", 1, "oreFluorite"),
-	BAUXITE("Bauxite", "ingotAluminum", 1, "oreBauxite"),
+	BAUXITE("Bauxite", "dustAluminum", 1, "oreBauxite"),
 	SODALITE("Sodalite", "dustSodalite", 1, "oreSodalite"),
-	PYRITE("Pyrite", "dustPyrite", 1, "orePyrite");
+	PYRITE("Pyrite", "ingotPyrite", 1, "orePyrite");
 
 	private ArrayList<ItemStack> ores;
 	private String name;
@@ -118,6 +119,8 @@ public enum ModOreList {
 	public static boolean isModOre(ItemStack is) {
 		if (is == null)
 			return false;
+		if (is.itemID == MekanismHandler.getInstance().oreID)
+			return true;
 		for (int i = 0; i < oreList.length; i++) {
 			if (oreList[i].ores.isEmpty()) {
 				oreList[i].reloadOreList();
@@ -132,6 +135,8 @@ public enum ModOreList {
 	public static ModOreList getModOreFromOre(ItemStack is) {
 		if (is == null)
 			return null;
+		if (is.itemID == MekanismHandler.getInstance().oreID)
+			return OSMIUM;
 		for (int i = 0; i < oreList.length; i++) {
 			if (oreList[i].ores.isEmpty()) {
 				oreList[i].reloadOreList();

@@ -23,10 +23,11 @@ import Reika.DragonAPI.ModInteract.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
 import Reika.DragonAPI.ModInteract.MekToolHandler;
+import Reika.DragonAPI.ModInteract.MekanismHandler;
 import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
 import Reika.DragonAPI.ModInteract.TinkerToolHandler;
-import Reika.DragonAPI.ModInteract.TwilightBlockHandler;
+import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModSpiderList;
@@ -119,9 +120,12 @@ public class DragonAPIInit extends DragonAPIMod {
 			ReikaJavaLibrary.initClass(TinkerToolHandler.class);
 		}
 		if (ModList.TWILIGHT.isLoaded()) {
-			ReikaJavaLibrary.initClass(TwilightBlockHandler.class);
+			ReikaJavaLibrary.initClass(TwilightForestHandler.class);
 		}
 		if (ModList.MEKANISM.isLoaded()) {
+			ReikaJavaLibrary.initClass(MekanismHandler.class);
+		}
+		if (ModList.MEKTOOLS.isLoaded()) {
 			ReikaJavaLibrary.initClass(MekToolHandler.class);
 		}
 	}

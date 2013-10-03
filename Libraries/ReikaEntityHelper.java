@@ -16,7 +16,7 @@ import java.util.Map;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.ai.EntityMinecartMobSpawner;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -541,8 +541,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	}
 
 	public static boolean burnsInSun(EntityLiving e) {
-		EnumCreatureType.monster.
-		return false;
+		return e.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
 	}
 
 }
