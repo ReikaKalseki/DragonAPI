@@ -29,7 +29,7 @@ public class SoundLoader {
 	public void onSoundLoad(SoundLoadEvent event) {
 		for (int i = 0; i < soundList.length; i++) {
 			try {
-				event.manager.soundPoolSounds.addSound(soundList[i].getPath(), soundList[i].getURL());
+				event.manager.soundPoolSounds.addSound(soundList[i].getPath()/*, soundList[i].getURL()*/);
 			}
 			catch (Exception e) {
 				throw new RegistrationException(mod, "Sound file "+soundList[i].getName()+" not found!");

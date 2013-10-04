@@ -12,7 +12,7 @@ package Reika.DragonAPI.ModRegistry;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -26,13 +26,13 @@ public enum ModSpiderList {
 	private Class entityClass;
 	private ModList mod;
 	private int entityHealth;
-	private final EntityLiving instance;
+	private final EntityLivingBase instance;
 
 	public static final ModSpiderList[] spiderList = ModSpiderList.values();
 
 	private ModSpiderList(ModList req, String className) {
 		mod = req;
-		EntityLiving ent = null;
+		EntityLivingBase ent = null;
 		try {
 			entityClass = Class.forName(className);
 			//ent = this.instantiate();
@@ -44,15 +44,15 @@ public enum ModSpiderList {
 		instance = ent;
 	}
 
-	public int getHealth() {
+	public float getHealth() {
 		return instance.getMaxHealth();
 	}
 
-	private EntityLiving instantiate() {
+	private EntityLivingBase instantiate() {
 		Constructor c;
 		try {
 			c = entityClass.getConstructor(World.class);
-			return (EntityLiving)c.newInstance((Object[])null);
+			return (EntityLivingBase)c.newInstance((Object[])null);
 		}
 		catch (NoSuchMethodException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: ERROR LOADING "+this);

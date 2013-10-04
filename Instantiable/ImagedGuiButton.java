@@ -16,6 +16,7 @@ import net.minecraft.client.gui.GuiButton;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public final class ImagedGuiButton extends GuiButton {
 
@@ -25,16 +26,18 @@ public final class ImagedGuiButton extends GuiButton {
 	private boolean shadow = true;
 	private String filepath;
 	private final boolean hasToolTip;
+	private final Class modClass;
 
-	public ImagedGuiButton(int par1, int par2, int par3, String par4Str)
+	public ImagedGuiButton(int par1, int par2, int par3, String par4Str, Class mod)
 	{
 		super(par1, par2, par3, 200, 20, par4Str);
 
 		hasToolTip = false;
+		modClass = mod;
 	}
 
 	/** Draw a Gui Button with an image background. Args: id, x, y, width, height, u, v, filepath */
-	public ImagedGuiButton(int par1, int par2, int par3, int par4, int par5, int par7, int par8, String file)
+	public ImagedGuiButton(int par1, int par2, int par3, int par4, int par5, int par7, int par8, String file, Class mod)
 	{
 		super(par1, par2, par3, 200, 20, null);
 		enabled = true;
@@ -51,10 +54,11 @@ public final class ImagedGuiButton extends GuiButton {
 		filepath = file;
 
 		hasToolTip = false;
+		modClass = mod;
 	}
 
 	/** Draw a Gui Button with an image background and text overlay. Args: id, x, y, width, height, text overlay, text color, shadow, u, v, filepath */
-	public ImagedGuiButton(int par1, int par2, int par3, int par4, int par5, String par6Str, int par7, int par8, int par9, boolean par10, String file)
+	public ImagedGuiButton(int par1, int par2, int par3, int par4, int par5, String par6Str, int par7, int par8, int par9, boolean par10, String file, Class mod)
 	{
 		super(par1, par2, par3, 200, 20, par6Str);
 		enabled = true;
@@ -73,10 +77,11 @@ public final class ImagedGuiButton extends GuiButton {
 		filepath = file;
 
 		hasToolTip = false;
+		modClass = mod;
 	}
 
 	/** Draw a Gui Button with an image background and text tooltip. Args: id, x, y, width, height, u, v, filepath, text tooltip, text color, shadow */
-	public ImagedGuiButton(int par1, int par2, int par3, int par4, int par5, int par7, int par8, String file, String par6Str, int par9, boolean par10)
+	public ImagedGuiButton(int par1, int par2, int par3, int par4, int par5, int par7, int par8, String file, String par6Str, int par9, boolean par10, Class mod)
 	{
 		super(par1, par2, par3, 200, 20, par6Str);
 		enabled = true;
@@ -95,6 +100,11 @@ public final class ImagedGuiButton extends GuiButton {
 		filepath = file;
 
 		hasToolTip = true;
+		modClass = mod;
+	}
+
+	private final String getButtonTexture() {
+		return filepath;
 	}
 
 	/**
@@ -107,7 +117,7 @@ public final class ImagedGuiButton extends GuiButton {
 		{
 			FontRenderer var4 = mc.fontRenderer;
 			int tex = GL11.GL_TEXTURE_BINDING_2D;
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, mc.renderEngine.getTexture(filepath));
+			ReikaTextureHelper.bindTexture(modClass, this.getButtonTexture());
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			this.drawTexturedModalRect(xPosition, yPosition, u, v, width, height);
 
@@ -127,7 +137,7 @@ public final class ImagedGuiButton extends GuiButton {
                 var7 = 16777120;
             }*/
 			if (displayString != null && !hasToolTip) {
-				mc.renderEngine.bindTexture("/font/glyph_AA.png");
+				ReikaTextureHelper.bindPackTexture("/font/glyph_AA.png");
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
 				if (shadow)
 					this.drawCenteredString(var4, displayString, xPosition + width / 2, yPosition + (height - 8) / 2, color);
@@ -143,7 +153,7 @@ public final class ImagedGuiButton extends GuiButton {
 
 	private void drawToolTip(Minecraft mc, int mx, int my) {
 		ReikaGuiAPI.instance.drawTooltip(mc.fontRenderer, displayString);
-		mc.renderEngine.bindTexture("/font/glyph_AA.png");
+		ReikaTextureHelper.bindPackTexture("/font/glyph_AA.png");
 	}
 
 	/**

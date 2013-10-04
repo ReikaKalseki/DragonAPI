@@ -296,7 +296,7 @@ public class IDMap {
 		addItem(Item.compass, 89);
 		addItem(Item.fishingRod, 90);
 		addItem(Item.pocketSundial, 91);
-		addItem(Item.lightStoneDust, 92);
+		addItem(Item.glowstone, 92);
 		addItem(Item.fishRaw, 93);
 		addItem(Item.fishCooked, 94);
 		addItem(Item.dyePowder, 95);

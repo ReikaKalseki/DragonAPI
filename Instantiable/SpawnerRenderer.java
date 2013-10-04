@@ -19,6 +19,8 @@ import net.minecraftforge.client.IItemRenderer;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
 public class SpawnerRenderer implements IItemRenderer {
 
 	@Override
@@ -40,7 +42,7 @@ public class SpawnerRenderer implements IItemRenderer {
 			double s = 0.5;
 			GL11.glScaled(s, s, s);
 			rb = (RenderBlocks)data[0];
-			Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
+			ReikaTextureHelper.bindTerrainTexture();
 			rb.renderBlockAsItem(Block.mobSpawner, 0, 1);
 			break;
 		case EQUIPPED:
@@ -48,12 +50,12 @@ public class SpawnerRenderer implements IItemRenderer {
 			double d = 0.5;
 			GL11.glTranslated(d, d, d);
 			rb = (RenderBlocks)data[0];
-			Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
+			ReikaTextureHelper.bindTerrainTexture();
 			rb.renderBlockAsItem(Block.mobSpawner, 0, 1);
 			break;
 		case INVENTORY:
 			rb = (RenderBlocks)data[0];
-			Minecraft.getMinecraft().renderEngine.bindTexture("/terrain.png");
+			ReikaTextureHelper.bindTerrainTexture();
 			rb.renderBlockAsItem(Block.mobSpawner, 0, 1);
 
 			if (item.stackTagCompound == null)

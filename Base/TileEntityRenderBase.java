@@ -12,6 +12,7 @@ package Reika.DragonAPI.Base;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.ForgeDirection;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 
@@ -25,5 +26,19 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 	}
 
 	public abstract String getTextureFolder();
+
+	public final void bindTextureByName(String tex) {
+		ReikaTextureHelper.bindTexture(this.getModClass(), tex);
+	}
+
+	public final void bindDirectTextureByName(String tex) {
+		ReikaTextureHelper.bindDirectTexture(this.getModClass(), tex);
+	}
+
+	public final void bindImageByName(String img) {
+		ReikaTextureHelper.bindTexture(this.getModClass(), this.getTextureFolder()+img);
+	}
+
+	protected abstract Class getModClass();
 
 }

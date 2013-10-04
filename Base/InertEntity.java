@@ -34,7 +34,7 @@ public abstract class InertEntity extends Entity {
 		prevRotationPitch = rotationPitch;
 		prevRotationYaw = rotationYaw;
 
-		timeInPortal  = 0;
+		portalCounter  = 0;
 
 		if (posY < -64.0D)
 			this.setDead();

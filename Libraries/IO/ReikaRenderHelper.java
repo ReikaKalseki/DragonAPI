@@ -176,7 +176,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	 * Note that these are referenced to a whole image, so [0,0,1,1] would be the entire image file.
 	 * @Author Reika
 	 * */
-	public static boolean addModelledBlockParticles(String basedir, World world, int x, int y, int z, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
+	public static boolean addModelledBlockParticles(String basedir, World world, int x, int y, int z, Block b, EffectRenderer eff, List<double[]> allowedRegions, Class mod) {
 		String name = null;
 		if (world.getBlockId(x, y, z) == b.blockID) {
 			TileEntity t = world.getBlockTileEntity(x, y, z);
@@ -199,7 +199,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			double overy = py+ReikaModelledBreakFX.pw-p[2];
 			if (overy > 0)
 				py -= overy;
-			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), file, px, py, mod));
 		}
 		return true;
 	}
@@ -207,7 +207,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockHitEffects!
 	 * Args: Base path (contains TE textures, world, MovingObjectPosition, Block, EffectRenderer, Allowed Texture Regions <br>
 	 * See addModelledBlockParticles(basedir, world, x, y, z, b, eff, allowedRegions) for explanation of the regions. */
-	public static boolean addModelledBlockParticles(String basedir, World world, MovingObjectPosition mov, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
+	public static boolean addModelledBlockParticles(String basedir, World world, MovingObjectPosition mov, Block b, EffectRenderer eff, List<double[]> allowedRegions, Class mod) {
 		if (mov == null)
 			return false;
 		int x = mov.blockX;
@@ -236,7 +236,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			double overy = py+ReikaModelledBreakFX.pw-p[2];
 			if (overy > 0)
 				py -= overy;
-			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, file, px, py));
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), file, px, py, mod));
 		}
 		return true;
 	}
@@ -244,7 +244,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockDestroyEffects!
 	 * Args: Texture Path, world, x, y, z, Block, EffectRenderer, Allowed Texture Regions <br>
 	 * See addModelledBlockParticles(basedir, world, x, y, z, b, eff, allowedRegions) for explanation of the regions. */
-	public static boolean addModelledBlockParticlesDirect(String texture, World world, int x, int y, int z, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
+	public static boolean addModelledBlockParticlesDirect(String texture, World world, int x, int y, int z, Block b, EffectRenderer eff, List<double[]> allowedRegions, Class mod) {
 		for (int i = 0; i < 48; i++) {
 			int k = rand.nextInt(allowedRegions.size());
 			double[] p = allowedRegions.get(k);
@@ -256,7 +256,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			double overy = py+ReikaModelledBreakFX.pw-p[2];
 			if (overy > 0)
 				py -= overy;
-			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), texture, px, py, mod));
 		}
 		return true;
 	}
@@ -264,7 +264,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockHitEffects!
 	 * Args: Texture Path, world, MovingObjectPosition, Block, EffectRenderer, Allowed Texture Regions. <br>
 	 * See addModelledBlockParticles(basedir, world, x, y, z, b, eff, allowedRegions) for explanation of the regions. */
-	public static boolean addModelledBlockParticlesDirect(String texture, World world, MovingObjectPosition mov, Block b, EffectRenderer eff, List<double[]> allowedRegions) {
+	public static boolean addModelledBlockParticlesDirect(String texture, World world, MovingObjectPosition mov, Block b, EffectRenderer eff, List<double[]> allowedRegions, Class mod) {
 		if (mov == null)
 			return false;
 		int x = mov.blockX;
@@ -282,7 +282,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			double overy = py+ReikaModelledBreakFX.pw-p[2];
 			if (overy > 0)
 				py -= overy;
-			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), Minecraft.getMinecraft().renderEngine, texture, px, py));
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), texture, px, py, mod));
 		}
 		return true;
 	}
@@ -291,14 +291,14 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		Block b = Block.blocksList[blockID];
 		Icon ico = new RenderBlocks().getBlockIcon(b);
 		for (int i = 0; i < 16; i++) {
-			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, world.getBlockMetadata(x, y, z), 0, Minecraft.getMinecraft().renderEngine, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0)));
+			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, world.getBlockMetadata(x, y, z), 0, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0), null));
 		}
 	}
 
 	public static void spawnDropParticles(World world, int x, int y, int z, Block b, int meta) {
 		Icon ico = new RenderBlocks().getBlockIcon(b);
 		for (int i = 0; i < 16; i++) {
-			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, meta, 0, Minecraft.getMinecraft().renderEngine, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0)));
+			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, meta, 0, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0), null));
 		}
 	}
 

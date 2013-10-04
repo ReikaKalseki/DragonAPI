@@ -79,11 +79,11 @@ public class MiningExplosion extends Explosion {
 							if (k1 > 0)
 							{
 								Block block = Block.blocksList[k1];
-								float f3 = exploder != null ? exploder.func_82146_a(this, world, l, i1, j1, block) : block.getExplosionResistance(exploder, world, l, i1, j1, explosionX, explosionY, explosionZ);
+								float f3 = exploder != null ? exploder.getBlockExplosionResistance(this, world, l, i1, j1, block) : block.getExplosionResistance(exploder, world, l, i1, j1, explosionX, explosionY, explosionZ);
 								f1 -= (f3 + 0.3F) * f2;
 							}
 
-							if (f1 > 0.0F && (exploder == null || exploder.func_96091_a(this, world, l, i1, j1, k1, f1)))
+							if (f1 > 0.0F && (exploder == null || exploder.shouldExplodeBlock(this, world, l, i1, j1, k1, f1)))
 							{
 								hashset.add(new ChunkPosition(l, i1, j1));
 							}

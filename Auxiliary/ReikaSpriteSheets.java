@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.item.ItemStack;
@@ -18,6 +17,8 @@ import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
 public final class ReikaSpriteSheets {
 
 	private ReikaSpriteSheets() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
@@ -25,12 +26,12 @@ public final class ReikaSpriteSheets {
 	/** Call this from a registered ItemRenderer class that implements IItemRenderer to actually render the item.
 	 * It will automatically compensate for being used for inventory/entity/held items.
 	 * Args: Texture Int (as given by setupTextures), Sprite Index, ItemRenderType, ItemStack, Data */
-	public static void renderItem(int tex, int index, ItemRenderType type, ItemStack item, Object... data) {
+	public static void renderItem(Class root, String tex, int index, ItemRenderType type, ItemStack item, Object... data) {
 		if (item == null)
 			return;
 		int row = index/16;
 		int col = index-row*16;
-		GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
+		ReikaTextureHelper.bindDirectTexture(root, tex);
 		if (type == type.INVENTORY)
 			GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glPushMatrix();
@@ -74,7 +75,7 @@ public final class ReikaSpriteSheets {
 			ItemRenderer.renderItemIn2D(v5, 0.0625F+0.0625F*col, 0.0625F*row, 0.0625F*col, 0.0625F+0.0625F*row, 256, 256, thick);
 		}
 		GL11.glEnable(GL11.GL_LIGHTING);
-		Minecraft.getMinecraft().renderEngine.bindTexture("/gui/items.png");
+		ReikaTextureHelper.bindItemTexture();
 	}
 
 }

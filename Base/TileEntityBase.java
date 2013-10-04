@@ -199,7 +199,7 @@ public abstract class TileEntityBase extends TileEntity {
 	@Override
 	public final void onDataPacket(INetworkManager netManager, Packet132TileEntityData packet)
 	{
-		this.readFromNBT(packet.customParam1);
+		this.readFromNBT(packet.data);
 	}
 
 	public Random getRandom() {

@@ -9,9 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.common.ForgeDirection;
 
+@Deprecated
 public enum EnumLook {
 
 	PLUSX(),
@@ -25,7 +27,7 @@ public enum EnumLook {
 
 	}
 
-	public static EnumLook getLookDir(EntityLiving e, boolean hasV) {
+	public static EnumLook getLookDir(EntityLivingBase e, boolean hasV) {
 		float y = e.rotationPitch;
 		int i = MathHelper.floor_double((e.rotationYaw * 4F) / 360F + 0.5D);
 		while (i > 3)
@@ -82,5 +84,24 @@ public enum EnumLook {
 
 	public boolean isZDir() {
 		return this == PLUSZ || this == MINZ;
+	}
+
+	public ForgeDirection getCorrespondingForge() {
+		switch(this) {
+		case DOWN:
+			return ForgeDirection.DOWN;
+		case MINX:
+			return ForgeDirection.WEST;
+		case MINZ:
+			return ForgeDirection.NORTH;
+		case PLUSX:
+			return ForgeDirection.EAST;
+		case PLUSZ:
+			return ForgeDirection.SOUTH;
+		case UP:
+			return ForgeDirection.UP;
+		default:
+			return ForgeDirection.UNKNOWN;
+		}
 	}
 }

@@ -867,7 +867,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return false;
 		Vec3 v1 = Vec3.fakePool.getVecFromPool(x1, y1, z1);
 		Vec3 v2 = Vec3.fakePool.getVecFromPool(x2, y2, z2);
-		return (world.rayTraceBlocks(v1, v2) == null);
+		return (world.clip(v1, v2) == null);
 	}
 
 	/** Returns true if there is a clear line of sight between two entites. Args: World, Entity 1, Entity 2 */
@@ -876,7 +876,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return false;
 		Vec3 v1 = Vec3.fakePool.getVecFromPool(e1.posX, e1.posY+e1.getEyeHeight(), e1.posZ);
 		Vec3 v2 = Vec3.fakePool.getVecFromPool(e2.posX, e2.posY+e2.getEyeHeight(), e2.posZ);
-		return (world.rayTraceBlocks(v1, v2) == null);
+		return (world.clip(v1, v2) == null);
 	}
 
 	/** Returns true if a block can see an point. Args: World, block x,y,z, Point x,y,z, Max Range */

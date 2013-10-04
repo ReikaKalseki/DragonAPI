@@ -13,7 +13,7 @@ import java.util.Random;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
@@ -25,12 +25,12 @@ public class ReikaSpawnerHelper {
 
 	/** Returns a mob spawner's type name. Args: Spawner TileEntity */
 	public static String getMobSpawnerMobName(TileEntityMobSpawner spw) {
-		return spw.func_98049_a().getEntityNameToSpawn();
+		return spw.getSpawnerLogic().getEntityNameToSpawn();
 	}
 
 	/** Sets a mob spawner type. Args: Spawner TileEntity, Name */
 	public static void setMobSpawnerMob(TileEntityMobSpawner spw, String name) {
-		spw.func_98049_a().setMobID(name);
+		spw.getSpawnerLogic().setMobID(name);
 	}
 
 	/** Returns a mob spawner's type name. Args: World, x, y, z */
@@ -95,9 +95,9 @@ public class ReikaSpawnerHelper {
 				id = world.getBlockId((int)ex, (int)ey, (int)ez);
 			}
 			e.setPositionAndRotation(ex, ey, ez, 0, 0);
-			if (e instanceof EntityLiving && potions != null) {
+			if (e instanceof EntityLivingBase && potions != null) {
 				for (int m = 0; m < potions.length; m++)
-					((EntityLiving)e).addPotionEffect(potions[m]);
+					((EntityLivingBase)e).addPotionEffect(potions[m]);
 			}
 			world.spawnEntityInWorld(e);
 		}

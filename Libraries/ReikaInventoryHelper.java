@@ -539,7 +539,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			if (size > is.getMaxStackSize()-is.stackSize || size+is.stackSize > ii.getInventoryStackLimit()) {
 				if (e == -1)
 					return false;
-				if (ii.isStackValidForSlot(e, is)) {
+				if (ii.isItemValidForSlot(e, is)) {
 					ii.setInventorySlotContents(e, is.copy());
 					return true;
 				}
@@ -553,7 +553,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 		if (e != -1) {
 			//ReikaJavaLibrary.pConsole(ii.isStackValidForSlot(e, is)+" on "+FMLCommonHandler.instance().getEffectiveSide()+" to "+ii+" with "+is);
-			if (ii.isStackValidForSlot(e, is)) {
+			if (ii.isItemValidForSlot(e, is)) {
 				ii.setInventorySlotContents(e, is.copy());
 				return true;
 			}

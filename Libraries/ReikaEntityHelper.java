@@ -15,8 +15,9 @@ import java.util.Map;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.ai.EntityMinecartMobSpawner;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
@@ -115,7 +116,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		addMapping(EntityMinecartTNT.class, "MinecartTNT", 45);
 		addMapping(EntityMinecartHopper.class, "MinecartHopper", 46);
 		addMapping(EntityMinecartMobSpawner.class, "MinecartSpawner", 47);
-		addMapping(EntityLiving.class, "Mob", 48);
+		addMapping(EntityLivingBase.class, "Mob", 48);
 		addMapping(EntityMob.class, "Monster", 49);
 		addMapping(EntityCreeper.class, "Creeper", 50, 894731, 0);
 		addMapping(EntitySkeleton.class, "Skeleton", 51, 12698049, 4802889);
@@ -196,8 +197,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	}
 
-	/** Returns true if the mob is a hostile one. Args: EntityLiving mob */
-	public static boolean isHostile(EntityLiving mob) {
+	/** Returns true if the mob is a hostile one. Args: EntityLivingBase mob */
+	public static boolean isHostile(EntityLivingBase mob) {
 		if (mob instanceof EntityMob)
 			return true;
 		if (mob instanceof EntityGhast)
@@ -239,9 +240,9 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		}
 		int numbermobs = 0;
 		for (int id = 0; id <= highestid; id++) {
-			if (EntityList.IDtoClassMapping.containsKey(id) && id != 48 && id != 49) { //ID 48,49 is "Mob","Monster" -> EntityLiving.class, EntityMob.class
+			if (EntityList.IDtoClassMapping.containsKey(id) && id != 48 && id != 49) { //ID 48,49 is "Mob","Monster" -> EntityLivingBase.class, EntityMob.class
 				Entity ent = EntityList.createEntityByID(id, world);
-				if (ent instanceof EntityLiving)
+				if (ent instanceof EntityLivingBase)
 					numbermobs++;
 			}
 		}
@@ -339,7 +340,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	/** Converts a mob ID to a color, based off the mob's color. Players return bright red.
 	 * Args: Mob ID */
-	public static int mobToColor(EntityLiving ent) {
+	public static int mobToColor(EntityLivingBase ent) {
 		int id = EntityList.getEntityID(ent);
 		if (ent instanceof EntityPlayer)
 			return 0xffff0000;
@@ -348,7 +349,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	}
 
 	/** Returns true if the given pitch falls within the given creature's hearing range. */
-	public static boolean isHearingRange(long freq, EntityLiving ent) {
+	public static boolean isHearingRange(long freq, EntityLivingBase ent) {
 		if (ent instanceof EntityPlayer || ent instanceof EntityWitch || ent instanceof EntityZombie) {
 			if (freq < 20)
 				return false;
@@ -484,12 +485,12 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		ent.velocityChanged = true;
 	}
 
-	/** Returns true if all EntityLiving within the list are dead. Args: List
-	 * [The list MUST be of EntityLiving (or subclass) - any other type WILL cause
+	/** Returns true if all EntityLivingBase within the list are dead. Args: List
+	 * [The list MUST be of EntityLivingBase (or subclass) - any other type WILL cause
 	 * a classcast exception!], test isDead only yes/no */
 	public static boolean allAreDead(List mobs, boolean isDeadOnly) {
 		for (int i = 0; i < mobs.size(); i++) {
-			EntityLiving ent = (EntityLiving)mobs.get(i);
+			EntityLivingBase ent = (EntityLivingBase)mobs.get(i);
 			if ((!ent.isDead && ent.getHealth() > 0) || (!ent.isDead && isDeadOnly))
 				return false;
 		}
@@ -503,8 +504,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
     	ent.motionY = 4*max*rand.nextFloat();*/
 	}
 
-	/** Drop an entity's head. Args: EntityLiving */
-	public static void dropHead(EntityLiving e) {
+	/** Drop an entity's head. Args: EntityLivingBase */
+	public static void dropHead(EntityLivingBase e) {
 		if (e == null)
 			return;
 		ItemStack is = null;
@@ -540,9 +541,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return mobNameToID(name);
 	}
 
-	public static boolean burnsInSun(EntityLiving e) {
-		EnumCreatureType.monster.
-		return false;
+	public static boolean burnsInSun(EntityLivingBase e) {
+		return e.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
 	}
 
 }

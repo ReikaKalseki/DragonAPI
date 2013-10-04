@@ -9,46 +9,28 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import java.io.IOException;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 import Reika.DragonAPI.Auxiliary.ReikaSpriteSheets;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.IO.ReikaPNGLoader;
 import Reika.DragonAPI.Interfaces.IndexedItemSprites;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class ItemSpriteSheetRenderer implements IItemRenderer {
 
-	protected final int spritesheet;
+	protected final String spritesheet;
+	private final DragonAPIMod mod;
+	private final Class modClass;
 
-	public ItemSpriteSheetRenderer(DragonAPIMod mod, Class root, String file, String backup) {
+	public ItemSpriteSheetRenderer(DragonAPIMod mod, Class root, String file) {
 		//this.spritesheet = ReikaSpriteSheets.setupTextures(root, file);
-		if (ReikaTextureHelper.isUsingDefaultTexturePack()) {
-			spritesheet = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
-		}
-		else {
-			String filename = "/"+mod.getDisplayName().toLowerCase()+"/"+file;
-			int sprite = 0;
-			try {
-				sprite = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTexturePackImage(ReikaTextureHelper.getCurrentTexturePack(), filename));
-				ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": Found alternate texture pack image in texturepack "+ReikaTextureHelper.getCurrentTexturePack().getTexturePackFileName()+".");
-			}
-			catch (IOException e) {
-				ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": IOException ("+e.getClass().getSimpleName()+") on loading texture pack image variant "+filename+" for texturepack "+ReikaTextureHelper.getCurrentTexturePack().getTexturePackFileName()+". Loading default textures.");
-				sprite = Minecraft.getMinecraft().renderEngine.allocateAndSetupTexture(ReikaPNGLoader.readTextureImage(root, file, backup));
-			}
-			finally {
-				spritesheet = sprite;
-			}
-		}
+		//if (ReikaTextureHelper.isUsingDefaultTexturePack()) {
+		this.mod = mod;
+		modClass = root;
+		spritesheet = file;
 	}
 
 	@Override
@@ -69,11 +51,7 @@ public final class ItemSpriteSheetRenderer implements IItemRenderer {
 		if (cls instanceof IndexedItemSprites) {
 			IndexedItemSprites iis = (IndexedItemSprites)cls;
 			int index = iis.getItemSpriteIndex(item);
-			ReikaSpriteSheets.renderItem(spritesheet, index, type, item, data);
+			ReikaSpriteSheets.renderItem(modClass, spritesheet, index, type, item, data);
 		}
-	}
-
-	public int getSpritesheet() {
-		return spritesheet;
 	}
 }

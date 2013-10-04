@@ -16,7 +16,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -94,7 +94,7 @@ public class ItemSpawner extends Item {
 				return false;
 		}
 		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1);
-		List inblock = world.getEntitiesWithinAABB(EntityLiving.class, box);
+		List inblock = world.getEntitiesWithinAABB(EntityLivingBase.class, box);
 		if (inblock.size() > 0)
 			return false;
 		if (!ep.canPlayerEdit(x, y, z, 0, is))
@@ -107,7 +107,7 @@ public class ItemSpawner extends Item {
 			TileEntityMobSpawner spw = (TileEntityMobSpawner)world.getBlockTileEntity(x, y, z);
 			if (spw != null) {
 				world.playSoundEffect(x+0.5, y+0.5, z+0.5, "step.stone", 1F, 1.5F);
-				MobSpawnerBaseLogic lgc = spw.func_98049_a();
+				MobSpawnerBaseLogic lgc = spw.getSpawnerLogic();
 				ReikaSpawnerHelper.setSpawnerFromItemNBT(is, spw);
 				lgc.spawnDelay = 400; //20s delay
 			}
@@ -125,7 +125,7 @@ public class ItemSpawner extends Item {
 		int dim = world.provider.dimensionId;
 		String name = ReikaSpawnerHelper.getSpawnerFromItemNBT(is);
 		if (ReikaTwilightHelper.isTwilightForestBoss(name))
-			return dim == ReikaTwilightHelper.TWILIGHT_ID;
+			return dim == ReikaTwilightHelper.getDimensionID();
 		if (name.equals("EnderDragon"))
 			return dim == 1;
 		switch(dim) {

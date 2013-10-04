@@ -138,7 +138,7 @@ public final class ReikaChatHelper extends DragonAPICore {
 		else if (id < 256)
 			writeBlock(world, id, dmg);
 		else
-			writeString(id+":"+dmg+" is "+Item.itemsList[id].getLocalizedName(new ItemStack(id, 1, dmg)));
+			writeString(id+":"+dmg+" is "+Item.itemsList[id].getItemDisplayName(new ItemStack(id, 1, dmg)));
 	}
 
 	public static void writeBlock(World world, int id, int meta) {

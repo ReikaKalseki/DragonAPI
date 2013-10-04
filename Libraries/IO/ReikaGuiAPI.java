@@ -455,7 +455,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
 		o = 2;
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
-		mc.renderEngine.bindTexture("/font/glyph_AA.png");
+		ReikaTextureHelper.bindFontTexture();
 		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
 	}
 
@@ -468,7 +468,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
 		o = 2;
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
-		mc.renderEngine.bindTexture("/font/glyph_AA.png");
+		ReikaTextureHelper.bindFontTexture();
 		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
 	}
 

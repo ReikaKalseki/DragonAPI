@@ -12,11 +12,10 @@ package Reika.DragonAPI.Instantiable;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityDiggingFX;
-import net.minecraft.client.renderer.RenderEngine;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class ReikaModelledBreakFX extends EntityDiggingFX {
 
@@ -27,11 +26,19 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 
 	private Random r = new Random();
 
-	public ReikaModelledBreakFX(World world, double x, double y, double z, double vx, double vy, double vz, Block b, int meta, int side, RenderEngine re, String texture, double u, double v) {
-		super(world, x, y, z, vx, vy, vz, b, meta, side, re);
+	private final Class modClass;
+
+	public ReikaModelledBreakFX(World world, double x, double y, double z, double vx, double vy, double vz, Block b, int meta, int side, String texture, double u, double v, Class mod) {
+		super(world, x, y, z, vx, vy, vz, getBlock(b), meta, side);
 		tex = texture;
 		texpos[0] = u;
 		texpos[1] = v;
+
+		modClass = mod;
+	}
+
+	private static Block getBlock(Block b) {
+		return b != null ? b : Block.stone;
 	}
 
 	@Override
@@ -77,8 +84,11 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 		float f12 = (float)(prevPosY + (posY - prevPosY) * par2 - interpPosY);
 		float f13 = (float)(prevPosZ + (posZ - prevPosZ) * par2 - interpPosZ);
 		float f14 = 1.0F;
-		Minecraft.getMinecraft().renderEngine.bindTexture(tex);
-		//GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
+		if (modClass != null)
+			ReikaTextureHelper.bindTexture(modClass, tex);
+		else
+			ReikaTextureHelper.bindPackTexture(tex);
+
 		Tessellator v5 = new Tessellator();
 		v5.startDrawingQuads();
 		par1Tessellator.addVertexWithUV(f11 - par3 * f10 - par6 * f10, f12 - par4 * f10, f13 - par5 * f10 - par7 * f10, texpos[0], texpos[1]);

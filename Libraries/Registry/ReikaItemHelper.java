@@ -127,7 +127,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return true;
 		if (id == Item.dyePowder.itemID)
 			return true;
-		if (id == Item.lightStoneDust.itemID)
+		if (id == Item.glowstone.itemID)
 			return true;
 		if (id == Item.feather.itemID)
 			return true;

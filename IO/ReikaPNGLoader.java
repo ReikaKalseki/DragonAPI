@@ -17,7 +17,6 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import net.minecraft.client.texturepacks.ITexturePack;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class ReikaPNGLoader {
@@ -29,24 +28,13 @@ public final class ReikaPNGLoader {
 
 	/** Returns a BufferedImage read off the provided filepath, or, failing that, a backup hard-coded path.
 	 * Args: Root class, filepath, Backup Direct FilePath (include C:/ or other letter drive) */
-	public static BufferedImage readTextureImage(Class root, String name, String back)
+	public static BufferedImage readTextureImage(Class root, String name)
 	{
+		ReikaJavaLibrary.pConsole("Pipelining texture from "+root.getCanonicalName()+" to "+name);
 		InputStream inputfile = root.getResourceAsStream(name);
-		InputStream inputback = root.getResourceAsStream(back);
 
-		if (inputfile == null && inputback == null) {
-			ReikaJavaLibrary.pConsole("Neither default image filepath at "+name+" or backup at "+back+" found. Loading \"MissingTexture\".");
-			return missingtex;
-		}
-		if (inputfile == null && inputback != null) {
-			ReikaJavaLibrary.pConsole("Default image filepath at "+name+" does not exist. Switching to backup at "+back+".");
-			try {
-				return ImageIO.read(inputback);
-			}
-			catch (IOException e1) {
-				ReikaJavaLibrary.pConsole("Backup image filepath at "+back+" not found. Loading \"MissingTexture\".");
-				//e1.printStackTrace();
-			}
+		if (inputfile == null) {
+			ReikaJavaLibrary.pConsole("Image filepath at "+name+" not found. Loading \"MissingTexture\".");
 			return missingtex;
 		}
 		BufferedImage bufferedimage = null;
@@ -54,22 +42,11 @@ public final class ReikaPNGLoader {
 			return ImageIO.read(inputfile);
 		}
 		catch (IOException e) {
-			if (back == null) {
-				ReikaJavaLibrary.pConsole("Backup image filepath at "+back+" does not exist. Loading \"MissingTexture\".");
-				return missingtex;
-			}
-			ReikaJavaLibrary.pConsole("Default image filepath at "+name+" not found. Switching to backup at "+back+".");
-			try {
-				return ImageIO.read(inputback);
-			}
-			catch (IOException e1) {
-				ReikaJavaLibrary.pConsole("Backup image filepath at "+back+" not found. Loading \"MissingTexture\".");
-				//e1.printStackTrace();
-				return missingtex;
-			}
+			ReikaJavaLibrary.pConsole("Default image filepath at "+name+" not found.");
+			return missingtex;
 		}
 	}
-
+	/*
 	public static BufferedImage readTexturePackImage(ITexturePack ip, String name) throws IOException
 	{
 		InputStream inputfile;
@@ -79,7 +56,7 @@ public final class ReikaPNGLoader {
 			throw new IOException("IOException on loading texture pack image variant for texturepack "+ip.getTexturePackID()+". Loading default textures.");
 		}
 		return ImageIO.read(inputfile);
-	}
+	}*/
 
 	public static boolean imageFileExists(Class root, String name) {
 		InputStream inputfile = root.getResourceAsStream(name);

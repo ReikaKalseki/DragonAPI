@@ -9,12 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidDictionary;
-import net.minecraftforge.liquids.LiquidStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.ModList;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import buildcraft.api.fuels.IronEngineFuel;
 
 public class ReikaBuildCraftHelper extends DragonAPICore {
@@ -22,7 +21,7 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	public static final int rhogas = 720;
 	public static final int rhooil = 850; //varies between 700 and 1000
 
-	private static final LiquidStack fuel = LiquidDictionary.getLiquid("Fuel", LiquidContainerRegistry.BUCKET_VOLUME);
+	private static final Fluid fuel = FluidRegistry.getFluid("fuel");
 	private static double gasEnergyPerKg = 46.9;
 
 	public static boolean doesBuildCraftExist() {
@@ -30,12 +29,12 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	}
 
 	public static float getFuelMJPerTick() {
-		return IronEngineFuel.getFuelForLiquid(fuel).powerPerCycle;
+		return IronEngineFuel.getFuelForFluid(fuel).powerPerCycle;
 	}
 
 	/** In ticks */
 	public static float getFuelBucketDuration() {
-		return IronEngineFuel.getFuelForLiquid(fuel).totalBurningTime;
+		return IronEngineFuel.getFuelForFluid(fuel).totalBurningTime;
 	}
 
 	/** Minecraft joules per second */
