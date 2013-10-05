@@ -9,10 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.lang.reflect.Field;
 import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.item.Item;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import Reika.DragonAPI.DragonAPICore;
 
@@ -36,6 +38,29 @@ public final class ReikaPotionHelper extends DragonAPICore {
 			}
 		}
 		return -1;
+	}
+
+	public static boolean isBadEffect(Potion pot) {
+		boolean bad = false;
+		try {
+			Field f = pot.getClass().getDeclaredField("isBadEffect");
+			f.setAccessible(true);
+			bad = f.getBoolean(pot);
+			f.setAccessible(false);
+		}
+		catch (IllegalArgumentException e1) {
+			e1.printStackTrace();
+		}
+		catch (IllegalAccessException e1) {
+			e1.printStackTrace();
+		}
+		catch (NoSuchFieldException e1) {
+			e1.printStackTrace();
+		}
+		catch (SecurityException e1) {
+			e1.printStackTrace();
+		}
+		return bad;
 	}
 
 	public static boolean isSplashPotion(int dmg) {

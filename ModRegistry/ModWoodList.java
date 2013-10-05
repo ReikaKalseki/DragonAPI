@@ -66,7 +66,7 @@ public enum ModWoodList { //look through treecapitator config?
 	private String varName;
 	private Class containerClass;
 
-	private boolean exists;
+	private boolean exists = false;
 
 	public static final ModWoodList[] woodList = ModWoodList.values();
 
@@ -153,6 +153,7 @@ public enum ModWoodList { //look through treecapitator config?
 			saplingID = idsapling;
 			saplingMeta = metasapling;
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully loaded wood "+this);
+			exists = true;
 		}
 		catch (ClassNotFoundException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
@@ -182,7 +183,7 @@ public enum ModWoodList { //look through treecapitator config?
 	}
 
 	public boolean exists() {
-		return exists;
+		return exists && this.getParentMod().isLoaded();
 	}
 
 	public ItemStack getItem() {
