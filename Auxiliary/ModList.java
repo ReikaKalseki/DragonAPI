@@ -38,7 +38,7 @@ public enum ModList {
 	MINEFACTORY("MineFactoryReloaded"),
 	DARTCRAFT("DartCraft"),
 	TINKERER("TConstruct"),
-	THERMAL("ThermalExpansion"),
+	THERMALEXPANSION("ThermalExpansion"),
 	MEKANISM("Mekanism"),
 	MEKTOOLS("MekanismTools"),
 	RAILCRAFT("Railcraft");

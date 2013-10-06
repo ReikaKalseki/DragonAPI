@@ -10,8 +10,8 @@
 package Reika.DragonAPI.ModInteract;
 
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.liquids.LiquidContainerRegistry;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.ModList;
 import buildcraft.api.fuels.IronEngineFuel;
@@ -59,12 +59,12 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 
 	/** Get mass of gasoline in kilograms from the number of forge millibuckets. */
 	private static double getGasolineMass(int millis) {
-		double volume = millis/LiquidContainerRegistry.BUCKET_VOLUME;
+		double volume = millis/FluidContainerRegistry.BUCKET_VOLUME;
 		return rhogas*volume;
 	}
 
 	private static double getOilMass(int millis) {
-		double volume = millis/LiquidContainerRegistry.BUCKET_VOLUME;
+		double volume = millis/FluidContainerRegistry.BUCKET_VOLUME;
 		return rhooil*volume;
 	}
 
@@ -76,7 +76,7 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 
 	/** Get energy of one fuel bucket in joules. */
 	public static double getFuelBucketEnergy() {
-		return getGasolineEnergy(LiquidContainerRegistry.BUCKET_VOLUME);
+		return getGasolineEnergy(FluidContainerRegistry.BUCKET_VOLUME);
 	}
 
 }

@@ -35,7 +35,7 @@ public abstract class TileEntityBase extends TileEntity {
 
 	private final StepTimer updateTimer;
 
-	protected static final ForgeDirection[] dirs = ForgeDirection.values();
+	protected final ForgeDirection[] dirs = ForgeDirection.values();
 
 	public abstract int getTileEntityBlockID();
 
