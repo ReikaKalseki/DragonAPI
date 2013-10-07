@@ -1,93 +1,106 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2013
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.Icon;
 import net.minecraft.world.World;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
 
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.IO.BlockModelRenderer.ModelBlockInterface;
+import Reika.DragonAPI.Auxiliary.BlockModelRenderer;
+import Reika.DragonAPI.Auxiliary.BlockModelRenderer.ModelBlockInterface;
 
 public class ReikaLiquidRenderer {
 
-	private static Map<LiquidStack, int[]> flowingRenderCache = new HashMap<LiquidStack, int[]>();
-	private static Map<LiquidStack, int[]> stillRenderCache = new HashMap<LiquidStack, int[]>();
+	private static Map<Fluid, int[]> flowingRenderCache = new HashMap<Fluid, int[]>();
+	private static Map<Fluid, int[]> stillRenderCache = new HashMap<Fluid, int[]>();
 	public static final int LEVELS = 100;
 	private static final ModelBlockInterface liquidBlock = new ModelBlockInterface();
 
-	public static Icon getLiquidTexture(LiquidStack liquid) {
-		if (liquid == null || liquid.itemID <= 0) {
+	public static Icon getFluidTexture(FluidStack fluidStack, boolean flowing) {
+		if (fluidStack == null) {
 			return null;
 		}
-		LiquidStack canon = liquid.canonical();
-		if (canon == null) {
-			throw new MisuseException(liquid+" does not exist!");
+		return getFluidTexture(fluidStack.getFluid(), flowing);
+	}
+
+	public static Icon getFluidTexture(Fluid fluid, boolean flowing) {
+		if (fluid == null) {
+			return null;
 		}
-		Icon icon = canon.getRenderingIcon();
+		Icon icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
 		if (icon == null) {
-			throw new MisuseException(liquid+" has no icon!");
+			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
 		}
 		return icon;
 	}
 
-	public static String getLiquidSheet(LiquidStack liquid) {
-		if (liquid == null || liquid.itemID <= 0) {
-			return "/terrain.png";
-		}
-		LiquidStack canon = liquid.canonical();
-		if (canon == null) {
-			throw new MisuseException(liquid+" does not exist!");
-		}
-		return canon.getTextureSheet();
+	public static void setFluidColor(FluidStack fluidstack) {
+		if (fluidstack == null)
+			return;
+
+		int color = fluidstack.getFluid().getColor(fluidstack);
+		float red = (color >> 16 & 255) / 255.0F;
+		float green = (color >> 8 & 255) / 255.0F;
+		float blue = (color & 255) / 255.0F;
+		GL11.glColor4f(red, green, blue, 1);
 	}
 
-	public static int[] getGLLists(LiquidStack liquid, World world, boolean flowing) {
-		if (liquid == null) {
+	public static void bindFluidTexture(FluidStack fluidstack) {
+		Fluid fluid = fluidstack.getFluid();
+		if (fluid.equals(FluidRegistry.WATER) || fluid.equals(FluidRegistry.LAVA) || fluid.canBePlacedInWorld())
+			ReikaTextureHelper.bindTerrainTexture();
+		else
+			ReikaTextureHelper.bindItemTexture();
+	}
+
+	public static int[] getGLLists(FluidStack fluidStack, World world, boolean flowing) {
+		if (fluidStack == null) {
 			return null;
 		}
-		liquid = liquid.canonical();
-		if(liquid == null) {
-			throw new MisuseException(liquid+" does not exist!");
+		Fluid fluid = fluidStack.getFluid();
+		if (fluid == null) {
+			return null;
 		}
-		Map<LiquidStack, int[]> cache = flowing ? flowingRenderCache : stillRenderCache;
-		int[] diplayLists = cache.get(liquid);
+		Map<Fluid, int[]> cache = flowing ? flowingRenderCache : stillRenderCache;
+		int[] diplayLists = cache.get(fluid);
 		if (diplayLists != null) {
 			return diplayLists;
 		}
 
 		diplayLists = new int[LEVELS];
 
-		if (liquid.itemID < Block.blocksList.length && Block.blocksList[liquid.itemID] != null) {
-			liquidBlock.baseBlock = Block.blocksList[liquid.itemID];
-			if (!flowing) {
-				liquidBlock.texture = getLiquidTexture(liquid);
-			}
-		} else if (Item.itemsList[liquid.itemID] != null) {
-			liquidBlock.baseBlock = Block.waterStill;
-			liquidBlock.texture = getLiquidTexture(liquid);
+		if (fluid.getBlockID() > 0) {
+			liquidBlock.baseBlock = Block.blocksList[fluid.getBlockID()];
+			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		} else {
-			return null;
+			liquidBlock.baseBlock = Block.waterStill;
+			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		}
 
-		cache.put(liquid, diplayLists);
+		cache.put(fluid, diplayLists);
 
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_CULL_FACE);
-		ItemStack stack = liquid.asItemStack();
-		int color = stack.getItem().getColorFromItemStack(stack, 0);
-		float c1 = (color >> 16 & 255) / 255.0F;
-		float c2 = (color >> 8 & 255) / 255.0F;
-		float c3 = (color & 255) / 255.0F;
-		GL11.glColor4f(c1, c2, c3, 1);
+
 		for (int s = 0; s < LEVELS; ++s) {
 			diplayLists[s] = GLAllocation.generateDisplayLists(1);
 			GL11.glNewList(diplayLists[s], 4864 /*GL_COMPILE*/);

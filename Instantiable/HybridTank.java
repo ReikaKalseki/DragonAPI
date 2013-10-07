@@ -1,0 +1,138 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2013
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
+package Reika.DragonAPI.Instantiable;
+
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+/** A tank class that can handle direct operations as well as standard Forge Liquid operations. */
+public class HybridTank extends FluidTank {
+
+	private final String name;
+
+	public HybridTank(String name, int capacity) {
+		super(capacity);
+		this.name = name;
+	}
+
+	public HybridTank(String name, FluidStack stack, int capacity) {
+		super(stack, capacity);
+		this.name = name;
+	}
+
+	public HybridTank(String name, Fluid fluid, int amount, int capacity) {
+		super(fluid, amount, capacity);
+		this.name = name;
+	}
+
+	@Override
+	public final NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+		NBTTagCompound tankData = new NBTTagCompound();
+		super.writeToNBT(tankData);
+		nbt.setCompoundTag(name, tankData);
+		return nbt;
+	}
+
+	@Override
+	public final FluidTank readFromNBT(NBTTagCompound nbt) {
+		if (nbt.hasKey(name)) {
+			NBTTagCompound tankData = nbt.getCompoundTag(name);
+			super.readFromNBT(tankData);
+		}
+		return this;
+	}
+
+	public boolean isEmpty() {
+		return this.getFluid() == null || this.getFluid().amount <= 0;
+	}
+
+	public boolean isFull() {
+		return this.getFluid() != null && this.getFluid().amount >= this.getCapacity();
+	}
+
+	public Fluid getFluidType() {
+		return this.getFluid() != null ? this.getFluid().getFluid() : null;
+	}
+
+	public int getLevel() {
+		if (this.getFluid() == null)
+			return 0;
+		return this.getFluid().amount;
+	}
+
+	public void removeLiquid(int amt) {
+		if (this.getFluid() == null) {
+			ReikaJavaLibrary.pConsole("Could not remove liquid from empty tank!");
+			Thread.dumpStack();
+		}
+		else {
+			this.drain(amt, true);
+		}
+	}
+
+	public void addLiquid(int amt) {
+		if (this.getFluid() == null) {
+			ReikaJavaLibrary.pConsole("Could not add liquid to empty tank!");
+			Thread.dumpStack();
+		}
+		else {
+			this.fill(new FluidStack(this.getFluid().getFluid(), amt), true);
+		}
+	}
+
+	public void addLiquid(int amt, Fluid type) {
+		if (this.getFluid() == null) {
+			this.fill(new FluidStack(type, amt), true);
+		}
+		else if (type.equals(this.getFluid().getFluid())) {
+			this.fill(new FluidStack(this.getFluid().getFluid(), amt), true);
+		}
+	}
+
+	public void empty() {
+		this.drain(this.getLevel(), true);
+	}
+
+	public void flood() {
+		this.addLiquid(capacity);
+	}
+
+	public void setFluidType(Fluid type) {
+		int amt = this.getLevel();
+		this.drain(amt, true);
+		this.fill(new FluidStack(type, amt), true);
+	}
+
+	public void setLevel(int amt) {
+		if (this.isEmpty()) {
+			ReikaJavaLibrary.pConsole("You must use setContents() to fill an empty tank!");
+			return;
+		}
+		if (amt > capacity)
+			amt = capacity;
+		Fluid f = this.getActualFluid();
+		this.setContents(amt, f);
+	}
+
+	public void setContents(int amt, Fluid f) {
+		this.empty();
+		this.addLiquid(amt, f);
+	}
+
+	public Fluid getActualFluid() {
+		if (this.getFluid() == null)
+			return null;
+		return this.getFluid().getFluid();
+	}
+
+}

@@ -107,7 +107,7 @@ public class ReikaTextureHelper {
 		Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
 	}
 
-	public static int getTexturePackSize() {
+	public static int getIconHeight() {
 		return 16;
 	}
 

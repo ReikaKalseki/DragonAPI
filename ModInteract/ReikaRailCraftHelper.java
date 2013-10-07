@@ -9,16 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import net.minecraftforge.liquids.LiquidContainerRegistry;
-import net.minecraftforge.liquids.LiquidDictionary;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Libraries.MathSci.ReikaThermoHelper;
 
 public class ReikaRailCraftHelper extends DragonAPICore {
 
-	private static final LiquidStack steam = LiquidDictionary.getLiquid("Steam", LiquidContainerRegistry.BUCKET_VOLUME);
+	private static final Fluid STEAM = FluidRegistry.getFluid("steam");
 
 	public static boolean doesRailCraftExist() {
 		return ModList.RAILCRAFT.isLoaded();
@@ -34,7 +34,7 @@ public class ReikaRailCraftHelper extends DragonAPICore {
 
 	/** Get the energy liberated by the conversion of one block of steam to one bucket of water. */
 	public static double getSteamBucketEnergy() {
-		return ReikaThermoHelper.WATER_BOIL_ENTHALPY*LiquidContainerRegistry.BUCKET_VOLUME*1000; //2260 kJ/kg * 1000 kg * 1000 J/kJ
+		return ReikaThermoHelper.WATER_BOIL_ENTHALPY*FluidContainerRegistry.BUCKET_VOLUME*1000; //2260 kJ/kg * 1000 kg * 1000 J/kJ
 	}
 
 }
