@@ -73,9 +73,9 @@ public enum ModOreList {
 	CADMIUM("Cadmium", "ingotCadmium", 1, "oreCadmium"),
 	INDIUM("Indium", "ingotIndium", 1, "oreIndium"),
 	FLUORITE("Fluorite", "shardFluorite", 1, "oreFluorite"),
-	BAUXITE("Bauxite", "ingotAluminum", 1, "oreBauxite"),
+	BAUXITE("Bauxite", "dustAluminum", 1, "oreBauxite"),
 	SODALITE("Sodalite", "dustSodalite", 1, "oreSodalite"),
-	PYRITE("Pyrite", "dustPyrite", 1, "orePyrite");
+	PYRITE("Pyrite", "ingotPyrite", 1, "orePyrite");
 
 	private ArrayList<ItemStack> ores;
 	private String name;
