@@ -36,17 +36,17 @@ public class HybridTank extends FluidTank {
 	}
 
 	@Override
-	public final NBTTagCompound writeToNBT(NBTTagCompound nbt) {
+	public final NBTTagCompound writeToNBT(NBTTagCompound NBT) {
 		NBTTagCompound tankData = new NBTTagCompound();
 		super.writeToNBT(tankData);
-		nbt.setCompoundTag(name, tankData);
-		return nbt;
+		NBT.setCompoundTag(name, tankData);
+		return NBT;
 	}
 
 	@Override
-	public final FluidTank readFromNBT(NBTTagCompound nbt) {
-		if (nbt.hasKey(name)) {
-			NBTTagCompound tankData = nbt.getCompoundTag(name);
+	public final FluidTank readFromNBT(NBTTagCompound NBT) {
+		if (NBT.hasKey(name)) {
+			NBTTagCompound tankData = NBT.getCompoundTag(name);
 			super.readFromNBT(tankData);
 		}
 		return this;
