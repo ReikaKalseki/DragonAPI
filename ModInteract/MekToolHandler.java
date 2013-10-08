@@ -98,4 +98,8 @@ public final class MekToolHandler extends ModHandlerBase {
 		return paxelIDs.contains(held.itemID) || pickIDs.contains(held.itemID);
 	}
 
+	public boolean isWood(ItemStack held) {
+		return paxelIDs.get(0) == held.itemID;
+	}
+
 }

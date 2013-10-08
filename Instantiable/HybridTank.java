@@ -60,10 +60,6 @@ public class HybridTank extends FluidTank {
 		return this.getFluid() != null && this.getFluid().amount >= this.getCapacity();
 	}
 
-	public Fluid getFluidType() {
-		return this.getFluid() != null ? this.getFluid().getFluid() : null;
-	}
-
 	public int getLevel() {
 		if (this.getFluid() == null)
 			return 0;
@@ -80,17 +76,11 @@ public class HybridTank extends FluidTank {
 		}
 	}
 
-	public void addLiquid(int amt) {
-		if (this.getFluid() == null) {
-			ReikaJavaLibrary.pConsole("Could not add liquid to empty tank!");
-			Thread.dumpStack();
-		}
-		else {
-			this.fill(new FluidStack(this.getFluid().getFluid(), amt), true);
-		}
-	}
-
 	public void addLiquid(int amt, Fluid type) {
+		if (type == null)
+			return;
+		if (amt > capacity)
+			amt = capacity;
 		if (this.getFluid() == null) {
 			this.fill(new FluidStack(type, amt), true);
 		}
@@ -103,25 +93,10 @@ public class HybridTank extends FluidTank {
 		this.drain(this.getLevel(), true);
 	}
 
-	public void flood() {
-		this.addLiquid(capacity);
-	}
-
 	public void setFluidType(Fluid type) {
 		int amt = this.getLevel();
 		this.drain(amt, true);
 		this.fill(new FluidStack(type, amt), true);
-	}
-
-	public void setLevel(int amt) {
-		if (this.isEmpty()) {
-			ReikaJavaLibrary.pConsole("You must use setContents() to fill an empty tank!");
-			return;
-		}
-		if (amt > capacity)
-			amt = capacity;
-		Fluid f = this.getActualFluid();
-		this.setContents(amt, f);
 	}
 
 	public void setContents(int amt, Fluid f) {
@@ -133,6 +108,10 @@ public class HybridTank extends FluidTank {
 		if (this.getFluid() == null)
 			return null;
 		return this.getFluid().getFluid();
+	}
+
+	public float getFraction() {
+		return this.getLevel()/(float)this.getCapacity();
 	}
 
 }
