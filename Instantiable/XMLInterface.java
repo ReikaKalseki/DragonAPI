@@ -26,10 +26,16 @@ public class XMLInterface {
 
 	private final HashMap<String, String> data = new HashMap<String, String>();
 
-	public XMLInterface(Class root, String path) {
+	public XMLInterface(Class root, String path, boolean crashIfNull) {
 		rootClass = root;
 		filepath = path;
-		doc = ReikaXMLBase.getXMLDocument(root, path);
+		try {
+			doc = ReikaXMLBase.getXMLDocument(root, path);
+		}
+		catch (RuntimeException e) {
+			if (crashIfNull)
+				throw new RuntimeException(e);
+		}
 		this.readFileToMap();
 	}
 
@@ -43,6 +49,8 @@ public class XMLInterface {
 	}
 
 	private void recursiveRead(Node n) {
+		if (n == null)
+			return;
 		NodeList li = n.getChildNodes();
 		int len = li.getLength();
 		for (int i = 0; i < len; i++) {
