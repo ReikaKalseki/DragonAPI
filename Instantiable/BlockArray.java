@@ -25,7 +25,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 public class BlockArray {
 
 	private List<int[]> blocks = new ArrayList<int[]>();
-	private int liquidID;
+	private Material liquidMat;
 	private boolean overflow = false;
 	protected World refWorld;
 
@@ -164,10 +164,7 @@ public class BlockArray {
 	}
 
 	public void setLiquid(Material mat) {
-		if (mat == Material.water)
-			liquidID = 9;
-		if (mat == Material.lava)
-			liquidID = 11;
+		liquidMat = mat;
 	}
 
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
@@ -176,7 +173,7 @@ public class BlockArray {
 		//ReikaJavaLibrary.pConsole(liquidID+" and "+world.getBlockId(x, y, z));;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
-		if (world.getBlockId(x, y, z) != liquidID && world.getBlockId(x, y, z) != liquidID-1) {
+		if (world.getBlockMaterial(x, y, z) != liquidMat) {
 			//ReikaJavaLibrary.pConsole("Could not match id "+world.getBlockId(x, y, z)+" to "+liquidID);
 			return;
 		}

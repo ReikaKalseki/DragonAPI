@@ -67,7 +67,7 @@ public enum ModOreList {
 	NETHERPLATINUM("Nether Platinum", "ingotPlatinum", 1, "oreNetherPlatinum"),
 	ZINC("Zinc", "ingotZinc", 1, "oreZinc", "oreSphalerite"),
 	OSMIUM("Osmium", "ingotOsmium", 1, "oreOsmium", "oreNetherOsmium"),
-	NETHERPIGIRON("Nether Pig Iron", "ingotPigIron", 1, "oreNetherPigIron"),
+	NETHERPIGIRON("Steel", "ingotSteel", 1, "oreNetherSteel"), //...
 	SULFUR("Sulfur", "dustSulfur", 3, "oreSulfur"),
 	PITCHBLENDE("Pitchblende", "ingotUranium", 1, "orePitchblende"),
 	CADMIUM("Cadmium", "ingotCadmium", 1, "oreCadmium"),

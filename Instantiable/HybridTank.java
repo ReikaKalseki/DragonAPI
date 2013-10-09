@@ -114,4 +114,11 @@ public class HybridTank extends FluidTank {
 		return this.getLevel()/(float)this.getCapacity();
 	}
 
+	@Override
+	public String toString() {
+		if (this.isEmpty())
+			return "Empty Tank "+name;
+		return "Tank "+name+", containing "+this.getLevel()+" mB of "+this.getActualFluid().getLocalizedName();
+	}
+
 }

@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.Java;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -32,7 +33,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			return (instance.setUnlocalizedName(list.getUnlocalizedName()));
 		}
 		catch (NoSuchMethodException e) {
-			throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" does not have the specified constructor! Check visibility and material args!");
+			throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" does not have the specified constructor "+Arrays.toString(list.getConstructorParamTypes())+"! Check visibility and material args!");
 		}
 		catch (SecurityException e) {
 			throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" threw security exception!");
@@ -66,7 +67,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			return (instance.setUnlocalizedName(list.getUnlocalizedName()));
 		}
 		catch (NoSuchMethodException e) {
-			throw new RegistrationException(mod, "Item Class "+list.getObjectClass().getSimpleName()+" does not have the specified constructor!");
+			throw new RegistrationException(mod, "Item Class "+list.getObjectClass().getSimpleName()+" does not have the specified constructor "+Arrays.toString(list.getConstructorParamTypes())+"!");
 		}
 		catch (SecurityException e) {
 			throw new RegistrationException(mod, "Item Class "+list.getObjectClass().getSimpleName()+" threw security exception!");
