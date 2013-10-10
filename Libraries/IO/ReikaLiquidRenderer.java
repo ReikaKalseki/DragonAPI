@@ -63,8 +63,7 @@ public class ReikaLiquidRenderer {
 		GL11.glColor4f(red, green, blue, 1);
 	}
 
-	public static void bindFluidTexture(FluidStack fluidstack) {
-		Fluid fluid = fluidstack.getFluid();
+	public static void bindFluidTexture(Fluid fluid) {
 		if (fluid.equals(FluidRegistry.WATER) || fluid.equals(FluidRegistry.LAVA) || fluid.canBePlacedInWorld())
 			ReikaTextureHelper.bindTerrainTexture();
 		else
