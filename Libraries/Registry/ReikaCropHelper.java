@@ -20,7 +20,8 @@ public enum ReikaCropHelper {
 	WHEAT(Block.crops.blockID, 7, 0),
 	CARROT(Block.carrot.blockID, 7, 0),
 	POTATO(Block.potato.blockID, 7, 0),
-	NETHERWART(Block.netherStalk.blockID, 4, 0);
+	NETHERWART(Block.netherStalk.blockID, 4, 0),
+	COCOA(Block.cocoaPlant.blockID, 3, 0);
 
 	public final int blockID;
 	public final int ripeMeta;

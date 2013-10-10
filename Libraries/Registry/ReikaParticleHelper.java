@@ -26,13 +26,13 @@ public enum ReikaParticleHelper {
 	SMOKE("smoke"),
 	LARGESMOKE("largesmoke"),
 	SNOWBALL("snowballpoof"),
-	PORTAL("portal"),
+	PORTAL("portal"), //and Ender
 	RAIN("splash"),
 	DRIPWATER("dripWater"),
 	DRIPLAVA("dripLava"),
 	EXPLODE("hugeexplosion"),
 	HEART("heart"),
-	CLOUD("cloud"),
+	CLOUD("cloud"), //Angry villager
 	NOTE("note"),
 	SGA("enchantmenttable"),
 	LAVA("lava"),
