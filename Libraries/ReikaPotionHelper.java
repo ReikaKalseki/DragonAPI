@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -27,6 +27,8 @@ public final class ReikaPotionHelper extends DragonAPICore {
 	public static final int AWKWARD_META = 16;
 	public static final int POTION_BIT = 8192;
 
+	private static final ArrayList<Integer> badPotions = new ArrayList();
+
 	/** Returns a potion ID from the damage value. Returns -1 if invalid damage value. */
 	public static int getPotionID(int dmg) {
 		List effects = Item.potion.getEffects(dmg);
@@ -41,26 +43,7 @@ public final class ReikaPotionHelper extends DragonAPICore {
 	}
 
 	public static boolean isBadEffect(Potion pot) {
-		boolean bad = false;
-		try {
-			Field f = pot.getClass().getDeclaredField("isBadEffect");
-			f.setAccessible(true);
-			bad = f.getBoolean(pot);
-			f.setAccessible(false);
-		}
-		catch (IllegalArgumentException e1) {
-			e1.printStackTrace();
-		}
-		catch (IllegalAccessException e1) {
-			e1.printStackTrace();
-		}
-		catch (NoSuchFieldException e1) {
-			e1.printStackTrace();
-		}
-		catch (SecurityException e1) {
-			e1.printStackTrace();
-		}
-		return bad;
+		return badPotions.contains(pot.id);
 	}
 
 	public static boolean isSplashPotion(int dmg) {
@@ -77,6 +60,18 @@ public final class ReikaPotionHelper extends DragonAPICore {
 
 	public static boolean isActualPotion(int dmg) {
 		return (dmg & POTION_BIT) != 0;
+	}
+
+	static {
+		badPotions.add(Potion.confusion.id);
+		badPotions.add(Potion.wither.id);
+		badPotions.add(Potion.moveSlowdown.id);
+		badPotions.add(Potion.digSlowdown.id);
+		badPotions.add(Potion.weakness.id);
+		badPotions.add(Potion.blindness.id);
+		badPotions.add(Potion.harm.id);
+		badPotions.add(Potion.hunger.id);
+		badPotions.add(Potion.poison.id);
 	}
 
 }

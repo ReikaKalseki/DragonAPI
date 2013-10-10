@@ -10,6 +10,8 @@
 package Reika.DragonAPI.Libraries.Registry;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -33,6 +35,8 @@ public enum ReikaOreHelper {
 	private String oreDict;
 	private String dropOreDict;
 	private final ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
+
+	private static final HashMap<String, String> cases = new HashMap();
 
 	public static final ReikaOreHelper[] oreList = ReikaOreHelper.values();
 
@@ -96,12 +100,45 @@ public enum ReikaOreHelper {
 	}
 
 	public static ReikaOreHelper getEntryByOreDict(ItemStack is) {
+		ReikaOreHelper special = checkForSpecialCases(is);
+		if (special != null)
+			return special;
 		for (int i = 0; i < oreList.length; i++) {
 			ReikaOreHelper ore = oreList[i];
 			if (ReikaItemHelper.listContainsItemStack(ore.ores, is))
 				return ore;
 		}
 		return null;
+	}
+
+	public static ReikaOreHelper checkForSpecialCases(ItemStack is) {
+		for (Map.Entry<String, String> entry : cases.entrySet()) {
+			String key = entry.getKey();
+			ArrayList<ItemStack> li = OreDictionary.getOres(key);
+			if (ReikaItemHelper.listContainsItemStack(li, is)) {
+				return getEntryFromOreName(entry.getValue());
+			}
+		}
+		return null;
+	}
+
+	public static ReikaOreHelper getEntryFromOreName(String value) {
+		for (int i = 0; i < oreList.length; i++) {
+			ReikaOreHelper ore = oreList[i];
+			if (ore.getOreDictName().equals(value))
+				return ore;
+		}
+		return null;
+	}
+
+	static {
+		addSpecialCase("oreEmerald", "oreOlivine");
+	}
+
+	private static void addSpecialCase(String ore, String... names) {
+		for (int i = 0; i < names.length; i++) {
+			cases.put(names[i], ore);
+		}
 	}
 
 }

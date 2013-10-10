@@ -28,7 +28,7 @@ public enum ModOreList {
 	GALENA("Galena", "ingotGalena", 1, "oreGalena"),
 	ALUMINUM("Aluminum", "ingotNaturalAluminum", 1, "oreAluminum", "naturalAluminum", "oreNaturalAluminum"), //...Why??
 	IRIDIUM("Iridium", "ingotIridium", 1, "oreIridium"),
-	NULL("Unused", "unused", 1, "unused"),
+	UNUSED("Unused", "ingotunused", 1, "oreUnused"),
 	CERTUSQUARTZ("Certus Quartz", "crystalQuartz", 3, "oreCertusQuartz"),
 	URANIUM("Uranium", "ingotUranium", 1, "oreUranium"),
 	CINNABAR("Mercury", "itemQuicksilver", 1, "oreCinnabar"),
@@ -43,9 +43,9 @@ public enum ModOreList {
 	SALTPETER("Saltpeter", "dustSaltpeter", 2, "oreSaltpeter"),
 	TUNGSTEN("Tungsten", "ingotTungsten", 1, "oreTungsten", "oreTungstate"),
 	NIKOLITE("Nikolite", "dustNikolite", 5, "oreNikolite"),
-	GREENSAPPHIRE("Green Sapphire", "gemGreenSapphire", 1, "oreGreenSapphire"),
+	GREENSAPPHIRE("Green Sapphire", "gemGreenSapphire", 1, "oreGreenSapphire", "oreNetherGreenSapphire"),
 	RUBY("Ruby", "gemRuby", 1, "oreRuby"),
-	SAPPHIRE("Sapphire", "gemSapphire", 1, "oreSapphire"),
+	SAPPHIRE("Sapphire", "gemSapphire", 1, "oreSapphire", "oreNetherSapphire"),
 	MONAZIT("Monazit", "ForciciumItem", 4, "MonazitOre"),
 	FORCE("Force", "gemForce", 3, "oreForce"),
 	NETHERCOAL("Nether Coal", "itemCoal", 1, "oreNetherCoal"),
@@ -74,7 +74,7 @@ public enum ModOreList {
 	INDIUM("Indium", "ingotIndium", 1, "oreIndium"),
 	FLUORITE("Fluorite", "shardFluorite", 1, "oreFluorite"),
 	BAUXITE("Bauxite", "dustBauxite", 1, "oreBauxite"),
-	SODALITE("Sodalite", "dustSodalite", 1, "oreSodalite"),
+	SODALITE("Sodalite", "dyeBlue", 1, "oreSodalite"),
 	PYRITE("Pyrite", "dustPyrite", 1, "orePyrite");
 
 	private ArrayList<ItemStack> ores;
@@ -107,6 +107,20 @@ public enum ModOreList {
 
 	public boolean isNetherOres() {
 		return this.name().startsWith("NETHER");
+	}
+
+	public boolean isGregtech() {
+		switch(this) {
+		case BAUXITE:
+		case GALENA:
+		case PYRITE:
+		case SODALITE:
+		case TUNGSTEN:
+		case ZINC:
+			return true;
+		default:
+			return false;
+		}
 	}
 
 	public void reloadOreList() {
