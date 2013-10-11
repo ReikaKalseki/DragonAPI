@@ -24,7 +24,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class TextureBinder
+public class ReikaTextureBinder
 {
 	/** A mapping from GL texture names (integers) to BufferedImage instances */
 	private IntHashMap textureNameToImageMap = new IntHashMap();

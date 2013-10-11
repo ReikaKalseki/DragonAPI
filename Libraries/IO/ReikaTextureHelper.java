@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaPNGLoader;
-import Reika.DragonAPI.IO.TextureBinder;
+import Reika.DragonAPI.IO.ReikaTextureBinder;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -30,7 +30,7 @@ public class ReikaTextureHelper {
 	private static final HashMap<String, Integer> textures = new HashMap();
 	private static final HashMap<String, ResourceLocation> maps = new HashMap();
 
-	public static final TextureBinder binder = new TextureBinder();
+	public static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
 	private static final ResourceLocation font = new ResourceLocation("textures/font/ascii.png");
 

@@ -13,10 +13,9 @@ import java.net.URL;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.InstallationException;
+import Reika.DragonAPI.Instantiable.ModLogger;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -37,13 +36,13 @@ public abstract class DragonAPIMod {
 		}
 	}
 
-	@PreInit
+	@EventHandler
 	public abstract void preload(FMLPreInitializationEvent evt);
 
-	@Init
+	@EventHandler
 	public abstract void load(FMLInitializationEvent event);
 
-	@PostInit
+	@EventHandler
 	public abstract void postload(FMLPostInitializationEvent evt);
 
 	public abstract String getDisplayName();
@@ -67,4 +66,6 @@ public abstract class DragonAPIMod {
 	protected void hasNoDragonAPI() {
 		throw new InstallationException(this, "This mod needs DragonAPI to function correctly!");
 	}
+
+	public abstract ModLogger getModLogger();
 }

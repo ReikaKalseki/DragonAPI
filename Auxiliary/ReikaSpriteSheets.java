@@ -69,7 +69,12 @@ public final class ReikaSpriteSheets {
 				GL11.glTranslatef(-0.125F, -0.125F, 0F);
 			}
 			else {
-				GL11.glTranslatef(-0.5F, 0, 0);
+				double sc = 0.6;
+				//GL11.glScaled(sc, sc, sc);
+				GL11.glRotatef(90, 0, 1, 0);
+				GL11.glTranslated(-0.5, 0, 0);
+				GL11.glTranslated(0, -0.375, 0);
+				//GL11.glTranslated(0, 0, 0.125);
 			}
 			float thick = 0.0625F;
 			ItemRenderer.renderItemIn2D(v5, 0.0625F+0.0625F*col, 0.0625F*row, 0.0625F*col, 0.0625F+0.0625F*row, 256, 256, thick);

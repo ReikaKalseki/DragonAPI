@@ -17,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Instantiable.ModLogger;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.BCMachineHandler;
@@ -51,6 +52,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	//@Instance
 	public static DragonAPIInit instance = new DragonAPIInit();
+
+	private ModLogger logger = new ModLogger(instance, true, false, false);
 
 	@Override
 	@PreInit
@@ -163,6 +166,11 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	public String getVersionName() {
 		return "";
+	}
+
+	@Override
+	public ModLogger getModLogger() {
+		return null;
 	}
 
 }

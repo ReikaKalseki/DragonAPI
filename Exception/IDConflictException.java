@@ -17,10 +17,10 @@ public class IDConflictException extends DragonAPIException {
 		message.append(mod.getDisplayName()+" was not installed correctly:\n");
 		message.append("CONFLICT: "+msg+"\n");
 		message.append("Check your IDs and change them if possible.\n");
-		if (mod.getDocumentationSite() != null)
-			message.append("This is NOT a mod bug. Do not post it to "+mod.getDocumentationSite().toString());
-		else
-			message.append("This is NOT a mod bug. Do not post it to the mod website.");
+		//if (mod.getDocumentationSite() != null)
+		//	message.append("This is NOT a mod bug. Do not post it to "+mod.getDocumentationSite().toString());
+		//else
+		message.append("This is NOT a mod bug. Do not post it to the mod website.");
 		this.crash();
 	}
 

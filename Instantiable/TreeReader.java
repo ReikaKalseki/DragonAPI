@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
+import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 
 public class TreeReader extends BlockArray {
@@ -241,7 +242,7 @@ public class TreeReader extends BlockArray {
 				return;
 			}
 			//ItemStack leaf = wood.getCorrespondingLeaf();
-			if (id == Block.wood.blockID || wood != null) {
+			if (id == Block.wood.blockID || wood != null || id == TwilightForestHandler.getInstance().treeCoreID) {
 				this.addBlockCoordinate(x, y, z);
 				for (int i = -1; i <= 1; i++) {
 					for (int j = -1; j <= 1; j++) {
