@@ -67,7 +67,8 @@ public class ReikaLiquidRenderer {
 		if (fluid.equals(FluidRegistry.WATER) || fluid.equals(FluidRegistry.LAVA) || fluid.canBePlacedInWorld())
 			ReikaTextureHelper.bindTerrainTexture();
 		else
-			ReikaTextureHelper.bindItemTexture();
+			//ReikaTextureHelper.bindItemTexture();
+			ReikaTextureHelper.bindTerrainTexture(); //required to mesh with BuildCraft rendering
 	}
 
 	public static int[] getGLLists(FluidStack fluidStack, World world, boolean flowing) {
