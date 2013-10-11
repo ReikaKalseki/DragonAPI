@@ -34,10 +34,10 @@ public class PixelRenderer {
 		z = pz;
 		xy = plane;
 
-        pw = w/wx;
-        ph = -h/wy;
+		pw = w/wx;
+		ph = -h/wy;
 
-        flip = f;
+		flip = f;
 	}
 
 	public void setPosition(double x0, double y0, double z0) {

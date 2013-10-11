@@ -25,19 +25,19 @@ public final class ReikaAABBHelper extends DragonAPICore {
 	public static void renderAABB(World world, AxisAlignedBB box, double par2, double par4, double par6, int x, int y, int z, int a, int r, int g, int b, boolean line) {
 		int[] color = {r, g, b, a};
 		ReikaRenderHelper.prepareGeoDraw(true);
-        GL11.glPushMatrix();
-        GL11.glTranslatef((float)par2, (float)par4 + 2.0F, (float)par6 + 1.0F);
-        GL11.glScalef(1.0F, -1.0F, -1.0F);
-        GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-        GL11.glPopMatrix();
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-    	GL11.glEnable(GL11.GL_BLEND);
-    	if (color[3] > 255 && color[3] > 0)
-    		color[3] = 255;
-    	if (color[3] < 0)
-    		color[3] *= -1;
-    	boolean filled = true;
-    	Tessellator var5 = new Tessellator();
+		GL11.glPushMatrix();
+		GL11.glTranslatef((float)par2, (float)par4 + 2.0F, (float)par6 + 1.0F);
+		GL11.glScalef(1.0F, -1.0F, -1.0F);
+		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+		GL11.glPopMatrix();
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glEnable(GL11.GL_BLEND);
+		if (color[3] > 255 && color[3] > 0)
+			color[3] = 255;
+		if (color[3] < 0)
+			color[3] *= -1;
+		boolean filled = true;
+		Tessellator var5 = new Tessellator();
 		double xdiff = box.minX-x;
 		double ydiff = box.minY-y;
 		double zdiff = box.minZ-z;
@@ -54,83 +54,83 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		if (var5.isDrawing)
 			var5.draw();
 		if (line) {
-		    var5.startDrawing(GL11.GL_LINE_LOOP);
-		    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-		    var5.addVertex(px2, py2, pz);
-		    var5.addVertex(px, py2, pz);
-		    var5.addVertex(px, py2, pz2);
-		    var5.addVertex(px2, py2, pz2);
-		    var5.draw();
-		    var5.startDrawing(GL11.GL_LINE_LOOP);
-		    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-		    var5.addVertex(px2, py, pz);
-		    var5.addVertex(px, py, pz);
-		    var5.addVertex(px, py, pz2);
-		    var5.addVertex(px2, py, pz2);
-		    var5.draw();
-		    var5.startDrawing(GL11.GL_LINE_LOOP);
-		    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-		    var5.addVertex(px, py, pz);
-		   	var5.addVertex(px, py2, pz);
-		   	var5.draw();
-		    var5.startDrawing(GL11.GL_LINE_LOOP);
-		    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-		   	var5.addVertex(px2, py, pz);
-		   	var5.addVertex(px2, py2, pz);
-		   	var5.draw();
-		    var5.startDrawing(GL11.GL_LINE_LOOP);
-		    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-		    var5.addVertex(px2, py, pz2);
-		    var5.addVertex(px2, py2, pz2);
-		    var5.draw();
-		    var5.startDrawing(GL11.GL_LINE_LOOP);
-		    var5.setColorRGBA(color[0], color[1], color[2], color[3]);
-		    var5.addVertex(px, py, pz2);
-		    var5.addVertex(px, py2, pz2);
-		    var5.draw();
+			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+			var5.addVertex(px2, py2, pz);
+			var5.addVertex(px, py2, pz);
+			var5.addVertex(px, py2, pz2);
+			var5.addVertex(px2, py2, pz2);
+			var5.draw();
+			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+			var5.addVertex(px2, py, pz);
+			var5.addVertex(px, py, pz);
+			var5.addVertex(px, py, pz2);
+			var5.addVertex(px2, py, pz2);
+			var5.draw();
+			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+			var5.addVertex(px, py, pz);
+			var5.addVertex(px, py2, pz);
+			var5.draw();
+			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+			var5.addVertex(px2, py, pz);
+			var5.addVertex(px2, py2, pz);
+			var5.draw();
+			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+			var5.addVertex(px2, py, pz2);
+			var5.addVertex(px2, py2, pz2);
+			var5.draw();
+			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
+			var5.addVertex(px, py, pz2);
+			var5.addVertex(px, py2, pz2);
+			var5.draw();
 		}
-    	if (filled)
-    	{
-	    	var5.startDrawing(GL11.GL_QUADS);
-	    	//var5.setBrightness(255);
-	    	var5.setColorRGBA(color[0], color[1], color[2], (int)(color[3]*0.375F));
+		if (filled)
+		{
+			var5.startDrawing(GL11.GL_QUADS);
+			//var5.setBrightness(255);
+			var5.setColorRGBA(color[0], color[1], color[2], (int)(color[3]*0.375F));
 
-	    	var5.addVertex(px, py, pz);
-	    	var5.addVertex(px2, py, pz);
-	    	var5.addVertex(px2, py, pz2);
-	    	var5.addVertex(px, py, pz2);
+			var5.addVertex(px, py, pz);
+			var5.addVertex(px2, py, pz);
+			var5.addVertex(px2, py, pz2);
+			var5.addVertex(px, py, pz2);
 
-	    	var5.addVertex(px2, py, pz);
-	    	var5.addVertex(px2, py2, pz);
-	    	var5.addVertex(px2, py2, pz2);
-	    	var5.addVertex(px2, py, pz2);
+			var5.addVertex(px2, py, pz);
+			var5.addVertex(px2, py2, pz);
+			var5.addVertex(px2, py2, pz2);
+			var5.addVertex(px2, py, pz2);
 
-	    	var5.addVertex(px, py2, pz);
-	    	var5.addVertex(px, py, pz);
-	    	var5.addVertex(px, py, pz2);
-	    	var5.addVertex(px, py2, pz2);
+			var5.addVertex(px, py2, pz);
+			var5.addVertex(px, py, pz);
+			var5.addVertex(px, py, pz2);
+			var5.addVertex(px, py2, pz2);
 
-	    	var5.addVertex(px, py2, pz2);
-	    	var5.addVertex(px, py, pz2);
-	    	var5.addVertex(px2, py, pz2);
-	    	var5.addVertex(px2, py2, pz2);
+			var5.addVertex(px, py2, pz2);
+			var5.addVertex(px, py, pz2);
+			var5.addVertex(px2, py, pz2);
+			var5.addVertex(px2, py2, pz2);
 
-	    	var5.addVertex(px, py, pz);
-	    	var5.addVertex(px, py2, pz);
-	    	var5.addVertex(px2, py2, pz);
-	    	var5.addVertex(px2, py, pz);
+			var5.addVertex(px, py, pz);
+			var5.addVertex(px, py2, pz);
+			var5.addVertex(px2, py2, pz);
+			var5.addVertex(px2, py, pz);
 
-	    	var5.addVertex(px2, py2, pz);
-	    	var5.addVertex(px, py2, pz);
-	    	var5.addVertex(px, py2, pz2);
-	    	var5.addVertex(px2, py2, pz2);
-	    	var5.draw();
-    	}
+			var5.addVertex(px2, py2, pz);
+			var5.addVertex(px, py2, pz);
+			var5.addVertex(px, py2, pz2);
+			var5.addVertex(px2, py2, pz2);
+			var5.draw();
+		}
 
-    	ReikaRenderHelper.exitGeoDraw();
-    	GL11.glEnable(GL11.GL_CULL_FACE);
-    	GL11.glDisable(GL11.GL_BLEND);
-    	GL11.glEnable(GL11.GL_DEPTH_TEST);
+		ReikaRenderHelper.exitGeoDraw();
+		GL11.glEnable(GL11.GL_CULL_FACE);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	/** Returns a 1-block bounding box. Args: x, y, z */

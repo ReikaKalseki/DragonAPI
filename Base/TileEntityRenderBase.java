@@ -22,7 +22,7 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 		if (!te.isInWorld())
 			return true;
 		int pass = MinecraftForgeClient.getRenderPass();
-		return (te.shouldRenderInPass(pass));
+		return pass == 0;//(te.shouldRenderInPass(pass));
 	}
 
 	public abstract String getTextureFolder();
