@@ -34,9 +34,7 @@ import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModSpiderList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.PostInit;
-import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -56,20 +54,20 @@ public class DragonAPIInit extends DragonAPIMod {
 	private ModLogger logger = new ModLogger(instance, true, false, false);
 
 	@Override
-	@PreInit
+	@EventHandler
 	public void preload(FMLPreInitializationEvent evt) {
 		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		OreDictionary.initVanillaEntries();
 	}
 
 	@Override
-	@Init
+	@EventHandler
 	public void load(FMLInitializationEvent event) {
 
 	}
 
 	@Override
-	@PostInit
+	@EventHandler
 	public void postload(FMLPostInitializationEvent evt) {
 		this.loadHandlers();
 		this.alCompat();
