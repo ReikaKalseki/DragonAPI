@@ -416,7 +416,9 @@ public final class ReikaGuiAPI extends GuiScreen {
 	public void drawItemStack(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
 		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
 		FontRenderer font = null;
-		if (is != null)
+		if (is == null)
+			return;
+		if (is != null && is.getItem() != null)
 			font = is.getItem().getFontRenderer(is);
 		if (font == null)
 			font = fr;

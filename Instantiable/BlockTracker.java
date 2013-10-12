@@ -11,9 +11,8 @@ package Reika.DragonAPI.Instantiable;
 
 import java.util.HashMap;
 
-import net.minecraft.item.ItemBlock;
 import net.minecraft.world.World;
-import net.minecraftforge.liquids.LiquidStack;
+import net.minecraftforge.fluids.Fluid;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BlockTracker extends BlockArray {
@@ -81,12 +80,12 @@ public class BlockTracker extends BlockArray {
 		}
 	}
 
-	public int getNumberOfLiquidSources(LiquidStack liq) {
-		if (!(liq.asItemStack().getItem() instanceof ItemBlock)) {
+	public int getNumberOfLiquidSources(Fluid liq) {
+		if (!liq.canBePlacedInWorld()) {
 			ReikaJavaLibrary.pConsole("Cannot call the count for a non-world liquid!");
 			return 0;
 		}
-		return this.getNumberOf(liq.itemID, 0);
+		return this.getNumberOf(liq.getBlockID(), 0);
 	}
 
 }
