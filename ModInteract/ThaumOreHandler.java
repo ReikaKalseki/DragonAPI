@@ -12,8 +12,6 @@ package Reika.DragonAPI.ModInteract;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.ModList;
@@ -81,18 +79,14 @@ public final class ThaumOreHandler extends ModHandlerBase {
 
 		if (this.hasMod()) {
 			try {
-				Class thaum = Class.forName("thaumcraft.common.Config");
-				Field ore = thaum.getField("blockCustomOre");
-				Field item = thaum.getField("itemResource");
-				Field shard = thaum.getField("itemShard");
+				Class thaum = Class.forName("thaumcraft.common.config.Config");
+				Field ore = thaum.getField("blockCustomOreId");
+				Field item = thaum.getField("itemResourceId");
+				Field shard = thaum.getField("itemShardId");
 
-				Block oreBlock = (Block)ore.get(null);
-				Item oreItem = (Item)item.get(null);
-				Item oreShard = (Item)shard.get(null);
-
-				idore = oreBlock.blockID;
-				idshard = oreShard.itemID;
-				iditem = oreItem.itemID;
+				idore = ore.getInt(null);
+				iditem = item.getInt(null);
+				idshard = shard.getInt(null);
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft Config class not found! Cannot read its items!");

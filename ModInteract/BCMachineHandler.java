@@ -33,23 +33,23 @@ public class BCMachineHandler extends ModHandlerBase {
 				idtank = ((Block)tank.get(null)).blockID;
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: BuildCraft Factory class not found! Cannot read its contents!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: BuildCraft Factory class not found! Cannot read its contents!");
 				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: BuildCraft Factory tankBlock field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: BuildCraft Factory tankBlock field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Cannot read BuildCraft Factory class (Security Exception)! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read BuildCraft Factory class (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Illegal argument for reading BuildCraft Factory class!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading BuildCraft Factory class!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Illegal access exception for reading BuildCraft Factory class!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading BuildCraft Factory class!");
 				e.printStackTrace();
 			}
 		}

@@ -33,23 +33,23 @@ public class AppEngHandler extends ModHandlerBase {
 				certus = quartz.copy();
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: AppEng class not found! Cannot read its contents!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: AppEng class not found! Cannot read its contents!");
 				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: AppEng certusBlock field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: AppEng certusBlock field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Cannot read AppEng class (Security Exception)! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read AppEng class (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Illegal argument for reading AppEng class!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading AppEng class!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Illegal access exception for reading AppEng class!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading AppEng class!");
 				e.printStackTrace();
 			}
 		}

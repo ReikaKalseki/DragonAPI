@@ -33,23 +33,23 @@ public class ForestryHandler extends ModHandlerBase {
 				idapatite = item.itemID;
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Forestry class not found! Cannot read its contents!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Forestry class not found! Cannot read its contents!");
 				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Forestry apatiteBlock field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Forestry apatiteBlock field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Cannot read Forestry class (Security Exception)! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read Forestry class (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Illegal argument for reading Forestry class!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading Forestry class!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.spamConsole("DRAGONAPI: Illegal access exception for reading Forestry class!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading Forestry class!");
 				e.printStackTrace();
 			}
 		}

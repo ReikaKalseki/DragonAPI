@@ -115,6 +115,30 @@ public class BlockArray {
 		}
 	}
 
+	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
+	 * Args: World, start x, start y, start z, id to follow, metadata to follow */
+	public void recursiveAddWithMetadata(World world, int x, int y, int z, int id, int meta) {
+		if (world.getBlockId(x, y, z) != id)
+			return;
+		if (world.getBlockMetadata(x, y, z) != meta)
+			return;
+		if (this.hasBlock(x, y, z))
+			return;
+		this.addBlockCoordinate(x, y, z);
+		try {
+			this.recursiveAddWithMetadata(world, x+1, y, z, id, meta);
+			this.recursiveAddWithMetadata(world, x-1, y, z, id, meta);
+			this.recursiveAddWithMetadata(world, x, y+1, z, id, meta);
+			this.recursiveAddWithMetadata(world, x, y-1, z, id, meta);
+			this.recursiveAddWithMetadata(world, x, y, z+1, id, meta);
+			this.recursiveAddWithMetadata(world, x, y, z-1, id, meta);
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
+		}
+	}
+
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
 	public void recursiveAddWithBounds(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2) {
