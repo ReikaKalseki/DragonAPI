@@ -21,6 +21,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.Instantiable.ModLogger;
 import Reika.DragonAPI.Interfaces.RegistrationList;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
@@ -121,7 +122,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		}
 	}
 
-	public static boolean getPrivateBoolean(Object obj, String field) {
+	public static boolean getPrivateBoolean(Object obj, String field, ModLogger log) {
 		try {
 			Class c = obj.getClass();
 			Field f = null;
@@ -134,8 +135,10 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 				}
 			}
 			if (f == null) {
-				ReikaJavaLibrary.pConsole("Could not find field "+field+" in "+obj);
-				ReikaChatHelper.write("Could not find field "+field+" in "+obj);
+				if (log.shouldDebug()) {
+					ReikaJavaLibrary.pConsole("Could not find field "+field+" in "+obj);
+					ReikaChatHelper.write("Could not find field "+field+" in "+obj);
+				}
 				throw new NoSuchFieldException();
 			}
 			boolean val = false;
@@ -149,18 +152,24 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			return val;
 		}
 		catch (NoSuchFieldException e) {
-			ReikaJavaLibrary.pConsole("Could not find field "+field+" in "+obj);
-			ReikaChatHelper.write("Could not find field "+field+" in "+obj);
+			if (log.shouldDebug()) {
+				ReikaJavaLibrary.pConsole("Could not find field "+field+" in "+obj);
+				ReikaChatHelper.write("Could not find field "+field+" in "+obj);
+			}
 			e.printStackTrace();
 		}
 		catch (IllegalAccessException e) {
-			ReikaJavaLibrary.pConsole("Could not access field "+field+" in "+obj);
-			ReikaChatHelper.write("Could not access field "+field+" in "+obj);
+			if (log.shouldDebug()) {
+				ReikaJavaLibrary.pConsole("Could not access field "+field+" in "+obj);
+				ReikaChatHelper.write("Could not access field "+field+" in "+obj);
+			}
 			e.printStackTrace();
 		}
 		catch (SecurityException e) {
-			ReikaJavaLibrary.pConsole("Security Manager locked field "+field+" in "+obj);
-			ReikaChatHelper.write("Security Manager locked field "+field+" in "+obj);
+			if (log.shouldDebug()) {
+				ReikaJavaLibrary.pConsole("Security Manager locked field "+field+" in "+obj);
+				ReikaChatHelper.write("Security Manager locked field "+field+" in "+obj);
+			}
 			e.printStackTrace();
 		}
 		return false;
