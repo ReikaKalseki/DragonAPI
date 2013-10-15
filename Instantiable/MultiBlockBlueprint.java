@@ -9,12 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 
 public class MultiBlockBlueprint {
 
+	/** Do not overwrite a block if this is the ID at this position */
+	private static final int NULL_ID = -1;
 	public final int xSize;
 	public final int ySize;
 	public final int zSize;
@@ -22,21 +28,25 @@ public class MultiBlockBlueprint {
 	private int[][][] IDs;
 	private int[][][] metas;
 
+	private List<Integer> overrides = new ArrayList();
+
 	public MultiBlockBlueprint(int x, int y, int z) {
 		xSize = x;
 		ySize = y;
 		zSize = z;
 		IDs = new int[x][y][z];
 		metas = new int[x][y][z];
+		//Arrays.fill(IDs, -1);
+		//Arrays.fill(metas, -1);
 	}
 
-	public MultiBlockBlueprint addBlockAt(int id, int meta, int x, int y, int z) {
+	public MultiBlockBlueprint addBlockAt(int x, int y, int z, int id, int meta) {
 		IDs[x][y][z] = id;
 		metas[x][y][z] = meta;
 		return this;
 	}
 
-	public MultiBlockBlueprint addBlockAt(int id, int x, int y, int z) {
+	public MultiBlockBlueprint addBlockAt(int x, int y, int z, int id) {
 		return this.addBlockAt(id, OreDictionary.WILDCARD_VALUE, x, y, z);
 	}
 
@@ -60,12 +70,27 @@ public class MultiBlockBlueprint {
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
 				for (int k = 0; k < zSize; k++) {
-					int meta = metas[i][j][k];
-					if (meta == OreDictionary.WILDCARD_VALUE)
-						meta = 0;
-					world.setBlock(x0+i, y0+j, z0+k, IDs[i][j][k], meta, 3);
+					int id = IDs[i][j][k];
+					if (id != NULL_ID) {
+						int meta = metas[i][j][k];
+						if (meta == OreDictionary.WILDCARD_VALUE)
+							meta = 0;
+						if (this.canPlaceBlockAt(world, x0+i, y0+j, z0+k))
+							world.setBlock(x0+i, y0+j, z0+k, id, meta, 3);
+					}
 				}
 			}
 		}
+	}
+
+	private boolean canPlaceBlockAt(World world, int x, int y, int z) {
+		if (ReikaWorldHelper.softBlocks(world, x, y, z))
+			return true;
+		int id = world.getBlockId(x, y, z);
+		return overrides.contains(id);
+	}
+
+	public void addOverwriteableID(int id) {
+		overrides.add(id);
 	}
 }
