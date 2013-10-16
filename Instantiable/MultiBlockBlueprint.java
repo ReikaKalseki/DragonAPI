@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
@@ -20,15 +21,17 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 public class MultiBlockBlueprint {
 
 	/** Do not overwrite a block if this is the ID at this position */
-	private static final int NULL_ID = -1;
+	protected static final int NULL_ID = -1;
 	public final int xSize;
 	public final int ySize;
 	public final int zSize;
 
-	private int[][][] IDs;
-	private int[][][] metas;
+	protected int[][][] IDs;
+	protected int[][][] metas;
 
 	private List<Integer> overrides = new ArrayList();
+
+	protected static final Random rand = new Random();
 
 	public MultiBlockBlueprint(int x, int y, int z) {
 		xSize = x;
@@ -48,6 +51,14 @@ public class MultiBlockBlueprint {
 
 	public MultiBlockBlueprint addBlockAt(int x, int y, int z, int id) {
 		return this.addBlockAt(id, OreDictionary.WILDCARD_VALUE, x, y, z);
+	}
+
+	public MultiBlockBlueprint addCenteredBlockAt(int x, int y, int z, int id, int meta) {
+		return this.addBlockAt(x+xSize/2, y, z+zSize/2, id, meta);
+	}
+
+	public MultiBlockBlueprint addCenteredBlockAt(int x, int y, int z, int id) {
+		return this.addCenteredBlockAt(id, OreDictionary.WILDCARD_VALUE, x, y, z);
 	}
 
 	public boolean isMatch(World world, int x0, int y0, int z0) {
@@ -75,22 +86,45 @@ public class MultiBlockBlueprint {
 						int meta = metas[i][j][k];
 						if (meta == OreDictionary.WILDCARD_VALUE)
 							meta = 0;
-						if (this.canPlaceBlockAt(world, x0+i, y0+j, z0+k))
+						if (this.canPlaceBlockAt(world, x0+i, y0+j, z0+k)) {
+							//ReikaJavaLibrary.pConsole("Creating "+id+":"+meta+" @ "+(x0+i)+", "+(y0+j)+", "+(z0+k));
 							world.setBlock(x0+i, y0+j, z0+k, id, meta, 3);
+						}
 					}
 				}
 			}
 		}
 	}
 
-	private boolean canPlaceBlockAt(World world, int x, int y, int z) {
+	protected boolean canPlaceBlockAt(World world, int x, int y, int z) {
 		if (ReikaWorldHelper.softBlocks(world, x, y, z))
 			return true;
 		int id = world.getBlockId(x, y, z);
 		return overrides.contains(id);
 	}
 
-	public void addOverwriteableID(int id) {
+	public MultiBlockBlueprint addOverwriteableID(int id) {
 		overrides.add(id);
+		return this;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < xSize; i++) {
+			for (int j = 0; j < ySize; j++) {
+				for (int k = 0; k < zSize; k++) {
+					int id = IDs[i][j][k];
+					int meta = metas[i][j][k];
+					sb.append("["+id+":"+meta+"]");
+				}
+			}
+		}
+		return sb.toString();
+	}
+
+	public void clear() {
+		IDs = new int[xSize][ySize][zSize];
+		metas = new int[xSize][ySize][zSize];
 	}
 }

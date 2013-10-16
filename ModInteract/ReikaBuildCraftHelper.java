@@ -50,11 +50,11 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	}
 
 	public static double getWattsPerMJ() {
-		if (!doesBuildCraftExist())
-			return 56280; //default  *4?
-		double power = getFuelRealPower();
-		double mj = getFuelMJPerTick();
-		return power/mj; //as of 1.5.2, is 56.28kW per MJ/t
+		//if (!doesBuildCraftExist())
+		return 56280; //default  *4?
+		//double power = getFuelRealPower();
+		//double mj = getFuelMJPerTick();
+		//return power/mj; //as of 1.5.2, is 56.28kW per MJ/t
 	}
 
 	/** Get mass of gasoline in kilograms from the number of forge millibuckets. */

@@ -55,6 +55,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return true;
 		if (b.isAirBlock(world, x, y, z))
 			return true;
+		if (id == Block.vine.blockID)
+			return true;
 		return (BlockProperties.softBlocksArray[id]);
 	}
 
@@ -1320,8 +1322,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return true;
 		if (id == Block.gravel.blockID)
 			return false;
-		if (mat == Material.grass)
-			return true;
 		return false;
 	}
 
