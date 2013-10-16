@@ -29,14 +29,10 @@ public class ThaumBlockHandler extends ModHandlerBase {
 
 		if (this.hasMod()) {
 			try {
-				Class thaum = Class.forName("thaumcraft.common.Config");
+				Class thaum = ModList.THAUMCRAFT.getBlockClass();
 				Field totem = thaum.getField("blockCosmeticSolid");
 				Block block = (Block)totem.get(null);
 				idtile = block.blockID;
-			}
-			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft Config class not found! Cannot read its items!");
-				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft block field not found! "+e.getMessage());

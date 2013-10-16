@@ -24,7 +24,7 @@ public enum ModList {
 	BUILDCRAFTENERGY("BuildCraft|Energy"),
 	BUILDCRAFTFACTORY("BuildCraft|Factory"),
 	BUILDCRAFTTRANSPORT("BuildCraft|Transport"),
-	THAUMCRAFT("Thaumcraft"),
+	THAUMCRAFT("Thaumcraft", "thaumcraft.common.config.Config"),
 	INDUSTRIALCRAFT("IC2"),
 	GREGTECH("GregTech"),
 	FORESTRY("Forestry"),
@@ -46,17 +46,26 @@ public enum ModList {
 	private boolean condition;
 	private boolean preset = false;
 	private String modlabel;
-	private Class modClass;
+	private Class blockClass;
 
 	public static final ModList[] modList = ModList.values();
 
-	private ModList(String s) {
-		modlabel = s;
+	private ModList(String label, String blocks, String items) {
+		modlabel = label;
 		boolean c = Loader.isModLoaded(modlabel);
 		condition = c;
 		preset = true;
-		if (c)
+		if (c) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" detected in the MC installation. Adjusting behavior accordingly.");
+			try {
+				blockClass = Class.forName(blocks);
+				itemClass = Class.forName(items);
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft Config class not found! Cannot read its items!");
+				e.printStackTrace();
+			}
+		}
 		else
 			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" not detected in the MC installation. No special action taken.");
 	}
@@ -74,6 +83,10 @@ public enum ModList {
 	@Override
 	public String toString() {
 		return this.getModLabel();
+	}
+
+	public Class getBlockClass() {
+		return blockClass;
 	}
 
 }
