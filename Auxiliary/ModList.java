@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import java.util.HashMap;
+
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.Loader;
 
@@ -49,6 +51,10 @@ public enum ModList {
 	private final String itemClass;
 	private final String blockClass;
 
+	//To save on repeated Class.forName
+	private static final HashMap<ModList, Class> blockClasses = new HashMap();
+	private static final HashMap<ModList, Class> itemClasses = new HashMap();
+
 	public static final ModList[] modList = ModList.values();
 
 	private ModList(String label, String blocks, String items) {
@@ -86,14 +92,20 @@ public enum ModList {
 			Thread.dumpStack();
 			return null;
 		}
-		try {
-			return Class.forName(blockClass);
+		Class c = blockClasses.get(this);
+		if (c == null) {
+			try {
+				c = Class.forName(blockClass);
+				blockClasses.put(this, c);
+				return c;
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load block class for "+this+".");
+				e.printStackTrace();
+				return null;
+			}
 		}
-		catch (ClassNotFoundException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load block class for "+this+".");
-			e.printStackTrace();
-			return null;
-		}
+		return c;
 	}
 
 	public Class getItemClass() {
@@ -102,14 +114,20 @@ public enum ModList {
 			Thread.dumpStack();
 			return null;
 		}
-		try {
-			return Class.forName(itemClass);
+		Class c = itemClasses.get(this);
+		if (c == null) {
+			try {
+				c = Class.forName(itemClass);
+				itemClasses.put(this, c);
+				return c;
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+".");
+				e.printStackTrace();
+				return null;
+			}
 		}
-		catch (ClassNotFoundException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+".");
-			e.printStackTrace();
-			return null;
-		}
+		return c;
 	}
 
 	public boolean isLoaded() {
