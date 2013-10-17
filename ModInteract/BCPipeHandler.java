@@ -89,7 +89,7 @@ public class BCPipeHandler extends ModHandlerBase {
 		int idpipe = -1;
 		if (this.hasMod()) {
 			try {
-				Class Transport = Class.forName("buildcraft.BuildCraftTransport");
+				Class Transport = this.getMod().getBlockClass();
 				Field pipe = Transport.getField("genericPipeBlock");
 				idpipe = ((Block)pipe.get(null)).blockID;
 				for (int i = 0; i < fluidPipes.length; i++) {
@@ -108,24 +108,24 @@ public class BCPipeHandler extends ModHandlerBase {
 					itemIDs.put(powerPipes[i], id);
 				}
 			}
-			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: BuildCraft Transport class not found! Cannot read its contents!");
-				e.printStackTrace();
-			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: BuildCraft Transport pipe field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read BuildCraft Transport class (Security Exception)! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading BuildCraft Transport class!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading BuildCraft Transport class!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				e.printStackTrace();
+			}
+			catch (NullPointerException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
 		}

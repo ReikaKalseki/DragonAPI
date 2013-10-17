@@ -32,30 +32,30 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 		if (this.hasMod()) {
 			try {
-				Class item = Class.forName("mods.tinker.tconstruct.common.TContent");
+				Class item = this.getMod().getItemClass();
 				Field pick = item.getField("pickaxe");
 				Field hammer = item.getField("hammer");
 				idpick = ((Item)pick.get(null)).itemID;
 				idhammer = ((Item)hammer.get(null)).itemID;
 			}
-			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: TConstruct Item class not found! Cannot read its items!");
-				e.printStackTrace();
-			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: TConstruct item field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read TConstruct items (Security Exception)! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading TConstruct items!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading TConstruct items!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				e.printStackTrace();
+			}
+			catch (NullPointerException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
 		}

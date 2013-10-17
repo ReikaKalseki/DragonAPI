@@ -79,7 +79,7 @@ public final class ThaumOreHandler extends ModHandlerBase {
 
 		if (this.hasMod()) {
 			try {
-				Class thaum = Class.forName("thaumcraft.common.config.Config");
+				Class thaum = ModList.THAUMCRAFT.getBlockClass();
 				Field ore = thaum.getField("blockCustomOreId");
 				Field item = thaum.getField("itemResourceId");
 				Field shard = thaum.getField("itemShardId");
@@ -88,24 +88,24 @@ public final class ThaumOreHandler extends ModHandlerBase {
 				iditem = item.getInt(null);
 				idshard = shard.getInt(null);
 			}
-			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft Config class not found! Cannot read its items!");
-				e.printStackTrace();
-			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft config field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read Thaumcraft config (Security Exception)! Ores not initialized! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading Thaumcraft config!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading Thaumcraft config!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				e.printStackTrace();
+			}
+			catch (NullPointerException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
 		}

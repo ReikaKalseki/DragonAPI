@@ -31,7 +31,6 @@ import Reika.DragonAPI.ModInteract.TinkerToolHandler;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 import Reika.DragonAPI.ModRegistry.ModOreList;
-import Reika.DragonAPI.ModRegistry.ModSpiderList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -58,6 +57,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void preload(FMLPreInitializationEvent evt) {
 		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		OreDictionary.initVanillaEntries();
+		ReikaJavaLibrary.initClass(ModList.class);
 	}
 
 	@Override
@@ -100,11 +100,10 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	private static void loadHandlers() {
-		ReikaJavaLibrary.initClass(ModList.class);
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);
 		ReikaJavaLibrary.initClass(ModCropList.class);
-		ReikaJavaLibrary.initClass(ModSpiderList.class);
+		//ReikaJavaLibrary.initClass(ModSpiderList.class);
 
 		if (ModList.BUILDCRAFTFACTORY.isLoaded()) {
 			ReikaJavaLibrary.initClass(BCMachineHandler.class);

@@ -27,29 +27,29 @@ public class ForestryHandler extends ModHandlerBase {
 		int idapatite = -1;
 		if (this.hasMod()) {
 			try {
-				Class forest = Class.forName("forestry.core.config.ForestryItem");
+				Class forest = this.getMod().getItemClass();
 				Field apa = forest.getField("apatite");
 				Item item = (Item)apa.get(null);
 				idapatite = item.itemID;
 			}
-			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Forestry class not found! Cannot read its contents!");
-				e.printStackTrace();
-			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Forestry apatiteBlock field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read Forestry class (Security Exception)! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading Forestry class!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading Forestry class!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				e.printStackTrace();
+			}
+			catch (NullPointerException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
 		}

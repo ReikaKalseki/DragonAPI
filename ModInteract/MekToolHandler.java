@@ -38,7 +38,7 @@ public final class MekToolHandler extends ModHandlerBase {
 		super();
 		if (this.hasMod()) {
 			try {
-				Class item = Class.forName("mekanism.tools.common.MekanismTools");
+				Class item = this.getMod().getItemClass();
 				for (int i = 0; i < paxelVars.length; i++) {
 					String varname = paxelVars[i];
 					Field paxel = item.getField(varname);
@@ -52,24 +52,24 @@ public final class MekToolHandler extends ModHandlerBase {
 					pickIDs.add(idpick);
 				}
 			}
-			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: MekTools Item class not found! Cannot read its items!");
-				e.printStackTrace();
-			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: MekTools item field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read MekTools items (Security Exception)! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading MekTools items!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading MekTools items!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				e.printStackTrace();
+			}
+			catch (NullPointerException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
 		}

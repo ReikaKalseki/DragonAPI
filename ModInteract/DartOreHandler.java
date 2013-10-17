@@ -18,7 +18,7 @@ import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModRegistry.ModOreList;
-import bluedart.item.DartItem;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class DartOreHandler extends ModHandlerBase {
 
@@ -38,33 +38,38 @@ public final class DartOreHandler extends ModHandlerBase {
 		int idore = -1;
 		if (this.hasMod()) {
 			try {
-				Class block = Class.forName("bluedart.block.DartBlock");
+				Class block = this.getMod().getBlockClass();
 				Class item = Class.forName("bluedart.item.DartItem");
 				Field ore = block.getField("powerOre");
 				//Field force = item.getField("gemForce");
 				Block powerOre = (Block)ore.get(null);
 				//idgem = ((Item)force.get(null)).itemID;
 				idore = powerOre.blockID;
-				idgem = DartItem.gemForce.itemID;
+				//idgem = DartItem.gemForce.itemID;
+				idgem = GameRegistry.findItemStack("DartCraft", "item.gemForce", 1).itemID;
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
 				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft item field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read DartCraft items (Security Exception)! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading DartCraft items!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading DartCraft items!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				e.printStackTrace();
+			}
+			catch (NullPointerException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
 		}

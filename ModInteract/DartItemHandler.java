@@ -13,7 +13,6 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import bluedart.item.DartItem;
 
 public final class DartItemHandler extends ModHandlerBase {
 
@@ -30,7 +29,7 @@ public final class DartItemHandler extends ModHandlerBase {
 				Class item = Class.forName("bluedart.item.DartItem");
 				//Field wrench = item.getField("forceWrench");
 				//idwrench = ((Item)wrench.get(null)).itemID;
-				idwrench = DartItem.forceWrench.itemID;
+				//idwrench = DartItem.forceWrench.itemID;
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");

@@ -118,6 +118,11 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	public static void initClass(Class c) {
+		if (c == null) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot initalize a null class!");
+			Thread.dumpStack();
+			return;
+		}
 		try {
 			Class.forName(c.getCanonicalName(), true, ReikaJavaLibrary.class.getClassLoader());
 		}

@@ -32,7 +32,7 @@ public abstract class DragonAPIMod {
 			ReikaJavaLibrary.pConsole(this.getDisplayName()+" is running in a deobfuscated environment!");
 		}
 		else {
-			ReikaJavaLibrary.pConsole(this.getDisplayName()+" is not running in a deobfuscated environment!");
+			ReikaJavaLibrary.pConsole(this.getDisplayName()+" is not running in a deobfuscated environment! This is not an error!");
 		}
 	}
 

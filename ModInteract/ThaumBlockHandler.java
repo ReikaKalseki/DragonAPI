@@ -11,7 +11,6 @@ package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
 
-import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
@@ -30,24 +29,27 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		if (this.hasMod()) {
 			try {
 				Class thaum = ModList.THAUMCRAFT.getBlockClass();
-				Field totem = thaum.getField("blockCosmeticSolid");
-				Block block = (Block)totem.get(null);
-				idtile = block.blockID;
+				Field totem = thaum.getField("blockCosmeticSolidId");
+				idtile = totem.getInt(null);
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft block field not found! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read Thaumcraft blocks (Security Exception)! "+e.getMessage());
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading Thaumcraft blocks!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading Thaumcraft blocks!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				e.printStackTrace();
+			}
+			catch (NullPointerException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
 		}

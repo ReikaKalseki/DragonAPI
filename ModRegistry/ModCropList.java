@@ -21,10 +21,10 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public enum ModCropList {
 
-	BARLEY(ModList.NATURA, "mods.natura.common.NContent", "crops", 0, 0, 3, Block.class),
-	COTTON(ModList.NATURA, "mods.natura.common.NContent", "crops", 4, 6, 8, Block.class),
-	FLAX(ModList.REDPOWER, "", "", 0, 0, 0, Block.class),
-	CANOLA(ModList.ROTARYCRAFT, "Reika.RotaryCraft.RotaryCraft", "canola", 0, 0, 9, Block.class);
+	BARLEY(ModList.NATURA, "crops", 0, 0, 3, Block.class),
+	COTTON(ModList.NATURA, "crops", 4, 6, 8, Block.class),
+	FLAX(ModList.REDPOWER, "", 0, 0, 0, Block.class),
+	CANOLA(ModList.ROTARYCRAFT, "canola", 0, 0, 9, Block.class);
 
 	private ModList mod;
 	public final int blockID;
@@ -35,22 +35,22 @@ public enum ModCropList {
 
 	public static final ModCropList[] cropList = values();
 
-	private ModCropList(ModList api, String className, String blockVar, int metamin, int metafresh, int metaripe, Class type) {
+	private ModCropList(ModList api, String blockVar, int metamin, int metafresh, int metaripe, Class type) {
 		mod = api;
 		harvestedMeta = metafresh;
 		ripeMeta = metaripe;
 		minmeta = metamin;
 		int id = -1;
 		if (mod.isLoaded()) {
-			if (className == null || className.isEmpty()) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty parent class");
+			Class cl = api.getBlockClass();
+			if (cl == null) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty block class");
 			}
-			else if (blockVar == null || blockVar.isEmpty()) {
+			if (blockVar == null || blockVar.isEmpty()) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty variable name");
 			}
 			else {
 				try {
-					Class cl = Class.forName(className);
 					Field b = cl.getField(blockVar);
 					if (type == ItemStack.class) {
 						ItemStack block = (ItemStack)b.get(null);
@@ -75,10 +75,6 @@ public enum ModCropList {
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for "+b);
 					}
-				}
-				catch (ClassNotFoundException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
-					e.printStackTrace();
 				}
 				catch (NoSuchFieldException e) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
