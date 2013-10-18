@@ -12,6 +12,8 @@ package Reika.DragonAPI.Libraries;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaNBTHelper extends DragonAPICore {
@@ -49,6 +51,18 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			}
 		}
 		return inv;
+	}
+
+	public static Fluid getFluidFromNBT(NBTTagCompound NBT) {
+		String name = NBT.getString("liquid");
+		if (name == null || name.isEmpty() || name.equals("empty"))
+			return null;
+		return FluidRegistry.getFluid(name);
+	}
+
+	public static void writeFluidToNBT(NBTTagCompound NBT, Fluid f) {
+		String name = f != null ? f.getName() : "empty";
+		NBT.setString("liquid", name);
 	}
 
 }

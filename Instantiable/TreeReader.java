@@ -13,11 +13,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
+import Reika.DyeTrees.API.TreeGetter;
 
 public class TreeReader extends BlockArray {
 
@@ -26,6 +29,43 @@ public class TreeReader extends BlockArray {
 
 	private ReikaTreeHelper vanilla;
 	private ModWoodList wood;
+	private ReikaDyeHelper dyeTree;
+
+	private final int dyeLeafID;
+	private boolean isDyeTree = false;
+
+	public TreeReader() {
+		super();
+		if (ModList.DYETREES.isLoaded())
+			dyeLeafID = TreeGetter.getNaturalDyeLeafID();
+		else
+			dyeLeafID = -1;
+	}
+
+	public void checkAndAddDyeTree(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		if (id == 0)
+			return;
+		int meta = world.getBlockMetadata(x, y, z);
+		if (this.hasBlock(x, y, z))
+			return;
+		if (id != Block.wood.blockID && id != dyeLeafID)
+			return;
+		if (id == dyeLeafID)
+			isDyeTree = true;
+		this.addBlockCoordinate(x, y, z);
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				for (int k = -1; k <= 1; k++) {
+					this.checkAndAddDyeTree(world, x+i, y+j, z+k);
+				}
+			}
+		}
+	}
+
+	public boolean isDyeTree() {
+		return isDyeTree;
+	}
 
 	public void addTree(World world, int x, int y, int z, int blockID, int blockMeta) {
 		int id = world.getBlockId(x, y, z);
@@ -128,49 +168,6 @@ public class TreeReader extends BlockArray {
 			}
 		}
 	}
-
-	/** For natura's massive redwood trees. Warning: may lag-spike! *//*
-	public void addSequoia(World world, int x, int y, int z, boolean debug) {
-		int id = world.getBlockId(x, y, z);
-		int meta = world.getBlockMetadata(x, y, z);
-		ModWoodList wood = ModWoodList.getModWood(id, meta);
-		if (wood == ModWoodList.SEQUOIA) {
-			this.addBlockCoordinate(x, y, z);
-			if (debug) {
-				ReikaJavaLibrary.pConsole("Adding "+x+", "+y+", "+z);
-			}
-			try {
-				for (int i = -20; i <= 20; i++) {
-					for (int j = 0; j < world.provider.getHeight(); j++) { //full height
-						for (int k = -20; k <= 20; k++) {
-							if (!this.hasBlock(x+i, y+j, z+k)) {
-								int idread = world.getBlockId(x, y, z);
-								int metaread = world.getBlockMetadata(x, y, z);
-								ItemStack blockread = new ItemStack(idread, 1, metaread);
-								ModWoodList woodread = ModWoodList.getModWood(blockread);
-								if (woodread == ModWoodList.SEQUOIA) {
-									this.addBlockCoordinate(x+i, j, z+k);
-									if (debug) {
-										ReikaJavaLibrary.pConsole("Adding "+(x+i)+", "+y+", "+(z+k));
-									}
-								}
-								else if (ReikaItemHelper.matchStacks(ModWoodList.SEQUOIA.getCorrespondingLeaf(), blockread)) {
-									this.addBlockCoordinate(x+i, j, z+k);
-									if (debug) {
-										ReikaJavaLibrary.pConsole("Adding "+(x+i)+", "+y+", "+(z+k));
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-			catch (StackOverflowError e) {
-				this.throwOverflow();
-				e.printStackTrace();
-			}
-		}
-	}*/
 
 	/** For Natura's massive redwood trees. Warning: may lag-spike! */
 	public void addSequoia(World world, int x, int y, int z, boolean debug) {
@@ -316,6 +313,7 @@ public class TreeReader extends BlockArray {
 		leafCount = 0;
 		vanilla = null;
 		wood = null;
+		isDyeTree = false;
 	}
 
 	public void setTree(ReikaTreeHelper tree) {
