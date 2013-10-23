@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.lwjgl.input.Mouse;
@@ -399,15 +400,21 @@ public final class ReikaGuiAPI extends GuiScreen {
 	}
 
 	/** Draw a fermenter recipe in the GUI. Args: x,y of top input slot, items of input slots,
-	 * x,y out, item output. Item array must be size-3! */
+	 * x,y out, item output. Item array must be size-2! */
 	public void drawFermenter(RenderItem render, FontRenderer f, int x, int y, ItemStack[] in, int x2, int y2, ItemStack out) {
-		if (in.length != 3)
-			throw new MisuseException("DrawFermenter() requires 3 input items!");
+		if (in.length != 2)
+			throw new MisuseException("DrawFermenter() requires 2 input items!");
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2 - 8;
 
-		for (int ij = 0; ij < 3; ij++)
-			this.drawItemStackWithTooltip(render, f, in[ij], x+j, y+18*ij+k);
+		ReikaLiquidRenderer.bindFluidTexture(FluidRegistry.WATER);
+		GL11.glColor4f(1, 1, 1, 1);
+		int h = 16-(int)(System.nanoTime()/200000000)%17;
+		this.drawTexturedModelRectFromIcon(x, y+10+16-h, FluidRegistry.WATER.getStillIcon(), 16, h);
+
+		this.drawItemStackWithTooltip(render, f, in[0], x+j, y+k);
+		this.drawItemStackWithTooltip(render, f, in[1], x+j, y+36+k);
+
 		if (out != null)
 			this.drawItemStackWithTooltip(render, f, out, x2+4+j, y2+4+k);
 	}

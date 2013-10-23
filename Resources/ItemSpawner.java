@@ -29,14 +29,12 @@ import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
-import Reika.RotaryCraft.RotaryCraft;
 
 public class ItemSpawner extends Item {
 
 	public ItemSpawner(int id) {
 		super(id);
 		this.setHasSubtypes(true);
-		this.setCreativeTab(RotaryCraft.tabSpawner);
 	}
 
 	@Override

@@ -16,6 +16,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -95,6 +96,11 @@ public final class ReikaChatHelper extends DragonAPICore {
 			return;
 		if (Minecraft.getMinecraft().thePlayer != null)
 			Minecraft.getMinecraft().thePlayer.addChatMessage(sg);
+	}
+
+	/** Automatically translates if possible. */
+	public static void writeLocalString(String tag) {
+		writeString(StatCollector.translateToLocal(tag));
 	}
 
 	/** A general object-to-chat function. Autoclips doubles to 2 decimals. Args: Object */
