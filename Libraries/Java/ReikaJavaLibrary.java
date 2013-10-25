@@ -36,8 +36,9 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	public static void spamConsole(Object obj) {
+		String sg = String.valueOf(obj);
 		for (int i = 0; i < 16; i++)
-			System.out.println(String.valueOf(obj));
+			System.out.println(sg);
 	}
 
 	public static void pConsole(Object obj, Side s) {

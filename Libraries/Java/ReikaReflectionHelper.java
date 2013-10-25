@@ -52,8 +52,12 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			Throwable t = e.getCause();
 			if (t instanceof IllegalArgumentException)
 				throw new IDConflictException(mod, t.getMessage());
-			else
+			else {
+				mod.getModLogger().logError("ITE on instantiating "+list);
+				e.getCause().printStackTrace();
 				throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" threw invocation target exception: "+e+" with "+e.getCause()+" ("+e.getCause().getMessage()+")");
+			}
+			//return null;
 		}
 	}
 
