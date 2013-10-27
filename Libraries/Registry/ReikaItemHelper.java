@@ -163,7 +163,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static void dropItem(World world, double x, double y, double z, ItemStack is) {
 		if (is == null)
 			return;
-		EntityItem ei = new EntityItem(world, x, y, z, is);
+		EntityItem ei = new EntityItem(world, x, y, z, is.copy());
 		ei.delayBeforeCanPickup = 10;
 		ei.motionX = -0.1+0.2*rand.nextDouble();
 		ei.motionZ = -0.1+0.2*rand.nextDouble();

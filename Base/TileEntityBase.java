@@ -28,7 +28,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public abstract class TileEntityBase extends TileEntity {
 
-	protected static final Random par5Random = new Random();
+	protected static final Random rand = new Random();
 	private int pseudometa;
 	public boolean shutDown;
 	public String placer;
@@ -147,7 +147,7 @@ public abstract class TileEntityBase extends TileEntity {
 		if (shutDown)
 			return;
 		try {
-			if (par5Random.nextInt(20) == 0)
+			if (rand.nextInt(20) == 0)
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			this.updateTileEntity();
 			this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
@@ -203,7 +203,7 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	public Random getRandom() {
-		return par5Random;
+		return rand;
 	}
 
 	@Override

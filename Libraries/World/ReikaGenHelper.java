@@ -53,6 +53,11 @@ public final class ReikaGenHelper extends DragonAPICore {
 		ChestGenHooks.getInfo(ChestGenHooks.STRONGHOLD_LIBRARY).addItem(new WeightedRandomChestContent(is, min, max, rate));
 	}
 
+	/** Adds an ItemStack to desert temples. Args: ItemStack, min size, max size, frequency */
+	public static void addStackToPyramid(ItemStack is, int min, int max, int rate) {
+		ChestGenHooks.getInfo(ChestGenHooks.PYRAMID_DESERT_CHEST).addItem(new WeightedRandomChestContent(is, min, max, rate));
+	}
+
 	/** Adds ItemStacks to chest generation. Args: Chest Type, ItemStacks, min size, max size, frequency */
 	public static void addStacksToChestGen(String chest, ArrayList<ItemStack> is, int min, int max, int rate) {
 		for (int i = 0; i < is.size(); i++)
