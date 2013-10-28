@@ -121,4 +121,12 @@ public class HybridTank extends FluidTank {
 		return "Tank "+name+", containing "+this.getLevel()+" mB of "+this.getActualFluid().getLocalizedName();
 	}
 
+	public int getRemainingSpace() {
+		return capacity-this.getLevel();
+	}
+
+	public boolean canTakeIn(int amt) {
+		return this.getRemainingSpace() >= amt;
+	}
+
 }

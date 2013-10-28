@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
+import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.ModLogger;
@@ -28,6 +29,8 @@ import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 public final class ReikaReflectionHelper extends DragonAPICore {
 
 	public static Block createBlockInstance(DragonAPIMod mod, RegistrationList list) {
+		if (list.getID() <= 0)
+			throw new InstallationException(mod, "Invalid ID "+list.getID()+" chosen for "+list.getBasicName());
 		try {
 			Constructor c = list.getObjectClass().getConstructor(list.getConstructorParamTypes());
 			Block instance = (Block)(c.newInstance(list.getConstructorParams()));
