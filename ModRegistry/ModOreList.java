@@ -72,10 +72,12 @@ public enum ModOreList {
 	PITCHBLENDE("Pitchblende", "ingotUranium", 1, "orePitchblende"),
 	CADMIUM("Cadmium", "ingotCadmium", 1, "oreCadmium"),
 	INDIUM("Indium", "ingotIndium", 1, "oreIndium"),
-	FLUORITE("Fluorite", "shardFluorite", 1, "oreFluorite"),
+	FLUORITE("Fluorite", "gemFluorite", 1, "oreFluorite"),
 	BAUXITE("Bauxite", "dustBauxite", 1, "oreBauxite"),
 	SODALITE("Sodalite", "dyeBlue", 1, "oreSodalite"),
-	PYRITE("Pyrite", "dustPyrite", 1, "orePyrite");
+	PYRITE("Pyrite", "dustPyrite", 1, "orePyrite"),
+	AMMONIUM("Ammonium Chloride", "dustAmmonium", 1, "oreAmmonium"),
+	CALCITE("Calcite", "gemCalcite", 1, "oreCalcite");
 
 	private ArrayList<ItemStack> ores;
 	private String name;
