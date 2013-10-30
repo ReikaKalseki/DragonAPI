@@ -273,4 +273,17 @@ public enum ModOreList {
 	public boolean isRare() {
 		return this == ModOreList.PLATINUM || this == ModOreList.NETHERPLATINUM || this == ModOreList.IRIDIUM;
 	}
+
+	public boolean isArsMagica() {
+		switch(this) {
+		case CHIMERITE:
+		case VINTEUM:
+		case BLUETOPAZ:
+		case MOONSTONE:
+		case SUNSTONE:
+			return true;
+		default:
+			return false;
+		}
+	}
 }
