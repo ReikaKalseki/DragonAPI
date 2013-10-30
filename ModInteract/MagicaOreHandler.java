@@ -64,12 +64,16 @@ public final class MagicaOreHandler extends ModHandlerBase {
 
 		if (this.hasMod()) {
 			try {
-				Class thaum = ModList.ARSMAGICA.getBlockClass();
-				Field ore = thaum.getField("AMOres");
-				Field item = thaum.getField("itemOre");
+				Class blocks = ModList.ARSMAGICA.getBlockClass();
+				Class items = ModList.ARSMAGICA.getItemClass();
+				Field ore = blocks.getField("AMOres");
+				Field item = items.getField("itemOre");
 
 				Block oreb = (Block)ore.get(null);
 				Item itemi = (Item)item.get(null);
+
+				idore = oreb.blockID;
+				iditem = itemi.itemID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());

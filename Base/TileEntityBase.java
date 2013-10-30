@@ -25,6 +25,8 @@ import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 
 public abstract class TileEntityBase extends TileEntity {
 
@@ -224,4 +226,8 @@ public abstract class TileEntityBase extends TileEntity {
 
 	@Override
 	public abstract boolean shouldRenderInPass(int pass);
+
+	public Side getSide() {
+		return FMLCommonHandler.instance().getEffectiveSide();
+	}
 }

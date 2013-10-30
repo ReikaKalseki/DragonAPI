@@ -46,7 +46,7 @@ public enum ModList {
 	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks", null), //items spread over half a dozen classes
 	ICBM("ICBM|Explosion"),
 	ARSMAGICA("arsmagica2", "am2.blocks.BlocksCommonProxy", "am2.items.ItemsCommonProxy"),
-	TRANSITIONAL("TransitionalAssistance");
+	TRANSITIONAL("TransitionalAssistance", "modTA.Core.TACore");
 
 	private final boolean condition;
 	private final String modlabel;
@@ -90,7 +90,7 @@ public enum ModList {
 
 	public Class getBlockClass() {
 		if (blockClass == null) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load block class for "+this+".");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load block class for "+this+". Null class provided.");
 			Thread.dumpStack();
 			return null;
 		}
@@ -112,7 +112,7 @@ public enum ModList {
 
 	public Class getItemClass() {
 		if (itemClass == null) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+".");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+". Null class provided.");
 			Thread.dumpStack();
 			return null;
 		}
