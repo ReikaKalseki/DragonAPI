@@ -28,6 +28,7 @@ import Reika.DragonAPI.ModInteract.MekanismHandler;
 import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
 import Reika.DragonAPI.ModInteract.TinkerToolHandler;
+import Reika.DragonAPI.ModInteract.TransitionalOreHandler;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 import Reika.DragonAPI.ModRegistry.ModOreList;
@@ -127,6 +128,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 		if (ModList.MEKTOOLS.isLoaded()) {
 			ReikaJavaLibrary.initClass(MekToolHandler.class);
+		}
+		if (ModList.TRANSITIONAL.isLoaded()) {
+			ReikaJavaLibrary.initClass(TransitionalOreHandler.class);
 		}
 	}
 

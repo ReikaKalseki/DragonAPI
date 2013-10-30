@@ -28,7 +28,7 @@ public enum ModOreList {
 	GALENA("Galena", "ingotGalena", 1, "oreGalena"),
 	ALUMINUM("Aluminum", "ingotNaturalAluminum", 1, "oreAluminum", "naturalAluminum", "oreNaturalAluminum"), //...Why??
 	IRIDIUM("Iridium", "ingotIridium", 1, "oreIridium"),
-	UNUSED("Unused", "ingotunused", 1, "oreUnused"),
+	FIRESTONE("Firestone", "shardFirestone", 1, "oreFirestone"), //Need intercraft
 	CERTUSQUARTZ("Certus Quartz", "crystalQuartz", 3, "oreCertusQuartz"),
 	URANIUM("Uranium", "ingotUranium", 1, "oreUranium"),
 	CINNABAR("Mercury", "itemQuicksilver", 1, "oreCinnabar"),
@@ -37,8 +37,8 @@ public enum ModOreList {
 	INFUSEDFIRE("Fire Infused", "shardFire", 4, "oreInfusedFire"),
 	INFUSEDWATER("Water Infused", "shardWater", 4, "oreInfusedWater"),
 	INFUSEDEARTH("Earth Infused", "shardEarth", 4, "oreInfusedEarth"),
-	INFUSEDVIS("Vis Infused", "shardVis", 4, "oreInfusedVis"),
-	INFUSEDDULL("Dull Infused", "shardDull", 4, "oreInfusedDull"),
+	INFUSEDENTROPY("Entropy Infused", "shardEntropy", 4, "oreInfusedEntropy"),
+	INFUSEDORDER("Order Infused", "shardOrder", 4, "oreInfusedOrder"),
 	APATITE("Apatite", "gemApatite", 3, "oreApatite"),
 	SALTPETER("Saltpeter", "dustSaltpeter", 2, "oreSaltpeter"),
 	TUNGSTEN("Tungsten", "ingotTungsten", 1, "oreTungsten", "oreTungstate"),
@@ -77,7 +77,14 @@ public enum ModOreList {
 	SODALITE("Sodalite", "dyeBlue", 1, "oreSodalite"),
 	PYRITE("Pyrite", "dustPyrite", 1, "orePyrite"),
 	AMMONIUM("Ammonium Chloride", "dustAmmonium", 1, "oreAmmonium"),
-	CALCITE("Calcite", "gemCalcite", 1, "oreCalcite");
+	CALCITE("Calcite", "gemCalcite", 1, "oreCalcite"),
+	CHIMERITE("Chimerite", "gemChimerite", 2, "oreChimerite"), //need intercraft
+	VINTEUM("Vinteum", "dustVinteum", 1, "oreVinteum"),
+	BLUETOPAZ("Blue Topaz", "gemBlueTopaz", 1, "oreBlueTopaz"),
+	MOONSTONE("Moonstone", "gemMoonstone", 1, "oreMoonstone"),
+	SUNSTONE("Sunstone", "gemSunstone", 1, "oreSunstone"),
+	TITANIUM("Titanium", "ingotTitanium", 1, "oreTitanium"),
+	MAGMANITE("Magmanite", "dropMagma", 1, "oreMagmanite"); //Need special silk touch & intercraft
 
 	private ArrayList<ItemStack> ores;
 	private String name;

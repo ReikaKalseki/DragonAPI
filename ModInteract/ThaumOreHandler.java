@@ -238,13 +238,13 @@ public final class ThaumOreHandler extends ModHandlerBase {
 			return oreCinnabar.copy();
 		case INFUSEDAIR:
 			return oreAir.copy();
-		case INFUSEDDULL:
+		case INFUSEDENTROPY:
 			return oreDull.copy();
 		case INFUSEDEARTH:
 			return oreEarth.copy();
 		case INFUSEDFIRE:
 			return oreFire.copy();
-		case INFUSEDVIS:
+		case INFUSEDORDER:
 			return oreVis.copy();
 		case INFUSEDWATER:
 			return oreWater.copy();
@@ -265,13 +265,13 @@ public final class ThaumOreHandler extends ModHandlerBase {
 			return dropCinnabar.copy();
 		case INFUSEDAIR:
 			return shardAir.copy();
-		case INFUSEDDULL:
+		case INFUSEDENTROPY:
 			return shardDull.copy();
 		case INFUSEDEARTH:
 			return shardEarth.copy();
 		case INFUSEDFIRE:
 			return shardFire.copy();
-		case INFUSEDVIS:
+		case INFUSEDORDER:
 			return shardVis.copy();
 		case INFUSEDWATER:
 			return shardWater.copy();

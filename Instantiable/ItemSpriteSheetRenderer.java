@@ -19,11 +19,11 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public final class ItemSpriteSheetRenderer implements IItemRenderer {
+public class ItemSpriteSheetRenderer implements IItemRenderer {
 
 	protected final String spritesheet;
 	private final DragonAPIMod mod;
-	private final Class modClass;
+	protected final Class modClass;
 
 	public ItemSpriteSheetRenderer(DragonAPIMod mod, Class root, String file) {
 		//this.spritesheet = ReikaSpriteSheets.setupTextures(root, file);

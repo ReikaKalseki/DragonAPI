@@ -44,7 +44,9 @@ public enum ModList {
 	MEKANISM("Mekanism", "mekanism.common.Mekanism"),
 	MEKTOOLS("MekanismTools", "mekanism.tools.common.MekanismTools"),
 	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks", null), //items spread over half a dozen classes
-	ICBM("ICBM|Explosion");
+	ICBM("ICBM|Explosion"),
+	ARSMAGICA("arsmagica2", "am2.blocks.BlocksCommonProxy", "am2.items.ItemsCommonProxy"),
+	TRANSITIONAL("TransitionalAssistance");
 
 	private final boolean condition;
 	private final String modlabel;
