@@ -52,6 +52,8 @@ public class DragonAPICore {
 		try {
 			String username = System.getProperty("user.name");
 			boolean win = System.getProperty("os.name").toLowerCase().contains("win");
+			if ("RadicalOne".equals(username))
+				username = "Reika";
 			return win && "Reika".equals(username);
 		}
 		catch (SecurityException e) {
