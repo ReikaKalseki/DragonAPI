@@ -16,7 +16,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 public abstract class ModHandlerBase {
 
 	protected ModHandlerBase() {
-		ReikaJavaLibrary.pConsole("Loading handler for mod "+this.getMod());
+		ReikaJavaLibrary.pConsole("DRAGONAPI: Loading handler for mod "+this.getMod());
 	}
 
 	public abstract boolean initializedProperly();
