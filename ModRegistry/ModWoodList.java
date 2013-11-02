@@ -301,6 +301,18 @@ public enum ModWoodList {
 		return mod;
 	}
 
+	public boolean isRareTree() {
+		switch(this) {
+		case TIMEWOOD:
+		case SORTING:
+		case MINEWOOD:
+		case TRANSFORMATION:
+			return true;
+		default:
+			return false;
+		}
+	}
+
 	static enum VarType {
 		ITEMSTACK(),
 		BLOCK(),
