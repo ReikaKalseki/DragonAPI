@@ -18,6 +18,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Instantiable.ModLogger;
+import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.BCMachineHandler;
@@ -59,6 +60,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
+
+		ReikaRegistryHelper.setupModData(instance, evt);
+		ReikaRegistryHelper.setupVersionChecking(evt);
 	}
 
 	@Override

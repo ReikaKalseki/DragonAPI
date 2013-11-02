@@ -9,16 +9,21 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.io.File;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Interfaces.RegistrationList;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
+import cpw.mods.fml.common.ModMetadata;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
 
@@ -84,5 +89,20 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 				return list[i];
 		}
 		return list[0];
+	}
+
+	public static void setupModData(DragonAPIMod mod, FMLPreInitializationEvent evt) {
+		ModMetadata dat = evt.getModMetadata();
+		dat.authorList.clear();
+		dat.authorList.add(mod.getModAuthorName());
+	}
+
+	public static void setupVersionChecking(FMLPreInitializationEvent evt) {
+		if (isDeObfEnvironment())
+			return;
+		File f = evt.getSourceFile();
+		String hash = ReikaFileReader.getHash(f);
+		ModMetadata meta = evt.getModMetadata();
+		meta.version = hash;
 	}
 }

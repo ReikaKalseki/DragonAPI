@@ -11,10 +11,12 @@ package Reika.DragonAPI.IO;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.security.MessageDigest;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -63,6 +65,41 @@ public class ReikaFileReader extends DragonAPICore {
 			ReikaJavaLibrary.pConsole(e.getMessage()+" on loading line "+i);
 		}
 		return sb.toString();
+	}
+
+	public static String getHash(String path) {
+		return getHash(new File(path));
+	}
+
+	public static String getHash(File file) {
+		try {
+			InputStream fis = new FileInputStream(file);
+			byte[] buffer = new byte[1024];
+			MessageDigest complete = MessageDigest.getInstance("MD5");
+			int numRead;
+
+			do {
+				numRead = fis.read(buffer);
+				if (numRead > 0)
+					complete.update(buffer, 0, numRead);
+			}
+			while (numRead != -1);
+
+			fis.close();
+			byte[] hash = complete.digest();
+
+			String result = "";
+
+			for (int i = 0; i < hash.length; i++) {
+				result += Integer.toString((hash[i] & 0xff) + 0x100, 16).substring(1);
+			}
+
+			return result.toUpperCase();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
 	}
 
 }
