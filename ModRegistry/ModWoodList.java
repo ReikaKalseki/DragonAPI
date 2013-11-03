@@ -10,6 +10,9 @@
 package Reika.DragonAPI.ModRegistry;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityFallingSand;
@@ -19,6 +22,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Auxiliary.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public enum ModWoodList {
@@ -42,12 +46,20 @@ public enum ModWoodList {
 	MAPLE(ModList.NATURA, "rareTree", "rareLeaves", "rareSapling", 0, new int[]{0,8}, 0, VarType.BLOCK),
 	WILLOW(ModList.NATURA, "willow", "floraLeavesNoColor", "rareSapling", 0, new int[]{3,11}, 4, VarType.BLOCK),
 	AMARANTH(ModList.NATURA, "rareTree", "rareLeaves", "rareSapling", 2, new int[]{2,10}, 2, VarType.BLOCK),
-	REDWOOD(ModList.BOP, null, null, null, 0, VarType.BLOCK),
-	ACACIA(ModList.BOP, null, null, null, 0, VarType.BLOCK),
-	JACARANDA(ModList.BOP, null, null, null, 0, VarType.BLOCK),
-	PALM(ModList.BOP, null, null, null, 0, VarType.BLOCK),
-	AUTUMN(ModList.BXL, null, null, null, 0, VarType.BLOCK),
-	FIR(ModList.BXL, null, null, null, 0, VarType.BLOCK),
+	BAMBOO(ModList.BOP, "bambooID", "leaves1ID", "saplingsID", 0, 1, 2, VarType.INT),
+	MAGIC(ModList.BOP, "logs2ID", "leaves1ID", "saplingsID", 1, new int[]{2,10}, 3, VarType.INT),
+	DARK(ModList.BOP, "logs1ID", "leaves1ID", "saplingsID", 2, new int[]{3,11}, 4, VarType.INT),
+	FIR(ModList.BOP, "logs1ID", "leaves1ID", "saplingsID", 3, new int[]{5,13}, 6, VarType.INT),
+	LOFT(ModList.BOP, "logs2ID", "leaves1ID", "saplingsID", 0, new int[]{6,14}, 7, VarType.INT),
+	CHERRY(ModList.BOP, "logs1ID", "leaves2ID", "saplingsID", new int[]{1,5,9}, new int[]{1,3,9,11}, 10, VarType.INT), //sapling 12 for white cherry
+	HELLBARK(ModList.BOP, "logs4ID", "leaves2ID", "saplingsID", 1, 4, 13, VarType.INT),
+	JACARANDA(ModList.BOP, "logs4ID", "leaves2ID", "saplingsID", 2, 5, 14, VarType.INT),
+	ACACIA(ModList.BOP, "logs1ID", "colourizedLeavesID", "colourizedSaplingsID", 0, new int[]{0,8}, 0, VarType.INT),
+	BOPMANGROVE(ModList.BOP, "logs2ID", "colourizedLeavesID", "colourizedSaplingsID", 2, new int[]{1,9}, 1, VarType.INT),
+	PALM(ModList.BOP, "logs2ID", "colourizedLeavesID", "colourizedSaplingsID", 3, 2, 2, VarType.INT),
+	REDWOOD(ModList.BOP, "logs3ID", "colourizedLeavesID", "colourizedSaplingsID", 0, new int[]{3,11}, 3, VarType.INT),
+	BOPWILLOW(ModList.BOP, "logs3ID", "colourizedLeavesID", "colourizedSaplingsID", 1, new int[]{4,12}, 4, VarType.INT),
+	PINE(ModList.BOP, "logs4ID", "colourizedLeavesID", "colourizedSaplingsID", 0, 5, 5, VarType.INT),
 	XLREDWOOD(ModList.BXL, null, null, null, 0, VarType.BLOCK),
 	RUBBER(ModList.INDUSTRIALCRAFT, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, VarType.ITEMSTACK),
 	MINERUBBER(ModList.MINEFACTORY, "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, VarType.BLOCK),
@@ -71,7 +83,7 @@ public enum ModWoodList {
 
 	private boolean exists = false;
 
-	public static final ModWoodList[] woodList = ModWoodList.values();
+	public static final ModWoodList[] woodList = values();
 
 	private ModWoodList(ModList req, int blockID, int leafID, int saplingID, VarType type) {
 		this(req, blockID, leafID, saplingID, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, type);
@@ -99,19 +111,23 @@ public enum ModWoodList {
 
 	private ModWoodList(ModList req, String blockVar, String leafVar, String saplingVar, int[] meta, int[] metaleaf, int metasapling, VarType type) {
 		mod = req;
-		if (!mod.isLoaded())
+		if (!mod.isLoaded()) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Not loading "+this.getLabel()+": Mod not present.");
 			return;
+		}
 		Class cl = req.getBlockClass();
+		ReikaJavaLibrary.pConsole("DRAGONAPI: Attempting to load "+this.getLabel()+". Data parameters:");
+		ReikaJavaLibrary.pConsole(cl+", "+blockVar+", "+leafVar+", "+saplingVar+", "+type);
 		if (cl == null) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this+": Empty block class");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel()+": Empty block class");
 			return;
 		}
 		if (blockVar == null || blockVar.isEmpty()) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this+": Empty variable name");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel()+": Empty variable name");
 			return;
 		}
 		if (leafVar == null || leafVar.isEmpty()) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading leaves for wood "+this+": Empty variable name");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading leaves for wood "+this.getLabel()+": Empty variable name");
 			return;
 		}
 		try {
@@ -127,7 +143,7 @@ public enum ModWoodList {
 				ItemStack leaf = (ItemStack)l.get(null);
 				ItemStack sapling = (ItemStack)s.get(null);
 				if (wood == null || leaf == null || sapling == null) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this+": Block not instantiated!");
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
 					return;
 				}
 				id = wood.itemID;
@@ -139,7 +155,7 @@ public enum ModWoodList {
 				Block leaf_b = (Block)l.get(null);
 				Block sapling_b = (Block)s.get(null);
 				if (wood_b == null || leaf_b == null || sapling_b == null) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this+": Block not instantiated!");
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
 					return;
 				}
 				id = wood_b.blockID;
@@ -152,7 +168,7 @@ public enum ModWoodList {
 				idsapling = s.getInt(null);
 				break;
 			default:
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type "+type+" for "+w+" or "+l);
 				return;
 			}
@@ -164,30 +180,49 @@ public enum ModWoodList {
 			System.arraycopy(metaleaf, 0, leafMeta, 0, metaleaf.length);
 			saplingID = idsapling;
 			saplingMeta = metasapling;
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully loaded wood "+this);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully loaded wood "+this.getLabel());
 			exists = true;
 		}
 		catch (NoSuchFieldException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
 			e.printStackTrace();
 		}
 		catch (SecurityException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
 			e.printStackTrace();
 		}
 		catch (IllegalAccessException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
 			e.printStackTrace();
 		}
 		catch (IllegalArgumentException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public String toString() {
-		return this.name()+" from "+mod;
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.name());
+		sb.append(" from ");
+		sb.append(mod);
+		if (exists) {
+			sb.append(" (LOG "+blockID+":"+Arrays.toString(blockMeta)+";");
+			sb.append(" ");
+			sb.append("LEAF "+leafID+":"+Arrays.toString(leafMeta)+";");
+			sb.append(" ");
+			sb.append("SAPLING "+saplingID+":"+saplingMeta);
+			sb.append(")");
+		}
+		else {
+			sb.append(" (Not loaded)");
+		}
+		return sb.toString();
+	}
+
+	public String getLabel() {
+		return this.name()+" from "+this.getParentMod();
 	}
 
 	public boolean exists() {
@@ -217,6 +252,20 @@ public enum ModWoodList {
 
 	public Block getBlock() {
 		return Block.blocksList[blockID];
+	}
+
+	public List<Integer> getLogMetadatas() {
+		List<Integer> li = new ArrayList();
+		for (int i = 0; i < blockMeta.length; i++)
+			li.add(blockMeta[i]);
+		return li;
+	}
+
+	public List<Integer> getLeafMetadatas() {
+		List<Integer> li = new ArrayList();
+		for (int i = 0; i < leafMeta.length; i++)
+			li.add(leafMeta[i]);
+		return li;
 	}
 
 	public static ModWoodList getModWood(int id, int meta) {
@@ -302,20 +351,27 @@ public enum ModWoodList {
 	}
 
 	public boolean isRareTree() {
-		switch(this) {
-		case TIMEWOOD:
-		case SORTING:
-		case MINEWOOD:
-		case TRANSFORMATION:
+		if (this == TIMEWOOD)
 			return true;
-		default:
-			return false;
-		}
+		if (this == SORTING)
+			return true;
+		if (this == MINEWOOD)
+			return true;
+		if (this == TRANSFORMATION)
+			return true;
+		if (this == ModWoodList.SILVERWOOD)
+			return true;
+		return false;
 	}
 
 	static enum VarType {
 		ITEMSTACK(),
 		BLOCK(),
 		INT();
+
+		@Override
+		public String toString() {
+			return "Variable Type "+ReikaStringParser.capFirstChar(this.name());
+		}
 	}
 }

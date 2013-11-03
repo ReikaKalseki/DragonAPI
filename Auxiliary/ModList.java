@@ -35,7 +35,7 @@ public enum ModList {
 	REDPOWER("RedPower"),
 	TWILIGHT("TwilightForest", "twilightforest.block.TFBlocks", "twilightforest.item.TFItems"),
 	NATURA("Natura", "mods.natura.common.NContent"),
-	BOP("BiomesOPlenty"),
+	BOP("BiomesOPlenty", "biomesoplenty.configuration.configfile.BOPConfigurationIDs"),
 	BXL("ExtraBiomesXL"),
 	MINEFACTORY("MineFactoryReloaded", "powercrystals.minefactoryreloaded.MineFactoryReloadedCore"),
 	DARTCRAFT("DartCraft", "bluedart.block.DartBlock", "bluedart.item.DartItem"),

@@ -29,8 +29,8 @@ public enum ReikaTreeHelper {
 
 	public static final ReikaTreeHelper[] treeList = ReikaTreeHelper.values();
 
-	public static final int TREE_MIN_LOG = 4;
-	public static final int TREE_MIN_LEAF = 9;
+	public static final int TREE_MIN_LOG = 2;
+	public static final int TREE_MIN_LEAF = 5;
 
 	private ReikaTreeHelper(Block wood, Block leaves, Block tree, int[] logmeta, int[] leafmeta, int saplingmeta) {
 		log = wood;

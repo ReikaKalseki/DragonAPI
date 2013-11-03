@@ -26,7 +26,7 @@ public enum ModOreList {
 	FERROUS("Nickel", "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
 	SILVER("Silver", "ingotSilver", 1, "oreSilver"),
 	GALENA("Galena", "ingotGalena", 1, "oreGalena"),
-	ALUMINUM("Aluminum", "ingotNaturalAluminum", 1, "oreAluminum", "naturalAluminum", "oreNaturalAluminum"), //...Why??
+	ALUMINUM("Aluminum", "ingotAluminum", 1, "oreAluminum", "oreAluminium", "naturalAluminum", "oreNaturalAluminum"), //...Why??
 	IRIDIUM("Iridium", "ingotIridium", 1, "oreIridium"),
 	FIRESTONE("Firestone", "shardFirestone", 1, "oreFirestone"),
 	CERTUSQUARTZ("Certus Quartz", "crystalQuartz", 3, "oreCertusQuartz"),
