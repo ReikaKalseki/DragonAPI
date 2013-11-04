@@ -72,7 +72,7 @@ public enum ModOreList {
 	PITCHBLENDE("Pitchblende", "ingotUranium", 1, "orePitchblende"),
 	CADMIUM("Cadmium", "ingotCadmium", 1, "oreCadmium"),
 	INDIUM("Indium", "ingotIndium", 1, "oreIndium"),
-	FLUORITE("Fluorite", "gemFluorite", 1, "oreFluorite"),
+	FLUORITE("Fluorite", "gemFluorite", 3, "oreFluorite"),
 	BAUXITE("Bauxite", "dustBauxite", 1, "oreBauxite"),
 	SODALITE("Sodalite", "dyeBlue", 1, "oreSodalite"),
 	PYRITE("Pyrite", "dustPyrite", 1, "orePyrite"),
