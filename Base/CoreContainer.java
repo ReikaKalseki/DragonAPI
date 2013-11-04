@@ -207,4 +207,10 @@ public class CoreContainer extends Container {
 		return (Slot)inventorySlots.get(index);
 	}
 
+	protected void addSlot(int i, int x, int y) {
+		if (ii == null)
+			return;
+		this.addSlotToContainer(new Slot(ii, i, x, y));
+	}
+
 }

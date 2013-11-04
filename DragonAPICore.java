@@ -31,6 +31,8 @@ public class DragonAPICore {
 
 	protected static final Random rand = new Random();
 
+	private static final boolean deobf = testDeobf();
+
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
 
 	public static URL getReikaForumPage(DragonAPIMod instance) {
@@ -67,6 +69,10 @@ public class DragonAPICore {
 	}
 
 	public static boolean isDeObfEnvironment() {
+		return deobf;
+	}
+
+	private static boolean testDeobf() {
 		try {
 			Method m = ItemHoe.class.getMethod("onItemUse", ItemStack.class, EntityPlayer.class, World.class, int.class, int.class, int.class, int.class, float.class, float.class, float.class);
 			return true;
