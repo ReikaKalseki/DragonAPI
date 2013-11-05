@@ -60,13 +60,9 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		look.yCoord *= scale;
 		look.zCoord *= scale;
 		double[] xyz = {dx+look.xCoord, dy+look.yCoord, dz+look.zCoord};
-		int x = (int)xyz[0];
-		int y = (int)xyz[1];
-		int z = (int)xyz[2];
-		if (x < 0)
-			x--;
-		if (z < 0)
-			z--;
+		int x = (int)Math.floor(xyz[0]);
+		int y = (int)Math.floor(xyz[1]);
+		int z = (int)Math.floor(xyz[2]);
 		return new int[]{x, y, z};
 	}
 

@@ -9,15 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public final class ReikaPlayerAPI extends DragonAPICore {
 
@@ -45,10 +46,21 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	}
 
-	@SideOnly(Side.CLIENT)
-	/** Get the block a player is looking at. Args: Range */
-	public static MovingObjectPosition getLookedAtBlock(int range) {
-		return Minecraft.getMinecraft().thePlayer.rayTrace(range, 1);
+	/** Get the block a player is looking at. Args: Player, Range, Detect 'soft' blocks yes/no */
+	public static MovingObjectPosition getLookedAtBlock(EntityPlayer ep, int range, boolean hitSoft) {
+		Vec3 norm = ep.getLookVec();
+		World world = ep.worldObj;
+		for (float i = 0; i <= range; i += 0.2) {
+			int[] xyz = ReikaVectorHelper.getPlayerLookBlockCoords(ep, i);
+			int id = world.getBlockId(xyz[0], xyz[1], xyz[2]);
+			if (id != 0) {
+				boolean isSoft = ReikaWorldHelper.softBlocks(world, xyz[0], xyz[1], xyz[2]);
+				if (hitSoft || !isSoft) {
+					return new MovingObjectPosition(xyz[0], xyz[1], xyz[2], 0, norm);
+				}
+			}
+		}
+		return null;
 	}
 
 	/** Gets a direction from a player's look direction. Args: Player, allow vertical yes/no */
