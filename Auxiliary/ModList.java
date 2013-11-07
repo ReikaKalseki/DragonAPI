@@ -46,7 +46,8 @@ public enum ModList {
 	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks", null), //items spread over half a dozen classes
 	ICBM("ICBM|Explosion"),
 	ARSMAGICA("arsmagica2", "am2.blocks.BlocksCommonProxy", "am2.items.ItemsCommonProxy"),
-	TRANSITIONAL("TransitionalAssistance", "modTA.Core.TACore");
+	TRANSITIONAL("TransitionalAssistance", "modTA.Core.TACore"),
+	ENDERSTORAGE("EnderStorage");
 
 	private final boolean condition;
 	private final String modlabel;

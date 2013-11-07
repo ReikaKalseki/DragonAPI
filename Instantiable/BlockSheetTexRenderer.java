@@ -26,7 +26,7 @@ public final class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler
 	private boolean is3D;
 	private final Class modClass;
 
-	public BlockSheetTexRenderer(Class root, String file, String backup) {
+	public BlockSheetTexRenderer(Class root, String file) {
 		is3D = true;
 		modClass = root;
 		//textureSheet = ReikaSpriteSheets.setupTextures(root, path);
