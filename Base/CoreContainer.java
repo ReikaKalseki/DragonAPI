@@ -166,7 +166,7 @@ public class CoreContainer extends Container {
 						}
 						else {
 							ItemStack inToSlot = toSlot.getStack();
-							int add = Math.min(inToSlot.getMaxStackSize()-inToSlot.stackSize, lim);
+							int add = Math.min(inToSlot.getMaxStackSize()-inToSlot.stackSize, lim-inToSlot.stackSize);
 							if (add > is.stackSize)
 								add = is.stackSize;
 							toSlot.putStack(new ItemStack(is.itemID, inToSlot.stackSize+add, is.getItemDamage()));
