@@ -119,7 +119,10 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return true;
 		if (a == null || b == null)
 			return false;
-		return (a.itemID == b.itemID && (a.getItemDamage() == b.getItemDamage() || a.getItemDamage() == OreDictionary.WILDCARD_VALUE || b.getItemDamage() == OreDictionary.WILDCARD_VALUE));
+		if (a.getItem().getHasSubtypes() || b.getItem().getHasSubtypes())
+			return (a.itemID == b.itemID && (a.getItemDamage() == b.getItemDamage() || a.getItemDamage() == OreDictionary.WILDCARD_VALUE || b.getItemDamage() == OreDictionary.WILDCARD_VALUE));
+		else
+			return a.itemID == b.itemID;
 	}
 
 	public static boolean isFireworkIngredient(int id) {
