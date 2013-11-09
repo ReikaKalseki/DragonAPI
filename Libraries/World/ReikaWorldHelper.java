@@ -741,7 +741,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
-		Block.blocksList[id].dropBlockAsItem(world, x, y, z, id, metad);
+		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
 		legacySetBlockWithNotify(world, x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreak(world, x+1, y, z, id, meta);
@@ -763,8 +763,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return;
 		if (ReikaMathLibrary.py3d(x-x0, y-y0, z-z0) > r)
 			return;
-		int metad = capMetadata(world.getBlockMetadata(x, y, z), 4);
-		Block.blocksList[id].dropBlockAsItem(world, x, y, z, metad, 0);
+		int metad = world.getBlockMetadata(x, y, z);
+		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
 		world.setBlock(x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreakWithinSphere(world, x+1, y, z, id, meta, x0, y0, z0, r);
@@ -787,7 +787,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
-		Block.blocksList[id].dropBlockAsItem(world, x, y, z, id, metad);
+		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
 		legacySetBlockWithNotify(world, x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreakWithBounds(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);

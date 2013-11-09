@@ -58,6 +58,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void preload(FMLPreInitializationEvent evt) {
 		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
+		MinecraftForge.EVENT_BUS.register(EventController.instance);
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
 

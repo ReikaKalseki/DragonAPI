@@ -10,17 +10,24 @@
 package Reika.DragonAPI.Libraries.IO;
 
 import java.awt.image.BufferedImage;
+import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaPNGLoader;
 import Reika.DragonAPI.IO.ReikaTextureBinder;
+import Reika.DragonAPI.Instantiable.ForcedResource;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -109,6 +116,43 @@ public class ReikaTextureHelper {
 
 	public static int getIconHeight() {
 		return 16;
+	}
+
+	public static Icon getMissingIcon() {
+		return ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
+	}
+
+	/** Overrides the standard ResourceLocation system. Unfortunately not yet functional. */
+	public static void forceArmorTexturePath(String tex) {
+		ReikaJavaLibrary.pConsole("DRAGONAPI: Disabling ResourceLocation on armor texture "+tex);
+		ForcedResource f = new ForcedResource(tex);
+		Map map = getArmorTextureMappings();
+		map.put(tex, f);
+	}
+
+	private static Map getArmorTextureMappings() {
+		try {
+			Class c = RenderBiped.class;
+			Field f = c.getDeclaredField(DragonAPICore.isDeObfEnvironment() ? "field_110859_k" : "field_110859_k");
+			f.setAccessible(true);
+			return (Map)f.get(null);
+		}
+		catch (NoSuchFieldException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Could not load the Armor Textures!");
+		}
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Could not load the Armor Textures!");
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Could not load the Armor Textures!");
+		}
+		catch (SecurityException e) {
+			e.printStackTrace();
+			throw new RuntimeException("Could not load the Armor Textures!");
+		}
 	}
 
 }

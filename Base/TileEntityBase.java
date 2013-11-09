@@ -210,7 +210,7 @@ public abstract class TileEntityBase extends TileEntity {
 
 	@Override
 	public String toString() {
-		return "Tile Entity "+this.getTEName()+" @ "+xCoord+", "+yCoord+", "+zCoord;
+		return "Tile Entity "+this.getTEName()+(this.isInWorld() ? " @ "+xCoord+", "+yCoord+", "+zCoord : " (item)");
 	}
 
 	protected abstract String getTEName();

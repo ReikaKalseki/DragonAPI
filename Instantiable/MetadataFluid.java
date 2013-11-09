@@ -34,7 +34,7 @@ public class MetadataFluid extends Fluid {
 	}
 
 	private final String getTag(int i) {
-		return String.format("%sD%d", fluidName, i);
+		return String.format("%s:%d", fluidName, i);
 	}
 
 	public final Fluid getFluid(int metadata) {

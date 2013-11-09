@@ -119,6 +119,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return true;
 		if (a == null || b == null)
 			return false;
+		if (a.getItem() == null || b.getItem() == null)
+			return false;
 		if (a.getItem().getHasSubtypes() || b.getItem().getHasSubtypes())
 			return (a.itemID == b.itemID && (a.getItemDamage() == b.getItemDamage() || a.getItemDamage() == OreDictionary.WILDCARD_VALUE || b.getItemDamage() == OreDictionary.WILDCARD_VALUE));
 		else
