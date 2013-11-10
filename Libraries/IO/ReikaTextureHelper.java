@@ -56,6 +56,11 @@ public class ReikaTextureHelper {
 		bindDirectTexture(root, tex);
 	}
 
+	/** To disallow resource packs to change it */
+	public static void bindFinalTexture(Class root, String tex) {
+		bindDirectTexture(root, tex);
+	}
+
 	public static void bindDirectTexture(Class root, String tex) {
 		Integer gl = textures.get(tex);
 		if (gl == null) {
