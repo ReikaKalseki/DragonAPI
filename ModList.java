@@ -7,9 +7,11 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Auxiliary;
+package Reika.DragonAPI;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.Loader;
@@ -23,6 +25,10 @@ public enum ModList {
 	GEOSTRATA("GeoStrata"),
 	REALBIOMES("RealBiomes"),
 	FURRY("FurryKingdoms"),
+	SPIDERPET("SpiderPet"),
+	ENDERFOREST("EnderForest"),
+	VOIDMONSTER("VoidMonster"),
+	USEFULTNT("UsefulTNT"),
 	BUILDCRAFTENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
 	BUILDCRAFTFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
 	BUILDCRAFTTRANSPORT("BuildCraft|Transport", "buildcraft.BuildCraftTransport"),
@@ -147,7 +153,17 @@ public enum ModList {
 	}
 
 	public boolean isReikasMod() {
-		return this.ordinal() <= FURRY.ordinal();
+		return this.ordinal() <= USEFULTNT.ordinal();
+	}
+
+	public static List<ModList> getReikasMods() {
+		List<ModList> li = new ArrayList();
+		for (int i = 0; i < modList.length; i++) {
+			ModList mod = modList[i];
+			if (mod.isReikasMod())
+				li.add(mod);
+		}
+		return li;
 	}
 
 }

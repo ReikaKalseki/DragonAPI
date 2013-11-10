@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Exception;
 
-import Reika.DragonAPI.Auxiliary.ModList;
+import Reika.DragonAPI.ModList;
 
 public class ModHandlerException extends DragonAPIException {
 

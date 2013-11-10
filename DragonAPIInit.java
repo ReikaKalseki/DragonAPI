@@ -15,19 +15,27 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.Auxiliary.ModList;
+import Reika.DragonAPI.Auxiliary.LoginHandler;
+import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
+import Reika.DragonAPI.Auxiliary.RetroGenController;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Instantiable.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModInteract.AppEngHandler;
 import Reika.DragonAPI.ModInteract.BCMachineHandler;
+import Reika.DragonAPI.ModInteract.BCPipeHandler;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
+import Reika.DragonAPI.ModInteract.ForestryHandler;
+import Reika.DragonAPI.ModInteract.IC2Handler;
+import Reika.DragonAPI.ModInteract.MagicaOreHandler;
 import Reika.DragonAPI.ModInteract.MekToolHandler;
 import Reika.DragonAPI.ModInteract.MekanismHandler;
 import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
+import Reika.DragonAPI.ModInteract.ThermalHandler;
 import Reika.DragonAPI.ModInteract.TinkerToolHandler;
 import Reika.DragonAPI.ModInteract.TransitionalOreHandler;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
@@ -36,11 +44,13 @@ import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 @Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@")
 @NetworkMod(clientSideRequired = true, serverSideRequired = true)
@@ -49,7 +59,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@SidedProxy(clientSide="Reika.DragonAPI.APIProxyClient", serverSide="Reika.DragonAPI.APIProxy")
 	public static APIProxy proxy;
 
-	//@Instance
+	@Instance("DragonAPI")
 	public static DragonAPIInit instance = new DragonAPIInit();
 
 	private ModLogger logger = new ModLogger(instance, true, false, false);
@@ -59,6 +69,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void preload(FMLPreInitializationEvent evt) {
 		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
+		//MinecraftForge.EVENT_BUS.register(APIEventHandler.instance);
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
 
@@ -69,7 +80,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
-
+		GameRegistry.registerPlayerTracker(LoginHandler.instance);
 	}
 
 	@Override
@@ -79,7 +90,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.alCompat();
 	}
 
-	private static void alCompat() { //Why the hell are there three standards for aluminum?
+	private void alCompat() { //Why the hell are there three standards for aluminum?
+		logger.log("Repairing compatibility between Aluminum OreDictionary Names.");
 		List<ItemStack> al = OreDictionary.getOres("ingotNaturalAluminum");
 		for (int i = 0; i < al.size(); i++) {
 			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminum"), al.get(i)))
@@ -105,36 +117,38 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 	}
 
-	private static void loadHandlers() {
+	private void loadHandlers() {
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);
 		ReikaJavaLibrary.initClass(ModCropList.class);
 
-		if (ModList.BUILDCRAFTFACTORY.isLoaded()) {
-			ReikaJavaLibrary.initClass(BCMachineHandler.class);
+		this.initHandler(ModList.BUILDCRAFTFACTORY, BCMachineHandler.class);
+		this.initHandler(ModList.BUILDCRAFTTRANSPORT, BCPipeHandler.class);
+		this.initHandler(ModList.THAUMCRAFT, ThaumOreHandler.class);
+		this.initHandler(ModList.THAUMCRAFT, ThaumBlockHandler.class);
+		this.initHandler(ModList.DARTCRAFT, DartOreHandler.class);
+		this.initHandler(ModList.DARTCRAFT, DartItemHandler.class);
+		this.initHandler(ModList.TINKERER, TinkerToolHandler.class);
+		this.initHandler(ModList.TWILIGHT, TwilightForestHandler.class);
+		this.initHandler(ModList.MEKANISM, MekanismHandler.class);
+		this.initHandler(ModList.MEKTOOLS, MekToolHandler.class);
+		this.initHandler(ModList.TRANSITIONAL, TransitionalOreHandler.class);
+		this.initHandler(ModList.INDUSTRIALCRAFT, IC2Handler.class);
+		this.initHandler(ModList.ARSMAGICA, MagicaOreHandler.class);
+		this.initHandler(ModList.APPLIEDENERGISTICS, AppEngHandler.class);
+		this.initHandler(ModList.FORESTRY, ForestryHandler.class);
+		this.initHandler(ModList.THERMALEXPANSION, ThermalHandler.class);
+	}
+
+	private void initHandler(ModList mod, Class c) {
+		if (!mod.isLoaded())
+			return;
+		try {
+			ReikaJavaLibrary.initClass(c);
 		}
-		if (ModList.THAUMCRAFT.isLoaded()) {
-			ReikaJavaLibrary.initClass(ThaumOreHandler.class);
-			ReikaJavaLibrary.initClass(ThaumBlockHandler.class);
-		}
-		if (ModList.DARTCRAFT.isLoaded()) {
-			ReikaJavaLibrary.initClass(DartOreHandler.class);
-			ReikaJavaLibrary.initClass(DartItemHandler.class);
-		}
-		if (ModList.TINKERER.isLoaded()) {
-			ReikaJavaLibrary.initClass(TinkerToolHandler.class);
-		}
-		if (ModList.TWILIGHT.isLoaded()) {
-			ReikaJavaLibrary.initClass(TwilightForestHandler.class);
-		}
-		if (ModList.MEKANISM.isLoaded()) {
-			ReikaJavaLibrary.initClass(MekanismHandler.class);
-		}
-		if (ModList.MEKTOOLS.isLoaded()) {
-			ReikaJavaLibrary.initClass(MekToolHandler.class);
-		}
-		if (ModList.TRANSITIONAL.isLoaded()) {
-			ReikaJavaLibrary.initClass(TransitionalOreHandler.class);
+		catch (Exception e) {
+			logger.logError("Could not load handler for "+mod.name());
+			e.printStackTrace();
 		}
 	}
 
@@ -175,7 +189,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@Override
 	public ModLogger getModLogger() {
-		return null;
+		return logger;
 	}
 
 }

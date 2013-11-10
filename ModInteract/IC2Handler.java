@@ -11,31 +11,31 @@ package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
 
-import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
+import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class ThermalHandler extends ModHandlerBase {
+public class IC2Handler extends ModHandlerBase {
 
-	private static final ThermalHandler instance = new ThermalHandler();
+	public final int iridiumID;
 
-	public static enum Types {
-		LIQUID(),
-		POWER();
-	}
+	private ItemStack purifiedUranium;
 
-	public final int liquiductID;
+	private static final IC2Handler instance = new IC2Handler();
 
-	private ThermalHandler() {
+	private IC2Handler() {
 		super();
-		int idpipe = -1;
+		int idiridium = -1;
 		if (this.hasMod()) {
 			try {
-				Class blocks = this.getMod().getBlockClass();
-				Field pipe = blocks.getField("blockConduit");
-				idpipe = ((Block)pipe.get(null)).blockID;
+				Class ic2 = this.getMod().getItemClass();
+				Field irid = ic2.getField("iridiumOre");
+				Field crush = ic2.getField("purifiedCrushedUraniumOre");
+				ItemStack iridium = (ItemStack)irid.get(null);
+				idiridium = iridium.itemID;
+				ItemStack pureCrushU = (ItemStack)crush.get(null);
+				purifiedUranium = pureCrushU;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -62,25 +62,25 @@ public class ThermalHandler extends ModHandlerBase {
 			this.noMod();
 		}
 
-		liquiductID = idpipe;
+		iridiumID = idiridium;
 	}
 
-	public static ThermalHandler getInstance() {
+	public static IC2Handler getInstance() {
 		return instance;
+	}
+
+	public ItemStack getPurifiedCrushedUranium() {
+		return this.initializedProperly() ? purifiedUranium.copy() : null;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return liquiductID != -1;
+		return iridiumID != -1 && purifiedUranium != null;
 	}
 
 	@Override
 	public ModList getMod() {
-		return ModList.THERMALEXPANSION;
-	}
-
-	public Types getConduitType(TileEntity te) {
-		return Types.values()[te.getBlockMetadata()];
+		return ModList.INDUSTRIALCRAFT;
 	}
 
 }

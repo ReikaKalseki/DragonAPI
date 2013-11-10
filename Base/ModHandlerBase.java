@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
-import Reika.DragonAPI.Auxiliary.ModList;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** Reflection tools to read other mods. */
