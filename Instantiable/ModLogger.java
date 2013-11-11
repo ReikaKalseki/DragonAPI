@@ -26,6 +26,10 @@ public class ModLogger {
 		logLoading = load;
 		printDebug = debug;
 		shouldWarn = warn;
+		if (mod == null)
+			throw new IllegalArgumentException("Cannot create a logger for a null mod!");
+		if (logLoading)
+			ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": Creating logger. Log Loading: "+load+"; Debug mode: "+debug+"; Warnings: "+warn);
 	}
 
 	public void debug(Object o) {

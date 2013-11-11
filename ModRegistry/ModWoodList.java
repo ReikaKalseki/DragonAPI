@@ -117,7 +117,7 @@ public enum ModWoodList {
 		}
 		Class cl = req.getBlockClass();
 		//ReikaJavaLibrary.pConsole("DRAGONAPI: Attempting to load "+this.getLabel()+". Data parameters:");
-		ReikaJavaLibrary.pConsole(cl+", "+blockVar+", "+leafVar+", "+saplingVar+", "+type);
+		//ReikaJavaLibrary.pConsole(cl+", "+blockVar+", "+leafVar+", "+saplingVar+", "+type);
 		if (cl == null) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel()+": Empty block class");
 			return;

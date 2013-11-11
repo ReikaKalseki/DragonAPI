@@ -21,6 +21,7 @@ import net.minecraft.world.World;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.RotaryCraft.Auxiliary.BlockArrayComputer;
 
 public class BlockArray {
 
@@ -29,8 +30,10 @@ public class BlockArray {
 	private boolean overflow = false;
 	protected World refWorld;
 
-	public BlockArray() {
+	private final BlockArrayComputer computer;
 
+	public BlockArray() {
+		computer = new BlockArrayComputer(this);
 	}
 
 	public BlockArray setWorld(World world) {

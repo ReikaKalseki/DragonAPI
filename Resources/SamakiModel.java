@@ -62,7 +62,9 @@ public class SamakiModel extends ModifiedPlayerModel {
 		float yaw = -ep.renderYawOffset%360-tick*(ep.renderYawOffset-ep.prevRenderYawOffset)+180;
 
 		//float pc = pitch*RADIAN;
-		float yc = yaw*RADIAN;
+		yc = yaw*RADIAN;
+
+		this.compensateAngles(tick);
 		//float yhc = yawHead*RADIAN;
 
 		//earL.rotateAngleX = pc;

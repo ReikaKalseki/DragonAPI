@@ -86,9 +86,12 @@ public class ReikaModel extends ModifiedPlayerModel {
 		float yawHead = -ep.rotationYaw%360-tick*(ep.rotationYaw-ep.prevRotationYaw);
 		float yaw = -ep.renderYawOffset%360-tick*(ep.renderYawOffset-ep.prevRenderYawOffset)+180;
 
-		float pc = pitch*RADIAN;
-		float yc = yaw*RADIAN;
-		float yhc = yawHead*RADIAN;
+		pc = pitch*RADIAN;
+		yc = yaw*RADIAN;
+		yhc = yawHead*RADIAN;
+
+		this.compensateAngles(tick);
+
 		hornL.rotateAngleX = pc;
 		//hornR.rotateAngleY = yawBody / (180F / (float)Math.PI);
 		hornR.rotateAngleX = pc;
@@ -111,10 +114,6 @@ public class ReikaModel extends ModifiedPlayerModel {
 
 	@Override
 	public void init() {
-		//Head code:
-		//bipedHead = new ModelRenderer(this, 0, 0);
-		//bipedHead.addBox(-4.0F, -8.0F, -4.0F, 8, 8, 8, par1);
-		//bipedHead.setRotationPoint(0.0F, 0.0F + par2, 0.0F);
 
 		hornR = new ModelRenderer(this, 32, 12);
 		hornR.addBox(this.getHornX()-2F, this.getHornY(), this.getHornZ(), 2, 1, 3);

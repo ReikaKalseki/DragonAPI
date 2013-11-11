@@ -49,9 +49,9 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 				}
 				LanguageRegistry.addName(target[i], enumr[i].getBasicName());
 				if (enumr[i].hasItemBlock())
-					mod.getModLogger().log("Instantiating Block "+enumr[i].getBasicName()+" with ID "+target[i].blockID+" to Block Variable "+target[i].getClass().getSimpleName()+" (slot "+i+") with ItemBlock "+enumr[i].getItemBlock().getSimpleName());
+					mod.getModLogger().log("Instantiating Block "+enumr[i].getBasicName()+" with ID "+target[i].blockID+" to Block Variable "+target[i].getClass().getSimpleName()+" (enum index "+i+") with ItemBlock "+enumr[i].getItemBlock().getSimpleName());
 				else
-					mod.getModLogger().log("Instantiating Block "+enumr[i].getBasicName()+" with ID "+target[i].blockID+" to Block Variable "+target[i].getClass().getSimpleName()+" (slot "+i+")");
+					mod.getModLogger().log("Instantiating Block "+enumr[i].getBasicName()+" with ID "+target[i].blockID+" to Block Variable "+target[i].getClass().getSimpleName()+" (enum index "+i+")");
 			}
 			else {
 				mod.getModLogger().log("Not instantiating Item "+enumr[i].getBasicName()+", as it is dummied out.");

@@ -26,7 +26,7 @@ public abstract class DragonAPIMod {
 
 	//public abstract void invalidFingerprint(final FMLFingerprintViolationEvent event);
 
-	public DragonAPIMod() {
+	protected DragonAPIMod() {
 		isDeObf = DragonAPICore.isDeObfEnvironment();
 		if (isDeObf) {
 			ReikaJavaLibrary.pConsole(this.getDisplayName()+" is running in a deobfuscated environment!");

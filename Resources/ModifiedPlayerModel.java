@@ -23,6 +23,10 @@ public abstract class ModifiedPlayerModel extends ModelBiped {
 		this.init();
 	}
 
+	protected float pc;
+	protected float yc;
+	protected float yhc;
+
 	public static final float RADIAN = toRadians();
 
 	private static float toRadians() {
@@ -41,5 +45,14 @@ public abstract class ModifiedPlayerModel extends ModelBiped {
 		model.rotateAngleX = x;
 		model.rotateAngleY = y;
 		model.rotateAngleZ = z;
+	}
+
+	protected final void compensateAngles(float tick) {
+		if (tick == 1.0F) {
+			yhc += -22.5F+180;
+			yhc *= 0.5;
+			yhc += 0.25;
+			yc += 45;
+		}
 	}
 }

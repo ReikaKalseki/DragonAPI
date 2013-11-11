@@ -19,6 +19,7 @@ import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.RetroGenController;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Instantiable.BiomeCollisionTracker;
 import Reika.DragonAPI.Instantiable.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -62,11 +63,12 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Instance("DragonAPI")
 	public static DragonAPIInit instance = new DragonAPIInit();
 
-	private ModLogger logger = new ModLogger(instance, true, false, false);
+	private ModLogger logger;
 
 	@Override
 	@EventHandler
 	public void preload(FMLPreInitializationEvent evt) {
+		logger = new ModLogger(instance, true, false, false);
 		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
 		//MinecraftForge.EVENT_BUS.register(APIEventHandler.instance);
@@ -88,10 +90,11 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void postload(FMLPostInitializationEvent evt) {
 		this.loadHandlers();
 		this.alCompat();
+		BiomeCollisionTracker.instance.check();
 	}
 
 	private void alCompat() { //Why the hell are there three standards for aluminum?
-		logger.log("Repairing compatibility between Aluminum OreDictionary Names.");
+		logger.log("Repairing compatibility between Alumin(i)um OreDictionary Names.");
 		List<ItemStack> al = OreDictionary.getOres("ingotNaturalAluminum");
 		for (int i = 0; i < al.size(); i++) {
 			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminum"), al.get(i)))
