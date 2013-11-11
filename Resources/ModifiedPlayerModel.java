@@ -49,10 +49,14 @@ public abstract class ModifiedPlayerModel extends ModelBiped {
 
 	protected final void compensateAngles(float tick) {
 		if (tick == 1.0F) {
-			yhc += -22.5F+180;
-			yhc *= 0.5;
-			yhc += 0.25;
-			yc += 45;
+			yhc = 180;
+			yc = 180;
+			pc = -90;
+
+			yhc *= RADIAN;
+			yc *= RADIAN;
+
+			pc *= RADIAN;
 		}
 	}
 }

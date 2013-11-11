@@ -688,10 +688,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			orb.motionX = -0.2+0.4*rand.nextFloat();
 			orb.motionY = 0.3*rand.nextFloat();
 			orb.motionZ = -0.2+0.4*rand.nextFloat();
-			if (world.isRemote)
-				return;
-			orb.velocityChanged = true;
-			world.spawnEntityInWorld(orb);
+			if (!world.isRemote) {
+				orb.velocityChanged = true;
+				world.spawnEntityInWorld(orb);
+			}
 		}
 	}
 
