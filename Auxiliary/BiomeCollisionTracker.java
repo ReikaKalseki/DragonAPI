@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Instantiable;
+package Reika.DragonAPI.Auxiliary;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,6 +16,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.InstallationException;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BiomeCollisionTracker {
 
@@ -68,8 +69,10 @@ public class BiomeCollisionTracker {
 			for (int k = 0; k < ids.size(); k++) {
 				int id = ids.get(k);
 				BiomeGenBase biome = BiomeGenBase.biomeList[id];
-				if (biome == null)
-					this.onConflict(mod, id);
+				if (biome == null) {
+					//this.onConflict(mod, id);
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Biome ID "+id+" was deleted post-registration!");
+				}
 				else {
 					Class c = biome.getClass();
 					Class c1 = classes.get(id);
@@ -81,6 +84,7 @@ public class BiomeCollisionTracker {
 	}
 
 	protected void onConflict(ModList mod, int id) {
+		ReikaJavaLibrary.pConsole("Conflict at Biome ID "+id+" ("+BiomeGenBase.biomeList[id].biomeName+")");
 		if (mod == null)
 			throw new IllegalArgumentException("Overwriting already-registered biome "+BiomeGenBase.biomeList[id]+" @ "+id);
 		throw new InstallationException(mod, "Biome ID Conflict: ID "+id);

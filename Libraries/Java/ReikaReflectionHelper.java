@@ -68,10 +68,12 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		Item instance;
 		try {
 			int id = list.getID();
-			if (Item.itemsList[256+id] != null && !list.overwritingItem())
-				throw new IDConflictException(mod, id+" item slot already occupied by "+Item.itemsList[256+id].getUnlocalizedName()+" while adding "+list.getBasicName());
-			else
-				mod.getModLogger().log("Overwriting "+Item.itemsList[256+id]+" with "+list.getBasicName());
+			if (Item.itemsList[256+id] != null) {
+				if (!list.overwritingItem())
+					throw new IDConflictException(mod, id+" item slot already occupied by "+Item.itemsList[256+id].getUnlocalizedName()+" while adding "+list.getBasicName());
+				else
+					mod.getModLogger().log("Overwriting "+Item.itemsList[256+id]+" with "+list.getBasicName());
+			}
 			Constructor c = list.getObjectClass().getConstructor(list.getConstructorParamTypes());
 			instance = (Item)(c.newInstance(list.getConstructorParams()));
 			return (instance.setUnlocalizedName(list.getUnlocalizedName()));

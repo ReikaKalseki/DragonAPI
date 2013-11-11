@@ -39,18 +39,16 @@ public class ReikaEnchantmentHelper {
 	}
 
 	/** Applies all enchantments to an ItemStack and returns it. Args: ItemStack, enchantment map */
-	public static ItemStack applyEnchantments(ItemStack is, HashMap<Enchantment,Integer> en) {
-		ItemStack s = is.copy();
+	public static void applyEnchantments(ItemStack is, HashMap<Enchantment,Integer> en) {
 		for (int i = 0; i < Enchantment.enchantmentsList.length; i++) {
 			if (Enchantment.enchantmentsList[i] != null) {
 				if (en.containsKey(Enchantment.enchantmentsList[i])) {
 					int level = en.get(Enchantment.enchantmentsList[i]);
 					if (level > 0)
-						s.addEnchantment(Enchantment.enchantmentsList[i], level);
+						is.addEnchantment(Enchantment.enchantmentsList[i], level);
 				}
 			}
 		}
-		return s;
 	}
 
 	/** Returns the enchantment level of an ItemStack. Args: Enchantment, ItemStack */
