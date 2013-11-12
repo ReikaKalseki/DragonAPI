@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
 
 public enum ModList {
@@ -145,6 +146,77 @@ public enum ModList {
 
 	public String getModLabel() {
 		return modlabel;
+	}
+
+	public String getDisplayName() {
+		switch(this) {
+		case APPLIEDENERGISTICS:
+			return "Applied Energistics";
+		case ARSMAGICA:
+			return "Ars Magica";
+		case BOP:
+			return "Biomes O'Plenty";
+		case BUILDCRAFTENERGY:
+			return "BuildCraft Energy";
+		case BUILDCRAFTFACTORY:
+			return "BuildCraft Factory";
+		case BUILDCRAFTTRANSPORT:
+			return "BuildCraft Transport";
+		case BXL:
+			return "ExtraBiomes XL";
+		case DARTCRAFT:
+			return "DartCraft";
+		case DYETREES:
+			return "DyeTrees";
+		case ENDERFOREST:
+			return "EnderForest";
+		case ENDERSTORAGE:
+			return "EnderStorage";
+		case EXPANDEDREDSTONE:
+			return "ExpandedRedstone";
+		case FURRY:
+			return "FurryKingdoms";
+		case GEOSTRATA:
+			return "GeoStrata";
+		case GREGTECH:
+			return "GregTech";
+		case ICBM:
+			return this.name();
+		case INDUSTRIALCRAFT:
+			return "IndustrialCraft";
+		case MEKTOOLS:
+			return "Mekanism Tools";
+		case MFFS:
+			return "Modular Forcefield System";
+		case MINEFACTORY:
+			return "MineFactory Reloaded";
+		case RAILCRAFT:
+			return "RailCraft";
+		case REACTORCRAFT:
+			return "ReactorCraft";
+		case REALBIOMES:
+			return "RealBiomes";
+		case REDPOWER:
+			return "RedPower";
+		case ROTARYCRAFT:
+			return "RotaryCraft";
+		case SPIDERPET:
+			return "SpiderPet";
+		case THERMALEXPANSION:
+			return "Thermal Expansion";
+		case TINKERER:
+			return "Tinkerer's Construct";
+		case TRANSITIONAL:
+			return "Transitional Assistance";
+		case TWILIGHT:
+			return "Twilight Forest";
+		case USEFULTNT:
+			return "UsefulTNT";
+		case VOIDMONSTER:
+			return "Void Monster";
+		default:
+			return ReikaStringParser.capFirstChar(this.name());
+		}
 	}
 
 	@Override
