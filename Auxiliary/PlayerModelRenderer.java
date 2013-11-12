@@ -12,7 +12,6 @@ package Reika.DragonAPI.Auxiliary;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 
 import org.lwjgl.opengl.GL11;
@@ -33,7 +32,7 @@ public class PlayerModelRenderer {
 	private static final SamakiModel modelSamaki = new SamakiModel();
 
 	private PlayerModelRenderer() {
-		MinecraftForge.EVENT_BUS.register(this);
+
 	}
 
 	// Render starts centered on eye position

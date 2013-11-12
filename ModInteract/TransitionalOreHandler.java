@@ -15,22 +15,27 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 
 public class TransitionalOreHandler extends ModHandlerBase {
 
 	private static final TransitionalOreHandler instance = new TransitionalOreHandler();
 
 	public final int magmaID;
+	public final int cobaltID;
 
 	private TransitionalOreHandler() {
 		super();
 		int idore = -1;
+		int idcobalt = -1;
 
 		if (this.hasMod()) {
 			try {
 				Class trans = ModList.TRANSITIONAL.getBlockClass();
 				Field magma = trans.getField("MagmaniteOreID");
 				idore = magma.getInt(null);
+				Field cobalt = trans.getField("CobaltOreID");
+				idcobalt = cobalt.getInt(null);
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -58,6 +63,8 @@ public class TransitionalOreHandler extends ModHandlerBase {
 		}
 
 		magmaID = idore;
+		cobaltID = idcobalt;
+		ReikaOreHelper.addOreForReference(new ItemStack(cobaltID, 1, 0));
 	}
 
 	public static TransitionalOreHandler getInstance() {
@@ -66,7 +73,7 @@ public class TransitionalOreHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return magmaID != -1;
+		return magmaID != -1 && cobaltID != -1;
 	}
 
 	@Override

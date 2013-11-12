@@ -34,6 +34,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
@@ -742,6 +743,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
 		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
+		if (id != 0)
+			ReikaSoundHelper.playBreakSound(world, x, y, z, Block.blocksList[id]);
 		legacySetBlockWithNotify(world, x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreak(world, x+1, y, z, id, meta);
@@ -765,6 +768,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
 		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
+		if (id != 0)
+			ReikaSoundHelper.playBreakSound(world, x, y, z, Block.blocksList[id]);
 		world.setBlock(x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreakWithinSphere(world, x+1, y, z, id, meta, x0, y0, z0, r);
@@ -788,6 +793,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
 		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
+		if (id != 0)
+			ReikaSoundHelper.playBreakSound(world, x, y, z, Block.blocksList[id]);
 		legacySetBlockWithNotify(world, x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreakWithBounds(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
@@ -1566,5 +1573,34 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				return true;
 		}
 		return false;
+	}
+
+	public static float getBiomeHumidity(BiomeGenBase biome) {
+		biome = ReikaBiomeHelper.getParentBiomeType(biome);
+		if (biome == BiomeGenBase.jungle)
+			return 1F;
+		if (biome == BiomeGenBase.ocean)
+			return 1F;
+		if (biome == BiomeGenBase.swampland)
+			return 0.85F;
+		if (biome == BiomeGenBase.forest)
+			return 0.6F;
+		if (biome == BiomeGenBase.plains)
+			return 0.4F;
+		if (biome == BiomeGenBase.desert)
+			return 0.2F;
+		if (biome == BiomeGenBase.hell)
+			return 0.1F;
+		if (biome == BiomeGenBase.beach)
+			return 0.95F;
+		if (biome == BiomeGenBase.icePlains)
+			return 0.4F;
+		if (biome == BiomeGenBase.mushroomIsland)
+			return 0.75F;
+		return 0.5F;
+	}
+
+	public static float getBiomeHumidity(World world, int x, int z) {
+		return getBiomeHumidity(world.getBiomeGenForCoords(x, z));
 	}
 }

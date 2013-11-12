@@ -9,9 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Resources;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.player.EntityPlayer;
+
+import org.lwjgl.input.Mouse;
 
 public abstract class ModifiedPlayerModel extends ModelBiped {
 
@@ -48,10 +52,37 @@ public abstract class ModifiedPlayerModel extends ModelBiped {
 	}
 
 	protected final void compensateAngles(float tick) {
+		//ReikaJavaLibrary.pConsole(yc/RADIAN);
 		if (tick == 1.0F) {
-			yhc = 180;
-			yc = 180;
-			pc = -90;
+
+			int ySize = 136;
+			int xSize = 195;
+
+			Minecraft mc = Minecraft.getMinecraft();
+			ScaledResolution scr = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+
+			int width = scr.getScaledWidth();
+			int height = scr.getScaledHeight();
+
+			int guiLeft = (width - xSize) / 2;
+			int guiTop = (height - ySize) / 2;
+
+			float par1 = Mouse.getX() * width / mc.displayWidth;
+			float par2 = height - Mouse.getY() * height / mc.displayHeight - 1;
+
+			float par3 = guiLeft + 43 - par1;
+			float par4 = guiTop + 45 - 30 - par2;
+
+			yc = (float)Math.atan(par3 / 40.0F) * 20.0F;
+			yhc = (float)Math.atan(par3 / 40.0F) * 40.0F;
+			pc = -((float)Math.atan(par4 / 40.0F)) * 20.0F;
+
+			yhc = -yhc;
+			yc = -yc;
+
+			yhc += 180;
+			yc += 180;
+			//pc = -90;
 
 			yhc *= RADIAN;
 			yc *= RADIAN;

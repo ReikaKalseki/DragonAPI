@@ -17,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public enum ReikaOreHelper {
 
@@ -39,6 +40,8 @@ public enum ReikaOreHelper {
 	private static final HashMap<String, String> cases = new HashMap();
 
 	public static final ReikaOreHelper[] oreList = ReikaOreHelper.values();
+
+	private static ArrayList<ItemStack> extraOres = new ArrayList();
 
 	private ReikaOreHelper(String n, Block b, ItemStack is, String d, String d2) {
 		name = n;
@@ -139,6 +142,15 @@ public enum ReikaOreHelper {
 		for (int i = 0; i < names.length; i++) {
 			cases.put(names[i], ore);
 		}
+	}
+
+	public static void addOreForReference(ItemStack ore) {
+		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding ore reference "+ore);
+		extraOres.add(ore);
+	}
+
+	public static boolean isExtraOre(ItemStack is) {
+		return ReikaItemHelper.listContainsItemStack(extraOres, is);
 	}
 
 }
