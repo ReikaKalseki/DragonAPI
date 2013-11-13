@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Interfaces;
+package Reika.DragonAPI.Instantiable;
 
 import org.lwjgl.opengl.GL11;
 
