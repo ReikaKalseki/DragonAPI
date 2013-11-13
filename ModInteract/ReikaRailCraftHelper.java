@@ -25,16 +25,21 @@ public class ReikaRailCraftHelper extends DragonAPICore {
 	}
 
 	/** Get energy of one steam bucket/block in joules. */
-	public static double getSteamBucketEnergy(double Tinit) {
-		double dT = 100-Tinit;
-		if (dT < 0) //If initial T is hotter
-			dT = 1; //require 4.18 MJ (one degree)
-		return ReikaThermoHelper.WATER_BLOCK_HEAT*dT; //4.18MJ/block/degree * delta-T
+	public static double getSteamBucketEnergy(int Tinit) {
+		return getSteamBoilingEnergy()+getSteamBucketEnergyToHeat(Tinit);
 	}
 
 	/** Get the energy liberated by the conversion of one block of steam to one bucket of water. */
-	public static double getSteamBucketEnergy() {
+	public static double getSteamBoilingEnergy() {
 		return ReikaThermoHelper.WATER_BOIL_ENTHALPY*FluidContainerRegistry.BUCKET_VOLUME*1000; //2260 kJ/kg * 1000 kg * 1000 J/kJ
+	}
+
+	/** Get the energy required to heat one water bucket to 100 degrees */
+	public static double getSteamBucketEnergyToHeat(int Tinit) {
+		double dT = 100-Tinit;
+		if (dT < 0)
+			dT = 0;
+		return ReikaThermoHelper.WATER_HEAT*FluidContainerRegistry.BUCKET_VOLUME*1000*dT; //4.18 kJ/kgK * 1000 kg * 1000 J/kJ * dT K
 	}
 
 }

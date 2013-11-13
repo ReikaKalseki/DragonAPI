@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2013
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Resources;
 
 import java.util.ArrayList;
@@ -123,7 +132,7 @@ public class GuiGuide extends GuiScreen {
 	}
 
 	private int getMaxPage() {
-		return 1+mods.size();
+		return mods.size();
 	}
 
 	private void drawTabIcons() {

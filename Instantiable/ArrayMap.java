@@ -1,12 +1,21 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2013
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 /** Like HashMap but can take int arrays as keys and still function.
  * Do not use the traditional put/get on this map! */
-public class ArrayMap extends HashMap {
+public class ArrayMap<V> extends HashMap {
 
 	public final int keySize;
 
@@ -14,40 +23,48 @@ public class ArrayMap extends HashMap {
 		keySize = size;
 	}
 
-	public Object putV(Object value, int... key) {
-		return this.put(key, value);
+	public V putV(V value, int... key) {
+		return this.putA(key, value);
 	}
 
-	public Object getV(int... key) {
-		return this.get(key);
+	public V getV(int... key) {
+		return this.getA(key);
 	}
 
 	public boolean containsKeyV(int... key) {
-		return this.containsKey(key);
+		return this.containsKeyA(key);
 	}
 
-	public Object put(int[] key, Object value) {
+	public V putA(int[] key, V value) {
 		if (key.length != keySize)
 			throw new IllegalArgumentException("Invalid key length!");
-		List li = Arrays.asList(key);
-		Object ret = this.get(li);
+		List li = this.toList(key);
+		V ret = (V) this.get(li);
 		this.put(li, value);
 		return ret;
 	}
 
-	public Object get(int[] key) {
+	public V getA(int[] key) {
 		if (key.length != keySize)
 			throw new IllegalArgumentException("Invalid key length!");
-		List li = Arrays.asList(key);
-		Object ret = this.get(li);
+		List<Integer> li = this.toList(key);
+		V ret = (V) this.get(li);
 		return ret;
 	}
 
-	public boolean containsKey(int[] key) {
+	public boolean containsKeyA(int[] key) {
 		if (key.length != keySize)
 			throw new IllegalArgumentException("Invalid key length!");
-		List li = Arrays.asList(key);
+		List li = this.toList(key);
 		return this.containsKey(li);
+	}
+
+	private List<Integer> toList(int[] key) {
+		List<Integer> li = new ArrayList();
+		for (int i = 0; i < this.keySize; i++) {
+			li.add(key[i]);
+		}
+		return li;
 	}
 
 }

@@ -288,81 +288,81 @@ public final class ReikaArrayHelper extends DragonAPICore {
 
 	/** Returns true if all nonzero values in the array are equal. Args: Array */
 	//TODO Make scale for all array sizes
-	public static boolean allNonZerosEqual(int[] arr) {
-		Arrays.sort(arr);
-		if (arr[0] != 0) {
-			if (arr[1] != 0)
-				if (arr[0] != arr[1])
+	public static boolean allNonZerosEqual(long[] powers) {
+		Arrays.sort(powers);
+		if (powers[0] != 0) {
+			if (powers[1] != 0)
+				if (powers[0] != powers[1])
 					return false;
 		}
-		if (arr[0] != 0) {
-			if (arr[2] != 0)
-				if (arr[0] != arr[2])
+		if (powers[0] != 0) {
+			if (powers[2] != 0)
+				if (powers[0] != powers[2])
 					return false;
 		}
-		if (arr[0] != 0) {
-			if (arr[3] != 0)
-				if (arr[0] != arr[3])
+		if (powers[0] != 0) {
+			if (powers[3] != 0)
+				if (powers[0] != powers[3])
 					return false;
 		}
-		if (arr[0] != 0) {
-			if (arr[4] != 0)
-				if (arr[0] != arr[4])
+		if (powers[0] != 0) {
+			if (powers[4] != 0)
+				if (powers[0] != powers[4])
 					return false;
 		}
-		if (arr[0] != 0) {
-			if (arr[5] != 0)
-				if (arr[0] != arr[5])
+		if (powers[0] != 0) {
+			if (powers[5] != 0)
+				if (powers[0] != powers[5])
 					return false;
 		}
-		if (arr[1] != 0) {
-			if (arr[2] != 0)
-				if (arr[1] != arr[2])
+		if (powers[1] != 0) {
+			if (powers[2] != 0)
+				if (powers[1] != powers[2])
 					return false;
 		}
-		if (arr[1] != 0) {
-			if (arr[3] != 0)
-				if (arr[1] != arr[3])
+		if (powers[1] != 0) {
+			if (powers[3] != 0)
+				if (powers[1] != powers[3])
 					return false;
 		}
-		if (arr[1] != 0) {
-			if (arr[4] != 0)
-				if (arr[1] != arr[4])
+		if (powers[1] != 0) {
+			if (powers[4] != 0)
+				if (powers[1] != powers[4])
 					return false;
 		}
-		if (arr[1] != 0) {
-			if (arr[5] != 0)
-				if (arr[1] != arr[5])
+		if (powers[1] != 0) {
+			if (powers[5] != 0)
+				if (powers[1] != powers[5])
 					return false;
 		}
-		if (arr[2] != 0) {
-			if (arr[3] != 0)
-				if (arr[2] != arr[3])
+		if (powers[2] != 0) {
+			if (powers[3] != 0)
+				if (powers[2] != powers[3])
 					return false;
 		}
-		if (arr[2] != 0) {
-			if (arr[4] != 0)
-				if (arr[2] != arr[4])
+		if (powers[2] != 0) {
+			if (powers[4] != 0)
+				if (powers[2] != powers[4])
 					return false;
 		}
-		if (arr[2] != 0) {
-			if (arr[5] != 0)
-				if (arr[2] != arr[5])
+		if (powers[2] != 0) {
+			if (powers[5] != 0)
+				if (powers[2] != powers[5])
 					return false;
 		}
-		if (arr[3] != 0) {
-			if (arr[4] != 0)
-				if (arr[3] != arr[4])
+		if (powers[3] != 0) {
+			if (powers[4] != 0)
+				if (powers[3] != powers[4])
 					return false;
 		}
-		if (arr[3] != 0) {
-			if (arr[5] != 0)
-				if (arr[3] != arr[5])
+		if (powers[3] != 0) {
+			if (powers[5] != 0)
+				if (powers[3] != powers[5])
 					return false;
 		}
-		if (arr[4] != 0) {
-			if (arr[5] != 0)
-				if (arr[4] != arr[5])
+		if (powers[4] != 0) {
+			if (powers[5] != 0)
+				if (powers[4] != powers[5])
 					return false;
 		}
 		return true;
@@ -385,5 +385,13 @@ public final class ReikaArrayHelper extends DragonAPICore {
 			a[lo] = a[i];
 			a[i] = buffer;
 		}
+	}
+
+	public static long sumArray(long[] arr) {
+		long sum = 0;
+		for (int i = 0; i < arr.length; i++) {
+			sum += arr[i];
+		}
+		return sum;
 	}
 }

@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2013
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
 import java.util.Arrays;
@@ -6,18 +15,18 @@ import java.util.List;
 
 import net.minecraft.item.ItemStack;
 
-public class ItemHashmap extends HashMap {
+public class ItemHashmap<V> extends HashMap {
 
-	public Object put(ItemStack key, Object value) {
+	public V put(ItemStack key, V value) {
 		List li = Arrays.asList(key.itemID, key.getItemDamage());
-		Object ret = this.get(li);
+		V ret = (V) this.get(li);
 		this.put(li, value);
 		return ret;
 	}
 
-	public Object get(ItemStack key) {
+	public V get(ItemStack key) {
 		List li = Arrays.asList(key.itemID, key.getItemDamage());
-		Object ret = this.get(li);
+		V ret = (V) this.get(li);
 		return ret;
 	}
 
