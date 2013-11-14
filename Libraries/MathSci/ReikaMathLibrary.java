@@ -318,4 +318,34 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static boolean doRangesOverLap(int min1, int max1, int min2, int max2) {
 		return max2 >= min1 && min2 <= max1;
 	}
+
+	/** Returns true if and only if n and only n of the args are true. */
+	public static boolean nBoolsAreTrue(int number, boolean... args) {
+		int count = 0;
+		for (int i = 0; i < args.length; i++) {
+			if (args[i])
+				count++;
+		}
+		return count == number;
+	}
+
+	/** Returns true if n or more of the args are true. */
+	public static boolean nPlusBoolsAreTrue(int number, boolean... args) {
+		int count = 0;
+		for (int i = 0; i < args.length; i++) {
+			if (args[i])
+				count++;
+		}
+		return count >= number;
+	}
+
+	/** Returns +1 or -1 depending on the sign of the argument. */
+	public static int sign(int val) {
+		return val/Math.abs(val);
+	}
+
+	/** Returns +1 or -1 depending on the sign of the argument. */
+	public static double sign(double val) {
+		return val/Math.abs(val);
+	}
 }
