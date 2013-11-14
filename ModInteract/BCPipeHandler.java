@@ -147,7 +147,7 @@ public class BCPipeHandler extends ModHandlerBase {
 
 	@Override
 	public ModList getMod() {
-		return ModList.BUILDCRAFTTRANSPORT;
+		return ModList.BCTRANSPORT;
 	}
 
 	public Types getPipeType(TileEntity te) {

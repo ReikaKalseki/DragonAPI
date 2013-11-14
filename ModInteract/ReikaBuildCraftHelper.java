@@ -25,7 +25,7 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	private static double gasEnergyPerKg = 46.9;
 
 	public static boolean doesBuildCraftExist() {
-		return ModList.BUILDCRAFTENERGY.isLoaded();
+		return ModList.BCENERGY.isLoaded();
 	}
 
 	public static float getFuelMJPerTick() {

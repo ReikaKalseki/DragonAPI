@@ -73,7 +73,7 @@ public class AppEngHandler extends ModHandlerBase {
 
 	@Override
 	public ModList getMod() {
-		return ModList.APPLIEDENERGISTICS;
+		return ModList.APPENG;
 	}
 
 	public ItemStack getCertusQuartz() {

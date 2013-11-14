@@ -128,8 +128,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		ReikaJavaLibrary.initClass(ModWoodList.class);
 		ReikaJavaLibrary.initClass(ModCropList.class);
 
-		this.initHandler(ModList.BUILDCRAFTFACTORY, BCMachineHandler.class);
-		this.initHandler(ModList.BUILDCRAFTTRANSPORT, BCPipeHandler.class);
+		this.initHandler(ModList.BCFACTORY, BCMachineHandler.class);
+		this.initHandler(ModList.BCTRANSPORT, BCPipeHandler.class);
 		this.initHandler(ModList.THAUMCRAFT, ThaumOreHandler.class);
 		this.initHandler(ModList.THAUMCRAFT, ThaumBlockHandler.class);
 		this.initHandler(ModList.DARTCRAFT, DartOreHandler.class);
@@ -139,9 +139,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.MEKANISM, MekanismHandler.class);
 		this.initHandler(ModList.MEKTOOLS, MekToolHandler.class);
 		this.initHandler(ModList.TRANSITIONAL, TransitionalOreHandler.class);
-		this.initHandler(ModList.INDUSTRIALCRAFT, IC2Handler.class);
+		this.initHandler(ModList.IC2, IC2Handler.class);
 		this.initHandler(ModList.ARSMAGICA, MagicaOreHandler.class);
-		this.initHandler(ModList.APPLIEDENERGISTICS, AppEngHandler.class);
+		this.initHandler(ModList.APPENG, AppEngHandler.class);
 		this.initHandler(ModList.FORESTRY, ForestryHandler.class);
 		this.initHandler(ModList.THERMALEXPANSION, ThermalHandler.class);
 	}

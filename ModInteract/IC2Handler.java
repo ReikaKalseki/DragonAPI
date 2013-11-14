@@ -80,7 +80,7 @@ public class IC2Handler extends ModHandlerBase {
 
 	@Override
 	public ModList getMod() {
-		return ModList.INDUSTRIALCRAFT;
+		return ModList.IC2;
 	}
 
 }

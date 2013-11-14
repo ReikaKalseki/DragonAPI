@@ -19,8 +19,6 @@ import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Instantiable.ImagedGuiButton;
-import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class GuiGuide extends GuiScreen {
@@ -46,12 +44,18 @@ public class GuiGuide extends GuiScreen {
 		int k = (height - ySize) / 2 - 8;
 
 		String file = "/Reika/DragonAPI/Textures/guidetab.png";
-		buttonList.add(new ImagedGuiButton(10, j-20, 17+k+163, 20, 20, "-", 220, 0, 0, false, file, DragonAPICore.class)); //Prev Page
-		buttonList.add(new ImagedGuiButton(11, j-20, 17+k+143, 20, 20, "+", 220, 20, 0, false, file, DragonAPICore.class));	//Next page
-		buttonList.add(new ImagedGuiButton(15, j-20, 17+k+183, 20, 20, "<<", 220, 20, 0, false, file, DragonAPICore.class));	//1st page
+		buttonList.add(new GuiButton(10, j-19, 17+k+163, 20, 20, "-")); //Prev Page
+		buttonList.add(new GuiButton(11, j-19, 17+k+143, 20, 20, "+"));	//Next page
+		buttonList.add(new GuiButton(15, j-19, 17+k+183, 20, 20, "<<"));	//1st page
 		buttonList.add(new GuiButton(12, j+xSize-27, k+6, 20, 20, "X"));	//Close gui button
 
 
+		if (screen > 0) {
+			String[] labels = {"Info", "Getting Started", "Useful Notes", "", ""};
+			for (int i = 0; i < 5; i++) {
+				buttonList.add(new GuiButton(i, j-19-65+1, k+20*i, 85, 20, labels[i])); //Prev Page
+			}
+		}
 	}
 
 	/**
@@ -138,20 +142,18 @@ public class GuiGuide extends GuiScreen {
 	private void drawTabIcons() {
 		int posX = (width - xSize) / 2;
 		int posY = (height - ySize) / 2;
-		/*
-		List<HandbookRegistry> li = HandbookRegistry.getEntriesForScreen(screen);
-		for (int i = 0; i < li.size(); i++) {
-			HandbookRegistry h = li.get(i);
-			ReikaGuiAPI.instance.drawItemStack(new RenderItem(), fontRenderer, h.getTabIcon(), posX-17, posY-6+i*20);
-		}*/
 	}
 
 	private void drawGraphics() {
 		int posX = (width - xSize) / 2-2;
 		int posY = (height - ySize) / 2-8;
 
+		String s = "";
 		if (screen >= 1)
-			ReikaGuiAPI.instance.drawCenteredStringNoShadow(fontRenderer, String.format("%s", mods.get(screen-1).getDisplayName()), posX+xSize-45, posY+12, 0);
+			s = mods.get(screen-1).getDisplayName();
+		else
+			s = "Reika's Mods";
+		fontRenderer.drawString(String.format("%s", s), posX+10, posY+8, 0);
 	}
 
 	@Override

@@ -25,19 +25,19 @@ public enum ModList {
 	EXPANDEDREDSTONE("ExpandedRedstone"),
 	GEOSTRATA("GeoStrata"),
 	REALBIOMES("RealBiomes"),
-	FURRY("FurryKingdoms"),
+	FURRYKINGDOMS("FurryKingdoms"),
 	SPIDERPET("SpiderPet"),
 	ENDERFOREST("EnderForest"),
 	VOIDMONSTER("VoidMonster"),
 	USEFULTNT("UsefulTNT"),
-	BUILDCRAFTENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
-	BUILDCRAFTFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
-	BUILDCRAFTTRANSPORT("BuildCraft|Transport", "buildcraft.BuildCraftTransport"),
+	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
+	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
+	BCTRANSPORT("BuildCraft|Transport", "buildcraft.BuildCraftTransport"),
 	THAUMCRAFT("Thaumcraft", "thaumcraft.common.config.Config"),
-	INDUSTRIALCRAFT("IC2", "ic2.core.Ic2Items"),
+	IC2("IC2", "ic2.core.Ic2Items"),
 	GREGTECH("GregTech"),
 	FORESTRY("Forestry", "forestry.core.config.ForestryBlock", "forestry.core.config.ForestryItem"),
-	APPLIEDENERGISTICS("AppliedEnergistics", "appeng.common.AppEng"),
+	APPENG("AppliedEnergistics", "appeng.common.AppEng"),
 	MFFS("MFFS", "mffs.ModularForceFieldSystem"),
 	REDPOWER("RedPower"),
 	TWILIGHT("TwilightForest", "twilightforest.block.TFBlocks", "twilightforest.item.TFItems"),
@@ -149,74 +149,7 @@ public enum ModList {
 	}
 
 	public String getDisplayName() {
-		switch(this) {
-		case APPLIEDENERGISTICS:
-			return "Applied Energistics";
-		case ARSMAGICA:
-			return "Ars Magica";
-		case BOP:
-			return "Biomes O'Plenty";
-		case BUILDCRAFTENERGY:
-			return "BuildCraft Energy";
-		case BUILDCRAFTFACTORY:
-			return "BuildCraft Factory";
-		case BUILDCRAFTTRANSPORT:
-			return "BuildCraft Transport";
-		case BXL:
-			return "ExtraBiomes XL";
-		case DARTCRAFT:
-			return "DartCraft";
-		case DYETREES:
-			return "DyeTrees";
-		case ENDERFOREST:
-			return "EnderForest";
-		case ENDERSTORAGE:
-			return "EnderStorage";
-		case EXPANDEDREDSTONE:
-			return "ExpandedRedstone";
-		case FURRY:
-			return "FurryKingdoms";
-		case GEOSTRATA:
-			return "GeoStrata";
-		case GREGTECH:
-			return "GregTech";
-		case ICBM:
-			return this.name();
-		case INDUSTRIALCRAFT:
-			return "IndustrialCraft";
-		case MEKTOOLS:
-			return "Mekanism Tools";
-		case MFFS:
-			return "Modular Forcefield System";
-		case MINEFACTORY:
-			return "MineFactory Reloaded";
-		case RAILCRAFT:
-			return "RailCraft";
-		case REACTORCRAFT:
-			return "ReactorCraft";
-		case REALBIOMES:
-			return "RealBiomes";
-		case REDPOWER:
-			return "RedPower";
-		case ROTARYCRAFT:
-			return "RotaryCraft";
-		case SPIDERPET:
-			return "SpiderPet";
-		case THERMALEXPANSION:
-			return "Thermal Expansion";
-		case TINKERER:
-			return "Tinkerer's Construct";
-		case TRANSITIONAL:
-			return "Transitional Assistance";
-		case TWILIGHT:
-			return "Twilight Forest";
-		case USEFULTNT:
-			return "UsefulTNT";
-		case VOIDMONSTER:
-			return "Void Monster";
-		default:
-			return ReikaStringParser.capFirstChar(this.name());
-		}
+		return ReikaStringParser.capFirstChar(this.name());
 	}
 
 	@Override

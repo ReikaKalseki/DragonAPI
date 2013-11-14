@@ -61,7 +61,7 @@ public enum ModWoodList {
 	BOPWILLOW(ModList.BOP, "logs3ID", "colourizedLeavesID", "colourizedSaplingsID", 1, new int[]{4,12}, 4, VarType.INT),
 	PINE(ModList.BOP, "logs4ID", "colourizedLeavesID", "colourizedSaplingsID", 0, 5, 5, VarType.INT),
 	XLREDWOOD(ModList.BXL, null, null, null, 0, VarType.BLOCK),
-	RUBBER(ModList.INDUSTRIALCRAFT, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, VarType.ITEMSTACK),
+	RUBBER(ModList.IC2, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, VarType.ITEMSTACK),
 	MINERUBBER(ModList.MINEFACTORY, "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, VarType.BLOCK),
 	TIMEWOOD(ModList.TWILIGHT, "magicLog", "magicLeaves", "sapling", new int[]{0,12}, new int[]{1,8}, 5, VarType.BLOCK),
 	TRANSFORMATION(ModList.TWILIGHT, "magicLog", "magicLeaves", "sapling", new int[]{1,13}, new int[]{1,9}, 6, VarType.BLOCK),

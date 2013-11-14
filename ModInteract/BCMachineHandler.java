@@ -71,7 +71,7 @@ public class BCMachineHandler extends ModHandlerBase {
 
 	@Override
 	public ModList getMod() {
-		return ModList.BUILDCRAFTFACTORY;
+		return ModList.BCFACTORY;
 	}
 
 	public ItemStack getTank() {
