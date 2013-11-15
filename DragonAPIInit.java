@@ -13,9 +13,11 @@ import java.net.URL;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
+import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.RetroGenController;
@@ -92,8 +94,20 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void postload(FMLPostInitializationEvent evt) {
 		this.loadHandlers();
+
 		this.alCompat();
+
 		BiomeCollisionTracker.instance.check();
+
+		if (DragonAPICore.isOnActualServer())
+			;//this.licenseTest();
+		CompatibilityTracker.instance.test();
+	}
+
+	private void licenseTest() {
+		MinecraftServer server = MinecraftServer.getServer();
+		String name = server.getServerHostname();
+		ReikaJavaLibrary.spamConsole(name);
 	}
 
 	private void alCompat() { //Why the hell are there three standards for aluminum?

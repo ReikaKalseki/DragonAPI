@@ -71,7 +71,7 @@ public class BiomeCollisionTracker {
 				BiomeGenBase biome = BiomeGenBase.biomeList[id];
 				if (biome == null) {
 					//this.onConflict(mod, id);
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Biome ID "+id+" was deleted post-registration!");
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Biome ID "+id+" ("+classes.get(id)+") was deleted post-registration!");
 				}
 				else {
 					Class c = biome.getClass();

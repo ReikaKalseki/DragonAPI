@@ -84,5 +84,6 @@ public class DragonAPICore {
 
 	public static boolean isOnActualServer() {
 		return FMLCommonHandler.instance().getMinecraftServerInstance() instanceof DedicatedServer;
+		//MinecraftServer.getServer().isDedicatedServer();
 	}
 }

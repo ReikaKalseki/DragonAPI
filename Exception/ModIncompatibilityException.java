@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Exception;
 
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
 
 public class ModIncompatibilityException extends DragonAPIException {
@@ -23,7 +24,23 @@ public class ModIncompatibilityException extends DragonAPIException {
 			this.crash();
 		}
 		else {
-			this.printStackTrace();
+			message.append("Neither mod may function correctly.");
+			//this.printStackTrace();
+		}
+	}
+
+	public ModIncompatibilityException(ModList mod, ModList otherMod, String msg, boolean fatal) {
+		message.append(mod.name()+" has compatibility issues with the following mod:\n");
+		message.append(otherMod.getDisplayName()+"\n");
+		message.append("Reason: "+msg+"\n");
+		message.append("Consult the mods' websites for details.\n");
+		if (fatal) {
+			message.append("This is a fatal incompatibility. Loading cannot continue.");
+			this.crash();
+		}
+		else {
+			message.append("Neither mod may function correctly.");
+			//this.printStackTrace();
 		}
 	}
 
