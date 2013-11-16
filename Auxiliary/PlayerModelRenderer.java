@@ -17,9 +17,9 @@ import net.minecraftforge.event.ForgeSubscribe;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Extras.ReikaModel;
+import Reika.DragonAPI.Extras.SamakiModel;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Resources.ReikaModel;
-import Reika.DragonAPI.Resources.SamakiModel;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -44,7 +44,7 @@ public class PlayerModelRenderer {
 		if (ep != null) {
 			if ("Reika_Kalseki".equals(ep.getEntityName())) {
 				//render.setRenderPassModel(modelReika);
-				ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "/Reika/DragonAPI/Textures/reika_tex.png");
+				ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "/Reika/DragonAPI/Resources/reika_tex.png");
 				GL11.glScaled(1, -1, 1);
 				GL11.glFrontFace(GL11.GL_CW);
 				modelReika.renderBodyParts(ep, tick);
@@ -53,7 +53,7 @@ public class PlayerModelRenderer {
 				GL11.glScaled(1, -1, 1);
 			}
 			else if ("FurryDJ".equals(ep.getEntityName())) {
-				ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "/Reika/DragonAPI/Textures/samaki_tex.png");
+				ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "/Reika/DragonAPI/Resources/samaki_tex.png");
 				GL11.glScaled(1, -1, 1);
 				GL11.glFrontFace(GL11.GL_CW);
 				modelSamaki.renderBodyParts(ep, tick);

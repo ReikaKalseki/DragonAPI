@@ -12,9 +12,17 @@ package Reika.DragonAPI;
 import java.net.URL;
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.Event.Result;
+import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
@@ -22,6 +30,8 @@ import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.RetroGenController;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Extras.ChatWatcher;
+import Reika.DragonAPI.Extras.GuideCommand;
 import Reika.DragonAPI.Instantiable.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -53,7 +63,9 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
@@ -74,6 +86,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void preload(FMLPreInitializationEvent evt) {
 		logger = new ModLogger(instance, true, false, false);
 		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
+		MinecraftForge.EVENT_BUS.register(this);
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
 
@@ -88,6 +101,10 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
 		GameRegistry.registerPlayerTracker(LoginHandler.instance);
+
+		NetworkRegistry.instance().registerGuiHandler(instance, new APIGuiHandler());
+
+		NetworkRegistry.instance().registerChatListener(ChatWatcher.instance);
 	}
 
 	@Override
@@ -102,6 +119,32 @@ public class DragonAPIInit extends DragonAPIMod {
 		if (DragonAPICore.isOnActualServer())
 			;//this.licenseTest();
 		CompatibilityTracker.instance.test();
+	}
+
+	@EventHandler
+	public void registerCommands(FMLServerStartingEvent evt) {
+		evt.registerServerCommand(new GuideCommand());
+	}
+
+	@ForgeSubscribe
+	public void addGuideGUI(PlayerInteractEvent evt) {
+		EntityPlayer ep = evt.entityPlayer;
+		ItemStack is = ep.getCurrentEquippedItem();
+		if (is != null && is.itemID == Item.enchantedBook.itemID) {
+			if (is.stackTagCompound != null) {
+				NBTTagCompound disp = is.stackTagCompound.getCompoundTag("display");
+				if (disp != null) {
+					NBTTagList list = disp.getTagList("Lore");
+					if (list != null) {
+						String sg = ((NBTTagString)list.tagAt(0)).data;
+						if (sg != null && sg.equals("Reika's Mods Guide")) {
+							ep.openGui(instance, 0, ep.worldObj, 0, 0, 0);
+							evt.setResult(Result.ALLOW);
+						}
+					}
+				}
+			}
+		}
 	}
 
 	private void licenseTest() {

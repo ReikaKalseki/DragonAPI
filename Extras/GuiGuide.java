@@ -7,9 +7,10 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Resources;
+package Reika.DragonAPI.Extras;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.client.gui.GuiButton;
@@ -19,17 +20,30 @@ import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.XMLInterface;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class GuiGuide extends GuiScreen {
 
 	private static final ArrayList<ModList> mods = new ArrayList();
+	private static final String PARENT = "Resources/";
+	private static final XMLInterface guide = new XMLInterface(DragonAPICore.class, PARENT+"guide.xml", !DragonAPICore.isDeObfEnvironment());
+	private static HashMap<ModList, String> data = new HashMap<ModList, String>();
 
 	private int screen;
 	private int page;
 
 	protected final int xSize = 256;
 	protected final int ySize = 220;
+
+	static {
+		for (int i = 0; i < mods.size(); i++) {
+			ModList mod = mods.get(i);
+			String desc = guide.getValueAtNode("misc:"+mod.name().toLowerCase());
+			//ReikaJavaLibrary.pConsole(desc);
+			data.put(mod, desc);
+		}
+	}
 
 	public GuiGuide() {
 
@@ -43,7 +57,7 @@ public class GuiGuide extends GuiScreen {
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2 - 8;
 
-		String file = "/Reika/DragonAPI/Textures/guidetab.png";
+		String file = "/Reika/DragonAPI/Resources/guidetab.png";
 		buttonList.add(new GuiButton(10, j-19, 17+k+163, 20, 20, "-")); //Prev Page
 		buttonList.add(new GuiButton(11, j-19, 17+k+143, 20, 20, "+"));	//Next page
 		buttonList.add(new GuiButton(15, j-19, 17+k+183, 20, 20, "<<"));	//1st page
@@ -159,7 +173,7 @@ public class GuiGuide extends GuiScreen {
 	@Override
 	public void drawScreen(int x, int y, float f)
 	{
-		String var4 = "/Reika/DragonAPI/Textures/guidebcg.png";
+		String var4 = "/Reika/DragonAPI/Resources/guidebcg.png";
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		ReikaTextureHelper.bindTexture(DragonAPICore.class, var4);
 
