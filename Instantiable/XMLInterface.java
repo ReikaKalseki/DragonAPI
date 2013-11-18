@@ -23,25 +23,33 @@ public class XMLInterface {
 
 	private final Class rootClass;
 	private final String filepath;
+	private final boolean requireFile;
 
 	private final HashMap<String, String> data = new HashMap<String, String>();
 
 	public XMLInterface(Class root, String path, boolean crashIfNull) {
 		rootClass = root;
 		filepath = path;
+		requireFile = crashIfNull;
 		try {
 			doc = ReikaXMLBase.getXMLDocument(root, path);
 		}
 		catch (RuntimeException e) {
-			if (crashIfNull)
+			if (requireFile)
 				throw new RuntimeException(e);
 		}
 		this.readFileToMap();
 	}
 
 	public void reread() {
-		doc = ReikaXMLBase.getXMLDocument(rootClass, filepath);
-		this.readFileToMap();
+		try {
+			doc = ReikaXMLBase.getXMLDocument(rootClass, filepath);
+			this.readFileToMap();
+		}
+		catch (RuntimeException e) {
+			if (requireFile)
+				throw new RuntimeException(e);
+		}
 	}
 
 	private void readFileToMap() {

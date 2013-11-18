@@ -47,6 +47,8 @@ public class ReikaTextureHelper {
 	private static final PluralMap textures = new PluralMap(2);
 	private static final HashMap<String, ResourceLocation> maps = new HashMap();
 
+	private static Integer missingTexInt;
+
 	public static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
 	private static final ResourceLocation font = new ResourceLocation("textures/font/ascii.png");
@@ -100,17 +102,18 @@ public class ReikaTextureHelper {
 
 	public static boolean bindPackTexture(String tex, ResourcePack res) {
 		Integer gl = (Integer) textures.get(res, tex);
-		boolean hasTex = false;
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.getImageFromResourcePack(tex, res);
-			hasTex = !ReikaImageLoader.missingtex.equals(img);
 			gl = new Integer(binder.allocateAndSetupTexture(img));
+			if (ReikaImageLoader.missingtex.equals(img) && missingTexInt == null) {
+				missingTexInt = new Integer(gl.intValue());
+			}
 			textures.put(gl, res, tex);
 		}
 		if (gl != null) {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 		}
-		//return gl != null && hasTex;
+		return gl != null && gl.intValue() != missingTexInt;
 	}
 
 	public static void bindTerrainTexture() {
