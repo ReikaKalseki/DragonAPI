@@ -63,7 +63,9 @@ public class ReikaTextureHelper {
 			if (tex.startsWith("/"))
 				tex = tex.substring(1);
 			String respath = tex.startsWith(parent) ? tex : parent+tex;
-			bindPackTexture(respath, res);
+			boolean hasTex = bindPackTexture(respath, res);
+			if (!hasTex)
+				bindClassReferencedTexture(root, tex);
 		}
 	}
 
@@ -96,23 +98,19 @@ public class ReikaTextureHelper {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
-	public static void bindPackTexture(String tex, ResourcePack res) {
+	public static boolean bindPackTexture(String tex, ResourcePack res) {
 		Integer gl = (Integer) textures.get(res, tex);
+		boolean hasTex = false;
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.getImageFromResourcePack(tex, res);
+			hasTex = !ReikaImageLoader.missingtex.equals(img);
 			gl = new Integer(binder.allocateAndSetupTexture(img));
 			textures.put(gl, res, tex);
 		}
-		if (gl != null)
+		if (gl != null) {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
-	}
-
-	public static int getGLID(String texture) {
-		Integer gl = (Integer)textures.get(texture);
-		if (gl == null) {
-			return -1;
 		}
-		return gl.intValue();
+		//return gl != null && hasTex;
 	}
 
 	public static void bindTerrainTexture() {
