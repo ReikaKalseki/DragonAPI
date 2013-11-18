@@ -12,8 +12,10 @@ package Reika.DragonAPI.Instantiable;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EntityDiggingFX;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
@@ -87,7 +89,7 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 		if (modClass != null)
 			ReikaTextureHelper.bindTexture(modClass, tex);
 		else
-			ReikaTextureHelper.bindPackTexture(tex);
+			Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(tex));
 
 		Tessellator v5 = new Tessellator();
 		v5.startDrawingQuads();

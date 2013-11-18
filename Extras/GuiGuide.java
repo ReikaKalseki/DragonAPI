@@ -28,7 +28,10 @@ public class GuiGuide extends GuiScreen {
 	private static final ArrayList<ModList> mods = new ArrayList();
 	private static final String PARENT = "Resources/";
 	private static final XMLInterface guide = new XMLInterface(DragonAPICore.class, PARENT+"guide.xml", !DragonAPICore.isDeObfEnvironment());
-	private static HashMap<ModList, String> data = new HashMap<ModList, String>();
+	private static HashMap<String, String> data = new HashMap();
+
+	private static final String[] tabLabels = {"Info", "Getting Started", "Useful Notes", "Tips and Tricks"};
+	private static final String[] tabTags = {"info", "tutorial", "notes", "tips"};
 
 	private int screen;
 	private int page;
@@ -36,17 +39,21 @@ public class GuiGuide extends GuiScreen {
 	protected final int xSize = 256;
 	protected final int ySize = 220;
 
-	static {
-		for (int i = 0; i < mods.size(); i++) {
-			ModList mod = mods.get(i);
-			String desc = guide.getValueAtNode("misc:"+mod.name().toLowerCase());
-			//ReikaJavaLibrary.pConsole(desc);
-			data.put(mod, desc);
-		}
+	public GuiGuide() {
+		guide.reread();
+		this.loadData();
 	}
 
-	public GuiGuide() {
-
+	private static void loadData() {
+		for (int i = 0; i < mods.size(); i++) {
+			ModList mod = mods.get(i);
+			for (int j = 0; j < tabTags.length; j++) {
+				String tag = "dragonapi:"+mod.name().toLowerCase()+":"+tabTags[j];
+				String desc = guide.getValueAtNode(tag);
+				//ReikaJavaLibrary.pConsole(tag+" ;; "+desc);
+				data.put(tag, desc);
+			}
+		}
 	}
 
 	@Override
@@ -65,9 +72,9 @@ public class GuiGuide extends GuiScreen {
 
 
 		if (screen > 0) {
-			String[] labels = {"Info", "Getting Started", "Useful Notes", "", ""};
-			for (int i = 0; i < 5; i++) {
-				buttonList.add(new GuiButton(i, j-19-65+1, k+20*i, 85, 20, labels[i])); //Prev Page
+			for (int i = 0; i < tabLabels.length; i++) {
+				String s = tabLabels[i];
+				buttonList.add(new GuiButton(i, j-19-65+1, k+20*i, 85, 20, s)); //Prev Page
 			}
 		}
 	}
@@ -116,35 +123,7 @@ public class GuiGuide extends GuiScreen {
 			}
 			this.initGui();
 			return;
-		}/*
-		if (screen == HandbookRegistry.TOC.getScreen()) {
-			switch(button.id) {
-			case 0:
-				screen = HandbookRegistry.TERMS.getScreen();
-				break;
-			case 1:
-				screen = HandbookRegistry.MISCDESC.getScreen();
-				break;
-			case 2:
-				screen = HandbookRegistry.ENGINEDESC.getScreen();
-				break;
-			case 3:
-				screen = HandbookRegistry.TRANSDESC.getScreen();
-				break;
-			case 4:
-				screen = HandbookRegistry.PRODMACHINEDESC.getScreen();
-				break;
-			case 5:
-				screen = HandbookRegistry.TOOLDESC.getScreen();
-				break;
-			case 6:
-				screen = HandbookRegistry.RESOURCEDESC.getScreen();
-				break;
-			}
-			this.initGui();
-			page = 0;
-			return;
-		}*/
+		}
 		page = button.id;
 		this.initGui();
 	}
@@ -168,6 +147,15 @@ public class GuiGuide extends GuiScreen {
 		else
 			s = "Reika's Mods";
 		fontRenderer.drawString(String.format("%s", s), posX+10, posY+8, 0);
+		if (screen >= 1) {
+			int w = fontRenderer.getStringWidth(s+" ");
+			if (mods.get(screen-1).isLoaded()) {
+				fontRenderer.drawString("(Installed)", posX+10+w, posY+8, 0x007700);
+			}
+			else {
+				fontRenderer.drawString("(Not Installed)", posX+10+w, posY+8, 0x770000);
+			}
+		}
 	}
 
 	@Override
@@ -187,9 +175,14 @@ public class GuiGuide extends GuiScreen {
 		/*
 		fontRenderer.drawString(HandbookRegistry.getEntry(screen, page).getTitle(), posX+xo+6, posY+yo+6, 0x000000);
 		HandbookRegistry h = HandbookRegistry.getEntry(screen, page);
-
-		fontRenderer.drawSplitString(String.format("%s", h.getData()), posX+descX, posY+descY, 242, 0xffffff);
 		 */
+		String s = "This book contains basic information about each of Reika's mods.";
+		if (screen > 0) {
+			String tag = "dragonapi:"+mods.get(screen-1).name().toLowerCase()+":"+tabTags[page];
+			s = data.get(tag);
+		}
+		fontRenderer.drawSplitString(String.format("%s", s), posX+9, posY+88, 241, 0xffffff);
+
 		this.drawGraphics();
 
 		super.drawScreen(x, y, f);
@@ -198,10 +191,12 @@ public class GuiGuide extends GuiScreen {
 	}
 
 	static {
+		loadData();
+
 		List<ModList> reika = ModList.getReikasMods();
 		for (int i = 0; i < reika.size(); i++) {
-			if (reika.get(i).isLoaded())
-				mods.add(reika.get(i));
+			//if (reika.get(i).isLoaded())
+			mods.add(reika.get(i));
 		}
 	}
 }

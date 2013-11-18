@@ -31,10 +31,6 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 		ReikaTextureHelper.bindTexture(this.getModClass(), tex);
 	}
 
-	public final void bindDirectTextureByName(String tex) {
-		ReikaTextureHelper.bindDirectTexture(this.getModClass(), tex);
-	}
-
 	public final void bindImageByName(String img) {
 		ReikaTextureHelper.bindTexture(this.getModClass(), this.getTextureFolder()+img);
 	}

@@ -12,23 +12,33 @@ package Reika.DragonAPI.IO;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.AbstractResourcePack;
+import net.minecraft.client.resources.ResourcePack;
+import net.minecraft.util.ResourceLocation;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-public final class ReikaPNGLoader {
+@SideOnly(Side.CLIENT)
+public final class ReikaImageLoader {
 
-	private ReikaPNGLoader() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
+	private ReikaImageLoader() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
-	public static int textureMap;
-	public static BufferedImage missingtex = new BufferedImage(64, 64, 2);
+	public static final BufferedImage missingtex = new BufferedImage(64, 64, 2);
+	private static final TextureManager eng = Minecraft.getMinecraft().renderEngine;
 
-	/** Returns a BufferedImage read off the provided filepath, or, failing that, a backup hard-coded path.
-	 * Args: Root class, filepath, Backup Direct FilePath (include C:/ or other letter drive) */
-	public static BufferedImage readTextureImage(Class root, String name)
+	/** Returns a BufferedImage read off the provided filepath.
+	 * Args: Root class, filepath */
+	public static BufferedImage readImage(Class root, String name)
 	{
 		ReikaJavaLibrary.pConsole("Pipelining texture from "+root.getCanonicalName()+" to "+name);
 		InputStream inputfile = root.getResourceAsStream(name);
@@ -46,6 +56,40 @@ public final class ReikaPNGLoader {
 			return missingtex;
 		}
 	}
+
+	public static BufferedImage getImageFromResourcePack(String path, ResourcePack res) {
+		ReikaJavaLibrary.pConsole("Loading image at "+path+" from resourcepack "+res.getPackName());
+		ResourceLocation loc = new ResourceLocation(path);
+		AbstractResourcePack pack = (AbstractResourcePack)res;
+		InputStream in = ReikaTextureHelper.getStreamFromTexturePack(path, pack);
+		if (in == null) {
+			ReikaJavaLibrary.pConsole("Texture pack image at "+path+" not found in "+res.getPackName()+".");
+			return missingtex;
+		}
+		try {
+			return ImageIO.read(in);
+		}
+		catch (IOException e) {
+			ReikaJavaLibrary.pConsole("Texture pack image at "+path+" not found in "+res.getPackName()+".");
+			e.printStackTrace();
+			return missingtex;
+		}
+	}
+
+	/** Reads a hard-coded image file. */
+	public static BufferedImage readHardPathImage(String path) {
+		try {
+			ReikaJavaLibrary.pConsole("Loading image at \n"+path);
+			InputStream in = new FileInputStream(path);
+			return ImageIO.read(in);
+		}
+		catch (IOException e) {
+			ReikaJavaLibrary.pConsole("Image filepath at "+path+" not found.");
+			e.printStackTrace();
+			return missingtex;
+		}
+	}
+
 	/*
 	public static BufferedImage readTexturePackImage(ITexturePack ip, String name) throws IOException
 	{

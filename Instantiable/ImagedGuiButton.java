@@ -137,7 +137,7 @@ public final class ImagedGuiButton extends GuiButton {
                 var7 = 16777120;
             }*/
 			if (displayString != null && !hasToolTip) {
-				ReikaTextureHelper.bindPackTexture("/font/glyph_AA.png");
+				ReikaTextureHelper.bindFontTexture();
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
 				if (shadow)
 					this.drawCenteredString(var4, displayString, xPosition + width / 2, yPosition + (height - 8) / 2, color);
@@ -153,7 +153,7 @@ public final class ImagedGuiButton extends GuiButton {
 
 	private void drawToolTip(Minecraft mc, int mx, int my) {
 		ReikaGuiAPI.instance.drawTooltip(mc.fontRenderer, displayString);
-		ReikaTextureHelper.bindPackTexture("/font/glyph_AA.png");
+		ReikaTextureHelper.bindFontTexture();
 	}
 
 	/**

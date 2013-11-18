@@ -271,7 +271,7 @@ public enum ModOreList {
 	}
 
 	public boolean isRare() {
-		return this == ModOreList.PLATINUM || this == ModOreList.NETHERPLATINUM || this == ModOreList.IRIDIUM || this == ModOreList.SUNSTONE;
+		return this == ModOreList.PLATINUM || this == ModOreList.NETHERPLATINUM || this == ModOreList.IRIDIUM || this == ModOreList.MOONSTONE;
 	}
 
 	public boolean isArsMagica() {

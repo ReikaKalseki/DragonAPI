@@ -74,6 +74,7 @@ public class BCPipeHandler extends ModHandlerBase {
 		"pipePowerStone",
 		"pipePowerQuartz",
 		"pipePowerGold",
+		"pipePowerIron",
 		"pipePowerDiamond",
 	};
 

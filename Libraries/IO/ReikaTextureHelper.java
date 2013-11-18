@@ -10,13 +10,21 @@
 package Reika.DragonAPI.Libraries.IO;
 
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.resources.AbstractResourcePack;
+import net.minecraft.client.resources.ResourcePack;
+import net.minecraft.client.resources.ResourcePackFileNotFoundException;
+import net.minecraft.client.resources.ResourcePackRepositoryEntry;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 
@@ -24,9 +32,10 @@ import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.IO.ReikaPNGLoader;
+import Reika.DragonAPI.IO.ReikaImageLoader;
 import Reika.DragonAPI.IO.ReikaTextureBinder;
 import Reika.DragonAPI.Instantiable.ForcedResource;
+import Reika.DragonAPI.Instantiable.PluralMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -34,7 +43,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ReikaTextureHelper {
 
-	private static final HashMap<String, Integer> textures = new HashMap();
+	/** Keys: Resource Pack, Path */
+	private static final PluralMap textures = new PluralMap(2);
 	private static final HashMap<String, ResourceLocation> maps = new HashMap();
 
 	public static final ReikaTextureBinder binder = new ReikaTextureBinder();
@@ -45,62 +55,60 @@ public class ReikaTextureHelper {
 		if (root == null) {
 			throw new MisuseException("You cannot fetch a render texture with reference to a null class!");
 		}
-		if (tex.startsWith("/Reika/")) {
-			StringBuilder sb = new StringBuilder();
-			String[] path = tex.split("/");
-			for (int i = 2; i < path.length; i++) {
-				sb.append("/");
-				sb.append(path[i]);
-			}
+		String parent = root.getPackage().getName().replaceAll("\\.", "/")+"/";
+		ResourcePack res = getCurrentResourcePack();
+		if (res.equals(getDefaultResourcePack()))
+			bindClassReferencedTexture(root, tex);
+		else {
+			if (tex.startsWith("/"))
+				tex = tex.substring(1);
+			String respath = tex.startsWith(parent) ? tex : parent+tex;
+			bindPackTexture(respath, res);
 		}
-		bindDirectTexture(root, tex);
 	}
 
 	/** To disallow resource packs to change it */
 	public static void bindFinalTexture(Class root, String tex) {
-		bindDirectTexture(root, tex);
+		bindClassReferencedTexture(root, tex);
 	}
 
-	public static void bindDirectTexture(Class root, String tex) {
-		Integer gl = textures.get(tex);
+	private static void bindClassReferencedTexture(Class root, String tex) {
+		ResourcePack def = getDefaultResourcePack();
+		Integer gl = (Integer) textures.get(def, tex);
 		if (gl == null) {
-			BufferedImage img = ReikaPNGLoader.readTextureImage(root, tex);
+			BufferedImage img = ReikaImageLoader.readImage(root, tex);
 			gl = new Integer(binder.allocateAndSetupTexture(img));
-			textures.put(tex, gl);
+			textures.put(gl, def, tex);
 		}
 		if (gl != null)
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
-	public static void bindPackTexture(String tex) {
-		if (tex.equals("/terrain.png")) {
-			bindTerrainTexture();
-			return;
+	public static void bindRawTexture(String tex) {
+		ResourcePack def = getDefaultResourcePack();
+		Integer gl = (Integer) textures.get(def, tex);
+		if (gl == null) {
+			BufferedImage img = ReikaImageLoader.readHardPathImage(tex);
+			gl = new Integer(binder.allocateAndSetupTexture(img));
+			textures.put(gl, def, tex);
 		}
-		else if (tex.equals("/gui/items.png")) {
-			bindItemTexture();
-			return;
-		}
-		else if (tex.equals("/font/glyph_AA.png")) {
-			bindFontTexture();
-			return;
-		}
-		else {
-			bindTexture(tex);
-		}
+		if (gl != null)
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
-	private static void bindTexture(String tex) {
-		ResourceLocation loc = maps.get(tex);
-		if (loc == null) {
-			loc = new ResourceLocation(tex);
-			maps.put(tex, loc);
+	public static void bindPackTexture(String tex, ResourcePack res) {
+		Integer gl = (Integer) textures.get(res, tex);
+		if (gl == null) {
+			BufferedImage img = ReikaImageLoader.getImageFromResourcePack(tex, res);
+			gl = new Integer(binder.allocateAndSetupTexture(img));
+			textures.put(gl, res, tex);
 		}
-		Minecraft.getMinecraft().renderEngine.bindTexture(loc);
+		if (gl != null)
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
 	public static int getGLID(String texture) {
-		Integer gl = textures.get(texture);
+		Integer gl = (Integer)textures.get(texture);
 		if (gl == null) {
 			return -1;
 		}
@@ -158,6 +166,69 @@ public class ReikaTextureHelper {
 			e.printStackTrace();
 			throw new RuntimeException("Could not load the Armor Textures!");
 		}
+	}
+
+	/** Returns the filename, including .zip if applicable, unless it is default, whereupon it returns "Default". */
+	public static String getCurrentResourcePackFileName() {
+		//return Minecraft.getMinecraft().gameSettings.skin;
+		return Minecraft.getMinecraft().getResourcePackRepository().getResourcePackName();
+	}
+
+	/** Returns the display name */
+	public static String getCurrentResourcePackName() {
+		return getCurrentResourcePack().getPackName().replaceAll(".zip", "");
+	}
+
+	/** Requires an iteration over all loaded packs! Do NOT call this every tick or render tick! */
+	public static ResourcePack getCurrentResourcePack() {
+		List li = Minecraft.getMinecraft().getResourcePackRepository().getRepositoryEntries();
+		String skin = Minecraft.getMinecraft().gameSettings.skin;
+		for (int i = 0; i < li.size(); i++) {
+			ResourcePackRepositoryEntry e = (ResourcePackRepositoryEntry)li.get(i);
+			if (e.getResourcePackName().equals(skin)) {
+				return e.getResourcePack();
+			}
+		}
+		return getDefaultResourcePack();
+	}
+
+	public static ResourcePack getDefaultResourcePack() {
+		return Minecraft.getMinecraft().getResourcePackRepository().rprDefaultResourcePack;
+	}
+
+	public static InputStream getStreamFromTexturePack(String path, AbstractResourcePack pack) {
+		Class c = pack.getClass();
+		String sg = DragonAPICore.isDeObfEnvironment() ? "getInputStreamByName" : "func_110591_a";
+		try {
+			Method m = c.getDeclaredMethod(sg, String.class);
+			m.setAccessible(true);
+			Object o = m.invoke(pack, path);
+			if (o == null)
+				return null;
+			InputStream in = (InputStream)o;
+			m.setAccessible(false);
+			return in;
+		}
+		catch (NoSuchMethodException e) {
+			e.printStackTrace();
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		catch (SecurityException e) {
+			e.printStackTrace();
+		}
+		catch (InvocationTargetException e) {
+			if (e.getCause() instanceof ResourcePackFileNotFoundException) {
+
+			}
+			else
+				e.printStackTrace();
+		}
+		return null;
 	}
 
 }

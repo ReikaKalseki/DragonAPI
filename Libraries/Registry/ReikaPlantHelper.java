@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public enum ReikaPlantHelper {
@@ -67,8 +68,8 @@ public enum ReikaPlantHelper {
 		case SUGARCANE:
 			if (idbelow != Block.sand.blockID && !ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow))
 				return false;
-			int water = ReikaWorldHelper.checkForAdjMaterial(world, x, y-1, z, Material.water);
-			return water != -1 && water != 0 && water != 1;
+			ForgeDirection water = ReikaWorldHelper.checkForAdjMaterial(world, x, y-1, z, Material.water);
+			return water != null && water.offsetY != 0;
 		case BUSH:
 			return idbelow == Block.sand.blockID;
 		case CROP:

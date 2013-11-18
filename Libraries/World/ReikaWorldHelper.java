@@ -266,84 +266,64 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns the direction in which a block of the specified ID was found.
-	 * Returns -1 if not found. Args: World, x,y,z, id to search.
-	 * Convention: 0 up 1 down 2 x+ 3 x- 4 z+ 5 z- */
-	public static int checkForAdjBlock(World world, int x, int y, int z, int id) {
-		if (world.getBlockId(x,y+1,z) == id)
-			return 0;
-		if (world.getBlockId(x,y-1,z) == id)
-			return 1;
-		if (world.getBlockId(x+1,y,z) == id)
-			return 2;
-		if (world.getBlockId(x-1,y,z) == id)
-			return 3;
-		if (world.getBlockId(x,y,z+1) == id)
-			return 4;
-		if (world.getBlockId(x,y,z-1) == id)
-			return 5;
-		return -1;
+	 * Returns -1 if not found. Args: World, x,y,z, id to search. */
+	public static ForgeDirection checkForAdjBlock(World world, int x, int y, int z, int id) {
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
+				int id2 = world.getBlockId(dx, dy, dz);
+				if (id == id2)
+					return dir;
+			}
+		}
+		return null;
 	}
 
 	/** Returns the direction in which a block of the specified material was found.
-	 * Returns -1 if not found. Args: World, x,y,z, material to search.
-	 * Convention: 0 up 1 down 2 x+ 3 x- 4 z+ 5 z- */
-	public static int checkForAdjMaterial(World world, int x, int y, int z, Material mat) {
-		if (world.getBlockMaterial(x,y+1,z) == mat)
-			return 0;
-		if (world.getBlockMaterial(x,y-1,z) == mat)
-			return 1;
-		if (world.getBlockMaterial(x+1,y,z) == mat)
-			return 2;
-		if (world.getBlockMaterial(x-1,y,z) == mat)
-			return 3;
-		if (world.getBlockMaterial(x,y,z+1) == mat)
-			return 4;
-		if (world.getBlockMaterial(x,y,z-1) == mat)
-			return 5;
-		return -1;
+	 * Returns -1 if not found. Args: World, x,y,z, material to search. */
+	public static ForgeDirection checkForAdjMaterial(World world, int x, int y, int z, Material mat) {
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
+				Material mat2 = world.getBlockMaterial(dx, dy, dz);
+				if (mat == mat2)
+					return dir;
+			}
+		}
+		return null;
 	}
 
 	/** Returns the direction in which a source block of the specified liquid was found.
-	 * Returns -1 if not found. Args: World, x,y,z, material (water/lava) to search.
-	 * Convention: 0 up 1 down 2 x+ 3 x- 4 z+ 5 z- */
-	public static int checkForAdjSourceBlock(World world, int x, int y, int z, Material mat) {
-		if (world.getBlockMaterial(x, y+1, z) == mat && world.getBlockMetadata(x, y+1, z) == 0)
-			return 0;
-		if (world.getBlockMaterial(x, y-1, z) == mat && world.getBlockMetadata(x, y-1, z) == 0)
-			return 1;
-		if (world.getBlockMaterial(x+1, y, z) == mat && world.getBlockMetadata(x+1, y, z) == 0)
-			return 2;
-		if (world.getBlockMaterial(x-1, y, z) == mat && world.getBlockMetadata(x-1, y, z) == 0)
-			return 3;
-		if (world.getBlockMaterial(x, y, z+1) == mat && world.getBlockMetadata(x, y, z+1) == 0)
-			return 4;
-		if (world.getBlockMaterial(x, y, z-1) == mat && world.getBlockMetadata(x, y, z-1) == 0)
-			return 5;
-		return -1;
+	 * Returns -1 if not found. Args: World, x,y,z, material (water/lava) to search. */
+	public static ForgeDirection checkForAdjSourceBlock(World world, int x, int y, int z, Material mat) {
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
+				Material mat2 = world.getBlockMaterial(dx, dy, dz);
+				if (mat == mat2 && world.getBlockMetadata(dx, dy, dz) == 0)
+					return dir;
+			}
+		}
+		return null;
 	}
 
 	/** Edits a block adjacent to the passed arguments, on the specified side.
 	 * Args: World, x, y, z, side, id to change to, metadata to change to */
-	public static void changeAdjBlock(World world, int x, int y, int z, int side, int id, int meta) {
-		switch(side) {
-		case 0:
-			world.setBlock(x, y+1, z, id, meta, 3);
-			break;
-		case 1:
-			world.setBlock(x, y-1, z, id, meta, 3);
-			break;
-		case 2:
-			world.setBlock(x+1, y, z, id, meta, 3);
-			break;
-		case 3:
-			world.setBlock(x-1, y, z, id, meta, 3);
-			break;
-		case 4:
-			world.setBlock(x, y, z+1, id, meta, 3);
-			break;
-		case 5:
-			world.setBlock(x, y, z-1, id, meta, 3);
-			break;
+	public static void changeAdjBlock(World world, int x, int y, int z, ForgeDirection side, int id, int meta) {
+		int dx = x+side.offsetX;
+		int dy = y+side.offsetY;
+		int dz = z+side.offsetZ;
+		if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
+			world.setBlock(dx, dy, dz, id, meta, 3);
 		}
 	}
 
@@ -399,8 +379,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static void temperatureEnvironment(World world, int x, int y, int z, int temperature) {
 		if (temperature < 0) {
 			for (int i = 0; i < 6; i++) {
-				int side = (ReikaWorldHelper.checkForAdjMaterial(world, x, y, z, Material.water));
-				if (side != -1)
+				ForgeDirection side = (ReikaWorldHelper.checkForAdjMaterial(world, x, y, z, Material.water));
+				if (side != null)
 					ReikaWorldHelper.changeAdjBlock(world, x, y, z, side, Block.ice.blockID, 0);
 			}
 		}

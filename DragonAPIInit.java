@@ -135,7 +135,7 @@ public class DragonAPIInit extends DragonAPIMod {
 				NBTTagCompound disp = is.stackTagCompound.getCompoundTag("display");
 				if (disp != null) {
 					NBTTagList list = disp.getTagList("Lore");
-					if (list != null) {
+					if (list != null && list.tagCount() > 0) {
 						String sg = ((NBTTagString)list.tagAt(0)).data;
 						if (sg != null && sg.equals("Reika's Mods Guide")) {
 							ep.openGui(instance, 0, ep.worldObj, 0, 0, 0);
