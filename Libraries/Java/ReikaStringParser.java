@@ -12,6 +12,9 @@ package Reika.DragonAPI.Libraries.Java;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 import Reika.DragonAPI.DragonAPICore;
 
@@ -221,5 +224,119 @@ public class ReikaStringParser extends DragonAPICore {
 	public static String subtractFrom(String src, String p) {
 		int len = p.length();
 		return src.substring(len);
+	}
+
+	public static List<String> splitStringByLength(String str, int len) {
+		return ReikaStringWrapper.listFormattedStringToWidth(str, len);
+		/*
+		List<String> li = new ArrayList();
+		if (str == null || str.isEmpty())
+			return li;
+		if (str.length() <= len) {
+			li.add(str);
+			return li;
+		}
+		//char[] data = str.toCharArray();
+		StringTokenizer tok = new StringTokenizer(str, "\\. | , | | -", true);
+
+		String[] parts = new String[tok.countTokens()];
+
+		for (int i = 0; i < parts.length; i++) {
+			parts[i] = tok.nextToken();
+		}
+
+		//String[] parts = str.split("\\. | , | | -");
+		//ReikaJavaLibrary.pConsole(Arrays.toString(parts));
+
+		int space = len;
+		StringBuilder sb = new StringBuilder();
+
+		for (int i = 0; i < parts.length; i++) {
+			String s = parts[i];
+			String ms = s.replaceAll("\u00a7", "");//.replaceAll(" ", "");
+			int reduct = ms.length()-(s.length()-ms.length());
+			//ReikaJavaLibrary.pConsole(s+" : "+(len-space)+"+"+ms.length()+"/"+len);
+			if (s.length() <= space) {
+				space -= reduct;
+				sb.append(s);
+			}
+			else {
+				String line = sb.toString();
+				if (line.length() > len) {
+					String s1 = line.substring(0, len);
+					li.add(s1);
+					String s2 = line.substring(len);
+					li.add(s2);
+				}
+				else
+					li.add(line);
+				sb.delete(0, sb.length());
+				if (!" ".equals(s)) {
+					sb.append(s);
+					space = len-reduct;
+				}
+				else
+					space = len;
+			}
+		}
+		li.add(sb.toString());
+
+		/*
+		//ReikaJavaLibrary.pConsole(Arrays.toString(data));
+		StringBuilder line = new StringBuilder();
+		StringBuilder word = new StringBuilder();
+		String formatter = "";
+		for (int i = 0; i < data.length; i++) {
+			char c = data[i];
+			if (c == 0) {
+
+			}
+			if ("\u00a7".charAt(0) == c) {
+				formatter = String.valueOf(c)+String.valueOf(data[i+1]);
+				if ("\u00a7".charAt(0) == data[i+1])
+					data[i+1] = 0;
+			}
+			if (c == ' ') {
+				if (data[i+1] == ' ')
+					data[i+1 ] = 0;
+			}
+			if (isSplittingChar(c)) {
+				word.append(c);
+				int a = Character.isWhitespace(c) ? 1 : 0;
+				if ((line.length() + word.length()-a-formatter.length()) > len) {
+					li.add(line.toString());
+					line.delete(0, line.length());
+				}
+				line.append(formatter);
+				line.append(word);
+				word.delete(0, word.length());
+			}
+			else {
+				// add it to the word and move on
+				word.append(c);
+			}
+		}
+
+		if (word.length() > 0) {
+			if ((line.length() + word.length()) > len) {
+				li.add(line.toString());
+				line.delete(0, line.length());
+			}
+
+			line.append(word);
+		}
+
+		// handle extra line
+		if (line.length() > 0) {
+			li.add(line.toString());
+		}*//*
+
+		return li;*/
+	}
+
+	public static boolean isSplittingChar(char c) {
+		if (c == '.' || c == ',' || c == '-' || c == ' ')
+			return true;
+		return false;
 	}
 }
