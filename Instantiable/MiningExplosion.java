@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +21,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.MathHelper;
@@ -27,14 +29,19 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class MiningExplosion extends Explosion {
 
 	private World world;
+	private final boolean dropCheap;
 
-	public MiningExplosion(World par1World, Entity par2Entity, double par3, double par5, double par7, float par9) {
+	private static final ArrayList<ItemStack> cheapBlocks = new ArrayList();
+
+	public MiningExplosion(World par1World, Entity par2Entity, double par3, double par5, double par7, float par9, boolean drop_cheap) {
 		super(par1World, par2Entity, par3, par5, par7, par9);
 		world = par1World;
+		dropCheap = drop_cheap;
 	}
 
 	@Override
@@ -166,20 +173,17 @@ public class MiningExplosion extends Explosion {
 		int k;
 		int l;
 
-		if (isSmoking)
-		{
+		if (isSmoking) {
 			iterator = affectedBlockPositions.iterator();
 
-			while (iterator.hasNext())
-			{
+			while (iterator.hasNext()) {
 				chunkposition = (ChunkPosition)iterator.next();
 				i = chunkposition.x;
 				j = chunkposition.y;
 				k = chunkposition.z;
 				l = world.getBlockId(i, j, k);
 
-				if (par1)
-				{
+				if (par1) {
 					double d0 = i + world.rand.nextFloat();
 					double d1 = j + world.rand.nextFloat();
 					double d2 = k + world.rand.nextFloat();
@@ -199,13 +203,12 @@ public class MiningExplosion extends Explosion {
 					world.spawnParticle("smoke", d0, d1, d2, d3, d4, d5);
 				}
 
-				if (l > 0)
-				{
+				if (l > 0) {
 					Block block = Block.blocksList[l];
 
-					if (l == Block.tnt.blockID || block.canDropFromExplosion(this))
-					{
-						block.dropBlockAsItem(world, i, j, k, world.getBlockMetadata(i, j, k), 0);
+					int meta = world.getBlockMetadata(i, j, k);
+					if ((l == Block.tnt.blockID || block.canDropFromExplosion(this)) && this.shouldDrop(block, meta)) {
+						block.dropBlockAsItem(world, i, j, k, meta, 0);
 					}
 
 					//block.onBlockExploded(world, i, j, k, this);
@@ -236,8 +239,30 @@ public class MiningExplosion extends Explosion {
 		}
 	}
 
+	private boolean shouldDrop(Block block, int meta) {
+		return dropCheap || !ReikaItemHelper.listContainsItemStack(cheapBlocks, new ItemStack(block.blockID, 1, meta));
+	}
+
 	public boolean canDamageEntity(Entity e) {
 		return !(e instanceof EntityItem || e instanceof EntityXPOrb) && !(e instanceof EntityPlayer);
+	}
+
+	private static void addCheapBlock(Block b) {
+		cheapBlocks.add(new ItemStack(b));
+	}
+
+	private static void addCheapBlock(Block b, int meta) {
+		cheapBlocks.add(new ItemStack(b.blockID, 1, meta));
+	}
+
+	static {
+		addCheapBlock(Block.grass);
+		addCheapBlock(Block.dirt);
+		addCheapBlock(Block.stone);
+		addCheapBlock(Block.cobblestone);
+		addCheapBlock(Block.sand);
+		addCheapBlock(Block.netherrack);
+		addCheapBlock(Block.gravel);
 	}
 
 }

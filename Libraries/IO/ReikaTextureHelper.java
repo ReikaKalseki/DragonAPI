@@ -57,7 +57,9 @@ public class ReikaTextureHelper {
 		if (root == null) {
 			throw new MisuseException("You cannot fetch a render texture with reference to a null class!");
 		}
-		String parent = root.getPackage().getName().replaceAll("\\.", "/")+"/";
+		//String parent = root.getPackage().getName().replaceAll("\\.", "/")+"/";
+		String s = root.getCanonicalName();
+		String parent = s.substring(0, s.length()-root.getSimpleName().length()-1).replaceAll("\\.", "/")+"/";
 		ResourcePack res = getCurrentResourcePack();
 		if (res.equals(getDefaultResourcePack()))
 			bindClassReferencedTexture(root, tex);
