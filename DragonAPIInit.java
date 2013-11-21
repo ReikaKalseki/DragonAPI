@@ -31,6 +31,7 @@ import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.RetroGenController;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Extras.ChatWatcher;
+import Reika.DragonAPI.Extras.CustomSoundHandler;
 import Reika.DragonAPI.Extras.GuideCommand;
 import Reika.DragonAPI.Instantiable.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
@@ -87,6 +88,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		logger = new ModLogger(instance, true, false, false);
 		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		MinecraftForge.EVENT_BUS.register(this);
+		MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
 
