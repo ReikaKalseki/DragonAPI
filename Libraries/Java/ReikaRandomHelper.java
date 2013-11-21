@@ -32,4 +32,16 @@ public class ReikaRandomHelper extends DragonAPICore {
 		return base+add;
 	}
 
+	/** Returns true with a percentage probability. Args: chance (out of 1 or a %) */
+	public static boolean doWithChance(double num) {
+		if (num > 1)
+			num /= 100D;
+		if (num >= 1)
+			return true;
+		if (num <= 0)
+			return false;
+
+		return rand.nextDouble() < num;
+	}
+
 }

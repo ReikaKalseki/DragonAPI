@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.MathSci;
 
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+
 
 
 public class ReikaNuclearHelper {
@@ -36,7 +38,7 @@ public class ReikaNuclearHelper {
 	}
 
 	public static boolean shouldDecay(Isotopes iso) {
-		return ReikaMathLibrary.doWithChance(getDecayChanceFromHalflife(iso.getMCHalfLife()));
+		return ReikaRandomHelper.doWithChance(getDecayChanceFromHalflife(iso.getMCHalfLife()));
 	}
 
 }

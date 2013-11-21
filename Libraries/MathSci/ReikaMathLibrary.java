@@ -231,18 +231,6 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return (logbase(num, base) == (int)logbase(num, base));
 	}
 
-	/** Returns true with a percentage probability. Args: chance (out of 1 or a %) */
-	public static boolean doWithChance(double num) {
-		if (num > 1)
-			num /= 100D;
-		if (num >= 1)
-			return true;
-		if (num <= 0)
-			return false;
-
-		return rand.nextDouble() < num;
-	}
-
 	/** Returns a multiplier (<1) based on how close the value is to the peak value of a
 	 * power distribution. (y = ax^n). Args: Peak x, peak y, required x, falloff factor, power */
 	public static double powerFalloff(double peakx, double peaky, double pos, double factor, double power) {
