@@ -14,7 +14,6 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -30,13 +29,13 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaImageLoader;
 import Reika.DragonAPI.IO.ReikaTextureBinder;
 import Reika.DragonAPI.Instantiable.ForcedResource;
 import Reika.DragonAPI.Instantiable.PluralMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -45,9 +44,7 @@ public class ReikaTextureHelper {
 
 	/** Keys: Resource Pack, Path */
 	private static final PluralMap textures = new PluralMap(2);
-	private static final HashMap<String, ResourceLocation> maps = new HashMap();
-
-	private static Integer missingTexInt;
+	private static final PluralMap packTextures = new PluralMap(2);
 
 	public static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
@@ -57,6 +54,7 @@ public class ReikaTextureHelper {
 		if (root == null) {
 			throw new MisuseException("You cannot fetch a render texture with reference to a null class!");
 		}
+		String oldtex = tex;
 		//String parent = root.getPackage().getName().replaceAll("\\.", "/")+"/";
 		String s = root.getCanonicalName();
 		String parent = s.substring(0, s.length()-root.getSimpleName().length()-1).replaceAll("\\.", "/")+"/";
@@ -67,9 +65,17 @@ public class ReikaTextureHelper {
 			if (tex.startsWith("/"))
 				tex = tex.substring(1);
 			String respath = tex.startsWith(parent) ? tex : parent+tex;
-			boolean hasTex = bindPackTexture(respath, res);
-			if (!hasTex)
-				bindClassReferencedTexture(root, tex);
+
+			Boolean flag = (Boolean)packTextures.get(res, tex);
+			if (flag == null || flag.booleanValue()) {
+				boolean hasTex = bindPackTexture(respath, res);
+				packTextures.put(hasTex, res, tex);
+				if (!hasTex)
+					bindClassReferencedTexture(root, oldtex);
+			}
+			else {
+				bindClassReferencedTexture(root, oldtex);
+			}
 		}
 	}
 
@@ -106,16 +112,16 @@ public class ReikaTextureHelper {
 		Integer gl = (Integer) textures.get(res, tex);
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.getImageFromResourcePack(tex, res);
-			gl = new Integer(binder.allocateAndSetupTexture(img));
-			if (ReikaImageLoader.missingtex.equals(img) && missingTexInt == null) {
-				missingTexInt = new Integer(gl.intValue());
+			if (img == null) {
+				return false;
 			}
+			gl = new Integer(binder.allocateAndSetupTexture(img));
 			textures.put(gl, res, tex);
 		}
 		if (gl != null) {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 		}
-		return gl != null && gl.intValue() != missingTexInt;
+		return gl != null;
 	}
 
 	public static void bindTerrainTexture() {
@@ -149,23 +155,11 @@ public class ReikaTextureHelper {
 	private static Map getArmorTextureMappings() {
 		try {
 			Class c = RenderBiped.class;
-			Field f = c.getDeclaredField(DragonAPICore.isDeObfEnvironment() ? "field_110859_k" : "field_110859_k");
+			Field f = ReikaObfuscationHelper.getField("field_110859_k");
 			f.setAccessible(true);
 			return (Map)f.get(null);
 		}
-		catch (NoSuchFieldException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not load the Armor Textures!");
-		}
 		catch (IllegalAccessException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not load the Armor Textures!");
-		}
-		catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not load the Armor Textures!");
-		}
-		catch (SecurityException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Could not load the Armor Textures!");
 		}
@@ -200,10 +194,8 @@ public class ReikaTextureHelper {
 	}
 
 	public static InputStream getStreamFromTexturePack(String path, AbstractResourcePack pack) {
-		Class c = pack.getClass();
-		String sg = DragonAPICore.isDeObfEnvironment() ? "getInputStreamByName" : "func_110591_a";
 		try {
-			Method m = c.getDeclaredMethod(sg, String.class);
+			Method m = ReikaObfuscationHelper.getMethod("getInputStreamByName");
 			m.setAccessible(true);
 			Object o = m.invoke(pack, path);
 			if (o == null)
@@ -212,16 +204,7 @@ public class ReikaTextureHelper {
 			m.setAccessible(false);
 			return in;
 		}
-		catch (NoSuchMethodException e) {
-			e.printStackTrace();
-		}
-		catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		}
 		catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		catch (SecurityException e) {
 			e.printStackTrace();
 		}
 		catch (InvocationTargetException e) {

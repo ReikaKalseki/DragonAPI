@@ -70,10 +70,26 @@ public class ReikaModel extends ModifiedPlayerModel {
 		back.render(f5);
 		back2.render(f5);
 		back3.render(f5);
-		wingL.render(f5);
-		wingR.render(f5);
+		/*
+		if (ep.isSneaking()) {
+			GL11.glRotated(this.getWingAngle()*180/3.14, 0, 1, 0);
+			GL11.glRotated(-20, 0, 0, 1);
+		}*/
+		wingR.render(f5);/*
+		if (ep.isSneaking()) {
+			GL11.glRotated(20, 0, 0, 1);
+			GL11.glRotated(-2*this.getWingAngle()*180/3.14, 0, 1, 0);
+			GL11.glRotated(20, 0, 0, 1);
+		}*/
+		wingL.render(f5);/*
+		if (ep.isSneaking()) {
+			GL11.glRotated(-20, 0, 0, 1);
+			GL11.glRotated(this.getWingAngle()*180/3.14, 0, 1, 0);
+		}*/
 
 		double d = 0.25;
+		if (ep.isSneaking())
+			d = 0.3125;
 		GL11.glTranslated(0, d, 0);
 		hornL.render(f5);
 		hornR.render(f5);

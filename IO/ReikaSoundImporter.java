@@ -17,16 +17,13 @@ import java.util.Map;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPool;
 import net.minecraft.client.audio.SoundPoolEntry;
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.ModLogger;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
 import com.google.common.collect.Lists;
 
 public class ReikaSoundImporter {
-
-	private static final String DEOBF_MAP = "nameToSoundPoolEntriesMapping";
-	private static final String OBF_MAP = "field_77461_d";
 
 	public static void addSound(ModLogger log, String name, URL url, SoundManager manager) {
 		SoundPool sounds = manager.soundPoolSounds;
@@ -58,30 +55,14 @@ public class ReikaSoundImporter {
 	private static Map getMappings(SoundPool sounds) {
 		try {
 			Class c = sounds.getClass();
-			Field f = c.getDeclaredField(getMapFieldName());
+			Field f = ReikaObfuscationHelper.getField("nameToSoundPoolEntriesMapping");
 			f.setAccessible(true);
 			return (Map)f.get(sounds);
-		}
-		catch (NoSuchFieldException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not load the Sound Pool!");
 		}
 		catch (IllegalAccessException e) {
 			e.printStackTrace();
 			throw new RuntimeException("Could not load the Sound Pool!");
 		}
-		catch (IllegalArgumentException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not load the Sound Pool!");
-		}
-		catch (SecurityException e) {
-			e.printStackTrace();
-			throw new RuntimeException("Could not load the Sound Pool!");
-		}
-	}
-
-	private static String getMapFieldName() {
-		return DragonAPICore.isDeObfEnvironment() ? DEOBF_MAP : OBF_MAP;
 	}
 
 }

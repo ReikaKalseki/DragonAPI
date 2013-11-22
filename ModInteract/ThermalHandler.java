@@ -27,15 +27,24 @@ public class ThermalHandler extends ModHandlerBase {
 	}
 
 	public final int liquiductID;
+	public final int enderID;
 
 	private ThermalHandler() {
 		super();
 		int idpipe = -1;
+		int idender = -1;
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
 				Field pipe = blocks.getField("blockConduit");
 				idpipe = ((Block)pipe.get(null)).blockID;
+				Class fluids = Class.forName("thermalexpansion.fluid.TEFluids");
+				Field ender = fluids.getField("blockEnder");
+				idender = ((Block)ender.get(null)).blockID;
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -63,6 +72,7 @@ public class ThermalHandler extends ModHandlerBase {
 		}
 
 		liquiductID = idpipe;
+		enderID = idender;
 	}
 
 	public static ThermalHandler getInstance() {
@@ -71,7 +81,7 @@ public class ThermalHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return liquiductID != -1;
+		return liquiductID != -1 && enderID != -1;
 	}
 
 	@Override

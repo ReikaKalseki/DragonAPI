@@ -87,6 +87,8 @@ public class SamakiModel extends ModifiedPlayerModel {
 		float f5 = 0.0625F;
 
 		double d = 0.1825;
+		if (ep.isSneaking())
+			d = 0.25;
 		GL11.glTranslated(0, d, 0);
 		GL11.glRotated(yawHead, 0, 1, 0);
 		GL11.glRotated(pitch, 1, 0, 0);

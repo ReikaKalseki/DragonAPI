@@ -11,10 +11,10 @@ package Reika.DragonAPI.Base;
 
 import java.net.URL;
 
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Instantiable.ModLogger;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -27,7 +27,7 @@ public abstract class DragonAPIMod {
 	//public abstract void invalidFingerprint(final FMLFingerprintViolationEvent event);
 
 	protected DragonAPIMod() {
-		isDeObf = DragonAPICore.isDeObfEnvironment();
+		isDeObf = ReikaObfuscationHelper.isDeObfEnvironment();
 		if (isDeObf) {
 			ReikaJavaLibrary.pConsole(this.getDisplayName()+" is running in a deobfuscated environment!");
 		}

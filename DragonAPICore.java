@@ -9,16 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
-import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemHoe;
-import net.minecraft.item.ItemStack;
 import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.world.World;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
@@ -30,8 +25,6 @@ public class DragonAPICore {
 	protected DragonAPICore() {throw new MisuseException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	protected static final Random rand = new Random();
-
-	private static final boolean deobf = testDeobf();
 
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
 
@@ -66,20 +59,6 @@ public class DragonAPICore {
 	static {
 		if (isReikasComputer())
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading on Reika's computer; Dev features enabled.");
-	}
-
-	public static boolean isDeObfEnvironment() {
-		return deobf;
-	}
-
-	private static boolean testDeobf() {
-		try {
-			Method m = ItemHoe.class.getMethod("onItemUse", ItemStack.class, EntityPlayer.class, World.class, int.class, int.class, int.class, int.class, float.class, float.class, float.class);
-			return true;
-		}
-		catch (NoSuchMethodException e) {
-			return false;
-		}
 	}
 
 	public static boolean isOnActualServer() {

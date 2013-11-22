@@ -133,13 +133,14 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		}
 	}
 
+	/** Gets the value of a private boolean in an instance of obj. Specify the deobfuscated name! */
 	public static boolean getPrivateBoolean(Object obj, String field, ModLogger log) {
 		try {
 			Class c = obj.getClass();
 			Field f = null;
 			while (f == null && c != null) {
 				try {
-					f = c.getDeclaredField(field); //may need to expand this system to find inherited
+					f = c.getDeclaredField(field);
 				}
 				catch (NoSuchFieldException e2) {
 					c = c.getSuperclass();

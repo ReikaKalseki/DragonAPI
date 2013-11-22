@@ -22,12 +22,13 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.XMLInterface;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
 public class GuiGuide extends GuiScreen {
 
 	private static final ArrayList<ModList> mods = new ArrayList();
 	private static final String PARENT = "Resources/";
-	private static final XMLInterface guide = new XMLInterface(DragonAPICore.class, PARENT+"guide.xml", !DragonAPICore.isDeObfEnvironment());
+	private static final XMLInterface guide = new XMLInterface(DragonAPICore.class, PARENT+"guide.xml", !ReikaObfuscationHelper.isDeObfEnvironment());
 	private static HashMap<String, String> data = new HashMap();
 
 	private static final String[] tabLabels = {"Info", "Getting Started", "Useful Notes", "Tips and Tricks"};

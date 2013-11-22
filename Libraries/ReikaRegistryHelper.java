@@ -19,6 +19,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Interfaces.RegistrationList;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
@@ -98,7 +99,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	}
 
 	public static void setupVersionChecking(FMLPreInitializationEvent evt) {
-		if (isDeObfEnvironment())
+		if (ReikaObfuscationHelper.isDeObfEnvironment())
 			return;
 		File f = evt.getSourceFile();
 		String hash = ReikaFileReader.getHash(f);

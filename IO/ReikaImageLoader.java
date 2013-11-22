@@ -33,7 +33,7 @@ public final class ReikaImageLoader {
 
 	private ReikaImageLoader() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
-	public static final BufferedImage missingtex = new BufferedImage(64, 64, 2);
+	private static final BufferedImage missingtex = new BufferedImage(64, 64, 2);
 	private static final TextureManager eng = Minecraft.getMinecraft().renderEngine;
 
 	/** Returns a BufferedImage read off the provided filepath.
@@ -64,7 +64,7 @@ public final class ReikaImageLoader {
 		InputStream in = ReikaTextureHelper.getStreamFromTexturePack(path, pack);
 		if (in == null) {
 			ReikaJavaLibrary.pConsole("Texture pack image at "+path+" not found in "+res.getPackName()+".");
-			return missingtex;
+			return null;
 		}
 		try {
 			return ImageIO.read(in);
@@ -72,7 +72,7 @@ public final class ReikaImageLoader {
 		catch (IOException e) {
 			ReikaJavaLibrary.pConsole("Texture pack image at "+path+" not found in "+res.getPackName()+".");
 			e.printStackTrace();
-			return missingtex;
+			return null;
 		}
 	}
 
