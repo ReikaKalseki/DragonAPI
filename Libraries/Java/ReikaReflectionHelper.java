@@ -17,6 +17,7 @@ import java.util.Arrays;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Exception.InstallationException;
@@ -72,10 +73,11 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 				if (!list.overwritingItem())
 					throw new IDConflictException(mod, id+" item slot already occupied by "+Item.itemsList[256+id].getUnlocalizedName()+" while adding "+list.getBasicName());
 				else
-					mod.getModLogger().log("Overwriting "+Item.itemsList[256+id]+" with "+list.getBasicName());
+					mod.getModLogger().log("Overwriting "+Item.itemsList[256+id].getUnlocalizedName()+" with "+list.getBasicName());
 			}
 			Constructor c = list.getObjectClass().getConstructor(list.getConstructorParamTypes());
 			instance = (Item)(c.newInstance(list.getConstructorParams()));
+			ItemOverwriteTracker.instance.addItem(instance, id+256);
 			return (instance.setUnlocalizedName(list.getUnlocalizedName()));
 		}
 		catch (NoSuchMethodException e) {
@@ -102,11 +104,18 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		}
 	}
 
-	public static Item createBasicItemInstance(Class<? extends Item> cl, int id, String unloc) {
+	public static Item createBasicItemInstance(DragonAPIMod mod, Class<? extends Item> cl, int id, String unloc, boolean overwrite) {
 		Item instance;
+		if (Item.itemsList[256+id] != null) {
+			if (!overwrite)
+				throw new IDConflictException(mod, id+" item slot already occupied by "+Item.itemsList[256+id].getUnlocalizedName()+" while adding "+unloc);
+			else
+				mod.getModLogger().log("Overwriting "+Item.itemsList[256+id].getUnlocalizedName()+" with "+unloc);
+		}
 		try {
 			Constructor c = cl.getConstructor(int.class);
 			instance = (Item)(c.newInstance(id));
+			ItemOverwriteTracker.instance.addItem(instance, id+256);
 			return (instance.setUnlocalizedName(unloc));
 		}
 		catch (NoSuchMethodException e) {

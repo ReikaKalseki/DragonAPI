@@ -122,7 +122,7 @@ public class CompatibilityTracker {
 
 	}
 
-	enum Severity {
+	public enum Severity {
 		NOEFFECT(false, false),
 		GLITCH(true, false),
 		HOSTILITY(true, false),

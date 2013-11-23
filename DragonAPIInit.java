@@ -25,13 +25,14 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
+import Reika.DragonAPI.Auxiliary.ChatWatcher;
 import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
+import Reika.DragonAPI.Auxiliary.CustomSoundHandler;
+import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.RetroGenController;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Extras.ChatWatcher;
-import Reika.DragonAPI.Extras.CustomSoundHandler;
 import Reika.DragonAPI.Extras.GuideCommand;
 import Reika.DragonAPI.Instantiable.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
@@ -117,6 +118,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.alCompat();
 
 		BiomeCollisionTracker.instance.check();
+		ItemOverwriteTracker.instance.check();
 
 		if (DragonAPICore.isOnActualServer())
 			;//this.licenseTest();

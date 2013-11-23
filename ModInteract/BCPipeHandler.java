@@ -89,25 +89,25 @@ public class BCPipeHandler extends ModHandlerBase {
 		super();
 		int idpipe = -1;
 		if (this.hasMod()) {
+			Class transport = this.getMod().getBlockClass();
+			for (int i = 0; i < fluidPipes.length; i++) {
+				String varname = fluidPipes[i];
+				int id = this.getPipeItemID(transport, varname);
+				itemIDs.put(fluidPipes[i], id);
+			}
+			for (int i = 0; i < itemPipes.length; i++) {
+				String varname = itemPipes[i];
+				int id = this.getPipeItemID(transport, varname);
+				itemIDs.put(itemPipes[i], id);
+			}
+			for (int i = 0; i < powerPipes.length; i++) {
+				String varname = powerPipes[i];
+				int id = this.getPipeItemID(transport, varname);
+				itemIDs.put(powerPipes[i], id);
+			}
 			try {
-				Class Transport = this.getMod().getBlockClass();
-				Field pipe = Transport.getField("genericPipeBlock");
+				Field pipe = transport.getField("genericPipeBlock");
 				idpipe = ((Block)pipe.get(null)).blockID;
-				for (int i = 0; i < fluidPipes.length; i++) {
-					Field f = Transport.getField(fluidPipes[i]);
-					int id = ((Item)f.get(null)).itemID;
-					itemIDs.put(fluidPipes[i], id);
-				}
-				for (int i = 0; i < itemPipes.length; i++) {
-					Field f = Transport.getField(itemPipes[i]);
-					int id = ((Item)f.get(null)).itemID;
-					itemIDs.put(itemPipes[i], id);
-				}
-				for (int i = 0; i < powerPipes.length; i++) {
-					Field f = Transport.getField(powerPipes[i]);
-					int id = ((Item)f.get(null)).itemID;
-					itemIDs.put(powerPipes[i], id);
-				}
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -135,6 +135,35 @@ public class BCPipeHandler extends ModHandlerBase {
 		}
 
 		pipeID = idpipe;
+	}
+
+	private int getPipeItemID(Class c, String varname) {
+		try {
+			Field f = c.getField(varname);
+			int id = ((Item)f.get(null)).itemID;
+			return id;
+		}
+		catch (NoSuchFieldException e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+			e.printStackTrace();
+		}
+		catch (SecurityException e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+			e.printStackTrace();
+		}
+		catch (IllegalArgumentException e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+			e.printStackTrace();
+		}
+		catch (IllegalAccessException e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+			e.printStackTrace();
+		}
+		catch (NullPointerException e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+			e.printStackTrace();
+		}
+		return -1;
 	}
 
 	public static BCPipeHandler getInstance() {

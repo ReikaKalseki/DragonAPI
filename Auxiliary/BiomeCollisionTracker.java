@@ -15,7 +15,7 @@ import java.util.HashMap;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Exception.InstallationException;
+import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BiomeCollisionTracker {
@@ -87,7 +87,7 @@ public class BiomeCollisionTracker {
 		ReikaJavaLibrary.pConsole("Conflict at Biome ID "+id+" ("+BiomeGenBase.biomeList[id].biomeName+")");
 		if (mod == null)
 			throw new IllegalArgumentException("Overwriting already-registered biome "+BiomeGenBase.biomeList[id]+" @ "+id);
-		throw new InstallationException(mod, "Biome ID Conflict: ID "+id);
+		throw new IDConflictException(mod, "Biome ID Conflict: ID "+id);
 	}
 
 }
