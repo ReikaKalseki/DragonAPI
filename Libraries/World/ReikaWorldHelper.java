@@ -10,15 +10,19 @@
 package Reika.DragonAPI.Libraries.World;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -1582,5 +1586,77 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	public static float getBiomeHumidity(World world, int x, int z) {
 		return getBiomeHumidity(world.getBiomeGenForCoords(x, z));
+	}
+
+	public static EntityLivingBase getClosestLivingEntity(World world, double x, double y, double z, AxisAlignedBB box) {
+		List<EntityLivingBase> li = world.getEntitiesWithinAABB(EntityLivingBase.class, box);
+		double d = Double.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < li.size(); i++) {
+			EntityLivingBase e = li.get(i);
+			if (!e.isDead && e.getHealth() > 0) {
+				double dd = ReikaMathLibrary.py3d(e.posX-x, e.posY-y, e.posZ-z);
+				if (dd < d) {
+					index = i;
+					d = dd;
+				}
+			}
+		}
+		return index >= 0 ? li.get(index) : null;
+	}
+
+	public static EntityLivingBase getClosestLivingEntityNoPlayers(World world, double x, double y, double z, AxisAlignedBB box, boolean excludeCreativeOnly) {
+		List<EntityLivingBase> li = world.getEntitiesWithinAABB(EntityLivingBase.class, box);
+		double d = Double.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < li.size(); i++) {
+			EntityLivingBase e = li.get(i);
+			if (!(e instanceof EntityPlayer) || (excludeCreativeOnly && !((EntityPlayer)e).capabilities.isCreativeMode)) {
+				if (!e.isDead && e.getHealth() > 0) {
+					double dd = ReikaMathLibrary.py3d(e.posX-x, e.posY-y, e.posZ-z);
+					if (dd < d) {
+						index = i;
+						d = dd;
+					}
+				}
+			}
+		}
+		return index >= 0 ? li.get(index) : null;
+	}
+
+	public static EntityLivingBase getClosestHostileEntity(World world, double x, double y, double z, AxisAlignedBB box) {
+		List<EntityLivingBase> li = world.getEntitiesWithinAABB(EntityLivingBase.class, box);
+		double d = Double.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < li.size(); i++) {
+			EntityLivingBase e = li.get(i);
+			if (ReikaEntityHelper.isHostile(e)) {
+				if (!e.isDead && e.getHealth() > 0) {
+					double dd = ReikaMathLibrary.py3d(e.posX-x, e.posY-y, e.posZ-z);
+					if (dd < d) {
+						index = i;
+						d = dd;
+					}
+				}
+			}
+		}
+		return index >= 0 ? li.get(index) : null;
+	}
+
+	public static EntityLivingBase getClosestLivingEntityOfClass(Class<? extends EntityLivingBase> c, World world, double x, double y, double z, AxisAlignedBB box) {
+		List<EntityLivingBase> li = world.getEntitiesWithinAABB(c, box);
+		double d = Double.MAX_VALUE;
+		int index = -1;
+		for (int i = 0; i < li.size(); i++) {
+			EntityLivingBase e = li.get(i);
+			if (!e.isDead && e.getHealth() > 0) {
+				double dd = ReikaMathLibrary.py3d(e.posX-x, e.posY-y, e.posZ-z);
+				if (dd < d) {
+					index = i;
+					d = dd;
+				}
+			}
+		}
+		return index >= 0 ? li.get(index) : null;
 	}
 }

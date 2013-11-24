@@ -11,12 +11,11 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.List;
 
-import Reika.DragonAPI.ModList;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.EnumChatFormatting;
+import Reika.DragonAPI.ModList;
 import cpw.mods.fml.common.IPlayerTracker;
 
 public final class LoginHandler implements IPlayerTracker {

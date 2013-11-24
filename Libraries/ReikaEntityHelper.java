@@ -74,7 +74,9 @@ import net.minecraft.entity.projectile.EntityPotion;
 import net.minecraft.entity.projectile.EntitySmallFireball;
 import net.minecraft.entity.projectile.EntitySnowball;
 import net.minecraft.entity.projectile.EntityWitherSkull;
+import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
@@ -542,6 +544,18 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	public static boolean burnsInSun(EntityLivingBase e) {
 		return e.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
+	}
+
+	public static boolean isEntityWearingArmorOf(EntityLivingBase e, EnumArmorMaterial type) {
+		for (int i = 1; i <= 4; i++) {
+			ItemStack is = e.getCurrentItemOrArmor(i);
+			if (is != null && is.getItem() instanceof ItemArmor) {
+				ItemArmor a = (ItemArmor)is.getItem();
+				if (a.getArmorMaterial() == type)
+					return true;
+			}
+		}
+		return false;
 	}
 
 }

@@ -24,7 +24,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Object obj) {
 		if (obj == null) {
-			System.out.println("null");
+			System.out.println("null arg");
 			return;
 		}
 		Class cl = obj.getClass();
@@ -63,6 +63,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static List makeListFrom(Object obj) {
 		List li = new ArrayList();
 		li.add(obj);
+		return li;
+	}
+
+	public static List makeListFrom(Object... obj) {
+		List li = new ArrayList();
+		for (int i = 0; i < obj.length; i++) {
+			li.add(obj[i]);
+		}
 		return li;
 	}
 

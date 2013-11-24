@@ -17,7 +17,7 @@ import java.util.Map;
 import net.minecraft.client.audio.SoundManager;
 import net.minecraft.client.audio.SoundPool;
 import net.minecraft.client.audio.SoundPoolEntry;
-import Reika.DragonAPI.Instantiable.ModLogger;
+import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 

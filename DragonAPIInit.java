@@ -34,7 +34,7 @@ import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.RetroGenController;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Extras.GuideCommand;
-import Reika.DragonAPI.Instantiable.ModLogger;
+import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;

@@ -12,7 +12,7 @@ package Reika.DragonAPI.Base;
 import java.net.URL;
 
 import Reika.DragonAPI.Exception.InstallationException;
-import Reika.DragonAPI.Instantiable.ModLogger;
+import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import cpw.mods.fml.common.Mod.EventHandler;

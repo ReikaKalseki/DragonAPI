@@ -190,6 +190,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 			GL11.glDisable(GL11.GL_BLEND);
 		if (tex)
 			GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glColor4f(1, 1, 1, 1);
 	}
 
 	public void drawCircle(int x, int y, int radius, int color) {

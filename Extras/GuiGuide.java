@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Instantiable.XMLInterface;
+import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 

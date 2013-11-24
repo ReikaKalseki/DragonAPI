@@ -20,14 +20,16 @@ import net.minecraft.nbt.NBTTagString;
 
 public class GuideCommand extends CommandBase {
 
+	private final String tag = "dragonapi";
+
 	@Override
 	public String getCommandName() {
-		return "dragonapi";
+		return tag;
 	}
 
 	@Override
 	public String getCommandUsage(ICommandSender icommandsender) {
-		return "/dragonapi";
+		return "/"+tag;
 	}
 
 	@Override
@@ -45,9 +47,15 @@ public class GuideCommand extends CommandBase {
 	}
 
 	@Override
-	public int getRequiredPermissionLevel()
-	{
+	public int getRequiredPermissionLevel() {
 		return 0;
 	}
+
+	@Override
+	public boolean canCommandSenderUseCommand(ICommandSender sender) {
+		return true;
+	}
+
+
 
 }
