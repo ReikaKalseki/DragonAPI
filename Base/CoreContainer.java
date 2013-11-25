@@ -131,7 +131,7 @@ public class CoreContainer extends Container {
 							int add = inToSlot.getMaxStackSize()-inToSlot.stackSize;
 							if (add > is.stackSize)
 								add = is.stackSize;
-							toSlot.putStack(new ItemStack(is.itemID, inToSlot.stackSize+add, is.getItemDamage()));
+							toSlot.putStack(ReikaItemHelper.getSizedItemStack(is, inslot.stackSize+add));
 							is.stackSize -= add;
 						}
 						if (tile instanceof XPProducer) {
@@ -160,7 +160,7 @@ public class CoreContainer extends Container {
 								is.stackSize = 0;
 							}
 							else {
-								toSlot.putStack(new ItemStack(is.itemID, lim, is.getItemDamage()));
+								toSlot.putStack(ReikaItemHelper.getSizedItemStack(is, lim));
 								is.stackSize -= lim;
 							}
 						}

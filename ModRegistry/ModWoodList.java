@@ -313,12 +313,20 @@ public enum ModWoodList {
 		return getModWood(id, meta) != null;
 	}
 
+	public static boolean isModLeaf(int id, int meta) {
+		return isModLeaf(new ItemStack(id, 1, meta));
+	}
+
 	public static boolean isModLeaf(ItemStack block) {
 		return getModWoodFromLeaf(block) != null;
 	}
 
 	public static boolean isModSapling(ItemStack block) {
 		return getModWoodFromSapling(block) != null;
+	}
+
+	public static boolean isModSapling(int id, int meta) {
+		return isModSapling(new ItemStack(id, 1, meta));
 	}
 
 	public Icon getWoodIcon(IBlockAccess iba, int x, int y, int z, int s) {

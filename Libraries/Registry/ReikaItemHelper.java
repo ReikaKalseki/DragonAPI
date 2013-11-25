@@ -111,7 +111,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 	}
 
-	/** Like .equals for comparing ItemStacks, but does not care about size.
+	/** Like .equals for comparing ItemStacks, but does not care about size or NBT tags.
 	 * Returns true if the ids and metadata match (or both are null).
 	 * Args: ItemStacks a, b */
 	public static boolean matchStacks(ItemStack a, ItemStack b) {
@@ -154,15 +154,10 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static ItemStack getSizedItemStack(ItemStack is, int num) {
-		return new ItemStack(is.itemID, num, is.getItemDamage());
-	}
-
-	public static boolean isMatch(ItemStack i1, ItemStack i2) {
-		if (i1 == null)
-			return i2 == null;
-		if (i2 == null)
-			return i1 == null;
-		return i1.itemID == i2.itemID && i1.getItemDamage() == i2.getItemDamage();
+		ItemStack is2 = new ItemStack(is.itemID, num, is.getItemDamage());
+		if (is.stackTagCompound != null)
+			is2.stackTagCompound = (NBTTagCompound)is.stackTagCompound.copy();
+		return is2;
 	}
 
 	public static void dropItem(World world, double x, double y, double z, ItemStack is) {
@@ -262,6 +257,6 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return false;
 		if (is.getItemDamage() != is2.getItemDamage())
 			return false;
-		return true;
+		return ItemStack.areItemStackTagsEqual(is, is2);
 	}
 }
