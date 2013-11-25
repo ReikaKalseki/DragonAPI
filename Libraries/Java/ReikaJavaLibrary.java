@@ -111,7 +111,10 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return null;
 	}
 
+	/** Copies a list. Can accept a null argument. */
 	public static <T> List<T> copyList(List<T> li) {
+		if (li == null)
+			return null;
 		List<T> n = new ArrayList<T>(li);
 		return n;
 	}
@@ -126,6 +129,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 	}
 
+	/** Initializes a class. */
 	public static void initClass(Class c) {
 		if (c == null) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot initalize a null class!");

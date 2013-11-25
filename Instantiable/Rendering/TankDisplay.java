@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.Icon;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidTankInfo;
@@ -26,15 +25,13 @@ public class TankDisplay {
 	public final int posY;
 	public final int xSize;
 	public final int ySize;
-	private final GuiScreen gui;
 
-	public TankDisplay(FluidTankInfo fl, int x, int y, int w, int h, GuiScreen instance) {
+	public TankDisplay(FluidTankInfo fl, int x, int y, int w, int h) {
 		tank = fl;
 		posX = x;
 		posY = y;
 		xSize = w;
 		ySize = h;
-		gui = instance;
 	}
 
 	public TankDisplay updateTank(FluidTankInfo fl) {
@@ -66,7 +63,7 @@ public class TankDisplay {
 		Icon ico = this.getIcon();
 		ReikaLiquidRenderer.bindFluidTexture(f);
 		int yh = posY+ySize-this.getRenderLevel();
-		gui.drawTexturedModelRectFromIcon(posX, yh, ico, xSize, this.getRenderLevel());
+		ReikaGuiAPI.instance.drawTexturedModelRectFromIcon(posX, yh, ico, xSize, this.getRenderLevel());
 		lines = false;
 		if (lines) {
 			int dist = ySize*1000/tank.capacity*4;
