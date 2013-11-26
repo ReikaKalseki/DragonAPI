@@ -22,6 +22,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 
 public class ReikaObfuscationHelper {
 
@@ -99,10 +101,18 @@ public class ReikaObfuscationHelper {
 
 	static {
 		addMethod("onItemUse", "func_77648_a", true, Item.class, ItemStack.class, EntityPlayer.class, World.class, int.class, int.class, int.class, int.class, float.class, float.class, float.class);
-		addMethod("getInputStreamByName", "func_110591_a", false, AbstractResourcePack.class, String.class);
+		if (isClientSide()) {
+			addMethod("getInputStreamByName", "func_110591_a", false, AbstractResourcePack.class, String.class);
+		}
 
-		addField("field_110859_k", "field_110859_k", false, RenderBiped.class); //armor texture map
-		addField("nameToSoundPoolEntriesMapping", "field_77461_d", false, SoundPool.class);
+		if (isClientSide()) {
+			addField("field_110859_k", "field_110859_k", false, RenderBiped.class); //armor texture map
+			addField("nameToSoundPoolEntriesMapping", "field_77461_d", false, SoundPool.class);
+		}
 		addField("isJumping", "field_70703_bu", false, EntityLivingBase.class);
+	}
+
+	private static boolean isClientSide() {
+		return FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT;
 	}
 }

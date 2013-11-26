@@ -80,9 +80,10 @@ public final class ThaumOreHandler extends ModHandlerBase {
 		if (this.hasMod()) {
 			try {
 				Class thaum = ModList.THAUMCRAFT.getBlockClass();
+				Class items = ModList.THAUMCRAFT.getItemClass();
 				Field ore = thaum.getField("blockCustomOreId");
-				Field item = thaum.getField("itemResourceId");
-				Field shard = thaum.getField("itemShardId");
+				Field item = items.getField("itemResourceId");
+				Field shard = items.getField("itemShardId");
 
 				idore = ore.getInt(null);
 				iditem = item.getInt(null);

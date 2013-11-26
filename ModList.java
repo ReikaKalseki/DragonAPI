@@ -33,7 +33,7 @@ public enum ModList {
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
 	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
 	BCTRANSPORT("BuildCraft|Transport", "buildcraft.BuildCraftTransport"),
-	THAUMCRAFT("Thaumcraft", "thaumcraft.common.config.Config"),
+	THAUMCRAFT("Thaumcraft", "thaumcraft.common.config.ConfigBlocks", "thaumcraft.common.config.ConfigItems"),
 	IC2("IC2", "ic2.core.Ic2Items"),
 	GREGTECH("GregTech"),
 	FORESTRY("Forestry", "forestry.core.config.ForestryBlock", "forestry.core.config.ForestryItem"),
