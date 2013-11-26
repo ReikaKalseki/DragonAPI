@@ -450,11 +450,19 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawItemStack(renderer, fr, is, x, y);
 
 		if (this.isMouseInBox(x, x+16, y, y+16)) {
-			this.drawTooltip(fr, is.getDisplayName());
+			String sg = is.getDisplayName();
+			boolean right = this.getMouseRealX() < mc.currentScreen.width/2;
+			if (right)
+				this.drawTooltipAt(fr, sg, this.getMouseRealX()+fr.getStringWidth(sg)+12, this.getMouseRealY());
+			else
+				this.drawTooltip(fr, sg);
 		}
 	}
 
 	public void drawTooltip(FontRenderer f, String s) {
+		ReikaRenderHelper.disableLighting();
+		RenderHelper.disableStandardItemLighting();
+		GL11.glColor4f(1, 1, 1, 1);
 		int mx = this.getMouseRealX();
 		int my = this.getMouseRealY();
 		int w = mc.fontRenderer.getStringWidth(s);
@@ -462,11 +470,15 @@ public final class ReikaGuiAPI extends GuiScreen {
 		int o = 3;
 		int a = 0xcc000000;
 		int dx = -Math.min(0, mx-6-o-w);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
 		o = 2;
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		ReikaTextureHelper.bindFontTexture();
 		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
+		RenderHelper.enableStandardItemLighting();
+		ReikaRenderHelper.enableLighting();
 	}
 
 	public void drawTooltipAt(FontRenderer f, String s, int mx, int my) {

@@ -3,8 +3,13 @@ package Reika.DragonAPI.Instantiable.Rendering;
 import java.awt.Color;
 import java.util.List;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+
+import org.lwjgl.opengl.GL11;
+
 import Reika.DragonAPI.Instantiable.Data.BarGraphData;
-import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 public class BarGraph {
 
@@ -45,14 +50,38 @@ public class BarGraph {
 
 	public void render(int x, int y, Color barColor) {
 		int w = barWidth;
-		for (int i = 0; i < data.getNumberEntries(); i++) {
+		ReikaRenderHelper.prepareGeoDraw(false);
+		int n = data.getNumberEntries();
+		for (int i = 0; i < n; i++) {
 			int h = this.getBarHeight(i);
-			int dy = ySize-h;
+			int v = values.get(i);
+			GL11.glColor4f(1, 1, 1, 1);
 			if (i%2 == 0)
 				barColor = barColor.darker().darker();
-			int color = barColor.getRGB()+0xff000000;
-			ReikaGuiAPI.instance.drawRect(x+i*w, y+dy, w, h, color, false);
+			else
+				barColor = barColor.brighter().brighter();
+			int color = barColor.getRGB();
+			//ReikaGuiAPI.instance.drawRect(x+i*w, y+dy, w, h, color, true);
+			boolean line = false;
+			if (line) {
+				GuiScreen.drawRect(x+i*w, y+ySize, x+i*w+w, y+ySize-h, 0xff000000);
+				GuiScreen.drawRect(x+i*w+1, y+ySize-1, x+i*w+w-1, y+ySize-h+1, color);
+			}
+			else {
+				GuiScreen.drawRect(x+i*w, y+ySize, x+i*w+w, y+ySize-h, color);
+			}
+			int dx = x+i*w+w/4;
+			int dy = y+ySize;
+			GL11.glTranslated(dx, dy, 0);
+			GL11.glRotated(-90, 0, 0, 1);
+			GL11.glTranslated(-dx, -dy, 0);
+			Minecraft.getMinecraft().fontRenderer.drawString(String.valueOf(v), dx, dy, 0xffffff);
+			GL11.glTranslated(dx, dy, 0);
+			GL11.glRotated(90, 0, 0, 1);
+			GL11.glTranslated(-dx, -dy, 0);
 		}
+		ReikaRenderHelper.exitGeoDraw();
+		ReikaRenderHelper.disableLighting();
 	}
 
 }

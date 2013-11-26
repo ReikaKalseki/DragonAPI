@@ -84,7 +84,8 @@ public enum ModOreList {
 	MOONSTONE("Moonstone", "gemMoonstone", 1, "oreMoonstone"),
 	SUNSTONE("Sunstone", "gemSunstone", 1, "oreSunstone"),
 	TITANIUM("Titanium", "ingotTitanium", 1, "oreTitanium"),
-	MAGMANITE("Magmanite", "dropMagma", 1, "oreMagmanite");
+	MAGMANITE("Magmanite", "dropMagma", 1, "oreMagmanite"),
+	MAGNETITE("Magnetite", "gemMagnetite", 1, "oreMagnetite");
 
 	private ArrayList<ItemStack> ores;
 	private String name;

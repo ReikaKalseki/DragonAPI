@@ -27,6 +27,7 @@ import net.minecraft.client.resources.ResourcePackRepositoryEntry;
 import net.minecraft.util.Icon;
 import net.minecraft.util.ResourceLocation;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Exception.MisuseException;
@@ -51,30 +52,36 @@ public class ReikaTextureHelper {
 	private static final ResourceLocation font = new ResourceLocation("textures/font/ascii.png");
 
 	public static void bindTexture(Class root, String tex) {
-		if (root == null) {
-			throw new MisuseException("You cannot fetch a render texture with reference to a null class!");
+		if (Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.isKeyDown(Keyboard.KEY_T)) {
+			textures.clear();
+			packTextures.clear();
 		}
-		String oldtex = tex;
-		//String parent = root.getPackage().getName().replaceAll("\\.", "/")+"/";
-		String s = root.getCanonicalName();
-		String parent = s.substring(0, s.length()-root.getSimpleName().length()-1).replaceAll("\\.", "/")+"/";
-		ResourcePack res = getCurrentResourcePack();
-		if (res.equals(getDefaultResourcePack()))
-			bindClassReferencedTexture(root, tex);
 		else {
-			if (tex.startsWith("/"))
-				tex = tex.substring(1);
-			String respath = tex.startsWith(parent) ? tex : parent+tex;
-
-			Boolean flag = (Boolean)packTextures.get(res, tex);
-			if (flag == null || flag.booleanValue()) {
-				boolean hasTex = bindPackTexture(respath, res);
-				packTextures.put(hasTex, res, tex);
-				if (!hasTex)
-					bindClassReferencedTexture(root, oldtex);
+			if (root == null) {
+				throw new MisuseException("You cannot fetch a render texture with reference to a null class!");
 			}
+			String oldtex = tex;
+			//String parent = root.getPackage().getName().replaceAll("\\.", "/")+"/";
+			String s = root.getCanonicalName();
+			String parent = s.substring(0, s.length()-root.getSimpleName().length()-1).replaceAll("\\.", "/")+"/";
+			ResourcePack res = getCurrentResourcePack();
+			if (res.equals(getDefaultResourcePack()))
+				bindClassReferencedTexture(root, tex);
 			else {
-				bindClassReferencedTexture(root, oldtex);
+				if (tex.startsWith("/"))
+					tex = tex.substring(1);
+				String respath = tex.startsWith(parent) ? tex : parent+tex;
+
+				Boolean flag = (Boolean)packTextures.get(res, tex);
+				if (flag == null || flag.booleanValue()) {
+					boolean hasTex = bindPackTexture(respath, res);
+					packTextures.put(hasTex, res, tex);
+					if (!hasTex)
+						bindClassReferencedTexture(root, oldtex);
+				}
+				else {
+					bindClassReferencedTexture(root, oldtex);
+				}
 			}
 		}
 	}

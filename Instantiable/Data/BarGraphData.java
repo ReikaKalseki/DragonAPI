@@ -14,13 +14,22 @@ public class BarGraphData {
 
 	}
 
+	/** The entries are self-sorting. */
 	public BarGraphData addEntries(int x, int number) {
 		if (values.contains(x)) {
 			int amt = data.get(x);
 			data.put(x, amt+number);
 		}
 		else {
-			values.add(x);
+			int place = 0;
+			for (int i = 0; i < values.size(); i++) {
+				int p = values.get(i);
+				if (x < p) {
+					i = values.size();
+					place = i;
+				}
+			}
+			values.add(place, x);
 			data.put(x, number);
 		}
 		return this;
@@ -40,5 +49,10 @@ public class BarGraphData {
 
 	public List<Integer> getXValues() {
 		return ReikaJavaLibrary.copyList(values);
+	}
+
+	public void clear() {
+		data.clear();
+		values.clear();
 	}
 }
