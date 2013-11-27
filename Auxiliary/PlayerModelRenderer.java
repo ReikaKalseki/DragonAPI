@@ -39,7 +39,7 @@ public class PlayerModelRenderer {
 	@ForgeSubscribe
 	public void changeReikaName(NameFormat e) {
 		if ("Reika_Kalseki".equals(e.username)) {
-			e.displayname = "Reika";
+			//e.displayname = "Reika";
 		}
 	}
 

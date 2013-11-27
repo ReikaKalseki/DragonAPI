@@ -45,7 +45,7 @@ public enum ReikaTimeHelper {
 			return time/144; //25 seconds
 		case MONTH: // Moon phases cycle every 8 days
 			return DAY.getMinecraftDuration()*8;
-		case WEEK:
+		case WEEK: //20 minutes
 			return DAY.getMinecraftDuration()*2;
 		case YEAR: //8 real hours
 			return MONTH.getMinecraftDuration()*6;
