@@ -131,13 +131,18 @@ public class CoreContainer extends Container {
 							int add = inToSlot.getMaxStackSize()-inToSlot.stackSize;
 							if (add > is.stackSize)
 								add = is.stackSize;
-							toSlot.putStack(ReikaItemHelper.getSizedItemStack(is, inslot.stackSize+add));
+							ItemStack toAdd = ReikaItemHelper.getSizedItemStack(is, inToSlot.stackSize+add);
+							//ReikaJavaLibrary.pConsole(is+" to "+inToSlot+" for "+toAdd+", by "+add);
+							toSlot.putStack(toAdd);
 							is.stackSize -= add;
 						}
 						if (tile instanceof XPProducer) {
 							((XPProducer)tile).addXPToPlayer(player);
 							((XPProducer)tile).clearXP();
 						}
+					}
+					else {
+
 					}
 				}
 				if (is.stackSize <= 0) {
@@ -169,9 +174,12 @@ public class CoreContainer extends Container {
 							int add = Math.min(inToSlot.getMaxStackSize()-inToSlot.stackSize, lim-inToSlot.stackSize);
 							if (add > is.stackSize)
 								add = is.stackSize;
-							toSlot.putStack(new ItemStack(is.itemID, inToSlot.stackSize+add, is.getItemDamage()));
+							toSlot.putStack(ReikaItemHelper.getSizedItemStack(is, inToSlot.stackSize+add));
 							is.stackSize -= add;
 						}
+					}
+					else {
+
 					}
 				}
 				if (is.stackSize <= 0) {

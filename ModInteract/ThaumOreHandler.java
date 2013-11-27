@@ -12,6 +12,8 @@ package Reika.DragonAPI.ModInteract;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.ModList;
@@ -81,13 +83,13 @@ public final class ThaumOreHandler extends ModHandlerBase {
 			try {
 				Class thaum = ModList.THAUMCRAFT.getBlockClass();
 				Class items = ModList.THAUMCRAFT.getItemClass();
-				Field ore = thaum.getField("blockCustomOreId");
-				Field item = items.getField("itemResourceId");
-				Field shard = items.getField("itemShardId");
+				Field ore = thaum.getField("blockCustomOre");
+				Field item = items.getField("itemResource");
+				Field shard = items.getField("itemShard");
 
-				idore = ore.getInt(null);
-				iditem = item.getInt(null);
-				idshard = shard.getInt(null);
+				idore = ((Block)ore.get(null)).blockID;
+				iditem = ((Item)item.get(null)).itemID;
+				idshard = ((Item)shard.get(null)).itemID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());

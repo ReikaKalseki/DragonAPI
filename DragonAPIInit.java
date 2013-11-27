@@ -89,15 +89,16 @@ public class DragonAPIInit extends DragonAPIMod {
 		logger = new ModLogger(instance, true, false, false);
 		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		MinecraftForge.EVENT_BUS.register(this);
-		MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
 
 		ReikaRegistryHelper.setupModData(instance, evt);
 		ReikaRegistryHelper.setupVersionChecking(evt);
 
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
+			MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
+		}
 	}
 
 	@Override

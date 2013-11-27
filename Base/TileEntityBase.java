@@ -146,11 +146,14 @@ public abstract class TileEntityBase extends TileEntity {
 
 	@Override
 	public final void updateEntity() {
+		int arg = 20;
 		if (shutDown)
-			return;
+			arg = 100;
 		try {
-			if (rand.nextInt(20) == 0)
+			if (rand.nextInt(arg) == 0)
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			if (shutDown)
+				return;
 			this.updateTileEntity();
 			this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
 		}
