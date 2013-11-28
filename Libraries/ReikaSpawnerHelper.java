@@ -13,7 +13,9 @@ import java.util.Random;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.EntityLivingData;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
@@ -99,6 +101,8 @@ public class ReikaSpawnerHelper {
 				for (int m = 0; m < potions.length; m++)
 					((EntityLivingBase)e).addPotionEffect(potions[m]);
 			}
+			if (e instanceof EntityLivingBase && e.worldObj != null)
+				((EntityLiving)e).onSpawnWithEgg((EntityLivingData)null);
 			world.spawnEntityInWorld(e);
 		}
 	}

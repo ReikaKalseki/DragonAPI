@@ -141,4 +141,9 @@ public class ItemSpawner extends Item {
 
 	@Override
 	public final void registerIcons(IconRegister ico) {}
+
+	@Override
+	public String getItemDisplayName(ItemStack is) {
+		return "Monster Spawner";
+	}
 }
