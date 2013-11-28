@@ -56,12 +56,9 @@ local.properties
 *.rsp
 *.sbr
 *.tlb
-*.ogg
 *.pdn
 *.tcn
-*.png
 *.ks
-*.xml
 *.keystore
 *.properties
 *.tli

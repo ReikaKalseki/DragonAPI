@@ -1,0 +1,153 @@
+﻿<?xml version="1.0"?>
+<dragonapi>
+	<rotarycraft>
+		<info>
+			RotaryCraft is an industrial-style tech mod that uses shaft power to run its machines. Engines generate rotational power - torque and speed, with power being the product of the two. RotaryCraft is designed to be realistic, from power requirements to machine behavior to events like failure, overheat, and so on. RotaryCraft has no dependencies other than DragonAPI, but can interface with other mods.
+		</info>
+		<tutorial>
+			RotaryCraft is not designed to be used immediately after starting a new world; large amounts of iron are required to construct most machines, and a strong resource base is recommended. It is also strongly recommended to follow the tech tree; shortcuts, while possible, are expensive and difficult, especially for newer players.
+		</tutorial>
+		<tips>
+			When doing anything, use a great deal of common sense. Do not use lava for machines that boil water, or try to use sticks to transmit the power from a jet engine.
+		</tips>
+		<notes>
+			RotaryCraft has a handbook with detailed information on the entire mod. Use that extensively. Also, it is strongly recommended to "forget" how other tech mods behave, as RotaryCraft is radically different.
+		</notes>
+	</rotarycraft>
+	<reactorcraft>
+		<info>
+			ReactorCraft is an addon for RotaryCraft that adds nuclear reactors to generate power. Unlike reactors from other mods, ReactorCraft requires a realistic reactor design with fuel rods, control rods, boilers, turbines, condensers, and pumps.
+		</info>
+		<tutorial>
+			ReactorCraft is NOT an early-game mod. Uranium is fairly rare, and processing and use of the uranium is rather complex. A basic reactor design involves arranging a number of fuel rods so that they are in line with each other. Mix boilers into the arrangement and pump water in the bottom. Pump the steam out the top into a steam grate, which should be placed below a turbine. Use condensers to collect the used steam and cycle it back into the boilers.
+		</tutorial>
+		<tips>
+			Any color fluorite can be used in the uranium processor, but only white fluorite can be processed by RotaryCraft machines.
+
+			Keep an eye on reactor temperatures. If it gets too hot, it will melt down, and possibly explode. This will irradiate a signficant area, and hazmat suits provide no protection.
+		</tips>
+		<notes>
+			ReactorCraft, being an addon for RotaryCraft, is completely dependent upon it. ReactorCraft adds ore generation to all three vanilla dimensions, so old worlds will have to generate new terrain.
+		</notes>	
+	</reactorcraft>
+	<dyetrees>
+		<info>
+			DyeTrees adds one color of tree for each dye. These trees spawn in the world, somewhat rarely, and can generate with any vanilla log material. They behave and often look like oak trees, dropping saplings occasionally and apples rarely. However, they also have a chance to drop dye from their leaves, allowing dyes to be farmed.
+			There is also a new biome, the Rainbow Forest.
+		</info>
+		<tutorial>
+			It should not take much effort to find your first dye tree. Simply harvest it like a normal oak tree and hope to get a sapling or dye.
+		</tutorial>
+		<tips>
+			Dye trees generate equally in all colors, but not in all biomes; as a general rule of thumb, the denser the foliage, the denser the dye trees.
+			
+			Blue, white, and black trees tend to be more useful.
+		</tips>
+		<notes>
+			If world generation of the trees is disabled, both for the Rainbow Forest and the trees in other biomes, the dye saplings can be crafted with one dye and one oak sapling.
+		</notes>		
+	</dyetrees>
+	<expandedredstone>	
+		<info>
+			Expanded Redstone adds functionality to vanilla redstone by way of a few simple machines and circuits. It is not a tech mod, but instead an addon which works either in a vanilla or modded world.
+		</info>
+		<tutorial>
+			Simply use the devices at your leisure; none of them are particularly expensive or complex.
+		</tutorial>
+		<tips>
+			Make sure you know the behavior of vanilla redstone.
+		</tips>
+		<notes>
+			Some items require nether quartz, so a trip to the Nether may be required.
+		</notes>
+	</expandedredstone>
+	<geostrata>		
+		<info>
+			GeoStrata adds a bunch of real-world rock types which overwrite 10-20% of vanilla stone. These rocks generate at realistic depths, and in realistic biomes (eg more shale and limestone in oceans). The mod also adds "Cave Crystals" - small crystals which can generate in caves. Standing near a crystal will give living entities small stat effects (eg red crystal gives 10s of resistance). Crystal shards can also be used to brew potions, some of which (such as jump boost) are not available normally.
+		</info>
+		<tutorial>
+			To find a crystal, just explore a cave; they can be detected by the light they emit and the high-pitched noises they emit.
+		</tutorial>
+		<tips>
+			Crystal behavior is dimension-dependent. Be wary of crystals in "evil" dimensions like the Nether.
+		</tips>
+		<notes>
+			Crystals generate equally in all colors, but not in all biomes; oceans have an increased spawn rate, and magical biomes like the Twilight Forest have a strongly increased spawn rate.
+		</notes>
+	</geostrata>
+	<realbiomes>	
+		<info>
+			RealBiomes adds a number of real-world biomes to the Minecraft world. This mod is not yet available.
+		</info>
+		<tutorial>
+		</tutorial>
+		<tips>
+		</tips>
+		<notes>
+		</notes>	
+	</realbiomes>
+	<furrykingdoms>	
+		<info>
+			FurryKingdoms adds a new dimension, populated by a number of civilizations. This mod is not yet available.
+		</info>
+		<tutorial>
+		</tutorial>
+		<tips>
+		</tips>
+		<notes>
+		</notes>
+	</furrykingdoms>
+	<spiderpet>		
+		<info>
+			Spider Pet allows you to tame four different kinds of spiders - vanilla, Natura Heatscar, and Twilight Forest King and Hedge spiders. These spiders can be ridden and used for transport or combat. While riding the spider, you may have stat effects absorbed from the spider.
+		</info>
+		<tutorial>
+			Simply craft a taming device and load it with the appropriate item. Right-click a normally-hostile spider with this tool, and it will be tamed by you.
+		</tutorial>
+		<tips>
+			As always, take care when approaching a hostile spider.
+		</tips>
+		<notes>Vanilla spiders require rotten flesh, heatscars require blaze powder, king spiders require a gold ingot, and hedge spiders require a melon slice.
+		</notes>
+	</spiderpet>
+	<enderforest>	
+		<info>
+			Ender Forest adds a new biome to the world. It is topographically identical to a forest biome - albeit with slightly sparser trees - but in this biome, Endermen spawn more frequently, and pools of liquid ender can be found around the landscape.
+		</info>
+		<tutorial>
+			Ender Forests are not difficult to find, but they are a huge advantage when large amounts of ender-related material are required.
+		</tutorial>
+		<tips>
+			Other hostile mobs can still spawn in this biome, so do not let your guard down.
+		</tips>
+		<notes>
+			The liquid ender that generates will be Thermal Expansion Resonant Ender if that mod is intalled.
+		</notes>	
+	</enderforest>
+	<voidmonster>	
+		<info>
+			The void monster is a mysterious create that lives in the abyss below the Minecraft world. Normally, its presence can only be detected from its cries, audible in the deep caves.
+		</info>
+		<tutorial>
+		</tutorial>
+		<tips>
+			Should you kill this monster, a plethora of valuable loot and xp awaits.
+		</tips>
+		<notes>
+		</notes>	
+	</voidmonster>
+	<usefultnt>
+		<info>
+			UsefulTNT gives you an item, which when used on TNT, will set the TNT off in a way that is more useful to mining - it always drops items, and will not destroy existing items or xp, and it will not chain with other TNT.
+		</info>
+		<tutorial>
+			To use the tool, simpy right-click a block of TNT with it. You will not receive damage from the resulting explosion.
+		</tutorial>
+		<tips>
+			Take care when using this in a great deal; large amounts of item drops can cause severe lag.
+		</tips>
+		<notes>
+			The item has no durability and is not consumed; it can be used as many times as desired.
+		</notes>		
+	</usefultnt>
+</dragonapi>
