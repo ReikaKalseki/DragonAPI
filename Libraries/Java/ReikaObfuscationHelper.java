@@ -108,6 +108,8 @@ public class ReikaObfuscationHelper {
 		if (isClientSide()) {
 			addField("field_110859_k", "field_110859_k", false, RenderBiped.class); //armor texture map
 			addField("nameToSoundPoolEntriesMapping", "field_77461_d", false, SoundPool.class);
+			//addField("scaleAmount", "??", false, RenderSlime.class);
+			//addField("mainModel", "??", false, RendererLivingEntity.class);
 		}
 		addField("isJumping", "field_70703_bu", false, EntityLivingBase.class);
 	}

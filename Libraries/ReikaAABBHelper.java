@@ -11,7 +11,6 @@ package Reika.DragonAPI.Libraries;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
@@ -22,7 +21,7 @@ public final class ReikaAABBHelper extends DragonAPICore {
 
 	/** Renders an AABB bounding box in the world. Very useful for debug purposes, or as a user-friendliness feature.
 	 * Args: World, AABB, Render par2,4,6, x,y,z of machine, root alpha value (-ve for solid color), RGB, solid outline yes/no */
-	public static void renderAABB(World world, AxisAlignedBB box, double par2, double par4, double par6, int x, int y, int z, int a, int r, int g, int b, boolean line) {
+	public static void renderAABB(AxisAlignedBB box, double par2, double par4, double par6, int x, int y, int z, int a, int r, int g, int b, boolean line) {
 		int[] color = {r, g, b, a};
 		ReikaRenderHelper.prepareGeoDraw(true);
 		GL11.glPushMatrix();

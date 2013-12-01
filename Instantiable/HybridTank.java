@@ -71,6 +71,10 @@ public class HybridTank extends FluidTank {
 			ReikaJavaLibrary.pConsole("Could not remove liquid from empty tank!");
 			Thread.dumpStack();
 		}
+		else if (amt <= 0) {
+			ReikaJavaLibrary.pConsole("Cannot remove <= 0!");
+			Thread.dumpStack();
+		}
 		else {
 			this.drain(amt, true);
 		}
@@ -127,6 +131,15 @@ public class HybridTank extends FluidTank {
 
 	public boolean canTakeIn(int amt) {
 		return this.getRemainingSpace() >= amt;
+	}
+
+	public boolean canTakeIn(Fluid f, int amt) {
+		if (this.isEmpty()) {
+			return capacity >= amt;
+		}
+		else {
+			return this.getRemainingSpace() >= amt && this.getActualFluid().equals(f);
+		}
 	}
 
 }

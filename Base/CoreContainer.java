@@ -137,7 +137,8 @@ public class CoreContainer extends Container {
 							is.stackSize -= add;
 						}
 						if (tile instanceof XPProducer) {
-							((XPProducer)tile).addXPToPlayer(player);
+							float xp = ((XPProducer)tile).getXP();
+							ep.addExperience((int)xp);
 							((XPProducer)tile).clearXP();
 						}
 					}
@@ -219,6 +220,22 @@ public class CoreContainer extends Container {
 		if (ii == null)
 			return;
 		this.addSlotToContainer(new Slot(ii, i, x, y));
+	}
+
+	@Override
+	public ItemStack slotClick(int ID, int par2, int par3, EntityPlayer ep) {
+		ItemStack is = super.slotClick(ID, par2, par3, ep);
+		if (ii != null && tile instanceof XPProducer) {
+			if (ID < ii.getSizeInventory()) {
+				float xp = ((XPProducer) tile).getXP();
+				if (xp > 0) {
+					ep.addExperience((int)xp);
+					((XPProducer) tile).clearXP();
+					ep.playSound("random.orb", 0.3F, 1);
+				}
+			}
+		}
+		return is;
 	}
 
 }

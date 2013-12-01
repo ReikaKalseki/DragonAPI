@@ -52,22 +52,22 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	/** A complement to Java's built-in List-to-Array. Args: Array of any object (ints, strings, etc). */
-	public static List makeListFromArray(Object[] obj) {
-		List li = new ArrayList();
+	public static ArrayList makeListFromArray(Object[] obj) {
+		ArrayList li = new ArrayList();
 		for (int i = 0; i < obj.length; i++) {
 			li.add(obj[i]);
 		}
 		return li;
 	}
 
-	public static List makeListFrom(Object obj) {
-		List li = new ArrayList();
+	public static ArrayList makeListFrom(Object obj) {
+		ArrayList li = new ArrayList();
 		li.add(obj);
 		return li;
 	}
 
-	public static List makeListFrom(Object... obj) {
-		List li = new ArrayList();
+	public static ArrayList makeListFrom(Object... obj) {
+		ArrayList li = new ArrayList();
 		for (int i = 0; i < obj.length; i++) {
 			li.add(obj[i]);
 		}

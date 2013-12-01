@@ -55,7 +55,8 @@ public enum ModList {
 	ARSMAGICA("arsmagica2", "am2.blocks.BlocksCommonProxy", "am2.items.ItemsCommonProxy"),
 	TRANSITIONAL("TransitionalAssistance", "modTA.Core.TACore"),
 	ENDERSTORAGE("EnderStorage"),
-	OPTIFINE("Optifine");
+	OPTIFINE("Optifine"),
+	TREECAPITATOR("TreeCapitator");
 
 	private final boolean condition;
 	private final String modlabel;
