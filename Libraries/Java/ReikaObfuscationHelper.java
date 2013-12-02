@@ -15,6 +15,8 @@ import java.util.HashMap;
 
 import net.minecraft.client.audio.SoundPool;
 import net.minecraft.client.renderer.entity.RenderBiped;
+import net.minecraft.client.renderer.entity.RenderSlime;
+import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -71,8 +73,10 @@ public class ReikaObfuscationHelper {
 			Field f;
 			if (isVisible)
 				f = c.getField(sg);
-			else
+			else {
 				f = c.getDeclaredField(sg);
+				f.setAccessible(true);
+			}
 			fields.put(deobf, f);
 			labels.put(deobf, obf);
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Registering reflexive field access to "+c+"."+deobf+" (obfuscated as "+obf+")");
@@ -88,8 +92,10 @@ public class ReikaObfuscationHelper {
 			Method m;
 			if (isVisible)
 				m = c.getMethod(sg, args);
-			else
+			else {
 				m = c.getDeclaredMethod(sg, args);
+				m.setAccessible(true);
+			}
 			methods.put(deobf, m);
 			labels.put(deobf, obf);
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Registering reflexive method access to "+c+"."+deobf+" (obfuscated as "+obf+")");
@@ -108,8 +114,8 @@ public class ReikaObfuscationHelper {
 		if (isClientSide()) {
 			addField("field_110859_k", "field_110859_k", false, RenderBiped.class); //armor texture map
 			addField("nameToSoundPoolEntriesMapping", "field_77461_d", false, SoundPool.class);
-			//addField("scaleAmount", "??", false, RenderSlime.class);
-			//addField("mainModel", "??", false, RendererLivingEntity.class);
+			addField("scaleAmount", "field_77092_a", false, RenderSlime.class);
+			addField("mainModel", "field_77045_g", false, RendererLivingEntity.class);
 		}
 		addField("isJumping", "field_70703_bu", false, EntityLivingBase.class);
 	}
