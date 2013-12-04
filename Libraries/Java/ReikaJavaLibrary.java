@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -149,5 +150,27 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			}
 		}
 		return false;
+	}
+
+	public static int getEnumLengthWithoutInitializing(Class<? extends Enum> c) {
+		Field[] q = c.getFields();
+		int count = 0;
+		for (int i = 0; i < q.length; i++) {
+			Field f = q[i];
+			if (f.isEnumConstant())
+				count++;
+		}
+		return count;
+	}
+
+	public static ArrayList<String> getEnumEntriesWithoutInitializing(Class<? extends Enum> c) {
+		ArrayList<String> li = new ArrayList();
+		Field[] q = c.getFields();
+		for (int i = 0; i < q.length; i++) {
+			Field f = q[i];
+			if (f.isEnumConstant())
+				li.add(f.getName());
+		}
+		return li;
 	}
 }

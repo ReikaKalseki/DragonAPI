@@ -20,7 +20,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -85,14 +87,6 @@ public enum ModWoodList {
 
 	public static final ModWoodList[] woodList = values();
 
-	private ModWoodList(ModList req, int blockID, int leafID, int saplingID, VarType type) {
-		this(req, blockID, leafID, saplingID, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, type);
-	}
-
-	private ModWoodList(ModList req, int blockID, int leafID, int saplingID, int[] metalog, int[] metaleaf, int metasapling, VarType type) {
-
-	}
-
 	private ModWoodList(ModList req, String blockVar, String leafVar, String saplingVar, int meta, int metaleaf, int metasapling, VarType type) {
 		this(req, blockVar, leafVar, saplingVar, new int[]{meta}, new int[]{metaleaf}, metasapling, type);
 	}
@@ -110,6 +104,8 @@ public enum ModWoodList {
 	}
 
 	private ModWoodList(ModList req, String blockVar, String leafVar, String saplingVar, int[] meta, int[] metaleaf, int metasapling, VarType type) {
+		if (!DragonAPIInit.canLoadHandlers())
+			throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
 		mod = req;
 		if (!mod.isLoaded()) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Not loading "+this.getLabel()+": Mod not present.");

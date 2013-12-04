@@ -10,10 +10,15 @@
 package Reika.DragonAPI.ModRegistry;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.MekanismHandler;
@@ -26,7 +31,7 @@ public enum ModOreList {
 	FERROUS("Nickel", "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
 	SILVER("Silver", "ingotSilver", 1, "oreSilver"),
 	GALENA("Galena", "ingotGalena", 1, "oreGalena"),
-	ALUMINUM("Aluminum", "ingotAluminum", 1, "oreAluminum", "oreAluminium", "naturalAluminum", "oreNaturalAluminum"), //...Why??
+	ALUMINUM("Aluminum", "ingotAluminum", 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
 	IRIDIUM("Iridium", "ingotIridium", 1, "oreIridium"),
 	FIRESTONE("Firestone", "shardFirestone", 1, "oreFirestone"),
 	CERTUSQUARTZ("Certus Quartz", "crystalQuartz", 3, "oreCertusQuartz"),
@@ -67,7 +72,7 @@ public enum ModOreList {
 	NETHERPLATINUM("Nether Platinum", "ingotPlatinum", 1, "oreNetherPlatinum"),
 	ZINC("Zinc", "ingotZinc", 1, "oreZinc", "oreSphalerite"),
 	OSMIUM("Osmium", "ingotOsmium", 1, "oreOsmium", "oreNetherOsmium"),
-	NETHERPIGIRON("Steel", "ingotSteel", 1, "oreNetherSteel"), //...
+	NETHERPIGIRON("Pig Iron", "ingotSteel", 1, "oreNetherSteel"), //...
 	SULFUR("Sulfur", "dustSulfur", 3, "oreSulfur"),
 	PITCHBLENDE("Pitchblende", "ingotUranium", 1, "orePitchblende"),
 	CADMIUM("Cadmium", "ingotCadmium", 1, "oreCadmium"),
@@ -95,20 +100,57 @@ public enum ModOreList {
 
 	//private static final ArrayList<ItemStack> blocks = new ArrayList<ItemStack>();
 
-	public static final ModOreList[] oreList = ModOreList.values();
+	public static final ModOreList[] oreList = values();
 
 	private ModOreList(String n, String prod, int count, String... ore) {
+		if (!DragonAPIInit.canLoadHandlers())
+			throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
+		dropCount = count;
+		name = n;
+		product = prod;
 		oreLabel = new String[ore.length];
 		for (int i = 0; i < ore.length; i++) {
 			oreLabel[i] = ore[i];
 		}
 		ores = new ArrayList<ItemStack>();
+
+		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding ore entries for "+this.toString()+" (Ore Names: "+Arrays.toString(ore)+")");
+
 		for (int i = 0; i < ore.length; i++) {
-			ores.addAll(OreDictionary.getOres(ore[i]));
+			ArrayList<ItemStack> toadd = OreDictionary.getOres(ore[i]);
+			if (!toadd.isEmpty()) {
+				ReikaJavaLibrary.pConsole("\tDetected the following blocks for "+this+" from OreDict \""+ore[i]+"\": "+toadd.toString());
+				for (int k = 0; k < toadd.size(); k++) {
+					ItemStack is = toadd.get(k);
+					if (ReikaItemHelper.isBlock(is)) {
+						ores.add(is);
+					}
+					else {
+						ReikaJavaLibrary.pConsole("\t"+is+" is not an ore block, but was OreDict fetched by \""+ore[i]+"\"!");
+					}
+				}
+			}
+			else
+				ReikaJavaLibrary.pConsole("\tNo ore blocks detected for \""+ore[i]+"\"");
 		}
-		dropCount = count;
-		name = n;
-		product = prod;
+		if (!this.existsInGame())
+			ReikaJavaLibrary.pConsole("\tDRAGONAPI: No ore blocks detected for "+this);
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getName());
+		//sb.append(" (Ore Names: ");
+		//for (int i = 0; i < oreLabel.length; i++) {
+		//	sb.append(oreLabel[i]);
+		//	if (i < oreLabel.length-1)
+		//		sb.append(" ");
+		//}
+		//sb.append(")");
+		if (this.isRare())
+			sb.append(" (Rare)");
+		return sb.toString();
 	}
 
 	public boolean isThaumcraft() {
@@ -243,18 +285,14 @@ public enum ModOreList {
 		return li;
 	}
 
-	public boolean hasRegisteredBlock() {
-		return ores.size() > 0;
-	}
-
 	public ItemStack getFirstOreBlock() {
-		if (!this.hasRegisteredBlock())
+		if (!this.existsInGame())
 			return null;
 		return ores.get(0);
 	}
 
 	public ItemStack getRandomOreBlock() {
-		if (!this.hasRegisteredBlock())
+		if (!this.existsInGame())
 			return null;
 		int s = ores.size();
 		int index = new Random().nextInt(s);
@@ -267,7 +305,7 @@ public enum ModOreList {
 		return li;
 	}
 
-	public boolean hasLoadedOres() {
+	public boolean existsInGame() {
 		return !ores.isEmpty();
 	}
 
@@ -286,5 +324,18 @@ public enum ModOreList {
 		default:
 			return false;
 		}
+	}
+
+	public boolean canGenerateIn(Block b, int meta) {
+		return this.getGennableIn(b, meta) != null;
+	}
+
+	public ItemStack getGennableIn(Block b, int meta) {
+		for (int i = 0; i < ores.size(); i++) {
+			ItemStack is = ores.get(i);
+			Block ore = Block.blocksList[is.itemID];
+			//Not done
+		}
+		return null;
 	}
 }

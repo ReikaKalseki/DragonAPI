@@ -14,7 +14,10 @@ import java.awt.Color;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public enum ReikaDyeHelper {
 
@@ -66,22 +69,37 @@ public enum ReikaDyeHelper {
 		return this.ordinal();
 	}
 
+	@SideOnly(Side.CLIENT)
 	public int getColor() {
+		return ReikaTextureHelper.isDefaultResourcePack() ? color : this.getColorOverride();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public int getDefaultColor() {
 		return color;
 	}
 
-	public Color getJavaColor() {
-		return Color.decode(String.valueOf(color));
+	@SideOnly(Side.CLIENT)
+	private int getColorOverride() {
+		return ReikaTextureHelper.getColorOverride(this);
 	}
 
+	@SideOnly(Side.CLIENT)
+	public Color getJavaColor() {
+		return Color.decode(String.valueOf(this.getColor()));
+	}
+
+	@SideOnly(Side.CLIENT)
 	public int getRed() {
 		return this.getJavaColor().getRed();
 	}
 
+	@SideOnly(Side.CLIENT)
 	public int getBlue() {
 		return this.getJavaColor().getBlue();
 	}
 
+	@SideOnly(Side.CLIENT)
 	public int getGreen() {
 		return this.getJavaColor().getGreen();
 	}
@@ -98,6 +116,7 @@ public enum ReikaDyeHelper {
 		return new ItemStack(Block.cloth.blockID, 1, this.getWoolMeta());
 	}
 
+	@SideOnly(Side.CLIENT)
 	public double[] getRedstoneParticleVelocityForColor() {
 		double[] c = new double[]{this.getRed()/255D, this.getGreen()/255D, this.getBlue()/255D};
 		return c;

@@ -22,7 +22,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.ResourcePack;
-import net.minecraft.util.ResourceLocation;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.relauncher.Side;
@@ -59,7 +58,6 @@ public final class ReikaImageLoader {
 
 	public static BufferedImage getImageFromResourcePack(String path, ResourcePack res) {
 		ReikaJavaLibrary.pConsole("Loading image at "+path+" from resourcepack "+res.getPackName());
-		ResourceLocation loc = new ResourceLocation(path);
 		AbstractResourcePack pack = (AbstractResourcePack)res;
 		InputStream in = ReikaTextureHelper.getStreamFromTexturePack(path, pack);
 		if (in == null) {

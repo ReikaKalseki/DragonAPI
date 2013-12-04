@@ -20,8 +20,10 @@ import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class BlockArray {
 
@@ -407,5 +409,67 @@ public class BlockArray {
 
 	public boolean hasWorldReference() {
 		return refWorld != null;
+	}
+
+	public void offset(int x, int y, int z) {
+		for (int i = 0; i < blocks.size(); i++) {
+			int[] xyz = blocks.get(i);
+			xyz[0] += x;
+			xyz[1] += y;
+			xyz[2] += z;
+		}
+	}
+
+	public void sink(World world) {
+		boolean canSink = true;
+		while (canSink) {
+			for (int i = 0; i < blocks.size(); i++) {
+				int[] xyz = blocks.get(i);
+				int x = xyz[0];
+				int y = xyz[1];
+				int z = xyz[2];
+				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z)) {
+					canSink = false;
+				}
+			}
+			if (canSink)
+				this.offset(0, -1, 0);
+		}
+	}
+
+	public void sink(World world, Block... overrides) {
+		boolean canSink = true;
+		while (canSink) {
+			for (int i = 0; i < blocks.size(); i++) {
+				int[] xyz = blocks.get(i);
+				int x = xyz[0];
+				int y = xyz[1];
+				int z = xyz[2];
+				int idy = world.getBlockId(x, y-1, z);
+				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) || ReikaArrayHelper.contains(overrides, idy)) {
+					canSink = false;
+				}
+			}
+			if (canSink)
+				this.offset(0, -1, 0);
+		}
+	}
+
+	public void sink(World world, Material... overrides) {
+		boolean canSink = true;
+		while (canSink) {
+			for (int i = 0; i < blocks.size(); i++) {
+				int[] xyz = blocks.get(i);
+				int x = xyz[0];
+				int y = xyz[1];
+				int z = xyz[2];
+				Material idy = world.getBlockMaterial(x, y-1, z);
+				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) || ReikaArrayHelper.contains(overrides, idy)) {
+					canSink = false;
+				}
+			}
+			if (canSink)
+				this.offset(0, -1, 0);
+		}
 	}
 }

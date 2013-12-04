@@ -15,7 +15,9 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
@@ -36,6 +38,8 @@ public enum ModCropList {
 	public static final ModCropList[] cropList = values();
 
 	private ModCropList(ModList api, String blockVar, int metamin, int metafresh, int metaripe, Class type) {
+		if (!DragonAPIInit.canLoadHandlers())
+			throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
 		mod = api;
 		harvestedMeta = metafresh;
 		ripeMeta = metaripe;

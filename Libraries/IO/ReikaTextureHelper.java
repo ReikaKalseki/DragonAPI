@@ -9,8 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -37,6 +40,7 @@ import Reika.DragonAPI.Instantiable.Data.PluralMap;
 import Reika.DragonAPI.Instantiable.IO.ForcedResource;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -47,12 +51,18 @@ public class ReikaTextureHelper {
 	private static final PluralMap textures = new PluralMap(2);
 	private static final PluralMap packTextures = new PluralMap(2);
 
+	private static final PluralMap<Integer> colorOverrides = new PluralMap(2);
+
 	public static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
 	private static final ResourceLocation font = new ResourceLocation("textures/font/ascii.png");
 
+	private static boolean reload() {
+		return Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.isKeyDown(Keyboard.KEY_T);
+	}
+
 	public static void bindTexture(Class root, String tex) {
-		if (Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.isKeyDown(Keyboard.KEY_T)) {
+		if (reload()) {
 			textures.clear();
 			packTextures.clear();
 		}
@@ -65,7 +75,7 @@ public class ReikaTextureHelper {
 			String s = root.getCanonicalName();
 			String parent = s.substring(0, s.length()-root.getSimpleName().length()-1).replaceAll("\\.", "/")+"/";
 			ResourcePack res = getCurrentResourcePack();
-			if (res.equals(getDefaultResourcePack()))
+			if (isDefaultResourcePack())
 				bindClassReferencedTexture(root, tex);
 			else {
 				if (tex.startsWith("/"))
@@ -196,6 +206,10 @@ public class ReikaTextureHelper {
 		return getDefaultResourcePack();
 	}
 
+	public static boolean isDefaultResourcePack() {
+		return getCurrentResourcePack().equals(getDefaultResourcePack());
+	}
+
 	public static ResourcePack getDefaultResourcePack() {
 		return Minecraft.getMinecraft().getResourcePackRepository().rprDefaultResourcePack;
 	}
@@ -203,12 +217,12 @@ public class ReikaTextureHelper {
 	public static InputStream getStreamFromTexturePack(String path, AbstractResourcePack pack) {
 		try {
 			Method m = ReikaObfuscationHelper.getMethod("getInputStreamByName");
-			m.setAccessible(true);
+			//m.setAccessible(true);
 			Object o = m.invoke(pack, path);
 			if (o == null)
 				return null;
 			InputStream in = (InputStream)o;
-			m.setAccessible(false);
+			//m.setAccessible(false);
 			return in;
 		}
 		catch (IllegalAccessException e) {
@@ -222,6 +236,51 @@ public class ReikaTextureHelper {
 				e.printStackTrace();
 		}
 		return null;
+	}
+
+	public static int getColorOverride(ReikaDyeHelper dye) {
+		if (reload()) {
+			colorOverrides.clear();
+		}
+		ResourcePack cur = getCurrentResourcePack();
+		Integer color = colorOverrides.get(dye, cur);
+		if (color == null) {
+			initializeColorOverrides((AbstractResourcePack)cur);
+			color = colorOverrides.get(dye, cur);
+		}
+		return color != null ? color.intValue() : dye.getDefaultColor();
+	}
+
+	private static void initializeColorOverrides(AbstractResourcePack pack) {
+		try {
+			String path = "Reika/DragonAPI/dyecolor.txt";
+			InputStream in = getStreamFromTexturePack(path, pack);
+			if (in == null) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not find color override text file. Using defaults.");
+				for (int i = 0; i < 16; i++) {
+					ReikaDyeHelper dye = ReikaDyeHelper.dyes[i];
+					int c = dye.getDefaultColor();
+					Integer color = new Integer(c);
+					colorOverrides.put(color, dye, pack);
+				}
+				return;
+			}
+			BufferedReader p = new BufferedReader(new InputStreamReader(in));
+			for (int i = 0; i < 16; i++) {
+				String line = p.readLine();
+				String[] s = line.split(":");
+				int c = Color.decode(s[1]).getRGB();
+				Integer color = new Integer(c);
+				ReikaDyeHelper dye = ReikaDyeHelper.dyes[i];
+				colorOverrides.put(color, dye, pack);
+			}
+			p.close();
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Found color override text file for texture pack "+getCurrentResourcePackName()+".");
+		}
+		catch (Exception e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error reading color override text file for texture pack "+getCurrentResourcePackName()+".");
+			e.printStackTrace();
+		}
 	}
 
 }

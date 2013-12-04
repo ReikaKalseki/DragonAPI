@@ -58,6 +58,8 @@ import Reika.DragonAPI.ModRegistry.ModCropList;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -218,6 +220,10 @@ public class DragonAPIInit extends DragonAPIMod {
 			logger.logError("Could not load handler for "+mod.name());
 			e.printStackTrace();
 		}
+	}
+
+	public static boolean canLoadHandlers() {
+		return Loader.instance().hasReachedState(LoaderState.INITIALIZATION);
 	}
 
 	@Override

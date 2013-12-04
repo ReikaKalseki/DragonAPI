@@ -394,4 +394,12 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		}
 		return sum;
 	}
+
+	public static boolean contains(Object[] arr, Object val) {
+		for (int i = 0; i < arr.length; i++) {
+			if (val.equals(arr[i]))
+				return true;
+		}
+		return false;
+	}
 }
