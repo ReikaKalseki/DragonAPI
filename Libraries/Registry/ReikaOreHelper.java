@@ -153,4 +153,8 @@ public enum ReikaOreHelper {
 		return ReikaItemHelper.listContainsItemStack(extraOres, is);
 	}
 
+	public Block getOreGenBlock() {
+		return this == QUARTZ ? Block.netherrack : Block.stone;
+	}
+
 }

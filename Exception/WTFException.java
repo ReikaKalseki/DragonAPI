@@ -17,7 +17,19 @@ public class WTFException extends DragonAPIException {
 		message.append("Either you or "+mod.getDisplayName()+" did something really stupid:\n");
 		message.append(msg+"\n");
 		if (fatal) {
-			message.append("What you did was so bad that the game cannot continue.");
+			message.append("This is such a bad thing to do that the mods cannot load.");
+			this.crash();
+		}
+		else {
+			this.printStackTrace();
+		}
+	}
+
+	public WTFException(String msg, boolean fatal) {
+		message.append("Someone did something really stupid:\n");
+		message.append(msg+"\n");
+		if (fatal) {
+			message.append("This is such a bad thing to do that the mods cannot load.");
 			this.crash();
 		}
 		else {

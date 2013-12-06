@@ -11,6 +11,7 @@ package Reika.DragonAPI.ModRegistry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -92,11 +93,12 @@ public enum ModOreList {
 	MAGMANITE("Magmanite", "dropMagma", 1, "oreMagmanite"),
 	MAGNETITE("Magnetite", "gemMagnetite", 1, "oreMagnetite");
 
-	private ArrayList<ItemStack> ores;
+	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 	private String name;
 	private String[] oreLabel;
 	private int dropCount;
 	private String product;
+	private HashMap<String, ArrayList<ItemStack>> perName = new HashMap();
 
 	//private static final ArrayList<ItemStack> blocks = new ArrayList<ItemStack>();
 
@@ -112,7 +114,6 @@ public enum ModOreList {
 		for (int i = 0; i < ore.length; i++) {
 			oreLabel[i] = ore[i];
 		}
-		ores = new ArrayList<ItemStack>();
 
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding ore entries for "+this.toString()+" (Ore Names: "+Arrays.toString(ore)+")");
 
@@ -124,6 +125,10 @@ public enum ModOreList {
 					ItemStack is = toadd.get(k);
 					if (ReikaItemHelper.isBlock(is)) {
 						ores.add(is);
+						ArrayList li = perName.get(ore[i]);
+						if (li == null)
+							perName.put(ore[i], new ArrayList());
+						perName.get(ore[i]).add(is);
 					}
 					else {
 						ReikaJavaLibrary.pConsole("\t"+is+" is not an ore block, but was OreDict fetched by \""+ore[i]+"\"!");
@@ -310,7 +315,8 @@ public enum ModOreList {
 	}
 
 	public boolean isRare() {
-		return this == ModOreList.PLATINUM || this == ModOreList.NETHERPLATINUM || this == ModOreList.IRIDIUM || this == ModOreList.MOONSTONE;
+		return this == ModOreList.PLATINUM || this == ModOreList.NETHERPLATINUM || this == ModOreList.IRIDIUM ||
+				this == ModOreList.MOONSTONE;
 	}
 
 	public boolean isArsMagica() {
@@ -326,16 +332,25 @@ public enum ModOreList {
 		}
 	}
 
-	public boolean canGenerateIn(Block b, int meta) {
-		return this.getGennableIn(b, meta) != null;
+	public boolean canGenerateIn(Block b) {
+		if (this.isNetherOres())
+			return b == Block.netherrack;
+
+		return b == Block.stone;
 	}
 
-	public ItemStack getGennableIn(Block b, int meta) {
+	public ItemStack getGennableIn(Block b) {
 		for (int i = 0; i < ores.size(); i++) {
 			ItemStack is = ores.get(i);
 			Block ore = Block.blocksList[is.itemID];
 			//Not done
 		}
 		return null;
+	}
+
+	public HashMap<String, ArrayList<ItemStack>> getOresByName() {
+		HashMap<String, ArrayList<ItemStack>> map = new HashMap();
+		map.putAll(perName);
+		return map;
 	}
 }
