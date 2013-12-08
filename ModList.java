@@ -30,6 +30,10 @@ public enum ModList {
 	ENDERFOREST("EnderForest"),
 	VOIDMONSTER("VoidMonster"),
 	USEFULTNT("UsefulTNT"),
+	METEORCRAFT("MeteorCraft"),
+	JETPLANE("JetPlane"),
+	CAVECONTROL("CaveControl"),
+	LEGACYCRAFT("LegacyCraft"),
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
 	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
 	BCTRANSPORT("BuildCraft|Transport", "buildcraft.BuildCraftTransport"),
@@ -160,7 +164,7 @@ public enum ModList {
 	}
 
 	public boolean isReikasMod() {
-		return this.ordinal() <= USEFULTNT.ordinal();
+		return this.ordinal() <= LEGACYCRAFT.ordinal();
 	}
 
 	public static List<ModList> getReikasMods() {

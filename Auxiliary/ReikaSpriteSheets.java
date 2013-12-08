@@ -52,16 +52,28 @@ public final class ReikaSpriteSheets {
 		if (type == type.INVENTORY) {
 			if (v5.isDrawing)
 				v5.draw();
+			double r = 45;
+			double r2 = -30;
+			double s = 1.6;
+			double d = -0.5;
+			GL11.glRotated(r, 0, 1, 0);
+			GL11.glRotated(r2, 1, 0, 0);
+			GL11.glScaled(s, s, s);
+			GL11.glTranslated(d, d, 0);
 			v5.startDrawingQuads();
-			v5.setTranslation(-1.125F, -1.375F, 0);
+			//v5.setTranslation(-1.125F, -1.375F, 0);
 			v5.addVertexWithUV(0, 0, 0, 0.0625F*col, 0.0625F+0.0625F*row);
-			v5.setTranslation(0.125F, -0.46875F, 0);
+			//v5.setTranslation(0.125F, -0.46875F, 0);
 			v5.addVertexWithUV(1, 0, 0, 0.0625F+0.0625F*col, 0.0625F+0.0625F*row);
-			v5.setTranslation(0.125F, 0.375F, 0);
+			//v5.setTranslation(0.125F, 0.375F, 0);
 			v5.addVertexWithUV(1, 1, 0, 0.0625F+0.0625F*col, 0.0625F*row);
-			v5.setTranslation(-1.125F, -0.53125F, 0);
+			//v5.setTranslation(-1.125F, -0.53125F, 0);
 			v5.addVertexWithUV(0, 1, 0, 0.0625F*col, 0.0625F*row);
 			v5.draw();
+			GL11.glTranslated(-d, -d, 0);
+			GL11.glScaled(1/s, 1/s, 1/s);
+			GL11.glRotated(-r2, 1, 0, 0);
+			GL11.glRotated(-r, 0, 1, 0);
 		}
 		if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
 			if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON) {
@@ -74,7 +86,17 @@ public final class ReikaSpriteSheets {
 				GL11.glTranslatef(-1, 0, 0);
 				GL11.glTranslatef(0.5F, 0, 0.25F);
 				GL11.glRotatef(-10, 0, 1, 0);
-				GL11.glTranslatef(-0.125F, -0.125F, 0F);
+				GL11.glTranslatef(-0.125F, -0.125F, 0F);/*
+				double r = -45;
+				double r2 = 0;
+				double r3 = 30;
+				double s = 2.25;
+				double d = 0;
+				GL11.glRotated(r, 0, 1, 0);
+				GL11.glRotated(r2, 1, 0, 0);
+				GL11.glRotated(r3, 0, 0, 1);
+				GL11.glScaled(s, s, s);
+				GL11.glTranslated(d, d, 0);*/
 			}
 			else {
 				double sc = 0.6;

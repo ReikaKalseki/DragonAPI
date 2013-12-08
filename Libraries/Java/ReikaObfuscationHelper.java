@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.entity.RenderSlime;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemHoe;
@@ -118,6 +119,7 @@ public class ReikaObfuscationHelper {
 			addField("mainModel", "field_77045_g", false, RendererLivingEntity.class);
 		}
 		addField("isJumping", "field_70703_bu", false, EntityLivingBase.class);
+		addField("timeSinceIgnited", "field_70833_d", false, EntityCreeper.class);
 	}
 
 	private static boolean isClientSide() {

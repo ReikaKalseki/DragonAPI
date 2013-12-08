@@ -106,8 +106,15 @@ public class ReikaTextureHelper {
 		Integer gl = (Integer) textures.get(def, tex);
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.readImage(root, tex);
-			gl = new Integer(binder.allocateAndSetupTexture(img));
-			textures.put(gl, def, tex);
+			if (img == null) {
+				ReikaJavaLibrary.pConsole("No image found for "+tex+"!");
+				gl = new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
+				textures.put(gl, def, tex);
+			}
+			else {
+				gl = new Integer(binder.allocateAndSetupTexture(img));
+				textures.put(gl, def, tex);
+			}
 		}
 		if (gl != null)
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
@@ -118,8 +125,15 @@ public class ReikaTextureHelper {
 		Integer gl = (Integer) textures.get(def, tex);
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.readHardPathImage(tex);
-			gl = new Integer(binder.allocateAndSetupTexture(img));
-			textures.put(gl, def, tex);
+			if (img == null) {
+				ReikaJavaLibrary.pConsole("No image found for "+tex+"!");
+				gl = new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
+				textures.put(gl, def, tex);
+			}
+			else {
+				gl = new Integer(binder.allocateAndSetupTexture(img));
+				textures.put(gl, def, tex);
+			}
 		}
 		if (gl != null)
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
