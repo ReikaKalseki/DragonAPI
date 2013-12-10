@@ -456,104 +456,104 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (temperature > 0)	{ // Melting snow/ice
 			for (int i = 0; i < 3; i++) {
 				if (world.getBlockMaterial(x-i, y, z) == Material.ice)
-					legacySetBlockWithNotify(world, x-i, y, z, Block.waterMoving.blockID);
+					world.setBlock(x-i, y, z, Block.waterMoving.blockID);
 				if (world.getBlockMaterial(x+i, y, z) == Material.ice)
-					legacySetBlockWithNotify(world, x+i, y, z, Block.waterMoving.blockID);
+					world.setBlock(x+i, y, z, Block.waterMoving.blockID);
 				if (world.getBlockMaterial(x, y-i, z) == Material.ice)
-					legacySetBlockWithNotify(world, x, y-i, z, Block.waterMoving.blockID);
+					world.setBlock(x, y-i, z, Block.waterMoving.blockID);
 				if (world.getBlockMaterial(x, y+i, z) == Material.ice)
-					legacySetBlockWithNotify(world, x, y+i, z, Block.waterMoving.blockID);
+					world.setBlock(x, y+i, z, Block.waterMoving.blockID);
 				if (world.getBlockMaterial(x, y, z-i) == Material.ice)
-					legacySetBlockWithNotify(world, x, y, z-i, Block.waterMoving.blockID);
+					world.setBlock(x, y, z-i, Block.waterMoving.blockID);
 				if (world.getBlockMaterial(x, y, z+i) == Material.ice)
-					legacySetBlockWithNotify(world, x, y, z+i, Block.waterMoving.blockID);
+					world.setBlock(x, y, z+i, Block.waterMoving.blockID);
 			}
 		}
 		if (temperature > 0)	{ // Melting snow/ice
 			for (int i = 0; i < 3; i++) {
 				if (world.getBlockMaterial(x-i, y, z) == Material.snow)
-					legacySetBlockWithNotify(world, x-i, y, z, 0);
+					world.setBlock(x-i, y, z, 0);
 				if (world.getBlockMaterial(x+i, y, z) == Material.snow)
-					legacySetBlockWithNotify(world, x+i, y, z, 0);
+					world.setBlock(x+i, y, z, 0);
 				if (world.getBlockMaterial(x, y-i, z) == Material.snow)
-					legacySetBlockWithNotify(world, x, y-i, z, 0);
+					world.setBlock(x, y-i, z, 0);
 				if (world.getBlockMaterial(x, y+i, z) == Material.snow)
-					legacySetBlockWithNotify(world, x, y+i, z, 0);
+					world.setBlock(x, y+i, z, 0);
 				if (world.getBlockMaterial(x, y, z-i) == Material.snow)
-					legacySetBlockWithNotify(world, x, y, z-i, 0);
+					world.setBlock(x, y, z-i, 0);
 				if (world.getBlockMaterial(x, y, z+i) == Material.snow)
-					legacySetBlockWithNotify(world, x, y, z+i, 0);
+					world.setBlock(x, y, z+i, 0);
 
 				if (world.getBlockMaterial(x-i, y, z) == Material.craftedSnow)
-					legacySetBlockWithNotify(world, x-i, y, z, 0);
+					world.setBlock(x-i, y, z, 0);
 				if (world.getBlockMaterial(x+i, y, z) == Material.craftedSnow)
-					legacySetBlockWithNotify(world, x+i, y, z, 0);
+					world.setBlock(x+i, y, z, 0);
 				if (world.getBlockMaterial(x, y-i, z) == Material.craftedSnow)
-					legacySetBlockWithNotify(world, x, y-i, z, 0);
+					world.setBlock(x, y-i, z, 0);
 				if (world.getBlockMaterial(x, y+i, z) == Material.craftedSnow)
-					legacySetBlockWithNotify(world, x, y+i, z, 0);
+					world.setBlock(x, y+i, z, 0);
 				if (world.getBlockMaterial(x, y, z-i) == Material.craftedSnow)
-					legacySetBlockWithNotify(world, x, y, z-i, 0);
+					world.setBlock(x, y, z-i, 0);
 				if (world.getBlockMaterial(x, y, z+i) == Material.craftedSnow)
-					legacySetBlockWithNotify(world, x, y, z+i, 0);
+					world.setBlock(x, y, z+i, 0);
 			}
 		}
 		if (temperature > 900)	{ // Melting sand, ground
 			for (int i = 0; i < 3; i++) {
 				if (world.getBlockMaterial(x-i, y, z) == Material.sand)
-					legacySetBlockWithNotify(world, x-i, y, z, Block.glass.blockID);
+					world.setBlock(x-i, y, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x+i, y, z) == Material.sand)
-					legacySetBlockWithNotify(world, x+i, y, z, Block.glass.blockID);
+					world.setBlock(x+i, y, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y-i, z) == Material.sand)
-					legacySetBlockWithNotify(world, x, y-i, z, Block.glass.blockID);
+					world.setBlock(x, y-i, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y+i, z) == Material.sand)
-					legacySetBlockWithNotify(world, x, y+i, z, Block.glass.blockID);
+					world.setBlock(x, y+i, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y, z-i) == Material.sand)
-					legacySetBlockWithNotify(world, x, y, z-i, Block.glass.blockID);
+					world.setBlock(x, y, z-i, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y, z+i) == Material.sand)
-					legacySetBlockWithNotify(world, x, y, z+i, Block.glass.blockID);
+					world.setBlock(x, y, z+i, Block.glass.blockID);
 
 				if (world.getBlockMaterial(x-i, y, z) == Material.ground)
-					legacySetBlockWithNotify(world, x-i, y, z, Block.glass.blockID);
+					world.setBlock(x-i, y, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x+i, y, z) == Material.ground)
-					legacySetBlockWithNotify(world, x+i, y, z, Block.glass.blockID);
+					world.setBlock(x+i, y, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y-i, z) == Material.ground)
-					legacySetBlockWithNotify(world, x, y-i, z, Block.glass.blockID);
+					world.setBlock(x, y-i, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y+i, z) == Material.ground)
-					legacySetBlockWithNotify(world, x, y+i, z, Block.glass.blockID);
+					world.setBlock(x, y+i, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y, z-i) == Material.ground)
-					legacySetBlockWithNotify(world, x, y, z-i, Block.glass.blockID);
+					world.setBlock(x, y, z-i, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y, z+i) == Material.ground)
-					legacySetBlockWithNotify(world, x, y, z+i, Block.glass.blockID);
+					world.setBlock(x, y, z+i, Block.glass.blockID);
 
 				if (world.getBlockMaterial(x-i, y, z) == Material.grass)
-					legacySetBlockWithNotify(world, x-i, y, z, Block.glass.blockID);
+					world.setBlock(x-i, y, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x+i, y, z) == Material.grass)
-					legacySetBlockWithNotify(world, x+i, y, z, Block.glass.blockID);
+					world.setBlock(x+i, y, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y-i, z) == Material.grass)
-					legacySetBlockWithNotify(world, x, y-i, z, Block.glass.blockID);
+					world.setBlock(x, y-i, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y+i, z) == Material.grass)
-					legacySetBlockWithNotify(world, x, y+i, z, Block.glass.blockID);
+					world.setBlock(x, y+i, z, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y, z-i) == Material.grass)
-					legacySetBlockWithNotify(world, x, y, z-i, Block.glass.blockID);
+					world.setBlock(x, y, z-i, Block.glass.blockID);
 				if (world.getBlockMaterial(x, y, z+i) == Material.grass)
-					legacySetBlockWithNotify(world, x, y, z+i, Block.glass.blockID);
+					world.setBlock(x, y, z+i, Block.glass.blockID);
 			}
 		}
 		if (temperature > 1700)	{ // Melting rock
 			for (int i = 0; i < 3; i++) {
 				if (world.getBlockMaterial(x-i, y, z) == Material.rock)
-					legacySetBlockWithNotify(world, x-i, y, z, Block.lavaMoving.blockID);
+					world.setBlock(x-i, y, z, Block.lavaMoving.blockID);
 				if (world.getBlockMaterial(x+i, y, z) == Material.rock)
-					legacySetBlockWithNotify(world, x+i, y, z, Block.lavaMoving.blockID);
+					world.setBlock(x+i, y, z, Block.lavaMoving.blockID);
 				if (world.getBlockMaterial(x, y-i, z) == Material.rock)
-					legacySetBlockWithNotify(world, x, y-i, z, Block.lavaMoving.blockID);
+					world.setBlock(x, y-i, z, Block.lavaMoving.blockID);
 				if (world.getBlockMaterial(x, y+i, z) == Material.rock)
-					legacySetBlockWithNotify(world, x, y+i, z, Block.lavaMoving.blockID);
+					world.setBlock(x, y+i, z, Block.lavaMoving.blockID);
 				if (world.getBlockMaterial(x, y, z-i) == Material.rock)
-					legacySetBlockWithNotify(world, x, y, z-i, Block.lavaMoving.blockID);
+					world.setBlock(x, y, z-i, Block.lavaMoving.blockID);
 				if (world.getBlockMaterial(x, y, z+i) == Material.rock)
-					legacySetBlockWithNotify(world, x, y, z+i, Block.lavaMoving.blockID);
+					world.setBlock(x, y, z+i, Block.lavaMoving.blockID);
 			}
 		}
 	}
@@ -561,17 +561,17 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Surrounds the block with fire. Args: World, x, y, z */
 	public static void ignite(World world, int x, int y, int z) {
 		if (world.getBlockId		(x-1, y, z) == 0)
-			legacySetBlockWithNotify(world, x-1, y, z, Block.fire.blockID);
+			world.setBlock(x-1, y, z, Block.fire.blockID);
 		if (world.getBlockId		(x+1, y, z) == 0)
-			legacySetBlockWithNotify(world, x+1, y, z, Block.fire.blockID);
+			world.setBlock(x+1, y, z, Block.fire.blockID);
 		if (world.getBlockId		(x, y-1, z) == 0)
-			legacySetBlockWithNotify(world, x, y-1, z, Block.fire.blockID);
+			world.setBlock(x, y-1, z, Block.fire.blockID);
 		if (world.getBlockId		(x, y+1, z) == 0)
-			legacySetBlockWithNotify(world, x, y+1, z, Block.fire.blockID);
+			world.setBlock(x, y+1, z, Block.fire.blockID);
 		if (world.getBlockId		(x, y, z-1) == 0)
-			legacySetBlockWithNotify(world, x, y, z-1, Block.fire.blockID);
+			world.setBlock(x, y, z-1, Block.fire.blockID);
 		if (world.getBlockId		(x, y, z+1) == 0)
-			legacySetBlockWithNotify(world, x, y, z+1, Block.fire.blockID);
+			world.setBlock(x, y, z+1, Block.fire.blockID);
 	}
 
 	/** Returns the number of water blocks directly and continuously above the passed coordinates.
@@ -729,7 +729,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
 		if (id != 0)
 			ReikaSoundHelper.playBreakSound(world, x, y, z, Block.blocksList[id]);
-		legacySetBlockWithNotify(world, x, y, z, 0);
+		world.setBlock(x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreak(world, x+1, y, z, id, meta);
 		recursiveBreak(world, x-1, y, z, id, meta);
@@ -779,7 +779,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
 		if (id != 0)
 			ReikaSoundHelper.playBreakSound(world, x, y, z, Block.blocksList[id]);
-		legacySetBlockWithNotify(world, x, y, z, 0);
+		world.setBlock(x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreakWithBounds(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
 		recursiveBreakWithBounds(world, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2);

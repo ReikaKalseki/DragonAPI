@@ -10,6 +10,8 @@
 package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import net.minecraft.item.Item;
 import Reika.DragonAPI.ModList;
@@ -28,16 +30,18 @@ public class ForestryHandler extends ModHandlerBase {
 		if (this.hasMod()) {
 			try {
 				Class forest = this.getMod().getItemClass();
-				Field apa = forest.getField("apatite");
-				Item item = (Item)apa.get(null);
+				Field apa = forest.getField("apatite"); //is enum object now
+				Object entry = apa.get(null);
+				Method get = forest.getMethod("item");
+				Item item = (Item)get.invoke(entry);
 				idapatite = item.itemID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
-			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+			catch (NoSuchMethodException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" method not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
@@ -50,6 +54,10 @@ public class ForestryHandler extends ModHandlerBase {
 			}
 			catch (NullPointerException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				e.printStackTrace();
+			}
+			catch (InvocationTargetException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Invocation target exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 		}

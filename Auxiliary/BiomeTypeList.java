@@ -58,10 +58,13 @@ public enum BiomeTypeList {
 
 	public static BiomeTypeList getEntry(BiomeGenBase biome) {
 		for (int i = 0; i < biomeList.length; i++) {
-			String[] biomes = biomeList[i].biomes;
-			for (int j = 0; j < biomes.length; j++) {
-				if (biome.getClass().getCanonicalName().equals(biomes[j]))
-					return biomeList[i];
+			BiomeTypeList type = biomeList[i];
+			if (type.isAvailable()) {
+				String[] biomes = type.biomes;
+				for (int j = 0; j < biomes.length; j++) {
+					if (biome.getClass().getCanonicalName().equals(biomes[j]))
+						return biomeList[i];
+				}
 			}
 		}
 		return null;

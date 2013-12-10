@@ -135,7 +135,7 @@ public enum ReikaOreHelper {
 	}
 
 	static {
-		addSpecialCase("oreEmerald", "oreOlivine");
+		//addSpecialCase("oreEmerald", "oreOlivine");
 	}
 
 	private static void addSpecialCase(String ore, String... names) {
