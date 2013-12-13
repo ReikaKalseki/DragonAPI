@@ -60,7 +60,8 @@ public enum ModList {
 	TRANSITIONAL("TransitionalAssistance", "modTA.Core.TACore"),
 	ENDERSTORAGE("EnderStorage"),
 	OPTIFINE("Optifine"),
-	TREECAPITATOR("TreeCapitator");
+	TREECAPITATOR("TreeCapitator"),
+	HARVESTCRAFT("PamHarvestCraft");
 
 	private final boolean condition;
 	private final String modlabel;
