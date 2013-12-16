@@ -16,6 +16,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import cpw.mods.fml.common.IPlayerTracker;
 
 public final class LoginHandler implements IPlayerTracker {
@@ -54,10 +55,14 @@ public final class LoginHandler implements IPlayerTracker {
 
 	@Override
 	public void onPlayerLogin(EntityPlayer ep) {
+		boolean flag = ReikaObfuscationHelper.isDeObfEnvironment();
 		if ("Reika_Kalseki".equals(ep.getEntityName())) {
 			ChatMessageComponent chat = new ChatMessageComponent();
 			chat.addText(reikaMessage);
 			MinecraftServer.getServer().getConfigurationManager().sendChatMsg(chat);
+		}
+		else {
+
 		}
 	}
 

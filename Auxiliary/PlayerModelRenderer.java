@@ -58,19 +58,6 @@ public class PlayerModelRenderer {
 				modelReika.renderBodyParts(ep, tick);
 				//modelReika.reset();
 				GL11.glFrontFace(GL11.GL_CCW);
-				/*
-				float yaw = -ep.rotationYaw%360-tick*(ep.rotationYaw-ep.prevRotationYaw);
-				double s = 0.05;
-				GL11.glScaled(-s, s, s);
-				int dy = -20;
-				int dx = 0;
-				GL11.glRotated(-yaw, 0, 1, 0);
-				GL11.glTranslated(dx, dy, 0);
-				//Minecraft.getMinecraft().fontRenderer.drawString("<Mod Dev>", 0, 0, 0);
-				ReikaGuiAPI.instance.drawCenteredStringNoShadow(Minecraft.getMinecraft().fontRenderer, "<Mod Dev>", 0, 0, 0xffffff);
-				GL11.glTranslated(-dx, -dy, 0);
-				GL11.glRotated(yaw, 0, 1, 0);
-				GL11.glScaled(-1/s, 1/s, 1/s);*/
 
 				GL11.glScaled(1, -1, 1);
 			}

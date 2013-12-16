@@ -119,8 +119,11 @@ public final class ReikaChatHelper extends DragonAPICore {
 		writeString(str);
 	}
 
-	public static void writeFormattedString(EnumChatFormatting fm, String str) {
-		writeString(fm.toString()+str);
+	public static void writeFormattedString(String str, EnumChatFormatting... fm) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < fm.length; i++)
+			sb.append(fm[i].toString());
+		writeString(sb.toString()+str);
 	}
 
 	public static void writeEntity(World world, Entity ent) {

@@ -207,7 +207,7 @@ public enum ModOreList {
 		if (is == null)
 			return null;
 		if (is.itemID == MekanismHandler.getInstance().oreID)
-			return OSMIUM;
+			return MekanismHandler.getInstance().getModOre(is.itemID, is.getItemDamage());
 		for (int i = 0; i < oreList.length; i++) {
 			if (oreList[i].ores.isEmpty()) {
 				oreList[i].reloadOreList();

@@ -84,6 +84,11 @@ public class SamakiModel extends ModifiedPlayerModel {
 		float pitch = -ep.rotationPitch;
 		float yawHead = -ep.rotationYaw%360-tick*(ep.rotationYaw-ep.prevRotationYaw);
 
+		if (tick == 1.0F) {
+			yawHead = yhc/RADIAN-6;
+			pitch = pc/RADIAN;
+		}
+
 		float f5 = 0.0625F;
 
 		double d = 0.1825;

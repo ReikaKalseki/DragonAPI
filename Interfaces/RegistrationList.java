@@ -12,7 +12,7 @@ package Reika.DragonAPI.Interfaces;
 import net.minecraft.item.ItemBlock;
 
 /** This is an interface for ENUMS! */
-public abstract interface RegistrationList {
+public interface RegistrationList {
 
 	public Class[] getConstructorParamTypes();
 

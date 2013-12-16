@@ -363,7 +363,7 @@ public enum ModWoodList {
 			return true;
 		if (this == TRANSFORMATION)
 			return true;
-		if (this == ModWoodList.SILVERWOOD)
+		if (this == SILVERWOOD)
 			return true;
 		return false;
 	}

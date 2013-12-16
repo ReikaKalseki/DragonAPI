@@ -15,12 +15,17 @@ import net.minecraft.block.Block;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public final class MekanismHandler extends ModHandlerBase {
 
 	private static final MekanismHandler instance = new MekanismHandler();
 
 	public final int oreID;
+
+	public static final int osmiumMeta = 0;
+	public static final int copperMeta = 1;
+	public static final int tinMeta = 2;
 
 	private MekanismHandler() {
 		super();
@@ -71,6 +76,20 @@ public final class MekanismHandler extends ModHandlerBase {
 	@Override
 	public ModList getMod() {
 		return ModList.MEKANISM;
+	}
+
+	public ModOreList getModOre(int id, int meta) {
+		if (id != oreID)
+			return null;
+
+		if (meta == osmiumMeta)
+			return ModOreList.OSMIUM;
+		if (meta == tinMeta)
+			return ModOreList.TIN;
+		if (meta == copperMeta)
+			return ModOreList.COPPER;
+
+		return null;
 	}
 
 }

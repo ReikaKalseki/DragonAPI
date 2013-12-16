@@ -61,7 +61,8 @@ public enum ModList {
 	ENDERSTORAGE("EnderStorage"),
 	OPTIFINE("Optifine"),
 	TREECAPITATOR("TreeCapitator"),
-	HARVESTCRAFT("PamHarvestCraft");
+	HARVESTCRAFT("PamHarvestCraft"),
+	MYSTCRAFT("Mystcraft");
 
 	private final boolean condition;
 	private final String modlabel;
