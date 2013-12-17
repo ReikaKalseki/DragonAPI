@@ -38,8 +38,8 @@ public enum ReikaDyeHelper {
 	ORANGE(0xD87F33),
 	WHITE(0xFFFFFF);
 
-	private int color;
-	private String colorName;
+	public final int color;
+	public final String colorName;
 
 	public static final ReikaDyeHelper[] dyes = ReikaDyeHelper.values();
 
@@ -121,9 +121,4 @@ public enum ReikaDyeHelper {
 		double[] c = new double[]{this.getRed()/255D, this.getGreen()/255D, this.getBlue()/255D};
 		return c;
 	}
-
-	public String getName() {
-		return colorName;
-	}
-
 }
