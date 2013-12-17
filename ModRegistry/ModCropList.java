@@ -17,33 +17,47 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.CropHandlerBase;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.ModInteract.MagicCropHandler;
+import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
 
 public enum ModCropList {
 
-	BARLEY(ModList.NATURA, "crops", 0, 0, 3, Block.class),
-	COTTON(ModList.NATURA, "crops", 4, 6, 8, Block.class),
-	FLAX(ModList.REDPOWER, "", 0, 0, 0, Block.class),
-	CANOLA(ModList.ROTARYCRAFT, "canola", 0, 0, 9, Block.class);
+	BARLEY(ModList.NATURA, "crops", 0, 0, 3, VarType.BLOCK),
+	COTTON(ModList.NATURA, "crops", 4, 6, 8, VarType.BLOCK),
+	FLAX(ModList.REDPOWER, "", 0, 0, 0, VarType.BLOCK),
+	CANOLA(ModList.ROTARYCRAFT, "canola", 0, 0, 9, VarType.BLOCK),
+	MAGIC(ModList.MAGICCROPS, MagicCropHandler.getInstance());
 
-	private ModList mod;
+	private final ModList mod;
 	public final int blockID;
 	public final int ripeMeta;
 	/** Not necessarily zero; see cotton */
 	public final int harvestedMeta;
 	private int minmeta;
+	private final CropHandlerBase handler;
 
 	public static final ModCropList[] cropList = values();
 
-	private ModCropList(ModList api, String blockVar, int metamin, int metafresh, int metaripe, Class type) {
+	private ModCropList(ModList api, CropHandlerBase h) {
+		handler = h;
+		mod = api;
+		blockID = -1;
+		ripeMeta = h.getRipeMeta();
+		harvestedMeta = h.getFreshMeta();
+	}
+
+	private ModCropList(ModList api, String blockVar, int metamin, int metafresh, int metaripe, VarType type) {
 		if (!DragonAPIInit.canLoadHandlers())
 			throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
 		mod = api;
 		harvestedMeta = metafresh;
 		ripeMeta = metaripe;
 		minmeta = metamin;
+		handler = null;
 		int id = -1;
 		if (mod.isLoaded()) {
 			Class cl = api.getBlockClass();
@@ -56,26 +70,27 @@ public enum ModCropList {
 			else {
 				try {
 					Field b = cl.getField(blockVar);
-					if (type == ItemStack.class) {
-						ItemStack block = (ItemStack)b.get(null);
-						if (block == null) {
+					switch(type) {
+					case ITEMSTACK:
+						ItemStack is = (ItemStack)b.get(null);
+						if (is == null) {
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
 						}
 						else
-							id = block.itemID;
-					}
-					else if (type == Block.class) {
+							id = is.itemID;
+						break;
+					case BLOCK:
 						Block block = (Block)b.get(null);
 						if (block == null) {
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
 						}
 						else
 							id = block.blockID;
-					}
-					else if (type == Integer.class) {
+						break;
+					case INT:
 						id = b.getInt(null);
-					}
-					else {
+						break;
+					default:
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for "+b);
 					}
@@ -103,7 +118,7 @@ public enum ModCropList {
 
 	@Override
 	public String toString() {
-		return this.name()+" from "+mod;
+		return this.name()+" from "+mod+" with metadatas ["+harvestedMeta+","+ripeMeta+"]";
 	}
 
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
@@ -118,8 +133,14 @@ public enum ModCropList {
 	public static ModCropList getModCrop(int id, int meta) {
 		for (int i = 0; i < cropList.length; i++) {
 			ModCropList crop = cropList[i];
-			if (crop.blockID == id && ReikaMathLibrary.isValueInsideBoundsIncl(crop.minmeta, crop.ripeMeta, meta))
-				return crop;
+			if (crop.isHandlered()) {
+				if (crop.handler.isCrop(id))
+					return crop;
+			}
+			else {
+				if (crop.blockID == id && ReikaMathLibrary.isValueInsideBoundsIncl(crop.minmeta, crop.ripeMeta, meta))
+					return crop;
+			}
 		}
 		return null;
 	}
@@ -134,5 +155,9 @@ public enum ModCropList {
 
 	public boolean isRipe(int meta) {
 		return meta >= ripeMeta;
+	}
+
+	public boolean isHandlered() {
+		return handler != null;
 	}
 }

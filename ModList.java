@@ -62,7 +62,8 @@ public enum ModList {
 	OPTIFINE("Optifine"),
 	TREECAPITATOR("TreeCapitator"),
 	HARVESTCRAFT("PamHarvestCraft"),
-	MYSTCRAFT("Mystcraft");
+	MYSTCRAFT("Mystcraft"),
+	MAGICCROPS("magicalcrops", "magicalcrops.mod_mCrops");
 
 	private final boolean condition;
 	private final String modlabel;

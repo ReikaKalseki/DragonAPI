@@ -368,7 +368,7 @@ public enum ModWoodList {
 		return false;
 	}
 
-	static enum VarType {
+	public static enum VarType {
 		ITEMSTACK(),
 		BLOCK(),
 		INT();
