@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import net.minecraft.client.audio.SoundPool;
 import net.minecraft.client.renderer.entity.RenderBiped;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.RenderSlime;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.resources.AbstractResourcePack;
@@ -117,6 +118,7 @@ public class ReikaObfuscationHelper {
 			addField("nameToSoundPoolEntriesMapping", "field_77461_d", false, SoundPool.class);
 			addField("scaleAmount", "field_77092_a", false, RenderSlime.class);
 			addField("mainModel", "field_77045_g", false, RendererLivingEntity.class);
+			addField("modelBipedMain", "field_77109_a", false, RenderPlayer.class);
 		}
 		addField("isJumping", "field_70703_bu", false, EntityLivingBase.class);
 		addField("timeSinceIgnited", "field_70833_d", false, EntityCreeper.class);

@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
@@ -556,6 +558,10 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			}
 		}
 		return false;
+	}
+
+	public static Render getEntityRenderer(Class entityClass) {
+		return (Render)RenderManager.instance.entityRenderMap.get(entityClass);
 	}
 
 }

@@ -90,4 +90,21 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 		return (pwr == 0 || pwr == 15);
 	}
 
+	/** Returns true if the redstone signal to x,y,z is alternating. Supply a larger lastPower array for more lenience. */
+	public static boolean isGettingACRedstone(World world, int x, int y, int z, boolean[] lastPower) {
+		boolean currentpower = world.isBlockIndirectlyGettingPowered(x, y, z);
+		boolean ac = false;
+		for (int i = 0; i < lastPower.length && !ac; i++) {
+			if (lastPower[i] != currentpower)
+				ac = true;
+		}
+
+		for (int i = lastPower.length-1; i > 0; i--) {
+			lastPower[i] = lastPower[i-1];
+		}
+		lastPower[0] = currentpower;
+
+		return ac;
+	}
+
 }
