@@ -200,7 +200,7 @@ public class CoreContainer extends Container {
 	private boolean canAdd(ItemStack is, ItemStack inslot) {
 		if (inslot == null)
 			return true;
-		return ReikaItemHelper.canCombineStacks(is, inslot);
+		return ReikaItemHelper.matchStacks(is, inslot);
 	}
 
 	@Override //To avoid a couple crashes with some mods not checking array bounds

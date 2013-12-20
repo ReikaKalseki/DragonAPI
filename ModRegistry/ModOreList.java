@@ -91,7 +91,9 @@ public enum ModOreList {
 	SUNSTONE("Sunstone", "gemSunstone", 1, "oreSunstone"),
 	TITANIUM("Titanium", "ingotTitanium", 1, "oreTitanium"),
 	MAGMANITE("Magmanite", "dropMagma", 1, "oreMagmanite"),
-	MAGNETITE("Magnetite", "gemMagnetite", 1, "oreMagnetite");
+	MAGNETITE("Magnetite", "gemMagnetite", 1, "oreMagnetite"),
+	ESSENCE("Essence", "itemEssence", 3, "oreEssence", "oreNetherEssence"),
+	MIMICHITE("Mimichite", "gemMimichite", 1, "oreMimichite");
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 	private String name;
@@ -183,8 +185,22 @@ public enum ModOreList {
 	public void reloadOreList() {
 		ores = new ArrayList<ItemStack>();
 		for (int i = 0; i < oreLabel.length; i++) {
-			ores.addAll(OreDictionary.getOres(oreLabel[i]));
+			ArrayList<ItemStack> li = OreDictionary.getOres(oreLabel[i]);
+			boolean flag = false;
+			for (int k = 0; k < li.size(); k++) {
+				ItemStack is = li.get(k);
+				if (!ReikaItemHelper.listContainsItemStack(ores, is)) {
+					ores.add(is);
+					flag = true;
+				}
+			}
+			if (flag) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Reloading ore listings for "+this);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Found "+li);
+			}
+			ores.addAll(li);
 		}
+		//Thread.dumpStack();
 	}
 
 	public static boolean isModOre(ItemStack is) {

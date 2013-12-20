@@ -123,7 +123,13 @@ public enum ModCropList {
 
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
 		int meta = world.getBlockMetadata(x, y, z);
-		return Block.blocksList[blockID].getBlockDropped(world, x, y, z, meta, fortune);
+		if (blockID != -1)
+			return Block.blocksList[blockID].getBlockDropped(world, x, y, z, meta, fortune);
+		else {
+			int id = world.getBlockId(x, y, z);
+			Block b = Block.blocksList[id];
+			return b != null ? b.getBlockDropped(world, x, y, z, meta, fortune) : new ArrayList();
+		}
 	}
 
 	public ModList getParentMod() {

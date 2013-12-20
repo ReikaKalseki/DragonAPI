@@ -17,21 +17,26 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class ThaumBlockHandler extends ModHandlerBase {
+public class TinkerOreHandler extends ModHandlerBase {
 
-	private static final ThaumBlockHandler instance = new ThaumBlockHandler();
+	private static final TinkerOreHandler instance = new TinkerOreHandler();
 
-	public final int totemID;
+	public final int gravelOreID;
+	public final int stoneOreID;
 
-	private ThaumBlockHandler() {
+	private TinkerOreHandler() {
 		super();
-		int idtile = -1;
+		int idgravel = -1;
+		int idnether = -1;
 
 		if (this.hasMod()) {
 			try {
-				Class thaum = ModList.THAUMCRAFT.getBlockClass();
-				Field totem = thaum.getField("blockCosmeticSolid");
-				idtile = ((Block)totem.get(null)).blockID;
+				Class tink = ModList.TINKERER.getBlockClass();
+				Field gravel = tink.getField("oreGravel");
+				idgravel = ((Block)gravel.get(null)).blockID;
+
+				Field ore = tink.getField("oreSlag");
+				idnether = ((Block)gravel.get(null)).blockID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -58,27 +63,34 @@ public class ThaumBlockHandler extends ModHandlerBase {
 			this.noMod();
 		}
 
-		totemID = idtile;
+		gravelOreID = idgravel;
+		stoneOreID = idnether;
 	}
 
-	public static ThaumBlockHandler getInstance() {
+	public static TinkerOreHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return totemID != -1;
+		return gravelOreID != -1 && stoneOreID != -1;
 	}
 
 	@Override
 	public ModList getMod() {
-		return ModList.THAUMCRAFT;
+		return ModList.TINKERER;
 	}
 
-	public boolean isTotemBlock(ItemStack block) {
+	public boolean isGravelOre(ItemStack block) {
 		if (!this.initializedProperly())
 			return false;
-		return block.itemID == totemID && block.getItemDamage() < 2;
+		return block.itemID == gravelOreID;
+	}
+
+	public boolean isNetherOre(ItemStack block) {
+		if (!this.initializedProperly())
+			return false;
+		return block.itemID == stoneOreID && block.getItemDamage() < 3;
 	}
 
 }

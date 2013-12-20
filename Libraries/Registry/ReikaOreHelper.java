@@ -108,7 +108,8 @@ public enum ReikaOreHelper {
 			return special;
 		for (int i = 0; i < oreList.length; i++) {
 			ReikaOreHelper ore = oreList[i];
-			if (ReikaItemHelper.listContainsItemStack(ore.ores, is))
+			ArrayList<ItemStack> li = ore.ores;
+			if (ReikaItemHelper.listContainsItemStack(li, is))
 				return ore;
 		}
 		return null;
@@ -155,6 +156,19 @@ public enum ReikaOreHelper {
 
 	public Block getOreGenBlock() {
 		return this == QUARTZ ? Block.netherrack : Block.stone;
+	}
+
+	public static void refreshAll() {
+		for (int i = 0; i < oreList.length; i++) {
+			ReikaOreHelper ore = oreList[i];
+			String tag = ore.oreDict;
+			ArrayList<ItemStack> li = OreDictionary.getOres(tag);
+			for (int k = 0; k < li.size(); k++) {
+				ItemStack is = li.get(k);
+				if (!ReikaItemHelper.listContainsItemStack(ore.ores, is))
+					ore.ores.add(is);
+			}
+		}
 	}
 
 }

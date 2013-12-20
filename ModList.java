@@ -46,7 +46,7 @@ public enum ModList {
 	REDPOWER("RedPower"),
 	TWILIGHT("TwilightForest", "twilightforest.block.TFBlocks", "twilightforest.item.TFItems"),
 	NATURA("Natura", "mods.natura.common.NContent"),
-	BOP("BiomesOPlenty", "biomesoplenty.configuration.configfile.BOPConfigurationIDs"),
+	BOP("BiomesOPlenty", "biomesoplenty.configuration.BOPConfigurationIDs"),
 	BXL("ExtraBiomesXL"),
 	MINEFACTORY("MineFactoryReloaded", "powercrystals.minefactoryreloaded.MineFactoryReloadedCore"),
 	DARTCRAFT("DartCraft", "bluedart.block.DartBlock", "bluedart.item.DartItem"),
@@ -63,10 +63,11 @@ public enum ModList {
 	TREECAPITATOR("TreeCapitator"),
 	HARVESTCRAFT("PamHarvestCraft"),
 	MYSTCRAFT("Mystcraft"),
-	MAGICCROPS("magicalcrops", "magicalcrops.mod_mCrops");
+	MAGICCROPS("magicalcrops", "magicalcrops.mod_mCrops"),
+	MIMICRY("Mimicry", "modMimicry.Block.MimicryBlock", "modMimicry.Item.MimicryItem");
 
 	private final boolean condition;
-	private final String modlabel;
+	public final String modLabel;
 	private final String itemClass;
 	private final String blockClass;
 
@@ -77,8 +78,8 @@ public enum ModList {
 	public static final ModList[] modList = ModList.values();
 
 	private ModList(String label, String blocks, String items) {
-		modlabel = label;
-		boolean c = Loader.isModLoaded(modlabel);
+		modLabel = label;
+		boolean c = Loader.isModLoaded(modLabel);
 		condition = c;
 		itemClass = items;
 		blockClass = blocks;
@@ -154,7 +155,7 @@ public enum ModList {
 	}
 
 	public String getModLabel() {
-		return modlabel;
+		return modLabel;
 	}
 
 	public String getDisplayName() {

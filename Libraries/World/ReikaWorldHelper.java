@@ -34,6 +34,7 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.fluids.BlockFluidBase;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
@@ -438,18 +439,24 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 		if (temperature > 230)	{ // Grass/leaves/plant autoignition
 			for (int i = 0; i < 4; i++) {
-				if (world.getBlockMaterial(x-i, y, z) == Material.leaves || world.getBlockMaterial(x-i, y, z) == Material.vine || world.getBlockMaterial(x-i, y, z) == Material.plants || world.getBlockMaterial(x-i, y, z) == Material.web)
-					ignite(world, x-i, y, z);
-				if (world.getBlockMaterial(x+i, y, z) == Material.leaves || world.getBlockMaterial(x+i, y, z) == Material.vine || world.getBlockMaterial(x+i, y, z) == Material.plants || world.getBlockMaterial(x+i, y, z) == Material.web)
-					ignite(world, x+i, y, z);
-				if (world.getBlockMaterial(x, y-i, z) == Material.leaves || world.getBlockMaterial(x, y-i, z) == Material.vine || world.getBlockMaterial(x, y-i, z) == Material.plants || world.getBlockMaterial(x, y-i, z) == Material.web)
-					ignite(world, x, y-i, z);
-				if (world.getBlockMaterial(x, y+i, z) == Material.leaves || world.getBlockMaterial(x, y+i, z) == Material.vine || world.getBlockMaterial(x, y+i, z) == Material.plants || world.getBlockMaterial(x, y+i, z) == Material.web)
-					ignite(world, x, y+i, z);
-				if (world.getBlockMaterial(x, y, z-i) == Material.leaves || world.getBlockMaterial(x, y, z-i) == Material.vine || world.getBlockMaterial(x, y, z-i) == Material.plants || world.getBlockMaterial(x, y, z-i) == Material.web)
-					ignite(world, x, y, z-i);
-				if (world.getBlockMaterial(x, y, z+i) == Material.leaves || world.getBlockMaterial(x, y, z+i) == Material.vine || world.getBlockMaterial(x, y, z+i) == Material.plants || world.getBlockMaterial(x, y, z+i) == Material.web)
-					ignite(world, x, y, z+i);
+				if (flammable(world, x-i, y, z))
+					if (world.getBlockMaterial(x-i, y, z) == Material.leaves || world.getBlockMaterial(x-i, y, z) == Material.vine || world.getBlockMaterial(x-i, y, z) == Material.plants || world.getBlockMaterial(x-i, y, z) == Material.web)
+						ignite(world, x-i, y, z);
+				if (flammable(world, x+i, y, z))
+					if (world.getBlockMaterial(x+i, y, z) == Material.leaves || world.getBlockMaterial(x+i, y, z) == Material.vine || world.getBlockMaterial(x+i, y, z) == Material.plants || world.getBlockMaterial(x+i, y, z) == Material.web)
+						ignite(world, x+i, y, z);
+				if (flammable(world, x, y-i, z))
+					if (world.getBlockMaterial(x, y-i, z) == Material.leaves || world.getBlockMaterial(x, y-i, z) == Material.vine || world.getBlockMaterial(x, y-i, z) == Material.plants || world.getBlockMaterial(x, y-i, z) == Material.web)
+						ignite(world, x, y-i, z);
+				if (flammable(world, x, y+i, z))
+					if (world.getBlockMaterial(x, y+i, z) == Material.leaves || world.getBlockMaterial(x, y+i, z) == Material.vine || world.getBlockMaterial(x, y+i, z) == Material.plants || world.getBlockMaterial(x, y+i, z) == Material.web)
+						ignite(world, x, y+i, z);
+				if (flammable(world, x, y, z-i))
+					if (world.getBlockMaterial(x, y, z-i) == Material.leaves || world.getBlockMaterial(x, y, z-i) == Material.vine || world.getBlockMaterial(x, y, z-i) == Material.plants || world.getBlockMaterial(x, y, z-i) == Material.web)
+						ignite(world, x, y, z-i);
+				if (flammable(world, x, y, z+i))
+					if (world.getBlockMaterial(x, y, z+i) == Material.leaves || world.getBlockMaterial(x, y, z+i) == Material.vine || world.getBlockMaterial(x, y, z+i) == Material.plants || world.getBlockMaterial(x, y, z+i) == Material.web)
+						ignite(world, x, y, z+i);
 			}
 		}
 
@@ -540,7 +547,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 					world.setBlock(x, y, z+i, Block.glass.blockID);
 			}
 		}
-		if (temperature > 1700)	{ // Melting rock
+		if (temperature > 1500)	{ // Melting rock
 			for (int i = 0; i < 3; i++) {
 				if (world.getBlockMaterial(x-i, y, z) == Material.rock)
 					world.setBlock(x-i, y, z, Block.lavaMoving.blockID);
@@ -711,9 +718,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static boolean isLiquidSourceBlock(World world, int x, int y, int z) {
 		if (world.getBlockMetadata(x, y, z) != 0)
 			return false;
-		if (world.getBlockMaterial(x, y, z) != Material.lava && world.getBlockMaterial(x, y, z) != Material.water)
+		int id = world.getBlockId(x, y, z);
+		if (id == 0)
 			return false;
-		return true;
+		Block b = Block.blocksList[id];
+		return b instanceof BlockFluid || b instanceof BlockFluidBase;
 	}
 
 	/** Breaks a contiguous area of blocks recursively (akin to a fill tool in image editors).

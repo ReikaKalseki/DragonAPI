@@ -40,6 +40,7 @@ import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.AppEngHandler;
 import Reika.DragonAPI.ModInteract.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.BCPipeHandler;
@@ -47,12 +48,15 @@ import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
 import Reika.DragonAPI.ModInteract.ForestryHandler;
 import Reika.DragonAPI.ModInteract.IC2Handler;
+import Reika.DragonAPI.ModInteract.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.MagicaOreHandler;
 import Reika.DragonAPI.ModInteract.MekToolHandler;
 import Reika.DragonAPI.ModInteract.MekanismHandler;
+import Reika.DragonAPI.ModInteract.MimicryHandler;
 import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
 import Reika.DragonAPI.ModInteract.ThermalHandler;
+import Reika.DragonAPI.ModInteract.TinkerOreHandler;
 import Reika.DragonAPI.ModInteract.TinkerToolHandler;
 import Reika.DragonAPI.ModInteract.TransitionalOreHandler;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
@@ -75,7 +79,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@")
+@Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies="after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft")
 @NetworkMod(clientSideRequired = true, serverSideRequired = true)
 public class DragonAPIInit extends DragonAPIMod {
 
@@ -130,6 +134,12 @@ public class DragonAPIInit extends DragonAPIMod {
 		CompatibilityTracker.instance.test();
 
 		IntegrityChecker.instance.testIntegrity();
+
+		ReikaOreHelper.refreshAll();
+		for (int i = 0; i < ModOreList.oreList.length; i++) {
+			ModOreList ore = ModOreList.oreList[i];
+			ore.reloadOreList();
+		}
 	}
 
 	@EventHandler
@@ -204,6 +214,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.DARTCRAFT, DartOreHandler.class);
 		this.initHandler(ModList.DARTCRAFT, DartItemHandler.class);
 		this.initHandler(ModList.TINKERER, TinkerToolHandler.class);
+		this.initHandler(ModList.TINKERER, TinkerOreHandler.class);
 		this.initHandler(ModList.TWILIGHT, TwilightForestHandler.class);
 		this.initHandler(ModList.MEKANISM, MekanismHandler.class);
 		this.initHandler(ModList.MEKTOOLS, MekToolHandler.class);
@@ -213,17 +224,22 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.APPENG, AppEngHandler.class);
 		this.initHandler(ModList.FORESTRY, ForestryHandler.class);
 		this.initHandler(ModList.THERMALEXPANSION, ThermalHandler.class);
+		this.initHandler(ModList.MIMICRY, MimicryHandler.class);
+		this.initHandler(ModList.MAGICCROPS, MagicCropHandler.class);
 	}
 
 	private void initHandler(ModList mod, Class c) {
-		if (!mod.isLoaded())
-			return;
-		try {
-			ReikaJavaLibrary.initClass(c);
+		if (mod.isLoaded()) {
+			try {
+				ReikaJavaLibrary.initClass(c);
+			}
+			catch (Exception e) {
+				logger.logError("Could not load handler for "+mod.name());
+				e.printStackTrace();
+			}
 		}
-		catch (Exception e) {
-			logger.logError("Could not load handler for "+mod.name());
-			e.printStackTrace();
+		else {
+			logger.log("Not loading handler for "+mod.getDisplayName()+"; Mod not present.");
 		}
 	}
 

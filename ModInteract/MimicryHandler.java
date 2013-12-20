@@ -12,26 +12,43 @@ package Reika.DragonAPI.ModInteract;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class ThaumBlockHandler extends ModHandlerBase {
+public class MimicryHandler extends ModHandlerBase {
 
-	private static final ThaumBlockHandler instance = new ThaumBlockHandler();
+	private static final MimicryHandler instance = new MimicryHandler();
 
-	public final int totemID;
+	public final int stoneOreID;
+	public final int netherOreID;
+	public final int endOreID;
+	public final int itemID;
 
-	private ThaumBlockHandler() {
+	private MimicryHandler() {
 		super();
-		int idtile = -1;
+		int idstone = -1;
+		int idnether = -1;
+		int idend = -1;
+		int iditem = -1;
 
 		if (this.hasMod()) {
 			try {
-				Class thaum = ModList.THAUMCRAFT.getBlockClass();
-				Field totem = thaum.getField("blockCosmeticSolid");
-				idtile = ((Block)totem.get(null)).blockID;
+				Class blocks = ModList.MIMICRY.getBlockClass();
+				Field ore = blocks.getField("MimichiteOre");
+				idstone = ((Block)ore.get(null)).blockID;
+
+				ore = blocks.getField("MimichiteNetherOre");
+				idnether = ((Block)ore.get(null)).blockID;
+
+				ore = blocks.getField("MimichiteEndOre");
+				idend = ((Block)ore.get(null)).blockID;
+
+				Class items = ModList.MIMICRY.getItemClass();
+				Field item = items.getField("Mimichite");
+				iditem = ((Item)ore.get(null)).itemID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -58,27 +75,30 @@ public class ThaumBlockHandler extends ModHandlerBase {
 			this.noMod();
 		}
 
-		totemID = idtile;
+		stoneOreID = idstone;
+		netherOreID = idnether;
+		endOreID = idend;
+		itemID = iditem;
 	}
 
-	public static ThaumBlockHandler getInstance() {
+	public static MimicryHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return totemID != -1;
+		return netherOreID != -1 && itemID != -1 && endOreID != -1 && stoneOreID != -1;
 	}
 
 	@Override
 	public ModList getMod() {
-		return ModList.THAUMCRAFT;
+		return ModList.MIMICRY;
 	}
 
-	public boolean isTotemBlock(ItemStack block) {
+	public boolean isMimichiteOre(ItemStack block) {
 		if (!this.initializedProperly())
 			return false;
-		return block.itemID == totemID && block.getItemDamage() < 2;
+		return block.itemID == stoneOreID || block.itemID == netherOreID || block.itemID == endOreID;
 	}
 
 }

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.MathSci;
 
 import Reika.DragonAPI.DragonAPICore;
+import codechicken.lib.math.MathHelper;
 
 
 public final class ReikaEngLibrary extends DragonAPICore {
@@ -131,7 +132,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static String getSIPrefix(double val) {
 		if (val < 10 && val >= 1)
 			return "";
-		int log = (int)ReikaMathLibrary.logbase(val, 1000);
+		int log = MathHelper.floor_double(ReikaMathLibrary.logbase(val, 1000));
 		switch(log) {
 		case 1:
 			return "k";

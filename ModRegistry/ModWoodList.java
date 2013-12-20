@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityFallingSand;
@@ -33,8 +34,8 @@ public enum ModWoodList {
 	DARKWOOD(ModList.TWILIGHT, "log", "hedge", "sapling", new int[]{3,15}, 1, 3, VarType.BLOCK),
 	MANGROVE(ModList.TWILIGHT, "log", "leaves", "sapling", new int[]{2,14}, new int[]{2,10}, 2, VarType.BLOCK),
 	TWILIGHTOAK(ModList.TWILIGHT, "log", "leaves", "sapling", new int[]{0,12}, 0, 0, VarType.BLOCK),
-	GREATWOOD(ModList.THAUMCRAFT, "blockMagicalLogId", "blockMagicalLeavesId", "blockCustomPlantId", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INT),
-	SILVERWOOD(ModList.THAUMCRAFT, "blockMagicalLogId", "blockMagicalLeavesId", "blockCustomPlantId", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INT),
+	GREATWOOD(ModList.THAUMCRAFT, "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.BLOCK),
+	SILVERWOOD(ModList.THAUMCRAFT, "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.BLOCK),
 	EUCALYPTUS(ModList.NATURA, "tree", "floraLeaves", "floraSapling", 0, new int[]{1,9}, 1, VarType.BLOCK),
 	SEQUOIA(ModList.NATURA, "redwood", "floraLeaves", "floraSapling", new int[]{0,1,2}, new int[]{0,8}, 0, VarType.BLOCK),
 	SAKURA(ModList.NATURA, "tree", "floraLeavesNoColor", "floraSapling", new int[]{1,5,9}, new int[]{0,8}, 3, VarType.BLOCK),
@@ -51,17 +52,17 @@ public enum ModWoodList {
 	BAMBOO(ModList.BOP, "bambooID", "leaves1ID", "saplingsID", 0, 1, 2, VarType.INT),
 	MAGIC(ModList.BOP, "logs2ID", "leaves1ID", "saplingsID", 1, new int[]{2,10}, 3, VarType.INT),
 	DARK(ModList.BOP, "logs1ID", "leaves1ID", "saplingsID", 2, new int[]{3,11}, 4, VarType.INT),
-	FIR(ModList.BOP, "logs1ID", "leaves1ID", "saplingsID", 3, new int[]{5,13}, 6, VarType.INT),
-	LOFT(ModList.BOP, "logs2ID", "leaves1ID", "saplingsID", 0, new int[]{6,14}, 7, VarType.INT),
-	CHERRY(ModList.BOP, "logs1ID", "leaves2ID", "saplingsID", new int[]{1,5,9}, new int[]{1,3,9,11}, 10, VarType.INT), //sapling 12 for white cherry
-	HELLBARK(ModList.BOP, "logs4ID", "leaves2ID", "saplingsID", 1, 4, 13, VarType.INT),
-	JACARANDA(ModList.BOP, "logs4ID", "leaves2ID", "saplingsID", 2, 5, 14, VarType.INT),
-	ACACIA(ModList.BOP, "logs1ID", "colourizedLeavesID", "colourizedSaplingsID", 0, new int[]{0,8}, 0, VarType.INT),
-	BOPMANGROVE(ModList.BOP, "logs2ID", "colourizedLeavesID", "colourizedSaplingsID", 2, new int[]{1,9}, 1, VarType.INT),
-	PALM(ModList.BOP, "logs2ID", "colourizedLeavesID", "colourizedSaplingsID", 3, 2, 2, VarType.INT),
-	REDWOOD(ModList.BOP, "logs3ID", "colourizedLeavesID", "colourizedSaplingsID", 0, new int[]{3,11}, 3, VarType.INT),
-	BOPWILLOW(ModList.BOP, "logs3ID", "colourizedLeavesID", "colourizedSaplingsID", 1, new int[]{4,12}, 4, VarType.INT),
-	PINE(ModList.BOP, "logs4ID", "colourizedLeavesID", "colourizedSaplingsID", 0, 5, 5, VarType.INT),
+	FIR(ModList.BOP, "logs1ID", "leaves2ID", "saplingsID", 3, new int[]{1,9}, 6, VarType.INT),
+	LOFT(ModList.BOP, "logs2ID", "leaves2ID", "saplingsID", 0, new int[]{2,10}, 7, VarType.INT),
+	CHERRY(ModList.BOP, "logs1ID", "leaves3ID", "saplingsID", new int[]{1,3,9,11}, new int[]{1,3,9,11}, 10, VarType.INT), //sapling 12 for white cherry
+	HELLBARK(ModList.BOP, "logs4ID", "leaves4ID", "saplingsID", 1, 0, 13, VarType.INT),
+	JACARANDA(ModList.BOP, "logs4ID", "leaves4ID", "saplingsID", 2, new int[]{1,9}, 14, VarType.INT),
+	ACACIA(ModList.BOP, "logs1ID", "colourizedLeaves1ID", "colourizedSaplingsID", 0, new int[]{0,8}, 0, VarType.INT),
+	BOPMANGROVE(ModList.BOP, "logs2ID", "colourizedLeaves1ID", "colourizedSaplingsID", 2, new int[]{1,9}, 1, VarType.INT),
+	PALM(ModList.BOP, "logs2ID", "colourizedLeaves1ID", "colourizedSaplingsID", 3, 2, 2, VarType.INT),
+	REDWOOD(ModList.BOP, "logs3ID", "colourizedLeaves1ID", "colourizedSaplingsID", 0, new int[]{3,11}, 3, VarType.INT),
+	BOPWILLOW(ModList.BOP, "logs3ID", "colourizedLeaves2ID", "colourizedSaplingsID", 1, new int[]{0,8}, 4, VarType.INT),
+	PINE(ModList.BOP, "logs4ID", "colourizedLeaves2ID", "colourizedSaplingsID", 0, new int[]{1,9}, 5, VarType.INT),
 	XLREDWOOD(ModList.BXL, null, null, null, 0, VarType.BLOCK),
 	RUBBER(ModList.IC2, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, VarType.ITEMSTACK),
 	MINERUBBER(ModList.MINEFACTORY, "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, VarType.BLOCK),
@@ -352,6 +353,14 @@ public enum ModWoodList {
 
 	public ModList getParentMod() {
 		return mod;
+	}
+
+	public static ModWoodList getRandomWood(Random rand) {
+		ModWoodList wood = woodList[rand.nextInt(woodList.length)];
+		while (!wood.exists) {
+			wood = woodList[rand.nextInt(woodList.length)];
+		}
+		return wood;
 	}
 
 	public boolean isRareTree() {

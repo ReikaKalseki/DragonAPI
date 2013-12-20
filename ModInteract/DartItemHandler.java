@@ -14,6 +14,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
+@Deprecated
 public final class DartItemHandler extends ModHandlerBase {
 
 	private static final DartItemHandler instance = new DartItemHandler();

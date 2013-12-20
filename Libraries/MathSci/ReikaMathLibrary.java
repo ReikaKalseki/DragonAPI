@@ -287,7 +287,10 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	 * Equivalent to getScientificNotation[0]. Args: Value */
 	public static double getThousandBase(double val) {
 		while (val >= 1000) {
-			val/= 1000D;
+			val /= 1000D;
+		}
+		while (val < 1) {
+			val *= 1000D;
 		}
 		return val;
 	}
