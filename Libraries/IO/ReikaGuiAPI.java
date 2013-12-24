@@ -477,8 +477,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 		ReikaTextureHelper.bindFontTexture();
 		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
-		RenderHelper.enableStandardItemLighting();
-		ReikaRenderHelper.enableLighting();
+		ReikaRenderHelper.disableLighting();
+		RenderHelper.enableGUIStandardItemLighting();
 	}
 
 	public void drawTooltipAt(FontRenderer f, String s, int mx, int my) {
@@ -492,6 +492,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
 		ReikaTextureHelper.bindFontTexture();
 		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
+		ReikaRenderHelper.disableLighting();
+		RenderHelper.enableGUIStandardItemLighting();
 	}
 
 	public float getMouseScreenY() {

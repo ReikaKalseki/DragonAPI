@@ -286,13 +286,15 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	/** Returns a double's value when reduced until it is less than a thousand.
 	 * Equivalent to getScientificNotation[0]. Args: Value */
 	public static double getThousandBase(double val) {
+		boolean neg = val < 0;
+		val = Math.abs(val);
 		while (val >= 1000) {
 			val /= 1000D;
 		}
-		while (val < 1) {
+		while (val < 1 && val > 0) {
 			val *= 1000D;
 		}
-		return val;
+		return neg ? -val : val;
 	}
 
 	/** Returns the factorial of a positive integer. Take care with this, given

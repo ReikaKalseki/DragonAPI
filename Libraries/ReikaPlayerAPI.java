@@ -84,9 +84,9 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		}
 		else { //Looking up/down
 			if (ep.rotationPitch > 0)
-				return ForgeDirection.UP; //set to up
+				return ForgeDirection.DOWN; //set to up
 			else
-				return ForgeDirection.DOWN; //set to down
+				return ForgeDirection.UP; //set to down
 		}
 		return ForgeDirection.UNKNOWN;
 	}

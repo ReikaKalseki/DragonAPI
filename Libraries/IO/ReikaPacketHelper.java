@@ -386,7 +386,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
-			PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToServer(packet);
 			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
 		}
 		else if (side == Side.CLIENT) {

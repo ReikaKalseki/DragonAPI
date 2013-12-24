@@ -24,7 +24,7 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
-public final class ExpandedOreRecipe implements IRecipe {
+public class ExpandedOreRecipe implements IRecipe {
 
 	//Added in for future ease of change, but hard coded for now.
 	private static final int MAX_CRAFT_GRID_WIDTH = 3;
@@ -124,6 +124,10 @@ public final class ExpandedOreRecipe implements IRecipe {
 			else if (in instanceof ArrayList)
 			{
 				itemMap.put(chr, in);
+			}
+			else if (in instanceof PreferentialItemStack)
+			{
+				itemMap.put(chr, ((PreferentialItemStack) in).getItem());
 			}
 			else
 			{

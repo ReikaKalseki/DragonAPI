@@ -933,7 +933,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				vec2.zCoord += z0;
 				//ReikaColorAPI.write(String.format("%f -->  %.3f,  %.3f, %.3f", i, vec2.xCoord, vec2.yCoord, vec2.zCoord));
 				int id = world.getBlockId((int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
-				if ((int)vec2.xCoord == x && (int)vec2.yCoord == y && (int)vec2.zCoord == z) {
+				if ((int)Math.floor(vec2.xCoord) == x && (int)Math.floor(vec2.yCoord) == y && (int)Math.floor(vec2.zCoord) == z) {
 					//ReikaColorAPI.writeCoords(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
 					return true;
 				}

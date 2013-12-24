@@ -74,6 +74,7 @@ public enum ModList {
 	//To save on repeated Class.forName
 	private static final HashMap<ModList, Class> blockClasses = new HashMap();
 	private static final HashMap<ModList, Class> itemClasses = new HashMap();
+	private static final HashMap<String, ModList> modIDs = new HashMap();
 
 	public static final ModList[] modList = ModList.values();
 
@@ -159,6 +160,8 @@ public enum ModList {
 	}
 
 	public String getDisplayName() {
+		if (this.isReikasMod())
+			return modLabel;
 		return ReikaStringParser.capFirstChar(this.name());
 	}
 
@@ -179,6 +182,22 @@ public enum ModList {
 				li.add(mod);
 		}
 		return li;
+	}
+
+	public static ModList getModFromID(String id) {
+		if (modIDs.containsKey(id))
+			return modIDs.get(id);
+		else {
+			for (int i = 0; i < modList.length; i++) {
+				ModList mod = modList[i];
+				if (mod.modLabel.equals(id)) {
+					modIDs.put(id, mod);
+					return mod;
+				}
+			}
+			modIDs.put(id, null);
+			return null;
+		}
 	}
 
 }

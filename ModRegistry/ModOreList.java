@@ -18,11 +18,15 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.ModInteract.MekanismHandler;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public enum ModOreList {
 
@@ -96,7 +100,7 @@ public enum ModOreList {
 	MIMICHITE("Mimichite", "gemMimichite", 1, "oreMimichite");
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
-	private String name;
+	public final String displayName;
 	private String[] oreLabel;
 	private int dropCount;
 	private String product;
@@ -110,7 +114,7 @@ public enum ModOreList {
 		if (!DragonAPIInit.canLoadHandlers())
 			throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
 		dropCount = count;
-		name = n;
+		displayName = n;
 		product = prod;
 		oreLabel = new String[ore.length];
 		for (int i = 0; i < ore.length; i++) {
@@ -147,7 +151,7 @@ public enum ModOreList {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(this.getName());
+		sb.append(displayName);
 		//sb.append(" (Ore Names: ");
 		//for (int i = 0; i < oreLabel.length; i++) {
 		//	sb.append(oreLabel[i]);
@@ -264,10 +268,6 @@ public enum ModOreList {
 		return false;
 	}
 
-	public String getName() {
-		return name;
-	}
-
 	public String getProductLabel() {
 		return product;
 	}
@@ -368,5 +368,19 @@ public enum ModOreList {
 		HashMap<String, ArrayList<ItemStack>> map = new HashMap();
 		map.putAll(perName);
 		return map;
+	}
+
+	public static ModList getOreModFromItemStack(ItemStack is) {
+		if (ReikaBlockHelper.isOre(is)) {
+			Block b = Block.blocksList[is.itemID];
+			UniqueIdentifier dat = GameRegistry.findUniqueIdentifierFor(b);
+			if (dat != null) {
+				String modName = dat.name;
+				String id = dat.modId;
+				ModList mod = ModList.getModFromID(id);
+				return mod;
+			}
+		}
+		return null;
 	}
 }

@@ -48,7 +48,7 @@ public class MimicryHandler extends ModHandlerBase {
 
 				Class items = ModList.MIMICRY.getItemClass();
 				Field item = items.getField("Mimichite");
-				iditem = ((Item)ore.get(null)).itemID;
+				iditem = ((Item)item.get(null)).itemID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());

@@ -71,7 +71,7 @@ public class CompatibilityTracker {
 		}
 	}
 
-	private class Incompatibility {
+	private static class Incompatibility {
 
 		public final ModList sourceMod;
 		public final ModList issueMod;

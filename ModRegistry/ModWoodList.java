@@ -69,7 +69,8 @@ public enum ModWoodList {
 	TIMEWOOD(ModList.TWILIGHT, "magicLog", "magicLeaves", "sapling", new int[]{0,12}, new int[]{1,8}, 5, VarType.BLOCK),
 	TRANSFORMATION(ModList.TWILIGHT, "magicLog", "magicLeaves", "sapling", new int[]{1,13}, new int[]{1,9}, 6, VarType.BLOCK),
 	MINEWOOD(ModList.TWILIGHT, "magicLog", "magicLeaves", "sapling", new int[]{2,14}, new int[]{2,10}, 7, VarType.BLOCK),
-	SORTING(ModList.TWILIGHT, "magicLog", "magicLeaves", "sapling", new int[]{3,15}, new int[]{3,11}, 8, VarType.BLOCK);
+	SORTING(ModList.TWILIGHT, "magicLog", "magicLeaves", "sapling", new int[]{3,15}, new int[]{3,11}, 8, VarType.BLOCK),
+	GLOW(ModList.TRANSITIONAL, "GlowWood", "GlowLeaf", "GlowSapling", 0, 0, 0, VarType.BLOCK);
 
 	private ModList mod;
 	private int blockID = -1;
