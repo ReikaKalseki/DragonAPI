@@ -20,7 +20,18 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 
 	public final boolean isValidMachineRenderpass(TileEntityBase te) {
 		if (!te.isInWorld())
-			return true;
+			return true;/*
+		int b = 0;
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = dirs[i];
+			int c = te.worldObj.getLightBrightnessForSkyBlocks(te.xCoord+dir.offsetX, te.yCoord+dir.offsetY, te.zCoord+dir.offsetZ, 0);
+			b = Math.max(c, b);
+		}
+		if (te.hasWorldObj()) {
+			int j = b % 65536;
+			int k = b / 65536;
+			OpenGlHelper.setLightmapTextureCoords(OpenGlHelper.lightmapTexUnit, j / 1.0F, k / 1.0F);
+		}*/
 		int pass = MinecraftForgeClient.getRenderPass();
 		return pass == 0;//(te.shouldRenderInPass(pass));
 	}

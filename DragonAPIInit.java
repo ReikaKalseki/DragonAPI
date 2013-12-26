@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.potion.Potion;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
@@ -32,6 +35,7 @@ import Reika.DragonAPI.Auxiliary.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
+import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.RetroGenController;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Extras.DonatorCommand;
@@ -107,6 +111,30 @@ public class DragonAPIInit extends DragonAPIMod {
 			MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
 			MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
 		}
+
+		this.increasePotionCount();
+	}
+
+	private void increasePotionCount() {
+		int count = Potion.potionTypes.length;
+		int newsize = 256;
+		try {
+			Field f = Potion.class.getField("potionTypes");
+			Potion[] newPotions = new Potion[newsize];
+			System.arraycopy(Potion.potionTypes, 0, newPotions, 0, count);
+			Field modifiersField = Field.class.getDeclaredField("modifiers");
+			modifiersField.setAccessible(true);
+			modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+			f.set(null, newPotions);
+			if (Potion.potionTypes.length == newsize)
+				logger.log("Overriding the vanilla PotionTypes array to allow for potion IDs up to "+(newsize-1)+" (up from "+(count-1)+").");
+			else
+				logger.logError("Could not increase potion ID limit from "+count+" to "+newsize+", but no exception was thrown!");
+		}
+		catch (Exception e) {
+			logger.logError("Could not increase potion ID limit from "+count+" to "+newsize+"!");
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -128,6 +156,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		BiomeCollisionTracker.instance.check();
 		ItemOverwriteTracker.instance.check();
+		PotionCollisionTracker.instance.check();
 
 		if (DragonAPICore.isOnActualServer())
 			;//this.licenseTest();

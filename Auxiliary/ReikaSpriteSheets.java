@@ -116,9 +116,9 @@ public final class ReikaSpriteSheets {
 		ReikaTextureHelper.bindItemTexture();
 	}
 
-	private static void renderEffect(ItemRenderType ir, ItemStack is) {
+	public static void renderEffect(ItemRenderType ir, ItemStack is) {
 		int pass = MinecraftForgeClient.getRenderPass();
-		Tessellator tessellator = new Tessellator();
+		Tessellator tessellator = Tessellator.instance;
 
 		int par4 = 0;
 		int par5 = 0;

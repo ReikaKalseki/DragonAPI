@@ -134,12 +134,12 @@ public final class ReikaAABBHelper extends DragonAPICore {
 
 	/** Returns a 1-block bounding box. Args: x, y, z */
 	public static AxisAlignedBB getBlockAABB(int x, int y, int z) {
-		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1);
+		return AxisAlignedBB.getAABBPool().getAABB(x, y, z, x+1, y+1, z+1);
 	}
 
 	/** Returns a sized bounding box centered on a block. Args: x, y, z */
 	public static AxisAlignedBB getBlockCenteredAABB(int x, int y, int z, int range) {
-		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1).expand(range, range, range);
+		return AxisAlignedBB.getAABBPool().getAABB(x, y, z, x+1, y+1, z+1).expand(range, range, range);
 	}
 
 }

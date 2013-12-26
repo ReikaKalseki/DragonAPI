@@ -372,13 +372,18 @@ public enum ModOreList {
 
 	public static ModList getOreModFromItemStack(ItemStack is) {
 		if (ReikaBlockHelper.isOre(is)) {
-			Block b = Block.blocksList[is.itemID];
-			UniqueIdentifier dat = GameRegistry.findUniqueIdentifierFor(b);
-			if (dat != null) {
-				String modName = dat.name;
-				String id = dat.modId;
-				ModList mod = ModList.getModFromID(id);
-				return mod;
+			if (ReikaItemHelper.isBlock(is)) {
+				Block b = Block.blocksList[is.itemID];
+				UniqueIdentifier dat = GameRegistry.findUniqueIdentifierFor(b);
+				if (dat != null) {
+					String modName = dat.name;
+					String id = dat.modId;
+					ModList mod = ModList.getModFromID(id);
+					return mod;
+				}
+			}
+			else {
+				ReikaJavaLibrary.pConsole("\t"+is+" is not an ore block, but was registered as an ore block! This is a bug in its parent mod!");
 			}
 		}
 		return null;

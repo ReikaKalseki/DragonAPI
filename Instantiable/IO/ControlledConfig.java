@@ -106,7 +106,7 @@ public class ControlledConfig {
 		return readID != CURRENT_CONFIG_ID;
 	}
 
-	protected void resetConfigFile() {
+	protected final void resetConfigFile() {
 		String path = this.getConfigPath()+"_Old_Config_Backup.txt";
 		File backup = new File(path);
 		if (backup.exists())
@@ -156,7 +156,7 @@ public class ControlledConfig {
 		configFile = event.getSuggestedConfigurationFile();
 	}
 
-	public void initProps(FMLPreInitializationEvent event) {
+	public final void initProps(FMLPreInitializationEvent event) {
 		if (configFile == null)
 			throw new MisuseException("Error loading "+configMod.getTechnicalName()+": You must load a config file before reading it!");
 		config = new Configuration(configFile);
@@ -190,6 +190,8 @@ public class ControlledConfig {
 			otherIDs[i] = this.getValueFromConfig(IDList[i], config);
 		}
 
+		this.loadAdditionalData();
+
 		/*******************************/
 		//save the data
 		config.save();
@@ -202,5 +204,7 @@ public class ControlledConfig {
 			return config.getItem(id.getCategory(), id.getConfigName(), id.getDefaultID()).getInt();
 		return config.get(id.getCategory(), id.getConfigName(), id.getDefaultID()).getInt();
 	}
+
+	protected void loadAdditionalData() {}
 
 }

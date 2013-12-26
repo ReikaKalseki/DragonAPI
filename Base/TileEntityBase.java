@@ -19,14 +19,17 @@ import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.Instantiable.StepTimer;
+import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class TileEntityBase extends TileEntity {
 
@@ -91,13 +94,19 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	public boolean isIDTEMatch(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		if (id == 0)
+			return false;
+		Block b = Block.blocksList[id];
+		if (!b.hasTileEntity(meta))
+			return false;
 		TileEntity te = world.getBlockTileEntity(x, y, z);
 		if (te == null)
 			return false;
 		if (!(te instanceof TileEntityBase))
 			return false;
 		TileEntityBase tb = (TileEntityBase)te;
-		int id = world.getBlockId(x, y, z);
 		if (id != tb.getTileEntityBlockID())
 			return false;
 		return true;
@@ -218,9 +227,7 @@ public abstract class TileEntityBase extends TileEntity {
 
 	protected abstract String getTEName();
 
-	public boolean needsBlockUpdates() {
-		return true;
-	}
+	//public abstract boolean needsDataUpdates();
 
 	/** Do not reference world, x, y, z, etc here, as this is called in the constructor */
 	public int getBlockUpdateDelay() {
@@ -232,5 +239,16 @@ public abstract class TileEntityBase extends TileEntity {
 
 	public Side getSide() {
 		return FMLCommonHandler.instance().getEffectiveSide();
+	}
+
+	protected void delete() {
+		worldObj.setBlock(xCoord, yCoord, zCoord, 0);
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public AxisAlignedBB getRenderBoundingBox()
+	{
+		return ReikaAABBHelper.getBlockAABB(xCoord, yCoord, zCoord);
 	}
 }

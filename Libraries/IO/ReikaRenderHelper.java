@@ -66,7 +66,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		prepareGeoDraw(false);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1F, 1F, 1F, 1F);
-		Tessellator var5 = new Tessellator();
+		Tessellator var5 = Tessellator.instance;
 		if (var5.isDrawing)
 			var5.draw();
 		var5.startDrawing(GL11.GL_LINE_LOOP);
@@ -87,7 +87,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1F, 1F, 1F, 1F);
-		Tessellator var5 = new Tessellator();
+		Tessellator var5 = Tessellator.instance;
 		//var5.setColorRGBA(color[0], color[1], color[2], 255);
 		var5.startDrawing(GL11.GL_LINE_LOOP);
 		var5.setColorRGBA(color[0], color[1], color[2], 255);
@@ -110,7 +110,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		prepareGeoDraw(false);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1F, 1F, 1F, 1F);
-		Tessellator var5 = new Tessellator();
+		Tessellator var5 = Tessellator.instance;
 		if (var5.isDrawing)
 			var5.draw();
 		var5.startDrawing(GL11.GL_LINE_LOOP);
@@ -153,7 +153,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	/** Renders a rectangle in-world. Args: r,g,b,a, Start x,y,z, End x,y,z */
 	public static void renderRectangle(int r, int g, int b, int a, double x1, double y1, double z1, double x2, double y2, double z2) {
 		prepareGeoDraw(a < 255);
-		Tessellator v5 = new Tessellator();
+		Tessellator v5 = Tessellator.instance;
 		v5.startDrawingQuads();
 		v5.setColorRGBA(r, g, b, a);
 		v5.addVertex(x1, y1, z1);
