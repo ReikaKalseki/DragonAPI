@@ -58,7 +58,7 @@ public enum ReikaDyeHelper {
 	}
 
 	public static ReikaDyeHelper getColorFromDamage(int damage) {
-		return dyes[damage];
+		return damage >= 0 && damage < dyes.length ? dyes[damage] : BLACK;
 	}
 
 	public static ReikaDyeHelper getColorFromItem(ItemStack is) {
@@ -120,5 +120,9 @@ public enum ReikaDyeHelper {
 	public double[] getRedstoneParticleVelocityForColor() {
 		double[] c = new double[]{this.getRed()/255D, this.getGreen()/255D, this.getBlue()/255D};
 		return c;
+	}
+
+	public String getOreDictName() {
+		return "dye"+ReikaStringParser.stripSpaces(colorName);
 	}
 }

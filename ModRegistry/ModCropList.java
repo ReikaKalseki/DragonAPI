@@ -26,11 +26,11 @@ import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
 
 public enum ModCropList {
 
-	BARLEY(ModList.NATURA, "crops", 0, 0, 3, VarType.BLOCK),
-	COTTON(ModList.NATURA, "crops", 4, 6, 8, VarType.BLOCK),
-	FLAX(ModList.REDPOWER, "", 0, 0, 0, VarType.BLOCK),
-	CANOLA(ModList.ROTARYCRAFT, "canola", 0, 0, 9, VarType.BLOCK),
-	MAGIC(ModList.MAGICCROPS, MagicCropHandler.getInstance());
+	BARLEY(ModList.NATURA, 0xCDB14D, "crops", 0, 0, 3, VarType.BLOCK),
+	COTTON(ModList.NATURA, 0xE366F5, "crops", 4, 6, 8, VarType.BLOCK),
+	FLAX(ModList.REDPOWER, 0xD9C482, "", 0, 0, 0, VarType.BLOCK),
+	CANOLA(ModList.ROTARYCRAFT, 0x5B5B5B, "canola", 0, 0, 9, VarType.BLOCK),
+	MAGIC(ModList.MAGICCROPS, 0x6F9165, MagicCropHandler.getInstance());
 
 	private final ModList mod;
 	public final int blockID;
@@ -40,23 +40,30 @@ public enum ModCropList {
 	private int minmeta;
 	private final CropHandlerBase handler;
 
+	public final int cropColor;
+
+	private boolean exists = false;
+
 	public static final ModCropList[] cropList = values();
 
-	private ModCropList(ModList api, CropHandlerBase h) {
+	private ModCropList(ModList api, int color, CropHandlerBase h) {
 		handler = h;
 		mod = api;
 		blockID = -1;
 		ripeMeta = h.getRipeMeta();
 		harvestedMeta = h.getFreshMeta();
+		cropColor = color;
+		exists = h.initializedProperly();
 	}
 
-	private ModCropList(ModList api, String blockVar, int metamin, int metafresh, int metaripe, VarType type) {
+	private ModCropList(ModList api, int color, String blockVar, int metamin, int metafresh, int metaripe, VarType type) {
 		if (!DragonAPIInit.canLoadHandlers())
 			throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
 		mod = api;
 		harvestedMeta = metafresh;
 		ripeMeta = metaripe;
 		minmeta = metamin;
+		cropColor = color;
 		handler = null;
 		int id = -1;
 		if (mod.isLoaded()) {
@@ -76,19 +83,24 @@ public enum ModCropList {
 						if (is == null) {
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
 						}
-						else
+						else {
 							id = is.itemID;
+							exists = true;
+						}
 						break;
 					case BLOCK:
 						Block block = (Block)b.get(null);
 						if (block == null) {
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
 						}
-						else
+						else {
 							id = block.blockID;
+							exists = true;
+						}
 						break;
 					case INT:
 						id = b.getInt(null);
+						exists = true;
 						break;
 					default:
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
@@ -165,5 +177,9 @@ public enum ModCropList {
 
 	public boolean isHandlered() {
 		return handler != null;
+	}
+
+	public boolean exists() {
+		return exists;
 	}
 }

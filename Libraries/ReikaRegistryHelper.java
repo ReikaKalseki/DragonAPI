@@ -75,7 +75,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 				}
 				else
 					LanguageRegistry.addName(target[i], r.getBasicName());
-				mod.getModLogger().log("Instantiating Item "+enumr[i].getBasicName()+" with ID "+target[i].itemID+" to Item Variable "+target[i].getClass().getSimpleName()+" (slot "+i+")");
+				mod.getModLogger().log("Instantiating Item "+enumr[i].getBasicName()+" with ID "+target[i].itemID+" to Item Variable "+target[i].getClass().getSimpleName()+" (enum index "+i+"). Has "+enumr[i].getNumberMetadatas()+" metadatas.");
 			}
 			else {
 				mod.getModLogger().log("Not instantiating Item "+enumr[i].getBasicName()+", as it is dummied out.");

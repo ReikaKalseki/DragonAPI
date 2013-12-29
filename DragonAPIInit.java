@@ -235,6 +235,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);
 		ReikaJavaLibrary.initClass(ModCropList.class);
+		ModOreList.initializeAll();
 
 		this.initHandler(ModList.BCFACTORY, BCMachineHandler.class);
 		this.initHandler(ModList.BCTRANSPORT, BCPipeHandler.class);

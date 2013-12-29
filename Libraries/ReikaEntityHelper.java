@@ -167,25 +167,25 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	private static void setMobColors() {
 		mobColorArray[50] = ReikaColorAPI.RGBtoHex(65, 183, 54);
-		mobColorArray[51] = ReikaColorAPI.RGBtoHex(207); //Skeleton
+		mobColorArray[51] = ReikaColorAPI.GStoHex(207); //Skeleton
 		mobColorArray[52] = ReikaColorAPI.RGBtoHex(90, 71, 43); //Spider
 		mobColorArray[53] = ReikaColorAPI.RGBtoHex(67, 109, 53); //Giant
 		mobColorArray[54] = ReikaColorAPI.RGBtoHex(67, 109, 53); //Zombie
 		mobColorArray[55] = ReikaColorAPI.RGBtoHex(90, 162, 68); //Slime
-		mobColorArray[56] = ReikaColorAPI.RGBtoHex(240); //Ghast
+		mobColorArray[56] = ReikaColorAPI.GStoHex(240); //Ghast
 		mobColorArray[57] = ReikaColorAPI.RGBtoHex(181, 131, 131); //PigZombie
 		mobColorArray[58] = ReikaColorAPI.RGBtoHex(204, 15, 248); //Enderman
 		mobColorArray[59] = ReikaColorAPI.RGBtoHex(18, 77, 90); //Cave Spider
-		mobColorArray[60] = ReikaColorAPI.RGBtoHex(140); //Silverfish
+		mobColorArray[60] = ReikaColorAPI.GStoHex(140); //Silverfish
 		mobColorArray[61] = ReikaColorAPI.RGBtoHex(235, 180, 26); //Blaze
 		mobColorArray[62] = ReikaColorAPI.RGBtoHex(84, 14, 0); //LavaSlime
 		mobColorArray[63] = ReikaColorAPI.RGBtoHex(224, 121, 250); //Dragon
-		mobColorArray[64] = ReikaColorAPI.RGBtoHex(79); //Wither
+		mobColorArray[64] = ReikaColorAPI.GStoHex(79); //Wither
 		mobColorArray[65] = ReikaColorAPI.RGBtoHex(118, 100, 61); //Bat
 		mobColorArray[66] = ReikaColorAPI.RGBtoHex(163, 148, 131); //Witch
 
 		mobColorArray[90] = ReikaColorAPI.RGBtoHex(238, 158, 158); //Pig
-		mobColorArray[91] = ReikaColorAPI.RGBtoHex(214); //Sheep
+		mobColorArray[91] = ReikaColorAPI.GStoHex(214); //Sheep
 		mobColorArray[92] = ReikaColorAPI.RGBtoHex(67, 53, 37); //Cow
 		mobColorArray[93] = ReikaColorAPI.RGBtoHex(193, 147, 67); //Chicken
 		mobColorArray[94] = ReikaColorAPI.RGBtoHex(83, 108, 127); //Squid

@@ -93,17 +93,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return (BlockProperties.nonSolidArray[id]);
 	}
 
-	/** Converts the given block ID to a hex color. Renders ores (or disguises as stone) as requested.
-	 * Args: Block ID, Ore Rendering */
-	public static int blockColors(int id, boolean renderOres) {
-		if (renderOres)
-			BlockProperties.setOreColors();
-
-		if (BlockProperties.blockColorArray[id] == 0)
-			return 0xffD47EFF;
-		return BlockProperties.blockColorArray[id];
-	}
-
 	/** Converts the given coordinates to an RGB representation of those coordinates' biome's color, for the given material type.
 	 * Args: World, x, z, material (String) */
 	public static int[] biomeToRGB(World world, int x, int z, String material) {

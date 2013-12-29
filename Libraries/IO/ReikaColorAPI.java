@@ -19,12 +19,8 @@ public class ReikaColorAPI {
 		return color;
 	}
 
-	public static int RGBtoHex(int GS) {
-		if (GS == -1) //technical
-			return 0xffD47EFF;
-		int color = (GS | GS << 8 | GS << 16);
-		color += 0xff000000;
-		return color;
+	public static int GStoHex(int GS) {
+		return RGBtoHex(GS, GS, GS);
 	}
 
 	public static int[] HexToRGB (int hex) {

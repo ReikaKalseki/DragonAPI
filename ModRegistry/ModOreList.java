@@ -30,90 +30,93 @@ import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public enum ModOreList {
 
-	TIN("Tin", "ingotTin", 1, "oreTin"),
-	COPPER("Copper", "ingotCopper", 1, "oreCopper", "oreTetrahedrite"),
-	LEAD("Lead", "ingotLead", 1, "oreLead"),
-	FERROUS("Nickel", "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
-	SILVER("Silver", "ingotSilver", 1, "oreSilver"),
-	GALENA("Galena", "ingotGalena", 1, "oreGalena"),
-	ALUMINUM("Aluminum", "ingotAluminum", 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
-	IRIDIUM("Iridium", "ingotIridium", 1, "oreIridium"),
-	FIRESTONE("Firestone", "shardFirestone", 1, "oreFirestone"),
-	CERTUSQUARTZ("Certus Quartz", "crystalQuartz", 3, "oreCertusQuartz"),
-	URANIUM("Uranium", "ingotUranium", 1, "oreUranium"),
-	CINNABAR("Mercury", "itemQuicksilver", 1, "oreCinnabar"),
-	AMBER("Amber", "gemAmber", 1, "oreAmber"),
-	INFUSEDAIR("Air Infused", "shardAir", 4, "oreInfusedAir"),
-	INFUSEDFIRE("Fire Infused", "shardFire", 4, "oreInfusedFire"),
-	INFUSEDWATER("Water Infused", "shardWater", 4, "oreInfusedWater"),
-	INFUSEDEARTH("Earth Infused", "shardEarth", 4, "oreInfusedEarth"),
-	INFUSEDENTROPY("Entropy Infused", "shardEntropy", 4, "oreInfusedEntropy"),
-	INFUSEDORDER("Order Infused", "shardOrder", 4, "oreInfusedOrder"),
-	APATITE("Apatite", "gemApatite", 3, "oreApatite"),
-	SALTPETER("Saltpeter", "dustSaltpeter", 2, "oreSaltpeter"),
-	TUNGSTEN("Tungsten", "ingotTungsten", 1, "oreTungsten", "oreTungstate"),
-	NIKOLITE("Nikolite", "dustNikolite", 5, "oreNikolite"),
-	GREENSAPPHIRE("Green Sapphire", "gemGreenSapphire", 1, "oreGreenSapphire", "oreNetherGreenSapphire"),
-	RUBY("Ruby", "gemRuby", 1, "oreRuby"),
-	SAPPHIRE("Sapphire", "gemSapphire", 1, "oreSapphire", "oreNetherSapphire"),
-	MONAZIT("Monazit", "ForciciumItem", 4, "MonazitOre"),
-	FORCE("Force", "gemForce", 3, "oreForce"),
-	NETHERCOAL("Nether Coal", "itemCoal", 1, "oreNetherCoal"),
-	NETHERIRON("Nether Iron", "ingotIron", 1, "oreNetherIron"),
-	NETHERGOLD("Nether Gold", "ingotGold", 1, "oreNetherGold"),
-	NETHERREDSTONE("Nether Redstone", "dustRedstone", 4, "oreNetherRedstone"),
-	NETHERLAPIS("Nether Lapis", "dyeBlue", 6, "oreNetherLapis"),
-	NETHERDIAMOND("Nether Diamond", "gemDiamond", 1, "oreNetherDiamond"),
-	NETHEREMERALD("Nether Emerald", "gemEmerald", 1, "oreNetherEmerald"),
-	NETHERTIN("Nether Tin", "ingotTin", 1, "oreNetherTin"),
-	NETHERCOPPER("Nether Copper", "ingotCopper", 1, "oreNetherCopper"),
-	NETHERLEAD("Nether Lead", "ingotLead", 1, "oreNetherLead"),
-	NETHERNICKEL("Nether Nickel", "ingotNickel", 1, "oreNetherNickel"),
-	NETHERSILVER("Nether Silver", "ingotSilver", 1, "oreNetherSilver"),
-	NETHERNIKOLITE("Nether Nikolite", "dustNikolite", 5, "oreNetherNikolite"),
-	COBALT("Cobalt", "ingotCobalt", 1, "oreCobalt"),
-	ARDITE("Ardite", "ingotArdite", 1, "oreArdite"),
-	PLATINUM("Platinum", "ingotPlatinum", 1, "orePlatinum", "oreCooperite"), //WTF Greg..."Cooper" == "Sheldon"??
-	NETHERPLATINUM("Nether Platinum", "ingotPlatinum", 1, "oreNetherPlatinum"),
-	ZINC("Zinc", "ingotZinc", 1, "oreZinc", "oreSphalerite"),
-	OSMIUM("Osmium", "ingotOsmium", 1, "oreOsmium", "oreNetherOsmium"),
-	NETHERPIGIRON("Pig Iron", "ingotSteel", 1, "oreNetherSteel"), //...
-	SULFUR("Sulfur", "dustSulfur", 3, "oreSulfur"),
-	PITCHBLENDE("Pitchblende", "ingotUranium", 1, "orePitchblende"),
-	CADMIUM("Cadmium", "ingotCadmium", 1, "oreCadmium"),
-	INDIUM("Indium", "ingotIndium", 1, "oreIndium"),
-	FLUORITE("Fluorite", "gemFluorite", 3, "oreFluorite"),
-	BAUXITE("Bauxite", "dustBauxite", 1, "oreBauxite"),
-	SODALITE("Sodalite", "dyeBlue", 1, "oreSodalite"),
-	PYRITE("Pyrite", "dustPyrite", 1, "orePyrite"),
-	AMMONIUM("Ammonium Chloride", "dustAmmonium", 1, "oreAmmonium"),
-	CALCITE("Calcite", "gemCalcite", 1, "oreCalcite"),
-	CHIMERITE("Chimerite", "gemChimerite", 2, "oreChimerite"),
-	VINTEUM("Vinteum", "dustVinteum", 1, "oreVinteum"),
-	BLUETOPAZ("Blue Topaz", "gemBlueTopaz", 1, "oreBlueTopaz"),
-	MOONSTONE("Moonstone", "gemMoonstone", 1, "oreMoonstone"),
-	SUNSTONE("Sunstone", "gemSunstone", 1, "oreSunstone"),
-	TITANIUM("Titanium", "ingotTitanium", 1, "oreTitanium"),
-	MAGMANITE("Magmanite", "dropMagma", 1, "oreMagmanite"),
-	MAGNETITE("Magnetite", "gemMagnetite", 1, "oreMagnetite"),
-	ESSENCE("Essence", "itemEssence", 3, "oreEssence", "oreNetherEssence"),
-	MIMICHITE("Mimichite", "gemMimichite", 1, "oreMimichite");
+	TIN("Tin", 0xB2D5E9, "ingotTin", 1, "oreTin"),
+	COPPER("Copper", 0xBC6C01, "ingotCopper", 1, "oreCopper", "oreTetrahedrite"),
+	LEAD("Lead", 0x697597, "ingotLead", 1, "oreLead"),
+	FERROUS("Nickel", 0xD0CCAD, "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
+	SILVER("Silver", 0xA4D0DA, "ingotSilver", 1, "oreSilver"),
+	GALENA("Galena", 0x7F6E95, "ingotGalena", 1, "oreGalena"),
+	ALUMINUM("Aluminum", 0xF1F1F1, "ingotAluminum", 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
+	IRIDIUM("Iridium", 0xC1E2D3, "ingotIridium", 1, "oreIridium"),
+	FIRESTONE("Firestone", 0xE19636, "shardFirestone", 1, "oreFirestone"),
+	CERTUSQUARTZ("Certus Quartz", 0xC4CEFF, "crystalQuartz", 3, "oreCertusQuartz"),
+	URANIUM("Uranium", 0x4CFF00, "ingotUranium", 1, "oreUranium"),
+	CINNABAR("Mercury", 0x811A1A, "itemQuicksilver", 1, "oreCinnabar"),
+	AMBER("Amber", 0xB17F17, "gemAmber", 1, "oreAmber"),
+	INFUSEDAIR("Air Infused", 0xA88C32, "shardAir", 4, "oreInfusedAir"),
+	INFUSEDFIRE("Fire Infused", 0xB52100, "shardFire", 4, "oreInfusedFire"),
+	INFUSEDWATER("Water Infused", 0x007C99, "shardWater", 4, "oreInfusedWater"),
+	INFUSEDEARTH("Earth Infused", 0x008200, "shardEarth", 4, "oreInfusedEarth"),
+	INFUSEDENTROPY("Entropy Infused", 0x555576, "shardEntropy", 4, "oreInfusedEntropy"),
+	INFUSEDORDER("Order Infused", 0xDCDCFF, "shardOrder", 4, "oreInfusedOrder"),
+	APATITE("Apatite", 0x3296C5, "gemApatite", 3, "oreApatite"),
+	SALTPETER("Saltpeter", 0xFFFFFF, "dustSaltpeter", 2, "oreSaltpeter"),
+	TUNGSTEN("Tungsten", 0x1E1E1E, "ingotTungsten", 1, "oreTungsten", "oreTungstate"),
+	NIKOLITE("Nikolite", 0x2DABB8, "dustNikolite", 5, "oreNikolite"),
+	GREENSAPPHIRE("Green Sapphire", 0x00C416, "gemGreenSapphire", 1, "oreGreenSapphire", "oreNetherGreenSapphire"),
+	RUBY("Ruby", 0xBC0000, "gemRuby", 1, "oreRuby"),
+	SAPPHIRE("Sapphire", 0x0019AA, "gemSapphire", 1, "oreSapphire", "oreNetherSapphire"),
+	MONAZIT("Monazit", 0x3C6E3C, "ForciciumItem", 4, "MonazitOre"),
+	FORCE("Force", 0xFFC700, "gemForce", 3, "oreForce"),
+	NETHERCOAL("Nether Coal", 0x262626, "itemCoal", 1, "oreNetherCoal"),
+	NETHERIRON("Nether Iron", 0xD8AD91, "ingotIron", 1, "oreNetherIron"),
+	NETHERGOLD("Nether Gold", 0xD6A400, "ingotGold", 1, "oreNetherGold"),
+	NETHERREDSTONE("Nether Redstone", 0xBC0000, "dustRedstone", 4, "oreNetherRedstone"),
+	NETHERLAPIS("Nether Lapis", 0x2B4BFF, "dyeBlue", 6, "oreNetherLapis"),
+	NETHERDIAMOND("Nether Diamond", 0x68FFE3, "gemDiamond", 1, "oreNetherDiamond"),
+	NETHEREMERALD("Nether Emerald", 0x12DB00, "gemEmerald", 1, "oreNetherEmerald"),
+	NETHERTIN("Nether Tin", 0xA9CCE2, "ingotTin", 1, "oreNetherTin"),
+	NETHERCOPPER("Nether Copper", 0xC8850C, "ingotCopper", 1, "oreNetherCopper"),
+	NETHERLEAD("Nether Lead", 0x6F7DA3, "ingotLead", 1, "oreNetherLead"),
+	NETHERNICKEL("Nether Nickel", 0xB6AE85, "ingotNickel", 1, "oreNetherNickel"),
+	NETHERSILVER("Nether Silver", 0xA7E4EC, "ingotSilver", 1, "oreNetherSilver"),
+	NETHERNIKOLITE("Nether Nikolite", 0xA7E4EC, "dustNikolite", 5, "oreNetherNikolite"),
+	COBALT("Cobalt", 0x1C30A5, "ingotCobalt", 1, "oreCobalt"),
+	ARDITE("Ardite", 0xF48A00, "ingotArdite", 1, "oreArdite"),
+	PLATINUM("Platinum", 0x00A0DB, "ingotPlatinum", 1, "orePlatinum", "oreCooperite"), //WTF Greg..."Cooper" == "Sheldon"??
+	NETHERPLATINUM("Nether Platinum", 0x0892DE, "ingotPlatinum", 1, "oreNetherPlatinum"),
+	ZINC("Zinc", 0x9B9B9B, "ingotZinc", 1, "oreZinc", "oreSphalerite"),
+	OSMIUM("Osmium", 0xA8B0E7, "ingotOsmium", 1, "oreOsmium", "oreNetherOsmium"),
+	NETHERPIGIRON("Pig Iron", 0xC5B3AA, "ingotSteel", 1, "oreNetherSteel"), //...
+	SULFUR("Sulfur", 0xFFFF00, "dustSulfur", 3, "oreSulfur"),
+	PITCHBLENDE("Pitchblende", 0x4E4E7B, "ingotUranium", 1, "orePitchblende"),
+	CADMIUM("Cadmium", 0x87A6E8, "ingotCadmium", 1, "oreCadmium"),
+	INDIUM("Indium", 0xB3BFD8, "ingotIndium", 1, "oreIndium"),
+	FLUORITE("Fluorite", 0xDFD4AA, "gemFluorite", 3, "oreFluorite"),
+	BAUXITE("Bauxite", 0x72332B, "dustBauxite", 1, "oreBauxite"),
+	SODALITE("Sodalite", 0x133CAD, "dyeBlue", 1, "oreSodalite"),
+	PYRITE("Pyrite", 0xE1B531, "dustPyrite", 1, "orePyrite"),
+	AMMONIUM("Ammonium Chloride", 0xFFF9E0, "dustAmmonium", 1, "oreAmmonium"),
+	CALCITE("Calcite", 0xFF6A00, "gemCalcite", 1, "oreCalcite"),
+	CHIMERITE("Chimerite", 0xCBE5F5, "gemChimerite", 2, "oreChimerite"),
+	VINTEUM("Vinteum", 0x507BBC, "dustVinteum", 1, "oreVinteum"),
+	BLUETOPAZ("Blue Topaz", 0x92B1F0, "gemBlueTopaz", 1, "oreBlueTopaz"),
+	MOONSTONE("Moonstone", 0x6592CD, "gemMoonstone", 1, "oreMoonstone"),
+	SUNSTONE("Sunstone", 0xD15106, "gemSunstone", 1, "oreSunstone"),
+	TITANIUM("Titanium", 0x809797, "ingotTitanium", 1, "oreTitanium"),
+	MAGMANITE("Magmanite", 0xF95D00, "dropMagma", 1, "oreMagmanite"),
+	MAGNETITE("Magnetite", 0x44442D, "gemMagnetite", 1, "oreMagnetite"),
+	ESSENCE("Essence", 0x158215, "itemEssence", 3, "oreEssence", "oreNetherEssence"),
+	MIMICHITE("Mimichite", 0x8900FF, "gemMimichite", 1, "oreMimichite");
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 	public final String displayName;
 	private String[] oreLabel;
-	private int dropCount;
+	public final int dropCount;
+	public final int oreColor;
 	private String product;
+	private boolean init;
 	private HashMap<String, ArrayList<ItemStack>> perName = new HashMap();
 
 	//private static final ArrayList<ItemStack> blocks = new ArrayList<ItemStack>();
 
 	public static final ModOreList[] oreList = values();
 
-	private ModOreList(String n, String prod, int count, String... ore) {
-		if (!DragonAPIInit.canLoadHandlers())
-			throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
+	private ModOreList(String n, int color, String prod, int count, String... ore) {
+		//if (!DragonAPIInit.canLoadHandlers())
+		//	throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
 		dropCount = count;
+		oreColor = color;
 		displayName = n;
 		product = prod;
 		oreLabel = new String[ore.length];
@@ -122,27 +125,42 @@ public enum ModOreList {
 		}
 
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding ore entries for "+this.toString()+" (Ore Names: "+Arrays.toString(ore)+")");
+	}
 
-		for (int i = 0; i < ore.length; i++) {
-			ArrayList<ItemStack> toadd = OreDictionary.getOres(ore[i]);
+	public static void initializeAll() {
+		if (!DragonAPIInit.canLoadHandlers())
+			throw new MisuseException("Initialized registry enum too early! Wait until postInit!");
+		for (int i = 0; i < oreList.length; i++) {
+			oreList[i].initialize();
+		}
+	}
+
+	private void initialize() {
+		if (init) {
+			ReikaJavaLibrary.pConsole(this+" is already initialized!");
+			return;
+		}
+		init = true;
+		for (int i = 0; i < oreLabel.length; i++) {
+			ArrayList<ItemStack> toadd = OreDictionary.getOres(oreLabel[i]);
 			if (!toadd.isEmpty()) {
-				ReikaJavaLibrary.pConsole("\tDetected the following blocks for "+this+" from OreDict \""+ore[i]+"\": "+toadd.toString());
+				ReikaJavaLibrary.pConsole("\tDetected the following blocks for "+this+" from OreDict \""+oreLabel[i]+"\": "+toadd.toString());
 				for (int k = 0; k < toadd.size(); k++) {
 					ItemStack is = toadd.get(k);
 					if (ReikaItemHelper.isBlock(is)) {
 						ores.add(is);
-						ArrayList li = perName.get(ore[i]);
+						ArrayList li = perName.get(oreLabel[i]);
 						if (li == null)
-							perName.put(ore[i], new ArrayList());
-						perName.get(ore[i]).add(is);
+							perName.put(oreLabel[i], new ArrayList());
+						perName.get(oreLabel[i]).add(is);
 					}
 					else {
-						ReikaJavaLibrary.pConsole("\t"+is+" is not an ore block, but was OreDict fetched by \""+ore[i]+"\"!");
+						ReikaJavaLibrary.pConsole("\t"+is+" is not an ore block, but was OreDict fetched by \""+oreLabel[i]+"\"!");
 					}
 				}
 			}
 			else
-				ReikaJavaLibrary.pConsole("\tNo ore blocks detected for \""+ore[i]+"\"");
+				ReikaJavaLibrary.pConsole("\tNo ore blocks detected for \""+oreLabel[i]+"\"");
 		}
 		if (!this.existsInGame())
 			ReikaJavaLibrary.pConsole("\tDRAGONAPI: No ore blocks detected for "+this);
