@@ -25,6 +25,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -122,6 +123,7 @@ public class ReikaObfuscationHelper {
 		}
 		addField("isJumping", "field_70703_bu", false, EntityLivingBase.class);
 		addField("timeSinceIgnited", "field_70833_d", false, EntityCreeper.class);
+		addField("potionTypes", "field_76425_a", true, Potion.class);
 	}
 
 	private static boolean isClientSide() {

@@ -43,6 +43,7 @@ import Reika.DragonAPI.Extras.GuideCommand;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.AppEngHandler;
@@ -119,7 +120,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		int count = Potion.potionTypes.length;
 		int newsize = 256;
 		try {
-			Field f = Potion.class.getField("potionTypes");
+			Field f = ReikaObfuscationHelper.getField("potionTypes");
 			Potion[] newPotions = new Potion[newsize];
 			System.arraycopy(Potion.potionTypes, 0, newPotions, 0, count);
 			Field modifiersField = Field.class.getDeclaredField("modifiers");

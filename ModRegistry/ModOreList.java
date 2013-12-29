@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModRegistry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -209,11 +210,18 @@ public enum ModOreList {
 		for (int i = 0; i < oreLabel.length; i++) {
 			ArrayList<ItemStack> li = OreDictionary.getOres(oreLabel[i]);
 			boolean flag = false;
-			for (int k = 0; k < li.size(); k++) {
-				ItemStack is = li.get(k);
-				if (!ReikaItemHelper.listContainsItemStack(ores, is)) {
-					ores.add(is);
-					flag = true;
+			Iterator<ItemStack> it = li.iterator();
+			while (it.hasNext()) {
+				ItemStack is = it.next();
+				if (is.itemID < 0) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid item (ID = "+is.itemID+") registered as "+this);
+					it.remove();
+				}
+				else {
+					if (!ReikaItemHelper.listContainsItemStack(ores, is)) {
+						ores.add(is);
+						flag = true;
+					}
 				}
 			}
 			if (flag) {
