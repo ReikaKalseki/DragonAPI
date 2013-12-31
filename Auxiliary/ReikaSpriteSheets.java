@@ -76,7 +76,17 @@ public final class ReikaSpriteSheets {
 			GL11.glRotated(-r, 0, 1, 0);
 		}
 		if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
-			if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON) {
+			if (type == type.EQUIPPED) {
+				GL11.glTranslated(0.1, 0.15, 0);
+				float r = 135;
+				GL11.glRotated(r, 0, 1, 0);
+				GL11.glRotated(-100, 0, 0, 1);
+				double d = -2;
+				GL11.glTranslated(d, d, 0);
+				double s = 2.5;
+				GL11.glScaled(s, s, s);
+			}
+			else if (type == type.EQUIPPED_FIRST_PERSON) {
 				GL11.glTranslatef(0, 1.25F, 0.3125F);
 				GL11.glRotatef(60, 0, 1, 0);
 				GL11.glRotatef(65, 0, 0, 1);

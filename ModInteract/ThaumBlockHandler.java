@@ -22,16 +22,25 @@ public class ThaumBlockHandler extends ModHandlerBase {
 	private static final ThaumBlockHandler instance = new ThaumBlockHandler();
 
 	public final int totemID;
+	public final int plantID;
+
+	public final int shimmerMeta = 2;
+	public final int cinderMeta = 3;
+	public final int etherealMeta = 4;
 
 	private ThaumBlockHandler() {
 		super();
 		int idtile = -1;
+		int idplant = -1;
 
 		if (this.hasMod()) {
 			try {
 				Class thaum = ModList.THAUMCRAFT.getBlockClass();
 				Field totem = thaum.getField("blockCosmeticSolid");
 				idtile = ((Block)totem.get(null)).blockID;
+
+				Field plant = thaum.getField("blockCustomPlant");
+				idplant = ((Block)plant.get(null)).blockID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -59,6 +68,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		}
 
 		totemID = idtile;
+		plantID = idplant;
 	}
 
 	public static ThaumBlockHandler getInstance() {
@@ -67,7 +77,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return totemID != -1;
+		return totemID != -1 && plantID != -1;
 	}
 
 	@Override

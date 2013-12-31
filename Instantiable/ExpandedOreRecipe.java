@@ -24,6 +24,7 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 
+@Deprecated
 public class ExpandedOreRecipe implements IRecipe {
 
 	//Added in for future ease of change, but hard coded for now.
@@ -36,15 +37,15 @@ public class ExpandedOreRecipe implements IRecipe {
 	private int height = 0;
 	private boolean mirrored = true;
 
-	public ExpandedOreRecipe(Block     result, Object... recipe) {
+	private ExpandedOreRecipe(Block     result, Object... recipe) {
 		this(new ItemStack(result), recipe);
 	}
 
-	public ExpandedOreRecipe(Item      result, Object... recipe) {
+	private ExpandedOreRecipe(Item      result, Object... recipe) {
 		this(new ItemStack(result), recipe);
 	}
 
-	public ExpandedOreRecipe(ItemStack result, Object... recipe)
+	private ExpandedOreRecipe(ItemStack result, Object... recipe)
 	{
 		output = result.copy();
 

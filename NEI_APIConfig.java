@@ -13,6 +13,7 @@ import Reika.DragonAPI.Auxiliary.ExpandedOreHandler;
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
 
+@Deprecated
 public class NEI_APIConfig implements IConfigureNEI {
 
 	private static final ExpandedOreHandler expanded = new ExpandedOreHandler();

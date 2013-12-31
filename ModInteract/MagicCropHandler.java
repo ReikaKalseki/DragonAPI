@@ -23,31 +23,68 @@ import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public class MagicCropHandler extends CropHandlerBase {
 
-	private static final String[] crops = {
+	private static final String[] materialCrops = {
 		"Coal", "Redstone", "Glowstone", "Obsidian", "Dye", "Iron", "Gold", "Lapis", "Ender", "Nether", "XP", "Blaze", "Diamond",
 		"Emerald", "Copper", "Tin", "Silver", "Lead", "Quartz"
+	};
+
+	private static final String[] animalCrops = {
+		"Cow", "Creeper", "Magma", "Skeleton", "Slime", "Spider", "Ghast"
 	};
 
 	private static final MagicCropHandler instance = new MagicCropHandler();
 
 	private final ArrayList<Integer> blockIDs = new ArrayList();
+	private final ArrayList<Integer> seedIDs = new ArrayList();
 	public final int oreID;
 	public final int netherOreID;
 	public final int essenceID;
+	private final int configChance;
 
 	private MagicCropHandler() {
 		super();
 		int idore = -1;
 		int idnether = -1;
 		int idessence = -1;
+		int chance = -1;
 		if (this.hasMod()) {
 			Class c = this.getMod().getBlockClass();
-			for (int i = 0; i < crops.length; i++) {
-				String field = "mCrop"+crops[i];
+			for (int i = 0; i < materialCrops.length; i++) {
+				String field = "mCrop"+materialCrops[i];
+				String field2 = "mSeeds"+materialCrops[i];
 				try {
 					Field f = c.getField(field);
 					Block crop = (Block)f.get(null);
 					blockIDs.add(crop.blockID);
+
+					f = c.getField(field2);
+					Item seed = (Item)f.get(null);
+					seedIDs.add(seed.itemID);
+				}
+				catch (NoSuchFieldException e) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+					e.printStackTrace();
+				}
+				catch (IllegalAccessException e) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+					e.printStackTrace();
+				}
+				catch (NullPointerException e) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					e.printStackTrace();
+				}
+			}
+			for (int i = 0; i < animalCrops.length; i++) {
+				String field = "soulCrop"+animalCrops[i];
+				String field2 = "sSeeds"+animalCrops[i];
+				try {
+					Field f = c.getField(field);
+					Block crop = (Block)f.get(null);
+					blockIDs.add(crop.blockID);
+
+					f = c.getField(field2);
+					Item seed = (Item)f.get(null);
+					seedIDs.add(seed.itemID);
 				}
 				catch (NoSuchFieldException e) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -74,6 +111,10 @@ public class MagicCropHandler extends CropHandlerBase {
 				f = c.getField("MagicEssence");
 				Item essence = (Item)f.get(null);
 				idessence = essence.itemID;
+
+				f = c.getDeclaredField("seeddropchance");
+				f.setAccessible(true);
+				chance = f.getInt(null);
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -94,11 +135,22 @@ public class MagicCropHandler extends CropHandlerBase {
 		oreID = idore;
 		netherOreID = idnether;
 		essenceID = idessence;
+		configChance = chance;
 	}
 
 	@Override
 	public boolean isCrop(int id) {
 		return blockIDs.contains(id);
+	}
+
+	@Override
+	public boolean isSeedItem(ItemStack is) {
+		return seedIDs.contains(is.itemID);
+	}
+
+	@Override
+	public float getSecondSeedDropRate() {
+		return configChance/100F;
 	}
 
 	@Override
@@ -112,7 +164,7 @@ public class MagicCropHandler extends CropHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return !blockIDs.isEmpty() && oreID != -1 && netherOreID != -1 && essenceID != -1;
+		return !blockIDs.isEmpty() && seedIDs.isEmpty() && configChance != -1 && oreID != -1 && netherOreID != -1 && essenceID != -1;
 	}
 
 	public boolean isEssenceOre(int id) {

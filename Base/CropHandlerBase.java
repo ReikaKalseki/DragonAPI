@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import net.minecraft.item.ItemStack;
+
 public abstract class CropHandlerBase extends ModHandlerBase {
 
 	public abstract int getRipeMeta();
@@ -18,5 +20,9 @@ public abstract class CropHandlerBase extends ModHandlerBase {
 	public abstract boolean isCrop(int id);
 
 	public abstract boolean isRipeCrop(int id, int meta);
+
+	public abstract boolean isSeedItem(ItemStack is);
+
+	public abstract float getSecondSeedDropRate();
 
 }

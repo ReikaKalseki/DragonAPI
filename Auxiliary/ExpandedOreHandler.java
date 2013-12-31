@@ -23,6 +23,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import codechicken.nei.PositionedStack;
 import codechicken.nei.recipe.TemplateRecipeHandler;
 
+@Deprecated
 public class ExpandedOreHandler extends TemplateRecipeHandler {
 
 	public class ExpandedOreDictionaryRecipe extends CachedRecipe {

@@ -25,6 +25,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import Reika.DragonAPI.Instantiable.ExpandedOreRecipe;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ReikaRecipeHelper {
 
@@ -180,7 +181,8 @@ public class ReikaRecipeHelper {
 				if (objin[i] instanceof ItemStack)
 					isin[i] = (ItemStack)objin[i];
 				else if (objin[i] instanceof ArrayList) {
-					isin[i] = (ItemStack)((ArrayList)objin[i]).get(0);
+					if (!((List<IRecipe>)objin[i]).isEmpty())
+						isin[i] = (ItemStack)((ArrayList)objin[i]).get(0);
 				}
 			}
 		}
@@ -194,7 +196,8 @@ public class ReikaRecipeHelper {
 				if (objin[i] instanceof ItemStack)
 					isin[i] = (ItemStack)objin[i];
 				else if (objin[i] instanceof ArrayList) {
-					isin[i] = (ItemStack)((ArrayList)objin[i]).get(0);
+					if (!((List<IRecipe>)objin[i]).isEmpty())
+						isin[i] = (ItemStack)((ArrayList)objin[i]).get(0);
 				}
 			}
 		}
@@ -298,5 +301,21 @@ public class ReikaRecipeHelper {
 	/** Adds a smelting recipe. Args; Item in, item out, xp */
 	public static void addSmelting(ItemStack in, ItemStack out, float xp) {
 		FurnaceRecipes.smelting().addSmelting(in.itemID, in.getItemDamage(), out, xp);
+	}
+
+	/** Returns true if succeeded. */
+	public static boolean addOreRecipe(ItemStack out, Object... in) {
+		ShapedOreRecipe so = new ShapedOreRecipe(out, in);
+		boolean allowed = true;
+		Object[] objin = so.getInput();
+		for (int i = 0; i < objin.length; i++) {
+			if (objin[i] instanceof ArrayList) {
+				if (!((List<IRecipe>)objin[i]).isEmpty())
+					allowed = false;
+			}
+		}
+		if (allowed)
+			GameRegistry.addRecipe(so);
+		return allowed;
 	}
 }

@@ -11,8 +11,10 @@ package Reika.DragonAPI.ModRegistry;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPIInit;
@@ -26,19 +28,24 @@ import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
 
 public enum ModCropList {
 
-	BARLEY(ModList.NATURA, 0xCDB14D, "crops", 0, 0, 3, VarType.BLOCK),
-	COTTON(ModList.NATURA, 0xE366F5, "crops", 4, 6, 8, VarType.BLOCK),
-	FLAX(ModList.REDPOWER, 0xD9C482, "", 0, 0, 0, VarType.BLOCK),
-	CANOLA(ModList.ROTARYCRAFT, 0x5B5B5B, "canola", 0, 0, 9, VarType.BLOCK),
-	MAGIC(ModList.MAGICCROPS, 0x6F9165, MagicCropHandler.getInstance());
+	BARLEY(ModList.NATURA, 0xCDB14D, "crops", "seeds", 0, 0, 0, 3, VarType.INSTANCE),
+	COTTON(ModList.NATURA, 0xE366F5, "crops", "seeds", 0, 4, 6, 8, VarType.INSTANCE),
+	FLAX(ModList.REDPOWER, 0xD9C482, "", "", 0, 0, 0, 0, VarType.INSTANCE),
+	CANOLA(ModList.ROTARYCRAFT, 0x5B5B5B, "canola", "ItemCanolaSeed", 0, 0, 0, 9, VarType.INSTANCE, VarType.CLASS),
+	MAGIC(ModList.MAGICCROPS, 0x6F9165, MagicCropHandler.getInstance()),
+	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE);
 
 	private final ModList mod;
 	public final int blockID;
+	public final int seedID;
+	public final int seedMeta;
 	public final int ripeMeta;
 	/** Not necessarily zero; see cotton */
 	public final int harvestedMeta;
 	private int minmeta;
 	private final CropHandlerBase handler;
+	private String blockClass;
+	private String itemClass;
 
 	public final int cropColor;
 
@@ -50,13 +57,19 @@ public enum ModCropList {
 		handler = h;
 		mod = api;
 		blockID = -1;
+		seedID = -1;
+		seedMeta = -1;
 		ripeMeta = h.getRipeMeta();
 		harvestedMeta = h.getFreshMeta();
 		cropColor = color;
 		exists = h.initializedProperly();
 	}
 
-	private ModCropList(ModList api, int color, String blockVar, int metamin, int metafresh, int metaripe, VarType type) {
+	private ModCropList(ModList api, int color, String blockVar, String itemVar, int seedItem, int metamin, int metafresh, int metaripe, VarType type) {
+		this(api, color, blockVar, itemVar, seedItem, metamin, metafresh, metaripe, type, type);
+	}
+
+	private ModCropList(ModList api, int color, String blockVar, String itemVar, int seedItem, int metamin, int metafresh, int metaripe, VarType blockType, VarType itemType) {
 		if (!DragonAPIInit.canLoadHandlers())
 			throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
 		mod = api;
@@ -64,34 +77,41 @@ public enum ModCropList {
 		ripeMeta = metaripe;
 		minmeta = metamin;
 		cropColor = color;
+		seedMeta = seedItem;
 		handler = null;
 		int id = -1;
+		int seed = -1;
 		if (mod.isLoaded()) {
 			Class cl = api.getBlockClass();
 			if (cl == null) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty block class");
 			}
-			if (blockVar == null || blockVar.isEmpty()) {
+			if (blockVar == null || blockVar.isEmpty() || itemVar == null || itemVar.isEmpty()) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty variable name");
 			}
 			else {
 				try {
-					Field b = cl.getField(blockVar);
-					switch(type) {
+					Field b;
+					Field i;
+					switch(blockType) {
 					case ITEMSTACK:
+						b = cl.getField(blockVar);
 						ItemStack is = (ItemStack)b.get(null);
 						if (is == null) {
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
+							exists = false;
 						}
 						else {
 							id = is.itemID;
 							exists = true;
 						}
 						break;
-					case BLOCK:
+					case INSTANCE:
+						b = cl.getField(blockVar);
 						Block block = (Block)b.get(null);
 						if (block == null) {
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
+							exists = false;
 						}
 						else {
 							id = block.blockID;
@@ -99,12 +119,55 @@ public enum ModCropList {
 						}
 						break;
 					case INT:
+						b = cl.getField(blockVar);
 						id = b.getInt(null);
 						exists = true;
 						break;
+					case CLASS:
+						blockClass = blockVar;
+						break;
 					default:
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this);
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for "+b);
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for field "+blockVar);
+						exists = false;
+					}
+					switch(itemType) {
+					case ITEMSTACK:
+						i = cl.getField(itemVar);
+						ItemStack is2 = (ItemStack)i.get(null);
+						if (is2 == null) {
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Seed not instantiated!");
+							exists = false;
+						}
+						else {
+							seed = is2.itemID;
+							exists = true;
+						}
+						break;
+					case INSTANCE:
+						i = cl.getField(itemVar);
+						Item item = (Item)i.get(null);
+						if (item == null) {
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Seed not instantiated!");
+							exists = false;
+						}
+						else {
+							seed = item.itemID;
+							exists = true;
+						}
+						break;
+					case INT:
+						i = cl.getField(itemVar);
+						seed = i.getInt(null);
+						exists = true;
+						break;
+					case CLASS:
+						itemClass = itemVar;
+						break;
+					default:
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for field "+itemVar);
+						exists = false;
 					}
 				}
 				catch (NoSuchFieldException e) {
@@ -126,6 +189,7 @@ public enum ModCropList {
 			}
 		}
 		blockID = id;
+		seedID = seed;
 	}
 
 	@Override
@@ -139,8 +203,36 @@ public enum ModCropList {
 			return Block.blocksList[blockID].getBlockDropped(world, x, y, z, meta, fortune);
 		else {
 			int id = world.getBlockId(x, y, z);
+			if (id == -1)
+				return new ArrayList();
 			Block b = Block.blocksList[id];
 			return b != null ? b.getBlockDropped(world, x, y, z, meta, fortune) : new ArrayList();
+		}
+	}
+
+	public void removeOneSeed(ArrayList<ItemStack> li) {
+		Iterator<ItemStack> it = li.iterator();
+		while (it.hasNext()) {
+			ItemStack is = it.next();
+			if (this.isSeedItem(is)) {
+				if (is.stackSize > 1)
+					is.stackSize--;
+				else
+					it.remove();
+				return;
+			}
+		}
+	}
+
+	public boolean isSeedItem(ItemStack is) {
+		if (this.isHandlered()) {
+			return handler.isSeedItem(is);
+		}
+		else if (itemClass != null && !itemClass.isEmpty()) {
+			return itemClass.equals(is.getItem().getClass().getSimpleName());
+		}
+		else {
+			return (seedID == is.itemID && seedMeta == is.getItemDamage());
 		}
 	}
 
@@ -153,6 +245,10 @@ public enum ModCropList {
 			ModCropList crop = cropList[i];
 			if (crop.isHandlered()) {
 				if (crop.handler.isCrop(id))
+					return crop;
+			}
+			else if (crop.blockClass != null && !crop.blockClass.isEmpty()) {
+				if (crop.blockClass.equals(Block.blocksList[id].getClass().getSimpleName()))
 					return crop;
 			}
 			else {
