@@ -27,6 +27,8 @@ public class XMLInterface {
 
 	private final HashMap<String, String> data = new HashMap<String, String>();
 
+	public static final String NULL_VALUE = "#NULL!";
+
 	public XMLInterface(Class root, String path, boolean crashIfNull) {
 		rootClass = root;
 		filepath = path;
@@ -96,7 +98,7 @@ public class XMLInterface {
 	public String getValueAtNode(String name) {
 		String dat = data.get(name);
 		if (dat == null)
-			dat = "#NULL!";
+			dat = NULL_VALUE;
 		return dat;
 	}
 

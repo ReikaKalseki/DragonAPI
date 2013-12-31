@@ -61,7 +61,7 @@ public enum ModList {
 	ENDERSTORAGE("EnderStorage"),
 	OPTIFINE("Optifine"),
 	TREECAPITATOR("TreeCapitator"),
-	HARVESTCRAFT("PamHarvestCraft"),
+	HARVESTCRAFT("HarvestCraft"),
 	MYSTCRAFT("Mystcraft"),
 	MAGICCROPS("magicalcrops", "magicalcrops.mod_mCrops"),
 	MIMICRY("Mimicry", "modMimicry.Block.MimicryBlock", "modMimicry.Item.MimicryItem");

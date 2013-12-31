@@ -316,7 +316,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return 2700; //2.7 g/cc
 		if (ent instanceof EntityFallingSand)
 			return 2000; //2 g/cc
-		return 0.1;
+		return 100;
 	}
 
 	/** Returns an itemstack (size 1 item) of the entity's breeding item. Args: Entity */

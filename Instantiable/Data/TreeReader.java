@@ -49,7 +49,7 @@ public class TreeReader extends BlockArray {
 		int meta = world.getBlockMetadata(x, y, z);
 		if (this.hasBlock(x, y, z))
 			return;
-		if (id != Block.wood.blockID && id != dyeLeafID)
+		if (id != Block.wood.blockID && id != dyeLeafID && !ModWoodList.isModWood(id, meta))
 			return;
 		if (id == dyeLeafID)
 			isDyeTree = true;
