@@ -33,6 +33,7 @@ public class TreeReader extends BlockArray {
 
 	private final int dyeLeafID;
 	private boolean isDyeTree = false;
+	private int dyeMeta = -1;
 
 	public TreeReader() {
 		super();
@@ -49,10 +50,16 @@ public class TreeReader extends BlockArray {
 		int meta = world.getBlockMetadata(x, y, z);
 		if (this.hasBlock(x, y, z))
 			return;
+		//ReikaJavaLibrary.pConsole(id+":"+meta);
 		if (id != Block.wood.blockID && id != dyeLeafID && !ModWoodList.isModWood(id, meta))
 			return;
-		if (id == dyeLeafID)
+		if (id == dyeLeafID) {
 			isDyeTree = true;
+			dyeMeta = meta;
+			leafCount++;
+		}
+		else
+			logCount++;
 		this.addBlockCoordinate(x, y, z);
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
@@ -65,6 +72,10 @@ public class TreeReader extends BlockArray {
 
 	public boolean isDyeTree() {
 		return isDyeTree;
+	}
+
+	public int getDyeTreeMeta() {
+		return dyeMeta;
 	}
 
 	public void addTree(World world, int x, int y, int z, int blockID, int blockMeta) {
@@ -371,6 +382,7 @@ public class TreeReader extends BlockArray {
 		copy.dyeTree = dyeTree;
 
 		copy.isDyeTree = isDyeTree;
+		copy.dyeMeta = dyeMeta;
 
 		return copy;
 	}

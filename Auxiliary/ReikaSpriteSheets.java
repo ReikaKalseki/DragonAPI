@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemTool;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.MinecraftForgeClient;
@@ -76,7 +77,7 @@ public final class ReikaSpriteSheets {
 			GL11.glRotated(-r, 0, 1, 0);
 		}
 		if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
-			if (type == type.EQUIPPED) {
+			if (type == type.EQUIPPED && item.getItem() instanceof ItemTool) {
 				GL11.glTranslated(0.1, 0.15, 0);
 				float r = 135;
 				GL11.glRotated(r, 0, 1, 0);
@@ -107,6 +108,16 @@ public final class ReikaSpriteSheets {
 				GL11.glRotated(r3, 0, 0, 1);
 				GL11.glScaled(s, s, s);
 				GL11.glTranslated(d, d, 0);*/
+			}
+			else if (type == type.EQUIPPED) {
+				GL11.glRotated(90, 1, 0, 0);
+				GL11.glRotated(135, 0, 0, 1);
+				double d = 1.5;
+				GL11.glScaled(d, d, d);
+				GL11.glTranslated(0, -1, 0);
+				GL11.glTranslated(-0.2, 0, -0.4);
+				GL11.glRotated(-20, 0, 1, 0);
+				GL11.glRotated(-30, 1, 0, 0);
 			}
 			else {
 				double sc = 0.6;

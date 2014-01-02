@@ -307,15 +307,22 @@ public class ReikaRecipeHelper {
 	public static boolean addOreRecipe(ItemStack out, Object... in) {
 		ShapedOreRecipe so = new ShapedOreRecipe(out, in);
 		boolean allowed = true;
-		Object[] objin = so.getInput();
-		for (int i = 0; i < objin.length; i++) {
-			if (objin[i] instanceof ArrayList) {
-				if (!((List<IRecipe>)objin[i]).isEmpty())
-					allowed = false;
+		ArrayList<String> missing = new ArrayList();
+		for (int i = 0; i < in.length; i++) {
+			if (in[i] instanceof String) {
+				String s = (String) in[i];
+				if (i > 0 && in[i-1] instanceof Character) {
+					if (!ReikaItemHelper.oreItemExists(s)) {
+						allowed = false;
+						missing.add(s);
+					}
+				}
 			}
 		}
 		if (allowed)
 			GameRegistry.addRecipe(so);
+		else
+			ReikaJavaLibrary.pConsole("Recipe for "+out.getDisplayName()+" requires missing Ore Dictionary items "+missing+", and has not been loaded.");
 		return allowed;
 	}
 }

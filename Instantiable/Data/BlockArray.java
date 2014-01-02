@@ -290,7 +290,13 @@ public class BlockArray {
 			return "Empty[]";
 		StringBuilder list = new StringBuilder();
 		for (int i = 0; i < this.getSize(); i++) {
-			list.append(Arrays.toString(blocks.get(i)));
+			int[] xyz = blocks.get(i);
+			if (refWorld != null) {
+				int id = refWorld.getBlockId(xyz[0], xyz[1], xyz[2]);
+				int meta = refWorld.getBlockMetadata(xyz[0], xyz[1], xyz[2]);
+				list.append(id+":"+meta+" @ ");
+			}
+			list.append(Arrays.toString(xyz));
 			if (i != this.getSize()-1)
 				list.append(";");
 		}
