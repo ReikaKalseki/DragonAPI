@@ -34,6 +34,7 @@ public enum ModCropList {
 	CANOLA(ModList.ROTARYCRAFT, 0x5B5B5B, "canola", "ItemCanolaSeed", 0, 0, 0, 9, VarType.INSTANCE, VarType.CLASS),
 	MAGIC(ModList.MAGICCROPS, 0x6F9165, MagicCropHandler.getInstance()),
 	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE);
+	//Berry bushes with FakePlayer
 
 	private final ModList mod;
 	public final int blockID;
@@ -82,11 +83,15 @@ public enum ModCropList {
 		int id = -1;
 		int seed = -1;
 		if (mod.isLoaded()) {
-			Class cl = api.getBlockClass();
-			if (cl == null) {
+			Class blocks = api.getBlockClass();
+			Class items = api.getItemClass();
+			if (blocks == null) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty block class");
 			}
-			if (blockVar == null || blockVar.isEmpty() || itemVar == null || itemVar.isEmpty()) {
+			else if (items == null) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty item class");
+			}
+			else if (blockVar == null || blockVar.isEmpty() || itemVar == null || itemVar.isEmpty()) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty variable name");
 			}
 			else {
@@ -95,7 +100,7 @@ public enum ModCropList {
 					Field i;
 					switch(blockType) {
 					case ITEMSTACK:
-						b = cl.getField(blockVar);
+						b = blocks.getField(blockVar);
 						ItemStack is = (ItemStack)b.get(null);
 						if (is == null) {
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
@@ -107,7 +112,7 @@ public enum ModCropList {
 						}
 						break;
 					case INSTANCE:
-						b = cl.getField(blockVar);
+						b = blocks.getField(blockVar);
 						Block block = (Block)b.get(null);
 						if (block == null) {
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
@@ -119,7 +124,7 @@ public enum ModCropList {
 						}
 						break;
 					case INT:
-						b = cl.getField(blockVar);
+						b = blocks.getField(blockVar);
 						id = b.getInt(null);
 						exists = true;
 						break;
@@ -133,7 +138,7 @@ public enum ModCropList {
 					}
 					switch(itemType) {
 					case ITEMSTACK:
-						i = cl.getField(itemVar);
+						i = items.getField(itemVar);
 						ItemStack is2 = (ItemStack)i.get(null);
 						if (is2 == null) {
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Seed not instantiated!");
@@ -145,7 +150,7 @@ public enum ModCropList {
 						}
 						break;
 					case INSTANCE:
-						i = cl.getField(itemVar);
+						i = items.getField(itemVar);
 						Item item = (Item)i.get(null);
 						if (item == null) {
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Seed not instantiated!");
@@ -157,7 +162,7 @@ public enum ModCropList {
 						}
 						break;
 					case INT:
-						i = cl.getField(itemVar);
+						i = items.getField(itemVar);
 						seed = i.getInt(null);
 						exists = true;
 						break;

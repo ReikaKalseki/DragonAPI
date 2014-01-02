@@ -354,4 +354,25 @@ public class TreeReader extends BlockArray {
 		return this.getVanillaTree() != null;
 	}
 
+	@Override
+	public TreeReader copy() {
+		TreeReader copy = new TreeReader();
+
+		copy.refWorld = refWorld;
+		copy.liquidMat = liquidMat;
+		copy.overflow = overflow;
+		copy.blocks = ReikaJavaLibrary.copyList(blocks);
+
+		copy.leafCount = leafCount;
+		copy.logCount = logCount;
+
+		copy.vanilla = vanilla;
+		copy.wood = wood;
+		copy.dyeTree = dyeTree;
+
+		copy.isDyeTree = isDyeTree;
+
+		return copy;
+	}
+
 }

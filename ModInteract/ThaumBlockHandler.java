@@ -15,7 +15,6 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ThaumBlockHandler extends ModHandlerBase {
 
@@ -34,34 +33,10 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		int idplant = -1;
 
 		if (this.hasMod()) {
-			try {
-				Class thaum = ModList.THAUMCRAFT.getBlockClass();
-				Field totem = thaum.getField("blockCosmeticSolid");
-				idtile = ((Block)totem.get(null)).blockID;
+			Class thaum = ModList.THAUMCRAFT.getBlockClass();
 
-				Field plant = thaum.getField("blockCustomPlant");
-				idplant = ((Block)plant.get(null)).blockID;
-			}
-			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
-				e.printStackTrace();
-			}
-			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
-				e.printStackTrace();
-			}
-			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
-				e.printStackTrace();
-			}
+			idtile = this.loadBlockID(thaum, "blockCosmeticSolid");
+			idplant = this.loadBlockID(thaum, "blockCustomPlant");
 		}
 		else {
 			this.noMod();
@@ -89,6 +64,34 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		if (!this.initializedProperly())
 			return false;
 		return block.itemID == totemID && block.getItemDamage() < 2;
+	}
+
+	/** Tries both instance and ID storage */
+	private int loadBlockID(Class c, String fieldName) {
+		int id = -1;
+		Exception e1 = null;
+		Exception e2 = null;
+		try {
+			Field block = c.getField(fieldName);
+			id = ((Block)block.get(null)).blockID;
+		}
+		catch (Exception e) {
+			e1 = e;
+		}
+		if (id != -1) {
+			try {
+				Field number = c.getField(fieldName+"Id");
+				id = number.getInt(null);
+			}
+			catch (Exception e) {
+				e2 = e;
+			}
+		}
+		if (id == -1) {
+			e1.printStackTrace();
+			e2.printStackTrace();
+		}
+		return id;
 	}
 
 }

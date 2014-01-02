@@ -80,37 +80,12 @@ public final class ThaumOreHandler extends ModHandlerBase {
 		int idshard = -1;
 
 		if (this.hasMod()) {
-			try {
-				Class thaum = ModList.THAUMCRAFT.getBlockClass();
-				Class items = ModList.THAUMCRAFT.getItemClass();
-				Field ore = thaum.getField("blockCustomOre");
-				Field item = items.getField("itemResource");
-				Field shard = items.getField("itemShard");
+			Class thaum = ModList.THAUMCRAFT.getBlockClass();
+			Class items = ModList.THAUMCRAFT.getItemClass();
 
-				idore = ((Block)ore.get(null)).blockID;
-				iditem = ((Item)item.get(null)).itemID;
-				idshard = ((Item)shard.get(null)).itemID;
-			}
-			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
-				e.printStackTrace();
-			}
-			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
-				e.printStackTrace();
-			}
-			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
-				e.printStackTrace();
-			}
+			idore = this.loadBlockID(thaum, "blockCustomOre");
+			iditem = this.loadItemID(items, "itemResource");
+			idshard = this.loadItemID(items, "itemShard");
 		}
 		else {
 			this.noMod();
@@ -327,6 +302,62 @@ public final class ThaumOreHandler extends ModHandlerBase {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft ores already registered to ore dictionary! No action taken!");
 			Thread.dumpStack();
 		}
+	}
+
+	/** Tries both instance and ID storage */
+	private int loadBlockID(Class c, String fieldName) {
+		int id = -1;
+		Exception e1 = null;
+		Exception e2 = null;
+		try {
+			Field block = c.getField(fieldName);
+			id = ((Block)block.get(null)).blockID;
+		}
+		catch (Exception e) {
+			e1 = e;
+		}
+		if (id != -1) {
+			try {
+				Field number = c.getField(fieldName+"Id");
+				id = number.getInt(null);
+			}
+			catch (Exception e) {
+				e2 = e;
+			}
+		}
+		if (id == -1) {
+			e1.printStackTrace();
+			e2.printStackTrace();
+		}
+		return id;
+	}
+
+	/** Tries both instance and ID storage */
+	private int loadItemID(Class c, String fieldName) {
+		int id = -1;
+		Exception e1 = null;
+		Exception e2 = null;
+		try {
+			Field item = c.getField(fieldName);
+			id = ((Item)item.get(null)).itemID;
+		}
+		catch (Exception e) {
+			e1 = e;
+		}
+		if (id != -1) {
+			try {
+				Field number = c.getField(fieldName+"Id");
+				id = number.getInt(null);
+			}
+			catch (Exception e) {
+				e2 = e;
+			}
+		}
+		if (id == -1) {
+			e1.printStackTrace();
+			e2.printStackTrace();
+		}
+		return id;
 	}
 
 }

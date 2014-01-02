@@ -41,7 +41,7 @@ public enum ModOreList {
 	IRIDIUM("Iridium", 0xC1E2D3, "ingotIridium", 1, "oreIridium"),
 	FIRESTONE("Firestone", 0xE19636, "shardFirestone", 1, "oreFirestone"),
 	CERTUSQUARTZ("Certus Quartz", 0xC4CEFF, "crystalQuartz", 3, "oreCertusQuartz"),
-	URANIUM("Uranium", 0x4CFF00, "ingotUranium", 1, "oreUranium"),
+	URANIUM("Uranium", 0x4CFF00, "ingotUranium", 1, "oreUranium", "oreYellorite"),
 	CINNABAR("Mercury", 0x811A1A, "itemQuicksilver", 1, "oreCinnabar"),
 	AMBER("Amber", 0xB17F17, "gemAmber", 1, "oreAmber"),
 	INFUSEDAIR("Air Infused", 0xA88C32, "shardAir", 4, "oreInfusedAir"),
@@ -98,7 +98,9 @@ public enum ModOreList {
 	MAGMANITE("Magmanite", 0xF95D00, "dropMagma", 1, "oreMagmanite"),
 	MAGNETITE("Magnetite", 0x44442D, "gemMagnetite", 1, "oreMagnetite"),
 	ESSENCE("Essence", 0x158215, "itemEssence", 3, "oreEssence", "oreNetherEssence"),
-	MIMICHITE("Mimichite", 0x8900FF, "gemMimichite", 1, "oreMimichite");
+	MIMICHITE("Mimichite", 0x8900FF, "gemMimichite", 1, "oreMimichite"),
+	NETHERURANIUM("Nether Uranium", 0x00aa00, "ingotUranium", 1, "oreNetherUranium"),
+	QUANTUM("Quantum", 0x5BA642, "dustQuantum", 2, "oreQuantum");
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 	public final String displayName;

@@ -26,6 +26,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.ChatWatcher;
@@ -34,6 +35,7 @@ import Reika.DragonAPI.Auxiliary.CustomSoundHandler;
 import Reika.DragonAPI.Auxiliary.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
+import Reika.DragonAPI.Auxiliary.PlayerFirstTimeTracker;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.RetroGenController;
@@ -58,6 +60,7 @@ import Reika.DragonAPI.ModInteract.MagicaOreHandler;
 import Reika.DragonAPI.ModInteract.MekToolHandler;
 import Reika.DragonAPI.ModInteract.MekanismHandler;
 import Reika.DragonAPI.ModInteract.MimicryHandler;
+import Reika.DragonAPI.ModInteract.QuantumOreHandler;
 import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
 import Reika.DragonAPI.ModInteract.ThermalHandler;
@@ -179,6 +182,16 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	@ForgeSubscribe
+	public void onClose(WorldEvent.Save evt) {
+		PlayerFirstTimeTracker.closeAndSave();
+	}
+
+	@ForgeSubscribe
+	public void onLoad(WorldEvent.Load evt) {
+		PlayerFirstTimeTracker.loadTrackers();
+	}
+
+	@ForgeSubscribe
 	public void addGuideGUI(PlayerInteractEvent evt) {
 		EntityPlayer ep = evt.entityPlayer;
 		ItemStack is = ep.getCurrentEquippedItem();
@@ -257,6 +270,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.THERMALEXPANSION, ThermalHandler.class);
 		this.initHandler(ModList.MIMICRY, MimicryHandler.class);
 		this.initHandler(ModList.MAGICCROPS, MagicCropHandler.class);
+		this.initHandler(ModList.QCRAFT, QuantumOreHandler.class);
 	}
 
 	private void initHandler(ModList mod, Class c) {

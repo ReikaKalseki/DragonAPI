@@ -64,6 +64,8 @@ public final class LoginHandler implements IPlayerTracker {
 		else {
 
 		}
+
+		PlayerFirstTimeTracker.checkPlayer(ep);
 	}
 
 	@Override

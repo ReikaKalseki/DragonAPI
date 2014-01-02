@@ -27,9 +27,9 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class BlockArray {
 
-	private List<int[]> blocks = new ArrayList<int[]>();
-	private Material liquidMat;
-	private boolean overflow = false;
+	protected List<int[]> blocks = new ArrayList<int[]>();
+	protected Material liquidMat;
+	protected boolean overflow = false;
 	protected World refWorld;
 
 	private final BlockArrayComputer computer;
@@ -471,5 +471,14 @@ public class BlockArray {
 			if (canSink)
 				this.offset(0, -1, 0);
 		}
+	}
+
+	public BlockArray copy() {
+		BlockArray copy = new BlockArray();
+		copy.refWorld = refWorld;
+		copy.liquidMat = liquidMat;
+		copy.overflow = overflow;
+		copy.blocks = ReikaJavaLibrary.copyList(blocks);
+		return copy;
 	}
 }
