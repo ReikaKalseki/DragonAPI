@@ -1378,18 +1378,15 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 			if (id == topID && y == world.getTopSolidOrLiquidBlock(x, z)-1) {
 				world.setBlock(x, y, z, biome.topBlock);
-			}/*
-			else if (id == Block.wood.blockID)
-				world.setBlock(x, y, z, 0);
-			else if (id == Block.leaves.blockID)
-				world.setBlock(x, y, z, 0);*/
+			}
+
 			if (biome.getEnableSnow()) {
 				if (world.canBlockFreeze(x, y, z, false))
 					world.setBlock(x, y, z, Block.ice.blockID);
-				else if (world.canBlockSeeTheSky(x, y, z))
+				else if (world.canBlockSeeTheSky(x, y+1, z) && world.isAirBlock(x, y+1, z))
 					world.setBlock(x, y+1, z, Block.snow.blockID);
 			}
-			if (!biome.getEnableSnow()) {
+			else {
 				if (id == Block.snow.blockID)
 					world.setBlock(x, y, z, 0);
 				if (id == Block.ice.blockID)
@@ -1413,15 +1410,28 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int bigmush = dec.bigMushroomsPerChunk;
 
 		double fac = 1/3D;
+		int top = world.getTopSolidOrLiquidBlock(x, z);
 
-		if (ReikaRandomHelper.doWithChance(fac*trees/256D)) {
+		if (ReikaRandomHelper.doWithChance(fac*trees/96D)) {
 			WorldGenerator gen = biome.getRandomWorldGenForTrees(rand);
-			gen.generate(world, rand, x, world.getTopSolidOrLiquidBlock(x, z), z);
+			if (ReikaPlantHelper.SAPLING.canPlantAt(world, x, top, z)) {
+				if (softBlocks(world, x, top, z))
+					world.setBlock(x, top, z, 0);
+				gen.generate(world, rand, x, top, z);
+			}
 		}
 
-		if (ReikaRandomHelper.doWithChance(fac*grass/256D)) {
+		if (ReikaRandomHelper.doWithChance(fac*grass/64D)) {
 			WorldGenerator gen = biome.getRandomWorldGenForGrass(rand);
-			gen.generate(world, rand, x, world.getTopSolidOrLiquidBlock(x, z), z);
+			if (softBlocks(world, x, top, z))
+				world.setBlock(x, top, z, 0);
+			gen.generate(world, rand, x, top, z);
+		}
+
+		if (ReikaRandomHelper.doWithChance(fac*bigmush/96D)) {
+			if (softBlocks(world, x, top, z))
+				world.setBlock(x, top, z, 0);
+			biome.theBiomeDecorator.bigMushroomGen.generate(world, rand, x, top, z);
 		}
 
 		if (ReikaRandomHelper.doWithChance(fac*cactus/256D)) {
@@ -1433,7 +1443,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 
-		if (ReikaRandomHelper.doWithChance(fac*sugar/256D)) {
+		if (ReikaRandomHelper.doWithChance(fac*sugar/64D)) {
 			int y = world.getTopSolidOrLiquidBlock(x, z);
 			if (ReikaPlantHelper.SUGARCANE.canPlantAt(world, x, y, z)) {
 				int h = 1+rand.nextInt(3);
@@ -1442,14 +1452,14 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 
-		if (ReikaRandomHelper.doWithChance(fac*bushes/256D)) {
+		if (ReikaRandomHelper.doWithChance(fac*bushes/64D)) {
 			int y = world.getTopSolidOrLiquidBlock(x, z);
 			if (ReikaPlantHelper.BUSH.canPlantAt(world, x, y, z)) {
 				world.setBlock(x, y, z, Block.deadBush.blockID);
 			}
 		}
 
-		if (ReikaRandomHelper.doWithChance(fac*lily/256D)) {
+		if (ReikaRandomHelper.doWithChance(fac*lily/64D)) {
 			int y = world.getTopSolidOrLiquidBlock(x, z);
 			if (ReikaPlantHelper.LILYPAD.canPlantAt(world, x, y, z)) {
 				world.setBlock(x, y, z, Block.waterlily.blockID);
@@ -1466,7 +1476,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 
-		if (ReikaRandomHelper.doWithChance(fac*256*mushrooms/256D)) {
+		if (ReikaRandomHelper.doWithChance(fac*128*mushrooms/256D)) {
 			int y = world.getTopSolidOrLiquidBlock(x, z);
 			if (ReikaPlantHelper.MUSHROOM.canPlantAt(world, x, y, z)) {
 				if (rand.nextInt(4) == 0)

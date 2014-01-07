@@ -51,7 +51,6 @@ public enum ReikaPlantHelper {
 		int idbelow = world.getBlockId(x, y-1, z);
 		int metabelow = world.getBlockMetadata(x, y-1, z);
 		Material matbelow = world.getBlockMaterial(x, y-1, z);
-
 		switch(this) {
 		case CACTUS:
 			return idbelow == Block.sand.blockID;
