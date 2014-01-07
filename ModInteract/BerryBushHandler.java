@@ -22,7 +22,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 
-public class MagicCropHandler extends CropHandlerBase {
+public class BerryBushHandler extends CropHandlerBase {
 
 	private static final String[] materialCrops = {
 		"Coal", "Redstone", "Glowstone", "Obsidian", "Dye", "Iron", "Gold", "Lapis", "Ender", "Nether", "XP", "Blaze", "Diamond",
@@ -33,7 +33,7 @@ public class MagicCropHandler extends CropHandlerBase {
 		"Cow", "Creeper", "Magma", "Skeleton", "Slime", "Spider", "Ghast"
 	};
 
-	private static final MagicCropHandler instance = new MagicCropHandler();
+	private static final BerryBushHandler instance = new BerryBushHandler();
 
 	private final ArrayList<Integer> blockIDs = new ArrayList();
 	private final ArrayList<Integer> seedIDs = new ArrayList();
@@ -45,7 +45,7 @@ public class MagicCropHandler extends CropHandlerBase {
 	private ItemStack christmasEssence;
 	private ItemStack natureEssence;
 
-	private MagicCropHandler() {
+	private BerryBushHandler() {
 		super();
 		int idore = -1;
 		int idnether = -1;
@@ -158,12 +158,12 @@ public class MagicCropHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isSeedItem(ItemStack is) {
-		return seedIDs.contains(is.itemID);
+		return false;
 	}
 
 	@Override
 	public float getSecondSeedDropRate() {
-		return configChance/100F;
+		return 0;
 	}
 
 	@Override
@@ -171,13 +171,13 @@ public class MagicCropHandler extends CropHandlerBase {
 		return this.isCrop(id) && meta == this.getRipeMeta();
 	}
 
-	public static MagicCropHandler getInstance() {
+	public static BerryBushHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return !blockIDs.isEmpty() && seedIDs.isEmpty() && configChance != -1 && oreID != -1 && netherOreID != -1 && essenceID != -1 && cropEssenceID != -1;
+		return !blockIDs.isEmpty() && seedIDs.isEmpty() && configChance != -1 && oreID != -1 && netherOreID != -1 && essenceID != -1;
 	}
 
 	public boolean isEssenceOre(int id) {

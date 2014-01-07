@@ -520,7 +520,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 				is = new ItemStack(Item.skull.itemID, 1, 0);
 		}
 		if (e instanceof EntityZombie) {
-			if (!((EntityZombie)e).isVillager())
+			if (!(((EntityZombie)e).isVillager() || e instanceof EntityPigZombie))
 				is = new ItemStack(Item.skull.itemID, 1, 2);
 		}
 		if (e instanceof EntityPlayer)
@@ -529,7 +529,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			is = new ItemStack(Item.skull.itemID, 1, 4);
 		if (is == null)
 			return;
-		ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY, e.posZ, is);
+		ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY+0.2, e.posZ, is);
 	}
 
 	/** Spawns a bunch of particles around an entity. Args: Particle Type, Entity, number of particles */

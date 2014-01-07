@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import java.util.ArrayList;
+
 import net.minecraft.item.ItemStack;
 
 public abstract class CropHandlerBase extends ModHandlerBase {
@@ -24,5 +26,7 @@ public abstract class CropHandlerBase extends ModHandlerBase {
 	public abstract boolean isSeedItem(ItemStack is);
 
 	public abstract float getSecondSeedDropRate();
+
+	public abstract ArrayList<ItemStack> getAdditionalDrops();
 
 }

@@ -53,6 +53,26 @@ public class TreeReader extends BlockArray {
 		//ReikaJavaLibrary.pConsole(id+":"+meta);
 		if (id != Block.wood.blockID && id != dyeLeafID && !ModWoodList.isModWood(id, meta))
 			return;
+		if (id == dyeLeafID && dyeMeta != -1 && dyeMeta != meta)
+			return;
+
+		if (id != dyeLeafID) {
+			ModWoodList wood = ModWoodList.getModWood(id, meta);
+			ReikaTreeHelper van = ReikaTreeHelper.getTree(id, meta);
+			//ReikaJavaLibrary.pConsole(wood+"/"+this.wood+"  :  "+van+"/"+vanilla);
+			if (this.wood == null && vanilla == null) {
+				ReikaJavaLibrary.pConsole(this);
+				this.setModTree(wood);
+				this.setTree(van);
+			}
+			else {
+				if (wood != this.wood || van != vanilla)
+					return;
+			}
+		}
+		if (vanilla == null && wood == null)
+			return;
+
 		if (id == dyeLeafID) {
 			isDyeTree = true;
 			dyeMeta = meta;
@@ -325,6 +345,7 @@ public class TreeReader extends BlockArray {
 		vanilla = null;
 		wood = null;
 		isDyeTree = false;
+		dyeMeta = -1;
 	}
 
 	public void setTree(ReikaTreeHelper tree) {

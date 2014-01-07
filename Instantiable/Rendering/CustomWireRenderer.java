@@ -65,6 +65,10 @@ public class CustomWireRenderer implements ISimpleBlockRenderingHandler {
 		f18 = f6;
 		if (b instanceof WireBlock) {
 			WireBlock w = (WireBlock)b;
+			boolean alone = true;
+			for (int i = 2; i < 6; i++)
+				if (w.isDirectlyConnectedTo(world, x, y, z, i))
+					alone = false;
 			int power = w.getPowerState(world, x, y, z);
 			Icon ico = rb.getIconSafe(w.getBaseTexture());
 			Icon over = rb.getIconSafe(w.getConnectedSideOverlay());
@@ -96,7 +100,7 @@ public class CustomWireRenderer implements ISimpleBlockRenderingHandler {
 				int dx = x+dir.offsetX;
 				int dy = y+dir.offsetY;
 				int dz = z+dir.offsetZ;
-				if (w.isConnectedTo(world, x, y, z, dir.ordinal())) {
+				if (w.isDirectlyConnectedTo(world, x, y, z, dir.ordinal()) || (!alone && w.isTerminus(world, x, y, z, dir.getOpposite().ordinal()))) {
 					boolean up = w.drawWireUp(world, x, y, z, i);
 					switch(dir) {
 					case EAST:

@@ -182,13 +182,15 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	@ForgeSubscribe
-	public void onClose(WorldEvent.Save evt) {
-		PlayerFirstTimeTracker.closeAndSave();
+	public void onClose(WorldEvent.Unload evt) {
+		if (evt.world.provider.dimensionId == 0)
+			PlayerFirstTimeTracker.closeAndSave();
 	}
 
 	@ForgeSubscribe
 	public void onLoad(WorldEvent.Load evt) {
-		PlayerFirstTimeTracker.loadTrackers();
+		if (evt.world.provider.dimensionId == 0)
+			PlayerFirstTimeTracker.loadTrackers();
 	}
 
 	@ForgeSubscribe

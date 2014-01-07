@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
@@ -40,7 +41,7 @@ public class ItemSpriteSheetRenderer implements IItemRenderer {
 
 	@Override
 	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
-		return true;
+		return helper != helper.ENTITY_ROTATION ? true : Minecraft.getMinecraft().gameSettings.fancyGraphics;
 	}
 
 	@Override

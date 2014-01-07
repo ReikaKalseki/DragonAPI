@@ -54,7 +54,7 @@ public abstract class PlayerTracker {
 
 	public final String getSaveFilePath() {
 		File save = DimensionManager.getCurrentSaveRootDirectory();
-		return save.getPath().substring(2)+"\\DragonAPI\\PlayerTrackers\\";
+		return save.getPath().substring(2)+"/DragonAPI/PlayerTrackers/";
 	}
 
 	public final String getFullSavePath() {

@@ -12,8 +12,11 @@ package Reika.DragonAPI.Auxiliary;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
@@ -77,7 +80,7 @@ public final class ReikaSpriteSheets {
 			GL11.glRotated(-r, 0, 1, 0);
 		}
 		if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
-			if (type == type.EQUIPPED && item.getItem() instanceof ItemTool) {
+			if (type == type.EQUIPPED && (item.getItem() instanceof ItemTool || item.getItem() instanceof ItemSword || item.getItem() instanceof ItemShears)) {
 				GL11.glTranslated(0.1, 0.15, 0);
 				float r = 135;
 				GL11.glRotated(r, 0, 1, 0);
@@ -119,7 +122,7 @@ public final class ReikaSpriteSheets {
 				GL11.glRotated(-20, 0, 1, 0);
 				GL11.glRotated(-30, 1, 0, 0);
 			}
-			else {
+			else { //Entity
 				double sc = 0.6;
 				//GL11.glScaled(sc, sc, sc);
 				GL11.glRotatef(90, 0, 1, 0);
@@ -128,7 +131,24 @@ public final class ReikaSpriteSheets {
 				//GL11.glTranslated(0, 0, 0.125);
 			}
 			float thick = 0.0625F;
-			ItemRenderer.renderItemIn2D(v5, 0.0625F+0.0625F*col, 0.0625F*row, 0.0625F*col, 0.0625F+0.0625F*row, 256, 256, thick);
+			if (Minecraft.getMinecraft().gameSettings.fancyGraphics || type == type.EQUIPPED_FIRST_PERSON)
+				ItemRenderer.renderItemIn2D(v5, 0.0625F+0.0625F*col, 0.0625F*row, 0.0625F*col, 0.0625F+0.0625F*row, 256, 256, thick);
+			else {
+				if (type == type.ENTITY) {
+					GL11.glRotatef(180.0F - RenderManager.instance.playerViewY-90, 0.0F, 1.0F, 0.0F);
+					GL11.glRotatef(-RenderManager.instance.playerViewX, 1.0F, 0.0F, 0.0F);
+				}
+				GL11.glColor4f(1, 1, 1, 1);
+				v5.startDrawingQuads();
+				float u = col/16F;
+				float v = row/16F;
+				v5.setColorOpaque(255, 255, 255);
+				v5.addVertexWithUV(0, 0, 0, u, v+0.0625);
+				v5.addVertexWithUV(1, 0, 0, u+0.0625, v+0.0625);
+				v5.addVertexWithUV(1, 1, 0, u+0.0625, v);
+				v5.addVertexWithUV(0, 1, 0, u, v);
+				v5.draw();
+			}
 		}
 
 		renderEffect(type, item);

@@ -56,7 +56,6 @@ public class PlayerModelRenderer {
 				GL11.glScaled(1, -1, 1);
 				GL11.glFrontFace(GL11.GL_CW);
 				modelReika.renderBodyParts(ep, tick);
-				//modelReika.reset();
 				GL11.glFrontFace(GL11.GL_CCW);
 
 				GL11.glScaled(1, -1, 1);
@@ -66,7 +65,6 @@ public class PlayerModelRenderer {
 				GL11.glScaled(1, -1, 1);
 				GL11.glFrontFace(GL11.GL_CW);
 				modelSamaki.renderBodyParts(ep, tick);
-				//modelReika.reset();
 				GL11.glFrontFace(GL11.GL_CCW);
 				GL11.glScaled(1, -1, 1);
 			}

@@ -18,7 +18,13 @@ public interface WireBlock {
 
 	public int getPowerState(IBlockAccess world, int x, int y, int z);
 
+	/** Does it connect to this side at all? */
 	public boolean isConnectedTo(IBlockAccess world, int x, int y, int z, int side);
+
+	/** Is it another wire block or a redstone logic block? */
+	public boolean isDirectlyConnectedTo(IBlockAccess world, int x, int y, int z, int side);
+
+	public boolean isTerminus(IBlockAccess world, int x, int y, int z, int side);
 
 	public Color getColor();
 

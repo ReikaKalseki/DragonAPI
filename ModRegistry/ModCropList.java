@@ -33,7 +33,8 @@ public enum ModCropList {
 	FLAX(ModList.REDPOWER, 0xD9C482, "", "", 0, 0, 0, 0, VarType.INSTANCE),
 	CANOLA(ModList.ROTARYCRAFT, 0x5B5B5B, "canola", "ItemCanolaSeed", 0, 0, 0, 9, VarType.INSTANCE, VarType.CLASS),
 	MAGIC(ModList.MAGICCROPS, 0x6F9165, MagicCropHandler.getInstance()),
-	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE);
+	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE),
+	BERRY(ModList.NATURA, 0x55ff33, BerryBushHandler.getInstance());
 	//Berry bushes with FakePlayer
 
 	private final ModList mod;
@@ -202,17 +203,26 @@ public enum ModCropList {
 		return this.name()+" from "+mod+" with metadatas ["+harvestedMeta+","+ripeMeta+"]";
 	}
 
+	public boolean simulateFullBreak() {
+		return this == MAGIC;
+	}
+
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
 		int meta = world.getBlockMetadata(x, y, z);
+		ArrayList<ItemStack> li = new ArrayList();
 		if (blockID != -1)
-			return Block.blocksList[blockID].getBlockDropped(world, x, y, z, meta, fortune);
+			li.addAll(Block.blocksList[blockID].getBlockDropped(world, x, y, z, meta, fortune));
 		else {
 			int id = world.getBlockId(x, y, z);
 			if (id == -1)
 				return new ArrayList();
 			Block b = Block.blocksList[id];
-			return b != null ? b.getBlockDropped(world, x, y, z, meta, fortune) : new ArrayList();
+			if (b != null)
+				li.addAll(b.getBlockDropped(world, x, y, z, meta, fortune));
 		}
+		if (this.isHandlered())
+			li.addAll(handler.getAdditionalDrops());
+		return li;
 	}
 
 	public void removeOneSeed(ArrayList<ItemStack> li) {
@@ -269,7 +279,11 @@ public enum ModCropList {
 	}
 
 	public boolean destroyOnHarvest() {
-		return this != COTTON;
+		return this != COTTON || this.isNaturaBerry();
+	}
+
+	public boolean isNaturaBerry() {
+		return false;
 	}
 
 	public boolean isRipe(int meta) {

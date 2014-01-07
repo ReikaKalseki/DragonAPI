@@ -36,7 +36,7 @@ public enum ModOreList {
 	LEAD("Lead", 0x697597, "ingotLead", 1, "oreLead"),
 	FERROUS("Nickel", 0xD0CCAD, "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
 	SILVER("Silver", 0xA4D0DA, "ingotSilver", 1, "oreSilver"),
-	GALENA("Galena", 0x7F6E95, "ingotGalena", 1, "oreGalena"),
+	GALENA("Galena", 0x7F6E95, "dustGalena", 1, "oreGalena"),
 	ALUMINUM("Aluminum", 0xF1F1F1, "ingotAluminum", 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
 	IRIDIUM("Iridium", 0xC1E2D3, "ingotIridium", 1, "oreIridium"),
 	FIRESTONE("Firestone", 0xE19636, "shardFirestone", 1, "oreFirestone"),
@@ -100,7 +100,10 @@ public enum ModOreList {
 	ESSENCE("Essence", 0x158215, "itemEssence", 3, "oreEssence", "oreNetherEssence"),
 	MIMICHITE("Mimichite", 0x8900FF, "gemMimichite", 1, "oreMimichite"),
 	NETHERURANIUM("Nether Uranium", 0x00aa00, "ingotUranium", 1, "oreNetherUranium"),
-	QUANTUM("Quantum", 0x5BA642, "dustQuantum", 2, "oreQuantum");
+	QUANTUM("Quantum", 0x5BA642, "dustQuantum", 2, "oreQuantum"),
+	NETHERIRIDIUM("Nether Iridium", 0xb6f6c7, "ingotIridium", 1, "oreNetherIridium"),
+	DARKIRON("Dark Iron", 0x4F00D1, "ingotFZDarkIron", 1, "oreFZDarkIron"),
+	CHROMITE("Chromite", 0x94E0F5, "ingotChrome", 1, "oreChromite");
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 	public final String displayName;
@@ -360,7 +363,7 @@ public enum ModOreList {
 
 	public boolean isRare() {
 		return this == ModOreList.PLATINUM || this == ModOreList.NETHERPLATINUM || this == ModOreList.IRIDIUM ||
-				this == ModOreList.MOONSTONE;
+				this == ModOreList.MOONSTONE || this == NETHERIRIDIUM;
 	}
 
 	public boolean isArsMagica() {

@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -79,6 +80,8 @@ public class SamakiModel extends ModifiedPlayerModel {
 
 	@Override
 	public void renderBodyParts(EntityPlayer ep, float tick) {
+		if (ep.equals(Minecraft.getMinecraft().thePlayer) && !Minecraft.getMinecraft().thePlayer.getEntityName().equals("FurryDJ"))
+			return;
 		this.setPartAngles(ep, tick);
 
 		float pitch = -ep.rotationPitch;

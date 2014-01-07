@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -62,6 +63,8 @@ public class ReikaModel extends ModifiedPlayerModel {
 
 	@Override
 	public void renderBodyParts(EntityPlayer ep, float tick) {
+		if (ep.equals(Minecraft.getMinecraft().thePlayer) && !Minecraft.getMinecraft().thePlayer.getEntityName().equals("Reika_Kalseki"))
+			return;
 		this.setPartAngles(ep, tick);
 		float f5 = 0.0625F;
 		tail.render(f5);
