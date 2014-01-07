@@ -12,6 +12,7 @@ package Reika.DragonAPI.Base;
 import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public abstract class CropHandlerBase extends ModHandlerBase {
 
@@ -27,6 +28,6 @@ public abstract class CropHandlerBase extends ModHandlerBase {
 
 	public abstract float getSecondSeedDropRate();
 
-	public abstract ArrayList<ItemStack> getAdditionalDrops();
+	public abstract ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, int id, int meta, int fortune);
 
 }

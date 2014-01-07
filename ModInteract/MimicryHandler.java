@@ -22,16 +22,12 @@ public class MimicryHandler extends ModHandlerBase {
 
 	private static final MimicryHandler instance = new MimicryHandler();
 
-	public final int stoneOreID;
-	public final int netherOreID;
-	public final int endOreID;
+	public final int oreID;
 	public final int itemID;
 
 	private MimicryHandler() {
 		super();
 		int idstone = -1;
-		int idnether = -1;
-		int idend = -1;
 		int iditem = -1;
 
 		if (this.hasMod()) {
@@ -39,12 +35,6 @@ public class MimicryHandler extends ModHandlerBase {
 				Class blocks = ModList.MIMICRY.getBlockClass();
 				Field ore = blocks.getField("MimichiteOre");
 				idstone = ((Block)ore.get(null)).blockID;
-
-				ore = blocks.getField("MimichiteNetherOre");
-				idnether = ((Block)ore.get(null)).blockID;
-
-				ore = blocks.getField("MimichiteEndOre");
-				idend = ((Block)ore.get(null)).blockID;
 
 				Class items = ModList.MIMICRY.getItemClass();
 				Field item = items.getField("Mimichite");
@@ -75,9 +65,7 @@ public class MimicryHandler extends ModHandlerBase {
 			this.noMod();
 		}
 
-		stoneOreID = idstone;
-		netherOreID = idnether;
-		endOreID = idend;
+		oreID = idstone;
 		itemID = iditem;
 	}
 
@@ -87,7 +75,7 @@ public class MimicryHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return netherOreID != -1 && itemID != -1 && endOreID != -1 && stoneOreID != -1;
+		return itemID != -1 && oreID != -1;
 	}
 
 	@Override
@@ -98,7 +86,7 @@ public class MimicryHandler extends ModHandlerBase {
 	public boolean isMimichiteOre(ItemStack block) {
 		if (!this.initializedProperly())
 			return false;
-		return block.itemID == stoneOreID || block.itemID == netherOreID || block.itemID == endOreID;
+		return block.itemID == oreID;
 	}
 
 }

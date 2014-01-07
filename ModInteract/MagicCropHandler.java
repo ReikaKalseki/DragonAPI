@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
@@ -200,11 +201,11 @@ public class MagicCropHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public ArrayList<ItemStack> getAdditionalDrops() {
+	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, int id, int meta, int fortune) {
 		ArrayList<ItemStack> li = new ArrayList();
-		if (ReikaRandomHelper.doWithChance(20))
+		if (ReikaRandomHelper.doWithChance(20*(1+fortune)))
 			li.add(christmasEssence);
-		if (ReikaRandomHelper.doWithChance(20))
+		if (ReikaRandomHelper.doWithChance(20*(1+fortune)))
 			li.add(natureEssence);
 		return li;
 	}

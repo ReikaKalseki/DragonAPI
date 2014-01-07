@@ -23,7 +23,9 @@ import Reika.DragonAPI.Base.CropHandlerBase;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.ModInteract.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.MagicCropHandler;
+import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
 
 public enum ModCropList {
@@ -34,7 +36,8 @@ public enum ModCropList {
 	CANOLA(ModList.ROTARYCRAFT, 0x5B5B5B, "canola", "ItemCanolaSeed", 0, 0, 0, 9, VarType.INSTANCE, VarType.CLASS),
 	MAGIC(ModList.MAGICCROPS, 0x6F9165, MagicCropHandler.getInstance()),
 	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE),
-	BERRY(ModList.NATURA, 0x55ff33, BerryBushHandler.getInstance());
+	BERRY(ModList.NATURA, 0x55ff33, BerryBushHandler.getInstance()),
+	OREBERRY(ModList.TINKERER, 0xcccccc, OreBerryBushHandler.getInstance());
 	//Berry bushes with FakePlayer
 
 	private final ModList mod;
@@ -208,12 +211,12 @@ public enum ModCropList {
 	}
 
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
+		int id = world.getBlockId(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		ArrayList<ItemStack> li = new ArrayList();
 		if (blockID != -1)
 			li.addAll(Block.blocksList[blockID].getBlockDropped(world, x, y, z, meta, fortune));
 		else {
-			int id = world.getBlockId(x, y, z);
 			if (id == -1)
 				return new ArrayList();
 			Block b = Block.blocksList[id];
@@ -221,7 +224,7 @@ public enum ModCropList {
 				li.addAll(b.getBlockDropped(world, x, y, z, meta, fortune));
 		}
 		if (this.isHandlered())
-			li.addAll(handler.getAdditionalDrops());
+			li.addAll(handler.getAdditionalDrops(world, x, y, z, id, meta, fortune));
 		return li;
 	}
 
@@ -279,11 +282,11 @@ public enum ModCropList {
 	}
 
 	public boolean destroyOnHarvest() {
-		return this != COTTON || this.isNaturaBerry();
+		return this != COTTON && !this.isBerryBush();
 	}
 
-	public boolean isNaturaBerry() {
-		return false;
+	public boolean isBerryBush() {
+		return this == BERRY || this == OREBERRY;
 	}
 
 	public boolean isRipe(int meta) {

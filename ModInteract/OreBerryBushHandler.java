@@ -20,41 +20,36 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class BerryBushHandler extends CropHandlerBase {
+public class OreBerryBushHandler extends CropHandlerBase {
 
-	private static final BerryBushHandler instance = new BerryBushHandler();
+	private static final OreBerryBushHandler instance = new OreBerryBushHandler();
 
 	public final int bushID;
 	public final int berryID;
 
-	public final int netherBushID;
-	public final int netherBerryID;
+	public final int secondbushID;
 
-	private BerryBushHandler() {
+	private OreBerryBushHandler() {
 		super();
 		int idbush = -1;
 		int idberry = -1;
-		int idnetherbush = -1;
-		int idnetherberry = -1;
+
+		int idsecondbush = -1;
 		if (this.hasMod()) {
 			Class blocks = this.getMod().getBlockClass();
 			Class items = this.getMod().getItemClass();
 			try {
-				Field f = blocks.getField("berryBush");
+				Field f = blocks.getField("oreBerry");
 				Block bush = (Block)f.get(null);
 				idbush = bush.blockID;
 
-				f = blocks.getField("netherBerryBush");
-				Block netherbush = (Block)f.get(null);
-				idnetherbush = netherbush.blockID;
+				f = blocks.getField("oreBerrySecond");
+				Block secondbush = (Block)f.get(null);
+				idsecondbush = secondbush.blockID;
 
-				f = items.getField("berryItem");
+				f = items.getField("oreBerries");
 				Item berry = (Item)f.get(null);
 				idberry = berry.itemID;
-
-				f = items.getField("netherBerryItem");
-				Item netherberry = (Item)f.get(null);
-				idnetherberry = netherberry.itemID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -75,13 +70,12 @@ public class BerryBushHandler extends CropHandlerBase {
 		berryID = idberry;
 		bushID = idbush;
 
-		netherBerryID = idnetherberry;
-		netherBushID = idnetherbush;
+		secondbushID = idsecondbush;
 	}
 
 	@Override
 	public boolean isCrop(int id) {
-		return id == bushID || id == netherBushID;
+		return id == bushID;
 	}
 
 	@Override
@@ -99,18 +93,18 @@ public class BerryBushHandler extends CropHandlerBase {
 		return this.isCrop(id) && meta >= this.getRipeMeta();
 	}
 
-	public static BerryBushHandler getInstance() {
+	public static OreBerryBushHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return bushID != -1 && berryID != -1 && netherBushID != -1 && netherBerryID != -1;
+		return bushID != -1 && berryID != -1 || secondbushID != -1;
 	}
 
 	@Override
 	public ModList getMod() {
-		return ModList.NATURA;
+		return ModList.TINKERER;
 	}
 
 	@Override
@@ -129,8 +123,8 @@ public class BerryBushHandler extends CropHandlerBase {
 		if (id == bushID) {
 			li.add(new ItemStack(berryID, 1, meta-12));
 		}
-		else if (id == netherBushID) {
-			li.add(new ItemStack(netherBerryID, 1, meta-12));
+		if (id == secondbushID) {
+			li.add(new ItemStack(berryID, 1, meta-12));
 		}
 		return li;
 	}
