@@ -142,7 +142,61 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		}
 	}
 
-	/** Gets the value of a private boolean in an instance of obj. Specify the deobfuscated name! */
+	/** Gets the value of a private int in an instance of obj. */
+	public static int getPrivateInteger(Object obj, String field, ModLogger log) {
+		try {
+			Class c = obj.getClass();
+			Field f = null;
+			while (f == null && c != null) {
+				try {
+					f = c.getDeclaredField(field);
+				}
+				catch (NoSuchFieldException e2) {
+					c = c.getSuperclass();
+				}
+			}
+			if (f == null) {
+				if (log.shouldDebug()) {
+					ReikaJavaLibrary.pConsole("Could not find field "+field+" in "+obj);
+					ReikaChatHelper.write("Could not find field "+field+" in "+obj);
+				}
+				throw new NoSuchFieldException();
+			}
+			int val = Integer.MIN_VALUE;
+			if (!f.isAccessible()) {
+				f.setAccessible(true);
+				val = f.getInt(obj);
+				f.setAccessible(false);
+			}
+			else
+				val = f.getInt(obj);
+			return val;
+		}
+		catch (NoSuchFieldException e) {
+			if (log.shouldDebug()) {
+				ReikaJavaLibrary.pConsole("Could not find field "+field+" in "+obj);
+				ReikaChatHelper.write("Could not find field "+field+" in "+obj);
+			}
+			e.printStackTrace();
+		}
+		catch (IllegalAccessException e) {
+			if (log.shouldDebug()) {
+				ReikaJavaLibrary.pConsole("Could not access field "+field+" in "+obj);
+				ReikaChatHelper.write("Could not access field "+field+" in "+obj);
+			}
+			e.printStackTrace();
+		}
+		catch (SecurityException e) {
+			if (log.shouldDebug()) {
+				ReikaJavaLibrary.pConsole("Security Manager locked field "+field+" in "+obj);
+				ReikaChatHelper.write("Security Manager locked field "+field+" in "+obj);
+			}
+			e.printStackTrace();
+		}
+		return Integer.MIN_VALUE;
+	}
+
+	/** Gets the value of a private boolean in an instance of obj. */
 	public static boolean getPrivateBoolean(Object obj, String field, ModLogger log) {
 		try {
 			Class c = obj.getClass();
@@ -194,6 +248,21 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	/** Gets a nonvisible field that may be inherited by any of the superclasses. Returns null if none exists. */
+	public static Field getProtectedInheritedField(Object obj, String field) {
+		Class c = obj.getClass();
+		Field f = null;
+		while (f == null && c != null) {
+			try {
+				f = c.getDeclaredField(field);
+			}
+			catch (NoSuchFieldException e2) {
+				c = c.getSuperclass();
+			}
+		}
+		return f;
 	}
 
 }

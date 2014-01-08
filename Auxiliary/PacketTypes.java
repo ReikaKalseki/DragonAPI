@@ -15,7 +15,9 @@ public enum PacketTypes {
 	SOUND(),
 	STRING(),
 	UPDATE(),
-	FLOAT();
+	FLOAT(),
+	SYNC(),
+	TANK();
 
 	private PacketTypes() {
 
