@@ -38,7 +38,6 @@ public enum ModCropList {
 	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE),
 	BERRY(ModList.NATURA, 0x55ff33, BerryBushHandler.getInstance()),
 	OREBERRY(ModList.TINKERER, 0xcccccc, OreBerryBushHandler.getInstance());
-	//Berry bushes with FakePlayer
 
 	private final ModList mod;
 	public final int blockID;

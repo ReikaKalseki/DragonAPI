@@ -65,7 +65,8 @@ public enum ModList {
 	MYSTCRAFT("Mystcraft"),
 	MAGICCROPS("magicalcrops", "magicalcrops.mod_mCrops"),
 	MIMICRY("Mimicry", "modMimicry.Block.MimicryBlock", "modMimicry.Item.MimicryItem"),
-	QCRAFT("QuantumCraft", "dan200.QCraft");
+	QCRAFT("QuantumCraft", "dan200.QCraft"),
+	OPENBLOCKS("OpenBlocks", "openblocks.OpenBlocks$Blocks", "openblocks.OpenBlocks$Items");
 	//FACTORIZATION();
 
 	private final boolean condition;

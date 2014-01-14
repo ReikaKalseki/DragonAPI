@@ -131,7 +131,7 @@ public final class ReikaSpriteSheets {
 				//GL11.glTranslated(0, 0, 0.125);
 			}
 			float thick = 0.0625F;
-			if (Minecraft.getMinecraft().gameSettings.fancyGraphics || type == type.EQUIPPED_FIRST_PERSON)
+			if (Minecraft.getMinecraft().gameSettings.fancyGraphics || type == type.EQUIPPED_FIRST_PERSON || type == type.EQUIPPED)
 				ItemRenderer.renderItemIn2D(v5, 0.0625F+0.0625F*col, 0.0625F*row, 0.0625F*col, 0.0625F+0.0625F*row, 256, 256, thick);
 			else {
 				if (type == type.ENTITY) {

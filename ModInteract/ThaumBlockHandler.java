@@ -22,6 +22,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 
 	public final int totemID;
 	public final int plantID;
+	public final int crystalID;
 
 	public final int shimmerMeta = 2;
 	public final int cinderMeta = 3;
@@ -31,12 +32,14 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		super();
 		int idtile = -1;
 		int idplant = -1;
+		int idcrystal = -1;
 
 		if (this.hasMod()) {
 			Class thaum = ModList.THAUMCRAFT.getBlockClass();
 
 			idtile = this.loadBlockID(thaum, "blockCosmeticSolid");
 			idplant = this.loadBlockID(thaum, "blockCustomPlant");
+			idcrystal = this.loadBlockID(thaum, "blockCrystal");
 		}
 		else {
 			this.noMod();
@@ -44,6 +47,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 
 		totemID = idtile;
 		plantID = idplant;
+		crystalID = idcrystal;
 	}
 
 	public static ThaumBlockHandler getInstance() {
@@ -52,7 +56,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return totemID != -1 && plantID != -1;
+		return totemID != -1 && plantID != -1 && crystalID != -1;
 	}
 
 	@Override
@@ -92,6 +96,12 @@ public class ThaumBlockHandler extends ModHandlerBase {
 			e2.printStackTrace();
 		}
 		return id;
+	}
+
+	public boolean isCrystalCluster(ItemStack block) {
+		if (!this.initializedProperly())
+			return false;
+		return block.itemID == crystalID;
 	}
 
 }

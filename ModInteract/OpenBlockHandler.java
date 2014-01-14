@@ -15,33 +15,23 @@ import net.minecraft.block.Block;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.ModRegistry.ModOreList;
 
-public final class MekanismHandler extends ModHandlerBase {
+public final class OpenBlockHandler extends ModHandlerBase {
 
-	private static final MekanismHandler instance = new MekanismHandler();
+	private static final OpenBlockHandler instance = new OpenBlockHandler();
 
-	public final int oreID;
-	public final int cableID;
+	public final int tankID;
 
-	public static final int osmiumMeta = 0;
-	public static final int copperMeta = 1;
-	public static final int tinMeta = 2;
-
-	private MekanismHandler() {
+	private OpenBlockHandler() {
 		super();
-		int idore = -1;
-		int idcable = -1;
+		int idtank = -1;
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
-				Field ore = blocks.getField("OreBlock");
-				Block b = (Block)ore.get(null);
-				idore = b.blockID;
 
-				Field wire = blocks.getField("Transmitter");
-				b = (Block)wire.get(null);
-				idcable = b.blockID;
+				Field wire = blocks.getField("tank");
+				Block b = (Block)wire.get(null);
+				idtank = b.blockID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -67,36 +57,21 @@ public final class MekanismHandler extends ModHandlerBase {
 		else {
 			this.noMod();
 		}
-		oreID = idore;
-		cableID = idcable;
+		tankID = idtank;
 	}
 
-	public static MekanismHandler getInstance() {
+	public static OpenBlockHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return oreID != -1 && cableID != -1;
+		return tankID != -1;
 	}
 
 	@Override
 	public ModList getMod() {
-		return ModList.MEKANISM;
-	}
-
-	public ModOreList getModOre(int id, int meta) {
-		if (id != oreID)
-			return null;
-
-		if (meta == osmiumMeta)
-			return ModOreList.OSMIUM;
-		if (meta == tinMeta)
-			return ModOreList.TIN;
-		if (meta == copperMeta)
-			return ModOreList.COPPER;
-
-		return null;
+		return ModList.OPENBLOCKS;
 	}
 
 }

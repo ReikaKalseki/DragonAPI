@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityCreeper;
+import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemHoe;
@@ -126,6 +127,8 @@ public class ReikaObfuscationHelper {
 		addField("timeSinceIgnited", "field_70833_d", false, EntityCreeper.class);
 		addField("potionTypes", "field_76425_a", true, Potion.class);
 		addField("weaponDamage", "field_77827_a", false, ItemSword.class);
+		addField("isAggressive", "field_104003_g", false, EntityEnderman.class);
+		addField("stareTimer", "field_70826_g", false, EntityEnderman.class);
 	}
 
 	private static boolean isClientSide() {

@@ -61,7 +61,7 @@ public class TreeReader extends BlockArray {
 			ReikaTreeHelper van = ReikaTreeHelper.getTree(id, meta);
 			//ReikaJavaLibrary.pConsole(wood+"/"+this.wood+"  :  "+van+"/"+vanilla);
 			if (this.wood == null && vanilla == null) {
-				ReikaJavaLibrary.pConsole(this);
+				//ReikaJavaLibrary.pConsole(this);
 				this.setModTree(wood);
 				this.setTree(van);
 			}

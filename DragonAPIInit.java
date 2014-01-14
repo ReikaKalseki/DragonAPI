@@ -51,6 +51,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.AppEngHandler;
 import Reika.DragonAPI.ModInteract.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.BCPipeHandler;
+import Reika.DragonAPI.ModInteract.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
 import Reika.DragonAPI.ModInteract.ForestryHandler;
@@ -60,6 +61,8 @@ import Reika.DragonAPI.ModInteract.MagicaOreHandler;
 import Reika.DragonAPI.ModInteract.MekToolHandler;
 import Reika.DragonAPI.ModInteract.MekanismHandler;
 import Reika.DragonAPI.ModInteract.MimicryHandler;
+import Reika.DragonAPI.ModInteract.OpenBlockHandler;
+import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
 import Reika.DragonAPI.ModInteract.QuantumOreHandler;
 import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
@@ -272,7 +275,10 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.THERMALEXPANSION, ThermalHandler.class);
 		this.initHandler(ModList.MIMICRY, MimicryHandler.class);
 		this.initHandler(ModList.MAGICCROPS, MagicCropHandler.class);
-		this.initHandler(ModList.QCRAFT, QuantumOreHandler.class);
+		this.initHandler(ModList.QCRAFT, QuantumOreHandler.class);;
+		this.initHandler(ModList.TINKERER, OreBerryBushHandler.class);
+		this.initHandler(ModList.NATURA, BerryBushHandler.class);
+		this.initHandler(ModList.OPENBLOCKS, OpenBlockHandler.class);
 	}
 
 	private void initHandler(ModList mod, Class c) {

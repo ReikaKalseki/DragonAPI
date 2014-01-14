@@ -210,7 +210,7 @@ public class CoreContainer extends Container {
 			Object o = "A mod tried to access an invalid slot "+index+" for "+this;
 			ReikaJavaLibrary.pConsole(o);
 			ReikaChatHelper.write(o);
-			Thread.dumpStack();
+			//Thread.dumpStack();
 			return new Slot(new TileEntityChest(), index, -20, -20); //create new slot off screen; hacky fix, but should work
 		}
 		return (Slot)inventorySlots.get(index);

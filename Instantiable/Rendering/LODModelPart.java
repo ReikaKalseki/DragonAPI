@@ -19,6 +19,8 @@ import org.lwjgl.input.Keyboard;
 
 public class LODModelPart extends ModelRenderer {
 
+	private float size = -1;
+
 	public LODModelPart(ModelBase baseModel, int textureX, int textureZ) {
 		super(baseModel, textureX, textureZ);
 	}
@@ -28,6 +30,7 @@ public class LODModelPart extends ModelRenderer {
 	{
 		if (cubeList.isEmpty()) {
 			super.addBox(par1Str, par2, par3, par4, par5, par6, par7);
+			size = this.calculateVolume();
 		}
 		else {
 			throw new UnsupportedOperationException("You may only have one box per model piece!");
@@ -40,6 +43,7 @@ public class LODModelPart extends ModelRenderer {
 	{
 		if (cubeList.isEmpty()) {
 			super.addBox(par1, par2, par3, par4, par5, par6);
+			size = this.calculateVolume();
 		}
 		else {
 			throw new UnsupportedOperationException("You may only have one box per model piece!");
@@ -55,6 +59,7 @@ public class LODModelPart extends ModelRenderer {
 	{
 		if (cubeList.isEmpty()) {
 			super.addBox(par1, par2, par3, par4, par5, par6, par7);
+			size = this.calculateVolume();
 		}
 		else {
 			throw new UnsupportedOperationException("You may only have one box per model piece!");
@@ -65,7 +70,7 @@ public class LODModelPart extends ModelRenderer {
 		return (ModelBox)cubeList.get(0);
 	}
 
-	public float getVolume() {
+	private float calculateVolume() {
 		ModelBox box = this.getBox();
 		float x = box.posX1-box.posX2;
 		float y = box.posY1-box.posY2;
@@ -73,9 +78,16 @@ public class LODModelPart extends ModelRenderer {
 		return Math.abs(x*y*z);
 	}
 
+
+	public float getVolume() {
+		return size;
+	}
+
 	public boolean shouldRender(double dist_squared) {
 		if (Keyboard.isKeyDown(Keyboard.KEY_TAB))
 			return true;
+		if (size <= 0)
+			return false;
 		if (dist_squared < 96) {
 			return true;
 		}

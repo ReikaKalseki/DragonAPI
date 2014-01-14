@@ -207,6 +207,11 @@ public class MagicCropHandler extends CropHandlerBase {
 			li.add(christmasEssence);
 		if (ReikaRandomHelper.doWithChance(20*(1+fortune)))
 			li.add(natureEssence);
+		if (ReikaRandomHelper.doWithChance(20*(1+fortune))) {
+			li.add(this.getWeakEssence());
+			if (ReikaRandomHelper.doWithChance(25*(1+fortune)))
+				li.add(this.getWeakEssence());
+		}
 		return li;
 	}
 
@@ -219,6 +224,10 @@ public class MagicCropHandler extends CropHandlerBase {
 
 		ModOreList.ESSENCE.reloadOreList();
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Registering Magic Crops Essence ore to the Ore Dictionary!");
+	}
+
+	public ItemStack getWeakEssence() {
+		return new ItemStack(essenceID, 1, 0);
 	}
 
 }
