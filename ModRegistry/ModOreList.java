@@ -102,7 +102,7 @@ public enum ModOreList {
 	NETHERURANIUM("Nether Uranium", 0x00aa00, "ingotUranium", 1, "oreNetherUranium"),
 	QUANTUM("Quantum", 0x5BA642, "dustQuantum", 2, "oreQuantum"),
 	NETHERIRIDIUM("Nether Iridium", 0xb6f6c7, "ingotIridium", 1, "oreNetherIridium"),
-	DARKIRON("Dark Iron", 0x4F00D1, "ingotFZDarkIron", 1, "oreFZDarkIron"),
+	DARKIRON("Dark Iron", 0x4F00D1, "ingotFzDarkIron", 1, "oreFzDarkIron"),
 	CHROMITE("Chromite", 0x94E0F5, "ingotChrome", 1, "oreChromite");
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();

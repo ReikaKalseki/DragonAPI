@@ -41,8 +41,6 @@ public class DragonAPICore {
 		return true;
 	}
 
-	//TODO Add handler for custom death messages
-
 	public static boolean isReikasComputer() {
 		try {
 			String username = System.getProperty("user.name");

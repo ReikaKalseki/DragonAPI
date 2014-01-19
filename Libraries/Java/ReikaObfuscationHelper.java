@@ -112,6 +112,9 @@ public class ReikaObfuscationHelper {
 
 	static {
 		addMethod("onItemUse", "func_77648_a", true, Item.class, ItemStack.class, EntityPlayer.class, World.class, int.class, int.class, int.class, int.class, float.class, float.class, float.class);
+		addMethod("dropFewItems", "func_70628_a", false, EntityLivingBase.class, boolean.class, int.class);
+		addMethod("dropEquipment", "func_82160_b", false, EntityLivingBase.class, boolean.class, int.class);
+		addMethod("dropRareDrop", "func_70600_l", false, EntityLivingBase.class, int.class);
 		if (isClientSide()) {
 			addMethod("getInputStreamByName", "func_110591_a", false, AbstractResourcePack.class, String.class);
 		}

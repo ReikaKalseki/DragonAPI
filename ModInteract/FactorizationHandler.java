@@ -16,22 +16,29 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public final class OpenBlockHandler extends ModHandlerBase {
+public final class FactorizationHandler extends ModHandlerBase {
 
-	private static final OpenBlockHandler instance = new OpenBlockHandler();
+	private static final FactorizationHandler instance = new FactorizationHandler();
 
-	public final int tankID;
+	public final int bedrockID;
 
-	private OpenBlockHandler() {
+	private FactorizationHandler() {
 		super();
-		int idtank = -1;
+		int idbedrock = -1;
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
+				Class core = Class.forName("factorization.shared.Core");
+				Field registry = core.getField("registry");
+				Object reg = registry.get(null);
 
-				Field block = blocks.getField("tank");
-				Block b = (Block)block.get(null);
-				idtank = b.blockID;
+				Field bed = blocks.getField("fractured_bedrock_block");
+				Block b = (Block)bed.get(reg);
+				idbedrock = b.blockID;
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -57,21 +64,21 @@ public final class OpenBlockHandler extends ModHandlerBase {
 		else {
 			this.noMod();
 		}
-		tankID = idtank;
+		bedrockID = idbedrock;
 	}
 
-	public static OpenBlockHandler getInstance() {
+	public static FactorizationHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return tankID != -1;
+		return bedrockID != -1;
 	}
 
 	@Override
 	public ModList getMod() {
-		return ModList.OPENBLOCKS;
+		return ModList.FACTORIZATION;
 	}
 
 }

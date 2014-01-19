@@ -54,6 +54,7 @@ import Reika.DragonAPI.ModInteract.BCPipeHandler;
 import Reika.DragonAPI.ModInteract.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
+import Reika.DragonAPI.ModInteract.FactorizationHandler;
 import Reika.DragonAPI.ModInteract.ForestryHandler;
 import Reika.DragonAPI.ModInteract.IC2Handler;
 import Reika.DragonAPI.ModInteract.MagicCropHandler;
@@ -279,6 +280,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.TINKERER, OreBerryBushHandler.class);
 		this.initHandler(ModList.NATURA, BerryBushHandler.class);
 		this.initHandler(ModList.OPENBLOCKS, OpenBlockHandler.class);
+		this.initHandler(ModList.FACTORIZATION, FactorizationHandler.class);
 	}
 
 	private void initHandler(ModList mod, Class c) {

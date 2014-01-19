@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.IO;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
 public class ModLogger {
 
@@ -28,19 +29,19 @@ public class ModLogger {
 		shouldWarn = warn;
 		if (mod == null)
 			throw new IllegalArgumentException("Cannot create a logger for a null mod!");
-		if (logLoading)
+		if (this.shouldLog())
 			ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": Creating logger. Log Loading: "+load+"; Debug mode: "+debug+"; Warnings: "+warn);
 	}
 
 	public void debug(Object o) {
-		if (printDebug) {
+		if (this.shouldDebug()) {
 			ReikaJavaLibrary.pConsole(o);
 			ReikaChatHelper.write(o);
 		}
 	}
 
 	public void log(Object o) {
-		if (logLoading)
+		if (this.shouldLog())
 			ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": "+o);
 	}
 
@@ -54,7 +55,7 @@ public class ModLogger {
 	}
 
 	public boolean shouldDebug() {
-		return printDebug;
+		return printDebug || ReikaObfuscationHelper.isDeObfEnvironment();
 	}
 
 	public boolean shouldWarn() {
@@ -62,7 +63,7 @@ public class ModLogger {
 	}
 
 	public void warn(Object o) {
-		if (shouldWarn) {
+		if (this.shouldWarn()) {
 			ReikaJavaLibrary.pConsole(o);
 			ReikaChatHelper.write(o);
 		}
