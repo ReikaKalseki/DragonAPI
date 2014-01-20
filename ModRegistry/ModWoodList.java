@@ -41,7 +41,7 @@ public enum ModWoodList {
 	SAKURA(ModList.NATURA, 0x703C02, 0xEB7F98, "tree", "floraLeavesNoColor", "floraSapling", new int[]{1,5,9}, new int[]{0,8}, 3, VarType.INSTANCE),
 	GHOSTWOOD(ModList.NATURA, 0xB3B3B3, 0xEEE6D1, "tree", "floraLeavesNoColor", "floraSapling", new int[]{2,6,10}, new int[]{1,9}, 4, VarType.INSTANCE),
 	HOPSEED(ModList.NATURA, 0x9F8661, 0x3C9119, "tree", "floraLeaves", "floraSapling", 3, new int[]{2,10}, 2, VarType.INSTANCE),
-	DARKNATURA(ModList.NATURA, 0x234D85, 0x061E4C, "darkTree", "darkLeaves", "floraSapling", 0, new int[]{0,1,2,8,9,10}, 6, VarType.INSTANCE),
+	NATURADARKWOOD(ModList.NATURA, 0x234D85, 0x061E4C, "darkTree", "darkLeaves", "floraSapling", 0, new int[]{0,1,2,8,9,10}, 6, VarType.INSTANCE),
 	BLOODWOOD(ModList.NATURA, 0x8D4F05, 0xB10000, "bloodwood", "floraLeavesNoColor", "floraSapling", new int[]{0,1,2,3,4,5,15}, new int[]{2,10}, 5, VarType.INSTANCE),
 	FUSEWOOD(ModList.NATURA, 0x2C3E38, 0x28818D, "darkTree", "darkLeaves", "floraSapling", 1, new int[]{3,11}, 7, VarType.INSTANCE),
 	TIGERWOOD(ModList.NATURA, 0x544936, 0x5B2900, "rareTree", "rareLeaves", "rareSapling", 3, new int[]{3,11}, 3, VarType.INSTANCE),
@@ -53,7 +53,7 @@ public enum ModWoodList {
 	MAGIC(ModList.BOP, 0x78839E, 0x5687BE, "logs2ID", "leaves1ID", "saplingsID", 1, new int[]{2,10}, 3, VarType.INT),
 	DARK(ModList.BOP, 0x664848, 0x312F42, "logs1ID", "leaves1ID", "saplingsID", 2, new int[]{3,11}, 4, VarType.INT),
 	FIR(ModList.BOP, 0x675846, 0x518E5F, "logs1ID", "leaves2ID", "saplingsID", 3, new int[]{1,9}, 6, VarType.INT),
-	LOFT(ModList.BOP, 0x817665, 0x3FD994, "logs2ID", "leaves2ID", "saplingsID", 0, new int[]{2,10}, 7, VarType.INT),
+	LOFTWOOD(ModList.BOP, 0x817665, 0x3FD994, "logs2ID", "leaves2ID", "saplingsID", 0, new int[]{2,10}, 7, VarType.INT),
 	CHERRY(ModList.BOP, 0x965441, 0xFFAFE0, "logs1ID", "leaves3ID", "saplingsID", new int[]{1,3,9,11}, new int[]{1,3,9,11}, 10, VarType.INT), //sapling 12 for white cherry
 	HELLBARK(ModList.BOP, 0xB36F43, 0x7B5E1F, "logs4ID", "leaves4ID", "saplingsID", 1, 0, 13, VarType.INT),
 	JACARANDA(ModList.BOP, 0x998177, 0x644F84, "logs4ID", "leaves4ID", "saplingsID", 2, new int[]{1,9}, 14, VarType.INT),
@@ -63,9 +63,9 @@ public enum ModWoodList {
 	REDWOOD(ModList.BOP, 0x722F0D, 0x3E981A, "logs3ID", "colourizedLeaves1ID", "colourizedSaplingsID", 0, new int[]{3,11}, 3, VarType.INT),
 	BOPWILLOW(ModList.BOP, 0x767A47, 0x3E981A, "logs3ID", "colourizedLeaves2ID", "colourizedSaplingsID", 1, new int[]{0,8}, 4, VarType.INT),
 	PINE(ModList.BOP, 0x896B4F, 0x3E981A, "logs4ID", "colourizedLeaves2ID", "colourizedSaplingsID", 0, new int[]{1,9}, 5, VarType.INT),
-	XLREDWOOD(ModList.BXL, 0, 0, null, null, null, 0, VarType.INSTANCE),
-	RUBBER(ModList.IC2, 0x3C2D20, 0x638143, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, VarType.ITEMSTACK),
-	MINERUBBER(ModList.MINEFACTORY, 0x7E5C25, 0x5DC123, "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, VarType.INSTANCE),
+	BXLREDWOOD(ModList.BXL, 0, 0, null, null, null, 0, VarType.INSTANCE),
+	IC2RUBBER(ModList.IC2, 0x3C2D20, 0x638143, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, VarType.ITEMSTACK),
+	MFRRUBBER(ModList.MINEFACTORY, 0x7E5C25, 0x5DC123, "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, VarType.INSTANCE),
 	TIMEWOOD(ModList.TWILIGHT, 0x4F301D, 6986775, "magicLog", "magicLeaves", "sapling", new int[]{0,12}, new int[]{1,8}, 5, VarType.INSTANCE),
 	TRANSFORMATION(ModList.TWILIGHT, 0x66727F, 7130346, "magicLog", "magicLeaves", "sapling", new int[]{1,13}, new int[]{1,9}, 6, VarType.INSTANCE),
 	MINEWOOD(ModList.TWILIGHT, 0xC5A982, 16576836, "magicLog", "magicLeaves", "sapling", new int[]{2,14}, new int[]{2,10}, 7, VarType.INSTANCE),
@@ -207,7 +207,7 @@ public enum ModWoodList {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(this.name());
+		sb.append(this.getName());
 		sb.append(" from ");
 		sb.append(mod);
 		if (exists) {
@@ -221,6 +221,14 @@ public enum ModWoodList {
 		else {
 			sb.append(" (Not loaded)");
 		}
+		return sb.toString();
+	}
+
+	public String getBasicInfo() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getName());
+		sb.append(" from ");
+		sb.append(mod);
 		return sb.toString();
 	}
 
@@ -255,6 +263,10 @@ public enum ModWoodList {
 
 	public Block getBlock() {
 		return Block.blocksList[blockID];
+	}
+
+	public String getName() {
+		return ReikaStringParser.capFirstChar(this.name());
 	}
 
 	public List<Integer> getLogMetadatas() {

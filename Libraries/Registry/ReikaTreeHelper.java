@@ -9,8 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import java.util.Arrays;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public enum ReikaTreeHelper {
 
@@ -93,6 +96,23 @@ public enum ReikaTreeHelper {
 
 	public ItemStack getDamagedLeaf(int dmg) {
 		return new ItemStack(leaf.blockID, 1, leafMeta[dmg]);
+	}
+
+	public String getName() {
+		return ReikaStringParser.capFirstChar(this.name());
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(this.getName());
+		sb.append(" (LOG "+log.blockID+":"+Arrays.toString(logMeta)+";");
+		sb.append(" ");
+		sb.append("LEAF "+leaf.blockID+":"+Arrays.toString(leafMeta)+";");
+		sb.append(" ");
+		sb.append("SAPLING "+sapling.blockID+":"+saplingMeta);
+		sb.append(")");
+		return sb.toString();
 	}
 
 }

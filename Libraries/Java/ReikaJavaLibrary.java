@@ -33,7 +33,6 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			System.out.println(String.valueOf(obj)+" of "+String.valueOf(cl));
 		else
 			System.out.println(String.valueOf(obj));
-		//Thread.dumpStack();
 	}
 
 	public static void spamConsole(Object obj) {
