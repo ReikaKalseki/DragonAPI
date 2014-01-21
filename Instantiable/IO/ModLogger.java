@@ -12,7 +12,6 @@ package Reika.DragonAPI.Instantiable.IO;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
 public class ModLogger {
 
@@ -55,7 +54,7 @@ public class ModLogger {
 	}
 
 	public boolean shouldDebug() {
-		return printDebug || ReikaObfuscationHelper.isDeObfEnvironment();
+		return printDebug;
 	}
 
 	public boolean shouldWarn() {

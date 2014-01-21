@@ -14,6 +14,8 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.List;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -25,6 +27,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
@@ -217,6 +220,25 @@ public class DragonAPIInit extends DragonAPIMod {
 			}
 		}
 	}
+	/*
+	@ForgeSubscribe
+	public void safeSpawn(EntityJoinWorldEvent evt) {
+		Entity e = evt.entity;
+		if (e == null) {
+			evt.setCanceled(true);
+			logger.log("Caught null mob spawn for Entity");
+			return;
+		}
+		int id = EntityList.getEntityID(e);
+		if (id == 0) {
+			evt.setCanceled(true);
+			logger.log("Caught invalid mob spawn for Entity "+e.getClass()+" (ID "+id+")");
+		}
+		else if (!EntityList.IDtoClassMapping.containsKey(id)) {
+			evt.setCanceled(true);
+			logger.log("Caught invalid mob spawn for Entity "+e.getClass()+" (ID "+id+")");
+		}
+	}*/
 
 	private void licenseTest() {
 		MinecraftServer server = MinecraftServer.getServer();
