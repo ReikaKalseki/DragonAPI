@@ -74,7 +74,9 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	@Override
 	public final void updateTick(World world, int x, int y, int z, Random par5Random)
 	{
-		if (this.decays() && this.shouldTryDecay(world, x, y, z, world.getBlockMetadata(x, y, z))) {
+		int meta = world.getBlockMetadata(x, y, z);
+		//ReikaJavaLibrary.pConsole(blockID+" @ "+x+", "+y+", "+z+"  : "+this.decays()+"&"+this.shouldTryDecay(world, x, y, z, meta));
+		if (this.decays() && this.shouldTryDecay(world, x, y, z, meta)) {
 			this.decay(world, x, y, z, par5Random);
 		}
 	}
@@ -96,6 +98,22 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 				}
 			}
 		}
+
+		boolean hasAdj = false;
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			int id = world.getBlockId(dx, dy, dz);
+			if (id != 0) {
+				hasAdj = true;
+				i = 6;
+			}
+		}
+		if (!hasAdj)
+			decay = true;
+
 		int meta = world.getBlockMetadata(x, y, z);
 		if (decay) {
 			this.dropBlockAsItemWithChance(world, x, y, z, meta, 1, 0);
