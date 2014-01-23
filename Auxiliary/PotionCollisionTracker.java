@@ -14,14 +14,14 @@ import java.util.HashMap;
 
 import net.minecraft.potion.Potion;
 import net.minecraftforge.common.MinecraftForge;
-import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class PotionCollisionTracker {
 
-	private HashMap<ModList, ArrayList<Integer>> IDs = new HashMap();
-	private ArrayList<ModList> mods = new ArrayList();
+	private HashMap<DragonAPIMod, ArrayList<Integer>> IDs = new HashMap();
+	private ArrayList<DragonAPIMod> mods = new ArrayList();
 	private HashMap<Integer, Class> classes = new HashMap();
 
 	public static final PotionCollisionTracker instance = new PotionCollisionTracker();
@@ -32,7 +32,7 @@ public class PotionCollisionTracker {
 
 	public boolean isIDRegisteredToTracker(int id) {
 		for (int i = 0; i < mods.size(); i++) {
-			ModList mod = mods.get(i);
+			DragonAPIMod mod = mods.get(i);
 			ArrayList<Integer> ids = IDs.get(mod);
 			if (ids.contains(id))
 				return true;
@@ -40,7 +40,7 @@ public class PotionCollisionTracker {
 		return false;
 	}
 
-	private void addEntry(ModList mod, int id, Class potion) {
+	private void addEntry(DragonAPIMod mod, int id, Class potion) {
 		ArrayList<Integer> ids = IDs.get(mod);
 		if (ids == null) {
 			ids = new ArrayList();
@@ -52,7 +52,7 @@ public class PotionCollisionTracker {
 		classes.put(id, potion);
 	}
 
-	public void addPotionID(ModList mod, int id, Class potionClass) {
+	public void addPotionID(DragonAPIMod mod, int id, Class potionClass) {
 		Potion potion = Potion.potionTypes[id];
 		if (potion != null)
 			this.onConflict(null, id);
@@ -64,7 +64,7 @@ public class PotionCollisionTracker {
 
 	public final void check() {
 		for (int i = 0; i < mods.size(); i++) {
-			ModList mod = mods.get(i);
+			DragonAPIMod mod = mods.get(i);
 			ArrayList<Integer> ids = IDs.get(mod);
 			for (int k = 0; k < ids.size(); k++) {
 				int id = ids.get(k);
@@ -83,7 +83,7 @@ public class PotionCollisionTracker {
 		}
 	}
 
-	protected void onConflict(ModList mod, int id) {
+	protected void onConflict(DragonAPIMod mod, int id) {
 		ReikaJavaLibrary.pConsole("Conflict at Potion ID "+id+" ("+Potion.potionTypes[id].getName()+")");
 		if (mod == null)
 			throw new IllegalArgumentException("Overwriting already-registered Potion "+Potion.potionTypes[id]+" @ "+id);

@@ -57,4 +57,9 @@ public class StepTimer {
 		return (float)value/(float)cap;
 	}
 
+	@Override
+	public String toString() {
+		return "Timer @ "+value+"/"+cap;
+	}
+
 }

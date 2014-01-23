@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Exception.VanillaIntegrityException;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
@@ -106,7 +107,8 @@ public class ReikaObfuscationHelper {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Registering reflexive method access to "+c+"."+deobf+" (obfuscated as "+obf+")");
 		}
 		catch (NoSuchMethodException e) {
-			throw new IllegalArgumentException("Tried to register nonexistent method "+deobf+"/"+obf+". Check signature.");
+			//throw new VanillaIntegrityException("Tried to register nonexistent method "+deobf+"/"+obf+". Check signature.");
+			throw new VanillaIntegrityException(deobf, c, args);
 		}
 	}
 

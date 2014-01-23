@@ -14,14 +14,14 @@ import java.util.HashMap;
 
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
-import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BiomeCollisionTracker {
 
-	private HashMap<ModList, ArrayList<Integer>> IDs = new HashMap();
-	private ArrayList<ModList> mods = new ArrayList();
+	private HashMap<DragonAPIMod, ArrayList<Integer>> IDs = new HashMap();
+	private ArrayList<DragonAPIMod> mods = new ArrayList();
 	private HashMap<Integer, Class> classes = new HashMap();
 
 	public static final BiomeCollisionTracker instance = new BiomeCollisionTracker();
@@ -32,7 +32,7 @@ public class BiomeCollisionTracker {
 
 	public boolean isIDRegisteredToTracker(int id) {
 		for (int i = 0; i < mods.size(); i++) {
-			ModList mod = mods.get(i);
+			DragonAPIMod mod = mods.get(i);
 			ArrayList<Integer> ids = IDs.get(mod);
 			if (ids.contains(id))
 				return true;
@@ -40,7 +40,7 @@ public class BiomeCollisionTracker {
 		return false;
 	}
 
-	private void addEntry(ModList mod, int id, Class biome) {
+	private void addEntry(DragonAPIMod mod, int id, Class biome) {
 		ArrayList<Integer> ids = IDs.get(mod);
 		if (ids == null) {
 			ids = new ArrayList();
@@ -52,7 +52,7 @@ public class BiomeCollisionTracker {
 		classes.put(id, biome);
 	}
 
-	public void addBiomeID(ModList mod, int id, Class biomeClass) {
+	public void addBiomeID(DragonAPIMod mod, int id, Class biomeClass) {
 		BiomeGenBase biome = BiomeGenBase.biomeList[id];
 		if (biome != null)
 			this.onConflict(null, id);
@@ -64,7 +64,7 @@ public class BiomeCollisionTracker {
 
 	public final void check() {
 		for (int i = 0; i < mods.size(); i++) {
-			ModList mod = mods.get(i);
+			DragonAPIMod mod = mods.get(i);
 			ArrayList<Integer> ids = IDs.get(mod);
 			for (int k = 0; k < ids.size(); k++) {
 				int id = ids.get(k);
@@ -83,7 +83,7 @@ public class BiomeCollisionTracker {
 		}
 	}
 
-	protected void onConflict(ModList mod, int id) {
+	protected void onConflict(DragonAPIMod mod, int id) {
 		ReikaJavaLibrary.pConsole("Conflict at Biome ID "+id+" ("+BiomeGenBase.biomeList[id].biomeName+")");
 		if (mod == null)
 			throw new IllegalArgumentException("Overwriting already-registered biome "+BiomeGenBase.biomeList[id]+" @ "+id);

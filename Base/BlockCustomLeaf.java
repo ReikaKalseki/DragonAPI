@@ -27,7 +27,7 @@ import cpw.mods.fml.relauncher.Side;
 public abstract class BlockCustomLeaf extends BlockLeaves {
 
 	/** For fast/fancy graphics */
-	protected Icon[] icon = new Icon[2];
+	protected Icon[][] icon = new Icon[16][2];
 
 	protected final Random rand = new Random();
 
@@ -39,8 +39,10 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 			this.setGraphicsLevel(Minecraft.getMinecraft().gameSettings.fancyGraphics);
 		this.setHardness(0.2F);
 		this.setLightOpacity(1);
-		this.setTickRandomly(this.decays());
+		this.setTickRandomly(this.decays() || this.shouldRandomTick());
 	}
+
+	public abstract boolean shouldRandomTick();
 
 	public abstract boolean decays();
 
@@ -51,7 +53,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	@Override
 	public final Icon getIcon(int par1, int par2)
 	{
-		return icon[this.getOpacityIndex()];
+		return icon[par2][this.getOpacityIndex()];
 	}
 
 	private final int getOpacityIndex() {
@@ -79,6 +81,13 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 		if (this.decays() && this.shouldTryDecay(world, x, y, z, meta)) {
 			this.decay(world, x, y, z, par5Random);
 		}
+		else {
+			this.onRandomUpdate(world, x, y, z, par5Random);
+		}
+	}
+
+	protected void onRandomUpdate(World world, int x, int y, int z, Random r) {
+
 	}
 
 	public abstract boolean shouldTryDecay(World world, int x, int y, int z, int meta);
@@ -132,11 +141,13 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	@Override
 	public final void registerIcons(IconRegister ico)
 	{
-		icon[0] = ico.registerIcon(this.getFancyGraphicsIcon());
-		icon[1] = ico.registerIcon(this.getFastGraphicsIcon());
+		for (int i = 0; i < 16; i++) {
+			icon[i][0] = ico.registerIcon(this.getFancyGraphicsIcon(i));
+			icon[i][1] = ico.registerIcon(this.getFastGraphicsIcon(i));
+		}
 	}
 
-	public abstract String getFastGraphicsIcon();
-	public abstract String getFancyGraphicsIcon();
+	public abstract String getFastGraphicsIcon(int meta);
+	public abstract String getFancyGraphicsIcon(int meta);
 
 }

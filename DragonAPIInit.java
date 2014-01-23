@@ -14,8 +14,6 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.List;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -27,7 +25,6 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
@@ -42,6 +39,7 @@ import Reika.DragonAPI.Auxiliary.PlayerFirstTimeTracker;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.RetroGenController;
+import Reika.DragonAPI.Auxiliary.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Extras.DonatorCommand;
 import Reika.DragonAPI.Extras.GuideCommand;
@@ -168,6 +166,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		BiomeCollisionTracker.instance.check();
 		ItemOverwriteTracker.instance.check();
 		PotionCollisionTracker.instance.check();
+		VanillaIntegrityTracker.instance.check();
 
 		if (DragonAPICore.isOnActualServer())
 			;//this.licenseTest();
