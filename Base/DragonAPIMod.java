@@ -68,4 +68,9 @@ public abstract class DragonAPIMod {
 	}
 
 	public abstract ModLogger getModLogger();
+
+	@Override
+	public final String toString() {
+		return this.getTechnicalName();
+	}
 }

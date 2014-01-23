@@ -31,7 +31,7 @@ public class ControlledConfig {
 	private int readID;
 	protected File configFile;
 
-	protected DragonAPIMod configMod;
+	protected final DragonAPIMod configMod;
 
 	private ConfigList[] optionList;
 	private IDRegistry[] blockList;
@@ -158,7 +158,7 @@ public class ControlledConfig {
 
 	public final void initProps(FMLPreInitializationEvent event) {
 		if (configFile == null)
-			throw new MisuseException("Error loading "+configMod.getTechnicalName()+": You must load a config file before reading it!");
+			throw new MisuseException("Error loading "+configMod.getDisplayName()+": You must load a config file before reading it!");
 		config = new Configuration(configFile);
 
 		//load data

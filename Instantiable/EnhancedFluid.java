@@ -11,21 +11,21 @@ package Reika.DragonAPI.Instantiable;
 
 import net.minecraftforge.fluids.Fluid;
 
-public class ExpandedFluid extends Fluid {
+public class EnhancedFluid extends Fluid {
 
 	private String ingame;
 	private int color;
 
-	public ExpandedFluid(String fluidName) {
+	public EnhancedFluid(String fluidName) {
 		super(fluidName);
 	}
 
-	public ExpandedFluid setGameName(String name) {
+	public EnhancedFluid setGameName(String name) {
 		ingame = name;
 		return this;
 	}
 
-	public ExpandedFluid setColor(int rgb) {
+	public EnhancedFluid setColor(int rgb) {
 		color = rgb;
 		return this;
 	}
