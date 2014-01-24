@@ -24,6 +24,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModInteract.BerryBushHandler;
+import Reika.DragonAPI.ModInteract.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
@@ -37,7 +38,8 @@ public enum ModCropList {
 	MAGIC(ModList.MAGICCROPS, 0x6F9165, MagicCropHandler.getInstance()),
 	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE),
 	BERRY(ModList.NATURA, 0x55ff33, BerryBushHandler.getInstance()),
-	OREBERRY(ModList.TINKERER, 0xcccccc, OreBerryBushHandler.getInstance());
+	OREBERRY(ModList.TINKERER, 0xcccccc, OreBerryBushHandler.getInstance()),
+	PAM(ModList.HARVESTCRAFT, 0x22aa22, HarvestCraftHandler.getInstance());
 
 	private final ModList mod;
 	public final int blockID;
@@ -202,11 +204,10 @@ public enum ModCropList {
 
 	@Override
 	public String toString() {
-		return this.name()+" from "+mod+" with metadatas ["+harvestedMeta+","+ripeMeta+"]";
-	}
-
-	public boolean simulateFullBreak() {
-		return this == MAGIC;
+		if (this.isHandlered())
+			return this.name()+" from "+mod+" with handler "+handler.getClass().getSimpleName();
+		else
+			return this.name()+" from "+mod+" with metadatas ["+harvestedMeta+","+ripeMeta+"]";
 	}
 
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
@@ -225,6 +226,16 @@ public enum ModCropList {
 		if (this.isHandlered())
 			li.addAll(handler.getAdditionalDrops(world, x, y, z, id, meta, fortune));
 		return li;
+	}
+
+	public boolean isTileEntity() {
+		return this == PAM;
+	}
+
+	public void runTEHarvestCode(World world, int x, int y, int z) {
+		if (!this.isTileEntity())
+			return;
+		handler.editTileDataForHarvest(world, x, y, z);
 	}
 
 	public void removeOneSeed(ArrayList<ItemStack> li) {
@@ -288,8 +299,9 @@ public enum ModCropList {
 		return this == BERRY || this == OREBERRY;
 	}
 
-	public boolean isRipe(int meta) {
-		return meta >= ripeMeta;
+	public boolean isRipe(World world, int x, int y, int z) {
+		int meta = world.getBlockMetadata(x, y, z);
+		return this.isHandlered() ? handler.isRipeCrop(world, x, y, z) : meta >= ripeMeta;
 	}
 
 	public boolean isHandlered() {

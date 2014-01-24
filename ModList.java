@@ -61,14 +61,15 @@ public enum ModList {
 	ENDERSTORAGE("EnderStorage"),
 	OPTIFINE("Optifine"),
 	TREECAPITATOR("TreeCapitator"),
-	HARVESTCRAFT("HarvestCraft"),
+	HARVESTCRAFT("pamharvestcraft", "assets.pamharvestcraft.PamHarvestCraft"),
 	MYSTCRAFT("Mystcraft"),
 	MAGICCROPS("magicalcrops", "magicalcrops.mod_mCrops"),
 	MIMICRY("Mimicry", "modMimicry.Block.MimicryBlock", "modMimicry.Item.MimicryItem"),
 	QCRAFT("QuantumCraft", "dan200.QCraft"),
 	OPENBLOCKS("OpenBlocks", "openblocks.OpenBlocks$Blocks", "openblocks.OpenBlocks$Items"),
 	FACTORIZATION("factorization", "factorization.common.Registry"),
-	UE("UniversalElectricity");
+	UE("UniversalElectricity"),
+	EXTRAUTILS("ExtraUtilities");
 
 	private final boolean condition;
 	public final String modLabel;

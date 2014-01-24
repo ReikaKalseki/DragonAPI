@@ -36,6 +36,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
@@ -1666,5 +1667,14 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 		return index >= 0 ? li.get(index) : null;
+	}
+
+	public static EntityLivingBase getClosestLivingEntityOfClass(Class<? extends EntityLivingBase> c, World world, double x, double y, double z, double range) {
+		AxisAlignedBB box = AxisAlignedBB.getAABBPool().getAABB(x, y, z, x, y, z).expand(range, range, range);
+		return getClosestLivingEntityOfClass(c, world, x, y, z, box);
+	}
+
+	public static boolean otherDimensionsExist() {
+		return ModList.MYSTCRAFT.isLoaded() || ModList.TWILIGHT.isLoaded() || ModList.EXTRAUTILS.isLoaded();
 	}
 }

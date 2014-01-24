@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModRegistry;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -91,6 +92,8 @@ public enum ModWoodList {
 	private boolean exists = false;
 
 	public static final ModWoodList[] woodList = values();
+
+	private static final HashMap<List<Integer>, ModWoodList> woodMappings = new HashMap();
 
 	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, int meta, int metaleaf, int metasapling, VarType type) {
 		this(req, color, leaf, blockVar, leafVar, saplingVar, new int[]{meta}, new int[]{metaleaf}, metasapling, type);
@@ -288,32 +291,15 @@ public enum ModWoodList {
 	}
 
 	public static ModWoodList getModWood(ItemStack block) {
-		for (int i = 0; i < woodList.length; i++) {
-			if (woodList[i].isLogBlock(block))
-				return woodList[i];
-		}
-		return null;
+		return woodMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
 	}
 
 	public static ModWoodList getModWoodFromSapling(ItemStack block) {
-		for (int i = 0; i < woodList.length; i++) {
-			if (ReikaItemHelper.matchStacks(block, woodList[i].getCorrespondingSapling()))
-				return woodList[i];
-		}
-		return null;
+		return woodMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
 	}
 
 	public static ModWoodList getModWoodFromLeaf(ItemStack block) {
-		for (int i = 0; i < woodList.length; i++) {
-			if (woodList[i].leafMeta != null) {
-				//ReikaJavaLibrary.pConsole(woodList[i]+" - "+woodList[i].getCorrespondingLeaf().itemID+":"+Arrays.toString(woodList[i].leafMeta));
-				for (int k = 0; k < woodList[i].leafMeta.length; k++) {
-					if (ReikaItemHelper.matchStacks(block, woodList[i].getCorrespondingDamagedLeaf(k)))
-						return woodList[i];
-				}
-			}
-		}
-		return null;
+		return woodMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
 	}
 
 	public static ModWoodList getModWoodFromLeaf(int id, int meta) {
@@ -404,6 +390,31 @@ public enum ModWoodList {
 		@Override
 		public String toString() {
 			return "Variable Type "+ReikaStringParser.capFirstChar(this.name());
+		}
+	}
+
+	static {
+		for (int i = 0; i < woodList.length; i++) {
+			ModWoodList w = woodList[i];
+			if (w.exists()) {
+				int id = w.blockID;
+				int leaf = w.leafID;
+				int[] metas = w.blockMeta;
+				int[] leafmetas = w.leafMeta;
+				int sapling = w.saplingID;
+				int saplingMeta = w.saplingMeta;
+				for (int k = 0; k < metas.length; k++) {
+					int meta = metas[k];
+					List li = Arrays.asList(id, meta);
+					woodMappings.put(li, w);
+				}
+				for (int k = 0; k < leafmetas.length; k++) {
+					int meta = leafmetas[k];
+					List li = Arrays.asList(leaf, meta);
+					woodMappings.put(li, w);
+				}
+				woodMappings.put(Arrays.asList(sapling, saplingMeta), w);
+			}
 		}
 	}
 }

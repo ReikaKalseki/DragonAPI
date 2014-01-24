@@ -168,7 +168,9 @@ public class MagicCropHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public boolean isRipeCrop(int id, int meta) {
+	public boolean isRipeCrop(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
 		return this.isCrop(id) && meta == this.getRipeMeta();
 	}
 

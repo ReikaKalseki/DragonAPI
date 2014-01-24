@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -118,6 +119,8 @@ public enum ModOreList {
 
 	public static final ModOreList[] oreList = values();
 
+	private static final HashMap<List<Integer>, ModOreList> oreMappings = new HashMap();
+
 	private ModOreList(String n, int color, String prod, int count, String... ore) {
 		//if (!DragonAPIInit.canLoadHandlers())
 		//	throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
@@ -170,6 +173,15 @@ public enum ModOreList {
 		}
 		if (!this.existsInGame())
 			ReikaJavaLibrary.pConsole("\tDRAGONAPI: No ore blocks detected for "+this);
+
+		this.loadCache();
+	}
+
+	private final void loadCache() {
+		for (int i = 0; i < ores.size(); i++) {
+			ItemStack is = ores.get(i);
+			oreMappings.put(Arrays.asList(is.itemID, is.getItemDamage()), this);
+		}
 	}
 
 	@Override
@@ -239,19 +251,7 @@ public enum ModOreList {
 	}
 
 	public static boolean isModOre(ItemStack is) {
-		if (is == null)
-			return false;
-		if (is.itemID == MekanismHandler.getInstance().oreID)
-			return true;
-		for (int i = 0; i < oreList.length; i++) {
-			if (oreList[i].ores.isEmpty()) {
-				oreList[i].reloadOreList();
-			}
-			if (ReikaItemHelper.listContainsItemStack(oreList[i].ores, is)) {
-				return true;
-			}
-		}
-		return false;
+		return getModOreFromOre(is) != null;
 	}
 
 	public static ModOreList getModOreFromOre(ItemStack is) {
@@ -259,15 +259,8 @@ public enum ModOreList {
 			return null;
 		if (is.itemID == MekanismHandler.getInstance().oreID)
 			return MekanismHandler.getInstance().getModOre(is.itemID, is.getItemDamage());
-		for (int i = 0; i < oreList.length; i++) {
-			if (oreList[i].ores.isEmpty()) {
-				oreList[i].reloadOreList();
-			}
-			if (ReikaItemHelper.listContainsItemStack(oreList[i].ores, is)) {
-				return oreList[i];
-			}
-		}
-		return null;
+
+		return oreMappings.get(Arrays.asList(is.itemID, is.getItemDamage()));
 	}
 
 	public static ModOreList getEntryFromDamage(int dmg) {
@@ -284,19 +277,6 @@ public enum ModOreList {
 
 	public String[] getOreDictIngots() {
 		return new String[]{product};
-	}
-
-	public static boolean isModOreIngot(ItemStack is) {
-		if (is == null)
-			return false;
-		for (int i = 0; i < oreList.length; i++) {
-			String[] ingots = oreList[i].getOreDictIngots();
-			for (int j = 0; j < ingots.length; j++) {
-				if (ReikaItemHelper.listContainsItemStack(OreDictionary.getOres(ingots[j]), is))
-					return true;
-			}
-		}
-		return false;
 	}
 
 	public String getProductLabel() {
