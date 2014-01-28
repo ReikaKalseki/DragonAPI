@@ -9,19 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class ParallelTicker {
 
 	private final HashMap <String, Integer> tickers = new HashMap<String, Integer>();
 	private final HashMap <String, Integer> caps = new HashMap<String, Integer>();
-	private final List<String> keyList = new ArrayList<String>();
 
 	public void updateAll() {
-		for (int i = 0; i < keyList.size(); i++) {
-			String key = keyList.get(i);
+		for (String key : tickers.keySet()) {
 			this.updateTicker(key);
 		}
 	}
@@ -44,16 +40,8 @@ public class ParallelTicker {
 		}
 	}
 
-	public ParallelTicker addTicker() {
-		String key = String.format("Ticker%d", keyList.size());
-		tickers.put(key, 0);
-		keyList.add(key);
-		return this;
-	}
-
 	public ParallelTicker addTicker(String key) {
 		tickers.put(key, 0);
-		keyList.add(key);
 		return this;
 	}
 
@@ -107,6 +95,16 @@ public class ParallelTicker {
 				return (float)tickers.get(key)/(float)caps.get(key);
 		}
 		return 0F;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (String key : tickers.keySet()) {
+			String s = String.format("Timer %s: %d/%d (%.2f%s)", key, this.getTickOf(key), this.getCapOf(key), this.getPortionOfCap(key)*100F, "%");
+			sb.append(s+"\n");
+		}
+		return sb.toString();
 	}
 
 }

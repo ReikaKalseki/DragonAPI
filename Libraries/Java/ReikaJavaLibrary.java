@@ -87,12 +87,16 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	public static int safeIntParse(String s) {
-		try {
-			return Integer.parseInt(s);
+		boolean neg = false;
+		int num = 0;
+		if (s.startsWith("-")) {
+			s = s.substring(1);
+			neg = true;
 		}
-		catch (NumberFormatException e) {
-			return 0;//Integer.MIN_VALUE;
+		if (s.matches("\\d+")) {
+			num = Integer.parseInt(s);
 		}
+		return neg ? -num : num;
 	}
 
 	public static void printLine(int length) {

@@ -30,7 +30,7 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 
 	private final Class modClass;
 
-	public ReikaModelledBreakFX(World world, double x, double y, double z, double vx, double vy, double vz, Block b, int meta, int side, String texture, double u, double v, Class mod) {
+	public ReikaModelledBreakFX(World world, double x, double y, double z, double vx, double vy, double vz, Block b, int side, int meta, String texture, double u, double v, Class mod) {
 		super(world, x, y, z, vx, vy, vz, getBlock(b), meta, side);
 		tex = texture;
 		texpos[0] = u;

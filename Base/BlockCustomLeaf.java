@@ -78,12 +78,12 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	{
 		int meta = world.getBlockMetadata(x, y, z);
 		//ReikaJavaLibrary.pConsole(blockID+" @ "+x+", "+y+", "+z+"  : "+this.decays()+"&"+this.shouldTryDecay(world, x, y, z, meta));
+		boolean flag = false;
 		if (this.decays() && this.shouldTryDecay(world, x, y, z, meta)) {
-			this.decay(world, x, y, z, par5Random);
+			flag = this.decay(world, x, y, z, par5Random);
 		}
-		else {
+		if (!flag)
 			this.onRandomUpdate(world, x, y, z, par5Random);
-		}
 	}
 
 	protected void onRandomUpdate(World world, int x, int y, int z, Random r) {
@@ -92,7 +92,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 
 	public abstract boolean shouldTryDecay(World world, int x, int y, int z, int meta);
 
-	protected void decay(World world, int x, int y, int z, Random par5Random) {
+	protected boolean decay(World world, int x, int y, int z, Random par5Random) {
 		int r = 4;
 		boolean decay = true;
 		for (int i = -r; i <= r; i++) {
@@ -128,6 +128,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 			this.dropBlockAsItemWithChance(world, x, y, z, meta, 1, 0);
 			world.setBlock(x, y, z, 0);
 		}
+		return decay;
 	}
 
 	@Override

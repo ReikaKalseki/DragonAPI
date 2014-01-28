@@ -338,6 +338,12 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return true;
 		if (biome.getEnableSnow())
 			return true;
+		if (biome.biomeName.toLowerCase().contains("arctic"))
+			return true;
+		if (biome.biomeName.toLowerCase().contains("tundra"))
+			return true;
+		if (biome.biomeName.toLowerCase().contains("alpine"))
+			return true;
 		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
 		for (int i = 0; i < types.length; i++) {
 			if (types[i] == BiomeDictionary.Type.FROZEN)
@@ -621,7 +627,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Returns a broad-stroke biome temperature in degrees centigrade.
 	 * Args: World, x, z */
 	public static int getBiomeTemp(World world, int x, int z) {
-		int Tamb = 25; //Most biomes = 25C
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 		return getBiomeTemp(biome);
 	}

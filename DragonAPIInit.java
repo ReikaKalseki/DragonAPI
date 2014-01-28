@@ -38,7 +38,6 @@ import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerFirstTimeTracker;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
-import Reika.DragonAPI.Auxiliary.RetroGenController;
 import Reika.DragonAPI.Auxiliary.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Extras.DonatorCommand;
@@ -70,7 +69,7 @@ import Reika.DragonAPI.ModInteract.QuantumOreHandler;
 import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
 import Reika.DragonAPI.ModInteract.ThermalHandler;
-import Reika.DragonAPI.ModInteract.TinkerOreHandler;
+import Reika.DragonAPI.ModInteract.TinkerBlockHandler;
 import Reika.DragonAPI.ModInteract.TinkerToolHandler;
 import Reika.DragonAPI.ModInteract.TransitionalOreHandler;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
@@ -109,7 +108,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void preload(FMLPreInitializationEvent evt) {
 		logger = new ModLogger(instance, true, false, false);
-		MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
+		//MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		MinecraftForge.EVENT_BUS.register(this);
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
@@ -286,7 +285,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.DARTCRAFT, DartOreHandler.class);
 		this.initHandler(ModList.DARTCRAFT, DartItemHandler.class);
 		this.initHandler(ModList.TINKERER, TinkerToolHandler.class);
-		this.initHandler(ModList.TINKERER, TinkerOreHandler.class);
+		this.initHandler(ModList.TINKERER, TinkerBlockHandler.class);
 		this.initHandler(ModList.TWILIGHT, TwilightForestHandler.class);
 		this.initHandler(ModList.MEKANISM, MekanismHandler.class);
 		this.initHandler(ModList.MEKTOOLS, MekToolHandler.class);

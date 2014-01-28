@@ -30,6 +30,9 @@ public class HarvestCraftHandler extends CropHandlerBase {
 
 	private static final Random rand = new Random();
 
+	private final Field cropType;
+	private final Field cropGrowth;
+
 	private static final HarvestCraftHandler instance = new HarvestCraftHandler();
 
 	private HarvestCraftHandler() {
@@ -37,6 +40,8 @@ public class HarvestCraftHandler extends CropHandlerBase {
 		int idcrop = -1;
 		Item[] seeds = null;
 		Item[] drops = null;
+		Field type = null;
+		Field growth = null;
 		if (this.hasMod()) {
 			Class c = this.getMod().getBlockClass();
 			try {
@@ -62,6 +67,25 @@ public class HarvestCraftHandler extends CropHandlerBase {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
+			try {
+				c = Class.forName("assets.pamharvestcraft.TileEntityPamCrop");
+				type = c.getDeclaredField("cropID");
+				type.setAccessible(true);
+				growth = c.getDeclaredField("growthStage");
+				growth.setAccessible(true);
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				e.printStackTrace();
+			}
+			catch (NoSuchFieldException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+				e.printStackTrace();
+			}
+			catch (NullPointerException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				e.printStackTrace();
+			}
 		}
 		else {
 			this.noMod();
@@ -69,6 +93,9 @@ public class HarvestCraftHandler extends CropHandlerBase {
 		cropID = idcrop;
 		seedDrops = seeds;
 		otherDrops = drops;
+
+		cropType = type;
+		cropGrowth = growth;
 	}
 
 	@Override
@@ -92,9 +119,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 		if (id == cropID) {
 			TileEntity te = world.getBlockTileEntity(x, y, z);
 			try {
-				Field f = te.getClass().getDeclaredField("growthStage");
-				f.setAccessible(true);
-				int stage = f.getInt(te);
+				int stage = cropGrowth.getInt(te);
 				return stage == 2;
 			}
 			catch (Exception e) {}
@@ -108,7 +133,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return cropID != -1 && seedDrops != null && otherDrops != null;
+		return cropID != -1 && seedDrops != null && otherDrops != null && cropType != null && cropGrowth != null;
 	}
 
 	@Override
@@ -133,9 +158,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 			TileEntity te = world.getBlockTileEntity(x, y, z);
 			int crop = -1;
 			try {
-				Field f = te.getClass().getDeclaredField("cropID");
-				f.setAccessible(true);
-				crop = f.getInt(te);
+				crop = cropType.getInt(te);
 			}
 			catch (Exception e) {}
 			if (crop > -1) {
@@ -157,12 +180,9 @@ public class HarvestCraftHandler extends CropHandlerBase {
 		if (id == cropID) {
 			TileEntity te = world.getBlockTileEntity(x, y, z);
 			try {
-				Field f = te.getClass().getDeclaredField("growthStage");
-				f.setAccessible(true);
-				f.set(te, 0);
+				cropGrowth.set(te, 0);
 			}
-			catch (Exception e) {
-			}
+			catch (Exception e) {}
 		}
 		world.markBlockForRenderUpdate(x, y, z);
 		world.markBlockForUpdate(x, y, z);

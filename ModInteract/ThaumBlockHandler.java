@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ThaumBlockHandler extends ModHandlerBase {
 
@@ -28,11 +29,14 @@ public class ThaumBlockHandler extends ModHandlerBase {
 	public final int cinderMeta = 3;
 	public final int etherealMeta = 4;
 
+	public final int taintBiomeID;
+
 	private ThaumBlockHandler() {
 		super();
 		int idtile = -1;
 		int idplant = -1;
 		int idcrystal = -1;
+		int idtaint = -1;
 
 		if (this.hasMod()) {
 			Class thaum = ModList.THAUMCRAFT.getBlockClass();
@@ -40,6 +44,28 @@ public class ThaumBlockHandler extends ModHandlerBase {
 			idtile = this.loadBlockID(thaum, "blockCosmeticSolid");
 			idplant = this.loadBlockID(thaum, "blockCustomPlant");
 			idcrystal = this.loadBlockID(thaum, "blockCrystal");
+
+			try {
+				Class config = Class.forName("thaumcraft.common.config");
+				Field biome = config.getField("biomeTaintID");
+				idtaint = biome.getInt(null);
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft config class!");
+				e.printStackTrace();
+			}
+			catch (NoSuchFieldException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load field from ThaumCraft config class!");
+				e.printStackTrace();
+			}
+			catch (IllegalArgumentException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not read field from ThaumCraft config class!");
+				e.printStackTrace();
+			}
+			catch (IllegalAccessException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not read field from ThaumCraft config class!");
+				e.printStackTrace();
+			}
 		}
 		else {
 			this.noMod();
@@ -48,6 +74,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		totemID = idtile;
 		plantID = idplant;
 		crystalID = idcrystal;
+		taintBiomeID = idtaint;
 	}
 
 	public static ThaumBlockHandler getInstance() {
@@ -56,7 +83,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return totemID != -1 && plantID != -1 && crystalID != -1;
+		return totemID != -1 && plantID != -1 && crystalID != -1 && taintBiomeID != -1;
 	}
 
 	@Override

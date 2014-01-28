@@ -17,17 +17,21 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class TinkerOreHandler extends ModHandlerBase {
+public class TinkerBlockHandler extends ModHandlerBase {
 
-	private static final TinkerOreHandler instance = new TinkerOreHandler();
+	private static final TinkerBlockHandler instance = new TinkerBlockHandler();
 
 	public final int gravelOreID;
 	public final int stoneOreID;
+	public final int clearGlassID;
+	public final int clearPaneID;
 
-	private TinkerOreHandler() {
+	private TinkerBlockHandler() {
 		super();
 		int idgravel = -1;
 		int idnether = -1;
+		int idglass = -1;
+		int idpane = -1;
 
 		if (this.hasMod()) {
 			try {
@@ -37,6 +41,12 @@ public class TinkerOreHandler extends ModHandlerBase {
 
 				Field ore = tink.getField("oreSlag");
 				idnether = ((Block)gravel.get(null)).blockID;
+
+				Field glass = tink.getField("clearGlass");
+				idglass = ((Block)glass.get(null)).blockID;
+
+				Field pane = tink.getField("glassPane");
+				idpane = ((Block)pane.get(null)).blockID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -65,15 +75,17 @@ public class TinkerOreHandler extends ModHandlerBase {
 
 		gravelOreID = idgravel;
 		stoneOreID = idnether;
+		clearGlassID = idglass;
+		clearPaneID = idpane;
 	}
 
-	public static TinkerOreHandler getInstance() {
+	public static TinkerBlockHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return gravelOreID != -1 && stoneOreID != -1;
+		return gravelOreID != -1 && stoneOreID != -1 && clearGlassID != -1 && clearPaneID != -1;
 	}
 
 	@Override

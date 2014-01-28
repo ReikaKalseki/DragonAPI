@@ -157,7 +157,8 @@ public enum ModOreList {
 				for (int k = 0; k < toadd.size(); k++) {
 					ItemStack is = toadd.get(k);
 					if (ReikaItemHelper.isBlock(is)) {
-						ores.add(is);
+						if (!ReikaItemHelper.listContainsItemStack(ores, is))
+							ores.add(is);
 						ArrayList li = perName.get(oreLabel[i]);
 						if (li == null)
 							perName.put(oreLabel[i], new ArrayList());

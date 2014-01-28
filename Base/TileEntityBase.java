@@ -28,6 +28,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -35,7 +36,7 @@ public abstract class TileEntityBase extends TileEntity {
 
 	protected static final Random rand = new Random();
 	private int pseudometa;
-	public boolean shutDown;
+	protected boolean shutDown;
 	public String placer;
 
 	private final StepTimer updateTimer;
@@ -155,35 +156,56 @@ public abstract class TileEntityBase extends TileEntity {
 
 	@Override
 	public final void updateEntity() {
-		int arg = 20;
-		if (shutDown)
-			arg = 100;
-		try {
-			if (rand.nextInt(arg) == 0)
+		if (this.shouldRunUpdateCode()) {
+			try {
+				this.updateTileEntity();
+				this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
+			}
+			catch (ArrayIndexOutOfBoundsException e) {
+				this.writeError(e);
+			}
+			catch (IndexOutOfBoundsException e) {
+				this.writeError(e);
+			}
+			catch (ArithmeticException e) {
+				this.writeError(e);
+			}
+			catch (NullPointerException e) {
+				this.writeError(e);
+			}
+			catch (ClassCastException e) {
+				this.writeError(e);
+			}
+			catch (IllegalArgumentException e) {
+				this.writeError(e);
+			}
+		}
+		if (this.shouldSendSyncPackets()) {
+			this.sendSyncPacket();
+		}
+		if (worldObj.isRemote && this.needsToCauseBlockUpdates()) {
+			updateTimer.update();
+			if (updateTimer.checkCap()) {
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
-			if (shutDown)
-				return;
-			this.updateTileEntity();
-			this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
+			}
 		}
-		catch (ArrayIndexOutOfBoundsException e) {
-			this.writeError(e);
-		}
-		catch (IndexOutOfBoundsException e) {
-			this.writeError(e);
-		}
-		catch (ArithmeticException e) {
-			this.writeError(e);
-		}
-		catch (NullPointerException e) {
-			this.writeError(e);
-		}
-		catch (ClassCastException e) {
-			this.writeError(e);
-		}
-		catch (IllegalArgumentException e) {
-			this.writeError(e);
-		}
+	}
+
+	private void sendSyncPacket() {
+		Packet132TileEntityData dat = (Packet132TileEntityData)this.getDescriptionPacket();
+		PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, this.getUpdatePacketRadius(), worldObj.provider.dimensionId, dat);
+	}
+
+	public int getUpdatePacketRadius() {
+		return 16;
+	}
+
+	protected boolean shouldRunUpdateCode() {
+		return !shutDown && !worldObj.isRemote;
+	}
+
+	protected final boolean shouldSendSyncPackets() {
+		return !worldObj.isRemote;
 	}
 
 	private void writeError(Exception e) {
@@ -208,6 +230,7 @@ public abstract class TileEntityBase extends TileEntity {
 		NBTTagCompound var1 = new NBTTagCompound();
 		this.writeToNBT(var1);
 		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, var1);
+		//return super.getDescriptionPacket();
 	}
 
 	@Override
@@ -230,7 +253,7 @@ public abstract class TileEntityBase extends TileEntity {
 	//public abstract boolean needsDataUpdates();
 
 	/** Do not reference world, x, y, z, etc here, as this is called in the constructor */
-	public int getBlockUpdateDelay() {
+	public final int getBlockUpdateDelay() {
 		return 20;
 	}
 
@@ -250,5 +273,9 @@ public abstract class TileEntityBase extends TileEntity {
 	public AxisAlignedBB getRenderBoundingBox()
 	{
 		return ReikaAABBHelper.getBlockAABB(xCoord, yCoord, zCoord);
+	}
+
+	public boolean needsToCauseBlockUpdates() {
+		return false;
 	}
 }

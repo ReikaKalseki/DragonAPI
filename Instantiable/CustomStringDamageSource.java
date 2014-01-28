@@ -33,4 +33,14 @@ public class CustomStringDamageSource extends DamageSource {
 		return ch;
 	}
 
+	@Override
+	public DamageSource setDamageBypassesArmor() {
+		return super.setDamageBypassesArmor();
+	}
+
+	@Override
+	public DamageSource setDamageAllowedInCreativeMode() {
+		return super.setDamageAllowedInCreativeMode();
+	}
+
 }
