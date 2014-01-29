@@ -201,7 +201,7 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	protected boolean shouldRunUpdateCode() {
-		return !shutDown && !worldObj.isRemote;
+		return true;//!shutDown && !worldObj.isRemote;
 	}
 
 	protected final boolean shouldSendSyncPackets() {

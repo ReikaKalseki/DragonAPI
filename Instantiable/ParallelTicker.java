@@ -11,6 +11,8 @@ package Reika.DragonAPI.Instantiable;
 
 import java.util.HashMap;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 public class ParallelTicker {
 
 	private final HashMap <String, Integer> tickers = new HashMap<String, Integer>();
@@ -105,6 +107,22 @@ public class ParallelTicker {
 			sb.append(s+"\n");
 		}
 		return sb.toString();
+	}
+
+	public void writeToNBT(NBTTagCompound NBT, String id) {
+		for (String ticker : tickers.keySet()) {
+			String s = id+ticker;
+			NBT.setInteger(s+"cap", this.getCapOf(ticker));
+			NBT.setInteger(s+"tick", this.getTickOf(ticker));
+		}
+	}
+
+	public void readFromNBT(NBTTagCompound NBT, String id) {
+		for (String ticker : tickers.keySet()) {
+			String s = id+ticker;
+			this.setCap(ticker, NBT.getInteger(s+"cap"));
+			this.setTickOf(ticker, NBT.getInteger(s+"tick"));
+		}
 	}
 
 }

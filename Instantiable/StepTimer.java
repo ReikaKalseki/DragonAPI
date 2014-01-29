@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import net.minecraft.nbt.NBTTagCompound;
+
 public class StepTimer {
 
 	private int value;
@@ -60,6 +62,16 @@ public class StepTimer {
 	@Override
 	public String toString() {
 		return "Timer @ "+value+"/"+cap;
+	}
+
+	public void writeToNBT(NBTTagCompound NBT, String id) {
+		NBT.setInteger(id+"cap", cap);
+		NBT.setInteger(id+"tick", value);
+	}
+
+	public void readFromNBT(NBTTagCompound NBT, String id) {
+		cap = NBT.getInteger(id+"cap");
+		value = NBT.getInteger(id+"tick");
 	}
 
 }
