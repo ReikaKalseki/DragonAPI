@@ -53,6 +53,18 @@ public class ReikaMystcraftHelper {
 		return isMystAge(world) ? getOrCreateInterface(world).getStabilizationParameter() : 0;
 	}
 
+	public static int getInstabilityForAge(World world) {
+		return isMystAge(world) ? getOrCreateInterface(world).getTotalInstability() : 0;
+	}
+
+	public static int getBonusInstabilityForAge(World world) {
+		return isMystAge(world) ? getOrCreateInterface(world).getBonusInstability() : 0;
+	}
+
+	public static int getBaseInstabilityForAge(World world) {
+		return isMystAge(world) ? getOrCreateInterface(world).getBaseInstability() : 0;
+	}
+
 	public static boolean setStabilityForAge(World world, int stability) {
 		if (isMystAge(world)) {
 			InstabilityInterface ii = getOrCreateInterface(world);
@@ -75,7 +87,31 @@ public class ReikaMystcraftHelper {
 		}
 	}
 
-	public static InstabilityInterface getOrCreateInterface(World world) {
+	public static boolean addBaseInstabilityForAge(World world, short toAdd) {
+		if (isMystAge(world)) {
+			InstabilityInterface ii = getOrCreateInterface(world);
+			short unstable = ii.getBaseInstability();
+			short newunstable = (short)(unstable+toAdd);
+			return ii.setBaseInstability(newunstable);
+		}
+		else {
+			return false;
+		}
+	}
+
+	public static boolean addBonusInstabilityForAge(World world, int toAdd) {
+		if (isMystAge(world)) {
+			InstabilityInterface ii = getOrCreateInterface(world);
+			int unstable = ii.getBonusInstability();
+			int newunstable = unstable+toAdd;
+			return ii.setBonusInstability(newunstable);
+		}
+		else {
+			return false;
+		}
+	}
+
+	private static InstabilityInterface getOrCreateInterface(World world) {
 		InstabilityInterface ii = ageData.get(world.provider.dimensionId);
 		if (ii == null) {
 			ii = new InstabilityInterface(world);
@@ -84,7 +120,7 @@ public class ReikaMystcraftHelper {
 		return ii;
 	}
 
-	public static final class InstabilityInterface {
+	private static final class InstabilityInterface {
 
 		public final int dimensionID;
 		private final WorldProvider provider;
@@ -128,9 +164,9 @@ public class ReikaMystcraftHelper {
 			}
 		}
 
-		public boolean setInstabilityBonus(int amount) {
+		public boolean setBonusInstability(int amount) {
 			try {
-				instabilityNumber.set(instabilityController, amount);
+				instabilityNumber.set(ageController, amount);
 				return true;
 			}
 			catch (Exception e) {
