@@ -25,7 +25,7 @@ public class InverseLogExpression extends MathExpression {
 
 	@Override
 	public double evaluate(double arg) {
-		return baseVal + scale/(1+ReikaMathLibrary.logbase(arg+1, base));
+		return baseVal/(1+scale*(ReikaMathLibrary.logbase(arg+1, base)));
 	}
 
 	@Override
@@ -35,7 +35,7 @@ public class InverseLogExpression extends MathExpression {
 
 	@Override
 	public String toString() {
-		return baseVal+(scale > 0 ? "+" : "-")+Math.abs(scale)+"/(1+log_"+base+"(x+1))";
+		return baseVal+"/(1+"+scale+"*(log_"+base+"(x+1)))";
 	}
 
 }

@@ -101,6 +101,8 @@ public class BlockArray {
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow */
 	public void recursiveAdd(World world, int x, int y, int z, int id) {
+		if (overflow)
+			return;
 		if (world.getBlockId(x, y, z) != id)
 			return;
 		if (this.hasBlock(x, y, z))
@@ -123,6 +125,8 @@ public class BlockArray {
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow, metadata to follow */
 	public void recursiveAddWithMetadata(World world, int x, int y, int z, int id, int meta) {
+		if (overflow)
+			return;
 		if (world.getBlockId(x, y, z) != id)
 			return;
 		if (world.getBlockMetadata(x, y, z) != meta)
@@ -147,6 +151,8 @@ public class BlockArray {
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
 	public void recursiveAddWithBounds(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2) {
+		if (overflow)
+			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
 		if (world.getBlockId(x, y, z) != id) {
@@ -169,7 +175,41 @@ public class BlockArray {
 		}
 	}
 
+	/** Like the ordinary recursive add but with a bounded volume and tolerance for multiple IDs. Args: World, x, y, z,
+	 * id to replace, min x,y,z, max x,y,z */
+	public void recursiveMultiAddWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int... ids) {
+		if (overflow)
+			return;
+		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
+			return;
+		boolean flag = false;
+		for (int i = 0; i < ids.length; i++) {
+			if (world.getBlockId(x, y, z) == ids[i]) {
+				flag = true;
+			}
+		}
+		if (!flag)
+			return;
+		if (this.hasBlock(x, y, z))
+			return;
+		this.addBlockCoordinate(x, y, z);
+		try {
+			this.recursiveMultiAddWithBounds(world, x+1, y, z, x1, y1, z1, x2, y2, z2, ids);
+			this.recursiveMultiAddWithBounds(world, x-1, y, z, x1, y1, z1, x2, y2, z2, ids);
+			this.recursiveMultiAddWithBounds(world, x, y+1, z, x1, y1, z1, x2, y2, z2, ids);
+			this.recursiveMultiAddWithBounds(world, x, y-1, z, x1, y1, z1, x2, y2, z2, ids);
+			this.recursiveMultiAddWithBounds(world, x, y, z+1, x1, y1, z1, x2, y2, z2, ids);
+			this.recursiveMultiAddWithBounds(world, x, y, z-1, x1, y1, z1, x2, y2, z2, ids);
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
+		}
+	}
+
 	public void recursiveAddWithBoundsMetadata(World world, int x, int y, int z, int id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
+		if (overflow)
+			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
 		if (world.getBlockId(x, y, z) != id || world.getBlockMetadata(x, y, z) != meta) {
@@ -199,6 +239,8 @@ public class BlockArray {
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
 	public void recursiveAddLiquidWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2) {
+		if (overflow)
+			return;
 		//ReikaJavaLibrary.pConsole(liquidID+" and "+world.getBlockId(x, y, z));;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
@@ -226,6 +268,8 @@ public class BlockArray {
 	/** Like the ordinary recursive add but with a spherical bounded volume. Args: World, x, y, z,
 	 * id to replace, origin x,y,z, max radius */
 	public void recursiveAddWithinSphere(World world, int x, int y, int z, int id, int x0, int y0, int z0, double r) {
+		if (overflow)
+			return;
 		if (world.getBlockId(x, y, z) != id)
 			return;
 		if (this.hasBlock(x, y, z))

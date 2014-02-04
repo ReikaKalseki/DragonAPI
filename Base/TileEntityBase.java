@@ -40,6 +40,7 @@ public abstract class TileEntityBase extends TileEntity {
 	public String placer;
 
 	private final StepTimer updateTimer;
+	private final StepTimer packetTimer;
 
 	protected final ForgeDirection[] dirs = ForgeDirection.values();
 
@@ -52,6 +53,11 @@ public abstract class TileEntityBase extends TileEntity {
 	public TileEntityBase() {
 		super();
 		updateTimer = new StepTimer(this.getBlockUpdateDelay());
+		packetTimer = new StepTimer(this.getPacketDelay());
+	}
+
+	public int getPacketDelay() {
+		return 1;
 	}
 
 	public final Block getTEBlock() {
@@ -91,7 +97,7 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	public final EntityPlayer getPlacer() {
-		return worldObj.getPlayerEntityByName(placer);
+		return placer != null && !placer.isEmpty() ? worldObj.getPlayerEntityByName(placer) : null;
 	}
 
 	public boolean isIDTEMatch(World world, int x, int y, int z) {
@@ -181,7 +187,10 @@ public abstract class TileEntityBase extends TileEntity {
 			}
 		}
 		if (this.shouldSendSyncPackets()) {
-			this.sendSyncPacket();
+			packetTimer.update();
+			if (packetTimer.checkCap()) {
+				this.sendSyncPacket();
+			}
 		}
 		if (worldObj.isRemote && this.needsToCauseBlockUpdates()) {
 			updateTimer.update();

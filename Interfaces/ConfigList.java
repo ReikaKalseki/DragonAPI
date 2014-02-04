@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
-import net.minecraftforge.common.Configuration;
 
 /** This is an interface for ENUMS! */
 public interface ConfigList {
@@ -22,13 +21,13 @@ public interface ConfigList {
 
 	public Class getPropertyType();
 
-	public int setValue(Configuration config);
+	//public int setValue(Configuration config);
 
-	public float setDecimal(Configuration config);
+	//public float setDecimal(Configuration config);
 
 	public String getLabel();
 
-	public boolean setState(Configuration config);
+	//public boolean setState(Configuration config);
 
 	public boolean getState();
 
@@ -36,6 +35,14 @@ public interface ConfigList {
 
 	public float getFloat();
 
-	public boolean isDummiedOut();
+	public boolean getDefaultState();
+
+	public int getDefaultValue();
+
+	public float getDefaultFloat();
+
+	//public boolean isDummiedOut();
+
+	public boolean isEnforcingDefaults();
 
 }

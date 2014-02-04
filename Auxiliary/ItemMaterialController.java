@@ -10,7 +10,9 @@
 package Reika.DragonAPI.Auxiliary;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -23,7 +25,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class ItemMaterialController {
 
-	private final HashMap<int[], ItemMaterial> data = new HashMap<int[], ItemMaterial>();
+	private final HashMap<List<Integer>, ItemMaterial> data = new HashMap<List<Integer>, ItemMaterial>();
 	private final ArrayList<ItemStack> locks = new ArrayList<ItemStack>();
 
 	public static final ItemMaterialController instance = new ItemMaterialController();
@@ -36,7 +38,7 @@ public class ItemMaterialController {
 		if (this.hasImmutableMapping(is))
 			throw new MisuseException("Do not try to overwrite mappings of vanilla items!");
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding "+mat+" material properties to "+is);
-		data.put(new int[]{is.itemID, is.getItemDamage()}, mat);
+		data.put(Arrays.asList(is.itemID, is.getItemDamage()), mat);
 	}
 
 	public void addItem(Item i, ItemMaterial mat) {
@@ -55,7 +57,7 @@ public class ItemMaterialController {
 		if (this.hasImmutableMapping(is))
 			throw new MisuseException("Do not try to overwrite mappings of vanilla items!");
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding immutable material "+mat+" properties to vanilla item "+is);
-		data.put(new int[]{is.itemID, is.getItemDamage()}, mat);
+		data.put(Arrays.asList(is.itemID, is.getItemDamage()), mat);
 		locks.add(is);
 	}
 
@@ -74,15 +76,15 @@ public class ItemMaterialController {
 	public int getMeltingPoint(ItemStack is) {
 		if (!this.hasDataFor(is))
 			return 0;
-		return data.get(new int[]{is.itemID, is.getItemDamage()}).getMelting();
+		return data.get(Arrays.asList(is.itemID, is.getItemDamage())).getMelting();
 	}
 
 	public boolean hasDataFor(ItemStack is) {
-		return data.containsKey(new int[]{is.itemID, is.getItemDamage()});
+		return data.containsKey(Arrays.asList(is.itemID, is.getItemDamage()));
 	}
 
 	public ItemMaterial getMaterial(ItemStack is) {
-		return data.get(new int[]{is.itemID, is.getItemDamage()});
+		return data.get(Arrays.asList(is.itemID, is.getItemDamage()));
 	}
 
 	{

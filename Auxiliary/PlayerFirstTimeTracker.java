@@ -42,6 +42,7 @@ public class PlayerFirstTimeTracker {
 		for (int i = 0; i < list.size(); i++) {
 			PlayerTracker pt = list.get(i);
 			if (!pt.hasPlayer(ep)) {
+				//ReikaJavaLibrary.pConsole(pt+":"+ep.getEntityName());
 				pt.onNewPlayer(ep);
 				pt.addPlayer(ep);
 			}

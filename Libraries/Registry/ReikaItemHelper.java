@@ -252,6 +252,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return 0;
 		if (!(is.getItem() instanceof ItemBlock))
 			return 0;
+		int id = is.itemID;
+		if (id == Block.pistonBase.blockID || id == Block.pistonStickyBase.blockID)
+			return 0;
 		return is.getItem().getMetadata(is.getItemDamage());
 	}
 

@@ -55,9 +55,9 @@ public enum ModOreList {
 	SALTPETER("Saltpeter", 0xFFFFFF, "dustSaltpeter", 2, "oreSaltpeter"),
 	TUNGSTEN("Tungsten", 0x1E1E1E, "ingotTungsten", 1, "oreTungsten", "oreTungstate"),
 	NIKOLITE("Nikolite", 0x2DABB8, "dustNikolite", 5, "oreNikolite"),
-	GREENSAPPHIRE("Green Sapphire", 0x00C416, "gemGreenSapphire", 1, "oreGreenSapphire", "oreNetherGreenSapphire"),
+	GREENSAPPHIRE("Green Sapphire", 0x00C416, "gemGreenSapphire", 1, "oreGreenSapphire"),
 	RUBY("Ruby", 0xBC0000, "gemRuby", 1, "oreRuby"),
-	SAPPHIRE("Sapphire", 0x0019AA, "gemSapphire", 1, "oreSapphire", "oreNetherSapphire"),
+	SAPPHIRE("Sapphire", 0x0019AA, "gemSapphire", 1, "oreSapphire"),
 	MONAZIT("Monazit", 0x3C6E3C, "ForciciumItem", 4, "MonazitOre"),
 	FORCE("Force", 0xFFC700, "gemForce", 3, "oreForce"),
 	NETHERCOAL("Nether Coal", 0x262626, "itemCoal", 1, "oreNetherCoal"),
@@ -104,7 +104,9 @@ public enum ModOreList {
 	QUANTUM("Quantum", 0x5BA642, "dustQuantum", 2, "oreQuantum"),
 	NETHERIRIDIUM("Nether Iridium", 0xb6f6c7, "ingotIridium", 1, "oreNetherIridium"),
 	DARKIRON("Dark Iron", 0x4F00D1, "ingotFzDarkIron", 1, "oreFzDarkIron"),
-	CHROMITE("Chromite", 0x94E0F5, "ingotChrome", 1, "oreChromite");
+	CHROMITE("Chromite", 0x94E0F5, "ingotChrome", 1, "oreChromite"),
+	NETHERSAPPHIRE("Nether Sapphire", 0x00977, "gemSapphire", 1, "oreNetherSapphire"),
+	NETHERGREENSAPPHIRE("Nether Green Sapphire", 0x0a408, "gemGreenSapphire", 1, "oreNetherSapphire");
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 	public final String displayName;
@@ -153,6 +155,12 @@ public enum ModOreList {
 		for (int i = 0; i < oreLabel.length; i++) {
 			ArrayList<ItemStack> toadd = OreDictionary.getOres(oreLabel[i]);
 			if (!toadd.isEmpty()) {
+				Iterator<ItemStack> it = toadd.iterator();
+				while (it.hasNext()) {
+					ItemStack is = it.next();
+					if (is.itemID < 0)
+						it.remove();
+				}
 				ReikaJavaLibrary.pConsole("\tDetected the following blocks for "+this+" from OreDict \""+oreLabel[i]+"\": "+toadd.toString());
 				for (int k = 0; k < toadd.size(); k++) {
 					ItemStack is = toadd.get(k);

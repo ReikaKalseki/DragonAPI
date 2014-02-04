@@ -37,6 +37,8 @@ public abstract class PlayerTracker {
 	public abstract void onNewPlayer(EntityPlayer ep);
 
 	public final boolean hasPlayer(EntityPlayer ep) {
+		//ReikaJavaLibrary.pConsole(this+":"+players);
+		//ReikaJavaLibrary.pConsole(players.contains(ep.getEntityName()));
 		return players.contains(ep.getEntityName());
 	}
 
@@ -68,8 +70,8 @@ public abstract class PlayerTracker {
 
 	private final void save() {
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Saving player tracker "+this.toString(), Side.SERVER);
+		String name = this.getSaveFileName();
 		try {
-			String name = this.getSaveFileName();
 			File dir = new File(this.getSaveFilePath());
 			//ReikaJavaLibrary.pConsole(this.getSaveFilePath(), Side.SERVER);
 			if (!dir.exists()) {
@@ -82,7 +84,7 @@ public abstract class PlayerTracker {
 			PrintWriter p = new PrintWriter(f);
 			for (int i = 0; i < players.size(); i++) {
 				String line = players.get(i);
-				p.append(line+";");
+				p.append(line+"\n");
 			}
 			p.close();
 		}
@@ -101,7 +103,6 @@ public abstract class PlayerTracker {
 			while (line != null) {
 				line = p.readLine();
 				if (line != null) {
-					line = line.substring(0, line.length()-1);
 					if (!players.contains(line))
 						players.add(line);
 				}

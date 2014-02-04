@@ -56,6 +56,7 @@ public class ReikaTextureHelper {
 	public static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
 	private static final ResourceLocation font = new ResourceLocation("textures/font/ascii.png");
+	private static final ResourceLocation particle = new ResourceLocation("textures/particle/particles.png");
 
 	private static boolean reload() {
 		return Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.isKeyDown(Keyboard.KEY_T);
@@ -295,6 +296,10 @@ public class ReikaTextureHelper {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Error reading color override text file for texture pack "+getCurrentResourcePackName()+".");
 			e.printStackTrace();
 		}
+	}
+
+	public static void bindParticleTexture() {
+		Minecraft.getMinecraft().renderEngine.bindTexture(particle);
 	}
 
 }

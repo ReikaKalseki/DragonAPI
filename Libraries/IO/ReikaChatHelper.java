@@ -12,9 +12,12 @@ package Reika.DragonAPI.Libraries.IO;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -168,6 +171,18 @@ public final class ReikaChatHelper extends DragonAPICore {
 			return;
 		if (Minecraft.getMinecraft().thePlayer != null)
 			Minecraft.getMinecraft().thePlayer.addChatMessage(String.valueOf(FMLCommonHandler.instance().getEffectiveSide()));
+	}
+
+	public static void sendChatToPlayer(EntityPlayerMP ep, String sg) {
+		ChatMessageComponent chat = new ChatMessageComponent();
+		chat.addText(sg);
+		ep.sendChatToPlayer(chat);
+	}
+
+	public static void sendChatToAllOnServer(String sg) {
+		ChatMessageComponent chat = new ChatMessageComponent();
+		chat.addText(sg);
+		MinecraftServer.getServer().getConfigurationManager().sendChatMsg(chat);
 	}
 
 }

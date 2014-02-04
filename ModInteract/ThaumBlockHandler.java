@@ -48,7 +48,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 			idcrystal = this.loadBlockID(thaum, "blockCrystal");
 
 			try {
-				Class config = Class.forName("thaumcraft.common.config");
+				Class config = Class.forName("thaumcraft.common.config.config");
 				Field biome = config.getField("biomeTaintID");
 				idtaint = biome.getInt(null);
 

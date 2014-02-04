@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -89,5 +90,9 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 				return ForgeDirection.UP; //set to down
 		}
 		return ForgeDirection.UNKNOWN;
+	}
+
+	public static boolean isAdmin(EntityPlayer ep) {
+		return MinecraftServer.getServerConfigurationManager(MinecraftServer.getServer()).isPlayerOpped(ep.getEntityName());
 	}
 }

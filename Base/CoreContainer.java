@@ -33,6 +33,10 @@ public class CoreContainer extends Container {
 
 	protected final IInventory ii;
 
+	private boolean alwaysCan = false;
+
+	private static final TileEntityChest fakeChest = new TileEntityChest();
+
 	public CoreContainer(EntityPlayer player, TileEntity te)
 	{
 		tile = te;
@@ -46,6 +50,11 @@ public class CoreContainer extends Container {
 			ii = (IInventory)te;
 		else
 			ii = null;
+	}
+
+	public CoreContainer setAlwaysInteractable() {
+		alwaysCan = true;
+		return this;
 	}
 
 	public boolean hasInventoryChanged(ItemStack[] inv) {
@@ -96,7 +105,7 @@ public class CoreContainer extends Container {
 
 	@Override
 	public boolean canInteractWith(EntityPlayer player) {
-		return this.isStandard8mReach(player);
+		return alwaysCan || this.isStandard8mReach(player);
 	}
 
 	public final boolean isStandard8mReach(EntityPlayer player) {
@@ -203,7 +212,7 @@ public class CoreContainer extends Container {
 		return ReikaItemHelper.canCombineStacks(is, inslot);
 	}
 
-	@Override //To avoid a couple crashes with some mods not checking array bounds
+	@Override //To avoid a couple crashes with some mods (or vanilla packet system) not checking array bounds
 	public Slot getSlot(int index)
 	{
 		if (index >= inventorySlots.size() || index < 0) {
@@ -211,7 +220,7 @@ public class CoreContainer extends Container {
 			ReikaJavaLibrary.pConsole(o);
 			ReikaChatHelper.write(o);
 			//Thread.dumpStack();
-			return new Slot(new TileEntityChest(), index, -20, -20); //create new slot off screen; hacky fix, but should work
+			return new Slot(fakeChest, index, -20, -20); //create new slot off screen; hacky fix, but should work
 		}
 		return (Slot)inventorySlots.get(index);
 	}
@@ -224,6 +233,7 @@ public class CoreContainer extends Container {
 
 	@Override
 	public ItemStack slotClick(int ID, int par2, int par3, EntityPlayer ep) {
+		//ReikaJavaLibrary.pConsole(ID, Side.SERVER);
 		ItemStack is = super.slotClick(ID, par2, par3, ep);
 		if (ii != null && tile instanceof XPProducer) {
 			if (ID < ii.getSizeInventory()) {

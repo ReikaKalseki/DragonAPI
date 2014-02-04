@@ -15,15 +15,14 @@ import net.minecraft.world.World;
 
 public enum ReikaParticleHelper {
 
+	SMOKE("smoke"),
 	CRITICAL("crit"),
 	ENCHANTMENT("magicCrit"),
 	FLAME("flame"),
 	REDSTONE("reddust"),
 	BONEMEAL("happyVillager"),
 	BUBBLE("bubble"),
-	POTION("potion"),
 	VOID("townaura"),
-	SMOKE("smoke"),
 	LARGESMOKE("largesmoke"),
 	SNOWBALL("snowballpoof"),
 	PORTAL("portal"), //and Ender
@@ -32,12 +31,21 @@ public enum ReikaParticleHelper {
 	DRIPLAVA("dripLava"),
 	EXPLODE("hugeexplosion"),
 	HEART("heart"),
-	CLOUD("cloud"), //Angry villager
+	CLOUD("cloud"),
 	NOTE("note"),
 	SGA("enchantmenttable"),
 	LAVA("lava"),
 	SPRINT("footstep"),
-	SLIME("slime");
+	SLIME("slime"),
+	FIREWORK("fireworksSpark"),
+	SUSPEND("suspended"),
+	MOBSPELL("mobSpell"),
+	AMBIENTMOBSPELL("mobSpellAmbient"),
+	SPELL("spell"),
+	INSTANTSPELL("instantSpell"),
+	WITCH("witchMagic"),
+	SNOWSHOVEL("snowshovel"),
+	ANGRY("angryVillager");
 
 	private String name;
 	private static final Random rand = new Random();

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.Property;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.ConfigList;
@@ -161,19 +162,21 @@ public class ControlledConfig {
 			throw new MisuseException("Error loading "+configMod.getDisplayName()+": You must load a config file before reading it!");
 		config = new Configuration(configFile);
 
-		//load data
-		config.load();
-
 		this.versionCheck(event);
+		this.loadConfig();
+	}
+
+	private void loadConfig() {
+		config.load();
 
 		for (int i = 0; i < optionList.length; i++) {
 			String label = optionList[i].getLabel();
 			if (optionList[i].isBoolean())
-				controls[i] = optionList[i].setState(config);
+				controls[i] = this.setState(optionList[i]);
 			if (optionList[i].isNumeric())
-				controls[i] = optionList[i].setValue(config);
+				controls[i] = this.setValue(optionList[i]);
 			if (optionList[i].isDecimal())
-				controls[i] = optionList[i].setDecimal(config);
+				controls[i] = this.setFloat(optionList[i]);
 		}
 
 		for (int i = 0; i < blockList.length; i++) {
@@ -197,7 +200,28 @@ public class ControlledConfig {
 		config.save();
 	}
 
-	public int getValueFromConfig(IDRegistry id, Configuration config) {
+	private boolean setState(ConfigList cfg) {
+		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultState());
+		if (cfg.isEnforcingDefaults())
+			prop.set(cfg.getDefaultState());
+		return prop.getBoolean(cfg.getDefaultState());
+	}
+
+	private int setValue(ConfigList cfg) {
+		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultValue());
+		if (cfg.isEnforcingDefaults())
+			prop.set(cfg.getDefaultValue());
+		return prop.getInt();
+	}
+
+	private float setFloat(ConfigList cfg) {
+		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultFloat());
+		if (cfg.isEnforcingDefaults())
+			prop.set(cfg.getDefaultFloat());
+		return (float)prop.getDouble(cfg.getDefaultFloat());
+	}
+
+	private int getValueFromConfig(IDRegistry id, Configuration config) {
 		if (id.isBlock())
 			return config.getBlock(id.getCategory(), id.getConfigName(), id.getDefaultID()).getInt();
 		if (id.isItem())
@@ -206,5 +230,13 @@ public class ControlledConfig {
 	}
 
 	protected void loadAdditionalData() {}
+	/*
+	public void reloadCategoryFromDefaults(String category) {
+		config.load();
+		ConfigCategory cat = config.getCategory(category);
+		cat.clear();
+		config.save();
+		this.loadConfig();
+	}*/
 
 }

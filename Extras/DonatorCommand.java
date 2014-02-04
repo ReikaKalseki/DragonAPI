@@ -12,8 +12,8 @@ package Reika.DragonAPI.Extras;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.util.ChatMessageComponent;
 import Reika.DragonAPI.Auxiliary.DonatorController;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 public class DonatorCommand extends CommandBase {
 
@@ -32,10 +32,7 @@ public class DonatorCommand extends CommandBase {
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
 		EntityPlayerMP ep = getCommandSenderAsPlayer(ics);
-		ChatMessageComponent chat = new ChatMessageComponent();
-		String sg = DonatorController.instance.getDisplayList();
-		chat.addText(sg);
-		ep.sendChatToPlayer(chat);
+		ReikaChatHelper.sendChatToPlayer(ep, DonatorController.instance.getDisplayList());
 	}
 
 	@Override

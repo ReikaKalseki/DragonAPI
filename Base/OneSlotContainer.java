@@ -20,12 +20,16 @@ public class OneSlotContainer extends CoreContainer {
 	private IInventory inv;
 
 	public OneSlotContainer(EntityPlayer player, TileEntity te) {
+		this(player, te, 0);
+	}
+
+	public OneSlotContainer(EntityPlayer player, TileEntity te, int offsetY) {
 		super(player, te);
 		ep = player;
 		inv = (IInventory)te;
 		this.addSlotToContainer(new Slot(inv, 0, 80, 35));
 
-		this.addPlayerInventory(player);
+		this.addPlayerInventoryWithOffset(player, 0, offsetY);
 	}
 
 	/**
