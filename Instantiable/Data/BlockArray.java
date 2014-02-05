@@ -20,6 +20,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Interfaces.SemiTransparent;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -415,6 +416,12 @@ public class BlockArray {
 		if (!Block.blocksList[id].canCollideCheck(id, false) && !BlockFluid.class.isAssignableFrom(Block.blocksList[id].getClass())) {
 			this.addBlockCoordinate(x, y, z);
 			return true;
+		}
+		if (Block.blocksList[id] instanceof SemiTransparent) {
+			int meta = world.getBlockMetadata(x, y, z);
+			SemiTransparent b = (SemiTransparent)Block.blocksList[id];
+			if (b.isOpaque(meta))
+				return false;
 		}
 		if (!Block.blocksList[id].isOpaqueCube()) //do not block but do not add
 			return true;

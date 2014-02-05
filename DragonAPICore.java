@@ -20,6 +20,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 
 public class DragonAPICore {
 
@@ -60,11 +61,15 @@ public class DragonAPICore {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading on Reika's computer; Dev features enabled.");
 	}
 
+	protected static Side getSide() {
+		return FMLCommonHandler.instance().getEffectiveSide();
+	}
+
 	public static boolean isOnActualServer() {
-		return FMLCommonHandler.instance().getMinecraftServerInstance() instanceof DedicatedServer;
+		return getSide() == Side.SERVER && FMLCommonHandler.instance().getMinecraftServerInstance() instanceof DedicatedServer;
 	}
 
 	public static boolean isSinglePlayer() {
-		return FMLCommonHandler.instance().getMinecraftServerInstance() instanceof IntegratedServer;
+		return getSide() == Side.SERVER && FMLCommonHandler.instance().getMinecraftServerInstance() instanceof IntegratedServer;
 	}
 }
