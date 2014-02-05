@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Random;
 
 import net.minecraft.server.dedicated.DedicatedServer;
+import net.minecraft.server.integrated.IntegratedServer;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
@@ -61,6 +62,9 @@ public class DragonAPICore {
 
 	public static boolean isOnActualServer() {
 		return FMLCommonHandler.instance().getMinecraftServerInstance() instanceof DedicatedServer;
-		//MinecraftServer.getServer().isDedicatedServer();
+	}
+
+	public static boolean isSinglePlayer() {
+		return FMLCommonHandler.instance().getMinecraftServerInstance() instanceof IntegratedServer;
 	}
 }
