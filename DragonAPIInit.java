@@ -92,7 +92,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies="after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft")
+@Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies="after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;after:powersuits")
 @NetworkMod(clientSideRequired = true, serverSideRequired = true)
 public class DragonAPIInit extends DragonAPIMod {
 
