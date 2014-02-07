@@ -176,6 +176,36 @@ public class BlockArray {
 		}
 	}
 
+	public void recursiveAddMultipleWithBounds(World world, int x, int y, int z, List<Integer> id, int x1, int y1, int z1, int x2, int y2, int z2) {
+		if (overflow)
+			return;
+		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
+			return;
+		boolean flag = false;
+		for (int i = 0; i < id.size(); i++) {
+			if (world.getBlockId(x, y, z) == id.get(i)) {
+				flag = true;
+			}
+		}
+		if (!flag)
+			return;
+		if (this.hasBlock(x, y, z))
+			return;
+		this.addBlockCoordinate(x, y, z);
+		try {
+			this.recursiveAddMultipleWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddMultipleWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddMultipleWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddMultipleWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddMultipleWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddMultipleWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2);
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
+		}
+	}
+
 	/** Like the ordinary recursive add but with a bounded volume and tolerance for multiple IDs. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
 	public void recursiveMultiAddWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int... ids) {

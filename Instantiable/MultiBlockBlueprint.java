@@ -50,7 +50,7 @@ public class MultiBlockBlueprint {
 	}
 
 	public MultiBlockBlueprint addBlockAt(int x, int y, int z, int id) {
-		return this.addBlockAt(id, OreDictionary.WILDCARD_VALUE, x, y, z);
+		return this.addBlockAt(x, y, z, id, OreDictionary.WILDCARD_VALUE);
 	}
 
 	public MultiBlockBlueprint addCenteredBlockAt(int x, int y, int z, int id, int meta) {

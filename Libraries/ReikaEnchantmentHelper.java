@@ -15,8 +15,9 @@ import java.util.Map;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 
-public class ReikaEnchantmentHelper {
+public class ReikaEnchantmentHelper extends DragonAPICore {
 
 	/** Get a listing of all enchantments on an ItemStack. Args: ItemStack */
 	public static HashMap<Enchantment,Integer> getEnchantments(ItemStack is) {

@@ -22,12 +22,13 @@ import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.ExpandedOreRecipe;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 
-public class ReikaRecipeHelper {
+public class ReikaRecipeHelper extends DragonAPICore {
 
 	private static final CraftingManager cr = CraftingManager.getInstance();
 	private static final List<IRecipe> recipes = cr.getRecipeList();
