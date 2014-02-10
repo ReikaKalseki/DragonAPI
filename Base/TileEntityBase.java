@@ -38,6 +38,7 @@ public abstract class TileEntityBase extends TileEntity {
 	private int pseudometa;
 	protected boolean shutDown;
 	public String placer;
+	private int ticksExisted;
 
 	private final StepTimer updateTimer;
 	private final StepTimer packetTimer;
@@ -54,6 +55,10 @@ public abstract class TileEntityBase extends TileEntity {
 		super();
 		updateTimer = new StepTimer(this.getBlockUpdateDelay());
 		packetTimer = new StepTimer(this.getPacketDelay());
+	}
+
+	public int getTicksExisted() {
+		return ticksExisted;
 	}
 
 	public int getPacketDelay() {
@@ -198,6 +203,7 @@ public abstract class TileEntityBase extends TileEntity {
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			}
 		}
+		ticksExisted++;
 	}
 
 	private void sendSyncPacket() {

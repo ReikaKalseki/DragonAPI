@@ -55,4 +55,7 @@ public abstract class InertEntity extends Entity {
 	@Override
 	public void applyEntityCollision(Entity par1Entity) {}
 
+	@Override
+	public final void setFire(int ticks) {}
+
 }

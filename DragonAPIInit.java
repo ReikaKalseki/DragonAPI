@@ -42,6 +42,7 @@ import Reika.DragonAPI.Auxiliary.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Extras.DonatorCommand;
 import Reika.DragonAPI.Extras.GuideCommand;
+import Reika.DragonAPI.Extras.LogControlCommand;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -185,6 +186,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void registerCommands(FMLServerStartingEvent evt) {
 		evt.registerServerCommand(new GuideCommand());
 		evt.registerServerCommand(new DonatorCommand());
+		evt.registerServerCommand(new LogControlCommand());
 	}
 
 	@ForgeSubscribe

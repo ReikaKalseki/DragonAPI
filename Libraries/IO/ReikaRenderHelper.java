@@ -14,6 +14,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -30,7 +31,7 @@ import Reika.DragonAPI.Instantiable.Rendering.ReikaModelledBreakFX;
 import Reika.DragonAPI.Interfaces.RenderFetcher;
 import Reika.DragonAPI.Interfaces.TextureFetcher;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 
 public final class ReikaRenderHelper extends DragonAPICore {
 
@@ -56,7 +57,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	/** Converts a biome to a color multiplier (for use in things like leaf textures).
 	 * Args: World, x, z, material (grass, water, etc), bit */
 	public static float biomeToColorMultiplier(World world, int x, int z, String mat, int bit) {
-		int[] color = ReikaWorldHelper.biomeToRGB(world, x, z, mat);
+		int[] color = ReikaBiomeHelper.biomeToRGB(world, x, z, mat);
 		float mult = RGBtoColorMultiplier(color, bit);
 		return mult;
 	}
@@ -131,9 +132,21 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	}
 
 	public static void enableLighting() {
-		Minecraft.getMinecraft().entityRenderer.enableLightmap(1);
+		enableEntityLighting();
 		RenderHelper.enableStandardItemLighting();
 		GL11.glEnable(GL11.GL_LIGHTING);
+	}
+
+	public static void disableEntityLighting() {
+		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+	}
+
+	public static void enableEntityLighting() {
+		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 	}
 
 	/** Prepare for drawing primitive geometry by disabling all lighting and textures. Args: Is alpha going to be used */

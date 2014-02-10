@@ -20,26 +20,22 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -92,41 +88,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	public static boolean nonSolidBlocks(int id) {
 		return (BlockProperties.nonSolidArray[id]);
-	}
-
-	/** Converts the given coordinates to an RGB representation of those coordinates' biome's color, for the given material type.
-	 * Args: World, x, z, material (String) */
-	public static int[] biomeToRGB(World world, int x, int z, String material) {
-		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-		int color = ReikaWorldHelper.biomeToHex(biome, material);
-		return ReikaColorAPI.HexToRGB(color);
-	}
-
-	public static int[] biomeToRGB(IBlockAccess world, int x, int z, String material) {
-		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-		int color = ReikaWorldHelper.biomeToHex(biome, material);
-		return ReikaColorAPI.HexToRGB(color);
-	}
-
-	/** Converts the given coordinates to a hex representation of those coordinates' biome's color, for the given material type.
-	 * Args: World, x, z, material (String) */
-	public static int biomeToHexColor(World world, int x, int z, String material) {
-		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-		int color = ReikaWorldHelper.biomeToHex(biome, material);
-		return color;
-	}
-
-	private static int biomeToHex(BiomeGenBase biome, String mat) {
-		int color = 0;
-		if (mat == "Leaves")
-			color = biome.getBiomeFoliageColor();
-		if (mat == "Grass")
-			color = biome.getBiomeGrassColor();
-		if (mat == "Water")
-			color = biome.getWaterColorMultiplier();
-		if (mat == "Sky")
-			color = biome.getSkyColorByTemp(biome.getIntTemperature());
-		return color;
 	}
 
 	/** Caps the metadata at a certain value (eg, for leaves, metas are from 0-11, but there are only 4 types, and each type has 3 metas).
@@ -322,67 +283,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 	}
 
-	/** Returns true if the passed biome is a snow biome.  Args: Biome*/
-	public static boolean isSnowBiome(BiomeGenBase biome) {
-		if (biome == BiomeGenBase.frozenOcean)
-			return true;
-		if (biome == BiomeGenBase.frozenRiver)
-			return true;
-		if (biome == BiomeGenBase.iceMountains)
-			return true;
-		if (biome == BiomeGenBase.icePlains)
-			return true;
-		if (biome == BiomeGenBase.taiga)
-			return true;
-		if (biome == BiomeGenBase.taigaHills)
-			return true;
-		if (biome.getEnableSnow())
-			return true;
-		if (biome.biomeName.toLowerCase().contains("arctic"))
-			return true;
-		if (biome.biomeName.toLowerCase().contains("tundra"))
-			return true;
-		if (biome.biomeName.toLowerCase().contains("alpine"))
-			return true;
-		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
-		for (int i = 0; i < types.length; i++) {
-			if (types[i] == BiomeDictionary.Type.FROZEN)
-				return true;
-		}
-		return false;
-	}
-
-	/** Returns true if the passed biome is a hot biome.  Args: Biome*/
-	public static boolean isHotBiome(BiomeGenBase biome) {
-		if (biome == BiomeGenBase.desert)
-			return true;
-		if (biome == BiomeGenBase.desertHills)
-			return true;
-		if (biome == BiomeGenBase.hell)
-			return true;
-		if (biome == BiomeGenBase.jungle)
-			return true;
-		if (biome == BiomeGenBase.jungleHills)
-			return true;
-		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
-		for (int i = 0; i < types.length; i++) {
-			if (types[i] == BiomeDictionary.Type.WASTELAND)
-				return true;
-			if (types[i] == BiomeDictionary.Type.DESERT)
-				return true;
-			if (types[i] == BiomeDictionary.Type.JUNGLE)
-				return true;
-		}
-		return false;
-	}
-
 	/** Applies temperature effects to the environment. Args: World, x, y, z, temperature */
 	public static void temperatureEnvironment(World world, int x, int y, int z, int temperature) {
 		if (temperature < 0) {
 			for (int i = 0; i < 6; i++) {
-				ForgeDirection side = (ReikaWorldHelper.checkForAdjMaterial(world, x, y, z, Material.water));
+				ForgeDirection side = (checkForAdjMaterial(world, x, y, z, Material.water));
 				if (side != null)
-					ReikaWorldHelper.changeAdjBlock(world, x, y, z, side, Block.ice.blockID, 0);
+					changeAdjBlock(world, x, y, z, side, Block.ice.blockID, 0);
 			}
 		}
 		if (temperature > 450)	{ // Wood autoignition
@@ -606,31 +513,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return false;
 	}
 
-	/** Returns a broad-stroke biome temperature in degrees centigrade.
-	 * Args: biome */
-	public static int getBiomeTemp(BiomeGenBase biome) {
-		int Tamb = 25; //Most biomes = 25C
-		if (ReikaWorldHelper.isSnowBiome(biome))
-			Tamb = -20; //-20C
-		if (ReikaWorldHelper.isHotBiome(biome))
-			Tamb = 40;
-		if (biome == BiomeGenBase.hell)
-			Tamb = 300;	//boils water, so 300C (3 x 100)
-		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
-		for (int i = 0; i < types.length; i++) {
-			if (types[i] == BiomeDictionary.Type.NETHER)
-				Tamb = 300;
-		}
-		return Tamb;
-	}
-
-	/** Returns a broad-stroke biome temperature in degrees centigrade.
-	 * Args: World, x, z */
-	public static int getBiomeTemp(World world, int x, int z) {
-		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-		return getBiomeTemp(biome);
-	}
-
 	/** Performs machine overheat effects (primarily intended for RotaryCraft).
 	 * Args: World, x, y, z, item drop id, item drop metadata, min drops, max drops,
 	 * spark particles yes/no, number-of-sparks multiplier (default 20-40),
@@ -802,7 +684,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
-		legacySetBlockAndMetadataWithNotify(world, x, y, z, idto, metato);
+		world.setBlock(x, y, z, idto, metato, 3);
 		world.markBlockForUpdate(x, y, z);
 		recursiveFill(world, x+1, y, z, id, idto, meta, metato);
 		recursiveFill(world, x-1, y, z, id, idto, meta, metato);
@@ -823,7 +705,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
-		legacySetBlockAndMetadataWithNotify(world, x, y, z, idto, metato);
+		world.setBlock(x, y, z, idto, metato, 3);
 		world.markBlockForUpdate(x, y, z);
 		recursiveFillWithBounds(world, x+1, y, z, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
 		recursiveFillWithBounds(world, x-1, y, z, id, idto, meta, metato, x1, y1, z1, x2, y2, z2);
@@ -847,7 +729,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (ReikaMathLibrary.py3d(x-x0, y-y0, z-z0) > r)
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
-		legacySetBlockAndMetadataWithNotify(world, x, y, z, idto, metato);
+		world.setBlock(x, y, z, idto, metato, 3);
 		world.markBlockForUpdate(x, y, z);
 		recursiveFillWithinSphere(world, x+1, y, z, id, idto, meta, metato, x0, y0, z0, r);
 		recursiveFillWithinSphere(world, x-1, y, z, id, idto, meta, metato, x0, y0, z0, r);
@@ -932,7 +814,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 					//ReikaColorAPI.writeCoords(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
 					return true;
 				}
-				else if (id != 0 && id != locid && (isCollideable(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord) && !softBlocks(id))) {
+				else if (id != 0 && id != locid && (ReikaBlockHelper.isCollideable(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord) && !softBlocks(id))) {
 					i = (float)(range + 1); //Hard loop break
 				}
 			}
@@ -1024,7 +906,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				int var12 = world.getBlockMetadata(var8, var9, var10);
 				Block var13 = Block.blocksList[var11];
 				//ReikaColorAPI.write(var11);
-				if (var13 != null && (var11 > 0 && !ReikaWorldHelper.softBlocks(var11) && (var11 != Block.leaves.blockID) && (var11 != Block.web.blockID)) && var13.canCollideCheck(var12, false)) {
+				if (var13 != null && (var11 > 0 && !softBlocks(var11) && (var11 != Block.leaves.blockID) && (var11 != Block.web.blockID)) && var13.canCollideCheck(var12, false)) {
 					MovingObjectPosition var14 = var13.collisionRayTrace(world, var8, var9, var10, par1Vec3, par2Vec3);
 					if (var14 != null)
 						pos = var14;
@@ -1136,28 +1018,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return (pos == null);
 	}
 
-	/** Returns true if the block has a hitbox. Args: World, x, y, z */
-	public static boolean isCollideable(World world, int x, int y, int z) {
-		if (world.getBlockId(x, y, z) == 0)
-			return false;
-		Block b = Block.blocksList[world.getBlockId(x, y, z)];
-		return (b.getCollisionBoundingBoxFromPool(world, x, y, z) != null);
-	}
-
-	public static boolean legacySetBlockMetadataWithNotify(World world, int x, int y, int z, int meta) {
-		return world.setBlockMetadataWithNotify(x, y, z, meta, 3);
-	}
-
-	public static boolean legacySetBlockAndMetadataWithNotify(World world, int x, int y, int z, int id, int meta) {
-		return world.setBlock(x, y, z, id, meta, 3);
-	}
-
-	public static boolean legacySetBlockWithNotify(World world, int x, int y, int z, int id) {
-		boolean flag = world.setBlock(x, y, z, id, 0, 3);
-		world.markBlockForUpdate(x, y, z);
-		return flag;
-	}
-
 	/** Returns true if the specified corner has at least one air block adjacent to it,
 	 * but is not surrounded by air on all sides or in the void. Args: World, x, y, z */
 	public static boolean cornerHasAirAdjacent(World world, int x, int y, int z) {
@@ -1234,39 +1094,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return (airs != 8 && nonopq);
 	}
 
-	/** Spills the entire inventory of an ItemStack[] at the specified coordinates with a 1-block spread.
-	 * Args: World, x, y, z, inventory */
-	public static void spillAndEmptyInventory(World world, int x, int y, int z, ItemStack[] inventory) {
-		EntityItem ei;
-		ItemStack is;
-		for (int i = 0; i < inventory.length; i++) {
-			is = inventory[i];
-			inventory[i] = null;
-			if (is != null && !world.isRemote) {
-				ei = new EntityItem(world, x+rand.nextFloat(), y+rand.nextFloat(), z+rand.nextFloat(), is);
-				ReikaEntityHelper.addRandomDirVelocity(ei, 0.2);
-				world.spawnEntityInWorld(ei);
-			}
-		}
-	}
-
-	/** Spills the entire inventory of an ItemStack[] at the specified coordinates with a 1-block spread.
-	 * Args: World, x, y, z, IInventory */
-	public static void spillAndEmptyInventory(World world, int x, int y, int z, IInventory ii) {
-		int size = ii.getSizeInventory();
-		for (int i = 0; i < size; i++) {
-			ItemStack s = ii.getStackInSlot(i);
-			if (s != null) {
-				ii.setInventorySlotContents(i, null);
-				EntityItem ei = new EntityItem(world, x+rand.nextFloat(), y+rand.nextFloat(), z+rand.nextFloat(), s);
-				ReikaEntityHelper.addRandomDirVelocity(ei, 0.2);
-				ei.delayBeforeCanPickup = 10;
-				if (!world.isRemote)
-					world.spawnEntityInWorld(ei);
-			}
-		}
-	}
-
 	/** Spawns a line of particles between two points. Args: World, start x,y,z, end x,y,z, particle type, particle speed x,y,z, number of particles */
 	public static void spawnParticleLine(World world, double x1, double y1, double z1, double x2, double y2, double z2, String name, double vx, double vy, double vz, int spacing) {
 		double dx = x2-x1;
@@ -1307,28 +1134,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static void causeAdjacentUpdates(World world, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
 		world.notifyBlocksOfNeighborChange(x, y, z, id);
-	}
-
-	/** Tests if a block is a dirt-type one, such that non-farm plants can grow on it. Args: id, metadata, material */
-	public static boolean isDirtType(int id, int meta, Material mat) {
-		if (id == Block.dirt.blockID)
-			return true;
-		if (id == Block.grass.blockID)
-			return true;
-		if (id == Block.gravel.blockID)
-			return false;
-		return false;
-	}
-
-	/** Tests if a block is a liquid block. Args: ID */
-	public static boolean isLiquid(int id) {
-		if (id == 0)
-			return false;
-		Block b = Block.blocksList[id];
-		Material mat = b.blockMaterial;
-		if (mat == Material.lava || mat == Material.water)
-			return true;
-		return b instanceof BlockFluid;
 	}
 
 	/** Drops all items from a given block. Args: World, x, y, z, fortune level */
@@ -1571,35 +1376,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				return true;
 		}
 		return false;
-	}
-
-	public static float getBiomeHumidity(BiomeGenBase biome) {
-		biome = ReikaBiomeHelper.getParentBiomeType(biome);
-		if (biome == BiomeGenBase.jungle)
-			return 1F;
-		if (biome == BiomeGenBase.ocean)
-			return 1F;
-		if (biome == BiomeGenBase.swampland)
-			return 0.85F;
-		if (biome == BiomeGenBase.forest)
-			return 0.6F;
-		if (biome == BiomeGenBase.plains)
-			return 0.4F;
-		if (biome == BiomeGenBase.desert)
-			return 0.2F;
-		if (biome == BiomeGenBase.hell)
-			return 0.1F;
-		if (biome == BiomeGenBase.beach)
-			return 0.95F;
-		if (biome == BiomeGenBase.icePlains)
-			return 0.4F;
-		if (biome == BiomeGenBase.mushroomIsland)
-			return 0.75F;
-		return 0.5F;
-	}
-
-	public static float getBiomeHumidity(World world, int x, int z) {
-		return getBiomeHumidity(world.getBiomeGenForCoords(x, z));
 	}
 
 	public static EntityLivingBase getClosestLivingEntity(World world, double x, double y, double z, AxisAlignedBB box) {

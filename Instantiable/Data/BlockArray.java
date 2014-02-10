@@ -176,6 +176,34 @@ public class BlockArray {
 		}
 	}
 
+	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
+	 * id to replace, min x,y,z, max x,y,z */
+	public void recursiveAddWithBoundsRanged(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2, int r) {
+		if (overflow)
+			return;
+		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
+			return;
+		if (world.getBlockId(x, y, z) != id) {
+			return;
+		}
+		if (this.hasBlock(x, y, z))
+			return;
+		this.addBlockCoordinate(x, y, z);
+		try {
+			for (int i = -r; i <= r; i++) {
+				for (int j = -r; j <= r; j++) {
+					for (int k = -r; k <= r; k++) {
+						this.recursiveAddWithBoundsRanged(world, x+i, y+j, z+k, id, x1, y1, z1, x2, y2, z2, r);
+					}
+				}
+			}
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
+		}
+	}
+
 	public void recursiveAddMultipleWithBounds(World world, int x, int y, int z, List<Integer> id, int x1, int y1, int z1, int x2, int y2, int z2) {
 		if (overflow)
 			return;

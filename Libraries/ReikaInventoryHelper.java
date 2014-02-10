@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -19,6 +20,7 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
@@ -817,5 +819,38 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 				return false;
 		}
 		return true;
+	}
+
+	/** Spills the entire inventory of an ItemStack[] at the specified coordinates with a 1-block spread.
+	 * Args: World, x, y, z, inventory */
+	public static void spillAndEmptyInventory(World world, int x, int y, int z, ItemStack[] inventory) {
+		EntityItem ei;
+		ItemStack is;
+		for (int i = 0; i < inventory.length; i++) {
+			is = inventory[i];
+			inventory[i] = null;
+			if (is != null && !world.isRemote) {
+				ei = new EntityItem(world, x+rand.nextFloat(), y+rand.nextFloat(), z+rand.nextFloat(), is);
+				ReikaEntityHelper.addRandomDirVelocity(ei, 0.2);
+				world.spawnEntityInWorld(ei);
+			}
+		}
+	}
+
+	/** Spills the entire inventory of an ItemStack[] at the specified coordinates with a 1-block spread.
+	 * Args: World, x, y, z, IInventory */
+	public static void spillAndEmptyInventory(World world, int x, int y, int z, IInventory ii) {
+		int size = ii.getSizeInventory();
+		for (int i = 0; i < size; i++) {
+			ItemStack s = ii.getStackInSlot(i);
+			if (s != null) {
+				ii.setInventorySlotContents(i, null);
+				EntityItem ei = new EntityItem(world, x+rand.nextFloat(), y+rand.nextFloat(), z+rand.nextFloat(), s);
+				ReikaEntityHelper.addRandomDirVelocity(ei, 0.2);
+				ei.delayBeforeCanPickup = 10;
+				if (!world.isRemote)
+					world.spawnEntityInWorld(ei);
+			}
+		}
 	}
 }

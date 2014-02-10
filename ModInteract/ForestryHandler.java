@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
@@ -21,12 +22,14 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 public class ForestryHandler extends ModHandlerBase {
 
 	public final int apatiteID;
+	public final int saplingID;
 
 	private static final ForestryHandler instance = new ForestryHandler();
 
 	private ForestryHandler() {
 		super();
 		int idapatite = -1;
+		int idsapling = -1;
 		if (this.hasMod()) {
 			try {
 				Class forest = this.getMod().getItemClass();
@@ -35,6 +38,11 @@ public class ForestryHandler extends ModHandlerBase {
 				Method get = forest.getMethod("item");
 				Item item = (Item)get.invoke(entry);
 				idapatite = item.itemID;
+
+				Class blocks = this.getMod().getBlockClass();
+				Field sapling = blocks.getField("saplingGE");
+				Block s = (Block)sapling.get(null);
+				idsapling = s.blockID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -66,6 +74,7 @@ public class ForestryHandler extends ModHandlerBase {
 		}
 
 		apatiteID = idapatite;
+		saplingID = idsapling;
 	}
 
 	public static ForestryHandler getInstance() {
@@ -74,7 +83,7 @@ public class ForestryHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return apatiteID != -1;
+		return apatiteID != -1 && saplingID != -1;
 	}
 
 	@Override

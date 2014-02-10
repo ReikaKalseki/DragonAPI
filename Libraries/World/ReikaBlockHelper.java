@@ -10,6 +10,8 @@
 package Reika.DragonAPI.Libraries.World;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFluid;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
@@ -84,5 +86,39 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		default:
 			return 0;
 		}
+	}
+
+	public static Block getBlock(World world, int x, int y, int z) {
+		return Block.blocksList[world.getBlockId(x, y, z)];
+	}
+
+	/** Returns true if the block has a hitbox. Args: World, x, y, z */
+	public static boolean isCollideable(World world, int x, int y, int z) {
+		if (world.getBlockId(x, y, z) == 0)
+			return false;
+		Block b = Block.blocksList[world.getBlockId(x, y, z)];
+		return (b.getCollisionBoundingBoxFromPool(world, x, y, z) != null);
+	}
+
+	/** Tests if a block is a dirt-type one, such that non-farm plants can grow on it. Args: id, metadata, material */
+	public static boolean isDirtType(int id, int meta, Material mat) {
+		if (id == Block.dirt.blockID)
+			return true;
+		if (id == Block.grass.blockID)
+			return true;
+		if (id == Block.gravel.blockID)
+			return false;
+		return false;
+	}
+
+	/** Tests if a block is a liquid block. Args: ID */
+	public static boolean isLiquid(int id) {
+		if (id == 0)
+			return false;
+		Block b = Block.blocksList[id];
+		Material mat = b.blockMaterial;
+		if (mat == Material.lava || mat == Material.water)
+			return true;
+		return b instanceof BlockFluid;
 	}
 }

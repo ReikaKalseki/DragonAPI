@@ -17,6 +17,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public enum ReikaPlantHelper {
@@ -55,7 +56,7 @@ public enum ReikaPlantHelper {
 		case CACTUS:
 			return idbelow == Block.sand.blockID;
 		case FLOWER:
-			return ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow);
+			return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
 		case MUSHROOM:
 			return idbelow == Block.dirt.blockID || idbelow == Block.mycelium.blockID;
 		case SAPLING:/*
@@ -63,9 +64,9 @@ public enum ReikaPlantHelper {
 				world.setBlock(x, y, z, Block.grass.blockID);
 				return true;
 			}*/
-			return ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow);
+			return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
 		case SUGARCANE:
-			if (idbelow != Block.sand.blockID && !ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow))
+			if (idbelow != Block.sand.blockID && !ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow))
 				return false;
 			ForgeDirection water = ReikaWorldHelper.checkForAdjMaterial(world, x, y-1, z, Material.water);
 			return water != null && water.offsetY != 0;
@@ -76,7 +77,7 @@ public enum ReikaPlantHelper {
 		case NETHERWART:
 			return idbelow == Block.slowSand.blockID;
 		case TALLGRASS:
-			return ReikaWorldHelper.isDirtType(idbelow, metabelow, matbelow);
+			return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
 		case LILYPAD:
 			return matbelow == Material.water && metabelow == 0;
 		}

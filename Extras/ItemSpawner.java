@@ -101,7 +101,7 @@ public class ItemSpawner extends Item {
 		{
 			if (!ep.capabilities.isCreativeMode)
 				--is.stackSize;
-			ReikaWorldHelper.legacySetBlockWithNotify(world, x, y, z, Block.mobSpawner.blockID);
+			world.setBlock(x, y, z, Block.mobSpawner.blockID);
 			TileEntityMobSpawner spw = (TileEntityMobSpawner)world.getBlockTileEntity(x, y, z);
 			if (spw != null) {
 				world.playSoundEffect(x+0.5, y+0.5, z+0.5, "step.stone", 1F, 1.5F);
