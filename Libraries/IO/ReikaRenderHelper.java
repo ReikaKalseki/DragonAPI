@@ -84,14 +84,15 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	/** Renders a vertical-plane circle in the world. Args: radius, center x,y,z, RGB, phi */
 	public static void renderVCircle(double r, double x, double y, double z, int[] color, double phi) {
-		prepareGeoDraw(false);
+		prepareGeoDraw(true);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = Tessellator.instance;
 		//var5.setColorRGBA(color[0], color[1], color[2], 255);
+		int a = color.length == 4 ? color[3] : 255;
 		var5.startDrawing(GL11.GL_LINE_LOOP);
-		var5.setColorRGBA(color[0], color[1], color[2], 255);
+		var5.setColorRGBA(color[0], color[1], color[2], a);
 		for (int i = 0; i < 360; i++) {
 			int sign = 1;
 			double h = r*Math.cos(ReikaPhysicsHelper.degToRad(i));
