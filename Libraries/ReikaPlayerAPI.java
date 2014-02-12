@@ -10,7 +10,9 @@
 package Reika.DragonAPI.Libraries;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -94,5 +96,14 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	public static boolean isAdmin(EntityPlayer ep) {
 		return MinecraftServer.getServerConfigurationManager(MinecraftServer.getServer()).isPlayerOpped(ep.getEntityName());
+	}
+
+	/** Hacky, but it works */
+	public static void setPlayerWalkSpeed(EntityPlayer ep, float speed) {
+		PlayerCapabilities pc = ep.capabilities;
+		NBTTagCompound nbt = new NBTTagCompound();
+		pc.writeCapabilitiesToNBT(nbt);
+		nbt.setFloat("walkSpeed", speed);
+		pc.readCapabilitiesFromNBT(nbt);
 	}
 }
