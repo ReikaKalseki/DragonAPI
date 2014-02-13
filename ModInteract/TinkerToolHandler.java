@@ -85,34 +85,20 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	 * Infi Tool Check for Tinkers Construct compatibility
 	 */
 
-	/**
-	 * Checks to see whether or not tools belong to the infi tool list
-	 * 
-	 * @param itemstack
-	 * @return if is INFI_TOOL
-	 */
-	public static boolean isItemInfiTool(ItemStack itemstack) {
-		return itemstack.getUnlocalizedName().startsWith("item.InfiTool");
-	}
-
 	public boolean isPick(ItemStack itemstack) {
 		boolean flag = this.isPickID(itemstack);
-		if (isItemInfiTool(itemstack)) {
-			String stackName = itemstack.getUnlocalizedName();
-			if (stackName.contains("Pickaxe")) {
-				flag = true;
-			}
+		String stackName = itemstack.getUnlocalizedName();
+		if (stackName.equals(Item.itemsList[pickID].getUnlocalizedName())) {
+			flag = true;
 		}
 		return flag;
 	}
 
 	public boolean isHammer(ItemStack itemstack) {
 		boolean flag = this.isHammerID(itemstack);
-		if (isItemInfiTool(itemstack)) {
-			String stackName = itemstack.getUnlocalizedName();
-			if (stackName.contains("Hammer")) {
-				flag = true;
-			}
+		String stackName = itemstack.getUnlocalizedName();
+		if (stackName.equals(Item.itemsList[hammerID].getUnlocalizedName())) {
+			flag = true;
 		}
 		return flag;
 	}
