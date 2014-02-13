@@ -81,16 +81,26 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		return ModList.TINKERER;
 	}
 
-	public boolean isPick(ItemStack held) {
-		if (!this.initializedProperly())
-			return false;
-		return held.itemID == pickID;
+	public boolean isItemInfiTool(ItemStack is) {
+		return is.getUnlocalizedName().startsWith("item.InfiTool");
 	}
 
-	public boolean isHammer(ItemStack held) {
-		if (!this.initializedProperly())
-			return false;
-		return held.itemID == hammerID;
+	public boolean isPick(ItemStack is) {
+		if (this.isItemInfiTool(is)) {
+			String stackName = is.getUnlocalizedName();
+			if (stackName.contains("Pickaxe"))
+				return true;
+		}
+		return false;
+	}
+
+	public boolean isHammer(ItemStack is) {
+		if (this.isItemInfiTool(is)) {
+			String stackName = is.getUnlocalizedName();
+			if (stackName.contains("Hammer"))
+				return true;
+		}
+		return false;
 	}
 
 	public int getHarvestLevel(ItemStack is) {
