@@ -15,6 +15,7 @@ import java.util.HashMap;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.event.FMLInterModComms;
 
@@ -50,22 +51,32 @@ public class ReikaMystcraftHelper {
 	}
 
 	public static int getStabilityForAge(World world) {
+		if (!loadedCorrectly)
+			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getStabilizationParameter() : 0;
 	}
 
 	public static int getInstabilityForAge(World world) {
+		if (!loadedCorrectly)
+			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getTotalInstability() : 0;
 	}
 
 	public static int getBonusInstabilityForAge(World world) {
+		if (!loadedCorrectly)
+			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getBonusInstability() : 0;
 	}
 
 	public static int getBaseInstabilityForAge(World world) {
+		if (!loadedCorrectly)
+			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getBaseInstability() : 0;
 	}
 
 	public static boolean setStabilityForAge(World world, int stability) {
+		if (!loadedCorrectly)
+			return false;
 		if (isMystAge(world)) {
 			InstabilityInterface ii = getOrCreateInterface(world);
 			return ii.setStabilization(stability);
@@ -76,6 +87,8 @@ public class ReikaMystcraftHelper {
 	}
 
 	public static boolean addStabilityForAge(World world, int toAdd) {
+		if (!loadedCorrectly)
+			return false;
 		if (isMystAge(world)) {
 			InstabilityInterface ii = getOrCreateInterface(world);
 			int stable = ii.getStabilizationParameter();
@@ -88,6 +101,8 @@ public class ReikaMystcraftHelper {
 	}
 
 	public static boolean addBaseInstabilityForAge(World world, short toAdd) {
+		if (!loadedCorrectly)
+			return false;
 		if (isMystAge(world)) {
 			InstabilityInterface ii = getOrCreateInterface(world);
 			short unstable = ii.getBaseInstability();
@@ -100,6 +115,8 @@ public class ReikaMystcraftHelper {
 	}
 
 	public static boolean addBonusInstabilityForAge(World world, int toAdd) {
+		if (!loadedCorrectly)
+			return false;
 		if (isMystAge(world)) {
 			InstabilityInterface ii = getOrCreateInterface(world);
 			int unstable = ii.getBonusInstability();
@@ -112,6 +129,8 @@ public class ReikaMystcraftHelper {
 	}
 
 	private static InstabilityInterface getOrCreateInterface(World world) {
+		if (!loadedCorrectly)
+			return null;
 		InstabilityInterface ii = ageData.get(world.provider.dimensionId);
 		if (ii == null) {
 			ii = new InstabilityInterface(world);
@@ -247,27 +266,32 @@ public class ReikaMystcraftHelper {
 		Field base = null;
 		Field adata = null;
 		boolean load = true;
-		try {
-			Class prov = Class.forName("com.xcompwiz.mystcraft.world.WorldProviderMyst");
-			cont = prov.getDeclaredField("controller");
-			cont.setAccessible(true);
-			Class age = Class.forName("com.xcompwiz.mystcraft.world.AgeController");
-			insta = age.getDeclaredField("instabilityController");
-			insta.setAccessible(true);
-			Class controller = Class.forName("com.xcompwiz.mystcraft.instability.InstabilityController");
-			stable = controller.getDeclaredField("stabilization");
-			stable.setAccessible(true);
-			num = age.getDeclaredField("instability");
-			num.setAccessible(true);
-			Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
-			base = data.getDeclaredField("instability");
-			base.setAccessible(true);
-			adata = age.getDeclaredField("agedata");
-			adata.setAccessible(true);
+		if (ModList.MYSTCRAFT.isLoaded()) {
+			try {
+				Class prov = Class.forName("com.xcompwiz.mystcraft.world.WorldProviderMyst");
+				cont = prov.getDeclaredField("controller");
+				cont.setAccessible(true);
+				Class age = Class.forName("com.xcompwiz.mystcraft.world.AgeController");
+				insta = age.getDeclaredField("instabilityController");
+				insta.setAccessible(true);
+				Class controller = Class.forName("com.xcompwiz.mystcraft.instability.InstabilityController");
+				stable = controller.getDeclaredField("stabilization");
+				stable.setAccessible(true);
+				num = age.getDeclaredField("instability");
+				num.setAccessible(true);
+				Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
+				base = data.getDeclaredField("instability");
+				base.setAccessible(true);
+				adata = age.getDeclaredField("agedata");
+				adata.setAccessible(true);
+			}
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading Mystcraft instability interfacing!");
+				e.printStackTrace();
+				load = false;
+			}
 		}
-		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading Mystcraft instability interfacing!");
-			e.printStackTrace();
+		else {
 			load = false;
 		}
 		controller = cont;

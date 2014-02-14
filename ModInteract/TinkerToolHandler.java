@@ -88,7 +88,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	public boolean isPick(ItemStack is) {
 		if (this.isItemInfiTool(is)) {
 			String stackName = is.getUnlocalizedName();
-			if (stackName.contains("Pickaxe"))
+			if (stackName.equals(Item.itemsList[pickID].getUnlocalizedName()))
 				return true;
 		}
 		return false;
@@ -97,7 +97,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	public boolean isHammer(ItemStack is) {
 		if (this.isItemInfiTool(is)) {
 			String stackName = is.getUnlocalizedName();
-			if (stackName.contains("Hammer"))
+			if (stackName.equals(Item.itemsList[hammerID].getUnlocalizedName()))
 				return true;
 		}
 		return false;

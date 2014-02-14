@@ -16,7 +16,7 @@ import net.minecraft.tileentity.TileEntity;
 
 public class ContainerBasicStorage extends CoreContainer {
 
-	private IInventory lowerInv;
+	protected IInventory lowerInv;
 
 	public ContainerBasicStorage(EntityPlayer player, TileEntity te) {
 		super(player, te);
@@ -29,7 +29,7 @@ public class ContainerBasicStorage extends CoreContainer {
 		{
 			for (int j = 0; j < 9; j++)
 			{
-				this.addSlotToContainer(new Slot(lowerInv, j + i * 9, 8 + j * 18, 18 + i * 18));
+				this.addSlotToContainer(this.getSlotOfType(lowerInv, j + i * 9, 8 + j * 18, 18 + i * 18));
 			}
 		}
 
@@ -37,14 +37,18 @@ public class ContainerBasicStorage extends CoreContainer {
 		{
 			for (int j = 0; j < 9; j++)
 			{
-				this.addSlotToContainer(new Slot(player.inventory, j + i * 9 + 9, 8 + j * 18, 103 + i * 18 + dy));
+				this.addSlotToContainer(this.getSlotOfType(player.inventory, j + i * 9 + 9, 8 + j * 18, 103 + i * 18 + dy));
 			}
 		}
 
 		for (int i = 0; i < 9; i++)
 		{
-			this.addSlotToContainer(new Slot(player.inventory, i, 8 + i * 18, 161 + dy));
+			this.addSlotToContainer(this.getSlotOfType(player.inventory, i, 8 + i * 18, 161 + dy));
 		}
+	}
+
+	protected Slot getSlotOfType(IInventory ii, int id, int x, int y) {
+		return new Slot(ii, id, x, y);
 	}
 
 	/**
