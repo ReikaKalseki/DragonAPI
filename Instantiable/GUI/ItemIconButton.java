@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Instantiable;
+package Reika.DragonAPI.Instantiable.GUI;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -26,10 +26,10 @@ public class ItemIconButton extends GuiButton {
 
 	private ItemStack iconItem;
 
-	private RenderItem itemRender = new RenderItem();
+	private static final RenderItem itemRender = new RenderItem();
 
 	/** Draw a Gui Button with an image background. Args: id, x, y, color, itemstack */
-	public ItemIconButton(int par1, int par2, int par3, int par9, ItemStack is, RenderItem ir)
+	public ItemIconButton(int par1, int par2, int par3, int par9, ItemStack is)
 	{
 		super(par1, par2, par3, 200, 20, null);
 		enabled = true;
@@ -45,8 +45,6 @@ public class ItemIconButton extends GuiButton {
 
 		if (is != null)
 			iconItem = is.copy();
-
-		itemRender = ir;
 	}
 
 	/**

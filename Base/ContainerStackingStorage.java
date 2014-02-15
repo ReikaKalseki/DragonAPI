@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2013
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Base;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -5,7 +14,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import Reika.DragonAPI.Instantiable.SlotFullStack;
+import Reika.DragonAPI.Instantiable.GUI.SlotFullStack;
 
 public class ContainerStackingStorage extends ContainerBasicStorage {
 
