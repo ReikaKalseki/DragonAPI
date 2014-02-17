@@ -751,8 +751,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	/** Returns true if there is a clear line of sight between two entites. Args: World, Entity 1, Entity 2 */
 	public static boolean lineOfSight(World world, Entity e1, Entity e2) {
-		if (world.isRemote)
-			return false;
 		Vec3 v1 = Vec3.fakePool.getVecFromPool(e1.posX, e1.posY+e1.getEyeHeight(), e1.posZ);
 		Vec3 v2 = Vec3.fakePool.getVecFromPool(e2.posX, e2.posY+e2.getEyeHeight(), e2.posZ);
 		return (world.clip(v1, v2) == null);
@@ -1139,6 +1137,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Drops all items from a given block. Args: World, x, y, z, fortune level */
 	public static void dropBlockAt(World world, int x, int y, int z, int fortune) {
 		int id = world.getBlockId(x, y, z);
+		if (id == 0)
+			return;
 		int meta = world.getBlockMetadata(x, y, z);
 		ArrayList<ItemStack> li = Block.blocksList[id].getBlockDropped(world, x, y, z, meta, fortune);
 		ReikaItemHelper.dropItems(world, x+0.5, y+0.5, z+0.5, li);

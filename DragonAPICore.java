@@ -13,8 +13,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
-import net.minecraft.server.dedicated.DedicatedServer;
-import net.minecraft.server.integrated.IntegratedServer;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
@@ -66,10 +64,10 @@ public class DragonAPICore {
 	}
 
 	public static boolean isOnActualServer() {
-		return getSide() == Side.SERVER && FMLCommonHandler.instance().getMinecraftServerInstance() instanceof DedicatedServer;
+		return getSide() == Side.SERVER && FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer();
 	}
 
 	public static boolean isSinglePlayer() {
-		return getSide() == Side.SERVER && FMLCommonHandler.instance().getMinecraftServerInstance() instanceof IntegratedServer;
+		return getSide() == Side.SERVER && !FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer();
 	}
 }
