@@ -57,6 +57,8 @@ public class ReikaTextureHelper {
 
 	private static final ResourceLocation font = new ResourceLocation("textures/font/ascii.png");
 	private static final ResourceLocation particle = new ResourceLocation("textures/particle/particles.png");
+	private static final ResourceLocation gui = new ResourceLocation("textures/gui/widgets.png");
+	private static final ResourceLocation hud = new ResourceLocation("textures/gui/icons.png");
 
 	private static boolean reload() {
 		return Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.isKeyDown(Keyboard.KEY_T);
@@ -166,6 +168,14 @@ public class ReikaTextureHelper {
 
 	public static void bindItemTexture() {
 		Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationItemsTexture);
+	}
+
+	public static void bindGuiTexture() {
+		Minecraft.getMinecraft().renderEngine.bindTexture(gui);
+	}
+
+	public static void bindHUDTexture() {
+		Minecraft.getMinecraft().renderEngine.bindTexture(hud);
 	}
 
 	public static int getIconHeight() {

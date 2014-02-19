@@ -23,6 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class ReikaItemHelper extends DragonAPICore {
 
@@ -176,6 +177,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 		if (!world.isRemote) {
 			world.spawnEntityInWorld(ei);
 		}
+		ReikaJavaLibrary.pConsole(ei+" >> "+world.loadedEntityList.contains(ei), is.itemID == 264);
 	}
 
 	public static void dropItems(World world, double x, double y, double z, List<ItemStack> li) {

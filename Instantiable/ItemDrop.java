@@ -66,7 +66,9 @@ public class ItemDrop {
 	public boolean equals(Object o) {
 		if (o instanceof ItemDrop) {
 			ItemDrop it = (ItemDrop)o;
-			return ReikaItemHelper.matchStacks(item, it.item);
+			if (!ReikaItemHelper.matchStacks(item, it.item))
+				return false;
+			return ItemStack.areItemStackTagsEqual(item, it.item);
 		}
 		return false;
 	}
@@ -96,6 +98,28 @@ public class ItemDrop {
 	public boolean isEnchanted() {
 		Map map = EnchantmentHelper.getEnchantments(item);
 		return map != null && !map.isEmpty();
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(item.getDisplayName());
+		sb.append(": ");
+		sb.append(item.itemID);
+		sb.append(":");
+		sb.append(item.getItemDamage());
+		sb.append(" (");
+		if (minDrops != maxDrops) {
+			sb.append(minDrops);
+			sb.append("-");
+		}
+		sb.append(maxDrops);
+		sb.append(")");
+		if (this.isEnchanted()) {
+			sb.append("; ");
+			sb.append(EnchantmentHelper.getEnchantments(item));
+		}
+		return sb.toString();
 	}
 
 }
