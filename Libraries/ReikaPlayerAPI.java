@@ -106,4 +106,16 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		nbt.setFloat("walkSpeed", speed);
 		pc.readCapabilitiesFromNBT(nbt);
 	}
+
+	/** Returns true if the player has the given ID and metadata in their inventory, or is in creative mode.
+	 * Args: Player, ID, metadata (-1 for any) */
+	public static boolean playerHasOrIsCreative(EntityPlayer ep, int id, int meta) {
+		if (ep.capabilities.isCreativeMode)
+			return true;
+		ItemStack[] ii = ep.inventory.mainInventory;
+		if (meta != -1)
+			return (ReikaInventoryHelper.checkForItemStack(id, meta, ii));
+		else
+			return (ReikaInventoryHelper.checkForItem(id, ii));
+	}
 }

@@ -157,6 +157,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static ItemStack getSizedItemStack(ItemStack is, int num) {
+		if (is == null)
+			return null;
 		if (num <= 0)
 			return null;
 		ItemStack is2 = new ItemStack(is.itemID, num, is.getItemDamage());

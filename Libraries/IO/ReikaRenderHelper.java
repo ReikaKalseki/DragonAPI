@@ -62,8 +62,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		return mult;
 	}
 
-	/** Renders a flat circle in the world. Args: radius, center x,y,z, RGB*/
-	public static void renderCircle(double r, double x, double y, double z, int[] color) {
+	/** Renders a flat circle in the world. Args: radius, center x,y,z, RGB, angle step */
+	public static void renderCircle(double r, double x, double y, double z, int[] color, int step) {
 		prepareGeoDraw(false);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1F, 1F, 1F, 1F);
@@ -72,7 +72,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			var5.draw();
 		var5.startDrawing(GL11.GL_LINE_LOOP);
 		var5.setColorRGBA(color[0], color[1], color[2], 255);
-		for (int i = 0; i < 360; i++) {
+		for (int i = 0; i < 360; i += step) {
 			var5.addVertex(x+r*Math.cos(ReikaPhysicsHelper.degToRad(i)), y, z+r*Math.sin(ReikaPhysicsHelper.degToRad(i)));
 		}
 		var5.draw();
@@ -83,7 +83,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	}
 
 	/** Renders a vertical-plane circle in the world. Args: radius, center x,y,z, RGB, phi */
-	public static void renderVCircle(double r, double x, double y, double z, int[] color, double phi) {
+	public static void renderVCircle(double r, double x, double y, double z, int[] color, double phi, int step) {
 		prepareGeoDraw(true);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
@@ -93,7 +93,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		int a = color.length == 4 ? color[3] : 255;
 		var5.startDrawing(GL11.GL_LINE_LOOP);
 		var5.setColorRGBA(color[0], color[1], color[2], a);
-		for (int i = 0; i < 360; i++) {
+		for (int i = 0; i < 360; i += step) {
 			int sign = 1;
 			double h = r*Math.cos(ReikaPhysicsHelper.degToRad(i));
 			if (i >= 180)

@@ -31,7 +31,68 @@ public class ItemMaterialController {
 	public static final ItemMaterialController instance = new ItemMaterialController();
 
 	private ItemMaterialController() {
+		this.addVanillaItem(Item.hoeGold, ItemMaterial.GOLD);
+		this.addVanillaItem(Item.pickaxeGold, ItemMaterial.GOLD);
+		this.addVanillaItem(Item.shovelGold, ItemMaterial.GOLD);
+		this.addVanillaItem(Item.swordGold, ItemMaterial.GOLD);
+		this.addVanillaItem(Item.axeGold, ItemMaterial.GOLD);
+		this.addVanillaItem(Block.railPowered, ItemMaterial.GOLD);
+		this.addVanillaItem(Item.helmetGold, ItemMaterial.GOLD);
+		this.addVanillaItem(Item.bootsGold, ItemMaterial.GOLD);
+		this.addVanillaItem(Item.legsGold, ItemMaterial.GOLD);
+		this.addVanillaItem(Item.plateGold, ItemMaterial.GOLD);
 
+		this.addVanillaItem(Item.hoeIron, ItemMaterial.IRON);
+		this.addVanillaItem(Item.pickaxeIron, ItemMaterial.IRON);
+		this.addVanillaItem(Item.shovelIron, ItemMaterial.IRON);
+		this.addVanillaItem(Item.swordIron, ItemMaterial.IRON);
+		this.addVanillaItem(Item.axeIron, ItemMaterial.IRON);
+		this.addVanillaItem(Block.railDetector, ItemMaterial.IRON);
+		this.addVanillaItem(Block.rail, ItemMaterial.IRON);
+		this.addVanillaItem(Block.railActivator, ItemMaterial.IRON);
+		this.addVanillaItem(Item.helmetIron, ItemMaterial.IRON);
+		this.addVanillaItem(Item.bootsIron, ItemMaterial.IRON);
+		this.addVanillaItem(Item.legsIron, ItemMaterial.IRON);
+		this.addVanillaItem(Item.plateIron, ItemMaterial.IRON);
+		this.addVanillaItem(Item.flintAndSteel, ItemMaterial.IRON);
+		this.addVanillaItem(Block.fenceIron, ItemMaterial.IRON);
+		this.addVanillaItem(Block.cauldron, ItemMaterial.IRON);
+		this.addVanillaItem(Block.anvil, ItemMaterial.IRON);
+		this.addVanillaItem(Block.hopperBlock, ItemMaterial.IRON);
+		this.addVanillaItem(Item.doorIron, ItemMaterial.IRON);
+		this.addVanillaItem(Item.bucketEmpty, ItemMaterial.IRON);
+		this.addVanillaItem(Item.minecartEmpty, ItemMaterial.IRON);
+
+		this.addVanillaItem(Block.obsidian, ItemMaterial.OBSIDIAN);
+		this.addVanillaItem(Block.blockDiamond, ItemMaterial.DIAMOND);
+		this.addVanillaItem(Block.blockIron, ItemMaterial.IRON);
+		this.addVanillaItem(Block.blockGold, ItemMaterial.GOLD);
+		this.addVanillaItem(Block.stone, ItemMaterial.STONE);
+		this.addVanillaItem(Block.cobblestone, ItemMaterial.STONE);
+		this.addVanillaItem(Block.stoneBrick, ItemMaterial.STONE);
+		this.addVanillaItem(Block.brick, ItemMaterial.STONE);
+		this.addVanillaItem(Block.planks, ItemMaterial.WOOD);
+		this.addVanillaItem(Block.wood, ItemMaterial.WOOD);
+		this.addVanillaItem(Block.bookShelf, ItemMaterial.WOOD);
+		this.addVanillaItem(Item.doorWood, ItemMaterial.WOOD);
+		this.addVanillaItem(Item.sign, ItemMaterial.WOOD);
+		this.addVanillaItem(Block.workbench, ItemMaterial.WOOD);
+		this.addVanillaItem(Block.chest, ItemMaterial.WOOD);
+		this.addVanillaItem(Block.chestTrapped, ItemMaterial.WOOD);
+		this.addVanillaItem(Block.stairsWoodOak, ItemMaterial.WOOD);
+		this.addVanillaItem(Block.stairsWoodBirch, ItemMaterial.WOOD);
+		this.addVanillaItem(Block.stairsWoodSpruce, ItemMaterial.WOOD);
+		this.addVanillaItem(Block.stairsWoodJungle, ItemMaterial.WOOD);
+		this.addVanillaItem(Item.stick, ItemMaterial.WOOD);
+		this.addVanillaItem(Item.bowlEmpty, ItemMaterial.WOOD);
+		this.addVanillaItem(Item.swordWood, ItemMaterial.WOOD);
+		this.addVanillaItem(Item.pickaxeWood, ItemMaterial.WOOD);
+		this.addVanillaItem(Item.axeWood, ItemMaterial.WOOD);
+		this.addVanillaItem(Item.shovelWood, ItemMaterial.WOOD);
+
+		this.addVanillaItem(Item.diamond, ItemMaterial.DIAMOND);
+		this.addVanillaItem(Item.ingotIron, ItemMaterial.IRON);
+		this.addVanillaItem(Item.ingotGold, ItemMaterial.GOLD);
 	}
 
 	public void addItem(ItemStack is, ItemMaterial mat) {
@@ -85,54 +146,6 @@ public class ItemMaterialController {
 
 	public ItemMaterial getMaterial(ItemStack is) {
 		return data.get(Arrays.asList(is.itemID, is.getItemDamage()));
-	}
-
-	{
-		this.addVanillaItem(Item.hoeGold, ItemMaterial.GOLD);
-		this.addVanillaItem(Item.pickaxeGold, ItemMaterial.GOLD);
-		this.addVanillaItem(Item.shovelGold, ItemMaterial.GOLD);
-		this.addVanillaItem(Item.swordGold, ItemMaterial.GOLD);
-		this.addVanillaItem(Item.axeGold, ItemMaterial.GOLD);
-		this.addVanillaItem(Block.railPowered, ItemMaterial.GOLD);
-		this.addVanillaItem(Item.helmetGold, ItemMaterial.GOLD);
-		this.addVanillaItem(Item.bootsGold, ItemMaterial.GOLD);
-		this.addVanillaItem(Item.legsGold, ItemMaterial.GOLD);
-		this.addVanillaItem(Item.plateGold, ItemMaterial.GOLD);
-
-		this.addVanillaItem(Item.hoeIron, ItemMaterial.IRON);
-		this.addVanillaItem(Item.pickaxeIron, ItemMaterial.IRON);
-		this.addVanillaItem(Item.shovelIron, ItemMaterial.IRON);
-		this.addVanillaItem(Item.swordIron, ItemMaterial.IRON);
-		this.addVanillaItem(Item.axeIron, ItemMaterial.IRON);
-		this.addVanillaItem(Block.railDetector, ItemMaterial.IRON);
-		this.addVanillaItem(Block.rail, ItemMaterial.IRON);
-		this.addVanillaItem(Block.railActivator, ItemMaterial.IRON);
-		this.addVanillaItem(Item.helmetIron, ItemMaterial.IRON);
-		this.addVanillaItem(Item.bootsIron, ItemMaterial.IRON);
-		this.addVanillaItem(Item.legsIron, ItemMaterial.IRON);
-		this.addVanillaItem(Item.plateIron, ItemMaterial.IRON);
-		this.addVanillaItem(Item.flintAndSteel, ItemMaterial.IRON);
-		this.addVanillaItem(Block.fenceIron, ItemMaterial.IRON);
-		this.addVanillaItem(Block.cauldron, ItemMaterial.IRON);
-		this.addVanillaItem(Block.anvil, ItemMaterial.IRON);
-		this.addVanillaItem(Block.hopperBlock, ItemMaterial.IRON);
-		this.addVanillaItem(Item.doorIron, ItemMaterial.IRON);
-		this.addVanillaItem(Item.bucketEmpty, ItemMaterial.IRON);
-		this.addVanillaItem(Item.minecartEmpty, ItemMaterial.IRON);
-
-		this.addVanillaItem(Block.obsidian, ItemMaterial.OBSIDIAN);
-		this.addVanillaItem(Block.blockDiamond, ItemMaterial.DIAMOND);
-		this.addVanillaItem(Block.blockIron, ItemMaterial.IRON);
-		this.addVanillaItem(Block.blockGold, ItemMaterial.GOLD);
-		this.addVanillaItem(Block.stone, ItemMaterial.STONE);
-		this.addVanillaItem(Block.cobblestone, ItemMaterial.STONE);
-		this.addVanillaItem(Block.stoneBrick, ItemMaterial.STONE);
-		this.addVanillaItem(Block.brick, ItemMaterial.STONE);
-		this.addVanillaItem(Block.planks, ItemMaterial.WOOD);
-
-		this.addVanillaItem(Item.diamond, ItemMaterial.DIAMOND);
-		this.addVanillaItem(Item.ingotIron, ItemMaterial.IRON);
-		this.addVanillaItem(Item.ingotGold, ItemMaterial.GOLD);
 	}
 
 }

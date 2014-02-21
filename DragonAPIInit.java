@@ -67,6 +67,7 @@ import Reika.DragonAPI.ModInteract.MimicryHandler;
 import Reika.DragonAPI.ModInteract.OpenBlockHandler;
 import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
 import Reika.DragonAPI.ModInteract.QuantumOreHandler;
+import Reika.DragonAPI.ModInteract.RedstoneArsenalHandler;
 import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
 import Reika.DragonAPI.ModInteract.ThermalHandler;
@@ -305,6 +306,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.OPENBLOCKS, OpenBlockHandler.class);
 		this.initHandler(ModList.FACTORIZATION, FactorizationHandler.class);
 		this.initHandler(ModList.HARVESTCRAFT, HarvestCraftHandler.class);
+		this.initHandler(ModList.ARSENAL, RedstoneArsenalHandler.class);
 	}
 
 	private void initHandler(ModList mod, Class c) {

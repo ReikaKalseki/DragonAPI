@@ -70,7 +70,8 @@ public enum ModList {
 	FACTORIZATION("factorization", "factorization.common.Registry"),
 	UE("UniversalElectricity"),
 	EXTRAUTILS("ExtraUtilities"),
-	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits");
+	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits"),
+	ARSENAL("Redstone Arsenal", "redstonearsenal.item.RAItems");
 
 	private final boolean condition;
 	public final String modLabel;

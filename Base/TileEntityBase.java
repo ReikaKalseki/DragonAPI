@@ -293,4 +293,24 @@ public abstract class TileEntityBase extends TileEntity {
 	public boolean needsToCauseBlockUpdates() {
 		return false;
 	}
+
+	public TileEntity getAdjacentTileEntity(ForgeDirection dir) {
+		int dx = xCoord+dir.offsetX;
+		int dy = yCoord+dir.offsetY;
+		int dz = zCoord+dir.offsetZ;
+		return this.getTileEntity(dx, dy, dz);
+	}
+
+	public TileEntity getTileEntity(int x, int y, int z) {
+		int id = worldObj.getBlockId(x, y, z);
+		if (id <= 0)
+			return null;
+		Block b = Block.blocksList[id];
+		if (b == null)
+			return null;
+		int meta = worldObj.getBlockMetadata(x, y, z);
+		if (!b.hasTileEntity(meta))
+			return null;
+		return worldObj.getBlockTileEntity(x, y, z);
+	}
 }
