@@ -101,7 +101,7 @@ public final class ReikaPotionHelper extends DragonAPICore {
 		return is;
 	}
 
-	private static int getPotionDamageValue(Potion potion) {
+	public static int getPotionDamageValue(Potion potion) {
 		return potionDamageValues.containsKey(potion) ? potionDamageValues.get(potion) : 0;
 	}
 

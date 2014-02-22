@@ -78,7 +78,7 @@ public enum ReikaParticleHelper {
 
 	public void spawnAroundBlockWithOutset(World world, int x, int y, int z, double vx, double vy, double vz, int number, double outset) {
 		for (int i = 0; i < number; i++) {
-			world.spawnParticle(name, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), vx, vy, vz);
+			world.spawnParticle(name, x-outset+rand.nextDouble()*(1+outset), y-outset+rand.nextDouble()*(1+outset), z-outset+rand.nextDouble()*(1+outset), vx, vy, vz);
 		}
 	}
 

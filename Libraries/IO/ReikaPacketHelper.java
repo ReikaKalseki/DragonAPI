@@ -74,7 +74,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		if (side == Side.SERVER) {
 			// We are on the server side.
 			EntityPlayerMP player2 = (EntityPlayerMP) player;
-			PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToServer(packet);
 			PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
 		}
 		else if (side == Side.CLIENT) {

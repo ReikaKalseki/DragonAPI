@@ -15,6 +15,7 @@ public class ReikaThermoHelper {
 	public static final double GRAPHITE_HEAT = 0.71;
 
 	public static final double SODIUM_HEAT = 1.23;
+	public static final double CO2_HEAT = 1.168;
 
 	public static final double WATER_BOIL_ENTHALPY = 2260; // kJ/kg
 
