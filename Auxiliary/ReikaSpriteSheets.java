@@ -52,7 +52,7 @@ public final class ReikaSpriteSheets {
 		GL11.glScalef(1.0F, -1.0F, -1.0F);
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
 		GL11.glPopMatrix();
-		Tessellator v5 = new Tessellator();
+		Tessellator v5 = Tessellator.instance;
 		if (type == type.INVENTORY) {
 			if (v5.isDrawing)
 				v5.draw();

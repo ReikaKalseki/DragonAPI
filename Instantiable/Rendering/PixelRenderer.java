@@ -63,7 +63,7 @@ public class PixelRenderer {
 
 		}
 		ReikaRenderHelper.prepareGeoDraw(rgba[3] < 255);
-		Tessellator v5 = new Tessellator();
+		Tessellator v5 = Tessellator.instance;
 		if (flip) {
 			if (xy) {
 				v5.startDrawingQuads();

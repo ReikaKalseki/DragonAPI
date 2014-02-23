@@ -68,7 +68,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 		float var7 = 0.00390625F;
 		float var8 = 0.00390625F;
-		Tessellator var9 = new Tessellator();
+		Tessellator var9 = Tessellator.instance;
 		if (var9.isDrawing)
 			var9.draw();
 		var9.startDrawingQuads();
@@ -114,7 +114,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		float var6 = (par5 >> 16 & 255) / 255.0F;
 		float var7 = (par5 >> 8 & 255) / 255.0F;
 		float var8 = (par5 & 255) / 255.0F;
-		Tessellator var9 = new Tessellator();
+		Tessellator var9 = Tessellator.instance;
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -257,7 +257,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		float var6 = (par5 >> 16 & 255) / 255.0F;
 		float var7 = (par5 >> 8 & 255) / 255.0F;
 		float var8 = (par5 & 255) / 255.0F;
-		Tessellator var9 = new Tessellator();
+		Tessellator var9 = Tessellator.instance;
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);

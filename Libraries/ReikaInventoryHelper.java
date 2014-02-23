@@ -540,20 +540,6 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return (num < maxnum);
 	}
 
-	/** Adds a certain amount of a specified ID and metadata to an inventory slot, creating the itemstack if necessary.
-	 * Returns true if the whole stack fit and was added. Args: ID, number, metadata (-1 for any), inventory, slot */
-	public static boolean addOrSetStack(int id, int size, int meta, ItemStack[] inv, int slot) {
-		if (inv[slot] == null) {
-			inv[slot] = new ItemStack(id, size, meta);
-			return true;
-		}
-		int max = inv[slot].getMaxStackSize();
-		if (inv[slot].itemID != id || (inv[slot].getItemDamage() != meta && meta != -1) || inv[slot].stackSize+size > max)
-			return false;
-		inv[slot].stackSize += size;
-		return true;
-	}
-
 	/** Returns the number of unique itemstacks in the inventory after sorting and cleaning. Args: Inventory */
 	public static int getTotalUniqueStacks(ItemStack[] inv) {
 		ItemStack[] cp = new ItemStack[inv.length];
@@ -779,8 +765,24 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			return null;
 	}
 
-	public static void addOrSetStack(ItemStack is, ItemStack[] inv, int i) {
-		addOrSetStack(is.itemID, is.stackSize, is.getItemDamage(), inv, i);
+	public static boolean addOrSetStack(ItemStack is, ItemStack[] inv, int slot) {
+		if (is == null)
+			return false;
+		if (inv[slot] == null) {
+			inv[slot] = is.copy();
+			return true;
+		}
+		int max = inv[slot].getMaxStackSize();
+		if (!(ReikaItemHelper.matchStacks(is, inv[slot]) && ItemStack.areItemStackTagsEqual(is, inv[slot])) || inv[slot].stackSize+is.stackSize > max)
+			return false;
+		inv[slot].stackSize += is.stackSize;
+		return true;
+	}
+
+	/** Adds a certain amount of a specified ID and metadata to an inventory slot, creating the itemstack if necessary.
+	 * Returns true if the whole stack fit and was added. Args: ID, number, metadata (-1 for any), inventory, slot */
+	public static boolean addOrSetStack(int id, int size, int meta, ItemStack[] inv, int slot) {
+		return addOrSetStack(new ItemStack(id, size, meta), inv, slot);
 	}
 
 	public static List<ItemStack> getWholeInventory(IInventory ii) {

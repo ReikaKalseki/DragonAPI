@@ -36,7 +36,7 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		if (color[3] < 0)
 			color[3] *= -1;
 		boolean filled = true;
-		Tessellator var5 = new Tessellator();
+		Tessellator var5 = Tessellator.instance;
 		double xdiff = box.minX-x;
 		double ydiff = box.minY-y;
 		double zdiff = box.minZ-z;

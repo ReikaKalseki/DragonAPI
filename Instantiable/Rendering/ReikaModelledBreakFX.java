@@ -75,7 +75,7 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 	}
 
 	@Override
-	public void renderParticle(Tessellator par1Tessellator, float par2, float par3, float par4, float par5, float par6, float par7)
+	public void renderParticle(Tessellator v5, float par2, float par3, float par4, float par5, float par6, float par7)
 	{
 		float f6 = particleTextureIndexX / 16.0F;
 		float f7 = f6 + 0.0624375F;
@@ -91,13 +91,10 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 		else
 			Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(tex));
 
-		Tessellator v5 = new Tessellator();
-		v5.startDrawingQuads();
-		par1Tessellator.addVertexWithUV(f11 - par3 * f10 - par6 * f10, f12 - par4 * f10, f13 - par5 * f10 - par7 * f10, texpos[0], texpos[1]);
-		par1Tessellator.addVertexWithUV(f11 - par3 * f10 + par6 * f10, f12 + par4 * f10, f13 - par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]);
-		par1Tessellator.addVertexWithUV(f11 + par3 * f10 + par6 * f10, f12 + par4 * f10, f13 + par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]+pw);
-		par1Tessellator.addVertexWithUV(f11 + par3 * f10 - par6 * f10, f12 - par4 * f10, f13 + par5 * f10 - par7 * f10, texpos[0], texpos[1]+pw);
-		v5.draw();
+		v5.addVertexWithUV(f11 - par3 * f10 - par6 * f10, f12 - par4 * f10, f13 - par5 * f10 - par7 * f10, texpos[0], texpos[1]);
+		v5.addVertexWithUV(f11 - par3 * f10 + par6 * f10, f12 + par4 * f10, f13 - par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]);
+		v5.addVertexWithUV(f11 + par3 * f10 + par6 * f10, f12 + par4 * f10, f13 + par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]+pw);
+		v5.addVertexWithUV(f11 + par3 * f10 - par6 * f10, f12 - par4 * f10, f13 + par5 * f10 - par7 * f10, texpos[0], texpos[1]+pw);
 	}
 
 }

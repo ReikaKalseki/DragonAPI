@@ -69,7 +69,7 @@ public enum ModList {
 	OPENBLOCKS("OpenBlocks", "openblocks.OpenBlocks$Blocks", "openblocks.OpenBlocks$Items"),
 	FACTORIZATION("factorization", "factorization.common.Registry"),
 	UE("UniversalElectricity"),
-	EXTRAUTILS("ExtraUtilities"),
+	EXTRAUTILS("ExtraUtilities", "extrautils.ExtraUtils"),
 	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits"),
 	ARSENAL("Redstone Arsenal", "redstonearsenal.item.RAItems");
 

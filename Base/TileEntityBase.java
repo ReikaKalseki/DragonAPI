@@ -105,7 +105,12 @@ public abstract class TileEntityBase extends TileEntity {
 		return placer != null && !placer.isEmpty() ? worldObj.getPlayerEntityByName(placer) : null;
 	}
 
-	public boolean isIDTEMatch(World world, int x, int y, int z) {
+	public boolean isIDTEMatch() {
+		World world = worldObj;
+		int x = xCoord;
+		int y = yCoord;
+		int z = zCoord;
+
 		int id = world.getBlockId(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		if (id == 0)
