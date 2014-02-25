@@ -148,8 +148,8 @@ public class MagicCropHandler extends CropHandlerBase {
 		cropEssenceID = idcropessence;
 		configChance = chance;
 
-		natureEssence = new ItemStack(cropEssenceID, 1, 0);
-		christmasEssence = new ItemStack(cropEssenceID, 1, 20);
+		natureEssence = cropEssenceID >= 0 ? new ItemStack(cropEssenceID, 1, 0) : null;
+		christmasEssence = cropEssenceID >= 0 ? new ItemStack(cropEssenceID, 1, 20) : null;
 	}
 
 	@Override
@@ -205,14 +205,17 @@ public class MagicCropHandler extends CropHandlerBase {
 	@Override
 	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, int id, int meta, int fortune) {
 		ArrayList<ItemStack> li = new ArrayList();
-		if (ReikaRandomHelper.doWithChance(20*(1+fortune)))
+		if (ReikaRandomHelper.doWithChance(20*(1+fortune)) && christmasEssence != null)
 			li.add(christmasEssence);
-		if (ReikaRandomHelper.doWithChance(20*(1+fortune)))
+		if (ReikaRandomHelper.doWithChance(20*(1+fortune)) && natureEssence != null)
 			li.add(natureEssence);
 		if (ReikaRandomHelper.doWithChance(20*(1+fortune))) {
-			li.add(this.getWeakEssence());
-			if (ReikaRandomHelper.doWithChance(25*(1+fortune)))
-				li.add(this.getWeakEssence());
+			ItemStack weak = this.getWeakEssence();
+			if (weak != null) {
+				li.add(weak);
+				if (ReikaRandomHelper.doWithChance(25*(1+fortune)))
+					li.add(weak);
+			}
 		}
 		return li;
 	}
@@ -229,7 +232,7 @@ public class MagicCropHandler extends CropHandlerBase {
 	}
 
 	public ItemStack getWeakEssence() {
-		return new ItemStack(essenceID, 1, 0);
+		return essenceID >= 0 ? new ItemStack(essenceID, 1, 0) : null;
 	}
 
 }
