@@ -57,7 +57,6 @@ public class PlayerModelRenderer {
 				GL11.glFrontFace(GL11.GL_CW);
 				modelReika.renderBodyParts(ep, tick);
 				GL11.glFrontFace(GL11.GL_CCW);
-
 				GL11.glScaled(1, -1, 1);
 			}
 			else if ("FurryDJ".equals(ep.getEntityName())) {

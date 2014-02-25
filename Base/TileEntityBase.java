@@ -90,9 +90,6 @@ public abstract class TileEntityBase extends TileEntity {
 			NBT.setString("place", placer);
 	}
 
-	/**
-	 * Reads a tile entity from NBT.
-	 */
 	@Override
 	public void readFromNBT(NBTTagCompound NBT)
 	{
