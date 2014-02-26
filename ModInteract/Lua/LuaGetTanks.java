@@ -39,9 +39,16 @@ public class LuaGetTanks extends LuaMethod {
 		Object[] o = new Object[li.size()*3];
 		for (int i = 0; i < li.size(); i++) {
 			FluidTankInfo info = li.get(i);
-			o[i*3] = info.fluid.getFluid().getLocalizedName();
-			o[i*3+1] = info.fluid.amount;
-			o[i*3+2] = info.capacity;
+			if (info.fluid != null) {
+				o[i*3] = info.fluid.getFluid().getLocalizedName();
+				o[i*3+1] = info.fluid.amount;
+				o[i*3+2] = info.capacity;
+			}
+			else {
+				o[i*3] = null;
+				o[i*3+1] = 0;
+				o[i*3+2] = info.capacity;
+			}
 		}
 		return o;
 	}

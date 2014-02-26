@@ -25,7 +25,9 @@ public class LuaReadTank extends LuaMethod {
 		int ordinal = ((Double)args[0]).intValue();
 		IFluidHandler ifl = (IFluidHandler)te;
 		Object[] o = new Object[3];
-		FluidTankInfo info = ifl.getTankInfo(ForgeDirection.UP)[0];
+		FluidTankInfo info = ifl.getTankInfo(ForgeDirection.UP)[ordinal];
+		if (info.fluid == null)
+			return new Object[]{null, 0, info.capacity};
 		o[0] = info.fluid.getFluid().getLocalizedName();
 		o[1] = info.fluid.amount;
 		o[2] = info.capacity;

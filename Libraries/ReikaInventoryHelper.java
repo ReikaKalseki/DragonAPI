@@ -76,6 +76,20 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return false;
 	}
 
+	/** Checks an inventory for an itemstack,
+	 * defined by id, and metadata. Returns true if found.
+	 * Args: Item ID, Metadata, Inventory */
+	public static boolean checkForItemStack(int id, int dmg, IInventory inv) {
+		for (int i = 0; i < inv.getSizeInventory(); i++) {
+			ItemStack is = inv.getStackInSlot(i);
+			if (is != null) {
+				if (is.itemID == id && is.getItemDamage() == dmg)
+					return true;
+			}
+		}
+		return false;
+	}
+
 	/** Checks an itemstack array (eg an inventory) for a given itemstack.
 	 * Args: Check-for itemstack, Inventory, Match size T/F */
 	public static boolean checkForItemStack(ItemStack is, ItemStack[] inv, boolean matchsize) {
@@ -851,7 +865,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			ItemStack is = ii.getStackInSlot(i);
 			if (is == null)
 				return false;
-			if (is.stackSize < is.getMaxStackSize())
+			int max = Math.min(is.getMaxStackSize(), ii.getInventoryStackLimit());
+			if (is.stackSize < max)
 				return false;
 		}
 		return true;

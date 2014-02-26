@@ -26,13 +26,20 @@ public abstract class LuaMethod {
 	private static final LuaMethod readTank = new LuaReadTank();
 	private static final LuaMethod getSlot = new LuaGetSlot();
 	private static final LuaMethod getSizeInv = new LuaInvSize();
+	private static final LuaMethod printInv = new LuaPrintInv();
+	private static final LuaMethod getCoords = new LuaGetCoords();
+	private static final LuaMethod isFull = new LuaIsFull();
+	private static final LuaMethod isTankFull = new LuaIsTankFull();
+	private static final LuaMethod hasItem = new LuaHasItem();
 
 	public LuaMethod(String name, Class requiredParent) {
 		displayName = name;
 
 		requiredClass = requiredParent;
 
-		if (!methods.contains(this))
+		if (methods.contains(this))
+			throw new IllegalArgumentException("This method is a duplicate of one that already exists!");
+		else
 			methods.add(this);
 	}
 
