@@ -888,7 +888,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 	}
 
-	/** Spills the entire inventory of an ItemStack[] at the specified coordinates with a 1-block spread.
+	/** Spills the entire inventory of an IInventory at the specified coordinates with a 1-block spread.
 	 * Args: World, x, y, z, IInventory */
 	public static void spillAndEmptyInventory(World world, int x, int y, int z, IInventory ii) {
 		int size = ii.getSizeInventory();
