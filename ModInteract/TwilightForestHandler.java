@@ -25,6 +25,7 @@ public class TwilightForestHandler extends ModHandlerBase {
 	public final int mazeStoneID;
 	public final int treeCoreID;
 	public final int shieldID;
+	public final int portalID;
 
 	public final int breakerMeta;
 

@@ -15,8 +15,12 @@ import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
+import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModOreList;
+
+import com.xcompwiz.mystcraft.api.MystObjects;
 
 public final class ReikaBlockHelper extends DragonAPICore {
 
@@ -120,5 +124,18 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		if (mat == Material.lava || mat == Material.water)
 			return true;
 		return b instanceof BlockFluid;
+	}
+
+	public static boolean isPortalBlock(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		if (id == Block.portal.blockID)
+			return true;
+		if (id == Block.endPortal.blockID)
+			return true;
+		if (ModList.MYSTCRAFT.isLoaded() && MystObjects.portal != null && MystObjects.portal.blockID == id)
+			return true;
+		if (ModList.TWILIGHT.isLoaded() && id == TwilightForestHandler.getInstance().portalID)
+			return true;
+		return false;
 	}
 }
