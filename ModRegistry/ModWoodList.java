@@ -71,7 +71,8 @@ public enum ModWoodList {
 	TRANSFORMATION(ModList.TWILIGHT, 0x66727F, 7130346, "magicLog", "magicLeaves", "sapling", new int[]{1,13}, new int[]{1,9}, 6, VarType.INSTANCE),
 	MINEWOOD(ModList.TWILIGHT, 0xC5A982, 16576836, "magicLog", "magicLeaves", "sapling", new int[]{2,14}, new int[]{2,10}, 7, VarType.INSTANCE),
 	SORTING(ModList.TWILIGHT, 0x705835, 3558403, "magicLog", "magicLeaves", "sapling", new int[]{3,15}, new int[]{3,11}, 8, VarType.INSTANCE),
-	GLOW(ModList.TRANSITIONAL, 0xE2B87B, 0xFFBC5E, "GlowWood", "GlowLeaf", "GlowSapling", 0, 0, 0, VarType.INSTANCE);
+	GLOW(ModList.TRANSITIONAL, 0xE2B87B, 0xFFBC5E, "GlowWood", "GlowLeaf", "GlowSapling", 0, 0, 0, VarType.INSTANCE),
+	FORCE(ModList.DARTCRAFT, 0xE0B749, 0xD9B22C, "forceLog", "forceLeaves", "forceSapling", 0, new int[]{0,8}, 0, VarType.INSTANCE);
 
 	private ModList mod;
 	private int blockID = -1;
@@ -93,7 +94,9 @@ public enum ModWoodList {
 
 	public static final ModWoodList[] woodList = values();
 
-	private static final HashMap<List<Integer>, ModWoodList> woodMappings = new HashMap();
+	private static final HashMap<List<Integer>, ModWoodList> logMappings = new HashMap();
+	private static final HashMap<List<Integer>, ModWoodList> leafMappings = new HashMap();
+	private static final HashMap<List<Integer>, ModWoodList> saplingMappings = new HashMap();
 
 	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, int meta, int metaleaf, int metasapling, VarType type) {
 		this(req, color, leaf, blockVar, leafVar, saplingVar, new int[]{meta}, new int[]{metaleaf}, metasapling, type);
@@ -291,15 +294,15 @@ public enum ModWoodList {
 	}
 
 	public static ModWoodList getModWood(ItemStack block) {
-		return woodMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
+		return logMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
 	}
 
 	public static ModWoodList getModWoodFromSapling(ItemStack block) {
-		return woodMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
+		return saplingMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
 	}
 
 	public static ModWoodList getModWoodFromLeaf(ItemStack block) {
-		return woodMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
+		return leafMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
 	}
 
 	public static ModWoodList getModWoodFromLeaf(int id, int meta) {
@@ -406,14 +409,14 @@ public enum ModWoodList {
 				for (int k = 0; k < metas.length; k++) {
 					int meta = metas[k];
 					List li = Arrays.asList(id, meta);
-					woodMappings.put(li, w);
+					logMappings.put(li, w);
 				}
 				for (int k = 0; k < leafmetas.length; k++) {
 					int meta = leafmetas[k];
 					List li = Arrays.asList(leaf, meta);
-					woodMappings.put(li, w);
+					leafMappings.put(li, w);
 				}
-				woodMappings.put(Arrays.asList(sapling, saplingMeta), w);
+				saplingMappings.put(Arrays.asList(sapling, saplingMeta), w);
 			}
 		}
 	}

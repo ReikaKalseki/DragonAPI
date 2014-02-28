@@ -27,7 +27,7 @@ public class LuaPrintInv extends LuaMethod {
 		IInventory ii = (IInventory) te;
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			ItemStack is = ii.getStackInSlot(i);
-			String name = is != null ? is.getDisplayName() : "Empty";
+			String name = is != null ? is.toString() : "Empty";
 			li.add(name);
 		}
 		return li.toArray();

@@ -22,7 +22,7 @@ import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 import Reika.DyeTrees.API.TreeGetter;
 
-public class TreeReader extends BlockArray {
+public final class TreeReader extends BlockArray {
 
 	private int leafCount;
 	private int logCount;
@@ -43,7 +43,9 @@ public class TreeReader extends BlockArray {
 			dyeLeafID = -1;
 	}
 
-	public void checkAndAddDyeTree(World world, int x, int y, int z) {
+	private void checkAndAddDyeTree(World world, int x, int y, int z, int ox, int oy, int oz) {
+		if (Math.abs(x-ox) > 6 || Math.abs(y-oy) > 14 || Math.abs(z-oz) > 6)
+			return;
 		int id = world.getBlockId(x, y, z);
 		if (id == 0)
 			return;
@@ -84,10 +86,14 @@ public class TreeReader extends BlockArray {
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
-					this.checkAndAddDyeTree(world, x+i, y+j, z+k);
+					this.checkAndAddDyeTree(world, x+i, y+j, z+k, ox, oy, oz);
 				}
 			}
 		}
+	}
+
+	public void checkAndAddDyeTree(World world, int x, int y, int z) {
+		this.checkAndAddDyeTree(world, x, y, z, x, y, z);
 	}
 
 	public boolean isDyeTree() {
@@ -150,12 +156,13 @@ public class TreeReader extends BlockArray {
 		ModWoodList get = ModWoodList.getModWood(id, meta);
 		ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
 
-		//ReikaJavaLibrary.pConsole("GET: "+get+"   WOOD: "+wood+"    LEAF: "+leaf);
+		//ReikaJavaLibrary.pConsole("ID:"+id+"  GET: "+get+"   WOOD: "+wood+"    LEAF: "+leaf);
 
 		if (get != wood && leaf != wood)
 			return;
 
 		this.addBlockCoordinate(x, y, z);
+		//ReikaJavaLibrary.pConsole(id+":"+get+":"+leaf);
 		if (get == wood)
 			logCount++;
 		else if (leaf == wood)

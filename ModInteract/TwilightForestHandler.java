@@ -43,6 +43,7 @@ public class TwilightForestHandler extends ModHandlerBase {
 		int idcore = -1;
 		int idshield = -1;
 		int dim = 7;
+		int idportal = -1;
 
 		if (this.hasMod()) {
 			try {
@@ -57,12 +58,14 @@ public class TwilightForestHandler extends ModHandlerBase {
 				Field shield = twilight.getField("shield");
 				Field breaker = devices.getField("META_ANTIBUILDER");
 				Field dimension = mod.getField("dimensionID");
+				Field portal = twilight.getField("portal");
 				idroot = ((Block)root.get(null)).blockID;
 				idmachine = ((Block)machine.get(null)).blockID;
 				idtowerwood = ((Block)towerwood.get(null)).blockID;
 				idmaze = ((Block)maze.get(null)).blockID;
 				idcore = ((Block)core.get(null)).blockID;
 				idshield = ((Block)shield.get(null)).blockID;
+				idportal = ((Block)portal.get(null)).blockID;
 				metabreaker = breaker.getInt(null);
 				dim = dimension.getInt(null);
 			}
@@ -103,6 +106,7 @@ public class TwilightForestHandler extends ModHandlerBase {
 		treeCoreID = idcore;
 		shieldID = idshield;
 		dimensionID = dim;
+		portalID = idportal;
 	}
 
 	public static TwilightForestHandler getInstance() {
