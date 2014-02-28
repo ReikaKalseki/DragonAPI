@@ -25,4 +25,9 @@ public class LuaIsFull extends LuaMethod {
 		return new Object[]{ReikaInventoryHelper.isFull(ii)};
 	}
 
+	@Override
+	public String getDocumentation() {
+		return "Checks if an inventory is completely full.\nArgs: None\nReturns: true/false";
+	}
+
 }

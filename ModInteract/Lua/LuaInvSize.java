@@ -23,4 +23,9 @@ public class LuaInvSize extends LuaMethod {
 		return new Object[]{((IInventory)te).getSizeInventory()};
 	}
 
+	@Override
+	public String getDocumentation() {
+		return "Returns the inventory size.\nArgs: None\nReturns: Inventory Size";
+	}
+
 }

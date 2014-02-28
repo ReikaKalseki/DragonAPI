@@ -33,4 +33,9 @@ public class LuaPrintInv extends LuaMethod {
 		return li.toArray();
 	}
 
+	@Override
+	public String getDocumentation() {
+		return "Prints an entire inventory.\nArgs: None\nReturns: List of ItemStack.toString()";
+	}
+
 }

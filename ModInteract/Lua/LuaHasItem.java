@@ -50,4 +50,9 @@ public class LuaHasItem extends LuaMethod {
 		return new Object[]{flag};
 	}
 
+	@Override
+	public String getDocumentation() {
+		return "Checks for the item in an inventory.\nArgs: ID, metadata (optional), stackSize (optional)\nReturns: true/false";
+	}
+
 }

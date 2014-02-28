@@ -30,4 +30,9 @@ public class LuaIsTankFull extends LuaMethod {
 		return new Object[]{info.fluid.amount >= info.capacity};
 	}
 
+	@Override
+	public String getDocumentation() {
+		return "Checks if a tank is full.\nArgs: Tank Index\nReturns: true/false";
+	}
+
 }

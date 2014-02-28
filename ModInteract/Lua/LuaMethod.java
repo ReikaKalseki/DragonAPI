@@ -49,6 +49,12 @@ public abstract class LuaMethod {
 
 	public abstract Object[] invoke(TileEntity te, Object[] args) throws Exception;
 
+	public abstract String getDocumentation();
+
+	public final boolean isClassInstanceOf(Class<? extends TileEntity> te) {
+		return requiredClass != null ? requiredClass.isAssignableFrom(te) : true;
+	}
+
 	public final boolean isValidFor(TileEntity te) {
 		return requiredClass != null ? requiredClass.isAssignableFrom(te.getClass()) : true;
 	}
