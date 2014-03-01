@@ -36,7 +36,7 @@ public class LuaReadTank extends LuaMethod {
 
 	@Override
 	public String getDocumentation() {
-		return "Returns the contents of an IFluidTank.\nArgs: Tank Index\nReturns: [Fluid, Amount, Capacity]";
+		return "Returns the contents of an fluid tank.\nArgs: Tank Index\nReturns: [Fluid, Amount, Capacity]";
 	}
 
 }

@@ -47,6 +47,10 @@ public abstract class LuaMethod {
 		return ReikaJavaLibrary.copyList(methods);
 	}
 
+	public static final int getNumberMethods() {
+		return methods.size();
+	}
+
 	public abstract Object[] invoke(TileEntity te, Object[] args) throws Exception;
 
 	public abstract String getDocumentation();
@@ -66,6 +70,12 @@ public abstract class LuaMethod {
 		}
 		else
 			return false;
+	}
+
+	@Override
+	public final String toString() {
+		String name = requiredClass != null ? requiredClass.getSimpleName() : "Any TileEntity";
+		return displayName+"() for "+name;
 	}
 
 }
