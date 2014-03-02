@@ -78,4 +78,7 @@ public abstract class LuaMethod {
 		return displayName+"() for "+name;
 	}
 
+	/** Without "( )" */
+	public abstract String getArgsAsString();
+
 }

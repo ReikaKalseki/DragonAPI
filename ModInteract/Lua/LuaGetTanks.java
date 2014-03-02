@@ -58,4 +58,9 @@ public class LuaGetTanks extends LuaMethod {
 		return "Returns all the fluid tanks.\nArgs: None\nReturns: List of [Fluid, Amount, Capacity]";
 	}
 
+	@Override
+	public String getArgsAsString() {
+		return "";
+	}
+
 }

@@ -422,7 +422,6 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	/** Note that this must be called after any and all texture and text rendering, as the lighting conditions are left a bit off */
 	public void drawItemStack(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
-		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
 		FontRenderer font = null;
 		if (is == null)
 			return;
@@ -447,8 +446,10 @@ public final class ReikaGuiAPI extends GuiScreen {
 	}
 
 	public void drawItemStackWithTooltip(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
+		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
 		this.drawItemStack(renderer, fr, is, x, y);
 
+		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
 		if (this.isMouseInBox(x, x+16, y, y+16)) {
 			String sg = is.getDisplayName();
 			boolean right = this.getMouseRealX() < mc.currentScreen.width/2;
@@ -457,6 +458,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 			else
 				this.drawTooltip(fr, sg);
 		}
+		GL11.glTranslatef(0.0F, 0.0F, -64.0F);
 	}
 
 	public void drawTooltip(FontRenderer f, String s) {

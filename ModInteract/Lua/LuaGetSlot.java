@@ -39,4 +39,9 @@ public class LuaGetSlot extends LuaMethod {
 		return "Returns the inventory slot contents.\nArgs: None\nReturns: \"Empty\" if empty, otherwise [itemID, metadata, stackSize, displayName]";
 	}
 
+	@Override
+	public String getArgsAsString() {
+		return "";
+	}
+
 }

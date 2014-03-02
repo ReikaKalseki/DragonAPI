@@ -28,4 +28,9 @@ public class LuaInvSize extends LuaMethod {
 		return "Returns the inventory size.\nArgs: None\nReturns: Inventory Size";
 	}
 
+	@Override
+	public String getArgsAsString() {
+		return "";
+	}
+
 }

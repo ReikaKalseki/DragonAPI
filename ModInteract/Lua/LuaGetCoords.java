@@ -27,4 +27,9 @@ public class LuaGetCoords extends LuaMethod {
 		return "Returns the TileEntity coordinates.\nArgs: None\nReturns: [x,y,z]";
 	}
 
+	@Override
+	public String getArgsAsString() {
+		return "";
+	}
+
 }

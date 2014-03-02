@@ -30,4 +30,9 @@ public class LuaIsFull extends LuaMethod {
 		return "Checks if an inventory is completely full.\nArgs: None\nReturns: true/false";
 	}
 
+	@Override
+	public String getArgsAsString() {
+		return "";
+	}
+
 }

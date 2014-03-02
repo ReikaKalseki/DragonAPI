@@ -29,6 +29,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenHills;
 import Reika.DragonAPI.Exception.VanillaIntegrityException;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -134,6 +135,7 @@ public class ReikaObfuscationHelper {
 		addField("weaponDamage", "field_77827_a", false, ItemSword.class);
 		addField("isAggressive", "field_104003_g", false, EntityEnderman.class);
 		addField("stareTimer", "field_70826_g", false, EntityEnderman.class);
+		addField("theWorldGenerator", "field_82915_S", false, BiomeGenHills.class);
 	}
 
 	private static boolean isClientSide() {

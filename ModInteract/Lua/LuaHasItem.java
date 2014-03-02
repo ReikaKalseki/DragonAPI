@@ -55,4 +55,9 @@ public class LuaHasItem extends LuaMethod {
 		return "Checks for the item in an inventory.\nArgs: ID, metadata (optional), stackSize (optional)\nReturns: true/false";
 	}
 
+	@Override
+	public String getArgsAsString() {
+		return "int itemID, int metadata*, int stackSize*";
+	}
+
 }

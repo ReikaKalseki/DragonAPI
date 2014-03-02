@@ -35,4 +35,9 @@ public class LuaIsTankFull extends LuaMethod {
 		return "Checks if a tank is full.\nArgs: Tank Index\nReturns: true/false";
 	}
 
+	@Override
+	public String getArgsAsString() {
+		return "int tankIndex";
+	}
+
 }
