@@ -15,9 +15,6 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.List;
 
-import net.minecraft.client.entity.EntityClientPlayerMP;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
@@ -34,11 +31,7 @@ import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaPacketHelper extends DragonAPICore {
 
-	public static void sendDataPacket(String ch, int id, TileEntity te, EntityPlayer player, List<Integer> data) {
-		int x = te.xCoord;
-		int y = te.yCoord;
-		int z = te.zCoord;
-		String name = te.getBlockType().getLocalizedName();
+	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, List<Integer> data) {
 
 		int npars;
 		if (data == null)
@@ -62,7 +55,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			throw new RuntimeException("TileEntity "+name+" threw a packet exception! Null data: "+(data == null)+"; Npars: "+npars);
 		}
 
 		Packet250CustomPayload packet = new Packet250CustomPayload();
@@ -73,13 +65,11 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
-			EntityPlayerMP player2 = (EntityPlayerMP) player;
 			//PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
-			EntityClientPlayerMP player2 = (EntityClientPlayerMP) player;
 			PacketDispatcher.sendPacketToServer(packet);
 			//PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
 		}
@@ -88,12 +78,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
-	public static void sendLongDataPacket(String ch, int id, TileEntity te, EntityPlayer player, List<Long> data) {
-		int x = te.xCoord;
-		int y = te.yCoord;
-		int z = te.zCoord;
-		String name = te.getBlockType().getLocalizedName();
-
+	public static void sendLongDataPacket(String ch, int id, World world, int x, int y, int z, List<Long> data) {
 		int npars;
 		if (data == null)
 			npars = 4;
@@ -105,10 +90,11 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		try {
 			outputStream.writeInt(PacketTypes.DATA.ordinal());
 			outputStream.writeInt(id);
-			if (data != null)
+			if (data != null) {
 				for (int i = 0; i < data.size(); i++) {
 					outputStream.writeLong(data.get(i));
 				}
+			}
 			outputStream.writeInt(x);
 			outputStream.writeInt(y);
 			outputStream.writeInt(z);
@@ -116,7 +102,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			throw new RuntimeException("TileEntity "+name+" threw a long packet exception! Null data: "+(data == null)+"; Npars: "+npars);
 		}
 
 		Packet250CustomPayload packet = new Packet250CustomPayload();
@@ -127,11 +112,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
-			EntityPlayerMP player2 = (EntityPlayerMP) player;
+			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
-			EntityClientPlayerMP player2 = (EntityClientPlayerMP) player;
 			PacketDispatcher.sendPacketToServer(packet);
 		}
 		else {
@@ -139,32 +123,32 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
-	public static void sendDataPacket(String ch, int id, TileEntity te, EntityPlayer player, int data) {
-		sendDataPacket(ch, id, te, player, ReikaJavaLibrary.makeListFrom(data));
+	public static void sendDataPacket(String ch, int id, TileEntity te, int data) {
+		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
 	}
 
-	public static void sendLongDataPacket(String ch, int id, TileEntity te, EntityPlayer player, long data) {
-		sendLongDataPacket(ch, id, te, player, ReikaJavaLibrary.makeListFrom(data));
+	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, int data) {
+		sendDataPacket(ch, id, world, x, y, z, ReikaJavaLibrary.makeListFrom(data));
 	}
 
-	public static void sendDataPacket(String ch, int id, TileEntity te, EntityPlayer player, int data1, int data2) {
-		sendDataPacket(ch, id, te, player, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2}));
+	public static void sendLongDataPacket(String ch, int id, TileEntity te, long data) {
+		sendLongDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
 	}
 
-	public static void sendDataPacket(String ch, int id, TileEntity te, EntityPlayer player, int data1, int data2, int data3) {
-		sendDataPacket(ch, id, te, player, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2, data3}));
+	public static void sendDataPacket(String ch, int id, TileEntity te, int data1, int data2) {
+		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2}));
 	}
 
-	public static void sendDataPacket(String ch, int id, TileEntity te, EntityPlayer player, int data1, int data2, int data3, int data4) {
-		sendDataPacket(ch, id, te, player, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2, data3, data4}));
+	public static void sendDataPacket(String ch, int id, TileEntity te, int data1, int data2, int data3) {
+		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2, data3}));
 	}
 
-	public static void sendDataPacket(String ch, int id, TileEntity te, EntityPlayer player, long data) {
-		sendLongDataPacket(ch, id, te, player, ReikaJavaLibrary.makeListFrom(data));
+	public static void sendDataPacket(String ch, int id, TileEntity te, int data1, int data2, int data3, int data4) {
+		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2, data3, data4}));
 	}
 
-	public static void sendDataPacket(String ch, int id, TileEntity te) {
-		sendDataPacket(ch, id, te, null, null);
+	public static void sendDataPacket(String ch, int id, TileEntity te, long data) {
+		sendLongDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
 	}
 
 	public static void sendSoundPacket(String ch, String path, World world, double x, double y, double z, float vol, float pitch) {

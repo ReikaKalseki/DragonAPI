@@ -81,21 +81,44 @@ public abstract class TileEntityBase extends TileEntity {
 		return (dist <= 8);
 	}
 
-	@Override
-	public void writeToNBT(NBTTagCompound NBT)
-	{
-		super.writeToNBT(NBT);
+	protected void writeSyncTag(NBTTagCompound NBT) {
 		NBT.setInteger("meta", pseudometa);
+	}
+
+	protected void readSyncTag(NBTTagCompound NBT) {
+		pseudometa = NBT.getInteger("meta");
+	}
+
+	@Override
+	public void writeToNBT(NBTTagCompound NBT) {
+		super.writeToNBT(NBT);
+		this.writeSyncTag(NBT);
+
 		if (placer != null && !placer.isEmpty())
 			NBT.setString("place", placer);
 	}
 
 	@Override
-	public void readFromNBT(NBTTagCompound NBT)
-	{
+	public void readFromNBT(NBTTagCompound NBT) {
 		super.readFromNBT(NBT);
-		pseudometa = NBT.getInteger("meta");
+		this.readSyncTag(NBT);
+
 		placer = NBT.getString("place");
+	}
+
+	@Override
+	public final Packet getDescriptionPacket()
+	{
+		NBTTagCompound var1 = new NBTTagCompound();
+		this.writeSyncTag(var1);
+		Packet132TileEntityData p = new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, var1);
+		return p;
+	}
+
+	@Override
+	public final void onDataPacket(INetworkManager netManager, Packet132TileEntityData packet)
+	{
+		this.readSyncTag(packet.data);
 	}
 
 	public final EntityPlayer getPlacer() {
@@ -209,8 +232,9 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	private void sendSyncPacket() {
-		Packet132TileEntityData dat = (Packet132TileEntityData)this.getDescriptionPacket();
-		PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, this.getUpdatePacketRadius(), worldObj.provider.dimensionId, dat);
+		Packet dat = this.getDescriptionPacket();
+		if (dat != null)
+			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, this.getUpdatePacketRadius(), worldObj.provider.dimensionId, dat);
 	}
 
 	public int getUpdatePacketRadius() {
@@ -239,21 +263,6 @@ public abstract class TileEntityBase extends TileEntity {
 		//worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		//rmb = this.getTEModel(worldObj, xCoord, yCoord, zCoord);
 		this.animateWithTick(worldObj, xCoord, yCoord, zCoord);
-	}
-
-	@Override
-	public final Packet getDescriptionPacket()
-	{
-		NBTTagCompound var1 = new NBTTagCompound();
-		this.writeToNBT(var1);
-		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, var1);
-		//return super.getDescriptionPacket();
-	}
-
-	@Override
-	public final void onDataPacket(INetworkManager netManager, Packet132TileEntityData packet)
-	{
-		this.readFromNBT(packet.data);
 	}
 
 	public Random getRandom() {

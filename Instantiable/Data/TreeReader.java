@@ -177,10 +177,14 @@ public final class TreeReader extends BlockArray {
 		}
 	}
 
-	public void addTree(World world, int x, int y, int z) {
+	private void addTree(World world, int x, int y, int z, int x0, int y0, int z0) {
 		if (vanilla == null) {
 			throw new MisuseException("You must set the tree type!");
 		}
+		if (Math.abs(x-x0) > 24) //For magic forests
+			return;
+		if (Math.abs(z-z0) > 24)
+			return;
 		if (this.hasBlock(x, y, z))
 			return;
 		int id = world.getBlockId(x, y, z);
@@ -201,10 +205,14 @@ public final class TreeReader extends BlockArray {
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
-					this.addTree(world, x+i, y+j, z+k);
+					this.addTree(world, x+i, y+j, z+k, x0, y0, z0);
 				}
 			}
 		}
+	}
+
+	public void addTree(World world, int x, int y, int z) {
+		this.addTree(world, x, y, z, x, y, z);
 	}
 
 	/** For Natura's massive redwood trees. Warning: may lag-spike! */

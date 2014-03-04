@@ -64,12 +64,12 @@ public class StepTimer {
 		return "Timer @ "+value+"/"+cap;
 	}
 
-	public void writeToNBT(NBTTagCompound NBT, String id) {
+	protected void writeSyncTag(NBTTagCompound NBT, String id) {
 		NBT.setInteger(id+"cap", cap);
 		NBT.setInteger(id+"tick", value);
 	}
 
-	public void readFromNBT(NBTTagCompound NBT, String id) {
+	protected void readSyncTag(NBTTagCompound NBT, String id) {
 		cap = NBT.getInteger(id+"cap");
 		value = NBT.getInteger(id+"tick");
 	}

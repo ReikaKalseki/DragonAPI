@@ -32,10 +32,13 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
+import Reika.DragonAPI.APIPacketHandler;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -1161,6 +1164,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		byte[] biomes = ch.getBiomeArray();
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
+
+		int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
+		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, packet, world, x, 0, z, biome.biomeID);
 	}
 
 	/** Sets the biome type at an xz column and mimics its generation. Args: World, x, z, biome */
@@ -1178,6 +1184,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
+
+		int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
+		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, packet, world, x, 0, z, biome.biomeID);
 
 		int fillerID = from.fillerBlock;
 		int topID = from.topBlock;

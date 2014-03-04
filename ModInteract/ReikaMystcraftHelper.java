@@ -10,13 +10,21 @@
 package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+import com.xcompwiz.mystcraft.api.MystObjects;
+import com.xcompwiz.mystcraft.api.linking.ILinkInfo;
+
 import cpw.mods.fml.common.event.FMLInterModComms;
 
 
@@ -31,6 +39,10 @@ public class ReikaMystcraftHelper {
 	private static final Field instabilityNumber;
 	private static final Field baseInstability;
 
+	private static final Method getTile;
+	private static final Method getBook;
+	private static final Method getLink;
+
 	public static final boolean loadedCorrectly;
 
 	public static void disableFluidPage(String name) {
@@ -41,6 +53,29 @@ public class ReikaMystcraftHelper {
 		NBTMsg.getCompoundTag("fluidsymbol").setFloat("instabilityPerBlock", Float.MAX_VALUE);
 		NBTMsg.getCompoundTag("fluidsymbol").setString("fluidname", name);
 		FMLInterModComms.sendMessage("Mystcraft", "fluidsymbol", NBTMsg);
+	}
+
+	private static ILinkInfo getPortalInfo(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		if (id != MystObjects.portal.blockID)
+			return null;
+		try {
+			TileEntity te = (TileEntity)getTile.invoke(MystObjects.portal, world, x, y, z);
+			ItemStack book = (ItemStack)getBook.invoke(te);
+			if (book == null)
+				return null;
+			ILinkInfo info = (ILinkInfo)getLink.invoke(book.getItem(), book);
+			return info;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static int getTargetDimensionIDFromPortalBlock(World world, int x, int y, int z) {
+		ILinkInfo info = getPortalInfo(world, x, y, z);
+		return info != null ? info.getDimensionUID() : Integer.MIN_VALUE;
 	}
 
 	public static boolean isMystAge(World world) {
@@ -265,6 +300,9 @@ public class ReikaMystcraftHelper {
 		Field num = null;
 		Field base = null;
 		Field adata = null;
+		Method tile = null;
+		Method book = null;
+		Method link = null;
 		boolean load = true;
 		if (ModList.MYSTCRAFT.isLoaded()) {
 			try {
@@ -284,6 +322,15 @@ public class ReikaMystcraftHelper {
 				base.setAccessible(true);
 				adata = age.getDeclaredField("agedata");
 				adata.setAccessible(true);
+				Class portal = Class.forName("com.xcompwiz.mystcraft.block.BlockBookReceptacle");
+				tile = portal.getDeclaredMethod("getTileEntity", IBlockAccess.class, int.class, int.class, int.class);
+				tile.setAccessible(true);
+				Class booktile = Class.forName("com.xcompwiz.mystcraft.tileentity.TileEntityBook");
+				book = booktile.getDeclaredMethod("getBook");
+				book.setAccessible(true);
+				Class item = Class.forName("com.xcompwiz.mystcraft.item.ItemLinking");
+				link = item.getDeclaredMethod("getLinkInfo", ItemStack.class);
+				link.setAccessible(true);
 			}
 			catch (Exception e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading Mystcraft instability interfacing!");
@@ -300,6 +347,9 @@ public class ReikaMystcraftHelper {
 		instabilityNumber = num;
 		baseInstability = base;
 		data = adata;
+		getTile = tile;
+		getBook = book;
+		getLink = link;
 		loadedCorrectly = load;
 	}
 

@@ -90,13 +90,18 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies="after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;after:powersuits")
-@NetworkMod(clientSideRequired = true, serverSideRequired = true)
+@NetworkMod(clientSideRequired = true, serverSideRequired = true,
+clientPacketHandlerSpec = @SidedPacketHandler(channels = { "DragonAPIData" }, packetHandler = APIClientPackets.class),
+serverPacketHandlerSpec = @SidedPacketHandler(channels = { "DragonAPIData" }, packetHandler = APIServerPackets.class))
 public class DragonAPIInit extends DragonAPIMod {
+
+	public static final String packetChannel = "DragonAPIData";
 
 	@SidedProxy(clientSide="Reika.DragonAPI.APIProxyClient", serverSide="Reika.DragonAPI.APIProxy")
 	public static APIProxy proxy;

@@ -351,8 +351,7 @@ public enum ModOreList {
 	}
 
 	public boolean isRare() {
-		return this == ModOreList.PLATINUM || this == ModOreList.NETHERPLATINUM || this == ModOreList.IRIDIUM ||
-				this == ModOreList.MOONSTONE || this == NETHERIRIDIUM;
+		return this == PLATINUM || this == NETHERPLATINUM || this == IRIDIUM ||	this == MOONSTONE || this == NETHERIRIDIUM;
 	}
 
 	public boolean isArsMagica() {
@@ -363,6 +362,13 @@ public enum ModOreList {
 		case MOONSTONE:
 		case SUNSTONE:
 			return true;
+		default:
+			return false;
+		}
+	}
+
+	public boolean isMetallurgy() {
+		switch(this) {
 		default:
 			return false;
 		}
