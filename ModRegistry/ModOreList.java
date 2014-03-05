@@ -35,7 +35,7 @@ public enum ModOreList {
 	TIN("Tin", 0xB2D5E9, "ingotTin", 1, "oreTin"),
 	COPPER("Copper", 0xBC6C01, "ingotCopper", 1, "oreCopper", "oreTetrahedrite"),
 	LEAD("Lead", 0x697597, "ingotLead", 1, "oreLead"),
-	FERROUS("Nickel", 0xD0CCAD, "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
+	NICKEL("Nickel", 0xD0CCAD, "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
 	SILVER("Silver", 0xA4D0DA, "ingotSilver", 1, "oreSilver"),
 	GALENA("Galena", 0x7F6E95, "dustGalena", 1, "oreGalena"),
 	ALUMINUM("Aluminum", 0xF1F1F1, "ingotAluminum", 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
