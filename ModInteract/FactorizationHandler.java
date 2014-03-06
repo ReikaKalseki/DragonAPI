@@ -40,7 +40,7 @@ public final class FactorizationHandler extends ModHandlerBase {
 				idbedrock = b.blockID;
 
 				Field ingot = blocks.getField("dark_iron");
-				Item i = (Item)bed.get(reg);
+				Item i = (Item)ingot.get(reg);
 				idingot = i.itemID;
 			}
 			catch (ClassNotFoundException e) {
