@@ -15,6 +15,7 @@ import java.util.List;
 
 import net.minecraft.item.Item;
 import Reika.DragonAPI.Exception.IDConflictException;
+import Reika.DragonAPI.Exception.IDConflictException.ItemConflict;
 
 public class ItemOverwriteTracker {
 
@@ -44,12 +45,17 @@ public class ItemOverwriteTracker {
 	}
 
 	public void check() {
+		ArrayList<ItemConflict> li = new ArrayList();
 		for (int i = 0; i < trackedIDs.size(); i++) {
 			int id = trackedIDs.get(i);
 			Item original = map.get(id);
 			Item current = Item.itemsList[id];
 			if (original != current)
-				this.onConflict(id, current);
+				li.add(new ItemConflict(id, original, current));
+		}
+
+		if (!li.isEmpty()) {
+			throw new IDConflictException(li);
 		}
 	}
 
