@@ -323,6 +323,10 @@ public class DragonAPIInit extends DragonAPIMod {
 				logger.logError("Could not load handler for "+mod.name());
 				e.printStackTrace();
 			}
+			catch (ExceptionInInitializerError e) {
+				logger.logError("Could not load handler for "+mod.name());
+				e.printStackTrace();
+			}
 		}
 		else {
 			logger.log("Not loading handler for "+mod.getDisplayName()+"; Mod not present.");
