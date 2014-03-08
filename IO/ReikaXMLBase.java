@@ -40,7 +40,7 @@ public class ReikaXMLBase {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			throw new RuntimeException("XML file failed to load!");
+			throw new RuntimeException("XML file at "+path+" relative to "+root.getCanonicalName()+" failed to load!");
 		}
 	}
 
