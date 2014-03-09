@@ -27,8 +27,6 @@ public class ControlledConfig {
 
 	protected Configuration config;
 
-	/** Change this to cause auto-deletion of users' config files to load new copies */
-	private int CURRENT_CONFIG_ID = 0;
 	private int readID;
 	protected File configFile;
 
@@ -78,8 +76,6 @@ public class ControlledConfig {
 			otherIDs = new int[0];
 			IDList = new IDRegistry[0];
 		}
-
-		CURRENT_CONFIG_ID = cfg;
 	}
 
 	public String getConfigPath() {
@@ -103,8 +99,9 @@ public class ControlledConfig {
 	}
 
 	private boolean checkReset(Configuration config) {
-		readID = config.get("Control", "Config ID - Edit to have your config auto-deleted", CURRENT_CONFIG_ID).getInt();
-		return readID != CURRENT_CONFIG_ID;
+		//readID = config.get("Control", "Config ID - Edit to have your config auto-deleted", CURRENT_CONFIG_ID).getInt();
+		//return readID != CURRENT_CONFIG_ID;
+		return false;
 	}
 
 	protected final void resetConfigFile() {
@@ -161,22 +158,33 @@ public class ControlledConfig {
 		if (configFile == null)
 			throw new MisuseException("Error loading "+configMod.getDisplayName()+": You must load a config file before reading it!");
 		config = new Configuration(configFile);
-
-		this.versionCheck(event);
+		this.onInit();
 		this.loadConfig();
 	}
+
+	protected void onInit() {}
 
 	private void loadConfig() {
 		config.load();
 
 		for (int i = 0; i < optionList.length; i++) {
 			String label = optionList[i].getLabel();
-			if (optionList[i].isBoolean())
-				controls[i] = this.setState(optionList[i]);
-			if (optionList[i].isNumeric())
-				controls[i] = this.setValue(optionList[i]);
-			if (optionList[i].isDecimal())
-				controls[i] = this.setFloat(optionList[i]);
+			if (optionList[i].shouldLoad()) {
+				if (optionList[i].isBoolean())
+					controls[i] = this.setState(optionList[i]);
+				if (optionList[i].isNumeric())
+					controls[i] = this.setValue(optionList[i]);
+				if (optionList[i].isDecimal())
+					controls[i] = this.setFloat(optionList[i]);
+			}
+			else {
+				if (optionList[i].isBoolean())
+					controls[i] = optionList[i].getDefaultState();
+				if (optionList[i].isNumeric())
+					controls[i] = optionList[i].getDefaultValue();
+				if (optionList[i].isDecimal())
+					controls[i] = optionList[i].getDefaultFloat();
+			}
 		}
 
 		for (int i = 0; i < blockList.length; i++) {

@@ -67,7 +67,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double Tgold = 108*1000000;
 
 	/** Ultimate Shear Strengths */
-	public static final double Ssteel = 232*1000000;
+	public static final double Ssteel = 280*1000000;
 	public static final double Siron = 116*1000000;
 	public static final double Sglass = 19.1*1000000;
 	public static final double Sdiamond = 2.9*1000000000;

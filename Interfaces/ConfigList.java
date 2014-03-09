@@ -45,4 +45,6 @@ public interface ConfigList {
 
 	public boolean isEnforcingDefaults();
 
+	public boolean shouldLoad();
+
 }
