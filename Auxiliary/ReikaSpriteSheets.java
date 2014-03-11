@@ -37,7 +37,7 @@ public final class ReikaSpriteSheets {
 
 	/** Call this from a registered ItemRenderer class that implements IItemRenderer to actually render the item.
 	 * It will automatically compensate for being used for inventory/entity/held items.
-	 * Args: Texture Int (as given by setupTextures), Sprite Index, ItemRenderType, ItemStack, Data */
+	 * Args: Texture root class, Texture path, Sprite Index, ItemRenderType, ItemStack, Data */
 	public static void renderItem(Class root, String tex, int index, ItemRenderType type, ItemStack item, Object... data) {
 		if (item == null)
 			return;

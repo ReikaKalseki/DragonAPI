@@ -97,10 +97,12 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			ItemStack in = inv[i];
 			if (in != null) {
 				if (matchsize) {
-					return ItemStack.areItemStacksEqual(is, in);
+					if (ItemStack.areItemStacksEqual(is, in))
+						return true;
 				}
 				else {
-					return ItemStack.areItemStackTagsEqual(is, in) && ReikaItemHelper.matchStacks(is, in);
+					if (ItemStack.areItemStackTagsEqual(is, in) && ReikaItemHelper.matchStacks(is, in))
+						return true;
 				}
 			}
 		}
@@ -114,10 +116,12 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			ItemStack in = inv.getStackInSlot(i);
 			if (in != null) {
 				if (matchsize) {
-					return ItemStack.areItemStacksEqual(is, in);
+					if (ItemStack.areItemStacksEqual(is, in))
+						return true;
 				}
 				else {
-					return ItemStack.areItemStackTagsEqual(is, in) && ReikaItemHelper.matchStacks(is, in);
+					if (ItemStack.areItemStackTagsEqual(is, in) && ReikaItemHelper.matchStacks(is, in))
+						return true;
 				}
 			}
 		}

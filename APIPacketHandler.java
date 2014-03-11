@@ -12,6 +12,7 @@ package Reika.DragonAPI;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Random;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
@@ -21,11 +22,14 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.common.network.IPacketHandler;
 import cpw.mods.fml.common.network.Player;
 
 public abstract class APIPacketHandler implements IPacketHandler {
+
+	private final Random rand = new Random();
 
 	protected PacketIDs pack;
 	protected PacketTypes packetType;
@@ -114,6 +118,10 @@ public abstract class APIPacketHandler implements IPacketHandler {
 				world.markBlockForRenderUpdate(x, y, z);
 				break;
 			case PARTICLE:
+				if (data[0] < 0 || data[0] >= ReikaParticleHelper.particleList.length) {
+					ReikaParticleHelper p = ReikaParticleHelper.particleList[data[0]];
+					world.spawnParticle(p.name, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), 0, 0, 0);
+				}
 				break;
 			case BIOMECHANGE:
 				ReikaWorldHelper.setBiomeForXZ(world, x, z, BiomeGenBase.biomeList[data[0]]);
@@ -142,7 +150,7 @@ public abstract class APIPacketHandler implements IPacketHandler {
 		public int getNumberDataInts() {
 			switch(this) {
 			case PARTICLE:
-				return 4;
+				return 1;
 			case BIOMECHANGE:
 				return 1;
 			default:

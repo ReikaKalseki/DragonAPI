@@ -47,8 +47,10 @@ public enum ReikaParticleHelper {
 	SNOWSHOVEL("snowshovel"),
 	ANGRY("angryVillager");
 
-	private String name;
+	public final String name;
 	private static final Random rand = new Random();
+
+	public static final ReikaParticleHelper[] particleList = values();
 
 	private ReikaParticleHelper(String sg) {
 		name = sg;

@@ -47,9 +47,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 @SideOnly(Side.CLIENT)
 public class ReikaTextureHelper {
 
-	/** Keys: Resource Pack, Path */
-	private static final PluralMap textures = new PluralMap(2);
-	private static final PluralMap packTextures = new PluralMap(2);
+	/** Keys: Resource Pack, Class, Path */
+	private static final PluralMap textures = new PluralMap(3);
+	private static final PluralMap packTextures = new PluralMap(3);
 
 	private static final PluralMap<Integer> colorOverrides = new PluralMap(2);
 
@@ -85,10 +85,10 @@ public class ReikaTextureHelper {
 					tex = tex.substring(1);
 				String respath = tex.startsWith(parent) ? tex : parent+tex;
 
-				Boolean flag = (Boolean)packTextures.get(res, tex);
+				Boolean flag = (Boolean)packTextures.get(res, root, tex);
 				if (flag == null || flag.booleanValue()) {
-					boolean hasTex = bindPackTexture(respath, res);
-					packTextures.put(hasTex, res, tex);
+					boolean hasTex = bindPackTexture(root, respath, res);
+					packTextures.put(hasTex, res, root, tex);
 					if (!hasTex)
 						bindClassReferencedTexture(root, oldtex);
 				}
@@ -106,51 +106,51 @@ public class ReikaTextureHelper {
 
 	private static void bindClassReferencedTexture(Class root, String tex) {
 		ResourcePack def = getDefaultResourcePack();
-		Integer gl = (Integer) textures.get(def, tex);
+		Integer gl = (Integer) textures.get(def, root, tex);
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.readImage(root, tex);
 			if (img == null) {
 				ReikaJavaLibrary.pConsole("No image found for "+tex+"!");
 				gl = new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
-				textures.put(gl, def, tex);
+				textures.put(gl, def, root, tex);
 			}
 			else {
 				gl = new Integer(binder.allocateAndSetupTexture(img));
-				textures.put(gl, def, tex);
+				textures.put(gl, def, root, tex);
 			}
 		}
 		if (gl != null)
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
-	public static void bindRawTexture(String tex) {
+	public static void bindRawTexture(Class root, String tex) {
 		ResourcePack def = getDefaultResourcePack();
-		Integer gl = (Integer) textures.get(def, tex);
+		Integer gl = (Integer) textures.get(def, root, tex);
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.readHardPathImage(tex);
 			if (img == null) {
 				ReikaJavaLibrary.pConsole("No image found for "+tex+"!");
 				gl = new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
-				textures.put(gl, def, tex);
+				textures.put(gl, def, root, tex);
 			}
 			else {
 				gl = new Integer(binder.allocateAndSetupTexture(img));
-				textures.put(gl, def, tex);
+				textures.put(gl, def, root, tex);
 			}
 		}
 		if (gl != null)
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
-	public static boolean bindPackTexture(String tex, ResourcePack res) {
-		Integer gl = (Integer) textures.get(res, tex);
+	public static boolean bindPackTexture(Class root, String tex, ResourcePack res) {
+		Integer gl = (Integer) textures.get(res, root, tex);
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.getImageFromResourcePack(tex, res);
 			if (img == null) {
 				return false;
 			}
 			gl = new Integer(binder.allocateAndSetupTexture(img));
-			textures.put(gl, res, tex);
+			textures.put(gl, res, root, tex);
 		}
 		if (gl != null) {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
