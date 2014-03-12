@@ -10,6 +10,7 @@
 package Reika.DragonAPI;
 
 import java.util.ArrayList;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
@@ -71,7 +72,8 @@ public enum ModList {
 	UE("UniversalElectricity"),
 	EXTRAUTILS("ExtraUtilities", "extrautils.ExtraUtils"),
 	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits"),
-	ARSENAL("Redstone Arsenal", "redstonearsenal.item.RAItems");
+	ARSENAL("Redstone Arsenal", "redstonearsenal.item.RAItems"),
+	EMASHER("emashercore", "emasher.core.EmasherCore");
 
 	private final boolean condition;
 	public final String modLabel;
@@ -79,11 +81,11 @@ public enum ModList {
 	private final String blockClass;
 
 	//To save on repeated Class.forName
-	private static final HashMap<ModList, Class> blockClasses = new HashMap();
-	private static final HashMap<ModList, Class> itemClasses = new HashMap();
+	private static final EnumMap<ModList, Class> blockClasses = new EnumMap(ModList.class);
+	private static final EnumMap<ModList, Class> itemClasses = new EnumMap(ModList.class);
 	private static final HashMap<String, ModList> modIDs = new HashMap();
 
-	public static final ModList[] modList = ModList.values();
+	public static final ModList[] modList = values();
 
 	private ModList(String label, String blocks, String items) {
 		modLabel = label;
