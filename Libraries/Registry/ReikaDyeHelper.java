@@ -14,6 +14,9 @@ import java.awt.Color;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import org.lwjgl.opengl.GL11;
+
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.relauncher.Side;
@@ -124,5 +127,11 @@ public enum ReikaDyeHelper {
 
 	public String getOreDictName() {
 		return "dye"+ReikaStringParser.stripSpaces(colorName);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void setGLColorBlend() {
+		Color c = this.getJavaColor();
+		GL11.glColor3d(this.getRed()/255D, this.getGreen()/255D, this.getBlue()/255D);
 	}
 }
