@@ -35,6 +35,8 @@ import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 
 public final class ReikaRenderHelper extends DragonAPICore {
 
+	private static final RenderBlocks rb = new RenderBlocks();
+
 	/** Converts an RGB array into a color multiplier. Args: RGB[], bit */
 	public static float RGBtoColorMultiplier(int[] RGB, int bit) {
 		float color = 1F;
@@ -303,14 +305,14 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	public static void spawnModBlockDropParticles(World world, int x, int y, int z, int blockID) {
 		Block b = Block.blocksList[blockID];
-		Icon ico = new RenderBlocks().getBlockIcon(b);
+		Icon ico = rb.getBlockIcon(b);
 		for (int i = 0; i < 16; i++) {
 			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, world.getBlockMetadata(x, y, z), 0, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0), null));
 		}
 	}
 
 	public static void spawnDropParticles(World world, int x, int y, int z, Block b, int meta) {
-		Icon ico = new RenderBlocks().getBlockIcon(b);
+		Icon ico = rb.getBlockIcon(b);
 		for (int i = 0; i < 16; i++) {
 			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, meta, 0, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0), null));
 		}

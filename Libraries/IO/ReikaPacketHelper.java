@@ -513,18 +513,20 @@ public final class ReikaPacketHelper extends DragonAPICore {
 	}
 
 	public static void updateTileEntityData(World world, int x, int y, int z, String name, int data) {
-		TileEntity te = world.getBlockTileEntity(x, y, z);
-		if (te == null) {
-			ReikaJavaLibrary.pConsole("Null TileEntity for syncing field "+name);
-			return;
-		}
-		try {
-			Field f = ReikaReflectionHelper.getProtectedInheritedField(te, name);
-			f.setAccessible(true);
-			f.set(te, data);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
+		if (world.checkChunksExist(x, y, z, x, y, z)) {
+			TileEntity te = world.getBlockTileEntity(x, y, z);
+			if (te == null) {
+				ReikaJavaLibrary.pConsole("Null TileEntity for syncing field "+name);
+				return;
+			}
+			try {
+				Field f = ReikaReflectionHelper.getProtectedInheritedField(te, name);
+				f.setAccessible(true);
+				f.set(te, data);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

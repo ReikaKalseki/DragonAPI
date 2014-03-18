@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.world.World;
@@ -49,11 +50,16 @@ public enum ReikaParticleHelper {
 
 	public final String name;
 	private static final Random rand = new Random();
+	private static final HashMap<String, ReikaParticleHelper> names = new HashMap();
 
 	public static final ReikaParticleHelper[] particleList = values();
 
 	private ReikaParticleHelper(String sg) {
 		name = sg;
+	}
+
+	public static ReikaParticleHelper getByString(String name) {
+		return names.get(name);
 	}
 
 	public void spawnAt(World world, double x, double y, double z, double vx, double vy, double vz) {
@@ -94,6 +100,13 @@ public enum ReikaParticleHelper {
 
 	public static void spawnColoredParticleAt(World world, double x, double y, double z, double r, double g, double b) {
 		REDSTONE.spawnAt(world, x, y, z, r, g, b);
+	}
+
+	static {
+		for (int i = 0; i < particleList.length; i++) {
+			ReikaParticleHelper p = particleList[i];
+			names.put(p.name, p);
+		}
 	}
 
 }

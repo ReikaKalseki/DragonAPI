@@ -21,16 +21,20 @@ public class AppEngHandler extends ModHandlerBase {
 	private static final AppEngHandler instance = new AppEngHandler();
 
 	private ItemStack certus;
+	private ItemStack dust;
 
 	private AppEngHandler() {
 		super();
-		int idcertus = -1;
 		if (this.hasMod()) {
 			try {
 				Class ae = Class.forName("appeng.api.Materials");
 				Field item = ae.getField("matQuartz");
 				ItemStack quartz = (ItemStack)item.get(null);
 				certus = quartz.copy();
+
+				Field item2 = ae.getField("matQuartzDust");
+				ItemStack quartzdust = (ItemStack)item.get(null);
+				dust = quartzdust.copy();
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: AppEng class not found! Cannot read its contents!");
@@ -68,7 +72,7 @@ public class AppEngHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return certus != null;
+		return certus != null && dust != null;
 	}
 
 	@Override
@@ -78,6 +82,10 @@ public class AppEngHandler extends ModHandlerBase {
 
 	public ItemStack getCertusQuartz() {
 		return certus.copy();
+	}
+
+	public ItemStack getCertusQuartzDust() {
+		return dust.copy();
 	}
 
 }

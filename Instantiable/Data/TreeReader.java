@@ -32,15 +32,20 @@ public final class TreeReader extends BlockArray {
 	private ReikaDyeHelper dyeTree;
 
 	private final int dyeLeafID;
+	private final int rainbowLeafID;
 	private boolean isDyeTree = false;
 	private int dyeMeta = -1;
 
 	public TreeReader() {
 		super();
-		if (ModList.DYETREES.isLoaded())
+		if (ModList.DYETREES.isLoaded()) {
 			dyeLeafID = TreeGetter.getNaturalDyeLeafID();
-		else
+			rainbowLeafID = TreeGetter.getRainbowLeafID();
+		}
+		else {
 			dyeLeafID = -1;
+			rainbowLeafID = -1;
+		}
 	}
 
 	private void checkAndAddDyeTree(World world, int x, int y, int z, int ox, int oy, int oz) {
@@ -94,6 +99,33 @@ public final class TreeReader extends BlockArray {
 
 	public void checkAndAddDyeTree(World world, int x, int y, int z) {
 		this.checkAndAddDyeTree(world, x, y, z, x, y, z);
+	}
+
+	public void checkAndAddRainbowTree(World world, int x, int y, int z) {
+		if (this.hasBlock(x, y, z))
+			return;
+		int id = world.getBlockId(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+
+		if (id != Block.wood.blockID && id != rainbowLeafID)
+			return;
+		if (id == Block.wood.blockID && (meta&3) != 0)
+			return;
+
+		this.addBlockCoordinate(x, y, z);
+
+		if (id == Block.wood.blockID)
+			logCount++;
+		else
+			leafCount++;
+
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				for (int k = -1; k <= 1; k++) {
+					this.checkAndAddRainbowTree(world, x+i, y+j, z+k);
+				}
+			}
+		}
 	}
 
 	public boolean isDyeTree() {
