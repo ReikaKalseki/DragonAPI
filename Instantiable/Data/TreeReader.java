@@ -181,6 +181,12 @@ public final class TreeReader extends BlockArray {
 		if (wood == null) {
 			throw new MisuseException("You must set the mod tree type!");
 		}
+		this.addModTree(world, x, y, z, x, y, z);
+	}
+
+	private void addModTree(World world, int x, int y, int z, int x0, int y0, int z0) {
+		if (Math.abs(x-x0) > 24 || Math.abs(z-z0) > 24)
+			return;
 		if (this.hasBlock(x, y, z))
 			return;
 		int id = world.getBlockId(x, y, z);
@@ -203,7 +209,7 @@ public final class TreeReader extends BlockArray {
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
-					this.addModTree(world, x+i, y+j, z+k);
+					this.addModTree(world, x+i, y+j, z+k, x0, y0, z0);
 				}
 			}
 		}
