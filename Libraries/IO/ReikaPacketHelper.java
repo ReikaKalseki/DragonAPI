@@ -531,31 +531,33 @@ public final class ReikaPacketHelper extends DragonAPICore {
 	}
 
 	public static void updateTileEntityTankData(World world, int x, int y, int z, String name, int level) {
-		TileEntity te = world.getBlockTileEntity(x, y, z);
-		if (te == null) {
-			ReikaJavaLibrary.pConsole("Null TileEntity for syncing tank field "+name);
-			return;
-		}
-		try {
-			Field f = ReikaReflectionHelper.getProtectedInheritedField(te, name);
-			f.setAccessible(true);
-			HybridTank tank = (HybridTank)f.get(te);
-			if (level <= 0) {
-				tank.empty();
+		if (world.checkChunksExist(x, y, z, x, y, z)) {
+			TileEntity te = world.getBlockTileEntity(x, y, z);
+			if (te == null) {
+				ReikaJavaLibrary.pConsole("Null TileEntity for syncing tank field "+name);
+				return;
 			}
-			else if (level > tank.getCapacity())
-				level = tank.getCapacity();
+			try {
+				Field f = ReikaReflectionHelper.getProtectedInheritedField(te, name);
+				f.setAccessible(true);
+				HybridTank tank = (HybridTank)f.get(te);
+				if (level <= 0) {
+					tank.empty();
+				}
+				else if (level > tank.getCapacity())
+					level = tank.getCapacity();
 
-			if (tank.isEmpty()) {
+				if (tank.isEmpty()) {
 
+				}
+				else {
+					Fluid fluid = tank.getActualFluid();
+					tank.setContents(level, fluid);
+				}
 			}
-			else {
-				Fluid fluid = tank.getActualFluid();
-				tank.setContents(level, fluid);
+			catch (Exception e) {
+				e.printStackTrace();
 			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 
