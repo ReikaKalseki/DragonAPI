@@ -20,9 +20,9 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
-import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.Exception.StupidIDException;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Interfaces.RegistrationList;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
@@ -30,8 +30,9 @@ import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 public final class ReikaReflectionHelper extends DragonAPICore {
 
 	public static Block createBlockInstance(DragonAPIMod mod, RegistrationList list) {
-		if (list.getID() <= 0)
-			throw new InstallationException(mod, "Invalid ID "+list.getID()+" chosen for "+list.getBasicName());
+		int id = list.getID();
+		if (id < 0 || id > 4095)
+			throw new StupidIDException(mod, id, true);
 		try {
 			Constructor c = list.getObjectClass().getConstructor(list.getConstructorParamTypes());
 			Block instance = (Block)(c.newInstance(list.getConstructorParams()));
@@ -67,14 +68,16 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 
 	public static Item createItemInstance(DragonAPIMod mod, RegistrationList list) {
 		Item instance;
+		int id = list.getID();
+		if (id < 0 || id > 31999)
+			throw new StupidIDException(mod, id, false);
+		if (Item.itemsList[256+id] != null) {
+			if (!list.overwritingItem())
+				throw new IDConflictException(mod, id+" item slot already occupied by "+Item.itemsList[256+id].getUnlocalizedName()+" while adding "+list.getBasicName());
+			else
+				mod.getModLogger().log("Overwriting "+Item.itemsList[256+id].getUnlocalizedName()+" with "+list.getBasicName());
+		}
 		try {
-			int id = list.getID();
-			if (Item.itemsList[256+id] != null) {
-				if (!list.overwritingItem())
-					throw new IDConflictException(mod, id+" item slot already occupied by "+Item.itemsList[256+id].getUnlocalizedName()+" while adding "+list.getBasicName());
-				else
-					mod.getModLogger().log("Overwriting "+Item.itemsList[256+id].getUnlocalizedName()+" with "+list.getBasicName());
-			}
 			Constructor c = list.getObjectClass().getConstructor(list.getConstructorParamTypes());
 			instance = (Item)(c.newInstance(list.getConstructorParams()));
 			ItemOverwriteTracker.instance.addItem(instance, id+256);

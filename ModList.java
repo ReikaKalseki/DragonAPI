@@ -74,7 +74,8 @@ public enum ModList {
 	EXTRAUTILS("ExtraUtilities", "extrautils.ExtraUtils"),
 	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits"),
 	ARSENAL("Redstone Arsenal", "redstonearsenal.item.RAItems"),
-	EMASHER("emashercore", "emasher.core.EmasherCore");
+	EMASHER("emashercore", "emasher.core.EmasherCore"),
+	HIGHLANDS("Highlands", "highlands.api.HighlandsBlocks");
 
 	private final boolean condition;
 	public final String modLabel;

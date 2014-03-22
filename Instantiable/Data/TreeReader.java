@@ -178,6 +178,11 @@ public final class TreeReader extends BlockArray {
 			Thread.dumpStack();
 			return;
 		}
+		if (wood == ModWoodList.IRONWOOD) {
+			ReikaJavaLibrary.pConsole("Use ironwood handler!");
+			Thread.dumpStack();
+			return;
+		}
 		if (wood == null) {
 			throw new MisuseException("You must set the mod tree type!");
 		}
@@ -277,6 +282,38 @@ public final class TreeReader extends BlockArray {
 						this.addBlockCoordinate(i, j, k);
 					}
 					else if (leaf == ModWoodList.SEQUOIA) {
+						leafCount++;
+						this.addBlockCoordinate(i, j, k);
+					}
+				}
+			}
+		}
+	}
+
+	/** For Highlands's ironwood trees. Warning: may lag-spike! */
+	public void addIronwood(World world, int x, int y, int z, boolean debug) {
+		this.setModTree(ModWoodList.IRONWOOD);
+		int r = 24;
+		int minx = x-r;
+		int maxx = x+r;
+		int minz = z-r;
+		int maxz = z+r;
+
+		int yr = 16;
+
+		for (int j = y; j <= y+yr; j++) {
+			for (int i = minx; i <= maxx; i++) {
+				for (int k = minz; k <= maxz; k++) {
+					int id = world.getBlockId(i, j, k);
+					int meta = world.getBlockMetadata(i, j, k);
+					ModWoodList get = ModWoodList.getModWood(id, meta);
+					ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
+
+					if (get == ModWoodList.IRONWOOD) {
+						logCount++;
+						this.addBlockCoordinate(i, j, k);
+					}
+					else if (leaf == ModWoodList.IRONWOOD) {
 						leafCount++;
 						this.addBlockCoordinate(i, j, k);
 					}

@@ -72,7 +72,16 @@ public enum ModWoodList {
 	MINEWOOD(ModList.TWILIGHT, 0xC5A982, 16576836, "magicLog", "magicLeaves", "sapling", new int[]{2,14}, new int[]{2,10}, 7, VarType.INSTANCE),
 	SORTING(ModList.TWILIGHT, 0x705835, 3558403, "magicLog", "magicLeaves", "sapling", new int[]{3,15}, new int[]{3,11}, 8, VarType.INSTANCE),
 	GLOW(ModList.TRANSITIONAL, 0xE2B87B, 0xFFBC5E, "GlowWood", "GlowLeaf", "GlowSapling", 0, 0, 0, VarType.INSTANCE),
-	FORCE(ModList.DARTCRAFT, 0xE0B749, 0xD9B22C, "forceLog", "forceLeaves", "forceSapling", 0, new int[]{0,8}, 0, VarType.INSTANCE);
+	FORCE(ModList.DARTCRAFT, 0xE0B749, 0xD9B22C, "forceLog", "forceLeaves", "forceSapling", 0, new int[]{0,8}, 0, VarType.INSTANCE),
+	HIGHFIR(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "firWood", "firLeaves", "firSapling", VarType.INSTANCE),
+	HIGHACACIA(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "acaciaWood", "acaciaLeaves", "acaciaSapling", VarType.INSTANCE),
+	HIGHREDWOOD(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "redwoodWood", "redwoodLeaves", "redwoodSapling", VarType.INSTANCE),
+	POPLAR(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "poplarWood", "poplarLeaves", "poplarSapling", VarType.INSTANCE),
+	HIGHCANOPY(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "canopyWood", "canopyLeaves", "canopySapling", VarType.INSTANCE),
+	HIGHPALM(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "palmWood", "palmLeaves", "palmSapling", VarType.INSTANCE),
+	IRONWOOD(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "ironWood", "ironwoodLeaves", "ironwoodSapling", VarType.INSTANCE),
+	HIGHMANGROVE(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "mangroveWood", "mangroveLeaves", "mangroveSapling", VarType.INSTANCE),
+	ASH(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "ashWood", "ashLeaves", "ashSapling", VarType.INSTANCE);
 
 	private ModList mod;
 	private int blockID = -1;
@@ -97,6 +106,10 @@ public enum ModWoodList {
 	private static final HashMap<List<Integer>, ModWoodList> logMappings = new HashMap();
 	private static final HashMap<List<Integer>, ModWoodList> leafMappings = new HashMap();
 	private static final HashMap<List<Integer>, ModWoodList> saplingMappings = new HashMap();
+
+	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, VarType type) {
+		this(req, color, leaf, blockVar, leafVar, saplingVar, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, type);
+	}
 
 	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, int meta, int metaleaf, int metasapling, VarType type) {
 		this(req, color, leaf, blockVar, leafVar, saplingVar, new int[]{meta}, new int[]{metaleaf}, metasapling, type);

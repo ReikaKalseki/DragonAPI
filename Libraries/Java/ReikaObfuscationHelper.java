@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.audio.SoundPool;
 import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -136,6 +137,8 @@ public class ReikaObfuscationHelper {
 		addField("isAggressive", "field_104003_g", false, EntityEnderman.class);
 		addField("stareTimer", "field_70826_g", false, EntityEnderman.class);
 		addField("theWorldGenerator", "field_82915_S", false, BiomeGenHills.class);
+		addField("blockFlammability", "blockFlammability", false, Block.class);
+		addField("blockFireSpreadSpeed", "blockFireSpreadSpeed", false, Block.class);
 	}
 
 	private static boolean isClientSide() {
