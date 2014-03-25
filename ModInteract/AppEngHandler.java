@@ -33,7 +33,7 @@ public class AppEngHandler extends ModHandlerBase {
 				certus = quartz.copy();
 
 				Field item2 = ae.getField("matQuartzDust");
-				ItemStack quartzdust = (ItemStack)item.get(null);
+				ItemStack quartzdust = (ItemStack)item2.get(null);
 				dust = quartzdust.copy();
 			}
 			catch (ClassNotFoundException e) {
