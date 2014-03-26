@@ -211,12 +211,18 @@ public final class TreeReader extends BlockArray {
 		else if (leaf == wood)
 			leafCount++;
 
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
-				for (int k = -1; k <= 1; k++) {
-					this.addModTree(world, x+i, y+j, z+k, x0, y0, z0);
+		try {
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1; j++) {
+					for (int k = -1; k <= 1; k++) {
+						this.addModTree(world, x+i, y+j, z+k, x0, y0, z0);
+					}
 				}
 			}
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
 		}
 	}
 
@@ -245,12 +251,18 @@ public final class TreeReader extends BlockArray {
 		else if (leaf == vanilla)
 			leafCount++;
 
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
-				for (int k = -1; k <= 1; k++) {
-					this.addTree(world, x+i, y+j, z+k, x0, y0, z0);
+		try {
+			for (int i = -1; i <= 1; i++) {
+				for (int j = -1; j <= 1; j++) {
+					for (int k = -1; k <= 1; k++) {
+						this.addTree(world, x+i, y+j, z+k, x0, y0, z0);
+					}
 				}
 			}
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow();
+			e.printStackTrace();
 		}
 	}
 

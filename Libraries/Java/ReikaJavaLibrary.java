@@ -22,6 +22,8 @@ import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaJavaLibrary extends DragonAPICore {
 
+	private static int maxRecurse = -1;
+
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Object obj) {
 		if (obj == null) {
@@ -176,5 +178,25 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 				li.add(f.getName());
 		}
 		return li;
+	}
+
+	/** Returns the maximum allowable depth of recursion on the current system.
+	 * Keep in mind that this number is the <i>total</i> stack depth and as such contains some
+	 * vanilla MC and Forge calls as well. Subtract 100 or so to be safe. */
+	public static int getMaximumRecursiveDepth() {
+		if (maxRecurse == -1) {
+			maxRecurse = recurse(0);
+		}
+		return maxRecurse;
+	}
+
+	private static int recurse(int i) {
+		try {
+			recurse(i+1);
+		}
+		catch (StackOverflowError e) {
+			return i;
+		}
+		return 0; //Never runs
 	}
 }

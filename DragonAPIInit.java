@@ -115,6 +115,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void preload(FMLPreInitializationEvent evt) {
 		logger = new ModLogger(instance, true, false, false);
+		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());
 		//MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		MinecraftForge.EVENT_BUS.register(this);
 		OreDictionary.initVanillaEntries();

@@ -1165,8 +1165,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
 
-		int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
-		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, packet, world, x, 0, z, biome.biomeID);
+		if (!world.isRemote) {
+			int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, packet, world, x, 0, z, biome.biomeID);
+		}
 	}
 
 	/** Sets the biome type at an xz column and mimics its generation. Args: World, x, z, biome */
@@ -1185,8 +1187,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
 
-		int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
-		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, packet, world, x, 0, z, biome.biomeID);
+		if (!world.isRemote) {
+			int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, packet, world, x, 0, z, biome.biomeID);
+		}
 
 		int fillerID = from.fillerBlock;
 		int topID = from.topBlock;

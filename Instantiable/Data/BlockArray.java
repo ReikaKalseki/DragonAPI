@@ -33,6 +33,8 @@ public class BlockArray {
 	protected boolean overflow = false;
 	protected World refWorld;
 
+	public final int maxDepth = ReikaJavaLibrary.getMaximumRecursiveDepth();
+
 	private final BlockArrayComputer computer;
 
 	public BlockArray() {
@@ -505,7 +507,11 @@ public class BlockArray {
 
 	protected void throwOverflow() {
 		overflow = true;
-		ReikaJavaLibrary.pConsole("Stack overflow!");
+		ReikaJavaLibrary.pConsole("Stack overflow at depth "+this.getRecursionDepth()+"!");
+	}
+
+	private String getRecursionDepth() {
+		return null;
 	}
 
 	public int[] getRandomBlock() {
