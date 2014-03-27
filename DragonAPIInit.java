@@ -88,6 +88,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
@@ -282,11 +283,6 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	private void loadHandlers() {
-		ReikaJavaLibrary.initClass(ModOreList.class);
-		ReikaJavaLibrary.initClass(ModWoodList.class);
-		ReikaJavaLibrary.initClass(ModCropList.class);
-		ModOreList.initializeAll();
-
 		this.initHandler(ModList.BCFACTORY, BCMachineHandler.class);
 		this.initHandler(ModList.BCTRANSPORT, BCPipeHandler.class);
 		this.initHandler(ModList.THAUMCRAFT, ThaumOreHandler.class);
@@ -313,6 +309,15 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.FACTORIZATION, FactorizationHandler.class);
 		this.initHandler(ModList.HARVESTCRAFT, HarvestCraftHandler.class);
 		this.initHandler(ModList.ARSENAL, RedstoneArsenalHandler.class);
+
+		ReikaJavaLibrary.initClass(ModOreList.class);
+		ReikaJavaLibrary.initClass(ModWoodList.class);
+		ReikaJavaLibrary.initClass(ModCropList.class);
+	}
+
+	@EventHandler
+	public void lastLoad(FMLServerAboutToStartEvent evt) {
+		ModOreList.initializeAll();
 	}
 
 	private void initHandler(ModList mod, Class c) {

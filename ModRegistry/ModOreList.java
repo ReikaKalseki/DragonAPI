@@ -268,7 +268,6 @@ public enum ModOreList {
 			return null;
 		if (is.itemID == MekanismHandler.getInstance().oreID)
 			return MekanismHandler.getInstance().getModOre(is.itemID, is.getItemDamage());
-
 		return oreMappings.get(Arrays.asList(is.itemID, is.getItemDamage()));
 	}
 
