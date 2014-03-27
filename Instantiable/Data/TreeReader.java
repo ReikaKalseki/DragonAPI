@@ -337,7 +337,7 @@ public final class TreeReader extends BlockArray {
 	/** For Twilight's dark forests. */
 	public void addDarkForest(World world, int x, int y, int z, int minx, int maxx, int minz, int maxz, boolean debug) {
 		this.setModTree(ModWoodList.DARKWOOD);
-		for (int j = y; j <= y+16; j++) {
+		for (int j = y-24; j <= y+24; j++) {
 			for (int i = minx; i <= maxx; i++) {
 				for (int k = minz; k <= maxz; k++) {
 					int id = world.getBlockId(i, j, k);
