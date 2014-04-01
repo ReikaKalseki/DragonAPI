@@ -138,4 +138,28 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		return false;
 	}
+
+	public static boolean isStairBlock(int id) {
+		if (id == Block.stairsCobblestone.blockID)
+			return true;
+		if (id == Block.stairsStoneBrick.blockID)
+			return true;
+		if (id == Block.stairsBrick.blockID)
+			return true;
+		if (id == Block.stairsSandStone.blockID)
+			return true;
+		if (id == Block.stairsWoodOak.blockID)
+			return true;
+		if (id == Block.stairsNetherBrick.blockID)
+			return true;
+		if (id == Block.stairsWoodSpruce.blockID)
+			return true;
+		if (id == Block.stairsWoodBirch.blockID)
+			return true;
+		if (id == Block.stairsWoodJungle.blockID)
+			return true;
+		if (id == Block.stairsNetherQuartz.blockID)
+			return true;
+		return false;
+	}
 }

@@ -1171,6 +1171,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 	}
 
+	public static BiomeGenBase getNaturalGennedBiomeAt(World world, int x, int z) {
+		BiomeGenBase[] biomes = new BiomeGenBase[1];
+		biomes = world.getWorldChunkManager().loadBlockGeneratorData(biomes, x, z, 1, 1);
+		BiomeGenBase natural = biomes != null && biomes.length > 0 ? biomes[0] : null;
+		return natural;
+	}
+
 	/** Sets the biome type at an xz column and mimics its generation. Args: World, x, z, biome */
 	public static void setBiomeAndBlocksForXZ(World world, int x, int z, BiomeGenBase biome) {
 		Chunk ch = world.getChunkFromBlockCoords(x, z);
@@ -1488,5 +1495,38 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	public static boolean otherDimensionsExist() {
 		return ModList.MYSTCRAFT.isLoaded() || ModList.TWILIGHT.isLoaded() || ModList.EXTRAUTILS.isLoaded();
+	}
+
+	public static int getAmbientTemperatureAt(World world, int x, int y, int z) {
+		int Tamb = ReikaBiomeHelper.getBiomeTemp(world, x, z);
+		float temp = Tamb;
+
+		if (!world.provider.hasNoSky) {
+			if (world.canBlockSeeTheSky(x, y+1, z)) {
+				float sun = getSunIntensity(world);
+				temp += (sun-0.75F)*20;
+			}
+			int h = world.provider.getAverageGroundLevel();
+			int dy = h-y;
+			if (dy > 0) {
+				if (dy < 20) {
+					temp -= dy;
+					temp = Math.max(temp, Tamb-20);
+				}
+				else if (dy < 25) {
+					temp -= 2*(25-dy);
+					temp = Math.max(temp, Tamb-20);
+				}
+				else {
+					temp += 100*(dy-20)/h;
+					temp = Math.min(temp, Tamb+70);
+				}
+			}
+			if (y > 96) {
+				temp -= (y-96)/4;
+			}
+		}
+
+		return (int)temp;
 	}
 }

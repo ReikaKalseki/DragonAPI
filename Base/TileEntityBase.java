@@ -106,6 +106,15 @@ public abstract class TileEntityBase extends TileEntity {
 		placer = NBT.getString("place");
 	}
 
+	public void syncAllData() {
+		NBTTagCompound var1 = new NBTTagCompound();
+		this.writeSyncTag(var1);
+		this.writeToNBT(var1);
+		var1.setBoolean("fullData", true);
+		Packet132TileEntityData p = new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, var1);
+		PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, this.getUpdatePacketRadius(), worldObj.provider.dimensionId, p);
+	}
+
 	@Override
 	public final Packet getDescriptionPacket()
 	{
@@ -119,6 +128,8 @@ public abstract class TileEntityBase extends TileEntity {
 	public final void onDataPacket(INetworkManager netManager, Packet132TileEntityData packet)
 	{
 		this.readSyncTag(packet.data);
+		if (packet.data.getBoolean("fullData"))
+			this.readFromNBT(packet.data);
 	}
 
 	public final EntityPlayer getPlacer() {

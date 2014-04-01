@@ -16,7 +16,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 
@@ -170,6 +169,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			return true;
 		if (biome.biomeName.toLowerCase().contains("alpine"))
 			return true;
+		if (biome.biomeName.toLowerCase().contains("frozen"))
+			return true;
 		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
 		for (int i = 0; i < types.length; i++) {
 			if (types[i] == BiomeDictionary.Type.FROZEN)
@@ -210,12 +211,16 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			Tamb = -20; //-20C
 		if (isHotBiome(biome))
 			Tamb = 40;
+		if (biome == BiomeGenBase.sky)
+			Tamb = -100;
 		if (biome == BiomeGenBase.hell)
 			Tamb = 300;	//boils water, so 300C (3 x 100)
 		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
 		for (int i = 0; i < types.length; i++) {
 			if (types[i] == BiomeDictionary.Type.NETHER)
 				Tamb = 300;
+			if (types[i] == BiomeDictionary.Type.END)
+				Tamb = -100;
 		}
 		return Tamb;
 	}

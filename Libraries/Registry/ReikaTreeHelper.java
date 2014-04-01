@@ -9,13 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Interfaces.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
-public enum ReikaTreeHelper {
+public enum ReikaTreeHelper implements TreeType {
 
 	OAK(Block.wood, Block.leaves, Block.sapling, new int[]{0,4,8,12}, new int[]{0,4,8,12}, 0),
 	SPRUCE(Block.wood, Block.leaves, Block.sapling, new int[]{1,5,9,13}, new int[]{1,5,9,13}, 1),
@@ -113,6 +115,29 @@ public enum ReikaTreeHelper {
 		sb.append("SAPLING "+sapling.blockID+":"+saplingMeta);
 		sb.append(")");
 		return sb.toString();
+	}
+
+	@Override
+	public ItemStack getItem() {
+		return new ItemStack(log);
+	}
+
+	@Override
+	public int getLogID() {
+		return log.blockID;
+	}
+
+	@Override
+	public ArrayList<Integer> getLogMetadatas() {
+		ArrayList<Integer> li = new ArrayList();
+		for (int i = 0; i < logMeta.length; i++)
+			li.add(logMeta[i]);
+		return li;
+	}
+
+	@Override
+	public boolean canBePlacedSideways() {
+		return true;
 	}
 
 }

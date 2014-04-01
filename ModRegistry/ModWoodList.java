@@ -25,11 +25,12 @@ import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Interfaces.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
-public enum ModWoodList {
+public enum ModWoodList implements TreeType {
 
 	CANOPY(ModList.TWILIGHT, 0x252517, 6330464, "log", "leaves", "sapling", new int[]{1,13}, 1, 1, VarType.INSTANCE),
 	DARKWOOD(ModList.TWILIGHT, 0x35281A, 0x395F41, "log", "hedge", "sapling", new int[]{3,15}, 1, 3, VarType.INSTANCE),
@@ -288,6 +289,11 @@ public enum ModWoodList {
 		return ReikaStringParser.capFirstChar(this.name());
 	}
 
+	@Override
+	public int getLogID() {
+		return blockID;
+	}
+
 	public List<Integer> getLogMetadatas() {
 		List<Integer> li = new ArrayList();
 		for (int i = 0; i < blockMeta.length; i++)
@@ -395,6 +401,10 @@ public enum ModWoodList {
 		if (this == SILVERWOOD)
 			return true;
 		return false;
+	}
+
+	public boolean canBePlacedSideways() {
+		return this.getLogMetadatas().size() == 3;
 	}
 
 	public static enum VarType {

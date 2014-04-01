@@ -214,6 +214,10 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return true;
 		if (mob instanceof EntityWither)
 			return true;
+		if (mob.getClass().getSimpleName().toLowerCase().contains("wisp"))
+			return true;
+		if (mob.getClass().getSimpleName().toLowerCase().contains("pech"))
+			return true;
 		return false;
 	}
 

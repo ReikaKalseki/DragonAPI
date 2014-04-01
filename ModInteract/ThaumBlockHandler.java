@@ -31,6 +31,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 
 	public final int taintBiomeID;
 	public final int eerieBiomeID;
+	public final int magicBiomeID;
 
 	private ThaumBlockHandler() {
 		super();
@@ -39,6 +40,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		int idcrystal = -1;
 		int idtaint = -1;
 		int ideerie = -1;
+		int idmagic = -1;
 
 		if (this.hasMod()) {
 			Class thaum = ModList.THAUMCRAFT.getBlockClass();
@@ -54,6 +56,9 @@ public class ThaumBlockHandler extends ModHandlerBase {
 
 				biome = config.getField("biomeEerieID");
 				ideerie = biome.getInt(null);
+
+				biome = config.getField("biomeMagicalForestID");
+				idmagic = biome.getInt(null);
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft config class!");
@@ -81,6 +86,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		crystalID = idcrystal;
 		taintBiomeID = idtaint;
 		eerieBiomeID = ideerie;
+		magicBiomeID = idmagic;
 	}
 
 	public static ThaumBlockHandler getInstance() {
@@ -89,7 +95,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return totemID != -1 && plantID != -1 && crystalID != -1 && taintBiomeID != -1 && eerieBiomeID != -1;
+		return totemID != -1 && plantID != -1 && crystalID != -1 && taintBiomeID != -1 && eerieBiomeID != -1 && magicBiomeID != -1;
 	}
 
 	@Override

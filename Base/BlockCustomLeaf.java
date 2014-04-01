@@ -42,9 +42,27 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 		this.setTickRandomly(this.decays() || this.shouldRandomTick());
 	}
 
+	/** Overridden to allow conditional disabling of mod leaf control hacks, like the one in RandomThings. */
+	@Override
+	public final void onNeighborBlockChange(World world, int x, int y, int z, int neighborID) {
+		this.onBlockUpdate(world, x, y, z);
+		if (this.allowModDecayControl()) {
+			super.onNeighborBlockChange(world, x, y, z, neighborID);
+		}
+		else {
+
+		}
+	}
+
+	protected void onBlockUpdate(World world, int x, int y, int z) {
+
+	}
+
 	public abstract boolean shouldRandomTick();
 
 	public abstract boolean decays();
+
+	public abstract boolean allowModDecayControl();
 
 	public abstract boolean showInCreative();
 

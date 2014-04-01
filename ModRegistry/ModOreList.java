@@ -35,7 +35,7 @@ public enum ModOreList {
 	TIN("Tin", 0xB2D5E9, "ingotTin", 1, "oreTin"),
 	COPPER("Copper", 0xBC6C01, "ingotCopper", 1, "oreCopper", "oreTetrahedrite"),
 	LEAD("Lead", 0x697597, "ingotLead", 1, "oreLead"),
-	NICKEL("Nickel", 0xD0CCAD, "ingotNickel", 1, "oreNickel"), //ask KingLemming, not me...
+	NICKEL("Nickel", 0xD0CCAD, "ingotNickel", 1, "oreNickel", "orePentlandite"), //ask KingLemming, not me...
 	SILVER("Silver", 0xA4D0DA, "ingotSilver", 1, "oreSilver"),
 	GALENA("Galena", 0x7F6E95, "dustGalena", 1, "oreGalena"),
 	ALUMINUM("Aluminum", 0xF1F1F1, "ingotAluminum", 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
@@ -55,7 +55,7 @@ public enum ModOreList {
 	SALTPETER("Saltpeter", 0xFFFFFF, "dustSaltpeter", 2, "oreSaltpeter"),
 	TUNGSTEN("Tungsten", 0x1E1E1E, "ingotTungsten", 1, "oreTungsten", "oreTungstate"),
 	NIKOLITE("Nikolite", 0x2DABB8, "dustNikolite", 5, "oreNikolite"),
-	GREENSAPPHIRE("Green Sapphire", 0x00C416, "gemGreenSapphire", 1, "oreGreenSapphire"),
+	PERIDOT("Peridot", 0x00C416, "gemPeridot", 1, "orePeridot"),
 	RUBY("Ruby", 0xBC0000, "gemRuby", 1, "oreRuby"),
 	SAPPHIRE("Sapphire", 0x0019AA, "gemSapphire", 1, "oreSapphire"),
 	MONAZIT("Monazit", 0x3C6E3C, "ForciciumItem", 4, "MonazitOre"),
@@ -106,7 +106,10 @@ public enum ModOreList {
 	DARKIRON("Dark Iron", 0x4F00D1, "ingotFzDarkIron", 1, "oreFzDarkIron"),
 	CHROMITE("Chromite", 0x94E0F5, "ingotChrome", 1, "oreChromite"),
 	NETHERSAPPHIRE("Nether Sapphire", 0x00977, "gemSapphire", 1, "oreNetherSapphire"),
-	NETHERGREENSAPPHIRE("Nether Green Sapphire", 0x0a408, "gemGreenSapphire", 1, "oreNetherSapphire");
+	NETHERGREENSAPPHIRE("Nether Green Sapphire", 0x0a408, "gemGreenSapphire", 1, "oreNetherSapphire"),
+	NETHERTITANIUM("Nether Titanium", 0x0a408, "ingotNetherTitanium", 1, "oreNetherTitanium"),
+	NETHERSULFUR("Nether Sulfur", 0x0a408, "ingotNetherSulfur", 1, "oreNetherSulfur");
+
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 	public final String displayName;
