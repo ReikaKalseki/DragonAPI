@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.Java;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Arrays;
 
 import net.minecraft.block.Block;
@@ -266,6 +267,14 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			}
 		}
 		return f;
+	}
+
+	public static void setFinalField(Field f, Object instance, Object o) throws Exception {
+		f.setAccessible(true);
+		Field modifiersField = Field.class.getDeclaredField("modifiers");
+		modifiersField.setAccessible(true);
+		modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+		f.set(instance, o);
 	}
 
 }

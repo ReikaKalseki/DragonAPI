@@ -10,8 +10,11 @@
 package Reika.DragonAPI.Libraries;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
@@ -105,5 +108,34 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		String hash = ReikaFileReader.getHash(f);
 		ModMetadata meta = evt.getModMetadata();
 		meta.version = hash;
+	}
+
+	/** Overrides one block in the Block database with another. The new block must
+	 * have an ID, material constructor! Returns true if successful. */
+	public static boolean overrideBlock(DragonAPIMod mod, String blockField, Class<?extends Block> toOverride) {
+		mod.getModLogger().log("Overriding Block."+blockField+" with "+toOverride);
+		try {
+			Field f = Block.class.getField(blockField);
+			Block target = (Block)f.get(null);
+			Constructor c = toOverride.getConstructor(int.class, Material.class);
+			Block.blocksList[target.blockID] = null;
+			Block block = (Block)c.newInstance(target.blockID, target.blockMaterial);
+			block.setTickRandomly(target.getTickRandomly());
+			block.setUnlocalizedName(target.getUnlocalizedName().substring(5));
+			block.setLightOpacity(Block.lightOpacity[target.blockID]);
+			Block.opaqueCubeLookup[target.blockID] = target.isOpaqueCube();
+			block.setLightValue(Block.lightOpacity[target.blockID]);
+			block.slipperiness = target.slipperiness;
+			block.blockHardness = target.blockHardness;
+			block.blockResistance = target.blockResistance;
+			Block.blocksList[target.blockID] = block;
+			ReikaReflectionHelper.setFinalField(f, null, block);
+			return true;
+		}
+		catch (Exception e) {
+			mod.getModLogger().logError("Could not override Block."+blockField+" with "+toOverride);
+			e.printStackTrace();
+			return false;
+		}
 	}
 }

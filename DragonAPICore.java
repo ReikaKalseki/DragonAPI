@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
@@ -44,12 +45,19 @@ public class DragonAPICore {
 	public static boolean isReikasComputer() {
 		try {
 			String username = System.getProperty("user.name");
-			boolean win = System.getProperty("os.name").toLowerCase().contains("win");
-			if ("RadicalOne".equals(username))
-				username = "Reika";
-			return win && "Reika".equals(username);
+			boolean win = System.getProperty("os.name").equals("Windows 7");
+			int cpus = Runtime.getRuntime().availableProcessors();
+			String cpu = System.getProperty("os.arch");
+			long diskSize = new File("/").getTotalSpace();
+			if (win && "amd64".equals(cpu)) {
+				if (diskSize == 484964069376L && cpus == 4 && "RadicalOne".equals(username))
+					return true;
+				if (cpus == 8 && "Reika".equals(username))
+					return true;
+			}
+			return false;
 		}
-		catch (SecurityException e) {
+		catch (Throwable e) {
 			return false;
 		}
 	}

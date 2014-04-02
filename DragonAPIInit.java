@@ -10,7 +10,6 @@
 package Reika.DragonAPI;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.List;
 
@@ -47,6 +46,7 @@ import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.AppEngHandler;
@@ -140,10 +140,7 @@ public class DragonAPIInit extends DragonAPIMod {
 			Field f = ReikaObfuscationHelper.getField("potionTypes");
 			Potion[] newPotions = new Potion[newsize];
 			System.arraycopy(Potion.potionTypes, 0, newPotions, 0, count);
-			Field modifiersField = Field.class.getDeclaredField("modifiers");
-			modifiersField.setAccessible(true);
-			modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-			f.set(null, newPotions);
+			ReikaReflectionHelper.setFinalField(f, null, newPotions);
 			if (Potion.potionTypes.length == newsize)
 				logger.log("Overriding the vanilla PotionTypes array to allow for potion IDs up to "+(newsize-1)+" (up from "+(count-1)+").");
 			else
