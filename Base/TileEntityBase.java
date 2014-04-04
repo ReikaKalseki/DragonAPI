@@ -333,6 +333,18 @@ public abstract class TileEntityBase extends TileEntity {
 		int meta = worldObj.getBlockMetadata(x, y, z);
 		if (!b.hasTileEntity(meta))
 			return null;
-		return worldObj.getBlockTileEntity(x, y, z);
+		return this.cachesTEs() ? this.getCachedTE(x, y, z) : worldObj.getBlockTileEntity(x, y, z);
+	}
+
+	private boolean cachesTEs() {
+		return false;
+	}
+
+	private TileEntity getCachedTE(int x, int y, int z) {
+		return null;
+	}
+
+	public void updateCache(int tileX, int tileY, int tileZ) {
+
 	}
 }
