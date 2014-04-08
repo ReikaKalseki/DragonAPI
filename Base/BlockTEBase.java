@@ -2,6 +2,7 @@ package Reika.DragonAPI.Base;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
@@ -34,6 +35,13 @@ public abstract class BlockTEBase extends Block {
 
 	public final void setFullBlockBounds() {
 		this.setBlockBounds(0, 0, 0, 1, 1, 1);
+	}
+
+	@Override
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer ep, int side, float par7, float par8, float par9) {
+		TileEntityBase te = (TileEntityBase)world.getBlockTileEntity(x, y, z);
+		te.syncAllData();
+		return false;
 	}
 
 }
