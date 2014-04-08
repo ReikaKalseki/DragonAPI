@@ -27,6 +27,8 @@ public class DragonAPICore {
 
 	protected static final Random rand = new Random();
 
+	private static final boolean reika = calculateReikasComputer();
+
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
 
 	public static URL getReikaForumPage(DragonAPIMod instance) {
@@ -42,7 +44,7 @@ public class DragonAPICore {
 		return true;
 	}
 
-	public static boolean isReikasComputer() {
+	private static boolean calculateReikasComputer() {
 		try {
 			String username = System.getProperty("user.name");
 			boolean win = System.getProperty("os.name").equals("Windows 7");
@@ -60,6 +62,10 @@ public class DragonAPICore {
 		catch (Throwable e) {
 			return false;
 		}
+	}
+
+	public static boolean isReikasComputer() {
+		return reika;
 	}
 
 	static {
