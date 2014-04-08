@@ -75,7 +75,8 @@ public enum ModList {
 	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits"),
 	ARSENAL("Redstone Arsenal", "redstonearsenal.item.RAItems"),
 	EMASHER("emashercore", "emasher.core.EmasherCore"),
-	HIGHLANDS("Highlands", "highlands.api.HighlandsBlocks");
+	HIGHLANDS("Highlands", "highlands.api.HighlandsBlocks"),
+	PROJRED("ProjRed|Core");
 
 	private final boolean condition;
 	public final String modLabel;

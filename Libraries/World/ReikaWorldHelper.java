@@ -1529,4 +1529,18 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 		return (int)temp;
 	}
+
+	/** Returns whether there is a TileEntity at the specified position. Does not call getBlockTileEntity(). */
+	public static boolean tileExistsAt(World world, int x, int y, int z) {
+		int id = world.getBlockId(x, y, z);
+		if (id <= 0)
+			return false;
+		Block b = Block.blocksList[id];
+		if (b == null)
+			return false;
+		int meta = world.getBlockMetadata(x, y, z);
+		if (!b.hasTileEntity(meta))
+			return false;
+		return true;
+	}
 }

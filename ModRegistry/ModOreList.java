@@ -108,7 +108,7 @@ public enum ModOreList {
 	NETHERSAPPHIRE("Nether Sapphire", 0x00977, "gemSapphire", 1, "oreNetherSapphire"),
 	NETHERGREENSAPPHIRE("Nether Green Sapphire", 0x0a408, "gemGreenSapphire", 1, "oreNetherSapphire"),
 	NETHERTITANIUM("Nether Titanium", 0x0a408, "ingotNetherTitanium", 1, "oreNetherTitanium"),
-	NETHERSULFUR("Nether Sulfur", 0x0a408, "ingotNetherSulfur", 1, "oreNetherSulfur");
+	NETHERSULFUR("Nether Sulfur", 0x0a408, "ingotNetherSulfur", 3, "oreNetherSulfur");
 
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();

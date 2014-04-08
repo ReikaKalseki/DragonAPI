@@ -2,19 +2,38 @@ package Reika.DragonAPI.Base;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ForgeDirection;
+import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
 
-public class BlockTEBase extends Block {
+public abstract class BlockTEBase extends Block {
 
 	public BlockTEBase(int id, Material mat) {
 		super(id, mat);
 	}
 
 	@Override
+	public abstract boolean hasTileEntity(int meta);
+
+	@Override
+	public abstract TileEntity createTileEntity(World world, int meta);
+
+	@Override
 	public final void onNeighborTileChange(World world, int x, int y, int z, int tileX, int tileY, int tileZ)
 	{
+		ForgeDirection dir = ReikaDirectionHelper.getDirectionBetween(x, y, z, tileX, tileY, tileZ);
 		TileEntityBase te = (TileEntityBase)world.getBlockTileEntity(x, y, z);
-		te.updateCache(tileX, tileY, tileZ);
+		te.updateCache(dir);
+	}
+
+	public final AxisAlignedBB getBlockAABB(int x, int y, int z) {
+		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1);
+	}
+
+	public final void setFullBlockBounds() {
+		this.setBlockBounds(0, 0, 0, 1, 1, 1);
 	}
 
 }

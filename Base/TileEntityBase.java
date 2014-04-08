@@ -27,6 +27,7 @@ import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
@@ -42,6 +43,8 @@ public abstract class TileEntityBase extends TileEntity {
 
 	private final StepTimer updateTimer;
 	private final StepTimer packetTimer;
+
+	private final TileEntity[] adjTEMap = new TileEntity[6];
 
 	protected final ForgeDirection[] dirs = ForgeDirection.values();
 
@@ -87,6 +90,8 @@ public abstract class TileEntityBase extends TileEntity {
 
 	protected void readSyncTag(NBTTagCompound NBT) {
 		pseudometa = NBT.getInteger("meta");
+		if (pseudometa > 15)
+			pseudometa = 15;
 	}
 
 	@Override
@@ -274,6 +279,10 @@ public abstract class TileEntityBase extends TileEntity {
 		//worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		//rmb = this.getTEModel(worldObj, xCoord, yCoord, zCoord);
 		this.animateWithTick(worldObj, xCoord, yCoord, zCoord);
+		if (this.getTicksExisted() == 0) {
+			for (int i = 0; i < 6; i++)
+				this.updateCache(dirs[i]);
+		}
 	}
 
 	public Random getRandom() {
@@ -317,34 +326,39 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	public TileEntity getAdjacentTileEntity(ForgeDirection dir) {
-		int dx = xCoord+dir.offsetX;
-		int dy = yCoord+dir.offsetY;
-		int dz = zCoord+dir.offsetZ;
-		return this.getTileEntity(dx, dy, dz);
+		if (this.cachesTEs()) {
+			return this.getCachedTE(dir);
+		}
+		else {
+			int dx = xCoord+dir.offsetX;
+			int dy = yCoord+dir.offsetY;
+			int dz = zCoord+dir.offsetZ;
+			if (!ReikaWorldHelper.tileExistsAt(worldObj, dx, dy, dz))
+				return null;
+			return worldObj.getBlockTileEntity(dx, dy, dz);
+		}
 	}
 
 	public TileEntity getTileEntity(int x, int y, int z) {
-		int id = worldObj.getBlockId(x, y, z);
-		if (id <= 0)
+		if (!ReikaWorldHelper.tileExistsAt(worldObj, x, y, z))
 			return null;
-		Block b = Block.blocksList[id];
-		if (b == null)
-			return null;
-		int meta = worldObj.getBlockMetadata(x, y, z);
-		if (!b.hasTileEntity(meta))
-			return null;
-		return this.cachesTEs() ? this.getCachedTE(x, y, z) : worldObj.getBlockTileEntity(x, y, z);
+		return worldObj.getBlockTileEntity(x, y, z);
+	}
+
+	public final boolean isDirectlyAdjacent(int x, int y, int z) {
+		return Math.abs(x-xCoord)+Math.abs(y-yCoord)+Math.abs(z-zCoord) == 1;
 	}
 
 	private boolean cachesTEs() {
-		return false;
+		return this.getBlockType() instanceof BlockTEBase;
 	}
 
-	private TileEntity getCachedTE(int x, int y, int z) {
-		return null;
+	private TileEntity getCachedTE(ForgeDirection dir) {
+		return adjTEMap[dir.ordinal()];
 	}
 
-	public void updateCache(int tileX, int tileY, int tileZ) {
-
+	public void updateCache(ForgeDirection dir) {
+		TileEntity te = worldObj.getBlockTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
+		adjTEMap[dir.ordinal()] = te;
 	}
 }

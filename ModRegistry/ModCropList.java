@@ -41,7 +41,7 @@ public enum ModCropList {
 	OREBERRY(ModList.TINKERER, 0xcccccc, OreBerryBushHandler.getInstance()),
 	PAM(ModList.HARVESTCRAFT, 0x22aa22, HarvestCraftHandler.getInstance()),
 	ALGAE(ModList.EMASHER, 0x29D855, "algae", 0, VarType.INSTANCE),
-	ENDER(ModList.EXTRAUTILS, 0x00684A, "enderLily",  7, VarType.INSTANCE);
+	ENDER(ModList.EXTRAUTILS, 0x00684A, "enderLily", 7, VarType.INSTANCE);
 
 	private final ModList mod;
 	public final int blockID;
@@ -69,9 +69,7 @@ public enum ModCropList {
 	private ModCropList(ModList api, int color, String blockVar, int metamin, int metaripe, VarType type) {
 		dropsSelf = true;
 		mod = api;
-		seedMeta = 0;
 		ripeMeta = metaripe;
-		seedID = -1;
 		harvestedMeta = metamin;
 		handler = null;
 		cropColor = color;
@@ -152,6 +150,8 @@ public enum ModCropList {
 			}
 		}
 		blockID = id;
+		seedID = blockID;
+		seedMeta = 0;
 	}
 
 	private ModCropList(ModList api, int color, CropHandlerBase h) {

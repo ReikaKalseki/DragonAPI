@@ -44,4 +44,16 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		}
 	}
 
+	public static ForgeDirection getDirectionBetween(int x1, int y1, int z1, int x2, int y2, int z2) {
+		int dx = x2-x1;
+		int dy = y2-y1;
+		int dz = z2-z1;
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			if (dir.offsetX == dx && dir.offsetY == dy && dir.offsetZ == dz)
+				return dir;
+		}
+		return null;
+	}
+
 }

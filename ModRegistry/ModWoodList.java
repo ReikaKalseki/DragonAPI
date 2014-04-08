@@ -56,7 +56,7 @@ public enum ModWoodList implements TreeType {
 	DARK(ModList.BOP, 0x664848, 0x312F42, "logs1ID", "leaves1ID", "saplingsID", 2, new int[]{3,11}, 4, VarType.INT),
 	FIR(ModList.BOP, 0x675846, 0x518E5F, "logs1ID", "leaves2ID", "saplingsID", 3, new int[]{1,9}, 6, VarType.INT),
 	LOFTWOOD(ModList.BOP, 0x817665, 0x3FD994, "logs2ID", "leaves2ID", "saplingsID", 0, new int[]{2,10}, 7, VarType.INT),
-	CHERRY(ModList.BOP, 0x965441, 0xFFAFE0, "logs1ID", "leaves3ID", "saplingsID", new int[]{1,9,11}, new int[]{1,3,9,11}, 10, VarType.INT), //sapling 12 for white cherry
+	CHERRY(ModList.BOP, 0x965441, 0xFFAFE0, "logs1ID", "leaves3ID", "saplingsID", new int[]{1,5,9}, new int[]{1,3,9,11}, 10, VarType.INT), //sapling 12 for white cherry
 	HELLBARK(ModList.BOP, 0xB36F43, 0x7B5E1F, "logs4ID", "leaves4ID", "saplingsID", 1, 0, 13, VarType.INT),
 	JACARANDA(ModList.BOP, 0x998177, 0x644F84, "logs4ID", "leaves4ID", "saplingsID", 2, new int[]{1,9}, 14, VarType.INT),
 	ACACIA(ModList.BOP, 0x847956, 0x3E981A, "logs1ID", "colourizedLeaves1ID", "colourizedSaplingsID", 0, new int[]{0,8}, 0, VarType.INT),

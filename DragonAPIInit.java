@@ -52,6 +52,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.AppEngHandler;
 import Reika.DragonAPI.ModInteract.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.BCPipeHandler;
+import Reika.DragonAPI.ModInteract.BannedItemReader;
 import Reika.DragonAPI.ModInteract.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
@@ -131,6 +132,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 
 		this.increasePotionCount();
+
+		BannedItemReader.instance.initWith("plugins/BanItem/config.yml");
+		BannedItemReader.instance.initWith("plugins/TekkitCustomizerData/config.yml");
 	}
 
 	private void increasePotionCount() {
