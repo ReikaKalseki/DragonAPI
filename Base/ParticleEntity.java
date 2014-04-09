@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public abstract class ParticleEntity extends InertEntity {
 
@@ -51,6 +52,8 @@ public abstract class ParticleEntity extends InertEntity {
 		if (motionX == 0 && motionY == 0 && motionZ == 0 && ticksExisted > 20)
 			this.setDead();
 		if (posY > 256 || posY < 0)
+			this.setDead();
+		if (ticksExisted > 240 && ReikaRandomHelper.doWithChance(ticksExisted-240))
 			this.setDead();
 
 		//ReikaJavaLibrary.pConsole(String.format("%d, %d, %d :: %d, %d, %d", oldBlockX, oldBlockY, oldBlockZ, this.getBlockX(), this.getBlockY(), this.getBlockZ()));

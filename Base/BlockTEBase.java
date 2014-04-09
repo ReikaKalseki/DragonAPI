@@ -35,7 +35,8 @@ public abstract class BlockTEBase extends Block {
 	{
 		ForgeDirection dir = ReikaDirectionHelper.getDirectionBetween(x, y, z, tileX, tileY, tileZ);
 		TileEntityBase te = (TileEntityBase)world.getBlockTileEntity(x, y, z);
-		te.updateCache(dir);
+		if (te != null)
+			te.updateCache(dir);
 	}
 
 	public final AxisAlignedBB getBlockAABB(int x, int y, int z) {

@@ -52,7 +52,7 @@ public abstract class TileEntityBase extends TileEntity {
 
 	public abstract void updateEntity(World world, int x, int y, int z, int meta);
 
-	public abstract void animateWithTick(World world, int x, int y, int z);
+	protected abstract void animateWithTick(World world, int x, int y, int z);
 
 	public TileEntityBase() {
 		super();
