@@ -116,6 +116,7 @@ public class CoreContainer extends Container {
 	@Override
 	public final ItemStack transferStackInSlot(EntityPlayer player, int slot)
 	{
+		this.onShiftClickSlot(player, slot, ((Slot)inventorySlots.get(slot)).getStack());
 		ItemStack is = null;
 		Slot fromSlot = (Slot)inventorySlots.get(slot);
 		if (!(tile instanceof IInventory))
@@ -204,6 +205,10 @@ public class CoreContainer extends Container {
 		}
 
 		return null;
+	}
+
+	protected void onShiftClickSlot(EntityPlayer player, int slot, ItemStack is) {
+
 	}
 
 	private boolean canAdd(ItemStack is, ItemStack inslot) {

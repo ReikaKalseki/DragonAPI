@@ -17,22 +17,20 @@ import net.minecraft.world.World;
 
 public enum ReikaCropHelper {
 
-	WHEAT(Block.crops.blockID, 7, 0),
-	CARROT(Block.carrot.blockID, 7, 0),
-	POTATO(Block.potato.blockID, 7, 0),
-	NETHERWART(Block.netherStalk.blockID, 4, 0),
-	COCOA(Block.cocoaPlant.blockID, 3, 0);
+	WHEAT(Block.crops.blockID, 7),
+	CARROT(Block.carrot.blockID, 7),
+	POTATO(Block.potato.blockID, 7),
+	NETHERWART(Block.netherStalk.blockID, 4),
+	COCOA(Block.cocoaPlant.blockID, 2);
 
 	public final int blockID;
 	public final int ripeMeta;
-	public final int harvestedMeta;
 
 	public static final ReikaCropHelper[] cropList = values();
 
-	private ReikaCropHelper(int id, int metaripe, int metaharvest) {
+	private ReikaCropHelper(int id, int metaripe) {
 		blockID = id;
 		ripeMeta = metaripe;
-		harvestedMeta = metaharvest;
 	}
 
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
@@ -54,11 +52,19 @@ public enum ReikaCropHelper {
 	}
 
 	public boolean destroyOnHarvest() {
-		return true;
+		return false;
 	}
 
 	public boolean isRipe(int meta) {
-		return meta >= ripeMeta;
+		if (this == COCOA)
+			meta /= 4;
+		return meta == ripeMeta;
+	}
+
+	public int getHarvestedMeta(int meta_ripe) {
+		if (this == COCOA)
+			return meta_ripe&3;
+		return 0;
 	}
 
 
