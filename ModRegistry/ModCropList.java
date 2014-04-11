@@ -34,7 +34,6 @@ public enum ModCropList {
 	BARLEY(ModList.NATURA, 0xCDB14D, "crops", "seeds", 0, 0, 0, 3, VarType.INSTANCE),
 	COTTON(ModList.NATURA, 0xE366F5, "crops", "seeds", 0, 4, 6, 8, VarType.INSTANCE),
 	FLAX(ModList.REDPOWER, 0xD9C482, "", "", 0, 0, 0, 0, VarType.INSTANCE),
-	CANOLA(ModList.ROTARYCRAFT, 0x5B5B5B, "canola", "ItemCanolaSeed", 0, 0, 0, 9, VarType.INSTANCE, VarType.CLASS),
 	MAGIC(ModList.MAGICCROPS, 0x6F9165, MagicCropHandler.getInstance()),
 	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE),
 	BERRY(ModList.NATURA, 0x55ff33, BerryBushHandler.getInstance()),
@@ -121,9 +120,6 @@ public enum ModCropList {
 						b = blocks.getField(blockVar);
 						id = b.getInt(null);
 						exists = true;
-						break;
-					case CLASS:
-						blockClass = blockVar;
 						break;
 					default:
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
@@ -228,9 +224,6 @@ public enum ModCropList {
 						id = b.getInt(null);
 						exists = true;
 						break;
-					case CLASS:
-						blockClass = blockVar;
-						break;
 					default:
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for field "+blockVar);
@@ -265,9 +258,6 @@ public enum ModCropList {
 						i = items.getField(itemVar);
 						seed = i.getInt(null);
 						exists = true;
-						break;
-					case CLASS:
-						itemClass = itemVar;
 						break;
 					default:
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);

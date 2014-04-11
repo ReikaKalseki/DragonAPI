@@ -410,8 +410,7 @@ public enum ModWoodList implements TreeType {
 	public static enum VarType {
 		ITEMSTACK(),
 		INSTANCE(),
-		INT(),
-		CLASS();
+		INT();
 
 		@Override
 		public String toString() {

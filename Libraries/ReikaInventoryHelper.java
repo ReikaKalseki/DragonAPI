@@ -599,6 +599,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 					int added = Math.min(is.stackSize, max);
 					is.stackSize -= added;
 					ii.setInventorySlotContents(i, ReikaItemHelper.getSizedItemStack(is, added));
+					return true;
 				}
 				else {
 					if (ReikaItemHelper.matchStacks(is, in) && ItemStack.areItemStackTagsEqual(is, in)) {
@@ -617,14 +618,16 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		int size = is.stackSize;
 		int max = Math.min(ii.getInventoryStackLimit(), is.getMaxStackSize());
 		for (int i = 0; i < ii.getSizeInventory() && size > 0; i++) {
-			ItemStack in = ii.getStackInSlot(i);
-			if (in == null) {
-				size -= max;
-			}
-			else {
-				if (ReikaItemHelper.matchStacks(is, in) && ItemStack.areItemStackTagsEqual(is, in)) {
-					int space = max-in.stackSize;
-					size -= space;
+			if (ii.isItemValidForSlot(i, is)) {
+				ItemStack in = ii.getStackInSlot(i);
+				if (in == null) {
+					size -= max;
+				}
+				else {
+					if (ReikaItemHelper.matchStacks(is, in) && ItemStack.areItemStackTagsEqual(is, in)) {
+						int space = max-in.stackSize;
+						size -= space;
+					}
 				}
 			}
 		}
