@@ -32,10 +32,10 @@ import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public enum ModOreList {
 
-	TIN("Tin", 0xB2D5E9, "ingotTin", 1, "oreTin"),
+	TIN("Tin", 0xB2D5E9, "ingotTin", 1, "oreTin", "oreCassiterite"),
 	COPPER("Copper", 0xBC6C01, "ingotCopper", 1, "oreCopper", "oreTetrahedrite"),
 	LEAD("Lead", 0x697597, "ingotLead", 1, "oreLead"),
-	NICKEL("Nickel", 0xD0CCAD, "ingotNickel", 1, "oreNickel", "orePentlandite"), //ask KingLemming, not me...
+	NICKEL("Nickel", 0xD0CCAD, "ingotNickel", 1, "oreNickel", "orePentlandite"),
 	SILVER("Silver", 0xA4D0DA, "ingotSilver", 1, "oreSilver"),
 	GALENA("Galena", 0x7F6E95, "dustGalena", 1, "oreGalena"),
 	ALUMINUM("Aluminum", 0xF1F1F1, "ingotAluminum", 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
@@ -78,7 +78,7 @@ public enum ModOreList {
 	PLATINUM("Platinum", 0x00A0DB, "ingotPlatinum", 1, "orePlatinum", "oreCooperite"), //WTF Greg..."Cooper" == "Sheldon"??
 	NETHERPLATINUM("Nether Platinum", 0x0892DE, "ingotPlatinum", 1, "oreNetherPlatinum"),
 	ZINC("Zinc", 0x9B9B9B, "ingotZinc", 1, "oreZinc", "oreSphalerite"),
-	OSMIUM("Osmium", 0xA8B0E7, "ingotOsmium", 1, "oreOsmium", "oreNetherOsmium"),
+	OSMIUM("Osmium", 0xA8B0E7, "ingotOsmium", 1, "oreOsmium"),
 	NETHERPIGIRON("Pig Iron", 0xC5B3AA, "ingotSteel", 1, "oreNetherSteel"), //...
 	SULFUR("Sulfur", 0xFFFF00, "dustSulfur", 3, "oreSulfur"),
 	PITCHBLENDE("Pitchblende", 0x4E4E7B, "ingotUranium", 1, "orePitchblende"),
@@ -108,7 +108,9 @@ public enum ModOreList {
 	NETHERSAPPHIRE("Nether Sapphire", 0x00977, "gemSapphire", 1, "oreNetherSapphire"),
 	NETHERGREENSAPPHIRE("Nether Green Sapphire", 0x0a408, "gemGreenSapphire", 1, "oreNetherSapphire"),
 	NETHERTITANIUM("Nether Titanium", 0x0a408, "ingotNetherTitanium", 1, "oreNetherTitanium"),
-	NETHERSULFUR("Nether Sulfur", 0x0a408, "ingotNetherSulfur", 3, "oreNetherSulfur");
+	NETHERSULFUR("Nether Sulfur", 0x0a408, "dustNetherSulfur", 3, "oreNetherSulfur"),
+	NETHEROSMIUM("Nether Osmium", 0x98A0D7, "ingotNetherOsmium", 1, "oreNetherOsmium"),
+	SILICON("Silicon", 0x777777, "dustSilicon", 1, "oreSilicon");
 
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();

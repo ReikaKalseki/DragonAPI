@@ -41,7 +41,7 @@ public enum ModList {
 	BCTRANSPORT("BuildCraft|Transport", "buildcraft.BuildCraftTransport"),
 	THAUMCRAFT("Thaumcraft", "thaumcraft.common.config.ConfigBlocks", "thaumcraft.common.config.ConfigItems"),
 	IC2("IC2", "ic2.core.Ic2Items"),
-	GREGTECH("GregTech"),
+	GREGTECH("gregtech_addon"),
 	FORESTRY("Forestry", "forestry.core.config.ForestryBlock", "forestry.core.config.ForestryItem"),
 	APPENG("AppliedEnergistics", "appeng.common.AppEng"),
 	MFFS("MFFS", "mffs.ModularForceFieldSystem"),

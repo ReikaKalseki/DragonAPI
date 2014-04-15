@@ -20,7 +20,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.potion.Potion;
-import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
@@ -68,6 +67,7 @@ import Reika.DragonAPI.ModInteract.MimicryHandler;
 import Reika.DragonAPI.ModInteract.OpenBlockHandler;
 import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
 import Reika.DragonAPI.ModInteract.QuantumOreHandler;
+import Reika.DragonAPI.ModInteract.RailcraftHandler;
 import Reika.DragonAPI.ModInteract.RedstoneArsenalHandler;
 import Reika.DragonAPI.ModInteract.ThaumBlockHandler;
 import Reika.DragonAPI.ModInteract.ThaumOreHandler;
@@ -178,8 +178,6 @@ public class DragonAPIInit extends DragonAPIMod {
 		PotionCollisionTracker.instance.check();
 		VanillaIntegrityTracker.instance.check();
 
-		if (DragonAPICore.isOnActualServer())
-			;//this.licenseTest();
 		CompatibilityTracker.instance.test();
 
 		IntegrityChecker.instance.testIntegrity();
@@ -229,31 +227,6 @@ public class DragonAPIInit extends DragonAPIMod {
 				}
 			}
 		}
-	}
-	/*
-	@ForgeSubscribe
-	public void safeSpawn(EntityJoinWorldEvent evt) {
-		Entity e = evt.entity;
-		if (e == null) {
-			evt.setCanceled(true);
-			logger.log("Caught null mob spawn for Entity");
-			return;
-		}
-		int id = EntityList.getEntityID(e);
-		if (id == 0) {
-			evt.setCanceled(true);
-			logger.log("Caught invalid mob spawn for Entity "+e.getClass()+" (ID "+id+")");
-		}
-		else if (!EntityList.IDtoClassMapping.containsKey(id)) {
-			evt.setCanceled(true);
-			logger.log("Caught invalid mob spawn for Entity "+e.getClass()+" (ID "+id+")");
-		}
-	}*/
-
-	private void licenseTest() {
-		MinecraftServer server = MinecraftServer.getServer();
-		String name = server.getServerHostname();
-		ReikaJavaLibrary.spamConsole(name);
 	}
 
 	private void alCompat() { //Why the hell are there three standards for aluminum?
@@ -310,6 +283,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.FACTORIZATION, FactorizationHandler.class);
 		this.initHandler(ModList.HARVESTCRAFT, HarvestCraftHandler.class);
 		this.initHandler(ModList.ARSENAL, RedstoneArsenalHandler.class);
+		this.initHandler(ModList.RAILCRAFT, RailcraftHandler.class);
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);

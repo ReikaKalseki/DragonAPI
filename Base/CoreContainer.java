@@ -17,6 +17,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import Reika.DragonAPI.Interfaces.MultiPageInventory;
 import Reika.DragonAPI.Interfaces.XPProducer;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -122,14 +123,25 @@ public class CoreContainer extends Container {
 		if (!(tile instanceof IInventory))
 			return null;
 		int invsize = ((IInventory)tile).getSizeInventory();
+		int base = 0;
+		if (tile instanceof MultiPageInventory) {
+			MultiPageInventory mp = (MultiPageInventory)tile;
+			invsize = mp.getSlotsOnPage(mp.getCurrentPage());
+			int cur = mp.getCurrentPage();
+			for (int i = 0; i < cur; i++) {
+				base += mp.getSlotsOnPage(i);
+			}
+		}
 
 		if (fromSlot != null && fromSlot.getHasStack())
 		{
 			ItemStack inslot = fromSlot.getStack();
 			is = inslot.copy();
-			boolean toPlayer = slot < invsize;
+			boolean toPlayer = slot < invsize+base;
+
 			if (toPlayer) {
-				for (int i = invsize; i < inventorySlots.size() && is.stackSize > 0; i++) {
+				for (int i = invsize+base; i < inventorySlots.size() && is.stackSize > 0; i++) {
+					//ReikaJavaLibrary.pConsole(i);
 					Slot toSlot = (Slot)inventorySlots.get(i);
 					if (toSlot.isItemValid(is) && this.canAdd(is, toSlot.getStack())) {
 						if (!toSlot.getHasStack()) {
@@ -166,13 +178,14 @@ public class CoreContainer extends Container {
 				return is;
 			}
 			else {
-				for (int i = 0; i < invsize && is.stackSize > 0; i++) {
+				for (int i = base; i < ((IInventory)tile).getSizeInventory() && is.stackSize > 0; i++) {
 					Slot toSlot = (Slot)inventorySlots.get(i);
 					int lim = ((IInventory)tile).getInventoryStackLimit();
 					if (toSlot.isItemValid(is) && (((IInventory)tile).isItemValidForSlot(i, is)) && this.canAdd(is, toSlot.getStack())) {
 						if (!toSlot.getHasStack()) {
 							if (is.stackSize <= lim) {
 								toSlot.putStack(is.copy());
+								//ReikaJavaLibrary.pConsole(toSlot.getSlotIndex());
 								is.stackSize = 0;
 							}
 							else {

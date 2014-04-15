@@ -21,6 +21,7 @@ import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.common.FakePlayer;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
@@ -40,6 +41,7 @@ public abstract class TileEntityBase extends TileEntity {
 	protected boolean shutDown;
 	public String placer;
 	private int ticksExisted;
+	private FakePlayer fakePlayer;
 
 	private final StepTimer updateTimer;
 	private final StepTimer packetTimer;
@@ -139,6 +141,14 @@ public abstract class TileEntityBase extends TileEntity {
 
 	public final EntityPlayer getPlacer() {
 		return placer != null && !placer.isEmpty() ? worldObj.getPlayerEntityByName(placer) : null;
+	}
+
+	public final EntityPlayer getFakePlacer() {
+		if (placer == null || placer.isEmpty())
+			return null;
+		if (fakePlayer == null)
+			fakePlayer = new FakePlayer(worldObj, placer);
+		return fakePlayer;
 	}
 
 	public boolean isIDTEMatch() {
