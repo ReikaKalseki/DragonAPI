@@ -28,7 +28,7 @@ public final class RailcraftHandler extends ModHandlerBase {
 		if (this.hasMod()) {
 			try {
 				Class c = Class.forName("mods.railcraft.common.blocks.hidden.BlockHidden");
-				Field block = c.getField("block");
+				Field block = c.getDeclaredField("block");
 				block.setAccessible(true);
 				Block b = (Block)block.get(null);
 				idhidden = b.blockID;
