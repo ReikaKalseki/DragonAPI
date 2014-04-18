@@ -27,50 +27,8 @@ public class DragonAPICore {
 
 	protected static final Random rand = new Random();
 
-	private static final boolean reika = calculateReikasComputer();
-
-	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
-
-	public static URL getReikaForumPage(DragonAPIMod instance) {
-		try {
-			return new URL(FORUM_PAGE);
-		}
-		catch (MalformedURLException e) {
-			throw new RegistrationException(instance, "The mod provided a malformed URL for its documentation site!");
-		}
-	}
-
 	public static final boolean hasAllClasses() {
 		return true;
-	}
-
-	private static boolean calculateReikasComputer() {
-		try {
-			String username = System.getProperty("user.name");
-			boolean win = System.getProperty("os.name").equals("Windows 7");
-			int cpus = Runtime.getRuntime().availableProcessors();
-			String cpu = System.getProperty("os.arch");
-			long diskSize = new File("/").getTotalSpace();
-			if (win && "amd64".equals(cpu)) {
-				if (diskSize == 484964069376L && cpus == 4 && "RadicalOne".equals(username))
-					return true;
-				if (cpus == 8 && "Reika".equals(username))
-					return true;
-			}
-			return false;
-		}
-		catch (Throwable e) {
-			return false;
-		}
-	}
-
-	public static boolean isReikasComputer() {
-		return reika;
-	}
-
-	static {
-		if (isReikasComputer())
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading on Reika's computer; Dev features enabled.");
 	}
 
 	protected static Side getSide() {
