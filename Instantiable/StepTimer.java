@@ -28,6 +28,10 @@ public class StepTimer {
 		value++;
 	}
 
+	public void update(int time) {
+		value += time;
+	}
+
 	private boolean isAtCap() {
 		return value >= cap;
 	}

@@ -13,7 +13,6 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.player.PlayerEvent.NameFormat;
 
 import org.lwjgl.opengl.GL11;
 
@@ -34,13 +33,6 @@ public class PlayerModelRenderer {
 
 	private PlayerModelRenderer() {
 
-	}
-
-	@ForgeSubscribe
-	public void changeReikaName(NameFormat e) {
-		if ("Reika_Kalseki".equals(e.username)) {
-			//e.displayname = "Reika";
-		}
 	}
 
 	// Render starts centered on eye position

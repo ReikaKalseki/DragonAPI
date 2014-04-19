@@ -180,6 +180,66 @@ public abstract class BaseBlockRenderer implements ISimpleBlockRenderingHandler 
 		}
 	}
 
+	protected final void faceBrightnessNoWorld(ForgeDirection dir, Tessellator v5, float r, float g, float b) {
+		float f3 = 0.5F;
+		float f4 = 1.0F;
+		float f5 = 0.8F;
+		float f6 = 0.6F;
+
+		float f7 = f4;
+		float f8 = f4;
+		float f9 = f4;
+
+		float f10 = f3;
+		float f11 = f5;
+		float f12 = f6;
+		float f13 = f3;
+		float f14 = f5;
+		float f15 = f6;
+		float f16 = f3;
+		float f17 = f5;
+		float f18 = f6;
+
+		f10 = f3;
+		f11 = f5;
+		f12 = f6;
+		f13 = f3;
+		f14 = f5;
+		f15 = f6;
+		f16 = f3;
+		f17 = f5;
+		f18 = f6;
+
+		switch(dir.getOpposite()) {
+		case UP:
+			//v5.setBrightness(240);
+			v5.setColorOpaque_F(f7*r, f8*g, f9*b);
+			break;
+		case DOWN:
+			//v5.setBrightness(rb.renderMinY > 0.0D ? l : 1);
+			v5.setColorOpaque_F(f10*r, f13*g, f16*b);
+			break;
+		case NORTH:
+			//v5.setBrightness(rb.renderMinZ > 0.0D ? l : 1);
+			v5.setColorOpaque_F(f11*r, f14*g, f17*b);
+			break;
+		case SOUTH:
+			//v5.setBrightness(rb.renderMaxZ < 1.0D ? l : 1);
+			v5.setColorOpaque_F(f11*r, f14*g, f17*b);
+			break;
+		case WEST:
+			//v5.setBrightness(rb.renderMinX > 0.0D ? l : 1);
+			v5.setColorOpaque_F(f12*r, f15*g, f18*b);
+			break;
+		case EAST:
+			//v5.setBrightness(rb.renderMaxX < 1.0D ? l : 1);
+			v5.setColorOpaque_F(f12*r, f15*g, f18*b);
+			break;
+		default:
+			break;
+		}
+	}
+
 	protected final void faceBrightnessNoWorld(ForgeDirection dir, Tessellator v5, float multiplier) {
 		float f3 = 0.5F;
 		float f4 = 1.0F;

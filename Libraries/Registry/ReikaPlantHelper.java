@@ -31,9 +31,12 @@ public enum ReikaPlantHelper {
 	BUSH(Block.deadBush),
 	CROP(Block.crops, Block.carrot, Block.potato, Block.melonStem, Block.pumpkinStem),
 	NETHERWART(Block.netherStalk),
-	LILYPAD(Block.waterlily);
+	LILYPAD(Block.waterlily),
+	VINES(Block.vine);
 
 	private List<Integer> ids = new ArrayList<Integer>();
+
+	public static final ReikaPlantHelper[] plantList = values();
 
 	private ReikaPlantHelper(Block... blocks) {
 		for (int i = 0; i < blocks.length; i++) {
@@ -45,6 +48,15 @@ public enum ReikaPlantHelper {
 		for (int i = 0; i < items.length; i++) {
 			ids.add(items[i].itemID);
 		}
+	}
+
+	public static ReikaPlantHelper getPlant(int id) {
+		for (int i = 0; i < plantList.length; i++) {
+			ReikaPlantHelper p = plantList[i];
+			if (p.ids.contains(id))
+				return p;
+		}
+		return null;
 	}
 
 	/** Can a plant be planted at yes/no. Args: World, x, y, z */
@@ -80,6 +92,9 @@ public enum ReikaPlantHelper {
 			return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
 		case LILYPAD:
 			return matbelow == Material.water && metabelow == 0;
+		case VINES:
+			if (Block.opaqueCubeLookup[world.getBlockId(x, y+1, z)])
+				return true;
 		}
 		return false;
 	}

@@ -54,7 +54,7 @@ public class DragonAPICore {
 			if (win && "amd64".equals(cpu)) {
 				if (diskSize == 484964069376L && cpus == 4 && "RadicalOne".equals(username))
 					return true;
-				if (cpus == 8 && "Reika".equals(username))
+				if (diskSize == 119926681600L && cpus == 8 && "Reika".equals(username))
 					return true;
 			}
 			return false;

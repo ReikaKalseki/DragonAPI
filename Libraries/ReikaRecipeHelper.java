@@ -9,17 +9,21 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import Reika.DragonAPI.DragonAPICore;
@@ -32,6 +36,56 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 	private static final CraftingManager cr = CraftingManager.getInstance();
 	private static final List<IRecipe> recipes = cr.getRecipeList();
+
+	private static Field shapedOreHeight;
+	private static Field shapedOreWidth;
+	private static Field shapedOreInput;
+
+	static {
+		try {
+			shapedOreHeight = ShapedOreRecipe.class.getDeclaredField("height");
+			shapedOreWidth = ShapedOreRecipe.class.getDeclaredField("width");
+			shapedOreInput = ShapedOreRecipe.class.getDeclaredField("input");
+
+			shapedOreHeight.setAccessible(true);
+			shapedOreWidth.setAccessible(true);
+			shapedOreInput.setAccessible(true);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static void overwriteShapedOreRecipeInput(ShapedOreRecipe s, Object[] in, int height, int width) {
+		try {
+			shapedOreInput.set(s, in);
+			shapedOreHeight.set(s, height);
+			shapedOreWidth.set(s, width);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static int getOreRecipeHeight(ShapedOreRecipe s) {
+		try {
+			return shapedOreHeight.getInt(s);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	public static int getOreRecipeWidth(ShapedOreRecipe s) {
+		try {
+			return shapedOreWidth.getInt(s);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
 
 	/** Finds a recipe by its product. */
 	public static IRecipe getRecipeByOutput(ItemStack out) {
@@ -325,5 +379,128 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		else
 			ReikaJavaLibrary.pConsole("Recipe for "+out.getDisplayName()+" requires missing Ore Dictionary items "+missing+", and has not been loaded.");
 		return allowed;
+	}
+
+	public static void replaceIngredientInAllRecipes(ItemStack ingredient, ItemStack replacement, boolean makeCopy) {
+		ArrayList<IRecipe> copies = new ArrayList();
+		List<IRecipe> li = CraftingManager.getInstance().getRecipeList();
+		for (int k = 0; k < li.size(); k++) {
+			IRecipe ir = li.get(k);
+			if (ir instanceof ShapedRecipes) {
+				ShapedRecipes s = (ShapedRecipes) ir;
+				boolean match = false;
+				for (int i = 0; i < s.recipeItems.length; i++) {
+					if (ReikaItemHelper.matchStacks(ingredient, s.recipeItems[i])) {
+						match = true;
+					}
+				}
+				if (match && makeCopy)
+					copies.add(new ShapedRecipes(s.recipeWidth, s.recipeHeight, s.recipeItems, s.getRecipeOutput()));
+				if (match) {
+					for (int i = 0; i < s.recipeItems.length; i++) {
+						if (ReikaItemHelper.matchStacks(ingredient, s.recipeItems[i])) {
+							s.recipeItems[i] = replacement;
+						}
+					}
+				}
+			}
+			else if (ir instanceof ShapelessRecipes) {
+				ShapelessRecipes s = (ShapelessRecipes) ir;
+				boolean match = false;
+				List<ItemStack> in = s.recipeItems;
+				for (int i = 0; i < in.size(); i++) {
+					if (ReikaItemHelper.matchStacks(ingredient, in.get(i))) {
+						match = true;
+					}
+				}
+				if (match && makeCopy) {
+					ItemStack[] inarr = new ItemStack[in.size()];
+					for (int i = 0; i < inarr.length; i++) {
+						inarr[i] = in.get(i);
+					}
+					//GameRegistry.addShapelessRecipe(s.getRecipeOutput(), inarr);
+					copies.add(new ShapelessRecipes(s.getRecipeOutput(), ReikaJavaLibrary.copyList(in)));
+				}
+				if (match) {
+					for (int i = 0; i < in.size(); i++) {
+						if (ReikaItemHelper.matchStacks(ingredient, in.get(i))) {
+							in.set(i, replacement);
+						}
+					}
+				}
+			}
+			else if (ir instanceof ShapedOreRecipe) {
+				ShapedOreRecipe s = (ShapedOreRecipe) ir;
+				boolean match = false;
+				Object[] in = s.getInput();
+				for (int i = 0; i < in.length; i++) {
+					if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
+						match = true;
+					}
+				}
+				if (match && makeCopy) {
+					int h = getOreRecipeHeight(s);
+					int w = getOreRecipeWidth(s);
+					if (h > 0 && w > 0) {
+						ShapedOreRecipe rec = new ShapedOreRecipe(s.getRecipeOutput(), 'B', Block.stone);
+						//ReikaJavaLibrary.spamConsole(rec.getInput().length+":"+Arrays.toString(rec.getInput()));
+						//ReikaJavaLibrary.spamConsole(in.length+":"+Arrays.toString(in));
+						Object[] items = new Object[in.length];
+						System.arraycopy(in, 0, items, 0, in.length);
+						overwriteShapedOreRecipeInput(rec, items, h, w);
+						copies.add(rec);
+						//ReikaJavaLibrary.spamConsole(rec.getInput().length+":"+Arrays.toString(rec.getInput()));
+						//ReikaJavaLibrary.pConsole("----------------------------------------------------");
+					}
+				}
+				if (match) {
+					for (int i = 0; i < in.length; i++) {
+						if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
+							in[i] = replacement;
+						}
+					}
+				}
+			}
+			else if (ir instanceof ShapelessOreRecipe) {
+				ShapelessOreRecipe s = (ShapelessOreRecipe) ir;
+				boolean match = false;
+				ArrayList in = s.getInput();
+				for (int i = 0; i < in.size(); i++) {
+					if (in.get(i) instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in.get(i))) {
+						match = true;
+					}
+				}
+				if (match && makeCopy) {
+					Object[] inarr = new Object[in.size()];
+					for (int i = 0; i < inarr.length; i++) {
+						if (in.get(i) instanceof ArrayList) {
+							ItemStack is = ((ArrayList<ItemStack>)in.get(i)).get(0);
+							String oreName = OreDictionary.getOreName(OreDictionary.getOreID(is));
+							inarr[i] = oreName;
+						}
+						else {
+							inarr[i] = in.get(i);
+						}
+					}
+					copies.add(new ShapelessOreRecipe(s.getRecipeOutput(), inarr));
+				}
+				if (match) {
+					for (int i = 0; i < in.size(); i++) {
+						if (in.get(i) instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in.get(i))) {
+							in.set(i, replacement);
+						}
+					}
+				}
+			}
+		}
+
+		for (int i = 0; i < copies.size(); i++) {
+			IRecipe ir = copies.get(i);
+			if (ir instanceof ShapedOreRecipe) {
+				ShapedOreRecipe rec = (ShapedOreRecipe) ir;
+				ReikaJavaLibrary.spamConsole(ir.getRecipeOutput().getDisplayName()+":"+Arrays.toString(rec.getInput()));
+			}
+		}
+		CraftingManager.getInstance().getRecipeList().addAll(copies);
 	}
 }

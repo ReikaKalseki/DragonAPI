@@ -106,11 +106,12 @@ public enum ModOreList {
 	DARKIRON("Dark Iron", 0x4F00D1, "ingotFzDarkIron", 1, "oreFzDarkIron"),
 	CHROMITE("Chromite", 0x94E0F5, "ingotChrome", 1, "oreChromite"),
 	NETHERSAPPHIRE("Nether Sapphire", 0x00977, "gemSapphire", 1, "oreNetherSapphire"),
-	NETHERGREENSAPPHIRE("Nether Green Sapphire", 0x0a408, "gemGreenSapphire", 1, "oreNetherSapphire"),
-	NETHERTITANIUM("Nether Titanium", 0x0a408, "ingotNetherTitanium", 1, "oreNetherTitanium"),
-	NETHERSULFUR("Nether Sulfur", 0x0a408, "dustNetherSulfur", 3, "oreNetherSulfur"),
-	NETHEROSMIUM("Nether Osmium", 0x98A0D7, "ingotNetherOsmium", 1, "oreNetherOsmium"),
-	SILICON("Silicon", 0x777777, "dustSilicon", 1, "oreSilicon");
+	NETHERPERIDOT("Nether Peridot", 0x0a408, "gemPeridot", 1, "oreNetherGreenSapphire", "oreNetherPeridot"),
+	NETHERTITANIUM("Nether Titanium", 0x0a408, "ingotTitanium", 1, "oreNetherTitanium"),
+	NETHERSULFUR("Nether Sulfur", 0x0a408, "dustSulfur", 3, "oreNetherSulfur"),
+	NETHEROSMIUM("Nether Osmium", 0x98A0D7, "ingotOsmium", 1, "oreNetherOsmium"),
+	SILICON("Silicon", 0x777777, "itemSilicon", 1, "oreSilicon"),
+	RUTILE("Rutile", 0x615E57, "ingotRutile", 1, "oreRutile");
 
 
 	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();

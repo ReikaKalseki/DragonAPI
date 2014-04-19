@@ -22,6 +22,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 public class ForestryHandler extends ModHandlerBase {
 
 	public final int apatiteID;
+	public final int fertilizerID;
 	public final int saplingID;
 
 	private static final ForestryHandler instance = new ForestryHandler();
@@ -29,6 +30,7 @@ public class ForestryHandler extends ModHandlerBase {
 	private ForestryHandler() {
 		super();
 		int idapatite = -1;
+		int idfertilizer = -1;
 		int idsapling = -1;
 		if (this.hasMod()) {
 			try {
@@ -38,6 +40,11 @@ public class ForestryHandler extends ModHandlerBase {
 				Method get = forest.getMethod("item");
 				Item item = (Item)get.invoke(entry);
 				idapatite = item.itemID;
+
+				apa = forest.getField("fertilizerCompound"); //is enum object now
+				entry = apa.get(null);
+				item = (Item)get.invoke(entry);
+				idfertilizer = item.itemID;
 
 				Class blocks = this.getMod().getBlockClass();
 				Field sapling = blocks.getField("saplingGE");
@@ -75,6 +82,7 @@ public class ForestryHandler extends ModHandlerBase {
 
 		apatiteID = idapatite;
 		saplingID = idsapling;
+		fertilizerID = idfertilizer;
 	}
 
 	public static ForestryHandler getInstance() {

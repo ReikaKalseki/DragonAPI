@@ -1504,7 +1504,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (!world.provider.hasNoSky) {
 			if (world.canBlockSeeTheSky(x, y+1, z)) {
 				float sun = getSunIntensity(world);
-				temp += (sun-0.75F)*20;
+				int mult = world.isRaining() ? 10 : 20;
+				temp += (sun-0.75F)*mult;
 			}
 			int h = world.provider.getAverageGroundLevel();
 			int dy = h-y;
