@@ -82,7 +82,7 @@ public class RetroGenController {
 	@ForgeSubscribe
 	public void handleChunkLoadEvent(ChunkDataEvent.Load event)
 	{
-		this.generate(event);
+		//this.generate(event);
 	}
 
 }

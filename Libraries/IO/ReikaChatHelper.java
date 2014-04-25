@@ -16,12 +16,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 public final class ReikaChatHelper extends DragonAPICore {
@@ -182,7 +184,21 @@ public final class ReikaChatHelper extends DragonAPICore {
 	public static void sendChatToAllOnServer(String sg) {
 		ChatMessageComponent chat = new ChatMessageComponent();
 		chat.addText(sg);
-		MinecraftServer.getServer().getConfigurationManager().sendChatMsg(chat);
+		MinecraftServer srv = MinecraftServer.getServer();
+		if (srv != null) {
+			ServerConfigurationManager cfg = srv.getConfigurationManager();
+			if (cfg != null) {
+				cfg.sendChatMsg(chat);
+			}
+			else {
+				ReikaJavaLibrary.pConsole("Something tried to send chat to a server with null configurations!");
+				Thread.dumpStack();
+			}
+		}
+		else {
+			ReikaJavaLibrary.pConsole("Something tried to send chat to a null server!");
+			Thread.dumpStack();
+		}
 	}
 
 }

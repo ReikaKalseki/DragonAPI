@@ -29,6 +29,8 @@ public class DragonAPICore {
 
 	private static final boolean reika = calculateReikasComputer();
 
+	public static boolean debugtest = false;
+
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
 
 	public static URL getReikaForumPage(DragonAPIMod instance) {

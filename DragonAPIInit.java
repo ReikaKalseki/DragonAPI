@@ -41,6 +41,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Extras.DonatorCommand;
 import Reika.DragonAPI.Extras.GuideCommand;
 import Reika.DragonAPI.Extras.LogControlCommand;
+import Reika.DragonAPI.Extras.TestControlCommand;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -194,6 +195,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new GuideCommand());
 		evt.registerServerCommand(new DonatorCommand());
 		evt.registerServerCommand(new LogControlCommand());
+		evt.registerServerCommand(new TestControlCommand());
 	}
 
 	@ForgeSubscribe
