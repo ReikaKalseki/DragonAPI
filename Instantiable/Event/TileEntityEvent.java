@@ -47,4 +47,8 @@ public abstract class TileEntityEvent extends Event {
 		return tile instanceof IFluidHandler;
 	}
 
+	protected final TileEntity getTile() {
+		return tile;
+	}
+
 }

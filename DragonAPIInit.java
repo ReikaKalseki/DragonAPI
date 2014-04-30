@@ -20,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.potion.Potion;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.Event.Result;
 import net.minecraftforge.event.ForgeSubscribe;
@@ -30,6 +31,7 @@ import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.ChatWatcher;
 import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.CustomSoundHandler;
+import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
@@ -60,6 +62,7 @@ import Reika.DragonAPI.ModInteract.FactorizationHandler;
 import Reika.DragonAPI.ModInteract.ForestryHandler;
 import Reika.DragonAPI.ModInteract.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.IC2Handler;
+import Reika.DragonAPI.ModInteract.MFRHandler;
 import Reika.DragonAPI.ModInteract.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.MagicaOreHandler;
 import Reika.DragonAPI.ModInteract.MekToolHandler;
@@ -98,7 +101,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies="after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;after:powersuits")
+@Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies="after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;after:powersuits;after:GalacticCraft;after:Mystcraft;after:UniversalElectricity")
 @NetworkMod(clientSideRequired = true, serverSideRequired = true,
 clientPacketHandlerSpec = @SidedPacketHandler(channels = { "DragonAPIData" }, packetHandler = APIClientPackets.class),
 serverPacketHandlerSpec = @SidedPacketHandler(channels = { "DragonAPIData" }, packetHandler = APIServerPackets.class))
@@ -124,6 +127,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
 
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			MinecraftForge.EVENT_BUS.register(DebugOverlay.instance);
+
 		ReikaRegistryHelper.setupModData(instance, evt);
 		ReikaRegistryHelper.setupVersionChecking(evt);
 
@@ -133,9 +139,29 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 
 		this.increasePotionCount();
+		this.increaseBiomeCount();
 
 		BannedItemReader.instance.initWith("plugins/BanItem/config.yml");
 		BannedItemReader.instance.initWith("plugins/TekkitCustomizerData/config.yml");
+	}
+
+	private void increaseBiomeCount() {
+		int count = BiomeGenBase.biomeList.length;
+		int newsize = 1024;
+		try {
+			Field f = ReikaObfuscationHelper.getField("biomeList");
+			BiomeGenBase[] newBiomes = new BiomeGenBase[newsize];
+			System.arraycopy(BiomeGenBase.biomeList, 0, newBiomes, 0, count);
+			ReikaReflectionHelper.setFinalField(f, null, newBiomes);
+			if (BiomeGenBase.biomeList.length == newsize)
+				logger.log("Overriding the vanilla BiomeList array to allow for biome IDs up to "+(newsize-1)+" (up from "+(count-1)+").");
+			else
+				logger.logError("Could not increase biome ID limit from "+count+" to "+newsize+", but no exception was thrown!");
+		}
+		catch (Exception e) {
+			logger.logError("Could not increase biome ID limit from "+count+" to "+newsize+"!");
+			e.printStackTrace();
+		}
 	}
 
 	private void increasePotionCount() {
@@ -286,6 +312,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.HARVESTCRAFT, HarvestCraftHandler.class);
 		this.initHandler(ModList.ARSENAL, RedstoneArsenalHandler.class);
 		this.initHandler(ModList.RAILCRAFT, RailcraftHandler.class);
+		this.initHandler(ModList.MINEFACTORY, MFRHandler.class);
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);

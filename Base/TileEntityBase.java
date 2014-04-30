@@ -56,6 +56,8 @@ public abstract class TileEntityBase extends TileEntity {
 
 	protected abstract void animateWithTick(World world, int x, int y, int z);
 
+	public abstract int getRedstoneOverride();
+
 	public TileEntityBase() {
 		super();
 		updateTimer = new StepTimer(this.getBlockUpdateDelay());
@@ -242,6 +244,8 @@ public abstract class TileEntityBase extends TileEntity {
 				this.writeError(e);
 			}
 		}
+		if (this.getTicksExisted() < 2)
+			this.syncAllData();
 		if (this.shouldSendSyncPackets()) {
 			packetTimer.update();
 			if (packetTimer.checkCap()) {
@@ -301,7 +305,8 @@ public abstract class TileEntityBase extends TileEntity {
 
 	@Override
 	public String toString() {
-		return "Tile Entity "+this.getTEName()+(this.isInWorld() ? " @ "+xCoord+", "+yCoord+", "+zCoord : " (item)");
+		String base = "Tile Entity "+this.getTEName();
+		return base+(this.isInWorld() ? " @ DIM"+worldObj.provider.dimensionId+": "+xCoord+", "+yCoord+", "+zCoord : " (item)");
 	}
 
 	protected abstract String getTEName();

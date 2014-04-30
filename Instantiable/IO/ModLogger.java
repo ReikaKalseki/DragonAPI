@@ -66,6 +66,10 @@ public class ModLogger {
 	}
 
 	public boolean shouldDebug() {
+		if (logNone)
+			return false;
+		if (logAll)
+			return true;
 		return printDebug;
 	}
 

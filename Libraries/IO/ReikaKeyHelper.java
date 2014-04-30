@@ -24,6 +24,11 @@ public class ReikaKeyHelper {
 		return Keyboard.KEY_SPACE;
 	}
 
+	public static int getSneakKey() {
+		//return Minecraft.getMinecraft().gameSettings.keyBindJump.keyCode;
+		return Keyboard.KEY_LSHIFT;
+	}
+
 	public static boolean isKeyPressed(int key) {
 		return Keyboard.isKeyDown(key);
 	}

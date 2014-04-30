@@ -56,6 +56,10 @@ public abstract class PlayerTracker {
 
 	public final String getSaveFilePath() {
 		File save = DimensionManager.getCurrentSaveRootDirectory();
+		if (save == null) {
+			ReikaJavaLibrary.pConsole("DragonAPI: Cannot save player data for a null world!");
+			return "";
+		}
 		return save.getPath().substring(2)+"/DragonAPI/PlayerTrackers/";
 	}
 
@@ -72,21 +76,24 @@ public abstract class PlayerTracker {
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Saving player tracker "+this.toString(), Side.SERVER);
 		String name = this.getSaveFileName();
 		try {
-			File dir = new File(this.getSaveFilePath());
-			//ReikaJavaLibrary.pConsole(this.getSaveFilePath(), Side.SERVER);
-			if (!dir.exists()) {
-				dir.mkdirs();
+			String s = this.getSaveFilePath();
+			if (!s.isEmpty()) {
+				File dir = new File(s);
+				//ReikaJavaLibrary.pConsole(this.getSaveFilePath(), Side.SERVER);
+				if (!dir.exists()) {
+					dir.mkdirs();
+				}
+				File f = new File(this.getFullSavePath());
+				if (f.exists())
+					f.delete();
+				f.createNewFile();
+				PrintWriter p = new PrintWriter(f);
+				for (int i = 0; i < players.size(); i++) {
+					String line = players.get(i);
+					p.append(line+"\n");
+				}
+				p.close();
 			}
-			File f = new File(this.getFullSavePath());
-			if (f.exists())
-				f.delete();
-			f.createNewFile();
-			PrintWriter p = new PrintWriter(f);
-			for (int i = 0; i < players.size(); i++) {
-				String line = players.get(i);
-				p.append(line+"\n");
-			}
-			p.close();
 		}
 		catch (Exception e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: "+e.getMessage()+", and it caused the save to fail!", Side.SERVER);

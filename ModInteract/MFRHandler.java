@@ -12,33 +12,25 @@ package Reika.DragonAPI.ModInteract;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class MimicryHandler extends ModHandlerBase {
+public class MFRHandler extends ModHandlerBase {
 
-	private static final MimicryHandler instance = new MimicryHandler();
+	private static final MFRHandler instance = new MFRHandler();
 
-	public final int oreID;
-	public final int itemID;
+	public final int cableID;
 
-	private MimicryHandler() {
+	private MFRHandler() {
 		super();
-		int idstone = -1;
-		int iditem = -1;
+		int idcable = -1;
 
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
-				Field ore = blocks.getField("MimichiteOre");
-				idstone = ((Block)ore.get(null)).blockID;
-
-				Class items = this.getMod().getItemClass();
-				Field item = items.getField("Mimichite");
-				iditem = ((Item)item.get(null)).itemID;
+				Field wire = blocks.getField("rednetCableBlock");
+				idcable = ((Block)wire.get(null)).blockID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -65,28 +57,21 @@ public class MimicryHandler extends ModHandlerBase {
 			this.noMod();
 		}
 
-		oreID = idstone;
-		itemID = iditem;
+		cableID = idcable;
 	}
 
-	public static MimicryHandler getInstance() {
+	public static MFRHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return itemID != -1 && oreID != -1;
+		return cableID != -1;
 	}
 
 	@Override
 	public ModList getMod() {
-		return ModList.MIMICRY;
-	}
-
-	public boolean isMimichiteOre(ItemStack block) {
-		if (!this.initializedProperly())
-			return false;
-		return block.itemID == oreID;
+		return ModList.MINEFACTORY;
 	}
 
 }

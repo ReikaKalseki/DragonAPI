@@ -129,7 +129,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	public static void setSaturationLevel(EntityPlayer ep, int level) {
 		NBTTagCompound NBT = new NBTTagCompound();
 		ep.getFoodStats().writeNBT(NBT);
-		NBT.setInteger("foodSaturationLevel", level);
+		NBT.setFloat("foodSaturationLevel", level);
 		ep.getFoodStats().readNBT(NBT);
 	}
 }

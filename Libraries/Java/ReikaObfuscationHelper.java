@@ -30,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenHills;
 import Reika.DragonAPI.Exception.VanillaIntegrityException;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -133,6 +134,7 @@ public class ReikaObfuscationHelper {
 		addField("isJumping", "field_70703_bu", false, EntityLivingBase.class);
 		addField("timeSinceIgnited", "field_70833_d", false, EntityCreeper.class);
 		addField("potionTypes", "field_76425_a", true, Potion.class);
+		addField("biomeList", "field_76773_a", true, BiomeGenBase.class);
 		addField("weaponDamage", "field_77827_a", false, ItemSword.class);
 		addField("isAggressive", "field_104003_g", false, EntityEnderman.class);
 		addField("stareTimer", "field_70826_g", false, EntityEnderman.class);

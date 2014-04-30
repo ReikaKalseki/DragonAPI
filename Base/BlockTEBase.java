@@ -54,4 +54,20 @@ public abstract class BlockTEBase extends Block {
 		return false;
 	}
 
+	@Override
+	public final boolean hasComparatorInputOverride()
+	{
+		return true;
+	}
+
+	/**
+	 * If hasComparatorInputOverride returns true, the return value from this is used instead of the redstone signal
+	 * strength when this block inputs to a comparator.
+	 */
+	@Override
+	public final int getComparatorInputOverride(World world, int x, int y, int z, int par5)
+	{
+		return ((TileEntityBase)world.getBlockTileEntity(x, y, z)).getRedstoneOverride();
+	}
+
 }
