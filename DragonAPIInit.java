@@ -35,7 +35,6 @@ import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
-import Reika.DragonAPI.Auxiliary.PlayerFirstTimeTracker;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.VanillaIntegrityTracker;
@@ -226,14 +225,12 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@ForgeSubscribe
 	public void onClose(WorldEvent.Unload evt) {
-		if (evt.world.provider.dimensionId == 0)
-			PlayerFirstTimeTracker.closeAndSave();
+
 	}
 
 	@ForgeSubscribe
 	public void onLoad(WorldEvent.Load evt) {
-		if (evt.world.provider.dimensionId == 0)
-			PlayerFirstTimeTracker.loadTrackers();
+
 	}
 
 	@ForgeSubscribe

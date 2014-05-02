@@ -11,7 +11,6 @@ package Reika.DragonAPI.Libraries;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
@@ -501,7 +500,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			IRecipe ir = copies.get(i);
 			if (ir instanceof ShapedOreRecipe) {
 				ShapedOreRecipe rec = (ShapedOreRecipe) ir;
-				ReikaJavaLibrary.spamConsole(ir.getRecipeOutput().getDisplayName()+":"+Arrays.toString(rec.getInput()));
+				//ReikaJavaLibrary.spamConsole(ir.getRecipeOutput().getDisplayName()+":"+Arrays.toString(rec.getInput()));
 			}
 		}
 		CraftingManager.getInstance().getRecipeList().addAll(copies);

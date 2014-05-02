@@ -32,10 +32,10 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public enum ModWoodList implements TreeType {
 
-	CANOPY(ModList.TWILIGHT, 0x252517, 6330464, "log", "leaves", "sapling", new int[]{1,13}, 1, 1, VarType.INSTANCE),
+	CANOPY(ModList.TWILIGHT, 0x252517, 0x330464, "log", "leaves", "sapling", new int[]{1,13}, 1, 1, VarType.INSTANCE),
 	DARKWOOD(ModList.TWILIGHT, 0x35281A, 0x395F41, "log", "hedge", "sapling", new int[]{3,15}, 1, 3, VarType.INSTANCE),
-	MANGROVE(ModList.TWILIGHT, 0x8D8980, 8431445, "log", "leaves", "sapling", new int[]{2,14}, new int[]{2,10}, 2, VarType.INSTANCE),
-	TWILIGHTOAK(ModList.TWILIGHT, 0x806654, 4764952, "log", "leaves", "sapling", new int[]{0,12}, 0, 0, VarType.INSTANCE),
+	MANGROVE(ModList.TWILIGHT, 0x8D8980, 0x431445, "log", "leaves", "sapling", new int[]{2,14}, new int[]{2,10}, 2, VarType.INSTANCE),
+	TWILIGHTOAK(ModList.TWILIGHT, 0x806654, 0x764952, "log", "leaves", "sapling", new int[]{0,12}, 0, 0, VarType.INSTANCE),
 	GREATWOOD(ModList.THAUMCRAFT, 0x4F3E37, 0x71924C, "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INSTANCE),
 	SILVERWOOD(ModList.THAUMCRAFT, 0xC9C3AC, 0x5782C7, "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE),
 	EUCALYPTUS(ModList.NATURA, 0xE2CEB1, 0x3C9119, "tree", "floraLeaves", "floraSapling", 0, new int[]{1,9}, 1, VarType.INSTANCE),
@@ -82,7 +82,11 @@ public enum ModWoodList implements TreeType {
 	HIGHPALM(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "palmWood", "palmLeaves", "palmSapling", VarType.INSTANCE),
 	IRONWOOD(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "ironWood", "ironwoodLeaves", "ironwoodSapling", VarType.INSTANCE),
 	HIGHMANGROVE(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "mangroveWood", "mangroveLeaves", "mangroveSapling", VarType.INSTANCE),
-	ASH(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "ashWood", "ashLeaves", "ashSapling", VarType.INSTANCE);
+	ASH(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "ashWood", "ashLeaves", "ashSapling", VarType.INSTANCE),
+	WITCHWOOD(ModList.ARSMAGICA, 0x584D32, 0x1F4719, "witchwoodLog", "witchwoodLeaves", "witchwoodSapling", VarType.INSTANCE),
+	ROWAN(ModList.WITCHERY, 0x374633, 0x9E774D, "blockWitchLog", "blockWitchLeaves", "blockWitchSapling", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INSTANCE),
+	HAWTHORNE(ModList.WITCHERY, 0x656566, 0xC3EEC3, "blockWitchLog", "blockWitchLeaves", "blockWitchSapling", new int[]{2,6,10}, new int[]{2,10}, 2, VarType.INSTANCE),
+	ALDER(ModList.WITCHERY, 0x52544C, 0xC3D562, "blockWitchLog", "blockWitchLeaves", "blockWitchSapling", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE);
 
 	private ModList mod;
 	private int blockID = -1;

@@ -82,7 +82,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return darkID != -1;
+		return darkID != -1 && decoID != -1;
 	}
 
 	@Override

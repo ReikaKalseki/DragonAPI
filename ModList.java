@@ -76,7 +76,8 @@ public enum ModList {
 	ARSENAL("Redstone Arsenal", "redstonearsenal.item.RAItems"),
 	EMASHER("emashercore", "emasher.core.EmasherCore"),
 	HIGHLANDS("Highlands", "highlands.api.HighlandsBlocks"),
-	PROJRED("ProjRed|Core");
+	PROJRED("ProjRed|Core"),
+	WITCHERY("witchery", "com.emoniph.witchery.Witchery");
 
 	private final boolean condition;
 	public final String modLabel;

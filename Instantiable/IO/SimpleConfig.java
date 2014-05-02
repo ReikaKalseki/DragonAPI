@@ -10,9 +10,11 @@
 package Reika.DragonAPI.Instantiable.IO;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.Property;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
@@ -94,6 +96,30 @@ public final class SimpleConfig {
 				this.saveIfNecessary();
 			return param;
 		}
+	}
+
+	public ArrayList<Integer> getIntList(String category, String key, int... defaults) {
+		boolean flag = !isReading;
+		if (data.containsKey(key))
+			return (ArrayList<Integer>)data.get(key);
+		else {
+			if (flag)
+				this.loadIfNecessary();
+			ArrayList<Integer> param = this.getList(config.get(category, key, defaults));
+			data.put(key, param);
+			if (flag)
+				this.saveIfNecessary();
+			return param;
+		}
+	}
+
+	private ArrayList<Integer> getList(Property p) {
+		ArrayList li = new ArrayList();
+		int[] data = p.getIntList();
+		for (int i = 0; i < data.length; i++) {
+			li.add(data[i]);
+		}
+		return li;
 	}
 
 	private void loadIfNecessary() {

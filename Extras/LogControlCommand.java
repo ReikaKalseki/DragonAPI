@@ -16,6 +16,7 @@ import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class LogControlCommand extends CommandBase {
 
@@ -48,12 +49,20 @@ public class LogControlCommand extends CommandBase {
 				ModLogger.setAllLoggingFalse();
 				ReikaChatHelper.sendChatToPlayer(ep, g+"All logging disabled. Change affects "+n+" loggers.");
 			}
+			else if ("source".equals(args[0].toLowerCase())) {
+				ReikaJavaLibrary.toggleStackTrace();
+				ReikaChatHelper.sendChatToPlayer(ep, g+"All console prints now show a stack trace: "+ReikaJavaLibrary.dumpStack);
+			}
+			else if ("silence".equals(args[0].toLowerCase())) {
+				ReikaJavaLibrary.toggleSilentMode();
+				ReikaChatHelper.sendChatToPlayer(ep, g+"All console prints disabled: "+ReikaJavaLibrary.silent);
+			}
 			else if ("default".equals(args[0].toLowerCase())) {
 				ModLogger.setAllLoggingDefault();
 				ReikaChatHelper.sendChatToPlayer(ep, g+"All logging restored to config settings. Change affects "+n+" loggers.");
 			}
 			else
-				ReikaChatHelper.sendChatToPlayer(ep, r+"You must specify \"enable\", \"disable\", or \"default\".");
+				ReikaChatHelper.sendChatToPlayer(ep, r+"You must specify \"enable\", \"disable\", \"source\", or \"default\".");
 		}
 	}
 

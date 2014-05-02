@@ -279,7 +279,7 @@ public abstract class TileEntityBase extends TileEntity {
 		return !worldObj.isRemote;
 	}
 
-	private void writeError(Exception e) {
+	private void writeError(Throwable e) {
 		ReikaChatHelper.write(this+" is throwing "+e.getClass()+" on update: "+e.getMessage());
 		ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
 		ReikaChatHelper.write("");

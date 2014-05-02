@@ -23,9 +23,13 @@ import cpw.mods.fml.relauncher.Side;
 public final class ReikaJavaLibrary extends DragonAPICore {
 
 	private static int maxRecurse = -1;
+	public static boolean dumpStack = false;
+	public static boolean silent = false;
 
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Object obj) {
+		if (silent)
+			return;
 		if (obj == null) {
 			System.out.println("null arg");
 			return;
@@ -35,7 +39,8 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			System.out.println(String.valueOf(obj)+" of "+String.valueOf(cl));
 		else
 			System.out.println(String.valueOf(obj));
-		//Thread.dumpStack();
+		if (dumpStack)
+			Thread.dumpStack();
 	}
 
 	public static void spamConsole(Object obj) {
@@ -198,5 +203,13 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			return i;
 		}
 		return 0; //Never runs
+	}
+
+	public static void toggleStackTrace() {
+		dumpStack = !dumpStack;
+	}
+
+	public static void toggleSilentMode() {
+		silent = !silent;
 	}
 }

@@ -43,17 +43,20 @@ public enum ReikaDyeHelper {
 
 	public final int color;
 	public final String colorName;
+	public final String colorNameNoSpaces;
 
 	public static final ReikaDyeHelper[] dyes = ReikaDyeHelper.values();
 
 	private ReikaDyeHelper(int c) {
 		color = c;
 		colorName = ReikaStringParser.capFirstChar(this.name());
+		colorNameNoSpaces = ReikaStringParser.stripSpaces(colorName);
 	}
 
 	private ReikaDyeHelper(int c, String n) {
 		color = c;
 		colorName = n;
+		colorNameNoSpaces = ReikaStringParser.stripSpaces(n);
 	}
 
 	public static boolean isDyeItem(ItemStack is) {
