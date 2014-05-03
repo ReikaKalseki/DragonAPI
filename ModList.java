@@ -27,7 +27,7 @@ public enum ModList {
 	GEOSTRATA("GeoStrata"),
 	REALBIOMES("RealBiomes"),
 	FURRYKINGDOMS("FurryKingdoms"),
-	SPIDERPET("SpiderPet"),
+	CRITTERPET("CritterPet"),
 	ENDERFOREST("EnderForest"),
 	VOIDMONSTER("VoidMonster"),
 	USEFULTNT("UsefulTNT"),
