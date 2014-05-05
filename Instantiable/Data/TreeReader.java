@@ -34,6 +34,7 @@ public final class TreeReader extends BlockArray {
 	private final int dyeLeafID;
 	private final int rainbowLeafID;
 	private boolean isDyeTree = false;
+	private boolean isRainbowTree = false;
 	private int dyeMeta = -1;
 
 	public TreeReader() {
@@ -110,6 +111,7 @@ public final class TreeReader extends BlockArray {
 		if (id != Block.wood.blockID && id != rainbowLeafID && !ModWoodList.isModWood(id, meta))
 			return;
 
+		isRainbowTree = true;
 		this.addBlockCoordinate(x, y, z);
 
 		if (id == Block.wood.blockID || ModWoodList.isModWood(id, meta))
@@ -128,6 +130,10 @@ public final class TreeReader extends BlockArray {
 
 	public boolean isDyeTree() {
 		return isDyeTree;
+	}
+
+	public boolean isRainbowTree() {
+		return isRainbowTree;
 	}
 
 	public int getDyeTreeMeta() {

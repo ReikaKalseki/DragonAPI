@@ -11,12 +11,14 @@ package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFluid;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -24,6 +26,7 @@ import Reika.DragonAPI.Interfaces.SemiTransparent;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class BlockArray {
@@ -592,6 +595,61 @@ public class BlockArray {
 			if (canSink)
 				this.offset(0, -1, 0);
 		}
+	}
+
+	/** Pre-collates them into forced stacks to help with FPS. Will not attempt to stack NBT-sensitive items. */
+	public final ArrayList<ItemStack> getAllDroppedItems(World world, int fortune) {
+		ArrayList<ItemStack> li = new ArrayList();
+		ArrayList<ItemStack> nbt = new ArrayList();
+		HashMap<List<Integer>, Integer> map = new HashMap();
+		for (int i = 0; i < blocks.size(); i++) {
+			int[] xyz = blocks.get(i);
+			int x = xyz[0];
+			int y = xyz[1];
+			int z = xyz[2];
+			int id = world.getBlockId(x, y, z);
+			if (id != 0) {
+				Block b = Block.blocksList[id];
+				if (b != null) {
+					int metadata = world.getBlockMetadata(x, y, z);
+					ArrayList<ItemStack> drop = b.getBlockDropped(world, x, y, z, metadata, fortune);
+					for (int k = 0; k < drop.size(); k++) {
+						ItemStack is = drop.get(k);
+						if (is.stackTagCompound != null) {
+							nbt.add(is);
+						}
+						else {
+							List<Integer> key = Arrays.asList(is.itemID, is.getItemDamage());
+							if (map.containsKey(key)) {
+								int cur = map.get(key);
+								cur += is.stackSize;
+								map.put(key, cur);
+							}
+							else {
+								map.put(key, is.stackSize);
+							}
+						}
+					}
+				}
+			}
+		}
+		for (List<Integer> key : map.keySet()) {
+			int count = map.get(key);
+			ItemStack is = new ItemStack(key.get(0), 1, key.get(1));
+			int max = is.getMaxStackSize();
+			if (count > max) {
+				while (count > 0) {
+					int add = Math.min(count, max);
+					li.add(ReikaItemHelper.getSizedItemStack(is, add));
+					count -= add;
+				}
+			}
+			else {
+				li.add(ReikaItemHelper.getSizedItemStack(is, count));
+			}
+		}
+		li.addAll(nbt);
+		return li;
 	}
 
 	public BlockArray copy() {
