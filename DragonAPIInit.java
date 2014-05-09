@@ -138,7 +138,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 
 		this.increasePotionCount();
-		this.increaseBiomeCount();
+		//this.increaseBiomeCount(); world save stores biome as bytes, so 255 is cap
 
 		BannedItemReader.instance.initWith("plugins/BanItem/config.yml");
 		BannedItemReader.instance.initWith("plugins/TekkitCustomizerData/config.yml");

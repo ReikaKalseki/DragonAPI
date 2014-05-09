@@ -111,13 +111,14 @@ public final class TreeReader extends BlockArray {
 		if (id != Block.wood.blockID && id != rainbowLeafID && !ModWoodList.isModWood(id, meta))
 			return;
 
-		isRainbowTree = true;
 		this.addBlockCoordinate(x, y, z);
 
 		if (id == Block.wood.blockID || ModWoodList.isModWood(id, meta))
 			logCount++;
-		else
+		else {
 			leafCount++;
+			isRainbowTree = true;
+		}
 
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
