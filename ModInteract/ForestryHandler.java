@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -24,6 +25,7 @@ public class ForestryHandler extends ModHandlerBase {
 	public final int apatiteID;
 	public final int fertilizerID;
 	public final int saplingID;
+	public final int combID;
 
 	private static final ForestryHandler instance = new ForestryHandler();
 
@@ -32,6 +34,7 @@ public class ForestryHandler extends ModHandlerBase {
 		int idapatite = -1;
 		int idfertilizer = -1;
 		int idsapling = -1;
+		int idcomb = -1;
 		if (this.hasMod()) {
 			try {
 				Class forest = this.getMod().getItemClass();
@@ -41,10 +44,15 @@ public class ForestryHandler extends ModHandlerBase {
 				Item item = (Item)get.invoke(entry);
 				idapatite = item.itemID;
 
-				apa = forest.getField("fertilizerCompound"); //is enum object now
-				entry = apa.get(null);
+				Field fert = forest.getField("fertilizerCompound"); //is enum object now
+				entry = fert.get(null);
 				item = (Item)get.invoke(entry);
 				idfertilizer = item.itemID;
+
+				Field comb = forest.getField("beeComb"); //is enum object now
+				entry = comb.get(null);
+				item = (Item)get.invoke(entry);
+				idcomb = item.itemID;
 
 				Class blocks = this.getMod().getBlockClass();
 				Field sapling = blocks.getField("saplingGE");
@@ -83,6 +91,7 @@ public class ForestryHandler extends ModHandlerBase {
 		apatiteID = idapatite;
 		saplingID = idsapling;
 		fertilizerID = idfertilizer;
+		combID = idcomb;
 	}
 
 	public static ForestryHandler getInstance() {
@@ -91,12 +100,35 @@ public class ForestryHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return apatiteID != -1 && saplingID != -1;
+		return apatiteID != -1 && saplingID != -1 && fertilizerID != -1 && combID != -1;
 	}
 
 	@Override
 	public ModList getMod() {
 		return ModList.FORESTRY;
+	}
+
+	public enum Combs {
+
+		HONEY(0),
+		SIMMERING(2),
+		STRINGY(3),
+		FROZEN(4),
+		DRIPPING(5),
+		SILKY(6),
+		PARCHED(7),
+		MOSSY(15),
+		MELLOW(16);
+
+		public final int damageValue;
+
+		private Combs(int dmg) {
+			damageValue = dmg;
+		}
+
+		public ItemStack getItem() {
+			return new ItemStack(instance.combID, 1, damageValue);
+		}
 	}
 
 }

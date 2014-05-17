@@ -10,7 +10,6 @@
 package Reika.DragonAPI.ModInteract.Bees;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,11 +45,12 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	private final HashMap products = new HashMap();
 	private final BeeBranch branch;
 	private final String scientific;
+	private final String genus;
 	private final String creator;
 	private final String uid;
 	private final String name;
 
-	protected BeeSpecies(String name, String uid, String scientific, String creator) {
+	protected BeeSpecies(String name, String uid, String latinName, String creator) {
 		beeRoot = (IBeeRoot)AlleleManager.alleleRegistry.getSpeciesRoot("rootBees");
 		template = this.getSpeciesTemplate();
 
@@ -58,7 +58,10 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 		this.name = name;
 		this.creator = creator;
-		this.scientific = scientific;
+
+		String[] s = latinName.split(" ");
+		genus = s[0];
+		scientific = s[1];
 		this.uid = uid;
 	}
 
@@ -135,12 +138,12 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 		@Override
 		public String getName() {
-			return species.getName();
+			return species.genus;
 		}
 
 		@Override
 		public String getScientific() {
-			return species.getBinomial();
+			return species.genus;
 		}
 
 		@Override
@@ -209,7 +212,6 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 		@Override
 		public IAllele[] getTemplate() {
-			ReikaJavaLibrary.pConsole(Arrays.toString(template));
 			return template;
 		}
 
@@ -381,6 +383,21 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	public abstract ToleranceDirection getHumidityToleranceDir();
 	public abstract ToleranceDirection getTemperatureToleranceDir();
 	public abstract Effect getEffect();
+	public abstract int getOutlineColor();
+
+	@Override
+	public int getIconColour(int renderpass) {
+		switch(renderpass) {
+		case 0:
+			return this.getOutlineColor();
+		case 1:
+			return 0xffff00;
+		case 2:
+			return 0xffffff;
+		default:
+			return 0xffffff;
+		}
+	}
 
 	private final IAllele getGeneForBoolean(boolean b) {
 		String s = b ? "forestry.boolTrue" : "forestry.boolFalse";
@@ -392,10 +409,42 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	private final IAllele getToleranceGene(ToleranceDirection d, int i) {
-		return AlleleManager.alleleRegistry.getAllele(String.format("%s%d", d.tag, Math.abs(Math.min(i, 5))));
+		return AlleleManager.alleleRegistry.getAllele(String.format("%s%d", d.tag, Math.min(Math.abs(i), 5)));
 	}
 
 	protected final IAllele[] getSpeciesTemplate() {
+		for (int i = 0; i < Life.values().length; i++) {
+			Life l = Life.values()[i];
+			IAllele a = AlleleManager.alleleRegistry.getAllele(l.tag);
+			ReikaJavaLibrary.pConsole(a+" from "+l+" with "+l.tag);
+		}
+		for (int i = 0; i < Speeds.values().length; i++) {
+			Speeds l = Speeds.values()[i];
+			IAllele a = AlleleManager.alleleRegistry.getAllele(l.tag);
+			ReikaJavaLibrary.pConsole(a+" from "+l+" with "+l.tag);
+		}
+		for (int i = 0; i < Flowering.values().length; i++) {
+			Flowering l = Flowering.values()[i];
+			IAllele a = AlleleManager.alleleRegistry.getAllele(l.tag);
+			ReikaJavaLibrary.pConsole(a+" from "+l+" with "+l.tag);
+		}
+		for (int i = 0; i < Fertility.values().length; i++) {
+			Fertility l = Fertility.values()[i];
+			IAllele a = AlleleManager.alleleRegistry.getAllele(l.tag);
+			ReikaJavaLibrary.pConsole(a+" from "+l+" with "+l.tag);
+		}
+		for (int i = 0; i < Territory.values().length; i++) {
+			Territory l = Territory.values()[i];
+			IAllele a = AlleleManager.alleleRegistry.getAllele(l.tag);
+			ReikaJavaLibrary.pConsole(a+" from "+l+" with "+l.tag);
+		}
+		for (int i = 0; i < Effect.values().length; i++) {
+			Effect l = Effect.values()[i];
+			IAllele a = AlleleManager.alleleRegistry.getAllele(l.tag);
+			ReikaJavaLibrary.pConsole(a+" from "+l+" with "+l.tag);
+		}
+
+
 		IAllele[] alleles = beeRoot.getDefaultTemplate();
 		alleles[EnumBeeChromosome.SPECIES.ordinal()] = this;
 		alleles[EnumBeeChromosome.FLOWER_PROVIDER.ordinal()] = this.getFlowerAllele();

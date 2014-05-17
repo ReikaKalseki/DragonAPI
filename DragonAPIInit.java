@@ -59,6 +59,7 @@ import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
 import Reika.DragonAPI.ModInteract.FactorizationHandler;
 import Reika.DragonAPI.ModInteract.ForestryHandler;
+import Reika.DragonAPI.ModInteract.GalacticCraftHandler;
 import Reika.DragonAPI.ModInteract.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.IC2Handler;
 import Reika.DragonAPI.ModInteract.MFRHandler;
@@ -310,6 +311,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.ARSENAL, RedstoneArsenalHandler.class);
 		this.initHandler(ModList.RAILCRAFT, RailcraftHandler.class);
 		this.initHandler(ModList.MINEFACTORY, MFRHandler.class);
+		this.initHandler(ModList.GALACTICRAFT, GalacticCraftHandler.class);
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);
