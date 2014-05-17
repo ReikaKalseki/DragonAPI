@@ -568,4 +568,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return (Render)RenderManager.instance.entityRenderMap.get(entityClass);
 	}
 
+	public static void setNoPotionParticles(EntityLivingBase e) {
+		e.getDataWatcher().updateObject(7, 0);
+	}
+
 }

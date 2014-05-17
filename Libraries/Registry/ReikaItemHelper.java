@@ -168,13 +168,17 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static void dropItem(World world, double x, double y, double z, ItemStack is) {
+		dropItem(world, x, y, z, is, 1);
+	}
+
+	public static void dropItem(World world, double x, double y, double z, ItemStack is, double vscale) {
 		if (is == null)
 			return;
 		EntityItem ei = new EntityItem(world, x, y, z, is.copy());
 		ei.delayBeforeCanPickup = 10;
-		ei.motionX = -0.1+0.2*rand.nextDouble();
-		ei.motionZ = -0.1+0.2*rand.nextDouble();
-		ei.motionY = 0.2*rand.nextDouble();
+		ei.motionX = (-0.1+0.2*rand.nextDouble())*vscale;
+		ei.motionZ = (-0.1+0.2*rand.nextDouble())*vscale;
+		ei.motionY = (0.2*rand.nextDouble())*vscale;
 		if (!world.isRemote) {
 			world.spawnEntityInWorld(ei);
 		}
