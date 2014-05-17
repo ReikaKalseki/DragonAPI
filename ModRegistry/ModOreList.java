@@ -41,7 +41,7 @@ public enum ModOreList {
 	ALUMINUM("Aluminum", 0xF1F1F1, "ingotAluminum", 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
 	IRIDIUM("Iridium", 0xC1E2D3, "ingotIridium", 1, "oreIridium"),
 	FIRESTONE("Firestone", 0xE19636, "shardFirestone", 1, "oreFirestone"),
-	CERTUSQUARTZ("Certus Quartz", 0xC4CEFF, "crystalQuartz", 3, "oreCertusQuartz"),
+	CERTUSQUARTZ("Certus Quartz", 0xC4CEFF, "crystalCertusQuartz", 3, "oreCertusQuartz"),
 	URANIUM("Uranium", 0x4CFF00, "ingotUranium", 1, "oreUranium", "oreYellorite"),
 	CINNABAR("Mercury", 0x811A1A, "itemQuicksilver", 1, "oreCinnabar"),
 	AMBER("Amber", 0xB17F17, "gemAmber", 1, "oreAmber"),
