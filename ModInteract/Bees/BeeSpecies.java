@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.item.ItemStack;
@@ -37,6 +38,8 @@ import forestry.api.genetics.IGenome;
 import forestry.api.genetics.IIndividual;
 
 public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
+
+	protected final Random rand = new Random();
 
 	private final IBeeRoot beeRoot;
 	private final IAllele[] template;
