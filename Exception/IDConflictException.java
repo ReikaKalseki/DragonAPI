@@ -55,7 +55,7 @@ public class IDConflictException extends DragonAPIException {
 		message.append("The following ID conflicts were detected:\n");
 		for (int i = 0; i < items.size(); i++) {
 			ItemConflict it = items.get(i);
-			message.append(it.toString());
+			message.append(it.toString()+"\n");
 		}
 		message.append("Check your IDs and change them if possible.\n");
 		message.append("This is NOT a mod bug. Do not post it to the mod website.");

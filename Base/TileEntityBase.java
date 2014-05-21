@@ -376,14 +376,4 @@ public abstract class TileEntityBase extends TileEntity {
 		TileEntity te = worldObj.getBlockTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
 		adjTEMap[dir.ordinal()] = te;
 	}
-
-	@Override
-	public final void validate() {
-		super.validate();
-		this.onTileCreationInWorld(worldObj, xCoord, yCoord, zCoord);
-	}
-
-	protected void onTileCreationInWorld(World world, int x, int y, int z) {
-
-	}
 }

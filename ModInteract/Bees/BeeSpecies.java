@@ -263,6 +263,11 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		}
 	}
 
+	public final ItemStack getBeeItem(World world, EnumBeeType type) {
+		IAllele[] template = this.getSpeciesTemplate();
+		return beeRoot.getMemberStack(beeRoot.getBee(world, beeRoot.templateAsGenome(template)), type.ordinal());
+	}
+
 	public final void addBreeding(String parent1, String parent2, int chance) {
 		IAllele p1 = AlleleManager.alleleRegistry.getAllele("forestry.species"+parent1);
 		IAllele p2 = AlleleManager.alleleRegistry.getAllele("forestry.species"+parent2);
