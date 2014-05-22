@@ -78,7 +78,7 @@ public enum ModList {
 	HIGHLANDS("Highlands", "highlands.api.HighlandsBlocks"),
 	PROJRED("ProjRed|Core"),
 	WITCHERY("witchery", "com.emoniph.witchery.Witchery"),
-	GALACTICRAFT("GalacticraftCore", "micdoodle8.mods.galacticraft.core.blocks.GCBlocks", "micdoodle8.mods.galacticraft.core.items.GCItems");
+	GALACTICRAFT("GalacticraftCore", "micdoodle8.mods.galacticraft.core.blocks.GCCoreBlocks", "micdoodle8.mods.galacticraft.core.items.GCCoreItems");
 
 	private final boolean condition;
 	public final String modLabel;

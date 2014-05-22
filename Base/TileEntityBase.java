@@ -181,7 +181,8 @@ public abstract class TileEntityBase extends TileEntity {
 		return pseudometa;
 	}
 
-	@Override //Overwritten to allow use of original code
+	/** Overwritten to allow use of pseudo-metadata for internal separation with more than 16 variants. Not client-only. */
+	@Override
 	public final int getBlockMetadata() {
 		return this.getPseudoMeta();
 	}

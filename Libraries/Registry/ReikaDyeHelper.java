@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.Registry;
 
 import java.awt.Color;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -44,6 +45,7 @@ public enum ReikaDyeHelper {
 	public final int color;
 	public final String colorName;
 	public final String colorNameNoSpaces;
+	private static final Random rand = new Random();
 
 	public static final ReikaDyeHelper[] dyes = ReikaDyeHelper.values();
 
@@ -69,6 +71,10 @@ public enum ReikaDyeHelper {
 
 	public static ReikaDyeHelper getColorFromItem(ItemStack is) {
 		return getColorFromDamage(is.getItemDamage());
+	}
+
+	public static ReikaDyeHelper getRandomColor() {
+		return getColorFromDamage(rand.nextInt(16));
 	}
 
 	public int getDamage() {

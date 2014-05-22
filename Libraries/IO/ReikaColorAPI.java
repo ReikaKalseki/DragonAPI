@@ -13,10 +13,32 @@ import java.awt.Color;
 
 public class ReikaColorAPI {
 
-	public static int RGBtoHex(int R, int G, int B) {
-		int color = (B | G << 8 | R << 16);
-		color += 0xff000000;
+	/** Converts an RGB array into a color multiplier. Args: RGB[], bit */
+	public static float RGBtoColorMultiplier(int[] RGB, int bit) {
+		float color = 1F;
+		if (bit < 0 || bit > 2)
+			return 1F;
+		color = RGB[bit]/255F;
 		return color;
+	}
+
+	/** Converts a hex color code to a color multiplier. Args: Hex, bit */
+	public static float HextoColorMultiplier(int hex, int bit) {
+		float color = 1F;
+		int[] RGB = ReikaColorAPI.HexToRGB(hex);
+		if (bit < 0 || bit > 2)
+			return 1F;
+		color = RGB[bit]/255F;
+		return color;
+	}
+
+	public static int RGBtoHex(int R, int G, int B, int A) {
+		int color = (B | G << 8 | R << 16 | A << 24);
+		return color;
+	}
+
+	public static int RGBtoHex(int R, int G, int B) {
+		return RGBtoHex(R, G, B, 255);
 	}
 
 	public static int GStoHex(int GS) {
@@ -24,10 +46,11 @@ public class ReikaColorAPI {
 	}
 
 	public static int[] HexToRGB (int hex) {
-		int[] color = new int[3];
-		color[0] = Color.decode(String.valueOf(hex)).getRed();
-		color[1] = Color.decode(String.valueOf(hex)).getGreen();
-		color[2] = Color.decode(String.valueOf(hex)).getBlue();
+		int[] color = new int[4];
+		color[0] = hex >> 16 & 0xFF;
+		color[1] = hex >> 8 & 0xFF;
+		color[2] = hex & 0xFF;
+		color[3] = hex >> 24 & 0xFF;
 		return color;
 	}
 
