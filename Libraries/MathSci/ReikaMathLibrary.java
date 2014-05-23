@@ -107,6 +107,11 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	}
 
 	/** Returns the logarithm of a specified base. Args: input, logbase */
+	public static int logbase(long inp, int base) { //streamline, and ensure there is a fast log2 method
+		return (int)logbase((double)inp, base);
+	}
+
+	/** Returns the logarithm of a specified base. Args: input, logbase */
 	public static double logbase(double inp, double base) {
 		double val = Math.log(inp);
 		return val/(Math.log(base));
@@ -237,7 +242,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 
 	/** Returns true if a number is a power of another Args: Number, Base */
 	public static boolean isPowerOf(int num, int base) {
-		return (logbase(num, base) == (int)logbase(num, base));
+		return (logbase(num, base) == logbase(num, base));
 	}
 
 	/** Returns a multiplier (<1) based on how close the value is to the peak value of a

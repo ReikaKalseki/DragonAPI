@@ -11,6 +11,7 @@ package Reika.DragonAPI.Base;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -68,6 +69,12 @@ public abstract class BlockTEBase extends Block {
 	public final int getComparatorInputOverride(World world, int x, int y, int z, int par5)
 	{
 		return ((TileEntityBase)world.getBlockTileEntity(x, y, z)).getRedstoneOverride();
+	}
+
+	@Override
+	public boolean canEntityDestroy(World world, int x, int y, int z, Entity e)
+	{
+		return false;
 	}
 
 }

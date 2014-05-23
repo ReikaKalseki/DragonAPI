@@ -71,8 +71,6 @@ public class ItemMaterialController {
 		this.addVanillaItem(Block.cobblestone, ItemMaterial.STONE);
 		this.addVanillaItem(Block.stoneBrick, ItemMaterial.STONE);
 		this.addVanillaItem(Block.brick, ItemMaterial.STONE);
-		this.addVanillaItem(Block.planks, ItemMaterial.WOOD);
-		this.addVanillaItem(Block.wood, ItemMaterial.WOOD);
 		this.addVanillaItem(Block.bookShelf, ItemMaterial.WOOD);
 		this.addVanillaItem(Item.doorWood, ItemMaterial.WOOD);
 		this.addVanillaItem(Item.sign, ItemMaterial.WOOD);
@@ -90,9 +88,18 @@ public class ItemMaterialController {
 		this.addVanillaItem(Item.axeWood, ItemMaterial.WOOD);
 		this.addVanillaItem(Item.shovelWood, ItemMaterial.WOOD);
 
+		for (int i = 0; i < 4; i++) {
+			this.addVanillaItem(new ItemStack(Block.planks.blockID, 1, i), ItemMaterial.WOOD);
+			this.addVanillaItem(new ItemStack(Block.wood.blockID, 1, i), ItemMaterial.WOOD);
+		}
+
 		this.addVanillaItem(Item.diamond, ItemMaterial.DIAMOND);
 		this.addVanillaItem(Item.ingotIron, ItemMaterial.IRON);
 		this.addVanillaItem(Item.ingotGold, ItemMaterial.GOLD);
+
+		this.addVanillaItem(Item.coal, ItemMaterial.COAL);
+		this.addVanillaItem(new ItemStack(Item.coal.itemID, 1, 1), ItemMaterial.COAL);
+		this.addVanillaItem(Block.coalBlock, ItemMaterial.COAL);
 	}
 
 	public void addItem(ItemStack is, ItemMaterial mat) {

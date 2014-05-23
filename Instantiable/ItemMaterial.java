@@ -19,6 +19,7 @@ public final class ItemMaterial {
 	public static final ItemMaterial GOLD = new ItemMaterial("Gold", 1060);
 	public static final ItemMaterial DIAMOND = new ItemMaterial("Diamond", 2700);
 	public static final ItemMaterial OBSIDIAN = new ItemMaterial("Obsidian", 800);
+	public static final ItemMaterial COAL = new ItemMaterial("Coal", 400);
 
 	public ItemMaterial(String n, int melting) {
 		melt = melting;
