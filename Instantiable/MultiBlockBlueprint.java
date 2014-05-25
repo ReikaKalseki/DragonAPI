@@ -29,7 +29,7 @@ public class MultiBlockBlueprint {
 	protected int[][][] IDs;
 	protected int[][][] metas;
 
-	private List<Integer> overrides = new ArrayList();
+	private final List<Integer> overrides = new ArrayList();
 
 	protected static final Random rand = new Random();
 

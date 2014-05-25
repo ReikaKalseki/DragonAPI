@@ -106,8 +106,19 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return val;
 	}
 
+	public static int logbase2(long inp) {
+		int log = -1;
+		while (inp > 0) {
+			inp = inp >> 1;
+			log++;
+		}
+		return log;
+	}
+
 	/** Returns the logarithm of a specified base. Args: input, logbase */
-	public static int logbase(long inp, int base) { //streamline, and ensure there is a fast log2 method
+	public static int logbase(long inp, int base) { //return double
+		if (base == 2)
+			;//return logbase2(inp);
 		return (int)logbase((double)inp, base);
 	}
 
