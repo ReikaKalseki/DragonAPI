@@ -128,7 +128,7 @@ public class SlicedBlockBlueprint {
 	}
 
 	public boolean checkAgainst(World world, int x, int y, int z, int xref, int yref, ForgeDirection plane, int slice) {
-		//ReikaJavaLibrary.pConsole(this.getString(slice));
+		//ReikaJavaLibrary.pConsole(slice+": "+this.getString(slice));
 		int[][] ids = IDs.get(slice);
 		int[][] metas = metadatas.get(slice);
 		for (int i = 0; i < ids.length; i++) {
@@ -142,12 +142,14 @@ public class SlicedBlockBlueprint {
 					int id2 = world.getBlockId(dx, dy, dz);
 					if (id != id2) {
 						//ReikaJavaLibrary.pConsole(slice+": "+id+"&"+id2+" @ "+i+", "+k+" >> "+dx+","+dy+","+dz);
+						//world.setBlock(dx, dy, dz, 49);
 						return false;
 					}
 					if (meta != -1) {
 						int meta2 = world.getBlockMetadata(dx, dy, dz);
 						if (meta != meta2) {
 							//ReikaJavaLibrary.pConsole(slice+": "+meta+"%"+meta2+" @ "+i+", "+k+" >> "+dx+","+dy+","+dz);
+							//world.setBlock(dx, dy, dz, 49);
 							return false;
 						}
 					}
