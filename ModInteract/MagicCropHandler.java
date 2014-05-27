@@ -26,12 +26,16 @@ import Reika.DragonAPI.ModRegistry.ModOreList;
 public class MagicCropHandler extends CropHandlerBase {
 
 	private static final String[] materialCrops = {
-		"Coal", "Redstone", "Glowstone", "Obsidian", "Dye", "Iron", "Gold", "Lapis", "Ender", "Nether", "XP", "Blaze", "Diamond",
-		"Emerald", "Copper", "Tin", "Silver", "Lead", "Quartz"
+		"Essence", "Coal", "Redstone", "Glowstone", "Obsidian", "Dye", "Iron", "Gold", "Lapis", "Ender", "Nether", "XP", "Blaze",
+		"Diamond", "Emerald", "Copper", "Tin", "Silver", "Lead", "Quartz", "Sapphire", "Ruby", "Peridot", "Alumin"
 	};
 
 	private static final String[] animalCrops = {
 		"Cow", "Creeper", "Magma", "Skeleton", "Slime", "Spider", "Ghast"
+	};
+
+	private static final String[] essenceCrops = {
+		"Water", "Fire", "Earth", "Air"
 	};
 
 	private static final MagicCropHandler instance = new MagicCropHandler();
@@ -83,6 +87,31 @@ public class MagicCropHandler extends CropHandlerBase {
 			for (int i = 0; i < animalCrops.length; i++) {
 				String field = "soulCrop"+animalCrops[i];
 				String field2 = "sSeeds"+animalCrops[i];
+				try {
+					Field f = c.getField(field);
+					Block crop = (Block)f.get(null);
+					blockIDs.add(crop.blockID);
+
+					f = c.getField(field2);
+					Item seed = (Item)f.get(null);
+					seedIDs.add(seed.itemID);
+				}
+				catch (NoSuchFieldException e) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+					e.printStackTrace();
+				}
+				catch (IllegalAccessException e) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+					e.printStackTrace();
+				}
+				catch (NullPointerException e) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					e.printStackTrace();
+				}
+			}
+			for (int i = 0; i < essenceCrops.length; i++) {
+				String field = "eCrop"+essenceCrops[i];
+				String field2 = "eSeeds"+essenceCrops[i];
 				try {
 					Field f = c.getField(field);
 					Block crop = (Block)f.get(null);

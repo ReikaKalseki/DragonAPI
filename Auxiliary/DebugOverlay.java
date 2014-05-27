@@ -17,6 +17,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class DebugOverlay {
 
@@ -37,6 +38,7 @@ public class DebugOverlay {
 			String s = "Debug Mode Enabled!";
 			f.drawString(s, 1, 1, 0xffffff);
 			GL11.glScaled(1/d, 1/d, 1/d);
+			ReikaTextureHelper.bindHUDTexture();
 		}
 	}
 

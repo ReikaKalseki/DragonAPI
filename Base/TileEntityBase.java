@@ -245,7 +245,7 @@ public abstract class TileEntityBase extends TileEntity {
 				this.writeError(e);
 			}
 		}
-		if (this.getTicksExisted() < 2)
+		if (this.getTicksExisted() < 20)
 			this.syncAllData();
 		if (this.shouldSendSyncPackets()) {
 			packetTimer.update();

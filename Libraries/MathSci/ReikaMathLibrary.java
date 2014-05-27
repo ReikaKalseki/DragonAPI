@@ -115,17 +115,27 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return log;
 	}
 
-	/** Returns the logarithm of a specified base. Args: input, logbase */
-	public static int logbase(long inp, int base) { //return double
-		if (base == 2)
-			;//return logbase2(inp);
-		return (int)logbase((double)inp, base);
+	public static double logbase(long inp, int base) {
+		if (base == 2 && isPowerOfTwo((int)inp))
+			return logbase2(inp);
+		return logbase((double)inp, base);
 	}
 
 	/** Returns the logarithm of a specified base. Args: input, logbase */
 	public static double logbase(double inp, double base) {
-		double val = Math.log(inp);
-		return val/(Math.log(base));
+		return Math.log(inp)/(Math.log(base));
+	}
+
+	public static boolean isPositiveInteger(double num) {
+		return num > 0 && (int)num == num;
+	}
+
+	public static boolean isInteger(double num) {
+		return MathHelper.floor_double(num) == num;
+	}
+
+	public static boolean isPowerOfTwo(long num) {
+		return num > 0 && (num & (num-1)) == 0;
 	}
 
 	/** Returns the abs-max, abs-min, signed max, or signed min of the arguments,
@@ -253,7 +263,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 
 	/** Returns true if a number is a power of another Args: Number, Base */
 	public static boolean isPowerOf(int num, int base) {
-		return (logbase(num, base) == logbase(num, base));
+		return logbase(num, base) == (int)logbase(num, base);
 	}
 
 	/** Returns a multiplier (<1) based on how close the value is to the peak value of a

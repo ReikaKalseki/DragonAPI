@@ -39,11 +39,13 @@ public class IntegrityChecker {
 		RegistryEnum[] blocks = modBlocks.get(mod);
 		for (int i = 0; i < blocks.length; i++) {
 			RegistryEnum ir = blocks[i];
-			if (Block.blocksList[ir.getID()] == null)
-				return new Tamper(TamperType.DELETION, ir.getBasicName());
-			Block b = Block.blocksList[ir.getID()];
-			if (ir.getObjectClass() != b.getClass())
-				return new Tamper(TamperType.OVERWRITE, ir.getBasicName());
+			if (!ir.isDummiedOut()) {
+				if (Block.blocksList[ir.getID()] == null)
+					return new Tamper(TamperType.DELETION, ir.getBasicName());
+				Block b = Block.blocksList[ir.getID()];
+				if (ir.getObjectClass() != b.getClass())
+					return new Tamper(TamperType.OVERWRITE, ir.getBasicName());
+			}
 		}
 		return null;
 	}
@@ -53,11 +55,13 @@ public class IntegrityChecker {
 		RegistryEnum[] items = modItems.get(mod);
 		for (int i = 0; i < items.length; i++) {
 			RegistryEnum ir = items[i];
-			if (Item.itemsList[ir.getID()+256] == null)
-				return new Tamper(TamperType.DELETION, ir.getBasicName());
-			Item b = Item.itemsList[ir.getID()+256];
-			if (ir.getObjectClass() != b.getClass())
-				return new Tamper(TamperType.OVERWRITE, ir.getBasicName());
+			if (!ir.isDummiedOut()) {
+				if (Item.itemsList[ir.getID()+256] == null)
+					return new Tamper(TamperType.DELETION, ir.getBasicName());
+				Item b = Item.itemsList[ir.getID()+256];
+				if (ir.getObjectClass() != b.getClass())
+					return new Tamper(TamperType.OVERWRITE, ir.getBasicName());
+			}
 		}
 		return null;
 	}

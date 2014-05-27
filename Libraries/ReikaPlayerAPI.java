@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.HashMap;
+
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
@@ -18,12 +21,18 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.common.FakePlayer;
+import net.minecraftforge.common.FakePlayerFactory;
 import net.minecraftforge.common.ForgeDirection;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public final class ReikaPlayerAPI extends DragonAPICore {
+
+	private static final HashMap<String, FakePlayer> playerMap = new HashMap();
 
 	/** Transfers a player's entire inventory to an inventory. Args: Player, Inventory */
 	public static void transferInventoryToChest(EntityPlayer ep, ItemStack[] inv) {
@@ -94,8 +103,12 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return ForgeDirection.UNKNOWN;
 	}
 
+	private static boolean isAdmin(String name) {
+		return MinecraftServer.getServerConfigurationManager(MinecraftServer.getServer()).isPlayerOpped(name);
+	}
+
 	public static boolean isAdmin(EntityPlayer ep) {
-		return MinecraftServer.getServerConfigurationManager(MinecraftServer.getServer()).isPlayerOpped(ep.getEntityName());
+		return isAdmin(ep.getEntityName());
 	}
 
 	/** Hacky, but it works */
@@ -131,5 +144,23 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		ep.getFoodStats().writeNBT(NBT);
 		NBT.setFloat("foodSaturationLevel", level);
 		ep.getFoodStats().readNBT(NBT);
+	}
+
+	public static boolean playerCanBreakAt(World world, int x, int y, int z, int id, int meta, String name) {
+		if (DragonAPICore.isSinglePlayer())
+			return true;
+		if (isAdmin(name))
+			return true;
+		FakePlayer fp = FakePlayerFactory.get(world, name);
+		Block b = Block.blocksList[id];
+		BreakEvent evt = new BreakEvent(x, y, z, world, b, meta, fp);
+		MinecraftForge.EVENT_BUS.post(evt);
+		return !evt.isCanceled();
+	}
+
+	public static boolean playerCanBreakAt(World world, int x, int y, int z, String name) {
+		int id = world.getBlockId(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		return playerCanBreakAt(world, x, y, z, id, meta, name);
 	}
 }
