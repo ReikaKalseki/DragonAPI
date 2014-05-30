@@ -27,11 +27,12 @@ public class MagicCropHandler extends CropHandlerBase {
 
 	private static final String[] materialCrops = {
 		"Essence", "Coal", "Redstone", "Glowstone", "Obsidian", "Dye", "Iron", "Gold", "Lapis", "Ender", "Nether", "XP", "Blaze",
-		"Diamond", "Emerald", "Copper", "Tin", "Silver", "Lead", "Quartz", "Sapphire", "Ruby", "Peridot", "Alumin"
+		"Diamond", "Emerald", "DeathBloom", "Copper", "Tin", "Silver", "Lead", "Quartz", "Sapphire", "Ruby", "Peridot", "Alumin",
+		"Force", "Cobalt", "Ardite", "Nickel", "Platinum", "ThaumcraftShard", "Uranium"
 	};
 
 	private static final String[] animalCrops = {
-		"Cow", "Creeper", "Magma", "Skeleton", "Slime", "Spider", "Ghast"
+		"Cow", "Creeper", "Magma", "Skeleton", "Slime", "Spider", "Ghast", "Wither"
 	};
 
 	private static final String[] essenceCrops = {

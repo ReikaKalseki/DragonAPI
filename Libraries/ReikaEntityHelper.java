@@ -552,6 +552,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return e.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
 	}
 
+	/** If the entity is wearing a any piece of this armor material. */
 	public static boolean isEntityWearingArmorOf(EntityLivingBase e, EnumArmorMaterial type) {
 		for (int i = 1; i <= 4; i++) {
 			ItemStack is = e.getCurrentItemOrArmor(i);
@@ -562,6 +563,18 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			}
 		}
 		return false;
+	}
+
+	public static boolean isEntityWearingFullSuitOf(EntityLivingBase e, EnumArmorMaterial type) {
+		for (int i = 1; i <= 4; i++) {
+			ItemStack is = e.getCurrentItemOrArmor(i);
+			if (is != null && is.getItem() instanceof ItemArmor) {
+				ItemArmor a = (ItemArmor)is.getItem();
+				if (a.getArmorMaterial() != type)
+					return false;
+			}
+		}
+		return true;
 	}
 
 	public static Render getEntityRenderer(Class entityClass) {
