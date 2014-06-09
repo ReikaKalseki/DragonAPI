@@ -54,6 +54,7 @@ public class ThermalRecipeHelper {
 		toSend.setBoolean("reversible", reversible);
 		f.writeToNBT(toSend.getCompoundTag("fluid"));
 		FMLInterModComms.sendMessage("ThermalExpansion", "TransposerFillRecipe", toSend);
+		//fireEvent(ThermalRecipeEvent.ThermalMachine.TRANSPOSER, in, null, out, null, 0, energy);
 	}
 
 	public static void addFluidTransposerDrain(ItemStack in, ItemStack out, int energy, FluidStack f) {

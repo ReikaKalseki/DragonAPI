@@ -37,6 +37,18 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	private static final RenderBlocks rb = new RenderBlocks();
 
+	public static enum RenderDistance {
+		FAR(),
+		NORMAL(),
+		SHORT(),
+		TINY();
+		private static final RenderDistance[] list = values();
+	}
+
+	public static RenderDistance getRenderDistance() {
+		return RenderDistance.values()[Minecraft.getMinecraft().gameSettings.renderDistance];
+	}
+
 	/** Converts a biome to a color multiplier (for use in things like leaf textures).
 	 * Args: World, x, z, material (grass, water, etc), bit */
 	public static float biomeToColorMultiplier(World world, int x, int z, String mat, int bit) {

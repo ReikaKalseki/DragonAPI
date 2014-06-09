@@ -17,9 +17,12 @@ import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.input.Keyboard;
 
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper.RenderDistance;
+
 public class LODModelPart extends ModelRenderer {
 
-	private float size = -1;
+	private double renderDistanceSqr = -1;
 
 	public LODModelPart(ModelBase baseModel, int textureX, int textureZ) {
 		super(baseModel, textureX, textureZ);
@@ -30,7 +33,8 @@ public class LODModelPart extends ModelRenderer {
 	{
 		if (cubeList.isEmpty()) {
 			super.addBox(par1Str, par2, par3, par4, par5, par6, par7);
-			size = this.calculateVolume();
+			float size = this.calculateVolume();
+			renderDistanceSqr = this.calculateRenderDistance(size);
 		}
 		else {
 			throw new UnsupportedOperationException("You may only have one box per model piece!");
@@ -43,7 +47,8 @@ public class LODModelPart extends ModelRenderer {
 	{
 		if (cubeList.isEmpty()) {
 			super.addBox(par1, par2, par3, par4, par5, par6);
-			size = this.calculateVolume();
+			float size = this.calculateVolume();
+			renderDistanceSqr = this.calculateRenderDistance(size);
 		}
 		else {
 			throw new UnsupportedOperationException("You may only have one box per model piece!");
@@ -51,26 +56,24 @@ public class LODModelPart extends ModelRenderer {
 		return this;
 	}
 
-	/**
-	 * Creates a textured box. Args: originX, originY, originZ, width, height, depth, scaleFactor.
-	 */
 	@Override
 	public final void addBox(float par1, float par2, float par3, int par4, int par5, int par6, float par7)
 	{
 		if (cubeList.isEmpty()) {
 			super.addBox(par1, par2, par3, par4, par5, par6, par7);
-			size = this.calculateVolume();
+			float size = this.calculateVolume();
+			renderDistanceSqr = this.calculateRenderDistance(size);
 		}
 		else {
 			throw new UnsupportedOperationException("You may only have one box per model piece!");
 		}
 	}
 
-	protected ModelBox getBox() {
+	protected final ModelBox getBox() {
 		return (ModelBox)cubeList.get(0);
 	}
 
-	private float calculateVolume() {
+	public final float calculateVolume() {
 		ModelBox box = this.getBox();
 		float x = box.posX1-box.posX2;
 		float y = box.posY1-box.posY2;
@@ -78,40 +81,56 @@ public class LODModelPart extends ModelRenderer {
 		return Math.abs(x*y*z);
 	}
 
-
-	public float getVolume() {
-		return size;
-	}
-
-	public boolean shouldRender(double dist_squared) {
-		if (Keyboard.isKeyDown(Keyboard.KEY_TAB))
-			return true;
-		if (size <= 0)
-			return false;
-		if (dist_squared < 96) {
-			return true;
+	private double calculateRenderDistance(float size) {
+		int d = 0;
+		if (size > 1024) {
+			d = 16384;
 		}
-		if (dist_squared < 128) {
-			return this.getVolume() > 4;
+		else if (size > 512) {
+			d = 4096;
 		}
-		else if (dist_squared < 256) {
-			return this.getVolume() > 8;
+		else if (size > 128) {
+			d = 2048;
 		}
-		else if (dist_squared < 1024) {
-			return this.getVolume() > 32;
+		else if (size > 32) {
+			d = 1024;
 		}
-		else if (dist_squared < 2048) {
-			return this.getVolume() > 128;
+		else if (size > 8) {
+			d = 256;
 		}
-		else if (dist_squared < 4096) {
-			return this.getVolume() > 512;
+		else if (size > 4) {
+			d = 128;
+		}
+		else if (size > 0){
+			d = 96;
 		}
 		else {
-			return this.getVolume() > 1024;
+			d = 0;
+		}
+		return d;
+	}
+
+	public final boolean shouldRender(double dist_squared) {
+		return Keyboard.isKeyDown(Keyboard.KEY_TAB) || renderDistanceSqr*this.getDistanceMultiplier() >= dist_squared;
+	}
+
+	private double getDistanceMultiplier() {
+		RenderDistance r = ReikaRenderHelper.getRenderDistance();
+		switch (r) {
+		case FAR:
+			return 2;
+		case NORMAL:
+			return 1;
+		case SHORT:
+			return 0.75;
+		case TINY:
+			return 0.4;
+		default:
+			return 1;
 		}
 	}
 
-	public void render(TileEntity te, float pixelSize)
+	public final void render(TileEntity te, float pixelSize)
 	{
 		double rx = RenderManager.renderPosX;
 		double ry = RenderManager.renderPosY;
@@ -121,8 +140,9 @@ public class LODModelPart extends ModelRenderer {
 		double dz = rz-te.zCoord;
 		double d = dx*dx+dy*dy+dz*dz;
 
-		if (this.shouldRender(d) || !te.hasWorldObj())
+		if (!te.hasWorldObj() || this.shouldRender(d)) {
 			super.render(pixelSize);
+		}
 	}
 
 }

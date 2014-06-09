@@ -22,6 +22,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.FakePlayer;
+import net.minecraftforge.common.FakePlayerFactory;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
@@ -142,14 +143,17 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	public final EntityPlayer getPlacer() {
-		return placer != null && !placer.isEmpty() ? worldObj.getPlayerEntityByName(placer) : null;
+		if (placer == null || placer.isEmpty())
+			return null;
+		EntityPlayer ep = worldObj.getPlayerEntityByName(placer);
+		return ep != null ? ep : this.getFakePlacer();
 	}
 
 	public final EntityPlayer getFakePlacer() {
 		if (placer == null || placer.isEmpty())
 			return null;
 		if (fakePlayer == null)
-			fakePlayer = new FakePlayer(worldObj, placer);
+			fakePlayer = FakePlayerFactory.get(worldObj, placer);
 		return fakePlayer;
 	}
 

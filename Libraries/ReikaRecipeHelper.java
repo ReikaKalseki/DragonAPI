@@ -138,8 +138,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	}
 
 	/** Finds recipes by product. */
-	public static List<IRecipe> getAllRecipesByOutput(List<IRecipe> in, ItemStack out) {
-		List<IRecipe> li = new ArrayList<IRecipe>();
+	public static ArrayList<IRecipe> getAllRecipesByOutput(List<IRecipe> in, ItemStack out) {
+		ArrayList<IRecipe> li = new ArrayList<IRecipe>();
 		for (int i = 0; i < in.size(); i++) {
 			IRecipe ir = in.get(i);
 			//ReikaJavaLibrary.pConsole(ir.getRecipeOutput()+" == "+out);

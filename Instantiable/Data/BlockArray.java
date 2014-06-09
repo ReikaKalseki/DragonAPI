@@ -36,6 +36,13 @@ public class BlockArray {
 	protected boolean overflow = false;
 	protected World refWorld;
 
+	private int minX;
+	private int maxX;
+	private int minY;
+	private int maxY;
+	private int minZ;
+	private int maxZ;
+
 	public final int maxDepth = ReikaJavaLibrary.getMaximumRecursiveDepth();
 
 	private final BlockArrayComputer computer;
@@ -56,8 +63,60 @@ public class BlockArray {
 			return false;
 		int[] e = {x, y, z};
 		blocks.add(e);
+		this.setLimits(x, y, z);
 		//ReikaJavaLibrary.pConsole("Adding "+x+", "+y+", "+z);
 		return true;
+	}
+
+	public int getMinX() {
+		return minX;
+	}
+
+	public int getMaxX() {
+		return maxX;
+	}
+
+	public int getMinY() {
+		return minY;
+	}
+
+	public int getMaxY() {
+		return maxY;
+	}
+
+	public int getMinZ() {
+		return minZ;
+	}
+
+	public int getMaxZ() {
+		return maxZ;
+	}
+
+	public int getSizeX() {
+		return maxX-minX;
+	}
+
+	public int getSizeY() {
+		return maxY-minY;
+	}
+
+	public int getSizeZ() {
+		return maxZ-minZ;
+	}
+
+	private void setLimits(int x, int y, int z) {
+		if (x < minX)
+			minX = x;
+		if (x > maxX)
+			maxX = x;
+		if (y < minY)
+			minY = y;
+		if (y > maxY)
+			maxY = y;
+		if (z < minZ)
+			minZ = z;
+		if (z > maxZ)
+			maxZ = z;
 	}
 
 	public int[] getNextBlock() {
@@ -570,7 +629,7 @@ public class BlockArray {
 				int y = xyz[1];
 				int z = xyz[2];
 				int idy = world.getBlockId(x, y-1, z);
-				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) || ReikaArrayHelper.contains(overrides, idy)) {
+				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) && !ReikaArrayHelper.contains(overrides, idy)) {
 					canSink = false;
 				}
 			}
@@ -588,7 +647,7 @@ public class BlockArray {
 				int y = xyz[1];
 				int z = xyz[2];
 				Material idy = world.getBlockMaterial(x, y-1, z);
-				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) || ReikaArrayHelper.contains(overrides, idy)) {
+				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) && !ReikaArrayHelper.contains(overrides, idy) && idy.isSolid()) {
 					canSink = false;
 				}
 			}
@@ -659,5 +718,47 @@ public class BlockArray {
 		copy.overflow = overflow;
 		copy.blocks = ReikaJavaLibrary.copyList(blocks);
 		return copy;
+	}
+
+	public final boolean isAtLeastXPercentNot(World world, double percent, int id, int meta) {
+		double s = this.getSize();
+		int c = 0;
+		for (int i = 0; i < this.getSize(); i++) {
+			int[] xyz = this.getNthBlock(i);
+			int x = xyz[0];
+			int y = xyz[1];
+			int z = xyz[2];
+			int id2 = world.getBlockId(x, y, z);
+			int meta2 = world.getBlockMetadata(x, y, z);
+			if (id2 != id || meta2 != meta) {
+				c++;
+			}
+		}
+		return c/s*100D >= percent;
+	}
+
+	public final boolean isAtLeastXPercent(World world, double percent, int id) {
+		return this.isAtLeastXPercent(world, percent, id, -1);
+	}
+
+	public final boolean isAtLeastXPercent(World world, double percent, int id, int meta) {
+		double s = this.getSize();
+		int c = 0;
+		for (int i = 0; i < this.getSize(); i++) {
+			int[] xyz = this.getNthBlock(i);
+			int x = xyz[0];
+			int y = xyz[1];
+			int z = xyz[2];
+			int id2 = world.getBlockId(x, y, z);
+			int meta2 = world.getBlockMetadata(x, y, z);
+			if (id2 == id && (meta == -1 || meta2 == meta)) {
+				c++;
+			}
+		}
+		return c/s*100D >= percent;
+	}
+
+	public final boolean isAtLeastXPercentSolid(World world, double percent) {
+		return this.isAtLeastXPercentNot(world, percent, 0, 0);
 	}
 }
