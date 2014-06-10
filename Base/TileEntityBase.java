@@ -27,6 +27,7 @@ import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -381,4 +382,22 @@ public abstract class TileEntityBase extends TileEntity {
 		TileEntity te = worldObj.getBlockTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
 		adjTEMap[dir.ordinal()] = te;
 	}
+
+	@Override
+	public double getMaxRenderDistanceSquared() {
+		switch(ReikaRenderHelper.getRenderDistance()) {
+		case FAR:
+			return 6144D;
+		case NORMAL:
+			return 3364D;
+		case SHORT:
+			return 1024D;
+		case TINY:
+			return 256D;
+		default:
+			return 4096D;
+		}
+	}
+
+	public abstract boolean hasModel();
 }
