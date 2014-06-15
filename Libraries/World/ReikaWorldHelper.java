@@ -616,8 +616,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
 		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
-		if (id != 0)
-			ReikaSoundHelper.playBreakSound(world, x, y, z, Block.blocksList[id]);
+		ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 		world.setBlock(x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreak(world, x+1, y, z, id, meta);
@@ -641,8 +640,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
 		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
-		if (id != 0)
-			ReikaSoundHelper.playBreakSound(world, x, y, z, Block.blocksList[id]);
+		ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 		world.setBlock(x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreakWithinSphere(world, x+1, y, z, id, meta, x0, y0, z0, r);
@@ -666,8 +664,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
 		ReikaItemHelper.dropItems(world, x, y, z, Block.blocksList[id].getBlockDropped(world, x, y, z, metad, 0));
-		if (id != 0)
-			ReikaSoundHelper.playBreakSound(world, x, y, z, Block.blocksList[id]);
+		ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 		world.setBlock(x, y, z, 0);
 		world.markBlockForUpdate(x, y, z);
 		recursiveBreakWithBounds(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);

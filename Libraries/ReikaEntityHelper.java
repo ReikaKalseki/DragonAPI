@@ -561,6 +561,9 @@ public final class ReikaEntityHelper extends DragonAPICore {
 				if (a.getArmorMaterial() == type)
 					return true;
 			}
+			else {
+				return false;
+			}
 		}
 		return false;
 	}
@@ -572,6 +575,9 @@ public final class ReikaEntityHelper extends DragonAPICore {
 				ItemArmor a = (ItemArmor)is.getItem();
 				if (a.getArmorMaterial() != type)
 					return false;
+			}
+			else {
+				return false;
 			}
 		}
 		return true;

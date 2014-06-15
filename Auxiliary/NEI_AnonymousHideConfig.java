@@ -17,7 +17,8 @@ import net.minecraft.item.ItemStack;
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
 
-/** Allows you to hide items from NEI without having to write a special class implementing {@link codechicken.nei.api.IConfigureNEI}. */
+/** Allows you to hide items from NEI without having to write a special class implementing {@link codechicken.nei.api.IConfigureNEI}.
+ * Only call this class if NEI is loaded, or you will create an NEI dependence in your mod. */
 public class NEI_AnonymousHideConfig implements IConfigureNEI {
 
 	private static final ArrayList<Integer> items = new ArrayList();

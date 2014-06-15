@@ -43,7 +43,7 @@ public class BlockArray {
 	private int minZ;
 	private int maxZ;
 
-	public final int maxDepth = ReikaJavaLibrary.getMaximumRecursiveDepth();
+	public int maxDepth = Integer.MAX_VALUE;
 
 	private final BlockArrayComputer computer;
 
@@ -66,6 +66,11 @@ public class BlockArray {
 		this.setLimits(x, y, z);
 		//ReikaJavaLibrary.pConsole("Adding "+x+", "+y+", "+z);
 		return true;
+	}
+
+	public void remove(int x, int y, int z) {
+		int[] e = {x, y, z};
+		blocks.remove(e);
 	}
 
 	public int getMinX() {
@@ -166,7 +171,13 @@ public class BlockArray {
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow */
 	public void recursiveAdd(World world, int x, int y, int z, int id) {
+		this.recursiveAdd(world, x, y, z, id, 0);
+	}
+
+	private void recursiveAdd(World world, int x, int y, int z, int id, int depth) {
 		if (overflow)
+			return;
+		if (depth > maxDepth)
 			return;
 		if (world.getBlockId(x, y, z) != id)
 			return;
@@ -174,15 +185,15 @@ public class BlockArray {
 			return;
 		this.addBlockCoordinate(x, y, z);
 		try {
-			this.recursiveAdd(world, x+1, y, z, id);
-			this.recursiveAdd(world, x-1, y, z, id);
-			this.recursiveAdd(world, x, y+1, z, id);
-			this.recursiveAdd(world, x, y-1, z, id);
-			this.recursiveAdd(world, x, y, z+1, id);
-			this.recursiveAdd(world, x, y, z-1, id);
+			this.recursiveAdd(world, x+1, y, z, id, depth+1);
+			this.recursiveAdd(world, x-1, y, z, id, depth+1);
+			this.recursiveAdd(world, x, y+1, z, id, depth+1);
+			this.recursiveAdd(world, x, y-1, z, id, depth+1);
+			this.recursiveAdd(world, x, y, z+1, id, depth+1);
+			this.recursiveAdd(world, x, y, z-1, id, depth+1);
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
@@ -190,7 +201,13 @@ public class BlockArray {
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow, metadata to follow */
 	public void recursiveAddWithMetadata(World world, int x, int y, int z, int id, int meta) {
+		this.recursiveAddWithMetadata(world, x, y, z, id, meta, 0);
+	}
+
+	private void recursiveAddWithMetadata(World world, int x, int y, int z, int id, int meta, int depth) {
 		if (overflow)
+			return;
+		if (depth > maxDepth)
 			return;
 		if (world.getBlockId(x, y, z) != id)
 			return;
@@ -200,15 +217,15 @@ public class BlockArray {
 			return;
 		this.addBlockCoordinate(x, y, z);
 		try {
-			this.recursiveAddWithMetadata(world, x+1, y, z, id, meta);
-			this.recursiveAddWithMetadata(world, x-1, y, z, id, meta);
-			this.recursiveAddWithMetadata(world, x, y+1, z, id, meta);
-			this.recursiveAddWithMetadata(world, x, y-1, z, id, meta);
-			this.recursiveAddWithMetadata(world, x, y, z+1, id, meta);
-			this.recursiveAddWithMetadata(world, x, y, z-1, id, meta);
+			this.recursiveAddWithMetadata(world, x+1, y, z, id, meta, depth+1);
+			this.recursiveAddWithMetadata(world, x-1, y, z, id, meta, depth+1);
+			this.recursiveAddWithMetadata(world, x, y+1, z, id, meta, depth+1);
+			this.recursiveAddWithMetadata(world, x, y-1, z, id, meta, depth+1);
+			this.recursiveAddWithMetadata(world, x, y, z+1, id, meta, depth+1);
+			this.recursiveAddWithMetadata(world, x, y, z-1, id, meta, depth+1);
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
@@ -216,7 +233,13 @@ public class BlockArray {
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
 	public void recursiveAddWithBounds(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2) {
+		this.recursiveAddWithBounds(world, x, y, z, id, x1, y1, z1, x2, y2, z2, 0);
+	}
+
+	private void recursiveAddWithBounds(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
+			return;
+		if (depth > maxDepth)
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
@@ -227,15 +250,15 @@ public class BlockArray {
 			return;
 		this.addBlockCoordinate(x, y, z);
 		try {
-			this.recursiveAddWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2, depth+1);
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
@@ -243,7 +266,13 @@ public class BlockArray {
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
 	public void recursiveAddWithBoundsRanged(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2, int r) {
+		this.recursiveAddWithBoundsRanged(world, x, y, z, id, x1, y1, z1, x2, y2, z2, r, 0);
+	}
+
+	private void recursiveAddWithBoundsRanged(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2, int r, int depth) {
 		if (overflow)
+			return;
+		if (depth > maxDepth)
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
@@ -257,19 +286,25 @@ public class BlockArray {
 			for (int i = -r; i <= r; i++) {
 				for (int j = -r; j <= r; j++) {
 					for (int k = -r; k <= r; k++) {
-						this.recursiveAddWithBoundsRanged(world, x+i, y+j, z+k, id, x1, y1, z1, x2, y2, z2, r);
+						this.recursiveAddWithBoundsRanged(world, x+i, y+j, z+k, id, x1, y1, z1, x2, y2, z2, r, depth+1);
 					}
 				}
 			}
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
 
 	public void recursiveAddMultipleWithBounds(World world, int x, int y, int z, List<Integer> id, int x1, int y1, int z1, int x2, int y2, int z2) {
+		this.recursiveAddMultipleWithBounds(world, x, y, z, id, x1, y1, z1, x2, y2, z2, 0);
+	}
+
+	private void recursiveAddMultipleWithBounds(World world, int x, int y, int z, List<Integer> id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
+			return;
+		if (depth > maxDepth)
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
@@ -285,23 +320,29 @@ public class BlockArray {
 			return;
 		this.addBlockCoordinate(x, y, z);
 		try {
-			this.recursiveAddMultipleWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddMultipleWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddMultipleWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddMultipleWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddMultipleWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddMultipleWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddMultipleWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddMultipleWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddMultipleWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddMultipleWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddMultipleWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddMultipleWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2, depth+1);
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
 
+	public void recursiveMultiAddWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int... ids) {
+		this.recursiveMultiAddWithBounds(world, x, y, z, x1, y1, z1, x2, y2, z2, 0, ids);
+	}
+
 	/** Like the ordinary recursive add but with a bounded volume and tolerance for multiple IDs. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	public void recursiveMultiAddWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int... ids) {
+	private void recursiveMultiAddWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int depth, int... ids) {
 		if (overflow)
+			return;
+		if (depth > maxDepth)
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
@@ -317,21 +358,27 @@ public class BlockArray {
 			return;
 		this.addBlockCoordinate(x, y, z);
 		try {
-			this.recursiveMultiAddWithBounds(world, x+1, y, z, x1, y1, z1, x2, y2, z2, ids);
-			this.recursiveMultiAddWithBounds(world, x-1, y, z, x1, y1, z1, x2, y2, z2, ids);
-			this.recursiveMultiAddWithBounds(world, x, y+1, z, x1, y1, z1, x2, y2, z2, ids);
-			this.recursiveMultiAddWithBounds(world, x, y-1, z, x1, y1, z1, x2, y2, z2, ids);
-			this.recursiveMultiAddWithBounds(world, x, y, z+1, x1, y1, z1, x2, y2, z2, ids);
-			this.recursiveMultiAddWithBounds(world, x, y, z-1, x1, y1, z1, x2, y2, z2, ids);
+			this.recursiveMultiAddWithBounds(world, x+1, y, z, x1, y1, z1, x2, y2, z2, depth+1, ids);
+			this.recursiveMultiAddWithBounds(world, x-1, y, z, x1, y1, z1, x2, y2, z2, depth+1, ids);
+			this.recursiveMultiAddWithBounds(world, x, y+1, z, x1, y1, z1, x2, y2, z2, depth+1, ids);
+			this.recursiveMultiAddWithBounds(world, x, y-1, z, x1, y1, z1, x2, y2, z2, depth+1, ids);
+			this.recursiveMultiAddWithBounds(world, x, y, z+1, x1, y1, z1, x2, y2, z2, depth+1, ids);
+			this.recursiveMultiAddWithBounds(world, x, y, z-1, x1, y1, z1, x2, y2, z2, depth+1, ids);
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
 
 	public void recursiveAddWithBoundsMetadata(World world, int x, int y, int z, int id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
+		this.recursiveAddWithBoundsMetadata(world, x, y, z, id, meta, x1, y1, z1, x2, y2, z2, 0);
+	}
+
+	private void recursiveAddWithBoundsMetadata(World world, int x, int y, int z, int id, int meta, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
+			return;
+		if (depth > maxDepth)
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
@@ -342,15 +389,15 @@ public class BlockArray {
 			return;
 		this.addBlockCoordinate(x, y, z);
 		try {
-			this.recursiveAddWithBoundsMetadata(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddWithBoundsMetadata(world, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddWithBoundsMetadata(world, x, y+1, z, id, meta, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddWithBoundsMetadata(world, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddWithBoundsMetadata(world, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddWithBoundsMetadata(world, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddWithBoundsMetadata(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsMetadata(world, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsMetadata(world, x, y+1, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsMetadata(world, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsMetadata(world, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsMetadata(world, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
@@ -359,10 +406,16 @@ public class BlockArray {
 		liquidMat = mat;
 	}
 
+	public void recursiveAddLiquidWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2) {
+		this.recursiveAddLiquidWithBounds(world, x, y, z, x1, y1, z1, x2, y2, z2, 0);
+	}
+
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	public void recursiveAddLiquidWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2) {
+	private void recursiveAddLiquidWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
+			return;
+		if (depth > maxDepth)
 			return;
 		//ReikaJavaLibrary.pConsole(liquidID+" and "+world.getBlockId(x, y, z));;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
@@ -375,23 +428,25 @@ public class BlockArray {
 			return;
 		this.addBlockCoordinate(x, y, z);
 		try {
-			this.recursiveAddLiquidWithBounds(world, x+1, y, z, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddLiquidWithBounds(world, x-1, y, z, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddLiquidWithBounds(world, x, y+1, z, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddLiquidWithBounds(world, x, y-1, z, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddLiquidWithBounds(world, x, y, z+1, x1, y1, z1, x2, y2, z2);
-			this.recursiveAddLiquidWithBounds(world, x, y, z-1, x1, y1, z1, x2, y2, z2);
+			this.recursiveAddLiquidWithBounds(world, x+1, y, z, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddLiquidWithBounds(world, x-1, y, z, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddLiquidWithBounds(world, x, y+1, z, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddLiquidWithBounds(world, x, y-1, z, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddLiquidWithBounds(world, x, y, z+1, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddLiquidWithBounds(world, x, y, z-1, x1, y1, z1, x2, y2, z2, depth+1);
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
 
 	/** Like the ordinary recursive add but with a spherical bounded volume. Args: World, x, y, z,
 	 * id to replace, origin x,y,z, max radius */
-	public void recursiveAddWithinSphere(World world, int x, int y, int z, int id, int x0, int y0, int z0, double r) {
+	private void recursiveAddWithinSphere(World world, int x, int y, int z, int id, int x0, int y0, int z0, double r, int depth) {
 		if (overflow)
+			return;
+		if (depth > maxDepth)
 			return;
 		if (world.getBlockId(x, y, z) != id)
 			return;
@@ -401,15 +456,15 @@ public class BlockArray {
 			return;
 		this.addBlockCoordinate(x, y, z);
 		try {
-			this.recursiveAddWithinSphere(world, x+1, y, z, id, x0, y0, z0, r);
-			this.recursiveAddWithinSphere(world, x-1, y, z, id, x0, y0, z0, r);
-			this.recursiveAddWithinSphere(world, x, y+1, z, id, x0, y0, z0, r);
-			this.recursiveAddWithinSphere(world, x, y-1, z, id, x0, y0, z0, r);
-			this.recursiveAddWithinSphere(world, x, y, z+1, id, x0, y0, z0, r);
-			this.recursiveAddWithinSphere(world, x, y, z-1, id, x0, y0, z0, r);
+			this.recursiveAddWithinSphere(world, x+1, y, z, id, x0, y0, z0, r, depth+1);
+			this.recursiveAddWithinSphere(world, x-1, y, z, id, x0, y0, z0, r, depth+1);
+			this.recursiveAddWithinSphere(world, x, y+1, z, id, x0, y0, z0, r, depth+1);
+			this.recursiveAddWithinSphere(world, x, y-1, z, id, x0, y0, z0, r, depth+1);
+			this.recursiveAddWithinSphere(world, x, y, z+1, id, x0, y0, z0, r, depth+1);
+			this.recursiveAddWithinSphere(world, x, y, z-1, id, x0, y0, z0, r, depth+1);
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
@@ -554,26 +609,22 @@ public class BlockArray {
 		if (r == 0)
 			return;
 		try {
-			this.recursiveAddWithinSphere(world, x+1, y, z, id, x, y, z, r);
-			this.recursiveAddWithinSphere(world, x, y+1, z, id, x, y, z, r);
-			this.recursiveAddWithinSphere(world, x, y, z+1, id, x, y, z, r);
-			this.recursiveAddWithinSphere(world, x-1, y, z, id, x, y, z, r);
-			this.recursiveAddWithinSphere(world, x, y-1, z, id, x, y, z, r);
-			this.recursiveAddWithinSphere(world, x, y, z-1, id, x, y, z, r);
+			this.recursiveAddWithinSphere(world, x+1, y, z, id, x, y, z, r, 0);
+			this.recursiveAddWithinSphere(world, x, y+1, z, id, x, y, z, r, 0);
+			this.recursiveAddWithinSphere(world, x, y, z+1, id, x, y, z, r, 0);
+			this.recursiveAddWithinSphere(world, x-1, y, z, id, x, y, z, r, 0);
+			this.recursiveAddWithinSphere(world, x, y-1, z, id, x, y, z, r, 0);
+			this.recursiveAddWithinSphere(world, x, y, z-1, id, x, y, z, r, 0);
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(0);
 			e.printStackTrace();
 		}
 	}
 
-	protected void throwOverflow() {
+	protected void throwOverflow(int depth) {
 		overflow = true;
-		ReikaJavaLibrary.pConsole("Stack overflow at depth "+this.getRecursionDepth()+"!");
-	}
-
-	private String getRecursionDepth() {
-		return null;
+		ReikaJavaLibrary.pConsole("Stack overflow at depth "+depth+"/"+maxDepth+"!");
 	}
 
 	public int[] getRandomBlock() {

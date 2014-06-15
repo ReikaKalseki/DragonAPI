@@ -15,6 +15,11 @@ import net.minecraft.world.World;
 
 public class ReikaSoundHelper {
 
+	public static void playBreakSound(World world, int x, int y, int z, int id) {
+		if (id > 0)
+			playStepSound(world, x, y, z, Block.blocksList[id]);
+	}
+
 	public static void playBreakSound(World world, int x, int y, int z, Block b) {
 		StepSound s = b.stepSound;
 		String f = s.getBreakSound();

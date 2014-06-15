@@ -37,6 +37,8 @@ import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
+import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
+import Reika.DragonAPI.Auxiliary.SuggestedModsTracker;
 import Reika.DragonAPI.Auxiliary.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Extras.DonatorCommand;
@@ -99,6 +101,7 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies="after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;after:powersuits;after:GalacticCraft;after:Mystcraft;after:UniversalElectricity;after:Forestry")
@@ -141,8 +144,10 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.increasePotionCount();
 		//this.increaseBiomeCount(); world save stores biome as bytes, so 255 is cap
 
-		BannedItemReader.instance.initWith("plugins/BanItem/config.yml");
-		BannedItemReader.instance.initWith("plugins/TekkitCustomizerData/config.yml");
+		BannedItemReader.instance.initWith("BanItem");
+		BannedItemReader.instance.initWith("ItemBan");
+		BannedItemReader.instance.initWith("TekkitCustomizerData");
+		BannedItemReader.instance.initWith("TekkitCustomizer");
 	}
 
 	private void increaseBiomeCount() {
@@ -191,6 +196,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		NetworkRegistry.instance().registerGuiHandler(instance, new APIGuiHandler());
 
 		NetworkRegistry.instance().registerChatListener(ChatWatcher.instance);
+
+		TickRegistry.registerTickHandler(ProgressiveRecursiveBreaker.instance, Side.SERVER);
 	}
 
 	@Override
@@ -214,6 +221,8 @@ public class DragonAPIInit extends DragonAPIMod {
 			ModOreList ore = ModOreList.oreList[i];
 			ore.reloadOreList();
 		}
+
+		SuggestedModsTracker.instance.printConsole();
 	}
 
 	@EventHandler

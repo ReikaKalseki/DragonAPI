@@ -13,8 +13,10 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.ImmutableList;
 
 public class BannedItemReader {
@@ -29,11 +31,11 @@ public class BannedItemReader {
 
 	public void initWith(String path) {
 		String main = System.getProperty("user.dir").replaceAll("\\\\", "/");
-		String file = main+"/"+path;
+		String file = main+"/plugins/"+path;
 		File f = new File(file);
-		if (f.exists()) {
+		if (f.exists() && f.isDirectory()) {
 			try {
-				this.parseFile(f);
+				this.parseDirectory(f);
 			}
 			catch (Exception e) {}
 		}
@@ -87,6 +89,13 @@ public class BannedItemReader {
 		return false;
 	}
 
+	private void parseDirectory(File f) throws Exception {
+		ArrayList<File> li = ReikaFileReader.getAllFilesInFolder(f, "yml", "txt", "dat", "cfg");
+		for (int i = 0; i < li.size(); i++) {
+			this.parseFile(li.get(i));
+		}
+	}
+
 	private void parseFile(File f) throws Exception {
 		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
 		String line = in.readLine();
@@ -107,7 +116,7 @@ public class BannedItemReader {
 						allEntries.add(new ItemBanEntry(intid, intmeta));
 					}
 					catch (Exception e) {
-						e.printStackTrace();
+						//e.printStackTrace();
 					}
 				}
 			}

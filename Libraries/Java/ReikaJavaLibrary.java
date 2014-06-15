@@ -189,20 +189,22 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	 * Keep in mind that this number is the <i>total</i> stack depth and as such contains some
 	 * vanilla MC and Forge calls as well. Subtract 100 or so to be safe. */
 	public static int getMaximumRecursiveDepth() {
-		if (maxRecurse == -1) {
-			maxRecurse = recurse(0);
+		if (maxRecurse <= 0) {
+			recurse(0);
 		}
 		return maxRecurse;
 	}
 
 	private static int recurse(int i) {
+		maxRecurse = Math.max(i, maxRecurse);
+		//ReikaJavaLibrary.pConsole(i+":"+maxRecurse);
 		try {
 			recurse(i+1);
 		}
 		catch (StackOverflowError e) {
 			return i;
 		}
-		return 0; //Never runs
+		return 0;
 	}
 
 	public static void toggleStackTrace() {

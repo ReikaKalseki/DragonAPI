@@ -49,8 +49,10 @@ public final class TreeReader extends BlockArray {
 		}
 	}
 
-	private void checkAndAddDyeTree(World world, int x, int y, int z, int ox, int oy, int oz) {
+	private void checkAndAddDyeTree(World world, int x, int y, int z, int ox, int oy, int oz, int depth) {
 		if (Math.abs(x-ox) > 6 || Math.abs(y-oy) > 14 || Math.abs(z-oz) > 6)
+			return;
+		if (depth > 150)
 			return;
 		int id = world.getBlockId(x, y, z);
 		if (id == 0)
@@ -92,18 +94,24 @@ public final class TreeReader extends BlockArray {
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
-					this.checkAndAddDyeTree(world, x+i, y+j, z+k, ox, oy, oz);
+					this.checkAndAddDyeTree(world, x+i, y+j, z+k, ox, oy, oz, depth+1);
 				}
 			}
 		}
 	}
 
 	public void checkAndAddDyeTree(World world, int x, int y, int z) {
-		this.checkAndAddDyeTree(world, x, y, z, x, y, z);
+		this.checkAndAddDyeTree(world, x, y, z, x, y, z, 0);
 	}
 
 	public void checkAndAddRainbowTree(World world, int x, int y, int z) {
+		this.checkAndAddRainbowTree(world, x, y, z, 0);
+	}
+
+	private void checkAndAddRainbowTree(World world, int x, int y, int z, int depth) {
 		if (this.hasBlock(x, y, z))
+			return;
+		if (depth > 120)
 			return;
 		int id = world.getBlockId(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
@@ -123,7 +131,7 @@ public final class TreeReader extends BlockArray {
 		for (int i = -1; i <= 1; i++) {
 			for (int j = -1; j <= 1; j++) {
 				for (int k = -1; k <= 1; k++) {
-					this.checkAndAddRainbowTree(world, x+i, y+j, z+k);
+					this.checkAndAddRainbowTree(world, x+i, y+j, z+k, depth+1);
 				}
 			}
 		}
@@ -142,6 +150,10 @@ public final class TreeReader extends BlockArray {
 	}
 
 	public void addTree(World world, int x, int y, int z, int blockID, int blockMeta) {
+		this.addTree(world, x, y, z, blockID, blockMeta, 0);
+	}
+
+	private void addTree(World world, int x, int y, int z, int blockID, int blockMeta, int depth) {
 		int id = world.getBlockId(x, y, z);
 		if (id == 0)
 			return;
@@ -161,13 +173,13 @@ public final class TreeReader extends BlockArray {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
 						if (i != 0 || j != 0 || k != 0)
-							this.addTree(world, x+i, y+j, z+k, blockID, blockMeta);
+							this.addTree(world, x+i, y+j, z+k, blockID, blockMeta, depth+1);
 					}
 				}
 			}
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
@@ -191,10 +203,10 @@ public final class TreeReader extends BlockArray {
 		if (wood == null) {
 			throw new MisuseException("You must set the mod tree type!");
 		}
-		this.addModTree(world, x, y, z, x, y, z);
+		this.addModTree(world, x, y, z, x, y, z, 0);
 	}
 
-	private void addModTree(World world, int x, int y, int z, int x0, int y0, int z0) {
+	private void addModTree(World world, int x, int y, int z, int x0, int y0, int z0, int depth) {
 		if (Math.abs(x-x0) > 24 || Math.abs(z-z0) > 24)
 			return;
 		if (this.hasBlock(x, y, z))
@@ -220,18 +232,18 @@ public final class TreeReader extends BlockArray {
 			for (int i = -1; i <= 1; i++) {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
-						this.addModTree(world, x+i, y+j, z+k, x0, y0, z0);
+						this.addModTree(world, x+i, y+j, z+k, x0, y0, z0, depth+1);
 					}
 				}
 			}
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
 
-	private void addTree(World world, int x, int y, int z, int x0, int y0, int z0) {
+	private void addTree(World world, int x, int y, int z, int x0, int y0, int z0, int depth) {
 		if (vanilla == null) {
 			throw new MisuseException("You must set the tree type!");
 		}
@@ -256,23 +268,24 @@ public final class TreeReader extends BlockArray {
 		else if (leaf == vanilla)
 			leafCount++;
 
+		//ReikaJavaLibrary.pConsole(depth+":"+maxDepth, Side.SERVER);
 		try {
 			for (int i = -1; i <= 1; i++) {
 				for (int j = -1; j <= 1; j++) {
 					for (int k = -1; k <= 1; k++) {
-						this.addTree(world, x+i, y+j, z+k, x0, y0, z0);
+						this.addTree(world, x+i, y+j, z+k, x0, y0, z0, depth+1);
 					}
 				}
 			}
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(depth);
 			e.printStackTrace();
 		}
 	}
 
 	public void addTree(World world, int x, int y, int z) {
-		this.addTree(world, x, y, z, x, y, z);
+		this.addTree(world, x, y, z, x, y, z, 0);
 	}
 
 	/** For Natura's massive redwood trees. Warning: may lag-spike! */
@@ -363,6 +376,7 @@ public final class TreeReader extends BlockArray {
 		}
 	}
 
+	@Deprecated
 	public void addGenerousTree(World world, int x, int y, int z, int dw) {
 		if (this.hasBlock(x, y, z))
 			return;
@@ -433,7 +447,7 @@ public final class TreeReader extends BlockArray {
 			}
 		}
 		catch (StackOverflowError e) {
-			this.throwOverflow();
+			this.throwOverflow(0);
 			e.printStackTrace();
 		}
 	}

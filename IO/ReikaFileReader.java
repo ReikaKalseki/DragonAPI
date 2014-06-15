@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -36,6 +37,38 @@ public class ReikaFileReader extends DragonAPICore {
 			throw new RuntimeException("Could not load file data due to "+e.getCause()+" and "+e.getClass()+" !");
 		}
 		return len;
+	}
+
+	/** Gets all files with the given extension in a directory and any subdirectories. */
+	public static ArrayList<File> getAllFilesInFolder(File f, String... ext) {
+		ArrayList<File> li = new ArrayList();
+		if (f.isDirectory()) {
+			File[] files = f.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				File in = files[i];
+				if (in.isDirectory()) {
+					li.addAll(getAllFilesInFolder(in, ext));
+				}
+				else {
+					if (ext == null) {
+						li.add(in);
+					}
+					else {
+						for (int k = 0; k < ext.length; k++) {
+							if (in.getName().endsWith(ext[k])) {
+								li.add(in);
+							}
+						}
+					}
+				}
+			}
+		}
+		return li;
+	}
+
+	/** Gets all files in a directory and any subdirectories. */
+	public static ArrayList<File> getAllFilesInFolder(File f) {
+		return getAllFilesInFolder(f, null);
 	}
 
 	public static String readTextFile(Class root, String path) {

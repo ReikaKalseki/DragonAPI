@@ -128,10 +128,28 @@ public enum ReikaTreeHelper implements TreeType {
 	}
 
 	@Override
+	public int getLeafID() {
+		return leaf.blockID;
+	}
+
+	@Override
+	public int getSaplingID() {
+		return sapling.blockID;
+	}
+
+	@Override
 	public ArrayList<Integer> getLogMetadatas() {
 		ArrayList<Integer> li = new ArrayList();
 		for (int i = 0; i < logMeta.length; i++)
 			li.add(logMeta[i]);
+		return li;
+	}
+
+	@Override
+	public ArrayList<Integer> getLeafMetadatas() {
+		ArrayList<Integer> li = new ArrayList();
+		for (int i = 0; i < leafMeta.length; i++)
+			li.add(leafMeta[i]);
 		return li;
 	}
 

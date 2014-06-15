@@ -119,8 +119,8 @@ public abstract class TileEntityBase extends TileEntity {
 
 	public void syncAllData() {
 		NBTTagCompound var1 = new NBTTagCompound();
-		this.writeSyncTag(var1);
 		this.writeToNBT(var1);
+		this.writeSyncTag(var1);
 		var1.setBoolean("fullData", true);
 		Packet132TileEntityData p = new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, var1);
 		PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, this.getUpdatePacketRadius(), worldObj.provider.dimensionId, p);

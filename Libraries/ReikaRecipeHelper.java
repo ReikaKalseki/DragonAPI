@@ -150,6 +150,14 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return li;
 	}
 
+	public static boolean isCraftable(ItemStack is) {
+		return isCraftable(CraftingManager.getInstance().getRecipeList(), is);
+	}
+
+	public static boolean isCraftable(List<IRecipe> in, ItemStack is) {
+		return getAllRecipesByOutput(in, is).size() > 0;
+	}
+
 	/** Finds recipes by product. */
 	public static List<ShapedOreRecipe> getShapedOreRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ShapedOreRecipe> li = new ArrayList<ShapedOreRecipe>();

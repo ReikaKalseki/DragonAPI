@@ -17,7 +17,10 @@ public interface TreeType {
 
 	public ItemStack getItem();
 	public int getLogID();
+	public int getLeafID();
+	public int getSaplingID();
 	public List<Integer> getLogMetadatas();
+	public List<Integer> getLeafMetadatas();
 	public boolean canBePlacedSideways();
 
 }
