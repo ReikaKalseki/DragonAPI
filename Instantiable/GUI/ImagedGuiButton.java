@@ -57,8 +57,9 @@ public final class ImagedGuiButton extends GuiButton {
 		modClass = mod;
 	}
 
-	/** Draw a Gui Button with an image background and text overlay. Args: id, x, y, width, height, text overlay, text color, shadow, u, v, filepath */
-	public ImagedGuiButton(int par1, int par2, int par3, int par4, int par5, String par6Str, int par7, int par8, int par9, boolean par10, String file, Class mod)
+	/** Draw a Gui Button with an image background and text overlay.
+	 * Args: id, x, y, width, height, u, v, text overlay, text color, shadow, filepath */
+	public ImagedGuiButton(int par1, int par2, int par3, int par4, int par5, int par7, int par8, String par6Str, int par9, boolean par10, String file, Class mod)
 	{
 		super(par1, par2, par3, 200, 20, par6Str);
 		enabled = true;

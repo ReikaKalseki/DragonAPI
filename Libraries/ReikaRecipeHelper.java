@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -512,5 +513,77 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			}
 		}
 		CraftingManager.getInstance().getRecipeList().addAll(copies);
+	}
+
+	public static ShapedRecipes getShapedRecipeFor(ItemStack out, Object... in) {
+		String s = "";
+		int i = 0;
+		int j = 0;
+		int k = 0;
+
+		if (in[i] instanceof String[])
+		{
+			String[] astring = ((String[])in[i++]);
+
+			for (int l = 0; l < astring.length; ++l)
+			{
+				String s1 = astring[l];
+				++k;
+				j = s1.length();
+				s = s + s1;
+			}
+		}
+		else
+		{
+			while (in[i] instanceof String)
+			{
+				String s2 = (String)in[i++];
+				++k;
+				j = s2.length();
+				s = s + s2;
+			}
+		}
+
+		HashMap hashmap;
+
+		for (hashmap = new HashMap(); i < in.length; i += 2)
+		{
+			Character character = (Character)in[i];
+			ItemStack itemstack1 = null;
+
+			if (in[i + 1] instanceof Item)
+			{
+				itemstack1 = new ItemStack((Item)in[i + 1]);
+			}
+			else if (in[i + 1] instanceof Block)
+			{
+				itemstack1 = new ItemStack((Block)in[i + 1], 1, 32767);
+			}
+			else if (in[i + 1] instanceof ItemStack)
+			{
+				itemstack1 = (ItemStack)in[i + 1];
+			}
+
+			hashmap.put(character, itemstack1);
+		}
+
+		ItemStack[] aitemstack = new ItemStack[j * k];
+
+		for (int i1 = 0; i1 < j * k; ++i1)
+		{
+			char c0 = s.charAt(i1);
+
+			if (hashmap.containsKey(Character.valueOf(c0)))
+			{
+				aitemstack[i1] = ((ItemStack)hashmap.get(Character.valueOf(c0))).copy();
+			}
+			else
+			{
+				aitemstack[i1] = null;
+			}
+		}
+
+		ShapedRecipes shapedrecipes = new ShapedRecipes(j, k, aitemstack, out);
+		return shapedrecipes;
 	}
 }

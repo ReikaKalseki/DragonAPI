@@ -9,10 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
-import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.input.Keyboard;
@@ -132,9 +133,10 @@ public class LODModelPart extends ModelRenderer {
 
 	public final void render(TileEntity te, float pixelSize)
 	{
-		double rx = RenderManager.renderPosX;
-		double ry = RenderManager.renderPosY;
-		double rz = RenderManager.renderPosZ;
+		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+		double rx = ep.posX;
+		double ry = ep.posY;
+		double rz = ep.posZ;
 		double dx = rx-te.xCoord;
 		double dy = ry-te.yCoord;
 		double dz = rz-te.zCoord;

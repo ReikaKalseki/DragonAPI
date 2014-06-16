@@ -337,4 +337,8 @@ public class ReikaStringParser extends DragonAPICore {
 			return true;
 		return false;
 	}
+
+	public static String getFirstWord(String s) {
+		return s.split(" ")[0];
+	}
 }

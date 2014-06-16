@@ -87,10 +87,10 @@ public class BiomeCollisionTracker {
 	}
 
 	protected void onConflict(DragonAPIMod mod, int id) {
-		ReikaJavaLibrary.pConsole("Conflict at Biome ID "+id+" ("+BiomeGenBase.biomeList[id].biomeName+")");
+		String s = "Biome IDs: "+BiomeGenBase.biomeList[id]+" @ ID "+id;
 		if (mod == null)
-			throw new IllegalArgumentException("Overwriting already-registered biome "+BiomeGenBase.biomeList[id]+" @ ID "+id);
-		throw new IDConflictException(mod, "Biome ID Conflict: ID "+id);
+			throw new IDConflictException(s);
+		throw new IDConflictException(mod, s);
 	}
 
 }

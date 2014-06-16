@@ -84,10 +84,10 @@ public class PotionCollisionTracker {
 	}
 
 	protected void onConflict(DragonAPIMod mod, int id) {
-		ReikaJavaLibrary.pConsole("Conflict at Potion ID "+id+" ("+Potion.potionTypes[id].getName()+")");
+		String s = "Potion IDs: "+Potion.potionTypes[id]+" @ "+id;
 		if (mod == null)
-			throw new IllegalArgumentException("Overwriting already-registered Potion "+Potion.potionTypes[id]+" @ "+id);
-		throw new IDConflictException(mod, "Potion ID Conflict: ID "+id);
+			throw new IDConflictException(s);
+		throw new IDConflictException(mod, s);
 	}
 
 }

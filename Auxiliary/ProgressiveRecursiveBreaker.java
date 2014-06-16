@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
@@ -24,6 +25,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.WorldEvent;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
 import Reika.DragonAPI.Interfaces.TreeType;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -50,8 +52,9 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 		public boolean extraSpread = false;
 		public int tickRate = 1;
 		private int tick;
-		public int fortune;
-		public boolean silkTouch;
+		public int fortune = 0;
+		public boolean silkTouch = false;
+		public EntityPlayer player;
 		private static final ArrayList<int[]> extraDirs;
 
 		static {
@@ -145,9 +148,7 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 						int dx = x+dir.offsetX;
 						int dy = y+dir.offsetY;
 						int dz = z+dir.offsetZ;
-						int id2 = world.getBlockId(dx, dy, dz);
-						int meta2 = world.getBlockMetadata(dx, dy, dz);
-						if (id2 != 0 && ids.contains(Arrays.asList(id2, meta2))) {
+						if (this.canSpreadTo(world, dx, dy, dz)) {
 							next.addBlockCoordinate(dx, dy, dz);
 						}
 					}
@@ -157,9 +158,7 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 							int dx = x+d[0];
 							int dy = y+d[1];
 							int dz = z+d[2];
-							int id2 = world.getBlockId(dx, dy, dz);
-							int meta2 = world.getBlockMetadata(dx, dy, dz);
-							if (id2 != 0 && ids.contains(Arrays.asList(id2, meta2))) {
+							if (this.canSpreadTo(world, dx, dy, dz)) {
 								next.addBlockCoordinate(dx, dy, dz);
 							}
 						}
@@ -181,6 +180,16 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 			else {
 				isDone = true;
 			}
+		}
+
+		private boolean canSpreadTo(World world, int x, int y, int z) {
+			int id = world.getBlockId(x, y, z);
+			int meta = world.getBlockMetadata(x, y, z);
+			if (id == 0)
+				return false;
+			if (!ids.contains(Arrays.asList(id, meta)))
+				return false;
+			return player == null || ReikaPlayerAPI.playerCanBreakAt(world, x, y, z, player.getEntityName());
 		}
 
 		private void dropBlock(World world, int x, int y, int z) {
@@ -208,7 +217,18 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 		this.addCoordinate(world, x, y, z, Integer.MAX_VALUE);
 	}
 
-	public void addCoordinate(World world, int x, int y, int z, TreeType tree, int fortune, boolean silk) {
+	public void addCoordinate(World world, ProgressiveBreaker b) {
+		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
+		li.add(b);
+	}
+
+	public void addCoordinate(World world, int x, int y, int z, TreeType tree) {
+		ProgressiveBreaker b = this.getTreeBreaker(world, x, y, z, tree);
+		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
+		li.add(b);
+	}
+
+	public ProgressiveBreaker getTreeBreaker(World world, int x, int y, int z, TreeType tree) {
 		int log = tree.getLogID();
 		int leaf = tree.getLeafID();
 		List<Integer> logmetas = tree.getLogMetadatas();
@@ -220,14 +240,6 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 		for (int i = 0; i < leafmetas.size(); i++) {
 			ids.add(Arrays.asList(leaf, leafmetas.get(i)));
 		}
-		//if (ModList.DYETREES.isLoaded()) {
-		//	int id = TreeGetter.getNaturalDyeLeafID();
-		//	for (int i = 0; i < 16; i++) {
-		//		ids.add(Arrays.asList(id, i));
-		//	}
-		//	//ids.add(Arrays.asList(TreeGetter.getRainbowLeafID(), 0)); //LAG
-		//}
-		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
 		int depth = 30;
 		if (tree == ModWoodList.SEQUOIA)
 			depth = 350;
@@ -237,9 +249,7 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 			depth = 32;
 		ProgressiveBreaker b = new ProgressiveBreaker(world, x, y, z, depth, ids);
 		b.extraSpread = true;
-		b.fortune = fortune;
-		b.silkTouch = silk;
-		li.add(b);
+		return b;
 	}
 
 	public void addCoordinate(World world, int x, int y, int z, List<List<Integer>> ids) {

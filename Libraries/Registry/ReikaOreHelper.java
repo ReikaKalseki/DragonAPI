@@ -17,47 +17,51 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Interfaces.OreType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public enum ReikaOreHelper {
+public enum ReikaOreHelper implements OreType {
 
-	COAL("Coal", Block.oreCoal, Item.coal, "oreCoal", "itemCoal"),
-	IRON("Iron", Block.oreIron, "oreIron", "ingotIron"),
-	GOLD("Gold", Block.oreGold, "oreGold", "ingotGold"),
-	REDSTONE("Redstone", Block.oreRedstone, Item.redstone, "oreRedstone", "dustRedstone"),
-	LAPIS("Lapis Lazuli", Block.oreLapis, ReikaDyeHelper.BLUE.getStackOf(), "oreLapis", "dyeBlue"),
-	DIAMOND("Diamond", Block.oreDiamond, Item.diamond, "oreDiamond", "gemDiamond"),
-	EMERALD("Emerald", Block.oreEmerald, Item.emerald, "oreEmerald", "gemEmerald"),
-	QUARTZ("Nether Quartz", Block.oreNetherQuartz, Item.netherQuartz, "oreNetherQuartz", "itemQuartz");
+	COAL("Coal", Block.oreCoal, Item.coal, "oreCoal", "itemCoal", OreRarity.COMMON),
+	IRON("Iron", Block.oreIron, "oreIron", "ingotIron", OreRarity.AVERAGE),
+	GOLD("Gold", Block.oreGold, "oreGold", "ingotGold", OreRarity.SCATTERED),
+	REDSTONE("Redstone", Block.oreRedstone, Item.redstone, "oreRedstone", "dustRedstone", OreRarity.COMMON),
+	LAPIS("Lapis Lazuli", Block.oreLapis, ReikaDyeHelper.BLUE.getStackOf(), "oreLapis", "dyeBlue", OreRarity.SCARCE),
+	DIAMOND("Diamond", Block.oreDiamond, Item.diamond, "oreDiamond", "gemDiamond", OreRarity.COMMON),
+	EMERALD("Emerald", Block.oreEmerald, Item.emerald, "oreEmerald", "gemEmerald", OreRarity.RARE),
+	QUARTZ("Nether Quartz", Block.oreNetherQuartz, Item.netherQuartz, "oreNetherQuartz", "itemQuartz", OreRarity.EVERYWHERE);
 
 	private String name;
 	private ItemStack drop;
 	private Block ore;
 	private String oreDict;
 	private String dropOreDict;
+	public final OreRarity rarity;
 	private final ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 
 	private static final HashMap<String, String> cases = new HashMap();
+	private static final HashMap<Integer, ReikaOreHelper> vanillaOres = new HashMap();
 
 	public static final ReikaOreHelper[] oreList = ReikaOreHelper.values();
 
 	private static ArrayList<ItemStack> extraOres = new ArrayList();
 
-	private ReikaOreHelper(String n, Block b, ItemStack is, String d, String d2) {
+	private ReikaOreHelper(String n, Block b, ItemStack is, String d, String d2, OreRarity r) {
 		name = n;
 		ore = b;
 		drop = is.copy();
 		oreDict = d;
 		dropOreDict = d2;
 		ores.addAll(OreDictionary.getOres(oreDict));
+		rarity = r;
 	}
 
-	private ReikaOreHelper(String n, Block b, Item i, String d, String d2) {
-		this(n, b, new ItemStack(i), d, d2);
+	private ReikaOreHelper(String n, Block b, Item i, String d, String d2, OreRarity r) {
+		this(n, b, new ItemStack(i), d, d2, r);
 	}
 
-	private ReikaOreHelper(String n, Block b, String d, String d2) {
-		this(n, b, new ItemStack(b), d, d2);
+	private ReikaOreHelper(String n, Block b, String d, String d2, OreRarity r) {
+		this(n, b, new ItemStack(b), d, d2, r);
 	}
 
 	public String getName() {
@@ -85,11 +89,11 @@ public enum ReikaOreHelper {
 	}
 
 	public static boolean isVanillaOre(int id) {
-		for (int i = 0; i < oreList.length; i++) {
-			if (oreList[i].getOreBlock().itemID == id)
-				return true;
-		}
-		return false;
+		return getFromVanillaOre(id) != null;
+	}
+
+	public static ReikaOreHelper getFromVanillaOre(int id) {
+		return vanillaOres.get(id);
 	}
 
 	public ItemStack getResource() {
@@ -155,7 +159,7 @@ public enum ReikaOreHelper {
 	}
 
 	public Block getOreGenBlock() {
-		return this == QUARTZ ? Block.netherrack : Block.stone;
+		return this.isEnd() ? Block.whiteStone : this.isNether() ? Block.netherrack : Block.stone;
 	}
 
 	public static void refreshAll() {
@@ -168,6 +172,26 @@ public enum ReikaOreHelper {
 				if (!ReikaItemHelper.listContainsItemStack(ore.ores, is))
 					ore.ores.add(is);
 			}
+		}
+	}
+
+	public OreRarity getRarity() {
+		return rarity;
+	}
+
+	@Override
+	public boolean isNether() {
+		return this == QUARTZ;
+	}
+
+	@Override
+	public boolean isEnd() {
+		return false;
+	}
+
+	static {
+		for (int i = 0; i < oreList.length; i++) {
+			vanillaOres.put(oreList[i].ore.blockID, oreList[i]);
 		}
 	}
 
