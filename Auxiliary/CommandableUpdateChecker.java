@@ -35,7 +35,7 @@ public class CommandableUpdateChecker {
 
 	public static final CommandableUpdateChecker instance = new CommandableUpdateChecker();
 
-	public static final String reikaURL = "http://devio.us/~brianadams/versions.txt";
+	public static final String reikaURL = "http://devio.us/~reika/versions.txt";
 
 	private final HashMap<DragonAPIMod, ModVersion> latestVersions = new HashMap();
 	private final ArrayList<UpdateChecker> checkers = new ArrayList();
@@ -86,8 +86,7 @@ public class CommandableUpdateChecker {
 		String name = f.getName();
 		if (name.equals("bin")) {
 			mod.getModLogger().log("Mod is in source code form. Not checking versions.");
-			name = "RotaryCraft 1.6 v25";
-			//return;
+			return;
 		}
 		URL file = this.getURL(url);
 		if (file == null) {
