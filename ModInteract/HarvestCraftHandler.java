@@ -142,12 +142,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public int getRipeMeta() {
-		return 0;
-	}
-
-	@Override
-	public int getFreshMeta() {
+	public int getHarvestedMeta(World world, int x, int y, int z) {
 		return 0;
 	}
 

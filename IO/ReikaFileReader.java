@@ -16,6 +16,7 @@ import java.io.FileReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.net.URL;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
@@ -37,6 +38,46 @@ public class ReikaFileReader extends DragonAPICore {
 			throw new RuntimeException("Could not load file data due to "+e.getCause()+" and "+e.getClass()+" !");
 		}
 		return len;
+	}
+
+	public static BufferedReader getReader(File f) {
+		try {
+			return new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static BufferedReader getReader(String path) {
+		try {
+			return new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static BufferedReader getReader(URL url) {
+		try {
+			return new BufferedReader(new InputStreamReader(url.openStream()));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static BufferedReader getURLReader(String url) {
+		try {
+			return new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	/** Gets all files with the given extension in a directory and any subdirectories. */
@@ -98,6 +139,36 @@ public class ReikaFileReader extends DragonAPICore {
 			ReikaJavaLibrary.pConsole(e.getMessage()+" on loading line "+i);
 		}
 		return sb.toString();
+	}
+
+	public static ArrayList<String> getFileAsLines(String path) {
+		return getFileAsLines(getReader(path));
+	}
+
+	public static ArrayList<String> getFileAsLines(URL url) {
+		return getFileAsLines(getReader(url));
+	}
+
+	public static ArrayList<String> getFileAsLines(File f) {
+		return getFileAsLines(getReader(f));
+	}
+
+	private static ArrayList<String> getFileAsLines(BufferedReader r) {
+		ArrayList<String> li = new ArrayList();
+		String line = "";
+		try {
+			while (line != null) {
+				line = r.readLine();
+				if (line != null) {
+					li.add(line);
+				}
+			}
+			r.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return li;
 	}
 
 	public static String getHash(String path) {

@@ -16,9 +16,7 @@ import net.minecraft.world.World;
 
 public abstract class CropHandlerBase extends ModHandlerBase {
 
-	public abstract int getRipeMeta();
-
-	public abstract int getFreshMeta();
+	public abstract int getHarvestedMeta(World world, int x, int y, int z);
 
 	public abstract boolean isCrop(int id);
 

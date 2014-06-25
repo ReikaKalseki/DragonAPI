@@ -78,8 +78,12 @@ public class ControlledConfig {
 		}
 	}
 
-	public String getConfigPath() {
+	private final String getConfigPath() {
 		return configFile.getAbsolutePath().substring(0, configFile.getAbsolutePath().length()-4);
+	}
+
+	public final File getConfigFolder() {
+		return configFile.getParentFile();
 	}
 
 	public Object getControl(int i) {

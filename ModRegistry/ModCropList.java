@@ -48,7 +48,7 @@ public enum ModCropList {
 	public final int seedMeta;
 	public final int ripeMeta;
 	/** Not necessarily zero; see cotton */
-	public final int harvestedMeta;
+	private final int harvestedMeta;
 	private int minmeta;
 	private final CropHandlerBase handler;
 	private String blockClass;
@@ -156,8 +156,8 @@ public enum ModCropList {
 		blockID = -1;
 		seedID = -1;
 		seedMeta = -1;
-		ripeMeta = h.getRipeMeta();
-		harvestedMeta = h.getFreshMeta();
+		harvestedMeta = -1;
+		ripeMeta = -1;
 		cropColor = color;
 		exists = h.initializedProperly();
 	}
@@ -385,8 +385,11 @@ public enum ModCropList {
 	}
 
 	public boolean isRipe(World world, int x, int y, int z) {
-		int meta = world.getBlockMetadata(x, y, z);
-		return this.isHandlered() ? handler.isRipeCrop(world, x, y, z) : meta >= ripeMeta;
+		return this.isHandlered() ? handler.isRipeCrop(world, x, y, z) : world.getBlockMetadata(x, y, z) >= ripeMeta;
+	}
+
+	public int getHarvestedMetadata(World world, int x, int y, int z) {
+		return this.isHandlered() ? handler.getHarvestedMeta(world, x, y, z) : harvestedMeta;
 	}
 
 	public boolean isHandlered() {

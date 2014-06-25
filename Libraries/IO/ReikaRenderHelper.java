@@ -19,7 +19,6 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.Icon;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
@@ -292,18 +291,14 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		return true;
 	}
 
-	public static void spawnModBlockDropParticles(World world, int x, int y, int z, int blockID) {
+	public static void spawnDropParticles(World world, int x, int y, int z, int blockID, int meta) {
 		Block b = Block.blocksList[blockID];
-		Icon ico = rb.getBlockIcon(b);
-		for (int i = 0; i < 16; i++) {
-			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, world.getBlockMetadata(x, y, z), 0, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0), null));
-		}
+		spawnDropParticles(world, x, y, z, b, meta);
 	}
 
 	public static void spawnDropParticles(World world, int x, int y, int z, Block b, int meta) {
-		Icon ico = rb.getBlockIcon(b);
 		for (int i = 0; i < 16; i++) {
-			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, meta, 0, "/terrain.png", ico.getInterpolatedU(0), ico.getInterpolatedV(0), null));
+			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, meta, 0));
 		}
 	}
 

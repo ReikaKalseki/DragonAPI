@@ -25,9 +25,9 @@ public class OreBerryBushHandler extends CropHandlerBase {
 	private static final OreBerryBushHandler instance = new OreBerryBushHandler();
 
 	public final int bushID;
-	public final int berryID;
-
 	public final int secondbushID;
+
+	public final int berryID;
 
 	private OreBerryBushHandler() {
 		super();
@@ -92,7 +92,7 @@ public class OreBerryBushHandler extends CropHandlerBase {
 	public boolean isRipeCrop(World world, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		return this.isCrop(id) && meta >= this.getRipeMeta();
+		return this.isCrop(id) && meta >= 12;
 	}
 
 	public static OreBerryBushHandler getInstance() {
@@ -110,13 +110,8 @@ public class OreBerryBushHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public int getRipeMeta() {
-		return 12;
-	}
-
-	@Override
-	public int getFreshMeta() {
-		return 8;
+	public int getHarvestedMeta(World world, int x, int y, int z) {
+		return world.getBlockMetadata(x, y, z) - 4;
 	}
 
 	@Override

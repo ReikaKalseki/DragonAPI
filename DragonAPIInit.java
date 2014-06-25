@@ -29,6 +29,8 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.ChatWatcher;
+import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
+import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.CustomSoundHandler;
 import Reika.DragonAPI.Auxiliary.DebugOverlay;
@@ -46,7 +48,6 @@ import Reika.DragonAPI.Extras.GuideCommand;
 import Reika.DragonAPI.Extras.LogControlCommand;
 import Reika.DragonAPI.Extras.TestControlCommand;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
-import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
@@ -126,15 +127,11 @@ public class DragonAPIInit extends DragonAPIMod {
 		logger = new ModLogger(instance, true, false, false);
 		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());
 		//MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
-		MinecraftForge.EVENT_BUS.register(this);
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
 
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 			MinecraftForge.EVENT_BUS.register(DebugOverlay.instance);
-
-		ReikaRegistryHelper.setupModData(instance, evt);
-		ReikaRegistryHelper.setupVersionChecking(evt);
 
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
@@ -148,6 +145,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		BannedItemReader.instance.initWith("ItemBan");
 		BannedItemReader.instance.initWith("TekkitCustomizerData");
 		BannedItemReader.instance.initWith("TekkitCustomizer");
+
+		this.basicSetup(evt);
 	}
 
 	private void increaseBiomeCount() {
@@ -223,6 +222,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 
 		SuggestedModsTracker.instance.printConsole();
+		CommandableUpdateChecker.instance.checkAll();
 	}
 
 	@EventHandler
@@ -231,6 +231,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new DonatorCommand());
 		evt.registerServerCommand(new LogControlCommand());
 		evt.registerServerCommand(new TestControlCommand());
+		evt.registerServerCommand(new CheckerDisableCommand());
 	}
 
 	@ForgeSubscribe
@@ -367,27 +368,17 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@Override
 	public URL getDocumentationSite() {
-		return DragonAPICore.getReikaForumPage(instance);
+		return DragonAPICore.getReikaForumPage();
 	}
 
 	@Override
-	public boolean hasWiki() {
-		return false;
-	}
-
-	@Override
-	public URL getWiki() {
+	public String getWiki() {
 		return null;
 	}
 
 	@Override
-	public boolean hasVersion() {
-		return false;
-	}
-
-	@Override
-	public String getVersionName() {
-		return "";
+	public String getUpdateCheckURL() {
+		return CommandableUpdateChecker.reikaURL;
 	}
 
 	@Override

@@ -14,11 +14,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
-import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.Side;
 
 public class DragonAPICore {
@@ -33,17 +32,24 @@ public class DragonAPICore {
 
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
 
-	public static URL getReikaForumPage(DragonAPIMod instance) {
+	public static URL getReikaForumPage() {
 		try {
 			return new URL(FORUM_PAGE);
 		}
 		catch (MalformedURLException e) {
-			throw new RegistrationException(instance, "The mod provided a malformed URL for its documentation site!");
+			ReikaJavaLibrary.pConsole("The mod provided a malformed URL for its documentation site!");
+			e.printStackTrace();
+			return null;
 		}
 	}
 
 	public static final boolean hasAllClasses() {
 		return true;
+	}
+
+	public static File getMinecraftDirectory() {
+		String s = ((File)FMLInjectionData.data()[6]).getAbsolutePath();
+		return new File(s.substring(0, s.length()-1));
 	}
 
 	private static boolean calculateReikasComputer() {

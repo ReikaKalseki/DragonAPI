@@ -62,6 +62,7 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityCow;
+import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityMooshroom;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.passive.EntityPig;
@@ -82,9 +83,11 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModInteract.DartItemHandler;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 
@@ -534,6 +537,32 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (is == null)
 			return;
 		ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY+0.2, e.posZ, is);
+	}
+
+	public static ItemStack getFoodItem(EntityLivingBase e) {
+		if (e instanceof EntityCow) {
+			return new ItemStack(Item.beefRaw);
+		}
+		else if (e instanceof EntityPig) {
+			return new ItemStack(Item.porkRaw);
+		}
+		else if (e instanceof EntityChicken) {
+			return new ItemStack(Item.chickenRaw);
+		}
+		else if (e instanceof EntitySheep) {
+			if (ModList.DARTCRAFT.isLoaded()) {
+				int id = DartItemHandler.getInstance().meatID;
+				if (id > 0)
+					return new ItemStack(id, 1, 0);
+			}
+		}
+		else if (e instanceof EntityZombie) {
+			return new ItemStack(Item.rottenFlesh);
+		}
+		else if (e instanceof EntityHorse) {
+			return new ItemStack(Item.beefRaw);
+		}
+		return null;
 	}
 
 	/** Spawns a bunch of particles around an entity. Args: Particle Type, Entity, number of particles */

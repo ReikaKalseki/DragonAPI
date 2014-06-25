@@ -39,6 +39,13 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 		modClass = mod;
 	}
 
+	public ReikaModelledBreakFX(World world, double x, double y, double z, double vx, double vy, double vz, Block b, int side, int meta) {
+		super(world, x, y, z, vx, vy, vz, getBlock(b), meta, side);
+		tex = null;
+		modClass = null;
+		this.setParticleIcon(getBlock(b).getIcon(side, meta));
+	}
+
 	private static Block getBlock(Block b) {
 		return b != null ? b : Block.stone;
 	}
@@ -77,24 +84,34 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 	@Override
 	public void renderParticle(Tessellator v5, float par2, float par3, float par4, float par5, float par6, float par7)
 	{
-		float f6 = particleTextureIndexX / 16.0F;
-		float f7 = f6 + 0.0624375F;
-		float f8 = particleTextureIndexY / 16.0F;
-		float f9 = f8 + 0.0624375F;
-		float f10 = 0.1F * particleScale;
-		float f11 = (float)(prevPosX + (posX - prevPosX) * par2 - interpPosX);
-		float f12 = (float)(prevPosY + (posY - prevPosY) * par2 - interpPosY);
-		float f13 = (float)(prevPosZ + (posZ - prevPosZ) * par2 - interpPosZ);
-		float f14 = 1.0F;
-		if (modClass != null)
-			ReikaTextureHelper.bindTexture(modClass, tex);
-		else
-			Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(tex));
+		if (this.hasCustomTexture()) {
+			if (modClass != null)
+				ReikaTextureHelper.bindTexture(modClass, tex);
+			else
+				Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(tex));
 
-		v5.addVertexWithUV(f11 - par3 * f10 - par6 * f10, f12 - par4 * f10, f13 - par5 * f10 - par7 * f10, texpos[0], texpos[1]);
-		v5.addVertexWithUV(f11 - par3 * f10 + par6 * f10, f12 + par4 * f10, f13 - par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]);
-		v5.addVertexWithUV(f11 + par3 * f10 + par6 * f10, f12 + par4 * f10, f13 + par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]+pw);
-		v5.addVertexWithUV(f11 + par3 * f10 - par6 * f10, f12 - par4 * f10, f13 + par5 * f10 - par7 * f10, texpos[0], texpos[1]+pw);
+			float f6 = particleTextureIndexX / 16.0F;
+			float f7 = f6 + 0.0624375F;
+			float f8 = particleTextureIndexY / 16.0F;
+			float f9 = f8 + 0.0624375F;
+			float f10 = 0.1F * particleScale;
+			float f11 = (float)(prevPosX + (posX - prevPosX) * par2 - interpPosX);
+			float f12 = (float)(prevPosY + (posY - prevPosY) * par2 - interpPosY);
+			float f13 = (float)(prevPosZ + (posZ - prevPosZ) * par2 - interpPosZ);
+			float f14 = 1.0F;
+			v5.addVertexWithUV(f11 - par3 * f10 - par6 * f10, f12 - par4 * f10, f13 - par5 * f10 - par7 * f10, texpos[0], texpos[1]);
+			v5.addVertexWithUV(f11 - par3 * f10 + par6 * f10, f12 + par4 * f10, f13 - par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]);
+			v5.addVertexWithUV(f11 + par3 * f10 + par6 * f10, f12 + par4 * f10, f13 + par5 * f10 + par7 * f10, texpos[0]+pw, texpos[1]+pw);
+			v5.addVertexWithUV(f11 + par3 * f10 - par6 * f10, f12 - par4 * f10, f13 + par5 * f10 - par7 * f10, texpos[0], texpos[1]+pw);
+		}
+		else {
+			ReikaTextureHelper.bindTerrainTexture();
+			super.renderParticle(v5, par2, par3, par4, par5, par6, par7);
+		}
+	}
+
+	public boolean hasCustomTexture() {
+		return tex != null;
 	}
 
 }

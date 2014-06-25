@@ -108,7 +108,7 @@ public final class ReikaChatHelper extends DragonAPICore {
 		writeString(StatCollector.translateToLocal(tag));
 	}
 
-	/** A general object-to-chat function. Autoclips doubles to 2 decimals. Args: Object */
+	/** A general object-to-chat function. Autoclips doubles to 3 decimals. Args: Object */
 	public static void write(Object obj) {
 		if (FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT)
 			return;
@@ -118,7 +118,7 @@ public final class ReikaChatHelper extends DragonAPICore {
 		}
 		String str;
 		if (obj.getClass() == Double.class)
-			str = String.format("%.2f", obj);
+			str = String.format("%.3f", obj);
 		else
 			str = String.valueOf(obj);
 		writeString(str);

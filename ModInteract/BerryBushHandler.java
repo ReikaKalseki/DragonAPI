@@ -98,7 +98,7 @@ public class BerryBushHandler extends CropHandlerBase {
 	public boolean isRipeCrop(World world, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		return this.isCrop(id) && meta >= this.getRipeMeta();
+		return this.isCrop(id) && meta >= 12;
 	}
 
 	public static BerryBushHandler getInstance() {
@@ -116,13 +116,8 @@ public class BerryBushHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public int getRipeMeta() {
-		return 12;
-	}
-
-	@Override
-	public int getFreshMeta() {
-		return 8;
+	public int getHarvestedMeta(World world, int x, int y, int z) {
+		return world.getBlockMetadata(x, y, z) - 4;
 	}
 
 	@Override

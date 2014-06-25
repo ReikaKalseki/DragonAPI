@@ -201,7 +201,7 @@ public class MagicCropHandler extends CropHandlerBase {
 	public boolean isRipeCrop(World world, int x, int y, int z) {
 		int id = world.getBlockId(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		return this.isCrop(id) && meta == this.getRipeMeta();
+		return this.isCrop(id) && meta == 7;
 	}
 
 	public static MagicCropHandler getInstance() {
@@ -223,12 +223,7 @@ public class MagicCropHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public int getRipeMeta() {
-		return 7;
-	}
-
-	@Override
-	public int getFreshMeta() {
+	public int getHarvestedMeta(World world, int x, int y, int z) {
 		return 0;
 	}
 

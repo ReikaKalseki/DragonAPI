@@ -9,37 +9,43 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import java.lang.reflect.Field;
+
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-@Deprecated
 public final class DartItemHandler extends ModHandlerBase {
 
 	private static final DartItemHandler instance = new DartItemHandler();
 
 	public final int wrenchID;
+	public final int meatID;
 
 	private DartItemHandler() {
 		super();
-		int idwrench = -1;
+		int idwrench = -257;
+		int idmeat = -257;
 
 		if (this.hasMod()) {
 			try {
-				Class item = Class.forName("bluedart.item.DartItem");
-				//Field wrench = item.getField("forceWrench");
-				//idwrench = ((Item)wrench.get(null)).itemID;
-				//idwrench = DartItem.forceWrench.itemID;
+				Class item = Class.forName("bluedart.core.Config");
+
+				Field wrench = item.getField("forceWrenchID");
+				idwrench = wrench.getInt(null)+256;
+
+				Field meat = item.getField("rawLambchopID");
+				idmeat = meat.getInt(null)+256;
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
 				e.printStackTrace();
-			}/*
+			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft item field not found! "+e.getMessage());
 				e.printStackTrace();
-			}*/
+			}
 			catch (SecurityException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read DartCraft items (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
@@ -47,17 +53,18 @@ public final class DartItemHandler extends ModHandlerBase {
 			catch (IllegalArgumentException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading DartCraft items!");
 				e.printStackTrace();
-			}/*
+			}
 			catch (IllegalAccessException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading DartCraft items!");
 				e.printStackTrace();
-			}*/
+			}
 		}
 		else {
 			this.noMod();
 		}
 
 		wrenchID = idwrench;
+		meatID = idmeat;
 	}
 
 	public static DartItemHandler getInstance() {
@@ -66,7 +73,7 @@ public final class DartItemHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return wrenchID != -1;
+		return wrenchID != -1 && meatID != -1;
 	}
 
 	@Override
