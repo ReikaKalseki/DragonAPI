@@ -27,6 +27,7 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
@@ -147,6 +148,10 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	}
 
 	public static boolean playerCanBreakAt(World world, int x, int y, int z, int id, int meta, String name) {
+		if (name == null) {
+			ReikaJavaLibrary.pConsole("Cannot check permissions of a null player!");
+			return false;
+		}
 		if (DragonAPICore.isSinglePlayer())
 			return true;
 		if (isAdmin(name))

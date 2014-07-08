@@ -24,7 +24,6 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.lwjgl.input.Mouse;
@@ -42,10 +41,18 @@ public final class ReikaGuiAPI extends GuiScreen {
 	private int xSize;
 	private int ySize;
 
-	public static ReikaGuiAPI instance = new ReikaGuiAPI();
+	public static final ReikaGuiAPI instance = new ReikaGuiAPI();
 
 	private ReikaGuiAPI() {
 		mc = Minecraft.getMinecraft();
+	}
+
+	public int getScreenXInset() {
+		return (width - xSize) / 2;
+	}
+
+	public int getScreenYInset() {
+		return (height - ySize) / 2 - 8;
 	}
 
 	/**
@@ -341,8 +348,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 	private void drawRecipe(RenderItem render, FontRenderer f, int x, int y, ItemStack[] in, int x2, int y2, ItemStack out, boolean shapeless) {
 		if (in.length != 9)
 			throw new MisuseException("DrawRecipe() requires 9 input items!");
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2 - 8;
+		int j = this.getScreenXInset();
+		int k = this.getScreenYInset();
 		for (int ii = 0; ii < 3; ii++) {
 			for (int jj = 0; jj < 3; jj++) {
 				if (in[ii*3+jj] != null) {
@@ -359,8 +366,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	/** Draw a smelting recipe in the GUI. Args: output item, x in, y in, x out, y out */
 	public void drawSmelting(RenderItem render, FontRenderer f, ItemStack out, int x, int y, int x2, int y2) {
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2 - 8;
+		int j = this.getScreenXInset();
+		int k = this.getScreenYInset();
 
 		ItemStack in = ReikaRecipeHelper.getFurnaceInput(out);
 
@@ -370,54 +377,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 			this.drawItemStackWithTooltip(render, f, out, x2+4+j, y2+4+k);
 	}
 
-	/** Draw a compactor recipe in the GUI. Args: x in, y in, input itemstack, x out, y out, output itemstack */
-	public void drawCompressor(RenderItem render, FontRenderer f, int x, int y, ItemStack in, int x2, int y2, ItemStack out) {
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2 - 8;
-
-		if (in != null) {
-			for (int ii = 0; ii < 4; ii++)
-				this.drawItemStackWithTooltip(render, f, in, x+j, y+k+ii*18);
-		}
-		if (out != null)
-			this.drawItemStackWithTooltip(render, f, out, x2+j, y2+k);
-	}
-
-	/** Draw an extractor recipe in the GUI. Args: x in, y in; items of top row;
-	 * x out, y out; items of bottom row.
-	 * Items MUST be size-4 arrays! */
-	public void drawExtractor(RenderItem render, FontRenderer f, int x, int y, ItemStack[] in, int x2, int y2, ItemStack[] out) {
-		if (in.length != 4)
-			throw new MisuseException("DrawExtractor() requires 4 input items!");
-		if (out.length != 4)
-			throw new MisuseException("DrawExtactor() requires 4 output items!");
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2 - 8;
-
-		for (int ij = 0; ij < 4; ij++)
-			this.drawItemStackWithTooltip(render, f, in[ij], x+j+36*ij, y+k);
-		for (int ij = 0; ij < 4; ij++)
-			this.drawItemStackWithTooltip(render, f, out[ij], x2+j+36*ij, y2+k);
-	}
-
-	/** Draw a fermenter recipe in the GUI. Args: x,y of top input slot, items of input slots,
-	 * x,y out, item output. Item array must be size-2! */
-	public void drawFermenter(RenderItem render, FontRenderer f, int x, int y, ItemStack[] in, int x2, int y2, ItemStack out) {
-		if (in.length != 2)
-			throw new MisuseException("DrawFermenter() requires 2 input items!");
-		int j = (width - xSize) / 2;
-		int k = (height - ySize) / 2 - 8;
-
-		ReikaLiquidRenderer.bindFluidTexture(FluidRegistry.WATER);
-		GL11.glColor4f(1, 1, 1, 1);
-		int h = 16-(int)(System.nanoTime()/200000000)%17;
-		this.drawTexturedModelRectFromIcon(x, y+10+16-h, FluidRegistry.WATER.getStillIcon(), 16, h);
-
-		this.drawItemStackWithTooltip(render, f, in[0], x+j, y+k);
-		this.drawItemStackWithTooltip(render, f, in[1], x+j, y+36+k);
-
-		if (out != null)
-			this.drawItemStackWithTooltip(render, f, out, x2+4+j, y2+4+k);
+	public void drawItemStack(RenderItem renderer, ItemStack is, int x, int y) {
+		this.drawItemStack(renderer, Minecraft.getMinecraft().fontRenderer, is, x, y);
 	}
 
 	/** Note that this must be called after any and all texture and text rendering, as the lighting conditions are left a bit off */
@@ -443,6 +404,10 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 		renderer.renderItemAndEffectIntoGUI(font, mc.renderEngine, is, x, y);
 		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, null);
+	}
+
+	public void drawItemStackWithTooltip(RenderItem renderer, ItemStack is, int x, int y) {
+		this.drawItemStackWithTooltip(renderer, Minecraft.getMinecraft().fontRenderer, is, x, y);
 	}
 
 	public void drawItemStackWithTooltip(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {

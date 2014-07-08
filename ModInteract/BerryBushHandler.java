@@ -101,6 +101,14 @@ public class BerryBushHandler extends CropHandlerBase {
 		return this.isCrop(id) && meta >= 12;
 	}
 
+	@Override
+	public void makeRipe(World world, int x, int y, int z) {
+		int meta = world.getBlockMetadata(x, y, z);
+		int base = meta%4;
+		int metato = 12+base;
+		world.setBlockMetadataWithNotify(x, y, z, metato, 3);
+	}
+
 	public static BerryBushHandler getInstance() {
 		return instance;
 	}

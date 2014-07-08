@@ -33,6 +33,8 @@ public class HarvestCraftHandler extends CropHandlerBase {
 	private final Field cropType;
 	private final Field cropGrowth;
 
+	public static final int RIPE = 2;
+
 	private static final HarvestCraftHandler instance = new HarvestCraftHandler();
 
 	private HarvestCraftHandler() {
@@ -120,7 +122,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 			TileEntity te = world.getBlockTileEntity(x, y, z);
 			try {
 				int stage = cropGrowth.getInt(te);
-				return stage == 2;
+				return stage == RIPE;
 			}
 			catch (Exception e) {}
 		}
@@ -176,6 +178,22 @@ public class HarvestCraftHandler extends CropHandlerBase {
 			TileEntity te = world.getBlockTileEntity(x, y, z);
 			try {
 				cropGrowth.set(te, 0);
+			}
+			catch (Exception e) {}
+		}
+		world.markBlockForRenderUpdate(x, y, z);
+		world.markBlockForUpdate(x, y, z);
+	}
+
+	@Override
+	public void makeRipe(World world, int x, int y, int z) {
+		if (world.isRemote)
+			return;
+		int id = world.getBlockId(x, y, z);
+		if (id == cropID) {
+			TileEntity te = world.getBlockTileEntity(x, y, z);
+			try {
+				cropGrowth.set(te, RIPE);
 			}
 			catch (Exception e) {}
 		}

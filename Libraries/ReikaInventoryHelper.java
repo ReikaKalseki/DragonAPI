@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
@@ -585,6 +586,14 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 				ids.add(entry);
 			}
 		}
+	}
+
+	public static boolean addToIInv(Block b, IInventory ii) {
+		return addToIInv(new ItemStack(b), ii);
+	}
+
+	public static boolean addToIInv(Item is, IInventory ii) {
+		return addToIInv(new ItemStack(is), ii);
 	}
 
 	/** Returns true iff succeeded; adds iff can fit whole stack */

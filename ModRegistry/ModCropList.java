@@ -388,6 +388,16 @@ public enum ModCropList {
 		return this.isHandlered() ? handler.isRipeCrop(world, x, y, z) : world.getBlockMetadata(x, y, z) >= ripeMeta;
 	}
 
+	public void makeRipe(World world, int x, int y, int z) {
+		if (this.isHandlered()) {
+			handler.makeRipe(world, x, y, z);
+		}
+		else {
+			int metato = ripeMeta;
+			world.setBlockMetadataWithNotify(x, y, z, metato, 3);
+		}
+	}
+
 	public int getHarvestedMetadata(World world, int x, int y, int z) {
 		return this.isHandlered() ? handler.getHarvestedMeta(world, x, y, z) : harvestedMeta;
 	}

@@ -35,7 +35,7 @@ public class CommandableUpdateChecker {
 
 	public static final CommandableUpdateChecker instance = new CommandableUpdateChecker();
 
-	public static final String reikaURL = "http://devio.us/~reika/versions.txt";
+	public static final String reikaURL = "http://devio.us/~brianadams/versions.txt";
 
 	private final HashMap<DragonAPIMod, ModVersion> latestVersions = new HashMap();
 	private final ArrayList<UpdateChecker> checkers = new ArrayList();
@@ -100,7 +100,6 @@ public class CommandableUpdateChecker {
 			mod.getModLogger().logError("Could not access online version reference. Please notify "+mod.getModAuthorName());
 			return;
 		}
-		ReikaJavaLibrary.spamConsole(mod+": "+latest);
 		latestVersions.put(mod, latest);
 		checkers.add(c);
 		String label = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
@@ -124,7 +123,7 @@ public class CommandableUpdateChecker {
 	private void getOverrides() {
 		File f = this.getFile();
 		if (f.exists()) {
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(f);
+			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
 			for (int i = 0; i < li.size(); i++) {
 				String line = li.get(i);
 				String[] parts = line.split(":");
@@ -152,7 +151,7 @@ public class CommandableUpdateChecker {
 		String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
 		ModVersion latest = latestVersions.get(mod);
 		if (f.exists()) {
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(f);
+			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
 			Iterator<String> it = li.iterator();
 			while (it.hasNext()) {
 				String line = it.next();
@@ -282,7 +281,7 @@ public class CommandableUpdateChecker {
 		}
 
 		private ModVersion getLatestVersion() {
-			ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL);
+			ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, false);
 			String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
 			for (int i = 0; i < lines.size(); i++) {
 				String line = lines.get(i);
@@ -345,7 +344,7 @@ public class CommandableUpdateChecker {
 		}
 
 		public static ModVersion getFromString(String s) {
-			if (s.startsWith("v"))
+			if (s.startsWith("v") || s.startsWith("V"))
 				s = s.substring(1);
 			char c = s.charAt(s.length()-1);
 			if (Character.isDigit(c)) {

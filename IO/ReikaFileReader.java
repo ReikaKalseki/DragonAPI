@@ -141,19 +141,19 @@ public class ReikaFileReader extends DragonAPICore {
 		return sb.toString();
 	}
 
-	public static ArrayList<String> getFileAsLines(String path) {
-		return getFileAsLines(getReader(path));
+	public static ArrayList<String> getFileAsLines(String path, boolean printStackTrace) {
+		return getFileAsLines(getReader(path), printStackTrace);
 	}
 
-	public static ArrayList<String> getFileAsLines(URL url) {
-		return getFileAsLines(getReader(url));
+	public static ArrayList<String> getFileAsLines(URL url, boolean printStackTrace) {
+		return getFileAsLines(getReader(url), printStackTrace);
 	}
 
-	public static ArrayList<String> getFileAsLines(File f) {
-		return getFileAsLines(getReader(f));
+	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace) {
+		return getFileAsLines(getReader(f), printStackTrace);
 	}
 
-	private static ArrayList<String> getFileAsLines(BufferedReader r) {
+	private static ArrayList<String> getFileAsLines(BufferedReader r, boolean printStackTrace) {
 		ArrayList<String> li = new ArrayList();
 		String line = "";
 		try {
@@ -166,7 +166,8 @@ public class ReikaFileReader extends DragonAPICore {
 			r.close();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			if (printStackTrace)
+				e.printStackTrace();
 		}
 		return li;
 	}

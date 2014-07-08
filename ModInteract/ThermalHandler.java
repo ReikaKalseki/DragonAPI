@@ -26,7 +26,7 @@ public class ThermalHandler extends ModHandlerBase {
 		POWER();
 	}
 
-	public final int liquiductID;
+	public final int ductID;
 	public final int enderID;
 
 	private ThermalHandler() {
@@ -71,7 +71,7 @@ public class ThermalHandler extends ModHandlerBase {
 			this.noMod();
 		}
 
-		liquiductID = idpipe;
+		ductID = idpipe;
 		enderID = idender;
 	}
 
@@ -81,7 +81,7 @@ public class ThermalHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return liquiductID != -1 && enderID != -1;
+		return ductID != -1 && enderID != -1;
 	}
 
 	@Override

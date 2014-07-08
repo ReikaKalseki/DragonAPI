@@ -98,7 +98,6 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	/** Renders a line between two points in the world. Args: Start xyz, End xyz, rgb */
 	public static void renderLine(double x1, double y1, double z1, double x2, double y2, double z2, int rgba) {
-		prepareGeoDraw(false);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = Tessellator.instance;
@@ -110,7 +109,6 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		var5.addVertex(x1, y1, z1);
 		var5.addVertex(x2, y2, z2);
 		var5.draw();
-		exitGeoDraw();
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
@@ -156,7 +154,6 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	/** Renders a rectangle in-world. Args: r,g,b,a, Start x,y,z, End x,y,z */
 	public static void renderRectangle(int r, int g, int b, int a, double x1, double y1, double z1, double x2, double y2, double z2) {
-		prepareGeoDraw(a < 255);
 		Tessellator v5 = Tessellator.instance;
 		v5.startDrawingQuads();
 		v5.setColorRGBA(r, g, b, a);
@@ -165,7 +162,6 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		v5.addVertex(x2, y2, z2);
 		v5.addVertex(x1, y2, z1);
 		v5.draw();
-		exitGeoDraw();
 	}
 
 	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockDestroyEffects!

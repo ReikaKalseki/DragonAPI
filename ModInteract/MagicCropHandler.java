@@ -11,6 +11,7 @@ package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -25,31 +26,169 @@ import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public class MagicCropHandler extends CropHandlerBase {
 
-	private static final String[] materialCrops = {
-		"Essence", "Coal", "Redstone", "Glowstone", "Obsidian", "Dye", "Iron", "Gold", "Lapis", "Ender", "Nether", "XP", "Blaze",
-		"Diamond", "Emerald", "DeathBloom", "Copper", "Tin", "Silver", "Lead", "Quartz", "Sapphire", "Ruby", "Peridot", "Alumin",
-		"Force", "Cobalt", "Ardite", "Nickel", "Platinum", "ThaumcraftShard", "Uranium"
-	};
-
-	private static final String[] animalCrops = {
-		"Cow", "Creeper", "Magma", "Skeleton", "Slime", "Spider", "Ghast", "Wither"
-	};
-
-	private static final String[] essenceCrops = {
-		"Water", "Fire", "Earth", "Air"
-	};
-
-	private static final MagicCropHandler instance = new MagicCropHandler();
-
-	private final ArrayList<Integer> blockIDs = new ArrayList();
-	private final ArrayList<Integer> seedIDs = new ArrayList();
 	public final int oreID;
 	public final int netherOreID;
+	/** Crafting Item */
 	public final int essenceID;
 	public final int cropEssenceID;
 	private final int configChance;
 	private ItemStack christmasEssence;
 	private ItemStack natureEssence;
+
+	public static enum EssenceType {
+		COW(EssenceClass.SOUL, "Cow", 0),
+		CREEPER(EssenceClass.SOUL, "Creeper", 1),
+		SPIDER(EssenceClass.SOUL, "Spider", 5),
+		SKELETON(EssenceClass.SOUL, "Skeleton", 3),
+		ENDER(EssenceClass.MATERIAL, "Ender", 9),
+		BLAZE(EssenceClass.MATERIAL, "Blaze", 7),
+		SLIME(EssenceClass.SOUL, "Slime", 4),
+		MAGMA(EssenceClass.SOUL, "Magma", 2),
+		GHAST(EssenceClass.SOUL, "Ghast", 6),
+		WITHER(EssenceClass.SOUL, "Wither", 7),
+		DYE(EssenceClass.MATERIAL, "Dye", 13),
+		XP(EssenceClass.MATERIAL, "XP", 12),
+		COAL(EssenceClass.MATERIAL, "Coal", 11),
+		IRON(EssenceClass.MATERIAL, "Iron", 4),
+		GOLD(EssenceClass.MATERIAL, "Gold", 5),
+		REDSTONE(EssenceClass.MATERIAL, "Redstone", 1),
+		LAPIS(EssenceClass.MATERIAL, "Lapis", 6),
+		DIAMOND(EssenceClass.MATERIAL, "Diamond", 3),
+		EMERALD(EssenceClass.MATERIAL, "Emerald", 8),
+		PLATINUM(EssenceClass.MATERIAL, "Platinum", 13),
+		ESSENCE(EssenceClass.MATERIAL, "Essence", 0),
+		GLOWSTONE(EssenceClass.MATERIAL, "Glowstone", 2),
+		OBSIDIAN(EssenceClass.MATERIAL, "Obsidian", 10),
+		NETHER(EssenceClass.MATERIAL, "Nether", 14),
+		DEATH(EssenceClass.MATERIAL, "DeathBloom", 0),
+		COPPER(EssenceClass.MATERIAL, "Copper", 0),
+		TIN(EssenceClass.MATERIAL, "Tin", 1),
+		SILVER(EssenceClass.MATERIAL, "Silver", 2),
+		URANIUM(EssenceClass.MATERIAL, "Uranium", 15),
+		LEAD(EssenceClass.MATERIAL, "Lead", 3),
+		NICKEL(EssenceClass.MATERIAL, "Nickel", 12),
+		ALUMINUM(EssenceClass.MATERIAL, "Alumin", 8),
+		QUARTZ(EssenceClass.MATERIAL, "Quartz", 4),
+		SAPPHIRE(EssenceClass.MATERIAL, "Sapphire", 5),
+		RUBY(EssenceClass.MATERIAL, "Ruby", 6),
+		PERIDOT(EssenceClass.MATERIAL, "Peridot", 7),
+		FORCE(EssenceClass.MATERIAL, "Force", 9),
+		ARDITE(EssenceClass.MATERIAL, "Ardite", 11),
+		COBALT(EssenceClass.MATERIAL, "Cobalt", 10),
+		SHARD(EssenceClass.MATERIAL, "ThaumcraftShard", 14),
+		OIL(EssenceClass.MATERIAL, "Oil", 16),
+		EARTH(EssenceClass.ELEMENT, "Earth", 2),
+		AIR(EssenceClass.ELEMENT, "Air", 3),
+		FIRE(EssenceClass.ELEMENT, "Fire", 1),
+		WATER(EssenceClass.ELEMENT, "Water", 0);
+
+		private final EssenceClass type;
+		private final String tag;
+		private int cropID = -1;
+		private int seedID = -1;
+		private int essenceID = -1;
+		private final int essenceMeta;
+
+		public static final EssenceType[] essenceList = values();
+		private static final HashMap<Integer, EssenceType> cropIDs = new HashMap();
+		private static final HashMap<Integer, EssenceType> essenceIDs = new HashMap();
+		private static final HashMap<Integer, EssenceType> seedIDs = new HashMap();
+
+		private EssenceType(EssenceClass type, String name, int meta) {
+			this.type = type;
+			tag = name;
+			essenceMeta = meta;
+		}
+
+		private void setIDs(int crop, int seed, int essence) {
+			seedID = seed;
+			cropID = crop;
+			essenceID = essence;
+			cropIDs.put(crop, this);
+			seedIDs.put(seed, this);
+			essenceIDs.put(essence, this);
+		}
+
+		public String getSeedFieldName() {
+			return type.seedPrefix+tag;
+		}
+
+		public String getCropFieldName() {
+			return type.cropPrefix+tag;
+		}
+
+		public ItemStack getEssence() {
+			return new ItemStack(essenceID, 1, essenceMeta);
+		}
+
+		public ItemStack getSeeds() {
+			return new ItemStack(seedID, 1, 0);
+		}
+
+		public ItemStack getCrop() {
+			return new ItemStack(cropID, 1, 0);
+		}
+
+		public String getEssenceFieldName() {
+			if (this.isMod())
+				return "ModEssence";
+			switch(type) {
+			case ELEMENT:
+				return "ElementEssence";
+			case MATERIAL:
+				return "CropEssence";
+			case SOUL:
+				return "soulCropEssence";
+			default:
+				return "";
+			}
+		}
+
+		private boolean isMod() {
+			switch(this) {
+			case ALUMINUM:
+			case ARDITE:
+			case COBALT:
+			case COPPER:
+			case FORCE:
+			case LEAD:
+			case NICKEL:
+			case OIL:
+			case PERIDOT:
+			case PLATINUM:
+			case QUARTZ:
+			case RUBY:
+			case SAPPHIRE:
+			case SHARD:
+			case SILVER:
+			case TIN:
+			case URANIUM:
+				return true;
+			default:
+				return false;
+			}
+		}
+
+		public static boolean initialized() {
+			return !cropIDs.isEmpty() && !seedIDs.isEmpty() && !essenceIDs.isEmpty();
+		}
+	}
+
+	private static enum EssenceClass {
+		MATERIAL("mCrop", "mSeeds"),
+		SOUL("soulCrop", "sSeeds"),
+		ELEMENT("eCrop", "eSeeds");
+
+		public final String seedPrefix;
+		public final String cropPrefix;
+
+		private EssenceClass(String crop, String seed) {
+			seedPrefix = seed;
+			cropPrefix = crop;
+		}
+	}
+
+	private static final MagicCropHandler instance = new MagicCropHandler();
 
 	private MagicCropHandler() {
 		super();
@@ -60,67 +199,22 @@ public class MagicCropHandler extends CropHandlerBase {
 		int chance = -1;
 		if (this.hasMod()) {
 			Class c = this.getMod().getBlockClass();
-			for (int i = 0; i < materialCrops.length; i++) {
-				String field = "mCrop"+materialCrops[i];
-				String field2 = "mSeeds"+materialCrops[i];
+			for (int i = 0; i < EssenceType.essenceList.length; i++) {
+				EssenceType type = EssenceType.essenceList[i];
+				String cropf = type.getCropFieldName();
+				String seedf = type.getSeedFieldName();
+				String essf = type.getEssenceFieldName();
 				try {
-					Field f = c.getField(field);
+					Field f = c.getField(cropf);
 					Block crop = (Block)f.get(null);
-					blockIDs.add(crop.blockID);
 
-					f = c.getField(field2);
+					f = c.getField(seedf);
 					Item seed = (Item)f.get(null);
-					seedIDs.add(seed.itemID);
-				}
-				catch (NoSuchFieldException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
-					e.printStackTrace();
-				}
-				catch (IllegalAccessException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
-					e.printStackTrace();
-				}
-				catch (NullPointerException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
-					e.printStackTrace();
-				}
-			}
-			for (int i = 0; i < animalCrops.length; i++) {
-				String field = "soulCrop"+animalCrops[i];
-				String field2 = "sSeeds"+animalCrops[i];
-				try {
-					Field f = c.getField(field);
-					Block crop = (Block)f.get(null);
-					blockIDs.add(crop.blockID);
 
-					f = c.getField(field2);
-					Item seed = (Item)f.get(null);
-					seedIDs.add(seed.itemID);
-				}
-				catch (NoSuchFieldException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
-					e.printStackTrace();
-				}
-				catch (IllegalAccessException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
-					e.printStackTrace();
-				}
-				catch (NullPointerException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
-					e.printStackTrace();
-				}
-			}
-			for (int i = 0; i < essenceCrops.length; i++) {
-				String field = "eCrop"+essenceCrops[i];
-				String field2 = "eSeeds"+essenceCrops[i];
-				try {
-					Field f = c.getField(field);
-					Block crop = (Block)f.get(null);
-					blockIDs.add(crop.blockID);
+					f = c.getField(essf);
+					Item essence = (Item)f.get(null);
 
-					f = c.getField(field2);
-					Item seed = (Item)f.get(null);
-					seedIDs.add(seed.itemID);
+					type.setIDs(crop.blockID, seed.itemID, essence.itemID);
 				}
 				catch (NoSuchFieldException e) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -151,10 +245,6 @@ public class MagicCropHandler extends CropHandlerBase {
 				f = c.getDeclaredField("seeddropchance");
 				f.setAccessible(true);
 				chance = f.getInt(null);
-
-				f = c.getField("CropEssence");
-				Item cropessence = (Item)f.get(null);
-				idcropessence = cropessence.itemID;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -176,7 +266,7 @@ public class MagicCropHandler extends CropHandlerBase {
 		netherOreID = idnether;
 		essenceID = idessence;
 		cropEssenceID = idcropessence;
-		configChance = chance;
+		configChance = chance >= 0 ? chance : 10;
 
 		natureEssence = cropEssenceID >= 0 ? new ItemStack(cropEssenceID, 1, 0) : null;
 		christmasEssence = cropEssenceID >= 0 ? new ItemStack(cropEssenceID, 1, 20) : null;
@@ -184,12 +274,12 @@ public class MagicCropHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isCrop(int id) {
-		return blockIDs.contains(id);
+		return EssenceType.cropIDs.containsKey(id);
 	}
 
 	@Override
 	public boolean isSeedItem(ItemStack is) {
-		return seedIDs.contains(is.itemID);
+		return EssenceType.seedIDs.containsKey(is.itemID);
 	}
 
 	@Override
@@ -204,13 +294,18 @@ public class MagicCropHandler extends CropHandlerBase {
 		return this.isCrop(id) && meta == 7;
 	}
 
+	@Override
+	public void makeRipe(World world, int x, int y, int z) {
+		world.setBlockMetadataWithNotify(x, y, z, 7, 3);
+	}
+
 	public static MagicCropHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return !blockIDs.isEmpty() && seedIDs.isEmpty() && configChance != -1 && oreID != -1 && netherOreID != -1 && essenceID != -1 && cropEssenceID != -1;
+		return EssenceType.initialized() && configChance != -1 && oreID != -1 && netherOreID != -1 && essenceID != -1 && cropEssenceID != -1;
 	}
 
 	public boolean isEssenceOre(int id) {

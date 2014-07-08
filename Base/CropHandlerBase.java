@@ -22,6 +22,8 @@ public abstract class CropHandlerBase extends ModHandlerBase {
 
 	public abstract boolean isRipeCrop(World world, int x, int y, int z);
 
+	public abstract void makeRipe(World world, int x, int y, int z);
+
 	public abstract boolean isSeedItem(ItemStack is);
 
 	public abstract float getSecondSeedDropRate();

@@ -52,6 +52,14 @@ public class HybridTank extends FluidTank {
 		return this;
 	}
 
+	public final void writeToNBT(SyncPacket sp) {
+
+	}
+
+	public final void readFromNBT(SyncPacket sp) {
+
+	}
+
 	public boolean isEmpty() {
 		return this.getFluid() == null || this.getFluid().amount <= 0;
 	}

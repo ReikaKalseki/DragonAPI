@@ -213,7 +213,7 @@ public enum ModOreList implements OreType {
 		//		sb.append(" ");
 		//}
 		//sb.append(")");
-		sb.append(" ("+this.getRarity().name().toLowerCase()+")");
+		//sb.append(" ("+this.getRarity().name().toLowerCase()+")");
 		return sb.toString();
 	}
 

@@ -41,7 +41,7 @@ public class PlayerModelRenderer {
 		RenderPlayer render = evt.renderer;
 		EntityPlayer ep = evt.entityPlayer;
 		float tick = evt.partialRenderTick;
-		if (ep != null) {
+		if (ep != null && false) {
 			if ("Reika_Kalseki".equals(ep.getEntityName())) {
 				//render.setRenderPassModel(modelReika);
 				ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "/Reika/DragonAPI/Resources/reika_tex.png");
