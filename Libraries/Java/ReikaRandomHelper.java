@@ -44,4 +44,22 @@ public class ReikaRandomHelper extends DragonAPICore {
 		return rand.nextDouble() < num;
 	}
 
+	public static short getRandomShort(int max) {
+		int lim = max > 0 ? Math.min(max, Short.MAX_VALUE+1) : Short.MAX_VALUE+1;
+		return (short)rand.nextInt(lim);
+	}
+
+	public static short getRandomShort() {
+		return getRandomShort(Short.MAX_VALUE+1);
+	}
+
+	public static byte getRandomByte(int max) {
+		int lim = max > 0 ? Math.min(max, Byte.MAX_VALUE+1) : Byte.MAX_VALUE+1;
+		return (byte)rand.nextInt(lim);
+	}
+
+	public static byte getRandomByte() {
+		return getRandomByte(Byte.MAX_VALUE+1);
+	}
+
 }

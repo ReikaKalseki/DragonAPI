@@ -25,6 +25,7 @@ import net.minecraftforge.common.FakePlayer;
 import net.minecraftforge.common.FakePlayerFactory;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.Instantiable.StepTimer;
+import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
@@ -59,6 +60,8 @@ public abstract class TileEntityBase extends TileEntity {
 	protected abstract void animateWithTick(World world, int x, int y, int z);
 
 	public abstract int getRedstoneOverride();
+
+	protected final SyncPacket syncTag = new SyncPacket();
 
 	public TileEntityBase() {
 		super();
@@ -129,18 +132,32 @@ public abstract class TileEntityBase extends TileEntity {
 	@Override
 	public final Packet getDescriptionPacket()
 	{
+		/*
 		NBTTagCompound var1 = new NBTTagCompound();
 		this.writeSyncTag(var1);
 		Packet132TileEntityData p = new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, var1);
 		return p;
+		 */
+		syncTag.localize(this);
+		NBTTagCompound nbt = new NBTTagCompound();
+		this.writeSyncTag(nbt);
+		syncTag.setData(nbt);
+		//this.writeSyncTag(syncTag);
+		return syncTag;
 	}
 
 	@Override
 	public final void onDataPacket(INetworkManager netManager, Packet132TileEntityData packet)
 	{
-		this.readSyncTag(packet.data);
-		if (packet.data.getBoolean("fullData"))
-			this.readFromNBT(packet.data);
+		if (packet instanceof SyncPacket) {
+			SyncPacket p = (SyncPacket)packet;
+			//this.readSyncTag(p);
+		}
+		else {
+			this.readSyncTag(packet.data);
+			if (packet.data.getBoolean("fullData"))
+				this.readFromNBT(packet.data);
+		}
 	}
 
 	public final EntityPlayer getPlacer() {
@@ -269,8 +286,11 @@ public abstract class TileEntityBase extends TileEntity {
 
 	private void sendSyncPacket() {
 		Packet dat = this.getDescriptionPacket();
-		if (dat != null)
-			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, this.getUpdatePacketRadius(), worldObj.provider.dimensionId, dat);
+		if (dat != null) {
+			int r = this.getUpdatePacketRadius();
+			int dim = worldObj.provider.dimensionId;
+			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, dat);
+		}
 	}
 
 	public int getUpdatePacketRadius() {
