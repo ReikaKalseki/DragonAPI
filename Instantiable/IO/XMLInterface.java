@@ -29,6 +29,10 @@ public class XMLInterface {
 
 	public static final String NULL_VALUE = "#NULL!";
 
+	public XMLInterface(Class root, String path) {
+		this(root, path, false);
+	}
+
 	public XMLInterface(Class root, String path, boolean crashIfNull) {
 		rootClass = root;
 		filepath = path;

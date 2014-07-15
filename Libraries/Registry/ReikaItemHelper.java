@@ -288,4 +288,32 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 		return true;
 	}
+
+	public static void addToList(ArrayList<ItemStack> items, ArrayList<ItemStack> toAdd) {
+		for (int i = 0; i < toAdd.size(); i++) {
+			ItemStack is = toAdd.get(i);
+			addItemToList(items, is);
+		}
+	}
+
+	public static void addItemToList(ArrayList<ItemStack> items, ItemStack is) {
+		for (int i = 0; i < items.size() && is.stackSize > 0; i++) {
+			ItemStack in = items.get(i);
+			if (ReikaItemHelper.matchStacks(is, in) && ItemStack.areItemStackTagsEqual(is, in)) {
+				int sum = in.stackSize+is.stackSize;
+				if (sum <= in.getMaxStackSize()) {
+					in.stackSize = sum;
+					return;
+				}
+				else {
+					int diff = in.getMaxStackSize()-in.stackSize;
+					in.stackSize = in.getMaxStackSize();
+					is.stackSize -= diff;
+				}
+			}
+		}
+		if (is.stackSize > 0) {
+			items.add(is);
+		}
+	}
 }

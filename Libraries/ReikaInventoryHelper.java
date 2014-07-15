@@ -322,7 +322,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		if (slot == -1) {
 			if (empty == -1)
 				return false;
-			inventory[empty] = stack;
+			inventory[empty] = stack.copy();
 			return true;
 		}
 		if (inventory[slot].stackSize+stack.stackSize <= stack.getMaxStackSize()) {
@@ -999,6 +999,32 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 				ItemStack is = ii.getStackInSlot(slot);
 				if (is != null) {
 					li.put(slot, is);
+				}
+			}
+		}
+		return li;
+	}
+
+	public static ArrayList<Integer> getSlotsWithItemStack(ItemStack is, IInventory ii, boolean matchSize) {
+		ArrayList<Integer> li = new ArrayList();
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			ItemStack in = ii.getStackInSlot(i);
+			if (ReikaItemHelper.matchStacks(is, in)) {
+				if (!matchSize || in.stackSize == is.stackSize) {
+					li.add(i);
+				}
+			}
+		}
+		return li;
+	}
+
+	public static ArrayList<Integer> getSlotsBetweenWithItemStack(ItemStack is, IInventory ii, int min, int max, boolean matchSize) {
+		ArrayList<Integer> li = new ArrayList();
+		for (int i = min; i <= max; i++) {
+			ItemStack in = ii.getStackInSlot(i);
+			if (ReikaItemHelper.matchStacks(is, in)) {
+				if (!matchSize || in.stackSize == is.stackSize) {
+					li.add(i);
 				}
 			}
 		}

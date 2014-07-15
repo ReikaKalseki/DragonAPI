@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable.IO;
 
 import java.util.ArrayList;
 
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -28,15 +29,15 @@ public class ModLogger {
 
 	private static final ArrayList<ModLogger> loggers = new ArrayList();
 
-	public ModLogger(DragonAPIMod mod, boolean load, boolean debug, boolean warn) {
+	public ModLogger(DragonAPIMod mod, boolean warn) {
 		this.mod = mod;
-		logLoading = load;
-		printDebug = debug;
+		logLoading = DragonOptions.LOGLOADING.getState();
+		printDebug = DragonOptions.DEBUGMODE.getState();
 		shouldWarn = warn;
 		if (mod == null)
 			throw new IllegalArgumentException("Cannot create a logger for a null mod!");
 		if (this.shouldLog())
-			ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": Creating logger. Log Loading: "+load+"; Debug mode: "+debug+"; Warnings: "+warn);
+			ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": Creating logger. Log Loading: "+logLoading+"; Debug mode: "+printDebug+"; Warnings: "+warn);
 		loggers.add(this);
 	}
 

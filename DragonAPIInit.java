@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.network.packet.Packet;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
@@ -47,6 +48,8 @@ import Reika.DragonAPI.Extras.DonatorCommand;
 import Reika.DragonAPI.Extras.GuideCommand;
 import Reika.DragonAPI.Extras.LogControlCommand;
 import Reika.DragonAPI.Extras.TestControlCommand;
+import Reika.DragonAPI.Instantiable.SyncPacket;
+import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
@@ -60,8 +63,10 @@ import Reika.DragonAPI.ModInteract.BannedItemReader;
 import Reika.DragonAPI.ModInteract.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
+import Reika.DragonAPI.ModInteract.ExtraUtilsHandler;
 import Reika.DragonAPI.ModInteract.FactorizationHandler;
 import Reika.DragonAPI.ModInteract.ForestryHandler;
+import Reika.DragonAPI.ModInteract.ForestryRecipeHelper;
 import Reika.DragonAPI.ModInteract.GalacticCraftHandler;
 import Reika.DragonAPI.ModInteract.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.IC2Handler;
@@ -119,12 +124,17 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Instance("DragonAPI")
 	public static DragonAPIInit instance = new DragonAPIInit();
 
+	public static final ControlledConfig config = new ControlledConfig(instance, DragonOptions.optionList, null, null, null, 0);
+
 	private ModLogger logger;
 
 	@Override
 	@EventHandler
 	public void preload(FMLPreInitializationEvent evt) {
-		logger = new ModLogger(instance, true, false, false);
+		config.loadSubfolderedConfigFile(evt);
+		config.initProps(evt);
+
+		logger = new ModLogger(instance, false);
 		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());
 		//MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 		OreDictionary.initVanillaEntries();
@@ -147,6 +157,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		BannedItemReader.instance.initWith("TekkitCustomizer");
 
 		this.basicSetup(evt);
+
+		Packet.addIdClassMapping(DragonOptions.SYNCPACKET.getValue(), true, true, SyncPacket.class);
 	}
 
 	private void increaseBiomeCount() {
@@ -309,6 +321,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.ARSMAGICA, MagicaOreHandler.class);
 		this.initHandler(ModList.APPENG, AppEngHandler.class);
 		this.initHandler(ModList.FORESTRY, ForestryHandler.class);
+		this.initHandler(ModList.FORESTRY, ForestryRecipeHelper.class);
 		this.initHandler(ModList.THERMALEXPANSION, ThermalHandler.class);
 		this.initHandler(ModList.MIMICRY, MimicryHandler.class);
 		this.initHandler(ModList.MAGICCROPS, MagicCropHandler.class);
@@ -322,6 +335,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.RAILCRAFT, RailcraftHandler.class);
 		this.initHandler(ModList.MINEFACTORY, MFRHandler.class);
 		this.initHandler(ModList.GALACTICRAFT, GalacticCraftHandler.class);
+		this.initHandler(ModList.EXTRAUTILS, ExtraUtilsHandler.class);
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);

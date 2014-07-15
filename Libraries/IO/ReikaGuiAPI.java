@@ -32,6 +32,7 @@ import org.lwjgl.opengl.GL12;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -493,5 +494,15 @@ public final class ReikaGuiAPI extends GuiScreen {
 		int x = this.getMouseRealX();
 		int y = this.getMouseRealY();
 		return x >= minx && x <= maxx && y >= miny && y <= maxy;
+	}
+
+	public void renderStatic(int minx, int miny, int maxx, int maxy) {
+		for (int i = minx; i <= maxx; i++) {
+			for (int k = miny; k <= maxy; k++) {
+				int br = ReikaRandomHelper.getRandomPlusMinus(127, 127);
+				int color = ReikaColorAPI.GStoHex(br);
+				this.drawRect(i, k, i+1, k+1, 0xff000000 | color);
+			}
+		}
 	}
 }

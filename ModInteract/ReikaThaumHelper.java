@@ -77,4 +77,16 @@ public class ReikaThaumHelper {
 		return ot;
 	}
 
+	public static String aspectsToString(AspectList al) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		for (Aspect a : al.aspects.keySet()) {
+			int amt = al.getAmount(a);
+			sb.append(a.getTag()+"="+amt);
+			sb.append(", ");
+		}
+		sb.append("}");
+		return sb.toString();
+	}
+
 }

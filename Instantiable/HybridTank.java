@@ -52,14 +52,6 @@ public class HybridTank extends FluidTank {
 		return this;
 	}
 
-	public final void writeToNBT(SyncPacket sp) {
-
-	}
-
-	public final void readFromNBT(SyncPacket sp) {
-
-	}
-
 	public boolean isEmpty() {
 		return this.getFluid() == null || this.getFluid().amount <= 0;
 	}
@@ -148,6 +140,11 @@ public class HybridTank extends FluidTank {
 		else {
 			return this.getRemainingSpace() >= amt && this.getActualFluid().equals(f);
 		}
+	}
+
+	public boolean canTakeIn(FluidStack fs) {
+		int amt = fs.amount;
+		return this.isEmpty() ? capacity >= amt : this.getRemainingSpace() >= amt && this.getActualFluid().equals(fs.getFluid());
 	}
 
 }

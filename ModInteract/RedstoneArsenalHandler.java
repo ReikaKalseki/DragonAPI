@@ -39,10 +39,15 @@ public class RedstoneArsenalHandler extends ModHandlerBase {
 				Field item = ars.getField("itemPickaxe");
 				idpick = ((Item)item.get(null)).itemID;
 
-				Field config = ars.getField("config");
+				Class c = Class.forName("redstonearsenal.RedstoneArsenal");
+				Field config = c.getField("config");
 				Object obj = config.get(null);
 				Method get = obj.getClass().getMethod("get", String.class, String.class, int.class);
 				levelpick = (Integer)get.invoke(obj, categoryTag, configTag, 4);
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				e.printStackTrace();
 			}
 			catch (ClassCastException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" config not being read properly! "+e.getMessage());

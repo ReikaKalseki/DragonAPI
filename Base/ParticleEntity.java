@@ -54,7 +54,7 @@ public abstract class ParticleEntity extends InertEntity {
 			this.setDead();
 		if (posY > 256 || posY < 0)
 			this.setDead();
-		if (this.despawnOverTime() && ticksExisted > 240 && ReikaRandomHelper.doWithChance(ticksExisted-240))
+		if (this.despawnOverTime() && ticksExisted > 120 && ReikaRandomHelper.doWithChance(ticksExisted-120))
 			this.setDead();
 
 		//ReikaJavaLibrary.pConsole(String.format("%d, %d, %d :: %d, %d, %d", oldBlockX, oldBlockY, oldBlockZ, this.getBlockX(), this.getBlockY(), this.getBlockZ()));

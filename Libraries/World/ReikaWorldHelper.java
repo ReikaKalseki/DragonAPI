@@ -40,11 +40,13 @@ import Reika.DragonAPI.Auxiliary.BlockProperties;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
+import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaWorldHelper extends DragonAPICore {
 
@@ -1165,10 +1167,16 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int az = z-ch.zPosition*16;
 
 		int index = az*16+ax;
+		if (index < 0) {
+			ReikaJavaLibrary.pConsole("BIOME CHANGE ERROR: "+x+"&"+z+" @ "+ch.xPosition+"&"+ch.zPosition+": "+ax+"%"+az+" -> "+index, Side.SERVER);
+			return;
+		}
 
 		byte[] biomes = ch.getBiomeArray();
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
+		for (int i = 0; i < 256; i++)
+			ReikaWorldHelper.temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(biome));
 
 		if (!world.isRemote) {
 			int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
@@ -1191,13 +1199,18 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int az = z-ch.zPosition*16;
 
 		int index = az*16+ax;
+		if (index < 0) {
+			ReikaJavaLibrary.pConsole("BIOME CHANGE ERROR: "+x+"&"+z+" @ "+ch.xPosition+"&"+ch.zPosition+": "+ax+"%"+az+" -> "+index, Side.SERVER);
+			return;
+		}
 
 		byte[] biomes = ch.getBiomeArray();
-
 		BiomeGenBase from = BiomeGenBase.biomeList[biomes[index]];
 
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
+		for (int i = 0; i < 256; i++)
+			ReikaWorldHelper.temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(biome));
 
 		if (!world.isRemote) {
 			int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();

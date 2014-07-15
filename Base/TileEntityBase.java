@@ -24,6 +24,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.FakePlayer;
 import net.minecraftforge.common.FakePlayerFactory;
 import net.minecraftforge.common.ForgeDirection;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
@@ -61,7 +62,7 @@ public abstract class TileEntityBase extends TileEntity {
 
 	public abstract int getRedstoneOverride();
 
-	protected final SyncPacket syncTag = new SyncPacket();
+	private final SyncPacket syncTag = new SyncPacket();
 
 	public TileEntityBase() {
 		super();
@@ -132,16 +133,9 @@ public abstract class TileEntityBase extends TileEntity {
 	@Override
 	public final Packet getDescriptionPacket()
 	{
-		/*
-		NBTTagCompound var1 = new NBTTagCompound();
-		this.writeSyncTag(var1);
-		Packet132TileEntityData p = new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, var1);
-		return p;
-		 */
-		syncTag.localize(this);
 		NBTTagCompound nbt = new NBTTagCompound();
 		this.writeSyncTag(nbt);
-		syncTag.setData(nbt);
+		syncTag.setData(this, nbt);
 		//this.writeSyncTag(syncTag);
 		return syncTag;
 	}
@@ -151,7 +145,10 @@ public abstract class TileEntityBase extends TileEntity {
 	{
 		if (packet instanceof SyncPacket) {
 			SyncPacket p = (SyncPacket)packet;
-			//this.readSyncTag(p);
+			NBTTagCompound NBT = new NBTTagCompound();
+			this.writeSyncTag(NBT); //so unsent fields do not zero out, we sync the current values in
+			p.writeToNBT(NBT);
+			this.readSyncTag(NBT);
 		}
 		else {
 			this.readSyncTag(packet.data);
@@ -269,9 +266,9 @@ public abstract class TileEntityBase extends TileEntity {
 		}
 		if (this.getTicksExisted() < 20)
 			this.syncAllData();
-		if (this.shouldSendSyncPackets()) {
-			packetTimer.update();
-			if (packetTimer.checkCap()) {
+		packetTimer.update();
+		if (packetTimer.checkCap()) {
+			if (this.shouldSendSyncPackets()) {
 				this.sendSyncPacket();
 			}
 		}
@@ -285,16 +282,17 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	private void sendSyncPacket() {
-		Packet dat = this.getDescriptionPacket();
-		if (dat != null) {
+		SyncPacket dat = (SyncPacket)this.getDescriptionPacket();
+		if (dat != null && !dat.isEmpty()) {
 			int r = this.getUpdatePacketRadius();
 			int dim = worldObj.provider.dimensionId;
 			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, dat);
+			DragonAPIInit.instance.getModLogger().debug("Packet "+dat+" sent from "+this);
 		}
 	}
 
 	public int getUpdatePacketRadius() {
-		return 16;
+		return 32;
 	}
 
 	protected boolean shouldRunUpdateCode() {
@@ -318,7 +316,8 @@ public abstract class TileEntityBase extends TileEntity {
 	private final void updateTileEntity() {
 		//worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		//rmb = this.getTEModel(worldObj, xCoord, yCoord, zCoord);
-		this.animateWithTick(worldObj, xCoord, yCoord, zCoord);
+		if (worldObj.isRemote)
+			this.animateWithTick(worldObj, xCoord, yCoord, zCoord);
 		if (this.getTicksExisted() == 0) {
 			for (int i = 0; i < 6; i++)
 				this.updateCache(dirs[i]);

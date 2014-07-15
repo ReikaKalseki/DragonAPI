@@ -80,7 +80,7 @@ public class ReikaMystcraftHelper {
 
 	public static boolean isMystAge(World world) {
 		int id = world.provider.dimensionId;
-		if (id == 0 || id == 1 || id == -1 || id == ReikaTwilightHelper.getDimensionID())
+		if (id == 0 || id == 1 || id == -1 || id == ReikaTwilightHelper.getDimensionID() || id == ExtraUtilsHandler.getInstance().darkID)
 			return false;
 		return world.provider.getClass().getSimpleName().equals("WorldProviderMyst");
 	}

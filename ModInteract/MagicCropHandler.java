@@ -242,9 +242,15 @@ public class MagicCropHandler extends CropHandlerBase {
 				Item essence = (Item)f.get(null);
 				idessence = essence.itemID;
 
-				f = c.getDeclaredField("seeddropchance");
+
+				Class c2 = Class.forName("magicalcrops.ConfigHandler");
+				f = c2.getDeclaredField("seeddropchance");
 				f.setAccessible(true);
 				chance = f.getInt(null);
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());

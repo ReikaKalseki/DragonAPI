@@ -54,6 +54,8 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 
 	/** Returns the enchantment level of an ItemStack. Args: Enchantment, ItemStack */
 	public static int getEnchantmentLevel(Enchantment e, ItemStack is) {
+		if (is == null)
+			return 0;
 		Map enchants = EnchantmentHelper.getEnchantments(is);
 		if (enchants == null)
 			return 0;
@@ -66,6 +68,8 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 
 	/** Test whether an ItemStack has an enchantment. Args: Enchantment, ItemStack */
 	public static boolean hasEnchantment(Enchantment e, ItemStack is) {
+		if (is == null)
+			return false;
 		Map enchants = EnchantmentHelper.getEnchantments(is);
 		if (enchants == null)
 			return false;

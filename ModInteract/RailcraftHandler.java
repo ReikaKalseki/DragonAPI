@@ -31,7 +31,7 @@ public final class RailcraftHandler extends ModHandlerBase {
 				Field block = c.getDeclaredField("block");
 				block.setAccessible(true);
 				Block b = (Block)block.get(null);
-				idhidden = b.blockID;
+				idhidden = b != null ? b.blockID : -1; //may be disabled
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());

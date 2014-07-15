@@ -84,6 +84,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Interfaces.TameHostile;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -205,6 +206,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	/** Returns true if the mob is a hostile one. Args: EntityLivingBase mob */
 	public static boolean isHostile(EntityLivingBase mob) {
+		if (mob instanceof TameHostile)
+			return false;
 		if (mob instanceof EntityMob)
 			return true;
 		if (mob instanceof EntityGhast)

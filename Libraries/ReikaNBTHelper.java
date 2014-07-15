@@ -10,11 +10,22 @@
 package Reika.DragonAPI.Libraries;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagByte;
+import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagFloat;
+import net.minecraft.nbt.NBTTagInt;
+import net.minecraft.nbt.NBTTagIntArray;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTTagLong;
+import net.minecraft.nbt.NBTTagShort;
+import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Exception.MisuseException;
 
 public final class ReikaNBTHelper extends DragonAPICore {
 
@@ -63,6 +74,68 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	public static void writeFluidToNBT(NBTTagCompound NBT, Fluid f) {
 		String name = f != null ? f.getName() : "empty";
 		NBT.setString("liquid", name);
+	}
+
+	public static Object getValue(NBTBase NBT) {
+		if (NBT instanceof NBTTagInt) {
+			return ((NBTTagInt)NBT).data;
+		}
+		else if (NBT instanceof NBTTagByte) {
+			return ((NBTTagByte)NBT).data;
+		}
+		else if (NBT instanceof NBTTagShort) {
+			return ((NBTTagShort)NBT).data;
+		}
+		else if (NBT instanceof NBTTagLong) {
+			return ((NBTTagLong)NBT).data;
+		}
+		else if (NBT instanceof NBTTagFloat) {
+			return ((NBTTagFloat)NBT).data;
+		}
+		else if (NBT instanceof NBTTagDouble) {
+			return ((NBTTagDouble)NBT).data;
+		}
+		else if (NBT instanceof NBTTagIntArray) {
+			return ((NBTTagIntArray)NBT).intArray;
+		}
+		else if (NBT instanceof NBTTagString) {
+			return ((NBTTagString)NBT).data;
+		}
+		else if (NBT instanceof NBTTagByteArray) {
+			return ((NBTTagByteArray)NBT).byteArray;
+		}
+		else if (NBT instanceof NBTTagCompound) {
+			return NBT;
+		}
+		else if (NBT instanceof NBTBase) {
+			return NBT;
+		}
+		else {
+			return null;
+		}
+	}
+
+	public static boolean isIntNumberTag(NBTBase tag) {
+		return tag instanceof NBTTagInt || tag instanceof NBTTagByte || tag instanceof NBTTagShort || tag instanceof NBTTagLong;
+	}
+
+	public static NBTBase compressNumber(NBTBase tag) {
+		if (!isIntNumberTag(tag))
+			throw new MisuseException("Only integer-type numbers (byte, short, int, and long) can be compressed!");
+		String name = tag.getName();
+		long value = (Long)getValue(tag);
+		if (value > Integer.MAX_VALUE) {
+			return new NBTTagLong(name, value);
+		}
+		else if (value > Short.MAX_VALUE) {
+			return new NBTTagInt(name, (int)value);
+		}
+		else if (value > Byte.MAX_VALUE) {
+			return new NBTTagShort(name, (short)value);
+		}
+		else {
+			return new NBTTagByte(name, (byte)value);
+		}
 	}
 
 }

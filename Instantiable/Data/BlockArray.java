@@ -127,13 +127,20 @@ public class BlockArray {
 	public int[] getNextBlock() {
 		if (this.isEmpty())
 			return null;
-		return blocks.get(0);
+		return this.getReturnArray(0);
 	}
 
 	public int[] getNthBlock(int n) {
 		if (this.isEmpty())
 			return null;
-		return blocks.get(n);
+		return this.getReturnArray(n);
+	}
+
+	private int[] getReturnArray(int index) {
+		int[] arr = blocks.get(index);
+		int[] ret = new int[3];
+		System.arraycopy(arr, 0, ret, 0, 3);
+		return ret;
 	}
 
 	public int[] getNextAndMoveOn() {
@@ -645,13 +652,14 @@ public class BlockArray {
 		return refWorld != null;
 	}
 
-	public void offset(int x, int y, int z) {
+	public BlockArray offset(int x, int y, int z) {
 		for (int i = 0; i < blocks.size(); i++) {
 			int[] xyz = blocks.get(i);
 			xyz[0] += x;
 			xyz[1] += y;
 			xyz[2] += z;
 		}
+		return this;
 	}
 
 	public void sink(World world) {
@@ -697,6 +705,8 @@ public class BlockArray {
 				int x = xyz[0];
 				int y = xyz[1];
 				int z = xyz[2];
+				if (minY <= 0 || y <= 0)
+					canSink = false;
 				Material idy = world.getBlockMaterial(x, y-1, z);
 				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) && !ReikaArrayHelper.contains(overrides, idy) && idy.isSolid()) {
 					canSink = false;

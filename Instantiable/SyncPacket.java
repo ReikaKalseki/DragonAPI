@@ -12,189 +12,97 @@ package Reika.DragonAPI.Instantiable;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet132TileEntityData;
-import net.minecraft.tileentity.TileEntity;
+import Reika.DragonAPI.Base.TileEntityBase;
 
 public final class SyncPacket extends Packet132TileEntityData {
 
-	private final HashMap<Integer, Object> data = new HashMap();
-	private final HashMap<Integer, Object> oldData = new HashMap();
-	private static final HashMap<Integer, ArgType> args = new HashMap(); //need to client/server sync!
-	private static final HashMap<Integer, String> keyMap = new HashMap();
+	private final HashMap<String, NBTBase> data = new HashMap();
+	private final HashMap<String, NBTBase> oldData = new HashMap();
+	private final HashMap<String, NBTBase> changes = new HashMap();
 
 	public SyncPacket () {
 		super();
 	}
 
-	public void setData(NBTTagCompound NBT) {
+	public void setData(TileEntityBase te, NBTTagCompound NBT) {
+		xPosition = te.xCoord;
+		yPosition = te.yCoord;
+		zPosition = te.zCoord;
 
+		Collection c = NBT.getTags();
+		Iterator<NBTBase> it = c.iterator();
+		while (it.hasNext()) {
+			NBTBase tag = it.next();
+			this.addData(tag.getName(), tag);
+		}
 	}
 
-	public void setInteger(String key, int value) {
-		this.addData(key, value, ArgType.INT);
-	}
-	/*
-	public void setLong(String key, long value) {
-		this.addData(key, value, ArgType.LONG);
-	}
-
-	public void setShort(String key, short value) {
-		this.addData(key, value, ArgType.SHORT);
-	}
-
-	public void setByte(String key, byte value) {
-		this.addData(key, value, ArgType.BYTE);
-	}*/
-
-	public void setFloat(String key, float value) {
-		this.addData(key, value, ArgType.FLOAT);
-	}
-
-	public void setDouble(String key, double value) {
-		this.addData(key, value, ArgType.DOUBLE);
-	}
-
-	public void setBoolean(String key, boolean value) {
-		this.addData(key, value, ArgType.BOOLEAN);
-	}
-
-	public void setString(String key, String value) {
-		this.addData(key, value, ArgType.STRING);
-	}
-	/*
-	public void setIntArray(String key, int[] value) {
-		this.addData(key, value, ArgType.ARRAY);
-	}*/
-
-	private void addData(String label, Object value, ArgType arg) {
-		int key = this.getKey(label);
-		Object prev = data.get(key);
+	private void addData(String key, NBTBase value) {
+		NBTBase prev = data.get(key);
 		oldData.put(key, prev);
 		data.put(key, value);
-		args.put(key, arg);
-	}
-
-	public int getInteger(String key) {
-		Integer val = (Integer)data.get(this.getKey(key));
-		return val != null ? val.intValue() : 0;
-	}
-
-	public float getFloat(String key) {
-		Float val = (Float)data.get(this.getKey(key));
-		return val != null ? val.floatValue() : 0;
-	}
-
-	public double getDouble(String key) {
-		Double val = (Double)data.get(this.getKey(key));
-		return val != null ? val.doubleValue() : 0;
-	}
-
-	public boolean getBoolean(String key) {
-		Boolean val = (Boolean)data.get(this.getKey(key));
-		return val != null ? val.booleanValue() : false;
-	}
-
-	public String getString(String key) {
-		return (String)data.get(this.getKey(key));
-	}
-
-	public long getLong(String key) {
-		Long val = (Long)data.get(this.getKey(key));
-		return val != null ? val.longValue() : 0;
-	}
-
-	public short getShort(String key) {
-		Short val = (Short)data.get(this.getKey(key));
-		return val != null ? val.shortValue() : 0;
-	}
-
-	public byte getByte(String key) {
-		Byte val = (Byte)data.get(this.getKey(key));
-		return val != null ? val.byteValue() : 0;
-	}
-
-	private static enum ArgType {
-		INT(),
-		BOOLEAN(),
-		FLOAT(),
-		DOUBLE(),
-		STRING(),
-		//NBTTAG(),
-		ARRAY(),
-		SHORT(),
-		LONG(),
-		BYTE(),
-		FLUIDSTACK(),
-		ITEMSTACK();
-	}
-	/*
-	private short getKey(String name) {
-		short key = 0;
-		if (key == 0 || data.containsKey(key)) { //hash collision protection
-			key = this.getRandomKey();
+		if (!this.match(prev, value)) {
+			changes.put(key, value);
 		}
-		keyMap.put(key, name);
-		return key;
 	}
 
-	private static short getRandomKey() {
-		short key = ReikaRandomHelper.getRandomShort();
-		while (keyMap.containsKey(key))
-			key = ReikaRandomHelper.getRandomShort();
-		return key;
-	}*/
-
-	private int getKey(String name) {
-		int key = name.hashCode();
-		if (key == 0 || data.containsKey(key)) { //hash collision protection
-			throw new HashCollisionException(name);
-		}
-		keyMap.put(key, name);
-		return key;
-	}
-
-	private static final class HashCollisionException extends IllegalArgumentException {
-
-		private HashCollisionException(String s) {
-			super(s+" creates a conflicting hash in the SyncPacket!");
-		}
-
+	public boolean isEmpty() {
+		return changes.isEmpty();
 	}
 
 	@Override
 	public void readPacketData(DataInput in) throws IOException {
-		byte keys = in.readByte();
-		for (int i = 0; i < keys; i++) {
-			int key = in.readShort();
-			Object obj = this.readIn(key, in);
-			if (obj != null)
-				data.put(key, obj);
+		xPosition = in.readInt();
+		yPosition = in.readShort();
+		zPosition = in.readInt();
+
+		NBTTagCompound received = readNBTTagCompound(in);
+		this.populateFromStream(received);
+	}
+
+	private void populateFromStream(NBTTagCompound received) {
+		Collection c = received.getTags();
+		Iterator<NBTBase> it = c.iterator();
+		while (it.hasNext()) {
+			NBTBase tag = it.next();
+			data.put(tag.getName(), tag);
+		}
+	}
+
+	public void writeToNBT(NBTTagCompound NBT) {
+		for (String key : data.keySet()) {
+			NBT.setTag(key, data.get(key));
 		}
 	}
 
 	@Override
 	public void writePacketData(DataOutput out) throws IOException {
-		Iterator<Integer> keys = data.keySet().iterator();
+		out.writeInt(xPosition);
+		out.writeShort(yPosition);
+		out.writeInt(zPosition);
+
+		NBTTagCompound toSend = new NBTTagCompound();
+		this.saveChanges(toSend);
+		writeNBTTagCompound(toSend, out);
+	}
+
+	private void saveChanges(NBTTagCompound toSend) {
+		Iterator<String> keys = changes.keySet().iterator();
 		while (keys.hasNext()) {
-			int key = keys.next();
-			Object old = oldData.get(key);
-			Object cur = data.get(key);
-			if (this.match(old, cur))
-				keys.remove();
-		}
-		out.writeByte(data.size());
-		for (int key : data.keySet()) {
-			out.writeInt(key);
-			this.writeOut(key, out);
+			String key = keys.next();
+			NBTBase val = changes.get(key);
+			toSend.setTag(key, val);
 		}
 	}
 
-	private boolean match(Object old, Object cur) {
+	private boolean match(NBTBase old, NBTBase cur) {
 		if (old == cur)
 			return true;
 		if (old == null || cur == null)
@@ -202,82 +110,9 @@ public final class SyncPacket extends Packet132TileEntityData {
 		return cur.equals(old);
 	}
 
-	private void writeOut(int key, DataOutput out) throws IOException {
-		Object obj = data.get(key);
-		switch(args.get(key)) {
-		case ARRAY:
-			break;
-		case BOOLEAN:
-			out.writeBoolean((Boolean)obj);
-			break;
-		case BYTE:
-			out.writeByte((Byte)obj);
-			break;
-		case DOUBLE:
-			out.writeDouble((Double)obj);
-			break;
-		case FLOAT:
-			out.writeFloat((Float)obj);
-			break;
-		case FLUIDSTACK:
-			break;
-		case INT:
-			out.writeInt((Integer)obj);
-			break;
-		case ITEMSTACK:
-			break;
-		case LONG:
-			out.writeLong((Long)obj);
-			break;
-		case SHORT:
-			out.writeShort((Short)obj);
-			break;
-		case STRING:
-			out.writeUTF((String)obj);
-			break;
-		default:
-			break;
-		}
-	}
-
-	private Object readIn(int key, DataInput in) throws IOException {
-		Object obj = data.get(key);
-		switch(args.get(key)) {
-		case BOOLEAN:
-			return in.readBoolean();
-		case BYTE:
-			return in.readByte();
-		case DOUBLE:
-			return in.readDouble();
-		case FLOAT:
-			return in.readFloat();
-		case INT:
-			return in.readInt();
-		case LONG:
-			return in.readLong();
-		case SHORT:
-			return in.readShort();
-		case STRING:
-			return in.readUTF();
-		default:
-			return null;
-		}
-	}
-
 	@Override
-	public void processPacket(NetHandler nh) {
-		nh.unexpectedPacket(this);
-	}
-
-	@Override
-	public int getPacketSize() {
-		return data.keySet().size()*4+data.entrySet().size()*8;
-	}
-
-	public void localize(TileEntity te) {
-		xPosition = te.xCoord;
-		yPosition = te.yCoord;
-		zPosition = te.zCoord;
+	public String toString() {
+		return changes.isEmpty() ? "[Empty]" : changes.toString();
 	}
 
 }
