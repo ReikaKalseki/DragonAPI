@@ -65,11 +65,13 @@ public abstract class ParticleEntity extends InertEntity {
 			}
 		}
 
-		double s = this.getHitboxSize();
-		AxisAlignedBB box = AxisAlignedBB.getAABBPool().getAABB(posX, posY, posZ, posX, posY, posZ).expand(s, s, s);
-		List<Entity> inbox = worldObj.getEntitiesWithinAABB(Entity.class, box);
-		for (int i = 0; i < inbox.size(); i++) {
-			this.applyEntityCollision(inbox.get(i));
+		if (!worldObj.isRemote) {
+			double s = this.getHitboxSize();
+			AxisAlignedBB box = AxisAlignedBB.getAABBPool().getAABB(posX, posY, posZ, posX, posY, posZ).expand(s, s, s);
+			List<Entity> inbox = worldObj.getEntitiesWithinAABB(Entity.class, box);
+			for (int i = 0; i < inbox.size(); i++) {
+				this.applyEntityCollision(inbox.get(i));
+			}
 		}
 
 		this.onTick();

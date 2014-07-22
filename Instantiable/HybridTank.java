@@ -45,9 +45,15 @@ public class HybridTank extends FluidTank {
 
 	@Override
 	public final FluidTank readFromNBT(NBTTagCompound NBT) {
-		if (NBT.hasKey(name)) {
-			NBTTagCompound tankData = NBT.getCompoundTag(name);
-			super.readFromNBT(tankData);
+		try {
+			if (NBT.hasKey(name)) {
+				NBTTagCompound tankData = NBT.getCompoundTag(name);
+				super.readFromNBT(tankData);
+			}
+		}
+		catch (IllegalArgumentException e) { //"Empty String not allowed! caused by fluid save failure"
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading HybridTank '"+name+"' has errored, its machine will not keep its fluid!");
+			e.printStackTrace();
 		}
 		return this;
 	}

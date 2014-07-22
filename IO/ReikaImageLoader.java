@@ -12,6 +12,7 @@ package Reika.DragonAPI.IO;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
+import java.awt.image.RasterFormatException;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -19,9 +20,16 @@ import java.io.InputStream;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.AbstractResourcePack;
+import net.minecraft.client.resources.Resource;
+import net.minecraft.client.resources.ResourceManager;
 import net.minecraft.client.resources.ResourcePack;
+import net.minecraft.util.Icon;
+import net.minecraft.util.ResourceLocation;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.relauncher.Side;
@@ -134,5 +142,95 @@ public final class ReikaImageLoader {
 				i += 5;
 		}
 		graphics.dispose();
+	}
+
+	public static void unstitchIconsFromSheet(Icon[] icons, IconRegister ico, String name, int numIcons)
+	{
+		Icon[] icos = unstitchIcons(ico, name, numIcons);
+		System.arraycopy(icos, 0, icons, 0, icos.length);
+	}
+
+	public static void unstitchIconsFromSheet(Icon[][] icons, IconRegister ico, String name, int cols, int rows)
+	{
+		Icon[][] icos = unstitchIcons(ico, name, rows, cols);
+		for (int i = 0; i < icos.length; i++) {
+			for (int k = 0; k < icos[i].length; k++) {
+				icons[i][k] = icos[i][k];
+			}
+		}
+	}
+
+	private static Icon[] unstitchIcons(IconRegister ico, String name, int numIcons)
+	{
+		TextureMap textureMap = (TextureMap)ico;
+		Icon[] icons = new Icon[numIcons];
+		for (int i = 0; i < numIcons; i++) {
+			String texName = name + "." + i;
+			IconSheet texture = new IconSheet(texName, i, numIcons, 1);
+			textureMap.setTextureEntry(texName, texture);
+			icons[i] = texture;
+		}
+		return icons;
+	}
+
+	private static Icon[][] unstitchIcons(IconRegister ico, String name, int columns, int rows) {
+		TextureMap textureMap = (TextureMap)ico;
+		Icon[][] icons = new Icon[columns][rows];
+		for (int i = 0; i < columns; i++) {
+			for (int k = 0; k < rows; k++) {
+				int n = i*rows+k;
+				String texName = name + "." + n;
+				IconSheet texture = new IconSheet(texName, n, columns, rows);
+				textureMap.setTextureEntry(texName, texture);
+				icons[i][k] = texture;
+			}
+		}
+		return icons;
+	}
+
+	private static class IconSheet extends TextureAtlasSprite {
+
+		private int rowCount;
+		private int colCount;
+		public final int index;
+
+		protected IconSheet(String tex, int index, int cols, int rows) {
+			super(tex);
+			rowCount = rows;
+			colCount = cols;
+			this.index = index;
+		}
+
+		@Override
+		public boolean load(ResourceManager manager, ResourceLocation location) throws IOException {
+			String fileName = location.getResourcePath().replace("." + index, "");
+			BufferedImage image;
+			try {
+				Resource res = manager.getResource(new ResourceLocation(location.getResourceDomain(), fileName));
+				image = ImageIO.read(res.getInputStream());
+			}
+			catch (IOException ex) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Failed to load sub-texture from "+fileName+": "+ex.getLocalizedMessage());
+				return true;
+			}
+			int size = image.getHeight() / rowCount;
+			int x = index % colCount;
+			int y = index / colCount;
+			BufferedImage subImage;
+			try {
+				subImage = image.getSubimage(x*size, y*size, size, size);
+			}
+			catch (RasterFormatException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Failed to load sub-texture from "+fileName+" - "+image.getWidth()+"x"+image.getHeight()+": "+e.getLocalizedMessage());
+				throw e;
+			}
+			height = subImage.getHeight();
+			width = subImage.getWidth();
+			int[] imageData = new int[height*width];
+			subImage.getRGB(0, 0, width, height, imageData, 0, height);
+			framesTextureData.add(imageData);
+			return true;
+		}
+
 	}
 }

@@ -1574,4 +1574,31 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 		return maxdist;
 	}
+
+	public static boolean isExposedToAir(World world, int x, int y, int z) {
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetZ;
+			int dz = z+dir.offsetY;
+			int id = world.getBlockId(dx, dy, dz);
+			if (id == 0)
+				return true;
+			Block b = Block.blocksList[id];
+			if (b == null)
+				return true;
+			if (b.getCollisionBoundingBoxFromPool(world, dx, dy, dz) == null)
+				return true;
+			Material mat = b.blockMaterial;
+			if (mat != null) {
+				if (mat == Material.circuits || mat == Material.air || mat == Material.cactus || mat == Material.fire)
+					return true;
+				if (mat == Material.plants || mat == Material.portal || mat == Material.vine || mat == Material.web)
+					return true;
+				if (!mat.isSolid())
+					return true;
+			}
+		}
+		return false;
+	}
 }

@@ -37,6 +37,7 @@ import Reika.DragonAPI.Auxiliary.CustomSoundHandler;
 import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
+import Reika.DragonAPI.Auxiliary.KeyWatcher.KeyTicker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
@@ -44,10 +45,11 @@ import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.SuggestedModsTracker;
 import Reika.DragonAPI.Auxiliary.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Extras.DonatorCommand;
-import Reika.DragonAPI.Extras.GuideCommand;
-import Reika.DragonAPI.Extras.LogControlCommand;
-import Reika.DragonAPI.Extras.TestControlCommand;
+import Reika.DragonAPI.Command.DonatorCommand;
+import Reika.DragonAPI.Command.GuideCommand;
+import Reika.DragonAPI.Command.LogControlCommand;
+import Reika.DragonAPI.Command.SelectiveKillCommand;
+import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
@@ -209,6 +211,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		NetworkRegistry.instance().registerChatListener(ChatWatcher.instance);
 
 		TickRegistry.registerTickHandler(ProgressiveRecursiveBreaker.instance, Side.SERVER);
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			TickRegistry.registerTickHandler(KeyTicker.instance, Side.CLIENT);
 	}
 
 	@Override
@@ -244,6 +248,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new LogControlCommand());
 		evt.registerServerCommand(new TestControlCommand());
 		evt.registerServerCommand(new CheckerDisableCommand());
+		evt.registerServerCommand(new SelectiveKillCommand());
 	}
 
 	@ForgeSubscribe

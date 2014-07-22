@@ -380,4 +380,12 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static double sign(double val) {
 		return val/Math.abs(val);
 	}
+
+	public static int roundDownToX(int multiple, int val) {
+		return val - val%multiple;
+	}
+
+	public static int roundUpToX(int multiple, int val) {
+		return val + multiple - val%multiple;
+	}
 }

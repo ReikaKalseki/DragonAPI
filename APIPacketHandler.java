@@ -20,6 +20,8 @@ import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import Reika.DragonAPI.Auxiliary.KeyWatcher;
+import Reika.DragonAPI.Auxiliary.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
@@ -48,7 +50,9 @@ public abstract class APIPacketHandler implements IPacketHandler {
 		int[] data = new int[0];
 		long longdata = 0;
 		float floatdata = 0;
-		int x,y,z;
+		int x = 0;
+		int y = 0;
+		int z = 0;
 		boolean readinglong = false;
 		String stringdata = null;
 		//System.out.print(packet.length);
@@ -101,10 +105,25 @@ public abstract class APIPacketHandler implements IPacketHandler {
 				int level = inputStream.readInt();
 				ReikaPacketHelper.updateTileEntityTankData(world, x, y, z, tank, level);
 				return;
+			case RAW:
+				control = inputStream.readInt();
+				pack = PacketIDs.getEnum(control);
+				len = pack.getNumberDataInts();
+				data = new int[len];
+				readinglong = pack.isLongPacket();
+				if (!readinglong) {
+					for (int i = 0; i < len; i++)
+						data[i] = inputStream.readInt();
+				}
+				else
+					longdata = inputStream.readLong();
+				break;
 			}
-			x = inputStream.readInt();
-			y = inputStream.readInt();
-			z = inputStream.readInt();
+			if (packetType != PacketTypes.RAW) {
+				x = inputStream.readInt();
+				y = inputStream.readInt();
+				z = inputStream.readInt();
+			}
 		}
 		catch (IOException e) {
 			e.printStackTrace();
@@ -127,6 +146,12 @@ public abstract class APIPacketHandler implements IPacketHandler {
 				ReikaWorldHelper.setBiomeForXZ(world, x, z, BiomeGenBase.biomeList[data[0]]);
 				world.markBlockRangeForRenderUpdate(x, 0, z, x, world.provider.getActualHeight(), z);
 				break;
+			case KEYUPDATE:
+				int ordinal = data[0];
+				boolean used = data[1] > 0;
+				Key key = Key.keyList[ordinal];
+				KeyWatcher.instance.setKey(ep, key, used);
+				break;
 			}
 		}
 		catch (Exception e) {
@@ -137,7 +162,8 @@ public abstract class APIPacketHandler implements IPacketHandler {
 	public static enum PacketIDs {
 		BIOMECHANGE(),
 		BLOCKUPDATE(),
-		PARTICLE();
+		PARTICLE(),
+		KEYUPDATE();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -147,12 +173,18 @@ public abstract class APIPacketHandler implements IPacketHandler {
 			return false;
 		}
 
+		public boolean hasLocation() {
+			return this != KEYUPDATE;
+		}
+
 		public int getNumberDataInts() {
 			switch(this) {
 			case PARTICLE:
 				return 1;
 			case BIOMECHANGE:
 				return 1;
+			case KEYUPDATE:
+				return 2;
 			default:
 				return 0;
 			}

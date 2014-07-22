@@ -32,6 +32,7 @@ import org.lwjgl.opengl.GL12;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 import cpw.mods.fml.relauncher.Side;
@@ -125,7 +126,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		Tessellator var9 = Tessellator.instance;
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		BlendMode.DEFAULT.apply();
 		GL11.glColor4f(var6, var7, var8, var10);
 		if (var9.isDrawing)
 			var9.draw();
@@ -268,7 +269,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		Tessellator var9 = Tessellator.instance;
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		BlendMode.DEFAULT.apply();
 		GL11.glColor4f(var6, var7, var8, var10);
 		if (var9.isDrawing)
 			var9.draw();

@@ -26,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
 public final class ReikaSpriteSheets {
 
@@ -178,7 +179,7 @@ public final class ReikaSpriteSheets {
 					GL11.glDisable(GL11.GL_LIGHTING);
 					Minecraft.getMinecraft().renderEngine.bindTexture(RES_ITEM_GLINT);
 					GL11.glEnable(GL11.GL_BLEND);
-					GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
+					BlendMode.OVERLAYDARK.apply();
 					float f13 = 0.76F;
 					GL11.glColor4f(0.5F * f13, 0.25F * f13, 0.8F * f13, 1.0F);
 					GL11.glMatrixMode(GL11.GL_TEXTURE);
@@ -213,7 +214,7 @@ public final class ReikaSpriteSheets {
 		GL11.glDepthMask(false);
 		manager.bindTexture(RES_ITEM_GLINT);
 		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glBlendFunc(GL11.GL_SRC_COLOR, GL11.GL_ONE);
+		BlendMode.OVERLAYDARK.apply();
 		GL11.glColor4f(0.5F, 0.25F, 0.8F, 1.0F);
 
 		GL11.glRotated(45, 0, 1, 0);
@@ -261,7 +262,7 @@ public final class ReikaSpriteSheets {
 		GL11.glDepthMask(true);
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
-		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+		BlendMode.DEFAULT.apply();
 	}
 
 }

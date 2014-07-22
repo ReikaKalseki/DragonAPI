@@ -245,8 +245,10 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				if (objin[i] instanceof ItemStack)
 					isin[i] = (ItemStack)objin[i];
 				else if (objin[i] instanceof ArrayList) {
-					if (!((List<IRecipe>)objin[i]).isEmpty())
-						isin[i] = (ItemStack)((ArrayList)objin[i]).get(0);
+					if (!((List<IRecipe>)objin[i]).isEmpty()) {
+						int k = (int)((System.currentTimeMillis()/500)%((List)objin[i]).size());
+						isin[i] = (ItemStack)((ArrayList)objin[i]).get(k);
+					}
 				}
 			}
 		}
@@ -260,8 +262,10 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				if (objin[i] instanceof ItemStack)
 					isin[i] = (ItemStack)objin[i];
 				else if (objin[i] instanceof ArrayList) {
-					if (!((List<IRecipe>)objin[i]).isEmpty())
-						isin[i] = (ItemStack)((ArrayList)objin[i]).get(0);
+					if (!((List<IRecipe>)objin[i]).isEmpty()) {
+						int k = (int)((System.currentTimeMillis()/500)%((List)objin[i]).size());
+						isin[i] = (ItemStack)((ArrayList)objin[i]).get(k);
+					}
 				}
 			}
 		}
@@ -279,7 +283,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				if (obj instanceof ItemStack)
 					in[i] = (ItemStack)obj;
 				else if (obj instanceof ArrayList) {
-					in[i] = (ItemStack)((ArrayList)obj).get(0);
+					int k = (int)((System.currentTimeMillis()/500)%((List)obj).size());
+					in[i] = (ItemStack)((ArrayList)obj).get(k);
 				}
 				//ReikaJavaLibrary.pConsole(ire);
 			}

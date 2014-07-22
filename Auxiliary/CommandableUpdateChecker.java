@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -219,18 +219,13 @@ public class CommandableUpdateChecker {
 		return g+mod.getDisplayName()+r+" is out of date, likely has errors, and is no longer supported. Update to "+latest+".";
 	}
 
-	public static class CheckerDisableCommand extends CommandBase {
+	public static class CheckerDisableCommand extends DragonCommandBase {
 
 		public static final String tag = "checker";
 
 		@Override
-		public String getCommandName() {
+		public String getCommandString() {
 			return tag;
-		}
-
-		@Override
-		public String getCommandUsage(ICommandSender icommandsender) {
-			return "/"+tag;
 		}
 
 		@Override

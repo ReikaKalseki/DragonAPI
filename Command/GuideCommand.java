@@ -7,9 +7,8 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Extras;
+package Reika.DragonAPI.Command;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
@@ -18,18 +17,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 
-public class GuideCommand extends CommandBase {
-
-	private final String tag = "dragonapi";
+public class GuideCommand extends DragonCommandBase {
 
 	@Override
-	public String getCommandName() {
-		return tag;
-	}
-
-	@Override
-	public String getCommandUsage(ICommandSender icommandsender) {
-		return "/"+tag;
+	public String getCommandString() {
+		return "dragonapi";
 	}
 
 	@Override

@@ -12,13 +12,25 @@ package Reika.DragonAPI.Instantiable.Rendering;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityGiantZombie;
+import net.minecraft.entity.monster.EntitySilverfish;
+import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class SpawnerRenderer implements IItemRenderer {
@@ -60,9 +72,8 @@ public class SpawnerRenderer implements IItemRenderer {
 
 			if (item.stackTagCompound == null)
 				return;
-			String name = item.stackTagCompound.getString("Spawer");
+			String name = ReikaSpawnerHelper.getSpawnerFromItemNBT(item);
 			Entity entity = EntityList.createEntityByName(name, Minecraft.getMinecraft().theWorld);
-
 			if (entity != null)
 			{
 				//entity.setWorld(par0MobSpawnerBaseLogic.getSpawnerWorld());
@@ -71,14 +82,49 @@ public class SpawnerRenderer implements IItemRenderer {
 				double y = 10;
 				double z = 0;
 
-				float f1 = 0.4375F;
-				//GL11.glTranslatef(0.0F, 0.4F, 0.0F);
-				//GL11.glRotatef((float)(par0MobSpawnerBaseLogic.field_98284_d + (par0MobSpawnerBaseLogic.field_98287_c - par0MobSpawnerBaseLogic.field_98284_d) * (double)par7) * 10.0F, 0.0F, 1.0F, 0.0F);
-				//GL11.glRotatef(-30.0F, 1.0F, 0.0F, 0.0F);
-				//GL11.glTranslatef(0.0F, -0.4F, 0.0F);
-				//GL11.glScalef(f1, f1, f1);
 				entity.setLocationAndAngles(x, y, z, 0.0F, 0.0F);
-				//RenderManager.instance.renderEntityWithPosYaw(entity, 0.0D, 0.0D, 0.0D, 0.0F, spin);
+				Render r = ReikaEntityHelper.getEntityRenderer(entity.getClass());
+				if (r != null) {
+					GL11.glPushMatrix();
+					double sc = 0.5;
+					double dy = -0.5;
+					if (entity instanceof EntitySlime) {
+						sc = 1.25/((EntitySlime)entity).getSlimeSize();
+						dy = -0.25;
+					}
+					if (entity instanceof EntityGiantZombie)
+						sc = 0.1;
+					if (entity instanceof EntityGhast) {
+						sc = 0.15;
+						dy = -0.25;
+					}
+					if (entity instanceof EntityWither)
+						sc = 0.3;
+					if (entity instanceof EntityDragon)
+						sc = 0.125;
+					if (entity instanceof EntityEnderman)
+						dy = -0.75;
+					if (entity instanceof EntitySilverfish) {
+						sc = 1;
+						dy = 0;
+					}
+					if (entity instanceof EntitySquid)
+						dy = 0;
+					double ang = (System.currentTimeMillis()/5)%360;
+					GL11.glTranslated(0, dy, 0);
+					GL11.glScaled(sc, sc, sc);
+					GL11.glRotated(ang, 0, 1, 0);
+					GL11.glRotated(-20, 1, 0, 0);
+					ReikaRenderHelper.disableEntityLighting();
+					try {
+						r.doRender(entity, 0, 0, 0, 0, 0);
+					}
+					catch (Exception e) {
+						e.printStackTrace();
+					}
+					ReikaRenderHelper.disableEntityLighting();
+					GL11.glPopMatrix();
+				}
 			}
 			break;
 		default:

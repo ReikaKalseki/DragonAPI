@@ -10,11 +10,16 @@
 package Reika.DragonAPI.Libraries.Registry;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.opengl.GL11;
 
@@ -48,6 +53,8 @@ public enum ReikaDyeHelper {
 	private static final Random rand = new Random();
 
 	public static final ReikaDyeHelper[] dyes = ReikaDyeHelper.values();
+	private static final HashMap<ReikaDyeHelper, ArrayList<ItemStack>> oreDict = new HashMap();
+	private static final HashMap<List<Integer>, ReikaDyeHelper> oreDict2 = new HashMap();
 
 	private ReikaDyeHelper(int c) {
 		color = c;
@@ -62,15 +69,47 @@ public enum ReikaDyeHelper {
 	}
 
 	public static boolean isDyeItem(ItemStack is) {
-		return is != null && is.itemID == Item.dyePowder.itemID;
+		return getColorFromItem(is) != null;
+	}
+
+	public static ReikaDyeHelper getColorFromItem(ItemStack is) {
+		if (is == null)
+			return null;
+		if (is.itemID == Item.dyePowder.itemID)
+			return getColorFromDamage(is.getItemDamage());
+		return getDyeByOreDictionary(is);
+	}
+
+	private static ReikaDyeHelper getDyeByOreDictionary(ItemStack is) {
+		List<Integer> key = Arrays.asList(is.itemID, is.getItemDamage());
+		ReikaDyeHelper color = oreDict2.get(key);
+		if (color != null)
+			return color;
+		for (int i = 0; i < dyes.length; i++) {
+			ReikaDyeHelper dye = dyes[i];
+			String name = dye.getOreDictName();
+			ArrayList<ItemStack> li = OreDictionary.getOres(name);
+			if (ReikaItemHelper.listContainsItemStack(li, is)) {
+				addItemMapping(dye, is);
+				return dye;
+			}
+		}
+		return null;
+	}
+
+	private static void addItemMapping(ReikaDyeHelper dye, ItemStack is) {
+		ArrayList<ItemStack> li = oreDict.get(dye);
+		if (li == null) {
+			li = new ArrayList();
+			oreDict.put(dye, li);
+		}
+		li.add(is);
+		List<Integer> key = Arrays.asList(is.itemID, is.getItemDamage());
+		oreDict2.put(key, dye);
 	}
 
 	public static ReikaDyeHelper getColorFromDamage(int damage) {
 		return damage >= 0 && damage < dyes.length ? dyes[damage] : BLACK;
-	}
-
-	public static ReikaDyeHelper getColorFromItem(ItemStack is) {
-		return getColorFromDamage(is.getItemDamage());
 	}
 
 	public static ReikaDyeHelper getRandomColor() {

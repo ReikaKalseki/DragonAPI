@@ -7,26 +7,18 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Extras;
+package Reika.DragonAPI.Command;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import Reika.DragonAPI.Auxiliary.DonatorController;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
-public class DonatorCommand extends CommandBase {
-
-	private final String tag = "dragondonators";
+public class DonatorCommand extends DragonCommandBase {
 
 	@Override
-	public String getCommandName() {
-		return tag;
-	}
-
-	@Override
-	public String getCommandUsage(ICommandSender icommandsender) {
-		return "/"+tag;
+	public String getCommandString() {
+		return "dragondonators";
 	}
 
 	@Override

@@ -7,9 +7,8 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Extras;
+package Reika.DragonAPI.Command;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
@@ -18,18 +17,11 @@ import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class LogControlCommand extends CommandBase {
-
-	private final String tag = "modlogger";
+public class LogControlCommand extends DragonCommandBase {
 
 	@Override
-	public String getCommandName() {
-		return tag;
-	}
-
-	@Override
-	public String getCommandUsage(ICommandSender icommandsender) {
-		return "/"+tag;
+	public String getCommandString() {
+		return "modlogger";
 	}
 
 	@Override
