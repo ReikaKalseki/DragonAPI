@@ -122,6 +122,8 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	public void syncAllData() {
+		if (worldObj.isRemote)
+			return;
 		NBTTagCompound var1 = new NBTTagCompound();
 		this.writeToNBT(var1);
 		this.writeSyncTag(var1);
@@ -135,7 +137,7 @@ public abstract class TileEntityBase extends TileEntity {
 	{
 		NBTTagCompound nbt = new NBTTagCompound();
 		this.writeSyncTag(nbt);
-		syncTag.setData(this, nbt);
+		syncTag.setData(this, this.getTicksExisted()%256 == 0, nbt);
 		//this.writeSyncTag(syncTag);
 		return syncTag;
 	}
@@ -266,12 +268,12 @@ public abstract class TileEntityBase extends TileEntity {
 		}
 		if (this.getTicksExisted() < 20)
 			this.syncAllData();
-		packetTimer.update();
-		if (packetTimer.checkCap()) {
-			if (this.shouldSendSyncPackets()) {
-				this.sendSyncPacket();
-			}
+		//packetTimer.update();
+		//if (packetTimer.checkCap()) {
+		if (this.shouldSendSyncPackets()) {
+			this.sendSyncPacket();
 		}
+		//}
 		if (worldObj.isRemote && this.needsToCauseBlockUpdates()) {
 			updateTimer.update();
 			if (updateTimer.checkCap()) {

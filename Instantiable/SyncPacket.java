@@ -31,24 +31,25 @@ public final class SyncPacket extends Packet132TileEntityData {
 		super();
 	}
 
-	public void setData(TileEntityBase te, NBTTagCompound NBT) {
+	public void setData(TileEntityBase te, boolean force, NBTTagCompound NBT) {
 		xPosition = te.xCoord;
 		yPosition = te.yCoord;
 		zPosition = te.zCoord;
 
+		changes.clear();
 		Collection c = NBT.getTags();
 		Iterator<NBTBase> it = c.iterator();
 		while (it.hasNext()) {
 			NBTBase tag = it.next();
-			this.addData(tag.getName(), tag);
+			this.addData(tag.getName(), tag, force);
 		}
 	}
 
-	private void addData(String key, NBTBase value) {
+	private void addData(String key, NBTBase value, boolean force) {
 		NBTBase prev = data.get(key);
 		oldData.put(key, prev);
 		data.put(key, value);
-		if (!this.match(prev, value)) {
+		if (!this.match(prev, value) || force) {
 			changes.put(key, value);
 		}
 	}
