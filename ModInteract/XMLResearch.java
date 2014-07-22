@@ -11,6 +11,8 @@ package Reika.DragonAPI.ModInteract;
 
 import java.util.ArrayList;
 
+import thaumcraft.api.crafting.CrucibleRecipe;
+import thaumcraft.api.crafting.IArcaneRecipe;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.research.ResearchPage;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
@@ -22,6 +24,26 @@ public class XMLResearch {
 	public final String name;
 
 	public XMLResearch(String name, Class root, String path, InfusionRecipe recipe, int num) {
+		info = new XMLInterface(root, path);
+		this.name = name;
+		XMLPage page = new XMLPage(recipe);
+		pages.add(page);
+		for (int i = 1; i < num; i++) {
+			pages.add(new XMLPage(i));
+		}
+	}
+
+	public XMLResearch(String name, Class root, String path, IArcaneRecipe recipe, int num) {
+		info = new XMLInterface(root, path);
+		this.name = name;
+		XMLPage page = new XMLPage(recipe);
+		pages.add(page);
+		for (int i = 1; i < num; i++) {
+			pages.add(new XMLPage(i));
+		}
+	}
+
+	public XMLResearch(String name, Class root, String path, CrucibleRecipe recipe, int num) {
 		info = new XMLInterface(root, path);
 		this.name = name;
 		XMLPage page = new XMLPage(recipe);
@@ -49,6 +71,16 @@ public class XMLResearch {
 		private final int page;
 
 		private XMLPage(InfusionRecipe recipe) {
+			super(recipe);
+			page = 0;
+		}
+
+		private XMLPage(IArcaneRecipe recipe) {
+			super(recipe);
+			page = 0;
+		}
+
+		private XMLPage(CrucibleRecipe recipe) {
 			super(recipe);
 			page = 0;
 		}
