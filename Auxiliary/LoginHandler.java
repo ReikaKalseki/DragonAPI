@@ -13,6 +13,8 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.Event;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
@@ -64,6 +66,7 @@ public final class LoginHandler implements IPlayerTracker {
 
 		PlayerFirstTimeTracker.checkPlayer(ep);
 		CommandableUpdateChecker.instance.notifyPlayer(ep);
+		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(ep, ep.worldObj.provider.dimensionId));
 	}
 
 	@Override
@@ -73,12 +76,23 @@ public final class LoginHandler implements IPlayerTracker {
 
 	@Override
 	public void onPlayerChangedDimension(EntityPlayer player) {
-
+		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(player, player.worldObj.provider.dimensionId));
 	}
 
 	@Override
 	public void onPlayerRespawn(EntityPlayer player) {
+		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(player, player.worldObj.provider.dimensionId));
+	}
 
+	public static final class PlayerEnteredDimensionEvent extends Event {
+
+		public final int dimensionID;
+		public final EntityPlayer player;
+
+		public PlayerEnteredDimensionEvent(EntityPlayer ep, int dim) {
+			player = ep;
+			dimensionID = dim;
+		}
 	}
 
 }

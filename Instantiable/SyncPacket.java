@@ -27,6 +27,8 @@ public final class SyncPacket extends Packet132TileEntityData {
 	private final HashMap<String, NBTBase> oldData = new HashMap();
 	private final HashMap<String, NBTBase> changes = new HashMap();
 
+	private static final String ERROR_TAG = "erroredPacket";
+
 	public SyncPacket () {
 		super();
 	}
@@ -49,7 +51,7 @@ public final class SyncPacket extends Packet132TileEntityData {
 		NBTBase prev = data.get(key);
 		oldData.put(key, prev);
 		data.put(key, value);
-		if (!this.match(prev, value) || force) {
+		if (force || !this.match(prev, value)) {
 			changes.put(key, value);
 		}
 	}
@@ -65,7 +67,8 @@ public final class SyncPacket extends Packet132TileEntityData {
 		zPosition = in.readInt();
 
 		NBTTagCompound received = readNBTTagCompound(in);
-		this.populateFromStream(received);
+		if (!received.getBoolean(ERROR_TAG))
+			this.populateFromStream(received);
 	}
 
 	private void populateFromStream(NBTTagCompound received) {
@@ -90,7 +93,13 @@ public final class SyncPacket extends Packet132TileEntityData {
 		out.writeInt(zPosition);
 
 		NBTTagCompound toSend = new NBTTagCompound();
-		this.saveChanges(toSend);
+		try {
+			this.saveChanges(toSend);
+		}
+		catch (Exception e) {
+			toSend.setBoolean(ERROR_TAG, true);
+			e.printStackTrace();
+		}
 		writeNBTTagCompound(toSend, out);
 	}
 

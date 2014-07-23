@@ -49,6 +49,8 @@ public abstract class TileEntityBase extends TileEntity {
 
 	private final StepTimer updateTimer;
 	private final StepTimer packetTimer;
+	private final StepTimer fullSyncTimer;
+	private boolean forceSync = true;
 
 	private final TileEntity[] adjTEMap = new TileEntity[6];
 
@@ -67,7 +69,10 @@ public abstract class TileEntityBase extends TileEntity {
 	public TileEntityBase() {
 		super();
 		updateTimer = new StepTimer(this.getBlockUpdateDelay());
-		packetTimer = new StepTimer(this.getPacketDelay());
+		packetTimer = new StepTimer(4); //was this.getPacketDelay()
+		fullSyncTimer = new StepTimer(1200);
+		fullSyncTimer.setTick(rand.nextInt(1200));
+		//MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public int getTicksExisted() {
@@ -137,10 +142,25 @@ public abstract class TileEntityBase extends TileEntity {
 	{
 		NBTTagCompound nbt = new NBTTagCompound();
 		this.writeSyncTag(nbt);
-		syncTag.setData(this, this.getTicksExisted()%256 == 0, nbt);
-		//this.writeSyncTag(syncTag);
-		return syncTag;
+		this.writeToNBT(nbt);
+		nbt.setBoolean("fullData", true);
+		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, nbt);
 	}
+
+	private boolean forceFullSync() {
+		return forceSync;
+	}
+	/*
+	@ForgeSubscribe
+	public void markPlayerInNeedOfSync(PlayerEnteredDimensionEvent evt) {
+		if (worldObj != null && evt.dimensionID == worldObj.provider.dimensionId) {
+			NBTTagCompound nbt = new NBTTagCompound();
+			this.writeSyncTag(nbt);
+			syncTag.setData(this, true, nbt);
+			PacketDispatcher.sendPacketToPlayer(syncTag, (Player)evt.player);
+			DragonAPIInit.instance.getModLogger().debug("Forced sync of "+this+" with "+evt.player);
+		}
+	}*/
 
 	@Override
 	public final void onDataPacket(INetworkManager netManager, Packet132TileEntityData packet)
@@ -268,12 +288,17 @@ public abstract class TileEntityBase extends TileEntity {
 		}
 		if (this.getTicksExisted() < 20)
 			this.syncAllData();
-		//packetTimer.update();
-		//if (packetTimer.checkCap()) {
-		if (this.shouldSendSyncPackets()) {
-			this.sendSyncPacket();
+		packetTimer.update();
+
+		fullSyncTimer.update();
+		if (fullSyncTimer.checkCap())
+			forceSync = true;
+
+		if (packetTimer.checkCap() || this.forceFullSync()) {
+			if (this.shouldSendSyncPackets()) {
+				this.sendSyncPacket();
+			}
 		}
-		//}
 		if (worldObj.isRemote && this.needsToCauseBlockUpdates()) {
 			updateTimer.update();
 			if (updateTimer.checkCap()) {
@@ -284,12 +309,15 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	private void sendSyncPacket() {
-		SyncPacket dat = (SyncPacket)this.getDescriptionPacket();
-		if (dat != null && !dat.isEmpty()) {
-			int r = this.getUpdatePacketRadius();
+		NBTTagCompound nbt = new NBTTagCompound();
+		this.writeSyncTag(nbt);
+		syncTag.setData(this, this.forceFullSync(), nbt);
+		forceSync = false;
+		if (syncTag.isEmpty()) {
+			int r = this.forceFullSync() ? 128 : this.getUpdatePacketRadius();
 			int dim = worldObj.provider.dimensionId;
-			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, dat);
-			DragonAPIInit.instance.getModLogger().debug("Packet "+dat+" sent from "+this);
+			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, syncTag);
+			DragonAPIInit.instance.getModLogger().debug("Packet "+syncTag+" sent from "+this);
 		}
 	}
 
