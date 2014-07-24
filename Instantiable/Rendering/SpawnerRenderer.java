@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -117,7 +118,10 @@ public class SpawnerRenderer implements IItemRenderer {
 					GL11.glRotated(-20, 1, 0, 0);
 					ReikaRenderHelper.disableEntityLighting();
 					try {
+						String boss = BossStatus.bossName;
+						BossStatus.bossName = null;
 						r.doRender(entity, 0, 0, 0, 0, 0);
+						BossStatus.bossName = boss;
 					}
 					catch (Exception e) {
 						e.printStackTrace();

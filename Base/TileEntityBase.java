@@ -24,11 +24,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.FakePlayer;
 import net.minecraftforge.common.FakePlayerFactory;
 import net.minecraftforge.common.ForgeDirection;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -69,10 +71,9 @@ public abstract class TileEntityBase extends TileEntity {
 	public TileEntityBase() {
 		super();
 		updateTimer = new StepTimer(this.getBlockUpdateDelay());
-		packetTimer = new StepTimer(4); //was this.getPacketDelay()
+		packetTimer = new StepTimer(5); //was this.getPacketDelay()
 		fullSyncTimer = new StepTimer(1200);
 		fullSyncTimer.setTick(rand.nextInt(1200));
-		//MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public int getTicksExisted() {
@@ -126,15 +127,18 @@ public abstract class TileEntityBase extends TileEntity {
 		placer = NBT.getString("place");
 	}
 
-	public void syncAllData() {
-		if (worldObj.isRemote)
-			return;
-		NBTTagCompound var1 = new NBTTagCompound();
-		this.writeToNBT(var1);
-		this.writeSyncTag(var1);
-		var1.setBoolean("fullData", true);
-		Packet132TileEntityData p = new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, var1);
-		PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, this.getUpdatePacketRadius(), worldObj.provider.dimensionId, p);
+	public void syncAllData(boolean fullNBT) {
+		if (worldObj.isRemote) {
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.TILESYNC.ordinal(), this, fullNBT ? 1 : 0);
+		}
+		else {
+			NBTTagCompound var1 = new NBTTagCompound();
+			this.writeToNBT(var1);
+			this.writeSyncTag(var1);
+			var1.setBoolean("fullData", true);
+			Packet132TileEntityData p = new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, var1);
+			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, this.getUpdatePacketRadius(), worldObj.provider.dimensionId, p);
+		}
 	}
 
 	@Override
@@ -144,23 +148,16 @@ public abstract class TileEntityBase extends TileEntity {
 		this.writeSyncTag(nbt);
 		this.writeToNBT(nbt);
 		nbt.setBoolean("fullData", true);
-		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 0, nbt);
+		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, nbt);
 	}
 
-	private boolean forceFullSync() {
+	private boolean shouldFullSync() {
 		return forceSync;
 	}
-	/*
-	@ForgeSubscribe
-	public void markPlayerInNeedOfSync(PlayerEnteredDimensionEvent evt) {
-		if (worldObj != null && evt.dimensionID == worldObj.provider.dimensionId) {
-			NBTTagCompound nbt = new NBTTagCompound();
-			this.writeSyncTag(nbt);
-			syncTag.setData(this, true, nbt);
-			PacketDispatcher.sendPacketToPlayer(syncTag, (Player)evt.player);
-			DragonAPIInit.instance.getModLogger().debug("Forced sync of "+this+" with "+evt.player);
-		}
-	}*/
+
+	public void forceFullSync() {
+		forceSync = true;
+	}
 
 	@Override
 	public final void onDataPacket(INetworkManager netManager, Packet132TileEntityData packet)
@@ -287,14 +284,14 @@ public abstract class TileEntityBase extends TileEntity {
 			}
 		}
 		if (this.getTicksExisted() < 20)
-			this.syncAllData();
+			this.syncAllData(true);
 		packetTimer.update();
 
 		fullSyncTimer.update();
 		if (fullSyncTimer.checkCap())
-			forceSync = true;
+			this.forceFullSync();
 
-		if (packetTimer.checkCap() || this.forceFullSync()) {
+		if (packetTimer.checkCap() || this.shouldFullSync()) {
 			if (this.shouldSendSyncPackets()) {
 				this.sendSyncPacket();
 			}
@@ -311,10 +308,10 @@ public abstract class TileEntityBase extends TileEntity {
 	private void sendSyncPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		this.writeSyncTag(nbt);
-		syncTag.setData(this, this.forceFullSync(), nbt);
+		syncTag.setData(this, this.shouldFullSync(), nbt);
 		forceSync = false;
-		if (syncTag.isEmpty()) {
-			int r = this.forceFullSync() ? 128 : this.getUpdatePacketRadius();
+		if (!syncTag.isEmpty()) {
+			int r = this.shouldFullSync() ? 128 : this.getUpdatePacketRadius();
 			int dim = worldObj.provider.dimensionId;
 			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, syncTag);
 			DragonAPIInit.instance.getModLogger().debug("Packet "+syncTag+" sent from "+this);

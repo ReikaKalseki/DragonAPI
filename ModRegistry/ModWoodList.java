@@ -66,7 +66,7 @@ public enum ModWoodList implements TreeType {
 	BOPWILLOW(ModList.BOP, 0x767A47, 0x3E981A, "logs3ID", "colourizedLeaves2ID", "colourizedSaplingsID", 1, new int[]{0,8}, 4, VarType.INT),
 	PINE(ModList.BOP, 0x896B4F, 0x3E981A, "logs4ID", "colourizedLeaves2ID", "colourizedSaplingsID", 0, new int[]{1,9}, 5, VarType.INT),
 	BXLREDWOOD(ModList.BXL, 0, 0, null, null, null, 0, VarType.INSTANCE),
-	IC2RUBBER(ModList.IC2, 0x3C2D20, 0x638143, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, 0, 0, VarType.ITEMSTACK),
+	IC2RUBBER(ModList.IC2, 0x3C2D20, 0x638143, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, new int[]{0,8}, 0, VarType.ITEMSTACK),
 	MFRRUBBER(ModList.MINEFACTORY, 0x7E5C25, 0x5DC123, "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, VarType.INSTANCE),
 	TIMEWOOD(ModList.TWILIGHT, 0x4F301D, 6986775, "magicLog", "magicLeaves", "sapling", new int[]{0,12}, new int[]{1,8}, 5, VarType.INSTANCE),
 	TRANSFORMATION(ModList.TWILIGHT, 0x66727F, 7130346, "magicLog", "magicLeaves", "sapling", new int[]{1,13}, new int[]{1,9}, 6, VarType.INSTANCE),

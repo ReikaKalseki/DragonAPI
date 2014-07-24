@@ -51,7 +51,7 @@ public abstract class BlockTEBase extends Block {
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer ep, int side, float par7, float par8, float par9) {
 		TileEntityBase te = (TileEntityBase)world.getBlockTileEntity(x, y, z);
-		te.syncAllData();
+		te.syncAllData(true);
 		return false;
 	}
 

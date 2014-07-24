@@ -18,11 +18,13 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import Reika.DragonAPI.Auxiliary.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
+import Reika.DragonAPI.Base.TileEntityBase;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -152,6 +154,16 @@ public abstract class APIPacketHandler implements IPacketHandler {
 				Key key = Key.keyList[ordinal];
 				KeyWatcher.instance.setKey(ep, key, used);
 				break;
+			case TILESYNC:
+				TileEntity te = world.getBlockTileEntity(x, y, z);
+				if (te instanceof TileEntityBase && !world.isRemote) {
+					TileEntityBase tile = (TileEntityBase)te;
+					tile.syncAllData(data[0] > 0);
+				}
+				break;
+			case TILEDELETE:
+				world.setBlock(x, y, z, 0);
+				break;
 			}
 		}
 		catch (Exception e) {
@@ -163,7 +175,9 @@ public abstract class APIPacketHandler implements IPacketHandler {
 		BIOMECHANGE(),
 		BLOCKUPDATE(),
 		PARTICLE(),
-		KEYUPDATE();
+		KEYUPDATE(),
+		TILESYNC(),
+		TILEDELETE();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -185,6 +199,8 @@ public abstract class APIPacketHandler implements IPacketHandler {
 				return 1;
 			case KEYUPDATE:
 				return 2;
+			case TILESYNC:
+				return 1;
 			default:
 				return 0;
 			}
