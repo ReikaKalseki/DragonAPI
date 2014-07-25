@@ -457,28 +457,35 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 		if (temperature > 1500)	{ // Melting rock
 			for (int i = 0; i < 3; i++) {
-				if (isMeltable(world, x-i, y, z))
+				if (isMeltable(world, x-i, y, z, temperature))
 					world.setBlock(x-i, y, z, Block.lavaMoving.blockID);
-				if (isMeltable(world, x+i, y, z))
+				if (isMeltable(world, x+i, y, z, temperature))
 					world.setBlock(x+i, y, z, Block.lavaMoving.blockID);
-				if (isMeltable(world, x, y-i, z))
+				if (isMeltable(world, x, y-i, z, temperature))
 					world.setBlock(x, y-i, z, Block.lavaMoving.blockID);
-				if (isMeltable(world, x, y+i, z))
+				if (isMeltable(world, x, y+i, z, temperature))
 					world.setBlock(x, y+i, z, Block.lavaMoving.blockID);
-				if (isMeltable(world, x, y, z-i))
+				if (isMeltable(world, x, y, z-i, temperature))
 					world.setBlock(x, y, z-i, Block.lavaMoving.blockID);
-				if (isMeltable(world, x, y, z+i))
+				if (isMeltable(world, x, y, z+i, temperature))
 					world.setBlock(x, y, z+i, Block.lavaMoving.blockID);
 			}
 		}
 	}
 
-	public static boolean isMeltable(World world, int x, int y, int z) {
+	public static boolean isMeltable(World world, int x, int y, int z, int temperature) {
 		int id = world.getBlockId(x, y, z);
 		if (id == 0 || id == Block.bedrock.blockID)
 			return false;
 		Block b = Block.blocksList[id];
-		return b.blockMaterial == Material.rock || b.blockMaterial == Material.iron;
+		Material m = b.blockMaterial;
+		if (m == Material.rock) {
+			return temperature > 1500;
+		}
+		if (m == Material.iron) {
+			return temperature > 2000;
+		}
+		return false;
 	}
 
 	/** Surrounds the block with fire. Args: World, x, y, z */
