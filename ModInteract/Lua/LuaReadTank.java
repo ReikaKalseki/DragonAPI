@@ -44,4 +44,9 @@ public class LuaReadTank extends LuaMethod {
 		return "int tankIndex";
 	}
 
+	@Override
+	public ReturnType getReturnType() {
+		return ReturnType.ARRAY;
+	}
+
 }

@@ -57,7 +57,12 @@ public class LuaHasItem extends LuaMethod {
 
 	@Override
 	public String getArgsAsString() {
-		return "int itemID, int metadata*, int stackSize*";
+		return "int id, int meta*, int size*";
+	}
+
+	@Override
+	public ReturnType getReturnType() {
+		return ReturnType.BOOLEAN;
 	}
 
 }

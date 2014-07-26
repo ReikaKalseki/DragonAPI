@@ -40,4 +40,9 @@ public class LuaIsTankFull extends LuaMethod {
 		return "int tankIndex";
 	}
 
+	@Override
+	public ReturnType getReturnType() {
+		return ReturnType.BOOLEAN;
+	}
+
 }

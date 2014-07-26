@@ -32,4 +32,9 @@ public class LuaGetCoords extends LuaMethod {
 		return "";
 	}
 
+	@Override
+	public ReturnType getReturnType() {
+		return ReturnType.ARRAY;
+	}
+
 }

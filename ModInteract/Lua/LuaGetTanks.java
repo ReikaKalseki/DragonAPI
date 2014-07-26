@@ -63,4 +63,9 @@ public class LuaGetTanks extends LuaMethod {
 		return "";
 	}
 
+	@Override
+	public ReturnType getReturnType() {
+		return ReturnType.ARRAY;
+	}
+
 }

@@ -81,4 +81,22 @@ public abstract class LuaMethod {
 	/** Without "( )" */
 	public abstract String getArgsAsString();
 
+	public abstract ReturnType getReturnType();
+
+	public static enum ReturnType {
+		VOID("void"),
+		INTEGER("int"),
+		ARRAY("Object[]"),
+		STRING("String"),
+		BOOLEAN("boolean"),
+		FLOAT("float");
+
+		public final String displayName;
+
+		private ReturnType(String name) {
+			displayName = name;
+		}
+
+	}
+
 }

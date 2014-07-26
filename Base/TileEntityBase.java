@@ -9,9 +9,21 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Random;
 
+import li.cil.oc.api.Network;
+import li.cil.oc.api.network.Arguments;
+import li.cil.oc.api.network.Component;
+import li.cil.oc.api.network.Context;
+import li.cil.oc.api.network.Environment;
+import li.cil.oc.api.network.ManagedPeripheral;
+import li.cil.oc.api.network.Message;
+import li.cil.oc.api.network.Node;
+import li.cil.oc.api.network.Visibility;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,6 +38,7 @@ import net.minecraftforge.common.FakePlayerFactory;
 import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
@@ -35,12 +48,16 @@ import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.ModInteract.Lua.LuaMethod;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import dan200.computer.api.IComputerAccess;
+import dan200.computer.api.ILuaContext;
+import dan200.computer.api.IPeripheral;
 
-public abstract class TileEntityBase extends TileEntity {
+public abstract class TileEntityBase extends TileEntity implements IPeripheral, Environment, ManagedPeripheral {
 
 	protected static final Random rand = new Random();
 	private int pseudometa;
@@ -117,6 +134,9 @@ public abstract class TileEntityBase extends TileEntity {
 
 		if (placer != null && !placer.isEmpty())
 			NBT.setString("place", placer);
+
+		if (node != null)
+			node.save(NBT);
 	}
 
 	@Override
@@ -125,6 +145,9 @@ public abstract class TileEntityBase extends TileEntity {
 		this.readSyncTag(NBT);
 
 		placer = NBT.getString("place");
+
+		if (node != null)
+			node.load(NBT);
 	}
 
 	public void syncAllData(boolean fullNBT) {
@@ -446,4 +469,105 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	public abstract boolean hasModel();
+
+
+	private final HashMap<Integer, LuaMethod> luaMethods = new HashMap();
+	private final HashMap<String, LuaMethod> methodNames = new HashMap();
+	private final Component node = this.createNode();
+
+	/** ComputerCraft */
+	@Override
+	public final String[] getMethodNames() {
+		ArrayList<LuaMethod> li = new ArrayList();
+		List<LuaMethod> all = LuaMethod.getMethods();
+		for (int i = 0; i < all.size(); i++) {
+			LuaMethod l = all.get(i);
+			if (l.isValidFor(this))
+				li.add(l);
+		}
+		String[] s = new String[li.size()];
+		for (int i = 0; i < s.length; i++) {
+			LuaMethod l = li.get(i);
+			s[i] = l.displayName;
+			luaMethods.put(i, l);
+			methodNames.put(l.displayName, l);
+		}
+		return s;
+	}
+
+	@Override
+	public final Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws Exception {
+		return luaMethods.containsKey(method) ? luaMethods.get(method).invoke(this, arguments) : null;
+	}
+
+	@Override
+	public final boolean canAttachToSide(int side) {
+		return true;
+	}
+
+	@Override
+	public final void attach(IComputerAccess computer) {}
+	@Override
+	public final void detach(IComputerAccess computer) {}
+
+	@Override
+	public final String getType() {
+		return this.getTEName().replaceAll(" ", "");
+	}
+
+	/** OpenComputers */
+	public final String getComponentName() {
+		return this.getType();
+	}
+
+	@Override
+	public final String[] methods() {
+		return this.getMethodNames();
+	}
+
+	@Override
+	public final Object[] invoke(String method, Context context, Arguments args) throws Exception {
+		Object[] objs = new Object[args.count()];
+		for (int i = 0; i < objs.length; i++) {
+			objs[i] = args.checkAny(i);
+		}
+		return methodNames.containsKey(method) ? methodNames.get(method).invoke(this, objs) : null;
+	}
+
+	@Override
+	public final void onChunkUnload() {
+		super.onChunkUnload();
+		if (node != null)
+			node.remove();
+	}
+
+	@Override
+	public final void invalidate() {
+		super.invalidate();
+		if (node != null)
+			node.remove();
+	}
+
+	private Component createNode() {
+		if (ModList.OPENCOMPUTERS.isLoaded())
+			return Network.newNode(this, Visibility.Network).withComponent(this.getType(), this.getOCNetworkVisibility()).create();
+		else
+			return null;
+	}
+
+	protected Visibility getOCNetworkVisibility() {
+		return Visibility.Network;
+	}
+
+	@Override
+	public final Node node() {
+		return node;
+	}
+
+	@Override
+	public final void onConnect(Node node) {}
+	@Override
+	public final void onDisconnect(Node node) {}
+	@Override
+	public final void onMessage(Message message) {}
 }
