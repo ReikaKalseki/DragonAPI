@@ -316,17 +316,43 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Attempts to add an itemstack to an inventory. Is all-or-nothing - will not add a
 	 * partial stack. Returns true if the stack "fit". Args: Itemstack, inventory */
-	public static boolean putStackInInventory(ItemStack stack, ItemStack[] inventory) {
-		int slot = locateInInventory(stack.itemID, stack.getItemDamage(), inventory);
-		int empty = findEmptySlot(inventory);
-		if (slot == -1) {
-			if (empty == -1)
-				return false;
-			inventory[empty] = stack.copy();
-			return true;
+	public static boolean putStackInInventory(ItemStack is, IInventory ii, boolean overrideValid) {
+		ItemStack stack = is.copy();
+		ArrayList<Integer> slots = getSlotsWithItemStack(stack, ii, false);
+		int empty = findEmptySlot(ii);
+
+		int max = Math.min(ii.getInventoryStackLimit(), stack.getMaxStackSize());
+
+		int addable = 0;
+		ArrayList<Integer> validslots = new ArrayList();
+		for (int i = 0; i < slots.size() && stack.stackSize > 0; i++) {
+			int slot = slots.get(i);
+			if (overrideValid || ii.isItemValidForSlot(slot, stack)) {
+				ItemStack in = ii.getStackInSlot(slot);
+				if (ReikaItemHelper.matchStacks(stack, in) && ItemStack.areItemStackTagsEqual(stack, in)) {
+					int space = Math.min(max-in.stackSize, stack.stackSize);
+					addable += space;
+					validslots.add(slot);
+				}
+			}
 		}
-		if (inventory[slot].stackSize+stack.stackSize <= stack.getMaxStackSize()) {
-			inventory[slot].stackSize += stack.stackSize;
+		if (empty != -1)
+			addable += stack.getMaxStackSize();
+
+		if (addable < stack.stackSize)
+			return false;
+
+		for (int i = 0; i < validslots.size() && stack.stackSize > 0; i++) {
+			int slot = validslots.get(i);
+			ItemStack in = ii.getStackInSlot(slot);
+			int space = Math.min(max-in.stackSize, stack.stackSize);
+			in.stackSize += space;
+			stack.stackSize -= space;
+		}
+		if (stack.stackSize <= 0)
+			return true;
+		if (empty != -1) {
+			ii.setInventorySlotContents(empty, stack.copy());
 			return true;
 		}
 		return false;
@@ -436,6 +462,48 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 		}
 		return -1;
+	}
+
+	/** Returns the location of an empty slot in an inventory. Returns -1 if none.
+	 * Args: Inventory */
+	public static int findEmptySlot(IInventory ii) {
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			ItemStack is = ii.getStackInSlot(i);
+			if (is == null)
+				return i;
+			if (is.stackSize <= 0) {
+				is = null;
+				return i;
+			}
+		}
+		return -1;
+	}
+
+	public static ArrayList<Integer> findEmptySlots(ItemStack[] inventory) {
+		ArrayList li = new ArrayList();
+		for (int i = 0; i < inventory.length; i++) {
+			if (inventory[i] == null)
+				li.add(i);
+			if (inventory[i].stackSize <= 0) {
+				inventory[i] = null;
+				li.add(i);
+			}
+		}
+		return li;
+	}
+
+	public static ArrayList<Integer> findEmptySlots(IInventory inventory) {
+		ArrayList li = new ArrayList();
+		for (int i = 0; i < inventory.getSizeInventory(); i++) {
+			ItemStack is = inventory.getStackInSlot(i);
+			if (is == null)
+				li.add(i);
+			if (is.stackSize <= 0) {
+				inventory.setInventorySlotContents(i, null);
+				li.add(i);
+			}
+		}
+		return li;
 	}
 
 	/** Returns true if the inventory is empty. Args: Inventory */
@@ -1009,6 +1077,19 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		ArrayList<Integer> li = new ArrayList();
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			ItemStack in = ii.getStackInSlot(i);
+			if (ReikaItemHelper.matchStacks(is, in)) {
+				if (!matchSize || in.stackSize == is.stackSize) {
+					li.add(i);
+				}
+			}
+		}
+		return li;
+	}
+
+	public static ArrayList<Integer> getSlotsWithItemStack(ItemStack is, ItemStack[] inv, boolean matchSize) {
+		ArrayList<Integer> li = new ArrayList();
+		for (int i = 0; i < inv.length; i++) {
+			ItemStack in = inv[i];
 			if (ReikaItemHelper.matchStacks(is, in)) {
 				if (!matchSize || in.stackSize == is.stackSize) {
 					li.add(i);

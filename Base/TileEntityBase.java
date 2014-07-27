@@ -512,7 +512,11 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	@Override
 	public final String getType() {
-		return this.getTEName().replaceAll(" ", "");
+		return this.getName().replaceAll(" ", "");
+	}
+
+	protected String getName() {
+		return this.getTEName();
 	}
 
 	/** OpenComputers */
