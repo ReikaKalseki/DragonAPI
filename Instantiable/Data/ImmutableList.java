@@ -28,4 +28,9 @@ public class ImmutableList<E> extends ArrayList<E> {
 	public final boolean removeAll(Collection c)  {
 		throw new UnsupportedOperationException("You cannot remove entries from this list!");
 	}
+
+	@Override
+	public final E set(int index, E element) {
+		throw new UnsupportedOperationException("You cannot overwrite entries in this list!");
+	}
 }

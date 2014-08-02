@@ -40,6 +40,14 @@ public abstract class BlockTEBase extends Block {
 			te.updateCache(dir);
 	}
 
+	public void updateTileCache(World world, int x, int y, int z) {
+		TileEntityBase te = (TileEntityBase)world.getBlockTileEntity(x, y, z);
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			te.updateCache(dir);
+		}
+	}
+
 	public final AxisAlignedBB getBlockAABB(int x, int y, int z) {
 		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1);
 	}

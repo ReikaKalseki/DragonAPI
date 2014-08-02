@@ -9,6 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagByte;
@@ -22,6 +26,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
@@ -136,6 +141,27 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		else {
 			return new NBTTagByte(name, (byte)value);
 		}
+	}
+
+	public static ArrayList<String> parseNBTAsLines(NBTTagCompound nbt) {
+		ArrayList<String> li = new ArrayList();
+		Iterator<NBTBase> it = nbt.getTags().iterator();
+		while (it.hasNext()) {
+			NBTBase b = it.next();
+			if (b instanceof NBTTagByteArray) {
+				li.add(b.getName()+": "+Arrays.toString(((NBTTagByteArray)b).byteArray));
+			}
+			else if (b instanceof NBTTagIntArray) {
+				li.add(b.getName()+": "+Arrays.toString(((NBTTagIntArray)b).intArray));
+			}
+			else if (b instanceof NBTTagCompound) {
+				li.add(EnumChatFormatting.GOLD+b.getName()+": "+b.toString());
+			}
+			else {
+				li.add(b.getName()+": "+b.toString());
+			}
+		}
+		return li;
 	}
 
 }

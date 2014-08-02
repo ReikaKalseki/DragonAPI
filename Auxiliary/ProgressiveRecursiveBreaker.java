@@ -23,6 +23,7 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.WorldEvent;
+import Reika.DragonAPI.Instantiable.RelativePositionList;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
 import Reika.DragonAPI.Interfaces.TreeType;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
@@ -55,40 +56,6 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 		public int fortune = 0;
 		public boolean silkTouch = false;
 		public EntityPlayer player;
-		private static final ArrayList<int[]> extraDirs;
-
-		static {
-			extraDirs = new ArrayList();
-			extraDirs.add(new int[]{-1, -1, -1});
-			extraDirs.add(new int[]{-1, -1, 0});
-			extraDirs.add(new int[]{-1, -1, 1});
-			extraDirs.add(new int[]{-1, 0, -1});
-			//extraDirs.add(new int[]{-1, 0, 0});
-			extraDirs.add(new int[]{-1, 0, 1});
-			extraDirs.add(new int[]{-1, 1, -1});
-			extraDirs.add(new int[]{-1, 1, 0});
-			extraDirs.add(new int[]{-1, 1, 1});
-
-			extraDirs.add(new int[]{0, -1, -1});
-			//extraDirs.add(new int[]{0, -1, 0});
-			extraDirs.add(new int[]{0, -1, 1});
-			//extraDirs.add(new int[]{0, 0, -1});
-			//extraDirs.add(new int[]{0, 0, 0});
-			//extraDirs.add(new int[]{0, 0, 1});
-			extraDirs.add(new int[]{0, 1, -1});
-			//extraDirs.add(new int[]{0, 1, 0});
-			extraDirs.add(new int[]{0, 1, 1});
-
-			extraDirs.add(new int[]{1, -1, -1});
-			extraDirs.add(new int[]{1, -1, 0});
-			extraDirs.add(new int[]{1, -1, 1});
-			extraDirs.add(new int[]{1, 0, -1});
-			//extraDirs.add(new int[]{1, 0, 0});
-			extraDirs.add(new int[]{1, 0, 1});
-			extraDirs.add(new int[]{1, 1, -1});
-			extraDirs.add(new int[]{1, 1, 0});
-			extraDirs.add(new int[]{1, 1, 1});
-		}
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<List<Integer>> ids) {
 			this.world = world;
@@ -153,11 +120,11 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 						}
 					}
 					if (extraSpread) {
-						for (int n = 0; n < extraDirs.size(); n++) {
-							int[] d = extraDirs.get(n);
-							int dx = x+d[0];
-							int dy = y+d[1];
-							int dz = z+d[2];
+						for (int n = 0; n < RelativePositionList.cornerDirections.getSize(); n++) {
+							int[] d = RelativePositionList.cornerDirections.getNthPosition(x, y, z, n);
+							int dx = d[0];
+							int dy = d[1];
+							int dz = d[2];
 							if (this.canSpreadTo(world, dx, dy, dz)) {
 								next.addBlockCoordinate(dx, dy, dz);
 							}

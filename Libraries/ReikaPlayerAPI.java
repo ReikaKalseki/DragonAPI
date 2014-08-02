@@ -9,14 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import java.util.HashMap;
-
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -32,8 +32,6 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public final class ReikaPlayerAPI extends DragonAPICore {
-
-	private static final HashMap<String, FakePlayer> playerMap = new HashMap();
 
 	/** Transfers a player's entire inventory to an inventory. Args: Player, Inventory */
 	public static void transferInventoryToChest(EntityPlayer ep, ItemStack[] inv) {
@@ -73,6 +71,18 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 				}
 			}
 		}
+		return null;
+	}
+
+	public static MovingObjectPosition getLookedAtBlockClient(double reach) {
+		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+		Vec3 vec = Vec3.createVectorHelper(ep.posX, (ep.posY + 1.62) - ep.yOffset, ep.posZ);
+		Vec3 vec2 = ep.getLook(1.0F);
+		Vec3 vec3 = vec.addVector(vec2.xCoord*reach, vec2.yCoord*reach, vec2.zCoord*reach);
+		MovingObjectPosition hit = ep.worldObj.clip(vec, vec3);
+
+		if (hit != null && hit.typeOfHit == EnumMovingObjectType.TILE)
+			return hit;
 		return null;
 	}
 
@@ -167,5 +177,16 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		int id = world.getBlockId(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		return playerCanBreakAt(world, x, y, z, id, meta, name);
+	}
+
+	public static void removeExperience(EntityPlayer ep, int xp) {
+		while (xp > 0 && ep.experienceTotal > 0) {
+			ep.addExperience(-1);
+			if (ep.experience < 0) {
+				ep.addExperienceLevel(-1);
+				ep.experience = 0.95F;
+			}
+			xp--;
+		}
 	}
 }

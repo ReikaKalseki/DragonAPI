@@ -13,8 +13,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
@@ -27,9 +29,47 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.network.Player;
 import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaPacketHelper extends DragonAPICore {
+
+	public static void sendDataPacket(String ch, int id, EntityPlayer ep, int... data) {
+		ArrayList<Integer> li = new ArrayList();
+		for (int i = 0; i < data.length; i++) {
+			li.add(data[i]);
+		}
+		sendDataPacket(ch, id, li, ep);
+	}
+
+	public static void sendDataPacket(String ch, int id, List<Integer> data, EntityPlayer ep) {
+		int npars;
+		if (data == null)
+			npars = 4;
+		else
+			npars = data.size()+4;
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(npars*4); //4 bytes an int
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(PacketTypes.DATA.ordinal());
+			outputStream.writeInt(id);
+			if (data != null)
+				for (int i = 0; i < data.size(); i++) {
+					outputStream.writeInt(data.get(i));
+				}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		Packet250CustomPayload packet = new Packet250CustomPayload();
+		packet.channel = ch;
+		packet.data = bos.toByteArray();
+		packet.length = bos.size();
+
+		PacketDispatcher.sendPacketToPlayer(packet, (Player)ep);
+	}
 
 	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, List<Integer> data) {
 

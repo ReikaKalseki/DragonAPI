@@ -20,6 +20,7 @@ import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.client.renderer.entity.RenderSlime;
 import net.minecraft.client.renderer.entity.RendererLivingEntity;
 import net.minecraft.client.resources.AbstractResourcePack;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -141,6 +142,7 @@ public class ReikaObfuscationHelper {
 		addField("theWorldGenerator", "field_82915_S", false, BiomeGenHills.class);
 		addField("blockFlammability", "blockFlammability", false, Block.class);
 		addField("blockFireSpreadSpeed", "blockFireSpreadSpeed", false, Block.class);
+		addField("stringToIDMapping", "field_75622_f", false, EntityList.class);
 	}
 
 	private static boolean isClientSide() {

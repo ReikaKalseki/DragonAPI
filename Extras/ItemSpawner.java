@@ -25,6 +25,7 @@ import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -42,7 +43,7 @@ public class ItemSpawner extends Item {
 		if (is.stackTagCompound == null)
 			return;
 		if (is.stackTagCompound.hasKey("Spawner"))
-			par3List.add("Spawns "+is.stackTagCompound.getString("Spawner"));
+			par3List.add("Spawns "+ReikaEntityHelper.getEntityDisplayName(is.stackTagCompound.getString("Spawner")));
 	}
 
 	@Override
@@ -107,7 +108,7 @@ public class ItemSpawner extends Item {
 				world.playSoundEffect(x+0.5, y+0.5, z+0.5, "step.stone", 1F, 1.5F);
 				MobSpawnerBaseLogic lgc = spw.getSpawnerLogic();
 				ReikaSpawnerHelper.setSpawnerFromItemNBT(is, spw);
-				lgc.spawnDelay = 400; //20s delay
+				lgc.spawnDelay = itemRand.nextInt(900); //20s delay
 			}
 		}
 		//ModLoader.getMinecraftInstance().ingameGUI.addChatMessage(String.format("%d", world.getBlockMetadata(x, y, z)));

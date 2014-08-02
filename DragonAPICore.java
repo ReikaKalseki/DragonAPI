@@ -48,11 +48,7 @@ public class DragonAPICore {
 	}
 
 	public static File getMinecraftDirectory() {
-		String s = ((File)FMLInjectionData.data()[6]).getAbsolutePath();
-		String s2 = s.substring(0, s.length()-1);
-		if (s2.endsWith("minecraf"))
-			s2 = s2+"t";
-		return new File(s2);
+		return (File)FMLInjectionData.data()[6];
 	}
 
 	private static boolean calculateReikasComputer() {

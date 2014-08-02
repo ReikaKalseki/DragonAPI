@@ -58,11 +58,7 @@ public class ReikaSpawnerHelper {
 		if (is == null)
 			return;
 		String name = getMobSpawnerMobName(spw);
-		if (is.stackTagCompound == null)
-			is.setTagCompound(new NBTTagCompound());
-		if (!is.stackTagCompound.hasKey("Spawner")) {
-			is.stackTagCompound.setString("Spawner", name);
-		}
+		setSpawnerItemNBT(is, name, false);
 	}
 
 	/** Sets a spawner's spawn type from an item. Args: Item, Spawner TileEntity */
@@ -75,6 +71,14 @@ public class ReikaSpawnerHelper {
 			return;
 		String name = is.stackTagCompound.getString("Spawner");
 		setMobSpawnerMob(spw, name);
+	}
+
+	public static void setSpawnerItemNBT(ItemStack is, String mob, boolean force) {
+		if (is.stackTagCompound == null)
+			is.setTagCompound(new NBTTagCompound());
+		if (force || !is.stackTagCompound.hasKey("Spawner")) {
+			is.stackTagCompound.setString("Spawner", mob);
+		}
 	}
 
 	/** Forcibly runs the spawn cycle for a spawner. Args: Spawner TileEntity, number of mobs, Potion effects */

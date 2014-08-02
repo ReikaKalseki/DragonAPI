@@ -22,7 +22,7 @@ public class ReikaRandomHelper extends DragonAPICore {
 
 	/** Gets a random double value within base +/- range. */
 	public static double getRandomPlusMinus(double base, double range) {
-		double add = -range+rand.nextDouble()*(range*2+1);
+		double add = -range+rand.nextDouble()*range*2;
 		return (base+add);
 	}
 

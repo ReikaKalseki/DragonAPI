@@ -9,7 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import net.minecraft.enchantment.Enchantment;
@@ -79,6 +81,42 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 	/** Returns the speed bonus that efficiency that gives. Args: Level */
 	public static float getEfficiencyMultiplier(int level) {
 		return (float)Math.pow(1.3, level);
+	}
+
+	/** Returns true iff all the enchantments are compatible with each other. */
+	public static boolean areCompatible(Collection<Enchantment> enchantments) {
+		Iterator<Enchantment> it = enchantments.iterator();
+		Iterator<Enchantment> it2 = enchantments.iterator();
+		while (it.hasNext()) {
+			Enchantment e = it.next();
+			while (it2.hasNext()) {
+				Enchantment e2 = it2.next();
+				if (!areEnchantsCompatible(e, e2))
+					return false;
+			}
+		}
+		return true;
+	}
+
+	/** Returns true iff the new enchantment is compatible all the other enchantments. */
+	public static boolean isCompatible(Collection<Enchantment> enchantments, Enchantment addition) {
+		Iterator<Enchantment> it = enchantments.iterator();
+		Iterator<Enchantment> it2 = enchantments.iterator();
+		while (it.hasNext()) {
+			Enchantment e = it.next();
+			if (!areEnchantsCompatible(e, addition))
+				return false;
+		}
+		return true;
+	}
+
+	public static boolean areEnchantsCompatible(Enchantment e, Enchantment e2) {
+		return e.canApplyTogether(e2);
+	}
+
+	public static boolean hasEnchantments(ItemStack is) {
+		Map map = EnchantmentHelper.getEnchantments(is);
+		return map != null && !map.isEmpty();
 	}
 
 }

@@ -17,6 +17,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import Reika.DragonAPI.Instantiable.GUI.Slot.SlotNoClick;
 import Reika.DragonAPI.Interfaces.MultiPageInventory;
 import Reika.DragonAPI.Interfaces.XPProducer;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
@@ -253,6 +254,12 @@ public class CoreContainer extends Container {
 		if (ii == null)
 			return;
 		this.addSlotToContainer(new Slot(ii, i, x, y));
+	}
+
+	protected void addSlotNoClick(int i, int x, int y) {
+		if (ii == null)
+			return;
+		this.addSlotToContainer(new SlotNoClick(ii, i, x, y));
 	}
 
 	@Override

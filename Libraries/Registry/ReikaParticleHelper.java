@@ -90,6 +90,11 @@ public enum ReikaParticleHelper {
 		}
 	}
 
+	public static void spawnColoredParticles(World world, int x, int y, int z, ReikaDyeHelper color, int number) {
+		double[] v = color.getRedstoneParticleVelocityForColor();
+		REDSTONE.spawnAroundBlock(world, x, y, z, v[0], v[1], v[2], number);
+	}
+
 	public static void spawnColoredParticles(World world, int x, int y, int z, double r, double g, double b, int number) {
 		REDSTONE.spawnAroundBlock(world, x, y, z, r, g, b, number);
 	}

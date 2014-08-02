@@ -88,7 +88,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	public TileEntityBase() {
 		super();
 		updateTimer = new StepTimer(this.getBlockUpdateDelay());
-		packetTimer = new StepTimer(5); //was this.getPacketDelay()
+		packetTimer = new StepTimer(this.getPacketDelay());
 		fullSyncTimer = new StepTimer(1200);
 		fullSyncTimer.setTick(rand.nextInt(1200));
 	}
@@ -98,7 +98,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	public int getPacketDelay() {
-		return 1;
+		return 5;
 	}
 
 	public final Block getTEBlock() {
@@ -115,6 +115,11 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	public static final boolean isStandard8mReach(EntityPlayer ep, TileEntity te) {
 		double dist = ReikaMathLibrary.py3d(te.xCoord+0.5-ep.posX, te.yCoord+0.5-ep.posY, te.zCoord+0.5-ep.posZ);
 		return (dist <= 8);
+	}
+
+	public boolean isPlayerAccessible(EntityPlayer var1) {
+		double dist = ReikaMathLibrary.py3d(xCoord+0.5-var1.posX, yCoord+0.5-var1.posY, zCoord+0.5-var1.posZ);
+		return (dist <= 8) && worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	protected void writeSyncTag(NBTTagCompound NBT) {
@@ -449,6 +454,9 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	public void updateCache(ForgeDirection dir) {
 		TileEntity te = worldObj.getBlockTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
+		/*if (te instanceof SpaceRift) {
+			te = ((SpaceRift)te).getTileEntityFrom(dir);
+		}*/
 		adjTEMap[dir.ordinal()] = te;
 	}
 
@@ -468,8 +476,6 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		}
 	}
 
-	public abstract boolean hasModel();
-
 
 	private final HashMap<Integer, LuaMethod> luaMethods = new HashMap();
 	private final HashMap<String, LuaMethod> methodNames = new HashMap();
@@ -477,7 +483,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	/** ComputerCraft */
 	@Override
-	public final String[] getMethodNames() {
+	public String[] getMethodNames() {
 		ArrayList<LuaMethod> li = new ArrayList();
 		List<LuaMethod> all = LuaMethod.getMethods();
 		for (int i = 0; i < all.size(); i++) {
@@ -496,22 +502,22 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	@Override
-	public final Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws Exception {
+	public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws Exception {
 		return luaMethods.containsKey(method) ? luaMethods.get(method).invoke(this, arguments) : null;
 	}
 
 	@Override
-	public final boolean canAttachToSide(int side) {
+	public boolean canAttachToSide(int side) {
 		return true;
 	}
 
 	@Override
-	public final void attach(IComputerAccess computer) {}
+	public void attach(IComputerAccess computer) {}
 	@Override
-	public final void detach(IComputerAccess computer) {}
+	public void detach(IComputerAccess computer) {}
 
 	@Override
-	public final String getType() {
+	public String getType() {
 		return this.getName().replaceAll(" ", "");
 	}
 
@@ -520,17 +526,17 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	/** OpenComputers */
-	public final String getComponentName() {
+	public String getComponentName() {
 		return this.getType();
 	}
 
 	@Override
-	public final String[] methods() {
+	public String[] methods() {
 		return this.getMethodNames();
 	}
 
 	@Override
-	public final Object[] invoke(String method, Context context, Arguments args) throws Exception {
+	public Object[] invoke(String method, Context context, Arguments args) throws Exception {
 		Object[] objs = new Object[args.count()];
 		for (int i = 0; i < objs.length; i++) {
 			objs[i] = args.checkAny(i);
@@ -564,14 +570,14 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	@Override
-	public final Node node() {
+	public Node node() {
 		return node;
 	}
 
 	@Override
-	public final void onConnect(Node node) {}
+	public void onConnect(Node node) {}
 	@Override
-	public final void onDisconnect(Node node) {}
+	public void onDisconnect(Node node) {}
 	@Override
-	public final void onMessage(Message message) {}
+	public void onMessage(Message message) {}
 }

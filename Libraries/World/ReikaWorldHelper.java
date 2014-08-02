@@ -37,6 +37,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
+import Reika.DragonAPI.Instantiable.RelativePositionList;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
@@ -1607,5 +1608,33 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 		return false;
+	}
+
+	public static int countAdjacentBlocks(World world, int x, int y, int z, int id, boolean checkCorners) {
+		int count = 0;
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetZ;
+			int dz = z+dir.offsetY;
+			int id2 = world.getBlockId(dx, dy, dz);
+			if (id == id2)
+				count++;
+		}
+
+		if (checkCorners) {
+			for (int n = 0; n < RelativePositionList.cornerDirections.getSize(); n++) {
+				int[] d = RelativePositionList.cornerDirections.getNthPosition(x, y, z, n);
+				int dx = d[0];
+				int dy = d[1];
+				int dz = d[2];
+				int id2 = world.getBlockId(dx, dy, dz);
+				if (id == id2) {
+					count++;
+				}
+			}
+		}
+
+		return count;
 	}
 }

@@ -169,6 +169,8 @@ public enum ReikaDyeHelper {
 
 	@SideOnly(Side.CLIENT)
 	public double[] getRedstoneParticleVelocityForColor() {
+		if (this == WHITE)
+			return new double[]{20,20,20};
 		double[] c = new double[]{this.getRed()/255D, this.getGreen()/255D, this.getBlue()/255D};
 		return c;
 	}

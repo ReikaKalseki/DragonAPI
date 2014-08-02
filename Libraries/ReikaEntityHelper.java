@@ -17,27 +17,15 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
-import net.minecraft.entity.ai.EntityMinecartMobSpawner;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityEnderCrystal;
-import net.minecraft.entity.item.EntityEnderEye;
-import net.minecraft.entity.item.EntityEnderPearl;
-import net.minecraft.entity.item.EntityExpBottle;
 import net.minecraft.entity.item.EntityFallingSand;
-import net.minecraft.entity.item.EntityFireworkRocket;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.item.EntityMinecart;
-import net.minecraft.entity.item.EntityMinecartChest;
-import net.minecraft.entity.item.EntityMinecartEmpty;
-import net.minecraft.entity.item.EntityMinecartFurnace;
-import net.minecraft.entity.item.EntityMinecartHopper;
-import net.minecraft.entity.item.EntityMinecartTNT;
-import net.minecraft.entity.item.EntityPainting;
 import net.minecraft.entity.item.EntityTNTPrimed;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.monster.EntityBlaze;
@@ -45,7 +33,6 @@ import net.minecraft.entity.monster.EntityCaveSpider;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityGiantZombie;
 import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntityMagmaCube;
@@ -54,7 +41,6 @@ import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySlime;
-import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.EntityZombie;
@@ -71,21 +57,18 @@ import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityLargeFireball;
-import net.minecraft.entity.projectile.EntityPotion;
-import net.minecraft.entity.projectile.EntitySmallFireball;
-import net.minecraft.entity.projectile.EntitySnowball;
-import net.minecraft.entity.projectile.EntityWitherSkull;
 import net.minecraft.item.EnumArmorMaterial;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Interfaces.TameHostile;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
@@ -100,71 +83,20 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	static
 	{
-		addMapping(EntityItem.class, "Item", 1);
-		addMapping(EntityXPOrb.class, "XPOrb", 2);
-		addMapping(EntityPainting.class, "Painting", 9);
-		addMapping(EntityArrow.class, "Arrow", 10);
-		addMapping(EntitySnowball.class, "Snowball", 11);
-		addMapping(EntityLargeFireball.class, "Fireball", 12);
-		addMapping(EntitySmallFireball.class, "SmallFireball", 13);
-		addMapping(EntityEnderPearl.class, "ThrownEnderpearl", 14);
-		addMapping(EntityEnderEye.class, "EyeOfEnderSignal", 15);
-		addMapping(EntityPotion.class, "ThrownPotion", 16);
-		addMapping(EntityExpBottle.class, "ThrownExpBottle", 17);
-		addMapping(EntityItemFrame.class, "ItemFrame", 18);
-		addMapping(EntityWitherSkull.class, "WitherSkull", 19);
-		addMapping(EntityTNTPrimed.class, "PrimedTnt", 20);
-		addMapping(EntityFallingSand.class, "FallingSand", 21);
-		addMapping(EntityFireworkRocket.class, "FireworksRocketEntity", 22);
-		addMapping(EntityBoat.class, "Boat", 41);
-		addMapping(EntityMinecartEmpty.class, "MinecartRideable", 42);
-		addMapping(EntityMinecartChest.class, "MinecartChest", 43);
-		addMapping(EntityMinecartFurnace.class, "MinecartFurnace", 44);
-		addMapping(EntityMinecartTNT.class, "MinecartTNT", 45);
-		addMapping(EntityMinecartHopper.class, "MinecartHopper", 46);
-		addMapping(EntityMinecartMobSpawner.class, "MinecartSpawner", 47);
-		addMapping(EntityLivingBase.class, "Mob", 48);
-		addMapping(EntityMob.class, "Monster", 49);
-		addMapping(EntityCreeper.class, "Creeper", 50, 894731, 0);
-		addMapping(EntitySkeleton.class, "Skeleton", 51, 12698049, 4802889);
-		addMapping(EntitySpider.class, "Spider", 52, 3419431, 11013646);
-		addMapping(EntityGiantZombie.class, "Giant", 53);
-		addMapping(EntityZombie.class, "Zombie", 54, 44975, 7969893);
-		addMapping(EntitySlime.class, "Slime", 55, 5349438, 8306542);
-		addMapping(EntityGhast.class, "Ghast", 56, 16382457, 12369084);
-		addMapping(EntityPigZombie.class, "PigZombie", 57, 15373203, 5009705);
-		addMapping(EntityEnderman.class, "Enderman", 58, 1447446, 0);
-		addMapping(EntityCaveSpider.class, "CaveSpider", 59, 803406, 11013646);
-		addMapping(EntitySilverfish.class, "Silverfish", 60, 7237230, 3158064);
-		addMapping(EntityBlaze.class, "Blaze", 61, 16167425, 16775294);
-		addMapping(EntityMagmaCube.class, "LavaSlime", 62, 3407872, 16579584);
-		addMapping(EntityDragon.class, "EnderDragon", 63);
-		addMapping(EntityWither.class, "WitherBoss", 64);
-		addMapping(EntityBat.class, "Bat", 65, 4996656, 986895);
-		addMapping(EntityWitch.class, "Witch", 66, 3407872, 5349438);
-		addMapping(EntityPig.class, "Pig", 90, 15771042, 14377823);
-		addMapping(EntitySheep.class, "Sheep", 91, 15198183, 16758197);
-		addMapping(EntityCow.class, "Cow", 92, 4470310, 10592673);
-		addMapping(EntityChicken.class, "Chicken", 93, 10592673, 16711680);
-		addMapping(EntitySquid.class, "Squid", 94, 2243405, 7375001);
-		addMapping(EntityWolf.class, "Wolf", 95, 14144467, 13545366);
-		addMapping(EntityMooshroom.class, "MushroomCow", 96, 10489616, 12040119);
-		addMapping(EntitySnowman.class, "SnowMan", 97);
-		addMapping(EntityOcelot.class, "Ozelot", 98, 15720061, 5653556);
-		addMapping(EntityIronGolem.class, "VillagerGolem", 99);
-		addMapping(EntityVillager.class, "Villager", 120, 5651507, 12422002);
-		addMapping(EntityEnderCrystal.class, "EnderCrystal", 200);
-	}
-
-	private static void addMapping(Class par0Class, String par1Str, int par2)
-	{
-		classToIDMapping.put(par0Class, Integer.valueOf(par2));
-		stringToIDMapping.put(par1Str, Integer.valueOf(par2));
-	}
-
-	private static void addMapping(Class par0Class, String par1Str, int par2, int a, int b)
-	{
-		addMapping(par0Class, par1Str, par2);
+		try {
+			Map map = (Map)ReikaObfuscationHelper.getField("stringToIDMapping").get(null);
+			for (Object key : EntityList.stringToClassMapping.keySet()) {
+				String name = (String)key;
+				Class c = (Class)EntityList.stringToClassMapping.get(name);
+				int id = (Integer)map.get(name);
+				classToIDMapping.put(c, id);
+				stringToIDMapping.put(name, id);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static int[] mobColorArray = new int[201]; //Highest Entity ID (endercrystal)+1
@@ -227,7 +159,29 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return false;
 	}
 
-	/** Converts a string mobname to its respective id. Args: Name, world */
+	public static boolean isHostile(Class<? extends EntityLiving> mob) {
+		if (TameHostile.class.isAssignableFrom(mob))
+			return false;
+		if (EntityMob.class.isAssignableFrom(mob))
+			return true;
+		if (EntityGhast.class.isAssignableFrom(mob))
+			return true;
+		if (EntitySlime.class.isAssignableFrom(mob))
+			return true;
+		if (EntityWitch.class.isAssignableFrom(mob))
+			return true;
+		if (EntityDragon.class.isAssignableFrom(mob))
+			return true;
+		if (EntityWither.class.isAssignableFrom(mob))
+			return true;
+		if (mob.getSimpleName().toLowerCase().contains("wisp"))
+			return true;
+		if (mob.getSimpleName().toLowerCase().contains("pech"))
+			return true;
+		return false;
+	}
+
+	/** Converts a string mobname to its respective id. Args: Name */
 	public static int mobNameToID(String name) {
 		return (Integer)stringToIDMapping.get(name);
 	}
@@ -621,6 +575,30 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	public static void setNoPotionParticles(EntityLivingBase e) {
 		e.getDataWatcher().updateObject(7, 0);
+	}
+
+	public static void setInvulnerable(Entity e, boolean invuln) {
+		NBTTagCompound NBT = new NBTTagCompound();
+		e.writeToNBT(NBT);
+		NBT.setBoolean("Invulnerable", invuln);
+		e.readFromNBT(NBT);
+	}
+
+	public static boolean isLivingMob(String mob, boolean allowPlayers) {
+		Class c = allowPlayers ? EntityLivingBase.class : EntityLiving.class;
+		return c.isAssignableFrom((Class)EntityList.stringToClassMapping.get(mob));
+	}
+
+	public static boolean hasID(String mob) {
+		return stringToIDMapping.containsKey(mob);
+	}
+
+	public static boolean hasID(Class<? extends Entity> c) {
+		return classToIDMapping.containsKey(c);
+	}
+
+	public static String getEntityDisplayName(String name) {
+		return StatCollector.translateToLocal("entity."+name+".name");
 	}
 
 }
