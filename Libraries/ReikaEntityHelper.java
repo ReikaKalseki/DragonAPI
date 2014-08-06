@@ -68,6 +68,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Interfaces.TameHostile;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -81,17 +82,23 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	/** Maps entity names to their numeric identifiers */
 	private static Map stringToIDMapping = new HashMap();
 
-	static
+	public static void loadMappings()
 	{
+		if (!classToIDMapping.isEmpty())
+			return;
 		try {
 			Map map = (Map)ReikaObfuscationHelper.getField("stringToIDMapping").get(null);
 			for (Object key : EntityList.stringToClassMapping.keySet()) {
 				String name = (String)key;
 				Class c = (Class)EntityList.stringToClassMapping.get(name);
-				int id = (Integer)map.get(name);
-				classToIDMapping.put(c, id);
-				stringToIDMapping.put(name, id);
+				ReikaJavaLibrary.pConsole(name+":"+c);
+				if (map.containsKey(name)) {
+					int id = (Integer)map.get(name);
+					classToIDMapping.put(c, id);
+					stringToIDMapping.put(name, id);
+				}
 			}
+			ReikaJavaLibrary.pConsole(map);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -599,6 +606,10 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	public static String getEntityDisplayName(String name) {
 		return StatCollector.translateToLocal("entity."+name+".name");
+	}
+
+	public static boolean isTameHostile(String mob) {
+		return TameHostile.class.isAssignableFrom((Class)EntityList.stringToClassMapping.get(mob));
 	}
 
 }

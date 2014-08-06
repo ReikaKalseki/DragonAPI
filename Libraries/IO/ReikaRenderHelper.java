@@ -64,7 +64,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		if (var5.isDrawing)
 			var5.draw();
 		var5.startDrawing(GL11.GL_LINE_LOOP);
-		var5.setColorRGBA_I(rgba&0x00FFFFFF, rgba&0xFF000000);
+		var5.setColorRGBA_I(rgba, rgba >> 24 & 255);
 		for (int i = 0; i < 360; i += step) {
 			var5.addVertex(x+r*Math.cos(Math.toRadians(i)), y, z+r*Math.sin(Math.toRadians(i)));
 		}
@@ -74,13 +74,13 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
-	/** Renders a vertical-plane circle in the world. Args: radius, center x,y,z, RGBA, phi */
+	/** Renders a vertical-plane circle in the world. Args: radius, center x,y,z, RGBA, phi, angle step */
 	public static void renderVCircle(double r, double x, double y, double z, int rgba, double phi, int step) {
 		//GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1F, 1F, 1F, 1F);
 		Tessellator var5 = Tessellator.instance;
 		var5.startDrawing(GL11.GL_LINE_LOOP);
-		var5.setColorRGBA_I(rgba&0x00FFFFFF, rgba&0xFF000000);
+		var5.setColorRGBA_I(rgba, rgba >> 24 & 255);
 		for (int i = 0; i < 360; i += step) {
 			int sign = 1;
 			double h = r*Math.cos(ReikaPhysicsHelper.degToRad(i));
@@ -102,7 +102,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		if (var5.isDrawing)
 			var5.draw();
 		var5.startDrawing(GL11.GL_LINE_LOOP);
-		var5.setColorRGBA_I(rgba&0x00FFFFFF, rgba&0xFF000000);
+		var5.setColorRGBA_I(rgba, rgba >> 24 & 255);
 		var5.addVertex(x1, y1, z1);
 		var5.addVertex(x2, y2, z2);
 		var5.draw();

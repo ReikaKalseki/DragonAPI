@@ -30,6 +30,8 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaPlayerAPI extends DragonAPICore {
 
@@ -74,6 +76,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return null;
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static MovingObjectPosition getLookedAtBlockClient(double reach) {
 		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
 		Vec3 vec = Vec3.createVectorHelper(ep.posX, (ep.posY + 1.62) - ep.yOffset, ep.posZ);

@@ -22,7 +22,7 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	public static final int rhooil = 850; //varies between 700 and 1000
 
 	private static final Fluid fuel = FluidRegistry.getFluid("fuel");
-	private static double gasEnergyPerKg = 46.9;
+	private static double gasEnergyPerKg = 46.9; //MegaJoules
 
 	public static boolean doesBuildCraftExist() {
 		return ModList.BCENERGY.isLoaded();

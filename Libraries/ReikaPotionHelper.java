@@ -104,5 +104,55 @@ public final class ReikaPotionHelper extends DragonAPICore {
 	public static int getPotionDamageValue(Potion potion) {
 		return potionDamageValues.containsKey(potion) ? potionDamageValues.get(potion) : 0;
 	}
+	/*
+	public static void clearPotionsExceptSome(EntityLivingBase e, Potion... potions) {
+		Collection<PotionEffect> c = e.getActivePotionEffects();
+		Iterator<PotionEffect> it = c.iterator();
+		ArrayList<PotionEffect> keep = new ArrayList();
+		while (it.hasNext()) {
+			PotionEffect pot = it.next();
+			int id = pot.getPotionID();
+			boolean remove = true;
+			for (int i = 0; i < potions.length; i++) {
+				if (id == potions[i].id) {
+					remove = false;
+					break;
+				}
+			}
+			if (remove) {
+				e.removePotionEffect(id);
+				if (e.worldObj.isRemote)
+					e.removePotionEffectClient(id);
+			}
+		}
+		for (int i = 0; i < keep.size(); i++) {
+			PotionEffect pot = keep.get(i);
+			e.addPotionEffect(new PotionEffect(pot.getPotionID(), pot.getDuration(), pot.getAmplifier()));
+		}
+	}
 
+	public static void clearPotionsExceptPerma(EntityLivingBase e) {
+		Collection<PotionEffect> c = e.getActivePotionEffects();
+		Iterator<PotionEffect> it = c.iterator();
+		ArrayList<PotionEffect> keep = new ArrayList();
+		while (it.hasNext()) {
+			PotionEffect pot = it.next();
+			int id = pot.getPotionID();
+			Potion p = Potion.potionTypes[id];
+			boolean remove = true;
+			if (p instanceof PermaPotion) {
+				remove = ((PermaPotion)p).canBeCleared(e, pot);
+			}
+			if (remove) {
+				e.removePotionEffect(id);
+				if (e.worldObj.isRemote)
+					e.removePotionEffectClient(id);
+			}
+		}
+		for (int i = 0; i < keep.size(); i++) {
+			PotionEffect pot = keep.get(i);
+			e.addPotionEffect(new PotionEffect(pot.getPotionID(), pot.getDuration(), pot.getAmplifier()));
+		}
+	}
+	 */
 }

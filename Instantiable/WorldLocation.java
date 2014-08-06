@@ -1,13 +1,20 @@
 package Reika.DragonAPI.Instantiable;
 
+import java.util.Random;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeDirection;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public final class WorldLocation {
+
+	private static final Random rand = new Random();
 
 	public final int xCoord;
 	public final int yCoord;
@@ -25,9 +32,17 @@ public final class WorldLocation {
 		dimensionID = dim;
 	}
 
+	public WorldLocation(TileEntity te) {
+		this(te.worldObj, te.xCoord, te.yCoord, te.zCoord);
+	}
+
 	public int getBlockID() {
 		World world = this.getWorld();
 		return world != null ? world.getBlockId(xCoord, yCoord, zCoord) : -1;
+	}
+
+	public boolean isEmpty() {
+		return this.getBlockID() == 0;
 	}
 
 	public int getBlockMetadata() {
@@ -64,6 +79,36 @@ public final class WorldLocation {
 			if (adjacent) {
 				ReikaWorldHelper.causeAdjacentUpdates(world, xCoord, yCoord, zCoord);
 			}
+		}
+	}
+
+	public void dropItem(ItemStack is) {
+		this.dropItem(is, 1);
+	}
+
+	public void dropItem(ItemStack is, double vscale) {
+		World world = this.getWorld();
+		if (world != null && !world.isRemote) {
+			ReikaItemHelper.dropItem(this.getWorld(), xCoord+rand.nextDouble(), yCoord+rand.nextDouble(), zCoord+rand.nextDouble(), is, vscale);
+		}
+	}
+
+	public void setBlock(Block b) {
+		this.setBlock(b.blockID);
+	}
+
+	public void setBlock(int id) {
+		this.setBlock(id, 0);
+	}
+
+	public void setBlock(ItemStack is) {
+		this.setBlock(is.itemID, is.getItemDamage());
+	}
+
+	public void setBlock(int id, int meta) {
+		World world = this.getWorld();
+		if (world != null) {
+			world.setBlock(xCoord, yCoord, zCoord, id, meta, 3);
 		}
 	}
 

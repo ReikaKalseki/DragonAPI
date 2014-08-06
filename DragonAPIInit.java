@@ -53,6 +53,7 @@ import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
@@ -239,6 +240,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		SuggestedModsTracker.instance.printConsole();
 		CommandableUpdateChecker.instance.checkAll();
+
+		ReikaEntityHelper.loadMappings();
 	}
 
 	@EventHandler

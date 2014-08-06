@@ -52,8 +52,12 @@ public abstract class BlockTEBase extends Block {
 		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1);
 	}
 
-	public final void setFullBlockBounds() {
+	protected final void setFullBlockBounds() {
 		this.setBlockBounds(0, 0, 0, 1, 1, 1);
+	}
+
+	protected final void setBounds(AxisAlignedBB box, int x, int y, int z) {
+		this.setBlockBounds((float)box.minX-x, (float)box.minY-y, (float)box.minZ-z, (float)box.maxX-x, (float)box.maxY-y, (float)box.maxZ-z);
 	}
 
 	@Override
