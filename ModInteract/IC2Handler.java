@@ -9,16 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
+import java.lang.reflect.Field;
+
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+
 public class IC2Handler extends ModHandlerBase {
 
-	public final int iridiumID;
+	public final Item iridiumID;
 
 	private ItemStack purifiedUranium;
 
@@ -26,14 +28,14 @@ public class IC2Handler extends ModHandlerBase {
 
 	private IC2Handler() {
 		super();
-		int idiridium = -1;
+		Item idiridium = null;
 		if (this.hasMod()) {
 			try {
 				Class ic2 = this.getMod().getItemClass();
 				Field irid = ic2.getField("iridiumOre");
 				Field crush = ic2.getField("purifiedCrushedUraniumOre");
 				ItemStack iridium = (ItemStack)irid.get(null);
-				idiridium = iridium.itemID;
+				idiridium = iridium.getItem();
 				ItemStack pureCrushU = (ItemStack)crush.get(null);
 				purifiedUranium = pureCrushU;
 			}
@@ -75,7 +77,7 @@ public class IC2Handler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return iridiumID != -1 && purifiedUranium != null;
+		return iridiumID != null && purifiedUranium != null;
 	}
 
 	@Override

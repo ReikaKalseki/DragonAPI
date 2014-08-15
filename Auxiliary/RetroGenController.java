@@ -9,15 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import Reika.DragonAPI.Interfaces.RetroactiveGenerator;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-import net.minecraftforge.event.ForgeSubscribe;
 import net.minecraftforge.event.world.ChunkDataEvent;
-import Reika.DragonAPI.Interfaces.RetroactiveGenerator;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class RetroGenController {
 
@@ -79,7 +80,7 @@ public class RetroGenController {
 		return !tag.hasKey(gen.getIDString()) || !tag.getBoolean(gen.getIDString());
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void handleChunkLoadEvent(ChunkDataEvent.Load event)
 	{
 		//this.generate(event);

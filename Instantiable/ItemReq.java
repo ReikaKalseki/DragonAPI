@@ -9,24 +9,25 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Exception.MisuseException;
+
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import Reika.DragonAPI.Exception.MisuseException;
 
 public class ItemReq {
 
-	public final int itemID;
+	public final Item itemID;
 	public final int metadata;
 	public final float chanceToUse;
 	private int numberNeeded;
 
 	private NBTTagCompound nbt;
 
-	public ItemReq(int id, int meta, float chance) {
+	public ItemReq(Item id, int meta, float chance) {
 		itemID = id;
 		metadata = meta;
 		if (chance > 1)
@@ -35,19 +36,19 @@ public class ItemReq {
 		numberNeeded = -1;
 	}
 
-	private ItemReq(int id, float chance) {
+	private ItemReq(Item id, float chance) {
 		this(id, 0, chance);
 	}
 
 	public ItemReq(Block b, float chance) {
-		this(b.blockID, 0, chance);
+		this(b, 0, chance);
 	}
 
-	public ItemReq(Item i, float chance) {
-		this(i.itemID, 0, chance);
+	public ItemReq(Block b, int meta, float chance) {
+		this(Item.getItemFromBlock(b), meta, chance);
 	}
 
-	public ItemReq(int id, int meta, int number) {
+	public ItemReq(Item id, int meta, int number) {
 		if (number < 1) {
 			throw new MisuseException("You must specify a valid number of items required!");
 		}
@@ -91,7 +92,7 @@ public class ItemReq {
 		else if (this.alwaysConsume())
 			return new ItemStack(itemID, 1, metadata);
 		else
-			return new ItemStack(itemID, 1, metadata);//return new ItemStack(itemID, (int)(100*chanceToUse), metadata);
+			return new ItemStack(itemID, 1, metadata);//return new ItemStack.getItem, (int)(100*chanceToUse), metadata);
 	}
 
 }

@@ -13,11 +13,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public class StructuredBlockArray extends BlockArray {
 
-	private final HashMap<List<Integer>, List<Integer>> data = new HashMap();
+	private final HashMap<List<Integer>, ItemStack> data = new HashMap();
 
 	private int minX = Integer.MAX_VALUE;
 	private int minY = Integer.MAX_VALUE;
@@ -82,9 +85,9 @@ public class StructuredBlockArray extends BlockArray {
 			return false;
 		if (this.hasBlock(x, y, z))
 			return false;
-		int id = world.getBlockId(x, y, z);
+		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		data.put(Arrays.asList(x, y, z), Arrays.asList(id, meta));
+		data.put(Arrays.asList(x, y, z), new ItemStack(b, meta));
 		if (minX > x)
 			minX = x;
 		if (maxX < x)
@@ -100,21 +103,21 @@ public class StructuredBlockArray extends BlockArray {
 		return true;
 	}
 
-	public int getIDRelativeToMinXYZ(int dx, int dy, int dz) {
+	public Block getIDRelativeToMinXYZ(int dx, int dy, int dz) {
 		int x = dx+minX;
 		int y = dy+minY;
 		int z = dz+minZ;
-		return this.hasBlock(x, y, z) ? data.get(Arrays.asList(x, y, z)).get(0) : -1;
+		return this.hasBlock(x, y, z) ? Block.getBlockFromItem(data.get(Arrays.asList(x, y, z)).getItem()) : null;
 	}
 
 	public int getMetaRelativeToMinXYZ(int dx, int dy, int dz) {
 		int x = dx+minX;
 		int y = dy+minY;
 		int z = dz+minZ;
-		return this.hasBlock(x, y, z) ? data.get(Arrays.asList(x, y, z)).get(1) : -1;
+		return this.hasBlock(x, y, z) ? data.get(Arrays.asList(x, y, z)).getItemDamage() : -1;
 	}
 
-	public List<Integer> getBlockRelativeToMinXYZ(int dx, int dy, int dz) {
+	public ItemStack getBlockRelativeToMinXYZ(int dx, int dy, int dz) {
 		int x = dx+minX;
 		int y = dy+minY;
 		int z = dz+minZ;
@@ -126,48 +129,57 @@ public class StructuredBlockArray extends BlockArray {
 		return data.keySet().contains(Arrays.asList(x, y, z));
 	}
 
-	public int getNumberOf(int id, int meta) {
+	public int getNumberOf(Block id, int meta) {
 		int count = 0;
 		for (List<Integer> li : data.keySet()) {
-			List<Integer> block = data.get(li);
-			if (id == block.get(0) && meta == block.get(1))
+			ItemStack block = data.get(li);
+			if (Item.getItemFromBlock(id) == block.getItem() && meta == block.getItemDamage())
 				count++;
 		}
 		return count;
 	}
 
+	@Override
 	public int getMinX() {
 		return minX;
 	}
 
+	@Override
 	public int getMaxX() {
 		return maxX;
 	}
 
+	@Override
 	public int getMinY() {
 		return minY;
 	}
 
+	@Override
 	public int getMaxY() {
 		return maxY;
 	}
 
+	@Override
 	public int getMinZ() {
 		return minZ;
 	}
 
+	@Override
 	public int getMaxZ() {
 		return maxZ;
 	}
 
+	@Override
 	public int getSizeX() {
 		return maxX-minX+1;
 	}
 
+	@Override
 	public int getSizeY() {
 		return maxY-minY+1;
 	}
 
+	@Override
 	public int getSizeZ() {
 		return maxZ-minZ+1;
 	}

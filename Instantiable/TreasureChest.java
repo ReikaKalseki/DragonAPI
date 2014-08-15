@@ -9,14 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 
 public class TreasureChest {
 
@@ -54,13 +56,13 @@ public class TreasureChest {
 		return trapped;
 	}
 
-	public int getChestID() {
-		return this.isTrapped() ? Block.chestTrapped.blockID : Block.chest.blockID;
+	public Block getChestID() {
+		return this.isTrapped() ? Blocks.trapped_chest : Blocks.chest;
 	}
 
 	public void generate() {
 		refWorld.setBlock(xCoord, yCoord, zCoord, this.getChestID());
-		TileEntityChest te = (TileEntityChest)refWorld.getBlockTileEntity(xCoord, yCoord, zCoord);
+		TileEntityChest te = (TileEntityChest)refWorld.getTileEntity(xCoord, yCoord, zCoord);
 		for (int i = 0; i < itemList.size(); i++)
 			ReikaInventoryHelper.addToIInv(itemList.get(i), te);
 	}

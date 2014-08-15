@@ -9,6 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.CropHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -16,45 +20,42 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.CropHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BerryBushHandler extends CropHandlerBase {
 
 	private static final BerryBushHandler instance = new BerryBushHandler();
 
-	public final int bushID;
-	public final int berryID;
+	public final Block bushID;
+	public final Item berryID;
 
-	public final int netherBushID;
-	public final int netherBerryID;
+	public final Block netherBushID;
+	public final Item netherBerryID;
 
 	private BerryBushHandler() {
 		super();
-		int idbush = -1;
-		int idberry = -1;
-		int idnetherbush = -1;
-		int idnetherberry = -1;
+		Block idbush = null;
+		Item idberry = null;
+		Block idnetherbush = null;
+		Item idnetherberry = null;
 		if (this.hasMod()) {
 			Class blocks = this.getMod().getBlockClass();
 			Class items = this.getMod().getItemClass();
 			try {
 				Field f = blocks.getField("berryBush");
 				Block bush = (Block)f.get(null);
-				idbush = bush.blockID;
+				idbush = bush;
 
 				f = blocks.getField("netherBerryBush");
 				Block netherbush = (Block)f.get(null);
-				idnetherbush = netherbush.blockID;
+				idnetherbush = netherbush;
 
 				f = items.getField("berryItem");
 				Item berry = (Item)f.get(null);
-				idberry = berry.itemID;
+				idberry = berry;
 
 				f = items.getField("netherBerryItem");
 				Item netherberry = (Item)f.get(null);
-				idnetherberry = netherberry.itemID;
+				idnetherberry = netherberry;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -80,7 +81,7 @@ public class BerryBushHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public boolean isCrop(int id) {
+	public boolean isCrop(Block id) {
 		return id == bushID || id == netherBushID;
 	}
 
@@ -96,9 +97,9 @@ public class BerryBushHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
-		int id = world.getBlockId(x, y, z);
+		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		return this.isCrop(id) && meta >= 12;
+		return this.isCrop(b) && meta >= 12;
 	}
 
 	@Override
@@ -115,7 +116,7 @@ public class BerryBushHandler extends CropHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return bushID != -1 && berryID != -1 && netherBushID != -1 && netherBerryID != -1;
+		return bushID != null && berryID != null && netherBushID != null && netherBerryID != null;
 	}
 
 	@Override
@@ -129,7 +130,7 @@ public class BerryBushHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, int id, int meta, int fortune) {
+	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune) {
 		ArrayList<ItemStack> li = new ArrayList();
 		if (id == bushID) {
 			li.add(new ItemStack(berryID, 1, meta-12));

@@ -9,12 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.world.IBlockAccess;
 import Reika.DragonAPI.Auxiliary.ReikaBlockRenderer;
 import Reika.DragonAPI.Interfaces.SidedTextureIndex;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
+import net.minecraft.block.Block;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.world.IBlockAccess;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -69,14 +70,14 @@ public final class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderblocks) {
 		int metadata = world.getBlockMetadata(x, y, z);
-		ReikaBlockRenderer.instance.renderCube(block, x, y, z, 1F, 1F, 1F, metadata, world, textureSheet, modClass);
+		//ReikaBlockRenderer.instance.renderCube(block, x, y, z, 1F, 1F, 1F, metadata, world, textureSheet, modClass);
 		//if (!Loader.isModLoaded("Optifine"))
 		ReikaTextureHelper.bindTerrainTexture();
 		return true;
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
+	public boolean shouldRender3DInInventory(int model) {
 		return is3D;
 	}
 

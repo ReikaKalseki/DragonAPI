@@ -11,14 +11,18 @@ package Reika.DragonAPI.Interfaces;
 
 import java.net.URL;
 
+import net.minecraft.client.audio.SoundCategory;
+
 
 /** This is an interface for ENUMS! */
-public interface SoundList {
+public interface SoundEnum {
 
 	public String getName();
 
 	public String getPath();
 
 	public URL getURL();
+
+	public SoundCategory getCategory();
 
 }

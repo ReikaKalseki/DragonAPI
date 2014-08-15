@@ -9,15 +9,21 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
+import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
+
 import java.util.List;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,16 +31,11 @@ import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.ReikaEntityHelper;
-import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 
 public class ItemSpawner extends Item {
 
-	public ItemSpawner(int id) {
-		super(id);
+	public ItemSpawner() {
+		super();
 		this.setHasSubtypes(true);
 	}
 
@@ -47,7 +48,7 @@ public class ItemSpawner extends Item {
 	}
 
 	@Override
-	public void getSubItems(int par1, CreativeTabs par2CreativeTabs, List par3List) {
+	public void getSubItems(Item par1, CreativeTabs par2CreativeTabs, List par3List) {
 		for (int k = 50; k <= 66; k++) { //50-66 hostile, 90-99 animal, 120 villager
 			ItemStack spw = new ItemStack(par1, 1, 0);
 			if (spw.stackTagCompound == null)
@@ -76,7 +77,7 @@ public class ItemSpawner extends Item {
 			ReikaChatHelper.write(ReikaSpawnerHelper.getSpawnerFromItemNBT(is)+" cannot be placed in dimension "+world.provider.getDimensionName()+"!");
 			return false;
 		}
-		if (!ReikaWorldHelper.softBlocks(world.getBlockId(x, y, z)) && world.getBlockMaterial(x, y, z) != Material.water && world.getBlockMaterial(x, y, z) != Material.lava) {
+		if (!ReikaWorldHelper.softBlocks(world.getBlock(x, y, z)) && ReikaWorldHelper.getMaterial(world, x, y, z) != Material.water && ReikaWorldHelper.getMaterial(world, x, y, z) != Material.lava) {
 			if (side == 0)
 				--y;
 			if (side == 1)
@@ -89,7 +90,7 @@ public class ItemSpawner extends Item {
 				--x;
 			if (side == 5)
 				++x;
-			if (!ReikaWorldHelper.softBlocks(world.getBlockId(x, y, z)) && world.getBlockMaterial(x, y, z) != Material.water && world.getBlockMaterial(x, y, z) != Material.lava)
+			if (!ReikaWorldHelper.softBlocks(world.getBlock(x, y, z)) && ReikaWorldHelper.getMaterial(world, x, y, z) != Material.water && ReikaWorldHelper.getMaterial(world, x, y, z) != Material.lava)
 				return false;
 		}
 		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1);
@@ -102,11 +103,11 @@ public class ItemSpawner extends Item {
 		{
 			if (!ep.capabilities.isCreativeMode)
 				--is.stackSize;
-			world.setBlock(x, y, z, Block.mobSpawner.blockID);
-			TileEntityMobSpawner spw = (TileEntityMobSpawner)world.getBlockTileEntity(x, y, z);
+			world.setBlock(x, y, z, Blocks.mob_spawner);
+			TileEntityMobSpawner spw = (TileEntityMobSpawner)world.getTileEntity(x, y, z);
 			if (spw != null) {
 				world.playSoundEffect(x+0.5, y+0.5, z+0.5, "step.stone", 1F, 1.5F);
-				MobSpawnerBaseLogic lgc = spw.getSpawnerLogic();
+				MobSpawnerBaseLogic lgc = spw.func_145881_a();
 				ReikaSpawnerHelper.setSpawnerFromItemNBT(is, spw);
 				lgc.spawnDelay = itemRand.nextInt(900); //20s delay
 			}
@@ -141,10 +142,10 @@ public class ItemSpawner extends Item {
 	}
 
 	@Override
-	public final void registerIcons(IconRegister ico) {}
+	public final void registerIcons(IIconRegister ico) {}
 
 	@Override
-	public String getItemDisplayName(ItemStack is) {
+	public String getItemStackDisplayName(ItemStack is) {
 		return "Monster Spawner";
 	}
 }

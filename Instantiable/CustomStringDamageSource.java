@@ -10,8 +10,9 @@
 package Reika.DragonAPI.Instantiable;
 
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.IChatComponent;
 
 public class CustomStringDamageSource extends DamageSource {
 
@@ -26,10 +27,9 @@ public class CustomStringDamageSource extends DamageSource {
 	}
 
 	@Override
-	public ChatMessageComponent getDeathMessage(EntityLivingBase e)
+	public final IChatComponent func_151519_b(EntityLivingBase e)
 	{
-		ChatMessageComponent ch = new ChatMessageComponent();
-		ch.addText(e.getEntityName()+" "+message);
+		IChatComponent ch = new ChatComponentTranslation(e.getCommandSenderName()+" "+message);
 		return ch;
 	}
 

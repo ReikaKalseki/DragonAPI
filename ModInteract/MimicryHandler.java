@@ -9,36 +9,38 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class MimicryHandler extends ModHandlerBase {
 
 	private static final MimicryHandler instance = new MimicryHandler();
 
-	public final int oreID;
-	public final int itemID;
+	public final Block oreID;
+	public final Item itemID;
 
 	private MimicryHandler() {
 		super();
-		int idstone = -1;
-		int iditem = -1;
+		Block idstone = null;
+		Item iditem = null;
 
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
 				Field ore = blocks.getField("MimichiteOre");
-				idstone = ((Block)ore.get(null)).blockID;
+				idstone = ((Block)ore.get(null));
 
 				Class items = this.getMod().getItemClass();
 				Field item = items.getField("Mimichite");
-				iditem = ((Item)item.get(null)).itemID;
+				iditem = ((Item)item.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -75,7 +77,7 @@ public class MimicryHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return itemID != -1 && oreID != -1;
+		return itemID != null && oreID != null;
 	}
 
 	@Override
@@ -86,7 +88,7 @@ public class MimicryHandler extends ModHandlerBase {
 	public boolean isMimichiteOre(ItemStack block) {
 		if (!this.initializedProperly())
 			return false;
-		return block.itemID == oreID;
+		return ReikaItemHelper.matchStackWithBlock(block, oreID);
 	}
 
 }

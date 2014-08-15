@@ -9,15 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
+
 public interface IDRegistry {
 
 	public String getConfigName();
 
 	public int getDefaultID();
-
-	public boolean isBlock();
-
-	public boolean isItem();
 
 	public String getCategory();
 

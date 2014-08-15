@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +19,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 
 public class ReikaBiomeHelper extends DragonAPICore {
 
@@ -114,36 +115,29 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 	/** Converts the given coordinates to an RGB representation of those coordinates' biome's color, for the given material type.
 	 * Args: World, x, z, material (String) */
-	public static int[] biomeToRGB(World world, int x, int z, String material) {
-		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-		int color = biomeToHex(biome, material);
-		return ReikaColorAPI.HexToRGB(color);
-	}
-
-	public static int[] biomeToRGB(IBlockAccess world, int x, int z, String material) {
-		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-		int color = biomeToHex(biome, material);
+	public static int[] biomeToRGB(IBlockAccess world, int x, int y, int z, String material) {
+		int color = biomeToHex(world, x, y, z, material);
 		return ReikaColorAPI.HexToRGB(color);
 	}
 
 	/** Converts the given coordinates to a hex representation of those coordinates' biome's color, for the given material type.
 	 * Args: World, x, z, material (String) */
-	public static int biomeToHexColor(World world, int x, int z, String material) {
-		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-		int color = biomeToHex(biome, material);
+	public static int biomeToHexColor(IBlockAccess world, int x, int y, int z, String material) {
+		int color = biomeToHex(world, x, y, z, material);
 		return color;
 	}
 
-	private static int biomeToHex(BiomeGenBase biome, String mat) {
+	private static int biomeToHex(IBlockAccess world, int x, int y, int z, String mat) {
+		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 		int color = 0;
 		if (mat == "Leaves")
-			color = biome.getBiomeFoliageColor();
+			color = biome.getBiomeFoliageColor(x, y, z);
 		if (mat == "Grass")
-			color = biome.getBiomeGrassColor();
+			color = biome.getBiomeGrassColor(x, y, z);
 		if (mat == "Water")
 			color = biome.getWaterColorMultiplier();
 		if (mat == "Sky")
-			color = biome.getSkyColorByTemp(biome.getIntTemperature());
+			color = biome.getSkyColorByTemp(biome.getFloatTemperature(x, y, z));
 		return color;
 	}
 

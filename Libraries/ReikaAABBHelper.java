@@ -9,13 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.AxisAlignedBB;
 
 import org.lwjgl.opengl.GL11;
-
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 public final class ReikaAABBHelper extends DragonAPICore {
 
@@ -134,12 +134,12 @@ public final class ReikaAABBHelper extends DragonAPICore {
 
 	/** Returns a 1-block bounding box. Args: x, y, z */
 	public static AxisAlignedBB getBlockAABB(int x, int y, int z) {
-		return AxisAlignedBB.getAABBPool().getAABB(x, y, z, x+1, y+1, z+1);
+		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1);
 	}
 
-	/** Returns a sized bounding box centered on a block. Args: x, y, z */
+	/** Returns a sized bounding box centered on a Blocks. Args: x, y, z */
 	public static AxisAlignedBB getBlockCenteredAABB(int x, int y, int z, int range) {
-		return AxisAlignedBB.getAABBPool().getAABB(x, y, z, x+1, y+1, z+1).expand(range, range, range);
+		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1).expand(range, range, range);
 	}
 
 }

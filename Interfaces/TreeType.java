@@ -11,14 +11,15 @@ package Reika.DragonAPI.Interfaces;
 
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 public interface TreeType {
 
 	public ItemStack getItem();
-	public int getLogID();
-	public int getLeafID();
-	public int getSaplingID();
+	public Block getLogID();
+	public Block getLeafID();
+	public Block getSaplingID();
 	public List<Integer> getLogMetadatas();
 	public List<Integer> getLeafMetadatas();
 	public boolean canBePlacedSideways();

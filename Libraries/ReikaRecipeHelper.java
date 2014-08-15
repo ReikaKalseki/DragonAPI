@@ -9,13 +9,19 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.ExpandedOreRecipe;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
@@ -26,11 +32,6 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.ExpandedOreRecipe;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ReikaRecipeHelper extends DragonAPICore {
@@ -340,28 +341,18 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			//ReikaJavaLibrary.pConsole(in[i]+" for "+i);
 			if (in[i] != null) {
 				if (in[i].stackSize > 1)
-					in[i].stackSize = 1;//in[1] = new ItemStack(in[i].itemID, 4, in[i].getItemDamage());
+					in[i].stackSize = 1;//in[1] = new ItemStack(in[i.getItem, 4, in[i].getItemDamage());
 			}
 		}
 	}
 
 	/** Get the smelting recipe of an item by output. Args: output */
 	public static ItemStack getFurnaceInput(ItemStack out) {
-		HashMap m = (HashMap)FurnaceRecipes.smelting().getMetaSmeltingList();
-		Set ks = m.keySet();
-		Object[] ob = ks.toArray();
-		for (int i = 0; i < ob.length; i++) {
-			//ReikaJavaLibrary.pConsole(ob[i]);
-			try {
-				int id = (Integer)((List)ob[i]).get(0);
-				int meta = (Integer)((List)ob[i]).get(1);
-				ItemStack is = new ItemStack(id, 1, meta);
-				if (ReikaItemHelper.matchStacks(FurnaceRecipes.smelting().getSmeltingResult(is), out)) {
-					return is;
-				}
-			}
-			catch (ClassCastException e) {
-				ReikaJavaLibrary.pConsole(e.getMessage());
+		HashMap m = (HashMap)FurnaceRecipes.smelting().getSmeltingList();
+		for (Object o : m.keySet()) {
+			ItemStack in = (ItemStack)o;
+			if (ReikaItemHelper.matchStacks(FurnaceRecipes.smelting().getSmeltingResult(in), out)) {
+				return in;
 			}
 		}
 		return null;
@@ -369,7 +360,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 	/** Adds a smelting recipe. Args; Item in, item out, xp */
 	public static void addSmelting(ItemStack in, ItemStack out, float xp) {
-		FurnaceRecipes.smelting().addSmelting(in.itemID, in.getItemDamage(), out, xp);
+		FurnaceRecipes.smelting().func_151396_a(in.getItem(), out, xp);
 	}
 
 	/** Returns true if succeeded. */
@@ -458,7 +449,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 					int h = getOreRecipeHeight(s);
 					int w = getOreRecipeWidth(s);
 					if (h > 0 && w > 0) {
-						ShapedOreRecipe rec = new ShapedOreRecipe(s.getRecipeOutput(), 'B', Block.stone);
+						ShapedOreRecipe rec = new ShapedOreRecipe(s.getRecipeOutput(), 'B', Blocks.stone);
 						//ReikaJavaLibrary.spamConsole(rec.getInput().length+":"+Arrays.toString(rec.getInput()));
 						//ReikaJavaLibrary.spamConsole(in.length+":"+Arrays.toString(in));
 						Object[] items = new Object[in.length];

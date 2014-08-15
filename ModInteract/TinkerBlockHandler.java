@@ -9,44 +9,45 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class TinkerBlockHandler extends ModHandlerBase {
 
 	private static final TinkerBlockHandler instance = new TinkerBlockHandler();
 
-	public final int gravelOreID;
-	public final int stoneOreID;
-	public final int clearGlassID;
-	public final int clearPaneID;
+	public final Block gravelOreID;
+	public final Block stoneOreID;
+	public final Block clearGlassID;
+	public final Block clearPaneID;
 
 	private TinkerBlockHandler() {
 		super();
-		int idgravel = -1;
-		int idnether = -1;
-		int idglass = -1;
-		int idpane = -1;
+		Block idgravel = null;
+		Block idnether = null;
+		Block idglass = null;
+		Block idpane = null;
 
 		if (this.hasMod()) {
 			try {
 				Class tink = ModList.TINKERER.getBlockClass();
 				Field gravel = tink.getField("oreGravel");
-				idgravel = ((Block)gravel.get(null)).blockID;
+				idgravel = ((Block)gravel.get(null));
 
 				Field ore = tink.getField("oreSlag");
-				idnether = ((Block)gravel.get(null)).blockID;
+				idnether = ((Block)gravel.get(null));
 
 				Field glass = tink.getField("clearGlass");
-				idglass = ((Block)glass.get(null)).blockID;
+				idglass = ((Block)glass.get(null));
 
 				Field pane = tink.getField("glassPane");
-				idpane = ((Block)pane.get(null)).blockID;
+				idpane = ((Block)pane.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -85,7 +86,7 @@ public class TinkerBlockHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return gravelOreID != -1 && stoneOreID != -1 && clearGlassID != -1 && clearPaneID != -1;
+		return gravelOreID != null && stoneOreID != null && clearGlassID != null && clearPaneID != null;
 	}
 
 	@Override
@@ -96,13 +97,13 @@ public class TinkerBlockHandler extends ModHandlerBase {
 	public boolean isGravelOre(ItemStack block) {
 		if (!this.initializedProperly())
 			return false;
-		return block.itemID == gravelOreID;
+		return Block.getBlockFromItem(block.getItem()) == gravelOreID;
 	}
 
 	public boolean isNetherOre(ItemStack block) {
 		if (!this.initializedProperly())
 			return false;
-		return block.itemID == stoneOreID && block.getItemDamage() < 3;
+		return Block.getBlockFromItem(block.getItem()) == stoneOreID && block.getItemDamage() < 3;
 	}
 
 }

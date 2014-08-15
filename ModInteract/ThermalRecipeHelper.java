@@ -45,9 +45,9 @@ public class ThermalRecipeHelper {
 	public static void addFluidTransposerFill(ItemStack in, ItemStack out, int energy, FluidStack f, boolean reversible) {
 		NBTTagCompound toSend = new NBTTagCompound();
 		toSend.setInteger("energy", energy);
-		toSend.setCompoundTag("input", new NBTTagCompound());
-		toSend.setCompoundTag("output", new NBTTagCompound());
-		toSend.setCompoundTag("fluid", new NBTTagCompound());
+		toSend.setTag("input", new NBTTagCompound());
+		toSend.setTag("output", new NBTTagCompound());
+		toSend.setTag("fluid", new NBTTagCompound());
 
 		in.writeToNBT(toSend.getCompoundTag("input"));
 		out.writeToNBT(toSend.getCompoundTag("output"));
@@ -72,9 +72,9 @@ public class ThermalRecipeHelper {
 	public static void addFluidTransposerDrain(ItemStack in, ItemStack out, int energy, FluidStack f, int chance, boolean reversible) {
 		NBTTagCompound toSend = new NBTTagCompound();
 		toSend.setInteger("energy", energy);
-		toSend.setCompoundTag("input", new NBTTagCompound());
-		toSend.setCompoundTag("output", new NBTTagCompound());
-		toSend.setCompoundTag("fluid", new NBTTagCompound());
+		toSend.setTag("input", new NBTTagCompound());
+		toSend.setTag("output", new NBTTagCompound());
+		toSend.setTag("fluid", new NBTTagCompound());
 
 		in.writeToNBT(toSend.getCompoundTag("input"));
 		out.writeToNBT(toSend.getCompoundTag("output"));
@@ -123,8 +123,8 @@ public class ThermalRecipeHelper {
 	public static void addCrucibleRecipe(ItemStack in, FluidStack f, int energy) {
 		NBTTagCompound toSend = new NBTTagCompound();
 		toSend.setInteger("energy", energy);
-		toSend.setCompoundTag("input", new NBTTagCompound());
-		toSend.setCompoundTag("output", new NBTTagCompound());
+		toSend.setTag("input", new NBTTagCompound());
+		toSend.setTag("output", new NBTTagCompound());
 
 		in.writeToNBT(toSend.getCompoundTag("input"));
 		f.writeToNBT(toSend.getCompoundTag("output"));
@@ -134,11 +134,11 @@ public class ThermalRecipeHelper {
 	private static void addTwoInTwoOutWithChance(String type, ItemStack in1, ItemStack in2, ItemStack out1, ItemStack out2, int out2chance, int energy) {
 		NBTTagCompound toSend = new NBTTagCompound();
 		toSend.setInteger("energy", energy);
-		toSend.setCompoundTag("primaryInput", new NBTTagCompound());
-		toSend.setCompoundTag("secondaryInput", new NBTTagCompound());
-		toSend.setCompoundTag("primaryOutput", new NBTTagCompound());
+		toSend.setTag("primaryInput", new NBTTagCompound());
+		toSend.setTag("secondaryInput", new NBTTagCompound());
+		toSend.setTag("primaryOutput", new NBTTagCompound());
 		if (out2 != null)
-			toSend.setCompoundTag("secondaryOutput", new NBTTagCompound());
+			toSend.setTag("secondaryOutput", new NBTTagCompound());
 
 		in1.writeToNBT(toSend.getCompoundTag("primaryInput"));
 		in2.writeToNBT(toSend.getCompoundTag("secondaryInput"));
@@ -153,10 +153,10 @@ public class ThermalRecipeHelper {
 	private static void addOneInTwoOutWithChance(String type, ItemStack in, ItemStack out1, ItemStack out2, int out2chance, int energy) {
 		NBTTagCompound toSend = new NBTTagCompound();
 		toSend.setInteger("energy", energy);
-		toSend.setCompoundTag("input", new NBTTagCompound());
-		toSend.setCompoundTag("primaryOutput", new NBTTagCompound());
+		toSend.setTag("input", new NBTTagCompound());
+		toSend.setTag("primaryOutput", new NBTTagCompound());
 		if (out2 != null)
-			toSend.setCompoundTag("secondaryOutput", new NBTTagCompound());
+			toSend.setTag("secondaryOutput", new NBTTagCompound());
 
 		in.writeToNBT(toSend.getCompoundTag("input"));
 		out1.writeToNBT(toSend.getCompoundTag("primaryOutput"));

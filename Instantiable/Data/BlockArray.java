@@ -9,17 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.SemiTransparent;
@@ -28,6 +17,19 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Random;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public class BlockArray {
 
@@ -109,6 +111,10 @@ public class BlockArray {
 		return maxZ-minZ;
 	}
 
+	public int getVolume() {
+		return this.getSizeX()*this.getSizeY()*this.getSizeZ();
+	}
+
 	private void setLimits(int x, int y, int z) {
 		if (x < minX)
 			minX = x;
@@ -177,16 +183,16 @@ public class BlockArray {
 
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow */
-	public void recursiveAdd(World world, int x, int y, int z, int id) {
+	public void recursiveAdd(World world, int x, int y, int z, Block id) {
 		this.recursiveAdd(world, x, y, z, id, 0);
 	}
 
-	private void recursiveAdd(World world, int x, int y, int z, int id, int depth) {
+	private void recursiveAdd(World world, int x, int y, int z, Block id, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
 			return;
-		if (world.getBlockId(x, y, z) != id)
+		if (world.getBlock(x, y, z) != id)
 			return;
 		if (this.hasBlock(x, y, z))
 			return;
@@ -207,16 +213,16 @@ public class BlockArray {
 
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow, metadata to follow */
-	public void recursiveAddWithMetadata(World world, int x, int y, int z, int id, int meta) {
+	public void recursiveAddWithMetadata(World world, int x, int y, int z, Block id, int meta) {
 		this.recursiveAddWithMetadata(world, x, y, z, id, meta, 0);
 	}
 
-	private void recursiveAddWithMetadata(World world, int x, int y, int z, int id, int meta, int depth) {
+	private void recursiveAddWithMetadata(World world, int x, int y, int z, Block id, int meta, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
 			return;
-		if (world.getBlockId(x, y, z) != id)
+		if (world.getBlock(x, y, z) != id)
 			return;
 		if (world.getBlockMetadata(x, y, z) != meta)
 			return;
@@ -239,18 +245,18 @@ public class BlockArray {
 
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	public void recursiveAddWithBounds(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void recursiveAddWithBounds(World world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2) {
 		this.recursiveAddWithBounds(world, x, y, z, id, x1, y1, z1, x2, y2, z2, 0);
 	}
 
-	private void recursiveAddWithBounds(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+	private void recursiveAddWithBounds(World world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
-		if (world.getBlockId(x, y, z) != id) {
+		if (world.getBlock(x, y, z) != id) {
 			return;
 		}
 		if (this.hasBlock(x, y, z))
@@ -272,18 +278,18 @@ public class BlockArray {
 
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	public void recursiveAddWithBoundsRanged(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2, int r) {
+	public void recursiveAddWithBoundsRanged(World world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int r) {
 		this.recursiveAddWithBoundsRanged(world, x, y, z, id, x1, y1, z1, x2, y2, z2, r, 0);
 	}
 
-	private void recursiveAddWithBoundsRanged(World world, int x, int y, int z, int id, int x1, int y1, int z1, int x2, int y2, int z2, int r, int depth) {
+	private void recursiveAddWithBoundsRanged(World world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int r, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
-		if (world.getBlockId(x, y, z) != id) {
+		if (world.getBlock(x, y, z) != id) {
 			return;
 		}
 		if (this.hasBlock(x, y, z))
@@ -304,11 +310,11 @@ public class BlockArray {
 		}
 	}
 
-	public void recursiveAddMultipleWithBounds(World world, int x, int y, int z, List<Integer> id, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void recursiveAddMultipleWithBounds(World world, int x, int y, int z, List<Block> id, int x1, int y1, int z1, int x2, int y2, int z2) {
 		this.recursiveAddMultipleWithBounds(world, x, y, z, id, x1, y1, z1, x2, y2, z2, 0);
 	}
 
-	private void recursiveAddMultipleWithBounds(World world, int x, int y, int z, List<Integer> id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+	private void recursiveAddMultipleWithBounds(World world, int x, int y, int z, List<Block> id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -317,7 +323,7 @@ public class BlockArray {
 			return;
 		boolean flag = false;
 		for (int i = 0; i < id.size(); i++) {
-			if (world.getBlockId(x, y, z) == id.get(i)) {
+			if (world.getBlock(x, y, z) == id.get(i)) {
 				flag = true;
 			}
 		}
@@ -340,13 +346,13 @@ public class BlockArray {
 		}
 	}
 
-	public void recursiveMultiAddWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int... ids) {
+	public void recursiveMultiAddWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, Block... ids) {
 		this.recursiveMultiAddWithBounds(world, x, y, z, x1, y1, z1, x2, y2, z2, 0, ids);
 	}
 
 	/** Like the ordinary recursive add but with a bounded volume and tolerance for multiple IDs. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	private void recursiveMultiAddWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int depth, int... ids) {
+	private void recursiveMultiAddWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int depth, Block... ids) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -355,7 +361,7 @@ public class BlockArray {
 			return;
 		boolean flag = false;
 		for (int i = 0; i < ids.length; i++) {
-			if (world.getBlockId(x, y, z) == ids[i]) {
+			if (world.getBlock(x, y, z) == ids[i]) {
 				flag = true;
 			}
 		}
@@ -378,18 +384,18 @@ public class BlockArray {
 		}
 	}
 
-	public void recursiveAddWithBoundsMetadata(World world, int x, int y, int z, int id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void recursiveAddWithBoundsMetadata(World world, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
 		this.recursiveAddWithBoundsMetadata(world, x, y, z, id, meta, x1, y1, z1, x2, y2, z2, 0);
 	}
 
-	private void recursiveAddWithBoundsMetadata(World world, int x, int y, int z, int id, int meta, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+	private void recursiveAddWithBoundsMetadata(World world, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
-		if (world.getBlockId(x, y, z) != id || world.getBlockMetadata(x, y, z) != meta) {
+		if (world.getBlock(x, y, z) != id || world.getBlockMetadata(x, y, z) != meta) {
 			return;
 		}
 		if (this.hasBlock(x, y, z))
@@ -424,11 +430,11 @@ public class BlockArray {
 			return;
 		if (depth > maxDepth)
 			return;
-		//ReikaJavaLibrary.pConsole(liquidID+" and "+world.getBlockId(x, y, z));;
+		//ReikaJavaLibrary.pConsole(liquidID+" and "+world.getBlock(x, y, z));;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
-		if (world.getBlockMaterial(x, y, z) != liquidMat) {
-			//ReikaJavaLibrary.pConsole("Could not match id "+world.getBlockId(x, y, z)+" to "+liquidID);
+		if (ReikaWorldHelper.getMaterial(world, x, y, z) != liquidMat) {
+			//ReikaJavaLibrary.pConsole("Could not match id "+world.getBlock(x, y, z)+" to "+liquidID);
 			return;
 		}
 		if (this.hasBlock(x, y, z))
@@ -450,12 +456,12 @@ public class BlockArray {
 
 	/** Like the ordinary recursive add but with a spherical bounded volume. Args: World, x, y, z,
 	 * id to replace, origin x,y,z, max radius */
-	private void recursiveAddWithinSphere(World world, int x, int y, int z, int id, int x0, int y0, int z0, double r, int depth) {
+	private void recursiveAddWithinSphere(World world, int x, int y, int z, Block id, int x0, int y0, int z0, double r, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
 			return;
-		if (world.getBlockId(x, y, z) != id)
+		if (world.getBlock(x, y, z) != id)
 			return;
 		if (this.hasBlock(x, y, z))
 			return;
@@ -521,7 +527,7 @@ public class BlockArray {
 		for (int i = 0; i < this.getSize(); i++) {
 			int[] xyz = blocks.get(i);
 			if (refWorld != null) {
-				int id = refWorld.getBlockId(xyz[0], xyz[1], xyz[2]);
+				Block id = refWorld.getBlock(xyz[0], xyz[1], xyz[2]);
 				int meta = refWorld.getBlockMetadata(xyz[0], xyz[1], xyz[2]);
 				list.append(id+":"+meta+" @ ");
 			}
@@ -592,27 +598,27 @@ public class BlockArray {
 	}
 
 	public boolean addIfClear(World world, int x, int y, int z) {
-		int id = world.getBlockId(x, y, z);
-		if (id == 0) {
+		Block id = world.getBlock(x, y, z);
+		if (id == Blocks.air) {
 			this.addBlockCoordinate(x, y, z);
 			return true;
 		}
-		if (!Block.blocksList[id].canCollideCheck(id, false) && !BlockFluid.class.isAssignableFrom(Block.blocksList[id].getClass())) {
+		if (!id.canCollideCheck(world.getBlockMetadata(x, y, z), false) && !BlockLiquid.class.isAssignableFrom(id.getClass())) {
 			this.addBlockCoordinate(x, y, z);
 			return true;
 		}
-		if (Block.blocksList[id] instanceof SemiTransparent) {
+		if (id instanceof SemiTransparent) {
 			int meta = world.getBlockMetadata(x, y, z);
-			SemiTransparent b = (SemiTransparent)Block.blocksList[id];
+			SemiTransparent b = (SemiTransparent)id;
 			if (b.isOpaque(meta))
 				return false;
 		}
-		if (!Block.blocksList[id].isOpaqueCube()) //do not block but do not add
+		if (!id.isOpaqueCube()) //do not block but do not add
 			return true;
 		return false;
 	}
 
-	public void addSphere(World world, int x, int y, int z, int id, double r) {
+	public void addSphere(World world, int x, int y, int z, Block id, double r) {
 		if (r == 0)
 			return;
 		try {
@@ -679,7 +685,7 @@ public class BlockArray {
 		}
 	}
 
-	public void sink(World world, Block... overrides) {
+	public void sink(World world, Blocks... overrides) {
 		boolean canSink = true;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
@@ -687,7 +693,7 @@ public class BlockArray {
 				int x = xyz[0];
 				int y = xyz[1];
 				int z = xyz[2];
-				int idy = world.getBlockId(x, y-1, z);
+				Block idy = world.getBlock(x, y-1, z);
 				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) && !ReikaArrayHelper.contains(overrides, idy)) {
 					canSink = false;
 				}
@@ -707,7 +713,7 @@ public class BlockArray {
 				int z = xyz[2];
 				if (minY <= 0 || y <= 0)
 					canSink = false;
-				Material idy = world.getBlockMaterial(x, y-1, z);
+				Material idy = ReikaWorldHelper.getMaterial(world, x, y-1, z);
 				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) && !ReikaArrayHelper.contains(overrides, idy) && idy.isSolid()) {
 					canSink = false;
 				}
@@ -721,41 +727,36 @@ public class BlockArray {
 	public final ArrayList<ItemStack> getAllDroppedItems(World world, int fortune) {
 		ArrayList<ItemStack> li = new ArrayList();
 		ArrayList<ItemStack> nbt = new ArrayList();
-		HashMap<List<Integer>, Integer> map = new HashMap();
+		HashMap<ItemStack, Integer> map = new HashMap();
 		for (int i = 0; i < blocks.size(); i++) {
 			int[] xyz = blocks.get(i);
 			int x = xyz[0];
 			int y = xyz[1];
 			int z = xyz[2];
-			int id = world.getBlockId(x, y, z);
-			if (id != 0) {
-				Block b = Block.blocksList[id];
-				if (b != null) {
-					int metadata = world.getBlockMetadata(x, y, z);
-					ArrayList<ItemStack> drop = b.getBlockDropped(world, x, y, z, metadata, fortune);
-					for (int k = 0; k < drop.size(); k++) {
-						ItemStack is = drop.get(k);
-						if (is.stackTagCompound != null) {
-							nbt.add(is);
+			Block b = world.getBlock(x, y, z);
+			if (b != null && b != Blocks.air) {
+				int metadata = world.getBlockMetadata(x, y, z);
+				ArrayList<ItemStack> drop = b.getDrops(world, x, y, z, metadata, fortune);
+				for (int k = 0; k < drop.size(); k++) {
+					ItemStack is = drop.get(k);
+					if (is.stackTagCompound != null) {
+						nbt.add(is);
+					}
+					else {
+						if (map.containsKey(is)) {
+							int cur = map.get(is);
+							cur += is.stackSize;
+							map.put(is, cur);
 						}
 						else {
-							List<Integer> key = Arrays.asList(is.itemID, is.getItemDamage());
-							if (map.containsKey(key)) {
-								int cur = map.get(key);
-								cur += is.stackSize;
-								map.put(key, cur);
-							}
-							else {
-								map.put(key, is.stackSize);
-							}
+							map.put(is, is.stackSize);
 						}
 					}
 				}
 			}
 		}
-		for (List<Integer> key : map.keySet()) {
-			int count = map.get(key);
-			ItemStack is = new ItemStack(key.get(0), 1, key.get(1));
+		for (ItemStack is : map.keySet()) {
+			int count = map.get(is);
 			int max = is.getMaxStackSize();
 			if (count > max) {
 				while (count > 0) {
@@ -781,7 +782,7 @@ public class BlockArray {
 		return copy;
 	}
 
-	public final boolean isAtLeastXPercentNot(World world, double percent, int id, int meta) {
+	public final boolean isAtLeastXPercentNot(World world, double percent, Block id, int meta) {
 		double s = this.getSize();
 		int c = 0;
 		for (int i = 0; i < this.getSize(); i++) {
@@ -789,7 +790,7 @@ public class BlockArray {
 			int x = xyz[0];
 			int y = xyz[1];
 			int z = xyz[2];
-			int id2 = world.getBlockId(x, y, z);
+			Block id2 = world.getBlock(x, y, z);
 			int meta2 = world.getBlockMetadata(x, y, z);
 			if (id2 != id || meta2 != meta) {
 				c++;
@@ -798,11 +799,11 @@ public class BlockArray {
 		return c/s*100D >= percent;
 	}
 
-	public final boolean isAtLeastXPercent(World world, double percent, int id) {
+	public final boolean isAtLeastXPercent(World world, double percent, Block id) {
 		return this.isAtLeastXPercent(world, percent, id, -1);
 	}
 
-	public final boolean isAtLeastXPercent(World world, double percent, int id, int meta) {
+	public final boolean isAtLeastXPercent(World world, double percent, Block id, int meta) {
 		double s = this.getSize();
 		int c = 0;
 		for (int i = 0; i < this.getSize(); i++) {
@@ -810,7 +811,7 @@ public class BlockArray {
 			int x = xyz[0];
 			int y = xyz[1];
 			int z = xyz[2];
-			int id2 = world.getBlockId(x, y, z);
+			Block id2 = world.getBlock(x, y, z);
 			int meta2 = world.getBlockMetadata(x, y, z);
 			if (id2 == id && (meta == -1 || meta2 == meta)) {
 				c++;
@@ -820,6 +821,26 @@ public class BlockArray {
 	}
 
 	public final boolean isAtLeastXPercentSolid(World world, double percent) {
-		return this.isAtLeastXPercentNot(world, percent, 0, 0);
+		return this.isAtLeastXPercentNot(world, percent, Blocks.air, 0);
+	}
+
+	public void setTo(Block b) {
+		this.setTo(b, 0);
+	}
+
+	public void setTo(Block b, int meta) {
+		if (refWorld != null) {
+			for (int i = 0; i < this.getSize(); i++) {
+				int[] xyz = this.getNthBlock(i);
+				refWorld.setBlock(xyz[0], xyz[1], xyz[2], b, meta, 3);
+			}
+		}
+		else {
+			throw new MisuseException("Cannot apply operations to a null world!");
+		}
+	}
+
+	public void clearArea() {
+		this.setTo(Blocks.air);
 	}
 }

@@ -9,14 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraftforge.common.ChestGenHooks;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class LootController {
 

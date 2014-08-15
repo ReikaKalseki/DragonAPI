@@ -9,34 +9,35 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class TinkerToolHandler extends ModHandlerBase {
 
 	private static final TinkerToolHandler instance = new TinkerToolHandler();
 
-	public final int pickID;
-	public final int hammerID;
+	public final Item pickID;
+	public final Item hammerID;
 
 	private TinkerToolHandler() {
 		super();
-		int idpick = -1;
-		int idhammer = -1;
+		Item idpick = null;
+		Item idhammer = null;
 
 		if (this.hasMod()) {
 			try {
 				Class item = this.getMod().getItemClass();
 				Field pick = item.getField("pickaxe");
 				Field hammer = item.getField("hammer");
-				idpick = ((Item)pick.get(null)).itemID;
-				idhammer = ((Item)hammer.get(null)).itemID;
+				idpick = ((Item)pick.get(null));
+				idhammer = ((Item)hammer.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -73,7 +74,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return pickID != -1 && hammerID != -1;
+		return pickID != null && hammerID != null;
 	}
 
 	@Override
@@ -82,13 +83,13 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	}
 
 	public boolean isItemInfiTool(ItemStack is) {
-		return is.getUnlocalizedName().startsWith("item.InfiTool");
+		return is.getUnlocalizedName().startsWith("Items.InfiTool");
 	}
 
 	public boolean isPick(ItemStack is) {
 		if (this.isItemInfiTool(is)) {
 			String stackName = is.getUnlocalizedName();
-			if (stackName.equals(Item.itemsList[pickID].getUnlocalizedName()))
+			if (stackName.equals(pickID.getUnlocalizedName()))
 				return true;
 		}
 		return false;
@@ -97,7 +98,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	public boolean isHammer(ItemStack is) {
 		if (this.isItemInfiTool(is)) {
 			String stackName = is.getUnlocalizedName();
-			if (stackName.equals(Item.itemsList[hammerID].getUnlocalizedName()))
+			if (stackName.equals(hammerID.getUnlocalizedName()))
 				return true;
 		}
 		return false;

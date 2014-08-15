@@ -9,15 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Instantiable.Data.ImmutableList;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.Instantiable.Data.ImmutableList;
 
 public class BannedItemReader {
 
@@ -43,17 +46,24 @@ public class BannedItemReader {
 
 	private static final class ItemBanEntry {
 
-		public final int itemID;
+		public final Item itemID;
 		public final int itemDamage;
 
-		private ItemBanEntry(int id, int meta) {
+		private ItemBanEntry(Item id, int meta) {
 			itemID = id;
 			itemDamage = meta;
 		}
 
-		private ItemBanEntry(int id) {
-			itemID = id;
-			itemDamage = -1;
+		private ItemBanEntry(Item id) {
+			this(id, -1);
+		}
+
+		private ItemBanEntry(Block id, int meta) {
+			this(Item.getItemFromBlock(id), meta);
+		}
+
+		private ItemBanEntry(Block id) {
+			this(id, -1);
 		}
 
 		public boolean hasMeta() {
@@ -66,12 +76,16 @@ public class BannedItemReader {
 		}
 
 		public boolean matches(ItemStack is) {
-			return itemID == is.itemID && (itemDamage < 0 || itemDamage == is.getItemDamage());
+			return itemID == is.getItem() && (itemDamage < 0 || itemDamage == is.getItemDamage());
 		}
 
 	}
 
-	public boolean containsID(int id) {
+	public boolean containsID(Block id) {
+		return this.containsID(Item.getItemFromBlock(id));
+	}
+
+	public boolean containsID(Item id) {
 		for (int i = 0; i < allEntries.size(); i++) {
 			ItemBanEntry e = allEntries.get(i);
 			if (e.itemID == id)
@@ -112,8 +126,10 @@ public class BannedItemReader {
 						String id = parts[0];
 						String meta = parts[1];
 						int intid = Integer.parseInt(id);
+						Item it = Item.getItemById(intid);
 						int intmeta = meta.equals("*") ? -1 : Integer.parseInt(meta);
-						allEntries.add(new ItemBanEntry(intid, intmeta));
+
+						allEntries.add(new ItemBanEntry(it, intmeta));
 					}
 					catch (Exception e) {
 						//e.printStackTrace();

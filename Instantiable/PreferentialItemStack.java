@@ -12,6 +12,8 @@ package Reika.DragonAPI.Instantiable;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -19,6 +21,14 @@ public class PreferentialItemStack {
 
 	private LinkedList<String> oreNames = new LinkedList();
 	private final ItemStack fallbackItem;
+
+	public PreferentialItemStack(Item backup, String... items) {
+		this(new ItemStack(backup), items);
+	}
+
+	public PreferentialItemStack(Block backup, String... items) {
+		this(new ItemStack(backup), items);
+	}
 
 	public PreferentialItemStack(ItemStack backup, String... items) {
 		if (backup == null || backup.getItem() == null)

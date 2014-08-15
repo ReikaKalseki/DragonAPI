@@ -9,17 +9,21 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import Reika.DragonAPI.Extras.ModifiedPlayerModel;
+import Reika.DragonAPI.Extras.ReikaModel;
+import Reika.DragonAPI.Extras.SamakiModel;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.event.ForgeSubscribe;
 
 import org.lwjgl.opengl.GL11;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Extras.ReikaModel;
-import Reika.DragonAPI.Extras.SamakiModel;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -28,37 +32,54 @@ public class PlayerModelRenderer {
 
 	public static final PlayerModelRenderer instance = new PlayerModelRenderer();
 
-	private static final ReikaModel modelReika = new ReikaModel();
-	private static final SamakiModel modelSamaki = new SamakiModel();
+	private final ReikaModel modelReika = new ReikaModel();
+	private final SamakiModel modelSamaki = new SamakiModel();
+	private final HashMap<String, ModifiedPlayerModel> models = new HashMap();
 
 	private PlayerModelRenderer() {
+		models.put("Reika_Kalseki", modelReika);
+		models.put("FurryDJ", modelSamaki);
+	}
 
+	public void register() {
+		Map<Class, Render> map = RenderManager.instance.entityRenderMap;
+		map.put(EntityPlayer.class, new CustomPlayerRenderer(map.get(EntityPlayer.class)));
 	}
 
 	// Render starts centered on eye position
-	@ForgeSubscribe
-	public void addReikaModel(RenderPlayerEvent.Pre evt) {
-		RenderPlayer render = evt.renderer;
-		EntityPlayer ep = evt.entityPlayer;
-		float tick = evt.partialRenderTick;
-		if (ep != null && false) {
-			if ("Reika_Kalseki".equals(ep.getEntityName())) {
-				//render.setRenderPassModel(modelReika);
-				ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "/Reika/DragonAPI/Resources/reika_tex.png");
-				GL11.glScaled(1, -1, 1);
-				GL11.glFrontFace(GL11.GL_CW);
-				modelReika.renderBodyParts(ep, tick);
-				GL11.glFrontFace(GL11.GL_CCW);
-				GL11.glScaled(1, -1, 1);
+	//@SubscribeEvent
+	private void addCustomModel(EntityPlayer ep, float tick) {
+		if (ep != null) {
+			ModifiedPlayerModel model = models.get(ep.getCommandSenderName());
+			GL11.glPushMatrix();
+			//render.setRenderPassModel(modelReika);
+			model.bindTexture();
+			GL11.glTranslated(0, 1.6, 0);
+			GL11.glScaled(1, -1, 1);
+			if (ep.isSneaking()) {
+				GL11.glRotated(22.5, 1, 0, 0);
+				GL11.glTranslated(-0.02, 0.1, -0.05);
 			}
-			else if ("FurryDJ".equals(ep.getEntityName())) {
-				ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "/Reika/DragonAPI/Resources/samaki_tex.png");
-				GL11.glScaled(1, -1, 1);
-				GL11.glFrontFace(GL11.GL_CW);
-				modelSamaki.renderBodyParts(ep, tick);
-				GL11.glFrontFace(GL11.GL_CCW);
-				GL11.glScaled(1, -1, 1);
-			}
+			GL11.glFrontFace(GL11.GL_CW);
+			model.renderBodyParts(ep, tick);
+			GL11.glFrontFace(GL11.GL_CCW);
+			GL11.glPopMatrix();
 		}
+	}
+
+	private static final class CustomPlayerRenderer extends RenderPlayer {
+
+		private CustomPlayerRenderer(Render original) {
+			super();
+			renderManager = RenderManager.instance;
+		}
+
+		@Override
+		protected void rotateCorpse(EntityLivingBase ep, float par2, float par3, float partialTick)
+		{
+			super.rotateCorpse(ep, par2, par3, partialTick);
+			PlayerModelRenderer.instance.addCustomModel((EntityPlayer)ep, partialTick);
+		}
+
 	}
 }

@@ -9,35 +9,36 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import net.minecraft.item.Item;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class RedstoneArsenalHandler extends ModHandlerBase {
 
 	private static final String configTag = "ToolFluxInfusedHarvestLevel";
-	private static final String categoryTag = "item.feature";
+	private static final String categoryTag = "Items.feature";
 
 	private static final RedstoneArsenalHandler instance = new RedstoneArsenalHandler();
 
-	public final int pickID;
+	public final Item pickID;
 	public final int pickLevel;
 
 	private RedstoneArsenalHandler() {
 		super();
-		int idpick = -1;
+		Item idpick = null;
 		int levelpick = -1;
 
 		if (this.hasMod()) {
 			try {
 				Class ars = ModList.ARSENAL.getItemClass();
 				Field item = ars.getField("itemPickaxe");
-				idpick = ((Item)item.get(null)).itemID;
+				idpick = ((Item)item.get(null));
 
 				Class c = Class.forName("redstonearsenal.RedstoneArsenal");
 				Field config = c.getField("config");
@@ -96,7 +97,7 @@ public class RedstoneArsenalHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return pickID != -1 && pickLevel != -1;
+		return pickID != null && pickLevel != -1;
 	}
 
 	@Override

@@ -9,18 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModRegistry;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.BlockMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModInteract.BerryBushHandler;
@@ -28,6 +21,16 @@ import Reika.DragonAPI.ModInteract.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
 public enum ModCropList {
 
@@ -43,8 +46,8 @@ public enum ModCropList {
 	ENDER(ModList.EXTRAUTILS, 0x00684A, "enderLily", 7, VarType.INSTANCE);
 
 	private final ModList mod;
-	public final int blockID;
-	public final int seedID;
+	public final Block blockID;
+	public final Item seedID;
 	public final int seedMeta;
 	public final int ripeMeta;
 	/** Not necessarily zero; see cotton */
@@ -60,6 +63,7 @@ public enum ModCropList {
 	private boolean exists = false;
 
 	public static final ModCropList[] cropList = values();
+	private static final BlockMap<ModCropList> cropMappings = new BlockMap();
 
 	private ModCropList(ModList api, int color, String blockVar, int metaripe, VarType type) {
 		this(api, color, blockVar, 0, metaripe, type);
@@ -73,8 +77,8 @@ public enum ModCropList {
 		handler = null;
 		cropColor = color;
 
-		int id = -1;
-		int seed = -1;
+		Block id = null;
+		Item seed = null;
 		if (mod.isLoaded()) {
 			Class blocks = api.getBlockClass();
 			Class items = api.getItemClass();
@@ -100,7 +104,7 @@ public enum ModCropList {
 							exists = false;
 						}
 						else {
-							id = is.itemID;
+							id = Block.getBlockFromItem(is.getItem());
 							exists = true;
 						}
 						break;
@@ -112,15 +116,15 @@ public enum ModCropList {
 							exists = false;
 						}
 						else {
-							id = block.blockID;
+							id = block;
 							exists = true;
 						}
-						break;
+						break;/*
 					case INT:
 						b = blocks.getField(blockVar);
 						id = b.getInt(null);
 						exists = true;
-						break;
+						break;*/
 					default:
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for field "+blockVar);
@@ -146,15 +150,15 @@ public enum ModCropList {
 			}
 		}
 		blockID = id;
-		seedID = blockID;
+		seedID = Item.getItemFromBlock(blockID);
 		seedMeta = 0;
 	}
 
 	private ModCropList(ModList api, int color, CropHandlerBase h) {
 		handler = h;
 		mod = api;
-		blockID = -1;
-		seedID = -1;
+		blockID = null;
+		seedID = null;
 		seedMeta = -1;
 		harvestedMeta = -1;
 		ripeMeta = -1;
@@ -176,8 +180,8 @@ public enum ModCropList {
 		cropColor = color;
 		seedMeta = seedItem;
 		handler = null;
-		int id = -1;
-		int seed = -1;
+		Block id = null;
+		Item seed = null;
 		if (mod.isLoaded()) {
 			Class blocks = api.getBlockClass();
 			Class items = api.getItemClass();
@@ -203,7 +207,7 @@ public enum ModCropList {
 							exists = false;
 						}
 						else {
-							id = is.itemID;
+							id = Block.getBlockFromItem(is.getItem());
 							exists = true;
 						}
 						break;
@@ -215,15 +219,15 @@ public enum ModCropList {
 							exists = false;
 						}
 						else {
-							id = block.blockID;
+							id = block;
 							exists = true;
 						}
-						break;
+						break;/*
 					case INT:
 						b = blocks.getField(blockVar);
 						id = b.getInt(null);
 						exists = true;
-						break;
+						break;*/
 					default:
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for field "+blockVar);
@@ -238,7 +242,7 @@ public enum ModCropList {
 							exists = false;
 						}
 						else {
-							seed = is2.itemID;
+							seed = is2.getItem();
 							exists = true;
 						}
 						break;
@@ -250,15 +254,15 @@ public enum ModCropList {
 							exists = false;
 						}
 						else {
-							seed = item.itemID;
+							seed = item;
 							exists = true;
 						}
-						break;
+						break;/*
 					case INT:
 						i = items.getField(itemVar);
 						seed = i.getInt(null);
 						exists = true;
-						break;
+						break;*/
 					default:
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for field "+itemVar);
@@ -296,20 +300,19 @@ public enum ModCropList {
 	}
 
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
-		int id = world.getBlockId(x, y, z);
+		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		ArrayList<ItemStack> li = new ArrayList();
-		if (blockID != -1)
-			li.addAll(Block.blocksList[blockID].getBlockDropped(world, x, y, z, meta, fortune));
+		if (blockID != null)
+			li.addAll(blockID.getDrops(world, x, y, z, meta, fortune));
 		else {
-			if (id == -1)
+			if (b == Blocks.air)
 				return new ArrayList();
-			Block b = Block.blocksList[id];
 			if (b != null)
-				li.addAll(b.getBlockDropped(world, x, y, z, meta, fortune));
+				li.addAll(b.getDrops(world, x, y, z, meta, fortune));
 		}
 		if (this.isHandlered())
-			li.addAll(handler.getAdditionalDrops(world, x, y, z, id, meta, fortune));
+			li.addAll(handler.getAdditionalDrops(world, x, y, z, b, meta, fortune));
 		return li;
 	}
 
@@ -345,7 +348,7 @@ public enum ModCropList {
 			return itemClass.equals(is.getItem().getClass().getSimpleName());
 		}
 		else {
-			return (seedID == is.itemID && seedMeta == is.getItemDamage());
+			return (seedID == is.getItem() && seedMeta == is.getItemDamage());
 		}
 	}
 
@@ -353,26 +356,35 @@ public enum ModCropList {
 		return mod;
 	}
 
-	public static ModCropList getModCrop(int id, int meta) {
-		for (int i = 0; i < cropList.length; i++) {
-			ModCropList crop = cropList[i];
-			if (crop.isHandlered()) {
-				if (crop.handler.isCrop(id))
-					return crop;
+	public static ModCropList getModCrop(Block id, int meta) {
+		ModCropList mod = cropMappings.get(id, meta);
+
+		if (mod == null) {
+			for (int i = 0; i < cropList.length && mod == null; i++) {
+				ModCropList crop = cropList[i];
+				if (crop.isHandlered()) {
+					if (crop.handler.isCrop(id)) {
+						mod = crop;
+					}
+				}
+				else if (crop.blockClass != null && !crop.blockClass.isEmpty()) {
+					if (crop.blockClass.equals(id.getClass().getSimpleName())) {
+						mod = crop;
+					}
+				}
+				else {
+					if (crop.blockID == id && ReikaMathLibrary.isValueInsideBoundsIncl(crop.minmeta, crop.ripeMeta, meta)) {
+						mod = crop;
+					}
+				}
 			}
-			else if (crop.blockClass != null && !crop.blockClass.isEmpty()) {
-				if (crop.blockClass.equals(Block.blocksList[id].getClass().getSimpleName()))
-					return crop;
-			}
-			else {
-				if (crop.blockID == id && ReikaMathLibrary.isValueInsideBoundsIncl(crop.minmeta, crop.ripeMeta, meta))
-					return crop;
-			}
+			cropMappings.put(id, meta, mod);
 		}
-		return null;
+
+		return mod;
 	}
 
-	public static boolean isModCrop(int id, int meta) {
+	public static boolean isModCrop(Block id, int meta) {
 		return getModCrop(id, meta) != null;
 	}
 
@@ -408,5 +420,16 @@ public enum ModCropList {
 
 	public boolean exists() {
 		return exists;
+	}
+
+	static {
+		for (int i = 0; i < ModCropList.cropList.length; i++) {
+			ModCropList c = ModCropList.cropList[i];
+			if (c.exists() && !c.isHandlered()) {
+				Block b = c.blockID;
+				for (int k = c.minmeta; k <= c.ripeMeta; k++)
+					cropMappings.put(b, k, c);
+			}
+		}
 	}
 }

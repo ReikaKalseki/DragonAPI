@@ -9,16 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModRegistry;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -28,6 +18,17 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.ModInteract.MekanismHandler;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Random;
+
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
@@ -129,7 +130,7 @@ public enum ModOreList implements OreType {
 
 	public static final ModOreList[] oreList = values();
 
-	private static final HashMap<List<Integer>, ModOreList> oreMappings = new HashMap();
+	private static final HashMap<ItemStack, ModOreList> oreMappings = new HashMap();
 
 	private ModOreList(String n, int color, OreRarity r, String prod, int count, String... ore) {
 		//if (!DragonAPIInit.canLoadHandlers())
@@ -167,7 +168,7 @@ public enum ModOreList implements OreType {
 				Iterator<ItemStack> it = toadd.iterator();
 				while (it.hasNext()) {
 					ItemStack is = it.next();
-					if (is.itemID < 0)
+					if (is.getItem() == null)
 						it.remove();
 				}
 				ReikaJavaLibrary.pConsole("\tDetected the following blocks for "+this+" from OreDict \""+oreLabel[i]+"\": "+toadd.toString());
@@ -198,7 +199,7 @@ public enum ModOreList implements OreType {
 	private final void loadCache() {
 		for (int i = 0; i < ores.size(); i++) {
 			ItemStack is = ores.get(i);
-			oreMappings.put(Arrays.asList(is.itemID, is.getItemDamage()), this);
+			oreMappings.put(is, this);
 		}
 	}
 
@@ -247,8 +248,8 @@ public enum ModOreList implements OreType {
 			Iterator<ItemStack> it = li.iterator();
 			while (it.hasNext()) {
 				ItemStack is = it.next();
-				if (is.itemID < 0) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid item (ID = "+is.itemID+") registered as "+this);
+				if (is.getItem() == null) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid item (ID = "+is.getItem()+") registered as "+this);
 					it.remove();
 				}
 				else {
@@ -274,9 +275,9 @@ public enum ModOreList implements OreType {
 	public static ModOreList getModOreFromOre(ItemStack is) {
 		if (is == null)
 			return null;
-		if (is.itemID == MekanismHandler.getInstance().oreID)
-			return MekanismHandler.getInstance().getModOre(is.itemID, is.getItemDamage());
-		return oreMappings.get(Arrays.asList(is.itemID, is.getItemDamage()));
+		if (ReikaItemHelper.matchStackWithBlock(is, MekanismHandler.getInstance().oreID))
+			return MekanismHandler.getInstance().getModOre(is.getItem(), is.getItemDamage());
+		return oreMappings.get(is);
 	}
 
 	public static ModOreList getEntryFromDamage(int dmg) {
@@ -409,15 +410,15 @@ public enum ModOreList implements OreType {
 
 	public boolean canGenerateIn(Block b) {
 		if (this.isNetherOres())
-			return b == Block.netherrack;
+			return b == Blocks.netherrack;
 
-		return b == Block.stone;
+		return b == Blocks.stone;
 	}
 
 	public ItemStack getGennableIn(Block b) {
 		for (int i = 0; i < ores.size(); i++) {
 			ItemStack is = ores.get(i);
-			Block ore = Block.blocksList[is.itemID];
+			Block ore = Block.getBlockFromItem(is.getItem());
 			//Not done
 		}
 		return null;
@@ -432,7 +433,7 @@ public enum ModOreList implements OreType {
 	public static ModList getOreModFromItemStack(ItemStack is) {
 		if (ReikaBlockHelper.isOre(is)) {
 			if (ReikaItemHelper.isBlock(is)) {
-				Block b = Block.blocksList[is.itemID];
+				Block b = Block.getBlockFromItem(is.getItem());
 				UniqueIdentifier dat = GameRegistry.findUniqueIdentifierFor(b);
 				if (dat != null) {
 					String modName = dat.name;

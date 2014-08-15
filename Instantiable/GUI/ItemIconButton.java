@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.GUI;
 
+import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -16,8 +18,6 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
-
-import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 
 public class ItemIconButton extends GuiButton {
 
@@ -33,7 +33,7 @@ public class ItemIconButton extends GuiButton {
 	{
 		super(par1, par2, par3, 200, 20, null);
 		enabled = true;
-		drawButton = true;
+		visible = true;
 		id = par1;
 		xPosition = par2;
 		yPosition = par3;
@@ -53,7 +53,7 @@ public class ItemIconButton extends GuiButton {
 	@Override
 	public void drawButton(Minecraft par1Minecraft, int par2, int par3)
 	{
-		if (drawButton)
+		if (visible)
 		{
 			FontRenderer var4 = par1Minecraft.fontRenderer;
 			int tex = GL11.GL_TEXTURE_BINDING_2D;

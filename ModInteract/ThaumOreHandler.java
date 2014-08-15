@@ -9,6 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModRegistry.ModOreList;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -16,16 +22,12 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public final class ThaumOreHandler extends ModHandlerBase {
 
-	public final int oreID;
-	public final int oreItemID;
-	public final int shardID;
+	public final Block oreID;
+	public final Item oreItemID;
+	public final Item shardID;
 
 	public final int metaCinnabar = 0;
 	public final int metaAir = 1;
@@ -75,9 +77,9 @@ public final class ThaumOreHandler extends ModHandlerBase {
 
 	private ThaumOreHandler() {
 		super();
-		int idore = -1;
-		int iditem = -1;
-		int idshard = -1;
+		Block idore = null;
+		Item iditem = null;
+		Item idshard = null;
 
 		if (this.hasMod()) {
 			Class thaum = ModList.THAUMCRAFT.getBlockClass();
@@ -139,7 +141,7 @@ public final class ThaumOreHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return oreID != -1 && shardID != -1 && oreItemID != -1;
+		return oreID != null && shardID != null && oreItemID != null;
 	}
 
 	@Override
@@ -263,14 +265,14 @@ public final class ThaumOreHandler extends ModHandlerBase {
 		if (is == null)
 			return false;
 		//return ReikaItemHelper.listContainsItemStack(ores, is);
-		return is.itemID == oreID;
+		return ReikaItemHelper.matchStackWithBlock(is, oreID);
 	}
 
 	public boolean isShard(ItemStack is) {
 		if (!this.initializedProperly())
 			return false;
-		//return ReikaItemHelper.listContainsItemStack(items, is) && is.itemID == shardID;
-		return is.itemID == shardID;
+		//return ReikaItemHelper.listContainsItemStack(items, is) && is.getItem() == shardID;
+		return is.getItem() == shardID;
 	}
 
 	public boolean isShardOre(ItemStack block) {
@@ -305,57 +307,31 @@ public final class ThaumOreHandler extends ModHandlerBase {
 	}
 
 	/** Tries both instance and ID storage */
-	private int loadBlockID(Class c, String fieldName) {
-		int id = -1;
+	private Block loadBlockID(Class c, String fieldName) {
+		Block id = null;
 		Exception e1 = null;
 		Exception e2 = null;
 		try {
 			Field block = c.getField(fieldName);
-			id = ((Block)block.get(null)).blockID;
+			id = ((Block)block.get(null));
 		}
 		catch (Exception e) {
 			e1 = e;
-		}
-		if (id != -1) {
-			try {
-				Field number = c.getField(fieldName+"Id");
-				id = number.getInt(null);
-			}
-			catch (Exception e) {
-				e2 = e;
-			}
-		}
-		if (id == -1) {
-			e1.printStackTrace();
-			e2.printStackTrace();
 		}
 		return id;
 	}
 
 	/** Tries both instance and ID storage */
-	private int loadItemID(Class c, String fieldName) {
-		int id = -1;
+	private Item loadItemID(Class c, String fieldName) {
+		Item id = null;
 		Exception e1 = null;
 		Exception e2 = null;
 		try {
 			Field item = c.getField(fieldName);
-			id = ((Item)item.get(null)).itemID;
+			id = ((Item)item.get(null));
 		}
 		catch (Exception e) {
 			e1 = e;
-		}
-		if (id != -1) {
-			try {
-				Field number = c.getField(fieldName+"Id");
-				id = number.getInt(null);
-			}
-			catch (Exception e) {
-				e2 = e;
-			}
-		}
-		if (id == -1) {
-			e1.printStackTrace();
-			e2.printStackTrace();
 		}
 		return id;
 	}

@@ -9,10 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraftforge.client.MinecraftForgeClient;
-import net.minecraftforge.common.ForgeDirection;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 
@@ -47,5 +49,9 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 	}
 
 	protected abstract Class getModClass();
+
+	protected final FontRenderer getFontRenderer() {
+		return this.func_147498_b();
+	}
 
 }

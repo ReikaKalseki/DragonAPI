@@ -9,11 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
-import java.io.File;
-
-import net.minecraftforge.common.Configuration;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+import java.io.File;
+
+import net.minecraftforge.common.config.Configuration;
 
 public class ConfigReader {
 

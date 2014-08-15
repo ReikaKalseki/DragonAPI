@@ -9,8 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import java.io.DataInput;
-import java.io.DataOutput;
+import Reika.DragonAPI.Base.TileEntityBase;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -18,10 +18,10 @@ import java.util.Iterator;
 
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.packet.Packet132TileEntityData;
-import Reika.DragonAPI.Base.TileEntityBase;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 
-public final class SyncPacket extends Packet132TileEntityData {
+public final class SyncPacket extends S35PacketUpdateTileEntity {
 
 	private final HashMap<String, NBTBase> data = new HashMap();
 	private final HashMap<String, NBTBase> oldData = new HashMap();
@@ -34,16 +34,17 @@ public final class SyncPacket extends Packet132TileEntityData {
 	}
 
 	public void setData(TileEntityBase te, boolean force, NBTTagCompound NBT) {
-		xPosition = te.xCoord;
-		yPosition = te.yCoord;
-		zPosition = te.zCoord;
+		field_148863_a = te.xCoord;
+		field_148861_b = te.yCoord;
+		field_148862_c = te.zCoord;
 
 		changes.clear();
-		Collection c = NBT.getTags();
-		Iterator<NBTBase> it = c.iterator();
+		Collection c = NBT.func_150296_c();
+		Iterator<String> it = c.iterator();
 		while (it.hasNext()) {
-			NBTBase tag = it.next();
-			this.addData(tag.getName(), tag, force);
+			String name = it.next();
+			NBTBase tag = NBT.getTag(name);
+			this.addData(name, tag, force);
 		}
 	}
 
@@ -61,22 +62,23 @@ public final class SyncPacket extends Packet132TileEntityData {
 	}
 
 	@Override
-	public void readPacketData(DataInput in) throws IOException {
-		xPosition = in.readInt();
-		yPosition = in.readShort();
-		zPosition = in.readInt();
+	public void readPacketData(PacketBuffer in) throws IOException {
+		field_148863_a = in.readInt();
+		field_148861_b = in.readShort();
+		field_148862_c = in.readInt();
 
-		NBTTagCompound received = readNBTTagCompound(in);
+		NBTTagCompound received = in.readNBTTagCompoundFromBuffer();
 		if (!received.getBoolean(ERROR_TAG))
 			this.populateFromStream(received);
 	}
 
 	private void populateFromStream(NBTTagCompound received) {
-		Collection c = received.getTags();
-		Iterator<NBTBase> it = c.iterator();
+		Collection c = received.func_150296_c();
+		Iterator<String> it = c.iterator();
 		while (it.hasNext()) {
-			NBTBase tag = it.next();
-			data.put(tag.getName(), tag);
+			String name = it.next();
+			NBTBase tag = received.getCompoundTag(name);
+			data.put(name, tag);
 		}
 	}
 
@@ -87,10 +89,10 @@ public final class SyncPacket extends Packet132TileEntityData {
 	}
 
 	@Override
-	public void writePacketData(DataOutput out) throws IOException {
-		out.writeInt(xPosition);
-		out.writeShort(yPosition);
-		out.writeInt(zPosition);
+	public void writePacketData(PacketBuffer out) throws IOException {
+		out.writeInt(field_148863_a);
+		out.writeShort(field_148861_b);
+		out.writeInt(field_148862_c);
 
 		NBTTagCompound toSend = new NBTTagCompound();
 		try {
@@ -100,7 +102,7 @@ public final class SyncPacket extends Packet132TileEntityData {
 			toSend.setBoolean(ERROR_TAG, true);
 			e.printStackTrace();
 		}
-		writeNBTTagCompound(toSend, out);
+		out.writeNBTTagCompoundToBuffer(toSend);
 	}
 
 	private void saveChanges(NBTTagCompound toSend) {

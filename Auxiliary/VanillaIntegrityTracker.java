@@ -9,25 +9,27 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Exception.VanillaIntegrityException;
+import Reika.DragonAPI.Exception.WTFException;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Exception.VanillaIntegrityException;
-import Reika.DragonAPI.Exception.WTFException;
 
 public class VanillaIntegrityTracker {
 
 	private final HashMap<DragonAPIMod, ArrayList<Field>> blockList = new HashMap();
 	private final HashMap<DragonAPIMod, ArrayList<Field>> itemList = new HashMap();
 
-	private static final Class blockClass = Block.class;
+	private static final Class blockClass = Blocks.class;
 	private static final Class itemClass = Item.class;
 
 	private static final HashMap<Block, Field> blockFields = new HashMap();
@@ -81,7 +83,7 @@ public class VanillaIntegrityTracker {
 		}
 		Field f = blockFields.get(b);
 		if (f == null)
-			throw new MisuseException("Invalid block specified! No vanilla block has ID "+b.blockID+" and class "+b.getClass().getSimpleName());
+			throw new MisuseException("Invalid block specified! No vanilla block has ID "+b+" and class "+b.getClass().getSimpleName());
 		blocks.add(f);
 	}
 
@@ -93,7 +95,7 @@ public class VanillaIntegrityTracker {
 		}
 		Field f = itemFields.get(i);
 		if (f == null)
-			throw new MisuseException("Invalid item specified! No vanilla item has ID "+i.itemID+" and class "+i.getClass().getSimpleName());
+			throw new MisuseException("Invalid item specified! No vanilla item has ID "+i+" and class "+i.getClass().getSimpleName());
 		items.add(f);
 	}
 

@@ -9,22 +9,21 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.opengl.GL11;
 
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -54,7 +53,7 @@ public enum ReikaDyeHelper {
 
 	public static final ReikaDyeHelper[] dyes = ReikaDyeHelper.values();
 	private static final HashMap<ReikaDyeHelper, ArrayList<ItemStack>> oreDict = new HashMap();
-	private static final HashMap<List<Integer>, ReikaDyeHelper> oreDict2 = new HashMap();
+	private static final HashMap<ItemStack, ReikaDyeHelper> oreDict2 = new HashMap();
 
 	private ReikaDyeHelper(int c) {
 		color = c;
@@ -75,14 +74,13 @@ public enum ReikaDyeHelper {
 	public static ReikaDyeHelper getColorFromItem(ItemStack is) {
 		if (is == null)
 			return null;
-		if (is.itemID == Item.dyePowder.itemID)
+		if (is.getItem() == Items.dye)
 			return getColorFromDamage(is.getItemDamage());
 		return getDyeByOreDictionary(is);
 	}
 
 	private static ReikaDyeHelper getDyeByOreDictionary(ItemStack is) {
-		List<Integer> key = Arrays.asList(is.itemID, is.getItemDamage());
-		ReikaDyeHelper color = oreDict2.get(key);
+		ReikaDyeHelper color = oreDict2.get(is);
 		if (color != null)
 			return color;
 		for (int i = 0; i < dyes.length; i++) {
@@ -104,8 +102,7 @@ public enum ReikaDyeHelper {
 			oreDict.put(dye, li);
 		}
 		li.add(is);
-		List<Integer> key = Arrays.asList(is.itemID, is.getItemDamage());
-		oreDict2.put(key, dye);
+		oreDict2.put(is, dye);
 	}
 
 	public static ReikaDyeHelper getColorFromDamage(int damage) {
@@ -160,11 +157,11 @@ public enum ReikaDyeHelper {
 	}
 
 	public ItemStack getStackOf() {
-		return new ItemStack(Item.dyePowder.itemID, 1, this.getDamage());
+		return new ItemStack(Items.dye, 1, this.getDamage());
 	}
 
 	public ItemStack getWoolStack() {
-		return new ItemStack(Block.cloth.blockID, 1, this.getWoolMeta());
+		return new ItemStack(Blocks.wool, 1, this.getWoolMeta());
 	}
 
 	@SideOnly(Side.CLIENT)

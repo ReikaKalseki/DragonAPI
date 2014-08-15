@@ -29,7 +29,7 @@ public class ColorButton extends GuiButton {
 	{
 		super(par1, par2, par3, 200, 20, null);
 		enabled = true;
-		drawButton = true;
+		visible = true;
 		id = par1;
 		xPosition = par2;
 		yPosition = par3;

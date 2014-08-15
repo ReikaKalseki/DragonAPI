@@ -9,23 +9,24 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
+import java.lang.reflect.Field;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+
 public class TwilightForestHandler extends ModHandlerBase {
 
-	public final int rootID;
-	public final int towerMachineID;
-	public final int towerWoodID;
-	public final int mazeStoneID;
-	public final int treeCoreID;
-	public final int shieldID;
-	public final int portalID;
+	public final Block rootID;
+	public final Block towerMachineID;
+	public final Block towerWoodID;
+	public final Block mazeStoneID;
+	public final Block treeCoreID;
+	public final Block shieldID;
+	public final Block portalID;
 
 	public final int breakerMeta;
 
@@ -35,20 +36,20 @@ public class TwilightForestHandler extends ModHandlerBase {
 
 	private TwilightForestHandler() {
 		super();
-		int idroot = -1;
-		int idmachine = -1;
-		int idtowerwood = -1;
+		Block idroot = null;
+		Block idmachine = null;
+		Block idtowerwood = null;
 		int metabreaker = -1;
-		int idmaze = -1;
-		int idcore = -1;
-		int idshield = -1;
+		Block idmaze = null;
+		Block idcore = null;
+		Block idshield = null;
 		int dim = 7;
-		int idportal = -1;
+		Block idportal = null;
 
 		if (this.hasMod()) {
 			try {
 				Class twilight = this.getMod().getBlockClass();
-				Class devices = Class.forName("twilightforest.block.BlockTFTowerDevice");
+				Class devices = Class.forName("twilightforest.Blocks.BlockTFTowerDevice");
 				Class mod = Class.forName("twilightforest.TwilightForestMod");
 				Field root = twilight.getField("root");
 				Field machine = twilight.getField("towerDevice");
@@ -59,13 +60,13 @@ public class TwilightForestHandler extends ModHandlerBase {
 				Field breaker = devices.getField("META_ANTIBUILDER");
 				Field dimension = mod.getField("dimensionID");
 				Field portal = twilight.getField("portal");
-				idroot = ((Block)root.get(null)).blockID;
-				idmachine = ((Block)machine.get(null)).blockID;
-				idtowerwood = ((Block)towerwood.get(null)).blockID;
-				idmaze = ((Block)maze.get(null)).blockID;
-				idcore = ((Block)core.get(null)).blockID;
-				idshield = ((Block)shield.get(null)).blockID;
-				idportal = ((Block)portal.get(null)).blockID;
+				idroot = ((Block)root.get(null));
+				idmachine = ((Block)machine.get(null));
+				idtowerwood = ((Block)towerwood.get(null));
+				idmaze = ((Block)maze.get(null));
+				idcore = ((Block)core.get(null));
+				idshield = ((Block)shield.get(null));
+				idportal = ((Block)portal.get(null));
 				metabreaker = breaker.getInt(null);
 				dim = dimension.getInt(null);
 			}
@@ -115,7 +116,7 @@ public class TwilightForestHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return rootID != -1 && towerMachineID != -1 && towerWoodID != -1 && breakerMeta != -1 && mazeStoneID != -1 && treeCoreID != -1 && shieldID != -1;
+		return rootID != null && towerMachineID != null && towerWoodID != null && breakerMeta != -1 && mazeStoneID != null && treeCoreID != null && shieldID != null;
 	}
 
 	@Override
@@ -138,13 +139,13 @@ public class TwilightForestHandler extends ModHandlerBase {
 	public boolean isTowerWood(Block b) {
 		if (!this.initializedProperly())
 			return false;
-		return b.blockID == towerWoodID;
+		return b == towerWoodID;
 	}
 
 	public boolean isMazeStone(Block b) {
 		if (!this.initializedProperly())
 			return false;
-		return b.blockID == mazeStoneID;
+		return b == mazeStoneID;
 	}
 
 }

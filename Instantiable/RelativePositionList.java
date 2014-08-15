@@ -9,8 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import net.minecraft.util.Vec3;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
+
+import net.minecraft.util.Vec3;
 
 public class RelativePositionList {
 
@@ -86,7 +87,7 @@ public class RelativePositionList {
 
 	public Vec3 getVector(int n) {
 		int[] d = this.getNthRelativePosition(n);
-		return Vec3.fakePool.getVecFromPool(d[0], d[1], d[2]);
+		return Vec3.createVectorHelper(d[0], d[1], d[2]);
 	}
 
 }

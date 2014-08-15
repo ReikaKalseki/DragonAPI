@@ -9,9 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.MathSci;
 
+import Reika.DragonAPI.DragonAPICore;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import Reika.DragonAPI.DragonAPICore;
+import net.minecraft.init.Blocks;
 
 public final class ReikaPhysicsHelper extends DragonAPICore {
 
@@ -105,51 +107,51 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 	}
 
 	public static double getBlockDensity(Block b) {
-		if (b.blockID == 0)
+		if (b == Blocks.air)
 			return 1;
-		if (b.blockID == Block.blockGold.blockID)
+		if (b == Blocks.gold_block)
 			return ReikaEngLibrary.rhogold;
-		if (b.blockID == Block.blockIron.blockID)
+		if (b == Blocks.iron_block)
 			return ReikaEngLibrary.rhoiron;
-		if (b.blockID == Block.blockDiamond.blockID)
+		if (b == Blocks.diamond_block)
 			return ReikaEngLibrary.rhodiamond;
-		if (b.blockID == Block.blockEmerald.blockID)
+		if (b == Blocks.emerald_block)
 			return 2740;
-		if (b.blockID == Block.blockLapis.blockID)
+		if (b == Blocks.lapis_block)
 			return 2800;
-		if (b.blockID == Block.gravel.blockID)
+		if (b == Blocks.gravel)
 			return 1680;
-		if (b.blockMaterial == Material.rock)
+		if (b.getMaterial() == Material.rock)
 			return ReikaEngLibrary.rhorock;
-		if (b.blockMaterial == Material.glass)
+		if (b.getMaterial() == Material.glass)
 			return ReikaEngLibrary.rhorock;
-		if (b.blockMaterial == Material.grass)
+		if (b.getMaterial() == Material.grass)
 			return 1250;
-		if (b.blockMaterial == Material.ground)
+		if (b.getMaterial() == Material.ground)
 			return 1220;
-		if (b.blockMaterial == Material.clay)
+		if (b.getMaterial() == Material.clay)
 			return 1650;
-		if (b.blockMaterial == Material.sand)
+		if (b.getMaterial() == Material.sand)
 			return 1555;
-		if (b.blockMaterial == Material.wood)
+		if (b.getMaterial() == Material.wood)
 			return ReikaEngLibrary.rhowood;
-		if (b.blockMaterial == Material.leaves)
+		if (b.getMaterial() == Material.leaves)
 			return 100;
-		if (b.blockMaterial == Material.sponge)
+		if (b.getMaterial() == Material.sponge)
 			return 280;
-		if (b.blockMaterial == Material.plants)
+		if (b.getMaterial() == Material.plants)
 			return 100;
-		if (b.blockMaterial == Material.coral)
+		if (b.getMaterial() == Material.coral)
 			return 100;
-		if (b.blockMaterial == Material.cloth)
+		if (b.getMaterial() == Material.cloth)
 			return 1314;
-		if (b.blockMaterial == Material.iron)
+		if (b.getMaterial() == Material.iron)
 			return ReikaEngLibrary.rhoiron;
-		if (b.blockMaterial == Material.water)
+		if (b.getMaterial() == Material.water)
 			return ReikaEngLibrary.rhowater;
-		if (b.blockMaterial == Material.lava)
+		if (b.getMaterial() == Material.lava)
 			return ReikaEngLibrary.rholava;
-		if (b.blockMaterial == Material.ice)
+		if (b.getMaterial() == Material.ice)
 			return 917;
 		return 2200;
 	}

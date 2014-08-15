@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -20,8 +23,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class ItemDrop {
 
@@ -87,8 +88,8 @@ public class ItemDrop {
 		ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY+0.25, e.posZ, this.getItem());
 	}
 
-	public int getID() {
-		return item.itemID;
+	public Item getID() {
+		return item.getItem();
 	}
 
 	public int getMetadata() {
@@ -105,7 +106,7 @@ public class ItemDrop {
 		StringBuilder sb = new StringBuilder();
 		sb.append(item.getDisplayName());
 		sb.append(": ");
-		sb.append(item.itemID);
+		sb.append(item.getItem());
 		sb.append(":");
 		sb.append(item.getItemDamage());
 		sb.append(" (");

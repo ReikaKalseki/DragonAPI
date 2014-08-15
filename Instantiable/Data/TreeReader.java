@@ -9,18 +9,20 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import Reika.ChromatiCraft.API.TreeGetter;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
-import Reika.DyeTrees.API.TreeGetter;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.world.World;
 
 public final class TreeReader extends BlockArray {
 
@@ -31,8 +33,8 @@ public final class TreeReader extends BlockArray {
 	private ModWoodList wood;
 	private ReikaDyeHelper dyeTree;
 
-	private final int dyeLeafID;
-	private final int rainbowLeafID;
+	private final Block dyeLeafID;
+	private final Block rainbowLeafID;
 	private boolean isDyeTree = false;
 	private boolean isRainbowTree = false;
 	private int dyeMeta = -1;
@@ -44,8 +46,8 @@ public final class TreeReader extends BlockArray {
 			rainbowLeafID = TreeGetter.getRainbowLeafID();
 		}
 		else {
-			dyeLeafID = -1;
-			rainbowLeafID = -1;
+			dyeLeafID = null;
+			rainbowLeafID = null;
 		}
 	}
 
@@ -54,14 +56,14 @@ public final class TreeReader extends BlockArray {
 			return;
 		if (depth > 150)
 			return;
-		int id = world.getBlockId(x, y, z);
-		if (id == 0)
+		Block id = world.getBlock(x, y, z);
+		if (id == Blocks.air)
 			return;
 		int meta = world.getBlockMetadata(x, y, z);
 		if (this.hasBlock(x, y, z))
 			return;
 		//ReikaJavaLibrary.pConsole(id+":"+meta);
-		if (id != Block.wood.blockID && id != dyeLeafID && !ModWoodList.isModWood(id, meta))
+		if (id != Blocks.log && id != Blocks.log2 && id != dyeLeafID && !ModWoodList.isModWood(id, meta))
 			return;
 		if (id == dyeLeafID && dyeMeta != -1 && dyeMeta != meta)
 			return;
@@ -113,15 +115,15 @@ public final class TreeReader extends BlockArray {
 			return;
 		if (depth > 120)
 			return;
-		int id = world.getBlockId(x, y, z);
+		Block id = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 
-		if (id != Block.wood.blockID && id != rainbowLeafID && !ModWoodList.isModWood(id, meta))
+		if (id != Blocks.log && id != Blocks.log2 && id != rainbowLeafID && !ModWoodList.isModWood(id, meta))
 			return;
 
 		this.addBlockCoordinate(x, y, z);
 
-		if (id == Block.wood.blockID || ModWoodList.isModWood(id, meta))
+		if (id == Blocks.log || id == Blocks.log2 || ModWoodList.isModWood(id, meta))
 			logCount++;
 		else {
 			leafCount++;
@@ -149,20 +151,20 @@ public final class TreeReader extends BlockArray {
 		return dyeMeta;
 	}
 
-	public void addTree(World world, int x, int y, int z, int blockID, int blockMeta) {
+	public void addTree(World world, int x, int y, int z, Block blockID, int blockMeta) {
 		this.addTree(world, x, y, z, blockID, blockMeta, 0);
 	}
 
-	private void addTree(World world, int x, int y, int z, int blockID, int blockMeta, int depth) {
-		int id = world.getBlockId(x, y, z);
-		if (id == 0)
+	private void addTree(World world, int x, int y, int z, Block blockID, int blockMeta, int depth) {
+		Block id = world.getBlock(x, y, z);
+		if (id == Blocks.air)
 			return;
 		int meta = world.getBlockMetadata(x, y, z);
 		if (id != blockID)
 			return;
 		if (meta != blockMeta)
 			return;
-		if (id != Block.wood.blockID && !ModWoodList.isModWood(new ItemStack(id, 1, meta)))
+		if (id != Blocks.log || id != Blocks.log2 && !ModWoodList.isModWood(id, meta))
 			return;
 		if (this.hasBlock(x, y, z))
 			return;
@@ -211,7 +213,7 @@ public final class TreeReader extends BlockArray {
 			return;
 		if (this.hasBlock(x, y, z))
 			return;
-		int id = world.getBlockId(x, y, z);
+		Block id = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		ModWoodList get = ModWoodList.getModWood(id, meta);
 		ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
@@ -253,7 +255,7 @@ public final class TreeReader extends BlockArray {
 			return;
 		if (this.hasBlock(x, y, z))
 			return;
-		int id = world.getBlockId(x, y, z);
+		Block id = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		ReikaTreeHelper get = ReikaTreeHelper.getTree(id, meta);
 		ReikaTreeHelper leaf = ReikaTreeHelper.getTreeFromLeaf(id, meta);
@@ -302,7 +304,7 @@ public final class TreeReader extends BlockArray {
 		for (int j = y; j <= y+yr; j++) {
 			for (int i = minx; i <= maxx; i++) {
 				for (int k = minz; k <= maxz; k++) {
-					int id = world.getBlockId(i, j, k);
+					Block id = world.getBlock(i, j, k);
 					int meta = world.getBlockMetadata(i, j, k);
 					ModWoodList get = ModWoodList.getModWood(id, meta);
 					ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
@@ -334,7 +336,7 @@ public final class TreeReader extends BlockArray {
 		for (int j = y; j <= y+yr; j++) {
 			for (int i = minx; i <= maxx; i++) {
 				for (int k = minz; k <= maxz; k++) {
-					int id = world.getBlockId(i, j, k);
+					Block id = world.getBlock(i, j, k);
 					int meta = world.getBlockMetadata(i, j, k);
 					ModWoodList get = ModWoodList.getModWood(id, meta);
 					ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
@@ -358,7 +360,7 @@ public final class TreeReader extends BlockArray {
 		for (int j = y-24; j <= y+24; j++) {
 			for (int i = minx; i <= maxx; i++) {
 				for (int k = minz; k <= maxz; k++) {
-					int id = world.getBlockId(i, j, k);
+					Block id = world.getBlock(i, j, k);
 					int meta = world.getBlockMetadata(i, j, k);
 					ModWoodList get = ModWoodList.getModWood(id, meta);
 					ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
@@ -381,9 +383,9 @@ public final class TreeReader extends BlockArray {
 		if (this.hasBlock(x, y, z))
 			return;
 		try {
-			int id = world.getBlockId(x, y, z);
+			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
-			Material mat = world.getBlockMaterial(x, y, z);
+			Material mat = ReikaWorldHelper.getMaterial(world, x, y, z);
 			ModWoodList wood = ModWoodList.getModWood(id, meta);
 			if (wood == ModWoodList.SEQUOIA) {
 				ReikaJavaLibrary.pConsole("Use sequoia handler for "+id+":"+meta+"!");
@@ -391,17 +393,17 @@ public final class TreeReader extends BlockArray {
 				return;
 			}
 			//ItemStack leaf = wood.getCorrespondingLeaf();
-			if (id == Block.wood.blockID || wood != null || id == TwilightForestHandler.getInstance().treeCoreID) {
+			if (id == Blocks.log || id == Blocks.log2 || wood != null || id == TwilightForestHandler.getInstance().treeCoreID) {
 				this.addBlockCoordinate(x, y, z);
 				for (int i = -1; i <= 1; i++) {
 					for (int j = -1; j <= 1; j++) {
 						for (int k = -1; k <= 1; k++) {
 							if (!this.hasBlock(x+i, y+j, z+k)) {
-								Material read = world.getBlockMaterial(x+i, y+j, z+k);
-								int readid = world.getBlockId(x+i, y+j, z+k);
+								Material read = ReikaWorldHelper.getMaterial(world, x+i, y+j, z+k);
+								Block readid = world.getBlock(x+i, y+j, z+k);
 								int readmeta = world.getBlockMetadata(x+i, y+j, z+k);
 								if (read == Material.leaves) {
-									int leafID = readid;
+									Block leafID = readid;
 									int leafMeta = readmeta;
 									ModWoodList leaf = ModWoodList.getModWoodFromLeaf(leafID, leafMeta);
 									if (leaf == wood)
@@ -414,7 +416,7 @@ public final class TreeReader extends BlockArray {
 										}
 									}
 								}
-								else if (readid == Block.wood.blockID || ModWoodList.getModWood(readid, readmeta) == wood)
+								else if (readid == Blocks.log || readid == Blocks.log2 || ModWoodList.getModWood(readid, readmeta) == wood)
 									this.addGenerousTree(world, x+i, y+j, z+k, dw);
 							}
 						}

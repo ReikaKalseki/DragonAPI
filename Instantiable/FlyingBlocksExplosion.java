@@ -9,17 +9,19 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityFallingSand;
+import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class FlyingBlocksExplosion extends Explosion {
 
@@ -37,19 +39,19 @@ public class FlyingBlocksExplosion extends Explosion {
 		int y = (int)Math.floor(explosionY);
 		int z = (int)Math.floor(explosionZ);
 
-		List<EntityFallingSand> li = new ArrayList();
+		List<EntityFallingBlock> li = new ArrayList();
 		if (!world.isRemote) {
 			for (int i = x-r; i <= x+r; i++) {
 				for (int j = y-r; j <= y+r; j++) {
 					for (int k = z-r; k <= z+r; k++) {
-						int id = world.getBlockId(i, j, k);
+						Block b = world.getBlock(i, j, k);
 						int meta = world.getBlockMetadata(i, j, k);
-						if (this.canEntitize(world, i, j, k, id, meta)) {
-							EntityFallingSand e = new EntityFallingSand(world, i, j, k, id, meta);
+						if (this.canEntitize(world, i, j, k, b, meta)) {
+							EntityFallingBlock e = new EntityFallingBlock(world, i, j, k, b, meta);
 							li.add(e);
-							e.fallTime = -10000;
-							e.shouldDropItem = false;
-							world.setBlock(i, j, k, 0);
+							e.field_145812_b = -10000;
+							e.field_145813_c = false;
+							world.setBlockToAir(i, j, k);
 							world.spawnEntityInWorld(e);
 						}
 					}
@@ -60,7 +62,7 @@ public class FlyingBlocksExplosion extends Explosion {
 		super.doExplosionA();
 
 		for (int i = 0; i < li.size(); i++) {
-			EntityFallingSand e = li.get(i);
+			EntityFallingBlock e = li.get(i);
 			double dx = e.posX-explosionX;
 			double dy = e.posY-explosionY;
 			double dz = e.posZ-explosionZ;
@@ -77,12 +79,11 @@ public class FlyingBlocksExplosion extends Explosion {
 		}
 	}
 
-	protected final boolean canEntitize(World world, int x, int y, int z, int id, int meta) {
-		if (id == 0)
+	protected final boolean canEntitize(World world, int x, int y, int z, Block b, int meta) {
+		if (b == Blocks.air)
 			return false;
-		if (id == Block.bedrock.blockID)
+		if (b == Blocks.bedrock)
 			return false;
-		Block b = Block.blocksList[id];
 		if (b.hasTileEntity(meta))
 			return false;
 		if (ReikaWorldHelper.softBlocks(world, x, y, z))

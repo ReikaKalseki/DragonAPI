@@ -9,22 +9,22 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import Reika.DragonAPI.APIPacketHandler;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
+import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.HashMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.packet.Packet250CustomPayload;
-import Reika.DragonAPI.APIPacketHandler;
-import Reika.DragonAPI.DragonAPIInit;
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
-import cpw.mods.fml.common.network.PacketDispatcher;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -87,11 +87,11 @@ public class KeyWatcher {
 		}
 
 		public boolean pollKey() {
-			return key.pressed;
+			return key.getIsKeyPressed();
 		}
 
 		public int keyID() {
-			return key.keyCode;
+			return key.getKeyCode();
 		}
 
 		public Key getServerKey() {
@@ -102,7 +102,6 @@ public class KeyWatcher {
 			ByteArrayOutputStream bytes = new ByteArrayOutputStream(8);
 			DataOutputStream data = new DataOutputStream(bytes);
 			try {
-				data.writeInt(PacketTypes.RAW.ordinal());
 				data.writeInt(APIPacketHandler.PacketIDs.KEYUPDATE.ordinal());
 				data.writeInt(this.ordinal());
 				data.writeInt(this.pollKey() ? 1 : 0);
@@ -110,11 +109,8 @@ public class KeyWatcher {
 			catch (IOException e) {
 				e.printStackTrace();
 			}
-			Packet250CustomPayload packet = new Packet250CustomPayload();
-			packet.channel = DragonAPIInit.packetChannel;
-			packet.data = bytes.toByteArray();
-			packet.length = bytes.size();
-			PacketDispatcher.sendPacketToServer(packet);
+
+			ReikaPacketHelper.sendRawPacket(DragonAPIInit.packetChannel, bytes);
 		}
 	}
 
@@ -132,7 +128,7 @@ public class KeyWatcher {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static class KeyTicker implements ITickHandler {
+	public static class KeyTicker implements TickHandler {
 
 		public static final KeyTicker instance = new KeyTicker();
 		private final EnumMap<Keys, Boolean> keyStates = new EnumMap(Keys.class);
@@ -142,7 +138,7 @@ public class KeyWatcher {
 		}
 
 		@Override
-		public void tickStart(EnumSet<TickType> type, Object... tickData) {
+		public void tick(Object... tickData) {
 
 			for (int i = 0; i < Keys.keyList.length; i++) {
 				Keys key = Keys.keyList[i];
@@ -158,18 +154,18 @@ public class KeyWatcher {
 		}
 
 		@Override
-		public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-
-		}
-
-		@Override
-		public EnumSet<TickType> ticks() {
-			return EnumSet.of(TickType.CLIENT);
+		public TickType getType() {
+			return TickType.CLIENT;
 		}
 
 		@Override
 		public String getLabel() {
 			return "KeyWatcher";
+		}
+
+		@Override
+		public Phase getPhase() {
+			return Phase.START;
 		}
 
 	}

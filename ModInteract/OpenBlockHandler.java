@@ -9,29 +9,30 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.block.Block;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+import java.lang.reflect.Field;
+
+import net.minecraft.block.Block;
 
 public final class OpenBlockHandler extends ModHandlerBase {
 
 	private static final OpenBlockHandler instance = new OpenBlockHandler();
 
-	public final int tankID;
+	public final Block tankID;
 
 	private OpenBlockHandler() {
 		super();
-		int idtank = -1;
+		Block idtank = null;
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
 
 				Field block = blocks.getField("tank");
 				Block b = (Block)block.get(null);
-				idtank = b.blockID;
+				idtank = b;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -66,7 +67,7 @@ public final class OpenBlockHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return tankID != -1;
+		return tankID != null;
 	}
 
 	@Override

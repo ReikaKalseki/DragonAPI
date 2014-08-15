@@ -9,29 +9,30 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.block.Block;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+import java.lang.reflect.Field;
+
+import net.minecraft.block.Block;
 
 public final class RailcraftHandler extends ModHandlerBase {
 
 	private static final RailcraftHandler instance = new RailcraftHandler();
 
-	public final int hiddenID;
+	public final Block hiddenID;
 
 	private RailcraftHandler() {
 		super();
-		int idhidden = -1;
+		Block idhidden = null;
 		if (this.hasMod()) {
 			try {
 				Class c = Class.forName("mods.railcraft.common.blocks.hidden.BlockHidden");
 				Field block = c.getDeclaredField("block");
 				block.setAccessible(true);
 				Block b = (Block)block.get(null);
-				idhidden = b != null ? b.blockID : -1; //may be disabled
+				idhidden = b; //may be disabled
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
@@ -70,7 +71,7 @@ public final class RailcraftHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return hiddenID != -1;
+		return hiddenID != null;
 	}
 
 	@Override

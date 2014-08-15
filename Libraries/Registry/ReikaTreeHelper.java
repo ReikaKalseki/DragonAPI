@@ -9,20 +9,25 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import Reika.DragonAPI.Instantiable.Data.BlockMap;
+import Reika.DragonAPI.Interfaces.TreeType;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.Interfaces.TreeType;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public enum ReikaTreeHelper implements TreeType {
 
-	OAK(Block.wood, Block.leaves, Block.sapling, new int[]{0,4,8,12}, new int[]{0,4,8,12}, 0),
-	SPRUCE(Block.wood, Block.leaves, Block.sapling, new int[]{1,5,9,13}, new int[]{1,5,9,13}, 1),
-	BIRCH(Block.wood, Block.leaves, Block.sapling, new int[]{2,6,10,14}, new int[]{2,6,10,14}, 2),
-	JUNGLE(Block.wood, Block.leaves, Block.sapling, new int[]{3,7,11,15}, new int[]{3,7,11,15}, 3);
+	OAK(Blocks.log, Blocks.leaves, Blocks.sapling, new int[]{0,4,8,12}, new int[]{0,4,8,12}, 0),
+	SPRUCE(Blocks.log, Blocks.leaves, Blocks.sapling, new int[]{1,5,9,13}, new int[]{1,5,9,13}, 1),
+	BIRCH(Blocks.log, Blocks.leaves, Blocks.sapling, new int[]{2,6,10,14}, new int[]{2,6,10,14}, 2),
+	JUNGLE(Blocks.log, Blocks.leaves, Blocks.sapling, new int[]{3,7,11,15}, new int[]{3,7,11,15}, 3),
+	ACACIA(Blocks.log2, Blocks.leaves2, Blocks.sapling, new int[]{0,4,8,12}, new int[]{0,4,8,12}, 4),
+	DARKOAK(Blocks.log2, Blocks.leaves2, Blocks.sapling, new int[]{1,5,9,13}, new int[]{1,5,9,13}, 5);
 
 	private int[] leafMeta;
 	private int[] logMeta;
@@ -33,6 +38,10 @@ public enum ReikaTreeHelper implements TreeType {
 	private Block sapling;
 
 	public static final ReikaTreeHelper[] treeList = ReikaTreeHelper.values();
+
+	private static final BlockMap<ReikaTreeHelper> logMappings = new BlockMap();
+	private static final BlockMap<ReikaTreeHelper> leafMappings = new BlockMap();
+	private static final BlockMap<ReikaTreeHelper> saplingMappings = new BlockMap();
 
 	public static final int TREE_MIN_LOG = 2;
 	public static final int TREE_MIN_LEAF = 5;
@@ -48,56 +57,72 @@ public enum ReikaTreeHelper implements TreeType {
 		saplingMeta = saplingmeta;
 	}
 
+	public static ReikaTreeHelper getTree(Block id, int meta) {
+		return logMappings.get(id, meta);
+	}
+
 	public static ReikaTreeHelper getTree(ItemStack wood) {
-		for (int i = 0; i < treeList.length; i++) {
-			for (int k = 0; k < treeList[i].logMeta.length; k++) {
-				if (ReikaItemHelper.matchStacks(wood, treeList[i].getDamagedLog(k)))
-					return treeList[i];
-			}
-		}
-		return null;
+		return getTree(Block.getBlockFromItem(wood.getItem()), wood.getItemDamage());
 	}
 
-	public static ReikaTreeHelper getTree(int id, int meta) {
-		return getTree(new ItemStack(id, 1, meta));
-	}
-
-	public static ReikaTreeHelper getTreeFromLeaf(int id, int meta) {
-		return getTreeFromLeaf(new ItemStack(id, 1, meta));
+	public static ReikaTreeHelper getTreeFromLeaf(Block id, int meta) {
+		return leafMappings.get(id, meta);
 	}
 
 	public static ReikaTreeHelper getTreeFromLeaf(ItemStack leaf) {
-		for (int i = 0; i < treeList.length; i++) {
-			for (int k = 0; k < treeList[i].leafMeta.length; k++) {
-				if (ReikaItemHelper.matchStacks(leaf, treeList[i].getDamagedLeaf(k)))
-					return treeList[i];
-			}
-		}
-		return null;
+		return getTreeFromLeaf(Block.getBlockFromItem(leaf.getItem()), leaf.getItemDamage());
+	}
+
+	public static ReikaTreeHelper getTreeFromSapling(Block id, int meta) {
+		return saplingMappings.get(id, meta);
+	}
+
+	public static ReikaTreeHelper getTreeFromSapling(ItemStack sapling) {
+		return getTreeFromSapling(Block.getBlockFromItem(sapling.getItem()), sapling.getItemDamage());
 	}
 
 	public boolean isTree(ItemStack wood) {
 		return this.getTree(wood) != null;
 	}
 
+	public boolean isTree(Block id, int meta) {
+		return this.getTree(id, meta) != null;
+	}
+
+	public boolean isTreeLeaf(ItemStack leaf) {
+		return this.getTreeFromLeaf(leaf) != null;
+	}
+
+	public boolean isTreeLeaf(Block id, int meta) {
+		return this.getTreeFromLeaf(id, meta) != null;
+	}
+
+	public boolean isTreeSapling(ItemStack sapling) {
+		return this.getTreeFromSapling(sapling) != null;
+	}
+
+	public boolean isTreeSapling(Block id, int meta) {
+		return this.getTreeFromSapling(id, meta) != null;
+	}
+
 	public ItemStack getLog() {
-		return new ItemStack(log.blockID, 1, logMeta[0]);
+		return new ItemStack(log, 1, logMeta[0]);
 	}
 
 	public ItemStack getLeaf() {
-		return new ItemStack(leaf.blockID, 1, leafMeta[0]);
+		return new ItemStack(leaf, 1, leafMeta[0]);
 	}
 
 	public ItemStack getSapling() {
-		return new ItemStack(sapling.blockID, 1, saplingMeta);
+		return new ItemStack(sapling, 1, saplingMeta);
 	}
 
 	public ItemStack getDamagedLog(int dmg) {
-		return new ItemStack(log.blockID, 1, logMeta[dmg]);
+		return new ItemStack(log, 1, logMeta[dmg]);
 	}
 
 	public ItemStack getDamagedLeaf(int dmg) {
-		return new ItemStack(leaf.blockID, 1, leafMeta[dmg]);
+		return new ItemStack(leaf, 1, leafMeta[dmg]);
 	}
 
 	public String getName() {
@@ -108,11 +133,11 @@ public enum ReikaTreeHelper implements TreeType {
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		sb.append(this.getName());
-		sb.append(" (LOG "+log.blockID+":"+Arrays.toString(logMeta)+";");
+		sb.append(" (LOG "+log+":"+Arrays.toString(logMeta)+";");
 		sb.append(" ");
-		sb.append("LEAF "+leaf.blockID+":"+Arrays.toString(leafMeta)+";");
+		sb.append("LEAF "+leaf+":"+Arrays.toString(leafMeta)+";");
 		sb.append(" ");
-		sb.append("SAPLING "+sapling.blockID+":"+saplingMeta);
+		sb.append("SAPLING "+sapling+":"+saplingMeta);
 		sb.append(")");
 		return sb.toString();
 	}
@@ -123,18 +148,18 @@ public enum ReikaTreeHelper implements TreeType {
 	}
 
 	@Override
-	public int getLogID() {
-		return log.blockID;
+	public Block getLogID() {
+		return log;
 	}
 
 	@Override
-	public int getLeafID() {
-		return leaf.blockID;
+	public Block getLeafID() {
+		return leaf;
 	}
 
 	@Override
-	public int getSaplingID() {
-		return sapling.blockID;
+	public Block getSaplingID() {
+		return sapling;
 	}
 
 	@Override
@@ -156,6 +181,25 @@ public enum ReikaTreeHelper implements TreeType {
 	@Override
 	public boolean canBePlacedSideways() {
 		return true;
+	}
+
+	static {
+		for (int i = 0; i < treeList.length; i++) {
+			ReikaTreeHelper w = treeList[i];
+			Block id = w.log;
+			Block leaf = w.leaf;
+			int[] metas = w.logMeta;
+			int[] leafmetas = w.leafMeta;
+			Block sapling = w.sapling;
+			int saplingMeta = w.saplingMeta;
+			for (int k = 0; k < metas.length; k++) {
+				logMappings.put(id, metas[k], w);
+			}
+			for (int k = 0; k < leafmetas.length; k++) {
+				leafMappings.put(leaf, leafmetas[k], w);
+			}
+			saplingMappings.put(sapling, saplingMeta, w);
+		}
 	}
 
 }

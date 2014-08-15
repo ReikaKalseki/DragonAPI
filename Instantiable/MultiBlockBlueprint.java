@@ -9,24 +9,25 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 
 public class MultiBlockBlueprint {
 
 	/** Do not overwrite a block if this is the ID at this position */
-	protected static final int NULL_ID = -1;
 	public final int xSize;
 	public final int ySize;
 	public final int zSize;
 
-	protected int[][][] IDs;
+	protected Block[][][] IDs;
 	protected int[][][] metas;
 
 	private final List<Integer> overrides = new ArrayList();
@@ -37,37 +38,37 @@ public class MultiBlockBlueprint {
 		xSize = x;
 		ySize = y;
 		zSize = z;
-		IDs = new int[x][y][z];
+		IDs = new Block[x][y][z];
 		metas = new int[x][y][z];
 		//Arrays.fill(IDs, -1);
 		//Arrays.fill(metas, -1);
 	}
 
-	public MultiBlockBlueprint addBlockAt(int x, int y, int z, int id, int meta) {
+	public MultiBlockBlueprint addBlockAt(int x, int y, int z, Block id, int meta) {
 		IDs[x][y][z] = id;
 		metas[x][y][z] = meta;
 		return this;
 	}
 
-	public MultiBlockBlueprint addBlockAt(int x, int y, int z, int id) {
+	public MultiBlockBlueprint addBlockAt(int x, int y, int z, Block id) {
 		return this.addBlockAt(x, y, z, id, OreDictionary.WILDCARD_VALUE);
 	}
 
-	public MultiBlockBlueprint addCenteredBlockAt(int x, int y, int z, int id, int meta) {
+	public MultiBlockBlueprint addCenteredBlockAt(int x, int y, int z, Block id, int meta) {
 		return this.addBlockAt(x+xSize/2, y, z+zSize/2, id, meta);
 	}
 
-	public MultiBlockBlueprint addCenteredBlockAt(int x, int y, int z, int id) {
-		return this.addCenteredBlockAt(id, OreDictionary.WILDCARD_VALUE, x, y, z);
+	public MultiBlockBlueprint addCenteredBlockAt(int x, int y, int z, Block id) {
+		return this.addCenteredBlockAt(x, y, z, id, OreDictionary.WILDCARD_VALUE);
 	}
 
 	public boolean isMatch(World world, int x0, int y0, int z0) {
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
 				for (int k = 0; k < zSize; k++) {
-					int id = world.getBlockId(x0+i, y0+j, z0+k);
+					Block b = world.getBlock(x0+i, y0+j, z0+k);
 					int meta = world.getBlockMetadata(x0+i, y0+j, z0+k);
-					if (id != IDs[i][j][k])
+					if (b != IDs[i][j][k])
 						return false;
 					if (meta != metas[i][j][k] && metas[i][j][k] != OreDictionary.WILDCARD_VALUE)
 						return false;
@@ -81,8 +82,8 @@ public class MultiBlockBlueprint {
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
 				for (int k = 0; k < zSize; k++) {
-					int id = IDs[i][j][k];
-					if (id != NULL_ID) {
+					Block id = IDs[i][j][k];
+					if (id != null) {
 						int meta = metas[i][j][k];
 						if (meta == OreDictionary.WILDCARD_VALUE)
 							meta = 0;
@@ -99,8 +100,8 @@ public class MultiBlockBlueprint {
 	protected boolean canPlaceBlockAt(World world, int x, int y, int z) {
 		if (ReikaWorldHelper.softBlocks(world, x, y, z))
 			return true;
-		int id = world.getBlockId(x, y, z);
-		return overrides.contains(id);
+		Block b = world.getBlock(x, y, z);
+		return overrides.contains(b);
 	}
 
 	public MultiBlockBlueprint addOverwriteableID(int id) {
@@ -114,7 +115,7 @@ public class MultiBlockBlueprint {
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
 				for (int k = 0; k < zSize; k++) {
-					int id = IDs[i][j][k];
+					Block id = IDs[i][j][k];
 					int meta = metas[i][j][k];
 					sb.append("["+id+":"+meta+"]");
 				}
@@ -124,7 +125,7 @@ public class MultiBlockBlueprint {
 	}
 
 	public void clear() {
-		IDs = new int[xSize][ySize][zSize];
+		IDs = new Block[xSize][ySize][zSize];
 		metas = new int[xSize][ySize][zSize];
 	}
 }

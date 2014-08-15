@@ -9,94 +9,95 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public enum ReikaPlantHelper {
 
-	SAPLING(Block.sapling),
-	SUGARCANE(Block.reed),
-	CACTUS(Block.cactus),
-	MUSHROOM(Block.mushroomBrown, Block.mushroomRed),
-	FLOWER(Block.plantRed, Block.plantYellow),
-	TALLGRASS(Block.tallGrass),
-	BUSH(Block.deadBush),
-	CROP(Block.crops, Block.carrot, Block.potato, Block.melonStem, Block.pumpkinStem),
-	NETHERWART(Block.netherStalk),
-	LILYPAD(Block.waterlily),
-	VINES(Block.vine);
+	SAPLING(Blocks.sapling),
+	SUGARCANE(Blocks.reeds),
+	CACTUS(Blocks.cactus),
+	MUSHROOM(Blocks.brown_mushroom, Blocks.red_mushroom),
+	FLOWER(Blocks.red_flower, Blocks.yellow_flower),
+	TALLGRASS(Blocks.tallgrass),
+	BUSH(Blocks.deadbush),
+	CROP(Blocks.wheat, Blocks.carrots, Blocks.potatoes, Blocks.melon_stem, Blocks.pumpkin_stem),
+	NETHERWART(Blocks.nether_wart),
+	LILYPAD(Blocks.waterlily),
+	VINES(Blocks.vine);
 
-	private List<Integer> ids = new ArrayList<Integer>();
+	private List<Block> ids = new ArrayList();
 
 	public static final ReikaPlantHelper[] plantList = values();
 
+	private static final HashMap<Block, ReikaPlantHelper> plantMappings = new HashMap();
+
 	private ReikaPlantHelper(Block... blocks) {
 		for (int i = 0; i < blocks.length; i++) {
-			ids.add(blocks[i].blockID);
+			ids.add(blocks[i]);
 		}
 	}
 
-	private ReikaPlantHelper(Item... items) {
-		for (int i = 0; i < items.length; i++) {
-			ids.add(items[i].itemID);
-		}
-	}
-
-	public static ReikaPlantHelper getPlant(int id) {
-		for (int i = 0; i < plantList.length; i++) {
-			ReikaPlantHelper p = plantList[i];
-			if (p.ids.contains(id))
-				return p;
-		}
-		return null;
+	public static ReikaPlantHelper getPlant(Block id) {
+		return plantMappings.get(id);
 	}
 
 	/** Can a plant be planted at yes/no. Args: World, x, y, z */
 	public boolean canPlantAt(World world, int x, int y, int z) {
-		int idbelow = world.getBlockId(x, y-1, z);
+		Block idbelow = world.getBlock(x, y-1, z);
 		int metabelow = world.getBlockMetadata(x, y-1, z);
-		Material matbelow = world.getBlockMaterial(x, y-1, z);
+		Material matbelow = ReikaWorldHelper.getMaterial(world, x, y-1, z);
 		switch(this) {
 		case CACTUS:
-			return idbelow == Block.sand.blockID;
+			return idbelow == Blocks.sand;
 		case FLOWER:
 			return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
 		case MUSHROOM:
-			return idbelow == Block.dirt.blockID || idbelow == Block.mycelium.blockID;
+			return idbelow == Blocks.dirt || idbelow == Blocks.mycelium;
 		case SAPLING:/*
 			if (idbelow == TwilightBlockHandler.getInstance().rootID) {
-				world.setBlock(x, y, z, Block.grass.blockID);
+				world.setBlock(x, y, z, Blocks.grass.blockID);
 				return true;
 			}*/
 			return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
 		case SUGARCANE:
-			if (idbelow != Block.sand.blockID && !ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow))
+			if (idbelow != Blocks.sand && !ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow))
 				return false;
 			ForgeDirection water = ReikaWorldHelper.checkForAdjMaterial(world, x, y-1, z, Material.water);
 			return water != null && water.offsetY != 0;
 		case BUSH:
-			return idbelow == Block.sand.blockID;
+			return idbelow == Blocks.sand;
 		case CROP:
-			return idbelow == Block.tilledField.blockID;
+			return idbelow == Blocks.farmland;
 		case NETHERWART:
-			return idbelow == Block.slowSand.blockID;
+			return idbelow == Blocks.soul_sand;
 		case TALLGRASS:
 			return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
 		case LILYPAD:
 			return matbelow == Material.water && metabelow == 0;
 		case VINES:
-			if (Block.opaqueCubeLookup[world.getBlockId(x, y+1, z)])
+			if (world.getBlock(x, y+1, z).isOpaqueCube())
 				return true;
 		}
 		return false;
+	}
+
+	static {
+		for (int i = 0; i < plantList.length; i++) {
+			ReikaPlantHelper w = plantList[i];
+			for (int k = 0; k < w.ids.size(); k++)
+				plantMappings.put(w.ids.get(k), w);
+		}
 	}
 
 }

@@ -9,30 +9,31 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.item.Item;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+import java.lang.reflect.Field;
+
+import net.minecraft.item.Item;
 
 public final class GalacticCraftHandler extends ModHandlerBase {
 
 	private static final GalacticCraftHandler instance = new GalacticCraftHandler();
 
-	public final int basicItemID;
+	public final Item basicItemID;
 
 	public static final int siliconMeta = 2;
 
 	private GalacticCraftHandler() {
 		super();
-		int idbasicItem = -1;
+		Item idbasicItem = null;
 		if (this.hasMod()) {
 			try {
 				Class items = this.getMod().getItemClass();
 				Field f = items.getField("basicItem");
 				Item i = (Item)f.get(null);
-				idbasicItem = i.itemID;
+				idbasicItem = i;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -67,7 +68,7 @@ public final class GalacticCraftHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return basicItemID != -1;
+		return basicItemID != null;
 	}
 
 	@Override

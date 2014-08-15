@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
@@ -61,9 +64,13 @@ public class ReikaModel extends ModifiedPlayerModel {
 		super.render(e, par2, par3, par4, par5, par6, par7);
 	}
 
+	public void bindTexture() {
+		ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "/Reika/DragonAPI/Resources/reika_tex.png");
+	}
+
 	@Override
 	public void renderBodyParts(EntityPlayer ep, float tick) {
-		if (ep.equals(Minecraft.getMinecraft().thePlayer) && !Minecraft.getMinecraft().thePlayer.getEntityName().equals("Reika_Kalseki"))
+		if (ep.equals(Minecraft.getMinecraft().thePlayer) && !Minecraft.getMinecraft().thePlayer.getCommandSenderName().equals("Reika_Kalseki"))
 			return;
 		this.setPartAngles(ep, tick);
 		float f5 = 0.0625F;
@@ -116,9 +123,9 @@ public class ReikaModel extends ModifiedPlayerModel {
 		hornR.rotateAngleX = pc;
 
 
-		hornR.rotateAngleY = yhc;
-		hornL.rotateAngleY = yhc;
-
+		hornR.rotateAngleY = yhc-yc;
+		hornL.rotateAngleY = yhc-yc;
+		/*
 		tail.rotateAngleY = yc;
 		tail3.rotateAngleY = yc;
 		tail2.rotateAngleY = yc;
@@ -127,7 +134,7 @@ public class ReikaModel extends ModifiedPlayerModel {
 		back3.rotateAngleY = yc;
 		wingL.rotateAngleY = this.getWingAngle()+yc;
 		wingR.rotateAngleY = -this.getWingAngle()+yc;
-
+		 */
 		//this.init();
 	}
 

@@ -9,15 +9,19 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+
+import java.util.Iterator;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class ReikaChunkHelper extends DragonAPICore {
 
@@ -60,10 +64,12 @@ public final class ReikaChunkHelper extends DragonAPICore {
 
 	/** Deletes all the blocks in an entire chunk, except the specified ID. Enter -1 to
 	 * empty the chunk entirely. Args: World, x, z, id to save */
-	public static void deleteChunk(World world, int x, int z, int id) {
-		for (int d = 1; d < 256; d++) {
-			if (id != d)
-				removeIDFromChunk(world, x, z, d);
+	public static void deleteChunk(World world, int x, int z, Block id) {
+		Iterator it = Block.blockRegistry.iterator();
+		while (it.hasNext()) {
+			Block b = (Block)it.next();
+			if (id != b)
+				removeIDFromChunk(world, x, z, b);
 		}
 	}
 
@@ -86,17 +92,17 @@ public final class ReikaChunkHelper extends DragonAPICore {
 
 	/** Removes all blocks of specified ID and metadata from the chunk (replaces with air).
 	 * Set metadata to -1 for all. Args: World, x, z, Block ID, metadata */
-	public static void removeBlocksFromChunk(World world, int x, int z, int id, int meta) {
+	public static void removeBlocksFromChunk(World world, int x, int z, Block id, int meta) {
 		if (meta == -1) {
 			removeIDFromChunk(world, x, z, id);
 			return;
 		}
-		replaceBlocksInChunk(world, x, z, id, meta, 0, 0);
+		replaceBlocksInChunk(world, x, z, id, meta, Blocks.air, 0);
 	}
 
 	/** Replaces all blocks of specified ID and metadata in the chunk with specified ID and metadata.
 	 * Set metadata to -1 for all. Args: World, x, z, Block ID, metadata, ID-to, meta-to */
-	public static void replaceBlocksInChunk(World world, int x, int z, int id, int meta, int setid, int setmeta) {
+	public static void replaceBlocksInChunk(World world, int x, int z, Block id, int meta, Block setid, int setmeta) {
 		boolean nx = false;
 		boolean nz = false;
 		if (x < 0) {
@@ -130,7 +136,7 @@ public final class ReikaChunkHelper extends DragonAPICore {
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
 				for (int k = 0; k < 256; k++) {
-					int idread = world.getBlockId(x+i, k, z+j);
+					Block idread = world.getBlock(x+i, k, z+j);
 					int metaread = world.getBlockMetadata(x+i, k, z+j);
 					if (idread == id && metaread == meta)
 						world.setBlock(x+i, k, z+j, setid, setmeta, 3);
@@ -139,7 +145,7 @@ public final class ReikaChunkHelper extends DragonAPICore {
 		}
 	}
 
-	private static void replaceIDInChunk(World world, int x, int z, int id, int setid, int setmeta) {
+	private static void replaceIDInChunk(World world, int x, int z, Block id, Block setid, int setmeta) {
 		boolean nx = false;
 		boolean nz = false;
 		if (x < 0) {
@@ -169,7 +175,7 @@ public final class ReikaChunkHelper extends DragonAPICore {
 		for (int i = 0; i < 16; i++) {
 			for (int j = 0; j < 16; j++) {
 				for (int k = 0; k < 256; k++) {
-					int idread = world.getBlockId(x+i, k, z+j);
+					Block idread = world.getBlock(x+i, k, z+j);
 					if (idread == id)
 						world.setBlock(x+i, k, z+j, setid, setmeta, 3);
 				}
@@ -177,8 +183,8 @@ public final class ReikaChunkHelper extends DragonAPICore {
 		}
 	}
 
-	private static void removeIDFromChunk(World world, int x, int z, int id) {
-		replaceIDInChunk(world, x, z, id, 0, 0);
+	private static void removeIDFromChunk(World world, int x, int z, Block id) {
+		replaceIDInChunk(world, x, z, id, Blocks.air, 0);
 	}
 
 	/** Returns the distance (3d cartesian) to the nearest entity of this species.

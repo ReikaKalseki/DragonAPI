@@ -9,6 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import Reika.DragonAPI.Instantiable.GUI.Slot.SlotNoClick;
+import Reika.DragonAPI.Interfaces.MultiPageInventory;
+import Reika.DragonAPI.Interfaces.XPProducer;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
@@ -17,13 +25,6 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
-import Reika.DragonAPI.Instantiable.GUI.Slot.SlotNoClick;
-import Reika.DragonAPI.Interfaces.MultiPageInventory;
-import Reika.DragonAPI.Interfaces.XPProducer;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class CoreContainer extends Container {
 

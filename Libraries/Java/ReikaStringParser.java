@@ -9,12 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
+import Reika.DragonAPI.DragonAPICore;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
-
-import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaStringParser extends DragonAPICore {
 

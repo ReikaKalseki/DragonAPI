@@ -9,14 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.GUI;
 
+import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 
 import org.lwjgl.opengl.GL11;
-
-import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public final class ImagedGuiButton extends GuiButton {
 
@@ -41,7 +41,7 @@ public final class ImagedGuiButton extends GuiButton {
 	{
 		super(par1, par2, par3, 200, 20, null);
 		enabled = true;
-		drawButton = true;
+		visible = true;
 		id = par1;
 		xPosition = par2;
 		yPosition = par3;
@@ -63,7 +63,7 @@ public final class ImagedGuiButton extends GuiButton {
 	{
 		super(par1, par2, par3, 200, 20, par6Str);
 		enabled = true;
-		drawButton = true;
+		visible = true;
 		id = par1;
 		xPosition = par2;
 		yPosition = par3;
@@ -86,7 +86,7 @@ public final class ImagedGuiButton extends GuiButton {
 	{
 		super(par1, par2, par3, 200, 20, par6Str);
 		enabled = true;
-		drawButton = true;
+		visible = true;
 		id = par1;
 		xPosition = par2;
 		yPosition = par3;
@@ -114,7 +114,7 @@ public final class ImagedGuiButton extends GuiButton {
 	@Override
 	public void drawButton(Minecraft mc, int mx, int my)
 	{
-		if (drawButton)
+		if (visible)
 		{
 			FontRenderer var4 = mc.fontRenderer;
 			int tex = GL11.GL_TEXTURE_BINDING_2D;
@@ -122,8 +122,8 @@ public final class ImagedGuiButton extends GuiButton {
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			this.drawTexturedModalRect(xPosition, yPosition, u, v, width, height);
 
-			field_82253_i = mx >= xPosition && my >= yPosition && mx < xPosition + width && my < yPosition + height;
-			int k = this.getHoverState(field_82253_i);
+			field_146123_n = mx >= xPosition && my >= yPosition && mx < xPosition + width && my < yPosition + height;
+			int k = this.getHoverState(field_146123_n);
 
 			//this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, u, v, this.width / 2, this.height);
 			this.mouseDragged(mc, mx, my);/*

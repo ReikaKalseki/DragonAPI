@@ -9,13 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
+import Reika.DragonAPI.Auxiliary.ReikaSpriteSheets;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Interfaces.IndexedItemSprites;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
-import Reika.DragonAPI.Auxiliary.ReikaSpriteSheets;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Interfaces.IndexedItemSprites;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

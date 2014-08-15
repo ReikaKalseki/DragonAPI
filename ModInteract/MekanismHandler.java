@@ -9,20 +9,22 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.block.Block;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 
+import java.lang.reflect.Field;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+
 public final class MekanismHandler extends ModHandlerBase {
 
 	private static final MekanismHandler instance = new MekanismHandler();
 
-	public final int oreID;
-	public final int cableID;
+	public final Block oreID;
+	public final Block cableID;
 
 	public static final int osmiumMeta = 0;
 	public static final int copperMeta = 1;
@@ -30,18 +32,18 @@ public final class MekanismHandler extends ModHandlerBase {
 
 	private MekanismHandler() {
 		super();
-		int idore = -1;
-		int idcable = -1;
+		Block idore = null;
+		Block idcable = null;
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
 				Field ore = blocks.getField("OreBlock");
 				Block b = (Block)ore.get(null);
-				idore = b.blockID;
+				idore = b;
 
 				Field wire = blocks.getField("Transmitter");
 				b = (Block)wire.get(null);
-				idcable = b.blockID;
+				idcable = b;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -77,7 +79,7 @@ public final class MekanismHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return oreID != -1 && cableID != -1;
+		return oreID != null && cableID != null;
 	}
 
 	@Override
@@ -85,7 +87,11 @@ public final class MekanismHandler extends ModHandlerBase {
 		return ModList.MEKANISM;
 	}
 
-	public ModOreList getModOre(int id, int meta) {
+	public ModOreList getModOre(Item id, int meta) {
+		return this.getModOre(Block.getBlockFromItem(id), meta);
+	}
+
+	public ModOreList getModOre(Block id, int meta) {
 		if (id != oreID)
 			return null;
 

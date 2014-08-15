@@ -22,7 +22,7 @@ public class ContainerBasicStorage extends CoreContainer {
 		super(player, te);
 		lowerInv = (IInventory)te;
 		int numRows = lowerInv.getSizeInventory() / 9;
-		lowerInv.openChest();
+		lowerInv.openInventory();
 		int dy = (numRows - 4) * 18;
 
 		for (int i = 0; i < numRows; i++)
@@ -58,7 +58,7 @@ public class ContainerBasicStorage extends CoreContainer {
 	public final void onContainerClosed(EntityPlayer par1EntityPlayer)
 	{
 		super.onContainerClosed(par1EntityPlayer);
-		lowerInv.closeChest();
+		lowerInv.closeInventory();
 	}
 
 	public final IInventory getLowerInventory()

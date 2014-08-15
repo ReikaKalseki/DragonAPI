@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.util.Arrays;
 
 import net.minecraft.block.Block;
@@ -19,7 +21,6 @@ import net.minecraft.item.ItemStack;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReikaThaumHelper {
 	/** Contains a helper function to avoid overwriting existing aspects. */
@@ -29,7 +30,7 @@ public class ReikaThaumHelper {
 			Thread.dumpStack();
 			return;
 		}
-		AspectList has = ThaumcraftApi.objectTags.get(Arrays.asList(is.itemID, is.getItemDamage()));
+		AspectList has = ThaumcraftApi.objectTags.get(Arrays.asList(is.getItem(), is.getItemDamage()));
 		AspectList ot = getAspectList(aspects);
 
 		if (has != null) {
@@ -37,7 +38,7 @@ public class ReikaThaumHelper {
 				ot.merge(as, has.getAmount(as));
 			}
 		}
-		ThaumcraftApi.registerObjectTag(is.itemID, is.getItemDamage(), ot);
+		ThaumcraftApi.registerObjectTag(is.getItem(), is.getItemDamage(), ot);
 	}
 
 	public static void addAspects(Block b, Object... aspects) {
@@ -48,13 +49,13 @@ public class ReikaThaumHelper {
 		addAspects(new ItemStack(i), aspects);
 	}
 
-	public static void addAspects(int id, int meta, Object... aspects) {
+	public static void addAspects(Item id, int meta, Object... aspects) {
 		addAspects(new ItemStack(id, 1, meta), aspects);
 	}
 
 	public static void clearAspects(ItemStack is) {
 		AspectList ot = new AspectList();
-		ThaumcraftApi.registerObjectTag(is.itemID, is.getItemDamage(), ot);
+		ThaumcraftApi.registerObjectTag(is.getItem(), is.getItemDamage(), ot);
 	}
 
 	public static void addAspects(Class<? extends Entity> entity, Object... aspects) {

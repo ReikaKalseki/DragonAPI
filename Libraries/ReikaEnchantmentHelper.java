@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import Reika.DragonAPI.DragonAPICore;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,7 +19,6 @@ import java.util.Map;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaEnchantmentHelper extends DragonAPICore {
 

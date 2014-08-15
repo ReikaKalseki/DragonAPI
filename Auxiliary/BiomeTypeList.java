@@ -9,8 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import net.minecraft.world.biome.BiomeGenBase;
+import Reika.CaveControl.CaveControl;
 import Reika.DragonAPI.ModList;
+
+import net.minecraft.world.biome.BiomeGenBase;
 
 public enum BiomeTypeList {
 
@@ -57,12 +59,23 @@ public enum BiomeTypeList {
 	}
 
 	public static BiomeTypeList getEntry(BiomeGenBase biome) {
+		if (biome == null) {
+			CaveControl.logger.log("Null Biome!");
+			return null;
+		}
+		String name = biome.getClass().getCanonicalName();
+		if (biome.getClass().getCanonicalName() == null && biome.getClass().getEnclosingClass() != null) {
+			name = biome.getClass().getEnclosingClass().getCanonicalName();
+		}
+		else {
+			name = biome.getClass().getCanonicalName();
+		}
 		for (int i = 0; i < biomeList.length; i++) {
 			BiomeTypeList type = biomeList[i];
 			if (type.isAvailable()) {
 				String[] biomes = type.biomes;
 				for (int j = 0; j < biomes.length; j++) {
-					if (biome.getClass().getCanonicalName().equals(biomes[j]))
+					if (name.equals(biomes[j]))
 						return biomeList[i];
 				}
 			}

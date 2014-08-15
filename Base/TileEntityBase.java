@@ -9,6 +9,21 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.StepTimer;
+import Reika.DragonAPI.Instantiable.SyncPacket;
+import Reika.DragonAPI.Libraries.ReikaAABBHelper;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.ModInteract.Lua.LuaMethod;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -26,31 +41,19 @@ import li.cil.oc.api.network.Node;
 import li.cil.oc.api.network.Visibility;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet132TileEntityData;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import net.minecraftforge.common.FakePlayer;
-import net.minecraftforge.common.FakePlayerFactory;
-import net.minecraftforge.common.ForgeDirection;
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Instantiable.StepTimer;
-import Reika.DragonAPI.Instantiable.SyncPacket;
-import Reika.DragonAPI.Libraries.ReikaAABBHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import Reika.DragonAPI.ModInteract.Lua.LuaMethod;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import dan200.computer.api.IComputerAccess;
@@ -62,7 +65,8 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	protected static final Random rand = new Random();
 	private int pseudometa;
 	protected boolean shutDown;
-	public String placer;
+	protected String placer;
+	private String placerUUID;
 	private int ticksExisted;
 	private FakePlayer fakePlayer;
 
@@ -75,7 +79,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	protected final ForgeDirection[] dirs = ForgeDirection.values();
 
-	public abstract int getTileEntityBlockID();
+	public abstract Block getTileEntityBlockID();
 
 	public abstract void updateEntity(World world, int x, int y, int z, int meta);
 
@@ -102,14 +106,14 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	public final Block getTEBlock() {
-		int id = this.getTileEntityBlockID();
-		if (id == 0)
+		Block id = this.getTileEntityBlockID();
+		if (id == Blocks.air)
 			ReikaJavaLibrary.pConsole("TileEntity "+this+" tried to register ID 0!");
-		if (id >= Block.blocksList.length) {
+		if (id == null) {
 			ReikaJavaLibrary.pConsole(id+" is an invalid block ID for "+this+"!");
 			return null;
 		}
-		return Block.blocksList[id];
+		return id;
 	}
 
 	public static final boolean isStandard8mReach(EntityPlayer ep, TileEntity te) {
@@ -119,7 +123,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	public boolean isPlayerAccessible(EntityPlayer var1) {
 		double dist = ReikaMathLibrary.py3d(xCoord+0.5-var1.posX, yCoord+0.5-var1.posY, zCoord+0.5-var1.posZ);
-		return (dist <= 8) && worldObj.getBlockTileEntity(xCoord, yCoord, zCoord) == this;
+		return (dist <= 8) && worldObj.getTileEntity(xCoord, yCoord, zCoord) == this;
 	}
 
 	protected void writeSyncTag(NBTTagCompound NBT) {
@@ -139,6 +143,8 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 		if (placer != null && !placer.isEmpty())
 			NBT.setString("place", placer);
+		if (placerUUID != null && !placerUUID.isEmpty())
+			NBT.setString("placeUUID", placerUUID);
 
 		if (node != null)
 			node.save(NBT);
@@ -150,9 +156,22 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		this.readSyncTag(NBT);
 
 		placer = NBT.getString("place");
+		placerUUID = NBT.getString("placeUUID");
 
 		if (node != null)
 			node.load(NBT);
+	}
+
+	private void sendPacketToAllAround(S35PacketUpdateTileEntity p, int r) {
+		if (!worldObj.isRemote) {
+			AxisAlignedBB box = ReikaAABBHelper.getBlockAABB(xCoord, yCoord, zCoord).expand(r, r, r);
+			List<EntityPlayerMP> li = worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, box);
+			for (int i = 0; i < li.size(); i++)  {
+				EntityPlayerMP entityplayermp = li.get(i);
+				//entityplayermp.playerNetServerHandler.sendPacket(p);
+			}
+		}
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord); //TEMPORARY FIX, IS NOT GOOD ON PERFORMANCE, BUT FORCES A SYNC
 	}
 
 	public void syncAllData(boolean fullNBT) {
@@ -164,8 +183,8 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			this.writeToNBT(var1);
 			this.writeSyncTag(var1);
 			var1.setBoolean("fullData", true);
-			Packet132TileEntityData p = new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, var1);
-			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, this.getUpdatePacketRadius(), worldObj.provider.dimensionId, p);
+			S35PacketUpdateTileEntity p = new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 2, var1);
+			this.sendPacketToAllAround(p, this.getUpdatePacketRadius());
 		}
 	}
 
@@ -176,7 +195,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		this.writeSyncTag(nbt);
 		this.writeToNBT(nbt);
 		nbt.setBoolean("fullData", true);
-		return new Packet132TileEntityData(xCoord, yCoord, zCoord, 2, nbt);
+		return new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 2, nbt);
 	}
 
 	private boolean shouldFullSync() {
@@ -188,7 +207,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	@Override
-	public final void onDataPacket(INetworkManager netManager, Packet132TileEntityData packet)
+	public final void onDataPacket(NetworkManager netManager, S35PacketUpdateTileEntity packet)
 	{
 		if (packet instanceof SyncPacket) {
 			SyncPacket p = (SyncPacket)packet;
@@ -198,10 +217,20 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			this.readSyncTag(NBT);
 		}
 		else {
-			this.readSyncTag(packet.data);
-			if (packet.data.getBoolean("fullData"))
-				this.readFromNBT(packet.data);
+			this.readSyncTag(packet.field_148860_e);
+			if (packet.field_148860_e.getBoolean("fullData"))
+				this.readFromNBT(packet.field_148860_e);
 		}
+	}
+
+	public final void setPlacer(EntityPlayer ep) {
+		placer = ep.getCommandSenderName();
+		if (ep.getGameProfile().getId() != null)
+			placerUUID = ep.getGameProfile().getId().toString();
+	}
+
+	public final String getPlacerName() {
+		return placer;
 	}
 
 	public final EntityPlayer getPlacer() {
@@ -214,8 +243,10 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	public final EntityPlayer getFakePlacer() {
 		if (placer == null || placer.isEmpty())
 			return null;
+		if (worldObj.isRemote)
+			return null;
 		if (fakePlayer == null)
-			fakePlayer = FakePlayerFactory.get(worldObj, placer);
+			fakePlayer = ReikaPlayerAPI.getFakePlayerByNameAndUUID((WorldServer)worldObj, placer, placerUUID);
 		return fakePlayer;
 	}
 
@@ -225,20 +256,20 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		int y = yCoord;
 		int z = zCoord;
 
-		int id = world.getBlockId(x, y, z);
+		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		if (id == 0)
+		if (b == Blocks.air)
 			return false;
-		Block b = Block.blocksList[id];
+		;
 		if (!b.hasTileEntity(meta))
 			return false;
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(x, y, z);
 		if (te == null)
 			return false;
 		if (!(te instanceof TileEntityBase))
 			return false;
 		TileEntityBase tb = (TileEntityBase)te;
-		if (id != tb.getTileEntityBlockID())
+		if (b != tb.getTileEntityBlockID())
 			return false;
 		return true;
 	}
@@ -267,10 +298,10 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		if (blockType != null)
 			return blockType;
 		if (this.isInWorld()) {
-			blockType = Block.blocksList[worldObj.getBlockId(xCoord, yCoord, zCoord)];
+			blockType = worldObj.getBlock(xCoord, yCoord, zCoord);
 		}
 		else {
-			return blockType = Block.blocksList[this.getTileEntityBlockID()];
+			return blockType = this.getTileEntityBlockID();
 		}
 		return blockType;
 	}
@@ -341,7 +372,8 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		if (!syncTag.isEmpty()) {
 			int r = this.shouldFullSync() ? 128 : this.getUpdatePacketRadius();
 			int dim = worldObj.provider.dimensionId;
-			PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, syncTag);
+			//PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, syncTag);
+			this.sendPacketToAllAround(syncTag, r);
 			DragonAPIInit.instance.getModLogger().debug("Packet "+syncTag+" sent from "+this);
 		}
 	}
@@ -406,7 +438,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	protected void delete() {
-		worldObj.setBlock(xCoord, yCoord, zCoord, 0);
+		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 	}
 
 	@Override
@@ -430,14 +462,14 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			int dz = zCoord+dir.offsetZ;
 			if (!ReikaWorldHelper.tileExistsAt(worldObj, dx, dy, dz))
 				return null;
-			return worldObj.getBlockTileEntity(dx, dy, dz);
+			return worldObj.getTileEntity(dx, dy, dz);
 		}
 	}
 
 	public TileEntity getTileEntity(int x, int y, int z) {
 		if (!ReikaWorldHelper.tileExistsAt(worldObj, x, y, z))
 			return null;
-		return worldObj.getBlockTileEntity(x, y, z);
+		return worldObj.getTileEntity(x, y, z);
 	}
 
 	public final boolean isDirectlyAdjacent(int x, int y, int z) {
@@ -453,7 +485,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	public void updateCache(ForgeDirection dir) {
-		TileEntity te = worldObj.getBlockTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
+		TileEntity te = worldObj.getTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
 		/*if (te instanceof SpaceRift) {
 			te = ((SpaceRift)te).getTileEntityFrom(dir);
 		}*/

@@ -9,11 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.GUI;
 
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 
 public final class GuiStringBuilder extends GuiScreen {
 
@@ -62,7 +63,7 @@ public final class GuiStringBuilder extends GuiScreen {
 		buttonList.clear();
 		int j = (width - xSize) / 2;
 		int k = (height - ySize) / 2;
-		text = new Gui2DTextField(fontRenderer, j+5, k+10, xSize-10, ySize-20, displayWidth, displayHeight);
+		text = new Gui2DTextField(fontRendererObj, j+5, k+10, xSize-10, ySize-20, displayWidth, displayHeight);
 		text.setText(message);
 		text.setFocused(false);
 		text.setMaxStringLength(width*height);

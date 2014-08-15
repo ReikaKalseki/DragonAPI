@@ -9,13 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockRedstoneLogic;
-import net.minecraft.util.Direction;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockRedstoneDiode;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.Direction;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public final class ReikaRedstoneHelper extends DragonAPICore {
 
@@ -41,20 +43,19 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 
 	/** Is the block receiving power from a repeater on a side. Args: World, x, y, z, side */
 	public static boolean isReceivingPowerFromRepeater(World world, int x, int y, int z, ForgeDirection side) {
-		int id = world.getBlockId(x+side.offsetX, y+side.offsetY, z+side.offsetZ);
+		Block b = world.getBlock(x+side.offsetX, y+side.offsetY, z+side.offsetZ);
 		int meta = world.getBlockMetadata(x+side.offsetX, y+side.offsetY, z+side.offsetZ);
 		boolean dir = false;
-		if (id != 0) {
-			Block b = Block.blocksList[id];
-			if (b instanceof BlockRedstoneLogic) {
-				BlockRedstoneLogic lgc = (BlockRedstoneLogic)b;
+		if (b != Blocks.air) {
+			if (b instanceof BlockRedstoneDiode) {
+				BlockRedstoneDiode lgc = (BlockRedstoneDiode)b;
 				int direct = lgc.getDirection(meta);
 				int dx = Direction.offsetX[direct];
 				int dz = Direction.offsetZ[direct];
 				dir = (dx == side.offsetX && dz == side.offsetZ);
 			}
 		}
-		boolean power = (id == Block.redstoneComparatorActive.blockID || id == Block.redstoneRepeaterActive.blockID);
+		boolean power = (b == Blocks.powered_comparator || b == Blocks.powered_repeater);
 		return power && dir;
 	}
 

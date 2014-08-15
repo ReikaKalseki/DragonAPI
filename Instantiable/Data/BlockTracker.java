@@ -9,11 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BlockTracker extends BlockArray {
 
@@ -22,8 +25,8 @@ public class BlockTracker extends BlockArray {
 		refWorld = world;
 	}
 
-	private HashMap<int[], Integer> counts = new HashMap<int[], Integer>();
-	private HashMap<Integer, Integer> ids = new HashMap<Integer, Integer>();
+	private HashMap<ItemStack, Integer> counts = new HashMap<ItemStack, Integer>();
+	private HashMap<Block, Integer> ids = new HashMap<Block, Integer>();
 
 	@Override
 	public boolean addBlockCoordinate(int x, int y, int z) {
@@ -36,9 +39,9 @@ public class BlockTracker extends BlockArray {
 
 	private void incrementCounts(int x, int y, int z) {
 		if (this.hasWorldReference()) {
-			int id = refWorld.getBlockId(x, y, z);
+			Block id = refWorld.getBlock(x, y, z);
 			int meta = refWorld.getBlockMetadata(x, y, z);
-			int[] dat = {id,meta};
+			ItemStack dat = new ItemStack(id, 1, meta);
 			if (counts.containsKey(dat)) {
 				int count = counts.get(dat);
 				counts.put(dat, count+1);
@@ -59,8 +62,8 @@ public class BlockTracker extends BlockArray {
 		}
 	}
 
-	public int getNumberOf(int id, int meta) {
-		int[] dat = {id,meta};
+	public int getNumberOf(Block id, int meta) {
+		ItemStack dat = new ItemStack(id, 1, meta);
 		if (counts.containsKey(dat)) {
 			int count = counts.get(dat);
 			return count;
@@ -85,7 +88,7 @@ public class BlockTracker extends BlockArray {
 			ReikaJavaLibrary.pConsole("Cannot call the count for a non-world liquid!");
 			return 0;
 		}
-		return this.getNumberOf(liq.getBlockID(), 0);
+		return this.getNumberOf(liq.getBlock(), 0);
 	}
 
 }

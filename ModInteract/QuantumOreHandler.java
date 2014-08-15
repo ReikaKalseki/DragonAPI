@@ -9,43 +9,47 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModRegistry.ModOreList;
+
+import java.lang.reflect.Field;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class QuantumOreHandler extends ModHandlerBase {
 
 	private static final QuantumOreHandler instance = new QuantumOreHandler();
 
-	public final int quantumID;
-	public final int quantumIDGlow;
+	public final Block quantumID;
+	public final Block quantumIDGlow;
 
-	public final int dustID;
+	public final Item dustID;
 
 	private boolean isOreDict = false;
 
 	private QuantumOreHandler() {
 		super();
-		int idore = -1;
-		int idore2 = -1;
-		int iddust = -1;
+		Block idore = null;
+		Block idore2 = null;
+		Item iddust = null;
 
 		if (this.hasMod()) {
 			try {
 				Class quant = ModList.QCRAFT.getBlockClass();
 
 				Field quantum = quant.getField("quantumOreBlockID");
-				idore = quantum.getInt(null);
+				idore = (Block)quantum.get(null);
 				quantum = quant.getField("quantumOreGlowingBlockID");
-				idore2 = quantum.getInt(null);
+				idore2 = (Block)quantum.get(null);
 
 				Field dust = quant.getField("quantumDustItemID");
-				iddust = dust.getInt(null);
+				iddust = (Item)dust.get(null);
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -75,7 +79,7 @@ public class QuantumOreHandler extends ModHandlerBase {
 		quantumID = idore;
 		quantumIDGlow = idore2;
 
-		dustID = iddust+256;
+		dustID = iddust;
 	}
 
 	public static QuantumOreHandler getInstance() {
@@ -84,7 +88,7 @@ public class QuantumOreHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return quantumID != -1 && quantumIDGlow != -1 && dustID != -1;
+		return quantumID != null && quantumIDGlow != null && dustID != null;
 	}
 
 	@Override
@@ -95,7 +99,7 @@ public class QuantumOreHandler extends ModHandlerBase {
 	public boolean isQuantumOre(ItemStack block) {
 		if (!this.initializedProperly())
 			return false;
-		return block.itemID == quantumID || block.itemID == quantumIDGlow;
+		return ReikaItemHelper.matchStackWithBlock(block, quantumID) || ReikaItemHelper.matchStackWithBlock(block, quantumIDGlow);
 	}
 
 	public void forceOreRegistration() {

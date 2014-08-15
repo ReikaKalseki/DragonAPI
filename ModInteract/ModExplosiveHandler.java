@@ -24,7 +24,7 @@ public class ModExplosiveHandler {
 		Class exp = null;
 		Class miss = null;
 		try {
-			ic = Class.forName("ic2.core.block.EntityIC2Explosive");
+			ic = Class.forName("ic2.core.Blocks.EntityIC2Explosive");
 			exp = Class.forName("???");
 			miss = Class.forName(""); //The code is in another language... T_T
 		}

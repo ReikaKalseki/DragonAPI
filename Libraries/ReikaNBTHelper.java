@@ -9,8 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Exception.MisuseException;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 import net.minecraft.item.ItemStack;
@@ -26,11 +28,8 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagLong;
 import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Exception.MisuseException;
 
 public final class ReikaNBTHelper extends DragonAPICore {
 
@@ -53,12 +52,12 @@ public final class ReikaNBTHelper extends DragonAPICore {
 
 	/** Reads an inventory from NBT. Args: NBT Tag */
 	public static ItemStack[] getInvFromNBT(NBTTagCompound NBT) {
-		NBTTagList nbttaglist = NBT.getTagList("Items");
+		NBTTagList nbttaglist = NBT.getTagList("Items", NBT.getId());
 		ItemStack[] inv = new ItemStack[nbttaglist.tagCount()];
 
 		for (int i = 0; i < nbttaglist.tagCount(); i++)
 		{
-			NBTTagCompound nbttagcompound = (NBTTagCompound)nbttaglist.tagAt(i);
+			NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
 			byte byte0 = nbttagcompound.getByte("Slot");
 
 			if (byte0 >= 0 && byte0 < inv.length)
@@ -83,31 +82,31 @@ public final class ReikaNBTHelper extends DragonAPICore {
 
 	public static Object getValue(NBTBase NBT) {
 		if (NBT instanceof NBTTagInt) {
-			return ((NBTTagInt)NBT).data;
+			return ((NBTTagInt)NBT).func_150287_d();
 		}
 		else if (NBT instanceof NBTTagByte) {
-			return ((NBTTagByte)NBT).data;
+			return ((NBTTagByte)NBT).func_150290_f();
 		}
 		else if (NBT instanceof NBTTagShort) {
-			return ((NBTTagShort)NBT).data;
+			return ((NBTTagShort)NBT).func_150289_e();
 		}
 		else if (NBT instanceof NBTTagLong) {
-			return ((NBTTagLong)NBT).data;
+			return ((NBTTagLong)NBT).func_150291_c();
 		}
 		else if (NBT instanceof NBTTagFloat) {
-			return ((NBTTagFloat)NBT).data;
+			return ((NBTTagFloat)NBT).func_150288_h();
 		}
 		else if (NBT instanceof NBTTagDouble) {
-			return ((NBTTagDouble)NBT).data;
+			return ((NBTTagDouble)NBT).func_150286_g();
 		}
 		else if (NBT instanceof NBTTagIntArray) {
-			return ((NBTTagIntArray)NBT).intArray;
+			return ((NBTTagIntArray)NBT).func_150302_c();
 		}
 		else if (NBT instanceof NBTTagString) {
-			return ((NBTTagString)NBT).data;
+			return ((NBTTagString)NBT).func_150285_a_();
 		}
 		else if (NBT instanceof NBTTagByteArray) {
-			return ((NBTTagByteArray)NBT).byteArray;
+			return ((NBTTagByteArray)NBT).func_150292_c();
 		}
 		else if (NBT instanceof NBTTagCompound) {
 			return NBT;
@@ -127,27 +126,27 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	public static NBTBase compressNumber(NBTBase tag) {
 		if (!isIntNumberTag(tag))
 			throw new MisuseException("Only integer-type numbers (byte, short, int, and long) can be compressed!");
-		String name = tag.getName();
 		long value = (Long)getValue(tag);
 		if (value > Integer.MAX_VALUE) {
-			return new NBTTagLong(name, value);
+			return new NBTTagLong(value);
 		}
 		else if (value > Short.MAX_VALUE) {
-			return new NBTTagInt(name, (int)value);
+			return new NBTTagInt((int)value);
 		}
 		else if (value > Byte.MAX_VALUE) {
-			return new NBTTagShort(name, (short)value);
+			return new NBTTagShort((short)value);
 		}
 		else {
-			return new NBTTagByte(name, (byte)value);
+			return new NBTTagByte((byte)value);
 		}
 	}
 
 	public static ArrayList<String> parseNBTAsLines(NBTTagCompound nbt) {
 		ArrayList<String> li = new ArrayList();
-		Iterator<NBTBase> it = nbt.getTags().iterator();
-		while (it.hasNext()) {
-			NBTBase b = it.next();
+		Iterator<NBTBase> it = nbt.func_150296_c().iterator();
+		for (Object o : nbt.func_150296_c()) {
+			String key = (String)o;
+			NBTBase b = nbt.getTag(key);/*
 			if (b instanceof NBTTagByteArray) {
 				li.add(b.getName()+": "+Arrays.toString(((NBTTagByteArray)b).byteArray));
 			}
@@ -159,7 +158,8 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			}
 			else {
 				li.add(b.getName()+": "+b.toString());
-			}
+			}*/
+			li.add(key+": "+b.toString());
 		}
 		return li;
 	}

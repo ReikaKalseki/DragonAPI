@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable;
 
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidStack;
 
 public class EnhancedFluid extends Fluid {
 
@@ -31,9 +32,9 @@ public class EnhancedFluid extends Fluid {
 	}
 
 	@Override
-	public final String getLocalizedName()
+	public final String getLocalizedName(FluidStack fs)
 	{
-		return ingame != null ? ingame : super.getLocalizedName();
+		return ingame != null ? ingame : super.getLocalizedName(fs);
 	}
 
 	@Override

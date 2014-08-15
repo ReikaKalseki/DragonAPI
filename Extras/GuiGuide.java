@@ -9,6 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.IO.XMLInterface;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -17,12 +23,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
 import org.lwjgl.opengl.GL11;
-
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Instantiable.IO.XMLInterface;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
 public class GuiGuide extends GuiScreen {
 
@@ -147,14 +147,14 @@ public class GuiGuide extends GuiScreen {
 			s = mods.get(screen-1).getDisplayName();
 		else
 			s = "Reika's Mods";
-		fontRenderer.drawString(String.format("%s", s), posX+10, posY+8, 0);
+		fontRendererObj.drawString(String.format("%s", s), posX+10, posY+8, 0);
 		if (screen >= 1) {
-			int w = fontRenderer.getStringWidth(s+" ");
+			int w = fontRendererObj.getStringWidth(s+" ");
 			if (mods.get(screen-1).isLoaded()) {
-				fontRenderer.drawString("(Installed)", posX+10+w, posY+8, 0x007700);
+				fontRendererObj.drawString("(Installed)", posX+10+w, posY+8, 0x007700);
 			}
 			else {
-				fontRenderer.drawString("(Not Installed)", posX+10+w, posY+8, 0x770000);
+				fontRendererObj.drawString("(Not Installed)", posX+10+w, posY+8, 0x770000);
 			}
 		}
 	}
@@ -174,7 +174,7 @@ public class GuiGuide extends GuiScreen {
 		int xo = 0;
 		int yo = 0;
 		/*
-		fontRenderer.drawString(HandbookRegistry.getEntry(screen, page).getTitle(), posX+xo+6, posY+yo+6, 0x000000);
+		fontRendererObj.drawString(HandbookRegistry.getEntry(screen, page).getTitle(), posX+xo+6, posY+yo+6, 0x000000);
 		HandbookRegistry h = HandbookRegistry.getEntry(screen, page);
 		 */
 		String s = "This book contains basic information about each of Reika's mods.";
@@ -182,7 +182,7 @@ public class GuiGuide extends GuiScreen {
 			String tag = "dragonapi:"+mods.get(screen-1).name().toLowerCase()+":"+tabTags[page];
 			s = data.get(tag);
 		}
-		fontRenderer.drawSplitString(String.format("%s", s), posX+9, posY+88, 241, 0xffffff);
+		fontRendererObj.drawSplitString(String.format("%s", s), posX+9, posY+88, 241, 0xffffff);
 
 		this.drawGraphics();
 

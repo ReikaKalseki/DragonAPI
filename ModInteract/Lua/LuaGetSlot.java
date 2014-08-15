@@ -27,7 +27,7 @@ public class LuaGetSlot extends LuaMethod {
 		if (is == null)
 			return null;
 		Object[] o = new Object[4];
-		o[0] = is.itemID;
+		o[0] = is.getItem();
 		o[1] = is.getItemDamage();
 		o[2] = is.stackSize;
 		o[3] = is.getDisplayName();

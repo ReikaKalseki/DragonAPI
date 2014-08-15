@@ -1,16 +1,18 @@
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
-import net.minecraftforge.common.ForgeDirection;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public final class WorldLocation {
 
@@ -36,13 +38,13 @@ public final class WorldLocation {
 		this(te.worldObj, te.xCoord, te.yCoord, te.zCoord);
 	}
 
-	public int getBlockID() {
+	public Block getBlock() {
 		World world = this.getWorld();
-		return world != null ? world.getBlockId(xCoord, yCoord, zCoord) : -1;
+		return world != null ? world.getBlock(xCoord, yCoord, zCoord) : null;
 	}
 
 	public boolean isEmpty() {
-		return this.getBlockID() == 0;
+		return this.getBlock() == Blocks.air;
 	}
 
 	public int getBlockMetadata() {
@@ -52,7 +54,7 @@ public final class WorldLocation {
 
 	public TileEntity getTileEntity() {
 		World world = this.getWorld();
-		return world != null ? world.getBlockTileEntity(xCoord, yCoord, zCoord) : null;
+		return world != null ? world.getTileEntity(xCoord, yCoord, zCoord) : null;
 	}
 
 	public int getRedstone() {
@@ -94,18 +96,14 @@ public final class WorldLocation {
 	}
 
 	public void setBlock(Block b) {
-		this.setBlock(b.blockID);
-	}
-
-	public void setBlock(int id) {
-		this.setBlock(id, 0);
+		this.setBlock(b, 0);
 	}
 
 	public void setBlock(ItemStack is) {
-		this.setBlock(is.itemID, is.getItemDamage());
+		this.setBlock(Block.getBlockFromItem(is.getItem()), is.getItemDamage());
 	}
 
-	public void setBlock(int id, int meta) {
+	public void setBlock(Block id, int meta) {
 		World world = this.getWorld();
 		if (world != null) {
 			world.setBlock(xCoord, yCoord, zCoord, id, meta, 3);

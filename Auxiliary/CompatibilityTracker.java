@@ -9,11 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import java.util.ArrayList;
-
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.ModIncompatibilityException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+import java.util.ArrayList;
 
 public class CompatibilityTracker {
 

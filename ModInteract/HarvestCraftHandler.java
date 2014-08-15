@@ -9,6 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.CropHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Random;
@@ -18,13 +22,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.CropHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class HarvestCraftHandler extends CropHandlerBase {
 
-	public final int cropID;
+	public final Block cropID;
 	private final Item[] seedDrops;
 	private final Item[] otherDrops;
 
@@ -39,7 +40,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 
 	private HarvestCraftHandler() {
 		super();
-		int idcrop = -1;
+		Block idcrop = null;
 		Item[] seeds = null;
 		Item[] drops = null;
 		Field type = null;
@@ -49,7 +50,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 			try {
 				Field f = c.getDeclaredField("pamCrop");
 				Block crop = (Block)f.get(null);
-				idcrop = crop.blockID;
+				idcrop = crop;
 
 				f = c.getDeclaredField("PamSeeds");
 				seeds = (Item[])f.get(null);
@@ -101,7 +102,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public boolean isCrop(int id) {
+	public boolean isCrop(Block id) {
 		return id == cropID;
 	}
 
@@ -117,9 +118,9 @@ public class HarvestCraftHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
-		int id = world.getBlockId(x, y, z);
-		if (id == cropID) {
-			TileEntity te = world.getBlockTileEntity(x, y, z);
+		Block b = world.getBlock(x, y, z);
+		if (b == cropID) {
+			TileEntity te = world.getTileEntity(x, y, z);
 			try {
 				int stage = cropGrowth.getInt(te);
 				return stage == RIPE;
@@ -135,7 +136,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return cropID != -1 && seedDrops != null && otherDrops != null && cropType != null && cropGrowth != null;
+		return cropID != null && seedDrops != null && otherDrops != null && cropType != null && cropGrowth != null;
 	}
 
 	@Override
@@ -149,10 +150,10 @@ public class HarvestCraftHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, int id, int meta, int fortune) {
+	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune) {
 		ArrayList<ItemStack> li = new ArrayList();
 		if (id == cropID) {
-			TileEntity te = world.getBlockTileEntity(x, y, z);
+			TileEntity te = world.getTileEntity(x, y, z);
 			int crop = -1;
 			try {
 				crop = cropType.getInt(te);
@@ -173,15 +174,15 @@ public class HarvestCraftHandler extends CropHandlerBase {
 	public void editTileDataForHarvest(World world, int x, int y, int z) {
 		if (world.isRemote)
 			return;
-		int id = world.getBlockId(x, y, z);
-		if (id == cropID) {
-			TileEntity te = world.getBlockTileEntity(x, y, z);
+		Block b = world.getBlock(x, y, z);
+		if (b == cropID) {
+			TileEntity te = world.getTileEntity(x, y, z);
 			try {
 				cropGrowth.set(te, 0);
 			}
 			catch (Exception e) {}
 		}
-		world.markBlockForRenderUpdate(x, y, z);
+		world.func_147479_m(x, y, z);
 		world.markBlockForUpdate(x, y, z);
 	}
 
@@ -189,15 +190,15 @@ public class HarvestCraftHandler extends CropHandlerBase {
 	public void makeRipe(World world, int x, int y, int z) {
 		if (world.isRemote)
 			return;
-		int id = world.getBlockId(x, y, z);
-		if (id == cropID) {
-			TileEntity te = world.getBlockTileEntity(x, y, z);
+		Block b = world.getBlock(x, y, z);
+		if (b == cropID) {
+			TileEntity te = world.getTileEntity(x, y, z);
 			try {
 				cropGrowth.set(te, RIPE);
 			}
 			catch (Exception e) {}
 		}
-		world.markBlockForRenderUpdate(x, y, z);
+		world.func_147479_m(x, y, z);
 		world.markBlockForUpdate(x, y, z);
 	}
 

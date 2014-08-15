@@ -9,10 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.util.ArrayList;
 import java.util.Random;
-
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class OreDistributor {
 

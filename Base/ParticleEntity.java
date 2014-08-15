@@ -9,13 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+
 import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public abstract class ParticleEntity extends InertEntity {
 
@@ -67,7 +68,7 @@ public abstract class ParticleEntity extends InertEntity {
 
 		if (!worldObj.isRemote) {
 			double s = this.getHitboxSize();
-			AxisAlignedBB box = AxisAlignedBB.getAABBPool().getAABB(posX, posY, posZ, posX, posY, posZ).expand(s, s, s);
+			AxisAlignedBB box = AxisAlignedBB.getBoundingBox(posX, posY, posZ, posX, posY, posZ).expand(s, s, s);
 			List<Entity> inbox = worldObj.getEntitiesWithinAABB(Entity.class, box);
 			for (int i = 0; i < inbox.size(); i++) {
 				this.applyEntityCollision(inbox.get(i));
@@ -108,5 +109,53 @@ public abstract class ParticleEntity extends InertEntity {
 
 	private final boolean compareBlocks(int x, int y, int z) {
 		return x == oldBlockX && y == oldBlockY && z == oldBlockZ;
+	}
+
+	@Override
+	protected final boolean canTriggerWalking()
+	{
+		return false;
+	}
+
+	@Override
+	public final AxisAlignedBB getBoundingBox()
+	{
+		return null;
+	}
+
+	@Override
+	public final boolean canBeCollidedWith()
+	{
+		return false;
+	}
+
+	@Override
+	public final boolean canBePushed()
+	{
+		return false;
+	}
+
+	@Override
+	public final boolean canAttackWithItem()
+	{
+		return false;
+	}
+
+	@Override
+	public final boolean isEntityInvulnerable()
+	{
+		return true;
+	}
+
+	@Override
+	public final boolean doesEntityNotTriggerPressurePlate()
+	{
+		return true;
+	}
+
+	@Override
+	public final boolean canRenderOnFire()
+	{
+		return false;
 	}
 }

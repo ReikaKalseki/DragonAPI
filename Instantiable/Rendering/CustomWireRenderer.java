@@ -9,14 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
+import Reika.DragonAPI.Interfaces.WireBlock;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.ForgeDirection;
-import Reika.DragonAPI.Interfaces.WireBlock;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import net.minecraftforge.common.util.ForgeDirection;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class CustomWireRenderer implements ISimpleBlockRenderingHandler {
@@ -70,8 +71,8 @@ public class CustomWireRenderer implements ISimpleBlockRenderingHandler {
 				if (w.isDirectlyConnectedTo(world, x, y, z, i))
 					alone = false;
 			int power = w.getPowerState(world, x, y, z);
-			Icon ico = rb.getIconSafe(w.getBaseTexture());
-			Icon over = rb.getIconSafe(w.getConnectedSideOverlay());
+			IIcon ico = rb.getIconSafe(w.getBaseTexture());
+			IIcon over = rb.getIconSafe(w.getConnectedSideOverlay());
 			Tessellator v5 = Tessellator.instance;
 			int l = b.getMixedBrightnessForBlock(world, x, y, z);
 			v5.setBrightness(rb.renderMaxY < 1.0D ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
@@ -208,7 +209,7 @@ public class CustomWireRenderer implements ISimpleBlockRenderingHandler {
 	}
 
 	@Override
-	public boolean shouldRender3DInInventory() {
+	public boolean shouldRender3DInInventory(int model) {
 		return false;
 	}
 

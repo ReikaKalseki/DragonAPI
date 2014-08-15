@@ -9,13 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.Side;

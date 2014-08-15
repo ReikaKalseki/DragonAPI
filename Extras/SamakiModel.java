@@ -9,8 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
-import net.minecraft.client.Minecraft;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 
 import org.lwjgl.opengl.GL11;
@@ -58,55 +61,73 @@ public class SamakiModel extends ModifiedPlayerModel {
 
 	@Override
 	public void setPartAngles(EntityPlayer ep, float tick) {
-		//float pitch = -ep.rotationPitch;
-		//float yawHead = -ep.rotationYaw%360-tick*(ep.rotationYaw-ep.prevRotationYaw);
+		float pitch = -ep.rotationPitch;
+		float yawHead = -ep.rotationYaw%360-tick*(ep.rotationYaw-ep.prevRotationYaw);
 		float yaw = -ep.renderYawOffset%360-tick*(ep.renderYawOffset-ep.prevRenderYawOffset)+180;
 
-		//float pc = pitch*RADIAN;
+		pc = pitch*RADIAN;
 		yc = yaw*RADIAN;
 
-		this.compensateAngles(tick);
-		//float yhc = yawHead*RADIAN;
+		//this.compensateAngles(tick);
+		yhc = yawHead*RADIAN;
 
-		//earL.rotateAngleX = pc;
-		//hornR.rotateAngleY = yawBody / (180F / (float)Math.PI);
-		//earR.rotateAngleX = pc;
+		Tessellator.instance.startDrawing(GL11.GL_LINE_LOOP);
+		Tessellator.instance.addVertex(0, 0, 0);
+		Tessellator.instance.addVertex(0, 2, 0);
+		Tessellator.instance.draw();
+		;//earL.rotateAngleX = 0;
+		;//earR.rotateAngleX = 0;
+		;//earL.rotateAngleY = 0;//yhc-yc;
+		;//earR.rotateAngleY = 0;//yhc-yc;
+		;//earL.rotateAngleZ = 0;//45*RADIAN;
+		;//earR.rotateAngleZ = 0;//45*RADIAN;
 
-		//earR.rotateAngleY = yhc;
-		//earL.rotateAngleY = yhc;
+		//earR.rotateAngleY = yhc-yc;
+		//earL.rotateAngleY = yhc-yc;
 
-		tail.rotateAngleY = yc;
+		//tail.rotateAngleY = yc;
+	}
+
+	@Override
+	public void bindTexture() {
+		ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "/Reika/DragonAPI/Resources/samaki_tex.png");
 	}
 
 	@Override
 	public void renderBodyParts(EntityPlayer ep, float tick) {
-		if (ep.equals(Minecraft.getMinecraft().thePlayer) && !Minecraft.getMinecraft().thePlayer.getEntityName().equals("FurryDJ"))
-			return;
-		this.setPartAngles(ep, tick);
+		//this.setPartAngles(ep, tick);
 
-		float pitch = -ep.rotationPitch;
+		float pitch = ep.rotationPitch;
 		float yawHead = -ep.rotationYaw%360-tick*(ep.rotationYaw-ep.prevRotationYaw);
 
 		if (tick == 1.0F) {
-			yawHead = yhc/RADIAN-6;
-			pitch = pc/RADIAN;
+			yawHead = yhc-6;
 		}
+		yc = ep.rotationYaw;
+		yhc = ep.rotationYawHead;
+		pc = ep.rotationPitch;
+		float rc = ep.renderYawOffset-yc;
 
 		float f5 = 0.0625F;
 
 		double d = 0.1825;
-		if (ep.isSneaking())
-			d = 0.25;
-		GL11.glTranslated(0, d, 0);
-		GL11.glRotated(yawHead, 0, 1, 0);
-		GL11.glRotated(pitch, 1, 0, 0);
-		earL.render(f5);
-		earR.render(f5);
-		GL11.glRotated(-pitch, 1, 0, 0);
-		GL11.glRotated(yawHead, 0, -1, 0);
-		GL11.glTranslated(0, -d, 0);
 
 		tail.render(f5);
+
+		if (ep.isSneaking()) {
+			d = 0.25;
+
+			GL11.glTranslated(0.02, -0.1, 0.05);
+			GL11.glRotated(-22.5, 1, 0, 0);
+		}
+		GL11.glTranslated(0, d, 0);
+		GL11.glRotated(rc, 0, 1, 0);
+		GL11.glRotated(pc, 1, 0, 0);
+		earL.render(f5);
+		earR.render(f5);
+		GL11.glRotated(-pc, 1, 0, 0);
+		GL11.glRotated(-rc, 0, 1, 0);
+		GL11.glTranslated(0, -d, 0);
 	}
 
 }

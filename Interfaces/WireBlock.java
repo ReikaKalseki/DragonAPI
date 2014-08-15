@@ -11,7 +11,7 @@ package Reika.DragonAPI.Interfaces;
 
 import java.awt.Color;
 
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
 public interface WireBlock {
@@ -28,9 +28,9 @@ public interface WireBlock {
 
 	public Color getColor();
 
-	public Icon getConnectedSideOverlay();
+	public IIcon getConnectedSideOverlay();
 
-	public Icon getBaseTexture();
+	public IIcon getBaseTexture();
 
 	public boolean drawWireUp(IBlockAccess world, int x, int y, int z, int side);
 

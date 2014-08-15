@@ -9,13 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
 
 public enum ModList {
@@ -47,14 +48,14 @@ public enum ModList {
 	APPENG("AppliedEnergistics", "appeng.common.AppEng"),
 	MFFS("MFFS", "mffs.ModularForceFieldSystem"),
 	REDPOWER("RedPower"),
-	TWILIGHT("TwilightForest", "twilightforest.block.TFBlocks", "twilightforest.item.TFItems"),
+	TWILIGHT("TwilightForest", "twilightforest.Blocks.TFBlocks", "twilightforest.Items.TFItems"),
 	NATURA("Natura", "mods.natura.common.NContent"),
 	BOP("BiomesOPlenty", "biomesoplenty.configuration.BOPConfigurationIDs"),
 	BXL("ExtraBiomesXL"),
 	MINEFACTORY("MineFactoryReloaded", "powercrystals.minefactoryreloaded.MineFactoryReloadedCore"),
-	DARTCRAFT("DartCraft", "bluedart.block.DartBlock", "bluedart.item.DartItem"),
+	DARTCRAFT("DartCraft", "bluedart.Blocks.DartBlock", "bluedart.Items.DartItem"),
 	TINKERER("TConstruct", "tconstruct.common.TContent"), //"TRepo" in 1.7
-	THERMALEXPANSION("ThermalExpansion", "thermalexpansion.block.TEBlocks", "thermalexpansion.item.TEItems"),
+	THERMALEXPANSION("ThermalExpansion", "thermalexpansion.Blocks.TEBlocks", "thermalexpansion.Items.TEItems"),
 	MEKANISM("Mekanism", "mekanism.common.Mekanism"),
 	MEKTOOLS("MekanismTools", "mekanism.tools.common.MekanismTools"),
 	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks", null), //items spread over half a dozen classes
@@ -67,14 +68,14 @@ public enum ModList {
 	HARVESTCRAFT("pamharvestcraft", "assets.pamharvestcraft.PamHarvestCraft"),
 	MYSTCRAFT("Mystcraft"),
 	MAGICCROPS("magicalcrops", "magicalcrops.mod_mCrops"),
-	MIMICRY("Mimicry", "modMimicry.Block.MimicryBlock", "modMimicry.Item.MimicryItem"),
+	MIMICRY("Mimicry", "modMimicry.Blocks.MimicryBlock", "modMimicry.Items.MimicryItem"),
 	QCRAFT("QuantumCraft", "dan200.QCraft"),
 	OPENBLOCKS("OpenBlocks", "openblocks.OpenBlocks$Blocks", "openblocks.OpenBlocks$Items"),
 	FACTORIZATION("factorization", "factorization.common.Registry"),
 	UE("UniversalElectricity"),
 	EXTRAUTILS("ExtraUtilities", "extrautils.ExtraUtils"),
 	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits"),
-	ARSENAL("Redstone Arsenal", "redstonearsenal.item.RAItems"),
+	ARSENAL("Redstone Arsenal", "redstonearsenal.Items.RAItems"),
 	EMASHER("emashercore", "emasher.core.EmasherCore"),
 	HIGHLANDS("Highlands", "highlands.api.HighlandsBlocks"),
 	PROJRED("ProjRed|Core"),

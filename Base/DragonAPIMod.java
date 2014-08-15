@@ -9,10 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.RegistrationException;
@@ -20,6 +16,11 @@ import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;

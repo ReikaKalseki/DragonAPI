@@ -9,6 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.CropHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+import Reika.DragonAPI.ModRegistry.ModOreList;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,19 +24,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.CropHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public class MagicCropHandler extends CropHandlerBase {
 
-	public final int oreID;
-	public final int netherOreID;
+	public final Block oreID;
+	public final Block netherOreID;
 	/** Crafting Item */
-	public final int essenceID;
-	public final int cropEssenceID;
+	public final Item essenceID;
+	public final Item cropEssenceID;
 	private final int configChance;
 	private ItemStack christmasEssence;
 	private ItemStack natureEssence;
@@ -84,15 +85,15 @@ public class MagicCropHandler extends CropHandlerBase {
 
 		private final EssenceClass type;
 		private final String tag;
-		private int cropID = -1;
-		private int seedID = -1;
-		private int essenceID = -1;
+		private Block cropID = null;
+		private Item seedID = null;
+		private Item essenceID = null;
 		private final int essenceMeta;
 
 		public static final EssenceType[] essenceList = values();
-		private static final HashMap<Integer, EssenceType> cropIDs = new HashMap();
-		private static final HashMap<Integer, EssenceType> essenceIDs = new HashMap();
-		private static final HashMap<Integer, EssenceType> seedIDs = new HashMap();
+		private static final HashMap<Block, EssenceType> cropIDs = new HashMap();
+		private static final HashMap<Item, EssenceType> essenceIDs = new HashMap();
+		private static final HashMap<Item, EssenceType> seedIDs = new HashMap();
 
 		private EssenceType(EssenceClass type, String name, int meta) {
 			this.type = type;
@@ -100,7 +101,7 @@ public class MagicCropHandler extends CropHandlerBase {
 			essenceMeta = meta;
 		}
 
-		private void setIDs(int crop, int seed, int essence) {
+		private void setIDs(Block crop, Item seed, Item essence) {
 			seedID = seed;
 			cropID = crop;
 			essenceID = essence;
@@ -192,10 +193,10 @@ public class MagicCropHandler extends CropHandlerBase {
 
 	private MagicCropHandler() {
 		super();
-		int idore = -1;
-		int idnether = -1;
-		int idessence = -1;
-		int idcropessence = -1;
+		Block idore = null;
+		Block idnether = null;
+		Item idessence = null;
+		Item idcropessence = null;
 		int chance = -1;
 		if (this.hasMod()) {
 			Class c = this.getMod().getBlockClass();
@@ -214,7 +215,7 @@ public class MagicCropHandler extends CropHandlerBase {
 					f = c.getField(essf);
 					Item essence = (Item)f.get(null);
 
-					type.setIDs(crop.blockID, seed.itemID, essence.itemID);
+					type.setIDs(crop, seed, essence);
 				}
 				catch (NoSuchFieldException e) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -232,15 +233,15 @@ public class MagicCropHandler extends CropHandlerBase {
 			try {
 				Field f = c.getField("BlockOreEssence");
 				Block ore = (Block)f.get(null);
-				idore = ore.blockID;
+				idore = ore;
 
 				f = c.getField("BlockOreEssenceNether");
 				ore = (Block)f.get(null);
-				idnether = ore.blockID;
+				idnether = ore;
 
 				f = c.getField("MagicEssence");
 				Item essence = (Item)f.get(null);
-				idessence = essence.itemID;
+				idessence = essence;
 
 
 				Class c2 = Class.forName("magicalcrops.ConfigHandler");
@@ -274,18 +275,18 @@ public class MagicCropHandler extends CropHandlerBase {
 		cropEssenceID = idcropessence;
 		configChance = chance >= 0 ? chance : 10;
 
-		natureEssence = cropEssenceID >= 0 ? new ItemStack(cropEssenceID, 1, 0) : null;
-		christmasEssence = cropEssenceID >= 0 ? new ItemStack(cropEssenceID, 1, 20) : null;
+		natureEssence = cropEssenceID != null ? new ItemStack(cropEssenceID, 1, 0) : null;
+		christmasEssence = cropEssenceID != null ? new ItemStack(cropEssenceID, 1, 20) : null;
 	}
 
 	@Override
-	public boolean isCrop(int id) {
+	public boolean isCrop(Block id) {
 		return EssenceType.cropIDs.containsKey(id);
 	}
 
 	@Override
 	public boolean isSeedItem(ItemStack is) {
-		return EssenceType.seedIDs.containsKey(is.itemID);
+		return EssenceType.seedIDs.containsKey(is.getItem());
 	}
 
 	@Override
@@ -295,9 +296,9 @@ public class MagicCropHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
-		int id = world.getBlockId(x, y, z);
+		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		return this.isCrop(id) && meta == 7;
+		return this.isCrop(b) && meta == 7;
 	}
 
 	@Override
@@ -311,10 +312,10 @@ public class MagicCropHandler extends CropHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return EssenceType.initialized() && configChance != -1 && oreID != -1 && netherOreID != -1 && essenceID != -1 && cropEssenceID != -1;
+		return EssenceType.initialized() && configChance != -1 && oreID != null && netherOreID != null && essenceID != null && cropEssenceID != null;
 	}
 
-	public boolean isEssenceOre(int id) {
+	public boolean isEssenceOre(Block id) {
 		return id == netherOreID || id == oreID;
 	}
 
@@ -329,7 +330,7 @@ public class MagicCropHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, int id, int meta, int fortune) {
+	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune) {
 		ArrayList<ItemStack> li = new ArrayList();
 		if (ReikaRandomHelper.doWithChance(20*(1+fortune)) && christmasEssence != null)
 			li.add(christmasEssence);
@@ -358,7 +359,7 @@ public class MagicCropHandler extends CropHandlerBase {
 	}
 
 	public ItemStack getWeakEssence() {
-		return essenceID >= 0 ? new ItemStack(essenceID, 1, 0) : null;
+		return essenceID != null ? new ItemStack(essenceID, 1, 0) : null;
 	}
 
 }

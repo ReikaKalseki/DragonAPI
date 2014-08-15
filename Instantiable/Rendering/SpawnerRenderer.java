@@ -9,7 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
-import net.minecraft.block.Block;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.entity.Render;
@@ -24,15 +28,11 @@ import net.minecraft.entity.monster.EntityGiantZombie;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.passive.EntitySquid;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.IItemRenderer;
 
 import org.lwjgl.opengl.GL11;
-
-import Reika.DragonAPI.Libraries.ReikaEntityHelper;
-import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class SpawnerRenderer implements IItemRenderer {
 
@@ -56,7 +56,7 @@ public class SpawnerRenderer implements IItemRenderer {
 			GL11.glScaled(s, s, s);
 			rb = (RenderBlocks)data[0];
 			ReikaTextureHelper.bindTerrainTexture();
-			rb.renderBlockAsItem(Block.mobSpawner, 0, 1);
+			rb.renderBlockAsItem(Blocks.mob_spawner, 0, 1);
 			break;
 		case EQUIPPED:
 		case EQUIPPED_FIRST_PERSON:
@@ -64,12 +64,12 @@ public class SpawnerRenderer implements IItemRenderer {
 			GL11.glTranslated(d, d, d);
 			rb = (RenderBlocks)data[0];
 			ReikaTextureHelper.bindTerrainTexture();
-			rb.renderBlockAsItem(Block.mobSpawner, 0, 1);
+			rb.renderBlockAsItem(Blocks.mob_spawner, 0, 1);
 			break;
 		case INVENTORY:
 			rb = (RenderBlocks)data[0];
 			ReikaTextureHelper.bindTerrainTexture();
-			rb.renderBlockAsItem(Block.mobSpawner, 0, 1);
+			rb.renderBlockAsItem(Blocks.mob_spawner, 0, 1);
 
 			if (item.stackTagCompound == null)
 				return;

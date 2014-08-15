@@ -9,10 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+
 import java.awt.Color;
 
 import net.minecraft.client.renderer.Tessellator;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 public class PixelRenderer {
 

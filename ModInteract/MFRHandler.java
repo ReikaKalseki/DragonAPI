@@ -9,28 +9,29 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.block.Block;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+import java.lang.reflect.Field;
+
+import net.minecraft.block.Block;
 
 public class MFRHandler extends ModHandlerBase {
 
 	private static final MFRHandler instance = new MFRHandler();
 
-	public final int cableID;
+	public final Block cableID;
 
 	private MFRHandler() {
 		super();
-		int idcable = -1;
+		Block idcable = null;
 
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
 				Field wire = blocks.getField("rednetCableBlock");
-				idcable = ((Block)wire.get(null)).blockID;
+				idcable = ((Block)wire.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -66,7 +67,7 @@ public class MFRHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return cableID != -1;
+		return cableID != null;
 	}
 
 	@Override

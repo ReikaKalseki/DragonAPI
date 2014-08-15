@@ -9,6 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -22,42 +26,47 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Checks an itemstack array (eg an inventory) for an item of a specific id.
 	 * Returns true if found. Args: Item ID, Inventory */
-	public static boolean checkForItem(int id, ItemStack[] inv) {
+	public static boolean checkForItem(Item id, ItemStack[] inv) {
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				if (inv[i].itemID == id)
+				if (inv[i].getItem() == id)
 					return true;
 			}
 		}
 		return false;
 	}
 
-	public static boolean checkForItem(int id, IInventory ii) {
+	public static boolean checkForItem(Block id, ItemStack[] inv) {
+		return checkForItem(Item.getItemFromBlock(id), inv);
+	}
+
+	public static boolean checkForItem(Item id, IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			if (ii.getStackInSlot(i) != null) {
-				if (ii.getStackInSlot(i).itemID == id)
+				if (ii.getStackInSlot(i).getItem() == id)
 					return true;
 			}
 		}
 		return false;
+	}
+
+	public static boolean checkForItem(Block id, IInventory ii) {
+		return checkForItem(Item.getItemFromBlock(id), ii);
 	}
 
 	/** Checks an itemstack array (eg an inventory) for an itemstack,
 	 * defined by id, size, metadata. Returns true if found.
 	 * Args: Item ID, Metadata, StackSize, Inventory */
-	public static boolean checkForItemStack(int id, int dmg, int num, ItemStack[] inv) {
+	public static boolean checkForItemStack(Item id, int dmg, int num, ItemStack[] inv) {
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				if (inv[i].itemID == id && inv[i].getItemDamage() == dmg && inv[i].stackSize == num)
+				if (inv[i].getItem() == id && inv[i].getItemDamage() == dmg && inv[i].stackSize == num)
 					return true;
 			}
 		}
@@ -67,10 +76,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	/** Checks an itemstack array (eg an inventory) for an itemstack,
 	 * defined by id, and metadata. Returns true if found.
 	 * Args: Item ID, Metadata, Inventory */
-	public static boolean checkForItemStack(int id, int dmg, ItemStack[] inv) {
+	public static boolean checkForItemStack(Item id, int dmg, ItemStack[] inv) {
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				if (inv[i].itemID == id && inv[i].getItemDamage() == dmg)
+				if (inv[i].getItem() == id && inv[i].getItemDamage() == dmg)
 					return true;
 			}
 		}
@@ -80,11 +89,11 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	/** Checks an inventory for an itemstack,
 	 * defined by id, and metadata. Returns true if found.
 	 * Args: Item ID, Metadata, Inventory */
-	public static boolean checkForItemStack(int id, int dmg, IInventory inv) {
+	public static boolean checkForItemStack(Item id, int dmg, IInventory inv) {
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack is = inv.getStackInSlot(i);
 			if (is != null) {
-				if (is.itemID == id && is.getItemDamage() == dmg)
+				if (is.getItem() == id && is.getItemDamage() == dmg)
 					return true;
 			}
 		}
@@ -173,12 +182,12 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Returns the location (array index) of an item in the specified inventory.
 	 * Returns -1 if not present. Args: Item ID, Inventory */
-	public static int locateInInventory(int id, ItemStack[] inv) {
+	public static int locateInInventory(Item id, ItemStack[] inv) {
 		if (!checkForItem(id, inv))
 			return -1;
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				if (inv[i].itemID == id) {
+				if (inv[i].getItem() == id) {
 					return i;
 				}
 			}
@@ -186,15 +195,19 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return -1;
 	}
 
+	public static int locateInInventory(Block id, ItemStack[] inv) {
+		return locateInInventory(Item.getItemFromBlock(id), inv);
+	}
+
 	/** Returns the location (array index) of an item in the specified inventory.
 	 * Returns -1 if not present. Args: Item ID, Metadata, Inventory */
-	public static int locateInInventory(int id, int meta, ItemStack[] inv) {
+	public static int locateInInventory(Item id, int meta, ItemStack[] inv) {
 		if (!checkForItem(id, inv))
 			return -1;
 		if (meta == -1) {
 			for (int i = 0; i < inv.length; i++) {
 				if (inv[i] != null) {
-					if (inv[i].itemID == id) {
+					if (inv[i].getItem() == id) {
 						return i;
 					}
 				}
@@ -203,7 +216,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		else {
 			for (int i = 0; i < inv.length; i++) {
 				if (inv[i] != null) {
-					if (inv[i].itemID == id && inv[i].getItemDamage() == meta) {
+					if (inv[i].getItem() == id && inv[i].getItemDamage() == meta) {
 						return i;
 					}
 				}
@@ -214,11 +227,11 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Counts the number of a certain item ID in the inventory.
 	 * Args: ID, Inventory */
-	public static int countItem(int id, ItemStack[] inv) {
+	public static int countItem(Item id, ItemStack[] inv) {
 		int count = 0;
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				if (inv[i].itemID == id) {
+				if (inv[i].getItem() == id) {
 					count += inv[i].stackSize;
 				}
 			}
@@ -228,11 +241,11 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Counts the number of a certain item in the inventory.
 	 * Args: Item ID, Item Metadata, Inventory */
-	public static int countItem(int id, int meta, ItemStack[] inv) {
+	public static int countItem(Item id, int meta, ItemStack[] inv) {
 		int count = 0;
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				if (inv[i].itemID == id && inv[i].getItemDamage() == meta) {
+				if (inv[i].getItem() == id && inv[i].getItemDamage() == meta) {
 					count += inv[i].stackSize;
 				}
 			}
@@ -240,9 +253,13 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return count;
 	}
 
+	public static boolean findAndDecrStack(Block id, int meta, ItemStack[] inv) {
+		return findAndDecrStack(Item.getItemFromBlock(id), meta, inv);
+	}
+
 	/** Returns the existence of an item in the specified inventory, and decrements it if found.
 	 * Args: Item ID, Item Metadata, Inventory. Set meta to -1 for any. */
-	public static boolean findAndDecrStack(int id, int meta, ItemStack[] inv) {
+	public static boolean findAndDecrStack(Item id, int meta, ItemStack[] inv) {
 		int slot;
 		if (meta != -1)
 			slot = locateInInventory(id, meta, inv);
@@ -261,7 +278,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Returns the an item in the specified inventory, and decrements it if found.
 	 * Args: Item ID, Item Metadata, Inventory. Set meta to -1 for any. */
-	public static ItemStack findAndDecrStack2(int id, int meta, ItemStack[] inv) {
+	public static ItemStack findAndDecrStack2(Item id, int meta, ItemStack[] inv) {
 		int slot;
 		if (meta != -1)
 			slot = locateInInventory(id, meta, inv);
@@ -281,18 +298,18 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Counts the number of separate stacks of the item in an inventory.
 	 * Args: ID, metadata, inventory. Set meta to -1 for any. */
-	public static int countNumStacks(int id, int meta, ItemStack[] inv) {
+	public static int countNumStacks(Item id, int meta, ItemStack[] inv) {
 		int count = 0;
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
 				if (meta != -1) {
-					//ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.valueOf(id)+" = "+String.valueOf(inv[i].itemID));
-					if (inv[i].itemID == id && inv[i].getItemDamage() == meta)
+					//ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.valueOf(id)+" = "+String.valueOf(inv[i].getItem()));
+					if (inv[i].getItem() == id && inv[i].getItemDamage() == meta)
 						count++;
 				}
 				else {
-					//ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.valueOf(id)+" == "+String.valueOf(inv[i].itemID));
-					if (inv[i].itemID == id)
+					//ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.valueOf(id)+" == "+String.valueOf(inv[i].getItem()));
+					if (inv[i].getItem() == id)
 						count++;
 					//ModLoader.getMinecraftInstance().thePlayer.addChatMessage(String.valueOf(count));
 				}
@@ -307,7 +324,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		int count = 0;
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				if (inv[i].itemID == item.itemID)
+				if (ReikaItemHelper.matchStacks(item, inv[i]))
 					count++;
 			}
 		}
@@ -361,7 +378,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	/** Attempts to add an item to an inventory. Is all-or-nothing - will not add a
 	 * partial stack. Returns true if the stack "fit". Set metadata to -1 for any.
 	 * Args: Item ID, item metadata, number of items, inventory */
-	public static boolean putStackInInventory(int id, int meta, int size, ItemStack[] inventory) {
+	public static boolean putStackInInventory(Item id, int meta, int size, ItemStack[] inventory) {
 		if (meta == -1) {
 			boolean fits = putStackInInventory(id, size, inventory);
 			return fits;
@@ -381,7 +398,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return false;
 	}
 
-	private static boolean putStackInInventory(int id, int size, ItemStack[] inventory) {
+	private static boolean putStackInInventory(Item id, int size, ItemStack[] inventory) {
 		int slot = locateInInventory(id, inventory);
 		int empty = findEmptySlot(inventory);
 		if (slot == -1) {
@@ -400,7 +417,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	/** Adds as many of the specified item as it can (up to the specified maximum) and
 	 * returns the number of "leftover" items that did not fit. Set metadata to -1 for any.
 	 * Args: Item ID, item metadata, number of items, inventory */
-	public static int addToInventoryWithLeftover(int id, int meta, int size, ItemStack[] inventory) {
+	public static int addToInventoryWithLeftover(Item id, int meta, int size, ItemStack[] inventory) {
 		if (meta == -1) {
 			int leftover = addToInventoryWithLeftover(id, size, inventory);
 			return leftover;
@@ -423,7 +440,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return size;
 	}
 
-	private static int addToInventoryWithLeftover(int id, int size, ItemStack[] inventory) {
+	private static int addToInventoryWithLeftover(Item id, int size, ItemStack[] inventory) {
 		int slot = locateInInventory(id, inventory);
 		int empty = findEmptySlot(inventory);
 		if (slot == -1) {
@@ -446,7 +463,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	 * returns the number of "leftover" items that did not fit.
 	 * Args: Itemstack, inventory */
 	public static int addToInventoryWithLeftover(ItemStack stack, ItemStack[] inventory) {
-		int leftover = addToInventoryWithLeftover(stack.itemID, stack.getItemDamage(), stack.stackSize, inventory);
+		int leftover = addToInventoryWithLeftover(stack.getItem(), stack.getItemDamage(), stack.stackSize, inventory);
 		return leftover;
 	}
 
@@ -570,11 +587,11 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	}
 
 	/** Checks a crafting inventory for a specific ID and metadata (-1 for any). Args: InventoryCrafting, int ID */
-	public static boolean checkForItem(InventoryCrafting ic, int id, int meta) {
+	public static boolean checkForItem(InventoryCrafting ic, Item id, int meta) {
 		for (int i = 0; i < ic.getSizeInventory(); i++) {
 			ItemStack is = ic.getStackInSlot(i);
 			if (is != null) {
-				if (is.getItem().itemID == id && (meta == -1 || is.getItemDamage() == meta))
+				if (is.getItem() == id && (meta == -1 || is.getItemDamage() == meta))
 					return true;
 			}
 		}
@@ -600,10 +617,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Returns the highest metadata of a specific item/block ID in the specified inventory.
 	 * If there is none of that ID, it will return -1. Args: ID, inventory */
-	public static int findMaxMetadataOfID(int id, ItemStack[] inv) {
+	public static int findMaxMetadataOfID(Item id, ItemStack[] inv) {
 		int max = -1;
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null && inv[i].itemID == id) {
+			if (inv[i] != null && inv[i].getItem() == id) {
 				if (inv[i].getItemDamage() > max)
 					max = inv[i].getItemDamage();
 			}
@@ -622,8 +639,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return true;
 	}
 
-	/** Returns true if the inventory has space for more of a specific item. Args: ID, metadata, inventory */
-	public static boolean canAcceptMoreOf(int id, int meta, ItemStack[] inv) {
+	/** Returns true if the inventory has space for more of a specific Items. Args: ID, metadata, inventory */
+	public static boolean canAcceptMoreOf(Item id, int meta, ItemStack[] inv) {
 		if (countEmptySlots(inv) > 0)
 			return true;
 		if (locateInInventory(id, meta, inv) == -1)
@@ -631,7 +648,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		int num = 0;
 		int maxnum = new ItemStack(id, 1, meta).getMaxStackSize()*countNumStacks(id, meta, inv);
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i].itemID == id && inv[i].getItemDamage() == meta)
+			if (inv[i].getItem() == id && inv[i].getItemDamage() == meta)
 				num += inv[i].stackSize;
 		}
 		return (num < maxnum);
@@ -645,16 +662,16 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return 0;
 	}
 
-	/** Sorts and cleans an inventory, combining identical items and arranging them. Args: Inventory */
+	/** Sorts and cleans an inventory, combining identical items and arranging them. Args: Inventory *//*
 	public static void sortInventory(ItemStack[] inv) {
 		ArrayList<int[]> ids = new ArrayList<int[]>();
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				int[] entry = {inv[i].itemID, inv[i].getItemDamage(), inv[i].stackSize};
+				int[] entry = {inv[i].getItem(), inv[i].getItemDamage(), inv[i].stackSize};
 				ids.add(entry);
 			}
 		}
-	}
+	}*/
 
 	public static boolean addToIInv(Block b, IInventory ii) {
 		return addToIInv(new ItemStack(b), ii);
@@ -722,7 +739,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	public static boolean hasItemStack(ItemStack is, IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			if (ii.getStackInSlot(i) != null)
-				if (ii.getStackInSlot(i).itemID == is.itemID && ii.getStackInSlot(i).getItemDamage() == is.getItemDamage())
+				if (ii.getStackInSlot(i).getItem() == is.getItem() && ii.getStackInSlot(i).getItemDamage() == is.getItemDamage())
 					return true;
 		}
 		return false;
@@ -747,19 +764,19 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return locateNonFullStackOf(is, ii) != -1;
 	}
 
-	public static boolean hasItem(int id, IInventory ii) {
+	public static boolean hasItem(Item id, IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			if (ii.getStackInSlot(i) != null)
-				if (ii.getStackInSlot(i).itemID == id)
+				if (ii.getStackInSlot(i).getItem() == id)
 					return true;
 		}
 		return false;
 	}
 
-	public static int findMaxMetadataOfIDWithinMaximum(int id, ItemStack[] inv, int maxmeta) {
+	public static int findMaxMetadataOfIDWithinMaximum(Item id, ItemStack[] inv, int maxmeta) {
 		int max = -1;
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null && inv[i].itemID == id) {
+			if (inv[i] != null && inv[i].getItem() == id) {
 				if (inv[i].getItemDamage() > max && inv[i].getItemDamage() <= maxmeta)
 					max = inv[i].getItemDamage();
 			}
@@ -767,19 +784,19 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return max;
 	}
 
-	public static void convertItems(int id0, int m0, int id1, int m1, ItemStack[] inv) {
+	public static void convertItems(Item id0, int m0, Item id1, int m1, ItemStack[] inv) {
 		ItemStack to;
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				if ((inv[i].itemID == id0 || id0 == -1) && (inv[i].getItemDamage() == m0 || m0 == -1)) {
-					if (id1 == -1 && m1 == -1) {
+				if ((inv[i].getItem() == id0 || id0 == null) && (inv[i].getItemDamage() == m0 || m0 == -1)) {
+					if (id1 == null && m1 == -1) {
 						return;
 					}
 					else if (m1 == -1) {
 						to = new ItemStack(id1, inv[i].stackSize, inv[i].getItemDamage());
 					}
-					else if (id1 == -1) {
-						to = new ItemStack(inv[i].itemID, inv[i].stackSize, m1);
+					else if (id1 == null) {
+						to = new ItemStack(inv[i].getItem(), inv[i].stackSize, m1);
 					}
 					else {
 						to = new ItemStack(id1, inv[i].stackSize, m1);
@@ -794,7 +811,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		ItemStack to;
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				to = new ItemStack(inv[i].itemID, inv[i].stackSize, inv[i].getItemDamage()+1);
+				to = new ItemStack(inv[i].getItem(), inv[i].stackSize, inv[i].getItemDamage()+1);
 				inv[i] = to;
 			}
 		}
@@ -804,7 +821,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		ItemStack to;
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
-				to = new ItemStack(inv[i].itemID, inv[i].stackSize, 0);
+				to = new ItemStack(inv[i].getItem(), inv[i].stackSize, 0);
 				inv[i] = to;
 			}
 		}
@@ -828,10 +845,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return e == n;
 	}
 
-	public static int locateIDInInventory(int id, IInventory ii) {
+	public static int locateIDInInventory(Item id, IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			if (ii.getStackInSlot(i) != null) {
-				if (ii.getStackInSlot(i).itemID == id)
+				if (ii.getStackInSlot(i).getItem() == id)
 					return i;
 			}
 		}
@@ -889,8 +906,12 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Adds a certain amount of a specified ID and metadata to an inventory slot, creating the itemstack if necessary.
 	 * Returns true if the whole stack fit and was added. Args: ID, number, metadata (-1 for any), inventory, slot */
-	public static boolean addOrSetStack(int id, int size, int meta, ItemStack[] inv, int slot) {
+	public static boolean addOrSetStack(Item id, int size, int meta, ItemStack[] inv, int slot) {
 		return addOrSetStack(new ItemStack(id, size, meta), inv, slot);
+	}
+
+	public static boolean addOrSetStack(Block id, int size, int meta, ItemStack[] inv, int slot) {
+		return addOrSetStack(Item.getItemFromBlock(id), size, meta, inv, slot);
 	}
 
 	public static List<ItemStack> getWholeInventory(IInventory ii) {

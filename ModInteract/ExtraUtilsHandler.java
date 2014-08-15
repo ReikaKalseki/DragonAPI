@@ -9,17 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.block.Block;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
+import java.lang.reflect.Field;
+
+import net.minecraft.block.Block;
+
 public class ExtraUtilsHandler extends ModHandlerBase {
 
 	public final int darkID;
-	public final int decoID;
+	public final Block decoID;
 
 	public final int edgedBrick = 0;
 	public final int enderObsidian = 1;
@@ -37,7 +38,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 	private ExtraUtilsHandler() {
 		super();
 		int iddark = -1;
-		int iddeco = -1;
+		Block iddeco = null;
 		if (this.hasMod()) {
 			try {
 				Class c = this.getMod().getBlockClass();
@@ -45,7 +46,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 				iddark = dim.getInt(null);
 
 				Field deco = c.getField("decorative1");
-				iddeco = ((Block)deco.get(null)).blockID;
+				iddeco = ((Block)deco.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -82,7 +83,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return darkID != -1 && decoID != -1;
+		return darkID != -1 && decoID != null;
 	}
 
 	@Override

@@ -9,11 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
-import net.minecraft.util.Icon;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidTankInfo;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaLiquidRenderer;
+
+import net.minecraft.util.IIcon;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidTankInfo;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -52,7 +53,7 @@ public class TankDisplay {
 		return tank.fluid != null ? tank.fluid.getFluid() : null;
 	}
 
-	private Icon getIcon() {
+	private IIcon getIcon() {
 		return this.getFluid().getIcon();
 	}
 
@@ -60,7 +61,7 @@ public class TankDisplay {
 		Fluid f = this.getFluid();
 		if (f == null)
 			return;
-		Icon ico = this.getIcon();
+		IIcon ico = this.getIcon();
 		ReikaLiquidRenderer.bindFluidTexture(f);
 		int yh = posY+ySize-this.getRenderLevel();
 		ReikaGuiAPI.instance.drawTexturedModelRectFromIcon(posX, yh, ico, xSize, this.getRenderLevel());

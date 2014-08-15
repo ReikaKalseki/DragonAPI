@@ -9,6 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Interfaces.TameHostile;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModInteract.DartItemHandler;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,13 +25,14 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.item.EntityFallingSand;
+import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityMinecart;
 import net.minecraft.entity.item.EntityTNTPrimed;
@@ -57,22 +66,14 @@ import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.EnumArmorMaterial;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Interfaces.TameHostile;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.ModInteract.DartItemHandler;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 
@@ -87,18 +88,18 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (!classToIDMapping.isEmpty())
 			return;
 		try {
-			Map map = (Map)ReikaObfuscationHelper.getField("stringToIDMapping").get(null);
+			Map map = EntityList.stringToIDMapping;
 			for (Object key : EntityList.stringToClassMapping.keySet()) {
 				String name = (String)key;
 				Class c = (Class)EntityList.stringToClassMapping.get(name);
-				ReikaJavaLibrary.pConsole(name+":"+c);
+				//ReikaJavaLibrary.pConsole(name+":"+c);
 				if (map.containsKey(name)) {
 					int id = (Integer)map.get(name);
 					classToIDMapping.put(c, id);
 					stringToIDMapping.put(name, id);
 				}
 			}
-			ReikaJavaLibrary.pConsole(map);
+			//ReikaJavaLibrary.pConsole(map);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -285,29 +286,27 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return 70;
 		if (ent instanceof EntityTNTPrimed)
 			return 2700; //2.7 g/cc
-		if (ent instanceof EntityFallingSand)
+		if (ent instanceof EntityFallingBlock)
 			return 2000; //2 g/cc
 		return 100;
 	}
 
-	/** Returns an itemstack (size 1 item) of the entity's breeding item. Args: Entity */
-	public static ItemStack getBreedItem(EntityAnimal ent) {
-		int id;
-		int meta;
-		ItemStack item = null;
-		for (id = 256; id < Item.itemsList.length; id++) {
-			if (ReikaItemHelper.hasMetadata(id)) {
-				for (meta = 0; meta < 15; meta++) {
-					item = new ItemStack(id, 1, meta);
-					if (ent.isBreedingItem(item))
-						return item;
-				}
-			}
-			else {
-				item = new ItemStack(id, 1, 0);
-				if (ent.isBreedingItem(item))
-					return item;
-			}
+	/** Returns an itemstack (size 1 item) of the entity's breeding Items. Args: Entity */
+	public static ItemStack getBreedItem(EntityAnimal e) {
+		if (e instanceof EntitySheep) {
+			return new ItemStack(Items.wheat);
+		}
+		else if (e instanceof EntityCow) {
+			return new ItemStack(Items.wheat);
+		}
+		else if (e instanceof EntityPig) {
+			return new ItemStack(Items.carrot);
+		}
+		else if (e instanceof EntityChicken) {
+			return new ItemStack(Items.wheat_seeds);
+		}
+		else if (e instanceof EntityWolf) {
+			return new ItemStack(Items.porkchop);
 		}
 		return null;
 	}
@@ -486,18 +485,18 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (e instanceof EntitySkeleton) {
 			EntitySkeleton ek = (EntitySkeleton)e;
 			if (ek.getSkeletonType() == 1) //Wither Skeleton
-				is = new ItemStack(Item.skull.itemID, 1, 1);
+				is = new ItemStack(Items.skull, 1, 1);
 			else
-				is = new ItemStack(Item.skull.itemID, 1, 0);
+				is = new ItemStack(Items.skull, 1, 0);
 		}
 		if (e instanceof EntityZombie) {
 			if (!(((EntityZombie)e).isVillager() || e instanceof EntityPigZombie))
-				is = new ItemStack(Item.skull.itemID, 1, 2);
+				is = new ItemStack(Items.skull, 1, 2);
 		}
 		if (e instanceof EntityPlayer)
-			is = new ItemStack(Item.skull.itemID, 1, 3);
+			is = new ItemStack(Items.skull, 1, 3);
 		if (e instanceof EntityCreeper)
-			is = new ItemStack(Item.skull.itemID, 1, 4);
+			is = new ItemStack(Items.skull, 1, 4);
 		if (is == null)
 			return;
 		ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY+0.2, e.posZ, is);
@@ -505,26 +504,26 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	public static ItemStack getFoodItem(EntityLivingBase e) {
 		if (e instanceof EntityCow) {
-			return new ItemStack(Item.beefRaw);
+			return new ItemStack(Items.beef);
 		}
 		else if (e instanceof EntityPig) {
-			return new ItemStack(Item.porkRaw);
+			return new ItemStack(Items.porkchop);
 		}
 		else if (e instanceof EntityChicken) {
-			return new ItemStack(Item.chickenRaw);
+			return new ItemStack(Items.chicken);
 		}
 		else if (e instanceof EntitySheep) {
 			if (ModList.DARTCRAFT.isLoaded()) {
-				int id = DartItemHandler.getInstance().meatID;
-				if (id > 0)
+				Item id = DartItemHandler.getInstance().meatID;
+				if (id != null)
 					return new ItemStack(id, 1, 0);
 			}
 		}
 		else if (e instanceof EntityZombie) {
-			return new ItemStack(Item.rottenFlesh);
+			return new ItemStack(Items.rotten_flesh);
 		}
 		else if (e instanceof EntityHorse) {
-			return new ItemStack(Item.beefRaw);
+			return new ItemStack(Items.beef);
 		}
 		return null;
 	}
@@ -546,9 +545,9 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	}
 
 	/** If the entity is wearing a any piece of this armor material. */
-	public static boolean isEntityWearingArmorOf(EntityLivingBase e, EnumArmorMaterial type) {
+	public static boolean isEntityWearingArmorOf(EntityLivingBase e, ArmorMaterial type) {
 		for (int i = 1; i <= 4; i++) {
-			ItemStack is = e.getCurrentItemOrArmor(i);
+			ItemStack is = e.getEquipmentInSlot(i);
 			if (is != null && is.getItem() instanceof ItemArmor) {
 				ItemArmor a = (ItemArmor)is.getItem();
 				if (a.getArmorMaterial() == type)
@@ -561,9 +560,9 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return false;
 	}
 
-	public static boolean isEntityWearingFullSuitOf(EntityLivingBase e, EnumArmorMaterial type) {
+	public static boolean isEntityWearingFullSuitOf(EntityLivingBase e, ArmorMaterial type) {
 		for (int i = 1; i <= 4; i++) {
-			ItemStack is = e.getCurrentItemOrArmor(i);
+			ItemStack is = e.getEquipmentInSlot(i);
 			if (is != null && is.getItem() instanceof ItemArmor) {
 				ItemArmor a = (ItemArmor)is.getItem();
 				if (a.getArmorMaterial() != type)
@@ -610,6 +609,19 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	public static boolean isTameHostile(String mob) {
 		return TameHostile.class.isAssignableFrom((Class)EntityList.stringToClassMapping.get(mob));
+	}
+
+	public static void overrideEntity(Class mobClass, String name, int entityID) {
+		EntityEggInfo info = (EntityEggInfo)EntityList.entityEggs.get(entityID);
+		removeEntityMapping(mobClass, name, entityID);
+		EntityList.addMapping(mobClass, name, entityID);
+		EntityList.entityEggs.put(entityID, info);
+	}
+
+	private static void removeEntityMapping(Class mobClass, String name, int entityID) {
+		EntityList.stringToClassMapping.remove(name);
+		EntityList.entityEggs.remove(entityID);
+		EntityList.IDtoClassMapping.remove(entityID);
 	}
 
 }

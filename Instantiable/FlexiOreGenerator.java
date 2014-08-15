@@ -18,17 +18,17 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 
 public class FlexiOreGenerator extends WorldGenerator {
 
-	private final int[] replaceables;
+	private final Block[] replaceables;
 	private final int clusterSize;
 	private final int generatedMeta;
-	private final int generatedID;
+	private final Block generatedID;
 
-	public FlexiOreGenerator(int id, int meta, int number, int... target)
+	public FlexiOreGenerator(Block id, int meta, int number, Block... target)
 	{
 		generatedID = id;
 		generatedMeta = meta;
 		clusterSize = number;
-		replaceables = new int[target.length];
+		replaceables = new Block[target.length];
 		System.arraycopy(target, 0, replaceables, 0, target.length);
 	}
 
@@ -66,9 +66,9 @@ public class FlexiOreGenerator extends WorldGenerator {
 							for (int i3 = k1; i3 <= j2; i3++) {
 								double d14 = (i3 + 0.5D - d8) / (d10 / 2.0D);
 
-								Block block = Block.blocksList[world.getBlockId(k2, l2, i3)];
+								Block block = world.getBlock(k2, l2, i3);
 								for (int rr = 0; rr < replaceables.length; rr++) {
-									if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && (block != null && block.isGenMineableReplaceable(world, k2, l2, i3, replaceables[rr])))
+									if (d12 * d12 + d13 * d13 + d14 * d14 < 1.0D && (block != null && block.isReplaceableOreGen(world, k2, l2, i3, replaceables[rr])))
 										world.setBlock(k2, l2, i3, generatedID, generatedMeta, 2);
 								}
 							}

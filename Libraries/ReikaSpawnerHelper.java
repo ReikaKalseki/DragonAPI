@@ -11,11 +11,13 @@ package Reika.DragonAPI.Libraries;
 
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.EntityLivingData;
+import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
@@ -27,17 +29,17 @@ public class ReikaSpawnerHelper {
 
 	/** Returns a mob spawner's type name. Args: Spawner TileEntity */
 	public static String getMobSpawnerMobName(TileEntityMobSpawner spw) {
-		return spw.getSpawnerLogic().getEntityNameToSpawn();
+		return spw.func_145881_a().getEntityNameToSpawn();
 	}
 
 	/** Sets a mob spawner type. Args: Spawner TileEntity, Name */
 	public static void setMobSpawnerMob(TileEntityMobSpawner spw, String name) {
-		spw.getSpawnerLogic().setMobID(name);
+		spw.func_145881_a().setEntityName(name);
 	}
 
 	/** Returns a mob spawner's type name. Args: World, x, y, z */
 	public static String getSpawnerTypeName(World world, int x, int y, int z) {
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(x, y, z);
 		if (!(te instanceof TileEntityMobSpawner))
 			return null;
 		return getMobSpawnerMobName((TileEntityMobSpawner)te);
@@ -45,7 +47,7 @@ public class ReikaSpawnerHelper {
 
 	/** Returns a mob spawner's entity ID. Args: World, x, y, z */
 	public static int getSpawnerTypeID(World world, int x, int y, int z) {
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		TileEntity te = world.getTileEntity(x, y, z);
 		if (!(te instanceof TileEntityMobSpawner))
 			return -1;
 		TileEntityMobSpawner spw = (TileEntityMobSpawner)te;
@@ -53,7 +55,7 @@ public class ReikaSpawnerHelper {
 		return ReikaEntityHelper.mobNameToID(name);
 	}
 
-	/** Copies a spawner's spawn type to an item. Args: Item, Spawner TileEntity */
+	/** Copies a spawner's spawn type to an Items. Args: Item, Spawner TileEntity */
 	public static void addMobNBTToItem(ItemStack is, TileEntityMobSpawner spw) {
 		if (is == null)
 			return;
@@ -61,7 +63,7 @@ public class ReikaSpawnerHelper {
 		setSpawnerItemNBT(is, name, false);
 	}
 
-	/** Sets a spawner's spawn type from an item. Args: Item, Spawner TileEntity */
+	/** Sets a spawner's spawn type from an Items. Args: Item, Spawner TileEntity */
 	public static void setSpawnerFromItemNBT(ItemStack is, TileEntityMobSpawner spw) {
 		if (is == null)
 			return;
@@ -93,12 +95,12 @@ public class ReikaSpawnerHelper {
 			double ex = -8+r.nextDouble()*17+spw.xCoord;
 			double ez = -8+r.nextDouble()*17+spw.zCoord;
 			double ey = spw.yCoord;
-			int id = world.getBlockId((int)ex, (int)ey, (int)ez);
-			while (id != 0) {
+			Block id = world.getBlock((int)ex, (int)ey, (int)ez);
+			while (id != Blocks.air) {
 				ex = -8+r.nextDouble()*17+spw.xCoord;
 				ez = -8+r.nextDouble()*17+spw.zCoord;
 				ey = spw.yCoord;
-				id = world.getBlockId((int)ex, (int)ey, (int)ez);
+				id = world.getBlock((int)ex, (int)ey, (int)ez);
 			}
 			e.setPositionAndRotation(ex, ey, ez, 0, 0);
 			if (e instanceof EntityLivingBase && potions != null) {
@@ -106,12 +108,12 @@ public class ReikaSpawnerHelper {
 					((EntityLivingBase)e).addPotionEffect(potions[m]);
 			}
 			if (e instanceof EntityLivingBase && e.worldObj != null)
-				((EntityLiving)e).onSpawnWithEgg((EntityLivingData)null);
+				((EntityLiving)e).onSpawnWithEgg((IEntityLivingData)null);
 			world.spawnEntityInWorld(e);
 		}
 	}
 
-	/** Gets a spawner type from an item. Args: Item */
+	/** Gets a spawner type from an Items. Args: Item */
 	public static String getSpawnerFromItemNBT(ItemStack is) {
 		if (is == null)
 			return null;

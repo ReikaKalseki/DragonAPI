@@ -9,21 +9,23 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.ServerConfigurationManager;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 public final class ReikaChatHelper extends DragonAPICore {
@@ -45,8 +47,8 @@ public final class ReikaChatHelper extends DragonAPICore {
 		if (is == null)
 			msg = "Null Stack!";
 		else
-			msg = String.format("%d, %d, %d", is.itemID, is.stackSize, is.getItemDamage());
-		Minecraft.getMinecraft().thePlayer.addChatMessage(msg);
+			msg = String.format("%d, %d, %d", is.getItem(), is.stackSize, is.getItemDamage());
+		sendChatToPlayer(Minecraft.getMinecraft().thePlayer, msg);
 	}
 
 	/** Writes coordinates to the chat.
@@ -58,7 +60,7 @@ public final class ReikaChatHelper extends DragonAPICore {
 			return;
 		String msg;
 		msg = String.format("%.2f, %.2f, %.2f", x, y, z);
-		Minecraft.getMinecraft().thePlayer.addChatMessage(msg);
+		sendChatToPlayer(Minecraft.getMinecraft().thePlayer, msg);
 	}
 
 	/** Writes a block ID:metadata and coordinates to the chat.
@@ -70,14 +72,14 @@ public final class ReikaChatHelper extends DragonAPICore {
 		if (Minecraft.getMinecraft().thePlayer == null || world == null)
 			return;
 		String name;
-		int id = world.getBlockId(x, y, z);
-		if (id != 0)
-			name = Block.blocksList[id].getLocalizedName();
+		Block id = world.getBlock(x, y, z);
+		if (id != Blocks.air)
+			name = id.getLocalizedName();
 		else
 			name = "Air";
 		int meta = world.getBlockMetadata(x, y, z);
-		sb.append(String.format("Block "+name+" (ID %d Metadata %d) @ x=%d, y=%d, z=%d", id, meta, x, y, z)+"\n");
-		TileEntity te = world.getBlockTileEntity(x, y, z);
+		sb.append(String.format("Block "+name+" (ID %s Metadata %d) @ x=%d, y=%d, z=%d", id.toString(), meta, x, y, z)+"\n");
+		TileEntity te = world.getTileEntity(x, y, z);
 		if (te == null) {
 			sb.append("No Tile Entity at this location.");
 		}
@@ -85,7 +87,7 @@ public final class ReikaChatHelper extends DragonAPICore {
 			sb.append("Tile Entity at this location:\n");
 			sb.append(te.toString());
 		}
-		Minecraft.getMinecraft().thePlayer.addChatMessage(sb.toString());
+		sendChatToPlayer(Minecraft.getMinecraft().thePlayer, sb.toString());
 	}
 
 	/** Writes an integer to the chat. Args: Integer */
@@ -100,7 +102,7 @@ public final class ReikaChatHelper extends DragonAPICore {
 		if (FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT)
 			return;
 		if (Minecraft.getMinecraft().thePlayer != null)
-			Minecraft.getMinecraft().thePlayer.addChatMessage(sg);
+			sendChatToPlayer(Minecraft.getMinecraft().thePlayer, sg);
 	}
 
 	/** Automatically translates if possible. */
@@ -139,51 +141,49 @@ public final class ReikaChatHelper extends DragonAPICore {
 		if (ent == null)
 			writeString("null");
 		else
-			writeString(ent.getEntityName()+" @ "+String.format("%.2f, %.2f, %.2f", ent.posX, ent.posY, ent.posZ));
+			writeString(ent.getCommandSenderName()+" @ "+String.format("%.2f, %.2f, %.2f", ent.posX, ent.posY, ent.posZ));
 	}
 
-	public static void writeItem(World world, int id, int dmg) {
+	public static void writeItem(World world, Item id, int dmg) {
 		if (FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT)
 			return;
 		if (Minecraft.getMinecraft().thePlayer == null || world == null)
 			return;
-		if (id == 0)
+		if (id == null)
 			writeString("Null Item");
-		else if (id < 256)
-			writeBlock(world, id, dmg);
+		//else if (id < 256)
+		//	writeBlock(world, id, dmg);
 		else
-			writeString(id+":"+dmg+" is "+Item.itemsList[id].getItemDisplayName(new ItemStack(id, 1, dmg)));
+			writeString(id+":"+dmg+" is "+id.getItemStackDisplayName(new ItemStack(id, 1, dmg)));
 	}
 
-	public static void writeBlock(World world, int id, int meta) {
+	public static void writeBlock(World world, Block id, int meta) {
 		if (FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT)
 			return;
 		if (Minecraft.getMinecraft().thePlayer == null || world == null)
 			return;
-		if (id == 0)
+		if (id == Blocks.air)
 			writeString("Null Item");
-		else if (id > 4096)
-			writeItem(world, id, meta);
+		//else if (id > 4096)
+		//	writeItem(world, id, meta);
 		else
-			writeString(id+":"+meta+" is "+Block.blocksList[id].getLocalizedName());
+			writeString(id+":"+meta+" is "+id.getLocalizedName());
 	}
 
 	public static void writeSide() {
 		if (FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT)
 			return;
 		if (Minecraft.getMinecraft().thePlayer != null)
-			Minecraft.getMinecraft().thePlayer.addChatMessage(String.valueOf(FMLCommonHandler.instance().getEffectiveSide()));
+			sendChatToPlayer(Minecraft.getMinecraft().thePlayer, String.valueOf(FMLCommonHandler.instance().getEffectiveSide()));
 	}
 
 	public static void sendChatToPlayer(EntityPlayer ep, String sg) {
-		ChatMessageComponent chat = new ChatMessageComponent();
-		chat.addText(sg);
-		ep.sendChatToPlayer(chat);
+		ChatComponentTranslation chat = new ChatComponentTranslation(sg);
+		ep.addChatMessage(chat);
 	}
 
 	public static void sendChatToAllOnServer(String sg) {
-		ChatMessageComponent chat = new ChatMessageComponent();
-		chat.addText(sg);
+		ChatComponentTranslation chat = new ChatComponentTranslation(sg);
 		MinecraftServer srv = MinecraftServer.getServer();
 		if (srv != null) {
 			ServerConfigurationManager cfg = srv.getConfigurationManager();

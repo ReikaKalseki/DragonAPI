@@ -21,11 +21,7 @@ import codechicken.nei.api.IConfigureNEI;
  * Only call this class if NEI is loaded, or you will create an NEI dependence in your mod. */
 public class NEI_AnonymousHideConfig implements IConfigureNEI {
 
-	private static final ArrayList<Integer> items = new ArrayList();
-
-	public static void addID(int id) {
-		items.add(id);
-	}
+	private static final ArrayList<ItemStack> items = new ArrayList();
 
 	public static void addBlocks(Block[] block) {
 		for (int i = 0; i < block.length; i++)
@@ -33,7 +29,7 @@ public class NEI_AnonymousHideConfig implements IConfigureNEI {
 	}
 
 	public static void addBlock(Block block) {
-		addID(block.blockID);
+		addItem(new ItemStack(block));
 	}
 
 	public static void addItems(Item[] item) {
@@ -42,17 +38,17 @@ public class NEI_AnonymousHideConfig implements IConfigureNEI {
 	}
 
 	public static void addItem(Item item) {
-		addID(item.itemID);
+		addItem(new ItemStack(item));
 	}
 
-	public static void addItemStack(ItemStack item) {
-		addID(item.itemID);
+	public static void addItem(ItemStack item) {
+		items.add(item);
 	}
 
 	@Override
 	public void loadConfig() {
 		for (int i = 0; i < items.size(); i++) {
-			int id = items.get(i);
+			ItemStack id = items.get(i);
 			API.hideItem(id);
 		}
 	}

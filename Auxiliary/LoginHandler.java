@@ -9,18 +9,19 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.PlayerHandler.PlayerTracker;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import cpw.mods.fml.common.IPlayerTracker;
+import cpw.mods.fml.common.eventhandler.Event;
 
-public final class LoginHandler implements IPlayerTracker {
+public final class LoginHandler implements PlayerTracker {
 
 	public static final LoginHandler instance = new LoginHandler();
 
@@ -57,7 +58,7 @@ public final class LoginHandler implements IPlayerTracker {
 	@Override
 	public void onPlayerLogin(EntityPlayer ep) {
 		boolean flag = ReikaObfuscationHelper.isDeObfEnvironment();
-		if ("Reika_Kalseki".equals(ep.getEntityName())) {
+		if ("Reika_Kalseki".equals(ep.getCommandSenderName())) {
 			ReikaChatHelper.sendChatToAllOnServer(reikaMessage);
 		}
 		else {
@@ -75,7 +76,7 @@ public final class LoginHandler implements IPlayerTracker {
 	}
 
 	@Override
-	public void onPlayerChangedDimension(EntityPlayer player) {
+	public void onPlayerChangedDimension(EntityPlayer player, int from, int to) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(player, player.worldObj.provider.dimensionId));
 	}
 

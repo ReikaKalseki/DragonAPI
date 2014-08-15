@@ -12,8 +12,8 @@ package Reika.DragonAPI.Instantiable.Event;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import net.minecraftforge.event.Event;
 import net.minecraftforge.fluids.IFluidHandler;
+import cpw.mods.fml.common.eventhandler.Event;
 
 public abstract class TileEntityEvent extends Event {
 

@@ -9,18 +9,19 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Bees;
 
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import forestry.api.apiculture.EnumBeeChromosome;
@@ -44,7 +45,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	protected final Random rand = new Random();
 
 	private final IBeeRoot beeRoot;
-	private final Icon[][] icons = new Icon[EnumBeeType.VALUES.length][3];
+	private final IIcon[][] icons = new IIcon[EnumBeeType.VALUES.length][3];
 	private final HashMap specials = new HashMap();
 	private final HashMap products = new HashMap();
 	private final BeeBranch branch;
@@ -607,12 +608,12 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	@Override
-	public final void registerIcons(IconRegister ico) {
+	public final void registerIcons(IIconRegister ico) {
 		String iconType = "default";
 		String mod = "forestry";
 
-		Icon body1 = ico.registerIcon(mod + ":bees/" + iconType + "/body1");
-		Icon larva = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.LARVAE.name().toLowerCase()+".body");
+		IIcon body1 = ico.registerIcon(mod + ":bees/" + iconType + "/body1");
+		IIcon larva = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.LARVAE.name().toLowerCase()+".body");
 
 		for (int i = 0; i < EnumBeeType.VALUES.length; i++) {
 			if (EnumBeeType.VALUES[i] != EnumBeeType.NONE) {
@@ -624,7 +625,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	@Override
-	public final Icon getIcon(EnumBeeType type, int renderPass) {
+	public final IIcon getIcon(EnumBeeType type, int renderPass) {
 		return icons[type.ordinal()][renderPass];
 	}
 
@@ -645,7 +646,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public final Icon getIcon(short ps) {
+	public final IIcon getIcon(short ps) {
 		return ReikaTextureHelper.getMissingIcon();
 	}
 

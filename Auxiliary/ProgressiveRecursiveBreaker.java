@@ -9,20 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.world.WorldEvent;
+import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
+import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
 import Reika.DragonAPI.Instantiable.RelativePositionList;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
 import Reika.DragonAPI.Interfaces.TreeType;
@@ -31,10 +19,26 @@ import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
 
-public class ProgressiveRecursiveBreaker implements ITickHandler {
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.WorldEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+
+public class ProgressiveRecursiveBreaker implements TickHandler {
 
 	public static final ProgressiveRecursiveBreaker instance = new ProgressiveRecursiveBreaker();
 
@@ -49,7 +53,7 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 		private final int maxDepth;
 		private int depth = 0;
 		private boolean isDone = false;
-		private final ArrayList<List<Integer>> ids = new ArrayList();
+		private final ArrayList<ItemStack> ids = new ArrayList();
 		public boolean extraSpread = false;
 		public int tickRate = 1;
 		private int tick;
@@ -57,43 +61,39 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 		public boolean silkTouch = false;
 		public EntityPlayer player;
 
-		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<List<Integer>> ids) {
+		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<ItemStack> ids) {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
-			for (int i = 0; i < ids.size(); i++) {
-				List<Integer> a = ids.get(i);
-				this.ids.add(Arrays.asList(a.get(0), a.get(1)));
-			}
+			this.ids.addAll(ids);
 		}
 
-		private ProgressiveBreaker(World world, int x, int y, int z, int depth, int[]... ids) {
+		private ProgressiveBreaker(World world, int x, int y, int z, int depth, ItemStack... ids) {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
 			for (int i = 0; i < ids.length; i++) {
-				int[] a = ids[i];
-				this.ids.add(Arrays.asList(a[0], a[1]));
+				this.ids.add(ids[i]);
 			}
 		}
 
-		private ProgressiveBreaker(World world, int x, int y, int z, int id, int depth) {
+		private ProgressiveBreaker(World world, int x, int y, int z, Block id, int depth) {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
 			for (int i = 0; i < 16; i++)
-				ids.add(Arrays.asList(id, i));
+				ids.add(new ItemStack(id, i));
 		}
 
-		private ProgressiveBreaker(World world, int x, int y, int z, int id, int meta, int depth) {
+		private ProgressiveBreaker(World world, int x, int y, int z, Block id, int meta, int depth) {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
-			ids.add(Arrays.asList(id, meta));
+			ids.add(new ItemStack(id, meta));
 		}
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth) {
-			this(world, x, y, z, world.getBlockId(x, y, z), world.getBlockMetadata(x, y, z), depth);
+			this(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), depth);
 		}
 
 		private void tick() {
@@ -108,7 +108,7 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 					int x = xyz[0];
 					int y = xyz[1];
 					int z = xyz[2];
-					int id = world.getBlockId(x, y, z);
+					Block b = world.getBlock(x, y, z);
 					int meta = world.getBlockMetadata(x, y, z);
 					for (int k = 0; k < 6; k++) {
 						ForgeDirection dir = dirs[k];
@@ -150,22 +150,22 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 		}
 
 		private boolean canSpreadTo(World world, int x, int y, int z) {
-			int id = world.getBlockId(x, y, z);
+			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
-			if (id == 0)
+			if (id == Blocks.air)
 				return false;
 			if (!ids.contains(Arrays.asList(id, meta)))
 				return false;
-			return player == null || ReikaPlayerAPI.playerCanBreakAt(world, x, y, z, player.getEntityName());
+			return player == null || (!world.isRemote && ReikaPlayerAPI.playerCanBreakAt((WorldServer)world, x, y, z, player));
 		}
 
 		private void dropBlock(World world, int x, int y, int z) {
-			int id = world.getBlockId(x, y, z);
+			Block id = world.getBlock(x, y, z);
 			if (silkTouch)
 				ReikaItemHelper.dropItem(world, x, y, z, new ItemStack(id, 1, world.getBlockMetadata(x, y, z)));
 			else
 				ReikaWorldHelper.dropBlockAt(world, x, y, z, fortune);
-			world.setBlock(x, y, z, 0);
+			world.setBlockToAir(x, y, z);
 			ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 			world.markBlockForUpdate(x, y, z);
 		}
@@ -175,7 +175,7 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void unloadWorld(WorldEvent.Unload evt) {
 		//breakers.clear();
 	}
@@ -196,16 +196,16 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 	}
 
 	public ProgressiveBreaker getTreeBreaker(World world, int x, int y, int z, TreeType tree) {
-		int log = tree.getLogID();
-		int leaf = tree.getLeafID();
+		Block log = tree.getLogID();
+		Block leaf = tree.getLeafID();
 		List<Integer> logmetas = tree.getLogMetadatas();
 		List<Integer> leafmetas = tree.getLeafMetadatas();
-		ArrayList<List<Integer>> ids = new ArrayList();
+		ArrayList<ItemStack> ids = new ArrayList();
 		for (int i = 0; i < logmetas.size(); i++) {
-			ids.add(Arrays.asList(log, logmetas.get(i)));
+			ids.add(new ItemStack(log, logmetas.get(i)));
 		}
 		for (int i = 0; i < leafmetas.size(); i++) {
-			ids.add(Arrays.asList(leaf, leafmetas.get(i)));
+			ids.add(new ItemStack(leaf, leafmetas.get(i)));
 		}
 		int depth = 30;
 		if (tree == ModWoodList.SEQUOIA)
@@ -219,7 +219,7 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 		return b;
 	}
 
-	public void addCoordinate(World world, int x, int y, int z, List<List<Integer>> ids) {
+	public void addCoordinate(World world, int x, int y, int z, List<ItemStack> ids) {
 		ArrayList<ProgressiveBreaker> b = this.getOrCreateList(world);
 		b.add(new ProgressiveBreaker(world, x, y, z, Integer.MAX_VALUE, ids));
 	}
@@ -239,7 +239,7 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 	}
 
 	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
+	public void tick(Object... tickData) {
 		World world = (World)tickData[0];
 		ArrayList<ProgressiveBreaker> li = breakers.get(world.provider.dimensionId);
 		if (li != null) {
@@ -262,18 +262,18 @@ public class ProgressiveRecursiveBreaker implements ITickHandler {
 	}
 
 	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) {
-
-	}
-
-	@Override
-	public EnumSet<TickType> ticks() {
-		return EnumSet.of(TickType.WORLD);
+	public TickType getType() {
+		return TickType.WORLD;
 	}
 
 	@Override
 	public String getLabel() {
 		return "Progressive Recursive Breaker";
+	}
+
+	@Override
+	public Phase getPhase() {
+		return Phase.START;
 	}
 
 }

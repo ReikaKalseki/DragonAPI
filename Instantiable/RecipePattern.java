@@ -9,12 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class RecipePattern extends InventoryCrafting {
 
@@ -51,7 +52,7 @@ public final class RecipePattern extends InventoryCrafting {
 	}
 
 	@Override
-	public final void openChest() {}
+	public final void openInventory() {}
 	@Override
-	public final void closeChest() {}
+	public final void closeInventory() {}
 }

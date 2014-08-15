@@ -9,27 +9,30 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import Reika.DragonAPI.Interfaces.OreType;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.Interfaces.OreType;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public enum ReikaOreHelper implements OreType {
 
-	COAL("Coal", Block.oreCoal, Item.coal, "oreCoal", "itemCoal", OreRarity.COMMON),
-	IRON("Iron", Block.oreIron, "oreIron", "ingotIron", OreRarity.AVERAGE),
-	GOLD("Gold", Block.oreGold, "oreGold", "ingotGold", OreRarity.SCATTERED),
-	REDSTONE("Redstone", Block.oreRedstone, Item.redstone, "oreRedstone", "dustRedstone", OreRarity.COMMON),
-	LAPIS("Lapis Lazuli", Block.oreLapis, ReikaDyeHelper.BLUE.getStackOf(), "oreLapis", "dyeBlue", OreRarity.SCARCE),
-	DIAMOND("Diamond", Block.oreDiamond, Item.diamond, "oreDiamond", "gemDiamond", OreRarity.COMMON),
-	EMERALD("Emerald", Block.oreEmerald, Item.emerald, "oreEmerald", "gemEmerald", OreRarity.RARE),
-	QUARTZ("Nether Quartz", Block.oreNetherQuartz, Item.netherQuartz, "oreNetherQuartz", "itemQuartz", OreRarity.EVERYWHERE);
+	COAL("Coal", Blocks.coal_ore, Items.coal, "oreCoal", "itemCoal", OreRarity.COMMON),
+	IRON("Iron", Blocks.iron_ore, "oreIron", "ingotIron", OreRarity.AVERAGE),
+	GOLD("Gold", Blocks.gold_ore, "oreGold", "ingotGold", OreRarity.SCATTERED),
+	REDSTONE("Redstone", Blocks.redstone_ore, Items.redstone, "oreRedstone", "dustRedstone", OreRarity.COMMON),
+	LAPIS("Lapis Lazuli", Blocks.lapis_ore, ReikaDyeHelper.BLUE.getStackOf(), "oreLapis", "dyeBlue", OreRarity.SCARCE),
+	DIAMOND("Diamond", Blocks.diamond_ore, Items.diamond, "oreDiamond", "gemDiamond", OreRarity.COMMON),
+	EMERALD("Emerald", Blocks.emerald_ore, Items.emerald, "oreEmerald", "gemEmerald", OreRarity.RARE),
+	QUARTZ("Nether Quartz", Blocks.quartz_ore, Items.quartz, "oreNetherQuartz", "itemQuartz", OreRarity.EVERYWHERE);
 
 	private String name;
 	private ItemStack drop;
@@ -40,7 +43,7 @@ public enum ReikaOreHelper implements OreType {
 	private final ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 
 	private static final HashMap<String, String> cases = new HashMap();
-	private static final HashMap<Integer, ReikaOreHelper> vanillaOres = new HashMap();
+	private static final HashMap<Block, ReikaOreHelper> vanillaOres = new HashMap();
 
 	public static final ReikaOreHelper[] oreList = ReikaOreHelper.values();
 
@@ -76,8 +79,12 @@ public enum ReikaOreHelper implements OreType {
 		return new ItemStack(ore);
 	}
 
+	public Block getOreBlockInstance() {
+		return ore;
+	}
+
 	public boolean dropsSelf() {
-		return drop.itemID == ore.blockID;
+		return drop.getItem() == Item.getItemFromBlock(ore);
 	}
 
 	public String getOreDictName() {
@@ -88,21 +95,37 @@ public enum ReikaOreHelper implements OreType {
 		return dropOreDict;
 	}
 
-	public static boolean isVanillaOre(int id) {
+	public static boolean isVanillaOre(Block id) {
 		return getFromVanillaOre(id) != null;
 	}
 
-	public static ReikaOreHelper getFromVanillaOre(int id) {
+	public static boolean isVanillaOre(Item id) {
+		return isVanillaOre(Block.getBlockFromItem(id));
+	}
+
+	public static ReikaOreHelper getFromVanillaOre(Item id) {
+		return getFromVanillaOre(Block.getBlockFromItem(id));
+	}
+
+	public static ReikaOreHelper getFromVanillaOre(Block id) {
 		return vanillaOres.get(id);
+	}
+
+	public static boolean isVanillaOre(ItemStack id) {
+		return getFromVanillaOre(id) != null;
+	}
+
+	public static ReikaOreHelper getFromVanillaOre(ItemStack id) {
+		return vanillaOres.get(Block.getBlockFromItem(id.getItem()));
 	}
 
 	public ItemStack getResource() {
 		if (!this.dropsSelf())
 			return this.getDrop();
 		if (this == IRON)
-			return new ItemStack(Item.ingotIron);
+			return new ItemStack(Items.iron_ingot);
 		if (this == GOLD)
-			return new ItemStack(Item.ingotGold);
+			return new ItemStack(Items.gold_ingot);
 		return null;
 	}
 
@@ -159,7 +182,7 @@ public enum ReikaOreHelper implements OreType {
 	}
 
 	public Block getOreGenBlock() {
-		return this.isEnd() ? Block.whiteStone : this.isNether() ? Block.netherrack : Block.stone;
+		return this.isEnd() ? Blocks.end_stone : this.isNether() ? Blocks.netherrack : Blocks.stone;
 	}
 
 	public static void refreshAll() {
@@ -191,7 +214,7 @@ public enum ReikaOreHelper implements OreType {
 
 	static {
 		for (int i = 0; i < oreList.length; i++) {
-			vanillaOres.put(oreList[i].ore.blockID, oreList[i]);
+			vanillaOres.put(oreList[i].ore, oreList[i]);
 		}
 	}
 

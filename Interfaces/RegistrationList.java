@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
-import net.minecraft.item.ItemBlock;
 
 /** This is an interface for ENUMS! */
 public interface RegistrationList {
@@ -28,21 +27,9 @@ public interface RegistrationList {
 
 	public boolean hasMultiValuedName();
 
-	/** Only used in item registration */
-	public int getNumberMetadatas();
-
-	/** Only used in block registration */
-	public Class<? extends ItemBlock> getItemBlock();
-
-	/** Only used in block registration */
-	public boolean hasItemBlock();
-
-	public int getID();
-
-	/** Only used in item registration */
-	public boolean overwritingItem();
-
 	/** Whether to create it or not */
 	public boolean isDummiedOut();
+
+	public int getNumberMetadatas();
 
 }

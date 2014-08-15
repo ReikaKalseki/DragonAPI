@@ -9,31 +9,43 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.PlayerCapabilities;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumMovingObjectType;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-import net.minecraftforge.common.FakePlayer;
-import net.minecraftforge.common.FakePlayerFactory;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
+import java.util.HashMap;
+import java.util.UUID;
+
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.PlayerCapabilities;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+
+import com.mojang.authlib.GameProfile;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaPlayerAPI extends DragonAPICore {
+
+	private static final HashMap<String, FakePlayer> fakePlayers = new HashMap();
 
 	/** Transfers a player's entire inventory to an inventory. Args: Player, Inventory */
 	public static void transferInventoryToChest(EntityPlayer ep, ItemStack[] inv) {
@@ -65,8 +77,8 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		World world = ep.worldObj;
 		for (float i = 0; i <= range; i += 0.2) {
 			int[] xyz = ReikaVectorHelper.getPlayerLookBlockCoords(ep, i);
-			int id = world.getBlockId(xyz[0], xyz[1], xyz[2]);
-			if (id != 0) {
+			Block b = world.getBlock(xyz[0], xyz[1], xyz[2]);
+			if (b != Blocks.air) {
 				boolean isSoft = ReikaWorldHelper.softBlocks(world, xyz[0], xyz[1], xyz[2]);
 				if (hitSoft || !isSoft) {
 					return new MovingObjectPosition(xyz[0], xyz[1], xyz[2], 0, norm);
@@ -82,9 +94,9 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		Vec3 vec = Vec3.createVectorHelper(ep.posX, (ep.posY + 1.62) - ep.yOffset, ep.posZ);
 		Vec3 vec2 = ep.getLook(1.0F);
 		Vec3 vec3 = vec.addVector(vec2.xCoord*reach, vec2.yCoord*reach, vec2.zCoord*reach);
-		MovingObjectPosition hit = ep.worldObj.clip(vec, vec3);
+		MovingObjectPosition hit = ep.worldObj.rayTraceBlocks(vec, vec3);
 
-		if (hit != null && hit.typeOfHit == EnumMovingObjectType.TILE)
+		if (hit != null && hit.typeOfHit == MovingObjectType.BLOCK)
 			return hit;
 		return null;
 	}
@@ -117,12 +129,22 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return ForgeDirection.UNKNOWN;
 	}
 
-	private static boolean isAdmin(String name) {
-		return MinecraftServer.getServerConfigurationManager(MinecraftServer.getServer()).isPlayerOpped(name);
+	public static FakePlayer getFakePlayerByNameAndUUID(WorldServer world, String name, String uuid) {
+		FakePlayer fp = fakePlayers.get(name);
+		if (fp == null) {
+			fp = FakePlayerFactory.get(world, new GameProfile(UUID.fromString(uuid), name));
+			fakePlayers.put(name, fp);
+		}
+		return fp;
+	}
+
+	private static boolean isAdmin(WorldServer world, String name, String uuid) {
+		FakePlayer fp = getFakePlayerByNameAndUUID(world, name, uuid);
+		return isAdmin(fp);
 	}
 
 	public static boolean isAdmin(EntityPlayer ep) {
-		return isAdmin(ep.getEntityName());
+		return MinecraftServer.getServer().getConfigurationManager().func_152596_g(ep.getGameProfile());
 	}
 
 	/** Hacky, but it works */
@@ -136,7 +158,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	/** Returns true if the player has the given ID and metadata in their inventory, or is in creative mode.
 	 * Args: Player, ID, metadata (-1 for any) */
-	public static boolean playerHasOrIsCreative(EntityPlayer ep, int id, int meta) {
+	public static boolean playerHasOrIsCreative(EntityPlayer ep, Item id, int meta) {
 		if (ep.capabilities.isCreativeMode)
 			return true;
 		ItemStack[] ii = ep.inventory.mainInventory;
@@ -144,6 +166,10 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			return (ReikaInventoryHelper.checkForItemStack(id, meta, ii));
 		else
 			return (ReikaInventoryHelper.checkForItem(id, ii));
+	}
+
+	public static boolean playerHasOrIsCreative(EntityPlayer ep, Block id, int meta) {
+		return playerHasOrIsCreative(ep, Item.getItemFromBlock(id), meta);
 	}
 
 	public static void setFoodLevel(EntityPlayer ep, int level) {
@@ -160,26 +186,45 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		ep.getFoodStats().readNBT(NBT);
 	}
 
-	public static boolean playerCanBreakAt(World world, int x, int y, int z, int id, int meta, String name) {
+	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, EntityPlayer ep) {
+		Block b = world.getBlock(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		return playerCanBreakAt(world, x, y, z, b, meta, ep);
+	}
+
+	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, Block id, int meta, EntityPlayer ep) {
+		if (ep == null) {
+			ReikaJavaLibrary.pConsole("Cannot check permissions of a null player!");
+			return false;
+		}
+		if (DragonAPICore.isSinglePlayer())
+			return true;
+		if (isAdmin(ep))
+			return true;
+		BreakEvent evt = new BreakEvent(x, y, z, world, id, meta, ep);
+		MinecraftForge.EVENT_BUS.post(evt);
+		return !evt.isCanceled();
+	}
+
+	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, Block id, int meta, String name, String uuid) {
 		if (name == null) {
 			ReikaJavaLibrary.pConsole("Cannot check permissions of a null player!");
 			return false;
 		}
 		if (DragonAPICore.isSinglePlayer())
 			return true;
-		if (isAdmin(name))
+		if (isAdmin(world, name, uuid))
 			return true;
-		FakePlayer fp = FakePlayerFactory.get(world, name);
-		Block b = Block.blocksList[id];
-		BreakEvent evt = new BreakEvent(x, y, z, world, b, meta, fp);
+		FakePlayer fp = getFakePlayerByNameAndUUID(world, name, uuid);
+		BreakEvent evt = new BreakEvent(x, y, z, world, id, meta, fp);
 		MinecraftForge.EVENT_BUS.post(evt);
 		return !evt.isCanceled();
 	}
 
-	public static boolean playerCanBreakAt(World world, int x, int y, int z, String name) {
-		int id = world.getBlockId(x, y, z);
+	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, String name, String uuid) {
+		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		return playerCanBreakAt(world, x, y, z, id, meta, name);
+		return playerCanBreakAt(world, x, y, z, b, meta, name, uuid);
 	}
 
 	public static void removeExperience(EntityPlayer ep, int xp) {

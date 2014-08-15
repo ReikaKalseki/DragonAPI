@@ -9,6 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -16,25 +20,22 @@ import java.lang.reflect.Method;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ForestryHandler extends ModHandlerBase {
 
-	public final int apatiteID;
-	public final int fertilizerID;
-	public final int saplingID;
-	public final int combID;
+	public final Item apatiteID;
+	public final Item fertilizerID;
+	public final Block saplingID;
+	public final Item combID;
 
 	private static final ForestryHandler instance = new ForestryHandler();
 
 	private ForestryHandler() {
 		super();
-		int idapatite = -1;
-		int idfertilizer = -1;
-		int idsapling = -1;
-		int idcomb = -1;
+		Item idapatite = null;
+		Item idfertilizer = null;
+		Block idsapling = null;
+		Item idcomb = null;
 		if (this.hasMod()) {
 			try {
 				Class forest = this.getMod().getItemClass();
@@ -42,22 +43,22 @@ public class ForestryHandler extends ModHandlerBase {
 				Object entry = apa.get(null);
 				Method get = forest.getMethod("item");
 				Item item = (Item)get.invoke(entry);
-				idapatite = item.itemID;
+				idapatite = item;
 
 				Field fert = forest.getField("fertilizerCompound"); //is enum object now
 				entry = fert.get(null);
 				item = (Item)get.invoke(entry);
-				idfertilizer = item.itemID;
+				idfertilizer = item;
 
 				Field comb = forest.getField("beeComb"); //is enum object now
 				entry = comb.get(null);
 				item = (Item)get.invoke(entry);
-				idcomb = item.itemID;
+				idcomb = item;
 
 				Class blocks = this.getMod().getBlockClass();
 				Field sapling = blocks.getField("saplingGE");
 				Block s = (Block)sapling.get(null);
-				idsapling = s.blockID;
+				idsapling = s;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -100,7 +101,7 @@ public class ForestryHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return apatiteID != -1 && saplingID != -1 && fertilizerID != -1 && combID != -1;
+		return apatiteID != null && saplingID != null && fertilizerID != null && combID != null;
 	}
 
 	@Override

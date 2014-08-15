@@ -9,9 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
-import javax.sound.midi.Sequence;
-
 import Reika.DragonAPI.IO.ReikaMIDIReader;
+
+import javax.sound.midi.Sequence;
 
 public final class MIDIInterface {
 

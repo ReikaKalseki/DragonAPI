@@ -9,13 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Effects;
 
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
-import net.minecraft.client.renderer.tileentity.TileEntityRenderer;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 
 import org.lwjgl.opengl.GL11;
 
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -89,9 +90,9 @@ public class Glow {
 
 	//(double)par1TileEntity.xCoord - staticPlayerX, (double)par1TileEntity.yCoord - staticPlayerY, (double)par1TileEntity.zCoord - staticPlayerZ, par2);
 	public void render() {
-		double par2 = posX-TileEntityRenderer.staticPlayerX;
-		double par4 = posY-TileEntityRenderer.staticPlayerY;
-		double par6 = posZ-TileEntityRenderer.staticPlayerZ;
+		double par2 = posX-TileEntityRendererDispatcher.staticPlayerX;
+		double par4 = posY-TileEntityRendererDispatcher.staticPlayerY;
+		double par6 = posZ-TileEntityRendererDispatcher.staticPlayerZ;
 
 		ReikaRenderHelper.prepareGeoDraw(alpha < 255);
 		GL11.glTranslated(par2, par4, par6);

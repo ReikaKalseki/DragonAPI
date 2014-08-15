@@ -9,6 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.CropHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -16,40 +20,38 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.CropHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class OreBerryBushHandler extends CropHandlerBase {
 
 	private static final OreBerryBushHandler instance = new OreBerryBushHandler();
 
-	public final int bushID;
-	public final int secondbushID;
+	public final Block bushID;
+	public final Block secondbushID;
 
-	public final int berryID;
+	public final Item berryID;
 
 	private OreBerryBushHandler() {
 		super();
-		int idbush = -1;
-		int idberry = -1;
+		Block idbush = null;
+		Block idsecondbush = null;
 
-		int idsecondbush = -1;
+		Item idberry = null;
+
 		if (this.hasMod()) {
 			Class blocks = this.getMod().getBlockClass();
 			Class items = this.getMod().getItemClass();
 			try {
 				Field f = blocks.getField("oreBerry");
 				Block bush = (Block)f.get(null);
-				idbush = bush.blockID;
+				idbush = bush;
 
 				f = blocks.getField("oreBerrySecond");
 				Block secondbush = (Block)f.get(null);
-				idsecondbush = secondbush.blockID;
+				idsecondbush = secondbush;
 
 				f = items.getField("oreBerries");
 				Item berry = (Item)f.get(null);
-				idberry = berry.itemID;
+				idberry = berry;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -74,7 +76,7 @@ public class OreBerryBushHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public boolean isCrop(int id) {
+	public boolean isCrop(Block id) {
 		return id == bushID;
 	}
 
@@ -90,9 +92,9 @@ public class OreBerryBushHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
-		int id = world.getBlockId(x, y, z);
+		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		return this.isCrop(id) && meta >= 12;
+		return this.isCrop(b) && meta >= 12;
 	}
 
 	@Override
@@ -109,7 +111,7 @@ public class OreBerryBushHandler extends CropHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return bushID != -1 && berryID != -1 || secondbushID != -1;
+		return bushID != null && berryID != null || secondbushID != null;
 	}
 
 	@Override
@@ -123,7 +125,7 @@ public class OreBerryBushHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, int id, int meta, int fortune) {
+	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune) {
 		ArrayList<ItemStack> li = new ArrayList();
 		if (id == bushID) {
 			li.add(new ItemStack(berryID, 1, meta-12));

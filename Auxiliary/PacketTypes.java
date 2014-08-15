@@ -28,4 +28,8 @@ public enum PacketTypes {
 		return PacketTypes.values()[type];
 	}
 
+	public boolean hasCoordinates() {
+		return this != RAW;
+	}
+
 }

@@ -12,7 +12,8 @@ package Reika.DragonAPI.Auxiliary;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.util.Icon;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 
 public class BlockModelRenderer {
@@ -28,11 +29,11 @@ public class BlockModelRenderer {
 		public double maxY;
 		public double maxZ;
 
-		public Block baseBlock = Block.sand;
+		public Block baseBlock = Blocks.sand;
 
-		public Icon texture = null;
+		public IIcon texture = null;
 
-		public Icon getBlockTextureFromSide(int i) {
+		public IIcon getBlockTextureFromSide(int i) {
 			if (texture == null)
 				return baseBlock.getBlockTextureFromSide(i);
 			else
@@ -40,7 +41,7 @@ public class BlockModelRenderer {
 		}
 
 		public float getBlockBrightness(IBlockAccess iblockaccess, int i, int j, int k) {
-			return baseBlock.getBlockBrightness(iblockaccess, i, j, k);
+			return baseBlock.getMixedBrightnessForBlock(iblockaccess, i, j, k);
 		}
 	}
 

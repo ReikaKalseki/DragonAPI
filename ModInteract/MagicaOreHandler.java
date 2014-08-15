@@ -9,6 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.ModRegistry.ModOreList;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -16,15 +21,11 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public final class MagicaOreHandler extends ModHandlerBase {
 
-	public final int oreID;
-	public final int itemID;
+	public final Block oreID;
+	public final Item itemID;
 
 	public final int metaVinteum = 0;
 	public final int metaChimerite = 1;
@@ -59,8 +60,8 @@ public final class MagicaOreHandler extends ModHandlerBase {
 
 	private MagicaOreHandler() {
 		super();
-		int idore = -1;
-		int iditem = -1;
+		Block idore = null;
+		Item iditem = null;
 
 		if (this.hasMod()) {
 			try {
@@ -72,8 +73,8 @@ public final class MagicaOreHandler extends ModHandlerBase {
 				Block oreb = (Block)ore.get(null);
 				Item itemi = (Item)item.get(null);
 
-				idore = oreb.blockID;
-				iditem = itemi.itemID;
+				idore = oreb;
+				iditem = itemi;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -134,7 +135,7 @@ public final class MagicaOreHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return oreID != -1 && itemID != -1;
+		return oreID != null && itemID != null;
 	}
 
 	@Override
@@ -222,14 +223,14 @@ public final class MagicaOreHandler extends ModHandlerBase {
 		if (is == null)
 			return false;
 		//return ReikaItemHelper.listContainsItemStack(ores, is);
-		return is.itemID == oreID;
+		return Block.getBlockFromItem(is.getItem()) == oreID;
 	}
 
 	public boolean isItem(ItemStack is) {
 		if (!this.initializedProperly())
 			return false;
-		//return ReikaItemHelper.listContainsItemStack(items, is) && is.itemID == itemID;
-		return is.itemID == itemID;
+		//return ReikaItemHelper.listContainsItemStack(items, is) && is.getItem() == itemID;
+		return is.getItem() == itemID;
 	}
 
 	public void forceOreRegistration() {

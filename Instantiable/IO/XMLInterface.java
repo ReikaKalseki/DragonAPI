@@ -9,13 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
+import Reika.DragonAPI.IO.ReikaXMLBase;
+
 import java.util.HashMap;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import Reika.DragonAPI.IO.ReikaXMLBase;
 
 public class XMLInterface {
 

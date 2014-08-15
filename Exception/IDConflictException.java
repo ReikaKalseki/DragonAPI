@@ -9,11 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Exception;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.DragonAPIMod;
+
 import java.util.ArrayList;
 
 import net.minecraft.item.Item;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.DragonAPIMod;
 
 public class IDConflictException extends DragonAPIException {
 
@@ -64,11 +65,11 @@ public class IDConflictException extends DragonAPIException {
 
 	public static class ItemConflict {
 
-		private final int itemID;
+		private final Item itemID;
 		private final Item original;
 		private final Item overwriter;
 
-		public ItemConflict(int id, Item orig, Item over) {
+		public ItemConflict(Item id, Item orig, Item over) {
 			itemID = id;
 			original = orig;
 			overwriter = over;

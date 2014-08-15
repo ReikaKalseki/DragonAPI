@@ -9,23 +9,23 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import Reika.DragonAPI.Auxiliary.BlockModelRenderer;
+import Reika.DragonAPI.Auxiliary.BlockModelRenderer.ModelBlockInterface;
+
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.util.Icon;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
-
-import Reika.DragonAPI.Auxiliary.BlockModelRenderer;
-import Reika.DragonAPI.Auxiliary.BlockModelRenderer.ModelBlockInterface;
 
 public class ReikaLiquidRenderer {
 
@@ -34,18 +34,18 @@ public class ReikaLiquidRenderer {
 	public static final int LEVELS = 100;
 	private static final ModelBlockInterface liquidBlock = new ModelBlockInterface();
 
-	public static Icon getFluidTexture(FluidStack fluidStack, boolean flowing) {
+	public static IIcon getFluidTexture(FluidStack fluidStack, boolean flowing) {
 		if (fluidStack == null) {
 			return null;
 		}
 		return getFluidTexture(fluidStack.getFluid(), flowing);
 	}
 
-	public static Icon getFluidTexture(Fluid fluid, boolean flowing) {
+	public static IIcon getFluidTexture(Fluid fluid, boolean flowing) {
 		if (fluid == null) {
 			return null;
 		}
-		Icon icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
+		IIcon icon = flowing ? fluid.getFlowingIcon() : fluid.getStillIcon();
 		if (icon == null) {
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
 		}
@@ -87,11 +87,11 @@ public class ReikaLiquidRenderer {
 
 		diplayLists = new int[LEVELS];
 
-		if (fluid.getBlockID() > 0) {
-			liquidBlock.baseBlock = Block.blocksList[fluid.getBlockID()];
+		if (fluid.getBlock() != null) {
+			liquidBlock.baseBlock = fluid.getBlock();
 			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		} else {
-			liquidBlock.baseBlock = Block.waterStill;
+			liquidBlock.baseBlock = Blocks.water;
 			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
 		}
 

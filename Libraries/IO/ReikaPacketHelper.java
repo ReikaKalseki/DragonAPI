@@ -9,32 +9,147 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Auxiliary.PacketTypes;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.HybridTank;
+import Reika.DragonAPI.Instantiable.IO.PacketPipeline;
+import Reika.DragonAPI.Interfaces.IPacketHandler;
+import Reika.DragonAPI.Interfaces.SoundEnum;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
+
+import io.netty.buffer.ByteBuf;
+
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.DataInput;
+import java.io.DataInputStream;
+import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet250CustomPayload;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.NetHandlerPlayServer;
+import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Auxiliary.PacketTypes;
-import Reika.DragonAPI.Instantiable.HybridTank;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
+
+import com.google.common.collect.HashBiMap;
+
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.PacketDispatcher;
-import cpw.mods.fml.common.network.Player;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaPacketHelper extends DragonAPICore {
 
-	public static void sendDataPacket(String ch, int id, EntityPlayer ep, int... data) {
+	private static final HashMap<String, PacketPipeline> pipelines = new HashMap();
+	private static final HashBiMap<Short, IPacketHandler> handlers = HashBiMap.create();
+	private static short handlerID = 0;
+
+	public static void registerPacketHandler(DragonAPIMod mod, String channel, IPacketHandler handler) {
+		SimpleNetworkWrapper wrapper = NetworkRegistry.INSTANCE.newSimpleChannel(channel);
+		PacketPipeline p = new PacketPipeline(mod, channel, handler, wrapper);
+		p.registerPacket(DataPacket.class);
+		handlers.put(handlerID, handler);
+		pipelines.put(channel, p);
+		handlerID++;
+	}
+
+	public static void registerPacketClass(String channel, Class<? extends PacketObj> c) {
+		PacketPipeline pipe = pipelines.get(channel);
+		if (pipe == null)
+			throw new MisuseException("Cannot register a packet class to a null pipeline!");
+		pipe.registerPacket(c);
+	}
+
+	private static short getHandlerID(IPacketHandler handler) {
+		return handlers.containsValue(handler) ? handlers.inverse().get(handler) : -1;
+	}
+
+	private static IPacketHandler getHandlerFromID(short id) {
+		return handlers.get(id);
+	}
+	/*
+	public static void initPipelines() {
+		for (PacketPipeline p : pipelines.values()) {
+			p.initialize();
+		}
+	}
+
+	public static void postInitPipelines() {
+		for (PacketPipeline p : pipelines.values()) {
+			p.postInitialize();
+		}
+	}*/
+
+	public static void sendRawPacket(String ch, ByteArrayOutputStream bos) {
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.RAW, pipe);
+		pack.setData(dat);
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+
+		}
+		else if (side == Side.CLIENT) {
+			//PacketDispatcher.sendPacketToServer(packet);
+			pipe.sendToServer(pack);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
+	public static void sendDataPacket(String ch, ByteArrayOutputStream bos) {
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.DATA, pipe);
+		pack.setData(dat);
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+
+		}
+		else if (side == Side.CLIENT) {
+			//PacketDispatcher.sendPacketToServer(packet);
+			pipe.sendToServer(pack);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
+	public static void sendDataPacket(String ch, int id, EntityPlayerMP ep, int... data) {
 		ArrayList<Integer> li = new ArrayList();
 		for (int i = 0; i < data.length; i++) {
 			li.add(data[i]);
@@ -42,7 +157,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		sendDataPacket(ch, id, li, ep);
 	}
 
-	public static void sendDataPacket(String ch, int id, List<Integer> data, EntityPlayer ep) {
+	public static void sendDataPacket(String ch, int id, List<Integer> data, EntityPlayerMP ep) {
 		int npars;
 		if (data == null)
 			npars = 4;
@@ -52,7 +167,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(npars*4); //4 bytes an int
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-			outputStream.writeInt(PacketTypes.DATA.ordinal());
 			outputStream.writeInt(id);
 			if (data != null)
 				for (int i = 0; i < data.size(); i++) {
@@ -63,12 +177,20 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			ex.printStackTrace();
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
 
-		PacketDispatcher.sendPacketToPlayer(packet, (Player)ep);
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.DATA, pipe);
+		pack.setData(dat);
+
+		//PacketDispatcher.sendPacketToPlayer(packet, (Player)ep);
+		pipe.sendToPlayer(pack, ep);
 	}
 
 	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, List<Integer> data) {
@@ -82,7 +204,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(npars*4); //4 bytes an int
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-			outputStream.writeInt(PacketTypes.DATA.ordinal());
 			outputStream.writeInt(id);
 			if (data != null)
 				for (int i = 0; i < data.size(); i++) {
@@ -97,21 +218,27 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			ex.printStackTrace();
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.DATA, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
+
 		if (side == Side.SERVER) {
-			// We are on the server side.
-			//PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToDimension(pack, world);
 		}
 		else if (side == Side.CLIENT) {
-			// We are on the client side.
-			PacketDispatcher.sendPacketToServer(packet);
-			//PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			//PacketDispatcher.sendPacketToServer(packet);
+			pipe.sendToServer(pack);
 		}
 		else {
 			// We are on the Bukkit server.
@@ -128,7 +255,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(((npars-4)*8)+2*4); //4 bytes an int + 8 bytes a long
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-			outputStream.writeInt(PacketTypes.DATA.ordinal());
 			outputStream.writeInt(id);
 			if (data != null) {
 				for (int i = 0; i < data.size(); i++) {
@@ -144,19 +270,28 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			ex.printStackTrace();
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.DATA, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
-			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToDimension(pack, world);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
-			PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToServer(packet);
+			pipe.sendToServer(pack);
 		}
 		else {
 			// We are on the Bukkit server.
@@ -191,13 +326,12 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		sendLongDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
 	}
 
-	public static void sendSoundPacket(String ch, String path, World world, double x, double y, double z, float vol, float pitch) {
+	public static void sendSoundPacket(String ch, Enum<? extends SoundEnum> s, World world, double x, double y, double z, float vol, float pitch) {
 		int length = 0;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-			outputStream.writeInt(PacketTypes.SOUND.ordinal());
-			Packet.writeString(path, outputStream);
+			outputStream.writeInt(s.ordinal());
 			outputStream.writeDouble(x);
 			outputStream.writeDouble(y);
 			outputStream.writeDouble(z);
@@ -208,24 +342,33 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			throw new RuntimeException("Sound Packet for "+path+" threw a packet exception!");
+			throw new RuntimeException("Sound Packet for "+s+" threw a packet exception!");
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.SOUND, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
 			//EntityPlayerMP player2 = (EntityPlayerMP) player;
-			PacketDispatcher.sendPacketToAllAround(x, y, z, 20, world.provider.dimensionId, packet);
+			//PacketDispatcher.sendPacketToAllAround(x, y, z, 20, world.provider.dimensionId, packet);
+			pipe.sendToAllAround(pack, world, x, y, z, 20);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
 			//EntityClientPlayerMP player2 = (EntityClientPlayerMP) player;
 			//PacketDispatcher.sendPacketToServer(packet);
+			pipe.sendToServer(pack);
 		}
 		else {
 			// We are on the Bukkit server.
@@ -240,9 +383,8 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-			outputStream.writeInt(PacketTypes.STRING.ordinal());
+			writeString(sg, outputStream);
 			outputStream.writeInt(id);
-			Packet.writeString(sg, outputStream);
 			outputStream.writeInt(x);
 			outputStream.writeInt(y);
 			outputStream.writeInt(z);
@@ -252,21 +394,31 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			throw new RuntimeException("String Packet for "+sg+" threw a packet exception!");
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.STRING, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
 			//PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			pipe.sendToDimension(pack, te.worldObj);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
-			PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			pipe.sendToServer(pack);
+			//pipe.sendToDimension(pack, te.worldObj); //SERVER ONLY
 		}
 		else {
 			// We are on the Bukkit server.
@@ -278,9 +430,8 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-			outputStream.writeInt(PacketTypes.STRING.ordinal());
+			writeString(sg, outputStream);
 			outputStream.writeInt(id);
-			Packet.writeString(sg, outputStream);
 			outputStream.writeInt(x);
 			outputStream.writeInt(y);
 			outputStream.writeInt(z);
@@ -290,21 +441,30 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			throw new RuntimeException("String Packet for "+sg+" threw a packet exception!");
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.STRING, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
-			PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToDimension(pack, world);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
-			PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToServer(pack);
 		}
 		else {
 			// We are on the Bukkit server.
@@ -316,9 +476,8 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-			outputStream.writeInt(PacketTypes.STRING.ordinal());
+			writeString(sg, outputStream);
 			outputStream.writeInt(id);
-			Packet.writeString(sg, outputStream);
 			outputStream.writeInt(0);
 			outputStream.writeInt(0);
 			outputStream.writeInt(0);
@@ -328,21 +487,30 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			//throw new RuntimeException("String Packet for "+sg+" threw a packet exception!");
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.STRING, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
-			PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllPlayers(packet);
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllPlayers(packet);
+			pipe.sendToAllOnServer(pack);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
-			PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllPlayers(packet);
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllPlayers(packet);
+			pipe.sendToServer(pack);
 		}
 		else {
 			// We are on the Bukkit server.
@@ -358,7 +526,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-			outputStream.writeInt(PacketTypes.UPDATE.ordinal());
 			outputStream.writeInt(id);
 			outputStream.writeInt(x);
 			outputStream.writeInt(y);
@@ -370,21 +537,29 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			throw new RuntimeException("TileEntity "+name+" threw an update packet exception!");
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.UPDATE, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
-			//PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			pipe.sendToDimension(pack, te.worldObj);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
-			PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			pipe.sendToServer(pack);
 		}
 		else {
 			// We are on the Bukkit server.
@@ -395,7 +570,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-			outputStream.writeInt(PacketTypes.UPDATE.ordinal());
 			outputStream.writeInt(id);
 			outputStream.writeInt(x);
 			outputStream.writeInt(y);
@@ -407,21 +581,30 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			throw new RuntimeException("Coordinates "+x+", "+y+", "+z+" threw an update packet exception!");
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.UPDATE, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
 			//PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToDimension(pack, world);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
-			PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToServer(pack);
 		}
 		else {
 			// We are on the Bukkit server.
@@ -432,7 +615,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
-			outputStream.writeInt(PacketTypes.FLOAT.ordinal());
 			outputStream.writeInt(id);
 			outputStream.writeFloat(data);
 			outputStream.writeInt(x);
@@ -443,21 +625,30 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			ex.printStackTrace();
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.FLOAT, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
 			// We are on the server side.
-			PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToDimension(pack, world);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
-			PacketDispatcher.sendPacketToServer(packet);
-			PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToServer(pack);
 		}
 		else {
 			// We are on the Bukkit server.
@@ -475,11 +666,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			Field f = ReikaReflectionHelper.getProtectedInheritedField(te, field);
 			f.setAccessible(true);
 			int data = f.getInt(te);
-			outputStream.writeInt(PacketTypes.SYNC.ordinal());
+			writeString(field, outputStream);
 			outputStream.writeInt(x);
 			outputStream.writeInt(y);
 			outputStream.writeInt(z);
-			Packet.writeString(field, outputStream);
 			outputStream.writeInt(data);
 		}
 		catch (IllegalAccessException ex) {
@@ -489,14 +679,22 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			ex.printStackTrace();
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.SYNC, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
-			PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			pipe.sendToDimension(pack, te.worldObj);
 		}
 		else if (side == Side.CLIENT) {
 			ReikaJavaLibrary.pConsole(te+" sent a sync packet from the client! This is not allowed!");
@@ -517,11 +715,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			Field f = ReikaReflectionHelper.getProtectedInheritedField(te, tankField);
 			f.setAccessible(true);
 			HybridTank tank = (HybridTank)f.get(te);
-			outputStream.writeInt(PacketTypes.TANK.ordinal());
+			writeString(tankField, outputStream);
 			outputStream.writeInt(x);
 			outputStream.writeInt(y);
 			outputStream.writeInt(z);
-			Packet.writeString(tankField, outputStream);
 			outputStream.writeInt(tank.getLevel());
 		}
 		catch (ClassCastException ex) {
@@ -535,14 +732,22 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			ex.printStackTrace();
 		}
 
-		Packet250CustomPayload packet = new Packet250CustomPayload();
-		packet.channel = ch;
-		packet.data = bos.toByteArray();
-		packet.length = bos.size();
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			Thread.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.TANK, pipe);
+		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
-			PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
+			pipe.sendToDimension(pack, te.worldObj);
 		}
 		else if (side == Side.CLIENT) {
 			ReikaJavaLibrary.pConsole(te+" sent a sync packet from the client! This is not allowed!");
@@ -554,13 +759,17 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 	public static void updateTileEntityData(World world, int x, int y, int z, String name, int data) {
 		if (world.checkChunksExist(x, y, z, x, y, z)) {
-			TileEntity te = world.getBlockTileEntity(x, y, z);
+			TileEntity te = world.getTileEntity(x, y, z);
 			if (te == null) {
 				ReikaJavaLibrary.pConsole("Null TileEntity for syncing field "+name);
 				return;
 			}
 			try {
 				Field f = ReikaReflectionHelper.getProtectedInheritedField(te, name);
+				if (f == null) {
+					//ReikaJavaLibrary.pConsole("Null field for syncing tank field "+name);
+					return;
+				}
 				f.setAccessible(true);
 				f.set(te, data);
 			}
@@ -572,13 +781,17 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 	public static void updateTileEntityTankData(World world, int x, int y, int z, String name, int level) {
 		if (world.checkChunksExist(x, y, z, x, y, z)) {
-			TileEntity te = world.getBlockTileEntity(x, y, z);
+			TileEntity te = world.getTileEntity(x, y, z);
 			if (te == null) {
 				ReikaJavaLibrary.pConsole("Null TileEntity for syncing tank field "+name);
 				return;
 			}
 			try {
 				Field f = ReikaReflectionHelper.getProtectedInheritedField(te, name);
+				if (f == null) {
+					//ReikaJavaLibrary.pConsole("Null field for syncing tank field "+name);
+					return;
+				}
 				f.setAccessible(true);
 				HybridTank tank = (HybridTank)f.get(te);
 				if (level <= 0) {
@@ -598,6 +811,197 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	private static void writeString(String par0Str, DataOutput par1DataOutput) throws IOException
+	{
+		if (par0Str.length() > 32767)
+		{
+			throw new IOException("String too big");
+		}
+		else
+		{
+			par1DataOutput.writeShort(par0Str.length());
+			par1DataOutput.writeChars(par0Str);
+		}
+	}
+
+	private static String readString(DataInput par0DataInput) throws IOException
+	{
+		short short1 = par0DataInput.readShort();
+
+		if (short1 > Short.MAX_VALUE)
+		{
+			throw new IOException("Received string length longer than maximum allowed!");
+		}
+		else if (short1 < 0)
+		{
+			throw new IOException("Received string length is less than zero!");
+		}
+		else
+		{
+			StringBuilder stringbuilder = new StringBuilder();
+
+			for (int j = 0; j < short1; ++j)
+			{
+				stringbuilder.append(par0DataInput.readChar());
+			}
+
+			return stringbuilder.toString();
+		}
+	}
+
+	public static Packet getPacket(String channel, PacketObj p) {
+		PacketPipeline pipe = pipelines.get(channel);
+		return pipe != null ? pipe.getMinecraftPacket(p) : null;
+	}
+
+	public static class DataPacket extends PacketObj
+	{
+		private byte[] bytes;
+
+		public DataPacket() {
+			super();
+		}
+
+		public void setData(byte[] data) {
+			bytes = new byte[data.length];
+			System.arraycopy(data, 0, bytes, 0, bytes.length);
+		}
+
+		@Override
+		public void readData(ByteBuf data) {
+			super.readData(data);
+
+			byte[] dat = data.array();
+			bytes = new byte[dat.length-byteIndex-1];
+			System.arraycopy(dat, byteIndex+1, bytes, 0, bytes.length);
+			//ReikaJavaLibrary.pConsole("received "+this);
+		}
+
+		@Override
+		public void writeData(ByteBuf data) {
+			super.writeData(data);
+			data.writeBytes(bytes);
+			//ReikaJavaLibrary.pConsole("sent "+this);
+		}
+
+		public int getSize() {
+			return bytes.length;
+		}
+
+		public boolean isEmpty() {
+			return this.getSize() == 0;
+		}
+
+		@Override
+		public DataInputStream getDataIn() {
+			return new DataInputStream(new ByteArrayInputStream(bytes));
+		}
+
+		@Override
+		protected String getDataAsString() {
+			return Arrays.toString(bytes);
+		}
+	}
+
+	public static abstract class PacketObj implements IMessage {
+
+		protected IPacketHandler handler;
+		protected PacketTypes type;
+		protected int byteIndex = 0;
+
+		protected PacketObj() {
+
+		}
+
+		public final void fromBytes(ByteBuf buf) {
+			this.readData(buf);
+		}
+
+		public final void toBytes(ByteBuf buf) {
+			this.writeData(buf);
+		}
+
+		public void init(PacketTypes p, PacketPipeline l) {
+			type = p;
+			handler = l.getHandler();
+		}
+
+		public void readData(ByteBuf data) {
+			short id = this.readShort(data);
+			handler = getHandlerFromID(id);
+			byte type = this.readByte(data);
+			this.type = PacketTypes.getPacketType(type);
+		}
+
+		protected int readInt(ByteBuf data) {
+			byteIndex += 4;
+			return data.readInt();
+		}
+
+		protected short readShort(ByteBuf data) {
+			byteIndex += 2;
+			return data.readShort();
+		}
+
+		protected byte readByte(ByteBuf data) {
+			byteIndex += 1;
+			return data.readByte();
+		}
+
+		public void writeData(ByteBuf data) {
+			data.writeShort(getHandlerID(handler));
+			data.writeByte(type.ordinal());
+		}
+
+		public final void handleClient(NetHandlerPlayClient nh) {
+			handler.handleData(this, Minecraft.getMinecraft().theWorld, Minecraft.getMinecraft().thePlayer);
+			this.close();
+		}
+
+		public final void handleServer(NetHandlerPlayServer nh) {
+			handler.handleData(this, nh.playerEntity.worldObj, nh.playerEntity);
+			this.close();
+		}
+
+		@Override
+		public String toString() {
+			String hd = handler.getClass().getCanonicalName()+" (ID "+this.handlerID()+")";
+			return "type "+this.getType()+"; Data: "+this.getDataAsString()+" from "+hd;
+		}
+
+		protected abstract String getDataAsString();
+
+		private void close() {
+			try {
+				this.getDataIn().close();
+			}
+			catch (IOException e) {
+				DragonAPIInit.instance.getModLogger().logError("Error closing packet "+this+". Memory may leak.");
+				e.printStackTrace();
+			}
+		}
+
+		public abstract DataInputStream getDataIn();
+
+		public final String readString() {
+			try {
+				return ReikaPacketHelper.readString(this.getDataIn());
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+				return "ERROR";
+			}
+		}
+
+		public final PacketTypes getType() {
+			return type;
+		}
+
+		protected final int handlerID() {
+			return handlers.inverse().get(handler);
 		}
 	}
 

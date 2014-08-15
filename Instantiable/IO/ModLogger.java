@@ -9,12 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
-import java.util.ArrayList;
-
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+import java.util.ArrayList;
 
 public class ModLogger {
 

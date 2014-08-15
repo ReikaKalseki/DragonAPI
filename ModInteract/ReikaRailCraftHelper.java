@@ -9,12 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.MathSci.ReikaThermoHelper;
+
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidRegistry;
 
 public class ReikaRailCraftHelper extends DragonAPICore {
 

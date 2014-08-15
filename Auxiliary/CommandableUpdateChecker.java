@@ -9,6 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Command.DragonCommandBase;
+import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -22,13 +30,6 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Command.DragonCommandBase;
-import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class CommandableUpdateChecker {

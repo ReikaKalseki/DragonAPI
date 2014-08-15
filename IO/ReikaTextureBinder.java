@@ -19,7 +19,6 @@ import net.minecraft.util.IntHashMap;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import cpw.mods.fml.client.TextureFXManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -95,7 +94,7 @@ public class ReikaTextureBinder
 
 		int j = buf.getWidth();
 		int k = buf.getHeight();
-		TextureFXManager.instance().setTextureDimensions(par2, j, k);
+		//TextureFXManager.instance().setTextureDimensions(par2, j, k); no longer necessary? - might have been lost back in 1.5
 		int[] aint = new int[j * k];
 		buf.getRGB(0, 0, j, k, aint, 0, j);
 
@@ -129,4 +128,3 @@ public class ReikaTextureBinder
 		return aint1;
 	}
 }
-

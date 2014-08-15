@@ -9,18 +9,20 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 import com.xcompwiz.mystcraft.api.MystObjects;
 import com.xcompwiz.mystcraft.api.linking.ILinkInfo;
@@ -47,7 +49,7 @@ public class ReikaMystcraftHelper {
 
 	public static void disableFluidPage(String name) {
 		NBTTagCompound NBTMsg = new NBTTagCompound();
-		NBTMsg.setCompoundTag("fluidsymbol", new NBTTagCompound());
+		NBTMsg.setTag("fluidsymbol", new NBTTagCompound());
 		NBTMsg.getCompoundTag("fluidsymbol").setFloat("rarity", 0.0F);
 		NBTMsg.getCompoundTag("fluidsymbol").setFloat("grammarweight", 0.0F);
 		NBTMsg.getCompoundTag("fluidsymbol").setFloat("instabilityPerBlock", Float.MAX_VALUE);
@@ -56,8 +58,8 @@ public class ReikaMystcraftHelper {
 	}
 
 	private static ILinkInfo getPortalInfo(World world, int x, int y, int z) {
-		int id = world.getBlockId(x, y, z);
-		if (id != MystObjects.portal.blockID)
+		Block b = world.getBlock(x, y, z);
+		if (b != MystObjects.portal)
 			return null;
 		try {
 			TileEntity te = (TileEntity)getTile.invoke(MystObjects.portal, world, x, y, z);
@@ -322,13 +324,13 @@ public class ReikaMystcraftHelper {
 				base.setAccessible(true);
 				adata = age.getDeclaredField("agedata");
 				adata.setAccessible(true);
-				Class portal = Class.forName("com.xcompwiz.mystcraft.block.BlockBookReceptacle");
+				Class portal = Class.forName("com.xcompwiz.mystcraft.Blocks.BlockBookReceptacle");
 				tile = portal.getDeclaredMethod("getTileEntity", IBlockAccess.class, int.class, int.class, int.class);
 				tile.setAccessible(true);
 				Class booktile = Class.forName("com.xcompwiz.mystcraft.tileentity.TileEntityBook");
 				book = booktile.getDeclaredMethod("getBook");
 				book.setAccessible(true);
-				Class item = Class.forName("com.xcompwiz.mystcraft.item.ItemLinking");
+				Class item = Class.forName("com.xcompwiz.mystcraft.Items.ItemLinking");
 				link = item.getDeclaredMethod("getLinkInfo", ItemStack.class);
 				link.setAccessible(true);
 			}

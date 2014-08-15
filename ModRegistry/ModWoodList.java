@@ -9,26 +9,27 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModRegistry;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Random;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.item.EntityFallingSand;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.BlockMap;
 import Reika.DragonAPI.Interfaces.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityFallingBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 public enum ModWoodList implements TreeType {
 
@@ -51,20 +52,20 @@ public enum ModWoodList implements TreeType {
 	MAPLE(ModList.NATURA, 0x503A23, 0x993412, "rareTree", "rareLeaves", "rareSapling", 0, new int[]{0,8}, 0, VarType.INSTANCE),
 	WILLOW(ModList.NATURA, 0x584C30, 0x548941, "willow", "floraLeavesNoColor", "rareSapling", 0, new int[]{3,11}, 4, VarType.INSTANCE),
 	AMARANTH(ModList.NATURA, 0x9C8B56, 0x3C9119, "rareTree", "rareLeaves", "rareSapling", 2, new int[]{2,10}, 2, VarType.INSTANCE),
-	BAMBOO(ModList.BOP, 0xBBD26C, 0xAFD83B, "bambooID", "leaves1ID", "saplingsID", 0, 1, 2, VarType.INT),
-	MAGIC(ModList.BOP, 0x78839E, 0x5687BE, "logs2ID", "leaves1ID", "saplingsID", 1, new int[]{2,10}, 3, VarType.INT),
-	DARK(ModList.BOP, 0x664848, 0x312F42, "logs1ID", "leaves1ID", "saplingsID", 2, new int[]{3,11}, 4, VarType.INT),
-	FIR(ModList.BOP, 0x675846, 0x518E5F, "logs1ID", "leaves2ID", "saplingsID", 3, new int[]{1,9}, 6, VarType.INT),
-	LOFTWOOD(ModList.BOP, 0x817665, 0x3FD994, "logs2ID", "leaves2ID", "saplingsID", 0, new int[]{2,10}, 7, VarType.INT),
-	CHERRY(ModList.BOP, 0x965441, 0xFFAFE0, "logs1ID", "leaves3ID", "saplingsID", new int[]{1,5,9}, new int[]{1,3,9,11}, 10, VarType.INT), //sapling 12 for white cherry
-	HELLBARK(ModList.BOP, 0xB36F43, 0x7B5E1F, "logs4ID", "leaves4ID", "saplingsID", 1, 0, 13, VarType.INT),
-	JACARANDA(ModList.BOP, 0x998177, 0x644F84, "logs4ID", "leaves4ID", "saplingsID", 2, new int[]{1,9}, 14, VarType.INT),
-	ACACIA(ModList.BOP, 0x847956, 0x3E981A, "logs1ID", "colourizedLeaves1ID", "colourizedSaplingsID", 0, new int[]{0,8}, 0, VarType.INT),
-	BOPMANGROVE(ModList.BOP, 0xDED1B5, 0x3E981A, "logs2ID", "colourizedLeaves1ID", "colourizedSaplingsID", 2, new int[]{1,9}, 1, VarType.INT),
-	PALM(ModList.BOP, 0x936B40, 0x3E981A, "logs2ID", "colourizedLeaves1ID", "colourizedSaplingsID", 3, 2, 2, VarType.INT),
-	REDWOOD(ModList.BOP, 0x722F0D, 0x3E981A, "logs3ID", "colourizedLeaves1ID", "colourizedSaplingsID", 0, new int[]{3,11}, 3, VarType.INT),
-	BOPWILLOW(ModList.BOP, 0x767A47, 0x3E981A, "logs3ID", "colourizedLeaves2ID", "colourizedSaplingsID", 1, new int[]{0,8}, 4, VarType.INT),
-	PINE(ModList.BOP, 0x896B4F, 0x3E981A, "logs4ID", "colourizedLeaves2ID", "colourizedSaplingsID", 0, new int[]{1,9}, 5, VarType.INT),
+	BAMBOO(ModList.BOP, 0xBBD26C, 0xAFD83B, "bambooID", "leaves1ID", "saplingsID", 0, 1, 2, VarType.INSTANCE),
+	MAGIC(ModList.BOP, 0x78839E, 0x5687BE, "logs2ID", "leaves1ID", "saplingsID", 1, new int[]{2,10}, 3, VarType.INSTANCE),
+	DARK(ModList.BOP, 0x664848, 0x312F42, "logs1ID", "leaves1ID", "saplingsID", 2, new int[]{3,11}, 4, VarType.INSTANCE),
+	FIR(ModList.BOP, 0x675846, 0x518E5F, "logs1ID", "leaves2ID", "saplingsID", 3, new int[]{1,9}, 6, VarType.INSTANCE),
+	LOFTWOOD(ModList.BOP, 0x817665, 0x3FD994, "logs2ID", "leaves2ID", "saplingsID", 0, new int[]{2,10}, 7, VarType.INSTANCE),
+	CHERRY(ModList.BOP, 0x965441, 0xFFAFE0, "logs1ID", "leaves3ID", "saplingsID", new int[]{1,5,9}, new int[]{1,3,9,11}, 10, VarType.INSTANCE), //sapling 12 for white cherry
+	HELLBARK(ModList.BOP, 0xB36F43, 0x7B5E1F, "logs4ID", "leaves4ID", "saplingsID", 1, 0, 13, VarType.INSTANCE),
+	JACARANDA(ModList.BOP, 0x998177, 0x644F84, "logs4ID", "leaves4ID", "saplingsID", 2, new int[]{1,9}, 14, VarType.INSTANCE),
+	ACACIA(ModList.BOP, 0x847956, 0x3E981A, "logs1ID", "colourizedLeaves1ID", "colourizedSaplingsID", 0, new int[]{0,8}, 0, VarType.INSTANCE),
+	BOPMANGROVE(ModList.BOP, 0xDED1B5, 0x3E981A, "logs2ID", "colourizedLeaves1ID", "colourizedSaplingsID", 2, new int[]{1,9}, 1, VarType.INSTANCE),
+	PALM(ModList.BOP, 0x936B40, 0x3E981A, "logs2ID", "colourizedLeaves1ID", "colourizedSaplingsID", 3, 2, 2, VarType.INSTANCE),
+	REDWOOD(ModList.BOP, 0x722F0D, 0x3E981A, "logs3ID", "colourizedLeaves1ID", "colourizedSaplingsID", 0, new int[]{3,11}, 3, VarType.INSTANCE),
+	BOPWILLOW(ModList.BOP, 0x767A47, 0x3E981A, "logs3ID", "colourizedLeaves2ID", "colourizedSaplingsID", 1, new int[]{0,8}, 4, VarType.INSTANCE),
+	PINE(ModList.BOP, 0x896B4F, 0x3E981A, "logs4ID", "colourizedLeaves2ID", "colourizedSaplingsID", 0, new int[]{1,9}, 5, VarType.INSTANCE),
 	BXLREDWOOD(ModList.BXL, 0, 0, null, null, null, 0, VarType.INSTANCE),
 	IC2RUBBER(ModList.IC2, 0x3C2D20, 0x638143, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, new int[]{0,8}, 0, VarType.ITEMSTACK),
 	MFRRUBBER(ModList.MINEFACTORY, 0x7E5C25, 0x5DC123, "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5}, new int[]{0,8}, 0, VarType.INSTANCE),
@@ -89,13 +90,13 @@ public enum ModWoodList implements TreeType {
 	ALDER(ModList.WITCHERY, 0x52544C, 0xC3D562, "blockWitchLog", "blockWitchLeaves", "blockWitchSapling", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE);
 
 	private ModList mod;
-	private int blockID = -1;
-	private int leafID = -1;
+	private Block blockID = null;
+	private Block leafID = null;
 	private int blockMeta[];
 	private int leafMeta[];
 	private boolean hasPlanks;
 
-	private int saplingID;
+	private Block saplingID;
 	private int saplingMeta;
 
 	public final int logColor;
@@ -108,9 +109,9 @@ public enum ModWoodList implements TreeType {
 
 	public static final ModWoodList[] woodList = values();
 
-	private static final HashMap<List<Integer>, ModWoodList> logMappings = new HashMap();
-	private static final HashMap<List<Integer>, ModWoodList> leafMappings = new HashMap();
-	private static final HashMap<List<Integer>, ModWoodList> saplingMappings = new HashMap();
+	private static final BlockMap<ModWoodList> logMappings = new BlockMap();
+	private static final BlockMap<ModWoodList> leafMappings = new BlockMap();
+	private static final BlockMap<ModWoodList> saplingMappings = new BlockMap();
 
 	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, VarType type) {
 		this(req, color, leaf, blockVar, leafVar, saplingVar, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, type);
@@ -161,9 +162,9 @@ public enum ModWoodList implements TreeType {
 			Field w = cl.getField(blockVar);
 			Field l = cl.getField(leafVar);
 			Field s = cl.getField(saplingVar);
-			int id;
-			int idleaf;
-			int idsapling;
+			Block id;
+			Block idleaf;
+			Block idsapling;
 			switch(type) {
 			case ITEMSTACK:
 				ItemStack wood = (ItemStack)w.get(null);
@@ -173,9 +174,9 @@ public enum ModWoodList implements TreeType {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
 					return;
 				}
-				id = wood.itemID;
-				idleaf = leaf.itemID;
-				idsapling = sapling.itemID;
+				id = Block.getBlockFromItem(wood.getItem());
+				idleaf = Block.getBlockFromItem(leaf.getItem());
+				idsapling = Block.getBlockFromItem(sapling.getItem());
 				break;
 			case INSTANCE:
 				Block wood_b = (Block)w.get(null);
@@ -185,15 +186,15 @@ public enum ModWoodList implements TreeType {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
 					return;
 				}
-				id = wood_b.blockID;
-				idleaf = leaf_b.blockID;
-				idsapling = sapling_b.blockID;
-				break;
+				id = wood_b;
+				idleaf = leaf_b;
+				idsapling = sapling_b;
+				break;/*
 			case INT:
 				id = w.getInt(null);
 				idleaf = l.getInt(null);
 				idsapling = s.getInt(null);
-				break;
+				break;*/
 			default:
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type "+type+" for "+w+" or "+l);
@@ -276,7 +277,7 @@ public enum ModWoodList implements TreeType {
 		if (blockMeta == null)
 			return false;
 		if (this == SEQUOIA) {
-			return block.itemID == blockID;
+			return Block.getBlockFromItem(block.getItem()) == blockID;
 		}
 		for (int i = 0; i < blockMeta.length; i++) {
 			if (ReikaItemHelper.matchStacks(block, this.getLogItemWithOffset(i)))
@@ -286,7 +287,7 @@ public enum ModWoodList implements TreeType {
 	}
 
 	public Block getBlock() {
-		return Block.blocksList[blockID];
+		return blockID;
 	}
 
 	public String getName() {
@@ -294,17 +295,17 @@ public enum ModWoodList implements TreeType {
 	}
 
 	@Override
-	public int getLogID() {
+	public Block getLogID() {
 		return blockID;
 	}
 
 	@Override
-	public int getLeafID() {
+	public Block getLeafID() {
 		return leafID;
 	}
 
 	@Override
-	public int getSaplingID() {
+	public Block getSaplingID() {
 		return saplingID;
 	}
 
@@ -322,36 +323,40 @@ public enum ModWoodList implements TreeType {
 		return li;
 	}
 
-	public static ModWoodList getModWood(int id, int meta) {
-		return getModWood(new ItemStack(id, 1, meta));
+	public static ModWoodList getModWood(Block id, int meta) {
+		return logMappings.get(id, meta);
 	}
 
 	public static ModWoodList getModWood(ItemStack block) {
-		return logMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
+		return getModWood(Block.getBlockFromItem(block.getItem()), block.getItemDamage());
+	}
+
+	public static ModWoodList getModWoodFromSapling(Block id, int meta) {
+		return saplingMappings.get(id, meta);
 	}
 
 	public static ModWoodList getModWoodFromSapling(ItemStack block) {
-		return saplingMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
+		return getModWoodFromSapling(Block.getBlockFromItem(block.getItem()), block.getItemDamage());
 	}
 
 	public static ModWoodList getModWoodFromLeaf(ItemStack block) {
-		return leafMappings.get(Arrays.asList(block.itemID, block.getItemDamage()));
+		return getModWoodFromLeaf(Block.getBlockFromItem(block.getItem()), block.getItemDamage());
 	}
 
-	public static ModWoodList getModWoodFromLeaf(int id, int meta) {
-		return getModWoodFromLeaf(new ItemStack(id, 1, meta));
+	public static ModWoodList getModWoodFromLeaf(Block id, int meta) {
+		return leafMappings.get(id, meta);
 	}
 
 	public static boolean isModWood(ItemStack block) {
 		return getModWood(block) != null;
 	}
 
-	public static boolean isModWood(int id, int meta) {
+	public static boolean isModWood(Block id, int meta) {
 		return getModWood(id, meta) != null;
 	}
 
-	public static boolean isModLeaf(int id, int meta) {
-		return isModLeaf(new ItemStack(id, 1, meta));
+	public static boolean isModLeaf(Block id, int meta) {
+		return getModWoodFromLeaf(id, meta) != null;
 	}
 
 	public static boolean isModLeaf(ItemStack block) {
@@ -362,20 +367,20 @@ public enum ModWoodList implements TreeType {
 		return getModWoodFromSapling(block) != null;
 	}
 
-	public static boolean isModSapling(int id, int meta) {
-		return isModSapling(new ItemStack(id, 1, meta));
+	public static boolean isModSapling(Block id, int meta) {
+		return getModWoodFromSapling(id, meta) != null;
 	}
 
-	public Icon getWoodIcon(IBlockAccess iba, int x, int y, int z, int s) {
-		return this.getBlock().getBlockTexture(iba, x, y, z, s);
+	public IIcon getWoodIcon(IBlockAccess iba, int x, int y, int z, int s) {
+		return this.getBlock().getIcon(iba, x, y, z, s);
 	}
 
-	public Icon getSideIcon() {
+	public IIcon getSideIcon() {
 		return this.getBlock().getBlockTextureFromSide(2);
 	}
 
-	public EntityFallingSand getFallingBlock(World world, int x, int y, int z) {
-		EntityFallingSand e = new EntityFallingSand(world, x+0.5, y+0.5, z+0.5, blockID, blockMeta[0]);
+	public EntityFallingBlock getFallingBlock(World world, int x, int y, int z) {
+		EntityFallingBlock e = new EntityFallingBlock(world, x+0.5, y+0.5, z+0.5, blockID, blockMeta[0]);
 		return e;
 	}
 
@@ -423,8 +428,8 @@ public enum ModWoodList implements TreeType {
 
 	public static enum VarType {
 		ITEMSTACK(),
-		INSTANCE(),
-		INT();
+		INSTANCE();
+		//INT();
 
 		@Override
 		public String toString() {
@@ -436,23 +441,19 @@ public enum ModWoodList implements TreeType {
 		for (int i = 0; i < woodList.length; i++) {
 			ModWoodList w = woodList[i];
 			if (w.exists()) {
-				int id = w.blockID;
-				int leaf = w.leafID;
+				Block id = w.blockID;
+				Block leaf = w.leafID;
 				int[] metas = w.blockMeta;
 				int[] leafmetas = w.leafMeta;
-				int sapling = w.saplingID;
+				Block sapling = w.saplingID;
 				int saplingMeta = w.saplingMeta;
 				for (int k = 0; k < metas.length; k++) {
-					int meta = metas[k];
-					List li = Arrays.asList(id, meta);
-					logMappings.put(li, w);
+					logMappings.put(id, metas[k], w);
 				}
 				for (int k = 0; k < leafmetas.length; k++) {
-					int meta = leafmetas[k];
-					List li = Arrays.asList(leaf, meta);
-					leafMappings.put(li, w);
+					leafMappings.put(leaf, leafmetas[k], w);
 				}
-				saplingMappings.put(Arrays.asList(sapling, saplingMeta), w);
+				saplingMappings.put(sapling, saplingMeta, w);
 			}
 		}
 	}

@@ -9,44 +9,33 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
-import java.io.ByteArrayInputStream;
+import Reika.DragonAPI.Auxiliary.KeyWatcher;
+import Reika.DragonAPI.Auxiliary.KeyWatcher.Key;
+import Reika.DragonAPI.Auxiliary.PacketTypes;
+import Reika.DragonAPI.Base.TileEntityBase;
+import Reika.DragonAPI.Interfaces.IPacketHandler;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
+import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Random;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet250CustomPayload;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
-import Reika.DragonAPI.Auxiliary.KeyWatcher;
-import Reika.DragonAPI.Auxiliary.KeyWatcher.Key;
-import Reika.DragonAPI.Auxiliary.PacketTypes;
-import Reika.DragonAPI.Base.TileEntityBase;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import cpw.mods.fml.common.network.IPacketHandler;
-import cpw.mods.fml.common.network.Player;
 
-public abstract class APIPacketHandler implements IPacketHandler {
+public class APIPacketHandler implements IPacketHandler {
 
 	private final Random rand = new Random();
 
 	protected PacketIDs pack;
-	protected PacketTypes packetType;
 
-	@Override
-	public void onPacketData(INetworkManager manager, Packet250CustomPayload packet, Player player) {
-		this.process(packet, (EntityPlayer)player);
-	}
-
-	public abstract void process(Packet250CustomPayload packet, EntityPlayer ep);
-
-	public void handleData(Packet250CustomPayload packet, World world, EntityPlayer ep) {
-		DataInputStream inputStream = new DataInputStream(new ByteArrayInputStream(packet.data));
+	public void handleData(PacketObj packet, World world, EntityPlayer ep) {
+		DataInputStream inputStream = packet.getDataIn();
 		int control = Integer.MIN_VALUE;
 		int len;
 		int[] data = new int[0];
@@ -60,14 +49,14 @@ public abstract class APIPacketHandler implements IPacketHandler {
 		//System.out.print(packet.length);
 		try {
 			//ReikaJavaLibrary.pConsole(inputStream.readInt()+":"+inputStream.readInt()+":"+inputStream.readInt()+":"+inputStream.readInt()+":"+inputStream.readInt()+":"+inputStream.readInt()+":"+inputStream.readInt());
-			packetType = PacketTypes.getPacketType(inputStream.readInt());
+			PacketTypes packetType = packet.getType();
 			switch(packetType) {
 			case SOUND:
 				return;
 			case STRING:
+				stringdata = packet.readString();
 				control = inputStream.readInt();
 				pack = PacketIDs.getEnum(control);
-				stringdata = Packet.readString(inputStream, Short.MAX_VALUE);
 				break;
 			case DATA:
 				control = inputStream.readInt();
@@ -92,18 +81,18 @@ public abstract class APIPacketHandler implements IPacketHandler {
 				floatdata = inputStream.readFloat();
 				break;
 			case SYNC:
+				String name = packet.readString();
 				x = inputStream.readInt();
 				y = inputStream.readInt();
 				z = inputStream.readInt();
-				String name = Packet.readString(inputStream, Short.MAX_VALUE);
 				int value = inputStream.readInt();
 				ReikaPacketHelper.updateTileEntityData(world, x, y, z, name, value);
 				return;
 			case TANK:
+				String tank = packet.readString();
 				x = inputStream.readInt();
 				y = inputStream.readInt();
 				z = inputStream.readInt();
-				String tank = Packet.readString(inputStream, Short.MAX_VALUE);
 				int level = inputStream.readInt();
 				ReikaPacketHelper.updateTileEntityTankData(world, x, y, z, tank, level);
 				return;
@@ -121,7 +110,7 @@ public abstract class APIPacketHandler implements IPacketHandler {
 					longdata = inputStream.readLong();
 				break;
 			}
-			if (packetType != PacketTypes.RAW) {
+			if (packetType.hasCoordinates()) {
 				x = inputStream.readInt();
 				y = inputStream.readInt();
 				z = inputStream.readInt();
@@ -136,7 +125,7 @@ public abstract class APIPacketHandler implements IPacketHandler {
 			case BLOCKUPDATE:
 				//ReikaJavaLibrary.pConsole(x+", "+y+", "+z, Side.CLIENT);
 				world.markBlockForUpdate(x, y, z);
-				world.markBlockForRenderUpdate(x, y, z);
+				world.func_147479_m(x, y, z);
 				break;
 			case PARTICLE:
 				if (data[0] < 0 || data[0] >= ReikaParticleHelper.particleList.length) {
@@ -155,14 +144,14 @@ public abstract class APIPacketHandler implements IPacketHandler {
 				KeyWatcher.instance.setKey(ep, key, used);
 				break;
 			case TILESYNC:
-				TileEntity te = world.getBlockTileEntity(x, y, z);
+				TileEntity te = world.getTileEntity(x, y, z);
 				if (te instanceof TileEntityBase && !world.isRemote) {
 					TileEntityBase tile = (TileEntityBase)te;
 					tile.syncAllData(data[0] > 0);
 				}
 				break;
 			case TILEDELETE:
-				world.setBlock(x, y, z, 0);
+				world.setBlockToAir(x, y, z);
 				break;
 			}
 		}

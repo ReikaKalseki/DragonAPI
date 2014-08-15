@@ -12,8 +12,8 @@ package Reika.DragonAPI.Instantiable.Event;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.Cancelable;
-import net.minecraftforge.event.Event;
+import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.common.eventhandler.Event;
 
 @Cancelable
 public class SlotEvent extends Event {

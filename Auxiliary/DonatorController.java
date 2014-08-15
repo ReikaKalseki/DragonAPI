@@ -9,13 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
 import net.minecraft.util.EnumChatFormatting;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.MisuseException;
 
 public final class DonatorController {
 

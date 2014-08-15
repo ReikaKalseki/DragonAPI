@@ -9,12 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import Reika.DragonAPI.DragonAPICore;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
@@ -22,95 +26,102 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaItemHelper extends DragonAPICore {
 
-	public static final ItemStack inksac = new ItemStack(Item.dyePowder.itemID, 1, 0);
-	public static final ItemStack redDye = new ItemStack(Item.dyePowder.itemID, 1, 1);
-	public static final ItemStack cactusDye = new ItemStack(Item.dyePowder.itemID, 1, 2);
-	public static final ItemStack cocoaBeans = new ItemStack(Item.dyePowder.itemID, 1, 3);
-	public static final ItemStack lapisDye = new ItemStack(Item.dyePowder.itemID, 1, 4);
-	public static final ItemStack purpleDye = new ItemStack(Item.dyePowder.itemID, 1, 5);
-	public static final ItemStack cyanDye = new ItemStack(Item.dyePowder.itemID, 1, 6);
-	public static final ItemStack lgrayDye = new ItemStack(Item.dyePowder.itemID, 1, 7);
-	public static final ItemStack grayDye = new ItemStack(Item.dyePowder.itemID, 1, 8);
-	public static final ItemStack pinkDye = new ItemStack(Item.dyePowder.itemID, 1, 9);
-	public static final ItemStack limeDye = new ItemStack(Item.dyePowder.itemID, 1, 10);
-	public static final ItemStack yellowDye = new ItemStack(Item.dyePowder.itemID, 1, 11);
-	public static final ItemStack lblueDye = new ItemStack(Item.dyePowder.itemID, 1, 12);
-	public static final ItemStack magentaDye = new ItemStack(Item.dyePowder.itemID, 1, 13);
-	public static final ItemStack orangeDye = new ItemStack(Item.dyePowder.itemID, 1, 14);
-	public static final ItemStack bonemeal = new ItemStack(Item.dyePowder.itemID, 1, 15);
+	public static final ItemStack inksac = new ItemStack(Items.dye, 1, 0);
+	public static final ItemStack redDye = new ItemStack(Items.dye, 1, 1);
+	public static final ItemStack cactusDye = new ItemStack(Items.dye, 1, 2);
+	public static final ItemStack cocoaBeans = new ItemStack(Items.dye, 1, 3);
+	public static final ItemStack lapisDye = new ItemStack(Items.dye, 1, 4);
+	public static final ItemStack purpleDye = new ItemStack(Items.dye, 1, 5);
+	public static final ItemStack cyanDye = new ItemStack(Items.dye, 1, 6);
+	public static final ItemStack lgrayDye = new ItemStack(Items.dye, 1, 7);
+	public static final ItemStack grayDye = new ItemStack(Items.dye, 1, 8);
+	public static final ItemStack pinkDye = new ItemStack(Items.dye, 1, 9);
+	public static final ItemStack limeDye = new ItemStack(Items.dye, 1, 10);
+	public static final ItemStack yellowDye = new ItemStack(Items.dye, 1, 11);
+	public static final ItemStack lblueDye = new ItemStack(Items.dye, 1, 12);
+	public static final ItemStack magentaDye = new ItemStack(Items.dye, 1, 13);
+	public static final ItemStack orangeDye = new ItemStack(Items.dye, 1, 14);
+	public static final ItemStack bonemeal = new ItemStack(Items.dye, 1, 15);
 
-	public static final ItemStack blackWool = new ItemStack(Block.cloth.blockID, 1, 15);
-	public static final ItemStack redWool = new ItemStack(Block.cloth.blockID, 1, 14);
-	public static final ItemStack greenWool = new ItemStack(Block.cloth.blockID, 1, 13);
-	public static final ItemStack brownWool = new ItemStack(Block.cloth.blockID, 1, 12);
-	public static final ItemStack blueWool = new ItemStack(Block.cloth.blockID, 1, 11);
-	public static final ItemStack purpleWool = new ItemStack(Block.cloth.blockID, 1, 10);
-	public static final ItemStack cyanWool = new ItemStack(Block.cloth.blockID, 1, 9);
-	public static final ItemStack lgrayWool = new ItemStack(Block.cloth.blockID, 1, 8);
-	public static final ItemStack grayWool = new ItemStack(Block.cloth.blockID, 1, 7);
-	public static final ItemStack pinkWool = new ItemStack(Block.cloth.blockID, 1, 6);
-	public static final ItemStack limeWool = new ItemStack(Block.cloth.blockID, 1, 5);
-	public static final ItemStack yellowWool = new ItemStack(Block.cloth.blockID, 1, 4);
-	public static final ItemStack lblueWool = new ItemStack(Block.cloth.blockID, 1, 3);
-	public static final ItemStack magentaWool = new ItemStack(Block.cloth.blockID, 1, 2);
-	public static final ItemStack orangeWool = new ItemStack(Block.cloth.blockID, 1, 1);
-	public static final ItemStack whiteWool = new ItemStack(Block.cloth.blockID, 1, 0);
+	public static final ItemStack blackWool = new ItemStack(Blocks.wool, 1, 15);
+	public static final ItemStack redWool = new ItemStack(Blocks.wool, 1, 14);
+	public static final ItemStack greenWool = new ItemStack(Blocks.wool, 1, 13);
+	public static final ItemStack brownWool = new ItemStack(Blocks.wool, 1, 12);
+	public static final ItemStack blueWool = new ItemStack(Blocks.wool, 1, 11);
+	public static final ItemStack purpleWool = new ItemStack(Blocks.wool, 1, 10);
+	public static final ItemStack cyanWool = new ItemStack(Blocks.wool, 1, 9);
+	public static final ItemStack lgrayWool = new ItemStack(Blocks.wool, 1, 8);
+	public static final ItemStack grayWool = new ItemStack(Blocks.wool, 1, 7);
+	public static final ItemStack pinkWool = new ItemStack(Blocks.wool, 1, 6);
+	public static final ItemStack limeWool = new ItemStack(Blocks.wool, 1, 5);
+	public static final ItemStack yellowWool = new ItemStack(Blocks.wool, 1, 4);
+	public static final ItemStack lblueWool = new ItemStack(Blocks.wool, 1, 3);
+	public static final ItemStack magentaWool = new ItemStack(Blocks.wool, 1, 2);
+	public static final ItemStack orangeWool = new ItemStack(Blocks.wool, 1, 1);
+	public static final ItemStack whiteWool = new ItemStack(Blocks.wool, 1, 0);
 
-	public static final ItemStack stoneBricks = new ItemStack(Block.stoneBrick.blockID, 1, 0);
-	public static final ItemStack mossyBricks = new ItemStack(Block.stoneBrick.blockID, 1, 1);
-	public static final ItemStack crackBricks = new ItemStack(Block.stoneBrick.blockID, 1, 2);
-	public static final ItemStack circleBricks = new ItemStack(Block.stoneBrick.blockID, 1, 3);
+	public static final ItemStack stoneBricks = new ItemStack(Blocks.stonebrick, 1, 0);
+	public static final ItemStack mossyBricks = new ItemStack(Blocks.stonebrick, 1, 1);
+	public static final ItemStack crackBricks = new ItemStack(Blocks.stonebrick, 1, 2);
+	public static final ItemStack circleBricks = new ItemStack(Blocks.stonebrick, 1, 3);
 
-	public static final ItemStack sandstone = new ItemStack(Block.sandStone.blockID, 1, 0);
-	public static final ItemStack carvedSandstone = new ItemStack(Block.sandStone.blockID, 1, 1);
-	public static final ItemStack smoothSandstone = new ItemStack(Block.sandStone.blockID, 1, 2);
+	public static final ItemStack sandstone = new ItemStack(Blocks.sandstone, 1, 0);
+	public static final ItemStack carvedSandstone = new ItemStack(Blocks.sandstone, 1, 1);
+	public static final ItemStack smoothSandstone = new ItemStack(Blocks.sandstone, 1, 2);
 
-	public static final ItemStack quartz = new ItemStack(Block.blockNetherQuartz.blockID, 1, 0);
-	public static final ItemStack carvedQuartz = new ItemStack(Block.blockNetherQuartz.blockID, 1, 1);
-	public static final ItemStack columnQuartz = new ItemStack(Block.blockNetherQuartz.blockID, 1, 2);
+	public static final ItemStack quartz = new ItemStack(Blocks.quartz_block, 1, 0);
+	public static final ItemStack carvedQuartz = new ItemStack(Blocks.quartz_block, 1, 1);
+	public static final ItemStack columnQuartz = new ItemStack(Blocks.quartz_block, 1, 2);
 
-	public static final ItemStack oakLog = new ItemStack(Block.wood.blockID, 1, 0);
-	public static final ItemStack spruceLog = new ItemStack(Block.wood.blockID, 1, 1);
-	public static final ItemStack birchLog = new ItemStack(Block.wood.blockID, 1, 2);
-	public static final ItemStack jungleLog = new ItemStack(Block.wood.blockID, 1, 3);
-	public static final ItemStack oakLeaves = new ItemStack(Block.leaves.blockID, 1, 0);
-	public static final ItemStack spruceLeaves = new ItemStack(Block.leaves.blockID, 1, 1);
-	public static final ItemStack birchLeaves = new ItemStack(Block.leaves.blockID, 1, 2);
-	public static final ItemStack jungleLeaves = new ItemStack(Block.leaves.blockID, 1, 3);
-	public static final ItemStack oakSapling = new ItemStack(Block.sapling.blockID, 1, 0);
-	public static final ItemStack spruceSapling = new ItemStack(Block.sapling.blockID, 1, 1);
-	public static final ItemStack birchSapling = new ItemStack(Block.sapling.blockID, 1, 2);
-	public static final ItemStack jungleSapling = new ItemStack(Block.sapling.blockID, 1, 3);
-	public static final ItemStack oakWood = new ItemStack(Block.planks.blockID, 1, 0);
-	public static final ItemStack spruceWood = new ItemStack(Block.planks.blockID, 1, 1);
-	public static final ItemStack birchWood = new ItemStack(Block.planks.blockID, 1, 2);
-	public static final ItemStack jungleWood = new ItemStack(Block.planks.blockID, 1, 3);
+	public static final ItemStack oakLog = new ItemStack(Blocks.log, 1, 0);
+	public static final ItemStack spruceLog = new ItemStack(Blocks.log, 1, 1);
+	public static final ItemStack birchLog = new ItemStack(Blocks.log, 1, 2);
+	public static final ItemStack jungleLog = new ItemStack(Blocks.log, 1, 3);
+	public static final ItemStack acaciaLog = new ItemStack(Blocks.log, 1, 0);
+	public static final ItemStack darkOakLog = new ItemStack(Blocks.log, 1, 1);
+	public static final ItemStack oakLeaves = new ItemStack(Blocks.leaves, 1, 0);
+	public static final ItemStack spruceLeaves = new ItemStack(Blocks.leaves, 1, 1);
+	public static final ItemStack birchLeaves = new ItemStack(Blocks.leaves, 1, 2);
+	public static final ItemStack jungleLeaves = new ItemStack(Blocks.leaves, 1, 3);
+	public static final ItemStack acaciaLeaves = new ItemStack(Blocks.leaves2, 1, 0);
+	public static final ItemStack darkOakLeaves = new ItemStack(Blocks.leaves2, 1, 1);
+	public static final ItemStack oakSapling = new ItemStack(Blocks.sapling, 1, 0);
+	public static final ItemStack spruceSapling = new ItemStack(Blocks.sapling, 1, 1);
+	public static final ItemStack birchSapling = new ItemStack(Blocks.sapling, 1, 2);
+	public static final ItemStack jungleSapling = new ItemStack(Blocks.sapling, 1, 3);
+	public static final ItemStack acaciaSapling = new ItemStack(Blocks.sapling, 1, 4);
+	public static final ItemStack darkOakSapling = new ItemStack(Blocks.sapling, 1, 5);
+	public static final ItemStack oakWood = new ItemStack(Blocks.planks, 1, 0);
+	public static final ItemStack spruceWood = new ItemStack(Blocks.planks, 1, 1);
+	public static final ItemStack birchWood = new ItemStack(Blocks.planks, 1, 2);
+	public static final ItemStack jungleWood = new ItemStack(Blocks.planks, 1, 3);
+	public static final ItemStack acaciaWood = new ItemStack(Blocks.planks, 1, 4);
+	public static final ItemStack darkOakWood = new ItemStack(Blocks.planks, 1, 5);
 
-	public static final ItemStack stoneSlab = new ItemStack(Block.stoneSingleSlab.blockID, 1, 0);
-	public static final ItemStack sandstoneSlab = new ItemStack(Block.stoneSingleSlab.blockID, 1, 1);
-	public static final ItemStack cobbleSlab = new ItemStack(Block.stoneSingleSlab.blockID, 1, 3);
-	public static final ItemStack brickSlab = new ItemStack(Block.stoneSingleSlab.blockID, 1, 4);
-	public static final ItemStack stonebrickSlab = new ItemStack(Block.stoneSingleSlab.blockID, 1, 5);
-	public static final ItemStack netherSlab = new ItemStack(Block.stoneSingleSlab.blockID, 1, 6);
-	public static final ItemStack quartzSlab = new ItemStack(Block.stoneSingleSlab.blockID, 1, 7);
-	public static final ItemStack oakSlab = new ItemStack(Block.woodSingleSlab.blockID, 1, 0);
-	public static final ItemStack spruceSlab = new ItemStack(Block.woodSingleSlab.blockID, 1, 1);
-	public static final ItemStack birchSlab = new ItemStack(Block.woodSingleSlab.blockID, 1, 2);
-	public static final ItemStack jungleSlab = new ItemStack(Block.woodSingleSlab.blockID, 1, 3);
+	public static final ItemStack stoneSlab = new ItemStack(Blocks.stone_slab, 1, 0);
+	public static final ItemStack sandstoneSlab = new ItemStack(Blocks.stone_slab, 1, 1);
+	public static final ItemStack cobbleSlab = new ItemStack(Blocks.stone_slab, 1, 3);
+	public static final ItemStack brickSlab = new ItemStack(Blocks.stone_slab, 1, 4);
+	public static final ItemStack stonebrickSlab = new ItemStack(Blocks.stone_slab, 1, 5);
+	public static final ItemStack netherSlab = new ItemStack(Blocks.stone_slab, 1, 6);
+	public static final ItemStack quartzSlab = new ItemStack(Blocks.stone_slab, 1, 7);
+	public static final ItemStack oakSlab = new ItemStack(Blocks.wooden_slab, 1, 0);
+	public static final ItemStack spruceSlab = new ItemStack(Blocks.wooden_slab, 1, 1);
+	public static final ItemStack birchSlab = new ItemStack(Blocks.wooden_slab, 1, 2);
+	public static final ItemStack jungleSlab = new ItemStack(Blocks.wooden_slab, 1, 3);
 
 
-	/** Returns true if the block or item has metadata variants. Args: ID */
-	public static boolean hasMetadata(int id) {
+	/** Returns true if the block or item has metadata variants. Args: ID *//*
+	public static boolean hasMetadata(Item id) {
 		if (id > 255)
-			return Item.itemsList[id].getHasSubtypes();
+			return Items.itemsList[id].getHasSubtypes();
 		else {
-			return Item.itemsList[id-256].getHasSubtypes();
+			return Items.itemsList[id-256].getHasSubtypes();
 		}
-	}
+	}*/
 
 	/** Like .equals for comparing ItemStacks, but does not care about size or NBT tags.
 	 * Returns true if the ids and metadata match (or both are null).
@@ -125,33 +136,33 @@ public final class ReikaItemHelper extends DragonAPICore {
 		//if (!ItemStack.areItemStackTagsEqual(a, b))
 		//	return false;
 		if (a.getItem().getHasSubtypes() || b.getItem().getHasSubtypes())
-			return (a.itemID == b.itemID && (a.getItemDamage() == b.getItemDamage() || a.getItemDamage() == OreDictionary.WILDCARD_VALUE || b.getItemDamage() == OreDictionary.WILDCARD_VALUE));
+			return (a.getItem() == b.getItem() && (a.getItemDamage() == b.getItemDamage() || a.getItemDamage() == OreDictionary.WILDCARD_VALUE || b.getItemDamage() == OreDictionary.WILDCARD_VALUE));
 		else
-			return a.itemID == b.itemID;
+			return a.getItem() == b.getItem();
 	}
 
-	public static boolean isFireworkIngredient(int id) {
-		if (id == Item.diamond.itemID)
+	public static boolean isFireworkIngredient(Item id) {
+		if (id == Items.diamond)
 			return true;
-		if (id == Item.dyePowder.itemID)
+		if (id == Items.dye)
 			return true;
-		if (id == Item.glowstone.itemID)
+		if (id == Items.glowstone_dust)
 			return true;
-		if (id == Item.feather.itemID)
+		if (id == Items.feather)
 			return true;
-		if (id == Item.goldNugget.itemID)
+		if (id == Items.gold_nugget)
 			return true;
-		if (id == Item.fireballCharge.itemID)
+		if (id == Items.fire_charge)
 			return true;
-		if (id == Item.diamond.itemID)
+		if (id == Items.diamond)
 			return true;
-		if (id == Item.skull.itemID)
+		if (id == Items.skull)
 			return true;
-		if (id == Item.fireworkCharge.itemID)
+		if (id == Items.firework_charge)
 			return true;
-		if (id == Item.paper.itemID)
+		if (id == Items.paper)
 			return true;
-		if (id == Item.gunpowder.itemID)
+		if (id == Items.gunpowder)
 			return true;
 		return false;
 	}
@@ -161,7 +172,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return null;
 		if (num <= 0)
 			return null;
-		ItemStack is2 = new ItemStack(is.itemID, num, is.getItemDamage());
+		ItemStack is2 = new ItemStack(is.getItem(), num, is.getItemDamage());
 		if (is.stackTagCompound != null)
 			is2.stackTagCompound = (NBTTagCompound)is.stackTagCompound.copy();
 		return is2;
@@ -190,15 +201,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static boolean isBlock(ItemStack is) {
-		if (is.itemID < 256)
-			return true;
-		try {
-			//ReikaJavaLibrary.pConsole(Block.blocksList[is.itemID].getLocalizedName());
-			return Block.blocksList[is.itemID] != null && !Block.blocksList[is.itemID].getLocalizedName().contains("tile.ForgeFiller.name");
-		}
-		catch (Exception e) {
-			return false;
-		}
+		return Block.getBlockFromItem(is.getItem()) != null;
 	}
 
 	public static boolean listContainsItemStack(List<ItemStack> li, ItemStack is) {
@@ -212,7 +215,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 	public static void dropInventory(World world, int x, int y, int z)
 	{
-		IInventory ii = (IInventory)world.getBlockTileEntity(x, y, z);
+		IInventory ii = (IInventory)world.getTileEntity(x, y, z);
 		Random par5Random = new Random();
 		if (ii != null) {
 			label0:
@@ -230,27 +233,27 @@ public final class ReikaItemHelper extends DragonAPICore {
 						if (j > itemstack.stackSize)
 							j = itemstack.stackSize;
 						itemstack.stackSize -= j;
-						EntityItem entityitem = new EntityItem(world, x + f, y + f1, z + f2, new ItemStack(itemstack.itemID, j, itemstack.getItemDamage()));
+						EntityItem ei = new EntityItem(world, x + f, y + f1, z + f2, new ItemStack(itemstack.getItem(), j, itemstack.getItemDamage()));
 						if (itemstack.hasTagCompound())
-							entityitem.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
+							ei.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
 						float f3 = 0.05F;
-						entityitem.motionX = (float)par5Random.nextGaussian() * f3;
-						entityitem.motionY = (float)par5Random.nextGaussian() * f3 + 0.2F;
-						entityitem.motionZ = (float)par5Random.nextGaussian() * f3;
-						entityitem.delayBeforeCanPickup = 10;
-						world.spawnEntityInWorld(entityitem);
+						ei.motionX = (float)par5Random.nextGaussian() * f3;
+						ei.motionY = (float)par5Random.nextGaussian() * f3 + 0.2F;
+						ei.motionZ = (float)par5Random.nextGaussian() * f3;
+						ei.delayBeforeCanPickup = 10;
+						world.spawnEntityInWorld(ei);
 					}
 					while (true);
 				}
 		}
 	}
 
-	public static int getWorldBlockIDFromItem(ItemStack is) {
+	public static Block getWorldBlockIDFromItem(ItemStack is) {
 		if (is == null)
-			return 0;
+			return Blocks.air;
 		if (!(is.getItem() instanceof ItemBlock))
-			return 0;
-		return is.itemID;
+			return Blocks.air;
+		return Block.getBlockFromItem(is.getItem());
 	}
 
 	public static int getWorldBlockMetaFromItem(ItemStack is) {
@@ -258,8 +261,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return 0;
 		if (!(is.getItem() instanceof ItemBlock))
 			return 0;
-		int id = is.itemID;
-		if (id == Block.pistonBase.blockID || id == Block.pistonStickyBase.blockID)
+		if (matchStackWithBlock(is, Blocks.piston) || matchStackWithBlock(is, Blocks.sticky_piston))
 			return 0;
 		return is.getItem().getMetadata(is.getItemDamage());
 	}
@@ -267,7 +269,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static boolean canCombineStacks(ItemStack is, ItemStack is2) {
 		if (is == null || is2 == null)
 			return false;
-		if (is.itemID != is2.itemID)
+		if (is != is2)
 			return false;
 		if (is.getItemDamage() != is2.getItemDamage())
 			return false;
@@ -315,5 +317,19 @@ public final class ReikaItemHelper extends DragonAPICore {
 		if (is.stackSize > 0) {
 			items.add(is);
 		}
+	}
+
+	public static boolean matchStackWithBlock(ItemStack is, Block b) {
+		return is.getItem() == Item.getItemFromBlock(b);
+	}
+
+	public static boolean isAirItem(ItemStack is) {
+		return matchStackWithBlock(is, Blocks.air);
+	}
+
+	public static ItemStack stripNBT(ItemStack is) {
+		ItemStack is2 = is.copy();
+		is2.stackTagCompound = null;
+		return is2;
 	}
 }

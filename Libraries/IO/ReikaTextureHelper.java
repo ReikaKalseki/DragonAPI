@@ -9,49 +9,47 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.IO.ReikaImageLoader;
+import Reika.DragonAPI.IO.ReikaTextureBinder;
+import Reika.DragonAPI.Instantiable.Data.PluralMap;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
+
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.entity.RenderBiped;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.AbstractResourcePack;
-import net.minecraft.client.resources.ResourcePack;
+import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.ResourcePackFileNotFoundException;
-import net.minecraft.client.resources.ResourcePackRepositoryEntry;
-import net.minecraft.util.Icon;
+import net.minecraft.client.resources.ResourcePackRepository;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.IO.ReikaImageLoader;
-import Reika.DragonAPI.IO.ReikaTextureBinder;
-import Reika.DragonAPI.Instantiable.Data.PluralMap;
-import Reika.DragonAPI.Instantiable.IO.ForcedResource;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ReikaTextureHelper {
 
-	/** Keys: Resource Pack, Class, Path */
-	private static final PluralMap textures = new PluralMap(3);
-	private static final PluralMap packTextures = new PluralMap(3);
+	/** Keys: Class, Path */
+	private static final PluralMap textures = new PluralMap(2);
 
-	private static final PluralMap<Integer> colorOverrides = new PluralMap(2);
+	private static final HashMap<ReikaDyeHelper, Integer> colorOverrides = new HashMap();
 
 	public static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
@@ -67,7 +65,7 @@ public class ReikaTextureHelper {
 	public static void bindTexture(Class root, String tex) {
 		if (reload()) {
 			textures.clear();
-			packTextures.clear();
+			colorOverrides.clear();
 		}
 		else {
 			if (root == null) {
@@ -77,85 +75,75 @@ public class ReikaTextureHelper {
 			//String parent = root.getPackage().getName().replaceAll("\\.", "/")+"/";
 			String s = root.getCanonicalName();
 			String parent = s.substring(0, s.length()-root.getSimpleName().length()-1).replaceAll("\\.", "/")+"/";
-			ResourcePack res = getCurrentResourcePack();
-			if (isDefaultResourcePack())
-				bindClassReferencedTexture(root, tex);
-			else {
-				if (tex.startsWith("/"))
-					tex = tex.substring(1);
-				String respath = tex.startsWith(parent) ? tex : parent+tex;
+			if (tex.startsWith("/"))
+				tex = tex.substring(1);
+			String respath = tex.startsWith(parent) ? tex : parent+tex;
 
-				Boolean flag = (Boolean)packTextures.get(res, root, tex);
-				if (flag == null || flag.booleanValue()) {
-					boolean hasTex = bindPackTexture(root, respath, res);
-					packTextures.put(hasTex, res, root, tex);
-					if (!hasTex)
-						bindClassReferencedTexture(root, oldtex);
-				}
-				else {
-					bindClassReferencedTexture(root, oldtex);
+			Integer gl = (Integer)textures.get(root, tex);
+			if (gl == null) {
+				boolean loaded = false;
+				ArrayList<IResourcePack> li = getCurrentResourcePacks();
+				for (int i = 0; i < li.size() && !loaded; i++) {
+					IResourcePack res = li.get(i);
+					gl = bindPackTexture(root, respath, res);
+					if (gl != null) {
+						textures.put(gl, root, tex);
+						loaded = true;
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Texture Pack "+res.getPackName()+" contains an image for "+tex+".");
+					}
 				}
 			}
+			if (gl == null) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: No texture packs contain an image for "+tex+". Loading default.");
+				gl = bindClassReferencedTexture(root, oldtex);
+				textures.put(gl, root, tex);
+			}
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 		}
 	}
 
 	/** To disallow resource packs to change it */
 	public static void bindFinalTexture(Class root, String tex) {
-		bindClassReferencedTexture(root, tex);
+		Integer gl = (Integer)textures.get(root, tex);
+		if (gl == null) {
+			gl = bindClassReferencedTexture(root, tex);
+			textures.put(gl, root, tex);
+		}
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
-	private static void bindClassReferencedTexture(Class root, String tex) {
-		ResourcePack def = getDefaultResourcePack();
-		Integer gl = (Integer) textures.get(def, root, tex);
-		if (gl == null) {
-			BufferedImage img = ReikaImageLoader.readImage(root, tex);
-			if (img == null) {
-				ReikaJavaLibrary.pConsole("No image found for "+tex+"!");
-				gl = new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
-				textures.put(gl, def, root, tex);
-			}
-			else {
-				gl = new Integer(binder.allocateAndSetupTexture(img));
-				textures.put(gl, def, root, tex);
-			}
+	private static Integer bindClassReferencedTexture(Class root, String tex) {
+		BufferedImage img = ReikaImageLoader.readImage(root, tex);
+		if (img == null) {
+			ReikaJavaLibrary.pConsole("No image found for "+tex+"!");
+			return new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
 		}
-		if (gl != null)
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
+		else {
+			return new Integer(binder.allocateAndSetupTexture(img));
+		}
 	}
 
 	public static void bindRawTexture(Class root, String tex) {
-		ResourcePack def = getDefaultResourcePack();
-		Integer gl = (Integer) textures.get(def, root, tex);
+		Integer gl = (Integer)textures.get(root, tex);
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.readHardPathImage(tex);
 			if (img == null) {
 				ReikaJavaLibrary.pConsole("No image found for "+tex+"!");
 				gl = new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
-				textures.put(gl, def, root, tex);
+				textures.put(gl, root, tex);
 			}
 			else {
 				gl = new Integer(binder.allocateAndSetupTexture(img));
-				textures.put(gl, def, root, tex);
+				textures.put(gl, root, tex);
 			}
 		}
 		if (gl != null)
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
-	public static boolean bindPackTexture(Class root, String tex, ResourcePack res) {
-		Integer gl = (Integer) textures.get(res, root, tex);
-		if (gl == null) {
-			BufferedImage img = ReikaImageLoader.getImageFromResourcePack(tex, res);
-			if (img == null) {
-				return false;
-			}
-			gl = new Integer(binder.allocateAndSetupTexture(img));
-			textures.put(gl, res, root, tex);
-		}
-		if (gl != null) {
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
-		}
-		return gl != null;
+	private static Integer bindPackTexture(Class root, String tex, IResourcePack res) {
+		BufferedImage img = ReikaImageLoader.getImageFromResourcePack(tex, res);
+		return img != null ? new Integer(binder.allocateAndSetupTexture(img)) : null;
 	}
 
 	public static void bindTerrainTexture() {
@@ -182,11 +170,12 @@ public class ReikaTextureHelper {
 		return 16;
 	}
 
-	public static Icon getMissingIcon() {
-		return ((TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
+	public static IIcon getMissingIcon() {
+		TextureMap tex = (TextureMap)Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture);
+		return tex.getAtlasSprite("missingno");
 	}
 
-	/** Overrides the standard ResourceLocation system. Unfortunately not yet functional. */
+	/** Overrides the standard ResourceLocation system. Unfortunately not yet functional. *//*
 	public static void forceArmorTexturePath(String tex) {
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Disabling ResourceLocation on armor texture "+tex);
 		ForcedResource f = new ForcedResource(tex);
@@ -205,37 +194,24 @@ public class ReikaTextureHelper {
 			e.printStackTrace();
 			throw new RuntimeException("Could not load the Armor Textures!");
 		}
-	}
+	}*/
 
-	/** Returns the filename, including .zip if applicable, unless it is default, whereupon it returns "Default". */
-	public static String getCurrentResourcePackFileName() {
-		//return Minecraft.getMinecraft().gameSettings.skin;
-		return Minecraft.getMinecraft().getResourcePackRepository().getResourcePackName();
-	}
-
-	/** Returns the display name */
-	public static String getCurrentResourcePackName() {
-		return getCurrentResourcePack().getPackName().replaceAll(".zip", "");
-	}
-
-	/** Requires an iteration over all loaded packs! Do NOT call this every tick or render tick! */
-	public static ResourcePack getCurrentResourcePack() {
-		List li = Minecraft.getMinecraft().getResourcePackRepository().getRepositoryEntries();
-		String skin = Minecraft.getMinecraft().gameSettings.skin;
+	/** Returns a list of the selected resource packs, in the order they appear in the selection screen. */
+	public static ArrayList<IResourcePack> getCurrentResourcePacks() {
+		ArrayList<IResourcePack> packs = new ArrayList();
+		List<ResourcePackRepository.Entry> li = Minecraft.getMinecraft().getResourcePackRepository().getRepositoryEntries();
 		for (int i = 0; i < li.size(); i++) {
-			ResourcePackRepositoryEntry e = (ResourcePackRepositoryEntry)li.get(i);
-			if (e.getResourcePackName().equals(skin)) {
-				return e.getResourcePack();
-			}
+			ResourcePackRepository.Entry e = li.get(i);
+			packs.add(e.getResourcePack());
 		}
-		return getDefaultResourcePack();
+		return packs;
 	}
 
 	public static boolean isDefaultResourcePack() {
-		return getCurrentResourcePack().equals(getDefaultResourcePack());
+		return Minecraft.getMinecraft().getResourcePackRepository().getRepositoryEntries().isEmpty();
 	}
 
-	public static ResourcePack getDefaultResourcePack() {
+	public static IResourcePack getDefaultResourcePack() {
 		return Minecraft.getMinecraft().getResourcePackRepository().rprDefaultResourcePack;
 	}
 
@@ -267,44 +243,54 @@ public class ReikaTextureHelper {
 		if (reload()) {
 			colorOverrides.clear();
 		}
-		ResourcePack cur = getCurrentResourcePack();
-		Integer color = colorOverrides.get(dye, cur);
+		Integer color = colorOverrides.get(dye);
 		if (color == null) {
-			initializeColorOverrides((AbstractResourcePack)cur);
-			color = colorOverrides.get(dye, cur);
+			initializeColorOverrides();
+			color = colorOverrides.get(dye);
 		}
 		return color != null ? color.intValue() : dye.getDefaultColor();
 	}
 
-	private static void initializeColorOverrides(AbstractResourcePack pack) {
-		try {
-			String path = "Reika/DragonAPI/dyecolor.txt";
-			InputStream in = getStreamFromTexturePack(path, pack);
-			if (in == null) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not find color override text file. Using defaults.");
-				for (int i = 0; i < 16; i++) {
-					ReikaDyeHelper dye = ReikaDyeHelper.dyes[i];
-					int c = dye.getDefaultColor();
-					Integer color = new Integer(c);
-					colorOverrides.put(color, dye, pack);
+	private static void initializeColorOverrides() {
+		ArrayList<IResourcePack> li = getCurrentResourcePacks();
+		boolean loaded = false;
+		for (int k = 0; k < li.size(); k++) {
+			AbstractResourcePack pack = (AbstractResourcePack)li.get(k);
+			try {
+				String path = "Reika/DragonAPI/dyecolor.txt";
+				InputStream in = getStreamFromTexturePack(path, pack);
+				if (in != null) {
+					BufferedReader p = new BufferedReader(new InputStreamReader(in));
+					for (int i = 0; i < 16; i++) {
+						String line = p.readLine();
+						String[] s = line.split(":");
+						int c = Color.decode(s[1]).getRGB();
+						Integer color = new Integer(c);
+						ReikaDyeHelper dye = ReikaDyeHelper.dyes[i];
+						colorOverrides.put(dye, color);
+					}
+					p.close();
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Found color override text file for texture pack "+pack.getPackName()+".");
+					loaded = true;
 				}
-				return;
+				else {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: No color override found for texture pack "+pack.getPackName()+".");
+				}
 			}
-			BufferedReader p = new BufferedReader(new InputStreamReader(in));
-			for (int i = 0; i < 16; i++) {
-				String line = p.readLine();
-				String[] s = line.split(":");
-				int c = Color.decode(s[1]).getRGB();
-				Integer color = new Integer(c);
-				ReikaDyeHelper dye = ReikaDyeHelper.dyes[i];
-				colorOverrides.put(color, dye, pack);
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Error reading color override text file for texture pack "+pack.getPackName()+".");
+				e.printStackTrace();
 			}
-			p.close();
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Found color override text file for texture pack "+getCurrentResourcePackName()+".");
 		}
-		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error reading color override text file for texture pack "+getCurrentResourcePackName()+".");
-			e.printStackTrace();
+		if (!loaded) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not find color override text file in any resource packs. Using defaults.");
+			for (int i = 0; i < 16; i++) {
+				ReikaDyeHelper dye = ReikaDyeHelper.dyes[i];
+				int c = dye.getDefaultColor();
+				Integer color = new Integer(c);
+				colorOverrides.put(dye, color);
+			}
+			return;
 		}
 	}
 

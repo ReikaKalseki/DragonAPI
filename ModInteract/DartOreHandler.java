@@ -9,23 +9,26 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModRegistry.ModOreList;
+
+import java.lang.reflect.Field;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class DartOreHandler extends ModHandlerBase {
 
 	private static final DartOreHandler instance = new DartOreHandler();
 
-	public final int oreID;
-	public final int gemID;
+	public final Block oreID;
+	public final Item gemID;
 
 	private final ItemStack oreItem;
 	private final ItemStack gemItem;
@@ -34,19 +37,19 @@ public final class DartOreHandler extends ModHandlerBase {
 
 	private DartOreHandler() {
 		super();
-		int idgem = -1;
-		int idore = -1;
+		Item idgem = null;
+		Block idore = null;
 		if (this.hasMod()) {
 			try {
 				Class block = this.getMod().getBlockClass();
-				Class item = Class.forName("bluedart.item.DartItem");
+				Class item = Class.forName("bluedart.Items.DartItem");
 				Field ore = block.getField("powerOre");
-				//Field force = item.getField("gemForce");
+				//Field force = Items.getField("gemForce");
 				Block powerOre = (Block)ore.get(null);
 				//idgem = ((Item)force.get(null)).itemID;
-				idore = powerOre.blockID;
-				//idgem = DartItem.gemForce.itemID;
-				idgem = GameRegistry.findItemStack("DartCraft", "item.gemForce", 1).itemID;
+				idore = powerOre;
+				//idgem = DartItems.gemForce.itemID;
+				idgem = GameRegistry.findItemStack("DartCraft", "Items.gemForce", 1).getItem();
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
@@ -89,7 +92,7 @@ public final class DartOreHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return gemID != -1 && oreID != -1;
+		return gemID != null && oreID != null;
 	}
 
 	@Override
@@ -112,7 +115,7 @@ public final class DartOreHandler extends ModHandlerBase {
 	public boolean isDartOre(ItemStack block) {
 		if (!this.initializedProperly())
 			return false;
-		return block.itemID == oreID;
+		return ReikaItemHelper.matchStackWithBlock(block, oreID);
 	}
 
 	public void forceOreRegistration() {

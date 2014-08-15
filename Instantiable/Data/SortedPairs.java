@@ -9,11 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** Creates a data structure similar to a frequency graph, where any "x" value corresponds to
  * n "y" values, where n >= 0. It can also be converted into a bar graph. */

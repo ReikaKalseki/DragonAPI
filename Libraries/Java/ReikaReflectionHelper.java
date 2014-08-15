@@ -9,6 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.IDConflictException;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.Instantiable.IO.ModLogger;
+import Reika.DragonAPI.Interfaces.RegistrationList;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -17,27 +26,14 @@ import java.util.Arrays;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.IDConflictException;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Exception.RegistrationException;
-import Reika.DragonAPI.Exception.StupidIDException;
-import Reika.DragonAPI.Instantiable.IO.ModLogger;
-import Reika.DragonAPI.Interfaces.RegistrationList;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 public final class ReikaReflectionHelper extends DragonAPICore {
 
 	public static Block createBlockInstance(DragonAPIMod mod, RegistrationList list) {
-		int id = list.getID();
-		if (id < 0 || id > 4095)
-			throw new StupidIDException(mod, id, true);
 		try {
 			Constructor c = list.getObjectClass().getConstructor(list.getConstructorParamTypes());
 			Block instance = (Block)(c.newInstance(list.getConstructorParams()));
-			return (instance.setUnlocalizedName(list.getUnlocalizedName()));
+			return (instance.setBlockName(list.getUnlocalizedName()));
 		}
 		catch (NoSuchMethodException e) {
 			throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" does not have the specified constructor "+Arrays.toString(list.getConstructorParamTypes())+"! Check visibility and material args!");
@@ -68,20 +64,9 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 	}
 
 	public static Item createItemInstance(DragonAPIMod mod, RegistrationList list) {
-		Item instance;
-		int id = list.getID();
-		if (id < 0 || id > 31999)
-			throw new StupidIDException(mod, id, false);
-		if (Item.itemsList[256+id] != null) {
-			if (!list.overwritingItem())
-				throw new IDConflictException(mod, id+" item slot already occupied by "+Item.itemsList[256+id].getUnlocalizedName()+" while adding "+list.getBasicName());
-			else
-				mod.getModLogger().log("Overwriting "+Item.itemsList[256+id].getUnlocalizedName()+" with "+list.getBasicName());
-		}
 		try {
 			Constructor c = list.getObjectClass().getConstructor(list.getConstructorParamTypes());
-			instance = (Item)(c.newInstance(list.getConstructorParams()));
-			ItemOverwriteTracker.instance.addItem(instance, id+256);
+			Item instance = (Item)(c.newInstance(list.getConstructorParams()));
 			return (instance.setUnlocalizedName(list.getUnlocalizedName()));
 		}
 		catch (NoSuchMethodException e) {
@@ -110,16 +95,9 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 
 	public static Item createBasicItemInstance(DragonAPIMod mod, Class<? extends Item> cl, int id, String unloc, boolean overwrite) {
 		Item instance;
-		if (Item.itemsList[256+id] != null) {
-			if (!overwrite)
-				throw new IDConflictException(mod, id+" item slot already occupied by "+Item.itemsList[256+id].getUnlocalizedName()+" while adding "+unloc);
-			else
-				mod.getModLogger().log("Overwriting "+Item.itemsList[256+id].getUnlocalizedName()+" with "+unloc);
-		}
 		try {
 			Constructor c = cl.getConstructor(int.class);
 			instance = (Item)(c.newInstance(id));
-			ItemOverwriteTracker.instance.addItem(instance, id+256);
 			return (instance.setUnlocalizedName(unloc));
 		}
 		catch (NoSuchMethodException e) {

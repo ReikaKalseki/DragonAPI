@@ -9,25 +9,26 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class FactorizationHandler extends ModHandlerBase {
 
 	private static final FactorizationHandler instance = new FactorizationHandler();
 
-	public final int bedrockID;
-	public final int ingotID;
+	public final Block bedrockID;
+	public final Item ingotID;
 
 	private FactorizationHandler() {
 		super();
-		int idbedrock = -1;
-		int idingot = -1;
+		Block idbedrock = null;
+		Item idingot = null;
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
@@ -37,11 +38,11 @@ public final class FactorizationHandler extends ModHandlerBase {
 
 				Field bed = blocks.getField("fractured_bedrock_block");
 				Block b = (Block)bed.get(reg);
-				idbedrock = b.blockID;
+				idbedrock = b;
 
 				Field ingot = blocks.getField("dark_iron");
 				Item i = (Item)ingot.get(reg);
-				idingot = i.itemID;
+				idingot = i;
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
@@ -81,7 +82,7 @@ public final class FactorizationHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return bedrockID != -1 && ingotID != -1;
+		return bedrockID != null && ingotID != null;
 	}
 
 	@Override

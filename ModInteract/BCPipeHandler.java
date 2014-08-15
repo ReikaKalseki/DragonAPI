@@ -9,15 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransport;
 import buildcraft.transport.TileGenericPipe;
@@ -78,36 +79,36 @@ public class BCPipeHandler extends ModHandlerBase {
 		"pipePowerDiamond",
 	};
 
-	private final HashMap<String, Integer> itemIDs = new HashMap();
+	private final HashMap<String, Item> itemIDs = new HashMap();
 
 	private static final BCPipeHandler instance = new BCPipeHandler();
 
 	/** Pipe Block ID */
-	public final int pipeID;
+	public final Block pipeID;
 
 	private BCPipeHandler() {
 		super();
-		int idpipe = -1;
+		Block idpipe = null;
 		if (this.hasMod()) {
 			Class transport = this.getMod().getBlockClass();
 			for (int i = 0; i < fluidPipes.length; i++) {
 				String varname = fluidPipes[i];
-				int id = this.getPipeItemID(transport, varname);
+				Item id = this.getPipeItemID(transport, varname);
 				itemIDs.put(fluidPipes[i], id);
 			}
 			for (int i = 0; i < itemPipes.length; i++) {
 				String varname = itemPipes[i];
-				int id = this.getPipeItemID(transport, varname);
+				Item id = this.getPipeItemID(transport, varname);
 				itemIDs.put(itemPipes[i], id);
 			}
 			for (int i = 0; i < powerPipes.length; i++) {
 				String varname = powerPipes[i];
-				int id = this.getPipeItemID(transport, varname);
+				Item id = this.getPipeItemID(transport, varname);
 				itemIDs.put(powerPipes[i], id);
 			}
 			try {
 				Field pipe = transport.getField("genericPipeBlock");
-				idpipe = ((Block)pipe.get(null)).blockID;
+				idpipe = ((Block)pipe.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -137,10 +138,10 @@ public class BCPipeHandler extends ModHandlerBase {
 		pipeID = idpipe;
 	}
 
-	private int getPipeItemID(Class c, String varname) {
+	private Item getPipeItemID(Class c, String varname) {
 		try {
 			Field f = c.getField(varname);
-			int id = ((Item)f.get(null)).itemID;
+			Item id = ((Item)f.get(null));
 			return id;
 		}
 		catch (NoSuchFieldException e) {
@@ -163,7 +164,7 @@ public class BCPipeHandler extends ModHandlerBase {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 			e.printStackTrace();
 		}
-		return -1;
+		return null;
 	}
 
 	public static BCPipeHandler getInstance() {
@@ -172,7 +173,7 @@ public class BCPipeHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return pipeID != -1;
+		return pipeID != null;
 	}
 
 	@Override
@@ -195,7 +196,7 @@ public class BCPipeHandler extends ModHandlerBase {
 			if (te instanceof TileGenericPipe) {
 				TileGenericPipe tp = (TileGenericPipe)te;
 				Pipe p = tp.pipe;
-				int id = p.itemID;
+				Item id = p.itemID;
 				PipeTransport pt = p.transport;
 				switch(pt.getPipeType()) {
 				case FLUID:
@@ -217,10 +218,10 @@ public class BCPipeHandler extends ModHandlerBase {
 		return null;
 	}
 
-	private Types getType(int id, String[] names) {
+	private Types getType(Item id, String[] names) {
 		for (int i = 0; i < names.length; i++) {
 			String sg = names[i];
-			int item = itemIDs.get(sg);
+			Item item = itemIDs.get(sg);
 			if (id == item) {
 				return this.getType(sg);
 			}

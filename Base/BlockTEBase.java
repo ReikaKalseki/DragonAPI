@@ -9,20 +9,22 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.common.ForgeDirection;
-import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class BlockTEBase extends Block {
 
-	public BlockTEBase(int id, Material mat) {
-		super(id, mat);
+	public BlockTEBase(Material mat) {
+		super(mat);
 	}
 
 	@Override
@@ -32,16 +34,16 @@ public abstract class BlockTEBase extends Block {
 	public abstract TileEntity createTileEntity(World world, int meta);
 
 	@Override
-	public final void onNeighborTileChange(World world, int x, int y, int z, int tileX, int tileY, int tileZ)
+	public final void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ)
 	{
 		ForgeDirection dir = ReikaDirectionHelper.getDirectionBetween(x, y, z, tileX, tileY, tileZ);
-		TileEntityBase te = (TileEntityBase)world.getBlockTileEntity(x, y, z);
+		TileEntityBase te = (TileEntityBase)world.getTileEntity(x, y, z);
 		if (te != null)
 			te.updateCache(dir);
 	}
 
 	public void updateTileCache(World world, int x, int y, int z) {
-		TileEntityBase te = (TileEntityBase)world.getBlockTileEntity(x, y, z);
+		TileEntityBase te = (TileEntityBase)world.getTileEntity(x, y, z);
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
 			te.updateCache(dir);
@@ -62,7 +64,7 @@ public abstract class BlockTEBase extends Block {
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer ep, int side, float par7, float par8, float par9) {
-		TileEntityBase te = (TileEntityBase)world.getBlockTileEntity(x, y, z);
+		TileEntityBase te = (TileEntityBase)world.getTileEntity(x, y, z);
 		te.syncAllData(true);
 		return false;
 	}
@@ -73,18 +75,14 @@ public abstract class BlockTEBase extends Block {
 		return true;
 	}
 
-	/**
-	 * If hasComparatorInputOverride returns true, the return value from this is used instead of the redstone signal
-	 * strength when this block inputs to a comparator.
-	 */
 	@Override
 	public final int getComparatorInputOverride(World world, int x, int y, int z, int par5)
 	{
-		return ((TileEntityBase)world.getBlockTileEntity(x, y, z)).getRedstoneOverride();
+		return ((TileEntityBase)world.getTileEntity(x, y, z)).getRedstoneOverride();
 	}
 
 	@Override
-	public boolean canEntityDestroy(World world, int x, int y, int z, Entity e)
+	public boolean canEntityDestroy(IBlockAccess world, int x, int y, int z, Entity e)
 	{
 		return false;
 	}

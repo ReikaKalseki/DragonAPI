@@ -9,8 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
-import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
+
+import net.minecraft.world.World;
 
 public final class ReikaMediaHelper extends DragonAPICore {
 

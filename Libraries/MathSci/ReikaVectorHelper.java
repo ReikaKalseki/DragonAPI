@@ -9,25 +9,28 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.MathSci;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 public final class ReikaVectorHelper extends DragonAPICore {
 
 	/** Returns a standard fake between two specified points, rather than from the origin.
 	 * Args: start x,y,z, end x,y,z */
 	public static Vec3 getVec2Pt(double x1, double y1, double z1, double x2, double y2, double z2) {
-		Vec3 p1 = Vec3.fakePool.getVecFromPool(x1, y1, z1);
-		Vec3 p2 = Vec3.fakePool.getVecFromPool(x2, y2, z2);
+		Vec3 p1 = Vec3.createVectorHelper(x1, y1, z1);
+		Vec3 p2 = Vec3.createVectorHelper(x2, y2, z2);
 		return subtract(p2, p1);
 	}
 
 	private static Vec3 subtract(Vec3 p2, Vec3 p1) {
-		return Vec3.fakePool.getVecFromPool(p1.xCoord - p2.xCoord, p1.yCoord - p2.yCoord, p1.zCoord - p2.zCoord);
+		return Vec3.createVectorHelper(p1.xCoord - p2.xCoord, p1.yCoord - p2.yCoord, p1.zCoord - p2.zCoord);
 	}
 
 	/** Breaks a vector into a size-3 array of its components. Args: Vector */
@@ -73,8 +76,8 @@ public final class ReikaVectorHelper extends DragonAPICore {
 			int x = (int)look[0];
 			int y = (int)look[1];
 			int z = (int)look[2];
-			int id = world.getBlockId(x, y, z);
-			if (id != 0 && !(passthru && ReikaWorldHelper.softBlocks(id))) {
+			Block id = world.getBlock(x, y, z);
+			if (id != Blocks.air && !(passthru && ReikaWorldHelper.softBlocks(id))) {
 				xyz[0] = x;
 				xyz[1] = y;
 				xyz[2] = z;

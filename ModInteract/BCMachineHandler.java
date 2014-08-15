@@ -9,28 +9,29 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
+import java.lang.reflect.Field;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+
 public class BCMachineHandler extends ModHandlerBase {
 
-	public final int tankID;
+	public final Block tankID;
 
 	private static final BCMachineHandler instance = new BCMachineHandler();
 
 	private BCMachineHandler() {
 		super();
-		int idtank = -1;
+		Block idtank = null;
 		if (this.hasMod()) {
 			try {
 				Class factory = this.getMod().getBlockClass();
 				Field tank = factory.getField("tankBlock");
-				idtank = ((Block)tank.get(null)).blockID;
+				idtank = ((Block)tank.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -66,7 +67,7 @@ public class BCMachineHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return tankID != -1;
+		return tankID != null;
 	}
 
 	@Override

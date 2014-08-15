@@ -9,11 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** A tank class that can handle direct operations as well as standard Forge Liquid operations. */
 public class HybridTank extends FluidTank {
@@ -39,7 +40,7 @@ public class HybridTank extends FluidTank {
 	public final NBTTagCompound writeToNBT(NBTTagCompound NBT) {
 		NBTTagCompound tankData = new NBTTagCompound();
 		super.writeToNBT(tankData);
-		NBT.setCompoundTag(name, tankData);
+		NBT.setTag(name, tankData);
 		return NBT;
 	}
 

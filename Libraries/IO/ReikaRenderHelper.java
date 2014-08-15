@@ -9,6 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Rendering.ReikaModelledBreakFX;
+import Reika.DragonAPI.Interfaces.RenderFetcher;
+import Reika.DragonAPI.Interfaces.TextureFetcher;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
+
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -18,19 +25,14 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.shader.TesselatorVertexState;
+import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Instantiable.Rendering.ReikaModelledBreakFX;
-import Reika.DragonAPI.Interfaces.RenderFetcher;
-import Reika.DragonAPI.Interfaces.TextureFetcher;
-import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 
 public final class ReikaRenderHelper extends DragonAPICore {
 
@@ -45,13 +47,25 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	}
 
 	public static RenderDistance getRenderDistance() {
-		return RenderDistance.values()[Minecraft.getMinecraft().gameSettings.renderDistance];
+		float r = Minecraft.getMinecraft().gameSettings.renderDistanceChunks;
+		if (r > 8) {
+			return RenderDistance.FAR;
+		}
+		else if (r > 4) {
+			return RenderDistance.NORMAL;
+		}
+		else if (r > 2) {
+			return RenderDistance.SHORT;
+		}
+		else {
+			return RenderDistance.TINY;
+		}
 	}
 
 	/** Converts a biome to a color multiplier (for use in things like leaf textures).
 	 * Args: World, x, z, material (grass, water, etc), bit */
-	public static float biomeToColorMultiplier(World world, int x, int z, String mat, int bit) {
-		int[] color = ReikaBiomeHelper.biomeToRGB(world, x, z, mat);
+	public static float biomeToColorMultiplier(World world, int x, int y, int z, String mat, int bit) {
+		int[] color = ReikaBiomeHelper.biomeToRGB(world, x, y, z, mat);
 		float mult = ReikaColorAPI.RGBtoColorMultiplier(color, bit);
 		return mult;
 	}
@@ -175,8 +189,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	 * */
 	public static boolean addModelledBlockParticles(String basedir, World world, int x, int y, int z, Block b, EffectRenderer eff, List<double[]> allowedRegions, Class mod) {
 		String name = null;
-		if (world.getBlockId(x, y, z) == b.blockID) {
-			TileEntity t = world.getBlockTileEntity(x, y, z);
+		if (world.getBlock(x, y, z) == b) {
+			TileEntity t = world.getTileEntity(x, y, z);
 			if (t instanceof RenderFetcher) {
 				RenderFetcher te = (RenderFetcher)t;
 				TextureFetcher r = te.getRenderer();
@@ -211,8 +225,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		int y = mov.blockY;
 		int z = mov.blockZ;
 		String name = null;
-		if (world.getBlockId(x, y, z) == b.blockID) {
-			TileEntity t = world.getBlockTileEntity(x, y, z);
+		if (world.getBlock(x, y, z) == b) {
+			TileEntity t = world.getTileEntity(x, y, z);
 			if (t instanceof RenderFetcher) {
 				RenderFetcher te = (RenderFetcher)t;
 				TextureFetcher r = te.getRenderer();
@@ -284,15 +298,16 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		return true;
 	}
 
-	public static void spawnDropParticles(World world, int x, int y, int z, int blockID, int meta) {
-		Block b = Block.blocksList[blockID];
-		spawnDropParticles(world, x, y, z, b, meta);
-	}
-
 	public static void spawnDropParticles(World world, int x, int y, int z, Block b, int meta) {
 		for (int i = 0; i < 16; i++) {
 			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, meta, 0));
 		}
+	}
+
+	public static TesselatorVertexState getTessellatorState() {
+		Entity e = Minecraft.getMinecraft().renderViewEntity;
+		TesselatorVertexState st = Tessellator.instance.getVertexState((float)e.posX, (float)e.posY, (float)e.posZ);
+		return st;
 	}
 
 }

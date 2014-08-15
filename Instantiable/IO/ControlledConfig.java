@@ -9,18 +9,19 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.Property;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.ConfigList;
 import Reika.DragonAPI.Interfaces.IDRegistry;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ControlledConfig {
@@ -33,20 +34,14 @@ public class ControlledConfig {
 	protected final DragonAPIMod configMod;
 
 	private ConfigList[] optionList;
-	private IDRegistry[] blockList;
-	private IDRegistry[] itemList;
 	private IDRegistry[] IDList;
 
 	protected Object[] controls;
-	protected int[] blockIDs;
-	protected int[] itemIDs;
 	protected int[] otherIDs;
 
-	public ControlledConfig(DragonAPIMod mod, ConfigList[] option, IDRegistry[] blocks, IDRegistry[] items, IDRegistry[] id, int cfg) {
+	public ControlledConfig(DragonAPIMod mod, ConfigList[] option, IDRegistry[] id, int cfg) {
 		configMod = mod;
 		optionList = option;
-		blockList = blocks;
-		itemList = items;
 		IDList = id;
 
 		if (option != null)
@@ -54,20 +49,6 @@ public class ControlledConfig {
 		else {
 			controls = new Object[0];
 			optionList = new ConfigList[0];
-		}
-
-		if (blocks != null)
-			blockIDs = new int[blockList.length];
-		else {
-			blockIDs = new int[0];
-			blockList = new IDRegistry[0];
-		}
-
-		if (items != null)
-			itemIDs = new int[itemList.length];
-		else {
-			itemIDs = new int[0];
-			itemList = new IDRegistry[0];
 		}
 
 		if (id != null)
@@ -88,14 +69,6 @@ public class ControlledConfig {
 
 	public Object getControl(int i) {
 		return controls[i];
-	}
-
-	public int getBlockID(int i) {
-		return blockIDs[i];
-	}
-
-	public int getItemID(int i) {
-		return itemIDs[i];
 	}
 
 	public int getOtherID(int i) {
@@ -191,16 +164,6 @@ public class ControlledConfig {
 			}
 		}
 
-		for (int i = 0; i < blockList.length; i++) {
-			String name = blockList[i].getConfigName();
-			blockIDs[i] = config.get(blockList[i].getCategory(), name, blockList[i].getDefaultID()).getInt();
-		}
-
-		for (int i = 0; i < itemList.length; i++) {
-			String name = itemList[i].getConfigName();
-			itemIDs[i] = config.get(itemList[i].getCategory(), name, itemList[i].getDefaultID()).getInt();
-		}
-
 		for (int i = 0; i < IDList.length; i++) {
 			otherIDs[i] = this.getValueFromConfig(IDList[i], config);
 		}
@@ -234,10 +197,6 @@ public class ControlledConfig {
 	}
 
 	private int getValueFromConfig(IDRegistry id, Configuration config) {
-		if (id.isBlock())
-			return config.getBlock(id.getCategory(), id.getConfigName(), id.getDefaultID()).getInt();
-		if (id.isItem())
-			return config.getItem(id.getCategory(), id.getConfigName(), id.getDefaultID()).getInt();
 		return config.get(id.getCategory(), id.getConfigName(), id.getDefaultID()).getInt();
 	}
 

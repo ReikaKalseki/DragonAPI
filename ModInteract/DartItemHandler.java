@@ -9,34 +9,36 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
-
-import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
+import java.lang.reflect.Field;
+
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 public final class DartItemHandler extends ModHandlerBase {
 
 	private static final DartItemHandler instance = new DartItemHandler();
 
-	public final int wrenchID;
-	public final int meatID;
+	public final Item wrenchID;
+	public final Item meatID;
 
 	private DartItemHandler() {
 		super();
-		int idwrench = -257;
-		int idmeat = -257;
+		Item idwrench = null;
+		Item idmeat = null;
 
 		if (this.hasMod()) {
 			try {
 				Class item = Class.forName("bluedart.core.Config");
 
 				Field wrench = item.getField("forceWrenchID");
-				idwrench = wrench.getInt(null)+256;
+				idwrench = (Item)wrench.get(null);
 
 				Field meat = item.getField("rawLambchopID");
-				idmeat = meat.getInt(null)+256;
+				idmeat = (Item)meat.get(null);
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
@@ -73,7 +75,7 @@ public final class DartItemHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return wrenchID != -1 && meatID != -1;
+		return wrenchID != null && meatID != null;
 	}
 
 	@Override
@@ -86,7 +88,7 @@ public final class DartItemHandler extends ModHandlerBase {
 			return false;
 		if (!this.initializedProperly())
 			return false;
-		return held.itemID == wrenchID;
+		return held.getItem() == wrenchID;
 	}
 
 }

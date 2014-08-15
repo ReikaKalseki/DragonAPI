@@ -9,10 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
 import Reika.DragonAPI.Auxiliary.DonatorController;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayerMP;
 
 public class DonatorCommand extends DragonCommandBase {
 

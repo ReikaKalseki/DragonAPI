@@ -43,6 +43,8 @@ public abstract class ModifiedPlayerModel extends ModelBiped {
 
 	public abstract void setPartAngles(EntityPlayer ep, float tick);
 
+	public abstract void bindTexture();
+
 	public abstract void renderBodyParts(EntityPlayer ep, float tick);
 
 	protected final void setRotation(ModelRenderer model, float x, float y, float z) {
@@ -59,7 +61,7 @@ public abstract class ModifiedPlayerModel extends ModelBiped {
 			int xSize = 195;
 
 			Minecraft mc = Minecraft.getMinecraft();
-			ScaledResolution scr = new ScaledResolution(mc.gameSettings, mc.displayWidth, mc.displayHeight);
+			ScaledResolution scr = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 
 			int width = scr.getScaledWidth();
 			int height = scr.getScaledHeight();

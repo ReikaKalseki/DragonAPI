@@ -9,14 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class MekToolHandler extends ModHandlerBase {
 
@@ -31,8 +32,8 @@ public final class MekToolHandler extends ModHandlerBase {
 
 	private static final MekToolHandler instance = new MekToolHandler();
 
-	private final ArrayList<Integer> paxelIDs = new ArrayList();
-	private final ArrayList<Integer> pickIDs = new ArrayList();
+	private final ArrayList<Item> paxelIDs = new ArrayList();
+	private final ArrayList<Item> pickIDs = new ArrayList();
 
 	private MekToolHandler() {
 		super();
@@ -40,12 +41,12 @@ public final class MekToolHandler extends ModHandlerBase {
 			Class item = this.getMod().getItemClass();
 			for (int i = 0; i < paxelVars.length; i++) {
 				String varname = paxelVars[i];
-				int idpaxel = this.getID(item, varname);
+				Item idpaxel = this.getID(item, varname);
 				paxelIDs.add(idpaxel);
 			}
 			for (int i = 0; i < pickVars.length; i++) {
 				String varname = pickVars[i];
-				int idpick = this.getID(item, varname);
+				Item idpick = this.getID(item, varname);
 				pickIDs.add(idpick);
 			}
 
@@ -55,10 +56,10 @@ public final class MekToolHandler extends ModHandlerBase {
 		}
 	}
 
-	private int getID(Class c, String varname) {
+	private Item getID(Class c, String varname) {
 		try {
 			Field f = c.getField(varname);
-			int id = ((Item)f.get(null)).itemID;
+			Item id = ((Item)f.get(null));
 			return id;
 		}
 		catch (NoSuchFieldException e) {
@@ -81,7 +82,7 @@ public final class MekToolHandler extends ModHandlerBase {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 			e.printStackTrace();
 		}
-		return -1;
+		return null;
 	}
 
 	public static MekToolHandler getInstance() {
@@ -101,11 +102,11 @@ public final class MekToolHandler extends ModHandlerBase {
 	public boolean isPickTypeTool(ItemStack held) {
 		if (!this.initializedProperly())
 			return false;
-		return paxelIDs.contains(held.itemID) || pickIDs.contains(held.itemID);
+		return paxelIDs.contains(held.getItem()) || pickIDs.contains(held.getItem());
 	}
 
 	public boolean isWood(ItemStack held) {
-		return paxelIDs.get(0) == held.itemID;
+		return paxelIDs.get(0) == held.getItem();
 	}
 
 }

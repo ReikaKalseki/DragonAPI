@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -25,9 +28,6 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
-
 public final class ReikaSpriteSheets {
 
 	private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
@@ -36,7 +36,7 @@ public final class ReikaSpriteSheets {
 
 	private ReikaSpriteSheets() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
-	/** Call this from a registered ItemRenderer class that implements IItemRenderer to actually render the item.
+	/** Call this from a registered ItemRenderer class that implements IItemRenderer to actually render the Items.
 	 * It will automatically compensate for being used for inventory/entity/held items.
 	 * Args: Texture root class, Texture path, Sprite Index, ItemRenderType, ItemStack, Data */
 	public static void renderItem(Class root, String tex, int index, ItemRenderType type, ItemStack item, Object... data) {
@@ -45,8 +45,9 @@ public final class ReikaSpriteSheets {
 		int row = index/16;
 		int col = index-row*16;
 		ReikaTextureHelper.bindTexture(root, tex);
-		if (type == type.INVENTORY)
+		if (type == type.INVENTORY) {
 			GL11.glDisable(GL11.GL_LIGHTING);
+		}
 		GL11.glPushMatrix();
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -57,6 +58,8 @@ public final class ReikaSpriteSheets {
 		if (type == type.INVENTORY) {
 			if (v5.isDrawing)
 				v5.draw();
+			boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
+			GL11.glEnable(GL11.GL_BLEND);
 			double r = 45;
 			double r2 = -30;
 			double s = 1.6;
@@ -79,6 +82,8 @@ public final class ReikaSpriteSheets {
 			GL11.glScaled(1/s, 1/s, 1/s);
 			GL11.glRotated(-r2, 1, 0, 0);
 			GL11.glRotated(-r, 0, 1, 0);
+			if (!blend)
+				GL11.glDisable(GL11.GL_BLEND);
 		}
 		if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
 			if (type == type.EQUIPPED && (item.getItem() instanceof ItemTool || item.getItem() instanceof ItemSword || item.getItem() instanceof ItemShears)) {

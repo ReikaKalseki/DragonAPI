@@ -9,9 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import net.minecraft.world.biome.SpawnListEntry;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+
+import net.minecraft.world.biome.BiomeGenBase.SpawnListEntry;
 
 public class ModSpawnEntry {
 

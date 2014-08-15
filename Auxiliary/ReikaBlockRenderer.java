@@ -13,12 +13,9 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.init.Blocks;
 
 import org.lwjgl.opengl.GL11;
-
-import Reika.DragonAPI.Interfaces.SidedTextureIndex;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public final class ReikaBlockRenderer extends RenderBlocks {
 
@@ -80,8 +77,8 @@ public final class ReikaBlockRenderer extends RenderBlocks {
 
 	public void renderBlockInInventory(Block par1Block, int par2, float par3, int[] indices) {
 		Tessellator v5 = Tessellator.instance;
-		boolean flag = par1Block.blockID == Block.grass.blockID;
-		if (par1Block == Block.dispenser || par1Block == Block.dropper || par1Block == Block.furnaceIdle)
+		boolean flag = par1Block == Blocks.grass;
+		if (par1Block == Blocks.dispenser || par1Block == Blocks.dropper || par1Block == Blocks.furnace)
 			par2 = 3;
 		int j;
 		float f1;
@@ -423,7 +420,7 @@ public final class ReikaBlockRenderer extends RenderBlocks {
 			v5.addVertexWithUV(d11, d13, d15, d3, d5);
 		}
 	}
-
+	/*
 	public boolean renderCube(Block par1Block, int par2, int par3, int par4, float par5, float par6, float par7, int meta, IBlockAccess world, String tex, Class mod)
 	{
 		GL11.glDisable(GL11.GL_LIGHTING);
@@ -464,10 +461,10 @@ public final class ReikaBlockRenderer extends RenderBlocks {
 			aoLightValueScratchYZNN = par1Block.getAmbientOcclusionLightValue(world, par2, par3, par4 - 1);
 			aoLightValueScratchYZNP = par1Block.getAmbientOcclusionLightValue(world, par2, par3, par4 + 1);
 			aoLightValueScratchXYPN = par1Block.getAmbientOcclusionLightValue(world, par2 + 1, par3, par4);
-			flag3 = Block.canBlockGrass[world.getBlockId(par2 + 1, par3 - 1, par4)];
-			flag2 = Block.canBlockGrass[world.getBlockId(par2 - 1, par3 - 1, par4)];
-			flag5 = Block.canBlockGrass[world.getBlockId(par2, par3 - 1, par4 + 1)];
-			flag4 = Block.canBlockGrass[world.getBlockId(par2, par3 - 1, par4 - 1)];
+			flag3 = world.getBlock(par2 + 1, par3 - 1, par4).getCanBlockGrass();
+			flag2 = world.getBlock(par2 - 1, par3 - 1, par4).getCanBlockGrass();
+			flag5 = world.getBlock(par2, par3 - 1, par4 + 1).getCanBlockGrass();
+			flag4 = world.getBlock(par2, par3 - 1, par4 - 1).getCanBlockGrass();
 			if (!flag4 && !flag2) {
 				aoLightValueScratchXYZNNN = aoLightValueScratchXYNN;
 				aoBrightnessXYZNNN = aoBrightnessXYNN;
@@ -552,10 +549,10 @@ public final class ReikaBlockRenderer extends RenderBlocks {
 			aoLightValueScratchXYPP = par1Block.getAmbientOcclusionLightValue(world, par2 + 1, par3, par4);
 			aoLightValueScratchYZPN = par1Block.getAmbientOcclusionLightValue(world, par2, par3, par4 - 1);
 			aoLightValueScratchYZPP = par1Block.getAmbientOcclusionLightValue(world, par2, par3, par4 + 1);
-			flag3 = Block.canBlockGrass[world.getBlockId(par2 + 1, par3 + 1, par4)];
-			flag2 = Block.canBlockGrass[world.getBlockId(par2 - 1, par3 + 1, par4)];
-			flag5 = Block.canBlockGrass[world.getBlockId(par2, par3 + 1, par4 + 1)];
-			flag4 = Block.canBlockGrass[world.getBlockId(par2, par3 + 1, par4 - 1)];
+			flag3 = Blocks.canBlockGrass[world.getBlock(par2 + 1, par3 + 1, par4)];
+			flag2 = Blocks.canBlockGrass[world.getBlock(par2 - 1, par3 + 1, par4)];
+			flag5 = Blocks.canBlockGrass[world.getBlock(par2, par3 + 1, par4 + 1)];
+			flag4 = Blocks.canBlockGrass[world.getBlock(par2, par3 + 1, par4 - 1)];
 			if (!flag4 && !flag2) {
 				aoLightValueScratchXYZNPN = aoLightValueScratchXYNP;
 				aoBrightnessXYZNPN = aoBrightnessXYNP;
@@ -631,10 +628,10 @@ public final class ReikaBlockRenderer extends RenderBlocks {
 			aoBrightnessYZNN = par1Block.getMixedBrightnessForBlock(world, par2, par3 - 1, par4);
 			aoBrightnessYZPN = par1Block.getMixedBrightnessForBlock(world, par2, par3 + 1, par4);
 			aoBrightnessXZPN = par1Block.getMixedBrightnessForBlock(world, par2 + 1, par3, par4);
-			flag3 = Block.canBlockGrass[world.getBlockId(par2 + 1, par3, par4 - 1)];
-			flag2 = Block.canBlockGrass[world.getBlockId(par2 - 1, par3, par4 - 1)];
-			flag5 = Block.canBlockGrass[world.getBlockId(par2, par3 + 1, par4 - 1)];
-			flag4 = Block.canBlockGrass[world.getBlockId(par2, par3 - 1, par4 - 1)];
+			flag3 = Blocks.canBlockGrass[world.getBlock(par2 + 1, par3, par4 - 1)];
+			flag2 = Blocks.canBlockGrass[world.getBlock(par2 - 1, par3, par4 - 1)];
+			flag5 = Blocks.canBlockGrass[world.getBlock(par2, par3 + 1, par4 - 1)];
+			flag4 = Blocks.canBlockGrass[world.getBlock(par2, par3 - 1, par4 - 1)];
 
 			if (!flag2 && !flag4)  {
 				aoLightValueScratchXYZNNN = aoLightValueScratchXZNN;
@@ -719,10 +716,10 @@ public final class ReikaBlockRenderer extends RenderBlocks {
 			aoBrightnessXZPP = par1Block.getMixedBrightnessForBlock(world, par2 + 1, par3, par4);
 			aoBrightnessYZNP = par1Block.getMixedBrightnessForBlock(world, par2, par3 - 1, par4);
 			aoBrightnessYZPP = par1Block.getMixedBrightnessForBlock(world, par2, par3 + 1, par4);
-			flag3 = Block.canBlockGrass[world.getBlockId(par2 + 1, par3, par4 + 1)];
-			flag2 = Block.canBlockGrass[world.getBlockId(par2 - 1, par3, par4 + 1)];
-			flag5 = Block.canBlockGrass[world.getBlockId(par2, par3 + 1, par4 + 1)];
-			flag4 = Block.canBlockGrass[world.getBlockId(par2, par3 - 1, par4 + 1)];
+			flag3 = Blocks.canBlockGrass[world.getBlock(par2 + 1, par3, par4 + 1)];
+			flag2 = Blocks.canBlockGrass[world.getBlock(par2 - 1, par3, par4 + 1)];
+			flag5 = Blocks.canBlockGrass[world.getBlock(par2, par3 + 1, par4 + 1)];
+			flag4 = Blocks.canBlockGrass[world.getBlock(par2, par3 - 1, par4 + 1)];
 			if (!flag2 && !flag4) {
 				aoLightValueScratchXYZNNP = aoLightValueScratchXZNP;
 				aoBrightnessXYZNNP = aoBrightnessXZNP;
@@ -805,10 +802,10 @@ public final class ReikaBlockRenderer extends RenderBlocks {
 			aoBrightnessXZNN = par1Block.getMixedBrightnessForBlock(world, par2, par3, par4 - 1);
 			aoBrightnessXZNP = par1Block.getMixedBrightnessForBlock(world, par2, par3, par4 + 1);
 			aoBrightnessXYNP = par1Block.getMixedBrightnessForBlock(world, par2, par3 + 1, par4);
-			flag3 = Block.canBlockGrass[world.getBlockId(par2 - 1, par3 + 1, par4)];
-			flag2 = Block.canBlockGrass[world.getBlockId(par2 - 1, par3 - 1, par4)];
-			flag5 = Block.canBlockGrass[world.getBlockId(par2 - 1, par3, par4 - 1)];
-			flag4 = Block.canBlockGrass[world.getBlockId(par2 - 1, par3, par4 + 1)];
+			flag3 = Blocks.canBlockGrass[world.getBlock(par2 - 1, par3 + 1, par4)];
+			flag2 = Blocks.canBlockGrass[world.getBlock(par2 - 1, par3 - 1, par4)];
+			flag5 = Blocks.canBlockGrass[world.getBlock(par2 - 1, par3, par4 - 1)];
+			flag4 = Blocks.canBlockGrass[world.getBlock(par2 - 1, par3, par4 + 1)];
 			if (!flag5 && !flag2) {
 				aoLightValueScratchXYZNNN = aoLightValueScratchXZNN;
 				aoBrightnessXYZNNN = aoBrightnessXZNN;
@@ -892,10 +889,10 @@ public final class ReikaBlockRenderer extends RenderBlocks {
 			aoBrightnessXZPN = par1Block.getMixedBrightnessForBlock(world, par2, par3, par4 - 1);
 			aoBrightnessXZPP = par1Block.getMixedBrightnessForBlock(world, par2, par3, par4 + 1);
 			aoBrightnessXYPP = par1Block.getMixedBrightnessForBlock(world, par2, par3 + 1, par4);
-			flag3 = Block.canBlockGrass[world.getBlockId(par2 + 1, par3 + 1, par4)];
-			flag2 = Block.canBlockGrass[world.getBlockId(par2 + 1, par3 - 1, par4)];
-			flag5 = Block.canBlockGrass[world.getBlockId(par2 + 1, par3, par4 + 1)];
-			flag4 = Block.canBlockGrass[world.getBlockId(par2 + 1, par3, par4 - 1)];
+			flag3 = Blocks.canBlockGrass[world.getBlock(par2 + 1, par3 + 1, par4)];
+			flag2 = Blocks.canBlockGrass[world.getBlock(par2 + 1, par3 - 1, par4)];
+			flag5 = Blocks.canBlockGrass[world.getBlock(par2 + 1, par3, par4 + 1)];
+			flag4 = Blocks.canBlockGrass[world.getBlock(par2 + 1, par3, par4 - 1)];
 			if (!flag2 && !flag4) {
 				aoLightValueScratchXYZPNN = aoLightValueScratchXZPN;
 				aoBrightnessXYZPNN = aoBrightnessXZPN;
@@ -973,5 +970,5 @@ public final class ReikaBlockRenderer extends RenderBlocks {
 		v5.draw();
 		v5.startDrawingQuads();
 		return flag;
-	}
+	}*/
 }

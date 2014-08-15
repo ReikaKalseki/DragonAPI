@@ -9,55 +9,58 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockFluid;
-import net.minecraft.block.material.Material;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+
 import com.xcompwiz.mystcraft.api.MystObjects;
 
 public final class ReikaBlockHelper extends DragonAPICore {
 
 	/** Tests if a block always drops itself. Args: ID */
-	public static boolean alwaysDropsSelf(int ID) {
+	public static boolean alwaysDropsSelf(Block ID) {
 		int k = 0;
 		//for (k = 0; k <= 20; k++)
 		for (int i = 0; i < 16; i++)
-			if (ID != Block.blocksList[ID].idDropped(i, rand, k) && ID-256 != Block.blocksList[ID].idDropped(i, rand, k))
+			if (Item.getItemFromBlock(ID) != ID.getItemDropped(i, rand, k))
 				return false;/*
 		for (int i = 0; i < 16; i++)
-			if (Block.blocksList[ID].damageDropped(i) != i)
+			if (Blocks.blocksList[ID].damageDropped(i) != i)
 				return false;*/
 		return true;
 	}
 
 	/** Tests if a block never drops itself. Args: ID */
-	public static boolean neverDropsSelf(int ID) {
+	public static boolean neverDropsSelf(Block ID) {
 		boolean hasID = false;
 		boolean hasMeta = false;
 		for (int k = 0; k <= 20 && !hasID; k++)
 			for (int i = 0; i < 16 && !hasID; i++)
-				if (ID == Block.blocksList[ID].idDropped(i, rand, k) || ID-256 == Block.blocksList[ID].idDropped(i, rand, k))
+				if (Item.getItemFromBlock(ID) == ID.getItemDropped(i, rand, k))
 					hasID = true;/*
 		for (int i = 0; i < 16 && !hasMeta; i++)
-			if (Block.blocksList[ID].damageDropped(i) == i)*/
+			if (Blocks.blocksList[ID].damageDropped(i) == i)*/
 		hasMeta = true;
 		return (hasID && hasMeta);
 	}
 
-	/** Returns true if the Block ID corresponds to an ore block. Args: ItemStack */
+	/** Returns true if the Block ID corresponds to an ore Blocks. Args: ItemStack */
 	public static boolean isOre(ItemStack is) {
 		if (is == null)
 			return false;
-		if (is.itemID == Block.oreRedstoneGlowing.blockID)
+		if (is.getItem() == Item.getItemFromBlock(Blocks.lit_redstone_ore))
 			return true;
-		if (ReikaOreHelper.isVanillaOre(is.itemID))
+		if (ReikaOreHelper.isVanillaOre(is))
 			return true;
 		if (ModOreList.isModOre(is))
 			return true;
@@ -68,97 +71,92 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		return false;
 	}
 
-	/** Returns true if the Block ID corresponds to an ore block. Args: ID, Metadata */
-	public static boolean isOre(int id, int meta) {
+	/** Returns true if the Block ID corresponds to an ore Blocks. Args: ID, Metadata */
+	public static boolean isOre(Block id, int meta) {
 		return isOre(new ItemStack(id, 1, meta));
 	}
 
 	/** Gets a world block as an itemstack. Args: World, x, y, z */
 	public static ItemStack getWorldBlockAsItemStack(World world, int x, int y, int z) {
-		return new ItemStack(world.getBlockId(x, y, z), 1, world.getBlockMetadata(x, y, z));
+		return new ItemStack(world.getBlock(x, y, z), 1, world.getBlockMetadata(x, y, z));
 	}
 
 	/** Get the block ID silverfish stone is imitating. Args; Metadata */
-	public static int getSilverfishImitatedBlock(int meta) {
+	public static Block getSilverfishImitatedBlock(int meta) {
 		switch(meta) {
 		case 0:
-			return Block.stone.blockID;
+			return Blocks.stone;
 		case 1:
-			return Block.cobblestone.blockID;
+			return Blocks.cobblestone;
 		case 2:
-			return Block.stoneBrick.blockID;
+			return Blocks.stonebrick;
 		default:
-			return 0;
+			return Blocks.air;
 		}
-	}
-
-	public static Block getBlock(World world, int x, int y, int z) {
-		return Block.blocksList[world.getBlockId(x, y, z)];
 	}
 
 	/** Returns true if the block has a hitbox. Args: World, x, y, z */
 	public static boolean isCollideable(World world, int x, int y, int z) {
-		if (world.getBlockId(x, y, z) == 0)
+		Block b = world.getBlock(x, y, z);
+		if (b == Blocks.air)
 			return false;
-		Block b = Block.blocksList[world.getBlockId(x, y, z)];
 		return (b.getCollisionBoundingBoxFromPool(world, x, y, z) != null);
 	}
 
 	/** Tests if a block is a dirt-type one, such that non-farm plants can grow on it. Args: id, metadata, material */
-	public static boolean isDirtType(int id, int meta, Material mat) {
-		if (id == Block.dirt.blockID)
+	public static boolean isDirtType(Block id, int meta, Material mat) {
+		if (id == Blocks.dirt)
 			return true;
-		if (id == Block.grass.blockID)
+		if (id == Blocks.grass)
 			return true;
-		if (id == Block.gravel.blockID)
+		if (id == Blocks.gravel)
 			return false;
 		return false;
 	}
 
-	/** Tests if a block is a liquid block. Args: ID */
-	public static boolean isLiquid(int id) {
-		if (id == 0)
+	/** Tests if a block is a liquid Blocks. Args: ID */
+	public static boolean isLiquid(Block b) {
+		if (b == Blocks.air)
 			return false;
-		Block b = Block.blocksList[id];
-		Material mat = b.blockMaterial;
+		Material mat = b.getMaterial();
 		if (mat == Material.lava || mat == Material.water)
 			return true;
-		return b instanceof BlockFluid;
+		return b instanceof BlockLiquid;
 	}
 
 	public static boolean isPortalBlock(World world, int x, int y, int z) {
-		int id = world.getBlockId(x, y, z);
-		if (id == Block.portal.blockID)
+		Block id = world.getBlock(x, y, z);
+		if (id == Blocks.portal)
 			return true;
-		if (id == Block.endPortal.blockID)
+		if (id == Blocks.end_portal)
 			return true;
-		if (ModList.MYSTCRAFT.isLoaded() && MystObjects.portal != null && MystObjects.portal.blockID == id)
+		if (ModList.MYSTCRAFT.isLoaded() && MystObjects.portal != null && MystObjects.portal == id)
 			return true;
 		if (ModList.TWILIGHT.isLoaded() && id == TwilightForestHandler.getInstance().portalID)
 			return true;
 		return false;
 	}
 
-	public static boolean isStairBlock(int id) {
-		if (id == Block.stairsCobblestone.blockID)
+	public static boolean isStairBlock(Block id) {
+		if (id == Blocks.stone_stairs)
 			return true;
-		if (id == Block.stairsStoneBrick.blockID)
+		if (id == Blocks.stone_brick_stairs)
 			return true;
-		if (id == Block.stairsBrick.blockID)
+		if (id == Blocks.brick_stairs)
 			return true;
-		if (id == Block.stairsSandStone.blockID)
+		if (id == Blocks.sandstone_stairs)
 			return true;
-		if (id == Block.stairsWoodOak.blockID)
+		if (id == Blocks.oak_stairs)
 			return true;
-		if (id == Block.stairsNetherBrick.blockID)
+		if (id == Blocks.nether_brick_stairs)
 			return true;
-		if (id == Block.stairsWoodSpruce.blockID)
+		if (id == Blocks.spruce_stairs)
 			return true;
-		if (id == Block.stairsWoodBirch.blockID)
+		if (id == Blocks.birch_stairs)
 			return true;
-		if (id == Block.stairsWoodJungle.blockID)
+		if (id == Blocks.jungle_stairs)
 			return true;
-		if (id == Block.stairsNetherQuartz.blockID)
+		if (id == Blocks.quartz_stairs)
 			return true;
 		return false;
 	}

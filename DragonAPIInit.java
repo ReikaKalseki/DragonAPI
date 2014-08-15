@@ -9,40 +9,20 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.nbt.NBTTagString;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.potion.Potion;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.Event.Result;
-import net.minecraftforge.event.ForgeSubscribe;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
-import Reika.DragonAPI.Auxiliary.ChatWatcher;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
-import Reika.DragonAPI.Auxiliary.CustomSoundHandler;
 import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.IntegrityChecker;
-import Reika.DragonAPI.Auxiliary.ItemOverwriteTracker;
 import Reika.DragonAPI.Auxiliary.KeyWatcher.KeyTicker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
+import Reika.DragonAPI.Auxiliary.PlayerHandler;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.SuggestedModsTracker;
+import Reika.DragonAPI.Auxiliary.TickRegistry;
 import Reika.DragonAPI.Auxiliary.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Command.DonatorCommand;
@@ -50,10 +30,12 @@ import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
-import Reika.DragonAPI.Instantiable.SyncPacket;
+import Reika.DragonAPI.IO.CustomResourceManager;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
@@ -94,6 +76,24 @@ import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
+
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.List;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.SimpleReloadableResourceManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.potion.Potion;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
@@ -106,17 +106,12 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.network.NetworkMod;
-import cpw.mods.fml.common.network.NetworkMod.SidedPacketHandler;
+import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 
 @Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies="after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;after:powersuits;after:GalacticCraft;after:Mystcraft;after:UniversalElectricity;after:Forestry;after:MagicBees;after:BinnieCore;after:Natura;after:TConstruct")
-@NetworkMod(clientSideRequired = true, serverSideRequired = true,
-clientPacketHandlerSpec = @SidedPacketHandler(channels = { "DragonAPIData" }, packetHandler = APIClientPackets.class),
-serverPacketHandlerSpec = @SidedPacketHandler(channels = { "DragonAPIData" }, packetHandler = APIServerPackets.class))
 public class DragonAPIInit extends DragonAPIMod {
 
 	public static final String packetChannel = "DragonAPIData";
@@ -127,7 +122,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Instance("DragonAPI")
 	public static DragonAPIInit instance = new DragonAPIInit();
 
-	public static final ControlledConfig config = new ControlledConfig(instance, DragonOptions.optionList, null, null, null, 0);
+	public static final ControlledConfig config = new ControlledConfig(instance, DragonOptions.optionList, null, 0);
 
 	private ModLogger logger;
 
@@ -140,6 +135,12 @@ public class DragonAPIInit extends DragonAPIMod {
 		logger = new ModLogger(instance, false);
 		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());
 		//MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
+
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			Minecraft mc = Minecraft.getMinecraft();
+			mc.mcResourceManager = new CustomResourceManager((SimpleReloadableResourceManager)mc.mcResourceManager);
+		}
+
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
 
@@ -147,8 +148,9 @@ public class DragonAPIInit extends DragonAPIMod {
 			MinecraftForge.EVENT_BUS.register(DebugOverlay.instance);
 
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
-			MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
+			//MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
+			PlayerModelRenderer.instance.register();
+			//MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
 		}
 
 		this.increasePotionCount();
@@ -161,7 +163,10 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		this.basicSetup(evt);
 
-		Packet.addIdClassMapping(DragonOptions.SYNCPACKET.getValue(), true, true, SyncPacket.class);
+		ReikaPacketHelper.registerPacketHandler(instance, packetChannel, new APIPacketHandler());
+
+		//Packet.addIdClassMapping(DragonOptions.SYNCPACKET.getValue(), true, true, SyncPacket.class);
+		//ReikaPacketWrapper.instance.registerPacket(SyncPacket.class);
 	}
 
 	private void increaseBiomeCount() {
@@ -205,15 +210,17 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
-		GameRegistry.registerPlayerTracker(LoginHandler.instance);
+		PlayerHandler.instance.registerTracker(LoginHandler.instance);
 
-		NetworkRegistry.instance().registerGuiHandler(instance, new APIGuiHandler());
+		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new APIGuiHandler());
 
-		NetworkRegistry.instance().registerChatListener(ChatWatcher.instance);
+		//ReikaPacketHelper.initPipelines();
 
-		TickRegistry.registerTickHandler(ProgressiveRecursiveBreaker.instance, Side.SERVER);
+		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance, Side.SERVER);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-			TickRegistry.registerTickHandler(KeyTicker.instance, Side.CLIENT);
+			TickRegistry.instance.registerTickHandler(KeyTicker.instance, Side.CLIENT);
+
+		ReikaRegistryHelper.loadNames();
 	}
 
 	@Override
@@ -223,8 +230,9 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		this.alCompat();
 
+		//ReikaPacketHelper.postInitPipelines();
+
 		BiomeCollisionTracker.instance.check();
-		ItemOverwriteTracker.instance.check();
 		PotionCollisionTracker.instance.check();
 		VanillaIntegrityTracker.instance.check();
 
@@ -254,27 +262,27 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new SelectiveKillCommand());
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onClose(WorldEvent.Unload evt) {
 
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void onLoad(WorldEvent.Load evt) {
 
 	}
 
-	@ForgeSubscribe
+	@SubscribeEvent
 	public void addGuideGUI(PlayerInteractEvent evt) {
 		EntityPlayer ep = evt.entityPlayer;
 		ItemStack is = ep.getCurrentEquippedItem();
-		if (is != null && is.itemID == Item.enchantedBook.itemID) {
+		if (is != null && is.getItem() == Items.enchanted_book) {
 			if (is.stackTagCompound != null) {
 				NBTTagCompound disp = is.stackTagCompound.getCompoundTag("display");
 				if (disp != null) {
-					NBTTagList list = disp.getTagList("Lore");
+					NBTTagList list = disp.getTagList("Lore", 8); //8 == string
 					if (list != null && list.tagCount() > 0) {
-						String sg = ((NBTTagString)list.tagAt(0)).data;
+						String sg = list.getStringTagAt(0);
 						if (sg != null && sg.equals("Reika's Mods Guide")) {
 							ep.openGui(instance, 0, ep.worldObj, 0, 0, 0);
 							evt.setResult(Result.ALLOW);

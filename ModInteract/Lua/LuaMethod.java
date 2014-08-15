@@ -9,11 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Lua;
 
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public abstract class LuaMethod {
 

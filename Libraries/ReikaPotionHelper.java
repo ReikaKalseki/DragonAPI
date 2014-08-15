@@ -9,16 +9,17 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import Reika.DragonAPI.DragonAPICore;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-import net.minecraft.item.Item;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaPotionHelper extends DragonAPICore {
 
@@ -34,7 +35,7 @@ public final class ReikaPotionHelper extends DragonAPICore {
 
 	/** Returns a potion ID from the damage value. Returns -1 if invalid damage value. */
 	public static int getPotionID(int dmg) {
-		List effects = Item.potion.getEffects(dmg);
+		List effects = Items.potionitem.getEffects(dmg);
 		if (effects != null && !effects.isEmpty()) {
 			Iterator potioneffects = effects.iterator();
 			while (potioneffects.hasNext()) {
@@ -97,7 +98,7 @@ public final class ReikaPotionHelper extends DragonAPICore {
 			dmg += BOOST_BIT;
 		if (splash)
 			dmg += SPLASH_BIT;
-		ItemStack is = new ItemStack(Item.potion.itemID, 1, dmg);
+		ItemStack is = new ItemStack(Items.potionitem, 1, dmg);
 		return is;
 	}
 

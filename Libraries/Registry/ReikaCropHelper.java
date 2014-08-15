@@ -10,44 +10,43 @@
 package Reika.DragonAPI.Libraries.Registry;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 public enum ReikaCropHelper {
 
-	WHEAT(Block.crops.blockID, 7),
-	CARROT(Block.carrot.blockID, 7),
-	POTATO(Block.potato.blockID, 7),
-	NETHERWART(Block.netherStalk.blockID, 3),
-	COCOA(Block.cocoaPlant.blockID, 2);
+	WHEAT(Blocks.wheat, 7),
+	CARROT(Blocks.carrots, 7),
+	POTATO(Blocks.potatoes, 7),
+	NETHERWART(Blocks.nether_wart, 3),
+	COCOA(Blocks.cocoa, 2);
 
-	public final int blockID;
+	public final Block blockID;
 	public final int ripeMeta;
 
 	public static final ReikaCropHelper[] cropList = values();
 
-	private ReikaCropHelper(int id, int metaripe) {
+	private static final HashMap<Block, ReikaCropHelper> cropMappings = new HashMap();
+
+	private ReikaCropHelper(Block id, int metaripe) {
 		blockID = id;
 		ripeMeta = metaripe;
 	}
 
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
 		int meta = world.getBlockMetadata(x, y, z);
-		return Block.blocksList[blockID].getBlockDropped(world, x, y, z, meta, fortune);
+		return blockID.getDrops(world, x, y, z, meta, fortune);
 	}
 
-	public static ReikaCropHelper getCrop(int id) {
-		for (int i = 0; i < cropList.length; i++) {
-			ReikaCropHelper crop = cropList[i];
-			if (crop.blockID == id)
-				return crop;
-		}
-		return null;
+	public static ReikaCropHelper getCrop(Block id) {
+		return cropMappings.get(id);
 	}
 
-	public static boolean isCrop(int id) {
+	public static boolean isCrop(Block id) {
 		return getCrop(id) != null;
 	}
 
@@ -65,6 +64,14 @@ public enum ReikaCropHelper {
 		if (this == COCOA)
 			return meta_ripe&3;
 		return 0;
+	}
+
+	static {
+		for (int i = 0; i < cropList.length; i++) {
+			ReikaCropHelper w = cropList[i];
+			Block id = w.blockID;
+			cropMappings.put(id, w);
+		}
 	}
 
 

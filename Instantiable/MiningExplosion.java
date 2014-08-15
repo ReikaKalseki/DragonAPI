@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,6 +23,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
@@ -29,7 +32,6 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class MiningExplosion extends Explosion {
 
@@ -81,16 +83,16 @@ public class MiningExplosion extends Explosion {
 							int l = MathHelper.floor_double(d0);
 							int i1 = MathHelper.floor_double(d1);
 							int j1 = MathHelper.floor_double(d2);
-							int k1 = world.getBlockId(l, i1, j1);
+							Block k1 = world.getBlock(l, i1, j1);
 
-							if (k1 > 0)
+							if (k1 != Blocks.air)
 							{
-								Block block = Block.blocksList[k1];
-								float f3 = exploder != null ? exploder.getBlockExplosionResistance(this, world, l, i1, j1, block) : block.getExplosionResistance(exploder, world, l, i1, j1, explosionX, explosionY, explosionZ);
+								Block block = k1;
+								float f3 = exploder != null ? exploder.func_145772_a(this, world, l, i1, j1, block) : block.getExplosionResistance(exploder, world, l, i1, j1, explosionX, explosionY, explosionZ);
 								f1 -= (f3 + 0.3F) * f2;
 							}
 
-							if (f1 > 0.0F && (exploder == null || exploder.shouldExplodeBlock(this, world, l, i1, j1, k1, f1)))
+							if (f1 > 0.0F && (exploder == null || exploder.func_145774_a(this, world, l, i1, j1, k1, f1)))
 							{
 								hashset.add(new ChunkPosition(l, i1, j1));
 							}
@@ -112,8 +114,8 @@ public class MiningExplosion extends Explosion {
 		int l1 = MathHelper.floor_double(explosionY + explosionSize + 1.0D);
 		int i2 = MathHelper.floor_double(explosionZ - explosionSize - 1.0D);
 		int j2 = MathHelper.floor_double(explosionZ + explosionSize + 1.0D);
-		List list = world.getEntitiesWithinAABBExcludingEntity(exploder, AxisAlignedBB.getAABBPool().getAABB(i, k, i2, j, l1, j2));
-		Vec3 vec3 = world.getWorldVec3Pool().getVecFromPool(explosionX, explosionY, explosionZ);
+		List list = world.getEntitiesWithinAABBExcludingEntity(exploder, AxisAlignedBB.getBoundingBox(i, k, i2, j, l1, j2));
+		Vec3 vec3 = Vec3.createVectorHelper(explosionX, explosionY, explosionZ);
 
 		for (int k2 = 0; k2 < list.size(); ++k2)
 		{
@@ -143,7 +145,7 @@ public class MiningExplosion extends Explosion {
 
 					if (entity instanceof EntityPlayer)
 					{
-						this.func_77277_b().put(entity, world.getWorldVec3Pool().getVecFromPool(d0 * d10, d1 * d10, d2 * d10));
+						this.func_77277_b().put(entity, Vec3.createVectorHelper(d0 * d10, d1 * d10, d2 * d10));
 					}
 				}
 			}
@@ -171,17 +173,17 @@ public class MiningExplosion extends Explosion {
 		int i;
 		int j;
 		int k;
-		int l;
+		Block l;
 
 		if (isSmoking) {
 			iterator = affectedBlockPositions.iterator();
 
 			while (iterator.hasNext()) {
 				chunkposition = (ChunkPosition)iterator.next();
-				i = chunkposition.x;
-				j = chunkposition.y;
-				k = chunkposition.z;
-				l = world.getBlockId(i, j, k);
+				i = chunkposition.chunkPosX;
+				j = chunkposition.chunkPosY;
+				k = chunkposition.chunkPosZ;
+				l = world.getBlock(i, j, k);
 
 				if (par1) {
 					double d0 = i + world.rand.nextFloat();
@@ -203,17 +205,17 @@ public class MiningExplosion extends Explosion {
 					world.spawnParticle("smoke", d0, d1, d2, d3, d4, d5);
 				}
 
-				if (l > 0) {
-					Block block = Block.blocksList[l];
+				if (l != Blocks.air) {
+					Block block = l;
 
 					int meta = world.getBlockMetadata(i, j, k);
-					if ((l == Block.tnt.blockID || block.canDropFromExplosion(this)) && this.shouldDrop(block, meta)) {
+					if ((l == Blocks.tnt || block.canDropFromExplosion(this)) && this.shouldDrop(block, meta)) {
 						block.dropBlockAsItem(world, i, j, k, meta, 0);
 					}
 
-					//block.onBlockExploded(world, i, j, k, this);
+					//Blocks.onBlockExploded(world, i, j, k, this);
 					if (!world.isRemote)
-						world.setBlock(i, j, k, 0);
+						world.setBlockToAir(i, j, k);
 				}
 			}
 		}
@@ -225,22 +227,22 @@ public class MiningExplosion extends Explosion {
 			while (iterator.hasNext())
 			{
 				chunkposition = (ChunkPosition)iterator.next();
-				i = chunkposition.x;
-				j = chunkposition.y;
-				k = chunkposition.z;
-				l = world.getBlockId(i, j, k);
-				int i1 = world.getBlockId(i, j - 1, k);
+				i = chunkposition.chunkPosX;
+				j = chunkposition.chunkPosY;
+				k = chunkposition.chunkPosZ;
+				l = world.getBlock(i, j, k);
+				Block i1 = world.getBlock(i, j - 1, k);
 
-				if (l == 0 && Block.opaqueCubeLookup[i1] && new Random().nextInt(3) == 0)
+				if (l == Blocks.air && i1.isOpaqueCube() && new Random().nextInt(3) == 0)
 				{
-					world.setBlock(i, j, k, Block.fire.blockID);
+					world.setBlock(i, j, k, Blocks.fire);
 				}
 			}
 		}
 	}
 
 	private boolean shouldDrop(Block block, int meta) {
-		return dropCheap || !ReikaItemHelper.listContainsItemStack(cheapBlocks, new ItemStack(block.blockID, 1, meta));
+		return dropCheap || !ReikaItemHelper.listContainsItemStack(cheapBlocks, new ItemStack(block, 1, meta));
 	}
 
 	public boolean canDamageEntity(Entity e) {
@@ -252,17 +254,17 @@ public class MiningExplosion extends Explosion {
 	}
 
 	private static void addCheapBlock(Block b, int meta) {
-		cheapBlocks.add(new ItemStack(b.blockID, 1, meta));
+		cheapBlocks.add(new ItemStack(b, 1, meta));
 	}
 
 	static {
-		addCheapBlock(Block.grass);
-		addCheapBlock(Block.dirt);
-		addCheapBlock(Block.stone);
-		addCheapBlock(Block.cobblestone);
-		addCheapBlock(Block.sand);
-		addCheapBlock(Block.netherrack);
-		addCheapBlock(Block.gravel);
+		addCheapBlock(Blocks.grass);
+		addCheapBlock(Blocks.dirt);
+		addCheapBlock(Blocks.stone);
+		addCheapBlock(Blocks.cobblestone);
+		addCheapBlock(Blocks.sand);
+		addCheapBlock(Blocks.netherrack);
+		addCheapBlock(Blocks.gravel);
 	}
 
 }

@@ -9,40 +9,42 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.ModIntegrityException;
+import Reika.DragonAPI.Interfaces.BlockEnum;
+import Reika.DragonAPI.Interfaces.ItemEnum;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.ModIntegrityException;
-import Reika.DragonAPI.Interfaces.RegistryEnum;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public class IntegrityChecker {
 
 	public static final IntegrityChecker instance = new IntegrityChecker();
 
-	private final HashMap<DragonAPIMod, RegistryEnum[]> modBlocks = new HashMap();
-	private final HashMap<DragonAPIMod, RegistryEnum[]> modItems = new HashMap();
+	private final HashMap<DragonAPIMod, BlockEnum[]> modBlocks = new HashMap();
+	private final HashMap<DragonAPIMod, ItemEnum[]> modItems = new HashMap();
 
 	private IntegrityChecker() {
 
 	}
 
-	public void addMod(DragonAPIMod mod, RegistryEnum[] blocks, RegistryEnum[] items) {
+	public void addMod(DragonAPIMod mod, BlockEnum[] blocks, ItemEnum[] items) {
 		modBlocks.put(mod, blocks);
 		modItems.put(mod, items);
 	}
 
 	/** Returns null if mod integrity is preserved. */
 	private Tamper testBlockIntegrity(DragonAPIMod mod) {
-		RegistryEnum[] blocks = modBlocks.get(mod);
+		BlockEnum[] blocks = modBlocks.get(mod);
 		for (int i = 0; i < blocks.length; i++) {
-			RegistryEnum ir = blocks[i];
+			BlockEnum ir = blocks[i];
 			if (!ir.isDummiedOut()) {
-				if (Block.blocksList[ir.getID()] == null)
+				Block b = ir.getBlockInstance();
+				if (b == null)
 					return new Tamper(TamperType.DELETION, ir.getBasicName());
-				Block b = Block.blocksList[ir.getID()];
 				if (ir.getObjectClass() != b.getClass())
 					return new Tamper(TamperType.OVERWRITE, ir.getBasicName());
 			}
@@ -52,13 +54,13 @@ public class IntegrityChecker {
 
 	/** Returns null if mod integrity is preserved. */
 	private Tamper testItemIntegrity(DragonAPIMod mod) {
-		RegistryEnum[] items = modItems.get(mod);
+		ItemEnum[] items = modItems.get(mod);
 		for (int i = 0; i < items.length; i++) {
-			RegistryEnum ir = items[i];
+			ItemEnum ir = items[i];
 			if (!ir.isDummiedOut()) {
-				if (Item.itemsList[ir.getID()+256] == null)
+				Item b = ir.getItemInstance();
+				if (b == null)
 					return new Tamper(TamperType.DELETION, ir.getBasicName());
-				Item b = Item.itemsList[ir.getID()+256];
 				if (ir.getObjectClass() != b.getClass())
 					return new Tamper(TamperType.OVERWRITE, ir.getBasicName());
 			}
