@@ -47,7 +47,7 @@ public final class WorldLocation {
 
 	public int getBlockMetadata() {
 		World world = this.getWorld();
-		return world != null ? world.getBlockId(xCoord, yCoord, zCoord) : -1;
+		return world != null ? world.getBlockMetadata(xCoord, yCoord, zCoord) : -1;
 	}
 
 	public TileEntity getTileEntity() {
