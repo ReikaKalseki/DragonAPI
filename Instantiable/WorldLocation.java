@@ -1,5 +1,15 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2014
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
@@ -178,6 +188,14 @@ public final class WorldLocation {
 
 	public boolean equals(World world, int x, int y, int z) {
 		return this.equals(world.provider.dimensionId, x, y, z);
+	}
+
+	public double getDistanceTo(WorldLocation src) {
+		return this.getDistanceTo(src.xCoord, src.yCoord, src.zCoord);
+	}
+
+	public double getDistanceTo(double x, double y, double z) {
+		return ReikaMathLibrary.py3d(x-xCoord, y-yCoord, z-zCoord);
 	}
 
 }

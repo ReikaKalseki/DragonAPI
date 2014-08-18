@@ -40,6 +40,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -834,19 +836,20 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 			for (float i = 0; i <= range; i += 0.25) {
 				Vec3 vec2 = ReikaVectorHelper.getVec2Pt(x+a, y+b, z+c, x0, y0, z0).normalize();
-				vec2.xCoord *= i;
-				vec2.yCoord *= i;
-				vec2.zCoord *= i;
+				vec2 = ReikaVectorHelper.scaleVector(vec2, i);
 				vec2.xCoord += x0;
 				vec2.yCoord += y0;
 				vec2.zCoord += z0;
 				//ReikaColorAPI.write(String.format("%f -->  %.3f,  %.3f, %.3f", i, vec2.xCoord, vec2.yCoord, vec2.zCoord));
-				Block id = world.getBlock((int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
-				if ((int)Math.floor(vec2.xCoord) == x && (int)Math.floor(vec2.yCoord) == y && (int)Math.floor(vec2.zCoord) == z) {
+				int dx = MathHelper.floor_double(vec2.xCoord);
+				int dy = MathHelper.floor_double(vec2.yCoord);
+				int dz = MathHelper.floor_double(vec2.zCoord);
+				Block id = world.getBlock(dx, dy, dz);
+				if (dx == x && dy == y && dz == z) {
 					//ReikaColorAPI.writeCoords(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord);
 					return true;
 				}
-				else if (id != Blocks.air && id != locid && (ReikaBlockHelper.isCollideable(world, (int)vec2.xCoord, (int)vec2.yCoord, (int)vec2.zCoord) && !softBlocks(id))) {
+				else if (id != locid && ReikaBlockHelper.isCollideable(world, dx, dy, dz) && !softBlocks(world, dx, dy, dz)) {
 					i = (float)(range + 1); //Hard loop break
 				}
 			}
@@ -854,7 +857,51 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return false;
 	}
 
-	/** Returns true if the entity can see a block, or if it could be moved to a position where it could see the Blocks.
+	/** a, b, c, are the "internal offset" of the vector origins */
+	public static boolean rayTraceTwoBlocks(World world, int x1, int y1, int z1, int x2, int y2, int z2, float a, float b, float c) {
+		Vec3 vec1 = Vec3.createVectorHelper(x1+a, y1+b, z1+c);
+		Vec3 vec2 = Vec3.createVectorHelper(x2+a, y2+b, z2+c);
+		Vec3 ray = ReikaVectorHelper.subtract(vec1, vec2);
+		double dx = vec2.xCoord-vec1.xCoord;
+		double dy = vec2.yCoord-vec1.yCoord;
+		double dz = vec2.zCoord-vec1.zCoord;
+		double dd = ReikaMathLibrary.py3d(dx, dy, dz);
+		for (double d = 0.25; d <= dd; d += 0.5) {
+			Vec3 vec0 = ReikaVectorHelper.scaleVector(ray, d);
+			Vec3 vec = ReikaVectorHelper.scaleVector(ray, d-0.25);
+			vec0.xCoord += vec1.xCoord;
+			vec0.yCoord += vec1.yCoord;
+			vec0.zCoord += vec1.zCoord;
+			vec.xCoord += vec1.xCoord;
+			vec.yCoord += vec1.yCoord;
+			vec.zCoord += vec1.zCoord;
+			MovingObjectPosition mov = world.rayTraceBlocks(vec, vec0);
+			if (mov != null) {
+				if (mov.typeOfHit == MovingObjectType.BLOCK) {
+					int bx = mov.blockX;
+					int by = mov.blockY;
+					int bz = mov.blockZ;
+					if (bx == x1 && by == y1 && bz == z1) {
+
+					}
+					else if (bx == x2 && by == y2 && bz == z2) {
+
+					}
+					else {
+						if (!softBlocks(world, bx, by, bz) && ReikaBlockHelper.isCollideable(world, bx, by, bz))
+							return false;
+					}
+				}
+			}
+		}
+		return true;
+	}
+
+	public static boolean rayTraceTwoBlocks(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
+		return rayTraceTwoBlocks(world, x1, y1, z1, x2, y2, z2, 0.5F, 0.5F, 0.5F);
+	}
+
+	/** Returns true if the entity can see a block, or if it could be moved to a position where it could see the block.
 	 * Args: World, Block x,y,z, Entity, Max Move Distance
 	 * DO NOT USE THIS - CPU INTENSIVE TO ALL HELL! */
 	public static boolean canSeeOrMoveToSeeBlock(World world, int x, int y, int z, Entity ent, double r) {

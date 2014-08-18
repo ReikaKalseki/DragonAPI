@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2014
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
@@ -108,7 +117,7 @@ public final class BlockMap<V> {
 		return li;
 	}
 
-	private static final class BlockKey {
+	public static final class BlockKey {
 
 		public final Block blockID;
 		public final int metadata;

@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries.World;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.BlockProperties;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModOreList;
@@ -100,7 +101,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		Block b = world.getBlock(x, y, z);
 		if (b == Blocks.air)
 			return false;
-		return (b.getCollisionBoundingBoxFromPool(world, x, y, z) != null);
+		return (b.getCollisionBoundingBoxFromPool(world, x, y, z) != null && !BlockProperties.isNonSolid(b));
 	}
 
 	/** Tests if a block is a dirt-type one, such that non-farm plants can grow on it. Args: id, metadata, material */

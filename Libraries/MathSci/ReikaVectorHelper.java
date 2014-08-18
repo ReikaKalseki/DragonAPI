@@ -29,8 +29,8 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		return subtract(p2, p1);
 	}
 
-	private static Vec3 subtract(Vec3 p2, Vec3 p1) {
-		return Vec3.createVectorHelper(p1.xCoord - p2.xCoord, p1.yCoord - p2.yCoord, p1.zCoord - p2.zCoord);
+	public static Vec3 subtract(Vec3 p1, Vec3 p2) {
+		return Vec3.createVectorHelper(p2.xCoord - p1.xCoord, p2.yCoord - p1.yCoord, p2.zCoord - p1.zCoord);
 	}
 
 	/** Breaks a vector into a size-3 array of its components. Args: Vector */
@@ -140,6 +140,14 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		double[] xyz = new double[3];
 		//TODO This code is still being written
 		return xyz;
+	}
+
+	public static Vec3 scaleVector(Vec3 vec, double len) {
+		Vec3 ret = vec.normalize();
+		ret.xCoord *= len;
+		ret.yCoord *= len;
+		ret.zCoord *= len;
+		return ret;
 	}
 
 }

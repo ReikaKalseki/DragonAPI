@@ -13,6 +13,8 @@ import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
 import Reika.DragonAPI.Instantiable.RelativePositionList;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
+import Reika.DragonAPI.Instantiable.Data.BlockBox;
+import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
 import Reika.DragonAPI.Interfaces.TreeType;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
@@ -21,7 +23,6 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -45,7 +46,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 	private static final int MAX_DEPTH = 4;
 	private static final int MAX_SIZE = 32000;
 	private static final ForgeDirection[] dirs = ForgeDirection.values();
-	private final HashMap<Integer, ArrayList<ProgressiveBreaker>> breakers = new HashMap(); //IS CURRENTLY PERSISTENT BETWEEN WORLDS!
+	private final HashMap<Integer, ArrayList<ProgressiveBreaker>> breakers = new HashMap();
 
 	public static final class ProgressiveBreaker {
 		private final BlockArray start = new BlockArray();
@@ -53,22 +54,23 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private final int maxDepth;
 		private int depth = 0;
 		private boolean isDone = false;
-		private final ArrayList<ItemStack> ids = new ArrayList();
+		private final ArrayList<BlockKey> ids = new ArrayList();
 		public boolean extraSpread = false;
 		public int tickRate = 1;
 		private int tick;
 		public int fortune = 0;
 		public boolean silkTouch = false;
 		public EntityPlayer player;
+		public BlockBox bounds = BlockBox.infinity();
 
-		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<ItemStack> ids) {
+		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<BlockKey> ids) {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
 			this.ids.addAll(ids);
 		}
 
-		private ProgressiveBreaker(World world, int x, int y, int z, int depth, ItemStack... ids) {
+		private ProgressiveBreaker(World world, int x, int y, int z, int depth, BlockKey... ids) {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
@@ -82,14 +84,14 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
 			for (int i = 0; i < 16; i++)
-				ids.add(new ItemStack(id, i));
+				ids.add(new BlockKey(id, i));
 		}
 
 		private ProgressiveBreaker(World world, int x, int y, int z, Block id, int meta, int depth) {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
-			ids.add(new ItemStack(id, meta));
+			ids.add(new BlockKey(id, meta));
 		}
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth) {
@@ -150,11 +152,13 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		}
 
 		private boolean canSpreadTo(World world, int x, int y, int z) {
+			if (!bounds.isBlockInside(x, y, z))
+				return false;
 			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
 			if (id == Blocks.air)
 				return false;
-			if (!ids.contains(Arrays.asList(id, meta)))
+			if (!ids.contains(new BlockKey(id, meta)))
 				return false;
 			return player == null || (!world.isRemote && ReikaPlayerAPI.playerCanBreakAt((WorldServer)world, x, y, z, player));
 		}
@@ -200,12 +204,12 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		Block leaf = tree.getLeafID();
 		List<Integer> logmetas = tree.getLogMetadatas();
 		List<Integer> leafmetas = tree.getLeafMetadatas();
-		ArrayList<ItemStack> ids = new ArrayList();
+		ArrayList<BlockKey> ids = new ArrayList();
 		for (int i = 0; i < logmetas.size(); i++) {
-			ids.add(new ItemStack(log, logmetas.get(i)));
+			ids.add(new BlockKey(log, logmetas.get(i)));
 		}
 		for (int i = 0; i < leafmetas.size(); i++) {
-			ids.add(new ItemStack(leaf, leafmetas.get(i)));
+			ids.add(new BlockKey(leaf, leafmetas.get(i)));
 		}
 		int depth = 30;
 		if (tree == ModWoodList.SEQUOIA)
@@ -219,7 +223,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		return b;
 	}
 
-	public void addCoordinate(World world, int x, int y, int z, List<ItemStack> ids) {
+	public void addCoordinate(World world, int x, int y, int z, List<BlockKey> ids) {
 		ArrayList<ProgressiveBreaker> b = this.getOrCreateList(world);
 		b.add(new ProgressiveBreaker(world, x, y, z, Integer.MAX_VALUE, ids));
 	}
