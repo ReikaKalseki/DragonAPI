@@ -122,6 +122,10 @@ public final class BlockMap<V> {
 		public final Block blockID;
 		public final int metadata;
 
+		public BlockKey(Block b) {
+			this(b, -1);
+		}
+
 		public BlockKey(Block b, int meta) {
 			metadata = meta;
 			blockID = b;
@@ -161,6 +165,10 @@ public final class BlockMap<V> {
 
 		public ItemStack asItemStack() {
 			return new ItemStack(blockID, 1, metadata);
+		}
+
+		public boolean match(Block b, int meta) {
+			return b == this.blockID && (!this.hasMetadata() || meta == this.metadata);
 		}
 
 	}

@@ -58,7 +58,7 @@ public class TickRegistry {
 	public void clientTick(ClientTickEvent evt) {
 		for (TickHandler h : clientTickers) {
 			if (evt.phase == h.getPhase()) {
-				h.tick(evt);
+				h.tick();
 			}
 		}
 	}
@@ -76,7 +76,7 @@ public class TickRegistry {
 	public void serverTick(ServerTickEvent evt) {
 		for (TickHandler h : serverTickers) {
 			if (evt.phase == h.getPhase()) {
-				h.tick(evt);
+				h.tick();
 			}
 		}
 	}

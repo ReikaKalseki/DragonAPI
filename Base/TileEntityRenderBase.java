@@ -13,6 +13,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -53,5 +54,8 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 	protected final FontRenderer getFontRenderer() {
 		return this.func_147498_b();
 	}
+
+	@Override
+	public abstract void renderTileEntityAt(TileEntity tile, double par2, double par4, double par6, float par8);
 
 }

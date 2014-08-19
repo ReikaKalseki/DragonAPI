@@ -22,7 +22,6 @@ import net.minecraftforge.oredict.OreDictionary;
 
 public class MultiBlockBlueprint {
 
-	/** Do not overwrite a block if this is the ID at this position */
 	public final int xSize;
 	public final int ySize;
 	public final int zSize;

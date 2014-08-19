@@ -169,6 +169,18 @@ public class StructuredBlockArray extends BlockArray {
 		return maxZ;
 	}
 
+	public int getMidX() {
+		return this.getMinX()+this.getSizeX()/2;
+	}
+
+	public int getMidY() {
+		return this.getMinY()+this.getSizeY()/2;
+	}
+
+	public int getMidZ() {
+		return this.getMinZ()+this.getSizeZ()/2;
+	}
+
 	@Override
 	public int getSizeX() {
 		return maxX-minX+1;

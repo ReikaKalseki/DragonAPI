@@ -201,7 +201,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static boolean isBlock(ItemStack is) {
-		return Block.getBlockFromItem(is.getItem()) != null;
+		Block b = Block.getBlockFromItem(is.getItem());
+		return b != null && b != Blocks.air;
 	}
 
 	public static boolean listContainsItemStack(List<ItemStack> li, ItemStack is) {
