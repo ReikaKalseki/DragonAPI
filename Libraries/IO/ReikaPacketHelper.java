@@ -39,6 +39,7 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
@@ -1003,6 +1004,18 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		protected final int handlerID() {
 			return handlers.inverse().get(handler);
 		}
+	}
+
+	public static void registerVanillaPacketType(DragonAPIMod mod, int id, Class c, Side s, EnumConnectionState state) {
+		switch(s) {
+		case CLIENT:
+			state.func_150753_a().put(Integer.valueOf(id), c);
+			break;
+		case SERVER:
+			state.func_150755_b().put(Integer.valueOf(id), c);
+			break;
+		}
+		EnumConnectionState.field_150761_f.put(c, state);
 	}
 
 }

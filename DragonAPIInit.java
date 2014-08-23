@@ -31,6 +31,7 @@ import Reika.DragonAPI.Command.LogControlCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.IO.CustomResourceManager;
+import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
@@ -88,6 +89,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.EnumConnectionState;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
@@ -165,7 +167,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		ReikaPacketHelper.registerPacketHandler(instance, packetChannel, new APIPacketHandler());
 
-		//Packet.addIdClassMapping(DragonOptions.SYNCPACKET.getValue(), true, true, SyncPacket.class);
+		ReikaPacketHelper.registerVanillaPacketType(this, DragonOptions.SYNCPACKET.getValue(), SyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
 		//ReikaPacketWrapper.instance.registerPacket(SyncPacket.class);
 	}
 

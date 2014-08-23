@@ -79,6 +79,8 @@ public class DragonAPICore {
 	static {
 		if (isReikasComputer())
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading on Reika's computer; Dev features enabled.");
+
+		//ReikaMathCacher.initalize();
 	}
 
 	protected static Side getSide() {

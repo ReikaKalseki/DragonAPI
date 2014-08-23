@@ -11,9 +11,9 @@ package Reika.DragonAPI.Auxiliary;
 
 import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
-import Reika.DragonAPI.Instantiable.RelativePositionList;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.BlockBox;
+import Reika.DragonAPI.Instantiable.Data.RelativePositionList;
 import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
 import Reika.DragonAPI.Interfaces.TreeType;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;

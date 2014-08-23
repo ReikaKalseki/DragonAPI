@@ -60,6 +60,9 @@ public final class ReikaSpriteSheets {
 				v5.draw();
 			boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
 			GL11.glEnable(GL11.GL_BLEND);
+			int dst = GL11.glGetInteger(GL11.GL_BLEND_DST);
+			int src = GL11.glGetInteger(GL11.GL_BLEND_SRC);
+			BlendMode.DEFAULT.apply();
 			double r = 45;
 			double r2 = -30;
 			double s = 1.6;
@@ -82,6 +85,7 @@ public final class ReikaSpriteSheets {
 			GL11.glScaled(1/s, 1/s, 1/s);
 			GL11.glRotated(-r2, 1, 0, 0);
 			GL11.glRotated(-r, 0, 1, 0);
+			GL11.glBlendFunc(src, dst);
 			if (!blend)
 				GL11.glDisable(GL11.GL_BLEND);
 		}

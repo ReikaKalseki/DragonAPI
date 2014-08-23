@@ -16,10 +16,12 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -46,6 +48,10 @@ public final class WorldLocation {
 
 	public WorldLocation(TileEntity te) {
 		this(te.worldObj, te.xCoord, te.yCoord, te.zCoord);
+	}
+
+	public WorldLocation(Entity e) {
+		this(e.worldObj, MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ));
 	}
 
 	public Block getBlock() {

@@ -14,7 +14,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
-import Reika.DragonAPI.Instantiable.RelativePositionList;
+import Reika.DragonAPI.Instantiable.Data.RelativePositionList;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;

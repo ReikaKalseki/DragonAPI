@@ -51,19 +51,21 @@ public class PlayerModelRenderer {
 	private void addCustomModel(EntityPlayer ep, float tick) {
 		if (ep != null) {
 			ModifiedPlayerModel model = models.get(ep.getCommandSenderName());
-			GL11.glPushMatrix();
-			//render.setRenderPassModel(modelReika);
-			model.bindTexture();
-			GL11.glTranslated(0, 1.6, 0);
-			GL11.glScaled(1, -1, 1);
-			if (ep.isSneaking()) {
-				GL11.glRotated(22.5, 1, 0, 0);
-				GL11.glTranslated(-0.02, 0.1, -0.05);
+			if (model != null) {
+				GL11.glPushMatrix();
+				//render.setRenderPassModel(modelReika);
+				model.bindTexture();
+				GL11.glTranslated(0, 1.6, 0);
+				GL11.glScaled(1, -1, 1);
+				if (ep.isSneaking()) {
+					GL11.glRotated(22.5, 1, 0, 0);
+					GL11.glTranslated(-0.02, 0.1, -0.05);
+				}
+				GL11.glFrontFace(GL11.GL_CW);
+				model.renderBodyParts(ep, tick);
+				GL11.glFrontFace(GL11.GL_CCW);
+				GL11.glPopMatrix();
 			}
-			GL11.glFrontFace(GL11.GL_CW);
-			model.renderBodyParts(ep, tick);
-			GL11.glFrontFace(GL11.GL_CCW);
-			GL11.glPopMatrix();
 		}
 	}
 

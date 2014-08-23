@@ -15,7 +15,7 @@ public enum DragonOptions implements ConfigList {
 
 	LOGLOADING("Console Loading Info", true),
 	DEBUGMODE("Debug Mode", false),
-	//SYNCPACKET("Sync Packet ID", 182),
+	SYNCPACKET("Sync Packet ID", 182),
 	NORENDERS("Disable Renders For Debug", false);
 
 	private String label;

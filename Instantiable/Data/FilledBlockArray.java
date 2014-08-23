@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2014
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
 import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
@@ -15,6 +24,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	public FilledBlockArray(World world) {
 		super(world);
+	}
+
+	public void loadBlock(int x, int y, int z) {
+		this.setBlock(x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 	}
 
 	public void setBlock(int x, int y, int z, Block id) {
@@ -61,10 +74,29 @@ public class FilledBlockArray extends StructuredBlockArray {
 			BlockKey bk = this.getBlockKey(x, y, z);
 			Block b = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
-			if (!bk.match(b, meta))
+			if (!bk.match(b, meta)) {
 				return false;
+			}
 		}
 		return true;
+	}
+
+	@Override
+	public void remove(int x, int y, int z) {
+		super.remove(x, y, z);
+		data.remove(Arrays.asList(x, y, z));
+	}
+
+	public void populateBlockData() {
+		for (int i = 0; i < this.getSize(); i++) {
+			int[] xyz = this.getNthBlock(i);
+			int x = xyz[0];
+			int y = xyz[1];
+			int z = xyz[2];
+			Block b = world.getBlock(x, y, z);
+			int meta = world.getBlockMetadata(x, y, z);
+			this.setBlock(x, y, z, b, meta);
+		}
 	}
 
 }

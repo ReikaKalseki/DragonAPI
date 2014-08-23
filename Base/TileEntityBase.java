@@ -168,10 +168,9 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			List<EntityPlayerMP> li = worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, box);
 			for (int i = 0; i < li.size(); i++)  {
 				EntityPlayerMP entityplayermp = li.get(i);
-				//entityplayermp.playerNetServerHandler.sendPacket(p);
+				entityplayermp.playerNetServerHandler.sendPacket(p);
 			}
 		}
-		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord); //TEMPORARY FIX, IS NOT GOOD ON PERFORMANCE, BUT FORCES A SYNC
 	}
 
 	public void syncAllData(boolean fullNBT) {
@@ -180,9 +179,11 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		}
 		else {
 			NBTTagCompound var1 = new NBTTagCompound();
-			this.writeToNBT(var1);
+			if (fullNBT)
+				this.writeToNBT(var1);
 			this.writeSyncTag(var1);
-			var1.setBoolean("fullData", true);
+			if (fullNBT)
+				var1.setBoolean("fullData", true);
 			S35PacketUpdateTileEntity p = new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 2, var1);
 			this.sendPacketToAllAround(p, this.getUpdatePacketRadius());
 		}
@@ -218,8 +219,9 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		}
 		else {
 			this.readSyncTag(packet.field_148860_e);
-			if (packet.field_148860_e.getBoolean("fullData"))
+			if (packet.field_148860_e.getBoolean("fullData")) {
 				this.readFromNBT(packet.field_148860_e);
+			}
 		}
 	}
 

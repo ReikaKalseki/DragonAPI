@@ -615,7 +615,9 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		EntityEggInfo info = (EntityEggInfo)EntityList.entityEggs.get(entityID);
 		removeEntityMapping(mobClass, name, entityID);
 		EntityList.addMapping(mobClass, name, entityID);
-		EntityList.entityEggs.put(entityID, info);
+		if (info != null) {
+			EntityList.entityEggs.put(entityID, info);
+		}
 	}
 
 	private static void removeEntityMapping(Class mobClass, String name, int entityID) {

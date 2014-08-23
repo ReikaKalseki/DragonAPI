@@ -73,7 +73,7 @@ public class RayTracer {
 		double dy = vec2.yCoord-vec1.yCoord;
 		double dz = vec2.zCoord-vec1.zCoord;
 		double dd = ReikaMathLibrary.py3d(dx, dy, dz);
-		for (double d = 0.25; d <= dd; d += 0.5) {
+		for (double d = 0.25; d <= dd; d += 0.25) {
 			Vec3 vec0 = ReikaVectorHelper.scaleVector(ray, d);
 			Vec3 vec = ReikaVectorHelper.scaleVector(ray, d-0.25);
 			vec0.xCoord += vec1.xCoord;
@@ -89,8 +89,10 @@ public class RayTracer {
 					int by = mov.blockY;
 					int bz = mov.blockZ;
 					if (this.isNonTerminal(bx, by, bz)) {
-						if (this.isDisallowedBlock(world, bx, by, bz))
+						if (this.isDisallowedBlock(world, bx, by, bz)) {
+							//ReikaJavaLibrary.pConsole(mov+":"+world.getBlock(bx, by, bz), Side.SERVER);
 							return false;
+						}
 					}
 				}
 			}

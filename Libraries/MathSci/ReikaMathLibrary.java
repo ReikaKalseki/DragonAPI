@@ -23,7 +23,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static double py3d(double dx, double dy, double dz) {
 		double val;
 		val = dx*dx+dy*dy+dz*dz;
-		return MathHelper.sqrt_double(val);
+		return Math.sqrt(val);
 	}
 
 	/** Returns true if the input is within a percentage of its size of another value.
@@ -86,7 +86,6 @@ public final class ReikaMathLibrary extends DragonAPICore {
 
 	/** Returns the value of a double raised to an decimal power. Args: Base, power */
 	public static double doubpow(double base, double pow) {
-		double val = 1.0D;
 		return Math.pow(base, pow);
 	}
 
@@ -108,12 +107,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	}
 
 	public static int logbase2(long inp) {
-		int log = -1;
-		while (inp > 0) {
-			inp = inp >> 1;
-			log++;
-		}
-		return log;
+		return inp > 0 ? 63-Long.numberOfLeadingZeros(inp) : 0;
 	}
 
 	public static double logbase(long inp, int base) {
