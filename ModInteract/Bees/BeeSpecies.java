@@ -21,6 +21,9 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
+import com.mojang.authlib.GameProfile;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import forestry.api.apiculture.EnumBeeChromosome;
@@ -76,6 +79,11 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		beeRoot.registerTemplate(template);
 		AlleleManager.alleleRegistry.getClassification("family.apidae").addMemberGroup(branch);
 		isRegistered = true;
+	}
+
+	@Override
+	public final String getUnlocalizedName() {
+		return uid;
 	}
 
 	@Override
@@ -639,7 +647,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	@Override
-	public ItemStack[] getResearchBounty(World paramWorld, String paramString, IIndividual paramIIndividual, int paramInt) {
+	public ItemStack[] getResearchBounty(World paramWorld, GameProfile f, IIndividual paramIIndividual, int paramInt) {
 		return new ItemStack[0];
 	}
 

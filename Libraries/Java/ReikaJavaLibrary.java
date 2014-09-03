@@ -187,7 +187,17 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		try {
 			Class.forName(c.getCanonicalName(), true, ReikaJavaLibrary.class.getClassLoader());
 		}
-		catch (ClassNotFoundException e) {}
+		catch (ClassNotFoundException e) {
+			pConsole("DRAGONAPI: Failed to initalize class "+c.getCanonicalName()+"! Class not found!");
+		}/*
+		catch (Exception e) {
+			pConsole("DRAGONAPI: Failed to initalize class "+c.getCanonicalName()+"!");
+			String s = e.getMessage();
+			if (s.endsWith("for invalid side SERVER")) {
+				pConsole("Attemped to load a clientside class on the server! This is a significant programming error!");
+			}
+			e.printStackTrace();
+		}*/
 	}
 
 	public static boolean listContainsArray(List<int[]> li, int[] arr) {

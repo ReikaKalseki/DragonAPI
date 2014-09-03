@@ -56,7 +56,9 @@ public class ForestryHandler extends ModHandlerBase {
 
 				Class blocks = this.getMod().getBlockClass();
 				Field sapling = blocks.getField("saplingGE");
-				Block s = (Block)sapling.get(null);
+				entry = sapling.get(null);
+				get = forest.getMethod("block");
+				Block s = (Block)get.invoke(null);
 				idsapling = s;
 			}
 			catch (NoSuchFieldException e) {

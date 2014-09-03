@@ -9,12 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -22,8 +19,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.potion.Potion;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
@@ -31,12 +26,10 @@ import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
-import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.KeyWatcher.KeyTicker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerHandler;
-import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.SuggestedModsTracker;
@@ -48,7 +41,6 @@ import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
-import Reika.DragonAPI.IO.CustomResourceManager;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
@@ -56,8 +48,6 @@ import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.AppEngHandler;
@@ -137,22 +127,10 @@ public class DragonAPIInit extends DragonAPIMod {
 		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());
 		//MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
 
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			Minecraft mc = Minecraft.getMinecraft();
-			mc.mcResourceManager = new CustomResourceManager((SimpleReloadableResourceManager)mc.mcResourceManager);
-		}
+		proxy.registerSidedHandlers();
 
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
-
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-			MinecraftForge.EVENT_BUS.register(DebugOverlay.instance);
-
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			//MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
-			PlayerModelRenderer.instance.register();
-			//MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
-		}
 
 		this.increasePotionCount();
 		//this.increaseBiomeCount(); world save stores biome as bytes, so 255 is cap
@@ -183,7 +161,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		else
 			logger.logError("Could not increase biome ID limit from "+count+" to "+newsize+", but no exception was thrown!");
 	}*/
-	/*
+
 	private void increasePotionCount() {
 		int count = Potion.potionTypes.length;
 		int newsize = 256;
@@ -194,44 +172,6 @@ public class DragonAPIInit extends DragonAPIMod {
 			logger.log("Overriding the vanilla PotionTypes array to allow for potion IDs up to "+(newsize-1)+" (up from "+(count-1)+").");
 		else
 			logger.logError("Could not increase potion ID limit from "+count+" to "+newsize+", but no exception was thrown!");
-	}
-	 */
-	private void increaseBiomeCount() {
-		int count = BiomeGenBase.biomeList.length;
-		int newsize = 1024;
-		try {
-			Field f = ReikaObfuscationHelper.getField("biomeList");
-			BiomeGenBase[] newBiomes = new BiomeGenBase[newsize];
-			System.arraycopy(BiomeGenBase.biomeList, 0, newBiomes, 0, count);
-			ReikaReflectionHelper.setFinalField(f, null, newBiomes);
-			if (BiomeGenBase.biomeList.length == newsize)
-				logger.log("Overriding the vanilla BiomeList array to allow for biome IDs up to "+(newsize-1)+" (up from "+(count-1)+").");
-			else
-				logger.logError("Could not increase biome ID limit from "+count+" to "+newsize+", but no exception was thrown!");
-		}
-		catch (Exception e) {
-			logger.logError("Could not increase biome ID limit from "+count+" to "+newsize+"!");
-			e.printStackTrace();
-		}
-	}
-
-	private void increasePotionCount() {
-		int count = Potion.potionTypes.length;
-		int newsize = 256;
-		try {
-			Field f = ReikaObfuscationHelper.getField("potionTypes");
-			Potion[] newPotions = new Potion[newsize];
-			System.arraycopy(Potion.potionTypes, 0, newPotions, 0, count);
-			ReikaReflectionHelper.setFinalField(f, null, newPotions);
-			if (Potion.potionTypes.length == newsize)
-				logger.log("Overriding the vanilla PotionTypes array to allow for potion IDs up to "+(newsize-1)+" (up from "+(count-1)+").");
-			else
-				logger.logError("Could not increase potion ID limit from "+count+" to "+newsize+", but no exception was thrown!");
-		}
-		catch (Exception e) {
-			logger.logError("Could not increase potion ID limit from "+count+" to "+newsize+"!");
-			e.printStackTrace();
-		}
 	}
 
 	@Override
@@ -404,6 +344,10 @@ public class DragonAPIInit extends DragonAPIMod {
 			}
 			catch (Exception e) {
 				logger.logError("Could not load handler for "+mod.name());
+				e.printStackTrace();
+			}
+			catch (LinkageError e) {
+				logger.logError("Class version mismatch error! Could not load handler for "+mod.name());
 				e.printStackTrace();
 			}
 		}

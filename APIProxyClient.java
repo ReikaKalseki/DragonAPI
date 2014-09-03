@@ -9,7 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.Auxiliary.DebugOverlay;
+import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
+import Reika.DragonAPI.IO.CustomResourceManager;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class APIProxyClient extends APIProxy {
@@ -20,8 +26,16 @@ public class APIProxyClient extends APIProxy {
 	}
 
 	@Override
-	public void registerRenderers() {
+	public void registerSidedHandlers() {
 
+		Minecraft mc = Minecraft.getMinecraft();
+		mc.mcResourceManager = new CustomResourceManager((SimpleReloadableResourceManager)mc.mcResourceManager);
+
+		MinecraftForge.EVENT_BUS.register(DebugOverlay.instance);
+
+		//MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
+		PlayerModelRenderer.instance.register();
+		//MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
 	}
 
 	@Override
