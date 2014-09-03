@@ -9,9 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.MathSci;
 
-import Reika.DragonAPI.DragonAPICore;
-
 import net.minecraft.util.MathHelper;
+import Reika.DragonAPI.DragonAPICore;
 
 
 public final class ReikaEngLibrary extends DragonAPICore {

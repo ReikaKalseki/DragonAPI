@@ -9,17 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Interfaces.SemiTransparent;
-import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -29,21 +21,34 @@ import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
+import Reika.DragonAPI.Interfaces.SemiTransparent;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class BlockArray {
 
-	protected List<int[]> blocks = new ArrayList<int[]>();
+	protected final List<List<Integer>> blocks = new ArrayList();
 	protected Material liquidMat;
 	protected boolean overflow = false;
 	protected World refWorld;
 
-	private int minX;
-	private int maxX;
-	private int minY;
-	private int maxY;
-	private int minZ;
-	private int maxZ;
+	private int minX = Integer.MAX_VALUE;
+	private int maxX = Integer.MIN_VALUE;
+	private int minY = Integer.MAX_VALUE;
+	private int maxY = Integer.MIN_VALUE;
+	private int minZ = Integer.MAX_VALUE;
+	private int maxZ = Integer.MIN_VALUE;
 
 	public int maxDepth = Integer.MAX_VALUE;
 
@@ -63,16 +68,32 @@ public class BlockArray {
 			return false;
 		if (this.hasBlock(x, y, z))
 			return false;
-		int[] e = {x, y, z};
-		blocks.add(e);
+		blocks.add(Arrays.asList(x, y, z));
 		this.setLimits(x, y, z);
 		//ReikaJavaLibrary.pConsole("Adding "+x+", "+y+", "+z);
 		return true;
 	}
 
+	public boolean addBlockCoordinateIf(World world, int x, int y, int z, Block b, int meta) {
+		return this.addBlockCoordinateIf(world, x, y, z, new BlockKey(b, meta));
+	}
+
+	public boolean addBlockCoordinateIf(World world, int x, int y, int z, BlockKey bk) {
+		if (bk.match(world, x, y, z)) {
+			return this.addBlockCoordinate(x, y, z);
+		}
+		return false;
+	}
+
+	public boolean addBlockCoordinateIf(World world, int x, int y, int z, Collection<BlockKey> bk) {
+		if (bk.contains(BlockKey.getAt(world, x, y, z))) {
+			return this.addBlockCoordinate(x, y, z);
+		}
+		return false;
+	}
+
 	public void remove(int x, int y, int z) {
-		int[] e = {x, y, z};
-		blocks.remove(e);
+		blocks.remove(Arrays.asList(x, y, z));
 	}
 
 	public int getMinX() {
@@ -100,15 +121,15 @@ public class BlockArray {
 	}
 
 	public int getSizeX() {
-		return maxX-minX;
+		return maxX-minX+1;
 	}
 
 	public int getSizeY() {
-		return maxY-minY;
+		return maxY-minY+1;
 	}
 
 	public int getSizeZ() {
-		return maxZ-minZ;
+		return maxZ-minZ+1;
 	}
 
 	public int getVolume() {
@@ -143,9 +164,10 @@ public class BlockArray {
 	}
 
 	private int[] getReturnArray(int index) {
-		int[] arr = blocks.get(index);
+		List<Integer> arr = blocks.get(index);
 		int[] ret = new int[3];
-		System.arraycopy(arr, 0, ret, 0, 3);
+		for (int i = 0; i < 3; i++)
+			ret[i] = arr.get(i);
 		return ret;
 	}
 
@@ -173,37 +195,33 @@ public class BlockArray {
 	}
 
 	public boolean hasBlock(int x, int y, int z) {
-		for (int i = 0; i < blocks.size(); i++) {
-			int[] e = blocks.get(i);
-			if (e[0] == x && e[1] == y && e[2] == z)
-				return true;
-		}
-		return false;
+		return blocks.contains(Arrays.asList(x, y, z));
 	}
 
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow */
 	public void recursiveAdd(World world, int x, int y, int z, Block id) {
-		this.recursiveAdd(world, x, y, z, id, 0);
+		this.recursiveAdd(world, x, y, z, id, 0, new HashMap());
 	}
 
-	private void recursiveAdd(World world, int x, int y, int z, Block id, int depth) {
+	private void recursiveAdd(World world, int x, int y, int z, Block id, int depth, HashMap<List<Integer>, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
 			return;
 		if (world.getBlock(x, y, z) != id)
 			return;
-		if (this.hasBlock(x, y, z))
+		if (this.hasBlock(x, y, z) && depth >= map.get(Arrays.asList(x, y, z)))
 			return;
 		this.addBlockCoordinate(x, y, z);
+		map.put(Arrays.asList(x, y, z), depth);
 		try {
-			this.recursiveAdd(world, x+1, y, z, id, depth+1);
-			this.recursiveAdd(world, x-1, y, z, id, depth+1);
-			this.recursiveAdd(world, x, y+1, z, id, depth+1);
-			this.recursiveAdd(world, x, y-1, z, id, depth+1);
-			this.recursiveAdd(world, x, y, z+1, id, depth+1);
-			this.recursiveAdd(world, x, y, z-1, id, depth+1);
+			this.recursiveAdd(world, x+1, y, z, id, depth+1, map);
+			this.recursiveAdd(world, x-1, y, z, id, depth+1, map);
+			this.recursiveAdd(world, x, y+1, z, id, depth+1, map);
+			this.recursiveAdd(world, x, y-1, z, id, depth+1, map);
+			this.recursiveAdd(world, x, y, z+1, id, depth+1, map);
+			this.recursiveAdd(world, x, y, z-1, id, depth+1, map);
 		}
 		catch (StackOverflowError e) {
 			this.throwOverflow(depth);
@@ -214,10 +232,10 @@ public class BlockArray {
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow, metadata to follow */
 	public void recursiveAddWithMetadata(World world, int x, int y, int z, Block id, int meta) {
-		this.recursiveAddWithMetadata(world, x, y, z, id, meta, 0);
+		this.recursiveAddWithMetadata(world, x, y, z, id, meta, 0, new HashMap());
 	}
 
-	private void recursiveAddWithMetadata(World world, int x, int y, int z, Block id, int meta, int depth) {
+	private void recursiveAddWithMetadata(World world, int x, int y, int z, Block id, int meta, int depth, HashMap<List<Integer>, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -226,16 +244,17 @@ public class BlockArray {
 			return;
 		if (world.getBlockMetadata(x, y, z) != meta)
 			return;
-		if (this.hasBlock(x, y, z))
+		if (this.hasBlock(x, y, z) && depth >= map.get(Arrays.asList(x, y, z)))
 			return;
 		this.addBlockCoordinate(x, y, z);
+		map.put(Arrays.asList(x, y, z), depth);
 		try {
-			this.recursiveAddWithMetadata(world, x+1, y, z, id, meta, depth+1);
-			this.recursiveAddWithMetadata(world, x-1, y, z, id, meta, depth+1);
-			this.recursiveAddWithMetadata(world, x, y+1, z, id, meta, depth+1);
-			this.recursiveAddWithMetadata(world, x, y-1, z, id, meta, depth+1);
-			this.recursiveAddWithMetadata(world, x, y, z+1, id, meta, depth+1);
-			this.recursiveAddWithMetadata(world, x, y, z-1, id, meta, depth+1);
+			this.recursiveAddWithMetadata(world, x+1, y, z, id, meta, depth+1, map);
+			this.recursiveAddWithMetadata(world, x-1, y, z, id, meta, depth+1, map);
+			this.recursiveAddWithMetadata(world, x, y+1, z, id, meta, depth+1, map);
+			this.recursiveAddWithMetadata(world, x, y-1, z, id, meta, depth+1, map);
+			this.recursiveAddWithMetadata(world, x, y, z+1, id, meta, depth+1, map);
+			this.recursiveAddWithMetadata(world, x, y, z-1, id, meta, depth+1, map);
 		}
 		catch (StackOverflowError e) {
 			this.throwOverflow(depth);
@@ -483,10 +502,10 @@ public class BlockArray {
 	}
 
 	public void sortBlocksByHeight() { //O(n^2)
-		List<int[]> newList = new ArrayList<int[]>();
+		List<List<Integer>> newList = new ArrayList();
 		for (int i = 0; i < blocks.size(); i++) {
-			int[] a = blocks.get(i);
-			int y = a[1];
+			List<Integer> a = blocks.get(i);
+			int y = a.get(1);
 			//ReikaJavaLibrary.pConsole("List Size: "+newList.size());
 			if (newList.size() == 0) {
 				newList.add(a);
@@ -494,7 +513,7 @@ public class BlockArray {
 			}
 			else {
 				for (int k = 0; k < newList.size(); k++) {
-					int y2 = newList.get(k)[1];
+					int y2 = newList.get(k).get(1);
 					if (y < y2) {
 						newList.add(k, a);
 						//ReikaJavaLibrary.pConsole("Adding ["+a[0]+","+a[1]+","+a[2]+"] at position "+k+" (y="+y+", y2="+y2);
@@ -508,15 +527,17 @@ public class BlockArray {
 				}
 			}
 		}
-		blocks = newList;
+		blocks.clear();
+		blocks.addAll(newList);
 	}
 
 	public void reverseBlockOrder() {
-		List<int[]> newList = new ArrayList<int[]>();
+		List<List<Integer>> newList = new ArrayList();
 		for (int i = 0; i < blocks.size(); i++) {
 			newList.add(blocks.get(blocks.size()-1-i));
 		}
-		blocks = newList;
+		blocks.clear();
+		blocks.addAll(newList);
 	}
 
 	@Override
@@ -525,7 +546,7 @@ public class BlockArray {
 			return "Empty[]";
 		StringBuilder list = new StringBuilder();
 		for (int i = 0; i < this.getSize(); i++) {
-			int[] xyz = blocks.get(i);
+			int[] xyz = this.getReturnArray(i);
 			if (refWorld != null) {
 				Block id = refWorld.getBlock(xyz[0], xyz[1], xyz[2]);
 				int meta = refWorld.getBlockMetadata(xyz[0], xyz[1], xyz[2]);
@@ -658,12 +679,17 @@ public class BlockArray {
 		return refWorld != null;
 	}
 
+	public final BlockArray offset(ForgeDirection dir, int dist) {
+		return this.offset(dir.offsetX*dist, dir.offsetY*dist, dir.offsetZ*dist);
+	}
+
 	public BlockArray offset(int x, int y, int z) {
 		for (int i = 0; i < blocks.size(); i++) {
-			int[] xyz = blocks.get(i);
-			xyz[0] += x;
-			xyz[1] += y;
-			xyz[2] += z;
+			List<Integer> xyz = blocks.get(i);
+			int dx = xyz.get(0)+x;
+			int dy = xyz.get(1)+y;
+			int dz = xyz.get(2)+z;
+			blocks.set(i, xyz);
 		}
 		return this;
 	}
@@ -672,7 +698,7 @@ public class BlockArray {
 		boolean canSink = true;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
-				int[] xyz = blocks.get(i);
+				int[] xyz = this.getReturnArray(i);
 				int x = xyz[0];
 				int y = xyz[1];
 				int z = xyz[2];
@@ -689,7 +715,7 @@ public class BlockArray {
 		boolean canSink = true;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
-				int[] xyz = blocks.get(i);
+				int[] xyz = this.getReturnArray(i);
 				int x = xyz[0];
 				int y = xyz[1];
 				int z = xyz[2];
@@ -707,7 +733,7 @@ public class BlockArray {
 		boolean canSink = true;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
-				int[] xyz = blocks.get(i);
+				int[] xyz = this.getReturnArray(i);
 				int x = xyz[0];
 				int y = xyz[1];
 				int z = xyz[2];
@@ -729,7 +755,7 @@ public class BlockArray {
 		ArrayList<ItemStack> nbt = new ArrayList();
 		HashMap<ItemStack, Integer> map = new HashMap();
 		for (int i = 0; i < blocks.size(); i++) {
-			int[] xyz = blocks.get(i);
+			int[] xyz = this.getReturnArray(i);
 			int x = xyz[0];
 			int y = xyz[1];
 			int z = xyz[2];
@@ -778,7 +804,8 @@ public class BlockArray {
 		copy.refWorld = refWorld;
 		copy.liquidMat = liquidMat;
 		copy.overflow = overflow;
-		copy.blocks = ReikaJavaLibrary.copyList(blocks);
+		copy.blocks.clear();
+		copy.blocks.addAll(blocks);
 		return copy;
 	}
 
@@ -842,5 +869,44 @@ public class BlockArray {
 
 	public void clearArea() {
 		this.setTo(Blocks.air);
+	}
+
+	public void writeToNBT(String label, NBTTagCompound NBT) {
+		NBTTagList li = new NBTTagList();
+		for (int i = 0; i < this.getSize(); i++) {
+			NBTTagCompound tag = new NBTTagCompound();
+			int[] xyz = this.getNthBlock(i);
+			tag.setInteger("x", xyz[0]);
+			tag.setInteger("y", xyz[1]);
+			tag.setInteger("z", xyz[2]);
+			li.appendTag(tag);
+		}
+		NBT.setTag(label, li);
+	}
+
+	public void readFromNBT(String label, NBTTagCompound NBT) {
+		this.clear();
+		NBTTagList tag = NBT.getTagList(label, NBT.getId());
+		if (tag == null || tag.tagCount() == 0)
+			return;
+		for (int i = 0; i < tag.tagCount(); i++) {
+			NBTTagCompound coord = tag.getCompoundTagAt(i);
+			int x = coord.getInteger("x");
+			int y = coord.getInteger("y");
+			int z = coord.getInteger("z");
+			this.addBlockCoordinate(x, y, z);
+		}
+	}
+
+	public void shaveToCube() {
+		//TODO
+	}
+
+	public AxisAlignedBB asAABB() {
+		return AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX+1, maxY+1, maxZ+1);
+	}
+
+	public BlockBox asBlockBox() {
+		return new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 }

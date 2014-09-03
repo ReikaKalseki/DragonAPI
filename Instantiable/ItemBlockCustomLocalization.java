@@ -9,12 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import Reika.DragonAPI.Interfaces.BlockEnum;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+
+import org.apache.logging.log4j.Level;
+
+import Reika.DragonAPI.Interfaces.BlockEnum;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class ItemBlockCustomLocalization extends ItemBlock {
 
@@ -27,7 +29,8 @@ public final class ItemBlockCustomLocalization extends ItemBlock {
 	@Override
 	public String getItemStackDisplayName(ItemStack is) {
 		if (object == null) {
-			ReikaJavaLibrary.pConsole(this+", block "+field_150939_a+" has a null block enum!");
+			ReikaJavaLibrary.pConsole(Level.ERROR, this+", block "+field_150939_a+" has a null block enum!");
+			//ReikaJavaLibrary.dumpStack();
 			return is.getItem().getUnlocalizedName(is);
 		}
 		return object.hasMultiValuedName() ? object.getMultiValuedName(is.getItemDamage()) : object.getBasicName();

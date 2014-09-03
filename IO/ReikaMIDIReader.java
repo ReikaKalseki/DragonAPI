@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.IO;
 
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -23,6 +21,8 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
+
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class ReikaMIDIReader {
 

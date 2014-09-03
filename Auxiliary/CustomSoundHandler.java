@@ -9,12 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.IO.CustomResourceManager;
-
 import java.util.HashMap;
 
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.util.ResourceLocation;
+import Reika.DragonAPI.IO.CustomResourceManager;
 
 @Deprecated
 public class CustomSoundHandler {

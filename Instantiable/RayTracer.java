@@ -9,12 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
@@ -22,6 +16,11 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class RayTracer {
 

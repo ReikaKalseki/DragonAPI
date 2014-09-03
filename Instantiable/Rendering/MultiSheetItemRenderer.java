@@ -9,12 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Auxiliary.ReikaSpriteSheets;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Interfaces.MultisheetItem;
-
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 
 public class MultiSheetItemRenderer extends ItemSpriteSheetRenderer {
 

@@ -9,14 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Interfaces.PlayerTracker;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Interfaces.PlayerTracker;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class PlayerFirstTimeTracker {
 

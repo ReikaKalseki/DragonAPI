@@ -9,14 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.GUI;
 
-import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 
 import org.lwjgl.opengl.GL11;
+
+import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public final class ImagedGuiButton extends GuiButton {
 

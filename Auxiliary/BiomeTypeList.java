@@ -9,10 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import net.minecraft.world.biome.BiomeGenBase;
 import Reika.CaveControl.CaveControl;
 import Reika.DragonAPI.ModList;
-
-import net.minecraft.world.biome.BiomeGenBase;
 
 public enum BiomeTypeList {
 
@@ -27,8 +26,8 @@ public enum BiomeTypeList {
 	ARCTIC(BiomeGenBase.icePlains, BiomeGenBase.iceMountains),
 	MUSHROOM(BiomeGenBase.mushroomIsland, BiomeGenBase.mushroomIslandShore),
 	JUNGLE(BiomeGenBase.jungle, BiomeGenBase.jungleHills),
-	RAINBOW("Rainbow Forest", ModList.DYETREES, "Reika.DyeTrees.World.BiomeRainbowForest"),
-	ENDER("Ender Forest", ModList.ENDERFOREST, "Reika.EnderForest.World.BiomeEnderForest");
+	RAINBOW("Rainbow Forest", ModList.CHROMATICRAFT, "Reika.ChromatiCraft.World.BiomeRainbowForest"),
+	ENDER("Ender Forest", ModList.CHROMATICRAFT, "Reika.ChromatiCraft.World.BiomeEnderForest");
 
 	private String[] biomes;
 	private ModList dependency;

@@ -9,15 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneDiode;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class ReikaRedstoneHelper extends DragonAPICore {
 

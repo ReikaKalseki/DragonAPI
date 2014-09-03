@@ -9,13 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
-import java.lang.reflect.Field;
-
-import net.minecraft.item.ItemStack;
 
 public class AppEngHandler extends ModHandlerBase {
 
@@ -24,47 +25,47 @@ public class AppEngHandler extends ModHandlerBase {
 	private ItemStack certus;
 	private ItemStack dust;
 
+	private static Method itemGet;
+	private static Method itemDefGet;
+	private static Object aeCoreObj;
+
 	private AppEngHandler() {
 		super();
 		if (this.hasMod()) {
 			try {
-				Class ae = Class.forName("appeng.api.Materials");
-				Field item = ae.getField("matQuartz");
-				ItemStack quartz = (ItemStack)item.get(null);
-				certus = quartz.copy();
-
-				Field item2 = ae.getField("matQuartzDust");
-				ItemStack quartzdust = (ItemStack)item2.get(null);
-				dust = quartzdust.copy();
+				certus = getItemStack("materialCertusQuartzCrystal");
+				dust = getItemStack("materialCertusQuartzDust");
 			}
-			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: AppEng class not found! Cannot read its contents!");
-				e.printStackTrace();
-			}
-			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
-				e.printStackTrace();
-			}
-			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
-				e.printStackTrace();
-			}
-			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read AE class contents!");
 				e.printStackTrace();
 			}
 		}
 		else {
 			this.noMod();
 		}
+	}
+
+	private static ItemStack getItemStack(String field) throws Exception {
+		if (aeCoreObj == null || itemGet == null || itemDefGet == null) {
+			Class ae = Class.forName("appeng.core.Api");
+			Field inst = ae.getField("instance");
+			aeCoreObj = inst.get(null);
+			itemGet = ae.getMethod("items");
+
+			Class idef = Class.forName("appeng.api.util");
+			itemDefGet = idef.getMethod("item");
+
+			Class mat = Class.forName("appeng.api.definitions.Materials");
+			Field f = mat.getField(field);
+		}
+		if (aeCoreObj == null || itemGet == null || itemDefGet == null) {
+			return null;
+		}
+
+		Object def = itemGet.invoke(aeCoreObj);
+		Item item = (Item)itemDefGet.invoke(def);
+		return new ItemStack(item);
 	}
 
 	public static AppEngHandler getInstance() {

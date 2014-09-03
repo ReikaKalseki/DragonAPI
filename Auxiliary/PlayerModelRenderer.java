@@ -9,10 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.Extras.ModifiedPlayerModel;
-import Reika.DragonAPI.Extras.ReikaModel;
-import Reika.DragonAPI.Extras.SamakiModel;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,6 +20,9 @@ import net.minecraft.entity.player.EntityPlayer;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.Extras.ModifiedPlayerModel;
+import Reika.DragonAPI.Extras.ReikaModel;
+import Reika.DragonAPI.Extras.SamakiModel;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

@@ -9,13 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class RecipePattern extends InventoryCrafting {
 
@@ -34,7 +33,7 @@ public final class RecipePattern extends InventoryCrafting {
 		super(craft, 3, 3);
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
-				this.setInventorySlotContents(i+j*3, items[i*3+j]); //since will otherwise add vertically
+				this.setInventorySlotContents(i*3+j, items[i*3+j]); //no//since will otherwise add vertically
 			}
 		}
 	}

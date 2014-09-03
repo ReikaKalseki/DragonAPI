@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -22,6 +19,8 @@ import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class FlyingBlocksExplosion extends Explosion {
 

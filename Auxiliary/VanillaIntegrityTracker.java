@@ -9,11 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Exception.VanillaIntegrityException;
-import Reika.DragonAPI.Exception.WTFException;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -23,6 +18,10 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Exception.VanillaIntegrityException;
+import Reika.DragonAPI.Exception.WTFException;
 
 public class VanillaIntegrityTracker {
 

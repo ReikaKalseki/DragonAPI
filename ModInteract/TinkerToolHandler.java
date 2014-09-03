@@ -9,15 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class TinkerToolHandler extends ModHandlerBase {
 
@@ -33,11 +33,20 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 		if (this.hasMod()) {
 			try {
-				Class item = this.getMod().getItemClass();
-				Field pick = item.getField("pickaxe");
-				Field hammer = item.getField("hammer");
-				idpick = ((Item)pick.get(null));
-				idhammer = ((Item)hammer.get(null));
+				Class tic = Class.forName("tconstruct.library.TConstructRegistry");
+				Field f = tic.getField("tools");
+				ArrayList li = (ArrayList)f.get(null);
+				for (int i = 0; i < li.size(); i++) {
+					Item item = (Item)li.get(i);
+					if (item.getUnlocalizedName().contains("InfiTool.Pickaxe"))
+						idpick = item;
+					else if (item.getUnlocalizedName().contains("InfiTool.Hammer"))
+						idhammer = item;
+				}
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -82,26 +91,12 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		return ModList.TINKERER;
 	}
 
-	public boolean isItemInfiTool(ItemStack is) {
-		return is.getUnlocalizedName().startsWith("Items.InfiTool");
-	}
-
 	public boolean isPick(ItemStack is) {
-		if (this.isItemInfiTool(is)) {
-			String stackName = is.getUnlocalizedName();
-			if (stackName.equals(pickID.getUnlocalizedName()))
-				return true;
-		}
-		return false;
+		return is.getItem() == pickID;
 	}
 
 	public boolean isHammer(ItemStack is) {
-		if (this.isItemInfiTool(is)) {
-			String stackName = is.getUnlocalizedName();
-			if (stackName.equals(hammerID.getUnlocalizedName()))
-				return true;
-		}
-		return false;
+		return is.getItem() == hammerID;
 	}
 
 	public int getHarvestLevel(ItemStack is) {

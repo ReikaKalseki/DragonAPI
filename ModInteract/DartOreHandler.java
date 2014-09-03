@@ -9,18 +9,17 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.ModRegistry.ModOreList;
-
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModRegistry.ModOreList;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class DartOreHandler extends ModHandlerBase {
@@ -130,7 +129,7 @@ public final class DartOreHandler extends ModHandlerBase {
 		}
 		else {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Power ore already registered to ore dictionary! No action taken!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 		}
 	}
 

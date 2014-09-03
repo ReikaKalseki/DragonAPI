@@ -9,10 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import Reika.DragonAPI.Interfaces.SoundEnum;
-
 import net.minecraft.client.audio.ISound;
 import net.minecraft.util.ResourceLocation;
+import Reika.DragonAPI.Interfaces.SoundEnum;
 
 public class EnumSound implements ISound {
 

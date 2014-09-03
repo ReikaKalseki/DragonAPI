@@ -9,15 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.IDConflictException;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.minecraft.potion.Potion;
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.IDConflictException;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class PotionCollisionTracker {
 

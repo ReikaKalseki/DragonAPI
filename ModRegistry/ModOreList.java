@@ -9,16 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModRegistry;
 
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Interfaces.OreType;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
-import Reika.DragonAPI.ModInteract.MekanismHandler;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -29,6 +19,15 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Interfaces.OreType;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
+import Reika.DragonAPI.ModInteract.MekanismHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 

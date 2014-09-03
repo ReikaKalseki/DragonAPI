@@ -9,22 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
-import Reika.DragonAPI.APIPacketHandler;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Auxiliary.BlockProperties;
-import Reika.DragonAPI.Instantiable.Data.RelativePositionList;
-import Reika.DragonAPI.Libraries.ReikaEntityHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,6 +35,21 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
+import Reika.DragonAPI.APIPacketHandler;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.BlockProperties;
+import Reika.DragonAPI.Instantiable.Data.RelativePositionList;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
 import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaWorldHelper extends DragonAPICore {

@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Bees;
 
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -22,6 +19,8 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import forestry.api.apiculture.EnumBeeChromosome;

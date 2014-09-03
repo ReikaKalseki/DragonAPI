@@ -9,14 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Interfaces.TameHostile;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.ModInteract.DartItemHandler;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +66,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Interfaces.TameHostile;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModInteract.DartItemHandler;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 
@@ -624,6 +623,14 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		EntityList.stringToClassMapping.remove(name);
 		EntityList.entityEggs.remove(entityID);
 		EntityList.IDtoClassMapping.remove(entityID);
+	}
+
+	private static EntityCreeper dummy;
+
+	public static EntityLivingBase getDummyMob(World world) {
+		if (dummy == null)
+			dummy = new EntityCreeper(world);
+		return dummy;
 	}
 
 }

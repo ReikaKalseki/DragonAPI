@@ -9,12 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** A tank class that can handle direct operations as well as standard Forge Liquid operations. */
 public class HybridTank extends FluidTank {
@@ -76,11 +75,11 @@ public class HybridTank extends FluidTank {
 	public void removeLiquid(int amt) {
 		if (this.getFluid() == null) {
 			ReikaJavaLibrary.pConsole("Could not remove liquid from empty tank!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 		}
 		else if (amt <= 0) {
 			ReikaJavaLibrary.pConsole("Cannot remove <= 0!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 		}
 		else {
 			this.drain(amt, true);

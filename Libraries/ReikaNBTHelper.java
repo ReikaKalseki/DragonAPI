@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Exception.MisuseException;
-
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -30,6 +27,8 @@ import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Exception.MisuseException;
 
 public final class ReikaNBTHelper extends DragonAPICore {
 

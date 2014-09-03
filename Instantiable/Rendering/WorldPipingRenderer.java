@@ -9,12 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
-import Reika.DragonAPI.Base.BaseBlockRenderer;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Base.BaseBlockRenderer;
 
 public abstract class WorldPipingRenderer extends BaseBlockRenderer {
 

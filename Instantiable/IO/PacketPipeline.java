@@ -9,11 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Instantiable.WorldLocation;
-import Reika.DragonAPI.Interfaces.IPacketHandler;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
-
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
@@ -22,6 +17,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Instantiable.WorldLocation;
+import Reika.DragonAPI.Interfaces.IPacketHandler;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.IMessageHandler;

@@ -9,10 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.CropHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -20,6 +16,9 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.CropHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BerryBushHandler extends CropHandlerBase {
 

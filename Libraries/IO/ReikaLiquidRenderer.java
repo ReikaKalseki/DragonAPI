@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
-import Reika.DragonAPI.Auxiliary.BlockModelRenderer;
-import Reika.DragonAPI.Auxiliary.BlockModelRenderer.ModelBlockInterface;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -26,6 +23,9 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
+
+import Reika.DragonAPI.Auxiliary.BlockModelRenderer;
+import Reika.DragonAPI.Auxiliary.BlockModelRenderer.ModelBlockInterface;
 
 public class ReikaLiquidRenderer {
 

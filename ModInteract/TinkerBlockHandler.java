@@ -9,14 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class TinkerBlockHandler extends ModHandlerBase {
 

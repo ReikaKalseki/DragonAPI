@@ -9,12 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Exception;
 
-import Reika.DragonAPI.Base.DragonAPIMod;
-
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
 import net.minecraft.block.Block;
+import Reika.DragonAPI.Base.DragonAPIMod;
 
 public class VanillaIntegrityException extends DragonAPIException {
 

@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper.RenderDistance;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBox;
@@ -20,6 +17,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 
 import org.lwjgl.input.Keyboard;
+
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper.RenderDistance;
 
 public class LODModelPart extends ModelRenderer {
 

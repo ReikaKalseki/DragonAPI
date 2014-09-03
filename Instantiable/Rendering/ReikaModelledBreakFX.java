@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -20,6 +18,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class ReikaModelledBreakFX extends EntityDiggingFX {
 

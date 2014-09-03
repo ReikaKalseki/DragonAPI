@@ -9,12 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.ExpandedOreRecipe;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,6 +26,11 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.ExpandedOreRecipe;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ReikaRecipeHelper extends DragonAPICore {
@@ -224,8 +223,14 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		int num;
 		int w = 0;
 		int h = 0;
-		ReikaJavaLibrary.pConsole("Recipe is null!", ire == null);
-		ReikaJavaLibrary.pConsole("ItemStack array is null!", in == null);
+		if (ire == null)
+			ReikaJavaLibrary.pConsole("Recipe is null!");
+		if (in == null)
+			ReikaJavaLibrary.pConsole("ItemStack array is null!");
+		if (ire == null || in == null) {
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
 		if (ire instanceof ShapedRecipes) {
 			ShapedRecipes r = (ShapedRecipes)ire;
 			num = r.recipeItems.length;
@@ -360,7 +365,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 	/** Adds a smelting recipe. Args; Item in, item out, xp */
 	public static void addSmelting(ItemStack in, ItemStack out, float xp) {
-		FurnaceRecipes.smelting().func_151396_a(in.getItem(), out, xp);
+		FurnaceRecipes.smelting().func_151394_a(in, out, xp);
 	}
 
 	/** Returns true if succeeded. */

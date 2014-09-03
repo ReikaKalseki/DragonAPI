@@ -9,15 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.MathSci;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public final class ReikaVectorHelper extends DragonAPICore {
 

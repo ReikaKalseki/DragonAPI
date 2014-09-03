@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -18,6 +16,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 
 public class MultiBlockBlueprint {

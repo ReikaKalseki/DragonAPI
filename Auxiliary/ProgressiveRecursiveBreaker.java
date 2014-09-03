@@ -9,19 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
-import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
-import Reika.DragonAPI.Instantiable.Data.BlockArray;
-import Reika.DragonAPI.Instantiable.Data.BlockBox;
-import Reika.DragonAPI.Instantiable.Data.RelativePositionList;
-import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
-import Reika.DragonAPI.Interfaces.TreeType;
-import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import Reika.DragonAPI.ModRegistry.ModWoodList;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -36,6 +23,18 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.WorldEvent;
+import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
+import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
+import Reika.DragonAPI.Instantiable.Data.BlockArray;
+import Reika.DragonAPI.Instantiable.Data.BlockBox;
+import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
+import Reika.DragonAPI.Instantiable.Data.RelativePositionList;
+import Reika.DragonAPI.Interfaces.TreeType;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.ModRegistry.ModWoodList;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
@@ -276,8 +275,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 	}
 
 	@Override
-	public Phase getPhase() {
-		return Phase.START;
+	public boolean canFire(Phase p) {
+		return p == Phase.START;
 	}
 
 }

@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
@@ -19,6 +17,7 @@ import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public abstract class SilkBlock extends Block {
 

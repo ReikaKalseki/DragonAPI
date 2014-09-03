@@ -9,16 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import Reika.DragonAPI.Exception.MisuseException;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
 
 public class SlicedBlockBlueprint {
 
@@ -31,8 +30,8 @@ public class SlicedBlockBlueprint {
 	private final ArrayList<Block[][]> antiIDs = new ArrayList();
 	private final ArrayList<int[][]> antiMetadatas = new ArrayList();
 
-	private final HashMap<Character, ItemStack> mappings = new HashMap();
-	private final HashMap<Character, ItemStack> antiMappings = new HashMap();
+	private final HashMap<Character, BlockKey> mappings = new HashMap();
+	private final HashMap<Character, BlockKey> antiMappings = new HashMap();
 
 	public void addMapping(char c, Block id) {
 		this.addMapping(c, id, -1);
@@ -40,7 +39,7 @@ public class SlicedBlockBlueprint {
 
 	public void addMapping(char c, Block id, int meta) {
 		this.verifyArg(c);
-		mappings.put(c, new ItemStack(id, meta, 1));
+		mappings.put(c, new BlockKey(id, meta));
 	}
 
 	public void addAntiMapping(char c, Block id) {
@@ -49,7 +48,7 @@ public class SlicedBlockBlueprint {
 
 	public void addAntiMapping(char c, Block id, int meta) {
 		this.verifyArg(c);
-		antiMappings.put(c, new ItemStack(id, meta, 1));
+		antiMappings.put(c, new BlockKey(id, meta));
 	}
 
 	private void verifyArg(char c) {
@@ -112,11 +111,11 @@ public class SlicedBlockBlueprint {
 	}
 
 	private boolean mapBlock(char c, Block[][] ids, int[][] metas, Block[][] antiids, int[][] antimetas, int i, int k) {
-		ItemStack block = mappings.get(c);
+		BlockKey block = mappings.get(c);
 		if (block == null)
 			return false;
-		Block id = Block.getBlockFromItem(block.getItem());
-		int meta = block.getItemDamage();
+		Block id = block.blockID;
+		int meta = block.metadata;
 		ids[i][k] = id;
 		metas[i][k] = meta;
 		//ReikaJavaLibrary.pConsole(c+" Maps>> "+id+":"+meta);
@@ -124,11 +123,11 @@ public class SlicedBlockBlueprint {
 	}
 
 	private boolean antimapBlock(char c, Block[][] ids, int[][] metas, Block[][] antiids, int[][] antimetas, int i, int k) {
-		ItemStack block = antiMappings.get(c);
+		BlockKey block = antiMappings.get(c);
 		if (block == null)
 			return false;
-		Block id = Block.getBlockFromItem(block.getItem());
-		int meta = block.getItemDamage();
+		Block id = block.blockID;
+		int meta = block.metadata;
 		antiids[i][k] = id;
 		antimetas[i][k] = meta;
 		ids[i][k] = null;

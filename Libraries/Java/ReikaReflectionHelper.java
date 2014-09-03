@@ -9,15 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.IDConflictException;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Exception.RegistrationException;
-import Reika.DragonAPI.Instantiable.IO.ModLogger;
-import Reika.DragonAPI.Interfaces.RegistrationList;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -26,6 +17,14 @@ import java.util.Arrays;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.IDConflictException;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.Instantiable.IO.ModLogger;
+import Reika.DragonAPI.Interfaces.RegistrationList;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 public final class ReikaReflectionHelper extends DragonAPICore {
 

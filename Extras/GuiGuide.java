@@ -9,12 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Instantiable.IO.XMLInterface;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,6 +17,12 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 
 import org.lwjgl.opengl.GL11;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.IO.XMLInterface;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
 public class GuiGuide extends GuiScreen {
 

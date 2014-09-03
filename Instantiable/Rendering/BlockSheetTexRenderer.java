@@ -9,13 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
-import Reika.DragonAPI.Auxiliary.ReikaBlockRenderer;
-import Reika.DragonAPI.Interfaces.SidedTextureIndex;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
+import Reika.DragonAPI.Auxiliary.ReikaBlockRenderer;
+import Reika.DragonAPI.Interfaces.SidedTextureIndex;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

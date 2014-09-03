@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -23,6 +20,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 import com.xcompwiz.mystcraft.api.MystObjects;
 import com.xcompwiz.mystcraft.api.linking.ILinkInfo;

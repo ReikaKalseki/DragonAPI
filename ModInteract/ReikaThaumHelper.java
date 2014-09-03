@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.util.Arrays;
 
 import net.minecraft.block.Block;
@@ -21,13 +19,42 @@ import net.minecraft.item.ItemStack;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReikaThaumHelper {
+
+	public static void addAspects(ItemStack is, AspectList aspects) {
+		AspectList has = ThaumcraftApi.objectTags.get(Arrays.asList(is.getItem(), is.getItemDamage()));
+
+		if (has != null) {
+			for (Aspect as : has.aspects.keySet()) {
+				aspects.merge(as, has.getAmount(as));
+			}
+		}
+		ThaumcraftApi.registerObjectTag(is, new int[]{is.getItemDamage()}, aspects);
+	}
+
+	public static void addAspectsToBlock(Block b, AspectList aspects) {
+		addAspects(new ItemStack(b), aspects);
+	}
+
+	public static void addAspectsToBlockMeta(Block b, int meta, AspectList aspects) {
+		addAspects(new ItemStack(b, 1, meta), aspects);
+	}
+
+	public static void addAspectsToItem(Item i, AspectList aspects) {
+		addAspects(new ItemStack(i), aspects);
+	}
+
+	public static void addAspectsToItemMeta(Item id, int meta, AspectList aspects) {
+		addAspects(new ItemStack(id, 1, meta), aspects);
+	}
+
 	/** Contains a helper function to avoid overwriting existing aspects. */
 	public static void addAspects(ItemStack is, Object... aspects) {
 		if (aspects.length%2 != 0) {
 			ReikaJavaLibrary.pConsole("Could not add aspects to "+is+": You must specify a level for every aspect!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 		AspectList has = ThaumcraftApi.objectTags.get(Arrays.asList(is.getItem(), is.getItemDamage()));
@@ -38,24 +65,28 @@ public class ReikaThaumHelper {
 				ot.merge(as, has.getAmount(as));
 			}
 		}
-		ThaumcraftApi.registerObjectTag(is.getItem(), is.getItemDamage(), ot);
+		ThaumcraftApi.registerObjectTag(is, new int[]{is.getItemDamage()}, ot);
 	}
 
-	public static void addAspects(Block b, Object... aspects) {
+	public static void addAspectsToBlock(Block b, Object... aspects) {
 		addAspects(new ItemStack(b), aspects);
 	}
 
-	public static void addAspects(Item i, Object... aspects) {
+	public static void addAspectsToBlockMeta(Block b, int meta, Object... aspects) {
+		addAspects(new ItemStack(b, 1, meta), aspects);
+	}
+
+	public static void addAspectsToItem(Item i, Object... aspects) {
 		addAspects(new ItemStack(i), aspects);
 	}
 
-	public static void addAspects(Item id, int meta, Object... aspects) {
+	public static void addAspectsToItemMeta(Item id, int meta, Object... aspects) {
 		addAspects(new ItemStack(id, 1, meta), aspects);
 	}
 
 	public static void clearAspects(ItemStack is) {
 		AspectList ot = new AspectList();
-		ThaumcraftApi.registerObjectTag(is.getItem(), is.getItemDamage(), ot);
+		ThaumcraftApi.registerObjectTag(is, new int[]{is.getItemDamage()}, ot);
 	}
 
 	public static void addAspects(Class<? extends Entity> entity, Object... aspects) {

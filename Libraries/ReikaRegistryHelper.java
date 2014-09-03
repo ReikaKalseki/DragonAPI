@@ -9,16 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.RegistrationException;
-import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.Instantiable.ItemBlockCustomLocalization;
-import Reika.DragonAPI.Interfaces.BlockEnum;
-import Reika.DragonAPI.Interfaces.ItemEnum;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
-
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -29,6 +19,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Instantiable.ItemBlockCustomLocalization;
+import Reika.DragonAPI.Interfaces.BlockEnum;
+import Reika.DragonAPI.Interfaces.ItemEnum;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.ModMetadata;
@@ -76,6 +75,9 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	public static void instantiateAndRegisterItems(DragonAPIMod mod, ItemEnum[] enumr, Item[] target) {
 		if (enumr.length != target.length)
 			throw new RegistrationException(mod, "Invalid storage array!");
+		boolean canLoad = !Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION);
+		if (!canLoad)
+			throw new RegistrationException(mod, "This mod is loading items too late in the setup!");
 		for (int i = 0; i < enumr.length; i++) {
 			ItemEnum r = enumr[i];
 			if (!r.isDummiedOut()) {

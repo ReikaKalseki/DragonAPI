@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -27,6 +24,9 @@ import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
 public final class ReikaSpriteSheets {
 
@@ -220,6 +220,7 @@ public final class ReikaSpriteSheets {
 	{
 		GL11.glDepthFunc(GL11.GL_GREATER);
 		GL11.glDisable(GL11.GL_LIGHTING);
+		//GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glDepthMask(false);
 		manager.bindTexture(RES_ITEM_GLINT);
 		GL11.glEnable(GL11.GL_BLEND);
@@ -269,6 +270,7 @@ public final class ReikaSpriteSheets {
 
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDepthMask(true);
+		//GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glEnable(GL11.GL_LIGHTING);
 		GL11.glDepthFunc(GL11.GL_LEQUAL);
 		BlendMode.DEFAULT.apply();

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Interfaces;
 
 
+
 /** This is an interface for ENUMS! */
 public interface RegistrationList {
 

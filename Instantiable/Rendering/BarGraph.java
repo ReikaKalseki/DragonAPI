@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
-import Reika.DragonAPI.Instantiable.Data.BarGraphData;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
-
 import java.awt.Color;
 import java.util.List;
 
@@ -19,6 +16,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 
 import org.lwjgl.opengl.GL11;
+
+import Reika.DragonAPI.Instantiable.Data.BarGraphData;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 public class BarGraph {
 

@@ -9,18 +9,17 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
 
 public class FilledBlockArray extends StructuredBlockArray {
 
-	private HashMap<List<Integer>, BlockKey> data = new HashMap();
+	private final HashMap<List<Integer>, BlockKey> data = new HashMap();
 
 	public FilledBlockArray(World world) {
 		super(world);
@@ -75,6 +74,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 			Block b = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
 			if (!bk.match(b, meta)) {
+				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk+" & "+b+":"+meta);
+				//world.setBlock(x, y, z, Blocks.brick_block);
 				return false;
 			}
 		}
@@ -85,6 +86,23 @@ public class FilledBlockArray extends StructuredBlockArray {
 	public void remove(int x, int y, int z) {
 		super.remove(x, y, z);
 		data.remove(Arrays.asList(x, y, z));
+	}
+
+	@Override
+	public BlockArray offset(int x, int y, int z) {
+		HashMap map = new HashMap();
+		for (List<Integer> key : data.keySet()) {
+			int dx = key.get(0);
+			int dy = key.get(1);
+			int dz = key.get(2);
+			dx += x;
+			dy += y;
+			dz += z;
+			map.put(Arrays.asList(dx, dy, dz), data.get(key));
+		}
+		data.clear();
+		data.putAll(map);
+		return this;
 	}
 
 	public void populateBlockData() {

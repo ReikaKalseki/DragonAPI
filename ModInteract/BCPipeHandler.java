@@ -9,16 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransport;
 import buildcraft.transport.TileGenericPipe;
@@ -196,7 +195,7 @@ public class BCPipeHandler extends ModHandlerBase {
 			if (te instanceof TileGenericPipe) {
 				TileGenericPipe tp = (TileGenericPipe)te;
 				Pipe p = tp.pipe;
-				Item id = p.itemID;
+				Item id = p.item;
 				PipeTransport pt = p.transport;
 				switch(pt.getPipeType()) {
 				case FLUID:

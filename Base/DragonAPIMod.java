@@ -9,6 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.RegistrationException;
@@ -16,11 +20,6 @@ import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-
-import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
@@ -59,7 +58,7 @@ public abstract class DragonAPIMod {
 		MinecraftForge.EVENT_BUS.register(this);
 		ReikaRegistryHelper.setupModData(this, evt);
 		ReikaRegistryHelper.setupVersionChecking(evt);
-		CommandableUpdateChecker.instance.registerMod(this, evt, this.getUpdateCheckURL());
+		CommandableUpdateChecker.instance.registerMod(this, this.getUpdateCheckURL());
 	}
 
 	protected final void onInit(FMLInitializationEvent event) {
@@ -102,5 +101,13 @@ public abstract class DragonAPIMod {
 	@Override
 	public final String toString() {
 		return this.getTechnicalName();
+	}
+
+	public final String getMajorVersion() {
+		return "@MAJOR_VERSION@";
+	}
+
+	public final String getMinorVersion() {
+		return "@MINOR_VERSION@";
 	}
 }

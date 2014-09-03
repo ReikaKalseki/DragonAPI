@@ -9,16 +9,17 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Auxiliary.PlayerHandler.PlayerTracker;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.PlayerHandler.PlayerTracker;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import cpw.mods.fml.common.eventhandler.Event;
 
 public final class LoginHandler implements PlayerTracker {
@@ -67,6 +68,8 @@ public final class LoginHandler implements PlayerTracker {
 
 		PlayerFirstTimeTracker.checkPlayer(ep);
 		CommandableUpdateChecker.instance.notifyPlayer(ep);
+		if (ep instanceof EntityPlayerMP)
+			ReikaPlayerAPI.syncCustomData((EntityPlayerMP)ep);
 		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(ep, ep.worldObj.provider.dimensionId));
 	}
 

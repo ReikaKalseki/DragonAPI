@@ -9,12 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
+import java.util.ArrayList;
+
+import org.apache.logging.log4j.Level;
+
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
-import java.util.ArrayList;
 
 public class ModLogger {
 
@@ -43,18 +45,18 @@ public class ModLogger {
 
 	public void debug(Object o) {
 		if (this.shouldDebug()) {
-			ReikaJavaLibrary.pConsole(o);
+			ReikaJavaLibrary.pConsole(Level.DEBUG, o);
 			ReikaChatHelper.write(o);
 		}
 	}
 
 	public void log(Object o) {
 		if (this.shouldLog())
-			ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": "+o);
+			ReikaJavaLibrary.pConsole(Level.INFO, mod.getTechnicalName()+": "+o);
 	}
 
 	public void logError(Object o) {
-		ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": There was an error: "+o);
+		ReikaJavaLibrary.pConsole(Level.ERROR, mod.getTechnicalName()+" ERROR: "+o);
 	}
 
 	public boolean shouldLog() {

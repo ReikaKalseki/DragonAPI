@@ -39,8 +39,8 @@ public class TickRegistry {
 	@SubscribeEvent
 	public void playerTick(PlayerTickEvent evt) {
 		for (TickHandler h : playerTickers) {
-			if (evt.phase == h.getPhase()) {
-				h.tick(evt.player);
+			if (h.canFire(evt.phase)) {
+				h.tick(evt.player, evt.phase);
 			}
 		}
 	}
@@ -48,8 +48,8 @@ public class TickRegistry {
 	@SubscribeEvent
 	public void renderTick(RenderTickEvent evt) {
 		for (TickHandler h : renderTickers) {
-			if (evt.phase == h.getPhase()) {
-				h.tick(evt.renderTickTime);
+			if (h.canFire(evt.phase)) {
+				h.tick(evt.renderTickTime, evt.phase);
 			}
 		}
 	}
@@ -57,8 +57,8 @@ public class TickRegistry {
 	@SubscribeEvent
 	public void clientTick(ClientTickEvent evt) {
 		for (TickHandler h : clientTickers) {
-			if (evt.phase == h.getPhase()) {
-				h.tick();
+			if (h.canFire(evt.phase)) {
+				h.tick(evt.phase);
 			}
 		}
 	}
@@ -66,8 +66,8 @@ public class TickRegistry {
 	@SubscribeEvent
 	public void worldTick(WorldTickEvent evt) {
 		for (TickHandler h : worldTickers) {
-			if (evt.phase == h.getPhase()) {
-				h.tick(evt.world);
+			if (h.canFire(evt.phase)) {
+				h.tick(evt.world, evt.phase);
 			}
 		}
 	}
@@ -75,8 +75,8 @@ public class TickRegistry {
 	@SubscribeEvent
 	public void serverTick(ServerTickEvent evt) {
 		for (TickHandler h : serverTickers) {
-			if (evt.phase == h.getPhase()) {
-				h.tick();
+			if (h.canFire(evt.phase)) {
+				h.tick(evt.phase);
 			}
 		}
 	}
@@ -108,7 +108,7 @@ public class TickRegistry {
 
 		public TickType getType();
 
-		public Phase getPhase();
+		public boolean canFire(Phase p);
 
 		public String getLabel();
 

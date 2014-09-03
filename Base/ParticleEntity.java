@@ -9,14 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-
 import java.util.List;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public abstract class ParticleEntity extends InertEntity {
 

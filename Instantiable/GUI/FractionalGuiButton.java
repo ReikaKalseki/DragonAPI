@@ -9,10 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.GUI;
 
-import Reika.DragonAPI.Interfaces.FractionalButtonGui;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import Reika.DragonAPI.Interfaces.FractionalButtonGui;
 
 /** A type of GuiButton that can tell what fraction of it has been clicked and act accordingly. */
 public class FractionalGuiButton extends GuiButton {

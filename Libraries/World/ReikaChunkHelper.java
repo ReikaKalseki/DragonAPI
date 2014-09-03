@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-
 import java.util.Iterator;
 import java.util.List;
 
@@ -22,6 +19,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class ReikaChunkHelper extends DragonAPICore {
 

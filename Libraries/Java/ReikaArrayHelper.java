@@ -9,11 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
-import Reika.DragonAPI.DragonAPICore;
-
 import java.util.Arrays;
 
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaArrayHelper extends DragonAPICore {
 

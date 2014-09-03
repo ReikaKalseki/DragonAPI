@@ -9,6 +9,24 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import java.lang.reflect.Field;
+import java.net.URL;
+import java.util.List;
+
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.SimpleReloadableResourceManager;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.network.EnumConnectionState;
+import net.minecraft.potion.Potion;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker.CheckerDisableCommand;
@@ -77,25 +95,6 @@ import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
-
-import java.lang.reflect.Field;
-import java.net.URL;
-import java.util.List;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.SimpleReloadableResourceManager;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.EnumConnectionState;
-import net.minecraft.potion.Potion;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
@@ -167,10 +166,36 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		ReikaPacketHelper.registerPacketHandler(instance, packetChannel, new APIPacketHandler());
 
-		ReikaPacketHelper.registerVanillaPacketType(this, DragonOptions.SYNCPACKET.getValue(), SyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
+		int id = DragonOptions.SYNCPACKET.getValue();
+		ReikaPacketHelper.registerVanillaPacketType(this, id, SyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
 		//ReikaPacketWrapper.instance.registerPacket(SyncPacket.class);
 	}
 
+	/** Do not call unless biomes are no longer saved as bytes *//*
+	private void increaseBiomeCount() {
+		int count = BiomeGenBase.biomeList.length;
+		int newsize = 1024;
+		BiomeGenBase[] newBiomes = new BiomeGenBase[newsize];
+		System.arraycopy(BiomeGenBase.biomeList, 0, newBiomes, 0, count);
+		BiomeGenBase.biomeList = newBiomes;
+		if (BiomeGenBase.biomeList.length == newsize)
+			logger.log("Overriding the vanilla BiomeList array to allow for biome IDs up to "+(newsize-1)+" (up from "+(count-1)+").");
+		else
+			logger.logError("Could not increase biome ID limit from "+count+" to "+newsize+", but no exception was thrown!");
+	}*/
+	/*
+	private void increasePotionCount() {
+		int count = Potion.potionTypes.length;
+		int newsize = 256;
+		Potion[] newPotions = new Potion[newsize];
+		System.arraycopy(Potion.potionTypes, 0, newPotions, 0, count);
+		Potion.potionTypes = newPotions;
+		if (Potion.potionTypes.length == newsize)
+			logger.log("Overriding the vanilla PotionTypes array to allow for potion IDs up to "+(newsize-1)+" (up from "+(count-1)+").");
+		else
+			logger.logError("Could not increase potion ID limit from "+count+" to "+newsize+", but no exception was thrown!");
+	}
+	 */
 	private void increaseBiomeCount() {
 		int count = BiomeGenBase.biomeList.length;
 		int newsize = 1024;
@@ -221,13 +246,13 @@ public class DragonAPIInit extends DragonAPIMod {
 		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance, Side.SERVER);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 			TickRegistry.instance.registerTickHandler(KeyTicker.instance, Side.CLIENT);
-
-		ReikaRegistryHelper.loadNames();
 	}
 
 	@Override
 	@EventHandler
 	public void postload(FMLPostInitializationEvent evt) {
+		ReikaRegistryHelper.loadNames();
+
 		this.loadHandlers();
 
 		this.alCompat();
@@ -319,6 +344,13 @@ public class DragonAPIInit extends DragonAPIMod {
 				OreDictionary.registerOre("ingotNaturalAluminum", al.get(i));
 			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminum"), al.get(i)))
 				OreDictionary.registerOre("ingotAluminum", al.get(i));
+		}
+
+
+		al = OreDictionary.getOres("oreAluminium");
+		for (int i = 0; i < al.size(); i++) {
+			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("oreAluminum"), al.get(i)))
+				OreDictionary.registerOre("oreAluminum", al.get(i));
 		}
 	}
 

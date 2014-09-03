@@ -9,13 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
-import Reika.DragonAPI.DragonAPICore;
-
 import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraftforge.common.ChestGenHooks;
+import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaGenHelper extends DragonAPICore {
 

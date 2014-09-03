@@ -9,15 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ThermalHandler extends ModHandlerBase {
 

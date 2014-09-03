@@ -9,15 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.Interfaces.RetroactiveGenerator;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.event.world.ChunkDataEvent;
+import Reika.DragonAPI.Interfaces.RetroactiveGenerator;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class RetroGenController {

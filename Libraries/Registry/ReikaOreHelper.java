@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
-import Reika.DragonAPI.Interfaces.OreType;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +19,8 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Interfaces.OreType;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public enum ReikaOreHelper implements OreType {
 

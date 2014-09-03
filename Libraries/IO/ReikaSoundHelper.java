@@ -9,10 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
-import Reika.DragonAPI.Auxiliary.CustomSoundHandler;
-import Reika.DragonAPI.Instantiable.EnumSound;
-import Reika.DragonAPI.Interfaces.SoundEnum;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.Block.SoundType;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -20,6 +16,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Auxiliary.CustomSoundHandler;
+import Reika.DragonAPI.Instantiable.EnumSound;
+import Reika.DragonAPI.Interfaces.SoundEnum;
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -99,5 +98,10 @@ public class ReikaSoundHelper {
 	@SideOnly(Side.CLIENT)
 	public static void playSound(SoundEnum s, double x, double y, double z, float vol, float pitch) {
 		FMLClientHandler.instance().getClient().getSoundHandler().playSound(new EnumSound(s, x, y, z, vol, pitch));
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void playSound(SoundEnum s, Entity e, float vol, float pitch) {
+		playSound(s, e.posX, e.posY, e.posZ, vol, pitch);
 	}
 }

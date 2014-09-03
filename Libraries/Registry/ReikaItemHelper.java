@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
-import Reika.DragonAPI.DragonAPICore;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -26,6 +24,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Data.ImmutableItemStack;
 
 public final class ReikaItemHelper extends DragonAPICore {
 
@@ -122,6 +122,14 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return Items.itemsList[id-256].getHasSubtypes();
 		}
 	}*/
+
+	public static boolean matchStacks(ImmutableItemStack a, ImmutableItemStack b) {
+		return matchStacks(a.getItemStack(), b.getItemStack());
+	}
+
+	public static boolean matchStacks(ItemStack a, ImmutableItemStack b) {
+		return matchStacks(a, b.getItemStack());
+	}
 
 	/** Like .equals for comparing ItemStacks, but does not care about size or NBT tags.
 	 * Returns true if the ids and metadata match (or both are null).

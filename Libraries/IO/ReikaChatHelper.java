@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -26,6 +23,8 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 public final class ReikaChatHelper extends DragonAPICore {
@@ -178,26 +177,32 @@ public final class ReikaChatHelper extends DragonAPICore {
 	}
 
 	public static void sendChatToPlayer(EntityPlayer ep, String sg) {
-		ChatComponentTranslation chat = new ChatComponentTranslation(sg);
-		ep.addChatMessage(chat);
+		String[] parts = sg.split("\\n");
+		for (int i = 0; i < parts.length; i++) {
+			ChatComponentTranslation chat = new ChatComponentTranslation(parts[i]);
+			ep.addChatMessage(chat);
+		}
 	}
 
 	public static void sendChatToAllOnServer(String sg) {
-		ChatComponentTranslation chat = new ChatComponentTranslation(sg);
+		String[] parts = sg.split("\\n"); // \n no longer works in chat as of 1.7
 		MinecraftServer srv = MinecraftServer.getServer();
 		if (srv != null) {
 			ServerConfigurationManager cfg = srv.getConfigurationManager();
 			if (cfg != null) {
-				cfg.sendChatMsg(chat);
+				for (int i = 0; i < parts.length; i++) {
+					ChatComponentTranslation chat = new ChatComponentTranslation(parts[i]);
+					cfg.sendChatMsg(chat);
+				}
 			}
 			else {
 				ReikaJavaLibrary.pConsole("Something tried to send chat to a server with null configurations!");
-				Thread.dumpStack();
+				ReikaJavaLibrary.dumpStack();
 			}
 		}
 		else {
 			ReikaJavaLibrary.pConsole("Something tried to send chat to a null server!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 		}
 	}
 

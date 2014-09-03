@@ -9,13 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Instantiable.Rendering.ReikaModelledBreakFX;
-import Reika.DragonAPI.Interfaces.RenderFetcher;
-import Reika.DragonAPI.Interfaces.TextureFetcher;
-import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
-
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -33,6 +26,13 @@ import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Rendering.ReikaModelledBreakFX;
+import Reika.DragonAPI.Interfaces.RenderFetcher;
+import Reika.DragonAPI.Interfaces.TextureFetcher;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 
 public final class ReikaRenderHelper extends DragonAPICore {
 

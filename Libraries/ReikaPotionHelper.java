@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import Reika.DragonAPI.DragonAPICore;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -20,6 +18,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaPotionHelper extends DragonAPICore {
 

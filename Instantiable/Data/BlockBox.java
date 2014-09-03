@@ -9,9 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Instantiable.WorldLocation;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class BlockBox {
 
@@ -22,22 +23,22 @@ public final class BlockBox {
 	public final int maxY;
 	public final int maxZ;
 
-	public BlockBox() {
-		this(0, 0);
-	}
-
 	public BlockBox(int min, int max) {
 		this(min, min, min, max, max, max);
 	}
 
 	public BlockBox(int x0, int y0, int z0, int x1, int y1, int z1) {
-		minX = x0;
-		minY = y0;
-		minZ = z0;
+		minX = Math.min(x0, x1);
+		minY = Math.min(y0, y1);
+		minZ = Math.min(z0, z1);
 
-		maxX = x1;
-		maxY = y1;
-		maxZ = z1;
+		maxX = Math.max(x0, x1);
+		maxY = Math.max(y0, y1);
+		maxZ = Math.max(z0, z1);
+	}
+
+	public BlockBox(WorldLocation loc, WorldLocation loc2) {
+		this(loc.xCoord, loc.yCoord, loc.zCoord, loc2.xCoord, loc2.yCoord, loc2.zCoord);
 	}
 
 	public static BlockBox infinity() {
@@ -45,15 +46,15 @@ public final class BlockBox {
 	}
 
 	public int getSizeX() {
-		return maxX-minX;
+		return maxX-minX+1;
 	}
 
 	public int getSizeY() {
-		return maxY-minY;
+		return maxY-minY+1;
 	}
 
 	public int getSizeZ() {
-		return maxZ-minZ;
+		return maxZ-minZ+1;
 	}
 
 	public int getVolume() {
@@ -127,6 +128,15 @@ public final class BlockBox {
 	@Override
 	public int hashCode() {
 		return minX+maxX+minY+maxY+minZ+maxZ;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("%d, %d, %d >> %d, %d, %d", minX, minY, minZ, maxX, maxY, maxZ);
+	}
+
+	public AxisAlignedBB asAABB() {
+		return AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX+1, maxY+1, maxZ+1);
 	}
 
 }

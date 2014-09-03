@@ -9,11 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.MathSci;
 
-import Reika.DragonAPI.DragonAPICore;
-
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaPhysicsHelper extends DragonAPICore {
 

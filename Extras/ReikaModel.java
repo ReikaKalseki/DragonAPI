@@ -9,15 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 import org.lwjgl.opengl.GL11;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class ReikaModel extends ModifiedPlayerModel {
 

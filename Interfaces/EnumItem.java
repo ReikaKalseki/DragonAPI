@@ -7,15 +7,12 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Libraries.IO;
+package Reika.DragonAPI.Interfaces;
 
-import net.minecraft.world.World;
-import Reika.DragonAPI.DragonAPICore;
+import net.minecraft.item.ItemStack;
 
-public final class ReikaMediaHelper extends DragonAPICore {
+public interface EnumItem {
 
-	public static void playSoundVarying(World world, int x, int y, int z, String name) {
-		world.playSoundEffect(x+0.5, y+0.5, z+0.5, name, rand.nextFloat(), rand.nextFloat());
-	}
+	public RegistrationList getRegistry(ItemStack is);
 
 }

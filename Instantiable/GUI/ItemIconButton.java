@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.GUI;
 
-import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -18,6 +16,8 @@ import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 
 import org.lwjgl.opengl.GL11;
+
+import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 
 public class ItemIconButton extends GuiButton {
 

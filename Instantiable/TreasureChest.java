@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +17,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 
 public class TreasureChest {
 

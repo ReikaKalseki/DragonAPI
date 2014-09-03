@@ -9,24 +9,26 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.util.Random;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import Reika.DragonAPI.Auxiliary.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Base.TileEntityBase;
 import Reika.DragonAPI.Interfaces.IPacketHandler;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.DataPacket;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.util.Random;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
 
 public class APIPacketHandler implements IPacketHandler {
 
@@ -45,6 +47,7 @@ public class APIPacketHandler implements IPacketHandler {
 		int y = 0;
 		int z = 0;
 		boolean readinglong = false;
+		NBTTagCompound NBT = null;
 		String stringdata = null;
 		//System.out.print(packet.length);
 		try {
@@ -109,6 +112,11 @@ public class APIPacketHandler implements IPacketHandler {
 				else
 					longdata = inputStream.readLong();
 				break;
+			case NBT:
+				control = inputStream.readInt();
+				pack = PacketIDs.getEnum(control);
+				NBT = ((DataPacket)packet).asNBT();
+				break;
 			}
 			if (packetType.hasCoordinates()) {
 				x = inputStream.readInt();
@@ -128,7 +136,7 @@ public class APIPacketHandler implements IPacketHandler {
 				world.func_147479_m(x, y, z);
 				break;
 			case PARTICLE:
-				if (data[0] < 0 || data[0] >= ReikaParticleHelper.particleList.length) {
+				if (data[0] >= 0 && data[0] < ReikaParticleHelper.particleList.length) {
 					ReikaParticleHelper p = ReikaParticleHelper.particleList[data[0]];
 					world.spawnParticle(p.name, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), 0, 0, 0);
 				}
@@ -153,6 +161,13 @@ public class APIPacketHandler implements IPacketHandler {
 			case TILEDELETE:
 				world.setBlockToAir(x, y, z);
 				break;
+			case PLAYERDATSYNC:
+				for (Object o : NBT.func_150296_c()) {
+					String name = (String)o;
+					NBTBase tag = NBT.getTag(name);
+					ep.getEntityData().setTag(name, tag);
+				}
+				break;
 			}
 		}
 		catch (Exception e) {
@@ -166,7 +181,8 @@ public class APIPacketHandler implements IPacketHandler {
 		PARTICLE(),
 		KEYUPDATE(),
 		TILESYNC(),
-		TILEDELETE();
+		TILEDELETE(),
+		PLAYERDATSYNC();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];

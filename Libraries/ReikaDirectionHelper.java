@@ -9,9 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import Reika.DragonAPI.DragonAPICore;
-
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaDirectionHelper extends DragonAPICore {
 

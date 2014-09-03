@@ -9,12 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Lua;
 
-import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 
 public class LuaHasItem extends LuaMethod {
 

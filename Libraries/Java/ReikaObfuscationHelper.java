@@ -9,19 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
-import Reika.DragonAPI.Exception.VanillaIntegrityException;
-
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemHoe;
-import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
-import net.minecraft.world.World;
+import net.minecraftforge.classloading.FMLForgePlugin;
+import Reika.DragonAPI.Exception.VanillaIntegrityException;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
@@ -33,14 +29,15 @@ public class ReikaObfuscationHelper {
 	private static final HashMap<String, Field> fields = new HashMap();
 	private static final HashMap<String, String> labels = new HashMap();
 
-	private static boolean testDeobf() {
+	private static boolean testDeobf() {/*
 		try {
 			Method m = ItemHoe.class.getMethod("onItemUse", ItemStack.class, EntityPlayer.class, World.class, int.class, int.class, int.class, int.class, float.class, float.class, float.class);
 			return true;
 		}
 		catch (NoSuchMethodException e) {
 			return false;
-		}
+		}*/
+		return !FMLForgePlugin.RUNTIME_DEOBF;
 	}
 
 	public static boolean isDeObfEnvironment() {

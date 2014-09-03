@@ -9,14 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BlockTracker extends BlockArray {
 

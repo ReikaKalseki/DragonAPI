@@ -9,12 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 public class SuggestedModsTracker {
 

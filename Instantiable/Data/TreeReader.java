@@ -9,6 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.world.World;
 import Reika.ChromatiCraft.API.TreeGetter;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -18,11 +22,6 @@ import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
-
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.World;
 
 public final class TreeReader extends BlockArray {
 
@@ -41,7 +40,7 @@ public final class TreeReader extends BlockArray {
 
 	public TreeReader() {
 		super();
-		if (ModList.DYETREES.isLoaded()) {
+		if (ModList.CHROMATICRAFT.isLoaded()) {
 			dyeLeafID = TreeGetter.getNaturalDyeLeafID();
 			rainbowLeafID = TreeGetter.getRainbowLeafID();
 		}
@@ -189,17 +188,17 @@ public final class TreeReader extends BlockArray {
 	public void addModTree(World world, int x, int y, int z) {
 		if (wood == ModWoodList.SEQUOIA) {
 			ReikaJavaLibrary.pConsole("Use sequoia handler!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 		if (wood == ModWoodList.DARKWOOD) {
 			ReikaJavaLibrary.pConsole("Use darkwood handler!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 		if (wood == ModWoodList.IRONWOOD) {
 			ReikaJavaLibrary.pConsole("Use ironwood handler!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 		if (wood == null) {
@@ -389,7 +388,7 @@ public final class TreeReader extends BlockArray {
 			ModWoodList wood = ModWoodList.getModWood(id, meta);
 			if (wood == ModWoodList.SEQUOIA) {
 				ReikaJavaLibrary.pConsole("Use sequoia handler for "+id+":"+meta+"!");
-				Thread.dumpStack();
+				ReikaJavaLibrary.dumpStack();
 				return;
 			}
 			//ItemStack leaf = wood.getCorrespondingLeaf();
@@ -516,7 +515,8 @@ public final class TreeReader extends BlockArray {
 		copy.refWorld = refWorld;
 		copy.liquidMat = liquidMat;
 		copy.overflow = overflow;
-		copy.blocks = ReikaJavaLibrary.copyList(blocks);
+		copy.blocks.clear();
+		copy.blocks.addAll(blocks);
 
 		copy.leafCount = leafCount;
 		copy.logCount = logCount;

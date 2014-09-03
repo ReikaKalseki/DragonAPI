@@ -18,7 +18,8 @@ public enum PacketTypes {
 	FLOAT(),
 	SYNC(),
 	TANK(),
-	RAW();
+	RAW(),
+	NBT();
 
 	private PacketTypes() {
 

@@ -9,21 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Instantiable.StepTimer;
-import Reika.DragonAPI.Instantiable.SyncPacket;
-import Reika.DragonAPI.Libraries.ReikaAABBHelper;
-import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import Reika.DragonAPI.ModInteract.Lua.LuaMethod;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -53,6 +38,20 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.StepTimer;
+import Reika.DragonAPI.Instantiable.SyncPacket;
+import Reika.DragonAPI.Libraries.ReikaAABBHelper;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.ModInteract.Lua.LuaMethod;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -178,6 +177,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.TILESYNC.ordinal(), this, fullNBT ? 1 : 0);
 		}
 		else {
+			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 			NBTTagCompound var1 = new NBTTagCompound();
 			if (fullNBT)
 				this.writeToNBT(var1);
@@ -372,6 +372,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		syncTag.setData(this, this.shouldFullSync(), nbt);
 		forceSync = false;
 		if (!syncTag.isEmpty()) {
+			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 			int r = this.shouldFullSync() ? 128 : this.getUpdatePacketRadius();
 			int dim = worldObj.provider.dimensionId;
 			//PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, syncTag);
@@ -454,7 +455,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return false;
 	}
 
-	public TileEntity getAdjacentTileEntity(ForgeDirection dir) {
+	public final TileEntity getAdjacentTileEntity(ForgeDirection dir) {
 		if (this.cachesTEs()) {
 			return this.getCachedTE(dir);
 		}
@@ -468,7 +469,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		}
 	}
 
-	public TileEntity getTileEntity(int x, int y, int z) {
+	public final TileEntity getTileEntity(int x, int y, int z) {
 		if (!ReikaWorldHelper.tileExistsAt(worldObj, x, y, z))
 			return null;
 		return worldObj.getTileEntity(x, y, z);
@@ -486,7 +487,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return adjTEMap[dir.ordinal()];
 	}
 
-	public void updateCache(ForgeDirection dir) {
+	public final void updateCache(ForgeDirection dir) {
 		TileEntity te = worldObj.getTileEntity(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
 		/*if (te instanceof SpaceRift) {
 			te = ((SpaceRift)te).getTileEntityFrom(dir);

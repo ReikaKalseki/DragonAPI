@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
-import Reika.DragonAPI.DragonAPICore;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,7 +16,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
+import net.minecraft.world.World;
+
+import org.apache.logging.log4j.Level;
+
+import Reika.DragonAPI.DragonAPICore;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaJavaLibrary extends DragonAPICore {
@@ -29,30 +33,61 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Object obj) {
+		pConsole(Level.INFO, obj);
+	}
+
+	/** Generic write-to-console function. Args: Object */
+	public static void pConsole(Level level, Object obj) {
 		if (silent)
 			return;
 		if (obj == null) {
-			System.out.println("null arg");
-			return;
+			writeLineToConsoleAndLogs(level, "null arg");
 		}
-		Class cl = obj.getClass();
-		if (cl != String.class && cl != Integer.class && cl != Boolean.class)
-			System.out.println(String.valueOf(obj)+" of "+String.valueOf(cl));
-		else
-			System.out.println(String.valueOf(obj));
+		else {
+			Class cl = obj.getClass();
+			if (obj instanceof Object[]) {
+				writeLineToConsoleAndLogs(level, Arrays.toString((Object[])obj));
+			}
+			else if (cl != String.class && cl != Integer.class && cl != Boolean.class)
+				writeLineToConsoleAndLogs(level, String.valueOf(obj)+" of "+String.valueOf(cl));
+			else
+				writeLineToConsoleAndLogs(level, String.valueOf(obj));
+		}
 		if (dumpStack)
-			Thread.dumpStack();
+			dumpStack();
+	}
+
+	public static void dumpStack() {
+		writeLineToConsoleAndLogs(Level.WARN, "Stack Trace:");
+		StackTraceElement[] s = new Exception("Stack Trace").getStackTrace();
+		for (int i = 1; i < s.length; i++)
+			writeLineToConsoleAndLogs(Level.WARN, "\t"+s[i].toString());
+	}
+
+	private static void writeLineToConsoleAndLogs(Level level, String s) {
+		//System.out.println(s);
+		s = s.replaceAll("%", "%%"); //because FML logger fails at this
+		FMLLog.log(level, s);
 	}
 
 	public static void spamConsole(Object obj) {
 		String sg = String.valueOf(obj);
 		for (int i = 0; i < 16; i++)
-			System.out.println(sg);
+			pConsole(sg);
+	}
+
+	public static void writeCoord(World world, int x, int y, int z) {
+		pConsole(world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z)+" @ "+x+", "+y+", "+z+" @DIM"+world.provider.dimensionId);
 	}
 
 	public static void pConsole(Object obj, Side s) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == s)
 			pConsole(obj);
+	}
+
+	public static void pConsole(Object obj, Side s, boolean con) {
+		if (con)
+			pConsole(obj, s);
 	}
 
 	public static void pConsole(Object obj, boolean con) {
@@ -145,8 +180,8 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	/** Initializes a class. */
 	public static void initClass(Class c) {
 		if (c == null) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot initalize a null class!");
-			Thread.dumpStack();
+			pConsole("DRAGONAPI: Cannot initalize a null class!");
+			dumpStack();
 			return;
 		}
 		try {

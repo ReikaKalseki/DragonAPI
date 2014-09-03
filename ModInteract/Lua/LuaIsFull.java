@@ -9,10 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Lua;
 
-import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
-
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
+import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 
 public class LuaIsFull extends LuaMethod {
 

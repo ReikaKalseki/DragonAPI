@@ -9,16 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public final class SimpleConfig {

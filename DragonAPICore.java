@@ -9,14 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.Side;
@@ -58,7 +57,8 @@ public class DragonAPICore {
 			boolean win = System.getProperty("os.name").equals("Windows 7");
 			int cpus = Runtime.getRuntime().availableProcessors();
 			String cpu = System.getProperty("os.arch");
-			long diskSize = new File("/").getTotalSpace();
+			long diskSize = new File("c:").getTotalSpace();
+
 			if (win && "amd64".equals(cpu)) {
 				if (diskSize == 484964069376L && cpus == 4 && "RadicalOne".equals(username))
 					return true;

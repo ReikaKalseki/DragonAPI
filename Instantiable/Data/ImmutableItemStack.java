@@ -9,12 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import Reika.DragonAPI.Interfaces.BlockEnum;
-import Reika.DragonAPI.Interfaces.ItemEnum;
-
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Interfaces.BlockEnum;
+import Reika.DragonAPI.Interfaces.ItemEnum;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class ImmutableItemStack {
 
@@ -70,6 +70,14 @@ public final class ImmutableItemStack {
 
 	public ItemStack getItemStack() {
 		return data.copy();
+	}
+
+	public boolean match(ItemStack is) {
+		return ReikaItemHelper.matchStacks(is, this.getItemStack());
+	}
+
+	public boolean match(ImmutableItemStack is) {
+		return ReikaItemHelper.matchStacks(is.getItemStack(), this.getItemStack());
 	}
 
 }

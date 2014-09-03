@@ -9,9 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.MathSci;
 
-import Reika.DragonAPI.DragonAPICore;
-
 import net.minecraft.util.MathHelper;
+import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaMathLibrary extends DragonAPICore {
 
@@ -130,7 +129,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	}
 
 	public static boolean isPowerOfTwo(long num) {
-		return num > 0 && (num & (num-1)) == 0;
+		return num > 0 && (num & (num-1)) == 0; //alternate: num > 0 && (num & -num) == num
 	}
 
 	/** Returns the abs-max, abs-min, signed max, or signed min of the arguments,

@@ -9,12 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Exception.WTFException;
-import Reika.DragonAPI.Instantiable.ItemMaterial;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,6 +17,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Exception.WTFException;
+import Reika.DragonAPI.Instantiable.ItemMaterial;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class ItemMaterialController {
 

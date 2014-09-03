@@ -9,12 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.ModRegistry.ModOreList;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
@@ -22,6 +16,11 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public final class ThaumOreHandler extends ModHandlerBase {
 
@@ -302,7 +301,7 @@ public final class ThaumOreHandler extends ModHandlerBase {
 		}
 		else {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft ores already registered to ore dictionary! No action taken!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 		}
 	}
 

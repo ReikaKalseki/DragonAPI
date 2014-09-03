@@ -9,12 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Effects;
 
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-
 import net.minecraft.client.renderer.Tessellator;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

@@ -14,13 +14,12 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
 
 public class StructuredBlockArray extends BlockArray {
 
-	private final HashMap<List<Integer>, ItemStack> data = new HashMap();
+	private final HashMap<List<Integer>, BlockKey> data = new HashMap();
 
 	private int minX = Integer.MAX_VALUE;
 	private int minY = Integer.MAX_VALUE;
@@ -87,7 +86,7 @@ public class StructuredBlockArray extends BlockArray {
 			return false;
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		data.put(Arrays.asList(x, y, z), new ItemStack(b, meta));
+		data.put(Arrays.asList(x, y, z), new BlockKey(b, meta));
 		if (minX > x)
 			minX = x;
 		if (maxX < x)
@@ -107,17 +106,17 @@ public class StructuredBlockArray extends BlockArray {
 		int x = dx+minX;
 		int y = dy+minY;
 		int z = dz+minZ;
-		return this.hasBlock(x, y, z) ? Block.getBlockFromItem(data.get(Arrays.asList(x, y, z)).getItem()) : null;
+		return this.hasBlock(x, y, z) ? data.get(Arrays.asList(x, y, z)).blockID : null;
 	}
 
 	public int getMetaRelativeToMinXYZ(int dx, int dy, int dz) {
 		int x = dx+minX;
 		int y = dy+minY;
 		int z = dz+minZ;
-		return this.hasBlock(x, y, z) ? data.get(Arrays.asList(x, y, z)).getItemDamage() : -1;
+		return this.hasBlock(x, y, z) ? data.get(Arrays.asList(x, y, z)).metadata : -1;
 	}
 
-	public ItemStack getBlockRelativeToMinXYZ(int dx, int dy, int dz) {
+	public BlockKey getBlockRelativeToMinXYZ(int dx, int dy, int dz) {
 		int x = dx+minX;
 		int y = dy+minY;
 		int z = dz+minZ;
@@ -132,8 +131,8 @@ public class StructuredBlockArray extends BlockArray {
 	public int getNumberOf(Block id, int meta) {
 		int count = 0;
 		for (List<Integer> li : data.keySet()) {
-			ItemStack block = data.get(li);
-			if (Item.getItemFromBlock(id) == block.getItem() && meta == block.getItemDamage())
+			BlockKey block = data.get(li);
+			if (block.match(id, meta))
 				count++;
 		}
 		return count;

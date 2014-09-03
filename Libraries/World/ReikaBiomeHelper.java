@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +16,8 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 
 public class ReikaBiomeHelper extends DragonAPICore {
 

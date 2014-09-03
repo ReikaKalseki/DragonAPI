@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.Instantiable.Data.ImmutableList;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,6 +18,8 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Instantiable.Data.ImmutableList;
 
 public class BannedItemReader {
 

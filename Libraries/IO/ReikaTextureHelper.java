@@ -9,14 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.IO.ReikaImageLoader;
-import Reika.DragonAPI.IO.ReikaTextureBinder;
-import Reika.DragonAPI.Instantiable.Data.PluralMap;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
-
 import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
@@ -40,6 +32,13 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.IO.ReikaImageLoader;
+import Reika.DragonAPI.IO.ReikaTextureBinder;
+import Reika.DragonAPI.Instantiable.Data.PluralMap;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

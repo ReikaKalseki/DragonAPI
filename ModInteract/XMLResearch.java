@@ -9,14 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import Reika.DragonAPI.Instantiable.IO.XMLInterface;
-
 import java.util.ArrayList;
 
 import thaumcraft.api.crafting.CrucibleRecipe;
 import thaumcraft.api.crafting.IArcaneRecipe;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.research.ResearchPage;
+import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 
 public class XMLResearch {
 

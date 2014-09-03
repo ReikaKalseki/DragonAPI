@@ -9,13 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public class ChancedOutputList {
 

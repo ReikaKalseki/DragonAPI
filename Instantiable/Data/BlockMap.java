@@ -16,6 +16,7 @@ import java.util.HashMap;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 public final class BlockMap<V> {
 
@@ -156,7 +157,7 @@ public final class BlockMap<V> {
 
 		@Override
 		public String toString() {
-			return blockID.getUnlocalizedName()+":"+metadata;
+			return blockID+":"+metadata;
 		}
 
 		public boolean hasMetadata() {
@@ -169,6 +170,10 @@ public final class BlockMap<V> {
 
 		public boolean match(Block b, int meta) {
 			return b == this.blockID && (!this.hasMetadata() || meta == this.metadata);
+		}
+
+		public boolean match(World world, int x, int y, int z) {
+			return this.match(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 		}
 
 	}

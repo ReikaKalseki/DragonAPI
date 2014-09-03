@@ -15,18 +15,16 @@ import Reika.DragonAPI.Interfaces.SoundEnum;
 public class SoundLoader {
 
 	private SoundEnum[] soundList;
-	private Class root;
 
-	public SoundLoader(Class root, SoundEnum[] sounds) {
+	public SoundLoader(SoundEnum[] sounds) {
 		soundList = sounds;
-		this.root = root;
 	}
 
 	public void register() {
 		Reika.DragonAPI.IO.CustomResourceManager mg = CustomResourceManager.getRegisteredInstance();
 		for (int i = 0; i < soundList.length; i++) {
 			SoundEnum e = soundList[i];
-			mg.registerCustomPath(root, e.getPath(), e.getCategory());
+			mg.registerCustomPath(e.getPath(), e.getCategory());
 		}
 	}
 }

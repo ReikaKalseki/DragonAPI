@@ -9,12 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Exception;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.DragonAPIMod;
-
 import java.util.ArrayList;
 
 import net.minecraft.item.Item;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.DragonAPIMod;
 
 public class IDConflictException extends DragonAPIException {
 

@@ -9,13 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
-
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.AxisAlignedBB;
 
 import org.lwjgl.opengl.GL11;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 public final class ReikaAABBHelper extends DragonAPICore {
 

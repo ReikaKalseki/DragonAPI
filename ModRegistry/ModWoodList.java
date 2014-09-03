@@ -9,15 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModRegistry;
 
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.Data.BlockMap;
-import Reika.DragonAPI.Interfaces.TreeType;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,6 +21,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.BlockMap;
+import Reika.DragonAPI.Interfaces.TreeType;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public enum ModWoodList implements TreeType {
 

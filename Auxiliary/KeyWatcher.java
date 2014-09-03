@@ -9,12 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.APIPacketHandler;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
-import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -24,6 +18,11 @@ import java.util.HashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import Reika.DragonAPI.APIPacketHandler;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
+import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -164,8 +163,8 @@ public class KeyWatcher {
 		}
 
 		@Override
-		public Phase getPhase() {
-			return Phase.START;
+		public boolean canFire(Phase p) {
+			return p == Phase.START;
 		}
 
 	}

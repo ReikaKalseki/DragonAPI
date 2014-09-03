@@ -9,31 +9,27 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
 
 public enum ModList {
 
 	ROTARYCRAFT("RotaryCraft", "Reika.RotaryCraft.RotaryCraft"),
 	REACTORCRAFT("ReactorCraft"),
-	DYETREES("DyeTrees"),
 	EXPANDEDREDSTONE("ExpandedRedstone"),
 	GEOSTRATA("GeoStrata"),
-	//REALBIOMES("RealBiomes"),
 	FURRYKINGDOMS("FurryKingdoms"),
 	CRITTERPET("CritterPet"),
-	ENDERFOREST("EnderForest"),
 	VOIDMONSTER("VoidMonster"),
 	USEFULTNT("UsefulTNT"),
 	METEORCRAFT("MeteorCraft"),
-	//JETPLANE("JetPlane"),
+	JETPLANE("JetPlane"),
 	CAVECONTROL("CaveControl"),
 	LEGACYCRAFT("LegacyCraft"),
 	ELECTRICRAFT("ElectriCraft"),
@@ -42,45 +38,45 @@ public enum ModList {
 	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
 	BCTRANSPORT("BuildCraft|Transport", "buildcraft.BuildCraftTransport"),
 	THAUMCRAFT("Thaumcraft", "thaumcraft.common.config.ConfigBlocks", "thaumcraft.common.config.ConfigItems"),
-	IC2("IC2", "ic2.core.Ic2Items"),
+	IC2("IC2", "ic2.core.Ic2Items"), //ensure still here
 	GREGTECH("gregtech_addon"),
-	FORESTRY("Forestry", "forestry.core.config.ForestryBlock", "forestry.core.config.ForestryItem"),
-	APPENG("AppliedEnergistics", "appeng.common.AppEng"),
-	MFFS("MFFS", "mffs.ModularForceFieldSystem"),
+	FORESTRY("Forestry", "forestry.core.config.ForestryBlock", "forestry.core.config.ForestryItem"), //ensure still here
+	APPENG("AppliedEnergistics"), //appeng.api.definitions
+	MFFS("MFFS", "mffs.ModularForceFieldSystem"), //ensure still here
 	REDPOWER("RedPower"),
-	TWILIGHT("TwilightForest", "twilightforest.Blocks.TFBlocks", "twilightforest.Items.TFItems"),
+	TWILIGHT("TwilightForest", "twilightforest.block.TFBlocks", "twilightforest.item.TFItems"),
 	NATURA("Natura", "mods.natura.common.NContent"),
-	BOP("BiomesOPlenty", "biomesoplenty.configuration.BOPConfigurationIDs"),
+	BOP("BiomesOPlenty", "biomesoplenty.api.content.BOPCBlocks", "biomesoplenty.api.content.BOPCItems"),
 	BXL("ExtraBiomesXL"),
-	MINEFACTORY("MineFactoryReloaded", "powercrystals.minefactoryreloaded.MineFactoryReloadedCore"),
-	DARTCRAFT("DartCraft", "bluedart.Blocks.DartBlock", "bluedart.Items.DartItem"),
-	TINKERER("TConstruct", "tconstruct.common.TContent"), //"TRepo" in 1.7
-	THERMALEXPANSION("ThermalExpansion", "thermalexpansion.Blocks.TEBlocks", "thermalexpansion.Items.TEItems"),
+	MINEFACTORY("MineFactoryReloaded", "powercrystals.minefactoryreloaded.MineFactoryReloadedCore"), //ensure still here
+	DARTCRAFT("DartCraft", "bluedart.Blocks.DartBlock", "bluedart.Items.DartItem"), //ensure still here
+	TINKERER("TConstruct"), //tconstruct.library.TConstructRegistry.getBlock/Item
+	THERMALEXPANSION("ThermalExpansion", "thermalexpansion.block.TEBlocks", "thermalexpansion.item.TEItems"),
 	MEKANISM("Mekanism", "mekanism.common.Mekanism"),
-	MEKTOOLS("MekanismTools", "mekanism.tools.common.MekanismTools"),
-	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks", null), //items spread over half a dozen classes
+	MEKTOOLS("MekanismTools", "mekanism.tools.common.MekanismTools"), //ensure still here
+	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks.RailcraftBlocks", null), //items spread over half a dozen classes
 	ICBM("ICBM|Explosion"),
-	ARSMAGICA("arsmagica2", "am2.blocks.BlocksCommonProxy", "am2.items.ItemsCommonProxy"),
-	TRANSITIONAL("TransitionalAssistance", "modTA.Core.TACore"),
+	ARSMAGICA("arsmagica2", "am2.blocks.BlocksCommonProxy", "am2.items.ItemsCommonProxy"), //ensure still here
+	TRANSITIONAL("TransitionalAssistance", "modTA.Core.TACore"), //ensure still here
 	ENDERSTORAGE("EnderStorage"),
 	OPTIFINE("Optifine"),
 	TREECAPITATOR("TreeCapitator"),
-	HARVESTCRAFT("pamharvestcraft", "assets.pamharvestcraft.PamHarvestCraft"),
+	HARVESTCRAFT("pamharvestcraft", "com.pam.harvestcraft.harvestcraft"),
 	MYSTCRAFT("Mystcraft"),
-	MAGICCROPS("magicalcrops", "magicalcrops.mod_mCrops"),
-	MIMICRY("Mimicry", "modMimicry.Blocks.MimicryBlock", "modMimicry.Items.MimicryItem"),
+	MAGICCROPS("magicalcrops", "com.mark719.magicalcrops.MagicalCrops"),
+	MIMICRY("Mimicry", "com.sparr.mimicry.block.MimicryBlock", "com.sparr.mimicry.item.MimicryItem"),
 	QCRAFT("QuantumCraft", "dan200.QCraft"),
 	OPENBLOCKS("OpenBlocks", "openblocks.OpenBlocks$Blocks", "openblocks.OpenBlocks$Items"),
 	FACTORIZATION("factorization", "factorization.common.Registry"),
 	UE("UniversalElectricity"),
-	EXTRAUTILS("ExtraUtilities", "extrautils.ExtraUtils"),
-	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits"),
-	ARSENAL("Redstone Arsenal", "redstonearsenal.Items.RAItems"),
-	EMASHER("emashercore", "emasher.core.EmasherCore"),
+	EXTRAUTILS("ExtraUtilities", "com.rwtema.extrautils.ExtraUtils"),
+	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits"), //ensure still here
+	ARSENAL("Redstone Arsenal", "redstonearsenal.item.RAItems"),
+	EMASHER("emashercore", "emasher.core.EmasherCore"), //ensure still here
 	HIGHLANDS("Highlands", "highlands.api.HighlandsBlocks"),
 	PROJRED("ProjRed|Core"),
-	WITCHERY("witchery", "com.emoniph.witchery.Witchery"),
-	GALACTICRAFT("GalacticraftCore", "micdoodle8.mods.galacticraft.core.blocks.GCCoreBlocks", "micdoodle8.mods.galacticraft.core.items.GCCoreItems"),
+	WITCHERY("witchery", "com.emoniph.witchery.WitcheryBlocks", "com.emoniph.witchery.WitcheryItems"),
+	GALACTICRAFT("GalacticraftCore", "micdoodle8.mods.galacticraft.core.blocks.GCBlocks", "micdoodle8.mods.galacticraft.core.items.GCItems"),
 	MULTIPART("McMultipart"),
 	OPENCOMPUTERS("OpenComputers"),
 	NEI("NotEnoughItems");
@@ -129,7 +125,7 @@ public enum ModList {
 	public Class getBlockClass() {
 		if (blockClass == null) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load block class for "+this+". Null class provided.");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return null;
 		}
 		Class c = blockClasses.get(this);
@@ -151,7 +147,7 @@ public enum ModList {
 	public Class getItemClass() {
 		if (itemClass == null) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+". Null class provided.");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return null;
 		}
 		Class c = itemClasses.get(this);

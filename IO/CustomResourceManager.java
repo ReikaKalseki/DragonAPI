@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.IO;
 
-import Reika.DragonAPI.Instantiable.IO.DirectResource;
-
 import java.io.IOException;
 import java.util.HashMap;
 
@@ -22,11 +20,11 @@ import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
+import Reika.DragonAPI.Instantiable.IO.DirectResource;
 
 public class CustomResourceManager extends SimpleReloadableResourceManager {
 
 	private final SimpleReloadableResourceManager original;
-	private final HashMap<String, Class> classes = new HashMap();
 	private final HashMap<String, SoundEventAccessorComposite> accessors = new HashMap();
 
 	public CustomResourceManager(SimpleReloadableResourceManager mg) {
@@ -44,17 +42,14 @@ public class CustomResourceManager extends SimpleReloadableResourceManager {
 		String dom = loc.getResourceDomain();
 		if (dom.equals("custom_path")) {
 			String path = loc.getResourcePath();
-			Class c = this.getClassFor(path);
-			return new DirectResource(c, path);
+			return new DirectResource(path);
 		}
 		else {
 			return original.getResource(loc);
 		}
 	}
 
-	public void registerCustomPath(Class root, String path, SoundCategory cat) {
-		classes.put(path, root);
-
+	public void registerCustomPath(String path, SoundCategory cat) {
 		ResourceLocation rl = new ResourceLocation("custom_path", path);
 		SoundPoolEntry spe = new SoundPoolEntry(rl, 1, 1, false);
 		SoundEventAccessor pos = new SoundEventAccessor(spe, 1);
@@ -76,10 +71,6 @@ public class CustomResourceManager extends SimpleReloadableResourceManager {
 		for (String path : accessors.keySet()) {
 			Minecraft.getMinecraft().getSoundHandler().sndRegistry.registerSound(accessors.get(path));
 		}
-	}
-
-	private Class getClassFor(String path) {
-		return classes.get(path);
 	}
 	/*
 	@Override

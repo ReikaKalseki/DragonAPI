@@ -12,7 +12,7 @@ package Reika.DragonAPI.Auxiliary;
 import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
 
@@ -23,7 +23,7 @@ public class PlayerHandler {
 	private final ArrayList<PlayerTracker> trackers = new ArrayList();
 
 	private PlayerHandler() {
-		MinecraftForge.EVENT_BUS.register(this);
+		FMLCommonHandler.instance().bus().register(this);
 	}
 
 	public void registerTracker(PlayerTracker p) {

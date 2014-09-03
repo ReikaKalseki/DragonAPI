@@ -9,19 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Interfaces.ConfigList;
-import Reika.DragonAPI.Interfaces.IDRegistry;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Interfaces.ConfigList;
+import Reika.DragonAPI.Interfaces.IDRegistry;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ControlledConfig {

@@ -9,18 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Auxiliary.PacketTypes;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.HybridTank;
-import Reika.DragonAPI.Instantiable.IO.PacketPipeline;
-import Reika.DragonAPI.Interfaces.IPacketHandler;
-import Reika.DragonAPI.Interfaces.SoundEnum;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
-
 import io.netty.buffer.ByteBuf;
 
 import java.io.ByteArrayInputStream;
@@ -39,14 +27,31 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Auxiliary.PacketTypes;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.HybridTank;
+import Reika.DragonAPI.Instantiable.IO.PacketPipeline;
+import Reika.DragonAPI.Interfaces.IPacketHandler;
+import Reika.DragonAPI.Interfaces.SoundEnum;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 
 import com.google.common.collect.HashBiMap;
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -64,6 +69,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		SimpleNetworkWrapper wrapper = NetworkRegistry.INSTANCE.newSimpleChannel(channel);
 		PacketPipeline p = new PacketPipeline(mod, channel, handler, wrapper);
 		p.registerPacket(DataPacket.class);
+		//p.registerPacket(NBTPacket.class);
 		handlers.put(handlerID, handler);
 		pipelines.put(channel, p);
 		handlerID++;
@@ -101,7 +107,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -128,7 +134,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -181,7 +187,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -222,7 +228,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -274,7 +280,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -305,6 +311,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, int data) {
 		sendDataPacket(ch, id, world, x, y, z, ReikaJavaLibrary.makeListFrom(data));
+	}
+
+	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, int data1, int data2) {
+		sendDataPacket(ch, id, world, x, y, z, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2}));
 	}
 
 	public static void sendLongDataPacket(String ch, int id, TileEntity te, long data) {
@@ -349,7 +359,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -398,7 +408,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -445,7 +455,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -491,7 +501,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -541,7 +551,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -585,7 +595,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -629,7 +639,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -683,7 +693,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -736,7 +746,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
-			Thread.dumpStack();
+			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 
@@ -756,6 +766,54 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		else {
 			// We are on the Bukkit server.
 		}
+	}
+
+	public static void sendNBTPacket(String ch, int id, NBTTagCompound nbt) {
+		DataPacket pack = getNBTPacket(id, nbt);
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+		pack.init(PacketTypes.NBT, pipe);
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+
+		}
+		else if (side == Side.CLIENT) {
+			pipe.sendToServer(pack);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
+	public static void sendNBTPacket(String ch, int id, EntityPlayerMP ep, NBTTagCompound nbt) {
+		DataPacket pack = getNBTPacket(id, nbt);
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+		pack.init(PacketTypes.NBT, pipe);
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			pipe.sendToPlayer(pack, ep);
+		}
+		else if (side == Side.CLIENT) {
+
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
+	private static DataPacket getNBTPacket(int id, NBTTagCompound nbt) {
+		DataPacket pack = new DataPacket();
+		pack.setData(id, nbt);
+		return pack;
 	}
 
 	public static void updateTileEntityData(World world, int x, int y, int z, String name, int data) {
@@ -860,15 +918,28 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 	public static class DataPacket extends PacketObj
 	{
-		private byte[] bytes;
+		protected byte[] bytes;
 
 		public DataPacket() {
 			super();
 		}
 
-		public void setData(byte[] data) {
+		private void setData(byte[] data) {
 			bytes = new byte[data.length];
 			System.arraycopy(data, 0, bytes, 0, bytes.length);
+		}
+
+		private void setData(int id, NBTTagCompound tag) {
+			try {
+				byte[] most = this.writeNBTTagCompoundToBytes(tag);
+				ByteArrayDataOutput out = ByteStreams.newDataOutput();
+				out.writeInt(id);
+				out.write(most);
+				bytes = out.toByteArray();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
@@ -886,6 +957,17 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			super.writeData(data);
 			data.writeBytes(bytes);
 			//ReikaJavaLibrary.pConsole("sent "+this);
+		}
+
+		public NBTTagCompound asNBT() {
+			try {
+				byte[] abyte = new byte[bytes.length-4]; //remove control int
+				System.arraycopy(bytes, 4, abyte, 0, abyte.length);
+				return this.readNBTTagCompoundFromBuffer(abyte);
+			}
+			catch (IOException e) {
+				return null;
+			}
 		}
 
 		public int getSize() {
@@ -958,12 +1040,22 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 
 		public final void handleClient(NetHandlerPlayClient nh) {
-			handler.handleData(this, Minecraft.getMinecraft().theWorld, Minecraft.getMinecraft().thePlayer);
+			try {
+				handler.handleData(this, Minecraft.getMinecraft().theWorld, Minecraft.getMinecraft().thePlayer);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 			this.close();
 		}
 
 		public final void handleServer(NetHandlerPlayServer nh) {
-			handler.handleData(this, nh.playerEntity.worldObj, nh.playerEntity);
+			try {
+				handler.handleData(this, nh.playerEntity.worldObj, nh.playerEntity);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 			this.close();
 		}
 
@@ -994,6 +1086,32 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			catch (IOException e) {
 				e.printStackTrace();
 				return "ERROR";
+			}
+		}
+
+		protected final byte[] writeNBTTagCompoundToBytes(NBTTagCompound tag) throws IOException
+		{
+			ByteArrayDataOutput buf = ByteStreams.newDataOutput();
+			if (tag == null)
+				buf.writeShort(-1);
+			else {
+				byte[] abyte = CompressedStreamTools.compress(tag);
+				buf.writeShort((short)abyte.length);
+				buf.write(abyte);
+			}
+			return buf.toByteArray();
+		}
+
+		protected final NBTTagCompound readNBTTagCompoundFromBuffer(byte[] bytes) throws IOException
+		{
+			ByteArrayDataInput buf = ByteStreams.newDataInput(bytes);
+			short short1 = buf.readShort();
+			if (short1 < 0)
+				return null;
+			else {
+				byte[] abyte = new byte[short1];
+				buf.readFully(abyte);
+				return CompressedStreamTools.func_152457_a(abyte, NBTSizeTracker.field_152451_a);
 			}
 		}
 

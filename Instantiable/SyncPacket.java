@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import Reika.DragonAPI.Base.TileEntityBase;
-
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,6 +18,7 @@ import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import Reika.DragonAPI.Base.TileEntityBase;
 
 public final class SyncPacket extends S35PacketUpdateTileEntity {
 

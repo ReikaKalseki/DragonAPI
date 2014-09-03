@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.IO;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +19,9 @@ import java.io.LineNumberReader;
 import java.net.URL;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReikaFileReader extends DragonAPICore {
 

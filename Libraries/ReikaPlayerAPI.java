@@ -9,17 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-
 import java.util.HashMap;
 import java.util.UUID;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -37,6 +33,14 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Instantiable.Data.BlockArray;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 import com.mojang.authlib.GameProfile;
 
@@ -186,6 +190,15 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		ep.getFoodStats().readNBT(NBT);
 	}
 
+	public static boolean playerCanBreakAt(WorldServer world, BlockArray b, EntityPlayer ep) {
+		for (int i = 0; i < b.getSize(); i++) {
+			int[] xyz = b.getNthBlock(i);
+			if (!playerCanBreakAt(world, xyz[0], xyz[1], xyz[2], ep))
+				return false;
+		}
+		return true;
+	}
+
 	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, EntityPlayer ep) {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
@@ -236,5 +249,9 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			}
 			xp--;
 		}
+	}
+
+	public static void syncCustomData(EntityPlayerMP ep) {
+		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERDATSYNC.ordinal(), ep, ep.getEntityData());
 	}
 }

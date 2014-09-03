@@ -13,20 +13,19 @@ import java.io.InputStream;
 
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.data.IMetadataSection;
+import Reika.DragonAPI.DragonAPIInit;
 
 public class DirectResource implements IResource {
 
 	public final String path;
-	public final Class root;
 
-	public DirectResource(Class root, String path) {
+	public DirectResource(String path) {
 		this.path = path;
-		this.root = root;
 	}
 
 	@Override
 	public InputStream getInputStream() {
-		return root.getResourceAsStream(path);
+		return DragonAPIInit.class.getClassLoader().getResourceAsStream(path);//root.getResourceAsStream(path);
 	}
 
 	@Override

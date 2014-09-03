@@ -9,14 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Command.DragonCommandBase;
-import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -30,7 +22,13 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Command.DragonCommandBase;
+import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public class CommandableUpdateChecker {
 
@@ -82,10 +80,9 @@ public class CommandableUpdateChecker {
 		oldMods.add(mod);
 	}
 
-	public void registerMod(DragonAPIMod mod, FMLPreInitializationEvent evt, String url) {
-		File f = evt.getSourceFile();
-		String name = f.getName();
-		if (name.equals("bin")) {
+	public void registerMod(DragonAPIMod mod, String url) {
+		ModVersion version = this.getVersion(mod);
+		if (version == null) {
 			mod.getModLogger().log("Mod is in source code form. Not checking versions.");
 			return;
 		}
@@ -94,7 +91,6 @@ public class CommandableUpdateChecker {
 			mod.getModLogger().logError("Could not create URL to update checker. Version will not be checked.");
 			return;
 		}
-		ModVersion version = this.getVersionFromFileName(name);
 		UpdateChecker c = new UpdateChecker(mod, version, file);
 		ModVersion latest = c.getLatestVersion();
 		if (latest == null) {
@@ -137,14 +133,15 @@ public class CommandableUpdateChecker {
 		}
 	}
 
-	private ModVersion getVersionFromFileName(String name) {
+	private ModVersion getVersion(DragonAPIMod mod) {
 		//if (name.equals("bin"))
 		//	return ModVersion.source;
-		String[] parts = name.split(" ");
-		String last = parts[parts.length-1];
-		String[] part2 = last.split("\\.");
-		String version = part2[0];
-		return ModVersion.getFromString(version);
+		String major = mod.getMajorVersion();
+		String minor = mod.getMinorVersion();
+		if (major.startsWith("@")) { //dev environment
+			return null;
+		}
+		return new ModVersion(Integer.parseInt(major), minor.isEmpty() ? '\0' : minor.charAt(0));
 	}
 
 	private void setChecker(DragonAPIMod mod, boolean enable) {

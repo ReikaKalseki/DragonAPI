@@ -9,6 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModRegistry;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
+
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
@@ -21,16 +30,6 @@ import Reika.DragonAPI.ModInteract.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
-
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Iterator;
-
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public enum ModCropList {
 

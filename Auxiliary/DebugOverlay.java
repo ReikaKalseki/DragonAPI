@@ -9,10 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.ReikaNBTHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
@@ -28,6 +24,9 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class DebugOverlay {

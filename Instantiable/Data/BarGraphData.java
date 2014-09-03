@@ -9,11 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BarGraphData {
 	private HashMap<Integer, Integer> data = new HashMap();
