@@ -18,7 +18,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 /** A tank class that can handle direct operations as well as standard Forge Liquid operations. */
 public class HybridTank extends FluidTank {
 
-	private final String name;
+	protected final String name;
 
 	public HybridTank(String name, int capacity) {
 		super(capacity);

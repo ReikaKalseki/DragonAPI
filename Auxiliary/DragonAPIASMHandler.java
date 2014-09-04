@@ -11,13 +11,12 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.Map;
 
-import net.minecraft.launchwrapper.Launch;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
 public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 
 	static {
-		Launch.classLoader.addTransformerExclusion("Reika");
+		//Launch.classLoader.addTransformerExclusion("Reika");  Breaks @SideOnly
 	}
 
 	@Override

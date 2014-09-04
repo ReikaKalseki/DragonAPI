@@ -58,6 +58,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
 import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaPacketHelper extends DragonAPICore {
 
@@ -1039,6 +1040,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			data.writeByte(type.ordinal());
 		}
 
+		@SideOnly(Side.CLIENT)
 		public final void handleClient(NetHandlerPlayClient nh) {
 			try {
 				handler.handleData(this, Minecraft.getMinecraft().theWorld, Minecraft.getMinecraft().thePlayer);
@@ -1049,6 +1051,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			this.close();
 		}
 
+		@SideOnly(Side.SERVER)
 		public final void handleServer(NetHandlerPlayServer nh) {
 			try {
 				handler.handleData(this, nh.playerEntity.worldObj, nh.playerEntity);
