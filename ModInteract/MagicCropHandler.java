@@ -33,49 +33,50 @@ public class MagicCropHandler extends CropHandlerBase {
 	public final Item cropEssenceID;
 	private final int configChance;
 	private ItemStack christmasEssence;
-	private ItemStack natureEssence;
 
 	public static enum EssenceType {
 		COW(EssenceClass.SOUL, "Cow", 0),
 		CREEPER(EssenceClass.SOUL, "Creeper", 1),
-		SPIDER(EssenceClass.SOUL, "Spider", 5),
-		SKELETON(EssenceClass.SOUL, "Skeleton", 3),
-		ENDER(EssenceClass.MATERIAL, "Ender", 9),
-		BLAZE(EssenceClass.MATERIAL, "Blaze", 7),
-		SLIME(EssenceClass.SOUL, "Slime", 4),
 		MAGMA(EssenceClass.SOUL, "Magma", 2),
+		SKELETON(EssenceClass.SOUL, "Skeleton", 3),
+		SLIME(EssenceClass.SOUL, "Slime", 4),
+		SPIDER(EssenceClass.SOUL, "Spider", 5),
 		GHAST(EssenceClass.SOUL, "Ghast", 6),
 		WITHER(EssenceClass.SOUL, "Wither", 7),
-		DYE(EssenceClass.MATERIAL, "Dye", 13),
-		XP(EssenceClass.MATERIAL, "XP", 12),
-		COAL(EssenceClass.MATERIAL, "Coal", 11),
+
+		NATURE(EssenceClass.MATERIAL, "Essence", 0),
+		REDSTONE(EssenceClass.MATERIAL, "Redstone", 1),
+		GLOWSTONE(EssenceClass.MATERIAL, "Glowstone", 2),
+		DIAMOND(EssenceClass.MATERIAL, "Diamond", 3),
 		IRON(EssenceClass.MATERIAL, "Iron", 4),
 		GOLD(EssenceClass.MATERIAL, "Gold", 5),
-		REDSTONE(EssenceClass.MATERIAL, "Redstone", 1),
 		LAPIS(EssenceClass.MATERIAL, "Lapis", 6),
-		DIAMOND(EssenceClass.MATERIAL, "Diamond", 3),
+		BLAZE(EssenceClass.MATERIAL, "Blaze", 7),
 		EMERALD(EssenceClass.MATERIAL, "Emerald", 8),
-		PLATINUM(EssenceClass.MATERIAL, "Platinum", 13),
-		ESSENCE(EssenceClass.MATERIAL, "Essence", 0),
-		GLOWSTONE(EssenceClass.MATERIAL, "Glowstone", 2),
+		ENDER(EssenceClass.MATERIAL, "Ender", 9),
 		OBSIDIAN(EssenceClass.MATERIAL, "Obsidian", 10),
+		COAL(EssenceClass.MATERIAL, "Coal", 11),
+		XP(EssenceClass.MATERIAL, "Experience", 12),
+		DYE(EssenceClass.MATERIAL, "Dye", 13),
 		NETHER(EssenceClass.MATERIAL, "Nether", 14),
-		DEATH(EssenceClass.MATERIAL, "DeathBloom", 0),
+		//DEATH(EssenceClass.MATERIAL, "DeathBloom", 0),
+
 		COPPER(EssenceClass.MOD, "Copper", 0),
 		TIN(EssenceClass.MOD, "Tin", 1),
 		SILVER(EssenceClass.MOD, "Silver", 2),
-		URANIUM(EssenceClass.MOD, "Uranium", 15),
 		LEAD(EssenceClass.MOD, "Lead", 3),
-		NICKEL(EssenceClass.MOD, "Nickel", 12),
-		ALUMINUM(EssenceClass.MOD, "Alumin", 8),
 		QUARTZ(EssenceClass.MOD, "Quartz", 4),
 		SAPPHIRE(EssenceClass.MOD, "Sapphire", 5),
 		RUBY(EssenceClass.MOD, "Ruby", 6),
 		PERIDOT(EssenceClass.MOD, "Peridot", 7),
+		ALUMINUM(EssenceClass.MOD, "Alumin", 8),
 		FORCE(EssenceClass.MOD, "Force", 9),
-		ARDITE(EssenceClass.MOD, "Ardite", 11),
 		COBALT(EssenceClass.MOD, "Cobalt", 10),
+		ARDITE(EssenceClass.MOD, "Ardite", 11),
+		NICKEL(EssenceClass.MOD, "Nickel", 12),
+		PLATINUM(EssenceClass.MOD, "Platinum", 13),
 		SHARD(EssenceClass.MOD, "ThaumcraftShard", 14),
+		URANIUM(EssenceClass.MOD, "Uranium", 15),
 		OIL(EssenceClass.MOD, "Oil", 16),
 		RUBBER(EssenceClass.MOD, "Rubber", 17),
 		VINTEUM(EssenceClass.MOD, "Vinteum", 18),
@@ -89,10 +90,11 @@ public class MagicCropHandler extends CropHandlerBase {
 		MAGANESE(EssenceClass.MOD, "Manganese", 26),
 		SULFUR(EssenceClass.MOD, "Sulfur", 27),
 		DARKIRON(EssenceClass.MOD, "Darkiron", 28),
-		EARTH(EssenceClass.ELEMENT, "Earth", 2),
-		AIR(EssenceClass.ELEMENT, "Air", 3),
+
+		WATER(EssenceClass.ELEMENT, "Water", 0),
 		FIRE(EssenceClass.ELEMENT, "Fire", 1),
-		WATER(EssenceClass.ELEMENT, "Water", 0);
+		EARTH(EssenceClass.ELEMENT, "Earth", 2),
+		AIR(EssenceClass.ELEMENT, "Air", 3);
 
 		private final EssenceClass type;
 		private final String tag;
@@ -130,20 +132,18 @@ public class MagicCropHandler extends CropHandlerBase {
 		}
 
 		public ItemStack getEssence() {
-			return new ItemStack(essenceID, 1, essenceMeta);
+			return essenceID != null ? new ItemStack(essenceID, 1, essenceMeta) : null;
 		}
 
 		public ItemStack getSeeds() {
-			return new ItemStack(seedID, 1, 0);
+			return seedID != null ? new ItemStack(seedID, 1, 0) : null;
 		}
 
 		public ItemStack getCrop() {
-			return new ItemStack(cropID, 1, 0);
+			return cropID != null ? new ItemStack(cropID, 1, 0) : null;
 		}
 
 		public String getEssenceFieldName() {
-			if (this.isMod())
-				return "ModCropEssence";
 			switch(type) {
 			case ELEMENT:
 				return "ElementEssence";
@@ -151,33 +151,10 @@ public class MagicCropHandler extends CropHandlerBase {
 				return "CropEssence";
 			case SOUL:
 				return "SoulEssence";
+			case MOD:
+				return "ModCropEssence";
 			default:
 				return "";
-			}
-		}
-
-		private boolean isMod() {
-			switch(this) {
-			case ALUMINUM:
-			case ARDITE:
-			case COBALT:
-			case COPPER:
-			case FORCE:
-			case LEAD:
-			case NICKEL:
-			case OIL:
-			case PERIDOT:
-			case PLATINUM:
-			case QUARTZ:
-			case RUBY:
-			case SAPPHIRE:
-			case SHARD:
-			case SILVER:
-			case TIN:
-			case URANIUM:
-				return true;
-			default:
-				return false;
 			}
 		}
 
@@ -259,7 +236,7 @@ public class MagicCropHandler extends CropHandlerBase {
 				idessence = essence;
 
 
-				Class c2 = Class.forName("magicalcrops.ConfigHandler");
+				Class c2 = Class.forName("com.mark719.magicalcrops.ConfigHandler");
 				f = c2.getDeclaredField("seeddropchance");
 				f.setAccessible(true);
 				chance = f.getInt(null);
@@ -293,7 +270,6 @@ public class MagicCropHandler extends CropHandlerBase {
 		cropEssenceID = idcropessence;
 		configChance = chance >= 0 ? chance : 10;
 
-		natureEssence = cropEssenceID != null ? new ItemStack(cropEssenceID, 1, 0) : null;
 		christmasEssence = cropEssenceID != null ? new ItemStack(cropEssenceID, 1, 20) : null;
 	}
 
@@ -352,8 +328,9 @@ public class MagicCropHandler extends CropHandlerBase {
 		ArrayList<ItemStack> li = new ArrayList();
 		if (ReikaRandomHelper.doWithChance(20*(1+fortune)) && christmasEssence != null)
 			li.add(christmasEssence);
-		if (ReikaRandomHelper.doWithChance(20*(1+fortune)) && natureEssence != null)
-			li.add(natureEssence);
+		ItemStack nature = EssenceType.NATURE.getEssence();
+		if (ReikaRandomHelper.doWithChance(20*(1+fortune)) && nature != null)
+			li.add(nature);
 		if (ReikaRandomHelper.doWithChance(20*(1+fortune))) {
 			ItemStack weak = this.getWeakEssence();
 			if (weak != null) {
