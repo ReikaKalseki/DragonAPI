@@ -29,12 +29,13 @@ import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import cpw.mods.fml.common.Loader;
 
 public class CommandableUpdateChecker {
 
 	public static final CommandableUpdateChecker instance = new CommandableUpdateChecker();
 
-	public static final String reikaURL = "http://devio.us/~brianadams/versions.txt";
+	public static final String reikaURL = "http://server.techjargaming.com/Reika/versions_1-7-10.txt";
 
 	private final HashMap<DragonAPIMod, ModVersion> latestVersions = new HashMap();
 	private final ArrayList<UpdateChecker> checkers = new ArrayList();
@@ -80,12 +81,13 @@ public class CommandableUpdateChecker {
 		oldMods.add(mod);
 	}
 
-	public void registerMod(DragonAPIMod mod, String url) {
+	public void registerMod(DragonAPIMod mod) {
 		ModVersion version = this.getVersion(mod);
 		if (version == null) {
 			mod.getModLogger().log("Mod is in source code form. Not checking versions.");
 			return;
 		}
+		String url = mod.getUpdateCheckURL()+"_"+Loader.MC_VERSION.replaceAll("\\.", "-")+".txt";
 		URL file = this.getURL(url);
 		if (file == null) {
 			mod.getModLogger().logError("Could not create URL to update checker. Version will not be checked.");

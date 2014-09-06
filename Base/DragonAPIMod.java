@@ -58,7 +58,7 @@ public abstract class DragonAPIMod {
 		MinecraftForge.EVENT_BUS.register(this);
 		ReikaRegistryHelper.setupModData(this, evt);
 		ReikaRegistryHelper.setupVersionChecking(evt);
-		CommandableUpdateChecker.instance.registerMod(this, this.getUpdateCheckURL());
+		CommandableUpdateChecker.instance.registerMod(this);
 	}
 
 	protected final void onInit(FMLInitializationEvent event) {

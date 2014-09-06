@@ -21,12 +21,12 @@ public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 
 	@Override
 	public String[] getASMTransformerClass() {
-		return new String[0];
+		return new String[]{"Reika.DragonAPI.Extras.APIStripper"};
 	}
 
 	@Override
 	public String getModContainerClass() {
-		return null;
+		return "Reika.DragonAPI.Extras.APIStripper$AnnotationDummyContainer";
 	}
 
 	@Override

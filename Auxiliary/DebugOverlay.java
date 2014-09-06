@@ -25,6 +25,7 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -51,7 +52,7 @@ public class DebugOverlay {
 			ReikaTextureHelper.bindHUDTexture();
 		}
 
-		if (Keyboard.isKeyDown(Keyboard.KEY_TAB)) {
+		if (DragonOptions.TABNBT.getState() && Keyboard.isKeyDown(Keyboard.KEY_TAB)) {
 			Minecraft mc = Minecraft.getMinecraft();
 			EntityPlayer ep = mc.thePlayer;
 			FontRenderer f = mc.fontRenderer;

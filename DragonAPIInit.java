@@ -12,8 +12,12 @@ package Reika.DragonAPI;
 import java.net.URL;
 import java.util.List;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -93,6 +97,7 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
@@ -102,7 +107,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies="after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;after:powersuits;after:GalacticCraft;after:Mystcraft;after:UniversalElectricity;after:Forestry;after:MagicBees;after:BinnieCore;after:Natura;after:TConstruct")
+@Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies=DragonAPICore.dependencies)
 public class DragonAPIInit extends DragonAPIMod {
 
 	public static final String packetChannel = "DragonAPIData";
@@ -129,6 +134,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		proxy.registerSidedHandlers();
 
+		this.registerTechnicalBlocks();
+
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
 
@@ -149,6 +156,24 @@ public class DragonAPIInit extends DragonAPIMod {
 		//ReikaPacketWrapper.instance.registerPacket(SyncPacket.class);
 	}
 
+	/** Registers all the vanilla technical blocks (except air and block 36) to have items so as to avoid crashes when rendering them
+	 * in the inventory. */
+	private void registerTechnicalBlocks() {
+		Block[] blocks = {
+				Blocks.brewing_stand, Blocks.bed, Blocks.nether_wart, Blocks.cauldron, Blocks.flower_pot, Blocks.wheat, Blocks.reeds,
+				Blocks.cake, Blocks.skull, Blocks.piston_head, Blocks.lit_redstone_ore, Blocks.powered_repeater, Blocks.pumpkin_stem,
+				Blocks.standing_sign, Blocks.powered_comparator, Blocks.tripwire, Blocks.lit_redstone_lamp, Blocks.melon_stem,
+				Blocks.unlit_redstone_torch, Blocks.unpowered_comparator, Blocks.redstone_wire, Blocks.wall_sign,
+				Blocks.unpowered_repeater, Blocks.iron_door, Blocks.wooden_door
+		};
+
+		for (Block b : blocks) {
+			ItemBlock ib = new ItemBlock(b);
+			String s = Block.blockRegistry.getNameForObject(b);
+			Item.itemRegistry.addObject(Block.getIdFromBlock(b), s, ib);
+		}
+	}
+
 	/** Do not call unless biomes are no longer saved as bytes *//*
 	private void increaseBiomeCount() {
 		int count = BiomeGenBase.biomeList.length;
@@ -165,6 +190,10 @@ public class DragonAPIInit extends DragonAPIMod {
 	private void increasePotionCount() {
 		int count = Potion.potionTypes.length;
 		int newsize = 256;
+		if (count > newsize) {
+			logger.log("Did not increase potion size array, as some other mod already did.");
+			return;
+		}
 		Potion[] newPotions = new Potion[newsize];
 		System.arraycopy(Potion.potionTypes, 0, newPotions, 0, count);
 		Potion.potionTypes = newPotions;
@@ -186,6 +215,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance, Side.SERVER);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 			TickRegistry.instance.registerTickHandler(KeyTicker.instance, Side.CLIENT);
+
+		FMLInterModComms.sendMessage("Waila", "register", "Reika.DragonAPI.ModInteract.LegacyWailaHelper.registerObjects");
 	}
 
 	@Override

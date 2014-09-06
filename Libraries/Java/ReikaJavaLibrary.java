@@ -45,10 +45,10 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 		else {
 			Class cl = obj.getClass();
-			if (obj instanceof Object[]) {
-				writeLineToConsoleAndLogs(level, Arrays.toString((Object[])obj));
-			}
-			else if (cl != String.class && cl != Integer.class && cl != Boolean.class)
+			//if (obj instanceof Object[]) {
+			//	writeLineToConsoleAndLogs(level, Arrays.toString((Object[])obj));
+			//}
+			if (cl != String.class && cl != Integer.class && cl != Boolean.class)
 				writeLineToConsoleAndLogs(level, String.valueOf(obj)+" of "+String.valueOf(cl));
 			else
 				writeLineToConsoleAndLogs(level, String.valueOf(obj));

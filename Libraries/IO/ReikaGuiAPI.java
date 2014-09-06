@@ -296,7 +296,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 	}
 
 	public void drawCustomRecipeList(RenderItem render, FontRenderer f, List<IRecipe> lr, int x, int y, int x2, int y2) {
-		if (lr.size() <= 0) {
+		if (lr == null || lr.size() <= 0) {
 			//ReikaJavaLibrary.pConsole("No recipes found for "+out);
 			return;
 		}
@@ -387,6 +387,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 	public void drawItemStack(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
 		FontRenderer font = null;
 		if (is == null)
+			return;
+		if (is.getItem() == null)
 			return;
 		if (is != null && is.getItem() != null)
 			font = is.getItem().getFontRenderer(is);

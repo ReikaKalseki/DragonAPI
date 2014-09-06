@@ -1051,7 +1051,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			this.close();
 		}
 
-		@SideOnly(Side.SERVER)
 		public final void handleServer(NetHandlerPlayServer nh) {
 			try {
 				handler.handleData(this, nh.playerEntity.worldObj, nh.playerEntity);

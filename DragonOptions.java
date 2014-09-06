@@ -16,7 +16,8 @@ public enum DragonOptions implements ConfigList {
 	LOGLOADING("Console Loading Info", true),
 	DEBUGMODE("Debug Mode", false),
 	SYNCPACKET("Sync Packet ID", 182),
-	NORENDERS("Disable Renders For Debug", false);
+	NORENDERS("Disable Renders For Debug", false),
+	TABNBT("Show TileEntity NBT when using TAB", true);
 
 	private String label;
 	private boolean defaultState;

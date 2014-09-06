@@ -61,22 +61,34 @@ public class MagicCropHandler extends CropHandlerBase {
 		OBSIDIAN(EssenceClass.MATERIAL, "Obsidian", 10),
 		NETHER(EssenceClass.MATERIAL, "Nether", 14),
 		DEATH(EssenceClass.MATERIAL, "DeathBloom", 0),
-		COPPER(EssenceClass.MATERIAL, "Copper", 0),
-		TIN(EssenceClass.MATERIAL, "Tin", 1),
-		SILVER(EssenceClass.MATERIAL, "Silver", 2),
-		URANIUM(EssenceClass.MATERIAL, "Uranium", 15),
-		LEAD(EssenceClass.MATERIAL, "Lead", 3),
-		NICKEL(EssenceClass.MATERIAL, "Nickel", 12),
-		ALUMINUM(EssenceClass.MATERIAL, "Alumin", 8),
-		QUARTZ(EssenceClass.MATERIAL, "Quartz", 4),
-		SAPPHIRE(EssenceClass.MATERIAL, "Sapphire", 5),
-		RUBY(EssenceClass.MATERIAL, "Ruby", 6),
-		PERIDOT(EssenceClass.MATERIAL, "Peridot", 7),
-		FORCE(EssenceClass.MATERIAL, "Force", 9),
-		ARDITE(EssenceClass.MATERIAL, "Ardite", 11),
-		COBALT(EssenceClass.MATERIAL, "Cobalt", 10),
-		SHARD(EssenceClass.MATERIAL, "ThaumcraftShard", 14),
-		OIL(EssenceClass.MATERIAL, "Oil", 16),
+		COPPER(EssenceClass.MOD, "Copper", 0),
+		TIN(EssenceClass.MOD, "Tin", 1),
+		SILVER(EssenceClass.MOD, "Silver", 2),
+		URANIUM(EssenceClass.MOD, "Uranium", 15),
+		LEAD(EssenceClass.MOD, "Lead", 3),
+		NICKEL(EssenceClass.MOD, "Nickel", 12),
+		ALUMINUM(EssenceClass.MOD, "Alumin", 8),
+		QUARTZ(EssenceClass.MOD, "Quartz", 4),
+		SAPPHIRE(EssenceClass.MOD, "Sapphire", 5),
+		RUBY(EssenceClass.MOD, "Ruby", 6),
+		PERIDOT(EssenceClass.MOD, "Peridot", 7),
+		FORCE(EssenceClass.MOD, "Force", 9),
+		ARDITE(EssenceClass.MOD, "Ardite", 11),
+		COBALT(EssenceClass.MOD, "Cobalt", 10),
+		SHARD(EssenceClass.MOD, "ThaumcraftShard", 14),
+		OIL(EssenceClass.MOD, "Oil", 16),
+		RUBBER(EssenceClass.MOD, "Rubber", 17),
+		VINTEUM(EssenceClass.MOD, "Vinteum", 18),
+		TOPAZ(EssenceClass.MOD, "BlueTopaz", 19),
+		CHIMERITE(EssenceClass.MOD, "Chimerite", 20),
+		MOONSTONE(EssenceClass.MOD, "Moonstone", 21),
+		SUNSTONE(EssenceClass.MOD, "Sunstone", 22),
+		IRIDIUM(EssenceClass.MOD, "Iridium", 23),
+		YELLORITE(EssenceClass.MOD, "Yellorite", 24),
+		OSMIUM(EssenceClass.MOD, "Osmium", 25),
+		MAGANESE(EssenceClass.MOD, "Manganese", 26),
+		SULFUR(EssenceClass.MOD, "Sulfur", 27),
+		DARKIRON(EssenceClass.MOD, "Darkiron", 28),
 		EARTH(EssenceClass.ELEMENT, "Earth", 2),
 		AIR(EssenceClass.ELEMENT, "Air", 3),
 		FIRE(EssenceClass.ELEMENT, "Fire", 1),
@@ -131,14 +143,14 @@ public class MagicCropHandler extends CropHandlerBase {
 
 		public String getEssenceFieldName() {
 			if (this.isMod())
-				return "ModEssence";
+				return "ModCropEssence";
 			switch(type) {
 			case ELEMENT:
 				return "ElementEssence";
 			case MATERIAL:
 				return "CropEssence";
 			case SOUL:
-				return "soulCropEssence";
+				return "SoulEssence";
 			default:
 				return "";
 			}
@@ -175,9 +187,10 @@ public class MagicCropHandler extends CropHandlerBase {
 	}
 
 	private static enum EssenceClass {
-		MATERIAL("mCrop", "mSeeds"),
-		SOUL("soulCrop", "sSeeds"),
-		ELEMENT("eCrop", "eSeeds");
+		MATERIAL("MagicCrop", "MagicSeeds"),
+		MOD("ModMagicCrop", "ModMagicSeeds"),
+		SOUL("SoulCrop", "SoulSeeds"),
+		ELEMENT("ElementCrop", "ElementSeeds");
 
 		public final String seedPrefix;
 		public final String cropPrefix;
@@ -228,13 +241,16 @@ public class MagicCropHandler extends CropHandlerBase {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 					e.printStackTrace();
 				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
 			}
 			try {
-				Field f = c.getField("BlockOreEssence");
+				Field f = c.getField("EssenceOre");
 				Block ore = (Block)f.get(null);
 				idore = ore;
 
-				f = c.getField("BlockOreEssenceNether");
+				f = c.getField("EssenceOreNether");
 				ore = (Block)f.get(null);
 				idnether = ore;
 
@@ -262,6 +278,9 @@ public class MagicCropHandler extends CropHandlerBase {
 			}
 			catch (NullPointerException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				e.printStackTrace();
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}

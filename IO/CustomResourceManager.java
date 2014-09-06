@@ -16,11 +16,14 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.client.audio.SoundEventAccessor;
 import net.minecraft.client.audio.SoundEventAccessorComposite;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundPoolEntry;
+import net.minecraft.client.audio.SoundRegistry;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import Reika.DragonAPI.Instantiable.IO.DirectResource;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class CustomResourceManager extends SimpleReloadableResourceManager {
 
@@ -68,8 +71,18 @@ public class CustomResourceManager extends SimpleReloadableResourceManager {
 	}
 
 	public void initToSoundRegistry() {
+		SoundHandler sh = Minecraft.getMinecraft().getSoundHandler();
+		if (sh == null) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Attempted to initialize sound entries before the sound handler was created!");
+			return;
+		}
+		SoundRegistry srg = sh.sndRegistry;
+		if (srg == null) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Attempted to initialize sound entries before the sound registry was created!");
+			return;
+		}
 		for (String path : accessors.keySet()) {
-			Minecraft.getMinecraft().getSoundHandler().sndRegistry.registerSound(accessors.get(path));
+			srg.registerSound(accessors.get(path));
 		}
 	}
 	/*

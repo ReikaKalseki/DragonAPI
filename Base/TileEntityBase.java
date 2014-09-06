@@ -357,12 +357,14 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 				this.sendSyncPacket();
 			}
 		}
+		/*
 		if (worldObj.isRemote && this.needsToCauseBlockUpdates()) {
 			updateTimer.update();
 			if (updateTimer.checkCap()) {
 				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 			}
 		}
+		 */
 		ticksExisted++;
 	}
 
@@ -449,10 +451,6 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	public AxisAlignedBB getRenderBoundingBox()
 	{
 		return ReikaAABBHelper.getBlockAABB(xCoord, yCoord, zCoord);
-	}
-
-	public boolean needsToCauseBlockUpdates() {
-		return false;
 	}
 
 	public final TileEntity getAdjacentTileEntity(ForgeDirection dir) {

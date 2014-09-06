@@ -15,6 +15,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import mcp.mobius.waila.api.IWailaDataProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -28,6 +29,7 @@ import Reika.DragonAPI.Interfaces.BlockEnum;
 import Reika.DragonAPI.Interfaces.ItemEnum;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
+import Reika.DragonAPI.ModInteract.LegacyWailaHelper;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.ModMetadata;
@@ -63,6 +65,9 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 					mod.getModLogger().log("Instantiating Block "+r.getBasicName()+" with ID "+target[i]+" to Block Variable "+target[i].getClass().getSimpleName()+" (enum index "+i+") with ItemBlock "+r.getItemBlock().getSimpleName());
 				else
 					mod.getModLogger().log("Instantiating Block "+r.getBasicName()+" with ID "+target[i]+" to Block Variable "+target[i].getClass().getSimpleName()+" (enum index "+i+")");
+				if (IWailaDataProvider.class.isAssignableFrom(r.getObjectClass())) {
+					LegacyWailaHelper.registerLegacyWAILACompat(r);
+				}
 			}
 			else {
 				mod.getModLogger().log("Not instantiating Item "+r.getBasicName()+", as it is dummied out.");
