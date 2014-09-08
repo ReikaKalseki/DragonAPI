@@ -67,8 +67,15 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 		field_148862_c = in.readInt();
 
 		NBTTagCompound received = in.readNBTTagCompoundFromBuffer();
-		if (!received.getBoolean(ERROR_TAG))
+		if (!received.getBoolean(ERROR_TAG)) {
+			//try {
 			this.populateFromStream(received);
+			//}
+			//catch (Exception e) {
+			//	e.printStackTrace();
+			//	data.clear(); //discard packet
+			//}
+		}
 	}
 
 	private void populateFromStream(NBTTagCompound received) {
@@ -76,7 +83,7 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 		Iterator<String> it = c.iterator();
 		while (it.hasNext()) {
 			String name = it.next();
-			NBTBase tag = received.getCompoundTag(name);
+			NBTBase tag = received.getTag(name);
 			data.put(name, tag);
 		}
 	}
@@ -124,6 +131,10 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 	@Override
 	public String toString() {
 		return changes.isEmpty() ? "[Empty]" : changes.toString();
+	}
+
+	public boolean hasNoData() {
+		return data.isEmpty();
 	}
 
 }

@@ -23,9 +23,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.potion.Potion;
+import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
+import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker.CheckerDisableCommand;
@@ -106,6 +108,7 @@ import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod( modid = "DragonAPI", name="DragonAPI", version="release", certificateFingerprint = "@GET_FINGERPRINT@", dependencies=DragonAPICore.dependencies)
 public class DragonAPIInit extends DragonAPIMod {
@@ -268,6 +271,14 @@ public class DragonAPIInit extends DragonAPIMod {
 	@SubscribeEvent
 	public void onLoad(WorldEvent.Load evt) {
 
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void increaseChannels(SoundSetupEvent evt) {
+		if (DragonOptions.SOUNDCHANNELS.getState()) {
+			SoundSystemConfig.setNumberNormalChannels(256);
+		}
 	}
 
 	@SubscribeEvent

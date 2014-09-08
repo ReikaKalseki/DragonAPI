@@ -16,11 +16,14 @@ import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaAABBHelper extends DragonAPICore {
 
 	/** Renders an AABB bounding box in the world. Very useful for debug purposes, or as a user-friendliness feature.
 	 * Args: World, AABB, Render par2,4,6, x,y,z of machine, root alpha value (-ve for solid color), RGB, solid outline yes/no */
+	@SideOnly(Side.CLIENT)
 	public static void renderAABB(AxisAlignedBB box, double par2, double par4, double par6, int x, int y, int z, int a, int r, int g, int b, boolean line) {
 		int[] color = {r, g, b, a};
 		ReikaRenderHelper.prepareGeoDraw(true);

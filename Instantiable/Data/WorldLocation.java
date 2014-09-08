@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Instantiable;
+package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.Random;
 
@@ -150,7 +150,7 @@ public final class WorldLocation {
 		NBT.setTag(tag, data);
 	}
 
-	public static WorldLocation readFromNBT(String tag, NBTTagCompound NBT) {
+	public static final WorldLocation readFromNBT(String tag, NBTTagCompound NBT) {
 		if (!NBT.hasKey(tag))
 			return null;
 		NBTTagCompound data = NBT.getCompoundTag(tag);
@@ -162,6 +162,23 @@ public final class WorldLocation {
 			return new WorldLocation(dim, x, y, z);
 		}
 		return null;
+	}
+
+	public NBTTagCompound writeToTag() {
+		NBTTagCompound data = new NBTTagCompound();
+		data.setInteger("dim", dimensionID);
+		data.setInteger("x", xCoord);
+		data.setInteger("y", yCoord);
+		data.setInteger("z", zCoord);
+		return data;
+	}
+
+	public static final WorldLocation readTag(NBTTagCompound data) {
+		int x = data.getInteger("x");
+		int y = data.getInteger("y");
+		int z = data.getInteger("z");
+		int dim = data.getInteger("dim");
+		return new WorldLocation(dim, x, y, z);
 	}
 
 	public WorldLocation copy() {

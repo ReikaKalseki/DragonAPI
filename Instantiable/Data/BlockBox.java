@@ -11,7 +11,6 @@ package Reika.DragonAPI.Instantiable.Data;
 
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
-import Reika.DragonAPI.Instantiable.WorldLocation;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class BlockBox {

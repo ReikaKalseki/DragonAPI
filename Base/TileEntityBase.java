@@ -187,6 +187,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			S35PacketUpdateTileEntity p = new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 2, var1);
 			this.sendPacketToAllAround(p, this.getUpdatePacketRadius());
 		}
+		this.markDirty();
 	}
 
 	@Override
@@ -212,10 +213,12 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	{
 		if (packet instanceof SyncPacket) {
 			SyncPacket p = (SyncPacket)packet;
-			NBTTagCompound NBT = new NBTTagCompound();
-			this.writeSyncTag(NBT); //so unsent fields do not zero out, we sync the current values in
-			p.writeToNBT(NBT);
-			this.readSyncTag(NBT);
+			if (!p.hasNoData()) {
+				NBTTagCompound NBT = new NBTTagCompound();
+				this.writeSyncTag(NBT); //so unsent fields do not zero out, we sync the current values in
+				p.writeToNBT(NBT);
+				this.readSyncTag(NBT);
+			}
 		}
 		else {
 			this.readSyncTag(packet.field_148860_e);

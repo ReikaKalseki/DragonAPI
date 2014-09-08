@@ -25,6 +25,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class ReikaInventoryHelper extends DragonAPICore {
@@ -855,10 +856,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	}
 
 	public static int[] getWholeInventoryForISided(ISidedInventory ii) {
-		int[] n = new int[ii.getSizeInventory()];
-		for (int i = 0; i < n.length; i++)
-			n[i] = i;
-		return n;
+		return ReikaArrayHelper.getLinearArray(ii.getSizeInventory());
 	}
 
 	/** Fill-in so one does not need to constantly rewrite the IInventory method */

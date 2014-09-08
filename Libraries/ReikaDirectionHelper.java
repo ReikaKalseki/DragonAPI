@@ -56,4 +56,20 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		return null;
 	}
 
+	public static int getDirectionIndex(ForgeDirection dir) {
+		switch (dir) {
+		case EAST:
+		case WEST:
+			return 0;
+		case DOWN:
+		case UP:
+			return 1;
+		case NORTH:
+		case SOUTH:
+			return 2;
+		default:
+			return -1;
+		}
+	}
+
 }

@@ -33,6 +33,10 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	protected final Random rand = new Random();
 
 	protected BlockCustomLeaf() {
+		this(false);
+	}
+
+	protected BlockCustomLeaf(boolean tick) {
 		super();
 		this.setCreativeTab(this.showInCreative() ? this.getCreativeTab() : null);
 		this.setStepSound(soundTypeGrass);
@@ -40,7 +44,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 			this.setGraphicsLevel(Minecraft.getMinecraft().gameSettings.fancyGraphics);
 		this.setHardness(0.2F);
 		this.setLightOpacity(1);
-		this.setTickRandomly(this.decays() || this.shouldRandomTick());
+		this.setTickRandomly(tick || this.decays() || this.shouldRandomTick());
 	}
 
 	/** Overridden to allow conditional disabling of mod leaf control hacks, like the one in RandomThings. */
@@ -101,7 +105,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	public final void updateTick(World world, int x, int y, int z, Random par5Random)
 	{
 		int meta = world.getBlockMetadata(x, y, z);
-		//ReikaJavaLibrary.pConsole(blockID+" @ "+x+", "+y+", "+z+"  : "+this.decays()+"&"+this.shouldTryDecay(world, x, y, z, meta));
+		//ReikaJavaLibrary.pConsole(Block.getIdFromBlock(this)+" @ "+x+", "+y+", "+z+" : "+this.decays()+"&"+this.shouldTryDecay(world, x, y, z, meta));
 		boolean flag = false;
 		if (this.decays() && this.shouldTryDecay(world, x, y, z, meta)) {
 			flag = this.decay(world, x, y, z, par5Random);
