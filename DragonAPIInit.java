@@ -177,6 +177,57 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 	}
 
+	/*
+
+	/** Registers all the vanilla technical blocks (except air and block 36) to have items so as to avoid crashes when rendering them
+	 * in the inventory.
+	 * <br><br>
+	 * @Potentially_Upset_Readers
+	 * This method does use some FML namespace registry bypass hacks which are obviously
+	 * undesirable and will be changed as soon as Forge/vMC either registers these blocks
+	 * themselves, provides a dedicated event to cancel their unregistration, or gives a
+	 * native method with which to add minecraft: namespaced itemblocks.
+	 * <br><br>
+	 * Do <b>not</b> complain about my doing this until at least one of the above three has been met
+	 * and I have been made aware of it!
+	 * <br><br>
+	 * Sidenote: ASM, while effective, is not an acceptable method by which to accomplish
+	 * this, as it is not at all portable between updates and is painfully difficult to do
+	 * while not adding items for blocks which legitimately should not have them.
+	 * *//*
+	private void registerTechnicalBlocks() {
+		Block[] blocks = {
+				Blocks.brewing_stand, Blocks.bed, Blocks.nether_wart, Blocks.cauldron, Blocks.flower_pot, Blocks.wheat, Blocks.reeds,
+				Blocks.cake, Blocks.skull, Blocks.piston_head, Blocks.lit_redstone_ore, Blocks.powered_repeater, Blocks.pumpkin_stem,
+				Blocks.standing_sign, Blocks.powered_comparator, Blocks.tripwire, Blocks.lit_redstone_lamp, Blocks.melon_stem,
+				Blocks.unlit_redstone_torch, Blocks.unpowered_comparator, Blocks.redstone_wire, Blocks.wall_sign,
+				Blocks.unpowered_repeater, Blocks.iron_door, Blocks.wooden_door
+		};
+
+		try {
+			Method getData = GameData.class.getDeclaredMethod("getMain");
+			getData.setAccessible(true);
+			GameData gd = (GameData)getData.invoke(null);
+			Method add = GameData.class.getDeclaredMethod("registerItem", Item.class, String.class, int.class);
+			add.setAccessible(true);
+
+			for (Block b : blocks) { //why does this register as DragonAPI:block?
+				ItemBlock ib = new ItemBlock(b);
+				String s = Block.blockRegistry.getNameForObject(b);
+				add.invoke(gd, ib, s, -1);
+				//itemRegistry.addObject(Block.getIdFromBlock(b), s, ib);
+			}
+		}
+		catch (Exception e) {
+			logger.logError("Reflection failure when registering technical items: ");
+			e.printStackTrace();
+			return;
+		}
+
+	}
+
+	  */
+
 	/** Do not call unless biomes are no longer saved as bytes *//*
 	private void increaseBiomeCount() {
 		int count = BiomeGenBase.biomeList.length;
