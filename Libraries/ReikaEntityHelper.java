@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -631,6 +633,31 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (dummy == null)
 			dummy = new EntityCreeper(world);
 		return dummy;
+	}
+
+	public static void sortEntityListByDistance(List<Entity> li, double x, double y, double z) {
+		Collections.sort(li, new EntityDistanceComparator(x, y, z));
+	}
+
+	public static final class EntityDistanceComparator implements Comparator<Entity> {
+
+		public final double posX;
+		public final double posY;
+		public final double posZ;
+
+		public EntityDistanceComparator(double x, double y, double z) {
+			posX = x;
+			posY = y;
+			posZ = z;
+		}
+
+		@Override
+		public int compare(Entity e1, Entity e2) {
+			double dd1 = ReikaMathLibrary.py3d(e1.posX-posX, e1.posY-posY, e1.posZ-posZ);
+			double dd2 = ReikaMathLibrary.py3d(e2.posX-posX, e2.posY-posY, e2.posZ-posZ);
+			return dd1 > dd2 ? 1 : dd1 < dd2 ? -1 : 0;
+		}
+
 	}
 
 }

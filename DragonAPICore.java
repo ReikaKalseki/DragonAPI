@@ -30,7 +30,7 @@ public class DragonAPICore {
 
 	public static boolean debugtest = false;
 
-	private static final String MINFORGE = "required-after:Forge@10.13.0.1205;";
+	private static final String MINFORGE = "required-after:Forge@[10.13.0.1205,);";
 	public static final String dependencies = MINFORGE+"after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;"+
 			"after:powersuits;after:GalacticCraft;after:Mystcraft;after:UniversalElectricity;after:Forestry;after:MagicBees;"+
 			"after:BinnieCore;after:Natura;after:TConstruct";

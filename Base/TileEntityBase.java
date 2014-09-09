@@ -41,6 +41,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Extras.APIStripper.Strippable;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
@@ -59,6 +60,7 @@ import dan200.computer.api.IComputerAccess;
 import dan200.computer.api.ILuaContext;
 import dan200.computer.api.IPeripheral;
 
+@Strippable(value = {"dan200.computer.api.IPeripheral", "li.cil.oc.api.network.Environment", "li.cil.oc.api.network.ManagedPeripheral"})
 public abstract class TileEntityBase extends TileEntity implements IPeripheral, Environment, ManagedPeripheral {
 
 	protected static final Random rand = new Random();

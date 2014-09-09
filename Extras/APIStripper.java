@@ -35,7 +35,7 @@ public class APIStripper implements IClassTransformer {
 	private static boolean scrapedData = false;
 	private static ASMDataTable ASM_DATA = null;
 
-	public static void scrapeData(ASMDataTable table) {
+	private static void scrapeData(ASMDataTable table) {
 		AnnotationStripper.scrapeData(table);
 		scrapedData = true;
 	}
@@ -56,7 +56,8 @@ public class APIStripper implements IClassTransformer {
 
 	/**
 	 * When used on a class, methods from referenced interfaces will not be removed <br>
-	 * When using this annotation on methods, ensure you do not switch on an enum inside that method. JavaC implementation details means this will cause crashes.
+	 * When using this annotation on methods, ensure you do not switch on an enum inside that method.
+	 * JavaC implementation details means this will cause crashes.
 	 * <p>
 	 * Can also strip on modid using "mod:CoFHCore" as a value <br>
 	 * Can also strip on API using "api:CoFHAPI|energy" as a value
@@ -97,7 +98,7 @@ public class APIStripper implements IClassTransformer {
 		@Subscribe
 		public void construction(FMLConstructionEvent evt) {
 			ASM_DATA = evt.getASMHarvestedData();
-			AnnotationStripper.scrapeData(ASM_DATA);
+			scrapeData(ASM_DATA);
 		}
 	}
 

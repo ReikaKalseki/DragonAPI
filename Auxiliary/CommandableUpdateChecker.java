@@ -35,7 +35,7 @@ public class CommandableUpdateChecker {
 
 	public static final CommandableUpdateChecker instance = new CommandableUpdateChecker();
 
-	public static final String reikaURL = "http://server.techjargaming.com/Reika/versions_1-7-10.txt";
+	public static final String reikaURL = "http://server.techjargaming.com/Reika/versions";
 
 	private final HashMap<DragonAPIMod, ModVersion> latestVersions = new HashMap();
 	private final ArrayList<UpdateChecker> checkers = new ArrayList();
@@ -276,15 +276,28 @@ public class CommandableUpdateChecker {
 		}
 
 		private ModVersion getLatestVersion() {
-			ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, false);
-			String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
-			for (int i = 0; i < lines.size(); i++) {
-				String line = lines.get(i);
-				if (line.toLowerCase().startsWith(name)) {
-					String[] parts = line.split(":");
-					String part = parts[1];
-					ModVersion version = ModVersion.getFromString(part);
-					return version;
+			try {
+				ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, false);
+				String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
+				for (int i = 0; i < lines.size(); i++) {
+					String line = lines.get(i);
+					if (line.toLowerCase().startsWith(name)) {
+						String[] parts = line.split(":");
+						String part = parts[1];
+						ModVersion version = ModVersion.getFromString(part);
+						return version;
+					}
+				}
+			}
+			catch (Exception e) {
+				if (e instanceof IOException) {
+					mod.getModLogger().logError("IO Error accessing online file:");
+					mod.getModLogger().log(e.getClass().getCanonicalName()+": "+e.getLocalizedMessage());
+					mod.getModLogger().log(e.getStackTrace()[0].toString());
+				}
+				else {
+					mod.getModLogger().logError("Error accessing online file:");
+					e.printStackTrace();
 				}
 			}
 			return null;

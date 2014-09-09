@@ -79,7 +79,9 @@ public enum ModList {
 	GALACTICRAFT("GalacticraftCore", "micdoodle8.mods.galacticraft.core.blocks.GCBlocks", "micdoodle8.mods.galacticraft.core.items.GCItems"),
 	MULTIPART("McMultipart"),
 	OPENCOMPUTERS("OpenComputers"),
-	NEI("NotEnoughItems");
+	NEI("NotEnoughItems"),
+	ATG("ATG"),
+	WAILA("Waila");
 
 	private final boolean condition;
 	public final String modLabel;
