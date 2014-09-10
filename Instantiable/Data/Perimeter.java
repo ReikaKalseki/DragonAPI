@@ -176,4 +176,16 @@ public final class Perimeter {
 		return p;
 	}
 
+	public int segmentCount() {
+		return Math.max(0, points.size()-1);
+	}
+
+	public Coordinate getSegmentPreCoord(int segment) {
+		return points.get(segment);
+	}
+
+	public Coordinate getSegmentPostCoord(int segment) {
+		return points.get(segment+1);
+	}
+
 }

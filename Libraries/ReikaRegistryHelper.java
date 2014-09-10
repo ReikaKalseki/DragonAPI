@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -23,11 +22,9 @@ import net.minecraft.item.Item;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
-import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.ItemBlockCustomLocalization;
 import Reika.DragonAPI.Interfaces.BlockEnum;
 import Reika.DragonAPI.Interfaces.ItemEnum;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.ModInteract.LegacyWailaHelper;
 import cpw.mods.fml.common.Loader;
@@ -198,15 +195,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		ModMetadata dat = evt.getModMetadata();
 		dat.authorList.clear();
 		dat.authorList.add(mod.getModAuthorName());
-	}
-
-	public static void setupVersionChecking(FMLPreInitializationEvent evt) {
-		if (ReikaObfuscationHelper.isDeObfEnvironment())
-			return;
-		File f = evt.getSourceFile();
-		String hash = ReikaFileReader.getHash(f);
-		ModMetadata meta = evt.getModMetadata();
-		meta.version = hash;
+		dat.version = "v"+mod.getMajorVersion()+mod.getMinorVersion();
 	}
 
 	/** Overrides one block in the Block database with another. The new block must
