@@ -16,6 +16,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
+import Reika.DragonAPI.Exception.StupidIDException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BiomeCollisionTracker {
@@ -53,8 +54,8 @@ public class BiomeCollisionTracker {
 	}
 
 	public void addBiomeID(DragonAPIMod mod, int id, Class biomeClass) {
-		if (id < 0 || id == 255) {
-			throw new IllegalArgumentException("Illegal Biome ID "+id);
+		if (id < 0 || id >= 255) {
+			throw new StupidIDException(mod, id);
 		}
 		BiomeGenBase biome = BiomeGenBase.biomeList[id];
 		if (biome != null)

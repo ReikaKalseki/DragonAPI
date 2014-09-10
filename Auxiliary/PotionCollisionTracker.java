@@ -16,6 +16,7 @@ import net.minecraft.potion.Potion;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
+import Reika.DragonAPI.Exception.StupidIDException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class PotionCollisionTracker {
@@ -53,6 +54,9 @@ public class PotionCollisionTracker {
 	}
 
 	public void addPotionID(DragonAPIMod mod, int id, Class potionClass) {
+		if (id < 0 || id >= Potion.potionTypes.length) {
+			throw new StupidIDException(mod, id);
+		}
 		Potion potion = Potion.potionTypes[id];
 		if (potion != null)
 			this.onConflict(null, id);
