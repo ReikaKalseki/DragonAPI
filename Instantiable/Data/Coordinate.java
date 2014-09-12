@@ -15,7 +15,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
@@ -45,16 +44,12 @@ public final class Coordinate {
 		this(loc.xCoord, loc.yCoord, loc.zCoord);
 	}
 
-	public Coordinate move(int dx, int dy, int dz) {
+	public Coordinate offset(int dx, int dy, int dz) {
 		return new Coordinate(xCoord+dx, yCoord+dy, zCoord+dz);
 	}
 
-	public Coordinate move(ForgeDirection dir, int dist) {
-		return this.move(dir.offsetX*dist, dir.offsetY*dist, dir.offsetZ*dist);
-	}
-
-	public Coordinate changeWorld(World world) {
-		return new Coordinate(xCoord, yCoord, zCoord);
+	public Coordinate offset(ForgeDirection dir, int dist) {
+		return this.offset(dir.offsetX*dist, dir.offsetY*dist, dir.offsetZ*dist);
 	}
 
 	public void writeToNBT(String tag, NBTTagCompound NBT) {
@@ -126,6 +121,14 @@ public final class Coordinate {
 
 	public double getDistanceTo(double x, double y, double z) {
 		return ReikaMathLibrary.py3d(x-xCoord, y-yCoord, z-zCoord);
+	}
+
+	public int[] toArray() {
+		int[] a = new int[3];
+		a[0] = xCoord;
+		a[1] = yCoord;
+		a[2] = zCoord;
+		return a;
 	}
 
 }

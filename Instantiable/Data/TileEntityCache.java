@@ -9,9 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import net.minecraft.tileentity.TileEntity;
 
@@ -64,10 +64,8 @@ public final class TileEntityCache<V> {
 		return data.remove(c);
 	}
 
-	public Collection<Coordinate> keySet() {
-		ArrayList set = new ArrayList();
-		set.addAll(data.keySet());
-		return set;
+	public Set<Coordinate> keySet() {
+		return Collections.unmodifiableSet(data.keySet());
 	}
 
 	public void clear() {

@@ -10,6 +10,7 @@
 package Reika.DragonAPI;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -29,12 +30,12 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
+import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.KeyWatcher.KeyTicker;
-import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerHandler;
 import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
@@ -360,7 +361,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	private void alCompat() { //Why the hell are there three standards for aluminum?
 		logger.log("Repairing compatibility between Alumin(i)um OreDictionary Names.");
-		List<ItemStack> al = OreDictionary.getOres("ingotNaturalAluminum");
+		List<ItemStack> al = new ArrayList(OreDictionary.getOres("ingotNaturalAluminum"));
 		for (int i = 0; i < al.size(); i++) {
 			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminum"), al.get(i)))
 				OreDictionary.registerOre("ingotAluminum", al.get(i));
@@ -368,7 +369,7 @@ public class DragonAPIInit extends DragonAPIMod {
 				OreDictionary.registerOre("ingotAluminium", al.get(i));
 		}
 
-		al = OreDictionary.getOres("ingotAluminum");
+		al = new ArrayList(OreDictionary.getOres("ingotAluminum"));
 		for (int i = 0; i < al.size(); i++) {
 			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotNaturalAluminum"), al.get(i)))
 				OreDictionary.registerOre("ingotNaturalAluminum", al.get(i));
@@ -376,7 +377,7 @@ public class DragonAPIInit extends DragonAPIMod {
 				OreDictionary.registerOre("ingotAluminium", al.get(i));
 		}
 
-		al = OreDictionary.getOres("ingotAluminium");
+		al = new ArrayList(OreDictionary.getOres("ingotAluminium"));
 		for (int i = 0; i < al.size(); i++) {
 			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotNaturalAluminum"), al.get(i)))
 				OreDictionary.registerOre("ingotNaturalAluminum", al.get(i));
@@ -385,7 +386,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 
 
-		al = OreDictionary.getOres("oreAluminium");
+		al = new ArrayList(OreDictionary.getOres("oreAluminium"));
 		for (int i = 0; i < al.size(); i++) {
 			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("oreAluminum"), al.get(i)))
 				OreDictionary.registerOre("oreAluminum", al.get(i));

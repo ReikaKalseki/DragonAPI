@@ -635,4 +635,11 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		}
 		return li;
 	}
+
+	public static ArrayList<ItemStack> getMutableOreDictList(String s) {
+		ArrayList li = OreDictionary.getOres(s);
+		ArrayList clean = new ArrayList();
+		clean.addAll(li);
+		return clean;
+	}
 }

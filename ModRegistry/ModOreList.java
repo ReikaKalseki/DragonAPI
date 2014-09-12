@@ -11,8 +11,11 @@ package Reika.DragonAPI.ModRegistry;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -348,10 +351,8 @@ public enum ModOreList implements OreType {
 		return ores.get(index);
 	}
 
-	public ArrayList<ItemStack> getAllOreBlocks() {
-		ArrayList<ItemStack> li = new ArrayList<ItemStack>();
-		li.addAll(ores);
-		return li;
+	public Collection<ItemStack> getAllOreBlocks() {
+		return Collections.unmodifiableCollection(ores);
 	}
 
 	public boolean existsInGame() {
@@ -424,10 +425,8 @@ public enum ModOreList implements OreType {
 		return null;
 	}
 
-	public HashMap<String, ArrayList<ItemStack>> getOresByName() {
-		HashMap<String, ArrayList<ItemStack>> map = new HashMap();
-		map.putAll(perName);
-		return map;
+	public Map<String, ArrayList<ItemStack>> getOresByName() {
+		return Collections.unmodifiableMap(perName);
 	}
 
 	public static ModList getOreModFromItemStack(ItemStack is) {

@@ -12,6 +12,8 @@ package Reika.DragonAPI.Instantiable.Data;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -38,7 +40,7 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class BlockArray {
 
-	protected final List<List<Integer>> blocks = new ArrayList();
+	protected final List<Coordinate> blocks = new ArrayList();
 	protected Material liquidMat;
 	protected boolean overflow = false;
 	protected World refWorld;
@@ -68,7 +70,7 @@ public class BlockArray {
 			return false;
 		if (this.hasBlock(x, y, z))
 			return false;
-		blocks.add(Arrays.asList(x, y, z));
+		blocks.add(new Coordinate(x, y, z));
 		this.setLimits(x, y, z);
 		//ReikaJavaLibrary.pConsole("Adding "+x+", "+y+", "+z);
 		return true;
@@ -93,7 +95,7 @@ public class BlockArray {
 	}
 
 	public void remove(int x, int y, int z) {
-		blocks.remove(Arrays.asList(x, y, z));
+		blocks.remove(new Coordinate(x, y, z));
 	}
 
 	public int getMinX() {
@@ -164,11 +166,7 @@ public class BlockArray {
 	}
 
 	private int[] getReturnArray(int index) {
-		List<Integer> arr = blocks.get(index);
-		int[] ret = new int[3];
-		for (int i = 0; i < 3; i++)
-			ret[i] = arr.get(i);
-		return ret;
+		return blocks.get(index).toArray();
 	}
 
 	public int[] getNextAndMoveOn() {
@@ -195,7 +193,7 @@ public class BlockArray {
 	}
 
 	public boolean hasBlock(int x, int y, int z) {
-		return blocks.contains(Arrays.asList(x, y, z));
+		return blocks.contains(new Coordinate(x, y, z));
 	}
 
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
@@ -204,17 +202,17 @@ public class BlockArray {
 		this.recursiveAdd(world, x, y, z, id, 0, new HashMap());
 	}
 
-	private void recursiveAdd(World world, int x, int y, int z, Block id, int depth, HashMap<List<Integer>, Integer> map) {
+	private void recursiveAdd(World world, int x, int y, int z, Block id, int depth, HashMap<Coordinate, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
 			return;
 		if (world.getBlock(x, y, z) != id)
 			return;
-		if (this.hasBlock(x, y, z) && depth >= map.get(Arrays.asList(x, y, z)))
+		if (this.hasBlock(x, y, z) && depth >= map.get(new Coordinate(x, y, z)))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		map.put(Arrays.asList(x, y, z), depth);
+		map.put(new Coordinate(x, y, z), depth);
 		try {
 			this.recursiveAdd(world, x+1, y, z, id, depth+1, map);
 			this.recursiveAdd(world, x-1, y, z, id, depth+1, map);
@@ -235,7 +233,7 @@ public class BlockArray {
 		this.recursiveAddWithMetadata(world, x, y, z, id, meta, 0, new HashMap());
 	}
 
-	private void recursiveAddWithMetadata(World world, int x, int y, int z, Block id, int meta, int depth, HashMap<List<Integer>, Integer> map) {
+	private void recursiveAddWithMetadata(World world, int x, int y, int z, Block id, int meta, int depth, HashMap<Coordinate, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -244,10 +242,10 @@ public class BlockArray {
 			return;
 		if (world.getBlockMetadata(x, y, z) != meta)
 			return;
-		if (this.hasBlock(x, y, z) && depth >= map.get(Arrays.asList(x, y, z)))
+		if (this.hasBlock(x, y, z) && depth >= map.get(new Coordinate(x, y, z)))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		map.put(Arrays.asList(x, y, z), depth);
+		map.put(new Coordinate(x, y, z), depth);
 		try {
 			this.recursiveAddWithMetadata(world, x+1, y, z, id, meta, depth+1, map);
 			this.recursiveAddWithMetadata(world, x-1, y, z, id, meta, depth+1, map);
@@ -502,10 +500,11 @@ public class BlockArray {
 	}
 
 	public void sortBlocksByHeight() { //O(n^2)
-		List<List<Integer>> newList = new ArrayList();
+		/*
+		List<Coordinate> newList = new ArrayList();
 		for (int i = 0; i < blocks.size(); i++) {
-			List<Integer> a = blocks.get(i);
-			int y = a.get(1);
+			Coordinate a = blocks.get(i);
+			int y = a.yCoord;
 			//ReikaJavaLibrary.pConsole("List Size: "+newList.size());
 			if (newList.size() == 0) {
 				newList.add(a);
@@ -513,7 +512,7 @@ public class BlockArray {
 			}
 			else {
 				for (int k = 0; k < newList.size(); k++) {
-					int y2 = newList.get(k).get(1);
+					int y2 = newList.get(k).yCoord;
 					if (y < y2) {
 						newList.add(k, a);
 						//ReikaJavaLibrary.pConsole("Adding ["+a[0]+","+a[1]+","+a[2]+"] at position "+k+" (y="+y+", y2="+y2);
@@ -528,16 +527,21 @@ public class BlockArray {
 			}
 		}
 		blocks.clear();
-		blocks.addAll(newList);
+		blocks.addAll(newList);*/
+
+		Collections.sort(blocks, new HeightComparator());
 	}
 
 	public void reverseBlockOrder() {
+		/*
 		List<List<Integer>> newList = new ArrayList();
 		for (int i = 0; i < blocks.size(); i++) {
 			newList.add(blocks.get(blocks.size()-1-i));
 		}
 		blocks.clear();
 		blocks.addAll(newList);
+		 */
+		Collections.reverse(blocks);
 	}
 
 	@Override
@@ -685,11 +689,8 @@ public class BlockArray {
 
 	public BlockArray offset(int x, int y, int z) {
 		for (int i = 0; i < blocks.size(); i++) {
-			List<Integer> xyz = blocks.get(i);
-			int dx = xyz.get(0)+x;
-			int dy = xyz.get(1)+y;
-			int dz = xyz.get(2)+z;
-			blocks.set(i, Arrays.asList(dx, dy, dz));
+			Coordinate xyz = blocks.get(i);
+			blocks.set(i, xyz.offset(x, y, z));
 		}
 		return this;
 	}
@@ -911,5 +912,14 @@ public class BlockArray {
 
 	public BlockBox asBlockBox() {
 		return new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
+	}
+
+	private static class HeightComparator implements Comparator<Coordinate> {
+
+		@Override
+		public int compare(Coordinate o1, Coordinate o2) {
+			return o1.yCoord - o2.yCoord;
+		}
+
 	}
 }

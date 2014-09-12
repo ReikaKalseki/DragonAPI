@@ -11,7 +11,9 @@ package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
@@ -82,10 +84,8 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 		}
 	}
 
-	public HashMap<ItemStack, ChancedOutputList> getCentrifugeRecipes() {
-		HashMap<ItemStack, ChancedOutputList> map = new HashMap();
-		map.putAll(centrifuge);
-		return map;
+	public Map<ItemStack, ChancedOutputList> getCentrifugeRecipes() {
+		return Collections.unmodifiableMap(centrifuge);
 	}
 
 	public ChancedOutputList getRecipeOutput(ItemStack in) {

@@ -23,6 +23,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 
 @Deprecated
 public class ExpandedOreRecipe implements IRecipe {
@@ -284,7 +285,7 @@ public class ExpandedOreRecipe implements IRecipe {
 	}
 
 	public static final List<ItemStack> getWoodList() {
-		List<ItemStack> li = OreDictionary.getOres("plankWood");
+		List<ItemStack> li = ReikaRecipeHelper.getMutableOreDictList("plankWood");
 		li.addAll(OreDictionary.getOres("woodPlank"));
 		for (int i = 0; i < li.size(); i++) { //To cover a vanilla bug where vanilla planks are fetched as a stack of 2
 			ItemStack is = li.get(i);
@@ -295,7 +296,7 @@ public class ExpandedOreRecipe implements IRecipe {
 	}
 
 	public static final List<ItemStack> getLogList() {
-		List<ItemStack> li = OreDictionary.getOres("logWood");
+		List<ItemStack> li = ReikaRecipeHelper.getMutableOreDictList("logWood");
 		li.addAll(OreDictionary.getOres("woodLog"));
 		for (int i = 0; i < li.size(); i++) {
 			ItemStack is = li.get(i);
@@ -306,7 +307,7 @@ public class ExpandedOreRecipe implements IRecipe {
 	}
 
 	public static final List<ItemStack> getStickList() {
-		List<ItemStack> li = OreDictionary.getOres("stickWood");
+		List<ItemStack> li = ReikaRecipeHelper.getMutableOreDictList("stickWood");
 		li.addAll(OreDictionary.getOres("woodStick"));
 		for (int i = 0; i < li.size(); i++) {
 			ItemStack is = li.get(i);
@@ -317,7 +318,7 @@ public class ExpandedOreRecipe implements IRecipe {
 	}
 
 	public static final List<ItemStack> getSlabList() {
-		List<ItemStack> li = OreDictionary.getOres("slabWood");
+		List<ItemStack> li = ReikaRecipeHelper.getMutableOreDictList("slabWood");
 		li.addAll(OreDictionary.getOres("woodSlab"));
 		for (int i = 0; i < li.size(); i++) {
 			ItemStack is = li.get(i);
@@ -328,7 +329,7 @@ public class ExpandedOreRecipe implements IRecipe {
 	}
 
 	public static final List<ItemStack> getStairList() {
-		List<ItemStack> li = OreDictionary.getOres("stairWood");
+		List<ItemStack> li = ReikaRecipeHelper.getMutableOreDictList("stairWood");
 		li.addAll(OreDictionary.getOres("woodStair"));
 		for (int i = 0; i < li.size(); i++) {
 			ItemStack is = li.get(i);

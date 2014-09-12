@@ -11,6 +11,7 @@ package Reika.DragonAPI.ModInteract.Bees;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -121,16 +122,12 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	@Override
 	public final Map getProducts() {
-		Map m = new HashMap();
-		m.putAll(products);
-		return m;
+		return Collections.unmodifiableMap(products);
 	}
 
 	@Override
 	public final Map getSpecialty() {
-		Map m = new HashMap();
-		m.putAll(specials);
-		return m;
+		return Collections.unmodifiableMap(specials);
 	}
 
 	public abstract static class TraitsBee extends BeeSpecies {

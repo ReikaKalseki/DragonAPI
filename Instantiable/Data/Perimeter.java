@@ -10,6 +10,8 @@
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -39,10 +41,8 @@ public final class Perimeter {
 		return points.contains(new Coordinate(x, y, z));
 	}
 
-	public ArrayList<Coordinate> getPoints() {
-		ArrayList<Coordinate> li = new ArrayList();
-		li.addAll(points);
-		return li;
+	public Collection<Coordinate> getPoints() {
+		return Collections.unmodifiableCollection(points);
 	}
 
 	/*

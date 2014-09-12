@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,10 +48,8 @@ public class ChancedOutputList {
 		return this;
 	}
 
-	public HashMap<Integer, ItemStack> getData() {
-		HashMap map = new HashMap();
-		map.putAll(data);
-		return map;
+	public Map<ItemStack, Integer> getData() {
+		return Collections.unmodifiableMap(data);
 	}
 
 	public int getItemChance(ItemStack is) {
