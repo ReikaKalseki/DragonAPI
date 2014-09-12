@@ -110,4 +110,18 @@ public class ReikaColorAPI {
 		int b = (color >> 0) & 0xFF;
 		return b;
 	}
+
+	public static int mixColors(int c1, int c2, float ratio) {
+		int r1 = (c1 & 0xff0000) >> 16;
+		int r2 = (c2 & 0xff0000) >> 16;
+		int g1 = (c1 & 0xff00) >> 8;
+		int g2 = (c2 & 0xff00) >> 8;
+		int b1 = (c1 & 0xff);
+		int b2 = (c2 & 0xff);
+
+		int r = (int)(r1*ratio + r2*(1-ratio));
+		int g = (int)(g1*ratio + g2*(1-ratio));
+		int b = (int)(b1*ratio + b2*(1-ratio));
+		return r << 16 | g << 8 | b;
+	}
 }

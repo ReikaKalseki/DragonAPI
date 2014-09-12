@@ -56,9 +56,10 @@ import Reika.DragonAPI.ModInteract.Lua.LuaMethod;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dan200.computer.api.IComputerAccess;
-import dan200.computer.api.ILuaContext;
-import dan200.computer.api.IPeripheral;
+import dan200.computercraft.api.lua.ILuaContext;
+import dan200.computercraft.api.lua.LuaException;
+import dan200.computercraft.api.peripheral.IComputerAccess;
+import dan200.computercraft.api.peripheral.IPeripheral;
 
 @Strippable(value = {"dan200.computer.api.IPeripheral", "li.cil.oc.api.network.Environment", "li.cil.oc.api.network.ManagedPeripheral"})
 public abstract class TileEntityBase extends TileEntity implements IPeripheral, Environment, ManagedPeripheral {
@@ -75,6 +76,8 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	private final StepTimer packetTimer;
 	private final StepTimer fullSyncTimer;
 	private boolean forceSync = true;
+
+	private int updateDelay = 0;
 
 	private final TileEntity[] adjTEMap = new TileEntity[6];
 
@@ -161,6 +164,10 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 		if (node != null)
 			node.load(NBT);
+	}
+
+	public final void scheduleBlockUpdate(int ticks) {
+		updateDelay = ticks;
 	}
 
 	private void sendPacketToAllAround(S35PacketUpdateTileEntity p, int r) {
@@ -362,6 +369,14 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 				this.sendSyncPacket();
 			}
 		}
+
+		if (updateDelay > 0) {
+			updateDelay--;
+			if (updateDelay == 0) {
+				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			}
+		}
+
 		/*
 		if (worldObj.isRemote && this.needsToCauseBlockUpdates()) {
 			updateTimer.update();
@@ -423,6 +438,26 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	public Random getRandom() {
 		return rand;
+	}
+
+	@Override
+	public final boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (o instanceof TileEntity) {
+			TileEntity te = (TileEntity)o;
+			return te.worldObj.provider.dimensionId == worldObj.provider.dimensionId && this.matchCoords(te);
+		}
+		return false;
+	}
+
+	@Override
+	public final int hashCode() {
+		return xCoord + zCoord << 8 + yCoord << 16 + worldObj.provider.dimensionId << 24;
+	}
+
+	private boolean matchCoords(TileEntity te) {
+		return te.xCoord == xCoord && te.yCoord == yCoord && te.zCoord == zCoord;
 	}
 
 	@Override
@@ -539,14 +574,13 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return s;
 	}
 
-	@Override
-	public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws Exception {
-		return luaMethods.containsKey(method) ? luaMethods.get(method).invoke(this, arguments) : null;
+	public final boolean equals(IPeripheral other) {
+		return other == this;
 	}
 
 	@Override
-	public boolean canAttachToSide(int side) {
-		return true;
+	public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
+		return luaMethods.containsKey(method) ? luaMethods.get(method).invoke(this, arguments) : null;
 	}
 
 	@Override

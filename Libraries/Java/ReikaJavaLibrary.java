@@ -243,7 +243,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 
 	private static int recurse(int i) {
 		maxRecurse = Math.max(i, maxRecurse);
-		//ReikaJavaLibrary.pConsole(i+":"+maxRecurse);
+		//pConsole(i+":"+maxRecurse);
 		try {
 			recurse(i+1);
 		}

@@ -53,6 +53,10 @@ public final class WorldLocation {
 		this(e.worldObj, MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ));
 	}
 
+	public WorldLocation(World world, Coordinate loc) {
+		this(world, loc.xCoord, loc.yCoord, loc.zCoord);
+	}
+
 	public Block getBlock() {
 		World world = this.getWorld();
 		return world != null ? world.getBlock(xCoord, yCoord, zCoord) : null;

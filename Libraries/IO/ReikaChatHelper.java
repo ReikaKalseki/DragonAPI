@@ -31,10 +31,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaChatHelper extends DragonAPICore {
 
-	@SideOnly(Side.CLIENT)
 	public static void clearChat() {
-		if (FMLCommonHandler.instance().getEffectiveSide() != Side.CLIENT)
-			return;
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			clearChatGui();
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static void clearChatGui() {
 		Minecraft.getMinecraft().ingameGUI.getChatGUI().clearChatMessages();
 	}
 

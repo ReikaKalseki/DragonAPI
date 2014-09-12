@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModInteract.Lua;
 
 import net.minecraft.tileentity.TileEntity;
+import dan200.computercraft.api.lua.LuaException;
 
 public class LuaGetCoords extends LuaMethod {
 
@@ -18,7 +19,7 @@ public class LuaGetCoords extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws Exception {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
 		return new Object[]{te.xCoord, te.yCoord, te.zCoord};
 	}
 

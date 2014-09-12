@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.util.ResourceLocation;
-import Reika.DragonAPI.IO.CustomResourceManager;
+import Reika.DragonAPI.IO.DirectResourceManager;
 
 @Deprecated
 public class CustomSoundHandler {
@@ -32,7 +32,7 @@ public class CustomSoundHandler {
 		String name = mod.toLowerCase();
 		String file = sound.toLowerCase();
 		sounds.put(sound, new ResourceLocation(mod, sound));
-		CustomResourceManager.getRegisteredInstance().registerSound(mod, sound+".ogg", cat);
+		DirectResourceManager.getInstance().registerSound(mod, sound+".ogg", cat);
 	}
 
 	public ResourceLocation getSoundResource(String file) {

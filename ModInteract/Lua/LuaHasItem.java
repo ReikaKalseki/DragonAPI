@@ -14,6 +14,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
+import dan200.computercraft.api.lua.LuaException;
 
 public class LuaHasItem extends LuaMethod {
 
@@ -22,7 +23,7 @@ public class LuaHasItem extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws Exception {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
 		IInventory ii = (IInventory) te;
 		boolean flag = false;
 		switch(args.length) {

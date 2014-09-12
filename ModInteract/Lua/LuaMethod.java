@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.minecraft.tileentity.TileEntity;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import dan200.computercraft.api.lua.LuaException;
 
 public abstract class LuaMethod {
 
@@ -51,7 +52,7 @@ public abstract class LuaMethod {
 		return methods.size();
 	}
 
-	public abstract Object[] invoke(TileEntity te, Object[] args) throws Exception;
+	public abstract Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException;
 
 	public abstract String getDocumentation();
 

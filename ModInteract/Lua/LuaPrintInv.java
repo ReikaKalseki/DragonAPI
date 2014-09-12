@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import dan200.computercraft.api.lua.LuaException;
 
 public class LuaPrintInv extends LuaMethod {
 
@@ -22,7 +23,7 @@ public class LuaPrintInv extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws Exception {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
 		ArrayList<String> li = new ArrayList();
 		IInventory ii = (IInventory) te;
 		for (int i = 0; i < ii.getSizeInventory(); i++) {

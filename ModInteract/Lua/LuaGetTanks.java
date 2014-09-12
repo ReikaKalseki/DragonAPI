@@ -15,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import dan200.computercraft.api.lua.LuaException;
 
 public class LuaGetTanks extends LuaMethod {
 
@@ -23,7 +24,7 @@ public class LuaGetTanks extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws Exception {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
 		IFluidHandler ifl = (IFluidHandler)te;
 		ArrayList<FluidTankInfo> li = new ArrayList();
 		for (int i = 0; i < 6*0+1; i++) {

@@ -34,6 +34,7 @@ import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.KeyWatcher.KeyTicker;
+import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
 import Reika.DragonAPI.Auxiliary.PlayerHandler;
 import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
@@ -138,6 +139,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		proxy.registerSidedHandlers();
 
 		this.registerTechnicalBlocks();
+
+		ChunkManager.instance.register();
 
 		OreDictionary.initVanillaEntries();
 		ReikaJavaLibrary.initClass(ModList.class);
@@ -260,6 +263,8 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
+		proxy.registerSidedHandlersMain();
+
 		PlayerHandler.instance.registerTracker(LoginHandler.instance);
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new APIGuiHandler());

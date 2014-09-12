@@ -13,6 +13,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import dan200.computercraft.api.lua.LuaException;
 
 public class LuaReadTank extends LuaMethod {
 
@@ -21,7 +22,7 @@ public class LuaReadTank extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws Exception {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
 		int ordinal = ((Double)args[0]).intValue();
 		IFluidHandler ifl = (IFluidHandler)te;
 		Object[] o = new Object[3];

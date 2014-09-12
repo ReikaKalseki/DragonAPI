@@ -11,6 +11,8 @@ package Reika.DragonAPI.IO;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Set;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
@@ -20,36 +22,41 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.client.audio.SoundRegistry;
 import net.minecraft.client.resources.IResource;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
 import Reika.DragonAPI.Instantiable.IO.DirectResource;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class CustomResourceManager extends SimpleReloadableResourceManager {
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 
-	private final SimpleReloadableResourceManager original;
+public class DirectResourceManager implements IResourceManager, IResourceManagerReloadListener {
+
 	private final HashMap<String, SoundEventAccessorComposite> accessors = new HashMap();
 
-	public CustomResourceManager(SimpleReloadableResourceManager mg) {
-		super(mg.rmMetadataSerializer);
-		original = mg;
+	private static final DirectResourceManager instance = new DirectResourceManager();
+
+	private DirectResourceManager() {
+		super();
 		//this.registerReloadListener(this);
 	}
 
-	public static CustomResourceManager getRegisteredInstance() {
-		return (CustomResourceManager)Minecraft.getMinecraft().mcResourceManager;
+	public static DirectResourceManager getInstance() {
+		return instance;
 	}
 
 	@Override
 	public IResource getResource(ResourceLocation loc) throws IOException {
 		String dom = loc.getResourceDomain();
-		if (dom.equals("custom_path")) {
-			String path = loc.getResourcePath();
-			return new DirectResource(path);
-		}
-		else {
-			return original.getResource(loc);
-		}
+		//if (dom.equals("custom_path")) {
+		String path = loc.getResourcePath();
+		return new DirectResource(path);
+		//}
+		//else {
+		//	return original.getResource(loc);
+		//}
 	}
 
 	public void registerCustomPath(String path, SoundCategory cat) {
@@ -70,7 +77,7 @@ public class CustomResourceManager extends SimpleReloadableResourceManager {
 		accessors.put(path, cmp);
 	}
 
-	public void initToSoundRegistry() {
+	private void initToSoundRegistry() {
 		SoundHandler sh = Minecraft.getMinecraft().getSoundHandler();
 		if (sh == null) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Attempted to initialize sound entries before the sound handler was created!");
@@ -90,11 +97,25 @@ public class CustomResourceManager extends SimpleReloadableResourceManager {
 	public void onResourceManagerReload(IResourceManager rm) {
 		this.initToSoundRegistry();
 	}*/
-
+	/*
 	@Override
 	public void notifyReloadListeners() {
 		super.notifyReloadListeners();
 		original.notifyReloadListeners();
+		this.initToSoundRegistry();
+	}*/
+
+	public Set<String> getResourceDomains() {
+		return ImmutableSet.of("custom_path");
+	}
+
+	public List<IResource> getAllResources(ResourceLocation resource) throws IOException {
+		return ImmutableList.of(this.getResource(resource));
+	}
+
+	@Override
+	public void onResourceManagerReload(IResourceManager rm) {
+		((SimpleReloadableResourceManager)rm).domainResourceManagers.put("custom_path", this);
 		this.initToSoundRegistry();
 	}
 

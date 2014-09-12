@@ -41,6 +41,10 @@ public final class Coordinate {
 		this(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ));
 	}
 
+	public Coordinate(WorldLocation loc) {
+		this(loc.xCoord, loc.yCoord, loc.zCoord);
+	}
+
 	public Coordinate move(int dx, int dy, int dz) {
 		return new Coordinate(xCoord+dx, yCoord+dy, zCoord+dz);
 	}

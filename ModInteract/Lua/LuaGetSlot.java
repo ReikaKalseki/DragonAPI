@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract.Lua;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+import dan200.computercraft.api.lua.LuaException;
 
 public class LuaGetSlot extends LuaMethod {
 
@@ -20,7 +21,7 @@ public class LuaGetSlot extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws Exception {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
 		int slot = ((Double)args[0]).intValue();
 		IInventory ii = (IInventory)te;
 		ItemStack is = ii.getStackInSlot(slot);

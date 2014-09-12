@@ -639,19 +639,40 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return true;
 	}
 
+	public static boolean canAcceptMoreOf(Item item, int meta, int amt, IInventory inv) {
+		return canAcceptMoreOf(new ItemStack(item, amt, meta), inv);
+	}
+
 	/** Returns true if the inventory has space for more of a specific Items. Args: ID, metadata, inventory */
-	public static boolean canAcceptMoreOf(Item id, int meta, ItemStack[] inv) {
+	public static boolean canAcceptMoreOf(ItemStack is, IInventory inv) {
+		/*
 		if (countEmptySlots(inv) > 0)
 			return true;
 		if (locateInInventory(id, meta, inv) == -1)
 			return false;
+
 		int num = 0;
 		int maxnum = new ItemStack(id, 1, meta).getMaxStackSize()*countNumStacks(id, meta, inv);
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i].getItem() == id && inv[i].getItemDamage() == meta)
 				num += inv[i].stackSize;
 		}
-		return (num < maxnum);
+		return (num < maxnum);*/
+		int space = 0;
+		for (int i = 0; i < inv.getSizeInventory(); i++) {
+			if (inv.isItemValidForSlot(i, is)) {
+				ItemStack in = inv.getStackInSlot(i);
+				if (in == null)
+					return true;
+				else {
+					if (ReikaItemHelper.matchStacks(in, is) && ItemStack.areItemStackTagsEqual(is, in)) {
+						int max = Math.min(in.getMaxStackSize(), inv.getInventoryStackLimit());
+						space += max-in.stackSize;
+					}
+				}
+			}
+		}
+		return space >= is.stackSize;
 	}
 
 	/** Returns the number of unique itemstacks in the inventory after sorting and cleaning. Args: Inventory */

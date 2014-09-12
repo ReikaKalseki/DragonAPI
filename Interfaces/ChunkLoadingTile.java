@@ -7,33 +7,18 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI;
+package Reika.DragonAPI.Interfaces;
 
-import net.minecraft.world.World;
+import java.util.Collection;
 
-public class APIProxy {
+import net.minecraft.world.ChunkCoordIntPair;
 
-	public void registerSidedHandlers()
-	{
+public interface ChunkLoadingTile {
 
-	}
+	//public void setTicket(Ticket t);
 
-	public void registerSidedHandlersMain()
-	{
+	public Collection<ChunkCoordIntPair> getChunksToLoad();
 
-	}
+	//public boolean loadChunk(ChunkCoordIntPair chip);
 
-	public void addArmorRenders() {}
-
-	public World getClientWorld() {
-		return null;
-	}
-
-	public void registerRenderInformation() {
-
-	}
-
-	public void registerSounds() {
-
-	}
 }

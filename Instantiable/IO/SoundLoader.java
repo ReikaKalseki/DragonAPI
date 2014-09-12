@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
-import Reika.DragonAPI.IO.CustomResourceManager;
+import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Interfaces.SoundEnum;
 
 public class SoundLoader {
@@ -21,10 +21,9 @@ public class SoundLoader {
 	}
 
 	public void register() {
-		Reika.DragonAPI.IO.CustomResourceManager mg = CustomResourceManager.getRegisteredInstance();
 		for (int i = 0; i < soundList.length; i++) {
 			SoundEnum e = soundList[i];
-			mg.registerCustomPath(e.getPath(), e.getCategory());
+			DirectResourceManager.getInstance().registerCustomPath(e.getPath(), e.getCategory());
 		}
 	}
 }

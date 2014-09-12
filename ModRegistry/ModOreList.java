@@ -22,6 +22,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.ItemHashMap;
 import Reika.DragonAPI.Interfaces.OreType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -129,7 +130,7 @@ public enum ModOreList implements OreType {
 
 	public static final ModOreList[] oreList = values();
 
-	private static final HashMap<ItemStack, ModOreList> oreMappings = new HashMap();
+	private static final ItemHashMap<ModOreList> oreMappings = new ItemHashMap();
 
 	private ModOreList(String n, int color, OreRarity r, String prod, int count, String... ore) {
 		//if (!DragonAPIInit.canLoadHandlers())

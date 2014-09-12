@@ -689,7 +689,7 @@ public class BlockArray {
 			int dx = xyz.get(0)+x;
 			int dy = xyz.get(1)+y;
 			int dz = xyz.get(2)+z;
-			blocks.set(i, xyz);
+			blocks.set(i, Arrays.asList(dx, dy, dz));
 		}
 		return this;
 	}
@@ -737,11 +737,14 @@ public class BlockArray {
 				int x = xyz[0];
 				int y = xyz[1];
 				int z = xyz[2];
-				if (minY <= 0 || y <= 0)
+				if (minY <= 0 || y <= 0) {
 					canSink = false;
+					break;
+				}
 				Material idy = ReikaWorldHelper.getMaterial(world, x, y-1, z);
 				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) && !ReikaArrayHelper.contains(overrides, idy) && idy.isSolid()) {
 					canSink = false;
+					break;
 				}
 			}
 			if (canSink)
@@ -753,7 +756,7 @@ public class BlockArray {
 	public final ArrayList<ItemStack> getAllDroppedItems(World world, int fortune) {
 		ArrayList<ItemStack> li = new ArrayList();
 		ArrayList<ItemStack> nbt = new ArrayList();
-		HashMap<ItemStack, Integer> map = new HashMap();
+		ItemHashMap<Integer> map = new ItemHashMap();
 		for (int i = 0; i < blocks.size(); i++) {
 			int[] xyz = this.getReturnArray(i);
 			int x = xyz[0];
