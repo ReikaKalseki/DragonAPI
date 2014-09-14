@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
@@ -70,6 +71,18 @@ public final class TileEntityCache<V> {
 
 	public void clear() {
 		data.clear();
+	}
+
+	public int size() {
+		return data.size();
+	}
+
+	public Collection<V> values() {
+		return Collections.unmodifiableCollection(data.values());
+	}
+
+	public boolean isEmpty() {
+		return data.isEmpty();
 	}
 
 }

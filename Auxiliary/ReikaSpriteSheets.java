@@ -25,6 +25,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import Reika.DragonAPI.Interfaces.AnimatedSpritesheet;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
@@ -44,6 +45,15 @@ public final class ReikaSpriteSheets {
 			return;
 		int row = index/16;
 		int col = index-row*16;
+		if (item.getItem() instanceof AnimatedSpritesheet) {
+			AnimatedSpritesheet a = (AnimatedSpritesheet)item.getItem();
+			if (a.useAnimatedRender(item)) {
+				col = a.getColumn(item);
+				int offset = (int)((System.currentTimeMillis()/32/a.getFrameSpeed())%a.getFrameCount());
+				row = a.getBaseRow(item)+offset;
+				tex = a.getTexture(item);
+			}
+		}
 		ReikaTextureHelper.bindTexture(root, tex);
 		if (type == type.INVENTORY) {
 			GL11.glDisable(GL11.GL_LIGHTING);

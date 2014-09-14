@@ -153,4 +153,45 @@ public class HybridTank extends FluidTank {
 		return this.isEmpty() ? capacity >= amt : this.getRemainingSpace() >= amt && this.getActualFluid().equals(fs.getFluid());
 	}
 
+	public void setNBT(NBTTagCompound nbt) {
+		if (this.getFluid() != null)
+			this.getFluid().tag = nbt;
+	}
+
+	public void setNBTInt(String key, int val) {
+		if (this.getFluid() != null) {
+			if (this.getFluid().tag == null)
+				this.getFluid().tag = new NBTTagCompound();
+			this.getFluid().tag.setInteger(key, val);
+		}
+	}
+
+	public void setNBTString(String key, String s) {
+		if (this.getFluid() != null) {
+			if (this.getFluid().tag == null)
+				this.getFluid().tag = new NBTTagCompound();
+			this.getFluid().tag.setString(key, s);
+		}
+	}
+
+	public void setNBTBoolean(String key, boolean b) {
+		if (this.getFluid() != null) {
+			if (this.getFluid().tag == null)
+				this.getFluid().tag = new NBTTagCompound();
+			this.getFluid().tag.setBoolean(key, b);
+		}
+	}
+
+	public int getNBTInt(String key) {
+		return this.getFluid() != null && this.getFluid().tag != null ? this.getFluid().tag.getInteger(key) : 0;
+	}
+
+	public String getNBTString(String key) {
+		return this.getFluid() != null && this.getFluid().tag != null ? this.getFluid().tag.getString(key) : "";
+	}
+
+	public boolean getNBTBoolean(String key) {
+		return this.getFluid() != null && this.getFluid().tag != null ? this.getFluid().tag.getBoolean(key) : false;
+	}
+
 }

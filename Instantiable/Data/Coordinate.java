@@ -11,12 +11,18 @@ package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public final class Coordinate {
 
@@ -129,6 +135,59 @@ public final class Coordinate {
 		a[1] = yCoord;
 		a[2] = zCoord;
 		return a;
+	}
+
+	public Block getBlock(World world) {
+		return world != null ? world.getBlock(xCoord, yCoord, zCoord) : null;
+	}
+
+	public boolean isEmpty(World world) {
+		return this.getBlock(world) == Blocks.air;
+	}
+
+	public int getBlockMetadata(World world) {
+		return world != null ? world.getBlockMetadata(xCoord, yCoord, zCoord) : -1;
+	}
+
+	public TileEntity getTileEntity(World world) {
+		return world != null ? world.getTileEntity(xCoord, yCoord, zCoord) : null;
+	}
+
+	public int getRedstone(World world) {
+		return world != null ? world.getBlockPowerInput(xCoord, yCoord, zCoord) : 0;
+	}
+
+	public void triggerBlockUpdate(World world, boolean adjacent) {
+		if (world != null) {
+			world.markBlockForUpdate(xCoord, yCoord, zCoord);
+			if (adjacent) {
+				ReikaWorldHelper.causeAdjacentUpdates(world, xCoord, yCoord, zCoord);
+			}
+		}
+	}
+
+	public void dropItem(World world, ItemStack is) {
+		this.dropItem(world, is, 1);
+	}
+
+	public void dropItem(World world, ItemStack is, double vscale) {
+		if (world != null && !world.isRemote) {
+			ReikaItemHelper.dropItem(world, xCoord+rand.nextDouble(), yCoord+rand.nextDouble(), zCoord+rand.nextDouble(), is, vscale);
+		}
+	}
+
+	public void setBlock(World world, Block b) {
+		this.setBlock(world, b, 0);
+	}
+
+	public void setBlock(World world, ItemStack is) {
+		this.setBlock(world, Block.getBlockFromItem(is.getItem()), is.getItemDamage());
+	}
+
+	public void setBlock(World world, Block id, int meta) {
+		if (world != null) {
+			world.setBlock(xCoord, yCoord, zCoord, id, meta, 3);
+		}
 	}
 
 }

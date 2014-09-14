@@ -10,7 +10,6 @@
 package Reika.DragonAPI.Auxiliary;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -20,12 +19,13 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Instantiable.ItemMaterial;
+import Reika.DragonAPI.Instantiable.Data.ItemHashMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class ItemMaterialController {
 
-	private final HashMap<ItemStack, ItemMaterial> data = new HashMap<ItemStack, ItemMaterial>();
+	private final ItemHashMap<ItemMaterial> data = new ItemHashMap<ItemMaterial>();
 	private final ArrayList<ItemStack> locks = new ArrayList<ItemStack>();
 
 	public static final ItemMaterialController instance = new ItemMaterialController();
