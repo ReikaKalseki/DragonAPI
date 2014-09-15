@@ -45,6 +45,7 @@ public class AppEngHandler extends ModHandlerBase {
 	private Class partClass;
 
 	private Method itemGet;
+	private Method itemstackGet;
 	private Method blockGet;
 
 	private AppEngHandler() {
@@ -54,13 +55,13 @@ public class AppEngHandler extends ModHandlerBase {
 			try {
 				this.initGetters();
 
-				certus = this.getMaterial("materialCertusQuartzCrystal", 0);
-				dust = this.getMaterial("materialCertusQuartzDust", 0);
+				certus = this.getMaterial("materialCertusQuartzCrystal");
+				dust = this.getMaterial("materialCertusQuartzDust");
 
-				calcPress = this.getPart("materialCalcProcessorPress", 0);
-				engPress = this.getPart("materialEngProcessorPress", 0);
-				logicPress = this.getPart("materialLogicProcessorPress", 0);
-				siliconPress = this.getPart("materialSiliconPress", 0);
+				calcPress = this.getPart("materialCalcProcessorPress");
+				engPress = this.getPart("materialEngProcessorPress");
+				logicPress = this.getPart("materialLogicProcessorPress");
+				siliconPress = this.getPart("materialSiliconPress");
 
 				sky = this.getBlock("blockSkyStone");
 			}
@@ -99,6 +100,7 @@ public class AppEngHandler extends ModHandlerBase {
 
 		itemGet = def.getMethod("item");
 		blockGet = def.getMethod("block");
+		itemstackGet = def.getMethod("stack");
 
 		partClass = Class.forName("appeng.api.definitions.Parts");
 		itemClass = Class.forName("appeng.api.definitions.Items");
@@ -121,13 +123,13 @@ public class AppEngHandler extends ModHandlerBase {
 	private ItemStack getMaterial(String field) throws Exception {
 		Field f = matClass.getField(field);
 		Object def = f.get(matList);
-		return new ItemStack((Item)itemGet.invoke(def));
+		return (ItemStack)itemstackGet.invoke(def, 1);
 	}
 
 	private ItemStack getPart(String field) throws Exception {
 		Field f = partClass.getField(field);
 		Object def = f.get(partList);
-		return new ItemStack((Item)itemGet.invoke(def));
+		return (ItemStack)itemstackGet.invoke(def, 1);
 	}
 
 	public static AppEngHandler getInstance() {
