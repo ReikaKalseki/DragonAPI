@@ -11,14 +11,13 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.ArrayList;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
 import org.lwjgl.input.Keyboard;
@@ -27,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
@@ -58,21 +58,23 @@ public class DebugOverlay {
 			FontRenderer f = mc.fontRenderer;
 
 			float reach = 4;
-			Vec3 vec = Vec3.createVectorHelper(ep.posX, (ep.posY + 1.62) - ep.yOffset, ep.posZ);
-			Vec3 vec2 = ep.getLook(1.0F);
-			Vec3 vec3 = vec.addVector(vec2.xCoord*reach, vec2.yCoord*reach, vec2.zCoord*reach);
-			MovingObjectPosition hit = ep.worldObj.rayTraceBlocks(vec, vec3);
-
-			if (hit != null && hit.typeOfHit == MovingObjectType.BLOCK) {
-				TileEntity te = ep.worldObj.getTileEntity(hit.blockX, hit.blockY, hit.blockZ);
-				if (te != null) {
-					NBTTagCompound NBT = new NBTTagCompound();
-					te.writeToNBT(NBT);
-					ArrayList<String> li = ReikaNBTHelper.parseNBTAsLines(NBT);
-					for (int i = 0; i < li.size(); i++) {
-						String s = li.get(i);
-						f.drawString(s, 1+event.resolution.getScaledWidth()/2*(i/24), 1+f.FONT_HEIGHT*(i%24), 0xffffff);
-						ReikaTextureHelper.bindHUDTexture();
+			MovingObjectPosition hit = ReikaPlayerAPI.getLookedAtBlockClient(4);
+			if (hit != null) {
+				int x = hit.blockX;
+				int y = hit.blockY;
+				int z = hit.blockZ;
+				Block b = ep.worldObj.getBlock(x, y, z);
+				if (b.hasTileEntity(ep.worldObj.getBlockMetadata(x, y, z))) {
+					TileEntity te = ep.worldObj.getTileEntity(x, y, z);
+					if (te != null) {
+						NBTTagCompound NBT = new NBTTagCompound();
+						te.writeToNBT(NBT);
+						ArrayList<String> li = ReikaNBTHelper.parseNBTAsLines(NBT);
+						for (int i = 0; i < li.size(); i++) {
+							String s = li.get(i);
+							f.drawString(s, 1+event.resolution.getScaledWidth()/2*(i/24), 1+f.FONT_HEIGHT*(i%24), 0xffffff);
+							ReikaTextureHelper.bindHUDTexture();
+						}
 					}
 				}
 			}

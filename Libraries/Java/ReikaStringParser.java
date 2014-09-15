@@ -341,4 +341,15 @@ public class ReikaStringParser extends DragonAPICore {
 	public static String getFirstWord(String s) {
 		return s.split(" ")[0];
 	}
+
+	public static boolean containsWord(String s, String word) {
+		int index = s.indexOf(word);
+		if (index < 0)
+			return false;
+		if (index > 0 && Character.isLetter(s.charAt(index-1)))
+			return false;
+		if (index < s.length()-1 && Character.isLetter(s.charAt(index+1)))
+			return false;
+		return true;
+	}
 }

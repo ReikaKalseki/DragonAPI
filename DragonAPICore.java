@@ -14,6 +14,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
+import net.minecraftforge.common.ForgeVersion;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -86,10 +87,24 @@ public class DragonAPICore {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading on Reika's computer; Dev features enabled.");
 
 		//ReikaMathCacher.initalize();
+		validateForgeVersions();
 	}
 
 	protected static Side getSide() {
 		return FMLCommonHandler.instance().getEffectiveSide();
+	}
+
+	private static void validateForgeVersions() {
+		int major = ForgeVersion.majorVersion;
+		int minor = ForgeVersion.minorVersion;
+		int rev = ForgeVersion.revisionVersion;
+		int build = ForgeVersion.buildVersion;
+
+		int recbuild = 1210;
+		if (build < recbuild) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: The version of Forge you are using is compatible but not recommended.");
+			ReikaJavaLibrary.pConsole(String.format("Consider updating to at least %d.%d.%d.%d.", major, minor, rev, recbuild));
+		}
 	}
 
 	public static boolean isOnActualServer() {

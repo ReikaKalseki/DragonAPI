@@ -90,9 +90,11 @@ import Reika.DragonAPI.ModInteract.TinkerBlockHandler;
 import Reika.DragonAPI.ModInteract.TinkerToolHandler;
 import Reika.DragonAPI.ModInteract.TransitionalOreHandler;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
+import Reika.DragonAPI.ModRegistry.PowerTypes;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
@@ -429,6 +431,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);
 		ReikaJavaLibrary.initClass(ModCropList.class);
+		ReikaJavaLibrary.initClass(PowerTypes.class);
+		ReikaJavaLibrary.initClass(InterfaceCache.class);
 	}
 
 	@EventHandler

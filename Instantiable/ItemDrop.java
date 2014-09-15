@@ -74,9 +74,13 @@ public class ItemDrop {
 	}
 
 	public ItemStack getItem() {
-		int num = minDrops+rand.nextInt(1+maxDrops-minDrops);
+		int num = this.getDropCount();
 		ItemStack is = ReikaItemHelper.getSizedItemStack(item.copy(), num);
 		return is;
+	}
+
+	public int getDropCount() {
+		return minDrops+rand.nextInt(1+maxDrops-minDrops);
 	}
 
 	public void drop(World world, double x, double y, double z) {

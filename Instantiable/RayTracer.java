@@ -22,7 +22,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
-public class RayTracer {
+public final class RayTracer {
 
 	public final int originX;
 	public final int originY;

@@ -177,6 +177,15 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 	}
 
+	public static Class getClassNoException(String cl) {
+		try {
+			return Class.forName(cl);
+		}
+		catch (ClassNotFoundException e) {
+			return null;
+		}
+	}
+
 	/** Initializes a class. */
 	public static void initClass(Class c) {
 		if (c == null) {

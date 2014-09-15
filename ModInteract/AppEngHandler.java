@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -147,14 +148,23 @@ public class AppEngHandler extends ModHandlerBase {
 	}
 
 	public ItemStack getCertusQuartz() {
-		return certus.copy();
+		return certus != null ? certus.copy() : null;
 	}
 
 	public ItemStack getCertusQuartzDust() {
-		return dust.copy();
+		return dust != null ? dust.copy() : null;
 	}
 
-	public ArrayList<ItemStack> getMeteorChestLoot() {
+	public Collection<ItemStack> getPossibleMeteorChestLoot() {
+		ArrayList<ItemStack> li = new ArrayList();
+		li.add(calcPress);
+		li.add(engPress);
+		li.add(logicPress);
+		li.add(siliconPress);
+		return li;
+	}
+
+	public Collection<ItemStack> getMeteorChestLoot() {
 		ArrayList<ItemStack> li = new ArrayList();
 		int n = 1+rand.nextInt(3);
 		for (int i = 0; i < n; i++) {

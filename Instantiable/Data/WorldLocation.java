@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -55,6 +56,10 @@ public final class WorldLocation {
 
 	public WorldLocation(World world, Coordinate loc) {
 		this(world, loc.xCoord, loc.yCoord, loc.zCoord);
+	}
+
+	public WorldLocation(World world, MovingObjectPosition hit) {
+		this(world, hit.blockX, hit.blockY, hit.blockZ);
 	}
 
 	public Block getBlock() {
