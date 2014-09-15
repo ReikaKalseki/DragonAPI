@@ -44,7 +44,6 @@ public final class ReikaChatHelper extends DragonAPICore {
 
 	/** Writes an itemstack to the chat.
 	 * Args: World, itemstack */
-	@SideOnly(Side.CLIENT)
 	public static void writeItemStack(World world, ItemStack is) {
 		if (Minecraft.getMinecraft().thePlayer == null || world == null)
 			return;
@@ -53,23 +52,21 @@ public final class ReikaChatHelper extends DragonAPICore {
 			msg = "Null Stack!";
 		else
 			msg = String.format("%d, %d, %d", is.getItem(), is.stackSize, is.getItemDamage());
-		sendChatToPlayer(Minecraft.getMinecraft().thePlayer, msg);
+		writeString(msg);
 	}
 
 	/** Writes coordinates to the chat.
 	 * Args: World, x, y, z */
-	@SideOnly(Side.CLIENT)
 	public static void writeCoords(World world, double x, double y, double z) {
 		if (Minecraft.getMinecraft().thePlayer == null || world == null)
 			return;
 		String msg;
 		msg = String.format("%.2f, %.2f, %.2f", x, y, z);
-		sendChatToPlayer(Minecraft.getMinecraft().thePlayer, msg);
+		writeString(msg);
 	}
 
 	/** Writes a block ID:metadata and coordinates to the chat.
 	 * Args: World, x, y, z */
-	@SideOnly(Side.CLIENT)
 	public static void writeBlockAtCoords(World world, int x, int y, int z) {
 		StringBuilder sb = new StringBuilder();
 		if (Minecraft.getMinecraft().thePlayer == null || world == null)
@@ -90,30 +87,33 @@ public final class ReikaChatHelper extends DragonAPICore {
 			sb.append("Tile Entity at this location:\n");
 			sb.append(te.toString());
 		}
-		sendChatToPlayer(Minecraft.getMinecraft().thePlayer, sb.toString());
+		writeString(sb.toString());
 	}
 
 	/** Writes an integer to the chat. Args: Integer */
-	@SideOnly(Side.CLIENT)
 	public static void writeInt(int num) {
 		writeString(String.format("%d", num));
 	}
 
+	public static void writeString(String sg) {
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			writeChatString(sg);
+		}
+	}
+
 	/** Writes any general-purpose string to the chat. Args: String */
 	@SideOnly(Side.CLIENT)
-	public static void writeString(String sg) {
+	private static void writeChatString(String sg) {
 		if (Minecraft.getMinecraft().thePlayer != null)
 			sendChatToPlayer(Minecraft.getMinecraft().thePlayer, sg);
 	}
 
 	/** Automatically translates if possible. */
-	@SideOnly(Side.CLIENT)
 	public static void writeLocalString(String tag) {
 		writeString(StatCollector.translateToLocal(tag));
 	}
 
 	/** A general object-to-chat function. Autoclips doubles to 3 decimals. Args: Object */
-	@SideOnly(Side.CLIENT)
 	public static void write(Object obj) {
 		if (obj == null) {
 			writeString("null");
@@ -127,7 +127,6 @@ public final class ReikaChatHelper extends DragonAPICore {
 		writeString(str);
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void writeFormattedString(String str, EnumChatFormatting... fm) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < fm.length; i++)
@@ -135,9 +134,8 @@ public final class ReikaChatHelper extends DragonAPICore {
 		writeString(sb.toString()+str);
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void writeEntity(World world, Entity ent) {
-		if (Minecraft.getMinecraft().thePlayer == null || world == null)
+		if (world == null)
 			return;
 		if (ent == null)
 			writeString("null");
@@ -145,10 +143,7 @@ public final class ReikaChatHelper extends DragonAPICore {
 			writeString(ent.getCommandSenderName()+" @ "+String.format("%.2f, %.2f, %.2f", ent.posX, ent.posY, ent.posZ));
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void writeItem(World world, Item id, int dmg) {
-		if (Minecraft.getMinecraft().thePlayer == null || world == null)
-			return;
 		if (id == null)
 			writeString("Null Item");
 		//else if (id < 256)
@@ -157,10 +152,7 @@ public final class ReikaChatHelper extends DragonAPICore {
 			writeString(id+":"+dmg+" is "+id.getItemStackDisplayName(new ItemStack(id, 1, dmg)));
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void writeBlock(World world, Block id, int meta) {
-		if (Minecraft.getMinecraft().thePlayer == null || world == null)
-			return;
 		if (id == Blocks.air)
 			writeString("Null Item");
 		//else if (id > 4096)
@@ -169,10 +161,8 @@ public final class ReikaChatHelper extends DragonAPICore {
 			writeString(id+":"+meta+" is "+id.getLocalizedName());
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void writeSide() {
-		if (Minecraft.getMinecraft().thePlayer != null)
-			sendChatToPlayer(Minecraft.getMinecraft().thePlayer, String.valueOf(FMLCommonHandler.instance().getEffectiveSide()));
+		writeString(String.valueOf(FMLCommonHandler.instance().getEffectiveSide()));
 	}
 
 	public static void sendChatToPlayer(EntityPlayer ep, String sg) {

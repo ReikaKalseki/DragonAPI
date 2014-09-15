@@ -9,11 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import java.util.Random;
+
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** Reflection tools to read other mods. */
 public abstract class ModHandlerBase {
+
+	protected final Random rand = new Random();
 
 	protected ModHandlerBase() {
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Loading handler for mod "+this.getMod());

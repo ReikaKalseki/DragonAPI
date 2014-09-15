@@ -11,7 +11,9 @@ package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
@@ -25,16 +27,42 @@ public class AppEngHandler extends ModHandlerBase {
 	private ItemStack certus;
 	private ItemStack dust;
 
-	private static Method itemGet;
-	private static Method itemDefGet;
-	private static Object aeCoreObj;
+	private ItemStack siliconPress;
+	private ItemStack logicPress;
+	private ItemStack calcPress;
+	private ItemStack engPress;
+
+	public final Block skystone;
+
+	private Object itemList;
+	private Object matList;
+	private Object blockList;
+	private Object partList;
+
+	private Class itemClass;
+	private Class matClass;
+	private Class blockClass;
+	private Class partClass;
+
+	private Method itemGet;
+	private Method blockGet;
 
 	private AppEngHandler() {
 		super();
+		Block sky = null;
 		if (this.hasMod()) {
 			try {
-				certus = getItemStack("materialCertusQuartzCrystal");
-				dust = getItemStack("materialCertusQuartzDust");
+				this.initGetters();
+
+				certus = this.getMaterial("materialCertusQuartzCrystal", 0);
+				dust = this.getMaterial("materialCertusQuartzDust", 0);
+
+				calcPress = this.getPart("materialCalcProcessorPress", 0);
+				engPress = this.getPart("materialEngProcessorPress", 0);
+				logicPress = this.getPart("materialLogicProcessorPress", 0);
+				siliconPress = this.getPart("materialSiliconPress", 0);
+
+				sky = this.getBlock("blockSkyStone");
 			}
 			catch (Exception e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read AE class contents!");
@@ -44,28 +72,62 @@ public class AppEngHandler extends ModHandlerBase {
 		else {
 			this.noMod();
 		}
+		skystone = sky;
 	}
 
-	private static ItemStack getItemStack(String field) throws Exception {
-		if (aeCoreObj == null || itemGet == null || itemDefGet == null) {
-			Class ae = Class.forName("appeng.core.Api");
-			Field inst = ae.getField("instance");
-			aeCoreObj = inst.get(null);
-			itemGet = ae.getMethod("items");
+	private void initGetters() throws Exception {
+		Class ae = Class.forName("appeng.core.Api");
+		Field instance = ae.getField("instance");
+		Object inst = instance.get(null);
 
-			Class idef = Class.forName("appeng.api.util");
-			itemDefGet = idef.getMethod("item");
+		Field b = ae.getDeclaredField("blocks");
+		Field i = ae.getDeclaredField("items");
+		Field p = ae.getDeclaredField("parts");
+		Field m = ae.getDeclaredField("materials");
 
-			Class mat = Class.forName("appeng.api.definitions.Materials");
-			Field f = mat.getField(field);
-		}
-		if (aeCoreObj == null || itemGet == null || itemDefGet == null) {
-			return null;
-		}
+		b.setAccessible(true);
+		i.setAccessible(true);
+		p.setAccessible(true);
+		m.setAccessible(true);
 
-		Object def = itemGet.invoke(aeCoreObj);
-		Item item = (Item)itemDefGet.invoke(def);
-		return new ItemStack(item);
+		partList = p.get(inst);
+		itemList = i.get(inst);
+		blockList = b.get(inst);
+		matList = m.get(inst);
+
+		Class def = Class.forName("appeng.api.util.AEItemDefinition");
+
+		itemGet = def.getMethod("item");
+		blockGet = def.getMethod("block");
+
+		partClass = Class.forName("appeng.api.definitions.Parts");
+		itemClass = Class.forName("appeng.api.definitions.Items");
+		blockClass = Class.forName("appeng.api.definitions.Blocks");
+		matClass = Class.forName("appeng.api.definitions.Materials");
+	}
+
+	private Block getBlock(String field) throws Exception {
+		Field f = blockClass.getField(field);
+		Object def = f.get(blockList);
+		return (Block)blockGet.invoke(def);
+	}
+
+	private Item getItem(String field) throws Exception {
+		Field f = itemClass.getField(field);
+		Object def = f.get(itemList);
+		return (Item)itemGet.invoke(def);
+	}
+
+	private ItemStack getMaterial(String field) throws Exception {
+		Field f = matClass.getField(field);
+		Object def = f.get(matList);
+		return new ItemStack((Item)itemGet.invoke(def));
+	}
+
+	private ItemStack getPart(String field) throws Exception {
+		Field f = partClass.getField(field);
+		Object def = f.get(partList);
+		return new ItemStack((Item)itemGet.invoke(def));
 	}
 
 	public static AppEngHandler getInstance() {
@@ -74,7 +136,7 @@ public class AppEngHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return certus != null && dust != null;
+		return certus != null && dust != null && skystone != null;
 	}
 
 	@Override
@@ -88,6 +150,28 @@ public class AppEngHandler extends ModHandlerBase {
 
 	public ItemStack getCertusQuartzDust() {
 		return dust.copy();
+	}
+
+	public ArrayList<ItemStack> getMeteorChestLoot() {
+		ArrayList<ItemStack> li = new ArrayList();
+		int n = 1+rand.nextInt(3);
+		for (int i = 0; i < n; i++) {
+			switch (rand.nextInt(4)) {
+			case 0:
+				li.add(calcPress);
+				break;
+			case 1:
+				li.add(engPress);
+				break;
+			case 2:
+				li.add(logicPress);
+				break;
+			case 3:
+				li.add(siliconPress);
+				break;
+			}
+		}
+		return li;
 	}
 
 }

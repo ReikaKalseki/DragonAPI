@@ -41,7 +41,7 @@ public enum ModList {
 	IC2("IC2", "ic2.core.Ic2Items"), //ensure still here
 	GREGTECH("gregtech"),
 	FORESTRY("Forestry", "forestry.core.config.ForestryBlock", "forestry.core.config.ForestryItem"), //ensure still here
-	APPENG("AppliedEnergistics"), //appeng.api.definitions
+	APPENG("appliedenergistics2"), //appeng.api.definitions
 	MFFS("MFFS", "mffs.ModularForceFieldSystem"), //ensure still here
 	REDPOWER("RedPower"),
 	TWILIGHT("TwilightForest", "twilightforest.block.TFBlocks", "twilightforest.item.TFItems"),
