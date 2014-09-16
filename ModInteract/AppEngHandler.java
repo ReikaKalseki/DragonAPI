@@ -101,7 +101,7 @@ public class AppEngHandler extends ModHandlerBase {
 
 		itemGet = def.getMethod("item");
 		blockGet = def.getMethod("block");
-		itemstackGet = def.getMethod("stack");
+		itemstackGet = def.getMethod("stack", int.class);
 
 		partClass = Class.forName("appeng.api.definitions.Parts");
 		itemClass = Class.forName("appeng.api.definitions.Items");
