@@ -53,6 +53,7 @@ public class DebugOverlay {
 		}
 
 		if (DragonOptions.TABNBT.getState() && Keyboard.isKeyDown(Keyboard.KEY_TAB)) {
+			//if (APIProxyClient.key_nbt.isPressed()) {
 			Minecraft mc = Minecraft.getMinecraft();
 			EntityPlayer ep = mc.thePlayer;
 			FontRenderer f = mc.fontRenderer;

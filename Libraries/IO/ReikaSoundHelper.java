@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import java.util.ConcurrentModificationException;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.Block.SoundType;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -92,12 +94,22 @@ public class ReikaSoundHelper {
 	@SideOnly(Side.CLIENT)
 	public static void playCustomSound(String file, double x, double y, double z, float vol, float pitch) {
 		ResourceLocation rl = CustomSoundHandler.instance.getSoundResource(file);
-		FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(rl, (float)x, (float)y, (float)z, vol, pitch));
+		try {
+			FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(rl, (float)x, (float)y, (float)z, vol, pitch));
+		}
+		catch (ConcurrentModificationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
 	public static void playSound(SoundEnum s, double x, double y, double z, float vol, float pitch) {
-		FMLClientHandler.instance().getClient().getSoundHandler().playSound(new EnumSound(s, x, y, z, vol, pitch));
+		try {
+			FMLClientHandler.instance().getClient().getSoundHandler().playSound(new EnumSound(s, x, y, z, vol, pitch));
+		}
+		catch (ConcurrentModificationException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@SideOnly(Side.CLIENT)

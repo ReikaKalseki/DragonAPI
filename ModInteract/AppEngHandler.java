@@ -59,10 +59,10 @@ public class AppEngHandler extends ModHandlerBase {
 				certus = this.getMaterial("materialCertusQuartzCrystal");
 				dust = this.getMaterial("materialCertusQuartzDust");
 
-				calcPress = this.getPart("materialCalcProcessorPress");
-				engPress = this.getPart("materialEngProcessorPress");
-				logicPress = this.getPart("materialLogicProcessorPress");
-				siliconPress = this.getPart("materialSiliconPress");
+				calcPress = this.getMaterial("materialCalcProcessorPress");
+				engPress = this.getMaterial("materialEngProcessorPress");
+				logicPress = this.getMaterial("materialLogicProcessorPress");
+				siliconPress = this.getMaterial("materialSiliconPress");
 
 				sky = this.getBlock("blockSkyStone");
 			}

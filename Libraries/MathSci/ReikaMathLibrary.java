@@ -382,4 +382,15 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static int roundUpToX(int multiple, int val) {
 		return val + multiple - val%multiple;
 	}
+
+	public static double[] splitNumberByDigits(long num, int base) {
+		int len = 1+(int)logbase(num, base);
+		double[] arr = new double[len];
+		for (int i = 0; i < len; i++) {
+			long val = num%base;
+			arr[i] = val/(double)base;
+			num /= base;
+		}
+		return arr;
+	}
 }

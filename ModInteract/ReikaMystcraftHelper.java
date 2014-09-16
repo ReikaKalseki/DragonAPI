@@ -23,7 +23,6 @@ import net.minecraft.world.WorldProvider;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-import com.xcompwiz.mystcraft.api.MystObjects;
 import com.xcompwiz.mystcraft.api.linking.ILinkInfo;
 
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -35,7 +34,7 @@ public class ReikaMystcraftHelper {
 
 	private static final Field controller;
 	private static final Field instability;
-	private static final Field stabilization;
+	//private static final Field stabilization;
 	private static final Field data;
 	private static final Field instabilityNumber;
 	private static final Field baseInstability;
@@ -58,10 +57,10 @@ public class ReikaMystcraftHelper {
 
 	private static ILinkInfo getPortalInfo(World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
-		if (b != MystObjects.portal)
+		if (b != MystCraftHandler.getInstance().portalID)
 			return null;
 		try {
-			TileEntity te = (TileEntity)getTile.invoke(MystObjects.portal, world, x, y, z);
+			TileEntity te = (TileEntity)getTile.invoke(MystCraftHandler.getInstance().portalID, world, x, y, z);
 			ItemStack book = (ItemStack)getBook.invoke(te);
 			if (book == null)
 				return null;
@@ -85,13 +84,13 @@ public class ReikaMystcraftHelper {
 			return false;
 		return world.provider.getClass().getSimpleName().equals("WorldProviderMyst");
 	}
-
+	/*
 	public static int getStabilityForAge(World world) {
 		if (!loadedCorrectly)
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getStabilizationParameter() : 0;
 	}
-
+	 */
 	public static int getInstabilityForAge(World world) {
 		if (!loadedCorrectly)
 			return 0;
@@ -109,7 +108,7 @@ public class ReikaMystcraftHelper {
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getBaseInstability() : 0;
 	}
-
+	/*
 	public static boolean setStabilityForAge(World world, int stability) {
 		if (!loadedCorrectly)
 			return false;
@@ -135,7 +134,7 @@ public class ReikaMystcraftHelper {
 			return false;
 		}
 	}
-
+	 */
 	public static boolean addBaseInstabilityForAge(World world, short toAdd) {
 		if (!loadedCorrectly)
 			return false;
@@ -197,7 +196,7 @@ public class ReikaMystcraftHelper {
 				e.printStackTrace();
 			}
 		}
-
+		/*
 		public int getStabilizationParameter() {
 			try {
 				return stabilization.getInt(instabilityController);
@@ -218,7 +217,7 @@ public class ReikaMystcraftHelper {
 				return false;
 			}
 		}
-
+		 */
 		public boolean setBonusInstability(int amount) {
 			try {
 				instabilityNumber.set(ageController, amount);
@@ -297,7 +296,7 @@ public class ReikaMystcraftHelper {
 	static {
 		Field cont = null;
 		Field insta = null;
-		Field stable = null;
+		//Field stable = null;
 		Field num = null;
 		Field base = null;
 		Field adata = null;
@@ -314,8 +313,8 @@ public class ReikaMystcraftHelper {
 				insta = age.getDeclaredField("instabilityController");
 				insta.setAccessible(true);
 				Class controller = Class.forName("com.xcompwiz.mystcraft.instability.InstabilityController");
-				stable = controller.getDeclaredField("stabilization");
-				stable.setAccessible(true);
+				//stable = controller.getDeclaredField("stabilization");*
+				//stable.setAccessible(true);
 				num = age.getDeclaredField("instability");
 				num.setAccessible(true);
 				Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
@@ -323,13 +322,13 @@ public class ReikaMystcraftHelper {
 				base.setAccessible(true);
 				adata = age.getDeclaredField("agedata");
 				adata.setAccessible(true);
-				Class portal = Class.forName("com.xcompwiz.mystcraft.Blocks.BlockBookReceptacle");
+				Class portal = Class.forName("com.xcompwiz.mystcraft.portal.PortalUtils");
 				tile = portal.getDeclaredMethod("getTileEntity", IBlockAccess.class, int.class, int.class, int.class);
 				tile.setAccessible(true);
 				Class booktile = Class.forName("com.xcompwiz.mystcraft.tileentity.TileEntityBook");
 				book = booktile.getDeclaredMethod("getBook");
 				book.setAccessible(true);
-				Class item = Class.forName("com.xcompwiz.mystcraft.Items.ItemLinking");
+				Class item = Class.forName("com.xcompwiz.mystcraft.item.ItemLinking");
 				link = item.getDeclaredMethod("getLinkInfo", ItemStack.class);
 				link.setAccessible(true);
 			}
@@ -344,7 +343,7 @@ public class ReikaMystcraftHelper {
 		}
 		controller = cont;
 		instability = insta;
-		stabilization = stable;
+		//stabilization = stable;
 		instabilityNumber = num;
 		baseInstability = base;
 		data = adata;

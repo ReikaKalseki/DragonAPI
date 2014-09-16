@@ -20,10 +20,9 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
+import Reika.DragonAPI.ModInteract.MystCraftHandler;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModOreList;
-
-import com.xcompwiz.mystcraft.api.MystObjects;
 
 public final class ReikaBlockHelper extends DragonAPICore {
 
@@ -130,7 +129,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		if (id == Blocks.end_portal)
 			return true;
-		if (ModList.MYSTCRAFT.isLoaded() && MystObjects.portal != null && MystObjects.portal == id)
+		if (ModList.MYSTCRAFT.isLoaded() && id == MystCraftHandler.getInstance().portalID)
 			return true;
 		if (ModList.TWILIGHT.isLoaded() && id == TwilightForestHandler.getInstance().portalID)
 			return true;

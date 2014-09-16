@@ -78,6 +78,7 @@ import Reika.DragonAPI.ModInteract.MagicaOreHandler;
 import Reika.DragonAPI.ModInteract.MekToolHandler;
 import Reika.DragonAPI.ModInteract.MekanismHandler;
 import Reika.DragonAPI.ModInteract.MimicryHandler;
+import Reika.DragonAPI.ModInteract.MystCraftHandler;
 import Reika.DragonAPI.ModInteract.OpenBlockHandler;
 import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
 import Reika.DragonAPI.ModInteract.QuantumOreHandler;
@@ -427,6 +428,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.MINEFACTORY, MFRHandler.class);
 		this.initHandler(ModList.GALACTICRAFT, GalacticCraftHandler.class);
 		this.initHandler(ModList.EXTRAUTILS, ExtraUtilsHandler.class);
+		this.initHandler(ModList.MYSTCRAFT, MystCraftHandler.class);
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);
