@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Interfaces.PlayerTracker;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class PlayerFirstTimeTracker {
@@ -45,11 +45,19 @@ public class PlayerFirstTimeTracker {
 
 	private static void addPlayer(PlayerTracker pt, EntityPlayer ep) {
 		String tag = BASE_TAG+pt.getID();
-		ep.getEntityData().setBoolean(tag, true);
+		ReikaPlayerAPI.getDeathPersistentNBT(ep).setBoolean(tag, true);
 	}
 
 	private static boolean hasPlayer(PlayerTracker pt, EntityPlayer ep) {
 		String tag = BASE_TAG+pt.getID();
-		return ep.getEntityData().getBoolean(tag);
+		return ReikaPlayerAPI.getDeathPersistentNBT(ep).getBoolean(tag);
+	}
+
+	public static interface PlayerTracker {
+
+		public void onNewPlayer(EntityPlayer ep);
+
+		/** This MUST be unique! */
+		public String getID();
 	}
 }

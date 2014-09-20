@@ -254,4 +254,10 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	public static void syncCustomData(EntityPlayerMP ep) {
 		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERDATSYNC.ordinal(), ep, ep.getEntityData());
 	}
+
+	public static NBTTagCompound getDeathPersistentNBT(EntityPlayer ep) {
+		NBTTagCompound nbt = ep.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
+		ep.getEntityData().setTag(EntityPlayer.PERSISTED_NBT_TAG, nbt);
+		return nbt;
+	}
 }

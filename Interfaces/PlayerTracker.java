@@ -9,12 +9,5 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
-import net.minecraft.entity.player.EntityPlayer;
 
-public interface PlayerTracker {
 
-	public void onNewPlayer(EntityPlayer ep);
-
-	/** This MUST be unique! */
-	public String getID();
-}
