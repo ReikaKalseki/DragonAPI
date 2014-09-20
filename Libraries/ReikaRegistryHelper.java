@@ -195,7 +195,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		ModMetadata dat = evt.getModMetadata();
 		dat.authorList.clear();
 		dat.authorList.add(mod.getModAuthorName());
-		dat.version = "v"+mod.getMajorVersion()+mod.getMinorVersion();
+		dat.version = mod.getModVersion().toString();
 	}
 
 	/** Overrides one block in the Block database with another. The new block must

@@ -38,7 +38,9 @@ public class ReikaNuclearHelper {
 	}
 
 	public static boolean shouldDecay(Isotopes iso) {
-		return ReikaRandomHelper.doWithChance(getDecayChanceFromHalflife(iso.getMCHalfLife()));
+		double chance = getDecayChanceFromHalflife(iso.getMCHalfLife());
+		chance *= 6;
+		return ReikaRandomHelper.doWithChance(chance);
 	}
 
 }

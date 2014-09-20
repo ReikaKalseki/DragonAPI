@@ -13,9 +13,11 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.Extras.ModVersion;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -29,6 +31,12 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 public abstract class DragonAPIMod {
 
 	protected final boolean isDeObf;
+	private final ModVersion version;
+	//private static final ModVersion api_version;
+
+	static {
+		//api_version = ModVersion.readFromFile();
+	}
 
 	@EventHandler
 	public final void invalidFingerprint(final FMLFingerprintViolationEvent event) {
@@ -43,6 +51,11 @@ public abstract class DragonAPIMod {
 		else {
 			ReikaJavaLibrary.pConsole(this.getDisplayName()+" is not running in a deobfuscated environment.");
 		}
+
+		version = ModVersion.readFromFile();
+
+		if (this.getClass() != DragonAPIInit.class)
+			;//this.validateDragonAPI();
 	}
 
 	@EventHandler
@@ -59,6 +72,14 @@ public abstract class DragonAPIMod {
 		ReikaRegistryHelper.setupModData(this, evt);
 		CommandableUpdateChecker.instance.registerMod(this);
 	}
+	/*
+	private void validateDragonAPI() {
+		ModVersion mod = this.getModVersion();
+		ModVersion api = this.getAPIVersion();
+		if (mod.majorVersion != api.majorVersion || mod.isNewerMinorVersion(api)) {
+			throw new VersionMismatchException(this, api_instance);
+		}
+	}*/
 
 	protected final void onInit(FMLInitializationEvent event) {
 
@@ -101,12 +122,22 @@ public abstract class DragonAPIMod {
 	public final String toString() {
 		return this.getTechnicalName();
 	}
+	/*
+	private static final ModVersion getAPIVersion() {
+		return api_version;//ModVersion.getFromString("@MAJOR_VERSION@"+"@MINOR_VERSION@");
+	}*/
 
-	public final String getMajorVersion() {
-		return "@MAJOR_VERSION@";
+	public final ModVersion getModVersion() {/*
+		//if (name.equals("bin"))
+		//	return ModVersion.source;
+		String major = this.getMajorVersion();
+		String minor = this.getMinorVersion();
+		if (major.startsWith("$")) { //dev environment
+			return ModVersion.source;
+		}
+		return new ModVersion(Integer.parseInt(major), minor.isEmpty() ? '\0' : minor.charAt(0));
+		//return ModVersion.getFromString(this.getMajorVersion()+this.getMinorVersion());*/
+		return version;
 	}
 
-	public final String getMinorVersion() {
-		return "@MINOR_VERSION@";
-	}
 }

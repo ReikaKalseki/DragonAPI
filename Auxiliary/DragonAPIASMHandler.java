@@ -11,17 +11,19 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.Map;
 
+import Reika.DragonAPI.Extras.APIStripper;
+import Reika.DragonAPI.Extras.FMLItemBlockPatch;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 
 public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 
 	static {
-		//Launch.classLoader.addTransformerExclusion("Reika");  Breaks @SideOnly
+		//Launch.classLoader.addTransformerExclusion("Reika");  Breaks @SideOnly and EventHandlers
 	}
 
 	@Override
 	public String[] getASMTransformerClass() {
-		return new String[]{"Reika.DragonAPI.Extras.APIStripper"};
+		return new String[]{APIStripper.class.getName(), DragonAPIClassTransfomer.class.getName(), FMLItemBlockPatch.class.getName()};
 	}
 
 	@Override

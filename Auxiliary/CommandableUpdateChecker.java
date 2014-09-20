@@ -25,6 +25,7 @@ import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Command.DragonCommandBase;
+import Reika.DragonAPI.Extras.ModVersion;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -82,8 +83,8 @@ public class CommandableUpdateChecker {
 	}
 
 	public void registerMod(DragonAPIMod mod) {
-		ModVersion version = this.getVersion(mod);
-		if (version == null) {
+		ModVersion version = mod.getModVersion();
+		if (version == ModVersion.source) {
 			mod.getModLogger().log("Mod is in source code form. Not checking versions.");
 			return;
 		}
@@ -133,17 +134,6 @@ public class CommandableUpdateChecker {
 					overrides.put(mod, b);
 			}
 		}
-	}
-
-	private ModVersion getVersion(DragonAPIMod mod) {
-		//if (name.equals("bin"))
-		//	return ModVersion.source;
-		String major = mod.getMajorVersion();
-		String minor = mod.getMinorVersion();
-		if (major.startsWith("@")) { //dev environment
-			return null;
-		}
-		return new ModVersion(Integer.parseInt(major), minor.isEmpty() ? '\0' : minor.charAt(0));
 	}
 
 	private void setChecker(DragonAPIMod mod, boolean enable) {
@@ -301,67 +291,6 @@ public class CommandableUpdateChecker {
 				}
 			}
 			return null;
-		}
-	}
-
-	private static class ModVersion {
-		/*
-		public static final ModVersion source = new ModVersion(0) {
-			@Override
-			public boolean equals(Object o) {
-				return o instanceof ModVersion;
-			}
-			@Override
-			public String toString() {
-				return "Source Code";
-			}
-			@Override
-			public boolean isCompiled() {
-				return false;
-			}
-		};*/
-
-		public final int majorVersion;
-		public final String subVersion;
-
-		private ModVersion(int major) {
-			this(major, '\0');
-		}
-
-		private ModVersion(int major, char minor) {
-			majorVersion = major;
-			subVersion = minor == '\0' ? "" : Character.toString(minor).toLowerCase();
-		}
-
-		@Override
-		public boolean equals(Object o) {
-			if (o instanceof ModVersion) {
-				ModVersion m = (ModVersion)o;
-				return m.majorVersion == majorVersion && m.subVersion.equals(subVersion);
-			}
-			return false;
-		}
-
-		public boolean isCompiled() {
-			return true;
-		}
-
-		@Override
-		public String toString() {
-			return "v"+majorVersion+subVersion;
-		}
-
-		public static ModVersion getFromString(String s) {
-			if (s.startsWith("v") || s.startsWith("V"))
-				s = s.substring(1);
-			char c = s.charAt(s.length()-1);
-			if (Character.isDigit(c)) {
-				return new ModVersion(Integer.parseInt(s));
-			}
-			else {
-				String major = s.substring(0, s.length()-1);
-				return new ModVersion(Integer.parseInt(major), c);
-			}
 		}
 	}
 

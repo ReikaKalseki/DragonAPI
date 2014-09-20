@@ -50,7 +50,7 @@ public enum ModList {
 	BXL("ExtraBiomesXL"),
 	MINEFACTORY("MineFactoryReloaded", "powercrystals.minefactoryreloaded.MineFactoryReloadedCore"), //ensure still here
 	DARTCRAFT("DartCraft", "bluedart.Blocks.DartBlock", "bluedart.Items.DartItem"), //ensure still here
-	TINKERER("TConstruct"), //tconstruct.library.TConstructRegistry.getBlock/Item
+	TINKERER("TConstruct", "tconstruct.world.TinkerWorld", null), //tconstruct.library.TConstructRegistry.getBlock/Item
 	THERMALEXPANSION("ThermalExpansion", "thermalexpansion.block.TEBlocks", "thermalexpansion.item.TEItems"),
 	MEKANISM("Mekanism", "mekanism.common.Mekanism"),
 	MEKTOOLS("MekanismTools", "mekanism.tools.common.MekanismTools"), //ensure still here

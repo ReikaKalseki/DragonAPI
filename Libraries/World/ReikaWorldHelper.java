@@ -585,6 +585,12 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Takes a specified amount of XP and splits it randomly among a bunch of orbs.
 	 * Args: World, x, y, z, amount */
 	public static void splitAndSpawnXP(World world, double x, double y, double z, int xp) {
+		splitAndSpawnXP(world, x, y, z, xp, 6000);
+	}
+
+	/** Takes a specified amount of XP and splits it randomly among a bunch of orbs.
+	 * Args: World, x, y, z, amount, life */
+	public static void splitAndSpawnXP(World world, double x, double y, double z, int xp, int life) {
 		int max = xp/5+1;
 
 		while (xp > 0) {
@@ -596,6 +602,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			orb.motionX = -0.2+0.4*rand.nextFloat();
 			orb.motionY = 0.3*rand.nextFloat();
 			orb.motionZ = -0.2+0.4*rand.nextFloat();
+			orb.xpOrbAge = 6000-life;
 			if (!world.isRemote) {
 				orb.velocityChanged = true;
 				world.spawnEntityInWorld(orb);

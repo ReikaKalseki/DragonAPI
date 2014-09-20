@@ -57,6 +57,7 @@ local.properties
 *.sbr
 *.tlb
 *.pdn
+*.rar
 *.tcn
 *.ks
 *.keystore
