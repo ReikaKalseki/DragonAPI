@@ -14,7 +14,9 @@ import java.util.Map;
 import Reika.DragonAPI.Extras.APIStripper;
 import Reika.DragonAPI.Extras.FMLItemBlockPatch;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
+import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 
+@MCVersion("1.7.10")
 public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 
 	static {

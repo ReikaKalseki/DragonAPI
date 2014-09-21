@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
@@ -84,6 +85,45 @@ public class ReikaASMHelper {
 		m.instructions.insert(root, arg);
 	}
 
+	public static void clearMethodBody(MethodNode m) {
+		m.instructions.clear();/*
+		String[] s = m.desc.split("\\)");
+		String ret = s[s.length-1];
+		ReturnType type = ReturnType.getFromSig(ret);
+		AbstractInsnNode retcall = null;
+		switch(type) {
+		case LONG:
+			retcall = new InsnNode(Opcodes.LRETURN);
+			break;
+		case DOUBLE:
+			retcall = new InsnNode(Opcodes.DRETURN);
+			break;
+		case FLOAT:
+			retcall = new InsnNode(Opcodes.FRETURN);
+			break;
+		case INT:
+		case BYTE:
+		case SHORT:
+		case BOOLEAN:
+			retcall = new InsnNode(Opcodes.IRETURN);
+			break;
+		case FLOATARRAY:
+		case INTARRAY:
+		case BOOLARRAY:
+		case SHORTARRAY:
+		case DOUBARRAY:
+		case BYTEARRAY:
+		case OBJECT:
+			retcall = new InsnNode(Opcodes.ARETURN);
+			break;
+		case VOID:
+			retcall = new InsnNode(Opcodes.RETURN);
+			break;
+		}
+		if (retcall != null)
+			m.instructions.add(retcall);*/
+	}
+
 	public static String clearString(InsnList c) {
 		return printInsnList(c.iterator());
 	}
@@ -112,6 +152,45 @@ public class ReikaASMHelper {
 		t.print(new PrintWriter(sw));
 		t.getText().clear();
 		return sw.toString();
+	}
+
+	private static enum ReturnType {
+
+		VOID("V"),
+		INT("I"),
+		BOOLEAN("Z"),
+		BYTE("B"),
+		LONG("L"),
+		SHORT("S"),
+		FLOAT("F"),
+		DOUBLE("D"),
+		INTARRAY("[I"),
+		BYTEARRAY("[B"),
+		SHORTARRAY("[S"),
+		DOUBARRAY("[D"),
+		BOOLARRAY("[Z"),
+		FLOATARRAY("[F"),
+		OBJECT("");
+
+		private final String id;
+
+		private static final HashMap<String, ReturnType> map = new HashMap();
+
+		private ReturnType(String s) {
+			id = s;
+		}
+
+		private static ReturnType getFromSig(String id) {
+			return map.containsKey(id) ? map.get(id) : OBJECT;
+		}
+
+		static {
+			for (int i = 0; i < values().length; i++) {
+				ReturnType type = values()[i];
+				map.put(type.id, type);
+			}
+		}
+
 	}
 
 }
