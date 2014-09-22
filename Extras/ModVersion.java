@@ -17,19 +17,14 @@ import java.util.Properties;
 public class ModVersion implements Comparable<ModVersion> {
 
 	public static final ModVersion source = new ModVersion(0) {
-		@Override
-		public boolean equals(Object o) {return o == this;}
-		@Override
-		public String toString() {return "Source Code";}
-		@Override
-		public boolean isCompiled() {return false;}
+		@Override public boolean equals(Object o) {return o == this;}
+		@Override public String toString() {return "Source Code";}
+		@Override public boolean isCompiled() {return false;}
 	};
 
 	private static final ModVersion error = new ModVersion(0) {
-		@Override
-		public boolean equals(Object o) {return o == this;}
-		@Override
-		public String toString() {return "[ERROR]";}
+		@Override public boolean equals(Object o) {return o == this;}
+		@Override public String toString() {return "[NO FILE]";}
 	};
 
 	public final int majorVersion;
