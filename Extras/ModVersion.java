@@ -9,7 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class ModVersion implements Comparable<ModVersion> {
@@ -84,7 +86,11 @@ public class ModVersion implements Comparable<ModVersion> {
 	public static ModVersion readFromFile() {
 		Properties p = new Properties();
 		try {
-			p.load(ModVersion.class.getClassLoader().getResourceAsStream("version.properties"));
+			InputStream stream = ModVersion.class.getClassLoader().getResourceAsStream("version.properties");
+			if (stream == null) {
+				throw new FileNotFoundException();
+			}
+			p.load(stream);
 			return getFromString(p.getProperty("Major")+p.getProperty("Minor"));
 		}
 		catch (IOException e) {
