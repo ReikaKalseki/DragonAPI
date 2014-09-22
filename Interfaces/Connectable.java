@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
+import net.minecraft.world.World;
+
 public interface Connectable {
 
 	public boolean isEmitting();
@@ -17,8 +19,8 @@ public interface Connectable {
 
 	public void resetOther();
 
-	public boolean setSource(int x, int y, int z);
+	public boolean setSource(World world, int x, int y, int z);
 
-	public boolean setTarget(int x, int y, int z);
+	public boolean setTarget(World world, int x, int y, int z);
 
 }

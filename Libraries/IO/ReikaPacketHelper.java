@@ -623,6 +623,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
+	public static void sendFloatPacket(String ch, int id, TileEntity te, float data) {
+		sendFloatPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, data);
+	}
+
 	public static void sendFloatPacket(String ch, int id, World world, int x, int y, int z, float data) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
 		DataOutputStream outputStream = new DataOutputStream(bos);

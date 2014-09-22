@@ -110,8 +110,8 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	}
 
 	public static double logbase(long inp, int base) {
-		if (base == 2 && isPowerOfTwo((int)inp))
-			return logbase2(inp);
+		//if (base == 2 && isPowerOfTwo((int)inp))
+		//	return logbase2(inp);
 		return logbase((double)inp, base);
 	}
 
