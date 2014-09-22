@@ -25,6 +25,13 @@ public class ModVersion implements Comparable<ModVersion> {
 		public boolean isCompiled() {return false;}
 	};
 
+	private static final ModVersion error = new ModVersion(0) {
+		@Override
+		public boolean equals(Object o) {return o == this;}
+		@Override
+		public String toString() {return "[ERROR]";}
+	};
+
 	public final int majorVersion;
 	public final String subVersion;
 
@@ -95,7 +102,7 @@ public class ModVersion implements Comparable<ModVersion> {
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			return null;
+			return error;
 		}
 	}
 }
