@@ -11,6 +11,7 @@ package Reika.DragonAPI.Command;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 public abstract class DragonCommandBase extends CommandBase {
 
@@ -24,6 +25,10 @@ public abstract class DragonCommandBase extends CommandBase {
 	@Override
 	public final String getCommandUsage(ICommandSender icommandsender) {
 		return "/"+this.getCommandString();
+	}
+
+	protected static final void sendChatToSender(ICommandSender ics, String s) {
+		ReikaChatHelper.sendChatToPlayer(getCommandSenderAsPlayer(ics), s);
 	}
 
 }

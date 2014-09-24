@@ -27,6 +27,12 @@ public class AppEngHandler extends ModHandlerBase {
 
 	private ItemStack certus;
 	private ItemStack dust;
+	private ItemStack silicon;
+
+	private ItemStack basicChip;
+	private ItemStack advChip;
+	private ItemStack basicChipPattern;
+	private ItemStack advChipPattern;
 
 	private ItemStack siliconPress;
 	private ItemStack logicPress;
@@ -58,6 +64,12 @@ public class AppEngHandler extends ModHandlerBase {
 
 				certus = this.getMaterial("materialCertusQuartzCrystal");
 				dust = this.getMaterial("materialCertusQuartzDust");
+				silicon = this.getMaterial("materialSilicon");
+
+				basicChip = this.getMaterial("materialBasicCard");
+				advChip = this.getMaterial("materialAdvCard");
+				basicChipPattern = this.getMaterial("materialBasicCard");
+				advChipPattern = this.getMaterial("materialAdvCard");
 
 				calcPress = this.getMaterial("materialCalcProcessorPress");
 				engPress = this.getMaterial("materialEngProcessorPress");
@@ -184,6 +196,18 @@ public class AppEngHandler extends ModHandlerBase {
 			}
 		}
 		return li;
+	}
+
+	public ItemStack getBasicChipPattern() {
+		return basicChipPattern != null ? basicChipPattern.copy() : null;
+	}
+
+	public ItemStack getAdvancedChipPattern() {
+		return advChipPattern != null ? advChipPattern.copy() : null;
+	}
+
+	public ItemStack getSilicon() {
+		return silicon != null ? silicon.copy() : null;
 	}
 
 }
