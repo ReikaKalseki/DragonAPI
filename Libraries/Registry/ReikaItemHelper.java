@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.Registry;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -213,10 +214,13 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return b != null && b != Blocks.air;
 	}
 
-	public static boolean listContainsItemStack(List<ItemStack> li, ItemStack is) {
-		for (int i = 0; i < li.size(); i++) {
-			ItemStack is2 = li.get(i);
-			if (matchStacks(is, is2))
+	public static boolean listContainsItemStack(Collection<ItemStack> li, ItemStack is) {
+		return listContainsItemStack(li, is, false);
+	}
+
+	public static boolean listContainsItemStack(Collection<ItemStack> li, ItemStack is, boolean NBT) {
+		for (ItemStack is2 : li) {
+			if (matchStacks(is, is2) && (!NBT || ItemStack.areItemStackTagsEqual(is, is2)))
 				return true;
 		}
 		return false;
@@ -278,7 +282,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static boolean canCombineStacks(ItemStack is, ItemStack is2) {
 		if (is == null || is2 == null)
 			return false;
-		if (is != is2)
+		if (is.getItem() != is2.getItem())
 			return false;
 		if (is.getItemDamage() != is2.getItemDamage())
 			return false;

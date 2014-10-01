@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class Perimeter {
@@ -137,7 +138,7 @@ public final class Perimeter {
 	}
 
 	public void readFromNBT(String name, NBTTagCompound NBT) {
-		NBTTagList tag = NBT.getTagList(name, NBT.getId());
+		NBTTagList tag = NBT.getTagList(name, NBTTypes.COMPOUND.ID);
 		points.clear();
 		if (tag != null) {
 			for (int i = 0; i < tag.tagCount(); i++) {

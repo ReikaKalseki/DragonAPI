@@ -34,7 +34,7 @@ public class DragonAPICore {
 	private static final String MINFORGE = "required-after:Forge@[10.13.0.1205,);";
 	public static final String dependencies = MINFORGE+"after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;"+
 			"after:powersuits;after:GalacticCraft;after:Mystcraft;after:UniversalElectricity;after:Forestry;after:MagicBees;"+
-			"after:BinnieCore;after:Natura;after:TConstruct";
+			"after:BinnieCore;after:Natura;after:TConstruct;after:ProjRed|Core";
 
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
 

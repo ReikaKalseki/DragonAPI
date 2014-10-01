@@ -10,6 +10,8 @@
 package Reika.DragonAPI.Libraries.Registry;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ public enum ReikaOreHelper implements OreType {
 	GOLD("Gold", Blocks.gold_ore, "oreGold", "ingotGold", OreRarity.SCATTERED),
 	REDSTONE("Redstone", Blocks.redstone_ore, Items.redstone, "oreRedstone", "dustRedstone", OreRarity.COMMON),
 	LAPIS("Lapis Lazuli", Blocks.lapis_ore, ReikaDyeHelper.BLUE.getStackOf(), "oreLapis", "dyeBlue", OreRarity.SCARCE),
-	DIAMOND("Diamond", Blocks.diamond_ore, Items.diamond, "oreDiamond", "gemDiamond", OreRarity.COMMON),
+	DIAMOND("Diamond", Blocks.diamond_ore, Items.diamond, "oreDiamond", "gemDiamond", OreRarity.SCARCE),
 	EMERALD("Emerald", Blocks.emerald_ore, Items.emerald, "oreEmerald", "gemEmerald", OreRarity.RARE),
 	QUARTZ("Nether Quartz", Blocks.quartz_ore, Items.quartz, "oreNetherQuartz", "itemQuartz", OreRarity.EVERYWHERE);
 
@@ -46,7 +48,7 @@ public enum ReikaOreHelper implements OreType {
 
 	public static final ReikaOreHelper[] oreList = ReikaOreHelper.values();
 
-	private static ArrayList<ItemStack> extraOres = new ArrayList();
+	private static final ArrayList<ItemStack> extraOres = new ArrayList();
 
 	private ReikaOreHelper(String n, Block b, ItemStack is, String d, String d2, OreRarity r) {
 		name = n;
@@ -126,6 +128,10 @@ public enum ReikaOreHelper implements OreType {
 		if (this == GOLD)
 			return new ItemStack(Items.gold_ingot);
 		return null;
+	}
+
+	public Collection<ItemStack> getAllOreBlocks() {
+		return Collections.unmodifiableCollection(OreDictionary.getOres(this.getOreDictName()));
 	}
 
 	public static ReikaOreHelper getEntryByOreDict(ItemStack is) {

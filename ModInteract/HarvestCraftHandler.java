@@ -9,14 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
@@ -24,64 +21,168 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class HarvestCraftHandler extends CropHandlerBase {
 
-	public final Block cropID;
-	private final Item[] seedDrops;
-	private final Item[] otherDrops;
-
 	private static final Random rand = new Random();
 
-	private final Field cropType;
-	private final Field cropGrowth;
+	//private final Field cropType;
+	//private final Field cropGrowth;
 
-	public static final int RIPE = 2;
+	//private static final EnumMap<CropType, Block> saplings = new EnumMap(CropType.class);
+	//private static final EnumMap<CropType, Block> blocks = new EnumMap(CropType.class);
+	//private static final EnumMap<CropType, ItemStack> seeds = new EnumMap(CropType.class);
+	//private static final EnumMap<CropType, ItemStack> drops = new EnumMap(CropType.class);
+
+	private static final int RIPE = 7;
 
 	private static final HarvestCraftHandler instance = new HarvestCraftHandler();
 
+	private final Class cropClass;
+
+	/*
+	public static enum CropType {
+		APPLE(CropClass.TREE),
+		ALMOND(CropClass.TREE),
+		APRICOT(CropClass.TREE),
+		AVOCADO(CropClass.TREE),
+		BANANA(CropClass.TREE),
+		CASHEW(CropClass.TREE),
+		CHERRY(CropClass.TREE),
+		CHESTNUT(CropClass.TREE),
+		CINNAMON(CropClass.TREE),
+		COCONUT(CropClass.TREE),
+		DATE(CropClass.TREE),
+		DRAGONFRUIT(CropClass.TREE),
+		DURIAN(CropClass.TREE),
+		FIG(CropClass.TREE),
+		GRAPEFRUIT(CropClass.TREE),
+		LEMON(CropClass.TREE),
+		LIME(CropClass.TREE),
+		MAPLE(CropClass.TREE),
+		MANGO(CropClass.TREE),
+		NUTMEG(CropClass.TREE),
+		OLIVE(CropClass.TREE),
+		ORANGE(CropClass.TREE),
+		PAPAYA(CropClass.TREE),
+		PAPERBARK(CropClass.TREE),
+		PEACH(CropClass.TREE),
+		PEAR(CropClass.TREE),
+		PECAN(CropClass.TREE),
+		PEPPERCORN(CropClass.TREE),
+		PERSIMMON(CropClass.TREE),
+		PISTACHIO(CropClass.TREE),
+		PLUM(CropClass.TREE),
+		POMEGRANATE(CropClass.TREE),
+		STARFRUIT(CropClass.TREE),
+		VANILLABEAN(CropClass.TREE),
+		WALNUT(CropClass.TREE),
+		BLACKBERRY(CropClass.FARM),
+		BLUEBERRY(CropClass.FARM),
+		CANDLEBERRY(CropClass.FARM),
+		RASPBERRY(CropClass.FARM),
+		STRAWBERRY(CropClass.FARM),
+		CACTUSFRUIT(CropClass.FARM),
+		ASPARAGUS(CropClass.FARM),
+		BARLEY(CropClass.FARM),
+		OATS(CropClass.FARM),
+		RYE(CropClass.FARM),
+		CORN(CropClass.FARM),
+		BAMBOOSHOOT(CropClass.FARM),
+		CANTALOUPE(CropClass.FARM),
+		CUCUMBER(CropClass.FARM),
+		WINTERSQUASH(CropClass.FARM),
+		ZUCCHINI(CropClass.FARM),
+		BEET(CropClass.FARM),
+		ONION(CropClass.FARM),
+		PARSNIP(CropClass.FARM),
+		PEANUT(CropClass.FARM),
+		RADISH(CropClass.FARM),
+		RUTABAGA(CropClass.FARM),
+		SWEETPOTATO(CropClass.FARM),
+		TURNIP(CropClass.FARM),
+		RHUBARB(CropClass.FARM),
+		CELERY(CropClass.FARM),
+		GARLIC(CropClass.FARM),
+		GINGER(CropClass.FARM),
+		SPICELEAF(CropClass.FARM),
+		TEALEAF(CropClass.FARM),
+		COFFEEBEAN(CropClass.FARM),
+		MUSTARDSEEDS(CropClass.FARM),
+		BROCCOLI(CropClass.FARM),
+		CAULIFLOWER(CropClass.FARM),
+		LEEK(CropClass.FARM),
+		LETTUCE(CropClass.FARM),
+		SCALLION(CropClass.FARM),
+		ARTICHOKE(CropClass.FARM),
+		BRUSSELSPROUT(CropClass.FARM),
+		CABBAGE(CropClass.FARM),
+		WHITEMUSHROOM(CropClass.FARM),
+		BEAN(CropClass.FARM),
+		SOYBEAN(CropClass.FARM),
+		BELLPEPPER(CropClass.FARM),
+		CHILIPEPPER(CropClass.FARM),
+		EGGPLANT(CropClass.FARM),
+		OKRA(CropClass.FARM),
+		PEAS(CropClass.FARM),
+		TOMATO(CropClass.FARM),
+		COTTON(CropClass.FARM),
+		PINEAPPLE(CropClass.FARM),
+		GRAPE(CropClass.FARM),
+		KIWI(CropClass.FARM),
+		CRANBERRY(CropClass.FARM),
+		RICE(CropClass.FARM),
+		SEAWEED(CropClass.FARM);
+
+		public final CropClass type;
+
+		private CropType(CropClass c) {
+			type = c;
+		}
+
+		public Block getSapling() {
+			return saplings.get(this);
+		}
+
+		public Block getBlock() {
+			return blocks.get(this);
+		}
+
+		public ItemStack getSeed() {
+			ItemStack is = seeds.get(this);
+			return is != null ? is.copy() : null;
+		}
+
+		public ItemStack getDrops() {
+			ItemStack is = drops.get(this);
+			return is != null ? is.copy() : null;
+		}
+	}
+
+	private static enum CropClass {
+		TREE(),
+		FARM();
+	}*/
+
 	private HarvestCraftHandler() {
 		super();
-		Block idcrop = null;
-		Item[] seeds = null;
-		Item[] drops = null;
-		Field type = null;
-		Field growth = null;
+		Class c = null;
 		if (this.hasMod()) {
-			Class c = this.getMod().getBlockClass();
+			//Class c1 = this.getMod().getBlockClass();
+			//Class c2 = this.getMod().getItemClass();
 			try {
-				Field f = c.getDeclaredField("pamCrop");
+				/*
+				Field f = c1.getDeclaredField("pamCrop");
 				Block crop = (Block)f.get(null);
 				idcrop = crop;
 
-				f = c.getDeclaredField("PamSeeds");
+				f = c1.getDeclaredField("PamSeeds");
 				seeds = (Item[])f.get(null);
 
-				f = c.getDeclaredField("PamCropItems");
-				drops = (Item[])f.get(null);
-			}
-			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
-				e.printStackTrace();
-			}
-			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
-				e.printStackTrace();
-			}
-			try {
-				c = Class.forName("assets.pamharvestcraft.TileEntityPamCrop");
-				type = c.getDeclaredField("cropID");
-				type.setAccessible(true);
-				growth = c.getDeclaredField("growthStage");
-				growth.setAccessible(true);
+				f = c1.getDeclaredField("PamCropItems");
+				drops = (Item[])f.get(null);*/
+
+				c = Class.forName("com.pam.harvestcraft.BlockPamCrop");
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
-				e.printStackTrace();
-			}
-			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (NullPointerException e) {
@@ -92,17 +193,18 @@ public class HarvestCraftHandler extends CropHandlerBase {
 		else {
 			this.noMod();
 		}
-		cropID = idcrop;
-		seedDrops = seeds;
-		otherDrops = drops;
+		//cropID = idcrop;
+		//seedDrops = seeds;
+		//otherDrops = drops;
 
-		cropType = type;
-		cropGrowth = growth;
+		//cropType = type;
+		//cropGrowth = growth;
+		cropClass = c;
 	}
 
 	@Override
 	public boolean isCrop(Block id) {
-		return id == cropID;
+		return id.getClass() == cropClass;
 	}
 
 	@Override
@@ -111,22 +213,8 @@ public class HarvestCraftHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public float getSecondSeedDropRate() {
-		return 1;
-	}
-
-	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
-		Block b = world.getBlock(x, y, z);
-		if (b == cropID) {
-			TileEntity te = world.getTileEntity(x, y, z);
-			try {
-				int stage = cropGrowth.getInt(te);
-				return stage == RIPE;
-			}
-			catch (Exception e) {}
-		}
-		return false;
+		return this.isCrop(world.getBlock(x, y, z)) && world.getBlockMetadata(x, y, z) >= 7;
 	}
 
 	public static HarvestCraftHandler getInstance() {
@@ -135,7 +223,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return cropID != null && seedDrops != null && otherDrops != null && cropType != null && cropGrowth != null;
+		return cropClass != null;
 	}
 
 	@Override
@@ -150,7 +238,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 
 	@Override
 	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune) {
-		ArrayList<ItemStack> li = new ArrayList();
+		ArrayList<ItemStack> li = new ArrayList();/*
 		if (id == cropID) {
 			TileEntity te = world.getTileEntity(x, y, z);
 			int crop = -1;
@@ -165,12 +253,12 @@ public class HarvestCraftHandler extends CropHandlerBase {
 				li.add(new ItemStack(seedDrops[crop], numseeds, 0));
 				li.add(new ItemStack(otherDrops[crop], numcrops, 0));
 			}
-		}
+		}*/
 		return li;
 	}
 
 	@Override
-	public void editTileDataForHarvest(World world, int x, int y, int z) {
+	public void editTileDataForHarvest(World world, int x, int y, int z) {/*
 		if (world.isRemote)
 			return;
 		Block b = world.getBlock(x, y, z);
@@ -182,11 +270,11 @@ public class HarvestCraftHandler extends CropHandlerBase {
 			catch (Exception e) {}
 		}
 		world.func_147479_m(x, y, z);
-		world.markBlockForUpdate(x, y, z);
+		world.markBlockForUpdate(x, y, z);*/
 	}
 
 	@Override
-	public void makeRipe(World world, int x, int y, int z) {
+	public void makeRipe(World world, int x, int y, int z) {/*
 		if (world.isRemote)
 			return;
 		Block b = world.getBlock(x, y, z);
@@ -196,7 +284,8 @@ public class HarvestCraftHandler extends CropHandlerBase {
 				cropGrowth.set(te, RIPE);
 			}
 			catch (Exception e) {}
-		}
+		}*/
+		world.setBlockMetadataWithNotify(x, y, z, RIPE, 3);
 		world.func_147479_m(x, y, z);
 		world.markBlockForUpdate(x, y, z);
 	}

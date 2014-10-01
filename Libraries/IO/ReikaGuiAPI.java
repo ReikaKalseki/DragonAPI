@@ -31,6 +31,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Interfaces.WrappedRecipe;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
@@ -304,7 +305,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 		ItemStack[] in = new ItemStack[9];
 		int k = ((int)(System.nanoTime()/2000000000))%lr.size();
 		//ReikaJavaLibrary.pConsole(k);
-		IRecipe ire = lr.get(k);
+		Object ir = lr.get(k);
+		IRecipe ire = ir instanceof WrappedRecipe ? ((WrappedRecipe)ir).getRecipe() : (IRecipe)ir;
 		ItemStack isout = ire.getRecipeOutput();
 		ReikaRecipeHelper.copyRecipeToItemStackArray(in, ire);
 		//ReikaJavaLibrary.pConsole(Arrays.toString(in)+" to "+isout);

@@ -20,7 +20,9 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.shader.TesselatorVertexState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
@@ -138,7 +140,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	}
 
 	public static void disableEntityLighting() {
-		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit); //block/sky light grid image
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
 	}
@@ -309,5 +311,31 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		TesselatorVertexState st = Tessellator.instance.getVertexState((float)e.posX, (float)e.posY, (float)e.posZ);
 		return st;
 	}
+
+	public static void rerenderAllChunks() {
+		World world = Minecraft.getMinecraft().theWorld;
+		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+		int r = 192;
+		int x1 = MathHelper.floor_double(ep.posX-r);
+		int x2 = MathHelper.floor_double(ep.posX+r);
+		int z1 = MathHelper.floor_double(ep.posZ-r);
+		int z2 = MathHelper.floor_double(ep.posZ+r);
+		world.markBlockRangeForRenderUpdate(x1, 0, z1, x2, world.provider.getHeight()-1, z2);
+	}
+
+	/*
+	public static void updateAllWorldRenderers() {
+		try {
+			Field f = RenderGlobal.class.getDeclaredField("worldRenderers");
+			f.setAccessible(true);
+			WorldRenderer[] w = (WorldRenderer[])f.get(Minecraft.getMinecraft().renderGlobal);
+			for (int i = 0; i < w.length; i++) {
+				w[i].markDirty();
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}*/
 
 }

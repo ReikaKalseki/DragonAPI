@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
+import net.minecraft.nbt.NBTTagEnd;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagIntArray;
@@ -51,7 +52,7 @@ public final class ReikaNBTHelper extends DragonAPICore {
 
 	/** Reads an inventory from NBT. Args: NBT Tag */
 	public static ItemStack[] getInvFromNBT(NBTTagCompound NBT) {
-		NBTTagList nbttaglist = NBT.getTagList("Items", NBT.getId());
+		NBTTagList nbttaglist = NBT.getTagList("Items", NBTTypes.COMPOUND.ID);
 		ItemStack[] inv = new ItemStack[nbttaglist.tagCount()];
 
 		for (int i = 0; i < nbttaglist.tagCount(); i++)
@@ -122,6 +123,10 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		return tag instanceof NBTTagInt || tag instanceof NBTTagByte || tag instanceof NBTTagShort || tag instanceof NBTTagLong;
 	}
 
+	public static boolean isNumberTag(NBTBase tag) {
+		return isIntNumberTag(tag) || tag instanceof NBTTagFloat || tag instanceof NBTTagDouble;
+	}
+
 	public static NBTBase compressNumber(NBTBase tag) {
 		if (!isIntNumberTag(tag))
 			throw new MisuseException("Only integer-type numbers (byte, short, int, and long) can be compressed!");
@@ -161,6 +166,27 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			li.add(key+": "+b.toString());
 		}
 		return li;
+	}
+
+	public static enum NBTTypes {
+		INT(new NBTTagInt(0).getId()),
+		BYTE(new NBTTagByte((byte)0).getId()),
+		SHORT(new NBTTagShort((short)0).getId()),
+		FLOAT(new NBTTagFloat(0).getId()),
+		DOUBLE(new NBTTagDouble(0).getId()),
+		LONG(new NBTTagLong(0).getId()),
+		INTA(new NBTTagIntArray(new int[0]).getId()),
+		BYTEA(new NBTTagByteArray(new byte[0]).getId()),
+		STRING(new NBTTagString("").getId()),
+		LIST(new NBTTagList().getId()),
+		COMPOUND(new NBTTagCompound().getId()),
+		END(new NBTTagEnd().getId());
+
+		public final int ID;
+
+		private NBTTypes(int id) {
+			ID = id;
+		}
 	}
 
 }

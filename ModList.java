@@ -61,7 +61,7 @@ public enum ModList {
 	ENDERSTORAGE("EnderStorage"),
 	OPTIFINE("Optifine"),
 	TREECAPITATOR("TreeCapitator"),
-	HARVESTCRAFT("pamharvestcraft", "com.pam.harvestcraft.harvestcraft"),
+	HARVESTCRAFT("harvestcraft", "com.pam.harvestcraft.BlockRegistry", "com.pam.harvestcraft.ItemRegistry"),
 	MYSTCRAFT("Mystcraft"),
 	MAGICCROPS("magicalcrops", "com.mark719.magicalcrops.MagicalCrops"),
 	MIMICRY("Mimicry", "com.sparr.mimicry.block.MimicryBlock", "com.sparr.mimicry.item.MimicryItem"),
@@ -81,7 +81,8 @@ public enum ModList {
 	OPENCOMPUTERS("OpenComputers"),
 	NEI("NotEnoughItems"),
 	ATG("ATG"),
-	WAILA("Waila");
+	WAILA("Waila"),
+	BLUEPOWER("bluepower", "com.bluepowermod.init.BPBlocks", "com.bluepowermod.init.BPItems");
 
 	private final boolean condition;
 	public final String modLabel;

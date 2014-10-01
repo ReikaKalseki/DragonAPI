@@ -53,6 +53,7 @@ import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -298,7 +299,7 @@ public class DragonAPIInit extends DragonAPIMod {
 			if (is.stackTagCompound != null) {
 				NBTTagCompound disp = is.stackTagCompound.getCompoundTag("display");
 				if (disp != null) {
-					NBTTagList list = disp.getTagList("Lore", 8); //8 == string
+					NBTTagList list = disp.getTagList("Lore", NBTTypes.STRING.ID);
 					if (list != null && list.tagCount() > 0) {
 						String sg = list.getStringTagAt(0);
 						if (sg != null && sg.equals("Reika's Mods Guide")) {

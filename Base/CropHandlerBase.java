@@ -27,7 +27,7 @@ public abstract class CropHandlerBase extends ModHandlerBase {
 
 	public abstract boolean isSeedItem(ItemStack is);
 
-	public abstract float getSecondSeedDropRate();
+	//public abstract float getSecondSeedDropRate();
 
 	public abstract ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune);
 

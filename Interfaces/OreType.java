@@ -9,10 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
+import java.util.Collection;
+
+import net.minecraft.item.ItemStack;
+
 
 public interface OreType {
 
 	public OreRarity getRarity();
+
+	public Collection<ItemStack> getAllOreBlocks();
 
 	public boolean isNether();
 	public boolean isEnd();

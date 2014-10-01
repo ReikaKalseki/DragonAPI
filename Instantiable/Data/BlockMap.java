@@ -10,8 +10,9 @@
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -110,12 +111,8 @@ public final class BlockMap<V> {
 		return data.size();
 	}
 
-	public Collection<ItemStack> keySet() {
-		ArrayList li = new ArrayList();
-		for (BlockKey key : data.keySet()) {
-			li.add(key.asItemStack());
-		}
-		return li;
+	public Set<BlockKey> keySet() {
+		return Collections.unmodifiableSet(this.keySet());
 	}
 
 	public static final class BlockKey {

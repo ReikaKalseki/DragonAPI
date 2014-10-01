@@ -65,6 +65,10 @@ public final class MixMap<V, K> {
 		return map != null ? map.get(v2) : null;
 	}
 
+	public boolean containsKey(V obj) {
+		return data.containsKey(obj);
+	}
+
 	public Collection<ImmutablePair<V, V>> getMixesMaking(K mix) {/*
 		ArrayList<ImmutablePair<V, V>> li = new ArrayList();
 		for (V k1 : data.keySet()) {

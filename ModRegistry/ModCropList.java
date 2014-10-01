@@ -32,10 +32,10 @@ import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
 
 public enum ModCropList {
-
+	//seed meta, min meta, fresh meta, ripe meta
 	BARLEY(ModList.NATURA, 0xCDB14D, "crops", "seeds", 0, 0, 0, 3, VarType.INSTANCE),
 	COTTON(ModList.NATURA, 0xE366F5, "crops", "seeds", 0, 4, 6, 8, VarType.INSTANCE),
-	FLAX(ModList.REDPOWER, 0xD9C482, "", "", 0, 0, 0, 0, VarType.INSTANCE),
+	FLAX(ModList.BLUEPOWER, 0xD9C482, "flax_crop", "flax_seeds", 0, 0, 0, 8, VarType.INSTANCE),
 	MAGIC(ModList.MAGICCROPS, 0x6F9165, MagicCropHandler.getInstance()),
 	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE),
 	BERRY(ModList.NATURA, 0x55ff33, BerryBushHandler.getInstance()),
@@ -316,7 +316,7 @@ public enum ModCropList {
 	}
 
 	public boolean isTileEntity() {
-		return this == PAM;
+		return false;
 	}
 
 	public void runTEHarvestCode(World world, int x, int y, int z) {

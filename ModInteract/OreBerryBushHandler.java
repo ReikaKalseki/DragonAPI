@@ -85,11 +85,6 @@ public class OreBerryBushHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public float getSecondSeedDropRate() {
-		return 0;
-	}
-
-	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);

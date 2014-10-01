@@ -32,6 +32,7 @@ import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
 import Reika.DragonAPI.Interfaces.SemiTransparent;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -890,7 +891,7 @@ public class BlockArray {
 
 	public void readFromNBT(String label, NBTTagCompound NBT) {
 		this.clear();
-		NBTTagList tag = NBT.getTagList(label, NBT.getId());
+		NBTTagList tag = NBT.getTagList(label, NBTTypes.COMPOUND.ID);
 		if (tag == null || tag.tagCount() == 0)
 			return;
 		for (int i = 0; i < tag.tagCount(); i++) {

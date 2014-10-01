@@ -15,24 +15,20 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class BlockTieredResource extends Block {
 
-	private static final Random rand = new Random();
+	protected static final Random rand = new Random();
 
 	public BlockTieredResource(Material mat) {
 		super(mat);
@@ -79,17 +75,31 @@ public abstract class BlockTieredResource extends Block {
 	@Override
 	public final boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
 	{
+		int fortune = EnchantmentHelper.getFortuneModifier(player);
 		if (this.isPlayerSufficientTier(world, x, y, z, player)) {
-			int fortune = EnchantmentHelper.getFortuneModifier(player);
 			Collection<ItemStack> li = this.getHarvestResources(world, x, y, z, fortune);
-			for (ItemStack is : li) {
-				ReikaItemHelper.dropItem(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), is);
+			if (li != null) {
+				for (ItemStack is : li) {
+					ReikaItemHelper.dropItem(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), is);
+				}
+			}
+		}
+		else {
+			Collection<ItemStack> li = this.getNoHarvestResources(world, x, y, z, fortune);
+			if (li != null) {
+				for (ItemStack is : li) {
+					ReikaItemHelper.dropItem(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), is);
+				}
 			}
 		}
 		return super.removedByPlayer(world, player, x, y, z, willHarvest);
 	}
 
 	protected abstract Collection<ItemStack> getHarvestResources(World world, int x, int y, int z, int fortune);
+
+	protected Collection<ItemStack> getNoHarvestResources(World world, int x, int y, int z, int fortune) {
+		return null;
+	}
 
 	public abstract boolean isPlayerSufficientTier(IBlockAccess world, int x, int y, int z, EntityPlayer ep);
 
@@ -103,22 +113,6 @@ public abstract class BlockTieredResource extends Block {
 				world.setBlockToAir(x, y, z);
 			}
 		}
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public final AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z)
-	{
-		if (this.isFullyUndetectable() && !this.isPlayerSufficientTier(world, x, y, z, Minecraft.getMinecraft().thePlayer)) {
-			return AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
-		}
-		else {
-			return super.getSelectedBoundingBoxFromPool(world, x, y, z);
-		}
-	}
-
-	protected boolean isFullyUndetectable() {
-		return false;
 	}
 
 }

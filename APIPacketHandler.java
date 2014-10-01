@@ -27,6 +27,7 @@ import Reika.DragonAPI.Interfaces.IPacketHandler;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.DataPacket;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
@@ -168,6 +169,8 @@ public class APIPacketHandler implements IPacketHandler {
 					ep.getEntityData().setTag(name, tag);
 				}
 				break;
+			case RERENDER:
+				ReikaRenderHelper.rerenderAllChunks();
 			}
 		}
 		catch (Exception e) {
@@ -182,7 +185,8 @@ public class APIPacketHandler implements IPacketHandler {
 		KEYUPDATE(),
 		TILESYNC(),
 		TILEDELETE(),
-		PLAYERDATSYNC();
+		PLAYERDATSYNC(),
+		RERENDER();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];

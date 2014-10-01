@@ -282,11 +282,11 @@ public class MagicCropHandler extends CropHandlerBase {
 	public boolean isSeedItem(ItemStack is) {
 		return EssenceType.seedIDs.containsKey(is.getItem());
 	}
-
+	/*
 	@Override
 	public float getSecondSeedDropRate() {
 		return configChance/100F;
-	}
+	}*/
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {

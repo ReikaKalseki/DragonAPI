@@ -457,7 +457,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	@Override
 	public final int hashCode() {
-		return xCoord + zCoord << 8 + yCoord << 16 + worldObj.provider.dimensionId << 24;
+		return worldObj != null ? (xCoord + zCoord << 8 + yCoord << 16 + worldObj.provider.dimensionId << 24) : super.hashCode();
 	}
 
 	private boolean matchCoords(TileEntity te) {
@@ -526,7 +526,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	private TileEntity getCachedTE(ForgeDirection dir) {
-		return adjTEMap[dir.ordinal()];
+		return dir != null ? adjTEMap[dir.ordinal()] : null;
 	}
 
 	public final void updateCache(ForgeDirection dir) {

@@ -10,16 +10,19 @@
 package Reika.DragonAPI.Instantiable;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collection;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class PreferentialItemStack {
 
-	private LinkedList<String> oreNames = new LinkedList();
+	private ArrayList<String> oreNames = new ArrayList();
+	private Collection<ItemStack> blacklist = new ArrayList();
+	private Collection<Item> itemblacklist = new ArrayList();
 	private final ItemStack fallbackItem;
 
 	public PreferentialItemStack(Item backup, String... items) {
@@ -44,12 +47,25 @@ public class PreferentialItemStack {
 		return s != null ? s : fallbackItem;
 	}
 
+	public PreferentialItemStack blockItemStack(ItemStack is) {
+		blacklist.add(is.copy());
+		return this;
+	}
+
+	public PreferentialItemStack blockItem(Item i) {
+		itemblacklist.add(i);
+		return this;
+	}
+
 	private String getStringToUse() {
-		for (int i = 0; i < oreNames.size(); i++) {
-			String ore = oreNames.get(i);
-			ArrayList<ItemStack> li = OreDictionary.getOres(ore);
-			if (!li.isEmpty())
-				return ore;
+		for (String ore : oreNames) {
+			Collection<ItemStack> items = OreDictionary.getOres(ore);
+			if (items != null) {
+				for (ItemStack is : items) {
+					if (!itemblacklist.contains(is.getItem()) && !ReikaItemHelper.listContainsItemStack(blacklist, is))
+						return ore;
+				}
+			}
 		}
 		return null;
 	}
