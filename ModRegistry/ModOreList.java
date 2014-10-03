@@ -277,7 +277,7 @@ public enum ModOreList implements OreType {
 	}
 
 	public static ModOreList getModOreFromOre(ItemStack is) {
-		if (is == null)
+		if (is == null || is.getItem() == null)
 			return null;
 		if (ReikaItemHelper.matchStackWithBlock(is, MekanismHandler.getInstance().oreID))
 			return MekanismHandler.getInstance().getModOre(is.getItem(), is.getItemDamage());

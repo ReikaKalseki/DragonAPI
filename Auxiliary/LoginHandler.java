@@ -81,11 +81,15 @@ public final class LoginHandler implements PlayerTracker {
 	@Override
 	public void onPlayerChangedDimension(EntityPlayer player, int from, int to) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(player, player.worldObj.provider.dimensionId));
+		if (player instanceof EntityPlayerMP)
+			ReikaPlayerAPI.syncCustomData((EntityPlayerMP)player);
 	}
 
 	@Override
 	public void onPlayerRespawn(EntityPlayer player) {
 		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(player, player.worldObj.provider.dimensionId));
+		if (player instanceof EntityPlayerMP)
+			ReikaPlayerAPI.syncCustomData((EntityPlayerMP)player);
 	}
 
 	public static final class PlayerEnteredDimensionEvent extends Event {

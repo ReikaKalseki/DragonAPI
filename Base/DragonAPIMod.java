@@ -11,12 +11,16 @@ package Reika.DragonAPI.Base;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
 
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Exception.InstallationException;
+import Reika.DragonAPI.Exception.MissingDependencyException;
 import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.Exception.VersionMismatchException;
+import Reika.DragonAPI.Exception.VersionMismatchException.APIMismatchException;
 import Reika.DragonAPI.Extras.ModVersion;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
@@ -32,6 +36,8 @@ public abstract class DragonAPIMod {
 
 	protected final boolean isDeObf;
 	private final ModVersion version;
+	private static ModVersion apiVersion;
+	private static final HashMap<String, ModVersion> modVersions = new HashMap();
 	//private static final ModVersion api_version;
 
 	static {
@@ -53,9 +59,10 @@ public abstract class DragonAPIMod {
 		}
 
 		version = ModVersion.readFromFile();
-
-		if (this.getClass() != DragonAPIInit.class)
-			;//this.validateDragonAPI();
+		modVersions.put(this.getClass().getSimpleName(), version);
+		if (this.getClass() == DragonAPIInit.class) {
+			apiVersion = version;
+		}
 	}
 
 	@EventHandler
@@ -72,14 +79,33 @@ public abstract class DragonAPIMod {
 		ReikaRegistryHelper.setupModData(this, evt);
 		CommandableUpdateChecker.instance.registerMod(this);
 	}
-	/*
-	private void validateDragonAPI() {
+
+	protected final void verifyVersions() {
 		ModVersion mod = this.getModVersion();
-		ModVersion api = this.getAPIVersion();
-		if (mod.majorVersion != api.majorVersion || mod.isNewerMinorVersion(api)) {
-			throw new VersionMismatchException(this, api_instance);
+		if (mod.majorVersion != apiVersion.majorVersion || mod.isNewerMinorVersion(apiVersion)) {
+			throw new APIMismatchException(this, mod, apiVersion);
 		}
-	}*/
+		HashMap<String, String> map = this.getDependencies();
+		if (map != null) {
+			for (String key : map.keySet()) {
+				String req = map.get(key);
+				ModVersion has = modVersions.get(key);
+				if (has == null) {
+					throw new MissingDependencyException(this, key);
+				}
+				else if (!has.isCompiled()) {
+
+				}
+				else if (!req.equals(has.toString())) {
+					throw new VersionMismatchException(this, mod, key, has);
+				}
+			}
+		}
+	}
+
+	protected HashMap<String, String> getDependencies() {
+		return null;
+	}
 
 	protected final void onInit(FMLInitializationEvent event) {
 

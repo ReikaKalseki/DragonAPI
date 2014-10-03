@@ -11,6 +11,7 @@ package Reika.DragonAPI.Base;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -562,9 +563,8 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	@Override
 	public String[] getMethodNames() {
 		ArrayList<LuaMethod> li = new ArrayList();
-		List<LuaMethod> all = LuaMethod.getMethods();
-		for (int i = 0; i < all.size(); i++) {
-			LuaMethod l = all.get(i);
+		Collection<LuaMethod> all = LuaMethod.getMethods();
+		for (LuaMethod l : all) {
 			if (l.isValidFor(this))
 				li.add(l);
 		}

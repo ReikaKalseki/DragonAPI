@@ -10,10 +10,9 @@
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BarGraphData {
 	private HashMap<Integer, Integer> data = new HashMap();
@@ -57,7 +56,7 @@ public class BarGraphData {
 	}
 
 	public List<Integer> getXValues() {
-		return ReikaJavaLibrary.copyList(values);
+		return Collections.unmodifiableList(values);
 	}
 
 	public void clear() {

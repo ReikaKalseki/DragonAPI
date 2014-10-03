@@ -58,7 +58,7 @@ public class ModVersion implements Comparable<ModVersion> {
 	}
 
 	public static ModVersion getFromString(String s) {
-		if (s.startsWith("$"))
+		if (s.startsWith("$") || s.startsWith("@"))
 			return source;
 		if (s.startsWith("v") || s.startsWith("V"))
 			s = s.substring(1);

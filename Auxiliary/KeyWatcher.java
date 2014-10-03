@@ -18,6 +18,9 @@ import java.util.HashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+
+import org.lwjgl.input.Keyboard;
+
 import Reika.DragonAPI.APIPacketHandler;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
@@ -58,7 +61,8 @@ public class KeyWatcher {
 		DROPITEM(),
 		ATTACK(),
 		USE(),
-		CHAT();
+		CHAT(),
+		LCTRL;
 
 		public static final Key[] keyList = values();
 	}
@@ -75,9 +79,11 @@ public class KeyWatcher {
 		DROPITEM(Minecraft.getMinecraft().gameSettings.keyBindDrop),
 		ATTACK(Minecraft.getMinecraft().gameSettings.keyBindAttack),
 		USE(Minecraft.getMinecraft().gameSettings.keyBindUseItem),
-		CHAT(Minecraft.getMinecraft().gameSettings.keyBindChat);
+		CHAT(Minecraft.getMinecraft().gameSettings.keyBindChat),
+		LCTRL(Keyboard.KEY_LCONTROL);
 
-		private final KeyBinding key;
+		private KeyBinding key;
+		private int keyInt;
 
 		public static final Keys[] keyList = values();
 
@@ -85,8 +91,12 @@ public class KeyWatcher {
 			this.key = key;
 		}
 
+		private Keys(int key) {
+			keyInt = key;
+		}
+
 		public boolean pollKey() {
-			return key.getIsKeyPressed();
+			return key != null ? key.getIsKeyPressed() : Keyboard.isKeyDown(keyInt);
 		}
 
 		public int keyID() {

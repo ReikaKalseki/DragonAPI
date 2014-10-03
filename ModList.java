@@ -82,7 +82,8 @@ public enum ModList {
 	NEI("NotEnoughItems"),
 	ATG("ATG"),
 	WAILA("Waila"),
-	BLUEPOWER("bluepower", "com.bluepowermod.init.BPBlocks", "com.bluepowermod.init.BPItems");
+	BLUEPOWER("bluepower", "com.bluepowermod.init.BPBlocks", "com.bluepowermod.init.BPItems"),
+	COLORLIGHT("easycoloredlights");
 
 	private final boolean condition;
 	public final String modLabel;

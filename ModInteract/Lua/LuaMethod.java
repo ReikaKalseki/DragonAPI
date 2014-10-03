@@ -10,10 +10,10 @@
 package Reika.DragonAPI.ModInteract.Lua;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
+import java.util.Collections;
 
 import net.minecraft.tileentity.TileEntity;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import dan200.computercraft.api.lua.LuaException;
 
 public abstract class LuaMethod {
@@ -44,8 +44,8 @@ public abstract class LuaMethod {
 			methods.add(this);
 	}
 
-	public static final List<LuaMethod> getMethods() {
-		return ReikaJavaLibrary.copyList(methods);
+	public static final Collection<LuaMethod> getMethods() {
+		return Collections.unmodifiableCollection(methods);
 	}
 
 	public static final int getNumberMethods() {

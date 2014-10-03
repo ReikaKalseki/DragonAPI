@@ -10,10 +10,10 @@
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** Creates a data structure similar to a frequency graph, where any "x" value corresponds to
  * n "y" values, where n >= 0. It can also be converted into a bar graph. */
@@ -37,17 +37,17 @@ public class SortedPairs {
 		return this;
 	}
 
-	public List<Object> getAllAtX(int x) {
+	public Collection<Object> getAllAtX(int x) {
 		List li = data.get(x);
-		return ReikaJavaLibrary.copyList(li);
+		return li != null ? Collections.unmodifiableCollection(li) : null;
 	}
 
 	public BarGraphData toBarGraph() {
 		BarGraphData bdg = new BarGraphData();
 		for (int i = 0; i < keys.size(); i++) {
 			int key = keys.get(i);
-			List li = this.getAllAtX(key);
-			bdg.addEntries(key, li.size());
+			Collection li = this.getAllAtX(key);
+			bdg.addEntries(key, li != null ? li.size() : 0);
 		}
 		return bdg;
 	}
