@@ -32,7 +32,7 @@ public final class KeyedItemStack {
 
 	@Override
 	public final int hashCode() {
-		return Item.getIdFromItem(item.getItem())+(item.getItemDamage() << 8);
+		return Item.getIdFromItem(item.getItem())+(item.getItemDamage() << 16);
 	}
 
 	@Override
@@ -47,7 +47,7 @@ public final class KeyedItemStack {
 		return false;
 	}
 
-	public ItemStack getItem() {
+	public ItemStack getItemStack() {
 		return item.copy();
 	}
 

@@ -26,7 +26,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
-public final class WorldLocation {
+public class WorldLocation {
 
 	private static final Random rand = new Random();
 
@@ -44,6 +44,10 @@ public final class WorldLocation {
 		yCoord = y;
 		zCoord = z;
 		dimensionID = dim;
+	}
+
+	private WorldLocation(WorldLocation loc) {
+		this(loc.dimensionID, loc.xCoord, loc.yCoord, loc.zCoord);
 	}
 
 	public WorldLocation(TileEntity te) {
@@ -191,7 +195,7 @@ public final class WorldLocation {
 	}
 
 	public WorldLocation copy() {
-		return new WorldLocation(dimensionID, xCoord, yCoord, zCoord);
+		return new WorldLocation(this);
 	}
 
 	@Override
@@ -227,6 +231,24 @@ public final class WorldLocation {
 
 	public double getDistanceTo(double x, double y, double z) {
 		return ReikaMathLibrary.py3d(x-xCoord, y-yCoord, z-zCoord);
+	}
+
+	public DoubleWorldLocation decimalOffset(double dx, double dy, double dz) {
+		return new DoubleWorldLocation(this, dx, dy, dz);
+	}
+
+	public static final class DoubleWorldLocation extends WorldLocation {
+
+		public final double offsetX;
+		public final double offsetY;
+		public final double offsetZ;
+
+		private DoubleWorldLocation(WorldLocation loc, double dx, double dy, double dz) {
+			super(loc);
+			offsetX = dx;
+			offsetY = dy;
+			offsetZ = dz;
+		}
 	}
 
 }

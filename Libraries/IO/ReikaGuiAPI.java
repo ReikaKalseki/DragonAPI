@@ -433,42 +433,46 @@ public final class ReikaGuiAPI extends GuiScreen {
 	}
 
 	public void drawTooltip(FontRenderer f, String s) {
-		ReikaRenderHelper.disableLighting();
-		RenderHelper.disableStandardItemLighting();
-		GL11.glColor4f(1, 1, 1, 1);
-		int mx = this.getMouseRealX();
+		int mx = this.getMouseRealX()-f.getStringWidth(s)*0;
 		int my = this.getMouseRealY();
-		int w = mc.fontRenderer.getStringWidth(s);
-		int h = 8;
-		int o = 3;
-		int a = 0xcc000000;
-		int dx = -Math.min(0, mx-6-o-w);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
-		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
-		o = 2;
-		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
-		ReikaTextureHelper.bindFontTexture();
-		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
-		//ReikaRenderHelper.disableLighting();
-		//RenderHelper.enableGUIStandardItemLighting();
-		//RenderHelper.disableStandardItemLighting();
+		this.drawTooltipAt(f, s, mx, my);
 	}
 
 	public void drawTooltipAt(FontRenderer f, String s, int mx, int my) {
-		int w = mc.fontRenderer.getStringWidth(s);
-		int h = 8;
-		int o = 3;
-		int a = 0xcc000000;
-		int dx = -Math.min(0, mx-6-o-w);
-		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00440077);
-		o = 2;
-		this.drawRect(dx+mx-6+o, my-12-o, dx+mx-6-w-o, my-12+h+o, a+0x00050505);
-		ReikaTextureHelper.bindFontTexture();
-		this.drawString(mc.fontRenderer, s, dx+mx-w-6, my-12, 0xffffff);
-		//ReikaRenderHelper.disableLighting();
-		//RenderHelper.enableGUIStandardItemLighting();
-		//RenderHelper.disableStandardItemLighting();
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		int k = f.getStringWidth(s);
+		int j2 = mx + 12;
+		int k2 = my - 12;
+		int i1 = 8;
+
+		if (j2 + k > width)
+			j2 -= 28 + k;
+
+		if (k2 + i1 + 6 > height)
+			;//k2 = height - i1 - 6;
+
+		zLevel = 300.0F;
+		itemRender.zLevel = 300.0F;
+		int j1 = -267386864;
+		this.drawGradientRect(j2 - 3, k2 - 4, j2 + k + 3, k2 - 3, j1, j1);
+		this.drawGradientRect(j2 - 3, k2 + i1 + 3, j2 + k + 3, k2 + i1 + 4, j1, j1);
+		this.drawGradientRect(j2 - 3, k2 - 3, j2 + k + 3, k2 + i1 + 3, j1, j1);
+		this.drawGradientRect(j2 - 4, k2 - 3, j2 - 3, k2 + i1 + 3, j1, j1);
+		this.drawGradientRect(j2 + k + 3, k2 - 3, j2 + k + 4, k2 + i1 + 3, j1, j1);
+		int k1 = 1347420415;
+		int l1 = (k1 & 16711422) >> 1 | k1 & -16777216;
+		this.drawGradientRect(j2 - 3, k2 - 3 + 1, j2 - 3 + 1, k2 + i1 + 3 - 1, k1, l1);
+		this.drawGradientRect(j2 + k + 2, k2 - 3 + 1, j2 + k + 3, k2 + i1 + 3 - 1, k1, l1);
+		this.drawGradientRect(j2 - 3, k2 - 3, j2 + k + 3, k2 - 3 + 1, k1, k1);
+		this.drawGradientRect(j2 - 3, k2 + i1 + 2, j2 + k + 3, k2 + i1 + 3, l1, l1);
+
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		f.drawStringWithShadow(s, j2, k2, 0xffffffff);
+		GL11.glPopAttrib();
 	}
 
 	public float getMouseScreenY() {

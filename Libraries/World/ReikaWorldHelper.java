@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.World;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -32,6 +33,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -1706,5 +1708,22 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 
 		return count;
+	}
+
+	public static void forceGenAndPopulate(World world, int x, int y, int z, int meta) {
+		Chunk ch = world.getChunkFromBlockCoords(x, z);
+		IChunkProvider p = world.getChunkProvider();
+		if (!ch.isTerrainPopulated) {
+			try {
+				p.populate(p, x >> 4, z >> 4);
+			}
+			catch (ConcurrentModificationException e) {
+				ReikaJavaLibrary.pConsole("Chunk at "+x+", "+z+" failed to allow population due to a ConcurrentModificationException! Contact Reika with information on any mods that might be multithreading worldgen!");
+			}
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("Chunk at "+x+", "+z+" failed to allow population!");
+				e.printStackTrace();
+			}
+		}
 	}
 }

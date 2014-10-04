@@ -11,8 +11,11 @@ package Reika.DragonAPI.ModInteract;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+import Reika.DragonAPI.Instantiable.Event.ThermalRecipeEvent;
+import Reika.DragonAPI.Instantiable.Event.ThermalRecipeEvent.ThermalMachine;
 import cpw.mods.fml.common.event.FMLInterModComms;
 
 public class ThermalRecipeHelper {
@@ -54,7 +57,15 @@ public class ThermalRecipeHelper {
 		toSend.setBoolean("reversible", reversible);
 		f.writeToNBT(toSend.getCompoundTag("fluid"));
 		FMLInterModComms.sendMessage("ThermalExpansion", "TransposerFillRecipe", toSend);
-		//fireEvent(ThermalRecipeEvent.ThermalMachine.TRANSPOSER, in, null, out, null, 0, energy);
+		fireEvent(ThermalRecipeEvent.ThermalMachine.TRANSPOSER, in, null, out, null, 0, energy);
+	}
+
+	private static void fireEvent(ThermalMachine type, ItemStack in, FluidStack out, int rf) {
+		MinecraftForge.EVENT_BUS.post(new ThermalRecipeEvent(type, in, out, rf));
+	}
+
+	private static void fireEvent(ThermalMachine type, ItemStack in1, ItemStack in2, ItemStack out1, ItemStack out2, int out2chance, int rf) {
+		MinecraftForge.EVENT_BUS.post(new ThermalRecipeEvent(type, in1, in2, out1, out2, out2chance, rf));
 	}
 
 	public static void addFluidTransposerDrain(ItemStack in, ItemStack out, int energy, FluidStack f) {
@@ -82,6 +93,7 @@ public class ThermalRecipeHelper {
 		toSend.setInteger("chance", chance);
 		f.writeToNBT(toSend.getCompoundTag("fluid"));
 		FMLInterModComms.sendMessage("ThermalExpansion", "TransposerExtractRecipe", toSend);
+		fireEvent(ThermalRecipeEvent.ThermalMachine.TRANSPOSER, in, null, out, null, 0, energy);
 	}
 
 	public static void addInductionSmelter(ItemStack in1, ItemStack in2, ItemStack out1, int energy) {
@@ -129,6 +141,7 @@ public class ThermalRecipeHelper {
 		in.writeToNBT(toSend.getCompoundTag("input"));
 		f.writeToNBT(toSend.getCompoundTag("output"));
 		FMLInterModComms.sendMessage("ThermalExpansion", "CrucibleRecipe", toSend);
+		fireEvent(ThermalRecipeEvent.ThermalMachine.CRUCIBLE, in, f, energy);
 	}
 
 	private static void addTwoInTwoOutWithChance(String type, ItemStack in1, ItemStack in2, ItemStack out1, ItemStack out2, int out2chance, int energy) {
@@ -148,6 +161,7 @@ public class ThermalRecipeHelper {
 		if (out2chance < 100)
 			toSend.setInteger("secondaryChance", out2chance);
 		FMLInterModComms.sendMessage("ThermalExpansion", type, toSend);
+		fireEvent(ThermalRecipeEvent.ThermalMachine.getType(type), in1, in2, out1, out2, out2chance, energy);
 	}
 
 	private static void addOneInTwoOutWithChance(String type, ItemStack in, ItemStack out1, ItemStack out2, int out2chance, int energy) {
@@ -165,6 +179,7 @@ public class ThermalRecipeHelper {
 		if (out2chance < 100)
 			toSend.setInteger("secondaryChance", out2chance);
 		FMLInterModComms.sendMessage("ThermalExpansion", type, toSend);
+		fireEvent(ThermalRecipeEvent.ThermalMachine.getType(type), in, null, out1, out2, out2chance, energy);
 	}
 
 }

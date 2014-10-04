@@ -10,8 +10,10 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
+import cpw.mods.fml.common.eventhandler.Event;
 
-public class ThermalRecipeEvent {
+public class ThermalRecipeEvent extends Event {
 
 	public static enum ThermalMachine {
 		INDUCTION(),
@@ -19,24 +21,38 @@ public class ThermalRecipeEvent {
 		TRANSPOSER(),
 		PULVERIZER(),
 		SAWMILL();
+
+		public static ThermalMachine getType(String type) {
+			return null;
+		}
 	}
 
 	public final ThermalMachine machine;
 	private final ItemStack input1;
-	private final ItemStack input2;
-	private final ItemStack output1;
-	private final ItemStack output2;
-	public final int chanceForOutput2;
+	private ItemStack input2;
+	private FluidStack fluidOut;
+	private ItemStack output1;
+	private ItemStack output2;
+	public int chanceForOutput2;
 	public final int energy;
 
-	public ThermalRecipeEvent(ThermalMachine type, ItemStack in1, ItemStack in2, ItemStack out1, ItemStack out2, int out2chance, int rf) {
+	private ThermalRecipeEvent(ThermalMachine type, ItemStack in, int rf) {
 		machine = type;
-		input1 = in1;
+		input1 = in;
+		energy = rf;
+	}
+
+	public ThermalRecipeEvent(ThermalMachine type, ItemStack in1, FluidStack out, int rf) {
+		this(type, in1, rf);
+		fluidOut = out;
+	}
+
+	public ThermalRecipeEvent(ThermalMachine type, ItemStack in1, ItemStack in2, ItemStack out1, ItemStack out2, int out2chance, int rf) {
+		this(type, in1, rf);
 		input2 = in2;
 		output1 = out1;
 		output2 = out2;
 		chanceForOutput2 = out2chance;
-		energy = rf;
 	}
 
 	public boolean hasSecondInput() {
@@ -61,6 +77,10 @@ public class ThermalRecipeEvent {
 
 	public ItemStack getOutput2() {
 		return output2 != null ? output2.copy() : null;
+	}
+
+	public FluidStack getFluidOut() {
+		return fluidOut != null ? fluidOut.copy() : null;
 	}
 
 }

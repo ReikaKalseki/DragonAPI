@@ -36,7 +36,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 	private static final HashMap<String, ClassPatch> classes = new HashMap();
 
 	private static enum ClassPatch {
-		CREEPERBOMBEVENT("net.minecraft.entity.monster.EntityCreeper", "xz");
+		CREEPERBOMBEVENT("net.minecraft.entity.monster.EntityCreeper", "xz"),
+		ITEMRENDEREVENT("net.minecraft.client.gui.inventory.GuiContainer", "bex");
 
 		private final String obfName;
 		private final String deobfName;
@@ -77,6 +78,26 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.insert(pos, new InsnNode(Opcodes.DUP));
 					m.instructions.insert(pos, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/CreeperExplodeEvent"));
 					m.instructions.insert(pos, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+				}
+			}
+			break;
+			case ITEMRENDEREVENT: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_146977_a", "func_146977_a", "(Lnet/minecraft/inventory/Slot;)V");
+				if (m == null) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Could not find method for "+this+" ASM handler!");
+				}
+				else {
+					AbstractInsnNode pos = m.instructions.getFirst();
+					m.instructions.insertBefore(pos, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+					m.instructions.insertBefore(pos, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/RenderItemInSlotEvent"));
+					m.instructions.insertBefore(pos, new InsnNode(Opcodes.DUP));
+					m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 1));
+					m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/RenderItemInSlotEvent", "<init>", "(Lnet/minecraft/client/gui/inventory/GuiContainer;Lnet/minecraft/inventory/Slot;)V"));
+					m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+					m.instructions.insertBefore(pos, new InsnNode(Opcodes.POP));
+
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
 				}
 			}
