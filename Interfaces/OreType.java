@@ -11,6 +11,7 @@ package Reika.DragonAPI.Interfaces;
 
 import java.util.Collection;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 
@@ -22,6 +23,8 @@ public interface OreType {
 
 	public boolean isNether();
 	public boolean isEnd();
+
+	public boolean canGenerateIn(Block b);
 
 
 	public static enum OreRarity {

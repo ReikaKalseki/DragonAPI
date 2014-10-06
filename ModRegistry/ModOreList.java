@@ -411,9 +411,10 @@ public enum ModOreList implements OreType {
 	}
 
 	public boolean canGenerateIn(Block b) {
-		if (this.isNetherOres())
+		if (this.isNether())
 			return b == Blocks.netherrack;
-
+		if (this.isEnd())
+			return b == Blocks.end_stone;
 		return b == Blocks.stone;
 	}
 

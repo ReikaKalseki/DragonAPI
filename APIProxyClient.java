@@ -23,6 +23,8 @@ public class APIProxyClient extends APIProxy {
 
 	public static KeyBinding key_nbt;
 
+	private static final SimpleReloadableResourceManager rm = (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager();
+
 	@Override
 	public void registerSounds() {
 		//MinecraftForge.EVENT_BUS.register(new SoundLoader(ReactorCraft.instance, SoundRegistry.soundList));
@@ -46,7 +48,6 @@ public class APIProxyClient extends APIProxy {
 
 	@Override
 	public void registerSidedHandlersMain() {
-		SimpleReloadableResourceManager rm = (SimpleReloadableResourceManager)Minecraft.getMinecraft().getResourceManager();
 		rm.registerReloadListener(DirectResourceManager.getInstance());
 	}
 

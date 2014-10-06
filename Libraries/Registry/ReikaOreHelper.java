@@ -217,6 +217,14 @@ public enum ReikaOreHelper implements OreType {
 		return false;
 	}
 
+	public boolean canGenerateIn(Block b) {
+		if (this.isNether())
+			return b == Blocks.netherrack;
+		if (this.isEnd())
+			return b == Blocks.end_stone;
+		return b == Blocks.stone;
+	}
+
 	static {
 		for (int i = 0; i < oreList.length; i++) {
 			vanillaOres.put(oreList[i].ore, oreList[i]);
