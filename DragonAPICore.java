@@ -29,6 +29,8 @@ public class DragonAPICore {
 
 	private static final boolean reika = calculateReikasComputer();
 
+	public static final String last_API_Version = "@MAJOR_VERSION@"+"@MINOR_VERSION@";
+
 	public static boolean debugtest = false;
 
 	private static final String MINFORGE = "required-after:Forge@[10.13.0.1205,);";

@@ -59,7 +59,7 @@ public class DebugOverlay {
 			FontRenderer f = mc.fontRenderer;
 
 			float reach = 4;
-			MovingObjectPosition hit = ReikaPlayerAPI.getLookedAtBlockClient(4);
+			MovingObjectPosition hit = ReikaPlayerAPI.getLookedAtBlockClient(4, false);
 			if (hit != null) {
 				int x = hit.blockX;
 				int y = hit.blockY;

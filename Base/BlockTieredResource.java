@@ -20,11 +20,13 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 
 public abstract class BlockTieredResource extends Block {
 
@@ -64,6 +66,11 @@ public abstract class BlockTieredResource extends Block {
 	@Override
 	public final ItemStack createStackedBlock(int meta) {
 		return null;
+	}
+
+	@Override
+	public ItemStack getPickBlock(MovingObjectPosition target, World world, int x, int y, int z) {
+		return ReikaBlockHelper.getWorldBlockAsItemStack(world, x, y, z);
 	}
 
 	@Override

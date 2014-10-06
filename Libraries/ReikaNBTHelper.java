@@ -18,7 +18,6 @@ import net.minecraft.nbt.NBTTagByte;
 import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
-import net.minecraft.nbt.NBTTagEnd;
 import net.minecraft.nbt.NBTTagFloat;
 import net.minecraft.nbt.NBTTagInt;
 import net.minecraft.nbt.NBTTagIntArray;
@@ -180,7 +179,7 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		STRING(new NBTTagString("").getId()),
 		LIST(new NBTTagList().getId()),
 		COMPOUND(new NBTTagCompound().getId()),
-		END(new NBTTagEnd().getId());
+		END(0);
 
 		public final int ID;
 

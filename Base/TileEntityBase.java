@@ -111,7 +111,9 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	public final boolean isPlacer(EntityPlayer ep) {
-		return ep.getCommandSenderName().endsWith(placer) && ep.getUniqueID().equals(placerUUID);
+		if (placer == null || placerUUID == null || placer.isEmpty() || placerUUID.isEmpty())
+			return false;
+		return ep.getCommandSenderName().equals(placer) && ep.getUniqueID().toString().equals(placerUUID.toString());
 	}
 
 	public final Block getTEBlock() {

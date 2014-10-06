@@ -112,7 +112,7 @@ public final class BlockMap<V> {
 	}
 
 	public Set<BlockKey> keySet() {
-		return Collections.unmodifiableSet(this.keySet());
+		return Collections.unmodifiableSet(this.data.keySet());
 	}
 
 	public static final class BlockKey {

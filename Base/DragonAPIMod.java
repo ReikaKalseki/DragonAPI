@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.HashMap;
 
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Exception.InstallationException;
@@ -83,7 +84,7 @@ public abstract class DragonAPIMod {
 	protected final void verifyVersions() {
 		ModVersion mod = this.getModVersion();
 		if (mod.majorVersion != apiVersion.majorVersion || mod.isNewerMinorVersion(apiVersion)) {
-			throw new APIMismatchException(this, mod, apiVersion);
+			throw new APIMismatchException(this, mod, apiVersion, DragonAPICore.last_API_Version);
 		}
 		HashMap<String, String> map = this.getDependencies();
 		if (map != null) {
@@ -97,7 +98,7 @@ public abstract class DragonAPIMod {
 
 				}
 				else if (!req.equals(has.toString())) {
-					throw new VersionMismatchException(this, mod, key, has);
+					throw new VersionMismatchException(this, mod, key, has, req);
 				}
 			}
 		}

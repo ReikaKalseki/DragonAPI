@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.Java;
 
 import java.util.Arrays;
+import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
@@ -408,5 +409,13 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		for (int i = 0; i < n.length; i++)
 			n[i] = i;
 		return n;
+	}
+
+	public static int[] intListToArray(List<Integer> li) {
+		int[] a = new int[li.size()];
+		for (int i = 0; i < a.length; i++) {
+			a[i] = li.get(i);
+		}
+		return a;
 	}
 }

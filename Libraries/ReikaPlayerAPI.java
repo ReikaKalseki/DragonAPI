@@ -17,7 +17,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.PlayerCapabilities;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -26,7 +25,6 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
@@ -39,8 +37,6 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 import com.mojang.authlib.GameProfile;
 
@@ -75,8 +71,8 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	}
 
-	/** Get the block a player is looking at. Args: Player, Range, Detect 'soft' blocks yes/no */
-	public static MovingObjectPosition getLookedAtBlock(EntityPlayer ep, int range, boolean hitSoft) {
+	/** Get the block a player is looking at. Args: Player, Range, Detect 'soft' blocks yes/no *//*
+	public static MovingObjectPosition getLookedAtBlock(EntityPlayer ep, int range, boolean hitSoft) {/*
 		Vec3 norm = ep.getLookVec();
 		World world = ep.worldObj;
 		for (float i = 0; i <= range; i += 0.2) {
@@ -89,20 +85,25 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 				}
 			}
 		}
-		return null;
-	}
+		return null;*//*
+		return getLookedAtBlock()
+	}*/
 
-	@SideOnly(Side.CLIENT)
-	public static MovingObjectPosition getLookedAtBlockClient(double reach) {
-		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+	public static MovingObjectPosition getLookedAtBlock(EntityPlayer ep, double reach, boolean liq) {
 		Vec3 vec = Vec3.createVectorHelper(ep.posX, (ep.posY + 1.62) - ep.yOffset, ep.posZ);
 		Vec3 vec2 = ep.getLook(1.0F);
 		Vec3 vec3 = vec.addVector(vec2.xCoord*reach, vec2.yCoord*reach, vec2.zCoord*reach);
-		MovingObjectPosition hit = ep.worldObj.rayTraceBlocks(vec, vec3);
+		MovingObjectPosition hit = ep.worldObj.rayTraceBlocks(vec, vec3, liq);
 
 		if (hit != null && hit.typeOfHit == MovingObjectType.BLOCK)
 			return hit;
 		return null;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static MovingObjectPosition getLookedAtBlockClient(double reach, boolean liq) {
+		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+		return getLookedAtBlock(ep, reach, liq);
 	}
 
 	/** Gets a direction from a player's look direction. Args: Player, allow vertical yes/no */

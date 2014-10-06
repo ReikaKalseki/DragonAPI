@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2014
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -47,11 +56,6 @@ public class RenderItemInSlotEvent extends Event {
 
 	public int getRelativeMouseY() {
 		return ReikaGuiAPI.instance.getMouseRealY()-slotY-gui.guiTop;
-	}
-
-	public boolean toolTipLeft(int length) {
-		int j2 = ReikaGuiAPI.instance.getMouseRealX() + 12;
-		return j2 + length > gui.width;
 	}
 
 }

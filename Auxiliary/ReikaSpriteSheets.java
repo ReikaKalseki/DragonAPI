@@ -26,6 +26,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import Reika.DragonAPI.Interfaces.AnimatedSpritesheet;
+import Reika.DragonAPI.Interfaces.MultiLayerItemSprite;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
@@ -40,87 +41,96 @@ public final class ReikaSpriteSheets {
 	/** Call this from a registered ItemRenderer class that implements IItemRenderer to actually render the Items.
 	 * It will automatically compensate for being used for inventory/entity/held items.
 	 * Args: Texture root class, Texture path, Sprite Index, ItemRenderType, ItemStack, Data */
-	public static void renderItem(Class root, String tex, int index, ItemRenderType type, ItemStack item, Object... data) {
+	public static void renderItem(Class root, String tex, int idx, ItemRenderType type, ItemStack item, Object... data) {
 		if (item == null)
 			return;
-		int row = index/16;
-		int col = index-row*16;
-		if (item.getItem() instanceof AnimatedSpritesheet) {
-			AnimatedSpritesheet a = (AnimatedSpritesheet)item.getItem();
-			if (a.useAnimatedRender(item)) {
-				col = a.getColumn(item);
-				int offset = (int)((System.currentTimeMillis()/32/a.getFrameSpeed())%a.getFrameCount());
-				row = a.getBaseRow(item)+offset;
-				tex = a.getTexture(item);
-			}
-		}
-		ReikaTextureHelper.bindTexture(root, tex);
-		if (type == type.INVENTORY) {
-			GL11.glDisable(GL11.GL_LIGHTING);
+		int[] indices = new int[]{idx};
+		if (item.getItem() instanceof MultiLayerItemSprite) {
+			MultiLayerItemSprite m = (MultiLayerItemSprite)item.getItem();
+			indices = m.getIndices(item);
 		}
 		GL11.glPushMatrix();
-		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		GL11.glScalef(1.0F, -1.0F, -1.0F);
-		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-		GL11.glPopMatrix();
-		Tessellator v5 = Tessellator.instance;
-		if (type == type.INVENTORY) {
-			if (v5.isDrawing)
-				v5.draw();
-			boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
-			GL11.glEnable(GL11.GL_BLEND);
-			int dst = GL11.glGetInteger(GL11.GL_BLEND_DST);
-			int src = GL11.glGetInteger(GL11.GL_BLEND_SRC);
-			BlendMode.DEFAULT.apply();
-			double r = 45;
-			double r2 = -30;
-			double s = 1.6;
-			double d = -0.5;
-			GL11.glRotated(r, 0, 1, 0);
-			GL11.glRotated(r2, 1, 0, 0);
-			GL11.glScaled(s, s, s);
-			GL11.glTranslated(d, d, 0);
-			v5.startDrawingQuads();
-			//v5.setTranslation(-1.125F, -1.375F, 0);
-			v5.addVertexWithUV(0, 0, 0, 0.0625F*col, 0.0625F+0.0625F*row);
-			//v5.setTranslation(0.125F, -0.46875F, 0);
-			v5.addVertexWithUV(1, 0, 0, 0.0625F+0.0625F*col, 0.0625F+0.0625F*row);
-			//v5.setTranslation(0.125F, 0.375F, 0);
-			v5.addVertexWithUV(1, 1, 0, 0.0625F+0.0625F*col, 0.0625F*row);
-			//v5.setTranslation(-1.125F, -0.53125F, 0);
-			v5.addVertexWithUV(0, 1, 0, 0.0625F*col, 0.0625F*row);
-			v5.draw();
-			GL11.glTranslated(-d, -d, 0);
-			GL11.glScaled(1/s, 1/s, 1/s);
-			GL11.glRotated(-r2, 1, 0, 0);
-			GL11.glRotated(-r, 0, 1, 0);
-			GL11.glBlendFunc(src, dst);
-			if (!blend)
-				GL11.glDisable(GL11.GL_BLEND);
-		}
-		if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
-			if (type == type.EQUIPPED && (item.getItem() instanceof ItemTool || item.getItem() instanceof ItemSword || item.getItem() instanceof ItemShears)) {
-				GL11.glTranslated(0.1, 0.15, 0);
-				float r = 135;
-				GL11.glRotated(r, 0, 1, 0);
-				GL11.glRotated(-100, 0, 0, 1);
-				double d = -2;
-				GL11.glTranslated(d, d, 0);
-				double s = 2.5;
-				GL11.glScaled(s, s, s);
+		for (int i = 0; i < indices.length; i++) {
+			double z = 0.001*i;
+			int index = indices[i];
+			int row = index/16;
+			int col = index-row*16;
+			if (item.getItem() instanceof AnimatedSpritesheet) {
+				AnimatedSpritesheet a = (AnimatedSpritesheet)item.getItem();
+				if (a.useAnimatedRender(item)) {
+					col = a.getColumn(item);
+					int offset = (int)((System.currentTimeMillis()/32/a.getFrameSpeed())%a.getFrameCount());
+					row = a.getBaseRow(item)+offset;
+					tex = a.getTexture(item);
+				}
 			}
-			else if (type == type.EQUIPPED_FIRST_PERSON) {
-				GL11.glTranslatef(0, 1.25F, 0.3125F);
-				GL11.glRotatef(60, 0, 1, 0);
-				GL11.glRotatef(65, 0, 0, 1);
-				GL11.glTranslatef(-0.625F, 0F, 0);
-				GL11.glScalef(1.5F, 1.5F, 1.5F);
-				GL11.glRotatef(-90, 0, 0, 1);
-				GL11.glTranslatef(-1, 0, 0);
-				GL11.glTranslatef(0.5F, 0, 0.25F);
-				GL11.glRotatef(-10, 0, 1, 0);
-				GL11.glTranslatef(-0.125F, -0.125F, 0F);/*
+			ReikaTextureHelper.bindTexture(root, tex);
+			if (type == type.INVENTORY) {
+				GL11.glDisable(GL11.GL_LIGHTING);
+			}
+			GL11.glPushMatrix();
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			GL11.glScalef(1.0F, -1.0F, -1.0F);
+			GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+			GL11.glPopMatrix();
+			Tessellator v5 = Tessellator.instance;
+			if (type == type.INVENTORY) {
+				if (v5.isDrawing)
+					v5.draw();
+				boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
+				GL11.glEnable(GL11.GL_BLEND);
+				int dst = GL11.glGetInteger(GL11.GL_BLEND_DST);
+				int src = GL11.glGetInteger(GL11.GL_BLEND_SRC);
+				BlendMode.DEFAULT.apply();
+				double r = 45;
+				double r2 = -30;
+				double s = 1.6;
+				double d = -0.5;
+				GL11.glRotated(r, 0, 1, 0);
+				GL11.glRotated(r2, 1, 0, 0);
+				GL11.glScaled(s, s, s);
+				GL11.glTranslated(d, d, 0);
+				v5.startDrawingQuads();
+				//v5.setTranslation(-1.125F, -1.375F, 0);
+				v5.addVertexWithUV(0, 0, z, 0.0625F*col, 0.0625F+0.0625F*row);
+				//v5.setTranslation(0.125F, -0.46875F, 0);
+				v5.addVertexWithUV(1, 0, z, 0.0625F+0.0625F*col, 0.0625F+0.0625F*row);
+				//v5.setTranslation(0.125F, 0.375F, 0);
+				v5.addVertexWithUV(1, 1, z, 0.0625F+0.0625F*col, 0.0625F*row);
+				//v5.setTranslation(-1.125F, -0.53125F, 0);
+				v5.addVertexWithUV(0, 1, z, 0.0625F*col, 0.0625F*row);
+				v5.draw();
+				GL11.glTranslated(-d, -d, 0);
+				GL11.glScaled(1/s, 1/s, 1/s);
+				GL11.glRotated(-r2, 1, 0, 0);
+				GL11.glRotated(-r, 0, 1, 0);
+				GL11.glBlendFunc(src, dst);
+				if (!blend)
+					GL11.glDisable(GL11.GL_BLEND);
+			}
+			if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
+				if (type == type.EQUIPPED && (item.getItem() instanceof ItemTool || item.getItem() instanceof ItemSword || item.getItem() instanceof ItemShears)) {
+					GL11.glTranslated(0.1, 0.15, 0);
+					float r = 135;
+					GL11.glRotated(r, 0, 1, 0);
+					GL11.glRotated(-100, 0, 0, 1);
+					double d = -2;
+					GL11.glTranslated(d, d, 0);
+					double s = 2.5;
+					GL11.glScaled(s, s, s);
+				}
+				else if (type == type.EQUIPPED_FIRST_PERSON) {
+					GL11.glTranslatef(0, 1.25F, 0.3125F);
+					GL11.glRotatef(60, 0, 1, 0);
+					GL11.glRotatef(65, 0, 0, 1);
+					GL11.glTranslatef(-0.625F, 0F, 0);
+					GL11.glScalef(1.5F, 1.5F, 1.5F);
+					GL11.glRotatef(-90, 0, 0, 1);
+					GL11.glTranslatef(-1, 0, 0);
+					GL11.glTranslatef(0.5F, 0, 0.25F);
+					GL11.glRotatef(-10, 0, 1, 0);
+					GL11.glTranslatef(-0.125F, -0.125F, 0F);/*
 				double r = -45;
 				double r2 = 0;
 				double r3 = 30;
@@ -131,53 +141,55 @@ public final class ReikaSpriteSheets {
 				GL11.glRotated(r3, 0, 0, 1);
 				GL11.glScaled(s, s, s);
 				GL11.glTranslated(d, d, 0);*/
-			}
-			else if (type == type.EQUIPPED) {
-				GL11.glRotated(90, 1, 0, 0);
-				GL11.glRotated(135, 0, 0, 1);
-				double d = 1.5;
-				GL11.glScaled(d, d, d);
-				GL11.glTranslated(0, -1, 0);
-				GL11.glTranslated(-0.2, 0, -0.4);
-				GL11.glRotated(-20, 0, 1, 0);
-				GL11.glRotated(-30, 1, 0, 0);
-			}
-			else { //Entity
-				double sc = 0.6;
-				//GL11.glScaled(sc, sc, sc);
-				GL11.glRotatef(90, 0, 1, 0);
-				GL11.glTranslated(-0.5, 0, 0);
-				GL11.glTranslated(0, -0.375, 0);
-				//GL11.glTranslated(0, 0, 0.125);
-			}
-			float thick = 0.0625F;
-			if (Minecraft.getMinecraft().gameSettings.fancyGraphics || type == type.EQUIPPED_FIRST_PERSON || type == type.EQUIPPED)
-				ItemRenderer.renderItemIn2D(v5, 0.0625F+0.0625F*col, 0.0625F*row, 0.0625F*col, 0.0625F+0.0625F*row, 256, 256, thick);
-			else {
-				if (type == type.ENTITY) {
-					GL11.glRotatef(180.0F - RenderManager.instance.playerViewY-90, 0.0F, 1.0F, 0.0F);
-					GL11.glRotatef(-RenderManager.instance.playerViewX, 1.0F, 0.0F, 0.0F);
 				}
-				GL11.glColor4f(1, 1, 1, 1);
-				v5.startDrawingQuads();
-				float u = col/16F;
-				float v = row/16F;
-				v5.setColorOpaque(255, 255, 255);
-				v5.addVertexWithUV(0, 0, 0, u, v+0.0625);
-				v5.addVertexWithUV(1, 0, 0, u+0.0625, v+0.0625);
-				v5.addVertexWithUV(1, 1, 0, u+0.0625, v);
-				v5.addVertexWithUV(0, 1, 0, u, v);
-				v5.draw();
+				else if (type == type.EQUIPPED) {
+					GL11.glRotated(90, 1, 0, 0);
+					GL11.glRotated(135, 0, 0, 1);
+					double d = 1.5;
+					GL11.glScaled(d, d, d);
+					GL11.glTranslated(0, -1, 0);
+					GL11.glTranslated(-0.2, 0, -0.4);
+					GL11.glRotated(-20, 0, 1, 0);
+					GL11.glRotated(-30, 1, 0, 0);
+				}
+				else { //Entity
+					double sc = 0.6;
+					//GL11.glScaled(sc, sc, sc);
+					GL11.glRotatef(90, 0, 1, 0);
+					GL11.glTranslated(-0.5, 0, 0);
+					GL11.glTranslated(0, -0.375, 0);
+					//GL11.glTranslated(0, 0, 0.125);
+				}
+				float thick = 0.0625F;
+				if (Minecraft.getMinecraft().gameSettings.fancyGraphics || type == type.EQUIPPED_FIRST_PERSON || type == type.EQUIPPED)
+					ItemRenderer.renderItemIn2D(v5, 0.0625F+0.0625F*col, 0.0625F*row, 0.0625F*col, 0.0625F+0.0625F*row, 256, 256, thick);
+				else {
+					if (type == type.ENTITY) {
+						GL11.glRotatef(180.0F - RenderManager.instance.playerViewY-90, 0.0F, 1.0F, 0.0F);
+						GL11.glRotatef(-RenderManager.instance.playerViewX, 1.0F, 0.0F, 0.0F);
+					}
+					GL11.glColor4f(1, 1, 1, 1);
+					v5.startDrawingQuads();
+					float u = col/16F;
+					float v = row/16F;
+					v5.setColorOpaque(255, 255, 255);
+					v5.addVertexWithUV(0, 0, 0, u, v+0.0625);
+					v5.addVertexWithUV(1, 0, 0, u+0.0625, v+0.0625);
+					v5.addVertexWithUV(1, 1, 0, u+0.0625, v);
+					v5.addVertexWithUV(0, 1, 0, u, v);
+					v5.draw();
+				}
 			}
 		}
-
 		renderEffect(type, item);
 
 		GL11.glEnable(GL11.GL_LIGHTING);
 		ReikaTextureHelper.bindItemTexture();
+		GL11.glPopMatrix();
 	}
 
 	public static void renderEffect(ItemRenderType ir, ItemStack is) {
+		GL11.glPushMatrix();
 		int pass = MinecraftForgeClient.getRenderPass();
 		Tessellator tessellator = Tessellator.instance;
 
@@ -224,6 +236,7 @@ public final class ReikaSpriteSheets {
 				}
 			}
 		}
+		GL11.glPopMatrix();
 	}
 
 	private static void renderEffect(TextureManager manager, int x, int y)

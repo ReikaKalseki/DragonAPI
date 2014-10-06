@@ -56,7 +56,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			else {
 				mod.getModLogger().logError("ITE on instantiating "+list);
 				e.getCause().printStackTrace();
-				throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" threw invocation target exception: "+e+" with "+e.getCause()+" ("+e.getCause().getMessage()+")");
+				throw new RegistrationException(mod, list+" ("+list.getObjectClass().getSimpleName()+") threw invocation target exception: "+e+" with "+e.getCause()+" ("+e.getCause().getMessage()+")");
 			}
 			//return null;
 		}
@@ -88,7 +88,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			if (t instanceof IllegalArgumentException)
 				throw new IDConflictException(mod, t.getMessage());
 			else
-				throw new RegistrationException(mod, list.getObjectClass().getSimpleName()+" threw invocation target exception: "+e+" with "+e.getCause()+" ("+e.getCause().getMessage()+")");
+				throw new RegistrationException(mod, list+" ("+list.getObjectClass().getSimpleName()+") threw invocation target exception: "+e+" with "+e.getCause()+" ("+e.getCause().getMessage()+")");
 		}
 	}
 
