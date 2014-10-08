@@ -2,6 +2,7 @@ package Reika.DragonAPI.Libraries;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 
@@ -9,31 +10,34 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.IResource;
-import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 public class ReikaIconHelper {
 
-	public static IIcon clipFrom(IIcon tex, IIcon src, ResourceLocation loc, TextureMap map, String name) {
-		return clipFrom(tex, src, loc, loc, map, name);
+	public static IIcon clipFrom(IIcon tex, IIcon src, TextureMap map, String name) {
+		try {
+			return getDiff(tex, src, map, name, true);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	public static IIcon clipFrom(IIcon tex, IIcon src, ResourceLocation l1, ResourceLocation l2, TextureMap map, String name) {
-		return getDiff(tex, src, l1, l2, true, map, name);
+	public static IIcon subtractFrom(IIcon sub, IIcon sum, TextureMap map, String name) {
+		try {
+			return getDiff(sub, sum, map, name, false);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
-	public static IIcon subtractFrom(IIcon sub, IIcon sum, ResourceLocation loc, TextureMap map, String name) {
-		return subtractFrom(sub, sum, loc, loc, map, name);
-	}
-
-	public static IIcon subtractFrom(IIcon sub, IIcon sum, ResourceLocation l1, ResourceLocation l2, TextureMap map, String name) {
-		return getDiff(sub, sum, l1, l2, false, map, name);
-	}
-
-	private static IIcon getDiff(IIcon i1, IIcon i2, ResourceLocation l1, ResourceLocation l2, boolean clip, TextureMap map, String name) {
-		BufferedImage src = getIconImage(i2, l2);
-		BufferedImage tgt = getIconImage(i1, l1);
+	private static IIcon getDiff(IIcon i1, IIcon i2, TextureMap map, String name, boolean clip) throws IOException {
+		BufferedImage src = getIconImage(i2, map);
+		BufferedImage tgt = getIconImage(i1, map);
 		int w = src.getWidth();
 		int h = src.getHeight();
 		int type = src.getType();
@@ -60,7 +64,7 @@ public class ReikaIconHelper {
 		for (int i = 0; i < sp.getFrameCount(); i++) {
 			int[][] data = sp.getFrameTextureData(i);
 			for (int x = 0; x < data.length; x++) {
-				for (int y = 0; y < data[x].length; i++) {
+				for (int y = 0; y < data[x].length; y++) {
 					int c = out.getRGB(x, y);
 					if (c != 0) {
 						data[x][y] = c;
@@ -71,16 +75,17 @@ public class ReikaIconHelper {
 		return sp;
 	}
 
-	private static BufferedImage getIconImage(IIcon ico, ResourceLocation loc) {
-		IResourceManager rm = Minecraft.getMinecraft().getResourceManager();
-		try {
-			IResource ir = rm.getResource(loc);
-			BufferedImage img = ImageIO.read(ir.getInputStream());
-			return img;
+	private static BufferedImage getIconImage(IIcon ico, TextureMap map) throws IOException {
+		Map<String, TextureAtlasSprite> data = map.mapRegisteredSprites;
+		for (String s : data.keySet()) {
+			ResourceLocation loc = new ResourceLocation(s);
+			TextureAtlasSprite spr = data.get(s);
+			if (spr.getIconName().equals(ico.getIconName())) {
+				IResource ir = Minecraft.getMinecraft().getResourceManager().getResource(loc);
+				return ImageIO.read(ir.getInputStream());
+			}
 		}
-		catch (IOException e) {
-			throw new IllegalArgumentException("The RL "+loc+" does not contain "+ico+"!");
-		}
+		throw new IOException("No image found!");
 	}
 
 }

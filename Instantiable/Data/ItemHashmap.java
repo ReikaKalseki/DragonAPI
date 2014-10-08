@@ -85,6 +85,11 @@ public final class ItemHashMap<V> {
 		return li;
 	}
 
+	@Override
+	public String toString() {
+		return data.toString();
+	}
+
 	private static final class ItemKey {
 
 		public final Item itemID;
