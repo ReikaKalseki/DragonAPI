@@ -82,20 +82,25 @@ public abstract class BlockTieredResource extends Block {
 	@Override
 	public final boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
 	{
-		int fortune = EnchantmentHelper.getFortuneModifier(player);
-		if (this.isPlayerSufficientTier(world, x, y, z, player)) {
-			Collection<ItemStack> li = this.getHarvestResources(world, x, y, z, fortune);
-			if (li != null) {
-				for (ItemStack is : li) {
-					ReikaItemHelper.dropItem(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), is);
-				}
-			}
+		if (player.capabilities.isCreativeMode) {
+
 		}
 		else {
-			Collection<ItemStack> li = this.getNoHarvestResources(world, x, y, z, fortune);
-			if (li != null) {
-				for (ItemStack is : li) {
-					ReikaItemHelper.dropItem(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), is);
+			int fortune = EnchantmentHelper.getFortuneModifier(player);
+			if (this.isPlayerSufficientTier(world, x, y, z, player)) {
+				Collection<ItemStack> li = this.getHarvestResources(world, x, y, z, fortune);
+				if (li != null) {
+					for (ItemStack is : li) {
+						ReikaItemHelper.dropItem(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), is);
+					}
+				}
+			}
+			else {
+				Collection<ItemStack> li = this.getNoHarvestResources(world, x, y, z, fortune);
+				if (li != null) {
+					for (ItemStack is : li) {
+						ReikaItemHelper.dropItem(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), is);
+					}
 				}
 			}
 		}

@@ -59,7 +59,7 @@ public abstract class DragonAPIMod {
 			ReikaJavaLibrary.pConsole(this.getDisplayName()+" is not running in a deobfuscated environment.");
 		}
 
-		version = ModVersion.readFromFile();
+		version = ModVersion.readFromFile(this);
 		modVersions.put(this.getClass().getSimpleName(), version);
 		if (this.getClass() == DragonAPIInit.class) {
 			apiVersion = version;
@@ -83,22 +83,24 @@ public abstract class DragonAPIMod {
 
 	protected final void verifyVersions() {
 		ModVersion mod = this.getModVersion();
-		if (mod.majorVersion != apiVersion.majorVersion || mod.isNewerMinorVersion(apiVersion)) {
-			throw new APIMismatchException(this, mod, apiVersion, DragonAPICore.last_API_Version);
-		}
-		HashMap<String, String> map = this.getDependencies();
-		if (map != null) {
-			for (String key : map.keySet()) {
-				String req = map.get(key);
-				ModVersion has = modVersions.get(key);
-				if (has == null) {
-					throw new MissingDependencyException(this, key);
-				}
-				else if (!has.isCompiled()) {
+		if (mod.verify()) {
+			if (mod.majorVersion != apiVersion.majorVersion || mod.isNewerMinorVersion(apiVersion)) {
+				throw new APIMismatchException(this, mod, apiVersion, DragonAPICore.last_API_Version);
+			}
+			HashMap<String, String> map = this.getDependencies();
+			if (map != null) {
+				for (String key : map.keySet()) {
+					String req = map.get(key);
+					ModVersion has = modVersions.get(key);
+					if (has == null) {
+						throw new MissingDependencyException(this, key);
+					}
+					else if (!has.isCompiled()) {
 
-				}
-				else if (!req.equals(has.toString())) {
-					throw new VersionMismatchException(this, mod, key, has, req);
+					}
+					else if (!req.equals(has.toString())) {
+						throw new VersionMismatchException(this, mod, key, has, req);
+					}
 				}
 			}
 		}

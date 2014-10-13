@@ -25,7 +25,7 @@ public final class TileEntityCache<V> {
 	}
 
 	public V put(int x, int y, int z, V tile) {
-		return this.put(x, y, z, tile);
+		return this.put(new Coordinate(x, y, z), tile);
 	}
 
 	public V put(Coordinate c, V tile) {
@@ -33,7 +33,7 @@ public final class TileEntityCache<V> {
 	}
 
 	public V put(WorldLocation loc, V tile) {
-		return data.put(new Coordinate(loc), tile);
+		return this.put(new Coordinate(loc), tile);
 	}
 
 	public V put(V tile) {
@@ -83,6 +83,11 @@ public final class TileEntityCache<V> {
 
 	public boolean isEmpty() {
 		return data.isEmpty();
+	}
+
+	@Override
+	public String toString() {
+		return data.toString();
 	}
 
 }

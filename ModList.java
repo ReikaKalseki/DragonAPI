@@ -52,6 +52,7 @@ public enum ModList {
 	DARTCRAFT("DartCraft", "bluedart.Blocks.DartBlock", "bluedart.Items.DartItem"), //ensure still here
 	TINKERER("TConstruct", "tconstruct.world.TinkerWorld", null), //tconstruct.library.TConstructRegistry.getBlock/Item
 	THERMALEXPANSION("ThermalExpansion", "thermalexpansion.block.TEBlocks", "thermalexpansion.item.TEItems"),
+	THERMALFOUNDATION("ThermalFoundation", "thermalfoundation.item.TFBlocks", "thermalfoundation.item.TFItems"),
 	MEKANISM("Mekanism", "mekanism.common.Mekanism"),
 	MEKTOOLS("MekanismTools", "mekanism.tools.common.MekanismTools"), //ensure still here
 	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks.RailcraftBlocks", null), //items spread over half a dozen classes
@@ -83,7 +84,8 @@ public enum ModList {
 	ATG("ATG"),
 	WAILA("Waila"),
 	BLUEPOWER("bluepower", "com.bluepowermod.init.BPBlocks", "com.bluepowermod.init.BPItems"),
-	COLORLIGHT("easycoloredlights");
+	COLORLIGHT("easycoloredlights"),
+	ENDERIO("EnderIO", "crazypants.enderio.EnderIO");
 
 	private final boolean condition;
 	public final String modLabel;

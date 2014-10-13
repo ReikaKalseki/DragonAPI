@@ -365,7 +365,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.APPENG, AppEngHandler.class);
 		this.initHandler(ModList.FORESTRY, ForestryHandler.class);
 		this.initHandler(ModList.FORESTRY, ForestryRecipeHelper.class);
-		this.initHandler(ModList.THERMALEXPANSION, ThermalHandler.class);
+		this.initHandler(ModList.THERMALFOUNDATION, ThermalHandler.class);
 		this.initHandler(ModList.MIMICRY, MimicryHandler.class);
 		this.initHandler(ModList.MAGICCROPS, MagicCropHandler.class);
 		this.initHandler(ModList.QCRAFT, QuantumOreHandler.class);;

@@ -13,7 +13,6 @@ import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
-import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -37,15 +36,10 @@ public class ThermalHandler extends ModHandlerBase {
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
-				Field pipe = blocks.getField("blockConduit");
-				idpipe = ((Block)pipe.get(null));
-				Class fluids = Class.forName("thermalexpansion.fluid.TEFluids");
-				Field ender = fluids.getField("blockEnder");
+				//Field pipe = blocks.getField("blockConduit");
+				//idpipe = ((Block)pipe.get(null));
+				Field ender = blocks.getField("blockFluidEnder");
 				idender = ((Block)ender.get(null));
-			}
-			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
-				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -74,7 +68,6 @@ public class ThermalHandler extends ModHandlerBase {
 
 		ductID = idpipe;
 		enderID = idender;
-		DragonAPIInit.instance.getModLogger().debug("Duct "+ductID);
 	}
 
 	public static ThermalHandler getInstance() {
@@ -88,7 +81,7 @@ public class ThermalHandler extends ModHandlerBase {
 
 	@Override
 	public ModList getMod() {
-		return ModList.THERMALEXPANSION;
+		return ModList.THERMALFOUNDATION;
 	}
 
 	public Types getConduitType(TileEntity te) {

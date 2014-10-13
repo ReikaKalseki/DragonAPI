@@ -14,17 +14,22 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
 public class ModVersion implements Comparable<ModVersion> {
 
 	public static final ModVersion source = new ModVersion(0) {
 		@Override public boolean equals(Object o) {return o == this;}
 		@Override public String toString() {return "Source Code";}
 		@Override public boolean isCompiled() {return false;}
+		@Override public boolean verify() {return false;}
 	};
 
 	private static final ModVersion error = new ModVersion(0) {
 		@Override public boolean equals(Object o) {return o == this;}
 		@Override public String toString() {return "[NO FILE]";}
+		@Override public boolean verify() {return false;}
 	};
 
 	public final int majorVersion;
@@ -49,6 +54,10 @@ public class ModVersion implements Comparable<ModVersion> {
 	}
 
 	public boolean isCompiled() {
+		return true;
+	}
+
+	public boolean verify() {
 		return true;
 	}
 
@@ -85,10 +94,11 @@ public class ModVersion implements Comparable<ModVersion> {
 		return v.majorVersion == majorVersion && v.getSubVersionIndex() < this.getSubVersionIndex();
 	}
 
-	public static ModVersion readFromFile() {
+	public static ModVersion readFromFile(DragonAPIMod mod) {
 		Properties p = new Properties();
+		String path = ReikaStringParser.stripSpaces("/Reika/"+mod.getDisplayName()+"/version.properties");
 		try {
-			InputStream stream = ModVersion.class.getClassLoader().getResourceAsStream("version.properties");
+			InputStream stream = ModVersion.class.getClassLoader().getResourceAsStream(path);
 			if (stream == null) {
 				throw new FileNotFoundException();
 			}
