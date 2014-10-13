@@ -181,8 +181,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		if (!worldObj.isRemote) {
 			AxisAlignedBB box = ReikaAABBHelper.getBlockAABB(xCoord, yCoord, zCoord).expand(r, r, r);
 			List<EntityPlayerMP> li = worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, box);
-			for (int i = 0; i < li.size(); i++)  {
-				EntityPlayerMP entityplayermp = li.get(i);
+			for (EntityPlayerMP entityplayermp : li)  {
 				entityplayermp.playerNetServerHandler.sendPacket(p);
 			}
 		}
