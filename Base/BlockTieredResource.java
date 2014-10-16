@@ -107,9 +107,9 @@ public abstract class BlockTieredResource extends Block {
 		return super.removedByPlayer(world, player, x, y, z, willHarvest);
 	}
 
-	protected abstract Collection<ItemStack> getHarvestResources(World world, int x, int y, int z, int fortune);
+	public abstract Collection<ItemStack> getHarvestResources(World world, int x, int y, int z, int fortune);
 
-	protected Collection<ItemStack> getNoHarvestResources(World world, int x, int y, int z, int fortune) {
+	public Collection<ItemStack> getNoHarvestResources(World world, int x, int y, int z, int fortune) {
 		return null;
 	}
 
