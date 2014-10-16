@@ -167,6 +167,14 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		return li;
 	}
 
+	public static void combineNBT(NBTTagCompound tag1, NBTTagCompound tag2) {
+		for (Object o : tag2.func_150296_c()) {
+			String s = (String)o;
+			NBTBase key = tag2.getTag(s);
+			tag1.setTag(s, key.copy());
+		}
+	}
+
 	public static enum NBTTypes {
 		INT(new NBTTagInt(0).getId()),
 		BYTE(new NBTTagByte((byte)0).getId()),

@@ -34,6 +34,7 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Base.ScheduledTickEvent;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -260,5 +261,9 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		NBTTagCompound nbt = ep.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
 		ep.getEntityData().setTag(EntityPlayer.PERSISTED_NBT_TAG, nbt);
 		return nbt;
+	}
+
+	public static void schedulePlayerTick(EntityPlayer ep, int ticks) {
+		ReikaScheduler.scheduleEvent(new ScheduledTickEvent(ep), ticks);
 	}
 }
