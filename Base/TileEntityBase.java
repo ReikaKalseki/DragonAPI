@@ -439,7 +439,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		if (this.getTicksExisted() == 0) {
 			for (int i = 0; i < 6; i++)
 				this.updateCache(dirs[i]);
-			if (node.network() == null)
+			if (node != null && node.network() == null)
 				Network.joinOrCreateNetwork(this);
 			this.onFirstTick(worldObj, xCoord, yCoord, zCoord);
 		}
