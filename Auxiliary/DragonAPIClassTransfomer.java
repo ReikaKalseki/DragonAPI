@@ -16,11 +16,13 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -37,7 +39,9 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 
 	private static enum ClassPatch {
 		CREEPERBOMBEVENT("net.minecraft.entity.monster.EntityCreeper", "xz"),
-		ITEMRENDEREVENT("net.minecraft.client.gui.inventory.GuiContainer", "bex");
+		ITEMRENDEREVENT("net.minecraft.client.gui.inventory.GuiContainer", "bex"),
+		SLOTCLICKEVENT("net.minecraft.inventory.Slot", "aay"),
+		ICECANCEL("net.minecraft.world.World", "ahb");
 
 		private final String obfName;
 		private final String deobfName;
@@ -102,6 +106,76 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				}
 			}
 			break;
+			case SLOTCLICKEVENT: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_82870_a", "onPickupFromSlot", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;)V");
+				if (m == null) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Could not find method for "+this+" ASM handler!");
+				}
+				else {
+					AbstractInsnNode pos = m.instructions.getFirst();
+					m.instructions.insertBefore(pos, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+					m.instructions.insertBefore(pos, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/SlotEvent$RemoveFromSlotEvent"));
+					m.instructions.insertBefore(pos, new InsnNode(Opcodes.DUP));
+					m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/inventory/Slot", "getSlotIndex", "()I"));
+					m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.insertBefore(pos, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/Slot", "inventory", "Lnet/minecraft/inventory/IInventory;"));
+					m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 2));
+					m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 1));
+					m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SlotEvent$RemoveFromSlotEvent", "<init>", "(ILnet/minecraft/inventory/IInventory;Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V"));
+					m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+					m.instructions.insertBefore(pos, new InsnNode(Opcodes.POP));
+
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+				}
+			}
+			break;
+			case ICECANCEL: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_72834_c", "canBlockFreeze", "(IIIZ)Z");
+				if (m == null) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Could not find method for "+this+" ASM handler!");
+				}
+				else {
+					LabelNode l4 = new LabelNode(new Label());
+					LabelNode l6 = new LabelNode(new Label());
+					m.instructions.clear();
+					m.instructions.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent"));
+					m.instructions.add(new InsnNode(Opcodes.DUP));
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
+					m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 4));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "<init>", "(Lnet/minecraft/world/World;IIIZ)V"));
+					m.instructions.add(new VarInsnNode(Opcodes.ASTORE, 5));
+					m.instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 5));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+					m.instructions.add(new InsnNode(Opcodes.POP));
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 5));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "getResult", "()Lcpw/mods/fml/common/eventhandler/Event$Result;"));
+					m.instructions.add(new VarInsnNode(Opcodes.ASTORE, 6));
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 6));
+					m.instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "cpw/mods/fml/common/eventhandler/Event$Result", "ALLOW", "Lcpw/mods/fml/common/eventhandler/Event$Result;"));
+					m.instructions.add(new JumpInsnNode(Opcodes.IF_ACMPNE, l4));
+					m.instructions.add(new InsnNode(Opcodes.ICONST_1));
+					m.instructions.add(new InsnNode(Opcodes.IRETURN));
+					m.instructions.add(l4);
+					//FRAME APPEND [Reika/DragonAPI/Instantiable/Event/IceFreezeEvent cpw/mods/fml/common/eventhandler/Event$Result]
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 6));
+					m.instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "cpw/mods/fml/common/eventhandler/Event$Result", "DENY", "Lcpw/mods/fml/common/eventhandler/Event$Result;"));
+					m.instructions.add(new JumpInsnNode(Opcodes.IF_ACMPNE, l6));
+					m.instructions.add(new InsnNode(Opcodes.ICONST_0));
+					m.instructions.add(new InsnNode(Opcodes.IRETURN));
+					m.instructions.add(l6);
+					//FRAME SAME
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 5));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "wouldFreezeNaturally", "()Z"));
+					m.instructions.add(new InsnNode(Opcodes.IRETURN));
+
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+				}
+			}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);

@@ -242,7 +242,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 	}
 
 	@Override
-	public void tick(Object... tickData) {
+	public void tick(TickType type, Object... tickData) {
 		World world = (World)tickData[0];
 		ArrayList<ProgressiveBreaker> li = breakers.get(world.provider.dimensionId);
 		if (li != null) {

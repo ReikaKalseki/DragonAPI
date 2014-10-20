@@ -51,6 +51,7 @@ public final class ReikaSpriteSheets {
 		}
 		GL11.glPushMatrix();
 		for (int i = 0; i < indices.length; i++) {
+			GL11.glPushMatrix();
 			double z = 0.001*i;
 			int index = indices[i];
 			int row = index/16;
@@ -180,6 +181,7 @@ public final class ReikaSpriteSheets {
 					v5.draw();
 				}
 			}
+			GL11.glPopMatrix();
 		}
 		renderEffect(type, item);
 

@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import Reika.DragonAPI.DragonAPICore;
 
@@ -343,13 +344,6 @@ public class ReikaStringParser extends DragonAPICore {
 	}
 
 	public static boolean containsWord(String s, String word) {
-		int index = s.indexOf(word);
-		if (index < 0)
-			return false;
-		if (index > 0 && Character.isLetter(s.charAt(index-1)))
-			return false;
-		if (index < s.length()-1 && Character.isLetter(s.charAt(index+1)))
-			return false;
-		return true;
+		return Pattern.compile("\\s"+word+"[\\s]|\\s"+word+"$|^"+word+"\\s|^"+word+"$").matcher(s).find();
 	}
 }

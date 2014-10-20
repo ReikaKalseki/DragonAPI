@@ -168,6 +168,10 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		for (int i = 0; i < types.length; i++) {
 			if (types[i] == BiomeDictionary.Type.FROZEN)
 				return true;
+			if (types[i] == BiomeDictionary.Type.COLD)
+				return true;
+			if (types[i] == BiomeDictionary.Type.SNOWY)
+				return true;
 		}
 		return false;
 	}
@@ -189,6 +193,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			if (types[i] == BiomeDictionary.Type.WASTELAND)
 				return true;
 			if (types[i] == BiomeDictionary.Type.DESERT)
+				return true;
+			if (types[i] == BiomeDictionary.Type.HOT)
 				return true;
 			if (types[i] == BiomeDictionary.Type.JUNGLE)
 				return true;

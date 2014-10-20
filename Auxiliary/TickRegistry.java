@@ -40,7 +40,7 @@ public class TickRegistry {
 	public void playerTick(PlayerTickEvent evt) {
 		for (TickHandler h : playerTickers) {
 			if (h.canFire(evt.phase)) {
-				h.tick(evt.player, evt.phase);
+				h.tick(TickType.PLAYER, evt.player, evt.phase);
 			}
 		}
 	}
@@ -49,7 +49,7 @@ public class TickRegistry {
 	public void renderTick(RenderTickEvent evt) {
 		for (TickHandler h : renderTickers) {
 			if (h.canFire(evt.phase)) {
-				h.tick(evt.renderTickTime, evt.phase);
+				h.tick(TickType.RENDER, evt.renderTickTime, evt.phase);
 			}
 		}
 	}
@@ -58,7 +58,7 @@ public class TickRegistry {
 	public void clientTick(ClientTickEvent evt) {
 		for (TickHandler h : clientTickers) {
 			if (h.canFire(evt.phase)) {
-				h.tick(evt.phase);
+				h.tick(TickType.CLIENT, evt.phase);
 			}
 		}
 	}
@@ -67,7 +67,7 @@ public class TickRegistry {
 	public void worldTick(WorldTickEvent evt) {
 		for (TickHandler h : worldTickers) {
 			if (h.canFire(evt.phase)) {
-				h.tick(evt.world, evt.phase);
+				h.tick(TickType.WORLD, evt.world, evt.phase);
 			}
 		}
 	}
@@ -76,7 +76,7 @@ public class TickRegistry {
 	public void serverTick(ServerTickEvent evt) {
 		for (TickHandler h : serverTickers) {
 			if (h.canFire(evt.phase)) {
-				h.tick(evt.phase);
+				h.tick(TickType.SERVER, evt.phase);
 			}
 		}
 	}
@@ -99,12 +99,19 @@ public class TickRegistry {
 		case WORLD:
 			worldTickers.add(h);
 			break;
+		case ALL:
+			clientTickers.add(h);
+			playerTickers.add(h);
+			renderTickers.add(h);
+			serverTickers.add(h);
+			worldTickers.add(h);
+			break;
 		}
 	}
 
 	public static interface TickHandler {
 
-		public void tick(Object... tickData);
+		public void tick(TickType type, Object... tickData);
 
 		public TickType getType();
 
@@ -145,7 +152,10 @@ public class TickRegistry {
 		 * This is the server game tick.
 		 * Fired once per tick loop on the server.
 		 */
-		SERVER;
+		SERVER,
+
+
+		ALL;
 	}
 
 }

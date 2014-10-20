@@ -34,8 +34,10 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Base.ScheduledTickEvent;
+import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
+import Reika.DragonAPI.Auxiliary.TickScheduler;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
+import Reika.DragonAPI.Instantiable.Event.ScheduledTickEvent;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -264,6 +266,6 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	}
 
 	public static void schedulePlayerTick(EntityPlayer ep, int ticks) {
-		ReikaScheduler.scheduleEvent(new ScheduledTickEvent(ep), ticks);
+		TickScheduler.instance.scheduleEvent(new ScheduledTickEvent(TickType.PLAYER, ep), ticks);
 	}
 }

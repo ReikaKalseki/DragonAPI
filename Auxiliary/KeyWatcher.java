@@ -147,7 +147,7 @@ public class KeyWatcher {
 		}
 
 		@Override
-		public void tick(Object... tickData) {
+		public void tick(TickType type, Object... tickData) {
 
 			for (int i = 0; i < Keys.keyList.length; i++) {
 				Keys key = Keys.keyList[i];

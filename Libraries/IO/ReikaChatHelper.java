@@ -45,8 +45,6 @@ public final class ReikaChatHelper extends DragonAPICore {
 	/** Writes an itemstack to the chat.
 	 * Args: World, itemstack */
 	public static void writeItemStack(World world, ItemStack is) {
-		if (Minecraft.getMinecraft().thePlayer == null || world == null)
-			return;
 		String msg;
 		if (is == null)
 			msg = "Null Stack!";
@@ -58,8 +56,6 @@ public final class ReikaChatHelper extends DragonAPICore {
 	/** Writes coordinates to the chat.
 	 * Args: World, x, y, z */
 	public static void writeCoords(World world, double x, double y, double z) {
-		if (Minecraft.getMinecraft().thePlayer == null || world == null)
-			return;
 		String msg;
 		msg = String.format("%.2f, %.2f, %.2f", x, y, z);
 		writeString(msg);
@@ -69,8 +65,6 @@ public final class ReikaChatHelper extends DragonAPICore {
 	 * Args: World, x, y, z */
 	public static void writeBlockAtCoords(World world, int x, int y, int z) {
 		StringBuilder sb = new StringBuilder();
-		if (Minecraft.getMinecraft().thePlayer == null || world == null)
-			return;
 		String name;
 		Block id = world.getBlock(x, y, z);
 		if (id != Blocks.air)
