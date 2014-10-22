@@ -18,6 +18,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 
 public final class BlockMap<V> {
 
@@ -158,7 +159,7 @@ public final class BlockMap<V> {
 		}
 
 		public boolean hasMetadata() {
-			return metadata >= 0;
+			return metadata >= 0 && metadata != OreDictionary.WILDCARD_VALUE;
 		}
 
 		public ItemStack asItemStack() {

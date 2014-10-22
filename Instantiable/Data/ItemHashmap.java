@@ -16,6 +16,7 @@ import java.util.HashMap;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 public final class ItemHashMap<V> {
 
@@ -90,6 +91,10 @@ public final class ItemHashMap<V> {
 		return data.toString();
 	}
 
+	public void clear() {
+		data.clear();
+	}
+
 	private static final class ItemKey {
 
 		public final Item itemID;
@@ -121,7 +126,7 @@ public final class ItemHashMap<V> {
 		}
 
 		public boolean hasMetadata() {
-			return metadata >= 0;
+			return metadata >= 0 && metadata != OreDictionary.WILDCARD_VALUE;
 		}
 
 		public ItemStack asItemStack() {
