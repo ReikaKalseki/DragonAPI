@@ -17,6 +17,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
@@ -69,8 +70,18 @@ public class DebugOverlay {
 					TileEntity te = ep.worldObj.getTileEntity(x, y, z);
 					if (te != null) {
 						NBTTagCompound NBT = new NBTTagCompound();
-						te.writeToNBT(NBT);
-						ArrayList<String> li = ReikaNBTHelper.parseNBTAsLines(NBT);
+						ArrayList<String> li = new ArrayList();
+						try {
+							te.writeToNBT(NBT);
+							li.addAll(ReikaNBTHelper.parseNBTAsLines(NBT));
+						}
+						catch (Exception e) {
+							StackTraceElement[] el = e.getStackTrace();
+							li.add(EnumChatFormatting.RED.toString()+e.getClass()+": "+e.getLocalizedMessage());
+							for (int i = 0; i < 4; i++) {
+								li.add(el[i].toString());
+							}
+						}
 						for (int i = 0; i < li.size(); i++) {
 							String s = li.get(i);
 							f.drawString(s, 1+event.resolution.getScaledWidth()/2*(i/24), 1+f.FONT_HEIGHT*(i%24), 0xffffff);

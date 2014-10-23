@@ -1,14 +1,19 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2014
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 
 public class ItemCollection {
 
@@ -58,7 +63,7 @@ public class ItemCollection {
 			return 0;
 		}
 	}
-
+	/*
 	public int getItemCountWithOreEquivalence(ItemStack is) {
 		int[] ids = OreDictionary.getOreIDs(is);
 		if (ids.length == 0) {
@@ -81,25 +86,33 @@ public class ItemCollection {
 			return count;
 		}
 	}
-
-	public boolean removeXItems(ItemStack is, int amt) {
+	 */
+	public int removeXItems(ItemStack is, int amt) {
 		ArrayList<InventorySlot> li = data.get(is);
+		int rem = 0;
 		if (li != null) {
 			Iterator<InventorySlot> it = li.iterator();
 			while (it.hasNext()) {
 				InventorySlot slot = it.next();
-				amt -= slot.decrement(amt);
+				int dec = slot.decrement(amt);
+				rem += dec;
+				amt -= dec;
 				if (slot.isEmpty())
 					it.remove();
 				if (amt <= 0)
-					return true;
+					return rem;
 			}
 		}
-		return false;
+		return rem;
 	}
 
 	public void clear() {
 		data.clear();
+	}
+
+	@Override
+	public String toString() {
+		return data.toString();
 	}
 
 }

@@ -17,7 +17,7 @@ public enum DragonOptions implements ConfigList {
 	DEBUGMODE("Debug Mode", false),
 	SYNCPACKET("Sync Packet ID", 182),
 	NORENDERS("Disable Renders For Debug", false),
-	TABNBT("Show TileEntity NBT when using TAB", true),
+	TABNBT("Show TileEntity NBT when using TAB", false),
 	SOUNDCHANNELS("Increase sound channel count", true);
 
 	private String label;
