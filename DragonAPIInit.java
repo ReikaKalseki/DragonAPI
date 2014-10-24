@@ -44,6 +44,7 @@ import Reika.DragonAPI.Auxiliary.SuggestedModsTracker;
 import Reika.DragonAPI.Auxiliary.TickRegistry;
 import Reika.DragonAPI.Auxiliary.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Command.BlockReplaceCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
@@ -272,6 +273,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new TestControlCommand());
 		evt.registerServerCommand(new CheckerDisableCommand());
 		evt.registerServerCommand(new SelectiveKillCommand());
+		evt.registerServerCommand(new BlockReplaceCommand());
 	}
 
 	@SubscribeEvent
