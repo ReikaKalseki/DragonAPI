@@ -514,4 +514,11 @@ public final class ReikaGuiAPI extends GuiScreen {
 			}
 		}
 	}
+
+	public void drawTexturedModalRectWithDepth(int x, int y, int u, int v, int w, int h, int o) {
+		GL11.glPushMatrix();
+		GL11.glTranslated(0, 0, o);
+		this.drawTexturedModalRect(x, y, u, v, w, h);
+		GL11.glPopMatrix();
+	}
 }

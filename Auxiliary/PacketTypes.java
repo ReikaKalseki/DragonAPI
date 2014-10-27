@@ -30,7 +30,7 @@ public enum PacketTypes {
 	}
 
 	public boolean hasCoordinates() {
-		return this != RAW;
+		return this != RAW && this != NBT;
 	}
 
 }

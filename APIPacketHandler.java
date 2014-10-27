@@ -159,6 +159,14 @@ public class APIPacketHandler implements IPacketHandler {
 					tile.syncAllData(data[0] > 0);
 				}
 				break;
+			case VTILESYNC:
+				int tx = NBT.getInteger("x");
+				int ty = NBT.getInteger("y");
+				int tz = NBT.getInteger("z");
+				TileEntity tile = world.getTileEntity(tx, ty, tz);
+				//ReikaJavaLibrary.pConsole(((IInventory)tile).getStackInSlot(0));
+				tile.readFromNBT(NBT);
+				break;
 			case TILEDELETE:
 				world.setBlockToAir(x, y, z);
 				break;
@@ -184,6 +192,7 @@ public class APIPacketHandler implements IPacketHandler {
 		PARTICLE(),
 		KEYUPDATE(),
 		TILESYNC(),
+		VTILESYNC(),
 		TILEDELETE(),
 		PLAYERDATSYNC(),
 		RERENDER();

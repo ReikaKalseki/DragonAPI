@@ -9,7 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Iterator;
+import java.util.List;
+
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
@@ -179,9 +186,11 @@ public class CoreContainer extends Container {
 				return is;
 			}
 			else {
-				for (int i = base; i < ((IInventory)tile).getSizeInventory() && is.stackSize > 0; i++) {
-					Slot toSlot = (Slot)inventorySlots.get(i);
+				List<Slot> list = this.getOrderedSlotList();
+				for (int i = base; i < ((IInventory)tile).getSizeInventory() && i < list.size() && is.stackSize > 0; i++) {
+					Slot toSlot = list.get(i);
 					int lim = ((IInventory)tile).getInventoryStackLimit();
+					//ReikaJavaLibrary.pConsole(i+" "+toSlot+":"+toSlot.getSlotIndex()+" E ["+base+", "+((IInventory)tile).getSizeInventory()+") > "+toSlot.isItemValid(is), Side.SERVER);
 					if (toSlot.isItemValid(is) && (((IInventory)tile).isItemValidForSlot(i, is)) && this.canAdd(is, toSlot.getStack())) {
 						if (!toSlot.getHasStack()) {
 							if (is.stackSize <= lim) {
@@ -277,6 +286,38 @@ public class CoreContainer extends Container {
 			}
 		}
 		return is;
+	}
+
+	private List<Slot> getOrderedSlotList() {
+		List<Slot> copy = new ArrayList(inventorySlots);
+		Collections.sort(copy, new SlotComparator());
+		Iterator<Slot> it = copy.iterator();
+		while (it.hasNext()) {
+			Slot s = it.next();
+			if (s.inventory instanceof InventoryPlayer)
+				it.remove();
+		}
+		/*
+		StringBuilder sb = new StringBuilder();
+		sb.append("[");
+		for (int i = 0; i < copy.size(); i++) {
+			Slot slot = copy.get(i);
+			sb.append(slot.getSlotIndex()+":"+slot.getClass().getSimpleName()+":"+slot.inventory);
+			sb.append(", ");
+		}
+		sb.append("]");
+		ReikaJavaLibrary.pConsole(sb.toString());
+		 */
+		return copy;
+	}
+
+	private static class SlotComparator implements Comparator<Slot> {
+
+		@Override
+		public int compare(Slot o1, Slot o2) {
+			return o1.getSlotIndex() - o2.getSlotIndex();
+		}
+
 	}
 
 }

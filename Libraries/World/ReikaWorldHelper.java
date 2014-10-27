@@ -497,6 +497,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		Block b = world.getBlock(x, y, z);
 		if (b == Blocks.air || b == Blocks.bedrock)
 			return false;
+		if (b == Blocks.obsidian) {
+			return temperature > 1800;
+		}
 		Material m = b.getMaterial();
 		if (m == Material.rock) {
 			return temperature > 1500;

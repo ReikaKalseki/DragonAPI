@@ -100,7 +100,7 @@ public class ModVersion implements Comparable<ModVersion> {
 		try {
 			InputStream stream = ModVersion.class.getClassLoader().getResourceAsStream(path);
 			if (stream == null) {
-				throw new FileNotFoundException("Version file for "+mod+"is missing!");
+				throw new FileNotFoundException("Version file for "+mod.getDisplayName()+" is missing!");
 			}
 			p.load(stream);
 			return getFromString(p.getProperty("Major")+p.getProperty("Minor"));

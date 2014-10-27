@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
@@ -56,6 +57,18 @@ public class RenderItemInSlotEvent extends Event {
 
 	public int getRelativeMouseY() {
 		return ReikaGuiAPI.instance.getMouseRealY()-slotY-gui.guiTop;
+	}
+
+	public boolean guiInstanceOf(Class c) {
+		return c.isAssignableFrom(gui.getClass());
+	}
+
+	public Class getGuiClass() {
+		return gui.getClass();
+	}
+
+	public IInventory getSlotInventory() {
+		return slot.inventory;
 	}
 
 }

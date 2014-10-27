@@ -168,6 +168,8 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	}
 
 	public static void combineNBT(NBTTagCompound tag1, NBTTagCompound tag2) {
+		if (tag2 == null || tag2.hasNoTags())
+			return;
 		for (Object o : tag2.func_150296_c()) {
 			String s = (String)o;
 			NBTBase key = tag2.getTag(s);

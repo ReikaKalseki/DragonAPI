@@ -418,4 +418,12 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		}
 		return a;
 	}
+
+	public static int[] getArrayOf(int val, int length) {
+		int[] data = new int[length];
+		for (int i = 0; i < length; i++) {
+			data[i] = val;
+		}
+		return data;
+	}
 }

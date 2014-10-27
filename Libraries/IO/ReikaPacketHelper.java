@@ -36,6 +36,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
@@ -45,6 +46,7 @@ import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.IO.PacketPipeline;
 import Reika.DragonAPI.Interfaces.IPacketHandler;
 import Reika.DragonAPI.Interfaces.SoundEnum;
+import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 
@@ -1140,6 +1142,14 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			break;
 		}
 		EnumConnectionState.field_150761_f.put(c, state);
+	}
+
+	public static void syncTileEntity(TileEntity tile) {
+		NBTTagCompound NBT = new NBTTagCompound();
+		tile.writeToNBT(NBT);
+		List<EntityPlayerMP> li = tile.worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, ReikaAABBHelper.getBlockAABB(tile.xCoord, tile.yCoord, tile.zCoord).expand(4, 4, 4));
+		for (EntityPlayerMP ep : li)
+			sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.VTILESYNC.ordinal(), ep, NBT);
 	}
 
 }

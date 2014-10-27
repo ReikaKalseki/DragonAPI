@@ -65,7 +65,8 @@ public class ReikaThaumHelper {
 				ot.merge(as, has.getAmount(as));
 			}
 		}
-		ThaumcraftApi.registerObjectTag(is, new int[]{is.getItemDamage()}, ot);
+		ReikaJavaLibrary.pConsole(Block.getBlockFromItem(is.getItem())+"_"+is+" > "+ot.aspects.toString()+" W "+has);
+		ThaumcraftApi.registerObjectTag(is, ot);
 	}
 
 	public static void addAspectsToBlock(Block b, Object... aspects) {
