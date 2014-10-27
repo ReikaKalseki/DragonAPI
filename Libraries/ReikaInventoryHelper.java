@@ -199,6 +199,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return locateInInventory(Item.getItemFromBlock(id), inv);
 	}
 
+	public static int locateInInventory(Block id, int meta, ItemStack[] inv) {
+		return locateInInventory(Item.getItemFromBlock(id), meta, inv);
+	}
+
 	/** Returns the location (array index) of an item in the specified inventory.
 	 * Returns -1 if not present. Args: Item ID, Metadata, Inventory */
 	public static int locateInInventory(Item id, int meta, ItemStack[] inv) {

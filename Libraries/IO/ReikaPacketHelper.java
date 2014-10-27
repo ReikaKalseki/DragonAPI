@@ -203,6 +203,55 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		pipe.sendToPlayer(pack, ep);
 	}
 
+	public static void sendDataPacket(String ch, int id, TileEntity te, EntityPlayerMP ep, int... data) {
+		int npars;
+		if (data == null)
+			npars = 4;
+		else
+			npars = data.length+4;
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(npars*4); //4 bytes an int
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(id);
+			if (data != null)
+				for (int i = 0; i < data.length; i++) {
+					outputStream.writeInt(data[i]);
+				}
+			outputStream.writeInt(te.xCoord);
+			outputStream.writeInt(te.yCoord);
+			outputStream.writeInt(te.zCoord);
+
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.DATA, pipe);
+		pack.setData(dat);
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+
+		if (side == Side.SERVER) {
+			pipe.sendToPlayer(pack, ep);
+		}
+		else if (side == Side.CLIENT) {
+
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
 	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, List<Integer> data) {
 
 		int npars;

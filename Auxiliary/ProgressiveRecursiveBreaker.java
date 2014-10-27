@@ -59,8 +59,10 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private int tick;
 		public int fortune = 0;
 		public boolean silkTouch = false;
+		public boolean drops = true;
 		public EntityPlayer player;
 		public BlockBox bounds = BlockBox.infinity();
+		public BreakerCallback call;
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<BlockKey> ids) {
 			this.world = world;
@@ -143,11 +145,22 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 				}
 				depth++;
 				if (start.isEmpty())
-					isDone = true;
+					this.finish();
 			}
 			else {
-				isDone = true;
+				this.finish();
 			}
+		}
+
+		private void finish() {
+			isDone = true;
+			if (call != null) {
+				call.onFinish(this);
+			}
+		}
+
+		public void terminate() {
+			this.finish();
 		}
 
 		private boolean canSpreadTo(World world, int x, int y, int z) {
@@ -155,6 +168,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 				return false;
 			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
+			if (call != null && !call.canBreak(this, world, x, y, z, id, meta))
+				return false;
 			if (id == Blocks.air)
 				return false;
 			if (!ids.contains(new BlockKey(id, meta)))
@@ -164,14 +179,27 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 
 		private void dropBlock(World world, int x, int y, int z) {
 			Block id = world.getBlock(x, y, z);
-			if (silkTouch)
-				ReikaItemHelper.dropItem(world, x, y, z, new ItemStack(id, 1, world.getBlockMetadata(x, y, z)));
-			else
-				ReikaWorldHelper.dropBlockAt(world, x, y, z, fortune);
+			int meta = world.getBlockMetadata(x, y, z);
+			if (drops) {
+				if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta))
+					ReikaItemHelper.dropItem(world, x, y, z, new ItemStack(id, 1, world.getBlockMetadata(x, y, z)));
+				else
+					ReikaWorldHelper.dropBlockAt(world, x, y, z, fortune);
+			}
 			world.setBlockToAir(x, y, z);
 			ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 			world.markBlockForUpdate(x, y, z);
+			if (call != null)
+				call.onBreak(this, world, x, y, z, id, meta);
 		}
+	}
+
+	public static interface BreakerCallback {
+
+		public boolean canBreak(ProgressiveBreaker b, World world, int x, int y, int z, Block id, int meta);
+		public void onBreak(ProgressiveBreaker b, World world, int x, int y, int z, Block id, int meta);
+		public void onFinish(ProgressiveBreaker b);
+
 	}
 
 	private ProgressiveRecursiveBreaker() {
@@ -230,6 +258,13 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 	public void addCoordinate(World world, int x, int y, int z, int maxDepth) {
 		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
 		li.add(new ProgressiveBreaker(world, x, y, z, maxDepth));
+	}
+
+	public ProgressiveBreaker addCoordinateWithReturn(World world, int x, int y, int z, int maxDepth) {
+		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
+		ProgressiveBreaker b = new ProgressiveBreaker(world, x, y, z, maxDepth);
+		li.add(b);
+		return b;
 	}
 
 	private ArrayList<ProgressiveBreaker> getOrCreateList(World world) {
