@@ -211,8 +211,6 @@ public class MENetwork {
 		@Override
 		public IAEItemStack reset() {return this;}
 		@Override
-		public boolean isMeaninful() {return false;}
-		@Override
 		public void incStackSize(long l) {stack.stackSize += l;}
 		@Override
 		public void decStackSize(long l) {stack.stackSize -= l;}
@@ -259,6 +257,9 @@ public class MENetwork {
 		public int compareTo(AEStack o) {
 			return (int)(o.getStackSize()-this.getStackSize());
 		}
+		@Override
+		public boolean isMeaningful() {return false;}
+		public boolean isMeaninful() {return false;} //for back compat
 
 	}
 

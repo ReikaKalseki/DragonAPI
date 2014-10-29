@@ -678,4 +678,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		clean.addAll(li);
 		return clean;
 	}
+
+	public static IRecipe getShapelessRecipeFor(ItemStack out, ItemStack... in) {
+		return new ShapelessRecipes(out.copy(), ReikaJavaLibrary.makeListFrom(in));
+	}
 }

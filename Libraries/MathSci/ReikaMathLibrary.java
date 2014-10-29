@@ -298,6 +298,10 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return (val <= hi && val >= low);
 	}
 
+	public static boolean isValueInsideBounds(double low, double hi, double val) {
+		return (val < hi && val > low);
+	}
+
 	public static boolean isValueInsideBoundsIncl(double low, double hi, double val) {
 		return (val <= hi && val >= low);
 	}
