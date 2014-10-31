@@ -25,8 +25,10 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public abstract class BlockTieredResource extends Block {
 
@@ -82,29 +84,30 @@ public abstract class BlockTieredResource extends Block {
 	@Override
 	public final boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
 	{
+		Collection<ItemStack> li = null;
 		if (player.capabilities.isCreativeMode) {
 
 		}
 		else {
 			int fortune = EnchantmentHelper.getFortuneModifier(player);
 			if (this.isPlayerSufficientTier(world, x, y, z, player)) {
-				Collection<ItemStack> li = this.getHarvestResources(world, x, y, z, fortune);
-				if (li != null) {
-					for (ItemStack is : li) {
-						ReikaItemHelper.dropItem(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), is);
-					}
-				}
+				li = this.getHarvestResources(world, x, y, z, fortune);
 			}
 			else {
-				Collection<ItemStack> li = this.getNoHarvestResources(world, x, y, z, fortune);
-				if (li != null) {
-					for (ItemStack is : li) {
-						ReikaItemHelper.dropItem(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), is);
-					}
-				}
+				li = this.getNoHarvestResources(world, x, y, z, fortune);
 			}
 		}
-		return super.removedByPlayer(world, player, x, y, z, willHarvest);
+		boolean flag = super.removedByPlayer(world, player, x, y, z, willHarvest);
+		if (flag && li != null) {
+			for (ItemStack is : li) {
+				double rx = ReikaRandomHelper.getRandomPlusMinus(x+0.5, 0.625);
+				double ry = ReikaRandomHelper.getRandomPlusMinus(y+0.5, 0.625);
+				double rz = ReikaRandomHelper.getRandomPlusMinus(z+0.5, 0.625);
+				ReikaItemHelper.dropItem(world, rx, ry, rz, is, 0);
+			}
+			ReikaWorldHelper.splitAndSpawnXP(world, x+0.5, y+0.5, z+0.5, 2+rand.nextInt(5));
+		}
+		return flag;
 	}
 
 	public abstract Collection<ItemStack> getHarvestResources(World world, int x, int y, int z, int fortune);

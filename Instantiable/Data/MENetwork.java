@@ -257,7 +257,6 @@ public class MENetwork {
 		public int compareTo(AEStack o) {
 			return (int)(o.getStackSize()-this.getStackSize());
 		}
-		@Override
 		public boolean isMeaningful() {return false;}
 		public boolean isMeaninful() {return false;} //for back compat
 
