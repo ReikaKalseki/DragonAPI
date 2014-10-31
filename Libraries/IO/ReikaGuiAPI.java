@@ -44,6 +44,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 	private int xSize;
 	private int ySize;
 
+	public static int NEI_DEPTH = 0;
+
 	public static final ReikaGuiAPI instance = new ReikaGuiAPI();
 
 	private ReikaGuiAPI() {

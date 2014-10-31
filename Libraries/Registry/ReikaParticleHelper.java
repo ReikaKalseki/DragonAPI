@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public enum ReikaParticleHelper {
 
@@ -86,7 +87,10 @@ public enum ReikaParticleHelper {
 
 	public void spawnAroundBlockWithOutset(World world, int x, int y, int z, double vx, double vy, double vz, int number, double outset) {
 		for (int i = 0; i < number; i++) {
-			world.spawnParticle(name, x-outset+rand.nextDouble()*(1+outset), y-outset+rand.nextDouble()*(1+outset), z-outset+rand.nextDouble()*(1+outset), vx, vy, vz);
+			double rx = ReikaRandomHelper.getRandomPlusMinus(x+0.5, 0.5+outset);
+			double ry = ReikaRandomHelper.getRandomPlusMinus(y+0.5, 0.5+outset);
+			double rz = ReikaRandomHelper.getRandomPlusMinus(z+0.5, 0.5+outset);
+			world.spawnParticle(name, rx, ry, rz, vx, vy, vz);
 		}
 	}
 

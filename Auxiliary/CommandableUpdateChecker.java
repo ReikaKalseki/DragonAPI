@@ -219,6 +219,11 @@ public class CommandableUpdateChecker {
 		}
 
 		@Override
+		protected boolean isAdminOnly() {
+			return true;
+		}
+
+		@Override
 		public void processCommand(ICommandSender ics, String[] args) {
 			EntityPlayerMP ep = getCommandSenderAsPlayer(ics);
 			if (args.length == 2) {

@@ -39,15 +39,8 @@ public class GuideCommand extends DragonCommandBase {
 	}
 
 	@Override
-	public int getRequiredPermissionLevel() {
-		return 0;
+	protected boolean isAdminOnly() {
+		return false;
 	}
-
-	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender) {
-		return true;
-	}
-
-
 
 }

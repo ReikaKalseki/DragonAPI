@@ -46,10 +46,12 @@ import Reika.DragonAPI.Auxiliary.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Command.BlockReplaceCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
+import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
+import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
@@ -274,6 +276,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new CheckerDisableCommand());
 		evt.registerServerCommand(new SelectiveKillCommand());
 		evt.registerServerCommand(new BlockReplaceCommand());
+		evt.registerServerCommand(new EditNearbyInventoryCommand());
+		evt.registerServerCommand(new TileSyncCommand());
 	}
 
 	@SubscribeEvent

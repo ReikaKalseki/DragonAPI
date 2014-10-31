@@ -471,6 +471,34 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return leftover;
 	}
 
+	public static int addToInventoryWithLeftover(ItemStack stack, IInventory inventory) {
+		int left = stack.stackSize;
+		int max = Math.min(inventory.getInventoryStackLimit(), stack.getMaxStackSize());
+		for (int i = 0; i < inventory.getSizeInventory(); i++) {
+			ItemStack in = inventory.getStackInSlot(i);
+			if (in == null) {
+				int add = Math.min(max, left);
+				inventory.setInventorySlotContents(i, ReikaItemHelper.getSizedItemStack(stack, add));
+				left -= add;
+				if (left <= 0)
+					return 0;
+			}
+			else {
+				if (ReikaItemHelper.matchStacks(stack, in) && ItemStack.areItemStackTagsEqual(stack, in)) {
+					int space = max-in.stackSize;
+					int add = Math.min(space, stack.stackSize);
+					if (add > 0) {
+						in.stackSize += add;
+						left -= add;
+						if (left <= 0)
+							return 0;
+					}
+				}
+			}
+		}
+		return left;
+	}
+
 	/** Returns the location of an empty slot in an inventory. Returns -1 if none.
 	 * Args: Inventory */
 	public static int findEmptySlot(ItemStack[] inventory) {

@@ -59,13 +59,7 @@ public class LogControlCommand extends DragonCommandBase {
 	}
 
 	@Override
-	public int getRequiredPermissionLevel() {
-		return DragonAPICore.isSinglePlayer() ? 0 : 4;
+	protected boolean isAdminOnly() {
+		return !DragonAPICore.isSinglePlayer();
 	}
-
-	@Override
-	public boolean canCommandSenderUseCommand(ICommandSender sender) {
-		return DragonAPICore.isSinglePlayer() ? true : super.canCommandSenderUseCommand(sender);
-	}
-
 }

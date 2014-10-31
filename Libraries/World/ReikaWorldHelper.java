@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.World;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.List;
 
@@ -22,7 +23,9 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -1632,7 +1635,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		Block b = world.getBlock(x, y, z);
 		if (b == Blocks.air)
 			return false;
-		;
 		if (b == null)
 			return false;
 		int meta = world.getBlockMetadata(x, y, z);
@@ -1723,5 +1725,24 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static Collection<IInventory> getAllInventories(World world, int x, int y, int z, int r) {
+		Collection<IInventory> c = new ArrayList();
+		for (int i = -r; i <= r; i++) {
+			for (int j = -r; j <= r; j++) {
+				for (int k = -r; k <= r; k++) {
+					int dx = x+i;
+					int dy = y+j;
+					int dz = z+k;
+					if (tileExistsAt(world, dx, dy, dz)) {
+						TileEntity te = world.getTileEntity(dx, dy, dz);
+						if (te instanceof IInventory)
+							c.add((IInventory)te);
+					}
+				}
+			}
+		}
+		return c;
 	}
 }

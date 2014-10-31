@@ -187,7 +187,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		}
 	}
 
-	public void syncAllData(boolean fullNBT) {
+	public final void syncAllData(boolean fullNBT) {
 		if (worldObj.isRemote) {
 			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.TILESYNC.ordinal(), this, fullNBT ? 1 : 0);
 		}
@@ -201,8 +201,14 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 				var1.setBoolean("fullData", true);
 			S35PacketUpdateTileEntity p = new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 2, var1);
 			this.sendPacketToAllAround(p, this.getUpdatePacketRadius());
+
+			this.onDataSync(fullNBT);
 		}
 		this.markDirty();
+	}
+
+	protected void onDataSync(boolean fullNBT) {
+
 	}
 
 	@Override
