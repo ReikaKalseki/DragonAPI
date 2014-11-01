@@ -182,6 +182,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 				for (int i = 0; i < data.size(); i++) {
 					outputStream.writeInt(data.get(i));
 				}
+
+			outputStream.writeInt(0);
+			outputStream.writeInt(0); //xyz
+			outputStream.writeInt(0);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

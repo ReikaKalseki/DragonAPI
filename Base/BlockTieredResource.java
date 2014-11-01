@@ -91,10 +91,10 @@ public abstract class BlockTieredResource extends Block {
 		else {
 			int fortune = EnchantmentHelper.getFortuneModifier(player);
 			if (this.isPlayerSufficientTier(world, x, y, z, player)) {
-				li = this.getHarvestResources(world, x, y, z, fortune);
+				li = this.getHarvestResources(world, x, y, z, fortune, player);
 			}
 			else {
-				li = this.getNoHarvestResources(world, x, y, z, fortune);
+				li = this.getNoHarvestResources(world, x, y, z, fortune, player);
 			}
 		}
 		boolean flag = super.removedByPlayer(world, player, x, y, z, willHarvest);
@@ -110,9 +110,9 @@ public abstract class BlockTieredResource extends Block {
 		return flag;
 	}
 
-	public abstract Collection<ItemStack> getHarvestResources(World world, int x, int y, int z, int fortune);
+	public abstract Collection<ItemStack> getHarvestResources(World world, int x, int y, int z, int fortune, EntityPlayer player);
 
-	public Collection<ItemStack> getNoHarvestResources(World world, int x, int y, int z, int fortune) {
+	public Collection<ItemStack> getNoHarvestResources(World world, int x, int y, int z, int fortune, EntityPlayer player) {
 		return null;
 	}
 
