@@ -639,6 +639,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		super.onChunkUnload();
 		if (node != null)
 			node.remove();
+		this.onInvalidateOrUnload(worldObj, xCoord, yCoord, zCoord, false);
 	}
 
 	@Override
@@ -646,6 +647,11 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		super.invalidate();
 		if (node != null)
 			node.remove();
+		this.onInvalidateOrUnload(worldObj, xCoord, yCoord, zCoord, true);
+	}
+
+	protected void onInvalidateOrUnload(World world, int x, int y, int z, boolean invalid) {
+
 	}
 
 	private Component createNode() {
