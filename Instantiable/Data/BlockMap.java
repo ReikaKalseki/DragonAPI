@@ -116,7 +116,7 @@ public final class BlockMap<V> {
 		return Collections.unmodifiableSet(this.data.keySet());
 	}
 
-	public static final class BlockKey {
+	public static final class BlockKey implements BlockCheck {
 
 		public final Block blockID;
 		public final int metadata;
@@ -174,6 +174,17 @@ public final class BlockMap<V> {
 			return this.match(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 		}
 
+		@Override
+		public void place(World world, int x, int y, int z) {
+			world.setBlock(x, y, z, blockID, this.hasMetadata() ? this.metadata : 0, 3);
+		}
+
+	}
+
+	public static interface BlockCheck {
+
+		public boolean match(Block b, int meta);
+		public void place(World world, int x, int y, int z);
 	}
 
 }

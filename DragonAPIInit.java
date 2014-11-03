@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -266,6 +268,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		CommandableUpdateChecker.instance.checkAll();
 
 		ReikaEntityHelper.loadMappings();
+
+		if (ModList.liteLoaderInstalled() && FMLCommonHandler.instance().getSide() == Side.SERVER)
+			Minecraft.getMinecraft().refreshResources();
 	}
 
 	@EventHandler

@@ -97,6 +97,8 @@ public enum ModList {
 	private static final EnumMap<ModList, Class> itemClasses = new EnumMap(ModList.class);
 	private static final HashMap<String, ModList> modIDs = new HashMap();
 
+	private static final Class liteClass;
+
 	public static final ModList[] modList = values();
 
 	private ModList(String label, String blocks, String items) {
@@ -219,6 +221,21 @@ public enum ModList {
 			modIDs.put(id, null);
 			return null;
 		}
+	}
+
+	public static boolean liteLoaderInstalled() {
+		return liteClass != null;
+	}
+
+	static {
+		Class c = null;
+		try {
+			c = Class.forName("com.mumfrey.liteloader.core.LiteLoader");
+		}
+		catch (Exception e) {
+
+		}
+		liteClass = c;
 	}
 
 }
