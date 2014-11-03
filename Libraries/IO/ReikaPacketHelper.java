@@ -389,6 +389,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2, data3, data4}));
 	}
 
+	public static void sendDataPacket(String ch, int id, TileEntity te, int... data) {
+		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeIntListFromArray(data));
+	}
+
 	public static void sendDataPacket(String ch, int id, TileEntity te, long data) {
 		sendLongDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
 	}

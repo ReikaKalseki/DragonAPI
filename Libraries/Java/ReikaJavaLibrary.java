@@ -104,6 +104,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return li;
 	}
 
+	public static ArrayList makeIntListFromArray(int[] obj) {
+		ArrayList li = new ArrayList();
+		for (int i = 0; i < obj.length; i++) {
+			li.add(obj[i]);
+		}
+		return li;
+	}
+
 	public static ArrayList makeListFrom(Object obj) {
 		ArrayList li = new ArrayList();
 		li.add(obj);
