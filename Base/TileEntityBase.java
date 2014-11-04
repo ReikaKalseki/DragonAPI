@@ -43,6 +43,7 @@ import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Extras.APIStripper.Strippable;
+import Reika.DragonAPI.Extras.ModDependent;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
@@ -157,8 +158,10 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		if (placerUUID != null && !placerUUID.isEmpty())
 			NBT.setString("placeUUID", placerUUID);
 
-		if (node != null)
-			node.save(NBT);
+		if (ModList.OPENCOMPUTERS.isLoaded()) {
+			if (node != null)
+				node.save(NBT);
+		}
 	}
 
 	@Override
@@ -169,8 +172,10 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		placer = NBT.getString("place");
 		placerUUID = NBT.getString("placeUUID");
 
-		if (node != null)
-			node.load(NBT);
+		if (ModList.OPENCOMPUTERS.isLoaded()) {
+			if (node != null)
+				node.load(NBT);
+		}
 	}
 
 	public final void scheduleBlockUpdate(int ticks) {
@@ -445,8 +450,10 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		if (this.getTicksExisted() == 0) {
 			for (int i = 0; i < 6; i++)
 				this.updateCache(dirs[i]);
-			if (node != null && node.network() == null)
-				Network.joinOrCreateNetwork(this);
+			if (ModList.OPENCOMPUTERS.isLoaded()) {
+				if (node != null && node.network() == null)
+					Network.joinOrCreateNetwork(this);
+			}
 			this.onFirstTick(worldObj, xCoord, yCoord, zCoord);
 		}
 	}
@@ -501,7 +508,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return FMLCommonHandler.instance().getEffectiveSide();
 	}
 
-	protected void delete() {
+	protected final void delete() {
 		worldObj.setBlockToAir(xCoord, yCoord, zCoord);
 	}
 
@@ -571,6 +578,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	private final HashMap<Integer, LuaMethod> luaMethods = new HashMap();
 	private final HashMap<String, LuaMethod> methodNames = new HashMap();
+	@ModDependent(mod = ModList.OPENCOMPUTERS)
 	private final Component node = this.createNode();
 
 	/** ComputerCraft */
@@ -592,18 +600,22 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return s;
 	}
 
+	@ModDependent(mod = ModList.COMPUTERCRAFT)
 	public final boolean equals(IPeripheral other) {
 		return other == this;
 	}
 
 	@Override
+	@ModDependent(mod = ModList.COMPUTERCRAFT)
 	public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
 		return luaMethods.containsKey(method) ? luaMethods.get(method).invoke(this, arguments) : null;
 	}
 
 	@Override
+	@ModDependent(mod = ModList.COMPUTERCRAFT)
 	public void attach(IComputerAccess computer) {}
 	@Override
+	@ModDependent(mod = ModList.COMPUTERCRAFT)
 	public void detach(IComputerAccess computer) {}
 
 	@Override
@@ -626,6 +638,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	@Override
+	@ModDependent(mod = ModList.OPENCOMPUTERS)
 	public Object[] invoke(String method, Context context, Arguments args) throws Exception {
 		Object[] objs = new Object[args.count()];
 		for (int i = 0; i < objs.length; i++) {
@@ -637,16 +650,20 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	@Override
 	public final void onChunkUnload() {
 		super.onChunkUnload();
-		if (node != null)
-			node.remove();
+		if (ModList.OPENCOMPUTERS.isLoaded()) {
+			if (node != null)
+				node.remove();
+		}
 		this.onInvalidateOrUnload(worldObj, xCoord, yCoord, zCoord, false);
 	}
 
 	@Override
 	public final void invalidate() {
 		super.invalidate();
-		if (node != null)
-			node.remove();
+		if (ModList.OPENCOMPUTERS.isLoaded()) {
+			if (node != null)
+				node.remove();
+		}
 		this.onInvalidateOrUnload(worldObj, xCoord, yCoord, zCoord, true);
 	}
 
@@ -654,6 +671,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	}
 
+	@ModDependent(mod = ModList.OPENCOMPUTERS)
 	private Component createNode() {
 		if (ModList.OPENCOMPUTERS.isLoaded())
 			return Network.newNode(this, Visibility.Network).withComponent(this.getType(), this.getOCNetworkVisibility()).create();
@@ -661,19 +679,24 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			return null;
 	}
 
+	@ModDependent(mod = ModList.OPENCOMPUTERS)
 	protected Visibility getOCNetworkVisibility() {
 		return Visibility.Network;
 	}
 
 	@Override
+	@ModDependent(mod = ModList.OPENCOMPUTERS)
 	public Node node() {
 		return node;
 	}
 
 	@Override
+	@ModDependent(mod = ModList.OPENCOMPUTERS)
 	public void onConnect(Node node) {}
 	@Override
+	@ModDependent(mod = ModList.OPENCOMPUTERS)
 	public void onDisconnect(Node node) {}
 	@Override
+	@ModDependent(mod = ModList.OPENCOMPUTERS)
 	public void onMessage(Message message) {}
 }

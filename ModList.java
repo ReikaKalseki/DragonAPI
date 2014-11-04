@@ -85,7 +85,8 @@ public enum ModList {
 	WAILA("Waila"),
 	BLUEPOWER("bluepower", "com.bluepowermod.init.BPBlocks", "com.bluepowermod.init.BPItems"),
 	COLORLIGHT("easycoloredlights"),
-	ENDERIO("EnderIO", "crazypants.enderio.EnderIO");
+	ENDERIO("EnderIO", "crazypants.enderio.EnderIO"),
+	COMPUTERCRAFT("ComputerCraft", "dan200.ComputerCraft");
 
 	private final boolean condition;
 	public final String modLabel;
