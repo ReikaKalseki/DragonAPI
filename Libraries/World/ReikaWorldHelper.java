@@ -1745,4 +1745,12 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 		return c;
 	}
+
+	public static void dropAndDestroyBlockAt(World world, int x, int y, int z, boolean breakAll) {
+		Block b = world.getBlock(x, y, z);
+		if (b.blockHardness < 0 && !breakAll)
+			return;
+		dropBlockAt(world, x, y, z);
+		world.setBlock(x, y, z, Blocks.air);
+	}
 }

@@ -25,7 +25,7 @@ public class XMLInterface {
 	private final String filepath;
 	private final boolean requireFile;
 
-	private final HashMap<String, String> data = new HashMap<String, String>();
+	private final HashMap<String, String> data = new HashMap();
 
 	public static final String NULL_VALUE = "#NULL!";
 

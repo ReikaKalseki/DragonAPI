@@ -15,7 +15,6 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -52,7 +51,6 @@ import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
-import Reika.DragonAPI.Command.SetNEICommand;
 import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Instantiable.SyncPacket;
@@ -284,7 +282,6 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new BlockReplaceCommand());
 		evt.registerServerCommand(new EditNearbyInventoryCommand());
 		evt.registerServerCommand(new TileSyncCommand());
-		evt.registerServerCommand(new SetNEICommand());
 	}
 
 	@SubscribeEvent

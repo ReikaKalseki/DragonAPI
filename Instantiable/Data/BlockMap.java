@@ -73,6 +73,10 @@ public final class BlockMap<V> {
 		return this.containsKey(BlockKey.getAt(world, x, y, z));
 	}
 
+	public void clear() {
+		data.clear();
+	}
+
 	@Override
 	public String toString() {
 		return data.toString();
@@ -140,7 +144,7 @@ public final class BlockMap<V> {
 
 		@Override
 		public int hashCode() {
-			return blockID.hashCode() + metadata << 24;
+			return blockID.hashCode()/* + metadata << 24*/;
 		}
 
 		@Override

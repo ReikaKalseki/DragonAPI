@@ -24,7 +24,6 @@ import Reika.DragonAPI.Auxiliary.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Base.TileEntityBase;
 import Reika.DragonAPI.Interfaces.IPacketHandler;
-import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.DataPacket;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
@@ -172,6 +171,7 @@ public class APIPacketHandler implements IPacketHandler {
 				world.setBlockToAir(x, y, z);
 				break;
 			case PLAYERDATSYNC:
+			case PLAYERDATSYNC_CLIENT:
 				for (Object o : NBT.func_150296_c()) {
 					String name = (String)o;
 					NBTBase tag = NBT.getTag(name);
@@ -180,9 +180,6 @@ public class APIPacketHandler implements IPacketHandler {
 				break;
 			case RERENDER:
 				ReikaRenderHelper.rerenderAllChunks();
-				break;
-			case NEIDEPTH:
-				ReikaGuiAPI.NEI_DEPTH = data[0];
 				break;
 			}
 		}
@@ -200,9 +197,8 @@ public class APIPacketHandler implements IPacketHandler {
 		VTILESYNC(),
 		TILEDELETE(),
 		PLAYERDATSYNC(),
-		RERENDER(),
-		/** Temporary! */
-		NEIDEPTH();
+		PLAYERDATSYNC_CLIENT(),
+		RERENDER();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
