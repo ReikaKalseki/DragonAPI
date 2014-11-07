@@ -612,10 +612,13 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			ReikaChatHelper.write("Tried to access Slot "+slot+", which is empty.");
 			return;
 		}
+		//ReikaJavaLibrary.pConsole("pre: "+inv.getStackInSlot(slot)+" w "+amount);
 		if (inv.getStackInSlot(slot).stackSize > amount)
 			inv.getStackInSlot(slot).stackSize -= amount;
 		else
 			inv.setInventorySlotContents(slot, null);
+		//ReikaJavaLibrary.pConsole("post: "+inv.getStackInSlot(slot)+" w "+amount);
+
 	}
 
 	/** Checks a crafting inventory for a specific ID and metadata (-1 for any). Args: InventoryCrafting, int ID */

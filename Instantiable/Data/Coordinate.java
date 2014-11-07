@@ -110,7 +110,7 @@ public final class Coordinate {
 
 	@Override
 	public int hashCode() {
-		return xCoord + zCoord << 8 + yCoord << 16;
+		return xCoord + (zCoord << 8) + (yCoord << 16);
 	}
 
 	@Override

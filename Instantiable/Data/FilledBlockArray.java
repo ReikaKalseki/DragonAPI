@@ -96,6 +96,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 	}
 
+	public boolean hasBlockAt(int x, int y, int z, Block b, int meta) {
+		BlockCheck bc = this.getBlockKey(x, y, z);
+		return bc != null ? bc.match(b, meta) : false;
+	}
+
 	public boolean matchInWorld() {
 		for (Coordinate c : data.keySet()) {
 			int x = c.xCoord;

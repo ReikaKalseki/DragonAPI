@@ -152,27 +152,27 @@ public abstract class BaseBlockRenderer implements ISimpleBlockRenderingHandler 
 
 		switch(dir.getOpposite()) {
 		case UP:
-			v5.setBrightness(rb.renderMaxY < 1.0D ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
+			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
 			v5.setColorOpaque_F(f7, f8, f9);
 			break;
 		case DOWN:
-			v5.setBrightness(rb.renderMinY > 0.0D ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
+			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
 			v5.setColorOpaque_F(f10, f13, f16);
 			break;
 		case NORTH:
-			v5.setBrightness(rb.renderMinZ > 0.0D ? l : b.getMixedBrightnessForBlock(world, x, y, z - 1));
+			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y, z - 1));
 			v5.setColorOpaque_F(f11, f14, f17);
 			break;
 		case SOUTH:
-			v5.setBrightness(rb.renderMaxZ < 1.0D ? l : b.getMixedBrightnessForBlock(world, x, y, z + 1));
+			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y, z + 1));
 			v5.setColorOpaque_F(f11, f14, f17);
 			break;
 		case WEST:
-			v5.setBrightness(rb.renderMinX > 0.0D ? l : b.getMixedBrightnessForBlock(world, x - 1, y, z));
+			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x - 1, y, z));
 			v5.setColorOpaque_F(f12, f15, f18);
 			break;
 		case EAST:
-			v5.setBrightness(rb.renderMaxX < 1.0D ? l : b.getMixedBrightnessForBlock(world, x + 1, y, z));
+			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x + 1, y, z));
 			v5.setColorOpaque_F(f12, f15, f18);
 			break;
 		default:

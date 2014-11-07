@@ -479,7 +479,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	@Override
 	public final int hashCode() {
-		return worldObj != null ? (xCoord + zCoord << 8 + yCoord << 16 + worldObj.provider.dimensionId << 24) : super.hashCode();
+		return worldObj != null ? (xCoord + (zCoord << 8) + (yCoord << 16) + (worldObj.provider.dimensionId << 24)) : super.hashCode();
 	}
 
 	private boolean matchCoords(TileEntity te) {

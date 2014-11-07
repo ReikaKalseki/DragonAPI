@@ -205,7 +205,7 @@ public class WorldLocation {
 
 	@Override
 	public int hashCode() {
-		return xCoord + zCoord << 8 + yCoord << 16 + dimensionID << 24;
+		return xCoord + (zCoord << 8) + (yCoord << 16) + (dimensionID << 24);
 	}
 
 	@Override

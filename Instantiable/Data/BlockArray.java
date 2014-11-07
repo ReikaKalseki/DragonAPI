@@ -57,6 +57,8 @@ public class BlockArray {
 
 	private final BlockArrayComputer computer;
 
+	protected static final Random rand = new Random();
+
 	public BlockArray() {
 		computer = new BlockArrayComputer(this);
 	}
@@ -667,9 +669,8 @@ public class BlockArray {
 	}
 
 	public int[] getRandomBlock() {
-		Random r = new Random();
 		int s = this.getSize();
-		return this.getNthBlock(r.nextInt(s));
+		return this.getNthBlock(rand.nextInt(s));
 	}
 
 	public void remove(int index) {
