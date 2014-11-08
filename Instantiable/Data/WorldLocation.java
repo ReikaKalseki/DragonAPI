@@ -156,11 +156,23 @@ public class WorldLocation {
 
 	public void writeToNBT(String tag, NBTTagCompound NBT) {
 		NBTTagCompound data = new NBTTagCompound();
+		this.writeToNBT(data);
+		NBT.setTag(tag, data);
+	}
+
+	public void writeToNBT(NBTTagCompound data) {
 		data.setInteger("dim", dimensionID);
 		data.setInteger("x", xCoord);
 		data.setInteger("y", yCoord);
 		data.setInteger("z", zCoord);
-		NBT.setTag(tag, data);
+	}
+
+	public static final WorldLocation readFromNBT(NBTTagCompound data) {
+		int x = data.getInteger("x");
+		int y = data.getInteger("y");
+		int z = data.getInteger("z");
+		int dim = data.getInteger("dim");
+		return new WorldLocation(dim, x, y, z);
 	}
 
 	public static final WorldLocation readFromNBT(String tag, NBTTagCompound NBT) {
@@ -168,11 +180,7 @@ public class WorldLocation {
 			return null;
 		NBTTagCompound data = NBT.getCompoundTag(tag);
 		if (data != null) {
-			int x = data.getInteger("x");
-			int y = data.getInteger("y");
-			int z = data.getInteger("z");
-			int dim = data.getInteger("dim");
-			return new WorldLocation(dim, x, y, z);
+			return readFromNBT(data);
 		}
 		return null;
 	}

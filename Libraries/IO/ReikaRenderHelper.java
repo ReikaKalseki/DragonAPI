@@ -323,6 +323,10 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		world.markBlockRangeForRenderUpdate(x1, 0, z1, x2, world.provider.getHeight()-1, z2);
 	}
 
+	public static int getFPS() {
+		return Minecraft.getMinecraft().fpsCounter;
+	}
+
 	/*
 	public static void updateAllWorldRenderers() {
 		try {

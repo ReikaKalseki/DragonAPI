@@ -7,9 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Extras;
-
-import static Reika.DragonAPI.Extras.AnnotationStripper.parse;
+package Reika.DragonAPI.ASM;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -48,7 +46,7 @@ public class APIStripper implements IClassTransformer {
 		}
 
 		if (scrapedData) {
-			bytes = parse(name, transformedName, bytes);
+			bytes = AnnotationStripper.parse(name, transformedName, bytes);
 		}
 
 		return bytes;
