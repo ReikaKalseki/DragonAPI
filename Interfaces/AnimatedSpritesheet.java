@@ -21,6 +21,8 @@ public interface AnimatedSpritesheet extends IndexedItemSprites {
 
 	public int getFrameCount();
 
+	public int getFrameOffset(ItemStack is);
+
 	public int getBaseRow(ItemStack is);
 
 }

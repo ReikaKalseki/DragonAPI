@@ -60,7 +60,7 @@ public final class ReikaSpriteSheets {
 				AnimatedSpritesheet a = (AnimatedSpritesheet)item.getItem();
 				if (a.useAnimatedRender(item)) {
 					col = a.getColumn(item);
-					int offset = (int)((System.currentTimeMillis()/32/a.getFrameSpeed())%a.getFrameCount());
+					int offset = (int)((System.currentTimeMillis()/32/a.getFrameSpeed()+a.getFrameOffset(item))%a.getFrameCount());
 					row = a.getBaseRow(item)+offset;
 					tex = a.getTexture(item);
 				}
