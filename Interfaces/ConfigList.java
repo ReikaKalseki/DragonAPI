@@ -19,6 +19,8 @@ public interface ConfigList {
 
 	public boolean isDecimal();
 
+	//public boolean isString();
+
 	public Class getPropertyType();
 
 	//public int setValue(Configuration config);
