@@ -137,9 +137,11 @@ public class APIPacketHandler implements IPacketHandler {
 				world.func_147479_m(x, y, z);
 				break;
 			case PARTICLE:
-				if (data[0] >= 0 && data[0] < ReikaParticleHelper.particleList.length) {
-					ReikaParticleHelper p = ReikaParticleHelper.particleList[data[0]];
-					world.spawnParticle(p.name, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), 0, 0, 0);
+				for (int i = 0; i < data[1]; i++) {
+					if (data[0] >= 0 && data[0] < ReikaParticleHelper.particleList.length) {
+						ReikaParticleHelper p = ReikaParticleHelper.particleList[data[0]];
+						world.spawnParticle(p.name, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), 0, 0, 0);
+					}
 				}
 				break;
 			case BIOMECHANGE:
@@ -215,7 +217,7 @@ public class APIPacketHandler implements IPacketHandler {
 		public int getNumberDataInts() {
 			switch(this) {
 			case PARTICLE:
-				return 1;
+				return 2;
 			case BIOMECHANGE:
 				return 1;
 			case KEYUPDATE:
