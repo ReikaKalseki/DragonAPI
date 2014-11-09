@@ -983,6 +983,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 	public static class DataPacket extends PacketObj
 	{
 		protected byte[] bytes;
+		private DataInputStream in;
 
 		public DataPacket() {
 			super();
@@ -1044,7 +1045,9 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		@Override
 		public DataInputStream getDataIn() {
-			return new DataInputStream(new ByteArrayInputStream(bytes));
+			if (in == null)
+				in = new DataInputStream(new ByteArrayInputStream(bytes));
+			return in;
 		}
 
 		@Override
