@@ -9,11 +9,19 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import thaumcraft.api.ThaumcraftApi;
@@ -22,6 +30,12 @@ import thaumcraft.api.aspects.AspectList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReikaThaumHelper {
+
+	private static Map<String, ArrayList<String>> research;
+	private static Map<String, AspectList> aspects;
+	private static Map<String, ArrayList<String>> scannedObjects;
+	private static Map<String, ArrayList<String>> scannedEntities;
+	private static Map<String, ArrayList<String>> scannedPhenomena;
 
 	public static void addAspects(ItemStack is, AspectList aspects) {
 		AspectList has = ThaumcraftApi.objectTags.get(Arrays.asList(is.getItem(), is.getItemDamage()));
@@ -120,6 +134,99 @@ public class ReikaThaumHelper {
 		}
 		sb.append("}");
 		return sb.toString();
+	}
+
+	private static final class AspectSorter implements Comparator<Aspect> {
+
+		private static final HashMap<Aspect, Integer> map = new HashMap();
+
+		@Override
+		public int compare(Aspect o1, Aspect o2) {
+			if (o1.isPrimal() && o2.isPrimal()) {
+				return map.get(o1)-map.get(o2);
+			}
+			else if (o1.isPrimal()) {
+				return Integer.MIN_VALUE;
+			}
+			else if (o2.isPrimal()) {
+				return Integer.MAX_VALUE;
+			}
+			else {
+				return String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());
+			}
+		}
+
+		static {
+			map.put(Aspect.AIR, 0);
+			map.put(Aspect.EARTH, 1);
+			map.put(Aspect.FIRE, 2);
+			map.put(Aspect.WATER, 3);
+			map.put(Aspect.ORDER, 4);
+			map.put(Aspect.ENTROPY, 5);
+		}
+
+	}
+
+	public static boolean hasPlayerDiscoveredAspect(EntityPlayer ep, Aspect a) {
+		if (a.isPrimal())
+			return true;
+		AspectList al = aspects.get(ep.getCommandSenderName());
+		return al != null && al.aspects.containsKey(a);
+	}
+
+	public static Collection<Aspect> getAllDiscoveredAspects(EntityPlayer ep) {
+		Collection<Aspect> li = new ArrayList();
+		AspectList al = aspects.get(ep.getCommandSenderName());
+		if (al != null) {
+			li.addAll(al.aspects.keySet());
+		}
+		return li;
+	}
+
+	public static void sortAspectList(ArrayList<Aspect> list) {
+		Collections.sort(list, new AspectSorter());
+	}
+
+	public static void clearScannedObjects(EntityPlayer ep) {
+		String s = ep.getCommandSenderName();
+		scannedObjects.remove(s);
+		scannedEntities.remove(s);
+		scannedPhenomena.remove(s);
+	}
+
+	public static void clearResearch(EntityPlayer ep) {
+		research.remove(ep.getCommandSenderName());
+	}
+
+	public static void clearDiscoveredAspects(EntityPlayer ep) {
+		aspects.remove(ep.getCommandSenderName());
+	}
+
+	static {
+		try
+		{
+			Class c = Class.forName("thaumcraft.common.Thaumcraft");
+			Field f = c.getField("proxy");
+			Object proxy = f.get(null);
+			Class cp = Class.forName("thaumcraft.common.CommonProxy");
+			Field kn = cp.getField("playerKnowledge");
+			Object knowledge = kn.get(proxy);
+			Class ck = Class.forName("thaumcraft.common.lib.research.PlayerKnowledge");
+			Field res = ck.getField("researchCompleted");
+			Field objs = ck.getField("objectsScanned");
+			Field ents = ck.getField("entitiesScanned");
+			Field phen = ck.getField("phenomenaScanned");
+			Field asp = ck.getField("aspectsDiscovered");
+
+			aspects = (Map)asp.get(knowledge);
+			research = (Map)res.get(knowledge);
+			scannedObjects = (Map)objs.get(knowledge);
+			scannedEntities = (Map)ents.get(knowledge);
+			scannedPhenomena = (Map)phen.get(knowledge);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

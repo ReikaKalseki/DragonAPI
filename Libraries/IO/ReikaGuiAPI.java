@@ -523,4 +523,13 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawTexturedModalRect(x, y, u, v, w, h);
 		GL11.glPopMatrix();
 	}
+
+	public void drawRectFrame(int minx, int miny, int w, int h, int color) {
+		int maxx = minx+w;
+		int maxy = miny+h;
+		this.drawLine(minx, miny, maxx, miny, color);
+		this.drawLine(minx, maxy, maxx, maxy, color);
+		this.drawLine(minx, miny, minx, maxy, color);
+		this.drawLine(maxx, miny, maxx, maxy, color);
+	}
 }
