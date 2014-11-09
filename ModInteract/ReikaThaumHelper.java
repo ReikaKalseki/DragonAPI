@@ -203,8 +203,7 @@ public class ReikaThaumHelper {
 	}
 
 	static {
-		try
-		{
+		try {
 			Class c = Class.forName("thaumcraft.common.Thaumcraft");
 			Field f = c.getField("proxy");
 			Object proxy = f.get(null);
