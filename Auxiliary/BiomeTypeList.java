@@ -10,7 +10,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import net.minecraft.world.biome.BiomeGenBase;
-import Reika.CaveControl.CaveControl;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 
 public enum BiomeTypeList {
@@ -59,7 +59,7 @@ public enum BiomeTypeList {
 
 	public static BiomeTypeList getEntry(BiomeGenBase biome) {
 		if (biome == null) {
-			CaveControl.logger.log("Null Biome!");
+			DragonAPIInit.instance.getModLogger().log("Null Biome!");
 			return null;
 		}
 		String name = biome.getClass().getCanonicalName();
