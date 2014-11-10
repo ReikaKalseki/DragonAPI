@@ -241,6 +241,10 @@ public class WorldLocation {
 		return ReikaMathLibrary.py3d(x-xCoord, y-yCoord, z-zCoord);
 	}
 
+	public double getSquareDistanceTo(double x, double y, double z) {
+		return Math.abs(x-xCoord)+Math.abs(y-yCoord)+Math.abs(z-zCoord);
+	}
+
 	public DoubleWorldLocation decimalOffset(double dx, double dy, double dz) {
 		return new DoubleWorldLocation(this, dx, dy, dz);
 	}

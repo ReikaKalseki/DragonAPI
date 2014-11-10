@@ -27,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReikaThaumHelper {
@@ -168,6 +169,8 @@ public class ReikaThaumHelper {
 	}
 
 	public static boolean hasPlayerDiscoveredAspect(EntityPlayer ep, Aspect a) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return false;
 		if (a.isPrimal())
 			return true;
 		AspectList al = aspects.get(ep.getCommandSenderName());
@@ -176,6 +179,8 @@ public class ReikaThaumHelper {
 
 	public static Collection<Aspect> getAllDiscoveredAspects(EntityPlayer ep) {
 		Collection<Aspect> li = new ArrayList();
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return li;
 		AspectList al = aspects.get(ep.getCommandSenderName());
 		if (al != null) {
 			li.addAll(al.aspects.keySet());
@@ -188,6 +193,8 @@ public class ReikaThaumHelper {
 	}
 
 	public static void clearScannedObjects(EntityPlayer ep) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return;
 		String s = ep.getCommandSenderName();
 		scannedObjects.remove(s);
 		scannedEntities.remove(s);
@@ -195,36 +202,42 @@ public class ReikaThaumHelper {
 	}
 
 	public static void clearResearch(EntityPlayer ep) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return;
 		research.remove(ep.getCommandSenderName());
 	}
 
 	public static void clearDiscoveredAspects(EntityPlayer ep) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return;
 		aspects.remove(ep.getCommandSenderName());
 	}
 
 	static {
-		try {
-			Class c = Class.forName("thaumcraft.common.Thaumcraft");
-			Field f = c.getField("proxy");
-			Object proxy = f.get(null);
-			Class cp = Class.forName("thaumcraft.common.CommonProxy");
-			Field kn = cp.getField("playerKnowledge");
-			Object knowledge = kn.get(proxy);
-			Class ck = Class.forName("thaumcraft.common.lib.research.PlayerKnowledge");
-			Field res = ck.getField("researchCompleted");
-			Field objs = ck.getField("objectsScanned");
-			Field ents = ck.getField("entitiesScanned");
-			Field phen = ck.getField("phenomenaScanned");
-			Field asp = ck.getField("aspectsDiscovered");
+		if (ModList.THAUMCRAFT.isLoaded()) {
+			try {
+				Class c = Class.forName("thaumcraft.common.Thaumcraft");
+				Field f = c.getField("proxy");
+				Object proxy = f.get(null);
+				Class cp = Class.forName("thaumcraft.common.CommonProxy");
+				Field kn = cp.getField("playerKnowledge");
+				Object knowledge = kn.get(proxy);
+				Class ck = Class.forName("thaumcraft.common.lib.research.PlayerKnowledge");
+				Field res = ck.getField("researchCompleted");
+				Field objs = ck.getField("objectsScanned");
+				Field ents = ck.getField("entitiesScanned");
+				Field phen = ck.getField("phenomenaScanned");
+				Field asp = ck.getField("aspectsDiscovered");
 
-			aspects = (Map)asp.get(knowledge);
-			research = (Map)res.get(knowledge);
-			scannedObjects = (Map)objs.get(knowledge);
-			scannedEntities = (Map)ents.get(knowledge);
-			scannedPhenomena = (Map)phen.get(knowledge);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
+				aspects = (Map)asp.get(knowledge);
+				research = (Map)res.get(knowledge);
+				scannedObjects = (Map)objs.get(knowledge);
+				scannedEntities = (Map)ents.get(knowledge);
+				scannedPhenomena = (Map)phen.get(knowledge);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
