@@ -24,6 +24,8 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.potion.PotionEffect;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -37,6 +39,8 @@ public class ReikaThaumHelper {
 	private static Map<String, ArrayList<String>> scannedObjects;
 	private static Map<String, ArrayList<String>> scannedEntities;
 	private static Map<String, ArrayList<String>> scannedPhenomena;
+
+	private static Potion warpWard;
 
 	public static void addAspects(ItemStack is, AspectList aspects) {
 		AspectList has = ThaumcraftApi.objectTags.get(Arrays.asList(is.getItem(), is.getItemDamage()));
@@ -213,6 +217,10 @@ public class ReikaThaumHelper {
 		aspects.remove(ep.getCommandSenderName());
 	}
 
+	public static void giveWarpProtection(EntityPlayer ep, int time) {
+		ep.addPotionEffect(new PotionEffect(warpWard.id, time, 0));
+	}
+
 	static {
 		if (ModList.THAUMCRAFT.isLoaded()) {
 			try {
@@ -234,6 +242,10 @@ public class ReikaThaumHelper {
 				scannedObjects = (Map)objs.get(knowledge);
 				scannedEntities = (Map)ents.get(knowledge);
 				scannedPhenomena = (Map)phen.get(knowledge);
+
+				Class pot = Class.forName("thaumcraft.common.lib.potions.PotionWarpWard");
+				Field ins = pot.getDeclaredField("instance");
+				warpWard = (Potion)ins.get(null);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
