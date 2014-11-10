@@ -22,7 +22,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	/** Densities in kg/m^3 */
 	public static final double patm = 101300;			// Atmosphere Sealevel pressure
 	public static final double rhogold = 19300;			// Gold Density
-	public static final double rhoiron = 8200;			// Iron Density
+	public static final double rhoiron = 7800;			// Iron Density
 	public static final double rhowater = 1000;			// Water density
 	public static final double rholava = 2700;			// Lava density
 	public static final double rhowood = 800;			// Wood density
