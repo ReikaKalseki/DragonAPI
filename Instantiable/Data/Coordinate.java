@@ -105,7 +105,7 @@ public final class Coordinate {
 
 	@Override
 	public String toString() {
-		return xCoord+", "+yCoord+", "+zCoord;
+		return "["+xCoord+", "+yCoord+", "+zCoord+"]";
 	}
 
 	@Override

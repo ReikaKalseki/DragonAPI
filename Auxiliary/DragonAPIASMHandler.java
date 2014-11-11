@@ -12,6 +12,7 @@ package Reika.DragonAPI.Auxiliary;
 import java.util.Map;
 
 import Reika.DragonAPI.ASM.APIStripper;
+import Reika.DragonAPI.ASM.DependentMethodStripper;
 import Reika.DragonAPI.ASM.DragonAPIClassTransfomer;
 import Reika.DragonAPI.ASM.FMLItemBlockPatch;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
@@ -30,7 +31,7 @@ public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 				APIStripper.class.getName(),
 				DragonAPIClassTransfomer.class.getName(),
 				FMLItemBlockPatch.class.getName(),
-				//DependentMethodStripper.class.getName()
+				DependentMethodStripper.class.getName()
 		};
 	}
 

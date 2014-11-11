@@ -31,10 +31,9 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class DependentMethodStripper implements IClassTransformer
 {
-	private static final boolean DEBUG = true;
+	private static final boolean DEBUG = false;
 	@Override
-	public byte[] transform(String name, String transformedName, byte[] bytes)
-	{
+	public byte[] transform(String name, String transformedName, byte[] bytes) {
 		if (bytes == null) {
 			return null;
 		}
@@ -44,26 +43,20 @@ public class DependentMethodStripper implements IClassTransformer
 		classReader.accept(classNode, 0);
 
 		Iterator<FieldNode> fields = classNode.fields.iterator();
-		while(fields.hasNext())
-		{
+		while(fields.hasNext()) {
 			FieldNode field = fields.next();
-			if (this.remove(field.visibleAnnotations))
-			{
-				if (DEBUG)
-				{
+			if (this.remove(field.visibleAnnotations)) {
+				if (DEBUG) {
 					ReikaJavaLibrary.pConsole(String.format("Removing Field: %s.%s", classNode.name, field.name));
 				}
 				fields.remove();
 			}
 		}
 		Iterator<MethodNode> methods = classNode.methods.iterator();
-		while(methods.hasNext())
-		{
+		while(methods.hasNext()) {
 			MethodNode method = methods.next();
-			if (this.remove(method.visibleAnnotations))
-			{
-				if (DEBUG)
-				{
+			if (this.remove(method.visibleAnnotations)) {
+				if (DEBUG) {
 					ReikaJavaLibrary.pConsole(String.format("Removing Method: %s.%s%s", classNode.name, method.name, method.desc));
 				}
 				methods.remove();
@@ -75,31 +68,22 @@ public class DependentMethodStripper implements IClassTransformer
 		return writer.toByteArray();
 	}
 
-	private boolean remove(List<AnnotationNode> anns)
-	{
-		if (anns == null)
-		{
+	private boolean remove(List<AnnotationNode> anns) {
+		if (anns == null) {
 			return false;
 		}
-		for (AnnotationNode ann : anns)
-		{
-			if (ann.desc.equals("LReika/DragonAPI/ASM/DependentMethodStripper$ModDependent;"))
-			{
-				if (ann.values != null)
-				{
-					for (int x = 0; x < ann.values.size() - 1; x += 2)
-					{
+		for (AnnotationNode ann : anns) {
+			if (ann.desc.equals("LReika/DragonAPI/ASM/DependentMethodStripper$ModDependent;")) {
+				if (ann.values != null) {
+					for (int x = 0; x < ann.values.size() - 1; x += 2) {
 						Object key = ann.values.get(x);
 						Object values = ann.values.get(x+1);
-						if (key instanceof String && key.equals("mod"))
-						{
-							if (values instanceof String[])
-							{
+						if (key instanceof String && key.equals("mod")) {
+							if (values instanceof String[]) {
 								String[] value = (String[])values;
 								ModList mod = ModList.valueOf(value[1]);
 								//ReikaJavaLibrary.pConsole(mod+": "+Arrays.toString(value));
-								if (!mod.isLoaded())
-								{
+								if (!mod.isLoaded()) {
 									return true;
 								}
 							}
