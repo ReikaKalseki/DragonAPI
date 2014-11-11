@@ -327,6 +327,14 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		return Minecraft.getMinecraft().fpsCounter;
 	}
 
+	public static int getRealFOV() {
+		float base = Minecraft.getMinecraft().gameSettings.fovSetting;//-14;
+		float diff = ((-40+70-base)/40F)*15F;
+		float ang = base+diff;
+		//ReikaJavaLibrary.pConsole(ang);
+		return (int)ang;
+	}
+
 	/*
 	public static void updateAllWorldRenderers() {
 		try {
