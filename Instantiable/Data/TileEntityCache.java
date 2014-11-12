@@ -15,8 +15,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Set;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class TileEntityCache<V> {
 
@@ -95,6 +99,32 @@ public final class TileEntityCache<V> {
 	@Override
 	public String toString() {
 		return data.toString();
+	}
+
+	public void writeToNBT(NBTTagCompound tag) {
+		NBTTagList li = new NBTTagList();
+		for (WorldLocation loc : data.keySet()) {
+			NBTTagCompound data = new NBTTagCompound();
+			loc.writeToNBT(data);
+			li.appendTag(data);
+		}
+		tag.setTag("locs", li);
+	}
+
+	public void readFromNBT(NBTTagCompound tag) {
+		NBTTagList li = tag.getTagList("locs", NBTTypes.COMPOUND.ID);
+		for (Object o : li.tagList) {
+			NBTTagCompound data = (NBTTagCompound)o;
+			WorldLocation loc = WorldLocation.readFromNBT(data);
+			TileEntity te = loc.getTileEntity();
+			try {
+				V v = (V)te;
+				this.data.put(loc, v);
+			}
+			catch (ClassCastException e) { //ugly, but no other way to test if te instanceof V
+				ReikaJavaLibrary.pConsole("Tried to load a TileEntityCache from invalid NBT!");
+			}
+		}
 	}
 
 }
