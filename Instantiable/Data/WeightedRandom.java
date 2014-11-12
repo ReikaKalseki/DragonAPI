@@ -38,6 +38,19 @@ public class WeightedRandom<V> {
 		return null;
 	}
 
+	public V getRandomEntry(V fallback, double wt) {
+		double sum = this.weightSum+wt;
+		double d = r.nextDouble()*sum;
+		double p = 0;
+		for (V obj : data.keySet()) {
+			p += data.get(obj);
+			if (d <= p) {
+				return obj;
+			}
+		}
+		return fallback;
+	}
+
 	public boolean isEmpty() {
 		return data.isEmpty();
 	}
