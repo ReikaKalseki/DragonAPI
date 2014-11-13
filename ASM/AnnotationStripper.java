@@ -120,8 +120,9 @@ class AnnotationStripper {
 							if (remove) {
 								cn.interfaces.remove(cz);
 								altered = true;
-								if (DEBUG)
+								if (DEBUG) {
 									ReikaJavaLibrary.pConsole("Removing interface "+cz+" from "+cn.name+"; class not present.");
+								}
 							}
 						}
 					}
@@ -154,6 +155,11 @@ class AnnotationStripper {
 						}
 					}
 				}
+			}
+		}
+		if (altered) {
+			if (DEBUG) {
+				ReikaJavaLibrary.pConsole("Remaining interfaces: "+cn.interfaces);
 			}
 		}
 		return altered;

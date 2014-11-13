@@ -96,7 +96,7 @@ public class ModVersion implements Comparable<ModVersion> {
 
 	public static ModVersion readFromFile(DragonAPIMod mod) {
 		Properties p = new Properties();
-		String path = ReikaStringParser.stripSpaces("/Reika/"+mod.getDisplayName()+"/version.properties");
+		String path = ReikaStringParser.stripSpaces("/version.properties");
 		try {
 			InputStream stream = ModVersion.class.getClassLoader().getResourceAsStream(path);
 			if (stream == null) {

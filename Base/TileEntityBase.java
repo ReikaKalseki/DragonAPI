@@ -63,7 +63,8 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 
-@Strippable(value = {"dan200.computer.api.IPeripheral", "li.cil.oc.api.network.Environment", "li.cil.oc.api.network.ManagedPeripheral"})
+@Strippable(value = {"dan200.computercraft.api.peripheral.IPeripheral", "li.cil.oc.api.network.Environment",
+"li.cil.oc.api.network.ManagedPeripheral"})
 public abstract class TileEntityBase extends TileEntity implements IPeripheral, Environment, ManagedPeripheral {
 
 	protected static final Random rand = new Random();
