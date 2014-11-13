@@ -31,7 +31,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class DependentMethodStripper implements IClassTransformer
 {
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] bytes) {
 		if (bytes == null) {
@@ -65,6 +65,7 @@ public class DependentMethodStripper implements IClassTransformer
 
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
 		classNode.accept(writer);
+		classNode.check(classNode.version);
 		return writer.toByteArray();
 	}
 

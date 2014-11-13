@@ -205,8 +205,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			Class.forName(c.getCanonicalName(), true, ReikaJavaLibrary.class.getClassLoader());
 		}
 		catch (ClassNotFoundException e) {
-			pConsole("DRAGONAPI: Failed to initalize class "+c.getCanonicalName()+"! Class not found!");
-		}/*
+			pConsole("DRAGONAPI: Failed to initalize class "+c.getName()+"! Class not found!");
+			e.printStackTrace();
+		}
+		catch (NoClassDefFoundError e) {
+			pConsole("DRAGONAPI: Failed to initalize class "+c.getName()+"! Class not found!");
+			e.printStackTrace();
+		}
+		/*
 		catch (Exception e) {
 			pConsole("DRAGONAPI: Failed to initalize class "+c.getCanonicalName()+"!");
 			String s = e.getMessage();

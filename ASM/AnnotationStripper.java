@@ -25,6 +25,7 @@ import org.objectweb.asm.tree.InnerClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModAPIManager;
@@ -37,6 +38,8 @@ class AnnotationStripper {
 	static THashSet<String> strippables;
 	static final String strippableDesc;
 	static String side;
+
+	private static final boolean DEBUG = true;
 
 	static {
 		strippableDesc = Type.getDescriptor(Strippable.class);
@@ -90,27 +93,35 @@ class AnnotationStripper {
 
 	static boolean strip(ClassNode cn) {
 		boolean altered = false;
+		//ReikaJavaLibrary.pConsole("entry -1 for "+cn.name+"; "+cn.visibleAnnotations);
 		if (cn.visibleAnnotations != null) {
 			for (AnnotationNode n : cn.visibleAnnotations) {
 				AnnotationInfo node = parseAnnotation(n, strippableDesc);
 				if (node != null) {
 					String[] value = node.values;
+					//ReikaJavaLibrary.pConsole("entry 0 for "+cn.name+"; "+Arrays.toString(value));
 					boolean wrongSide = side == node.side;
 					for (int j = 0, l = value.length; j < l; ++j) {
 						String clazz = value[j];
 						String cz = clazz.replace('.', '/');
 						if (cn.interfaces.contains(cz)) {
+							//ReikaJavaLibrary.pConsole("entry 1 for "+cn.name);
 							boolean remove = true;
 							try {
 								if (!wrongSide && !workingPath.contains(clazz)) {
 									Class.forName(clazz, false, AnnotationStripper.class.getClassLoader());
 									remove = false;
+									//ReikaJavaLibrary.pConsole("exit 1 for "+cn.name+"; "+clazz);
 								}
-							} catch (Throwable _) {
+							}
+							catch (Throwable _) {
+
 							}
 							if (remove) {
 								cn.interfaces.remove(cz);
 								altered = true;
+								if (DEBUG)
+									ReikaJavaLibrary.pConsole("Removing interface "+cz+" from "+cn.name+"; class not present.");
 							}
 						}
 					}
