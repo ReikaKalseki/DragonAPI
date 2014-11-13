@@ -79,7 +79,7 @@ public class DependentMethodStripper implements IClassTransformer
 					for (int x = 0; x < ann.values.size() - 1; x += 2) {
 						Object key = ann.values.get(x);
 						Object values = ann.values.get(x+1);
-						if (key instanceof String && key.equals("mod")) {
+						if (key instanceof String && key.equals("value")) {
 							if (values instanceof String[]) {
 								String[] value = (String[])values;
 								ModList mod = ModList.valueOf(value[1]);
@@ -99,6 +99,6 @@ public class DependentMethodStripper implements IClassTransformer
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.METHOD, ElementType.FIELD})
 	public static @interface ModDependent {
-		ModList mod();
+		ModList value();
 	}
 }

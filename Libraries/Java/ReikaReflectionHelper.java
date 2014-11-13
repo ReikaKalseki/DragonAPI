@@ -60,6 +60,10 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			}
 			//return null;
 		}
+		catch (NoClassDefFoundError e) {
+			e.printStackTrace();
+			throw new RegistrationException(mod, "Failed to load "+list+" due to a missing class!");
+		}
 	}
 
 	public static Item createItemInstance(DragonAPIMod mod, RegistrationList list) {
@@ -89,6 +93,10 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 				throw new IDConflictException(mod, t.getMessage());
 			else
 				throw new RegistrationException(mod, list+" ("+list.getObjectClass().getSimpleName()+") threw invocation target exception: "+e+" with "+e.getCause()+" ("+e.getCause().getMessage()+")");
+		}
+		catch (NoClassDefFoundError e) {
+			e.printStackTrace();
+			throw new RegistrationException(mod, "Failed to load "+list+" due to a missing class!");
 		}
 	}
 
@@ -120,6 +128,10 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 				throw new IllegalArgumentException(t.getMessage());
 			else
 				throw new MisuseException(cl.getSimpleName()+" threw invocation target exception: "+e+" with "+e.getCause()+" ("+e.getCause().getMessage()+")");
+		}
+		catch (NoClassDefFoundError e) {
+			e.printStackTrace();
+			throw new RegistrationException(mod, "Failed to load "+cl+" due to a missing class!");
 		}
 	}
 

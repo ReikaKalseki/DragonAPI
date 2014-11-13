@@ -159,7 +159,7 @@ class AnnotationStripper {
 		}
 		if (altered) {
 			if (DEBUG) {
-				ReikaJavaLibrary.pConsole("Remaining interfaces: "+cn.interfaces);
+				ReikaJavaLibrary.pConsole("Remaining interfaces on "+cn.name+": "+cn.interfaces);
 			}
 		}
 		return altered;

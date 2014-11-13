@@ -600,22 +600,22 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return s;
 	}
 
-	@ModDependent(mod = ModList.COMPUTERCRAFT)
+	@ModDependent(ModList.COMPUTERCRAFT)
 	public final boolean equals(IPeripheral other) {
 		return other == this;
 	}
 
 	@Override
-	@ModDependent(mod = ModList.COMPUTERCRAFT)
+	@ModDependent(ModList.COMPUTERCRAFT)
 	public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
 		return luaMethods.containsKey(method) ? luaMethods.get(method).invoke(this, arguments) : null;
 	}
 
 	@Override
-	@ModDependent(mod = ModList.COMPUTERCRAFT)
+	@ModDependent(ModList.COMPUTERCRAFT)
 	public void attach(IComputerAccess computer) {}
 	@Override
-	@ModDependent(mod = ModList.COMPUTERCRAFT)
+	@ModDependent(ModList.COMPUTERCRAFT)
 	public void detach(IComputerAccess computer) {}
 
 	@Override
@@ -638,7 +638,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	@Override
-	@ModDependent(mod = ModList.OPENCOMPUTERS)
+	@ModDependent(ModList.OPENCOMPUTERS)
 	public Object[] invoke(String method, Context context, Arguments args) throws Exception {
 		Object[] objs = new Object[args.count()];
 		for (int i = 0; i < objs.length; i++) {
@@ -678,24 +678,24 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			return null;
 	}
 
-	@ModDependent(mod = ModList.OPENCOMPUTERS)
+	@ModDependent(ModList.OPENCOMPUTERS)
 	protected Visibility getOCNetworkVisibility() {
 		return Visibility.Network;
 	}
 
 	@Override
-	@ModDependent(mod = ModList.OPENCOMPUTERS)
+	@ModDependent(ModList.OPENCOMPUTERS)
 	public Node node() {
 		return (Node)node;
 	}
 
 	@Override
-	@ModDependent(mod = ModList.OPENCOMPUTERS)
+	@ModDependent(ModList.OPENCOMPUTERS)
 	public void onConnect(Node node) {}
 	@Override
-	@ModDependent(mod = ModList.OPENCOMPUTERS)
+	@ModDependent(ModList.OPENCOMPUTERS)
 	public void onDisconnect(Node node) {}
 	@Override
-	@ModDependent(mod = ModList.OPENCOMPUTERS)
+	@ModDependent(ModList.OPENCOMPUTERS)
 	public void onMessage(Message message) {}
 }
