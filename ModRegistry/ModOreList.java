@@ -43,7 +43,7 @@ public enum ModOreList implements OreType {
 	NICKEL("Nickel", 0xD0CCAD, OreRarity.SCATTERED, "ingotNickel", 1, "oreNickel", "orePentlandite"),
 	SILVER("Silver", 0xA4D0DA, OreRarity.AVERAGE, "ingotSilver", 1, "oreSilver"),
 	GALENA("Galena", 0x7F6E95, OreRarity.SCATTERED, "dustGalena", 1, "oreGalena"),
-	ALUMINUM("Aluminum", 0xF1F1F1, OreRarity.COMMON, "ingotAluminum", 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
+	ALUMINUM("Aluminum", 0xF1F1F1, OreRarity.COMMON, getAluminumName(), 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
 	IRIDIUM("Iridium", 0xC1E2D3, OreRarity.RARE, "ingotIridium", 1, "oreIridium"),
 	FIRESTONE("Firestone", 0xE19636, OreRarity.RARE, "shardFirestone", 1, "oreFirestone"),
 	CERTUSQUARTZ("Certus Quartz", 0xC4CEFF, OreRarity.AVERAGE, "crystalCertusQuartz", 3, "oreCertusQuartz"),
@@ -58,7 +58,7 @@ public enum ModOreList implements OreType {
 	INFUSEDORDER("Order Infused", 0xDCDCFF, OreRarity.SCARCE, "shardOrder", 2, "oreInfusedOrder"),
 	APATITE("Apatite", 0x3296C5, OreRarity.COMMON, "gemApatite", 3, "oreApatite"),
 	SALTPETER("Saltpeter", 0xFFFFFF, OreRarity.AVERAGE, "dustSaltpeter", 2, "oreSaltpeter"),
-	TUNGSTEN("Tungsten", 0x1E1E1E, OreRarity.COMMON, "ingotTungsten", 1, "oreTungsten", "oreTungstate"),
+	TUNGSTEN("Tungsten", 0x1E1E1E, OreRarity.COMMON, "dustTungsten", 1, "oreTungsten", "oreTungstate"),
 	NIKOLITE("Nikolite", 0x2DABB8, OreRarity.COMMON, "dustNikolite", 5, "oreNikolite"),
 	PERIDOT("Peridot", 0x00C416, OreRarity.SCARCE, "gemPeridot", 1, "orePeridot"),
 	RUBY("Ruby", 0xBC0000, OreRarity.SCARCE, "gemRuby", 1, "oreRuby"),
@@ -120,7 +120,7 @@ public enum ModOreList implements OreType {
 	AMETHYST("Amethyst", 0xff00ff, OreRarity.RARE, "gemAmethyst", 1, "oreAmethyst"),
 	TESLATITE("Teslatite", 0x2F81F1, OreRarity.COMMON, "dustTeslatite", 3, "oreTeslatite");
 
-	private ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
+	private ArrayList<ItemStack> ores = new ArrayList();
 	public final String displayName;
 	private String[] oreLabel;
 	public final int dropCount;
@@ -150,6 +150,10 @@ public enum ModOreList implements OreType {
 		rarity = r;
 
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding ore entries for "+this.toString()+" (Ore Names: "+Arrays.toString(ore)+")");
+	}
+
+	private static String getAluminumName() {
+		return ModList.GREGTECH.isLoaded() ? "dustAluminum" : "ingotAluminum";
 	}
 
 	public static void initializeAll() {
