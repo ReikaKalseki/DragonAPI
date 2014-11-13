@@ -25,7 +25,9 @@ public class ForestryHandler extends ModHandlerBase {
 	public final Item apatiteID;
 	public final Item fertilizerID;
 	public final Block saplingID;
+	public final Block leafID;
 	public final Item combID;
+	public final Item saplingItem;
 
 	private static final ForestryHandler instance = new ForestryHandler();
 
@@ -34,6 +36,8 @@ public class ForestryHandler extends ModHandlerBase {
 		Item idapatite = null;
 		Item idfertilizer = null;
 		Block idsapling = null;
+		Item itemsapling = null;
+		Block idleaf = null;
 		Item idcomb = null;
 		if (this.hasMod()) {
 			try {
@@ -44,22 +48,33 @@ public class ForestryHandler extends ModHandlerBase {
 				Item item = (Item)get.invoke(entry);
 				idapatite = item;
 
-				Field fert = forest.getField("fertilizerCompound"); //is enum object now
+				Field fert = forest.getField("fertilizerCompound");
 				entry = fert.get(null);
 				item = (Item)get.invoke(entry);
 				idfertilizer = item;
 
-				Field comb = forest.getField("beeComb"); //is enum object now
+				Field comb = forest.getField("beeComb");
 				entry = comb.get(null);
 				item = (Item)get.invoke(entry);
 				idcomb = item;
 
+				Field sap = forest.getField("sapling");
+				entry = sap.get(null);
+				item = (Item)get.invoke(entry);
+				itemsapling = item;
+
 				Class blocks = this.getMod().getBlockClass();
+				get = blocks.getMethod("block");
+
 				Field sapling = blocks.getField("saplingGE");
 				entry = sapling.get(null);
-				get = forest.getMethod("block");
-				Block s = (Block)get.invoke(null);
+				Block s = (Block)get.invoke(entry);
 				idsapling = s;
+
+				Field leaf = blocks.getField("leaves");
+				entry = leaf.get(null);
+				s = (Block)get.invoke(entry);
+				idleaf = s;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -92,8 +107,10 @@ public class ForestryHandler extends ModHandlerBase {
 
 		apatiteID = idapatite;
 		saplingID = idsapling;
+		leafID = idleaf;
 		fertilizerID = idfertilizer;
 		combID = idcomb;
+		saplingItem = itemsapling;
 	}
 
 	public static ForestryHandler getInstance() {
