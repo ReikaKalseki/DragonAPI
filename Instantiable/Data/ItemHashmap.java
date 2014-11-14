@@ -107,7 +107,7 @@ public final class ItemHashMap<V> {
 
 		@Override
 		public int hashCode() {
-			return itemID.hashCode() + metadata << 24;
+			return itemID.hashCode()/* + metadata << 24*/;
 		}
 
 		@Override

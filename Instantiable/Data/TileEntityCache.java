@@ -67,6 +67,11 @@ public final class TileEntityCache<V> {
 		return data.remove(c);
 	}
 
+	public V remove(V tile) {
+		TileEntity te = (TileEntity)tile;
+		return this.remove(te.worldObj, te.xCoord, te.yCoord, te.zCoord);
+	}
+
 	public Set<WorldLocation> keySet() {
 		return Collections.unmodifiableSet(data.keySet());
 	}
