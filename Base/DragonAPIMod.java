@@ -61,6 +61,7 @@ public abstract class DragonAPIMod {
 
 		version = ModVersion.readFromFile(this);
 		modVersions.put(this.getClass().getSimpleName(), version);
+		ReikaJavaLibrary.pConsole("Registered "+this+" as version "+version);
 		if (this.getClass() == DragonAPIInit.class) {
 			apiVersion = version;
 		}

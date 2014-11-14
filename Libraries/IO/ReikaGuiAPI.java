@@ -434,6 +434,25 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glTranslatef(0.0F, 0.0F, -64.0F);
 	}
 
+	public void drawMultilineTooltip(List<String> li, int x, int y) {
+		GL11.glTranslatef(0.0F, 0.0F, 64.0F);
+		int dy = y;
+		for (String s : li) {
+			this.drawTooltipAt(mc.fontRenderer, s, x, dy);
+			dy += 17;
+		}
+		GL11.glTranslatef(0.0F, 0.0F, -64.0F);
+	}
+
+	public void drawMultilineTooltip(ItemStack is, int x, int y) {
+		if (this.isMouseInBox(x, x+16, y, y+16)) {
+			List<String> li = new ArrayList();
+			li.add(is.getDisplayName());
+			is.getItem().addInformation(is, Minecraft.getMinecraft().thePlayer, li, true);
+			this.drawMultilineTooltip(li, x, y);
+		}
+	}
+
 	public void drawTooltip(FontRenderer f, String s) {
 		int mx = this.getMouseRealX()-f.getStringWidth(s)*0;
 		int my = this.getMouseRealY();
