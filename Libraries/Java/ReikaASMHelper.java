@@ -21,6 +21,7 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
@@ -30,12 +31,32 @@ import org.objectweb.asm.util.TraceMethodVisitor;
 
 public class ReikaASMHelper {
 
+	public static FieldNode getFieldByName(ClassNode c, String name) {
+		return getFieldByName(c, name, name);
+	}
+
+	public static FieldNode getFieldByName(ClassNode c, String obf, String deobf) {
+		String s = FMLForgePlugin.RUNTIME_DEOBF ? obf : deobf;
+		List<FieldNode> fields = c.fields;
+		for (int k = 0; k < fields.size(); k++) {
+			FieldNode f = fields.get(k);
+			if (f.name.equals(s)) {
+				return f;
+			}
+		}
+		return null;
+	}
+
+	public static MethodNode getMethodByName(ClassNode c, String name, String sig) {
+		return getMethodByName(c, name, name, sig);
+	}
+
 	public static MethodNode getMethodByName(ClassNode c, String obf, String deobf, String sig) {
 		String s = FMLForgePlugin.RUNTIME_DEOBF ? obf : deobf;
 		List<MethodNode> methods = c.methods;
 		for (int k = 0; k < methods.size(); k++) {
 			MethodNode m = methods.get(k);
-			if ((m.name.equals(s) && m.desc.equals(sig))) {
+			if (m.name.equals(s) && m.desc.equals(sig)) {
 				return m;
 			}
 		}
