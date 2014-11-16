@@ -187,7 +187,7 @@ public final class BlockMap<V> {
 
 	public static interface BlockCheck {
 
-		public boolean match(Block b, int meta);
+		public boolean match(World world, int x, int y, int z);
 		public void place(World world, int x, int y, int z);
 	}
 

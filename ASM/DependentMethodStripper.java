@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -73,6 +74,8 @@ public class DependentMethodStripper implements IClassTransformer
 		if (anns == null) {
 			return false;
 		}
+		if (!FMLForgePlugin.RUNTIME_DEOBF) //prevents needing to always reload game in dev env
+			return false;
 		for (AnnotationNode ann : anns) {
 			if (ann.desc.equals("LReika/DragonAPI/ASM/DependentMethodStripper$ModDependent;")) {
 				if (ann.values != null) {

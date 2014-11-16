@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
@@ -17,6 +18,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockCheck;
 import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class FilledBlockArray extends StructuredBlockArray {
 
@@ -41,6 +44,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 	public void setBlock(int x, int y, int z, BlockKey bk) {
 		super.addBlockCoordinate(x, y, z);
 		data.put(new Coordinate(x, y, z), bk);
+	}
+
+	public void setEmpty(int x, int y, int z, boolean soft, boolean nonsolid, Block... exceptions) {
+		super.addBlockCoordinate(x, y, z);
+		data.put(new Coordinate(x, y, z), new EmptyCheck(soft, nonsolid, exceptions));
 	}
 
 	public void addBlock(int x, int y, int z, Block id) {
@@ -98,7 +106,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	public boolean hasBlockAt(int x, int y, int z, Block b, int meta) {
 		BlockCheck bc = this.getBlockKey(x, y, z);
-		return bc != null ? bc.match(b, meta) : false;
+		return bc != null ? bc.match(world, x, y, z) : false;
 	}
 
 	public boolean matchInWorld() {
@@ -107,9 +115,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 			int y = c.yCoord;
 			int z = c.zCoord;
 			BlockCheck bk = this.getBlockKey(x, y, z);
-			Block b = world.getBlock(x, y, z);
-			int meta = world.getBlockMetadata(x, y, z);
-			if (!bk.match(b, meta)) {
+			if (!bk.match(world, x, y, z)) {
 				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk+" & "+b+":"+meta);
 				//bk.place(world, x, y, z);
 				//world.setBlock(x, y+1, z, Blocks.brick_block);
@@ -164,8 +170,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 
 		@Override
-		public boolean match(Block b, int meta) {
-			return keys.contains(new BlockKey(b, meta));
+		public boolean match(World world, int x, int y, int z) {
+			return keys.contains(new BlockKey(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z)));
 		}
 
 		public void place(World world, int x, int y, int z) {
@@ -183,6 +189,44 @@ public class FilledBlockArray extends StructuredBlockArray {
 		@Override
 		public String toString() {
 			return keys.toString();
+		}
+
+	}
+
+	private static class EmptyCheck implements BlockCheck {
+
+		public final boolean allowNonSolid;
+		public final boolean allowSoft;
+		private final Collection<Block> exceptions;
+
+		private EmptyCheck(boolean soft, boolean nonsolid, Block... exc) {
+			allowNonSolid = nonsolid;
+			allowSoft = soft;
+			exceptions = ReikaJavaLibrary.makeListFromArray(exc);
+		}
+
+		@Override
+		public boolean match(World world, int x, int y, int z) {
+			Block b = world.getBlock(x, y, z);
+			if (exceptions.contains(b))
+				return false;
+			if (b == Blocks.air || b.isAir(world, x, y, z))
+				return true;
+			if (allowSoft && ReikaWorldHelper.softBlocks(world, x, y, z))
+				return true;
+			if (allowNonSolid && b.getCollisionBoundingBoxFromPool(world, x, y, z) == null)
+				return true;
+			return false;
+		}
+
+		@Override
+		public void place(World world, int x, int y, int z) {
+			world.setBlock(x, y, z, Blocks.air);
+		}
+
+		@Override
+		public String toString() {
+			return "[Empty]";
 		}
 
 	}
