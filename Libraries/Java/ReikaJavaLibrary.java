@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.Java;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
@@ -322,5 +323,13 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		if (name.equals("void"))
 			return void.class;
 		return null;
+	}
+
+	public static <K,T> boolean collectionMapContainsValue(HashMap<K, Collection<T>> map, T value) {
+		for (Collection<T> c : map.values()) {
+			if (c != null && c.contains(value))
+				return true;
+		}
+		return false;
 	}
 }
