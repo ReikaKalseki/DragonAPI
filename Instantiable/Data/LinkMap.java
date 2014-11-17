@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 
 public class LinkMap {
 
@@ -62,7 +65,8 @@ public class LinkMap {
 	}
 
 	public Map<WorldLocation, Double> getTargets(WorldLocation loc) {
-		return Collections.unmodifiableMap(data.get(loc));
+		Map map = data.get(loc);
+		return map != null ? Collections.unmodifiableMap(map) : null;
 	}
 
 	@Override
@@ -83,6 +87,38 @@ public class LinkMap {
 
 	public void clear() {
 		data.clear();
+	}
+
+	public void writeToNBT(NBTTagCompound tag) {
+		NBTTagList li = new NBTTagList();
+		for (WorldLocation src : data.keySet()) {
+			NBTTagCompound entry = new NBTTagCompound();
+			src.writeToNBT(entry);
+			NBTTagList map = new NBTTagList();
+			HashMap<WorldLocation, Double> dat = data.get(src);
+			for (WorldLocation tg : dat.keySet()) {
+				NBTTagCompound nbt = new NBTTagCompound();
+				tg.writeToNBT(nbt);
+				map.appendTag(nbt);
+			}
+			entry.setTag("map", map);
+			li.appendTag(entry);
+		}
+		tag.setTag("locs", li);
+	}
+
+	public void readFromNBT(NBTTagCompound tag) {
+		NBTTagList li = tag.getTagList("locs", NBTTypes.COMPOUND.ID);
+		for (Object o : li.tagList) {
+			NBTTagCompound entry = (NBTTagCompound)o;
+			WorldLocation src = WorldLocation.readFromNBT(entry);
+			NBTTagList map = tag.getTagList("map", NBTTypes.COMPOUND.ID);
+			for (Object o2 : li.tagList) {
+				NBTTagCompound nbt = (NBTTagCompound)o2;
+				WorldLocation tg = WorldLocation.readFromNBT(nbt);
+				this.addLink(src, tg);
+			}
+		}
 	}
 
 }

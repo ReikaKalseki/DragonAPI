@@ -13,6 +13,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Random;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,6 +24,7 @@ import Reika.DragonAPI.Auxiliary.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Base.TileEntityBase;
+import Reika.DragonAPI.Instantiable.Rendering.NumberParticleFX;
 import Reika.DragonAPI.Interfaces.IPacketHandler;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.DataPacket;
@@ -183,6 +185,12 @@ public class APIPacketHandler implements IPacketHandler {
 			case RERENDER:
 				ReikaRenderHelper.rerenderAllChunks();
 				break;
+			case COLOREDPARTICLE:
+				ReikaParticleHelper.spawnColoredParticlesWithOutset(world, x, y, z, data[0], data[1], data[2], data[3], data[4]/16D);
+				break;
+			case NUMBERPARTICLE:
+				Minecraft.getMinecraft().effectRenderer.addEffect(new NumberParticleFX(world, x+0.5, y+0.5, z+0.5, data[0]));
+				break;
 			}
 		}
 		catch (Exception e) {
@@ -200,7 +208,9 @@ public class APIPacketHandler implements IPacketHandler {
 		TILEDELETE(),
 		PLAYERDATSYNC(),
 		PLAYERDATSYNC_CLIENT(),
-		RERENDER();
+		RERENDER(),
+		COLOREDPARTICLE(),
+		NUMBERPARTICLE();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -218,6 +228,10 @@ public class APIPacketHandler implements IPacketHandler {
 			switch(this) {
 			case PARTICLE:
 				return 2;
+			case NUMBERPARTICLE:
+				return 1;
+			case COLOREDPARTICLE:
+				return 5;
 			case BIOMECHANGE:
 				return 1;
 			case KEYUPDATE:
