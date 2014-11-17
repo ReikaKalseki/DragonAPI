@@ -47,6 +47,7 @@ import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
@@ -150,6 +151,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (mob instanceof TameHostile)
 			return false;
 		if (mob instanceof EntityMob)
+			return true;
+		if (mob instanceof IMob)
 			return true;
 		if (mob instanceof EntityGhast)
 			return true;
