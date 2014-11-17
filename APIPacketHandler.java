@@ -32,6 +32,8 @@ import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class APIPacketHandler implements IPacketHandler {
 
@@ -189,12 +191,24 @@ public class APIPacketHandler implements IPacketHandler {
 				ReikaParticleHelper.spawnColoredParticlesWithOutset(world, x, y, z, data[0], data[1], data[2], data[3], data[4]/16D);
 				break;
 			case NUMBERPARTICLE:
-				Minecraft.getMinecraft().effectRenderer.addEffect(new NumberParticleFX(world, x+0.5, y+0.5, z+0.5, data[0]));
 				break;
 			}
+			if (world.isRemote)
+				this.clientHandle(world, x, y, z, pack, data);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	private void clientHandle(World world, int x, int y, int z, PacketIDs pack, int[] data) {
+		switch(pack) {
+		case NUMBERPARTICLE:
+			Minecraft.getMinecraft().effectRenderer.addEffect(new NumberParticleFX(world, x+0.5, y+0.5, z+0.5, data[0]));
+			break;
+		default:
+			break;
 		}
 	}
 
