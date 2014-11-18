@@ -106,13 +106,15 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			tick = 0;
 			if (depth < maxDepth) {
 				BlockArray next = new BlockArray();
-				for (int i = 0; i < start.getSize(); i++) {
+				for (int i = 0; i < start.getSize() && !isDone; i++) {
 					int[] xyz = start.getNthBlock(i);
 					int x = xyz[0];
 					int y = xyz[1];
 					int z = xyz[2];
 					Block b = world.getBlock(x, y, z);
 					int meta = world.getBlockMetadata(x, y, z);
+					if (call != null && !call.canBreak(this, world, x, y, z, b, meta))
+						continue;
 					for (int k = 0; k < 6; k++) {
 						ForgeDirection dir = dirs[k];
 						int dx = x+dir.offsetX;
@@ -168,8 +170,6 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 				return false;
 			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
-			if (call != null && !call.canBreak(this, world, x, y, z, id, meta))
-				return false;
 			if (id == Blocks.air)
 				return false;
 			if (!ids.contains(new BlockKey(id, meta)))
@@ -212,21 +212,29 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 	}
 
 	public void addCoordinate(World world, int x, int y, int z) {
+		if (world.isRemote)
+			return;
 		this.addCoordinate(world, x, y, z, Integer.MAX_VALUE);
 	}
 
 	public void addCoordinate(World world, ProgressiveBreaker b) {
+		if (world.isRemote)
+			return;
 		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
 		li.add(b);
 	}
 
 	public void addCoordinate(World world, int x, int y, int z, TreeType tree) {
+		if (world.isRemote)
+			return;
 		ProgressiveBreaker b = this.getTreeBreaker(world, x, y, z, tree);
 		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
 		li.add(b);
 	}
 
 	public ProgressiveBreaker getTreeBreaker(World world, int x, int y, int z, TreeType tree) {
+		if (world.isRemote)
+			return null;
 		Block log = tree.getLogID();
 		Block leaf = tree.getLeafID();
 		List<Integer> logmetas = tree.getLogMetadatas();
@@ -251,16 +259,22 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 	}
 
 	public void addCoordinate(World world, int x, int y, int z, List<BlockKey> ids) {
+		if (world.isRemote)
+			return;
 		ArrayList<ProgressiveBreaker> b = this.getOrCreateList(world);
 		b.add(new ProgressiveBreaker(world, x, y, z, Integer.MAX_VALUE, ids));
 	}
 
 	public void addCoordinate(World world, int x, int y, int z, int maxDepth) {
+		if (world.isRemote)
+			return;
 		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
 		li.add(new ProgressiveBreaker(world, x, y, z, maxDepth));
 	}
 
 	public ProgressiveBreaker addCoordinateWithReturn(World world, int x, int y, int z, int maxDepth) {
+		if (world.isRemote)
+			return null;
 		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
 		ProgressiveBreaker b = new ProgressiveBreaker(world, x, y, z, maxDepth);
 		li.add(b);
