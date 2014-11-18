@@ -643,6 +643,8 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		Object[] objs = new Object[args.count()];
 		for (int i = 0; i < objs.length; i++) {
 			objs[i] = args.checkAny(i);
+			if (objs[i] instanceof byte[])
+				objs[i] = new String((byte[])objs[i]);
 		}
 		return methodNames.containsKey(method) ? methodNames.get(method).invoke(this, objs) : null;
 	}
