@@ -17,9 +17,9 @@ import java.util.List;
 import java.util.Random;
 
 import li.cil.oc.api.Network;
-import li.cil.oc.api.network.Arguments;
+import li.cil.oc.api.machine.Arguments;
+import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.Component;
-import li.cil.oc.api.network.Context;
 import li.cil.oc.api.network.Environment;
 import li.cil.oc.api.network.ManagedPeripheral;
 import li.cil.oc.api.network.Message;

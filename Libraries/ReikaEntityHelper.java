@@ -80,10 +80,10 @@ import Reika.DragonAPI.ModInteract.DartItemHandler;
 public final class ReikaEntityHelper extends DragonAPICore {
 
 	/** provides a mapping between an Entity Class and an entity ID */
-	private static Map classToIDMapping = new HashMap();
+	private static Map<Class, Integer> classToIDMapping = new HashMap();
 
 	/** Maps entity names to their numeric identifiers */
-	private static Map stringToIDMapping = new HashMap();
+	private static Map<String, Integer> stringToIDMapping = new HashMap();
 
 	public static void loadMappings()
 	{
@@ -195,7 +195,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	/** Converts a string mobname to its respective id. Args: Name */
 	public static int mobNameToID(String name) {
-		return (Integer)stringToIDMapping.get(name);
+		return stringToIDMapping.get(name);
 	}
 
 	/** Converts a string mobname to its respective class file. Args: Name */
@@ -542,6 +542,13 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	public static int getEntityIDByClass(Class cl) {
 		String name = (String)EntityList.classToStringMapping.get(cl);
 		return mobNameToID(name);
+	}
+
+	public static int getEntityID(Entity e) {
+		if (e instanceof EntityPlayer) {
+			return -1;
+		}
+		return EntityList.getEntityID(e);
 	}
 
 	public static boolean burnsInSun(EntityLivingBase e) {
