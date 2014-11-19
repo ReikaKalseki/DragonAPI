@@ -14,12 +14,15 @@ import java.util.ArrayList;
 import mcp.mobius.waila.api.IWailaDataProvider;
 import mcp.mobius.waila.api.IWailaRegistrar;
 import net.minecraft.block.Block;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Interfaces.BlockEnum;
 
 public class LegacyWailaHelper {
 
 	private static final ArrayList<BlockEnum> wailaData = new ArrayList();
 
+	@ModDependent(ModList.WAILA)
 	public static void registerObjects(IWailaRegistrar reg) {
 		for (int i = 0; i < wailaData.size(); i++) {
 			BlockEnum r = wailaData.get(i);

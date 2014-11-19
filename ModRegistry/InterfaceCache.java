@@ -20,7 +20,8 @@ public enum InterfaceCache {
 	IMISSILE("icbm.api.IMissile"),
 	MUSEELECTRICITEM("net.machinemuse.api.electricity.MuseElectricItem"),
 	RFENERGYITEM("cofh.api.energy.IEnergyContainerItem"),
-	UEENERGYITEM("universalelectricity.api.item.IEnergyItem");
+	UEENERGYITEM("universalelectricity.api.item.IEnergyItem"),
+	WAILA("mcp.mobius.waila.api.IWailaDataProvider");
 
 	private final String classpath;
 	public final String name;
@@ -39,6 +40,10 @@ public enum InterfaceCache {
 
 	public boolean instanceOf(Object o) {
 		return object != null && object.isAssignableFrom(o.getClass());
+	}
+
+	public boolean instanceOf(Class c) {
+		return object != null && object.isAssignableFrom(c);
 	}
 }
 //}
