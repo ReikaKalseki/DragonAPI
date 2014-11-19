@@ -17,7 +17,9 @@ import Reika.DragonAPI.ASM.DragonAPIClassTransfomer;
 import Reika.DragonAPI.ASM.FMLItemBlockPatch;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
+import cpw.mods.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 
+@SortingIndex(1001)
 @MCVersion("1.7.10")
 public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 

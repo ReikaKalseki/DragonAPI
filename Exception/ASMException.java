@@ -3,6 +3,8 @@ package Reika.DragonAPI.Exception;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodNode;
 
 public abstract class ASMException extends RuntimeException {
 
@@ -18,18 +20,24 @@ public abstract class ASMException extends RuntimeException {
 	@Override
 	public final String getMessage() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(this.toString());
+		sb.append(this.getTitle());
 		sb.append(" not found in class ");
 		sb.append(node.name);
 		sb.append(".\n");
 		sb.append("This is a critical ASM error and the class transformer operation cannot proceed.");
 		sb.append(" If you are the developer of this mod, check for proper use of SRG/deobf names. If not, report it to the developer.");
-		sb.append("Additional information:\n");
+		sb.append("\n\nAdditional information:\n");
 		sb.append(this.getAdditionalInformation());
 		return sb.toString();
 	}
 
 	protected abstract String getAdditionalInformation();
+	protected abstract String getTitle();
+
+	@Override
+	public final String toString() {
+		return super.toString();
+	}
 
 	public final boolean isVanillaClass() {
 		return !node.name.startsWith("net.minecraftforge") && !node.name.startsWith("cpw");
@@ -45,7 +53,7 @@ public abstract class ASMException extends RuntimeException {
 		}
 
 		@Override
-		public String toString() {
+		protected String getTitle() {
 			return "Method "+label+" "+signature;
 		}
 
@@ -59,7 +67,10 @@ public abstract class ASMException extends RuntimeException {
 				sb.append("Use of non-SRG name in compiled game on vanilla code. This is very likely an error.\n");
 			}
 			sb.append("Identified methods:\n");
-			sb.append(node.methods);
+			for (MethodNode m : node.methods) {
+				String tag = m.name.equals(label) ? " * Name match" : "";
+				sb.append("\t"+m.name+" "+m.desc+tag+"\n");
+			}
 			return sb.toString();
 		}
 
@@ -72,7 +83,7 @@ public abstract class ASMException extends RuntimeException {
 		}
 
 		@Override
-		public String toString() {
+		protected String getTitle() {
 			return "Field "+label;
 		}
 
@@ -86,7 +97,10 @@ public abstract class ASMException extends RuntimeException {
 				sb.append("Use of non-SRG name in compiled game on vanilla code. This is very likely an error.\n");
 			}
 			sb.append("Identified fields:\n");
-			sb.append(node.fields);
+			for (FieldNode f : node.fields) {
+				String tag = f.name.equals(label) ? " * Name match" : "";
+				sb.append("\t"+f.name+" "+f.desc+tag+"\n");
+			}
 			return sb.toString();
 		}
 
