@@ -29,13 +29,16 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
 
+import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
+import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
+
 public class ReikaASMHelper {
 
-	public static FieldNode getFieldByName(ClassNode c, String name) {
+	public static FieldNode getFieldByName(ClassNode c, String name) throws NoSuchASMFieldException {
 		return getFieldByName(c, name, name);
 	}
 
-	public static FieldNode getFieldByName(ClassNode c, String obf, String deobf) {
+	public static FieldNode getFieldByName(ClassNode c, String obf, String deobf) throws NoSuchASMFieldException {
 		String s = FMLForgePlugin.RUNTIME_DEOBF ? obf : deobf;
 		List<FieldNode> fields = c.fields;
 		for (int k = 0; k < fields.size(); k++) {
@@ -44,14 +47,14 @@ public class ReikaASMHelper {
 				return f;
 			}
 		}
-		return null;
+		throw new NoSuchASMFieldException(c, s);
 	}
 
-	public static MethodNode getMethodByName(ClassNode c, String name, String sig) {
+	public static MethodNode getMethodByName(ClassNode c, String name, String sig) throws NoSuchASMMethodException {
 		return getMethodByName(c, name, name, sig);
 	}
 
-	public static MethodNode getMethodByName(ClassNode c, String obf, String deobf, String sig) {
+	public static MethodNode getMethodByName(ClassNode c, String obf, String deobf, String sig) throws NoSuchASMMethodException {
 		String s = FMLForgePlugin.RUNTIME_DEOBF ? obf : deobf;
 		List<MethodNode> methods = c.methods;
 		for (int k = 0; k < methods.size(); k++) {
@@ -60,7 +63,7 @@ public class ReikaASMHelper {
 				return m;
 			}
 		}
-		return null;
+		throw new NoSuchASMMethodException(c, s, sig);
 	}
 
 	public static void removeCodeLine(MethodNode m, int line) {
