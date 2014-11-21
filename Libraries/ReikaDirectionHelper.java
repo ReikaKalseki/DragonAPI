@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Data.Coordinate;
 
 public class ReikaDirectionHelper extends DragonAPICore {
 
@@ -54,6 +55,10 @@ public class ReikaDirectionHelper extends DragonAPICore {
 				return dir;
 		}
 		return null;
+	}
+
+	public static ForgeDirection getDirectionBetween(Coordinate c1, Coordinate c2) {
+		return getDirectionBetween(c1.xCoord, c1.yCoord, c1.zCoord, c2.xCoord, c2.yCoord, c2.zCoord);
 	}
 
 	public static int getDirectionIndex(ForgeDirection dir) {
