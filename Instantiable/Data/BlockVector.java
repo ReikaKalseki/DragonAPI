@@ -9,6 +9,10 @@ public class BlockVector {
 	public final int zCoord;
 	public final ForgeDirection direction;
 
+	public BlockVector(ForgeDirection dir, int x, int y, int z) {
+		this(x, y, z, dir);
+	}
+
 	public BlockVector(int x, int y, int z, ForgeDirection dir) {
 		xCoord = x;
 		yCoord = y;
