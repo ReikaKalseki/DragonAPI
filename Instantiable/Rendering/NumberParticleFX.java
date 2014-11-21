@@ -24,6 +24,7 @@ public class NumberParticleFX extends EntityFX {
 		motionY = 0.18;
 		particleMaxAge = 15;
 		particleScale = 0.05F;
+		noClip = true;
 	}
 
 	@Override

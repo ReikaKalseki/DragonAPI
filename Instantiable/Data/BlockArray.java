@@ -83,6 +83,10 @@ public class BlockArray {
 		return this.addBlockCoordinateIf(world, x, y, z, new BlockKey(b, meta));
 	}
 
+	public boolean addBlockCoordinateIf(World world, int x, int y, int z, Block b) {
+		return this.addBlockCoordinateIf(world, x, y, z, new BlockKey(b));
+	}
+
 	public boolean addBlockCoordinateIf(World world, int x, int y, int z, BlockKey bk) {
 		if (bk.match(world, x, y, z)) {
 			return this.addBlockCoordinate(x, y, z);

@@ -103,9 +103,9 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				m.instructions.insertBefore(pos, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/SlotEvent$RemoveFromSlotEvent"));
 				m.instructions.insertBefore(pos, new InsnNode(Opcodes.DUP));
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 0));
-				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/inventory/Slot", "getSlotIndex", "()I"));
+				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/inventory/Slot", "getSlotIndex", "()I")); //do not obfuscate, is Forge func
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 0));
-				m.instructions.insertBefore(pos, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/Slot", "inventory", "Lnet/minecraft/inventory/IInventory;"));
+				m.instructions.insertBefore(pos, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/Slot", FMLForgePlugin.RUNTIME_DEOBF ? "field_75224_c" : "inventory", "Lnet/minecraft/inventory/IInventory;"));
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 2));
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 1));
 				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SlotEvent$RemoveFromSlotEvent", "<init>", "(ILnet/minecraft/inventory/IInventory;Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V"));
