@@ -267,7 +267,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		ReikaEntityHelper.loadMappings();
 
-		if (ModList.liteLoaderInstalled() && FMLCommonHandler.instance().getSide() == Side.SERVER)
+		if (ModList.liteLoaderInstalled() && FMLCommonHandler.instance().getSide() == Side.CLIENT)
 			Minecraft.getMinecraft().refreshResources();
 	}
 

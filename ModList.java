@@ -232,6 +232,9 @@ public enum ModList {
 		Class c = null;
 		try {
 			c = Class.forName("com.mumfrey.liteloader.core.LiteLoader");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: LiteLoader detected. Loading compatibility features.");
+			ReikaJavaLibrary.pConsole("\t\tNote that some parts of the game, especially sounds and textures, may error out.");
+			ReikaJavaLibrary.pConsole("\t\tTry reloading resources (F3+T) to fix this.");
 		}
 		catch (Exception e) {
 
