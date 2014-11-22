@@ -15,7 +15,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
+import Reika.DragonAPI.Instantiable.BlockKey;
 
 public class StructuredBlockArray extends BlockArray {
 

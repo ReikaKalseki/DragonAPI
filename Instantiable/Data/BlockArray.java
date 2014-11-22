@@ -30,7 +30,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.Data.BlockMap.BlockKey;
+import Reika.DragonAPI.Instantiable.BlockKey;
 import Reika.DragonAPI.Interfaces.SemiTransparent;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
@@ -88,7 +88,7 @@ public class BlockArray {
 	}
 
 	public boolean addBlockCoordinateIf(World world, int x, int y, int z, BlockKey bk) {
-		if (bk.match(world, x, y, z)) {
+		if (bk.matchInWorld(world, x, y, z)) {
 			return this.addBlockCoordinate(x, y, z);
 		}
 		return false;

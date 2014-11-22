@@ -379,8 +379,9 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		packetTimer.update();
 
 		fullSyncTimer.update();
-		if (fullSyncTimer.checkCap())
+		if (fullSyncTimer.checkCap()) {
 			this.forceFullSync();
+		}
 
 		if (packetTimer.checkCap() || this.shouldFullSync()) {
 			if (this.shouldSendSyncPackets()) {

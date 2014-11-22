@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -26,6 +27,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.tileentity.TileEntity;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -39,6 +41,15 @@ public class ReikaThaumHelper {
 	private static Map<String, ArrayList<String>> scannedObjects;
 	private static Map<String, ArrayList<String>> scannedEntities;
 	private static Map<String, ArrayList<String>> scannedPhenomena;
+
+	private static Method addWandVis;
+	private static Method getWandVis;
+	private static Method maxWandVis;
+
+	private static Method setWandInUse;
+	private static Method clearWandInUse;
+
+	private static Method researchComplete;
 
 	private static Potion warpWard;
 
@@ -218,7 +229,124 @@ public class ReikaThaumHelper {
 	}
 
 	public static void giveWarpProtection(EntityPlayer ep, int time) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return;
 		ep.addPotionEffect(new PotionEffect(warpWard.id, time, 0));
+	}
+
+	public static int getWandSpaceFor(ItemStack wand, Aspect a) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return 0;
+		return getVisCapacityForWand(wand)-getVisInWand(wand).getAmount(a);
+	}
+
+	public static int getVisCapacityForWand(ItemStack wand) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return 0;
+		try {
+			return (Integer)maxWandVis.invoke(wand.getItem(), wand);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	public static AspectList getVisInWand(ItemStack wand) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return null;
+		try {
+			return (AspectList)getWandVis.invoke(wand.getItem(), wand);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static int addVisToWand(ItemStack wand, Aspect a, int amt) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return 0;
+		try {
+			return (Integer)addWandVis.invoke(wand.getItem(), wand, a, amt, true);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
+	}
+
+	public static void setWandInUse(ItemStack wand, TileEntity te) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return;
+		try {
+			setWandInUse.invoke(wand.getItem(), wand, te.xCoord, te.yCoord, te.zCoord);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void clearWandInUse(ItemStack wand) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return;
+		try {
+			clearWandInUse.invoke(wand.getItem(), wand);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/** Decomposes an AspectList down to its primal types. */
+	public static AspectList decompose(AspectList complex) {
+		AspectList al = new AspectList();
+		for (Aspect a : complex.aspects.keySet()) {
+			int amt = complex.getAmount(a);
+			if (a.isPrimal()) {
+				al.add(a, amt);
+			}
+			else {
+				HashMap<Aspect, Integer> map = getAspectDecomposition(a);
+				for (Aspect a2 : map.keySet()) {
+					al.add(a2, amt*map.get(a2));
+				}
+			}
+		}
+		return al;
+	}
+
+	public static HashMap<Aspect, Integer> getAspectDecomposition(Aspect a) {
+		HashMap<Aspect, Integer> map = new HashMap();
+		addAspectDecomposition(a, map);
+		return map;
+	}
+
+	private static void addAspectDecomposition(Aspect a, HashMap<Aspect, Integer> map) {
+		Integer get = map.get(a);
+		if (get == null)
+			get = 0;
+		if (a.isPrimal()) {
+			map.put(a, get+1);
+		}
+		else {
+			Aspect[] parents = a.getComponents();
+			for (int i = 0; i < parents.length; i++) {
+				addAspectDecomposition(parents[i], map);
+			}
+		}
+	}
+
+	public static boolean isResearchComplete(EntityPlayer ep, String research) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return false;
+		try {
+			return (Boolean)researchComplete.invoke(null, ep.getCommandSenderName(), research);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	static {
@@ -246,6 +374,16 @@ public class ReikaThaumHelper {
 				Class pot = Class.forName("thaumcraft.common.lib.potions.PotionWarpWard");
 				Field ins = pot.getDeclaredField("instance");
 				warpWard = (Potion)ins.get(null);
+
+				Class wand = Class.forName("thaumcraft.common.items.wands.ItemWandCasting");
+				addWandVis = wand.getMethod("addVis", ItemStack.class, Aspect.class, int.class, boolean.class);
+				getWandVis = wand.getMethod("getAllVis", ItemStack.class);
+				maxWandVis = wand.getMethod("getMaxVis", ItemStack.class);
+				setWandInUse = wand.getMethod("setObjectInUse", ItemStack.class, int.class, int.class, int.class);
+				clearWandInUse = wand.getMethod("clearObjectInUse", ItemStack.class);
+
+				Class mgr = Class.forName("thaumcraft.common.lib.research.ResearchManager");
+				researchComplete = mgr.getMethod("isResearchComplete", String.class, String.class);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
