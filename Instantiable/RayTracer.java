@@ -34,6 +34,7 @@ public final class RayTracer {
 	private Vec3 offset = Vec3.createVectorHelper(0, 0, 0);
 
 	private final ArrayList<BlockKey> forbiddenBlocks = new ArrayList();
+	private final ArrayList<BlockKey> allowedBlocks = new ArrayList();
 
 	public RayTracer(int x1, int y1, int z1, int x2, int y2, int z2) {
 		originX = x1;
@@ -62,6 +63,14 @@ public final class RayTracer {
 
 	public void addOpaqueBlock(Block b, int meta) {
 		forbiddenBlocks.add(new BlockKey(b, meta));
+	}
+
+	public void addTransparentBlock(Block b) {
+		this.addTransparentBlock(b, -1);
+	}
+
+	public void addTransparentBlock(Block b, int meta) {
+		allowedBlocks.add(new BlockKey(b, meta));
 	}
 
 	public boolean isClearLineOfSight(World world) {
@@ -104,11 +113,13 @@ public final class RayTracer {
 	}
 
 	private boolean isDisallowedBlock(World world, int x, int y, int z) {
-		if (!ReikaWorldHelper.softBlocks(world, x, y, z) && (softBlocksOnly || ReikaBlockHelper.isCollideable(world, x, y, z)))
-			return true;
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		BlockKey key = new BlockKey(b, meta);
+		if (allowedBlocks.contains(key))
+			return false;
+		if (!ReikaWorldHelper.softBlocks(world, x, y, z) && (softBlocksOnly || ReikaBlockHelper.isCollideable(world, x, y, z)))
+			return true;
 		return forbiddenBlocks.contains(key);
 	}
 

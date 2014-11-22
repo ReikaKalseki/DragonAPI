@@ -51,9 +51,10 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		int dz = z2-z1;
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
-			if (dir.offsetX == dx && dir.offsetY == dy && dir.offsetZ == dz)
+			if (Math.signum(dir.offsetX) == Math.signum(dx) && Math.signum(dir.offsetY) == Math.signum(dy) && Math.signum(dir.offsetZ) == Math.signum(dz))
 				return dir;
 		}
+		//ReikaJavaLibrary.pConsole(x1+","+y1+","+z1+" > "+x2+","+y2+","+z2+" ("+dx+":"+dy+":"+dz+")");
 		return null;
 	}
 
