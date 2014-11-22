@@ -236,8 +236,8 @@ public enum ModList {
 			ReikaJavaLibrary.pConsole("\t\tNote that some parts of the game, especially sounds and textures, may error out.");
 			ReikaJavaLibrary.pConsole("\t\tTry reloading resources (F3+T) to fix this.");
 		}
-		catch (Exception e) {
-
+		catch (ClassNotFoundException e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: LiteLoader not detected.");
 		}
 		liteClass = c;
 	}

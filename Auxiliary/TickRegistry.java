@@ -11,6 +11,8 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.ArrayList;
 
+import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;
@@ -31,6 +33,8 @@ public class TickRegistry {
 	private ArrayList<TickHandler> renderTickers = new ArrayList();
 	private ArrayList<TickHandler> clientTickers = new ArrayList();
 	private ArrayList<TickHandler> serverTickers = new ArrayList();
+
+	private static boolean posted = false;
 
 	private TickRegistry() {
 		FMLCommonHandler.instance().bus().register(this);
@@ -60,6 +64,10 @@ public class TickRegistry {
 			if (h.canFire(evt.phase)) {
 				h.tick(TickType.CLIENT, evt.phase);
 			}
+		}
+		if (!posted) {
+			MinecraftForge.EVENT_BUS.post(new GameFinishedLoadingEvent());
+			posted = true;
 		}
 	}
 

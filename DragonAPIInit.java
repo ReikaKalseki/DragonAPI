@@ -54,6 +54,7 @@ import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Instantiable.SyncPacket;
+import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
@@ -266,9 +267,6 @@ public class DragonAPIInit extends DragonAPIMod {
 		CommandableUpdateChecker.instance.checkAll();
 
 		ReikaEntityHelper.loadMappings();
-
-		if (ModList.liteLoaderInstalled() && FMLCommonHandler.instance().getSide() == Side.CLIENT)
-			Minecraft.getMinecraft().refreshResources();
 	}
 
 	@EventHandler
@@ -300,6 +298,13 @@ public class DragonAPIInit extends DragonAPIMod {
 		if (DragonOptions.SOUNDCHANNELS.getState()) {
 			SoundSystemConfig.setNumberNormalChannels(256);
 		}
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void onGameLoaded(GameFinishedLoadingEvent evt) {
+		if (ModList.liteLoaderInstalled())
+			Minecraft.getMinecraft().refreshResources();
 	}
 
 	@SubscribeEvent
