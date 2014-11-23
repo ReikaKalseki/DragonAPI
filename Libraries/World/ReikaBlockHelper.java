@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries.World;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
@@ -25,6 +26,22 @@ import Reika.DragonAPI.ModInteract.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public final class ReikaBlockHelper extends DragonAPICore {
+
+	public static boolean matchMaterialsLoosely(Material m1, Material m2) {
+		if (m1 == m2)
+			return true;
+		if (m1 == Material.ice && m2 == Material.packedIce)
+			return true;
+		if (m2 == Material.ice && m1 == Material.packedIce)
+			return true;
+		if (m1 == Material.snow && m2 == Material.craftedSnow)
+			return true;
+		if (m2 == Material.snow && m1 == Material.craftedSnow)
+			return true;
+		if (m1.getMaterialMapColor() == MapColor.foliageColor && m2.getMaterialMapColor() == MapColor.foliageColor)
+			return true;
+		return false;
+	}
 
 	/** Tests if a block always drops itself. Args: ID */
 	public static boolean alwaysDropsSelf(Block ID) {

@@ -11,6 +11,8 @@ package Reika.DragonAPI.Libraries.Registry;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -114,6 +116,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final ItemStack birchSlab = new ItemStack(Blocks.wooden_slab, 1, 2);
 	public static final ItemStack jungleSlab = new ItemStack(Blocks.wooden_slab, 1, 3);
 
+	private static final ItemComparator comparator = new ItemComparator();
 
 	/** Returns true if the block or item has metadata variants. Args: ID *//*
 	public static boolean hasMetadata(Item id) {
@@ -344,5 +347,18 @@ public final class ReikaItemHelper extends DragonAPICore {
 		ItemStack is2 = is.copy();
 		is2.stackTagCompound = null;
 		return is2;
+	}
+
+	public static void sortItems(List<ItemStack> li) {
+		Collections.sort(li, comparator);
+	}
+
+	public static class ItemComparator implements Comparator<ItemStack> {
+
+		@Override
+		public int compare(ItemStack o1, ItemStack o2) {
+			return Item.getIdFromItem(o1.getItem())-Item.getIdFromItem(o2.getItem());
+		}
+
 	}
 }

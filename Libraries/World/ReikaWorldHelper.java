@@ -276,7 +276,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			int dz = z+dir.offsetZ;
 			if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
 				Material mat2 = getMaterial(world, dx, dy, dz);
-				if (mat == mat2)
+				if (ReikaBlockHelper.matchMaterialsLoosely(mat, mat2))
 					return dir;
 			}
 		}

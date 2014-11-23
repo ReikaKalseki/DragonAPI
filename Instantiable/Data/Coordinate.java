@@ -79,7 +79,7 @@ public final class Coordinate {
 			int x = data.getInteger("x");
 			int y = data.getInteger("y");
 			int z = data.getInteger("z");
-			int dim = data.getInteger("dim");
+			return new Coordinate(x, y, z);
 		}
 		return null;
 	}

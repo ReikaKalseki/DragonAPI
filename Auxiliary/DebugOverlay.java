@@ -60,34 +60,35 @@ public class DebugOverlay {
 				Minecraft mc = Minecraft.getMinecraft();
 				EntityPlayer ep = mc.thePlayer;
 				FontRenderer f = mc.fontRenderer;
-
-				float reach = 4;
-				MovingObjectPosition hit = ReikaPlayerAPI.getLookedAtBlockClient(4, false);
-				if (hit != null) {
-					int x = hit.blockX;
-					int y = hit.blockY;
-					int z = hit.blockZ;
-					Block b = ep.worldObj.getBlock(x, y, z);
-					if (b.hasTileEntity(ep.worldObj.getBlockMetadata(x, y, z))) {
-						TileEntity te = ep.worldObj.getTileEntity(x, y, z);
-						if (te != null) {
-							NBTTagCompound NBT = new NBTTagCompound();
-							ArrayList<String> li = new ArrayList();
-							try {
-								te.writeToNBT(NBT);
-								li.addAll(ReikaNBTHelper.parseNBTAsLines(NBT));
-							}
-							catch (Exception e) {
-								StackTraceElement[] el = e.getStackTrace();
-								li.add(EnumChatFormatting.RED.toString()+e.getClass()+": "+e.getLocalizedMessage());
-								for (int i = 0; i < 4; i++) {
-									li.add(el[i].toString());
+				if (mc.currentScreen == null) {
+					float reach = 4;
+					MovingObjectPosition hit = ReikaPlayerAPI.getLookedAtBlockClient(4, false);
+					if (hit != null) {
+						int x = hit.blockX;
+						int y = hit.blockY;
+						int z = hit.blockZ;
+						Block b = ep.worldObj.getBlock(x, y, z);
+						if (b.hasTileEntity(ep.worldObj.getBlockMetadata(x, y, z))) {
+							TileEntity te = ep.worldObj.getTileEntity(x, y, z);
+							if (te != null) {
+								NBTTagCompound NBT = new NBTTagCompound();
+								ArrayList<String> li = new ArrayList();
+								try {
+									te.writeToNBT(NBT);
+									li.addAll(ReikaNBTHelper.parseNBTAsLines(NBT));
 								}
-							}
-							for (int i = 0; i < li.size(); i++) {
-								String s = li.get(i);
-								f.drawString(s, 1+event.resolution.getScaledWidth()/2*(i/24), 1+f.FONT_HEIGHT*(i%24), 0xffffff);
-								ReikaTextureHelper.bindHUDTexture();
+								catch (Exception e) {
+									StackTraceElement[] el = e.getStackTrace();
+									li.add(EnumChatFormatting.RED.toString()+e.getClass()+": "+e.getLocalizedMessage());
+									for (int i = 0; i < 4; i++) {
+										li.add(el[i].toString());
+									}
+								}
+								for (int i = 0; i < li.size(); i++) {
+									String s = li.get(i);
+									f.drawString(s, 1+event.resolution.getScaledWidth()/2*(i/24), 1+f.FONT_HEIGHT*(i%24), 0xffffff);
+									ReikaTextureHelper.bindHUDTexture();
+								}
 							}
 						}
 					}

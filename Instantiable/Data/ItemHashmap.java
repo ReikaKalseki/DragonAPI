@@ -11,23 +11,34 @@ package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class ItemHashMap<V> {
 
 	private final HashMap<ItemKey, V> data = new HashMap();
+	private ArrayList<ItemStack> sorted = new ArrayList();
 
 	public ItemHashMap() {
 
 	}
 
+	private void updateSortedList() {
+		sorted = new ArrayList(this.keySet());
+		ReikaItemHelper.sortItems(sorted);
+	}
+
 	private V put(ItemKey is, V value) {
-		return data.put(is, value);
+		V ret = data.put(is, value);
+		this.updateSortedList();
+		return ret;
 	}
 
 	private V get(ItemKey is) {
@@ -91,11 +102,26 @@ public final class ItemHashMap<V> {
 		return data.toString();
 	}
 
-	public void clear() {
-		data.clear();
+	public V remove(ItemStack is) {
+		return this.remove(new ItemKey(is));
 	}
 
-	private static final class ItemKey {
+	private V remove(ItemKey is) {
+		V ret = data.remove(is);
+		this.updateSortedList();
+		return ret;
+	}
+
+	public void clear() {
+		data.clear();
+		this.updateSortedList();
+	}
+
+	public List<ItemStack> sortedKeyset() {
+		return Collections.unmodifiableList(sorted);
+	}
+
+	private static final class ItemKey implements Comparable<ItemKey> {
 
 		public final Item itemID;
 		private final int metadata;
@@ -131,6 +157,11 @@ public final class ItemHashMap<V> {
 
 		public ItemStack asItemStack() {
 			return new ItemStack(itemID, 1, metadata);
+		}
+
+		@Override
+		public int compareTo(ItemKey o) {
+			return Item.getIdFromItem(itemID)-Item.getIdFromItem(o.itemID);
 		}
 
 	}
