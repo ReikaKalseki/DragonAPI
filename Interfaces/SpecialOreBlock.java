@@ -21,5 +21,6 @@ public interface SpecialOreBlock {
 	public ItemStack getSilkTouchVersion(World world, int x, int y, int z);
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune);
 	public ItemStack getReplacementBlock(World world, int x, int y, int z);
+	public ItemStack getDisplayItem(World world, int x, int y, int z);
 
 }
