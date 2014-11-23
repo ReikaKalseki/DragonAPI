@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +24,7 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
@@ -330,5 +333,25 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 				return true;
 		}
 		return false;
+	}
+
+	public static byte[] streamToBytes(InputStream in) {
+		ArrayList<Byte> li = new ArrayList();
+		try {
+			int ret = in.read();
+			while (ReikaMathLibrary.isValueInsideBoundsIncl(0, 255, ret)) {
+				li.add((byte)ret);
+				ret = in.read();
+			}
+			byte[] arr = new byte[li.size()];
+			for (int i = 0; i < li.size(); i++) {
+				arr[i] = li.get(i);
+			}
+			return arr;
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

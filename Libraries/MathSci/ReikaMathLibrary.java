@@ -283,27 +283,25 @@ public final class ReikaMathLibrary extends DragonAPICore {
 
 	/** Returns true if the value is not inside the bounds (inclusive). Args: Low Bound, Upper Bound, Value */
 	public static boolean isValueOutsideBounds(int low, int hi, int val) {
-		if (val >= low && val <= hi)
-			return false;
-		return true;
+		return !(val >= low && val <= hi);
 	}
 
 	/** Returns true if the value is inside the bounds (not inclusive). Args: Low Bound, Upper Bound, Value */
 	public static boolean isValueInsideBounds(int low, int hi, int val) {
-		return (val < hi && val > low);
+		return val < hi && val > low;
 	}
 
 	/** Returns true if the value is inside the bounds (inclusive). Args: Low Bound, Upper Bound, Value */
 	public static boolean isValueInsideBoundsIncl(int low, int hi, int val) {
-		return (val <= hi && val >= low);
+		return val <= hi && val >= low;
 	}
 
 	public static boolean isValueInsideBounds(double low, double hi, double val) {
-		return (val < hi && val > low);
+		return val < hi && val > low;
 	}
 
 	public static boolean isValueInsideBoundsIncl(double low, double hi, double val) {
-		return (val <= hi && val >= low);
+		return val <= hi && val >= low;
 	}
 
 	/** Returns a double expressed in scientific notation (ret[0] x 10^ret[1]). Args: Value */

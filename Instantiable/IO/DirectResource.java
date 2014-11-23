@@ -9,15 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
+import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.data.IMetadataSection;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class DirectResource implements IResource {
 
 	public final String path;
+	private byte[] data;
 
 	public DirectResource(String path) {
 		this.path = path;
@@ -25,7 +28,10 @@ public class DirectResource implements IResource {
 
 	@Override
 	public InputStream getInputStream() {
-		return DragonAPIInit.class.getClassLoader().getResourceAsStream(path);//root.getResourceAsStream(path);
+		if (data == null) {
+			data = ReikaJavaLibrary.streamToBytes(DragonAPIInit.class.getClassLoader().getResourceAsStream(path));
+		}
+		return new ByteArrayInputStream(data);
 	}
 
 	@Override
