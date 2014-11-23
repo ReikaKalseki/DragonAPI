@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.BlockProperties;
+import Reika.DragonAPI.Interfaces.SpecialOreBlock;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.MystCraftHandler;
 import Reika.DragonAPI.ModInteract.TwilightForestHandler;
@@ -75,6 +76,8 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		if (is == null)
 			return false;
 		if (is.getItem() == Item.getItemFromBlock(Blocks.lit_redstone_ore))
+			return true;
+		if (Block.getBlockFromItem(is.getItem()) instanceof SpecialOreBlock)
 			return true;
 		if (ReikaOreHelper.isVanillaOre(is))
 			return true;
