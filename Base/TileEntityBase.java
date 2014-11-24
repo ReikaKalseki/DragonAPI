@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -44,6 +45,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
+import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
@@ -52,6 +54,8 @@ import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper.TypeSelector;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.Lua.LuaMethod;
@@ -208,9 +212,15 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			S35PacketUpdateTileEntity p = new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 2, var1);
 			this.sendPacketToAllAround(p, this.getUpdatePacketRadius());
 
+			this.syncTankData();
+
 			this.onDataSync(fullNBT);
 		}
 		this.markDirty();
+	}
+
+	private void syncTankData() {
+		Collection<Field> c = ReikaReflectionHelper.getFields(this.getClass(), new TypeSelector(HybridTank.class));
 	}
 
 	protected void onDataSync(boolean fullNBT) {

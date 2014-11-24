@@ -12,8 +12,11 @@ package Reika.DragonAPI.Libraries.Java;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -265,5 +268,55 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
 		f.set(instance, o);
 	}
+
+	public static Collection<Field> getFields(Class c, FieldSelector sel) {
+		Collection<Field> li = new ArrayList();
+		while (c != null) {
+			Field[] fd = c.getDeclaredFields();
+			for (int i = 0; i < fd.length; i++) {
+				Field f = fd[i];
+				if (sel.isValid(f))
+					li.add(f);
+			}
+			c = c.getSuperclass();
+		}
+		return li;
+	}
+
+	public static Collection<Method> getMethods(Class c, MethodSelector sel) {
+		Collection<Method> li = new ArrayList();
+		while (c != null) {
+			Method[] fd = c.getDeclaredMethods();
+			for (int i = 0; i < fd.length; i++) {
+				Method f = fd[i];
+				if (sel.isValid(f))
+					li.add(f);
+			}
+			c = c.getSuperclass();
+		}
+		return li;
+	}
+
+	public static interface FieldSelector {
+		public boolean isValid(Field f);
+	}
+
+	public static interface MethodSelector {
+		public boolean isValid(Method m);
+	}
+
+	public static final class TypeSelector implements FieldSelector {
+
+		public final Class type;
+
+		public TypeSelector(Class c) {
+			type = c;
+		}
+
+		@Override
+		public boolean isValid(Field f) {
+			return f.getType() == type;
+		}
+	};
 
 }
