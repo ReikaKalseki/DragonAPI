@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries.IO;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
@@ -21,15 +22,22 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.item.crafting.ShapelessRecipes;
+import net.minecraft.potion.Potion;
+import net.minecraft.util.MathHelper;
+import net.minecraftforge.client.GuiIngameForge;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.WrappedRecipe;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
@@ -550,5 +558,95 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawLine(minx, maxy, maxx, maxy, color);
 		this.drawLine(minx, miny, minx, maxy, color);
 		this.drawLine(maxx, miny, maxx, maxy, color);
+	}
+
+	public void drawVanillaHealthBar(EntityPlayer ep, ScaledResolution sr, int rowHeight) {
+		this.drawVanillaHealthBar(ep, sr, rowHeight, null);
+	}
+
+	public void drawVanillaHealthBar(EntityPlayer ep, ScaledResolution sr, int rowHeight, HashMap<Integer, Integer> colors) {
+		GL11.glEnable(GL11.GL_BLEND);
+		if (colors != null && !colors.isEmpty())
+			ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "Resources/gui.png");
+		boolean highlight = ep.hurtResistantTime/3 % 2 == 1;
+
+		if (ep.hurtResistantTime < 10) {
+			highlight = false;
+		}
+
+		IAttributeInstance attrMaxHealth = ep.getEntityAttribute(SharedMonsterAttributes.maxHealth);
+		int health = MathHelper.ceiling_float_int(ep.getHealth());
+		int healthLast = MathHelper.ceiling_float_int(ep.prevHealth);
+		float healthMax = (float)attrMaxHealth.getAttributeValue();
+		float absorb = ep.getAbsorptionAmount();
+
+		int healthRows = MathHelper.ceiling_float_int((healthMax+absorb)/2.0F/10.0F);
+
+		int left = sr.getScaledWidth()/2-91;
+		int top = sr.getScaledHeight()-GuiIngameForge.left_height;
+		GuiIngameForge.left_height += (healthRows*rowHeight);
+		if (rowHeight != 10)
+			GuiIngameForge.left_height += 10-rowHeight;
+
+		int regen = -1; //regen "bounced" heart
+		if (ep.isPotionActive(Potion.regeneration)) {
+			regen = (int)(System.currentTimeMillis()/50) % 25;
+		}
+
+		int upper =  9*(ep.worldObj.getWorldInfo().isHardcoreModeEnabled() ? 5 : 0);
+		int back = (highlight ? 25 : 16);
+		int margin = 16;
+		if (ep.isPotionActive(Potion.poison))
+			margin += 36;
+		else if (ep.isPotionActive(Potion.wither))
+			margin += 72;
+		float absorbRemaining = absorb;
+
+		for (int i = MathHelper.ceiling_float_int((healthMax+absorb)/2.0F)-1; i >= 0; i--) {
+			int row = MathHelper.ceiling_float_int((i+1)/10.0F)-1;
+			int x = left+i % 10*8;
+			int y = top-row*rowHeight;
+
+			if (health <= 4)
+				y += ReikaRandomHelper.getRandomPlusMinus(2, 1);
+			if (i == regen)
+				y -= 2;
+
+			this.drawTexturedModalRect(x, y, back, upper, 9, 9);
+
+			if (highlight) {
+				if (i*2+1 < healthLast)
+					this.drawTexturedModalRect(x, y, margin+54, upper, 9, 9); //draw full heart
+				else if (i*2+1 == healthLast)
+					this.drawTexturedModalRect(x, y, margin+63, upper, 9, 9); //draw half heart
+			}
+
+			if (absorbRemaining > 0) {
+				if (absorbRemaining == absorb && absorb % 2.0F == 1.0F)
+					this.drawTexturedModalRect(x, y, margin+153, upper, 9, 9); //draw full heart
+				else
+					this.drawTexturedModalRect(x, y, margin+144, upper, 9, 9); //draw half heart
+				absorbRemaining -= 2.0F;
+			}
+			else {
+				if (colors != null) {
+					Integer color = colors.get(i);
+					if (color != null) {
+						float red = ReikaColorAPI.getRedFromInteger(color.intValue())/255F;
+						float green = ReikaColorAPI.getGreenFromInteger(color.intValue())/255F;
+						float blue = ReikaColorAPI.getBlueFromInteger(color.intValue())/255F;
+						GL11.glColor3f(red, green, blue);
+					}
+				}
+				if (i*2+1 < health) //heart is filled
+					this.drawTexturedModalRect(x, y, margin+36, upper, 9, 9); //draw full heart
+				else if (i*2+1 == health)
+					this.drawTexturedModalRect(x, y, margin+45, upper, 9, 9); //draw half heart
+				GL11.glColor3f(1, 1, 1);
+			}
+		}
+
+		ReikaTextureHelper.bindHUDTexture();
+		GL11.glDisable(GL11.GL_BLEND);
 	}
 }
