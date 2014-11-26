@@ -66,34 +66,28 @@ public class ReikaColorAPI {
 		return color;
 	}
 
-	public static Color getHigherSat(Color color) {
-		int r = (color.getRed());
-		int g = (color.getGreen());
-		int b = (color.getBlue());
-		int a = color.getAlpha();
-		if (r > g && r > b)
-			r *= 1.2;
-		if (g > r && g > b)
-			g *= 1.2;
-		if (b > g && b > r)
-			b *= 1.2;
-		if (r > 255)
-			r = 255;
-		if (g > 255)
-			g = 255;
-		if (b > 255)
-			b = 255;
-		Color color2 = new Color(r, g, b, a);
-		return color2;
+	private static float[] RGBtoHSB(int rgb) {
+		return Color.RGBtoHSB(getRedFromInteger(rgb), getGreenFromInteger(rgb), getBlueFromInteger(rgb), null);
 	}
 
-	public static Color getLowerSat(Color color) {
-		int r = color.getRed();
-		int g = color.getGreen();
-		int b = color.getBlue();
-		int a = color.getAlpha();
-		Color color2 = new Color(r, g, b, a);
-		return color2;
+	public static Color getModifiedSat(Color color, float factor) {
+		return new Color(getModifiedSat(color.getRGB(), factor));
+	}
+
+	public static int getModifiedSat(int rgb, float factor) {
+		float[] hsb = RGBtoHSB(rgb);
+		hsb[1] *= factor;
+		return Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
+	}
+
+	public static Color getModifiedHue(Color color, int hue) {
+		return new Color(getModifiedHue(color.getRGB(), hue));
+	}
+
+	public static int getModifiedHue(int rgb, int hue) {
+		float[] hsb = RGBtoHSB(rgb);
+		hsb[0] = hue/360F;
+		return Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
 	}
 
 	public static int getRedFromInteger(int color) {
