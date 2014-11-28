@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries.Java;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -353,5 +354,29 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static <I, O> Collection<O> getConstructedCollection(Collection<I> inputs, Class<I> ci, Class<O> co) {
+		try {
+			return getConstructedCollection(inputs, co.getConstructor(ci));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static <I, O> Collection<O> getConstructedCollection(Collection<I> inputs, Constructor<O> c) {
+		Collection<O> outputs = new ArrayList();
+		try {
+			for (I in : inputs) {
+				O out = c.newInstance(in);
+				outputs.add(out);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return outputs;
 	}
 }

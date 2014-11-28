@@ -18,7 +18,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ObjectWeb<V> {
 
-	private final HashMap<V, List> web = new HashMap();
+	private final HashMap<V, ArrayList<V>> web = new HashMap();
 
 	public ObjectWeb() {
 
@@ -77,7 +77,7 @@ public class ObjectWeb<V> {
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
-		List<V> li = web.get(parent);
+		ArrayList<V> li = web.get(parent);
 		if (li.contains(child)) {
 			ReikaJavaLibrary.pConsole("Child "+child+" already exists for node "+parent+"!");
 			ReikaJavaLibrary.dumpStack();
@@ -93,7 +93,7 @@ public class ObjectWeb<V> {
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
-		List<V> li = web.get(parent);
+		ArrayList<V> li = web.get(parent);
 		if (!li.contains(child)) {
 			ReikaJavaLibrary.pConsole("Child "+child+" does not exist for node "+parent+"! Cannot remove!");
 			ReikaJavaLibrary.dumpStack();
