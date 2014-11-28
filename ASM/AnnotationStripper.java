@@ -82,7 +82,9 @@ class AnnotationStripper {
 					if (!workingPath.contains(node.name)) {
 						try {
 							Class.forName(node.name, false, AnnotationStripper.class.getClassLoader());
-						} catch (Throwable _) {
+						}
+						catch (ClassNotFoundException e) {
+
 						}
 					}
 				}
@@ -106,18 +108,13 @@ class AnnotationStripper {
 						String cz = clazz.replace('.', '/');
 						if (cn.interfaces.contains(cz)) {
 							//ReikaJavaLibrary.pConsole("entry 1 for "+cn.name);
-							boolean remove = true;
 							try {
 								if (!wrongSide && !workingPath.contains(clazz)) {
 									Class.forName(clazz, false, AnnotationStripper.class.getClassLoader());
-									remove = false;
 									//ReikaJavaLibrary.pConsole("exit 1 for "+cn.name+"; "+clazz);
 								}
 							}
-							catch (Throwable _) {
-
-							}
-							if (remove) {
+							catch (ClassNotFoundException e) {
 								cn.interfaces.remove(cz);
 								altered = true;
 								if (DEBUG) {
@@ -183,7 +180,8 @@ class AnnotationStripper {
 							if (!workingPath.contains(clazz)) {
 								Class.forName(clazz, false, AnnotationStripper.class.getClassLoader());
 							}
-						} catch (Throwable _) {
+						}
+						catch (ClassNotFoundException e) {
 							needsRemoved = true;
 						}
 					}
