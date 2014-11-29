@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.Java;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
 
 public class ReikaRandomHelper extends DragonAPICore {
 
@@ -62,6 +63,24 @@ public class ReikaRandomHelper extends DragonAPICore {
 
 	public static byte getRandomByte() {
 		return getRandomByte(Byte.MAX_VALUE+1);
+	}
+
+	/** Returns a random number less than {@code n} such that the probability of a given value {@code val} is equal to <br> {@code (i+1)/n!}. */
+	public static int getLinearRandom(int n) {
+		WeightedRandom<Integer> r = new WeightedRandom();
+		for (int i = 0; i < n; i++) {
+			r.addEntry(i, i+1);
+		}
+		return r.getRandomEntry();
+	}
+
+	/** Returns a random number less than {@code n} such that the probability of a given value {@code val} is equal to <br> {@code (n-i+1)/n!}. */
+	public static int getInverseLinearRandom(int n) {
+		WeightedRandom<Integer> r = new WeightedRandom();
+		for (int i = 0; i < n; i++) {
+			r.addEntry(n-i-1, i+1);
+		}
+		return r.getRandomEntry();
 	}
 
 }
