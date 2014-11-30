@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public class ModVersion implements Comparable<ModVersion> {
@@ -103,11 +104,15 @@ public class ModVersion implements Comparable<ModVersion> {
 				throw new FileNotFoundException("Version file for "+mod.getDisplayName()+" is missing!");
 			}
 			p.load(stream);
-			return getFromString(p.getProperty("Major")+p.getProperty("Minor"));
+			String mj = p.getProperty("Major");
+			String mn = p.getProperty("Minor");
+			if (mj == null || mn == null || mj.equals("null") || mn.equals("null") || mj.isEmpty() || mn.isEmpty())
+				throw new InstallationException(mod, "The version file was either damaged, overwritten, or is missing!");
+			return getFromString(mj+mn);
 		}
 		catch (IOException e) {
 			e.printStackTrace();
-			return error;
+			throw new InstallationException(mod, "The version file was either damaged, overwritten, or is missing!");
 		}
 	}
 }

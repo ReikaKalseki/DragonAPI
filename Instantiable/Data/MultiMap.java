@@ -94,4 +94,19 @@ public final class MultiMap<K, V> {
 		return c != null && c.remove(value);
 	}
 
+	@Override
+	public String toString() {
+		return data.toString();
+	}
+
+	@Override
+	public int hashCode() {
+		return data.hashCode();
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		return o instanceof MultiMap && this.data.equals(((MultiMap)o).data);
+	}
+
 }
