@@ -25,19 +25,21 @@ public final class ItemHashMap<V> {
 
 	private final HashMap<ItemKey, V> data = new HashMap();
 	private ArrayList<ItemStack> sorted = new ArrayList();
+	private Collection<ItemStack> keyset = null;
 
 	public ItemHashMap() {
 
 	}
 
-	private void updateSortedList() {
+	private void updateCaches() {
 		sorted = new ArrayList(this.keySet());
 		ReikaItemHelper.sortItems(sorted);
+		this.keyset = this.createKeySet();
 	}
 
 	private V put(ItemKey is, V value) {
 		V ret = data.put(is, value);
-		this.updateSortedList();
+		this.updateCaches();
 		return ret;
 	}
 
@@ -90,6 +92,12 @@ public final class ItemHashMap<V> {
 	}
 
 	public Collection<ItemStack> keySet() {
+		if (keyset == null)
+			keyset = this.createKeySet();
+		return Collections.unmodifiableCollection(keyset);
+	}
+
+	private Collection<ItemStack> createKeySet() {
 		ArrayList li = new ArrayList();
 		for (ItemKey key : data.keySet()) {
 			li.add(key.asItemStack());
@@ -108,13 +116,13 @@ public final class ItemHashMap<V> {
 
 	private V remove(ItemKey is) {
 		V ret = data.remove(is);
-		this.updateSortedList();
+		this.updateCaches();
 		return ret;
 	}
 
 	public void clear() {
 		data.clear();
-		this.updateSortedList();
+		this.updateCaches();
 	}
 
 	public List<ItemStack> sortedKeyset() {
