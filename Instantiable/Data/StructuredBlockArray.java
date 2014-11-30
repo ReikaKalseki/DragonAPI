@@ -9,9 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
@@ -19,7 +17,7 @@ import Reika.DragonAPI.Instantiable.BlockKey;
 
 public class StructuredBlockArray extends BlockArray {
 
-	private final HashMap<List<Integer>, BlockKey> data = new HashMap();
+	private final HashMap<Coordinate, BlockKey> data = new HashMap();
 
 	private int minX = Integer.MAX_VALUE;
 	private int minY = Integer.MAX_VALUE;
@@ -39,9 +37,10 @@ public class StructuredBlockArray extends BlockArray {
 		if (data.isEmpty())
 			return null;
 		int[] a = new int[3];
-		List<Integer> li = data.keySet().iterator().next();
-		for (int i = 0; i < 3; i++)
-			a[i] = li.get(i);
+		Coordinate li = data.keySet().iterator().next();
+		a[0] = li.xCoord;
+		a[1] = li.yCoord;
+		a[2] = li.zCoord;
 		return a;
 	}
 
@@ -51,10 +50,11 @@ public class StructuredBlockArray extends BlockArray {
 			return null;
 		int[] arr = new int[3];
 		int a = 0;
-		for (List<Integer> li : data.keySet()) {
+		for (Coordinate li : data.keySet()) {
 			if (a == n) {
-				for (int i = 0; i < 3; i++)
-					arr[i] = li.get(i);
+				arr[0] = li.xCoord;
+				arr[1] = li.yCoord;
+				arr[2] = li.zCoord;
 			}
 			a++;
 		}
@@ -66,9 +66,10 @@ public class StructuredBlockArray extends BlockArray {
 		if (data.isEmpty())
 			return null;
 		int[] a = new int[3];
-		List<Integer> li = data.keySet().iterator().next();
-		for (int i = 0; i < 3; i++)
-			a[i] = li.get(i);
+		Coordinate li = data.keySet().iterator().next();
+		a[0] = li.xCoord;
+		a[1] = li.yCoord;
+		a[2] = li.zCoord;
 		data.remove(li);
 		return a;
 	}
@@ -86,7 +87,7 @@ public class StructuredBlockArray extends BlockArray {
 			return false;
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		data.put(Arrays.asList(x, y, z), new BlockKey(b, meta));
+		data.put(new Coordinate(x, y, z), new BlockKey(b, meta));
 		if (minX > x)
 			minX = x;
 		if (maxX < x)
@@ -106,31 +107,50 @@ public class StructuredBlockArray extends BlockArray {
 		int x = dx+minX;
 		int y = dy+minY;
 		int z = dz+minZ;
-		return this.hasBlock(x, y, z) ? data.get(Arrays.asList(x, y, z)).blockID : null;
+		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).blockID : null;
+	}
+
+	public BlockKey getBlockKeyRelativeToMinXYZ(int dx, int dy, int dz) {
+		int x = dx+minX;
+		int y = dy+minY;
+		int z = dz+minZ;
+		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)) : null;
+	}
+
+	public Block getBlockRelativeToMinXYZ(int dx, int dy, int dz) {
+		int x = dx+minX;
+		int y = dy+minY;
+		int z = dz+minZ;
+		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).blockID : null;
 	}
 
 	public int getMetaRelativeToMinXYZ(int dx, int dy, int dz) {
 		int x = dx+minX;
 		int y = dy+minY;
 		int z = dz+minZ;
-		return this.hasBlock(x, y, z) ? data.get(Arrays.asList(x, y, z)).metadata : -1;
+		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).metadata : -1;
 	}
 
-	public BlockKey getBlockRelativeToMinXYZ(int dx, int dy, int dz) {
-		int x = dx+minX;
-		int y = dy+minY;
-		int z = dz+minZ;
-		return this.hasBlock(x, y, z) ? data.get(Arrays.asList(x, y, z)) : null;
+	public BlockKey getBlockKeyAt(int x, int y, int z) {
+		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)) : null;
+	}
+
+	public Block getBlockAt(int x, int y, int z) {
+		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).blockID : null;
+	}
+
+	public int getMetaAt(int x, int y, int z) {
+		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).metadata : -1;
 	}
 
 	@Override
 	public boolean hasBlock(int x, int y, int z) {
-		return data.keySet().contains(Arrays.asList(x, y, z));
+		return data.keySet().contains(new Coordinate(x, y, z));
 	}
 
 	public int getNumberOf(Block id, int meta) {
 		int count = 0;
-		for (List<Integer> li : data.keySet()) {
+		for (Coordinate li : data.keySet()) {
 			BlockKey block = data.get(li);
 			if (block.match(id, meta))
 				count++;
