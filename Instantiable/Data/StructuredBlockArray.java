@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
@@ -62,6 +64,11 @@ public class StructuredBlockArray extends BlockArray {
 	}
 
 	@Override
+	public Collection<Coordinate> keySet() {
+		return Collections.unmodifiableCollection(data.keySet());
+	}
+
+	@Override
 	public int[] getNextAndMoveOn() {
 		if (data.isEmpty())
 			return null;
@@ -101,13 +108,6 @@ public class StructuredBlockArray extends BlockArray {
 		if (maxZ < z)
 			maxZ = z;
 		return true;
-	}
-
-	public Block getIDRelativeToMinXYZ(int dx, int dy, int dz) {
-		int x = dx+minX;
-		int y = dy+minY;
-		int z = dz+minZ;
-		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).blockID : null;
 	}
 
 	public BlockKey getBlockKeyRelativeToMinXYZ(int dx, int dy, int dz) {

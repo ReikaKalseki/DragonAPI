@@ -14,6 +14,10 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+
+import org.lwjgl.util.vector.Matrix4f;
+import org.lwjgl.util.vector.Vector3f;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -147,6 +151,20 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		ret.yCoord *= len;
 		ret.zCoord *= len;
 		return ret;
+	}
+
+	public static Vector3f multiplyVectorByMatrix(Vector3f vector, Matrix4f matrix) {
+		float newX = matrix.m00*vector.x+matrix.m01*vector.y+matrix.m02*vector.z+matrix.m03;
+		float newY = matrix.m10*vector.x+matrix.m11*vector.y+matrix.m12*vector.z+matrix.m13;
+		float newZ = matrix.m20*vector.x+matrix.m21*vector.y+matrix.m22*vector.z+matrix.m23;
+		return new Vector3f(newX, newY, newZ);
+	}
+
+	public static void euler321Sequence(Matrix4f mat, double rx, double ry, double rz) {
+		float z = (float)Math.toRadians(rz);
+		float y = (float)Math.toRadians(ry);
+		float x = (float)Math.toRadians(rx);
+		mat.rotate(z, new Vector3f(0, 0, 1)).rotate(y, new Vector3f(0, 1, 0)).rotate(x, new Vector3f(1, 0, 0));
 	}
 
 }

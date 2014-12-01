@@ -16,6 +16,7 @@ import java.util.HashMap;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.BlockKey;
 import Reika.DragonAPI.Interfaces.BlockCheck;
@@ -103,6 +104,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 			//world.setBlock(x, y, z, b, meta, 3);
 			data.get(c).place(world, c.xCoord, c.yCoord, c.zCoord);
 		}
+	}
+
+	public ItemStack getDisplayAt(int x, int y, int z) {
+		BlockCheck bk = this.getBlockKey(x, y, z);
+		return bk != null ? bk.asItemStack() : null;
 	}
 
 	public boolean hasBlockAt(int x, int y, int z, Block b) {
@@ -202,6 +208,12 @@ public class FilledBlockArray extends StructuredBlockArray {
 			return keys.toString();
 		}
 
+		@Override
+		public ItemStack asItemStack() {
+			Block b = this.getBlock();
+			return b != null && b != Blocks.air ? new ItemStack(b, 1, this.getMeta()) : null;
+		}
+
 	}
 
 	private static class EmptyCheck implements BlockCheck {
@@ -251,6 +263,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 		@Override
 		public String toString() {
 			return "[Empty]";
+		}
+
+		@Override
+		public ItemStack asItemStack() {
+			return null;
 		}
 
 	}

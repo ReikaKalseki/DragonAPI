@@ -172,6 +172,10 @@ public class BlockArray {
 		return this.getReturnArray(n);
 	}
 
+	public Collection<Coordinate> keySet() {
+		return Collections.unmodifiableCollection(blocks);
+	}
+
 	private int[] getReturnArray(int index) {
 		return blocks.get(index).toArray();
 	}
