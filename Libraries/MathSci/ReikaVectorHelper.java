@@ -167,4 +167,11 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		mat.rotate(z, new Vector3f(0, 0, 1)).rotate(y, new Vector3f(0, 1, 0)).rotate(x, new Vector3f(1, 0, 0));
 	}
 
+	public static void euler213Sequence(Matrix4f mat, double rx, double ry, double rz) {
+		float z = (float)Math.toRadians(rz);
+		float y = (float)Math.toRadians(ry);
+		float x = (float)Math.toRadians(rx);
+		mat.rotate(y, new Vector3f(0, 1, 0)).rotate(x, new Vector3f(1, 0, 0)).rotate(z, new Vector3f(0, 0, 1));
+	}
+
 }
