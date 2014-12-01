@@ -10,6 +10,8 @@
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -46,6 +48,10 @@ public class PluralMap<V> extends HashMap {
 			li.add(key[i]);
 		}
 		return li;
+	}
+
+	public Collection<List<Object>> pluralKeySet() {
+		return Collections.unmodifiableCollection(this.keySet());
 	}
 
 }
