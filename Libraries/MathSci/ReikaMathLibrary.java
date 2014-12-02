@@ -411,4 +411,12 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		}
 		return max;
 	}
+
+	public static float getDecimalPart(float f) {
+		return f-(int)f;
+	}
+
+	public static double getDecimalPart(double d) {
+		return d-(int)d;
+	}
 }

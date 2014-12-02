@@ -18,7 +18,6 @@ import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.MinecraftForgeClient;
 
@@ -31,8 +30,6 @@ import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
 public final class ReikaSpriteSheets {
-
-	private static final ResourceLocation RES_ITEM_GLINT = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
 	private static int zLevel = 0;
 
@@ -210,7 +207,7 @@ public final class ReikaSpriteSheets {
 
 					GL11.glDepthFunc(GL11.GL_EQUAL);
 					GL11.glDisable(GL11.GL_LIGHTING);
-					Minecraft.getMinecraft().renderEngine.bindTexture(RES_ITEM_GLINT);
+					ReikaTextureHelper.bindEnchantmentTexture();
 					GL11.glEnable(GL11.GL_BLEND);
 					BlendMode.OVERLAYDARK.apply();
 					float f13 = 0.76F;
@@ -247,7 +244,7 @@ public final class ReikaSpriteSheets {
 		GL11.glDisable(GL11.GL_LIGHTING);
 		//GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glDepthMask(false);
-		manager.bindTexture(RES_ITEM_GLINT);
+		ReikaTextureHelper.bindEnchantmentTexture();
 		GL11.glEnable(GL11.GL_BLEND);
 		BlendMode.OVERLAYDARK.apply();
 		GL11.glColor4f(0.5F, 0.25F, 0.8F, 1.0F);

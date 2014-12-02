@@ -50,12 +50,13 @@ public class ReikaTextureHelper {
 
 	private static final HashMap<ReikaDyeHelper, Integer> colorOverrides = new HashMap();
 
-	public static final ReikaTextureBinder binder = new ReikaTextureBinder();
+	private static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
 	private static final ResourceLocation font = new ResourceLocation("textures/font/ascii.png");
 	private static final ResourceLocation particle = new ResourceLocation("textures/particle/particles.png");
 	private static final ResourceLocation gui = new ResourceLocation("textures/gui/widgets.png");
 	private static final ResourceLocation hud = new ResourceLocation("textures/gui/icons.png");
+	private static final ResourceLocation ench = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
 	private static boolean reload() {
 		return Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.isKeyDown(Keyboard.KEY_T);
@@ -159,6 +160,10 @@ public class ReikaTextureHelper {
 
 	public static void bindGuiTexture() {
 		Minecraft.getMinecraft().renderEngine.bindTexture(gui);
+	}
+
+	public static void bindEnchantmentTexture() {
+		Minecraft.getMinecraft().renderEngine.bindTexture(ench);
 	}
 
 	public static void bindHUDTexture() {

@@ -24,22 +24,24 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 public final class ItemHashMap<V> {
 
 	private final HashMap<ItemKey, V> data = new HashMap();
-	private ArrayList<ItemStack> sorted = new ArrayList();
+	private ArrayList<ItemStack> sorted = null;
 	private Collection<ItemStack> keyset = null;
+	private boolean modifiedKeys = true;
 
 	public ItemHashMap() {
 
 	}
 
-	private void updateCaches() {
+	private void updateKeysets() {
+		this.modifiedKeys = false;
+		this.keyset = this.createKeySet();
 		sorted = new ArrayList(this.keySet());
 		ReikaItemHelper.sortItems(sorted);
-		this.keyset = this.createKeySet();
 	}
 
 	private V put(ItemKey is, V value) {
 		V ret = data.put(is, value);
-		this.updateCaches();
+		this.modifiedKeys = true;
 		return ret;
 	}
 
@@ -92,8 +94,9 @@ public final class ItemHashMap<V> {
 	}
 
 	public Collection<ItemStack> keySet() {
-		if (keyset == null)
-			keyset = this.createKeySet();
+		if (this.modifiedKeys || keyset == null) {
+			this.updateKeysets();
+		}
 		return Collections.unmodifiableCollection(keyset);
 	}
 
@@ -116,16 +119,19 @@ public final class ItemHashMap<V> {
 
 	private V remove(ItemKey is) {
 		V ret = data.remove(is);
-		this.updateCaches();
+		this.modifiedKeys = true;
 		return ret;
 	}
 
 	public void clear() {
 		data.clear();
-		this.updateCaches();
+		this.modifiedKeys = true;
 	}
 
 	public List<ItemStack> sortedKeyset() {
+		if (this.modifiedKeys || this.sorted == null) {
+			this.updateKeysets();
+		}
 		return Collections.unmodifiableList(sorted);
 	}
 
