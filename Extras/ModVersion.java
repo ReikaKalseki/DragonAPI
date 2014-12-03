@@ -14,8 +14,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.InstallationException;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public class ModVersion implements Comparable<ModVersion> {
@@ -96,6 +98,8 @@ public class ModVersion implements Comparable<ModVersion> {
 	}
 
 	public static ModVersion readFromFile(DragonAPIMod mod) {
+		if (DragonAPICore.isReikasComputer() && ReikaObfuscationHelper.isDeObfEnvironment())
+			return source;
 		Properties p = new Properties();
 		String path = ReikaStringParser.stripSpaces("version.properties");
 		try {
