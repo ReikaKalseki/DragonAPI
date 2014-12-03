@@ -14,11 +14,12 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Instantiable.Data.WorldLocation;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
@@ -26,9 +27,22 @@ public class FlyingBlocksExplosion extends Explosion {
 
 	private World world;
 
-	public FlyingBlocksExplosion(World world, Entity e, double x, double y, double z, float power) {
-		super(world, e, x, y, z, power);
+	public FlyingBlocksExplosion(WorldLocation loc, float power) {
+		this(loc.getWorld(), loc.xCoord+0.5, loc.yCoord+0.5, loc.zCoord+0.5, power);
+	}
+
+	public FlyingBlocksExplosion(TileEntity loc, float power) {
+		this(loc.worldObj, loc.xCoord+0.5, loc.yCoord+0.5, loc.zCoord+0.5, power);
+	}
+
+	public FlyingBlocksExplosion(World world, double x, double y, double z, float power) {
+		super(world, null, x, y, z, power);
 		this.world = world;
+	}
+
+	public void doExplosion() {
+		this.doExplosionA();
+		this.doExplosionB(true);
 	}
 
 	@Override
