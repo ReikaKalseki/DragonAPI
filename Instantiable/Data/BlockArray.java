@@ -103,49 +103,84 @@ public class BlockArray {
 
 	public void remove(int x, int y, int z) {
 		blocks.remove(new Coordinate(x, y, z));
+		if (this.isEdge(x, y, z)) {
+			this.recalcLimits();
+		}
 	}
 
-	public int getMinX() {
+	public void recalcLimits() {
+		this.resetLimits();
+	}
+
+	private void resetLimits() {
+		minX = Integer.MAX_VALUE;
+		maxX = Integer.MIN_VALUE;
+		minY = Integer.MAX_VALUE;
+		maxY = Integer.MIN_VALUE;
+		minZ = Integer.MAX_VALUE;
+		maxZ = Integer.MIN_VALUE;
+		for (Coordinate c : blocks) {
+			this.setLimits(c.xCoord, c.yCoord, c.zCoord);
+		}
+	}
+
+	public final boolean isEdge(int x, int y, int z) {
+		return this.isEdgeX(x) || this.isEdgeY(y) || this.isEdgeZ(z);
+	}
+
+	public final boolean isEdgeX(int x) {
+		return x == minX || x == maxX;
+	}
+
+	public final boolean isEdgeY(int y) {
+		return y == minY || y == maxY;
+	}
+
+	public final boolean isEdgeZ(int z) {
+		return z == minZ || z == maxZ;
+	}
+
+	public final int getMinX() {
 		return minX;
 	}
 
-	public int getMaxX() {
+	public final int getMaxX() {
 		return maxX;
 	}
 
-	public int getMinY() {
+	public final int getMinY() {
 		return minY;
 	}
 
-	public int getMaxY() {
+	public final int getMaxY() {
 		return maxY;
 	}
 
-	public int getMinZ() {
+	public final int getMinZ() {
 		return minZ;
 	}
 
-	public int getMaxZ() {
+	public final int getMaxZ() {
 		return maxZ;
 	}
 
-	public int getSizeX() {
+	public final int getSizeX() {
 		return maxX-minX+1;
 	}
 
-	public int getSizeY() {
+	public final int getSizeY() {
 		return maxY-minY+1;
 	}
 
-	public int getSizeZ() {
+	public final int getSizeZ() {
 		return maxZ-minZ+1;
 	}
 
-	public int getVolume() {
+	public final int getVolume() {
 		return this.getSizeX()*this.getSizeY()*this.getSizeZ();
 	}
 
-	private void setLimits(int x, int y, int z) {
+	private final void setLimits(int x, int y, int z) {
 		if (x < minX)
 			minX = x;
 		if (x > maxX)
@@ -190,7 +225,7 @@ public class BlockArray {
 		return next;
 	}
 
-	public int getSize() {
+	public final int getSize() {
 		return blocks.size();
 	}
 
@@ -199,11 +234,11 @@ public class BlockArray {
 		overflow = false;
 	}
 
-	public boolean isEmpty() {
+	public final boolean isEmpty() {
 		return blocks.size() == 0;
 	}
 
-	public boolean hasBlock(int x, int y, int z) {
+	public final boolean hasBlock(int x, int y, int z) {
 		return blocks.contains(new Coordinate(x, y, z));
 	}
 
@@ -510,48 +545,11 @@ public class BlockArray {
 		}
 	}
 
-	public void sortBlocksByHeight() { //O(n^2)
-		/*
-		List<Coordinate> newList = new ArrayList();
-		for (int i = 0; i < blocks.size(); i++) {
-			Coordinate a = blocks.get(i);
-			int y = a.yCoord;
-			//ReikaJavaLibrary.pConsole("List Size: "+newList.size());
-			if (newList.size() == 0) {
-				newList.add(a);
-				//ReikaJavaLibrary.pConsole("Adding ["+a[0]+","+a[1]+","+a[2]+"] at 0");
-			}
-			else {
-				for (int k = 0; k < newList.size(); k++) {
-					int y2 = newList.get(k).yCoord;
-					if (y < y2) {
-						newList.add(k, a);
-						//ReikaJavaLibrary.pConsole("Adding ["+a[0]+","+a[1]+","+a[2]+"] at position "+k+" (y="+y+", y2="+y2);
-						break;
-					}
-					else if (k == newList.size()+1) {
-						newList.add(a);
-						//ReikaJavaLibrary.pConsole("Adding ["+a[0]+","+a[1]+","+a[2]+"] at end of list");
-						break;
-					}
-				}
-			}
-		}
-		blocks.clear();
-		blocks.addAll(newList);*/
-
+	public void sortBlocksByHeight() {
 		Collections.sort(blocks, new HeightComparator());
 	}
 
 	public void reverseBlockOrder() {
-		/*
-		List<List<Integer>> newList = new ArrayList();
-		for (int i = 0; i < blocks.size(); i++) {
-			newList.add(blocks.get(blocks.size()-1-i));
-		}
-		blocks.clear();
-		blocks.addAll(newList);
-		 */
 		Collections.reverse(blocks);
 	}
 
@@ -681,7 +679,7 @@ public class BlockArray {
 		return this.getNthBlock(rand.nextInt(s));
 	}
 
-	public void remove(int index) {
+	private void remove(int index) {
 		blocks.remove(index);
 	}
 
@@ -705,7 +703,7 @@ public class BlockArray {
 		return this;
 	}
 
-	public void sink(World world) {
+	public final void sink(World world) {
 		boolean canSink = true;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
@@ -722,7 +720,7 @@ public class BlockArray {
 		}
 	}
 
-	public void sink(World world, Blocks... overrides) {
+	public final void sink(World world, Blocks... overrides) {
 		boolean canSink = true;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
@@ -740,7 +738,7 @@ public class BlockArray {
 		}
 	}
 
-	public void sink(World world, Material... overrides) {
+	public final void sink(World world, Material... overrides) {
 		boolean canSink = true;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
@@ -820,6 +818,12 @@ public class BlockArray {
 		copy.overflow = overflow;
 		copy.blocks.clear();
 		copy.blocks.addAll(blocks);
+		copy.minX = minX;
+		copy.minY = minY;
+		copy.minZ = minZ;
+		copy.maxX = maxX;
+		copy.maxY = maxY;
+		copy.maxZ = maxZ;
 		return copy;
 	}
 
@@ -916,11 +920,11 @@ public class BlockArray {
 		//TODO
 	}
 
-	public AxisAlignedBB asAABB() {
+	public final AxisAlignedBB asAABB() {
 		return AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX+1, maxY+1, maxZ+1);
 	}
 
-	public BlockBox asBlockBox() {
+	public final BlockBox asBlockBox() {
 		return new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
