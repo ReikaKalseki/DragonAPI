@@ -39,7 +39,7 @@ public class WorldLocation {
 		this(world.provider.dimensionId, x, y, z);
 	}
 
-	private WorldLocation(int dim, int x, int y, int z) {
+	public WorldLocation(int dim, int x, int y, int z) {
 		xCoord = x;
 		yCoord = y;
 		zCoord = z;
