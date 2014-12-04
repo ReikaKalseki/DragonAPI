@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
@@ -124,7 +125,7 @@ public class StructuredBlockArray extends BlockArray {
 
 	public final boolean hasNonAirBlock(int x, int y, int z) {
 		Block b = this.getBlockAt(x, y, z);
-		return b != null && b != Blocks.air && b.getMaterial() != Material.air;
+		return b != null && b != Blocks.air && b.getMaterial() != Material.air && !(b instanceof BlockAir);
 	}
 
 	@Override
