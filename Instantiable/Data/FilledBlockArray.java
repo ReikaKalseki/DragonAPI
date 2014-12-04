@@ -35,6 +35,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 		this.setBlock(x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 	}
 
+	public void loadBlockTo(int x, int y, int z, int xt, int yt, int zt) {
+		this.setBlock(xt, yt, zt, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
+	}
+
 	public void setBlock(int x, int y, int z, Block id) {
 		this.setBlock(x, y, z , new BlockKey(id));
 	}

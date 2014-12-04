@@ -181,18 +181,16 @@ public final class Coordinate {
 		}
 	}
 
-	public void setBlock(World world, Block b) {
-		this.setBlock(world, b, 0);
+	public boolean setBlock(World world, Block b) {
+		return this.setBlock(world, b, 0);
 	}
 
-	public void setBlock(World world, ItemStack is) {
-		this.setBlock(world, Block.getBlockFromItem(is.getItem()), is.getItemDamage());
+	public boolean setBlock(World world, ItemStack is) {
+		return this.setBlock(world, Block.getBlockFromItem(is.getItem()), is.getItemDamage());
 	}
 
-	public void setBlock(World world, Block id, int meta) {
-		if (world != null) {
-			world.setBlock(xCoord, yCoord, zCoord, id, meta, 3);
-		}
+	public boolean setBlock(World world, Block id, int meta) {
+		return world != null && world.setBlock(xCoord, yCoord, zCoord, id, meta, 3);
 	}
 
 }

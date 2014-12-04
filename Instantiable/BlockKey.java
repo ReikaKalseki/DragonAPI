@@ -15,7 +15,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Interfaces.BlockCheck;
-import Reika.DragonAPI.Interfaces.BlockCheck;
 
 public final class BlockKey implements BlockCheck {
 

@@ -14,6 +14,8 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.BlockKey;
 
@@ -108,16 +110,33 @@ public class StructuredBlockArray extends BlockArray {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).metadata : -1;
 	}
 
-	public BlockKey getBlockKeyAt(int x, int y, int z) {
+	public final BlockKey getBlockKeyAt(int x, int y, int z) {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)) : null;
 	}
 
-	public Block getBlockAt(int x, int y, int z) {
+	public final Block getBlockAt(int x, int y, int z) {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).blockID : null;
 	}
 
-	public int getMetaAt(int x, int y, int z) {
+	public final int getMetaAt(int x, int y, int z) {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).metadata : -1;
+	}
+
+	public final boolean hasNonAirBlock(int x, int y, int z) {
+		Block b = this.getBlockAt(x, y, z);
+		return b != null && b != Blocks.air && b.getMaterial() != Material.air;
+	}
+
+	@Override
+	public int[] getRandomBlock() {
+		int[] a = super.getRandomBlock();
+		return a;
+	}
+
+	@Override
+	public void remove(int x, int y, int z) {
+		super.remove(x, y, z);
+		data.remove(new Coordinate(x, y, z));
 	}
 
 	public int getNumberOf(Block id, int meta) {
@@ -128,6 +147,18 @@ public class StructuredBlockArray extends BlockArray {
 				count++;
 		}
 		return count;
+	}
+
+	@Override
+	public BlockArray offset(int x, int y, int z) {
+		super.offset(x, y, z);
+		HashMap<Coordinate, BlockKey> map = new HashMap();
+		for (Coordinate c : data.keySet()) {
+			map.put(c.offset(x, y, z), data.get(c));
+		}
+		data.clear();
+		data.putAll(map);
+		return this;
 	}
 
 	public int getMidX() {
@@ -144,6 +175,19 @@ public class StructuredBlockArray extends BlockArray {
 
 	@Override
 	public String toString() {
-		return data.toString();
+		return data.size()+": "+data.toString();
+	}
+
+	@Override
+	public BlockArray copy() {
+		StructuredBlockArray copy = new StructuredBlockArray(world);
+		copy.refWorld = refWorld;
+		copy.liquidMat = liquidMat;
+		copy.overflow = overflow;
+		copy.blocks.clear();
+		copy.blocks.addAll(blocks);
+		copy.recalcLimits();
+		copy.data.putAll(data);
+		return copy;
 	}
 }

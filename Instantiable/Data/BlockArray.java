@@ -558,6 +558,7 @@ public class BlockArray {
 		if (this.isEmpty())
 			return "Empty[]";
 		StringBuilder list = new StringBuilder();
+		list.append(this.getSize()+": ");
 		for (int i = 0; i < this.getSize(); i++) {
 			int[] xyz = this.getReturnArray(i);
 			if (refWorld != null) {
@@ -675,8 +676,7 @@ public class BlockArray {
 	}
 
 	public int[] getRandomBlock() {
-		int s = this.getSize();
-		return this.getNthBlock(rand.nextInt(s));
+		return this.getNthBlock(rand.nextInt(this.getSize()));
 	}
 
 	private void remove(int index) {
