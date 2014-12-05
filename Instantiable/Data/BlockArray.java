@@ -827,6 +827,10 @@ public class BlockArray {
 		return copy;
 	}
 
+	public void addAll(BlockArray add) {
+		blocks.addAll(add.blocks);
+	}
+
 	public final boolean isAtLeastXPercentNot(World world, double percent, Block id, int meta) {
 		double s = this.getSize();
 		int c = 0;

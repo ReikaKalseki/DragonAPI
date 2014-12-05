@@ -17,6 +17,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.BlockKey;
 
@@ -190,5 +192,30 @@ public class StructuredBlockArray extends BlockArray {
 		copy.recalcLimits();
 		copy.data.putAll(data);
 		return copy;
+	}
+
+	public ItemHashMap<Integer> getItems() {
+		ItemHashMap<Integer> map = new ItemHashMap();
+		for (Coordinate c : data.keySet()) {
+			BlockKey bk = data.get(c);
+			if (bk.blockID instanceof BlockAir)
+				continue;
+			if (Item.getItemFromBlock(bk.blockID) == null)
+				continue;
+			ItemStack is = bk.asItemStack();
+			Integer get = map.get(is);
+			int amt = get != null ? get.intValue() : 0;
+			map.put(is, amt+1);
+		}
+		return map;
+	}
+
+	public void addAll(StructuredBlockArray add, boolean overwrite) {
+		super.addAll(add);
+		for (Coordinate c : add.data.keySet()) {
+			if (overwrite || !data.containsKey(c)) {
+				data.put(c, add.data.get(c));
+			}
+		}
 	}
 }

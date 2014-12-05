@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -178,6 +179,18 @@ public final class ItemHashMap<V> {
 			return Item.getIdFromItem(itemID)-Item.getIdFromItem(o.itemID);
 		}
 
+	}
+
+	public static ItemHashMap<Integer> getFromInventory(IInventory ii) {
+		ItemHashMap<Integer> map = new ItemHashMap();
+		int s = ii.getSizeInventory();
+		for (int i = 0; i < s; i++) {
+			ItemStack in = ii.getStackInSlot(i);
+			Integer has = map.get(in);
+			int amt = has != null ? has.intValue() : 0;
+			map.put(in, has+1);
+		}
+		return map;
 	}
 
 }

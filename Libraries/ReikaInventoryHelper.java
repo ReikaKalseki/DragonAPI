@@ -24,6 +24,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Data.ItemHashMap;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -598,7 +599,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	}
 
 	/** Intelligently decrements a stack in an inventory, setting it to null if necessary.
-	 * Also performs sanity checks. Args: Inventory, Slot */
+	 * Also performs sanity checks. Args: Inventory, Slot, Amount */
 	public static void decrStack(int slot, IInventory inv, int amount) {
 		if (slot >= inv.getSizeInventory()) {
 			ReikaChatHelper.write("Tried to access Slot "+slot+", which is larger than the inventory.");
@@ -1184,5 +1185,29 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 		}
 		return li;
+	}
+
+	public static boolean inventoryContains(ItemHashMap<Integer> map, IInventory ii) {
+		ItemHashMap<Integer> inv = ItemHashMap.getFromInventory(ii);
+		for (ItemStack is : map.keySet()) {
+			int need = map.get(is);
+			int has = inv.get(is);
+			if (need > has)
+				return false;
+		}
+		return true;
+	}
+
+	public static void removeFromInventory(ItemHashMap<Integer> map, IInventory ii) {
+		for (ItemStack is : map.keySet()) {
+			int need = map.get(is);
+			int loc = locateInInventory(is, ii, false);
+			while (loc >= 0 && need > 0) {
+				ItemStack in = ii.getStackInSlot(loc);
+				int max = Math.min(need, in.stackSize);
+				decrStack(loc, ii, max);
+				loc = locateInInventory(is, ii, false);
+			}
+		}
 	}
 }
