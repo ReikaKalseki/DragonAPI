@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -25,6 +27,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
@@ -38,6 +41,7 @@ import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
 import Reika.DragonAPI.Auxiliary.TickScheduler;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
 import Reika.DragonAPI.Instantiable.Event.ScheduledTickEvent;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -272,5 +276,35 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	public static void schedulePlayerTick(EntityPlayer ep, int ticks) {
 		TickScheduler.instance.scheduleEvent(new ScheduledTickEvent(TickType.PLAYER, ep), ticks);
+	}
+
+	public static void notifyAdmins(String s) {
+		MinecraftServer ms = MinecraftServer.getServer();
+		if (ms != null) {
+			Collection<EntityPlayer> ops = getOps();
+			for (EntityPlayer ep : ops) {
+				ReikaChatHelper.sendChatToPlayer(ep, s);
+			}
+		}
+	}
+
+	public static Collection<EntityPlayer> getOps() {
+		WorldServer[] w = MinecraftServer.getServer().worldServers;
+		Collection<EntityPlayer> ops = new ArrayList();
+		for (int i = 0; i < w.length; i++) {
+			WorldServer ws = w[i];
+			ops.addAll(getOps(ws));
+		}
+		return ops;
+	}
+
+	public static Collection<EntityPlayer> getOps(World world) {
+		Collection<EntityPlayer> ops = new ArrayList();
+		for (Object o : world.playerEntities) {
+			EntityPlayer ep = (EntityPlayer)o;
+			if (isAdmin(ep))
+				ops.add(ep);
+		}
+		return ops;
 	}
 }
