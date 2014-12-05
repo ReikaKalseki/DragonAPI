@@ -50,7 +50,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 			BlockEnum r = enumr[i];
 			if (!r.isDummiedOut()) {
 				target[i] = ReikaReflectionHelper.createBlockInstance(mod, r);
-				String regname = (mod.getTechnicalName()+"_block_"+((Enum)r).name()).toLowerCase();
+				String regname = (mod.getTechnicalName()+"_block_"+r.name()).toLowerCase();
 				if (r.hasItemBlock())
 					GameRegistry.registerBlock(target[i], r.getItemBlock(), regname);
 				else
@@ -84,7 +84,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 			ItemEnum r = enumr[i];
 			if (!r.isDummiedOut()) {
 				target[i] = ReikaReflectionHelper.createItemInstance(mod, r);
-				String regname = (mod.getTechnicalName()+"_item_"+((Enum)r).name()).toLowerCase();
+				String regname = (mod.getTechnicalName()+"_item_"+r.name()).toLowerCase();
 				int num = r.getNumberMetadatas();
 				for (int j = 0; j < num; j++) {
 					registerItemVariant(r, j);

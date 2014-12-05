@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
-import java.net.URL;
-
 import net.minecraft.client.audio.SoundCategory;
 
 
@@ -21,8 +19,12 @@ public interface SoundEnum {
 
 	public String getPath();
 
-	public URL getURL();
+	//public URL getURL();
 
 	public SoundCategory getCategory();
+
+	public int getTickDuration();
+
+	public int ordinal();
 
 }

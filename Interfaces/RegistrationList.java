@@ -33,4 +33,10 @@ public interface RegistrationList {
 
 	public int getNumberMetadatas();
 
+	/** To avoid casting to Enum */
+	public int ordinal();
+
+	/** To avoid casting to Enum */
+	public String name();
+
 }

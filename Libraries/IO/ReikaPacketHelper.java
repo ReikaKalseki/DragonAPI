@@ -397,7 +397,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		sendLongDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
 	}
 
-	public static void sendSoundPacket(String ch, Enum<? extends SoundEnum> s, World world, double x, double y, double z, float vol, float pitch) {
+	public static void sendSoundPacket(String ch, SoundEnum s, World world, double x, double y, double z, float vol, float pitch) {
 		int length = 0;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 		DataOutputStream outputStream = new DataOutputStream(bos);
