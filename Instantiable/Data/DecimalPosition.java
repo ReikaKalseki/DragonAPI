@@ -60,6 +60,26 @@ public final class DecimalPosition {
 		return this.offset(dir.offsetX*dist, dir.offsetY*dist, dir.offsetZ*dist);
 	}
 
+	public boolean sharesBlock(DecimalPosition dec) {
+		return this.sharesBlock(dec.xCoord, dec.yCoord, dec.zCoord);
+	}
+
+	public boolean sharesBlock(double x, double y, double z) {
+		return this.matchX(x) && this.matchY(y) && this.matchZ(z);
+	}
+
+	private boolean matchX(double x) {
+		return MathHelper.floor_double(x) == MathHelper.floor_double(xCoord);
+	}
+
+	private boolean matchY(double y) {
+		return MathHelper.floor_double(y) == MathHelper.floor_double(yCoord);
+	}
+
+	private boolean matchZ(double z) {
+		return MathHelper.floor_double(z) == MathHelper.floor_double(zCoord);
+	}
+
 	public void writeToNBT(String tag, NBTTagCompound NBT) {
 		NBTTagCompound data = new NBTTagCompound();
 		data.setDouble("x", xCoord);

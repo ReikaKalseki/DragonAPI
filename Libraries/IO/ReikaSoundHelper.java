@@ -114,8 +114,8 @@ public class ReikaSoundHelper {
 		long time = world.getTotalWorldTime();
 		while (it.hasNext()) {
 			SoundPlay p = it.next();
-			if (time-p.time < s.getTickDuration()*0.9) {
-				if (p.loc.getDistanceTo(x, y, z) < 12)
+			if (time-p.time < 20) { //1s for now
+				if (p.loc.getDistanceTo(x, y, z) < 12 && !p.loc.sharesBlock(x, y, z))
 					return;
 			}
 			else {

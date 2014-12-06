@@ -23,7 +23,7 @@ public interface SoundEnum {
 
 	public SoundCategory getCategory();
 
-	public int getTickDuration();
+	//public int getTickDuration();
 
 	public int ordinal();
 

@@ -116,6 +116,12 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return 5;
 	}
 
+	public void animateItem() {
+		if (worldObj == null) {
+			this.animateWithTick(null, 0, 0, 0);
+		}
+	}
+
 	public final boolean isPlacer(EntityPlayer ep) {
 		if (placer == null || placerUUID == null || placer.isEmpty() || placerUUID.isEmpty())
 			return false;

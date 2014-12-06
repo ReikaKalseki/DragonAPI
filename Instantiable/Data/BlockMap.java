@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
@@ -116,6 +117,10 @@ public final class BlockMap<V> {
 
 	public Set<BlockKey> keySet() {
 		return Collections.unmodifiableSet(this.data.keySet());
+	}
+
+	public Collection<V> values() {
+		return Collections.unmodifiableCollection(data.values());
 	}
 
 }
