@@ -47,8 +47,8 @@ public class ModLogger {
 
 	public void debug(Object o) {
 		if (this.shouldDebug()) {
-			ReikaJavaLibrary.pConsole(Level.DEBUG, o);
-			ReikaChatHelper.write(o);
+			ReikaJavaLibrary.pConsole(Level.DEBUG, "DEBUG: "+o);
+			ReikaChatHelper.write("DEBUG: "+o);
 		}
 	}
 

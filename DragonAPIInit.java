@@ -236,6 +236,9 @@ public class DragonAPIInit extends DragonAPIMod {
 			TickRegistry.instance.registerTickHandler(KeyTicker.instance, Side.CLIENT);
 
 		FMLInterModComms.sendMessage("Waila", "register", "Reika.DragonAPI.ModInteract.LegacyWailaHelper.registerObjects");
+
+		if (DragonOptions.UNNERFOBSIDIAN.getState())
+			Blocks.obsidian.setResistance(2000);
 	}
 
 	@Override

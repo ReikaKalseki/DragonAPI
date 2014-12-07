@@ -86,7 +86,8 @@ public enum ModList {
 	BLUEPOWER("bluepower", "com.bluepowermod.init.BPBlocks", "com.bluepowermod.init.BPItems"),
 	COLORLIGHT("easycoloredlights"),
 	ENDERIO("EnderIO", "crazypants.enderio.EnderIO"),
-	COMPUTERCRAFT("ComputerCraft", "dan200.ComputerCraft");
+	COMPUTERCRAFT("ComputerCraft", "dan200.ComputerCraft"),
+	ROUTER("RouterReborn", "router.reborn.RouterReborn");
 
 	private final boolean condition;
 	public final String modLabel;

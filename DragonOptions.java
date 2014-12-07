@@ -18,7 +18,8 @@ public enum DragonOptions implements ConfigList {
 	SYNCPACKET("Sync Packet ID", 182),
 	NORENDERS("Disable Renders For Debug", false),
 	TABNBT("Show TileEntity NBT when using TAB", false),
-	SOUNDCHANNELS("Increase sound channel count", true);
+	SOUNDCHANNELS("Increase sound channel count", true),
+	UNNERFOBSIDIAN("Restore Obsidian Blast Resistance", true);
 
 	private String label;
 	private boolean defaultState;

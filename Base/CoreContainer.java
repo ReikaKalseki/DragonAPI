@@ -97,10 +97,6 @@ public class CoreContainer extends Container {
 		this.addPlayerInventoryWithOffset(player, 0, 0);
 	}
 
-
-	/**
-	 * Updates crafting matrix; called from onCraftMatrixChanged. Args: none
-	 */
 	@Override
 	public void detectAndSendChanges()
 	{
@@ -125,7 +121,9 @@ public class CoreContainer extends Container {
 	@Override
 	public final ItemStack transferStackInSlot(EntityPlayer player, int slot)
 	{
-		this.onShiftClickSlot(player, slot, ((Slot)inventorySlots.get(slot)).getStack());
+		ItemStack ret = this.onShiftClickSlot(player, slot, ((Slot)inventorySlots.get(slot)).getStack());
+		if (ret != null)
+			return ret;
 		ItemStack is = null;
 		Slot fromSlot = (Slot)inventorySlots.get(slot);
 		if (!(tile instanceof IInventory))
@@ -141,8 +139,7 @@ public class CoreContainer extends Container {
 			}
 		}
 
-		if (fromSlot != null && fromSlot.getHasStack())
-		{
+		if (fromSlot != null && fromSlot.getHasStack()) {
 			ItemStack inslot = fromSlot.getStack();
 			is = inslot.copy();
 			boolean toPlayer = slot < invsize+base;
@@ -230,8 +227,9 @@ public class CoreContainer extends Container {
 		return null;
 	}
 
-	protected void onShiftClickSlot(EntityPlayer player, int slot, ItemStack is) {
-
+	/** Return non-null here to stop all normal shift-click behavior */
+	protected ItemStack onShiftClickSlot(EntityPlayer player, int slot, ItemStack is) {
+		return null;
 	}
 
 	private boolean canAdd(ItemStack is, ItemStack inslot) {
