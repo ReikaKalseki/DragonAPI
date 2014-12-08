@@ -33,4 +33,9 @@ public class ImmutableList<E> extends ArrayList<E> {
 	public final E set(int index, E element) {
 		throw new UnsupportedOperationException("You cannot overwrite entries in this list!");
 	}
+
+	@Override
+	public final void clear() {
+		throw new UnsupportedOperationException("You cannot overwrite entries in this list!");
+	}
 }
