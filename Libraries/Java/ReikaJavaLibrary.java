@@ -16,8 +16,13 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import net.minecraft.world.World;
@@ -378,5 +383,22 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			e.printStackTrace();
 		}
 		return outputs;
+	}
+
+	public static HashMap sortMapByValues(HashMap map) {
+		List<Map.Entry> list = new LinkedList(map.entrySet());
+		Collections.sort(list, new MapValueSorter());
+		HashMap sortedHashMap = new LinkedHashMap();
+		for (Map.Entry e : list) {
+			sortedHashMap.put(e.getKey(), e.getValue());
+		}
+		return sortedHashMap;
+	}
+
+	public static class MapValueSorter<V> implements Comparator<Map.Entry<V, Comparable>> {
+
+		public int compare(Map.Entry<V, Comparable> o1, Map.Entry<V, Comparable> o2) {
+			return (o1.getValue()).compareTo(o2.getValue());
+		}
 	}
 }

@@ -35,6 +35,7 @@ import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
+import Reika.DragonAPI.Auxiliary.IDDumpCommand;
 import Reika.DragonAPI.Auxiliary.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.KeyWatcher.KeyTicker;
 import Reika.DragonAPI.Auxiliary.LoginHandler;
@@ -283,6 +284,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new BlockReplaceCommand());
 		evt.registerServerCommand(new EditNearbyInventoryCommand());
 		evt.registerServerCommand(new TileSyncCommand());
+		evt.registerServerCommand(new IDDumpCommand());
 	}
 
 	@SubscribeEvent

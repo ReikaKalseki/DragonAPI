@@ -20,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import Reika.DragonAPI.Auxiliary.IDDumpCommand;
 import Reika.DragonAPI.Auxiliary.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
@@ -122,6 +123,16 @@ public class APIPacketHandler implements IPacketHandler {
 				pack = PacketIDs.getEnum(control);
 				NBT = ((DataPacket)packet).asNBT();
 				break;
+			case STRINGINT:
+				stringdata = packet.readString();
+				control = inputStream.readInt();
+				pack = PacketIDs.getEnum(control);
+				data = new int[pack.getNumberDataInts()];
+				for (int i = 0; i < data.length; i++)
+					data[i] = inputStream.readInt();
+				break;
+			default:
+				break;
 			}
 			if (packetType.hasCoordinates()) {
 				x = inputStream.readInt();
@@ -192,6 +203,8 @@ public class APIPacketHandler implements IPacketHandler {
 				break;
 			case NUMBERPARTICLE:
 				break;
+			case IDDUMP:
+				break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data);
@@ -206,6 +219,9 @@ public class APIPacketHandler implements IPacketHandler {
 		switch(pack) {
 		case NUMBERPARTICLE:
 			Minecraft.getMinecraft().effectRenderer.addEffect(new NumberParticleFX(world, x+0.5, y+0.5, z+0.5, data[0]));
+			break;
+		case IDDUMP:
+			IDDumpCommand.dumpClientside(data[0]);
 			break;
 		default:
 			break;
@@ -224,7 +240,8 @@ public class APIPacketHandler implements IPacketHandler {
 		PLAYERDATSYNC_CLIENT(),
 		RERENDER(),
 		COLOREDPARTICLE(),
-		NUMBERPARTICLE();
+		NUMBERPARTICLE(),
+		IDDUMP();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -251,6 +268,8 @@ public class APIPacketHandler implements IPacketHandler {
 			case KEYUPDATE:
 				return 2;
 			case TILESYNC:
+				return 1;
+			case IDDUMP:
 				return 1;
 			default:
 				return 0;

@@ -27,4 +27,6 @@ public interface SoundEnum {
 
 	public int ordinal();
 
+	public boolean canOverlap();
+
 }

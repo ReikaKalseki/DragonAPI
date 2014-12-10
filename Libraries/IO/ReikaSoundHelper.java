@@ -109,20 +109,22 @@ public class ReikaSoundHelper {
 	}
 
 	public static void playSound(SoundEnum s, String ch, World world, double x, double y, double z, float vol, float pitch) {
-		Collection<SoundPlay> c = plays.get(s);
-		Iterator<SoundPlay> it = c.iterator();
 		long time = world.getTotalWorldTime();
-		while (it.hasNext()) {
-			SoundPlay p = it.next();
-			if (time-p.time < 20) { //1s for now
-				if (p.loc.getDistanceTo(x, y, z) < 12 && !p.loc.sharesBlock(x, y, z))
-					return;
+		if (!s.canOverlap()) {
+			Collection<SoundPlay> c = plays.get(s);
+			Iterator<SoundPlay> it = c.iterator();
+			while (it.hasNext()) {
+				SoundPlay p = it.next();
+				if (time-p.time < 20) { //1s for now
+					if (p.loc.getDistanceTo(x, y, z) < 12 && !p.loc.sharesBlock(x, y, z))
+						return;
+				}
+				else {
+					it.remove();
+				}
 			}
-			else {
-				it.remove();
-			}
+			plays.addValue(s, new SoundPlay(time, x, y, z));
 		}
-		plays.addValue(s, new SoundPlay(time, x, y, z));
 		sendSound(ch, s, world, x, y, z, vol, pitch);
 	}
 
