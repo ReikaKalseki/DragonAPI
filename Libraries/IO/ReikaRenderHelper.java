@@ -324,7 +324,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	}
 
 	public static int getFPS() {
-		return Minecraft.getMinecraft().debugFPS;
+		return Minecraft.debugFPS;
 	}
 
 	public static int getRealFOV() {
