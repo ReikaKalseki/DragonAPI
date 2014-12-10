@@ -434,7 +434,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			int dim = worldObj.provider.dimensionId;
 			//PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, syncTag);
 			this.sendPacketToAllAround(syncTag, r);
-			DragonAPIInit.instance.getModLogger().debug("Packet "+syncTag+" sent from "+this);
+			//DragonAPIInit.instance.getModLogger().debug("Packet "+syncTag+" sent from "+this);
 		}
 	}
 
