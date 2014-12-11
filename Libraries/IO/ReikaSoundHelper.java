@@ -20,7 +20,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Auxiliary.CustomSoundHandler;
+import Reika.DragonAPI.Auxiliary.Trackers.CustomSoundHandler;
 import Reika.DragonAPI.Instantiable.EnumSound;
 import Reika.DragonAPI.Instantiable.Data.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Data.MultiMap;

@@ -10,26 +10,22 @@
 package Reika.DragonAPI.Command;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
-import Reika.DragonAPI.Auxiliary.Trackers.DonatorController;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
-public class DonatorCommand extends DragonCommandBase {
-
-	@Override
-	public String getCommandString() {
-		return "dragondonators";
-	}
+public class ChestRepopulationCommand extends DragonCommandBase {
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
-		EntityPlayerMP ep = getCommandSenderAsPlayer(ics);
-		ReikaChatHelper.sendChatToPlayer(ep, DonatorController.instance.getDisplayList());
+
+	}
+
+	@Override
+	public String getCommandString() {
+		return "regenchests";
 	}
 
 	@Override
 	protected boolean isAdminOnly() {
-		return false;
+		return true;
 	}
 
 }

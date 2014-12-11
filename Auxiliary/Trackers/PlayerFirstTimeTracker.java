@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Auxiliary;
+package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.ArrayList;
 
@@ -34,8 +34,7 @@ public class PlayerFirstTimeTracker {
 
 	public static void checkPlayer(EntityPlayer ep) {
 		NBTTagCompound nbt = ep.getEntityData();
-		for (int i = 0; i < list.size(); i++) {
-			PlayerTracker pt = list.get(i);
+		for (PlayerTracker pt : list) {
 			if (!hasPlayer(pt, ep)) {
 				pt.onNewPlayer(ep);
 				addPlayer(pt, ep);

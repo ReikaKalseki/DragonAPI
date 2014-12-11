@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Auxiliary;
+package Reika.DragonAPI.Extras;
 
 import java.util.List;
 
@@ -16,7 +16,10 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Auxiliary.PlayerHandler.PlayerTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
+import Reika.DragonAPI.Auxiliary.Trackers.PlayerFirstTimeTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler;
+import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler.PlayerTracker;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;

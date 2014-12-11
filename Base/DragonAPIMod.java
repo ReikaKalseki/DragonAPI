@@ -16,7 +16,7 @@ import java.util.HashMap;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
+import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.MissingDependencyException;
 import Reika.DragonAPI.Exception.RegistrationException;

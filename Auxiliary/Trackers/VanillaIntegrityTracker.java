@@ -7,11 +7,11 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Auxiliary;
+package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
@@ -22,11 +22,12 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.VanillaIntegrityException;
 import Reika.DragonAPI.Exception.WTFException;
+import Reika.DragonAPI.Instantiable.Data.MultiMap;
 
 public class VanillaIntegrityTracker {
 
-	private final HashMap<DragonAPIMod, ArrayList<Field>> blockList = new HashMap();
-	private final HashMap<DragonAPIMod, ArrayList<Field>> itemList = new HashMap();
+	private final MultiMap<DragonAPIMod, Field> blockList = new MultiMap();
+	private final MultiMap<DragonAPIMod, Field> itemList = new MultiMap();
 
 	private static final Class blockClass = Blocks.class;
 	private static final Class itemClass = Item.class;
@@ -75,34 +76,23 @@ public class VanillaIntegrityTracker {
 	}
 
 	public void addWatchedBlock(DragonAPIMod mod, Block b) {
-		ArrayList<Field> blocks = blockList.get(mod);
-		if (blocks == null) {
-			blocks = new ArrayList();
-			blockList.put(mod, blocks);
-		}
 		Field f = blockFields.get(b);
 		if (f == null)
 			throw new MisuseException("Invalid block specified! No vanilla block has ID "+b+" and class "+b.getClass().getSimpleName());
-		blocks.add(f);
+		blockList.addValue(mod, f);
 	}
 
 	public void addWatchedItem(DragonAPIMod mod, Item i) {
-		ArrayList<Field> items = itemList.get(mod);
-		if (items == null) {
-			items = new ArrayList();
-			itemList.put(mod, items);
-		}
 		Field f = itemFields.get(i);
 		if (f == null)
 			throw new MisuseException("Invalid item specified! No vanilla item has ID "+i+" and class "+i.getClass().getSimpleName());
-		items.add(f);
+		itemList.addValue(mod, f);
 	}
 
 	public final void check() {
 		for (DragonAPIMod mod : blockList.keySet()) {
-			ArrayList<Field> blocks = blockList.get(mod);
-			for (int i = 0; i < blocks.size(); i++) {
-				Field f = blocks.get(i);
+			Collection<Field> blocks = blockList.get(mod);
+			for (Field f : blocks) {
 				try {
 					Object o = f.get(null);
 					if (!(o instanceof Block)) { //if null or some crap value
@@ -114,9 +104,8 @@ public class VanillaIntegrityTracker {
 			}
 		}
 		for (DragonAPIMod mod : itemList.keySet()) {
-			ArrayList<Field> items = itemList.get(mod);
-			for (int i = 0; i < items.size(); i++) {
-				Field f = items.get(i);
+			Collection<Field> items = itemList.get(mod);
+			for (Field f : items) {
 				try {
 					Object o = f.get(null);
 					if (!(o instanceof Item)) { //if null or some crap value

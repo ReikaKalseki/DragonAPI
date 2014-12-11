@@ -10,7 +10,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -23,11 +23,12 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.WorldEvent;
-import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
-import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.Instantiable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.BlockBox;
+import Reika.DragonAPI.Instantiable.Data.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.RelativePositionList;
 import Reika.DragonAPI.Interfaces.TreeType;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
@@ -45,7 +46,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 	private static final int MAX_DEPTH = 4;
 	private static final int MAX_SIZE = 32000;
 	private static final ForgeDirection[] dirs = ForgeDirection.values();
-	private final HashMap<Integer, ArrayList<ProgressiveBreaker>> breakers = new HashMap();
+	private final MultiMap<Integer, ProgressiveBreaker> breakers = new MultiMap();
 
 	public static final class ProgressiveBreaker {
 		private final BlockArray start = new BlockArray();
@@ -220,16 +221,14 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 	public void addCoordinate(World world, ProgressiveBreaker b) {
 		if (world.isRemote)
 			return;
-		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
-		li.add(b);
+		breakers.addValue(world.provider.dimensionId, b);
 	}
 
 	public void addCoordinate(World world, int x, int y, int z, TreeType tree) {
 		if (world.isRemote)
 			return;
 		ProgressiveBreaker b = this.getTreeBreaker(world, x, y, z, tree);
-		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
-		li.add(b);
+		breakers.addValue(world.provider.dimensionId, b);
 	}
 
 	public ProgressiveBreaker getTreeBreaker(World world, int x, int y, int z, TreeType tree) {
@@ -261,39 +260,27 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 	public void addCoordinate(World world, int x, int y, int z, List<BlockKey> ids) {
 		if (world.isRemote)
 			return;
-		ArrayList<ProgressiveBreaker> b = this.getOrCreateList(world);
-		b.add(new ProgressiveBreaker(world, x, y, z, Integer.MAX_VALUE, ids));
+		breakers.addValue(world.provider.dimensionId, new ProgressiveBreaker(world, x, y, z, Integer.MAX_VALUE, ids));
 	}
 
 	public void addCoordinate(World world, int x, int y, int z, int maxDepth) {
 		if (world.isRemote)
 			return;
-		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
-		li.add(new ProgressiveBreaker(world, x, y, z, maxDepth));
+		breakers.addValue(world.provider.dimensionId, new ProgressiveBreaker(world, x, y, z, maxDepth));
 	}
 
 	public ProgressiveBreaker addCoordinateWithReturn(World world, int x, int y, int z, int maxDepth) {
 		if (world.isRemote)
 			return null;
-		ArrayList<ProgressiveBreaker> li = this.getOrCreateList(world);
 		ProgressiveBreaker b = new ProgressiveBreaker(world, x, y, z, maxDepth);
-		li.add(b);
+		breakers.addValue(world.provider.dimensionId, b);
 		return b;
-	}
-
-	private ArrayList<ProgressiveBreaker> getOrCreateList(World world) {
-		ArrayList<ProgressiveBreaker> li = breakers.get(world.provider.dimensionId);
-		if (li == null) {
-			li = new ArrayList();
-			breakers.put(world.provider.dimensionId, li);
-		}
-		return li;
 	}
 
 	@Override
 	public void tick(TickType type, Object... tickData) {
 		World world = (World)tickData[0];
-		ArrayList<ProgressiveBreaker> li = breakers.get(world.provider.dimensionId);
+		Collection<ProgressiveBreaker> li = breakers.get(world.provider.dimensionId);
 		if (li != null) {
 			if (!world.isRemote) {
 				Iterator<ProgressiveBreaker> it = li.iterator();

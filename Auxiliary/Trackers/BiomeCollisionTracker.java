@@ -7,9 +7,9 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Auxiliary;
+package Reika.DragonAPI.Auxiliary.Trackers;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import net.minecraft.world.biome.BiomeGenBase;
@@ -17,12 +17,12 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Exception.StupidIDException;
+import Reika.DragonAPI.Instantiable.Data.MultiMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BiomeCollisionTracker {
 
-	private HashMap<DragonAPIMod, ArrayList<Integer>> IDs = new HashMap();
-	private ArrayList<DragonAPIMod> mods = new ArrayList();
+	private MultiMap<DragonAPIMod, Integer> IDs = new MultiMap();
 	private HashMap<Integer, Class> classes = new HashMap();
 
 	public static final BiomeCollisionTracker instance = new BiomeCollisionTracker();
@@ -32,9 +32,8 @@ public class BiomeCollisionTracker {
 	}
 
 	public boolean isIDRegisteredToTracker(int id) {
-		for (int i = 0; i < mods.size(); i++) {
-			DragonAPIMod mod = mods.get(i);
-			ArrayList<Integer> ids = IDs.get(mod);
+		for (DragonAPIMod mod : IDs.keySet()) {
+			Collection<Integer> ids = IDs.get(mod);
 			if (ids.contains(id))
 				return true;
 		}
@@ -42,14 +41,7 @@ public class BiomeCollisionTracker {
 	}
 
 	private void addEntry(DragonAPIMod mod, int id, Class biome) {
-		ArrayList<Integer> ids = IDs.get(mod);
-		if (ids == null) {
-			ids = new ArrayList();
-		}
-		ids.add(id);
-		IDs.put(mod, ids);
-		if (!mods.contains(mod))
-			mods.add(mod);
+		IDs.addValue(mod, id);
 		classes.put(id, biome);
 	}
 
@@ -67,11 +59,9 @@ public class BiomeCollisionTracker {
 	}
 
 	public final void check() {
-		for (int i = 0; i < mods.size(); i++) {
-			DragonAPIMod mod = mods.get(i);
-			ArrayList<Integer> ids = IDs.get(mod);
-			for (int k = 0; k < ids.size(); k++) {
-				int id = ids.get(k);
+		for (DragonAPIMod mod : IDs.keySet()) {
+			Collection<Integer> ids = IDs.get(mod);
+			for (int id : ids) {
 				BiomeGenBase biome = BiomeGenBase.biomeList[id];
 				if (biome == null) {
 					//this.onConflict(mod, id);

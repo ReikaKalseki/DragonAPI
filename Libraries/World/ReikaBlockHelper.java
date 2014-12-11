@@ -19,7 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Auxiliary.BlockProperties;
+import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Interfaces.SpecialOreBlock;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.MystCraftHandler;

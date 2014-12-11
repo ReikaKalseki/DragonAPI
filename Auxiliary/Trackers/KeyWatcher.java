@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Auxiliary;
+package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -23,8 +23,8 @@ import org.lwjgl.input.Keyboard;
 
 import Reika.DragonAPI.APIPacketHandler;
 import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Auxiliary.TickRegistry.TickHandler;
-import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;

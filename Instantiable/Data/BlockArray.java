@@ -113,6 +113,7 @@ public class BlockArray {
 	}
 
 	private void resetLimits() {
+		//ReikaJavaLibrary.pConsole(minX+","+minY+","+minZ+" > "+maxX+","+maxY+","+maxZ, Side.SERVER);
 		minX = Integer.MAX_VALUE;
 		maxX = Integer.MIN_VALUE;
 		minY = Integer.MAX_VALUE;
@@ -122,6 +123,7 @@ public class BlockArray {
 		for (Coordinate c : blocks) {
 			this.setLimits(c.xCoord, c.yCoord, c.zCoord);
 		}
+		//ReikaJavaLibrary.pConsole(minX+","+minY+","+minZ+" > "+maxX+","+maxY+","+maxZ, Side.SERVER);
 	}
 
 	public final boolean isEdge(int x, int y, int z) {
@@ -904,6 +906,14 @@ public class BlockArray {
 			li.appendTag(tag);
 		}
 		NBT.setTag(label, li);
+		NBTTagCompound limit = new NBTTagCompound();
+		limit.setInteger("minx", minX);
+		limit.setInteger("miny", minY);
+		limit.setInteger("minz", minZ);
+		limit.setInteger("maxx", maxX);
+		limit.setInteger("maxy", maxY);
+		limit.setInteger("maxx", maxZ);
+		NBT.setTag(label+"_lim", limit);
 	}
 
 	public void readFromNBT(String label, NBTTagCompound NBT) {
@@ -918,6 +928,13 @@ public class BlockArray {
 			int z = coord.getInteger("z");
 			this.addBlockCoordinate(x, y, z);
 		}
+		NBTTagCompound limit = NBT.getCompoundTag(label+"_lim");
+		minX = limit.getInteger("minx");
+		minY = limit.getInteger("miny");
+		minZ = limit.getInteger("minz");
+		maxX = limit.getInteger("maxx");
+		maxY = limit.getInteger("maxy");
+		maxZ = limit.getInteger("maxx");
 	}
 
 	public void shaveToCube() {

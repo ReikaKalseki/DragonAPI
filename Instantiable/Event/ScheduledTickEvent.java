@@ -10,7 +10,7 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraftforge.common.MinecraftForge;
-import Reika.DragonAPI.Auxiliary.TickRegistry.TickType;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import cpw.mods.fml.common.eventhandler.Event;
 
 public class ScheduledTickEvent extends Event {

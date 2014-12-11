@@ -19,7 +19,7 @@ import org.lwjgl.opengl.GL11;
 
 public final class ReikaBlockRenderer extends RenderBlocks {
 
-	public static ReikaBlockRenderer instance = new ReikaBlockRenderer();
+	public static final ReikaBlockRenderer instance = new ReikaBlockRenderer();
 
 	private ReikaBlockRenderer() {}
 

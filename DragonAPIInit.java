@@ -30,30 +30,30 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import paulscode.sound.SoundSystemConfig;
-import Reika.DragonAPI.Auxiliary.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
-import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker;
-import Reika.DragonAPI.Auxiliary.CommandableUpdateChecker.CheckerDisableCommand;
-import Reika.DragonAPI.Auxiliary.CompatibilityTracker;
-import Reika.DragonAPI.Auxiliary.IDDumpCommand;
-import Reika.DragonAPI.Auxiliary.IntegrityChecker;
-import Reika.DragonAPI.Auxiliary.KeyWatcher.KeyTicker;
-import Reika.DragonAPI.Auxiliary.LoginHandler;
-import Reika.DragonAPI.Auxiliary.PlayerHandler;
-import Reika.DragonAPI.Auxiliary.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
-import Reika.DragonAPI.Auxiliary.SuggestedModsTracker;
-import Reika.DragonAPI.Auxiliary.TickRegistry;
-import Reika.DragonAPI.Auxiliary.VanillaIntegrityTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
+import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker.CheckerDisableCommand;
+import Reika.DragonAPI.Auxiliary.Trackers.CompatibilityTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.IntegrityChecker;
+import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.KeyTicker;
+import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler;
+import Reika.DragonAPI.Auxiliary.Trackers.PotionCollisionTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.SuggestedModsTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry;
+import Reika.DragonAPI.Auxiliary.Trackers.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Command.BlockReplaceCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
 import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
 import Reika.DragonAPI.Command.GuideCommand;
+import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.Command.TileSyncCommand;
+import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Instantiable.SyncPacket;
 import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
@@ -88,6 +88,7 @@ import Reika.DragonAPI.ModInteract.MimicryHandler;
 import Reika.DragonAPI.ModInteract.MystCraftHandler;
 import Reika.DragonAPI.ModInteract.OpenBlockHandler;
 import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
+import Reika.DragonAPI.ModInteract.PeripheralHandler;
 import Reika.DragonAPI.ModInteract.QuantumOreHandler;
 import Reika.DragonAPI.ModInteract.RailcraftHandler;
 import Reika.DragonAPI.ModInteract.RedstoneArsenalHandler;
@@ -121,6 +122,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import dan200.computercraft.api.ComputerCraftAPI;
 
 @Mod(modid = "DragonAPI", certificateFingerprint = "@GET_FINGERPRINT@", dependencies=DragonAPICore.dependencies)
 public class DragonAPIInit extends DragonAPIMod {
@@ -240,6 +242,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		if (DragonOptions.UNNERFOBSIDIAN.getState())
 			Blocks.obsidian.setResistance(2000);
+
+		ComputerCraftAPI.registerPeripheralProvider(new PeripheralHandler());
 	}
 
 	@Override

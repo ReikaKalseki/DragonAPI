@@ -7,18 +7,19 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Auxiliary;
+package Reika.DragonAPI.Auxiliary.Trackers;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Instantiable.Data.MultiMap;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 
 public class SuggestedModsTracker {
 
-	private final HashMap<DragonAPIMod, ArrayList<SuggestedMod>> data = new HashMap();
+	private final MultiMap<DragonAPIMod, SuggestedMod> data = new MultiMap();
 	private final HashMap<DragonAPIMod, Boolean> print = new HashMap();
 
 	public static final SuggestedModsTracker instance = new SuggestedModsTracker();
@@ -60,20 +61,8 @@ public class SuggestedModsTracker {
 	}
 
 	public void addSuggestedMod(DragonAPIMod mod, ModList suggested, String reason) {
-		ArrayList<SuggestedMod> li = this.getOrCreate(mod);
 		SuggestedMod s = new SuggestedMod(suggested, reason);
-		if (!li.contains(s))
-			li.add(s);
-	}
-
-	private ArrayList<SuggestedMod> getOrCreate(DragonAPIMod mod) {
-		ArrayList<SuggestedMod> li = data.get(mod);
-		if (li == null) {
-			li = new ArrayList();
-			data.put(mod, li);
-			print.put(mod, true);
-		}
-		return li;
+		data.addValue(mod, s);
 	}
 
 	public void addSuggestedMods(DragonAPIMod mod, String reason, ModList... suggested) {
@@ -85,13 +74,12 @@ public class SuggestedModsTracker {
 	public void printConsole(DragonAPIMod mod) {
 		if (print.get(mod)) {
 			ModLogger log = mod.getModLogger();
-			ArrayList<SuggestedMod> li = data.get(mod);
-			for (int i = 0; i < li.size(); i++) {
-				SuggestedMod sug = li.get(i);
-				//if (!sug.isLoaded()) {
-				String s = String.format("Consider installing %s: %s", sug.getName(), sug.reason);
-				log.log(s);
-				//}
+			Collection<SuggestedMod> li = data.get(mod);
+			for (SuggestedMod sug : li) {
+				if (!sug.isLoaded()) {
+					String s = String.format("Consider installing %s: %s", sug.getName(), sug.reason);
+					log.log(s);
+				}
 			}
 		}
 	}
