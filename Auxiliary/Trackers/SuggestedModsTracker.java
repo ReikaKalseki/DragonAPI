@@ -10,7 +10,6 @@
 package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.Collection;
-import java.util.HashMap;
 
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -20,7 +19,6 @@ import Reika.DragonAPI.Instantiable.IO.ModLogger;
 public class SuggestedModsTracker {
 
 	private final MultiMap<DragonAPIMod, SuggestedMod> data = new MultiMap();
-	private final HashMap<DragonAPIMod, Boolean> print = new HashMap();
 
 	public static final SuggestedModsTracker instance = new SuggestedModsTracker();
 
@@ -56,10 +54,6 @@ public class SuggestedModsTracker {
 		}
 	}
 
-	public void setPrint(DragonAPIMod mod, boolean doPrint) {
-		print.put(mod, doPrint);
-	}
-
 	public void addSuggestedMod(DragonAPIMod mod, ModList suggested, String reason) {
 		SuggestedMod s = new SuggestedMod(suggested, reason);
 		data.addValue(mod, s);
@@ -72,14 +66,12 @@ public class SuggestedModsTracker {
 	}
 
 	public void printConsole(DragonAPIMod mod) {
-		if (print.get(mod)) {
-			ModLogger log = mod.getModLogger();
-			Collection<SuggestedMod> li = data.get(mod);
-			for (SuggestedMod sug : li) {
-				if (!sug.isLoaded()) {
-					String s = String.format("Consider installing %s: %s", sug.getName(), sug.reason);
-					log.log(s);
-				}
+		ModLogger log = mod.getModLogger();
+		Collection<SuggestedMod> li = data.get(mod);
+		for (SuggestedMod sug : li) {
+			if (!sug.isLoaded()) {
+				String s = String.format("Consider installing %s: %s", sug.getName(), sug.reason);
+				log.log(s);
 			}
 		}
 	}
