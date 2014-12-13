@@ -194,7 +194,14 @@ public class APIPacketHandler implements IPacketHandler {
 					NBTBase tag = NBT.getTag(name);
 					ep.getEntityData().setTag(name, tag);
 				}
-				break;
+				break;/*
+			case PLAYERATTRSYNC:
+				for (Object o : NBT.func_150296_c()) { //Double tags
+					String name = (String)o;
+					NBTBase tag = NBT.getTag(name);
+					BaseAttributeMap map = ep.getAttributeMap();
+				}
+				break;*/
 			case RERENDER:
 				ReikaRenderHelper.rerenderAllChunks();
 				break;
@@ -238,6 +245,7 @@ public class APIPacketHandler implements IPacketHandler {
 		TILEDELETE(),
 		PLAYERDATSYNC(),
 		PLAYERDATSYNC_CLIENT(),
+		//PLAYERATTRSYNC(),
 		RERENDER(),
 		COLOREDPARTICLE(),
 		NUMBERPARTICLE(),

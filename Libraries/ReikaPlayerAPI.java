@@ -12,16 +12,19 @@ package Reika.DragonAPI.Libraries;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.ai.attributes.ServersideAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.PlayerCapabilities;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.S20PacketEntityProperties;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
@@ -37,8 +40,8 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Auxiliary.Trackers.TickScheduler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.Auxiliary.Trackers.TickScheduler;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
 import Reika.DragonAPI.Instantiable.Event.ScheduledTickEvent;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
@@ -261,6 +264,19 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	public static void syncCustomData(EntityPlayerMP ep) {
 		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERDATSYNC.ordinal(), ep, ep.getEntityData());
+	}
+
+	public static void syncAttributes(EntityPlayerMP ep) {
+		/*
+		NBTTagCompound nbt = new NBTTagCompound();
+		ServersideAttributeMap map = (ServersideAttributeMap)ep.getAttributeMap();
+		Collection<IAttributeInstance> c = map.getAllAttributes();
+		for (IAttributeInstance iai : c) {
+			nbt.setDouble(iai.getAttribute().getAttributeUnlocalizedName(), iai.getAttributeValue());
+		}
+		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERATTRSYNC.ordinal(), ep, nbt);*/
+		Set set = ((ServersideAttributeMap)ep.getAttributeMap()).getAttributeInstanceSet();
+		ep.playerNetServerHandler.sendPacket(new S20PacketEntityProperties(ep.getEntityId(), set));
 	}
 
 	@SideOnly(Side.CLIENT)

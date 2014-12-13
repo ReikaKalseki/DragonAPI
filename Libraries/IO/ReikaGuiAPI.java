@@ -11,8 +11,10 @@ package Reika.DragonAPI.Libraries.IO;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -31,11 +33,14 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.GuiIngameForge;
+import net.minecraftforge.client.event.GuiScreenEvent.DrawScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.util.Rectangle;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -44,11 +49,13 @@ import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public final class ReikaGuiAPI extends GuiScreen {
+
 	private int xSize;
 	private int ySize;
 
@@ -56,8 +63,11 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	public static final ReikaGuiAPI instance = new ReikaGuiAPI();
 
+	private final HashMap<String, Rectangle> tooltips = new HashMap();
+
 	private ReikaGuiAPI() {
 		mc = Minecraft.getMinecraft();
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public int getScreenXInset() {
@@ -66,6 +76,11 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	public int getScreenYInset() {
 		return (height - ySize) / 2 - 8;
+	}
+
+	@SubscribeEvent
+	public void preDrawScreen(DrawScreenEvent.Pre evt) {
+		tooltips.clear();
 	}
 
 	/**
@@ -502,6 +517,12 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		f.drawStringWithShadow(s, j2, k2, 0xffffffff);
 		GL11.glPopAttrib();
+
+		tooltips.put(s, new Rectangle(mx, my+8, f.getStringWidth(s)+24, f.FONT_HEIGHT+8));
+	}
+
+	public Map<String, Rectangle> getTooltips() {
+		return Collections.unmodifiableMap(tooltips);
 	}
 
 	public float getMouseScreenY() {

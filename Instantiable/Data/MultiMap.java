@@ -85,6 +85,18 @@ public final class MultiMap<K, V> {
 		return Collections.unmodifiableCollection(data.values());
 	}
 
+	public Collection<V> allValues() {
+		Collection<V> li = new ArrayList();
+		for (Collection<V> c : data.values()) {
+			li.addAll(c);
+		}
+		return li;
+	}
+
+	public int totalSize() {
+		return this.allValues().size();
+	}
+
 	public boolean containsValue(V value) {
 		return ReikaJavaLibrary.collectionMapContainsValue(data, value);
 	}

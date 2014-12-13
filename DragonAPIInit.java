@@ -86,6 +86,7 @@ import Reika.DragonAPI.ModInteract.MekToolHandler;
 import Reika.DragonAPI.ModInteract.MekanismHandler;
 import Reika.DragonAPI.ModInteract.MimicryHandler;
 import Reika.DragonAPI.ModInteract.MystCraftHandler;
+import Reika.DragonAPI.ModInteract.NEIIntercept;
 import Reika.DragonAPI.ModInteract.OpenBlockHandler;
 import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
 import Reika.DragonAPI.ModInteract.PeripheralHandler;
@@ -314,6 +315,8 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void onGameLoaded(GameFinishedLoadingEvent evt) {
 		if (ModList.liteLoaderInstalled())
 			Minecraft.getMinecraft().refreshResources();
+		if (ModList.NEI.isLoaded())
+			NEIIntercept.instance.register();
 	}
 
 	@SubscribeEvent
