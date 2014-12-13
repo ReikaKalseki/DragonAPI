@@ -101,7 +101,7 @@ public class ModVersion implements Comparable<ModVersion> {
 		if (DragonAPICore.isReikasComputer() && ReikaObfuscationHelper.isDeObfEnvironment())
 			return source;
 		Properties p = new Properties();
-		String path = ReikaStringParser.stripSpaces("version.properties");
+		String path = ReikaStringParser.stripSpaces("version_"+ReikaStringParser.stripSpaces(mod.getTechnicalName().toLowerCase())+".properties");
 		try {
 			InputStream stream = ModVersion.class.getClassLoader().getResourceAsStream(path);
 			if (stream == null) {
