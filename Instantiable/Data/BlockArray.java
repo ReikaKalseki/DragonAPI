@@ -912,7 +912,7 @@ public class BlockArray {
 		limit.setInteger("minz", minZ);
 		limit.setInteger("maxx", maxX);
 		limit.setInteger("maxy", maxY);
-		limit.setInteger("maxx", maxZ);
+		limit.setInteger("maxz", maxZ);
 		NBT.setTag(label+"_lim", limit);
 	}
 
@@ -934,7 +934,7 @@ public class BlockArray {
 		minZ = limit.getInteger("minz");
 		maxX = limit.getInteger("maxx");
 		maxY = limit.getInteger("maxy");
-		maxZ = limit.getInteger("maxx");
+		maxZ = limit.getInteger("maxz");
 	}
 
 	public void shaveToCube() {
