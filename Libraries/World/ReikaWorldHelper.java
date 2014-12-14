@@ -793,7 +793,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	 * NOTE: If one point is a block, use canBlockSee instead, as this method will always return false. */
 	public static boolean lineOfSight(World world, double x1, double y1, double z1, double x2, double y2, double z2) {
 		if (world.isRemote)
-			return false;
+			;//return false;
 		Vec3 v1 = Vec3.createVectorHelper(x1, y1, z1);
 		Vec3 v2 = Vec3.createVectorHelper(x2, y2, z2);
 		return (world.rayTraceBlocks(v1, v2) == null);
