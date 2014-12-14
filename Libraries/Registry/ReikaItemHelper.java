@@ -353,7 +353,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 		Collections.sort(li, comparator);
 	}
 
-	public static class ItemComparator implements Comparator<ItemStack> {
+	private static class ItemComparator implements Comparator<ItemStack> {
 
 		@Override
 		public int compare(ItemStack o1, ItemStack o2) {

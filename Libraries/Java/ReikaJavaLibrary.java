@@ -395,7 +395,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return sortedHashMap;
 	}
 
-	public static class MapValueSorter<V> implements Comparator<Map.Entry<V, Comparable>> {
+	private static class MapValueSorter<V> implements Comparator<Map.Entry<V, Comparable>> {
 
 		public int compare(Map.Entry<V, Comparable> o1, Map.Entry<V, Comparable> o2) {
 			return (o1.getValue()).compareTo(o2.getValue());

@@ -53,6 +53,8 @@ public class ReikaThaumHelper {
 
 	private static Potion warpWard;
 
+	private static Collection<Aspect> allAspects = new ArrayList();
+
 	public static void addAspects(ItemStack is, AspectList aspects) {
 		AspectList has = ThaumcraftApi.objectTags.get(Arrays.asList(is.getItem(), is.getItemDamage()));
 
@@ -201,6 +203,10 @@ public class ReikaThaumHelper {
 			li.addAll(al.aspects.keySet());
 		}
 		return li;
+	}
+
+	public static Collection<? extends Aspect> getAllAspects() {
+		return Collections.unmodifiableCollection(allAspects);
 	}
 
 	public static void sortAspectList(ArrayList<Aspect> list) {
@@ -384,6 +390,17 @@ public class ReikaThaumHelper {
 
 				Class mgr = Class.forName("thaumcraft.common.lib.research.ResearchManager");
 				researchComplete = mgr.getMethod("isResearchComplete", String.class, String.class);
+
+				Field[] fds = Aspect.class.getDeclaredFields();
+				for (int i = 0; i < fds.length; i++) {
+					Field fd = fds[i];
+					if (fd.getType() == Aspect.class) {
+						Aspect a = (Aspect)fd.get(null);
+						if (a != null) {
+							allAspects.add(a);
+						}
+					}
+				}
 			}
 			catch (Exception e) {
 				e.printStackTrace();
