@@ -244,7 +244,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		if (DragonOptions.UNNERFOBSIDIAN.getState())
 			Blocks.obsidian.setResistance(2000);
 
-		ComputerCraftAPI.registerPeripheralProvider(new PeripheralHandler());
+		if (ModList.COMPUTERCRAFT.isLoaded())
+			ComputerCraftAPI.registerPeripheralProvider(new PeripheralHandler());
 	}
 
 	@Override
