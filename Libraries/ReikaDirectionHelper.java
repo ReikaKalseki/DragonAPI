@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.ArrayList;
+
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Coordinate;
@@ -76,6 +78,20 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		default:
 			return -1;
 		}
+	}
+
+	/** Returns the two positive direction vectors perpendicular to the supplied direction. */
+	public static ArrayList<ForgeDirection> getPerpendicularDirections(ForgeDirection dir) {
+		ArrayList<ForgeDirection> dirs = new ArrayList();
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection d = ForgeDirection.VALID_DIRECTIONS[i];
+			if (d != dir && d != dir.getOpposite())
+				dirs.add(d);
+		}
+		dirs.remove(ForgeDirection.WEST);
+		dirs.remove(ForgeDirection.NORTH);
+		dirs.remove(ForgeDirection.DOWN);
+		return dirs;
 	}
 
 }
