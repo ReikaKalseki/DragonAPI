@@ -17,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Exception.StupidIDException;
+import Reika.DragonAPI.Extras.IDType;
 import Reika.DragonAPI.Instantiable.Data.MultiMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -47,7 +48,7 @@ public class BiomeCollisionTracker {
 
 	public void addBiomeID(DragonAPIMod mod, int id, Class biomeClass) {
 		if (id < 0 || id >= 255) {
-			throw new StupidIDException(mod, id);
+			throw new StupidIDException(mod, id, IDType.BIOME);
 		}
 		BiomeGenBase biome = BiomeGenBase.biomeList[id];
 		if (biome != null)
