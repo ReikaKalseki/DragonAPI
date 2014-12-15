@@ -490,6 +490,8 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			return true;
 		if (o instanceof TileEntity) {
 			TileEntity te = (TileEntity)o;
+			if ((te.worldObj == null && worldObj != null) || (worldObj == null && te.worldObj != null))
+				return false;
 			return te.worldObj.provider.dimensionId == worldObj.provider.dimensionId && this.matchCoords(te);
 		}
 		return false;
