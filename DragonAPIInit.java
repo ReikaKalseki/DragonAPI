@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,7 +90,6 @@ import Reika.DragonAPI.ModInteract.MystCraftHandler;
 import Reika.DragonAPI.ModInteract.NEIIntercept;
 import Reika.DragonAPI.ModInteract.OpenBlockHandler;
 import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
-import Reika.DragonAPI.ModInteract.PeripheralHandler;
 import Reika.DragonAPI.ModInteract.QuantumOreHandler;
 import Reika.DragonAPI.ModInteract.RailcraftHandler;
 import Reika.DragonAPI.ModInteract.RedstoneArsenalHandler;
@@ -123,7 +123,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import dan200.computercraft.api.ComputerCraftAPI;
 
 @Mod(modid = "DragonAPI", certificateFingerprint = "@GET_FINGERPRINT@", dependencies=DragonAPICore.dependencies)
 public class DragonAPIInit extends DragonAPIMod {
@@ -147,11 +146,11 @@ public class DragonAPIInit extends DragonAPIMod {
 		config.loadSubfolderedConfigFile(evt);
 		config.initProps(evt);
 
-		logger.log("Active Classloader is: "+this.getClass().getClassLoader());
-
 		logger = new ModLogger(instance, false);
 		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());
 		//MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
+
+		logger.log("Active Classloader is: "+this.getClass().getClassLoader());
 
 		proxy.registerSidedHandlers();
 
@@ -246,8 +245,19 @@ public class DragonAPIInit extends DragonAPIMod {
 		if (DragonOptions.UNNERFOBSIDIAN.getState())
 			Blocks.obsidian.setResistance(2000);
 
-		if (ModList.COMPUTERCRAFT.isLoaded())
-			ComputerCraftAPI.registerPeripheralProvider(new PeripheralHandler());
+		if (ModList.COMPUTERCRAFT.isLoaded()) {
+			try {
+				Class handler = Class.forName("Reika.DragonAPI.ModInteract.PeripheralHandler");
+				Object handlerObj = handler.newInstance();
+				Class api = Class.forName("dan200.computercraft.api.ComputerCraftAPI");
+				Method register = api.getDeclaredMethod("registerPeripheralProvider", handler);
+				register.invoke(null, handlerObj);
+				//ComputerCraftAPI.registerPeripheralProvider(new PeripheralHandler()); Nonreflective code crashes
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
