@@ -11,9 +11,12 @@ package Reika.DragonAPI.ASM;
 
 import gnu.trove.set.hash.THashSet;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import net.minecraft.launchwrapper.Launch;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -53,8 +56,6 @@ class AnnotationStripper {
 		public String[] values = emptyList;
 	}
 
-	private static ClassNode world = null, worldServer = null;
-
 	static byte[] parse(String name, String transformedName, byte[] bytes) {
 		workingPath.add(transformedName);
 		if (strippables.contains(name)) {
@@ -80,11 +81,8 @@ class AnnotationStripper {
 			if (cn.innerClasses != null) {
 				for (InnerClassNode node : cn.innerClasses) {
 					if (!workingPath.contains(node.name)) {
-						try {
-							Class.forName(node.name, false, AnnotationStripper.class.getClassLoader());
-						}
-						catch (ClassNotFoundException e) {
-
+						if (!classExists(node.name)) {
+							//had no code here
 						}
 					}
 				}
@@ -108,17 +106,13 @@ class AnnotationStripper {
 						String cz = clazz.replace('.', '/');
 						if (cn.interfaces.contains(cz)) {
 							//ReikaJavaLibrary.pConsole("entry 1 for "+cn.name);
-							try {
-								if (!wrongSide && !workingPath.contains(clazz)) {
-									Class.forName(clazz, false, AnnotationStripper.class.getClassLoader());
-									//ReikaJavaLibrary.pConsole("exit 1 for "+cn.name+"; "+clazz);
-								}
-							}
-							catch (ClassNotFoundException e) {
-								cn.interfaces.remove(cz);
-								altered = true;
-								if (DEBUG) {
-									ReikaJavaLibrary.pConsole("Removing interface "+cz+" from "+cn.name+"; class not present.");
+							if (!wrongSide && !workingPath.contains(clazz)) {
+								if (!classExists(clazz)) {
+									cn.interfaces.remove(cz);
+									altered = true;
+									if (DEBUG) {
+										ReikaJavaLibrary.pConsole("Removing interface "+cz+" from "+cn.name+"; class not present.");
+									}
 								}
 							}
 						}
@@ -162,6 +156,15 @@ class AnnotationStripper {
 		return altered;
 	}
 
+	private static boolean classExists(String name) {
+		try {
+			return Launch.classLoader.getClassBytes(name) != null;
+		}
+		catch (IOException e) {
+			return false;
+		}
+	}
+
 	static boolean checkRemove(AnnotationInfo node, Iterator<? extends Object> iter) {
 		if (node != null) {
 			boolean needsRemoved = node.side == side;
@@ -176,13 +179,10 @@ class AnnotationStripper {
 						needsRemoved = !ModAPIManager.INSTANCE.hasAPI(clazz.substring(4));
 					}
 					else {
-						try {
-							if (!workingPath.contains(clazz)) {
-								Class.forName(clazz, false, AnnotationStripper.class.getClassLoader());
+						if (!workingPath.contains(clazz)) {
+							if (!classExists(clazz)) {
+								needsRemoved = true;
 							}
-						}
-						catch (ClassNotFoundException e) {
-							needsRemoved = true;
 						}
 					}
 					if (needsRemoved) {
