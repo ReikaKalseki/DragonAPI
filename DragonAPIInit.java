@@ -145,12 +145,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.verifyVersions();
 		config.loadSubfolderedConfigFile(evt);
 		config.initProps(evt);
-
 		logger = new ModLogger(instance, false);
-		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());
-		//MinecraftForge.EVENT_BUS.register(RetroGenController.getInstance());
-
 		logger.log("Active Classloader is: "+this.getClass().getClassLoader());
+		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());
 
 		proxy.registerSidedHandlers();
 
