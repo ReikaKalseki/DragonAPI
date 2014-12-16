@@ -31,6 +31,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.DataPacket;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.relauncher.Side;
@@ -212,6 +213,8 @@ public class APIPacketHandler implements IPacketHandler {
 				break;
 			case IDDUMP:
 				break;
+			case EXPLODE:
+				break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data);
@@ -229,6 +232,10 @@ public class APIPacketHandler implements IPacketHandler {
 			break;
 		case IDDUMP:
 			IDDumpCommand.dumpClientside(data[0]);
+			break;
+		case EXPLODE:
+			ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "random.explode");
+			ReikaParticleHelper.EXPLODE.spawnAroundBlock(world, x, y, z, 1);
 			break;
 		default:
 			break;
@@ -249,7 +256,8 @@ public class APIPacketHandler implements IPacketHandler {
 		RERENDER(),
 		COLOREDPARTICLE(),
 		NUMBERPARTICLE(),
-		IDDUMP();
+		IDDUMP(),
+		EXPLODE();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];

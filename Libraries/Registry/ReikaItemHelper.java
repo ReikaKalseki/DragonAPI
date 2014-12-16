@@ -207,9 +207,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 	}
 
-	public static void dropItems(World world, double x, double y, double z, List<ItemStack> li) {
-		for (int i = 0; i < li.size(); i++)
-			dropItem(world, x, y, z, li.get(i));
+	public static void dropItems(World world, double x, double y, double z, Collection<ItemStack> li) {
+		for (ItemStack is : li)
+			dropItem(world, x, y, z, is);
 	}
 
 	public static boolean isBlock(ItemStack is) {

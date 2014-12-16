@@ -65,6 +65,8 @@ public abstract class DragonAPIMod {
 		if (this.getClass() == DragonAPIInit.class) {
 			apiVersion = version;
 		}
+
+		ReikaJavaLibrary.pConsole(this.getTechnicalName()+": Active Classloader is: "+this.getClass().getClassLoader());
 	}
 
 	@EventHandler

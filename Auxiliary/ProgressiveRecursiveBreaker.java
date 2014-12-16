@@ -25,6 +25,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.WorldEvent;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.Base.BlockTieredResource;
 import Reika.DragonAPI.Instantiable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.BlockBox;
@@ -182,10 +183,23 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
 			if (drops) {
-				if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta))
-					ReikaItemHelper.dropItem(world, x, y, z, new ItemStack(id, 1, world.getBlockMetadata(x, y, z)));
-				else
-					ReikaWorldHelper.dropBlockAt(world, x, y, z, fortune);
+				if (id instanceof BlockTieredResource) {
+					BlockTieredResource bt = (BlockTieredResource)id;
+					if (player != null) {
+						if (bt.isPlayerSufficientTier(world, x, y, z, player)) {
+							ReikaItemHelper.dropItems(world, x, y, z, bt.getHarvestResources(world, x, y, z, 0, player));
+						}
+						else {
+							ReikaItemHelper.dropItems(world, x, y, z, bt.getNoHarvestResources(world, x, y, z, 0, player));
+						}
+					}
+				}
+				else {
+					if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta))
+						ReikaItemHelper.dropItem(world, x, y, z, new ItemStack(id, 1, world.getBlockMetadata(x, y, z)));
+					else
+						ReikaWorldHelper.dropBlockAt(world, x, y, z, fortune);
+				}
 			}
 			world.setBlockToAir(x, y, z);
 			ReikaSoundHelper.playBreakSound(world, x, y, z, id);

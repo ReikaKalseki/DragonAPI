@@ -21,20 +21,20 @@ public class StupidIDException extends DragonAPIException {
 		message.append(type.getName()+" ID "+ID+" is completely invalid, as it is "+this.getError(ID, type)+".\n");
 		message.append("Please learn how IDs work before attempting to modify configs.\n");
 		if (ID > 100000)
-			message.append("No sane ID would be this large.\n");
+			message.append("No sane ID would be this large, and you would do well to realize this.\n");
 		message.append("This is NOT a mod bug. Do not post it to the mod website or you will look extremely foolish.");
 		this.crash();
 	}
 
 	private String getError(int id, IDType type) {
 		int max = this.getMaxAllowable(type);
-		return id < 0 ? "negative" : id > max ? "too large" : "";
+		return id < 0 ? "negative" : id > max ? "too large" : "wrong";
 	}
 
 	private int getMaxAllowable(IDType type) {
 		switch(type) {
 		case BIOME:
-			return BiomeGenBase.biomeList.length-1;
+			return BiomeGenBase.biomeList.length-1-1; //255 is reserved
 		case BLOCK:
 			return 4095;
 		case ITEM:
