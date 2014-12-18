@@ -293,7 +293,7 @@ public final class ThaumOreHandler extends ModHandlerBase {
 				ModOreList o = ModOreList.oreList[i];
 				if (o.isThaumcraft()) {
 					OreDictionary.registerOre(o.getOreDictNames()[0], this.getOre(o));
-					OreDictionary.registerOre(o.getProductLabel(), this.getItem(o));
+					OreDictionary.registerOre(o.getProductOreDictName(), this.getItem(o));
 					o.reloadOreList();
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Registering "+o.displayName);
 				}

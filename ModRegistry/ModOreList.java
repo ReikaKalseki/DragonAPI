@@ -300,11 +300,7 @@ public enum ModOreList implements OreType {
 		return arr;
 	}
 
-	public String[] getOreDictIngots() {
-		return new String[]{product};
-	}
-
-	public String getProductLabel() {
+	public String getProductOreDictName() {
 		return product;
 	}
 

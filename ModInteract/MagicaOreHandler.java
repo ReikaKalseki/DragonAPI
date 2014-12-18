@@ -239,7 +239,7 @@ public final class MagicaOreHandler extends ModHandlerBase {
 				ModOreList o = ModOreList.oreList[i];
 				if (o.isArsMagica()) {
 					OreDictionary.registerOre(o.getOreDictNames()[0], this.getOre(o));
-					OreDictionary.registerOre(o.getProductLabel(), this.getItem(o));
+					OreDictionary.registerOre(o.getProductOreDictName(), this.getItem(o));
 					o.reloadOreList();
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Registering "+o.displayName);
 				}
