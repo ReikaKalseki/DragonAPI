@@ -11,8 +11,11 @@ package Reika.DragonAPI.ASM;
 
 import java.util.HashMap;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.MinecraftForge;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -30,6 +33,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import Reika.DragonAPI.Instantiable.Event.RenderFirstPersonItemEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -41,7 +45,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		CREEPERBOMBEVENT("net.minecraft.entity.monster.EntityCreeper", "xz"),
 		ITEMRENDEREVENT("net.minecraft.client.gui.inventory.GuiContainer", "bex"),
 		SLOTCLICKEVENT("net.minecraft.inventory.Slot", "aay"),
-		ICECANCEL("net.minecraft.world.World", "ahb");
+		ICECANCEL("net.minecraft.world.World", "ahb"),
+		HELDRENDEREVENT("net.minecraft.client.renderer.EntityRenderer", "blt");
 
 		private final String obfName;
 		private final String deobfName;
@@ -155,6 +160,27 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				m.instructions.add(new InsnNode(Opcodes.IRETURN));
 
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+				break;
+			}
+			case HELDRENDEREVENT: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_78476_b", "renderHand", "(FI)V");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+						String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_78440_a" : "renderItemInFirstPerson";
+						MethodInsnNode min = (MethodInsnNode)ain;
+						if (min.name.equals(func)) {
+							m.instructions.insert(ain, new InsnNode(Opcodes.POP));
+							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/RenderFirstPersonItemEvent", "<init>", "()V"));
+							m.instructions.insert(ain, new InsnNode(Opcodes.DUP));
+							m.instructions.insert(ain, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/RenderFirstPersonItemEvent"));
+							m.instructions.insert(ain, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+							break;
+						}
+					}
+				}
 			}
 			}
 
@@ -162,6 +188,29 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			cn.accept(writer);
 			return writer.toByteArray();
 		}
+	}
+
+	float p_78476_1_ = 0;
+	Minecraft mc = null;
+	ItemRenderer itemRenderer = null;
+	void doStuff() {
+		if (mc.gameSettings.thirdPersonView == 0 && !mc.renderViewEntity.isPlayerSleeping() && !mc.gameSettings.hideGUI && !mc.playerController.enableEverythingIsScrewedUpMode())
+		{
+			this.enableLightmap(p_78476_1_);
+			itemRenderer.renderItemInFirstPerson(p_78476_1_);
+			MinecraftForge.EVENT_BUS.post(new RenderFirstPersonItemEvent());
+			this.disableLightmap(p_78476_1_);
+		}
+	}
+
+	private void disableLightmap(double p_78476_1_) {
+		// TODO Auto-generated method stub
+
+	}
+
+	private void enableLightmap(double p_78476_1_) {
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override

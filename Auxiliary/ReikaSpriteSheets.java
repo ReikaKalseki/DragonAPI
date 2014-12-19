@@ -51,13 +51,16 @@ public final class ReikaSpriteSheets {
 			return;
 		if (item instanceof SpriteRenderCallback) {
 			GL11.glPushMatrix();
-			if (type == ItemRenderType.INVENTORY)
-				prepareInvRender();
-			else if (type == ItemRenderType.EQUIPPED)
-				prepareHeldRender3rdP();
-			else if (type == ItemRenderType.EQUIPPED_FIRST_PERSON)
-				prepareHeldRender();
-			boolean res = ((SpriteRenderCallback)is.getItem()).onRender(itemRender, is, type);
+			SpriteRenderCallback spr = (SpriteRenderCallback)item;
+			if (spr.doPreGLTransforms(is, type)) {
+				if (type == ItemRenderType.INVENTORY)
+					prepareInvRender();
+				else if (type == ItemRenderType.EQUIPPED)
+					prepareHeldRender3rdP();
+				else if (type == ItemRenderType.EQUIPPED_FIRST_PERSON)
+					prepareHeldRender();
+			}
+			boolean res = spr.onRender(itemRender, is, type);
 			GL11.glPopMatrix();
 			if (res)
 				return;

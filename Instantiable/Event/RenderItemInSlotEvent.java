@@ -18,7 +18,10 @@ import org.lwjgl.input.Mouse;
 
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class RenderItemInSlotEvent extends Event {
 
 	private final ItemStack item;

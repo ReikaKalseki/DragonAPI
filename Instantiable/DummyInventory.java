@@ -1,0 +1,37 @@
+package Reika.DragonAPI.Instantiable;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import Reika.ChromatiCraft.Registry.ChromaItems;
+
+public final class DummyInventory implements IInventory {
+
+	@Override
+	public int getSizeInventory() {return 0;}
+	@Override
+	public ItemStack getStackInSlot(int slot) {return null;}
+	@Override
+	public ItemStack decrStackSize(int slot, int decr) {return null;}
+	@Override
+	public ItemStack getStackInSlotOnClosing(int slot) {return null;}
+	@Override
+	public void setInventorySlotContents(int slot, ItemStack is) {}
+	@Override
+	public String getInventoryName() {return ChromaItems.VOIDCELL.getBasicName();}
+	@Override
+	public boolean hasCustomInventoryName() {return false;}
+	@Override
+	public int getInventoryStackLimit() {return 0;}
+	@Override
+	public void markDirty() {}
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer ep) {return false;}
+	@Override
+	public void openInventory() {}
+	@Override
+	public void closeInventory() {}
+	@Override
+	public boolean isItemValidForSlot(int slot, ItemStack is) {return false;}
+
+}

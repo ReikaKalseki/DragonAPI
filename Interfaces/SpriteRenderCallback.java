@@ -15,7 +15,9 @@ import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 
 public interface SpriteRenderCallback {
 
-	/** Return true to prevent further rendering. OpenGL transforms are already set up for you. */
+	/** Return true to prevent further rendering. */
 	public boolean onRender(RenderItem ri, ItemStack is, ItemRenderType type);
+
+	public boolean doPreGLTransforms(ItemStack is, ItemRenderType type);
 
 }

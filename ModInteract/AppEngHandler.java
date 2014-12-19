@@ -39,7 +39,12 @@ public class AppEngHandler extends ModHandlerBase {
 	private ItemStack calcPress;
 	private ItemStack engPress;
 
+	private ItemStack goldProcessor;
+	private ItemStack quartzProcessor;
+	private ItemStack diamondProcessor;
+
 	public final Block skystone;
+	public final Block quartzGlass;
 
 	private Object itemList;
 	private Object matList;
@@ -58,6 +63,7 @@ public class AppEngHandler extends ModHandlerBase {
 	private AppEngHandler() {
 		super();
 		Block sky = null;
+		Block glass = null;
 		if (this.hasMod()) {
 			try {
 				this.initGetters();
@@ -76,7 +82,12 @@ public class AppEngHandler extends ModHandlerBase {
 				logicPress = this.getMaterial("materialLogicProcessorPress");
 				siliconPress = this.getMaterial("materialSiliconPress");
 
+				goldProcessor = this.getMaterial("materialLogicProcessor");
+				quartzProcessor = this.getMaterial("materialCalcProcessor");
+				diamondProcessor = this.getMaterial("materialEngProcessor");
+
 				sky = this.getBlock("blockSkyStone");
+				glass = this.getBlock("blockQuartzGlass");
 			}
 			catch (Exception e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read AE class contents!");
@@ -87,6 +98,7 @@ public class AppEngHandler extends ModHandlerBase {
 			this.noMod();
 		}
 		skystone = sky;
+		quartzGlass = glass;
 	}
 
 	private void initGetters() throws Exception {
@@ -208,6 +220,18 @@ public class AppEngHandler extends ModHandlerBase {
 
 	public ItemStack getSilicon() {
 		return silicon != null ? silicon.copy() : null;
+	}
+
+	public ItemStack getGoldProcessor() {
+		return goldProcessor != null ? goldProcessor.copy() : null;
+	}
+
+	public ItemStack getQuartzProcessor() {
+		return quartzProcessor != null ? quartzProcessor.copy() : null;
+	}
+
+	public ItemStack getDiamondProcessor() {
+		return diamondProcessor != null ? diamondProcessor.copy() : null;
 	}
 
 }
