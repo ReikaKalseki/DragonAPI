@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 
 import net.minecraft.item.ItemStack;
@@ -174,6 +175,13 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			String s = (String)o;
 			NBTBase key = tag2.getTag(s);
 			tag1.setTag(s, key.copy());
+		}
+	}
+
+	public static void clearTagCompound(NBTTagCompound dat) {
+		Collection<String> tags = new ArrayList(dat.func_150296_c());
+		for (String tag : tags) {
+			dat.removeTag(tag);
 		}
 	}
 

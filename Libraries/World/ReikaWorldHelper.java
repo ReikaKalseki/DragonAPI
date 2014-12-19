@@ -87,6 +87,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		Block b = world.getBlock(x, y, z);
 		if (b == Blocks.air)
 			return false;
+		if (b == Blocks.trapdoor || b == Blocks.chest)
+			return false;
 		if (b.getFlammability(world, x, y, z, ForgeDirection.UP) > 0)
 			return true;
 		return (BlockProperties.isFlammable(b));

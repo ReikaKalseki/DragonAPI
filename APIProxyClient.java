@@ -17,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.IO.DirectResourceManager;
+import Reika.DragonAPI.Instantiable.Event.ResourceReloadEvent;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class APIProxyClient extends APIProxy {
@@ -37,6 +38,7 @@ public class APIProxyClient extends APIProxy {
 		//mc.mcResourceManager = new CustomResourceManager((SimpleReloadableResourceManager)mc.mcResourceManager);
 
 		MinecraftForge.EVENT_BUS.register(DebugOverlay.instance);
+		ResourceReloadEvent.register();
 
 		//MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
 		PlayerModelRenderer.instance.register();

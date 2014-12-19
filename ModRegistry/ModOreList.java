@@ -118,7 +118,8 @@ public enum ModOreList implements OreType {
 	SILICON("Silicon", 0x777777, OreRarity.AVERAGE, "itemSilicon", 1, "oreSilicon"),
 	RUTILE("Rutile", 0x615E57, OreRarity.SCATTERED, "ingotRutile", 1, "oreRutile"),
 	AMETHYST("Amethyst", 0xff00ff, OreRarity.RARE, "gemAmethyst", 1, "oreAmethyst"),
-	TESLATITE("Teslatite", 0x2F81F1, OreRarity.COMMON, "dustTeslatite", 3, "oreTeslatite");
+	TESLATITE("Teslatite", 0x2F81F1, OreRarity.COMMON, "dustTeslatite", 3, "oreTeslatite"),
+	MANA("Mana", 0x70DAFC, OreRarity.SCARCE, "ingotMana", 1, "oreMana");
 
 	private ArrayList<ItemStack> ores = new ArrayList();
 	public final String displayName;

@@ -16,9 +16,7 @@ public class ReikaRandomHelper extends DragonAPICore {
 
 	/** Like rand.getInt(), but will not crash for n <= 0 */
 	public static int getSafeRandomInt(int val) {
-		if (val <= 1)
-			return 0;
-		return rand.nextInt(val);
+		return val > 1 ? rand.nextInt(val) : 0;
 	}
 
 	/** Gets a random double value within base +/- range. */

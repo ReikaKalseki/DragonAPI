@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries.Java;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -33,6 +34,8 @@ import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 
 public class ReikaASMHelper {
+
+	private static Field opcodeField;
 
 	public static FieldNode getFieldByName(ClassNode c, String name) throws NoSuchASMFieldException {
 		return getFieldByName(c, name, name);
@@ -176,6 +179,25 @@ public class ReikaASMHelper {
 		t.print(new PrintWriter(sw));
 		t.getText().clear();
 		return sw.toString();
+	}
+
+	public static void changeOpcode(AbstractInsnNode ain, int opcode) {
+		try {
+			opcodeField.setInt(ain, opcode);
+		}
+		catch (Exception e) {
+
+		}
+	}
+
+	static {
+		try {
+			opcodeField = AbstractInsnNode.class.getDeclaredField("opcode");
+			opcodeField.setAccessible(true);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static enum ReturnType {
