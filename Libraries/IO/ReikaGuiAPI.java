@@ -327,13 +327,12 @@ public final class ReikaGuiAPI extends GuiScreen {
 			return;
 		}
 		//ReikaJavaLibrary.pConsole(lr.get(0).getRecipeOutput().toString());
-		ItemStack[] in = new ItemStack[9];
 		int k = ((int)(System.nanoTime()/2000000000))%lr.size();
 		//ReikaJavaLibrary.pConsole(k);
 		Object ir = lr.get(k);
 		IRecipe ire = ir instanceof WrappedRecipe ? ((WrappedRecipe)ir).getRecipe() : (IRecipe)ir;
 		ItemStack isout = ire.getRecipeOutput();
-		ReikaRecipeHelper.copyRecipeToItemStackArray(in, ire);
+		ItemStack[] in = ReikaRecipeHelper.getPermutedRecipeArray(ire);
 		//ReikaJavaLibrary.pConsole(Arrays.toString(in)+" to "+isout);
 		boolean noshape = false;
 		if (ire instanceof ShapelessRecipes)
@@ -353,16 +352,9 @@ public final class ReikaGuiAPI extends GuiScreen {
 			return;
 		}
 		//ReikaJavaLibrary.pConsole(lr.get(13).getRecipeOutput());
-		ItemStack[] in = new ItemStack[9];
 		IRecipe ire = lr.get(((int)(System.nanoTime()/2000000000))%lr.size());
 		ItemStack isout = ire.getRecipeOutput();
-		try {
-			ReikaRecipeHelper.copyRecipeToItemStackArray(in, ire);
-		}
-		catch (NullPointerException e) { //temporary fix...
-			e.printStackTrace();
-			return;
-		}
+		ItemStack[] in = ReikaRecipeHelper.getPermutedRecipeArray(ire);
 		boolean noshape = false;
 		if (ire instanceof ShapelessRecipes)
 			noshape = true;
@@ -421,7 +413,15 @@ public final class ReikaGuiAPI extends GuiScreen {
 			font = is.getItem().getFontRenderer(is);
 		if (font == null)
 			font = fr;
-
+		/*
+		if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
+			List li = ReikaItemHelper.getAllPermutations(is.getItem());
+			if (!li.isEmpty()) {
+				int tick = (int)((System.currentTimeMillis()/1000)%li.size());
+				is = li.get(tick);
+			}
+		}
+		 */
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		RenderHelper.disableStandardItemLighting();
 		GL11.glDisable(GL11.GL_LIGHTING);

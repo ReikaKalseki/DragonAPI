@@ -15,9 +15,12 @@ import java.net.URL;
 import java.util.Random;
 
 import net.minecraftforge.common.ForgeVersion;
+import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.Side;
 
@@ -32,6 +35,8 @@ public class DragonAPICore {
 	public static final String last_API_Version = "@MAJOR_VERSION@"+"@MINOR_VERSION@";
 
 	public static boolean debugtest = false;
+
+	private static boolean loaded;
 
 	private static final String MINFORGE = "required-after:Forge@[10.13.0.1205,);";
 	public static final String dependencies = MINFORGE+"after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;"+
@@ -90,6 +95,7 @@ public class DragonAPICore {
 
 		//ReikaMathCacher.initalize();
 		validateForgeVersions();
+		MinecraftForge.EVENT_BUS.register(new LoadWatcher());
 	}
 
 	protected static Side getSide() {
@@ -115,5 +121,18 @@ public class DragonAPICore {
 
 	public static boolean isSinglePlayer() {
 		return getSide() == Side.SERVER && !FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer();
+	}
+
+	private static class LoadWatcher {
+
+		@SubscribeEvent
+		public void load(GameFinishedLoadingEvent evt) {
+			loaded = true;
+		}
+
+	}
+
+	public static boolean hasGameLoaded() {
+		return loaded;
 	}
 }

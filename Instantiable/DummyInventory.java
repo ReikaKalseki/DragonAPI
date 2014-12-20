@@ -3,7 +3,6 @@ package Reika.DragonAPI.Instantiable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import Reika.ChromatiCraft.Registry.ChromaItems;
 
 public final class DummyInventory implements IInventory {
 
@@ -18,7 +17,7 @@ public final class DummyInventory implements IInventory {
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack is) {}
 	@Override
-	public String getInventoryName() {return ChromaItems.VOIDCELL.getBasicName();}
+	public String getInventoryName() {return "Dummy";}
 	@Override
 	public boolean hasCustomInventoryName() {return false;}
 	@Override

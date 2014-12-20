@@ -13,10 +13,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -28,6 +30,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.ImmutableItemStack;
 
 public final class ReikaItemHelper extends DragonAPICore {
@@ -181,6 +184,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 	public static ItemStack getSizedItemStack(ItemStack is, int num) {
 		if (is == null)
+			return null;
+		if (is.getItem() == null)
 			return null;
 		if (num <= 0)
 			return null;
@@ -347,6 +352,24 @@ public final class ReikaItemHelper extends DragonAPICore {
 		ItemStack is2 = is.copy();
 		is2.stackTagCompound = null;
 		return is2;
+	}
+
+	private static final HashMap<Item, ArrayList<ItemStack>> permutations = new HashMap();
+
+	public static List<ItemStack> getAllMetadataPermutations(Item item) {
+		if (item == null)
+			throw new MisuseException("You cannot get the permutations of null!");
+		ArrayList<ItemStack> li = permutations.get(item);
+		if (li == null) {
+			li = new ArrayList();
+			CreativeTabs[] tabs = item.getCreativeTabs();
+			for (int k = 0; k < tabs.length; k++) {
+				CreativeTabs tab = tabs[k];
+				item.getSubItems(item, tab, li);
+			}
+			permutations.put(item, li);
+		}
+		return Collections.unmodifiableList(li);
 	}
 
 	public static void sortItems(List<ItemStack> li) {
