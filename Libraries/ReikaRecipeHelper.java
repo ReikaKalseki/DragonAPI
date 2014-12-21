@@ -262,8 +262,11 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	/** Turns a recipe into a 3x3 itemstack array. Args: Recipe */
 	public static List<ItemStack>[] getRecipeArray(IRecipe ir) {
 		List<ItemStack>[] lists = new List[9];
-		for (int i = 0; i < 9; i++)
-			lists[i] = Collections.unmodifiableList(getRecipeCacheObject(ir).items[i]);
+		for (int i = 0; i < 9; i++) {
+			List li = getRecipeCacheObject(ir).items[i];
+			if (li != null && !li.isEmpty())
+				lists[i] = Collections.unmodifiableList(li);
+		}
 		return lists;
 	}
 
