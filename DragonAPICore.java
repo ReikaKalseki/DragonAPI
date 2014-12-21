@@ -123,7 +123,7 @@ public class DragonAPICore {
 		return getSide() == Side.SERVER && !FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer();
 	}
 
-	private static class LoadWatcher {
+	public static class LoadWatcher {
 
 		@SubscribeEvent
 		public void load(GameFinishedLoadingEvent evt) {

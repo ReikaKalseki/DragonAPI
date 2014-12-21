@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.ExpandedOreRecipe;
+import Reika.DragonAPI.Instantiable.RecipePattern;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -240,13 +242,15 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	}
 
 	private static List<ItemStack> getRecipeItemStack(ItemStack is) {
+		if (is == null)
+			return null;
 		if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE)
 			return ReikaItemHelper.getAllMetadataPermutations(is.getItem());
 		else
 			return ReikaJavaLibrary.makeListFrom(is);
 	}
 
-	private static RecipeCache copyRecipeToCacheObject(IRecipe ir) {
+	private static RecipeCache getRecipeCacheObject(IRecipe ir) {
 		RecipeCache cache = recipeCache.get(ir);
 		if (cache == null) {
 			cache = calculateRecipeToItemStackArray(ir);
@@ -259,14 +263,14 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	public static List<ItemStack>[] getRecipeArray(IRecipe ir) {
 		List<ItemStack>[] lists = new List[9];
 		for (int i = 0; i < 9; i++)
-			lists[i] = Collections.unmodifiableList(copyRecipeToCacheObject(ir).items[i]);
+			lists[i] = Collections.unmodifiableList(getRecipeCacheObject(ir).items[i]);
 		return lists;
 	}
 
 	/** Turns a recipe into a 3x3 itemstack array, permuting it as well, usually for rendering. Args: Recipe */
 	@SideOnly(Side.CLIENT)
 	public static ItemStack[] getPermutedRecipeArray(IRecipe ir) {
-		RecipeCache r = copyRecipeToCacheObject(ir);
+		RecipeCache r = getRecipeCacheObject(ir);
 		List<ItemStack>[] isin = r.items;
 
 		int time = 1000;
@@ -713,6 +717,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return li;
 	}
 
+	/** DISTINCT from getAllItems in that it returns a list of objects, including lists! */
 	public static ArrayList<Object> getAllInputsInRecipe(IRecipe ire) {
 		ArrayList<Object> li = new ArrayList();
 		if (ire instanceof ShapedRecipes) {
@@ -761,14 +766,22 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	}
 
 	public static boolean matchArrayToRecipe(ItemStack[] in, IRecipe ir) {
-		return false; todo
+		RecipePattern r = new RecipePattern(in);
+		return ir.matches(r, null);
 	}
 
 	public static boolean recipeContains(IRecipe ir, ItemStack is) {
-		return false; todo
+		return ReikaItemHelper.listContainsItemStack(getAllItemsInRecipe(ir), is);
 	}
 
-	public static int getRecipeLocationIndex(IRecipe recipe, ItemStack is) {
-		return -1; todo
+	public static Collection<Integer> getRecipeLocationIndices(IRecipe ir, ItemStack is) {
+		Collection<Integer> c = new ArrayList();
+		RecipeCache r = getRecipeCacheObject(ir);
+		for (int i = 0; i < 9; i++) {
+			List<ItemStack> li = r.items[i];
+			if (li != null && ReikaItemHelper.listContainsItemStack(li, is))
+				c.add(i);
+		}
+		return c;
 	}
 }
