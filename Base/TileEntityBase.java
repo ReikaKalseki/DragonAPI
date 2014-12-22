@@ -222,7 +222,8 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 			this.onDataSync(fullNBT);
 		}
-		this.markDirty();
+		if (worldObj.checkChunksExist(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord))
+			this.markDirty();
 	}
 
 	private void syncTankData() {

@@ -11,7 +11,9 @@ package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -30,20 +32,13 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 
 public class ReikaMystcraftHelper {
 
-	private static final HashMap<Integer, InstabilityInterface> ageData = new HashMap();
+	private static final Random rand = new Random();
 
-	private static final Field controller;
-	private static final Field instability;
-	//private static final Field stabilization;
-	private static final Field data;
-	private static final Field instabilityNumber;
-	private static final Field baseInstability;
+	private static final HashMap<Integer, InstabilityInterface> ageData = new HashMap();
 
 	private static final Method getTile;
 	private static final Method getBook;
 	private static final Method getLink;
-
-	public static final boolean loadedCorrectly;
 
 	public static void disableFluidPage(String name) {
 		NBTTagCompound NBTMsg = new NBTTagCompound();
@@ -92,19 +87,19 @@ public class ReikaMystcraftHelper {
 	}
 	 */
 	public static int getInstabilityForAge(World world) {
-		if (!loadedCorrectly)
+		if (!InstabilityInterface.loadedCorrectly)
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getTotalInstability() : 0;
 	}
 
 	public static int getBonusInstabilityForAge(World world) {
-		if (!loadedCorrectly)
+		if (!InstabilityInterface.loadedCorrectly)
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getBonusInstability() : 0;
 	}
 
 	public static int getBaseInstabilityForAge(World world) {
-		if (!loadedCorrectly)
+		if (!InstabilityInterface.loadedCorrectly)
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getBaseInstability() : 0;
 	}
@@ -136,7 +131,7 @@ public class ReikaMystcraftHelper {
 	}
 	 */
 	public static boolean addBaseInstabilityForAge(World world, short toAdd) {
-		if (!loadedCorrectly)
+		if (!InstabilityInterface.loadedCorrectly)
 			return false;
 		if (isMystAge(world)) {
 			InstabilityInterface ii = getOrCreateInterface(world);
@@ -150,7 +145,7 @@ public class ReikaMystcraftHelper {
 	}
 
 	public static boolean addBonusInstabilityForAge(World world, int toAdd) {
-		if (!loadedCorrectly)
+		if (!InstabilityInterface.loadedCorrectly)
 			return false;
 		if (isMystAge(world)) {
 			InstabilityInterface ii = getOrCreateInterface(world);
@@ -164,7 +159,7 @@ public class ReikaMystcraftHelper {
 	}
 
 	private static InstabilityInterface getOrCreateInterface(World world) {
-		if (!loadedCorrectly)
+		if (!InstabilityInterface.loadedCorrectly)
 			return null;
 		InstabilityInterface ii = ageData.get(world.provider.dimensionId);
 		if (ii == null) {
@@ -175,6 +170,15 @@ public class ReikaMystcraftHelper {
 	}
 
 	private static final class InstabilityInterface {
+
+		private static final Field controller;
+		private static final Field instability;
+		//private static final Field stabilization;
+		private static final Field data;
+		private static final Field instabilityNumber;
+		private static final Field baseInstability;
+
+		private static boolean loadedCorrectly;
 
 		public final int dimensionID;
 		private final WorldProvider provider;
@@ -291,37 +295,194 @@ public class ReikaMystcraftHelper {
 			}
 		}
 
+		static {
+			Field cont = null;
+			Field insta = null;
+			//Field stable = null;
+			Field num = null;
+			Field base = null;
+			Field adata = null;
+			Method tile = null;
+			Method book = null;
+			Method link = null;
+			boolean load = true;
+			if (ModList.MYSTCRAFT.isLoaded()) {
+				try {
+					Class prov = Class.forName("com.xcompwiz.mystcraft.world.WorldProviderMyst");
+					cont = prov.getDeclaredField("controller");
+					cont.setAccessible(true);
+					Class age = Class.forName("com.xcompwiz.mystcraft.world.AgeController");
+					insta = age.getDeclaredField("instabilityController");
+					insta.setAccessible(true);
+					Class controller = Class.forName("com.xcompwiz.mystcraft.instability.InstabilityController");
+					//stable = controller.getDeclaredField("stabilization");*
+					//stable.setAccessible(true);
+					num = age.getDeclaredField("instability");
+					num.setAccessible(true);
+					Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
+					base = data.getDeclaredField("instability");
+					base.setAccessible(true);
+					adata = age.getDeclaredField("agedata");
+					adata.setAccessible(true);
+					Class portal = Class.forName("com.xcompwiz.mystcraft.portal.PortalUtils");
+					tile = portal.getDeclaredMethod("getTileEntity", IBlockAccess.class, int.class, int.class, int.class);
+					tile.setAccessible(true);
+					Class booktile = Class.forName("com.xcompwiz.mystcraft.tileentity.TileEntityBook");
+					book = booktile.getDeclaredMethod("getBook");
+					book.setAccessible(true);
+					Class item = Class.forName("com.xcompwiz.mystcraft.item.ItemLinking");
+					link = item.getDeclaredMethod("getLinkInfo", ItemStack.class);
+					link.setAccessible(true);
+					loadedCorrectly = true;
+				}
+				catch (Exception e) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading Mystcraft instability interfacing!");
+					e.printStackTrace();
+					load = false;
+				}
+			}
+			else {
+				load = false;
+			}
+			controller = cont;
+			instability = insta;
+			//stabilization = stable;
+			instabilityNumber = num;
+			baseInstability = base;
+			data = adata;
+		}
+
+	}
+
+	public static ArrayList<AgeSymbol> getAllSymbols() {
+		ArrayList<AgeSymbol> c = new ArrayList();
+		if (AgeSymbol.loadedCorrectly) {
+			try {
+				ArrayList li = (ArrayList)AgeSymbol.getAgeSymbols.invoke(null);
+				for (Object o : li)
+					c.add(new AgeSymbol(o));
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return c;
+	}
+
+	public static ArrayList<ItemStack> getAllAgePages() {
+		ArrayList<AgeSymbol> c = getAllSymbols();
+		ArrayList<ItemStack> li = new ArrayList();
+		for (AgeSymbol a : c) {
+			ItemStack is = a.getPage();
+			if (is != null)
+				li.add(is);
+		}
+		return li;
+	}
+
+	public static AgeSymbol getRandomPage() {
+		ArrayList<AgeSymbol> c = getAllSymbols();
+		return c.get(rand.nextInt(c.size()));
+	}
+
+	public static class AgeSymbol {
+
+		private static boolean loadedCorrectly;
+
+		private static Method id;
+		private static Method instability;
+		private static Method name;
+
+		private static Method getAgeSymbols;
+
+		private static Method createPage;
+
+		private final Object iagesymbol;
+
+		private AgeSymbol(Object o) {
+			iagesymbol = o;
+		}
+
+		public String getID() {
+			if (!loadedCorrectly)
+				return "";
+			try {
+				return (String)id.invoke(iagesymbol);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return "";
+			}
+		}
+
+		public String getDisplayName() {
+			if (!loadedCorrectly)
+				return "";
+			try {
+				return (String)name.invoke(iagesymbol);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return "";
+			}
+		}
+
+		public int getInstability() {
+			if (!loadedCorrectly)
+				return 0;
+			try {
+				return (Integer)instability.invoke(iagesymbol, 1);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return 0;
+			}
+		}
+
+		public ItemStack getPage() {
+			if (!loadedCorrectly)
+				return null;
+			try {
+				return (ItemStack)createPage.invoke(iagesymbol, this.getID());
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return null;
+			}
+		}
+
+		static {
+			if (ModList.MYSTCRAFT.isLoaded()) {
+				try {
+					Class interf = Class.forName("com.xcompwiz.mystcraft.symbol.IAgeSymbol");
+					id = interf.getDeclaredMethod("identifier");
+					name = interf.getDeclaredMethod("displayName");
+					instability = interf.getDeclaredMethod("instabilityModifier", int.class);
+
+					Class mgr = Class.forName("com.xcompwiz.mystcraft.symbol.SymbolManager");
+					getAgeSymbols = mgr.getDeclaredMethod("getAgeSymbols");
+
+					Class page = Class.forName("com.xcompwiz.mystcraft.page.Page");
+					createPage = page.getDeclaredMethod("createSymbolPage", String.class);
+
+					loadedCorrectly = true;
+				}
+				catch (Exception e) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading Mystcraft page interfacing!");
+					e.printStackTrace();
+				}
+			}
+		}
+
 	}
 
 	static {
-		Field cont = null;
-		Field insta = null;
-		//Field stable = null;
-		Field num = null;
-		Field base = null;
-		Field adata = null;
 		Method tile = null;
 		Method book = null;
 		Method link = null;
 		boolean load = true;
 		if (ModList.MYSTCRAFT.isLoaded()) {
 			try {
-				Class prov = Class.forName("com.xcompwiz.mystcraft.world.WorldProviderMyst");
-				cont = prov.getDeclaredField("controller");
-				cont.setAccessible(true);
-				Class age = Class.forName("com.xcompwiz.mystcraft.world.AgeController");
-				insta = age.getDeclaredField("instabilityController");
-				insta.setAccessible(true);
-				Class controller = Class.forName("com.xcompwiz.mystcraft.instability.InstabilityController");
-				//stable = controller.getDeclaredField("stabilization");*
-				//stable.setAccessible(true);
-				num = age.getDeclaredField("instability");
-				num.setAccessible(true);
-				Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
-				base = data.getDeclaredField("instability");
-				base.setAccessible(true);
-				adata = age.getDeclaredField("agedata");
-				adata.setAccessible(true);
 				Class portal = Class.forName("com.xcompwiz.mystcraft.portal.PortalUtils");
 				tile = portal.getDeclaredMethod("getTileEntity", IBlockAccess.class, int.class, int.class, int.class);
 				tile.setAccessible(true);
@@ -333,7 +494,7 @@ public class ReikaMystcraftHelper {
 				link.setAccessible(true);
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading Mystcraft instability interfacing!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading Mystcraft linkbook interfacing!");
 				e.printStackTrace();
 				load = false;
 			}
@@ -341,16 +502,10 @@ public class ReikaMystcraftHelper {
 		else {
 			load = false;
 		}
-		controller = cont;
-		instability = insta;
-		//stabilization = stable;
-		instabilityNumber = num;
-		baseInstability = base;
-		data = adata;
+
 		getTile = tile;
 		getBook = book;
 		getLink = link;
-		loadedCorrectly = load;
 	}
 
 }
