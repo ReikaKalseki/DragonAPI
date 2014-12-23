@@ -134,6 +134,11 @@ public enum ReikaOreHelper implements OreType {
 		return Collections.unmodifiableCollection(OreDictionary.getOres(this.getOreDictName()));
 	}
 
+	@Override
+	public ItemStack getFirstOreBlock() {
+		return new ItemStack(ore);
+	}
+
 	public static ReikaOreHelper getEntryByOreDict(ItemStack is) {
 		ReikaOreHelper special = checkForSpecialCases(is);
 		if (special != null)
@@ -223,6 +228,11 @@ public enum ReikaOreHelper implements OreType {
 		if (this.isEnd())
 			return b == Blocks.end_stone;
 		return b == Blocks.stone;
+	}
+
+	@Override
+	public boolean existsInGame() {
+		return true;
 	}
 
 	static {

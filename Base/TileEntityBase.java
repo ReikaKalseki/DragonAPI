@@ -672,20 +672,30 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	@Override
 	public final void onChunkUnload() {
 		super.onChunkUnload();
+
+		for (int i = 0; i < 6; i++)
+			adjTEMap[i] = null;
+
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
 			if (node instanceof Component)
 				((Component)node).remove();
 		}
+
 		this.onInvalidateOrUnload(worldObj, xCoord, yCoord, zCoord, false);
 	}
 
 	@Override
 	public final void invalidate() {
 		super.invalidate();
+
+		for (int i = 0; i < 6; i++)
+			adjTEMap[i] = null;
+
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
 			if (node instanceof Component)
 				((Component)node).remove();
 		}
+
 		this.onInvalidateOrUnload(worldObj, xCoord, yCoord, zCoord, true);
 	}
 

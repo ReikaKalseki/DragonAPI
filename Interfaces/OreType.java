@@ -20,12 +20,14 @@ public interface OreType {
 	public OreRarity getRarity();
 
 	public Collection<ItemStack> getAllOreBlocks();
+	public ItemStack getFirstOreBlock();
 
 	public boolean isNether();
 	public boolean isEnd();
 
 	public boolean canGenerateIn(Block b);
 
+	public boolean existsInGame();
 
 	public static enum OreRarity {
 		EVERYWHERE(), //Copper, Fluorite
