@@ -41,7 +41,7 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 		return ench;
 	}
 
-	/** Applies all enchantments to an ItemStack and returns it. Args: ItemStack, enchantment map */
+	/** Applies all enchantments to an ItemStack. Args: ItemStack, enchantment map */
 	public static void applyEnchantments(ItemStack is, HashMap<Enchantment,Integer> en) {
 		for (int i = 0; i < Enchantment.enchantmentsList.length; i++) {
 			if (Enchantment.enchantmentsList[i] != null) {
