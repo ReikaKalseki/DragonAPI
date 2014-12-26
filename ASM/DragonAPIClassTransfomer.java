@@ -177,8 +177,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 							break;
 						}
 					}
-					break;
 				}
+				break;
 			}
 			case POTIONEFFECTID: {
 				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_82719_a", "writeCustomPotionEffectToNBT", "(Lnet/minecraft/nbt/NBTTagCompound;)Lnet/minecraft/nbt/NBTTagCompound;");
