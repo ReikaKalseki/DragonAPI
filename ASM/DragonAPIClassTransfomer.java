@@ -11,11 +11,8 @@ package Reika.DragonAPI.ASM;
 
 import java.util.HashMap;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
-import net.minecraftforge.common.MinecraftForge;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -33,7 +30,6 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import Reika.DragonAPI.Instantiable.Event.RenderFirstPersonItemEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -46,7 +42,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		ITEMRENDEREVENT("net.minecraft.client.gui.inventory.GuiContainer", "bex"),
 		SLOTCLICKEVENT("net.minecraft.inventory.Slot", "aay"),
 		ICECANCEL("net.minecraft.world.World", "ahb"),
-		HELDRENDEREVENT("net.minecraft.client.renderer.EntityRenderer", "blt");
+		HELDRENDEREVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
+		POTIONEFFECTID("net.minecraft.potion.PotionEffect", "rw");
 
 		private final String obfName;
 		private final String deobfName;
@@ -180,7 +177,35 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 							break;
 						}
 					}
+					break;
 				}
+			}
+			case POTIONEFFECTID: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_82719_a", "writeCustomPotionEffectToNBT", "(Lnet/minecraft/nbt/NBTTagCompound;)Lnet/minecraft/nbt/NBTTagCompound;");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.I2B) {
+						MethodInsnNode nbt = (MethodInsnNode)ain.getNext(); //set to NBT
+						nbt.name = FMLForgePlugin.RUNTIME_DEOBF ? "func_74768_a" : "setInteger";
+						nbt.desc = "(Ljava/lang/String;I)V";
+						m.instructions.remove(ain); //delete the byte cast
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 1!");
+						break;
+					}
+				}
+
+				m = ReikaASMHelper.getMethodByName(cn, "func_82722_b", "readCustomPotionEffectFromNBT", "(Lnet/minecraft/nbt/NBTTagCompound;)Lnet/minecraft/potion/PotionEffect;");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.LDC) {
+						MethodInsnNode nbt = (MethodInsnNode)ain.getNext(); //get from NBT
+						nbt.name = FMLForgePlugin.RUNTIME_DEOBF ? "func_74762_e" : "getInteger";
+						nbt.desc = "(Ljava/lang/String;)I";
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 2!");
+						break;
+					}
+				}
+				break;
 			}
 			}
 
@@ -188,29 +213,6 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			cn.accept(writer);
 			return writer.toByteArray();
 		}
-	}
-
-	float p_78476_1_ = 0;
-	Minecraft mc = null;
-	ItemRenderer itemRenderer = null;
-	void doStuff() {
-		if (mc.gameSettings.thirdPersonView == 0 && !mc.renderViewEntity.isPlayerSleeping() && !mc.gameSettings.hideGUI && !mc.playerController.enableEverythingIsScrewedUpMode())
-		{
-			this.enableLightmap(p_78476_1_);
-			itemRenderer.renderItemInFirstPerson(p_78476_1_);
-			MinecraftForge.EVENT_BUS.post(new RenderFirstPersonItemEvent());
-			this.disableLightmap(p_78476_1_);
-		}
-	}
-
-	private void disableLightmap(double p_78476_1_) {
-		// TODO Auto-generated method stub
-
-	}
-
-	private void enableLightmap(double p_78476_1_) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
