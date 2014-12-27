@@ -15,7 +15,9 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 
@@ -23,32 +25,28 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 
 	/** Get a listing of all enchantments on an ItemStack. Args: ItemStack */
 	public static HashMap<Enchantment,Integer> getEnchantments(ItemStack is) {
-		Map enchants = EnchantmentHelper.getEnchantments(is);
+		Map<Integer, Integer> enchants = EnchantmentHelper.getEnchantments(is);
 		if (enchants == null)
 			return null;
-		HashMap<Enchantment,Integer> ench = new HashMap<Enchantment,Integer>();
-		for (int i = 0; i < Enchantment.enchantmentsList.length; i++) {
-			if (Enchantment.enchantmentsList[i] != null) {
-				if (enchants.containsKey(Enchantment.enchantmentsList[i].effectId)) {
-					int level = (Integer)enchants.get(Enchantment.enchantmentsList[i].effectId);
-					ench.put(Enchantment.enchantmentsList[i], level);
-				}
-				else {
-					ench.put(Enchantment.enchantmentsList[i], 0);
-				}
-			}
+		HashMap<Enchantment,Integer> ench = new HashMap();
+		for (Integer id : enchants.keySet()) {
+			Enchantment e = Enchantment.enchantmentsList[id];
+			int level = enchants.get(id);
+			ench.put(e, level);
 		}
 		return ench;
 	}
 
 	/** Applies all enchantments to an ItemStack. Args: ItemStack, enchantment map */
 	public static void applyEnchantments(ItemStack is, HashMap<Enchantment,Integer> en) {
-		for (int i = 0; i < Enchantment.enchantmentsList.length; i++) {
-			if (Enchantment.enchantmentsList[i] != null) {
-				if (en.containsKey(Enchantment.enchantmentsList[i])) {
-					int level = en.get(Enchantment.enchantmentsList[i]);
-					if (level > 0)
-						is.addEnchantment(Enchantment.enchantmentsList[i], level);
+		for (Enchantment e : en.keySet()) {
+			int level = en.get(e);
+			if (level > 0) {
+				if (is.getItem() == Items.enchanted_book) {
+					Items.enchanted_book.addEnchantment(is, new EnchantmentData(e, level));
+				}
+				else {
+					is.addEnchantment(e, level);
 				}
 			}
 		}
@@ -75,7 +73,7 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 		Map enchants = EnchantmentHelper.getEnchantments(is);
 		if (enchants == null)
 			return false;
-		return (enchants.containsKey(e.effectId));
+		return enchants.containsKey(e.effectId);
 	}
 
 	/** Returns the speed bonus that efficiency that gives. Args: Level */

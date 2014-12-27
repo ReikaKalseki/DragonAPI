@@ -10,9 +10,12 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -86,7 +89,20 @@ public final class ReikaPotionHelper extends DragonAPICore {
 		potionDamageValues.put(Potion.damageBoost, 8201);
 		potionDamageValues.put(Potion.moveSlowdown, 8234);
 		potionDamageValues.put(Potion.harm, 8268);
+		potionDamageValues.put(Potion.waterBreathing, 8237);
 		potionDamageValues.put(Potion.invisibility, 8238);
+	}
+
+	public static Map<Potion, Integer> getPotionValues() {
+		return Collections.unmodifiableMap(potionDamageValues);
+	}
+
+	public static ArrayList<ItemStack> getBasePotionItems() {
+		ArrayList<ItemStack> li = new ArrayList();
+		for (int meta : potionDamageValues.values()) {
+			li.add(new ItemStack(Items.potionitem, 1, meta));
+		}
+		return li;
 	}
 
 	public static ItemStack getPotionItem(Potion potion, boolean extended, boolean levelII, boolean splash) {
