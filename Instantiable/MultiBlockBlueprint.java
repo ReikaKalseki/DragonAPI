@@ -77,6 +77,7 @@ public class MultiBlockBlueprint {
 	}
 
 	public void createInWorld(World world, int x0, int y0, int z0) {
+		if (world != null) {
 		for (int i = 0; i < xSize; i++) {
 			for (int j = 0; j < ySize; j++) {
 				for (int k = 0; k < zSize; k++) {
@@ -92,6 +93,7 @@ public class MultiBlockBlueprint {
 					}
 				}
 			}
+		}
 		}
 	}
 
