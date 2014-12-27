@@ -167,6 +167,8 @@ public class APIPacketHandler implements IPacketHandler {
 			case KEYUPDATE:
 				int ordinal = data[0];
 				boolean used = data[1] > 0;
+				if (ordinal < 0 || ordinal >= Key.keyList.length)
+				break;
 				Key key = Key.keyList[ordinal];
 				KeyWatcher.instance.setKey(ep, key, used);
 				break;
