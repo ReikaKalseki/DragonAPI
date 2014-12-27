@@ -21,6 +21,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
@@ -43,7 +44,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		SLOTCLICKEVENT("net.minecraft.inventory.Slot", "aay"),
 		ICECANCEL("net.minecraft.world.World", "ahb"),
 		HELDRENDEREVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
-		POTIONEFFECTID("net.minecraft.potion.PotionEffect", "rw");
+		POTIONEFFECTID("net.minecraft.potion.PotionEffect", "rw"),
+		POTIONPACKETID("net.minecraft.network.play.server.S1DPacketEntityEffect", "in");
 
 		private final String obfName;
 		private final String deobfName;
@@ -205,6 +207,58 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 						break;
 					}
 				}
+				break;
+			}
+			case POTIONPACKETID: {
+				FieldNode f = ReikaASMHelper.getFieldByName(cn, "field_149432_b", "field_149432_b");
+				f.desc = "I";
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 1!");
+
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "<init>", "(ILnet/minecraft/potion/PotionEffect;)V");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.I2B) {
+						m.instructions.remove(ain);
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 2!");
+						break;
+					}
+				}
+
+				m = ReikaASMHelper.getMethodByName(cn, "func_148837_a", "readPacketData", "(Lnet/minecraft/network/PacketBuffer;)V");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+						MethodInsnNode min = (MethodInsnNode)ain;
+						String func = FMLForgePlugin.RUNTIME_DEOBF ? "readByte" : "readByte";
+						String func2 = FMLForgePlugin.RUNTIME_DEOBF ? "readInt" : "readInt";
+						if (min.name.equals(func)) {
+							min.name = func2;
+							min.desc = "()I";
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 3!");
+							break;
+						}
+					}
+				}
+
+				m = ReikaASMHelper.getMethodByName(cn, "func_148840_b", "writePacketData", "(Lnet/minecraft/network/PacketBuffer;)V");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+						MethodInsnNode min = (MethodInsnNode)ain;
+						String func = FMLForgePlugin.RUNTIME_DEOBF ? "writeByte" : "writeByte";
+						String func2 = FMLForgePlugin.RUNTIME_DEOBF ? "writeInt" : "writeInt";
+						if (min.name.equals(func)) {
+							min.name = func2;
+							min.desc = "(I)Lio/netty/buffer/ByteBuf;";
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 4!");
+							break;
+						}
+					}
+				}
+
+				m = ReikaASMHelper.getMethodByName(cn, "func_149427_e", "func_149427_e", "()B");
+				m.desc = "()I"; //Change getID() return to int; does not need code changes elsewhere, as it is passed into a PotionEffect <init>.
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 5!");
 				break;
 			}
 			}
