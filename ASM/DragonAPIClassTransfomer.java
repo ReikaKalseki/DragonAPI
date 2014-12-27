@@ -45,7 +45,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		ICECANCEL("net.minecraft.world.World", "ahb"),
 		HELDRENDEREVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		POTIONEFFECTID("net.minecraft.potion.PotionEffect", "rw"),
-		POTIONPACKETID("net.minecraft.network.play.server.S1DPacketEntityEffect", "in");
+		POTIONPACKETID("net.minecraft.network.play.server.S1DPacketEntityEffect", "in"),
+		POTIONPACKETID2("net.minecraft.client.network.NetHandlerPlayClient", "bjb");
 
 		private final String obfName;
 		private final String deobfName;
@@ -218,6 +219,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				for (int i = 0; i < m.instructions.size(); i++) {
 					AbstractInsnNode ain = m.instructions.get(i);
 					if (ain.getOpcode() == Opcodes.I2B) {
+						FieldInsnNode put = (FieldInsnNode)ain.getNext();
+						put.desc = "I";
 						m.instructions.remove(ain);
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 2!");
 						break;
@@ -234,6 +237,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 						if (min.name.equals(func)) {
 							min.name = func2;
 							min.desc = "()I";
+							FieldInsnNode put = (FieldInsnNode)ain.getNext();
+							put.desc = "I";
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 3!");
 							break;
 						}
@@ -250,6 +255,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 						if (min.name.equals(func)) {
 							min.name = func2;
 							min.desc = "(I)Lio/netty/buffer/ByteBuf;";
+							FieldInsnNode get = (FieldInsnNode)ain.getPrevious();
+							get.desc = "I";
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 4!");
 							break;
 						}
@@ -259,13 +266,42 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				m = ReikaASMHelper.getMethodByName(cn, "func_149427_e", "func_149427_e", "()B");
 				m.desc = "()I"; //Change getID() return to int; does not need code changes elsewhere, as it is passed into a PotionEffect <init>.
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 5!");
+
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.GETFIELD) {
+						FieldInsnNode fin = (FieldInsnNode)ain;
+						fin.desc = "I";
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 6!");
+						break;
+					}
+				}
+				break;
+			}
+			case POTIONPACKETID2: { //Changes the call to func_149427_e, which otherwise looks for ()B and NSMEs
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147260_a", "handleEntityEffect", "(Lnet/minecraft/network/play/server/S1DPacketEntityEffect;)V");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+						MethodInsnNode min = (MethodInsnNode)ain;
+						String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_149427_e" : "func_149427_e";
+						if (min.name.equals(func)) {
+							min.desc = "()I";
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+							break;
+						}
+					}
+				}
 				break;
 			}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
 			cn.accept(writer);
-			return writer.toByteArray();
+			byte[] newdata = writer.toByteArray();
+			//ClassNode vcn = new ClassNode(); //verify
+			//new ClassReader(newdata).accept(vcn, 0);
+			return newdata;
 		}
 	}
 
