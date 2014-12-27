@@ -262,6 +262,12 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		}
 	}
 
+	public static void clearExperience(EntityPlayer ep) {
+		ep.experience = 0;
+		ep.experienceLevel = 0;
+		ep.experienceTotal = 0;
+	}
+
 	public static void syncCustomData(EntityPlayerMP ep) {
 		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERDATSYNC.ordinal(), ep, ep.getEntityData());
 	}

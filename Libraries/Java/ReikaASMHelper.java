@@ -22,6 +22,7 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.LineNumberNode;
@@ -36,6 +37,26 @@ import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 public class ReikaASMHelper {
 
 	private static Field opcodeField;
+
+	public static void changeFieldType(ClassNode c, String obf, String deobf, String newType) throws NoSuchASMFieldException {
+		FieldNode f = getFieldByName(c, obf, deobf);
+		f.desc = newType;
+		for (MethodNode m : c.methods) {
+			for (int i = 0; i < m.instructions.size(); i++) {
+				AbstractInsnNode ain = m.instructions.get(i);
+				if (ain instanceof FieldInsnNode) {
+					FieldInsnNode fin = (FieldInsnNode)ain;
+					if (fin.name.equals(f.name)) {
+						fin.desc = f.desc;
+					}
+				}
+			}
+		}
+	}
+
+	public static void changeMethodReturnType(ClassNode c, String obf, String deobf, String newType) throws NoSuchASMMethodException {
+		//need to somehow set up an automated system where if this method is referenced anywhere else, it auto-ASMs
+	}
 
 	public static FieldNode getFieldByName(ClassNode c, String name) throws NoSuchASMFieldException {
 		return getFieldByName(c, name, name);
