@@ -33,6 +33,8 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 
 public class DragonAPIClassTransfomer implements IClassTransformer {
 
@@ -263,17 +265,19 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					}
 				}
 
-				m = ReikaASMHelper.getMethodByName(cn, "func_149427_e", "func_149427_e", "()B");
-				m.desc = "()I"; //Change getID() return to int; does not need code changes elsewhere, as it is passed into a PotionEffect <init>.
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 5!");
+				if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+					m = ReikaASMHelper.getMethodByName(cn, "func_149427_e", "func_149427_e", "()B");
+					m.desc = "()I"; //Change getID() return to int; does not need code changes elsewhere, as it is passed into a PotionEffect <init>.
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 5!");
 
-				for (int i = 0; i < m.instructions.size(); i++) {
-					AbstractInsnNode ain = m.instructions.get(i);
-					if (ain.getOpcode() == Opcodes.GETFIELD) {
-						FieldInsnNode fin = (FieldInsnNode)ain;
-						fin.desc = "I";
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 6!");
-						break;
+					for (int i = 0; i < m.instructions.size(); i++) {
+						AbstractInsnNode ain = m.instructions.get(i);
+						if (ain.getOpcode() == Opcodes.GETFIELD) {
+							FieldInsnNode fin = (FieldInsnNode)ain;
+							fin.desc = "I";
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 6!");
+							break;
+						}
 					}
 				}
 				break;

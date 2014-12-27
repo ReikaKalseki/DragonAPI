@@ -34,7 +34,8 @@ public abstract class ASMException extends RuntimeException {
 		sb.append(node.name);
 		sb.append(".\n");
 		sb.append("This is a critical ASM error and the class transformer operation cannot proceed.");
-		sb.append(" If you are the developer of this mod, check for proper use of SRG/deobf names. If not, report it to the developer.");
+		sb.append(" If you are the developer of this mod, check for proper use of SRG/deobf names and/or sideonly elements.");
+		sb.append(" If not, report it to the developer.");
 		sb.append("\n\nAdditional information:\n");
 		sb.append(this.getAdditionalInformation());
 		return sb.toString();
