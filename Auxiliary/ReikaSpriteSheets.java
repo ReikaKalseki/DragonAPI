@@ -174,8 +174,7 @@ public final class ReikaSpriteSheets {
 		GL11.glRotated(135, 0, 0, 1);
 		double d = 1.5;
 		GL11.glScaled(d, d, d);
-		GL11.glTranslated(0, -1, 0);
-		GL11.glTranslated(-0.2, 0, -0.4);
+		GL11.glTranslated(-0.2, -1, -0.4);
 		GL11.glRotated(-20, 0, 1, 0);
 		GL11.glRotated(-30, 1, 0, 0);
 	}
@@ -187,8 +186,7 @@ public final class ReikaSpriteSheets {
 		GL11.glTranslatef(-0.625F, 0F, 0);
 		GL11.glScalef(1.5F, 1.5F, 1.5F);
 		GL11.glRotatef(-90, 0, 0, 1);
-		GL11.glTranslatef(-1, 0, 0);
-		GL11.glTranslatef(0.5F, 0, 0.25F);
+		GL11.glTranslatef(-0.5F, 0, 0.25F);
 		GL11.glRotatef(-10, 0, 1, 0);
 		GL11.glTranslatef(-0.125F, -0.125F, 0F);
 		/*
