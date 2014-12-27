@@ -170,6 +170,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 						String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_78440_a" : "renderItemInFirstPerson";
 						MethodInsnNode min = (MethodInsnNode)ain;
 						if (min.name.equals(func)) {
+							while (ain.getNext() instanceof LabelNode || ain.getNext() instanceof LineNumberNode)
+								ain = ain.getNext();
 							m.instructions.insert(ain, new InsnNode(Opcodes.POP));
 							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
 							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/RenderFirstPersonItemEvent", "<init>", "()V"));
