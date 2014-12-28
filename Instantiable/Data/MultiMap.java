@@ -101,6 +101,11 @@ public final class MultiMap<K, V> {
 		return ReikaJavaLibrary.collectionMapContainsValue(data, value);
 	}
 
+	public boolean containsValueForKey(K key, V value) {
+		Collection<V> c = data.get(key);
+		return c != null && c.contains(value);
+	}
+
 	public boolean remove(K key, V value) {
 		Collection<V> c = data.get(key);
 		return c != null && c.remove(value);

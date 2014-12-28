@@ -14,7 +14,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
-import buildcraft.api.fuels.IronEngineFuel;
+import buildcraft.energy.fuels.FuelManager;
 
 public class ReikaBuildCraftHelper extends DragonAPICore {
 
@@ -29,12 +29,12 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	}
 
 	public static float getFuelMJPerTick() {
-		return IronEngineFuel.getFuelForFluid(fuel).powerPerCycle;
+		return FuelManager.INSTANCE.getFuel(fuel).getPowerPerCycle();
 	}
 
 	/** In ticks */
 	public static float getFuelBucketDuration() {
-		return IronEngineFuel.getFuelForFluid(fuel).totalBurningTime;
+		return FuelManager.INSTANCE.getFuel(fuel).getTotalBurningTime();
 	}
 
 	/** Minecraft joules per second */

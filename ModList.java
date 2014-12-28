@@ -87,7 +87,8 @@ public enum ModList {
 	COLORLIGHT("easycoloredlights"),
 	ENDERIO("EnderIO", "crazypants.enderio.EnderIO"),
 	COMPUTERCRAFT("ComputerCraft", "dan200.ComputerCraft"),
-	ROUTER("RouterReborn", "router.reborn.RouterReborn");
+	ROUTER("RouterReborn", "router.reborn.RouterReborn"),
+	PNEUMATICRAFT("PneumaticCraft", "pneumaticCraft.common.block.Blockss", "pneumaticCraft.common.item.Itemss");
 
 	private final boolean condition;
 	public final String modLabel;

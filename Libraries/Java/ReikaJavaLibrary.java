@@ -401,4 +401,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			return (o1.getValue()).compareTo(o2.getValue());
 		}
 	}
+
+	public static <E> E[] collectionToArray(Collection<E> li) {
+		E[] arr = (E[])new Object[li.size()];
+		int i = 0;
+		for (E ps : li) {
+			arr[i] = ps;
+			i++;
+		}
+		return arr;
+	}
 }
