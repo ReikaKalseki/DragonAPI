@@ -196,10 +196,12 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return -1;
 	}
 
+/** Finds a block in an itemstack array, usually an inventory. */
 	public static int locateInInventory(Block id, ItemStack[] inv) {
 		return locateInInventory(Item.getItemFromBlock(id), inv);
 	}
 
+/** Metadata-sensitive version of above. */
 	public static int locateInInventory(Block id, int meta, ItemStack[] inv) {
 		return locateInInventory(Item.getItemFromBlock(id), meta, inv);
 	}

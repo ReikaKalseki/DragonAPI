@@ -28,24 +28,16 @@ public class APIProxyClient extends APIProxy {
 
 	@Override
 	public void registerSounds() {
-		//MinecraftForge.EVENT_BUS.register(new SoundLoader(ReactorCraft.instance, SoundRegistry.soundList));
+		
 	}
 
 	@Override
 	public void registerSidedHandlers() {
 
-		//Minecraft mc = Minecraft.getMinecraft();
-		//mc.mcResourceManager = new CustomResourceManager((SimpleReloadableResourceManager)mc.mcResourceManager);
-
-		MinecraftForge.EVENT_BUS.register(DebugOverlay.instance);
+	MinecraftForge.EVENT_BUS.register(DebugOverlay.instance);
 		ResourceReloadEvent.register();
 
-		//MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
 		PlayerModelRenderer.instance.register();
-		//MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
-
-		//key_nbt = new KeyBinding("TileEntity NBT Overlay", Keyboard.KEY_TAB, "DragonAPI");
-		//ClientRegistry.registerKeyBinding(key_nbt);
 	}
 
 	@Override

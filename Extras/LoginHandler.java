@@ -70,6 +70,7 @@ public final class LoginHandler implements PlayerTracker {
 
 		PlayerFirstTimeTracker.checkPlayer(ep);
 		CommandableUpdateChecker.instance.notifyPlayer(ep);
+		DragonAPICore.dispatchLoginData(ep.getGameProfile());
 		if (ep instanceof EntityPlayerMP)
 			syncPlayer((EntityPlayerMP)ep);
 		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(ep, ep.worldObj.provider.dimensionId));

