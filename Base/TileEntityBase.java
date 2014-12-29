@@ -42,6 +42,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
@@ -452,9 +453,11 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	}
 
 	private void writeError(Throwable e) {
-		ReikaChatHelper.write(this+" is throwing "+e.getClass()+" on update: "+e.getMessage());
-		ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
-		ReikaChatHelper.write("");
+		if (DragonOptions.CHATERRORS.getState()) {
+			ReikaChatHelper.write(this+" is throwing "+e.getClass()+" on update: "+e.getMessage());
+			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
+			ReikaChatHelper.write("");
+		}
 
 		ReikaJavaLibrary.pConsole(this+" is throwing "+e.getClass()+" on update: "+e.getMessage());
 		e.printStackTrace();

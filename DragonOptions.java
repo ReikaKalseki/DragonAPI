@@ -19,7 +19,8 @@ public enum DragonOptions implements ConfigList {
 	NORENDERS("Disable Renders For Debug", false),
 	TABNBT("Show TileEntity NBT when using TAB", false),
 	SOUNDCHANNELS("Increase sound channel count", true),
-	UNNERFOBSIDIAN("Restore Obsidian Blast Resistance", true);
+	UNNERFOBSIDIAN("Restore Obsidian Blast Resistance", true),
+	CHATERRORS("Log errors to chat", true);
 
 	private String label;
 	private boolean defaultState;

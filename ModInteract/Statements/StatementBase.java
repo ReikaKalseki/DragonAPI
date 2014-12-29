@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2014
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Statements;
 
 import java.lang.reflect.Constructor;
@@ -24,6 +33,8 @@ public abstract class StatementBase implements ITriggerExternal {
 	private IIcon icon;
 	private String iconstring;
 	private final Class[] argTypes;
+
+	protected static final String questionIcon = "dragonapi:modinteract/question";
 
 	private static final HashMap<Class, Constructor> constructors = new HashMap();
 

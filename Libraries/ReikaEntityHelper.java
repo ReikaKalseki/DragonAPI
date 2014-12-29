@@ -670,4 +670,15 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	}
 
+	public static boolean isBossMob(EntityLiving e) {
+		if (e instanceof EntityWither || e instanceof EntityDragon)
+			return true;
+		String name = e.getClass().getName().toLowerCase();
+		if (name.contains("voidmonster"))
+			return false;
+		if (name.startsWith("twilightforest.entity.boss"))
+			return true;
+		return false;
+	}
+
 }

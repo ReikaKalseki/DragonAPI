@@ -558,7 +558,12 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Returns true if the inventory is empty. Args: Inventory */
 	public static boolean isEmpty(ItemStack[] inventory) {
-		for (int i = 0; i < inventory.length; i++) {
+		return isEmpty(inventory, 0, inventory.length);
+	}
+
+	/** Returns true if the inventory is empty in the slot range specified. Args: Inventory, int min, int max */
+	public static boolean isEmpty(ItemStack[] inventory, int min, int max) {
+		for (int i = min; i < max; i++) {
 			if (inventory[i] != null)
 				return false;
 		}

@@ -22,59 +22,98 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ForestryHandler extends ModHandlerBase {
 
-	public final Item apatiteID;
-	public final Item fertilizerID;
-	public final Block saplingID;
-	public final Block leafID;
-	public final Item combID;
-	public final Item saplingItem;
+	private boolean init = false;
 
 	private static final ForestryHandler instance = new ForestryHandler();
 
+	public enum ItemEntry {
+		APATITE("apatite"),
+		FERTILIZER("fertilizerCompound"),
+		SAPLING("sapling"),
+		COMB("beeComb"),
+		HONEY("honeyDrop"),
+		HONEYDEW("honeydew"),
+		JELLY("royalJelly"),
+		PROPOLIS("propolis"),
+		WAX("beeswax"),
+		POLLEN("pollen"),
+		TREEPOLLEN("pollenFertile"),
+		QUEEN("beeQueenGE"),
+		PRINCESS("beePrincessGE"),
+		DRONE("beeDroneGE"),
+		LARVA("beeLarvaeGE");
+
+		private final String tag;
+		private Item item;
+
+		private static final ItemEntry[] list = values();
+
+		private ItemEntry(String id) {
+			tag = id;
+		}
+
+		public Item getItem() {
+			return item;
+		}
+	}
+
+	public enum BlockEntry {
+		SAPLING("saplingGE"),
+		LEAF("leaves"),
+		LOG1("log1"),
+		LOG2("log2"),
+		LOG3("log3"),
+		LOG4("log4"),
+		LOG5("log5"),
+		LOG6("log6"),
+		LOG7("log7"),
+		LOG8("log8"),
+		HIVE("beehives");
+
+		private final String tag;
+		private Block item;
+
+		private static final BlockEntry[] list = values();
+
+		private BlockEntry(String id) {
+			tag = id;
+		}
+
+		public Block getBlock() {
+			return item;
+		}
+
+		public boolean isLog() {
+			return this.name().toLowerCase().startsWith("log");
+		}
+	}
+
 	private ForestryHandler() {
 		super();
-		Item idapatite = null;
-		Item idfertilizer = null;
-		Block idsapling = null;
-		Item itemsapling = null;
-		Block idleaf = null;
-		Item idcomb = null;
 		if (this.hasMod()) {
 			try {
+
 				Class forest = this.getMod().getItemClass();
-				Field apa = forest.getField("apatite"); //is enum object now
-				Object entry = apa.get(null);
 				Method get = forest.getMethod("item");
-				Item item = (Item)get.invoke(entry);
-				idapatite = item;
-
-				Field fert = forest.getField("fertilizerCompound");
-				entry = fert.get(null);
-				item = (Item)get.invoke(entry);
-				idfertilizer = item;
-
-				Field comb = forest.getField("beeComb");
-				entry = comb.get(null);
-				item = (Item)get.invoke(entry);
-				idcomb = item;
-
-				Field sap = forest.getField("sapling");
-				entry = sap.get(null);
-				item = (Item)get.invoke(entry);
-				itemsapling = item;
+				for (int i = 0; i < ItemEntry.list.length; i++) {
+					ItemEntry ie = ItemEntry.list[i];
+					Field f = forest.getField(ie.tag); //is enum object now
+					Object entry = f.get(null);
+					Item item = (Item)get.invoke(entry);
+					ie.item = item;
+				}
 
 				Class blocks = this.getMod().getBlockClass();
 				get = blocks.getMethod("block");
+				for (int i = 0; i < BlockEntry.list.length; i++) {
+					BlockEntry ie = BlockEntry.list[i];
+					Field f = blocks.getField(ie.tag); //is enum object now
+					Object entry = f.get(null);
+					Block b = (Block)get.invoke(entry);
+					ie.item = b;
+				}
 
-				Field sapling = blocks.getField("saplingGE");
-				entry = sapling.get(null);
-				Block s = (Block)get.invoke(entry);
-				idsapling = s;
-
-				Field leaf = blocks.getField("leaves");
-				entry = leaf.get(null);
-				s = (Block)get.invoke(entry);
-				idleaf = s;
+				init = true;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -104,13 +143,6 @@ public class ForestryHandler extends ModHandlerBase {
 		else {
 			this.noMod();
 		}
-
-		apatiteID = idapatite;
-		saplingID = idsapling;
-		leafID = idleaf;
-		fertilizerID = idfertilizer;
-		combID = idcomb;
-		saplingItem = itemsapling;
 	}
 
 	public static ForestryHandler getInstance() {
@@ -119,7 +151,7 @@ public class ForestryHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return apatiteID != null && saplingID != null && fertilizerID != null && combID != null;
+		return init;
 	}
 
 	@Override
@@ -146,7 +178,7 @@ public class ForestryHandler extends ModHandlerBase {
 		}
 
 		public ItemStack getItem() {
-			return new ItemStack(instance.combID, 1, damageValue);
+			return new ItemStack(ItemEntry.COMB.getItem(), 1, damageValue);
 		}
 	}
 
