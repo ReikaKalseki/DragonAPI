@@ -29,7 +29,7 @@ public class ReikaTextureBinder
 	private IntHashMap textureNameToImageMap = new IntHashMap();
 
 	/** Stores the image data for the texture. */
-	private IntBuffer imageData = GLAllocation.createDirectIntBuffer(4194304);
+	private IntBuffer imageData = GLAllocation.createDirectIntBuffer(8388608); //was 4194304 of raw ARGB; doubled to 8MB to allow for bigger images
 
 	/** Reference to the GameSettings object */
 	private GameSettings options;

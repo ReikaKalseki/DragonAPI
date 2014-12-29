@@ -56,9 +56,9 @@ public class ReikaColorAPI {
 
 	public static int getColorWithBrightnessMultiplier(int argb, float mult) {
 		int alpha = ((argb >> 24) & 0xFF);
-		int red = (int) (((argb >> 16) & 0xFF)*mult);
-		int green = (int) (((argb >> 8) & 0xFF)*mult);
-		int blue = (int) ((argb & 0xFF)*mult);
+		int red = (int) (((argb >> 16) & 0xFF)*mult) & 0xFF;
+		int green = (int) (((argb >> 8) & 0xFF)*mult) & 0xFF;
+		int blue = (int) ((argb & 0xFF)*mult) & 0xFF;
 		int color = alpha;
 		color = (color << 8) + red;
 		color = (color << 8) + green;
