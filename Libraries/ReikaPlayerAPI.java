@@ -32,6 +32,7 @@ import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
@@ -328,5 +329,14 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 				ops.add(ep);
 		}
 		return ops;
+	}
+
+	public static EntityPlayer getPlayerByNameAnyWorld(String name) {
+		for (World world : DimensionManager.getWorlds()) {
+			EntityPlayer ep = world.getPlayerEntityByName(name);
+			if (ep != null)
+				return ep;
+		}
+		return null;
 	}
 }

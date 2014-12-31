@@ -10,6 +10,9 @@
 package Reika.DragonAPI.Libraries.World;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.world.IBlockAccess;
@@ -17,9 +20,63 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Data.MultiMap;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 
 public class ReikaBiomeHelper extends DragonAPICore {
+
+	private static final MultiMap<BiomeGenBase, BiomeGenBase> children = new MultiMap();
+	private static final MultiMap<BiomeGenBase, BiomeGenBase> similarity = new MultiMap();
+	private static final HashMap<BiomeGenBase, BiomeGenBase> parents = new HashMap();
+
+	static {
+		addChildBiome(BiomeGenBase.desert, BiomeGenBase.desertHills);
+
+		addChildBiome(BiomeGenBase.forest, BiomeGenBase.forestHills);
+
+		addChildBiome(BiomeGenBase.taiga, BiomeGenBase.taigaHills);
+		addChildBiome(BiomeGenBase.taiga, BiomeGenBase.coldTaiga, false);
+		addChildBiome(BiomeGenBase.taiga, BiomeGenBase.megaTaiga, false);
+
+		addChildBiome(BiomeGenBase.jungle, BiomeGenBase.jungleHills);
+		addChildBiome(BiomeGenBase.jungle, BiomeGenBase.jungleEdge);
+
+		addChildBiome(BiomeGenBase.megaTaiga, BiomeGenBase.megaTaigaHills);
+
+		addChildBiome(BiomeGenBase.coldTaiga, BiomeGenBase.coldTaigaHills);
+
+		addChildBiome(BiomeGenBase.icePlains, BiomeGenBase.iceMountains);
+
+		addChildBiome(BiomeGenBase.birchForest, BiomeGenBase.birchForestHills);
+
+		addChildBiome(BiomeGenBase.extremeHills, BiomeGenBase.extremeHillsEdge);
+		addChildBiome(BiomeGenBase.extremeHills, BiomeGenBase.extremeHillsPlus);
+
+		addChildBiome(BiomeGenBase.mesa, BiomeGenBase.mesaPlateau);
+		addChildBiome(BiomeGenBase.mesa, BiomeGenBase.mesaPlateau_F);
+
+		addChildBiome(BiomeGenBase.beach, BiomeGenBase.coldBeach, false);
+		addChildBiome(BiomeGenBase.beach, BiomeGenBase.stoneBeach);
+
+		addChildBiome(BiomeGenBase.ocean, BiomeGenBase.deepOcean, false);
+		addChildBiome(BiomeGenBase.ocean, BiomeGenBase.frozenOcean, false);
+
+		addChildBiome(BiomeGenBase.river, BiomeGenBase.frozenRiver, false);
+
+		addChildBiome(BiomeGenBase.savanna, BiomeGenBase.savannaPlateau);
+	}
+
+	private static void addChildBiome(BiomeGenBase parent, BiomeGenBase child) {
+		addChildBiome(parent, child, true);
+	}
+
+	private static void addChildBiome(BiomeGenBase parent, BiomeGenBase child, boolean isChild) {
+		similarity.addValue(parent, child);
+		if (isChild) {
+			children.addValue(parent, child);
+			parents.put(child, parent);
+		}
+	}
 
 	/** Returns the first empty biome index. */
 	public static int getFirstEmptyBiomeIndex() {
@@ -34,82 +91,30 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	public static List<BiomeGenBase> getAllBiomes() {
 		List<BiomeGenBase> li = new ArrayList<BiomeGenBase>();
 		for (int i = 0; i < BiomeGenBase.biomeList.length; i++) {
-			li.add(BiomeGenBase.biomeList[i]);
+			if (BiomeGenBase.biomeList[i] != null)
+				li.add(BiomeGenBase.biomeList[i]);
 		}
 		return li;
 	}
 
-	/** Returns the biome supplied and any associated ones (eg Desert+DesertHills). Args: Biome */
-	public static List<BiomeGenBase> getAllAssociatedBiomes(BiomeGenBase biome) {
-		List<BiomeGenBase> li = new ArrayList<BiomeGenBase>();
-		li.add(biome);
+	/** Returns any associated biomes (eg Desert+DesertHills) to the one supplied. Args: Biome, Whether to match "loosely". Loose matching
+	 * is defined as similarity between two biomes where one is not a parent of the other but both are similar in nature, eg Taiga+Cold Taiga */
+	public static Collection<BiomeGenBase> getAllAssociatedBiomes(BiomeGenBase biome, boolean loose) {
+		return Collections.unmodifiableCollection(loose ? similarity.get(biome) : children.get(biome));
+	}
 
-		if (biome == BiomeGenBase.desert)
-			li.add(BiomeGenBase.desertHills);
-
-		if (biome == BiomeGenBase.extremeHills)
-			li.add(BiomeGenBase.extremeHillsEdge);
-
-		if (biome == BiomeGenBase.forest)
-			li.add(BiomeGenBase.forestHills);
-
-		if (biome == BiomeGenBase.taiga)
-			li.add(BiomeGenBase.taigaHills);
-
-		if (biome == BiomeGenBase.icePlains)
-			li.add(BiomeGenBase.iceMountains);
-
-		if (biome == BiomeGenBase.mushroomIsland)
-			li.add(BiomeGenBase.mushroomIslandShore);
-
-		if (biome == BiomeGenBase.jungle)
-			li.add(BiomeGenBase.jungleHills);
-
-		return li;
+	public static Collection<BiomeGenBase> getChildBiomes(BiomeGenBase biome) {
+		return getAllAssociatedBiomes(biome, false);
 	}
 
 	/** Returns the biome's parent. Args: Biome */
 	public static BiomeGenBase getParentBiomeType(BiomeGenBase biome) {
-		if (biome == BiomeGenBase.desertHills)
-			return (BiomeGenBase.desert);
-
-		if (biome == BiomeGenBase.extremeHillsEdge)
-			return (BiomeGenBase.extremeHills);
-
-		if (biome == BiomeGenBase.forestHills)
-			return (BiomeGenBase.forest);
-
-		if (biome == BiomeGenBase.taigaHills)
-			return (BiomeGenBase.taiga);
-
-		if (biome == BiomeGenBase.iceMountains)
-			return (BiomeGenBase.icePlains);
-
-		if (biome == BiomeGenBase.mushroomIslandShore)
-			return (BiomeGenBase.mushroomIsland);
-
-		if (biome == BiomeGenBase.jungleHills)
-			return (BiomeGenBase.jungle);
-		return biome;
+		return parents.containsKey(biome) ? parents.get(biome) : biome;
 	}
 
 	/** Returns whether the biome is a variant of a parent. Args: Biome */
 	public static boolean isChildBiome(BiomeGenBase biome) {
-		if (biome == BiomeGenBase.desertHills)
-			return true;
-		if (biome == BiomeGenBase.extremeHillsEdge)
-			return true;
-		if (biome == BiomeGenBase.forestHills)
-			return true;
-		if (biome == BiomeGenBase.taigaHills)
-			return true;
-		if (biome == BiomeGenBase.iceMountains)
-			return true;
-		if (biome == BiomeGenBase.mushroomIslandShore)
-			return true;
-		if (biome == BiomeGenBase.jungleHills)
-			return true;
-		return false;
+		return parents.containsKey(biome);
 	}
 
 	/** Converts the given coordinates to an RGB representation of those coordinates' biome's color, for the given material type.
@@ -150,9 +155,9 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			return true;
 		if (biome == BiomeGenBase.icePlains)
 			return true;
-		if (biome == BiomeGenBase.taiga)
+		if (biome == BiomeGenBase.coldTaiga)
 			return true;
-		if (biome == BiomeGenBase.taigaHills)
+		if (biome == BiomeGenBase.coldTaigaHills)
 			return true;
 		if (biome.getEnableSnow())
 			return true;
@@ -234,25 +239,56 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	public static float getBiomeHumidity(BiomeGenBase biome) {
 		biome = getParentBiomeType(biome);
 		if (biome == BiomeGenBase.jungle)
-			return 1F;
+			return 0.95F;
 		if (biome == BiomeGenBase.ocean)
+			return 1F;
+		if (biome == BiomeGenBase.deepOcean)
 			return 1F;
 		if (biome == BiomeGenBase.swampland)
 			return 0.85F;
 		if (biome == BiomeGenBase.forest)
 			return 0.6F;
+		if (biome == BiomeGenBase.birchForest)
+			return 0.55F;
+		if (biome == BiomeGenBase.roofedForest)
+			return 0.7F;
 		if (biome == BiomeGenBase.plains)
 			return 0.4F;
+		if (biome == BiomeGenBase.savanna)
+			return 0.3F;
 		if (biome == BiomeGenBase.desert)
+			return 0.2F;
+		if (biome == BiomeGenBase.mesa)
 			return 0.2F;
 		if (biome == BiomeGenBase.hell)
 			return 0.1F;
+		if (biome == BiomeGenBase.sky)
+			return 0.1F;
 		if (biome == BiomeGenBase.beach)
-			return 0.95F;
+			return 0.98F;
 		if (biome == BiomeGenBase.icePlains)
 			return 0.4F;
 		if (biome == BiomeGenBase.mushroomIsland)
 			return 0.75F;
+		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
+		for (int i = 0; i < types.length; i++) {
+			if (types[i] == BiomeDictionary.Type.BEACH)
+				return 0.95F;
+			if (types[i] == BiomeDictionary.Type.OCEAN || types[i] == BiomeDictionary.Type.RIVER || types[i] == BiomeDictionary.Type.WATER)
+				return 1F;
+			if (types[i] == BiomeDictionary.Type.JUNGLE)
+				return 1;
+			if (types[i] == BiomeDictionary.Type.DESERT || types[i] == BiomeDictionary.Type.SANDY)
+				return 0.2F;
+			if (types[i] == BiomeDictionary.Type.NETHER || types[i] == BiomeDictionary.Type.END)
+				return 1;
+			if (types[i] == BiomeDictionary.Type.WASTELAND)
+				return 0.1F;
+			if (types[i] == BiomeDictionary.Type.WET)
+				return 0.7F;
+			if (types[i] == BiomeDictionary.Type.DRY)
+				return 0.3F;
+		}
 		return 0.5F;
 	}
 
