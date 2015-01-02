@@ -88,7 +88,8 @@ public enum ModList {
 	ENDERIO("EnderIO", "crazypants.enderio.EnderIO"),
 	COMPUTERCRAFT("ComputerCraft", "dan200.ComputerCraft"),
 	ROUTER("RouterReborn", "router.reborn.RouterReborn"),
-	PNEUMATICRAFT("PneumaticCraft", "pneumaticCraft.common.block.Blockss", "pneumaticCraft.common.item.Itemss");
+	PNEUMATICRAFT("PneumaticCraft", "pneumaticCraft.common.block.Blockss", "pneumaticCraft.common.item.Itemss"),
+	PROJECTE("ProjectE", "moze_intel.projecte.gameObjs.ObjHandler");
 
 	private final boolean condition;
 	public final String modLabel;

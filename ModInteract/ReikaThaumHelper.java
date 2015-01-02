@@ -28,11 +28,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ResourceLocation;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.crafting.CrucibleRecipe;
+import thaumcraft.api.crafting.IArcaneRecipe;
+import thaumcraft.api.crafting.InfusionRecipe;
+import thaumcraft.api.crafting.ShapedArcaneRecipe;
+import thaumcraft.api.crafting.ShapelessArcaneRecipe;
+import thaumcraft.api.research.ResearchCategories;
+import thaumcraft.api.research.ResearchPage;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 
 public class ReikaThaumHelper {
 
@@ -41,6 +52,8 @@ public class ReikaThaumHelper {
 	private static Map<String, ArrayList<String>> scannedObjects;
 	private static Map<String, ArrayList<String>> scannedEntities;
 	private static Map<String, ArrayList<String>> scannedPhenomena;
+	private static Map<String, Integer> playerWarp;
+	private static Map<String, Integer> playerTempWarp;
 
 	private static Method addWandVis;
 	private static Method getWandVis;
@@ -240,6 +253,44 @@ public class ReikaThaumHelper {
 		ep.addPotionEffect(new PotionEffect(warpWard.id, time, 0));
 	}
 
+	public static void removeWarp(EntityPlayer ep) {
+		playerWarp.remove(ep.getCommandSenderName());
+		playerTempWarp.remove(ep.getCommandSenderName());
+	}
+
+	public static void removeWarp(EntityPlayer ep, int amt) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return;
+		String s = ep.getCommandSenderName();
+		int temphas = playerTempWarp.get(s);
+		int rem = 0;
+		if (temphas > 0) {
+			rem = Math.min(temphas, amt);
+			if (temphas-rem > 0) {
+				playerTempWarp.put(s, temphas-rem);
+			}
+			else {
+				playerTempWarp.remove(s);
+			}
+		}
+		int left = amt-rem;
+		if (left > 0) {
+			int has = playerWarp.get(s);
+			int rem2 = Math.min(has, left);
+			if (has-rem2 > 0) {
+				playerWarp.put(s, has-rem2);
+			}
+			else {
+				playerWarp.remove(s);
+			}
+		}
+	}
+
+	public static int getPlayerWarp(EntityPlayer ep) {
+		Integer has = playerWarp.get(ep.getCommandSenderName());
+		return has != null ? has.intValue() : 0;
+	}
+
 	public static int getWandSpaceFor(ItemStack wand, Aspect a) {
 		if (!ModList.THAUMCRAFT.isLoaded())
 			return 0;
@@ -355,6 +406,147 @@ public class ReikaThaumHelper {
 		}
 	}
 
+	/** Your lang file will have to include an entry tc.research_category.[name]=[Localized Name] entry. */
+	public static void addBookCategory(ResourceLocation icon, String name) {
+		ResourceLocation rl2 = new ResourceLocation("thaumcraft", "textures/gui/gui_researchback.png");
+		ResearchCategories.registerCategory(name, icon, rl2);
+	}
+
+	private static void addInfusionRecipeBookEntryViaXML(String id, String name, String desc, String category, ItemStack out, AspectList aspects, InfusionRecipe ir, Class root, String path) {
+		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, 0, 0, 0, out).setName(name);
+		res.setDescription(desc);
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
+			res.setPages(xml.getPages());
+		}
+		res.registerResearchItem();
+	}
+
+	public static void addInfusionRecipeWithBookEntry(String id, String prereq, String desc, String category, Class root, String path, ItemStack in, ItemStack out, AspectList aspects, int instability, ItemStack... ingredients) {
+		InfusionRecipe ir = ThaumcraftApi.addInfusionCraftingRecipe(prereq, out, instability, aspects, in, ingredients);
+		addInfusionRecipeBookEntryViaXML(id, out.getDisplayName(), desc, category, out, aspects, ir, root, path);
+	}
+
+	private static void addCrucibleRecipeBookEntryViaXML(String id, String name, String desc, String category, ItemStack out, AspectList aspects, CrucibleRecipe ir, Class root, String path) {
+		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, 0, 0, 0, out).setName(name);
+		res.setDescription(desc);
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
+			res.setPages(xml.getPages());
+		}
+		res.registerResearchItem();
+	}
+
+	public static void addCrucibleRecipeWithBookEntry(String id, String prereq, String desc, String category, Class root, String path, ItemStack in, ItemStack out, AspectList aspects) {
+		CrucibleRecipe ir = ThaumcraftApi.addCrucibleRecipe(prereq, out, in, aspects);
+		addCrucibleRecipeBookEntryViaXML(id, out.getDisplayName(), desc, category, out, aspects, ir, root, path);
+	}
+
+	private static void addArcaneRecipeBookEntryViaXML(String id, String name, String desc, String category, ItemStack out, AspectList aspects, IArcaneRecipe ir, Class root, String path) {
+		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, 0, 0, 0, out).setName(name);
+		res.setDescription(desc);
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
+			res.setPages(xml.getPages());
+		}
+		res.registerResearchItem();
+	}
+
+	public static void addShapedArcaneRecipeWithBookEntry(String id, String prereq, String desc, String category, Class root, String path, ItemStack out, AspectList aspects, Object... in) {
+		ShapedArcaneRecipe ir = ThaumcraftApi.addArcaneCraftingRecipe(prereq, out, aspects, in);
+		addArcaneRecipeBookEntryViaXML(id, out.getDisplayName(), desc, category, out, aspects, ir, root, path);
+	}
+
+	public static void addArcaneRecipeWithBookEntry(String id, String prereq, String desc, String category, Class root, String path, ItemStack out, AspectList aspects, Object... in) {
+		ShapelessArcaneRecipe ir = ThaumcraftApi.addShapelessArcaneCraftingRecipe(prereq, out, aspects, in);
+		addArcaneRecipeBookEntryViaXML(id, out.getDisplayName(), desc, category, out, aspects, ir, root, path);
+	}
+
+	public static class XMLResearch {
+
+		private final XMLInterface info;
+		private final ArrayList<ResearchPage> pages = new ArrayList();
+		public final String name;
+
+		private XMLResearch(String name, Class root, String path, InfusionRecipe recipe, int num) {
+			info = new XMLInterface(root, path);
+			this.name = name;
+			XMLPage page = new XMLPage(recipe);
+			pages.add(page);
+			for (int i = 1; i < num; i++) {
+				pages.add(new XMLPage(i));
+			}
+		}
+
+		private XMLResearch(String name, Class root, String path, IArcaneRecipe recipe, int num) {
+			info = new XMLInterface(root, path);
+			this.name = name;
+			XMLPage page = new XMLPage(recipe);
+			pages.add(page);
+			for (int i = 1; i < num; i++) {
+				pages.add(new XMLPage(i));
+			}
+		}
+
+		private XMLResearch(String name, Class root, String path, CrucibleRecipe recipe, int num) {
+			info = new XMLInterface(root, path);
+			this.name = name;
+			XMLPage page = new XMLPage(recipe);
+			pages.add(page);
+			for (int i = 1; i < num; i++) {
+				pages.add(new XMLPage(i));
+			}
+		}
+
+		public void addPage() {
+			int num = pages.size();
+			pages.add(new XMLPage(num));
+		}
+
+		public ResearchPage[] getPages() {
+			ResearchPage[] arr = new ResearchPage[pages.size()];
+			for (int i = 0; i < arr.length; i++) {
+				arr[i] = pages.get(i);
+			}
+			return arr;
+		}
+
+		private class XMLPage extends ResearchPage {
+
+			private final int page;
+
+			private XMLPage(InfusionRecipe recipe) {
+				super(recipe);
+				page = 0;
+			}
+
+			private XMLPage(IArcaneRecipe recipe) {
+				super(recipe);
+				page = 0;
+			}
+
+			private XMLPage(CrucibleRecipe recipe) {
+				super(recipe);
+				page = 0;
+			}
+
+			private XMLPage(int id) {
+				super("");
+				page = id;
+			}
+
+			@Override
+			public String getTranslatedText() {
+				return info.getValueAtNode("researches:"+name.toLowerCase()+":page"+page);
+			}
+
+			@Override
+			public String toString() {
+				return name+": "+this.getTranslatedText();
+			}
+		}
+	}
+
 	static {
 		if (ModList.THAUMCRAFT.isLoaded()) {
 			try {
@@ -370,12 +562,16 @@ public class ReikaThaumHelper {
 				Field ents = ck.getField("entitiesScanned");
 				Field phen = ck.getField("phenomenaScanned");
 				Field asp = ck.getField("aspectsDiscovered");
+				Field warp = ck.getField("warp");
+				Field warptemp = ck.getField("warpTemp");
 
 				aspects = (Map)asp.get(knowledge);
 				research = (Map)res.get(knowledge);
 				scannedObjects = (Map)objs.get(knowledge);
 				scannedEntities = (Map)ents.get(knowledge);
 				scannedPhenomena = (Map)phen.get(knowledge);
+				playerWarp = (Map)warp.get(knowledge);
+				playerTempWarp = (Map)warptemp.get(knowledge);
 
 				Class pot = Class.forName("thaumcraft.common.lib.potions.PotionWarpWard");
 				Field ins = pot.getDeclaredField("instance");
@@ -409,3 +605,4 @@ public class ReikaThaumHelper {
 	}
 
 }
+

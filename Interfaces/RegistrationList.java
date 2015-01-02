@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
+import net.minecraft.item.ItemStack;
+
 
 
 /** This is an interface for ENUMS! */
@@ -38,5 +40,9 @@ public interface RegistrationList {
 
 	/** To avoid casting to Enum */
 	public String name();
+
+	//public ItemStack getStackOf();
+
+	public ItemStack getStackOfMetadata(int meta);
 
 }
