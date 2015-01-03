@@ -19,9 +19,11 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.MultiMap;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public class ReikaBiomeHelper extends DragonAPICore {
 
@@ -294,5 +296,13 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 	public static float getBiomeHumidity(World world, int x, int z) {
 		return getBiomeHumidity(world.getBiomeGenForCoords(x, z));
+	}
+
+	public static boolean isOcean(BiomeGenBase biome) {
+		if (biome == BiomeGenBase.ocean || biome == BiomeGenBase.frozenOcean || biome == BiomeGenBase.deepOcean)
+			return true;
+		if (BiomeDictionary.isBiomeOfType(biome, Type.OCEAN))
+			return true;
+		return ReikaStringParser.containsWord(biome.biomeName.toLowerCase(), "ocean");
 	}
 }
