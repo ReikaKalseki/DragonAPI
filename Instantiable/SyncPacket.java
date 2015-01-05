@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import Reika.DragonAPI.Base.TileEntityBase;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class SyncPacket extends S35PacketUpdateTileEntity {
 
@@ -42,8 +43,13 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 		Iterator<String> it = c.iterator();
 		while (it.hasNext()) {
 			String name = it.next();
-			NBTBase tag = NBT.getTag(name);
-			this.addData(name, tag, force);
+			if (name == null) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: An NBT tag with a null key is being sent to the sync packet from "+te);
+			}
+			else {
+				NBTBase tag = NBT.getTag(name);
+				this.addData(name, tag, force);
+			}
 		}
 	}
 
@@ -62,19 +68,26 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 
 	@Override
 	public void readPacketData(PacketBuffer in) throws IOException {
-		field_148863_a = in.readInt();
-		field_148861_b = in.readShort();
-		field_148862_c = in.readInt();
+		try {
+			field_148863_a = in.readInt();
+			field_148861_b = in.readShort();
+			field_148862_c = in.readInt();
 
-		NBTTagCompound received = in.readNBTTagCompoundFromBuffer();
-		if (!received.getBoolean(ERROR_TAG)) {
-			//try {
-			this.populateFromStream(received);
-			//}
-			//catch (Exception e) {
-			//	e.printStackTrace();
-			//	data.clear(); //discard packet
-			//}
+			NBTTagCompound received = in.readNBTTagCompoundFromBuffer();
+			if (!received.getBoolean(ERROR_TAG)) {
+				//try {
+				this.populateFromStream(received);
+				//}
+				//catch (Exception e) {
+				//	e.printStackTrace();
+				//	data.clear(); //discard packet
+				//}
+			}
+		}
+		catch (Exception e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error reading Sync Tag!");
+			e.printStackTrace();
+			data.clear();
 		}
 	}
 
@@ -107,8 +120,16 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 		catch (Exception e) {
 			toSend.setBoolean(ERROR_TAG, true);
 			e.printStackTrace();
+			//out.clear();
 		}
-		out.writeNBTTagCompoundToBuffer(toSend);
+		try {
+			out.writeNBTTagCompoundToBuffer(toSend);
+		}
+		catch (Exception e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error writing Sync Tag!");
+			out.clear();
+			e.printStackTrace();
+		}
 	}
 
 	private void saveChanges(NBTTagCompound toSend) {
