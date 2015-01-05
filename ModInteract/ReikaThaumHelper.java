@@ -35,8 +35,6 @@ import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.CrucibleRecipe;
 import thaumcraft.api.crafting.IArcaneRecipe;
 import thaumcraft.api.crafting.InfusionRecipe;
-import thaumcraft.api.crafting.ShapedArcaneRecipe;
-import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchPage;
 import Reika.DragonAPI.ModList;
@@ -44,6 +42,7 @@ import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ReikaThaumHelper {
 
@@ -412,7 +411,11 @@ public class ReikaThaumHelper {
 		ResearchCategories.registerCategory(name, icon, rl2);
 	}
 
-	private static void addInfusionRecipeBookEntryViaXML(String id, String name, String desc, String category, ItemStack out, AspectList aspects, InfusionRecipe ir, Class root, String path) {
+	@SideOnly(Side.CLIENT)
+	public static void addInfusionRecipeBookEntryViaXML(String id, String desc, String category, InfusionRecipe ir, Class root, String path) {
+		ItemStack out = (ItemStack)ir.getRecipeOutput();
+		AspectList aspects = ir.getAspects();
+		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, 0, 0, 0, out).setName(name);
 		res.setDescription(desc);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
@@ -422,12 +425,11 @@ public class ReikaThaumHelper {
 		res.registerResearchItem();
 	}
 
-	public static void addInfusionRecipeWithBookEntry(String id, String prereq, String desc, String category, Class root, String path, ItemStack in, ItemStack out, AspectList aspects, int instability, ItemStack... ingredients) {
-		InfusionRecipe ir = ThaumcraftApi.addInfusionCraftingRecipe(prereq, out, instability, aspects, in, ingredients);
-		addInfusionRecipeBookEntryViaXML(id, out.getDisplayName(), desc, category, out, aspects, ir, root, path);
-	}
-
-	private static void addCrucibleRecipeBookEntryViaXML(String id, String name, String desc, String category, ItemStack out, AspectList aspects, CrucibleRecipe ir, Class root, String path) {
+	@SideOnly(Side.CLIENT)
+	public static void addCrucibleRecipeBookEntryViaXML(String id, String desc, String category, CrucibleRecipe ir, Class root, String path) {
+		ItemStack out = ir.getRecipeOutput();
+		AspectList aspects = ir.aspects;
+		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, 0, 0, 0, out).setName(name);
 		res.setDescription(desc);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
@@ -437,12 +439,11 @@ public class ReikaThaumHelper {
 		res.registerResearchItem();
 	}
 
-	public static void addCrucibleRecipeWithBookEntry(String id, String prereq, String desc, String category, Class root, String path, ItemStack in, ItemStack out, AspectList aspects) {
-		CrucibleRecipe ir = ThaumcraftApi.addCrucibleRecipe(prereq, out, in, aspects);
-		addCrucibleRecipeBookEntryViaXML(id, out.getDisplayName(), desc, category, out, aspects, ir, root, path);
-	}
-
-	private static void addArcaneRecipeBookEntryViaXML(String id, String name, String desc, String category, ItemStack out, AspectList aspects, IArcaneRecipe ir, Class root, String path) {
+	@SideOnly(Side.CLIENT)
+	public static void addArcaneRecipeBookEntryViaXML(String id, String desc, String category, IArcaneRecipe ir, Class root, String path) {
+		ItemStack out = ir.getRecipeOutput();
+		AspectList aspects = ir.getAspects();
+		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, 0, 0, 0, out).setName(name);
 		res.setDescription(desc);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
@@ -450,16 +451,6 @@ public class ReikaThaumHelper {
 			res.setPages(xml.getPages());
 		}
 		res.registerResearchItem();
-	}
-
-	public static void addShapedArcaneRecipeWithBookEntry(String id, String prereq, String desc, String category, Class root, String path, ItemStack out, AspectList aspects, Object... in) {
-		ShapedArcaneRecipe ir = ThaumcraftApi.addArcaneCraftingRecipe(prereq, out, aspects, in);
-		addArcaneRecipeBookEntryViaXML(id, out.getDisplayName(), desc, category, out, aspects, ir, root, path);
-	}
-
-	public static void addArcaneRecipeWithBookEntry(String id, String prereq, String desc, String category, Class root, String path, ItemStack out, AspectList aspects, Object... in) {
-		ShapelessArcaneRecipe ir = ThaumcraftApi.addShapelessArcaneCraftingRecipe(prereq, out, aspects, in);
-		addArcaneRecipeBookEntryViaXML(id, out.getDisplayName(), desc, category, out, aspects, ir, root, path);
 	}
 
 	public static class XMLResearch {
