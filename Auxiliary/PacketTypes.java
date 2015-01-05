@@ -20,7 +20,8 @@ public enum PacketTypes {
 	TANK(),
 	RAW(),
 	NBT(),
-	STRINGINT();
+	STRINGINT(),
+	UUID();
 
 	private PacketTypes() {
 

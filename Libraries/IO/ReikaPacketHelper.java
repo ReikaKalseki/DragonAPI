@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
@@ -37,9 +38,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
-import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.HybridTank;
@@ -256,6 +257,58 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
+	public static void sendDataPacketToEntireServer(String ch, int id, List<Integer> data) {
+
+		int npars;
+		if (data == null)
+			npars = 4;
+		else
+			npars = data.size()+4;
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(npars*4); //4 bytes an int
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(id);
+			if (data != null)
+				for (int i = 0; i < data.size(); i++) {
+					outputStream.writeInt(data.get(i));
+				}
+			outputStream.writeInt(0);
+			outputStream.writeInt(0);
+			outputStream.writeInt(0);
+
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.DATA, pipe);
+		pack.setData(dat);
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+
+		if (side == Side.SERVER) {
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToAllOnServer(pack);
+		}
+		else if (side == Side.CLIENT) {
+			//PacketDispatcher.sendPacketToServer(packet);
+			//pipe.sendToServer(pack);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
 	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, List<Integer> data) {
 
 		int npars;
@@ -359,6 +412,54 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		else {
 			// We are on the Bukkit server.
 		}
+	}
+
+	public static void sendUUIDPacket(String ch, int id, World world, int x, int y, int z, UUID data) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(2*8+3*4); //4 bytes an int + 8 bytes a long
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(id);
+			outputStream.writeLong(data.getMostSignificantBits());
+			outputStream.writeLong(data.getLeastSignificantBits());
+			outputStream.writeInt(x);
+			outputStream.writeInt(y);
+			outputStream.writeInt(z);
+
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.DATA, pipe);
+		pack.setData(dat);
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			// We are on the server side.
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToDimension(pack, world);
+		}
+		else if (side == Side.CLIENT) {
+			// We are on the client side.
+			//PacketDispatcher.sendPacketToServer(packet);
+			pipe.sendToServer(pack);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
+	public static void sendDataPacketToEntireServer(String ch, int id, int... data) {
+		sendDataPacketToEntireServer(ch, id, ReikaJavaLibrary.makeIntListFromArray(data));
 	}
 
 	public static void sendDataPacket(String ch, int id, TileEntity te, int data) {

@@ -33,6 +33,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.ExpandedOreRecipe;
 import Reika.DragonAPI.Instantiable.RecipePattern;
+import Reika.DragonAPI.Instantiable.Data.ItemHashMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -786,5 +787,20 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				c.add(i);
 		}
 		return c;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static ItemHashMap<Integer> getItemCountsForDisplay(IRecipe ir) {
+		ItemHashMap<Integer> map = new ItemHashMap();
+		ItemStack[] items = ReikaRecipeHelper.getPermutedRecipeArray(ir);
+		for (int i = 0; i < 9; i++) {
+			ItemStack is = items[i];
+			if (is != null) {
+				Integer num = map.get(is);
+				int n = num != null ? num.intValue() : 0;
+				map.put(is, n+1);
+			}
+		}
+		return map;
 	}
 }

@@ -23,6 +23,9 @@ public class StupidIDException extends DragonAPIException {
 		if (ID > 100000)
 			message.append("No sane ID would be this large, and you would do well to realize this.\n");
 		message.append("This is NOT a mod bug. Do not post it to the mod website or you will look extremely foolish.");
+		if (ID <= 0) {
+			message.append("\nIf you picked "+ID+" in an attempt to disable the feature, this is not how, and disabling may not be possible.");
+		}
 		this.crash();
 	}
 
