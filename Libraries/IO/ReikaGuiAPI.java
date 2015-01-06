@@ -1,7 +1,7 @@
 /*******************************************************************************
  * @author Reika Kalseki
  * 
- * Copyright 2014
+ * Copyright 2015
  * 
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
@@ -43,6 +43,7 @@ import org.lwjgl.opengl.GL12;
 import org.lwjgl.util.Rectangle;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.WrappedRecipe;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
@@ -64,6 +65,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 	public static final ReikaGuiAPI instance = new ReikaGuiAPI();
 
 	private final HashMap<String, Rectangle> tooltips = new HashMap();
+	private final HashMap<Rectangle, ItemStack> items = new HashMap();
+	private final boolean cacheRenders = ModList.NEI.isLoaded();
 
 	private ReikaGuiAPI() {
 		mc = Minecraft.getMinecraft();
@@ -80,7 +83,10 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	@SubscribeEvent
 	public void preDrawScreen(DrawScreenEvent.Pre evt) {
-		tooltips.clear();
+		if (cacheRenders) {
+			tooltips.clear();
+			items.clear();
+		}
 	}
 
 	/**
@@ -435,6 +441,9 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 		renderer.renderItemAndEffectIntoGUI(font, mc.renderEngine, is, x, y);
 		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, null);
+
+		if (cacheRenders)
+			items.put(new Rectangle(x, y, 16, 16), is.copy());
 	}
 
 	public void drawItemStackWithTooltip(RenderItem renderer, ItemStack is, int x, int y) {
@@ -518,11 +527,27 @@ public final class ReikaGuiAPI extends GuiScreen {
 		f.drawStringWithShadow(s, j2, k2, 0xffffffff);
 		GL11.glPopAttrib();
 
-		tooltips.put(s, new Rectangle(mx, my+8, f.getStringWidth(s)+24, f.FONT_HEIGHT+8));
+		if (cacheRenders)
+			tooltips.put(s, new Rectangle(mx, my+8, f.getStringWidth(s)+24, f.FONT_HEIGHT+8));
 	}
 
 	public Map<String, Rectangle> getTooltips() {
 		return Collections.unmodifiableMap(tooltips);
+	}
+
+	public Map<Rectangle, ItemStack> getRenderedItems() {
+		return Collections.unmodifiableMap(items);
+	}
+
+	/** This function is computationally expensive! */
+	public ItemStack getItemRenderAt(int x, int y) {
+		Rectangle k = new Rectangle(x, y, 1, 1);
+		for (Rectangle r : items.keySet()) {
+			if (k.intersects(r)) {
+				return items.get(r);
+			}
+		}
+		return null;
 	}
 
 	public float getMouseScreenY() {

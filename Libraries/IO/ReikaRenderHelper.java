@@ -1,7 +1,7 @@
 /*******************************************************************************
  * @author Reika Kalseki
  * 
- * Copyright 2014
+ * Copyright 2015
  * 
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -33,6 +34,8 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Rendering.ReikaModelledBreakFX;
 import Reika.DragonAPI.Interfaces.RenderFetcher;
 import Reika.DragonAPI.Interfaces.TextureFetcher;
+import Reika.DragonAPI.Interfaces.TileModel;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 
@@ -349,5 +352,65 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			e.printStackTrace();
 		}
 	}*/
+
+	public static void renderEnchantedModel(TileEntity tile, TileModel model, ArrayList li, float rotation) {
+		int x = tile.xCoord;
+		int y = tile.yCoord;
+		int z = tile.zCoord;
+		float f9 = (System.nanoTime()/100000000)%64/64F;
+		ReikaTextureHelper.bindEnchantmentTexture();
+		GL11.glEnable(GL11.GL_BLEND);
+		BlendMode.OVERLAYDARK.apply();
+		float f10 = 0.5F;
+		GL11.glColor4f(f10, f10, f10, 1.0F);
+
+		GL11.glMatrixMode(GL11.GL_TEXTURE);
+		GL11.glTranslated(f9, f9, f9);
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+		GL11.glDepthFunc(GL11.GL_LEQUAL);
+		GL11.glPushMatrix();
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		GL11.glTranslatef(0, 2, 2);
+		GL11.glScalef(1.0F, -1.0F, -1.0F);
+		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
+		float f11 = 0.76F;
+		GL11.glColor4f(0.5F * f11, 0.25F * f11, 0.8F * f11, 1.0F);
+		GL11.glRotatef(rotation, 0.0F, 1.0F, 0.0F);
+		GL11.glDepthMask(false);
+
+		if (tile.hasWorldObj())
+			ReikaRenderHelper.disableLighting();
+
+		double d = 1.0125;
+		int p = 2;
+		GL11.glTranslated(0, p, 0);
+		GL11.glScaled(d, d, d);
+		GL11.glTranslated(0, -p, 0);
+
+		model.renderAll(tile, li);
+
+		GL11.glTranslated(0, p, 0);
+		GL11.glScaled(1D/d, 1D/d, 1D/d);
+		GL11.glTranslated(0, -p, 0);
+
+		GL11.glMatrixMode(GL11.GL_TEXTURE);
+		GL11.glLoadIdentity();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+
+		GL11.glDepthMask(true);
+
+		if (tile.hasWorldObj())
+			ReikaRenderHelper.enableLighting();
+
+		GL11.glEnable(GL11.GL_ALPHA_TEST);
+
+		GL11.glPopMatrix();
+		GL11.glDepthFunc(GL11.GL_LEQUAL);
+
+		BlendMode.DEFAULT.apply();
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+	}
 
 }

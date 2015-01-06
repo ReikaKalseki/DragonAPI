@@ -7,33 +7,23 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI;
+package Reika.DragonAPI.Instantiable;
 
-import net.minecraft.world.World;
+import net.minecraft.item.ItemStack;
 
-public class APIProxy {
+public class TemporaryInventory extends BasicInventory {
 
-	public void registerSidedHandlers()
-	{
-
+	public TemporaryInventory(int size) {
+		super("temp", size);
 	}
 
-	public void registerSidedHandlersMain()
-	{
-
+	public TemporaryInventory(int size, int stack) {
+		super("temp", size, stack);
 	}
 
-	public void addArmorRenders() {}
-
-	public World getClientWorld() {
-		return null;
+	@Override
+	public boolean isItemValidForSlot(int i, ItemStack is) {
+		return true;
 	}
 
-	public void registerRenderInformation() {
-
-	}
-
-	public void registerSounds() {
-
-	}
 }

@@ -1,7 +1,7 @@
 /*******************************************************************************
  * @author Reika Kalseki
  * 
- * Copyright 2014
+ * Copyright 2015
  * 
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
@@ -20,9 +20,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.common.BiomeManager;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.MultiMap;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public class ReikaBiomeHelper extends DragonAPICore {
@@ -304,5 +306,32 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		if (BiomeDictionary.isBiomeOfType(biome, Type.OCEAN))
 			return true;
 		return ReikaStringParser.containsWord(biome.biomeName.toLowerCase(), "ocean");
+	}
+
+	public static void removeBiomeWithAssociates(BiomeGenBase biome) {
+		BiomeManager.removeSpawnBiome(biome);
+		Collection<BiomeGenBase> c = getChildBiomes(biome);
+		for (BiomeGenBase b : c)
+			BiomeManager.removeSpawnBiome(b);
+	}
+
+	public static void removeAllBiomesBut(Collection<BiomeGenBase> biomes) {
+		for (int i = 0; i < BiomeGenBase.biomeList.length; i++) {
+			BiomeGenBase b = BiomeGenBase.biomeList[i];
+			if (!biomes.contains(b))
+				BiomeManager.removeSpawnBiome(b);
+		}
+	}
+
+	public static void removeAllBiomesBut(BiomeGenBase... biomes) {
+		removeAllBiomesBut(ReikaJavaLibrary.makeListFromArray(biomes));
+	}
+
+	public static void removeAllBiomesBut(BiomeGenBase biome) {
+		for (int i = 0; i < BiomeGenBase.biomeList.length; i++) {
+			BiomeGenBase b = BiomeGenBase.biomeList[i];
+			if (b != biome)
+				BiomeManager.removeSpawnBiome(b);
+		}
 	}
 }

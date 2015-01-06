@@ -1,7 +1,7 @@
 /*******************************************************************************
  * @author Reika Kalseki
  * 
- * Copyright 2014
+ * Copyright 2015
  * 
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
@@ -21,9 +22,12 @@ import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
+import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.TemporaryInventory;
 import Reika.DragonAPI.Instantiable.Data.ItemHashMap;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
@@ -1212,6 +1216,28 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 				int max = Math.min(need, in.stackSize);
 				decrStack(loc, ii, max);
 				loc = locateInInventory(is, ii, false);
+			}
+		}
+	}
+
+	public static void generateMultipliedLoot(int bonus, Random r, String s, IInventory te) {
+		for (int n = 0; n < bonus; n++) {
+			TemporaryInventory ii = new TemporaryInventory(te.getSizeInventory());
+			WeightedRandomChestContent[] loot = ChestGenHooks.getItems(s, r);
+			WeightedRandomChestContent.generateChestContents(r, loot, ii, ChestGenHooks.getCount(s, r));
+			for (int i = 0; i < ii.getSizeInventory(); i++) {
+				ItemStack in = ii.getStackInSlot(i);
+				if (in != null) {
+					int tg = r.nextInt(ii.getSizeInventory());
+					int tries = 0;
+					while (te.getStackInSlot(tg) != null && tries < 10) {
+						tg = r.nextInt(ii.getSizeInventory());
+						tries++;
+					}
+					if (te.getStackInSlot(tg) == null) {
+						te.setInventorySlotContents(tg, in);
+					}
+				}
 			}
 		}
 	}

@@ -9,8 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
-public interface SidePlacedTile {
+import java.util.ArrayList;
 
-	public void placeOnSide(int s);
+import net.minecraft.tileentity.TileEntity;
+
+public interface TileModel {
+
+	public void renderAll(TileEntity tile, ArrayList li);
 
 }
