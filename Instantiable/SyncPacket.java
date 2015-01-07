@@ -14,18 +14,27 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
+import net.minecraft.tileentity.TileEntity;
 import Reika.DragonAPI.Base.TileEntityBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class SyncPacket extends S35PacketUpdateTileEntity {
 
 	private final HashMap<String, NBTBase> data = new HashMap();
 	private final HashMap<String, NBTBase> oldData = new HashMap();
 	private final HashMap<String, NBTBase> changes = new HashMap();
+
+	/** Is the packet currently being written by the network thread */
+	private boolean dispatch;
+	/** Is the packet currently being read by the network thread */
+	private boolean receive;
 
 	private static final String ERROR_TAG = "erroredPacket";
 
@@ -34,6 +43,12 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 	}
 
 	public void setData(TileEntityBase te, boolean force, NBTTagCompound NBT) {
+		if (dispatch) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: The sync packet for "+te+" would have just CME'd, as the");
+			ReikaJavaLibrary.pConsole("Server-Thread data-writing code has overlapped with the Network-Thread byte[] dispatch.\n");
+			return;
+		}
+
 		field_148863_a = te.xCoord;
 		field_148861_b = te.yCoord;
 		field_148862_c = te.zCoord;
@@ -68,6 +83,7 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 
 	@Override
 	public void readPacketData(PacketBuffer in) throws IOException {
+		receive = true;
 		try {
 			field_148863_a = in.readInt();
 			field_148861_b = in.readShort();
@@ -89,6 +105,7 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 			e.printStackTrace();
 			data.clear();
 		}
+		receive = false;
 	}
 
 	private void populateFromStream(NBTTagCompound received) {
@@ -101,7 +118,15 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 		}
 	}
 
-	public void writeToNBT(NBTTagCompound NBT) {
+	@SideOnly(Side.CLIENT)
+	public void readForSync(NBTTagCompound NBT) {
+		if (dispatch) {
+			TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(field_148863_a, field_148861_b, field_148862_c);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: The sync packet for "+te+" would have just CME'd, as the");
+			ReikaJavaLibrary.pConsole("Client-Thread data-reading code has overlapped with the Network-Thread byte[] reading.\n");
+			return;
+		}
+
 		for (String key : data.keySet()) {
 			NBT.setTag(key, data.get(key));
 		}
@@ -109,6 +134,7 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 
 	@Override
 	public void writePacketData(PacketBuffer out) throws IOException {
+		dispatch = true;
 		out.writeInt(field_148863_a);
 		out.writeShort(field_148861_b);
 		out.writeInt(field_148862_c);
@@ -130,6 +156,7 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 			out.clear();
 			e.printStackTrace();
 		}
+		dispatch = false;
 	}
 
 	private void saveChanges(NBTTagCompound toSend) {

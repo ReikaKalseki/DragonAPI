@@ -51,6 +51,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 						int chance = out.get(item);
 						outputs.addItem(item, chance);
 					}
+					outputs.lock();
 					centrifuge.put(in, outputs);
 				}
 			}
@@ -89,7 +90,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 	}
 
 	public ChancedOutputList getRecipeOutput(ItemStack in) {
-		return centrifuge.get(in);
+		return centrifuge.get(in).copy();
 	}
 
 	@Override

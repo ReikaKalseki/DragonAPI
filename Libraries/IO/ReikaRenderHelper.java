@@ -38,6 +38,8 @@ import Reika.DragonAPI.Interfaces.TileModel;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaRenderHelper extends DragonAPICore {
 
@@ -303,18 +305,21 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		return true;
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void spawnDropParticles(World world, int x, int y, int z, Block b, int meta) {
 		for (int i = 0; i < 16; i++) {
 			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, meta, 0));
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static TesselatorVertexState getTessellatorState() {
 		Entity e = Minecraft.getMinecraft().renderViewEntity;
 		TesselatorVertexState st = Tessellator.instance.getVertexState((float)e.posX, (float)e.posY, (float)e.posZ);
 		return st;
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void rerenderAllChunks() {
 		World world = Minecraft.getMinecraft().theWorld;
 		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
