@@ -81,7 +81,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	private FakePlayer fakePlayer;
 
 	private final StepTimer updateTimer;
-	private final StepTimer packetTimer;
+	//private final StepTimer packetTimer;
 	private final StepTimer fullSyncTimer;
 	private boolean forceSync = true;
 
@@ -104,7 +104,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	public TileEntityBase() {
 		super();
 		updateTimer = new StepTimer(this.getBlockUpdateDelay());
-		packetTimer = new StepTimer(this.getPacketDelay());
+		//packetTimer = new StepTimer(this.getPacketDelay());
 		fullSyncTimer = new StepTimer(1200);
 		fullSyncTimer.setTick(rand.nextInt(1200));
 	}
@@ -394,14 +394,14 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		}
 		if (this.getTicksExisted() < 20)
 			this.syncAllData(true);
-		packetTimer.update();
+		//packetTimer.update();
 
 		fullSyncTimer.update();
 		if (fullSyncTimer.checkCap()) {
 			this.forceFullSync();
 		}
 
-		if (packetTimer.checkCap() || this.shouldFullSync()) {
+		if (this.shouldSendSyncPacket() || this.shouldFullSync()) {
 			if (this.shouldSendSyncPackets()) {
 				this.sendSyncPacket();
 			}
@@ -423,6 +423,10 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		}
 		 */
 		ticksExisted++;
+	}
+
+	private boolean shouldSendSyncPacket() {
+		return worldObj != null && worldObj.getTotalWorldTime()%this.getPacketDelay() == 0;
 	}
 
 	private void sendSyncPacket() {

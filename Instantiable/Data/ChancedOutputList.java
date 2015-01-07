@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public final class ChancedOutputList {
@@ -107,7 +108,7 @@ public final class ChancedOutputList {
 		if (!modifiable)
 			throw new UnsupportedOperationException("This ChancedOutputList is locked!");
 		for (ItemStack is : data.keySet()) {
-			float f2 = f*data.get(is);
+			float f2 = MathHelper.clamp_float(f*data.get(is), 0, 100);
 			data.put(is, f2);
 		}
 	}
@@ -117,8 +118,9 @@ public final class ChancedOutputList {
 		if (!modifiable)
 			throw new UnsupportedOperationException("This ChancedOutputList is locked!");
 		for (ItemStack is : data.keySet()) {
-			float cur = data.get(is);
-			float next = (float)Math.pow(cur, 1D/p);
+			float cur = data.get(is)/100F;
+			float pow = 100F*(float)Math.pow(cur, 1D/p);
+			float next = MathHelper.clamp_float(pow, 0, 100);
 			data.put(is, next);
 		}
 	}
