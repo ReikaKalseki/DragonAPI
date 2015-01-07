@@ -261,7 +261,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			if (!p.hasNoData()) {
 				NBTTagCompound NBT = new NBTTagCompound();
 				this.writeSyncTag(NBT); //so unsent fields do not zero out, we sync the current values in
-				p.writeToNBT(NBT);
+				p.readForSync(NBT);
 				this.readSyncTag(NBT);
 			}
 		}
