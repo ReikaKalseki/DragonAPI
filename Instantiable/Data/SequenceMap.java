@@ -25,11 +25,13 @@ public class SequenceMap<V> {
 	private final HashMap<V, TreeEntry<V>> data = new HashMap();
 
 	public Collection<V> getParents(V obj) {
-		return Collections.unmodifiableCollection(data.get(obj).parents);
+		TreeEntry t = data.get(obj);
+		return t != null ? Collections.unmodifiableCollection(t.parents) : null;
 	}
 
 	public Collection<V> getChildren(V obj) {
-		return Collections.unmodifiableCollection(data.get(obj).children);
+		TreeEntry t = data.get(obj);
+		return t != null ? Collections.unmodifiableCollection(t.children) : null;
 	}
 
 	public Collection<V> getRecursiveParents(V obj) {
