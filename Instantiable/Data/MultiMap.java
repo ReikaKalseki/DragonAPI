@@ -20,7 +20,11 @@ public final class MultiMap<K, V> {
 
 	private final HashMap<K, Collection<V>> data = new HashMap();
 
+	private boolean modifiable = true;
+
 	public Collection<V> put(K key, Collection<V> value) {
+		if (!modifiable)
+			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		return data.put(key, value);
 	}
 
@@ -39,6 +43,8 @@ public final class MultiMap<K, V> {
 	}
 
 	private void addValue(K key, V value, boolean load, boolean copy) {
+		if (!modifiable)
+			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		Collection<V> li = null;
 		if (load)
 			li = data.get(key);
@@ -51,6 +57,8 @@ public final class MultiMap<K, V> {
 	}
 
 	public Collection<V> remove(K key) {
+		if (!modifiable)
+			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		Collection<V> ret = data.get(key);
 		data.remove(key);
 		return ret;
@@ -58,7 +66,7 @@ public final class MultiMap<K, V> {
 
 	public Collection<V> get(K key) {
 		Collection<V> c = data.get(key);
-		return c != null ? c : new ArrayList(); //Internal NPE protection
+		return c != null ? (this.modifiable ? c : Collections.unmodifiableCollection(c)) : new ArrayList(); //Internal NPE protection
 	}
 
 	public boolean containsKey(K key) {
@@ -74,6 +82,8 @@ public final class MultiMap<K, V> {
 	}
 
 	public void clear() {
+		if (!modifiable)
+			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		data.clear();
 	}
 
@@ -82,6 +92,8 @@ public final class MultiMap<K, V> {
 	}
 
 	public Collection<Collection<V>> values() {
+		if (!modifiable)
+			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		return Collections.unmodifiableCollection(data.values());
 	}
 
@@ -107,6 +119,8 @@ public final class MultiMap<K, V> {
 	}
 
 	public boolean remove(K key, V value) {
+		if (!modifiable)
+			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		Collection<V> c = data.get(key);
 		return c != null && c.remove(value);
 	}
@@ -124,6 +138,10 @@ public final class MultiMap<K, V> {
 	@Override
 	public boolean equals(Object o) {
 		return o instanceof MultiMap && this.data.equals(((MultiMap)o).data);
+	}
+
+	public void lock() {
+		modifiable = false;
 	}
 
 }

@@ -11,7 +11,11 @@ package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 
 public class SequenceMap<V> {
@@ -21,12 +25,11 @@ public class SequenceMap<V> {
 	private final HashMap<V, TreeEntry<V>> data = new HashMap();
 
 	public Collection<V> getParents(V obj) {
-		Collection c = new ArrayList();
-		TreeEntry<V> tree = data.get(obj);
-		if (tree != null) {
-			c.addAll(tree.parents);
-		}
-		return c;
+		return Collections.unmodifiableCollection(data.get(obj).parents);
+	}
+
+	public Collection<V> getChildren(V obj) {
+		return Collections.unmodifiableCollection(data.get(obj).children);
 	}
 
 	public Collection<V> getRecursiveParents(V obj) {
@@ -37,15 +40,6 @@ public class SequenceMap<V> {
 				c.add(par);
 				c.addAll(this.getRecursiveParents(par));
 			}
-		}
-		return c;
-	}
-
-	public Collection<V> getChildren(V obj) {
-		Collection c = new ArrayList();
-		TreeEntry<V> tree = data.get(obj);
-		if (tree != null) {
-			c.addAll(tree.children);
 		}
 		return c;
 	}
@@ -68,6 +62,10 @@ public class SequenceMap<V> {
 
 	public void addChild(V obj, V child) {
 		this.addChild(obj, child, true);
+	}
+
+	public void addChildless(V obj) {
+		data.put(obj, new TreeEntry());
 	}
 
 	private void addParent(V obj, V parent, boolean cross) {
@@ -97,12 +95,106 @@ public class SequenceMap<V> {
 		return tree != null && tree.children.contains(p2);
 	}
 
+	public boolean hasElement(V obj) {
+		return this.data.containsKey(obj);
+	}
+
+	public Topology<V> getTopology() {
+		return new Topology(this);
+	}
+
 	private static class TreeEntry<V> {
 
 		private Collection<V> parents = new ArrayList();
 		private Collection<V> children = new ArrayList();
 
 		private TreeEntry() {
+
+		}
+
+	}
+
+	public static class Topology<V> {
+
+		private final SequenceMap<V> map;
+		private final HashMap<V, Integer> depths = new HashMap();
+		//private final ArrayList<V> sortedList;
+
+		private final Comparator topologySorter = new TopologySorter();
+
+		private Topology(SequenceMap m) {
+			map = m;
+			this.calculateDepths();
+			//this.sortedList = new ArrayList(map.data.keySet());
+			//Collections.sort(this.sortedList, this.topologySorter);
+		}
+
+		private void calculateDepths() {
+			Collection<V> c = new ArrayList(map.data.keySet());
+			for (V obj : c) {
+				//depths.addValue(this.getNumberParents(obj), obj);
+				depths.put(obj, 0);
+			}
+
+			boolean change = false;
+			do {
+				change = false;
+				Iterator<V> it = c.iterator();
+				while (it.hasNext()) {
+					V obj = it.next();
+					//depths.addValue(this.getNumberParents(obj), obj);
+					boolean locchange = false;
+					Collection<V> par = this.getParents(obj);
+					for (V p : par) {
+						int o = depths.get(obj);
+						int d = depths.get(p)+1;
+						if (d > o) {
+							depths.put(obj, d);
+							change = true;
+							locchange = true;
+						}
+					}
+					if (!locchange)
+						it.remove();
+				}
+			} while(change);
+		}
+
+		public int getNumberParents(V obj) {
+			return map.data.get(obj).parents.size();
+		}
+
+		public int getNumberChildren(V obj) {
+			return map.data.get(obj).children.size();
+		}
+
+		public Collection<V> getChildren(V obj) {
+			return map.getChildren(obj);
+		}
+
+		public Collection<V> getParents(V obj) {
+			return map.getParents(obj);
+		}
+
+		public Map<V, Integer> getDepthMap() {
+			return Collections.unmodifiableMap(depths);
+		}
+
+		//public List<V> getSortedList() {
+		//	return Collections.unmodifiableList(this.sortedList);
+		//}
+
+		@Override
+		public String toString() {
+			return depths.toString();
+		}
+
+		private class TopologySorter implements Comparator<V> {
+
+			@Override
+			public int compare(V o1, V o2) {
+				return Topology.this.getNumberParents(o1)-Topology.this.getNumberParents(o2);
+			}
 
 		}
 

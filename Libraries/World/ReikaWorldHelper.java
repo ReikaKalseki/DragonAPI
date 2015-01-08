@@ -194,6 +194,23 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return false;
 	}
 
+	/** Search for a specific block in a range. Returns true if found. Cannot identify if
+	 * found more than one, or where the found one(s) is/are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id, meta */
+	public static boolean findNearBlock(World world, int x, int y, int z, int range, Block id, int meta) {
+		x -= range/2;
+		y -= range/2;
+		z -= range/2;
+		for (int i = 0; i < range; i++) {
+			for (int j = 0; j < range; j++) {
+				for (int k = 0; k < range; k++) {
+					if (world.getBlock(x+i, y+j, z+k) == id && world.getBlockMetadata(x+i, y+j, z+k) == meta)
+						return true;
+				}
+			}
+		}
+		return false;
+	}
+
 	/** Search for a specific block in a range. Returns number found. Cannot identify where they
 	 * are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id */
 	public static int findNearBlocks(World world, int x, int y, int z, int range, Block id) {

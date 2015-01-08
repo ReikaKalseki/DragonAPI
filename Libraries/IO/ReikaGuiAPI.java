@@ -218,7 +218,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glBegin(GL11.GL_LINE_LOOP);
+		GL11.glBegin(GL11.GL_LINES);
 		GL11.glColor4f(red/255F, green/255F, blue/255F, alpha/255F);
 		GL11.glVertex2i(x, y);
 		GL11.glVertex2i(x2, y2);
