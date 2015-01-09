@@ -176,6 +176,7 @@ public class ReikaMystcraftHelper {
 		//private static final Field stabilization;
 		private static final Field data;
 		private static final Field instabilityNumber;
+		private static final Field blockInstabilityNumber;
 		private static final Field baseInstability;
 
 		private static boolean loadedCorrectly;
@@ -300,6 +301,7 @@ public class ReikaMystcraftHelper {
 			Field insta = null;
 			//Field stable = null;
 			Field num = null;
+			Field numblock = null;
 			Field base = null;
 			Field adata = null;
 			Method tile = null;
@@ -317,8 +319,10 @@ public class ReikaMystcraftHelper {
 					Class controller = Class.forName("com.xcompwiz.mystcraft.instability.InstabilityController");
 					//stable = controller.getDeclaredField("stabilization");*
 					//stable.setAccessible(true);
-					num = age.getDeclaredField("instability");
+					num = age.getDeclaredField("symbolinstability");
 					num.setAccessible(true);
+					numblock = age.getDeclaredField("blockinstability");
+					numblock.setAccessible(true);
 					Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
 					base = data.getDeclaredField("instability");
 					base.setAccessible(true);
@@ -348,6 +352,7 @@ public class ReikaMystcraftHelper {
 			instability = insta;
 			//stabilization = stable;
 			instabilityNumber = num;
+			blockInstabilityNumber = numblock;
 			baseInstability = base;
 			data = adata;
 		}
