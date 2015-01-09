@@ -11,7 +11,6 @@ package Reika.DragonAPI.Libraries.IO;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +44,8 @@ import org.lwjgl.util.Rectangle;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.RectangleMap;
+import Reika.DragonAPI.Instantiable.Data.RegionMap;
 import Reika.DragonAPI.Interfaces.WrappedRecipe;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
@@ -64,8 +65,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	public static final ReikaGuiAPI instance = new ReikaGuiAPI();
 
-	private final HashMap<String, Rectangle> tooltips = new HashMap();
-	private final HashMap<Rectangle, ItemStack> items = new HashMap();
+	private final RectangleMap<String> tooltips = new RectangleMap();
+	private final RegionMap<ItemStack> items = new RegionMap();
 	private final boolean cacheRenders = ModList.NEI.isLoaded();
 
 	private ReikaGuiAPI() {
@@ -443,7 +444,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, null);
 
 		if (cacheRenders)
-			items.put(new Rectangle(x, y, 16, 16), is.copy());
+			items.addRegionByWH(x, y, 16, 16, is.copy());
 	}
 
 	public void drawItemStackWithTooltip(RenderItem renderer, ItemStack is, int x, int y) {
@@ -528,26 +529,20 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glPopAttrib();
 
 		if (cacheRenders)
-			tooltips.put(s, new Rectangle(mx, my+8, f.getStringWidth(s)+24, f.FONT_HEIGHT+8));
+			tooltips.addItem(s, mx, my+8, f.getStringWidth(s)+24, f.FONT_HEIGHT+8);
 	}
 
 	public Map<String, Rectangle> getTooltips() {
-		return Collections.unmodifiableMap(tooltips);
+		return tooltips.view();
 	}
 
 	public Map<Rectangle, ItemStack> getRenderedItems() {
-		return Collections.unmodifiableMap(items);
+		return items.view();
 	}
 
 	/** This function is computationally expensive! */
 	public ItemStack getItemRenderAt(int x, int y) {
-		Rectangle k = new Rectangle(x, y, 1, 1);
-		for (Rectangle r : items.keySet()) {
-			if (k.intersects(r)) {
-				return items.get(r);
-			}
-		}
-		return null;
+		return items.getRegion(x, y);
 	}
 
 	public float getMouseScreenY() {

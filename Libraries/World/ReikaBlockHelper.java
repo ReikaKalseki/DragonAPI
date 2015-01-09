@@ -75,8 +75,6 @@ public final class ReikaBlockHelper extends DragonAPICore {
 	public static boolean isOre(ItemStack is) {
 		if (is == null)
 			return false;
-		if (is.getItem() == Item.getItemFromBlock(Blocks.lit_redstone_ore))
-			return true;
 		if (Block.getBlockFromItem(is.getItem()) instanceof SpecialOreBlock)
 			return true;
 		if (ReikaOreHelper.isVanillaOre(is))
@@ -92,6 +90,8 @@ public final class ReikaBlockHelper extends DragonAPICore {
 
 	/** Returns true if the Block ID corresponds to an ore Blocks. Args: ID, Metadata */
 	public static boolean isOre(Block id, int meta) {
+		if (id == Blocks.lit_redstone_ore)
+			return true;
 		return isOre(new ItemStack(id, 1, meta));
 	}
 

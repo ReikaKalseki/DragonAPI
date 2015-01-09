@@ -39,6 +39,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker.CheckerDisabl
 import Reika.DragonAPI.Auxiliary.Trackers.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.KeyTicker;
+import Reika.DragonAPI.Auxiliary.Trackers.PatreonController;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.SuggestedModsTracker;
@@ -71,6 +72,7 @@ import Reika.DragonAPI.ModInteract.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.BCPipeHandler;
 import Reika.DragonAPI.ModInteract.BannedItemReader;
 import Reika.DragonAPI.ModInteract.BerryBushHandler;
+import Reika.DragonAPI.ModInteract.BloodMagicHandler;
 import Reika.DragonAPI.ModInteract.DartItemHandler;
 import Reika.DragonAPI.ModInteract.DartOreHandler;
 import Reika.DragonAPI.ModInteract.ExtraUtilsHandler;
@@ -255,6 +257,27 @@ public class DragonAPIInit extends DragonAPIMod {
 				e.printStackTrace();
 			}
 		}
+
+		PatreonController.instance.addPatron(this, "Dale Mahalko / Plawerth", 1);
+		PatreonController.instance.addPatron(this, "Lasse Knudsen", 40);
+		PatreonController.instance.addPatron(this, "Jason Watson", 10);
+		PatreonController.instance.addPatron(this, "frogfigther the derp", 10);
+		PatreonController.instance.addPatron(this, "Fizyxnrd", 2);
+		PatreonController.instance.addPatron(this, "Jakbruce2012", 10);
+		PatreonController.instance.addPatron(this, "Michael Luke", 5);
+		PatreonController.instance.addPatron(this, "Andrew Jones", 10);
+		PatreonController.instance.addPatron(this, "Steven Kane", 40);
+		PatreonController.instance.addPatron(this, "motsop", 1);
+		PatreonController.instance.addPatron(this, "Luc Levesque", 5);
+		PatreonController.instance.addPatron(this, "David Harris", 1);
+		PatreonController.instance.addPatron(this, "Michael Vaarning", 5);
+		PatreonController.instance.addPatron(this, "Renato", 1);
+		PatreonController.instance.addPatron(this, "BevoLJ", 5);
+		PatreonController.instance.addPatron(this, "brian allred", 1);
+		PatreonController.instance.addPatron(this, "Joshua Kubiak", 5);
+		PatreonController.instance.addPatron(this, "Paul Luhman", 1);
+		PatreonController.instance.addPatron(this, "John Paul Douglass", 10);
+		PatreonController.instance.addPatron(this, "Jon M", 5);
 	}
 
 	@Override
@@ -417,6 +440,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.GALACTICRAFT, GalacticCraftHandler.class);
 		this.initHandler(ModList.EXTRAUTILS, ExtraUtilsHandler.class);
 		this.initHandler(ModList.MYSTCRAFT, MystCraftHandler.class);
+		this.initHandler(ModList.BLOODMAGIC, BloodMagicHandler.class);
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);

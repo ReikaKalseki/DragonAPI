@@ -9,7 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.lwjgl.util.Rectangle;
 
@@ -66,6 +69,14 @@ public class RegionMap<V> {
 				return true;
 		}
 		return false;
+	}
+
+	public Map<Rectangle, V> view() {
+		return Collections.unmodifiableMap(data);
+	}
+
+	public Collection<Rectangle> keySet() {
+		return Collections.unmodifiableCollection(data.keySet());
 	}
 
 }
