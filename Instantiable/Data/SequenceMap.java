@@ -69,7 +69,21 @@ public class SequenceMap<V> {
 	public void addChildless(V obj) {
 		data.put(obj, new TreeEntry());
 	}
+	/*
+	public void addOrphan(V obj) {
+		V p = this.getOrphanParent();
+		TreeEntry tree = this.data.get(p);
+		if (tree == null) {
+			tree = new TreeEntry();
+			data.put(p, tree);
+		}
+		tree.children.add(obj);
+	}
 
+	private V getOrphanParent() {
+		return null;
+	}
+	 */
 	private void addParent(V obj, V parent, boolean cross) {
 		TreeEntry tree = this.data.get(obj);
 		if (tree == null) {
@@ -101,8 +115,37 @@ public class SequenceMap<V> {
 		return this.data.containsKey(obj);
 	}
 
+	public boolean hasElementAsChild(V obj) {
+		for (TreeEntry e : data.values()) {
+			if (e.children.contains(obj))
+				return true;
+		}
+		return false;
+	}
+
+	public void clear() {
+		data.clear();
+	}
+
 	public Topology<V> getTopology() {
 		return new Topology(this);
+	}
+
+	public Collection valueSet() {
+		Collection<V> values = new ArrayList();
+		for (TreeEntry<V> t : data.values()) {
+			values.addAll(t.children);
+		}
+		return values;
+	}
+
+	public Collection fullSet() {
+		Collection<V> values = this.valueSet();
+		for (V obj : data.keySet()) {
+			if (!values.contains(obj))
+				values.add(obj);
+		}
+		return values;
 	}
 
 	private static class TreeEntry<V> {
@@ -132,7 +175,7 @@ public class SequenceMap<V> {
 		}
 
 		private void calculateDepths() {
-			Collection<V> c = new ArrayList(map.data.keySet());
+			Collection<V> c = new ArrayList(map.fullSet());
 			for (V obj : c) {
 				//depths.addValue(this.getNumberParents(obj), obj);
 				depths.put(obj, 0);

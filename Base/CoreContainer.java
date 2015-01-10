@@ -100,12 +100,34 @@ public class CoreContainer extends Container {
 	@Override
 	public void detectAndSendChanges()
 	{
-		super.detectAndSendChanges();
+		//super.detectAndSendChanges();
 
-		for (int i = 0; i < crafters.size(); i++)
-		{
-			ICrafting icrafting = (ICrafting)crafters.get(i);
+		for (int i = 0; i < inventorySlots.size(); ++i) {
+			ItemStack itemstack = ((Slot)inventorySlots.get(i)).getStack();
+			ItemStack itemstack1 = (ItemStack)inventoryItemStacks.get(i);
+
+			//ReikaJavaLibrary.pConsole("TRY: "+itemstack+":"+itemstack1, itemstack != null && itemstack1 != null);
+			if (!ItemStack.areItemStacksEqual(itemstack1, itemstack) || true) { //the true is to force a sync
+				itemstack1 = itemstack == null ? null : itemstack.copy();
+				inventoryItemStacks.set(i, itemstack1);
+
+				for (int j = 0; j < crafters.size(); ++j) {
+					//ReikaJavaLibrary.pConsole("SEND: "+i+":"+itemstack1);
+					((ICrafting)crafters.get(j)).sendSlotContents(this, i, itemstack1);
+				}
+			}
 		}
+
+		//for (int i = 0; i < crafters.size(); i++) {
+		//	ICrafting icrafting = (ICrafting)crafters.get(i);
+		//}
+	}
+
+	@Override
+	public final void putStackInSlot(int slot, ItemStack is)
+	{
+		//ReikaJavaLibrary.pConsole("RECEIVE: "+slot+":"+is);
+		super.putStackInSlot(slot, is);
 	}
 
 	@Override
