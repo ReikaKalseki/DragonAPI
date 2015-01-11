@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.Registry;
 import java.util.HashMap;
 import java.util.Random;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
@@ -61,6 +62,10 @@ public enum ReikaParticleHelper {
 
 	public static ReikaParticleHelper getByString(String name) {
 		return names.get(name);
+	}
+
+	public void spawnAt(Entity e) {
+		this.spawnAt(e.worldObj, e.posX, e.posY, e.posZ);
 	}
 
 	public void spawnAt(World world, double x, double y, double z, double vx, double vy, double vz) {

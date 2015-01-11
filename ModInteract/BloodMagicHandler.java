@@ -11,7 +11,9 @@ package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
@@ -25,9 +27,20 @@ public final class BloodMagicHandler extends ModHandlerBase {
 	public final Fluid lifeEssence;
 	public final Item orbID;
 
+	public final Item boundHelmet;
+	public final Item boundChestplate;
+	public final Item boundLegs;
+	public final Item boundBoots;
+
 	private BloodMagicHandler() {
 		super();
 		Item idorb = null;
+
+		Item helm = null;
+		Item chest = null;
+		Item legs = null;
+		Item boots = null;
+
 		Fluid life = null;
 		if (this.hasMod()) {
 			try {
@@ -35,6 +48,22 @@ public final class BloodMagicHandler extends ModHandlerBase {
 				Field item = c.getDeclaredField("sacrificialDagger");
 				item.setAccessible(true);
 				idorb = (Item)item.get(null);
+
+				item = c.getDeclaredField("boundHelmet");
+				item.setAccessible(true);
+				helm = (Item)item.get(null);
+
+				item = c.getDeclaredField("boundPlate");
+				item.setAccessible(true);
+				chest = (Item)item.get(null);
+
+				item = c.getDeclaredField("boundLeggings");
+				item.setAccessible(true);
+				legs = (Item)item.get(null);
+
+				item = c.getDeclaredField("boundBoots");
+				item.setAccessible(true);
+				boots = (Item)item.get(null);
 
 				c = Class.forName("WayofTime.alchemicalWizardry.AlchemicalWizardry");
 				Field f = c.getDeclaredField("lifeEssenceFluid");
@@ -70,6 +99,12 @@ public final class BloodMagicHandler extends ModHandlerBase {
 			this.noMod();
 		}
 		orbID = idorb;
+
+		boundBoots = boots;
+		boundChestplate = chest;
+		boundHelmet = helm;
+		boundLegs = legs;
+
 		lifeEssence = life;
 	}
 
@@ -79,7 +114,7 @@ public final class BloodMagicHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return lifeEssence != null && orbID != null;
+		return lifeEssence != null && orbID != null && boundBoots != null && boundChestplate != null && boundHelmet != null && boundLegs != null;
 	}
 
 	@Override
@@ -89,6 +124,19 @@ public final class BloodMagicHandler extends ModHandlerBase {
 
 	public boolean isBloodOrb(Item item) {
 		return item instanceof IBloodOrb;
+	}
+
+	public boolean isPlayerWearingFullBoundArmor(EntityPlayer ep) {
+		ItemStack[] inv = ep.inventory.armorInventory;
+		if (inv[3] == null || inv[3].getItem() != boundHelmet)
+			return false;
+		if (inv[2] == null || inv[2].getItem() != boundChestplate)
+			return false;
+		if (inv[1] == null || inv[1].getItem() != boundLegs)
+			return false;
+		if (inv[0] == null || inv[0].getItem() != boundBoots)
+			return false;
+		return true;
 	}
 
 }

@@ -21,7 +21,7 @@ public class IDConflictException extends DragonAPIException {
 		//if (mod.getDocumentationSite() != null)
 		//	message.append("This is NOT a mod bug. Do not post it to "+mod.getDocumentationSite().toString());
 		//else
-		message.append("This is NOT a mod bug. Do not post it to the mod website or you will look lazy or extremely foolish..");
+		message.append("This is NOT a mod bug. Do not post it or ask for support or you will look lazy or extremely foolish..");
 		this.crash();
 	}
 
@@ -32,7 +32,7 @@ public class IDConflictException extends DragonAPIException {
 		//if (mod.getDocumentationSite() != null)
 		//	message.append("This is NOT a mod bug. Do not post it to "+mod.getDocumentationSite().toString());
 		//else
-		message.append("This is NOT a mod bug. Do not post it to the mod website or you will look lazy or extremely foolish..");
+		message.append("This is NOT a mod bug. Do not post it or ask for support or you will look lazy or extremely foolish..");
 		this.crash();
 	}
 
@@ -43,7 +43,7 @@ public class IDConflictException extends DragonAPIException {
 		//if (mod.getDocumentationSite() != null)
 		//	message.append("This is NOT a mod bug. Do not post it to "+mod.getDocumentationSite().toString());
 		//else
-		message.append("This is NOT a mod bug. Do not post it to the mod website or you will look lazy or extremely foolish..");
+		message.append("This is NOT a mod bug. Do not post it or ask for support or you will look lazy or extremely foolish..");
 		this.crash();
 	}
 }

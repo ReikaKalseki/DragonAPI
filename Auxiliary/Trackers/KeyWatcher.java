@@ -62,7 +62,9 @@ public class KeyWatcher {
 		ATTACK(),
 		USE(),
 		CHAT(),
-		LCTRL;
+		LCTRL(),
+		PGUP(),
+		PGDN();
 
 		public static final Key[] keyList = values();
 	}
@@ -80,7 +82,9 @@ public class KeyWatcher {
 		ATTACK(Minecraft.getMinecraft().gameSettings.keyBindAttack),
 		USE(Minecraft.getMinecraft().gameSettings.keyBindUseItem),
 		CHAT(Minecraft.getMinecraft().gameSettings.keyBindChat),
-		LCTRL(Keyboard.KEY_LCONTROL);
+		LCTRL(Keyboard.KEY_LCONTROL),
+		PGUP(Keyboard.KEY_PRIOR),
+		PGDN(Keyboard.KEY_NEXT);
 
 		private KeyBinding key;
 		private int keyInt;

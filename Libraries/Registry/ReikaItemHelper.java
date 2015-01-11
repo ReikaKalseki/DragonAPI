@@ -19,6 +19,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
@@ -193,6 +194,10 @@ public final class ReikaItemHelper extends DragonAPICore {
 		if (is.stackTagCompound != null)
 			is2.stackTagCompound = (NBTTagCompound)is.stackTagCompound.copy();
 		return is2;
+	}
+
+	public static EntityItem dropItem(Entity e, ItemStack is) {
+		return dropItem(e.worldObj, e.posX, e.posY, e.posZ, is);
 	}
 
 	public static EntityItem dropItem(World world, double x, double y, double z, ItemStack is) {

@@ -20,11 +20,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Base.TileEntityBase;
 import Reika.DragonAPI.Command.IDDumpCommand;
+import Reika.DragonAPI.Instantiable.Event.RawKeyPressEvent;
 import Reika.DragonAPI.Instantiable.Rendering.NumberParticleFX;
 import Reika.DragonAPI.Interfaces.IPacketHandler;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -169,6 +171,7 @@ public class APIPacketHandler implements IPacketHandler {
 				boolean used = data[1] > 0;
 				Key key = Key.keyList[ordinal];
 				KeyWatcher.instance.setKey(ep, key, used);
+				MinecraftForge.EVENT_BUS.post(new RawKeyPressEvent(key, ep));
 				break;
 			case TILESYNC:
 				TileEntity te = world.getTileEntity(x, y, z);

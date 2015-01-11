@@ -11,12 +11,14 @@ package Reika.DragonAPI.Base;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.EnumMap;
 import java.util.HashMap;
 
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
+import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.MissingDependencyException;
 import Reika.DragonAPI.Exception.RegistrationException;
@@ -25,6 +27,7 @@ import Reika.DragonAPI.Exception.VersionMismatchException.APIMismatchException;
 import Reika.DragonAPI.Extras.ModVersion;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaFormatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -41,6 +44,8 @@ public abstract class DragonAPIMod {
 	private static final HashMap<String, ModVersion> modVersions = new HashMap();
 	//private static final ModVersion api_version;
 
+	private final LoadProfiler profiler;
+
 	static {
 		//api_version = ModVersion.readFromFile();
 	}
@@ -51,6 +56,8 @@ public abstract class DragonAPIMod {
 	}
 
 	protected DragonAPIMod() {
+		profiler = new LoadProfiler(this);
+		profiler.startTiming(LoadPhase.CONSTRUCT);
 		isDeObf = ReikaObfuscationHelper.isDeObfEnvironment();
 		if (isDeObf) {
 			ReikaJavaLibrary.pConsole(this.getDisplayName()+" is running in a deobfuscated environment!");
@@ -67,6 +74,7 @@ public abstract class DragonAPIMod {
 		}
 
 		ReikaJavaLibrary.pConsole(this.getTechnicalName()+": Active Classloader is: "+this.getClass().getClassLoader());
+		profiler.finishTiming();
 	}
 
 	@EventHandler
@@ -170,6 +178,65 @@ public abstract class DragonAPIMod {
 		return new ModVersion(Integer.parseInt(major), minor.isEmpty() ? '\0' : minor.charAt(0));
 		//return ModVersion.getFromString(this.getMajorVersion()+this.getMinorVersion());*/
 		return version;
+	}
+
+	protected final void startTiming(LoadPhase p) {
+		profiler.startTiming(p);
+	}
+
+	protected final void finishTiming() {
+		profiler.finishTiming();
+	}
+
+	public static final class LoadProfiler {
+
+		private long time = -1;
+		private long total;
+		private LoadPhase phase = null;
+
+		private final DragonAPIMod mod;
+
+		private final EnumMap<LoadPhase, Boolean> loaded = new EnumMap(LoadPhase.class);
+
+		private LoadProfiler(DragonAPIMod mod) {
+			this.mod = mod;
+		}
+
+		private void startTiming(LoadPhase p) {
+			if (time != -1)
+				throw new IllegalStateException(mod.getTechnicalName()+" is already profiling phase "+phase+"!");
+			if (loaded.containsKey(p) && loaded.get(p))
+				throw new IllegalStateException(mod.getTechnicalName()+" already finished profiling phase "+phase+"!");
+			phase = p;
+			time = System.currentTimeMillis();
+		}
+
+		protected void finishTiming() {
+			long duration = System.currentTimeMillis()-time;
+			if (time == -1)
+				throw new IllegalStateException(mod.getTechnicalName()+" cannot stop profiling before it starts!");
+			time = -1;
+			String s = ReikaFormatHelper.millisToHMSms(duration);
+			ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": Completed loading phase "+phase+" in "+duration+" ms ("+s+").");
+			if (duration > 1800000) { //30 min
+				ReikaJavaLibrary.pConsole("Loading time exceeded thirty minutes, indicating very weak hardware. Beware of low framerates.");
+			}
+			else if (duration > 300000) { //5 min
+				ReikaJavaLibrary.pConsole("Loading time exceeded five minutes, indicating weaker hardware. Consider reducing settings.");
+			}
+			total += duration;
+			if (phase == LoadPhase.POSTLOAD)
+				ReikaJavaLibrary.pConsole("Total mod loading time: "+total+" ms ("+ReikaFormatHelper.millisToHMSms(total)+").");
+			phase = null;
+		}
+
+		public static enum LoadPhase {
+			CONSTRUCT(),
+			PRELOAD(),
+			LOAD(),
+			POSTLOAD();
+		}
+
 	}
 
 }

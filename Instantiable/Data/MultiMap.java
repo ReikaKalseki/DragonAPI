@@ -61,7 +61,7 @@ public final class MultiMap<K, V> {
 			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		Collection<V> ret = data.get(key);
 		data.remove(key);
-		return ret;
+		return ret != null ? ret : new ArrayList();
 	}
 
 	public Collection<V> get(K key) {

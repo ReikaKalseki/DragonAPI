@@ -20,7 +20,7 @@ public abstract class BasicInventory implements IInventory {
 	public final int stackLimit;
 	public final String name;
 
-	private final ItemStack[] inv;
+	protected ItemStack[] inv;
 
 	public BasicInventory(String n, int size) {
 		this(n, size, 64);

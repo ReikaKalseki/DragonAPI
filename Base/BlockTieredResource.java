@@ -123,7 +123,8 @@ public abstract class BlockTieredResource extends Block {
 		if (elb instanceof EntityPlayer) {
 			EntityPlayer ep = (EntityPlayer)elb;
 			if (!this.isPlayerSufficientTier(world, x, y, z, ep)) {
-				ReikaRenderHelper.spawnDropParticles(world, x, y, z, this, world.getBlockMetadata(x, y, z));
+				if (world.isRemote)
+					ReikaRenderHelper.spawnDropParticles(world, x, y, z, this, world.getBlockMetadata(x, y, z));
 				ReikaSoundHelper.playBreakSound(world, x, y, z, this);
 				world.setBlockToAir(x, y, z);
 			}
