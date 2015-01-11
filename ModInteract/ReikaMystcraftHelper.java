@@ -86,23 +86,42 @@ public class ReikaMystcraftHelper {
 		return isMystAge(world) ? getOrCreateInterface(world).getStabilizationParameter() : 0;
 	}
 	 */
-	public static int getInstabilityForAge(World world) {
+	public static int getInstabilityScoreForAge(World world) {
 		if (!InstabilityInterface.loadedCorrectly)
 			return 0;
-		return isMystAge(world) ? getOrCreateInterface(world).getTotalInstability() : 0;
+		return isMystAge(world) ? getOrCreateInterface(world).getInstabilityScore() : 0;
 	}
 
-	public static int getBonusInstabilityForAge(World world) {
+	public static int getBlockInstabilityForAge(World world) {
 		if (!InstabilityInterface.loadedCorrectly)
 			return 0;
-		return isMystAge(world) ? getOrCreateInterface(world).getBonusInstability() : 0;
+		return isMystAge(world) ? getOrCreateInterface(world).getBlockInstability() : 0;
 	}
 
-	public static int getBaseInstabilityForAge(World world) {
+	public static int getSymbolInstabilityForAge(World world) {
+		if (!InstabilityInterface.loadedCorrectly)
+			return 0;
+		return isMystAge(world) ? getOrCreateInterface(world).getSymbolInstability() : 0;
+	}
+
+	public static short getBaseInstabilityForAge(World world) {
 		if (!InstabilityInterface.loadedCorrectly)
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getBaseInstability() : 0;
 	}
+
+	public static int decrInstabilityForAge(World world, int amt) {
+		if (!InstabilityInterface.loadedCorrectly)
+			return 0;
+		return isMystAge(world) ? getOrCreateInterface(world).decrInstability(amt) : 0;
+	}
+
+	public static void addInstabilityForAge(World world, short amt) {
+		if (InstabilityInterface.loadedCorrectly && isMystAge(world)) {
+			getOrCreateInterface(world).addBaseInstability(amt);
+		}
+	}
+
 	/*
 	public static boolean setStabilityForAge(World world, int stability) {
 		if (!loadedCorrectly)
@@ -130,33 +149,6 @@ public class ReikaMystcraftHelper {
 		}
 	}
 	 */
-	public static boolean addBaseInstabilityForAge(World world, short toAdd) {
-		if (!InstabilityInterface.loadedCorrectly)
-			return false;
-		if (isMystAge(world)) {
-			InstabilityInterface ii = getOrCreateInterface(world);
-			short unstable = ii.getBaseInstability();
-			short newunstable = (short)(unstable+toAdd);
-			return ii.setBaseInstability(newunstable);
-		}
-		else {
-			return false;
-		}
-	}
-
-	public static boolean addBonusInstabilityForAge(World world, int toAdd) {
-		if (!InstabilityInterface.loadedCorrectly)
-			return false;
-		if (isMystAge(world)) {
-			InstabilityInterface ii = getOrCreateInterface(world);
-			int unstable = ii.getBonusInstability();
-			int newunstable = unstable+toAdd;
-			return ii.setBonusInstability(newunstable);
-		}
-		else {
-			return false;
-		}
-	}
 
 	private static InstabilityInterface getOrCreateInterface(World world) {
 		if (!InstabilityInterface.loadedCorrectly)
@@ -171,13 +163,14 @@ public class ReikaMystcraftHelper {
 
 	private static final class InstabilityInterface {
 
-		private static final Field controller;
-		private static final Field instability;
+		private static final Field age_controller;
+		private static final Field instability_controller;
 		//private static final Field stabilization;
 		private static final Field data;
 		private static final Field instabilityNumber;
 		private static final Field blockInstabilityNumber;
 		private static final Field baseInstability;
+		private static final Method getScore;
 
 		private static boolean loadedCorrectly;
 
@@ -193,18 +186,19 @@ public class ReikaMystcraftHelper {
 			provider = world.provider;
 			dimensionID = world.provider.dimensionId;
 			try {
-				ageController = controller.get(provider);
-				instabilityController = instability.get(ageController);
+				ageController = age_controller.get(provider);
+				instabilityController = instability_controller.get(ageController);
 				ageData = data.get(ageController);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		/*
-		public int getStabilizationParameter() {
+
+		public int getBlockInstability() {
 			try {
-				return stabilization.getInt(instabilityController);
+				Integer get = (Integer)blockInstabilityNumber.get(ageController);
+				return get != null ? get.intValue() : 0;
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -212,50 +206,7 @@ public class ReikaMystcraftHelper {
 			}
 		}
 
-		public boolean setStabilization(int stable) {
-			try {
-				stabilization.set(instabilityController, stable);
-				return true;
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-		 */
-		public boolean setBonusInstability(int amount) {
-			try {
-				instabilityNumber.set(ageController, amount);
-				return true;
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-
-		public boolean setBaseInstability(int amount) {
-			try {
-				baseInstability.set(instabilityController, amount);
-				return true;
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return false;
-			}
-		}
-
-		public short getBaseInstability() {
-			try {
-				return baseInstability.getShort(ageData);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return 0;
-			}
-		}
-
-		public int getBonusInstability() {
+		public int getSymbolInstability() {
 			try {
 				return instabilityNumber.getInt(ageController);
 			}
@@ -265,34 +216,91 @@ public class ReikaMystcraftHelper {
 			}
 		}
 
-		public int getTotalInstability() {
-			return this.getBaseInstability()+this.getBonusInstability();
-		}
-
-		public boolean addBaseInstability(short amount) {
-			short current = this.getBaseInstability();
-			short newshort = (short)(current+amount);
-			if (newshort < 0)
-				newshort = 0;
+		public short getBaseInstability() {
 			try {
-				baseInstability.set(ageData, newshort);
-				return true;
+				return baseInstability.getShort(ageController);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				return false;
+				return 0;
 			}
 		}
 
-		public boolean addBonusInstability(int amount) {
-			int current = this.getBonusInstability();
+		public int getInstabilityScore() {
 			try {
-				instabilityNumber.set(ageController, current+amount);
-				return true;
+				return (Integer)getScore.invoke(ageController);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
-				return false;
+				return 0;
+			}
+		}
+
+		public void addBaseInstability(short amt) {
+			short base = this.getBaseInstability();
+			this.setBaseInstability((short)(amt+base));
+		}
+
+		public int decrInstability(int amt) {
+			int symbol = this.getSymbolInstability();
+			if (symbol >= amt) {
+				this.setSymbolInstability(symbol-amt);
+				return 0;
+			}
+			else {
+				this.setSymbolInstability(0);
+				int rem = amt-symbol;
+				int block = this.getBlockInstability();
+				if (block >= rem) {
+					this.setBlockInstability(block-rem);
+					return 0;
+				}
+				else {
+					int rem2 = rem-block;
+					this.setBlockInstability(0);
+					short base = this.getBaseInstability();
+					if (base >= rem2) {
+						this.setBaseInstability((short)(base-rem2));
+						return 0;
+					}
+					else {
+						this.setBaseInstability((short)0);
+						return rem2-base;
+					}
+				}
+			}
+		}
+
+		private void setBaseInstability(short amt) {
+			if (amt < 0)
+				amt = 0;
+			try {
+				baseInstability.set(ageController, amt);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		private void setBlockInstability(int amt) {
+			if (amt < 0)
+				amt = 0;
+			try {
+				blockInstabilityNumber.set(ageController, Integer.valueOf(amt));
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		private void setSymbolInstability(int amt) {
+			if (amt < 0)
+				amt = 0;
+			try {
+				instabilityNumber.set(ageController, amt);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -304,9 +312,7 @@ public class ReikaMystcraftHelper {
 			Field numblock = null;
 			Field base = null;
 			Field adata = null;
-			Method tile = null;
-			Method book = null;
-			Method link = null;
+			Method score = null;
 			boolean load = true;
 			if (ModList.MYSTCRAFT.isLoaded()) {
 				try {
@@ -326,17 +332,10 @@ public class ReikaMystcraftHelper {
 					Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
 					base = data.getDeclaredField("instability");
 					base.setAccessible(true);
+					score = data.getDeclaredMethod("getInstabilityScore");
+					score.setAccessible(true);
 					adata = age.getDeclaredField("agedata");
 					adata.setAccessible(true);
-					Class portal = Class.forName("com.xcompwiz.mystcraft.portal.PortalUtils");
-					tile = portal.getDeclaredMethod("getTileEntity", IBlockAccess.class, int.class, int.class, int.class);
-					tile.setAccessible(true);
-					Class booktile = Class.forName("com.xcompwiz.mystcraft.tileentity.TileEntityBook");
-					book = booktile.getDeclaredMethod("getBook");
-					book.setAccessible(true);
-					Class item = Class.forName("com.xcompwiz.mystcraft.item.ItemLinking");
-					link = item.getDeclaredMethod("getLinkInfo", ItemStack.class);
-					link.setAccessible(true);
 					loadedCorrectly = true;
 				}
 				catch (Exception e) {
@@ -348,11 +347,12 @@ public class ReikaMystcraftHelper {
 			else {
 				load = false;
 			}
-			controller = cont;
-			instability = insta;
+			age_controller = cont;
+			instability_controller = insta;
 			//stabilization = stable;
 			instabilityNumber = num;
 			blockInstabilityNumber = numblock;
+			getScore = score;
 			baseInstability = base;
 			data = adata;
 		}
