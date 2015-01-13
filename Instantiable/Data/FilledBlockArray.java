@@ -102,11 +102,16 @@ public class FilledBlockArray extends StructuredBlockArray {
 	 */
 
 	public void place() {
+		this.placeExcept(null);
+	}
+
+	public void placeExcept(Coordinate e) {
 		for (Coordinate c : data.keySet()) {
 			//Block b = this.getBlock(x, y, z);
 			//int meta = this.getBlockMetadata(x, y, z);
 			//world.setBlock(x, y, z, b, meta, 3);
-			data.get(c).place(world, c.xCoord, c.yCoord, c.zCoord);
+			if (!c.equals(e))
+				data.get(c).place(world, c.xCoord, c.yCoord, c.zCoord);
 		}
 	}
 
@@ -274,6 +279,19 @@ public class FilledBlockArray extends StructuredBlockArray {
 			return null;
 		}
 
+	}
+
+	@Override
+	public BlockArray copy() {
+		FilledBlockArray copy = new FilledBlockArray(world);
+		copy.refWorld = refWorld;
+		copy.liquidMat = liquidMat;
+		copy.overflow = overflow;
+		copy.blocks.clear();
+		copy.blocks.addAll(blocks);
+		copy.recalcLimits();
+		copy.data.putAll(data);
+		return copy;
 	}
 
 }

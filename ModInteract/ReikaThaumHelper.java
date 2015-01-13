@@ -46,6 +46,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class ReikaThaumHelper {
 
+	//keep watch for if these change to uuid
 	private static Map<String, ArrayList<String>> research;
 	private static Map<String, AspectList> aspects;
 	private static Map<String, ArrayList<String>> scannedObjects;

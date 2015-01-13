@@ -30,12 +30,20 @@ public interface OreType {
 	public boolean existsInGame();
 
 	public static enum OreRarity {
-		EVERYWHERE(), //Copper, Fluorite
-		COMMON(), //Tin, Redstone
-		AVERAGE(), //Iron
-		SCATTERED(), //Gold, Calcite
-		SCARCE(), //Lapis, Diamond
-		RARE(); //Emerald, Platinum
+		EVERYWHERE("Large and very common veins", "Copper and Fluorite"), //Copper, Fluorite
+		COMMON("Larger sized and common veins", "Tin and Redstone"), //Tin, Redstone
+		AVERAGE("Average sized veins of average rarity", "Iron"), //Iron
+		SCATTERED("Average sized but rarer veins", "Gold and Calcite"), //Gold, Calcite
+		SCARCE("Veins are smaller and often hard to find", "Lapis and Diamond"), //Lapis, Diamond
+		RARE("Generally a single block or two per chunk", "Emerald and Platinum"); //Emerald, Platinum
+
+		public final String desc;
+		public final String examples;
+
+		private OreRarity(String d, String e) {
+			desc = d;
+			examples = e;
+		}
 	}
 
 }

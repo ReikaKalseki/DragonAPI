@@ -140,6 +140,8 @@ public enum ModWoodList implements TreeType {
 		logColor = color;
 		if (!mod.isLoaded()) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Not loading "+this.getLabel()+": Mod not present.");
+			blockMeta = new int[]{0};
+			leafMeta = new int[]{0};
 			return;
 		}
 		Class cl = req.getBlockClass();
