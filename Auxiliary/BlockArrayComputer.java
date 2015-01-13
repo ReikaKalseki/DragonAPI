@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import Reika.DragonAPI.Instantiable.Data.BlockArray;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 
 public class BlockArrayComputer implements Runnable {
 

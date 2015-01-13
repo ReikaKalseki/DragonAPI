@@ -15,7 +15,7 @@ import java.util.Arrays;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.Instantiable.Data.BlockMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Interfaces.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 

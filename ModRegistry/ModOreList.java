@@ -25,7 +25,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.Data.ItemHashMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.OreType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;

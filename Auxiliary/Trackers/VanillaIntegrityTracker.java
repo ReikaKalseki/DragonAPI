@@ -22,7 +22,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.VanillaIntegrityException;
 import Reika.DragonAPI.Exception.WTFException;
-import Reika.DragonAPI.Instantiable.Data.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 
 public class VanillaIntegrityTracker {
 

@@ -27,6 +27,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import Reika.DragonAPI.Interfaces.AnimatedSpritesheet;
+import Reika.DragonAPI.Interfaces.BlendedColor;
+import Reika.DragonAPI.Interfaces.GradientBlend;
 import Reika.DragonAPI.Interfaces.MultiLayerItemSprite;
 import Reika.DragonAPI.Interfaces.SpriteRenderCallback;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
@@ -101,15 +103,36 @@ public final class ReikaSpriteSheets {
 				GL11.glPushMatrix();
 				prepareInvRender();
 				v5.startDrawingQuads();
+				int c1 = 0xffffff;
+				int c2 = 0xffffff;
+				int c3 = 0xffffff;
+				int c4 = 0xffffff;
+				if (item instanceof GradientBlend) {
+					GL11.glShadeModel(GL11.GL_SMOOTH);
+					GradientBlend g = (GradientBlend)item;
+					c1 = g.getColorOne(is);
+					c2 = g.getColorTwo(is);
+					c3 = g.getColorThree(is);
+					c4 = g.getColorFour(is);
+				}
+				else if (item instanceof BlendedColor) {
+					int c = ((BlendedColor)item).getColor(is);
+					c1 = c2 = c3 = c4 = c;
+				}
+				v5.setColorOpaque_I(c1);
 				v5.addVertexWithUV(0, 0, z, 0.0625F*col, 0.0625F+0.0625F*row);
+				v5.setColorOpaque_I(c2);
 				v5.addVertexWithUV(1, 0, z, 0.0625F+0.0625F*col, 0.0625F+0.0625F*row);
+				v5.setColorOpaque_I(c3);
 				v5.addVertexWithUV(1, 1, z, 0.0625F+0.0625F*col, 0.0625F*row);
+				v5.setColorOpaque_I(c4);
 				v5.addVertexWithUV(0, 1, z, 0.0625F*col, 0.0625F*row);
 				v5.draw();
 				GL11.glPopMatrix();
 				GL11.glBlendFunc(src, dst);
 				if (!blend)
 					GL11.glDisable(GL11.GL_BLEND);
+				GL11.glShadeModel(GL11.GL_FLAT);
 			}
 			if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
 				if (type == type.EQUIPPED && (item instanceof ItemTool || item instanceof ItemSword || item instanceof ItemShears)) {

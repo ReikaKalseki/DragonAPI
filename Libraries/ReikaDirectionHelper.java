@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Instantiable.Data.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 
 public class ReikaDirectionHelper extends DragonAPICore {
 

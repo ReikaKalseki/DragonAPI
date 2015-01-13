@@ -32,7 +32,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.Data.ImmutableItemStack;
+import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 
 public final class ReikaItemHelper extends DragonAPICore {
 

@@ -18,7 +18,7 @@ import java.util.Map;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Instantiable.Data.ChancedOutputList;
+import Reika.DragonAPI.Instantiable.Data.Collections.ChancedOutputList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ForestryRecipeHelper extends ModHandlerBase {

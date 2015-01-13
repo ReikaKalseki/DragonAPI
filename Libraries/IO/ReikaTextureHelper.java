@@ -35,7 +35,7 @@ import org.lwjgl.opengl.GL11;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaImageLoader;
 import Reika.DragonAPI.IO.ReikaTextureBinder;
-import Reika.DragonAPI.Instantiable.Data.PluralMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;

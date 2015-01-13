@@ -27,6 +27,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import appeng.api.config.Actionable;
 import appeng.api.config.FuzzyMode;

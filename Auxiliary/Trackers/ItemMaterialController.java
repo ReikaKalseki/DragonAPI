@@ -19,7 +19,7 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Instantiable.ItemMaterial;
-import Reika.DragonAPI.Instantiable.Data.ItemHashMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 

@@ -22,7 +22,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.Data.BlockMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModInteract.BerryBushHandler;

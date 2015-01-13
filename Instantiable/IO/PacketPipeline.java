@@ -18,7 +18,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Instantiable.Data.WorldLocation;
+import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Interfaces.IPacketHandler;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;

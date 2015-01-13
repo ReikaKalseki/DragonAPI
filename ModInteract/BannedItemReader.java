@@ -19,7 +19,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.Instantiable.Data.ImmutableList;
+import Reika.DragonAPI.Instantiable.Data.Collections.ImmutableList;
 
 public class BannedItemReader {
 

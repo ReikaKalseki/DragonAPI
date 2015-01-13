@@ -13,7 +13,7 @@ import java.util.Collection;
 
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Instantiable.Data.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 
 public class SuggestedModsTracker {

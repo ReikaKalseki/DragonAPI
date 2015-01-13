@@ -19,7 +19,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Exception.StupidIDException;
 import Reika.DragonAPI.Extras.IDType;
-import Reika.DragonAPI.Instantiable.Data.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class PotionCollisionTracker {
