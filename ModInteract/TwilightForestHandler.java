@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
@@ -26,6 +27,9 @@ public class TwilightForestHandler extends ModHandlerBase {
 	public final Block treeCoreID;
 	public final Block shieldID;
 	public final Block portalID;
+	public final Block hedgeID;
+
+	public final Item steelleaf;
 
 	public final int breakerMeta;
 
@@ -42,12 +46,15 @@ public class TwilightForestHandler extends ModHandlerBase {
 		Block idmaze = null;
 		Block idcore = null;
 		Block idshield = null;
-		int dim = 7;
+		Block idhedge = null;
 		Block idportal = null;
+		int dim = 7;
+		Item leaf = null;
 
 		if (this.hasMod()) {
 			try {
 				Class twilight = this.getMod().getBlockClass();
+				Class items = this.getMod().getItemClass();
 				Class devices = Class.forName("twilightforest.block.BlockTFTowerDevice");
 				Class mod = Class.forName("twilightforest.TwilightForestMod");
 				Field root = twilight.getField("root");
@@ -59,6 +66,8 @@ public class TwilightForestHandler extends ModHandlerBase {
 				Field breaker = devices.getField("META_ANTIBUILDER");
 				Field dimension = mod.getField("dimensionID");
 				Field portal = twilight.getField("portal");
+				Field hedge = twilight.getField("hedge");
+				Field sleaf = items.getField("steeleafIngot");
 				idroot = ((Block)root.get(null));
 				idmachine = ((Block)machine.get(null));
 				idtowerwood = ((Block)towerwood.get(null));
@@ -66,6 +75,8 @@ public class TwilightForestHandler extends ModHandlerBase {
 				idcore = ((Block)core.get(null));
 				idshield = ((Block)shield.get(null));
 				idportal = ((Block)portal.get(null));
+				idhedge = ((Block)hedge.get(null));
+				leaf = ((Item)sleaf.get(null));
 				metabreaker = breaker.getInt(null);
 				dim = dimension.getInt(null);
 			}
@@ -107,6 +118,9 @@ public class TwilightForestHandler extends ModHandlerBase {
 		shieldID = idshield;
 		dimensionID = dim;
 		portalID = idportal;
+		hedgeID = idhedge;
+
+		steelleaf = leaf;
 	}
 
 	public static TwilightForestHandler getInstance() {

@@ -77,7 +77,7 @@ public abstract class BasicInventory implements IInventory {
 	public void markDirty() {}
 
 	@Override
-	public final boolean isUseableByPlayer(EntityPlayer ep) {return false;}
+	public boolean isUseableByPlayer(EntityPlayer ep) {return false;}
 
 	@Override
 	public void openInventory() {}
