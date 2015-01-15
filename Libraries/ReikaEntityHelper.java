@@ -67,8 +67,11 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.StatCollector;
+import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Interfaces.TameHostile;
@@ -679,6 +682,38 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (name.startsWith("twilightforest.entity.boss"))
 			return true;
 		return false;
+	}
+
+	public static void transferEntityToDimension(Entity e, int to_dim) {
+		transferEntityToDimension(e, to_dim, null);
+	}
+
+	public static void transferEntityToDimension(Entity e, int to_dim, Teleporter t) {
+		if (!e.worldObj.isRemote && !e.isDead) {
+			e.worldObj.theProfiler.startSection("changeDimension");
+			MinecraftServer ms = MinecraftServer.getServer();
+			int from_dim = e.dimension;
+			WorldServer from = ms.worldServerForDimension(from_dim);
+			WorldServer to = ms.worldServerForDimension(to_dim);
+			e.dimension = to_dim;
+			e.worldObj.removeEntity(e);
+			e.isDead = false;
+			e.worldObj.theProfiler.startSection("reposition");
+			ms.getConfigurationManager().transferEntityToWorld(e, from_dim, from, to, t != null ? t : new Teleporter(to));
+			e.worldObj.theProfiler.endStartSection("reloading");
+			Entity copy = EntityList.createEntityByName(EntityList.getEntityString(e), to);
+
+			if (copy != null) {
+				copy.copyDataFrom(e, true);
+				to.spawnEntityInWorld(copy);
+			}
+
+			e.isDead = true;
+			e.worldObj.theProfiler.endSection();
+			from.resetUpdateEntityTick();
+			to.resetUpdateEntityTick();
+			e.worldObj.theProfiler.endSection();
+		}
 	}
 
 }

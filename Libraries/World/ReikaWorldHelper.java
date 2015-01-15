@@ -91,17 +91,17 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return false;
 		if (b.getFlammability(world, x, y, z, ForgeDirection.UP) > 0)
 			return true;
-		return (BlockProperties.isFlammable(b));
+		return BlockProperties.isFlammable(b);
 	}
 
 	public static boolean flammable(Block id) {
 		if (id == Blocks.air)
 			return false;
-		return (BlockProperties.isFlammable(id));
+		return BlockProperties.isFlammable(id);
 	}
 
 	public static boolean nonSolidBlocks(Block id) {
-		return (BlockProperties.isNonSolid(id));
+		return BlockProperties.isNonSolid(id);
 	}
 
 	/** Caps the metadata at a certain value (eg, for leaves, metas are from 0-11, but there are only 4 types, and each type has 3 metas).
