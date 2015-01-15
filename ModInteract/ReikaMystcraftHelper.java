@@ -218,7 +218,7 @@ public class ReikaMystcraftHelper {
 
 		public short getBaseInstability() {
 			try {
-				return baseInstability.getShort(ageController);
+				return baseInstability.getShort(ageData);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -275,7 +275,7 @@ public class ReikaMystcraftHelper {
 			if (amt < 0)
 				amt = 0;
 			try {
-				baseInstability.set(ageController, amt);
+				baseInstability.set(ageData, amt);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -332,7 +332,7 @@ public class ReikaMystcraftHelper {
 					Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
 					base = data.getDeclaredField("instability");
 					base.setAccessible(true);
-					score = data.getDeclaredMethod("getInstabilityScore");
+					score = age.getDeclaredMethod("getInstabilityScore");
 					score.setAccessible(true);
 					adata = age.getDeclaredField("agedata");
 					adata.setAccessible(true);

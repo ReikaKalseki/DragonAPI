@@ -22,8 +22,12 @@ public class NEIRecipeCheckEvent extends Event {
 	public final GuiContainer gui;
 
 	public NEIRecipeCheckEvent(GuiContainer gui) {
+		this(gui, GuiContainerManager.getStackMouseOver(gui));
+	}
+
+	public NEIRecipeCheckEvent(GuiContainer gui, ItemStack item) {
 		this.gui = gui;
-		item = GuiContainerManager.getStackMouseOver(gui);
+		this.item = item;
 	}
 
 	public ItemStack getItem() {

@@ -10,9 +10,14 @@
 package Reika.DragonAPI.ModInteract;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Instantiable.Event.NEIRecipeCheckEvent;
+import codechicken.nei.ItemPanel;
+import codechicken.nei.ItemPanel.ItemPanelSlot;
+import codechicken.nei.LayoutManager;
 import codechicken.nei.NEIClientConfig;
+import codechicken.nei.NEIController;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.guihook.IContainerInputHandler;
 import codechicken.nei.recipe.GuiRecipe;
@@ -43,7 +48,23 @@ public class NEIIntercept implements IContainerInputHandler {
 
 	@Override
 	public boolean mouseClicked(GuiContainer gui, int mousex, int mousey, int button) {
-		return button == 0 && gui instanceof GuiRecipe && MinecraftForge.EVENT_BUS.post(new NEIRecipeCheckEvent(gui));
+		if (button == 0) {
+			if (gui instanceof GuiRecipe)
+				return MinecraftForge.EVENT_BUS.post(new NEIRecipeCheckEvent(gui));
+			else {
+				ItemPanel panel = LayoutManager.itemPanel;
+				ItemPanelSlot slot = panel.getSlotMouseOver(mousex, mousey);
+				if (slot != null && panel.draggedStack == null) {
+					ItemStack item = slot.item;
+					if (NEIController.manager.window instanceof GuiRecipe || !NEIClientConfig.canCheatItem(item)) {
+						if (button == 0) {
+							return MinecraftForge.EVENT_BUS.post(new NEIRecipeCheckEvent(gui, item));
+						}
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override

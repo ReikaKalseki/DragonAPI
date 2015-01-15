@@ -339,4 +339,14 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		}
 		return null;
 	}
+
+	public static boolean isFake(EntityPlayer ep) {
+		if (ep instanceof FakePlayer)
+			return true;
+		if (ep.getCommandSenderName().contains("[CoFH]") || ep.getCommandSenderName().contains("[ThaumcraftTablet]"))
+			return true;
+		if (ep.getClass().getName().toLowerCase().contains("fakeplayer"))
+			return true;
+		return false;
+	}
 }
