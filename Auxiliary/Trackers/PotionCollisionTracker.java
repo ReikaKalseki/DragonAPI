@@ -34,15 +34,6 @@ public class PotionCollisionTracker {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	public boolean isIDRegisteredToTracker(int id) {
-		for (DragonAPIMod mod : IDs.keySet()) {
-			Collection<Integer> ids = IDs.get(mod);
-			if (ids.contains(id))
-				return true;
-		}
-		return false;
-	}
-
 	private void addEntry(DragonAPIMod mod, int id, Class potion) {
 		IDs.addValue(mod, id);
 		classes.put(id, potion);
@@ -54,9 +45,9 @@ public class PotionCollisionTracker {
 		}
 		Potion potion = Potion.potionTypes[id];
 		if (potion != null)
-			this.onConflict(null, id);
-		if (this.isIDRegisteredToTracker(id))
-			this.onConflict(mod, id);
+			this.onConflict(null, id, potion.getClass(), potionClass);
+		if (classes.containsKey(id))
+			this.onConflict(mod, id, classes.get(id), potionClass);
 		else
 			this.addEntry(mod, id, potionClass);
 	}
@@ -74,14 +65,14 @@ public class PotionCollisionTracker {
 					Class c = potion.getClass();
 					Class c1 = classes.get(id);
 					if (c1 != c)
-						this.onConflict(mod, id);
+						this.onConflict(mod, id, c, c1);
 				}
 			}
 		}
 	}
 
-	protected void onConflict(DragonAPIMod mod, int id) {
-		String s = "Potion IDs: "+Potion.potionTypes[id]+" @ "+id;
+	protected void onConflict(DragonAPIMod mod, int id, Class c, Class c1) {
+		String s = "Potion IDs: "+Potion.potionTypes[id]+" @ "+id+" ("+c.getSimpleName()+" & "+c1.getSimpleName()+")";
 		if (mod == null)
 			throw new IDConflictException(s);
 		throw new IDConflictException(mod, s);

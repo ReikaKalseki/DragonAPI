@@ -32,15 +32,6 @@ public class BiomeCollisionTracker {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	public boolean isIDRegisteredToTracker(int id) {
-		for (DragonAPIMod mod : IDs.keySet()) {
-			Collection<Integer> ids = IDs.get(mod);
-			if (ids.contains(id))
-				return true;
-		}
-		return false;
-	}
-
 	private void addEntry(DragonAPIMod mod, int id, Class biome) {
 		IDs.addValue(mod, id);
 		classes.put(id, biome);
@@ -52,9 +43,9 @@ public class BiomeCollisionTracker {
 		}
 		BiomeGenBase biome = BiomeGenBase.biomeList[id];
 		if (biome != null)
-			this.onConflict(null, id);
-		if (this.isIDRegisteredToTracker(id))
-			this.onConflict(mod, id);
+			this.onConflict(null, id, biome.getClass(), biomeClass);
+		else if (classes.containsKey(id))
+			this.onConflict(mod, id, classes.get(id), biomeClass);
 		else
 			this.addEntry(mod, id, biomeClass);
 	}
@@ -72,14 +63,14 @@ public class BiomeCollisionTracker {
 					Class c = biome.getClass();
 					Class c1 = classes.get(id);
 					if (c1 != c)
-						this.onConflict(mod, id);
+						this.onConflict(mod, id, c, c1);
 				}
 			}
 		}
 	}
 
-	protected void onConflict(DragonAPIMod mod, int id) {
-		String s = "Biome IDs: "+BiomeGenBase.biomeList[id]+" @ ID "+id;
+	protected void onConflict(DragonAPIMod mod, int id, Class c, Class c1) {
+		String s = "Biome IDs: "+BiomeGenBase.biomeList[id]+" @ ID "+id+" ("+c.getSimpleName()+" & "+c1.getSimpleName()+")";
 		if (mod == null)
 			throw new IDConflictException(s);
 		throw new IDConflictException(mod, s);

@@ -30,6 +30,7 @@ public class TwilightForestHandler extends ModHandlerBase {
 	public final Block hedgeID;
 
 	public final Item steelleaf;
+	public final Item ironwood;
 
 	public final int breakerMeta;
 
@@ -50,6 +51,7 @@ public class TwilightForestHandler extends ModHandlerBase {
 		Block idportal = null;
 		int dim = 7;
 		Item leaf = null;
+		Item ironw = null;
 
 		if (this.hasMod()) {
 			try {
@@ -68,6 +70,7 @@ public class TwilightForestHandler extends ModHandlerBase {
 				Field portal = twilight.getField("portal");
 				Field hedge = twilight.getField("hedge");
 				Field sleaf = items.getField("steeleafIngot");
+				Field iwood = items.getField("ironwoodIngot");
 				idroot = ((Block)root.get(null));
 				idmachine = ((Block)machine.get(null));
 				idtowerwood = ((Block)towerwood.get(null));
@@ -121,6 +124,7 @@ public class TwilightForestHandler extends ModHandlerBase {
 		hedgeID = idhedge;
 
 		steelleaf = leaf;
+		ironwood = ironw;
 	}
 
 	public static TwilightForestHandler getInstance() {

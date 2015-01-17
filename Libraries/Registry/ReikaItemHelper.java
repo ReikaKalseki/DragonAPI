@@ -115,10 +115,24 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final ItemStack stonebrickSlab = new ItemStack(Blocks.stone_slab, 1, 5);
 	public static final ItemStack netherSlab = new ItemStack(Blocks.stone_slab, 1, 6);
 	public static final ItemStack quartzSlab = new ItemStack(Blocks.stone_slab, 1, 7);
+
+	public static final ItemStack stoneDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 0);
+	public static final ItemStack sandstoneDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 1);
+	public static final ItemStack cobbleDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 3);
+	public static final ItemStack brickDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 4);
+	public static final ItemStack stonebrickDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 5);
+	public static final ItemStack netherDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 6);
+	public static final ItemStack quartzDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 7);
+
 	public static final ItemStack oakSlab = new ItemStack(Blocks.wooden_slab, 1, 0);
 	public static final ItemStack spruceSlab = new ItemStack(Blocks.wooden_slab, 1, 1);
 	public static final ItemStack birchSlab = new ItemStack(Blocks.wooden_slab, 1, 2);
 	public static final ItemStack jungleSlab = new ItemStack(Blocks.wooden_slab, 1, 3);
+
+	public static final ItemStack oakDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 0);
+	public static final ItemStack spruceDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 1);
+	public static final ItemStack birchDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 2);
+	public static final ItemStack jungleDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 3);
 
 	private static final ItemComparator comparator = new ItemComparator();
 

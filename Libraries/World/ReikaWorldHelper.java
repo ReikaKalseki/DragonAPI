@@ -1772,4 +1772,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		dropBlockAt(world, x, y, z);
 		world.setBlock(x, y, z, Blocks.air);
 	}
+
+	public static boolean matchWithItemStack(World world, int x, int y, int z, ItemStack is) {
+		return ReikaItemHelper.matchStackWithBlock(is, world.getBlock(x, y, z)) && is.getItemDamage() == world.getBlockMetadata(x, y, z);
+	}
 }

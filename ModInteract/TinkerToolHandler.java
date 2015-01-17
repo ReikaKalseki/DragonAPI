@@ -10,8 +10,8 @@
 package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -23,26 +23,84 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 	private static final TinkerToolHandler instance = new TinkerToolHandler();
 
-	public final Item pickID;
-	public final Item hammerID;
+	public enum Tools {
+		PICK("pickaxe"),
+		SPADE("shovel"),
+		AXE("hatchet"),
+		BROADSWORD("broadsword"),
+		LONGSWORD("longsword"),
+		RAPIER("rapier"),
+		DAGGER("dagger"),
+		CUTLASS("cutlass"),
+		PAN("frypan"),
+		SIGN("battlesign"),
+		CHISEL("chisel"),
+		MATTOCK("mattock"),
+		SCYTHE("scythe"),
+		LUMBERAXE("lumberaxe"),
+		CLEAVER("cleaver"),
+		HAMMER("hammer"),
+		BATTLEAX("battleaxe");
+
+		private Item item;
+		private final String field;
+
+		private static final Tools[] list = values();
+
+		private Tools(String s) {
+			field = s;
+		}
+
+		public Item getItem() {
+			return item;
+		}
+
+	}
+
+	public enum Blocks {
+		TOOLSTATION("toolStationWood"),
+		TOOLSTATION2("toolStationStone"),
+		TOOLFORGE("toolForge"),
+		WORKBENCH("craftingStationWood"),
+		CRAFTSLAB("craftingSlabWood"),
+		FURNACE("furnaceSlab");
+
+		private Block item;
+		private final String field;
+
+		private static final Blocks[] list = values();
+
+		private Blocks(String s) {
+			field = s;
+		}
+
+		public Block getItem() {
+			return item;
+		}
+
+	}
+
+	private boolean init = false;
 
 	private TinkerToolHandler() {
 		super();
-		Item idpick = null;
-		Item idhammer = null;
 
 		if (this.hasMod()) {
 			try {
-				Class tic = Class.forName("tconstruct.library.TConstructRegistry");
-				Field f = tic.getField("tools");
-				ArrayList li = (ArrayList)f.get(null);
-				for (int i = 0; i < li.size(); i++) {
-					Item item = (Item)li.get(i);
-					if (item.getUnlocalizedName().contains("InfiTool.Pickaxe"))
-						idpick = item;
-					else if (item.getUnlocalizedName().contains("InfiTool.Hammer"))
-						idhammer = item;
+				Class tic = Class.forName("tconstruct.tools.TinkerTools");
+				for (int i = 0; i < Tools.list.length; i++) {
+					Tools t = Tools.list[i];
+					Field f = tic.getField(t.field);
+					t.item = (Item)f.get(null);
 				}
+
+				for (int i = 0; i < Blocks.list.length; i++) {
+					Blocks t = Blocks.list[i];
+					Field f = tic.getField(t.field);
+					t.item = (Block)f.get(null);
+				}
+
+				init = true;
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
@@ -72,9 +130,6 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		else {
 			this.noMod();
 		}
-
-		pickID = idpick;
-		hammerID = idhammer;
 	}
 
 	public static TinkerToolHandler getInstance() {
@@ -83,7 +138,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return pickID != null && hammerID != null;
+		return init;
 	}
 
 	@Override
@@ -92,11 +147,11 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	}
 
 	public boolean isPick(ItemStack is) {
-		return is.getItem() == pickID;
+		return is != null && is.getItem() == Tools.PICK.item;
 	}
 
 	public boolean isHammer(ItemStack is) {
-		return is.getItem() == hammerID;
+		return is != null && is.getItem() == Tools.HAMMER.item;
 	}
 
 	public int getHarvestLevel(ItemStack is) {
@@ -116,6 +171,14 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 	public boolean isDiamondOrBetter(ItemStack is) {
 		return this.getHarvestLevel(is) >= 3;
+	}
+
+	public boolean isToolStation(Block b) {
+		return b == Blocks.TOOLSTATION.item || b == Blocks.TOOLSTATION2.item;
+	}
+
+	public boolean isWorkbench(Block b) {
+		return b == Blocks.WORKBENCH.item || b == Blocks.CRAFTSLAB.item;
 	}
 
 }

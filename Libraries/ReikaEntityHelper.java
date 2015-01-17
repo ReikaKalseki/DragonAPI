@@ -689,30 +689,35 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	}
 
 	public static void transferEntityToDimension(Entity e, int to_dim, Teleporter t) {
-		if (!e.worldObj.isRemote && !e.isDead) {
-			e.worldObj.theProfiler.startSection("changeDimension");
-			MinecraftServer ms = MinecraftServer.getServer();
-			int from_dim = e.dimension;
-			WorldServer from = ms.worldServerForDimension(from_dim);
-			WorldServer to = ms.worldServerForDimension(to_dim);
-			e.dimension = to_dim;
-			e.worldObj.removeEntity(e);
-			e.isDead = false;
-			e.worldObj.theProfiler.startSection("reposition");
-			ms.getConfigurationManager().transferEntityToWorld(e, from_dim, from, to, t != null ? t : new Teleporter(to));
-			e.worldObj.theProfiler.endStartSection("reloading");
-			Entity copy = EntityList.createEntityByName(EntityList.getEntityString(e), to);
+		if (!e.isDead) {
+			if (!e.worldObj.isRemote) {
+				e.worldObj.theProfiler.startSection("changeDimension");
+				MinecraftServer ms = MinecraftServer.getServer();
+				int from_dim = e.dimension;
+				WorldServer from = ms.worldServerForDimension(from_dim);
+				WorldServer to = ms.worldServerForDimension(to_dim);
+				e.dimension = to_dim;
+				e.worldObj.removeEntity(e);
+				e.isDead = false;
+				e.worldObj.theProfiler.startSection("reposition");
+				ms.getConfigurationManager().transferEntityToWorld(e, from_dim, from, to, t != null ? t : new Teleporter(to));
+				e.worldObj.theProfiler.endStartSection("reloading");
+				Entity copy = EntityList.createEntityByName(EntityList.getEntityString(e), to);
 
-			if (copy != null) {
-				copy.copyDataFrom(e, true);
-				to.spawnEntityInWorld(copy);
+				if (copy != null) {
+					copy.copyDataFrom(e, true);
+					to.spawnEntityInWorld(copy);
+				}
+
+				e.isDead = true;
+				e.worldObj.theProfiler.endSection();
+				from.resetUpdateEntityTick();
+				to.resetUpdateEntityTick();
+				e.worldObj.theProfiler.endSection();
 			}
-
-			e.isDead = true;
-			e.worldObj.theProfiler.endSection();
-			from.resetUpdateEntityTick();
-			to.resetUpdateEntityTick();
-			e.worldObj.theProfiler.endSection();
+			else {
+				e.dimension = to_dim;
+			}
 		}
 	}
 

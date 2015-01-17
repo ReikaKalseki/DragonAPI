@@ -11,7 +11,11 @@ package Reika.DragonAPI.ASM;
 
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.ClassReader;
@@ -48,7 +52,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		HELDRENDEREVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		POTIONEFFECTID("net.minecraft.potion.PotionEffect", "rw"),
 		POTIONPACKETID("net.minecraft.network.play.server.S1DPacketEntityEffect", "in"),
-		POTIONPACKETID2("net.minecraft.client.network.NetHandlerPlayClient", "bjb");
+		POTIONPACKETID2("net.minecraft.client.network.NetHandlerPlayClient", "bjb"),
+		BLOCKPLACE("net.minecraft.item.ItemBlock", "abh");
 
 		private final String obfName;
 		private final String deobfName;
@@ -298,6 +303,35 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				}
 				break;
 			}
+			case BLOCKPLACE: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "placeBlockAt", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFFI)Z"); //Forge func, so no srg
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+						MethodInsnNode min = (MethodInsnNode)ain;
+						String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_149689_a" : "onBlockPlacedBy";
+						if (min.name.equals(func)) {
+							m.instructions.insert(min, new InsnNode(Opcodes.POP));
+							m.instructions.insert(min, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+							m.instructions.insert(min, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/PlayerPlaceBlockEvent", "<init>", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;ILnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V"));
+							m.instructions.insert(min, new VarInsnNode(Opcodes.ALOAD, 2));
+							m.instructions.insert(min, new VarInsnNode(Opcodes.ALOAD, 1));
+							m.instructions.insert(min, new VarInsnNode(Opcodes.ILOAD, 11));
+							m.instructions.insert(min, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/item/ItemBlock", "field_150939_a", "Lnet/minecraft/block/Block;"));
+							m.instructions.insert(min, new VarInsnNode(Opcodes.ALOAD, 0));
+							m.instructions.insert(min, new VarInsnNode(Opcodes.ILOAD, 6));
+							m.instructions.insert(min, new VarInsnNode(Opcodes.ILOAD, 5));
+							m.instructions.insert(min, new VarInsnNode(Opcodes.ILOAD, 4));
+							m.instructions.insert(min, new VarInsnNode(Opcodes.ALOAD, 3));
+							m.instructions.insert(min, new InsnNode(Opcodes.DUP));
+							m.instructions.insert(min, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/PlayerPlaceBlockEvent"));
+							m.instructions.insert(min, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+							break;
+						}
+					}
+				}
+			}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -306,6 +340,28 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			//ClassNode vcn = new ClassNode(); //verify
 			//new ClassReader(newdata).accept(vcn, 0);
 			return newdata;
+		}
+	}
+
+	public class test {
+		Block field_150939_a = null;
+
+		public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
+		{
+
+			if (!world.setBlock(x, y, z, field_150939_a, metadata, 3))
+			{
+				return false;
+			}
+
+			if (world.getBlock(x, y, z) == field_150939_a)
+			{
+				//MinecraftForge.EVENT_BUS.post(new PlayerPlaceBlockEvent(world, x, y, z, field_150939_a, metadata, stack, player));
+				field_150939_a.onBlockPlacedBy(world, x, y, z, player, stack);
+				field_150939_a.onPostBlockPlaced(world, x, y, z, metadata);
+			}
+
+			return true;
 		}
 	}
 
