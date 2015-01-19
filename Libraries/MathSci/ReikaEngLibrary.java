@@ -15,9 +15,13 @@ import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaEngLibrary extends DragonAPICore {
 
-	public static final double e = Math.E;				// s/e
-	public static final double pi = Math.PI;		// s/e
-	public static final double G = 6.67*0.00000000001;	// Grav Constant
+	/** Various constants */
+	public static final double e = Math.E;		// s/e
+	public static final double pi = Math.PI;	// s/e
+	public static final double G = 6.67e-11;	// Grav Constant
+	public static final double c = 2.998e8;		// Speed of light
+	public static final double k = 9e9;			// electrostatic constant
+	public static final double sigma = 5.67e-8;	// heat radiation constant
 
 	/** Densities in kg/m^3 */
 	public static final double patm = 101300;			// Atmosphere Sealevel pressure
@@ -31,52 +35,54 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double rhographite = 2150;		// Graphite density
 
 	/** Shear moduli */
-	public static final double Gsteel = 79.3*1000000000;
-	public static final double Giron = 82*1000000000;
-	public static final double Gglass = 26.2*1000000000;
-	public static final double Gdiamond = 478*1000000000;
-	public static final double Galuminum = 25.5*1000000000;
-	public static final double Grubber = 0.6*1000000;
-	public static final double Gwood = 620*1000000;
-	public static final double Gconcrete = 79.3*1000000000;
-	public static final double Gstone = 8*1000000000; //varies widely
-	public static final double Ggold = 27*1000000000;
+	public static final double Gsteel = 79.3e9;
+	public static final double Giron = 82e9;
+	public static final double Gglass = 26.2e9;
+	public static final double Gdiamond = 478e9;
+	public static final double Galuminum = 25.5e9;
+	public static final double Grubber = 0.6e6;
+	public static final double Gwood = 620e6;
+	public static final double Gconcrete = 79.3e9;
+	public static final double Gstone = 8e9; //varies widely
+	public static final double Ggold = 27e9;
 
 	/** Elastic Moduli */
-	public static final double Esteel = 210*1000000000;
-	public static final double Eiron = 211*1000000000;
-	public static final double Eglass = 70*1000000000;
-	public static final double Ediamond = 1.220*1000000000000D; //1.22 TPa... O_O
-	public static final double Ealuminum = 69*1000000000;
-	public static final double Erubber = 50*1000000;
-	public static final double Ewood = 11*1000000;
-	public static final double Econcrete = 30*1000000000;
-	public static final double Estone = 50*1000000000; //varies widely
-	public static final double Egold = 79*1000000000;
+	public static final double Esteel = 210e9;
+	public static final double Eiron = 211e9;
+	public static final double Eglass = 70e9;
+	public static final double Ediamond = 1.220e12; //1.22 TPa... O_O
+	public static final double Ealuminum = 69e9;
+	public static final double Erubber = 50e6;
+	public static final double Ewood = 11e6;
+	public static final double Econcrete = 30e9;
+	public static final double Estone = 50e9; //varies widely
+	public static final double Egold = 79e9;
 
 	/** Ultimate Tensile Strengths */
-	public static final double Tsteel = 400*1000000;
-	public static final double Tiron = 200*1000000;
-	public static final double Tglass = 33*1000000;
-	public static final double Tdiamond = 5*1000000000;
-	public static final double Taluminum = 110*1000000;
-	public static final double Trubber = 5*1000000;
-	public static final double Twood = 20*1000000;
-	public static final double Tconcrete = 3*1000000;
-	public static final double Tstone = 100*1000000; //varies widely
-	public static final double Tgold = 108*1000000;
+	public static final double Tsteel = 400e6;
+	public static final double Tiron = 200e6;
+	public static final double Tglass = 33e6;
+	public static final double Tdiamond = 5e9;
+	public static final double Taluminum = 110e6;
+	public static final double Trubber = 5e6;
+	public static final double Twood = 20e6;
+	public static final double Tconcrete_tensile = 3e6;
+	public static final double Tconcrete_compressive = 9e7;
+	public static final double Tstone = 100e6; //varies widely
+	public static final double Tgold = 108e6;
 
 	/** Ultimate Shear Strengths */
-	public static final double Ssteel = 280*1000000;
-	public static final double Siron = 116*1000000;
-	public static final double Sglass = 19.1*1000000;
-	public static final double Sdiamond = 2.9*1000000000;
-	public static final double Saluminum = 63.8*1000000;
-	public static final double Srubber = 2.9*1000000;
-	public static final double Swood = 11.6*1000000;
-	public static final double Sconcrete = 1.74*1000000; //tensile; 30x stronger for compression
-	public static final double Sstone = 40*1000000; //varies widely
-	public static final double Sgold = 62.6*1000000;
+	public static final double Ssteel = 280e6;
+	public static final double Siron = 116e6;
+	public static final double Sglass = 19.1e6;
+	public static final double Sdiamond = 2.9e9;
+	public static final double Saluminum = 63.8e6;
+	public static final double Srubber = 2.9e6;
+	public static final double Swood = 11.6e6;
+	public static final double Sconcrete_tensile = 1.74e6;
+	public static final double Sconcrete_compressive = 5.1e7;
+	public static final double Sstone = 40e6; //varies widely
+	public static final double Sgold = 62.6e6;
 
 	/** Calculates an exponential decay. Args: Rate, initial value, time */
 	public static double decay(double rate, double ivp, double time) {

@@ -52,7 +52,7 @@ public enum ModList {
 	DARTCRAFT("DartCraft", "bluedart.Blocks.DartBlock", "bluedart.Items.DartItem"), //ensure still here
 	TINKERER("TConstruct", "tconstruct.world.TinkerWorld", null), //tconstruct.library.TConstructRegistry.getBlock/Item
 	THERMALEXPANSION("ThermalExpansion", "thermalexpansion.block.TEBlocks", "thermalexpansion.item.TEItems"),
-	THERMALFOUNDATION("ThermalFoundation", "thermalfoundation.item.TFBlocks", "thermalfoundation.item.TFItems"),
+	THERMALFOUNDATION("ThermalFoundation", "thermalfoundation.block.TFBlocks", "thermalfoundation.item.TFItems"),
 	MEKANISM("Mekanism", "mekanism.common.Mekanism"),
 	MEKTOOLS("MekanismTools", "mekanism.tools.common.MekanismTools"), //ensure still here
 	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks.RailcraftBlocks", null), //items spread over half a dozen classes

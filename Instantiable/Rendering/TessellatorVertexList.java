@@ -13,13 +13,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.MathHelper;
 
 public class TessellatorVertexList {
 
 	private final ArrayList<TessellatorVertex> data = new ArrayList();
 
-	public TessellatorVertexList() {
+	public final double originX;
+	public final double originY;
+	public final double originZ;
 
+	public TessellatorVertexList() {
+		this(0, 0, 0);
+	}
+
+	public TessellatorVertexList(double x, double y, double z) {
+		originX = x;
+		originY = y;
+		originZ = z;
 	}
 
 	public void addVertex(double x, double y, double z) {
@@ -31,8 +42,7 @@ public class TessellatorVertexList {
 	}
 
 	public void render() {
-		for (int i = 0; i < data.size(); i++) {
-			TessellatorVertex v = data.get(i);
+		for (TessellatorVertex v : data) {
 			v.addToTessellator();
 		}
 	}
@@ -42,12 +52,12 @@ public class TessellatorVertexList {
 	}
 
 	private static class TessellatorVertex {
-		public final double posX;
-		public final double posY;
-		public final double posZ;
+		private double posX;
+		private double posY;
+		private double posZ;
 
-		public final double posU;
-		public final double posV;
+		private double posU;
+		private double posV;
 
 		private boolean hasUV;
 
@@ -82,6 +92,81 @@ public class TessellatorVertexList {
 			}
 			return false;
 		}
+	}
+
+	public void offset(double dx, double dy, double dz) {
+		for (TessellatorVertex v : data) {
+			v.posX += dx;
+			v.posY += dy;
+			v.posZ += dz;
+		}
+	}
+
+	public void scale(double dx, double dy, double dz) {
+		for (TessellatorVertex v : data) {
+			v.posX *= dx;
+			v.posY *= dy;
+			v.posZ *= dz;
+		}
+	}
+
+	public void clamp(double minx, double miny, double minz, double maxx, double maxy, double maxz) {
+		for (TessellatorVertex v : data) {
+			v.posX = MathHelper.clamp_double(v.posX, minx, maxx);
+			v.posY = MathHelper.clamp_double(v.posY, miny, maxy);
+			v.posZ = MathHelper.clamp_double(v.posZ, minz, maxz);
+		}
+	}
+
+	public void invertX() {
+		for (TessellatorVertex v : data) {
+			v.posX = 1-v.posX;
+		}
+		this.reverse();
+	}
+
+	public void invertY() {
+		for (TessellatorVertex v : data) {
+			v.posY = 1-v.posY;
+		}
+		this.reverse();
+	}
+
+	public void invertZ() {
+		for (TessellatorVertex v : data) {
+			v.posZ = 1-v.posZ;
+		}
+		this.reverse();
+	}
+
+	/** CW about +X */
+	public void rotateYtoZ() {
+		for (TessellatorVertex v : data) {
+			double z = v.posZ-originZ;
+			v.posZ = originZ+v.posY-originY;
+			v.posY = originY+z;
+		}
+		this.reverse();
+	}
+
+	/** CW about +Y */
+	public void rotateXtoZ() {
+		for (TessellatorVertex v : data) {
+			double z = v.posZ-originZ;
+			v.posZ = originZ+v.posX-originX;
+			v.posX = originX+z;
+		}
+		this.reverse();
+	}
+
+	/** CW about +Z */
+	public void rotateYtoX() {
+		for (TessellatorVertex v : data) {
+			double x = v.posX-originX;
+			v.posX = originX+v.posY-originY;
+			v.posY = originY+x;
+		}
+		this.reverse();
 	}
 
 }
