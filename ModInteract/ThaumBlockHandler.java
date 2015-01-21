@@ -25,6 +25,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 	public final Block totemID;
 	public final Block plantID;
 	public final Block crystalID;
+	public final Block jarID;
 
 	public final int shimmerMeta = 2;
 	public final int cinderMeta = 3;
@@ -39,6 +40,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		Block idtile = null;
 		Block idplant = null;
 		Block idcrystal = null;
+		Block idjar = null;
 		int idtaint = -1;
 		int ideerie = -1;
 		int idmagic = -1;
@@ -49,6 +51,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 			idtile = this.loadBlockID(thaum, "blockCosmeticSolid");
 			idplant = this.loadBlockID(thaum, "blockCustomPlant");
 			idcrystal = this.loadBlockID(thaum, "blockCrystal");
+			idjar = this.loadBlockID(thaum, "blockJar");
 
 			try {
 				Class config = Class.forName("thaumcraft.common.config.Config");
@@ -85,6 +88,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		totemID = idtile;
 		plantID = idplant;
 		crystalID = idcrystal;
+		jarID = idjar;
 		taintBiomeID = idtaint;
 		eerieBiomeID = ideerie;
 		magicBiomeID = idmagic;
@@ -96,7 +100,7 @@ public class ThaumBlockHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return totemID != null && plantID != null && crystalID != null && taintBiomeID != -1 && eerieBiomeID != -1 && magicBiomeID != -1;
+		return totemID != null && plantID != null && crystalID != null && jarID != null && taintBiomeID != -1 && eerieBiomeID != -1 && magicBiomeID != -1;
 	}
 
 	@Override

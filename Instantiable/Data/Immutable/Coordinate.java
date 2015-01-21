@@ -134,6 +134,10 @@ public final class Coordinate {
 		return ReikaMathLibrary.py3d(x-xCoord, y-yCoord, z-zCoord);
 	}
 
+	public double getDistanceTo(Entity e) {
+		return this.getDistanceTo(e.posX, e.posY, e.posZ);
+	}
+
 	public int[] toArray() {
 		int[] a = new int[3];
 		a[0] = xCoord;

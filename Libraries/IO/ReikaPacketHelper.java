@@ -45,6 +45,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.IO.PacketPipeline;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Interfaces.IPacketHandler;
 import Reika.DragonAPI.Interfaces.SoundEnum;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
@@ -105,6 +106,44 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			p.postInitialize();
 		}
 	}*/
+
+	public static void sendNIntPacket(String ch, int id, PacketTarget p, List<Integer> data) {
+		int npars = 1+data.size(); //+1 for the size
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(npars*4); //4 bytes an int
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(id);
+			outputStream.writeInt(data.size());
+			if (data != null) {
+				for (int i : data) {
+					outputStream.writeInt(i);
+				}
+			}
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.PREFIXED, pipe);
+		pack.setData(dat);
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		p.dispatch(pipe, pack);
+	}
+
+	public static void sendNIntPacket(String ch, int id, PacketTarget p, int... data) {
+		sendNIntPacket(ch, id, p, ReikaJavaLibrary.makeIntListFromArray(data));
+	}
 
 	public static void sendRawPacket(String ch, ByteArrayOutputStream bos) {
 		DataOutputStream outputStream = new DataOutputStream(bos);

@@ -585,6 +585,15 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 			te = ((SpaceRift)te).getTileEntityFrom(dir);
 		}*/
 		adjTEMap[dir.ordinal()] = te;
+		this.onPlacedNextToThis(te, dir);
+	}
+
+	protected void onPlacedNextToThis(TileEntity te, ForgeDirection dir) {
+
+	}
+
+	public final int getObjectID() {
+		return System.identityHashCode(this);
 	}
 
 	@Override

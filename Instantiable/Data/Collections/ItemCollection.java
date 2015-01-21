@@ -25,17 +25,19 @@ public class ItemCollection {
 
 	}
 
-	public void addInventory(IInventory ii) {
+	public ItemCollection addInventory(IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			this.addSlot(new InventorySlot(i, ii));
 		}
+		return this;
 	}
 
-	public void addSlot(InventorySlot slot) {
+	public ItemCollection addSlot(InventorySlot slot) {
 		ItemStack is = slot.getStack();
 		if (is != null) {
 			this.addItemToData(is, slot);
 		}
+		return this;
 	}
 
 	private void addItemToData(ItemStack is, InventorySlot slot) {

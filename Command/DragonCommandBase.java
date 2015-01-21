@@ -41,7 +41,7 @@ public abstract class DragonCommandBase extends CommandBase {
 	}
 
 	@Override
-	public final boolean canCommandSenderUseCommand(ICommandSender sender) {
+	public boolean canCommandSenderUseCommand(ICommandSender sender) {
 		if (DragonAPICore.isSinglePlayer())
 			return true;
 		if (sender instanceof EntityPlayerMP) {

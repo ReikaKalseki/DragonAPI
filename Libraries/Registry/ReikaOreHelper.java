@@ -33,7 +33,7 @@ public enum ReikaOreHelper implements OreType {
 	LAPIS("Lapis Lazuli", Blocks.lapis_ore, ReikaDyeHelper.BLUE.getStackOf(), "oreLapis", "dyeBlue", OreRarity.SCARCE),
 	DIAMOND("Diamond", Blocks.diamond_ore, Items.diamond, "oreDiamond", "gemDiamond", OreRarity.SCARCE),
 	EMERALD("Emerald", Blocks.emerald_ore, Items.emerald, "oreEmerald", "gemEmerald", OreRarity.RARE),
-	QUARTZ("Nether Quartz", Blocks.quartz_ore, Items.quartz, "oreNetherQuartz", "itemQuartz", OreRarity.EVERYWHERE);
+	QUARTZ("Nether Quartz", Blocks.quartz_ore, Items.quartz, "oreQuartz", "itemQuartz", OreRarity.EVERYWHERE);
 
 	private String name;
 	private ItemStack drop;
