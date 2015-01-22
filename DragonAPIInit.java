@@ -47,6 +47,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.SuggestedModsTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry;
 import Reika.DragonAPI.Auxiliary.Trackers.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
 import Reika.DragonAPI.Command.BlockReplaceCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
 import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
@@ -145,7 +146,8 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	@EventHandler
 	public void preload(FMLPreInitializationEvent evt) {
-		this.verifyVersions();
+		this.startTiming(LoadPhase.PRELOAD);
+		this.verifyInstallation();
 		config.loadSubfolderedConfigFile(evt);
 		config.initProps(evt);
 
@@ -176,6 +178,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		int id = DragonOptions.SYNCPACKET.getValue();
 		ReikaPacketHelper.registerVanillaPacketType(this, id, SyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
 		//ReikaPacketWrapper.instance.registerPacket(SyncPacket.class);
+		this.finishTiming();
 	}
 
 	/** Registers all the vanilla technical blocks (except air and block 36) to have items so as to avoid crashes when rendering them
@@ -228,6 +231,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
+		this.startTiming(LoadPhase.LOAD);
 		proxy.registerSidedHandlersMain();
 
 		PlayerHandler.instance.registerTracker(LoginHandler.instance);
@@ -279,11 +283,14 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Paul Luhman", 1);
 		PatreonController.instance.addPatron(this, "John Paul Douglass", 10);
 		PatreonController.instance.addPatron(this, "Jon M", 5);
+		this.finishTiming();
 	}
 
 	@Override
 	@EventHandler
 	public void postload(FMLPostInitializationEvent evt) {
+		this.startTiming(LoadPhase.POSTLOAD);
+
 		ReikaRegistryHelper.loadNames();
 
 		this.loadHandlers();
@@ -310,6 +317,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		CommandableUpdateChecker.instance.checkAll();
 
 		ReikaEntityHelper.loadMappings();
+
+		this.finishTiming();
 	}
 
 	@EventHandler

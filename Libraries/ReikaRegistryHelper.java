@@ -13,6 +13,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.IdentityHashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -24,6 +25,7 @@ import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.ItemBlockCustomLocalization;
 import Reika.DragonAPI.Interfaces.BlockEnum;
 import Reika.DragonAPI.Interfaces.ItemEnum;
+import Reika.DragonAPI.Interfaces.RegistrationList;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.ModInteract.LegacyWailaHelper;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
@@ -37,6 +39,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 
 	private static final HashMap<BlockEnum, ArrayList<Integer>> blockVariants = new HashMap();
 	private static final HashMap<ItemEnum, ArrayList<Integer>> itemVariants = new HashMap();
+	private static final IdentityHashMap<Object, RegistrationList> registries = new IdentityHashMap();
 
 	/** Instantiates all blocks and registers them to the game. Uses an Enum[] that implements RegistrationList.
 	 * Args: Mod, Enum.values(), Target Block[] array to save instances. */
@@ -48,28 +51,35 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 			throw new RegistrationException(mod, "This mod is loading blocks too late in the setup!");
 		for (int i = 0; i < enumr.length; i++) {
 			BlockEnum r = enumr[i];
-			if (!r.isDummiedOut()) {
-				target[i] = ReikaReflectionHelper.createBlockInstance(mod, r);
-				String regname = (mod.getTechnicalName()+"_block_"+r.name()).toLowerCase();
-				if (r.hasItemBlock())
-					GameRegistry.registerBlock(target[i], r.getItemBlock(), regname);
-				else
-					GameRegistry.registerBlock(target[i], ItemBlockCustomLocalization.class, regname);
-				int num = r.getNumberMetadatas();
-				for (int k = 0; k < num; k++)
-					registerBlockVariant(r, k);
-				if (r.hasItemBlock())
-					mod.getModLogger().log("Instantiating Block "+r.getBasicName()+" with ID "+target[i]+" to Block Variable "+target[i].getClass().getSimpleName()+" (enum index "+i+") with ItemBlock "+r.getItemBlock().getSimpleName());
-				else
-					mod.getModLogger().log("Instantiating Block "+r.getBasicName()+" with ID "+target[i]+" to Block Variable "+target[i].getClass().getSimpleName()+" (enum index "+i+")");
-				if (InterfaceCache.WAILA.instanceOf(r.getObjectClass())) {
-					LegacyWailaHelper.registerLegacyWAILACompat(r);
-				}
-			}
-			else {
-				mod.getModLogger().log("Not instantiating Item "+r.getBasicName()+", as it is dummied out.");
+			target[i] = registerBlock(mod, r, i);
+		}
+	}
+
+	private static Block registerBlock(DragonAPIMod mod, BlockEnum r, int idx) {
+		Block b = null;
+		if (!r.isDummiedOut()) {
+			b = ReikaReflectionHelper.createBlockInstance(mod, r);
+			String regname = (mod.getTechnicalName()+"_block_"+r.name()).toLowerCase();
+			if (r.hasItemBlock())
+				GameRegistry.registerBlock(b, r.getItemBlock(), regname);
+			else
+				GameRegistry.registerBlock(b, ItemBlockCustomLocalization.class, regname);
+			registries.put(b, r);
+			int num = r.getNumberMetadatas();
+			for (int k = 0; k < num; k++)
+				registerBlockVariant(r, k);
+			if (r.hasItemBlock())
+				mod.getModLogger().log("Instantiating Block "+r.getBasicName()+" with ID "+b+" to Block Variable "+b.getClass().getSimpleName()+" (enum index "+idx+") with ItemBlock "+r.getItemBlock().getSimpleName());
+			else
+				mod.getModLogger().log("Instantiating Block "+r.getBasicName()+" with ID "+b+" to Block Variable "+b.getClass().getSimpleName()+" (enum index "+idx+")");
+			if (InterfaceCache.WAILA.instanceOf(r.getObjectClass())) {
+				LegacyWailaHelper.registerLegacyWAILACompat(r);
 			}
 		}
+		else {
+			mod.getModLogger().log("Not instantiating Item "+r.getBasicName()+", as it is dummied out.");
+		}
+		return b;
 	}
 
 	/** Instantiates all items and registers them to the game. Uses an Enum[] that implements RegistrationList.
@@ -82,20 +92,27 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 			throw new RegistrationException(mod, "This mod is loading items too late in the setup!");
 		for (int i = 0; i < enumr.length; i++) {
 			ItemEnum r = enumr[i];
-			if (!r.isDummiedOut()) {
-				target[i] = ReikaReflectionHelper.createItemInstance(mod, r);
-				String regname = (mod.getTechnicalName()+"_item_"+r.name()).toLowerCase();
-				int num = r.getNumberMetadatas();
-				for (int j = 0; j < num; j++) {
-					registerItemVariant(r, j);
-				}
-				GameRegistry.registerItem(target[i], regname);
-				mod.getModLogger().log("Instantiating Item "+r.getBasicName()+" with ID "+target[i]+" to Item Variable "+target[i].getClass().getSimpleName()+" (enum index "+i+"). Has "+enumr[i].getNumberMetadatas()+" metadatas.");
-			}
-			else {
-				mod.getModLogger().log("Not instantiating Item "+r.getBasicName()+", as it is dummied out.");
-			}
+			target[i] = registerItem(mod, r, i);
 		}
+	}
+
+	private static Item registerItem(DragonAPIMod mod, ItemEnum r, int idx) {
+		Item it = null;
+		if (!r.isDummiedOut()) {
+			it = ReikaReflectionHelper.createItemInstance(mod, r);
+			String regname = (mod.getTechnicalName()+"_item_"+r.name()).toLowerCase();
+			int num = r.getNumberMetadatas();
+			for (int j = 0; j < num; j++) {
+				registerItemVariant(r, j);
+			}
+			GameRegistry.registerItem(it, regname);
+			registries.put(it, r);
+			mod.getModLogger().log("Instantiating Item "+r.getBasicName()+" with ID "+it+" to Item Variable "+it.getClass().getSimpleName()+" (enum index "+idx+"). Has "+r.getNumberMetadatas()+" metadatas.");
+		}
+		else {
+			mod.getModLogger().log("Not instantiating Item "+r.getBasicName()+", as it is dummied out.");
+		}
+		return it;
 	}
 
 	private static void registerBlockVariant(BlockEnum e, int meta) {
@@ -234,5 +251,9 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 			e.printStackTrace();
 			return false;
 		}
+	}
+
+	public static RegistrationList getRegistry(Object o) {
+		return registries.get(o);
 	}
 }

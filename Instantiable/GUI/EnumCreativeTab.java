@@ -9,99 +9,51 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.GUI;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.Interfaces.EnumItem;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import Reika.DragonAPI.Interfaces.BlockEnum;
+import Reika.DragonAPI.Interfaces.RegistrationList;
+import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 
-public abstract class EnumCreativeTab extends CreativeTabs {
+public abstract class EnumCreativeTab extends SortedCreativeTab {
 
-	private final String name;
+	public EnumCreativeTab(String name) {
+		super(name);
+	}
 
-	private final ArrayList<ItemStack> items = new ArrayList();
+	private static final EnumItemSorter sorter = new EnumItemSorter();
 
-	private static final ItemSorter sorter = new ItemSorter();
-
-	private static final class ItemSorter implements Comparator {
+	private static final class EnumItemSorter implements Comparator<ItemStack> {
 
 		@Override
-		public int compare(Object o1, Object o2) {
-			ItemStack is1 = (ItemStack)o1;
-			ItemStack is2 = (ItemStack)o2;
+		public int compare(ItemStack is1, ItemStack is2) {
 			Item i1 = is1.getItem();
 			Item i2 = is2.getItem();
-			if (i1 instanceof EnumItem && i2 instanceof EnumItem) {
-				return ((Enum)((EnumItem)i1).getRegistry(is1)).ordinal() - ((Enum)((EnumItem)i2).getRegistry(is2)).ordinal();
+			RegistrationList r1 = ReikaRegistryHelper.getRegistry(i1);
+			RegistrationList r2 = ReikaRegistryHelper.getRegistry(i2);
+			if (r1 != null && r2 != null) {
+				int d1 = r1.ordinal();
+				int d2 = r2.ordinal();
+				if (r1 instanceof BlockEnum)
+					d1 -= 1000;
+				if (r2 instanceof BlockEnum)
+					d2 -= 1000;
+				return d1 - d2;
 			}
-			if (i1 instanceof EnumItem) {
+			if (r1 != null) {
 				return Integer.MAX_VALUE;
 			}
-			if (i2 instanceof EnumItem) {
+			if (r2 != null) {
 				return Integer.MIN_VALUE;
 			}
 			return 0;
 		}
-
-	}
-
-	public EnumCreativeTab(String name) {
-		super(name);
-		this.name = name;
 	}
 
 	@Override
-	public final String getTabLabel()
-	{
-		return name;
+	protected final Comparator<ItemStack> getComparator() {
+		return sorter;
 	}
-
-	@Override
-	public final String getTranslatedTabLabel()
-	{
-		return name;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public final void displayAllReleventItems(List li) { //"Relevent"...
-		//super.displayAllReleventItems(li);
-
-		items.clear();
-		List add = new ArrayList();
-		if (items.isEmpty()) {
-			super.displayAllReleventItems(add);
-			Collections.sort(add, sorter);
-			items.addAll(add);
-		}
-		li.addAll(items);
-		/*
-		RegistrationList[] list = this.getRegistry();
-		for (int i = 0; i < list.length; i++) {
-			RegistrationList r = list[i];
-			Item item = r instanceof ItemEnum ? ((ItemEnum)r).getItemInstance() : Item.getItemFromBlock(((BlockEnum)r).getBlockInstance());
-			CreativeTabs[] c = item.getCreativeTabs();
-			for (int k = 0; k < c.length; k++) {
-				if (c[k] == this)
-					item.getSubItems(item, this, li);
-			}
-		}
-		 */
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public final Item getTabIconItem() {
-		return null;
-	}
-
-	@Override
-	@SideOnly(Side.CLIENT)
-	public abstract ItemStack getIconItemStack();
 }

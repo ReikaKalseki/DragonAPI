@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.EnumMap;
@@ -20,6 +21,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
 import Reika.DragonAPI.Exception.InstallationException;
+import Reika.DragonAPI.Exception.JarZipException;
 import Reika.DragonAPI.Exception.MissingDependencyException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Exception.VersionMismatchException;
@@ -30,7 +32,9 @@ import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaFormatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod.EventHandler;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -92,7 +96,21 @@ public abstract class DragonAPIMod {
 		CommandableUpdateChecker.instance.registerMod(this);
 	}
 
-	protected final void verifyVersions() {
+	protected final void verifyInstallation() {
+		this.verifyVersions();
+		if (this.getModFile().getName().endsWith(".jar.zip"))
+			throw new JarZipException(this);
+	}
+
+	protected final ModContainer getModContainer() {
+		return Loader.instance().getModObjectList().inverse().get(this);
+	}
+
+	protected File getModFile() {
+		return this.getModContainer().getSource();
+	}
+
+	private final void verifyVersions() {
 		ModVersion mod = this.getModVersion();
 		if (mod.verify()) {
 			if (mod.majorVersion != apiVersion.majorVersion || mod.isNewerMinorVersion(apiVersion)) {
