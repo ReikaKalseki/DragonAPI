@@ -32,6 +32,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
+import Reika.DragonAPI.Auxiliary.CreativeTabSorter;
 import Reika.DragonAPI.Auxiliary.FindTilesCommand;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
@@ -318,7 +319,13 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		ReikaEntityHelper.loadMappings();
 
+		CreativeTabSorter.instance.sortTabs();
+
 		this.finishTiming();
+	}
+
+	private void sortCreativeTabs() {
+
 	}
 
 	@EventHandler

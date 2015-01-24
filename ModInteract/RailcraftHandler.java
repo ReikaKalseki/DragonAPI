@@ -80,7 +80,7 @@ public final class RailcraftHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return hiddenID != null;
+		return hiddenID != null && firestoneID != null;
 	}
 
 	@Override

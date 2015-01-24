@@ -20,7 +20,8 @@ public enum DragonOptions implements ConfigList {
 	TABNBT("Show TileEntity NBT when using TAB", false),
 	SOUNDCHANNELS("Increase sound channel count", true),
 	UNNERFOBSIDIAN("Restore Obsidian Blast Resistance", true),
-	CHATERRORS("Log errors to chat", true);
+	CHATERRORS("Log errors to chat", true),
+	SORTCREATIVE("Sort Creative Tabs Alphabetically", true);
 
 	private String label;
 	private boolean defaultState;

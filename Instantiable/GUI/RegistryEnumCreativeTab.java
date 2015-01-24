@@ -17,9 +17,9 @@ import Reika.DragonAPI.Interfaces.BlockEnum;
 import Reika.DragonAPI.Interfaces.RegistrationList;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 
-public abstract class EnumCreativeTab extends SortedCreativeTab {
+public abstract class RegistryEnumCreativeTab extends SortedCreativeTab {
 
-	public EnumCreativeTab(String name) {
+	public RegistryEnumCreativeTab(String name) {
 		super(name);
 	}
 
