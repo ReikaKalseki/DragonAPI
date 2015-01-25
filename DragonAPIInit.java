@@ -284,6 +284,13 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Paul Luhman", 1);
 		PatreonController.instance.addPatron(this, "John Paul Douglass", 10);
 		PatreonController.instance.addPatron(this, "Jon M", 5);
+		PatreonController.instance.addPatron(this, "Christhereaper", 5);
+		PatreonController.instance.addPatron(this, "Havgood", 10);
+		PatreonController.instance.addPatron(this, "David Carlson", 10);
+		PatreonController.instance.addPatron(this, "Frederik", 10);
+		PatreonController.instance.addPatron(this, "Tommy Miller", 10);
+		PatreonController.instance.addPatron(this, "Josh O'Connor-Chen", 10);
+
 		this.finishTiming();
 	}
 

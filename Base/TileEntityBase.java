@@ -46,6 +46,7 @@ import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
@@ -290,6 +291,14 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return ep != null ? ep : this.getFakePlacer();
 	}
 
+	public final EntityPlayerMP getServerPlacer() {
+		EntityPlayer ep = this.getPlacer();
+		if (ep instanceof EntityPlayerMP)
+			return (EntityPlayerMP)ep;
+		else
+			throw new MisuseException("Cannot get the serverside player on the client!");
+	}
+
 	public final EntityPlayer getFakePlacer() {
 		if (placer == null || placer.isEmpty())
 			return null;
@@ -492,22 +501,33 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return rand;
 	}
 
-	@Override
-	public final boolean equals(Object o) {
+	/** Returns true if the other TileEntity is the same type at the same coordinates, but not necessarily are the same instance. */
+	public final boolean isSameTile(Object o) {
 		if (o == this)
 			return true;
-		if (o instanceof TileEntity) {
+		if (o.getClass() == this.getClass()) {
 			TileEntity te = (TileEntity)o;
 			if ((te.worldObj == null && worldObj != null) || (worldObj == null && te.worldObj != null))
 				return false;
-			return te.worldObj.provider.dimensionId == worldObj.provider.dimensionId && this.matchCoords(te);
+			return te.worldObj.provider.dimensionId == worldObj.provider.dimensionId && this.matchCoords(te) && te.isInvalid() == this.isInvalid();
 		}
 		return false;
 	}
 
 	@Override
+	public final boolean equals(Object o) {
+		if (o != this && this.isSameTile(o)) {
+			ReikaJavaLibrary.pConsole("TileEntities would be equal functionally but not in identity!");
+			Thread.dumpStack();
+		}
+		return super.equals(o);
+	}
+
+	@Override
 	public final int hashCode() {
-		return worldObj != null ? (xCoord + (zCoord << 8) + (yCoord << 16) + (worldObj.provider.dimensionId << 24)) : super.hashCode();
+		//int base = worldObj != null ? (xCoord + (zCoord << 8) + (yCoord << 16) + (worldObj.provider.dimensionId << 24)) : super.hashCode();
+		//return tileEntityInvalid ? -base : base;
+		return super.hashCode();
 	}
 
 	private boolean matchCoords(TileEntity te) {

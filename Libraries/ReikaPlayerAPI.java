@@ -159,7 +159,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return isAdmin(fp);
 	}
 
-	public static boolean isAdmin(EntityPlayer ep) {
+	public static boolean isAdmin(EntityPlayerMP ep) {
 		return MinecraftServer.getServer().getConfigurationManager().func_152596_g(ep.getGameProfile());
 	}
 
@@ -202,7 +202,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		ep.getFoodStats().readNBT(NBT);
 	}
 
-	public static boolean playerCanBreakAt(WorldServer world, BlockArray b, EntityPlayer ep) {
+	public static boolean playerCanBreakAt(WorldServer world, BlockArray b, EntityPlayerMP ep) {
 		for (int i = 0; i < b.getSize(); i++) {
 			int[] xyz = b.getNthBlock(i);
 			if (!playerCanBreakAt(world, xyz[0], xyz[1], xyz[2], ep))
@@ -211,13 +211,13 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return true;
 	}
 
-	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, EntityPlayer ep) {
+	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, EntityPlayerMP ep) {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		return playerCanBreakAt(world, x, y, z, b, meta, ep);
 	}
 
-	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, Block id, int meta, EntityPlayer ep) {
+	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, Block id, int meta, EntityPlayerMP ep) {
 		if (ep == null) {
 			ReikaJavaLibrary.pConsole("Cannot check permissions of a null player!");
 			return false;
@@ -324,7 +324,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	public static Collection<EntityPlayer> getOps(World world) {
 		Collection<EntityPlayer> ops = new ArrayList();
 		for (Object o : world.playerEntities) {
-			EntityPlayer ep = (EntityPlayer)o;
+			EntityPlayerMP ep = (EntityPlayerMP)o;
 			if (isAdmin(ep))
 				ops.add(ep);
 		}

@@ -16,6 +16,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -176,7 +177,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 				return false;
 			if (!ids.contains(new BlockKey(id, meta)))
 				return false;
-			return player == null || (!world.isRemote && ReikaPlayerAPI.playerCanBreakAt((WorldServer)world, x, y, z, player));
+			return player == null || (!world.isRemote && ReikaPlayerAPI.playerCanBreakAt((WorldServer)world, x, y, z, (EntityPlayerMP)player));
 		}
 
 		private void dropBlock(World world, int x, int y, int z) {

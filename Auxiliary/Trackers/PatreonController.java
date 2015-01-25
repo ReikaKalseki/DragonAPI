@@ -27,6 +27,10 @@ public class PatreonController {
 	}
 
 	public void addPatron(DragonAPIMod mod, String name, int amt) {
+		this.addPatron(mod, name, name, amt);
+	}
+
+	public void addPatron(DragonAPIMod mod, String name, String minecraft, int amt) {
 		Patrons p = this.getOrCreate(mod);
 		p.addPatron(name, amt);
 	}
