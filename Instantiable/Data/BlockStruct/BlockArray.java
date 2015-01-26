@@ -344,6 +344,41 @@ public class BlockArray {
 		}
 	}
 
+	/** Like the ordinary recursive add but with a bounded volume; specifically excludes fluid source (meta == 0) blocks. Args: World, x, y, z,
+	 * id to replace, min x,y,z, max x,y,z */
+	public void recursiveAddWithBoundsNoFluidSource(World world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2) {
+		this.recursiveAddWithBoundsNoFluidSource(world, x, y, z, id, x1, y1, z1, x2, y2, z2, 0);
+	}
+
+	private void recursiveAddWithBoundsNoFluidSource(World world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+		if (overflow)
+			return;
+		if (depth > maxDepth)
+			return;
+		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
+			return;
+		if (world.getBlock(x, y, z) != id) {
+			return;
+		}
+		if (world.getBlockMetadata(x, y, z) == 0)
+			return;
+		if (this.hasBlock(x, y, z))
+			return;
+		this.addBlockCoordinate(x, y, z);
+		try {
+			this.recursiveAddWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2, depth+1);
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow(depth);
+			e.printStackTrace();
+		}
+	}
+
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
 	public void recursiveAddWithBoundsRanged(World world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int r) {

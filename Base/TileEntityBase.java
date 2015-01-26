@@ -517,7 +517,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	@Override
 	public final boolean equals(Object o) {
 		if (o != this && this.isSameTile(o)) {
-			ReikaJavaLibrary.pConsole("TileEntities would be equal functionally but not in identity!");
+			ReikaJavaLibrary.pConsole("TileEntities would be equal functionally but not in identity!"); //debug code
 			Thread.dumpStack();
 		}
 		return super.equals(o);

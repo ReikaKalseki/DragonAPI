@@ -11,11 +11,7 @@ package Reika.DragonAPI.ASM;
 
 import java.util.HashMap;
 
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.ClassReader;
@@ -53,7 +49,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		POTIONEFFECTID("net.minecraft.potion.PotionEffect", "rw"),
 		POTIONPACKETID("net.minecraft.network.play.server.S1DPacketEntityEffect", "in"),
 		POTIONPACKETID2("net.minecraft.client.network.NetHandlerPlayClient", "bjb"),
-		BLOCKPLACE("net.minecraft.item.ItemBlock", "abh");
+		BLOCKPLACE("net.minecraft.item.ItemBlock", "abh"),
+		SETBLOCK("net.minecraft.world.chunk.Chunk", "apx");
 
 		private final String obfName;
 		private final String deobfName;
@@ -331,6 +328,54 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 						}
 					}
 				}
+				break;
+			}
+			case SETBLOCK: {
+				//Look for IRETURN immediately after an ICONST_1; this is a "return true"
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_150807_a", "func_150807_a", "(IIILnet/minecraft/block/Block;I)Z");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.IRETURN) {
+						if (ain.getPrevious().getOpcode() == Opcodes.ICONST_1) {
+							AbstractInsnNode loc = ain.getPrevious();
+							m.instructions.insertBefore(loc, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+							m.instructions.insertBefore(loc, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent"));
+							m.instructions.insertBefore(loc, new InsnNode(Opcodes.DUP));
+							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ALOAD, 0));
+							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 1));
+							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 2));
+							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 3));
+							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent", "<init>", "(Lnet/minecraft/world/chunk/Chunk;III)V"));
+							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+							m.instructions.insertBefore(loc, new InsnNode(Opcodes.POP));
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 1!");
+							break;
+						}
+					}
+				}
+
+				m = ReikaASMHelper.getMethodByName(cn, "func_76589_b", "setBlockMetadata", "(IIII)Z");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.IRETURN) {
+						if (ain.getPrevious().getOpcode() == Opcodes.ICONST_1) {
+							AbstractInsnNode loc = ain.getPrevious();
+							m.instructions.insertBefore(loc, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+							m.instructions.insertBefore(loc, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent"));
+							m.instructions.insertBefore(loc, new InsnNode(Opcodes.DUP));
+							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ALOAD, 0));
+							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 1));
+							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 2));
+							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 3));
+							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent", "<init>", "(Lnet/minecraft/world/chunk/Chunk;III)V"));
+							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+							m.instructions.insertBefore(loc, new InsnNode(Opcodes.POP));
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 2!");
+							break;
+						}
+					}
+				}
+				break;
 			}
 			}
 
@@ -343,34 +388,12 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	public class test {
-		Block field_150939_a = null;
-
-		public boolean placeBlockAt(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ, int metadata)
-		{
-
-			if (!world.setBlock(x, y, z, field_150939_a, metadata, 3))
-			{
-				return false;
-			}
-
-			if (world.getBlock(x, y, z) == field_150939_a)
-			{
-				//MinecraftForge.EVENT_BUS.post(new PlayerPlaceBlockEvent(world, x, y, z, field_150939_a, metadata, stack, player));
-				field_150939_a.onBlockPlacedBy(world, x, y, z, player, stack);
-				field_150939_a.onPostBlockPlaced(world, x, y, z, metadata);
-			}
-
-			return true;
-		}
-	}
-
 	@Override
 	public byte[] transform(String className, String className2, byte[] opcodes) {
 		if (!classes.isEmpty()) {
 			ClassPatch p = classes.get(className);
 			if (p != null) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Patching class "+className);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Patching class "+p.deobfName);
 				opcodes = p.apply(opcodes);
 				classes.remove(className); //for maximizing performance
 			}

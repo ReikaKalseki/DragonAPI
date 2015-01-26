@@ -182,27 +182,39 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.finishTiming();
 	}
 
+	private static final Block[] technicalBlocks = {
+		Blocks.brewing_stand, Blocks.bed, Blocks.nether_wart, Blocks.cauldron, Blocks.flower_pot, Blocks.wheat, Blocks.reeds,
+		Blocks.cake, Blocks.skull, Blocks.piston_head, Blocks.lit_redstone_ore, Blocks.powered_repeater, Blocks.pumpkin_stem,
+		Blocks.standing_sign, Blocks.powered_comparator, Blocks.tripwire, Blocks.lit_redstone_lamp, Blocks.melon_stem,
+		Blocks.unlit_redstone_torch, Blocks.unpowered_comparator, Blocks.redstone_wire, Blocks.wall_sign,
+		Blocks.unpowered_repeater, Blocks.iron_door, Blocks.wooden_door
+	};
+
 	/** Registers all the vanilla technical blocks (except air and block 36) to have items so as to avoid crashes when rendering them
 	 * in the inventory. */
 	private void registerTechnicalBlocks() {
-		Block[] blocks = {
-				Blocks.brewing_stand, Blocks.bed, Blocks.nether_wart, Blocks.cauldron, Blocks.flower_pot, Blocks.wheat, Blocks.reeds,
-				Blocks.cake, Blocks.skull, Blocks.piston_head, Blocks.lit_redstone_ore, Blocks.powered_repeater, Blocks.pumpkin_stem,
-				Blocks.standing_sign, Blocks.powered_comparator, Blocks.tripwire, Blocks.lit_redstone_lamp, Blocks.melon_stem,
-				Blocks.unlit_redstone_torch, Blocks.unpowered_comparator, Blocks.redstone_wire, Blocks.wall_sign,
-				Blocks.unpowered_repeater, Blocks.iron_door, Blocks.wooden_door
-		};
-
-		for (Block b : blocks) {
+		for (int i = 0; i < technicalBlocks.length; i++) {
+			Block b = technicalBlocks[i];
 			ItemBlock ib = new ItemBlock(b);
 			String s = Block.blockRegistry.getNameForObject(b)+"_technical";
 			Item.itemRegistry.addObject(Block.getIdFromBlock(b), s, ib);
 		}
 	}
 
+	/*
+	@EventHandler
+	public void preventMappingCorruption(FMLMissingMappingsEvent evt) {
+		for (MissingMapping m : evt.getAll()) {
+			if (m.type == Type.ITEM && (m.id <= 164 || ReikaMathLibrary.isValueInsideBounds(170, 175, m.id))) {
+				ReikaJavaLibrary.pConsole("FIRED");
+				//m.ignore();
+			}
+		}
+	}
+	 */
 	/** Do not call unless biomes are no longer saved as bytes *//*
 	private void increaseBiomeCount() {
-		int count = BiomeGenBase.biomeList.length;
+		int count = BiomeGenBase.biomeL	ist.length;
 		int newsize = 1024;
 		BiomeGenBase[] newBiomes = new BiomeGenBase[newsize];
 		System.arraycopy(BiomeGenBase.biomeList, 0, newBiomes, 0, count);

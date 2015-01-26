@@ -103,8 +103,7 @@ public class AppEngHandler extends ModHandlerBase {
 
 	private void initGetters() throws Exception {
 		Class ae = Class.forName("appeng.core.Api");
-		Field instance = ae.getField("instance");
-		Object inst = instance.get(null);
+		Object inst = this.getInstance(ae);
 
 		Field b = ae.getDeclaredField("blocks");
 		Field i = ae.getDeclaredField("items");
@@ -131,6 +130,29 @@ public class AppEngHandler extends ModHandlerBase {
 		itemClass = Class.forName("appeng.api.definitions.Items");
 		blockClass = Class.forName("appeng.api.definitions.Blocks");
 		matClass = Class.forName("appeng.api.definitions.Materials");
+	}
+
+	private Object getInstance(Class ae) throws Exception {
+		String[] f = {"instance", "INSTANCE", "Instance"};
+		Field instance = null;
+		for (int i = 0; i < f.length; i++) {
+			try {
+				instance = ae.getField(f[i]);
+				if (instance != null)
+					break;
+			}
+			catch (NoSuchFieldException e) {
+
+			}
+		}
+		if (instance == null) {
+			throw new NoSuchFieldException("AE API Instance field not found!");
+		}
+		Object inst = instance.get(null);
+		if (inst == null) {
+			throw new NullPointerException("Instance field found but was empty!");
+		}
+		return inst;
 	}
 
 	private Block getBlock(String field) throws Exception {

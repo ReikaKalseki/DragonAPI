@@ -1,0 +1,44 @@
+package Reika.DragonAPI.Instantiable.Data.Immutable;
+
+import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+
+public final class WorldChunk {
+
+	public final int dimensionID;
+	public final ChunkCoordIntPair chunk;
+
+	public WorldChunk(World world, Chunk ch) {
+		this(world, ch.getChunkCoordIntPair());
+	}
+
+	public WorldChunk(World world, ChunkCoordIntPair ch) {
+		this(world.provider.dimensionId, ch);
+	}
+
+	private WorldChunk(int dim, ChunkCoordIntPair ch) {
+		dimensionID = dim;
+		chunk = ch;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof WorldChunk) {
+			WorldChunk c = (WorldChunk)o;
+			return c.dimensionID == dimensionID && c.chunk.equals(chunk);
+		}
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return chunk.hashCode()^dimensionID;
+	}
+
+	@Override
+	public String toString() {
+		return "Chunk "+chunk.toString()+" in DIM"+dimensionID;
+	}
+
+}

@@ -136,7 +136,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	}
 
 	public static String getSIPrefix(double val) {
-		if (val < 10 && val >= 1)
+		if (val == 0 || (val < 10 && val >= 1))
 			return "";
 		int log = MathHelper.floor_double(ReikaMathLibrary.logbase(val, 1000));
 		switch(log) {

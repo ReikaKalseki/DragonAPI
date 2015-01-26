@@ -21,6 +21,7 @@ public final class MultiMap<K, V> {
 	private final HashMap<K, Collection<V>> data = new HashMap();
 
 	private boolean modifiable = true;
+	private boolean nullEmpty = false;
 
 	public Collection<V> put(K key, Collection<V> value) {
 		if (!modifiable)
@@ -66,6 +67,8 @@ public final class MultiMap<K, V> {
 
 	public Collection<V> get(K key) {
 		Collection<V> c = data.get(key);
+		if (c == null && this.nullEmpty)
+			return null;
 		return c != null ? (this.modifiable ? c : Collections.unmodifiableCollection(c)) : new ArrayList(); //Internal NPE protection
 	}
 
@@ -140,8 +143,14 @@ public final class MultiMap<K, V> {
 		return o instanceof MultiMap && this.data.equals(((MultiMap)o).data);
 	}
 
-	public void lock() {
+	public MultiMap<K, V> lock() {
 		modifiable = false;
+		return this;
+	}
+
+	public MultiMap<K, V> setNullEmpty() {
+		nullEmpty = true;
+		return this;
 	}
 
 }

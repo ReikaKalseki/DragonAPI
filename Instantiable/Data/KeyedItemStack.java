@@ -20,7 +20,7 @@ public final class KeyedItemStack {
 	private boolean sized = false;
 
 	public KeyedItemStack(ItemStack is) {
-		if (is == null)
+		if (is == null || is.getItem() == null)
 			throw new MisuseException("You cannot key a null itemstack!");
 		item = is.copy();
 	}
@@ -32,7 +32,7 @@ public final class KeyedItemStack {
 
 	@Override
 	public final int hashCode() {
-		return Item.getIdFromItem(item.getItem())+(item.getItemDamage() << 16);
+		return Item.getIdFromItem(item.getItem())+(item.getItemDamage() << 16)+(item.stackTagCompound != null ? item.stackTagCompound.hashCode() : 0);
 	}
 
 	@Override
@@ -49,6 +49,11 @@ public final class KeyedItemStack {
 
 	public ItemStack getItemStack() {
 		return item.copy();
+	}
+
+	@Override
+	public String toString() {
+		return item.toString();
 	}
 
 }
