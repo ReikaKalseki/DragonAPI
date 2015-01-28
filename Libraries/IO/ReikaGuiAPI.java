@@ -447,12 +447,17 @@ public final class ReikaGuiAPI extends GuiScreen {
 			items.addRegionByWH(x, y, 16, 16, is.copy());
 	}
 
+	/*
 	public void drawItemStackWithTooltip(RenderItem renderer, ItemStack is, int x, int y) {
 		this.drawItemStackWithTooltip(renderer, Minecraft.getMinecraft().fontRenderer, is, x, y);
 	}
+	 */
 
 	public void drawItemStackWithTooltip(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
 		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
+		FontRenderer f2 = is.getItem().getFontRenderer(is);
+		if (f2 != null)
+			fr = f2;
 		this.drawItemStack(renderer, fr, is, x, y);
 
 		GL11.glTranslatef(0.0F, 0.0F, 32.0F);

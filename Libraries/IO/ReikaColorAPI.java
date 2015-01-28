@@ -105,6 +105,14 @@ public class ReikaColorAPI {
 		return b;
 	}
 
+	public static boolean isRGBNonZero(int color) {
+		return (color & 0xffffff) > 0;
+	}
+
+	public static boolean isAlphaNonZero(int color) {
+		return (color & 0xff000000) > 0;
+	}
+
 	public static int mixColors(int c1, int c2, float ratio) {
 		int r1 = (c1 & 0xff0000) >> 16;
 		int r2 = (c2 & 0xff0000) >> 16;

@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -33,6 +36,22 @@ public class SetBlockEvent extends Event {
 		xCoord = ch.xPosition*16+x;
 		yCoord = y;
 		zCoord = ch.zPosition*16+z;
+	}
+
+	public boolean isAir() {
+		return this.getBlock() instanceof BlockAir;
+	}
+
+	public Block getBlock() {
+		return world.getBlock(xCoord, yCoord, zCoord);
+	}
+
+	public int getMetadata() {
+		return world.getBlockMetadata(xCoord, yCoord, zCoord);
+	}
+
+	public TileEntity getTileEntity() {
+		return world.getTileEntity(xCoord, yCoord, zCoord);
 	}
 
 }

@@ -136,6 +136,10 @@ public final class ItemHashMap<V> {
 		return Collections.unmodifiableList(sorted);
 	}
 
+	public boolean isEmpty() {
+		return this.data.isEmpty();
+	}
+
 	private static final class ItemKey implements Comparable<ItemKey> {
 
 		public final Item itemID;

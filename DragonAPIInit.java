@@ -32,7 +32,6 @@ import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
-import Reika.DragonAPI.Auxiliary.CreativeTabSorter;
 import Reika.DragonAPI.Auxiliary.FindTilesCommand;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
@@ -95,6 +94,7 @@ import Reika.DragonAPI.ModInteract.MystCraftHandler;
 import Reika.DragonAPI.ModInteract.NEIIntercept;
 import Reika.DragonAPI.ModInteract.OpenBlockHandler;
 import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
+import Reika.DragonAPI.ModInteract.PneumaticPlantHandler;
 import Reika.DragonAPI.ModInteract.QuantumOreHandler;
 import Reika.DragonAPI.ModInteract.RailcraftHandler;
 import Reika.DragonAPI.ModInteract.RedstoneArsenalHandler;
@@ -264,10 +264,11 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		if (ModList.COMPUTERCRAFT.isLoaded()) {
 			try {
+				Class interf = Class.forName("dan200.computercraft.api.peripheral.IPeripheralProvider");
 				Class handler = Class.forName("Reika.DragonAPI.ModInteract.PeripheralHandler");
 				Object handlerObj = handler.newInstance();
 				Class api = Class.forName("dan200.computercraft.api.ComputerCraftAPI");
-				Method register = api.getDeclaredMethod("registerPeripheralProvider", handler);
+				Method register = api.getDeclaredMethod("registerPeripheralProvider", interf);
 				register.invoke(null, handlerObj);
 				//ComputerCraftAPI.registerPeripheralProvider(new PeripheralHandler()); Nonreflective code crashes
 			}
@@ -338,7 +339,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		ReikaEntityHelper.loadMappings();
 
-		CreativeTabSorter.instance.sortTabs();
+		//CreativeTabSorter.instance.sortTabs(); //frequently messes up
 
 		this.finishTiming();
 	}
@@ -385,8 +386,10 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void onGameLoaded(GameFinishedLoadingEvent evt) {
 		if (ModList.liteLoaderInstalled())
 			Minecraft.getMinecraft().refreshResources();
-		if (ModList.NEI.isLoaded())
+		if (ModList.NEI.isLoaded()) {
 			NEIIntercept.instance.register();
+			//NEIFontRendererHandler.instance.register();
+		}
 	}
 
 	@SubscribeEvent
@@ -478,6 +481,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.EXTRAUTILS, ExtraUtilsHandler.class);
 		this.initHandler(ModList.MYSTCRAFT, MystCraftHandler.class);
 		this.initHandler(ModList.BLOODMAGIC, BloodMagicHandler.class);
+		this.initHandler(ModList.PNEUMATICRAFT, PneumaticPlantHandler.class);
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);

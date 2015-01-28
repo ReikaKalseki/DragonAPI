@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import codechicken.lib.gui.GuiDraw;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.client.settings.KeyBinding;
@@ -18,6 +19,7 @@ import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.PlayerModelRenderer;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Event.ResourceReloadEvent;
+import Reika.DragonAPI.Instantiable.IO.DelegateFontRenderer;
 import cpw.mods.fml.client.FMLClientHandler;
 
 public class APIProxyClient extends APIProxy {
@@ -51,6 +53,9 @@ public class APIProxyClient extends APIProxy {
 	@Override
 	public void registerSidedHandlersMain() {
 		rm.registerReloadListener(DirectResourceManager.getInstance());
+		Minecraft.getMinecraft().fontRenderer = new DelegateFontRenderer(Minecraft.getMinecraft().fontRenderer);
+		if (ModList.NEI.isLoaded())
+			GuiDraw.fontRenderer = Minecraft.getMinecraft().fontRenderer;
 	}
 
 	@Override

@@ -28,6 +28,7 @@ import net.minecraft.client.resources.ResourcePackFileNotFoundException;
 import net.minecraft.client.resources.ResourcePackRepository;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -36,6 +37,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaImageLoader;
 import Reika.DragonAPI.IO.ReikaTextureBinder;
 import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
+import Reika.DragonAPI.Instantiable.Event.TextureReloadEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
@@ -52,7 +54,7 @@ public class ReikaTextureHelper {
 
 	private static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
-	private static final ResourceLocation font = new ResourceLocation("textures/font/ascii.png");
+	public static final ResourceLocation font = new ResourceLocation("textures/font/ascii.png");
 	private static final ResourceLocation particle = new ResourceLocation("textures/particle/particles.png");
 	private static final ResourceLocation gui = new ResourceLocation("textures/gui/widgets.png");
 	private static final ResourceLocation hud = new ResourceLocation("textures/gui/icons.png");
@@ -66,6 +68,7 @@ public class ReikaTextureHelper {
 		if (reload()) {
 			textures.clear();
 			colorOverrides.clear();
+			MinecraftForge.EVENT_BUS.post(new TextureReloadEvent());
 		}
 		else {
 			if (root == null) {

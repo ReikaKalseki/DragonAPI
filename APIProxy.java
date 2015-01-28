@@ -13,13 +13,11 @@ import net.minecraft.world.World;
 
 public class APIProxy {
 
-	public void registerSidedHandlers()
-	{
+	public void registerSidedHandlers() {
 
 	}
 
-	public void registerSidedHandlersMain()
-	{
+	public void registerSidedHandlersMain() {
 
 	}
 
