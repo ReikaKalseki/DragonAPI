@@ -15,7 +15,6 @@ import java.net.URL;
 import java.util.Random;
 
 import net.minecraftforge.common.ForgeVersion;
-import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -95,7 +94,6 @@ public class DragonAPICore {
 
 		//ReikaMathCacher.initalize();
 		validateForgeVersions();
-		MinecraftForge.EVENT_BUS.register(new LoadWatcher());
 	}
 
 	protected static Side getSide() {
@@ -123,7 +121,13 @@ public class DragonAPICore {
 		return getSide() == Side.SERVER && !FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer();
 	}
 
-	public static class LoadWatcher {
+	public static class DragonAPILoadWatcher {
+
+		public static final DragonAPILoadWatcher instance = new DragonAPILoadWatcher();
+
+		private DragonAPILoadWatcher() {
+
+		}
 
 		@SubscribeEvent
 		public void load(GameFinishedLoadingEvent evt) {
