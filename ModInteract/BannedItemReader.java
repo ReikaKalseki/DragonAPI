@@ -19,13 +19,15 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.Instantiable.Data.Collections.ImmutableList;
+import Reika.DragonAPI.Instantiable.Data.Collections.ImmutableCollections.ImmutableList;
+import Reika.DragonAPI.Instantiable.Data.Collections.ImmutableCollections.ImmutableSet;
 
 public class BannedItemReader {
 
 	public static final BannedItemReader instance = new BannedItemReader();
 
 	private final ImmutableList<ItemBanEntry> allEntries = new ImmutableList();
+	private final ImmutableSet<Integer> allIds = new ImmutableSet();
 
 	private BannedItemReader() {
 
@@ -45,23 +47,15 @@ public class BannedItemReader {
 
 	private static final class ItemBanEntry {
 
-		public final Item itemID;
+		public final int itemID;
 		public final int itemDamage;
 
-		private ItemBanEntry(Item id, int meta) {
+		private ItemBanEntry(int id, int meta) {
 			itemID = id;
 			itemDamage = meta;
 		}
 
-		private ItemBanEntry(Item id) {
-			this(id, -1);
-		}
-
-		private ItemBanEntry(Block id, int meta) {
-			this(Item.getItemFromBlock(id), meta);
-		}
-
-		private ItemBanEntry(Block id) {
+		private ItemBanEntry(int id) {
 			this(id, -1);
 		}
 
@@ -75,22 +69,21 @@ public class BannedItemReader {
 		}
 
 		public boolean matches(ItemStack is) {
-			return itemID == is.getItem() && (itemDamage < 0 || itemDamage == is.getItemDamage());
+			return itemID == Item.getIdFromItem(is.getItem()) && (itemDamage < 0 || itemDamage == is.getItemDamage());
 		}
 
 	}
 
 	public boolean containsID(Block id) {
-		return this.containsID(Item.getItemFromBlock(id));
+		return this.containsID(Block.getIdFromBlock(id));
 	}
 
-	public boolean containsID(Item id) {
-		for (int i = 0; i < allEntries.size(); i++) {
-			ItemBanEntry e = allEntries.get(i);
-			if (e.itemID == id)
-				return true;
-		}
-		return false;
+	public boolean containsID(Item item) {
+		return this.containsID(Item.getIdFromItem(item));
+	}
+
+	private boolean containsID(int id) {
+		return allIds.contains(id);
 	}
 
 	public boolean containsItem(ItemStack is) {
@@ -125,10 +118,8 @@ public class BannedItemReader {
 						String id = parts[0];
 						String meta = parts[1];
 						int intid = Integer.parseInt(id);
-						Item it = Item.getItemById(intid);
 						int intmeta = meta.equals("*") ? -1 : Integer.parseInt(meta);
-
-						allEntries.add(new ItemBanEntry(it, intmeta));
+						allEntries.add(new ItemBanEntry(intid, intmeta));
 					}
 					catch (Exception e) {
 						//e.printStackTrace();

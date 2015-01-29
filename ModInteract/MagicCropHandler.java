@@ -28,44 +28,57 @@ public class MagicCropHandler extends CropHandlerBase {
 
 	public final Block oreID;
 	public final Block netherOreID;
+	public final Block endOreID;
 	/** Crafting Item */
-	public final Item essenceID;
-	public final Item cropEssenceID;
 	private final int configChance;
-	private ItemStack christmasEssence;
 
-	public static enum EssenceType {
-		COW(EssenceClass.SOUL, "Cow", 0),
-		CREEPER(EssenceClass.SOUL, "Creeper", 1),
-		MAGMA(EssenceClass.SOUL, "Magma", 2),
-		SKELETON(EssenceClass.SOUL, "Skeleton", 3),
-		SLIME(EssenceClass.SOUL, "Slime", 4),
-		SPIDER(EssenceClass.SOUL, "Spider", 5),
-		GHAST(EssenceClass.SOUL, "Ghast", 6),
-		WITHER(EssenceClass.SOUL, "Wither", 7),
+	public enum EssenceType {
+		COW(EssenceClass.SOULPASSIVE, "Cow", 0),
+		SHEEP(EssenceClass.SOULPASSIVE, "Sheep", 2),
+		PIG(EssenceClass.SOULPASSIVE, "Pig", 1),
+		CHICKEN(EssenceClass.SOULPASSIVE, "Chicken", 3),
+		CREEPER(EssenceClass.SOULHOSTILE, "Creeper", 1),
+		MAGMA(EssenceClass.SOULHOSTILE, "Magma", 4),
+		SKELETON(EssenceClass.SOULHOSTILE, "Skeleton", 5),
+		SLIME(EssenceClass.SOULHOSTILE, "Slime", 6),
+		SPIDER(EssenceClass.SOULHOSTILE, "Spider", 7),
+		GHAST(EssenceClass.SOULHOSTILE, "Ghast", 3),
+		WITHER(EssenceClass.SOULHOSTILE, "Wither", 8),
+		BLAZE(EssenceClass.SOULHOSTILE, "Blaze", 0),
+		ENDER(EssenceClass.SOULHOSTILE, "Enderman", 2),
 
-		NATURE(EssenceClass.MATERIAL, "Essence", 0),
-		REDSTONE(EssenceClass.MATERIAL, "Redstone", 1),
-		GLOWSTONE(EssenceClass.MATERIAL, "Glowstone", 2),
-		DIAMOND(EssenceClass.MATERIAL, "Diamond", 3),
-		IRON(EssenceClass.MATERIAL, "Iron", 4),
-		GOLD(EssenceClass.MATERIAL, "Gold", 5),
-		LAPIS(EssenceClass.MATERIAL, "Lapis", 6),
-		BLAZE(EssenceClass.MATERIAL, "Blaze", 7),
-		EMERALD(EssenceClass.MATERIAL, "Emerald", 8),
-		ENDER(EssenceClass.MATERIAL, "Ender", 9),
-		OBSIDIAN(EssenceClass.MATERIAL, "Obsidian", 10),
-		COAL(EssenceClass.MATERIAL, "Coal", 11),
-		XP(EssenceClass.MATERIAL, "Experience", 12),
-		DYE(EssenceClass.MATERIAL, "Dye", 13),
-		NETHER(EssenceClass.MATERIAL, "Nether", 14),
-		//DEATH(EssenceClass.MATERIAL, "DeathBloom", 0),
+		ESSENCE(EssenceClass.MINICIO, "Minicio", 0), //Own item
+		COAL(EssenceClass.MATERIAL1, "Coal", 1),
+		DYE(EssenceClass.MATERIAL1, "Dye", 2),
+		REDSTONE(EssenceClass.MATERIAL2, "Redstone", 0),
+		GLOWSTONE(EssenceClass.MATERIAL2, "Glowstone", 1),
+		OBSIDIAN(EssenceClass.MATERIAL2, "Obsidian", 2),
+		IRON(EssenceClass.MATERIAL3, "Iron", 0),
+		GOLD(EssenceClass.MATERIAL3, "Gold", 1),
+		LAPIS(EssenceClass.MATERIAL3, "Lapis", 2),
+		QUARTZ(EssenceClass.MATERIAL3, "Quartz", 4),
+		XP(EssenceClass.MATERIAL3, "Experience", 3),
+		DIAMOND(EssenceClass.MATERIAL4, "Diamond", 0),
+		EMERALD(EssenceClass.MATERIAL4, "Emerald", 1),
+		WATER(EssenceClass.MATERIAL1, "Water", 5),
+		FIRE(EssenceClass.MATERIAL1, "Fire", 4),
+		EARTH(EssenceClass.MATERIAL1, "Earth", 3),
+		AIR(EssenceClass.MATERIAL1, "Air", 0),
 
+		ABSORPTION(EssenceClass.POTION, "Absorption", 0),
+		FIRERESIST(EssenceClass.POTION, "FireResistance", 1),
+		HASTE(EssenceClass.POTION, "Haste", 2),
+		NIGHTVISION(EssenceClass.POTION, "NightVision", 3),
+		REGEN(EssenceClass.POTION, "Regeneration", 4),
+		RESISTANCE(EssenceClass.POTION, "Resistance", 5),
+		STRENGTH(EssenceClass.POTION, "Strength", 6),
+		WATERBREATHING(EssenceClass.POTION, "WaterBreathing", 7),
+		/*
 		COPPER(EssenceClass.MOD, "Copper", 0),
 		TIN(EssenceClass.MOD, "Tin", 1),
 		SILVER(EssenceClass.MOD, "Silver", 2),
 		LEAD(EssenceClass.MOD, "Lead", 3),
-		QUARTZ(EssenceClass.MOD, "Quartz", 4),
+		CQUARTZ(EssenceClass.MOD, "Quartz", 4),
 		SAPPHIRE(EssenceClass.MOD, "Sapphire", 5),
 		RUBY(EssenceClass.MOD, "Ruby", 6),
 		PERIDOT(EssenceClass.MOD, "Peridot", 7),
@@ -89,13 +102,8 @@ public class MagicCropHandler extends CropHandlerBase {
 		OSMIUM(EssenceClass.MOD, "Osmium", 25),
 		MAGANESE(EssenceClass.MOD, "Manganese", 26),
 		SULFUR(EssenceClass.MOD, "Sulfur", 27),
-		DARKIRON(EssenceClass.MOD, "Darkiron", 28),
-
-		WATER(EssenceClass.ELEMENT, "Water", 0),
-		FIRE(EssenceClass.ELEMENT, "Fire", 1),
-		EARTH(EssenceClass.ELEMENT, "Earth", 2),
-		AIR(EssenceClass.ELEMENT, "Air", 3);
-
+		DARKIRON(EssenceClass.MOD, "Darkiron", 28);
+		 */;
 		private final EssenceClass type;
 		private final String tag;
 		private Block cropID = null;
@@ -108,8 +116,8 @@ public class MagicCropHandler extends CropHandlerBase {
 		private static final HashMap<Item, EssenceType> essenceIDs = new HashMap();
 		private static final HashMap<Item, EssenceType> seedIDs = new HashMap();
 
-		private EssenceType(EssenceClass type, String name, int meta) {
-			this.type = type;
+		private EssenceType(EssenceClass c, String name, int meta) {
+			type = c;
 			tag = name;
 			essenceMeta = meta;
 		}
@@ -123,12 +131,12 @@ public class MagicCropHandler extends CropHandlerBase {
 			essenceIDs.put(essence, this);
 		}
 
-		public String getSeedFieldName() {
-			return type.seedPrefix+tag;
+		private String getSeedFieldName() {
+			return "Seeds"+tag;
 		}
 
-		public String getCropFieldName() {
-			return type.cropPrefix+tag;
+		private String getCropFieldName() {
+			return "Crop"+tag;
 		}
 
 		public ItemStack getEssence() {
@@ -143,38 +151,53 @@ public class MagicCropHandler extends CropHandlerBase {
 			return cropID != null ? new ItemStack(cropID, 1, 0) : null;
 		}
 
-		public String getEssenceFieldName() {
-			switch(type) {
-			case ELEMENT:
-				return "ElementEssence";
-			case MATERIAL:
-				return "CropEssence";
-			case SOUL:
-				return "SoulEssence";
-			case MOD:
-				return "ModCropEssence";
-			default:
-				return "";
-			}
-		}
-
 		public static boolean initialized() {
 			return !cropIDs.isEmpty() && !seedIDs.isEmpty() && !essenceIDs.isEmpty();
 		}
 	}
 
 	private static enum EssenceClass {
-		MATERIAL("MagicCrop", "MagicSeeds"),
-		MOD("ModMagicCrop", "ModMagicSeeds"),
-		SOUL("SoulCrop", "SoulSeeds"),
-		ELEMENT("ElementCrop", "ElementSeeds");
+		SOULPASSIVE("SoulEssencePassive"),
+		SOULHOSTILE("SoulEssenceHostile"),
+		MINICIO("MinicioEssence"),
+		MATERIAL1("T1Essence"),
+		MATERIAL2("T2Essence"),
+		MATERIAL3("T3Essence"),
+		MATERIAL4("T4Essence"),
+		POTION("PotionPetals"),
+		MOD("");
 
-		public final String seedPrefix;
-		public final String cropPrefix;
+		private final String field;
 
-		private EssenceClass(String crop, String seed) {
-			seedPrefix = seed;
-			cropPrefix = crop;
+		private EssenceClass(String s) {
+			field = s;
+		}
+	}
+
+	public enum MiscEssence {
+		NATURE("T1Essence", 6),
+		CHRISTMAS("ChristmasEssence"),
+		TAINTED("TaintedEssence"),
+		ACCIO("AccioEssence"),
+		CRUCIO("CrucioEssence"),
+		IMPERIO("ImperioEssence"),
+		ZIVICIO("ZivicioEssence");
+
+		private final String field;
+		private final int metadata;
+		private Item item;
+
+		private MiscEssence(String s) {
+			this(s, 0);
+		}
+
+		private MiscEssence(String s, int meta) {
+			field = s;
+			metadata = meta;
+		}
+
+		public ItemStack getItem() {
+			return item != null ? new ItemStack(item, 1, metadata) : null;
 		}
 	}
 
@@ -184,8 +207,7 @@ public class MagicCropHandler extends CropHandlerBase {
 		super();
 		Block idore = null;
 		Block idnether = null;
-		Item idessence = null;
-		Item idcropessence = null;
+		Block idend = null;
 		int chance = -1;
 		if (this.hasMod()) {
 			Class c = this.getMod().getBlockClass();
@@ -193,7 +215,7 @@ public class MagicCropHandler extends CropHandlerBase {
 				EssenceType type = EssenceType.essenceList[i];
 				String cropf = type.getCropFieldName();
 				String seedf = type.getSeedFieldName();
-				String essf = type.getEssenceFieldName();
+				String essf = type.type.field;
 				try {
 					Field f = c.getField(cropf);
 					Block crop = (Block)f.get(null);
@@ -231,9 +253,10 @@ public class MagicCropHandler extends CropHandlerBase {
 				ore = (Block)f.get(null);
 				idnether = ore;
 
-				f = c.getField("MagicEssence");
-				Item essence = (Item)f.get(null);
-				idessence = essence;
+				f = c.getField("EssenceOreEnd");
+				ore = (Block)f.get(null);
+				idend = ore;
+
 
 
 				Class c2 = Class.forName("com.mark719.magicalcrops.ConfigHandler");
@@ -266,11 +289,8 @@ public class MagicCropHandler extends CropHandlerBase {
 		}
 		oreID = idore;
 		netherOreID = idnether;
-		essenceID = idessence;
-		cropEssenceID = idcropessence;
+		endOreID = idend;
 		configChance = chance >= 0 ? chance : 10;
-
-		christmasEssence = cropEssenceID != null ? new ItemStack(cropEssenceID, 1, 20) : null;
 	}
 
 	@Override
@@ -306,11 +326,11 @@ public class MagicCropHandler extends CropHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return EssenceType.initialized() && configChance != -1 && oreID != null && netherOreID != null && essenceID != null && cropEssenceID != null;
+		return EssenceType.initialized() && configChance != -1 && oreID != null && netherOreID != null && endOreID != null;
 	}
 
 	public boolean isEssenceOre(Block id) {
-		return id == netherOreID || id == oreID;
+		return id == netherOreID || id == oreID || id == endOreID;
 	}
 
 	@Override
@@ -326,13 +346,13 @@ public class MagicCropHandler extends CropHandlerBase {
 	@Override
 	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune) {
 		ArrayList<ItemStack> li = new ArrayList();
-		if (ReikaRandomHelper.doWithChance(20*(1+fortune)) && christmasEssence != null)
-			li.add(christmasEssence);
-		ItemStack nature = EssenceType.NATURE.getEssence();
-		if (ReikaRandomHelper.doWithChance(20*(1+fortune)) && nature != null)
+		if (MiscEssence.CHRISTMAS.item != null && ReikaRandomHelper.doWithChance(20*(1+fortune)))
+			li.add(MiscEssence.CHRISTMAS.getItem());
+		ItemStack nature = MiscEssence.NATURE.getItem();
+		if (nature != null && ReikaRandomHelper.doWithChance(20*(1+fortune)))
 			li.add(nature);
 		if (ReikaRandomHelper.doWithChance(20*(1+fortune))) {
-			ItemStack weak = this.getWeakEssence();
+			ItemStack weak = EssenceType.ESSENCE.getEssence();
 			if (weak != null) {
 				li.add(weak);
 				if (ReikaRandomHelper.doWithChance(25*(1+fortune)))
@@ -349,12 +369,11 @@ public class MagicCropHandler extends CropHandlerBase {
 		ore = new ItemStack(netherOreID, 1, 0);
 		OreDictionary.registerOre("oreNetherEssence", ore);
 
+		ore = new ItemStack(endOreID, 1, 0);
+		OreDictionary.registerOre("oreEndEssence", ore);
+
 		ModOreList.ESSENCE.reloadOreList();
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Registering Magic Crops Essence ore to the Ore Dictionary!");
-	}
-
-	public ItemStack getWeakEssence() {
-		return essenceID != null ? new ItemStack(essenceID, 1, 0) : null;
 	}
 
 }

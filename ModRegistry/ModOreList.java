@@ -103,7 +103,7 @@ public enum ModOreList implements OreType {
 	TITANIUM("Titanium", 0x809797, OreRarity.SCARCE, "ingotTitanium", 1, "oreTitanium"),
 	MAGMANITE("Magmanite", 0xF95D00, OreRarity.SCATTERED, "dropMagma", 1, "oreMagmanite"),
 	MAGNETITE("Magnetite", 0x44442D, OreRarity.AVERAGE, "gemMagnetite", 1, "oreMagnetite"),
-	ESSENCE("Essence", 0x158215, OreRarity.AVERAGE, "itemEssence", 4, "oreEssence", "oreNetherEssence"),
+	ESSENCE("Essence", 0x158215, OreRarity.AVERAGE, "itemEssence", 4, "oreEssence", "oreNetherEssence", "oreEndEssence"),
 	MIMICHITE("Mimichite", 0x8900FF, OreRarity.SCATTERED, "gemMimichite", 1, "oreMimichite"),
 	NETHERURANIUM("Nether Uranium", 0x00aa00, OreRarity.SCARCE, "ingotUranium", 1, "oreNetherUranium"),
 	QUANTUM("Quantum", 0x5BA642, OreRarity.SCATTERED, "dustQuantum", 2, "oreQuantum"),
