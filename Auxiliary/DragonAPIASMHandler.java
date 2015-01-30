@@ -11,6 +11,7 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.Map;
 
+import net.minecraft.launchwrapper.Launch;
 import Reika.DragonAPI.ASM.APIStripper;
 import Reika.DragonAPI.ASM.DependentMethodStripper;
 import Reika.DragonAPI.ASM.DragonAPIClassTransfomer;
@@ -24,7 +25,12 @@ import cpw.mods.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
 public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 
 	static {
-		//Launch.classLoader.addTransformerExclusion("Reika");  Breaks @SideOnly and EventHandlers
+		Launch.classLoader.addTransformerExclusion("Reika.DragonAPI.ASM");
+		Launch.classLoader.addTransformerExclusion("Reika.LegacyCraft.LegacyASMHandler");
+		Launch.classLoader.addTransformerExclusion("Reika.ChromatiCraft.Auxiliary.ChromaASMHandler");
+
+		Launch.classLoader.addTransformerExclusion("Reika.DragonAPI.Libraries.Java.ReikaASMHelper");
+		Launch.classLoader.addTransformerExclusion("Reika.DragonAPI.Exception.ASMException");
 	}
 
 	@Override

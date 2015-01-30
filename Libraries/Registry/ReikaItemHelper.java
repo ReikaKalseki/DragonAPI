@@ -364,10 +364,6 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return is.getItem() == Item.getItemFromBlock(b);
 	}
 
-	public static boolean isAirItem(ItemStack is) {
-		return matchStackWithBlock(is, Blocks.air);
-	}
-
 	public static ItemStack stripNBT(ItemStack is) {
 		ItemStack is2 = is.copy();
 		is2.stackTagCompound = null;

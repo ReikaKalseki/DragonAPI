@@ -21,6 +21,7 @@ import java.util.List;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
@@ -131,6 +132,53 @@ public class ReikaASMHelper {
 			root = root.getNext();
 		}
 		m.instructions.insert(root, arg);
+	}
+
+	public static ArrayList<String> parseMethodArguments(MethodNode mn) {
+		//ReikaJavaLibrary.pConsole("PARSING METHOD: "+mn.desc);
+		String desc = mn.desc.substring(mn.desc.indexOf('(')+1, mn.desc.lastIndexOf(')')); //strip to inside brackets
+		ArrayList<String> li = new ArrayList();
+		parseArguments(li, desc);
+		//ReikaJavaLibrary.pConsole("PARSED METHOD: "+mn.desc+" > "+li);
+		return li;
+	}
+
+	private static void parseArguments(ArrayList<String> args, String desc) {
+		//ReikaJavaLibrary.pConsole("PARSING: "+desc);
+		if (desc.startsWith("L")) { //Class
+			int semi = desc.indexOf(';');
+			String arg = desc.substring(0, semi+1);
+			//ReikaJavaLibrary.pConsole("Parsed as class: "+arg);
+			args.add(arg);
+			parseArguments(args, desc.substring(arg.length()));
+		}
+		else if (desc.isEmpty()) { //done
+			//ReikaJavaLibrary.pConsole("Parsed empty.");
+		}
+		else { //primitive
+			String prim = desc.substring(0, 1);
+			//ReikaJavaLibrary.pConsole("Parsed as primitive: "+prim);
+			args.add(prim);
+			parseArguments(args, desc.substring(1));
+		}
+	}
+
+	public static boolean memberHasAnnotationOfType(MethodNode mn, String type) {
+		return hasAnnotation(mn.visibleAnnotations, type);
+	}
+
+	public static boolean memberHasAnnotationOfType(FieldNode fn, String type) {
+		return hasAnnotation(fn.visibleAnnotations, type);
+	}
+
+	private static boolean hasAnnotation(List<AnnotationNode> li, String type) {
+		if (li == null || li.isEmpty())
+			return false;
+		for (AnnotationNode ann : li) {
+			if (ann.desc.startsWith(type))
+				return true;
+		}
+		return false;
 	}
 
 	public static void clearMethodBody(MethodNode m) {

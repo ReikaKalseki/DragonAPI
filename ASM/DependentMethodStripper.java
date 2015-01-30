@@ -14,6 +14,7 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -31,12 +32,15 @@ import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.ASMException;
+import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 
-public class DependentMethodStripper implements IClassTransformer
-{
+public class DependentMethodStripper implements IClassTransformer {
+
+	private static final String baseString = "LReika/DragonAPI/ASM/DependentMethodStripper$";
 	private static final boolean DEBUG = true;
+
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] bytes) {
 		if (bytes == null) {
@@ -50,9 +54,10 @@ public class DependentMethodStripper implements IClassTransformer
 		Iterator<FieldNode> fields = classNode.fields.iterator();
 		while(fields.hasNext()) {
 			FieldNode field = fields.next();
-			if (this.remove(field)) {
+			AnnotationFail a = this.remove(field);
+			if (a != null) {
 				if (DEBUG) {
-					ReikaJavaLibrary.pConsole(String.format("Removing Field: %s.%s", classNode.name, field.name));
+					ReikaJavaLibrary.pConsole(String.format("Removing Field: %s.%s; Reason: %s", classNode.name, field.name, a.text));
 				}
 				fields.remove();
 			}
@@ -60,9 +65,10 @@ public class DependentMethodStripper implements IClassTransformer
 		Iterator<MethodNode> methods = classNode.methods.iterator();
 		while(methods.hasNext()) {
 			MethodNode method = methods.next();
-			if (this.remove(method)) {
+			AnnotationFail a = this.remove(method);
+			if (a != null) {
 				if (DEBUG) {
-					ReikaJavaLibrary.pConsole(String.format("Removing Method: %s.%s%s", classNode.name, method.name, method.desc));
+					ReikaJavaLibrary.pConsole(String.format("Removing Method: %s.%s%s; Reason: %s", classNode.name, method.name, method.desc, a.text));
 				}
 				methods.remove();
 			}
@@ -74,20 +80,20 @@ public class DependentMethodStripper implements IClassTransformer
 		return writer.toByteArray();
 	}
 
-	private boolean remove(FieldNode f) {
-		return processSmart(f) || this.remove(f.visibleAnnotations);
+	private AnnotationFail remove(FieldNode f) {
+		return processSmart(f) ? smartFail : this.remove(f.visibleAnnotations);
 	}
 
-	private boolean remove(MethodNode f) {
-		return processSmart(f) || this.remove(f.visibleAnnotations);
+	private AnnotationFail remove(MethodNode f) {
+		return processSmart(f) ? smartFail : this.remove(f.visibleAnnotations);
 	}
 
-	private boolean remove(List<AnnotationNode> anns) {
+	private AnnotationFail remove(List<AnnotationNode> anns) {
 		if (anns == null) {
-			return false;
+			return null;
 		}
-		if (!FMLForgePlugin.RUNTIME_DEOBF) //prevents needing to always reload game in dev env
-			return false;
+		if (!FMLForgePlugin.RUNTIME_DEOBF) //prevents needing to always reload game in dev env (ASM not run on src edit, so Eclipse thinks new methods)
+			return null;
 		for (AnnotationNode ann : anns) {
 			if (isDependencyAnnotation(ann)) {
 				if (ann.values != null) {
@@ -101,30 +107,43 @@ public class DependentMethodStripper implements IClassTransformer
 									String[] value = (String[])values;
 									//ReikaJavaLibrary.pConsole(mod+": "+Arrays.toString(value));
 									if (a.remove(value[1])) {
-										return true;
+										return new AnnotationFail(a, value[1]);
 									}
 								}
 							}
 						}
 					}
 					else {
-						throw new InvalidStrippingAnnotationException("Annotation type "+ann.desc+" is not valid!");
+						throw new InvalidStrippingAnnotationException(ann);
 					}
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 
 	private static class InvalidStrippingAnnotationException extends ASMException {
 
-		public InvalidStrippingAnnotationException(String s) {
-			super(s);
+		public InvalidStrippingAnnotationException(AnnotationNode ann) {
+			super("Annotation type "+ann.desc+" is not valid!");
 		}
 
 	}
 
-	private static final String baseString = "LReika/DragonAPI/ASM/DependentMethodStripper$";
+	private static class AnnotationFail {
+
+		private final Annotations annotation;
+		private final String reference;
+		private final String text;
+
+		private AnnotationFail(Annotations a, String ref) {
+			annotation = a;
+			reference = ref;
+			text = String.format(a.desc, ref);
+		}
+	}
+
+	private static final AnnotationFail smartFail = new AnnotationFail(Annotations.SMART, "");
 
 	private static boolean isDependencyAnnotation(AnnotationNode ann) {
 		//ann.desc.equals("LReika/DragonAPI/ASM/DependentMethodStripper$ModDependent;");
@@ -132,43 +151,52 @@ public class DependentMethodStripper implements IClassTransformer
 	}
 
 	private static boolean processSmart(MethodNode mn) {
-
+		if (!ReikaASMHelper.memberHasAnnotationOfType(mn, "LReika/DragonAPI/ASM/DependentMethodStripper$SmartStripper"))
+			return false;
+		ArrayList<String> args = ReikaASMHelper.parseMethodArguments(mn);
+		for (String s : args) {
+			if (s.length() > 1 && !classExists(s.substring(1, s.length()-1))) //> 1 to avoid primitives, substring to drop L- and -;
+				return true;
+		}
+		return false;
 	}
 
-	private static boolean processSmart(FieldNode mn) {
+	private static boolean processSmart(FieldNode fn) {
+		return ReikaASMHelper.memberHasAnnotationOfType(fn, "LReika/DragonAPI/ASM/DependentMethodStripper$SmartStripper") && !classExists(fn.desc);
+	}
 
+	private static boolean classExists(String name) {
+		try {
+			return Launch.classLoader.getClassBytes(name) != null;
+		}
+		catch (IOException e) {
+			return false;
+		}
 	}
 
 	private static enum Annotations {
-		MOD("ModDependent"),
-		CLASS("ClassDependent"),
-		SMART("SmartStripper");
+		MOD("ModDependent", "Required mod %s not loaded."),
+		CLASS("ClassDependent", "Required class %s not found."),
+		SMART("SmartStripper", "Refers to one or more classes not found.");
 
 		private final String name;
+		private final String desc;
 
 		private static final HashMap<String, Annotations> map = new HashMap();
 
-		private Annotations(String s) {
+		private Annotations(String s, String d) {
 			name = s;
+			desc = d;
 		}
 
 		private boolean remove(String value) {
 			switch(this) {
 			case CLASS:
-				return classExists(value);
+				return !classExists(value);
 			case MOD:
 				ModList mod = ModList.valueOf(value);
 				return !mod.isLoaded();
 			default:
-				return false;
-			}
-		}
-
-		private static boolean classExists(String name) {
-			try {
-				return Launch.classLoader.getClassBytes(name) != null;
-			}
-			catch (IOException e) {
 				return false;
 			}
 		}
