@@ -29,7 +29,16 @@ public final class BlockKey implements BlockCheck {
 		metadata = meta;
 		blockID = b;
 	}
-
+	/*
+	public BlockKey(ItemStack is) {
+		this(Block.getBlockFromItem(is.getItem()), is.getItemDamage());
+		if (is.getItem() == null)
+			throw new MisuseException("Cannot create a BlockKey from a null item!");
+		Block b = Block.getBlockFromItem(is.getItem());
+		if (b == null)
+			throw new MisuseException("Cannot create a BlockKey with an item with no block!");
+	}
+	 */
 	public static BlockKey getAt(IBlockAccess world, int x, int y, int z) {
 		return new BlockKey(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 	}
