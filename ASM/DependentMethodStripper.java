@@ -103,11 +103,16 @@ public class DependentMethodStripper implements IClassTransformer {
 							Object key = ann.values.get(x);
 							Object values = ann.values.get(x+1);
 							if (key instanceof String && key.equals("value")) {
-								if (values instanceof String[]) {
+								if (values instanceof String[]) { //Enum
 									String[] value = (String[])values;
-									//ReikaJavaLibrary.pConsole(mod+": "+Arrays.toString(value));
 									if (a.remove(value[1])) {
 										return new AnnotationFail(a, value[1]);
+									}
+								}
+								else if (values instanceof String) { //Normal string arg
+									String sg = (String)values;
+									if (a.remove(sg)) {
+										return new AnnotationFail(a, sg);
 									}
 								}
 							}
@@ -146,7 +151,6 @@ public class DependentMethodStripper implements IClassTransformer {
 	private static final AnnotationFail smartFail = new AnnotationFail(Annotations.SMART, "");
 
 	private static boolean isDependencyAnnotation(AnnotationNode ann) {
-		//ann.desc.equals("LReika/DragonAPI/ASM/DependentMethodStripper$ModDependent;");
 		return ann.desc.startsWith(baseString);
 	}
 
@@ -202,7 +206,7 @@ public class DependentMethodStripper implements IClassTransformer {
 		}
 
 		private static Annotations getType(AnnotationNode ann) {
-			String d = ann.desc;
+			String d = ann.desc.substring(0, ann.desc.length()-1); //remove ';'
 			return map.get(d.substring(baseString.length()));
 		}
 

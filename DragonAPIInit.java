@@ -87,6 +87,7 @@ import Reika.DragonAPI.ModInteract.GalacticCraftHandler;
 import Reika.DragonAPI.ModInteract.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.IC2Handler;
 import Reika.DragonAPI.ModInteract.MFRHandler;
+import Reika.DragonAPI.ModInteract.MTInteractionManager;
 import Reika.DragonAPI.ModInteract.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.MagicaOreHandler;
 import Reika.DragonAPI.ModInteract.MekToolHandler;
@@ -365,6 +366,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new TileSyncCommand());
 		evt.registerServerCommand(new IDDumpCommand());
 		evt.registerServerCommand(new FindTilesCommand());
+
+		if (MTInteractionManager.isMTLoaded())
+			MTInteractionManager.instance.scanAndRevert();
 	}
 
 	@SubscribeEvent

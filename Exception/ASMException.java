@@ -53,7 +53,7 @@ public abstract class ASMException extends RuntimeException {
 		protected abstract String getTitle();
 
 		public final boolean isVanillaClass() {
-			return isVanillaClass(node);
+			return ASMException.isVanillaClass(node); //need the direct class reference or compiler has a seizure <_<
 		}
 
 	}

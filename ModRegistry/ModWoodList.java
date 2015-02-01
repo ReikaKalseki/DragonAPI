@@ -167,10 +167,11 @@ public enum ModWoodList implements TreeType {
 			Block idleaf;
 			Block idsapling;
 			switch(type) {
-			case ITEMSTACK:
-				ItemStack wood = (ItemStack)w.get(null);
-				ItemStack leaf = (ItemStack)l.get(null);
-				ItemStack sapling = (ItemStack)s.get(null);
+			case ITEMSTACK: {
+				Object ins = this.getFieldInstance();
+				ItemStack wood = (ItemStack)w.get(ins);
+				ItemStack leaf = (ItemStack)l.get(ins);
+				ItemStack sapling = (ItemStack)s.get(ins);
 				if (wood == null || leaf == null || sapling == null) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
 					return;
@@ -179,10 +180,12 @@ public enum ModWoodList implements TreeType {
 				idleaf = Block.getBlockFromItem(leaf.getItem());
 				idsapling = Block.getBlockFromItem(sapling.getItem());
 				break;
-			case INSTANCE:
-				Block wood_b = (Block)w.get(null);
-				Block leaf_b = (Block)l.get(null);
-				Block sapling_b = (Block)s.get(null);
+			}
+			case INSTANCE: {
+				Object ins = this.getFieldInstance();
+				Block wood_b = (Block)w.get(ins);
+				Block leaf_b = (Block)l.get(ins);
+				Block sapling_b = (Block)s.get(ins);
 				if (wood_b == null || leaf_b == null || sapling_b == null) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
 					return;
@@ -190,12 +193,8 @@ public enum ModWoodList implements TreeType {
 				id = wood_b;
 				idleaf = leaf_b;
 				idsapling = sapling_b;
-				break;/*
-			case INT:
-				id = w.getInt(null);
-				idleaf = l.getInt(null);
-				idsapling = s.getInt(null);
-				break;*/
+				break;
+			}
 			default:
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type "+type+" for "+w+" or "+l);
@@ -227,6 +226,26 @@ public enum ModWoodList implements TreeType {
 		catch (IllegalArgumentException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
 			e.printStackTrace();
+		}
+		catch (ReflectiveOperationException e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
+			e.printStackTrace();
+		}
+		catch (NullPointerException e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
+			e.printStackTrace();
+		}
+	}
+
+	private Object getFieldInstance() throws ReflectiveOperationException {
+		switch(mod) {
+		case WITCHERY: {
+			Class c = Class.forName("com.emoniph.witchery.Witchery");
+			Field f = c.getField("Blocks");
+			return f.get(null);
+		}
+		default:
+			return null;
 		}
 	}
 

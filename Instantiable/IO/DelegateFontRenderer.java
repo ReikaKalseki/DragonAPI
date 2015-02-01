@@ -44,15 +44,17 @@ public final class DelegateFontRenderer extends FontRenderer {
 
 	@Override
 	public int drawString(String sg, int x, int y, int color, boolean shadow) {
-		return this.getRenderer(sg).drawString(sg, x, y, color, shadow);
+		FontKey f = this.getRenderer(sg);
+		return f.renderer.drawString(f.text, x, y, color, shadow);
 	}
 
 	@Override
 	public void drawSplitString(String sg, int x, int y, int space, int color) {
-		this.getRenderer(sg).drawSplitString(sg, x, y, space, color);
+		FontKey f = this.getRenderer(sg);
+		f.renderer.drawSplitString(f.text, x, y, space, color);
 	}
 
-	private FontRenderer getRenderer(String sg) {
+	private FontKey getRenderer(String sg) {
 		String ref = sg;
 		StringBuilder pre = new StringBuilder();
 		while (!ref.isEmpty() && ref.charAt(0) == '\u00A7') {
@@ -61,10 +63,26 @@ public final class DelegateFontRenderer extends FontRenderer {
 		}
 		for (String c : renderers.keySet()) {
 			if (ref.startsWith(c)) {
-				return renderers.get(c);
+				ref = ref.substring(c.length());
+				while (ref.indexOf('\uFFFC') >= 0) {
+					ref = ref.substring(ref.indexOf('\uFFFC')+c.length());
+				}
+				return new FontKey(renderers.get(c), pre.toString()+ref);
 			}
 		}
-		return fallback;
+		return new FontKey(fallback, sg);
+	}
+
+	private static class FontKey {
+
+		private final FontRenderer renderer;
+		private final String text;
+
+		private FontKey(FontRenderer f, String s) {
+			renderer = f;
+			text = s;
+		}
+
 	}
 
 	@Override

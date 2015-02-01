@@ -12,7 +12,9 @@ package Reika.DragonAPI.IO;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
@@ -205,6 +207,45 @@ public class ReikaFileReader extends DragonAPICore {
 			e.printStackTrace();
 			return "";
 		}
+	}
+
+	/** Edits individual lines matching in a file if they match a given criterion. */
+	public static abstract class LineEditor {
+
+		/** Attempt line editing? */
+		public abstract boolean editLine(String s);
+
+		/** The line used to replace strings that match the criteria */
+		protected abstract String getReplacementLine(String s);
+
+		public final boolean performChanges(File f) {
+			try {
+				BufferedReader r = new BufferedReader(new FileReader(f));
+				String sep = System.getProperty("line.separator");
+				String line = r.readLine();
+				StringBuilder out = new StringBuilder();
+				while (line != null) {
+					String rep = this.editLine(line) ? this.getReplacementLine(line) : line;
+					if (rep == null) {
+
+					}
+					else {
+						out.append(rep+sep);
+					}
+					line = r.readLine();
+				}
+				r.close();
+				FileOutputStream os = new FileOutputStream(f);
+				os.write(out.toString().getBytes());
+				os.close();
+				return true;
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+				return false;
+			}
+		}
+
 	}
 
 }

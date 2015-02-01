@@ -212,7 +212,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			return;
 		}
 		try {
-			Class.forName(c.getCanonicalName(), true, ReikaJavaLibrary.class.getClassLoader());
+			Class.forName(c.getName(), true, ReikaJavaLibrary.class.getClassLoader());
 		}
 		catch (ClassNotFoundException e) {
 			pConsole("DRAGONAPI: Failed to initalize class "+c.getName()+"! Class not found!");
@@ -223,12 +223,19 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			e.printStackTrace();
 		}
 		catch (RuntimeException e) {
-			pConsole("DRAGONAPI: Failed to initalize class "+c.getCanonicalName()+"!");
+			pConsole("DRAGONAPI: Failed to initalize class "+c.getName()+"!");
 			String s = e.getMessage();
 			if (s.endsWith("for invalid side SERVER")) {
 				pConsole("Attemped to load a clientside class on the server! This is a significant programming error!");
 			}
 			e.printStackTrace();
+		}
+	}
+
+	public static void initClassWithSubs(Class c) {
+		initClass(c);
+		for (Class c2 : c.getDeclaredClasses()) {
+			initClass(c2);
 		}
 	}
 

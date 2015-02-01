@@ -366,7 +366,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 		@Override
 		public final float getChance(IBeeHousing ibh, IAllele ia1, IAllele ia2, IGenome ig1, IGenome ig2) {
-			return this.isValidParents(ia1, ia2) ? 1 : 0;
+			return this.isValidParents(ia1, ia2) ? chance : 0;
 		}
 
 		private boolean isValidParents(IAllele ia1, IAllele ia2) {
