@@ -19,15 +19,15 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.Instantiable.Data.Collections.ImmutableCollections.ImmutableList;
-import Reika.DragonAPI.Instantiable.Data.Collections.ImmutableCollections.ImmutableSet;
+import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayList;
+import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 
 public class BannedItemReader {
 
 	public static final BannedItemReader instance = new BannedItemReader();
 
-	private final ImmutableList<ItemBanEntry> allEntries = new ImmutableList();
-	private final ImmutableSet<Integer> allIds = new ImmutableSet();
+	private final OneWayList<ItemBanEntry> allEntries = new OneWayList();
+	private final OneWaySet<Integer> allIds = new OneWaySet();
 
 	private BannedItemReader() {
 
