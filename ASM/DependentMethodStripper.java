@@ -54,10 +54,10 @@ public class DependentMethodStripper implements IClassTransformer {
 		Iterator<FieldNode> fields = classNode.fields.iterator();
 		while(fields.hasNext()) {
 			FieldNode field = fields.next();
-			AnnotationFail a = this.remove(field);
+			AnnotationFail a = this.remove(classNode, field);
 			if (a != null) {
 				if (DEBUG) {
-					ReikaJavaLibrary.pConsole(String.format("Removing Field: %s.%s; Reason: %s", classNode.name, field.name, a.text));
+					ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Field: %s.%s; Reason: %s", classNode.name, field.name, a.text));
 				}
 				fields.remove();
 			}
@@ -65,10 +65,10 @@ public class DependentMethodStripper implements IClassTransformer {
 		Iterator<MethodNode> methods = classNode.methods.iterator();
 		while(methods.hasNext()) {
 			MethodNode method = methods.next();
-			AnnotationFail a = this.remove(method);
+			AnnotationFail a = this.remove(classNode, method);
 			if (a != null) {
 				if (DEBUG) {
-					ReikaJavaLibrary.pConsole(String.format("Removing Method: %s.%s%s; Reason: %s", classNode.name, method.name, method.desc, a.text));
+					ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Method: %s.%s%s; Reason: %s", classNode.name, method.name, method.desc, a.text));
 				}
 				methods.remove();
 			}
@@ -80,15 +80,15 @@ public class DependentMethodStripper implements IClassTransformer {
 		return writer.toByteArray();
 	}
 
-	private AnnotationFail remove(FieldNode f) {
-		return processSmart(f) ? smartFail : this.remove(f.visibleAnnotations);
+	private AnnotationFail remove(ClassNode cn, FieldNode f) {
+		return processSmart(f) ? smartFail : this.remove(cn, f.visibleAnnotations);
 	}
 
-	private AnnotationFail remove(MethodNode f) {
-		return processSmart(f) ? smartFail : this.remove(f.visibleAnnotations);
+	private AnnotationFail remove(ClassNode cn, MethodNode f) {
+		return processSmart(f) ? smartFail : this.remove(cn, f.visibleAnnotations);
 	}
 
-	private AnnotationFail remove(List<AnnotationNode> anns) {
+	private AnnotationFail remove(ClassNode cn, List<AnnotationNode> anns) {
 		if (anns == null) {
 			return null;
 		}
@@ -119,7 +119,7 @@ public class DependentMethodStripper implements IClassTransformer {
 						}
 					}
 					else {
-						throw new InvalidStrippingAnnotationException(ann);
+						throw new InvalidStrippingAnnotationException(cn, ann);
 					}
 				}
 			}
@@ -129,8 +129,19 @@ public class DependentMethodStripper implements IClassTransformer {
 
 	private static class InvalidStrippingAnnotationException extends ASMException {
 
-		public InvalidStrippingAnnotationException(AnnotationNode ann) {
-			super("Annotation type "+ann.desc+" is not valid!");
+		private final AnnotationNode annotation;
+
+		public InvalidStrippingAnnotationException(ClassNode cn, AnnotationNode ann) {
+			super(cn);
+			annotation = ann;
+		}
+
+		@Override
+		public final String getMessage() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(super.getMessage());
+			sb.append("Annotation type "+annotation.desc+" is not valid dependency annotation!");
+			return sb.toString();
 		}
 
 	}

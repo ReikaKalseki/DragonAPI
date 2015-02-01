@@ -19,24 +19,33 @@ public abstract class ASMException extends RuntimeException {
 
 	public static final boolean DEV_ENV = !FMLForgePlugin.RUNTIME_DEOBF;
 
-	protected final String label;
 
-	protected ASMException(String name) {
-		label = name;
+	protected final ClassNode node;
+
+	protected ASMException(ClassNode cn) {
+		node = cn;
+	}
+
+	@Override
+	public String getMessage() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("Error ASMing "+node.name);
+		return sb.toString();
 	}
 
 	private abstract static class NoSuchMemberASMException extends ASMException {
 
-		protected final ClassNode node;
+		protected final String label;
 
 		private NoSuchMemberASMException(ClassNode cn, String name) {
-			super(name);
-			node = cn;
+			super(cn);
+			label = name;
 		}
 
 		@Override
 		public final String getMessage() {
 			StringBuilder sb = new StringBuilder();
+			sb.append(super.getMessage());
 			sb.append(this.getTitle());
 			sb.append(" not found in class ");
 			sb.append(node.name);

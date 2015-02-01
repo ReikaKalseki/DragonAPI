@@ -81,14 +81,26 @@ public class ReikaASMHelper {
 
 	public static MethodNode getMethodByName(ClassNode c, String obf, String deobf, String sig) throws NoSuchASMMethodException {
 		String s = FMLForgePlugin.RUNTIME_DEOBF ? obf : deobf;
+		MethodNode mn = getMethodByNameAndSig(c, s, sig);
+		if (mn == null)
+			throw new NoSuchASMMethodException(c, s, sig);
+		else
+			return mn;
+	}
+
+	public static boolean classContainsMethod(ClassNode cn, MethodNode mn) {
+		return getMethodByNameAndSig(cn, mn.name, mn.signature) != null;
+	}
+
+	private static MethodNode getMethodByNameAndSig(ClassNode c, String name, String sig) {
 		List<MethodNode> methods = c.methods;
 		for (int k = 0; k < methods.size(); k++) {
 			MethodNode m = methods.get(k);
-			if (m.name.equals(s) && m.desc.equals(sig)) {
+			if (m.name.equals(name) && m.desc.equals(sig)) {
 				return m;
 			}
 		}
-		throw new NoSuchASMMethodException(c, s, sig);
+		return null;
 	}
 
 	public static void removeCodeLine(MethodNode m, int line) {

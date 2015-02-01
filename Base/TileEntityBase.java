@@ -22,7 +22,6 @@ import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.Component;
 import li.cil.oc.api.network.Environment;
-import li.cil.oc.api.network.ManagedPeripheral;
 import li.cil.oc.api.network.Message;
 import li.cil.oc.api.network.Node;
 import li.cil.oc.api.network.Visibility;
@@ -44,8 +43,8 @@ import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.ASM.APIStripper.Strippable;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
+import Reika.DragonAPI.ASM.InterfaceInjector.Injectable;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.StepTimer;
@@ -69,9 +68,9 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 
-@Strippable(value = {"dan200.computercraft.api.peripheral.IPeripheral", "li.cil.oc.api.network.Environment",
+@Injectable(value = {"dan200.computercraft.api.peripheral.IPeripheral", "li.cil.oc.api.network.Environment",
 "li.cil.oc.api.network.ManagedPeripheral"})
-public abstract class TileEntityBase extends TileEntity implements IPeripheral, Environment, ManagedPeripheral {
+public abstract class TileEntityBase extends TileEntity {
 
 	protected static final Random rand = new Random();
 	private int pseudometa;
@@ -638,7 +637,6 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 	private final Object node = this.createNode();
 
 	/** ComputerCraft */
-	@Override
 	public String[] getMethodNames() {
 		ArrayList<LuaMethod> li = new ArrayList();
 		Collection<LuaMethod> all = LuaMethod.getMethods();
@@ -661,20 +659,16 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return other == this;
 	}
 
-	@Override
 	@ModDependent(ModList.COMPUTERCRAFT)
 	public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
 		return luaMethods.containsKey(method) ? luaMethods.get(method).invoke(this, arguments) : null;
 	}
 
-	@Override
 	@ModDependent(ModList.COMPUTERCRAFT)
 	public void attach(IComputerAccess computer) {}
-	@Override
 	@ModDependent(ModList.COMPUTERCRAFT)
 	public void detach(IComputerAccess computer) {}
 
-	@Override
 	public String getType() {
 		return this.getName().replaceAll(" ", "");
 	}
@@ -688,12 +682,10 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return this.getType();
 	}
 
-	@Override
 	public String[] methods() {
 		return this.getMethodNames();
 	}
 
-	@Override
 	@ModDependent(ModList.OPENCOMPUTERS)
 	public Object[] invoke(String method, Context context, Arguments args) throws Exception {
 		Object[] objs = new Object[args.count()];
@@ -741,7 +733,7 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 
 	private Object createNode() {
 		if (ModList.OPENCOMPUTERS.isLoaded())
-			return Network.newNode(this, Visibility.Network).withComponent(this.getType(), this.getOCNetworkVisibility()).create();
+			return Network.newNode((Environment)this, Visibility.Network).withComponent(this.getType(), this.getOCNetworkVisibility()).create();
 		else
 			return null;
 	}
@@ -751,19 +743,15 @@ public abstract class TileEntityBase extends TileEntity implements IPeripheral, 
 		return Visibility.Network;
 	}
 
-	@Override
 	@ModDependent(ModList.OPENCOMPUTERS)
 	public Node node() {
 		return (Node)node;
 	}
 
-	@Override
 	@ModDependent(ModList.OPENCOMPUTERS)
 	public void onConnect(Node node) {}
-	@Override
 	@ModDependent(ModList.OPENCOMPUTERS)
 	public void onDisconnect(Node node) {}
-	@Override
 	@ModDependent(ModList.OPENCOMPUTERS)
 	public void onMessage(Message message) {}
 }
