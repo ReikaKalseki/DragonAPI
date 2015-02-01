@@ -22,7 +22,6 @@ import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.LineEditor;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayMap;
-import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -57,8 +56,7 @@ public final class MTInteractionManager {
 
 	public static final MTInteractionManager instance = new MTInteractionManager();
 
-	private final OneWayMap<Prevention, OneWaySet<KeyedItemStack>> data = new OneWayMap();
-	//private final OneWayMap<Prevention, OneWayMap<MTItemEntry, ScanResults>> scanResult = new OneWayMap();
+	private final OneWayMap<Prevention, OneWayMap<KeyedItemStack, String>> data = new OneWayMap();
 
 	private final Method reloadMethod;
 	private final Method addReloadWatcher;
@@ -113,7 +111,6 @@ public final class MTInteractionManager {
 	}
 
 	private void scanAndRemove() {
-		//ReikaJavaLibrary.pConsole("DRAGONAPI MINETWEAKER: Registry: "+data);
 		ArrayList<File> files = this.getFiles();
 		for (File f : files) {
 			this.parseFile(f);
@@ -127,21 +124,6 @@ public final class MTInteractionManager {
 		}
 	}
 
-	/*
-	private void removeFlaggedFileLines() {
-		for (Prevention p : data.keySet()) {
-			this.removeLinesFor(p);
-		}
-	}
-
-	private void removeLinesFor(Prevention p) {
-		OneWaySet<KeyedItemStack> li = data.get(p);
-		OneWayMap<MTItemEntry, ScanResults> scan = scanResult.get(p);
-		for (KeyedItemStack ks : li) {
-
-		}
-	}
-	 */
 	/** Reloads the MT scripts, by invoking the same method that /mt reload does. */
 	private void reloadMT() {
 		if (reloadMethod == null)
@@ -160,50 +142,6 @@ public final class MTInteractionManager {
 		return ReikaFileReader.getAllFilesInFolder(folder, ".zs");
 	}
 
-	/*
-	private void parseFile(File f) {
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(f, false);
-		for (int line = 0; line < li.size(); line++) {
-			String s = li.get(line);
-			if (s.startsWith("//")) { //comment
-
-			}
-			else {
-				int period = s.indexOf('.');
-				if (period >= 0) {
-					this.parseLine(f.getName(), s.substring(period+1), line);
-				}
-				else { //not a recipe line
-
-				}
-			}
-		}
-	}
-
-	private void parseLine(String file, String s, int line) {
-		if (s.startsWith("add")) {
-			this.addEntry(file, s, Prevention.NEWRECIPE, line);
-		}
-		else if (s.startsWith("remove")) {
-			this.addEntry(file, s, Prevention.REMOVERECIPE, line);
-		}
-	}
-
-	private void addEntry(String file, String s, Prevention p, int line) {
-		OneWayMap<MTItemEntry, ScanResults> type = scanResult.get(p);
-		if (type == null) {
-			type = new OneWayMap();
-			scanResult.put(p, type);
-		}
-		MTItemEntry item = new MTItemEntry(s.substring(s.indexOf('<')+1, s.indexOf('>')));
-		ScanResults r = type.get(item);
-		if (r == null) {
-			r = new ScanResults();
-			type.put(item, r);
-		}
-		r.addLine(file, line);
-	}
-	 */
 	public void blacklistNewRecipesFor(ItemStack is) {
 		this.addEntry(Prevention.NEWRECIPE, is, false, true);
 	}
@@ -251,9 +189,9 @@ public final class MTInteractionManager {
 		if (!mc.getModId().equalsIgnoreCase(id.modId)) {
 			throw new MisuseException("Cannot block MT scripts on items from another mod!");
 		}
-		OneWaySet<KeyedItemStack> li = data.get(p);
+		OneWayMap<KeyedItemStack, String> li = data.get(p);
 		if (li == null) {
-			li = new OneWaySet();
+			li = new OneWayMap();
 			data.put(p, li);
 		}
 		KeyedItemStack ks = new KeyedItemStack(is);
@@ -261,37 +199,13 @@ public final class MTInteractionManager {
 		ks.setIgnoreNBT(ignoreNBT);
 		ks.setSimpleHash(true);
 		ks.lock();
-		li.add(ks);
+		li.put(ks, mc.getModId());
 	}
 
 	private static enum Prevention {
 		NEWRECIPE(),
 		REMOVERECIPE();
 	}
-
-	/*
-	private static enum Modes {
-		RECIPE("recipes"),
-		FURNACE("smelting");
-
-		private final String tag;
-
-		private static final ImmutableMap<String, Modes> map = new ImmutableMap();
-
-		private Modes(String s) {
-			tag = s+".";
-		}
-
-		public static Modes getMode(String s) {
-			return Modes.getMode(s.substring(0, s.indexOf('(')));
-		}
-
-		static {
-			for (Modes m : values())
-				map.put(m.tag, m);
-		}
-	}
-	 */
 
 	private static final class MTItemEntry {
 
@@ -341,44 +255,30 @@ public final class MTInteractionManager {
 		}
 
 	}
-	/*
-	private static class ScanResults {
-
-		private static OneWayMap<String, OneWaySet<Integer>> data = new OneWayMap();
-
-		private void addLine(String file, int line) {
-			OneWaySet<Integer> lines = data.get(file);
-			if (lines == null) {
-				lines = new OneWaySet();
-				data.put(file, lines);
-			}
-			lines.add(line);
-		}
-
-	}*/
 
 	private static final class MTScriptScanner extends LineEditor {
 
-		private final OneWaySet<KeyedItemStack> set;
+		private final OneWayMap<KeyedItemStack, String> set;
+		private String lastItemMod;
 
 		private MTScriptScanner(Prevention p) {
 			set = instance.data.get(p);
 		}
 
 		@Override
-		protected String getReplacementLine(String s) {
-			return "//"+s; //comment
+		protected String getReplacementLine(String s, String newline) { //comment, plus note
+			return "//"+s+newline+"//The above line was commented out because the mod registering the item for which a recipe is being added or "+
+			"removed ("+lastItemMod+") has requested not to allow this. See your logs for more information, including on who to go to if you have "+
+			"further questions.";
 		}
 
 		@Override
 		public boolean editLine(String s) {
-			//ReikaJavaLibrary.pConsole("DRAGONAPI MINETWEAKER: Parsing line: "+s);
 			boolean flag = this.parseLine(s);
 			if (flag) {
-				//ReikaJavaLibrary.pConsole("#########Line was flagged!");
-				ReikaJavaLibrary.pConsole("DragonAPI: The line '"+s+"' has been commented out of the Minetweaker script, as the mod registering this "+
-						"item has requested to disallow such actions. This is NOT a bug in either that mod or Minetweaker; do not bother StanHebben "+
-						"with it. You may ask the developer of the registrant mod for further questions or to request a removal. Be civil.");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: The line '"+s+"' has been commented out of the Minetweaker script, as "+lastItemMod+" has "+
+						"requested to disallow such actions. This is NOT a bug in either that mod or Minetweaker; do not bother StanHebben "+
+						"with it. You may ask the developer of "+lastItemMod+" for further questions or to request a removal. Be civil.");
 			}
 			return flag;
 		}
@@ -411,8 +311,15 @@ public final class MTInteractionManager {
 		private boolean parse(String s, Prevention p) {
 			MTItemEntry item = new MTItemEntry(s.substring(s.indexOf('<')+1, s.indexOf('>')));
 			KeyedItemStack ks = item.asKeyStack().setSimpleHash(true).lock();
-			//ReikaJavaLibrary.pConsole("Parsed as "+item+", keys to "+ks);
-			return ks != null && set.contains(ks);
+			if (ks != null) {
+				String mod = set.get(ks);
+				if (mod != null) {
+					lastItemMod = mod;
+					return true;
+				}
+			}
+			lastItemMod = "[null]";
+			return false;
 		}
 
 	}

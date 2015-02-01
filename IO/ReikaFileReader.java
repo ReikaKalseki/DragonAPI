@@ -215,8 +215,8 @@ public class ReikaFileReader extends DragonAPICore {
 		/** Attempt line editing? */
 		public abstract boolean editLine(String s);
 
-		/** The line used to replace strings that match the criteria */
-		protected abstract String getReplacementLine(String s);
+		/** The line used to replace strings that match the criteria. Args: Original line, newline separator */
+		protected abstract String getReplacementLine(String s, String newline);
 
 		public final boolean performChanges(File f) {
 			try {
@@ -225,7 +225,7 @@ public class ReikaFileReader extends DragonAPICore {
 				String line = r.readLine();
 				StringBuilder out = new StringBuilder();
 				while (line != null) {
-					String rep = this.editLine(line) ? this.getReplacementLine(line) : line;
+					String rep = this.editLine(line) ? this.getReplacementLine(line, sep) : line;
 					if (rep == null) {
 
 					}
