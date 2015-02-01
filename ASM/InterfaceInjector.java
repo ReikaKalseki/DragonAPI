@@ -108,6 +108,8 @@ public class InterfaceInjector implements IClassTransformer {
 		}
 		else {
 			cn.interfaces.add(inter.name);
+			if (DEBUG)
+				ReikaJavaLibrary.pConsole("DRAGONAPI ASM: Interface class "+inter.name+" successfully injected.");
 		}
 	}
 
@@ -156,7 +158,7 @@ public class InterfaceInjector implements IClassTransformer {
 			for (MethodNode m : node.methods) {
 				sb.append("\t"+m.name+" "+m.desc);
 				if (missingMethodNames.contains(m.name)) {
-					sb.append(" (Method matches a missing method name but not signature; this is likely the error.");
+					sb.append(" << Method matches a missing method name but not signature; this is likely the error.");
 				}
 				sb.append("\n");
 			}
