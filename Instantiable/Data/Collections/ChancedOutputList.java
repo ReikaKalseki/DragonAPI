@@ -54,7 +54,10 @@ public final class ChancedOutputList {
 	}
 
 	public Collection<ItemStack> keySet() {
-		return data.keySet();
+		Collection<ItemStack> c = new ArrayList();
+		for (ItemStack is : data.keySet())
+			c.add(is.copy());
+		return c;
 	}
 
 	public float getItemChance(ItemStack is) {
@@ -96,8 +99,9 @@ public final class ChancedOutputList {
 		return new ChancedOutputList(data);
 	}
 
-	public void lock() {
+	public ChancedOutputList lock() {
 		modifiable = false;
+		return this;
 	}
 
 	@Override

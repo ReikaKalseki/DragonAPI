@@ -184,7 +184,7 @@ public enum ModOreList implements OreType {
 				for (int k = 0; k < toadd.size(); k++) {
 					ItemStack is = toadd.get(k);
 					if (ReikaItemHelper.isBlock(is)) {
-						if (!ReikaItemHelper.listContainsItemStack(ores, is))
+						if (!ReikaItemHelper.collectionContainsItemStack(ores, is))
 							ores.add(is);
 						ArrayList li = perName.get(oreLabel[i]);
 						if (li == null)
@@ -252,7 +252,7 @@ public enum ModOreList implements OreType {
 	public void reloadOreList() {
 		ores = new ArrayList<ItemStack>();
 		for (int i = 0; i < oreLabel.length; i++) {
-			ArrayList<ItemStack> li = OreDictionary.getOres(oreLabel[i]);
+			ArrayList<ItemStack> li = new ArrayList(OreDictionary.getOres(oreLabel[i]));
 			boolean flag = false;
 			Iterator<ItemStack> it = li.iterator();
 			while (it.hasNext()) {
@@ -262,7 +262,7 @@ public enum ModOreList implements OreType {
 					it.remove();
 				}
 				else {
-					if (!ReikaItemHelper.listContainsItemStack(ores, is)) {
+					if (!ReikaItemHelper.collectionContainsItemStack(ores, is)) {
 						ores.add(is);
 						flag = true;
 					}
@@ -272,7 +272,6 @@ public enum ModOreList implements OreType {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Reloading ore listings for "+this);
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Found "+li);
 			}
-			ores.addAll(li);
 		}
 		//Thread.dumpStack();
 	}

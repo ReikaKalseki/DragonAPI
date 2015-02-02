@@ -119,7 +119,7 @@ public class ItemMaterialController {
 	}
 
 	public boolean hasImmutableMapping(ItemStack is) {
-		return ReikaItemHelper.listContainsItemStack(locks, is);
+		return ReikaItemHelper.collectionContainsItemStack(locks, is);
 	}
 
 	private void addVanillaItem(ItemStack is, ItemMaterial mat) {

@@ -31,7 +31,10 @@ import Reika.DragonAPI.Instantiable.TemporaryInventory;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.RotaryCraft.TileEntities.Processing.TileEntityCentrifuge;
+import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaInventoryHelper extends DragonAPICore {
 
@@ -747,18 +750,32 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return addToIInv(new ItemStack(is), ii);
 	}
 
-	/** Returns true iff succeeded; adds iff can fit whole stack */
 	public static boolean addToIInv(ItemStack is, IInventory ii) {
-		if (!hasSpaceFor(is, ii))
+		return addToIInv(is, ii, false);
+	}
+
+	public static boolean addToIInv(ItemStack is, IInventory ii, boolean overrideValid) {
+		return addToIInv(is, ii, overrideValid, 0, ii.getSizeInventory());
+	}
+
+	public static boolean addToIInv(ItemStack is, IInventory ii, int first, int last) {
+		return addToIInv(is, ii, false, first, last);
+	}
+
+	/** Returns true iff succeeded; adds iff can fit whole stack */
+	public static boolean addToIInv(ItemStack is, IInventory ii, boolean overrideValid, int firstSlot, int maxSlot) {
+		if (!hasSpaceFor(is, ii, overrideValid, firstSlot, maxSlot)) {
 			return false;
+		}
 		int max = Math.min(ii.getInventoryStackLimit(), is.getMaxStackSize());
-		for (int i = 0; i < ii.getSizeInventory() && is.stackSize > 0; i++) {
-			if (ii.isItemValidForSlot(i, is)) {
+		for (int i = firstSlot; i < maxSlot; i++) {
+			if (overrideValid || ii.isItemValidForSlot(i, is)) {
 				ItemStack in = ii.getStackInSlot(i);
 				if (in == null) {
 					int added = Math.min(is.stackSize, max);
 					is.stackSize -= added;
 					ii.setInventorySlotContents(i, ReikaItemHelper.getSizedItemStack(is, added));
+					ReikaJavaLibrary.pConsole("Added "+added+" of "+is+" to "+i, Side.SERVER, ii instanceof TileEntityCentrifuge);
 					return true;
 				}
 				else {
@@ -767,18 +784,24 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 						int added = Math.min(is.stackSize, space);
 						is.stackSize -= added;
 						ii.getStackInSlot(i).stackSize += added;
+						if (is.stackSize <= 0)
+							return true;
 					}
 				}
 			}
 		}
-		return true;
+		return is.stackSize == 0;
 	}
 
-	public static boolean hasSpaceFor(ItemStack is, IInventory ii) {
+	public static boolean hasSpaceFor(ItemStack is, IInventory ii, boolean overrideValid) {
+		return hasSpaceFor(is, ii, overrideValid, 0, ii.getSizeInventory());
+	}
+
+	public static boolean hasSpaceFor(ItemStack is, IInventory ii, boolean overrideValid, int firstSlot, int maxSlot) {
 		int size = is.stackSize;
 		int max = Math.min(ii.getInventoryStackLimit(), is.getMaxStackSize());
-		for (int i = 0; i < ii.getSizeInventory() && size > 0; i++) {
-			if (ii.isItemValidForSlot(i, is)) {
+		for (int i = firstSlot; i < maxSlot && size > 0; i++) {
+			if (overrideValid || ii.isItemValidForSlot(i, is)) {
 				ItemStack in = ii.getStackInSlot(i);
 				if (in == null) {
 					size -= max;

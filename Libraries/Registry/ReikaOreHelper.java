@@ -146,7 +146,7 @@ public enum ReikaOreHelper implements OreType {
 		for (int i = 0; i < oreList.length; i++) {
 			ReikaOreHelper ore = oreList[i];
 			ArrayList<ItemStack> li = ore.ores;
-			if (ReikaItemHelper.listContainsItemStack(li, is))
+			if (ReikaItemHelper.collectionContainsItemStack(li, is))
 				return ore;
 		}
 		return null;
@@ -156,7 +156,7 @@ public enum ReikaOreHelper implements OreType {
 		for (Map.Entry<String, String> entry : cases.entrySet()) {
 			String key = entry.getKey();
 			ArrayList<ItemStack> li = OreDictionary.getOres(key);
-			if (ReikaItemHelper.listContainsItemStack(li, is)) {
+			if (ReikaItemHelper.collectionContainsItemStack(li, is)) {
 				return getEntryFromOreName(entry.getValue());
 			}
 		}
@@ -188,7 +188,7 @@ public enum ReikaOreHelper implements OreType {
 	}
 
 	public static boolean isExtraOre(ItemStack is) {
-		return ReikaItemHelper.listContainsItemStack(extraOres, is);
+		return ReikaItemHelper.collectionContainsItemStack(extraOres, is);
 	}
 
 	public Block getOreGenBlock() {
@@ -202,7 +202,7 @@ public enum ReikaOreHelper implements OreType {
 			ArrayList<ItemStack> li = OreDictionary.getOres(tag);
 			for (int k = 0; k < li.size(); k++) {
 				ItemStack is = li.get(k);
-				if (!ReikaItemHelper.listContainsItemStack(ore.ores, is))
+				if (!ReikaItemHelper.collectionContainsItemStack(ore.ores, is))
 					ore.ores.add(is);
 			}
 		}

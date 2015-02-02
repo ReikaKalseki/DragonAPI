@@ -241,7 +241,7 @@ public class MiningExplosion extends Explosion {
 	}
 
 	private boolean shouldDrop(Block block, int meta) {
-		return dropCheap || !ReikaItemHelper.listContainsItemStack(cheapBlocks, new ItemStack(block, 1, meta));
+		return dropCheap || !ReikaItemHelper.collectionContainsItemStack(cheapBlocks, new ItemStack(block, 1, meta));
 	}
 
 	public boolean canDamageEntity(Entity e) {

@@ -425,32 +425,32 @@ public class DragonAPIInit extends DragonAPIMod {
 		logger.log("Repairing compatibility between Alumin(i)um OreDictionary Names.");
 		List<ItemStack> al = new ArrayList(OreDictionary.getOres("ingotNaturalAluminum"));
 		for (int i = 0; i < al.size(); i++) {
-			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminum"), al.get(i)))
+			if (!ReikaItemHelper.collectionContainsItemStack(OreDictionary.getOres("ingotAluminum"), al.get(i)))
 				OreDictionary.registerOre("ingotAluminum", al.get(i));
-			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminium"), al.get(i)))
+			if (!ReikaItemHelper.collectionContainsItemStack(OreDictionary.getOres("ingotAluminium"), al.get(i)))
 				OreDictionary.registerOre("ingotAluminium", al.get(i));
 		}
 
 		al = new ArrayList(OreDictionary.getOres("ingotAluminum"));
 		for (int i = 0; i < al.size(); i++) {
-			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotNaturalAluminum"), al.get(i)))
+			if (!ReikaItemHelper.collectionContainsItemStack(OreDictionary.getOres("ingotNaturalAluminum"), al.get(i)))
 				OreDictionary.registerOre("ingotNaturalAluminum", al.get(i));
-			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminium"), al.get(i)))
+			if (!ReikaItemHelper.collectionContainsItemStack(OreDictionary.getOres("ingotAluminium"), al.get(i)))
 				OreDictionary.registerOre("ingotAluminium", al.get(i));
 		}
 
 		al = new ArrayList(OreDictionary.getOres("ingotAluminium"));
 		for (int i = 0; i < al.size(); i++) {
-			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotNaturalAluminum"), al.get(i)))
+			if (!ReikaItemHelper.collectionContainsItemStack(OreDictionary.getOres("ingotNaturalAluminum"), al.get(i)))
 				OreDictionary.registerOre("ingotNaturalAluminum", al.get(i));
-			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("ingotAluminum"), al.get(i)))
+			if (!ReikaItemHelper.collectionContainsItemStack(OreDictionary.getOres("ingotAluminum"), al.get(i)))
 				OreDictionary.registerOre("ingotAluminum", al.get(i));
 		}
 
 
 		al = new ArrayList(OreDictionary.getOres("oreAluminium"));
 		for (int i = 0; i < al.size(); i++) {
-			if (!ReikaItemHelper.listContainsItemStack(OreDictionary.getOres("oreAluminum"), al.get(i)))
+			if (!ReikaItemHelper.collectionContainsItemStack(OreDictionary.getOres("oreAluminum"), al.get(i)))
 				OreDictionary.registerOre("oreAluminum", al.get(i));
 		}
 	}

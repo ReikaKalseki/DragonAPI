@@ -35,7 +35,7 @@ public class SlotApprovedItems extends Slot {
 	}
 
 	public SlotApprovedItems addItem(ItemStack is) {
-		if (!ReikaItemHelper.listContainsItemStack(items, is))
+		if (!ReikaItemHelper.collectionContainsItemStack(items, is))
 			items.add(is);
 		return this;
 	}
@@ -55,7 +55,7 @@ public class SlotApprovedItems extends Slot {
 	@Override
 	public boolean isItemValid(ItemStack is)
 	{
-		return ReikaItemHelper.listContainsItemStack(items, is);
+		return ReikaItemHelper.collectionContainsItemStack(items, is);
 	}
 
 }

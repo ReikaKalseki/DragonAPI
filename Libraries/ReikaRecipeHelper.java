@@ -775,7 +775,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	}
 
 	public static boolean recipeContains(IRecipe ir, ItemStack is) {
-		return ReikaItemHelper.listContainsItemStack(getAllItemsInRecipe(ir), is);
+		return ReikaItemHelper.collectionContainsItemStack(getAllItemsInRecipe(ir), is);
 	}
 
 	public static Collection<Integer> getRecipeLocationIndices(IRecipe ir, ItemStack is) {
@@ -783,7 +783,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		RecipeCache r = getRecipeCacheObject(ir);
 		for (int i = 0; i < 9; i++) {
 			List<ItemStack> li = r.items[i];
-			if (li != null && ReikaItemHelper.listContainsItemStack(li, is))
+			if (li != null && ReikaItemHelper.collectionContainsItemStack(li, is))
 				c.add(i);
 		}
 		return c;

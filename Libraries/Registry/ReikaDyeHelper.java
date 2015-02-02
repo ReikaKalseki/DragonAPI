@@ -86,7 +86,7 @@ public enum ReikaDyeHelper {
 			ReikaDyeHelper dye = dyes[i];
 			String name = dye.getOreDictName();
 			ArrayList<ItemStack> li = OreDictionary.getOres(name);
-			if (ReikaItemHelper.listContainsItemStack(li, is)) {
+			if (ReikaItemHelper.collectionContainsItemStack(li, is)) {
 				addItemMapping(dye, is);
 				return dye;
 			}

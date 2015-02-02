@@ -242,7 +242,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return b != null && b != Blocks.air;
 	}
 
-	public static boolean listContainsItemStack(Collection<ItemStack> li, ItemStack is) {
+	public static boolean collectionContainsItemStack(Collection<ItemStack> li, ItemStack is) {
 		return listContainsItemStack(li, is, false);
 	}
 

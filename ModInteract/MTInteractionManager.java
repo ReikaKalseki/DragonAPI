@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Map;
 
 import minetweaker.util.IEventHandler;
 import net.minecraft.block.Block;
@@ -199,6 +200,13 @@ public final class MTInteractionManager {
 		ks.setIgnoreNBT(ignoreNBT);
 		ks.setSimpleHash(true);
 		ks.lock();
+		if (li.containsKey(ks)) {
+			for (Map.Entry<KeyedItemStack, String> e : li.entrySet()) {
+				KeyedItemStack key = e.getKey();
+				if (key.equals(ks) && !key.exactMatch(ks))
+					throw new MisuseException("This item, '"+is.getDisplayName()+"' ("+ks+"), is already listed, but under the wider tag "+key+".");
+			}
+		}
 		li.put(ks, mc.getModId());
 	}
 

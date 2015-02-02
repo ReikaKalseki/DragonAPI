@@ -68,6 +68,10 @@ public final class ImmutableItemStack {
 		return data.getItem();
 	}
 
+	public int getMaxStackSize() {
+		return data.getMaxStackSize();
+	}
+
 	public ItemStack getItemStack() {
 		return data.copy();
 	}

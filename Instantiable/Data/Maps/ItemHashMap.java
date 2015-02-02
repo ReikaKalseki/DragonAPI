@@ -20,6 +20,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class ItemHashMap<V> {
@@ -28,9 +29,15 @@ public final class ItemHashMap<V> {
 	private ArrayList<ItemStack> sorted = null;
 	private Collection<ItemStack> keyset = null;
 	private boolean modifiedKeys = true;
+	private boolean oneWay = false;
 
 	public ItemHashMap() {
 
+	}
+
+	public ItemHashMap<V> setOneWay() {
+		oneWay = true;
+		return this;
 	}
 
 	private void updateKeysets() {
@@ -41,6 +48,8 @@ public final class ItemHashMap<V> {
 	}
 
 	private V put(ItemKey is, V value) {
+		if (oneWay && data.containsKey(is))
+			throw new UnsupportedOperationException("This map does not support overwriting values!");
 		V ret = data.put(is, value);
 		this.modifiedKeys = true;
 		return ret;
@@ -62,12 +71,20 @@ public final class ItemHashMap<V> {
 		return this.get(new ItemKey(is));
 	}
 
+	public V get(ImmutableItemStack is) {
+		return this.get(is.getItemStack());
+	}
+
 	public boolean containsKey(ItemStack is) {
 		return this.containsKey(new ItemKey(is));
 	}
 
 	public V put(Item i, int meta, V value) {
 		return this.put(new ItemStack(i, meta), value);
+	}
+
+	public V put(ImmutableItemStack is, V obj) {
+		return this.put(is.getItemStack(), obj);
 	}
 
 	public V get(Item i, int meta) {
@@ -101,8 +118,12 @@ public final class ItemHashMap<V> {
 		return Collections.unmodifiableCollection(keyset);
 	}
 
+	public Collection<V> values() {
+		return Collections.unmodifiableCollection(data.values());
+	}
+
 	private Collection<ItemStack> createKeySet() {
-		ArrayList li = new ArrayList();
+		ArrayList<ItemStack> li = new ArrayList();
 		for (ItemKey key : data.keySet()) {
 			li.add(key.asItemStack());
 		}
@@ -119,12 +140,16 @@ public final class ItemHashMap<V> {
 	}
 
 	private V remove(ItemKey is) {
+		if (oneWay)
+			throw new UnsupportedOperationException("This map does not support removing values!");
 		V ret = data.remove(is);
 		this.modifiedKeys = true;
 		return ret;
 	}
 
 	public void clear() {
+		if (oneWay)
+			throw new UnsupportedOperationException("This map does not support removing values!");
 		data.clear();
 		this.modifiedKeys = true;
 	}

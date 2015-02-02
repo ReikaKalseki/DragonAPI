@@ -74,14 +74,22 @@ public final class KeyedItemStack {
 	public final boolean equals(Object o) {
 		if (o instanceof KeyedItemStack) {
 			KeyedItemStack ks = (KeyedItemStack)o;
-			for (int i = 0; i < Criteria.list.length; i++) {
-				Criteria c = Criteria.list[i];
-				if (enabledCriteria[i] && ks.enabledCriteria[i] && !c.match(this, ks))
-					return false;
-			}
-			return true;
+			return this.match(ks, false);
 		}
 		return false;
+	}
+
+	public boolean exactMatch(KeyedItemStack ks) {
+		return this.match(ks, true);
+	}
+
+	private boolean match(KeyedItemStack ks, boolean force) {
+		for (int i = 0; i < Criteria.list.length; i++) {
+			Criteria c = Criteria.list[i];
+			if ((force || (enabledCriteria[i] && ks.enabledCriteria[i])) && !c.match(this, ks))
+				return false;
+		}
+		return true;
 	}
 
 	public ItemStack getItemStack() {

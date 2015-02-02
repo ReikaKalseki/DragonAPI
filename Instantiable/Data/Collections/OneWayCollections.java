@@ -9,12 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Collections;
 
+import java.util.AbstractSet;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 public class OneWayCollections {
@@ -105,6 +107,46 @@ public class OneWayCollections {
 		@Override
 		public final Collection<V> values() {
 			return Collections.unmodifiableCollection(super.values());
+		}
+
+		@Override
+		public final Set<Map.Entry<K, V>> entrySet() {
+			return new WrapperEntrySet(super.entrySet());
+		}
+
+	}
+
+	private static final class WrapperEntrySet<K, V> extends AbstractSet<Map.Entry<K,V>> {
+
+		private final Set<Map.Entry<K, V>> wrapped;
+
+		private WrapperEntrySet(Set<Map.Entry<K, V>> set) {
+			wrapped = set;
+		}
+
+		@Override
+		public Iterator<Map.Entry<K,V>> iterator() {
+			return wrapped.iterator();
+		}
+
+		@Override
+		public boolean contains(Object o) {
+			return wrapped.contains(o);
+		}
+
+		@Override
+		public boolean remove(Object o) {
+			throw new UnsupportedOperationException("You cannot remove entries from this map with its entry set!");
+		}
+
+		@Override
+		public int size() {
+			return wrapped.size();
+		}
+
+		@Override
+		public void clear() {
+			throw new UnsupportedOperationException("You cannot clear this map entry set!");
 		}
 
 	}
