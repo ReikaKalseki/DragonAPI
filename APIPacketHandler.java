@@ -22,6 +22,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
+import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Base.TileEntityBase;
@@ -218,6 +219,8 @@ public class APIPacketHandler implements IPacketHandler {
 				break;
 			case EXPLODE:
 				break;
+			case OLDMODS:
+				break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data);
@@ -240,6 +243,9 @@ public class APIPacketHandler implements IPacketHandler {
 			ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "random.explode");
 			ReikaParticleHelper.EXPLODE.spawnAroundBlock(world, x, y, z, 1);
 			break;
+		case OLDMODS:
+			CommandableUpdateChecker.instance.onClientReceiveOldModsNote();
+			break;
 		default:
 			break;
 		}
@@ -260,7 +266,8 @@ public class APIPacketHandler implements IPacketHandler {
 		COLOREDPARTICLE(),
 		NUMBERPARTICLE(),
 		IDDUMP(),
-		EXPLODE();
+		EXPLODE(),
+		OLDMODS();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];

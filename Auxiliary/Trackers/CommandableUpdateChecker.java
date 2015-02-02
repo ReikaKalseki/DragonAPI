@@ -18,25 +18,41 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
+import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Extras.ModVersion;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class CommandableUpdateChecker {
 
 	public static final CommandableUpdateChecker instance = new CommandableUpdateChecker();
 
 	public static final String reikaURL = "http://server.techjargaming.com/Reika/versions";
+
+	private static boolean testedInternet = false;
+	private static boolean hasInternet = false;
 
 	private final HashMap<DragonAPIMod, ModVersion> latestVersions = new HashMap();
 	private final ArrayList<UpdateChecker> checkers = new ArrayList();
@@ -66,7 +82,7 @@ public class CommandableUpdateChecker {
 					ReikaJavaLibrary.pConsole("This version of the mod ("+version+") is out of date.");
 					ReikaJavaLibrary.pConsole("This version is likely to contain bugs, crashes, and/or exploits.");
 					ReikaJavaLibrary.pConsole("No technical support whatsoever will be provided for this version.");
-					ReikaJavaLibrary.pConsole("Update to "+latest+" as soon as possible.");
+					ReikaJavaLibrary.pConsole("Update to "+latest+" as soon as possible; there is no good reason not to.");
 					ReikaJavaLibrary.pConsole("------------------------------------------------------------------------");
 					ReikaJavaLibrary.pConsole("");
 				}
@@ -86,7 +102,7 @@ public class CommandableUpdateChecker {
 		ModVersion version = mod.getModVersion();
 		if (version == ModVersion.source) {
 			mod.getModLogger().log("Mod is in source code form. Not checking versions.");
-			return;
+			//return;
 		}
 		String url = mod.getUpdateCheckURL()+"_"+Loader.MC_VERSION.replaceAll("\\.", "-")+".txt";
 		URL file = this.getURL(url);
@@ -185,21 +201,33 @@ public class CommandableUpdateChecker {
 
 	public void notifyPlayer(EntityPlayer ep) {
 		if (!oldMods.isEmpty()) {
-			String sg = EnumChatFormatting.YELLOW.toString()+"DragonAPI Notification:";
-			ReikaChatHelper.sendChatToPlayer(ep, sg);
+			this.sendMessages(ep);
+			if (ep instanceof EntityPlayerMP)
+				ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.OLDMODS.ordinal(), (EntityPlayerMP)ep);
 		}
-		for (int i = 0; i < oldMods.size(); i++) {
-			DragonAPIMod mod = oldMods.get(i);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void onClientReceiveOldModsNote() {
+		StringBuilder sb = new StringBuilder();
+		for (DragonAPIMod mod : oldMods) {
+			sb.append(mod.getDisplayName()+" ("+mod.getModVersion()+" -> "+latestVersions.get(mod).toString()+"); ");
+		}
+		MinecraftForge.EVENT_BUS.register(new ScreenWriter(sb.toString()));
+	}
+
+	private void sendMessages(EntityPlayer ep) {
+		String sg = EnumChatFormatting.YELLOW.toString()+"DragonAPI Notification:";
+		ReikaChatHelper.sendChatToPlayer(ep, sg);
+		for (DragonAPIMod mod : oldMods) {
 			String s = this.getChatMessage(mod);
 			ReikaChatHelper.sendChatToPlayer(ep, s);
 		}
-		if (!oldMods.isEmpty()) {
-			String g = EnumChatFormatting.YELLOW.toString();
-			String sg = g+"To disable this notifcation for any mod, type \"/"+CheckerDisableCommand.tag+" disable [modname]\".";
-			ReikaChatHelper.sendChatToPlayer(ep, sg);
-			sg = g+"Changes take effect upon server or client restart.";
-			ReikaChatHelper.sendChatToPlayer(ep, sg);
-		}
+		String g = EnumChatFormatting.YELLOW.toString();
+		String sg2 = g+"To disable this notifcation for any mod, type \"/"+CheckerDisableCommand.tag+" disable [modname]\".";
+		ReikaChatHelper.sendChatToPlayer(ep, sg2);
+		sg2 = g+"Changes take effect upon server or client restart.";
+		ReikaChatHelper.sendChatToPlayer(ep, sg2);
 	}
 
 	private String getChatMessage(DragonAPIMod mod) {
@@ -272,7 +300,7 @@ public class CommandableUpdateChecker {
 
 		private ModVersion getLatestVersion() {
 			try {
-				ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, false);
+				ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, 10000, false);
 				String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
 				for (int i = 0; i < lines.size(); i++) {
 					String line = lines.get(i);
@@ -297,6 +325,43 @@ public class CommandableUpdateChecker {
 			}
 			return null;
 		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static class ScreenWriter {
+
+		private final FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
+		private final String pre = "Out of Date Mods: ";
+		private final int pw = fr.getStringWidth(pre);
+		private final String text;
+		private final int w;
+
+		private int tick;
+		private int dx = pw;
+
+		private ScreenWriter(String s) {
+			text = s;
+			w = fr.getStringWidth(s);
+		}
+
+		@SubscribeEvent
+		public void drawOverlay(RenderGameOverlayEvent evt) {
+			if (evt.type == ElementType.HELMET) {
+				tick++;
+				ReikaGuiAPI.instance.drawRect(0, 0, w, fr.FONT_HEIGHT-1, 0xff222222);
+				int sw = Minecraft.getMinecraft().displayWidth/evt.resolution.getScaleFactor()-pw;
+				if (w > sw && tick%(1+ReikaRenderHelper.getFPS()/20) == 0) {
+					dx--;
+				}
+				if (dx <= -w+pw)
+					dx = Minecraft.getMinecraft().displayWidth/evt.resolution.getScaleFactor();
+				fr.drawString(text, dx, 0, 0xffffff);
+
+				ReikaGuiAPI.instance.drawRect(0, 0, pw, fr.FONT_HEIGHT-1, 0xff222222);
+				fr.drawString(pre, 0, 0, 0xffffff);
+			}
+		}
+
 	}
 
 }

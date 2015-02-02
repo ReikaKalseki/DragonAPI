@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.URL;
+import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 
@@ -62,9 +63,11 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static BufferedReader getReader(URL url) {
+	public static BufferedReader getReader(URL url, int timeout) {
 		try {
-			return new BufferedReader(new InputStreamReader(url.openStream()));
+			URLConnection c = url.openConnection();
+			c.setConnectTimeout(timeout);
+			return new BufferedReader(new InputStreamReader(c.getInputStream()));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -72,9 +75,9 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static BufferedReader getURLReader(String url) {
+	public static BufferedReader getURLReader(String url, int timeout) {
 		try {
-			return new BufferedReader(new InputStreamReader(new URL(url).openStream()));
+			return getReader(new URL(url), timeout);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -147,8 +150,8 @@ public class ReikaFileReader extends DragonAPICore {
 		return getFileAsLines(getReader(path), printStackTrace);
 	}
 
-	public static ArrayList<String> getFileAsLines(URL url, boolean printStackTrace) {
-		return getFileAsLines(getReader(url), printStackTrace);
+	public static ArrayList<String> getFileAsLines(URL url, int timeout, boolean printStackTrace) {
+		return getFileAsLines(getReader(url, timeout), printStackTrace);
 	}
 
 	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace) {

@@ -180,21 +180,8 @@ public abstract class DragonAPIMod {
 	public final String toString() {
 		return this.getTechnicalName();
 	}
-	/*
-	private static final ModVersion getAPIVersion() {
-		return api_version;//ModVersion.getFromString("@MAJOR_VERSION@"+"@MINOR_VERSION@");
-	}*/
 
-	public final ModVersion getModVersion() {/*
-		//if (name.equals("bin"))
-		//	return ModVersion.source;
-		String major = this.getMajorVersion();
-		String minor = this.getMinorVersion();
-		if (major.startsWith("$")) { //dev environment
-			return ModVersion.source;
-		}
-		return new ModVersion(Integer.parseInt(major), minor.isEmpty() ? '\0' : minor.charAt(0));
-		//return ModVersion.getFromString(this.getMajorVersion()+this.getMinorVersion());*/
+	public final ModVersion getModVersion() {
 		return version;
 	}
 

@@ -13,6 +13,8 @@ public class BlockSpiral {
 	public final int originZ;
 	public final int radius;
 
+	private int gridSize = 1;
+
 	private int posX;
 	private int posY;
 	private int posZ;
@@ -30,6 +32,11 @@ public class BlockSpiral {
 		return this;
 	}
 
+	public BlockSpiral setGridSize(int s) {
+		gridSize = s;
+		return this;
+	}
+
 	public BlockSpiral setInitialDirection(ForgeDirection dir) {
 		if (dir.offsetY != 0)
 			throw new MisuseException("Spirals are not designed for vertical directions!");
@@ -43,23 +50,19 @@ public class BlockSpiral {
 		posY = originY;
 		posZ = originZ;
 		blocks.addBlockCoordinate(posX, posY, posZ);
-		this.recurse();
-		return this;
-	}
 
-	private void recurse() {
-		posX += step.offsetX;
-		posY += step.offsetY;
-		posZ += step.offsetZ;
-		if (Math.abs(posX-originX) > radius || Math.abs(posY-originY) > radius || Math.abs(posZ-originZ) > radius) {
-			return;
+		while (Math.abs(posX-originX) <= radius*gridSize && Math.abs(posY-originY) <= radius*gridSize && Math.abs(posZ-originZ) <= radius*gridSize) {
+			posX += step.offsetX*gridSize;
+			posY += step.offsetY*gridSize;
+			posZ += step.offsetZ*gridSize;
+			blocks.addBlockCoordinate(posX, posY, posZ);
+			ForgeDirection dir = rightHanded ? ReikaDirectionHelper.getRightBy90(step) : ReikaDirectionHelper.getLeftBy90(step);
+			if (!blocks.hasBlock(posX+dir.offsetX*gridSize, posY+dir.offsetY*gridSize, posZ+dir.offsetZ*gridSize)) {
+				step = dir;
+			}
 		}
-		blocks.addBlockCoordinate(posX, posY, posZ);
-		ForgeDirection dir = rightHanded ? ReikaDirectionHelper.getRightBy90(step) : ReikaDirectionHelper.getLeftBy90(step);
-		if (!blocks.hasBlock(posX+dir.offsetX, posY+dir.offsetY, posZ+dir.offsetZ)) {
-			step = dir;
-		}
-		this.recurse();
+
+		return this;
 	}
 
 	public int[] getNthBlock(int n) {
