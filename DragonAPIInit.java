@@ -310,6 +310,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Josh O'Connor-Chen", 10);
 		PatreonController.instance.addPatron(this, "Dawson Dimmick", 25);
 
+		CommandableUpdateChecker.instance.checkAll();
+
 		this.finishTiming();
 	}
 
@@ -341,7 +343,6 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 
 		SuggestedModsTracker.instance.printConsole();
-		CommandableUpdateChecker.instance.checkAll();
 
 		ReikaEntityHelper.loadMappings();
 

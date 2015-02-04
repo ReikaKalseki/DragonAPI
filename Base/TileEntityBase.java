@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
@@ -76,7 +77,7 @@ public abstract class TileEntityBase extends TileEntity {
 	private int pseudometa;
 	protected boolean shutDown;
 	protected String placer;
-	private String placerUUID;
+	protected UUID placerUUID;
 	private int ticksExisted;
 	private FakePlayer fakePlayer;
 
@@ -124,9 +125,9 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	public final boolean isPlacer(EntityPlayer ep) {
-		if (placer == null || placerUUID == null || placer.isEmpty() || placerUUID.isEmpty())
+		if (placer == null || placerUUID == null || placer.isEmpty())
 			return false;
-		return ep.getCommandSenderName().equals(placer) && ep.getUniqueID().toString().equals(placerUUID.toString());
+		return ep.getCommandSenderName().equals(placer) && ep.getUniqueID().equals(placerUUID);
 	}
 
 	public final Block getTEBlock() {
@@ -167,8 +168,8 @@ public abstract class TileEntityBase extends TileEntity {
 
 		if (placer != null && !placer.isEmpty())
 			NBT.setString("place", placer);
-		if (placerUUID != null && !placerUUID.isEmpty())
-			NBT.setString("placeUUID", placerUUID);
+		if (placerUUID != null)
+			NBT.setString("placeUUID", placerUUID.toString());
 
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
 			if (node instanceof Component)
@@ -182,7 +183,8 @@ public abstract class TileEntityBase extends TileEntity {
 		this.readSyncTag(NBT);
 
 		placer = NBT.getString("place");
-		placerUUID = NBT.getString("placeUUID");
+		if (NBT.hasKey("placeUUID"))
+			placerUUID = UUID.fromString(NBT.getString("placeUUID"));
 
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
 			if (node instanceof Component)
@@ -276,7 +278,7 @@ public abstract class TileEntityBase extends TileEntity {
 	public final void setPlacer(EntityPlayer ep) {
 		placer = ep.getCommandSenderName();
 		if (ep.getGameProfile().getId() != null)
-			placerUUID = ep.getGameProfile().getId().toString();
+			placerUUID = ep.getGameProfile().getId();
 	}
 
 	public final String getPlacerName() {

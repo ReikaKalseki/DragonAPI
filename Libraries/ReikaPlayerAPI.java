@@ -145,16 +145,16 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return ForgeDirection.UNKNOWN;
 	}
 
-	public static FakePlayer getFakePlayerByNameAndUUID(WorldServer world, String name, String uuid) {
+	public static FakePlayer getFakePlayerByNameAndUUID(WorldServer world, String name, UUID uuid) {
 		FakePlayer fp = fakePlayers.get(name);
 		if (fp == null) {
-			fp = FakePlayerFactory.get(world, new GameProfile(UUID.fromString(uuid), name));
+			fp = FakePlayerFactory.get(world, new GameProfile(uuid, name));
 			fakePlayers.put(name, fp);
 		}
 		return fp;
 	}
 
-	private static boolean isAdmin(WorldServer world, String name, String uuid) {
+	private static boolean isAdmin(WorldServer world, String name, UUID uuid) {
 		FakePlayer fp = getFakePlayerByNameAndUUID(world, name, uuid);
 		return isAdmin(fp);
 	}
@@ -231,7 +231,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return !evt.isCanceled();
 	}
 
-	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, Block id, int meta, String name, String uuid) {
+	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, Block id, int meta, String name, UUID uuid) {
 		if (name == null) {
 			ReikaJavaLibrary.pConsole("Cannot check permissions of a null player!");
 			return false;
@@ -246,7 +246,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return !evt.isCanceled();
 	}
 
-	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, String name, String uuid) {
+	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, String name, UUID uuid) {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		return playerCanBreakAt(world, x, y, z, b, meta, name, uuid);
@@ -348,5 +348,13 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		if (ep.getClass().getName().toLowerCase().contains("fakeplayer"))
 			return true;
 		return false;
+	}
+
+	public static boolean isReika(EntityPlayer ep) {
+		return ep.getUniqueID().equals(DragonAPICore.Reika_UUID);
+	}
+
+	public static UUID getUUIDByUsername(String name) {
+		return UUID.randomUUID();
 	}
 }

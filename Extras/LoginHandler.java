@@ -61,7 +61,7 @@ public final class LoginHandler implements PlayerTracker {
 	@Override
 	public void onPlayerLogin(EntityPlayer ep) {
 		boolean flag = ReikaObfuscationHelper.isDeObfEnvironment();
-		if ("Reika_Kalseki".equals(ep.getCommandSenderName())) {
+		if (ReikaPlayerAPI.isReika(ep)) {
 			ReikaChatHelper.sendChatToAllOnServer(reikaMessage);
 		}
 		else {

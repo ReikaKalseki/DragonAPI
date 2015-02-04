@@ -23,6 +23,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -41,6 +42,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -77,7 +79,7 @@ public class CommandableUpdateChecker {
 
 				}
 				else {
-					this.markUpdate(mod);
+					this.markUpdate(mod, version, latest);
 					ReikaJavaLibrary.pConsole("-----------------------"+mod.getTechnicalName()+"-----------------------");
 					ReikaJavaLibrary.pConsole("This version of the mod ("+version+") is out of date.");
 					ReikaJavaLibrary.pConsole("This version is likely to contain bugs, crashes, and/or exploits.");
@@ -94,8 +96,17 @@ public class CommandableUpdateChecker {
 		}
 	}
 
-	private void markUpdate(DragonAPIMod mod) {
+	private void markUpdate(DragonAPIMod mod, ModVersion version, ModVersion latest) {
 		oldMods.add(mod);
+
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setString("modDisplayName", mod.getDisplayName());
+		nbt.setString("oldVersion", version.toString());
+		nbt.setString("newVersion", latest.toString());
+		nbt.setString("updateUrl", mod.getDocumentationSite().toString());
+		nbt.setBoolean("isDirectLink", false);
+		nbt.setString("changeLog", mod.getDocumentationSite().toString());
+		FMLInterModComms.sendRuntimeMessage(mod.getModContainer().getModId(), "VersionChecker", "addUpdate", nbt);
 	}
 
 	public void registerMod(DragonAPIMod mod) {

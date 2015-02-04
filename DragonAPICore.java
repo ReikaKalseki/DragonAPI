@@ -13,6 +13,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
+import java.util.UUID;
 
 import net.minecraftforge.common.ForgeVersion;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -43,6 +44,7 @@ public class DragonAPICore {
 			"after:BinnieCore;after:Natura;after:TConstruct;after:ProjRed|Core;after:bluepower";
 
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
+	public static final UUID Reika_UUID = UUID.fromString("e5248026-6874-4954-9a02-aa8910d08f31");
 
 	public static URL getReikaForumPage() {
 		try {

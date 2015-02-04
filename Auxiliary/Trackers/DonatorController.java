@@ -14,10 +14,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.UUID;
 
 import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 
 public final class DonatorController {
 
@@ -45,7 +47,7 @@ public final class DonatorController {
 			li = new DonationList();
 			data.put(mod, li);
 		}
-		Donator d = li.addDonation(donator, ingame, donation);
+		Donator d = li.addDonation(donator, ReikaPlayerAPI.getUUIDByUsername(ingame), donation);
 		byModDonators.addValue(mod, d);
 		if (mod.isReikasMod()) {
 			reikaDonators.add(d);
@@ -84,10 +86,10 @@ public final class DonatorController {
 		return Collections.unmodifiableSet(reikaDonators);
 	}
 
-	public boolean donatedTo(String ingame, DragonAPIMod mod) {
+	public boolean donatedTo(UUID ingame, DragonAPIMod mod) {
 		Collection<Donator> c = byModDonators.get(mod);
 		for (Donator d : c) {
-			if (d.ingameName.endsWith(ingame))
+			if (d.ingameName.equals(ingame))
 				return true;
 		}
 		return false;
@@ -170,10 +172,10 @@ public final class DonatorController {
 
 	public static class Donator {
 
-		public final String ingameName;
+		public final UUID ingameName;
 		public final String displayName;
 
-		private Donator(String name, String ign) {
+		private Donator(String name, UUID ign) {
 			displayName = name;
 			ingameName = ign;
 		}
@@ -203,7 +205,7 @@ public final class DonatorController {
 
 		private final HashMap<String, Donation> data = new HashMap();
 
-		private Donator addDonation(String name, String ign, float amt) {
+		private Donator addDonation(String name, UUID ign, float amt) {
 			Donator d = new Donator(name, ign);
 			Donation dn = data.get(d);
 			if (dn == null) {

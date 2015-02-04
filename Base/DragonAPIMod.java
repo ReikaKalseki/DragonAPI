@@ -102,7 +102,7 @@ public abstract class DragonAPIMod {
 			throw new JarZipException(this);
 	}
 
-	protected final ModContainer getModContainer() {
+	public final ModContainer getModContainer() {
 		return Loader.instance().getModObjectList().inverse().get(this);
 	}
 

@@ -11,6 +11,7 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -29,7 +30,6 @@ import Reika.DragonAPI.Extras.ReikaModel;
 import Reika.DragonAPI.Extras.SamakiModel;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.PlayerRenderObj;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -38,14 +38,14 @@ public class PlayerSpecificRenderer {
 
 	public static final PlayerSpecificRenderer instance = new PlayerSpecificRenderer();
 
-	private final MultiMap<String, PlayerRenderObj> renders = new MultiMap().setNullEmpty();
+	private final MultiMap<UUID, PlayerRenderObj> renders = new MultiMap().setNullEmpty();
 
 	private final ReikaModel modelReika = new ReikaModel();
 	private final SamakiModel modelSamaki = new SamakiModel();
 
 	private PlayerSpecificRenderer() {
-		this.registerRenderer("Reika_Kalseki", new PlayerModelRenderer(modelReika));
-		this.registerRenderer("FurryDJ", new PlayerModelRenderer(modelSamaki));
+		this.registerRenderer(DragonAPICore.Reika_UUID, new PlayerModelRenderer(modelReika));
+		this.registerRenderer(UUID.fromString("bca741d8-d934-4785-9c26-f6a4141be124"), new PlayerModelRenderer(modelSamaki));
 	}
 
 	public void registerIntercept() {
@@ -53,20 +53,21 @@ public class PlayerSpecificRenderer {
 		map.put(EntityPlayer.class, new CustomPlayerRenderer(map.get(EntityPlayer.class)));
 	}
 
-	public void registerRenderer(String name, PlayerRenderObj r) {
-		renders.addValue(name, r);
+	public void registerRenderer(UUID uuid, PlayerRenderObj r) {
+		renders.addValue(uuid, r);
 
 		//If anyone flips out over this and complains "OMG REIKA GIVES HIMSELF ALL THE RENDERS IN THE DEV ENVIRONMENT! DRM!",
 		//You are:
 		//If you cannot understand Java: making wild accusations based on your own ignorance
 		//If you can understand Java: A disgrace to other programmers for harassing a developer over what you should understand is harmless
-		if (DragonAPICore.isReikasComputer() && ReikaObfuscationHelper.isDeObfEnvironment()) {
-			renders.addValue("Reika_Kalseki", r);
-		}
+		//Update: Someone did it. Congratulations. Now go eat the contents of your toilet.
+		//if (DragonAPICore.isReikasComputer() && ReikaObfuscationHelper.isDeObfEnvironment()) {
+		//	renders.addValue("Reika_Kalseki", r);
+		//}
 	}
 
 	private void renderAdditionalObjects(EntityPlayer ep, float ptick) {
-		Collection<PlayerRenderObj> c = renders.get(ep.getCommandSenderName());
+		Collection<PlayerRenderObj> c = renders.get(ep.getUniqueID());
 		if (c != null) {
 			for (PlayerRenderObj r : c) {
 				r.render(ep, ptick, new PlayerRotationData(ep, ptick));

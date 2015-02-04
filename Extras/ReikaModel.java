@@ -17,6 +17,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class ReikaModel extends ModifiedPlayerModel {
@@ -71,7 +72,7 @@ public class ReikaModel extends ModifiedPlayerModel {
 
 	@Override
 	public void renderBodyParts(EntityPlayer ep, float tick) {
-		if (ep.equals(Minecraft.getMinecraft().thePlayer) && !Minecraft.getMinecraft().thePlayer.getCommandSenderName().equals("Reika_Kalseki"))
+		if (ep.equals(Minecraft.getMinecraft().thePlayer) && !ReikaPlayerAPI.isReika(Minecraft.getMinecraft().thePlayer))
 			return;
 		this.setPartAngles(ep, tick);
 		float f5 = 0.0625F;
