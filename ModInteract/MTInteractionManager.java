@@ -63,6 +63,11 @@ public final class MTInteractionManager {
 	private final Method addReloadWatcher;
 
 	private MTInteractionManager() {
+		if (!isMTLoaded()) {
+			reloadMethod = null;
+			addReloadWatcher = null;
+			return;
+		}
 		Method rl = null;
 		Method rlw = null;
 		try {
@@ -341,7 +346,7 @@ public final class MTInteractionManager {
 		}
 	}
 
-	private static class ReloadHandler implements IEventHandler {
+	private class ReloadHandler implements IEventHandler {
 
 		@Override
 		public void handle(Object r) {
