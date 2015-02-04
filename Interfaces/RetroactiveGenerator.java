@@ -12,13 +12,10 @@ package Reika.DragonAPI.Interfaces;
 import java.util.Random;
 
 import net.minecraft.world.World;
+import cpw.mods.fml.common.IWorldGenerator;
 
-public interface RetroactiveGenerator {
+public interface RetroactiveGenerator extends IWorldGenerator {
 
-	/** Note that the chunkX and chunkZ are the real x and z coordinates of the chunk origin, not chunk coordinates */
-	public void generate(Random rand, World world, int chunkX, int chunkZ);
-
-	/** Note that the chunkX and chunkZ are the real x and z coordinates of the chunk origin, not chunk coordinates */
 	public boolean canGenerateAt(Random rand, World world, int chunkX, int chunkZ);
 
 	/** It would be a good idea to prefix this with your mod's name; eg ReactorCraft_PitchblendeGen */

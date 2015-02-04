@@ -89,7 +89,7 @@ public class ReikaASMHelper {
 	}
 
 	public static boolean classContainsMethod(ClassNode cn, MethodNode mn) {
-		return getMethodByNameAndSig(cn, mn.name, mn.signature) != null;
+		return getMethodByNameAndSig(cn, mn.name, mn.desc) != null;
 	}
 
 	private static MethodNode getMethodByNameAndSig(ClassNode c, String name, String sig) {

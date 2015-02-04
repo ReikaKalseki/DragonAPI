@@ -60,7 +60,7 @@ public class SamakiModel extends ModifiedPlayerModel {
 	}
 
 	@Override
-	public void setPartAngles(EntityPlayer ep, float tick) {
+	protected void setPartAngles(EntityPlayer ep, float tick) {
 		float pitch = -ep.rotationPitch;
 		float yawHead = -ep.rotationYaw%360-tick*(ep.rotationYaw-ep.prevRotationYaw);
 		float yaw = -ep.renderYawOffset%360-tick*(ep.renderYawOffset-ep.prevRenderYawOffset)+180;

@@ -50,7 +50,9 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		POTIONPACKETID("net.minecraft.network.play.server.S1DPacketEntityEffect", "in"),
 		POTIONPACKETID2("net.minecraft.client.network.NetHandlerPlayClient", "bjb"),
 		BLOCKPLACE("net.minecraft.item.ItemBlock", "abh"),
-		SETBLOCK("net.minecraft.world.chunk.Chunk", "apx");
+		SETBLOCK("net.minecraft.world.chunk.Chunk", "apx"),
+		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
+		;
 
 		private final String obfName;
 		private final String deobfName;
@@ -377,6 +379,10 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				}
 				break;
 			}
+			//case PLAYERRENDER: {
+			//
+			//	break;
+			//}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);

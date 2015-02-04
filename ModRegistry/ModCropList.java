@@ -25,11 +25,11 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.ModInteract.BerryBushHandler;
-import Reika.DragonAPI.ModInteract.HarvestCraftHandler;
-import Reika.DragonAPI.ModInteract.MagicCropHandler;
-import Reika.DragonAPI.ModInteract.OreBerryBushHandler;
-import Reika.DragonAPI.ModInteract.PneumaticPlantHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.MagicCropHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.OreBerryBushHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.PneumaticPlantHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
 
 public enum ModCropList {

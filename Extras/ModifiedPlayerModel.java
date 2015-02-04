@@ -41,7 +41,7 @@ public abstract class ModifiedPlayerModel extends ModelBiped {
 
 	protected abstract void init();
 
-	public abstract void setPartAngles(EntityPlayer ep, float tick);
+	protected abstract void setPartAngles(EntityPlayer ep, float tick);
 
 	public abstract void bindTexture();
 

@@ -22,8 +22,8 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Interfaces.SpecialOreBlock;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
-import Reika.DragonAPI.ModInteract.MystCraftHandler;
-import Reika.DragonAPI.ModInteract.TwilightForestHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public final class ReikaBlockHelper extends DragonAPICore {

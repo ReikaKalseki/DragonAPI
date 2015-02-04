@@ -78,7 +78,7 @@ import Reika.DragonAPI.Interfaces.TameHostile;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.ModInteract.DartItemHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 

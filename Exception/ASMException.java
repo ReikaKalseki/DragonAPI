@@ -29,7 +29,7 @@ public abstract class ASMException extends RuntimeException {
 	@Override
 	public String getMessage() {
 		StringBuilder sb = new StringBuilder();
-		sb.append("Error ASMing "+node.name);
+		sb.append("Error ASMing "+node.name+":\n");
 		return sb.toString();
 	}
 

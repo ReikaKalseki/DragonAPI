@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract;
 
+import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
+
 public class ReikaTwilightHelper {
 
 	//public static final int TWILIGHT_ID = 7;

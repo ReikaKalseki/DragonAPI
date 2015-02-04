@@ -10,9 +10,13 @@
 package Reika.DragonAPI.ASM;
 
 import java.io.IOException;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -34,7 +38,7 @@ public class InterfaceInjector implements IClassTransformer {
 
 	private final boolean crashOnError;
 
-	private InterfaceInjector() {
+	public InterfaceInjector() {
 		crashOnError = !Boolean.valueOf(System.getProperty(SKIP_PROPERTY));
 	}
 
@@ -48,7 +52,7 @@ public class InterfaceInjector implements IClassTransformer {
 		ClassReader classReader = new ClassReader(bytes);
 		classReader.accept(classNode, 0);
 
-		String[] c = this.getInterfacesFor(classNode);
+		Collection<String> c = this.getInterfacesFor(classNode);
 		if (c == null)
 			return bytes;
 
@@ -60,15 +64,17 @@ public class InterfaceInjector implements IClassTransformer {
 		return writer.toByteArray();
 	}
 
-	private String[] getInterfacesFor(ClassNode cn) {
-		for (AnnotationNode ann : cn.visibleAnnotations) {
-			if (ann.desc.equals("LReika/DragonAPI/ASM/InterfaceInjector/Injectable;")) {
-				for (int x = 0; x < ann.values.size() - 1; x += 2) {
-					Object key = ann.values.get(x);
-					Object values = ann.values.get(x+1);
-					if (key instanceof String && key.equals("value")) {
-						if (values instanceof String[]) {
-							return (String[])values;
+	private Collection<String> getInterfacesFor(ClassNode cn) {
+		if (cn.visibleAnnotations != null) {
+			for (AnnotationNode ann : cn.visibleAnnotations) {
+				if (ann.desc.equals("LReika/DragonAPI/ASM/InterfaceInjector$Injectable;")) {
+					for (int x = 0; x < ann.values.size() - 1; x += 2) {
+						Object key = ann.values.get(x);
+						Object values = ann.values.get(x+1);
+						if (key instanceof String && key.equals("value")) {
+							if (values instanceof List && !((List)values).isEmpty() && ((List)values).get(0) instanceof String) {
+								return (List<String>)values;
+							}
 						}
 					}
 				}
@@ -77,9 +83,9 @@ public class InterfaceInjector implements IClassTransformer {
 		return null;
 	}
 
-	private void tryInjectInterfaces(ClassNode cn, String[] c) {
+	private void tryInjectInterfaces(ClassNode cn, Collection<String> c) {
 		if (DEBUG)
-			ReikaJavaLibrary.pConsole("DRAGONAPI ASM: Injecting "+c.length+" interfaces into "+cn.name+": "+Arrays.toString(c));
+			ReikaJavaLibrary.pConsole("DRAGONAPI ASM: Injecting "+c.size()+" interfaces into "+cn.name+": "+c);
 		for (String cl : c) {
 			ClassNode inter = this.getInterfaceFromString(cl);
 			if (inter == null) {
@@ -103,8 +109,10 @@ public class InterfaceInjector implements IClassTransformer {
 			ImproperImplementationException e = new ImproperImplementationException(cn, inter, missing);
 			if (crashOnError)
 				throw e;
-			else
+			else {
+				ReikaJavaLibrary.pConsole("DRAGONAPI ASM: Interface "+inter.name+" could not be injected to "+cn.name+"; improper implementation.");
 				e.printStackTrace();
+			}
 		}
 		else {
 			cn.interfaces.add(inter.name);
@@ -167,6 +175,8 @@ public class InterfaceInjector implements IClassTransformer {
 
 	}
 
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.TYPE})
 	public static @interface Injectable {
 
 		public String[] value();

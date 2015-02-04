@@ -193,6 +193,20 @@ public abstract class DragonAPIMod {
 		profiler.finishTiming();
 	}
 
+	@Override
+	public final boolean equals(Object o) {
+		return o.getClass() == this.getClass() && ((DragonAPIMod)o).getTechnicalName().equalsIgnoreCase(this.getTechnicalName());
+	}
+
+	@Override
+	public final int hashCode() {
+		return ~this.getClass().hashCode()^this.getTechnicalName().hashCode();
+	}
+
+	public final boolean isReikasMod() {
+		return this.getClass().getName().startsWith("Reika.");
+	}
+
 	public static final class LoadProfiler {
 
 		private long time = -1;

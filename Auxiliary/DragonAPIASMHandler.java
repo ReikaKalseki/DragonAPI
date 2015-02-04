@@ -37,11 +37,11 @@ public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 	@Override
 	public String[] getASMTransformerClass() {
 		return new String[]{
+				InterfaceInjector.class.getName(), //Must run before dependent method stripper
 				APIStripper.class.getName(),
 				DragonAPIClassTransfomer.class.getName(),
 				FMLItemBlockPatch.class.getName(),
 				DependentMethodStripper.class.getName(),
-				InterfaceInjector.class.getName(),
 		};
 	}
 

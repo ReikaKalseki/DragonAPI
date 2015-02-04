@@ -9,39 +9,48 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary.Trackers;
 
-import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 
 public final class DonatorController {
 
 	public static final DonatorController instance = new DonatorController();
 
 	private final HashMap<DragonAPIMod, DonationList> data = new HashMap();
+	private final MultiMap<DragonAPIMod, Donator> byModDonators = new MultiMap();
+	private final HashSet<Donator> reikaDonators = new HashSet();
 
 	private DonatorController() {
 
 	}
 
 	/** This function does all the work for you. Provide the donation in dollar.cent amounts (eg 12.50F).
-	 * Returns true if the donator had previous donations. */
-	public boolean addDonation(DragonAPIMod mod, String donator, float donation) {
+	 * Returns the total from this donator. */
+	public float addDonation(DragonAPIMod mod, String donator, float donation) {
+		return this.addDonation(mod, donator, donator, donation);
+	}
+	/** This function does all the work for you. Provide the donation in dollar.cent amounts (eg 12.50F).
+	 * Returns the total from this donator. */
+	public float addDonation(DragonAPIMod mod, String donator, String ingame, float donation) {
 		boolean flag = false;
 		DonationList li = data.get(mod);
 		if (li == null) {
-			li = new DonationList(donator, donation);
+			li = new DonationList();
+			data.put(mod, li);
 		}
-		else {
-			Donation d = new Donation(donator, donation);
-			flag = li.hasPreviousFrom(donator);
-			li.add(d);
+		Donator d = li.addDonation(donator, ingame, donation);
+		byModDonators.addValue(mod, d);
+		if (mod.isReikasMod()) {
+			reikaDonators.add(d);
 		}
-		data.put(mod, li);
-		return flag;
+		return li.data.get(donator).donationAmount;
 	}
 
 	public String getTotalDonationsFromAllMods(String donator) {
@@ -53,33 +62,35 @@ public final class DonatorController {
 	}
 
 	private float getNumericalTotalDonationsFrom(DragonAPIMod mod, String donator) {
-		float amt = 0;
 		DonationList li = data.get(mod);
-		if (li == null)
-			return 0;
-		else {
-			for (int i = 0; i < li.size(); i++) {
-				Donation d = (Donation)li.get(i);
-				if (d.displayName.equals(donator))
-					amt += d.donationAmount;
-			}
-			return amt;
+		if (li != null) {
+			Donation d = li.data.get(donator);
+			if (d != null)
+				return d.donationAmount;
 		}
+		return 0;
 	}
 
 	public String getTotalDonationsFrom(DragonAPIMod mod, String donator) {
-		float amt = 0;
-		DonationList li = data.get(mod);
-		if (li == null)
-			return "$0.00";
-		else {
-			for (int i = 0; i < li.size(); i++) {
-				Donation d = (Donation)li.get(i);
-				if (d.displayName.equals(donator))
-					amt += d.donationAmount;
-			}
-			return String.format("$%.2f", amt);
+		return String.format("$%.2f", this.getNumericalTotalDonationsFrom(mod, donator));
+
+	}
+
+	public Collection<Donator> getAllDonatorsFor(DragonAPIMod mod) {
+		return Collections.unmodifiableCollection(byModDonators.get(mod));
+	}
+
+	public Set<Donator> getReikasDonators() {
+		return Collections.unmodifiableSet(reikaDonators);
+	}
+
+	public boolean donatedTo(String ingame, DragonAPIMod mod) {
+		Collection<Donator> c = byModDonators.get(mod);
+		for (Donator d : c) {
+			if (d.ingameName.endsWith(ingame))
+				return true;
 		}
+		return false;
 	}
 
 	public String getDisplayList() {
@@ -98,19 +109,23 @@ public final class DonatorController {
 		return sb.toString();
 	}
 
-	private class Donation {
+	private static class Donation implements Comparable<Donation> {
 
-		public final String displayName;
-		public final float donationAmount;
+		private final Donator donator;
+		private float donationAmount;
 
-		public Donation(String name, float amount) {
-			displayName = name;
-			donationAmount = amount;
+		public Donation(Donator d) {
+			this(d, 0);
+		}
+
+		public Donation(Donator d, float amt) {
+			donator = d;
+			donationAmount = amt;
 		}
 
 		@Override
 		public String toString() {
-			return String.format("  %s%s%s: %s%.2f", this.getDisplayColor().toString(), this.getFormatting(), displayName, "$", donationAmount);
+			return String.format("  %s%s%s: %s%.2f", this.getDisplayColor().toString(), this.getFormatting(), donator.toString(), "$", donationAmount);
 		}
 
 		public String getFormatting() {
@@ -121,13 +136,14 @@ public final class DonatorController {
 		public boolean equals(Object o) {
 			if (o instanceof Donation) {
 				Donation d = (Donation)o;
-				return d.displayName.equals(displayName) && d.donationAmount == donationAmount;
+				return d.donationAmount == donationAmount && d.donator.equals(donator);
 			}
 			return false;
 		}
 
-		public boolean comesBefore(Donation d) {
-			return donationAmount >= d.donationAmount;
+		@Override
+		public int hashCode() {
+			return donator.hashCode()+(int)(donationAmount*100);
 		}
 
 		public EnumChatFormatting getDisplayColor() {
@@ -145,84 +161,58 @@ public final class DonatorController {
 			}
 		}
 
-		public Donation merge(Donation d) {
-			return new Donation(displayName, donationAmount+d.donationAmount);
-		}
-
-		public Donation merge(Donation... dons) {
-			float amt = donationAmount;
-			for (int i = 0; i < dons.length; i++) {
-				Donation d = dons[i];
-				amt += d.donationAmount;
-			}
-			return new Donation(displayName, amt);
+		@Override
+		public int compareTo(Donation o) {
+			return (int)Math.signum(o.donationAmount-donationAmount);
 		}
 
 	}
 
-	private class DonationList extends ArrayList {
+	public static class Donator {
 
-		/** Creates a new instance with one entry. */
-		public DonationList(String donator, float amount) {
-			Donation d = new Donation(donator, amount);
-			this.add(d);
+		public final String ingameName;
+		public final String displayName;
+
+		private Donator(String name, String ign) {
+			displayName = name;
+			ingameName = ign;
 		}
 
-		public boolean hasPreviousFrom(String donator) {
-			for (int i = 0; i < this.size(); i++) {
-				Donation d = (Donation)this.get(i);
-				if (d.displayName.equals(donator))
-					return true;
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof Donator) {
+				Donator d = (Donator)o;
+				return d.ingameName.equals(ingameName) && d.displayName.equals(displayName);
 			}
 			return false;
 		}
 
 		@Override
-		public boolean add(Object o) {
-			if (!(o instanceof Donation))
-				throw new MisuseException("You can only use a DonationList to store donations!");
-			Donation d = (Donation)o;
-			boolean flag = this.hasPreviousFrom(d.displayName);
-			int index = this.getInsertionIndex(d);
-			if (index == -1)
-				super.add(d);
-			else
-				super.add(index, d);
-			if (flag)
-				this.mergeAndSort(d);
-			return true;
-		}
-
-		private void mergeAndSort(Donation src) {
-			Iterator<Donation> it = this.iterator();
-			while (it.hasNext()) {
-				Donation d = it.next();
-				if (d.displayName.equals(src.displayName)) {
-					src = src.merge(d);
-					it.remove();
-				}
-			}
-			this.add(src);
-		}
-
-		private int getInsertionIndex(Donation d) {
-			for (int i = 0; i < this.size(); i++) {
-				Donation at = (Donation)this.get(i);
-				if (d.comesBefore(at))
-					return i;
-			}
-			return -1;
+		public int hashCode() {
+			return ingameName.hashCode()^displayName.hashCode();
 		}
 
 		@Override
 		public String toString() {
-			StringBuilder sb = new StringBuilder();
-			for (int i = 0; i < this.size(); i++) {
-				sb.append(this.get(i).toString());
-				if (i < this.size()-1)
-					sb.append("\n");
-			}
-			return sb.toString();
+			return displayName+" ("+ingameName+")";
 		}
+
+	}
+
+	private static class DonationList {
+
+		private final HashMap<String, Donation> data = new HashMap();
+
+		private Donator addDonation(String name, String ign, float amt) {
+			Donator d = new Donator(name, ign);
+			Donation dn = data.get(d);
+			if (dn == null) {
+				dn = new Donation(d);
+				data.put(name, dn);
+			}
+			dn.donationAmount += amt;
+			return d;
+		}
+
 	}
 }

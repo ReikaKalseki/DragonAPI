@@ -64,6 +64,7 @@ public class ReikaModel extends ModifiedPlayerModel {
 		super.render(e, par2, par3, par4, par5, par6, par7);
 	}
 
+	@Override
 	public void bindTexture() {
 		ReikaTextureHelper.bindFinalTexture(DragonAPICore.class, "/Reika/DragonAPI/Resources/reika_tex.png");
 	}
@@ -107,7 +108,7 @@ public class ReikaModel extends ModifiedPlayerModel {
 	}
 
 	@Override
-	public void setPartAngles(EntityPlayer ep, float tick) {
+	protected void setPartAngles(EntityPlayer ep, float tick) {
 		float pitch = -ep.rotationPitch;
 		float yawHead = -ep.rotationYaw%360-tick*(ep.rotationYaw-ep.prevRotationYaw);
 		float yaw = -ep.renderYawOffset%360-tick*(ep.renderYawOffset-ep.prevRenderYawOffset)+180;
@@ -139,7 +140,7 @@ public class ReikaModel extends ModifiedPlayerModel {
 	}
 
 	@Override
-	public void init() {
+	protected void init() {
 
 		hornR = new ModelRenderer(this, 32, 12);
 		hornR.addBox(this.getHornX()-2F, this.getHornY(), this.getHornZ(), 2, 1, 3);
