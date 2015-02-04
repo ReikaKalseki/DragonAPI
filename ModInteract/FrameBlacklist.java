@@ -1,4 +1,4 @@
-package Reika.DragonAPI.ModInteract.Instantiable;
+package Reika.DragonAPI.ModInteract;
 
 import java.util.HashSet;
 
