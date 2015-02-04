@@ -175,7 +175,7 @@ public final class DonatorController {
 		public final UUID ingameName;
 		public final String displayName;
 
-		private Donator(String name, UUID ign) {
+		Donator(String name, UUID ign) {
 			displayName = name;
 			ingameName = ign;
 		}

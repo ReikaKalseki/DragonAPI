@@ -11,10 +11,14 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.UUID;
 
+import Reika.DragonAPI.Auxiliary.Trackers.DonatorController.Donator;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 
 public class PatreonController {
 
@@ -30,9 +34,9 @@ public class PatreonController {
 		this.addPatron(mod, name, name, amt);
 	}
 
-	public void addPatron(DragonAPIMod mod, String name, String minecraft, int amt) {
+	public void addPatron(DragonAPIMod mod, String name, String ingame, int amt) {
 		Patrons p = this.getOrCreate(mod);
-		p.addPatron(name, amt);
+		p.addPatron(name, ReikaPlayerAPI.getUUIDByUsername(ingame), amt);
 	}
 
 	private Patrons getOrCreate(DragonAPIMod mod) {
@@ -44,15 +48,15 @@ public class PatreonController {
 		return p;
 	}
 
-	public String getModPatrons(DragonAPIMod mod) {
-		return data.get(mod).toString();
+	public Collection<Donator> getModPatrons(DragonAPIMod mod) {
+		return Collections.unmodifiableCollection(data.get(mod).data.keySet());
 	}
 
 	public int getAmount(DragonAPIMod mod, String name) {
 		return data.get(mod).getAmount(name);
 	}
 
-	public Collection<String> getPatronsOver(DragonAPIMod mod, int amount) {
+	public Collection<Donator> getPatronsOver(DragonAPIMod mod, int amount) {
 		return data.get(mod).getPatronsOver(amount);
 	}
 
@@ -71,16 +75,16 @@ public class PatreonController {
 
 	private static class Patrons {
 
-		private final HashMap<String, Integer> data = new HashMap();
+		private final HashMap<Donator, Integer> data = new HashMap();
 
 		private int total;
 
-		private void addPatron(String name, int amt) {
+		private void addPatron(String name, UUID id, int amt) {
 			if (data.containsKey(name)) {
 				throw new MisuseException("You cannot have two copies of the same patron!");
 			}
 			else {
-				data.put(name, amt);
+				data.put(new Donator(name, id), amt);
 				total += amt;
 			}
 		}
@@ -94,12 +98,12 @@ public class PatreonController {
 			return e != null ? e.intValue() : 0;
 		}
 
-		private Collection<String> getPatronsOver(int amount) {
-			ArrayList<String> li = new ArrayList();
-			for (String s : data.keySet()) {
-				int f = data.get(s);
+		private Collection<Donator> getPatronsOver(int amount) {
+			ArrayList<Donator> li = new ArrayList();
+			for (Donator d : data.keySet()) {
+				int f = data.get(d);
 				if (f >= amount)
-					li.add(s);
+					li.add(d);
 			}
 			return li;
 		}
