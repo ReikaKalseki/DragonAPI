@@ -288,7 +288,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Jason Watson", 10);
 		PatreonController.instance.addPatron(this, "frogfigther the derp", "a52abe43-ee2a-482a-a99c-51d8203e49d3", 10);
 		PatreonController.instance.addPatron(this, "Fizyxnrd", 2);
-		PatreonController.instance.addPatron(this, "Jakbruce2012", 10);
+		PatreonController.instance.addPatron(this, "Jakbruce2012", "8286f5c2-3062-4034-a72b-21dde6dcaa1a", 10);
 		PatreonController.instance.addPatron(this, "Michael Luke", 5);
 		PatreonController.instance.addPatron(this, "Andrew Jones", 10);
 		PatreonController.instance.addPatron(this, "Steven Kane", 40);
