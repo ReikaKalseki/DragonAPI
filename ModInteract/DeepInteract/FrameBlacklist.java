@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.ModInteract;
+package Reika.DragonAPI.ModInteract.DeepInteract;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
@@ -16,16 +16,23 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
 import Reika.DragonAPI.ASM.DependentMethodStripper.SmartStripper;
 
+import com.amadornes.framez.api.FramezApi;
 import com.amadornes.framez.api.movement.BlockMovementType;
 import com.amadornes.framez.api.movement.HandlingPriority;
 import com.amadornes.framez.api.movement.HandlingPriority.Priority;
 import com.amadornes.framez.api.movement.IMovementHandler;
 import com.amadornes.framez.api.movement.IMovingBlock;
 
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
 
 public class FrameBlacklist {
+
+	static {
+		if (Loader.isModLoaded("framez"))
+			FramezApi.inst().getMovementApi().registerMovementHandler(new FramezHandler());
+	}
 
 	private static boolean isBlacklisted(World world, int x, int y, int z, Block b, int meta, TileEntity te) {
 		return MinecraftForge.EVENT_BUS.post(new FrameUsageEvent(world, x, y, z, b, meta, te));
@@ -33,6 +40,10 @@ public class FrameBlacklist {
 
 	@Strippable("com.amadornes.framez.api.movement.IMovementHandler")
 	public static class FramezHandler implements IMovementHandler {
+
+		private FramezHandler() {
+
+		}
 
 		@Override
 		@SmartStripper

@@ -19,7 +19,6 @@ import java.util.UUID;
 import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 
 public final class DonatorController {
 
@@ -36,7 +35,7 @@ public final class DonatorController {
 	/** This function does all the work for you. Provide the donation in dollar.cent amounts (eg 12.50F).
 	 * Returns the total from this donator. */
 	public float addDonation(DragonAPIMod mod, String donator, float donation) {
-		return this.addDonation(mod, donator, donator, donation);
+		return this.addDonation(mod, donator, null, donation);
 	}
 	/** This function does all the work for you. Provide the donation in dollar.cent amounts (eg 12.50F).
 	 * Returns the total from this donator. */
@@ -47,7 +46,7 @@ public final class DonatorController {
 			li = new DonationList();
 			data.put(mod, li);
 		}
-		Donator d = li.addDonation(donator, ReikaPlayerAPI.getUUIDByUsername(ingame), donation);
+		Donator d = li.addDonation(donator, ingame != null ? UUID.fromString(ingame) : null, donation);
 		byModDonators.addValue(mod, d);
 		if (mod.isReikasMod()) {
 			reikaDonators.add(d);
@@ -184,6 +183,8 @@ public final class DonatorController {
 		public boolean equals(Object o) {
 			if (o instanceof Donator) {
 				Donator d = (Donator)o;
+				if (d.ingameName == null || ingameName == null)
+					return false;
 				return d.ingameName.equals(ingameName) && d.displayName.equals(displayName);
 			}
 			return false;
@@ -191,7 +192,7 @@ public final class DonatorController {
 
 		@Override
 		public int hashCode() {
-			return ingameName.hashCode()^displayName.hashCode();
+			return (ingameName != null ? ingameName.hashCode() : 0)^displayName.hashCode();
 		}
 
 		@Override

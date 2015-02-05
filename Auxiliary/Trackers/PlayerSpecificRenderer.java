@@ -62,7 +62,7 @@ public class PlayerSpecificRenderer {
 		//If you can understand Java: A disgrace to other programmers for harassing a developer over what you should understand is harmless
 		//Update: Someone did it. Congratulations. Now go eat the contents of your toilet.
 		//if (DragonAPICore.isReikasComputer() && ReikaObfuscationHelper.isDeObfEnvironment()) {
-		//	renders.addValue("Reika_Kalseki", r);
+		//	renders.addValue(DragonAPICore.Reika_UUID, r);
 		//}
 	}
 

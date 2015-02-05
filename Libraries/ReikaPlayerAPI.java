@@ -57,6 +57,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public final class ReikaPlayerAPI extends DragonAPICore {
 
 	private static final HashMap<String, FakePlayer> fakePlayers = new HashMap();
+	private static final HashMap<String, UUID> uuidMap = new HashMap();
 
 	/** Transfers a player's entire inventory to an inventory. Args: Player, Inventory */
 	public static void transferInventoryToChest(EntityPlayer ep, ItemStack[] inv) {
@@ -353,8 +354,13 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	public static boolean isReika(EntityPlayer ep) {
 		return ep.getUniqueID().equals(DragonAPICore.Reika_UUID);
 	}
-
+	/*
 	public static UUID getUUIDByUsername(String name) {
-		return UUID.randomUUID();
+		UUID id = uuidMap.get(name);
+		if (id == null) {
+
+		}
+		return id;
 	}
+	 */
 }

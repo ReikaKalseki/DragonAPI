@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.ModInteract;
+package Reika.DragonAPI.ModInteract.DeepInteract;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;

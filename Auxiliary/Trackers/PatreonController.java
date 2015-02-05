@@ -18,7 +18,6 @@ import java.util.UUID;
 import Reika.DragonAPI.Auxiliary.Trackers.DonatorController.Donator;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 
 public class PatreonController {
 
@@ -31,12 +30,12 @@ public class PatreonController {
 	}
 
 	public void addPatron(DragonAPIMod mod, String name, int amt) {
-		this.addPatron(mod, name, name, amt);
+		this.addPatron(mod, name, null, amt);
 	}
 
 	public void addPatron(DragonAPIMod mod, String name, String ingame, int amt) {
 		Patrons p = this.getOrCreate(mod);
-		p.addPatron(name, ReikaPlayerAPI.getUUIDByUsername(ingame), amt);
+		p.addPatron(name, ingame != null ? UUID.fromString(ingame) : null, amt);
 	}
 
 	private Patrons getOrCreate(DragonAPIMod mod) {

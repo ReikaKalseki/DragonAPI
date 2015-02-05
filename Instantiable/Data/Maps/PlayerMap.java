@@ -12,15 +12,16 @@ package Reika.DragonAPI.Instantiable.Data.Maps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
 
 public class PlayerMap<V> {
 
-	private final HashMap<String, V> data = new HashMap();
+	private final HashMap<UUID, V> data = new HashMap();
 
-	private static String getKey(EntityPlayer ep) {
-		return ep.getCommandSenderName(); //switch to uuid in 1.8
+	private static UUID getKey(EntityPlayer ep) {
+		return ep.getUniqueID();
 	}
 
 	public V get(EntityPlayer ep) {
@@ -43,7 +44,7 @@ public class PlayerMap<V> {
 		return data.containsKey(getKey(ep));
 	}
 
-	public Collection<String> keySet() {
+	public Collection<UUID> keySet() {
 		return Collections.unmodifiableCollection(data.keySet());
 	}
 
