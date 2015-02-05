@@ -35,6 +35,7 @@ import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaImageLoader;
+import Reika.DragonAPI.IO.ReikaImageLoader.ImageEditor;
 import Reika.DragonAPI.IO.ReikaTextureBinder;
 import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
 import Reika.DragonAPI.Instantiable.Event.TextureReloadEvent;
@@ -65,6 +66,10 @@ public class ReikaTextureHelper {
 	}
 
 	public static void bindTexture(Class root, String tex) {
+		bindTexture(root, tex, null);
+	}
+
+	public static void bindTexture(Class root, String tex, ImageEditor img) {
 		if (reload()) {
 			textures.clear();
 			colorOverrides.clear();
@@ -88,7 +93,7 @@ public class ReikaTextureHelper {
 				ArrayList<IResourcePack> li = getCurrentResourcePacks();
 				for (int i = 0; i < li.size() && !loaded; i++) {
 					IResourcePack res = li.get(i);
-					gl = bindPackTexture(root, respath, res);
+					gl = bindPackTexture(root, respath, res, img);
 					if (gl != null) {
 						textures.put(gl, root, tex);
 						loaded = true;
@@ -98,7 +103,7 @@ public class ReikaTextureHelper {
 			}
 			if (gl == null) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: No texture packs contain an image for "+tex+". Loading default.");
-				gl = bindClassReferencedTexture(root, oldtex);
+				gl = bindClassReferencedTexture(root, oldtex, img);
 				textures.put(gl, root, tex);
 			}
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
@@ -109,14 +114,14 @@ public class ReikaTextureHelper {
 	public static void bindFinalTexture(Class root, String tex) {
 		Integer gl = (Integer)textures.get(root, tex);
 		if (gl == null) {
-			gl = bindClassReferencedTexture(root, tex);
+			gl = bindClassReferencedTexture(root, tex, null);
 			textures.put(gl, root, tex);
 		}
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
-	private static Integer bindClassReferencedTexture(Class root, String tex) {
-		BufferedImage img = ReikaImageLoader.readImage(root, tex);
+	private static Integer bindClassReferencedTexture(Class root, String tex, ImageEditor editor) {
+		BufferedImage img = ReikaImageLoader.readImage(root, tex, editor);
 		if (img == null) {
 			ReikaJavaLibrary.pConsole("No image found for "+tex+"!");
 			return new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
@@ -144,8 +149,8 @@ public class ReikaTextureHelper {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
-	private static Integer bindPackTexture(Class root, String tex, IResourcePack res) {
-		BufferedImage img = ReikaImageLoader.getImageFromResourcePack(tex, res);
+	private static Integer bindPackTexture(Class root, String tex, IResourcePack res, ImageEditor editor) {
+		BufferedImage img = ReikaImageLoader.getImageFromResourcePack(tex, res, editor);
 		return img != null ? new Integer(binder.allocateAndSetupTexture(img)) : null;
 	}
 

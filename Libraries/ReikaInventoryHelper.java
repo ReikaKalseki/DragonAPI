@@ -26,6 +26,7 @@ import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.TemporaryInventory;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
@@ -272,11 +273,20 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	/** Returns the existence of an item in the specified inventory, and decrements it if found.
 	 * Args: Item ID, Item Metadata, Inventory. Set meta to -1 for any. */
 	public static boolean findAndDecrStack(Item id, int meta, ItemStack[] inv) {
+		ItemStack is = meta >= 0 ? new ItemStack(id, 1, meta) : new ItemStack(id, 1, OreDictionary.WILDCARD_VALUE);
+		return findAndDecrStack(is, inv);
+	}
+
+	public static boolean findAndDecrStack(ItemStack is, ItemStack[] inv) {
+		return findAndDecrStack(is, inv, false);
+	}
+
+	public static boolean findAndDecrStack(ItemStack is, ItemStack[] inv, boolean nbt) {
 		int slot;
-		if (meta != -1)
-			slot = locateInInventory(id, meta, inv);
+		if (is.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+			slot = locateInInventory(is.getItem(), is.getItemDamage(), inv);
 		else
-			slot = locateInInventory(id, inv);
+			slot = locateInInventory(is.getItem(), inv);
 		if (slot == -1)
 			return false;
 		else {

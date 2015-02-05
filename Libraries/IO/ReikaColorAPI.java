@@ -126,4 +126,13 @@ public class ReikaColorAPI {
 		int b = (int)(b1*ratio + b2*(1-ratio));
 		return r << 16 | g << 8 | b;
 	}
+
+	public static int additiveBlend(int color) {
+		int rgb = color&0xFFFFFF;
+		int r = getRedFromInteger(color);
+		int g = getGreenFromInteger(color);
+		int b = getBlueFromInteger(color);
+		int alpha = (r+g+b)/3;
+		return rgb | (alpha << 24);
+	}
 }

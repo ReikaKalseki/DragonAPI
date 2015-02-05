@@ -206,6 +206,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	/** Draws a line between two points. Args: Start x,y, end x,y, color */
 	public void drawLine(int x, int y, int x2, int y2, int color) {
+		if (GL11.glGetFloat(GL11.GL_LINE_WIDTH) < 1.5F)
+			GL11.glLineWidth(1.5F);
 		boolean light = GL11.glIsEnabled(GL11.GL_LIGHTING);
 		boolean depth = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
 		boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);

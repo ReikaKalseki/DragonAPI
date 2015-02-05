@@ -30,6 +30,7 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.relauncher.Side;
@@ -43,10 +44,22 @@ public final class ReikaImageLoader {
 	private static final BufferedImage missingtex = new BufferedImage(64, 64, 2);
 	private static final TextureManager eng = Minecraft.getMinecraft().renderEngine;
 
+	public static final ImageEditor rgbToAlpha = new ImageEditor() {
+		@Override
+		public int getRGB(int raw) {
+			return ReikaColorAPI.additiveBlend(raw);
+		}
+	};
+
+	public static interface ImageEditor {
+
+		public int getRGB(int raw);
+
+	}
+
 	/** Returns a BufferedImage read off the provided filepath.
 	 * Args: Root class, filepath */
-	public static BufferedImage readImage(Class root, String name)
-	{
+	public static BufferedImage readImage(Class root, String name, ImageEditor editor) {
 		ReikaJavaLibrary.pConsole("Pipelining texture from "+root.getCanonicalName()+" to "+name);
 		InputStream inputfile = root.getResourceAsStream(name);
 
@@ -56,7 +69,15 @@ public final class ReikaImageLoader {
 		}
 		BufferedImage bufferedimage = null;
 		try {
-			return ImageIO.read(inputfile);
+			BufferedImage img = ImageIO.read(inputfile);
+			if (editor != null) {
+				for (int x = 0; x < img.getWidth(); x++) {
+					for (int y = 0; y < img.getHeight(); y++) {
+						img.setRGB(x, y, editor.getRGB(img.getRGB(x, y)));
+					}
+				}
+			}
+			return img;
 		}
 		catch (IOException e) {
 			ReikaJavaLibrary.pConsole("Default image filepath at "+name+" not found.");
@@ -64,7 +85,7 @@ public final class ReikaImageLoader {
 		}
 	}
 
-	public static BufferedImage getImageFromResourcePack(String path, IResourcePack res) {
+	public static BufferedImage getImageFromResourcePack(String path, IResourcePack res, ImageEditor editor) {
 		ReikaJavaLibrary.pConsole("Loading image at "+path+" from resourcepack "+res.getPackName());
 		AbstractResourcePack pack = (AbstractResourcePack)res;
 		InputStream in = ReikaTextureHelper.getStreamFromTexturePack(path, pack);
