@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -22,6 +24,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.BiomeManager;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Data.Immutable.RGB;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -32,6 +35,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	private static final MultiMap<BiomeGenBase, BiomeGenBase> children = new MultiMap();
 	private static final MultiMap<BiomeGenBase, BiomeGenBase> similarity = new MultiMap();
 	private static final HashMap<BiomeGenBase, BiomeGenBase> parents = new HashMap();
+	private static final HashMap<BiomeGenBase, RGB> biomeColors = new HashMap();
 
 	static {
 		addChildBiome(BiomeGenBase.desert, BiomeGenBase.desertHills);
@@ -333,5 +337,17 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			if (b != biome)
 				BiomeManager.removeSpawnBiome(b);
 		}
+	}
+
+	public static int getBiomeUniqueColor(BiomeGenBase b) {
+		Block top = b.topBlock;
+		if (BiomeDictionary.isBiomeOfType(b, Type.WATER))
+			top = Blocks.water;
+		int mat = top.getMaterial().getMaterialMapColor().colorValue;
+		if (top == Blocks.grass) {
+			mat = b.getBiomeGrassColor(0, 0, 0);
+		}
+		RGB rgb = new RGB(mat);
+		return rgb.getInt();
 	}
 }

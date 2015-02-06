@@ -53,9 +53,6 @@ public class CommandableUpdateChecker {
 
 	public static final String reikaURL = "http://server.techjargaming.com/Reika/versions";
 
-	private static boolean testedInternet = false;
-	private static boolean hasInternet = false;
-
 	private final HashMap<DragonAPIMod, ModVersion> latestVersions = new HashMap();
 	private final ArrayList<UpdateChecker> checkers = new ArrayList();
 	private final ArrayList<DragonAPIMod> oldMods = new ArrayList();

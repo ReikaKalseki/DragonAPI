@@ -105,6 +105,11 @@ public class ReikaColorAPI {
 		return b;
 	}
 
+	public static int getAlphaFromInteger(int color) {
+		int b = (color >> 24) & 0xFF;
+		return b;
+	}
+
 	public static boolean isRGBNonZero(int color) {
 		return (color & 0xffffff) > 0;
 	}

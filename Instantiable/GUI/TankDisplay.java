@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Instantiable.Rendering;
+package Reika.DragonAPI.Instantiable.GUI;
 
 import net.minecraft.util.IIcon;
 import net.minecraftforge.fluids.Fluid;
