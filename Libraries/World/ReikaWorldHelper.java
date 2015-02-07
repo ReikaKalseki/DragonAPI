@@ -1277,7 +1277,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			ReikaJavaLibrary.pConsole("BIOME CHANGE ERROR: "+x+"&"+z+" @ "+ch.xPosition+"&"+ch.zPosition+": "+ax+"%"+az+" -> "+index, Side.SERVER);
 			return;
 		}
-
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
 		for (int i = 0; i < 256; i++)

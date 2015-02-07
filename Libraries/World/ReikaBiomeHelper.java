@@ -35,7 +35,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	private static final MultiMap<BiomeGenBase, BiomeGenBase> children = new MultiMap();
 	private static final MultiMap<BiomeGenBase, BiomeGenBase> similarity = new MultiMap();
 	private static final HashMap<BiomeGenBase, BiomeGenBase> parents = new HashMap();
-	private static final HashMap<BiomeGenBase, RGB> biomeColors = new HashMap();
+	private static final int[] biomeColors = new int[40];
 
 	static {
 		addChildBiome(BiomeGenBase.desert, BiomeGenBase.desertHills);
@@ -72,6 +72,51 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		addChildBiome(BiomeGenBase.river, BiomeGenBase.frozenRiver, false);
 
 		addChildBiome(BiomeGenBase.savanna, BiomeGenBase.savannaPlateau);
+
+		biomeColors[BiomeGenBase.ocean.biomeID] = 0x0000FF;
+		biomeColors[BiomeGenBase.deepOcean.biomeID] = 0x0000B0;
+		biomeColors[BiomeGenBase.river.biomeID] = 0x005AFF;
+		biomeColors[BiomeGenBase.frozenOcean.biomeID] = 0x0094FF;
+		biomeColors[BiomeGenBase.frozenRiver.biomeID] = 0x00C6FF;
+
+		biomeColors[BiomeGenBase.icePlains.biomeID] = 0x608772;
+		biomeColors[BiomeGenBase.plains.biomeID] = 0x6B8C42;
+		biomeColors[BiomeGenBase.taiga.biomeID] = 0x62886F;
+		biomeColors[BiomeGenBase.swampland.biomeID] = 0x444E3A;
+		biomeColors[BiomeGenBase.extremeHills.biomeID] = 0x668766;
+		biomeColors[BiomeGenBase.jungle.biomeID] = 0x3E9829;
+		biomeColors[BiomeGenBase.forest.biomeID] = 0x5B9144;
+		biomeColors[BiomeGenBase.savanna.biomeID] = 0xBCB555;
+		biomeColors[BiomeGenBase.birchForest.biomeID] = 0x78BC63;
+		biomeColors[BiomeGenBase.roofedForest.biomeID] = 0x387F24;
+
+		biomeColors[BiomeGenBase.desert.biomeID] = 0xEEE7B1;
+		biomeColors[BiomeGenBase.mushroomIsland.biomeID] = 0x726D81;
+		biomeColors[BiomeGenBase.mesa.biomeID] = 0x9C6247;
+		biomeColors[BiomeGenBase.beach.biomeID] = 0xEDE28E;
+		biomeColors[BiomeGenBase.stoneBeach.biomeID] = 0x949494;
+		biomeColors[BiomeGenBase.coldBeach.biomeID] = 0xACB6D3;
+
+		biomeColors[BiomeGenBase.megaTaiga.biomeID] = 0x62886A;
+		biomeColors[BiomeGenBase.megaTaigaHills.biomeID] = 0x82B28B;
+		biomeColors[BiomeGenBase.coldTaiga.biomeID] = 0x628878;
+		biomeColors[BiomeGenBase.coldTaigaHills.biomeID] = 0x82B29D;
+		biomeColors[BiomeGenBase.savannaPlateau.biomeID] = 0xD3CA61;
+		biomeColors[BiomeGenBase.iceMountains.biomeID] = 0x80B297;
+		biomeColors[BiomeGenBase.mushroomIslandShore.biomeID] = 0x726D96;
+		biomeColors[BiomeGenBase.desertHills.biomeID] = 0xFFF7BF;
+		biomeColors[BiomeGenBase.forestHills.biomeID] = 0x70B253;
+		biomeColors[BiomeGenBase.taigaHills.biomeID] = 0x82B292;
+		biomeColors[BiomeGenBase.jungleHills.biomeID] = 0x4CB731;
+		biomeColors[BiomeGenBase.jungleEdge.biomeID] = 0x4CB784;
+		biomeColors[BiomeGenBase.extremeHillsEdge.biomeID] = 0x9BCC9B;
+		biomeColors[BiomeGenBase.extremeHillsPlus.biomeID] = 0x87B287;
+		biomeColors[BiomeGenBase.birchForestHills.biomeID] = 0x91E076;
+		biomeColors[BiomeGenBase.mesaPlateau.biomeID] = 0xCC805D;
+		biomeColors[BiomeGenBase.mesaPlateau_F.biomeID] = 0xFF9E75;
+
+		biomeColors[BiomeGenBase.hell.biomeID] = 0x8F5353;
+		biomeColors[BiomeGenBase.sky.biomeID] = 0xD6D99B;
 	}
 
 	private static void addChildBiome(BiomeGenBase parent, BiomeGenBase child) {
@@ -339,7 +384,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		}
 	}
 
-	public static int getBiomeUniqueColor(BiomeGenBase b) {
+	public static int getBiomeNaturalColor(BiomeGenBase b) {
 		Block top = b.topBlock;
 		if (BiomeDictionary.isBiomeOfType(b, Type.WATER))
 			top = Blocks.water;
@@ -349,5 +394,9 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		}
 		RGB rgb = new RGB(mat);
 		return rgb.getInt();
+	}
+
+	public static int getBiomeUniqueColor(BiomeGenBase b) {
+		return biomeColors[b.biomeID];
 	}
 }

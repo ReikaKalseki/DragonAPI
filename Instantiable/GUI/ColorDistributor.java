@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.GUI;
 
 import java.util.ArrayList;
@@ -13,6 +22,10 @@ public class ColorDistributor {
 
 	public ColorDistributor() {
 
+	}
+
+	public int forceColor(int color) {
+		return this.addColor(color);
 	}
 
 	public int generateNewColor() {
@@ -32,7 +45,15 @@ public class ColorDistributor {
 	}
 
 	private int generateNewColor(Bias b) {
-		colors.add(this.getNewColor(b));
+		return this.addColor(this.getNewColor(b));
+	}
+
+	private int addColor(int color) {
+		return this.addColor(new RGB(color));
+	}
+
+	private int addColor(RGB color) {
+		colors.add(color);
 		return colors.size()-1;
 	}
 

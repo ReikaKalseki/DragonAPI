@@ -52,6 +52,7 @@ public class ReikaTextureHelper {
 	private static final PluralMap textures = new PluralMap(2);
 
 	private static final HashMap<ReikaDyeHelper, Integer> colorOverrides = new HashMap();
+	private static boolean noColorPacks = false;
 
 	private static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
@@ -254,9 +255,10 @@ public class ReikaTextureHelper {
 	public static int getColorOverride(ReikaDyeHelper dye) {
 		if (reload()) {
 			colorOverrides.clear();
+			noColorPacks = false;
 		}
 		Integer color = colorOverrides.get(dye);
-		if (color == null) {
+		if (color == null && !noColorPacks) {
 			initializeColorOverrides();
 			color = colorOverrides.get(dye);
 		}
@@ -302,6 +304,7 @@ public class ReikaTextureHelper {
 				Integer color = new Integer(c);
 				colorOverrides.put(dye, color);
 			}
+			noColorPacks = true;
 			return;
 		}
 	}

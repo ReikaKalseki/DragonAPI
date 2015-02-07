@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -100,8 +101,8 @@ public final class MultiMap<K, V> {
 		return Collections.unmodifiableCollection(data.values());
 	}
 
-	public Collection<V> allValues() {
-		Collection<V> li = new ArrayList();
+	public Collection<V> allValues(boolean duplicates) {
+		Collection<V> li = duplicates ? new ArrayList() : new HashSet();
 		for (Collection<V> c : data.values()) {
 			li.addAll(c);
 		}
@@ -109,7 +110,7 @@ public final class MultiMap<K, V> {
 	}
 
 	public int totalSize() {
-		return this.allValues().size();
+		return this.allValues(true).size();
 	}
 
 	public boolean containsValue(V value) {

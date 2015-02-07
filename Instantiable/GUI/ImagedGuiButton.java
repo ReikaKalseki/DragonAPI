@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.GUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.Tessellator;
 
 import org.lwjgl.opengl.GL11;
 
@@ -27,6 +28,12 @@ public final class ImagedGuiButton extends GuiButton {
 	private String filepath;
 	private final boolean hasToolTip;
 	private final Class modClass;
+
+	public TextAlign alignment = TextAlign.CENTER;
+	public int textOffset = 0;
+	public FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
+
+	public int textureSize = 256;
 
 	public ImagedGuiButton(int par1, int par2, int par3, String par4Str, Class mod)
 	{
@@ -58,7 +65,7 @@ public final class ImagedGuiButton extends GuiButton {
 	}
 
 	/** Draw a Gui Button with an image background and text overlay.
-	 * Args: id, x, y, width, height, u, v, text overlay, text color, shadow, filepath, class root */
+	 *Args: id, x, y, width, height, u, v, text overlay, text color, shadow, filepath, class root */
 	public ImagedGuiButton(int par1, int par2, int par3, int par4, int par5, int par7, int par8, String par6Str, int par9, boolean par10, String file, Class mod)
 	{
 		super(par1, par2, par3, 200, 20, par6Str);
@@ -108,42 +115,23 @@ public final class ImagedGuiButton extends GuiButton {
 		return filepath;
 	}
 
-	/**
-	 * Draws this button to the screen.
-	 */
 	@Override
 	public void drawButton(Minecraft mc, int mx, int my)
 	{
-		if (visible)
-		{
-			FontRenderer var4 = mc.fontRenderer;
+		if (visible) {
 			int tex = GL11.GL_TEXTURE_BINDING_2D;
 			ReikaTextureHelper.bindTexture(modClass, this.getButtonTexture());
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			this.drawTexturedModalRect(xPosition, yPosition, u, v, width, height);
 
-			field_146123_n = mx >= xPosition && my >= yPosition && mx < xPosition + width && my < yPosition + height;
+			field_146123_n = mx >= xPosition && my >= yPosition && mx < xPosition+width && my < yPosition+height;
 			int k = this.getHoverState(field_146123_n);
 
-			//this.drawTexturedModalRect(this.xPosition + this.width / 2, this.yPosition, u, v, this.width / 2, this.height);
-			this.mouseDragged(mc, mx, my);/*
-            int var7 = 14737632;
-
-            if (!this.enabled)
-            {
-                var7 = -6250336;
-            }
-            else if (var5)
-            {
-                var7 = 16777120;
-            }*/
+			this.mouseDragged(mc, mx, my);
 			if (displayString != null && !hasToolTip) {
 				ReikaTextureHelper.bindFontTexture();
 				GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
-				if (shadow)
-					this.drawCenteredString(var4, displayString, xPosition + width / 2, yPosition + (height - 8) / 2, color);
-				else
-					this.drawCenteredStringNoShadow(var4, displayString, xPosition + width / 2 + 1, yPosition + (height - 8) / 2, color);
+				renderer.drawString(displayString, this.getLabelX()+alignment.getDX(renderer, displayString), yPosition+(height-8)/2, color, shadow);
 			}
 			else if (k == 2 && displayString != null && hasToolTip) {
 				this.drawToolTip(mc, mx, my);
@@ -152,17 +140,54 @@ public final class ImagedGuiButton extends GuiButton {
 		}
 	}
 
+	@Override
+	public void drawTexturedModalRect(int x, int y, int u, int v, int w, int h) {
+		float f = 1F/textureSize;
+		Tessellator v5 = Tessellator.instance;
+		v5.startDrawingQuads();
+		v5.addVertexWithUV(x+0, y+h, zLevel, (u+0)*f, (v+h)*f);
+		v5.addVertexWithUV(x+w, y+h, zLevel, (u+w)*f, (v+h)*f);
+		v5.addVertexWithUV(x+w, y+0, zLevel, (u+w)*f, (v+0)*f);
+		v5.addVertexWithUV(x+0, y+0, zLevel, (u+0)*f, (v+0)*f);
+		v5.draw();
+	}
+
+	private int getLabelX() {
+		int base = textOffset+xPosition;
+		switch(alignment) {
+		case CENTER:
+			return base+width/2;
+		case LEFT:
+			return base+2;
+		case RIGHT:
+			return base+width-2;
+		default:
+			return base;
+		}
+	}
+
 	private void drawToolTip(Minecraft mc, int mx, int my) {
 		ReikaGuiAPI.instance.drawTooltip(mc.fontRenderer, displayString);
 		ReikaTextureHelper.bindFontTexture();
 	}
 
-	/**
-	 * Renders the specified text to the screen, center-aligned.
-	 */
-	public static void drawCenteredStringNoShadow(FontRenderer par1FontRenderer, String par2Str, int par3, int par4, int par5)
-	{
-		par1FontRenderer.drawString(par2Str, par3 - par1FontRenderer.getStringWidth(par2Str) / 2, par4, par5);
+	public static enum TextAlign {
+		LEFT(),
+		CENTER(),
+		RIGHT();
+
+		private int getDX(FontRenderer f, String s) {
+			switch(this) {
+			case CENTER:
+				return f.getStringWidth(s)/2;
+			case LEFT:
+				return 0;
+			case RIGHT:
+				return f.getStringWidth(s);
+			default:
+				return 0;
+			}
+		}
 	}
 
 }
