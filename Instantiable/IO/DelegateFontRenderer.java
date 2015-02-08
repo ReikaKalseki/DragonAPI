@@ -9,14 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
-import java.util.HashMap;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+
+import com.google.common.collect.HashBiMap;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.relauncher.Side;
@@ -26,8 +27,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 public final class DelegateFontRenderer extends FontRenderer {
 
 	private final FontRenderer fallback;
-	private final HashMap<String, FontRenderer> renderers = new HashMap();
-	private static int maxID = 0;
+	private final HashBiMap<String, FontRenderer> renderers = HashBiMap.create();
+	private static int currentID = 161; //char 161 = '¡'; everything from here is a foreign-language char or diacritical
+	private static final int maxID = 0xFFFF;
+	private static final String keyChar = "\uFFFC";
 
 	public DelegateFontRenderer(FontRenderer fr) {
 		super(Minecraft.getMinecraft().gameSettings, ReikaTextureHelper.font, Minecraft.getMinecraft().renderEngine, false);
@@ -36,9 +39,12 @@ public final class DelegateFontRenderer extends FontRenderer {
 	}
 
 	public String addRenderer(FontRenderer f) {
-		String id = "\uFFFC"+maxID;
+		if (currentID >= maxID) {
+			throw new MisuseException("Delegate Font Renderer has run out of IDs! All "+maxID+" IDs occupied!");
+		}
+		String id = keyChar+String.valueOf((char)currentID);
 		renderers.put(id, f);
-		maxID++;
+		currentID++;
 		return id;
 	}
 
@@ -55,19 +61,14 @@ public final class DelegateFontRenderer extends FontRenderer {
 	}
 
 	private FontKey getRenderer(String sg) {
-		String ref = sg;
-		StringBuilder pre = new StringBuilder();
-		while (!ref.isEmpty() && ref.charAt(0) == '\u00A7') {
-			pre.append(ref.substring(0, 2));
-			ref = ref.substring(2);
-		}
-		for (String c : renderers.keySet()) {
-			if (ref.startsWith(c)) {
-				ref = ref.substring(c.length());
-				while (ref.indexOf('\uFFFC') >= 0) {
-					ref = ref.substring(ref.indexOf('\uFFFC')+c.length());
+		if (sg.length() > 2) {
+			int index = sg.indexOf(keyChar);
+			if (index >= 0) {
+				String key = sg.substring(index, index+2);
+				FontRenderer f = renderers.get(key);
+				if (f != null) {
+					return new FontKey(f, sg.substring(0, index)+sg.substring(index+2, sg.length()));
 				}
-				return new FontKey(renderers.get(c), pre.toString()+ref);
 			}
 		}
 		return new FontKey(fallback, sg);

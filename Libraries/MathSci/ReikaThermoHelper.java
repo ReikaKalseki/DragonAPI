@@ -20,10 +20,12 @@ public class ReikaThermoHelper {
 	public static final double WATER_BOIL_ENTHALPY = 2260; // kJ/kg
 
 	/** Heat energy in one block */
-	public static final double WATER_BLOCK_HEAT = 4180000D;
+	public static final double WATER_BLOCK_HEAT = 4.18e6;
+
+	public static final long ROCK_MELT_ENERGY = (long)5.2e6;
 
 	/** E = mc delta T */
 	public static double getTemperatureIncrease(double C, double M, double E) {
-		return E/M/C;
+		return E/(M*C);
 	}
 }

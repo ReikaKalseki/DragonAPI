@@ -13,7 +13,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
 import buildcraft.energy.fuels.FuelManager;
 
 public class ReikaBuildCraftHelper extends DragonAPICore {
@@ -23,10 +22,6 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 
 	private static final Fluid fuel = FluidRegistry.getFluid("fuel");
 	private static double gasEnergyPerKg = 46.9; //MegaJoules
-
-	public static boolean doesBuildCraftExist() {
-		return ModList.BCENERGY.isLoaded();
-	}
 
 	public static float getFuelMJPerTick() {
 		return FuelManager.INSTANCE.getFuel(fuel).getPowerPerCycle();
@@ -38,17 +33,20 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	}
 
 	/** Minecraft joules per second */
+	@Deprecated
 	public static float getFuelMinecraftWatts() {
 		return 20*getFuelMJPerTick()/(getFuelBucketDuration()/20F);
 	}
 
 	/** J/s for fuel */
+	@Deprecated
 	public static double getFuelRealPower() {
 		double energy = getFuelBucketEnergy();
 		double time = getFuelBucketDuration();
 		return energy/time;
 	}
 
+	@Deprecated
 	public static double getWattsPerMJ() {
 		//if (!doesBuildCraftExist())
 		return 56280; //default  *4?

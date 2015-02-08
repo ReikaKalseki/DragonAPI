@@ -15,15 +15,14 @@ import Reika.DragonAPI.ModList;
 
 public class ReikaPneumaticHelper {
 
-	private static int airPerRF;
+	private static final int airPerRF = 1;
 
 	public static int getAirPerRF() {
-		return 1;//airPerRF;
+		return airPerRF;
 	}
 
 	public static int getWattsPerAir() {
-		double wattPerRF = ReikaBuildCraftHelper.getWattsPerMJ()/10;
-		return (int)(wattPerRF/airPerRF);
+		return ReikaRFHelper.getWattsPerRF()/airPerRF;
 	}
 
 	static {
@@ -31,7 +30,7 @@ public class ReikaPneumaticHelper {
 			try {
 				Class c = Class.forName("pneumaticCraft.common.Config");
 				Field f = c.getField("fluxCompressorEfficiency");
-				airPerRF = 20*f.getInt(null)/100;
+				//airPerRF = 20*f.getInt(null)/100;
 			}
 			catch (Exception e) {
 				e.printStackTrace();

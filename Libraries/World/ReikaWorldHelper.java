@@ -1439,6 +1439,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 
+		biome.decorate(world, rand, x, z);
+
 		for (int i = 40; i < 80; i++) {
 			world.markBlockForUpdate(x, i, z);
 			causeAdjacentUpdates(world, x, i, z);

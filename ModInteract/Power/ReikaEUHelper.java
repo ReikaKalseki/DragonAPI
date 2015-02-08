@@ -11,7 +11,12 @@ package Reika.DragonAPI.ModInteract.Power;
 
 public class ReikaEUHelper {
 
-	public static final double WATTS_PER_EU = 22512D;
+	private static final double WATTS_PER_EU_default = 2080D;
+	private static final double WATTS_PER_EU_legacy = 22512D;
+
+	public static double getWattsPerEU() {
+		return ReikaRFHelper.getWattsPerRF()*4D;
+	}
 
 	public static int getIC2TierFromEUVoltage(double voltage) {
 		if (voltage >= 8192) { //"Ultra"
@@ -33,7 +38,7 @@ public class ReikaEUHelper {
 	}
 
 	public static int getIC2TierFromPower(double power) {
-		return getIC2TierFromEUVoltage(power/WATTS_PER_EU);
+		return getIC2TierFromEUVoltage(power/getWattsPerEU());
 	}
 
 	public static enum Voltage {

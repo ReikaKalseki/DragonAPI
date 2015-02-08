@@ -169,4 +169,8 @@ public class TessellatorVertexList {
 		this.reverse();
 	}
 
+	public void clear() {
+		data.clear();
+	}
+
 }
