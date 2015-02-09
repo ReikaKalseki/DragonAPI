@@ -323,8 +323,9 @@ public final class MTInteractionManager {
 
 		private boolean parse(String s, Prevention p) {
 			MTItemEntry item = new MTItemEntry(s.substring(s.indexOf('<')+1, s.indexOf('>')));
-			KeyedItemStack ks = item.asKeyStack().setSimpleHash(true).lock();
+			KeyedItemStack ks = item.asKeyStack();
 			if (ks != null) {
+				ks.setSimpleHash(true).lock();
 				String mod = set.get(ks);
 				if (mod != null) {
 					lastItemMod = mod;
