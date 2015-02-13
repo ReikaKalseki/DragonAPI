@@ -70,6 +70,7 @@ import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.BannedItemReader;
@@ -152,8 +153,10 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@EventHandler
 	public void invalidSignature(FMLFingerprintViolationEvent evt) {
-		if (!evt.fingerprints.contains(evt.expectedFingerprint.toLowerCase().replaceAll(":", ""))) {
-			throw new InvalidBuildException(this, evt.source);
+		if (!ReikaObfuscationHelper.isDeObfEnvironment()) {
+			if (!evt.fingerprints.contains(evt.expectedFingerprint.toLowerCase().replaceAll(":", ""))) {
+				throw new InvalidBuildException(this, evt.source);
+			}
 		}
 	}
 

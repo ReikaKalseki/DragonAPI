@@ -14,7 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
-import Reika.DragonAPI.ASM.DependentMethodStripper.SmartStripper;
+import Reika.DragonAPI.ASM.DependentMethodStripper.SmartStrip;
 
 import com.amadornes.framez.api.FramezApi;
 import com.amadornes.framez.api.movement.BlockMovementType;
@@ -46,21 +46,21 @@ public class FrameBlacklist {
 		}
 
 		@Override
-		@SmartStripper
+		@SmartStrip
 		@HandlingPriority(Priority.HIGH)
 		public boolean handleStartMoving(IMovingBlock block) {
 			return isBlacklisted(block.getWorld(), block.getX(), block.getY(), block.getZ(), block.getBlock(), block.getMetadata(), block.getTileEntity());
 		}
 
 		@Override
-		@SmartStripper
+		@SmartStrip
 		@HandlingPriority(Priority.HIGH)
 		public boolean handleFinishMoving(IMovingBlock block) {
 			return isBlacklisted(block.getWorld(), block.getX(), block.getY(), block.getZ(), block.getBlock(), block.getMetadata(), block.getTileEntity());
 		}
 
 		@Override
-		@SmartStripper
+		@SmartStrip
 		@HandlingPriority(Priority.HIGH)
 		public BlockMovementType getMovementType(World world, Integer x, Integer y, Integer z) {
 			return isBlacklisted(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), world.getTileEntity(x, y, z)) ? BlockMovementType.UNMOVABLE : null;

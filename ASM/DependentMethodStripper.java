@@ -166,7 +166,7 @@ public class DependentMethodStripper implements IClassTransformer {
 	}
 
 	private static boolean processSmart(MethodNode mn) {
-		if (!ReikaASMHelper.memberHasAnnotationOfType(mn, "LReika/DragonAPI/ASM/DependentMethodStripper$SmartStripper"))
+		if (!ReikaASMHelper.memberHasAnnotationOfType(mn, "LReika/DragonAPI/ASM/DependentMethodStripper$SmartStrip"))
 			return false;
 		ArrayList<String> args = ReikaASMHelper.parseMethodArguments(mn);
 		for (String s : args) {
@@ -177,7 +177,7 @@ public class DependentMethodStripper implements IClassTransformer {
 	}
 
 	private static boolean processSmart(FieldNode fn) {
-		return ReikaASMHelper.memberHasAnnotationOfType(fn, "LReika/DragonAPI/ASM/DependentMethodStripper$SmartStripper") && !classExists(fn.desc);
+		return ReikaASMHelper.memberHasAnnotationOfType(fn, "LReika/DragonAPI/ASM/DependentMethodStripper$SmartStrip") && !classExists(fn.desc);
 	}
 
 	private static boolean classExists(String name) {
@@ -192,7 +192,7 @@ public class DependentMethodStripper implements IClassTransformer {
 	private static enum Annotations {
 		MOD("ModDependent", "Required mod %s not loaded."),
 		CLASS("ClassDependent", "Required class %s not found."),
-		SMART("SmartStripper", "Refers to one or more classes not found.");
+		SMART("SmartStrip", "Refers to one or more classes not found.");
 
 		private final String name;
 		private final String desc;
@@ -242,7 +242,7 @@ public class DependentMethodStripper implements IClassTransformer {
 
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.METHOD, ElementType.FIELD})
-	public static @interface SmartStripper {
+	public static @interface SmartStrip {
 
 	}
 }
