@@ -59,6 +59,7 @@ import Reika.DragonAPI.Command.LogControlCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.Command.TileSyncCommand;
+import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
@@ -121,6 +122,7 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
@@ -147,6 +149,13 @@ public class DragonAPIInit extends DragonAPIMod {
 	public static final ControlledConfig config = new ControlledConfig(instance, DragonOptions.optionList, null, 0);
 
 	private ModLogger logger;
+
+	@EventHandler
+	public void invalidSignature(FMLFingerprintViolationEvent evt) {
+		if (!evt.fingerprints.contains(evt.expectedFingerprint.toLowerCase().replaceAll(":", ""))) {
+			throw new InvalidBuildException(this, evt.source);
+		}
+	}
 
 	@Override
 	@EventHandler

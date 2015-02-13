@@ -115,7 +115,7 @@ public abstract class DragonAPIMod {
 				JarFile jf = new JarFile(this.getModFile());
 				//JarFile jf = new JarFile("E:/My Documents/Desktop Stuff/Game Stuff/Modding/Minecraft/mcp 1.7/reobf/DragonAPI 1.7.10 V4a.jar");
 				InputStream folder = ReikaFileReader.getFileInsideJar(jf, ReikaJavaLibrary.getTopLevelPackage(this.getClass())+"/");
-				String hash = "Temp";//ReikaFileReader.getHash(folder, HashType.SHA256);
+				String hash = "@TEMPHASH@";//ReikaFileReader.getHash(folder, HashType.SHA256);
 				Manifest mf = jf.getManifest();
 				if (mf == null)
 					throw new InvalidBuildException(this, this.getModFile());
