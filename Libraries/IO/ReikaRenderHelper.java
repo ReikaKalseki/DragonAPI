@@ -384,8 +384,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		GL11.glRotatef(rotation, 0.0F, 1.0F, 0.0F);
 		GL11.glDepthMask(false);
 
-		if (tile.hasWorldObj())
-			ReikaRenderHelper.disableLighting();
+		GL11.glDisable(GL11.GL_LIGHTING);
 
 		double d = 1.0125;
 		int p = 2;
@@ -405,8 +404,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 		GL11.glDepthMask(true);
 
-		if (tile.hasWorldObj())
-			ReikaRenderHelper.enableLighting();
+		GL11.glEnable(GL11.GL_LIGHTING);
 
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 

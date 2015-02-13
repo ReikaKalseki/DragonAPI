@@ -22,6 +22,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.security.MessageDigest;
 import java.util.ArrayList;
+import java.util.jar.JarFile;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -177,38 +178,58 @@ public class ReikaFileReader extends DragonAPICore {
 		return li;
 	}
 
-	public static String getHash(String path) {
-		return getHash(new File(path));
+	public static String getHash(String path, HashType type) {
+		return getHash(new File(path), type);
 	}
 
-	public static String getHash(File file) {
+	public static String getHash(File file, HashType type) {
 		try {
-			InputStream fis = new FileInputStream(file);
+			return getHash(new FileInputStream(file), type);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return "";
+		}
+	}
+
+	public static String getHash(InputStream is, HashType type) {
+		StringBuffer sb = new StringBuffer();
+		try {
 			byte[] buffer = new byte[1024];
-			MessageDigest complete = MessageDigest.getInstance("MD5");
+			MessageDigest complete = MessageDigest.getInstance(type.tag);
 			int numRead;
 
 			do {
-				numRead = fis.read(buffer);
+				numRead = is.read(buffer);
 				if (numRead > 0)
 					complete.update(buffer, 0, numRead);
 			}
 			while (numRead != -1);
 
-			fis.close();
+			is.close();
 			byte[] hash = complete.digest();
 
-			String result = "";
-
 			for (int i = 0; i < hash.length; i++) {
-				result += Integer.toString((hash[i] & 0xff) + 0x100, 16).substring(1);
+				sb.append(Integer.toString((hash[i] & 0xff) + 0x100, 16).substring(1).toUpperCase());
 			}
-
-			return result.toUpperCase();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			return "";
+			sb.append("IO ERROR: ");
+			sb.append(e.toString());
+		}
+		return sb.toString();
+	}
+
+	public static enum HashType {
+		MD5("MD5"),
+		SHA1("SHA-1"),
+		SHA256("SHA-256");
+
+		private final String tag;
+
+		private HashType(String s) {
+			tag = s;
 		}
 	}
 
@@ -249,6 +270,26 @@ public class ReikaFileReader extends DragonAPICore {
 			}
 		}
 
+	}
+
+	public static InputStream getFileInsideJar(File f, String name) {
+		try {
+			return getFileInsideJar(new JarFile(f), name);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static InputStream getFileInsideJar(JarFile jar, String name) {
+		try {
+			return jar.getInputStream(jar.getEntry(name));
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }

@@ -1029,7 +1029,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		pack.init(PacketTypes.NBT, pipe);
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
-
+			pipe.sendToAllOnServer(pack);
 		}
 		else if (side == Side.CLIENT) {
 			pipe.sendToServer(pack);
@@ -1053,7 +1053,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			pipe.sendToPlayer(pack, ep);
 		}
 		else if (side == Side.CLIENT) {
-
+			pipe.sendToAllOnServer(pack);
 		}
 		else {
 			// We are on the Bukkit server.

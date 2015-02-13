@@ -422,4 +422,9 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static <E> E getRandomListEntry(ArrayList<E> li) {
 		return li.isEmpty() ? null : li.get(rand.nextInt(li.size()));
 	}
+
+	public static String getTopLevelPackage(Class c) {
+		String n = c.getName();
+		return n.substring(0, n.indexOf('.'));
+	}
 }

@@ -221,7 +221,8 @@ public class CommandableUpdateChecker {
 		for (DragonAPIMod mod : oldMods) {
 			sb.append(mod.getDisplayName()+" ("+mod.getModVersion()+" -> "+latestVersions.get(mod).toString()+"); ");
 		}
-		MinecraftForge.EVENT_BUS.register(new ScreenWriter(sb.toString()));
+		if (!oldMods.isEmpty())
+			MinecraftForge.EVENT_BUS.register(new ScreenWriter(sb.toString()));
 	}
 
 	private void sendMessages(EntityPlayer ep) {

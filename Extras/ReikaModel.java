@@ -19,8 +19,11 @@ import org.lwjgl.opengl.GL11;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import cpw.mods.fml.common.Loader;
 
 public class ReikaModel extends ModifiedPlayerModel {
+
+	private final boolean tailMod = Loader.isModLoaded("Tails");
 
 	public ModelRenderer hornL;
 	public ModelRenderer hornR;
@@ -76,9 +79,13 @@ public class ReikaModel extends ModifiedPlayerModel {
 			return;
 		this.setPartAngles(ep, tick);
 		float f5 = 0.0625F;
-		tail.render(f5);
-		tail3.render(f5);
-		tail2.render(f5);
+
+		if (this.renderTail()) {
+			tail.render(f5);
+			tail3.render(f5);
+			tail2.render(f5);
+		}
+
 		back.render(f5);
 		back2.render(f5);
 		back3.render(f5);
@@ -106,6 +113,10 @@ public class ReikaModel extends ModifiedPlayerModel {
 		hornL.render(f5);
 		hornR.render(f5);
 		GL11.glTranslated(0, -d, 0);
+	}
+
+	private boolean renderTail() {
+		return !tailMod;
 	}
 
 	@Override

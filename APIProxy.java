@@ -34,4 +34,8 @@ public class APIProxy {
 	public void registerSounds() {
 
 	}
+
+	public void registerSidedHandlersGameLoaded() {
+
+	}
 }

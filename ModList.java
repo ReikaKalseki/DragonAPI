@@ -60,7 +60,6 @@ public enum ModList {
 	ARSMAGICA("arsmagica2", "am2.blocks.BlocksCommonProxy", "am2.items.ItemsCommonProxy"), //ensure still here
 	TRANSITIONAL("TransitionalAssistance", "modTA.Core.TACore"), //ensure still here
 	ENDERSTORAGE("EnderStorage"),
-	OPTIFINE("Optifine"),
 	TREECAPITATOR("TreeCapitator"),
 	HARVESTCRAFT("harvestcraft", "com.pam.harvestcraft.BlockRegistry", "com.pam.harvestcraft.ItemRegistry"),
 	MYSTCRAFT("Mystcraft"),
@@ -103,6 +102,7 @@ public enum ModList {
 	private static final HashMap<String, ModList> modIDs = new HashMap();
 
 	private static final Class liteClass;
+	private static final Class optiClass;
 
 	public static final ModList[] modList = values();
 
@@ -232,6 +232,10 @@ public enum ModList {
 		return liteClass != null;
 	}
 
+	public static boolean optifineInstalled() {
+		return optiClass != null;
+	}
+
 	static {
 		Class c = null;
 		try {
@@ -244,6 +248,18 @@ public enum ModList {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: LiteLoader not detected.");
 		}
 		liteClass = c;
+
+		c = null;
+		try {
+			c = Class.forName("optifine.OptiFineTweaker");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Optifine detected. Loading compatibility features.");
+			ReikaJavaLibrary.pConsole("\t\tNote that some parts of the game, especially rendering and textures, may error out.");
+			ReikaJavaLibrary.pConsole("\t\tTry reloading resources (F3+T) to fix this.");
+		}
+		catch (ClassNotFoundException e) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Optifine not detected.");
+		}
+		optiClass = c;
 	}
 
 }

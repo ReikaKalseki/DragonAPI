@@ -33,8 +33,10 @@ public class GuiPainter {
 
 	public final int posX;
 	public final int posY;
+	public final int width;
+	public final int height;
 
-	private final int pixelSize;
+	protected final int pixelSize;
 	public PaintElement activeElement;
 	private MultiMap<PaintElement, Point> locations = new MultiMap();
 	public Brush brush = Brush.PIXEL;
@@ -46,6 +48,12 @@ public class GuiPainter {
 		pixelSize = s;
 		posX = x;
 		posY = y;
+		width = w;
+		height = h;
+	}
+
+	protected void init() {
+		this.clear();
 	}
 
 	public void onRenderTick(int mx, int my) {
@@ -80,7 +88,7 @@ public class GuiPainter {
 		ReikaGuiAPI.instance.drawRectFrame(posX, posY, data.length*pixelSize, data[0].length*pixelSize, 0xffffff);
 	}
 
-	public void put(int dx, int dy, PaintElement p) {
+	protected void put(int dx, int dy, PaintElement p) {
 		PaintElement prev = data[dx][dy];
 		if (this.canReplace(prev, p)) {
 			Collection c1 = locations.get(prev);
@@ -90,10 +98,28 @@ public class GuiPainter {
 			else
 				locations.put(prev, c1);
 			data[dx][dy] = p;
-			Collection c2 = locations.get(p);
-			c2.add(new Point(dx, dy));
-			locations.put(p, c2);
+			if (p != null) {
+				Collection c2 = locations.get(p);
+				c2.add(new Point(dx, dy));
+				locations.put(p, c2);
+			}
 		}
+	}
+
+	public void erase(int x, int y) {
+		this.put(x, y, this.getFallbackEntry(x, y));
+	}
+
+	public void clear() {
+		for (int i = 0; i < data.length; i++) {
+			for (int k = 0; k < data[i].length; k++) {
+				data[i][k] = this.getFallbackEntry(i, k);
+			}
+		}
+	}
+
+	protected PaintElement getFallbackEntry(int x, int y) {
+		return null;
 	}
 
 	private boolean canReplace(PaintElement prev, PaintElement p) {

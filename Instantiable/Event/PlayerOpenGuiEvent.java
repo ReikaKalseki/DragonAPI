@@ -9,34 +9,28 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
 
 @Cancelable
-public class PlayerPlaceBlockEvent extends Event {
+public class PlayerOpenGuiEvent extends Event {
 
-	public final World world;
-	public final int x;
-	public final int y;
-	public final int z;
-	public final Block block;
-	public final int metadata;
-	private final ItemStack held;
 	public final EntityPlayer player;
+	public final Object mod;
+	public final World world;
+	public final int posX;
+	public final int posY;
+	public final int posZ;
 
-	public PlayerPlaceBlockEvent(World world, int x, int y, int z, Block b, int meta, ItemStack is, EntityPlayer ep) {
-		this.world = world;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-		block = b;
-		metadata = meta;
-		held = is;
+	public PlayerOpenGuiEvent(EntityPlayer ep, Object md, World w, int x, int y, int z) {
 		player = ep;
+		mod = md;
+		world = w;
+		posX = x;
+		posY = y;
+		posZ = z;
 	}
 
 }

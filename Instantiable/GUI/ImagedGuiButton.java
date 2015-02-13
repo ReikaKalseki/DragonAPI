@@ -156,11 +156,11 @@ public final class ImagedGuiButton extends GuiButton {
 		int base = textOffset+xPosition;
 		switch(alignment) {
 		case CENTER:
-			return base+width/2;
+			return base+width/2-renderer.getStringWidth(displayString)+1;
 		case LEFT:
 			return base+2;
 		case RIGHT:
-			return base+width-2;
+			return base+width-4-renderer.getStringWidth(displayString)*2;
 		default:
 			return base;
 		}

@@ -10,10 +10,14 @@
 package Reika.DragonAPI.Base;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.DragonAPICore;
@@ -21,12 +25,14 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
 import Reika.DragonAPI.Exception.InstallationException;
+import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Exception.JarZipException;
 import Reika.DragonAPI.Exception.MissingDependencyException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Exception.VersionMismatchException;
 import Reika.DragonAPI.Exception.VersionMismatchException.APIMismatchException;
 import Reika.DragonAPI.Extras.ModVersion;
+import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaFormatHelper;
@@ -100,6 +106,31 @@ public abstract class DragonAPIMod {
 		this.verifyVersions();
 		if (this.getModFile().getName().endsWith(".jar.zip"))
 			throw new JarZipException(this);
+		this.verifyHash();
+	}
+
+	private void verifyHash() {
+		if (this.getModVersion().isCompiled()) {
+			try {
+				JarFile jf = new JarFile(this.getModFile());
+				//JarFile jf = new JarFile("E:/My Documents/Desktop Stuff/Game Stuff/Modding/Minecraft/mcp 1.7/reobf/DragonAPI 1.7.10 V4a.jar");
+				InputStream folder = ReikaFileReader.getFileInsideJar(jf, ReikaJavaLibrary.getTopLevelPackage(this.getClass())+"/");
+				String hash = "Temp";//ReikaFileReader.getHash(folder, HashType.SHA256);
+				Manifest mf = jf.getManifest();
+				if (mf == null)
+					throw new InvalidBuildException(this, this.getModFile());
+				String attr = mf.getMainAttributes().getValue("ModHash");
+				if (attr == null || hash == null || !hash.equals(attr))
+					throw new InvalidBuildException(this, this.getModFile());
+			}
+			catch (IOException e) {
+				throw new InvalidBuildException(this, this.getModFile());
+			}
+		}
+	}
+
+	protected final URL getClassFile() {
+		return this.getClass().getProtectionDomain().getCodeSource().getLocation();
 	}
 
 	public final ModContainer getModContainer() {

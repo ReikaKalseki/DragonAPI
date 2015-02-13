@@ -16,9 +16,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerSpecificRenderer;
+import Reika.DragonAPI.IO.DelegateFontRenderer;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Event.ResourceReloadEvent;
-import Reika.DragonAPI.Instantiable.IO.DelegateFontRenderer;
 import codechicken.lib.gui.GuiDraw;
 import cpw.mods.fml.client.FMLClientHandler;
 
@@ -43,7 +43,6 @@ public class APIProxyClient extends APIProxy {
 		ResourceReloadEvent.register();
 
 		//MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
-		PlayerSpecificRenderer.instance.registerIntercept();
 		//MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
 
 		//key_nbt = new KeyBinding("TileEntity NBT Overlay", Keyboard.KEY_TAB, "DragonAPI");
@@ -56,6 +55,11 @@ public class APIProxyClient extends APIProxy {
 		Minecraft.getMinecraft().fontRenderer = new DelegateFontRenderer(Minecraft.getMinecraft().fontRenderer);
 		if (ModList.NEI.isLoaded())
 			GuiDraw.fontRenderer = Minecraft.getMinecraft().fontRenderer;
+	}
+
+	@Override
+	public void registerSidedHandlersGameLoaded() {
+		PlayerSpecificRenderer.instance.registerIntercept();
 	}
 
 	@Override

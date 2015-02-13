@@ -22,6 +22,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
@@ -51,6 +52,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		POTIONPACKETID2("net.minecraft.client.network.NetHandlerPlayClient", "bjb"),
 		BLOCKPLACE("net.minecraft.item.ItemBlock", "abh"),
 		SETBLOCK("net.minecraft.world.chunk.Chunk", "apx"),
+		GUIEVENT("net.minecraft.entity.player.EntityPlayer", "yz")
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
 		;
 
@@ -83,8 +85,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					pos = pos.getNext();
 				}
 				m.instructions.insert(pos, new InsnNode(Opcodes.POP));
-				m.instructions.insert(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
-				m.instructions.insert(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/CreeperExplodeEvent", "<init>", "(Lnet/minecraft/entity/monster/EntityCreeper;)V"));
+				m.instructions.insert(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				m.instructions.insert(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/CreeperExplodeEvent", "<init>", "(Lnet/minecraft/entity/monster/EntityCreeper;)V", false));
 				m.instructions.insert(pos, new VarInsnNode(Opcodes.ALOAD, 0));
 				m.instructions.insert(pos, new InsnNode(Opcodes.DUP));
 				m.instructions.insert(pos, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/CreeperExplodeEvent"));
@@ -100,8 +102,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				m.instructions.insertBefore(pos, new InsnNode(Opcodes.DUP));
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 0));
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 1));
-				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/RenderItemInSlotEvent", "<init>", "(Lnet/minecraft/client/gui/inventory/GuiContainer;Lnet/minecraft/inventory/Slot;)V"));
-				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/RenderItemInSlotEvent", "<init>", "(Lnet/minecraft/client/gui/inventory/GuiContainer;Lnet/minecraft/inventory/Slot;)V", false));
+				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 				m.instructions.insertBefore(pos, new InsnNode(Opcodes.POP));
 
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
@@ -114,13 +116,13 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				m.instructions.insertBefore(pos, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/SlotEvent$RemoveFromSlotEvent"));
 				m.instructions.insertBefore(pos, new InsnNode(Opcodes.DUP));
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 0));
-				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/inventory/Slot", "getSlotIndex", "()I")); //do not obfuscate, is Forge func
+				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/inventory/Slot", "getSlotIndex", "()I", false)); //do not obfuscate, is Forge func
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 0));
 				m.instructions.insertBefore(pos, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/inventory/Slot", FMLForgePlugin.RUNTIME_DEOBF ? "field_75224_c" : "inventory", "Lnet/minecraft/inventory/IInventory;"));
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 2));
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 1));
-				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SlotEvent$RemoveFromSlotEvent", "<init>", "(ILnet/minecraft/inventory/IInventory;Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V"));
-				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SlotEvent$RemoveFromSlotEvent", "<init>", "(ILnet/minecraft/inventory/IInventory;Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V", false));
+				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 				m.instructions.insertBefore(pos, new InsnNode(Opcodes.POP));
 
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
@@ -138,14 +140,14 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
 				m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
 				m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 4));
-				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "<init>", "(Lnet/minecraft/world/World;IIIZ)V"));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "<init>", "(Lnet/minecraft/world/World;IIIZ)V", false));
 				m.instructions.add(new VarInsnNode(Opcodes.ASTORE, 5));
 				m.instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
 				m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 5));
-				m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 				m.instructions.add(new InsnNode(Opcodes.POP));
 				m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 5));
-				m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "getResult", "()Lcpw/mods/fml/common/eventhandler/Event$Result;"));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "getResult", "()Lcpw/mods/fml/common/eventhandler/Event$Result;", false));
 				m.instructions.add(new VarInsnNode(Opcodes.ASTORE, 6));
 				m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 6));
 				m.instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "cpw/mods/fml/common/eventhandler/Event$Result", "ALLOW", "Lcpw/mods/fml/common/eventhandler/Event$Result;"));
@@ -162,7 +164,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				m.instructions.add(l6);
 				//FRAME SAME
 				m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 5));
-				m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "wouldFreezeNaturally", "()Z"));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "wouldFreezeNaturally", "()Z", false));
 				m.instructions.add(new InsnNode(Opcodes.IRETURN));
 
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
@@ -177,8 +179,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 						MethodInsnNode min = (MethodInsnNode)ain;
 						if (min.name.equals(func)) {
 							m.instructions.insert(ain, new InsnNode(Opcodes.POP));
-							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
-							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/RenderFirstPersonItemEvent", "<init>", "()V"));
+							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/RenderFirstPersonItemEvent", "<init>", "()V", false));
 							m.instructions.insert(ain, new InsnNode(Opcodes.DUP));
 							m.instructions.insert(ain, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/RenderFirstPersonItemEvent"));
 							m.instructions.insert(ain, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
@@ -304,6 +306,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			}
 			case BLOCKPLACE: {
 				MethodNode m = ReikaASMHelper.getMethodByName(cn, "placeBlockAt", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFFI)Z"); //Forge func, so no srg
+				/*
 				for (int i = 0; i < m.instructions.size(); i++) {
 					AbstractInsnNode ain = m.instructions.get(i);
 					if (ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
@@ -311,8 +314,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 						String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_149689_a" : "onBlockPlacedBy";
 						if (min.name.equals(func)) {
 							m.instructions.insert(min, new InsnNode(Opcodes.POP));
-							m.instructions.insert(min, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
-							m.instructions.insert(min, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/PlayerPlaceBlockEvent", "<init>", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;ILnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V"));
+							m.instructions.insert(min, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+							m.instructions.insert(min, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/PlayerPlaceBlockEvent", "<init>", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;ILnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V", false));
 							m.instructions.insert(min, new VarInsnNode(Opcodes.ALOAD, 2));
 							m.instructions.insert(min, new VarInsnNode(Opcodes.ALOAD, 1));
 							m.instructions.insert(min, new VarInsnNode(Opcodes.ILOAD, 11));
@@ -329,7 +332,32 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 							break;
 						}
 					}
-				}
+				}*/
+
+				InsnList pre = new InsnList();
+				LabelNode L1 = new LabelNode();
+				LabelNode L2 = new LabelNode();
+				pre.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				pre.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/PlayerPlaceBlockEvent"));
+				pre.add(new InsnNode(Opcodes.DUP));
+				pre.add(new VarInsnNode(Opcodes.ALOAD, 3));
+				pre.add(new VarInsnNode(Opcodes.ILOAD, 4));
+				pre.add(new VarInsnNode(Opcodes.ILOAD, 5));
+				pre.add(new VarInsnNode(Opcodes.ILOAD, 6));
+				pre.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				pre.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/item/ItemBlock", "field_150939_a", "Lnet/minecraft/block/Block;"));
+				pre.add(new VarInsnNode(Opcodes.ILOAD, 11));
+				pre.add(new VarInsnNode(Opcodes.ALOAD, 1));
+				pre.add(new VarInsnNode(Opcodes.ALOAD, 2));
+				pre.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/PlayerPlaceBlockEvent", "<init>", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;ILnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V", false));
+				pre.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				pre.add(new JumpInsnNode(Opcodes.IFEQ, L1));
+				pre.add(L2);
+				pre.add(new InsnNode(Opcodes.ICONST_0));
+				pre.add(new InsnNode(Opcodes.IRETURN));
+				pre.add(L1);
+				m.instructions.insert(pre);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
 				break;
 			}
 			case SETBLOCK: {
@@ -347,8 +375,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 1));
 							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 2));
 							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 3));
-							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent", "<init>", "(Lnet/minecraft/world/chunk/Chunk;III)V"));
-							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent", "<init>", "(Lnet/minecraft/world/chunk/Chunk;III)V", false));
+							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 							m.instructions.insertBefore(loc, new InsnNode(Opcodes.POP));
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 1!");
 							break;
@@ -369,8 +397,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 1));
 							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 2));
 							m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 3));
-							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent", "<init>", "(Lnet/minecraft/world/chunk/Chunk;III)V"));
-							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z"));
+							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent", "<init>", "(Lnet/minecraft/world/chunk/Chunk;III)V", false));
+							m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 							m.instructions.insertBefore(loc, new InsnNode(Opcodes.POP));
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 2!");
 							break;
@@ -378,6 +406,35 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					}
 				}
 				break;
+			}
+			case GUIEVENT: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "openGui", "(Ljava/lang/Object;ILnet/minecraft/world/World;III)V");
+				InsnList pre = new InsnList();
+				LabelNode L1 = new LabelNode();
+				LabelNode L2 = new LabelNode();
+				pre.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				pre.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/PlayerOpenGuiEvent"));
+				pre.add(new InsnNode(Opcodes.DUP));
+				pre.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				pre.add(new VarInsnNode(Opcodes.ALOAD, 1));
+				pre.add(new VarInsnNode(Opcodes.ALOAD, 3));
+				pre.add(new VarInsnNode(Opcodes.ILOAD, 4));
+				pre.add(new VarInsnNode(Opcodes.ILOAD, 5));
+				pre.add(new VarInsnNode(Opcodes.ILOAD, 6));
+				pre.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/PlayerOpenGuiEvent", "<init>", "(Lnet/minecraft/entity/player/EntityPlayer;Ljava/lang/Object;Lnet/minecraft/world/World;III)V", false));
+				pre.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				pre.add(new JumpInsnNode(Opcodes.IFNE, L1));
+				pre.add(L2);
+				m.instructions.insert(pre);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 1!");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.RETURN) {
+						m.instructions.insertBefore(ain, L1);
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 2!");
+						break;
+					}
+				}
 			}
 			//case PLAYERRENDER: {
 			//

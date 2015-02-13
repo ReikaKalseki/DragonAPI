@@ -405,6 +405,7 @@ public class DragonAPIInit extends DragonAPIMod {
 			NEIIntercept.instance.register();
 			//NEIFontRendererHandler.instance.register();
 		}
+		proxy.registerSidedHandlersGameLoaded();
 	}
 
 	@SubscribeEvent
