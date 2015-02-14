@@ -44,6 +44,7 @@ import org.lwjgl.util.Rectangle;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.IO.DelegateFontRenderer;
 import Reika.DragonAPI.Instantiable.Data.Maps.RectangleMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.RegionMap;
 import Reika.DragonAPI.Interfaces.WrappedRecipe;
@@ -457,7 +458,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	public void drawItemStackWithTooltip(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
 		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
-		FontRenderer f2 = is.getItem().getFontRenderer(is);
+		FontRenderer f2 = Minecraft.getMinecraft().fontRenderer;//is.getItem().getFontRenderer(is);
 		if (f2 != null)
 			fr = f2;
 		this.drawItemStack(renderer, fr, is, x, y);
@@ -505,7 +506,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_LIGHTING);
-		int k = f.getStringWidth(s);
+		int k = f.getStringWidth(DelegateFontRenderer.stripFlags(s));
 		int j2 = mx + 12;
 		int k2 = my - 12;
 		int i1 = 8;

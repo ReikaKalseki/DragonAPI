@@ -23,7 +23,9 @@ import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.LineEditor;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayMap;
+import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -272,6 +274,7 @@ public final class MTInteractionManager {
 	private static final class MTScriptScanner extends LineEditor {
 
 		private final OneWayMap<KeyedItemStack, String> set;
+		private final OneWayMap<String, OneWaySet<MTItemEntry>> variables = new OneWayMap();
 		private String lastItemMod;
 
 		private MTScriptScanner(Prevention p) {
@@ -287,6 +290,7 @@ public final class MTInteractionManager {
 
 		@Override
 		public boolean editLine(String s) {
+			s = ReikaStringParser.stripSpaces(s);
 			boolean flag = this.parseLine(s);
 			if (flag) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: The line '"+s+"' has been commented out of the Minetweaker script, as "+lastItemMod+" has "+
@@ -298,6 +302,21 @@ public final class MTInteractionManager {
 
 		private boolean parseLine(String s) {
 			if (s.startsWith("//")) { //comment
+				return false;
+			}
+			else if (s.startsWith("val")) { //variable
+				String name = s.substring(3, s.indexOf("="));
+				int lb = s.indexOf('<');
+				int rb = s.indexOf('>');
+				if (lb >= 0 && rb >= 0) {
+					MTItemEntry val = new MTItemEntry(s.substring(lb+1, rb));
+					OneWaySet<MTItemEntry> set = variables.get(name);
+					if (set == null) {
+						set = new OneWaySet();
+						variables.put(name, set);
+					}
+					set.add(val);
+				}
 				return false;
 			}
 			else {
@@ -322,14 +341,31 @@ public final class MTInteractionManager {
 		}
 
 		private boolean parse(String s, Prevention p) {
-			MTItemEntry item = new MTItemEntry(s.substring(s.indexOf('<')+1, s.indexOf('>')));
-			KeyedItemStack ks = item.asKeyStack();
-			if (ks != null) {
-				ks.setSimpleHash(true).lock();
-				String mod = set.get(ks);
-				if (mod != null) {
-					lastItemMod = mod;
-					return true;
+			int lb = s.indexOf('<');
+			int rb = s.indexOf('>');
+			OneWaySet<MTItemEntry> items = new OneWaySet();
+			if (lb >= 0 && rb >= 0) {
+				items.add(new MTItemEntry(s.substring(lb+1, rb)));
+			}
+			else {
+				int lp = s.indexOf('(');
+				int lc = s.indexOf(',');
+				if (lp < 0 || lc < 0)
+					return false; //what kind of line is this?!
+				String tag = s.substring(lp+1, lc);
+				OneWaySet<MTItemEntry> var = variables.get(tag);
+				if (var != null)
+					items.addAll(var);
+			}
+			for (MTItemEntry item : items) {
+				KeyedItemStack ks = item.asKeyStack();
+				if (ks != null) {
+					ks.setSimpleHash(true).lock();
+					String mod = set.get(ks);
+					if (mod != null) {
+						lastItemMod = mod;
+						return true;
+					}
 				}
 			}
 			lastItemMod = "[null]";

@@ -32,7 +32,7 @@ public final class DelegateFontRenderer extends FontRenderer {
 	private final HashBiMap<String, BasicFontRenderer> renderers = HashBiMap.create();
 	private static int currentID = 512; //char 512; everything from here is a foreign-language char or diacritic
 	private static final int maxID = 0xFFFF;
-	private static final String keyChar = "\uFFFC";
+	private static final char keyChar = '\uFFFC';
 
 	public DelegateFontRenderer(FontRenderer fr) {
 		super(Minecraft.getMinecraft().gameSettings, ReikaTextureHelper.font, Minecraft.getMinecraft().renderEngine, false);
@@ -115,6 +115,15 @@ public final class DelegateFontRenderer extends FontRenderer {
 		if (!Loader.instance().hasReachedState(LoaderState.LOADING))
 			throw new MisuseException("Tried to access the delegate font renderer too early!");
 		return (DelegateFontRenderer)Minecraft.getMinecraft().fontRenderer;
+	}
+
+	public static String stripFlags(String sg) {
+		int idx = sg.indexOf(keyChar);
+		while (idx >= 0) {
+			sg = sg.replaceAll(String.valueOf(keyChar)+String.valueOf(sg.charAt(idx+1)), "");
+			idx = sg.indexOf(keyChar);
+		}
+		return sg;
 	}
 
 
