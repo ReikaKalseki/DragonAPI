@@ -56,21 +56,50 @@ public class ThaumItemHelper {
 	}
 
 	public static enum BlockEntry {
-		CRYSTALCORE("blockCrystal", 6),
+		TOTEM("blockCosmeticSolid", 0),
+		TILE("blockCosmeticSolid", 1),
+		THAUMIUM("blockCosmeticSolid", 4),
+		TALLOW("blockCosmeticSolid", 5),
+		ARCANESTONE("blockCosmeticSolid", 6),
+		ARCANEBRICKS("blockCosmeticSolid", 7),
+		ANCIENTSTONE("blockCosmeticSolid", 11),
+		ANCIENTROCK("blockCosmeticSolid", 12),
+		CRUSTEDSTONE("blockCosmeticSolid", 14),
+		ANCIENTPEDESTAL("blockCosmeticSolid", 15),
+		SHIMMER("blockCustomPlant", 2),
+		CINDER("blockCustomPlant", 3),
+		ETHEREAL("blockCustomPlant", 4),
+		CRYSTAL("blockCrystal"),
+		JAR("blockJar");
 		;
 
 		public final int metadata;
 		private final String item;
+
+		private BlockEntry(String s) {
+			this(s, 0);
+		}
 
 		private BlockEntry(String s, int meta) {
 			item = s;
 			metadata = meta;
 		}
 
-		public ItemStack getItem() {
-			Block b = GameRegistry.findBlock(ModList.THAUMCRAFT.modLabel, item);
-			return new ItemStack(b, 1, metadata);
+		public Block getBlock() {
+			return GameRegistry.findBlock(ModList.THAUMCRAFT.modLabel, item);
 		}
+
+		public ItemStack getItem() {
+			return new ItemStack(this.getBlock(), 1, metadata);
+		}
+	}
+
+	public static boolean isTotemBlock(Block b, int meta) {
+		return b == BlockEntry.TOTEM.getBlock() && meta < 2;
+	}
+
+	public static boolean isCrystalCluster(Block b) {
+		return b == BlockEntry.CRYSTAL.getBlock();
 	}
 
 }

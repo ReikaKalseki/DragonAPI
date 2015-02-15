@@ -73,6 +73,10 @@ public class ItemDrop {
 		return false;
 	}
 
+	public ItemStack getItemStack() {
+		return item.copy();
+	}
+
 	public ItemStack getItem() {
 		int num = this.getDropCount();
 		ItemStack is = ReikaItemHelper.getSizedItemStack(item.copy(), num);

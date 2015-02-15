@@ -13,9 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -26,6 +24,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.OreType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -119,7 +118,8 @@ public enum ModOreList implements OreType {
 	RUTILE("Rutile", 0x615E57, OreRarity.SCATTERED, "ingotRutile", 1, "oreRutile"),
 	AMETHYST("Amethyst", 0xff00ff, OreRarity.RARE, "gemAmethyst", 1, "oreAmethyst"),
 	TESLATITE("Teslatite", 0x2F81F1, OreRarity.COMMON, "dustTeslatite", 3, "oreTeslatite"),
-	MANA("Mana", 0x70DAFC, OreRarity.SCARCE, "ingotMana", 1, "oreMana");
+	MANA("Mana", 0x70DAFC, OreRarity.SCARCE, "ingotMana", 1, "oreMana"),
+	NETHERSALTPETER("Nether Saltpeter", 0xdddddd, OreRarity.SCARCE, "dustSaltpeter", 4, "oreNetherSaltpeter");
 
 	private ArrayList<ItemStack> ores = new ArrayList();
 	public final String displayName;
@@ -129,7 +129,7 @@ public enum ModOreList implements OreType {
 	private String product;
 	private boolean init;
 	public final OreRarity rarity;
-	private HashMap<String, ArrayList<ItemStack>> perName = new HashMap();
+	private MultiMap<String, ItemStack> perName = new MultiMap();
 
 	//private static final ArrayList<ItemStack> blocks = new ArrayList<ItemStack>();
 
@@ -186,10 +186,7 @@ public enum ModOreList implements OreType {
 					if (ReikaItemHelper.isBlock(is)) {
 						if (!ReikaItemHelper.collectionContainsItemStack(ores, is))
 							ores.add(is);
-						ArrayList li = perName.get(oreLabel[i]);
-						if (li == null)
-							perName.put(oreLabel[i], new ArrayList());
-						perName.get(oreLabel[i]).add(is);
+						perName.addValue(oreLabel[i], is);
 					}
 					else {
 						ReikaJavaLibrary.pConsole("\t"+is+" is not an ore block, but was OreDict fetched by \""+oreLabel[i]+"\"!");
@@ -425,10 +422,6 @@ public enum ModOreList implements OreType {
 			//Not done
 		}
 		return null;
-	}
-
-	public Map<String, ArrayList<ItemStack>> getOresByName() {
-		return Collections.unmodifiableMap(perName);
 	}
 
 	public static ModList getOreModFromItemStack(ItemStack is) {

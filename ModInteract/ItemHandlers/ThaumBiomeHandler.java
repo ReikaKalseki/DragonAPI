@@ -11,47 +11,26 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
-public class ThaumBlockHandler extends ModHandlerBase {
+public class ThaumBiomeHandler extends ModHandlerBase {
 
-	private static final ThaumBlockHandler instance = new ThaumBlockHandler();
-
-	public final Block totemID;
-	public final Block plantID;
-	public final Block crystalID;
-	public final Block jarID;
-
-	public final int shimmerMeta = 2;
-	public final int cinderMeta = 3;
-	public final int etherealMeta = 4;
+	private static final ThaumBiomeHandler instance = new ThaumBiomeHandler();
 
 	public final int taintBiomeID;
 	public final int eerieBiomeID;
 	public final int magicBiomeID;
 
-	private ThaumBlockHandler() {
+	private ThaumBiomeHandler() {
 		super();
-		Block idtile = null;
-		Block idplant = null;
-		Block idcrystal = null;
-		Block idjar = null;
 		int idtaint = -1;
 		int ideerie = -1;
 		int idmagic = -1;
 
 		if (this.hasMod()) {
 			Class thaum = ModList.THAUMCRAFT.getBlockClass();
-
-			idtile = this.loadBlockID(thaum, "blockCosmeticSolid");
-			idplant = this.loadBlockID(thaum, "blockCustomPlant");
-			idcrystal = this.loadBlockID(thaum, "blockCrystal");
-			idjar = this.loadBlockID(thaum, "blockJar");
 
 			try {
 				Class config = Class.forName("thaumcraft.common.config.Config");
@@ -84,55 +63,23 @@ public class ThaumBlockHandler extends ModHandlerBase {
 		else {
 			this.noMod();
 		}
-
-		totemID = idtile;
-		plantID = idplant;
-		crystalID = idcrystal;
-		jarID = idjar;
 		taintBiomeID = idtaint;
 		eerieBiomeID = ideerie;
 		magicBiomeID = idmagic;
 	}
 
-	public static ThaumBlockHandler getInstance() {
+	public static ThaumBiomeHandler getInstance() {
 		return instance;
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return totemID != null && plantID != null && crystalID != null && jarID != null && taintBiomeID != -1 && eerieBiomeID != -1 && magicBiomeID != -1;
+		return taintBiomeID != -1 && eerieBiomeID != -1 && magicBiomeID != -1;
 	}
 
 	@Override
 	public ModList getMod() {
 		return ModList.THAUMCRAFT;
-	}
-
-	public boolean isTotemBlock(ItemStack block) {
-		if (!this.initializedProperly())
-			return false;
-		return ReikaItemHelper.matchStackWithBlock(block, totemID) && block.getItemDamage() < 2;
-	}
-
-	/** Tries both instance and ID storage */
-	private Block loadBlockID(Class c, String fieldName) {
-		Block id = null;
-		Exception e1 = null;
-		Exception e2 = null;
-		try {
-			Field block = c.getField(fieldName);
-			id = ((Block)block.get(null));
-		}
-		catch (Exception e) {
-			e1 = e;
-		}
-		return id;
-	}
-
-	public boolean isCrystalCluster(ItemStack block) {
-		if (!this.initializedProperly())
-			return false;
-		return ReikaItemHelper.matchStackWithBlock(block, crystalID);
 	}
 
 }

@@ -31,6 +31,7 @@ public class ReikaEEHelper {
 		}
 	}
 
+	/** Do not use until the EMC registry supports wildcards! */
 	public static void blacklistRegistry(RegistrationList[] reg) {
 		if (!isLoaded())
 			return;

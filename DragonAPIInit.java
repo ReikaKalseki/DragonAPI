@@ -103,7 +103,7 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.PneumaticPlantHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.QuantumOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.RailcraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.RedstoneArsenalHandler;
-import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumBlockHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumBiomeHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ThermalHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerBlockHandler;
@@ -479,7 +479,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.BCFACTORY, BCMachineHandler.class);
 		this.initHandler(ModList.BCTRANSPORT, BCPipeHandler.class);
 		this.initHandler(ModList.THAUMCRAFT, ThaumOreHandler.class);
-		this.initHandler(ModList.THAUMCRAFT, ThaumBlockHandler.class);
+		this.initHandler(ModList.THAUMCRAFT, ThaumBiomeHandler.class);
 		this.initHandler(ModList.DARTCRAFT, DartOreHandler.class);
 		this.initHandler(ModList.DARTCRAFT, DartItemHandler.class);
 		this.initHandler(ModList.TINKERER, TinkerToolHandler.class);
