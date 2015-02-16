@@ -32,7 +32,7 @@ public final class RGB {
 
 	/** ARGB */
 	public RGB(int color) {
-		this(ReikaColorAPI.getRedFromInteger(color), ReikaColorAPI.getGreenFromInteger(color), ReikaColorAPI.getBlueFromInteger(color), ReikaColorAPI.getAlphaFromInteger(color));
+		this(ReikaColorAPI.getRed(color), ReikaColorAPI.getGreen(color), ReikaColorAPI.getBlue(color), ReikaColorAPI.getAlpha(color));
 	}
 
 	public int getInt() {

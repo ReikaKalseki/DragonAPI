@@ -72,10 +72,7 @@ public class CommandableUpdateChecker {
 				ModVersion version = c.version;
 				ModVersion latest = latestVersions.get(mod);
 				//if (version.isCompiled()) {
-				if (version.equals(latest)) {
-
-				}
-				else {
+				if (version.compareTo(latest) < 0) {
 					this.markUpdate(mod, version, latest);
 					ReikaJavaLibrary.pConsole("-----------------------"+mod.getTechnicalName()+"-----------------------");
 					ReikaJavaLibrary.pConsole("This version of the mod ("+version+") is out of date.");

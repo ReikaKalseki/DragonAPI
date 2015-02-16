@@ -681,9 +681,9 @@ public final class ReikaGuiAPI extends GuiScreen {
 				if (colors != null) {
 					Integer color = colors.get(i);
 					if (color != null) {
-						float red = ReikaColorAPI.getRedFromInteger(color.intValue())/255F;
-						float green = ReikaColorAPI.getGreenFromInteger(color.intValue())/255F;
-						float blue = ReikaColorAPI.getBlueFromInteger(color.intValue())/255F;
+						float red = ReikaColorAPI.getRed(color.intValue())/255F;
+						float green = ReikaColorAPI.getGreen(color.intValue())/255F;
+						float blue = ReikaColorAPI.getBlue(color.intValue())/255F;
 						GL11.glColor3f(red, green, blue);
 					}
 				}

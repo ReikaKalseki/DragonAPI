@@ -11,13 +11,15 @@ package Reika.DragonAPI.Instantiable.Rendering;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.MathHelper;
 
 public class TessellatorVertexList {
 
-	private final ArrayList<TessellatorVertex> data = new ArrayList();
+	private ArrayList<TessellatorVertex> data = new ArrayList();
+	private final LinkedList<ArrayList<TessellatorVertex>> list = new LinkedList();
 
 	public final double originX;
 	public final double originY;
@@ -171,6 +173,17 @@ public class TessellatorVertexList {
 
 	public void clear() {
 		data.clear();
+	}
+
+	public void push() {
+		list.addLast(data);
+		data = new ArrayList();
+	}
+
+	public void pop() {
+		if (list.isEmpty())
+			throw new IllegalStateException("Popped an empty list!");
+		data = list.pollLast();
 	}
 
 }

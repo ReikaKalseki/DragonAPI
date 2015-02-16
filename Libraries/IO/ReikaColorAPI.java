@@ -67,7 +67,7 @@ public class ReikaColorAPI {
 	}
 
 	private static float[] RGBtoHSB(int rgb) {
-		return Color.RGBtoHSB(getRedFromInteger(rgb), getGreenFromInteger(rgb), getBlueFromInteger(rgb), null);
+		return Color.RGBtoHSB(getRed(rgb), getGreen(rgb), getBlue(rgb), null);
 	}
 
 	public static Color getModifiedSat(Color color, float factor) {
@@ -90,22 +90,22 @@ public class ReikaColorAPI {
 		return Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
 	}
 
-	public static int getRedFromInteger(int color) {
+	public static int getRed(int color) {
 		int r = (color >> 16) & 0xFF;
 		return r;
 	}
 
-	public static int getGreenFromInteger(int color) {
+	public static int getGreen(int color) {
 		int g = (color >> 8) & 0xFF;
 		return g;
 	}
 
-	public static int getBlueFromInteger(int color) {
+	public static int getBlue(int color) {
 		int b = (color >> 0) & 0xFF;
 		return b;
 	}
 
-	public static int getAlphaFromInteger(int color) {
+	public static int getAlpha(int color) {
 		int b = (color >> 24) & 0xFF;
 		return b;
 	}
@@ -134,10 +134,14 @@ public class ReikaColorAPI {
 
 	public static int additiveBlend(int color) {
 		int rgb = color&0xFFFFFF;
-		int r = getRedFromInteger(color);
-		int g = getGreenFromInteger(color);
-		int b = getBlueFromInteger(color);
+		int r = getRed(color);
+		int g = getGreen(color);
+		int b = getBlue(color);
 		int alpha = (r+g+b)/3;
 		return rgb | (alpha << 24);
+	}
+
+	public static int getPackedIntForColoredLight(int color, int lightval) {
+		return getRed(color) << 15 | getGreen(color) << 10 | getBlue(color) << 5 | lightval;
 	}
 }

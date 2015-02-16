@@ -31,6 +31,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
 import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
@@ -60,6 +61,7 @@ import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
+import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
@@ -388,6 +390,12 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		if (MTInteractionManager.isMTLoaded())
 			MTInteractionManager.instance.scanAndRevert();
+	}
+
+	@SubscribeEvent
+	public void catchNullOreDict(OreRegisterEvent evt) {
+		if (evt.Ore == null || evt.Ore.getItem() == null)
+			throw new WTFException("Someone registered null to the OreDictionary under the name '"+evt.Name+"'!", true);
 	}
 
 	@SubscribeEvent
