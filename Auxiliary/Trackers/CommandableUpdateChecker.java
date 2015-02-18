@@ -15,6 +15,8 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -31,6 +33,7 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Extras.ModVersion;
@@ -54,10 +57,12 @@ public class CommandableUpdateChecker {
 	public static final String reikaURL = "http://server.techjargaming.com/Reika/versions";
 
 	private final HashMap<DragonAPIMod, ModVersion> latestVersions = new HashMap();
-	private final ArrayList<UpdateChecker> checkers = new ArrayList();
-	private final ArrayList<DragonAPIMod> oldMods = new ArrayList();
+	private final Collection<UpdateChecker> checkers = new ArrayList();
+	private final Collection<DragonAPIMod> oldMods = new ArrayList();
+	private final Collection<DragonAPIMod> oldModsAggressive = new ArrayList();
 	private final HashMap<String, DragonAPIMod> modNames = new HashMap();
 	private final HashMap<DragonAPIMod, Boolean> overrides = new HashMap();
+	private final HashMap<DragonAPIMod, Long> dates = new HashMap();
 
 	private CommandableUpdateChecker() {
 
@@ -65,8 +70,7 @@ public class CommandableUpdateChecker {
 
 	public void checkAll() {
 		this.getOverrides();
-		for (int i = 0; i < checkers.size(); i++) {
-			UpdateChecker c = checkers.get(i);
+		for (UpdateChecker c : checkers) {
 			DragonAPIMod mod = c.mod;
 			if (this.shouldCheck(mod)) {
 				ModVersion version = c.version;
@@ -90,8 +94,22 @@ public class CommandableUpdateChecker {
 		}
 	}
 
+	public boolean beAggressive(DragonAPIMod mod, ModVersion version, ModVersion latest) {
+		return DragonOptions.UPDATESCROLL.getState() || !this.canSkipAnnoyance(mod, version, latest);
+	}
+
+	private boolean canSkipAnnoyance(DragonAPIMod mod, ModVersion version, ModVersion latest) {
+		if (latest.majorVersion-version.majorVersion > 1)
+			return false;
+		if (System.currentTimeMillis()-dates.get(mod) >= 2L*7L*24L*3600L*1000L)
+			return false;
+		return true;
+	}
+
 	private void markUpdate(DragonAPIMod mod, ModVersion version, ModVersion latest) {
 		oldMods.add(mod);
+		if (this.beAggressive(mod, version, latest))
+			oldModsAggressive.add(mod);
 
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setString("modDisplayName", mod.getDisplayName());
@@ -122,6 +140,7 @@ public class CommandableUpdateChecker {
 			return;
 		}
 		latestVersions.put(mod, latest);
+		dates.put(mod, c.lastModified);
 		checkers.add(c);
 		String label = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
 		modNames.put(label, mod);
@@ -214,12 +233,13 @@ public class CommandableUpdateChecker {
 
 	@SideOnly(Side.CLIENT)
 	public void onClientReceiveOldModsNote() {
-		StringBuilder sb = new StringBuilder();
-		for (DragonAPIMod mod : oldMods) {
-			sb.append(mod.getDisplayName()+" ("+mod.getModVersion()+" -> "+latestVersions.get(mod).toString()+"); ");
-		}
-		if (!oldMods.isEmpty())
+		if (!oldModsAggressive.isEmpty()) {
+			StringBuilder sb = new StringBuilder();
+			for (DragonAPIMod mod : oldMods) {
+				sb.append(mod.getDisplayName()+" ("+mod.getModVersion()+" -> "+latestVersions.get(mod).toString()+"); ");
+			}
 			MinecraftForge.EVENT_BUS.register(new ScreenWriter(sb.toString()));
+		}
 	}
 
 	private void sendMessages(EntityPlayer ep) {
@@ -297,6 +317,7 @@ public class CommandableUpdateChecker {
 		private final ModVersion version;
 		private final URL checkURL;
 		private final DragonAPIMod mod;
+		private long lastModified = -1;
 
 		private UpdateChecker(DragonAPIMod mod, ModVersion version, URL url) {
 			this.mod = mod;
@@ -308,28 +329,45 @@ public class CommandableUpdateChecker {
 			try {
 				ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, 10000, false);
 				String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
-				for (int i = 0; i < lines.size(); i++) {
-					String line = lines.get(i);
+				for (String line : lines) {
 					if (line.toLowerCase().startsWith(name)) {
 						String[] parts = line.split(":");
-						String part = parts[1];
-						ModVersion version = ModVersion.getFromString(part);
+						ModVersion version = ModVersion.getFromString(parts[1]);
+						String date = parts.length >= 3 ? parts[2] : "";
+						lastModified = this.getUnixTime(date);
 						return version;
 					}
 				}
 			}
 			catch (Exception e) {
-				if (e instanceof IOException) {
-					mod.getModLogger().logError("IO Error accessing online file:");
-					mod.getModLogger().log(e.getClass().getCanonicalName()+": "+e.getLocalizedMessage());
-					mod.getModLogger().log(e.getStackTrace()[0].toString());
-				}
-				else {
-					mod.getModLogger().logError("Error accessing online file:");
-					e.printStackTrace();
-				}
+				this.logError(e);
 			}
 			return null;
+		}
+
+		private long getUnixTime(String date) {
+			if (date.isEmpty())
+				return -1;
+			String[] parts = date.split("-");
+			GregorianCalendar greg = new GregorianCalendar();
+			greg.clear();
+			int month = Integer.parseInt(parts[0]);
+			int day = Integer.parseInt(parts[1]);
+			int year = Integer.parseInt(parts[2]);
+			greg.set(year, month, day);
+			return greg.getTimeInMillis();
+		}
+
+		private void logError(Exception e) {
+			if (e instanceof IOException) {
+				mod.getModLogger().logError("IO Error accessing online file:");
+				mod.getModLogger().log(e.getClass().getCanonicalName()+": "+e.getLocalizedMessage());
+				mod.getModLogger().log(e.getStackTrace()[0].toString());
+			}
+			else {
+				mod.getModLogger().logError("Error accessing online file:");
+				e.printStackTrace();
+			}
 		}
 	}
 

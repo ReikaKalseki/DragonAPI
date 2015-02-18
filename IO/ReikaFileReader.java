@@ -159,7 +159,7 @@ public class ReikaFileReader extends DragonAPICore {
 		return getFileAsLines(getReader(f), printStackTrace);
 	}
 
-	private static ArrayList<String> getFileAsLines(BufferedReader r, boolean printStackTrace) {
+	public static ArrayList<String> getFileAsLines(BufferedReader r, boolean printStackTrace) {
 		ArrayList<String> li = new ArrayList();
 		String line = "";
 		try {

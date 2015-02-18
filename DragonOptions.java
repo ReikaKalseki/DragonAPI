@@ -21,7 +21,9 @@ public enum DragonOptions implements ConfigList {
 	SOUNDCHANNELS("Increase sound channel count", true),
 	UNNERFOBSIDIAN("Restore Obsidian Blast Resistance", true),
 	CHATERRORS("Log errors to chat", true),
-	SORTCREATIVE("Sort Creative Tabs Alphabetically", true);
+	SORTCREATIVE("Sort Creative Tabs Alphabetically", true),
+	UPDATESCROLL("Agressive Update Notification", true),
+	CUSTOMRENDER("Custom/Donator Renders", true);
 
 	private String label;
 	private boolean defaultState;

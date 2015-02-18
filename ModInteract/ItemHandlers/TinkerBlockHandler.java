@@ -23,30 +23,40 @@ public class TinkerBlockHandler extends ModHandlerBase {
 
 	public final Block gravelOreID;
 	public final Block stoneOreID;
-	//public final Block clearGlassID;
-	//public final Block clearPaneID;
+	public final Block clearGlassID;
+	public final Block clearPaneID;
+	public final Block searedBlockID;
 
 	private TinkerBlockHandler() {
 		super();
 		Block idgravel = null;
 		Block idnether = null;
-		//Block idglass = null;
-		//Block idpane = null;
+		Block idglass = null;
+		Block idpane = null;
+		Block idseared = null;
 
 		if (this.hasMod()) {
 			try {
 				Class tink = ModList.TINKERER.getBlockClass();
 				Field gravel = tink.getField("oreGravel");
-				idgravel = ((Block)gravel.get(null));
+				idgravel = (Block)gravel.get(null);
 
 				Field ore = tink.getField("oreSlag");
-				idnether = ((Block)gravel.get(null));
+				idnether = (Block)gravel.get(null);
 
-				//Field glass = tink.getField("clearGlass");
-				//idglass = ((Block)glass.get(null));
+				tink = Class.forName("tconstruct.smeltery.TinkerSmeltery");
+				Field glass = tink.getField("clearGlass");
+				idglass = (Block)glass.get(null);
 
-				//Field pane = tink.getField("glassPane");
-				//idpane = ((Block)pane.get(null));
+				Field pane = tink.getField("glassPane");
+				idpane = (Block)pane.get(null);
+
+				Field sear = tink.getField("searedBlock");
+				idseared = (Block)sear.get(null);
+			}
+			catch (ClassNotFoundException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -75,8 +85,9 @@ public class TinkerBlockHandler extends ModHandlerBase {
 
 		gravelOreID = idgravel;
 		stoneOreID = idnether;
-		//clearGlassID = idglass;
-		//clearPaneID = idpane;
+		clearGlassID = idglass;
+		clearPaneID = idpane;
+		searedBlockID = idseared;
 	}
 
 	public static TinkerBlockHandler getInstance() {

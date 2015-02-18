@@ -68,6 +68,10 @@ public class FrameBlacklist {
 
 	}
 
+	public static boolean fireFrameEvent(World world, int x, int y, int z) {
+		return MinecraftForge.EVENT_BUS.post(new FrameUsageEvent(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), world.getTileEntity(x, y, z)));
+	}
+
 	@Cancelable
 	public static class FrameUsageEvent extends Event {
 

@@ -18,9 +18,13 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.ASM.APIStripper.Strippable;
 import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
+import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
+import framesapi.IMoveCheck;
 
-public abstract class BlockTEBase extends Block {
+@Strippable("framesapi.IMoveCheck")
+public abstract class BlockTEBase extends Block implements IMoveCheck {
 
 	public BlockTEBase(Material mat) {
 		super(mat);
@@ -84,6 +88,11 @@ public abstract class BlockTEBase extends Block {
 	public boolean canEntityDestroy(IBlockAccess world, int x, int y, int z, Entity e)
 	{
 		return false;
+	}
+
+	@Override
+	public boolean canMove(World world, int x, int y, int z) {
+		return !FrameBlacklist.fireFrameEvent(world, x, y, z);
 	}
 
 }

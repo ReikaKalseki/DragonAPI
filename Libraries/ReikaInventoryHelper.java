@@ -32,10 +32,7 @@ import Reika.DragonAPI.Instantiable.TemporaryInventory;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.RotaryCraft.TileEntities.Processing.TileEntityCentrifuge;
-import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaInventoryHelper extends DragonAPICore {
 
@@ -785,7 +782,6 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 					int added = Math.min(is.stackSize, max);
 					is.stackSize -= added;
 					ii.setInventorySlotContents(i, ReikaItemHelper.getSizedItemStack(is, added));
-					ReikaJavaLibrary.pConsole("Added "+added+" of "+is+" to "+i, Side.SERVER, ii instanceof TileEntityCentrifuge);
 					return true;
 				}
 				else {

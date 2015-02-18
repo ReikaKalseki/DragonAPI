@@ -25,6 +25,7 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Extras.ModifiedPlayerModel;
 import Reika.DragonAPI.Extras.ReikaModel;
 import Reika.DragonAPI.Extras.SamakiModel;
@@ -67,6 +68,8 @@ public class PlayerSpecificRenderer {
 	}
 
 	private void renderAdditionalObjects(EntityPlayer ep, float ptick) {
+		if (ep == Minecraft.getMinecraft().thePlayer && !DragonOptions.CUSTOMRENDER.getState())
+			return;
 		Collection<PlayerRenderObj> c = renders.get(ep.getUniqueID());
 		if (c != null) {
 			for (PlayerRenderObj r : c) {
