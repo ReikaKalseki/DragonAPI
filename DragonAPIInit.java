@@ -69,6 +69,7 @@ import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
+import Reika.DragonAPI.Libraries.ReikaPotionHelper;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -77,8 +78,9 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.BannedItemReader;
 import Reika.DragonAPI.ModInteract.MTInteractionManager;
-import Reika.DragonAPI.ModInteract.NEIIntercept;
+import Reika.DragonAPI.ModInteract.MinetweakerHooks;
 import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
+import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
 import Reika.DragonAPI.ModInteract.ItemHandlers.AppEngHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BCPipeHandler;
@@ -351,6 +353,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		CompatibilityTracker.instance.test();
 
+		ReikaPotionHelper.loadBadPotions();
+
 		IntegrityChecker.instance.testIntegrity();
 
 		ReikaOreHelper.refreshAll();
@@ -366,6 +370,10 @@ public class DragonAPIInit extends DragonAPIMod {
 		//CreativeTabSorter.instance.sortTabs(); //frequently messes up
 
 		ReikaJavaLibrary.initClass(FrameBlacklist.class);
+
+		if (MTInteractionManager.isMTLoaded()) {
+			MinetweakerHooks.instance.registerAll();
+		}
 
 		this.finishTiming();
 	}

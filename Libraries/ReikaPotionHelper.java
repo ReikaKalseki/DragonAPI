@@ -10,13 +10,13 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -68,7 +68,7 @@ public final class ReikaPotionHelper extends DragonAPICore {
 		return (dmg & POTION_BIT) != 0;
 	}
 
-	static {
+	static {/*
 		badPotions.add(Potion.confusion.id);
 		badPotions.add(Potion.wither.id);
 		badPotions.add(Potion.moveSlowdown.id);
@@ -77,7 +77,7 @@ public final class ReikaPotionHelper extends DragonAPICore {
 		badPotions.add(Potion.blindness.id);
 		badPotions.add(Potion.harm.id);
 		badPotions.add(Potion.hunger.id);
-		badPotions.add(Potion.poison.id);
+		badPotions.add(Potion.poison.id);*/
 
 		potionDamageValues.put(Potion.regeneration, 8193);
 		potionDamageValues.put(Potion.moveSpeed, 8194);
@@ -91,6 +91,14 @@ public final class ReikaPotionHelper extends DragonAPICore {
 		potionDamageValues.put(Potion.harm, 8268);
 		potionDamageValues.put(Potion.waterBreathing, 8237);
 		potionDamageValues.put(Potion.invisibility, 8238);
+	}
+
+	public static void loadBadPotions() {
+		for (int i = 0; i < Potion.potionTypes.length; i++) {
+			Potion p = Potion.potionTypes[i];
+			if (p != null && p.isBadEffect)
+				badPotions.add(p.id);
+		}
 	}
 
 	public static Map<Potion, Integer> getPotionValues() {
@@ -171,4 +179,10 @@ public final class ReikaPotionHelper extends DragonAPICore {
 		}
 	}
 	 */
+
+	public static void clearBadPotions(EntityLivingBase player) {
+		for (int id : badPotions) {
+			player.removePotionEffect(id);
+		}
+	}
 }

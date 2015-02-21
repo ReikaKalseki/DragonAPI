@@ -44,6 +44,10 @@ public final class TileEntityCache<V> {
 		return this.put(te.worldObj, te.xCoord, te.yCoord, te.zCoord, tile);
 	}
 
+	public void putAll(TileEntityCache<V> tc) {
+		data.putAll(tc.data);
+	}
+
 	public V get(World world, int x, int y, int z) {
 		return this.get(new WorldLocation(world, x, y, z));
 	}

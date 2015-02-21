@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.ModInteract;
+package Reika.DragonAPI.ModInteract.DeepInteract;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.item.ItemStack;
@@ -53,12 +53,14 @@ public class NEIIntercept implements IContainerInputHandler {
 				return MinecraftForge.EVENT_BUS.post(new NEIRecipeCheckEvent(gui));
 			else {
 				ItemPanel panel = LayoutManager.itemPanel;
-				ItemPanelSlot slot = panel.getSlotMouseOver(mousex, mousey);
-				if (slot != null && panel.draggedStack == null) {
-					ItemStack item = slot.item;
-					if (NEIController.manager.window instanceof GuiRecipe || !NEIClientConfig.canCheatItem(item)) {
-						if (button == 0) {
-							return MinecraftForge.EVENT_BUS.post(new NEIRecipeCheckEvent(gui, item));
+				if (panel != null) {
+					ItemPanelSlot slot = panel.getSlotMouseOver(mousex, mousey);
+					if (slot != null && panel.draggedStack == null) {
+						ItemStack item = slot.item;
+						if (NEIController.manager.window instanceof GuiRecipe || !NEIClientConfig.canCheatItem(item)) {
+							if (button == 0) {
+								return MinecraftForge.EVENT_BUS.post(new NEIRecipeCheckEvent(gui, item));
+							}
 						}
 					}
 				}

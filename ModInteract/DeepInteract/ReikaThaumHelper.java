@@ -263,7 +263,7 @@ public class ReikaThaumHelper {
 		if (!ModList.THAUMCRAFT.isLoaded())
 			return;
 		String s = ep.getCommandSenderName();
-		int temphas = playerTempWarp.get(s);
+		int temphas = getPlayerTempWarp(ep);
 		int rem = 0;
 		if (temphas > 0) {
 			rem = Math.min(temphas, amt);
@@ -276,7 +276,7 @@ public class ReikaThaumHelper {
 		}
 		int left = amt-rem;
 		if (left > 0) {
-			int has = playerWarp.get(s);
+			int has = getPlayerWarp(ep);
 			int rem2 = Math.min(has, left);
 			if (has-rem2 > 0) {
 				playerWarp.put(s, has-rem2);
@@ -289,6 +289,11 @@ public class ReikaThaumHelper {
 
 	public static int getPlayerWarp(EntityPlayer ep) {
 		Integer has = playerWarp.get(ep.getCommandSenderName());
+		return has != null ? has.intValue() : 0;
+	}
+
+	public static int getPlayerTempWarp(EntityPlayer ep) {
+		Integer has = playerTempWarp.get(ep.getCommandSenderName());
 		return has != null ? has.intValue() : 0;
 	}
 
@@ -414,11 +419,11 @@ public class ReikaThaumHelper {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void addInfusionRecipeBookEntryViaXML(String id, String desc, String category, InfusionRecipe ir, Class root, String path) {
+	public static void addInfusionRecipeBookEntryViaXML(String id, String desc, String category, InfusionRecipe ir, int row, int col, Class root, String path) {
 		ItemStack out = (ItemStack)ir.getRecipeOutput();
 		AspectList aspects = ir.getAspects();
 		String name = out.getDisplayName();
-		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, 0, 0, 0, out).setName(name);
+		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
@@ -428,11 +433,11 @@ public class ReikaThaumHelper {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void addCrucibleRecipeBookEntryViaXML(String id, String desc, String category, CrucibleRecipe ir, Class root, String path) {
+	public static void addCrucibleRecipeBookEntryViaXML(String id, String desc, String category, CrucibleRecipe ir, int row, int col, Class root, String path) {
 		ItemStack out = ir.getRecipeOutput();
 		AspectList aspects = ir.aspects;
 		String name = out.getDisplayName();
-		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, 0, 0, 0, out).setName(name);
+		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
@@ -442,11 +447,11 @@ public class ReikaThaumHelper {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void addArcaneRecipeBookEntryViaXML(String id, String desc, String category, IArcaneRecipe ir, Class root, String path) {
+	public static void addArcaneRecipeBookEntryViaXML(String id, String desc, String category, IArcaneRecipe ir, int row, int col, Class root, String path) {
 		ItemStack out = ir.getRecipeOutput();
 		AspectList aspects = ir.getAspects();
 		String name = out.getDisplayName();
-		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, 0, 0, 0, out).setName(name);
+		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);

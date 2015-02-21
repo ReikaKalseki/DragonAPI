@@ -78,9 +78,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static boolean softBlocks(Block id) {
-		if (id == Blocks.air)
+		if (id == Blocks.air || id.getMaterial() == Material.air)
 			return true;
-		return (BlockProperties.isSoft(id));
+		return BlockProperties.isSoft(id);
 	}
 
 	public static boolean flammable(IBlockAccess world, int x, int y, int z) {

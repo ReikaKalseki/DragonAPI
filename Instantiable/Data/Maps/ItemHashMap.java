@@ -49,7 +49,7 @@ public final class ItemHashMap<V> {
 
 	private V put(ItemKey is, V value) {
 		if (oneWay && data.containsKey(is))
-			throw new UnsupportedOperationException("This map does not support overwriting values!");
+			throw new UnsupportedOperationException("This map does not support overwriting values! Item "+is+" already mapped to '"+data.get(is)+"'!");
 		V ret = data.put(is, value);
 		this.modifiedKeys = true;
 		return ret;

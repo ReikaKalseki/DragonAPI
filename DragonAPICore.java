@@ -19,6 +19,7 @@ import net.minecraftforge.common.ForgeVersion;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.FMLInjectionData;
@@ -121,6 +122,12 @@ public class DragonAPICore {
 
 	public static boolean isSinglePlayer() {
 		return getSide() == Side.SERVER && !FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer();
+	}
+
+	public static void debugPrint(Object o) {
+		ReikaJavaLibrary.pConsole(o);
+		if (!ReikaObfuscationHelper.isDeObfEnvironment())
+			Thread.dumpStack();
 	}
 
 	public static class DragonAPILoadWatcher {

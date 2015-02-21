@@ -89,7 +89,7 @@ public final class ChancedOutputList {
 		ArrayList<ItemStack> li = new ArrayList();
 		for (ItemStack key : data.keySet()) {
 			float c = data.get(key);
-			if (ReikaRandomHelper.doWithChance(c))
+			if (ReikaRandomHelper.doWithChance(c/100D)) // /100 to force all into 0-1 range
 				li.add(key.copy());
 		}
 		return li;

@@ -89,7 +89,8 @@ public enum ModList {
 	ROUTER("RouterReborn", "router.reborn.RouterReborn"),
 	PNEUMATICRAFT("PneumaticCraft", "pneumaticCraft.common.block.Blockss", "pneumaticCraft.common.item.Itemss"),
 	PROJECTE("ProjectE", "moze_intel.projecte.gameObjs.ObjHandler"),
-	BLOODMAGIC("AWWayofTime", "WayofTime.alchemicalWizardry.ModBlocks", "WayofTime.alchemicalWizardry.ModItems");
+	BLOODMAGIC("AWWayofTime", "WayofTime.alchemicalWizardry.ModBlocks", "WayofTime.alchemicalWizardry.ModItems"),
+	LYCANITE("lycanitesmobs");
 
 	private final boolean condition;
 	public final String modLabel;

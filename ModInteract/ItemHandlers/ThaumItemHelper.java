@@ -35,6 +35,7 @@ public class ThaumItemHelper {
 		PRIMALFOCUS("FocusPrimal"),
 		SALTS("ItemBathSalts"),
 		ELDRITCHEYE("ItemEldritchObject"),
+		BALANCED("ItemShard", 6),
 		;
 
 		public final int metadata;

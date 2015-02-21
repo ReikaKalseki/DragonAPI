@@ -857,7 +857,7 @@ public class BlockArray {
 		copy.liquidMat = liquidMat;
 		copy.overflow = overflow;
 		copy.blocks.clear();
-		copy.blocks.addAll(blocks);
+		copy.addAll(this);
 		copy.minX = minX;
 		copy.minY = minY;
 		copy.minZ = minZ;
@@ -868,7 +868,9 @@ public class BlockArray {
 	}
 
 	public void addAll(BlockArray add) {
-		blocks.addAll(add.blocks);
+		for (Coordinate c : add.blocks)
+			if (!blocks.contains(c))
+				blocks.add(c);
 	}
 
 	public final boolean isAtLeastXPercentNot(World world, double percent, Block id, int meta) {
