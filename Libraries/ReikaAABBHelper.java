@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
 
 import org.lwjgl.opengl.GL11;
@@ -143,6 +144,10 @@ public final class ReikaAABBHelper extends DragonAPICore {
 	/** Returns a sized bounding box centered on a Blocks. Args: x, y, z */
 	public static AxisAlignedBB getBlockCenteredAABB(int x, int y, int z, int range) {
 		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1).expand(range, range, range);
+	}
+
+	public static AxisAlignedBB getEntityCenteredAABB(Entity e, int range) {
+		return AxisAlignedBB.getBoundingBox(e.posX, e.posY, e.posZ, e.posX, e.posY, e.posZ).expand(range, range, range);
 	}
 
 }

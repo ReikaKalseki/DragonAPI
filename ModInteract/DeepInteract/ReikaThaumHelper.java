@@ -22,6 +22,7 @@ import java.util.Map;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -37,6 +38,7 @@ import thaumcraft.api.crafting.IArcaneRecipe;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchPage;
+import thaumcraft.common.entities.monster.EntityWisp;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -66,6 +68,8 @@ public class ReikaThaumHelper {
 	private static Method researchComplete;
 
 	private static Potion warpWard;
+
+	private static Field wispTarget;
 
 	private static Collection<Aspect> allAspects = new ArrayList();
 
@@ -585,6 +589,10 @@ public class ReikaThaumHelper {
 				Class mgr = Class.forName("thaumcraft.common.lib.research.ResearchManager");
 				researchComplete = mgr.getMethod("isResearchComplete", String.class, String.class);
 
+				Class wisp = Class.forName("thaumcraft.common.entities.monster.EntityWisp");
+				wispTarget = wisp.getDeclaredField("targetedEntity");
+				wispTarget.setAccessible(true);
+
 				Field[] fds = Aspect.class.getDeclaredFields();
 				for (int i = 0; i < fds.length; i++) {
 					Field fd = fds[i];
@@ -599,6 +607,15 @@ public class ReikaThaumHelper {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+	}
+
+	public static void setWispHostility(EntityWisp e, EntityLivingBase tg) {
+		try {
+			wispTarget.set(e, tg);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
 		}
 	}
 

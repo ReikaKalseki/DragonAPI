@@ -721,4 +721,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		}
 	}
 
+	public static <T extends Entity> T getNearestEntityOfSameType(T e, int r) {
+		return (T)e.worldObj.findNearestEntityWithinAABB(e.getClass(), ReikaAABBHelper.getEntityCenteredAABB(e, 24), e);
+	}
+
 }

@@ -24,7 +24,7 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public final class ReikaVectorHelper extends DragonAPICore {
 
-	/** Returns a standard fake between two specified points, rather than from the origin.
+	/** Returns a standard Vec3 between two specified points, rather than from the origin.
 	 * Args: start x,y,z, end x,y,z */
 	public static Vec3 getVec2Pt(double x1, double y1, double z1, double x2, double y2, double z2) {
 		Vec3 p1 = Vec3.createVectorHelper(x1, y1, z1);
