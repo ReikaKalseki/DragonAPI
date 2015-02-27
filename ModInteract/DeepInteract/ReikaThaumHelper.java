@@ -43,9 +43,6 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.CustomThaumResearch;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ReikaThaumHelper {
 
@@ -422,45 +419,36 @@ public class ReikaThaumHelper {
 		ResearchCategories.registerCategory(name, icon, rl2);
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void addInfusionRecipeBookEntryViaXML(String id, String desc, String category, InfusionRecipe ir, int row, int col, Class root, String path) {
 		ItemStack out = (ItemStack)ir.getRecipeOutput();
 		AspectList aspects = ir.getAspects();
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
-			res.setPages(xml.getPages());
-		}
+		XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
+		res.setPages(xml.getPages());
 		res.registerResearchItem();
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void addCrucibleRecipeBookEntryViaXML(String id, String desc, String category, CrucibleRecipe ir, int row, int col, Class root, String path) {
 		ItemStack out = ir.getRecipeOutput();
 		AspectList aspects = ir.aspects;
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
-			res.setPages(xml.getPages());
-		}
+		XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
+		res.setPages(xml.getPages());
 		res.registerResearchItem();
 	}
 
-	@SideOnly(Side.CLIENT)
 	public static void addArcaneRecipeBookEntryViaXML(String id, String desc, String category, IArcaneRecipe ir, int row, int col, Class root, String path) {
 		ItemStack out = ir.getRecipeOutput();
 		AspectList aspects = ir.getAspects();
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
-			res.setPages(xml.getPages());
-		}
+		XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
+		res.setPages(xml.getPages());
 		res.registerResearchItem();
 	}
 
@@ -616,6 +604,16 @@ public class ReikaThaumHelper {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
+		}
+	}
+
+	public static Entity getWispHostility(EntityWisp e) {
+		try {
+			return (Entity)wispTarget.get(e);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return null;
 		}
 	}
 

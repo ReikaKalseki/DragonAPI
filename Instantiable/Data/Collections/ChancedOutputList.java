@@ -108,7 +108,7 @@ public final class ChancedOutputList {
 	public String toString() {
 		return data.toString();
 	}
-
+	/*
 	public void multiplyChances(float f) {
 		if (!modifiable)
 			throw new UnsupportedOperationException("This ChancedOutputList is locked!");
@@ -118,7 +118,7 @@ public final class ChancedOutputList {
 		}
 	}
 
-	/** Raises chances by the given power. */
+	/** Raises chances by the given power. *//*
 	public void powerChances(double p) {
 		if (!modifiable)
 			throw new UnsupportedOperationException("This ChancedOutputList is locked!");
@@ -128,6 +128,53 @@ public final class ChancedOutputList {
 			float next = MathHelper.clamp_float(pow, 0, 100);
 			data.put(is, next);
 		}
+	}
+	 */
+
+	public void manipulateChances(ChanceManipulator cm) {
+		if (!modifiable)
+			throw new UnsupportedOperationException("This ChancedOutputList is locked!");
+		for (ItemStack is : data.keySet()) {
+			data.put(is, MathHelper.clamp_float(cm.getChance(data.get(is)), 0, 100));
+		}
+	}
+
+	public static interface ChanceManipulator {
+
+		public float getChance(float original);
+
+	}
+
+	public static class ChanceMultiplier implements ChanceManipulator {
+
+		private final float factor;
+
+		public ChanceMultiplier(float factor) {
+			this.factor = factor;
+		}
+
+		@Override
+		public float getChance(float original) {
+			return original*factor;
+		}
+
+	}
+
+	public static class ChanceExponentiator implements ChanceManipulator {
+
+		private final double power;
+
+		public ChanceExponentiator(double power) {
+			this.power = power;
+		}
+
+		@Override
+		public float getChance(float original) {
+			double p = original/100D;
+			double num = Math.pow(p, 1D/power);
+			return (float)(100*num);
+		}
+
 	}
 
 }

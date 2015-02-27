@@ -245,8 +245,8 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	 * Draws the specified string.
 	 */
 	@Override
-	public int drawString(String sg, int x, int y, int z) {
-		return this.drawString(sg, x, y, z, false);
+	public int drawString(String sg, int x, int y, int color) {
+		return this.drawString(sg, x, y, color, false);
 	}
 
 	/**

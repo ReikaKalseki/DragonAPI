@@ -16,7 +16,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -62,7 +61,6 @@ public class CommandableUpdateChecker {
 	private final Collection<DragonAPIMod> oldModsAggressive = new ArrayList();
 	private final HashMap<String, DragonAPIMod> modNames = new HashMap();
 	private final HashMap<DragonAPIMod, Boolean> overrides = new HashMap();
-	private final HashMap<DragonAPIMod, Long> dates = new HashMap();
 
 	private CommandableUpdateChecker() {
 
@@ -101,8 +99,6 @@ public class CommandableUpdateChecker {
 	private boolean canSkipAnnoyance(DragonAPIMod mod, ModVersion version, ModVersion latest) {
 		if (latest.majorVersion-version.majorVersion > 1)
 			return false;
-		if (System.currentTimeMillis()-dates.get(mod) >= 2L*7L*24L*3600L*1000L)
-			return false;
 		return true;
 	}
 
@@ -140,7 +136,6 @@ public class CommandableUpdateChecker {
 			return;
 		}
 		latestVersions.put(mod, latest);
-		dates.put(mod, c.lastModified);
 		checkers.add(c);
 		String label = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
 		modNames.put(label, mod);
@@ -317,7 +312,6 @@ public class CommandableUpdateChecker {
 		private final ModVersion version;
 		private final URL checkURL;
 		private final DragonAPIMod mod;
-		private long lastModified = -1;
 
 		private UpdateChecker(DragonAPIMod mod, ModVersion version, URL url) {
 			this.mod = mod;
@@ -333,8 +327,6 @@ public class CommandableUpdateChecker {
 					if (line.toLowerCase().startsWith(name)) {
 						String[] parts = line.split(":");
 						ModVersion version = ModVersion.getFromString(parts[1]);
-						String date = parts.length >= 3 ? parts[2] : "";
-						lastModified = this.getUnixTime(date);
 						return version;
 					}
 				}
@@ -343,19 +335,6 @@ public class CommandableUpdateChecker {
 				this.logError(e);
 			}
 			return null;
-		}
-
-		private long getUnixTime(String date) {
-			if (date.isEmpty())
-				return -1;
-			String[] parts = date.split("-");
-			GregorianCalendar greg = new GregorianCalendar();
-			greg.clear();
-			int month = Integer.parseInt(parts[0]);
-			int day = Integer.parseInt(parts[1]);
-			int year = Integer.parseInt(parts[2]);
-			greg.set(year, month, day);
-			return greg.getTimeInMillis();
 		}
 
 		private void logError(Exception e) {

@@ -414,6 +414,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				ItemStack is = (ItemStack)sr.recipeItems.get(i);
 				isin[i] = getRecipeItemStack(is);
 			}
+			w = sr.getRecipeSize() >= 3 ? 3 : sr.getRecipeSize();
+			h = (sr.getRecipeSize()+2)/3;
 		}
 		else if (ire instanceof ShapelessOreRecipe) {
 			ShapelessOreRecipe so = (ShapelessOreRecipe)ire;
@@ -431,6 +433,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				}
 				//ReikaJavaLibrary.pConsole(ire);
 			}
+			w = so.getRecipeSize() >= 3 ? 3 : so.getRecipeSize();
+			h = (so.getRecipeSize()+2)/3;
 		}
 
 		return new RecipeCache(isin, w, h);

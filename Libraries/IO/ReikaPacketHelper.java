@@ -27,6 +27,7 @@ import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
@@ -904,6 +905,54 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			//PacketDispatcher.sendPacketToServer(packet);
 			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
 			pipe.sendToDimension(pack, world);
+		}
+		else if (side == Side.CLIENT) {
+			// We are on the client side.
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pipe.sendToServer(pack);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
+	public static void sendPositionPacket(String ch, int id, Entity e, int data, PacketTarget pt) {
+		sendPositionPacket(ch, id, e.worldObj, e.posX, e.posY, e.posZ, data, pt);
+	}
+
+	public static void sendPositionPacket(String ch, int id, World world, double x, double y, double z, int data, PacketTarget pt) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(id);
+			outputStream.writeDouble(x);
+			outputStream.writeDouble(y);
+			outputStream.writeDouble(z);
+			outputStream.writeInt(data);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.POS, pipe);
+		pack.setData(dat);
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			// We are on the server side.
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pt.dispatch(pipe, pack);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.

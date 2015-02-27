@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -136,6 +137,7 @@ public enum ModOreList implements OreType {
 	public static final ModOreList[] oreList = values();
 
 	private static final ItemHashMap<ModOreList> oreMappings = new ItemHashMap();
+	private static final HashSet<String> oreNames = new HashSet();
 
 	private ModOreList(String n, int color, OreRarity r, String prod, int count, String... ore) {
 		//if (!DragonAPIInit.canLoadHandlers())
@@ -172,6 +174,7 @@ public enum ModOreList implements OreType {
 		}
 		init = true;
 		for (int i = 0; i < oreLabel.length; i++) {
+			oreNames.add(oreLabel[i]);
 			ArrayList<ItemStack> toadd = OreDictionary.getOres(oreLabel[i]);
 			if (!toadd.isEmpty()) {
 				Iterator<ItemStack> it = toadd.iterator();
@@ -441,5 +444,9 @@ public enum ModOreList implements OreType {
 			}
 		}
 		return null;
+	}
+
+	public static boolean isModOreType(String s) {
+		return oreNames.contains(s);
 	}
 }

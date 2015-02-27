@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import net.minecraft.block.Block;
@@ -26,14 +27,14 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public enum ReikaOreHelper implements OreType {
 
-	COAL("Coal", Blocks.coal_ore, Items.coal, "oreCoal", "itemCoal", OreRarity.COMMON),
-	IRON("Iron", Blocks.iron_ore, "oreIron", "ingotIron", OreRarity.AVERAGE),
-	GOLD("Gold", Blocks.gold_ore, "oreGold", "ingotGold", OreRarity.SCATTERED),
-	REDSTONE("Redstone", Blocks.redstone_ore, Items.redstone, "oreRedstone", "dustRedstone", OreRarity.COMMON),
-	LAPIS("Lapis Lazuli", Blocks.lapis_ore, ReikaDyeHelper.BLUE.getStackOf(), "oreLapis", "dyeBlue", OreRarity.SCARCE),
-	DIAMOND("Diamond", Blocks.diamond_ore, Items.diamond, "oreDiamond", "gemDiamond", OreRarity.SCARCE),
-	EMERALD("Emerald", Blocks.emerald_ore, Items.emerald, "oreEmerald", "gemEmerald", OreRarity.RARE),
-	QUARTZ("Nether Quartz", Blocks.quartz_ore, Items.quartz, "oreQuartz", "itemQuartz", OreRarity.EVERYWHERE);
+	COAL("Coal", Blocks.coal_ore, Items.coal, 1, "oreCoal", "itemCoal", OreRarity.COMMON),
+	IRON("Iron", Blocks.iron_ore, "oreIron", 1, "ingotIron", OreRarity.AVERAGE),
+	GOLD("Gold", Blocks.gold_ore, "oreGold", 1, "ingotGold", OreRarity.SCATTERED),
+	REDSTONE("Redstone", Blocks.redstone_ore, Items.redstone, 1, "oreRedstone", "dustRedstone", OreRarity.COMMON),
+	LAPIS("Lapis Lazuli", Blocks.lapis_ore, ReikaDyeHelper.BLUE.getStackOf(), 1, "oreLapis", "dyeBlue", OreRarity.SCARCE),
+	DIAMOND("Diamond", Blocks.diamond_ore, Items.diamond, 1, "oreDiamond", "gemDiamond", OreRarity.SCARCE),
+	EMERALD("Emerald", Blocks.emerald_ore, Items.emerald, 1, "oreEmerald", "gemEmerald", OreRarity.RARE),
+	QUARTZ("Nether Quartz", Blocks.quartz_ore, Items.quartz, 1, "oreQuartz", "itemQuartz", OreRarity.EVERYWHERE);
 
 	private String name;
 	private ItemStack drop;
@@ -41,31 +42,34 @@ public enum ReikaOreHelper implements OreType {
 	private String oreDict;
 	private String dropOreDict;
 	public final OreRarity rarity;
+	public final int blockDrops;
 	private final ArrayList<ItemStack> ores = new ArrayList<ItemStack>();
 
 	private static final HashMap<String, String> cases = new HashMap();
 	private static final HashMap<Block, ReikaOreHelper> vanillaOres = new HashMap();
+	private static final HashSet<String> oreNames = new HashSet();
 
 	public static final ReikaOreHelper[] oreList = ReikaOreHelper.values();
 
 	private static final ArrayList<ItemStack> extraOres = new ArrayList();
 
-	private ReikaOreHelper(String n, Block b, ItemStack is, String d, String d2, OreRarity r) {
+	private ReikaOreHelper(String n, Block b, ItemStack is, int nd, String d, String d2, OreRarity r) {
 		name = n;
 		ore = b;
 		drop = is.copy();
+		blockDrops = nd;
 		oreDict = d;
 		dropOreDict = d2;
 		ores.addAll(OreDictionary.getOres(oreDict));
 		rarity = r;
 	}
 
-	private ReikaOreHelper(String n, Block b, Item i, String d, String d2, OreRarity r) {
-		this(n, b, new ItemStack(i), d, d2, r);
+	private ReikaOreHelper(String n, Block b, Item i, int nd, String d, String d2, OreRarity r) {
+		this(n, b, new ItemStack(i), nd, d, d2, r);
 	}
 
-	private ReikaOreHelper(String n, Block b, String d, String d2, OreRarity r) {
-		this(n, b, new ItemStack(b), d, d2, r);
+	private ReikaOreHelper(String n, Block b, String d, int nd, String d2, OreRarity r) {
+		this(n, b, new ItemStack(b), nd, d, d2, r);
 	}
 
 	public String getName() {
@@ -238,7 +242,12 @@ public enum ReikaOreHelper implements OreType {
 	static {
 		for (int i = 0; i < oreList.length; i++) {
 			vanillaOres.put(oreList[i].ore, oreList[i]);
+			oreNames.add(oreList[i].oreDict);
 		}
+	}
+
+	public static boolean isVanillaOreType(String s) {
+		return oreNames.contains(s);
 	}
 
 }
