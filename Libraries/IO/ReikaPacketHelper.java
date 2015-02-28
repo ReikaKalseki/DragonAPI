@@ -297,6 +297,57 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
+	public static void sendDataPacket(String ch, int id, PacketTarget pt, List<Integer> data) {
+		int npars;
+		if (data == null)
+			npars = 4;
+		else
+			npars = data.size()+4;
+
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(npars*4); //4 bytes an int
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(id);
+			if (data != null)
+				for (int i = 0; i < data.size(); i++) {
+					outputStream.writeInt(data.get(i));
+				}
+			outputStream.writeInt(0);
+			outputStream.writeInt(0);
+			outputStream.writeInt(0);
+
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.DATA, pipe);
+		pack.setData(dat);
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+
+		if (side == Side.SERVER) {
+			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+			pt.dispatch(pipe, pack);
+		}
+		else if (side == Side.CLIENT) {
+			//PacketDispatcher.sendPacketToServer(packet);
+			pipe.sendToServer(pack);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
 	public static void sendDataPacketToEntireServer(String ch, int id, List<Integer> data) {
 
 		int npars;
@@ -504,6 +555,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 	public static void sendDataPacket(String ch, int id, TileEntity te, int data) {
 		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
+	}
+
+	public static void sendDataPacket(String ch, int id, PacketTarget pt, int... data) {
+		sendDataPacket(ch, id, pt, ReikaJavaLibrary.makeIntListFromArray(data));
 	}
 
 	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, int data) {
