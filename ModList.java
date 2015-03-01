@@ -37,6 +37,7 @@ public enum ModList {
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
 	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
 	BCTRANSPORT("BuildCraft|Transport", "buildcraft.BuildCraftTransport"),
+	BCSILICON("BuildCraft|Silicon", "buildcraft.BuildCraftSilicon"),
 	THAUMCRAFT("Thaumcraft", "thaumcraft.common.config.ConfigBlocks", "thaumcraft.common.config.ConfigItems"),
 	IC2("IC2", "ic2.core.Ic2Items"), //ensure still here
 	GREGTECH("gregtech"),

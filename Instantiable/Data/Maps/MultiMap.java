@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -107,6 +108,13 @@ public final class MultiMap<K, V> {
 			li.addAll(c);
 		}
 		return li;
+	}
+
+	public void shuffleValues() {
+		for (Collection c : data.values()) {
+			if (c instanceof List)
+				Collections.shuffle((List)c);
+		}
 	}
 
 	public int totalSize() {

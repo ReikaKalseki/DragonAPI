@@ -29,7 +29,10 @@ public class DirectResource implements IResource {
 	@Override
 	public InputStream getInputStream() {
 		if (data == null) {
-			data = ReikaJavaLibrary.streamToBytes(DragonAPIInit.class.getClassLoader().getResourceAsStream(path));
+			InputStream st = DragonAPIInit.class.getClassLoader().getResourceAsStream(path);
+			if (st == null)
+				throw new RuntimeException("Resource not found at "+path);
+			data = ReikaJavaLibrary.streamToBytes(st);
 		}
 		return new ByteArrayInputStream(data);
 	}
