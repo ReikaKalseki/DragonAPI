@@ -1270,4 +1270,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 		}
 	}
+
+	public static void addItems(IInventory ii, ArrayList<ItemStack> li) {
+		for (ItemStack is : li) {
+			addToIInv(is, ii);
+		}
+	}
 }

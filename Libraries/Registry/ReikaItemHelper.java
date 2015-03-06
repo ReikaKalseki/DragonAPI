@@ -33,6 +33,8 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
 public final class ReikaItemHelper extends DragonAPICore {
 
@@ -399,5 +401,10 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return Item.getIdFromItem(o1.getItem())-Item.getIdFromItem(o2.getItem());
 		}
 
+	}
+
+	public static boolean isItemAddedByMod(Item i, String modID) {
+		UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(i);
+		return id != null ? modID.equalsIgnoreCase(id.modId) : modID == null;
 	}
 }

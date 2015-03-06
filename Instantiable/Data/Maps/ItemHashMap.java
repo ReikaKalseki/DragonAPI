@@ -20,6 +20,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
@@ -79,8 +80,16 @@ public final class ItemHashMap<V> {
 		return this.containsKey(new ItemKey(is));
 	}
 
+	public V put(Block i, V value) {
+		return this.put(new ItemStack(i), value);
+	}
+
+	public V put(Item i, V value) {
+		return this.put(new ItemStack(i), value);
+	}
+
 	public V put(Item i, int meta, V value) {
-		return this.put(new ItemStack(i, meta), value);
+		return this.put(new ItemStack(i, 1, meta), value);
 	}
 
 	public V put(ImmutableItemStack is, V obj) {
@@ -171,6 +180,8 @@ public final class ItemHashMap<V> {
 		private final int metadata;
 
 		private ItemKey(ItemStack is) {
+			if (is == null || is.getItem() == null)
+				throw new MisuseException("You cannot add a null itemstack to the map!");
 			this.itemID = is.getItem();
 			this.metadata = is.getItemDamage();
 		}

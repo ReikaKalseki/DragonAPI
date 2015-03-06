@@ -31,6 +31,7 @@ import Reika.DragonAPI.Interfaces.BlendedColor;
 import Reika.DragonAPI.Interfaces.GradientBlend;
 import Reika.DragonAPI.Interfaces.MultiLayerItemSprite;
 import Reika.DragonAPI.Interfaces.SpriteRenderCallback;
+import Reika.DragonAPI.Interfaces.ToolSprite;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
@@ -135,7 +136,7 @@ public final class ReikaSpriteSheets {
 				GL11.glShadeModel(GL11.GL_FLAT);
 			}
 			if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
-				if (type == type.EQUIPPED && (item instanceof ItemTool || item instanceof ItemSword || item instanceof ItemShears)) {
+				if (type == type.EQUIPPED && (item instanceof ItemTool || item instanceof ItemSword || item instanceof ItemShears || item instanceof ToolSprite)) {
 					prepareHeldToolRender();
 				}
 				else if (type == type.EQUIPPED_FIRST_PERSON) {

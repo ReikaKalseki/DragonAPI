@@ -110,7 +110,11 @@ public abstract class TileEntityBase extends TileEntity {
 		fullSyncTimer.setTick(rand.nextInt(1200));
 	}
 
-	public int getTicksExisted() {
+	public final boolean isChunkLoaded() {
+		return worldObj.checkChunksExist(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+	}
+
+	public final int getTicksExisted() {
 		return ticksExisted;
 	}
 

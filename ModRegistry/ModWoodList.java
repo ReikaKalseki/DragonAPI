@@ -408,8 +408,12 @@ public enum ModWoodList implements TreeType {
 		return new ItemStack(leafID, 1, leafMeta[0]);
 	}
 
-	public ItemStack getCorrespondingDamagedLeaf(int i) {
-		return new ItemStack(leafID, 1, leafMeta[i]);
+	public ArrayList<ItemStack> getAllLeaves() {
+		ArrayList<ItemStack> li = new ArrayList();
+		for (int i = 0; i < leafMeta.length; i++) {
+			li.add(new ItemStack(leafID, 1, leafMeta[i]));
+		}
+		return li;
 	}
 
 	public ItemStack getCorrespondingSapling() {

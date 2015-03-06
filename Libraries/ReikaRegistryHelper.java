@@ -65,6 +65,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 			else
 				GameRegistry.registerBlock(b, ItemBlockCustomLocalization.class, regname);
 			registries.put(b, r);
+			registries.put(Item.getItemFromBlock(b), r);
 			int num = r.getNumberMetadatas();
 			for (int k = 0; k < num; k++)
 				registerBlockVariant(r, k);

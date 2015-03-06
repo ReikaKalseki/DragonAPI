@@ -77,15 +77,16 @@ import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.BannedItemReader;
-import Reika.DragonAPI.ModInteract.MTInteractionManager;
 import Reika.DragonAPI.ModInteract.MinetweakerHooks;
 import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
+import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
 import Reika.DragonAPI.ModInteract.ItemHandlers.AppEngHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BCPipeHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BloodMagicHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.BoPBlockHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
@@ -527,6 +528,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.initHandler(ModList.MYSTCRAFT, MystCraftHandler.class);
 		this.initHandler(ModList.BLOODMAGIC, BloodMagicHandler.class);
 		this.initHandler(ModList.PNEUMATICRAFT, PneumaticPlantHandler.class);
+		this.initHandler(ModList.BOP, BoPBlockHandler.class);
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);

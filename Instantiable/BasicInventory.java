@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import java.util.Arrays;
+
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -83,5 +85,9 @@ public abstract class BasicInventory implements IInventory {
 	public void openInventory() {}
 	@Override
 	public void closeInventory() {}
+
+	public final ItemStack[] getItems() {
+		return Arrays.copyOf(inv, inv.length);
+	}
 
 }

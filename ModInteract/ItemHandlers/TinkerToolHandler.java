@@ -57,7 +57,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 	}
 
-	public enum Blocks {
+	public enum ToolBlocks {
 		TOOLSTATION("toolStationWood"),
 		TOOLSTATION2("toolStationStone"),
 		TOOLFORGE("toolForge"),
@@ -68,9 +68,9 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		private Block item;
 		private final String field;
 
-		private static final Blocks[] list = values();
+		private static final ToolBlocks[] list = values();
 
-		private Blocks(String s) {
+		private ToolBlocks(String s) {
 			field = s;
 		}
 
@@ -94,8 +94,8 @@ public final class TinkerToolHandler extends ModHandlerBase {
 					t.item = (Item)f.get(null);
 				}
 
-				for (int i = 0; i < Blocks.list.length; i++) {
-					Blocks t = Blocks.list[i];
+				for (int i = 0; i < ToolBlocks.list.length; i++) {
+					ToolBlocks t = ToolBlocks.list[i];
 					Field f = tic.getField(t.field);
 					t.item = (Block)f.get(null);
 				}
@@ -174,11 +174,11 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	}
 
 	public boolean isToolStation(Block b) {
-		return b == Blocks.TOOLSTATION.item || b == Blocks.TOOLSTATION2.item;
+		return b == ToolBlocks.TOOLSTATION.item || b == ToolBlocks.TOOLSTATION2.item;
 	}
 
 	public boolean isWorkbench(Block b) {
-		return b == Blocks.WORKBENCH.item || b == Blocks.CRAFTSLAB.item;
+		return b == ToolBlocks.WORKBENCH.item || b == ToolBlocks.CRAFTSLAB.item;
 	}
 
 }

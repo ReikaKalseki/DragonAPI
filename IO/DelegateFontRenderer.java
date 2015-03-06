@@ -38,7 +38,20 @@ public final class DelegateFontRenderer extends FontRenderer {
 		super(Minecraft.getMinecraft().gameSettings, ReikaTextureHelper.font, Minecraft.getMinecraft().renderEngine, false);
 		fallback = fr;
 		this.setUnicodeFlag(fr.getUnicodeFlag());
+		this.setBidiFlag(fr.getBidiFlag());
 		((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(this);
+	}
+
+	@Override
+	public void setUnicodeFlag(boolean flag) {
+		super.setUnicodeFlag(flag);
+		fallback.setUnicodeFlag(flag);
+	}
+
+	@Override
+	public void setBidiFlag(boolean flag) {
+		super.setBidiFlag(flag);
+		fallback.setBidiFlag(flag);
 	}
 
 	public String addRenderer(BasicFontRenderer f) {

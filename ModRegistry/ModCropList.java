@@ -11,7 +11,6 @@ package Reika.DragonAPI.ModRegistry;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -20,19 +19,22 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.CropHandlerBase;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
+import Reika.DragonAPI.Interfaces.CropHandler;
+import Reika.DragonAPI.Interfaces.CropType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.CanolaHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.CrystalPlantHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.OreBerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.PneumaticPlantHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
 
-public enum ModCropList {
+public enum ModCropList implements CropType {
 	//seed meta, min meta, fresh meta, ripe meta
 	BARLEY(ModList.NATURA, 0xCDB14D, "crops", "seeds", 0, 0, 0, 3, VarType.INSTANCE),
 	COTTON(ModList.NATURA, 0xE366F5, "crops", "seeds", 0, 4, 6, 8, VarType.INSTANCE),
@@ -44,7 +46,9 @@ public enum ModCropList {
 	PAM(ModList.HARVESTCRAFT, 0x22aa22, HarvestCraftHandler.getInstance()),
 	ALGAE(ModList.EMASHER, 0x29D855, "algae", 0, VarType.INSTANCE),
 	ENDER(ModList.EXTRAUTILS, 0x00684A, "enderLily", 7, VarType.INSTANCE),
-	PNEUMATIC(ModList.PNEUMATICRAFT, 0x37FF69, PneumaticPlantHandler.getInstance());
+	PNEUMATIC(ModList.PNEUMATICRAFT, 0x37FF69, PneumaticPlantHandler.getInstance()),
+	CANOLA(ModList.ROTARYCRAFT, 0x00cc00, new CanolaHandler()),
+	BLOOM(ModList.CHROMATICRAFT, 0x00ff00, new CrystalPlantHandler());
 
 	private final ModList mod;
 	public final Block blockID;
@@ -54,7 +58,7 @@ public enum ModCropList {
 	/** Not necessarily zero; see cotton */
 	private final int harvestedMeta;
 	private int minmeta;
-	private final CropHandlerBase handler;
+	private final CropHandler handler;
 	private String blockClass;
 	private String itemClass;
 	private boolean dropsSelf;
@@ -62,6 +66,8 @@ public enum ModCropList {
 	public final int cropColor;
 
 	private boolean exists = false;
+
+	//private static Collection<CustomCrop> customHandlers = new OneWaySet();
 
 	public static final ModCropList[] cropList = values();
 	private static final BlockMap<ModCropList> cropMappings = new BlockMap();
@@ -155,7 +161,7 @@ public enum ModCropList {
 		seedMeta = 0;
 	}
 
-	private ModCropList(ModList api, int color, CropHandlerBase h) {
+	private ModCropList(ModList api, int color, CropHandler h) {
 		handler = h;
 		mod = api;
 		blockID = null;
@@ -312,33 +318,29 @@ public enum ModCropList {
 			if (b != null)
 				li.addAll(b.getDrops(world, x, y, z, meta, fortune));
 		}
-		if (this.isHandlered())
-			li.addAll(handler.getAdditionalDrops(world, x, y, z, b, meta, fortune));
+		if (this.isHandlered()) {
+			ArrayList<ItemStack> li2 = handler.getAdditionalDrops(world, x, y, z, b, meta, fortune);
+			if (li2 != null && !li2.isEmpty())
+				li.addAll(li2);
+		}
 		return li;
 	}
 
-	public boolean isTileEntity() {
-		return false;
+	private boolean isTileEntity() {
+		return this == BLOOM;
 	}
 
-	public void runTEHarvestCode(World world, int x, int y, int z) {
+	public void setHarvested(World world, int x, int y, int z) {
+		if (this.isTileEntity())
+			this.runTEHarvestCode(world, x, y, z);
+		else
+			world.setBlockMetadataWithNotify(x, y, z, this.getHarvestedMetadata(world, x, y, z), 3);
+	}
+
+	private void runTEHarvestCode(World world, int x, int y, int z) {
 		if (!this.isTileEntity())
 			return;
 		handler.editTileDataForHarvest(world, x, y, z);
-	}
-
-	public void removeOneSeed(ArrayList<ItemStack> li) {
-		Iterator<ItemStack> it = li.iterator();
-		while (it.hasNext()) {
-			ItemStack is = it.next();
-			if (this.isSeedItem(is)) {
-				if (is.stackSize > 1)
-					is.stackSize--;
-				else
-					it.remove();
-				return;
-			}
-		}
 	}
 
 	public boolean isSeedItem(ItemStack is) {
@@ -379,6 +381,16 @@ public enum ModCropList {
 					}
 				}
 			}
+			/*
+			if (mod == null) {
+				for (CustomCrop ch : customHandlers) {
+					if (ch.handler.isCrop(id)) {
+						mod = ch;
+						break;
+					}
+				}
+			}
+			 */
 			cropMappings.put(id, meta, mod);
 		}
 
@@ -411,7 +423,7 @@ public enum ModCropList {
 		}
 	}
 
-	public int getHarvestedMetadata(World world, int x, int y, int z) {
+	private int getHarvestedMetadata(World world, int x, int y, int z) {
 		return this.isHandlered() ? handler.getHarvestedMeta(world, x, y, z) : harvestedMeta;
 	}
 
@@ -419,18 +431,66 @@ public enum ModCropList {
 		return handler != null;
 	}
 
-	public boolean exists() {
+	public boolean existsInGame() {
 		return exists;
 	}
 
 	static {
 		for (int i = 0; i < ModCropList.cropList.length; i++) {
 			ModCropList c = ModCropList.cropList[i];
-			if (c.exists() && !c.isHandlered()) {
+			if (c.existsInGame() && !c.isHandlered()) {
 				Block b = c.blockID;
 				for (int k = c.minmeta; k <= c.ripeMeta; k++)
 					cropMappings.put(b, k, c);
 			}
 		}
 	}
+	/*
+	private static class CustomCrop implements CropType {
+
+		private final CropHandler handler;
+
+		private CustomCrop(CropHandler ch) {
+			handler = ch;
+		}
+
+		@Override
+		public boolean existsInGame() {
+			return true;
+		}
+
+		@Override
+		public boolean isRipe(World world, int x, int y, int z) {
+			return handler.isRipeCrop(world, x, y, z);
+		}
+
+		@Override
+		public void setHarvested(World world, int x, int y, int z) {
+			handler.setHarvested(world, x, y, z);
+		}
+
+		@Override
+		public void makeRipe(World world, int x, int y, int z) {
+			handler.makeRipe(world, x, y, z);
+		}
+
+		@Override
+		public boolean isSeedItem(ItemStack is) {
+			return handler.isSeedItem(is)
+		}
+
+		@Override
+		public boolean destroyOnHarvest() {
+			return handler.destroyOnHarvest();
+		}
+
+		@Override
+		public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
+			return han;
+		}
+	}
+
+	public static void addCustomCropType(CropHandler ch) {
+		customHandlers.add(new CustomCrop(ch));
+	}*/
 }

@@ -9,27 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
-import java.util.ArrayList;
-
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Interfaces.CropHandler;
 
-public abstract class CropHandlerBase extends ModHandlerBase {
-
-	public abstract int getHarvestedMeta(World world, int x, int y, int z);
-
-	public abstract boolean isCrop(Block id);
-
-	public abstract boolean isRipeCrop(World world, int x, int y, int z);
-
-	public abstract void makeRipe(World world, int x, int y, int z);
-
-	public abstract boolean isSeedItem(ItemStack is);
-
-	//public abstract float getSecondSeedDropRate();
-
-	public abstract ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune);
+public abstract class CropHandlerBase extends ModHandlerBase implements CropHandler {
 
 	public void editTileDataForHarvest(World world, int x, int y, int z) {}
 

@@ -14,27 +14,36 @@ import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Interfaces.CropType;
 
-public enum ReikaCropHelper {
+public enum ReikaCropHelper implements CropType {
 
-	WHEAT(Blocks.wheat, 7),
-	CARROT(Blocks.carrots, 7),
-	POTATO(Blocks.potatoes, 7),
-	NETHERWART(Blocks.nether_wart, 3),
-	COCOA(Blocks.cocoa, 2);
+	WHEAT(Blocks.wheat, 7, Items.wheat_seeds),
+	CARROT(Blocks.carrots, 7, Items.carrot),
+	POTATO(Blocks.potatoes, 7, Items.potato),
+	NETHERWART(Blocks.nether_wart, 3, Items.nether_wart),
+	COCOA(Blocks.cocoa, 2, ReikaItemHelper.cocoaBeans);
 
 	public final Block blockID;
 	public final int ripeMeta;
+	private final ItemStack seedItem;
 
 	public static final ReikaCropHelper[] cropList = values();
 
 	private static final HashMap<Block, ReikaCropHelper> cropMappings = new HashMap();
 
-	private ReikaCropHelper(Block id, int metaripe) {
+	private ReikaCropHelper(Block id, int metaripe, Item seed) {
+		this(id, metaripe, new ItemStack(seed));
+	}
+
+	private ReikaCropHelper(Block id, int metaripe, ItemStack seed) {
 		blockID = id;
 		ripeMeta = metaripe;
+		seedItem = seed;
 	}
 
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
@@ -52,6 +61,10 @@ public enum ReikaCropHelper {
 
 	public boolean destroyOnHarvest() {
 		return false;
+	}
+
+	public boolean isRipe(World world, int x, int y, int z) {
+		return this.isRipe(world.getBlockMetadata(x, y, z));
 	}
 
 	public boolean isRipe(int meta) {
@@ -72,6 +85,26 @@ public enum ReikaCropHelper {
 			Block id = w.blockID;
 			cropMappings.put(id, w);
 		}
+	}
+
+	@Override
+	public boolean existsInGame() {
+		return true;
+	}
+
+	@Override
+	public void setHarvested(World world, int x, int y, int z) {
+		world.setBlockMetadataWithNotify(x, y, z, 0, 3);
+	}
+
+	@Override
+	public void makeRipe(World world, int x, int y, int z) {
+		world.setBlockMetadataWithNotify(x, y, z, ripeMeta, 3);
+	}
+
+	@Override
+	public boolean isSeedItem(ItemStack is) {
+		return ReikaItemHelper.matchStacks(is, seedItem);
 	}
 
 

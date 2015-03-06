@@ -15,7 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 
-public interface OreType {
+public interface OreType extends RegistryType {
 
 	public OreRarity getRarity();
 
@@ -26,8 +26,6 @@ public interface OreType {
 	public boolean isEnd();
 
 	public boolean canGenerateIn(Block b);
-
-	public boolean existsInGame();
 
 	public static enum OreRarity {
 		EVERYWHERE("Large and very common veins", "Copper and Fluorite"), //Copper, Fluorite
