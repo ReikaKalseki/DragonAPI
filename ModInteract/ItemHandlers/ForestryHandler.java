@@ -97,7 +97,7 @@ public class ForestryHandler extends ModHandlerBase {
 				Method get = forest.getMethod("item");
 				for (int i = 0; i < ItemEntry.list.length; i++) {
 					ItemEntry ie = ItemEntry.list[i];
-					Field f = forest.getField(ie.tag); //is enum object now
+					Field f = forest.getDeclaredField(ie.tag); //is enum object now
 					Object entry = f.get(null);
 					Item item = (Item)get.invoke(entry);
 					ie.item = item;
@@ -107,7 +107,7 @@ public class ForestryHandler extends ModHandlerBase {
 				get = blocks.getMethod("block");
 				for (int i = 0; i < BlockEntry.list.length; i++) {
 					BlockEntry ie = BlockEntry.list[i];
-					Field f = blocks.getField(ie.tag); //is enum object now
+					Field f = blocks.getDeclaredField(ie.tag); //is enum object now
 					Object entry = f.get(null);
 					Block b = (Block)get.invoke(entry);
 					ie.item = b;
