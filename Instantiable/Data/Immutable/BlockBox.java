@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -136,6 +137,25 @@ public final class BlockBox {
 
 	public AxisAlignedBB asAABB() {
 		return AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX+1, maxY+1, maxZ+1);
+	}
+
+	public static BlockBox readFromNBT(NBTTagCompound tag) {
+		int minx = tag.getInteger("minx");
+		int miny = tag.getInteger("miny");
+		int minz = tag.getInteger("minz");
+		int maxx = tag.getInteger("maxx");
+		int maxy = tag.getInteger("maxy");
+		int maxz = tag.getInteger("maxz");
+		return new BlockBox(minx, miny, minz, maxx, maxy, maxz);
+	}
+
+	public void writeToNBT(NBTTagCompound tag) {
+		tag.setInteger("minx", minX);
+		tag.setInteger("miny", minY);
+		tag.setInteger("minz", minZ);
+		tag.setInteger("maxx", maxX);
+		tag.setInteger("maxy", maxY);
+		tag.setInteger("maxz", maxZ);
 	}
 
 }

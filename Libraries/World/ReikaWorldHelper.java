@@ -268,6 +268,21 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return 0;
 	}
 
+	public static ForgeDirection checkForAdjNonCube(World world, int x, int y, int z) {
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
+				Block id2 = world.getBlock(dx, dy, dz);
+				if (!id2.isOpaqueCube())
+					return dir;
+			}
+		}
+		return null;
+	}
+
 	/** Returns the direction in which a block of the specified ID was found.
 	 * Returns -1 if not found. Args: World, x,y,z, id to search. */
 	public static ForgeDirection checkForAdjBlock(World world, int x, int y, int z, Block id) {

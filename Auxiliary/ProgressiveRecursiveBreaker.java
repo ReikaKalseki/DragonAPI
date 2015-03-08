@@ -11,6 +11,7 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,6 +32,7 @@ import Reika.DragonAPI.Instantiable.Data.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.TreeType;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
@@ -66,6 +68,10 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		public EntityPlayer player;
 		public BlockBox bounds = BlockBox.infinity();
 		public BreakerCallback call;
+		public boolean isOmni = false;
+		private boolean isBlacklist = false;
+		public boolean pathTracking = false;
+		private final Collection<Coordinate> path = new HashSet();
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<BlockKey> ids) {
 			this.world = world;
@@ -100,6 +106,14 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth) {
 			this(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), depth);
+		}
+
+		public void setBlacklist(BlockKey... keys) {
+			ids.clear();
+			isBlacklist = true;
+			for (int i = 0; i < keys.length; i++) {
+				ids.add(keys[i]);
+			}
 		}
 
 		private void tick() {
@@ -138,6 +152,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 							}
 						}
 					}
+					if (pathTracking)
+						path.add(new Coordinate(x, y, z));
 					this.dropBlock(world, x, y, z);
 				}
 				start.clear();
@@ -169,14 +185,18 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		}
 
 		private boolean canSpreadTo(World world, int x, int y, int z) {
+			if (pathTracking && path.contains(new Coordinate(x, y, z)))
+				return false;
 			if (!bounds.isBlockInside(x, y, z))
 				return false;
 			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
 			if (id == Blocks.air)
 				return false;
-			if (!ids.contains(new BlockKey(id, meta)))
-				return false;
+			if (!isOmni) {
+				if (!ids.contains(new BlockKey(id, meta)))
+					return false;
+			}
 			return player == null || (!world.isRemote && ReikaPlayerAPI.playerCanBreakAt((WorldServer)world, x, y, z, (EntityPlayerMP)player));
 		}
 
