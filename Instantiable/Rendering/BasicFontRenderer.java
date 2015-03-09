@@ -166,7 +166,8 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 		float f = charIndex%16*8;
 		float f1 = charIndex/16*8;
 		float f2 = italic ? 1F : 0F;
-		//GL11.glEnable(GL11.GL_BLEND);
+		if (this.needsGLBlending())
+			GL11.glEnable(GL11.GL_BLEND);
 		//BlendMode.ADDITIVE.apply();
 		this.bindTexture();
 		float f3 = charWidth[charIndex]-0.01F;
@@ -186,6 +187,10 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	}
 
 	protected abstract void bindTexture();
+
+	protected boolean needsGLBlending() {
+		return false;
+	}
 
 	private ResourceLocation getUnicodePageLocation(int gl) {
 		if (unicodePageLocations[gl] == null) {

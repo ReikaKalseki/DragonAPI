@@ -17,7 +17,12 @@ import java.util.Map;
 import org.lwjgl.util.Point;
 import org.lwjgl.util.Rectangle;
 
+/** Uses the generic as a key. Do not confuse with {@link RegionMap}. */
 public class RectangleMap<V> {
+
+	public RectangleMap() {
+
+	}
 
 	private final HashMap<V, Rectangle> data = new HashMap();
 

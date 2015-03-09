@@ -17,6 +17,7 @@ import java.util.Map;
 
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityList.EntityEggInfo;
@@ -81,6 +82,13 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
 
 public final class ReikaEntityHelper extends DragonAPICore {
+
+	public static final IEntitySelector itemSelector = new IEntitySelector() {
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			return e instanceof EntityItem;
+		}
+	};
 
 	/** provides a mapping between an Entity Class and an entity ID */
 	private static Map<Class, Integer> classToIDMapping = new HashMap();
