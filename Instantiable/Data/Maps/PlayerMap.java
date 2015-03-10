@@ -32,6 +32,14 @@ public class PlayerMap<V> {
 		return data.put(getKey(ep), obj);
 	}
 
+	public V directPut(UUID uid, V obj) {
+		return data.put(uid, obj);
+	}
+
+	public V directGet(UUID uid) {
+		return data.get(uid);
+	}
+
 	public V remove(EntityPlayer ep) {
 		return data.remove(getKey(ep));
 	}
