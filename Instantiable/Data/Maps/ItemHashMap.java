@@ -180,8 +180,10 @@ public final class ItemHashMap<V> {
 		private final int metadata;
 
 		private ItemKey(ItemStack is) {
-			if (is == null || is.getItem() == null)
+			if (is == null)
 				throw new MisuseException("You cannot add a null itemstack to the map!");
+			if (is.getItem() == null)
+				throw new MisuseException("You cannot add a null-item itemstack to the map!");
 			this.itemID = is.getItem();
 			this.metadata = is.getItemDamage();
 		}
@@ -229,6 +231,15 @@ public final class ItemHashMap<V> {
 			Integer has = map.get(in);
 			int amt = has != null ? has.intValue() : 0;
 			map.put(in, has+1);
+		}
+		return map;
+	}
+
+	@Override
+	public ItemHashMap<Integer> clone() {
+		ItemHashMap map = new ItemHashMap();
+		for (ItemKey is : this.data.keySet()) {
+			map.data.put(is, data.get(is));
 		}
 		return map;
 	}

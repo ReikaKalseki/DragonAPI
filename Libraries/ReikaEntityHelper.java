@@ -733,4 +733,11 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return (T)e.worldObj.findNearestEntityWithinAABB(e.getClass(), ReikaAABBHelper.getEntityCenteredAABB(e, 24), e);
 	}
 
+	public static void decrEntityItemStack(EntityItem ei, int rem) {
+		ItemStack is = ei.getEntityItem();
+		is.stackSize -= rem;
+		if (is.stackSize <= 0)
+			ei.setDead();
+	}
+
 }

@@ -11,8 +11,11 @@ package Reika.DragonAPI.ASM;
 
 import java.util.HashMap;
 
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.MinecraftForge;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -32,6 +35,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -52,7 +56,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		POTIONPACKETID2("net.minecraft.client.network.NetHandlerPlayClient", "bjb"),
 		BLOCKPLACE("net.minecraft.item.ItemBlock", "abh"),
 		SETBLOCK("net.minecraft.world.chunk.Chunk", "apx"),
-		GUIEVENT("net.minecraft.entity.player.EntityPlayer", "yz")
+		GUIEVENT("net.minecraft.entity.player.EntityPlayer", "yz"),
+		ITEMUPDATE("net.minecraft.entity.item.EntityItem", "xk")
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
 		;
 
@@ -435,6 +440,29 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 						break;
 					}
 				}
+				break;
+			}
+			case ITEMUPDATE: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70071_h_", "onUpdate", "()V");
+				InsnList fire = new InsnList();
+				fire.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				fire.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/ItemUpdateEvent"));
+				fire.add(new InsnNode(Opcodes.DUP));
+				fire.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				fire.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/ItemUpdateEvent", "<init>", "(Lnet/minecraft/entity/item/EntityItem;)V", false));
+				fire.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				fire.add(new InsnNode(Opcodes.POP));
+
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.INVOKESPECIAL) {
+						MethodInsnNode min = (MethodInsnNode)ain;
+						if (min.name.equals(m.name) && min.owner.equals("net/minecraft/entity/Entity")) {
+							m.instructions.insert(min, fire);
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+						}
+					}
+				}
 			}
 			//case PLAYERRENDER: {
 			//
@@ -449,6 +477,29 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			//new ClassReader(newdata).accept(vcn, 0);
 			return newdata;
 		}
+	}
+
+	class test extends EntityItem {
+
+		public test(World p_i1711_1_) {
+			super(p_i1711_1_);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public void onUpdate() {
+
+			if (ticksExisted > 0)
+				ticksExisted--;
+
+			super.onUpdate();
+			MinecraftForge.EVENT_BUS.post(new ItemUpdateEvent(this));
+
+			if (onGround) {
+				this.setDead();
+			}
+		}
+
 	}
 
 	@Override

@@ -52,6 +52,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
 import Reika.DragonAPI.Command.BlockReplaceCommand;
+import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
 import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
 import Reika.DragonAPI.Command.GuideCommand;
@@ -64,6 +65,7 @@ import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
+import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
@@ -397,6 +399,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new TileSyncCommand());
 		evt.registerServerCommand(new IDDumpCommand());
 		evt.registerServerCommand(new FindTilesCommand());
+		evt.registerServerCommand(new ClearItemsCommand());
 
 		if (MTInteractionManager.isMTLoaded())
 			MTInteractionManager.instance.scanAndRevert();
@@ -436,6 +439,13 @@ public class DragonAPIInit extends DragonAPIMod {
 			//NEIFontRendererHandler.instance.register();
 		}
 		proxy.registerSidedHandlersGameLoaded();
+	}
+
+	@SubscribeEvent
+	public void clearItems(ItemUpdateEvent evt) {
+		if (ClearItemsCommand.clearItem(evt.entityItem)) {
+			evt.entityItem.setDead();
+		}
 	}
 
 	@SubscribeEvent

@@ -52,8 +52,8 @@ class AnnotationStripper {
 	static final ArrayList<String> workingPath = new ArrayList<String>();
 	private static final String[] emptyList = {};
 	static class AnnotationInfo {
-		public String side;
-		public String[] values = emptyList;
+		String side;
+		String[] values = emptyList;
 	}
 
 	static byte[] parse(String name, String transformedName, byte[] bytes) {

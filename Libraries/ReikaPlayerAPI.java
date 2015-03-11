@@ -180,9 +180,9 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			return true;
 		ItemStack[] ii = ep.inventory.mainInventory;
 		if (meta != -1)
-			return (ReikaInventoryHelper.checkForItemStack(id, meta, ii));
+			return ReikaInventoryHelper.checkForItemStack(id, meta, ii);
 		else
-			return (ReikaInventoryHelper.checkForItem(id, ii));
+			return ReikaInventoryHelper.checkForItem(id, ii);
 	}
 
 	public static boolean playerHasOrIsCreative(EntityPlayer ep, Block id, int meta) {

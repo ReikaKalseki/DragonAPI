@@ -151,7 +151,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		if (ModList.MYSTCRAFT.isLoaded() && id == MystCraftHandler.getInstance().portalID)
 			return true;
-		if (ModList.TWILIGHT.isLoaded() && id == TwilightForestHandler.getInstance().portalID)
+		if (ModList.TWILIGHT.isLoaded() && id == TwilightForestHandler.BlockEntry.PORTAL.getBlock())
 			return true;
 		return false;
 	}

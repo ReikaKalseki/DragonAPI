@@ -392,7 +392,7 @@ public final class TreeReader extends BlockArray {
 				return;
 			}
 			//ItemStack leaf = wood.getCorrespondingLeaf();
-			if (id == Blocks.log || id == Blocks.log2 || wood != null || id == TwilightForestHandler.getInstance().treeCoreID) {
+			if (id == Blocks.log || id == Blocks.log2 || wood != null || id == TwilightForestHandler.BlockEntry.TREECORE.getBlock()) {
 				this.addBlockCoordinate(x, y, z);
 				for (int i = -1; i <= 1; i++) {
 					for (int j = -1; j <= 1; j++) {

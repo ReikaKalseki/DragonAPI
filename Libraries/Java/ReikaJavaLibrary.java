@@ -431,4 +431,12 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		String n = c.getName();
 		return n.substring(0, n.indexOf('.'));
 	}
+
+	public static <E> Collection<E> getCompoundCollection(Collection<Collection<E>> colls) {
+		Collection<E> c = new ArrayList();
+		for (Collection<E> c2 : colls) {
+			c.addAll(c2);
+		}
+		return c;
+	}
 }

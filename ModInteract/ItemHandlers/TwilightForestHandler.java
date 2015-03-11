@@ -20,38 +20,78 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class TwilightForestHandler extends ModHandlerBase {
 
-	public final Block rootID;
-	public final Block towerMachineID;
-	public final Block towerWoodID;
-	public final Block mazeStoneID;
-	public final Block treeCoreID;
-	public final Block shieldID;
-	public final Block portalID;
-	public final Block hedgeID;
-
-	public final Item steelleaf;
-	public final Item ironwood;
-
 	public final int breakerMeta;
 
 	public final int dimensionID;
+
+	private boolean init = false;
+
+	public static enum BlockEntry {
+		ROOT("root"),
+		TOWERMACHINE("towerDevice"),
+		TOWERWOOD("towerWood"),
+		MAZESTONE("mazestone"),
+		TREECORE("magicLogSpecial"),
+		SHIELD("shield"),
+		PORTAL("portal"),
+		HEDGE("hedge"),
+		DEADROCK("deadrock"),
+		FIREJET("fireJet"),
+		FIREFLY("firefly"),
+		MOONWORM("moonworm"),
+		FIREFLYJAR("fireflyJar"),
+		CICADA("cicada");
+
+		private final String tag;
+		private Block block;
+
+		private static final BlockEntry[] list = values();
+
+		private BlockEntry(String s) {
+			tag = s;
+		}
+
+		public Block getBlock() {
+			return block;
+		}
+	}
+
+	public static enum ItemEntry {
+		STEELLEAF("steeleafIngot"),
+		IRONWOOD("ironwoodIngot"),
+		MOONWORM("moonwormQueen"),
+		NAGASCALE("nagaScale"),
+		TORCHBERRY("torchberries"),
+		TOWERKEY("towerKey"),
+		FEATHER("feather"),
+		CARMINITE("carminite"),
+		TRANSFORMDUST("transformPowder");
+
+
+		private final String tag;
+		private Item item;
+
+		private static final ItemEntry[] list = values();
+
+		private ItemEntry(String s) {
+			tag = s;
+		}
+
+		public Item getItem() {
+			return item;
+		}
+
+		public ItemStack getStack() {
+			return new ItemStack(item);
+		}
+	}
 
 	private static final TwilightForestHandler instance = new TwilightForestHandler();
 
 	private TwilightForestHandler() {
 		super();
-		Block idroot = null;
-		Block idmachine = null;
-		Block idtowerwood = null;
 		int metabreaker = -1;
-		Block idmaze = null;
-		Block idcore = null;
-		Block idshield = null;
-		Block idhedge = null;
-		Block idportal = null;
 		int dim = 7;
-		Item leaf = null;
-		Item ironw = null;
 
 		if (this.hasMod()) {
 			try {
@@ -59,29 +99,24 @@ public class TwilightForestHandler extends ModHandlerBase {
 				Class items = this.getMod().getItemClass();
 				Class devices = Class.forName("twilightforest.block.BlockTFTowerDevice");
 				Class mod = Class.forName("twilightforest.TwilightForestMod");
-				Field root = twilight.getField("root");
-				Field machine = twilight.getField("towerDevice");
-				Field towerwood = twilight.getField("towerWood");
-				Field core = twilight.getField("magicLogSpecial");
-				Field maze = twilight.getField("mazestone");
-				Field shield = twilight.getField("shield");
 				Field breaker = devices.getField("META_ANTIBUILDER");
 				Field dimension = mod.getField("dimensionID");
-				Field portal = twilight.getField("portal");
-				Field hedge = twilight.getField("hedge");
-				Field sleaf = items.getField("steeleafIngot");
-				Field iwood = items.getField("ironwoodIngot");
-				idroot = ((Block)root.get(null));
-				idmachine = ((Block)machine.get(null));
-				idtowerwood = ((Block)towerwood.get(null));
-				idmaze = ((Block)maze.get(null));
-				idcore = ((Block)core.get(null));
-				idshield = ((Block)shield.get(null));
-				idportal = ((Block)portal.get(null));
-				idhedge = ((Block)hedge.get(null));
-				leaf = ((Item)sleaf.get(null));
 				metabreaker = breaker.getInt(null);
 				dim = dimension.getInt(null);
+
+				for (int i = 0; i < BlockEntry.list.length; i++) {
+					BlockEntry b = BlockEntry.list[i];
+					Field f = twilight.getField(b.tag);
+					b.block = (Block)f.get(null);
+				}
+
+				for (int i = 0; i < ItemEntry.list.length; i++) {
+					ItemEntry b = ItemEntry.list[i];
+					Field f = items.getField(b.tag);
+					b.item = (Item)f.get(null);
+				}
+
+				init = true;
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Twilight Forest class not found! Cannot read its contents!");
@@ -112,19 +147,8 @@ public class TwilightForestHandler extends ModHandlerBase {
 			this.noMod();
 		}
 
-		rootID = idroot;
-		towerMachineID = idmachine;
-		towerWoodID = idtowerwood;
 		breakerMeta = metabreaker;
-		mazeStoneID = idmaze;
-		treeCoreID = idcore;
-		shieldID = idshield;
 		dimensionID = dim;
-		portalID = idportal;
-		hedgeID = idhedge;
-
-		steelleaf = leaf;
-		ironwood = ironw;
 	}
 
 	public static TwilightForestHandler getInstance() {
@@ -133,7 +157,7 @@ public class TwilightForestHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return rootID != null && towerMachineID != null && towerWoodID != null && breakerMeta != -1 && mazeStoneID != null && treeCoreID != null && shieldID != null;
+		return init;
 	}
 
 	@Override
@@ -141,28 +165,8 @@ public class TwilightForestHandler extends ModHandlerBase {
 		return ModList.TWILIGHT;
 	}
 
-	public ItemStack getRoot() {
-		if (!this.initializedProperly())
-			return null;
-		return new ItemStack(rootID, 1, 0);
-	}
-
-	public ItemStack getTowerMachine() {
-		if (!this.initializedProperly())
-			return null;
-		return new ItemStack(towerMachineID, 1, 0);
-	}
-
-	public boolean isTowerWood(Block b) {
-		if (!this.initializedProperly())
-			return false;
-		return b == towerWoodID;
-	}
-
-	public boolean isMazeStone(Block b) {
-		if (!this.initializedProperly())
-			return false;
-		return b == mazeStoneID;
+	public boolean isToughBlock(Block b) {
+		return b == BlockEntry.MAZESTONE.getBlock() || b == BlockEntry.SHIELD.getBlock() || b == BlockEntry.DEADROCK.getBlock();
 	}
 
 }

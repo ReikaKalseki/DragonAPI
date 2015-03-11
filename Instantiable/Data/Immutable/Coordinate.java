@@ -197,4 +197,12 @@ public final class Coordinate {
 		return world != null && world.setBlock(xCoord, yCoord, zCoord, id, meta, 3);
 	}
 
+	public void updateTick(World world) {
+		this.updateTick(world, world.rand);
+	}
+
+	public void updateTick(World world, Random r) {
+		this.getBlock(world).updateTick(world, xCoord, yCoord, zCoord, r);
+	}
+
 }

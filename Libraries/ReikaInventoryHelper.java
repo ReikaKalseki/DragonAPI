@@ -30,6 +30,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.TemporaryInventory;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Interfaces.ActivatedInventoryItem;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -40,9 +41,15 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	 * Returns true if found. Args: Item ID, Inventory */
 	public static boolean checkForItem(Item id, ItemStack[] inv) {
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null) {
-				if (inv[i].getItem() == id)
+			ItemStack in = inv[i];
+			if (in != null) {
+				if (in.getItem() == id) {
 					return true;
+				}
+				else if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItem(id, ((ActivatedInventoryItem)in.getItem()).getInventory(in)))
+						return true;
+				}
 			}
 		}
 		return false;
@@ -54,9 +61,15 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	public static boolean checkForItem(Item id, IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
-			if (ii.getStackInSlot(i) != null) {
-				if (ii.getStackInSlot(i).getItem() == id)
+			ItemStack in = ii.getStackInSlot(i);
+			if (in != null) {
+				if (in.getItem() == id) {
 					return true;
+				}
+				else if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItem(id, ((ActivatedInventoryItem)in.getItem()).getInventory(in)))
+						return true;
+				}
 			}
 		}
 		return false;
@@ -68,7 +81,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Checks an itemstack array (eg an inventory) for an itemstack,
 	 * defined by id, size, metadata. Returns true if found.
-	 * Args: Item ID, Metadata, StackSize, Inventory */
+	 * Args: Item ID, Metadata, StackSize, Inventory *//*
+	 @Deprecated
 	public static boolean checkForItemStack(Item id, int dmg, int num, ItemStack[] inv) {
 		for (int i = 0; i < inv.length; i++) {
 			if (inv[i] != null) {
@@ -78,15 +92,21 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 		return false;
 	}
-
+	  */
 	/** Checks an itemstack array (eg an inventory) for an itemstack,
 	 * defined by id, and metadata. Returns true if found.
 	 * Args: Item ID, Metadata, Inventory */
 	public static boolean checkForItemStack(Item id, int dmg, ItemStack[] inv) {
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null) {
-				if (inv[i].getItem() == id && inv[i].getItemDamage() == dmg)
+			ItemStack in = inv[i];
+			if (in != null) {
+				if (in.getItem() == id && in.getItemDamage() == dmg) {
 					return true;
+				}
+				else if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItemStack(id, dmg, ((ActivatedInventoryItem)in.getItem()).getInventory(in)))
+						return true;
+				}
 			}
 		}
 		return false;
@@ -99,8 +119,13 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack is = inv.getStackInSlot(i);
 			if (is != null) {
-				if (is.getItem() == id && is.getItemDamage() == dmg)
+				if (is.getItem() == id && is.getItemDamage() == dmg) {
 					return true;
+				}
+				else if (is.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItemStack(id, dmg, ((ActivatedInventoryItem)is.getItem()).getInventory(is)))
+						return true;
+				}
 			}
 		}
 		return false;
@@ -112,6 +137,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		for (int i = 0; i < inv.length; i++) {
 			ItemStack in = inv[i];
 			if (in != null) {
+				if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItemStack(is, ((ActivatedInventoryItem)in.getItem()).getInventory(in), matchsize))
+						return true;
+				}
 				if (matchsize) {
 					if (ItemStack.areItemStacksEqual(is, in))
 						return true;
@@ -131,6 +160,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack in = inv.getStackInSlot(i);
 			if (in != null) {
+				if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItemStack(is, ((ActivatedInventoryItem)in.getItem()).getInventory(in), matchsize))
+						return true;
+				}
 				if (matchsize) {
 					if (ItemStack.areItemStacksEqual(is, in))
 						return true;
@@ -150,6 +183,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		for (int i = 0; i < inv.length; i++) {
 			ItemStack in = inv[i];
 			if (in != null) {
+				if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItemStack(is, ((ActivatedInventoryItem)in.getItem()).getInventory(in), matchsize))
+						return i;
+				}
 				if (matchsize) {
 					if (ItemStack.areItemStacksEqual(is, in)) {
 						return i;
@@ -171,6 +208,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		for (int i = 0; i < inv.getSizeInventory(); i++) {
 			ItemStack in = inv.getStackInSlot(i);
 			if (in != null) {
+				if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItemStack(is, ((ActivatedInventoryItem)in.getItem()).getInventory(in), matchsize))
+						return i;
+				}
 				if (matchsize) {
 					if (ItemStack.areItemStacksEqual(is, in)) {
 						return i;
@@ -189,12 +230,15 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	/** Returns the location (array index) of an item in the specified inventory.
 	 * Returns -1 if not present. Args: Item ID, Inventory */
 	public static int locateInInventory(Item id, ItemStack[] inv) {
-		if (!checkForItem(id, inv))
-			return -1;
 		for (int i = 0; i < inv.length; i++) {
-			if (inv[i] != null) {
-				if (inv[i].getItem() == id) {
+			ItemStack in = inv[i];
+			if (in != null) {
+				if (in.getItem() == id) {
 					return i;
+				}
+				else if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (locateInInventory(id, ((ActivatedInventoryItem)in.getItem()).getInventory(in)) >= 0)
+						return i;
 				}
 			}
 		}
@@ -212,23 +256,15 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	/** Returns the location (array index) of an item in the specified inventory.
 	 * Returns -1 if not present. Args: Item ID, Metadata, Inventory */
 	public static int locateInInventory(Item id, int meta, ItemStack[] inv) {
-		if (!checkForItem(id, inv))
-			return -1;
-		if (meta == -1) {
-			for (int i = 0; i < inv.length; i++) {
-				if (inv[i] != null) {
-					if (inv[i].getItem() == id) {
-						return i;
-					}
+		for (int i = 0; i < inv.length; i++) {
+			ItemStack in = inv[i];
+			if (in != null) {
+				if (in.getItem() == id && (meta == -1 || in.getItemDamage() == meta)) {
+					return i;
 				}
-			}
-		}
-		else {
-			for (int i = 0; i < inv.length; i++) {
-				if (inv[i] != null) {
-					if (inv[i].getItem() == id && inv[i].getItemDamage() == meta) {
+				else if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (locateInInventory(id, meta, ((ActivatedInventoryItem)in.getItem()).getInventory(in)) >= 0)
 						return i;
-					}
 				}
 			}
 		}
@@ -287,10 +323,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		if (slot == -1)
 			return false;
 		else {
-			if (inv[slot].stackSize > 1)
-				inv[slot].stackSize--;
-			else
-				inv[slot] = null;
+			decrStack(slot, inv);
 			return true;
 		}
 	}
@@ -307,10 +340,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			return null;
 		else {
 			ItemStack inslot = inv[slot];
-			if (inv[slot].stackSize > 1)
-				inv[slot].stackSize--;
-			else
-				inv[slot] = null;
+			decrStack(slot, inv);
 			return inslot;
 		}
 	}
@@ -607,12 +637,16 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			ReikaChatHelper.write("Tried to access Slot "+slot+", which is < 0.");
 			return;
 		}
-		if (inv[slot] == null) {
+		ItemStack in = inv[slot];
+		if (in == null) {
 			ReikaChatHelper.write("Tried to access Slot "+slot+", which is empty.");
 			return;
 		}
-		if (inv[slot].stackSize > 1)
-			inv[slot].stackSize--;
+		if (in.getItem() instanceof ActivatedInventoryItem) {
+			((ActivatedInventoryItem)in.getItem()).decrementSlot(in, slot);
+		}
+		else if (in.stackSize > 1)
+			in.stackSize--;
 		else
 			inv[slot] = null;
 	}

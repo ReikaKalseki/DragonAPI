@@ -66,7 +66,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 		this.addBlock(x, y, z , new BlockKey(id, meta));
 	}
 
-	public void addBlock(int x, int y, int z, BlockKey bk) {
+	private void addBlock(int x, int y, int z, BlockKey bk) {
 		super.addBlockCoordinate(x, y, z);
 		this.addBlockToCoord(new Coordinate(x, y, z), bk);
 	}
