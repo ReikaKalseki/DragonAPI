@@ -12,12 +12,12 @@ package Reika.DragonAPI.Instantiable.IO;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.relauncher.Side;
@@ -64,20 +64,34 @@ public abstract class PacketTarget {
 
 	public static final class RadiusTarget extends PacketTarget {
 
-		private final WorldLocation loc;
+		private final int dim;
+		private final double x;
+		private final double y;
+		private final double z;
 		private final int radius;
 
 		public RadiusTarget(WorldLocation loc, int r) {
-			this.loc = loc;
-			radius = r;
+			this(loc.dimensionID, loc.xCoord, loc.yCoord, loc.zCoord, r);
+		}
+
+		public RadiusTarget(Entity e, int r) {
+			this(e.worldObj, e.posX, e.posY, e.posZ, r);
 		}
 
 		public RadiusTarget(TileEntity te, int r) {
-			this(new WorldLocation(te), r);
+			this(te.worldObj, te.xCoord+0.5, te.yCoord+0.5, te.zCoord+0.5, r);
 		}
 
-		public RadiusTarget(World world, int x, int y, int z, int r) {
-			this(new WorldLocation(world, x, y, z), r);
+		public RadiusTarget(World world, double x, double y, double z, int r) {
+			this(world.provider.dimensionId, x, y, z, r);
+		}
+
+		private RadiusTarget(int world, double x, double y, double z, int r) {
+			dim = world;
+			this.x = x;
+			this.y = y;
+			this.z = z;
+			radius = r;
 		}
 
 		public RadiusTarget(World world, Coordinate c, int r) {
@@ -86,7 +100,7 @@ public abstract class PacketTarget {
 
 		@Override
 		public void dispatch(PacketPipeline p, PacketObj pk) {
-			p.sendToAllAround(pk, loc, radius);
+			p.sendToAllAround(pk, dim, x, y, z, radius);
 		}
 	}
 

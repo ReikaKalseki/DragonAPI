@@ -66,6 +66,14 @@ public class DragonAPICore {
 		return (File)FMLInjectionData.data()[6];
 	}
 
+	public static String getMinecraftDirectoryString() {
+		String s = getMinecraftDirectory().getAbsolutePath();
+		if (s.endsWith("/.") || s.endsWith("\\.")) {
+			s = s.substring(0, s.length()-2);
+		}
+		return s;
+	}
+
 	private static boolean calculateReikasComputer() {
 		try {
 			String username = System.getProperty("user.name");

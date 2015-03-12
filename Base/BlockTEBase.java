@@ -92,7 +92,7 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 
 	@Override
 	public boolean canMove(World world, int x, int y, int z) {
-		return !FrameBlacklist.fireFrameEvent(world, x, y, z);
+		return !FrameBlacklist.instance.fireFrameEvent(world, x, y, z);
 	}
 
 }

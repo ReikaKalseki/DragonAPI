@@ -29,17 +29,19 @@ import cpw.mods.fml.common.eventhandler.Event;
 
 public class FrameBlacklist {
 
-	static {
+	public static final FrameBlacklist instance = new FrameBlacklist();
+
+	private FrameBlacklist() {
 		if (Loader.isModLoaded("framez"))
 			FramezApi.inst().getMovementApi().registerMovementHandler(new FramezHandler());
 	}
 
-	private static boolean isBlacklisted(World world, int x, int y, int z, Block b, int meta, TileEntity te) {
+	private boolean isBlacklisted(World world, int x, int y, int z, Block b, int meta, TileEntity te) {
 		return MinecraftForge.EVENT_BUS.post(new FrameUsageEvent(world, x, y, z, b, meta, te));
 	}
 
 	@Strippable("com.amadornes.framez.api.movement.IMovementHandler")
-	public static class FramezHandler implements IMovementHandler {
+	public class FramezHandler implements IMovementHandler {
 
 		private FramezHandler() {
 
@@ -49,26 +51,26 @@ public class FrameBlacklist {
 		@SmartStrip
 		@HandlingPriority(Priority.HIGH)
 		public boolean handleStartMoving(IMovingBlock block) {
-			return isBlacklisted(block.getWorld(), block.getX(), block.getY(), block.getZ(), block.getBlock(), block.getMetadata(), block.getTileEntity());
+			return FrameBlacklist.this.isBlacklisted(block.getWorld(), block.getX(), block.getY(), block.getZ(), block.getBlock(), block.getMetadata(), block.getTileEntity());
 		}
 
 		@Override
 		@SmartStrip
 		@HandlingPriority(Priority.HIGH)
 		public boolean handleFinishMoving(IMovingBlock block) {
-			return isBlacklisted(block.getWorld(), block.getX(), block.getY(), block.getZ(), block.getBlock(), block.getMetadata(), block.getTileEntity());
+			return FrameBlacklist.this.isBlacklisted(block.getWorld(), block.getX(), block.getY(), block.getZ(), block.getBlock(), block.getMetadata(), block.getTileEntity());
 		}
 
 		@Override
 		@SmartStrip
 		@HandlingPriority(Priority.HIGH)
 		public BlockMovementType getMovementType(World world, Integer x, Integer y, Integer z) {
-			return isBlacklisted(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), world.getTileEntity(x, y, z)) ? BlockMovementType.UNMOVABLE : null;
+			return FrameBlacklist.this.isBlacklisted(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), world.getTileEntity(x, y, z)) ? BlockMovementType.UNMOVABLE : null;
 		}
 
 	}
 
-	public static boolean fireFrameEvent(World world, int x, int y, int z) {
+	public boolean fireFrameEvent(World world, int x, int y, int z) {
 		return MinecraftForge.EVENT_BUS.post(new FrameUsageEvent(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), world.getTileEntity(x, y, z)));
 	}
 

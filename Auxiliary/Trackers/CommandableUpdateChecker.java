@@ -9,7 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary.Trackers;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -37,6 +41,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Extras.ModVersion;
 import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Instantiable.Event.ClientLoginEvent;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -58,9 +63,9 @@ public class CommandableUpdateChecker {
 	private final HashMap<DragonAPIMod, ModVersion> latestVersions = new HashMap();
 	private final Collection<UpdateChecker> checkers = new ArrayList();
 	private final Collection<DragonAPIMod> oldMods = new ArrayList();
-	private final Collection<DragonAPIMod> oldModsAggressive = new ArrayList();
 	private final HashMap<String, DragonAPIMod> modNames = new HashMap();
 	private final HashMap<DragonAPIMod, Boolean> overrides = new HashMap();
+	private final HashMap<DragonAPIMod, UpdateHash> hashes = new HashMap();
 
 	private CommandableUpdateChecker() {
 
@@ -92,20 +97,92 @@ public class CommandableUpdateChecker {
 		}
 	}
 
-	public boolean beAggressive(DragonAPIMod mod, ModVersion version, ModVersion latest) {
-		return DragonOptions.UPDATESCROLL.getState() || !this.canSkipAnnoyance(mod, version, latest);
+	public boolean beAggressive(DragonAPIMod mod, EntityPlayer ep) {
+		return DragonOptions.UPDATESCROLL.getState() || !this.canSkipAnnoyance(mod, ep);
 	}
 
-	private boolean canSkipAnnoyance(DragonAPIMod mod, ModVersion version, ModVersion latest) {
+	private boolean canSkipAnnoyance(DragonAPIMod mod, EntityPlayer ep) {
+		ModVersion latest = latestVersions.get(mod);
+		ModVersion version = mod.getModVersion();
 		if (latest.majorVersion-version.majorVersion > 1)
 			return false;
-		return true;
+		UpdateHash test = this.genHash(mod, ep);
+		UpdateHash get = this.getOrCreateHash(mod, ep);
+
+		return this.canHideMessage(get, test);
+	}
+
+	private UpdateHash getOrCreateHash(DragonAPIMod mod, EntityPlayer ep) {
+		UpdateHash uh = hashes.get(mod);
+		if (uh == null) {
+			uh = this.readHash(mod);
+			if (uh == null) {
+				uh = this.genHash(mod, ep);
+				this.writeHash(mod, uh);
+			}
+			hashes.put(mod, uh);
+		}
+		return uh;
+	}
+
+	private UpdateHash readHash(DragonAPIMod mod) {
+		File f = this.getHashFile();
+		ArrayList<String> data = ReikaFileReader.getFileAsLines(f, true);
+		for (String s : data) {
+			String tag = mod.getDisplayName()+"=";
+			if (s.startsWith(tag)) {
+				return UpdateHash.decode(s.substring(tag.length()));
+			}
+		}
+		return null;
+	}
+
+	private void writeHash(DragonAPIMod mod, UpdateHash uh) {
+		File f = this.getHashFile();
+		ArrayList<String> data = ReikaFileReader.getFileAsLines(f, true);
+		String tag = mod.getDisplayName()+"=";
+		data.add(tag+uh.toString());
+		try {
+			BufferedReader r = new BufferedReader(new FileReader(f));
+			String sep = System.getProperty("line.separator");
+			String line = r.readLine();
+			StringBuilder out = new StringBuilder();
+			for (String l : data) {
+				out.append(l+sep);
+			}
+			r.close();
+			FileOutputStream os = new FileOutputStream(f);
+			os.write(out.toString().getBytes());
+			os.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private File getHashFile() {
+		String base = DragonAPICore.getMinecraftDirectoryString();
+		File parent = new File(base+"/config/Reika");
+		if (!parent.exists())
+			parent.mkdirs();
+		String path = parent+"/versions.dat";
+		File f = new File(path);
+		try {
+			if (!f.exists())
+				f.createNewFile();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return f;
+	}
+
+	private UpdateHash genHash(DragonAPIMod mod, EntityPlayer ep) {
+		return new UpdateHash(ep.getUniqueID(), mod.getModContainer().getSource().getAbsolutePath(), System.currentTimeMillis());
 	}
 
 	private void markUpdate(DragonAPIMod mod, ModVersion version, ModVersion latest) {
 		oldMods.add(mod);
-		if (this.beAggressive(mod, version, latest))
-			oldModsAggressive.add(mod);
 
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setString("modDisplayName", mod.getDisplayName());
@@ -117,9 +194,13 @@ public class CommandableUpdateChecker {
 		FMLInterModComms.sendRuntimeMessage(mod.getModContainer().getModId(), "VersionChecker", "addUpdate", nbt);
 	}
 
+	private boolean canHideMessage(UpdateHash get, UpdateHash test) {
+		return !get.equals(test) && test.timestamp < get.timestamp+(1000*3600*24*14) && test.timestamp >= get.timestamp; //2 weeks, and cannot be errored
+	}
+
 	public void registerMod(DragonAPIMod mod) {
 		ModVersion version = mod.getModVersion();
-		if (version == ModVersion.source) {
+		if (version == ModVersion.source && false) {
 			mod.getModLogger().log("Mod is in source code form. Not checking versions.");
 			return;
 		}
@@ -219,6 +300,7 @@ public class CommandableUpdateChecker {
 	}
 
 	public void notifyPlayer(EntityPlayer ep) {
+		this.genHashes(ep);
 		if (!oldMods.isEmpty()) {
 			this.sendMessages(ep);
 			if (ep instanceof EntityPlayerMP)
@@ -227,14 +309,26 @@ public class CommandableUpdateChecker {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void onClientReceiveOldModsNote() {
-		if (!oldModsAggressive.isEmpty()) {
-			StringBuilder sb = new StringBuilder();
-			for (DragonAPIMod mod : oldMods) {
+	public void onClientLogin(ClientLoginEvent evt) {
+		this.genHashes(evt.player);
+	}
+
+	private void genHashes(EntityPlayer ep) {
+		for (DragonAPIMod mod : latestVersions.keySet()) {
+			this.getOrCreateHash(mod, ep);
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void onClientReceiveOldModsNote(EntityPlayer ep) {
+		StringBuilder sb = new StringBuilder();
+		for (DragonAPIMod mod : oldMods) {
+			if (this.beAggressive(mod, ep)) {
 				sb.append(mod.getDisplayName()+" ("+mod.getModVersion()+" -> "+latestVersions.get(mod).toString()+"); ");
 			}
-			MinecraftForge.EVENT_BUS.register(new ScreenWriter(sb.toString()));
 		}
+		if (sb.length() > 0)
+			MinecraftForge.EVENT_BUS.register(new ScreenWriter(sb.toString()));
 	}
 
 	private void sendMessages(EntityPlayer ep) {
@@ -348,6 +442,85 @@ public class CommandableUpdateChecker {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private static class UpdateHash {
+
+		private final long timestamp;
+		private final String filepath;
+		private final UUID player;
+
+		private UpdateHash(UUID id, String file, long time) {
+			player = id;
+			filepath = file;
+			timestamp = time;
+
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof UpdateHash) {
+				UpdateHash uh = (UpdateHash)o;
+				return uh.player == player && uh.filepath.equals(player);
+			}
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			String time = String.valueOf(timestamp);
+			String id = player.toString();
+			StringBuffer sb = new StringBuffer();
+			int idx = 0;
+			while (idx < time.length() || idx < id.length() || idx < filepath.length()) {
+				char c1 = idx >= time.length() ? '*' : time.charAt(idx);
+				char c2 = idx >= id.length() ? '*' : id.charAt(idx); possibly not working
+				char c3 = idx >= filepath.length() ? '*' : filepath.charAt(idx);
+				long sum = c1 | (c2 << 16) | (c3 << 32);
+				idx++;
+				sb.append(this.getStringForInt(sum)+":");
+			}
+			return sb.toString();
+		}
+
+		public static UpdateHash decode(String s) {
+			StringBuilder path = new StringBuilder();
+			StringBuilder id = new StringBuilder();
+			StringBuilder time = new StringBuilder();
+			String[] parts = s.split(":");
+			for (int i = 0; i < parts.length; i++) {
+				String p = parts[i];
+				long dat = getIntForString(p);
+				char c1 = (char)(dat & 65535);
+				char c2 = (char)((dat >> 16) & 65535); not working correctly
+				char c3 = (char)((dat >> 32) & 65535);
+				if (c1 != '*')
+					time.append(c1);
+				if (c2 != '*')
+					id.append(c2);
+				if (c3 != '*')
+					path.append(c3);
+			}
+			return new UpdateHash(UUID.fromString(id.toString()), path.toString(), Long.parseLong(time.toString()));
+		}
+
+		private static String getStringForInt(long l) {
+			return Long.toString(l, 36);
+		}
+
+		private static long getIntForString(String s) {
+			return Long.parseLong(s, 36);
+		}
+
+		private static final char[] chars = {
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+			'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+			'v', 'w', 'x', 'y', 'z', '~', '`', '+', '-', '=',
+			'!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
+			'[', ']', '{', '}', ';', ':', '<', '>', ',', '.',
+		};
+
 	}
 
 	@SideOnly(Side.CLIENT)

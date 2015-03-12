@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.IO;
 import java.util.ArrayList;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.network.Packet;
@@ -87,7 +88,19 @@ public class PacketPipeline {
 	}
 
 	public void sendToAllAround(PacketObj p, World world, double x, double y, double z, int range) {
-		TargetPoint pt = new TargetPoint(world.provider.dimensionId, x, y, z, range);
+		this.sendToAllAround(p, world.provider.dimensionId, x, y, z, range);
+	}
+
+	public void sendToAllAround(PacketObj p, int world, double x, double y, double z, int range) {
+		TargetPoint pt = new TargetPoint(world, x, y, z, range);
+		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
+		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(pt);
+		//channels.get(Side.SERVER).writeAndFlush(p);
+		wrapper.sendToAllAround(p, pt);
+	}
+
+	public void sendToAllAround(PacketObj p, Entity e, int range) {
+		TargetPoint pt = new TargetPoint(e.worldObj.provider.dimensionId, e.posX, e.posY, e.posZ, range);
 		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
 		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(pt);
 		//channels.get(Side.SERVER).writeAndFlush(p);

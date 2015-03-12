@@ -27,6 +27,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Base.TileEntityBase;
 import Reika.DragonAPI.Command.IDDumpCommand;
+import Reika.DragonAPI.Instantiable.Event.ClientLoginEvent;
 import Reika.DragonAPI.Instantiable.Event.RawKeyPressEvent;
 import Reika.DragonAPI.Instantiable.Rendering.NumberParticleFX;
 import Reika.DragonAPI.Interfaces.IPacketHandler;
@@ -221,9 +222,11 @@ public class APIPacketHandler implements IPacketHandler {
 				break;
 			case OLDMODS:
 				break;
+			case LOGIN:
+				break;
 			}
 			if (world.isRemote)
-				this.clientHandle(world, x, y, z, pack, data);
+				this.clientHandle(world, x, y, z, pack, data, ep);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -231,7 +234,7 @@ public class APIPacketHandler implements IPacketHandler {
 	}
 
 	@SideOnly(Side.CLIENT)
-	private void clientHandle(World world, int x, int y, int z, PacketIDs pack, int[] data) {
+	private void clientHandle(World world, int x, int y, int z, PacketIDs pack, int[] data, EntityPlayer player) {
 		switch(pack) {
 		case NUMBERPARTICLE:
 			Minecraft.getMinecraft().effectRenderer.addEffect(new NumberParticleFX(world, x+0.5, y+0.5, z+0.5, data[0]));
@@ -244,7 +247,10 @@ public class APIPacketHandler implements IPacketHandler {
 			ReikaParticleHelper.EXPLODE.spawnAroundBlock(world, x, y, z, 1);
 			break;
 		case OLDMODS:
-			CommandableUpdateChecker.instance.onClientReceiveOldModsNote();
+			CommandableUpdateChecker.instance.onClientReceiveOldModsNote(player);
+			break;
+		case LOGIN:
+			MinecraftForge.EVENT_BUS.post(new ClientLoginEvent(player));
 			break;
 		default:
 			break;
@@ -267,7 +273,8 @@ public class APIPacketHandler implements IPacketHandler {
 		NUMBERPARTICLE(),
 		IDDUMP(),
 		EXPLODE(),
-		OLDMODS();
+		OLDMODS(),
+		LOGIN();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
