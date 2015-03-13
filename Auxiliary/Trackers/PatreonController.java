@@ -19,7 +19,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.DonatorController.Donator;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 
-public class PatreonController {
+public final class PatreonController {
 
 	public static final PatreonController instance = new PatreonController();
 

@@ -54,7 +54,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class CommandableUpdateChecker {
+public final class CommandableUpdateChecker {
 
 	public static final CommandableUpdateChecker instance = new CommandableUpdateChecker();
 
@@ -195,12 +195,12 @@ public class CommandableUpdateChecker {
 	}
 
 	private boolean canHideMessage(UpdateHash get, UpdateHash test) {
-		return !get.equals(test) && test.timestamp < get.timestamp+(1000*3600*24*14) && test.timestamp >= get.timestamp; //2 weeks, and cannot be errored
+		return !get.equals(test) && test.timestamp < get.timestamp+(1000*3600*24*14) && test.timestamp >= get.timestamp; //2 weeks, and cannot be faked
 	}
 
 	public void registerMod(DragonAPIMod mod) {
 		ModVersion version = mod.getModVersion();
-		if (version == ModVersion.source && false) {
+		if (version == ModVersion.source) {
 			mod.getModLogger().log("Mod is in source code form. Not checking versions.");
 			return;
 		}
@@ -473,13 +473,15 @@ public class CommandableUpdateChecker {
 			StringBuffer sb = new StringBuffer();
 			int idx = 0;
 			while (idx < time.length() || idx < id.length() || idx < filepath.length()) {
-				char c1 = idx >= time.length() ? '*' : time.charAt(idx);
-				char c2 = idx >= id.length() ? '*' : id.charAt(idx); possibly not working
-				char c3 = idx >= filepath.length() ? '*' : filepath.charAt(idx);
+				long c1 = idx >= time.length() ? '*' : time.charAt(idx);
+				long c2 = idx >= id.length() ? '*' : id.charAt(idx);
+				long c3 = idx >= filepath.length() ? '*' : filepath.charAt(idx);
 				long sum = c1 | (c2 << 16) | (c3 << 32);
 				idx++;
+				//ReikaJavaLibrary.pConsole(c1+" & "+c2+" & "+c3+" > "+sum+" $ "+this.getStringForInt(sum));
 				sb.append(this.getStringForInt(sum)+":");
 			}
+			//ReikaJavaLibrary.pConsole("Final: "+time+" & "+id+" & "+filepath+" > "+sb.toString());
 			return sb.toString();
 		}
 
@@ -492,8 +494,9 @@ public class CommandableUpdateChecker {
 				String p = parts[i];
 				long dat = getIntForString(p);
 				char c1 = (char)(dat & 65535);
-				char c2 = (char)((dat >> 16) & 65535); not working correctly
+				char c2 = (char)((dat >> 16) & 65535);
 				char c3 = (char)((dat >> 32) & 65535);
+				//ReikaJavaLibrary.pConsole(c1+" & "+c2+" & "+c3+" < "+dat+" $ "+p);
 				if (c1 != '*')
 					time.append(c1);
 				if (c2 != '*')
@@ -501,6 +504,7 @@ public class CommandableUpdateChecker {
 				if (c3 != '*')
 					path.append(c3);
 			}
+			//ReikaJavaLibrary.pConsole("Final: "+time+" & "+id+" & "+path+" < "+s);
 			return new UpdateHash(UUID.fromString(id.toString()), path.toString(), Long.parseLong(time.toString()));
 		}
 

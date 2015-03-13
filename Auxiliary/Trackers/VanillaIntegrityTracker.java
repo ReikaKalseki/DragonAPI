@@ -24,7 +24,7 @@ import Reika.DragonAPI.Exception.VanillaIntegrityException;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 
-public class VanillaIntegrityTracker {
+public final class VanillaIntegrityTracker {
 
 	private final MultiMap<DragonAPIMod, Field> blockList = new MultiMap();
 	private final MultiMap<DragonAPIMod, Field> itemList = new MultiMap();

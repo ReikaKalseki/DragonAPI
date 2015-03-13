@@ -21,7 +21,7 @@ import Reika.DragonAPI.Extras.IDType;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class BiomeCollisionTracker {
+public final class BiomeCollisionTracker {
 
 	private MultiMap<DragonAPIMod, Integer> IDs = new MultiMap();
 	private HashMap<Integer, Class> classes = new HashMap();

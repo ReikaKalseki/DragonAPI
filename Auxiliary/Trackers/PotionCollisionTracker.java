@@ -22,7 +22,7 @@ import Reika.DragonAPI.Extras.IDType;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class PotionCollisionTracker {
+public final class PotionCollisionTracker {
 
 	private MultiMap<DragonAPIMod, Integer> IDs = new MultiMap();
 	private ArrayList<DragonAPIMod> mods = new ArrayList();

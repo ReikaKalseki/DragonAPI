@@ -15,9 +15,9 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.ModIncompatibilityException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class CompatibilityTracker {
+public final class CompatibilityTracker {
 
-	public static CompatibilityTracker instance = new CompatibilityTracker();
+	public static final CompatibilityTracker instance = new CompatibilityTracker();
 
 	private ArrayList<Incompatibility> issues = new ArrayList();
 

@@ -22,7 +22,7 @@ import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayList;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 
-public class BannedItemReader {
+public final class BannedItemReader {
 
 	public static final BannedItemReader instance = new BannedItemReader();
 

@@ -19,7 +19,7 @@ import Reika.DragonAPI.Interfaces.BlockEnum;
 import Reika.DragonAPI.Interfaces.ItemEnum;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
-public class IntegrityChecker {
+public final class IntegrityChecker {
 
 	public static final IntegrityChecker instance = new IntegrityChecker();
 

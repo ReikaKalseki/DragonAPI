@@ -10,16 +10,19 @@
 package Reika.DragonAPI.Instantiable.GUI;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
-public final class ImagedGuiButton extends GuiButton {
+public class ImagedGuiButton extends GuiButton {
 
 	private int u;
 	private int v;
@@ -29,11 +32,16 @@ public final class ImagedGuiButton extends GuiButton {
 	private final boolean hasToolTip;
 	private final Class modClass;
 
+	public String sound = "gui.button.press";
+
 	public TextAlign alignment = TextAlign.CENTER;
 	public int textOffset = 0;
 	public FontRenderer renderer = Minecraft.getMinecraft().fontRenderer;
 
 	public int textureSize = 256;
+
+	private boolean lastHover;
+	private int ticks = 0;
 
 	public ImagedGuiButton(int par1, int par2, int par3, String par4Str, Class mod)
 	{
@@ -137,7 +145,18 @@ public final class ImagedGuiButton extends GuiButton {
 				this.drawToolTip(mc, mx, my);
 			}
 			GL11.glColor4d(1, 1, 1, 1);
+
+			if (!lastHover && field_146123_n && ticks > 1) {
+				this.onHoverTo();
+			}
+
+			lastHover = field_146123_n;
+			ticks++;
 		}
+	}
+
+	protected void onHoverTo() {
+
 	}
 
 	@Override
@@ -150,6 +169,12 @@ public final class ImagedGuiButton extends GuiButton {
 		v5.addVertexWithUV(x+w, y+0, zLevel, (u+w)*f, (v+0)*f);
 		v5.addVertexWithUV(x+0, y+0, zLevel, (u+0)*f, (v+0)*f);
 		v5.draw();
+	}
+
+	@Override
+	public void func_146113_a(SoundHandler sh)
+	{
+		sh.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation(sound), 1.0F));
 	}
 
 	private int getLabelX() {

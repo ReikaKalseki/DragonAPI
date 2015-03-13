@@ -35,7 +35,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public class PlayerSpecificRenderer {
+public final class PlayerSpecificRenderer {
 
 	public static final PlayerSpecificRenderer instance = new PlayerSpecificRenderer();
 

@@ -21,7 +21,7 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 
 	protected final ForgeDirection[] dirs = ForgeDirection.values();
 
-	public final boolean isValidMachineRenderpass(TileEntityBase te) {
+	public final boolean isValidMachineRenderPass(TileEntityBase te) {
 		if (!te.isInWorld())
 			return true;/*
 		int b = 0;
@@ -38,6 +38,8 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 		int pass = MinecraftForgeClient.getRenderPass();
 		return pass == 0;//(te.shouldRenderInPass(pass));
 	}
+
+	protected abstract boolean doRenderModel(TileEntityBase te);
 
 	public abstract String getTextureFolder();
 
