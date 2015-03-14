@@ -41,6 +41,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.Trackers.CompatibilityTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.FurnaceFuelRegistry;
 import Reika.DragonAPI.Auxiliary.Trackers.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.KeyTicker;
 import Reika.DragonAPI.Auxiliary.Trackers.PatreonController;
@@ -140,6 +141,7 @@ import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -348,6 +350,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.loadHandlers();
 
 		this.alCompat();
+
+		GameRegistry.registerFuelHandler(FurnaceFuelRegistry.instance);
 
 		//ReikaPacketHelper.postInitPipelines();
 
