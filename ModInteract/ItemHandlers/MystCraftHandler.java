@@ -16,6 +16,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class MystCraftHandler extends ModHandlerBase {
 
@@ -33,9 +34,9 @@ public class MystCraftHandler extends ModHandlerBase {
 
 		if (this.hasMod()) {
 			try {
-				iddecay = this.getBlockInstance("Decay");
-				idportal = this.getBlockInstance("LinkPortal");
-				idcrystal = this.getBlockInstance("Crystal");
+				iddecay = this.getBlockInstance("decay");
+				idportal = this.getBlockInstance("portal");
+				idcrystal = this.getBlockInstance("crystal");
 			}
 			catch (NullPointerException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
@@ -55,9 +56,9 @@ public class MystCraftHandler extends ModHandlerBase {
 
 	private Block getBlockInstance(String name) {
 		try {
-			Field f = Class.forName("com.xcompwiz.mystcraft.block."+name).getDeclaredField("instance");
-			f.setAccessible(true);
-			return (Block)f.get(null);
+			Field f = this.getMod().getBlockClass().getDeclaredField("block_"+name);
+			String reg = (String)f.get(null);
+			return GameRegistry.findBlock(this.getMod().modLabel, reg);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

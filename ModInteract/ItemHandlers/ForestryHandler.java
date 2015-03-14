@@ -36,7 +36,7 @@ public class ForestryHandler extends ModHandlerBase {
 		JELLY("royalJelly"),
 		PROPOLIS("propolis"),
 		WAX("beeswax"),
-		POLLEN("pollen"),
+		POLLEN("pollenCluster"),
 		TREEPOLLEN("pollenFertile"),
 		QUEEN("beeQueenGE"),
 		PRINCESS("beePrincessGE"),

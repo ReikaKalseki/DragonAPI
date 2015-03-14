@@ -51,7 +51,7 @@ public enum ModList {
 	BXL("ExtraBiomesXL"),
 	MINEFACTORY("MineFactoryReloaded", "powercrystals.minefactoryreloaded.setup.MFRThings"),
 	DARTCRAFT("DartCraft", "bluedart.Blocks.DartBlock", "bluedart.Items.DartItem"), //ensure still here
-	TINKERER("TConstruct", "tconstruct.world.TinkerWorld", null), //tconstruct.library.TConstructRegistry.getBlock/Item
+	TINKERER("TConstruct", "tconstruct.world.TinkerWorld"), //tconstruct.library.TConstructRegistry.getBlock/Item
 	THERMALEXPANSION("ThermalExpansion", "thermalexpansion.block.TEBlocks", "thermalexpansion.item.TEItems"),
 	THERMALFOUNDATION("ThermalFoundation", "thermalfoundation.block.TFBlocks", "thermalfoundation.item.TFItems"),
 	MEKANISM("Mekanism", "mekanism.common.Mekanism"),
@@ -63,7 +63,7 @@ public enum ModList {
 	ENDERSTORAGE("EnderStorage"),
 	TREECAPITATOR("TreeCapitator"),
 	HARVESTCRAFT("harvestcraft", "com.pam.harvestcraft.BlockRegistry", "com.pam.harvestcraft.ItemRegistry"),
-	MYSTCRAFT("Mystcraft"),
+	MYSTCRAFT("Mystcraft", "com.xcompwiz.mystcraft.api.MystObjects"),
 	MAGICCROPS("magicalcrops", "com.mark719.magicalcrops.MagicalCrops"),
 	MIMICRY("Mimicry", "com.sparr.mimicry.block.MimicryBlock", "com.sparr.mimicry.item.MimicryItem"),
 	QCRAFT("QuantumCraft", "dan200.QCraft"),

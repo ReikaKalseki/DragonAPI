@@ -31,8 +31,4 @@ public class ResourceReloadEvent extends Event {
 
 	}
 
-	private ResourceReloadEvent() {
-
-	}
-
 }
