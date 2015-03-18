@@ -1,8 +1,16 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import appeng.api.config.Actionable;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.BaseActionSource;
@@ -28,6 +36,7 @@ public class MESystemReader {
 	public ItemHashMap<Long> getMESystemContents() {
 		ItemHashMap<Long> map = new ItemHashMap();
 		if (node == null || node.getGrid() == null || this.getStorage() == null) {
+			/*
 			StringBuilder sb = new StringBuilder();
 			sb.append(node+"/");
 			if (node != null) {
@@ -48,12 +57,11 @@ public class MESystemReader {
 			else {
 				sb.append("/[No node]");
 			}
-			ReikaJavaLibrary.pConsole("No grid: "+sb.toString());
+			ReikaJavaLibrary.pConsole("No grid: "+sb.toString());*/
 			return map;
 		}
 		for (IAEItemStack iae : this.getStorage().getStorageList()) {
-			if (iae.isItem() && iae.isMeaningful() && iae.getCountRequestable() > 0) {
-				ReikaJavaLibrary.pConsole(iae+":"+iae.isCraftable()+":"+iae.getItemStack()+":"+iae.getStackSize());
+			if (iae.isItem() && iae.isMeaningful()) {
 				map.put(iae.getItemStack(), iae.getStackSize());
 			}
 		}
