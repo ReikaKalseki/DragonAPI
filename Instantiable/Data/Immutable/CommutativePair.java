@@ -11,12 +11,12 @@ package Reika.DragonAPI.Instantiable.Data.Immutable;
 
 import Reika.DragonAPI.Exception.MisuseException;
 
-public final class CommutativePair {
+public final class CommutativePair<V> {
 
-	public final Object o1;
-	public final Object o2;
+	public final V o1;
+	public final V o2;
 
-	public CommutativePair(Object o1, Object o2) {
+	public CommutativePair(V o1, V o2) {
 		if (o1 == null || o2 == null)
 			throw new MisuseException("You cannot create a pair with null!");
 		this.o1 = o1;

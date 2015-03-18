@@ -29,6 +29,19 @@ public class OreBerryBushHandler extends CropHandlerBase {
 
 	public final Item berryID;
 
+	public static enum BerryTypes {
+		IRON(),
+		GOLD(),
+		COPPER(),
+		TIN(),
+		ALUMNINUM(),
+		XP();
+
+		public ItemStack getStack() {
+			return new ItemStack(instance.berryID, 1, this.ordinal());
+		}
+	}
+
 	private OreBerryBushHandler() {
 		super();
 		Block idbush = null;

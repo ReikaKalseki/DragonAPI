@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -27,17 +28,27 @@ public class RedstoneArsenalHandler extends ModHandlerBase {
 
 	public final Item pickID;
 	public final int pickLevel;
+	private final ItemStack fluxDust;
+	private final ItemStack fluxIngot;
 
 	private RedstoneArsenalHandler() {
 		super();
 		Item idpick = null;
 		int levelpick = -1;
+		ItemStack dust = null;
+		ItemStack ingot = null;
 
 		if (this.hasMod()) {
 			try {
 				Class ars = ModList.ARSENAL.getItemClass();
 				Field item = ars.getField("itemPickaxe");
 				idpick = ((Item)item.get(null));
+
+				item = ars.getField("dustElectrumFlux");
+				dust = ((ItemStack)item.get(null));
+
+				item = ars.getField("ingotElectrumFlux");
+				ingot = ((ItemStack)item.get(null));
 
 				Class c = Class.forName("redstonearsenal.RedstoneArsenal");
 				Field config = c.getField("config");
@@ -88,6 +99,9 @@ public class RedstoneArsenalHandler extends ModHandlerBase {
 
 		pickID = idpick;
 		pickLevel = levelpick;
+
+		fluxDust = dust;
+		fluxIngot = ingot;
 	}
 
 	public static RedstoneArsenalHandler getInstance() {
@@ -96,7 +110,15 @@ public class RedstoneArsenalHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return pickID != null && pickLevel != -1;
+		return pickID != null && pickLevel != -1 && fluxDust != null && fluxIngot != null;
+	}
+
+	public ItemStack getFluxIngot() {
+		return fluxIngot.copy();
+	}
+
+	public ItemStack getFluxDust() {
+		return fluxIngot.copy();
 	}
 
 	@Override

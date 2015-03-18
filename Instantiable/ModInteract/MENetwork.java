@@ -32,9 +32,14 @@ import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import appeng.api.config.Actionable;
 import appeng.api.config.FuzzyMode;
+import appeng.api.networking.IGrid;
+import appeng.api.networking.IGridHost;
+import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.BaseActionSource;
+import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.ICellProvider;
 import appeng.api.storage.IMEInventoryHandler;
+import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.StorageChannel;
 import appeng.api.storage.data.IAEItemStack;
 import appeng.api.storage.data.IAEStack;
@@ -48,6 +53,10 @@ public class MENetwork {
 	private BlockArray blocks = new BlockArray();
 	private final Collection<IMEInventoryHandler> itemCache = new ArrayList();
 	private final World world;
+
+	private MENetwork() {
+		this(null);
+	}
 
 	private MENetwork(World world) {
 		this.world = world;
@@ -133,6 +142,28 @@ public class MENetwork {
 	@Override
 	public String toString() {
 		return blocks.toString()+" > "+itemCache.toString();
+	}
+
+	public static MENetwork getFromGridHost(IGridHost te, ForgeDirection dir) {
+		if (!(te instanceof TileEntity))
+			return null;
+		TileEntity tile = (TileEntity)te;
+		MENetwork net = new MENetwork(tile.worldObj);
+		IGrid ig = te.getGridNode(dir).getGrid();
+		net.populate(ig);
+		return net;
+	}
+
+	public static MENetwork getFromGridHost(IGridNode ign) {
+		MENetwork net = new MENetwork();
+		net.populate(ign.getGrid());
+		return net;
+	}
+
+	private void populate(IGrid ig) {
+		IStorageGrid isg = ig.getCache(IStorageGrid.class);
+		IMEMonitor<IAEItemStack> mon = isg.getItemInventory();
+		IItemList contained = mon.getStorageList();
 	}
 
 	public static MENetwork getConnectedTo(TileEntity te) {

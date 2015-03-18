@@ -174,4 +174,20 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		mat.rotate(y, new Vector3f(0, 1, 0)).rotate(x, new Vector3f(1, 0, 0)).rotate(z, new Vector3f(0, 0, 1));
 	}
 
+	public static Vec3 getXYProjection(Vec3 vec) {
+		return Vec3.createVectorHelper(vec.xCoord, vec.yCoord, 0);
+	}
+
+	public static Vec3 getYZProjection(Vec3 vec) {
+		return Vec3.createVectorHelper(0, vec.yCoord, vec.zCoord);
+	}
+
+	public static Vec3 getXZProjection(Vec3 vec) {
+		return Vec3.createVectorHelper(vec.xCoord, 0, vec.zCoord);
+	}
+
+	public static Vec3 getInverseVector(Vec3 vec) {
+		return Vec3.createVectorHelper(-vec.xCoord, -vec.yCoord, -vec.zCoord);
+	}
+
 }
