@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,6 +27,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S20PacketEntityProperties;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
@@ -363,4 +365,17 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return id;
 	}
 	 */
+
+	public static List<EntityPlayerMP> getPlayersWithin(World world, AxisAlignedBB box) {
+		ArrayList<EntityPlayerMP> li = new ArrayList();
+		for (Object o : world.playerEntities) {
+			if (o instanceof EntityPlayerMP && ((EntityPlayerMP)o).boundingBox.intersectsWith(box)) {
+				EntityPlayerMP ep = (EntityPlayerMP)o;
+				if (ep.boundingBox.intersectsWith(box)) {
+					li.add(ep);
+				}
+			}
+		}
+		return li;
+	}
 }

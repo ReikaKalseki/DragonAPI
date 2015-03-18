@@ -10,13 +10,15 @@
 package Reika.DragonAPI.ASM;
 
 import java.util.HashMap;
+import java.util.List;
 
-import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.culling.ICamera;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ReportedException;
+import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -38,7 +40,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import Reika.DragonAPI.Instantiable.Event.TileEntityRenderEvent;
+import Reika.DragonAPI.Instantiable.Event.EntityRenderingLoopEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -62,6 +64,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		GUIEVENT("net.minecraft.entity.player.EntityPlayer", "yz"),
 		ITEMUPDATE("net.minecraft.entity.item.EntityItem", "xk"),
 		TILERENDER("net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher", "bmk"),
+		WORLDRENDER("net.minecraft.client.renderer.RenderGlobal", "bma"),
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
 		;
 
@@ -497,6 +500,35 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				}
 				break;
 			}
+			case WORLDRENDER: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147589_a", "renderEntities", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/client/renderer/culling/ICamera;F)V");
+				InsnList fire = new InsnList();
+				fire.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				fire.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/EntityRenderingLoopEvent"));
+				fire.add(new InsnNode(Opcodes.DUP));
+				fire.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/EntityRenderingLoopEvent", "<init>", "()V", false));
+				fire.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				fire.add(new InsnNode(Opcodes.POP));
+				AbstractInsnNode loc = null;
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+						MethodInsnNode min = (MethodInsnNode)ain;
+						String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_78483_a" : "disableLightmap";
+						if (min.name.equals(func)) {
+							while (loc == null) {
+								ain = ain.getPrevious();
+								if (ain.getOpcode() == Opcodes.ALOAD && ((VarInsnNode)ain).var == 0)
+									loc = ain;
+							}
+							m.instructions.insertBefore(loc, fire);
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+							break;
+						}
+					}
+				}
+				break;
+			}
 			//case PLAYERRENDER: {
 			//
 			//	break;
@@ -512,33 +544,28 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	class test  {
+	class test {
 
-		public void renderTileEntityAt(TileEntity te, double x, double y, double z, float p)
-		{
-			TileEntitySpecialRenderer tileentityspecialrenderer = this.getSpecialRenderer(te);
+		private List<TileEntity> tileEntities;
+		int pass;
+		Minecraft mc;
+		World theWorld;
+		int i = 0;
 
-			if (tileentityspecialrenderer != null)
+		public void renderEntities(EntityLivingBase p_147589_1_, ICamera p_147589_2_, float p_147589_3_) {
+			for (i = 0; i < tileEntities.size(); ++i)
 			{
-				try
+				TileEntity tile = tileEntities.get(i);
+				if (tile.shouldRenderInPass(pass) && p_147589_2_.isBoundingBoxInFrustum(tile.getRenderBoundingBox()))
 				{
-					tileentityspecialrenderer.renderTileEntityAt(te, x, y, z, p);
-					MinecraftForge.EVENT_BUS.post(new TileEntityRenderEvent(te, x, y, z, p));
-				}
-				catch (Throwable throwable)
-				{
-					CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering Block Entity");
-					CrashReportCategory crashreportcategory = crashreport.makeCategory("Block Entity Details");
-					te.func_145828_a(crashreportcategory);
-					throw new ReportedException(crashreport);
+					TileEntityRendererDispatcher.instance.renderTileEntity(tile, p_147589_3_);
 				}
 			}
-		}
 
-		private TileEntitySpecialRenderer getSpecialRenderer(
-				TileEntity p_147549_1_) {
-			// TODO Auto-generated method stub
-			return null;
+			MinecraftForge.EVENT_BUS.post(new EntityRenderingLoopEvent());
+
+			mc.entityRenderer.disableLightmap(p_147589_3_);
+			theWorld.theProfiler.endSection();
 		}
 
 	}

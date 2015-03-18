@@ -203,7 +203,7 @@ public abstract class TileEntityBase extends TileEntity {
 	private void sendPacketToAllAround(S35PacketUpdateTileEntity p, int r) {
 		if (!worldObj.isRemote) {
 			AxisAlignedBB box = ReikaAABBHelper.getBlockAABB(xCoord, yCoord, zCoord).expand(r, r, r);
-			List<EntityPlayerMP> li = worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, box);
+			List<EntityPlayerMP> li = ReikaPlayerAPI.getPlayersWithin(worldObj, box);
 			for (EntityPlayerMP entityplayermp : li)  {
 				entityplayermp.playerNetServerHandler.sendPacket(p);
 			}
