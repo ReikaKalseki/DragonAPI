@@ -33,22 +33,23 @@ public final class CanolaHandler implements CropHandler {
 
 	@Override
 	public boolean isCrop(Block id) {
-		return id == BlockRegistry.CANOLA.getBlockInstance();
+		return ModList.ROTARYCRAFT.isLoaded() && id == BlockRegistry.CANOLA.getBlockInstance();
 	}
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
-		return this.isCrop(world.getBlock(x, y, z)) && world.getBlockMetadata(x, y, z) == BlockCanola.GROWN;
+		return ModList.ROTARYCRAFT.isLoaded() && this.isCrop(world.getBlock(x, y, z)) && world.getBlockMetadata(x, y, z) == BlockCanola.GROWN;
 	}
 
 	@Override
 	public void makeRipe(World world, int x, int y, int z) {
-		world.setBlockMetadataWithNotify(x, y, z, BlockCanola.GROWN, 3);
+		if (ModList.ROTARYCRAFT.isLoaded())
+			world.setBlockMetadataWithNotify(x, y, z, BlockCanola.GROWN, 3);
 	}
 
 	@Override
 	public boolean isSeedItem(ItemStack is) {
-		return ItemRegistry.CANOLA.matchItem(is) && is.getItemDamage() == 0;
+		return ModList.ROTARYCRAFT.isLoaded() && ItemRegistry.CANOLA.matchItem(is) && is.getItemDamage() == 0;
 	}
 
 	@Override

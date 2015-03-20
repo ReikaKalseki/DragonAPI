@@ -28,6 +28,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.InnerClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.ModList;
@@ -57,7 +58,7 @@ public class DependentMethodStripper implements IClassTransformer {
 			AnnotationFail a = this.remove(classNode, field);
 			if (a != null) {
 				if (DEBUG) {
-					ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Field: %s.%s; Reason: %s", classNode.name, field.name, a.text));
+					ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Field: '%s.%s'; Reason: %s", classNode.name, field.name, a.text));
 				}
 				fields.remove();
 			}
@@ -68,10 +69,23 @@ public class DependentMethodStripper implements IClassTransformer {
 			AnnotationFail a = this.remove(classNode, method);
 			if (a != null) {
 				if (DEBUG) {
+					ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Method: '%s.%s%s'; Reason: %s", classNode.name, method.name, method.desc, a.text));
+				}
+				methods.remove();
+			}
+		}
+		Iterator<InnerClassNode> classes = classNode.innerClasses.iterator();
+		while(classes.hasNext()) {
+			InnerClassNode method = classes.next();
+			/*
+			AnnotationFail a = this.remove(classNode, method);
+			if (a != null) {
+				if (DEBUG) {
 					ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Method: %s.%s%s; Reason: %s", classNode.name, method.name, method.desc, a.text));
 				}
 				methods.remove();
 			}
+			 */
 		}
 
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);

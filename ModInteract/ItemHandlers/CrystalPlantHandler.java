@@ -32,31 +32,31 @@ public class CrystalPlantHandler implements CropHandler {
 
 	@Override
 	public boolean isCrop(Block id) {
-		return id == ChromaBlocks.PLANT.getBlockInstance();
+		return ModList.CHROMATICRAFT.isLoaded() && id == ChromaBlocks.PLANT.getBlockInstance();
 	}
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
 		TileEntity te = world.getTileEntity(x, y, z);
-		return te instanceof TileEntityCrystalPlant && ((TileEntityCrystalPlant)te).canHarvest();
+		return ModList.CHROMATICRAFT.isLoaded() && te instanceof TileEntityCrystalPlant && ((TileEntityCrystalPlant)te).canHarvest();
 	}
 
 	@Override
 	public void makeRipe(World world, int x, int y, int z) {
 		TileEntity te = world.getTileEntity(x, y, z);
-		if (te instanceof TileEntityCrystalPlant) {
+		if (ModList.CHROMATICRAFT.isLoaded() && te instanceof TileEntityCrystalPlant) {
 			((TileEntityCrystalPlant)te).makeRipe();
 		}
 	}
 
 	@Override
 	public boolean isSeedItem(ItemStack is) {
-		return ChromaItems.SEED.matchWith(is);
+		return ModList.CHROMATICRAFT.isLoaded() && ChromaItems.SEED.matchWith(is);
 	}
 
 	@Override
 	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune) {
-		if (ChromaOptions.CRYSTALFARM.getState() && ReikaRandomHelper.doWithChance(0.01)) {
+		if (ModList.CHROMATICRAFT.isLoaded() && ChromaOptions.CRYSTALFARM.getState() && ReikaRandomHelper.doWithChance(0.01)) {
 			ArrayList li = new ArrayList();
 			ItemStack shard = ChromaItems.SHARD.getStackOfMetadata(world.getBlockMetadata(x, y, z));
 			li.add(shard);
@@ -68,7 +68,7 @@ public class CrystalPlantHandler implements CropHandler {
 	@Override
 	public void editTileDataForHarvest(World world, int x, int y, int z) {
 		TileEntity te = world.getTileEntity(x, y, z);
-		if (te instanceof TileEntityCrystalPlant) {
+		if (ModList.CHROMATICRAFT.isLoaded() && te instanceof TileEntityCrystalPlant) {
 			((TileEntityCrystalPlant)te).harvest(false);
 		}
 	}

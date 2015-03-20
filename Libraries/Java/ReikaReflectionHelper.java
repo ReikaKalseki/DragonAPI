@@ -65,7 +65,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		}
 		catch (NoClassDefFoundError e) {
 			e.printStackTrace();
-			throw new RegistrationException(mod, "Failed to load "+list+" due to a missing class!");
+			throw new RegistrationException(mod, "Failed to load "+list+" due to a missing class: "+e);
 		}
 	}
 
@@ -99,7 +99,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		}
 		catch (NoClassDefFoundError e) {
 			e.printStackTrace();
-			throw new RegistrationException(mod, "Failed to load "+list+" due to a missing class!");
+			throw new RegistrationException(mod, "Failed to load "+list+" due to a missing class: "+e);
 		}
 	}
 
@@ -134,7 +134,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		}
 		catch (NoClassDefFoundError e) {
 			e.printStackTrace();
-			throw new RegistrationException(mod, "Failed to load "+cl+" due to a missing class!");
+			throw new RegistrationException(mod, "Failed to load "+cl+" due to a missing class: "+e);
 		}
 	}
 
