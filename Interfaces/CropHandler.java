@@ -29,6 +29,8 @@ public interface CropHandler {
 
 	//public abstract float getSecondSeedDropRate();
 
+	public abstract ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune);
+
 	public abstract ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune);
 
 	public void editTileDataForHarvest(World world, int x, int y, int z);

@@ -32,6 +32,7 @@ public abstract class LuaMethod {
 	private static final LuaMethod isFull = new LuaIsFull();
 	private static final LuaMethod isTankFull = new LuaIsTankFull();
 	private static final LuaMethod hasItem = new LuaHasItem();
+	private static final LuaMethod trigger = new LuaTriggerAction();
 
 	public LuaMethod(String name, Class requiredParent) {
 		displayName = name;

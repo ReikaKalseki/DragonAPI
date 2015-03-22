@@ -669,10 +669,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns the y-coordinate of the top non-air block at the given xz coordinates, at or
-	 * below the specified y-coordinate. Returns -1 if none. Args: World, x, z, y */
-	public static int findTopBlockBelowY(World world, int x, int z, int y) {
+	 * below the specified y-coordinate. Returns -1 if none. Args: World, x, y, z */
+	public static int findTopBlockBelowY(World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
-		while ((b == Blocks.air) && y >= 0) {
+		while (b == Blocks.air && y >= 0) {
 			y--;
 			b = world.getBlock(x, y, z);
 		}

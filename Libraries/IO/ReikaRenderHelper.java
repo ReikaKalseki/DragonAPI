@@ -14,6 +14,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -414,6 +415,11 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		BlendMode.DEFAULT.apply();
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+	}
+
+	public static int getGUIScale() {
+		Minecraft mc = Minecraft.getMinecraft();
+		return new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
 	}
 
 }

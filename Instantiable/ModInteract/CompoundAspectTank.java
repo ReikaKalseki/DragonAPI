@@ -21,7 +21,7 @@ import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 public class CompoundAspectTank {
 
 	@ModDependent(ModList.THAUMCRAFT)
-	private final HashMap<Aspect, Integer> aspects = new HashMap();
+	private HashMap<Aspect, Integer> aspects;
 
 	protected final int capacity;
 	public final int maxTypes;
@@ -33,6 +33,8 @@ public class CompoundAspectTank {
 	public CompoundAspectTank(int c, int types) {
 		capacity = c;
 		maxTypes = types;
+		if (ModList.THAUMCRAFT.isLoaded())
+			aspects = new HashMap();
 	}
 
 	public int getMaxCapacity(Aspect a) {

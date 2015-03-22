@@ -89,7 +89,7 @@ public class OreBerryBushHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isCrop(Block id) {
-		return id == bushID;
+		return id == bushID || id == secondbushID;
 	}
 
 	@Override
@@ -135,12 +135,17 @@ public class OreBerryBushHandler extends CropHandlerBase {
 	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune) {
 		ArrayList<ItemStack> li = new ArrayList();
 		if (id == bushID) {
-			li.add(new ItemStack(berryID, 1, meta-12));
+			li.add(new ItemStack(berryID, 1+rand.nextInt(3), meta%4));
 		}
-		if (id == secondbushID) {
-			li.add(new ItemStack(berryID, 1, meta-12));
+		else if (id == secondbushID) {
+			li.add(new ItemStack(berryID, 1+rand.nextInt(3), meta%4+4));
 		}
 		return li;
+	}
+
+	@Override
+	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
+		return new ArrayList();
 	}
 
 }

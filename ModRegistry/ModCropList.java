@@ -319,6 +319,11 @@ public enum ModCropList implements CropType {
 				li.addAll(b.getDrops(world, x, y, z, meta, fortune));
 		}
 		if (this.isHandlered()) {
+			ArrayList<ItemStack> li3 = handler.getDropsOverride(world, x, y, z, b, meta, fortune);
+			if (li3 != null) {
+				li.clear();
+				li.addAll(li3);
+			}
 			ArrayList<ItemStack> li2 = handler.getAdditionalDrops(world, x, y, z, b, meta, fortune);
 			if (li2 != null && !li2.isEmpty())
 				li.addAll(li2);

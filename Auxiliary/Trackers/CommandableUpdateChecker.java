@@ -363,7 +363,7 @@ public final class CommandableUpdateChecker {
 
 		@Override
 		protected boolean isAdminOnly() {
-			return true;
+			return false;
 		}
 
 		@Override

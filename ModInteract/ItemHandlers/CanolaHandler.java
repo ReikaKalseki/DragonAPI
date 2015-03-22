@@ -67,4 +67,9 @@ public final class CanolaHandler implements CropHandler {
 		return ModList.ROTARYCRAFT.isLoaded() && BlockRegistry.CANOLA.getBlockInstance() != null;
 	}
 
+	@Override
+	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
+		return null;
+	}
+
 }

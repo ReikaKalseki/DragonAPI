@@ -92,7 +92,9 @@ public enum ModList {
 	PROJECTE("ProjectE", "moze_intel.projecte.gameObjs.ObjHandler"),
 	BLOODMAGIC("AWWayofTime", "WayofTime.alchemicalWizardry.ModBlocks", "WayofTime.alchemicalWizardry.ModItems"),
 	LYCANITE("lycanitesmobs"),
-	CRAFTMANAGER("zcraftingmanager");
+	CRAFTMANAGER("zcraftingmanager"),
+	MINECHEM("minechem"),
+	TFC("terrafirmacraft");
 
 	private final boolean condition;
 	public final String modLabel;

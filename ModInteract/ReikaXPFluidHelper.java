@@ -42,8 +42,8 @@ public class ReikaXPFluidHelper {
 			addFluid((Fluid)fdf.get(null), fd.getInt(null));
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("Error loading xp fluid type as loaded from "+cf+"#"+sf+".");
-			e.printStackTrace();
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading xp fluid type as loaded from "+cf+"#"+sf+": "+e);
+			//e.printStackTrace();
 		}
 	}
 
@@ -56,8 +56,8 @@ public class ReikaXPFluidHelper {
 			addFluid(s, fd.getInt(null));
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("Error loading xp fluid type "+s+".");
-			e.printStackTrace();
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading xp fluid type "+s+": "+e);
+			//e.printStackTrace();
 		}
 	}
 

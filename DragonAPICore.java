@@ -42,7 +42,7 @@ public class DragonAPICore {
 	private static final String MINFORGE = "required-after:Forge@[10.13.0.1231,);"; //was 1205
 	public static final String dependencies = MINFORGE+"after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;"+
 			"after:powersuits;after:GalacticCraft;after:Mystcraft;after:UniversalElectricity;after:Forestry;after:MagicBees;"+
-			"after:BinnieCore;after:Natura;after:TConstruct;after:ProjRed|Core;after:bluepower";
+			"after:BinnieCore;after:Natura;after:TConstruct;after:ProjRed|Core;after:bluepower;after:Waila";
 
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
 	public static final UUID Reika_UUID = UUID.fromString("e5248026-6874-4954-9a02-aa8910d08f31");

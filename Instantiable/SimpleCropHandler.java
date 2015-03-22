@@ -75,4 +75,9 @@ public final class SimpleCropHandler implements CropHandler {
 		return true;
 	}
 
+	@Override
+	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
+		return null;
+	}
+
 }

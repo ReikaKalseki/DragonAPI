@@ -147,4 +147,9 @@ public class PneumaticPlantHandler extends CropHandlerBase {
 		return ModList.PNEUMATICRAFT;
 	}
 
+	@Override
+	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
+		return null;
+	}
+
 }

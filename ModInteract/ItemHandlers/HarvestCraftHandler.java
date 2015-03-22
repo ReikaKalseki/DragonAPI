@@ -290,4 +290,9 @@ public class HarvestCraftHandler extends CropHandlerBase {
 		world.markBlockForUpdate(x, y, z);
 	}
 
+	@Override
+	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
+		return null;
+	}
+
 }

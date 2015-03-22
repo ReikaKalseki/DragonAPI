@@ -78,4 +78,9 @@ public class CrystalPlantHandler implements CropHandler {
 		return ModList.CHROMATICRAFT.isLoaded() && ChromaBlocks.PLANT.getBlockInstance() != null;
 	}
 
+	@Override
+	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
+		return null;
+	}
+
 }

@@ -29,7 +29,9 @@ public class MagicCropHandler extends CropHandlerBase {
 	public final Block oreID;
 	public final Block netherOreID;
 	public final Block endOreID;
-	/** Crafting Item */
+
+	public final Item dropID;
+
 	private final int configChance;
 
 	public enum EssenceType {
@@ -208,6 +210,7 @@ public class MagicCropHandler extends CropHandlerBase {
 		Block idore = null;
 		Block idnether = null;
 		Block idend = null;
+		Item iddrop = null;
 		int chance = -1;
 		if (this.hasMod()) {
 			Class c = this.getMod().getBlockClass();
@@ -257,7 +260,9 @@ public class MagicCropHandler extends CropHandlerBase {
 				ore = (Block)f.get(null);
 				idend = ore;
 
-
+				f = c.getField("ExperienceDrop");
+				Item drop = (Item)f.get(null);
+				iddrop = drop;
 
 				Class c2 = Class.forName("com.mark719.magicalcrops.ConfigHandler");
 				f = c2.getDeclaredField("seeddropchance");
@@ -290,6 +295,7 @@ public class MagicCropHandler extends CropHandlerBase {
 		oreID = idore;
 		netherOreID = idnether;
 		endOreID = idend;
+		dropID = iddrop;
 		configChance = chance >= 0 ? chance : 10;
 	}
 
@@ -326,7 +332,7 @@ public class MagicCropHandler extends CropHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return EssenceType.initialized() && configChance != -1 && oreID != null && netherOreID != null && endOreID != null;
+		return EssenceType.initialized() && configChance != -1 && oreID != null && netherOreID != null && endOreID != null && dropID != null;
 	}
 
 	public boolean isEssenceOre(Block id) {
@@ -374,6 +380,11 @@ public class MagicCropHandler extends CropHandlerBase {
 
 		ModOreList.ESSENCE.reloadOreList();
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Registering Magic Crops Essence ore to the Ore Dictionary!");
+	}
+
+	@Override
+	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
+		return null;
 	}
 
 }
