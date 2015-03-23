@@ -22,7 +22,8 @@ public enum InterfaceCache {
 	RFENERGYITEM("cofh.api.energy.IEnergyContainerItem"),
 	UEENERGYITEM("universalelectricity.api.item.IEnergyItem"),
 	WAILA("mcp.mobius.waila.api.IWailaDataProvider"),
-	IWRENCH("buildcraft.api.tools.IToolWrench");
+	IWRENCH("buildcraft.api.tools.IToolWrench"),
+	IC2WRENCH("ic2.api.tile.IWrenchable");
 
 	private final String classpath;
 	public final String name;

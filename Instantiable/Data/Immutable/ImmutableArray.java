@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
-public class ImmutableArray<V> {
+public final class ImmutableArray<V> {
 
 	private final V[] data;
 	public final int length;

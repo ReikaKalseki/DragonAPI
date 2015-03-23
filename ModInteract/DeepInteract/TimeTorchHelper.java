@@ -37,9 +37,11 @@ public class TimeTorchHelper {
 			try {
 				Class c = Class.forName("com.sci.torcherino.tile.TileTorcherino");
 				Field f = c.getDeclaredField("blacklistedTiles");
+				f.setAccessible(true);
 				tileBlacklist = (HashSet<Class>)f.get(null);
 
 				f = c.getDeclaredField("blacklistedBlocks");
+				f.setAccessible(true);
 				blockBlacklist = (HashSet<Block>)f.get(null);
 			}
 			catch (Exception e) {

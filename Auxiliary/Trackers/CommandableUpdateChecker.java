@@ -371,7 +371,7 @@ public final class CommandableUpdateChecker {
 			EntityPlayerMP ep = getCommandSenderAsPlayer(ics);
 			if (args.length == 2) {
 				String action = args[0];
-				String name = args[1];
+				String name = args[1].toLowerCase();
 				DragonAPIMod mod = instance.modNames.get(name);
 				if (mod != null) {
 					if (action.equals("disable")) {

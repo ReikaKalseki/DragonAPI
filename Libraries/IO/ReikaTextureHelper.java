@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.IResourcePack;
@@ -311,6 +312,24 @@ public class ReikaTextureHelper {
 
 	public static void bindParticleTexture() {
 		Minecraft.getMinecraft().renderEngine.bindTexture(particle);
+	}
+
+	public static int[][] getTextureData(IIcon ico, TextureMap map) {
+		return map.getAtlasSprite(ico.getIconName()).getFrameTextureData(0);
+	}
+
+	public static void generateSpriteTextureData(String name, TextureMap map, int[][]... data) {
+		TextureAtlasSprite tex = new GenSprite(name);
+		tex.setFramesTextureData(ReikaJavaLibrary.makeListFrom(data));
+		map.mapRegisteredSprites.put(name, tex);
+	}
+
+	private static class GenSprite extends TextureAtlasSprite {
+
+		protected GenSprite(String s) {
+			super(s);
+		}
+
 	}
 
 }

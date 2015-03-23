@@ -144,4 +144,8 @@ public class ReikaColorAPI {
 	public static int getPackedIntForColoredLight(int color, int lightval) {
 		return getRed(color) << 15 | getGreen(color) << 10 | getBlue(color) << 5 | lightval;
 	}
+
+	public static int invertColor(int rgb) {
+		return RGBtoHex(255-getRed(rgb), 255-getGreen(rgb), 255-getBlue(rgb));
+	}
 }

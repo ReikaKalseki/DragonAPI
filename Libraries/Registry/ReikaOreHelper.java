@@ -31,7 +31,7 @@ public enum ReikaOreHelper implements OreType {
 	IRON("Iron", Blocks.iron_ore, "oreIron", 1, "ingotIron", OreRarity.AVERAGE),
 	GOLD("Gold", Blocks.gold_ore, "oreGold", 1, "ingotGold", OreRarity.SCATTERED),
 	REDSTONE("Redstone", Blocks.redstone_ore, Items.redstone, 1, "oreRedstone", "dustRedstone", OreRarity.COMMON),
-	LAPIS("Lapis Lazuli", Blocks.lapis_ore, ReikaDyeHelper.BLUE.getStackOf(), 1, "oreLapis", "dyeBlue", OreRarity.SCARCE),
+	LAPIS("Lapis Lazuli", Blocks.lapis_ore, ReikaDyeHelper.BLUE.getStackOf(), 1, "oreLapis", "gemLapis", OreRarity.SCARCE),
 	DIAMOND("Diamond", Blocks.diamond_ore, Items.diamond, 1, "oreDiamond", "gemDiamond", OreRarity.SCARCE),
 	EMERALD("Emerald", Blocks.emerald_ore, Items.emerald, 1, "oreEmerald", "gemEmerald", OreRarity.RARE),
 	QUARTZ("Nether Quartz", Blocks.quartz_ore, Items.quartz, 1, "oreQuartz", "itemQuartz", OreRarity.EVERYWHERE);
