@@ -41,7 +41,7 @@ public enum InterfaceCache {
 	}
 
 	public boolean instanceOf(Object o) {
-		return object != null && object.isAssignableFrom(o.getClass());
+		return object != null && o != null && object.isAssignableFrom(o.getClass());
 	}
 
 	public boolean instanceOf(Class c) {

@@ -44,4 +44,6 @@ public interface OreType extends RegistryType {
 		}
 	}
 
+	public int ordinal();
+
 }
