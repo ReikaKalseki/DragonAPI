@@ -29,6 +29,10 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -137,6 +141,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final ItemStack jungleDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 3);
 
 	private static final ItemComparator comparator = new ItemComparator();
+
+	private static HashMap<Fluid, ItemStack> fluidContainerData = new HashMap();
 
 	/** Returns true if the block or item has metadata variants. Args: ID *//*
 	public static boolean hasMetadata(Item id) {
@@ -406,5 +412,33 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static boolean isItemAddedByMod(Item i, String modID) {
 		UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(i);
 		return id != null ? modID.equalsIgnoreCase(id.modId) : modID == null;
+	}
+
+	public static ItemStack getContainerForFluid(Fluid fluid) {
+		if (fluidContainerData.containsKey(fluid)) {
+			ItemStack ret = fluidContainerData.get(fluid);
+			return ret != null ? ret.copy() : null;
+		}
+		else {
+			ItemStack ret = calculateContainerForFluid(fluid);
+			fluidContainerData.put(fluid, ret);
+			return ret != null ? ret.copy() : null;
+		}
+	}
+
+	private static ItemStack calculateContainerForFluid(Fluid fluid) {
+		ItemStack is = new ItemStack(Items.bucket);
+		ItemStack fill = FluidContainerRegistry.fillFluidContainer(new FluidStack(fluid, Integer.MAX_VALUE), is);
+		if (fill != null) {
+			return fill;
+		}
+		FluidContainerData[] dat = FluidContainerRegistry.getRegisteredFluidContainerData();
+		for (int i = 0; i < dat.length; i++) {
+			FluidContainerData fcd = dat[i];
+			if (fcd.fluid != null && fcd.fluid.getFluid() == fluid && fcd.filledContainer != null) {
+				return fcd.filledContainer.copy();
+			}
+		}
+		return null;
 	}
 }

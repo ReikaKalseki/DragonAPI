@@ -18,10 +18,15 @@ import net.minecraft.block.BlockAir;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Interfaces.BlockCheck;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class FilledBlockArray extends StructuredBlockArray {
@@ -46,6 +51,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	public void setBlock(int x, int y, int z, Block id, int meta) {
 		this.setBlock(x, y, z , new BlockKey(id, meta));
+	}
+
+	public void setFluid(int x, int y, int z, Fluid f) {
+		super.addBlockCoordinate(x, y, z);
+		data.put(new Coordinate(x, y, z), new FluidCheck(f));
 	}
 
 	public void setBlock(int x, int y, int z, BlockKey bk) {
@@ -138,7 +148,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 			BlockCheck bk = this.getBlockKey(x, y, z);
 			//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk+" & "+world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z));
 			if (!world.isRemote && !bk.matchInWorld(world, x, y, z)) {
-				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk.getClass()+":"+bk+" & "+world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z), data.size() == 360);
+				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk.getClass()+":"+bk+" & "+world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z));
 				//bk.place(world, x, y, z);
 				//world.setBlock(x, y, z, Blocks.brick_block);
 				return false;
@@ -222,6 +232,43 @@ public class FilledBlockArray extends StructuredBlockArray {
 		public ItemStack asItemStack() {
 			Block b = this.getBlock();
 			return b != null && b != Blocks.air ? new ItemStack(b, 1, this.getMeta()) : null;
+		}
+
+	}
+
+	private static class FluidCheck implements BlockCheck {
+
+		public final Fluid fluid;
+
+		private FluidCheck(Fluid f) {
+			if (!f.canBePlacedInWorld())
+				throw new MisuseException("You cannot require non-placeable fluids!");
+			fluid = f;
+		}
+
+		@Override
+		public boolean matchInWorld(World world, int x, int y, int z) {
+			return this.match(world.getBlock(x, y, z), 0);
+		}
+
+		@Override
+		public boolean match(Block b, int meta) {
+			return b instanceof BlockFluidBase && ((BlockFluidBase)b).getFluid() == fluid || FluidRegistry.lookupFluidForBlock(b) == fluid;
+		}
+
+		@Override
+		public void place(World world, int x, int y, int z) {
+			world.setBlock(x, y, z, this.getBlock());
+		}
+
+		private Block getBlock() {
+			return fluid.getBlock();
+		}
+
+		@Override
+		public ItemStack asItemStack() {
+			ItemStack is = ReikaItemHelper.getContainerForFluid(fluid);
+			return is != null ? is : new ItemStack(this.getBlock());
 		}
 
 	}

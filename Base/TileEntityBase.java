@@ -297,11 +297,15 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	public final EntityPlayerMP getServerPlacer() {
+		if (worldObj.isRemote)
+			throw new MisuseException("Cannot get the serverside player on the client!");
 		EntityPlayer ep = this.getPlacer();
 		if (ep instanceof EntityPlayerMP)
 			return (EntityPlayerMP)ep;
-		else
+		else if (!(ReikaPlayerAPI.isFake(ep)))
 			throw new MisuseException("Cannot get the serverside player on the client!");
+		else
+			return null;
 	}
 
 	public final EntityPlayer getFakePlacer() {

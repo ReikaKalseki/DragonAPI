@@ -490,13 +490,11 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		pack.init(PacketTypes.DATA, pipe);
 		pack.setData(dat);
 
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-
-		if (side == Side.SERVER) {
+		if (!world.isRemote) {
 			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
 			pipe.sendToDimension(pack, world);
 		}
-		else if (side == Side.CLIENT) {
+		else if (world.isRemote) {
 			//PacketDispatcher.sendPacketToServer(packet);
 			pipe.sendToServer(pack);
 		}
