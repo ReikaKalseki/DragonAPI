@@ -142,7 +142,7 @@ public class ReikaColorAPI {
 	}
 
 	public static int getPackedIntForColoredLight(int color, int lightval) {
-		return getRed(color) << 15 | getGreen(color) << 10 | getBlue(color) << 5 | lightval;
+		return getBlue(color) << 15 | getGreen(color) << 10 | getRed(color) << 5 | lightval;
 	}
 
 	public static int invertColor(int rgb) {

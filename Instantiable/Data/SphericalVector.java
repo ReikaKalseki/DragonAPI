@@ -28,7 +28,7 @@ public class SphericalVector {
 		return new SphericalVector(dat[0], dat[1], dat[2]);
 	}
 
-	private double[] getCartesian() {
+	public double[] getCartesian() {
 		return ReikaPhysicsHelper.polarToCartesian(magnitude, inclination, rotation);
 	}
 
