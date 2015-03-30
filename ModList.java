@@ -72,7 +72,7 @@ public enum ModList {
 	UE("UniversalElectricity"),
 	EXTRAUTILS("ExtraUtilities", "com.rwtema.extrautils.ExtraUtils"),
 	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits"), //ensure still here
-	ARSENAL("Redstone Arsenal", "redstonearsenal.item.RAItems"),
+	ARSENAL("RedstoneArsenal", "redstonearsenal.item.RAItems"),
 	EMASHER("emashercore", "emasher.core.EmasherCore"), //ensure still here
 	HIGHLANDS("Highlands", "highlands.api.HighlandsBlocks"),
 	PROJRED("ProjRed|Core"),

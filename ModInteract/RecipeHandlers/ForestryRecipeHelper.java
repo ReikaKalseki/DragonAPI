@@ -29,7 +29,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 		return instance;
 	}
 
-	private HashMap<ItemStack, ChancedOutputList> centrifuge = new HashMap();
+	private final HashMap<ItemStack, ChancedOutputList> centrifuge = new HashMap();
 
 	private ForestryRecipeHelper() {
 		super();

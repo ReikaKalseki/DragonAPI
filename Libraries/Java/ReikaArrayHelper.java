@@ -446,4 +446,12 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		}
 		return data;
 	}
+
+	public static boolean isAllTrue(boolean[] arr) {
+		for (int i = 0; i < arr.length; i++) {
+			if (!arr[i])
+				return false;
+		}
+		return true;
+	}
 }

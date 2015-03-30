@@ -128,7 +128,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	public ItemStack getDisplayAt(int x, int y, int z) {
 		BlockCheck bk = this.getBlockKey(x, y, z);
-		return bk != null ? bk.asItemStack() : null;
+		return bk != null ? bk.getDisplay() : null;
 	}
 
 	public boolean hasBlockAt(int x, int y, int z, Block b) {
@@ -234,6 +234,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 			return b != null && b != Blocks.air ? new ItemStack(b, 1, this.getMeta()) : null;
 		}
 
+		public ItemStack getDisplay() {
+			return this.asItemStack();
+		}
+
 	}
 
 	private static class FluidCheck implements BlockCheck {
@@ -269,6 +273,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 		public ItemStack asItemStack() {
 			ItemStack is = ReikaItemHelper.getContainerForFluid(fluid);
 			return is != null ? is : new ItemStack(this.getBlock());
+		}
+
+		public ItemStack getDisplay() {
+			return new ItemStack(this.getBlock());
 		}
 
 	}
@@ -324,6 +332,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 		@Override
 		public ItemStack asItemStack() {
+			return null;
+		}
+
+		public ItemStack getDisplay() {
 			return null;
 		}
 

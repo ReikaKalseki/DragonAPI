@@ -75,6 +75,10 @@ public final class BlockKey implements BlockCheck {
 		return new ItemStack(blockID, 1, metadata);
 	}
 
+	public ItemStack getDisplay() {
+		return this.asItemStack();
+	}
+
 	public boolean match(Block b, int meta) {
 		return b == blockID && (!this.hasMetadata() || meta == metadata);
 	}

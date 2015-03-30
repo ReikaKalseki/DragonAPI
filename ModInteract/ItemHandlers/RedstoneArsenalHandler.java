@@ -41,7 +41,7 @@ public class RedstoneArsenalHandler extends ModHandlerBase {
 		if (this.hasMod()) {
 			try {
 				Class ars = ModList.ARSENAL.getItemClass();
-				Field item = ars.getField("itemPickaxe");
+				Field item = ars.getField("itemPickaxeFlux");
 				idpick = ((Item)item.get(null));
 
 				item = ars.getField("dustElectrumFlux");
@@ -114,11 +114,11 @@ public class RedstoneArsenalHandler extends ModHandlerBase {
 	}
 
 	public ItemStack getFluxIngot() {
-		return fluxIngot.copy();
+		return fluxIngot != null ? fluxIngot.copy() : null;
 	}
 
 	public ItemStack getFluxDust() {
-		return fluxIngot.copy();
+		return fluxDust != null ? fluxDust.copy() : null;
 	}
 
 	@Override

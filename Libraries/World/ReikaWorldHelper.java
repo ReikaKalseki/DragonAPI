@@ -33,10 +33,13 @@ import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.chunk.storage.AnvilChunkLoader;
+import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -1806,5 +1809,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				return false;
 		}
 		return true;
+	}
+
+	/** Returns true if the chunk here (block coords) has been generated, whether or not it is currently loaded. */
+	public static boolean isChunkGenerated(WorldServer world, int x, int z) {
+		IChunkLoader loader = world.theChunkProviderServer.currentChunkLoader;
+		return loader instanceof AnvilChunkLoader && ((AnvilChunkLoader)loader).chunkExists(world, x >> 4, z >> 4);
 	}
 }

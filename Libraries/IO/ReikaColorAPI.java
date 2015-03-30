@@ -148,4 +148,8 @@ public class ReikaColorAPI {
 	public static int invertColor(int rgb) {
 		return RGBtoHex(255-getRed(rgb), 255-getGreen(rgb), 255-getBlue(rgb));
 	}
+
+	public static int HexToGS(int rgb) {
+		return (getRed(rgb)+getGreen(rgb)+getBlue(rgb))/3;
+	}
 }

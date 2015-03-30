@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.Data.Immutable;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.common.DimensionManager;
 
 public final class WorldChunk {
 
@@ -38,6 +39,10 @@ public final class WorldChunk {
 			return c.dimensionID == dimensionID && c.chunk.equals(chunk);
 		}
 		return false;
+	}
+
+	public Chunk load() {
+		return DimensionManager.getWorld(dimensionID).getChunkFromChunkCoords(chunk.chunkXPos, chunk.chunkZPos);
 	}
 
 	@Override

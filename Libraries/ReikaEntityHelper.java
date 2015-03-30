@@ -62,6 +62,7 @@ import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -698,35 +699,47 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	public static void transferEntityToDimension(Entity e, int to_dim, Teleporter t) {
 		if (!e.isDead) {
-			if (!e.worldObj.isRemote) {
-				e.worldObj.theProfiler.startSection("changeDimension");
-				MinecraftServer ms = MinecraftServer.getServer();
-				int from_dim = e.dimension;
-				WorldServer from = ms.worldServerForDimension(from_dim);
-				WorldServer to = ms.worldServerForDimension(to_dim);
-				e.dimension = to_dim;
-				e.worldObj.removeEntity(e);
-				e.isDead = false;
-				e.worldObj.theProfiler.startSection("reposition");
-				ms.getConfigurationManager().transferEntityToWorld(e, from_dim, from, to, t != null ? t : new Teleporter(to));
-				e.worldObj.theProfiler.endStartSection("reloading");
-				Entity copy = EntityList.createEntityByName(EntityList.getEntityString(e), to);
-
-				if (copy != null) {
-					copy.copyDataFrom(e, true);
-					to.spawnEntityInWorld(copy);
-				}
-
-				e.isDead = true;
-				e.worldObj.theProfiler.endSection();
-				from.resetUpdateEntityTick();
-				to.resetUpdateEntityTick();
-				e.worldObj.theProfiler.endSection();
+			if (e instanceof EntityPlayerMP) {
+				transferPlayerToDimension((EntityPlayerMP)e, to_dim, t);
 			}
 			else {
-				e.dimension = to_dim;
+				if (!e.worldObj.isRemote) {
+					e.worldObj.theProfiler.startSection("changeDimension");
+					MinecraftServer ms = MinecraftServer.getServer();
+					int from_dim = e.dimension;
+					WorldServer from = ms.worldServerForDimension(from_dim);
+					WorldServer to = ms.worldServerForDimension(to_dim);
+					e.dimension = to_dim;
+					e.worldObj.removeEntity(e);
+					e.isDead = false;
+					e.worldObj.theProfiler.startSection("reposition");
+					ms.getConfigurationManager().transferEntityToWorld(e, from_dim, from, to, t != null ? t : new Teleporter(to));
+					e.worldObj.theProfiler.endStartSection("reloading");
+					Entity copy = EntityList.createEntityByName(EntityList.getEntityString(e), to);
+
+					if (copy != null) {
+						copy.copyDataFrom(e, true);
+						to.spawnEntityInWorld(copy);
+					}
+
+					e.isDead = true;
+					e.worldObj.theProfiler.endSection();
+					from.resetUpdateEntityTick();
+					to.resetUpdateEntityTick();
+					e.worldObj.theProfiler.endSection();
+				}
+				else {
+					e.dimension = to_dim;
+				}
 			}
 		}
+	}
+
+	private static void transferPlayerToDimension(EntityPlayerMP ep, int to_dim, Teleporter t) {
+		MinecraftServer mcs = ep.mcServer;
+		if (ep.timeUntilPortal > 0)
+			ep.timeUntilPortal = 10;
+		mcs.getConfigurationManager().transferPlayerToDimension(ep, to_dim, t != null ? t : new Teleporter(mcs.worldServerForDimension(to_dim)));
 	}
 
 	public static <T extends Entity> T getNearestEntityOfSameType(T e, int r) {

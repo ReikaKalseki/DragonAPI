@@ -18,4 +18,5 @@ public interface BlockCheck {
 	public boolean match(Block b, int meta);
 	public void place(World world, int x, int y, int z);
 	public ItemStack asItemStack();
+	public ItemStack getDisplay();
 }
