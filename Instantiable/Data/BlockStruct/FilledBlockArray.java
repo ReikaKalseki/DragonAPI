@@ -15,7 +15,11 @@ import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
+import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -24,6 +28,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.BlockCheck;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -153,6 +158,37 @@ public class FilledBlockArray extends StructuredBlockArray {
 				//world.setBlock(x, y, z, Blocks.brick_block);
 				return false;
 			}
+		}
+		return true;
+	}
+
+	public ItemHashMap<Integer> tally() {
+		ItemHashMap<Integer> map = new ItemHashMap();
+		for (BlockCheck bc : data.values()) {
+			ItemStack key = bc.asItemStack();
+			if (this.count(key)) {
+				Integer get = map.get(key);
+				int has = get != null ? get.intValue() : 0;
+				map.put(key, has+1);
+			}
+		}
+		return map;
+	}
+
+	private boolean count(ItemStack is) {
+		if (is == null)
+			return false;
+		Item it = is.getItem();
+		if (it == null)
+			return false;
+		if (it instanceof ItemBlock) {
+			Block b = Block.getBlockFromItem(it);
+			if (b instanceof BlockLiquid || b instanceof BlockFluidBase) {
+				if (is.getItemDamage() > 0)
+					return false;
+			}
+			if (b != null && b.getMaterial() == Material.air)
+				return false;
 		}
 		return true;
 	}

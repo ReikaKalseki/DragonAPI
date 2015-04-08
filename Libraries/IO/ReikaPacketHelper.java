@@ -697,6 +697,37 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
+	public static void sendStringPacket(String ch, int id, String sg, PacketTarget pt) {
+		int length = 0;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			writeString(sg, outputStream);
+			outputStream.writeInt(id);
+			outputStream.writeInt(0);
+			outputStream.writeInt(0);
+			outputStream.writeInt(0);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			throw new RuntimeException("String Packet for "+sg+" threw a packet exception!");
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.STRING, pipe);
+		pack.setData(dat);
+
+		pt.dispatch(pipe, pack);
+	}
+
 	public static void sendStringPacket(String ch, int id, String sg, TileEntity te) {
 		int x = te.xCoord;
 		int y = te.yCoord;

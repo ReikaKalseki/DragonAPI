@@ -10,17 +10,9 @@
 package Reika.DragonAPI.ASM;
 
 import java.util.HashMap;
-import java.util.List;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.culling.ICamera;
-import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
-import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
-import net.minecraftforge.common.MinecraftForge;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -40,7 +32,6 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import Reika.DragonAPI.Instantiable.Event.EntityRenderingLoopEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -65,6 +56,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		ITEMUPDATE("net.minecraft.entity.item.EntityItem", "xk"),
 		TILERENDER("net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher", "bmk"),
 		WORLDRENDER("net.minecraft.client.renderer.RenderGlobal", "bma"),
+		NIGHTVISEVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
 		;
 
@@ -529,6 +521,25 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				}
 				break;
 			}
+			case NIGHTVISEVENT: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_82830_a", "getNightVisionBrightness", "(Lnet/minecraft/entity/player/EntityPlayer;F)F");
+				m.instructions.clear();
+				m.instructions.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/NightVisionBrightnessEvent"));
+				m.instructions.add(new InsnNode(Opcodes.DUP));
+				m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+				m.instructions.add(new VarInsnNode(Opcodes.FLOAD, 2));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/NightVisionBrightnessEvent", "<init>", "(Lnet/minecraft/entity/player/EntityPlayer;F)V", false));
+				m.instructions.add(new VarInsnNode(Opcodes.ASTORE, 3));
+				m.instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				m.instructions.add(new InsnNode(Opcodes.POP));
+				m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3));
+				m.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/NightVisionBrightnessEvent", "brightness", "F"));
+				m.instructions.add(new InsnNode(Opcodes.FRETURN));
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+				break;
+			}
 			//case PLAYERRENDER: {
 			//
 			//	break;
@@ -542,32 +553,6 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			//new ClassReader(newdata).accept(vcn, 0);
 			return newdata;
 		}
-	}
-
-	class test {
-
-		private List<TileEntity> tileEntities;
-		int pass;
-		Minecraft mc;
-		World theWorld;
-		int i = 0;
-
-		public void renderEntities(EntityLivingBase p_147589_1_, ICamera p_147589_2_, float p_147589_3_) {
-			for (i = 0; i < tileEntities.size(); ++i)
-			{
-				TileEntity tile = tileEntities.get(i);
-				if (tile.shouldRenderInPass(pass) && p_147589_2_.isBoundingBoxInFrustum(tile.getRenderBoundingBox()))
-				{
-					TileEntityRendererDispatcher.instance.renderTileEntity(tile, p_147589_3_);
-				}
-			}
-
-			MinecraftForge.EVENT_BUS.post(new EntityRenderingLoopEvent());
-
-			mc.entityRenderer.disableLightmap(p_147589_3_);
-			theWorld.theProfiler.endSection();
-		}
-
 	}
 
 	@Override

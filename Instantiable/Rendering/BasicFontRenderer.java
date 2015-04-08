@@ -43,6 +43,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public abstract class BasicFontRenderer extends FontRenderer implements IResourceManagerReloadListener {
 
 	private static final TCharIntHashMap charMap = new TCharIntHashMap(256);
+	private static final TCharIntHashMap formatMap = new TCharIntHashMap(32);
 
 	private static final ResourceLocation[] unicodePageLocations = new ResourceLocation[256];
 	/** Array of width of all the characters in default.png */
@@ -305,20 +306,24 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	private void renderStringAtPos(String sg, boolean shadow) {
 		currentString = sg;
 		for (int i = 0; i < sg.length(); i++) {
-			this.renderCharInString(sg, i, shadow);
+			if (this.renderCharInString(sg, i, shadow))
+				i++;
 		}
 	}
 
-	protected void renderCharInString(String sg, int idx, boolean shadow) {
+	private int getFormatIndex(char c) {
+		return formatMap.get(c);
+	}
+
+	protected boolean renderCharInString(String sg, int idx, boolean shadow) { //return true if hit a formatter
 		char c0 = sg.charAt(idx);
 		int j;
 		int k;
 
 		if (c0 == 167 && idx+1 < sg.length()) {
-			j = "0123456789abcdefklmnor".indexOf(sg.toLowerCase().charAt(idx+1));
+			j = this.getFormatIndex(sg.toLowerCase().charAt(idx+1));
 
-			if (j < 16)
-			{
+			if (j < 16) {
 				randomStyle = false;
 				boldStyle = false;
 				strikethroughStyle = false;
@@ -360,6 +365,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 			}
 
 			idx++;
+			return true;
 		}
 		else {
 			j = this.getCharGridIndex(c0);
@@ -433,6 +439,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 			}
 
 			posX += ((int)f);
+			return false;
 		}
 	}
 
@@ -482,8 +489,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	 * Returns the width of this string. Equivalent of FontMetrics.stringWidth(String s).
 	 */
 	@Override
-	public int getStringWidth(String sg)
-	{
+	public int getStringWidth(String sg) {
 		if (sg == null) {
 			return 0;
 		}
@@ -812,6 +818,12 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 		char[] chars = key.toCharArray();
 		for (int i = 0; i < chars.length; i++) {
 			charMap.put(chars[i], i);
+		}
+
+		String form = "0123456789abcdefklmnor";
+		chars = key.toCharArray();
+		for (int i = 0; i < chars.length; i++) {
+			formatMap.put(chars[i], i);
 		}
 	}
 

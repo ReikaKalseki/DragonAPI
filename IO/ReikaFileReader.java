@@ -24,6 +24,8 @@ import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.jar.JarFile;
 
+import org.apache.commons.io.FileUtils;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -292,4 +294,23 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
+	public static void deleteFolderWithContents(File f) {
+		deleteFolderWithContents(f, 10);
+	}
+
+	public static void deleteFolderWithContents(File f, int tries) {
+		deleteFolderWithContents(f, tries, 0);
+	}
+
+	private static void deleteFolderWithContents(File f, int tries, int attempt) {
+		try {
+			FileUtils.deleteDirectory(f);
+		}
+		catch (Exception e) {
+			if (tries > attempt)
+				deleteFolderWithContents(f, tries, attempt+1);
+			else
+				e.printStackTrace();
+		}
+	}
 }
