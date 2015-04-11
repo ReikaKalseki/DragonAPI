@@ -91,15 +91,13 @@ public class ReikaTextureHelper {
 
 			Integer gl = (Integer)textures.get(root, tex);
 			if (gl == null) {
-				boolean loaded = false;
 				ArrayList<IResourcePack> li = getCurrentResourcePacks();
-				for (int i = 0; i < li.size() && !loaded; i++) {
-					IResourcePack res = li.get(i);
+				for (IResourcePack res : li) {
 					gl = bindPackTexture(root, respath, res, img);
 					if (gl != null) {
 						textures.put(gl, root, tex);
-						loaded = true;
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Texture Pack "+res.getPackName()+" contains an image for "+tex+".");
+						break;
 					}
 				}
 			}

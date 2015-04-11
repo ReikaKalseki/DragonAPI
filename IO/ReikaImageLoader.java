@@ -81,6 +81,7 @@ public final class ReikaImageLoader {
 		}
 		catch (IOException e) {
 			ReikaJavaLibrary.pConsole("Default image filepath at "+name+" not found.");
+			e.printStackTrace();
 			return missingtex;
 		}
 	}
@@ -98,7 +99,7 @@ public final class ReikaImageLoader {
 		}
 		catch (IOException e) {
 			ReikaJavaLibrary.pConsole("Texture pack image at "+path+" not found in "+res.getPackName()+".");
-			e.printStackTrace();
+			//e.printStackTrace();
 			return null;
 		}
 	}
