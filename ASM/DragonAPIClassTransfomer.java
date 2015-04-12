@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM;
 
-import java.util.HashMap;
+import java.util.Collection;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -32,6 +32,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -39,7 +40,7 @@ import cpw.mods.fml.relauncher.Side;
 
 public class DragonAPIClassTransfomer implements IClassTransformer {
 
-	private static final HashMap<String, ClassPatch> classes = new HashMap();
+	private static final MultiMap<String, ClassPatch> classes = new MultiMap().setNullEmpty();
 
 	private static enum ClassPatch {
 		CREEPERBOMBEVENT("net.minecraft.entity.monster.EntityCreeper", "xz"),
@@ -558,10 +559,12 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 	@Override
 	public byte[] transform(String className, String className2, byte[] opcodes) {
 		if (!classes.isEmpty()) {
-			ClassPatch p = classes.get(className);
-			if (p != null) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Patching class "+p.deobfName);
-				opcodes = p.apply(opcodes);
+			Collection<ClassPatch> c = classes.get(className);
+			if (c != null) {
+				for (ClassPatch p : c) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Patching class "+p.deobfName);
+					opcodes = p.apply(opcodes);
+				}
 				classes.remove(className); //for maximizing performance
 			}
 		}
@@ -572,7 +575,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		for (int i = 0; i < ClassPatch.list.length; i++) {
 			ClassPatch p = ClassPatch.list[i];
 			String s = !FMLForgePlugin.RUNTIME_DEOBF ? p.deobfName : p.obfName;
-			classes.put(s, p);
+			classes.addValue(s, p);
 		}
 	}
 }

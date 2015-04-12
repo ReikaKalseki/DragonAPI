@@ -24,7 +24,8 @@ public enum InterfaceCache {
 	WAILA("mcp.mobius.waila.api.IWailaDataProvider"),
 	IWRENCH("buildcraft.api.tools.IToolWrench"),
 	IC2WRENCH("ic2.api.tile.IWrenchable"),
-	NODE("thaumcraft.api.nodes.INode");
+	NODE("thaumcraft.api.nodes.INode"),
+	GRIDHOST("appeng.api.networking.IGridHost");
 
 	private final String classpath;
 	public final String name;

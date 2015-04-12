@@ -46,6 +46,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
@@ -559,6 +560,7 @@ public final class CommandableUpdateChecker {
 
 				ReikaGuiAPI.instance.drawRect(0, 0, pw, fr.FONT_HEIGHT-1, 0xff222222);
 				fr.drawString(pre, 0, 0, 0xffffff);
+				ReikaTextureHelper.bindHUDTexture();
 			}
 		}
 

@@ -94,7 +94,8 @@ public enum ModList {
 	LYCANITE("lycanitesmobs"),
 	CRAFTMANAGER("zcraftingmanager"),
 	MINECHEM("minechem"),
-	TFC("terrafirmacraft");
+	TFC("terrafirmacraft"),
+	BOTANIA("Botania");
 
 	private final boolean condition;
 	public final String modLabel;

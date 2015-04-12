@@ -1310,4 +1310,28 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			addToIInv(is, ii);
 		}
 	}
+
+	/** Returns the number successfully removed. */
+	public static int drawFromInventory(ItemStack is, int max, IInventory inventory) {
+		int amt = 0;
+		for (int i = 0; i < inventory.getSizeInventory(); i++) {
+			ItemStack in = inventory.getStackInSlot(i);
+			if (ReikaItemHelper.matchStacks(is, in)) {
+				int rem = Math.min(max, in.stackSize);
+				if (rem > 0) {
+					if (in.stackSize > rem) {
+						in.stackSize -= rem;
+					}
+					else {
+						inventory.setInventorySlotContents(i, null);
+					}
+					max -= rem;
+					amt += rem;
+					if (max <= 0)
+						break;
+				}
+			}
+		}
+		return amt;
+	}
 }
