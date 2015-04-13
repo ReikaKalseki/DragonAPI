@@ -14,7 +14,7 @@ import net.minecraft.item.ItemStack;
 
 public final class InventorySlot {
 
-	private final IInventory inventory;
+	public final IInventory inventory;
 	public final int slot;
 
 	public InventorySlot(int slot, IInventory inv) {

@@ -725,6 +725,59 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return li;
 	}
 
+
+
+	public static Object[] getInputArrayCopy(IRecipe ire) {
+		Object[] out = new Object[9];
+		if (ire instanceof ShapedRecipes) {
+			ShapedRecipes r = (ShapedRecipes)ire;
+			for (int i = 0; i < r.recipeItems.length; i++) {
+				if (r.recipeItems[i] != null)
+					out[i] = r.recipeItems[i].copy();
+			}
+		}
+		else if (ire instanceof ShapedOreRecipe) {
+			ShapedOreRecipe so = (ShapedOreRecipe)ire;
+			Object[] objin = so.getInput();
+			for (int i = 0; i < objin.length; i++) {
+				Object o = objin[i];
+				if (o instanceof ItemStack)
+					out[i] = ((ItemStack)o).copy();
+				else if (o instanceof List)
+					out[i] = new ArrayList((List)o);
+			}
+		}
+		else if (ire instanceof ExpandedOreRecipe) {
+			ExpandedOreRecipe so = (ExpandedOreRecipe)ire;
+			Object[] objin = so.getInputCopy();
+			for (int i = 0; i < objin.length; i++) {
+				Object o = objin[i];
+				if (o instanceof ItemStack)
+					out[i] = ((ItemStack)o).copy();
+				else if (o instanceof List)
+					out[i] = new ArrayList((List)o);
+			}
+		}
+		else if (ire instanceof ShapelessRecipes) {
+			ShapelessRecipes sr = (ShapelessRecipes)ire;
+			for (int i = 0; i < sr.recipeItems.size(); i++) {
+				ItemStack is = (ItemStack)sr.recipeItems.get(i);
+				out[i] = is.copy();
+			}
+		}
+		else if (ire instanceof ShapelessOreRecipe) {
+			ShapelessOreRecipe so = (ShapelessOreRecipe)ire;
+			for (int i = 0; i < so.getRecipeSize(); i++) {
+				Object o = so.getInput().get(i);
+				if (o instanceof ItemStack)
+					out[i] = ((ItemStack)o).copy();
+				else if (o instanceof List)
+					out[i] = new ArrayList((List)o);
+			}
+		}
+		return out;
+	}
+
 	/** DISTINCT from getAllItems in that it returns a list of objects, including lists! */
 	public static ArrayList<Object> getAllInputsInRecipe(IRecipe ire) {
 		ArrayList<Object> li = new ArrayList();

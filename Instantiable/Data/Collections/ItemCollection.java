@@ -10,16 +10,20 @@
 package Reika.DragonAPI.Instantiable.Data.Collections;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Instantiable.Data.Immutable.InventorySlot;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 
 public class ItemCollection {
 
-	private final ItemHashMap<ArrayList<InventorySlot>> data = new ItemHashMap();
+	private final ItemHashMap<Collection<InventorySlot>> data = new ItemHashMap();
+	private final Collection<IInventory> inventories = new HashSet();
 
 	public ItemCollection() {
 
@@ -29,6 +33,7 @@ public class ItemCollection {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			this.addSlot(new InventorySlot(i, ii));
 		}
+		inventories.add(ii);
 		return this;
 	}
 
@@ -37,12 +42,13 @@ public class ItemCollection {
 		if (is != null) {
 			this.addItemToData(is, slot);
 		}
+		inventories.add(slot.inventory);
 		return this;
 	}
 
 	private void addItemToData(ItemStack is, InventorySlot slot) {
 		int has = this.getItemCount(is);
-		ArrayList<InventorySlot> li = data.get(is);
+		Collection<InventorySlot> li = data.get(is);
 		if (li == null) {
 			li = new ArrayList();
 			data.put(is, li);
@@ -54,8 +60,20 @@ public class ItemCollection {
 		return data.containsKey(is);
 	}
 
+	/** Returns how many items left over. */
+	public int addItemsToUnderlyingInventories(ItemStack is) {
+		int left = is.stackSize;
+		for (IInventory ii : inventories) {
+			left = ReikaInventoryHelper.addToInventoryWithLeftover(is, ii);
+			is.stackSize = left;
+			if (left <= 0)
+				return 0;
+		}
+		return left;
+	}
+
 	public int getItemCount(ItemStack is) {
-		ArrayList<InventorySlot> li = data.get(is);
+		Collection<InventorySlot> li = data.get(is);
 		if (li != null) {
 			int count = 0;
 			for (InventorySlot slot : li) {
@@ -92,7 +110,7 @@ public class ItemCollection {
 	}
 	 */
 	public int removeXItems(ItemStack is, int amt) {
-		ArrayList<InventorySlot> li = data.get(is);
+		Collection<InventorySlot> li = data.get(is);
 		int rem = 0;
 		if (li != null) {
 			Iterator<InventorySlot> it = li.iterator();
