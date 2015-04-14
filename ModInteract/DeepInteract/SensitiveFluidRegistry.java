@@ -20,6 +20,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableArray;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
@@ -42,7 +43,7 @@ public final class SensitiveFluidRegistry {
 			fluidCowField.setAccessible(true);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			ReikaJavaLibrary.pConsole("DRAGONAPI: MooFluids not detected. Not loading fluid handling.");
 		}
 	}
 
