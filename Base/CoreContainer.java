@@ -143,11 +143,14 @@ public class CoreContainer extends Container {
 	@Override
 	public final ItemStack transferStackInSlot(EntityPlayer player, int slot)
 	{
-		ItemStack ret = this.onShiftClickSlot(player, slot, ((Slot)inventorySlots.get(slot)).getStack());
+		Slot islot = ((Slot)inventorySlots.get(slot));
+		if (!this.allowShiftClicking(player, slot, islot.getStack()))
+			return null;
+		ItemStack ret = this.onShiftClickSlot(player, slot, islot.getStack());
 		if (ret != null)
 			return ret;
 		ItemStack is = null;
-		Slot fromSlot = (Slot)inventorySlots.get(slot);
+		Slot fromSlot = islot;
 		if (!(tile instanceof IInventory))
 			return null;
 		int invsize = ((IInventory)tile).getSizeInventory();
@@ -247,6 +250,10 @@ public class CoreContainer extends Container {
 		}
 
 		return null;
+	}
+
+	public boolean allowShiftClicking(EntityPlayer player, int slot, ItemStack stack) {
+		return true;
 	}
 
 	/** Return non-null here to stop all normal shift-click behavior */
