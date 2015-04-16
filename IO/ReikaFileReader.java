@@ -18,8 +18,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.net.ConnectException;
+import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.jar.JarFile;
@@ -66,25 +70,42 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static BufferedReader getReader(URL url, int timeout) {
+	public static BufferedReader getReader(URL url, int timeout, ConnectionErrorHandler ch) {
+		if (!isInternetAccessible(timeout)) {
+			ch.onNoInternet();
+			return null;
+		}
+
 		try {
 			URLConnection c = url.openConnection();
 			c.setConnectTimeout(timeout);
 			return new BufferedReader(new InputStreamReader(c.getInputStream()));
 		}
+		catch (UnknownHostException e) { //Server not found
+			ch.onServerNotFound();
+		}
+		catch (ConnectException e) { //Redirect/tampering
+			ch.onServerRedirected();
+		}
+		catch (SocketTimeoutException e) { //Slow internet, cannot load a text file...
+			ch.onTimedOut();
+		}
 		catch (Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
-	public static BufferedReader getURLReader(String url, int timeout) {
+	private static boolean isInternetAccessible(int timeout) {
 		try {
-			return getReader(new URL(url), timeout);
+			InetAddress ia = InetAddress.getByName("8.8.4.4"); //google, if this is down the world is in flames
+			if (!ia.isReachable(timeout)) {
+				throw new IOException("No internet");
+			}
+			return true;
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return null;
+		catch (IOException ex) {
+			return false;
 		}
 	}
 
@@ -153,8 +174,9 @@ public class ReikaFileReader extends DragonAPICore {
 		return getFileAsLines(getReader(path), printStackTrace);
 	}
 
-	public static ArrayList<String> getFileAsLines(URL url, int timeout, boolean printStackTrace) {
-		return getFileAsLines(getReader(url, timeout), printStackTrace);
+	public static ArrayList<String> getFileAsLines(URL url, int timeout, boolean printStackTrace, ConnectionErrorHandler ch) {
+		BufferedReader r = getReader(url, timeout, ch);
+		return r != null ? getFileAsLines(r, printStackTrace) : null;
 	}
 
 	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace) {
@@ -221,6 +243,15 @@ public class ReikaFileReader extends DragonAPICore {
 			sb.append(e.toString());
 		}
 		return sb.toString();
+	}
+
+	public interface ConnectionErrorHandler {
+
+		void onServerRedirected();
+		void onTimedOut();
+		void onNoInternet();
+		void onServerNotFound();
+
 	}
 
 	public static enum HashType {

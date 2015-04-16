@@ -35,6 +35,12 @@ public class ModVersion implements Comparable<ModVersion> {
 		@Override public boolean verify() {return false;}
 	};
 
+	public static final ModVersion timeout = new ModVersion(0) {
+		@Override public boolean equals(Object o) {return o == this;}
+		@Override public String toString() {return "[URL TIMEOUT]";}
+		@Override public boolean verify() {return false;}
+	};
+
 	public final int majorVersion;
 	public final String subVersion;
 

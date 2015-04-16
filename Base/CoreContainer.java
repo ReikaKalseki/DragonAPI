@@ -272,7 +272,7 @@ public class CoreContainer extends Container {
 	{
 		if (index >= inventorySlots.size() || index < 0) {
 			Object o = "A mod tried to access an invalid slot "+index+" for TileEntity "+tile+".";
-			Object o2 = "It is likely assuming the TileEntity has an inventory, but it does not.";
+			Object o2 = "It is likely assuming the TileEntity has an inventory when it does not.";
 			Object o3 = "Check for any inventory-modifying mods and items you are carrying.";
 			ReikaJavaLibrary.pConsole(o);
 			ReikaJavaLibrary.pConsole(o2);
