@@ -334,7 +334,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			if (types[i] == BiomeDictionary.Type.DESERT || types[i] == BiomeDictionary.Type.SANDY)
 				return 0.2F;
 			if (types[i] == BiomeDictionary.Type.NETHER || types[i] == BiomeDictionary.Type.END)
-				return 1;
+				return 0.1F;
 			if (types[i] == BiomeDictionary.Type.WASTELAND)
 				return 0.1F;
 			if (types[i] == BiomeDictionary.Type.WET)

@@ -16,10 +16,6 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableArray;
 
-import com.creativemd.craftingmanager.api.utils.sorting.items.BlockSorting;
-import com.creativemd.craftingmanager.api.utils.sorting.items.ItemSorting;
-import com.creativemd.craftingmanager.api.utils.sorting.items.ItemStackSorting;
-
 /** Register progression/balance-sensitive items here to blacklist normal recipe systems from adding new recipes for them. */
 public final class SensitiveItemRegistry {
 
@@ -74,7 +70,7 @@ public final class SensitiveItemRegistry {
 				MTInteractionManager.instance.blacklistNewRecipesFor(item);
 				break;
 			case CRAFTMANAGER:
-				CraftingManagerBlacklisting.registerItem(new BlockSorting(item));
+				CraftingManagerBlacklisting.registerItem(item);
 				break;
 			}
 		}
@@ -85,7 +81,7 @@ public final class SensitiveItemRegistry {
 				MTInteractionManager.instance.blacklistNewRecipesFor(item);
 				break;
 			case CRAFTMANAGER:
-				CraftingManagerBlacklisting.registerItem(new ItemSorting(item));
+				CraftingManagerBlacklisting.registerItem(item);
 				break;
 			}
 		}
@@ -96,7 +92,7 @@ public final class SensitiveItemRegistry {
 				MTInteractionManager.instance.blacklistNewRecipesFor(item);
 				break;
 			case CRAFTMANAGER:
-				CraftingManagerBlacklisting.registerItem(new ItemStackSorting(item));
+				CraftingManagerBlacklisting.registerItem(item);
 				break;
 			}
 		}

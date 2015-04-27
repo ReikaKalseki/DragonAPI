@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
@@ -63,6 +65,28 @@ public final class MixMap<V, K> {
 	public K getMix(V v1, V v2) {
 		HashMap<V, K> map = data.get(v1);
 		return map != null ? map.get(v2) : null;
+	}
+
+	public Collection<V> getMixablesWith(V v1) {
+		Map<V, K> map = data.get(v1);
+		return map != null ? Collections.unmodifiableCollection(map.keySet()) : null;
+	}
+
+	public Collection<K> getChildrenOf(V v1) {
+		Map<V, K> map = data.get(v1);
+		return map != null ? Collections.unmodifiableCollection(map.values()) : null;
+	}
+
+	public Collection<V> getMixParents(K k) {
+		Collection<V> c = new HashSet();
+		Collection<ImmutablePair<V, V>> pairs = this.getMixesMaking(k);
+		if (pairs != null) {
+			for (ImmutablePair<V, V> p : pairs) {
+				c.add(p.left);
+				c.add(p.right);
+			}
+		}
+		return c;
 	}
 
 	public boolean containsKey(V obj) {

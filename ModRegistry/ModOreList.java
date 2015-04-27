@@ -280,6 +280,10 @@ public enum ModOreList implements OreType {
 		return getModOreFromOre(is) != null;
 	}
 
+	public static boolean isModOre(Block b, int meta) {
+		return getModOreFromOre(b, meta) != null;
+	}
+
 	public static ModOreList getModOreFromOre(Block b, int meta) {
 		return getModOreFromOre(new ItemStack(b, 1, meta));
 	}

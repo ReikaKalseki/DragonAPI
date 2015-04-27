@@ -39,6 +39,8 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaItemHelper extends DragonAPICore {
 
@@ -380,6 +382,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 	private static final HashMap<Item, ArrayList<ItemStack>> permutations = new HashMap();
 
+	@SideOnly(Side.CLIENT)
 	public static List<ItemStack> getAllMetadataPermutations(Item item) {
 		if (item == null)
 			throw new MisuseException("You cannot get the permutations of null!");

@@ -46,6 +46,17 @@ public final class ReikaMathLibrary extends DragonAPICore {
 			return false;
 	}
 
+	/** Returns true if the input is within a percentage of its size of another value.
+	 * Args: Input, target, percent tolerance */
+	public static boolean approxpAbs(double input, double target, double percent) {
+		return approxp(Math.abs(input), Math.abs(target), percent);
+	}
+
+	/** Returns true if the input is within [target-range,target+range]. Args: input, target, range */
+	public static boolean approxrAbs(double input, double target, double range) {
+		return approxr(Math.abs(input), Math.abs(target), range);
+	}
+
 	/** Returns the value of a double raised to an integer power. Args: Base, power */
 	public static double intpow(double base, int pow) {
 		double val = 1.0D;

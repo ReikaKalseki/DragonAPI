@@ -54,7 +54,7 @@ public enum ModList {
 	TINKERER("TConstruct", "tconstruct.world.TinkerWorld"), //tconstruct.library.TConstructRegistry.getBlock/Item
 	THERMALEXPANSION("ThermalExpansion", "thermalexpansion.block.TEBlocks", "thermalexpansion.item.TEItems"),
 	THERMALFOUNDATION("ThermalFoundation", "thermalfoundation.block.TFBlocks", "thermalfoundation.item.TFItems"),
-	MEKANISM("Mekanism", "mekanism.common.Mekanism"),
+	MEKANISM("Mekanism", "mekanism.common.MekanismBlocks", "mekanism.common.MekanismItems"),
 	MEKTOOLS("MekanismTools", "mekanism.tools.common.MekanismTools"), //ensure still here
 	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks.RailcraftBlocks", null), //items spread over half a dozen classes
 	ICBM("ICBM|Explosion"),

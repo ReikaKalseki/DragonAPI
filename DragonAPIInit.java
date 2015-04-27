@@ -36,6 +36,7 @@ import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.FindTilesCommand;
+import Reika.DragonAPI.Auxiliary.LoggingFilters;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
@@ -607,6 +608,14 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	public ModLogger getModLogger() {
 		return logger;
+	}
+
+	static {
+		loadLogParsers();
+	}
+
+	private static void loadLogParsers() {
+		LoggingFilters.registerCoreFilters();
 	}
 
 }

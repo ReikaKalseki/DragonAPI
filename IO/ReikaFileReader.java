@@ -19,7 +19,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.net.ConnectException;
-import java.net.InetAddress;
+import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
@@ -98,10 +98,9 @@ public class ReikaFileReader extends DragonAPICore {
 
 	private static boolean isInternetAccessible(int timeout) {
 		try {
-			InetAddress ia = InetAddress.getByName("8.8.4.4"); //google, if this is down the world is in flames
-			if (!ia.isReachable(timeout)) {
-				throw new IOException("No internet");
-			}
+			URLConnection c = new URL("http://www.google.com").openConnection();
+			c.setConnectTimeout(timeout);
+			((HttpURLConnection)c).getResponseCode();
 			return true;
 		}
 		catch (IOException ex) {

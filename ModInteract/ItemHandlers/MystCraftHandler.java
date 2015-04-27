@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import net.minecraft.block.Block;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Exception.ModReflectionException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -38,6 +39,10 @@ public class MystCraftHandler extends ModHandlerBase {
 				idportal = this.getBlockInstance("portal");
 				idcrystal = this.getBlockInstance("crystal");
 			}
+			catch (ModReflectionException e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Reflective exception for reading "+this.getMod()+"! Was the class loaded?");
+				e.printStackTrace();
+			}
 			catch (NullPointerException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
@@ -54,11 +59,21 @@ public class MystCraftHandler extends ModHandlerBase {
 		crystalID = idcrystal;
 	}
 
-	private Block getBlockInstance(String name) {
+	private Block getBlockInstance(String name) throws ModReflectionException {
+		Class c = this.getMod().getBlockClass();
+		String s = this.getField(c, "block_", name);
+		if (s == null)
+			s = this.getField(c, "", name);
+		if (s == null)
+			throw new ModReflectionException(ModList.MYSTCRAFT, name);
+		return GameRegistry.findBlock(this.getMod().modLabel, s);
+	}
+
+	private String getField(Class c, String pre, String name) {
 		try {
-			Field f = this.getMod().getBlockClass().getDeclaredField("block_"+name);
+			Field f = c.getDeclaredField(pre+name);
 			String reg = (String)f.get(null);
-			return GameRegistry.findBlock(this.getMod().modLabel, reg);
+			return reg;
 		}
 		catch (Exception e) {
 			e.printStackTrace();

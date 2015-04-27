@@ -9,15 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
+import java.util.Collection;
+
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import appeng.api.AEApi;
 import appeng.api.config.Actionable;
+import appeng.api.config.FuzzyMode;
 import appeng.api.networking.IGridNode;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
-import appeng.util.item.AEItemStack;
 
 public class MESystemReader {
 
@@ -68,15 +71,34 @@ public class MESystemReader {
 		return map;
 	}
 
+	private IAEItemStack createAEStack(ItemStack is) {
+		return AEApi.instance().storage().createItemStack(is);
+	}
+
 	/** Returns how many items removed */
 	public long removeItem(ItemStack is, boolean simulate) {
-		IAEItemStack ret = this.getStorage().extractItems(AEItemStack.create(is), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+		IAEItemStack ret = this.getStorage().extractItems(this.createAEStack(is), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+		return ret != null ? ret.getStackSize() : 0;
+	}
+
+	/** Returns how many items removed. But Fuzzy! :D */
+	public long removeItemFuzzy(ItemStack is, boolean simulate, FuzzyMode fz, boolean oredict) {
+		IMEMonitor<IAEItemStack> mon = this.getStorage();
+		IAEItemStack ae = this.createAEStack(is);
+		Collection<IAEItemStack> c = mon.getStorageList().findFuzzy(ae, fz);
+		IAEItemStack most = null;
+		for (IAEItemStack iae : c) {
+			if ((most == null || iae.getStackSize() >= most.getStackSize()) && (oredict || is.getItem() == iae.getItem())) {
+				most = iae;
+			}
+		}
+		IAEItemStack ret = most != null ? mon.extractItems(most, simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource) : null;
 		return ret != null ? ret.getStackSize() : 0;
 	}
 
 	/** Returns how many items NOT added */
 	public long addItem(ItemStack is, boolean simulate) {
-		IAEItemStack ret = this.getStorage().injectItems(AEItemStack.create(is), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+		IAEItemStack ret = this.getStorage().injectItems(this.createAEStack(is), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
 		return ret != null ? ret.getStackSize() : 0;
 	}
 

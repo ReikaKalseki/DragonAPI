@@ -50,6 +50,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	private static final int[] permuOffsets = new int[9];
 
 	private static final HashMap<IRecipe, RecipeCache> recipeCache = new HashMap();
+	private static final HashMap<IRecipe, RecipeCache> recipeCacheClient = new HashMap();
 
 	private static Field shapedOreHeight;
 	private static Field shapedOreWidth;
@@ -242,20 +243,21 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return li;
 	}
 
-	private static List<ItemStack> getRecipeItemStack(ItemStack is) {
+	private static List<ItemStack> getRecipeItemStack(ItemStack is, boolean client) {
 		if (is == null)
 			return null;
-		if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE)
+		if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE && client)
 			return ReikaItemHelper.getAllMetadataPermutations(is.getItem());
 		else
 			return ReikaJavaLibrary.makeListFrom(is);
 	}
 
-	private static RecipeCache getRecipeCacheObject(IRecipe ir) {
-		RecipeCache cache = recipeCache.get(ir);
+	private static RecipeCache getRecipeCacheObject(IRecipe ir, boolean client) {
+		HashMap<IRecipe, RecipeCache> map = client ? recipeCacheClient : recipeCache;
+		RecipeCache cache = map.get(ir);
 		if (cache == null) {
-			cache = calculateRecipeToItemStackArray(ir);
-			recipeCache.put(ir, cache);
+			cache = calculateRecipeToItemStackArray(ir, client);
+			map.put(ir, cache);
 		}
 		return cache;
 	}
@@ -264,7 +266,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	public static List<ItemStack>[] getRecipeArray(IRecipe ir) {
 		List<ItemStack>[] lists = new List[9];
 		for (int i = 0; i < 9; i++) {
-			List li = getRecipeCacheObject(ir).items[i];
+			List li = getRecipeCacheObject(ir, false).items[i];
 			if (li != null && !li.isEmpty())
 				lists[i] = Collections.unmodifiableList(li);
 		}
@@ -274,7 +276,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	/** Turns a recipe into a 3x3 itemstack array, permuting it as well, usually for rendering. Args: Recipe */
 	@SideOnly(Side.CLIENT)
 	public static ItemStack[] getPermutedRecipeArray(IRecipe ir) {
-		RecipeCache r = getRecipeCacheObject(ir);
+		RecipeCache r = getRecipeCacheObject(ir, true);
 		List<ItemStack>[] isin = r.items;
 
 		int time = 1000;
@@ -285,6 +287,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				}
 			}
 		}
+
 		int[] indices = new int[9];
 		ItemStack[] add = new ItemStack[9];
 		for (int i = 0; i < 9; i++) {
@@ -347,7 +350,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return in;
 	}
 
-	private static RecipeCache calculateRecipeToItemStackArray(IRecipe ire) {
+	private static RecipeCache calculateRecipeToItemStackArray(IRecipe ire, boolean client) {
 		List<ItemStack>[] isin = new List[9];
 		int num;
 		int w = 0;
@@ -365,7 +368,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			h = r.recipeHeight;
 			for (int i = 0; i < r.recipeItems.length; i++) {
 				ItemStack is = r.recipeItems[i];
-				isin[i] = getRecipeItemStack(is);
+				isin[i] = getRecipeItemStack(is, client);
 			}
 
 		}
@@ -378,7 +381,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			for (int i = 0; i < objin.length; i++) {
 				if (objin[i] instanceof ItemStack) {
 					ItemStack is = (ItemStack)objin[i];
-					isin[i] = getRecipeItemStack(is);
+					isin[i] = getRecipeItemStack(is, client);
 				}
 				else if (objin[i] instanceof List) {
 					List<ItemStack> li = (List)objin[i];
@@ -397,7 +400,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			for (int i = 0; i < objin.length; i++) {
 				if (objin[i] instanceof ItemStack) {
 					ItemStack is = (ItemStack)objin[i];
-					isin[i] = getRecipeItemStack(is);
+					isin[i] = getRecipeItemStack(is, client);
 				}
 				else if (objin[i] instanceof List) {
 					List<ItemStack> li = (List)objin[i];
@@ -412,7 +415,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			//ReikaJavaLibrary.pConsole(ire);
 			for (int i = 0; i < sr.getRecipeSize(); i++) {
 				ItemStack is = (ItemStack)sr.recipeItems.get(i);
-				isin[i] = getRecipeItemStack(is);
+				isin[i] = getRecipeItemStack(is, client);
 			}
 			w = sr.getRecipeSize() >= 3 ? 3 : sr.getRecipeSize();
 			h = (sr.getRecipeSize()+2)/3;
@@ -423,7 +426,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				Object obj = so.getInput().get(i);
 				if (obj instanceof ItemStack) {
 					ItemStack is = (ItemStack)obj;
-					isin[i] = getRecipeItemStack(is);
+					isin[i] = getRecipeItemStack(is, client);
 				}
 				else if (obj instanceof List) {
 					List<ItemStack> li = (List)obj;
@@ -837,7 +840,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 	public static Collection<Integer> getRecipeLocationIndices(IRecipe ir, ItemStack is) {
 		Collection<Integer> c = new ArrayList();
-		RecipeCache r = getRecipeCacheObject(ir);
+		RecipeCache r = getRecipeCacheObject(ir, false);
 		for (int i = 0; i < 9; i++) {
 			List<ItemStack> li = r.items[i];
 			if (li != null && ReikaItemHelper.collectionContainsItemStack(li, is))

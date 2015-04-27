@@ -84,6 +84,7 @@ public final class CommandableUpdateChecker {
 			if (this.shouldCheck(mod)) {
 				ModVersion version = c.version;
 				ModVersion latest = latestVersions.get(mod);
+				ReikaJavaLibrary.pConsole(latestVersions);
 				//if (version.isCompiled()) {
 				if (latest == ModVersion.timeout) {
 					this.markUpdate(mod, version, latest);
@@ -436,12 +437,14 @@ public final class CommandableUpdateChecker {
 				String s = list.get(0);
 				int x = 2;
 				int y = 2;
-				int w = 160;
-				int h = 61;
+				int w = 192;
+				int sw = w-25;
+				int lines = fr.listFormattedStringToWidth(s, sw).size();
+				int h = 7+(lines)*(fr.FONT_HEIGHT);
 				Gui.drawRect(x, y, x+w, y+h, 0xff4a4a4a);
 				ReikaGuiAPI.instance.drawRectFrame(x, y, w, h, 0xb0b0b0);
 				ReikaGuiAPI.instance.drawRectFrame(x+2, y+2, w-4, h-4, 0xcfcfcf);
-				fr.drawSplitString(s, x+4, y+4, w-25, 0xffffff);
+				fr.drawSplitString(s, x+4, y+4, sw, 0xffffff);
 
 				Tessellator v5 = Tessellator.instance;
 				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);

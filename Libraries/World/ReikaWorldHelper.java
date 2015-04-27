@@ -1749,18 +1749,32 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static void forceGenAndPopulate(World world, int x, int y, int z, int meta) {
-		Chunk ch = world.getChunkFromBlockCoords(x, z);
-		IChunkProvider p = world.getChunkProvider();
-		if (!ch.isTerrainPopulated) {
-			try {
-				p.populate(p, x >> 4, z >> 4);
-			}
-			catch (ConcurrentModificationException e) {
-				ReikaJavaLibrary.pConsole("Chunk at "+x+", "+z+" failed to allow population due to a ConcurrentModificationException! Contact Reika with information on any mods that might be multithreading worldgen!");
-			}
-			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("Chunk at "+x+", "+z+" failed to allow population!");
-				e.printStackTrace();
+		forceGenAndPopulate(world, x, y, z, meta, 0);
+	}
+
+	public static void forceGenAndPopulate(World world, int x, int y, int z, int meta, int range) {
+
+		for (int i = -range; i <= range; i++) {
+			for (int k = -range; k <= range; k++) {
+
+				int dx = x+i*16;
+				int dz = z+k*16;
+
+				Chunk ch = world.getChunkFromBlockCoords(dx, dz);
+				IChunkProvider p = world.getChunkProvider();
+				if (!ch.isTerrainPopulated) {
+					try {
+						p.populate(p, dx >> 4, dz >> 4);
+					}
+					catch (ConcurrentModificationException e) {
+						ReikaJavaLibrary.pConsole("Chunk at "+dx+", "+dz+" failed to allow population due to a ConcurrentModificationException! Contact Reika with information on any mods that might be multithreading worldgen!");
+					}
+					catch (Exception e) {
+						ReikaJavaLibrary.pConsole("Chunk at "+dx+", "+dz+" failed to allow population!");
+						e.printStackTrace();
+					}
+				}
+
 			}
 		}
 	}
@@ -1815,5 +1829,16 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static boolean isChunkGenerated(WorldServer world, int x, int z) {
 		IChunkLoader loader = world.theChunkProviderServer.currentChunkLoader;
 		return loader instanceof AnvilChunkLoader && ((AnvilChunkLoader)loader).chunkExists(world, x >> 4, z >> 4);
+	}
+
+	public static int getWaterDepth(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		int c = 0;
+		while (b == Blocks.water) {
+			y--;
+			c++;
+			b = world.getBlock(x, y, z);
+		}
+		return c;
 	}
 }
