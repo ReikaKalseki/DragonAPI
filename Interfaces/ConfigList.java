@@ -21,6 +21,8 @@ public interface ConfigList {
 
 	//public boolean isString();
 
+	//public boolean isString();
+
 	public Class getPropertyType();
 
 	//public int setValue(Configuration config);
@@ -37,11 +39,15 @@ public interface ConfigList {
 
 	public float getFloat();
 
+	//public String getString();
+
 	public boolean getDefaultState();
 
 	public int getDefaultValue();
 
 	public float getDefaultFloat();
+
+	//public String getDefaultString();
 
 	//public boolean isDummiedOut();
 

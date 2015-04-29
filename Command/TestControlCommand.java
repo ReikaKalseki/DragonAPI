@@ -11,7 +11,6 @@ package Reika.DragonAPI.Command;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayerMP;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
@@ -31,8 +30,6 @@ public class TestControlCommand extends CommandBase {
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
-		EntityPlayerMP ep = getCommandSenderAsPlayer(ics);
-
 		DragonAPICore.debugtest = !DragonAPICore.debugtest;
 		ReikaChatHelper.sendChatToAllOnServer("Debug Test Mode: "+DragonAPICore.debugtest);
 	}

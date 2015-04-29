@@ -12,20 +12,25 @@ package Reika.DragonAPI.Libraries.IO;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Block.SoundType;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import Reika.DragonAPI.Auxiliary.Trackers.CustomSoundHandler;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.IO.EnumSound;
 import Reika.DragonAPI.Interfaces.SoundEnum;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -108,6 +113,10 @@ public class ReikaSoundHelper {
 		}
 	}
 
+	public static void playSound(SoundEnum s, String ch, World world, Entity e, float vol, float pitch) {
+		playSound(s, ch, world, e.posX, e.posY, e.posZ, vol, pitch);
+	}
+
 	public static void playSound(SoundEnum s, String ch, World world, double x, double y, double z, float vol, float pitch) {
 		long time = world.getTotalWorldTime();
 		if (!s.canOverlap()) {
@@ -145,6 +154,18 @@ public class ReikaSoundHelper {
 	@SideOnly(Side.CLIENT)
 	public static void playClientSound(SoundEnum s, Entity e, float vol, float pitch) {
 		playClientSound(s, e.posX, e.posY, e.posZ, vol, pitch);
+	}
+
+	public static void broadcastSound(SoundEnum s, String ch, float vol, float pitch) {
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			throw new MisuseException("You cannot call this from the client!");
+		World[] worlds = DimensionManager.getWorlds();
+		for (World world : worlds) {
+			for (EntityPlayer ep : (List<EntityPlayer>)world.playerEntities) {
+				playSound(s, ch, world, ep, vol, pitch);
+			}
+		}
+
 	}
 
 	private static class SoundPlay {

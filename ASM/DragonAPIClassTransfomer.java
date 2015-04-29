@@ -11,12 +11,9 @@ package Reika.DragonAPI.ASM;
 
 import java.util.Collection;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
-import net.minecraftforge.common.MinecraftForge;
 
-import org.lwjgl.opengl.GL11;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
@@ -36,7 +33,6 @@ import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Event.FarClippingPlaneEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -63,6 +59,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		WORLDRENDER("net.minecraft.client.renderer.RenderGlobal", "bma"),
 		NIGHTVISEVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		FARCLIPEVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
+		PUSHENTITYOUT("net.minecraft.entity.Entity", "sa"),
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
 		;
 
@@ -552,13 +549,14 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			//}
 			case FARCLIPEVENT: {
 				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_78479_a", "setupCameraTransform", "(FI)V");
+				String fd = FMLForgePlugin.RUNTIME_DEOBF ? "field_78530_s" : "farPlaneDistance";
 				InsnList add = new InsnList();
 				add.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/FarClippingPlaneEvent"));
 				add.add(new InsnNode(Opcodes.DUP));
 				add.add(new VarInsnNode(Opcodes.FLOAD, 1));
 				add.add(new VarInsnNode(Opcodes.ILOAD, 2));
 				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
-				add.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", "farPlaneDistance", "F"));
+				add.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", fd, "F"));
 				add.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/FarClippingPlaneEvent", "<init>", "(FIF)V", false));
 				add.add(new VarInsnNode(Opcodes.ASTORE, 3));
 				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
@@ -568,7 +566,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				add.add(new VarInsnNode(Opcodes.ALOAD, 3));
 				add.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/FarClippingPlaneEvent", "farClippingPlaneDistance", "F"));
-				add.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/EntityRenderer", "farPlaneDistance", "F"));
+				add.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/EntityRenderer", fd, "F"));
 				for (int i = 0; i < m.instructions.size(); i++) {
 					AbstractInsnNode ain = m.instructions.get(i);
 					if (ain.getOpcode() == Opcodes.PUTFIELD) {
@@ -579,6 +577,26 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				}
 				break;
 			}
+			case PUSHENTITYOUT: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_145771_j", "func_145771_j", "(DDD)Z");
+				InsnList add = new InsnList();
+				LabelNode L1 = new LabelNode();
+				LabelNode L2 = new LabelNode();
+				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				add.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/EntityPushOutOfBlocksEvent"));
+				add.add(new InsnNode(Opcodes.DUP));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				add.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/EntityPushOutOfBlocksEvent", "<init>", "(Lnet/minecraft/entity/Entity;)V", false));
+				add.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				add.add(new JumpInsnNode(Opcodes.IFEQ, L1));
+				add.add(L2);
+				add.add(new InsnNode(Opcodes.ICONST_0));
+				add.add(new InsnNode(Opcodes.IRETURN));
+				add.add(L1);
+				m.instructions.insert(add);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+				break;
+			}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -587,28 +605,6 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			//ClassNode vcn = new ClassNode(); //verify
 			//new ClassReader(newdata).accept(vcn, 0);
 			return newdata;
-		}
-	}
-
-	class test {
-
-		private Minecraft mc;
-		private float farPlaneDistance;
-
-		private void setupCameraTransform(float p_78479_1_, int p_78479_2_)
-		{
-			farPlaneDistance = mc.gameSettings.renderDistanceChunks * 16;
-			FarClippingPlaneEvent evt = new FarClippingPlaneEvent(p_78479_1_, p_78479_2_, farPlaneDistance);
-			MinecraftForge.EVENT_BUS.post(evt);
-			farPlaneDistance = evt.farClippingPlaneDistance;
-			GL11.glMatrixMode(GL11.GL_PROJECTION);
-			GL11.glLoadIdentity();
-			float f1 = 0.07F;
-
-			if (mc.gameSettings.anaglyph)
-			{
-				GL11.glTranslatef((-(p_78479_2_ * 2 - 1)) * f1, 0.0F, 0.0F);
-			}
 		}
 	}
 

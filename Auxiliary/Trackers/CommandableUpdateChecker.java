@@ -9,7 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary.Trackers;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
@@ -18,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -39,6 +43,7 @@ import org.lwjgl.opengl.GL11;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Extras.ModVersion;
@@ -46,6 +51,9 @@ import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.ConnectionErrorHandler;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayList;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayMap;
+import Reika.DragonAPI.Instantiable.Event.ClientLoginEvent;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -70,8 +78,16 @@ public final class CommandableUpdateChecker {
 	private final Collection<UpdateChecker> checkers = new OneWayList();
 	private final Collection<DragonAPIMod> oldMods = new OneWayList();
 	private final Collection<DragonAPIMod> noURLMods = new OneWayList();
+
 	private final HashMap<String, DragonAPIMod> modNames = new OneWayMap();
+	private final HashMap<DragonAPIMod, String> modNamesReverse = new OneWayMap();
+
 	private final HashMap<DragonAPIMod, Boolean> overrides = new OneWayMap();
+
+	private final Collection<DragonAPIMod> dispatchedOldMods = new ArrayList();
+	private final Collection<DragonAPIMod> dispatchedURLMods = new ArrayList();
+
+	private final HashMap<DragonAPIMod, UpdateHash> hashes = new HashMap();
 
 	private CommandableUpdateChecker() {
 
@@ -151,6 +167,7 @@ public final class CommandableUpdateChecker {
 		checkers.add(c);
 		String label = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
 		modNames.put(label, mod);
+		modNamesReverse.put(mod, label);
 	}
 
 	private URL getURL(String url) {
@@ -233,15 +250,131 @@ public final class CommandableUpdateChecker {
 	public void notifyPlayer(EntityPlayer ep) {
 		if (!oldMods.isEmpty() || !noURLMods.isEmpty()) {
 			this.sendMessages(ep);
-			if (ep instanceof EntityPlayerMP)
-				ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.OLDMODS.ordinal(), (EntityPlayerMP)ep);
 		}
+
+		if (ep instanceof EntityPlayerMP) {
+			PacketTarget pt = new PacketTarget.PlayerTarget((EntityPlayerMP)ep);
+			for (DragonAPIMod mod : oldMods) {
+				if (this.beAggressive(mod, (EntityPlayerMP)ep)) {
+					ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.OLDMODS.ordinal(), modNamesReverse.get(mod), pt);
+				}
+			}
+			for (DragonAPIMod mod : noURLMods) {
+				ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.OLDMODS.ordinal(), "URL_"+modNamesReverse.get(mod), pt);
+			}
+		}
+	}
+
+	private boolean beAggressive(DragonAPIMod mod, EntityPlayerMP ep) {
+		boolean abandonedPack = latestVersions.get(mod).majorVersion-mod.getModVersion().majorVersion > 1;
+		if (!abandonedPack && DragonOptions.PACKONLYUPDATE.getState()) {
+			return this.isPackMaker(mod, ep);
+		}
+		else if (DragonOptions.OPONLYUPDATE.getState()) {
+			return DragonAPICore.isSinglePlayer() || ReikaPlayerAPI.isAdmin(ep);
+		}
+		return true;
+	}
+
+	private boolean isPackMaker(DragonAPIMod mod, EntityPlayerMP ep) {
+		UpdateHash test = this.genHash(mod, ep);
+		UpdateHash get = this.getOrCreateHash(mod, ep);
+		return !!get.equals(test);
+	}
+
+	private UpdateHash getOrCreateHash(DragonAPIMod mod, EntityPlayer ep) {
+		UpdateHash uh = hashes.get(mod);
+		if (uh == null) {
+			uh = this.readHash(mod);
+			if (uh == null) {
+				uh = this.genHash(mod, ep);
+				this.writeHash(mod, uh);
+			}
+			hashes.put(mod, uh);
+		}
+		return uh;
+	}
+
+	private UpdateHash readHash(DragonAPIMod mod) {
+		File f = this.getHashFile();
+		ArrayList<String> data = ReikaFileReader.getFileAsLines(f, true);
+		for (String s : data) {
+			String tag = mod.getDisplayName()+"=";
+			if (s.startsWith(tag)) {
+				return UpdateHash.decode(s.substring(tag.length()));
+			}
+		}
+		return null;
+	}
+
+	private void writeHash(DragonAPIMod mod, UpdateHash uh) {
+		File f = this.getHashFile();
+		ArrayList<String> data = ReikaFileReader.getFileAsLines(f, true);
+		String tag = mod.getDisplayName()+"=";
+		data.add(tag+uh.toString());
+		try {
+			BufferedReader r = new BufferedReader(new FileReader(f));
+			String sep = System.getProperty("line.separator");
+			String line = r.readLine();
+			StringBuilder out = new StringBuilder();
+			for (String l : data) {
+				out.append(l+sep);
+			}
+			r.close();
+			FileOutputStream os = new FileOutputStream(f);
+			os.write(out.toString().getBytes());
+			os.close();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private File getHashFile() {
+		String base = DragonAPICore.getMinecraftDirectoryString();
+		File parent = new File(base+"/config/Reika");
+		if (!parent.exists())
+			parent.mkdirs();
+		String path = parent+"/versions.dat";
+		File f = new File(path);
+		try {
+			if (!f.exists())
+				f.createNewFile();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return f;
+	}
+
+	private UpdateHash genHash(DragonAPIMod mod, EntityPlayer ep) {
+		return new UpdateHash(ep.getUniqueID(), mod.getModContainer().getSource().getAbsolutePath(), System.currentTimeMillis());
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void onClientLogin(ClientLoginEvent evt) {
+		this.genHashes(evt.player);
+	}
+
+	private void genHashes(EntityPlayer ep) {
+		for (DragonAPIMod mod : latestVersions.keySet()) {
+			this.getOrCreateHash(mod, ep);
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void onClientReceiveOldModID(String s) {
+		Collection<DragonAPIMod> c = s.startsWith("URL_") ? dispatchedURLMods : dispatchedOldMods;
+		if (s.startsWith("URL_"))
+			s = s.substring(4);
+		DragonAPIMod mod = modNames.get(s);
+		c.add(mod);
 	}
 
 	@SideOnly(Side.CLIENT)
 	public void onClientReceiveOldModsNote(EntityPlayer ep) {
 		ArrayList<String> li = new ArrayList();
-		for (DragonAPIMod mod : oldMods) {
+		for (DragonAPIMod mod : dispatchedOldMods) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(mod.getDisplayName());
 			sb.append(" ");
@@ -253,7 +386,7 @@ public final class CommandableUpdateChecker {
 			sb.append(" Hold CTRL to be able to click this message.");
 			li.add(sb.toString());
 		}
-		for (DragonAPIMod mod : noURLMods) {
+		for (DragonAPIMod mod : dispatchedURLMods) {
 			StringBuilder sb = new StringBuilder();
 			sb.append(mod.getDisplayName());
 			sb.append(" could not verify its version; the version server may be inaccessible. Check your internet settings, and please notify ");
@@ -404,6 +537,89 @@ public final class CommandableUpdateChecker {
 		public void onTimedOut() {
 			mod.getModLogger().logError("Error accessing online file: Timed Out");
 		}
+	}
+
+	private static class UpdateHash {
+
+		private final long timestamp;
+		private final String filepath;
+		private final UUID player;
+
+		private UpdateHash(UUID id, String file, long time) {
+			player = id;
+			filepath = file;
+			timestamp = time;
+
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof UpdateHash) {
+				UpdateHash uh = (UpdateHash)o;
+				return uh.player == player && uh.filepath.equals(player);
+			}
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			String time = String.valueOf(timestamp);
+			String id = player.toString();
+			StringBuffer sb = new StringBuffer();
+			int idx = 0;
+			while (idx < time.length() || idx < id.length() || idx < filepath.length()) {
+				long c1 = idx >= time.length() ? '*' : time.charAt(idx);
+				long c2 = idx >= id.length() ? '*' : id.charAt(idx);
+				long c3 = idx >= filepath.length() ? '*' : filepath.charAt(idx);
+				long sum = c1 | (c2 << 16) | (c3 << 32);
+				idx++;
+				//ReikaJavaLibrary.pConsole(c1+" & "+c2+" & "+c3+" > "+sum+" $ "+this.getStringForInt(sum));
+				sb.append(this.getStringForInt(sum)+":");
+			}
+			//ReikaJavaLibrary.pConsole("Final: "+time+" & "+id+" & "+filepath+" > "+sb.toString());
+			return sb.toString();
+		}
+
+		public static UpdateHash decode(String s) {
+			StringBuilder path = new StringBuilder();
+			StringBuilder id = new StringBuilder();
+			StringBuilder time = new StringBuilder();
+			String[] parts = s.split(":");
+			for (int i = 0; i < parts.length; i++) {
+				String p = parts[i];
+				long dat = getIntForString(p);
+				char c1 = (char)(dat & 65535);
+				char c2 = (char)((dat >> 16) & 65535);
+				char c3 = (char)((dat >> 32) & 65535);
+				//ReikaJavaLibrary.pConsole(c1+" & "+c2+" & "+c3+" < "+dat+" $ "+p);
+				if (c1 != '*')
+					time.append(c1);
+				if (c2 != '*')
+					id.append(c2);
+				if (c3 != '*')
+					path.append(c3);
+			}
+			//ReikaJavaLibrary.pConsole("Final: "+time+" & "+id+" & "+path+" < "+s);
+			return new UpdateHash(UUID.fromString(id.toString()), path.toString(), Long.parseLong(time.toString()));
+		}
+
+		private static String getStringForInt(long l) {
+			return Long.toString(l, 36);
+		}
+
+		private static long getIntForString(String s) {
+			return Long.parseLong(s, 36);
+		}
+
+		private static final char[] chars = {
+			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+			'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+			'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+			'v', 'w', 'x', 'y', 'z', '~', '`', '+', '-', '=',
+			'!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
+			'[', ']', '{', '}', ';', ':', '<', '>', ',', '.',
+		};
+
 	}
 
 	private static class VersionNotLoadableException extends RuntimeException {

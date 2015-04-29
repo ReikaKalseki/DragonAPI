@@ -221,12 +221,13 @@ public class APIPacketHandler implements IPacketHandler {
 			case EXPLODE:
 				break;
 			case OLDMODS:
+			case OLDMODSLOAD:
 				break;
 			case LOGIN:
 				break;
 			}
 			if (world.isRemote)
-				this.clientHandle(world, x, y, z, pack, data, ep);
+				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -234,7 +235,7 @@ public class APIPacketHandler implements IPacketHandler {
 	}
 
 	@SideOnly(Side.CLIENT)
-	private void clientHandle(World world, int x, int y, int z, PacketIDs pack, int[] data, EntityPlayer player) {
+	private void clientHandle(World world, int x, int y, int z, PacketIDs pack, int[] data, String sg, EntityPlayer player) {
 		switch(pack) {
 		case NUMBERPARTICLE:
 			Minecraft.getMinecraft().effectRenderer.addEffect(new NumberParticleFX(world, x+0.5, y+0.5, z+0.5, data[0]));
@@ -247,6 +248,9 @@ public class APIPacketHandler implements IPacketHandler {
 			ReikaParticleHelper.EXPLODE.spawnAroundBlock(world, x, y, z, 1);
 			break;
 		case OLDMODS:
+			CommandableUpdateChecker.instance.onClientReceiveOldModID(sg);
+			break;
+		case OLDMODSLOAD:
 			CommandableUpdateChecker.instance.onClientReceiveOldModsNote(player);
 			break;
 		case LOGIN:
@@ -274,6 +278,7 @@ public class APIPacketHandler implements IPacketHandler {
 		IDDUMP(),
 		EXPLODE(),
 		OLDMODS(),
+		OLDMODSLOAD(),
 		LOGIN();
 
 		public static PacketIDs getEnum(int index) {

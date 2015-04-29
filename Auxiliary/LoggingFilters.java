@@ -20,7 +20,9 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
+import cpw.mods.fml.relauncher.Side;
 
 public class LoggingFilters {
 
@@ -145,8 +147,10 @@ public class LoggingFilters {
 	}
 
 	public static void registerCoreFilters() {
-		registerFilter(soundLoaderFilter, LoggerType.SOUND);
 		registerFilter(mismatchFilter, LoggerType.FML);
+
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			registerFilter(soundLoaderFilter, LoggerType.SOUND);
 	}
 
 }

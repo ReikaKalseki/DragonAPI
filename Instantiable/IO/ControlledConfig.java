@@ -152,6 +152,8 @@ public class ControlledConfig {
 					controls[i] = this.setValue(optionList[i]);
 				if (optionList[i].isDecimal())
 					controls[i] = this.setFloat(optionList[i]);
+				//if (optionList[i].isString())
+				//	controls[i] = this.setString(optionList[i]);
 			}
 			else {
 				if (optionList[i].isBoolean())
@@ -160,6 +162,8 @@ public class ControlledConfig {
 					controls[i] = optionList[i].getDefaultValue();
 				if (optionList[i].isDecimal())
 					controls[i] = optionList[i].getDefaultFloat();
+				//if (optionList[i].isString())
+				//	controls[i] = optionList[i].getDefaultString();
 			}
 		}
 
@@ -194,7 +198,14 @@ public class ControlledConfig {
 			prop.set(cfg.getDefaultFloat());
 		return (float)prop.getDouble(cfg.getDefaultFloat());
 	}
-
+	/*
+	private String setString(ConfigList cfg) {
+		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultString());
+		if (cfg.isEnforcingDefaults())
+			prop.set(cfg.getDefaultString());
+		return prop.getString();
+	}
+	 */
 	private int getValueFromConfig(IDRegistry id, Configuration config) {
 		return config.get(id.getCategory(), id.getConfigName(), id.getDefaultID()).getInt();
 	}

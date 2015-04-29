@@ -22,12 +22,15 @@ public enum DragonOptions implements ConfigList {
 	UNNERFOBSIDIAN("Restore Obsidian Blast Resistance", true),
 	CHATERRORS("Log errors to chat", true),
 	SORTCREATIVE("Sort Creative Tabs Alphabetically", true),
-	CUSTOMRENDER("Custom/Donator Renders", true);
+	CUSTOMRENDER("Custom/Donator Renders", true),
+	OPONLYUPDATE("Only show update notice to Ops or SSP", false),
+	PACKONLYUPDATE("Only show update notice to pack creator", false);
 
 	private String label;
 	private boolean defaultState;
 	private int defaultValue;
 	private float defaultFloat;
+	private String defaultString;
 	private Class type;
 	private boolean enforcing = false;
 
@@ -56,6 +59,12 @@ public enum DragonOptions implements ConfigList {
 		type = float.class;
 	}
 
+	private DragonOptions(String l, String s) {
+		label = l;
+		defaultString = s;
+		type = String.class;
+	}
+
 	public boolean isBoolean() {
 		return type == boolean.class;
 	}
@@ -66,6 +75,10 @@ public enum DragonOptions implements ConfigList {
 
 	public boolean isDecimal() {
 		return type == float.class;
+	}
+
+	public boolean isString() {
+		return type == String.class;
 	}
 
 	public Class getPropertyType() {
@@ -88,6 +101,10 @@ public enum DragonOptions implements ConfigList {
 		return (Float)DragonAPIInit.config.getControl(this.ordinal());
 	}
 
+	public String getString() {
+		return (String)DragonAPIInit.config.getControl(this.ordinal());
+	}
+
 	public boolean isDummiedOut() {
 		return type == null;
 	}
@@ -106,7 +123,12 @@ public enum DragonOptions implements ConfigList {
 	public float getDefaultFloat() {
 		return defaultFloat;
 	}
-
+	/*
+	@Override
+	public String getDefaultString() {
+		return defaultString;
+	}
+	 */
 	@Override
 	public boolean isEnforcingDefaults() {
 		return enforcing;
