@@ -23,5 +23,7 @@ public interface TreeType {
 	public List<Integer> getLogMetadatas();
 	public List<Integer> getLeafMetadatas();
 	public boolean canBePlacedSideways();
+	public boolean exists();
+	public ItemStack getBasicLeaf();
 
 }

@@ -33,6 +33,72 @@ public abstract class ASMException extends RuntimeException {
 		return sb.toString();
 	}
 
+	private abstract static class NoSuchInstructionASMException extends ASMException {
+
+		private final MethodNode method;
+
+		private NoSuchInstructionASMException(MethodNode m) {
+			super(null);
+			method = m;
+		}
+
+		@Override
+		public String getMessage() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Error ASMing method "+method.name+" "+method.desc+":\n");
+			return sb.toString();
+		}
+
+	}
+
+	public static class NoSuchASMMethodInstructionException extends NoSuchInstructionASMException {
+
+		private final String callName;
+		private final String callDesc;
+		private final int callInt;
+
+		public NoSuchASMMethodInstructionException(MethodNode m, String name, String sig, int n) {
+			super(m);
+			callName = name;
+			callDesc = sig;
+			callInt = n;
+		}
+
+		@Override
+		public String getMessage() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(super.getMessage());
+			sb.append("Could not find an instruction for a method call to "+callName+" "+callDesc+":\n");
+			if (callInt > 0)
+				sb.append("Was looking for call #"+callInt+" to that method call.\n");
+			return sb.toString();
+		}
+
+	}
+
+	public static class NoSuchASMFieldInstructionException extends NoSuchInstructionASMException {
+
+		private final String callName;
+		private final int callInt;
+
+		public NoSuchASMFieldInstructionException(MethodNode m, String name, int n) {
+			super(m);
+			callName = name;
+			callInt = n;
+		}
+
+		@Override
+		public String getMessage() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(super.getMessage());
+			sb.append("Could not find an instruction for a field call to "+callName+":\n");
+			if (callInt > 0)
+				sb.append("Was looking for call #"+callInt+" to that field call.\n");
+			return sb.toString();
+		}
+
+	}
+
 	private abstract static class NoSuchMemberASMException extends ASMException {
 
 		protected final String label;

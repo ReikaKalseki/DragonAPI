@@ -60,4 +60,9 @@ public class PlayerMap<V> {
 		return data.get(s);
 	}
 
+	@Override
+	public String toString() {
+		return data.toString();
+	}
+
 }

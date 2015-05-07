@@ -18,7 +18,7 @@ import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerSpecificRenderer;
 import Reika.DragonAPI.IO.DelegateFontRenderer;
 import Reika.DragonAPI.IO.DirectResourceManager;
-import Reika.DragonAPI.Instantiable.Event.ResourceReloadEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.ResourceReloadEvent;
 import codechicken.lib.gui.GuiDraw;
 import cpw.mods.fml.client.FMLClientHandler;
 

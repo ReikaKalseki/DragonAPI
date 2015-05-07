@@ -404,7 +404,7 @@ public enum ModWoodList implements TreeType {
 		return e;
 	}
 
-	public ItemStack getCorrespondingLeaf() {
+	public ItemStack getBasicLeaf() {
 		return new ItemStack(leafID, 1, leafMeta[0]);
 	}
 

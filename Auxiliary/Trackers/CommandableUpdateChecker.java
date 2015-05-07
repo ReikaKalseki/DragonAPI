@@ -51,7 +51,7 @@ import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.ConnectionErrorHandler;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayList;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayMap;
-import Reika.DragonAPI.Instantiable.Event.ClientLoginEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;

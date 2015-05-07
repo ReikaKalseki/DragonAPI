@@ -91,6 +91,13 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		}
 	};
 
+	public static final IEntitySelector itemOrXPSelector = new IEntitySelector() {
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			return e instanceof EntityItem || e instanceof EntityXPOrb;
+		}
+	};
+
 	/** provides a mapping between an Entity Class and an entity ID */
 	private static Map<Class, Integer> classToIDMapping = new HashMap();
 

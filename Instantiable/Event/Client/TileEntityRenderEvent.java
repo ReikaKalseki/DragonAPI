@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Instantiable.Event;
+package Reika.DragonAPI.Instantiable.Event.Client;
 
 import net.minecraft.tileentity.TileEntity;
 import cpw.mods.fml.common.eventhandler.Event;

@@ -9,10 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM;
 
-import java.util.Collection;
+import static net.minecraftforge.common.util.ForgeDirection.UP;
 
+import java.util.Collection;
+import java.util.Random;
+
+import net.minecraft.block.BlockFire;
+import net.minecraft.init.Blocks;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -26,6 +34,7 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -33,6 +42,7 @@ import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Event.BlockConsumedByFireEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -60,6 +70,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		NIGHTVISEVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		FARCLIPEVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		PUSHENTITYOUT("net.minecraft.entity.Entity", "sa"),
+		CREATIVETAB("net.minecraft.client.gui.inventory.GuiContainerCreative", "bfm"),
+		BURNBLOCK("net.minecraft.block.BlockFire", "alb"),
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
 		;
 
@@ -105,11 +117,11 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_146977_a", "func_146977_a", "(Lnet/minecraft/inventory/Slot;)V");
 				AbstractInsnNode pos = m.instructions.getFirst();
 				m.instructions.insertBefore(pos, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
-				m.instructions.insertBefore(pos, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/RenderItemInSlotEvent"));
+				m.instructions.insertBefore(pos, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/RenderItemInSlotEvent"));
 				m.instructions.insertBefore(pos, new InsnNode(Opcodes.DUP));
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 0));
 				m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 1));
-				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/RenderItemInSlotEvent", "<init>", "(Lnet/minecraft/client/gui/inventory/GuiContainer;Lnet/minecraft/inventory/Slot;)V", false));
+				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/Client/RenderItemInSlotEvent", "<init>", "(Lnet/minecraft/client/gui/inventory/GuiContainer;Lnet/minecraft/inventory/Slot;)V", false));
 				m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 				m.instructions.insertBefore(pos, new InsnNode(Opcodes.POP));
 
@@ -187,9 +199,9 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 						if (min.name.equals(func)) {
 							m.instructions.insert(ain, new InsnNode(Opcodes.POP));
 							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
-							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/RenderFirstPersonItemEvent", "<init>", "()V", false));
+							m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/Client/RenderFirstPersonItemEvent", "<init>", "()V", false));
 							m.instructions.insert(ain, new InsnNode(Opcodes.DUP));
-							m.instructions.insert(ain, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/RenderFirstPersonItemEvent"));
+							m.instructions.insert(ain, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/RenderFirstPersonItemEvent"));
 							m.instructions.insert(ain, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
 							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
 							break;
@@ -471,14 +483,14 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147549_a", "renderTileEntityAt", "(Lnet/minecraft/tileentity/TileEntity;DDDF)V");
 				InsnList fire = new InsnList();
 				fire.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
-				fire.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/TileEntityRenderEvent"));
+				fire.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/TileEntityRenderEvent"));
 				fire.add(new InsnNode(Opcodes.DUP));
 				fire.add(new VarInsnNode(Opcodes.ALOAD, 1));
 				fire.add(new VarInsnNode(Opcodes.DLOAD, 2));
 				fire.add(new VarInsnNode(Opcodes.DLOAD, 4));
 				fire.add(new VarInsnNode(Opcodes.DLOAD, 6));
 				fire.add(new VarInsnNode(Opcodes.FLOAD, 8));
-				fire.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/TileEntityRenderEvent", "<init>", "(Lnet/minecraft/tileentity/TileEntity;DDDF)V", false));
+				fire.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/Client/TileEntityRenderEvent", "<init>", "(Lnet/minecraft/tileentity/TileEntity;DDDF)V", false));
 				fire.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 				fire.add(new InsnNode(Opcodes.POP));
 				for (int i = 0; i < m.instructions.size(); i++) {
@@ -499,9 +511,9 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147589_a", "renderEntities", "(Lnet/minecraft/entity/EntityLivingBase;Lnet/minecraft/client/renderer/culling/ICamera;F)V");
 				InsnList fire = new InsnList();
 				fire.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
-				fire.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/EntityRenderingLoopEvent"));
+				fire.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/EntityRenderingLoopEvent"));
 				fire.add(new InsnNode(Opcodes.DUP));
-				fire.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/EntityRenderingLoopEvent", "<init>", "()V", false));
+				fire.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/Client/EntityRenderingLoopEvent", "<init>", "()V", false));
 				fire.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 				fire.add(new InsnNode(Opcodes.POP));
 				AbstractInsnNode loc = null;
@@ -527,18 +539,18 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			case NIGHTVISEVENT: {
 				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_82830_a", "getNightVisionBrightness", "(Lnet/minecraft/entity/player/EntityPlayer;F)F");
 				m.instructions.clear();
-				m.instructions.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/NightVisionBrightnessEvent"));
+				m.instructions.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/NightVisionBrightnessEvent"));
 				m.instructions.add(new InsnNode(Opcodes.DUP));
 				m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
 				m.instructions.add(new VarInsnNode(Opcodes.FLOAD, 2));
-				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/NightVisionBrightnessEvent", "<init>", "(Lnet/minecraft/entity/player/EntityPlayer;F)V", false));
+				m.instructions.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/Client/NightVisionBrightnessEvent", "<init>", "(Lnet/minecraft/entity/player/EntityPlayer;F)V", false));
 				m.instructions.add(new VarInsnNode(Opcodes.ASTORE, 3));
 				m.instructions.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
 				m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3));
 				m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 				m.instructions.add(new InsnNode(Opcodes.POP));
 				m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3));
-				m.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/NightVisionBrightnessEvent", "brightness", "F"));
+				m.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/Client/NightVisionBrightnessEvent", "brightness", "F"));
 				m.instructions.add(new InsnNode(Opcodes.FRETURN));
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
 				break;
@@ -551,13 +563,13 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_78479_a", "setupCameraTransform", "(FI)V");
 				String fd = FMLForgePlugin.RUNTIME_DEOBF ? "field_78530_s" : "farPlaneDistance";
 				InsnList add = new InsnList();
-				add.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/FarClippingPlaneEvent"));
+				add.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/FarClippingPlaneEvent"));
 				add.add(new InsnNode(Opcodes.DUP));
 				add.add(new VarInsnNode(Opcodes.FLOAD, 1));
 				add.add(new VarInsnNode(Opcodes.ILOAD, 2));
 				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				add.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/EntityRenderer", fd, "F"));
-				add.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/FarClippingPlaneEvent", "<init>", "(FIF)V", false));
+				add.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/Client/FarClippingPlaneEvent", "<init>", "(FIF)V", false));
 				add.add(new VarInsnNode(Opcodes.ASTORE, 3));
 				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
 				add.add(new VarInsnNode(Opcodes.ALOAD, 3));
@@ -565,7 +577,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				add.add(new InsnNode(Opcodes.POP));
 				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				add.add(new VarInsnNode(Opcodes.ALOAD, 3));
-				add.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/FarClippingPlaneEvent", "farClippingPlaneDistance", "F"));
+				add.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/Client/FarClippingPlaneEvent", "farClippingPlaneDistance", "F"));
 				add.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/client/renderer/EntityRenderer", fd, "F"));
 				for (int i = 0; i < m.instructions.size(); i++) {
 					AbstractInsnNode ain = m.instructions.get(i);
@@ -597,6 +609,137 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
 				break;
 			}
+			case CREATIVETAB: {
+				InsnList add = new InsnList();
+				LabelNode L26 = new LabelNode();
+				add.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/CreativeTabGuiRenderEvent"));
+				add.add(new InsnNode(Opcodes.DUP));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 4));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				add.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/inventory/GuiContainerCreative", "searchField", "Lnet/minecraft/client/gui/GuiTextField;"));
+				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/gui/inventory/GuiContainerCreative", "tabPage", "I"));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				add.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/inventory/GuiContainer", "xSize", "I"));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				add.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/inventory/GuiContainer", "ySize", "I"));
+				add.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/Client/CreativeTabGuiRenderEvent", "<init>", "(Lnet/minecraft/client/gui/inventory/GuiContainerCreative;Lnet/minecraft/creativetab/CreativeTabs;Lnet/minecraft/client/gui/GuiTextField;III)V", false));
+				add.add(new VarInsnNode(Opcodes.ASTORE, 9));
+				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 9));
+				add.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				add.add(new JumpInsnNode(Opcodes.IFNE, L26));
+
+				/*
+				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				add.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/CreativeTabGuiRenderEvent"));
+				add.add(new InsnNode(Opcodes.DUP));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 4));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				add.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/inventory/GuiContainerCreative", "searchField", "Lnet/minecraft/client/gui/GuiTextField;"));
+				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraft/client/gui/inventory/GuiContainerCreative", "tabPage", "I"));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				add.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/inventory/GuiContainer", "xSize", "I"));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				add.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/inventory/GuiContainer", "ySize", "I"));
+				add.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/Client/CreativeTabGuiRenderEvent", "<init>", "(Lnet/minecraft/client/gui/inventory/GuiContainerCreative;Lnet/minecraft/creativetab/CreativeTabs;Lnet/minecraft/client/gui/GuiTextField;III)V", false));
+				add.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				add.add(new InsnNode(Opcodes.POP));
+				 */
+
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_146976_a", "drawGuiContainerBackgroundLayer", "(FII)V");
+				String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_73729_b" : "drawTexturedModalRect";
+				//String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_110577_a" : "bindTexture";
+				boolean primed = false;
+				AbstractInsnNode loc1 = null;
+				AbstractInsnNode loc2 = null;
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (!primed && ain.getOpcode() == Opcodes.LDC) {
+						LdcInsnNode lin = (LdcInsnNode)ain;
+						if ("textures/gui/container/creative_inventory/tab_".equals(lin.cst)) {
+							primed = true;
+							loc1 = ReikaASMHelper.getLastInsnBefore(m.instructions, i, Opcodes.ALOAD, 0);
+						}
+					}
+					else if (primed && ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+						MethodInsnNode min = (MethodInsnNode)ain;
+						if (min.name.equals(func)) {
+							m.instructions.insert(min, L26); //add the label node
+							//m.instructions.insert(ain, add);
+							ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 1!");
+							break;
+						}
+					}
+				}
+				m.instructions.insertBefore(loc1, add);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 2!");
+				break;
+			}
+			case BURNBLOCK: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_149674_a", "updateTick", "(Lnet/minecraft/world/World;IIILjava/util/Random;)V");
+				String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_147465_d" : "setBlock";
+				String func2 = FMLForgePlugin.RUNTIME_DEOBF ? "func_147468_f" : "setBlockToAir";
+				MethodInsnNode min = ReikaASMHelper.getFirstMethodCall(m, func, "(IIILnet/minecraft/block/Block;II)Z");
+				InsnList add = new InsnList();
+				LabelNode L34 = new LabelNode();
+				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				add.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/BlockConsumedByFireEvent"));
+				add.add(new InsnNode(Opcodes.DUP));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 1));
+				add.add(new VarInsnNode(Opcodes.ILOAD, 10));
+				add.add(new VarInsnNode(Opcodes.ILOAD, 12));
+				add.add(new VarInsnNode(Opcodes.ILOAD, 11));
+				add.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/BlockConsumedByFireEvent", "<init>", "(Lnet/minecraft/world/World;III)V", false));
+				add.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				add.add(new JumpInsnNode(Opcodes.IFNE, L34));
+				AbstractInsnNode loc1 = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(min), Opcodes.ALOAD, 1);
+				AbstractInsnNode loc2 = ReikaASMHelper.getFirstInsnAfter(m.instructions, m.instructions.indexOf(min), Opcodes.POP);
+				m.instructions.insertBefore(loc1, add);
+				m.instructions.insert(loc2, L34);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 1!");
+
+				m = ReikaASMHelper.getMethodByName(cn, "func_149841_a", "tryCatchFire", "(Lnet/minecraft/world/World;IIIILjava/util/Random;ILnet/minecraftforge/common/util/ForgeDirection;)V");
+				min = ReikaASMHelper.getFirstMethodCall(m, func, "(IIILnet/minecraft/block/Block;II)Z");
+				add = new InsnList();
+				LabelNode L12 = new LabelNode();
+				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				add.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/BlockConsumedByFireEvent"));
+				add.add(new InsnNode(Opcodes.DUP));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 1));
+				add.add(new VarInsnNode(Opcodes.ILOAD, 2));
+				add.add(new VarInsnNode(Opcodes.ILOAD, 3));
+				add.add(new VarInsnNode(Opcodes.ILOAD, 4));
+				add.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/BlockConsumedByFireEvent", "<init>", "(Lnet/minecraft/world/World;III)V", false));
+				add.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				add.add(new JumpInsnNode(Opcodes.IFNE, L12));
+				loc1 = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(min), Opcodes.ALOAD, 1);
+				loc2 = ReikaASMHelper.getFirstInsnAfter(m.instructions, m.instructions.indexOf(min), Opcodes.POP);
+				m.instructions.insertBefore(loc1, add);
+				m.instructions.insert(loc2, L12);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 2!");
+
+				min = ReikaASMHelper.getFirstMethodCall(m, func2, "(III)Z");
+				//add = ReikaASMHelper.copyInsnList(add, L12, L12);
+				add = new InsnList();
+				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+				add.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/BlockConsumedByFireEvent"));
+				add.add(new InsnNode(Opcodes.DUP));
+				add.add(new VarInsnNode(Opcodes.ALOAD, 1));
+				add.add(new VarInsnNode(Opcodes.ILOAD, 2));
+				add.add(new VarInsnNode(Opcodes.ILOAD, 3));
+				add.add(new VarInsnNode(Opcodes.ILOAD, 4));
+				add.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/BlockConsumedByFireEvent", "<init>", "(Lnet/minecraft/world/World;III)V", false));
+				add.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+				add.add(new JumpInsnNode(Opcodes.IFNE, L12));
+				loc1 = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(min), Opcodes.ALOAD, 1);
+				loc2 = ReikaASMHelper.getFirstInsnAfter(m.instructions, m.instructions.indexOf(min), Opcodes.POP);
+				m.instructions.insertBefore(loc1, add);
+				//m.instructions.insert(loc2, L12);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 3!");
+				break;
+			}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -605,6 +748,137 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			//ClassNode vcn = new ClassNode(); //verify
 			//new ClassReader(newdata).accept(vcn, 0);
 			return newdata;
+		}
+	}
+
+	static class Test extends BlockFire {
+		@Override
+		public void updateTick(World world, int x, int y, int z, Random p_149674_5_)
+		{
+			if (world.getGameRules().getGameRuleBooleanValue("doFireTick"))
+			{
+				boolean flag = world.getBlock(x, y - 1, z).isFireSource(world, x, y - 1, z, UP);
+
+				if (!this.canPlaceBlockAt(world, x, y, z))
+				{
+					world.setBlockToAir(x, y, z);
+				}
+
+				if (!flag && world.isRaining() && (world.canLightningStrikeAt(x, y, z) || world.canLightningStrikeAt(x - 1, y, z) || world.canLightningStrikeAt(x + 1, y, z) || world.canLightningStrikeAt(x, y, z - 1) || world.canLightningStrikeAt(x, y, z + 1)))
+				{
+					world.setBlockToAir(x, y, z);
+				}
+				else
+				{
+					int l = world.getBlockMetadata(x, y, z);
+
+					if (l < 15)
+					{
+						world.setBlockMetadataWithNotify(x, y, z, l + p_149674_5_.nextInt(3) / 2, 4);
+					}
+
+					world.scheduleBlockUpdate(x, y, z, this, this.tickRate(world) + p_149674_5_.nextInt(10));
+
+					if (!flag)
+					{
+						if (!World.doesBlockHaveSolidTopSurface(world, x, y - 1, z) || l > 3)
+						{
+							world.setBlockToAir(x, y, z);
+						}
+					}
+					else if (!flag && !this.canCatchFire(world, x, y - 1, z, UP) && l == 15 && p_149674_5_.nextInt(4) == 0)
+					{
+						world.setBlockToAir(x, y, z);
+					}
+					else
+					{
+						boolean flag1 = world.isBlockHighHumidity(x, y, z);
+						byte b0 = 0;
+
+						if (flag1)
+						{
+							b0 = -50;
+						}
+
+						for (int i1 = x - 1; i1 <= x + 1; ++i1)
+						{
+							for (int j1 = z - 1; j1 <= z + 1; ++j1)
+							{
+								for (int k1 = y - 1; k1 <= y + 4; ++k1)
+								{
+									if (i1 != x || k1 != y || j1 != z)
+									{
+										int l1 = 100;
+
+										if (k1 > y + 1)
+										{
+											l1 += (k1 - (y + 1)) * 100;
+										}
+
+										int i2 = 4398;
+
+										if (i2 > 0)
+										{
+											int j2 = (i2 + 40 + world.difficultySetting.getDifficultyId() * 7) / (l + 30);
+
+											if (flag1)
+											{
+												j2 /= 2;
+											}
+
+											if (j2 > 0 && p_149674_5_.nextInt(l1) <= j2 && (!world.isRaining() || !world.canLightningStrikeAt(i1, k1, j1)) && !world.canLightningStrikeAt(i1 - 1, k1, z) && !world.canLightningStrikeAt(i1 + 1, k1, j1) && !world.canLightningStrikeAt(i1, k1, j1 - 1) && !world.canLightningStrikeAt(i1, k1, j1 + 1))
+											{
+												int k2 = l + p_149674_5_.nextInt(5) / 4;
+
+												if (k2 > 15)
+												{
+													k2 = 15;
+												}
+
+												if (!MinecraftForge.EVENT_BUS.post(new BlockConsumedByFireEvent(world, i1, k1, j1)))
+													world.setBlock(i1, k1, j1, this, k2, 3);
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+
+		private void tryCatchFire(World world, int x, int y, int z, int p_149841_5_, Random p_149841_6_, int p_149841_7_, ForgeDirection face)
+		{
+			int j1 = world.getBlock(x, y, z).getFlammability(world, x, y, z, face);
+
+			if (p_149841_6_.nextInt(p_149841_5_) < j1)
+			{
+				boolean flag = world.getBlock(x, y, z) == Blocks.tnt;
+
+				if (p_149841_6_.nextInt(p_149841_7_ + 10) < 5 && !world.canLightningStrikeAt(x, y, z))
+				{
+					int k1 = p_149841_7_ + p_149841_6_.nextInt(5) / 4;
+
+					if (k1 > 15)
+					{
+						k1 = 15;
+					}
+
+					if (!MinecraftForge.EVENT_BUS.post(new BlockConsumedByFireEvent(world, x, y, z)))
+						world.setBlock(x, y, z, this, k1, 3);
+				}
+				else
+				{
+					if (!MinecraftForge.EVENT_BUS.post(new BlockConsumedByFireEvent(world, x, y, z)))
+						world.setBlockToAir(x, y, z);
+				}
+
+				if (flag)
+				{
+					Blocks.tnt.onBlockDestroyedByPlayer(world, x, y, z, 1);
+				}
+			}
 		}
 	}
 

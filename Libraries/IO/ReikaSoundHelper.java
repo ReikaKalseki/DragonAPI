@@ -179,4 +179,12 @@ public class ReikaSoundHelper {
 		}
 
 	}
+
+	public static void playSoundAtEntity(World world, Entity e, String snd) {
+		playSoundAtEntity(world, e, snd, 1, 1);
+	}
+
+	public static void playSoundAtEntity(World world, Entity e, String snd, float vol, float p) {
+		world.playSoundEffect(e.posX, e.posY, e.posZ, snd, vol, p);
+	}
 }

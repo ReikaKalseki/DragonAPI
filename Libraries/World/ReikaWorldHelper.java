@@ -43,6 +43,8 @@ import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.APIPacketHandler;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
@@ -175,6 +177,34 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			if (!waterup && waterdown) // Water lower only
 				;						// the case we want
 			if (!waterup && !waterdown) //Neither water -> above surface
+				y--;
+		}
+		return y;
+	}
+
+	/** Finds the top edge of the top fluid block in the column. Args: World, this.x,y,z.
+	 * DO NOT CALL if there is no fluid there, as there is a possibility of infinite loop. */
+	public static double findFluidSurface(World world, double x, double y, double z) { //Returns double y-coord of top surface of top block
+
+		int xp = (int)x;
+		int zp = (int)z;
+		boolean lowestfluid = false;
+		boolean fluidup = false;
+		boolean fluiddown = false;
+		Fluid f = FluidRegistry.lookupFluidForBlock(world.getBlock(xp, (int)y, zp));
+		if (f == null)
+			return y+3;
+
+		while (!(!fluidup && fluiddown)) {
+			fluidup = (getFluid(world, xp, (int)y, zp) == f);
+			fluiddown = (getFluid(world, xp, (int)y-1, zp) == f);
+			if (fluidup && fluiddown) //Both blocks are fluid -> below surface
+				y++;
+			if (fluidup && !fluiddown) //Upper only is fluid -> should never happen
+				return y+3;		//Return and exit function
+			if (!fluidup && fluiddown) // fluid lower only
+				;						// the case we want
+			if (!fluidup && !fluiddown) //Neither fluid -> above surface
 				y--;
 		}
 		return y;
@@ -1247,18 +1277,24 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Checks if a liquid block is part of a column (has same liquid above and below and none of them are source blocks).
 	 * Args: World, x, y, z */
 	public static boolean isLiquidAColumn(World world, int x, int y, int z) {
-		Material mat = getMaterial(world, x, y, z);
+		Fluid f = getFluid(world, x, y, z);
+		if (f == null)
+			return false;
 		if (isLiquidSourceBlock(world, x, y, z))
 			return false;
-		if (getMaterial(world, x, y+1, z) != mat)
+		if (getFluid(world, x, y+1, z) != f)
 			return false;
 		if (isLiquidSourceBlock(world, x, y+1, z))
 			return false;
-		if (getMaterial(world, x, y-1, z) != mat)
+		if (getFluid(world, x, y-1, z) != f)
 			return false;
 		if (isLiquidSourceBlock(world, x, y-1, z))
 			return false;
 		return true;
+	}
+
+	public static Fluid getFluid(World world, int x, int y, int z) {
+		return FluidRegistry.lookupFluidForBlock(world.getBlock(x, y, z));
 	}
 
 	/** Updates all blocks adjacent to the coordinate given. Args: World, x, y, z */

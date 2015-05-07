@@ -27,7 +27,7 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
-import Reika.DragonAPI.Instantiable.Event.TextureReloadEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.TextureReloadEvent;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 import com.ibm.icu.text.ArabicShaping;

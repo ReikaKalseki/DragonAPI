@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import net.minecraftforge.classloading.FMLForgePlugin;
 
@@ -25,13 +26,22 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeInsnNode;
+import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
 
+import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 
@@ -318,6 +328,130 @@ public class ReikaASMHelper {
 			}
 		}
 
+	}
+
+	public static AbstractInsnNode getFirstInsnAfter(InsnList li, int index, int opcode, Object... args) {
+		AbstractInsnNode ain = li.get(index);
+		while (!match(ain, opcode, args) && index < li.size()) {
+			index++;
+			ain = li.get(index);
+		}
+		return match(ain, opcode, args) ? ain : null;
+	}
+
+	public static AbstractInsnNode getLastInsnBefore(InsnList li, int index, int opcode, Object... args) {
+		AbstractInsnNode ain = li.get(index);
+		while (!match(ain, opcode, args) && index > 0) {
+			index--;
+			ain = li.get(index);
+		}
+		return match(ain, opcode, args) ? ain : null;
+	}
+
+	public static boolean match(AbstractInsnNode ain, int opcode, Object... args) {
+		if (ain.getOpcode() != opcode)
+			return false;
+		if (ain instanceof InsnNode) {
+			return true;
+		}
+		else if (ain instanceof VarInsnNode) {
+			return args[0] instanceof Integer && ((VarInsnNode)ain).var == (Integer)args[0];
+		}
+		else if (ain instanceof LdcInsnNode) {
+			return args[0].equals(((LdcInsnNode)ain).cst);
+		}
+		else if (ain instanceof IntInsnNode) {
+			return args[0] instanceof Integer && ((IntInsnNode)ain).operand == (Integer)args[0];
+		}
+		else if (ain instanceof TypeInsnNode) {
+			return args[0] instanceof String && ((TypeInsnNode)ain).desc.equals(args[0]);
+		}
+		else if (ain instanceof FieldInsnNode) {
+			if (args.length != 3 || !(args[0] instanceof String) || !(args[1] instanceof String) || !(args[2] instanceof String))
+				return false;
+			FieldInsnNode fin = (FieldInsnNode)ain;
+			return fin.owner.equals(args[0]) && fin.name.equals(args[1]) && fin.desc.equals(args[2]);
+		}
+		else if (ain instanceof MethodInsnNode) {
+			if (args.length != 4 || !(args[0] instanceof String) || !(args[1] instanceof String) || !(args[2] instanceof String) || !(args[3] instanceof Boolean))
+				return false;
+			MethodInsnNode min = (MethodInsnNode)ain;
+			return min.owner.equals(args[0]) && min.name.equals(args[1]) && min.desc.equals(args[2]) && min.itf == (Boolean)args[3];
+		}
+		else if (ain instanceof JumpInsnNode) {
+			return args[0] instanceof LabelNode && ((JumpInsnNode)ain).label == args[0];
+		}
+		else if (ain instanceof IincInsnNode) {
+			if (args.length != 2 || !(args[0] instanceof Integer) || !(args[1] instanceof Integer))
+				return false;
+			IincInsnNode iin = (IincInsnNode)ain;
+			return iin.var == (Integer)args[0] && iin.incr == (Integer)args[1];
+		}
+		return false;
+	}
+
+	public static MethodInsnNode getFirstMethodCall(MethodNode m, String name, String sig) {
+		return getNthMethodCall(m, name, sig, 1);
+	}
+
+	private static MethodInsnNode getNthMethodCall(MethodNode m, String name, String sig, int n) {
+		int counter = 0;
+		for (int i = 0; i < m.instructions.size(); i++) {
+			AbstractInsnNode ain = m.instructions.get(i);
+			if (ain instanceof MethodInsnNode) {
+				MethodInsnNode min = (MethodInsnNode)ain;
+				if (min.name.equals(name) && min.desc.equals(sig)) {
+					counter++;
+					if (counter >= n)
+						return min;
+				}
+			}
+		}
+		throw new ASMException.NoSuchASMMethodInstructionException(m, name, sig, n > 1 ? n : -1);
+	}
+
+	public static FieldInsnNode getFirstFieldCall(MethodNode m, String name) {
+		return getNthFieldCall(m, name, 1);
+	}
+
+	private static FieldInsnNode getNthFieldCall(MethodNode m, String name, int n) {
+		int counter = 0;
+		for (int i = 0; i < m.instructions.size(); i++) {
+			AbstractInsnNode ain = m.instructions.get(i);
+			if (ain instanceof FieldInsnNode) {
+				FieldInsnNode min = (FieldInsnNode)ain;
+				if (min.name.equals(name)) {
+					counter++;
+					if (counter >= n)
+						return min;
+				}
+			}
+		}
+		throw new ASMException.NoSuchASMFieldInstructionException(m, name, n > 1 ? n : -1);
+	}
+
+	/** Currently broken */
+	public static InsnList copyInsnList(InsnList li, LabelNode... pairs) {
+		Map<LabelNode, LabelNode> map = new HashMap();
+		for (int i = 0; i < pairs.length; i += 2) {
+			map.put(pairs[i], pairs[i+1]);
+		}
+		return copyInsnList(li, map);
+	}
+
+	/** Currently broken */
+	public static InsnList copyInsnList(InsnList li, Map<LabelNode, LabelNode> labels) {
+		InsnList copy = new InsnList();
+		for (int i = 0; i < li.size(); i++) {
+			AbstractInsnNode ain = li.get(i);
+			copy.add(copyInstruction(ain, labels));
+		}
+		return copy;
+	}
+
+	/** Currently broken */
+	public static AbstractInsnNode copyInstruction(AbstractInsnNode ain, Map<LabelNode, LabelNode> labels) {
+		return ain.clone(labels);
 	}
 
 }

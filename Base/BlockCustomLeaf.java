@@ -79,12 +79,12 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	public abstract CreativeTabs getCreativeTab();
 
 	@Override
-	public final IIcon getIcon(int par1, int par2)
+	public IIcon getIcon(int par1, int par2)
 	{
 		return icon[par2][this.getOpacityIndex()];
 	}
 
-	private final int getOpacityIndex() {
+	protected final int getOpacityIndex() {
 		field_150121_P = Minecraft.getMinecraft().gameSettings.fancyGraphics;
 		return field_150121_P ? 0 : 1;
 	}
@@ -168,7 +168,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	}
 
 	@Override
-	public final void registerBlockIcons(IIconRegister ico)
+	public void registerBlockIcons(IIconRegister ico)
 	{
 		for (int i = 0; i < 16; i++) {
 			icon[i][0] = ico.registerIcon(this.getFancyGraphicsIcon(i));

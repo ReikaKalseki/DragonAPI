@@ -143,7 +143,12 @@ public enum ReikaTreeHelper implements TreeType {
 
 	@Override
 	public ItemStack getItem() {
-		return new ItemStack(log);
+		return new ItemStack(log, 1, logMeta[0]);
+	}
+
+	@Override
+	public ItemStack getBasicLeaf() {
+		return new ItemStack(leaf, 1, leafMeta[0]);
 	}
 
 	@Override
@@ -179,6 +184,11 @@ public enum ReikaTreeHelper implements TreeType {
 
 	@Override
 	public boolean canBePlacedSideways() {
+		return true;
+	}
+
+	@Override
+	public boolean exists() {
 		return true;
 	}
 

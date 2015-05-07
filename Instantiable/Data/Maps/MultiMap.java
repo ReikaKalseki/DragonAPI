@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -160,6 +161,20 @@ public final class MultiMap<K, V> {
 	public MultiMap<K, V> setNullEmpty() {
 		nullEmpty = true;
 		return this;
+	}
+
+	public void putAll(Map<K, V> map) {
+		for (K k : map.keySet()) {
+			this.addValue(k, map.get(k));
+		}
+	}
+
+	public void putAll(MultiMap<K, V> map) {
+		for (K k : map.keySet()) {
+			for (V v : map.get(k)) {
+				this.addValue(k, v);
+			}
+		}
 	}
 
 }

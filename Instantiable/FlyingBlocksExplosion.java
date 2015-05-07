@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
+import Reika.DragonAPI.Interfaces.ConditionallyUnbreakable;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
@@ -97,12 +98,17 @@ public class FlyingBlocksExplosion extends Explosion {
 			return false;
 		if (b == Blocks.bedrock)
 			return false;
+		if (b.blockHardness < 0)
+			return false;
+		if (b instanceof ConditionallyUnbreakable)
+			return !((ConditionallyUnbreakable)b).isUnbreakable(world, x, y, z, meta);
 		if (b.hasTileEntity(meta))
 			return false;
 		if (ReikaWorldHelper.softBlocks(world, x, y, z))
 			return false;
-		if (b.getRenderType() != 0) //To prevent weird looking flying sand entities
-			return false;
+		if (b.getRenderType() != 0 && !b.renderAsNormalBlock() && !b.isOpaqueCube()) { //To prevent weird looking flying sand entities
+			;//return false;
+		}
 		double dd = ReikaMathLibrary.py3d(x+0.5-explosionX, y+0.5-explosionY, z+0.5-explosionZ);
 		return dd <= explosionSize+0.5;
 	}

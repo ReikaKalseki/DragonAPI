@@ -39,7 +39,7 @@ import Reika.DragonAPI.IO.ReikaImageLoader;
 import Reika.DragonAPI.IO.ReikaImageLoader.ImageEditor;
 import Reika.DragonAPI.IO.ReikaTextureBinder;
 import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
-import Reika.DragonAPI.Instantiable.Event.TextureReloadEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.TextureReloadEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;

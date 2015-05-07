@@ -81,4 +81,12 @@ public class ReikaRandomHelper extends DragonAPICore {
 		return r.getRandomEntry();
 	}
 
+	public static String generateRandomString(int len) {
+		byte[] b = new byte[len];
+		for (int i = 0; i < len; i++) {
+			b[i] = (byte)(32+rand.nextInt(95));
+		}
+		return new String(b);
+	}
+
 }

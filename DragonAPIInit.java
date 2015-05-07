@@ -66,8 +66,8 @@ import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.LoginHandler;
-import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
@@ -335,6 +335,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Dawson Dimmick", 25);
 		PatreonController.instance.addPatron(this, "Polymorph", "474c622e-80cb-4daa-b2c2-562c5d85aa4c", 10);
 		PatreonController.instance.addPatron(this, "DorinnB", "1a4c37c8-de99-4960-8157-90dc28ef4c65", 1);
+		PatreonController.instance.addPatron(this, "Kotaro_MC", "4e40b5a3-fa82-4496-acf2-d2fadeb5bf5d", 40);
 
 		CommandableUpdateChecker.instance.checkAll();
 

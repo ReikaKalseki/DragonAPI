@@ -41,6 +41,8 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static boolean dumpStack = false;
 	public static boolean silent = false;
 
+	private static final HashMap<String, Object> threadLock = new HashMap();
+
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Object obj) {
 		pConsole(Level.INFO, obj);

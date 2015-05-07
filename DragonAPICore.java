@@ -17,7 +17,7 @@ import java.util.UUID;
 
 import net.minecraftforge.common.ForgeVersion;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.Event.GameFinishedLoadingEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
