@@ -61,11 +61,12 @@ public class ItemCollection {
 	}
 
 	/** Returns how many items left over. */
-	public int addItemsToUnderlyingInventories(ItemStack is) {
+	public int addItemsToUnderlyingInventories(ItemStack is, boolean simulate) {
 		int left = is.stackSize;
 		for (IInventory ii : inventories) {
-			left = ReikaInventoryHelper.addToInventoryWithLeftover(is, ii);
-			is.stackSize = left;
+			left = ReikaInventoryHelper.addToInventoryWithLeftover(is, ii, simulate);
+			if (!simulate)
+				is.stackSize = left;
 			if (left <= 0)
 				return 0;
 		}

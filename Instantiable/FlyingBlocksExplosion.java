@@ -20,7 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
-import Reika.DragonAPI.Interfaces.ConditionallyUnbreakable;
+import Reika.DragonAPI.Interfaces.SemiUnbreakable;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
@@ -100,8 +100,8 @@ public class FlyingBlocksExplosion extends Explosion {
 			return false;
 		if (b.blockHardness < 0)
 			return false;
-		if (b instanceof ConditionallyUnbreakable)
-			return !((ConditionallyUnbreakable)b).isUnbreakable(world, x, y, z, meta);
+		if (b instanceof SemiUnbreakable)
+			return !((SemiUnbreakable)b).isUnbreakable(world, x, y, z, meta);
 		if (b.hasTileEntity(meta))
 			return false;
 		if (ReikaWorldHelper.softBlocks(world, x, y, z))

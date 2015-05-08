@@ -13,6 +13,7 @@ import java.util.Collection;
 
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.config.FuzzyMode;
@@ -100,6 +101,14 @@ public class MESystemReader {
 	public long addItem(ItemStack is, boolean simulate) {
 		IAEItemStack ret = this.getStorage().injectItems(this.createAEStack(is), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
 		return ret != null ? ret.getStackSize() : 0;
+	}
+
+	public long getItemCount(ItemStack is) {
+		return this.removeItem(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true);
+	}
+
+	public long getFuzzyItemCount(ItemStack is, FuzzyMode fz, boolean ore) {
+		return this.removeItemFuzzy(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true, fz, ore);
 	}
 
 	private class ActionSource extends BaseActionSource {

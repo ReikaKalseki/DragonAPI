@@ -131,7 +131,7 @@ public class EditNearbyInventoryCommand extends DragonCommandBase {
 				}
 				if (this == ADD) {
 					ItemStack is2 = ReikaItemHelper.getSizedItemStack(is, is.stackSize-count);
-					count += is2.stackSize-ReikaInventoryHelper.addToInventoryWithLeftover(is2, ii);
+					count += is2.stackSize-ReikaInventoryHelper.addToInventoryWithLeftover(is2, ii, false);
 					//ReikaJavaLibrary.pConsole(is+":"+count);
 					if (count >= is.stackSize)
 						return count;
