@@ -102,7 +102,7 @@ public final class SensitiveFluidRegistry {
 		private void blacklist(Fluid fluid) {
 			switch(this) {
 			case MYSTCRAFT:
-				ReikaMystcraftHelper.disableFluidPage(fluid.getName());
+				ReikaMystcraftHelper.disableFluidPage(fluid);
 				break;
 			case MOOFLUID:
 				break;

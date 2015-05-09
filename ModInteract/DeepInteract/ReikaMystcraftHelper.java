@@ -17,11 +17,11 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
+import net.minecraftforge.fluids.Fluid;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
@@ -43,14 +43,8 @@ public class ReikaMystcraftHelper {
 	private static final Method getBook;
 	private static final Method getLink;
 
-	public static void disableFluidPage(String name) {
-		NBTTagCompound NBTMsg = new NBTTagCompound();
-		NBTMsg.setTag("fluidsymbol", new NBTTagCompound());
-		NBTMsg.getCompoundTag("fluidsymbol").setFloat("rarity", 0.0F);
-		NBTMsg.getCompoundTag("fluidsymbol").setFloat("grammarweight", 0.0F);
-		NBTMsg.getCompoundTag("fluidsymbol").setFloat("instabilityPerBlock", Float.MAX_VALUE);
-		NBTMsg.getCompoundTag("fluidsymbol").setString("fluidname", name);
-		FMLInterModComms.sendMessage("Mystcraft", "fluidsymbol", NBTMsg);
+	public static void disableFluidPage(Fluid f) {
+		FMLInterModComms.sendMessage(ModList.MYSTCRAFT.modLabel, "blacklistfluid", f.getName());
 	}
 
 	private static ILinkInfo getPortalInfo(World world, int x, int y, int z) {

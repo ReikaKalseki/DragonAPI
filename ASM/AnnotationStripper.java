@@ -58,7 +58,8 @@ class AnnotationStripper {
 
 	static byte[] parse(String name, String transformedName, byte[] bytes) {
 		workingPath.add(transformedName);
-		if (strippables.contains(name)) {
+		//ReikaJavaLibrary.pConsole(name+" // "+transformedName+": :"+strippables.contains(name));
+		if (doStrip(name)) {
 			ClassReader cr = new ClassReader(bytes);
 			ClassNode cn = new ClassNode();
 			cr.accept(cn, 0);
@@ -70,6 +71,13 @@ class AnnotationStripper {
 		}
 		workingPath.remove(workingPath.size() - 1);
 		return bytes;
+	}
+
+	private static boolean doStrip(String name) {
+		if (strippables.contains(name))
+			return true;
+		int idx = name.indexOf('$');
+		return idx >= 0 && strippables.contains(name.substring(0, idx));
 	}
 
 	static synchronized void HACK(String name, byte[] bytes) {
@@ -92,6 +100,7 @@ class AnnotationStripper {
 	}
 
 	static boolean strip(ClassNode cn) {
+		//ReikaJavaLibrary.pConsole("Class: "+cn.name+" has annotations"+ReikaASMHelper.clearAnnotations(cn.visibleAnnotations)+"; "+ReikaASMHelper.clearAnnotations(cn.invisibleAnnotations)+"; "+ReikaASMHelper.clearTypeAnnotations(cn.visibleTypeAnnotations)+"; "+ReikaASMHelper.clearTypeAnnotations(cn.invisibleTypeAnnotations));
 		boolean altered = false;
 		//ReikaJavaLibrary.pConsole("entry -1 for "+cn.name+"; "+cn.visibleAnnotations);
 		if (cn.visibleAnnotations != null) {

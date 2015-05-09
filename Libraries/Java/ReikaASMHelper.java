@@ -36,6 +36,7 @@ import org.objectweb.asm.tree.LdcInsnNode;
 import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.TypeAnnotationNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.util.Textifier;
@@ -452,6 +453,40 @@ public class ReikaASMHelper {
 	/** Currently broken */
 	public static AbstractInsnNode copyInstruction(AbstractInsnNode ain, Map<LabelNode, LabelNode> labels) {
 		return ain.clone(labels);
+	}
+
+	public static String clearAnnotations(List<AnnotationNode> li) {
+		if (li == null)
+			return "null";
+		else if (li.isEmpty())
+			return "[]";
+		else {
+			StringBuilder sb = new StringBuilder();
+			sb.append("[");
+			for (AnnotationNode a : li) {
+				sb.append(a.desc);
+				sb.append(", ");
+			}
+			sb.append("]");
+			return sb.toString();
+		}
+	}
+
+	public static String clearTypeAnnotations(List<TypeAnnotationNode> li) {
+		if (li == null)
+			return "null";
+		else if (li.isEmpty())
+			return "[]";
+		else {
+			StringBuilder sb = new StringBuilder();
+			sb.append("[");
+			for (AnnotationNode a : li) {
+				sb.append(a.desc);
+				sb.append(", ");
+			}
+			sb.append("]");
+			return sb.toString();
+		}
 	}
 
 }

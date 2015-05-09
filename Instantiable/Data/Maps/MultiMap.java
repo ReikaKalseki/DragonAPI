@@ -135,7 +135,11 @@ public final class MultiMap<K, V> {
 		if (!modifiable)
 			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		Collection<V> c = data.get(key);
-		return c != null && c.remove(value);
+		boolean flag = c != null && c.remove(value);
+		if (flag && c.isEmpty()) {
+			this.data.remove(key);
+		}
+		return flag;
 	}
 
 	@Override

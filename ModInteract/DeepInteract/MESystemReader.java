@@ -10,14 +10,25 @@
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.IdentityHashMap;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.config.FuzzyMode;
 import appeng.api.networking.IGridNode;
+import appeng.api.networking.crafting.ICraftingCallback;
+import appeng.api.networking.crafting.ICraftingGrid;
+import appeng.api.networking.crafting.ICraftingJob;
+import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.IMEMonitor;
@@ -28,13 +39,36 @@ public class MESystemReader {
 	private final IGridNode node;
 	private final BaseActionSource actionSource;
 
+	private final IdentityHashMap<Future<ICraftingJob>, CraftCompleteCallback> crafting = new IdentityHashMap();
+	private final MultiMap<CraftCompleteCallback, ICraftingLink> craftingLinks = new MultiMap().setNullEmpty();
+
 	public MESystemReader(IGridNode ign, SourceType src) {
+		this(ign, new ActionSource(src));
+	}
+
+	/** For loading all the data of the old reader */
+	public MESystemReader(IGridNode ign, MESystemReader reader) {
+		this(ign, reader.actionSource);
+
+		crafting.putAll(reader.crafting);
+		craftingLinks.putAll(reader.craftingLinks);
+	}
+
+	private MESystemReader(IGridNode ign, BaseActionSource src) {
 		node = ign;
-		actionSource = new ActionSource(src);
+		actionSource = src;
 	}
 
 	private IMEMonitor<IAEItemStack> getStorage() {
+		if (node == null || node.getGrid() == null)
+			return null;
 		return ((IStorageGrid)node.getGrid().getCache(IStorageGrid.class)).getItemInventory();
+	}
+
+	private ICraftingGrid getCraftingGrid() {
+		if (node == null || node.getGrid() == null)
+			return null;
+		return ((ICraftingGrid)node.getGrid().getCache(ICraftingGrid.class));
 	}
 
 	public ItemHashMap<Long> getMESystemContents() {
@@ -97,6 +131,11 @@ public class MESystemReader {
 		return ret != null ? ret.getStackSize() : 0;
 	}
 
+	/** AE Does not currently support this */
+	public long removeItemFuzzyIgnoreNBT(ItemStack is, boolean simulate, FuzzyMode fz, boolean oredict) {
+		return this.removeItemFuzzy(is, simulate, fz, oredict);
+	}
+
 	/** Returns how many items NOT added */
 	public long addItem(ItemStack is, boolean simulate) {
 		IAEItemStack ret = this.getStorage().injectItems(this.createAEStack(is), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
@@ -111,7 +150,84 @@ public class MESystemReader {
 		return this.removeItemFuzzy(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true, fz, ore);
 	}
 
-	private class ActionSource extends BaseActionSource {
+	/** AE does not currently support this */
+	public long getFuzzyItemCountIgnoreNBT(ItemStack is, FuzzyMode fz, boolean ore) {
+		return this.getFuzzyItemCount(is, fz, ore);
+	}
+
+	/** Triggers the native crafting system to craft a given amount of a given item. Callbacks is optional. */
+	public void triggerCrafting(World world, ItemStack is, long amt, ICraftingCallback callback, CraftCompleteCallback callback2) {
+		if (node == null || node.getGrid() == null)
+			return;
+		IAEItemStack iae = this.createAEStack(is);
+		iae.setStackSize(amt);
+		Future<ICraftingJob> f = this.getCraftingGrid().beginCraftingJob(world, node.getGrid(), actionSource, iae, callback);
+		crafting.put(f, callback2);
+	}
+
+	/** You are required to call this on your reader if you want things like crafting triggers to work. */
+	public void tick() {
+		ICraftingGrid cache = this.getCraftingGrid();
+		if (cache != null) {
+
+			HashSet<Future<ICraftingJob>> removeCalls = new HashSet();
+			for (Future<ICraftingJob> f : crafting.keySet()) {
+				if (f.isDone()) {
+					try {
+						ICraftingJob job = f.get();
+						ICraftingLink l = cache.submitJob(job, null, null, true, actionSource);
+						if (l == null) {
+							ReikaJavaLibrary.pConsole(job+" to craft "+job.getOutput()+" returned a null link!");
+						}
+						else {
+							if (crafting.get(f) != null)
+								craftingLinks.addValue(crafting.get(f), l);
+						}
+						removeCalls.add(f);
+					}
+					catch (InterruptedException e) {
+						e.printStackTrace();
+					}
+					catch (ExecutionException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+			for (Future<ICraftingJob> f : removeCalls)
+				crafting.remove(f);
+
+			MultiMap<CraftCompleteCallback, ICraftingLink> removeLinks = new MultiMap().setNullEmpty();
+			for (CraftCompleteCallback ccc : craftingLinks.keySet()) {
+				Collection<ICraftingLink> c = craftingLinks.get(ccc);
+				if (c != null && !c.isEmpty()) {
+					for (ICraftingLink l : c) {
+						if (l.isDone()) {
+							ccc.onCraftingComplete(l);
+							removeLinks.addValue(ccc, l);
+						}
+					}
+				}
+			}
+			//ReikaJavaLibrary.pConsole("CRAFT: "+craftingLinks, !craftingLinks.isEmpty());
+			//ReikaJavaLibrary.pConsole("REM: "+removeLinks, !removeLinks.isEmpty());
+			for (CraftCompleteCallback ccc : removeLinks.keySet()) {
+				Collection<ICraftingLink> c = removeLinks.get(ccc);
+				if (c != null) {
+					for (ICraftingLink l : c) {
+						craftingLinks.remove(ccc, l);
+					}
+				}
+			}
+		}
+	}
+
+	public static interface CraftCompleteCallback {
+
+		public void onCraftingComplete(ICraftingLink link);
+
+	}
+
+	private static class ActionSource extends BaseActionSource {
 
 		private final SourceType type;
 
