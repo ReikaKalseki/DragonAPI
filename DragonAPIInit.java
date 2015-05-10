@@ -35,6 +35,7 @@ import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
 import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
+import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
 import Reika.DragonAPI.Auxiliary.FindTilesCommand;
 import Reika.DragonAPI.Auxiliary.LoggingFilters;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
@@ -179,6 +180,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		config.initProps(evt);
 
 		MinecraftForge.EVENT_BUS.register(DragonAPILoadWatcher.instance);
+		MinecraftForge.EVENT_BUS.register(DragonAPIEventWatcher.instance);
 
 		logger = new ModLogger(instance, false);
 		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());

@@ -29,6 +29,7 @@ import appeng.api.networking.crafting.ICraftingCallback;
 import appeng.api.networking.crafting.ICraftingGrid;
 import appeng.api.networking.crafting.ICraftingJob;
 import appeng.api.networking.crafting.ICraftingLink;
+import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.security.BaseActionSource;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.IMEMonitor;
@@ -38,6 +39,8 @@ public class MESystemReader {
 
 	private final IGridNode node;
 	private final BaseActionSource actionSource;
+
+	private ICraftingRequester requester = null;
 
 	private final IdentityHashMap<Future<ICraftingJob>, CraftCompleteCallback> crafting = new IdentityHashMap();
 	private final MultiMap<CraftCompleteCallback, ICraftingLink> craftingLinks = new MultiMap().setNullEmpty();
@@ -52,11 +55,18 @@ public class MESystemReader {
 
 		crafting.putAll(reader.crafting);
 		craftingLinks.putAll(reader.craftingLinks);
+
+		requester = reader.requester;
 	}
 
 	private MESystemReader(IGridNode ign, BaseActionSource src) {
 		node = ign;
 		actionSource = src;
+	}
+
+	public MESystemReader setRequester(ICraftingRequester icr) {
+		requester = icr;
+		return this;
 	}
 
 	private IMEMonitor<IAEItemStack> getStorage() {
@@ -175,13 +185,16 @@ public class MESystemReader {
 				if (f.isDone()) {
 					try {
 						ICraftingJob job = f.get();
-						ICraftingLink l = cache.submitJob(job, null, null, true, actionSource);
+						ICraftingLink l = cache.submitJob(job, requester, null, true, actionSource);
 						if (l == null) {
 							ReikaJavaLibrary.pConsole(job+" to craft "+job.getOutput()+" returned a null link!");
 						}
 						else {
-							if (crafting.get(f) != null)
-								craftingLinks.addValue(crafting.get(f), l);
+							CraftCompleteCallback ccc = crafting.get(f);
+							if (ccc != null) {
+								craftingLinks.addValue(ccc, l);
+								ccc.onCraftingLinkReturned(l);
+							}
 						}
 						removeCalls.add(f);
 					}
@@ -223,6 +236,7 @@ public class MESystemReader {
 
 	public static interface CraftCompleteCallback {
 
+		public void onCraftingLinkReturned(ICraftingLink link);
 		public void onCraftingComplete(ICraftingLink link);
 
 	}

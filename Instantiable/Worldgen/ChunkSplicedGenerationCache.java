@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.Worldgen;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
@@ -30,6 +31,10 @@ public class ChunkSplicedGenerationCache {
 
 	public void setBlock(int x, int y, int z, Block b, int meta) {
 		this.place(x, y, z, new SetBlock(b, meta));
+	}
+
+	public void setTileEntity(int x, int y, int z, Block b, int meta, TileCallback call) {
+		this.place(x, y, z, new TileSet(call, b, meta));
 	}
 
 	public void place(int x, int y, int z, SetBlock sb) {
@@ -69,6 +74,7 @@ public class ChunkSplicedGenerationCache {
 				int z = (cp.chunkZPos << 4)+c.zCoord;
 				bp.place(world, x, y, z);
 			}
+			data.remove(cp);
 		}
 	}
 
@@ -113,6 +119,29 @@ public class ChunkSplicedGenerationCache {
 				world.func_147479_m(x, y, z);
 			}
 		}
+
+	}
+
+	public static class TileSet extends SetBlock {
+
+		private final TileCallback callback;
+
+		private TileSet(TileCallback c, Block b, int m) {
+			super(b, m);
+			callback = c;
+		}
+
+		@Override
+		public void place(World world, int x, int y, int z) {
+			super.place(world, x, y, z);
+			callback.onTilePlaced(world, x, y, z, world.getTileEntity(x, y, z));
+		}
+
+	}
+
+	public static interface TileCallback {
+
+		public void onTilePlaced(World world, int x, int y, int z, TileEntity te);
 
 	}
 
