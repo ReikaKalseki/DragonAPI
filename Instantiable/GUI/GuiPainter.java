@@ -41,6 +41,8 @@ public class GuiPainter {
 	private MultiMap<PaintElement, Point> locations = new MultiMap();
 	public Brush brush = Brush.PIXEL;
 
+	private boolean init;
+
 	private static final Random rand = new Random();
 
 	public GuiPainter(int x, int y, int w, int h, int s) {
@@ -52,8 +54,11 @@ public class GuiPainter {
 		height = h;
 	}
 
+	/** Call this from the end of the subclass constructor. */
 	protected void init() {
+		init = true;
 		this.clear();
+		init = false;
 	}
 
 	public void onRenderTick(int mx, int my) {
@@ -113,9 +118,13 @@ public class GuiPainter {
 	public void clear() {
 		for (int i = 0; i < data.length; i++) {
 			for (int k = 0; k < data[i].length; k++) {
-				data[i][k] = this.getFallbackEntry(i, k);
+				data[i][k] = init ? this.getDefaultEntry(i, k) : this.getFallbackEntry(i, k);
 			}
 		}
+	}
+
+	protected PaintElement getDefaultEntry(int x, int y) {
+		return this.getFallbackEntry(x, y);
 	}
 
 	protected PaintElement getFallbackEntry(int x, int y) {

@@ -1333,6 +1333,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
+		ch.setChunkModified();
 		for (int i = 0; i < 256; i++)
 			temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(biome));
 
