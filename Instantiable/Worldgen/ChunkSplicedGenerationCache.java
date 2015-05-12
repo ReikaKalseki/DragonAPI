@@ -64,6 +64,18 @@ public class ChunkSplicedGenerationCache {
 	}
 
 	public void generate(World world, ChunkCoordIntPair cp) {
+		this.doGenerate(world, cp);
+		data.remove(cp);
+	}
+
+	public void generateAll(World world) {
+		for (ChunkCoordIntPair cp : data.keySet()) {
+			this.doGenerate(world, cp);
+		}
+		data.clear();
+	}
+
+	private void doGenerate(World world, ChunkCoordIntPair cp) {
 		HashMap<Coordinate, BlockPlace> map = data.get(cp);
 		if (map != null) {
 			//ReikaJavaLibrary.pConsole("To generate: "+map);
@@ -74,7 +86,6 @@ public class ChunkSplicedGenerationCache {
 				int z = (cp.chunkZPos << 4)+c.zCoord;
 				bp.place(world, x, y, z);
 			}
-			data.remove(cp);
 		}
 	}
 
@@ -142,6 +153,21 @@ public class ChunkSplicedGenerationCache {
 	public static interface TileCallback {
 
 		public void onTilePlaced(World world, int x, int y, int z, TileEntity te);
+
+	}
+
+	public static final class RelayCache extends ChunkSplicedGenerationCache {
+
+		private final World world;
+
+		public RelayCache(World world) {
+			this.world = world;
+		}
+
+		@Override
+		public void place(int x, int y, int z, SetBlock sb) {
+			sb.place(world, x, y, z);
+		}
 
 	}
 
