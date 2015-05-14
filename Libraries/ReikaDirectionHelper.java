@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
@@ -92,6 +93,11 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		dirs.remove(ForgeDirection.NORTH);
 		dirs.remove(ForgeDirection.DOWN);
 		return dirs;
+	}
+
+	public static ForgeDirection getRandomDirection(boolean vertical, Random rand) {
+		int idx = vertical ? rand.nextInt(6) : 2+rand.nextInt(4);
+		return ForgeDirection.VALID_DIRECTIONS[idx];
 	}
 
 }
