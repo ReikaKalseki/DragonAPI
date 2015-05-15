@@ -454,4 +454,18 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		}
 		return true;
 	}
+
+	public static boolean arrayContains(String[] arr, String sg, boolean ignoreCase) {
+		for (int i = 0; i < arr.length; i++) {
+			if (ignoreCase) {
+				if (sg.equalsIgnoreCase(arr[i]))
+					return true;
+			}
+			else {
+				if (sg.equals(arr[i]))
+					return true;
+			}
+		}
+		return false;
+	}
 }
