@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.renderer.texture.TextureMap;
 
 import org.apache.logging.log4j.Level;
@@ -20,6 +21,7 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.Side;
@@ -28,8 +30,16 @@ public class LoggingFilters {
 
 	private static final Filter mismatchFilter = new ItemBlockMismatchFilter();
 	private static final Filter soundLoaderFilter = new CustomSoundLoaderFilter();
+	private static final Filter noTextureFilter = new MissingTextureFilter();
 
 	public abstract static class CoreFilter implements Filter {
+
+		private static boolean skipNext = false;
+		protected final LoggerType type;
+
+		private CoreFilter(LoggerType log) {
+			type = log;
+		}
 
 		@Override
 		public final Result getOnMismatch() {
@@ -58,12 +68,17 @@ public class LoggingFilters {
 
 		@Override
 		public final Result filter(LogEvent event) {
+			if (skipNext) {
+				return Result.NEUTRAL;
+			}
 			String msg = this.parse(event.getMessage(), event.getLevel());
 			if (msg == null) {
 				return Result.DENY;
 			}
 			else if (!msg.isEmpty()) {
-				LogManager.getLogger(event.getLoggerName()).log(event.getLevel(), msg);
+				skipNext = true;
+				getLogger(type).log(event.getLevel(), msg);
+				skipNext = false;
 				return Result.DENY;
 			}
 			else {
@@ -77,10 +92,13 @@ public class LoggingFilters {
 
 	private static class ItemBlockMismatchFilter extends CoreFilter {
 
+		private final String PREFIX = "Block <-> ItemBlock name mismatch";
+		private final String TAG = "DragonAPI:minecraft";
+
 		private int counter = 0;
 
 		private ItemBlockMismatchFilter() {
-
+			super(LoggerType.FML);
 		}
 
 		@Override
@@ -90,7 +108,7 @@ public class LoggingFilters {
 				return null;
 			}
 			String sg = msg.getFormattedMessage();
-			if (sg.contains("Block <-> ItemBlock name mismatch") && sg.contains("DragonAPI:minecraft")) {
+			if (sg.contains(PREFIX) && sg.contains(TAG)) {
 				counter = 7;
 				return null;
 			}
@@ -101,16 +119,39 @@ public class LoggingFilters {
 
 	private static class CustomSoundLoaderFilter extends CoreFilter {
 
-		private CustomSoundLoaderFilter() {
+		private final String PREFIX = "Invalid sounds.json";
 
+		private CustomSoundLoaderFilter() {
+			super(LoggerType.SOUND);
 		}
 
 
 		@Override
 		protected String parse(Message msg, Level lvl) {
 			String sg = msg.getFormattedMessage();
-			if (sg.contains("Invalid sounds.json")) {
+			if (sg.contains(PREFIX)) {
 				return null;
+			}
+			return "";
+		}
+
+	}
+
+	private static class MissingTextureFilter extends CoreFilter {
+
+		private final String PREFIX = "Using missing texture, unable to load";
+
+		private MissingTextureFilter() {
+			super(LoggerType.TEXTURE);
+		}
+
+		@Override
+		protected String parse(Message msg, Level lvl) {
+			String sg = msg.getFormattedMessage();
+			if (sg.contains(PREFIX)) {
+				String tex = sg.substring(PREFIX.length()+1);
+				ReikaJavaLibrary.pConsole("ERROR: Texture Map could not find texture '"+tex+"'; File not found.");
+				return null;//"ERROR: Texture Map could not find texture '"+tex+"'; File not found.";
 			}
 			return "";
 		}
@@ -135,6 +176,8 @@ public class LoggingFilters {
 			return (Logger)LogManager.getLogger(SoundHandler.class);
 		case TEXTURE:
 			return (Logger)LogManager.getLogger(TextureMap.class);
+		case CHAT:
+			return (Logger)LogManager.getLogger(GuiNewChat.class);
 		default:
 			return null;
 		}
@@ -143,14 +186,21 @@ public class LoggingFilters {
 	public static enum LoggerType {
 		FML(),
 		TEXTURE(),
-		SOUND();
+		SOUND(),
+		CHAT();
+
+		public boolean isClientOnly() {
+			return this == TEXTURE || this == SOUND || this == CHAT;
+		}
 	}
 
 	public static void registerCoreFilters() {
 		registerFilter(mismatchFilter, LoggerType.FML);
 
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			registerFilter(soundLoaderFilter, LoggerType.SOUND);
+			registerFilter(noTextureFilter, LoggerType.TEXTURE);
+		}
 	}
 
 }

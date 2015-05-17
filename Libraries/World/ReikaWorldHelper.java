@@ -41,6 +41,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
@@ -49,6 +50,7 @@ import Reika.DragonAPI.APIPacketHandler;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
@@ -60,6 +62,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
 public final class ReikaWorldHelper extends DragonAPICore {
@@ -1877,5 +1880,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			b = world.getBlock(x, y, z);
 		}
 		return c;
+	}
+
+	public static boolean isWorldLoaded(int dim) {
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			throw new MisuseException("This cannot be called clientside!");
+		return DimensionManager.getWorld(dim) != null;
 	}
 }

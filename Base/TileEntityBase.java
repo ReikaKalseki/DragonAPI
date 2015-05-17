@@ -391,9 +391,6 @@ public abstract class TileEntityBase extends TileEntity {
 				this.updateTileEntity();
 				this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
 			}
-			catch (ArrayIndexOutOfBoundsException e) {
-				this.writeError(e);
-			}
 			catch (IndexOutOfBoundsException e) {
 				this.writeError(e);
 			}
@@ -410,7 +407,7 @@ public abstract class TileEntityBase extends TileEntity {
 				this.writeError(e);
 			}
 		}
-		if (this.getTicksExisted() < 20)
+		if (this.getTicksExisted() < 20 && this.getTicksExisted()%4 == 0)
 			this.syncAllData(true);
 		//packetTimer.update();
 
