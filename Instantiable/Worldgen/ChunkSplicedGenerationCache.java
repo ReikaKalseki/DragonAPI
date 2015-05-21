@@ -37,7 +37,7 @@ public class ChunkSplicedGenerationCache {
 		this.place(x, y, z, new TileSet(call, b, meta));
 	}
 
-	public void place(int x, int y, int z, SetBlock sb) {
+	public void place(int x, int y, int z, BlockPlace sb) {
 		ChunkCoordIntPair key = this.getKey(x, z);
 		HashMap<Coordinate, BlockPlace> map = data.get(key);
 		if (map == null) {
@@ -108,16 +108,16 @@ public class ChunkSplicedGenerationCache {
 
 	}
 
-	public static class SetBlock implements BlockPlace {
+	static class SetBlock implements BlockPlace {
 
 		private final Block block;
 		private final int metadata;
 
-		private SetBlock(Block b) {
+		SetBlock(Block b) {
 			this(b, 0);
 		}
 
-		private SetBlock(Block b, int m) {
+		SetBlock(Block b, int m) {
 			block = b;
 			metadata = m;
 		}
@@ -133,11 +133,11 @@ public class ChunkSplicedGenerationCache {
 
 	}
 
-	public static class TileSet extends SetBlock {
+	static class TileSet extends SetBlock {
 
 		private final TileCallback callback;
 
-		private TileSet(TileCallback c, Block b, int m) {
+		TileSet(TileCallback c, Block b, int m) {
 			super(b, m);
 			callback = c;
 		}
@@ -165,7 +165,7 @@ public class ChunkSplicedGenerationCache {
 		}
 
 		@Override
-		public void place(int x, int y, int z, SetBlock sb) {
+		public void place(int x, int y, int z, BlockPlace sb) {
 			sb.place(world, x, y, z);
 		}
 

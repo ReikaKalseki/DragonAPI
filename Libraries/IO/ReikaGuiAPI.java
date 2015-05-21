@@ -354,8 +354,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	public void drawCustomRecipes(RenderItem render, FontRenderer f, List<ItemStack> out, List<IRecipe> ir, int x, int y, int x2, int y2) {
 		ArrayList<IRecipe> lr = new ArrayList<IRecipe>();
-		for (int i = 0; i < out.size(); i++) {
-			lr.addAll(ReikaRecipeHelper.getAllRecipesByOutput(ir, out.get(i)));
+		for (ItemStack is : out) {
+			lr.addAll(ReikaRecipeHelper.getAllRecipesByOutput(ir, is));
 		}
 		if (lr.size() <= 0) {
 			//ReikaJavaLibrary.pConsole("No recipes found for "+out);

@@ -167,8 +167,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	/** Finds recipes by product. */
 	public static ArrayList<IRecipe> getAllRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		ArrayList<IRecipe> li = new ArrayList<IRecipe>();
-		for (int i = 0; i < in.size(); i++) {
-			IRecipe ir = in.get(i);
+		for (IRecipe ir : in) {
 			//ReikaJavaLibrary.pConsole(ir.getRecipeOutput()+" == "+out);
 			if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
 				li.add(ir);
@@ -188,8 +187,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	/** Finds recipes by product. */
 	public static List<ShapedOreRecipe> getShapedOreRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ShapedOreRecipe> li = new ArrayList<ShapedOreRecipe>();
-		for (int i = 0; i < in.size(); i++) {
-			IRecipe ir = in.get(i);
+		for (IRecipe ir : in) {
 			//ReikaJavaLibrary.pConsole(ir.getRecipeOutput()+" == "+out);
 			if (ir instanceof ShapedOreRecipe) {
 				if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
@@ -203,8 +201,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	/** Finds recipes by product. */
 	public static List<ExpandedOreRecipe> getExpandedOreRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ExpandedOreRecipe> li = new ArrayList<ExpandedOreRecipe>();
-		for (int i = 0; i < in.size(); i++) {
-			IRecipe ir = in.get(i);
+		for (IRecipe ir : in) {
 			//ReikaJavaLibrary.pConsole(ir.getRecipeOutput()+" == "+out);
 			if (ir instanceof ExpandedOreRecipe) {
 				if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
@@ -218,8 +215,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	/** Finds recipes by product. */
 	public static List<ShapelessRecipes> getShapelessRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ShapelessRecipes> li = new ArrayList<ShapelessRecipes>();
-		for (int i = 0; i < in.size(); i++) {
-			IRecipe ir = in.get(i);
+		for (IRecipe ir : in) {
 			if (ir instanceof ShapelessRecipes) {
 				if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
 					li.add((ShapelessRecipes)ir);
@@ -232,8 +228,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	/** Finds recipes by product. */
 	public static List<ShapelessOreRecipe> getShapelessOreRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ShapelessOreRecipe> li = new ArrayList<ShapelessOreRecipe>();
-		for (int i = 0; i < in.size(); i++) {
-			IRecipe ir = in.get(i);
+		for (IRecipe ir : in) {
 			if (ir instanceof ShapelessOreRecipe) {
 				if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
 					li.add((ShapelessOreRecipe)ir);
@@ -488,8 +483,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			throw new MisuseException("You cannot replace null in recipes!");
 		ArrayList<IRecipe> copies = new ArrayList();
 		List<IRecipe> li = CraftingManager.getInstance().getRecipeList();
-		for (int k = 0; k < li.size(); k++) {
-			IRecipe ir = li.get(k);
+		for (IRecipe ir : li) {
 			if (ir instanceof ShapedRecipes) {
 				ShapedRecipes s = (ShapedRecipes) ir;
 				boolean match = false;
@@ -597,14 +591,14 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				}
 			}
 		}
-
-		for (int i = 0; i < copies.size(); i++) {
-			IRecipe ir = copies.get(i);
+		/*
+		for (IRecipe ir : copies) {
 			if (ir instanceof ShapedOreRecipe) {
 				ShapedOreRecipe rec = (ShapedOreRecipe) ir;
 				//ReikaJavaLibrary.spamConsole(ir.getRecipeOutput().getDisplayName()+":"+Arrays.toString(rec.getInput()));
 			}
 		}
+		 */
 		CraftingManager.getInstance().getRecipeList().addAll(copies);
 	}
 
