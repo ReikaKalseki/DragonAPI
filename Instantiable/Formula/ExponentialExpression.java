@@ -12,9 +12,9 @@ package Reika.DragonAPI.Instantiable.Formula;
 
 public class ExponentialExpression extends MathExpression {
 
-	private final double baseVal;
-	private final double scale;
-	private final double base;
+	public final double baseVal;
+	public final double scale;
+	public final double base;
 
 	public ExponentialExpression(double init, double scale, double base) {
 		baseVal = init;
@@ -23,17 +23,17 @@ public class ExponentialExpression extends MathExpression {
 	}
 
 	@Override
-	public double evaluate(double arg) {
+	public final double evaluate(double arg) throws ArithmeticException {
 		return baseVal + scale*Math.pow(base, arg);
 	}
 
 	@Override
-	public double getBaseValue() {
+	public final double getBaseValue() {
 		return baseVal;
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return baseVal+(scale > 0 ? "+" : "-")+Math.abs(scale)+"*"+base+"^x";
 	}
 }

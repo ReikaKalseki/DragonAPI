@@ -13,9 +13,9 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public class InverseLogExpression extends MathExpression {
 
-	private final double baseVal;
-	private final double scale;
-	private final double base;
+	public final double baseVal;
+	public final double scale;
+	public final double base;
 
 	public InverseLogExpression(double init, double scale, double base) {
 		baseVal = init;
@@ -24,17 +24,17 @@ public class InverseLogExpression extends MathExpression {
 	}
 
 	@Override
-	public double evaluate(double arg) {
+	public final double evaluate(double arg) throws ArithmeticException {
 		return baseVal/(1+scale*(ReikaMathLibrary.logbase(arg+1, base)));
 	}
 
 	@Override
-	public double getBaseValue() {
+	public final double getBaseValue() {
 		return baseVal;
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return baseVal+"/(1+"+scale+"*(log_"+base+"(x+1)))";
 	}
 

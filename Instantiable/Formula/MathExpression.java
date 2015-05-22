@@ -11,7 +11,7 @@ package Reika.DragonAPI.Instantiable.Formula;
 
 public abstract class MathExpression {
 
-	public abstract double evaluate(double arg);
+	public abstract double evaluate(double arg) throws ArithmeticException;
 
 	public abstract double getBaseValue();
 

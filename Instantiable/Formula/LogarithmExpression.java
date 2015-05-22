@@ -13,9 +13,9 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public class LogarithmExpression extends MathExpression {
 
-	private final double baseVal;
-	private final double scale;
-	private final double logBase;
+	public final double baseVal;
+	public final double scale;
+	public final double logBase;
 
 	public LogarithmExpression(double init, double scale, double base) {
 		baseVal = init;
@@ -24,17 +24,17 @@ public class LogarithmExpression extends MathExpression {
 	}
 
 	@Override
-	public double evaluate(double arg) {
+	public final double evaluate(double arg) throws ArithmeticException {
 		return baseVal + scale*ReikaMathLibrary.logbase(arg+1, logBase);
 	}
 
 	@Override
-	public double getBaseValue() {
+	public final double getBaseValue() {
 		return baseVal;
 	}
 
 	@Override
-	public String toString() {
+	public final String toString() {
 		return baseVal+(scale > 0 ? "+" : "-")+Math.abs(scale)+"*log_"+logBase+"(x+1)";
 	}
 }
