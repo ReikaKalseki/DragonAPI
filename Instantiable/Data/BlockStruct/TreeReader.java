@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import Reika.ChromatiCraft.API.TreeGetter;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
@@ -479,8 +480,8 @@ public final class TreeReader extends BlockArray {
 	}
 
 	@Override
-	public int[] getNextAndMoveOn() {
-		int[] next = super.getNextAndMoveOn();
+	public Coordinate getNextAndMoveOn() {
+		Coordinate next = super.getNextAndMoveOn();
 		if (this.isEmpty())
 			this.reset();
 		return next;

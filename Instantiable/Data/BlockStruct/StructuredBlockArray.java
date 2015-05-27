@@ -35,32 +35,27 @@ public class StructuredBlockArray extends BlockArray {
 	}
 
 	@Override
-	public int[] getNextBlock() {
+	public Coordinate getNextBlock() {
 		if (data.isEmpty())
 			return null;
-		int[] a = new int[3];
 		Coordinate li = data.keySet().iterator().next();
-		a[0] = li.xCoord;
-		a[1] = li.yCoord;
-		a[2] = li.zCoord;
-		return a;
+		return li;
 	}
 
 	@Override
-	public int[] getNthBlock(int n) {
+	public Coordinate getNthBlock(int n) {
+		/*
 		if (data.isEmpty())
 			return null;
-		int[] arr = new int[3];
 		int a = 0;
 		for (Coordinate li : data.keySet()) {
 			if (a == n) {
-				arr[0] = li.xCoord;
-				arr[1] = li.yCoord;
-				arr[2] = li.zCoord;
+				return li;
 			}
 			a++;
 		}
-		return arr;
+		return null;*/
+		return blocks.get(n);
 	}
 
 	@Override
@@ -69,16 +64,13 @@ public class StructuredBlockArray extends BlockArray {
 	}
 
 	@Override
-	public int[] getNextAndMoveOn() {
+	public Coordinate getNextAndMoveOn() {
 		if (data.isEmpty())
 			return null;
-		int[] a = new int[3];
 		Coordinate li = data.keySet().iterator().next();
-		a[0] = li.xCoord;
-		a[1] = li.yCoord;
-		a[2] = li.zCoord;
 		data.remove(li);
-		return a;
+		blocks.remove(li);
+		return li;
 	}
 
 	@Override
@@ -90,7 +82,9 @@ public class StructuredBlockArray extends BlockArray {
 		super.addBlockCoordinate(x, y, z);
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		data.put(new Coordinate(x, y, z), new BlockKey(b, meta));
+		Coordinate c = new Coordinate(x, y, z);
+		data.put(c, new BlockKey(b, meta));
+		blocks.add(c);
 		return true;
 	}
 
@@ -133,8 +127,8 @@ public class StructuredBlockArray extends BlockArray {
 	}
 
 	@Override
-	public int[] getRandomBlock() {
-		int[] a = super.getRandomBlock();
+	public Coordinate getRandomBlock() {
+		Coordinate a = super.getRandomBlock();
 		return a;
 	}
 

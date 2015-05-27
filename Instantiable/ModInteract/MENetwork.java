@@ -75,7 +75,7 @@ public class MENetwork {
 
 	private void initializeStorage() {
 		for (int i = 0; i < blocks.getSize(); i++) {
-			int[] xyz = blocks.getNthBlock(i);
+			Coordinate c = blocks.getNthBlock(i);
 			TileEntity te = world.getTileEntity(xyz[0], xyz[1], xyz[2]);
 			if (te instanceof ICellProvider) {
 				ICellProvider icp = (ICellProvider)te;

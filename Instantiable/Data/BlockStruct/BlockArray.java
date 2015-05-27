@@ -10,11 +10,11 @@
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -44,7 +44,8 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class BlockArray {
 
-	protected final List<Coordinate> blocks = new ArrayList();
+	protected final ArrayList<Coordinate> blocks = new ArrayList();
+	private final HashSet<Coordinate> keys = new HashSet();
 	protected Material liquidMat;
 	protected boolean overflow = false;
 	protected World refWorld;
@@ -76,10 +77,16 @@ public class BlockArray {
 			return false;
 		if (this.hasBlock(x, y, z))
 			return false;
-		blocks.add(new Coordinate(x, y, z));
+		Coordinate c = new Coordinate(x, y, z);
+		this.addKey(c);
 		this.setLimits(x, y, z);
 		//ReikaJavaLibrary.pConsole("Adding "+x+", "+y+", "+z);
 		return true;
+	}
+
+	protected void addKey(Coordinate c) {
+		blocks.add(c);
+		keys.add(c);
 	}
 
 	public boolean addBlockCoordinateIf(World world, int x, int y, int z, Block b, int meta) {
@@ -105,10 +112,16 @@ public class BlockArray {
 	}
 
 	public void remove(int x, int y, int z) {
-		blocks.remove(new Coordinate(x, y, z));
+		Coordinate c = new Coordinate(x, y, z);
+		this.removeKey(c);
 		if (this.isEdge(x, y, z)) {
 			this.recalcLimits();
 		}
+	}
+
+	protected void removeKey(Coordinate c) {
+		blocks.remove(c);
+		keys.remove(c);
 	}
 
 	public void recalcLimits() {
@@ -200,30 +213,26 @@ public class BlockArray {
 			maxZ = z;
 	}
 
-	public int[] getNextBlock() {
+	public Coordinate getNextBlock() {
 		if (this.isEmpty())
 			return null;
-		return this.getReturnArray(0);
+		return blocks.get(0);
 	}
 
-	public int[] getNthBlock(int n) {
+	public Coordinate getNthBlock(int n) {
 		if (this.isEmpty())
 			return null;
-		return this.getReturnArray(n);
+		return blocks.get(n);
 	}
 
 	public Collection<Coordinate> keySet() {
 		return Collections.unmodifiableCollection(blocks);
 	}
 
-	private int[] getReturnArray(int index) {
-		return blocks.get(index).toArray();
-	}
-
-	public int[] getNextAndMoveOn() {
+	public Coordinate getNextAndMoveOn() {
 		if (this.isEmpty())
 			return null;
-		int[] next = this.getNextBlock();
+		Coordinate next = this.getNextBlock();
 		blocks.remove(0);
 		if (this.isEmpty())
 			overflow = false;
@@ -244,7 +253,7 @@ public class BlockArray {
 	}
 
 	public final boolean hasBlock(int x, int y, int z) {
-		return blocks.contains(new Coordinate(x, y, z));
+		return keys.contains(new Coordinate(x, y, z));
 	}
 
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
@@ -600,13 +609,13 @@ public class BlockArray {
 		StringBuilder list = new StringBuilder();
 		list.append(this.getSize()+": ");
 		for (int i = 0; i < this.getSize(); i++) {
-			int[] xyz = this.getReturnArray(i);
+			Coordinate c = this.getNthBlock(i);
 			if (refWorld != null) {
-				Block id = refWorld.getBlock(xyz[0], xyz[1], xyz[2]);
-				int meta = refWorld.getBlockMetadata(xyz[0], xyz[1], xyz[2]);
+				Block id = refWorld.getBlock(c.xCoord, c.yCoord, c.zCoord);
+				int meta = refWorld.getBlockMetadata(c.xCoord, c.yCoord, c.zCoord);
 				list.append(id+":"+meta+" @ ");
 			}
-			list.append(Arrays.toString(xyz));
+			list.append(c.toString());
 			if (i != this.getSize()-1)
 				list.append(";");
 		}
@@ -715,7 +724,7 @@ public class BlockArray {
 		ReikaJavaLibrary.pConsole("Stack overflow at depth "+depth+"/"+maxDepth+"!");
 	}
 
-	public int[] getRandomBlock() {
+	public Coordinate getRandomBlock() {
 		return this.getNthBlock(rand.nextInt(this.getSize()));
 	}
 
@@ -747,10 +756,10 @@ public class BlockArray {
 		boolean canSink = true;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
-				int[] xyz = this.getReturnArray(i);
-				int x = xyz[0];
-				int y = xyz[1];
-				int z = xyz[2];
+				Coordinate c = this.getNthBlock(i);
+				int x = c.xCoord;
+				int y = c.yCoord;
+				int z = c.zCoord;
 				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z)) {
 					canSink = false;
 				}
@@ -764,10 +773,10 @@ public class BlockArray {
 		boolean canSink = true;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
-				int[] xyz = this.getReturnArray(i);
-				int x = xyz[0];
-				int y = xyz[1];
-				int z = xyz[2];
+				Coordinate c = this.getNthBlock(i);
+				int x = c.xCoord;
+				int y = c.yCoord;
+				int z = c.zCoord;
 				Block idy = world.getBlock(x, y-1, z);
 				if (!ReikaWorldHelper.softBlocks(world, x, y-1, z) && !ReikaArrayHelper.contains(overrides, idy)) {
 					canSink = false;
@@ -782,10 +791,10 @@ public class BlockArray {
 		boolean canSink = true;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
-				int[] xyz = this.getReturnArray(i);
-				int x = xyz[0];
-				int y = xyz[1];
-				int z = xyz[2];
+				Coordinate c = this.getNthBlock(i);
+				int x = c.xCoord;
+				int y = c.yCoord;
+				int z = c.zCoord;
 				if (minY <= 0 || y <= 0) {
 					canSink = false;
 					break;
@@ -807,10 +816,10 @@ public class BlockArray {
 		ArrayList<ItemStack> nbt = new ArrayList();
 		ItemHashMap<Integer> map = new ItemHashMap();
 		for (int i = 0; i < blocks.size(); i++) {
-			int[] xyz = this.getReturnArray(i);
-			int x = xyz[0];
-			int y = xyz[1];
-			int z = xyz[2];
+			Coordinate c = this.getNthBlock(i);
+			int x = c.xCoord;
+			int y = c.yCoord;
+			int z = c.zCoord;
 			Block b = world.getBlock(x, y, z);
 			if (b != null && b != Blocks.air) {
 				int metadata = world.getBlockMetadata(x, y, z);
@@ -868,26 +877,29 @@ public class BlockArray {
 	}
 
 	public void addAll(BlockArray add) {
-		for (Coordinate c : add.blocks)
-			if (!blocks.contains(c))
+		for (Coordinate c : add.blocks) {
+			if (!blocks.contains(c)) {
 				blocks.add(c);
+			}
+			keys.add(c);
+		}
 	}
 
 	public final boolean isAtLeastXPercentNot(World world, double percent, Block id, int meta) {
 		double s = this.getSize();
-		int c = 0;
+		int ct = 0;
 		for (int i = 0; i < this.getSize(); i++) {
-			int[] xyz = this.getNthBlock(i);
-			int x = xyz[0];
-			int y = xyz[1];
-			int z = xyz[2];
+			Coordinate c = this.getNthBlock(i);
+			int x = c.xCoord;
+			int y = c.yCoord;
+			int z = c.zCoord;
 			Block id2 = world.getBlock(x, y, z);
 			int meta2 = world.getBlockMetadata(x, y, z);
 			if (id2 != id || meta2 != meta) {
-				c++;
+				ct++;
 			}
 		}
-		return c/s*100D >= percent;
+		return ct/s*100D >= percent;
 	}
 
 	public final boolean isAtLeastXPercent(World world, double percent, Block id) {
@@ -896,19 +908,19 @@ public class BlockArray {
 
 	public final boolean isAtLeastXPercent(World world, double percent, Block id, int meta) {
 		double s = this.getSize();
-		int c = 0;
+		int ct = 0;
 		for (int i = 0; i < this.getSize(); i++) {
-			int[] xyz = this.getNthBlock(i);
-			int x = xyz[0];
-			int y = xyz[1];
-			int z = xyz[2];
+			Coordinate c = this.getNthBlock(i);
+			int x = c.xCoord;
+			int y = c.yCoord;
+			int z = c.zCoord;
 			Block id2 = world.getBlock(x, y, z);
 			int meta2 = world.getBlockMetadata(x, y, z);
 			if (id2 == id && (meta == -1 || meta2 == meta)) {
-				c++;
+				ct++;
 			}
 		}
-		return c/s*100D >= percent;
+		return ct/s*100D >= percent;
 	}
 
 	public final boolean isAtLeastXPercentSolid(World world, double percent) {
@@ -922,8 +934,8 @@ public class BlockArray {
 	public void setTo(Block b, int meta) {
 		if (refWorld != null) {
 			for (int i = 0; i < this.getSize(); i++) {
-				int[] xyz = this.getNthBlock(i);
-				refWorld.setBlock(xyz[0], xyz[1], xyz[2], b, meta, 3);
+				Coordinate c = this.getNthBlock(i);
+				refWorld.setBlock(c.xCoord, c.yCoord, c.zCoord, b, meta, 3);
 			}
 		}
 		else {
@@ -939,10 +951,10 @@ public class BlockArray {
 		NBTTagList li = new NBTTagList();
 		for (int i = 0; i < this.getSize(); i++) {
 			NBTTagCompound tag = new NBTTagCompound();
-			int[] xyz = this.getNthBlock(i);
-			tag.setInteger("x", xyz[0]);
-			tag.setInteger("y", xyz[1]);
-			tag.setInteger("z", xyz[2]);
+			Coordinate c = this.getNthBlock(i);
+			tag.setInteger("x", c.xCoord);
+			tag.setInteger("y", c.yCoord);
+			tag.setInteger("z", c.zCoord);
 			li.appendTag(tag);
 		}
 		NBT.setTag(label, li);
