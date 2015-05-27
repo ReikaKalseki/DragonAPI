@@ -1887,4 +1887,16 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			throw new MisuseException("This cannot be called clientside!");
 		return DimensionManager.getWorld(dim) != null;
 	}
+
+	public static int getTopNonAirBlock(World world, int x, int z) {
+		Chunk ch = world.getChunkFromBlockCoords(x, z);
+		int top = ch.getTopFilledSegment()+15;
+		for (int y = top; y > 0; y--) {
+			Block b = ch.getBlock(x&15, y, z&15);
+			if (!b.isAir(world, x, y, z)) {
+				return y;
+			}
+		}
+		return 0;
+	}
 }

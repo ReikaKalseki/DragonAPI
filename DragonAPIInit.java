@@ -452,7 +452,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@SubscribeEvent
 	public void clearItems(ItemUpdateEvent evt) {
-		if (ClearItemsCommand.clearItem(evt.entityItem)) {
+		if (ClearItemsCommand.clearItem(evt.entityItem) || true) {
 			evt.entityItem.setDead();
 		}
 	}

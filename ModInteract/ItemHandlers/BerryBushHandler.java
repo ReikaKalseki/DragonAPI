@@ -140,4 +140,9 @@ public class BerryBushHandler extends CropHandlerBase {
 		return new ArrayList();
 	}
 
+	@Override
+	public int getGrowthState(World world, int x, int y, int z) {
+		return world.getBlockMetadata(x, y, z)%4;
+	}
+
 }

@@ -22,6 +22,8 @@ public interface CropType extends RegistryType {
 	public void setHarvested(World world, int x, int y, int z);
 	public void makeRipe(World world, int x, int y, int z);
 
+	public int getGrowthState(World world, int x, int y, int z);
+
 	public boolean isSeedItem(ItemStack is);
 
 	public boolean destroyOnHarvest();

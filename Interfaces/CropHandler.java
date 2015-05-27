@@ -25,6 +25,8 @@ public interface CropHandler {
 
 	public abstract void makeRipe(World world, int x, int y, int z);
 
+	public abstract int getGrowthState(World world, int x, int y, int z);
+
 	public abstract boolean isSeedItem(ItemStack is);
 
 	//public abstract float getSecondSeedDropRate();

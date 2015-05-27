@@ -295,4 +295,9 @@ public class HarvestCraftHandler extends CropHandlerBase {
 		return null;
 	}
 
+	@Override
+	public int getGrowthState(World world, int x, int y, int z) {
+		return world.getBlockMetadata(x, y, z);
+	}
+
 }

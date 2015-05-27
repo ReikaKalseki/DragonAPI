@@ -83,4 +83,15 @@ public class CrystalPlantHandler implements CropHandler {
 		return null;
 	}
 
+	@Override
+	public int getGrowthState(World world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		if (ModList.CHROMATICRAFT.isLoaded() && te instanceof TileEntityCrystalPlant) {
+			return ((TileEntityCrystalPlant)te).getGrowthState();
+		}
+		else {
+			return 0;
+		}
+	}
+
 }

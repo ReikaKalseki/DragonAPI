@@ -498,4 +498,9 @@ public enum ModCropList implements CropType {
 	public static void addCustomCropType(CropHandler ch) {
 		customHandlers.add(new CustomCrop(ch));
 	}*/
+
+	@Override
+	public int getGrowthState(World world, int x, int y, int z) {
+		return this.isHandlered() ? handler.getGrowthState(world, x, y, z) : world.getBlockMetadata(x, y, z);
+	}
 }
