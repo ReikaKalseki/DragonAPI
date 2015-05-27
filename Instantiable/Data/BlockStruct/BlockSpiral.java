@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
 
 public class BlockSpiral {
@@ -74,7 +75,7 @@ public class BlockSpiral {
 		return this;
 	}
 
-	public int[] getNthBlock(int n) {
+	public Coordinate getNthBlock(int n) {
 		return blocks.getNthBlock(n);
 	}
 

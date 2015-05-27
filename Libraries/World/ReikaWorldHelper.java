@@ -53,6 +53,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
@@ -1774,10 +1775,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 		if (checkCorners) {
 			for (int n = 0; n < RelativePositionList.cornerDirections.getSize(); n++) {
-				int[] d = RelativePositionList.cornerDirections.getNthPosition(x, y, z, n);
-				int dx = d[0];
-				int dy = d[1];
-				int dz = d[2];
+				Coordinate d = RelativePositionList.cornerDirections.getNthPosition(x, y, z, n);
+				int dx = d.xCoord;
+				int dy = d.yCoord;
+				int dz = d.zCoord;
 				Block id2 = world.getBlock(dx, dy, dz);
 				if (id == id2) {
 					count++;

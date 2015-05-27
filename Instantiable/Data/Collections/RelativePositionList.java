@@ -10,8 +10,9 @@
 package Reika.DragonAPI.Instantiable.Data.Collections;
 
 
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import net.minecraft.util.Vec3;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 
 public class RelativePositionList {
 
@@ -73,21 +74,18 @@ public class RelativePositionList {
 		return positions.getSize();
 	}
 
-	public int[] getNthPosition(int x, int y, int z, int n) {
-		int[] relative = this.getNthRelativePosition(n);
-		relative[0] += x;
-		relative[1] += y;
-		relative[2] += z;
-		return relative;
+	public Coordinate getNthPosition(int x, int y, int z, int n) {
+		Coordinate relative = this.getNthRelativePosition(n);
+		return relative.offset(x, y, z);
 	}
 
-	public int[] getNthRelativePosition(int n) {
+	public Coordinate getNthRelativePosition(int n) {
 		return positions.getNthBlock(n);
 	}
 
 	public Vec3 getVector(int n) {
-		int[] d = this.getNthRelativePosition(n);
-		return Vec3.createVectorHelper(d[0], d[1], d[2]);
+		Coordinate d = this.getNthRelativePosition(n);
+		return Vec3.createVectorHelper(d.xCoord, d.yCoord, d.zCoord);
 	}
 
 }

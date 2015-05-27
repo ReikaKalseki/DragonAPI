@@ -124,10 +124,10 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			if (depth < maxDepth) {
 				BlockArray next = new BlockArray();
 				for (int i = 0; i < start.getSize() && !isDone; i++) {
-					int[] xyz = start.getNthBlock(i);
-					int x = xyz[0];
-					int y = xyz[1];
-					int z = xyz[2];
+					Coordinate c = start.getNthBlock(i);
+					int x = c.xCoord;
+					int y = c.yCoord;
+					int z = c.zCoord;
 					Block b = world.getBlock(x, y, z);
 					int meta = world.getBlockMetadata(x, y, z);
 					if (call != null && !call.canBreak(this, world, x, y, z, b, meta))
@@ -143,10 +143,10 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 					}
 					if (extraSpread) {
 						for (int n = 0; n < RelativePositionList.cornerDirections.getSize(); n++) {
-							int[] d = RelativePositionList.cornerDirections.getNthPosition(x, y, z, n);
-							int dx = d[0];
-							int dy = d[1];
-							int dz = d[2];
+							Coordinate d = RelativePositionList.cornerDirections.getNthPosition(x, y, z, n);
+							int dx = d.xCoord;
+							int dy = d.yCoord;
+							int dz = d.zCoord;
 							if (this.canSpreadTo(world, dx, dy, dz)) {
 								next.addBlockCoordinate(dx, dy, dz);
 							}
@@ -158,10 +158,10 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 				}
 				start.clear();
 				for (int i = 0; i < next.getSize() && i < MAX_SIZE; i++) {
-					int[] xyz = next.getNthBlock(i);
-					int x = xyz[0];
-					int y = xyz[1];
-					int z = xyz[2];
+					Coordinate c = next.getNthBlock(i);
+					int x = c.xCoord;
+					int y = c.yCoord;
+					int z = c.zCoord;
 					start.addBlockCoordinate(x, y, z);
 				}
 				depth++;

@@ -611,8 +611,8 @@ public class BlockArray {
 		for (int i = 0; i < this.getSize(); i++) {
 			Coordinate c = this.getNthBlock(i);
 			if (refWorld != null) {
-				Block id = refWorld.getBlock(c.xCoord, c.yCoord, c.zCoord);
-				int meta = refWorld.getBlockMetadata(c.xCoord, c.yCoord, c.zCoord);
+				Block id = c.getBlock(refWorld);
+				int meta = refWorldc.getBlockMetadata();
 				list.append(id+":"+meta+" @ ");
 			}
 			list.append(c.toString());
@@ -935,7 +935,7 @@ public class BlockArray {
 		if (refWorld != null) {
 			for (int i = 0; i < this.getSize(); i++) {
 				Coordinate c = this.getNthBlock(i);
-				refWorld.setBlock(c.xCoord, c.yCoord, c.zCoord, b, meta, 3);
+				c.setBlock(refWorld, b, meta);
 			}
 		}
 		else {

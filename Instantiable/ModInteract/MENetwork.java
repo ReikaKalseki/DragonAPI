@@ -28,6 +28,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import appeng.api.config.Actionable;
@@ -76,7 +77,7 @@ public class MENetwork {
 	private void initializeStorage() {
 		for (int i = 0; i < blocks.getSize(); i++) {
 			Coordinate c = blocks.getNthBlock(i);
-			TileEntity te = world.getTileEntity(xyz[0], xyz[1], xyz[2]);
+			TileEntity te = world.getTileEntity(c.xCoord, c.yCoord, c.zCoord);
 			if (te instanceof ICellProvider) {
 				ICellProvider icp = (ICellProvider)te;
 				List<IMEInventoryHandler> li = icp.getCellArray(StorageChannel.ITEMS);

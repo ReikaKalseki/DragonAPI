@@ -218,10 +218,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	public void populateBlockData() {
 		for (int i = 0; i < this.getSize(); i++) {
-			int[] xyz = this.getNthBlock(i);
-			int x = xyz[0];
-			int y = xyz[1];
-			int z = xyz[2];
+			Coordinate c = this.getNthBlock(i);
+			int x = c.xCoord;
+			int y = c.yCoord;
+			int z = c.zCoord;
 			Block b = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
 			this.setBlock(x, y, z, b, meta);

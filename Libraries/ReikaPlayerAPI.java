@@ -46,6 +46,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.Auxiliary.Trackers.TickScheduler;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Event.ScheduledTickEvent;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -91,11 +92,11 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		World world = ep.worldObj;
 		for (float i = 0; i <= range; i += 0.2) {
 			int[] xyz = ReikaVectorHelper.getPlayerLookBlockCoords(ep, i);
-			Block b = world.getBlock(xyz[0], xyz[1], xyz[2]);
+			Block b = worldc.getBlock();
 			if (b != Blocks.air) {
-				boolean isSoft = ReikaWorldHelper.softBlocks(world, xyz[0], xyz[1], xyz[2]);
+				boolean isSoft = ReikaWorldHelper.softBlocks(world, c.xCoord, c.yCoord, c.zCoord);
 				if (hitSoft || !isSoft) {
-					return new MovingObjectPosition(xyz[0], xyz[1], xyz[2], 0, norm);
+					return new MovingObjectPosition(c.xCoord, c.yCoord, c.zCoord, 0, norm);
 				}
 			}
 		}
@@ -207,8 +208,8 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	public static boolean playerCanBreakAt(WorldServer world, BlockArray b, EntityPlayerMP ep) {
 		for (int i = 0; i < b.getSize(); i++) {
-			int[] xyz = b.getNthBlock(i);
-			if (!playerCanBreakAt(world, xyz[0], xyz[1], xyz[2], ep))
+			Coordinate c = b.getNthBlock(i);
+			if (!playerCanBreakAt(world, c.xCoord, c.yCoord, c.zCoord, ep))
 				return false;
 		}
 		return true;
