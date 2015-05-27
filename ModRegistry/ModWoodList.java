@@ -36,6 +36,7 @@ public enum ModWoodList implements TreeType {
 	DARKWOOD(ModList.TWILIGHT, 		0x35281A, 0x395F41, "log", "hedge", "sapling", new int[]{3,15}, 1, 3, VarType.INSTANCE),
 	MANGROVE(ModList.TWILIGHT, 		0x8D8980, 0x431445, "log", "leaves", "sapling", new int[]{2,14}, new int[]{2,10}, 2, VarType.INSTANCE),
 	TWILIGHTOAK(ModList.TWILIGHT, 	0x806654, 0x764952, "log", "leaves", "sapling", new int[]{0,12}, new int[]{0,8}, 0, VarType.INSTANCE),
+	//RAINBOWOAK(ModList.TWILIGHT, 	0x806654, 0x764952, "---", "leaves", "sapling", new int[]{0,12}, new int[]{3,11}, 9, VarType.INSTANCE),
 	GREATWOOD(ModList.THAUMCRAFT, 	0x4F3E37, 0x71924C, "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INSTANCE),
 	SILVERWOOD(ModList.THAUMCRAFT, 	0xC9C3AC, 0x5782C7, "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE),
 	EUCALYPTUS(ModList.NATURA, 		0xE2CEB1, 0x3C9119, "tree", "floraLeaves", "floraSapling", 0, new int[]{1,9}, 1, VarType.INSTANCE),
