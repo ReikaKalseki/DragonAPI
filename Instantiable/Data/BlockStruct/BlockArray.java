@@ -612,7 +612,7 @@ public class BlockArray {
 			Coordinate c = this.getNthBlock(i);
 			if (refWorld != null) {
 				Block id = c.getBlock(refWorld);
-				int meta = refWorldc.getBlockMetadata();
+				int meta = c.getBlockMetadata(refWorld);
 				list.append(id+":"+meta+" @ ");
 			}
 			list.append(c.toString());

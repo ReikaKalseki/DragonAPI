@@ -9,9 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import java.lang.ref.WeakReference;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -25,6 +27,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class WorldLocation {
 
@@ -35,8 +39,18 @@ public class WorldLocation {
 	public final int zCoord;
 	public final int dimensionID;
 
+	private boolean isRemote = false;
+
+	@SideOnly(Side.CLIENT)
+	private WeakReference<WorldClient> clientWorld;
+
 	public WorldLocation(World world, int x, int y, int z) {
 		this(world.provider.dimensionId, x, y, z);
+
+		if (world.isRemote) {
+			isRemote = true;
+			clientWorld = new WeakReference(world);
+		}
 	}
 
 	public WorldLocation(int dim, int x, int y, int z) {
@@ -47,7 +61,7 @@ public class WorldLocation {
 	}
 
 	private WorldLocation(WorldLocation loc) {
-		this(loc.dimensionID, loc.xCoord, loc.yCoord, loc.zCoord);
+		this(loc.getWorld(), loc.xCoord, loc.yCoord, loc.zCoord);
 	}
 
 	public WorldLocation(TileEntity te) {
@@ -151,7 +165,7 @@ public class WorldLocation {
 	}
 
 	public World getWorld() {
-		return DimensionManager.getWorld(dimensionID);
+		return isRemote && clientWorld.get() != null ? clientWorld.get() : DimensionManager.getWorld(dimensionID);
 	}
 
 	public void writeToNBT(String tag, NBTTagCompound NBT) {

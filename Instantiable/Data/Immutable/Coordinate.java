@@ -122,7 +122,7 @@ public final class Coordinate {
 		return false;
 	}
 
-	private boolean equals(int x, int y, int z) {
+	public boolean equals(int x, int y, int z) {
 		return x == xCoord && y == yCoord && z == zCoord;
 	}
 
