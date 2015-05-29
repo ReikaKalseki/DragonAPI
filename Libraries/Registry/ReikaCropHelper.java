@@ -107,6 +107,10 @@ public enum ReikaCropHelper implements CropType {
 		return ReikaItemHelper.matchStacks(is, seedItem);
 	}
 
+	public ItemStack getSeedItem() {
+		return seedItem.copy();
+	}
+
 	@Override
 	public int getGrowthState(World world, int x, int y, int z) {
 		return world.getBlockMetadata(x, y, z);

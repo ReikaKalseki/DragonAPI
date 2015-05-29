@@ -378,16 +378,15 @@ public class FilledBlockArray extends StructuredBlockArray {
 	}
 
 	@Override
-	public BlockArray copy() {
-		FilledBlockArray copy = new FilledBlockArray(world);
-		copy.refWorld = refWorld;
-		copy.liquidMat = liquidMat;
-		copy.overflow = overflow;
-		copy.blocks.clear();
-		copy.blocks.addAll(blocks);
-		copy.recalcLimits();
-		copy.data.putAll(data);
-		return copy;
+	protected BlockArray instantiate() {
+		return new FilledBlockArray(world);
+	}
+
+	@Override
+	public void copyTo(BlockArray copy) {
+		super.copyTo(copy);
+		if (copy instanceof FilledBlockArray)
+			((FilledBlockArray)copy).data.putAll(data);
 	}
 
 }

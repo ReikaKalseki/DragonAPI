@@ -27,7 +27,7 @@ public final class BlockMap<V> {
 
 	}
 
-	private V get(BlockKey bk) {
+	public V get(BlockKey bk) {
 		//ReikaJavaLibrary.pConsole(bk+" >> "+data.keySet());
 		return data.get(bk);
 	}

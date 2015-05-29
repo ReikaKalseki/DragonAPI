@@ -30,6 +30,8 @@ import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerRegisterEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
 import paulscode.sound.SoundSystemConfig;
@@ -73,6 +75,7 @@ import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.ReikaPotionHelper;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
@@ -418,6 +421,26 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void catchNullOreDict(OreRegisterEvent evt) {
 		if (evt.Ore == null || evt.Ore.getItem() == null)
 			throw new WTFException("Someone registered null to the OreDictionary under the name '"+evt.Name+"'!", true);
+		else {
+			logger.log("Logged OreDict registration of "+evt.Ore+" as '"+evt.Name+"'.");
+		}
+	}
+
+	@SubscribeEvent
+	public void mapFluidContainers(FluidContainerRegisterEvent evt) {
+		Fluid f = evt.data.fluid.getFluid();
+		ItemStack fill = evt.data.filledContainer;
+		ItemStack empty = evt.data.emptyContainer;
+		StringBuilder sb = new StringBuilder();
+		sb.append("Logged FluidContainer registration of ");
+		sb.append(f.getName());
+		sb.append(" with filled '");
+		sb.append(fill != null ? fill.getDisplayName() : "[null]");
+		sb.append("' and empty '");
+		sb.append(empty != null ? empty.getDisplayName() : "[null]");
+		sb.append("'.");
+		logger.log(sb.toString());
+		ReikaFluidHelper.mapContainerToFluid(f, empty, fill);
 	}
 
 	@SubscribeEvent

@@ -54,8 +54,9 @@ public class StructuredBlockArray extends BlockArray {
 			}
 			a++;
 		}
-		return null;*/
-		return blocks.get(n);
+		return null;
+		return blocks.get(n);*/
+		return super.getNthBlock(n);
 	}
 
 	@Override
@@ -69,7 +70,7 @@ public class StructuredBlockArray extends BlockArray {
 			return null;
 		Coordinate li = data.keySet().iterator().next();
 		data.remove(li);
-		blocks.remove(li);
+		super.removeKey(li);
 		return li;
 	}
 
@@ -84,7 +85,6 @@ public class StructuredBlockArray extends BlockArray {
 		int meta = world.getBlockMetadata(x, y, z);
 		Coordinate c = new Coordinate(x, y, z);
 		data.put(c, new BlockKey(b, meta));
-		blocks.add(c);
 		return true;
 	}
 
@@ -178,16 +178,16 @@ public class StructuredBlockArray extends BlockArray {
 	}
 
 	@Override
-	public BlockArray copy() {
-		StructuredBlockArray copy = new StructuredBlockArray(world);
-		copy.refWorld = refWorld;
-		copy.liquidMat = liquidMat;
-		copy.overflow = overflow;
-		copy.blocks.clear();
-		copy.blocks.addAll(blocks);
-		copy.recalcLimits();
-		copy.data.putAll(data);
-		return copy;
+	protected BlockArray instantiate() {
+		return new StructuredBlockArray(world);
+	}
+
+	@Override
+	public void copyTo(BlockArray copy) {
+		super.copyTo(copy);
+		if (copy instanceof StructuredBlockArray) {
+			((StructuredBlockArray)copy).data.putAll(data);
+		}
 	}
 
 	public ItemHashMap<Integer> getItems() {
@@ -204,14 +204,5 @@ public class StructuredBlockArray extends BlockArray {
 			map.put(is, amt+1);
 		}
 		return map;
-	}
-
-	public void addAll(StructuredBlockArray add, boolean overwrite) {
-		super.addAll(add);
-		for (Coordinate c : add.data.keySet()) {
-			if (overwrite || !data.containsKey(c)) {
-				data.put(c, add.data.get(c));
-			}
-		}
 	}
 }

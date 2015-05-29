@@ -510,14 +510,13 @@ public final class TreeReader extends BlockArray {
 	}
 
 	@Override
-	public TreeReader copy() {
-		TreeReader copy = new TreeReader();
+	protected BlockArray instantiate() {
+		return new TreeReader();
+	}
 
-		copy.refWorld = refWorld;
-		copy.liquidMat = liquidMat;
-		copy.overflow = overflow;
-		copy.blocks.clear();
-		copy.blocks.addAll(blocks);
+	@Override
+	public void copyTo(BlockArray cp) {
+		TreeReader copy = (TreeReader)cp;
 
 		copy.leafCount = leafCount;
 		copy.logCount = logCount;
@@ -528,8 +527,6 @@ public final class TreeReader extends BlockArray {
 
 		copy.isDyeTree = isDyeTree;
 		copy.dyeMeta = dyeMeta;
-
-		return copy;
 	}
 
 }

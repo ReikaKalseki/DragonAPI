@@ -44,7 +44,7 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class BlockArray {
 
-	protected final ArrayList<Coordinate> blocks = new ArrayList();
+	private final ArrayList<Coordinate> blocks = new ArrayList();
 	private final HashSet<Coordinate> keys = new HashSet();
 	protected Material liquidMat;
 	protected boolean overflow = false;
@@ -725,7 +725,7 @@ public class BlockArray {
 	}
 
 	public Coordinate getRandomBlock() {
-		return this.getNthBlock(rand.nextInt(this.getSize()));
+		return this.isEmpty() ? null : this.getNthBlock(rand.nextInt(this.getSize()));
 	}
 
 	private void remove(int index) {
@@ -745,9 +745,13 @@ public class BlockArray {
 	}
 
 	public BlockArray offset(int x, int y, int z) {
-		for (int i = 0; i < blocks.size(); i++) {
-			Coordinate xyz = blocks.get(i);
-			blocks.set(i, xyz.offset(x, y, z));
+		Collection<Coordinate> temp = new ArrayList(blocks);
+		keys.clear();
+		blocks.clear();
+		for (Coordinate c : temp) {
+			Coordinate c2 = c.offset(x, y, z);
+			blocks.add(c2);
+			keys.add(c2);
 		}
 		return this;
 	}
@@ -860,29 +864,32 @@ public class BlockArray {
 		return li;
 	}
 
-	public BlockArray copy() {
-		BlockArray copy = new BlockArray();
+	public final BlockArray copy() {
+		BlockArray copy = this.instantiate();
+		this.copyTo(copy);
+		return copy;
+	}
+
+	protected BlockArray instantiate() {
+		return new BlockArray();
+	}
+
+	public void copyTo(BlockArray copy) {
 		copy.refWorld = refWorld;
 		copy.liquidMat = liquidMat;
 		copy.overflow = overflow;
 		copy.blocks.clear();
-		copy.addAll(this);
+		copy.blocks.addAll(blocks);
+		copy.keys.clear();
+		copy.keys.addAll(keys);
+		copy.recalcLimits();
+		/*
 		copy.minX = minX;
 		copy.minY = minY;
 		copy.minZ = minZ;
 		copy.maxX = maxX;
 		copy.maxY = maxY;
-		copy.maxZ = maxZ;
-		return copy;
-	}
-
-	public void addAll(BlockArray add) {
-		for (Coordinate c : add.blocks) {
-			if (!blocks.contains(c)) {
-				blocks.add(c);
-			}
-			keys.add(c);
-		}
+		copy.maxZ = maxZ;*/
 	}
 
 	public final boolean isAtLeastXPercentNot(World world, double percent, Block id, int meta) {
