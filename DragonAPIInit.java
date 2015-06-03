@@ -48,6 +48,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.FurnaceFuelRegistry;
 import Reika.DragonAPI.Auxiliary.Trackers.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.KeyTicker;
+import Reika.DragonAPI.Auxiliary.Trackers.PackModificationTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.PatreonController;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.PotionCollisionTracker;
@@ -354,6 +355,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.startTiming(LoadPhase.POSTLOAD);
 
 		ReikaRegistryHelper.loadNames();
+
+		PackModificationTracker.instance.loadAll();
 
 		this.loadHandlers();
 
