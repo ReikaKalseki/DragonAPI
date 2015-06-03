@@ -495,9 +495,15 @@ public final class ReikaGuiAPI extends GuiScreen {
 	}
 
 	public void drawTooltip(FontRenderer f, String s) {
-		int mx = this.getMouseRealX()-f.getStringWidth(s)*0;
-		int my = this.getMouseRealY();
-		this.drawTooltipAt(f, s, mx, my);
+		int x = this.getMouseRealX()-f.getStringWidth(s)*0;
+		int y = this.getMouseRealY();
+		this.drawTooltipAt(f, s, x, y);
+	}
+
+	public void drawTooltip(FontRenderer f, String s, int dx, int dy) {
+		int x = this.getMouseRealX()-f.getStringWidth(s)*0;
+		int y = this.getMouseRealY();
+		this.drawTooltipAt(f, s, x+dx, y+dy);
 	}
 
 	public void drawTooltipAt(FontRenderer f, String s, int mx, int my) {

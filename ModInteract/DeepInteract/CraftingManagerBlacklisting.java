@@ -87,7 +87,7 @@ public class CraftingManagerBlacklisting {
 
 		@Override
 		protected boolean isObject(ItemStack stack) {
-			RegistrationList reg = ReikaRegistryHelper.getRegistry(stack.getItem());
+			RegistrationList reg = ReikaRegistryHelper.getRegistryForObject(stack.getItem());
 			return reg != null && reg.getClass() == registryEnum;
 		}
 

@@ -12,8 +12,10 @@ package Reika.DragonAPI.Libraries;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -24,6 +26,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.ItemBlockCustomLocalization;
 import Reika.DragonAPI.Interfaces.BlockEnum;
+import Reika.DragonAPI.Interfaces.EntityEnum;
 import Reika.DragonAPI.Interfaces.ItemEnum;
 import Reika.DragonAPI.Interfaces.RegistrationList;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
@@ -33,6 +36,7 @@ import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class ReikaRegistryHelper extends DragonAPICore {
@@ -40,6 +44,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	private static final HashMap<BlockEnum, ArrayList<Integer>> blockVariants = new HashMap();
 	private static final HashMap<ItemEnum, ArrayList<Integer>> itemVariants = new HashMap();
 	private static final IdentityHashMap<Object, RegistrationList> registries = new IdentityHashMap();
+	private static final IdentityHashMap<Object, EntityCollection> modEntityRegistries = new IdentityHashMap();
 
 	/** Instantiates all blocks and registers them to the game. Uses an Enum[] that implements RegistrationList.
 	 * Args: Mod, Enum.values(), Target Block[] array to save instances. */
@@ -254,7 +259,53 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		}
 	}
 
-	public static RegistrationList getRegistry(Object o) {
+	public static RegistrationList getRegistryForObject(Object o) {
 		return registries.get(o);
+	}
+
+	public static void registerModEntities(Object mod, EntityEnum[] list) {
+		for (int i = 0; i < list.length; i++) {
+			EntityEnum e = list[i];
+			boolean upd = e.sendsVelocityUpdates();
+			int dist = e.getTrackingDistance();
+			EntityCollection ec = getNextCollectionFor(mod);
+			int id = ec.maxID;
+			EntityRegistry.registerModEntity(e.getObjectClass(), e.getUnlocalizedName(), id, mod, dist, upd ? 20 : 1, upd);
+			if (e.hasSpawnEgg()) {
+				//EntityList.entityEggs.put(id, new EntityEggInfo(id, e.eggColor1(), e.eggColor2()));
+			}
+			ec.addEntry(e);
+		}
+	}
+
+	public static List<EntityEnum> getEntityEnumForMod(Object mod) {
+		EntityCollection ec = modEntityRegistries.get(mod);
+		return ec != null ? Collections.unmodifiableList(ec.entities) : null;
+	}
+
+	private static EntityCollection getNextCollectionFor(Object mod) {
+		EntityCollection ec = modEntityRegistries.get(mod);
+		if (ec == null) {
+			ec = new EntityCollection();
+			modEntityRegistries.put(mod, ec);
+		}
+		return ec;
+	}
+
+	private static class EntityCollection {
+
+		private int maxID = 1;
+		private ArrayList<EntityEnum> entities = new ArrayList();
+
+		private EntityCollection() {
+
+		}
+
+		private EntityCollection addEntry(EntityEnum e) {
+			entities.add(e);
+			maxID++;
+			return this;
+		}
+
 	}
 }

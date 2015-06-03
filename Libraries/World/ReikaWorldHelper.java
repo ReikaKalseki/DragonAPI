@@ -647,7 +647,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				world.spawnParticle("lava", x+rand.nextFloat(), y+1, z+rand.nextFloat(), 0, 0, 0);
 		if (drop != null) {
 			ItemStack scrap = drop.copy();
-			int numdrops = rand.nextInt(maxdrops)+mindrops;
+			int numdrops = rand.nextInt(1+maxdrops-mindrops)+mindrops;
 			if (!world.isRemote) {
 				for (int i = 0; i < numdrops; i++) {
 					EntityItem ent = new EntityItem(world, x+rand.nextFloat(), y+0.5, z+rand.nextFloat(), scrap);
