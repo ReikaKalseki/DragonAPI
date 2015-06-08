@@ -321,7 +321,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Andrew Jones", 10);
 		PatreonController.instance.addPatron(this, "Steven Kane", 40);
 		PatreonController.instance.addPatron(this, "motsop", 1);
-		PatreonController.instance.addPatron(this, "Luc Levesque", 5);
+		PatreonController.instance.addPatron(this, "Luc Levesque", "d0ffe97b-3370-4135-8218-4399e7ec5184", 5); //Demethan
 		PatreonController.instance.addPatron(this, "David Harris", 1);
 		PatreonController.instance.addPatron(this, "Michael Vaarning", 5);
 		PatreonController.instance.addPatron(this, "Renato", 1);
@@ -343,6 +343,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "DorinnB", "1a4c37c8-de99-4960-8157-90dc28ef4c65", 1);
 		PatreonController.instance.addPatron(this, "Kotaro_MC", "4e40b5a3-fa82-4496-acf2-d2fadeb5bf5d", 40);
 		PatreonController.instance.addPatron(this, "AnotherDeadBard", "147aac9c-c0d2-4273-a6cc-f272f5b2ae13", 5);
+		PatreonController.instance.addPatron(this, "Haggle1996", "bb7c2ac3-72aa-4ad8-8e00-4e0fb67a51ec", 10);
+		PatreonController.instance.addPatron(this, "acnotalpha", "dc7496be-2408-4c7e-a65e-6beb53355fa7", 10); //Jeremiah Winsley
 
 		CommandableUpdateChecker.instance.checkAll();
 

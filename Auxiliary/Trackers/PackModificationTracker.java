@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 
 import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -34,12 +35,13 @@ public class PackModificationTracker {
 
 	}
 
-	public ArrayList<PackModification> getModifications(DragonAPIMod mod) {
-		return data.get(mod);
+	public List<PackModification> getModifications(DragonAPIMod mod) {
+		ArrayList<PackModification> li = data.get(mod);
+		return li != null ? Collections.unmodifiableList(li) : null;
 	}
 
 	public boolean modificationsExist(DragonAPIMod mod) {
-		return !data.get(mod).isEmpty();
+		return data.get(mod) != null && !data.get(mod).isEmpty();
 	}
 
 	public void addMod(DragonAPIMod mod, ControlledConfig cfg) {

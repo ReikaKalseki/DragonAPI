@@ -34,6 +34,7 @@ public enum ModList {
 	LEGACYCRAFT("LegacyCraft"),
 	ELECTRICRAFT("ElectriCraft"),
 	CHROMATICRAFT("ChromatiCraft"),
+	BUILDCRAFT("BuildCraft|Core", "buildcraft.BuildCraftCore"),
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
 	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
 	BCTRANSPORT("BuildCraft|Transport", "buildcraft.BuildCraftTransport"),

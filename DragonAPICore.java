@@ -117,7 +117,7 @@ public class DragonAPICore {
 		int rev = ForgeVersion.revisionVersion;
 		int build = ForgeVersion.buildVersion;
 
-		int recbuild = 1208;
+		int recbuild = 1291;
 		if (build < recbuild) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: The version of Forge you are using is compatible but not recommended.");
 			ReikaJavaLibrary.pConsole(String.format("Consider updating to at least %d.%d.%d.%d.", major, minor, rev, recbuild));
