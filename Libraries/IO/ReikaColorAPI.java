@@ -152,4 +152,8 @@ public class ReikaColorAPI {
 	public static int HexToGS(int rgb) {
 		return (getRed(rgb)+getGreen(rgb)+getBlue(rgb))/3;
 	}
+
+	public static int getHue(int rgb) {
+		return (int)(360*Color.RGBtoHSB(getRed(rgb), getGreen(rgb), getBlue(rgb), null)[0]);
+	}
 }

@@ -40,6 +40,10 @@ public class PlayerMap<V> {
 		return data.get(uid);
 	}
 
+	public V directRemove(UUID uid) {
+		return data.remove(uid);
+	}
+
 	public V remove(EntityPlayer ep) {
 		return data.remove(getKey(ep));
 	}
