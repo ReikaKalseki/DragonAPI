@@ -26,6 +26,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Base.TileEntityBase;
+import Reika.DragonAPI.Command.EntityListCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Instantiable.Event.RawKeyPressEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
@@ -217,6 +218,7 @@ public class APIPacketHandler implements IPacketHandler {
 			case NUMBERPARTICLE:
 				break;
 			case IDDUMP:
+			case ENTITYDUMP:
 				break;
 			case EXPLODE:
 				break;
@@ -242,6 +244,9 @@ public class APIPacketHandler implements IPacketHandler {
 			break;
 		case IDDUMP:
 			IDDumpCommand.dumpClientside(data[0]);
+			break;
+		case ENTITYDUMP:
+			EntityListCommand.dumpClientside();
 			break;
 		case EXPLODE:
 			ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "random.explode");
@@ -276,6 +281,7 @@ public class APIPacketHandler implements IPacketHandler {
 		COLOREDPARTICLE(),
 		NUMBERPARTICLE(),
 		IDDUMP(),
+		ENTITYDUMP(),
 		EXPLODE(),
 		OLDMODS(),
 		OLDMODSLOAD(),

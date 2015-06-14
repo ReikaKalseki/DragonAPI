@@ -9,18 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM;
 
-import static net.minecraftforge.common.util.ForgeDirection.UP;
-
 import java.util.Collection;
-import java.util.Random;
 
-import net.minecraft.block.BlockFire;
-import net.minecraft.init.Blocks;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -42,7 +34,6 @@ import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Event.BlockConsumedByFireEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -72,6 +63,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		PUSHENTITYOUT("net.minecraft.entity.Entity", "sa"),
 		CREATIVETAB("net.minecraft.client.gui.inventory.GuiContainerCreative", "bfm"),
 		BURNBLOCK("net.minecraft.block.BlockFire", "alb"),
+		//CHATSIZE("net.minecraft.client.gui.GuiNewChat", "bcc"),
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
 		;
 
@@ -739,7 +731,21 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				//m.instructions.insert(loc2, L12);
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 3!");
 				break;
-			}
+			}/*
+			case CHATSIZE: {
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_146237_a", "func_146237_a", "(Lnet/minecraft/util/IChatComponent;IIZ)V");
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.BIPUSH) {
+						IntInsnNode iin = (IntInsnNode)ain;
+						if (iin.operand == 100) {
+							iin.operand = 1000; //increase history to 1000 lines
+						}
+					}
+				}
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler!");
+				break;
+			}*/
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -748,137 +754,6 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			//ClassNode vcn = new ClassNode(); //verify
 			//new ClassReader(newdata).accept(vcn, 0);
 			return newdata;
-		}
-	}
-
-	static class Test extends BlockFire {
-		@Override
-		public void updateTick(World world, int x, int y, int z, Random p_149674_5_)
-		{
-			if (world.getGameRules().getGameRuleBooleanValue("doFireTick"))
-			{
-				boolean flag = world.getBlock(x, y - 1, z).isFireSource(world, x, y - 1, z, UP);
-
-				if (!this.canPlaceBlockAt(world, x, y, z))
-				{
-					world.setBlockToAir(x, y, z);
-				}
-
-				if (!flag && world.isRaining() && (world.canLightningStrikeAt(x, y, z) || world.canLightningStrikeAt(x - 1, y, z) || world.canLightningStrikeAt(x + 1, y, z) || world.canLightningStrikeAt(x, y, z - 1) || world.canLightningStrikeAt(x, y, z + 1)))
-				{
-					world.setBlockToAir(x, y, z);
-				}
-				else
-				{
-					int l = world.getBlockMetadata(x, y, z);
-
-					if (l < 15)
-					{
-						world.setBlockMetadataWithNotify(x, y, z, l + p_149674_5_.nextInt(3) / 2, 4);
-					}
-
-					world.scheduleBlockUpdate(x, y, z, this, this.tickRate(world) + p_149674_5_.nextInt(10));
-
-					if (!flag)
-					{
-						if (!World.doesBlockHaveSolidTopSurface(world, x, y - 1, z) || l > 3)
-						{
-							world.setBlockToAir(x, y, z);
-						}
-					}
-					else if (!flag && !this.canCatchFire(world, x, y - 1, z, UP) && l == 15 && p_149674_5_.nextInt(4) == 0)
-					{
-						world.setBlockToAir(x, y, z);
-					}
-					else
-					{
-						boolean flag1 = world.isBlockHighHumidity(x, y, z);
-						byte b0 = 0;
-
-						if (flag1)
-						{
-							b0 = -50;
-						}
-
-						for (int i1 = x - 1; i1 <= x + 1; ++i1)
-						{
-							for (int j1 = z - 1; j1 <= z + 1; ++j1)
-							{
-								for (int k1 = y - 1; k1 <= y + 4; ++k1)
-								{
-									if (i1 != x || k1 != y || j1 != z)
-									{
-										int l1 = 100;
-
-										if (k1 > y + 1)
-										{
-											l1 += (k1 - (y + 1)) * 100;
-										}
-
-										int i2 = 4398;
-
-										if (i2 > 0)
-										{
-											int j2 = (i2 + 40 + world.difficultySetting.getDifficultyId() * 7) / (l + 30);
-
-											if (flag1)
-											{
-												j2 /= 2;
-											}
-
-											if (j2 > 0 && p_149674_5_.nextInt(l1) <= j2 && (!world.isRaining() || !world.canLightningStrikeAt(i1, k1, j1)) && !world.canLightningStrikeAt(i1 - 1, k1, z) && !world.canLightningStrikeAt(i1 + 1, k1, j1) && !world.canLightningStrikeAt(i1, k1, j1 - 1) && !world.canLightningStrikeAt(i1, k1, j1 + 1))
-											{
-												int k2 = l + p_149674_5_.nextInt(5) / 4;
-
-												if (k2 > 15)
-												{
-													k2 = 15;
-												}
-
-												if (!MinecraftForge.EVENT_BUS.post(new BlockConsumedByFireEvent(world, i1, k1, j1)))
-													world.setBlock(i1, k1, j1, this, k2, 3);
-											}
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		private void tryCatchFire(World world, int x, int y, int z, int p_149841_5_, Random p_149841_6_, int p_149841_7_, ForgeDirection face)
-		{
-			int j1 = world.getBlock(x, y, z).getFlammability(world, x, y, z, face);
-
-			if (p_149841_6_.nextInt(p_149841_5_) < j1)
-			{
-				boolean flag = world.getBlock(x, y, z) == Blocks.tnt;
-
-				if (p_149841_6_.nextInt(p_149841_7_ + 10) < 5 && !world.canLightningStrikeAt(x, y, z))
-				{
-					int k1 = p_149841_7_ + p_149841_6_.nextInt(5) / 4;
-
-					if (k1 > 15)
-					{
-						k1 = 15;
-					}
-
-					if (!MinecraftForge.EVENT_BUS.post(new BlockConsumedByFireEvent(world, x, y, z)))
-						world.setBlock(x, y, z, this, k1, 3);
-				}
-				else
-				{
-					if (!MinecraftForge.EVENT_BUS.post(new BlockConsumedByFireEvent(world, x, y, z)))
-						world.setBlockToAir(x, y, z);
-				}
-
-				if (flag)
-				{
-					Blocks.tnt.onBlockDestroyedByPlayer(world, x, y, z, 1);
-				}
-			}
 		}
 	}
 

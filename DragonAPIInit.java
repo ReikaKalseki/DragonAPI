@@ -61,6 +61,7 @@ import Reika.DragonAPI.Command.BlockReplaceCommand;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
 import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
+import Reika.DragonAPI.Command.EntityListCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
@@ -415,6 +416,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new EditNearbyInventoryCommand());
 		evt.registerServerCommand(new TileSyncCommand());
 		evt.registerServerCommand(new IDDumpCommand());
+		evt.registerServerCommand(new EntityListCommand());
 		evt.registerServerCommand(new FindTilesCommand());
 		evt.registerServerCommand(new ClearItemsCommand());
 
