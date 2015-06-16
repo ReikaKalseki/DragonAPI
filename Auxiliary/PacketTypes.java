@@ -23,7 +23,8 @@ public enum PacketTypes {
 	STRINGINT(),
 	UUID(),
 	PREFIXED(),
-	POS();
+	POS(),
+	FULLSOUND();
 
 	private PacketTypes() {
 
@@ -34,7 +35,7 @@ public enum PacketTypes {
 	}
 
 	public boolean hasCoordinates() {
-		return this != RAW && this != NBT && this != STRINGINT && this != PREFIXED && this != POS;
+		return this != RAW && this != NBT && this != STRINGINT && this != PREFIXED && this != POS && this != FULLSOUND;
 	}
 
 }

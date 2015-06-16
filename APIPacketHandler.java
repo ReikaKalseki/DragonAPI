@@ -68,6 +68,10 @@ public class APIPacketHandler implements IPacketHandler {
 			switch(packetType) {
 			case SOUND:
 				return;
+			case FULLSOUND:
+				control = inputStream.readInt();
+				pack = PacketIDs.getEnum(control);
+				break;
 			case STRING:
 				stringdata = packet.readString();
 				control = inputStream.readInt();
@@ -227,6 +231,18 @@ public class APIPacketHandler implements IPacketHandler {
 				break;
 			case LOGIN:
 				break;
+			case SERVERSOUND:
+				if (world.isRemote) {
+					double dx = inputStream.readDouble();
+					double dy = inputStream.readDouble();
+					double dz = inputStream.readDouble();
+					String name = packet.readString();
+					float vol = inputStream.readFloat();
+					float pitch = inputStream.readFloat();
+					boolean flag = inputStream.readBoolean();
+					ReikaSoundHelper.playNormalClientSound(world, dx, dy, dz, name, vol, pitch, flag);
+				}
+				break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -285,7 +301,8 @@ public class APIPacketHandler implements IPacketHandler {
 		EXPLODE(),
 		OLDMODS(),
 		OLDMODSLOAD(),
-		LOGIN();
+		LOGIN(),
+		SERVERSOUND();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];

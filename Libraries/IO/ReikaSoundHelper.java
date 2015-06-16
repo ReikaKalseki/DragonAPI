@@ -23,6 +23,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.CustomSoundHandler;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
@@ -156,6 +158,11 @@ public class ReikaSoundHelper {
 		playClientSound(s, e.posX, e.posY, e.posZ, vol, pitch);
 	}
 
+	@SideOnly(Side.CLIENT)
+	public static void playNormalClientSound(World world, double x, double y, double z, String name, float vol, float pitch, boolean flag) {
+		world.playSound(x, y, z, name, vol, pitch, flag);
+	}
+
 	public static void broadcastSound(SoundEnum s, String ch, float vol, float pitch) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 			throw new MisuseException("You cannot call this from the client!");
@@ -186,5 +193,9 @@ public class ReikaSoundHelper {
 
 	public static void playSoundAtEntity(World world, Entity e, String snd, float vol, float p) {
 		world.playSoundEffect(e.posX, e.posY, e.posZ, snd, vol, p);
+	}
+
+	public static void playSoundFromServer(World world, double x, double y, double z, String name, float vol, float pitch, boolean scale) {
+		ReikaPacketHelper.writeDirectSound(DragonAPIInit.packetChannel, PacketIDs.SERVERSOUND.ordinal(), world, x, y, z, name, vol, pitch, scale);
 	}
 }

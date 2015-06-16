@@ -30,6 +30,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
@@ -43,6 +44,8 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.CustomThaumResearch;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ReikaThaumHelper {
 
@@ -67,6 +70,8 @@ public class ReikaThaumHelper {
 	private static Potion warpWard;
 
 	private static Field wispTarget;
+
+	private static Object proxy; //auto-sides to correct side
 
 	private static Collection<Aspect> allAspects = new ArrayList();
 
@@ -541,8 +546,10 @@ public class ReikaThaumHelper {
 			try {
 				Class c = Class.forName("thaumcraft.common.Thaumcraft");
 				Field f = c.getField("proxy");
-				Object proxy = f.get(null);
+				proxy = f.get(null);
+
 				Class cp = Class.forName("thaumcraft.common.CommonProxy");
+				Class clip = Class.forName("thaumcraft.client.ClientProxy");
 				Field kn = cp.getField("playerKnowledge");
 				Object knowledge = kn.get(proxy);
 				Class ck = Class.forName("thaumcraft.common.lib.research.PlayerKnowledge");
@@ -590,6 +597,11 @@ public class ReikaThaumHelper {
 						}
 					}
 				}
+
+				for (int i = 0; i < EffectType.list.length; i++) {
+					EffectType type = EffectType.list[i];
+					type.call = clip.getMethod(type.name, type.arguments);
+				}
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -613,6 +625,43 @@ public class ReikaThaumHelper {
 		catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
+		}
+	}
+
+	/** Triggers one of TC's native FX. It is your responsibility to ensure the correct parameters are chosen for the relevant Effect Type. */
+	@SideOnly(Side.CLIENT)
+	public static void triggerEffect(EffectType type, Object... data) {
+		try {
+			type.call.invoke(proxy, data);
+		}
+		catch (Exception e) {
+			ReikaJavaLibrary.pConsole("ERROR Triggering ThaumCraft Effect: "+e.getMessage());
+			e.printStackTrace();
+		}
+	}
+
+	public static enum EffectType {
+		NODEBURST("burst", World.class, double.class, double.class, double.class, float.class), //Node break/wisp spawn sparkle
+		WISP("wispFX", World.class, double.class, double.class, double.class, float.class, float.class, float.class, float.class), //Wisp particles
+		WISP2("wispFX2", World.class, double.class, double.class, double.class, float.class, int.class, boolean.class, boolean.class, float.class),
+		WISP3("wispFX3", World.class, double.class, double.class, double.class, double.class, double.class, double.class, float.class, int.class, boolean.class, float.class),
+		WISP4("wispFX4", World.class, double.class, double.class, double.class, Entity.class, int.class, boolean.class, float.class),
+		BOLT("bolt", World.class, Entity.class, Entity.class), //Wisp attack
+		SOURCESTREAM("sourceStreamFX", World.class, double.class, double.class, double.class, float.class, float.class, float.class, int.class), //Vis from jar during infusion
+		RUNES("blockRunes", World.class, double.class, double.class, double.class, float.class, float.class, float.class, int.class, float.class),
+		NODEBOLT("nodeBolt", World.class, float.class, float.class, float.class, float.class, float.class, float.class), //node interaction
+		NODEBOLT_ENTITY("nodeBolt", World.class, float.class, float.class, float.class, Entity.class);
+
+		private static final EffectType[] list = values();
+
+		private final String name;
+		private final Class[] arguments;
+
+		private Method call;
+
+		private EffectType(String s, Class... args) {
+			name = s;
+			arguments = args;
 		}
 	}
 

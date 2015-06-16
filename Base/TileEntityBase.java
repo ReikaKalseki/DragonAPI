@@ -102,12 +102,18 @@ public abstract class TileEntityBase extends TileEntity {
 
 	private final SyncPacket syncTag = new SyncPacket();
 
+	private long lastTickCall = -1;
+
 	public TileEntityBase() {
 		super();
 		updateTimer = new StepTimer(this.getBlockUpdateDelay());
 		//packetTimer = new StepTimer(this.getPacketDelay());
 		fullSyncTimer = new StepTimer(1200);
 		fullSyncTimer.setTick(rand.nextInt(1200));
+	}
+
+	public boolean allowTickAcceleration() {
+		return true;
 	}
 
 	public final boolean isChunkLoaded() {
@@ -386,6 +392,14 @@ public abstract class TileEntityBase extends TileEntity {
 
 	@Override
 	public final void updateEntity() {
+		long time = worldObj.getTotalWorldTime();
+		boolean same = time == lastTickCall;
+
+		if (same && !this.allowTickAcceleration())
+			return;
+
+		lastTickCall = time;
+
 		if (this.shouldRunUpdateCode()) {
 			try {
 				this.updateTileEntity();
@@ -407,37 +421,40 @@ public abstract class TileEntityBase extends TileEntity {
 				this.writeError(e);
 			}
 		}
-		if (this.getTicksExisted() < 20 && this.getTicksExisted()%4 == 0)
-			this.syncAllData(true);
-		//packetTimer.update();
 
-		fullSyncTimer.update();
-		if (fullSyncTimer.checkCap()) {
-			this.forceFullSync();
-		}
+		if (!same) {
+			if (this.getTicksExisted() < 20 && this.getTicksExisted()%4 == 0)
+				this.syncAllData(true);
+			//packetTimer.update();
 
-		if (this.shouldSendSyncPacket() || this.shouldFullSync()) {
-			if (this.shouldSendSyncPackets()) {
-				this.sendSyncPacket();
+			fullSyncTimer.update();
+			if (fullSyncTimer.checkCap()) {
+				this.forceFullSync();
 			}
-		}
 
-		if (updateDelay > 0) {
-			updateDelay--;
-			if (updateDelay == 0) {
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			if (this.shouldSendSyncPacket() || this.shouldFullSync()) {
+				if (this.shouldSendSyncPackets()) {
+					this.sendSyncPacket();
+				}
 			}
-		}
 
-		/*
-		if (worldObj.isRemote && this.needsToCauseBlockUpdates()) {
-			updateTimer.update();
-			if (updateTimer.checkCap()) {
-				worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+			if (updateDelay > 0) {
+				updateDelay--;
+				if (updateDelay == 0) {
+					worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+				}
 			}
+
+			/*
+			if (worldObj.isRemote && this.needsToCauseBlockUpdates()) {
+				updateTimer.update();
+				if (updateTimer.checkCap()) {
+					worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+				}
+			}
+			 */
+			ticksExisted++;
 		}
-		 */
-		ticksExisted++;
 	}
 
 	private boolean shouldSendSyncPacket() {

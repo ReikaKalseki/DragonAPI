@@ -648,6 +648,56 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		sendLongDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
 	}
 
+	public static void writeDirectSound(String ch, int id, World world, double x, double y, double z, String name, float vol, float pitch, boolean scale) {
+		int length = 0;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			outputStream.writeInt(id);
+
+			outputStream.writeDouble(x);
+			outputStream.writeDouble(y);
+			outputStream.writeDouble(z);
+
+			writeString(name, outputStream);
+
+			outputStream.writeFloat(vol);
+			outputStream.writeFloat(pitch);
+
+			outputStream.writeBoolean(scale);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			throw new RuntimeException("Sound Packet for sound '"+name+"' @ "+x+", "+y+", "+z+" threw a packet exception!");
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.FULLSOUND, pipe);
+		pack.setData(dat);
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			// We are on the server side.
+			//EntityPlayerMP player2 = (EntityPlayerMP) player;
+			//PacketDispatcher.sendPacketToAllAround(x, y, z, 20, world.provider.dimensionId, packet);
+			pipe.sendToAllAround(pack, world, x, y, z, 20);
+		}
+		else if (side == Side.CLIENT) {
+
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
 	public static void sendSoundPacket(String ch, SoundEnum s, World world, double x, double y, double z, float vol, float pitch) {
 		int length = 0;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
