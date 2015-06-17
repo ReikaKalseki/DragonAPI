@@ -38,7 +38,7 @@ public class GuiPainter {
 
 	protected final int pixelSize;
 	public PaintElement activeElement;
-	private MultiMap<PaintElement, Point> locations = new MultiMap();
+	private MultiMap<PaintElement, Point> locations = new MultiMap(new MultiMap.HashSetFactory());
 	public Brush brush = Brush.PIXEL;
 
 	private boolean init;

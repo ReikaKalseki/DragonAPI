@@ -26,6 +26,16 @@ public final class MultiMap<K, V> {
 	private boolean modifiable = true;
 	private boolean nullEmpty = false;
 
+	private final CollectionFactory factory;
+
+	public MultiMap() {
+		this(null);
+	}
+
+	public MultiMap(CollectionFactory cf) {
+		factory = cf != null ? cf : new ListFactory();
+	}
+
 	public Collection<V> put(K key, Collection<V> value) {
 		if (!modifiable)
 			throw new UnsupportedOperationException("Map "+this+" is locked!");
@@ -38,26 +48,33 @@ public final class MultiMap<K, V> {
 		return ret;
 	}
 
-	public void addValue(K key, V value) {
-		this.addValue(key, value, false);
+	public boolean addValue(K key, V value) {
+		return this.addValue(key, value, false);
 	}
 
-	public void addValue(K key, V value, boolean allowCopies) {
-		this.addValue(key, value, true, allowCopies);
+	public boolean addValue(K key, V value, boolean allowCopies) {
+		return this.addValue(key, value, true, allowCopies);
 	}
 
-	private void addValue(K key, V value, boolean load, boolean copy) {
+	private boolean addValue(K key, V value, boolean load, boolean copy) {
 		if (!modifiable)
 			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		Collection<V> li = null;
 		if (load)
 			li = data.get(key);
 		if (!load || li == null) {
-			li = new ArrayList();
+			li = this.createCollection();
 			data.put(key, li);
 		}
-		if (copy || !li.contains(value))
+		if (copy || !li.contains(value)) {
 			li.add(value);
+			return true;
+		}
+		return false;
+	}
+
+	private Collection<V> createCollection() {
+		return this.factory.createCollection();
 	}
 
 	public Collection<V> remove(K key) {
@@ -179,6 +196,30 @@ public final class MultiMap<K, V> {
 				this.addValue(k, v);
 			}
 		}
+	}
+
+	public static interface CollectionFactory {
+
+		public Collection createCollection();
+
+	}
+
+	public static final class ListFactory implements CollectionFactory {
+
+		@Override
+		public Collection createCollection() {
+			return new ArrayList();
+		}
+
+	}
+
+	public static final class HashSetFactory implements CollectionFactory {
+
+		@Override
+		public Collection createCollection() {
+			return new HashSet();
+		}
+
 	}
 
 }
