@@ -550,7 +550,6 @@ public class ReikaThaumHelper {
 				proxy = f.get(null);
 
 				Class cp = Class.forName("thaumcraft.common.CommonProxy");
-				Class clip = Class.forName("thaumcraft.client.ClientProxy");
 				Field kn = cp.getField("playerKnowledge");
 				Object knowledge = kn.get(proxy);
 				Class ck = Class.forName("thaumcraft.common.lib.research.PlayerKnowledge");
@@ -569,25 +568,60 @@ public class ReikaThaumHelper {
 				scannedPhenomena = (Map)phen.get(knowledge);
 				playerWarp = (Map)warp.get(knowledge);
 				playerTempWarp = (Map)warptemp.get(knowledge);
+			}
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft PlayerKnowledge Handler!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
+			}
 
+			try {
 				Class pot = Class.forName("thaumcraft.common.lib.potions.PotionWarpWard");
 				Field ins = pot.getDeclaredField("instance");
 				warpWard = (Potion)ins.get(null);
+			}
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Potion Handler!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
+			}
 
+			try {
 				Class wand = Class.forName("thaumcraft.common.items.wands.ItemWandCasting");
 				addWandVis = wand.getMethod("addVis", ItemStack.class, Aspect.class, int.class, boolean.class);
 				getWandVis = wand.getMethod("getAllVis", ItemStack.class);
 				maxWandVis = wand.getMethod("getMaxVis", ItemStack.class);
 				setWandInUse = wand.getMethod("setObjectInUse", ItemStack.class, int.class, int.class, int.class);
 				clearWandInUse = wand.getMethod("clearObjectInUse", ItemStack.class);
+			}
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Wand Handler!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
+			}
 
+			try {
 				Class mgr = Class.forName("thaumcraft.common.lib.research.ResearchManager");
 				researchComplete = mgr.getMethod("isResearchComplete", String.class, String.class);
+			}
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Research Handler!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
+			}
 
+			try {
 				Class wisp = Class.forName("thaumcraft.common.entities.monster.EntityWisp");
 				wispTarget = wisp.getDeclaredField("targetedEntity");
 				wispTarget.setAccessible(true);
+			}
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Mob Handler!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
+			}
 
+			try {
 				Field[] fds = Aspect.class.getDeclaredFields();
 				for (int i = 0; i < fds.length; i++) {
 					Field fd = fds[i];
@@ -598,6 +632,15 @@ public class ReikaThaumHelper {
 						}
 					}
 				}
+			}
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Aspect Handler!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
+			}
+
+			try {
+				Class clip = Class.forName("thaumcraft.client.ClientProxy");
 
 				for (int i = 0; i < EffectType.list.length; i++) {
 					EffectType type = EffectType.list[i];
@@ -605,7 +648,7 @@ public class ReikaThaumHelper {
 				}
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Handler!");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Effect Handler!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
