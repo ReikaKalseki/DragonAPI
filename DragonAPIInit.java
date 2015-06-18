@@ -52,6 +52,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.PackModificationTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.PatreonController;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.PotionCollisionTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.SuggestedModsTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry;
 import Reika.DragonAPI.Auxiliary.Trackers.VanillaIntegrityTracker;
@@ -91,6 +92,10 @@ import Reika.DragonAPI.ModInteract.MinetweakerHooks;
 import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
 import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
+import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
+import Reika.DragonAPI.ModInteract.DeepInteract.ReikaThaumHelper;
+import Reika.DragonAPI.ModInteract.DeepInteract.SmelteryRecipeHandler;
+import Reika.DragonAPI.ModInteract.DeepInteract.TwilightForestLootHooks;
 import Reika.DragonAPI.ModInteract.ItemHandlers.AppEngHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BCPipeHandler;
@@ -393,6 +398,10 @@ public class DragonAPIInit extends DragonAPIMod {
 		//CreativeTabSorter.instance.sortTabs(); //frequently messes up
 
 		ReikaJavaLibrary.initClass(FrameBlacklist.class);
+		ReikaJavaLibrary.initClass(ReikaMystcraftHelper.class);
+		ReikaJavaLibrary.initClass(ReikaThaumHelper.class);
+		ReikaJavaLibrary.initClass(SmelteryRecipeHandler.class);
+		ReikaJavaLibrary.initClass(TwilightForestLootHooks.class);
 
 		if (MTInteractionManager.isMTLoaded()) {
 			MinetweakerHooks.instance.registerAll();
@@ -479,6 +488,7 @@ public class DragonAPIInit extends DragonAPIMod {
 			//NEIFontRendererHandler.instance.register();
 		}
 		proxy.registerSidedHandlersGameLoaded();
+		ReflectiveFailureTracker.instance.print();
 	}
 
 	@SubscribeEvent

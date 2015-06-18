@@ -19,6 +19,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -170,6 +172,7 @@ public class SmelteryRecipeHandler {
 		catch (Exception e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load Smeltery Recipe Handler!");
 			e.printStackTrace();
+			ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TINKERER, e);
 		}
 	}
 }

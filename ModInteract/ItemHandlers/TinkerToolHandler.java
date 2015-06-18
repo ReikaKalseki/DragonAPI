@@ -90,14 +90,68 @@ public final class TinkerToolHandler extends ModHandlerBase {
 				Class tic = Class.forName("tconstruct.tools.TinkerTools");
 				for (int i = 0; i < Tools.list.length; i++) {
 					Tools t = Tools.list[i];
-					Field f = tic.getField(t.field);
-					t.item = (Item)f.get(null);
+					try {
+						Field f = tic.getField(t.field);
+						t.item = (Item)f.get(null);
+					}
+					catch (NoSuchFieldException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (SecurityException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (IllegalArgumentException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (IllegalAccessException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (NullPointerException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
 				}
 
 				for (int i = 0; i < ToolBlocks.list.length; i++) {
 					ToolBlocks t = ToolBlocks.list[i];
-					Field f = tic.getField(t.field);
-					t.item = (Block)f.get(null);
+					try {
+						Field f = tic.getField(t.field);
+						t.item = (Block)f.get(null);
+					}
+					catch (NoSuchFieldException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (SecurityException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (IllegalArgumentException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (IllegalAccessException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (NullPointerException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
 				}
 
 				init = true;
@@ -105,26 +159,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
 				e.printStackTrace();
-			}
-			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
-				e.printStackTrace();
-			}
-			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
-				e.printStackTrace();
-			}
-			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
-				e.printStackTrace();
+				this.logFailure(e);
 			}
 		}
 		else {

@@ -97,47 +97,82 @@ public class ForestryHandler extends ModHandlerBase {
 				Method get = forest.getMethod("item");
 				for (int i = 0; i < ItemEntry.list.length; i++) {
 					ItemEntry ie = ItemEntry.list[i];
-					Field f = forest.getDeclaredField(ie.tag); //is enum object now
-					Object entry = f.get(null);
-					Item item = (Item)get.invoke(entry);
-					ie.item = item;
+					try {
+						Field f = forest.getDeclaredField(ie.tag); //is enum object now
+						Object entry = f.get(null);
+						Item item = (Item)get.invoke(entry);
+						ie.item = item;
+					}
+					catch (NoSuchFieldException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (IllegalArgumentException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (IllegalAccessException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (NullPointerException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (InvocationTargetException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Invocation target exception for reading "+this.getMod()+"!");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
 				}
 
 				Class blocks = this.getMod().getBlockClass();
 				get = blocks.getMethod("block");
 				for (int i = 0; i < BlockEntry.list.length; i++) {
 					BlockEntry ie = BlockEntry.list[i];
-					Field f = blocks.getDeclaredField(ie.tag); //is enum object now
-					Object entry = f.get(null);
-					Block b = (Block)get.invoke(entry);
-					ie.item = b;
+					try {
+						Field f = blocks.getDeclaredField(ie.tag); //is enum object now
+						Object entry = f.get(null);
+						Block b = (Block)get.invoke(entry);
+						ie.item = b;
+					}
+					catch (NoSuchFieldException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (IllegalArgumentException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (IllegalAccessException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (NullPointerException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
+					catch (InvocationTargetException e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Invocation target exception for reading "+this.getMod()+"!");
+						e.printStackTrace();
+						this.logFailure(e);
+					}
 				}
 
 				init = true;
 			}
-			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
-				e.printStackTrace();
-			}
 			catch (NoSuchMethodException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" method not found! "+e.getMessage());
 				e.printStackTrace();
-			}
-			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
-				e.printStackTrace();
-			}
-			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
-				e.printStackTrace();
-			}
-			catch (InvocationTargetException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Invocation target exception for reading "+this.getMod()+"!");
-				e.printStackTrace();
+				this.logFailure(e);
 			}
 		}
 		else {

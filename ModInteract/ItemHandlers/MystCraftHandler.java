@@ -42,10 +42,12 @@ public class MystCraftHandler extends ModHandlerBase {
 			catch (ModReflectionException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Reflective exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 
 			ReikaJavaLibrary.initClass(ReikaMystcraftHelper.class);

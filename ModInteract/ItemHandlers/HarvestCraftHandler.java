@@ -184,10 +184,12 @@ public class HarvestCraftHandler extends CropHandlerBase {
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 		}
 		else {

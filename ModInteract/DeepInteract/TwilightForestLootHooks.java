@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class TwilightForestLootHooks {
@@ -104,43 +106,47 @@ public class TwilightForestLootHooks {
 	}
 
 	static {
-		try {
-			Class c = Class.forName("twilightforest.TFTreasure");
-			Class tableClass = Class.forName("twilightforest.TFTreasureTable");
-			Class entryClass = Class.forName("twilightforest.TFTreasureItem");
+		if (ModList.TWILIGHT.isLoaded()) {
+			try {
+				Class c = Class.forName("twilightforest.TFTreasure");
+				Class tableClass = Class.forName("twilightforest.TFTreasureTable");
+				Class entryClass = Class.forName("twilightforest.TFTreasureItem");
 
-			tableList = tableClass.getDeclaredField("list");
-			tableList.setAccessible(true);
+				tableList = tableClass.getDeclaredField("list");
+				tableList.setAccessible(true);
 
-			entryConstructor = entryClass.getConstructor(ItemStack.class, int.class);
+				entryConstructor = entryClass.getConstructor(ItemStack.class, int.class);
 
-			for (int k = 0; k < LootLevels.list.length; k++) {
-				LootLevels l = LootLevels.list[k];
-				l.fieldInstance = c.getDeclaredField(l.field);
-				l.fieldInstance.setAccessible(true);
-			}
+				for (int k = 0; k < LootLevels.list.length; k++) {
+					LootLevels l = LootLevels.list[k];
+					l.fieldInstance = c.getDeclaredField(l.field);
+					l.fieldInstance.setAccessible(true);
+				}
 
-			for (int i = 0; i < DungeonTypes.list.length; i++) {
-				DungeonTypes type = DungeonTypes.list[i];
-				try {
-					Field f = c.getField(type.field);
-					type.instance = f.get(null);
+				for (int i = 0; i < DungeonTypes.list.length; i++) {
+					DungeonTypes type = DungeonTypes.list[i];
+					try {
+						Field f = c.getField(type.field);
+						type.instance = f.get(null);
 
-					for (int k = 0; k < LootLevels.list.length; k++) {
-						LootLevels l = LootLevels.list[k];
-						Object table = l.fieldInstance.get(type.instance);
-						type.treasureTables.put(l, table);
+						for (int k = 0; k < LootLevels.list.length; k++) {
+							LootLevels l = LootLevels.list[k];
+							Object table = l.fieldInstance.get(type.instance);
+							type.treasureTables.put(l, table);
+						}
+					}
+					catch (Exception e) {
+						ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load TF dungeon loot table "+type+"!");
+						e.printStackTrace();
+						ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TWILIGHT, e);
 					}
 				}
-				catch (Exception e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load TF dungeon loot table "+type+"!");
-					e.printStackTrace();
-				}
 			}
-		}
-		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load TF dungeon loot tables!");
-			e.printStackTrace();
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load TF dungeon loot tables!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TWILIGHT, e);
+			}
 		}
 	}
 

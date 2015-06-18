@@ -89,6 +89,7 @@ public class PneumaticPlantHandler extends CropHandlerBase {
 			}
 			catch (Exception e) {
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 		}
 		else {

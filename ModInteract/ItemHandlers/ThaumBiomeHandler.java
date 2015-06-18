@@ -46,18 +46,22 @@ public class ThaumBiomeHandler extends ModHandlerBase {
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft config class!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load field from ThaumCraft config class!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not read field from ThaumCraft config class!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not read field from ThaumCraft config class!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 		}
 		else {

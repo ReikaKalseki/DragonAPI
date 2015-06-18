@@ -305,32 +305,28 @@ public final class ThaumOreHandler extends ModHandlerBase {
 		}
 	}
 
-	/** Tries both instance and ID storage */
 	private Block loadBlockID(Class c, String fieldName) {
 		Block id = null;
-		Exception e1 = null;
-		Exception e2 = null;
 		try {
 			Field block = c.getField(fieldName);
 			id = ((Block)block.get(null));
 		}
 		catch (Exception e) {
-			e1 = e;
+			this.logFailure(e);
+			e.printStackTrace();
 		}
 		return id;
 	}
 
-	/** Tries both instance and ID storage */
 	private Item loadItemID(Class c, String fieldName) {
 		Item id = null;
-		Exception e1 = null;
-		Exception e2 = null;
 		try {
 			Field item = c.getField(fieldName);
 			id = ((Item)item.get(null));
 		}
 		catch (Exception e) {
-			e1 = e;
+			this.logFailure(e);
+			e.printStackTrace();
 		}
 		return id;
 	}

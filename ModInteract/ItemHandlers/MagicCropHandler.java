@@ -276,17 +276,21 @@ public class MagicCropHandler extends CropHandlerBase {
 					catch (NoSuchFieldException e) {
 						ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 						e.printStackTrace();
+						this.logFailure(e);
 					}
 					catch (IllegalAccessException e) {
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
 						e.printStackTrace();
+						this.logFailure(e);
 					}
 					catch (NullPointerException e) {
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 						e.printStackTrace();
+						this.logFailure(e);
 					}
 					catch (Exception e) {
 						e.printStackTrace();
+						this.logFailure(e);
 					}
 				}
 				for (int i = 0; i < MiscEssence.list.length; i++) {
@@ -300,17 +304,21 @@ public class MagicCropHandler extends CropHandlerBase {
 					catch (NoSuchFieldException e) {
 						ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 						e.printStackTrace();
+						this.logFailure(e);
 					}
 					catch (IllegalAccessException e) {
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
 						e.printStackTrace();
+						this.logFailure(e);
 					}
 					catch (NullPointerException e) {
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 						e.printStackTrace();
+						this.logFailure(e);
 					}
 					catch (Exception e) {
 						e.printStackTrace();
+						this.logFailure(e);
 					}
 				}
 				try {
@@ -338,26 +346,32 @@ public class MagicCropHandler extends CropHandlerBase {
 				catch (ClassNotFoundException e) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
 					e.printStackTrace();
+					this.logFailure(e);
 				}
 				catch (NoSuchFieldException e) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 					e.printStackTrace();
+					this.logFailure(e);
 				}
 				catch (IllegalAccessException e) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
 					e.printStackTrace();
+					this.logFailure(e);
 				}
 				catch (NullPointerException e) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 					e.printStackTrace();
+					this.logFailure(e);
 				}
 				catch (Exception e) {
 					e.printStackTrace();
+					this.logFailure(e);
 				}
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 		}
 		else {

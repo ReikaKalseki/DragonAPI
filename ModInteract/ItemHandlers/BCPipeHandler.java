@@ -112,22 +112,27 @@ public class BCPipeHandler extends ModHandlerBase {
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (SecurityException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 		}
 		else {
@@ -146,22 +151,27 @@ public class BCPipeHandler extends ModHandlerBase {
 		catch (NoSuchFieldException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 			e.printStackTrace();
+			this.logFailure(e);
 		}
 		catch (SecurityException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 			e.printStackTrace();
+			this.logFailure(e);
 		}
 		catch (IllegalArgumentException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
 			e.printStackTrace();
+			this.logFailure(e);
 		}
 		catch (IllegalAccessException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
 			e.printStackTrace();
+			this.logFailure(e);
 		}
 		catch (NullPointerException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 			e.printStackTrace();
+			this.logFailure(e);
 		}
 		return null;
 	}
@@ -189,6 +199,7 @@ public class BCPipeHandler extends ModHandlerBase {
 		catch (ClassNotFoundException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Pipe reader failed! Class not found!");
 			e.printStackTrace();
+			this.logFailure(e);
 			return null;
 		}
 		try {
@@ -212,6 +223,7 @@ public class BCPipeHandler extends ModHandlerBase {
 		catch (Exception e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Pipe reader failed!");
 			e.printStackTrace();
+			this.logFailure(e);
 			return null;
 		}
 		return null;

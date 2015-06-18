@@ -53,26 +53,32 @@ public final class DartOreHandler extends ModHandlerBase {
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (SecurityException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 		}
 		else {

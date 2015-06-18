@@ -41,6 +41,7 @@ import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchPage;
 import thaumcraft.common.entities.monster.EntityWisp;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.CustomThaumResearch;
@@ -604,7 +605,9 @@ public class ReikaThaumHelper {
 				}
 			}
 			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Handler!");
 				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
 		}
 	}

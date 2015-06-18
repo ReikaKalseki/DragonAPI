@@ -12,6 +12,7 @@ package Reika.DragonAPI.Base;
 import java.util.Random;
 
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** Reflection tools to read other mods. */
@@ -33,6 +34,10 @@ public abstract class ModHandlerBase {
 
 	public boolean hasMod() {
 		return this.getMod().isLoaded();
+	}
+
+	protected final void logFailure(Exception e) {
+		ReflectiveFailureTracker.instance.logModReflectiveFailure(this.getMod(), e);
 	}
 
 }

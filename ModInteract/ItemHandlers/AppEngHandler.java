@@ -92,6 +92,7 @@ public class AppEngHandler extends ModHandlerBase {
 			catch (Exception e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read AE class contents!");
 				e.printStackTrace();
+				logFailure(e);
 			}
 		}
 		else {

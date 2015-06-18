@@ -42,22 +42,27 @@ public final class DartItemHandler extends ModHandlerBase {
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft item field not found! "+e.getMessage());
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (SecurityException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read DartCraft items (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading DartCraft items!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading DartCraft items!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 		}
 		else {

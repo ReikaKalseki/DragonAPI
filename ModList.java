@@ -14,6 +14,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
@@ -180,6 +181,7 @@ public enum ModList {
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+".");
 				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(this, e);
 				return null;
 			}
 		}
