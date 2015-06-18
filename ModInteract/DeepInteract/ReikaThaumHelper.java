@@ -664,6 +664,32 @@ public class ReikaThaumHelper {
 			arguments = args;
 		}
 	}
+	/*
+	/** Note dat[0] is the length. *//*
+	public static int[] aspectToIntsForPacket(Aspect a) {
+		String s = a.getName().toLowerCase();
+		int[] dat = new int[1+s.length()];
+		dat[0] = s.length();
+		for (int i = 0; i < dat.length; i++) {
+			dat[1+i] = s.charAt(i);
+		}
+		return dat;
+	}
 
+	public static Aspect intsToAspectFromPacket(int[] dat) {
+		int len = dat[0];
+		StringBuilder sb = new StringBuilder();
+		for (int i = 1; i < dat.length; i++) {
+			sb.append((char)dat[i]);
+		}
+		String s = sb.toString();
+		Aspect a = Aspect.getAspect(s);
+		if (a == null) {
+			ReikaJavaLibrary.pConsole("Packet Error: Aspect from String '"+s+"' (encoded by "+Arrays.toString(dat)+") returned a null Aspect!");
+		}
+		else
+			return a;
+	}
+	 */
 }
 

@@ -966,6 +966,52 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
+	public static void sendStringPacketWithRadius(String ch, int id, TileEntity te, int radius, String sg) {
+		int length = 0;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			writeString(sg, outputStream);
+			outputStream.writeInt(id);
+			outputStream.writeInt(te.xCoord);
+			outputStream.writeInt(te.yCoord);
+			outputStream.writeInt(te.zCoord);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			//throw new RuntimeException("String Packet for "+sg+" threw a packet exception!");
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.STRING, pipe);
+		pack.setData(dat);
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			// We are on the server side.
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllPlayers(packet);
+			pipe.sendToAllAround(pack, te, radius);
+		}
+		else if (side == Side.CLIENT) {
+			// We are on the client side.
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllPlayers(packet);
+			pipe.sendToServer(pack);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
 	public static void sendUpdatePacket(String ch, int id, TileEntity te) {
 		int x = te.xCoord;
 		int y = te.yCoord;
