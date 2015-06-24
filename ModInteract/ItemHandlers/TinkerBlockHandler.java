@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
@@ -26,6 +27,24 @@ public class TinkerBlockHandler extends ModHandlerBase {
 	public final Block clearGlassID;
 	public final Block clearPaneID;
 	public final Block searedBlockID;
+	private final Item materialID;
+
+	public enum Materials {
+		SLIMECRYSTAL(1),
+		MOSSBALL(6),
+		LAVACRYSTAL(7),
+		NECROTICBONE(8);
+
+		private final int metadata;
+
+		private Materials(int m) {
+			metadata = m;
+		}
+
+		public ItemStack getItem() {
+			return new ItemStack(instance.materialID, 1, metadata);
+		}
+	}
 
 	private TinkerBlockHandler() {
 		super();
@@ -34,6 +53,7 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		Block idglass = null;
 		Block idpane = null;
 		Block idseared = null;
+		Item idmaterial = null;
 
 		if (this.hasMod()) {
 			try {
@@ -53,6 +73,10 @@ public class TinkerBlockHandler extends ModHandlerBase {
 
 				Field sear = tink.getField("searedBlock");
 				idseared = (Block)sear.get(null);
+
+				Class tic = Class.forName("tconstruct.tools.TinkerTools");
+				Field mat = tic.getField("materials");
+				idmaterial = (Item)mat.get(null);
 			}
 			catch (ClassNotFoundException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
@@ -94,6 +118,8 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		clearGlassID = idglass;
 		clearPaneID = idpane;
 		searedBlockID = idseared;
+
+		materialID = idmaterial;
 	}
 
 	public static TinkerBlockHandler getInstance() {

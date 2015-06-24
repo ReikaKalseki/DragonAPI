@@ -17,6 +17,7 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
@@ -65,6 +66,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaWorldHelper extends DragonAPICore {
 
@@ -1899,5 +1901,14 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 		return 0;
+	}
+
+	public static World getBasicReferenceWorld() {
+		return FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? getClientWorld() : DimensionManager.getWorld(0);
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static World getClientWorld() {
+		return Minecraft.getMinecraft().theWorld;
 	}
 }

@@ -189,7 +189,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		config.loadSubfolderedConfigFile(evt);
 		config.initProps(evt);
 
-		MinecraftForge.EVENT_BUS.register(DragonAPILoadWatcher.instance);
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			MinecraftForge.EVENT_BUS.register(DragonAPILoadWatcher.instance);
 		MinecraftForge.EVENT_BUS.register(DragonAPIEventWatcher.instance);
 
 		logger = new ModLogger(instance, false);
@@ -346,6 +347,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Ariaxis", "bef0a130-c4f5-4239-bd6b-a19e24802120", 30);
 		PatreonController.instance.addPatron(this, "Dawson Dimmick", 25);
 		PatreonController.instance.addPatron(this, "Polymorph", "474c622e-80cb-4daa-b2c2-562c5d85aa4c", 10);
+		PatreonController.instance.addPatron(this, "SourC00lguy", "c0f67a07-a8aa-4044-a223-fb5640778c41", 1);
 		PatreonController.instance.addPatron(this, "DorinnB", "1a4c37c8-de99-4960-8157-90dc28ef4c65", 1);
 		PatreonController.instance.addPatron(this, "Kotaro_MC", "4e40b5a3-fa82-4496-acf2-d2fadeb5bf5d", 40);
 		PatreonController.instance.addPatron(this, "AnotherDeadBard", "147aac9c-c0d2-4273-a6cc-f272f5b2ae13", 5);
@@ -386,10 +388,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		IntegrityChecker.instance.testIntegrity();
 
 		ReikaOreHelper.refreshAll();
-		for (int i = 0; i < ModOreList.oreList.length; i++) {
-			ModOreList ore = ModOreList.oreList[i];
-			ore.reloadOreList();
-		}
+		ModOreList.initializeAll();
 
 		SuggestedModsTracker.instance.printConsole();
 
@@ -599,6 +598,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@EventHandler
 	public void lastLoad(FMLServerAboutToStartEvent evt) {
+		ReikaOreHelper.refreshAll();
 		ModOreList.initializeAll();
 	}
 

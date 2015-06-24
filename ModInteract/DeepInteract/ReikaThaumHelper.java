@@ -45,6 +45,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.CustomThaumResearch;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -639,18 +640,20 @@ public class ReikaThaumHelper {
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
 
-			try {
-				Class clip = Class.forName("thaumcraft.client.ClientProxy");
+			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+				try {
+					Class clip = Class.forName("thaumcraft.client.ClientProxy");
 
-				for (int i = 0; i < EffectType.list.length; i++) {
-					EffectType type = EffectType.list[i];
-					type.call = clip.getMethod(type.name, type.arguments);
+					for (int i = 0; i < EffectType.list.length; i++) {
+						EffectType type = EffectType.list[i];
+						type.call = clip.getMethod(type.name, type.arguments);
+					}
 				}
-			}
-			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Effect Handler!");
-				e.printStackTrace();
-				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
+				catch (Exception e) {
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Effect Handler!");
+					e.printStackTrace();
+					ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
+				}
 			}
 		}
 	}

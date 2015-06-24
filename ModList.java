@@ -97,7 +97,8 @@ public enum ModList {
 	CRAFTMANAGER("zcraftingmanager"),
 	MINECHEM("minechem"),
 	TFC("terrafirmacraft"),
-	BOTANIA("Botania");
+	BOTANIA("Botania"),
+	GENDUSTRY("gendustry");
 
 	private final boolean condition;
 	public final String modLabel;

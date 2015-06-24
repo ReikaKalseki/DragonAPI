@@ -25,6 +25,7 @@ public class ReikaXPFluidHelper {
 
 	static {
 		addFluid("openblocks.OpenBlocks$Fluids", "xpJuice", "openmods.utils.EnchantmentUtils", "RATIO");
+		addFluid("openblocks.OpenBlocks$Fluids", "xpJuice", "openblocks.config", "xpToLiquidRatio");
 		addFluid("mods.immibis.lxp.LiquidXPMod", "defaultFluid", "mods.immibis.lxp.LiquidXPMod", "mbPerXp");
 	}
 

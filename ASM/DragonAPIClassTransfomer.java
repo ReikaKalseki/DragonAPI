@@ -692,7 +692,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				m.instructions.insert(loc2, L34);
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 1!");
 
-				m = ReikaASMHelper.getMethodByName(cn, "func_149841_a", "tryCatchFire", "(Lnet/minecraft/world/World;IIIILjava/util/Random;ILnet/minecraftforge/common/util/ForgeDirection;)V");
+				m = ReikaASMHelper.getMethodByName(cn, /*"func_149841_a", */"tryCatchFire", "(Lnet/minecraft/world/World;IIIILjava/util/Random;ILnet/minecraftforge/common/util/ForgeDirection;)V"); // Forge one
 				min = ReikaASMHelper.getFirstMethodCall(m, func, "(IIILnet/minecraft/block/Block;II)Z");
 				add = new InsnList();
 				LabelNode L12 = new LabelNode();

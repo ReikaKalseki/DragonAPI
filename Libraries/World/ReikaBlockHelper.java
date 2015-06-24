@@ -83,8 +83,6 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		if (ReikaOreHelper.getEntryByOreDict(is) != null)
 			return true;
-		if (ReikaOreHelper.isExtraOre(is))
-			return true;
 		return false;
 	}
 

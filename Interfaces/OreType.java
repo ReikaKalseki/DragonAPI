@@ -19,6 +19,8 @@ public interface OreType extends RegistryType {
 
 	public OreRarity getRarity();
 
+	public String[] getOreDictNames();
+
 	public Collection<ItemStack> getAllOreBlocks();
 	public ItemStack getFirstOreBlock();
 

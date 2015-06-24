@@ -24,6 +24,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Instantiable.GUI.Slot.SlotNoClick;
 import Reika.DragonAPI.Interfaces.MultiPageInventory;
 import Reika.DragonAPI.Interfaces.XPProducer;
@@ -268,18 +269,19 @@ public class CoreContainer extends Container {
 	}
 
 	@Override //To avoid a couple crashes with some mods (or vanilla packet system) not checking array bounds
-	public Slot getSlot(int index)
-	{
+	public Slot getSlot(int index) {
 		if (index >= inventorySlots.size() || index < 0) {
-			Object o = "A mod tried to access an invalid slot "+index+" for TileEntity "+tile+".";
-			Object o2 = "It is likely assuming the TileEntity has an inventory when it does not.";
-			Object o3 = "Check for any inventory-modifying mods and items you are carrying.";
+			String o = "A mod tried to access an invalid slot "+index+" for TileEntity "+tile+".";
+			String o2 = "It is likely assuming the TileEntity has an inventory when it does not.";
+			String o3 = "Check for any inventory-modifying mods and items you are carrying.";
 			ReikaJavaLibrary.pConsole(o);
 			ReikaJavaLibrary.pConsole(o2);
 			ReikaJavaLibrary.pConsole(o3);
-			ReikaChatHelper.write(o);
-			ReikaChatHelper.write(o2);
-			ReikaChatHelper.write(o3);
+			if (DragonOptions.CHATERRORS.getState()) {
+				ReikaChatHelper.write(o);
+				ReikaChatHelper.write(o2);
+				ReikaChatHelper.write(o3);
+			}
 			//Thread.dumpStack();
 			return new Slot(fakeChest, index, -20, -20); //create new slot off screen; hacky fix, but should work
 		}

@@ -113,7 +113,7 @@ public class QuantumOreHandler extends ModHandlerBase {
 			String tag = ore.getOreDictNames()[0];
 			OreDictionary.registerOre(tag, new ItemStack(quantumID, 1, 0));
 			OreDictionary.registerOre(tag, new ItemStack(quantumIDGlow, 1, 0));
-			ore.reloadOreList();
+			ore.initialize();
 			isOreDict = true;
 		}
 		else {

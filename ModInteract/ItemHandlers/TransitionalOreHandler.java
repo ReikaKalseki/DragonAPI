@@ -13,11 +13,12 @@ import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
+import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public class TransitionalOreHandler extends ModHandlerBase {
 
@@ -71,7 +72,8 @@ public class TransitionalOreHandler extends ModHandlerBase {
 
 		magmaID = idore;
 		cobaltID = idcobalt;
-		ReikaOreHelper.addOreForReference(new ItemStack(cobaltID, 1, 0));
+		OreDictionary.registerOre("oreCobalt", new ItemStack(cobaltID, 1, 0));
+		ModOreList.COBALT.initialize();
 	}
 
 	public static TransitionalOreHandler getInstance() {

@@ -12,10 +12,10 @@ package Reika.DragonAPI.ModRegistry;
 
 public enum PowerTypes {
 
-	MJ("buildcraft.api.power.IPowerReceptor", "buildcraft.api.power.IPowerEmitter"),
+	//MJ("buildcraft.api.power.IPowerReceptor", "buildcraft.api.power.IPowerEmitter"), killed by RF
 	RF("cofh.api.energy.IEnergyHandler", "cofh.api.energy.IEnergyContainerItem"),
 	EU("ic2.api.energy.tile.IEnergyTile", "ic2.api.item.IElectricItem"),
-	UE("universalelectricity.api.energy.IEnergyInterface", "universalelectricity.api.item.IEnergyItem"),
+	//UE("universalelectricity.api.energy.IEnergyInterface", "universalelectricity.api.item.IEnergyItem"), killed by RF
 	ROTARYCRAFT("Reika.RotaryCraft.API.ShaftMachine"),
 	PNEUMATIC(),
 	HYDRAULIC();

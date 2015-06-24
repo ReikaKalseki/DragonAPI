@@ -24,6 +24,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class DragonAPICore {
 
@@ -147,6 +148,7 @@ public class DragonAPICore {
 		}
 
 		@SubscribeEvent
+		@SideOnly(Side.CLIENT)
 		public void load(GameFinishedLoadingEvent evt) {
 			loaded = true;
 		}

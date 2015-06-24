@@ -43,6 +43,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.IO.PacketPipeline;
@@ -1667,9 +1668,13 @@ public final class ReikaPacketHelper extends DragonAPICore {
 	public static void registerVanillaPacketType(DragonAPIMod mod, int id, Class c, Side s, EnumConnectionState state) {
 		switch(s) {
 		case CLIENT:
+			if (state.func_150753_a().containsKey(id))
+				throw new IDConflictException(mod, "Packet "+c+" ID "+id+" is already occupied!");
 			state.func_150753_a().put(Integer.valueOf(id), c);
 			break;
 		case SERVER:
+			if (state.func_150755_b().containsKey(id))
+				throw new IDConflictException(mod, "Packet "+c+" ID "+id+" is already occupied!");
 			state.func_150755_b().put(Integer.valueOf(id), c);
 			break;
 		}

@@ -24,7 +24,8 @@ public enum DragonOptions implements ConfigList {
 	SORTCREATIVE("Sort Creative Tabs Alphabetically", true),
 	CUSTOMRENDER("Custom/Donator Renders", true),
 	OPONLYUPDATE("Only show update notice to Ops or SSP", false),
-	PACKONLYUPDATE("Only show update notice to pack creator", false);
+	PACKONLYUPDATE("Only show update notice to pack creator", false),
+	GREGORES("Force Gregtech Ore Compatibility", true);
 
 	private String label;
 	private boolean defaultState;

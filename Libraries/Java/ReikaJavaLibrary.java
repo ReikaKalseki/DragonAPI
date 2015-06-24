@@ -30,6 +30,7 @@ import net.minecraft.world.World;
 import org.apache.logging.log4j.Level;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
@@ -440,5 +441,13 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			c.addAll(c2);
 		}
 		return c;
+	}
+
+	public static boolean isAnyModLoaded(ModList[] mods) {
+		for (int i = 0; i < mods.length; i++) {
+			if (mods[i].isLoaded())
+				return true;
+		}
+		return false;
 	}
 }

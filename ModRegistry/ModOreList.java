@@ -32,6 +32,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MekanismHandler;
+import Reika.DragonAPI.ModInteract.RecipeHandlers.ModOreCompat;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 
@@ -47,7 +48,7 @@ public enum ModOreList implements OreType {
 	IRIDIUM("Iridium", 0xC1E2D3, OreRarity.RARE, "ingotIridium", 1, "oreIridium"),
 	FIRESTONE("Firestone", 0xE19636, OreRarity.RARE, "shardFirestone", 1, "oreFirestone"),
 	CERTUSQUARTZ("Certus Quartz", 0xC4CEFF, OreRarity.AVERAGE, "crystalCertusQuartz", 3, "oreCertusQuartz"),
-	URANIUM("Uranium", 0x4CFF00, OreRarity.SCATTERED, "ingotUranium", 1, "oreUranium", "oreYellorite"),
+	URANIUM("Uranium", 0x4CFF00, OreRarity.SCATTERED, "ingotUranium", 1, "oreUranium", "oreYellorite", "oreUraninite"),
 	CINNABAR("Mercury", 0x811A1A, OreRarity.SCATTERED, "itemQuicksilver", 1, "oreCinnabar"),
 	AMBER("Amber", 0xB17F17, OreRarity.SCATTERED, "gemAmber", 1, "oreAmber"),
 	INFUSEDAIR("Air Infused", 0xA88C32, OreRarity.SCATTERED, "shardAir", 2, "oreInfusedAir"),
@@ -120,7 +121,8 @@ public enum ModOreList implements OreType {
 	AMETHYST("Amethyst", 0xff00ff, OreRarity.RARE, "gemAmethyst", 1, "oreAmethyst"),
 	TESLATITE("Teslatite", 0x2F81F1, OreRarity.COMMON, "dustTeslatite", 3, "oreTeslatite"),
 	MANA("Mana", 0x70DAFC, OreRarity.SCARCE, "ingotMana", 1, "oreMana"),
-	NETHERSALTPETER("Nether Saltpeter", 0xdddddd, OreRarity.SCARCE, "dustSaltpeter", 4, "oreNetherSaltpeter");
+	NETHERSALTPETER("Nether Saltpeter", 0xdddddd, OreRarity.SCARCE, "dustSaltpeter", 4, "oreNetherSaltpeter"),
+	THORIUM("Thorium", 0x595959, OreRarity.SCARCE, "ingotThorium", 1, "oreThorium", "oreThorite", "oreThorianite");
 
 	private ArrayList<ItemStack> ores = new ArrayList();
 	public final String displayName;
@@ -167,15 +169,19 @@ public enum ModOreList implements OreType {
 		}
 	}
 
-	private void initialize() {
+	public void initialize() {
+		/*
 		if (init) {
 			ReikaJavaLibrary.pConsole(this+" is already initialized!");
 			return;
 		}
 		init = true;
+		 */
+		ores.clear();
 		for (int i = 0; i < oreLabel.length; i++) {
-			oreNames.add(oreLabel[i]);
-			ArrayList<ItemStack> toadd = OreDictionary.getOres(oreLabel[i]);
+			String label = oreLabel[i];
+			oreNames.add(label);
+			ArrayList<ItemStack> toadd = OreDictionary.getOres(label);
 			if (!toadd.isEmpty()) {
 				Iterator<ItemStack> it = toadd.iterator();
 				while (it.hasNext()) {
@@ -183,22 +189,35 @@ public enum ModOreList implements OreType {
 					if (is.getItem() == null)
 						it.remove();
 				}
-				ReikaJavaLibrary.pConsole("\tDetected the following blocks for "+this+" from OreDict \""+oreLabel[i]+"\": "+toadd.toString());
-				for (int k = 0; k < toadd.size(); k++) {
-					ItemStack is = toadd.get(k);
+				ReikaJavaLibrary.pConsole("\tDetected the following blocks for "+this+" from OreDict \""+label+"\": "+toadd.toString());
+				for (ItemStack is : toadd) {
 					if (ReikaItemHelper.isBlock(is)) {
 						if (!ReikaItemHelper.collectionContainsItemStack(ores, is))
 							ores.add(is);
-						perName.addValue(oreLabel[i], is);
+						perName.addValue(label, is);
 					}
 					else {
-						ReikaJavaLibrary.pConsole("\t"+is+" is not an ore block, but was OreDict fetched by \""+oreLabel[i]+"\"!");
+						ReikaJavaLibrary.pConsole("\t"+is+" is not an ore block, but was OreDict fetched by \""+label+"\"!");
 					}
 				}
 			}
-			else
-				ReikaJavaLibrary.pConsole("\tNo ore blocks detected for \""+oreLabel[i]+"\"");
+			else {
+				ReikaJavaLibrary.pConsole("\tNo ore blocks detected for \""+label+"\"");
+			}
 		}
+
+		ReikaJavaLibrary.pConsole("\tAdding special blocks for "+this+":");
+		Collection<ItemStack> c = ModOreCompat.instance.load(this);
+		if (c.isEmpty()) {
+			ReikaJavaLibrary.pConsole("\tNo special blocks found.");
+		}
+		else {
+			ReikaJavaLibrary.pConsole("\t"+c.size()+" special blocks found: "+c);
+			for (ItemStack is : c)
+				if (!ReikaItemHelper.collectionContainsItemStack(ores, is))
+					ores.add(is);
+		}
+
 		if (!this.existsInGame())
 			ReikaJavaLibrary.pConsole("\tDRAGONAPI: No ore blocks detected for "+this);
 
@@ -247,33 +266,6 @@ public enum ModOreList implements OreType {
 		default:
 			return false;
 		}
-	}
-
-	public void reloadOreList() {
-		ores = new ArrayList<ItemStack>();
-		for (int i = 0; i < oreLabel.length; i++) {
-			ArrayList<ItemStack> li = new ArrayList(OreDictionary.getOres(oreLabel[i]));
-			boolean flag = false;
-			Iterator<ItemStack> it = li.iterator();
-			while (it.hasNext()) {
-				ItemStack is = it.next();
-				if (is.getItem() == null) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid item (ID = "+is.getItem()+") registered as "+this);
-					it.remove();
-				}
-				else {
-					if (!ReikaItemHelper.collectionContainsItemStack(ores, is)) {
-						ores.add(is);
-						flag = true;
-					}
-				}
-			}
-			if (flag) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Reloading ore listings for "+this);
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Found "+li);
-			}
-		}
-		//Thread.dumpStack();
 	}
 
 	public static boolean isModOre(ItemStack is) {

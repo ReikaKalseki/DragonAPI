@@ -127,7 +127,7 @@ public final class MTInteractionManager {
 
 	private void parseFile(File f) {
 		for (Prevention p : data.keySet()) {
-			MTScriptScanner scan = new MTScriptScanner(p);
+			MTScriptScanner scan = new MTScriptScanner(p, f);
 			scan.performChanges(f);
 		}
 	}
@@ -276,9 +276,11 @@ public final class MTInteractionManager {
 		private final OneWayMap<KeyedItemStack, String> set;
 		private final OneWayMap<String, OneWaySet<MTItemEntry>> variables = new OneWayMap();
 		private String lastItemMod;
+		private final File script;
 
-		private MTScriptScanner(Prevention p) {
+		private MTScriptScanner(Prevention p, File f) {
 			set = instance.data.get(p);
+			script = f;
 		}
 
 		@Override
@@ -291,7 +293,15 @@ public final class MTInteractionManager {
 		@Override
 		public boolean editLine(String s) {
 			s = ReikaStringParser.stripSpaces(s);
-			boolean flag = this.parseLine(s);
+			boolean flag = false;
+			try {
+				flag = this.parseLine(s);
+			}
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Error parsing line '"+s+"' in '"+script.getName()+"':");
+				e.printStackTrace();
+				return false;
+			}
 			if (flag) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: The line '"+s+"' has been commented out of the Minetweaker script, as "+lastItemMod+" has "+
 						"requested to disallow such actions. This is NOT a bug in either that mod or Minetweaker; do not bother StanHebben "+
@@ -301,21 +311,30 @@ public final class MTInteractionManager {
 		}
 
 		private boolean parseLine(String s) {
-			if (s.startsWith("//")) { //comment
+			if (s.startsWith("//") || s.startsWith("##")) { //comment
 				return false;
 			}
 			else if (s.startsWith("val")) { //variable
-				String name = s.substring(3, s.indexOf("="));
-				int lb = s.indexOf('<');
-				int rb = s.indexOf('>');
-				if (lb >= 0 && rb >= 0) {
-					MTItemEntry val = new MTItemEntry(s.substring(lb+1, rb));
-					OneWaySet<MTItemEntry> set = variables.get(name);
-					if (set == null) {
-						set = new OneWaySet();
-						variables.put(name, set);
+				int eq = s.indexOf("=");
+				if (eq < 0) {
+					this.logError(s, "is a variable declaration that lacks a variable definition.");
+				}
+				else {
+					String name = s.substring(3, eq);
+					int lb = s.indexOf('<');
+					int rb = s.indexOf('>');
+					if (lb >= 0 && rb >= 0) {
+						MTItemEntry val = new MTItemEntry(s.substring(lb+1, rb));
+						OneWaySet<MTItemEntry> set = variables.get(name);
+						if (set == null) {
+							set = new OneWaySet();
+							variables.put(name, set);
+						}
+						set.add(val);
 					}
-					set.add(val);
+					else {
+						this.logError(s, "is a variable definition with no item specified.");
+					}
 				}
 				return false;
 			}
@@ -328,6 +347,11 @@ public final class MTInteractionManager {
 					return false;
 				}
 			}
+		}
+
+		private void logError(String s, String desc) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Note that an invalid line has been found in your MT script '"+script.getName()+"':");
+			ReikaJavaLibrary.pConsole("The line '"+s+"' "+desc+" Consider fixing this.");
 		}
 
 		private boolean parseTruncLine(String s) {

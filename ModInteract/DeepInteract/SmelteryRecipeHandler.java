@@ -148,31 +148,33 @@ public class SmelteryRecipeHandler {
 	}
 
 	static {
-		try {
-			Class reg = Class.forName("tconstruct.library.TConstructRegistry");
-			Method getTableCasting = reg.getMethod("getTableCasting");
-			Method getBasinCasting = reg.getMethod("getBasinCasting");
+		if (ModList.TINKERER.isLoaded()) {
+			try {
+				Class reg = Class.forName("tconstruct.library.TConstructRegistry");
+				Method getTableCasting = reg.getMethod("getTableCasting");
+				Method getBasinCasting = reg.getMethod("getBasinCasting");
 
-			castingInstance = getTableCasting.invoke(null);
-			castingBasinInstance = getBasinCasting.invoke(null);
+				castingInstance = getTableCasting.invoke(null);
+				castingBasinInstance = getBasinCasting.invoke(null);
 
-			Class c = Class.forName("tconstruct.smeltery.TinkerSmeltery");
-			castItem = (Item)c.getField("metalPattern").get(null);
+				Class c = Class.forName("tconstruct.smeltery.TinkerSmeltery");
+				castItem = (Item)c.getField("metalPattern").get(null);
 
-			Class smeltery = Class.forName("tconstruct.library.crafting.Smeltery");
-			Field inst = smeltery.getField("instance");
-			smelteryInstance = inst.get(null);
+				Class smeltery = Class.forName("tconstruct.library.crafting.Smeltery");
+				Field inst = smeltery.getField("instance");
+				smelteryInstance = inst.get(null);
 
-			addMelting = smeltery.getMethod("addMelting", ItemStack.class, Block.class, int.class, int.class, FluidStack.class);
+				addMelting = smeltery.getMethod("addMelting", ItemStack.class, Block.class, int.class, int.class, FluidStack.class);
 
-			Class casting = Class.forName("tconstruct.library.crafting.LiquidCasting");
-			addCasting = casting.getMethod("addCastingRecipe", ItemStack.class, FluidStack.class, ItemStack.class, int.class);
-			addBlockCasting = casting.getMethod("addCastingRecipe", ItemStack.class, FluidStack.class, int.class);
-		}
-		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load Smeltery Recipe Handler!");
-			e.printStackTrace();
-			ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TINKERER, e);
+				Class casting = Class.forName("tconstruct.library.crafting.LiquidCasting");
+				addCasting = casting.getMethod("addCastingRecipe", ItemStack.class, FluidStack.class, ItemStack.class, int.class);
+				addBlockCasting = casting.getMethod("addCastingRecipe", ItemStack.class, FluidStack.class, int.class);
+			}
+			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load Smeltery Recipe Handler!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TINKERER, e);
+			}
 		}
 	}
 }

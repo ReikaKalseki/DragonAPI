@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -22,8 +20,9 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.OreType;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.ModInteract.RecipeHandlers.ModOreCompat;
 
 public enum ReikaOreHelper implements OreType {
 
@@ -47,7 +46,8 @@ public enum ReikaOreHelper implements OreType {
 
 	private static final HashMap<String, String> cases = new HashMap();
 	private static final HashMap<Block, ReikaOreHelper> vanillaOres = new HashMap();
-	private static final HashSet<String> oreNames = new HashSet();
+	private static final HashMap<String, ReikaOreHelper> oreNames = new HashMap();
+	private static final ItemHashMap<ReikaOreHelper> itemMap = new ItemHashMap();
 
 	public static final ReikaOreHelper[] oreList = ReikaOreHelper.values();
 
@@ -94,6 +94,10 @@ public enum ReikaOreHelper implements OreType {
 
 	public String getOreDictName() {
 		return oreDict;
+	}
+
+	public String[] getOreDictNames() {
+		return new String[]{oreDict};
 	}
 
 	public String getDropOreDictName() {
@@ -144,55 +148,11 @@ public enum ReikaOreHelper implements OreType {
 	}
 
 	public static ReikaOreHelper getEntryByOreDict(ItemStack is) {
-		ReikaOreHelper special = checkForSpecialCases(is);
-		if (special != null)
-			return special;
-		for (int i = 0; i < oreList.length; i++) {
-			ReikaOreHelper ore = oreList[i];
-			ArrayList<ItemStack> li = ore.ores;
-			if (ReikaItemHelper.collectionContainsItemStack(li, is))
-				return ore;
-		}
-		return null;
-	}
-
-	public static ReikaOreHelper checkForSpecialCases(ItemStack is) {
-		for (Map.Entry<String, String> entry : cases.entrySet()) {
-			String key = entry.getKey();
-			ArrayList<ItemStack> li = OreDictionary.getOres(key);
-			if (ReikaItemHelper.collectionContainsItemStack(li, is)) {
-				return getEntryFromOreName(entry.getValue());
-			}
-		}
-		return null;
+		return itemMap.get(is);
 	}
 
 	public static ReikaOreHelper getEntryFromOreName(String value) {
-		for (int i = 0; i < oreList.length; i++) {
-			ReikaOreHelper ore = oreList[i];
-			if (ore.getOreDictName().equals(value))
-				return ore;
-		}
-		return null;
-	}
-
-	static {
-		//addSpecialCase("oreEmerald", "oreOlivine");
-	}
-
-	private static void addSpecialCase(String ore, String... names) {
-		for (int i = 0; i < names.length; i++) {
-			cases.put(names[i], ore);
-		}
-	}
-
-	public static void addOreForReference(ItemStack ore) {
-		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding ore reference "+ore);
-		extraOres.add(ore);
-	}
-
-	public static boolean isExtraOre(ItemStack is) {
-		return ReikaItemHelper.collectionContainsItemStack(extraOres, is);
+		return oreNames.get(value);
 	}
 
 	public Block getOreGenBlock() {
@@ -202,12 +162,19 @@ public enum ReikaOreHelper implements OreType {
 	public static void refreshAll() {
 		for (int i = 0; i < oreList.length; i++) {
 			ReikaOreHelper ore = oreList[i];
-			String tag = ore.oreDict;
-			ArrayList<ItemStack> li = OreDictionary.getOres(tag);
-			for (int k = 0; k < li.size(); k++) {
-				ItemStack is = li.get(k);
-				if (!ReikaItemHelper.collectionContainsItemStack(ore.ores, is))
-					ore.ores.add(is);
+			ore.refresh();
+		}
+	}
+
+	private void refresh() {
+		ores.clear();
+		String tag = oreDict;
+		ArrayList<ItemStack> li = new ArrayList(OreDictionary.getOres(tag)); //wrap in new list to get rid of Forge's immutable
+		li.addAll(ModOreCompat.instance.load(this));
+		for (ItemStack is : li) {
+			if (!ReikaItemHelper.collectionContainsItemStack(ores, is)) {
+				ores.add(is);
+				itemMap.put(is, this);
 			}
 		}
 	}
@@ -242,12 +209,12 @@ public enum ReikaOreHelper implements OreType {
 	static {
 		for (int i = 0; i < oreList.length; i++) {
 			vanillaOres.put(oreList[i].ore, oreList[i]);
-			oreNames.add(oreList[i].oreDict);
+			oreNames.put(oreList[i].oreDict, oreList[i]);
 		}
 	}
 
 	public static boolean isVanillaOreType(String s) {
-		return oreNames.contains(s);
+		return oreNames.containsKey(s);
 	}
 
 }

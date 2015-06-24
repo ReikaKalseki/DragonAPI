@@ -462,7 +462,7 @@ public class MagicCropHandler extends CropHandlerBase {
 		ore = new ItemStack(endOreID, 1, 0);
 		OreDictionary.registerOre("oreEndEssence", ore);
 
-		ModOreList.ESSENCE.reloadOreList();
+		ModOreList.ESSENCE.initialize();
 		ReikaJavaLibrary.pConsole("DRAGONAPI: Registering Magic Crops Essence ore to the Ore Dictionary!");
 	}
 
