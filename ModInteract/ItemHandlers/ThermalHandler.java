@@ -12,7 +12,6 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -21,17 +20,10 @@ public class ThermalHandler extends ModHandlerBase {
 
 	private static final ThermalHandler instance = new ThermalHandler();
 
-	public static enum Types {
-		LIQUID(),
-		POWER();
-	}
-
-	public final Block ductID;
 	public final Block enderID;
 
 	private ThermalHandler() {
 		super();
-		Block idpipe = null;
 		Block idender = null;
 		if (this.hasMod()) {
 			try {
@@ -70,8 +62,6 @@ public class ThermalHandler extends ModHandlerBase {
 		else {
 			this.noMod();
 		}
-
-		ductID = idpipe;
 		enderID = idender;
 	}
 
@@ -81,16 +71,12 @@ public class ThermalHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return ductID != null && enderID != null;
+		return enderID != null;
 	}
 
 	@Override
 	public ModList getMod() {
 		return ModList.THERMALFOUNDATION;
-	}
-
-	public Types getConduitType(TileEntity te) {
-		return Types.values()[te.getBlockMetadata()];
 	}
 
 }

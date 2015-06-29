@@ -9,7 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM;
 
+import java.lang.management.ManagementFactory;
 import java.util.Collection;
+import java.util.List;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -755,6 +757,12 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			//new ClassReader(newdata).accept(vcn, 0);
 			return newdata;
 		}
+
+		public boolean isEnabled() {
+			List<String> args = ManagementFactory.getRuntimeMXBean().getInputArguments();
+			String tag = "-DragonAPI_disable_ASM_"+this.name();
+			return !args.contains(tag);
+		}
 	}
 
 	@Override
@@ -775,8 +783,16 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 	static {
 		for (int i = 0; i < ClassPatch.list.length; i++) {
 			ClassPatch p = ClassPatch.list[i];
-			String s = !FMLForgePlugin.RUNTIME_DEOBF ? p.deobfName : p.obfName;
-			classes.addValue(s, p);
+			if (p.isEnabled()) {
+				String s = !FMLForgePlugin.RUNTIME_DEOBF ? p.deobfName : p.obfName;
+				classes.addValue(s, p);
+			}
+			else {
+				ReikaJavaLibrary.pConsole("******************************************************************************************");
+				ReikaJavaLibrary.pConsole("DRAGONAPI: WARNING: ASM TRANSFORMER '"+p+"' HAS BEEN DISABLED. THIS CAN BREAK MANY THINGS.");
+				ReikaJavaLibrary.pConsole("IF THIS TRANSFORMER HAS BEEN DISABLED WITHOUT GOOD REASON, TURN IT BACK ON IMMEDIATELY!");
+				ReikaJavaLibrary.pConsole("******************************************************************************************");
+			}
 		}
 	}
 }

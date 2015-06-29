@@ -231,6 +231,19 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return val;
 	}
 
+	/** Returns the nearest higher power of 2 or "sort of" power of 2 (=1.5*prev power of 2, so eg 192 between 128 and 256) */
+	public static int ceilPseudo2Exp(int val) {
+		int pow = ceil2exp(val);
+		int prev = intpow2(2, logbase2(pow)-1);
+		int mid = prev*3/2;
+		if (prev >= val)
+			return prev;
+		else if (mid >= val)
+			return mid;
+		else
+			return pow;
+	}
+
 	/** Returns whether the two numbers are the same sign.
 	 * Will return true if both are zero. Args: Input 1, Input 2*/
 	public static boolean isSameSign(double val1, double val2) {

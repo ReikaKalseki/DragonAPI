@@ -67,7 +67,7 @@ public class MystCraftHandler extends ModHandlerBase {
 		if (s == null)
 			s = this.getField(c, "", name);
 		if (s == null)
-			throw new ModReflectionException(ModList.MYSTCRAFT, name);
+			throw new ModReflectionException(ModList.MYSTCRAFT, "Could not find a field for "+name);
 		return GameRegistry.findBlock(this.getMod().modLabel, s);
 	}
 

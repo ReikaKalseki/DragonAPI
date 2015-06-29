@@ -21,6 +21,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Interfaces.SpecialOreBlock;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
@@ -88,9 +89,21 @@ public final class ReikaBlockHelper extends DragonAPICore {
 
 	/** Returns true if the Block ID corresponds to an ore Blocks. Args: ID, Metadata */
 	public static boolean isOre(Block id, int meta) {
+		if (id == Blocks.air)
+			return false;
 		if (id == Blocks.lit_redstone_ore)
 			return true;
-		return isOre(new ItemStack(id, 1, meta));
+		if (id instanceof SpecialOreBlock)
+			return true;
+		if (ReikaOreHelper.isVanillaOre(id))
+			return true;
+		if (ModOreList.isModOre(id, meta))
+			return true;
+		if (Item.getItemFromBlock(id) == null) {
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Block "+id+" has no item to compare against for Ore Check?!");
+			return false;
+		}
+		return ReikaOreHelper.getEntryByOreDict(new ItemStack(id, 1, meta)) != null;
 	}
 
 	/** Gets a world block as an itemstack. Args: World, x, y, z */

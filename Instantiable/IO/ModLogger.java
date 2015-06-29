@@ -13,12 +13,10 @@ import java.util.ArrayList;
 
 import org.apache.logging.log4j.Level;
 
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
 public class ModLogger {
 
@@ -70,8 +68,8 @@ public class ModLogger {
 	}
 
 	public boolean shouldDebug() {
-		if (DragonAPICore.isReikasComputer() && ReikaObfuscationHelper.isDeObfEnvironment())
-			return true;
+		//if (DragonAPICore.isReikasComputer() && ReikaObfuscationHelper.isDeObfEnvironment())
+		//return true;
 		if (logNone)
 			return false;
 		if (logAll)

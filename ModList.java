@@ -10,6 +10,7 @@
 package Reika.DragonAPI;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +22,8 @@ import cpw.mods.fml.common.Loader;
 
 public enum ModList {
 
-	ROTARYCRAFT("RotaryCraft", "Reika.RotaryCraft.RotaryCraft"),
-	REACTORCRAFT("ReactorCraft"),
+	ROTARYCRAFT("RotaryCraft", "Reika.RotaryCraft.Registry.BlockRegistry", "Reika.RotaryCraft.Registry.ItemRegistry"),
+	REACTORCRAFT("ReactorCraft", "Reika.ReactorCraft.Registry.ReactorBlocks", "Reika.ReactorCraft.Registry.ReactorItems"),
 	EXPANDEDREDSTONE("ExpandedRedstone"),
 	GEOSTRATA("GeoStrata"),
 	FURRYKINGDOMS("FurryKingdoms"),
@@ -33,8 +34,8 @@ public enum ModList {
 	JETPLANE("JetPlane"),
 	CAVECONTROL("CaveControl"),
 	LEGACYCRAFT("LegacyCraft"),
-	ELECTRICRAFT("ElectriCraft"),
-	CHROMATICRAFT("ChromatiCraft"),
+	ELECTRICRAFT("ElectriCraft", "Reika.ElectriCraft.Registry.ElectriBlocks", "Reika.ElectriCraft.Registry.ElectriItems"),
+	CHROMATICRAFT("ChromatiCraft", "Reika.ChromatiCraft.Registry.ChromaBlocks", "Reika.ChromatiCraft.Registry.ChromaItems"),
 	BUILDCRAFT("BuildCraft|Core", "buildcraft.BuildCraftCore"),
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
 	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
@@ -54,18 +55,18 @@ public enum ModList {
 	MINEFACTORY("MineFactoryReloaded", "powercrystals.minefactoryreloaded.setup.MFRThings"),
 	DARTCRAFT("DartCraft", "bluedart.Blocks.DartBlock", "bluedart.Items.DartItem"), //ensure still here
 	TINKERER("TConstruct", "tconstruct.world.TinkerWorld"), //tconstruct.library.TConstructRegistry.getBlock/Item
-	THERMALEXPANSION("ThermalExpansion", "thermalexpansion.block.TEBlocks", "thermalexpansion.item.TEItems"),
-	THERMALFOUNDATION("ThermalFoundation", "thermalfoundation.block.TFBlocks", "thermalfoundation.item.TFItems"),
+	THERMALEXPANSION("ThermalExpansion", new String[]{"thermalexpansion.block.TEBlocks", "cofh.thermalexpansion.block.TEBlocks"}, new String[]{"thermalexpansion.item.TEItems", "cofh.thermalexpansion.item.TEItems"}),
+	THERMALFOUNDATION("ThermalFoundation", new String[]{"thermalfoundation.block.TFBlocks", "cofh.thermalfoundation.block.TFBlocks"}, new String[]{"thermalfoundation.item.TFItems", "cofh.thermalfoundation.item.TFItems"}),
 	MEKANISM("Mekanism", "mekanism.common.MekanismBlocks", "mekanism.common.MekanismItems"),
 	MEKTOOLS("MekanismTools", "mekanism.tools.common.MekanismTools"), //ensure still here
-	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks.RailcraftBlocks", null), //items spread over half a dozen classes
+	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks.RailcraftBlocks", new String[0]), //items spread over half a dozen classes
 	ICBM("ICBM|Explosion"),
 	ARSMAGICA("arsmagica2", "am2.blocks.BlocksCommonProxy", "am2.items.ItemsCommonProxy"), //ensure still here
 	TRANSITIONAL("TransitionalAssistance", "modTA.Core.TACore"), //mod dead
 	ENDERSTORAGE("EnderStorage"),
 	TREECAPITATOR("TreeCapitator"),
 	HARVESTCRAFT("harvestcraft", "com.pam.harvestcraft.BlockRegistry", "com.pam.harvestcraft.ItemRegistry"),
-	MYSTCRAFT("Mystcraft", "com.xcompwiz.mystcraft.api.MystObjects"),
+	MYSTCRAFT("Mystcraft", new String[]{"com.xcompwiz.mystcraft.api.MystObjects", "com.xcompwiz.mystcraft.api.MystObjects.Blocks"}, new String[]{"com.xcompwiz.mystcraft.api.MystObjects", "com.xcompwiz.mystcraft.api.MystObjects.Items"}),
 	MAGICCROPS("magicalcrops", "com.mark719.magicalcrops.handlers.MBlocks", "com.mark719.magicalcrops.handlers.MItems"),
 	MIMICRY("Mimicry", "com.sparr.mimicry.block.MimicryBlock", "com.sparr.mimicry.item.MimicryItem"),
 	QCRAFT("QuantumCraft", "dan200.QCraft"),
@@ -102,8 +103,8 @@ public enum ModList {
 
 	private final boolean condition;
 	public final String modLabel;
-	private final String itemClass;
-	private final String blockClass;
+	private final String[] itemClass;
+	private final String[] blockClass;
 
 	//To save on repeated Class.forName
 	private static final EnumMap<ModList, Class> blockClasses = new EnumMap(ModList.class);
@@ -115,7 +116,7 @@ public enum ModList {
 
 	public static final ModList[] modList = values();
 
-	private ModList(String label, String blocks, String items) {
+	private ModList(String label, String[] blocks, String[] items) {
 		modLabel = label;
 		boolean c = Loader.isModLoaded(modLabel);
 		condition = c;
@@ -140,26 +141,50 @@ public enum ModList {
 		this(label, modClass, modClass);
 	}
 
+	private ModList(String label, String blocks, String items) {
+		this(label, blocks != null ? new String[]{blocks} : null, items != null ? new String[]{items} : null);
+	}
+
+	private ModList(String label, String[] blocks, String items) {
+		this(label, blocks, items != null ? new String[]{items} : null);
+	}
+
+	private ModList(String label, String blocks, String[] items) {
+		this(label, blocks != null ? new String[]{blocks} : null, items);
+	}
+
 	private ModList(String label) {
 		this(label, null);
 	}
 
+	private Class findClass(String s) {
+		try {
+			return Class.forName(s);
+		}
+		catch (ClassNotFoundException e) {
+			return null;
+		}
+	}
+
 	public Class getBlockClass() {
-		if (blockClass == null) {
+		if (blockClass == null || blockClass.length == 0) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load block class for "+this+". Null class provided.");
 			ReikaJavaLibrary.dumpStack();
 			return null;
 		}
 		Class c = blockClasses.get(this);
 		if (c == null) {
-			try {
-				c = Class.forName(blockClass);
-				blockClasses.put(this, c);
-				return c;
+			for (String s : blockClass) {
+				c = this.findClass(s);
+				if (c != null) {
+					blockClasses.put(this, c);
+					break;
+				}
 			}
-			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load block class for "+this+".");
-				e.printStackTrace();
+			if (c == null) {
+				String sgs = Arrays.toString(blockClass);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load block class for "+this+". Not found: "+sgs);
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(this, new ClassNotFoundException(sgs));
 				return null;
 			}
 		}
@@ -167,22 +192,24 @@ public enum ModList {
 	}
 
 	public Class getItemClass() {
-		if (itemClass == null) {
+		if (itemClass == null || itemClass.length == 0) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+". Null class provided.");
 			ReikaJavaLibrary.dumpStack();
 			return null;
 		}
 		Class c = itemClasses.get(this);
 		if (c == null) {
-			try {
-				c = Class.forName(itemClass);
-				itemClasses.put(this, c);
-				return c;
+			for (String s : itemClass) {
+				c = this.findClass(s);
+				if (c != null) {
+					itemClasses.put(this, c);
+					break;
+				}
 			}
-			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+".");
-				e.printStackTrace();
-				ReflectiveFailureTracker.instance.logModReflectiveFailure(this, e);
+			if (c == null) {
+				String sgs = Arrays.toString(itemClass);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+". Not found: "+sgs);
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(this, new ClassNotFoundException(sgs));
 				return null;
 			}
 		}

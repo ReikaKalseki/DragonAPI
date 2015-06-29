@@ -33,6 +33,9 @@ public class ReikaXMLBase {
 
 	public static Document getXMLDocument(Class root, String path) {
 		InputStream in = root.getResourceAsStream(path);
+		if (in == null) {
+			throw new RuntimeException("XML file at "+path+" relative to "+root.getCanonicalName()+" not found!");
+		}
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();

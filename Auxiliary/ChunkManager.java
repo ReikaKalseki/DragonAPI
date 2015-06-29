@@ -52,8 +52,9 @@ public class ChunkManager implements LoadingCallback {
 			TileEntity te = world.getTileEntity(x, y, z);
 			if (te instanceof ChunkLoadingTile) {
 				ChunkLoadingTile tile = (ChunkLoadingTile)te;
+				WorldLocation loc = new WorldLocation(te);
 				this.forceTicketChunks(ticket, tile.getChunksToLoad()); //this.getChunkSquare(x, z, tile.getRadius())
-				this.cacheTicket(world, x, y, z, ticket);
+				this.cacheTicket(loc, ticket);
 			}
 			else {
 				ForgeChunkManager.releaseTicket(ticket);
@@ -61,30 +62,39 @@ public class ChunkManager implements LoadingCallback {
 		}
 	}
 
-	private void cacheTicket(World world, int x, int y, int z, Ticket ticket) {
-		tickets.put(new WorldLocation(world, x, y, z), ticket);
+	private void cacheTicket(WorldLocation loc, Ticket ticket) {
+		tickets.put(loc, ticket);
+	}
+
+	public void unloadChunks(TileEntity te) {
+		this.unloadChunks(new WorldLocation(te));
 	}
 
 	public void unloadChunks(World world, int x, int y, int z) {
-		Ticket ticket = tickets.get(new WorldLocation(world, x, y, z));
+		this.unloadChunks(new WorldLocation(world, x, y, z));
+	}
+
+	public void unloadChunks(WorldLocation loc) {
+		Ticket ticket = tickets.get(loc);
 		ForgeChunkManager.releaseTicket(ticket);
 	}
 
-	public void loadChunks(World world, int x, int y, int z, ChunkLoadingTile te) {
-		Ticket ticket = tickets.get(new WorldLocation(world, x, y, z));
+	public void loadChunks(ChunkLoadingTile te) {
+		WorldLocation loc = new WorldLocation((TileEntity)te);
+		Ticket ticket = tickets.get(loc);
 		if (ticket == null) {
-			ticket = this.getNewTicket(world, x, y, z);
-			this.cacheTicket(world, x, y, z, ticket);
+			ticket = this.getNewTicket(loc);
+			this.cacheTicket(loc, ticket);
 		}
 		this.forceTicketChunks(ticket, te.getChunksToLoad());
 	}
 
-	private Ticket getNewTicket(World world, int x, int y, int z) {
-		Ticket ticket = ForgeChunkManager.requestTicket(DragonAPIInit.instance, world, Type.NORMAL);
+	private Ticket getNewTicket(WorldLocation loc) {
+		Ticket ticket = ForgeChunkManager.requestTicket(DragonAPIInit.instance, loc.getWorld(), Type.NORMAL);
 		NBTTagCompound nbt = ticket.getModData();
-		nbt.setInteger("tileX", x);
-		nbt.setInteger("tileY", y);
-		nbt.setInteger("tileZ", z);
+		nbt.setInteger("tileX", loc.xCoord);
+		nbt.setInteger("tileY", loc.yCoord);
+		nbt.setInteger("tileZ", loc.zCoord);
 		return ticket;
 	}
 

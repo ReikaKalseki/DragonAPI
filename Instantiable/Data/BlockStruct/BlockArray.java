@@ -245,6 +245,7 @@ public class BlockArray {
 
 	public void clear() {
 		blocks.clear();
+		keys.clear();
 		overflow = false;
 	}
 

@@ -100,7 +100,6 @@ public final class CommandableUpdateChecker {
 			if (this.shouldCheck(mod)) {
 				ModVersion version = c.version;
 				ModVersion latest = latestVersions.get(mod);
-				ReikaJavaLibrary.pConsole(latestVersions);
 				//if (version.isCompiled()) {
 				if (latest == ModVersion.timeout) {
 					this.markUpdate(mod, version, latest);

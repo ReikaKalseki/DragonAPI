@@ -9,17 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces;
 
-import java.util.Collection;
+import net.minecraft.world.World;
 
-import net.minecraft.world.ChunkCoordIntPair;
+/** Use this to declare a TileEntity-holding block as "not always safely movable". */
+public interface SelectiveMovable {
 
-/** For TileEntities that load chunks. Only implement this on a TileEntity! */
-public interface ChunkLoadingTile {
-
-	//public void setTicket(Ticket t);
-
-	public Collection<ChunkCoordIntPair> getChunksToLoad();
-
-	//public boolean loadChunk(ChunkCoordIntPair chip);
+	public boolean canMove(World world, int x, int y, int z);
 
 }

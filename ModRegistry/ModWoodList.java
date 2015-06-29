@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModRegistry;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -87,7 +88,8 @@ public enum ModWoodList implements TreeType {
 	WITCHWOOD(ModList.ARSMAGICA, 	0x584D32, 0x1F4719, "witchwoodLog", "witchwoodLeaves", "witchwoodSapling", VarType.INSTANCE),
 	ROWAN(ModList.WITCHERY, 		0x374633, 0x9E774D, "LOG", "LEAVES", "SAPLING", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INSTANCE),
 	HAWTHORNE(ModList.WITCHERY, 	0x656566, 0xC3EEC3, "LOG", "LEAVES", "SAPLING", new int[]{2,6,10}, new int[]{2,10}, 2, VarType.INSTANCE),
-	ALDER(ModList.WITCHERY, 		0x52544C, 0xC3D562, "LOG", "LEAVES", "SAPLING", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE);
+	ALDER(ModList.WITCHERY, 		0x52544C, 0xC3D562, "LOG", "LEAVES", "SAPLING", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE),
+	LIGHTED(ModList.CHROMATICRAFT,	0xA05F36, 0xFFD793, "GLOWLOG", "GLOWLEAF", "GLOWSAPLING", VarType.INSTANCE);
 
 	private ModList mod;
 	private Block blockID = null;
@@ -161,18 +163,14 @@ public enum ModWoodList implements TreeType {
 			return;
 		}
 		try {
-			Field w = cl.getField(blockVar);
-			Field l = cl.getField(leafVar);
-			Field s = cl.getField(saplingVar);
 			Block id;
 			Block idleaf;
 			Block idsapling;
 			switch(type) {
 			case ITEMSTACK: {
-				Object ins = this.getFieldInstance();
-				ItemStack wood = (ItemStack)w.get(ins);
-				ItemStack leaf = (ItemStack)l.get(ins);
-				ItemStack sapling = (ItemStack)s.get(ins);
+				ItemStack wood = this.loadItemStack(cl, blockVar);
+				ItemStack leaf = this.loadItemStack(cl, leafVar);
+				ItemStack sapling = this.loadItemStack(cl, saplingVar);
 				if (wood == null || leaf == null || sapling == null) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
 					return;
@@ -183,10 +181,9 @@ public enum ModWoodList implements TreeType {
 				break;
 			}
 			case INSTANCE: {
-				Object ins = this.getFieldInstance();
-				Block wood_b = (Block)w.get(ins);
-				Block leaf_b = (Block)l.get(ins);
-				Block sapling_b = (Block)s.get(ins);
+				Block wood_b = this.loadBlock(cl, blockVar);
+				Block leaf_b = this.loadBlock(cl, leafVar);
+				Block sapling_b = this.loadBlock(cl, leafVar);
 				if (wood_b == null || leaf_b == null || sapling_b == null) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
 					return;
@@ -198,7 +195,7 @@ public enum ModWoodList implements TreeType {
 			}
 			default:
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type "+type+" for "+w+" or "+l);
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type "+type);
 				return;
 			}
 			blockID = id;
@@ -235,6 +232,32 @@ public enum ModWoodList implements TreeType {
 		catch (NullPointerException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
 			e.printStackTrace();
+		}
+	}
+
+	private ItemStack loadItemStack(Class cl, String field) throws ReflectiveOperationException {
+		switch(mod) {
+		default: {
+			Object ins = this.getFieldInstance();
+			Field f = cl.getField(field);
+			return (ItemStack)f.get(ins);
+		}
+		}
+	}
+
+	private Block loadBlock(Class cl, String field) throws ReflectiveOperationException {
+		switch(mod) {
+		case CHROMATICRAFT: {
+			Field f = cl.getField(field);
+			Method block = cl.getMethod("getBlockInstance");
+			Object entry = f.get(null);
+			return (Block)block.invoke(entry);
+		}
+		default: {
+			Object ins = this.getFieldInstance();
+			Field f = cl.getField(field);
+			return (Block)f.get(ins);
+		}
 		}
 	}
 
