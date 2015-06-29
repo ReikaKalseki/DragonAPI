@@ -27,7 +27,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.potion.Potion;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
+import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -206,6 +209,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		ReikaJavaLibrary.initClass(ModList.class);
 
 		this.increasePotionCount();
+		this.increaseChunkCap();
 		//this.increaseBiomeCount(); world save stores biome as bytes, so 255 is cap
 
 		BannedItemReader.instance.initWith("BanItem");
@@ -221,6 +225,13 @@ public class DragonAPIInit extends DragonAPIMod {
 		ReikaPacketHelper.registerVanillaPacketType(this, id, SyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
 		//ReikaPacketWrapper.instance.registerPacket(SyncPacket.class);
 		this.finishTiming();
+	}
+
+	private void increaseChunkCap() {
+		Configuration cfg = ForgeChunkManager.getConfig();
+		Property modTC = cfg.get(this.getModContainer().getModId(), "maximumTicketCount", 1000);
+		Property modCPT = cfg.get(this.getModContainer().getModId(), "maximumChunksPerTicket", 2000);
+		cfg.save();
 	}
 
 	private static final Block[] technicalBlocks = {

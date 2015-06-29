@@ -236,7 +236,7 @@ public enum ModList {
 	}
 
 	public boolean isReikasMod() {
-		return this.ordinal() <= ELECTRICRAFT.ordinal();
+		return this.ordinal() <= CHROMATICRAFT.ordinal();
 	}
 
 	public static List<ModList> getReikasMods() {
