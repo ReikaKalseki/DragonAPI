@@ -340,6 +340,10 @@ public class ReikaASMHelper {
 		return match(ain, opcode, args) ? ain : null;
 	}
 
+	public static AbstractInsnNode getLastInsn(InsnList li, int opcode, Object... args) {
+		return getLastInsnBefore(li, li.size()-1, opcode, args);
+	}
+
 	public static AbstractInsnNode getLastInsnBefore(InsnList li, int index, int opcode, Object... args) {
 		AbstractInsnNode ain = li.get(index);
 		while (!match(ain, opcode, args) && index > 0) {
@@ -391,17 +395,17 @@ public class ReikaASMHelper {
 		return false;
 	}
 
-	public static MethodInsnNode getFirstMethodCall(MethodNode m, String name, String sig) {
-		return getNthMethodCall(m, name, sig, 1);
+	public static MethodInsnNode getFirstMethodCall(MethodNode m, String owner, String name, String sig) {
+		return getNthMethodCall(m, owner, name, sig, 1);
 	}
 
-	private static MethodInsnNode getNthMethodCall(MethodNode m, String name, String sig, int n) {
+	private static MethodInsnNode getNthMethodCall(MethodNode m, String owner, String name, String sig, int n) {
 		int counter = 0;
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);
 			if (ain instanceof MethodInsnNode) {
 				MethodInsnNode min = (MethodInsnNode)ain;
-				if (min.name.equals(name) && min.desc.equals(sig)) {
+				if (min.owner.equals(owner) && min.name.equals(name) && min.desc.equals(sig)) {
 					counter++;
 					if (counter >= n)
 						return min;

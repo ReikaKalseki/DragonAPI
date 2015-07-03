@@ -10,7 +10,6 @@
 package Reika.DragonAPI.ModInteract.Power;
 
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -24,22 +23,27 @@ public class ReikaRailCraftHelper extends DragonAPICore {
 		return ModList.RAILCRAFT.isLoaded();
 	}
 
-	/** Get energy of one steam bucket/block in joules. */
-	public static double getSteamBucketEnergy(int Tinit) {
-		return getSteamBoilingEnergy()+getSteamBucketEnergyToHeat(Tinit);
+	/** Get energy of steam in joules. */
+	public static double getSteamEnergy(int Tinit, int mB) {
+		return getSteamBoilingEnergy(mB)+getSteamBucketEnergyToHeat(Tinit, mB);
 	}
 
 	/** Get the energy liberated by the conversion of one block of steam to one bucket of water. */
-	public static double getSteamBoilingEnergy() {
-		return ReikaThermoHelper.WATER_BOIL_ENTHALPY*FluidContainerRegistry.BUCKET_VOLUME*1000; //2260 kJ/kg * 1000 kg * 1000 J/kJ
+	public static double getSteamBoilingEnergy(int mB) {
+		return ReikaThermoHelper.WATER_BOIL_ENTHALPY*mB*1000; //2260 kJ/kg * 1000 kg * 1000 J/kJ
 	}
 
 	/** Get the energy required to heat one water bucket to 100 degrees */
-	public static double getSteamBucketEnergyToHeat(int Tinit) {
+	public static double getSteamBucketEnergyToHeat(int Tinit, int mB) {
 		double dT = 100-Tinit;
 		if (dT < 0)
 			dT = 0;
-		return ReikaThermoHelper.WATER_HEAT*FluidContainerRegistry.BUCKET_VOLUME*1000*dT; //4.18 kJ/kgK * 1000 kg * 1000 J/kJ * dT K
+		return ReikaThermoHelper.WATER_HEAT*mB*1000*dT; //4.18 kJ/kgK * 1000 kg * 1000 J/kJ * dT K
+	}
+
+	public static int getAmountConvertibleSteam(int Tinit, long energy) {
+		double per = getSteamEnergy(Tinit, 1);
+		return (int)(energy/per);
 	}
 
 }

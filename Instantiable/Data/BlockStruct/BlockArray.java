@@ -183,15 +183,15 @@ public class BlockArray {
 	}
 
 	public final int getSizeX() {
-		return maxX-minX+1;
+		return this.isEmpty() ? 0 : maxX-minX+1;
 	}
 
 	public final int getSizeY() {
-		return maxY-minY+1;
+		return this.isEmpty() ? 0 : maxY-minY+1;
 	}
 
 	public final int getSizeZ() {
-		return maxZ-minZ+1;
+		return this.isEmpty() ? 0 : maxZ-minZ+1;
 	}
 
 	public final int getVolume() {

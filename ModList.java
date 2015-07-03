@@ -11,14 +11,19 @@ package Reika.DragonAPI;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 
 public enum ModList {
 
@@ -110,6 +115,7 @@ public enum ModList {
 	private static final EnumMap<ModList, Class> blockClasses = new EnumMap(ModList.class);
 	private static final EnumMap<ModList, Class> itemClasses = new EnumMap(ModList.class);
 	private static final HashMap<String, ModList> modIDs = new HashMap();
+	private static final MultiMap<ModList, ModHandlerBase> handlers = new MultiMap();
 
 	private static final Class liteClass;
 	private static final Class optiClass;
@@ -230,6 +236,19 @@ public enum ModList {
 		return ReikaStringParser.capFirstChar(this.name());
 	}
 
+	public ModContainer getModContainer() {
+		return Loader.instance().getIndexedModList().get(modLabel);
+	}
+
+	public Object getModObject() {
+		return this.getModContainer().getMod();
+	}
+
+	public String getVersion() {
+		Object o = this.getModObject();
+		return o instanceof DragonAPIMod ? ((DragonAPIMod)o).getModVersion().toString() : this.getModContainer().getVersion();
+	}
+
 	@Override
 	public String toString() {
 		return this.getModLabel();
@@ -237,6 +256,14 @@ public enum ModList {
 
 	public boolean isReikasMod() {
 		return this.ordinal() <= CHROMATICRAFT.ordinal();
+	}
+
+	public void registerHandler(ModHandlerBase h) {
+		handlers.addValue(this, h);
+	}
+
+	public Collection<ModHandlerBase> getHandlers() {
+		return handlers.get(this);
 	}
 
 	public static List<ModList> getReikasMods() {

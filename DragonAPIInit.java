@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -61,6 +62,10 @@ import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry;
 import Reika.DragonAPI.Auxiliary.Trackers.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
+import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Base.ModHandlerBase.SearchVersionHandler;
+import Reika.DragonAPI.Base.ModHandlerBase.VersionHandler;
+import Reika.DragonAPI.Base.ModHandlerBase.VersionIgnore;
 import Reika.DragonAPI.Command.BlockReplaceCommand;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
@@ -97,7 +102,6 @@ import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaThaumHelper;
-import Reika.DragonAPI.ModInteract.DeepInteract.SmelteryRecipeHandler;
 import Reika.DragonAPI.ModInteract.DeepInteract.TwilightForestLootHooks;
 import Reika.DragonAPI.ModInteract.ItemHandlers.AppEngHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BCMachineHandler;
@@ -113,6 +117,7 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.ForestryHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.GalacticCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.IC2Handler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.LegacyMagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MFRHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MagicaOreHandler;
@@ -133,7 +138,9 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerBlockHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TransitionalOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.VeryLegacyMagicCropHandler;
 import Reika.DragonAPI.ModInteract.RecipeHandlers.ForestryRecipeHelper;
+import Reika.DragonAPI.ModInteract.RecipeHandlers.SmelteryRecipeHandler;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 import Reika.DragonAPI.ModRegistry.ModOreList;
@@ -339,7 +346,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Andrew Jones", 10);
 		PatreonController.instance.addPatron(this, "Steven Kane", 40);
 		PatreonController.instance.addPatron(this, "motsop", 1);
-		PatreonController.instance.addPatron(this, "Luc Levesque", "d0ffe97b-3370-4135-8218-4399e7ec5184", 5); //Demethan
+		PatreonController.instance.addPatron(this, "Demethan", "d0ffe97b-3370-4135-8218-4399e7ec5184", 5); //Luc Levesque
 		PatreonController.instance.addPatron(this, "David Harris", 1);
 		PatreonController.instance.addPatron(this, "Michael Vaarning", 5);
 		PatreonController.instance.addPatron(this, "Renato", 1);
@@ -365,6 +372,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Haggle1996", "bb7c2ac3-72aa-4ad8-8e00-4e0fb67a51ec", 10);
 		PatreonController.instance.addPatron(this, "acnotalpha", "dc7496be-2408-4c7e-a65e-6beb53355fa7", 10); //Jeremiah Winsley
 		PatreonController.instance.addPatron(this, "Lavious", "7fb32de9-4d98-4d1f-9264-43bd1edf0ae0", 1);
+		PatreonController.instance.addPatron(this, "quok98", "f573f6a0-9e08-482a-9985-29c5bb89c4f4", 10); //Rich Edelman
 
 		CommandableUpdateChecker.instance.checkAll();
 
@@ -564,41 +572,43 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	private void loadHandlers() {
-		this.initHandler(ModList.BCFACTORY, BCMachineHandler.class);
-		this.initHandler(ModList.BCTRANSPORT, BCPipeHandler.class);
-		this.initHandler(ModList.THAUMCRAFT, ThaumOreHandler.class);
-		this.initHandler(ModList.THAUMCRAFT, ThaumBiomeHandler.class);
-		this.initHandler(ModList.DARTCRAFT, DartOreHandler.class);
-		this.initHandler(ModList.DARTCRAFT, DartItemHandler.class);
-		this.initHandler(ModList.TINKERER, TinkerToolHandler.class);
-		this.initHandler(ModList.TINKERER, TinkerBlockHandler.class);
-		this.initHandler(ModList.TWILIGHT, TwilightForestHandler.class);
-		this.initHandler(ModList.MEKANISM, MekanismHandler.class);
-		this.initHandler(ModList.MEKTOOLS, MekToolHandler.class);
-		this.initHandler(ModList.TRANSITIONAL, TransitionalOreHandler.class);
-		this.initHandler(ModList.IC2, IC2Handler.class);
-		this.initHandler(ModList.ARSMAGICA, MagicaOreHandler.class);
-		this.initHandler(ModList.APPENG, AppEngHandler.class);
-		this.initHandler(ModList.FORESTRY, ForestryHandler.class);
-		this.initHandler(ModList.FORESTRY, ForestryRecipeHelper.class);
-		this.initHandler(ModList.THERMALFOUNDATION, ThermalHandler.class);
-		this.initHandler(ModList.MIMICRY, MimicryHandler.class);
-		this.initHandler(ModList.MAGICCROPS, MagicCropHandler.class);
-		this.initHandler(ModList.QCRAFT, QuantumOreHandler.class);;
-		this.initHandler(ModList.TINKERER, OreBerryBushHandler.class);
-		this.initHandler(ModList.NATURA, BerryBushHandler.class);
-		this.initHandler(ModList.OPENBLOCKS, OpenBlockHandler.class);
-		this.initHandler(ModList.FACTORIZATION, FactorizationHandler.class);
-		this.initHandler(ModList.HARVESTCRAFT, HarvestCraftHandler.class);
-		this.initHandler(ModList.ARSENAL, RedstoneArsenalHandler.class);
-		this.initHandler(ModList.RAILCRAFT, RailcraftHandler.class);
-		this.initHandler(ModList.MINEFACTORY, MFRHandler.class);
-		this.initHandler(ModList.GALACTICRAFT, GalacticCraftHandler.class);
-		this.initHandler(ModList.EXTRAUTILS, ExtraUtilsHandler.class);
-		this.initHandler(ModList.MYSTCRAFT, MystCraftHandler.class);
-		this.initHandler(ModList.BLOODMAGIC, BloodMagicHandler.class);
-		this.initHandler(ModList.PNEUMATICRAFT, PneumaticPlantHandler.class);
-		this.initHandler(ModList.BOP, BoPBlockHandler.class);
+		this.registerHandler(ModList.BCFACTORY, BCMachineHandler.class);
+		this.registerHandler(ModList.BCTRANSPORT, BCPipeHandler.class);
+		this.registerHandler(ModList.THAUMCRAFT, ThaumOreHandler.class);
+		this.registerHandler(ModList.THAUMCRAFT, ThaumBiomeHandler.class);
+		this.registerHandler(ModList.DARTCRAFT, DartOreHandler.class);
+		this.registerHandler(ModList.DARTCRAFT, DartItemHandler.class);
+		this.registerHandler(ModList.TINKERER, TinkerToolHandler.class);
+		this.registerHandler(ModList.TINKERER, TinkerBlockHandler.class);
+		this.registerHandler(ModList.TWILIGHT, TwilightForestHandler.class);
+		this.registerHandler(ModList.MEKANISM, MekanismHandler.class);
+		this.registerHandler(ModList.MEKTOOLS, MekToolHandler.class);
+		this.registerHandler(ModList.TRANSITIONAL, TransitionalOreHandler.class);
+		this.registerHandler(ModList.IC2, IC2Handler.class);
+		this.registerHandler(ModList.ARSMAGICA, MagicaOreHandler.class);
+		this.registerHandler(ModList.APPENG, AppEngHandler.class);
+		this.registerHandler(ModList.FORESTRY, ForestryHandler.class);
+		this.registerHandler(ModList.FORESTRY, ForestryRecipeHelper.class);
+		this.registerHandler(ModList.THERMALFOUNDATION, ThermalHandler.class);
+		this.registerHandler(ModList.MIMICRY, MimicryHandler.class);
+		this.registerHandler(ModList.MAGICCROPS, MagicCropHandler.class, new SearchVersionHandler("4.0.0_PUBLIC_BETA")); //Newest
+		this.registerHandler(ModList.MAGICCROPS, LegacyMagicCropHandler.class, new SearchVersionHandler("4.0.0_BETA")); //Private Beta
+		this.registerHandler(ModList.MAGICCROPS, VeryLegacyMagicCropHandler.class, new SearchVersionHandler("1.7.2 - 0.1 ALPHA")); //1.7.10 alpha
+		this.registerHandler(ModList.QCRAFT, QuantumOreHandler.class);;
+		this.registerHandler(ModList.TINKERER, OreBerryBushHandler.class);
+		this.registerHandler(ModList.NATURA, BerryBushHandler.class);
+		this.registerHandler(ModList.OPENBLOCKS, OpenBlockHandler.class);
+		this.registerHandler(ModList.FACTORIZATION, FactorizationHandler.class);
+		this.registerHandler(ModList.HARVESTCRAFT, HarvestCraftHandler.class);
+		this.registerHandler(ModList.ARSENAL, RedstoneArsenalHandler.class);
+		this.registerHandler(ModList.RAILCRAFT, RailcraftHandler.class);
+		this.registerHandler(ModList.MINEFACTORY, MFRHandler.class);
+		this.registerHandler(ModList.GALACTICRAFT, GalacticCraftHandler.class);
+		this.registerHandler(ModList.EXTRAUTILS, ExtraUtilsHandler.class);
+		this.registerHandler(ModList.MYSTCRAFT, MystCraftHandler.class);
+		this.registerHandler(ModList.BLOODMAGIC, BloodMagicHandler.class);
+		this.registerHandler(ModList.PNEUMATICRAFT, PneumaticPlantHandler.class);
+		this.registerHandler(ModList.BOP, BoPBlockHandler.class);
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);
@@ -613,10 +623,21 @@ public class DragonAPIInit extends DragonAPIMod {
 		ModOreList.initializeAll();
 	}
 
-	private void initHandler(ModList mod, Class c) {
+	private void registerHandler(ModList mod, Class<? extends ModHandlerBase> c) {
+		this.registerHandler(mod, c, new VersionIgnore());
+	}
+
+	private void registerHandler(ModList mod, Class<? extends ModHandlerBase> c, VersionHandler vh) {
 		if (mod.isLoaded()) {
 			try {
-				ReikaJavaLibrary.initClass(c);
+				String ver = mod.getVersion();
+				if (vh.acceptVersion(ver)) {
+					this.initHandler(mod, c);
+					logger.log("Loading handler "+c+" for mod "+mod+" "+ver+".");
+				}
+				else {
+					logger.log("Not loading handler "+c+" for "+mod.getDisplayName()+"; Version "+ver+" not compatible with "+vh.toString()+".");
+				}
 			}
 			catch (Exception e) {
 				logger.logError("Could not load handler for "+mod.name());
@@ -630,6 +651,13 @@ public class DragonAPIInit extends DragonAPIMod {
 		else {
 			logger.log("Not loading handler for "+mod.getDisplayName()+"; Mod not present.");
 		}
+	}
+
+	private void initHandler(ModList mod, Class<? extends ModHandlerBase> c) throws Exception {
+		ReikaJavaLibrary.initClass(c);
+		Field inst = c.getField("instance");
+		ModHandlerBase h = (ModHandlerBase)inst.get(null);
+		mod.registerHandler(h);
 	}
 
 	public static boolean canLoadHandlers() {

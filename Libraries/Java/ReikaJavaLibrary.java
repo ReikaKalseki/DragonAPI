@@ -9,10 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -27,7 +32,12 @@ import java.util.Map.Entry;
 
 import net.minecraft.world.World;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -41,6 +51,8 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	private static int maxRecurse = -1;
 	public static boolean dumpStack = false;
 	public static boolean silent = false;
+
+	private static final boolean printClasses = ReikaJVMParser.isArgumentPresent("-DragonAPI_printClassInit");
 
 	private static final HashMap<String, Object> threadLock = new HashMap();
 
@@ -209,6 +221,8 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 
 	/** Initializes a class. */
 	public static void initClass(Class c) {
+		if (printClasses)
+			printClassMetadata(c);
 		if (c == null) {
 			pConsole("DRAGONAPI: Cannot initalize a null class!");
 			dumpStack();
@@ -220,10 +234,20 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		catch (ClassNotFoundException e) {
 			pConsole("DRAGONAPI: Failed to initalize class "+c.getName()+"! Class not found!");
 			e.printStackTrace();
+			printClassMetadata(c);
+			//printClassASM(c); //, "ErroredClasses/"
 		}
 		catch (NoClassDefFoundError e) {
 			pConsole("DRAGONAPI: Failed to initalize class "+c.getName()+"! Class not found!");
 			e.printStackTrace();
+			printClassMetadata(c);
+			//printClassASM(c);
+		}
+		catch (LinkageError e) {
+			pConsole("DRAGONAPI: Failed to initalize class "+c.getName()+"! Class not found!");
+			e.printStackTrace();
+			printClassMetadata(c);
+			//printClassASM(c);
 		}
 		catch (RuntimeException e) {
 			pConsole("DRAGONAPI: Failed to initalize class "+c.getName()+"!");
@@ -231,6 +255,217 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			if (s.endsWith("for invalid side SERVER")) {
 				pConsole("Attemped to load a clientside class on the server! This is a significant programming error!");
 			}
+			e.printStackTrace();
+		}
+	}
+
+	public static void printClassSource(Class c, String path) {
+		printClassSource(path+c.getName(), getClassBytes(c));
+	}
+
+	public static void printClassMetadata(Class c) {
+		printClassMetadata(c.getName(), c);
+	}
+
+	public static void printClassASM(Class c) {
+		printClassASM(c.getName(), getClassBytes(c));
+	}
+
+	public static void printClassSource(Class c) {
+		printClassSource(c.getName(), getClassBytes(c));
+	}
+
+	public static byte[] getClassBytes(Class c) {
+		String className = c.getName();
+		String classAsPath = className.replace('.', '/')+".class";
+		InputStream stream = c.getClassLoader().getResourceAsStream(classAsPath);
+		try {
+			return IOUtils.toByteArray(stream);
+		}
+		catch (IOException e) {
+			pConsole("DRAGONAPI: Error converting class to byte[]!");
+			e.printStackTrace();
+			return new byte[0];
+		}
+	}
+
+	public static void printClassMetadata(String path, Class c) {
+		String filename = path+".classdata";
+		try {
+			File f = new File(filename);
+			f.createNewFile();
+			BufferedWriter p = new BufferedWriter(new PrintWriter(f));
+			printClassMetadata(p, c);
+			p.close();
+		}
+		catch (IOException e) {
+			pConsole("DRAGONAPI: Error printing class data!");
+			e.printStackTrace();
+		}
+	}
+
+	private static void printClassMetadata(BufferedWriter p, Class c) throws IOException {
+		try {
+			p.write("General:\n");
+			p.write("\t"+c.getName()+"\n");
+			p.write("\tAnnotations: "+Arrays.toString(c.getAnnotations())+"\n");
+			p.write("\tModifiers: "+Integer.toBinaryString(c.getModifiers())+"\n");
+			p.write("\tSuperclass: "+c.getSuperclass()+"\n");
+			p.write("\tInterfaces: "+Arrays.toString(c.getInterfaces())+"\n");
+			p.write("\tSynthetic: "+c.isSynthetic()+"\n");
+			p.write("\n\n");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+
+		try {
+			p.write("Internal Classes:\n");
+			for (Class cs : c.getDeclaredClasses()) {
+				try {
+					printClassMetadata(p, cs);
+				}
+				catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			p.write("\n\n");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+
+		try {
+			p.write("Constructors:\n");
+			for (Constructor cs : c.getDeclaredConstructors()) {
+				try {
+					p.write("\t\tAnnotations: "+Arrays.toString(cs.getAnnotations())+"\n");
+					p.write("\t\tModifiers: "+Integer.toBinaryString(cs.getModifiers())+"\n");
+					p.write("\t\tSignature: "+Arrays.toString(cs.getParameterTypes())+"\n");
+					p.write("\t\tExceptions: "+Arrays.toString(cs.getExceptionTypes())+"\n");
+					p.write("\tSynthetic: "+cs.isSynthetic()+"\n");
+				}
+				catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			p.write("\n\n");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+
+		try {
+			p.write("Fields:\n");
+			for (Field fd : c.getDeclaredFields()) {
+				try {
+					p.write("\t"+fd.getName()+"\n");
+					p.write("\t\tAnnotations: "+Arrays.toString(fd.getAnnotations())+"\n");
+					p.write("\t\tModifiers: "+Integer.toBinaryString(fd.getModifiers())+"\n");
+					p.write("\t\tType: "+fd.getType()+"\n");
+					p.write("\tSynthetic: "+fd.isSynthetic()+"\n");
+				}
+				catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			p.write("\n\n");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+
+		try {
+			p.write("Methods:\n");
+			for (Method m : c.getDeclaredMethods()) {
+				try {
+					p.write("\t"+m.getName());
+					p.write("\t\tAnnotations: "+Arrays.toString(m.getAnnotations())+"\n");
+					p.write("\t\tModifiers: "+Integer.toBinaryString(m.getModifiers())+"\n");
+					p.write("\t\tSignature: "+Arrays.toString(m.getParameterTypes())+"\n");
+					p.write("\t\tExceptions: "+Arrays.toString(m.getExceptionTypes())+"\n");
+					p.write("\t\tReturn: "+m.getReturnType()+"\n");
+					p.write("\tSynthetic: "+m.isSynthetic()+"\n");
+				}
+				catch (Throwable t) {
+					t.printStackTrace();
+				}
+			}
+			p.write("\n\n");
+		}
+		catch (Throwable t) {
+			t.printStackTrace();
+		}
+	}
+
+	public static void printClassASM(String path, byte[] data) {
+		ClassReader reader = new ClassReader(data);
+		ClassNode classNode = new ClassNode();
+		reader.accept(classNode,0);
+		final List<MethodNode> methods = classNode.methods;
+		String filename = path+".asm";
+		try {
+			File f = new File(filename);
+			f.createNewFile();
+			BufferedWriter p = new BufferedWriter(new PrintWriter(f));
+			for (MethodNode m : methods) {
+				InsnList inList = m.instructions;
+				p.write(m.name);
+				for (int i = 0; i < inList.size(); i++){
+					p.write(ReikaASMHelper.clearString(inList.get(i)));
+				}
+			}
+
+			p.close();
+		}
+		catch (IOException e) {
+			pConsole("DRAGONAPI: Error printing class ASM!");
+			e.printStackTrace();
+		}
+	}
+
+	public static void printClassSource(String path, byte[] data) {
+		//read in, build classNode
+		/*
+		ClassNode classNode = new ClassNode();
+		ClassReader cr = new ClassReader(data);
+		cr.accept(classNode, 0);
+
+		//peek at classNode and modifier
+		List<MethodNode> methods = classNode.methods;
+		for (MethodNode method : methods) {
+			System.out.println("name = "+method.name+" desc = "+method.desc);
+			InsnList insnList = method.instructions;
+			Iterator ite = insnList.iterator();
+
+			while(ite.hasNext()) {
+				AbstractInsnNode insn = (AbstractInsnNode)ite.next();
+				int opcode = insn.getOpcode();
+				//add before return: System.out.println("Returning ... ")
+				if (opcode == Opcodes.RETURN) {
+					InsnList tempList = new InsnList();
+					tempList.add(new FieldInsnNode(Opcodes.GETSTATIC, "java/lang/System", "out", "Ljava/io/PrintStream;"));
+					tempList.add(new LdcInsnNode("Returning ... "));
+					tempList.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL,"java/io/PrintStream","println", "(Ljava/lang/String;)V"));
+					insnList.insert(insn.getPrevious(), tempList);
+					method.maxStack += 2;
+				}
+			}
+		}
+
+		//write classNode
+		ClassWriter out = new ClassWriter(0);
+		classNode.accept(out);
+		data = out.toByteArray() */
+
+		String filename = path+".class";
+		try {
+			FileOutputStream fos = new FileOutputStream(filename);
+			fos.write(data);
+			fos.close();
+		}
+		catch (IOException e) {
+			pConsole("DRAGONAPI: Error printing class!");
 			e.printStackTrace();
 		}
 	}

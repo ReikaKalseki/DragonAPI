@@ -33,6 +33,7 @@ public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 		Launch.classLoader.addTransformerExclusion("Reika.RotaryCraft.Auxiliary.RotaryIntegrationManager");
 
 		Launch.classLoader.addTransformerExclusion("Reika.DragonAPI.Libraries.Java.ReikaASMHelper");
+		Launch.classLoader.addTransformerExclusion("Reika.DragonAPI.Libraries.Java.ReikaJVMParser");
 		Launch.classLoader.addTransformerExclusion("Reika.DragonAPI.Exception.ASMException");
 
 		Launch.classLoader.addTransformerExclusion("Reika.DragonAPI.ModInteract.BannedItemReader");

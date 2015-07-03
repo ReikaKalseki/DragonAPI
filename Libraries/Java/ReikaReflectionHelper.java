@@ -317,6 +317,38 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		public boolean isValid(Field f) {
 			return f.getType() == type;
 		}
-	};
+	}
+
+	public static boolean checkForField(Class c, String name, int... modifiers) {
+		try {
+			Field f = c.getDeclaredField(name);
+			for (int i = 0; i < modifiers.length; i++) {
+				int mod = modifiers[i];
+				if ((f.getModifiers() & mod) == 0) {
+					return false;
+				}
+			}
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
+
+	public static boolean checkForMethod(Class c, String name, Class[] args, int... modifiers) {
+		try {
+			Method f = c.getDeclaredMethod(name, args);
+			for (int i = 0; i < modifiers.length; i++) {
+				int mod = modifiers[i];
+				if ((f.getModifiers() & mod) == 0) {
+					return false;
+				}
+			}
+			return true;
+		}
+		catch (Exception e) {
+			return false;
+		}
+	}
 
 }

@@ -28,7 +28,6 @@ import net.minecraftforge.event.world.WorldEvent;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Interfaces.ChunkLoadingTile;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -92,18 +91,23 @@ public class ChunkManager implements LoadingCallback {
 	}
 
 	public void unloadChunks(WorldLocation loc) {
-		Ticket ticket = tickets.get(loc);
+		Ticket ticket = tickets.remove(loc);
+		//ReikaJavaLibrary.pConsole("Unloading "+ticket+" with "+ticket.getChunkList());
 		ForgeChunkManager.releaseTicket(ticket);
 	}
 
-	public void loadChunks(ChunkLoadingTile te) {
-		WorldLocation loc = new WorldLocation((TileEntity)te);
+	public void loadChunks(WorldLocation loc, Collection<ChunkCoordIntPair> chunks) {
 		Ticket ticket = tickets.get(loc);
 		if (ticket == null) {
 			ticket = this.getNewTicket(loc);
 			this.cacheTicket(loc, ticket);
 		}
-		this.forceTicketChunks(ticket, te.getChunksToLoad());
+		this.forceTicketChunks(ticket, chunks);
+	}
+
+	public void loadChunks(ChunkLoadingTile te) {
+		WorldLocation loc = new WorldLocation((TileEntity)te);
+		this.loadChunks(loc, te.getChunksToLoad());
 	}
 
 	private Ticket getNewTicket(WorldLocation loc) {
@@ -117,16 +121,16 @@ public class ChunkManager implements LoadingCallback {
 
 	private void forceTicketChunks(Ticket ticket, Collection<ChunkCoordIntPair> chunks) {
 		ImmutableSet<ChunkCoordIntPair> ticketChunks = ticket.getChunkList();
-		ReikaJavaLibrary.pConsole("Parsing ticket "+ticket+", world="+ticket.world+", mod="+ticket.getModId()+", chunks="+chunks);
+		//ReikaJavaLibrary.pConsole("Parsing ticket "+ticket+", world="+ticket.world+", mod="+ticket.getModId()+", chunks="+chunks);
 		for (ChunkCoordIntPair coord : ticketChunks) {
 			if (!chunks.contains(coord)) {
-				ReikaJavaLibrary.pConsole("Unforcing chunk "+coord.chunkXPos+", "+coord.chunkZPos);
+				//ReikaJavaLibrary.pConsole("Unforcing chunk "+coord.chunkXPos+", "+coord.chunkZPos);
 				ForgeChunkManager.unforceChunk(ticket, coord);
 			}
 		}
 		for (ChunkCoordIntPair coord : chunks) {
 			if (!ticketChunks.contains(coord)) {
-				ReikaJavaLibrary.pConsole("Forcing chunk "+coord.chunkXPos+", "+coord.chunkZPos);
+				//ReikaJavaLibrary.pConsole("Forcing chunk "+coord.chunkXPos+", "+coord.chunkZPos);
 				ForgeChunkManager.forceChunk(ticket, coord);
 			}
 		}

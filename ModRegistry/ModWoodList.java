@@ -183,7 +183,7 @@ public enum ModWoodList implements TreeType {
 			case INSTANCE: {
 				Block wood_b = this.loadBlock(cl, blockVar);
 				Block leaf_b = this.loadBlock(cl, leafVar);
-				Block sapling_b = this.loadBlock(cl, leafVar);
+				Block sapling_b = this.loadBlock(cl, saplingVar);
 				if (wood_b == null || leaf_b == null || sapling_b == null) {
 					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
 					return;

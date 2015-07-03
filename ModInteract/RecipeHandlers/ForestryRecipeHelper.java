@@ -20,6 +20,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Instantiable.Data.Collections.ChancedOutputList;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.SemanticVersionParser;
 
 public class ForestryRecipeHelper extends ModHandlerBase {
 
@@ -36,8 +37,10 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 
 		if (this.hasMod()) {
 			try {
-				Class centri = Class.forName("forestry.factory.gadgets.MachineCentrifuge$RecipeManager");
-				Class recipe = Class.forName("forestry.factory.gadgets.MachineCentrifuge$Recipe");
+				String pre = "forestry.factory.gadgets.MachineCentrifuge$";
+				Class centri = Class.forName(pre+"RecipeManager");
+				String rec = SemanticVersionParser.isVersionAtLeast(this.getMod().getVersion(), "3.6") ? pre+"Recipe" : pre+"CentrifugeRecipe";
+				Class recipe = Class.forName(rec);
 				Field list = centri.getField("recipes");
 				Field input = recipe.getField("resource");
 				Field output = recipe.getField("products");

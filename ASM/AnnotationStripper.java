@@ -28,6 +28,7 @@ import org.objectweb.asm.tree.InnerClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
+import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
@@ -43,6 +44,7 @@ class AnnotationStripper {
 	static String side;
 
 	private static final boolean DEBUG = true;
+	private static final boolean printClass = ReikaJVMParser.isArgumentPresent("-DragonAPI_printStripped");
 
 	static {
 		strippableDesc = Type.getDescriptor(Strippable.class);
@@ -67,6 +69,9 @@ class AnnotationStripper {
 				ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_FRAMES);
 				cn.accept(cw);
 				bytes = cw.toByteArray();
+				if (printClass) {
+					ReikaJavaLibrary.printClassSource("StrippedClasses/"+name.replace('.', '/'), bytes);
+				}
 			}
 		}
 		workingPath.remove(workingPath.size() - 1);
