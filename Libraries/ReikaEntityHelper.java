@@ -9,9 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -76,6 +78,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Interfaces.TameHostile;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -91,12 +94,77 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		}
 	};
 
+
 	public static final IEntitySelector itemOrXPSelector = new IEntitySelector() {
 		@Override
 		public boolean isEntityApplicable(Entity e) {
 			return e instanceof EntityItem || e instanceof EntityXPOrb;
 		}
 	};
+
+	public static final class ClassEntitySelector implements IEntitySelector {
+
+		private final Class classType;
+
+		public ClassEntitySelector(Class c) {
+			classType = c;
+		}
+
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			return e.getClass() == classType;
+		}
+
+	}
+
+	public static final class SpecificItemSelector implements IEntitySelector {
+
+		private final KeyedItemStack item;
+
+		public SpecificItemSelector(KeyedItemStack ks) {
+			item = ks;
+		}
+
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			return e instanceof EntityItem && item.match(((EntityItem)e).getEntityItem());
+		}
+	};
+
+	public static final class MultiItemSelector implements IEntitySelector {
+
+		private final HashSet<KeyedItemStack> items = new HashSet();
+
+		public MultiItemSelector(Collection<KeyedItemStack> c) {
+			for (KeyedItemStack ks : c) {
+				items.add(ks.copy().setSimpleHash(true));
+			}
+		}
+
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			if (e instanceof EntityItem) {
+				KeyedItemStack ks = new KeyedItemStack(((EntityItem)e).getEntityItem()).setSimpleHash(true);
+				return items.contains(ks);
+			}
+			return false;
+		}
+	};
+
+	public static final class EntityIDSelector implements IEntitySelector {
+
+		private final int entityID;
+
+		public EntityIDSelector(int id) {
+			entityID = id;
+		}
+
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			return EntityList.getEntityID(e) == entityID;
+		}
+
+	}
 
 	/** provides a mapping between an Entity Class and an entity ID */
 	private static Map<Class, Integer> classToIDMapping = new HashMap();
@@ -758,6 +826,14 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		is.stackSize -= rem;
 		if (is.stackSize <= 0)
 			ei.setDead();
+	}
+
+	public static void clearEntities(World world, IEntitySelector sel) {
+		for (Entity e : ((List<Entity>)world.loadedEntityList)) {
+			if (sel == null || sel.isEntityApplicable(e)) {
+				e.setDead();
+			}
+		}
 	}
 
 }

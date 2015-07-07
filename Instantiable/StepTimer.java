@@ -9,9 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import java.util.Random;
+
 import net.minecraft.nbt.NBTTagCompound;
 
-public class StepTimer {
+public final class StepTimer {
 
 	private int value;
 	private int cap;
@@ -49,6 +51,10 @@ public class StepTimer {
 
 	public void setTick(int tick) {
 		value = tick;
+	}
+
+	public void randomizeTick(Random r) {
+		this.setTick(r.nextInt(cap));
 	}
 
 	public int getTick() {

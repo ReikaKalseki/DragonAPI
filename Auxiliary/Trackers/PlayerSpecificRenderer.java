@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Map;
 import java.util.UUID;
 
@@ -39,7 +40,7 @@ public final class PlayerSpecificRenderer {
 
 	public static final PlayerSpecificRenderer instance = new PlayerSpecificRenderer();
 
-	private final MultiMap<UUID, PlayerRenderObj> renders = new MultiMap().setNullEmpty();
+	private final MultiMap<UUID, PlayerRenderObj> renders = new MultiMap().setNullEmpty().setOrdered(new RenderComparator());
 
 	private final ReikaModel modelReika = new ReikaModel();
 	private final SamakiModel modelSamaki = new SamakiModel();
@@ -102,6 +103,11 @@ public final class PlayerSpecificRenderer {
 				GL11.glFrontFace(GL11.GL_CCW);
 				GL11.glPopMatrix();
 			}
+		}
+
+		@Override
+		public int getRenderPriority() {
+			return Integer.MIN_VALUE;
 		}
 	}
 
@@ -204,6 +210,17 @@ public final class PlayerSpecificRenderer {
 
 		public float getRenderPitch() {
 			return renderPitch;
+		}
+
+	}
+
+	private static class RenderComparator implements Comparator<PlayerRenderObj> {
+
+		@Override
+		public int compare(PlayerRenderObj o1, PlayerRenderObj o2) {
+			int p1 = o1.getRenderPriority();
+			int p2 = o2.getRenderPriority();
+			return p1 < p2 ? -1 : p1 > p2 ? 1 : 0;
 		}
 
 	}

@@ -72,7 +72,7 @@ public enum ModList {
 	TREECAPITATOR("TreeCapitator"),
 	HARVESTCRAFT("harvestcraft", "com.pam.harvestcraft.BlockRegistry", "com.pam.harvestcraft.ItemRegistry"),
 	MYSTCRAFT("Mystcraft", new String[]{"com.xcompwiz.mystcraft.api.MystObjects", "com.xcompwiz.mystcraft.api.MystObjects.Blocks"}, new String[]{"com.xcompwiz.mystcraft.api.MystObjects", "com.xcompwiz.mystcraft.api.MystObjects.Items"}),
-	MAGICCROPS("magicalcrops", "com.mark719.magicalcrops.handlers.MBlocks", "com.mark719.magicalcrops.handlers.MItems"),
+	MAGICCROPS("magicalcrops", new String[]{"com.mark719.magicalcrops.MagicalCrops", "com.mark719.magicalcrops.handlers.MBlocks"}, new String[]{"com.mark719.magicalcrops.MagicalCrops", "com.mark719.magicalcrops.handlers.MItems"}),
 	MIMICRY("Mimicry", "com.sparr.mimicry.block.MimicryBlock", "com.sparr.mimicry.item.MimicryItem"),
 	QCRAFT("QuantumCraft", "dan200.QCraft"),
 	OPENBLOCKS("OpenBlocks", "openblocks.OpenBlocks$Blocks", "openblocks.OpenBlocks$Items"),

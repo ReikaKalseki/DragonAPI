@@ -16,7 +16,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 public final class KeyedItemStack {
 
 	private final ItemStack item;
-	private boolean[] enabledCriteria = new boolean[Criteria.list.length];
+	private final boolean[] enabledCriteria = new boolean[Criteria.list.length];
 	private boolean lock = false;
 	private boolean simpleHash = false;
 
@@ -92,6 +92,15 @@ public final class KeyedItemStack {
 		return true;
 	}
 
+	public boolean match(ItemStack is) {
+		KeyedItemStack ks = new KeyedItemStack(is);
+		ks.setSimpleHash(simpleHash);
+		for (int i = 0; i < Criteria.list.length; i++) {
+			ks.enabledCriteria[i] = enabledCriteria[i];
+		}
+		return this.equals(ks);
+	}
+
 	public ItemStack getItemStack() {
 		return item.copy();
 	}
@@ -107,6 +116,16 @@ public final class KeyedItemStack {
 			sb.append(enabledCriteria[i] ? "1" : "0");
 		}
 		return sb.toString();
+	}
+
+	public KeyedItemStack copy() {
+		KeyedItemStack ks = new KeyedItemStack(item.copy());
+		ks.setSimpleHash(simpleHash);
+		for (int i = 0; i < Criteria.list.length; i++) {
+			ks.enabledCriteria[i] = enabledCriteria[i];
+		}
+		ks.lock = lock;
+		return ks;
 	}
 
 	private static enum Criteria {

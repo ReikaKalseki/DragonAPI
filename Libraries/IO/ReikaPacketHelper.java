@@ -625,6 +625,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		sendDataPacket(ch, id, world, x, y, z, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2}));
 	}
 
+	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, int... data) {
+		sendDataPacket(ch, id, world, x, y, z, ReikaJavaLibrary.makeIntListFromArray(data));
+	}
+
 	public static void sendLongDataPacket(String ch, int id, TileEntity te, long data) {
 		sendLongDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
 	}
@@ -1665,20 +1669,21 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
-	public static void registerVanillaPacketType(DragonAPIMod mod, int id, Class c, Side s, EnumConnectionState state) {
+	public static void registerVanillaPacketType(DragonAPIMod mod, int id, Class<? extends Packet> c, Side s, EnumConnectionState state) {
 		switch(s) {
 		case CLIENT:
 			if (state.func_150753_a().containsKey(id))
-				throw new IDConflictException(mod, "Packet "+c+" ID "+id+" is already occupied!");
+				throw new IDConflictException(mod, "Packet "+c+" ID "+id+" is already occupied by "+state.func_150753_a().get(id)+"!");
 			state.func_150753_a().put(Integer.valueOf(id), c);
 			break;
 		case SERVER:
 			if (state.func_150755_b().containsKey(id))
-				throw new IDConflictException(mod, "Packet "+c+" ID "+id+" is already occupied!");
+				throw new IDConflictException(mod, "Packet "+c+" ID "+id+" is already occupied by "+state.func_150755_b().get(id)+"!");
 			state.func_150755_b().put(Integer.valueOf(id), c);
 			break;
 		}
 		EnumConnectionState.field_150761_f.put(c, state);
+		mod.getModLogger().log("Registering vanilla-type packet "+c+" with ID "+id+" on side "+s);
 	}
 
 	public static void syncTileEntity(TileEntity tile) {

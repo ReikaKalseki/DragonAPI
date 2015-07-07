@@ -30,6 +30,7 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.NetworkManager;
 import net.minecraft.network.Packet;
@@ -40,6 +41,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.IFluidHandler;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
@@ -47,9 +49,13 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.ASM.InterfaceInjector.Injectable;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.IO.CompoundSyncPacket;
+import Reika.DragonAPI.IO.CompoundSyncPacket.CompoundSyncPacketHandler;
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
+import Reika.DragonAPI.Interfaces.DataSync;
+import Reika.DragonAPI.Interfaces.PartialInventory;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
@@ -71,7 +77,7 @@ import dan200.computercraft.api.peripheral.IPeripheral;
 
 @Injectable(value = {"dan200.computercraft.api.peripheral.IPeripheral", "li.cil.oc.api.network.Environment",
 "li.cil.oc.api.network.ManagedPeripheral"})
-public abstract class TileEntityBase extends TileEntity {
+public abstract class TileEntityBase extends TileEntity implements CompoundSyncPacketHandler {
 
 	protected static final Random rand = new Random();
 	private int pseudometa;
@@ -107,9 +113,10 @@ public abstract class TileEntityBase extends TileEntity {
 	public TileEntityBase() {
 		super();
 		updateTimer = new StepTimer(this.getBlockUpdateDelay());
+		updateTimer.randomizeTick(rand);
 		//packetTimer = new StepTimer(this.getPacketDelay());
 		fullSyncTimer = new StepTimer(1200);
-		fullSyncTimer.setTick(rand.nextInt(1200));
+		fullSyncTimer.randomizeTick(rand);
 	}
 
 	public boolean allowTickAcceleration() {
@@ -125,7 +132,7 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	public int getPacketDelay() {
-		return 5;
+		return DragonOptions.SLOWSYNC.getState() ? 20 : 5;
 	}
 
 	public void animateItem() {
@@ -266,14 +273,24 @@ public abstract class TileEntityBase extends TileEntity {
 	}
 
 	@Override
+	public final void handleCompoundSyncPacket(CompoundSyncPacket p) {
+		if (!p.hasNoData()) {
+			NBTTagCompound NBT = new NBTTagCompound();
+			this.writeSyncTag(NBT); //so unsent fields do not zero out, we sync the current values in
+			p.readForSync(this, NBT);
+			this.readSyncTag(NBT);
+		}
+	}
+
+	@Override
 	public final void onDataPacket(NetworkManager netManager, S35PacketUpdateTileEntity packet)
 	{
-		if (packet instanceof SyncPacket) {
-			SyncPacket p = (SyncPacket)packet;
+		if (packet instanceof DataSync) {
+			DataSync p = (DataSync)packet;
 			if (!p.hasNoData()) {
 				NBTTagCompound NBT = new NBTTagCompound();
 				this.writeSyncTag(NBT); //so unsent fields do not zero out, we sync the current values in
-				p.readForSync(NBT);
+				p.readForSync(this, NBT);
 				this.readSyncTag(NBT);
 			}
 		}
@@ -432,8 +449,8 @@ public abstract class TileEntityBase extends TileEntity {
 				this.forceFullSync();
 			}
 
-			if (this.shouldSendSyncPacket() || this.shouldFullSync()) {
-				if (this.shouldSendSyncPackets()) {
+			if (this.shouldSendSyncPackets()) {
+				if (this.shouldSendSyncPacket() || this.shouldFullSync()) {
 					this.sendSyncPacket();
 				}
 			}
@@ -464,16 +481,21 @@ public abstract class TileEntityBase extends TileEntity {
 	private void sendSyncPacket() {
 		NBTTagCompound nbt = new NBTTagCompound();
 		this.writeSyncTag(nbt);
+		//if (DragonOptions.COMPOUNDSYNC.getState()) {
+		//	CompoundSyncPacket.instance.setData(this, this.shouldFullSync(), nbt);
+		//}
+		//else {
 		syncTag.setData(this, this.shouldFullSync(), nbt);
-		forceSync = false;
 		if (!syncTag.isEmpty()) {
-			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
 			int r = this.shouldFullSync() ? 128 : this.getUpdatePacketRadius();
 			int dim = worldObj.provider.dimensionId;
 			//PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, syncTag);
 			this.sendPacketToAllAround(syncTag, r);
 			//DragonAPIInit.instance.getModLogger().debug("Packet "+syncTag+" sent from "+this);
 		}
+		//}
+		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+		forceSync = false;
 	}
 
 	public int getUpdatePacketRadius() {
@@ -778,4 +800,12 @@ public abstract class TileEntityBase extends TileEntity {
 	public void onDisconnect(Node node) {}
 	@ModDependent(ModList.OPENCOMPUTERS)
 	public void onMessage(Message message) {}
+
+	public final boolean hasAnInventory() {
+		return this instanceof PartialInventory ? ((PartialInventory)this).hasInventory() : this instanceof IInventory;
+	}
+
+	public final boolean hasATank() {
+		return this instanceof PartialInventory ? ((PartialInventory)this).hasInventory() : this instanceof IFluidHandler;
+	}
 }

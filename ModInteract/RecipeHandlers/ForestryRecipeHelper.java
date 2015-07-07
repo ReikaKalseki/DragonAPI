@@ -39,7 +39,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 			try {
 				String pre = "forestry.factory.gadgets.MachineCentrifuge$";
 				Class centri = Class.forName(pre+"RecipeManager");
-				String rec = SemanticVersionParser.isVersionAtLeast(this.getMod().getVersion(), "3.6") ? pre+"Recipe" : pre+"CentrifugeRecipe";
+				String rec = SemanticVersionParser.isVersionAtLeast(this.getMod().getVersion(), "3.6") ? pre+"CentrifugeRecipe" : pre+"Recipe";
 				Class recipe = Class.forName(rec);
 				Field list = centri.getField("recipes");
 				Field input = recipe.getField("resource");

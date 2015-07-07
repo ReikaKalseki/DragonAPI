@@ -25,7 +25,10 @@ public enum DragonOptions implements ConfigList {
 	CUSTOMRENDER("Custom/Donator Renders", true),
 	OPONLYUPDATE("Only show update notice to Ops or SSP", false),
 	PACKONLYUPDATE("Only show update notice to pack creator", false),
-	GREGORES("Force Gregtech Ore Compatibility", true);
+	GREGORES("Force Gregtech Ore Compatibility", true),
+	LOGSYNCCME("Log Sync Packet CME Avoidance", true),
+	SLOWSYNC("Slow Sync Packets - Only use this as a last resort", false),
+	;//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
 
 	private String label;
 	private boolean defaultState;

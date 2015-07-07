@@ -300,7 +300,7 @@ public class VeryLegacyMagicCropHandler extends CropHandlerBase {
 		world.setBlockMetadataWithNotify(x, y, z, 7, 3);
 	}
 
-	public static VeryLegacyMagicCropHandler getInstance() {
+	private static VeryLegacyMagicCropHandler getInstance() {
 		return instance;
 	}
 

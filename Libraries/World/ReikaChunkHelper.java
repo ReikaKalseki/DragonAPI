@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -20,6 +22,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper.ClassEntitySelector;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class ReikaChunkHelper extends DragonAPICore {
@@ -34,12 +37,6 @@ public final class ReikaChunkHelper extends DragonAPICore {
 	public static void regenChunk(World world, int x, int z) {
 		Chunk in = world.getChunkFromBlockCoords(x, z);
 		in.setChunkModified();
-		//TODO
-	}
-
-	/** Forcibly loads a chunk. Args: World, x, z */
-	public static void forceLoadChunk(World world, int x, int z) {
-		Chunk in = world.getChunkFromBlockCoords(x, z);
 		//TODO
 	}
 
@@ -223,5 +220,29 @@ public final class ReikaChunkHelper extends DragonAPICore {
 		int entitiesfound = world.getEntitiesWithinAABB(entity, AxisAlignedBB.getBoundingBox(x, 0, z, x2, 255, z2)).size();
 		return entitiesfound;
 
+	}
+
+	public static Collection<Entity> getEntities(Chunk ch, ClassEntitySelector sel) {
+		Collection<Entity> c = new ArrayList();
+		for (int i = 0; i < ch.entityLists.length; i++) {
+			List<Entity> li = ch.entityLists[i];
+			for (Entity e : li) {
+				if (sel == null || sel.isEntityApplicable(e)) {
+					c.add(e);
+				}
+			}
+		}
+		return c;
+	}
+
+	public static void clearEntities(Chunk ch, ClassEntitySelector sel) {
+		for (int i = 0; i < ch.entityLists.length; i++) {
+			List<Entity> li = ch.entityLists[i];
+			for (Entity e : li) {
+				if (sel == null || sel.isEntityApplicable(e)) {
+					e.setDead();
+				}
+			}
+		}
 	}
 }

@@ -14,18 +14,18 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
-import Reika.DragonAPI.Base.TileEntityBase;
+import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Interfaces.DataSync;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public final class SyncPacket extends S35PacketUpdateTileEntity {
+public final class SyncPacket extends S35PacketUpdateTileEntity implements DataSync {
 
 	private final HashMap<String, NBTBase> data = new HashMap();
 	private final HashMap<String, NBTBase> oldData = new HashMap();
@@ -42,10 +42,13 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 		super();
 	}
 
-	public void setData(TileEntityBase te, boolean force, NBTTagCompound NBT) {
+	public void setData(TileEntity te, boolean force, NBTTagCompound NBT) {
 		if (dispatch) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: The sync packet for "+te+" would have just CME'd, as the");
-			ReikaJavaLibrary.pConsole("Server-Thread data-writing code has overlapped with the Network-Thread byte[] dispatch.\n");
+			if (DragonOptions.LOGSYNCCME.getState()) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: The sync packet for "+te+" would have just CME'd, as the");
+				ReikaJavaLibrary.pConsole("Server-Thread data-writing code has overlapped with the Network-Thread byte[] dispatch.");
+				ReikaJavaLibrary.pConsole("Seeing this message frequently could indicate a serious issue.\n");
+			}
 			return;
 		}
 
@@ -119,11 +122,13 @@ public final class SyncPacket extends S35PacketUpdateTileEntity {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void readForSync(NBTTagCompound NBT) {
+	public void readForSync(TileEntity te, NBTTagCompound NBT) {
 		if (dispatch) {
-			TileEntity te = Minecraft.getMinecraft().theWorld.getTileEntity(field_148863_a, field_148861_b, field_148862_c);
-			ReikaJavaLibrary.pConsole("DRAGONAPI: The sync packet for "+te+" would have just CME'd, as the");
-			ReikaJavaLibrary.pConsole("Client-Thread data-reading code has overlapped with the Network-Thread byte[] reading.\n");
+			if (DragonOptions.LOGSYNCCME.getState()) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: The sync packet for "+te+" would have just CME'd, as the");
+				ReikaJavaLibrary.pConsole("Client-Thread data-reading code has overlapped with the Network-Thread byte[] reading.");
+				ReikaJavaLibrary.pConsole("Seeing this message frequently could indicate a serious issue.\n");
+			}
 			return;
 		}
 

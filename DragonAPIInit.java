@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -117,7 +116,6 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.ForestryHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.GalacticCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.IC2Handler;
-import Reika.DragonAPI.ModInteract.ItemHandlers.LegacyMagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MFRHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MagicaOreHandler;
@@ -138,7 +136,6 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerBlockHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TransitionalOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
-import Reika.DragonAPI.ModInteract.ItemHandlers.VeryLegacyMagicCropHandler;
 import Reika.DragonAPI.ModInteract.RecipeHandlers.ForestryRecipeHelper;
 import Reika.DragonAPI.ModInteract.RecipeHandlers.SmelteryRecipeHandler;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
@@ -230,7 +227,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		int id = DragonOptions.SYNCPACKET.getValue();
 		ReikaPacketHelper.registerVanillaPacketType(this, id, SyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
-		//ReikaPacketWrapper.instance.registerPacket(SyncPacket.class);
+		//if (DragonOptions.COMPOUNDSYNC.getState())
+		//	ReikaPacketHelper.registerVanillaPacketType(this, id+1, CompoundSyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
 		this.finishTiming();
 	}
 
@@ -315,6 +313,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance, Side.SERVER);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 			TickRegistry.instance.registerTickHandler(KeyTicker.instance, Side.CLIENT);
+		//if (DragonOptions.COMPOUNDSYNC.getState())
+		//	TickRegistry.instance.registerTickHandler(CompoundSyncPacketTracker.instance, Side.SERVER);
 
 		FMLInterModComms.sendMessage("Waila", "register", "Reika.DragonAPI.ModInteract.LegacyWailaHelper.registerObjects");
 
@@ -592,8 +592,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.registerHandler(ModList.THERMALFOUNDATION, ThermalHandler.class);
 		this.registerHandler(ModList.MIMICRY, MimicryHandler.class);
 		this.registerHandler(ModList.MAGICCROPS, MagicCropHandler.class, new SearchVersionHandler("4.0.0_PUBLIC_BETA")); //Newest
-		this.registerHandler(ModList.MAGICCROPS, LegacyMagicCropHandler.class, new SearchVersionHandler("4.0.0_BETA")); //Private Beta
-		this.registerHandler(ModList.MAGICCROPS, VeryLegacyMagicCropHandler.class, new SearchVersionHandler("1.7.2 - 0.1 ALPHA")); //1.7.10 alpha
+		//this.registerHandler(ModList.MAGICCROPS, LegacyMagicCropHandler.class, new SearchVersionHandler("4.0.0_BETA")); //Private Beta
+		//this.registerHandler(ModList.MAGICCROPS, VeryLegacyMagicCropHandler.class, new SearchVersionHandler("1.7.2 - 0.1 ALPHA")); //1.7.10 alpha
 		this.registerHandler(ModList.QCRAFT, QuantumOreHandler.class);;
 		this.registerHandler(ModList.TINKERER, OreBerryBushHandler.class);
 		this.registerHandler(ModList.NATURA, BerryBushHandler.class);
@@ -655,8 +655,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	private void initHandler(ModList mod, Class<? extends ModHandlerBase> c) throws Exception {
 		ReikaJavaLibrary.initClass(c);
-		Field inst = c.getField("instance");
-		ModHandlerBase h = (ModHandlerBase)inst.get(null);
+		Method inst = c.getMethod("getInstance", null);
+		ModHandlerBase h = (ModHandlerBase)inst.invoke(null);
 		mod.registerHandler(h);
 	}
 

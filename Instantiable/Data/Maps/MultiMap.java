@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.Data.Maps;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -25,6 +26,7 @@ public final class MultiMap<K, V> {
 
 	private boolean modifiable = true;
 	private boolean nullEmpty = false;
+	private Comparator<V> ordering = null;
 
 	private final CollectionFactory factory;
 
@@ -39,6 +41,8 @@ public final class MultiMap<K, V> {
 	public Collection<V> put(K key, Collection<V> value) {
 		if (!modifiable)
 			throw new UnsupportedOperationException("Map "+this+" is locked!");
+		if (ordering != null && value instanceof List)
+			Collections.sort((List)value, ordering);
 		return data.put(key, value);
 	}
 
@@ -68,6 +72,8 @@ public final class MultiMap<K, V> {
 		}
 		if (copy || !li.contains(value)) {
 			li.add(value);
+			if (ordering != null && li instanceof List)
+				Collections.sort((List)li, ordering);
 			return true;
 		}
 		return false;
@@ -181,6 +187,11 @@ public final class MultiMap<K, V> {
 
 	public MultiMap<K, V> setNullEmpty() {
 		nullEmpty = true;
+		return this;
+	}
+
+	public MultiMap<K, V> setOrdered(Comparator<V> order) {
+		this.ordering = order;
 		return this;
 	}
 

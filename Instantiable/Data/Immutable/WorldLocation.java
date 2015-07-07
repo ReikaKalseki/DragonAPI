@@ -281,4 +281,13 @@ public class WorldLocation {
 		}
 	}
 
+	public String toSerialString() {
+		return String.format("%d:%d:%d:%d", dimensionID, xCoord, yCoord, zCoord);
+	}
+
+	public static WorldLocation fromSerialString(String s) {
+		String[] parts = s.split(":");
+		return new WorldLocation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+	}
+
 }

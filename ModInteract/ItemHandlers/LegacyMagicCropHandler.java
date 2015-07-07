@@ -326,7 +326,7 @@ public class LegacyMagicCropHandler extends CropHandlerBase {
 		world.setBlockMetadataWithNotify(x, y, z, 7, 3);
 	}
 
-	public static LegacyMagicCropHandler getInstance() {
+	private static LegacyMagicCropHandler getInstance() {
 		return instance;
 	}
 
