@@ -71,7 +71,8 @@ public class ThaumItemHelper {
 		CINDER("blockCustomPlant", 3),
 		ETHEREAL("blockCustomPlant", 4),
 		CRYSTAL("blockCrystal"),
-		JAR("blockJar");
+		JAR("blockJar"),
+		NODEPLACER("blockAiry", 0),
 		;
 
 		public final int metadata;

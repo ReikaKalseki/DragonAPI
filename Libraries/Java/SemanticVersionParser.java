@@ -1,4 +1,15 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
+
+import java.util.Arrays;
 
 public class SemanticVersionParser {
 
@@ -14,7 +25,11 @@ public class SemanticVersionParser {
 		return compareVersions(v1, v2) <= 0;
 	}
 
-	private static class SemanticVersion implements Comparable<SemanticVersion> {
+	public static SemanticVersion getVersion(String s) {
+		return new SemanticVersion(s);
+	}
+
+	public static class SemanticVersion implements Comparable<SemanticVersion> {
 
 		private final int[] versions;
 
@@ -44,6 +59,10 @@ public class SemanticVersionParser {
 				}
 			}
 			return 0;
+		}
+
+		public int[] getVersions() {
+			return Arrays.copyOf(versions, versions.length);
 		}
 
 	}

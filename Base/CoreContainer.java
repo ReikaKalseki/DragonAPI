@@ -25,6 +25,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
 import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Instantiable.Data.Immutable.InventorySlot;
 import Reika.DragonAPI.Instantiable.GUI.Slot.SlotNoClick;
 import Reika.DragonAPI.Interfaces.MultiPageInventory;
 import Reika.DragonAPI.Interfaces.XPProducer;
@@ -47,6 +48,8 @@ public class CoreContainer extends Container {
 
 	private static final TileEntityChest fakeChest = new TileEntityChest();
 
+	private ArrayList<InventorySlot> relaySlots = new ArrayList();
+
 	public CoreContainer(EntityPlayer player, TileEntity te)
 	{
 		tile = te;
@@ -64,6 +67,11 @@ public class CoreContainer extends Container {
 
 	public CoreContainer setAlwaysInteractable() {
 		alwaysCan = true;
+		return this;
+	}
+
+	public CoreContainer addSlotRelay(IInventory inv, int slot) {
+		relaySlots.add(new InventorySlot(slot, inv));
 		return this;
 	}
 
@@ -338,6 +346,19 @@ public class CoreContainer extends Container {
 		ReikaJavaLibrary.pConsole(sb.toString());
 		 */
 		return copy;
+	}
+
+	@Override
+	public Slot getSlotFromInventory(IInventory ii, int slot) {
+		Slot s = super.getSlotFromInventory(ii, slot);
+		if (s == null) {
+			for (InventorySlot is : relaySlots) {
+				if (is.inventory == ii && is.slot == slot) {
+					return is.toSlot(-20, -20);
+				}
+			}
+		}
+		return null;
 	}
 
 	private static class SlotComparator implements Comparator<Slot> {

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
 public final class InventorySlot {
@@ -53,6 +54,10 @@ public final class InventorySlot {
 	@Override
 	public String toString() {
 		return "Slot "+slot+" of "+inventory;
+	}
+
+	public Slot toSlot(int x, int y) {
+		return new Slot(inventory, slot, x, y);
 	}
 
 }

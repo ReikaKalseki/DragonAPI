@@ -19,6 +19,8 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.Libraries.Java.SemanticVersionParser;
+import Reika.DragonAPI.Libraries.Java.SemanticVersionParser.SemanticVersion;
 
 public class ModVersion implements Comparable<ModVersion> {
 
@@ -124,5 +126,17 @@ public class ModVersion implements Comparable<ModVersion> {
 			e.printStackTrace();
 			throw new InstallationException(mod, "The version file was either damaged, overwritten, or is missing!");
 		}
+	}
+
+	public String toSemanticVersion() {
+		return String.format("%d.%d", majorVersion, 1+subVersion.charAt(0)-'a');
+	}
+
+	public static ModVersion fromSemanticVersion(String s) {
+		SemanticVersion sm = SemanticVersionParser.getVersion(s);
+		int[] ver = sm.getVersions();
+		int major = ver.length > 0 ? ver[0] : 1;
+		int minor = ver.length > 1 ? ver[1] : 1;
+		return new ModVersion(major, Character.toChars('a'-1+minor)[0]);
 	}
 }

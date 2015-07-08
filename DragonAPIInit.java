@@ -373,6 +373,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "acnotalpha", "dc7496be-2408-4c7e-a65e-6beb53355fa7", 10); //Jeremiah Winsley
 		PatreonController.instance.addPatron(this, "Lavious", "7fb32de9-4d98-4d1f-9264-43bd1edf0ae0", 1);
 		PatreonController.instance.addPatron(this, "quok98", "f573f6a0-9e08-482a-9985-29c5bb89c4f4", 10); //Rich Edelman
+		PatreonController.instance.addPatron(this, "rxiv", "1cb1da91-d3ed-4c10-9506-ca27fd480634", 5);
 
 		CommandableUpdateChecker.instance.checkAll();
 
