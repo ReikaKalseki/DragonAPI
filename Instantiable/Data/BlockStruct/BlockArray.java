@@ -270,10 +270,11 @@ public class BlockArray {
 			return;
 		if (world.getBlock(x, y, z) != id)
 			return;
-		if (this.hasBlock(x, y, z) && depth >= map.get(new Coordinate(x, y, z)))
+		Coordinate c = new Coordinate(x, y, z);
+		if (map.containsKey(c) && depth >= map.get(c))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		map.put(new Coordinate(x, y, z), depth);
+		map.put(c, depth);
 		try {
 			this.recursiveAdd(world, x+1, y, z, id, depth+1, map);
 			this.recursiveAdd(world, x-1, y, z, id, depth+1, map);
@@ -303,10 +304,11 @@ public class BlockArray {
 			return;
 		if (world.getBlockMetadata(x, y, z) != meta)
 			return;
-		if (this.hasBlock(x, y, z) && depth >= map.get(new Coordinate(x, y, z)))
+		Coordinate c = new Coordinate(x, y, z);
+		if (map.containsKey(c) && depth >= map.get(c))
 			return;
 		this.addBlockCoordinate(x, y, z);
-		map.put(new Coordinate(x, y, z), depth);
+		map.put(c, depth);
 		try {
 			this.recursiveAddWithMetadata(world, x+1, y, z, id, meta, depth+1, map);
 			this.recursiveAddWithMetadata(world, x-1, y, z, id, meta, depth+1, map);

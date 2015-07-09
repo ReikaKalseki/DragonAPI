@@ -468,4 +468,41 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		}
 		return false;
 	}
+
+	public static int booleanToBitflags(boolean[] flags) {
+		int n = 0;
+		for (int i = 0; i < flags.length; i++) {
+			if (flags[i])
+				n += (1 << i);
+		}
+		return n;
+	}
+
+	public static boolean[] booleanFromBitflags(int bitflags, int len) {
+		boolean[] arr = new boolean[len];
+		for (int i = 0; i < len; i++) {
+			int n = (1 << i);
+			boolean flag = (bitflags & n) != 0;
+		}
+		return arr;
+	}
+
+	public static byte booleanToByteBitflags(boolean[] flags) {
+		byte n = 0;
+		for (int i = 0; i < flags.length; i++) {
+			if (flags[i])
+				n += (1 << i);
+		}
+		return n;
+	}
+
+	public static boolean[] booleanFromByteBitflags(byte bitflags, int len) {
+		boolean[] arr = new boolean[len];
+		for (int i = 0; i < len; i++) {
+			int n = (1 << i);
+			boolean flag = (bitflags & n) != 0;
+			arr[i] = flag;
+		}
+		return arr;
+	}
 }

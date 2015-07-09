@@ -444,4 +444,23 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 		return null;
 	}
+
+	public static boolean isVanillaBlock(Block b) {
+		return isVanillaItem(Item.getItemFromBlock(b));
+	}
+
+	public static boolean isVanillaItem(ItemStack is) {
+		return isVanillaItem(is.getItem());
+	}
+
+	public static boolean isVanillaItem(Item i) {
+		return "minecraft".equals(getNamespace(i));
+	}
+
+	private static String getNamespace(Item i) {
+		if (i == null)
+			return null;
+		String s = Item.itemRegistry.getNameForObject(i);
+		return s.substring(0, s.indexOf(':'));
+	}
 }

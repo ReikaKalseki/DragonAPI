@@ -306,6 +306,11 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		placer = ep.getCommandSenderName();
 		if (ep.getGameProfile().getId() != null)
 			placerUUID = ep.getGameProfile().getId();
+		this.onSetPlacer(ep);
+	}
+
+	protected void onSetPlacer(EntityPlayer ep) {
+
 	}
 
 	public final String getPlacerName() {

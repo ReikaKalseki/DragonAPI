@@ -14,6 +14,14 @@ public abstract class DragonAPIException extends RuntimeException {
 
 	protected StringBuilder message = new StringBuilder();
 
+	protected DragonAPIException() {
+		super();
+	}
+
+	protected DragonAPIException(Throwable t) {
+		super(t);
+	}
+
 	@Override
 	public final String getMessage() {
 		return message.toString();

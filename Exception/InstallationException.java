@@ -29,4 +29,9 @@ public class InstallationException extends DragonAPIException {
 		this.crash();
 	}
 
+	public InstallationException(DragonAPIMod mod, Exception e) {
+		super(e);
+		message.append(mod.getDisplayName()+" was not installed correctly:\n");
+	}
+
 }
