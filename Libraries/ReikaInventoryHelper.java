@@ -29,6 +29,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.TemporaryInventory;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.ActivatedInventoryItem;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
@@ -1336,5 +1337,16 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 		}
 		return amt;
+	}
+
+	public static int locateInInventory(KeyedItemStack kis, ItemStack[] inv) {
+		for (int i = 0; i < inv.length; i++) {
+			ItemStack in = inv[i];
+			if (in != null) {
+				if (kis.match(in))
+					return i;
+			}
+		}
+		return -1;
 	}
 }

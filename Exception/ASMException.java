@@ -35,17 +35,19 @@ public abstract class ASMException extends RuntimeException {
 
 	private abstract static class NoSuchInstructionASMException extends ASMException {
 
+		private final ClassNode owner;
 		private final MethodNode method;
 
-		private NoSuchInstructionASMException(MethodNode m) {
+		private NoSuchInstructionASMException(ClassNode cn, MethodNode m) {
 			super(null);
 			method = m;
+			owner = cn;
 		}
 
 		@Override
 		public String getMessage() {
 			StringBuilder sb = new StringBuilder();
-			sb.append("Error ASMing method "+method.name+" "+method.desc+":\n");
+			sb.append("Error ASMing method "+method.name+" "+method.desc+" in "+owner.name+":\n");
 			return sb.toString();
 		}
 
@@ -57,8 +59,8 @@ public abstract class ASMException extends RuntimeException {
 		private final String callDesc;
 		private final int callInt;
 
-		public NoSuchASMMethodInstructionException(MethodNode m, String name, String sig, int n) {
-			super(m);
+		public NoSuchASMMethodInstructionException(ClassNode cn, MethodNode m, String name, String sig, int n) {
+			super(cn, m);
 			callName = name;
 			callDesc = sig;
 			callInt = n;
@@ -81,8 +83,8 @@ public abstract class ASMException extends RuntimeException {
 		private final String callName;
 		private final int callInt;
 
-		public NoSuchASMFieldInstructionException(MethodNode m, String name, int n) {
-			super(m);
+		public NoSuchASMFieldInstructionException(ClassNode cn, MethodNode m, String name, int n) {
+			super(cn, m);
 			callName = name;
 			callInt = n;
 		}

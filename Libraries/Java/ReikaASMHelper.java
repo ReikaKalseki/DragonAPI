@@ -395,11 +395,11 @@ public class ReikaASMHelper {
 		return false;
 	}
 
-	public static MethodInsnNode getFirstMethodCall(MethodNode m, String owner, String name, String sig) {
-		return getNthMethodCall(m, owner, name, sig, 1);
+	public static MethodInsnNode getFirstMethodCall(ClassNode cn, MethodNode m, String owner, String name, String sig) {
+		return getNthMethodCall(cn, m, owner, name, sig, 1);
 	}
 
-	private static MethodInsnNode getNthMethodCall(MethodNode m, String owner, String name, String sig, int n) {
+	private static MethodInsnNode getNthMethodCall(ClassNode cn, MethodNode m, String owner, String name, String sig, int n) {
 		int counter = 0;
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);
@@ -412,14 +412,14 @@ public class ReikaASMHelper {
 				}
 			}
 		}
-		throw new ASMException.NoSuchASMMethodInstructionException(m, name, sig, n > 1 ? n : -1);
+		throw new ASMException.NoSuchASMMethodInstructionException(cn, m, name, sig, n > 1 ? n : -1);
 	}
 
-	public static FieldInsnNode getFirstFieldCall(MethodNode m, String name) {
-		return getNthFieldCall(m, name, 1);
+	public static FieldInsnNode getFirstFieldCall(ClassNode cn, MethodNode m, String name) {
+		return getNthFieldCall(cn, m, name, 1);
 	}
 
-	private static FieldInsnNode getNthFieldCall(MethodNode m, String name, int n) {
+	private static FieldInsnNode getNthFieldCall(ClassNode cn, MethodNode m, String name, int n) {
 		int counter = 0;
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);
@@ -432,7 +432,7 @@ public class ReikaASMHelper {
 				}
 			}
 		}
-		throw new ASMException.NoSuchASMFieldInstructionException(m, name, n > 1 ? n : -1);
+		throw new ASMException.NoSuchASMFieldInstructionException(cn, m, name, n > 1 ? n : -1);
 	}
 
 	/** Currently broken */

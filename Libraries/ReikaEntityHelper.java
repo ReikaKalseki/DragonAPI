@@ -399,6 +399,9 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		else if (e instanceof EntityWolf) {
 			return new ItemStack(Items.porkchop);
 		}
+		else if (e instanceof EntityOcelot) {
+			return new ItemStack(Items.fish);
+		}
 		return null;
 	}
 

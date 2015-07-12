@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModRegistry;
 
+import net.minecraftforge.fluids.FluidRegistry;
+
 
 public enum PowerTypes {
 
@@ -17,10 +19,15 @@ public enum PowerTypes {
 	EU("ic2.api.energy.tile.IEnergyTile", "ic2.api.item.IElectricItem"),
 	//UE("universalelectricity.api.energy.IEnergyInterface", "universalelectricity.api.item.IEnergyItem"), killed by RF
 	ROTARYCRAFT("Reika.RotaryCraft.API.ShaftMachine"),
-	PNEUMATIC(),
-	HYDRAULIC();
+	PNEUMATIC("pneumaticCraft.api.tileentity.IPneumaticMachine"),
+	HYDRAULIC(),
+	STEAM(FluidRegistry.getFluid("steam") != null);
 
 	private final boolean exists;
+
+	private PowerTypes(boolean f) {
+		exists = f;
+	}
 
 	private PowerTypes(String... cl) {
 		exists = cl != null && cl.length > 0 && this.checkAllClasses(cl);

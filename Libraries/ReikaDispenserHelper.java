@@ -3,6 +3,7 @@ package Reika.DragonAPI.Libraries;
 import java.util.HashMap;
 
 import net.minecraft.block.BlockDispenser;
+import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
 import net.minecraft.dispenser.IBlockSource;
 import net.minecraft.item.ItemDye;
@@ -23,10 +24,10 @@ public class ReikaDispenserHelper {
 
 	private static void addDispenserAction(ItemStack is, IBehaviorDispenseItem action, boolean override) {
 		Object o = BlockDispenser.dispenseBehaviorRegistry.getObject(is.getItem());
-		boolean flag = o == null || o instanceof StackDataSensitiveEntry;
+		boolean flag = o == null || o instanceof StackDataSensitiveEntry || o.getClass() == BehaviorDefaultDispenseItem.class;
 		if (!flag && !override)
 			return;
-		StackDataSensitiveEntry e = flag ? (StackDataSensitiveEntry)o : null;
+		StackDataSensitiveEntry e = flag && o.getClass() != BehaviorDefaultDispenseItem.class ? (StackDataSensitiveEntry)o : null;
 		if (e == null) {
 			e = new StackDataSensitiveEntry((IBehaviorDispenseItem)o);
 			BlockDispenser.dispenseBehaviorRegistry.putObject(is.getItem(), e);
@@ -44,10 +45,10 @@ public class ReikaDispenserHelper {
 
 	private static void addDispenserAction(KeyedItemStack is, IBehaviorDispenseItem action, boolean override) {
 		Object o = BlockDispenser.dispenseBehaviorRegistry.getObject(is.getItemStack().getItem());
-		boolean flag = o == null || o instanceof StackDataSensitiveEntry;
+		boolean flag = o == null || o instanceof StackDataSensitiveEntry || o.getClass() == BehaviorDefaultDispenseItem.class;
 		if (!flag && !override)
 			return;
-		StackDataSensitiveEntry e = flag ? (StackDataSensitiveEntry)o : null;
+		StackDataSensitiveEntry e = flag && o.getClass() != BehaviorDefaultDispenseItem.class ? (StackDataSensitiveEntry)o : null;
 		if (e == null) {
 			e = new StackDataSensitiveEntry((IBehaviorDispenseItem)o);
 			BlockDispenser.dispenseBehaviorRegistry.putObject(is.getItemStack().getItem(), e);

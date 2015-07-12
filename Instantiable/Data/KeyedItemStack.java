@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -19,6 +21,18 @@ public final class KeyedItemStack {
 	private final boolean[] enabledCriteria = new boolean[Criteria.list.length];
 	private boolean lock = false;
 	private boolean simpleHash = false;
+
+	public KeyedItemStack(Block b) {
+		this(Item.getItemFromBlock(b));
+	}
+
+	public KeyedItemStack(Item i) {
+		this(new ItemStack(i));
+		this.setIgnoreMetadata(true);
+		this.setSized(false);
+		this.setIgnoreNBT(true);
+		this.setSimpleHash(true);
+	}
 
 	public KeyedItemStack(ItemStack is) {
 		if (is == null || is.getItem() == null)

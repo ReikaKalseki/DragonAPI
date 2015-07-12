@@ -233,7 +233,7 @@ public class BlockArray {
 		if (this.isEmpty())
 			return null;
 		Coordinate next = this.getNextBlock();
-		blocks.remove(0);
+		this.remove(0);
 		if (this.isEmpty())
 			overflow = false;
 		return next;
@@ -250,7 +250,7 @@ public class BlockArray {
 	}
 
 	public final boolean isEmpty() {
-		return blocks.size() == 0;
+		return blocks.isEmpty();
 	}
 
 	public final boolean hasBlock(int x, int y, int z) {
@@ -732,7 +732,8 @@ public class BlockArray {
 	}
 
 	private void remove(int index) {
-		blocks.remove(index);
+		Coordinate c = blocks.remove(index);
+		keys.remove(c);
 	}
 
 	public boolean isOverflowing() {

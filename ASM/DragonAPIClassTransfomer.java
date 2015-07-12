@@ -683,7 +683,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_147465_d" : "setBlock";
 				String func2 = FMLForgePlugin.RUNTIME_DEOBF ? "func_147468_f" : "setBlockToAir";
 				String world = "net/minecraft/world/World";
-				MethodInsnNode min = ReikaASMHelper.getFirstMethodCall(m, world, func, "(IIILnet/minecraft/block/Block;II)Z");
+				MethodInsnNode min = ReikaASMHelper.getFirstMethodCall(cn, m, world, func, "(IIILnet/minecraft/block/Block;II)Z");
 				InsnList add = new InsnList();
 				LabelNode L34 = new LabelNode();
 				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
@@ -703,7 +703,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 1!");
 
 				m = ReikaASMHelper.getMethodByName(cn, /*"func_149841_a", */"tryCatchFire", "(Lnet/minecraft/world/World;IIIILjava/util/Random;ILnet/minecraftforge/common/util/ForgeDirection;)V"); // Forge one
-				min = ReikaASMHelper.getFirstMethodCall(m, world, func, "(IIILnet/minecraft/block/Block;II)Z");
+				min = ReikaASMHelper.getFirstMethodCall(cn, m, world, func, "(IIILnet/minecraft/block/Block;II)Z");
 				add = new InsnList();
 				LabelNode L12 = new LabelNode();
 				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
@@ -722,7 +722,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				m.instructions.insert(loc2, L12);
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully applied "+this+" ASM handler 2!");
 
-				min = ReikaASMHelper.getFirstMethodCall(m, world, func2, "(III)Z");
+				min = ReikaASMHelper.getFirstMethodCall(cn, m, world, func2, "(III)Z");
 				//add = ReikaASMHelper.copyInsnList(add, L12, L12);
 				add = new InsnList();
 				add.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));

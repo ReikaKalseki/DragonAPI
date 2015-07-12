@@ -39,20 +39,21 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 			try {
 				String pre = "forestry.factory.gadgets.MachineCentrifuge$";
 				Class centri = Class.forName(pre+"RecipeManager");
-				String rec = SemanticVersionParser.isVersionAtLeast(this.getMod().getVersion(), "3.6") ? pre+"CentrifugeRecipe" : pre+"Recipe";
+				boolean p6 = SemanticVersionParser.isVersionAtLeast(this.getMod().getVersion(), "3.6");
+				String rec = p6 ? pre+"CentrifugeRecipe" : pre+"Recipe";
 				Class recipe = Class.forName(rec);
-				Field list = centri.getField("recipes");
-				Field input = recipe.getField("resource");
-				Field output = recipe.getField("products");
+				Field list = centri.getField("recipes"); //version safe
+				Field input = recipe.getField(p6 ? "input" : "resource");
+				Field output = recipe.getField(p6 ? "outputs" : "products");
 				ArrayList li = (ArrayList)list.get(null);
 				for (int i = 0; i < li.size(); i++) {
 					Object r = li.get(i);
 					ItemStack in = (ItemStack)input.get(r);
-					HashMap<ItemStack, Integer> out = (HashMap)output.get(r);
+					HashMap<ItemStack, Number> out = (HashMap)output.get(r);
 					ChancedOutputList outputs = new ChancedOutputList();
 					for (ItemStack item : out.keySet()) {
-						int chance = out.get(item);
-						outputs.addItem(item, chance);
+						Number chance = out.get(item);
+						outputs.addItem(item, p6 ? chance.floatValue() : chance.intValue());
 					}
 					outputs.lock();
 					centrifuge.put(in, outputs);
