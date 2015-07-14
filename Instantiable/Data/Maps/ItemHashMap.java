@@ -22,6 +22,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
+import Reika.DragonAPI.Interfaces.Matcher;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class ItemHashMap<V> {
@@ -30,6 +31,7 @@ public final class ItemHashMap<V> {
 	private ArrayList<ItemStack> sorted = null;
 	private Collection<ItemStack> keyset = null;
 	private boolean modifiedKeys = true;
+	private Matcher<V> matcher = null;
 	private boolean oneWay = false;
 
 	public ItemHashMap() {
@@ -37,7 +39,12 @@ public final class ItemHashMap<V> {
 	}
 
 	public ItemHashMap<V> setOneWay() {
+		return this.setOneWay(null);
+	}
+
+	public ItemHashMap<V> setOneWay(Matcher m) {
 		oneWay = true;
+		this.matcher = m;
 		return this;
 	}
 
@@ -49,8 +56,14 @@ public final class ItemHashMap<V> {
 	}
 
 	private V put(ItemKey is, V value) {
-		if (oneWay && data.containsKey(is))
+		if (oneWay && data.containsKey(is)) {
+			if (matcher != null) {
+				V v = data.get(is);
+				if (v == value || matcher.match(v, value))
+					return v;
+			}
 			throw new UnsupportedOperationException("This map does not support overwriting values! Item "+is+" already mapped to '"+data.get(is)+"'!");
+		}
 		V ret = data.put(is, value);
 		this.modifiedKeys = true;
 		return ret;

@@ -597,14 +597,6 @@ public class BlockArray {
 		}
 	}
 
-	public void sortBlocksByHeight() {
-		Collections.sort(blocks, new HeightComparator());
-	}
-
-	public void reverseBlockOrder() {
-		Collections.reverse(blocks);
-	}
-
 	@Override
 	public String toString() {
 		if (this.isEmpty())
@@ -1012,12 +1004,44 @@ public class BlockArray {
 		return new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
+	public void reverseBlockOrder() {
+		Collections.reverse(blocks);
+	}
+
+	public void sortBlocksByHeight() {
+		this.sort(heightComparator);
+	}
+
+	public void sort(Comparator<Coordinate> comparator) {
+		Collections.sort(blocks, comparator);
+	}
+
+	private static final Comparator<Coordinate> heightComparator = new HeightComparator();
+
 	private static class HeightComparator implements Comparator<Coordinate> {
 
 		@Override
 		public int compare(Coordinate o1, Coordinate o2) {
 			return o1.yCoord - o2.yCoord;
 		}
+
+	}
+
+	public static abstract class BlockTypePrioritizer implements Comparator<Coordinate> {
+
+		private final World world;
+
+		protected BlockTypePrioritizer(World world) {
+			this.world = world;
+		}
+
+		public final int compare(Coordinate c1, Coordinate c2) {
+			BlockKey b1 = c1.getBlockKey(world);
+			BlockKey b2 = c2.getBlockKey(world);
+			return this.compare(b1, b2);
+		}
+
+		protected abstract int compare(BlockKey b1, BlockKey b2);
 
 	}
 }

@@ -21,6 +21,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Instantiable.Data.BlockKey;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -158,6 +159,10 @@ public final class Coordinate {
 		return world != null ? world.getBlockMetadata(xCoord, yCoord, zCoord) : -1;
 	}
 
+	public BlockKey getBlockKey(World world) {
+		return world != null ? new BlockKey(world.getBlock(xCoord, yCoord, zCoord), world.getBlockMetadata(xCoord, yCoord, zCoord)) : null;
+	}
+
 	public TileEntity getTileEntity(World world) {
 		return world != null ? world.getTileEntity(xCoord, yCoord, zCoord) : null;
 	}
@@ -194,7 +199,11 @@ public final class Coordinate {
 	}
 
 	public boolean setBlock(World world, Block id, int meta) {
-		return world != null && world.setBlock(xCoord, yCoord, zCoord, id, meta, 3);
+		return this.setBlock(world, id, meta, 3);
+	}
+
+	public boolean setBlock(World world, Block id, int meta, int flags) {
+		return world != null && world.setBlock(xCoord, yCoord, zCoord, id, meta, flags);
 	}
 
 	public void updateTick(World world) {
