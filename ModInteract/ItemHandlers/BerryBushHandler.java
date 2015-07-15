@@ -83,7 +83,7 @@ public class BerryBushHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public boolean isCrop(Block id) {
+	public boolean isCrop(Block id, int meta) {
 		return id == bushID || id == netherBushID;
 	}
 
@@ -96,7 +96,7 @@ public class BerryBushHandler extends CropHandlerBase {
 	public boolean isRipeCrop(World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		return this.isCrop(b) && meta >= 12;
+		return this.isCrop(b, meta) && meta >= 12;
 	}
 
 	@Override

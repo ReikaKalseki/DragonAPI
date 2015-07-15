@@ -116,5 +116,10 @@ public enum ReikaCropHelper implements CropType {
 		return world.getBlockMetadata(x, y, z);
 	}
 
+	@Override
+	public boolean isCrop(Block id, int meta) {
+		return id == blockID;
+	}
+
 
 }

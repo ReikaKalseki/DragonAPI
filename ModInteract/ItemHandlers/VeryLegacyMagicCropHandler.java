@@ -274,7 +274,7 @@ public class VeryLegacyMagicCropHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public boolean isCrop(Block id) {
+	public boolean isCrop(Block id, int meta) {
 		return EssenceType.cropIDs.containsKey(id);
 	}
 
@@ -292,7 +292,7 @@ public class VeryLegacyMagicCropHandler extends CropHandlerBase {
 	public boolean isRipeCrop(World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
-		return this.isCrop(b) && meta == 7;
+		return this.isCrop(b, meta) && meta == 7;
 	}
 
 	@Override

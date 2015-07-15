@@ -42,9 +42,12 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 				boolean p6 = SemanticVersionParser.isVersionAtLeast(this.getMod().getVersion(), "3.6");
 				String rec = p6 ? pre+"CentrifugeRecipe" : pre+"Recipe";
 				Class recipe = Class.forName(rec);
-				Field list = centri.getField("recipes"); //version safe
-				Field input = recipe.getField(p6 ? "input" : "resource");
-				Field output = recipe.getField(p6 ? "outputs" : "products");
+				Field list = centri.getDeclaredField("recipes"); //version safe
+				list.setAccessible(true);
+				Field input = recipe.getDeclaredField(p6 ? "input" : "resource");
+				input.setAccessible(true);
+				Field output = recipe.getDeclaredField(p6 ? "outputs" : "products");
+				output.setAccessible(true);
 				ArrayList li = (ArrayList)list.get(null);
 				for (int i = 0; i < li.size(); i++) {
 					Object r = li.get(i);

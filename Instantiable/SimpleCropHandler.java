@@ -14,25 +14,34 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Interfaces.CropHandler;
+import Reika.DragonAPI.Interfaces.CustomCropHandler;
+import Reika.DragonAPI.Interfaces.ModEntry;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
-public final class SimpleCropHandler implements CropHandler {
+public final class SimpleCropHandler implements CustomCropHandler {
 
 	public final Block crop;
 	public final int ripeMeta;
 	public final int harvestMeta;
 	private final ItemStack seedItem;
 
-	public SimpleCropHandler(Block b, int ripe, ItemStack seed) {
-		this(b, 0, ripe, seed);
+	private final ModEntry mod;
+	private final int color;
+	private final String name;
+
+	public SimpleCropHandler(ModEntry mod, int color, String name, Block b, int ripe, ItemStack seed) {
+		this(mod, color, name, b, 0, ripe, seed);
 	}
 
-	public SimpleCropHandler(Block b, int harvest, int ripe, ItemStack seed) {
+	public SimpleCropHandler(ModEntry mod, int color, String name, Block b, int harvest, int ripe, ItemStack seed) {
 		crop = b;
 		ripeMeta = ripe;
 		harvestMeta = harvest;
 		seedItem = seed;
+
+		this.mod = mod;
+		this.color = color;
+		this.name = name;
 	}
 
 	@Override
@@ -41,13 +50,14 @@ public final class SimpleCropHandler implements CropHandler {
 	}
 
 	@Override
-	public boolean isCrop(Block id) {
+	public boolean isCrop(Block id, int meta) {
 		return id == crop;
 	}
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
-		return this.isCrop(world.getBlock(x, y, z)) && world.getBlockMetadata(x, y, z) == ripeMeta;
+		int meta = world.getBlockMetadata(x, y, z);
+		return this.isCrop(world.getBlock(x, y, z), meta) && meta == ripeMeta;
 	}
 
 	@Override
@@ -83,6 +93,26 @@ public final class SimpleCropHandler implements CropHandler {
 	@Override
 	public int getGrowthState(World world, int x, int y, int z) {
 		return world.getBlockMetadata(x, y, z);
+	}
+
+	@Override
+	public ModEntry getMod() {
+		return mod;
+	}
+
+	@Override
+	public int getColor() {
+		return color;
+	}
+
+	@Override
+	public String getEnumEntryName() {
+		return name;
+	}
+
+	@Override
+	public boolean isTileEntity() {
+		return false;
 	}
 
 }

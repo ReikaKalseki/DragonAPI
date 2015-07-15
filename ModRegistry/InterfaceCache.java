@@ -20,7 +20,6 @@ public enum InterfaceCache {
 	IMISSILE("com.builtbroken.icbm.api"),
 	MUSEELECTRICITEM("net.machinemuse.api.electricity.MuseElectricItem"),
 	RFENERGYITEM("cofh.api.energy.IEnergyContainerItem"),
-	UEENERGYITEM("universalelectricity.api.item.IEnergyItem"),
 	WAILA("mcp.mobius.waila.api.IWailaDataProvider"),
 	IWRENCH("buildcraft.api.tools.IToolWrench"),
 	IC2WRENCH("ic2.api.tile.IWrenchable"),

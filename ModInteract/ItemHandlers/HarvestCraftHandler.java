@@ -205,7 +205,7 @@ public class HarvestCraftHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public boolean isCrop(Block id) {
+	public boolean isCrop(Block id, int meta) {
 		return id.getClass() == cropClass;
 	}
 
@@ -216,7 +216,8 @@ public class HarvestCraftHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
-		return this.isCrop(world.getBlock(x, y, z)) && world.getBlockMetadata(x, y, z) >= 7;
+		int meta = world.getBlockMetadata(x, y, z);
+		return this.isCrop(world.getBlock(x, y, z), meta) && meta >= 7;
 	}
 
 	public static HarvestCraftHandler getInstance() {

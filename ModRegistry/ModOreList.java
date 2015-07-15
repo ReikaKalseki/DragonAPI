@@ -27,6 +27,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.OreType;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -169,6 +170,14 @@ public enum ModOreList implements OreType {
 		}
 	}
 
+	public void addOreDictName(String s) {
+		if (!ReikaArrayHelper.arrayContains(oreLabel, s, false)) {
+			oreLabel = Arrays.copyOf(oreLabel, oreLabel.length+1);
+			oreLabel[oreLabel.length-1] = s;
+		}
+		this.initialize();
+	}
+
 	public void initialize() {
 		/*
 		if (init) {
@@ -177,6 +186,7 @@ public enum ModOreList implements OreType {
 		}
 		init = true;
 		 */
+		ReikaJavaLibrary.pConsole("Loading ore type "+this);
 		ores.clear();
 		for (int i = 0; i < oreLabel.length; i++) {
 			String label = oreLabel[i];

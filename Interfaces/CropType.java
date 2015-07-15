@@ -12,6 +12,7 @@ package Reika.DragonAPI.Interfaces;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
@@ -29,6 +30,8 @@ public interface CropType extends RegistryType {
 	public boolean destroyOnHarvest();
 
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune);
+
+	public boolean isCrop(Block id, int meta);
 
 	public static class CropMethods {
 

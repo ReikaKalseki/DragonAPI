@@ -104,14 +104,14 @@ public class PneumaticPlantHandler extends CropHandlerBase {
 	}
 
 	@Override
-	public boolean isCrop(Block id) {
+	public boolean isCrop(Block id, int meta) {
 		return blockMap.containsKey(id);
 	}
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
 		int meta = world.getBlockMetadata(x, y, z);
-		return this.isCrop(world.getBlock(x, y, z)) && meta == this.getRipeMeta(meta);
+		return this.isCrop(world.getBlock(x, y, z), meta) && meta == this.getRipeMeta(meta);
 	}
 
 	@Override

@@ -105,6 +105,10 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 		return (float)(4*ratio);
 	}
 
+	public static float getEnergyFromExplosion(float ex) {
+		return ex/4F*(float)TNTenergy;
+	}
+
 	public static double getBlockDensity(Block b) {
 		if (b == Blocks.air)
 			return 1;

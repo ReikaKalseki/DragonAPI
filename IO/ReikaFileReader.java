@@ -70,7 +70,7 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static BufferedReader getReader(URL url, int timeout, ConnectionErrorHandler ch) {
+	public static BufferedReader getReader(URL url, int timeout, ConnectionErrorHandler ch, DataFetcher f) {
 		if (!isInternetAccessible(timeout)) {
 			ch.onNoInternet();
 			return null;
@@ -79,6 +79,14 @@ public class ReikaFileReader extends DragonAPICore {
 		try {
 			URLConnection c = url.openConnection();
 			c.setConnectTimeout(timeout);
+			if (f != null) {
+				try {
+					f.fetchData(c);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 			return new BufferedReader(new InputStreamReader(c.getInputStream()));
 		}
 		catch (UnknownHostException e) { //Server not found
@@ -174,7 +182,11 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static ArrayList<String> getFileAsLines(URL url, int timeout, boolean printStackTrace, ConnectionErrorHandler ch) {
-		BufferedReader r = getReader(url, timeout, ch);
+		return getFileAsLines(url, timeout, printStackTrace, ch, null);
+	}
+
+	public static ArrayList<String> getFileAsLines(URL url, int timeout, boolean printStackTrace, ConnectionErrorHandler ch, DataFetcher f) {
+		BufferedReader r = getReader(url, timeout, ch, f);
 		return r != null ? getFileAsLines(r, printStackTrace) : null;
 	}
 
@@ -244,12 +256,18 @@ public class ReikaFileReader extends DragonAPICore {
 		return sb.toString();
 	}
 
-	public interface ConnectionErrorHandler {
+	public static interface ConnectionErrorHandler {
 
 		void onServerRedirected();
 		void onTimedOut();
 		void onNoInternet();
 		void onServerNotFound();
+
+	}
+
+	public static interface DataFetcher {
+
+		void fetchData(URLConnection c) throws Exception;
 
 	}
 

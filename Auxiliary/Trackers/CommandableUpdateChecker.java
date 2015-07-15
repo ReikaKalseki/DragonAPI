@@ -17,10 +17,14 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.UUID;
 
 import net.minecraft.client.Minecraft;
@@ -49,6 +53,7 @@ import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Extras.ModVersion;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.ConnectionErrorHandler;
+import Reika.DragonAPI.IO.ReikaFileReader.DataFetcher;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayList;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayMap;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
@@ -472,11 +477,12 @@ public final class CommandableUpdateChecker {
 		}
 	}
 
-	private static class UpdateChecker implements ConnectionErrorHandler {
+	private static class UpdateChecker implements ConnectionErrorHandler, DataFetcher {
 
 		private final ModVersion version;
 		private final URL checkURL;
 		private final DragonAPIMod mod;
+		private Date modified;
 
 		private UpdateChecker(DragonAPIMod mod, ModVersion version, URL url) {
 			this.mod = mod;
@@ -486,7 +492,7 @@ public final class CommandableUpdateChecker {
 
 		private ModVersion getLatestVersion() {
 			try {
-				ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, 10000, false, this);
+				ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, 10000, false, this, this);
 				String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
 				for (String line : lines) {
 					if (line.toLowerCase().startsWith(name)) {
@@ -535,6 +541,12 @@ public final class CommandableUpdateChecker {
 		@Override
 		public void onTimedOut() {
 			mod.getModLogger().logError("Error accessing online file: Timed Out");
+		}
+
+		@Override
+		public void fetchData(URLConnection c) throws Exception {
+			String lastModified = c.getHeaderField("Last-Modified");
+			modified = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss Z", Locale.ENGLISH).parse(lastModified);
 		}
 	}
 
