@@ -22,6 +22,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.ItemBlockCustomLocalization;
@@ -78,7 +79,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 				mod.getModLogger().log("Instantiating Block "+r.getBasicName()+" with ID "+b+" to Block Variable "+b.getClass().getSimpleName()+" (enum index "+idx+") with ItemBlock "+r.getItemBlock().getSimpleName());
 			else
 				mod.getModLogger().log("Instantiating Block "+r.getBasicName()+" with ID "+b+" to Block Variable "+b.getClass().getSimpleName()+" (enum index "+idx+")");
-			if (InterfaceCache.WAILA.instanceOf(r.getObjectClass())) {
+			if (ModList.WAILA.isLoaded() && InterfaceCache.WAILA.instanceOf(r.getObjectClass())) {
 				LegacyWailaHelper.registerLegacyWAILACompat(r);
 			}
 		}

@@ -64,7 +64,7 @@ public enum ModList implements ModEntry {
 	THERMALEXPANSION("ThermalExpansion", new String[]{"thermalexpansion.block.TEBlocks", "cofh.thermalexpansion.block.TEBlocks"}, new String[]{"thermalexpansion.item.TEItems", "cofh.thermalexpansion.item.TEItems"}),
 	THERMALFOUNDATION("ThermalFoundation", new String[]{"thermalfoundation.block.TFBlocks", "cofh.thermalfoundation.block.TFBlocks"}, new String[]{"thermalfoundation.item.TFItems", "cofh.thermalfoundation.item.TFItems"}),
 	MEKANISM("Mekanism", "mekanism.common.MekanismBlocks", "mekanism.common.MekanismItems"),
-	MEKTOOLS("MekanismTools", "mekanism.tools.common.MekanismTools"), //ensure still here
+	MEKTOOLS("MekanismTools", "mekanism.tools.common.ToolsItems"),
 	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks.RailcraftBlocks", new String[0]), //items spread over half a dozen classes
 	ICBM("ICBM|Explosion"),
 	ARSMAGICA("arsmagica2", "am2.blocks.BlocksCommonProxy", "am2.items.ItemsCommonProxy"), //ensure still here
@@ -72,7 +72,7 @@ public enum ModList implements ModEntry {
 	ENDERSTORAGE("EnderStorage"),
 	TREECAPITATOR("TreeCapitator"),
 	HARVESTCRAFT("harvestcraft", "com.pam.harvestcraft.BlockRegistry", "com.pam.harvestcraft.ItemRegistry"),
-	MYSTCRAFT("Mystcraft", new String[]{"com.xcompwiz.mystcraft.api.MystObjects", "com.xcompwiz.mystcraft.api.MystObjects.Blocks"}, new String[]{"com.xcompwiz.mystcraft.api.MystObjects", "com.xcompwiz.mystcraft.api.MystObjects.Items"}),
+	MYSTCRAFT("Mystcraft", new String[]{"com.xcompwiz.mystcraft.api.MystObjects", "com.xcompwiz.mystcraft.api.MystObjects$Blocks"}, new String[]{"com.xcompwiz.mystcraft.api.MystObjects", "com.xcompwiz.mystcraft.api.MystObjects$Items"}),
 	MAGICCROPS("magicalcrops", new String[]{"com.mark719.magicalcrops.MagicalCrops", "com.mark719.magicalcrops.handlers.MBlocks"}, new String[]{"com.mark719.magicalcrops.MagicalCrops", "com.mark719.magicalcrops.handlers.MItems"}),
 	MIMICRY("Mimicry", "com.sparr.mimicry.block.MimicryBlock", "com.sparr.mimicry.item.MimicryItem"),
 	QCRAFT("QuantumCraft", "dan200.QCraft"),
@@ -81,7 +81,7 @@ public enum ModList implements ModEntry {
 	UE("UniversalElectricity"),
 	EXTRAUTILS("ExtraUtilities", "com.rwtema.extrautils.ExtraUtils"),
 	POWERSUITS("powersuits", "net.machinemuse.powersuits.common.ModularPowersuits"), //ensure still here
-	ARSENAL("RedstoneArsenal", "redstonearsenal.item.RAItems"),
+	ARSENAL("RedstoneArsenal", new String[]{"redstonearsenal.item.RAItems", "cofh.redstonearsenal.item.RAItems"}),
 	EMASHER("emashercore", "emasher.core.EmasherCore"), //ensure still here
 	HIGHLANDS("Highlands", "highlands.api.HighlandsBlocks"),
 	PROJRED("ProjRed|Core"),
@@ -148,6 +148,10 @@ public enum ModList implements ModEntry {
 		this(label, modClass, modClass);
 	}
 
+	private ModList(String label, String[] modClass) {
+		this(label, modClass, modClass);
+	}
+
 	private ModList(String label, String blocks, String items) {
 		this(label, blocks != null ? new String[]{blocks} : null, items != null ? new String[]{items} : null);
 	}
@@ -161,7 +165,7 @@ public enum ModList implements ModEntry {
 	}
 
 	private ModList(String label) {
-		this(label, null);
+		this(label, (String)null);
 	}
 
 	private Class findClass(String s) {

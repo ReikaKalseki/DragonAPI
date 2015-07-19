@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
@@ -24,19 +25,18 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public final class RayTracer {
 
-	public final int originX;
-	public final int originY;
-	public final int originZ;
-	public final int targetX;
-	public final int targetY;
-	public final int targetZ;
+	private double originX;
+	private double originY;
+	private double originZ;
+	private double targetX;
+	private double targetY;
+	private double targetZ;
 	public boolean softBlocksOnly = false;
-	private Vec3 offset = Vec3.createVectorHelper(0, 0, 0);
 
 	private final ArrayList<BlockKey> forbiddenBlocks = new ArrayList();
 	private final ArrayList<BlockKey> allowedBlocks = new ArrayList();
 
-	public RayTracer(int x1, int y1, int z1, int x2, int y2, int z2) {
+	public RayTracer(double x1, double y1, double z1, double x2, double y2, double z2) {
 		originX = x1;
 		originY = y1;
 		originZ = z1;
@@ -45,16 +45,26 @@ public final class RayTracer {
 		targetZ = z2;
 	}
 
-	public RayTracer setOrigins(int x1, int y1, int z1, int x2, int y2, int z2) {
-		RayTracer ray = new RayTracer(x1, y1, z1, x2, y2, z2);
-		ray.forbiddenBlocks.addAll(forbiddenBlocks);
-		ray.offset = Vec3.createVectorHelper(offset.xCoord, offset.yCoord, offset.zCoord);
-		ray.softBlocksOnly = softBlocksOnly;
-		return ray;
+	public void setOrigins(double x1, double y1, double z1, double x2, double y2, double z2) {
+		originX = x1;
+		originY = y1;
+		originZ = z1;
+		targetX = x2;
+		targetY = y2;
+		targetZ = z2;
 	}
 
-	public void setInternalOffsets(double x, double y, double z) {
-		offset = Vec3.createVectorHelper(x, y, z);
+	public void offset(double dx, double dy, double dz) {
+		this.offset(dx, dy, dz, dx, dy, dz);
+	}
+
+	public void offset(double dx1, double dy1, double dz1, double dx2, double dy2, double dz2) {
+		originX += dx1;
+		originY += dy1;
+		originZ += dz1;
+		targetX += dx2;
+		targetY += dy2;
+		targetZ += dz2;
 	}
 
 	public void addOpaqueBlock(Block b) {
@@ -74,8 +84,8 @@ public final class RayTracer {
 	}
 
 	public boolean isClearLineOfSight(World world) {
-		Vec3 vec1 = Vec3.createVectorHelper(originX+offset.xCoord, originY+offset.yCoord, originZ+offset.zCoord);
-		Vec3 vec2 = Vec3.createVectorHelper(targetX+offset.xCoord, targetY+offset.yCoord, targetZ+offset.zCoord);
+		Vec3 vec1 = Vec3.createVectorHelper(originX, originY, originZ);
+		Vec3 vec2 = Vec3.createVectorHelper(targetX, targetY, targetZ);
 		Vec3 ray = ReikaVectorHelper.subtract(vec1, vec2);
 		double dx = vec2.xCoord-vec1.xCoord;
 		double dy = vec2.yCoord-vec1.yCoord;
@@ -109,7 +119,11 @@ public final class RayTracer {
 	}
 
 	private boolean isNonTerminal(int x, int y, int z) {
-		return !((x == originX && y == originY && z == originZ) || (x == targetX && y == targetY && z == targetZ));
+		if (x == MathHelper.floor_double(originX) && y == MathHelper.floor_double(originY) && z == MathHelper.floor_double(originZ))
+			return false;
+		if (x == MathHelper.floor_double(targetX) && y == MathHelper.floor_double(targetY) && z == MathHelper.floor_double(targetZ))
+			return false;
+		return true;
 	}
 
 	private boolean isDisallowedBlock(World world, int x, int y, int z) {

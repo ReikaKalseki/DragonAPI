@@ -19,6 +19,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 public class ExtraUtilsHandler extends ModHandlerBase {
 
 	public final int darkID;
+
 	public final Block decoID;
 
 	public final int edgedBrick = 0;
@@ -41,8 +42,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 		if (this.hasMod()) {
 			try {
 				Class c = this.getMod().getBlockClass();
-				Field dim = c.getField("dimID");
-				iddark = dim.getInt(null);
+				iddark = this.getDimID(c);
 
 				Field deco = c.getField("decorative1");
 				iddeco = ((Block)deco.get(null));
@@ -79,6 +79,18 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 
 		darkID = iddark;
 		decoID = iddeco;
+	}
+
+	private int getDimID(Class c) throws NoSuchFieldException, IllegalAccessException {
+		try {
+			Field dim = c.getField("dimID");
+			return dim.getInt(null);
+		}
+		catch (Exception e) {
+			Field dim = c.getField("underdarkDimID");
+			return dim.getInt(null);
+		}
+
 	}
 
 	public static ExtraUtilsHandler getInstance() {

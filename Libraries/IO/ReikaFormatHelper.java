@@ -45,4 +45,19 @@ public class ReikaFormatHelper {
 		return String.format("%dh:%dm:%ds:%dms", hour, minute, second, in3);
 	}
 
+	public static String nanosToHMSms(long nanos) {
+		long hour = TimeUnit.NANOSECONDS.toHours(nanos);
+		long in1 = nanos-TimeUnit.HOURS.toNanos(hour);
+		long minute = TimeUnit.NANOSECONDS.toMinutes(in1);
+		long in2 = in1-TimeUnit.MINUTES.toNanos(minute);
+		long second = TimeUnit.NANOSECONDS.toSeconds(in2);
+		long in3 = in2-TimeUnit.SECONDS.toNanos(second);
+		long milli = TimeUnit.NANOSECONDS.toMillis(in3);
+		long in4 = in3-TimeUnit.MILLISECONDS.toNanos(milli);
+		long micro = TimeUnit.NANOSECONDS.toMicros(in4);
+		long nano = in4-TimeUnit.MICROSECONDS.toNanos(micro);
+
+		return String.format("%dh:%dm:%ds:%dms:%dus:%sns", hour, minute, second, milli, micro, nano);
+	}
+
 }

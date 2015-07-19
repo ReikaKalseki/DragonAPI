@@ -23,7 +23,7 @@ public final class MekanismHandler extends ModHandlerBase {
 	private static final MekanismHandler instance = new MekanismHandler();
 
 	public final Block oreID;
-	public final Block cableID;
+	//public final Block cableID;
 
 	public static final int osmiumMeta = 0;
 	public static final int copperMeta = 1;
@@ -32,7 +32,7 @@ public final class MekanismHandler extends ModHandlerBase {
 	private MekanismHandler() {
 		super();
 		Block idore = null;
-		Block idcable = null;
+		//Block idcable = null;
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
@@ -40,9 +40,9 @@ public final class MekanismHandler extends ModHandlerBase {
 				Block b = (Block)ore.get(null);
 				idore = b;
 
-				Field wire = blocks.getField("Transmitter");
-				b = (Block)wire.get(null);
-				idcable = b;
+				//Field wire = blocks.getField("Transmitter");
+				//b = (Block)wire.get(null);
+				//idcable = b;
 			}
 			catch (NoSuchFieldException e) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
@@ -74,7 +74,7 @@ public final class MekanismHandler extends ModHandlerBase {
 			this.noMod();
 		}
 		oreID = idore;
-		cableID = idcable;
+		//cableID = idcable;
 	}
 
 	public static MekanismHandler getInstance() {
@@ -83,7 +83,7 @@ public final class MekanismHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return oreID != null && cableID != null;
+		return oreID != null/* && cableID != null*/;
 	}
 
 	@Override

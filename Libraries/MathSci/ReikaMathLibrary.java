@@ -221,6 +221,8 @@ public final class ReikaMathLibrary extends DragonAPICore {
 
 	/** Returns the nearest higher power of 2. Args: input */
 	public static int ceil2exp(int val) {
+		if (val <= 0)
+			return 0;
 		val--;
 		val = (val >> 1) | val;
 		val = (val >> 2) | val;

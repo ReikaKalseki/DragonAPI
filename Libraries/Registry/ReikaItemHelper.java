@@ -457,7 +457,14 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return "minecraft".equals(getNamespace(i));
 	}
 
-	private static String getNamespace(Item i) {
+	public static String getNamespace(Block b) {
+		if (b == null)
+			return null;
+		String s = Block.blockRegistry.getNameForObject(b);
+		return s.substring(0, s.indexOf(':'));
+	}
+
+	public static String getNamespace(Item i) {
 		if (i == null)
 			return null;
 		String s = Item.itemRegistry.getNameForObject(i);

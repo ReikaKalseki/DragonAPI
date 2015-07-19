@@ -53,6 +53,7 @@ import Reika.DragonAPI.IO.CompoundSyncPacket;
 import Reika.DragonAPI.IO.CompoundSyncPacket.CompoundSyncPacketHandler;
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.StepTimer;
+import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
 import Reika.DragonAPI.Interfaces.DataSync;
 import Reika.DragonAPI.Interfaces.PartialInventory;
@@ -629,6 +630,10 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 				return null;
 			return worldObj.getTileEntity(dx, dy, dz);
 		}
+	}
+
+	public final WorldLocation getAdjacentLocation(ForgeDirection dir) {
+		return new WorldLocation(worldObj, xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
 	}
 
 	public final TileEntity getTileEntity(int x, int y, int z) {

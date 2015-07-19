@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
@@ -42,7 +43,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
-public class BlockArray {
+public class BlockArray implements Iterable<Coordinate> {
 
 	private final ArrayList<Coordinate> blocks = new ArrayList();
 	private final HashSet<Coordinate> keys = new HashSet();
@@ -1042,6 +1043,38 @@ public class BlockArray {
 		}
 
 		protected abstract int compare(BlockKey b1, BlockKey b2);
+
+	}
+
+	@Override
+	public Iterator<Coordinate> iterator() {
+		return new BlockArrayIterator();
+	}
+
+	private final class BlockArrayIterator implements Iterator<Coordinate> {
+
+		private int index;
+
+		private BlockArrayIterator() {
+
+		}
+
+		@Override
+		public boolean hasNext() {
+			return blocks.size() > index+1;
+		}
+
+		@Override
+		public Coordinate next() {
+			Coordinate c = blocks.get(index);
+			index++;
+			return c;
+		}
+
+		@Override
+		public void remove() {
+			BlockArray.this.remove(index);
+		}
 
 	}
 }

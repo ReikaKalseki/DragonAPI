@@ -10,7 +10,7 @@
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.EnumMap;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -20,39 +20,112 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class MekToolHandler extends ModHandlerBase {
 
-	private static final String[] paxelVars = {
-		"WoodPaxel", "StonePaxel", "IronPaxel", "DiamondPaxel", "GoldPaxel", "GlowstonePaxel", "BronzePaxel", "OsmiumPaxel",
-		"ObsidianPaxel", "LazuliPaxel", "SteelPaxel"
-	};
+	public static enum Materials {
+		WOOD("Wood"),
+		STONE("Stone"),
+		IRON("Iron"),
+		DIAMOND("Diamond"),
+		GOLD("Gold"),
+		GLOWSTONE("Glowstone"),
+		BRONZE("Bronze"),
+		OSMIUM("Osmium"),
+		OBSIDIAN("Obsidian"),
+		LAPIS("Lazuli"),
+		STEEL("Steel");
 
-	private static final String[] pickVars = {
-		"GlowstonePickaxe", "BronzePickaxe", "OsmiumPickaxe", "ObsidianPickaxe", "LazuliPickaxe", "SteelPickaxe"
-	};
+		private final String id;
+
+		private static final Materials[] list = values();
+
+		private Materials(String s) {
+			id = s;
+		}
+
+		public boolean isVanillaMaterial() {
+			switch(this) {
+			case WOOD:
+			case STONE:
+			case IRON:
+			case DIAMOND:
+			case GOLD:
+				return true;
+			default:
+				return false;
+			}
+		}
+	}
+
+	public static enum Tools {
+		PICK("Pickaxe"),
+		PAXEL("Paxel"),
+		SHOVEL("Shovel"),
+		AXE("Axe"),
+		HOE("Hoe"),
+		SWORD("Sword"),
+		HELMET("Helmet"),
+		CHEST("Chestplate"),
+		LEGS("Leggings"),
+		BOOTS("Boots");
+
+		private final String id;
+
+		private static final Tools[] list = values();
+
+		private Tools(String s) {
+			id = s;
+		}
+
+		public boolean isCombineableWith(Materials m) {
+			return this == PAXEL ? true : !m.isVanillaMaterial();
+		}
+	}
 
 	private static final MekToolHandler instance = new MekToolHandler();
 
-	private final ArrayList<Item> paxelIDs = new ArrayList();
-	private final ArrayList<Item> pickIDs = new ArrayList();
+	private final EnumMap<Tools, EnumMap<Materials, Item>> itemsTool = new EnumMap(Tools.class);
+	private final EnumMap<Materials, EnumMap<Tools, Item>> itemsMaterial = new EnumMap(Materials.class);
 
 	private MekToolHandler() {
 		super();
 		if (this.hasMod()) {
 			Class item = this.getMod().getItemClass();
-			for (int i = 0; i < paxelVars.length; i++) {
-				String varname = paxelVars[i];
-				Item idpaxel = this.getID(item, varname);
-				paxelIDs.add(idpaxel);
-			}
-			for (int i = 0; i < pickVars.length; i++) {
-				String varname = pickVars[i];
-				Item idpick = this.getID(item, varname);
-				pickIDs.add(idpick);
+
+			for (int i = 0; i < Materials.list.length; i++) {
+				Materials m = Materials.list[i];
+				for (int k = 0; k < Tools.list.length; k++) {
+					Tools t = Tools.list[k];
+					if (t.isCombineableWith(m)) {
+						String varname = this.getField(m, t);
+						Item tool = this.getID(item, varname);
+						this.addEntry(tool, m, t);
+					}
+				}
 			}
 
 		}
 		else {
 			this.noMod();
 		}
+	}
+
+	private void addEntry(Item tool, Materials m, Tools t) {
+		EnumMap<Materials, Item> map1 = itemsTool.get(tool);
+		if (map1 == null) {
+			map1 = new EnumMap(Materials.class);
+			itemsTool.put(t, map1);
+		}
+		itemsTool.put(t, map1);
+
+		EnumMap<Tools, Item> map2 = itemsMaterial.get(tool);
+		if (map2 == null) {
+			map2 = new EnumMap(Tools.class);
+			itemsMaterial.put(m, map2);
+		}
+		itemsMaterial.put(m, map2);
+	}
+
+	private String getField(Materials m, Tools t) {
+		return m.id+t.id;
 	}
 
 	private Item getID(Class c, String varname) {
@@ -95,7 +168,7 @@ public final class MekToolHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return !paxelIDs.isEmpty() && !pickIDs.isEmpty();
+		return !itemsMaterial.isEmpty() && !itemsTool.isEmpty();
 	}
 
 	@Override
@@ -103,14 +176,24 @@ public final class MekToolHandler extends ModHandlerBase {
 		return ModList.MEKTOOLS;
 	}
 
-	public boolean isPickTypeTool(ItemStack held) {
-		if (!this.initializedProperly())
+	public boolean isArmor(ItemStack is) {
+		if (itemsTool.get(Tools.HELMET).containsValue(is.getItem()))
 			return false;
-		return paxelIDs.contains(held.getItem()) || pickIDs.contains(held.getItem());
+		if (itemsTool.get(Tools.CHEST).containsValue(is.getItem()))
+			return false;
+		if (itemsTool.get(Tools.LEGS).containsValue(is.getItem()))
+			return false;
+		if (itemsTool.get(Tools.BOOTS).containsValue(is.getItem()))
+			return false;
+		return false;
+	}
+
+	public boolean isPickTypeTool(ItemStack held) {
+		return itemsTool.get(Tools.PAXEL).containsValue(held.getItem()) || itemsTool.get(Tools.PICK).containsValue(held.getItem());
 	}
 
 	public boolean isWood(ItemStack held) {
-		return paxelIDs.get(0) == held.getItem();
+		return itemsMaterial.get(Materials.WOOD).containsValue(held.getItem());
 	}
 
 }

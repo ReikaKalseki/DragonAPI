@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Instantiable.Data.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 
 public class ChunkSplicedGenerationCache {
@@ -31,6 +32,10 @@ public class ChunkSplicedGenerationCache {
 
 	public void setBlock(int x, int y, int z, Block b, int meta) {
 		this.place(x, y, z, new SetBlock(b, meta));
+	}
+
+	public void setBlock(int x, int y, int z, BlockKey bk) {
+		this.setBlock(x, y, z, bk.blockID, bk.metadata);
 	}
 
 	public void setTileEntity(int x, int y, int z, Block b, int meta, TileCallback call) {

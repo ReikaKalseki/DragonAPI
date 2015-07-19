@@ -96,6 +96,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.BannedItemReader;
 import Reika.DragonAPI.ModInteract.MinetweakerHooks;
+import Reika.DragonAPI.ModInteract.WailaTechnicalOverride;
 import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
 import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
@@ -255,6 +256,10 @@ public class DragonAPIInit extends DragonAPIMod {
 			ItemBlock ib = new ItemBlock(b);
 			String s = Block.blockRegistry.getNameForObject(b)+"_technical";
 			Item.itemRegistry.addObject(Block.getIdFromBlock(b), s, ib);
+
+			if (ModList.WAILA.isLoaded()) {
+				WailaTechnicalOverride.instance.addBlock(b);
+			}
 		}
 	}
 
@@ -268,7 +273,7 @@ public class DragonAPIInit extends DragonAPIMod {
 			}
 		}
 	}
-	 */
+	 *//*
 	/** Do not call unless biomes are no longer saved as bytes *//*
 	private void increaseBiomeCount() {
 		int count = BiomeGenBase.biomeL	ist.length;
@@ -317,6 +322,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		//	TickRegistry.instance.registerTickHandler(CompoundSyncPacketTracker.instance, Side.SERVER);
 
 		FMLInterModComms.sendMessage("Waila", "register", "Reika.DragonAPI.ModInteract.LegacyWailaHelper.registerObjects");
+		FMLInterModComms.sendMessage("Waila", "register", "Reika.DragonAPI.ModInteract.WailaTechnicalOverride.registerOverride");
 
 		if (DragonOptions.UNNERFOBSIDIAN.getState())
 			Blocks.obsidian.setResistance(2000);

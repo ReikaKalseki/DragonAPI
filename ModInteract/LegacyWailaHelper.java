@@ -33,10 +33,10 @@ public class LegacyWailaHelper {
 		for (DataHandler h : wailaData) {
 			IWailaDataProvider b = (IWailaDataProvider)h.getBlock();
 			Class<?extends Block> c = h.getObjectClass();
-			//reg.registerHeadProvider(b, c);
+			reg.registerHeadProvider(b, c);
 			reg.registerBodyProvider(b, c);
-			//reg.registerTailProvider(b, c);
-			//reg.registerStackProvider(b, c);
+			reg.registerTailProvider(b, c);
+			reg.registerStackProvider(b, c);
 		}
 	}
 
