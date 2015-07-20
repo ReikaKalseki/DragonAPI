@@ -13,6 +13,9 @@ import java.lang.reflect.Field;
 import java.util.HashSet;
 
 import net.minecraft.block.Block;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Instantiable.BasicModEntry;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.Loader;
 
 public class TimeTorchHelper {
@@ -45,7 +48,9 @@ public class TimeTorchHelper {
 				blockBlacklist = (HashSet<Block>)f.get(null);
 			}
 			catch (Exception e) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load Time Torch blacklisting!");
 				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(new BasicModEntry("Torcherino"), e);
 			}
 		}
 	}

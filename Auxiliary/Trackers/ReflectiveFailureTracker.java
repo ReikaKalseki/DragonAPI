@@ -11,21 +11,21 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.Collection;
 
-import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Interfaces.ModEntry;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReflectiveFailureTracker {
 
 	public static final ReflectiveFailureTracker instance = new ReflectiveFailureTracker();
 
-	private final MultiMap<ModList, ExceptionLog> data = new MultiMap();
+	private final MultiMap<ModEntry, ExceptionLog> data = new MultiMap();
 
 	private ReflectiveFailureTracker() {
 
 	}
 
-	public void logModReflectiveFailure(ModList mod, Exception e) {
+	public void logModReflectiveFailure(ModEntry mod, Exception e) {
 		String className = Thread.currentThread().getStackTrace()[2].getClassName();
 		data.addValue(mod, new ExceptionLog(className, e));
 	}
@@ -37,9 +37,9 @@ public class ReflectiveFailureTracker {
 			this.log("Some reflective mod handlers have failed.");
 			this.log("Please try updating all involved mods, and if this fails to fix the issue, notify the author of the handlers.");
 
-			for (ModList mod : data.keySet()) {
+			for (ModEntry mod : data.keySet()) {
 				Collection<ExceptionLog> c = data.get(mod);
-				this.log(String.format("%d failure%s for %s ('%s'):", c.size(), c.size() > 1 ? "s" : "", mod.getDisplayName(), mod.modLabel));
+				this.log(String.format("%d failure%s for %s ('%s'):", c.size(), c.size() > 1 ? "s" : "", mod.getDisplayName(), mod.getModLabel()));
 				for (ExceptionLog e : c) {
 					this.log(e.toString());
 				}

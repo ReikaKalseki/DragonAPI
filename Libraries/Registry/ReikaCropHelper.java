@@ -121,5 +121,10 @@ public enum ReikaCropHelper implements CropType {
 		return id == blockID;
 	}
 
+	@Override
+	public boolean neverDropsSecondSeed() {
+		return false;
+	}
+
 
 }

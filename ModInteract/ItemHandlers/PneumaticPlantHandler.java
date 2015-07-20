@@ -158,4 +158,9 @@ public class PneumaticPlantHandler extends CropHandlerBase {
 		return world.getBlockMetadata(x, y, z)%7;
 	}
 
+	@Override
+	public boolean neverDropsSecondSeed() {
+		return false;
+	}
+
 }

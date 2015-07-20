@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.w3c.dom.Document;
@@ -16,6 +17,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import Reika.DragonAPI.IO.ReikaXMLBase;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 
 public class XMLInterface {
 
@@ -26,6 +28,7 @@ public class XMLInterface {
 	private final boolean requireFile;
 
 	private final HashMap<String, String> data = new HashMap();
+	private final MultiMap<String, String> tree = new MultiMap();
 
 	public static final String NULL_VALUE = "#NULL!";
 
@@ -59,19 +62,21 @@ public class XMLInterface {
 	}
 
 	private void readFileToMap() {
-		this.recursiveRead(doc);
+		this.recursiveRead("$TOP$", doc);
 	}
 
-	private void recursiveRead(Node n) {
+	private void recursiveRead(String parent, Node n) {
 		if (n == null)
 			return;
 		NodeList li = n.getChildNodes();
 		int len = li.getLength();
 		for (int i = 0; i < len; i++) {
 			Node ch = li.item(i);
+			String key = ReikaXMLBase.getNodeNameTree(ch);
+			tree.addValue(parent, key);
 			if (ch.getNodeType() == Node.ELEMENT_NODE) {
 				//ReikaJavaLibrary.pConsole(ch.getNodeName());
-				this.recursiveRead(ch);
+				this.recursiveRead(key, ch);
 			}
 			else if (ch.getNodeType() == Node.TEXT_NODE) {
 				String val = ch.getNodeValue();
@@ -90,7 +95,6 @@ public class XMLInterface {
 				if (val != null) {
 					val = val.replace("\t", "");
 					//ReikaJavaLibrary.pConsole("TREE: "+ReikaXMLBase.getNodeNameTree(ch));
-					String key = ReikaXMLBase.getNodeNameTree(ch);
 					if (data.containsKey(key))
 						;//throw new RuntimeException("Your input XML has multiple node trees with the EXACT same names! Resolve this!");
 					data.put(key, val);
@@ -104,6 +108,19 @@ public class XMLInterface {
 		if (dat == null)
 			dat = NULL_VALUE;
 		return dat;
+	}
+
+	public boolean nodeExists(String name) {
+		return data.containsKey(name);
+	}
+
+	/** Only returns "tree" nodes, not text ones. */
+	public Collection<String> getNodesWithin(String name) {
+		return name == null ? this.getTopNodes() : tree.get(name);
+	}
+
+	public Collection<String> getTopNodes() {
+		return tree.get("$TOP$");
 	}
 
 	@Override

@@ -105,7 +105,9 @@ public enum ModList implements ModEntry {
 	MINECHEM("minechem"),
 	TFC("terrafirmacraft"),
 	BOTANIA("Botania"),
-	GENDUSTRY("gendustry");
+	GENDUSTRY("gendustry"),
+	FLUXEDCRYSTALS("fluxedcrystals", "fluxedCrystals.init.FCBlocks", "fluxedCrystals.init.FCItems"),
+	HUNGEROVERHAUL("HungerOverhaul");
 
 	private final boolean condition;
 	public final String modLabel;

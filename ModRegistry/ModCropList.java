@@ -30,6 +30,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.FluxedCrystalHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.OreBerryBushHandler;
@@ -49,8 +50,7 @@ public enum ModCropList implements ModCrop {
 	ALGAE(ModList.EMASHER, 0x29D855, "algae", 0, VarType.INSTANCE),
 	ENDER(ModList.EXTRAUTILS, 0x00684A, "enderLily", 7, VarType.INSTANCE),
 	PNEUMATIC(ModList.PNEUMATICRAFT, 0x37FF69, PneumaticPlantHandler.getInstance()),
-	//CANOLA(ModList.ROTARYCRAFT, 0x00cc00, new CanolaHandler()),
-	//BLOOM(ModList.CHROMATICRAFT, 0x00ff00, new CrystalPlantHandler());
+	FLUXED(ModList.FLUXEDCRYSTALS, 0xd00000, FluxedCrystalHandler.getInstance());
 	;
 
 	private final ModEntry mod;
@@ -70,12 +70,8 @@ public enum ModCropList implements ModCrop {
 
 	private boolean exists = false;
 
-	//private static Collection<CustomCrop> customHandlers = new OneWaySet();
-
 	public static final ModCropList[] cropList = values();
 	private static final BlockMap<ModCropList> cropMappings = new BlockMap();
-
-	//private static final Collection<ModCropList> customHandlers = new OneWayList();
 
 	private ModCropList(ModList api, int color, String blockVar, int metaripe, VarType type) {
 		this(api, color, blockVar, 0, metaripe, type);
@@ -131,12 +127,7 @@ public enum ModCropList implements ModCrop {
 							id = block;
 							exists = true;
 						}
-						break;/*
-					case INT:
-						b = blocks.getField(blockVar);
-						id = b.getInt(null);
-						exists = true;
-						break;*/
+						break;
 					default:
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
 						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for field "+blockVar);
@@ -336,19 +327,19 @@ public enum ModCropList implements ModCrop {
 		return li;
 	}
 
-	public boolean isTileEntity() {
+	public boolean isTileEntityUsedForGrowth() {
 		return handler instanceof CustomCropHandler ? ((CustomCropHandler)handler).isTileEntity() : false;
 	}
 
 	public void setHarvested(World world, int x, int y, int z) {
-		if (this.isTileEntity())
+		if (this.isTileEntityUsedForGrowth())
 			this.runTEHarvestCode(world, x, y, z);
 		else
 			world.setBlockMetadataWithNotify(x, y, z, this.getHarvestedMetadata(world, x, y, z), 3);
 	}
 
 	private void runTEHarvestCode(World world, int x, int y, int z) {
-		if (!this.isTileEntity())
+		if (!this.isTileEntityUsedForGrowth())
 			return;
 		handler.editTileDataForHarvest(world, x, y, z);
 	}
@@ -391,16 +382,6 @@ public enum ModCropList implements ModCrop {
 					}
 				}
 			}
-			/*
-			if (mod == null) {
-				for (ModCropList ct : customHandlers) {
-					if (ct.isCrop(id, meta)) {
-						mod = ct;
-						break;
-					}
-				}
-			}
-			 */
 
 			cropMappings.put(id, meta, mod);
 		}
@@ -460,63 +441,6 @@ public enum ModCropList implements ModCrop {
 			}
 		}
 	}
-	/*
-	private static abstract class CustomCrop implements ModCrop {
-
-		private final CropHandler handler;
-
-		private CustomCrop(CropHandler ch) {
-			handler = ch;
-		}
-
-		@Override
-		public boolean existsInGame() {
-			return true;
-		}
-
-		@Override
-		public boolean isRipe(World world, int x, int y, int z) {
-			return handler.isRipeCrop(world, x, y, z);
-		}
-
-		@Override
-		public void setHarvested(World world, int x, int y, int z) {
-			handler.setHarvested(world, x, y, z);
-		}
-
-		@Override
-		public void makeRipe(World world, int x, int y, int z) {
-			handler.makeRipe(world, x, y, z);
-		}
-
-		@Override
-		public boolean isSeedItem(ItemStack is) {
-			return handler.isSeedItem(is)
-		}
-
-		@Override
-		public boolean destroyOnHarvest() {
-			return handler.destroyOnHarvest();
-		}
-
-		@Override
-		public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
-			return han;
-		}
-
-		@Override
-		public int getGrowthState(World world, int x, int y, int z) {
-			// TODO Auto-generated method stub
-			return 0;
-		}
-
-		@Override
-		public boolean isCrop(Block id, int meta) {
-			// TODO Auto-generated method stub
-			return false;
-		}
-	}
-	 */
 
 	public static void addCustomCropType(CustomCropHandler ch) {
 		String n = ch.getEnumEntryName().toUpperCase();
@@ -542,5 +466,10 @@ public enum ModCropList implements ModCrop {
 	@Override
 	public int getGrowthState(World world, int x, int y, int z) {
 		return this.isHandlered() ? handler.getGrowthState(world, x, y, z) : world.getBlockMetadata(x, y, z);
+	}
+
+	@Override
+	public boolean neverDropsSecondSeed() {
+		return this.isHandlered() ? handler.neverDropsSecondSeed() : false;
 	}
 }

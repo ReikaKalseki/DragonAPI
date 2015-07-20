@@ -476,4 +476,9 @@ public class MagicCropHandler extends CropHandlerBase {
 		return world.getBlockMetadata(x, y, z);
 	}
 
+	@Override
+	public boolean neverDropsSecondSeed() {
+		return configChance == 0;
+	}
+
 }

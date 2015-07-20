@@ -156,4 +156,9 @@ public class OreBerryBushHandler extends CropHandlerBase {
 		return world.getBlockMetadata(x, y, z)%4;
 	}
 
+	@Override
+	public boolean neverDropsSecondSeed() {
+		return true;
+	}
+
 }

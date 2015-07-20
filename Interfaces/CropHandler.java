@@ -39,4 +39,6 @@ public interface CropHandler {
 
 	public abstract boolean initializedProperly();
 
+	public abstract boolean neverDropsSecondSeed();
+
 }

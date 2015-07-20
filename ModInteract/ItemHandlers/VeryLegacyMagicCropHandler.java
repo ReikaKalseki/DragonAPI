@@ -367,4 +367,9 @@ public class VeryLegacyMagicCropHandler extends CropHandlerBase {
 		return null;
 	}
 
+	@Override
+	public boolean neverDropsSecondSeed() {
+		return configChance == 0;
+	}
+
 }

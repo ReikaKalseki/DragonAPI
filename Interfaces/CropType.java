@@ -33,9 +33,13 @@ public interface CropType extends RegistryType {
 
 	public boolean isCrop(Block id, int meta);
 
+	public boolean neverDropsSecondSeed();
+
 	public static class CropMethods {
 
 		public static void removeOneSeed(CropType c, ArrayList<ItemStack> li) {
+			if (c.neverDropsSecondSeed())
+				return;
 			Iterator<ItemStack> it = li.iterator();
 			while (it.hasNext()) {
 				ItemStack is = it.next();

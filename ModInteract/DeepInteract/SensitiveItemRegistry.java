@@ -15,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableArray;
+import cpw.mods.fml.common.Loader;
 
 /** Register progression/balance-sensitive items here to blacklist normal recipe systems from adding new recipes for them. */
 public final class SensitiveItemRegistry {
@@ -54,7 +55,8 @@ public final class SensitiveItemRegistry {
 
 	private static enum Interactions {
 		MINETWEAKER(MTInteractionManager.isMTLoaded()),
-		CRAFTMANAGER(ModList.CRAFTMANAGER.isLoaded());
+		CRAFTMANAGER(ModList.CRAFTMANAGER.isLoaded()),
+		MATTEROVERDRIVE(Loader.isModLoaded("mo"));
 
 		private final boolean isLoaded;
 
@@ -72,6 +74,9 @@ public final class SensitiveItemRegistry {
 			case CRAFTMANAGER:
 				CraftingManagerBlacklisting.registerItem(item);
 				break;
+			case MATTEROVERDRIVE:
+				MatterOverdriveHandler.blacklist(item);
+				break;
 			}
 		}
 
@@ -83,6 +88,9 @@ public final class SensitiveItemRegistry {
 			case CRAFTMANAGER:
 				CraftingManagerBlacklisting.registerItem(item);
 				break;
+			case MATTEROVERDRIVE:
+				MatterOverdriveHandler.blacklist(item);
+				break;
 			}
 		}
 
@@ -93,6 +101,9 @@ public final class SensitiveItemRegistry {
 				break;
 			case CRAFTMANAGER:
 				CraftingManagerBlacklisting.registerItem(item);
+				break;
+			case MATTEROVERDRIVE:
+				MatterOverdriveHandler.blacklist(item);
 				break;
 			}
 		}
