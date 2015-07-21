@@ -26,6 +26,8 @@ import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
+import net.minecraft.entity.ai.EntityAIBase;
+import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityBoat;
@@ -79,6 +81,7 @@ import net.minecraft.world.WorldServer;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Interfaces.ComparableAI;
 import Reika.DragonAPI.Interfaces.TameHostile;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -837,6 +840,28 @@ public final class ReikaEntityHelper extends DragonAPICore {
 				e.setDead();
 			}
 		}
+	}
+
+	/** Lower priority value == higher actual priority */
+	public static void addAITask(EntityLiving e, EntityAIBase task, int priority) {
+		if (!hasAITask(e, task)) {
+			e.tasks.addTask(priority, task);
+		}
+	}
+
+	public static boolean hasAITask(EntityLiving e, EntityAIBase task) {
+		for (EntityAITaskEntry in : ((List<EntityAITaskEntry>)e.tasks.taskEntries)) {
+			if (in.action == task || in.action.equals(task)) {
+				return true;
+			}
+			if (in instanceof ComparableAI && task instanceof ComparableAI) {
+				if (((ComparableAI)in).match((ComparableAI)task))
+					return true;
+				if (((ComparableAI)task).match((ComparableAI)in))
+					return true;
+			}
+		}
+		return false;
 	}
 
 }

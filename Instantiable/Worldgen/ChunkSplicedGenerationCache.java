@@ -15,7 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Instantiable.Data.BlockKey;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 
 public class ChunkSplicedGenerationCache {
@@ -49,19 +49,30 @@ public class ChunkSplicedGenerationCache {
 			map = new HashMap();
 			data.put(key, map);
 		}
-		x = x%16;
-		z = z%16;
-		if (x < 0) {
-			x += 16;
-			if (x%16 == 0)
-				x += 16;
-		}
-		if (z < 0) {
-			z += 16;
-			if (z%16 == 0)
-				z += 16;
-		}
+		x = this.modAndAlign(x);
+		z = this.modAndAlign(z);
 		map.put(new Coordinate(x, y, z), sb);
+	}
+
+	private int modAndAlign(int c) {
+		c = c%16;
+		if (c < 0) {
+			c += 16;
+			if (c%16 == 0)
+				c += 16;
+		}
+		return c;
+	}
+
+	public BlockKey getBlock(int x, int y, int z) {
+		ChunkCoordIntPair key = this.getKey(x, z);
+		HashMap<Coordinate, BlockPlace> map = data.get(key);
+		if (map == null)
+			return null;
+		x = this.modAndAlign(x);
+		z = this.modAndAlign(z);
+		BlockPlace p = map.get(new Coordinate(x, y, z));
+		return p != null ? p.asBlockKey() : null;
 	}
 
 	public void generate(World world, int chunkX, int chunkZ) {
@@ -98,6 +109,11 @@ public class ChunkSplicedGenerationCache {
 		data.clear();
 	}
 
+	public void duplicate(ChunkSplicedGenerationCache c) {
+		this.clear();
+		data.putAll(c.data);
+	}
+
 	@Override
 	public String toString() {
 		return data.toString();
@@ -110,6 +126,7 @@ public class ChunkSplicedGenerationCache {
 	public static interface BlockPlace {
 
 		public void place(World world, int x, int y, int z);
+		public BlockKey asBlockKey();
 
 	}
 
@@ -134,6 +151,16 @@ public class ChunkSplicedGenerationCache {
 				world.markBlockForUpdate(x, y, z);
 				world.func_147479_m(x, y, z);
 			}
+		}
+
+		@Override
+		public final BlockKey asBlockKey() {
+			return new BlockKey(block, metadata);
+		}
+
+		@Override
+		public final String toString() {
+			return "SET "+this.asBlockKey().toString();
 		}
 
 	}
