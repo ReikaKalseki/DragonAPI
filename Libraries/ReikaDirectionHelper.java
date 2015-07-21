@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -66,6 +67,10 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		return getDirectionBetween(c1.xCoord, c1.yCoord, c1.zCoord, c2.xCoord, c2.yCoord, c2.zCoord);
 	}
 
+	public static ForgeDirection getDirectionBetween(Point from, Point to) {
+		return getDirectionBetween(from.x, 0, from.y, to.x, 0, to.y);
+	}
+
 	public static int getDirectionIndex(ForgeDirection dir) {
 		switch (dir) {
 		case EAST:
@@ -104,6 +109,23 @@ public class ReikaDirectionHelper extends DragonAPICore {
 	public static EnumFacing getOpposite(EnumFacing facing) {
 		int val = facing.ordinal()%2 != 0 ? facing.ordinal()-1 : facing.ordinal()+1;
 		return EnumFacing.values()[val];
+	}
+
+	public static ForgeDirection getSideOfBox(int i, int j, int k, boolean vertical, int size) {
+		if (i == size)
+			return ForgeDirection.EAST;
+		else if (i == 0)
+			return ForgeDirection.WEST;
+		else if (k == size)
+			return ForgeDirection.SOUTH;
+		else if (k == 0)
+			return ForgeDirection.NORTH;
+		else if (vertical && j == size)
+			return ForgeDirection.UP;
+		else if (vertical && j == 0)
+			return ForgeDirection.DOWN;
+		else
+			return null;
 	}
 
 }
