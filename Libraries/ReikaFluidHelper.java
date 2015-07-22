@@ -9,11 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 
 public class ReikaFluidHelper {
 
@@ -47,6 +51,26 @@ public class ReikaFluidHelper {
 		private FluidContainer(ItemStack fill, ItemStack emp) {
 			filled = fill;
 			empty = emp;
+		}
+
+	}
+
+	public static void sortFluids(ArrayList<FluidStack> li) {
+		Collections.sort(li, fluidStackComparator);
+	}
+
+	public static final Comparator<FluidStack> fluidStackComparator = new FluidStackComparator();
+
+	private static class FluidStackComparator implements Comparator<FluidStack> {
+
+		@Override
+		public int compare(FluidStack o1, FluidStack o2) {
+			if (o1.fluidID == o2.fluidID) {
+				return o1.amount-o2.amount;
+			}
+			else {
+				return o1.fluidID-o2.fluidID;
+			}
 		}
 
 	}

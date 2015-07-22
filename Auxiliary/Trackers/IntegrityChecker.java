@@ -15,8 +15,8 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.ModIntegrityException;
-import Reika.DragonAPI.Interfaces.BlockEnum;
-import Reika.DragonAPI.Interfaces.ItemEnum;
+import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
+import Reika.DragonAPI.Interfaces.Registry.ItemEnum;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public final class IntegrityChecker {

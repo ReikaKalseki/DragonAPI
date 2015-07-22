@@ -3,7 +3,7 @@ package Reika.DragonAPI.Instantiable.AI;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.tileentity.TileEntity;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Interfaces.MobAttractor;
+import Reika.DragonAPI.Interfaces.TileEntity.MobAttractor;
 
 public class AITaskSeekMachine extends AITaskSeekLocation {
 

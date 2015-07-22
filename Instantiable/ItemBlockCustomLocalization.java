@@ -15,7 +15,7 @@ import net.minecraft.item.ItemStack;
 
 import org.apache.logging.log4j.Level;
 
-import Reika.DragonAPI.Interfaces.BlockEnum;
+import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class ItemBlockCustomLocalization extends ItemBlock {

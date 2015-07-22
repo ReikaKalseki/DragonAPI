@@ -10,7 +10,7 @@
 package Reika.DragonAPI.Base;
 
 import net.minecraft.world.World;
-import Reika.DragonAPI.Interfaces.CropHandler;
+import Reika.DragonAPI.Interfaces.Registry.CropHandler;
 
 public abstract class CropHandlerBase extends ModHandlerBase implements CropHandler {
 

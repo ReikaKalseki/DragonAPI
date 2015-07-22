@@ -685,4 +685,12 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 		return false;
 	}
+
+	public static boolean removeValuesFromMap(Map map, Object value) {
+		boolean flag = false;
+		while(map.values().contains(value)) {
+			flag |= map.values().remove(value);
+		}
+		return flag;
+	}
 }

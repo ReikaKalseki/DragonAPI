@@ -10,6 +10,7 @@
 package Reika.DragonAPI.IO;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
@@ -211,6 +213,37 @@ public class ReikaFileReader extends DragonAPICore {
 				e.printStackTrace();
 		}
 		return li;
+	}
+
+	public static void writeLinesToFile(String s, ArrayList<String> li, boolean printStackTrace) {
+		writeLinesToFile(new File(s), li, printStackTrace);
+	}
+
+	public static void writeLinesToFile(File f, ArrayList<String> li, boolean printStackTrace) {
+		try {
+			writeLinesToFile(new BufferedWriter(new PrintWriter(f)), li, printStackTrace);
+		}
+		catch (IOException e) {
+			if (printStackTrace) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void writeLinesToFile(BufferedWriter p, ArrayList<String> li, boolean printStackTrace) {
+		String sep = System.getProperty("line.separator");
+		try {
+			for (String s : li) {
+				p.write(s+sep);
+			}
+			p.flush();
+			p.close();
+		}
+		catch (IOException e) {
+			if (printStackTrace) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public static String getHash(String path, HashType type) {

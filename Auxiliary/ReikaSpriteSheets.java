@@ -26,12 +26,12 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import Reika.DragonAPI.Interfaces.AnimatedSpritesheet;
-import Reika.DragonAPI.Interfaces.BlendedColor;
-import Reika.DragonAPI.Interfaces.GradientBlend;
-import Reika.DragonAPI.Interfaces.MultiLayerItemSprite;
-import Reika.DragonAPI.Interfaces.SpriteRenderCallback;
-import Reika.DragonAPI.Interfaces.ToolSprite;
+import Reika.DragonAPI.Interfaces.Item.AnimatedSpritesheet;
+import Reika.DragonAPI.Interfaces.Item.BlendedColor;
+import Reika.DragonAPI.Interfaces.Item.GradientBlend;
+import Reika.DragonAPI.Interfaces.Item.MultiLayerItemSprite;
+import Reika.DragonAPI.Interfaces.Item.SpriteRenderCallback;
+import Reika.DragonAPI.Interfaces.Item.ToolSprite;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 

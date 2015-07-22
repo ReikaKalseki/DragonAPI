@@ -12,13 +12,27 @@ package Reika.DragonAPI.Instantiable.IO;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Interfaces.ConfigList;
-import Reika.DragonAPI.Interfaces.IDRegistry;
+import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
+import Reika.DragonAPI.Interfaces.Configuration.ConfigList;
+import Reika.DragonAPI.Interfaces.Configuration.DecimalConfig;
+import Reika.DragonAPI.Interfaces.Configuration.IntArrayConfig;
+import Reika.DragonAPI.Interfaces.Configuration.IntegerConfig;
+import Reika.DragonAPI.Interfaces.Configuration.SegmentedConfigList;
+import Reika.DragonAPI.Interfaces.Configuration.StringArrayConfig;
+import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
+import Reika.DragonAPI.Interfaces.Registry.IDRegistry;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -38,13 +52,18 @@ public class ControlledConfig {
 	protected Object[] controls;
 	protected int[] otherIDs;
 
+	private final HashMap<SegmentedConfigList, String> specialFiles = new HashMap();
+	private final MultiMap<String, SegmentedConfigList> specialConfigs = new MultiMap();
+	private final HashMap<String, HashMap<String, String>> extraFiles = new HashMap();
+
 	public ControlledConfig(DragonAPIMod mod, ConfigList[] option, IDRegistry[] id, int cfg) {
 		configMod = mod;
 		optionList = option;
 		IDList = id;
 
-		if (option != null)
+		if (option != null) {
 			controls = new Object[optionList.length];
+		}
 		else {
 			controls = new Object[0];
 			optionList = new ConfigList[0];
@@ -64,6 +83,10 @@ public class ControlledConfig {
 
 	public final File getConfigFolder() {
 		return configFile.getParentFile();
+	}
+
+	public final Collection<String> getExtraFiles() {
+		return Collections.unmodifiableCollection(extraFiles.keySet());
 	}
 
 	public Object getControl(int i) {
@@ -116,18 +139,54 @@ public class ControlledConfig {
 	}
 
 	public void loadCustomConfigFile(FMLPreInitializationEvent event, String file) {
-		configFile = new File(file);
+		this.loadConfigFile(new File(file));
 	}
 
 	public void loadSubfolderedConfigFile(FMLPreInitializationEvent event) {
 		String name = ReikaStringParser.stripSpaces(configMod.getDisplayName());
 		String author = ReikaStringParser.stripSpaces(configMod.getModAuthorName());
 		String file = event.getModConfigurationDirectory()+"/"+author+"/"+name+".cfg";
-		configFile = new File(file);
+		this.loadConfigFile(new File(file));
 	}
 
 	public void loadDefaultConfigFile(FMLPreInitializationEvent event) {
-		configFile = event.getSuggestedConfigurationFile();
+		this.loadConfigFile(event.getSuggestedConfigurationFile());
+	}
+
+	private void loadConfigFile(File f) {
+		configFile = f;
+
+		if (optionList != null) {
+			for (int i = 0; i < optionList.length; i++) {
+				ConfigList c = optionList[i];
+				if (c instanceof SegmentedConfigList) {
+					SegmentedConfigList sg = (SegmentedConfigList)c;
+					String s = sg.getCustomConfigFile();
+					if (s != null) {
+						s = this.parseFileString(s);
+						specialFiles.put(sg, s);
+						extraFiles.put(s, new HashMap());
+						specialConfigs.addValue(s, sg);
+					}
+				}
+			}
+		}
+	}
+
+	private String parseFileString(String s) {
+		if (s.charAt(0) == '*') {
+			String suffix = s.replaceAll("\\*", "");
+			s = configFile.getAbsolutePath()+"*"+suffix;
+		}
+		String ext = s.substring(s.lastIndexOf('.'));
+		int post = ext.indexOf('*');
+		if (post >= 0) {
+			ext = ext.substring(0, post);
+			s = s.replaceAll("\\*", "");
+			s = s.replaceAll(ext, "");
+			s = s+ext;
+		}
+		return s;
 	}
 
 	public final void initProps(FMLPreInitializationEvent event) {
@@ -143,27 +202,16 @@ public class ControlledConfig {
 	private void loadConfig() {
 		config.load();
 
+		if (!specialFiles.isEmpty())
+			this.loadExtraFiles();
+
 		for (int i = 0; i < optionList.length; i++) {
 			String label = optionList[i].getLabel();
 			if (optionList[i].shouldLoad()) {
-				if (optionList[i].isBoolean())
-					controls[i] = this.setState(optionList[i]);
-				if (optionList[i].isNumeric())
-					controls[i] = this.setValue(optionList[i]);
-				if (optionList[i].isDecimal())
-					controls[i] = this.setFloat(optionList[i]);
-				//if (optionList[i].isString())
-				//	controls[i] = this.setString(optionList[i]);
+				controls[i] = this.loadValue(optionList[i]);
 			}
 			else {
-				if (optionList[i].isBoolean())
-					controls[i] = optionList[i].getDefaultState();
-				if (optionList[i].isNumeric())
-					controls[i] = optionList[i].getDefaultValue();
-				if (optionList[i].isDecimal())
-					controls[i] = optionList[i].getDefaultFloat();
-				//if (optionList[i].isString())
-				//	controls[i] = optionList[i].getDefaultString();
+				controls[i] = this.getDefault(optionList[i]);
 			}
 		}
 
@@ -176,36 +224,214 @@ public class ControlledConfig {
 		/*******************************/
 		//save the data
 		config.save();
+
+		if (!specialFiles.isEmpty())
+			this.saveExtraFiles();
 	}
 
-	private boolean setState(ConfigList cfg) {
+	private Object loadValue(ConfigList cfg) {
+		if (cfg instanceof BooleanConfig && ((BooleanConfig)cfg).isBoolean())
+			return this.setState((BooleanConfig)cfg);
+		if (cfg instanceof IntegerConfig && ((IntegerConfig)cfg).isNumeric())
+			return this.setValue((IntegerConfig)cfg);
+		if (cfg instanceof DecimalConfig && ((DecimalConfig)cfg).isDecimal())
+			return this.setFloat((DecimalConfig)cfg);
+		if (cfg instanceof StringConfig && ((StringConfig)cfg).isString())
+			return this.setString((StringConfig)cfg);
+		if (cfg instanceof IntArrayConfig && ((IntArrayConfig)cfg).isIntArray())
+			return this.setIntArray((IntArrayConfig)cfg);
+		if (cfg instanceof StringArrayConfig && ((StringArrayConfig)cfg).isStringArray())
+			return this.setStringArray((StringArrayConfig)cfg);
+		return null;
+	}
+
+	private Object getDefault(ConfigList cfg) {
+		if (cfg instanceof BooleanConfig && ((BooleanConfig)cfg).isBoolean())
+			return ((BooleanConfig)cfg).getDefaultState();
+		if (cfg instanceof IntegerConfig && ((IntegerConfig)cfg).isNumeric())
+			return ((IntegerConfig)cfg).getDefaultValue();
+		if (cfg instanceof DecimalConfig && ((DecimalConfig)cfg).isDecimal())
+			return ((DecimalConfig)cfg).getDefaultFloat();
+		if (cfg instanceof StringConfig && ((StringConfig)cfg).isString())
+			return ((StringConfig)cfg).getDefaultString();
+		if (cfg instanceof IntArrayConfig && ((IntArrayConfig)cfg).isIntArray())
+			return ((IntArrayConfig)cfg).getDefaultIntArray();
+		if (cfg instanceof StringArrayConfig && ((StringArrayConfig)cfg).isStringArray())
+			return ((StringArrayConfig)cfg).getDefaultStringArray();
+		return null;
+	}
+
+	private void loadExtraFiles() {
+		for (String s : extraFiles.keySet()) {
+			File f = new File(s);
+			if (f.exists()) {
+				this.readData(extraFiles.get(s), f);
+			}
+		}
+
+		for (ConfigList cfg : specialFiles.keySet()) {
+			String file = specialFiles.get(cfg);
+			HashMap<String, String> data = extraFiles.get(file);
+			String s = data.get(cfg.getLabel());
+			if (s == null) {
+				controls[cfg.ordinal()] = this.getDefault(cfg);
+			}
+			else {
+				try {
+					Object o = this.parseData(cfg, s);
+					controls[cfg.ordinal()] = o;
+				}
+				catch (Exception e) {
+					controls[cfg.ordinal()] = this.getDefault(cfg);
+				}
+			}
+		}
+	}
+
+	private Object parseData(ConfigList cfg, String o) {
+		if (cfg instanceof StringConfig && ((StringConfig)cfg).isString()) {
+			return o;
+		}
+		else if (cfg instanceof IntegerConfig && ((IntegerConfig)cfg).isNumeric()) {
+			return Integer.parseInt(o);
+		}
+		else if (cfg instanceof DecimalConfig && ((DecimalConfig)cfg).isDecimal()) {
+			return Float.parseFloat(o);
+		}
+		else if (cfg instanceof IntArrayConfig && ((IntArrayConfig)cfg).isIntArray()) {
+			o = o.replaceAll("[", "").replaceAll("]", "");
+			String[] parts = o.split(",");
+			int[] dat = new int[parts.length];
+			for (int i = 0; i < dat.length; i++) {
+				dat[i] = Integer.parseInt(parts[i]);
+			}
+			return dat;
+		}
+		else if (cfg instanceof StringArrayConfig && ((StringArrayConfig)cfg).isStringArray()) {
+			o = o.replaceAll("[", "").replaceAll("]", "");
+			String[] parts = o.split(",");
+			return parts;
+		}
+		else {
+			return o;
+		}
+	}
+
+	private void saveExtraFiles() {
+		for (String s : extraFiles.keySet()) {
+			try {
+				File f = new File(s);
+				ArrayList<String> li = this.getDataToWriteToFile(s);
+				if (!li.isEmpty()) {
+					File parent = new File(f.getParent());
+					if (!parent.exists())
+						parent.mkdirs();
+					if (f.exists())
+						f.delete();
+					f.createNewFile();
+					if (f.exists()) {
+						ReikaFileReader.writeLinesToFile(f, li, true);
+					}
+				}
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	private ArrayList<String> getDataToWriteToFile(String s) {
+		ArrayList<String> li = new ArrayList();
+		for (SegmentedConfigList cfg : specialConfigs.get(s)) {
+			Object dat = controls[cfg.ordinal()];
+			if (cfg.saveIfUnspecified() || !dat.equals(this.getDefault(cfg))) {
+				String val = this.encodeData(cfg, dat);
+				String sg = "[\""+cfg.getLabel()+"\"=\""+val+"\"";
+				li.add(sg);
+			}
+		}
+		return li;
+	}
+
+	private String encodeData(ConfigList cfg, Object o) {
+		if (cfg instanceof StringConfig && ((StringConfig)cfg).isString()) {
+			return (String)o;
+		}
+		else if (cfg instanceof BooleanConfig && ((BooleanConfig)cfg).isBoolean()) {
+			return String.valueOf(o);
+		}
+		else if (cfg instanceof IntegerConfig && ((IntegerConfig)cfg).isNumeric()) {
+			return String.valueOf(o);
+		}
+		else if (cfg instanceof DecimalConfig && ((DecimalConfig)cfg).isDecimal()) {
+			return String.valueOf(o);
+		}
+		else if (cfg instanceof IntArrayConfig && ((IntArrayConfig)cfg).isIntArray()) {
+			return Arrays.toString((int[])o);
+		}
+		else if (cfg instanceof StringArrayConfig && ((StringArrayConfig)cfg).isStringArray()) {
+			return Arrays.toString((String[])o);
+		}
+		else {
+			return "";
+		}
+	}
+
+	private void readData(HashMap<String, String> map, File f) {
+		ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+		for (String s : li) {
+			if (s.startsWith("[")) {
+				int min = s.indexOf('"');
+				int max = s.lastIndexOf('"');
+				String key = s.substring(min, max).replaceAll("\"", ""); //" [""="" "
+				String[] dat = key.split(":");
+				map.put(dat[0], dat[1]);
+			}
+		}
+	}
+
+	private boolean setState(BooleanConfig cfg) {
 		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultState());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultState());
 		return prop.getBoolean(cfg.getDefaultState());
 	}
 
-	private int setValue(ConfigList cfg) {
+	private int setValue(IntegerConfig cfg) {
 		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultValue());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultValue());
 		return prop.getInt();
 	}
 
-	private float setFloat(ConfigList cfg) {
+	private float setFloat(DecimalConfig cfg) {
 		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultFloat());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultFloat());
 		return (float)prop.getDouble(cfg.getDefaultFloat());
 	}
-	/*
-	private String setString(ConfigList cfg) {
+
+	private String setString(StringConfig cfg) {
 		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultString());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultString());
 		return prop.getString();
 	}
-	 */
+
+	private int[] setIntArray(IntArrayConfig cfg) {
+		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultIntArray());
+		if (cfg.isEnforcingDefaults())
+			prop.set(cfg.getDefaultIntArray());
+		return prop.getIntList();
+	}
+
+	private String[] setStringArray(StringArrayConfig cfg) {
+		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultStringArray());
+		if (cfg.isEnforcingDefaults())
+			prop.set(cfg.getDefaultStringArray());
+		return prop.getStringList();
+	}
+
 	private int getValueFromConfig(IDRegistry id, Configuration config) {
 		return config.get(id.getCategory(), id.getConfigName(), id.getDefaultID()).getInt();
 	}

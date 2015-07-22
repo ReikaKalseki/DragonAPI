@@ -20,7 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
-import Reika.DragonAPI.Interfaces.IPacketHandler;
+import Reika.DragonAPI.Interfaces.PacketHandler;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -36,10 +36,10 @@ public class PacketPipeline {
 	private boolean isPostInitialized = false;
 	private final DragonAPIMod mod;
 	public final String packetChannel;
-	private final IPacketHandler handler;
+	private final PacketHandler handler;
 	private final SimpleNetworkWrapper wrapper;
 
-	public PacketPipeline(DragonAPIMod mod, String modChannel, IPacketHandler handler, SimpleNetworkWrapper wrapper) {
+	public PacketPipeline(DragonAPIMod mod, String modChannel, PacketHandler handler, SimpleNetworkWrapper wrapper) {
 		packetChannel = modChannel;
 		this.mod = mod;
 		this.handler = handler;
@@ -52,7 +52,7 @@ public class PacketPipeline {
 		wrapper.registerMessage(InternalHandler.class, (Class)cl, id, Side.CLIENT);
 	}
 
-	public IPacketHandler getHandler() {
+	public PacketHandler getHandler() {
 		return handler;
 	}
 

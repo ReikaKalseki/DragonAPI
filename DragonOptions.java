@@ -9,9 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
-import Reika.DragonAPI.Interfaces.ConfigList;
+import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
+import Reika.DragonAPI.Interfaces.Configuration.IntegerConfig;
 
-public enum DragonOptions implements ConfigList {
+public enum DragonOptions implements IntegerConfig, BooleanConfig {
 
 	LOGLOADING("Console Loading Info", true),
 	DEBUGMODE("Debug Mode", false),
@@ -33,7 +34,6 @@ public enum DragonOptions implements ConfigList {
 	private String label;
 	private boolean defaultState;
 	private int defaultValue;
-	private float defaultFloat;
 	private String defaultString;
 	private Class type;
 	private boolean enforcing = false;
@@ -57,12 +57,6 @@ public enum DragonOptions implements ConfigList {
 		type = int.class;
 	}
 
-	private DragonOptions(String l, float d) {
-		label = l;
-		defaultFloat = d;
-		type = float.class;
-	}
-
 	private DragonOptions(String l, String s) {
 		label = l;
 		defaultString = s;
@@ -75,10 +69,6 @@ public enum DragonOptions implements ConfigList {
 
 	public boolean isNumeric() {
 		return type == int.class;
-	}
-
-	public boolean isDecimal() {
-		return type == float.class;
 	}
 
 	public boolean isString() {
@@ -101,14 +91,6 @@ public enum DragonOptions implements ConfigList {
 		return (Integer)DragonAPIInit.config.getControl(this.ordinal());
 	}
 
-	public float getFloat() {
-		return (Float)DragonAPIInit.config.getControl(this.ordinal());
-	}
-
-	public String getString() {
-		return (String)DragonAPIInit.config.getControl(this.ordinal());
-	}
-
 	public boolean isDummiedOut() {
 		return type == null;
 	}
@@ -123,16 +105,6 @@ public enum DragonOptions implements ConfigList {
 		return defaultValue;
 	}
 
-	@Override
-	public float getDefaultFloat() {
-		return defaultFloat;
-	}
-	/*
-	@Override
-	public String getDefaultString() {
-		return defaultString;
-	}
-	 */
 	@Override
 	public boolean isEnforcingDefaults() {
 		return enforcing;

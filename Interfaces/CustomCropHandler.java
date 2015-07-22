@@ -1,5 +1,7 @@
 package Reika.DragonAPI.Interfaces;
 
+import Reika.DragonAPI.Interfaces.Registry.CropHandler;
+import Reika.DragonAPI.Interfaces.Registry.ModEntry;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 
 public interface CustomCropHandler extends CropHandler {

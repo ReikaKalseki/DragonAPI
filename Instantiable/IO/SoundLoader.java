@@ -10,7 +10,7 @@
 package Reika.DragonAPI.Instantiable.IO;
 
 import Reika.DragonAPI.IO.DirectResourceManager;
-import Reika.DragonAPI.Interfaces.SoundEnum;
+import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 
 public class SoundLoader {
 

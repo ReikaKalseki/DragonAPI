@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -856,5 +857,23 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			}
 		}
 		return map;
+	}
+
+	public static String toString(IRecipe r) {
+		if (r instanceof ShapedRecipes) {
+			return Arrays.toString(((ShapedRecipes)r).recipeItems);
+		}
+		else if (r instanceof ShapelessRecipes) {
+			return ((ShapelessRecipes)r).recipeItems.toString();
+		}
+		else if (r instanceof ShapedOreRecipe) {
+			return Arrays.toString(((ShapedOreRecipe)r).getInput());
+		}
+		else if (r instanceof ShapelessOreRecipe) {
+			return ((ShapelessOreRecipe)r).getInput().toString();
+		}
+		else {
+			return "Unknown_"+r.getClass().getName();
+		}
 	}
 }

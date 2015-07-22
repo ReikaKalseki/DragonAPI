@@ -48,8 +48,8 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.IO.PacketPipeline;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
-import Reika.DragonAPI.Interfaces.IPacketHandler;
-import Reika.DragonAPI.Interfaces.SoundEnum;
+import Reika.DragonAPI.Interfaces.PacketHandler;
+import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
@@ -69,10 +69,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 public final class ReikaPacketHelper extends DragonAPICore {
 
 	private static final HashMap<String, PacketPipeline> pipelines = new HashMap();
-	private static final HashBiMap<Short, IPacketHandler> handlers = HashBiMap.create();
+	private static final HashBiMap<Short, PacketHandler> handlers = HashBiMap.create();
 	private static short handlerID = 0;
 
-	public static void registerPacketHandler(DragonAPIMod mod, String channel, IPacketHandler handler) {
+	public static void registerPacketHandler(DragonAPIMod mod, String channel, PacketHandler handler) {
 		SimpleNetworkWrapper wrapper = NetworkRegistry.INSTANCE.newSimpleChannel(channel);
 		PacketPipeline p = new PacketPipeline(mod, channel, handler, wrapper);
 		p.registerPacket(DataPacket.class);
@@ -89,11 +89,11 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		pipe.registerPacket(c);
 	}
 
-	private static short getHandlerID(IPacketHandler handler) {
+	private static short getHandlerID(PacketHandler handler) {
 		return handlers.containsValue(handler) ? handlers.inverse().get(handler) : -1;
 	}
 
-	private static IPacketHandler getHandlerFromID(short id) {
+	private static PacketHandler getHandlerFromID(short id) {
 		return handlers.get(id);
 	}
 	/*
@@ -1535,7 +1535,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 	public static abstract class PacketObj implements IMessage {
 
-		protected IPacketHandler handler;
+		protected PacketHandler handler;
 		protected PacketTypes type;
 		protected int byteIndex = 0;
 

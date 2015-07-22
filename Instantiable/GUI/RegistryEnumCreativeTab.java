@@ -13,8 +13,8 @@ import java.util.Comparator;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.Interfaces.BlockEnum;
-import Reika.DragonAPI.Interfaces.RegistrationList;
+import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
+import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 
 public abstract class RegistryEnumCreativeTab extends SortedCreativeTab {

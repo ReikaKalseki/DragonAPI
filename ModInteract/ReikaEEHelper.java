@@ -12,7 +12,7 @@ package Reika.DragonAPI.ModInteract;
 import moze_intel.projecte.api.ProjectEAPI;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Interfaces.RegistrationList;
+import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
 
 public class ReikaEEHelper {
 

@@ -27,7 +27,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
-import Reika.DragonAPI.Interfaces.ChunkLoadingTile;
+import Reika.DragonAPI.Interfaces.TileEntity.ChunkLoadingTile;
 
 import com.google.common.collect.ImmutableSet;
 

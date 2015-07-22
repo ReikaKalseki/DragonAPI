@@ -18,7 +18,7 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Interfaces.CropType;
+import Reika.DragonAPI.Interfaces.Registry.CropType;
 
 public enum ReikaCropHelper implements CropType {
 

@@ -12,7 +12,13 @@ package Reika.DragonAPI.Instantiable;
 import java.util.logging.Level;
 
 import net.minecraft.util.EnumChatFormatting;
-import Reika.DragonAPI.Interfaces.ConfigList;
+import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
+import Reika.DragonAPI.Interfaces.Configuration.ConfigList;
+import Reika.DragonAPI.Interfaces.Configuration.DecimalConfig;
+import Reika.DragonAPI.Interfaces.Configuration.IntArrayConfig;
+import Reika.DragonAPI.Interfaces.Configuration.IntegerConfig;
+import Reika.DragonAPI.Interfaces.Configuration.StringArrayConfig;
+import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
 
 public class Alert {
 
@@ -56,14 +62,23 @@ public class Alert {
 	}
 
 	private final Object getDefault() {
-		if (option.isBoolean()) {
-			return option.getDefaultState();
+		if (option instanceof BooleanConfig && ((BooleanConfig)option).isBoolean()) {
+			return ((BooleanConfig)option).getDefaultState();
 		}
-		else if (option.isNumeric()) {
-			return option.getDefaultValue();
+		else if (option instanceof IntegerConfig && ((IntegerConfig)option).isNumeric()) {
+			return ((IntegerConfig)option).getDefaultValue();
 		}
-		else if (option.isDecimal()) {
-			return option.getDefaultFloat();
+		else if (option instanceof DecimalConfig && ((DecimalConfig)option).isDecimal()) {
+			return ((DecimalConfig)option).getDefaultFloat();
+		}
+		else if (option instanceof StringConfig && ((StringConfig)option).isString()) {
+			return ((StringConfig)option).getDefaultString();
+		}
+		else if (option instanceof IntArrayConfig && ((IntArrayConfig)option).isIntArray()) {
+			return ((IntArrayConfig)option).getDefaultIntArray();
+		}
+		else if (option instanceof StringArrayConfig && ((StringArrayConfig)option).isStringArray()) {
+			return ((StringArrayConfig)option).getDefaultStringArray();
 		}
 		else {
 			return null;
@@ -71,14 +86,23 @@ public class Alert {
 	}
 
 	private final Object getValue() {
-		if (option.isBoolean()) {
-			return option.getState();
+		if (option instanceof BooleanConfig && ((BooleanConfig)option).isBoolean()) {
+			return ((BooleanConfig)option).getState();
 		}
-		else if (option.isNumeric()) {
-			return option.getValue();
+		else if (option instanceof IntegerConfig && ((IntegerConfig)option).isNumeric()) {
+			return ((IntegerConfig)option).getValue();
 		}
-		else if (option.isDecimal()) {
-			return option.getFloat();
+		else if (option instanceof DecimalConfig && ((DecimalConfig)option).isDecimal()) {
+			return ((DecimalConfig)option).getFloat();
+		}
+		else if (option instanceof StringConfig && ((StringConfig)option).isString()) {
+			return ((StringConfig)option).getString();
+		}
+		else if (option instanceof IntArrayConfig && ((IntArrayConfig)option).isIntArray()) {
+			return ((IntArrayConfig)option).getIntArray();
+		}
+		else if (option instanceof StringArrayConfig && ((StringArrayConfig)option).isStringArray()) {
+			return ((StringArrayConfig)option).getStringArray();
 		}
 		else {
 			return null;

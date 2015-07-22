@@ -22,6 +22,7 @@ import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableArray;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 /** Register progression/balance-sensitive fluids here to blacklist other mods from adding shortcuts to obtain them. */
@@ -89,7 +90,8 @@ public final class SensitiveFluidRegistry {
 
 	private static enum Interactions {
 		MYSTCRAFT(ModList.MYSTCRAFT.isLoaded()),
-		MOOFLUID(Loader.isModLoaded("MooFluids"));
+		MOOFLUID(Loader.isModLoaded("MooFluids")),
+		RFTOOLS(Loader.isModLoaded("rftools"));
 
 		private final boolean isLoaded;
 
@@ -105,6 +107,9 @@ public final class SensitiveFluidRegistry {
 				ReikaMystcraftHelper.disableFluidPage(fluid);
 				break;
 			case MOOFLUID:
+				break;
+			case RFTOOLS:
+				FMLInterModComms.sendMessage("rftools", "dimlet_blacklist", "Liquid."+fluid.getName());
 				break;
 			}
 		}

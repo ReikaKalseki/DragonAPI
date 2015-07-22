@@ -16,8 +16,8 @@ import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 public class ReikaNuclearHelper {
 
 	/** In eV */
-	public static final double URANIUM_FISSION_ENERGY = 200*1000000D;
-	public static final double AVOGADRO = 6.02*ReikaMathLibrary.doubpow(10, 23);
+	public static final double URANIUM_FISSION_ENERGY = 2e8;
+	public static final double AVOGADRO = 6.02e23;
 
 	public static final double NEUTRON_ESCAPE_SPEED = 2752;
 
@@ -38,8 +38,11 @@ public class ReikaNuclearHelper {
 	}
 
 	public static boolean shouldDecay(Isotopes iso) {
-		double chance = getDecayChanceFromHalflife(iso.getMCHalfLife());
-		chance *= 6;
+		return shouldDecay(iso, 1);
+	}
+
+	public static boolean shouldDecay(Isotopes iso, double multiplier) {
+		double chance = 6*multiplier*getDecayChanceFromHalflife(iso.getMCHalfLife());
 		return ReikaRandomHelper.doWithChance(chance);
 	}
 

@@ -12,7 +12,7 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 import java.util.Collection;
 
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Interfaces.ModEntry;
+import Reika.DragonAPI.Interfaces.Registry.ModEntry;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReflectiveFailureTracker {

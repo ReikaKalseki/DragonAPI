@@ -23,6 +23,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Interfaces.Matcher;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class ItemHashMap<V> {
@@ -169,6 +170,10 @@ public final class ItemHashMap<V> {
 		return ret;
 	}
 
+	public boolean removeValue(V value) {
+		return ReikaJavaLibrary.removeValuesFromMap(data, value);
+	}
+
 	public void clear() {
 		if (oneWay)
 			throw new UnsupportedOperationException("This map does not support removing values!");
@@ -249,7 +254,7 @@ public final class ItemHashMap<V> {
 	}
 
 	@Override
-	public ItemHashMap<Integer> clone() {
+	public ItemHashMap<V> clone() {
 		ItemHashMap map = new ItemHashMap();
 		for (ItemKey is : this.data.keySet()) {
 			map.data.put(is, data.get(is));

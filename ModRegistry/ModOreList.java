@@ -26,7 +26,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Interfaces.OreType;
+import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -123,7 +123,9 @@ public enum ModOreList implements OreType {
 	TESLATITE("Teslatite", 0x2F81F1, OreRarity.COMMON, "dustTeslatite", 3, "oreTeslatite"),
 	MANA("Mana", 0x70DAFC, OreRarity.SCARCE, "ingotMana", 1, "oreMana"),
 	NETHERSALTPETER("Nether Saltpeter", 0xdddddd, OreRarity.SCARCE, "dustSaltpeter", 4, "oreNetherSaltpeter"),
-	THORIUM("Thorium", 0x595959, OreRarity.SCARCE, "ingotThorium", 1, "oreThorium", "oreThorite", "oreThorianite");
+	THORIUM("Thorium", 0x595959, OreRarity.SCARCE, "ingotThorium", 1, "oreThorium", "oreThorite", "oreThorianite"),
+	DRACONIUM("Draconium", 0x9F01E2, OreRarity.SCATTERED, "draconiumDust", 1, "oreDraconium"),
+	ENDIUM("Endium", 0x372356, OreRarity.SCATTERED, "ingotEndium", 1, "oreEndium");
 
 	private ArrayList<ItemStack> ores = new ArrayList();
 	public final String displayName;

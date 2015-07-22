@@ -11,7 +11,7 @@ package Reika.DragonAPI.Auxiliary;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.event.world.BlockEvent;
-import Reika.DragonAPI.Interfaces.PlayerBreakHook;
+import Reika.DragonAPI.Interfaces.TileEntity.PlayerBreakHook;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class DragonAPIEventWatcher {
