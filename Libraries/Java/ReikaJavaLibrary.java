@@ -693,4 +693,31 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 		return flag;
 	}
+
+	public static int getNestedMapSize(Map map) {
+		int s = 0;
+		for (Object k : map.keySet()) {
+			Object o = map.get(k);
+			s += o instanceof Map ? ((Map)o).size() : 1;
+		}
+		return s;
+	}
+
+	public static Collection getValuesForMapOfMaps(Map map) {
+		Collection li = new ArrayList();
+		for (Object k : map.keySet()) {
+			Map o = (Map)map.get(k);
+			li.addAll(o.values());
+		}
+		return li;
+	}
+
+	public static class ReverseComparator implements Comparator<Comparable> {
+
+		@Override
+		public int compare(Comparable o1, Comparable o2) {
+			return o2.compareTo(o1);
+		}
+
+	}
 }
