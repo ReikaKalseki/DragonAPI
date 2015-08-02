@@ -346,4 +346,14 @@ public class ReikaStringParser extends DragonAPICore {
 	public static boolean containsWord(String s, String word) {
 		return Pattern.compile("\\s"+word+"[\\s]|\\s"+word+"$|^"+word+"\\s|^"+word+"$").matcher(s).find();
 	}
+
+	public static String getLongestString(String[] sgs) {
+		int idx = 0;
+		for (int i = 0; i < sgs.length; i++) {
+			String sg = sgs[i];
+			if (sg.length() > sgs[idx].length())
+				idx = i;
+		}
+		return sgs[idx];
+	}
 }

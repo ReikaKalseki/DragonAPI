@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -51,32 +52,32 @@ public final class DartOreHandler extends ModHandlerBase {
 				idgem = GameRegistry.findItemStack("DartCraft", "Items.gemForce", 1).getItem();
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
+				DragonAPICore.logError("DartCraft Item class not found! Cannot read its items!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+				DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
@@ -130,11 +131,11 @@ public final class DartOreHandler extends ModHandlerBase {
 			OreDictionary.registerOre(ModOreList.FORCE.getOreDictNames()[0], overworld);
 			OreDictionary.registerOre(ModOreList.FORCE.getOreDictNames()[0], nether);
 			ModOreList.FORCE.initialize();
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Power ore registered to ore dictionary!");
+			DragonAPICore.log("Power ore registered to ore dictionary!");
 			isOreDict = true;
 		}
 		else {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Power ore already registered to ore dictionary! No action taken!");
+			DragonAPICore.logError("Power ore already registered to ore dictionary! No action taken!");
 			ReikaJavaLibrary.dumpStack();
 		}
 	}

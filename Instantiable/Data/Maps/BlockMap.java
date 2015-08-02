@@ -44,7 +44,7 @@ public final class BlockMap<V> {
 		return this.get(BlockKey.getAt(world, x, y, z));
 	}
 
-	private V put(BlockKey bk, V obj) {
+	public V put(BlockKey bk, V obj) {
 		return data.put(bk, obj);
 	}
 

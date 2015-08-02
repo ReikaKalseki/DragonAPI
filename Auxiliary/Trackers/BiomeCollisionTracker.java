@@ -14,12 +14,12 @@ import java.util.HashMap;
 
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Exception.StupidIDException;
 import Reika.DragonAPI.Extras.IDType;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class BiomeCollisionTracker {
 
@@ -57,7 +57,7 @@ public final class BiomeCollisionTracker {
 				BiomeGenBase biome = BiomeGenBase.biomeList[id];
 				if (biome == null) {
 					//this.onConflict(mod, id);
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Biome ID "+id+" ("+classes.get(id)+") was deleted post-registration!");
+					DragonAPICore.logError("Biome ID "+id+" ("+classes.get(id)+") was deleted post-registration!");
 				}
 				else {
 					Class c = biome.getClass();

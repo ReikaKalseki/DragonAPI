@@ -14,9 +14,9 @@ import java.util.EnumMap;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class MekToolHandler extends ModHandlerBase {
 
@@ -43,14 +43,14 @@ public final class MekToolHandler extends ModHandlerBase {
 
 		public boolean isVanillaMaterial() {
 			switch(this) {
-			case WOOD:
-			case STONE:
-			case IRON:
-			case DIAMOND:
-			case GOLD:
-				return true;
-			default:
-				return false;
+				case WOOD:
+				case STONE:
+				case IRON:
+				case DIAMOND:
+				case GOLD:
+					return true;
+				default:
+					return false;
 			}
 		}
 	}
@@ -135,27 +135,27 @@ public final class MekToolHandler extends ModHandlerBase {
 			return id;
 		}
 		catch (NoSuchFieldException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+			DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 			e.printStackTrace();
 			this.logFailure(e);
 		}
 		catch (SecurityException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+			DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 			e.printStackTrace();
 			this.logFailure(e);
 		}
 		catch (IllegalArgumentException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+			DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 			e.printStackTrace();
 			this.logFailure(e);
 		}
 		catch (IllegalAccessException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+			DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 			e.printStackTrace();
 			this.logFailure(e);
 		}
 		catch (NullPointerException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+			DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 			e.printStackTrace();
 			this.logFailure(e);
 		}
@@ -177,6 +177,10 @@ public final class MekToolHandler extends ModHandlerBase {
 	}
 
 	public boolean isArmor(ItemStack is) {
+		if (is == null)
+			return false;
+		if (!this.initializedProperly())
+			return false;
 		if (itemsTool.get(Tools.HELMET).containsValue(is.getItem()))
 			return false;
 		if (itemsTool.get(Tools.CHEST).containsValue(is.getItem()))
@@ -189,10 +193,18 @@ public final class MekToolHandler extends ModHandlerBase {
 	}
 
 	public boolean isPickTypeTool(ItemStack held) {
+		if (held == null)
+			return false;
+		if (!this.initializedProperly())
+			return false;
 		return itemsTool.get(Tools.PAXEL).containsValue(held.getItem()) || itemsTool.get(Tools.PICK).containsValue(held.getItem());
 	}
 
 	public boolean isWood(ItemStack held) {
+		if (held == null)
+			return false;
+		if (!this.initializedProperly())
+			return false;
 		return itemsMaterial.get(Materials.WOOD).containsValue(held.getItem());
 	}
 

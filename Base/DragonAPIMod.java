@@ -83,7 +83,7 @@ public abstract class DragonAPIMod {
 			apiVersion = version;
 		}
 
-		ReikaJavaLibrary.pConsole(this.getTechnicalName()+": Active Classloader is: "+this.getClass().getClassLoader());
+		ReikaJavaLibrary.pConsole(this.getTechnicalName()+": Constructed; Active Classloader is: "+this.getClass().getClassLoader());
 		profiler.finishTiming();
 	}
 

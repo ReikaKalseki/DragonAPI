@@ -43,14 +43,10 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
-import Reika.DragonAPI.Auxiliary.Trackers.TickScheduler;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Instantiable.Event.ScheduledTickEvent;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 import com.mojang.authlib.GameProfile;
 
@@ -130,14 +126,14 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			while (i < 0)
 				i += 4;
 			switch (i) {
-			case 0:
-				return ForgeDirection.SOUTH;
-			case 1:
-				return ForgeDirection.WEST;
-			case 2:
-				return ForgeDirection.NORTH;
-			case 3:
-				return ForgeDirection.EAST;
+				case 0:
+					return ForgeDirection.SOUTH;
+				case 1:
+					return ForgeDirection.WEST;
+				case 2:
+					return ForgeDirection.NORTH;
+				case 3:
+					return ForgeDirection.EAST;
 			}
 		}
 		else { //Looking up/down
@@ -223,7 +219,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, Block id, int meta, EntityPlayerMP ep) {
 		if (ep == null) {
-			ReikaJavaLibrary.pConsole("Cannot check permissions of a null player!");
+			DragonAPICore.logError("Cannot check permissions of a null player!");
 			return false;
 		}
 		if (DragonAPICore.isSinglePlayer())
@@ -237,7 +233,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	public static boolean playerCanBreakAt(WorldServer world, int x, int y, int z, Block id, int meta, String name, UUID uuid) {
 		if (name == null) {
-			ReikaJavaLibrary.pConsole("Cannot check permissions of a null player!");
+			DragonAPICore.logError("Cannot check permissions of a null player!");
 			return false;
 		}
 		if (DragonAPICore.isSinglePlayer())
@@ -299,10 +295,6 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		NBTTagCompound nbt = ep.getEntityData().getCompoundTag(EntityPlayer.PERSISTED_NBT_TAG);
 		ep.getEntityData().setTag(EntityPlayer.PERSISTED_NBT_TAG, nbt);
 		return nbt;
-	}
-
-	public static void schedulePlayerTick(EntityPlayer ep, int ticks) {
-		TickScheduler.instance.scheduleEvent(new ScheduledTickEvent(TickType.PLAYER, ep), ticks);
 	}
 
 	public static void notifyAdmins(String s) {

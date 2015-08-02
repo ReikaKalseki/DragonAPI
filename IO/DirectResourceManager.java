@@ -26,8 +26,8 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.SimpleReloadableResourceManager;
 import net.minecraft.util.ResourceLocation;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.IO.DirectResource;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
@@ -80,12 +80,12 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 	private void initToSoundRegistry() {
 		SoundHandler sh = Minecraft.getMinecraft().getSoundHandler();
 		if (sh == null) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Attempted to initialize sound entries before the sound handler was created!");
+			DragonAPICore.logError("Attempted to initialize sound entries before the sound handler was created!");
 			return;
 		}
 		SoundRegistry srg = sh.sndRegistry;
 		if (srg == null) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Attempted to initialize sound entries before the sound registry was created!");
+			DragonAPICore.logError("Attempted to initialize sound entries before the sound registry was created!");
 			return;
 		}
 		for (String path : accessors.keySet()) {

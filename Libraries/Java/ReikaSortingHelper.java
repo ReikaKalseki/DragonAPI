@@ -17,6 +17,7 @@ import java.util.List;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.CommutativePair;
 
 public class ReikaSortingHelper {
@@ -118,13 +119,13 @@ public class ReikaSortingHelper {
 			}
 		}
 
-		ReikaJavaLibrary.pConsole("DRAGONAPI: About to perform a very slow sorting! If your game locks up here, come to Reika with this message!");
-		ReikaJavaLibrary.pConsole("Size: "+li.size()+"; Contents: "+li+"; Map: "+map);
+		DragonAPICore.log("About to perform a very slow sorting! If your game locks up here, come to Reika with this message!");
+		DragonAPICore.log("Size: "+li.size()+"; Contents: "+li+"; Map: "+map);
 		boolean flag = sortListByPairMap(li, map);
 		int cycles = 1;
 		while (flag) {
 			if (debug)
-				ReikaJavaLibrary.pConsole(cycles+" cycles.");
+				DragonAPICore.log(cycles+" cycles.");
 			flag = sortListByPairMap(li, map);
 			cycles++;
 		}
@@ -139,13 +140,13 @@ public class ReikaSortingHelper {
 				if (rel == null)
 					continue;
 				if (debug) {
-					//ReikaJavaLibrary.pConsole("Comparing "+o1+" @ "+i+" and "+o2+" @ "+k+"; Map contains "+rel);
-					//ReikaJavaLibrary.pConsole("");
+					//DragonAPICore.log("Comparing "+o1+" @ "+i+" and "+o2+" @ "+k+"; Map contains "+rel);
+					//DragonAPICore.log("");
 				}
 				if ((rel < 0 && i > k) || (rel > 0 && i < k)) { //swap
 					if (debug) {
 						String s = (rel < 0 && i > k) ? "after when it should be before" : "before when it should be after";
-						ReikaJavaLibrary.pConsole("Swapping "+o1+" and "+o2+": o1 was "+s);
+						DragonAPICore.log("Swapping "+o1+" and "+o2+": o1 was "+s);
 					}
 					li.set(i, o2);
 					li.set(k, o1);

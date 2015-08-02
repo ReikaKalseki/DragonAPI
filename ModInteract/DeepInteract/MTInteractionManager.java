@@ -18,13 +18,13 @@ import minetweaker.util.IEventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.LineEditor;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayMap;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
@@ -298,12 +298,12 @@ public final class MTInteractionManager {
 				flag = this.parseLine(s);
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error parsing line '"+s+"' in '"+script.getName()+"':");
+				DragonAPICore.logError("Error parsing line '"+s+"' in '"+script.getName()+"':");
 				e.printStackTrace();
 				return false;
 			}
 			if (flag) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: The line '"+s+"' has been commented out of the Minetweaker script, as "+lastItemMod+" has "+
+				DragonAPICore.log("The line '"+s+"' has been commented out of the Minetweaker script, as "+lastItemMod+" has "+
 						"requested to disallow such actions. This is NOT a bug in either that mod or Minetweaker; do not bother StanHebben "+
 						"with it. You may ask the developer of "+lastItemMod+" for further questions or to request a removal. Be civil.");
 			}
@@ -350,8 +350,8 @@ public final class MTInteractionManager {
 		}
 
 		private void logError(String s, String desc) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Note that an invalid line has been found in your MT script '"+script.getName()+"':");
-			ReikaJavaLibrary.pConsole("The line '"+s+"' "+desc+" Consider fixing this.");
+			DragonAPICore.logError("Note that an invalid line has been found in your MT script '"+script.getName()+"':");
+			DragonAPICore.logError("The line '"+s+"' "+desc+" Consider fixing this.");
 		}
 
 		private boolean parseTruncLine(String s) {

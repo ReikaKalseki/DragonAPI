@@ -17,10 +17,10 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableArray;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -44,7 +44,7 @@ public final class SensitiveFluidRegistry {
 			fluidCowField.setAccessible(true);
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: MooFluids not detected. Not loading fluid handling.");
+			DragonAPICore.log("MooFluids not detected. Not loading fluid handling.");
 		}
 	}
 
@@ -103,16 +103,20 @@ public final class SensitiveFluidRegistry {
 
 		private void blacklist(Fluid fluid) {
 			switch(this) {
-			case MYSTCRAFT:
-				ReikaMystcraftHelper.disableFluidPage(fluid);
-				break;
-			case MOOFLUID:
-				break;
-			case RFTOOLS:
-				FMLInterModComms.sendMessage("rftools", "dimlet_blacklist", "Liquid."+fluid.getName());
-				break;
+				case MYSTCRAFT:
+					ReikaMystcraftHelper.disableFluidPage(fluid);
+					break;
+				case MOOFLUID:
+					break;
+				case RFTOOLS:
+					FMLInterModComms.sendMessage("rftools", "dimlet_blacklist", "Liquid."+fluid.getName());
+					break;
 			}
 		}
+	}
+
+	public boolean contains(Fluid f) {
+		return forbiddenFluids.contains(f);
 	}
 
 }

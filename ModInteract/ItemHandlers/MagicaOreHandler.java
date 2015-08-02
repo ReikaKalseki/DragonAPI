@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -76,27 +77,27 @@ public final class MagicaOreHandler extends ModHandlerBase {
 				iditem = itemi;
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+				DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
@@ -151,16 +152,16 @@ public final class MagicaOreHandler extends ModHandlerBase {
 		if (!this.initializedProperly())
 			return null;
 		switch(meta) {
-		case metaVinteum:
-			return oreVinteum.copy();
-		case metaChimerite:
-			return oreChimerite.copy();
-		case metaTopaz:
-			return oreTopaz.copy();
-		case metaMoonstone:
-			return oreMoonstone.copy();
-		case metaSunstone:
-			return oreSunstone.copy();
+			case metaVinteum:
+				return oreVinteum.copy();
+			case metaChimerite:
+				return oreChimerite.copy();
+			case metaTopaz:
+				return oreTopaz.copy();
+			case metaMoonstone:
+				return oreMoonstone.copy();
+			case metaSunstone:
+				return oreSunstone.copy();
 		}
 		return null;
 	}
@@ -169,16 +170,16 @@ public final class MagicaOreHandler extends ModHandlerBase {
 		if (!this.initializedProperly())
 			return null;
 		switch(meta) {
-		case metaTopazItem:
-			return itemTopaz.copy();
-		case metaMoonstoneItem:
-			return itemMoonstone.copy();
-		case metaSunstoneItem:
-			return itemSunstone.copy();
-		case metaChimeriteItem:
-			return itemChimerite.copy();
-		case metaVinteumItem:
-			return itemVinteum.copy();
+			case metaTopazItem:
+				return itemTopaz.copy();
+			case metaMoonstoneItem:
+				return itemMoonstone.copy();
+			case metaSunstoneItem:
+				return itemSunstone.copy();
+			case metaChimeriteItem:
+				return itemChimerite.copy();
+			case metaVinteumItem:
+				return itemVinteum.copy();
 		}
 		return null;
 	}
@@ -188,16 +189,16 @@ public final class MagicaOreHandler extends ModHandlerBase {
 		if (!this.initializedProperly())
 			return null;
 		switch(ore) {
-		case VINTEUM:
-			return oreVinteum.copy();
-		case CHIMERITE:
-			return oreChimerite.copy();
-		case BLUETOPAZ:
-			return oreTopaz.copy();
-		case MOONSTONE:
-			return oreMoonstone.copy();
-		case SUNSTONE:
-			return oreSunstone.copy();
+			case VINTEUM:
+				return oreVinteum.copy();
+			case CHIMERITE:
+				return oreChimerite.copy();
+			case BLUETOPAZ:
+				return oreTopaz.copy();
+			case MOONSTONE:
+				return oreMoonstone.copy();
+			case SUNSTONE:
+				return oreSunstone.copy();
 		}
 		return null;
 	}
@@ -207,16 +208,16 @@ public final class MagicaOreHandler extends ModHandlerBase {
 		if (!this.initializedProperly())
 			return null;
 		switch(ore) {
-		case BLUETOPAZ:
-			return itemTopaz.copy();
-		case CHIMERITE:
-			return itemChimerite.copy();
-		case MOONSTONE:
-			return itemMoonstone.copy();
-		case SUNSTONE:
-			return itemSunstone.copy();
-		case VINTEUM:
-			return itemVinteum.copy();
+			case BLUETOPAZ:
+				return itemTopaz.copy();
+			case CHIMERITE:
+				return itemChimerite.copy();
+			case MOONSTONE:
+				return itemMoonstone.copy();
+			case SUNSTONE:
+				return itemSunstone.copy();
+			case VINTEUM:
+				return itemVinteum.copy();
 		}
 		return null;
 	}
@@ -239,19 +240,19 @@ public final class MagicaOreHandler extends ModHandlerBase {
 
 	public void forceOreRegistration() {
 		if (!isOreDict) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Ars Magica ores are being registered to Ore Dictionary!");
+			DragonAPICore.log("Ars Magica ores are being registered to Ore Dictionary!");
 			for (int i = 0; i < ModOreList.oreList.length; i++) {
 				ModOreList o = ModOreList.oreList[i];
 				if (o.isArsMagica()) {
 					OreDictionary.registerOre(o.getOreDictNames()[0], this.getOre(o));
 					OreDictionary.registerOre(o.getProductOreDictName(), this.getItem(o));
 					o.initialize();
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Registering "+o.displayName);
+					DragonAPICore.log("Registering "+o.displayName);
 				}
 			}
 		}
 		else {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Ars Magica ores already registered to ore dictionary! No action taken!");
+			DragonAPICore.log("Ars Magica ores already registered to ore dictionary! No action taken!");
 			ReikaJavaLibrary.dumpStack();
 		}
 	}

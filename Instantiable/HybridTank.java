@@ -13,6 +13,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** A tank class that can handle direct operations as well as standard Forge Liquid operations. */
@@ -52,7 +53,7 @@ public class HybridTank extends FluidTank {
 			}
 		}
 		catch (IllegalArgumentException e) { //"Empty String not allowed! caused by fluid save failure"
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Loading HybridTank '"+name+"' has errored, its machine will not keep its fluid!");
+			DragonAPICore.logError("Loading HybridTank '"+name+"' has errored, its machine will not keep its fluid!");
 			e.printStackTrace();
 		}
 		return this;
@@ -74,11 +75,11 @@ public class HybridTank extends FluidTank {
 
 	public void removeLiquid(int amt) {
 		if (this.getFluid() == null) {
-			ReikaJavaLibrary.pConsole("Could not remove liquid from empty tank!");
+			DragonAPICore.logError("Could not remove liquid from empty tank!");
 			ReikaJavaLibrary.dumpStack();
 		}
 		else if (amt <= 0) {
-			ReikaJavaLibrary.pConsole("Cannot remove <= 0!");
+			DragonAPICore.logError("Cannot remove <= 0!");
 			ReikaJavaLibrary.dumpStack();
 		}
 		else {

@@ -15,9 +15,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import WayofTime.alchemicalWizardry.api.items.interfaces.IBloodOrb;
 
 public final class BloodMagicHandler extends ModHandlerBase {
@@ -71,32 +71,32 @@ public final class BloodMagicHandler extends ModHandlerBase {
 				life = (Fluid)f.get(null);
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+				DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 				this.logFailure(e);
 			}

@@ -445,4 +445,20 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static double getDecimalPart(double d) {
 		return d-(int)d;
 	}
+
+	public static int addAndRollover(int a, int b, int min, int max) {
+		int sum = a+b;
+		int over = sum-max;
+		int under = min-sum;
+		int range = max-min;
+		while (over > 0) {
+			sum = Math.min(max, min+over);
+			over -= range;
+		}
+		while (under > 0) {
+			sum = Math.max(min, max-under);
+			under -= range;
+		}
+		return sum;
+	}
 }

@@ -21,6 +21,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -28,7 +29,6 @@ import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
@@ -157,7 +157,7 @@ public enum ModOreList implements OreType {
 		}
 		rarity = r;
 
-		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding ore entries for "+this.toString()+" (Ore Names: "+Arrays.toString(ore)+")");
+		DragonAPICore.log("Adding ore entries for "+this.toString()+" (Ore Names: "+Arrays.toString(ore)+")");
 	}
 
 	private static String getAluminumName() {
@@ -183,12 +183,12 @@ public enum ModOreList implements OreType {
 	public void initialize() {
 		/*
 		if (init) {
-			ReikaJavaLibrary.pConsole(this+" is already initialized!");
+			DragonAPICore.logError(this+" is already initialized!");
 			return;
 		}
 		init = true;
 		 */
-		ReikaJavaLibrary.pConsole("Loading ore type "+this);
+		DragonAPICore.log("Loading ore type "+this);
 		ores.clear();
 		for (int i = 0; i < oreLabel.length; i++) {
 			String label = oreLabel[i];
@@ -201,7 +201,7 @@ public enum ModOreList implements OreType {
 					if (is.getItem() == null)
 						it.remove();
 				}
-				ReikaJavaLibrary.pConsole("\tDetected the following blocks for "+this+" from OreDict \""+label+"\": "+toadd.toString());
+				DragonAPICore.log("\tDetected the following blocks for "+this+" from OreDict \""+label+"\": "+toadd.toString());
 				for (ItemStack is : toadd) {
 					if (ReikaItemHelper.isBlock(is)) {
 						if (!ReikaItemHelper.collectionContainsItemStack(ores, is))
@@ -209,29 +209,29 @@ public enum ModOreList implements OreType {
 						perName.addValue(label, is);
 					}
 					else {
-						ReikaJavaLibrary.pConsole("\t"+is+" is not an ore block, but was OreDict fetched by \""+label+"\"!");
+						DragonAPICore.log("\t"+is+" is not an ore block, but was OreDict fetched by \""+label+"\"!");
 					}
 				}
 			}
 			else {
-				ReikaJavaLibrary.pConsole("\tNo ore blocks detected for \""+label+"\"");
+				DragonAPICore.log("\tNo ore blocks detected for \""+label+"\"");
 			}
 		}
 
-		ReikaJavaLibrary.pConsole("\tAdding special blocks for "+this+":");
+		DragonAPICore.log("\tAdding special blocks for "+this+":");
 		Collection<ItemStack> c = ModOreCompat.instance.load(this);
 		if (c.isEmpty()) {
-			ReikaJavaLibrary.pConsole("\tNo special blocks found.");
+			DragonAPICore.log("\tNo special blocks found.");
 		}
 		else {
-			ReikaJavaLibrary.pConsole("\t"+c.size()+" special blocks found: "+c);
+			DragonAPICore.log("\t"+c.size()+" special blocks found: "+c);
 			for (ItemStack is : c)
 				if (!ReikaItemHelper.collectionContainsItemStack(ores, is))
 					ores.add(is);
 		}
 
 		if (!this.existsInGame())
-			ReikaJavaLibrary.pConsole("\tDRAGONAPI: No ore blocks detected for "+this);
+			DragonAPICore.log("\tNo ore blocks detected for "+this);
 
 		this.loadCache();
 	}
@@ -268,15 +268,15 @@ public enum ModOreList implements OreType {
 
 	public boolean isGregtech() {
 		switch(this) {
-		case BAUXITE:
-		case GALENA:
-		case PYRITE:
-		case SODALITE:
-		case TUNGSTEN:
-		case ZINC:
-			return true;
-		default:
-			return false;
+			case BAUXITE:
+			case GALENA:
+			case PYRITE:
+			case SODALITE:
+			case TUNGSTEN:
+			case ZINC:
+				return true;
+			default:
+				return false;
 		}
 	}
 
@@ -404,21 +404,21 @@ public enum ModOreList implements OreType {
 
 	public boolean isArsMagica() {
 		switch(this) {
-		case CHIMERITE:
-		case VINTEUM:
-		case BLUETOPAZ:
-		case MOONSTONE:
-		case SUNSTONE:
-			return true;
-		default:
-			return false;
+			case CHIMERITE:
+			case VINTEUM:
+			case BLUETOPAZ:
+			case MOONSTONE:
+			case SUNSTONE:
+				return true;
+			default:
+				return false;
 		}
 	}
 
 	public boolean isMetallurgy() {
 		switch(this) {
-		default:
-			return false;
+			default:
+				return false;
 		}
 	}
 
@@ -452,7 +452,7 @@ public enum ModOreList implements OreType {
 				}
 			}
 			else {
-				ReikaJavaLibrary.pConsole("\t"+is+" is not an ore block, but was registered as an ore block! This is a bug in its parent mod!");
+				DragonAPICore.logError("\t"+is+" is not an ore block, but was registered as an ore block! This is a bug in its parent mod!");
 			}
 		}
 		return null;

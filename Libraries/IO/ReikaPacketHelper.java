@@ -129,7 +129,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -151,7 +151,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -178,7 +178,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -235,7 +235,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -275,7 +275,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -326,7 +326,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -377,7 +377,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -429,7 +429,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -481,7 +481,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -531,7 +531,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -575,7 +575,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -678,7 +678,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -724,7 +724,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -770,7 +770,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -804,7 +804,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -851,7 +851,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -897,7 +897,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -943,7 +943,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -989,7 +989,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -1039,7 +1039,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -1083,7 +1083,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -1131,7 +1131,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -1179,7 +1179,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -1233,7 +1233,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -1249,7 +1249,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			new PacketTarget.RadiusTarget(te, 24).dispatch(pipe, pack);
 		}
 		else if (side == Side.CLIENT) {
-			ReikaJavaLibrary.pConsole(te+" sent a sync packet from the client! This is not allowed!");
+			DragonAPICore.logError(te+" sent a sync packet from the client! This is not allowed!");
 		}
 		else {
 			// We are on the Bukkit server.
@@ -1275,7 +1275,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 		catch (ClassCastException ex) {
 			//ex.printStackTrace();
-			ReikaJavaLibrary.pConsole(te+" tried to sync its tank, but it is not a HybridTank instance!");
+			DragonAPICore.logError(te+" tried to sync its tank, but it is not a HybridTank instance!");
 		}
 		catch (IllegalAccessException ex) {
 			ex.printStackTrace();
@@ -1286,7 +1286,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -1302,7 +1302,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			new PacketTarget.RadiusTarget(te, 24).dispatch(pipe, pack);
 		}
 		else if (side == Side.CLIENT) {
-			ReikaJavaLibrary.pConsole(te+" sent a sync packet from the client! This is not allowed!");
+			DragonAPICore.logError(te+" sent a sync packet from the client! This is not allowed!");
 		}
 		else {
 			// We are on the Bukkit server.
@@ -1313,7 +1313,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		DataPacket pack = getNBTPacket(id, nbt);
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -1334,7 +1334,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		DataPacket pack = getNBTPacket(id, nbt);
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
-			ReikaJavaLibrary.pConsole("Attempted to send a packet from an unbound channel!");
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -1361,13 +1361,13 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		if (world.checkChunksExist(x, y, z, x, y, z)) {
 			TileEntity te = world.getTileEntity(x, y, z);
 			if (te == null) {
-				ReikaJavaLibrary.pConsole("Null TileEntity for syncing field "+name);
+				DragonAPICore.logError("Null TileEntity for syncing field "+name);
 				return;
 			}
 			try {
 				Field f = ReikaReflectionHelper.getProtectedInheritedField(te, name);
 				if (f == null) {
-					//ReikaJavaLibrary.pConsole("Null field for syncing tank field "+name);
+					//DragonAPICore.log("Null field for syncing tank field "+name);
 					return;
 				}
 				f.setAccessible(true);
@@ -1383,13 +1383,13 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		if (world.checkChunksExist(x, y, z, x, y, z)) {
 			TileEntity te = world.getTileEntity(x, y, z);
 			if (te == null) {
-				ReikaJavaLibrary.pConsole("Null TileEntity for syncing tank field "+name);
+				DragonAPICore.logError("Null TileEntity for syncing tank field "+name);
 				return;
 			}
 			try {
 				Field f = ReikaReflectionHelper.getProtectedInheritedField(te, name);
 				if (f == null) {
-					//ReikaJavaLibrary.pConsole("Null field for syncing tank field "+name);
+					//DragonAPICore.log("Null field for syncing tank field "+name);
 					return;
 				}
 				f.setAccessible(true);
@@ -1491,14 +1491,14 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			byte[] dat = data.array();
 			bytes = new byte[dat.length-byteIndex-1];
 			System.arraycopy(dat, byteIndex+1, bytes, 0, bytes.length);
-			//ReikaJavaLibrary.pConsole("received "+this);
+			//DragonAPICore.log("received "+this);
 		}
 
 		@Override
 		public void writeData(ByteBuf data) {
 			super.writeData(data);
 			data.writeBytes(bytes);
-			//ReikaJavaLibrary.pConsole("sent "+this);
+			//DragonAPICore.log("sent "+this);
 		}
 
 		public NBTTagCompound asNBT() {
@@ -1671,16 +1671,16 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 	public static void registerVanillaPacketType(DragonAPIMod mod, int id, Class<? extends Packet> c, Side s, EnumConnectionState state) {
 		switch(s) {
-		case CLIENT:
-			if (state.func_150753_a().containsKey(id))
-				throw new IDConflictException(mod, "Packet "+c+" ID "+id+" is already occupied by "+state.func_150753_a().get(id)+"!");
-			state.func_150753_a().put(Integer.valueOf(id), c);
-			break;
-		case SERVER:
-			if (state.func_150755_b().containsKey(id))
-				throw new IDConflictException(mod, "Packet "+c+" ID "+id+" is already occupied by "+state.func_150755_b().get(id)+"!");
-			state.func_150755_b().put(Integer.valueOf(id), c);
-			break;
+			case CLIENT:
+				if (state.func_150753_a().containsKey(id))
+					throw new IDConflictException(mod, "Packet "+c+" ID "+id+" is already occupied by "+state.func_150753_a().get(id)+"!");
+				state.func_150753_a().put(Integer.valueOf(id), c);
+				break;
+			case SERVER:
+				if (state.func_150755_b().containsKey(id))
+					throw new IDConflictException(mod, "Packet "+c+" ID "+id+" is already occupied by "+state.func_150755_b().get(id)+"!");
+				state.func_150755_b().put(Integer.valueOf(id), c);
+				break;
 		}
 		EnumConnectionState.field_150761_f.put(c, state);
 		mod.getModLogger().log("Registering vanilla-type packet "+c+" with ID "+id+" on side "+s);

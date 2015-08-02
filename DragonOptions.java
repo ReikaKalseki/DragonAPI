@@ -15,6 +15,7 @@ import Reika.DragonAPI.Interfaces.Configuration.IntegerConfig;
 public enum DragonOptions implements IntegerConfig, BooleanConfig {
 
 	LOGLOADING("Console Loading Info", true),
+	FILELOG("Log Loading Info To Separate File", false),
 	DEBUGMODE("Debug Mode", false),
 	SYNCPACKET("Sync Packet ID", 182),
 	NORENDERS("Disable Renders For Debug", false),

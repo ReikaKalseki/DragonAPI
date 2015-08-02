@@ -207,4 +207,90 @@ public abstract class ASMException extends RuntimeException {
 
 	}
 
+	private abstract static class DuplicateMemberASMException extends ASMException {
+
+		protected final String label;
+
+		private DuplicateMemberASMException(ClassNode cn, String name) {
+			super(cn);
+			label = name;
+		}
+
+		@Override
+		public final String getMessage() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(super.getMessage());
+			sb.append(this.getTitle());
+			sb.append(" already found in class ");
+			sb.append(node.name);
+			sb.append(" when trying to add another member with the same erasure.\n");
+			sb.append("This is a critical ASM error and the class transformer operation cannot proceed.");
+			sb.append(" If you are the developer of this mod, check for copy-paste errors or broken overloading.");
+			sb.append(" If not, report it to the developer.");
+			sb.append("\n\nAdditional information:\n");
+			sb.append(this.getAdditionalInformation());
+			return sb.toString();
+		}
+
+		protected abstract String getAdditionalInformation();
+		protected abstract String getTitle();
+
+		public final boolean isVanillaClass() {
+			return ASMException.isVanillaClass(node); //need the direct class reference or compiler has a seizure <_<
+		}
+
+	}
+
+	public static final class DuplicateASMMethodException extends DuplicateMemberASMException {
+
+		private final String signature;
+
+		public DuplicateASMMethodException(ClassNode cn, String name, String sig) {
+			super(cn, name);
+			signature = sig;
+		}
+
+		@Override
+		protected String getTitle() {
+			return "Method "+label+" "+signature;
+		}
+
+		@Override
+		protected String getAdditionalInformation() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Identified methods:\n");
+			for (MethodNode m : node.methods) {
+				String tag1 = m.name.equals(label) ? " * Name match" : "";
+				String tag2 = m.desc.equals(label) ? " * Signature match" : "";
+				sb.append("\t"+m.name+" "+m.desc+tag1+"|"+tag2+"\n");
+			}
+			return sb.toString();
+		}
+
+	}
+
+	public static final class DuplicateASMFieldException extends DuplicateMemberASMException {
+
+		public DuplicateASMFieldException(ClassNode cn, String name) {
+			super(cn, name);
+		}
+
+		@Override
+		protected String getTitle() {
+			return "Field "+label;
+		}
+
+		@Override
+		protected String getAdditionalInformation() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Identified fields:\n");
+			for (FieldNode f : node.fields) {
+				String tag = f.name.equals(label) ? " * Name match" : "";
+				sb.append("\t"+f.name+" "+f.desc+tag+"\n");
+			}
+			return sb.toString();
+		}
+
+	}
+
 }

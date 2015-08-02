@@ -20,6 +20,7 @@ import java.util.HashMap;
 
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
@@ -33,7 +34,6 @@ import Reika.DragonAPI.Interfaces.Configuration.SegmentedConfigList;
 import Reika.DragonAPI.Interfaces.Configuration.StringArrayConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
 import Reika.DragonAPI.Interfaces.Registry.IDRegistry;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
@@ -109,11 +109,11 @@ public class ControlledConfig {
 		if (backup.exists())
 			backup.delete();
 		try {
-			ReikaJavaLibrary.pConsole(configMod.getDisplayName().toUpperCase()+": Writing Backup File to "+path);
-			ReikaJavaLibrary.pConsole(configMod.getDisplayName().toUpperCase()+": Use this to restore custom IDs if necessary.");
+			DragonAPICore.log(configMod.getDisplayName().toUpperCase()+": Writing Backup File to "+path);
+			DragonAPICore.log(configMod.getDisplayName().toUpperCase()+": Use this to restore custom IDs if necessary.");
 			backup.createNewFile();
 			if (!backup.exists())
-				ReikaJavaLibrary.pConsole(configMod.getDisplayName().toUpperCase()+": Could not create backup file at "+path+"!");
+				DragonAPICore.logError(configMod.getDisplayName().toUpperCase()+": Could not create backup file at "+path+"!");
 			else {
 				PrintWriter p = new PrintWriter(backup);
 				p.println("#####----------THESE ARE ALL THE OLD CONFIG SETTINGS YOU WERE USING----------#####");
@@ -123,7 +123,7 @@ public class ControlledConfig {
 			}
 		}
 		catch (IOException e) {
-			ReikaJavaLibrary.pConsole(configMod.getDisplayName().toUpperCase()+": Could not create backup file due to IOException!");
+			DragonAPICore.logError(configMod.getDisplayName().toUpperCase()+": Could not create backup file due to IOException!");
 			e.printStackTrace();
 		}
 		configFile.delete();
@@ -131,7 +131,7 @@ public class ControlledConfig {
 
 	private void versionCheck(FMLPreInitializationEvent event) {
 		if (this.checkReset(config)) {
-			ReikaJavaLibrary.pConsole(configMod.getDisplayName().toUpperCase()+": Config File Format Changed. Resetting...");
+			DragonAPICore.log(configMod.getDisplayName().toUpperCase()+": Config File Format Changed. Resetting...");
 			this.resetConfigFile();
 			this.initProps(event);
 			return;

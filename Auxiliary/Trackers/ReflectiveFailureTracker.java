@@ -11,9 +11,9 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.Collection;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Registry.ModEntry;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReflectiveFailureTracker {
 
@@ -32,7 +32,7 @@ public class ReflectiveFailureTracker {
 
 	public void print() {
 		if (!data.isEmpty()) {
-			ReikaJavaLibrary.pConsole("===============================================================================================");
+			DragonAPICore.log("===============================================================================================");
 
 			this.log("Some reflective mod handlers have failed.");
 			this.log("Please try updating all involved mods, and if this fails to fix the issue, notify the author of the handlers.");
@@ -43,17 +43,17 @@ public class ReflectiveFailureTracker {
 				for (ExceptionLog e : c) {
 					this.log(e.toString());
 				}
-				this.log("");
+				DragonAPICore.log("");
 			}
 
 
 			this.log("For further information, including full stacktraces, consult the loading logs, and search for the erroring classes' names.");
-			ReikaJavaLibrary.pConsole("===============================================================================================");
+			DragonAPICore.log("===============================================================================================");
 		}
 	}
 
 	private void log(String s) {
-		ReikaJavaLibrary.pConsole("DRAGONAPI: "+s);
+		DragonAPICore.logError(s);
 	}
 
 	private static class ExceptionLog {

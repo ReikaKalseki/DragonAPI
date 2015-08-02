@@ -15,8 +15,8 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Interfaces.Block.WireBlock;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 public class CustomWireRenderer implements ISimpleBlockRenderingHandler {
@@ -31,7 +31,7 @@ public class CustomWireRenderer implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public void renderInventoryBlock(Block b, int metadata, int modelID, RenderBlocks renderer) {
-		ReikaJavaLibrary.pConsole("This item for block "+b+" should have a placer item, not be obtainable directly!");
+		DragonAPICore.logError("This item for block "+b+" should have a placer item, not be obtainable directly!");
 		// should have placer item
 	}
 
@@ -103,100 +103,100 @@ public class CustomWireRenderer implements ISimpleBlockRenderingHandler {
 				if (w.isDirectlyConnectedTo(world, x, y, z, dir.ordinal()) || (!alone && w.isTerminus(world, x, y, z, dir.getOpposite().ordinal()))) {
 					boolean up = w.drawWireUp(world, x, y, z, i);
 					switch(dir) {
-					case EAST:
-						v5.addVertexWithUV(1, d, 1, over.getMinU(), over.getMaxV());
-						v5.addVertexWithUV(1, d, 0, over.getMaxU(), over.getMaxV());
-						v5.addVertexWithUV(0, d, 0, over.getMaxU(), over.getMinV());
-						v5.addVertexWithUV(0, d, 1, over.getMinU(), over.getMinV());
+						case EAST:
+							v5.addVertexWithUV(1, d, 1, over.getMinU(), over.getMaxV());
+							v5.addVertexWithUV(1, d, 0, over.getMaxU(), over.getMaxV());
+							v5.addVertexWithUV(0, d, 0, over.getMaxU(), over.getMinV());
+							v5.addVertexWithUV(0, d, 1, over.getMinU(), over.getMinV());
 
-						if (up) {
-							v5.addVertexWithUV(1-d2, 1, 1, over.getMinU(), over.getMaxV());
-							v5.addVertexWithUV(1-d2, 1, 0, over.getMaxU(), over.getMaxV());
-							v5.addVertexWithUV(1-d2, 0, 0, over.getMaxU(), over.getMinV());
-							v5.addVertexWithUV(1-d2, 0, 1, over.getMinU(), over.getMinV());
+							if (up) {
+								v5.addVertexWithUV(1-d2, 1, 1, over.getMinU(), over.getMaxV());
+								v5.addVertexWithUV(1-d2, 1, 0, over.getMaxU(), over.getMaxV());
+								v5.addVertexWithUV(1-d2, 0, 0, over.getMaxU(), over.getMinV());
+								v5.addVertexWithUV(1-d2, 0, 1, over.getMinU(), over.getMinV());
 
-							v5.addVertexWithUV(1-d2, 1, 1, over.getMinU(), over.getMinV());
-							v5.addVertexWithUV(1-d2, 1, 0, over.getMaxU(), over.getMinV());
-							v5.addVertexWithUV(1-d2, 0, 0, over.getMaxU(), over.getMaxV());
-							v5.addVertexWithUV(1-d2, 0, 1, over.getMinU(), over.getMaxV());
+								v5.addVertexWithUV(1-d2, 1, 1, over.getMinU(), over.getMinV());
+								v5.addVertexWithUV(1-d2, 1, 0, over.getMaxU(), over.getMinV());
+								v5.addVertexWithUV(1-d2, 0, 0, over.getMaxU(), over.getMaxV());
+								v5.addVertexWithUV(1-d2, 0, 1, over.getMinU(), over.getMaxV());
 
-							v5.addVertexWithUV(1-d2, 1, 1, ico.getMinU(), ico.getMinV());
-							v5.addVertexWithUV(1-d2, 1, 0, ico.getMaxU(), ico.getMinV());
-							v5.addVertexWithUV(1-d2, 0, 0, ico.getMaxU(), ico.getMaxV());
-							v5.addVertexWithUV(1-d2, 0, 1, ico.getMinU(), ico.getMaxV());
-						}
-						break;
-					case NORTH: //done
-						v5.addVertexWithUV(0, d, 1, over.getMinU(), over.getMinV());
-						v5.addVertexWithUV(1, d, 1, over.getMaxU(), over.getMinV());
-						v5.addVertexWithUV(1, d, 0, over.getMaxU(), over.getMaxV());
-						v5.addVertexWithUV(0, d, 0, over.getMinU(), over.getMaxV());
+								v5.addVertexWithUV(1-d2, 1, 1, ico.getMinU(), ico.getMinV());
+								v5.addVertexWithUV(1-d2, 1, 0, ico.getMaxU(), ico.getMinV());
+								v5.addVertexWithUV(1-d2, 0, 0, ico.getMaxU(), ico.getMaxV());
+								v5.addVertexWithUV(1-d2, 0, 1, ico.getMinU(), ico.getMaxV());
+							}
+							break;
+						case NORTH: //done
+							v5.addVertexWithUV(0, d, 1, over.getMinU(), over.getMinV());
+							v5.addVertexWithUV(1, d, 1, over.getMaxU(), over.getMinV());
+							v5.addVertexWithUV(1, d, 0, over.getMaxU(), over.getMaxV());
+							v5.addVertexWithUV(0, d, 0, over.getMinU(), over.getMaxV());
 
-						if (up) {
-							v5.addVertexWithUV(1, 1, d2, over.getMinU(), over.getMaxV());
-							v5.addVertexWithUV(0, 1, d2, over.getMaxU(), over.getMaxV());
-							v5.addVertexWithUV(0, 0, d2, over.getMaxU(), over.getMinV());
-							v5.addVertexWithUV(1, 0, d2, over.getMinU(), over.getMinV());
+							if (up) {
+								v5.addVertexWithUV(1, 1, d2, over.getMinU(), over.getMaxV());
+								v5.addVertexWithUV(0, 1, d2, over.getMaxU(), over.getMaxV());
+								v5.addVertexWithUV(0, 0, d2, over.getMaxU(), over.getMinV());
+								v5.addVertexWithUV(1, 0, d2, over.getMinU(), over.getMinV());
 
-							v5.addVertexWithUV(1, 1, d2, over.getMinU(), over.getMinV());
-							v5.addVertexWithUV(0, 1, d2, over.getMaxU(), over.getMinV());
-							v5.addVertexWithUV(0, 0, d2, over.getMaxU(), over.getMaxV());
-							v5.addVertexWithUV(1, 0, d2, over.getMinU(), over.getMaxV());
+								v5.addVertexWithUV(1, 1, d2, over.getMinU(), over.getMinV());
+								v5.addVertexWithUV(0, 1, d2, over.getMaxU(), over.getMinV());
+								v5.addVertexWithUV(0, 0, d2, over.getMaxU(), over.getMaxV());
+								v5.addVertexWithUV(1, 0, d2, over.getMinU(), over.getMaxV());
 
-							v5.addVertexWithUV(1, 1, d2, ico.getMinU(), ico.getMinV());
-							v5.addVertexWithUV(0, 1, d2, ico.getMaxU(), ico.getMinV());
-							v5.addVertexWithUV(0, 0, d2, ico.getMaxU(), ico.getMaxV());
-							v5.addVertexWithUV(1, 0, d2, ico.getMinU(), ico.getMaxV());
-						}
-						break;
-					case SOUTH: //done
-						v5.addVertexWithUV(0, d, 1, over.getMinU(), over.getMaxV());
-						v5.addVertexWithUV(1, d, 1, over.getMaxU(), over.getMaxV());
-						v5.addVertexWithUV(1, d, 0, over.getMaxU(), over.getMinV());
-						v5.addVertexWithUV(0, d, 0, over.getMinU(), over.getMinV());
+								v5.addVertexWithUV(1, 1, d2, ico.getMinU(), ico.getMinV());
+								v5.addVertexWithUV(0, 1, d2, ico.getMaxU(), ico.getMinV());
+								v5.addVertexWithUV(0, 0, d2, ico.getMaxU(), ico.getMaxV());
+								v5.addVertexWithUV(1, 0, d2, ico.getMinU(), ico.getMaxV());
+							}
+							break;
+						case SOUTH: //done
+							v5.addVertexWithUV(0, d, 1, over.getMinU(), over.getMaxV());
+							v5.addVertexWithUV(1, d, 1, over.getMaxU(), over.getMaxV());
+							v5.addVertexWithUV(1, d, 0, over.getMaxU(), over.getMinV());
+							v5.addVertexWithUV(0, d, 0, over.getMinU(), over.getMinV());
 
-						if (up) {
-							v5.addVertexWithUV(1, 0, 1-d2, over.getMinU(), over.getMinV());
-							v5.addVertexWithUV(0, 0, 1-d2, over.getMaxU(), over.getMinV());
-							v5.addVertexWithUV(0, 1, 1-d2, over.getMaxU(), over.getMaxV());
-							v5.addVertexWithUV(1, 1, 1-d2, over.getMinU(), over.getMaxV());
+							if (up) {
+								v5.addVertexWithUV(1, 0, 1-d2, over.getMinU(), over.getMinV());
+								v5.addVertexWithUV(0, 0, 1-d2, over.getMaxU(), over.getMinV());
+								v5.addVertexWithUV(0, 1, 1-d2, over.getMaxU(), over.getMaxV());
+								v5.addVertexWithUV(1, 1, 1-d2, over.getMinU(), over.getMaxV());
 
-							v5.addVertexWithUV(1, 0, 1-d2, over.getMinU(), over.getMaxV());
-							v5.addVertexWithUV(0, 0, 1-d2, over.getMaxU(), over.getMaxV());
-							v5.addVertexWithUV(0, 1, 1-d2, over.getMaxU(), over.getMinV());
-							v5.addVertexWithUV(1, 1, 1-d2, over.getMinU(), over.getMinV());
+								v5.addVertexWithUV(1, 0, 1-d2, over.getMinU(), over.getMaxV());
+								v5.addVertexWithUV(0, 0, 1-d2, over.getMaxU(), over.getMaxV());
+								v5.addVertexWithUV(0, 1, 1-d2, over.getMaxU(), over.getMinV());
+								v5.addVertexWithUV(1, 1, 1-d2, over.getMinU(), over.getMinV());
 
-							v5.addVertexWithUV(1, 0, 1-d2, ico.getMinU(), ico.getMaxV());
-							v5.addVertexWithUV(0, 0, 1-d2, ico.getMaxU(), ico.getMaxV());
-							v5.addVertexWithUV(0, 1, 1-d2, ico.getMaxU(), ico.getMinV());
-							v5.addVertexWithUV(1, 1, 1-d2, ico.getMinU(), ico.getMinV());
-						}
-						break;
-					case WEST:
-						v5.addVertexWithUV(1, d, 1, over.getMinU(), over.getMinV());
-						v5.addVertexWithUV(1, d, 0, over.getMaxU(), over.getMinV());
-						v5.addVertexWithUV(0, d, 0, over.getMaxU(), over.getMaxV());
-						v5.addVertexWithUV(0, d, 1, over.getMinU(), over.getMaxV());
+								v5.addVertexWithUV(1, 0, 1-d2, ico.getMinU(), ico.getMaxV());
+								v5.addVertexWithUV(0, 0, 1-d2, ico.getMaxU(), ico.getMaxV());
+								v5.addVertexWithUV(0, 1, 1-d2, ico.getMaxU(), ico.getMinV());
+								v5.addVertexWithUV(1, 1, 1-d2, ico.getMinU(), ico.getMinV());
+							}
+							break;
+						case WEST:
+							v5.addVertexWithUV(1, d, 1, over.getMinU(), over.getMinV());
+							v5.addVertexWithUV(1, d, 0, over.getMaxU(), over.getMinV());
+							v5.addVertexWithUV(0, d, 0, over.getMaxU(), over.getMaxV());
+							v5.addVertexWithUV(0, d, 1, over.getMinU(), over.getMaxV());
 
-						if (up) {
-							v5.addVertexWithUV(d2, 0, 1, over.getMinU(), over.getMinV());
-							v5.addVertexWithUV(d2, 0, 0, over.getMaxU(), over.getMinV());
-							v5.addVertexWithUV(d2, 1, 0, over.getMaxU(), over.getMaxV());
-							v5.addVertexWithUV(d2, 1, 1, over.getMinU(), over.getMaxV());
+							if (up) {
+								v5.addVertexWithUV(d2, 0, 1, over.getMinU(), over.getMinV());
+								v5.addVertexWithUV(d2, 0, 0, over.getMaxU(), over.getMinV());
+								v5.addVertexWithUV(d2, 1, 0, over.getMaxU(), over.getMaxV());
+								v5.addVertexWithUV(d2, 1, 1, over.getMinU(), over.getMaxV());
 
-							v5.addVertexWithUV(d2, 0, 1, over.getMinU(), over.getMaxV());
-							v5.addVertexWithUV(d2, 0, 0, over.getMaxU(), over.getMaxV());
-							v5.addVertexWithUV(d2, 1, 0, over.getMaxU(), over.getMinV());
-							v5.addVertexWithUV(d2, 1, 1, over.getMinU(), over.getMinV());
+								v5.addVertexWithUV(d2, 0, 1, over.getMinU(), over.getMaxV());
+								v5.addVertexWithUV(d2, 0, 0, over.getMaxU(), over.getMaxV());
+								v5.addVertexWithUV(d2, 1, 0, over.getMaxU(), over.getMinV());
+								v5.addVertexWithUV(d2, 1, 1, over.getMinU(), over.getMinV());
 
-							v5.addVertexWithUV(d2, 0, 1, ico.getMinU(), ico.getMaxV());
-							v5.addVertexWithUV(d2, 0, 0, ico.getMaxU(), ico.getMaxV());
-							v5.addVertexWithUV(d2, 1, 0, ico.getMaxU(), ico.getMinV());
-							v5.addVertexWithUV(d2, 1, 1, ico.getMinU(), ico.getMinV());
-						}
-						break;
-					default:
-						break;
+								v5.addVertexWithUV(d2, 0, 1, ico.getMinU(), ico.getMaxV());
+								v5.addVertexWithUV(d2, 0, 0, ico.getMaxU(), ico.getMaxV());
+								v5.addVertexWithUV(d2, 1, 0, ico.getMaxU(), ico.getMinV());
+								v5.addVertexWithUV(d2, 1, 1, ico.getMinU(), ico.getMinV());
+							}
+							break;
+						default:
+							break;
 					}
 				}
 			}

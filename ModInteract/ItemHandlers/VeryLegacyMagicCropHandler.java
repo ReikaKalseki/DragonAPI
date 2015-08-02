@@ -18,9 +18,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 
@@ -145,16 +145,16 @@ public class VeryLegacyMagicCropHandler extends CropHandlerBase {
 
 		public String getEssenceFieldName() {
 			switch(type) {
-			case ELEMENT:
-				return "ElementEssence";
-			case MATERIAL:
-				return "CropEssence";
-			case SOUL:
-				return "SoulEssence";
-			case MOD:
-				return "ModCropEssence";
-			default:
-				return "";
+				case ELEMENT:
+					return "ElementEssence";
+				case MATERIAL:
+					return "CropEssence";
+				case SOUL:
+					return "SoulEssence";
+				case MOD:
+					return "ModCropEssence";
+				default:
+					return "";
 			}
 		}
 
@@ -207,15 +207,15 @@ public class VeryLegacyMagicCropHandler extends CropHandlerBase {
 					type.setIDs(crop, seed, essence);
 				}
 				catch (NoSuchFieldException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 					e.printStackTrace();
 				}
 				catch (IllegalAccessException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+					DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 					e.printStackTrace();
 				}
 				catch (NullPointerException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 					e.printStackTrace();
 				}
 				catch (Exception e) {
@@ -242,19 +242,19 @@ public class VeryLegacyMagicCropHandler extends CropHandlerBase {
 				chance = f.getInt(null);
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
 			catch (Exception e) {
@@ -350,7 +350,7 @@ public class VeryLegacyMagicCropHandler extends CropHandlerBase {
 		OreDictionary.registerOre("oreNetherEssence", ore);
 
 		ModOreList.ESSENCE.initialize();
-		ReikaJavaLibrary.pConsole("DRAGONAPI: Registering Magic Crops Essence ore to the Ore Dictionary!");
+		DragonAPICore.log("Registering Magic Crops Essence ore to the Ore Dictionary!");
 	}
 
 	public ItemStack getWeakEssence() {

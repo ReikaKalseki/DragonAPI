@@ -34,6 +34,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaImageLoader;
 import Reika.DragonAPI.IO.ReikaImageLoader.ImageEditor;
@@ -96,13 +97,13 @@ public class ReikaTextureHelper {
 					gl = bindPackTexture(root, respath, res, img);
 					if (gl != null) {
 						textures.put(gl, root, tex);
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Texture Pack "+res.getPackName()+" contains an image for "+tex+".");
+						DragonAPICore.log("Texture Pack "+res.getPackName()+" contains an image for "+tex+".");
 						break;
 					}
 				}
 			}
 			if (gl == null) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: No texture packs contain an image for "+tex+". Loading default.");
+				DragonAPICore.log("No texture packs contain an image for "+tex+". Loading default.");
 				gl = bindClassReferencedTexture(root, oldtex, img);
 				textures.put(gl, root, tex);
 			}
@@ -123,7 +124,7 @@ public class ReikaTextureHelper {
 	private static Integer bindClassReferencedTexture(Class root, String tex, ImageEditor editor) {
 		BufferedImage img = ReikaImageLoader.readImage(root, tex, editor);
 		if (img == null) {
-			ReikaJavaLibrary.pConsole("No image found for "+tex+"!");
+			DragonAPICore.logError("No image found for "+tex+"!");
 			return new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
 		}
 		else {
@@ -136,7 +137,7 @@ public class ReikaTextureHelper {
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.readHardPathImage(tex);
 			if (img == null) {
-				ReikaJavaLibrary.pConsole("No image found for "+tex+"!");
+				DragonAPICore.logError("No image found for "+tex+"!");
 				gl = new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
 				textures.put(gl, root, tex);
 			}
@@ -189,7 +190,7 @@ public class ReikaTextureHelper {
 
 	/** Overrides the standard ResourceLocation system. Unfortunately not yet functional. *//*
 	public static void forceArmorTexturePath(String tex) {
-		ReikaJavaLibrary.pConsole("DRAGONAPI: Disabling ResourceLocation on armor texture "+tex);
+		DragonAPICore.log("DRAGONAPI: Disabling ResourceLocation on armor texture "+tex);
 		ForcedResource f = new ForcedResource(tex);
 		Map map = getArmorTextureMappings();
 		map.put(tex, f);
@@ -283,20 +284,20 @@ public class ReikaTextureHelper {
 						colorOverrides.put(dye, color);
 					}
 					p.close();
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Found color override text file for texture pack "+pack.getPackName()+".");
+					DragonAPICore.log("Found color override text file for texture pack "+pack.getPackName()+".");
 					loaded = true;
 				}
 				else {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: No color override found for texture pack "+pack.getPackName()+".");
+					DragonAPICore.log("No color override found for texture pack "+pack.getPackName()+".");
 				}
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error reading color override text file for texture pack "+pack.getPackName()+".");
+				DragonAPICore.logError("Error reading color override text file for texture pack "+pack.getPackName()+".");
 				e.printStackTrace();
 			}
 		}
 		if (!loaded) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not find color override text file in any resource packs. Using defaults.");
+			DragonAPICore.log("Could not find color override text file in any resource packs. Using defaults.");
 			for (int i = 0; i < 16; i++) {
 				ReikaDyeHelper dye = ReikaDyeHelper.dyes[i];
 				int c = dye.getDefaultColor();

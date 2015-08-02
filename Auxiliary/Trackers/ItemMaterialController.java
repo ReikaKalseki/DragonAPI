@@ -16,11 +16,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Instantiable.ItemMaterial;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class ItemMaterialController {
@@ -106,7 +106,7 @@ public class ItemMaterialController {
 	public void addItem(ItemStack is, ItemMaterial mat) {
 		if (this.hasImmutableMapping(is))
 			throw new MisuseException("Do not try to overwrite mappings of vanilla items!");
-		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding "+mat+" material properties to "+is);
+		DragonAPICore.log("DRAGONAPI: Adding "+mat+" material properties to "+is);
 		data.put(is, mat);
 	}
 
@@ -125,7 +125,7 @@ public class ItemMaterialController {
 	private void addVanillaItem(ItemStack is, ItemMaterial mat) {
 		if (this.hasImmutableMapping(is))
 			throw new MisuseException("Do not try to overwrite mappings of vanilla items!");
-		ReikaJavaLibrary.pConsole("DRAGONAPI: Adding immutable material "+mat+" properties to vanilla item "+is);
+		DragonAPICore.log("Adding immutable material "+mat+" properties to vanilla item "+is);
 		data.put(is, mat);
 		locks.add(is);
 	}
@@ -140,7 +140,7 @@ public class ItemMaterialController {
 		if (b == null)
 			throw new WTFException("Some mod is deleting the vanilla block "+b+"!", true);
 		if (Item.getItemFromBlock(b) == null)
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Block "+b+" has no corresponding item!");
+			DragonAPICore.logError("Block "+b+" has no corresponding item!");
 		else
 			this.addVanillaItem(new ItemStack(b), mat);
 	}

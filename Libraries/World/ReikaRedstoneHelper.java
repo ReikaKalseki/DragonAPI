@@ -16,7 +16,6 @@ import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class ReikaRedstoneHelper extends DragonAPICore {
 
@@ -36,7 +35,7 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 		repeat = false;
 		boolean pwr = world.isBlockIndirectlyGettingPowered(x, y, z);
 		boolean rpt = isReceivingPowerFromRepeater(world, x, y, z, side);
-		//ReikaJavaLibrary.pConsole(((sided || repeat) && pwr && !lastPower)+" for "+lastPower);
+		//DragonAPICore.log(((sided || repeat) && pwr && !lastPower)+" for "+lastPower);
 		return ((sided && pwr) || rpt) && !lastPower && !lastRepeat;
 	}
 
@@ -77,7 +76,7 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 	/** Returns true if the redstone signal is greater or equal to a value. Args: World, x, y, z, level */
 	public static boolean isRedstoneAtLevel(World world, int x, int y, int z, int level) {
 		if (level > 15) {
-			ReikaJavaLibrary.pConsole("Redstone level "+level+" is impossible!");
+			DragonAPICore.logError("Redstone level "+level+" is impossible!");
 			return false;
 		}
 		int pwr = world.getBlockPowerInput(x, y, z);

@@ -466,6 +466,9 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
 		if (this.isMouseInBox(x, x+16, y, y+16)) {
 			String sg = is.getDisplayName();
+			if (sg == null) {
+				sg = is.toString()+"{"+is.stackTagCompound+"}";
+			}
 			boolean right = this.getMouseRealX() < mc.currentScreen.width/2;
 			if (right)
 				this.drawTooltipAt(fr, sg, this.getMouseRealX()+fr.getStringWidth(sg)+12, this.getMouseRealY());
@@ -507,6 +510,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 	}
 
 	public void drawTooltipAt(FontRenderer f, String s, int mx, int my) {
+		if (s == null)
+			s = "[null]";
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);

@@ -11,6 +11,8 @@ package Reika.DragonAPI.Libraries.Java;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
+import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 
 public class ReikaRandomHelper extends DragonAPICore {
 
@@ -41,6 +43,10 @@ public class ReikaRandomHelper extends DragonAPICore {
 			return true;
 		if (num <= 0)
 			return false;
+
+		if (num < 10e-15) { //to help precision
+			return rand.nextDouble()*10e12 < num*10e12;
+		}
 
 		return rand.nextDouble() < num;
 	}
@@ -87,6 +93,12 @@ public class ReikaRandomHelper extends DragonAPICore {
 			b[i] = (byte)(32+rand.nextInt(95));
 		}
 		return new String(b);
+	}
+
+	public static DecimalPosition getRandomSphericalPosition(double x, double y, double z, int r) {
+		double dr = rand.nextDouble()*r;
+		double[] d = ReikaPhysicsHelper.polarToCartesian(dr, rand.nextInt(360), rand.nextInt(360));
+		return new DecimalPosition(x+d[0], y+d[1], z+d[2]);
 	}
 
 }

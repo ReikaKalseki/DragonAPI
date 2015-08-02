@@ -17,9 +17,9 @@ import java.util.Collection;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class AppEngHandler extends ModHandlerBase {
 
@@ -90,9 +90,9 @@ public class AppEngHandler extends ModHandlerBase {
 				glass = this.getBlock("blockQuartzGlass");
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read AE class contents!");
+				DragonAPICore.logError("Cannot read AE class contents!");
 				e.printStackTrace();
-				logFailure(e);
+				this.logFailure(e);
 			}
 		}
 		else {
@@ -216,18 +216,18 @@ public class AppEngHandler extends ModHandlerBase {
 		int n = 1+rand.nextInt(3);
 		for (int i = 0; i < n; i++) {
 			switch (rand.nextInt(4)) {
-			case 0:
-				li.add(calcPress);
-				break;
-			case 1:
-				li.add(engPress);
-				break;
-			case 2:
-				li.add(logicPress);
-				break;
-			case 3:
-				li.add(siliconPress);
-				break;
+				case 0:
+					li.add(calcPress);
+					break;
+				case 1:
+					li.add(engPress);
+					break;
+				case 2:
+					li.add(logicPress);
+					break;
+				case 3:
+					li.add(siliconPress);
+					break;
 			}
 		}
 		return li;

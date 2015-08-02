@@ -40,6 +40,7 @@ import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchPage;
 import thaumcraft.common.entities.monster.EntityWisp;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
@@ -107,7 +108,7 @@ public class ReikaThaumHelper {
 	/** Contains a helper function to avoid overwriting existing aspects. */
 	public static void addAspects(ItemStack is, Object... aspects) {
 		if (aspects.length%2 != 0) {
-			ReikaJavaLibrary.pConsole("Could not add aspects to "+is+": You must specify a level for every aspect!");
+			DragonAPICore.logError("Could not add aspects to "+is+": You must specify a level for every aspect!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -157,7 +158,7 @@ public class ReikaThaumHelper {
 			}
 		}
 		catch (ClassCastException e) {
-			ReikaJavaLibrary.pConsole("Invalid parameters! Could not generate aspect list from "+Arrays.toString(aspects)+"!");
+			DragonAPICore.logError("Invalid parameters! Could not generate aspect list from "+Arrays.toString(aspects)+"!");
 			e.printStackTrace();
 		}
 		return ot;
@@ -571,7 +572,7 @@ public class ReikaThaumHelper {
 				playerTempWarp = (Map)warptemp.get(knowledge);
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft PlayerKnowledge Handler!");
+				DragonAPICore.logError("Could not load ThaumCraft PlayerKnowledge Handler!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
@@ -582,7 +583,7 @@ public class ReikaThaumHelper {
 				warpWard = (Potion)ins.get(null);
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Potion Handler!");
+				DragonAPICore.logError("Could not load ThaumCraft Potion Handler!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
@@ -596,7 +597,7 @@ public class ReikaThaumHelper {
 				clearWandInUse = wand.getMethod("clearObjectInUse", ItemStack.class);
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Wand Handler!");
+				DragonAPICore.logError("Could not load ThaumCraft Wand Handler!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
@@ -606,7 +607,7 @@ public class ReikaThaumHelper {
 				researchComplete = mgr.getMethod("isResearchComplete", String.class, String.class);
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Research Handler!");
+				DragonAPICore.logError("Could not load ThaumCraft Research Handler!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
@@ -617,7 +618,7 @@ public class ReikaThaumHelper {
 				wispTarget.setAccessible(true);
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Mob Handler!");
+				DragonAPICore.logError("Could not load ThaumCraft Mob Handler!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
@@ -635,7 +636,7 @@ public class ReikaThaumHelper {
 				}
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Aspect Handler!");
+				DragonAPICore.logError("Could not load ThaumCraft Aspect Handler!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
@@ -650,7 +651,7 @@ public class ReikaThaumHelper {
 					}
 				}
 				catch (Exception e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft Effect Handler!");
+					DragonAPICore.logError("Could not load ThaumCraft Effect Handler!");
 					e.printStackTrace();
 					ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 				}
@@ -684,7 +685,7 @@ public class ReikaThaumHelper {
 			type.call.invoke(proxy, data);
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("ERROR Triggering ThaumCraft Effect: "+e.getMessage());
+			DragonAPICore.logError("Error Triggering ThaumCraft Effect: "+e.getMessage());
 			e.printStackTrace();
 		}
 	}
@@ -734,7 +735,7 @@ public class ReikaThaumHelper {
 		String s = sb.toString();
 		Aspect a = Aspect.getAspect(s);
 		if (a == null) {
-			ReikaJavaLibrary.pConsole("Packet Error: Aspect from String '"+s+"' (encoded by "+Arrays.toString(dat)+") returned a null Aspect!");
+			DragonAPICore.logError("Packet Error: Aspect from String '"+s+"' (encoded by "+Arrays.toString(dat)+") returned a null Aspect!");
 		}
 		else
 			return a;

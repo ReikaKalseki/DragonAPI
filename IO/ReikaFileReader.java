@@ -33,7 +33,6 @@ import java.util.jar.JarFile;
 import org.apache.commons.io.FileUtils;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReikaFileReader extends DragonAPICore {
 
@@ -158,7 +157,7 @@ public class ReikaFileReader extends DragonAPICore {
 			p = new BufferedReader(new InputStreamReader(in));
 		}
 		catch (NullPointerException e) {
-			ReikaJavaLibrary.pConsole("File "+path+" does not exist!");
+			DragonAPICore.logError("File "+path+" does not exist!");
 			return sb.toString();
 		}
 		int i = 0;
@@ -174,7 +173,7 @@ public class ReikaFileReader extends DragonAPICore {
 			p.close();
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole(e.getMessage()+" on loading line "+i);
+			DragonAPICore.logError(e.getMessage()+" on loading line "+i);
 		}
 		return sb.toString();
 	}

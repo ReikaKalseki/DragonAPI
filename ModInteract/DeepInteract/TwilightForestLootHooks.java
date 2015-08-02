@@ -15,9 +15,9 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class TwilightForestLootHooks {
 
@@ -70,10 +70,10 @@ public class TwilightForestLootHooks {
 				Object table = treasureTables.get(level);
 				Object entry = generateTreasureEntry(item, rarity);
 				insertTableEntry(table, entry);
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Added "+item+" to TF loot table "+this+" with rarity "+rarity);
+				DragonAPICore.log("Added "+item+" to TF loot table "+this+" with rarity "+rarity);
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not add loot to TF dungeon loot table "+this+"!");
+				DragonAPICore.logError("Could not add loot to TF dungeon loot table "+this+"!");
 				e.printStackTrace();
 			}
 		}
@@ -136,14 +136,14 @@ public class TwilightForestLootHooks {
 						}
 					}
 					catch (Exception e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load TF dungeon loot table "+type+"!");
+						DragonAPICore.logError("Could not load TF dungeon loot table "+type+"!");
 						e.printStackTrace();
 						ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TWILIGHT, e);
 					}
 				}
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load TF dungeon loot tables!");
+				DragonAPICore.logError("Could not load TF dungeon loot tables!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TWILIGHT, e);
 			}

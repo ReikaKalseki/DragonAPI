@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -152,22 +153,22 @@ public final class ThaumOreHandler extends ModHandlerBase {
 		if (!this.initializedProperly())
 			return null;
 		switch(meta) {
-		case metaAmber:
-			return oreAmber.copy();
-		case metaCinnabar:
-			return oreCinnabar.copy();
-		case metaAir:
-			return oreAir.copy();
-		case metaDull:
-			return oreDull.copy();
-		case metaEarth:
-			return oreEarth.copy();
-		case metaFire:
-			return oreFire.copy();
-		case metaVis:
-			return oreVis.copy();
-		case metaWater:
-			return oreWater.copy();
+			case metaAmber:
+				return oreAmber.copy();
+			case metaCinnabar:
+				return oreCinnabar.copy();
+			case metaAir:
+				return oreAir.copy();
+			case metaDull:
+				return oreDull.copy();
+			case metaEarth:
+				return oreEarth.copy();
+			case metaFire:
+				return oreFire.copy();
+			case metaVis:
+				return oreVis.copy();
+			case metaWater:
+				return oreWater.copy();
 		}
 		return null;
 	}
@@ -176,10 +177,10 @@ public final class ThaumOreHandler extends ModHandlerBase {
 		if (!this.initializedProperly())
 			return null;
 		switch(meta) {
-		case metaAmberItem:
-			return dropAmber.copy();
-		case metaCinnabarItem:
-			return dropCinnabar.copy();
+			case metaAmberItem:
+				return dropAmber.copy();
+			case metaCinnabarItem:
+				return dropCinnabar.copy();
 		}
 		return null;
 	}
@@ -188,18 +189,18 @@ public final class ThaumOreHandler extends ModHandlerBase {
 		if (!this.initializedProperly())
 			return null;
 		switch(meta) {
-		case metaAirShard:
-			return shardAir.copy();
-		case metaDullShard:
-			return shardDull.copy();
-		case metaEarthShard:
-			return shardEarth.copy();
-		case metaFireShard:
-			return shardFire.copy();
-		case metaVisShard:
-			return shardVis.copy();
-		case metaWaterShard:
-			return shardWater.copy();
+			case metaAirShard:
+				return shardAir.copy();
+			case metaDullShard:
+				return shardDull.copy();
+			case metaEarthShard:
+				return shardEarth.copy();
+			case metaFireShard:
+				return shardFire.copy();
+			case metaVisShard:
+				return shardVis.copy();
+			case metaWaterShard:
+				return shardWater.copy();
 		}
 		return null;
 	}
@@ -211,22 +212,22 @@ public final class ThaumOreHandler extends ModHandlerBase {
 		if (!ore.isThaumcraft())
 			return null;
 		switch(ore) {
-		case AMBER:
-			return oreAmber.copy();
-		case CINNABAR:
-			return oreCinnabar.copy();
-		case INFUSEDAIR:
-			return oreAir.copy();
-		case INFUSEDENTROPY:
-			return oreDull.copy();
-		case INFUSEDEARTH:
-			return oreEarth.copy();
-		case INFUSEDFIRE:
-			return oreFire.copy();
-		case INFUSEDORDER:
-			return oreVis.copy();
-		case INFUSEDWATER:
-			return oreWater.copy();
+			case AMBER:
+				return oreAmber.copy();
+			case CINNABAR:
+				return oreCinnabar.copy();
+			case INFUSEDAIR:
+				return oreAir.copy();
+			case INFUSEDENTROPY:
+				return oreDull.copy();
+			case INFUSEDEARTH:
+				return oreEarth.copy();
+			case INFUSEDFIRE:
+				return oreFire.copy();
+			case INFUSEDORDER:
+				return oreVis.copy();
+			case INFUSEDWATER:
+				return oreWater.copy();
 		}
 		return null;
 	}
@@ -238,22 +239,22 @@ public final class ThaumOreHandler extends ModHandlerBase {
 		if (!ore.isThaumcraft())
 			return null;
 		switch(ore) {
-		case AMBER:
-			return dropAmber.copy();
-		case CINNABAR:
-			return dropCinnabar.copy();
-		case INFUSEDAIR:
-			return shardAir.copy();
-		case INFUSEDENTROPY:
-			return shardDull.copy();
-		case INFUSEDEARTH:
-			return shardEarth.copy();
-		case INFUSEDFIRE:
-			return shardFire.copy();
-		case INFUSEDORDER:
-			return shardVis.copy();
-		case INFUSEDWATER:
-			return shardWater.copy();
+			case AMBER:
+				return dropAmber.copy();
+			case CINNABAR:
+				return dropCinnabar.copy();
+			case INFUSEDAIR:
+				return shardAir.copy();
+			case INFUSEDENTROPY:
+				return shardDull.copy();
+			case INFUSEDEARTH:
+				return shardEarth.copy();
+			case INFUSEDFIRE:
+				return shardFire.copy();
+			case INFUSEDORDER:
+				return shardVis.copy();
+			case INFUSEDWATER:
+				return shardWater.copy();
 		}
 		return null;
 	}
@@ -288,19 +289,19 @@ public final class ThaumOreHandler extends ModHandlerBase {
 
 	public void forceOreRegistration() {
 		if (!isOreDict) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft ores are being registered to Ore Dictionary!");
+			DragonAPICore.log("Thaumcraft ores are being registered to Ore Dictionary!");
 			for (int i = 0; i < ModOreList.oreList.length; i++) {
 				ModOreList o = ModOreList.oreList[i];
 				if (o.isThaumcraft()) {
 					OreDictionary.registerOre(o.getOreDictNames()[0], this.getOre(o));
 					OreDictionary.registerOre(o.getProductOreDictName(), this.getItem(o));
 					o.initialize();
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Registering "+o.displayName);
+					DragonAPICore.log("Registering "+o.displayName);
 				}
 			}
 		}
 		else {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Thaumcraft ores already registered to ore dictionary! No action taken!");
+			DragonAPICore.log("Thaumcraft ores already registered to ore dictionary! No action taken!");
 			ReikaJavaLibrary.dumpStack();
 		}
 	}

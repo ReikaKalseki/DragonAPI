@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
 
 public class SlicedBlockBlueprint {
 
@@ -240,5 +241,37 @@ public class SlicedBlockBlueprint {
 			}
 		}
 		return true;
+	}
+
+	public SlicedBlockBlueprint copy() {
+		SlicedBlockBlueprint cp = new SlicedBlockBlueprint();
+		cp.width = width;
+		cp.ySize = ySize;
+		cp.IDs.addAll(IDs);
+		cp.metadatas.addAll(metadatas);
+		cp.mappings.putAll(mappings);
+		cp.antiIDs.addAll(antiIDs);
+		cp.antiMetadatas.addAll(antiMetadatas);
+		cp.antiMappings.putAll(antiMappings);
+		return cp;
+	}
+
+	public void putInto(FilledBlockArray array, int x, int y, int z, ForgeDirection dir) {
+		ForgeDirection left = ReikaDirectionHelper.getLeftBy90(dir);
+		for (int slice = 0; slice < IDs.size(); slice++) {
+			int dx = x+dir.offsetX*slice;
+			Block[][] ids = IDs.get(slice);
+			int[][] metas = metadatas.get(slice);
+
+			for (int k = 0; k < ids.length; k++) {
+				int dz = z+left.offsetZ*k;
+				for (int m = 0; m < ids[k].length; m++) {
+					int dy = y+m;
+					Block id = ids[k][m];
+					int meta = metas[k][m];
+					array.setBlock(dx, dy, dz, id, meta);
+				}
+			}
+		}
 	}
 }

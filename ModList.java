@@ -127,17 +127,16 @@ public enum ModList implements ModEntry {
 
 	private ModList(String label, String[] blocks, String[] items) {
 		modLabel = label;
-		boolean c = Loader.isModLoaded(modLabel);
-		condition = c;
+		condition = Loader.isModLoaded(modLabel);
 		itemClass = items;
 		blockClass = blocks;
-		if (c) {
+		if (condition) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" detected in the MC installation. Adjusting behavior accordingly.");
 		}
 		else
 			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" not detected in the MC installation. No special action taken.");
 
-		if (c) {
+		if (condition) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Attempting to load data from "+this);
 			if (blocks == null)
 				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not block class for "+this+": Specified class was null. This may not be an error.");
@@ -181,7 +180,7 @@ public enum ModList implements ModEntry {
 
 	public Class getBlockClass() {
 		if (blockClass == null || blockClass.length == 0) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load block class for "+this+". Null class provided.");
+			DragonAPICore.logError("Could not load block class for "+this+". Null class provided.");
 			ReikaJavaLibrary.dumpStack();
 			return null;
 		}
@@ -191,12 +190,13 @@ public enum ModList implements ModEntry {
 				c = this.findClass(s);
 				if (c != null) {
 					blockClasses.put(this, c);
+					DragonAPICore.log("Found block class for "+this+": "+c);
 					break;
 				}
 			}
 			if (c == null) {
 				String sgs = Arrays.toString(blockClass);
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load block class for "+this+". Not found: "+sgs);
+				DragonAPICore.logError("Could not load block class for "+this+". Not found: "+sgs);
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(this, new ClassNotFoundException(sgs));
 				return null;
 			}
@@ -206,7 +206,7 @@ public enum ModList implements ModEntry {
 
 	public Class getItemClass() {
 		if (itemClass == null || itemClass.length == 0) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+". Null class provided.");
+			DragonAPICore.logError("Could not load item class for "+this+". Null class provided.");
 			ReikaJavaLibrary.dumpStack();
 			return null;
 		}
@@ -216,12 +216,13 @@ public enum ModList implements ModEntry {
 				c = this.findClass(s);
 				if (c != null) {
 					itemClasses.put(this, c);
+					DragonAPICore.log("Found item class for "+this+": "+c);
 					break;
 				}
 			}
 			if (c == null) {
 				String sgs = Arrays.toString(itemClass);
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load item class for "+this+". Not found: "+sgs);
+				DragonAPICore.logError("Could not load item class for "+this+". Not found: "+sgs);
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(this, new ClassNotFoundException(sgs));
 				return null;
 			}
@@ -312,8 +313,8 @@ public enum ModList implements ModEntry {
 		try {
 			c = Class.forName("com.mumfrey.liteloader.core.LiteLoader");
 			ReikaJavaLibrary.pConsole("DRAGONAPI: LiteLoader detected. Loading compatibility features.");
-			ReikaJavaLibrary.pConsole("\t\tNote that some parts of the game, especially sounds and textures, may error out.");
-			ReikaJavaLibrary.pConsole("\t\tTry reloading resources (F3+T) to fix this.");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: \t\tNote that some parts of the game, especially sounds and textures, may error out.");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: \t\tTry reloading resources (F3+T) to fix this.");
 		}
 		catch (ClassNotFoundException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: LiteLoader not detected.");
@@ -324,8 +325,8 @@ public enum ModList implements ModEntry {
 		try {
 			c = Class.forName("optifine.OptiFineTweaker");
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Optifine detected. Loading compatibility features.");
-			ReikaJavaLibrary.pConsole("\t\tNote that some parts of the game, especially rendering and textures, may error out.");
-			ReikaJavaLibrary.pConsole("\t\tTry reloading resources (F3+T) to fix this.");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: \t\tNote that some parts of the game, especially rendering and textures, may error out.");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: \t\tTry reloading resources (F3+T) to fix this.");
 		}
 		catch (ClassNotFoundException e) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Optifine not detected.");

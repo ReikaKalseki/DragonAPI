@@ -15,9 +15,9 @@ import java.util.HashMap;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.tileentity.TileEntity;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import buildcraft.transport.Pipe;
 import buildcraft.transport.PipeTransport;
 import buildcraft.transport.TileGenericPipe;
@@ -110,27 +110,27 @@ public class BCPipeHandler extends ModHandlerBase {
 				idpipe = ((Block)pipe.get(null));
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+				DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
@@ -149,27 +149,27 @@ public class BCPipeHandler extends ModHandlerBase {
 			return id;
 		}
 		catch (NoSuchFieldException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+			DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 			e.printStackTrace();
 			this.logFailure(e);
 		}
 		catch (SecurityException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+			DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 			e.printStackTrace();
 			this.logFailure(e);
 		}
 		catch (IllegalArgumentException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+			DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 			e.printStackTrace();
 			this.logFailure(e);
 		}
 		catch (IllegalAccessException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+			DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 			e.printStackTrace();
 			this.logFailure(e);
 		}
 		catch (NullPointerException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+			DragonAPICore.log("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 			e.printStackTrace();
 			this.logFailure(e);
 		}
@@ -197,7 +197,7 @@ public class BCPipeHandler extends ModHandlerBase {
 			Class test = Class.forName("buildcraft.transport.TileGenericPipe");
 		}
 		catch (ClassNotFoundException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Pipe reader failed! Class not found!");
+			DragonAPICore.logError("Pipe reader failed! Class not found!");
 			e.printStackTrace();
 			this.logFailure(e);
 			return null;
@@ -209,19 +209,19 @@ public class BCPipeHandler extends ModHandlerBase {
 				Item id = p.item;
 				PipeTransport pt = p.transport;
 				switch(pt.getPipeType()) {
-				case FLUID:
-					return this.getType(id, fluidPipes);
-				case ITEM:
-					return this.getType(id, itemPipes);
-				case POWER:
-					return this.getType(id, powerPipes);
-				default:
-					return null;
+					case FLUID:
+						return this.getType(id, fluidPipes);
+					case ITEM:
+						return this.getType(id, itemPipes);
+					case POWER:
+						return this.getType(id, powerPipes);
+					default:
+						return null;
 				}
 			}
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Pipe reader failed!");
+			DragonAPICore.logError("DRAGONAPI: Pipe reader failed!");
 			e.printStackTrace();
 			this.logFailure(e);
 			return null;

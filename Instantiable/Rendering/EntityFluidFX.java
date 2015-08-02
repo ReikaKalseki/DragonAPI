@@ -31,6 +31,21 @@ public class EntityFluidFX extends EntityFX {
 		motionZ = vz;
 	}
 
+	public EntityFluidFX setGravity(float g) {
+		particleGravity = g;
+		return this;
+	}
+
+	public EntityFluidFX setScale(float s) {
+		particleScale = s;
+		return this;
+	}
+
+	public EntityFluidFX setLife(int l) {
+		particleMaxAge = l;
+		return this;
+	}
+
 	@Override
 	public int getBrightnessForRender(float par1)
 	{

@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Exception.ModReflectionException;
@@ -40,12 +41,12 @@ public class MystCraftHandler extends ModHandlerBase {
 				idcrystal = this.getBlockInstance("crystal");
 			}
 			catch (ModReflectionException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Reflective exception for reading "+this.getMod()+"! Was the class loaded?");
+				DragonAPICore.logError("Reflective exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 				this.logFailure(e);
 			}

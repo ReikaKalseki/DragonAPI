@@ -17,36 +17,37 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 
 public class ReikaDirectionHelper extends DragonAPICore {
 
 	public static ForgeDirection getLeftBy90(ForgeDirection dir) {
 		switch(dir) {
-		case EAST:
-			return ForgeDirection.NORTH;
-		case NORTH:
-			return ForgeDirection.WEST;
-		case SOUTH:
-			return ForgeDirection.EAST;
-		case WEST:
-			return ForgeDirection.SOUTH;
-		default:
-			return dir;
+			case EAST:
+				return ForgeDirection.NORTH;
+			case NORTH:
+				return ForgeDirection.WEST;
+			case SOUTH:
+				return ForgeDirection.EAST;
+			case WEST:
+				return ForgeDirection.SOUTH;
+			default:
+				return dir;
 		}
 	}
 
 	public static ForgeDirection getRightBy90(ForgeDirection dir) {
 		switch(dir) {
-		case EAST:
-			return ForgeDirection.SOUTH;
-		case NORTH:
-			return ForgeDirection.EAST;
-		case SOUTH:
-			return ForgeDirection.WEST;
-		case WEST:
-			return ForgeDirection.NORTH;
-		default:
-			return dir;
+			case EAST:
+				return ForgeDirection.SOUTH;
+			case NORTH:
+				return ForgeDirection.EAST;
+			case SOUTH:
+				return ForgeDirection.WEST;
+			case WEST:
+				return ForgeDirection.NORTH;
+			default:
+				return dir;
 		}
 	}
 
@@ -73,17 +74,17 @@ public class ReikaDirectionHelper extends DragonAPICore {
 
 	public static int getDirectionIndex(ForgeDirection dir) {
 		switch (dir) {
-		case EAST:
-		case WEST:
-			return 0;
-		case DOWN:
-		case UP:
-			return 1;
-		case NORTH:
-		case SOUTH:
-			return 2;
-		default:
-			return -1;
+			case EAST:
+			case WEST:
+				return 0;
+			case DOWN:
+			case UP:
+				return 1;
+			case NORTH:
+			case SOUTH:
+				return 2;
+			default:
+				return -1;
 		}
 	}
 
@@ -126,6 +127,32 @@ public class ReikaDirectionHelper extends DragonAPICore {
 			return ForgeDirection.DOWN;
 		else
 			return null;
+	}
+
+	public static int getRelativeAngle(ForgeDirection from, ForgeDirection to) {
+		int rel = getHeading(to)-getHeading(from);
+		return (360+rel%360)%360;
+	}
+
+	private static int getHeading(ForgeDirection dir) {
+		switch(dir) {
+			case NORTH:
+				return 0;
+			case EAST:
+				return 90;
+			case SOUTH:
+				return 180;
+			case WEST:
+				return 270;
+			default:
+				return 0;
+		}
+	}
+
+	public static double getCompassHeading(double dx, double dz) {
+		double phi = ReikaPhysicsHelper.cartesianToPolar(dx, 0, -dz)[2];
+		phi += 90; //since phi=0 is EAST
+		return (phi%360D+360D)%360D;
 	}
 
 }

@@ -24,13 +24,13 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityChest;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Instantiable.Data.Immutable.InventorySlot;
 import Reika.DragonAPI.Instantiable.GUI.Slot.SlotNoClick;
 import Reika.DragonAPI.Interfaces.TileEntity.MultiPageInventory;
 import Reika.DragonAPI.Interfaces.TileEntity.XPProducer;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
@@ -115,13 +115,13 @@ public class CoreContainer extends Container {
 			ItemStack itemstack = ((Slot)inventorySlots.get(i)).getStack();
 			ItemStack itemstack1 = (ItemStack)inventoryItemStacks.get(i);
 
-			//ReikaJavaLibrary.pConsole("TRY: "+itemstack+":"+itemstack1, itemstack != null && itemstack1 != null);
+			//DragonAPICore.log("TRY: "+itemstack+":"+itemstack1, itemstack != null && itemstack1 != null);
 			if (!ItemStack.areItemStacksEqual(itemstack1, itemstack) || true) { //the true is to force a sync
 				itemstack1 = itemstack == null ? null : itemstack.copy();
 				inventoryItemStacks.set(i, itemstack1);
 
 				for (int j = 0; j < crafters.size(); ++j) {
-					//ReikaJavaLibrary.pConsole("SEND: "+i+":"+itemstack1);
+					//DragonAPICore.log("SEND: "+i+":"+itemstack1);
 					((ICrafting)crafters.get(j)).sendSlotContents(this, i, itemstack1);
 				}
 			}
@@ -135,7 +135,7 @@ public class CoreContainer extends Container {
 	@Override
 	public final void putStackInSlot(int slot, ItemStack is)
 	{
-		//ReikaJavaLibrary.pConsole("RECEIVE: "+slot+":"+is);
+		//DragonAPICore.log("RECEIVE: "+slot+":"+is);
 		super.putStackInSlot(slot, is);
 	}
 
@@ -180,7 +180,7 @@ public class CoreContainer extends Container {
 
 			if (toPlayer) {
 				for (int i = invsize+base; i < inventorySlots.size() && is.stackSize > 0; i++) {
-					//ReikaJavaLibrary.pConsole(i);
+					//DragonAPICore.log(i);
 					Slot toSlot = (Slot)inventorySlots.get(i);
 					if (toSlot.isItemValid(is) && this.canAdd(is, toSlot.getStack())) {
 						if (!toSlot.getHasStack()) {
@@ -193,7 +193,7 @@ public class CoreContainer extends Container {
 							if (add > is.stackSize)
 								add = is.stackSize;
 							ItemStack toAdd = ReikaItemHelper.getSizedItemStack(is, inToSlot.stackSize+add);
-							//ReikaJavaLibrary.pConsole(is+" to "+inToSlot+" for "+toAdd+", by "+add);
+							//DragonAPICore.log(is+" to "+inToSlot+" for "+toAdd+", by "+add);
 							toSlot.putStack(toAdd);
 							is.stackSize -= add;
 						}
@@ -221,12 +221,12 @@ public class CoreContainer extends Container {
 				for (int i = base; i < ((IInventory)tile).getSizeInventory() && i < list.size() && is.stackSize > 0; i++) {
 					Slot toSlot = list.get(i);
 					int lim = ((IInventory)tile).getInventoryStackLimit();
-					//ReikaJavaLibrary.pConsole(i+" "+toSlot+":"+toSlot.getSlotIndex()+" E ["+base+", "+((IInventory)tile).getSizeInventory()+") > "+toSlot.isItemValid(is), Side.SERVER);
+					//DragonAPICore.log(i+" "+toSlot+":"+toSlot.getSlotIndex()+" E ["+base+", "+((IInventory)tile).getSizeInventory()+") > "+toSlot.isItemValid(is), Side.SERVER);
 					if (toSlot.isItemValid(is) && (((IInventory)tile).isItemValidForSlot(i, is)) && this.canAdd(is, toSlot.getStack())) {
 						if (!toSlot.getHasStack()) {
 							if (is.stackSize <= lim) {
 								toSlot.putStack(is.copy());
-								//ReikaJavaLibrary.pConsole(toSlot.getSlotIndex());
+								//DragonAPICore.log(toSlot.getSlotIndex());
 								is.stackSize = 0;
 							}
 							else {
@@ -282,9 +282,9 @@ public class CoreContainer extends Container {
 			String o = "A mod tried to access an invalid slot "+index+" for TileEntity "+tile+".";
 			String o2 = "It is likely assuming the TileEntity has an inventory when it does not.";
 			String o3 = "Check for any inventory-modifying mods and items you are carrying.";
-			ReikaJavaLibrary.pConsole(o);
-			ReikaJavaLibrary.pConsole(o2);
-			ReikaJavaLibrary.pConsole(o3);
+			DragonAPICore.log(o);
+			DragonAPICore.log(o2);
+			DragonAPICore.log(o3);
 			if (DragonOptions.CHATERRORS.getState()) {
 				ReikaChatHelper.write(o);
 				ReikaChatHelper.write(o2);
@@ -310,7 +310,7 @@ public class CoreContainer extends Container {
 
 	@Override
 	public ItemStack slotClick(int ID, int par2, int par3, EntityPlayer ep) {
-		//ReikaJavaLibrary.pConsole(ID, Side.SERVER);
+		//DragonAPICore.log(ID, Side.SERVER);
 		ItemStack is = super.slotClick(ID, par2, par3, ep);
 		if (ii != null && tile instanceof XPProducer) {
 			if (ID < ii.getSizeInventory()) {
@@ -343,7 +343,7 @@ public class CoreContainer extends Container {
 			sb.append(", ");
 		}
 		sb.append("]");
-		ReikaJavaLibrary.pConsole(sb.toString());
+		DragonAPICore.log(sb.toString());
 		 */
 		return copy;
 	}

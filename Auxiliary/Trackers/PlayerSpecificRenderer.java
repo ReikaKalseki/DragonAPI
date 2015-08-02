@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -122,7 +123,14 @@ public final class PlayerSpecificRenderer {
 		protected void rotateCorpse(EntityLivingBase ep, float par2, float par3, float partialTick)
 		{
 			super.rotateCorpse(ep, par2, par3, partialTick);
-			PlayerSpecificRenderer.instance.renderAdditionalObjects((EntityPlayer)ep, partialTick);
+			if (MinecraftForgeClient.getRenderPass() == 1 || MinecraftForgeClient.getRenderPass() == -1)
+				PlayerSpecificRenderer.instance.renderAdditionalObjects((EntityPlayer)ep, partialTick);
+		}
+
+		@Override
+		protected void renderModel(EntityLivingBase ep, float f1, float f2, float f3, float f4, float f5, float f6) {
+			if (MinecraftForgeClient.getRenderPass() == 0 || MinecraftForgeClient.getRenderPass() == -1)
+				super.renderModel(ep, f1, f2, f3, f4, f5, f6);
 		}
 
 	}

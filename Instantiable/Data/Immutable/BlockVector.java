@@ -18,6 +18,14 @@ public final class BlockVector {
 	public final int zCoord;
 	public final ForgeDirection direction;
 
+	public BlockVector(ForgeDirection dir, Coordinate c) {
+		this(dir, c.xCoord, c.yCoord, c.zCoord);
+	}
+
+	public BlockVector(ForgeDirection dir, WorldLocation c) {
+		this(dir, c.xCoord, c.yCoord, c.zCoord);
+	}
+
 	public BlockVector(ForgeDirection dir, int x, int y, int z) {
 		this(x, y, z, dir);
 	}
@@ -27,6 +35,11 @@ public final class BlockVector {
 		yCoord = y;
 		zCoord = z;
 		direction = dir;
+	}
+
+	@Override
+	public String toString() {
+		return xCoord+", "+yCoord+", "+zCoord+" > "+direction;
 	}
 
 }

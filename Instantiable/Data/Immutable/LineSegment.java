@@ -10,8 +10,8 @@
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 
 public final class LineSegment {
@@ -35,7 +35,7 @@ public final class LineSegment {
 	public static final LineSegment getFromDXYZ(int x1, int x2, int y1, int y2, int z1, int z2) {
 		ForgeDirection dir = ReikaDirectionHelper.getDirectionBetween(x1, y1, z1, x2, y2, z2);
 		if (dir == null) {
-			ReikaJavaLibrary.pConsole("Invalid coordinates!");
+			DragonAPICore.logError("Invalid coordinates!");
 			return null;
 		}
 		int len = Math.abs(x2-x1+y2-y1+z2-z1);

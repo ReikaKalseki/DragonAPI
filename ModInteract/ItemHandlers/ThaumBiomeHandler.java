@@ -11,9 +11,9 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ThaumBiomeHandler extends ModHandlerBase {
 
@@ -44,22 +44,22 @@ public class ThaumBiomeHandler extends ModHandlerBase {
 				idmagic = biome.getInt(null);
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load ThaumCraft config class!");
+				DragonAPICore.logError("Could not load ThaumCraft config class!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load field from ThaumCraft config class!");
+				DragonAPICore.logError("Could not load field from ThaumCraft config class!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not read field from ThaumCraft config class!");
+				DragonAPICore.logError("Could not read field from ThaumCraft config class!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not read field from ThaumCraft config class!");
+				DragonAPICore.logError("Could not read field from ThaumCraft config class!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}

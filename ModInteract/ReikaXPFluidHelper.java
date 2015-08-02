@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaXPFluidHelper {
 
@@ -43,7 +43,7 @@ public class ReikaXPFluidHelper {
 			addFluid((Fluid)fdf.get(null), fd.getInt(null));
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading xp fluid type as loaded from "+cf+"#"+sf+": "+e);
+			DragonAPICore.logError("Error loading xp fluid type as loaded from "+cf+"#"+sf+": "+e);
 			//e.printStackTrace();
 		}
 	}
@@ -57,7 +57,7 @@ public class ReikaXPFluidHelper {
 			addFluid(s, fd.getInt(null));
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading xp fluid type "+s+": "+e);
+			DragonAPICore.logError("Error loading xp fluid type "+s+": "+e);
 			//e.printStackTrace();
 		}
 	}
@@ -80,10 +80,10 @@ public class ReikaXPFluidHelper {
 			loaded = new FluidStack(f, amt);
 			type = f;
 			ratio = amt;
-			ReikaJavaLibrary.pConsole("Loaded XP fluid "+f.getName()+" with ratio of "+amt+" mB/xp.");
+			DragonAPICore.log("Loaded XP fluid "+f.getName()+" with ratio of "+amt+" mB/xp.");
 		}
 		else {
-			ReikaJavaLibrary.pConsole("Rejected XP fluid "+f.getName()+" with ratio of "+amt+" mB/xp; a fluid is already loaded.");
+			DragonAPICore.log("Rejected XP fluid "+f.getName()+" with ratio of "+amt+" mB/xp; a fluid is already loaded.");
 		}
 	}
 

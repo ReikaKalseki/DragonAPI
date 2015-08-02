@@ -15,9 +15,9 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class HarvestCraftHandler extends CropHandlerBase {
 
@@ -182,12 +182,12 @@ public class HarvestCraftHandler extends CropHandlerBase {
 				c = Class.forName("com.pam.harvestcraft.BlockPamCrop");
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 				this.logFailure(e);
 			}

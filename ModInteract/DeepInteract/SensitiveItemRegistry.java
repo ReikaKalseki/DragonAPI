@@ -14,13 +14,18 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableArray;
+import Reika.DragonAPI.ModInteract.ReikaEEHelper;
 import cpw.mods.fml.common.Loader;
 
 /** Register progression/balance-sensitive items here to blacklist normal recipe systems from adding new recipes for them. */
 public final class SensitiveItemRegistry {
 
 	public static final SensitiveItemRegistry instance = new SensitiveItemRegistry();
+
+	private final OneWaySet<KeyedItemStack> keys = new OneWaySet();
 
 	private SensitiveItemRegistry() {
 		MinecraftForge.EVENT_BUS.register(this);
@@ -33,6 +38,8 @@ public final class SensitiveItemRegistry {
 				it.blacklist(item);
 			}
 		}
+
+		keys.add(new KeyedItemStack(item).lock());
 	}
 
 	public void registerItem(Item item) {
@@ -42,6 +49,8 @@ public final class SensitiveItemRegistry {
 				it.blacklist(item);
 			}
 		}
+
+		keys.add(new KeyedItemStack(item).lock());
 	}
 
 	public void registerItem(ItemStack item) {
@@ -51,12 +60,15 @@ public final class SensitiveItemRegistry {
 				it.blacklist(item);
 			}
 		}
+
+		keys.add(new KeyedItemStack(item).setSimpleHash(true).lock());
 	}
 
 	private static enum Interactions {
 		MINETWEAKER(MTInteractionManager.isMTLoaded()),
 		CRAFTMANAGER(ModList.CRAFTMANAGER.isLoaded()),
-		MATTEROVERDRIVE(Loader.isModLoaded("mo"));
+		MATTEROVERDRIVE(Loader.isModLoaded("mo")),
+		EE(true);
 
 		private final boolean isLoaded;
 
@@ -68,45 +80,62 @@ public final class SensitiveItemRegistry {
 
 		private void blacklist(Block item) {
 			switch(this) {
-			case MINETWEAKER:
-				MTInteractionManager.instance.blacklistNewRecipesFor(item);
-				break;
-			case CRAFTMANAGER:
-				CraftingManagerBlacklisting.registerItem(item);
-				break;
-			case MATTEROVERDRIVE:
-				MatterOverdriveHandler.blacklist(item);
-				break;
+				case MINETWEAKER:
+					MTInteractionManager.instance.blacklistNewRecipesFor(item);
+					break;
+				case CRAFTMANAGER:
+					CraftingManagerBlacklisting.registerItem(item);
+					break;
+				case MATTEROVERDRIVE:
+					MatterOverdriveHandler.blacklist(item);
+					break;
+				case EE:
+					ReikaEEHelper.blacklistItemStack(new ItemStack(item));
+					break;
 			}
 		}
 
 		private void blacklist(Item item) {
 			switch(this) {
-			case MINETWEAKER:
-				MTInteractionManager.instance.blacklistNewRecipesFor(item);
-				break;
-			case CRAFTMANAGER:
-				CraftingManagerBlacklisting.registerItem(item);
-				break;
-			case MATTEROVERDRIVE:
-				MatterOverdriveHandler.blacklist(item);
-				break;
+				case MINETWEAKER:
+					MTInteractionManager.instance.blacklistNewRecipesFor(item);
+					break;
+				case CRAFTMANAGER:
+					CraftingManagerBlacklisting.registerItem(item);
+					break;
+				case MATTEROVERDRIVE:
+					MatterOverdriveHandler.blacklist(item);
+					break;
+				case EE:
+					ReikaEEHelper.blacklistItemStack(new ItemStack(item));
+					break;
 			}
 		}
 
 		private void blacklist(ItemStack item) {
 			switch(this) {
-			case MINETWEAKER:
-				MTInteractionManager.instance.blacklistNewRecipesFor(item);
-				break;
-			case CRAFTMANAGER:
-				CraftingManagerBlacklisting.registerItem(item);
-				break;
-			case MATTEROVERDRIVE:
-				MatterOverdriveHandler.blacklist(item);
-				break;
+				case MINETWEAKER:
+					MTInteractionManager.instance.blacklistNewRecipesFor(item);
+					break;
+				case CRAFTMANAGER:
+					CraftingManagerBlacklisting.registerItem(item);
+					break;
+				case MATTEROVERDRIVE:
+					MatterOverdriveHandler.blacklist(item);
+					break;
+				case EE:
+					ReikaEEHelper.blacklistItemStack(item);
+					break;
 			}
 		}
+	}
+
+	public boolean contains(ItemStack is) {
+		return keys.contains(new KeyedItemStack(is).setSimpleHash(true));
+	}
+
+	public boolean contains(KeyedItemStack ks) {
+		return keys.contains(ks.copy().setSimpleHash(true));
 	}
 
 }

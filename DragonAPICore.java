@@ -30,7 +30,7 @@ public class DragonAPICore {
 
 	protected DragonAPICore() {throw new MisuseException("The class "+this.getClass()+" cannot be instantiated!");}
 
-	protected static final Random rand = new Random();
+	public static final Random rand = new Random();
 
 	private static final boolean reika = calculateReikasComputer();
 
@@ -53,7 +53,7 @@ public class DragonAPICore {
 			return new URL(FORUM_PAGE);
 		}
 		catch (MalformedURLException e) {
-			ReikaJavaLibrary.pConsole("The mod provided a malformed URL for its documentation site!");
+			DragonAPICore.logError("Reika's mods provided a malformed URL for their documentation site!");
 			e.printStackTrace();
 			return null;
 		}
@@ -72,6 +72,7 @@ public class DragonAPICore {
 		if (s.endsWith("/.") || s.endsWith("\\.")) {
 			s = s.substring(0, s.length()-2);
 		}
+		s = s.replaceAll("\\\\", "/");
 		return s;
 	}
 
@@ -120,8 +121,8 @@ public class DragonAPICore {
 
 		int recbuild = 1291;
 		if (build < recbuild) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: The version of Forge you are using is compatible but not recommended.");
-			ReikaJavaLibrary.pConsole(String.format("Consider updating to at least %d.%d.%d.%d.", major, minor, rev, recbuild));
+			log("The version of Forge you are using is compatible but not recommended.");
+			log(String.format("Consider updating to at least %d.%d.%d.%d.", major, minor, rev, recbuild));
 		}
 	}
 
@@ -137,6 +138,23 @@ public class DragonAPICore {
 		ReikaJavaLibrary.pConsole(o);
 		if (!ReikaObfuscationHelper.isDeObfEnvironment())
 			Thread.dumpStack();
+	}
+
+	public static void debug(Object s) {
+		DragonAPIInit.instance.getModLogger().debug(s);
+	}
+
+	public static void log(Object s) {
+		DragonAPIInit.instance.getModLogger().log(s);
+	}
+
+	public static void logError(Object s) {
+		DragonAPIInit.instance.getModLogger().logError(s);
+	}
+
+	public static void logError(Object o, Side side) {
+		if (FMLCommonHandler.instance().getEffectiveSide() == side)
+			logError(o);
 	}
 
 	public static class DragonAPILoadWatcher {

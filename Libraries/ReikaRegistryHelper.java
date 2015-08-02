@@ -52,7 +52,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	public static void instantiateAndRegisterBlocks(DragonAPIMod mod, BlockEnum[] enumr, Block[] target) {
 		if (enumr.length != target.length)
 			throw new RegistrationException(mod, "Invalid storage array!");
-		boolean canLoad = !Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION);
+		boolean canLoad = !Loader.instance().hasReachedState(LoaderState.INITIALIZATION);
 		if (!canLoad)
 			throw new RegistrationException(mod, "This mod is loading blocks too late in the setup!");
 		for (int i = 0; i < enumr.length; i++) {
@@ -94,7 +94,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	public static void instantiateAndRegisterItems(DragonAPIMod mod, ItemEnum[] enumr, Item[] target) {
 		if (enumr.length != target.length)
 			throw new RegistrationException(mod, "Invalid storage array!");
-		boolean canLoad = !Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION);
+		boolean canLoad = !Loader.instance().hasReachedState(LoaderState.INITIALIZATION);
 		if (!canLoad)
 			throw new RegistrationException(mod, "This mod is loading items too late in the setup!");
 		for (int i = 0; i < enumr.length; i++) {
@@ -198,7 +198,11 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		for (BlockEnum b : blockVariants.keySet()) {
 			Item item = Item.getItemFromBlock(b.getBlockInstance());
 			if (item instanceof ItemBlockCustomLocalization) {
+				/*if (b == null) {
+					b = (BlockEnum)getRegistryForObject(((ItemBlock)item).field_150939_a);
+				}*/
 				((ItemBlockCustomLocalization)item).setEnumObject(b);
+
 			}
 			else {
 

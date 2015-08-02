@@ -18,6 +18,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.EnumHelper;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -26,7 +27,6 @@ import Reika.DragonAPI.Interfaces.CustomCropHandler;
 import Reika.DragonAPI.Interfaces.Registry.CropHandler;
 import Reika.DragonAPI.Interfaces.Registry.ModCrop;
 import Reika.DragonAPI.Interfaces.Registry.ModEntry;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
@@ -91,63 +91,63 @@ public enum ModCropList implements ModCrop {
 			Class blocks = api.getBlockClass();
 			Class items = api.getItemClass();
 			if (blocks == null) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty block class");
+				DragonAPICore.logError("Error loading crop "+this+": Empty block class");
 			}
 			else if (items == null) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty item class");
+				DragonAPICore.logError("Error loading crop "+this+": Empty item class");
 			}
 			else if (blockVar == null || blockVar.isEmpty()) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty variable name");
+				DragonAPICore.logError("Error loading crop "+this+": Empty variable name");
 			}
 			else {
 				try {
 					Field b;
 					Field i;
 					switch(type) {
-					case ITEMSTACK:
-						b = blocks.getField(blockVar);
-						ItemStack is = (ItemStack)b.get(null);
-						if (is == null) {
-							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
+						case ITEMSTACK:
+							b = blocks.getField(blockVar);
+							ItemStack is = (ItemStack)b.get(null);
+							if (is == null) {
+								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+								exists = false;
+							}
+							else {
+								id = Block.getBlockFromItem(is.getItem());
+								exists = true;
+							}
+							break;
+						case INSTANCE:
+							b = blocks.getField(blockVar);
+							Block block = (Block)b.get(null);
+							if (block == null) {
+								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+								exists = false;
+							}
+							else {
+								id = block;
+								exists = true;
+							}
+							break;
+						default:
+							DragonAPICore.logError("Error loading crop "+this);
+							DragonAPICore.logError("Invalid variable type for field "+blockVar);
 							exists = false;
-						}
-						else {
-							id = Block.getBlockFromItem(is.getItem());
-							exists = true;
-						}
-						break;
-					case INSTANCE:
-						b = blocks.getField(blockVar);
-						Block block = (Block)b.get(null);
-						if (block == null) {
-							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
-							exists = false;
-						}
-						else {
-							id = block;
-							exists = true;
-						}
-						break;
-					default:
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for field "+blockVar);
-						exists = false;
 					}
 				}
 				catch (NoSuchFieldException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
+					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
 				}
 				catch (SecurityException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
+					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
 				}
 				catch (IllegalAccessException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
+					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
 				}
 				catch (IllegalArgumentException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
+					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
 				}
 			}
@@ -189,103 +189,103 @@ public enum ModCropList implements ModCrop {
 			Class blocks = api.getBlockClass();
 			Class items = api.getItemClass();
 			if (blocks == null) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty block class");
+				DragonAPICore.logError("Error loading crop "+this+": Empty block class");
 			}
 			else if (items == null) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty item class");
+				DragonAPICore.logError("Error loading crop "+this+": Empty item class");
 			}
 			else if (blockVar == null || blockVar.isEmpty() || itemVar == null || itemVar.isEmpty()) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Empty variable name");
+				DragonAPICore.logError("Error loading crop "+this+": Empty variable name");
 			}
 			else {
 				try {
 					Field b;
 					Field i;
 					switch(blockType) {
-					case ITEMSTACK:
-						b = blocks.getField(blockVar);
-						ItemStack is = (ItemStack)b.get(null);
-						if (is == null) {
-							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
-							exists = false;
-						}
-						else {
-							id = Block.getBlockFromItem(is.getItem());
-							exists = true;
-						}
-						break;
-					case INSTANCE:
-						b = blocks.getField(blockVar);
-						Block block = (Block)b.get(null);
-						if (block == null) {
-							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Block not instantiated!");
-							exists = false;
-						}
-						else {
-							id = block;
-							exists = true;
-						}
-						break;/*
+						case ITEMSTACK:
+							b = blocks.getField(blockVar);
+							ItemStack is = (ItemStack)b.get(null);
+							if (is == null) {
+								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+								exists = false;
+							}
+							else {
+								id = Block.getBlockFromItem(is.getItem());
+								exists = true;
+							}
+							break;
+						case INSTANCE:
+							b = blocks.getField(blockVar);
+							Block block = (Block)b.get(null);
+							if (block == null) {
+								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+								exists = false;
+							}
+							else {
+								id = block;
+								exists = true;
+							}
+							break;/*
 					case INT:
 						b = blocks.getField(blockVar);
 						id = b.getInt(null);
 						exists = true;
 						break;*/
-					default:
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for field "+blockVar);
-						exists = false;
+						default:
+							DragonAPICore.logError("Error loading crop "+this);
+							DragonAPICore.logError("Invalid variable type for field "+blockVar);
+							exists = false;
 					}
 					switch(itemType) {
-					case ITEMSTACK:
-						i = items.getField(itemVar);
-						ItemStack is2 = (ItemStack)i.get(null);
-						if (is2 == null) {
-							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Seed not instantiated!");
-							exists = false;
-						}
-						else {
-							seed = is2.getItem();
-							exists = true;
-						}
-						break;
-					case INSTANCE:
-						i = items.getField(itemVar);
-						Item item = (Item)i.get(null);
-						if (item == null) {
-							ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this+": Seed not instantiated!");
-							exists = false;
-						}
-						else {
-							seed = item;
-							exists = true;
-						}
-						break;/*
+						case ITEMSTACK:
+							i = items.getField(itemVar);
+							ItemStack is2 = (ItemStack)i.get(null);
+							if (is2 == null) {
+								DragonAPICore.logError("Error loading crop "+this+": Seed not instantiated!");
+								exists = false;
+							}
+							else {
+								seed = is2.getItem();
+								exists = true;
+							}
+							break;
+						case INSTANCE:
+							i = items.getField(itemVar);
+							Item item = (Item)i.get(null);
+							if (item == null) {
+								DragonAPICore.logError("Error loading crop "+this+": Seed not instantiated!");
+								exists = false;
+							}
+							else {
+								seed = item;
+								exists = true;
+							}
+							break;/*
 					case INT:
 						i = items.getField(itemVar);
 						seed = i.getInt(null);
 						exists = true;
 						break;*/
-					default:
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type for field "+itemVar);
-						exists = false;
+						default:
+							DragonAPICore.logError("Error loading crop "+this);
+							DragonAPICore.logError("Invalid variable type for field "+itemVar);
+							exists = false;
 					}
 				}
 				catch (NoSuchFieldException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
+					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
 				}
 				catch (SecurityException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
+					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
 				}
 				catch (IllegalAccessException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
+					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
 				}
 				catch (IllegalArgumentException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading crop "+this);
+					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
 				}
 			}
@@ -458,7 +458,7 @@ public enum ModCropList implements ModCrop {
 			ReikaReflectionHelper.setFinalField(ModCropList.class, "cropList", null, values());
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("Could not add custom crop type '"+ch.getMod()+": "+n+"'!");
+			DragonAPICore.logError("Could not add custom crop type '"+ch.getMod()+": "+n+"'!");
 			e.printStackTrace();
 		}
 	}

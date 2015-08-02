@@ -30,9 +30,9 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -60,11 +60,11 @@ public final class ReikaImageLoader {
 	/** Returns a BufferedImage read off the provided filepath.
 	 * Args: Root class, filepath */
 	public static BufferedImage readImage(Class root, String name, ImageEditor editor) {
-		ReikaJavaLibrary.pConsole("Pipelining texture from "+root.getCanonicalName()+" to "+name);
+		DragonAPICore.log("Pipelining texture from "+root.getCanonicalName()+" to "+name);
 		InputStream inputfile = root.getResourceAsStream(name);
 
 		if (inputfile == null) {
-			ReikaJavaLibrary.pConsole("Image filepath at "+name+" not found. Loading \"MissingTexture\".");
+			DragonAPICore.logError("Image filepath at "+name+" not found. Loading \"MissingTexture\".");
 			return missingtex;
 		}
 		BufferedImage bufferedimage = null;
@@ -80,25 +80,25 @@ public final class ReikaImageLoader {
 			return img;
 		}
 		catch (IOException e) {
-			ReikaJavaLibrary.pConsole("Default image filepath at "+name+" not found.");
+			DragonAPICore.logError("Default image filepath at "+name+" not found.");
 			e.printStackTrace();
 			return missingtex;
 		}
 	}
 
 	public static BufferedImage getImageFromResourcePack(String path, IResourcePack res, ImageEditor editor) {
-		ReikaJavaLibrary.pConsole("Loading image at "+path+" from resourcepack "+res.getPackName());
+		DragonAPICore.log("Loading image at "+path+" from resourcepack "+res.getPackName());
 		AbstractResourcePack pack = (AbstractResourcePack)res;
 		InputStream in = ReikaTextureHelper.getStreamFromTexturePack(path, pack);
 		if (in == null) {
-			ReikaJavaLibrary.pConsole("Texture pack image at "+path+" not found in "+res.getPackName()+".");
+			DragonAPICore.logError("Texture pack image at "+path+" not found in "+res.getPackName()+".");
 			return null;
 		}
 		try {
 			return ImageIO.read(in);
 		}
 		catch (IOException e) {
-			ReikaJavaLibrary.pConsole("Texture pack image at "+path+" not found in "+res.getPackName()+".");
+			DragonAPICore.logError("Texture pack image at "+path+" not found in "+res.getPackName()+".");
 			//e.printStackTrace();
 			return null;
 		}
@@ -107,12 +107,12 @@ public final class ReikaImageLoader {
 	/** Reads a hard-coded image file. */
 	public static BufferedImage readHardPathImage(String path) {
 		try {
-			ReikaJavaLibrary.pConsole("Loading image at \n"+path);
+			DragonAPICore.log("Loading image at \n"+path);
 			InputStream in = new FileInputStream(path);
 			return ImageIO.read(in);
 		}
 		catch (IOException e) {
-			ReikaJavaLibrary.pConsole("Image filepath at "+path+" not found.");
+			DragonAPICore.logError("Image filepath at "+path+" not found.");
 			e.printStackTrace();
 			return missingtex;
 		}
@@ -232,7 +232,7 @@ public final class ReikaImageLoader {
 				image = ImageIO.read(res.getInputStream());
 			}
 			catch (IOException ex) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Failed to load sub-texture from "+fileName+": "+ex.getLocalizedMessage());
+				DragonAPICore.logError("Failed to load sub-texture from "+fileName+": "+ex.getLocalizedMessage());
 				return true;
 			}
 			int size = image.getHeight() / rowCount;
@@ -243,7 +243,7 @@ public final class ReikaImageLoader {
 				subImage = image.getSubimage(x*size, y*size, size, size);
 			}
 			catch (RasterFormatException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Failed to load sub-texture from "+fileName+" - "+image.getWidth()+"x"+image.getHeight()+": "+e.getLocalizedMessage());
+				DragonAPICore.logError("Failed to load sub-texture from "+fileName+" - "+image.getWidth()+"x"+image.getHeight()+": "+e.getLocalizedMessage());
 				throw e;
 			}
 			height = subImage.getHeight();

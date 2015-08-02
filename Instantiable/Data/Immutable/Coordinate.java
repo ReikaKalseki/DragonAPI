@@ -39,6 +39,10 @@ public final class Coordinate {
 		zCoord = z;
 	}
 
+	public Coordinate(double x, double y, double z) {
+		this(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
+	}
+
 	public Coordinate(TileEntity te) {
 		this(te.xCoord, te.yCoord, te.zCoord);
 	}

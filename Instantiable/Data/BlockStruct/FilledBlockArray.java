@@ -22,6 +22,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -387,6 +388,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 		super.copyTo(copy);
 		if (copy instanceof FilledBlockArray)
 			((FilledBlockArray)copy).data.putAll(data);
+	}
+
+	public void fillFrom(SlicedBlockBlueprint sbb, int x, int y, int z, ForgeDirection dir) {
+		sbb.putInto(this, x, y, z, dir);
 	}
 
 }

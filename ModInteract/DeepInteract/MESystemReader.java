@@ -17,9 +17,9 @@ import java.util.concurrent.Future;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
@@ -105,7 +105,7 @@ public class MESystemReader {
 			else {
 				sb.append("/[No node]");
 			}
-			ReikaJavaLibrary.pConsole("No grid: "+sb.toString());*/
+			DragonAPICore.log("No grid: "+sb.toString());*/
 			return map;
 		}
 		for (IAEItemStack iae : this.getStorage().getStorageList()) {
@@ -187,7 +187,7 @@ public class MESystemReader {
 						ICraftingJob job = f.get();
 						ICraftingLink l = cache.submitJob(job, requester, null, true, actionSource);
 						if (l == null) {
-							ReikaJavaLibrary.pConsole(job+" to craft "+job.getOutput()+" returned a null link!");
+							DragonAPICore.logError(job+" to craft "+job.getOutput()+" returned a null link!");
 						}
 						else {
 							CraftCompleteCallback ccc = crafting.get(f);
@@ -221,8 +221,8 @@ public class MESystemReader {
 					}
 				}
 			}
-			//ReikaJavaLibrary.pConsole("CRAFT: "+craftingLinks, !craftingLinks.isEmpty());
-			//ReikaJavaLibrary.pConsole("REM: "+removeLinks, !removeLinks.isEmpty());
+			//DragonAPICore.log("CRAFT: "+craftingLinks, !craftingLinks.isEmpty());
+			//DragonAPICore.log("REM: "+removeLinks, !removeLinks.isEmpty());
 			for (CraftCompleteCallback ccc : removeLinks.keySet()) {
 				Collection<ICraftingLink> c = removeLinks.get(ccc);
 				if (c != null) {

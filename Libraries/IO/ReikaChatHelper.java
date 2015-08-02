@@ -179,12 +179,12 @@ public final class ReikaChatHelper extends DragonAPICore {
 				}
 			}
 			else {
-				ReikaJavaLibrary.pConsole("Something tried to send chat to a server with null configurations!");
+				DragonAPICore.logError("Something tried to send chat to a server with null configurations!");
 				ReikaJavaLibrary.dumpStack();
 			}
 		}
 		else {
-			ReikaJavaLibrary.pConsole("Something tried to send chat to a null server!");
+			DragonAPICore.logError("Something tried to send chat to a null server!");
 			ReikaJavaLibrary.dumpStack();
 		}
 	}

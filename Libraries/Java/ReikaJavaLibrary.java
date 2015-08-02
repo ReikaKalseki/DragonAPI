@@ -253,7 +253,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			pConsole("DRAGONAPI: Failed to initalize class "+c.getName()+"!");
 			String s = e.getMessage();
 			if (s.endsWith("for invalid side SERVER")) {
-				pConsole("Attemped to load a clientside class on the server! This is a significant programming error!");
+				pConsole("DRAGONAPI: Attemped to load a clientside class on the server! This is a significant programming error!");
 			}
 			e.printStackTrace();
 		}
@@ -658,11 +658,11 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	public static <E> E getRandomListEntry(List<E> li) {
-		return li.isEmpty() ? null : li.get(rand.nextInt(li.size()));
+		return li.isEmpty() ? null : li.get(DragonAPICore.rand.nextInt(li.size()));
 	}
 
 	public static <E> E getRandomCollectionEntry(Collection<E> c) {
-		return c.isEmpty() ? null : new ArrayList<E>(c).get(rand.nextInt(c.size()));
+		return c.isEmpty() ? null : new ArrayList<E>(c).get(DragonAPICore.rand.nextInt(c.size()));
 	}
 
 	public static String getTopLevelPackage(Class c) {

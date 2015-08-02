@@ -19,11 +19,11 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionFactory;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class TileEntityCache<V> {
 
@@ -154,7 +154,7 @@ public final class TileEntityCache<V> {
 				this.data.put(loc, v);
 			}
 			catch (ClassCastException e) { //ugly, but no other way to test if te instanceof V
-				ReikaJavaLibrary.pConsole("Tried to load a TileEntityCache from invalid NBT!");
+				DragonAPICore.logError("Tried to load a TileEntityCache from invalid NBT!");
 			}
 		}
 	}

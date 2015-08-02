@@ -13,16 +13,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler;
 
 public class SmelteryRecipeHandler {
 
@@ -34,9 +34,12 @@ public class SmelteryRecipeHandler {
 	private static Object castingInstance;
 	private static Object castingBasinInstance;
 	private static Object smelteryInstance;
-	private static Item castItem;
 
 	public static void addIngotMelting(ItemStack ingot, ItemStack render, int temp, String fluid) {
+		addMelting(ingot, render, temp, INGOT_AMOUNT, fluid);
+	}
+
+	public static void addIngotMelting(ItemStack ingot, ItemStack render, int temp, Fluid fluid) {
 		addMelting(ingot, render, temp, INGOT_AMOUNT, fluid);
 	}
 
@@ -56,16 +59,20 @@ public class SmelteryRecipeHandler {
 			throw new MisuseException("The render block must be a non-null block!");
 		try {
 			addMelting.invoke(smelteryInstance, is, b, render.getItemDamage(), temp, fluid);
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Adding smeltery melting of "+is+" into "+fluidToString(fluid)+".");
+			DragonAPICore.log("Adding smeltery melting of "+is+" into "+fluidToString(fluid)+".");
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not add Smeltery Recipe for "+is+" to "+fluidToString(fluid)+" @ "+temp+"!");
+			DragonAPICore.logError("Could not add Smeltery Recipe for "+is+" to "+fluidToString(fluid)+" @ "+temp+"!");
 			e.printStackTrace();
 		}
 	}
 
 	public static void addIngotCasting(ItemStack out, String fluid, int delay) {
-		addCasting(getIngotCast(), out, FluidRegistry.getFluid(fluid), INGOT_AMOUNT, delay);
+		addCasting(TinkerToolHandler.getInstance().getIngotCast(), out, FluidRegistry.getFluid(fluid), INGOT_AMOUNT, delay);
+	}
+
+	public static void addIngotCasting(ItemStack out, Fluid fluid, int delay) {
+		addCasting(TinkerToolHandler.getInstance().getIngotCast(), out, fluid, INGOT_AMOUNT, delay);
 	}
 
 	public static void addCasting(ItemStack cast, ItemStack out, String fluid, int fluidAmount, int delay) {
@@ -87,10 +94,10 @@ public class SmelteryRecipeHandler {
 			addCasting.invoke(castingInstance, out, in, cast, delay);
 			if (addCastRecipe)
 				addCasting.invoke(castingInstance, cast, getCastingFluid(), out, delay/2);
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Adding casting of "+fluidToString(in)+" to "+out+" with "+cast+".");
+			DragonAPICore.log("Adding casting of "+fluidToString(in)+" to "+out+" with "+cast+".");
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not add Casting Recipe for "+fluidToString(in)+" to "+out+" with "+cast+"!");
+			DragonAPICore.logError("Could not add Casting Recipe for "+fluidToString(in)+" to "+out+" with "+cast+"!");
 			e.printStackTrace();
 		}
 	}
@@ -98,6 +105,11 @@ public class SmelteryRecipeHandler {
 	public static void addReversibleCasting(ItemStack cast, ItemStack out, ItemStack render, int temp, FluidStack fluid, int delay) {
 		addCasting(cast, out, fluid, delay);
 		addMelting(out, render, temp, fluid);
+	}
+
+	public static void addReversibleCasting(ItemStack cast, ItemStack out, ItemStack render, int temp, Fluid fluid, int fluidAmount, int delay) {
+		addCasting(cast, out, fluid, fluidAmount, delay);
+		addMelting(out, render, temp, fluidAmount, fluid);
 	}
 
 	public static void addReversibleCasting(ItemStack cast, ItemStack out, ItemStack render, int temp, String fluid, int fluidAmount, int delay) {
@@ -120,20 +132,16 @@ public class SmelteryRecipeHandler {
 			throw new MisuseException("You cannot cast a non-block as a block!");
 		try {
 			addBlockCasting.invoke(castingBasinInstance, block, fluid, delay);
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Adding block casting of "+fluidToString(fluid)+" to "+block+".");
+			DragonAPICore.log("Adding block casting of "+fluidToString(fluid)+" to "+block+".");
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not add Block Casting Recipe for "+fluidToString(fluid)+" to "+block+"!");
+			DragonAPICore.logError("Could not add Block Casting Recipe for "+fluidToString(fluid)+" to "+block+"!");
 			e.printStackTrace();
 		}
 	}
 
 	private static String fluidToString(FluidStack fs) {
 		return fs.amount+" mB of "+fs.getLocalizedName();
-	}
-
-	private static ItemStack getIngotCast() {
-		return new ItemStack(castItem, 1, 0);
 	}
 
 	private static FluidStack getCastingFluid() {
@@ -157,9 +165,6 @@ public class SmelteryRecipeHandler {
 				castingInstance = getTableCasting.invoke(null);
 				castingBasinInstance = getBasinCasting.invoke(null);
 
-				Class c = Class.forName("tconstruct.smeltery.TinkerSmeltery");
-				castItem = (Item)c.getField("metalPattern").get(null);
-
 				Class smeltery = Class.forName("tconstruct.library.crafting.Smeltery");
 				Field inst = smeltery.getField("instance");
 				smelteryInstance = inst.get(null);
@@ -171,7 +176,7 @@ public class SmelteryRecipeHandler {
 				addBlockCasting = casting.getMethod("addCastingRecipe", ItemStack.class, FluidStack.class, int.class);
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load Smeltery Recipe Handler!");
+				DragonAPICore.logError("Could not load Smeltery Recipe Handler!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TINKERER, e);
 			}

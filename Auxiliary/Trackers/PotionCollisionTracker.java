@@ -15,12 +15,12 @@ import java.util.HashMap;
 
 import net.minecraft.potion.Potion;
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Exception.StupidIDException;
 import Reika.DragonAPI.Extras.IDType;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class PotionCollisionTracker {
 
@@ -59,7 +59,7 @@ public final class PotionCollisionTracker {
 				Potion potion = Potion.potionTypes[id];
 				if (potion == null) {
 					//this.onConflict(mod, id);
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Potion ID "+id+" ("+classes.get(id)+") was deleted post-registration!");
+					DragonAPICore.logError("Potion ID "+id+" ("+classes.get(id)+") was deleted post-registration!");
 				}
 				else {
 					Class c = potion.getClass();

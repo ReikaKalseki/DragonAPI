@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.World;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -54,11 +55,11 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
@@ -275,34 +276,34 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		Block idfound = Blocks.air;
 
 		switch (f) {
-		case 0:		//facing north (-z);
-			for (int i = 0; i < range; i++) {
-				idfound = world.getBlock(x, y, z-i);
-				if (idfound == id)
-					return i;
-			}
-			break;
-		case 1:		//facing east (-x);
-			for (int i = 0; i < range; i++) {
-				idfound = world.getBlock(x-i, y, z);
-				if (idfound == id)
-					return i;
-			}
-			break;
-		case 2:		//facing south (+z);
-			for (int i = 0; i < range; i++) {
-				idfound = world.getBlock(x, y, z+i);
-				if (idfound == id)
-					return i;
-			}
-			break;
-		case 3:		//facing west (+x);
-			for (int i = 0; i < range; i++) {
-				idfound = world.getBlock(x+i, y, z);
-				if (idfound == id)
-					return i;
-			}
-			break;
+			case 0:		//facing north (-z);
+				for (int i = 0; i < range; i++) {
+					idfound = world.getBlock(x, y, z-i);
+					if (idfound == id)
+						return i;
+				}
+				break;
+			case 1:		//facing east (-x);
+				for (int i = 0; i < range; i++) {
+					idfound = world.getBlock(x-i, y, z);
+					if (idfound == id)
+						return i;
+				}
+				break;
+			case 2:		//facing south (+z);
+				for (int i = 0; i < range; i++) {
+					idfound = world.getBlock(x, y, z+i);
+					if (idfound == id)
+						return i;
+				}
+				break;
+			case 3:		//facing west (+x);
+				for (int i = 0; i < range; i++) {
+					idfound = world.getBlock(x+i, y, z);
+					if (idfound == id)
+						return i;
+				}
+				break;
 		}
 		return 0;
 	}
@@ -842,9 +843,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	 * id to replace, id to fill with, metadata to replace (-1 for any),
 	 * metadata to fill with, origin x,y,z, max radius */
 	public static void recursiveFillWithinSphere(World world, int x, int y, int z, Block id, Block idto, int meta, int metato, int x0, int y0, int z0, double r) {
-		/*ReikaJavaLibrary.pConsole(world.getBlock(x, y, z)+" & "+id+" @ "+x0+", "+y0+", "+z0);
-		ReikaJavaLibrary.pConsole(world.getBlockMetadata(x, y, z)+" & "+meta+" @ "+x0+", "+y0+", "+z0);
-		ReikaJavaLibrary.pConsole(ReikaMathLibrary.py3d(x-x0, y-y0, z-z0)+" & "+r+" @ "+x0+", "+y0+", "+z0);*/
+		/*DragonAPICore.log(world.getBlock(x, y, z)+" & "+id+" @ "+x0+", "+y0+", "+z0);
+		DragonAPICore.log(world.getBlockMetadata(x, y, z)+" & "+meta+" @ "+x0+", "+y0+", "+z0);
+		DragonAPICore.log(ReikaMathLibrary.py3d(x-x0, y-y0, z-z0)+" & "+r+" @ "+x0+", "+y0+", "+z0);*/
 		if (world.getBlock(x, y, z) != id)
 			return;
 		if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
@@ -886,40 +887,40 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		for (int k = 0; k < 10; k++) {
 			float a = 0; float b = 0; float c = 0;
 			switch(k) {
-			case 1:
-				a = 1;
-				break;
-			case 2:
-				b = 1;
-				break;
-			case 3:
-				a = 1;
-				b = 1;
-				break;
-			case 4:
-				c = 1;
-				break;
-			case 5:
-				a = 1;
-				c = 1;
-				break;
-			case 6:
-				b = 1;
-				c = 1;
-				break;
-			case 7:
-				a = 1;
-				b = 1;
-				c = 1;
-				break;
-			case 8:
-				a = 0.5F;
-				b = 0.5F;
-				c = 0.5F;
-				break;
-			case 9:
-				b = 0.5F;
-				break;
+				case 1:
+					a = 1;
+					break;
+				case 2:
+					b = 1;
+					break;
+				case 3:
+					a = 1;
+					b = 1;
+					break;
+				case 4:
+					c = 1;
+					break;
+				case 5:
+					a = 1;
+					c = 1;
+					break;
+				case 6:
+					b = 1;
+					c = 1;
+					break;
+				case 7:
+					a = 1;
+					b = 1;
+					c = 1;
+					break;
+				case 8:
+					a = 0.5F;
+					b = 0.5F;
+					c = 0.5F;
+					break;
+				case 9:
+					b = 0.5F;
+					break;
 			}
 			for (float i = 0; i <= range; i += 0.25) {
 				Vec3 vec2 = ReikaVectorHelper.getVec2Pt(x+a, y+b, z+c, x0, y0, z0).normalize();
@@ -1334,7 +1335,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		byte[] biomes = ch.getBiomeArray();
 		int index = az*16+ax;
 		if (index < 0 || index >= biomes.length) {
-			ReikaJavaLibrary.pConsole("BIOME CHANGE ERROR: "+x+"&"+z+" @ "+ch.xPosition+"&"+ch.zPosition+": "+ax+"%"+az+" -> "+index, Side.SERVER);
+			DragonAPICore.logError("BIOME CHANGE ERROR: "+x+"&"+z+" @ "+ch.xPosition+"&"+ch.zPosition+": "+ax+"%"+az+" -> "+index, Side.SERVER);
 			return;
 		}
 		biomes[index] = (byte)biome.biomeID;
@@ -1366,7 +1367,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		byte[] biomes = ch.getBiomeArray();
 		int index = az*16+ax;
 		if (index < 0 || index >= biomes.length) {
-			ReikaJavaLibrary.pConsole("BIOME CHANGE ERROR: "+x+"&"+z+" @ "+ch.xPosition+"&"+ch.zPosition+": "+ax+"%"+az+" -> "+index, Side.SERVER);
+			DragonAPICore.logError("BIOME CHANGE ERROR: "+x+"&"+z+" @ "+ch.xPosition+"&"+ch.zPosition+": "+ax+"%"+az+" -> "+index, Side.SERVER);
 			return;
 		}
 
@@ -1810,10 +1811,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 						p.populate(p, dx >> 4, dz >> 4);
 					}
 					catch (ConcurrentModificationException e) {
-						ReikaJavaLibrary.pConsole("Chunk at "+dx+", "+dz+" failed to allow population due to a ConcurrentModificationException! Contact Reika with information on any mods that might be multithreading worldgen!");
+						DragonAPICore.logError("Chunk at "+dx+", "+dz+" failed to allow population due to a ConcurrentModificationException! Contact Reika with information on any mods that might be multithreading worldgen!");
 					}
 					catch (Exception e) {
-						ReikaJavaLibrary.pConsole("Chunk at "+dx+", "+dz+" failed to allow population!");
+						DragonAPICore.logError("Chunk at "+dx+", "+dz+" failed to allow population!");
 						e.printStackTrace();
 					}
 				}
@@ -1910,5 +1911,23 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	@SideOnly(Side.CLIENT)
 	private static World getClientWorld() {
 		return Minecraft.getMinecraft().theWorld;
+	}
+
+	public static ArrayList<BlockKey> getBlocksAlongVector(World world, double x1, double y1, double z1, double x2, double y2, double z2) {
+		HashSet<Coordinate> set = new HashSet();
+		ArrayList<BlockKey> li = new ArrayList();
+		double dd = ReikaMathLibrary.py3d(x2-x1, y2-y1, z2-z1);
+		for (double d = 0; d <= dd; d += 0.25) {
+			double f = d/dd;
+			double dx = x1+f*(x2-x1);
+			double dy = y1+f*(y2-y1);
+			double dz = z1+f*(z2-z1);
+			Coordinate c = new Coordinate(dx, dy, dz);
+			if (!set.contains(c)) {
+				set.add(c);
+				li.add(new BlockKey(c.getBlock(world), c.getBlockMetadata(world)));
+			}
+		}
+		return li;
 	}
 }

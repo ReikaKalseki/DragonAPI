@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ObjectWeb<V> {
@@ -73,13 +74,13 @@ public class ObjectWeb<V> {
 
 	private void addChild(V parent, V child) {
 		if (!this.hasNode(parent)) {
-			ReikaJavaLibrary.pConsole("Cannot add a child to a nonexistent node "+parent+"!");
+			DragonAPICore.logError("Cannot add a child to a nonexistent node "+parent+"!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 		ArrayList<V> li = web.get(parent);
 		if (li.contains(child)) {
-			ReikaJavaLibrary.pConsole("Child "+child+" already exists for node "+parent+"!");
+			DragonAPICore.logError("Child "+child+" already exists for node "+parent+"!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
@@ -89,13 +90,13 @@ public class ObjectWeb<V> {
 
 	public void removeChild(V parent, V child) {
 		if (!this.hasNode(parent)) {
-			ReikaJavaLibrary.pConsole("Cannot remove a child from a nonexistent node "+parent+"!");
+			DragonAPICore.logError("Cannot remove a child from a nonexistent node "+parent+"!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 		ArrayList<V> li = web.get(parent);
 		if (!li.contains(child)) {
-			ReikaJavaLibrary.pConsole("Child "+child+" does not exist for node "+parent+"! Cannot remove!");
+			DragonAPICore.logError("Child "+child+" does not exist for node "+parent+"! Cannot remove!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}

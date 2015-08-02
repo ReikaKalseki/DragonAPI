@@ -22,12 +22,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
@@ -142,24 +142,24 @@ public enum ModWoodList implements TreeType {
 		leafColor = leafcolor;
 		logColor = color;
 		if (!mod.isLoaded()) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Not loading "+this.getLabel()+": Mod not present.");
+			DragonAPICore.log("DRAGONAPI: Not loading "+this.getLabel()+": Mod not present.");
 			blockMeta = new int[]{0};
 			leafMeta = new int[]{0};
 			return;
 		}
 		Class cl = req.getBlockClass();
-		//ReikaJavaLibrary.pConsole("DRAGONAPI: Attempting to load "+this.getLabel()+". Data parameters:");
-		//ReikaJavaLibrary.pConsole(cl+", "+blockVar+", "+leafVar+", "+saplingVar+", "+type);
+		//DragonAPICore.log("DRAGONAPI: Attempting to load "+this.getLabel()+". Data parameters:");
+		//DragonAPICore.log(cl+", "+blockVar+", "+leafVar+", "+saplingVar+", "+type);
 		if (cl == null) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel()+": Empty block class");
+			DragonAPICore.logError("Error loading wood "+this.getLabel()+": Empty block class");
 			return;
 		}
 		if (blockVar == null || blockVar.isEmpty()) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel()+": Empty variable name");
+			DragonAPICore.logError("Error loading wood "+this.getLabel()+": Empty variable name");
 			return;
 		}
 		if (leafVar == null || leafVar.isEmpty()) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading leaves for wood "+this.getLabel()+": Empty variable name");
+			DragonAPICore.logError("Error loading leaves for wood "+this.getLabel()+": Empty variable name");
 			return;
 		}
 		try {
@@ -167,36 +167,36 @@ public enum ModWoodList implements TreeType {
 			Block idleaf;
 			Block idsapling;
 			switch(type) {
-			case ITEMSTACK: {
-				ItemStack wood = this.loadItemStack(cl, blockVar);
-				ItemStack leaf = this.loadItemStack(cl, leafVar);
-				ItemStack sapling = this.loadItemStack(cl, saplingVar);
-				if (wood == null || leaf == null || sapling == null) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
-					return;
+				case ITEMSTACK: {
+					ItemStack wood = this.loadItemStack(cl, blockVar);
+					ItemStack leaf = this.loadItemStack(cl, leafVar);
+					ItemStack sapling = this.loadItemStack(cl, saplingVar);
+					if (wood == null || leaf == null || sapling == null) {
+						DragonAPICore.logError("Error loading "+this.getLabel()+": Block not instantiated!");
+						return;
+					}
+					id = Block.getBlockFromItem(wood.getItem());
+					idleaf = Block.getBlockFromItem(leaf.getItem());
+					idsapling = Block.getBlockFromItem(sapling.getItem());
+					break;
 				}
-				id = Block.getBlockFromItem(wood.getItem());
-				idleaf = Block.getBlockFromItem(leaf.getItem());
-				idsapling = Block.getBlockFromItem(sapling.getItem());
-				break;
-			}
-			case INSTANCE: {
-				Block wood_b = this.loadBlock(cl, blockVar);
-				Block leaf_b = this.loadBlock(cl, leafVar);
-				Block sapling_b = this.loadBlock(cl, saplingVar);
-				if (wood_b == null || leaf_b == null || sapling_b == null) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading "+this.getLabel()+": Block not instantiated!");
-					return;
+				case INSTANCE: {
+					Block wood_b = this.loadBlock(cl, blockVar);
+					Block leaf_b = this.loadBlock(cl, leafVar);
+					Block sapling_b = this.loadBlock(cl, saplingVar);
+					if (wood_b == null || leaf_b == null || sapling_b == null) {
+						DragonAPICore.logError("Error loading "+this.getLabel()+": Block not instantiated!");
+						return;
+					}
+					id = wood_b;
+					idleaf = leaf_b;
+					idsapling = sapling_b;
+					break;
 				}
-				id = wood_b;
-				idleaf = leaf_b;
-				idsapling = sapling_b;
-				break;
-			}
-			default:
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Invalid variable type "+type);
-				return;
+				default:
+					DragonAPICore.logError("Error loading wood "+this.getLabel());
+					DragonAPICore.logError("Invalid variable type "+type);
+					return;
 			}
 			blockID = id;
 			blockMeta = new int[meta.length];
@@ -206,70 +206,70 @@ public enum ModWoodList implements TreeType {
 			System.arraycopy(metaleaf, 0, leafMeta, 0, metaleaf.length);
 			saplingID = idsapling;
 			saplingMeta = metasapling;
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Successfully loaded wood "+this.getLabel());
+			DragonAPICore.log("Successfully loaded wood "+this.getLabel());
 			exists = true;
 		}
 		catch (NoSuchFieldException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
+			DragonAPICore.logError("Error loading wood "+this.getLabel());
 			e.printStackTrace();
 		}
 		catch (SecurityException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
+			DragonAPICore.logError("Error loading wood "+this.getLabel());
 			e.printStackTrace();
 		}
 		catch (IllegalAccessException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
+			DragonAPICore.logError("Error loading wood "+this.getLabel());
 			e.printStackTrace();
 		}
 		catch (IllegalArgumentException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
+			DragonAPICore.logError("Error loading wood "+this.getLabel());
 			e.printStackTrace();
 		}
 		catch (ReflectiveOperationException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
+			DragonAPICore.logError("Error loading wood "+this.getLabel());
 			e.printStackTrace();
 		}
 		catch (NullPointerException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading wood "+this.getLabel());
+			DragonAPICore.logError("Error loading wood "+this.getLabel());
 			e.printStackTrace();
 		}
 	}
 
 	private ItemStack loadItemStack(Class cl, String field) throws ReflectiveOperationException {
 		switch(mod) {
-		default: {
-			Object ins = this.getFieldInstance();
-			Field f = cl.getField(field);
-			return (ItemStack)f.get(ins);
-		}
+			default: {
+				Object ins = this.getFieldInstance();
+				Field f = cl.getField(field);
+				return (ItemStack)f.get(ins);
+			}
 		}
 	}
 
 	private Block loadBlock(Class cl, String field) throws ReflectiveOperationException {
 		switch(mod) {
-		case CHROMATICRAFT: {
-			Field f = cl.getField(field);
-			Method block = cl.getMethod("getBlockInstance");
-			Object entry = f.get(null);
-			return (Block)block.invoke(entry);
-		}
-		default: {
-			Object ins = this.getFieldInstance();
-			Field f = cl.getField(field);
-			return (Block)f.get(ins);
-		}
+			case CHROMATICRAFT: {
+				Field f = cl.getField(field);
+				Method block = cl.getMethod("getBlockInstance");
+				Object entry = f.get(null);
+				return (Block)block.invoke(entry);
+			}
+			default: {
+				Object ins = this.getFieldInstance();
+				Field f = cl.getField(field);
+				return (Block)f.get(ins);
+			}
 		}
 	}
 
 	private Object getFieldInstance() throws ReflectiveOperationException {
 		switch(mod) {
-		case WITCHERY: {
-			Class c = Class.forName("com.emoniph.witchery.Witchery");
-			Field f = c.getField("Blocks");
-			return f.get(null);
-		}
-		default:
-			return null;
+			case WITCHERY: {
+				Class c = Class.forName("com.emoniph.witchery.Witchery");
+				Field f = c.getField("Blocks");
+				return f.get(null);
+			}
+			default:
+				return null;
 		}
 	}
 

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Interfaces.Registry;
 
 import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.world.World;
 
 
 /** This is an interface for ENUMS! */
@@ -28,5 +29,7 @@ public interface SoundEnum {
 	public int ordinal();
 
 	public boolean canOverlap();
+
+	public void playSound(World world, double x, double y, double z, float volume, float pitch);
 
 }

@@ -14,6 +14,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.BlockCheck;
 
 public final class BlockKey implements BlockCheck {
@@ -29,7 +30,7 @@ public final class BlockKey implements BlockCheck {
 		metadata = meta;
 		blockID = b;
 	}
-	/*
+
 	public BlockKey(ItemStack is) {
 		this(Block.getBlockFromItem(is.getItem()), is.getItemDamage());
 		if (is.getItem() == null)
@@ -38,7 +39,7 @@ public final class BlockKey implements BlockCheck {
 		if (b == null)
 			throw new MisuseException("Cannot create a BlockKey with an item with no block!");
 	}
-	 */
+
 	public static BlockKey getAt(IBlockAccess world, int x, int y, int z) {
 		return new BlockKey(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 	}

@@ -22,9 +22,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraftforge.fluids.Fluid;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
@@ -337,7 +337,7 @@ public class ReikaMystcraftHelper {
 					loadedCorrectly = true;
 				}
 				catch (Exception e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading Mystcraft instability interfacing!");
+					DragonAPICore.logError("Error loading Mystcraft instability interfacing!");
 					e.printStackTrace();
 					load = false;
 					ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
@@ -472,7 +472,7 @@ public class ReikaMystcraftHelper {
 					loadedCorrectly = true;
 				}
 				catch (Exception e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading Mystcraft page interfacing!");
+					DragonAPICore.logError("Error loading Mystcraft page interfacing!");
 					e.printStackTrace();
 					ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
 				}
@@ -499,7 +499,7 @@ public class ReikaMystcraftHelper {
 				link.setAccessible(true);
 			}
 			catch (Exception e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error loading Mystcraft linkbook interfacing!");
+				DragonAPICore.logError("Error loading Mystcraft linkbook interfacing!");
 				e.printStackTrace();
 				load = false;
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);

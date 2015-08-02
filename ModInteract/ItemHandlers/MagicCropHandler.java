@@ -18,9 +18,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 
@@ -38,7 +38,7 @@ public class MagicCropHandler extends CropHandlerBase {
 		PIG(EssenceClass.ANIMAL, "Pig"),
 		CHICKEN(EssenceClass.ANIMAL, "Chicken"),
 		CREEPER(EssenceClass.MOB, "Creeper"),
-		MAGMA(EssenceClass.MOB, "Magma"),
+		MAGMA(EssenceClass.MOB, "Magma"), //May not exist, may throw error
 		SKELETON(EssenceClass.MOB, "Skeleton"),
 		SLIME(EssenceClass.MOB, "Slime"),
 		SPIDER(EssenceClass.MOB, "Spider"),
@@ -274,17 +274,17 @@ public class MagicCropHandler extends CropHandlerBase {
 						type.setIDs(crop, seed, essence);
 					}
 					catch (NoSuchFieldException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+						DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (IllegalAccessException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+						DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (NullPointerException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+						DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 						e.printStackTrace();
 						this.logFailure(e);
 					}
@@ -302,17 +302,17 @@ public class MagicCropHandler extends CropHandlerBase {
 						type.setIDs(essence);
 					}
 					catch (NoSuchFieldException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+						DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (IllegalAccessException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+						DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (NullPointerException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+						DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 						e.printStackTrace();
 						this.logFailure(e);
 					}
@@ -337,29 +337,49 @@ public class MagicCropHandler extends CropHandlerBase {
 					//f = c.getField("ExperienceDrop");
 					//Item drop = (Item)f.get(null);
 					//iddrop = drop;
-
-					Class c2 = Class.forName("com.mark719.magicalcrops.config.ConfigMain");
-					f = c2.getDeclaredField("SECOND_SEED_CHANCE");
-					f.setAccessible(true);
-					chance = f.getInt(null);
-				}
-				catch (ClassNotFoundException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
-					e.printStackTrace();
-					this.logFailure(e);
 				}
 				catch (NoSuchFieldException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 					e.printStackTrace();
 					this.logFailure(e);
 				}
 				catch (IllegalAccessException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+					DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 					e.printStackTrace();
 					this.logFailure(e);
 				}
 				catch (NullPointerException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				try {
+					Class c = Class.forName("com.mark719.magicalcrops.config.ConfigMain");
+					Field f = c.getDeclaredField("SECOND_SEED_CHANCE");
+					f.setAccessible(true);
+					chance = f.getInt(null);
+				}
+				catch (ClassNotFoundException e) {
+					DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (NoSuchFieldException e) {
+					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (IllegalAccessException e) {
+					DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (NullPointerException e) {
+					DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 					e.printStackTrace();
 					this.logFailure(e);
 				}
@@ -369,7 +389,7 @@ public class MagicCropHandler extends CropHandlerBase {
 				}
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" class not found! "+e.getMessage());
+				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
@@ -463,7 +483,7 @@ public class MagicCropHandler extends CropHandlerBase {
 		OreDictionary.registerOre("oreEndEssence", ore);
 
 		ModOreList.ESSENCE.initialize();
-		ReikaJavaLibrary.pConsole("DRAGONAPI: Registering Magic Crops Essence ore to the Ore Dictionary!");
+		DragonAPICore.log("Registering Magic Crops Essence ore to the Ore Dictionary!");
 	}
 
 	@Override

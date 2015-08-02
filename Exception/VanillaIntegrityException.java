@@ -33,8 +33,8 @@ public class VanillaIntegrityException extends DragonAPIException {
 
 	public VanillaIntegrityException(Method m) {
 		message.append("The function "+m+" was deleted from forge/vanilla!\n");
-		message.append("If you are using MCPC, try to replicate the crash in SSP!\n");
-		message.append("If the crash does not occur there, you must fix your copy of MCPC.\n");
+		message.append("If you are using MCPC/Cauldron, try to replicate the crash in SSP!\n");
+		message.append("If the crash does not occur there, you must fix your copy of MCPC/Cauldron.\n");
 		message.append("One or more of the DragonAPI mods rely on this function.\n");
 		this.crash();
 	}
@@ -42,8 +42,8 @@ public class VanillaIntegrityException extends DragonAPIException {
 	public VanillaIntegrityException(String methodName, Class src, Class... argTypes) {
 		message.append("A function was deleted from forge/vanilla!\n");
 		message.append("Could not find "+methodName+"("+Arrays.toString(argTypes)+" in class "+src.getCanonicalName()+"\n");
-		message.append("If you are using MCPC, try to replicate the crash in SSP!\n");
-		message.append("If the crash does not occur there, you must fix your copy of MCPC.\n");
+		message.append("If you are using MCPC/Cauldron, try to replicate the crash in SSP!\n");
+		message.append("If the crash does not occur there, you must fix your copy of MCPC/Cauldron.\n");
 		message.append("One or more of the DragonAPI mods rely on this function.\n");
 		this.crash();
 	}

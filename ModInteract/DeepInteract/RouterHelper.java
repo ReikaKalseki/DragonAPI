@@ -12,9 +12,9 @@ package Reika.DragonAPI.ModInteract.DeepInteract;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class RouterHelper {
 
@@ -29,7 +29,7 @@ public class RouterHelper {
 			cache = (String[])blacklist.get(null);
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load Router blacklisting!");
+			DragonAPICore.logError("Could not load Router blacklisting!");
 			e.printStackTrace();
 			ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.ROUTER, e);
 		}
@@ -46,11 +46,11 @@ public class RouterHelper {
 			blacklist.set(null, in2);
 			cache = new String[in2.length];
 			System.arraycopy(in, 0, cache, 0, in.length);
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Blacklisted TileEntity "+label+" from the router; blacklist now is "+Arrays.toString(cache));
+			DragonAPICore.log("DRAGONAPI: Blacklisted TileEntity "+label+" from the router; blacklist now is "+Arrays.toString(cache));
 			return true;
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not blacklist TileEntity "+label+" from the router!");
+			DragonAPICore.logError("Could not blacklist TileEntity "+label+" from the router!");
 			e.printStackTrace();
 			return false;
 		}

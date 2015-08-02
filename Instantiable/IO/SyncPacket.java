@@ -19,9 +19,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.network.play.server.S35PacketUpdateTileEntity;
 import net.minecraft.tileentity.TileEntity;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Interfaces.DataSync;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -45,9 +45,9 @@ public final class SyncPacket extends S35PacketUpdateTileEntity implements DataS
 	public void setData(TileEntity te, boolean force, NBTTagCompound NBT) {
 		if (dispatch) {
 			if (DragonOptions.LOGSYNCCME.getState()) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: The sync packet for "+te+" would have just CME'd, as the");
-				ReikaJavaLibrary.pConsole("Server-Thread data-writing code has overlapped with the Network-Thread byte[] dispatch.");
-				ReikaJavaLibrary.pConsole("Seeing this message frequently could indicate a serious issue.\n");
+				DragonAPICore.log("The sync packet for "+te+" would have just CME'd, as the");
+				DragonAPICore.log("Server-Thread data-writing code has overlapped with the Network-Thread byte[] dispatch.");
+				DragonAPICore.log("Seeing this message frequently could indicate a serious issue.\n");
 			}
 			return;
 		}
@@ -62,7 +62,7 @@ public final class SyncPacket extends S35PacketUpdateTileEntity implements DataS
 		while (it.hasNext()) {
 			String name = it.next();
 			if (name == null) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: An NBT tag with a null key is being sent to the sync packet from "+te);
+				DragonAPICore.logError("An NBT tag with a null key is being sent to the sync packet from "+te);
 			}
 			else {
 				NBTBase tag = NBT.getTag(name);
@@ -104,7 +104,7 @@ public final class SyncPacket extends S35PacketUpdateTileEntity implements DataS
 			}
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error reading Sync Tag!");
+			DragonAPICore.logError("Error reading Sync Tag!");
 			e.printStackTrace();
 			data.clear();
 		}
@@ -125,9 +125,9 @@ public final class SyncPacket extends S35PacketUpdateTileEntity implements DataS
 	public void readForSync(TileEntity te, NBTTagCompound NBT) {
 		if (dispatch) {
 			if (DragonOptions.LOGSYNCCME.getState()) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: The sync packet for "+te+" would have just CME'd, as the");
-				ReikaJavaLibrary.pConsole("Client-Thread data-reading code has overlapped with the Network-Thread byte[] reading.");
-				ReikaJavaLibrary.pConsole("Seeing this message frequently could indicate a serious issue.\n");
+				DragonAPICore.log("The sync packet for "+te+" would have just CME'd, as the");
+				DragonAPICore.log("Client-Thread data-reading code has overlapped with the Network-Thread byte[] reading.");
+				DragonAPICore.log("Seeing this message frequently could indicate a serious issue.\n");
 			}
 			return;
 		}
@@ -157,7 +157,7 @@ public final class SyncPacket extends S35PacketUpdateTileEntity implements DataS
 			out.writeNBTTagCompoundToBuffer(toSend);
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error writing Sync Tag!");
+			DragonAPICore.logError("Error writing Sync Tag!");
 			out.clear();
 			e.printStackTrace();
 		}

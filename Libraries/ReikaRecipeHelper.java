@@ -149,13 +149,13 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		List<ShapedRecipes> li = new ArrayList<ShapedRecipes>();
 		for (int i = 0; i < in.size(); i++) {
 			IRecipe ir = in.get(i);
-			//ReikaJavaLibrary.pConsole(ir.getRecipeOutput()+" == "+out);
+			//DragonAPICore.log(ir.getRecipeOutput()+" == "+out);
 			if (ir instanceof ShapedRecipes) {
 				if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
 					li.add((ShapedRecipes)ir);
 			}
 		}
-		//ReikaJavaLibrary.pConsole(li);
+		//DragonAPICore.log(li);
 		return li;
 	}
 
@@ -169,11 +169,11 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	public static ArrayList<IRecipe> getAllRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		ArrayList<IRecipe> li = new ArrayList<IRecipe>();
 		for (IRecipe ir : in) {
-			//ReikaJavaLibrary.pConsole(ir.getRecipeOutput()+" == "+out);
+			//DragonAPICore.log(ir.getRecipeOutput()+" == "+out);
 			if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
 				li.add(ir);
 		}
-		//ReikaJavaLibrary.pConsole(li);
+		//DragonAPICore.log(li);
 		return li;
 	}
 
@@ -189,13 +189,13 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	public static List<ShapedOreRecipe> getShapedOreRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ShapedOreRecipe> li = new ArrayList<ShapedOreRecipe>();
 		for (IRecipe ir : in) {
-			//ReikaJavaLibrary.pConsole(ir.getRecipeOutput()+" == "+out);
+			//DragonAPICore.log(ir.getRecipeOutput()+" == "+out);
 			if (ir instanceof ShapedOreRecipe) {
 				if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
 					li.add((ShapedOreRecipe)ir);
 			}
 		}
-		//ReikaJavaLibrary.pConsole(li);
+		//DragonAPICore.log(li);
 		return li;
 	}
 
@@ -203,13 +203,13 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	public static List<ExpandedOreRecipe> getExpandedOreRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ExpandedOreRecipe> li = new ArrayList<ExpandedOreRecipe>();
 		for (IRecipe ir : in) {
-			//ReikaJavaLibrary.pConsole(ir.getRecipeOutput()+" == "+out);
+			//DragonAPICore.log(ir.getRecipeOutput()+" == "+out);
 			if (ir instanceof ExpandedOreRecipe) {
 				if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
 					li.add((ExpandedOreRecipe)ir);
 			}
 		}
-		//ReikaJavaLibrary.pConsole(li);
+		//DragonAPICore.log(li);
 		return li;
 	}
 
@@ -222,7 +222,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 					li.add((ShapelessRecipes)ir);
 			}
 		}
-		//ReikaJavaLibrary.pConsole(li);
+		//DragonAPICore.log(li);
 		return li;
 	}
 
@@ -235,7 +235,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 					li.add((ShapelessOreRecipe)ir);
 			}
 		}
-		//ReikaJavaLibrary.pConsole(li);
+		//DragonAPICore.log(li);
 		return li;
 	}
 
@@ -352,7 +352,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		int w = 0;
 		int h = 0;
 		if (ire == null)
-			ReikaJavaLibrary.pConsole("Recipe is null!");
+			DragonAPICore.logError("Recipe is null!");
 		if (ire == null) {
 			ReikaJavaLibrary.dumpStack();
 			return null;
@@ -371,7 +371,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		else if (ire instanceof ShapedOreRecipe) {
 			ShapedOreRecipe so = (ShapedOreRecipe)ire;
 			Object[] objin = so.getInput();
-			//ReikaJavaLibrary.pConsole(Arrays.toString(objin));
+			//DragonAPICore.log(Arrays.toString(objin));
 			w = 3;
 			h = 3;
 			for (int i = 0; i < objin.length; i++) {
@@ -390,7 +390,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		else if (ire instanceof ExpandedOreRecipe) {
 			ExpandedOreRecipe so = (ExpandedOreRecipe)ire;
 			Object[] objin = so.getInputCopy();
-			//ReikaJavaLibrary.pConsole(Arrays.toString(objin));
+			//DragonAPICore.log(Arrays.toString(objin));
 			w = so.getWidth();
 			h = so.getHeight();
 			for (int i = 0; i < objin.length; i++) {
@@ -408,7 +408,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		}
 		else if (ire instanceof ShapelessRecipes) {
 			ShapelessRecipes sr = (ShapelessRecipes)ire;
-			//ReikaJavaLibrary.pConsole(ire);
+			//DragonAPICore.log(ire);
 			for (int i = 0; i < sr.getRecipeSize(); i++) {
 				ItemStack is = (ItemStack)sr.recipeItems.get(i);
 				isin[i] = getRecipeItemStack(is, client);
@@ -430,7 +430,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 						isin[i] = li;
 					}
 				}
-				//ReikaJavaLibrary.pConsole(ire);
+				//DragonAPICore.log(ire);
 			}
 			w = so.getRecipeSize() >= 3 ? 3 : so.getRecipeSize();
 			h = (so.getRecipeSize()+2)/3;
@@ -475,7 +475,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		if (allowed)
 			GameRegistry.addRecipe(so);
 		else
-			ReikaJavaLibrary.pConsole("Recipe for "+out.getDisplayName()+" requires missing Ore Dictionary items "+missing+", and has not been loaded.");
+			DragonAPICore.logError("Recipe for "+out.getDisplayName()+" requires missing Ore Dictionary items "+missing+", and has not been loaded.");
 		return allowed;
 	}
 
@@ -549,7 +549,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 						overwriteShapedOreRecipeInput(rec, items, h, w);
 						copies.add(rec);
 						//ReikaJavaLibrary.spamConsole(rec.getInput().length+":"+Arrays.toString(rec.getInput()));
-						//ReikaJavaLibrary.pConsole("----------------------------------------------------");
+						//DragonAPICore.log("----------------------------------------------------");
 					}
 				}
 				if (match) {

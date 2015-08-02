@@ -29,7 +29,7 @@ public final class ItemBlockCustomLocalization extends ItemBlock {
 	@Override
 	public String getItemStackDisplayName(ItemStack is) {
 		if (object == null) {
-			ReikaJavaLibrary.pConsole(Level.ERROR, this+", block "+field_150939_a+" has a null block enum!");
+			ReikaJavaLibrary.pConsole(Level.ERROR, this+", block "+field_150939_a+" has a null block enum, or its display name was called too early!");
 			//ReikaJavaLibrary.dumpStack();
 			return is.getItem().getUnlocalizedName(is);
 		}

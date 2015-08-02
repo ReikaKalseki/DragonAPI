@@ -21,6 +21,9 @@ import java.util.Map;
 
 import net.minecraftforge.classloading.FMLForgePlugin;
 
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -49,6 +52,22 @@ import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 public class ReikaASMHelper {
 
 	private static Field opcodeField;
+
+	private static final Logger logger = LogManager.getLogger();
+
+	public static String activeMod;
+
+	public static void log(Object o) {
+		write(activeMod+": "+o, false);
+	}
+
+	public static void logError(Object o) {
+		write(activeMod+" ERROR: "+o, true);
+	}
+
+	private static void write(String s, boolean err) {
+		logger.log(err ? Level.ERROR : Level.INFO, s);
+	}
 
 	public static void changeFieldType(ClassNode c, String obf, String deobf, String newType) throws NoSuchASMFieldException {
 		FieldNode f = getFieldByName(c, obf, deobf);
@@ -491,6 +510,21 @@ public class ReikaASMHelper {
 			sb.append("]");
 			return sb.toString();
 		}
+	}
+
+	public static void addMethod(ClassNode cn, InsnList insns, String name, String sig, int flags) {
+		if (getMethodByNameAndSig(cn, name, sig) != null)
+			throw new ASMException.DuplicateASMMethodException(cn, name, sig);
+		MethodNode m = new MethodNode(flags, name, sig, null, new String[0]);
+		m.instructions = insns;
+		cn.methods.add(m);
+	}
+
+	public static void addField(ClassNode cn, String name, String type, int flags, Object init) {
+		if (getFieldByName(cn, name) != null)
+			throw new ASMException.DuplicateASMFieldException(cn, name);
+		FieldNode m = new FieldNode(flags, name, type, null, init);
+		cn.fields.add(m);
 	}
 
 }

@@ -29,6 +29,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
@@ -38,7 +39,6 @@ import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.Block.SemiTransparent;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -81,7 +81,7 @@ public class BlockArray implements Iterable<Coordinate> {
 		Coordinate c = new Coordinate(x, y, z);
 		this.addKey(c);
 		this.setLimits(x, y, z);
-		//ReikaJavaLibrary.pConsole("Adding "+x+", "+y+", "+z);
+		//DragonAPICore.log("Adding "+x+", "+y+", "+z);
 		return true;
 	}
 
@@ -130,7 +130,7 @@ public class BlockArray implements Iterable<Coordinate> {
 	}
 
 	private void resetLimits() {
-		//ReikaJavaLibrary.pConsole(minX+","+minY+","+minZ+" > "+maxX+","+maxY+","+maxZ, Side.SERVER);
+		//DragonAPICore.log(minX+","+minY+","+minZ+" > "+maxX+","+maxY+","+maxZ, Side.SERVER);
 		minX = Integer.MAX_VALUE;
 		maxX = Integer.MIN_VALUE;
 		minY = Integer.MAX_VALUE;
@@ -140,7 +140,7 @@ public class BlockArray implements Iterable<Coordinate> {
 		for (Coordinate c : blocks) {
 			this.setLimits(c.xCoord, c.yCoord, c.zCoord);
 		}
-		//ReikaJavaLibrary.pConsole(minX+","+minY+","+minZ+" > "+maxX+","+maxY+","+maxZ, Side.SERVER);
+		//DragonAPICore.log(minX+","+minY+","+minZ+" > "+maxX+","+maxY+","+maxZ, Side.SERVER);
 	}
 
 	public final boolean isEdge(int x, int y, int z) {
@@ -546,11 +546,11 @@ public class BlockArray implements Iterable<Coordinate> {
 			return;
 		if (depth > maxDepth)
 			return;
-		//ReikaJavaLibrary.pConsole(liquidID+" and "+world.getBlock(x, y, z));;
+		//DragonAPICore.log(liquidID+" and "+world.getBlock(x, y, z));;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
 		if (ReikaWorldHelper.getMaterial(world, x, y, z) != liquidMat) {
-			//ReikaJavaLibrary.pConsole("Could not match id "+world.getBlock(x, y, z)+" to "+liquidID);
+			//DragonAPICore.log("Could not match id "+world.getBlock(x, y, z)+" to "+liquidID);
 			return;
 		}
 		if (this.hasBlock(x, y, z))
@@ -717,7 +717,7 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	protected void throwOverflow(int depth) {
 		overflow = true;
-		ReikaJavaLibrary.pConsole("Stack overflow at depth "+depth+"/"+maxDepth+"!");
+		DragonAPICore.logError("Stack overflow at depth "+depth+"/"+maxDepth+"!");
 	}
 
 	public Coordinate getRandomBlock() {

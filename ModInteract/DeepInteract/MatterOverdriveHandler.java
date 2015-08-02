@@ -5,9 +5,9 @@ import java.lang.reflect.Method;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Instantiable.BasicModEntry;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class MatterOverdriveHandler {
 
@@ -53,7 +53,7 @@ public class MatterOverdriveHandler {
 			stackCall = c.getMethod(name, ItemStack.class);
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Could not load Matter Overdrive blacklisting!");
+			DragonAPICore.logError("Could not load Matter Overdrive blacklisting!");
 			e.printStackTrace();
 			ReflectiveFailureTracker.instance.logModReflectiveFailure(new BasicModEntry("mo"), e);
 		}

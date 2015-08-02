@@ -58,6 +58,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.SuggestedModsTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry;
+import Reika.DragonAPI.Auxiliary.Trackers.TickScheduler;
 import Reika.DragonAPI.Auxiliary.Trackers.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
@@ -179,7 +180,12 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	public static final ControlledConfig config = new ControlledConfig(instance, DragonOptions.optionList, null, 0);
 
-	private ModLogger logger;
+	private static ModLogger logger;
+
+	public DragonAPIInit() {
+		super();
+
+	}
 
 	@EventHandler
 	public void invalidSignature(FMLFingerprintViolationEvent evt) {
@@ -198,11 +204,14 @@ public class DragonAPIInit extends DragonAPIMod {
 		config.loadSubfolderedConfigFile(evt);
 		config.initProps(evt);
 
+		logger = new ModLogger(instance, false);
+		if (DragonOptions.FILELOG.getState())
+			logger.setOutput("**_Loading_Log.log");
+
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 			MinecraftForge.EVENT_BUS.register(DragonAPILoadWatcher.instance);
 		MinecraftForge.EVENT_BUS.register(DragonAPIEventWatcher.instance);
 
-		logger = new ModLogger(instance, false);
 		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());
 
 		proxy.registerSidedHandlers();
@@ -310,6 +319,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.startTiming(LoadPhase.LOAD);
 		proxy.registerSidedHandlersMain();
 
+		ReikaRegistryHelper.loadNames();
+
 		PlayerHandler.instance.registerTracker(LoginHandler.instance);
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new APIGuiHandler());
@@ -317,6 +328,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		//ReikaPacketHelper.initPipelines();
 
 		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance, Side.SERVER);
+		TickRegistry.instance.registerTickHandler(TickScheduler.instance, Side.SERVER);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 			TickRegistry.instance.registerTickHandler(KeyTicker.instance, Side.CLIENT);
 		//if (DragonOptions.COMPOUNDSYNC.getState())
@@ -381,6 +393,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Lavious", "7fb32de9-4d98-4d1f-9264-43bd1edf0ae0", 1);
 		PatreonController.instance.addPatron(this, "quok98", "f573f6a0-9e08-482a-9985-29c5bb89c4f4", 10); //Rich Edelman
 		PatreonController.instance.addPatron(this, "rxiv", "1cb1da91-d3ed-4c10-9506-ca27fd480634", 5);
+		PatreonController.instance.addPatron(this, "shobu", "6712dff7-a5d3-4a55-9c25-33b50e173ee1", 5);
 
 		CommandableUpdateChecker.instance.checkAll();
 
@@ -391,8 +404,6 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void postload(FMLPostInitializationEvent evt) {
 		this.startTiming(LoadPhase.POSTLOAD);
-
-		ReikaRegistryHelper.loadNames();
 
 		PackModificationTracker.instance.loadAll();
 

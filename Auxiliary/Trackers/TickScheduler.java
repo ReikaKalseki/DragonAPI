@@ -49,7 +49,7 @@ public class TickScheduler implements TickHandler {
 
 	@Override
 	public TickType getType() {
-		return TickType.ALL;
+		return TickType.SERVER;
 	}
 
 	@Override

@@ -13,9 +13,9 @@ import java.lang.reflect.Field;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class DartItemHandler extends ModHandlerBase {
 
@@ -40,27 +40,27 @@ public final class DartItemHandler extends ModHandlerBase {
 				idmeat = (Item)meat.get(null);
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft Item class not found! Cannot read its items!");
+				DragonAPICore.logError("DartCraft Item class not found! Cannot read its items!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: DartCraft item field not found! "+e.getMessage());
+				DragonAPICore.logError("DartCraft item field not found! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read DartCraft items (Security Exception)! "+e.getMessage());
+				DragonAPICore.logError("Cannot read DartCraft items (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading DartCraft items!");
+				DragonAPICore.logError("Illegal argument for reading DartCraft items!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading DartCraft items!");
+				DragonAPICore.logError("Illegal access exception for reading DartCraft items!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}

@@ -11,6 +11,8 @@ package Reika.DragonAPI.Libraries.Java;
 
 import java.util.Arrays;
 
+import Reika.DragonAPI.DragonAPICore;
+
 public class SemanticVersionParser {
 
 	public static int compareVersions(String v1, String v2) {
@@ -44,7 +46,7 @@ public class SemanticVersionParser {
 			catch (NumberFormatException e) {
 				String err = "'"+s+"' is not a valid semantic version! Must have '#.#.#...' formatting!";
 				//throw new IllegalArgumentException(err);
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Error parsing a semantic version! "+err);
+				DragonAPICore.logError("Error parsing a semantic version! "+err);
 			}
 		}
 

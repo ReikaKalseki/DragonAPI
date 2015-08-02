@@ -74,7 +74,7 @@ public class ReikaObfuscationHelper {
 			}
 			fields.put(deobf, f);
 			labels.put(deobf, obf);
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Registering reflexive field access to "+c+"."+deobf+" (obfuscated as "+obf+")");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Registering reflexive field access to "+c+"."+deobf+" (obfuscated as "+obf+")"); //cannot use logger
 		}
 		catch (NoSuchFieldException e) {
 			throw new IllegalArgumentException("Tried to register nonexistent field "+deobf+"/"+obf);
@@ -93,7 +93,7 @@ public class ReikaObfuscationHelper {
 			}
 			methods.put(deobf, m);
 			labels.put(deobf, obf);
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Registering reflexive method access to "+c+"."+deobf+" (obfuscated as "+obf+")");
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Registering reflexive method access to "+c+"."+deobf+" (obfuscated as "+obf+")"); //cannot use logger
 		}
 		catch (NoSuchMethodException e) {
 			//throw new VanillaIntegrityException("Tried to register nonexistent method "+deobf+"/"+obf+". Check signature.");

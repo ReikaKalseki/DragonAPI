@@ -15,6 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -51,27 +52,27 @@ public class QuantumOreHandler extends ModHandlerBase {
 				iddust = (Item)dust.get(null);
 			}
 			catch (NoSuchFieldException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (SecurityException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+				DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalArgumentException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
@@ -108,7 +109,7 @@ public class QuantumOreHandler extends ModHandlerBase {
 
 	public void forceOreRegistration() {
 		if (!isOreDict) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: QCraft ores are being registered to Ore Dictionary!");
+			DragonAPICore.log("QCraft ores are being registered to Ore Dictionary!");
 			ModOreList ore = ModOreList.QUANTUM;
 			String tag = ore.getOreDictNames()[0];
 			OreDictionary.registerOre(tag, new ItemStack(quantumID, 1, 0));
@@ -117,7 +118,7 @@ public class QuantumOreHandler extends ModHandlerBase {
 			isOreDict = true;
 		}
 		else {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: QCraft ores already registered to ore dictionary! No action taken!");
+			DragonAPICore.log("QCraft ores already registered to ore dictionary! No action taken!");
 			ReikaJavaLibrary.dumpStack();
 		}
 	}

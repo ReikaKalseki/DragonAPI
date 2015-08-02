@@ -38,7 +38,7 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 		return coords;
 	}
 
-	/** Converts 3D cartesian coordinates into polar ones. Returns angles in degrees, mapped 0-360. Args: x, y, z */
+	/** Converts 3D cartesian coordinates into polar ones. Returns angles in degrees, mapped 0-360. Args: x, y, z; Returns: Dist, Theta, Phi */
 	public static double[] cartesianToPolar(double x, double y, double z) {
 		double[] coords = new double[3];
 		boolean is90to270 = false;

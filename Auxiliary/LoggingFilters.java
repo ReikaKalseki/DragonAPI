@@ -21,7 +21,7 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.DragonAPICore;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.Side;
@@ -150,7 +150,7 @@ public class LoggingFilters {
 			String sg = msg.getFormattedMessage();
 			if (sg.contains(PREFIX)) {
 				String tex = sg.substring(PREFIX.length()+1);
-				ReikaJavaLibrary.pConsole("ERROR: Texture Map could not find texture '"+tex+"'; File not found.");
+				DragonAPICore.logError("Texture Map could not find texture '"+tex+"'; File not found.");
 				return null;//"ERROR: Texture Map could not find texture '"+tex+"'; File not found.";
 			}
 			return "";
@@ -170,16 +170,16 @@ public class LoggingFilters {
 
 	private static Logger getLogger(LoggerType type) {
 		switch(type) {
-		case FML:
-			return (Logger)FMLRelaunchLog.log.getLogger();
-		case SOUND:
-			return (Logger)LogManager.getLogger(SoundHandler.class);
-		case TEXTURE:
-			return (Logger)LogManager.getLogger(TextureMap.class);
-		case CHAT:
-			return (Logger)LogManager.getLogger(GuiNewChat.class);
-		default:
-			return null;
+			case FML:
+				return (Logger)FMLRelaunchLog.log.getLogger();
+			case SOUND:
+				return (Logger)LogManager.getLogger(SoundHandler.class);
+			case TEXTURE:
+				return (Logger)LogManager.getLogger(TextureMap.class);
+			case CHAT:
+				return (Logger)LogManager.getLogger(GuiNewChat.class);
+			default:
+				return null;
 		}
 	}
 

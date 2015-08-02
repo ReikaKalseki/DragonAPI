@@ -108,14 +108,14 @@ public final class ReikaVectorHelper extends DragonAPICore {
 	 * Returns +infinity if invalid axis. Args: Vector, 0/1/2 for x/y/z*/
 	public static double getSlope(Vec3 vec, int axis) {
 		switch(axis) {
-		case 0:
-			return (vec.xCoord/vec.lengthVector());
-		case 1:
-			return (vec.yCoord/vec.lengthVector());
-		case 2:
-			return (vec.zCoord/vec.lengthVector());
-		default:
-			return Double.POSITIVE_INFINITY;
+			case 0:
+				return (vec.xCoord/vec.lengthVector());
+			case 1:
+				return (vec.yCoord/vec.lengthVector());
+			case 2:
+				return (vec.zCoord/vec.lengthVector());
+			default:
+				return Double.POSITIVE_INFINITY;
 		}
 	}
 
@@ -188,6 +188,12 @@ public final class ReikaVectorHelper extends DragonAPICore {
 
 	public static Vec3 getInverseVector(Vec3 vec) {
 		return Vec3.createVectorHelper(-vec.xCoord, -vec.yCoord, -vec.zCoord);
+	}
+
+	public static Vector3f rotateVector(Vec3 vec, double rx, double ry, double rz) {
+		Matrix4f mat = new Matrix4f();
+		euler321Sequence(mat, rx, ry, rz);
+		return multiplyVectorByMatrix(new Vector3f((float)vec.xCoord, (float)vec.yCoord, (float)vec.zCoord), mat);
 	}
 
 }

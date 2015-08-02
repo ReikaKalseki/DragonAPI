@@ -43,6 +43,7 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.IFluidHandler;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
@@ -57,12 +58,12 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
 import Reika.DragonAPI.Interfaces.DataSync;
 import Reika.DragonAPI.Interfaces.TileEntity.PartialInventory;
+import Reika.DragonAPI.Interfaces.TileEntity.PartialTank;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper.TypeSelector;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -85,6 +86,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	protected boolean shutDown;
 	protected String placer;
 	protected UUID placerUUID;
+	protected boolean fakePlaced;
 	private int ticksExisted;
 	private FakePlayer fakePlayer;
 
@@ -151,9 +153,9 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	public final Block getTEBlock() {
 		Block id = this.getTileEntityBlockID();
 		if (id == Blocks.air)
-			ReikaJavaLibrary.pConsole("TileEntity "+this+" tried to register ID 0!");
+			DragonAPICore.logError("TileEntity "+this+" tried to register ID 0!");
 		if (id == null) {
-			ReikaJavaLibrary.pConsole(id+" is an invalid block ID for "+this+"!");
+			DragonAPICore.logError(id+" is an invalid block ID for "+this+"!");
 			return null;
 		}
 		return id;
@@ -305,6 +307,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	public final void setPlacer(EntityPlayer ep) {
 		placer = ep.getCommandSenderName();
+		fakePlaced = ReikaPlayerAPI.isFake(ep);
 		if (ep.getGameProfile().getId() != null)
 			placerUUID = ep.getGameProfile().getId();
 		this.onSetPlacer(ep);
@@ -391,7 +394,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	@Override //To avoid null pointers in inventory
 	public final Block getBlockType() {
-		//ReikaJavaLibrary.pConsole(this.blockType);
+		//DragonAPICore.log(this.blockType);
 		if (blockType != null)
 			return blockType;
 		if (this.isInWorld()) {
@@ -523,9 +526,9 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			ReikaChatHelper.write("");
 		}
 
-		ReikaJavaLibrary.pConsole(this+" is throwing "+e.getClass()+" on update: "+e.getMessage());
+		DragonAPICore.logError(this+" is throwing "+e.getClass()+" on update: "+e.getMessage());
 		e.printStackTrace();
-		ReikaJavaLibrary.pConsole("");
+		DragonAPICore.log("");
 	}
 
 	private final void updateTileEntity() {
@@ -568,7 +571,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	@Override
 	public final boolean equals(Object o) {/*
 		if (o != this && this.isSameTile(o)) {
-			ReikaJavaLibrary.pConsole("TileEntities would be equal functionally but not in identity!"); //debug code
+			DragonAPICore.log("TileEntities would be equal functionally but not in identity!"); //debug code
 			Thread.dumpStack();
 		}*/
 		return super.equals(o);
@@ -674,16 +677,16 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	@Override
 	public double getMaxRenderDistanceSquared() {
 		switch(ReikaRenderHelper.getRenderDistance()) {
-		case FAR:
-			return 6144D;
-		case NORMAL:
-			return 3364D;
-		case SHORT:
-			return 1024D;
-		case TINY:
-			return 256D;
-		default:
-			return 4096D;
+			case FAR:
+				return 6144D;
+			case NORMAL:
+				return 3364D;
+			case SHORT:
+				return 1024D;
+			case TINY:
+				return 256D;
+			default:
+				return 4096D;
 		}
 	}
 
@@ -816,6 +819,6 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	}
 
 	public final boolean hasATank() {
-		return this instanceof PartialInventory ? ((PartialInventory)this).hasInventory() : this instanceof IFluidHandler;
+		return this instanceof PartialTank ? ((PartialTank)this).hasTank() : this instanceof IFluidHandler;
 	}
 }

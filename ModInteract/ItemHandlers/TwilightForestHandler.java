@@ -14,9 +14,9 @@ import java.lang.reflect.Field;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class TwilightForestHandler extends ModHandlerBase {
 
@@ -105,27 +105,27 @@ public class TwilightForestHandler extends ModHandlerBase {
 					metabreaker = breaker.getInt(null);
 				}
 				catch (NoSuchFieldException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 					e.printStackTrace();
 					this.logFailure(e);
 				}
 				catch (SecurityException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+					DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 					e.printStackTrace();
 					this.logFailure(e);
 				}
 				catch (IllegalArgumentException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+					DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 					e.printStackTrace();
 					this.logFailure(e);
 				}
 				catch (IllegalAccessException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+					DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 					e.printStackTrace();
 					this.logFailure(e);
 				}
 				catch (NullPointerException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 					e.printStackTrace();
 					this.logFailure(e);
 				}
@@ -135,27 +135,27 @@ public class TwilightForestHandler extends ModHandlerBase {
 					dim = dimension.getInt(null);
 				}
 				catch (NoSuchFieldException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 					e.printStackTrace();
 					this.logFailure(e);
 				}
 				catch (SecurityException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+					DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 					e.printStackTrace();
 					this.logFailure(e);
 				}
 				catch (IllegalArgumentException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+					DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 					e.printStackTrace();
 					this.logFailure(e);
 				}
 				catch (IllegalAccessException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+					DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 					e.printStackTrace();
 					this.logFailure(e);
 				}
 				catch (NullPointerException e) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 					e.printStackTrace();
 					this.logFailure(e);
 				}
@@ -167,27 +167,27 @@ public class TwilightForestHandler extends ModHandlerBase {
 						b.block = (Block)f.get(null);
 					}
 					catch (NoSuchFieldException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+						DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (SecurityException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+						DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (IllegalArgumentException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+						DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (IllegalAccessException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+						DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (NullPointerException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+						DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 						e.printStackTrace();
 						this.logFailure(e);
 					}
@@ -200,27 +200,27 @@ public class TwilightForestHandler extends ModHandlerBase {
 						b.item = (Item)f.get(null);
 					}
 					catch (NoSuchFieldException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: "+this.getMod()+" field not found! "+e.getMessage());
+						DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (SecurityException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+						DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (IllegalArgumentException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal argument for reading "+this.getMod()+"!");
+						DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (IllegalAccessException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Illegal access exception for reading "+this.getMod()+"!");
+						DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 						e.printStackTrace();
 						this.logFailure(e);
 					}
 					catch (NullPointerException e) {
-						ReikaJavaLibrary.pConsole("DRAGONAPI: Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+						DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 						e.printStackTrace();
 						this.logFailure(e);
 					}
@@ -229,7 +229,7 @@ public class TwilightForestHandler extends ModHandlerBase {
 				init = true;
 			}
 			catch (ClassNotFoundException e) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Twilight Forest class not found! Cannot read its contents!");
+				DragonAPICore.logError("Twilight Forest class not found! Cannot read its contents!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}

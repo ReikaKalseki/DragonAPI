@@ -12,8 +12,8 @@ package Reika.DragonAPI.Instantiable.IO;
 import java.io.File;
 
 import net.minecraftforge.common.config.Configuration;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ConfigReader {
 
@@ -38,7 +38,7 @@ public class ConfigReader {
 		configFile = new File(filepath);
 		if (!configFile.exists()) {
 			//throw new MisuseException("Config for "+modName+" does not exist at "+filepath+"!\nThis reader is only designed for force-reading of existing data!");
-			ReikaJavaLibrary.pConsole("Config for "+modName+" does not exist at "+filepath+"!\nThis reader is only designed for force-reading of existing data!");
+			DragonAPICore.logError("Config for "+modName+" does not exist at "+filepath+"!\nThis reader is only designed for force-reading of existing data!");
 			return;
 		}
 		config = new Configuration(configFile);

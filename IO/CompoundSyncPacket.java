@@ -24,12 +24,12 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Interfaces.DataSync;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -56,9 +56,9 @@ public final class CompoundSyncPacket extends Packet implements DataSync {
 	public void setData(TileEntity te, boolean force, NBTTagCompound NBT) {
 		if (dispatch) {
 			if (DragonOptions.LOGSYNCCME.getState()) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: The compound sync packet for "+te+" would have just CME'd, as the");
-				ReikaJavaLibrary.pConsole("Server-Thread data-writing code has overlapped with the Network-Thread byte[] dispatch.");
-				ReikaJavaLibrary.pConsole("Seeing this message frequently could indicate a serious issue.\n");
+				DragonAPICore.log("The compound sync packet for "+te+" would have just CME'd, as the");
+				DragonAPICore.log("Server-Thread data-writing code has overlapped with the Network-Thread byte[] dispatch.");
+				DragonAPICore.log("Seeing this message frequently could indicate a serious issue.\n");
 			}
 			return;
 		}
@@ -73,7 +73,7 @@ public final class CompoundSyncPacket extends Packet implements DataSync {
 		while (it.hasNext()) {
 			String name = it.next();
 			if (name == null) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: An NBT tag with a null key is being sent to the compound sync packet from "+te);
+				DragonAPICore.log("An NBT tag with a null key is being sent to the compound sync packet from "+te);
 			}
 			else {
 				NBTBase tag = NBT.getTag(name);
@@ -96,7 +96,7 @@ public final class CompoundSyncPacket extends Packet implements DataSync {
 		oldData.get(loc).put(key, prev);
 		data.get(loc).put(key, value);
 		if (force || !this.match(prev, value)) {
-			//ReikaJavaLibrary.pConsole("Changing '"+key+"' from "+prev+" to "+value+" @ "+loc.getTileEntity());
+			//DragonAPICore.log("Changing '"+key+"' from "+prev+" to "+value+" @ "+loc.getTileEntity());
 			this.addChange(loc, key, value);
 		}
 	}
@@ -122,9 +122,9 @@ public final class CompoundSyncPacket extends Packet implements DataSync {
 	public void readForSync(TileEntity te, NBTTagCompound NBT) {
 		if (dispatch) {
 			if (DragonOptions.LOGSYNCCME.getState()) {
-				ReikaJavaLibrary.pConsole("DRAGONAPI: The compound sync packet for "+te+" would have just CME'd, as the");
-				ReikaJavaLibrary.pConsole("Client-Thread data-reading code has overlapped with the Network-Thread byte[] reading.");
-				ReikaJavaLibrary.pConsole("Seeing this message frequently could indicate a serious issue.\n");
+				DragonAPICore.log("The compound sync packet for "+te+" would have just CME'd, as the");
+				DragonAPICore.log("Client-Thread data-reading code has overlapped with the Network-Thread byte[] reading.");
+				DragonAPICore.log("Seeing this message frequently could indicate a serious issue.\n");
 			}
 			return;
 		}
@@ -183,12 +183,12 @@ public final class CompoundSyncPacket extends Packet implements DataSync {
 			out.writeNBTTagCompoundToBuffer(toSend);
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error writing Compound Sync Tag!");
+			DragonAPICore.logError("Error writing Compound Sync Tag!");
 			out.clear();
 			e.printStackTrace();
 		}
 
-		ReikaJavaLibrary.pConsole("Wrote "+changes.size()+" locations, data="+toSend);
+		DragonAPICore.log("Wrote "+changes.size()+" locations, data="+toSend);
 
 		dispatch = false;
 	}
@@ -246,7 +246,7 @@ public final class CompoundSyncPacket extends Packet implements DataSync {
 			}
 		}
 		catch (Exception e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Error reading Compound Sync Tag!");
+			DragonAPICore.logError("Error reading Compound Sync Tag!");
 			e.printStackTrace();
 			data.clear();
 		}
@@ -261,7 +261,7 @@ public final class CompoundSyncPacket extends Packet implements DataSync {
 			NBTBase tag = local.getTag(name);
 			data.get(loc).put(name, tag);
 		}
-		ReikaJavaLibrary.pConsole("Reading "+data.get(loc)+" from "+local+" @ "+loc.getTileEntity());
+		DragonAPICore.log("Reading "+data.get(loc)+" from "+local+" @ "+loc.getTileEntity());
 	}
 
 	@Override

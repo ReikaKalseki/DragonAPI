@@ -20,7 +20,7 @@ public class ReikaEEHelper {
 		if (!isLoaded())
 			return;
 		if (ModList.PROJECTE.isLoaded())
-			ProjectEAPI.registerCustomEMC(is, 0);
+			registerCustomEMC(is, 0);
 	}
 
 	public static void blacklistEntry(RegistrationList reg) {
@@ -42,6 +42,17 @@ public class ReikaEEHelper {
 
 	public static boolean isLoaded() {
 		return ModList.PROJECTE.isLoaded();
+	}
+
+	public static void registerCustomEMC(ItemStack is, int emc) {
+		if (!ModList.PROJECTE.isLoaded()) {
+			try {
+				ProjectEAPI.getEMCProxy().registerCustomEMC(is, emc);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 }

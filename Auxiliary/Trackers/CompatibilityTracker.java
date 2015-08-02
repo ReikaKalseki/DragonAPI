@@ -11,9 +11,9 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.ArrayList;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.ModIncompatibilityException;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class CompatibilityTracker {
 
@@ -52,20 +52,20 @@ public final class CompatibilityTracker {
 			if (inc.isActive()) {
 				Severity s = inc.severity;
 				if (inc.alwaysCrash) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: "+inc.sourceMod.getDisplayName()+" has detected hostile modifications from "+inc.issueMod.getDisplayName()+" and was set to disallow continuing.\n");
-					ReikaJavaLibrary.pConsole("It cannot function correctly. Check "+inc.sourceMod.getDisplayName()+" configs for an option to bypass this test and run anyways.");
+					DragonAPICore.log(inc.sourceMod.getDisplayName()+" has detected incompatible modifications from "+inc.issueMod.getDisplayName()+" and was set to disallow continuing.\n");
+					DragonAPICore.log("It cannot function correctly. Check "+inc.sourceMod.getDisplayName()+" configs for an option to bypass this test and run anyways.");
 					throw new RuntimeException();
 				}
 				else if (s == Severity.HOSTILITY) {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: "+inc.sourceMod.getDisplayName()+" has detected hostile modifications from "+inc.issueMod.getDisplayName()+" but was set to allow continuing.\n");
-					ReikaJavaLibrary.pConsole("However, it cannot function correctly. Contact the authors of the mods.");
+					DragonAPICore.log(inc.sourceMod.getDisplayName()+" has detected hostile modifications from "+inc.issueMod.getDisplayName()+" but was set to allow continuing.\n");
+					DragonAPICore.log("However, it cannot function correctly. Contact the authors of the mods.");
 				}
 				else if (s.throwException) {
 					new ModIncompatibilityException(inc.sourceMod, inc.issueMod, inc.message, s.isFatal);
 				}
 				else {
-					ReikaJavaLibrary.pConsole("DRAGONAPI: "+inc.sourceMod.getDisplayName()+" has logged a compatibility issue with "+inc.issueMod.getDisplayName()+".\n");
-					ReikaJavaLibrary.pConsole("However, it is able to continue without ill effects.");
+					DragonAPICore.log(inc.sourceMod.getDisplayName()+" has logged a compatibility issue with "+inc.issueMod.getDisplayName()+".\n");
+					DragonAPICore.log("However, it is able to continue without ill effects.");
 				}
 			}
 		}

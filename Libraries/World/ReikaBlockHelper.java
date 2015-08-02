@@ -21,7 +21,6 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Interfaces.Block.SpecialOreBlock;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
@@ -100,7 +99,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		if (ModOreList.isModOre(id, meta))
 			return true;
 		if (Item.getItemFromBlock(id) == null) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Block "+id+" has no item to compare against for Ore Check?!");
+			DragonAPICore.logError("Block "+id+" has no item to compare against for Ore Check?!");
 			return false;
 		}
 		return ReikaOreHelper.getEntryByOreDict(new ItemStack(id, 1, meta)) != null;
@@ -114,14 +113,14 @@ public final class ReikaBlockHelper extends DragonAPICore {
 	/** Get the block ID silverfish stone is imitating. Args; Metadata */
 	public static Block getSilverfishImitatedBlock(int meta) {
 		switch(meta) {
-		case 0:
-			return Blocks.stone;
-		case 1:
-			return Blocks.cobblestone;
-		case 2:
-			return Blocks.stonebrick;
-		default:
-			return Blocks.air;
+			case 0:
+				return Blocks.stone;
+			case 1:
+				return Blocks.cobblestone;
+			case 2:
+				return Blocks.stonebrick;
+			default:
+				return Blocks.air;
 		}
 	}
 

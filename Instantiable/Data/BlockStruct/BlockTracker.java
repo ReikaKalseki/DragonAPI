@@ -15,7 +15,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.DragonAPICore;
 
 public class BlockTracker extends BlockArray {
 
@@ -57,7 +57,7 @@ public class BlockTracker extends BlockArray {
 			}
 		}
 		else {
-			ReikaJavaLibrary.pConsole("You must specify a reference world for BlockTracker!");
+			DragonAPICore.logError("You must specify a reference world for BlockTracker!");
 		}
 	}
 
@@ -84,7 +84,7 @@ public class BlockTracker extends BlockArray {
 
 	public int getNumberOfLiquidSources(Fluid liq) {
 		if (!liq.canBePlacedInWorld()) {
-			ReikaJavaLibrary.pConsole("Cannot call the count for a non-world liquid!");
+			DragonAPICore.logError("Cannot call the count for a non-world liquid!");
 			return 0;
 		}
 		return this.getNumberOf(liq.getBlock(), 0);
