@@ -12,11 +12,13 @@ package Reika.DragonAPI.Instantiable.Data.Immutable;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -39,19 +41,19 @@ public final class DecimalPosition {
 	public DecimalPosition(TileEntity te) {
 		this(te.xCoord+0.5, te.yCoord+0.5, te.zCoord+0.5);
 	}
-	/*
-	public Position(Entity e) {
+
+	public DecimalPosition(Entity e) {
 		this(e.posX, e.posY, e.posZ);
 	}
-	 */
+
 	public DecimalPosition(DecimalPosition loc) {
 		this(loc.xCoord, loc.yCoord, loc.zCoord);
 	}
-	/*
-	public Position(MovingObjectPosition hit) {
+
+	public DecimalPosition(MovingObjectPosition hit) {
 		this(hit.blockX+0.5, hit.blockY+0.5, hit.blockZ+0.5);
 	}
-	 */
+
 	public DecimalPosition offset(int dx, int dy, int dz) {
 		return new DecimalPosition(xCoord+dx, yCoord+dy, zCoord+dz);
 	}

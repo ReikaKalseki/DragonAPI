@@ -80,6 +80,7 @@ import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.LoginHandler;
+import Reika.DragonAPI.Extras.TemporaryCodeCalls;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
@@ -227,6 +228,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.increaseChunkCap();
 		//this.increaseBiomeCount(); world save stores biome as bytes, so 255 is cap
 
+		if (ReikaObfuscationHelper.isDeObfEnvironment())
+			TemporaryCodeCalls.preload(evt);
+
 		BannedItemReader.instance.initWith("BanItem");
 		BannedItemReader.instance.initWith("ItemBan");
 		BannedItemReader.instance.initWith("TekkitCustomizerData");
@@ -319,6 +323,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.startTiming(LoadPhase.LOAD);
 		proxy.registerSidedHandlersMain();
 
+		if (ReikaObfuscationHelper.isDeObfEnvironment())
+			TemporaryCodeCalls.load(event);
+
 		ReikaRegistryHelper.loadNames();
 
 		PlayerHandler.instance.registerTracker(LoginHandler.instance);
@@ -327,10 +334,10 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		//ReikaPacketHelper.initPipelines();
 
-		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance, Side.SERVER);
-		TickRegistry.instance.registerTickHandler(TickScheduler.instance, Side.SERVER);
+		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance);
+		TickRegistry.instance.registerTickHandler(TickScheduler.instance);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-			TickRegistry.instance.registerTickHandler(KeyTicker.instance, Side.CLIENT);
+			TickRegistry.instance.registerTickHandler(KeyTicker.instance);
 		//if (DragonOptions.COMPOUNDSYNC.getState())
 		//	TickRegistry.instance.registerTickHandler(CompoundSyncPacketTracker.instance, Side.SERVER);
 
@@ -393,7 +400,10 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Lavious", "7fb32de9-4d98-4d1f-9264-43bd1edf0ae0", 1);
 		PatreonController.instance.addPatron(this, "quok98", "f573f6a0-9e08-482a-9985-29c5bb89c4f4", 10); //Rich Edelman
 		PatreonController.instance.addPatron(this, "rxiv", "1cb1da91-d3ed-4c10-9506-ca27fd480634", 5);
-		PatreonController.instance.addPatron(this, "shobu", "6712dff7-a5d3-4a55-9c25-33b50e173ee1", 5);
+		//PatreonController.instance.addPatron(this, "shobu", "6712dff7-a5d3-4a55-9c25-33b50e173ee1", 5);
+		PatreonController.instance.addPatron(this, "Goof245", "79849e78-fe9a-4bb9-af6b-fb4c41fc8dd8", 20); //Aiden Young
+		PatreonController.instance.addPatron(this, "Solego", "2c85a7d8-af77-4c5e-9416-47e4a281497f", 40); //Aiden Young
+
 
 		CommandableUpdateChecker.instance.checkAll();
 
@@ -408,6 +418,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		PackModificationTracker.instance.loadAll();
 
 		this.loadHandlers();
+
+		if (ReikaObfuscationHelper.isDeObfEnvironment())
+			TemporaryCodeCalls.postload(evt);
 
 		this.alCompat();
 

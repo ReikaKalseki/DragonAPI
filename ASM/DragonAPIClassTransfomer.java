@@ -12,6 +12,10 @@ package Reika.DragonAPI.ASM;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.MusicTicker;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
@@ -70,6 +74,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
 		//TILEUPDATE("net.minecraft.world.World", "ahb"),
 		FURNACEUPDATE("net.minecraft.tileentity.TileEntityFurnace", "apg"),
+		MUSICEVENT("net.minecraft.client.audio.MusicTicker", "btg"),
 		;
 
 		private final String obfName;
@@ -805,6 +810,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.insert(pre);
 					m.instructions.insertBefore(ret, post);
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
 				}
 				case PLAYERRENDERPASS: {
 					InsnList insns = new InsnList();
@@ -812,6 +818,41 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					insns.add(new InsnNode(Opcodes.IRETURN));
 					ReikaASMHelper.addMethod(cn, insns, "shouldRenderInPass", "(I)Z", Modifier.PUBLIC); //Forge method, no SRG
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case MUSICEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_73660_a", "update", "()V");
+
+					String handler = FMLForgePlugin.RUNTIME_DEOBF ? "func_147118_V" : "getSoundHandler"; //()Lnet/minecraft/client/audio/SoundHandler;
+					String play = FMLForgePlugin.RUNTIME_DEOBF ? "func_147682_a" : "playSound"; //(Lnet/minecraft/client/audio/ISound;)V
+
+					LabelNode L5 = new LabelNode();
+
+					InsnList post = new InsnList();
+
+					post.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+					post.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/PlayMusicEvent"));
+					post.add(new InsnNode(Opcodes.DUP));
+					post.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					post.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/audio/MusicTicker", "field_147678_c", "Lnet/minecraft/client/audio/ISound;"));
+					post.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					post.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/audio/MusicTicker", "field_147676_d", "I"));
+					post.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/Client/PlayMusicEvent", "<init>", "(Lnet/minecraft/client/audio/ISound;I)V", false));
+					post.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+					post.add(new JumpInsnNode(Opcodes.IFNE, L5));
+
+					AbstractInsnNode loc = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/client/audio/SoundHandler", play, "(Lnet/minecraft/client/audio/ISound;)V");
+
+					m.instructions.insert(loc, L5);
+
+					loc = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(loc), Opcodes.ALOAD, 0); //Get last ALOAD 0 before
+					loc = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(loc), Opcodes.ALOAD, 0); //Get next last ALOAD 0
+
+					m.instructions.insertBefore(loc, post);
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+
+					break;
 				}
 			}
 
@@ -832,6 +873,26 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			String tag = "-DragonAPI_silence_ASM_"+this.name();
 			return !ReikaJVMParser.isArgumentPresent(tag);
 		}
+	}
+
+	class test {
+
+		private ISound field_147678_c;
+		private int field_147676_d;
+		private Minecraft field_147677_b;
+
+		public void update() {
+			MusicTicker.MusicType musictype = field_147677_b.func_147109_W();
+
+			if (field_147678_c == null && field_147676_d-- <= 0)
+			{
+				field_147678_c = PositionedSoundRecord.func_147673_a(musictype.getMusicTickerLocation());
+				//if (!MinecraftForge.EVENT_BUS.post(new PlayMusicEvent(field_147678_c, field_147676_d)))
+				field_147677_b.getSoundHandler().playSound(field_147678_c);
+				field_147676_d = Integer.MAX_VALUE;
+			}
+		}
+
 	}
 
 	@Override

@@ -17,10 +17,11 @@ public class ColorBlendList {
 
 	private final ArrayList<Integer> data = new ArrayList();
 
-	private final float cycleSpeed;
+	/** Larger = slower */
+	private final float cycleModulus;
 
 	public ColorBlendList(float speed) {
-		cycleSpeed = speed;
+		cycleModulus = speed;
 	}
 
 	public ColorBlendList(float speed, int... colors) {
@@ -46,11 +47,11 @@ public class ColorBlendList {
 		//int idx = this.getIndex(tick);
 		//int idxp = idx == data.size()-1 ? 0 : idx+1;
 		//int idxm = idx == 0 ? data.size()-1 : idx-1;
-		int f1 = (int)(tick/cycleSpeed);
+		int f1 = (int)(tick/cycleModulus);
 		f1 = (f1+data.size())%data.size();
 		int c1 = data.get(f1%data.size());
 		int c2 = data.get((f1+1)%data.size());
-		float f = (float)(tick%cycleSpeed/cycleSpeed);
+		float f = (float)(tick%cycleModulus/cycleModulus);
 		return ReikaColorAPI.mixColors(c1, c2, 1-f);
 	}
 	/*
@@ -88,6 +89,19 @@ public class ColorBlendList {
 		data.clear();
 		data.addAll(li);
 		return this;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(cycleModulus);
+		sb.append("x [");
+		for (int color : data) {
+			sb.append(Integer.toHexString(color));
+			sb.append(",");
+		}
+		sb.append("]");
+		return sb.toString();
 	}
 
 }

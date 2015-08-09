@@ -11,6 +11,7 @@ package Reika.DragonAPI.IO;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -319,8 +320,8 @@ public final class CompoundSyncPacket extends Packet implements DataSync {
 		}
 
 		@Override
-		public TickType getType() {
-			return TickType.WORLD;
+		public EnumSet<TickType> getType() {
+			return EnumSet.of(TickType.WORLD);
 		}
 
 		@Override

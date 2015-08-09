@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
 public final class BlockVector {
@@ -19,6 +21,10 @@ public final class BlockVector {
 	public final ForgeDirection direction;
 
 	public BlockVector(ForgeDirection dir, Coordinate c) {
+		this(dir, c.xCoord, c.yCoord, c.zCoord);
+	}
+
+	public BlockVector(ForgeDirection dir, TileEntity c) {
 		this(dir, c.xCoord, c.yCoord, c.zCoord);
 	}
 
@@ -40,6 +46,21 @@ public final class BlockVector {
 	@Override
 	public String toString() {
 		return xCoord+", "+yCoord+", "+zCoord+" > "+direction;
+	}
+
+	public void writeToNBT(NBTTagCompound tag) {
+		tag.setInteger("x", xCoord);
+		tag.setInteger("y", yCoord);
+		tag.setInteger("z", zCoord);
+		tag.setInteger("dir", direction.ordinal());
+	}
+
+	public static BlockVector readFromNBT(NBTTagCompound tag) {
+		int x = tag.getInteger("x");
+		int y = tag.getInteger("y");
+		int z = tag.getInteger("z");
+		ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[tag.getInteger("dir")];
+		return new BlockVector(x, y, z, dir);
 	}
 
 }

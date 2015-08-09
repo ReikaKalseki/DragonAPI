@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.EnumMap;
+import java.util.EnumSet;
 import java.util.HashMap;
 
 import net.minecraft.client.Minecraft;
@@ -167,8 +168,8 @@ public class KeyWatcher {
 		}
 
 		@Override
-		public TickType getType() {
-			return TickType.CLIENT;
+		public EnumSet<TickType> getType() {
+			return EnumSet.of(TickType.CLIENT);
 		}
 
 		@Override

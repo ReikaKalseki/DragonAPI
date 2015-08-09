@@ -351,7 +351,7 @@ public class ReikaASMHelper {
 	}
 
 	public static AbstractInsnNode getFirstInsnAfter(InsnList li, int index, int opcode, Object... args) {
-		AbstractInsnNode ain = li.get(index);
+		AbstractInsnNode ain = li.get(index+1);
 		while (!match(ain, opcode, args) && index < li.size()) {
 			index++;
 			ain = li.get(index);
@@ -364,7 +364,7 @@ public class ReikaASMHelper {
 	}
 
 	public static AbstractInsnNode getLastInsnBefore(InsnList li, int index, int opcode, Object... args) {
-		AbstractInsnNode ain = li.get(index);
+		AbstractInsnNode ain = li.get(index-1);
 		while (!match(ain, opcode, args) && index > 0) {
 			index--;
 			ain = li.get(index);

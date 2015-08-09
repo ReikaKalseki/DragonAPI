@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
@@ -21,7 +22,6 @@ import cpw.mods.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.RenderTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ServerTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.WorldTickEvent;
-import cpw.mods.fml.relauncher.Side;
 
 
 public class TickRegistry {
@@ -89,31 +89,32 @@ public class TickRegistry {
 		}
 	}
 
-	public void registerTickHandler(TickHandler h, Side s) {
-		TickType type = h.getType();
-		switch(type) {
-		case CLIENT:
-			clientTickers.add(h);
-			break;
-		case PLAYER:
-			playerTickers.add(h);
-			break;
-		case RENDER:
-			renderTickers.add(h);
-			break;
-		case SERVER:
-			serverTickers.add(h);
-			break;
-		case WORLD:
-			worldTickers.add(h);
-			break;
-		case ALL:
-			clientTickers.add(h);
-			playerTickers.add(h);
-			renderTickers.add(h);
-			serverTickers.add(h);
-			worldTickers.add(h);
-			break;
+	public void registerTickHandler(TickHandler h) {
+		for (TickType type : h.getType()) {
+			switch(type) {
+				case CLIENT:
+					clientTickers.add(h);
+					break;
+				case PLAYER:
+					playerTickers.add(h);
+					break;
+				case RENDER:
+					renderTickers.add(h);
+					break;
+				case SERVER:
+					serverTickers.add(h);
+					break;
+				case WORLD:
+					worldTickers.add(h);
+					break;/*
+				case ALL:
+					clientTickers.add(h);
+					playerTickers.add(h);
+					renderTickers.add(h);
+					serverTickers.add(h);
+					worldTickers.add(h);
+					break;*/
+			}
 		}
 	}
 
@@ -121,7 +122,7 @@ public class TickRegistry {
 
 		public void tick(TickType type, Object... tickData);
 
-		public TickType getType();
+		public EnumSet<TickType> getType();
 
 		public boolean canFire(Phase p);
 
@@ -132,7 +133,7 @@ public class TickRegistry {
 	public static enum TickType {
 		/**
 		 * Fired during the world evaluation loop
-		 * server and client side
+		 * server side only! ("and client side" is false)
 		 *
 		 * arg 0 : The world that is ticking
 		 */
@@ -160,10 +161,7 @@ public class TickRegistry {
 		 * This is the server game tick.
 		 * Fired once per tick loop on the server.
 		 */
-		SERVER,
-
-
-		ALL;
+		SERVER;
 	}
 
 }

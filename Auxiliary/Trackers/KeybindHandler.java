@@ -11,6 +11,7 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 
 import net.minecraft.client.settings.KeyBinding;
@@ -38,7 +39,7 @@ public class KeybindHandler {
 
 	private KeybindHandler() {
 		//MinecraftForge.EVENT_BUS.register(this);
-		TickRegistry.instance.registerTickHandler(ticker, Side.CLIENT);
+		TickRegistry.instance.registerTickHandler(ticker);
 	}
 
 	@SubscribeEvent
@@ -78,8 +79,8 @@ public class KeybindHandler {
 		}
 
 		@Override
-		public TickType getType() {
-			return TickType.CLIENT;
+		public EnumSet<TickType> getType() {
+			return EnumSet.of(TickType.CLIENT);
 		}
 
 		@Override

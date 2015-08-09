@@ -11,6 +11,7 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
@@ -48,8 +49,8 @@ public class TickScheduler implements TickHandler {
 	}
 
 	@Override
-	public TickType getType() {
-		return TickType.SERVER;
+	public EnumSet<TickType> getType() {
+		return EnumSet.of(TickType.SERVER);
 	}
 
 	@Override

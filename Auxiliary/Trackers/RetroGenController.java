@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 
 import net.minecraft.init.Blocks;
@@ -29,7 +30,6 @@ import Reika.DragonAPI.Interfaces.RetroactiveGenerator;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
 
 public class RetroGenController {
 
@@ -51,7 +51,7 @@ public class RetroGenController {
 
 	private RetroGenController() {
 		MinecraftForge.EVENT_BUS.register(this);
-		TickRegistry.instance.registerTickHandler(new RetrogenTicker(), Side.SERVER);
+		TickRegistry.instance.registerTickHandler(new RetrogenTicker());
 	}
 
 	/** Adds a retroactive generator to the API's retro-gen registry. Larger numbers run later, much like IWorldGenerator. */
@@ -141,8 +141,8 @@ public class RetroGenController {
 		}
 
 		@Override
-		public TickType getType() {
-			return TickType.WORLD;
+		public EnumSet<TickType> getType() {
+			return EnumSet.of(TickType.WORLD);
 		}
 
 		@Override

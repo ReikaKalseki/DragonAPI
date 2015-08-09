@@ -106,8 +106,8 @@ public class ReikaColorAPI {
 	}
 
 	public static int getAlpha(int color) {
-		int b = (color >> 24) & 0xFF;
-		return b;
+		int a = (color >> 24) & 0xFF;
+		return a;
 	}
 
 	public static boolean isRGBNonZero(int color) {
@@ -118,7 +118,10 @@ public class ReikaColorAPI {
 		return (color & 0xff000000) > 0;
 	}
 
+	/** If ratio is < 0.5, c2 is dominant */
 	public static int mixColors(int c1, int c2, float ratio) {
+		int a1 = (c1 & 0xff000000) >> 24;
+		int a2 = (c2 & 0xff000000) >> 24;
 		int r1 = (c1 & 0xff0000) >> 16;
 		int r2 = (c2 & 0xff0000) >> 16;
 		int g1 = (c1 & 0xff00) >> 8;
@@ -129,7 +132,9 @@ public class ReikaColorAPI {
 		int r = (int)(r1*ratio + r2*(1-ratio));
 		int g = (int)(g1*ratio + g2*(1-ratio));
 		int b = (int)(b1*ratio + b2*(1-ratio));
-		return r << 16 | g << 8 | b;
+		int a = (int)(a1*ratio + a2*(1-ratio));
+
+		return a << 24 | r << 16 | g << 8 | b;
 	}
 
 	public static int additiveBlend(int color) {

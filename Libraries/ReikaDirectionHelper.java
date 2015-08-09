@@ -134,7 +134,7 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		return (360+rel%360)%360;
 	}
 
-	private static int getHeading(ForgeDirection dir) {
+	public static int getHeading(ForgeDirection dir) {
 		switch(dir) {
 			case NORTH:
 				return 0;

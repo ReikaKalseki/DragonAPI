@@ -41,6 +41,16 @@ public final class InventorySlot {
 		return ret;
 	}
 
+	public int increment(int amt) {
+		ItemStack is = this.getStack();
+		int max = Math.min(is.getMaxStackSize(), inventory.getInventoryStackLimit());
+		int ret = Math.min(amt, max-is.stackSize);
+		is.stackSize += ret;
+		if (is.stackSize <= 0)
+			inventory.setInventorySlotContents(slot, null);
+		return ret;
+	}
+
 	public ItemStack setSlot(ItemStack is) {
 		ItemStack prev = this.getStack();
 		inventory.setInventorySlotContents(slot, is);

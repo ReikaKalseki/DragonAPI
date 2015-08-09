@@ -190,10 +190,15 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		return Vec3.createVectorHelper(-vec.xCoord, -vec.yCoord, -vec.zCoord);
 	}
 
-	public static Vector3f rotateVector(Vec3 vec, double rx, double ry, double rz) {
+	public static Vector3f rotateVector(Vector3f vec, double rx, double ry, double rz) {
 		Matrix4f mat = new Matrix4f();
 		euler321Sequence(mat, rx, ry, rz);
-		return multiplyVectorByMatrix(new Vector3f((float)vec.xCoord, (float)vec.yCoord, (float)vec.zCoord), mat);
+		return multiplyVectorByMatrix(new Vector3f(vec.x, vec.y, vec.z), mat);
+	}
+
+	public static Vec3 rotateVector(Vec3 vec, double rx, double ry, double rz) {
+		Vector3f ret = rotateVector(new Vector3f((float)vec.xCoord, (float)vec.yCoord, (float)vec.zCoord), rx, ry, rz);
+		return Vec3.createVectorHelper(ret.x, ret.y, ret.z);
 	}
 
 }

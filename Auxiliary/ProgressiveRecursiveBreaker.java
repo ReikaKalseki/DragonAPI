@@ -11,6 +11,7 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -336,8 +337,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 	}
 
 	@Override
-	public TickType getType() {
-		return TickType.WORLD;
+	public EnumSet<TickType> getType() {
+		return EnumSet.of(TickType.WORLD);
 	}
 
 	@Override

@@ -59,15 +59,16 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 		//}
 	}
 
-	public void registerCustomPath(String path, SoundCategory cat) {
+	public void registerCustomPath(String path, SoundCategory cat, boolean streaming) {
 		ResourceLocation rl = new ResourceLocation("custom_path", path);
-		SoundPoolEntry spe = new SoundPoolEntry(rl, 1, 1, false);
+		SoundPoolEntry spe = new SoundPoolEntry(rl, 1, 1, streaming);
 		SoundEventAccessor pos = new SoundEventAccessor(spe, 1);
 		SoundEventAccessorComposite cmp = new SoundEventAccessorComposite(rl, 1, 1, cat);
 		cmp.addSoundToEventPool(pos);
 		accessors.put(path, cmp);
 	}
 
+	@Deprecated
 	public void registerSound(String domain, String path, SoundCategory cat) {
 		ResourceLocation rl = new ResourceLocation(domain, path);
 		SoundPoolEntry spe = new SoundPoolEntry(rl, 1, 1, false);

@@ -23,7 +23,7 @@ public class SoundLoader {
 	public void register() {
 		for (int i = 0; i < soundList.length; i++) {
 			SoundEnum e = soundList[i];
-			DirectResourceManager.getInstance().registerCustomPath(e.getPath(), e.getCategory());
+			DirectResourceManager.getInstance().registerCustomPath(e.getPath(), e.getCategory(), false);
 		}
 	}
 }
