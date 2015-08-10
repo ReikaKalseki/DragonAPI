@@ -205,6 +205,10 @@ public final class Coordinate {
 		return this.setBlock(world, id, meta, 3);
 	}
 
+	public boolean setBlockMetadata(World world, int meta) {
+		return world.setBlockMetadataWithNotify(xCoord, yCoord, zCoord, meta, 3);
+	}
+
 	public boolean setBlock(World world, Block id, int meta, int flags) {
 		return world != null && world.setBlock(xCoord, yCoord, zCoord, id, meta, flags);
 	}
@@ -215,6 +219,10 @@ public final class Coordinate {
 
 	public void updateTick(World world, Random r) {
 		this.getBlock(world).updateTick(world, xCoord, yCoord, zCoord, r);
+	}
+
+	public void scheduleUpdateTick(World world, int delay) {
+		world.scheduleBlockUpdate(xCoord, yCoord, zCoord, this.getBlock(world), delay);
 	}
 
 }
