@@ -43,6 +43,7 @@ import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
 import Reika.DragonAPI.Auxiliary.FindTilesCommand;
 import Reika.DragonAPI.Auxiliary.LoggingFilters;
+import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
@@ -273,6 +274,10 @@ public class DragonAPIInit extends DragonAPIMod {
 
 			if (ModList.WAILA.isLoaded()) {
 				WailaTechnicalOverride.instance.addBlock(b);
+			}
+
+			if (ModList.NEI.isLoaded()) {
+				NEI_DragonAPI_Config.hideBlock(b);
 			}
 		}
 	}

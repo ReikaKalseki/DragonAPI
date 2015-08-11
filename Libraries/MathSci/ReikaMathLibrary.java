@@ -461,4 +461,8 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		}
 		return sum;
 	}
+
+	public static boolean isPointInsideEllipse(double x, double y, double z, double ra, double rb, double rc) {
+		return (ra > 0 ? ((x*x)/(ra*ra)) : 0) + (rb > 0 ? ((y*y)/(rb*rb)) : 0) + (rc > 0 ? ((z*z)/(rc*rc)) : 0) <= 1;
+	}
 }
