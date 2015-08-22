@@ -107,7 +107,8 @@ public enum ModList implements ModEntry {
 	BOTANIA("Botania"),
 	GENDUSTRY("gendustry"),
 	FLUXEDCRYSTALS("fluxedcrystals", "fluxedCrystals.init.FCBlocks", "fluxedCrystals.init.FCItems"),
-	HUNGEROVERHAUL("HungerOverhaul");
+	HUNGEROVERHAUL("HungerOverhaul"),
+	CHISEL("chisel", "com.cricketcraft.chisel.init.ChiselBlocks", "com.cricketcraft.chisel.init.ChiselItems");
 
 	private final boolean condition;
 	public final String modLabel;

@@ -219,6 +219,32 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 	}
 
+	public static void initClass(String c) {
+		try {
+			Class.forName(c, true, ReikaJavaLibrary.class.getClassLoader());
+		}
+		catch (ClassNotFoundException e) {
+			pConsole("DRAGONAPI: Failed to initalize class "+c+"! Class not found!");
+			e.printStackTrace();
+		}
+		catch (NoClassDefFoundError e) {
+			pConsole("DRAGONAPI: Failed to initalize class "+c+"! Class not found!");
+			e.printStackTrace();
+		}
+		catch (LinkageError e) {
+			pConsole("DRAGONAPI: Failed to initalize class "+c+"! Class not found!");
+			e.printStackTrace();
+		}
+		catch (RuntimeException e) {
+			pConsole("DRAGONAPI: Failed to initalize class "+c+"!");
+			String s = e.getMessage();
+			if (s.endsWith("for invalid side SERVER")) {
+				pConsole("DRAGONAPI: Attemped to load a clientside class on the server! This is a significant programming error!");
+			}
+			e.printStackTrace();
+		}
+	}
+
 	/** Initializes a class. */
 	public static void initClass(Class c) {
 		if (printClasses)
@@ -710,6 +736,24 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			li.addAll(o.values());
 		}
 		return li;
+	}
+
+	public static void cycleList(List li, int n) {
+		if (li.isEmpty())
+			return;
+		for (int i = 0; i < n; i++) {
+			Object o = li.remove(li.size()-1);
+			li.add(0, o);
+		}
+	}
+
+	public static void cycleLinkedList(LinkedList li, int n) {
+		if (li.isEmpty())
+			return;
+		for (int i = 0; i < n; i++) {
+			Object o = li.removeLast();
+			li.addFirst(o);
+		}
 	}
 
 	public static class ReverseComparator implements Comparator<Comparable> {

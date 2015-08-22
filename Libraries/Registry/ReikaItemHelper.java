@@ -470,4 +470,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 		String s = Item.itemRegistry.getNameForObject(i);
 		return s.substring(0, s.indexOf(':'));
 	}
+
+	public static String getRegistrantMod(ItemStack is) {
+		UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(is.getItem());
+		return id != null ? id.modId : "[No Mod]";
+	}
 }

@@ -411,7 +411,8 @@ public final class MTInteractionManager {
 
 		@Override
 		public void handle(Object r) {
-			instance.scanAndRemove(); //Do not reload, because inf loop
+			if (!DragonAPICore.isSinglePlayer())
+				instance.scanAndRemove(); //Do not reload, because inf loop
 		}
 
 	}

@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 
@@ -22,6 +23,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.FilledBlockArray;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
@@ -43,6 +45,7 @@ public class StructureRenderer {
 
 	private final HashMap<Coordinate, ItemStack> overrides = new HashMap();
 	private final ItemHashMap<ItemStack> itemOverrides = new ItemHashMap();
+	private final HashMap<Block, BlockChoiceHook> choiceHooks = new HashMap();
 	private final ItemHashMap<BlockRenderHook> renderHooks = new ItemHashMap();
 
 	public StructureRenderer(FilledBlockArray structure) {
@@ -88,8 +91,34 @@ public class StructureRenderer {
 		itemOverrides.put(is, render);
 	}
 
+	public void addBlockHook(Block b, BlockChoiceHook brh) {
+		choiceHooks.put(b, brh);
+	}
+
 	public void addRenderHook(ItemStack is, BlockRenderHook brh) {
 		renderHooks.put(is, brh);
+	}
+
+	private ItemStack getRenderStack(Coordinate pos) {
+		ItemStack is = array.getDisplayAt(pos.xCoord, pos.yCoord, pos.zCoord);
+		ItemStack over = overrides.get(pos);
+		if (over != null)
+			is = over;
+		if (is != null && is.getItem() != null) {
+			over = itemOverrides.get(is);
+			if (over != null)
+				is = over;
+		}
+		if (is != null && is.getItem() != null) {
+			Block b = Block.getBlockFromItem(is.getItem());
+			if (b != null) {
+				BlockChoiceHook bc = choiceHooks.get(b);
+				if (bc != null) {
+					is = bc.getBlock(pos, is.getItemDamage()).asItemStack();
+				}
+			}
+		}
+		return is;
 	}
 
 	public void drawSlice(int j, int k) {
@@ -100,15 +129,7 @@ public class StructureRenderer {
 		int oy = 105;
 		for (int x = array.getMinX(); x <= array.getMaxX(); x++) {
 			for (int z = array.getMinZ(); z <= array.getMaxZ(); z++) {
-				ItemStack is = array.getDisplayAt(x, y, z);
-				ItemStack over = overrides.get(new Coordinate(x, y, z));
-				if (over != null)
-					is = over;
-				if (is != null && is.getItem() != null) {
-					over = itemOverrides.get(is);
-					if (over != null)
-						is = over;
-				}
+				ItemStack is = this.getRenderStack(new Coordinate(x, y, z));
 				if (is != null && is.getItem() != null) {
 					int dx = (x-array.getMidX())*dd;
 					int dz = (z-array.getMidZ())*dd;
@@ -132,11 +153,8 @@ public class StructureRenderer {
 		for (int y = array.getMinY(); y <= array.getMaxY(); y++) {
 			for (int x = array.getMinX(); x <= array.getMaxX(); x++) {
 				for (int z = array.getMinZ(); z <= array.getMaxZ(); z++) {
-					ItemStack is = array.getDisplayAt(x, y, z);
-					ItemStack over = overrides.get(new Coordinate(x, y, z));
-					if (over != null)
-						is = over;
-					if (is != null) {
+					ItemStack is = this.getRenderStack(new Coordinate(x, y, z));
+					if (is != null && is.getItem() != null) {
 						int dx = x-array.getMidX();
 						int dy = y-array.getMidY();
 						int dz = z-array.getMidZ();
@@ -251,6 +269,12 @@ public class StructureRenderer {
 		public double getScale();
 		public int getOffsetX();
 		public int getOffsetY();
+
+	}
+
+	public interface BlockChoiceHook {
+
+		public BlockKey getBlock(Coordinate pos, int meta);
 
 	}
 }

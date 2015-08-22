@@ -34,6 +34,17 @@ public class ReikaJVMParser {
 		return null;
 	}
 
+	public static int getArgumentInteger(String pre) {
+		for (String s : args) {
+			if (s.startsWith(pre)) {
+				int idx = s.indexOf('=');
+				String ret = s.substring(idx);
+				return ReikaJavaLibrary.safeIntParse(ret);
+			}
+		}
+		return -1;
+	}
+
 	static {
 		args.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
 	}

@@ -24,9 +24,11 @@ public class EnumSound implements ISound {
 	public final SoundEnum sound;
 	private final ResourceLocation res;
 
+	public final boolean attenuate;
+
 	private boolean repeat = false;
 
-	public EnumSound(SoundEnum obj, double x, double y, double z, float vol, float p) {
+	public EnumSound(SoundEnum obj, double x, double y, double z, float vol, float p, boolean att) {
 		sound = obj;
 		res = new ResourceLocation("custom_path", obj.getPath());
 		posX = x;
@@ -34,6 +36,7 @@ public class EnumSound implements ISound {
 		posZ = z;
 		volume = vol;
 		pitch = p;
+		attenuate = att;
 	}
 
 	public EnumSound setRepeating() {
@@ -83,7 +86,7 @@ public class EnumSound implements ISound {
 
 	@Override
 	public AttenuationType getAttenuationType() {
-		return AttenuationType.LINEAR;
+		return attenuate ? AttenuationType.LINEAR : AttenuationType.NONE;
 	}
 
 }

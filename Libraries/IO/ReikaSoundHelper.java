@@ -140,13 +140,18 @@ public class ReikaSoundHelper {
 	}
 
 	private static void sendSound(String ch, SoundEnum s, World world, double x, double y, double z, float vol, float pitch) {
-		ReikaPacketHelper.sendSoundPacket(ch, s, world, x, y, z, vol, pitch);
+		ReikaPacketHelper.sendSoundPacket(ch, s, world, x, y, z, vol, pitch, s.attenuate());
 	}
 
 	@SideOnly(Side.CLIENT)
 	public static void playClientSound(SoundEnum s, double x, double y, double z, float vol, float pitch) {
+		playClientSound(s, x, y, z, vol, pitch, true);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void playClientSound(SoundEnum s, double x, double y, double z, float vol, float pitch, boolean att) {
 		try {
-			FMLClientHandler.instance().getClient().getSoundHandler().playSound(new EnumSound(s, x, y, z, vol, pitch));
+			FMLClientHandler.instance().getClient().getSoundHandler().playSound(new EnumSound(s, x, y, z, vol, pitch, att));
 		}
 		catch (ConcurrentModificationException e) {
 			e.printStackTrace();
@@ -154,8 +159,13 @@ public class ReikaSoundHelper {
 	}
 
 	@SideOnly(Side.CLIENT)
+	public static void playClientSound(SoundEnum s, Entity e, float vol, float pitch, boolean att) {
+		playClientSound(s, e.posX, e.posY, e.posZ, vol, pitch, att);
+	}
+
+	@SideOnly(Side.CLIENT)
 	public static void playClientSound(SoundEnum s, Entity e, float vol, float pitch) {
-		playClientSound(s, e.posX, e.posY, e.posZ, vol, pitch);
+		playClientSound(s, e.posX, e.posY, e.posZ, vol, pitch, true);
 	}
 
 	@SideOnly(Side.CLIENT)

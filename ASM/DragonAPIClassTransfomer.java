@@ -12,10 +12,6 @@ package Reika.DragonAPI.ASM;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.MusicTicker;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
@@ -75,6 +71,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		//TILEUPDATE("net.minecraft.world.World", "ahb"),
 		FURNACEUPDATE("net.minecraft.tileentity.TileEntityFurnace", "apg"),
 		MUSICEVENT("net.minecraft.client.audio.MusicTicker", "btg"),
+		SOUNDEVENTS("net.minecraft.client.audio.SoundManager", "btj"),
 		;
 
 		private final String obfName;
@@ -854,6 +851,27 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 
 					break;
 				}
+				case SOUNDEVENTS: {
+
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_148594_a", "getNormalizedVolume", "(Lnet/minecraft/client/audio/ISound;Lnet/minecraft/client/audio/SoundPoolEntry;Lnet/minecraft/client/audio/SoundCategory;)F");
+					m.instructions.clear();
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/SoundVolumeEvent", "fire", "(Lnet/minecraft/client/audio/ISound;Lnet/minecraft/client/audio/SoundPoolEntry;Lnet/minecraft/client/audio/SoundCategory;)F", false));
+					m.instructions.add(new InsnNode(Opcodes.FRETURN));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 1!");
+
+					m = ReikaASMHelper.getMethodByName(cn, "func_148606_a", "getNormalizedPitch", "(Lnet/minecraft/client/audio/ISound;Lnet/minecraft/client/audio/SoundPoolEntry;)F");
+					m.instructions.clear();
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/SoundPitchEvent", "fire", "(Lnet/minecraft/client/audio/ISound;Lnet/minecraft/client/audio/SoundPoolEntry;)F", false));
+					m.instructions.add(new InsnNode(Opcodes.FRETURN));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 2!");
+
+					break;
+				}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -877,21 +895,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 
 	class test {
 
-		private ISound field_147678_c;
-		private int field_147676_d;
-		private Minecraft field_147677_b;
 
-		public void update() {
-			MusicTicker.MusicType musictype = field_147677_b.func_147109_W();
-
-			if (field_147678_c == null && field_147676_d-- <= 0)
-			{
-				field_147678_c = PositionedSoundRecord.func_147673_a(musictype.getMusicTickerLocation());
-				//if (!MinecraftForge.EVENT_BUS.post(new PlayMusicEvent(field_147678_c, field_147676_d)))
-				field_147677_b.getSoundHandler().playSound(field_147678_c);
-				field_147676_d = Integer.MAX_VALUE;
-			}
-		}
 
 	}
 

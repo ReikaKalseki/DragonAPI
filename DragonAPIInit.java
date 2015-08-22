@@ -93,6 +93,8 @@ import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.ReikaPotionHelper;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -214,7 +216,7 @@ public class DragonAPIInit extends DragonAPIMod {
 			MinecraftForge.EVENT_BUS.register(DragonAPILoadWatcher.instance);
 		MinecraftForge.EVENT_BUS.register(DragonAPIEventWatcher.instance);
 
-		logger.log("Initializing libraries with max recursion depth of "+ReikaJavaLibrary.getMaximumRecursiveDepth());
+		logger.log("Initializing libraries with max recursion depth of "+this.getRecursionDepth());
 
 		proxy.registerSidedHandlers();
 
@@ -222,7 +224,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		ChunkManager.instance.register();
 
-		OreDictionary.initVanillaEntries();
+		this.initalizeVanillaOreDict();
+
 		ReikaJavaLibrary.initClass(ModList.class);
 
 		this.increasePotionCount();
@@ -248,6 +251,27 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.finishTiming();
 	}
 
+	private int getRecursionDepth() {
+		int config = ReikaJVMParser.getArgumentInteger("-DragonAPI_RecursionLimit");//DragonOptions.RECURSE.getValue();
+		int min = 500;
+		int max = 50000;
+		if (config < min) {
+			logger.logError("Specified recursion limit of "+config+" is far too low, and has been clamped to "+min+".");
+			config = min;
+		}
+		if (config > max) {
+			logger.logError("Specified recursion limit of "+config+" is far too high, and has been clamped to "+max+".");
+			config = max;
+		}
+		return config > 0 ? config : ReikaJavaLibrary.getMaximumRecursiveDepth();
+	}
+
+	private void initalizeVanillaOreDict() {
+		OreDictionary.initVanillaEntries();
+		OreDictionary.registerOre("netherrack", Blocks.netherrack);
+		OreDictionary.registerOre("soulsand", Blocks.soul_sand);
+	}
+
 	private void increaseChunkCap() {
 		Configuration cfg = ForgeChunkManager.getConfig();
 		Property modTC = cfg.get(this.getModContainer().getModId(), "maximumTicketCount", 1000);
@@ -255,17 +279,17 @@ public class DragonAPIInit extends DragonAPIMod {
 		cfg.save();
 	}
 
-	private static final Block[] technicalBlocks = {
-		Blocks.brewing_stand, Blocks.bed, Blocks.nether_wart, Blocks.cauldron, Blocks.flower_pot, Blocks.wheat, Blocks.reeds,
-		Blocks.cake, Blocks.skull, Blocks.piston_head, Blocks.lit_redstone_ore, Blocks.powered_repeater, Blocks.pumpkin_stem,
-		Blocks.standing_sign, Blocks.powered_comparator, Blocks.tripwire, Blocks.lit_redstone_lamp, Blocks.melon_stem,
-		Blocks.unlit_redstone_torch, Blocks.unpowered_comparator, Blocks.redstone_wire, Blocks.wall_sign,
-		Blocks.unpowered_repeater, Blocks.iron_door, Blocks.wooden_door
-	};
-
 	/** Registers all the vanilla technical blocks (except air and block 36) to have items so as to avoid crashes when rendering them
 	 * in the inventory. */
 	private void registerTechnicalBlocks() {
+		Block[] technicalBlocks = {
+				Blocks.brewing_stand, Blocks.bed, Blocks.nether_wart, Blocks.cauldron, Blocks.flower_pot, Blocks.wheat, Blocks.reeds,
+				Blocks.cake, Blocks.skull, Blocks.piston_head, Blocks.lit_redstone_ore, Blocks.powered_repeater, Blocks.pumpkin_stem,
+				Blocks.standing_sign, Blocks.powered_comparator, Blocks.tripwire, Blocks.lit_redstone_lamp, Blocks.melon_stem,
+				Blocks.unlit_redstone_torch, Blocks.unpowered_comparator, Blocks.redstone_wire, Blocks.wall_sign,
+				Blocks.unpowered_repeater, Blocks.iron_door, Blocks.wooden_door
+		};
+
 		for (int i = 0; i < technicalBlocks.length; i++) {
 			Block b = technicalBlocks[i];
 			ItemBlock ib = new ItemBlock(b);
@@ -341,8 +365,10 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance);
 		TickRegistry.instance.registerTickHandler(TickScheduler.instance);
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			TickRegistry.instance.registerTickHandler(KeyTicker.instance);
+			TickRegistry.instance.registerTickHandler(new ReikaRenderHelper.RenderTick());
+		}
 		//if (DragonOptions.COMPOUNDSYNC.getState())
 		//	TickRegistry.instance.registerTickHandler(CompoundSyncPacketTracker.instance, Side.SERVER);
 
@@ -485,7 +511,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new FindTilesCommand());
 		evt.registerServerCommand(new ClearItemsCommand());
 
-		if (MTInteractionManager.isMTLoaded())
+		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();
 	}
 

@@ -73,11 +73,15 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.play.server.S19PacketEntityHeadLook;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
@@ -85,6 +89,7 @@ import Reika.DragonAPI.Interfaces.ComparableAI;
 import Reika.DragonAPI.Interfaces.TameHostile;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
 
@@ -862,6 +867,77 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			}
 		}
 		return false;
+	}
+
+	public static void seamlessTeleport(Entity e, int x1, int y1, int z1, int x2, int y2, int z2, ForgeDirection from, ForgeDirection to) {
+		if (e.worldObj.isRemote)
+			return;
+
+		double dx = e.posX-x1-0.5;
+		double dy = e.posY-y1-0.5;
+		double dz = e.posZ-z1-0.5;
+		float yaw = getDYaw(e, from, to);
+
+		Vec3 vec = Vec3.createVectorHelper(dx, dy, dz);
+		vec = ReikaVectorHelper.rotateVector(vec, 0, yaw, 0);
+
+		double nx = x2+vec.xCoord+0.5;
+		double ny = y2+vec.yCoord+0.5;
+		double nz = z2+vec.zCoord+0.5;
+
+		Vec3 vvec = Vec3.createVectorHelper(e.motionX, e.motionY, e.motionZ);
+		vvec = ReikaVectorHelper.rotateVector(vvec, 0, yaw, 0);
+		e.motionX = vvec.xCoord;
+		e.motionY = vvec.yCoord;
+		e.motionZ = vvec.zCoord;
+
+		if (e instanceof EntityPlayer) {
+			e.rotationYaw += yaw;
+			((EntityPlayer)e).rotationYawHead += yaw;
+			((EntityPlayer)e).prevRotationYawHead += yaw;
+			e.prevRotationYaw += yaw;
+			((EntityPlayer)e).setPositionAndUpdate(nx, ny, nz);
+			byte a = (byte)(MathHelper.floor_float(((EntityPlayer)e).rotationYawHead*256.0F/360.0F));
+			((EntityPlayerMP)e).playerNetServerHandler.sendPacket(new S19PacketEntityHeadLook(e, a));
+		}
+		else {
+			e.setLocationAndAngles(nx, ny, nz, e.rotationYaw+yaw, e.rotationPitch);
+		}
+	}
+
+	private static float getDYaw(Entity e, ForgeDirection from, ForgeDirection to) {
+		int rel = ReikaDirectionHelper.getRelativeAngle(from, to);
+		if (rel > 180)
+			rel = rel-360;
+		return rel;
+	}
+
+	/** Gets a direction from an entity's look direction. Args: Entity, allow vertical yes/no */
+	public static ForgeDirection getDirectionFromEntityLook(EntityLivingBase e, boolean vertical) {
+		if (MathHelper.abs(e.rotationPitch) < 60 || !vertical) {
+			int i = MathHelper.floor_double((e.rotationYaw * 4F) / 360F + 0.5D);
+			while (i > 3)
+				i -= 4;
+			while (i < 0)
+				i += 4;
+			switch (i) {
+				case 0:
+					return ForgeDirection.SOUTH;
+				case 1:
+					return ForgeDirection.WEST;
+				case 2:
+					return ForgeDirection.NORTH;
+				case 3:
+					return ForgeDirection.EAST;
+			}
+		}
+		else { //Looking up/down
+			if (e.rotationPitch > 0)
+				return ForgeDirection.DOWN; //set to up
+			else
+				return ForgeDirection.UP; //set to down
+		}
+		return ForgeDirection.UNKNOWN;
 	}
 
 }

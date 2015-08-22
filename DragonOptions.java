@@ -30,6 +30,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig {
 	GREGORES("Force Gregtech Ore Compatibility", true),
 	LOGSYNCCME("Log Sync Packet CME Avoidance", true),
 	SLOWSYNC("Slow Sync Packets - Only use this as a last resort", false),
+	//RECURSE("Recursion Limit Override", -1),
 	;//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
 
 	private String label;

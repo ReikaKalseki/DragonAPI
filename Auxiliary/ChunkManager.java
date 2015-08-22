@@ -96,13 +96,14 @@ public class ChunkManager implements LoadingCallback {
 		ForgeChunkManager.releaseTicket(ticket);
 	}
 
-	public void loadChunks(WorldLocation loc, Collection<ChunkCoordIntPair> chunks) {
+	public Ticket loadChunks(WorldLocation loc, Collection<ChunkCoordIntPair> chunks) {
 		Ticket ticket = tickets.get(loc);
 		if (ticket == null) {
 			ticket = this.getNewTicket(loc);
 			this.cacheTicket(loc, ticket);
 		}
 		this.forceTicketChunks(ticket, chunks);
+		return ticket;
 	}
 
 	public void loadChunks(ChunkLoadingTile te) {

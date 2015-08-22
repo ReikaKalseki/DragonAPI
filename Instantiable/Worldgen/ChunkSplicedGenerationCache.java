@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Worldgen;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
@@ -73,6 +74,30 @@ public class ChunkSplicedGenerationCache {
 		z = this.modAndAlign(z);
 		BlockPlace p = map.get(new Coordinate(x, y, z));
 		return p != null ? p.asBlockKey() : null;
+	}
+
+	public boolean hasBlock(int x, int y, int z) {
+		ChunkCoordIntPair key = this.getKey(x, z);
+		HashMap<Coordinate, BlockPlace> map = data.get(key);
+		if (map == null)
+			return false;
+		x = this.modAndAlign(x);
+		z = this.modAndAlign(z);
+		return map.containsKey(new Coordinate(x, y, z));
+	}
+
+	public HashSet<Coordinate> getLocationsOf(BlockKey key) {
+		HashSet<Coordinate> set = new HashSet();
+		for (ChunkCoordIntPair p : data.keySet()) {
+			HashMap<Coordinate, BlockPlace> map = data.get(p);
+			for (Coordinate c : map.keySet()) {
+				BlockPlace bp = map.get(c);
+				if (bp.asBlockKey().equals(key)) {
+					set.add(c.offset(p.chunkXPos*16, 0, p.chunkZPos*16));
+				}
+			}
+		}
+		return set;
 	}
 
 	public void generate(World world, int chunkX, int chunkZ) {

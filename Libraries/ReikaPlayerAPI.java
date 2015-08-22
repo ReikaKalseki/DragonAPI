@@ -117,34 +117,6 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return getLookedAtBlock(ep, reach, liq);
 	}
 
-	/** Gets a direction from a player's look direction. Args: Player, allow vertical yes/no */
-	public static ForgeDirection getDirectionFromPlayerLook(EntityPlayer ep, boolean vertical) {
-		if (MathHelper.abs(ep.rotationPitch) < 60 || !vertical) {
-			int i = MathHelper.floor_double((ep.rotationYaw * 4F) / 360F + 0.5D);
-			while (i > 3)
-				i -= 4;
-			while (i < 0)
-				i += 4;
-			switch (i) {
-				case 0:
-					return ForgeDirection.SOUTH;
-				case 1:
-					return ForgeDirection.WEST;
-				case 2:
-					return ForgeDirection.NORTH;
-				case 3:
-					return ForgeDirection.EAST;
-			}
-		}
-		else { //Looking up/down
-			if (ep.rotationPitch > 0)
-				return ForgeDirection.DOWN; //set to up
-			else
-				return ForgeDirection.UP; //set to down
-		}
-		return ForgeDirection.UNKNOWN;
-	}
-
 	public static FakePlayer getFakePlayerByNameAndUUID(WorldServer world, String name, UUID uuid) {
 		FakePlayer fp = fakePlayers.get(name);
 		if (fp == null) {

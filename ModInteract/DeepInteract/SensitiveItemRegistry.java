@@ -9,16 +9,19 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
+import moze_intel.projecte.api.event.EMCRemapEvent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableArray;
 import Reika.DragonAPI.ModInteract.ReikaEEHelper;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 /** Register progression/balance-sensitive items here to blacklist normal recipe systems from adding new recipes for them. */
 public final class SensitiveItemRegistry {
@@ -136,6 +139,15 @@ public final class SensitiveItemRegistry {
 
 	public boolean contains(KeyedItemStack ks) {
 		return keys.contains(ks.copy().setSimpleHash(true));
+	}
+
+	@SubscribeEvent
+	@ModDependent(ModList.PROJECTE)
+	public void watchProjectE(EMCRemapEvent evt) {
+		for (KeyedItemStack ks : keys) {
+			ItemStack is = ks.getItemStack();
+			ReikaEEHelper.blacklistItemStack(is);
+		}
 	}
 
 }

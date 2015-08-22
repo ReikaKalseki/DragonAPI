@@ -19,8 +19,11 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.DoubleMatrix;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaVectorHelper extends DragonAPICore {
 
@@ -174,6 +177,27 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		mat.rotate(y, new Vector3f(0, 1, 0)).rotate(x, new Vector3f(1, 0, 0)).rotate(z, new Vector3f(0, 0, 1));
 	}
 
+	public static Vec3 multiplyVectorByMatrix(Vec3 vector, DoubleMatrix matrix) {
+		double newX = matrix.m00*vector.xCoord+matrix.m01*vector.yCoord+matrix.m02*vector.zCoord+matrix.m03;
+		double newY = matrix.m10*vector.xCoord+matrix.m11*vector.yCoord+matrix.m12*vector.zCoord+matrix.m13;
+		double newZ = matrix.m20*vector.xCoord+matrix.m21*vector.yCoord+matrix.m22*vector.zCoord+matrix.m23;
+		return Vec3.createVectorHelper(newX, newY, newZ);
+	}
+
+	public static void euler321Sequence(DoubleMatrix mat, double rx, double ry, double rz) {
+		double z = Math.toRadians(rz);
+		double y = Math.toRadians(ry);
+		double x = Math.toRadians(rx);
+		mat.rotate(z, Vec3.createVectorHelper(0, 0, 1)).rotate(y, Vec3.createVectorHelper(0, 1, 0)).rotate(x, Vec3.createVectorHelper(1, 0, 0));
+	}
+
+	public static void euler213Sequence(DoubleMatrix mat, double rx, double ry, double rz) {
+		double z = Math.toRadians(rz);
+		double y = Math.toRadians(ry);
+		double x = Math.toRadians(rx);
+		mat.rotate(y, Vec3.createVectorHelper(0, 1, 0)).rotate(x, Vec3.createVectorHelper(1, 0, 0)).rotate(z, Vec3.createVectorHelper(0, 0, 1));
+	}
+
 	public static Vec3 getXYProjection(Vec3 vec) {
 		return Vec3.createVectorHelper(vec.xCoord, vec.yCoord, 0);
 	}
@@ -190,6 +214,7 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		return Vec3.createVectorHelper(-vec.xCoord, -vec.yCoord, -vec.zCoord);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static Vector3f rotateVector(Vector3f vec, double rx, double ry, double rz) {
 		Matrix4f mat = new Matrix4f();
 		euler321Sequence(mat, rx, ry, rz);
@@ -197,8 +222,9 @@ public final class ReikaVectorHelper extends DragonAPICore {
 	}
 
 	public static Vec3 rotateVector(Vec3 vec, double rx, double ry, double rz) {
-		Vector3f ret = rotateVector(new Vector3f((float)vec.xCoord, (float)vec.yCoord, (float)vec.zCoord), rx, ry, rz);
-		return Vec3.createVectorHelper(ret.x, ret.y, ret.z);
+		DoubleMatrix mat = new DoubleMatrix();
+		euler321Sequence(mat, rx, ry, rz);
+		return multiplyVectorByMatrix(vec, mat);
 	}
 
 }

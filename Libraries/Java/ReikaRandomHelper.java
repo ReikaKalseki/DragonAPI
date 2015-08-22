@@ -101,4 +101,8 @@ public class ReikaRandomHelper extends DragonAPICore {
 		return new DecimalPosition(x+d[0], y+d[1], z+d[2]);
 	}
 
+	public static double getRandomBetween(double min, double max) {
+		return min+rand.nextDouble()*(max-min);
+	}
+
 }

@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -27,6 +28,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -89,7 +91,7 @@ public enum ModWoodList implements TreeType {
 	ROWAN(ModList.WITCHERY, 		0x374633, 0x9E774D, "LOG", "LEAVES", "SAPLING", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INSTANCE),
 	HAWTHORNE(ModList.WITCHERY, 	0x656566, 0xC3EEC3, "LOG", "LEAVES", "SAPLING", new int[]{2,6,10}, new int[]{2,10}, 2, VarType.INSTANCE),
 	ALDER(ModList.WITCHERY, 		0x52544C, 0xC3D562, "LOG", "LEAVES", "SAPLING", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE),
-	LIGHTED(ModList.CHROMATICRAFT,	0xA05F36, 0xFFD793, "GLOWLOG", "GLOWLEAF", "GLOWSAPLING", VarType.INSTANCE);
+	LIGHTED(ModList.CHROMATICRAFT,	0xA05F36, 0xFFD793, "GLOWLOG", "GLOWLEAF", "GLOWSAPLING", 0, new int[]{0,1,2,3,4}, 0, VarType.INSTANCE);
 
 	private ModList mod;
 	private Block blockID = null;
@@ -114,6 +116,8 @@ public enum ModWoodList implements TreeType {
 	private static final BlockMap<ModWoodList> logMappings = new BlockMap();
 	private static final BlockMap<ModWoodList> leafMappings = new BlockMap();
 	private static final BlockMap<ModWoodList> saplingMappings = new BlockMap();
+
+	private static final MultiMap<ModList, ModWoodList> modMappings = new MultiMap(new MultiMap.HashSetFactory());
 
 	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, VarType type) {
 		this(req, color, leaf, blockVar, leafVar, saplingVar, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, type);
@@ -474,6 +478,10 @@ public enum ModWoodList implements TreeType {
 		return this.getLogMetadatas().size() == 3;
 	}
 
+	public static Collection<ModWoodList> getAllWoodsByMod(ModList mod) {
+		return modMappings.get(mod);
+	}
+
 	public static enum VarType {
 		ITEMSTACK(),
 		INSTANCE();
@@ -502,6 +510,8 @@ public enum ModWoodList implements TreeType {
 					leafMappings.put(leaf, leafmetas[k], w);
 				}
 				saplingMappings.put(sapling, saplingMeta, w);
+
+				modMappings.addValue(w.mod, w);
 			}
 		}
 	}

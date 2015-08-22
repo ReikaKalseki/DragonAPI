@@ -95,7 +95,7 @@ public final class MultiMap<K, V> {
 		Collection<V> c = data.get(key);
 		if (c == null && this.nullEmpty)
 			return null;
-		return c != null ? (this.modifiable ? c : Collections.unmodifiableCollection(c)) : new ArrayList(); //Internal NPE protection
+		return c != null ? (this.modifiable ? c : Collections.unmodifiableCollection(c)) : this.factory.createCollection(); //Internal NPE protection
 	}
 
 	public boolean containsKey(K key) {

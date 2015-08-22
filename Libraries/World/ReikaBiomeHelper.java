@@ -246,6 +246,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			return true;
 		if (biome == BiomeGenBase.jungleHills)
 			return true;
+		if (biome == BiomeGenBase.mesa)
+			return true;
 		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
 		for (int i = 0; i < types.length; i++) {
 			if (types[i] == BiomeDictionary.Type.WASTELAND)
@@ -263,6 +265,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	/** Returns a broad-stroke biome temperature in degrees centigrade.
 	 * Args: biome */
 	public static int getBiomeTemp(BiomeGenBase biome) {
+		biome = getParentBiomeType(biome);
 		int Tamb = 25; //Most biomes = 25C
 		if (isSnowBiome(biome))
 			Tamb = -20; //-20C

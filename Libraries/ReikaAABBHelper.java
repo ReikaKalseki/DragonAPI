@@ -150,4 +150,9 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		return AxisAlignedBB.getBoundingBox(e.posX, e.posY, e.posZ, e.posX, e.posY, e.posZ).expand(range, range, range);
 	}
 
+	public static AxisAlignedBB getSizedBlockAABB(int x, int y, int z, float size) {
+		size = size/2F;
+		return AxisAlignedBB.getBoundingBox(x+0.5-size, y+0.5-size, z+0.5-size, x+0.5+size, y+0.5+size, z+0.5+size);
+	}
+
 }

@@ -28,7 +28,9 @@ import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Instantiable.Event.Client.TextureReloadEvent;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
@@ -90,6 +92,8 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 
 	protected Kerning kerning = Kerning.NORMAL;
 	protected String currentString;
+
+	private WipeEffect wipe;
 
 	public BasicFontRenderer(boolean unicode) {
 		super(Minecraft.getMinecraft().gameSettings, ReikaTextureHelper.font, Minecraft.getMinecraft().renderEngine, unicode);
@@ -155,35 +159,52 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	/**
 	 * Pick how to render a single character and return the width used.
 	 */
-	protected float renderCharAtPos(int charIndex, char c, boolean italic) {
-		return c == 32 ? 4.0F : (!unicodeFlag && charMap.contains(c) ? this.renderDefaultChar(charIndex, italic) : this.renderUnicodeChar(c, italic));
+	protected float renderCharAtPos(int charIndex, char c, boolean italic, int index) {
+		if (wipe != null && wipe.lastChar == index+1) {
+			GL11.glColor4f(ReikaColorAPI.getRed(wipe.wipeColor)/255F, ReikaColorAPI.getGreen(wipe.wipeColor)/255F, ReikaColorAPI.getBlue(wipe.wipeColor)/255F, ReikaColorAPI.getAlpha(wipe.wipeColor)/255F);
+		}
+		else {
+			GL11.glColor4f(red, blue, green, alpha);
+		}
+		return c == 32 ? 4.0F : (!unicodeFlag && charMap.contains(c) ? this.renderCharFraction(charIndex, italic, this.getFraction(index)) : this.renderUnicodeChar(c, italic));
+	}
+
+	private float getFraction(int index) {
+		return wipe != null && wipe.lastChar == index+1 ? wipe.charFraction : 1;
+	}
+
+	@Override
+	protected float renderDefaultChar(int charIndex, boolean italic) {
+		return this.renderCharFraction(charIndex, italic, 1);
 	}
 
 	/**
 	 * Render a single character with the default.png font at current (posX,posY) location...
 	 */
-	@Override
-	protected float renderDefaultChar(int charIndex, boolean italic) {
-		float f = charIndex%16*8;
-		float f1 = charIndex/16*8;
+	protected float renderCharFraction(int charIndex, boolean italic, float fraction) {
+		float columnPos = charIndex%16*8;
+		float rowPos = charIndex/16*8;
+
 		float f2 = italic ? 1F : 0F;
+
 		if (this.needsGLBlending())
 			GL11.glEnable(GL11.GL_BLEND);
-		//BlendMode.ADDITIVE.apply();
+
 		this.bindTexture();
 		float f3 = charWidth[charIndex]-0.01F;
+		float f4 = f3*fraction;
+
 		GL11.glBegin(GL11.GL_TRIANGLE_STRIP);
-		GL11.glTexCoord2f(f/128F, f1/128F);
+		GL11.glTexCoord2f(columnPos/128F, rowPos/128F);
 		GL11.glVertex3f(posX+f2, posY, 0F);
-		GL11.glTexCoord2f(f/128F, (f1+7.99F)/128F);
+		GL11.glTexCoord2f(columnPos/128F, (rowPos+7.99F)/128F);
 		GL11.glVertex3f(posX-f2, posY+7.99F, 0F);
-		GL11.glTexCoord2f((f+f3-1F)/128F, f1/128F);
-		GL11.glVertex3f(posX+f3-1F+f2, posY, 0F);
-		GL11.glTexCoord2f((f+f3-1F)/128F, (f1+7.99F)/128F);
-		GL11.glVertex3f(posX+f3-1F-f2, posY+7.99F, 0F);
+		GL11.glTexCoord2f((columnPos+f4-1F)/128F, rowPos/128F);
+		GL11.glVertex3f(posX+f4-1F+f2, posY, 0F);
+		GL11.glTexCoord2f((columnPos+f4-1F)/128F, (rowPos+7.99F)/128F);
+		GL11.glVertex3f(posX+f4-1F-f2, posY+7.99F, 0F);
 		GL11.glEnd();
-		//BlendMode.DEFAULT.apply();
-		//GL11.glDisable(GL11.GL_BLEND);
+
 		return charWidth[charIndex]+kerning.spaceModifier;
 	}
 
@@ -243,7 +264,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	 * Draws the specified string with a shadow.
 	 */
 	@Override
-	public int drawStringWithShadow(String sg, int x, int y, int color) {
+	public final int drawStringWithShadow(String sg, int x, int y, int color) {
 		return this.drawString(sg, x, y, color, true);
 	}
 
@@ -251,7 +272,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	 * Draws the specified string.
 	 */
 	@Override
-	public int drawString(String sg, int x, int y, int color) {
+	public final int drawString(String sg, int x, int y, int color) {
 		return this.drawString(sg, x, y, color, false);
 	}
 
@@ -259,7 +280,16 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	 * Draws the specified string. Args: string, x, y, color, dropShadow
 	 */
 	@Override
-	public int drawString(String sg, int x, int y, int color, boolean shadow) {
+	public final int drawString(String sg, int x, int y, int color, boolean shadow) {
+		return this.doDrawString(sg, x, y, color, shadow);
+	}
+
+	public final int drawStringFloatPos(String sg, float x, float y, int color, boolean shadow) {
+		wipe = null;
+		return this.doDrawString(sg, x, y, color, shadow);
+	}
+
+	private int doDrawString(String sg, float x, float y, int color, boolean shadow) {
 		GL11.glEnable(GL11.GL_ALPHA_TEST);
 		this.resetStyles();
 		int l;
@@ -273,6 +303,29 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 		}
 
 		return l;
+	}
+
+	public final int drawFractionalString(String sg, int x, int y, int color, int cflash, boolean shadow, float fraction) {
+		if (fraction >= 1) {
+			return this.drawString(sg, x, y, color, shadow);
+		}
+		int len = /*ReikaStringParser.stripSpaces(sg).length();/*/sg.length();
+		float fs = fraction*len;
+		float charFraction = ReikaMathLibrary.getDecimalPart(fs);
+		int lastCharIndex = (int)fs+1;
+		/*
+		for (int i = lastCharIndex-1; i >= 0; i--) {
+			if (sg.charAt(i) == ' ') {
+				lastCharIndex++;
+			}
+		}
+		//while (sg.charAt(lastCharIndex-1) == ' ' && lastCharIndex < sg.length()) {
+		//	lastCharIndex++;
+		//}
+		 * */
+		wipe = new WipeEffect(charFraction, lastCharIndex, cflash);
+		String sg2 = sg.substring(0, lastCharIndex);
+		return this.doDrawString(sg2, x, y, color, shadow);
 	}
 
 	/**
@@ -387,7 +440,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 				posY -= f1;
 			}
 
-			float f = this.renderCharAtPos(j, c0, italicStyle);
+			float f = this.renderCharAtPos(j, c0, italicStyle, idx);
 
 			if (flag1) {
 				posX += f1;
@@ -402,7 +455,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 					posY -= f1;
 				}
 
-				this.renderCharAtPos(j, c0, italicStyle);
+				this.renderCharAtPos(j, c0, italicStyle, idx);
 				posX -= f1;
 
 				if (flag1) {
@@ -459,7 +512,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	/**
 	 * Render single line string by setting GL color, current (posX,posY), and calling renderStringAtPos()
 	 */
-	private int renderString(String sg, int x, int y, int color, boolean shadow) {
+	private int renderString(String sg, float x, float y, int color, boolean shadow) {
 		if (sg == null) {
 			return 0;
 		}
@@ -489,7 +542,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	 * Returns the width of this string. Equivalent of FontMetrics.stringWidth(String s).
 	 */
 	@Override
-	public int getStringWidth(String sg) {
+	public final int getStringWidth(String sg) {
 		if (sg == null) {
 			return 0;
 		}
@@ -631,10 +684,11 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	 * Splits and draws a String with wordwrap
 	 */
 	@Override
-	public void drawSplitString(String sg, int x, int y, int color, int width) {
+	public final void drawSplitString(String sg, int x, int y, int color, int width) {
 		this.resetStyles();
 		textColor = width;
 		sg = this.trimStringNewline(sg);
+		wipe = null;
 		this.renderSplitString(sg, x, y, color, false);
 	}
 
@@ -689,8 +743,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	 * Breaks a string into a list of pieces that will fit a specified width.
 	 */
 	@Override
-	public List<String> listFormattedStringToWidth(String sg, int width)
-	{
+	public final List<String> listFormattedStringToWidth(String sg, int width) {
 		return Arrays.asList(this.wrapFormattedString(sg, width).split("\n"));
 	}
 
@@ -725,31 +778,31 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 			char c0 = sg.charAt(l);
 
 			switch (c0) {
-			case 10:
-				l--;
-				break;
-			case 167:
-				if (l < j-1) {
-					l++;
-					char c1 = sg.charAt(l);
+				case 10:
+					l--;
+					break;
+				case 167:
+					if (l < j-1) {
+						l++;
+						char c1 = sg.charAt(l);
 
-					if (c1 != 108 && c1 != 76) {
-						if (c1 == 114 || c1 == 82 || isFormatColor(c1))
-							flag = false;
+						if (c1 != 108 && c1 != 76) {
+							if (c1 == 114 || c1 == 82 || isFormatColor(c1))
+								flag = false;
+						}
+						else {
+							flag = true;
+						}
 					}
-					else {
-						flag = true;
-					}
-				}
 
-				break;
-			case 32:
-				i1 = l;
-			default:
-				k += this.getCharWidth(c0);
+					break;
+				case 32:
+					i1 = l;
+				default:
+					k += this.getCharWidth(c0);
 
-				if (flag)
-					k++;
+					if (flag)
+						k++;
 			}
 
 			if (c0 == 10) {
@@ -839,5 +892,19 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 		private Kerning(int s) {
 			spaceModifier = s;
 		}
+	}
+
+	private static class WipeEffect {
+
+		private final int lastChar;
+		private final float charFraction;
+		private final int wipeColor;
+
+		private WipeEffect(float f, int ch, int color) {
+			lastChar = ch;
+			charFraction = f;
+			wipeColor = color;
+		}
+
 	}
 }

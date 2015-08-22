@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -223,6 +224,10 @@ public final class Coordinate {
 
 	public void scheduleUpdateTick(World world, int delay) {
 		world.scheduleBlockUpdate(xCoord, yCoord, zCoord, this.getBlock(world), delay);
+	}
+
+	public ChunkCoordIntPair asChunkPair() {
+		return new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4);
 	}
 
 }

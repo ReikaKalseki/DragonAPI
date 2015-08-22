@@ -861,19 +861,19 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 	public static String toString(IRecipe r) {
 		if (r instanceof ShapedRecipes) {
-			return Arrays.toString(((ShapedRecipes)r).recipeItems);
+			return "Shaped "+Arrays.toString(((ShapedRecipes)r).recipeItems);
 		}
 		else if (r instanceof ShapelessRecipes) {
-			return ((ShapelessRecipes)r).recipeItems.toString();
+			return "Shapeless "+((ShapelessRecipes)r).recipeItems.toString();
 		}
 		else if (r instanceof ShapedOreRecipe) {
-			return Arrays.toString(((ShapedOreRecipe)r).getInput());
+			return "Shaped Ore "+Arrays.toString(((ShapedOreRecipe)r).getInput());
 		}
 		else if (r instanceof ShapelessOreRecipe) {
-			return ((ShapelessOreRecipe)r).getInput().toString();
+			return "Shapeless Ore "+((ShapelessOreRecipe)r).getInput().toString();
 		}
 		else {
-			return "Unknown_"+r.getClass().getName();
+			return "Unknown '"+r.getClass().getName()+"'";
 		}
 	}
 }

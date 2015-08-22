@@ -20,12 +20,13 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 public class LegacyWailaHelper {
 
 	private static final ArrayList<DataHandler> wailaData = new ArrayList();
 
-	private static long worldTime;
+	private static long renderFrame;
 	private static WorldLocation lastLocation;
 
 	@ModDependent(ModList.WAILA)
@@ -48,13 +49,14 @@ public class LegacyWailaHelper {
 		wailaData.add(new BlockHandler(b));
 	}
 
+	@Deprecated
 	@ModDependent(ModList.WAILA)
 	public static boolean cacheAndReturn(IWailaDataAccessor acc) {
 		World world = acc.getWorld();
-		long time = world.getTotalWorldTime();
-		if (time != worldTime)
+		long time = ReikaRenderHelper.getRenderFrame();
+		if (time != renderFrame)
 			lastLocation = null;
-		worldTime = time;
+		renderFrame = time;
 		WorldLocation loc = new WorldLocation(world, acc.getPosition().blockX, acc.getPosition().blockY, acc.getPosition().blockZ);
 		if (loc.equals(lastLocation)) {
 			return true;

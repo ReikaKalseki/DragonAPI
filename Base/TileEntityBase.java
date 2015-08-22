@@ -534,8 +534,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	private final void updateTileEntity() {
 		//worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 		//rmb = this.getTEModel(worldObj, xCoord, yCoord, zCoord);
-		if (worldObj.isRemote)
-			this.animateWithTick(worldObj, xCoord, yCoord, zCoord);
+		//if (worldObj.isRemote) commented out, caused issues
+		this.animateWithTick(worldObj, xCoord, yCoord, zCoord);
 		if (this.getTicksExisted() == 0) {
 			for (int i = 0; i < 6; i++)
 				this.updateCache(dirs[i]);
