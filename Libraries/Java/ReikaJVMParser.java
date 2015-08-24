@@ -10,15 +10,16 @@
 package Reika.DragonAPI.Libraries.Java;
 
 import java.lang.management.ManagementFactory;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 public class ReikaJVMParser {
 
 	private static final HashSet<String> args = new HashSet();
 
-	public static ArrayList<String> getAllArguments() {
-		return new ArrayList(args);
+	public static Set<String> getAllArguments() {
+		return Collections.unmodifiableSet(args);
 	}
 
 	public static boolean isArgumentPresent(String arg) {
@@ -47,6 +48,7 @@ public class ReikaJVMParser {
 
 	static {
 		args.addAll(ManagementFactory.getRuntimeMXBean().getInputArguments());
+		ReikaJavaLibrary.pConsole(args.size()+" Java arguments present: "+args);
 	}
 
 }

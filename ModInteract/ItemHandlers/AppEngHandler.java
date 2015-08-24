@@ -27,6 +27,10 @@ public class AppEngHandler extends ModHandlerBase {
 
 	private ItemStack certus;
 	private ItemStack dust;
+
+	private ItemStack fluix;
+	private ItemStack fluixdust;
+
 	private ItemStack silicon;
 
 	private ItemStack basicChip;
@@ -70,6 +74,9 @@ public class AppEngHandler extends ModHandlerBase {
 
 				certus = this.getMaterial("materialCertusQuartzCrystal");
 				dust = this.getMaterial("materialCertusQuartzDust");
+				fluix = this.getMaterial("materialFluixCrystal");
+				fluixdust = this.getMaterial("materialFluixDust");
+
 				silicon = this.getMaterial("materialSilicon");
 
 				basicChip = this.getMaterial("materialBasicCard");
@@ -200,6 +207,14 @@ public class AppEngHandler extends ModHandlerBase {
 
 	public ItemStack getCertusQuartzDust() {
 		return dust != null ? dust.copy() : null;
+	}
+
+	public ItemStack getFluixCrystal() {
+		return fluix != null ? fluix.copy() : null;
+	}
+
+	public ItemStack getFluixDust() {
+		return fluixdust != null ? fluixdust.copy() : null;
 	}
 
 	public Collection<ItemStack> getPossibleMeteorChestLoot() {

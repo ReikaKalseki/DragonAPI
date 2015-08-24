@@ -30,6 +30,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import forestry.api.apiculture.EnumBeeChromosome;
 import forestry.api.apiculture.EnumBeeType;
 import forestry.api.apiculture.IAlleleBeeSpecies;
+import forestry.api.apiculture.IBeeGenome;
 import forestry.api.apiculture.IBeeHousing;
 import forestry.api.apiculture.IBeeMutation;
 import forestry.api.apiculture.IBeeRoot;
@@ -127,6 +128,16 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	@Override
 	public final Map getSpecialty() {
+		return Collections.unmodifiableMap(specials);
+	}
+
+	@Override
+	public Map<ItemStack, Float> getProductChances() {
+		return Collections.unmodifiableMap(products);
+	}
+
+	@Override
+	public Map<ItemStack, Float> getSpecialtyChances() {
 		return Collections.unmodifiableMap(specials);
 	}
 
@@ -365,7 +376,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		}
 
 		@Override
-		public final float getChance(IBeeHousing ibh, IAllele ia1, IAllele ia2, IGenome ig1, IGenome ig2) {
+		public final float getChance(IBeeHousing ibh, IAlleleBeeSpecies ia1, IAlleleBeeSpecies ia2, IBeeGenome ig1, IBeeGenome ig2) {
 			return this.isValidParents(ia1, ia2) ? chance : 0;
 		}
 
@@ -375,6 +386,12 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 			if (ia1.getUID().equals(parent2.getUID()) && ia2.getUID().equals(parent1.getUID()))
 				return true;
 			return false;
+		}
+
+		@Override
+		@Deprecated
+		public float getChance(IBeeHousing ibh, IAllele ia1, IAllele ia2, IGenome ig1, IGenome ig2) {
+			return this.isValidParents(ia1, ia2) ? chance : 0;
 		}
 
 	}
@@ -558,14 +575,14 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	@Override
 	public int getIconColour(int renderpass) {
 		switch(renderpass) {
-		case 0:
-			return this.getOutlineColor();
-		case 1:
-			return 0xffff00;
-		case 2:
-			return 0xffffff;
-		default:
-			return 0xffffff;
+			case 0:
+				return this.getOutlineColor();
+			case 1:
+				return 0xffff00;
+			case 2:
+				return 0xffffff;
+			default:
+				return 0xffffff;
 		}
 	}
 

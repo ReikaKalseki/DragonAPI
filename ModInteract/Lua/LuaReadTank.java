@@ -25,10 +25,10 @@ public class LuaReadTank extends LuaMethod {
 	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
 		int ordinal = ((Double)args[0]).intValue();
 		IFluidHandler ifl = (IFluidHandler)te;
-		Object[] o = new Object[3];
 		FluidTankInfo info = ifl.getTankInfo(ForgeDirection.UP)[ordinal];
 		if (info.fluid == null)
 			return new Object[]{null, 0, info.capacity};
+		Object[] o = new Object[3];
 		o[0] = info.fluid.getFluid().getLocalizedName();
 		o[1] = info.fluid.amount;
 		o[2] = info.capacity;

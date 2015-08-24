@@ -72,6 +72,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		FURNACEUPDATE("net.minecraft.tileentity.TileEntityFurnace", "apg"),
 		MUSICEVENT("net.minecraft.client.audio.MusicTicker", "btg"),
 		SOUNDEVENTS("net.minecraft.client.audio.SoundManager", "btj"),
+		CLOUDRENDEREVENT("net.minecraft.client.settings.GameSettings", "bbj"),
 		;
 
 		private final String obfName;
@@ -870,6 +871,13 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.add(new InsnNode(Opcodes.FRETURN));
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 2!");
 
+					break;
+				}
+				case CLOUDRENDEREVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_74309_c", "shouldRenderClouds", "()Z");
+					m.instructions.clear();
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/CloudRenderEvent", "fire", "()Z", false));
+					m.instructions.add(new InsnNode(Opcodes.IRETURN));
 					break;
 				}
 			}

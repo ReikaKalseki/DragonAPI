@@ -23,7 +23,6 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.FilledBlockArray;
-import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
@@ -114,7 +113,7 @@ public class StructureRenderer {
 			if (b != null) {
 				BlockChoiceHook bc = choiceHooks.get(b);
 				if (bc != null) {
-					is = bc.getBlock(pos, is.getItemDamage()).asItemStack();
+					is = bc.getBlock(pos, is.getItemDamage());
 				}
 			}
 		}
@@ -124,7 +123,7 @@ public class StructureRenderer {
 	public void drawSlice(int j, int k) {
 		int y = array.getMinY()+secY;
 		int max = Math.max(array.getSizeX(), array.getSizeZ());
-		int dd = max > 16 ? 28-max : 14;
+		int dd = max > 16 ? Math.max(12, 28-max) : 14;
 		int ox = 120;
 		int oy = 105;
 		for (int x = array.getMinX(); x <= array.getMaxX(); x++) {
@@ -174,7 +173,7 @@ public class StructureRenderer {
 		GL11.glPushMatrix();
 		double d = 2;
 		if (max >= 18) {
-			d = 0.6;
+			d = 0.675;
 		}
 		else if (max >= 14) {
 			d = 0.8;
@@ -274,7 +273,7 @@ public class StructureRenderer {
 
 	public interface BlockChoiceHook {
 
-		public BlockKey getBlock(Coordinate pos, int meta);
+		public ItemStack getBlock(Coordinate pos, int meta);
 
 	}
 }

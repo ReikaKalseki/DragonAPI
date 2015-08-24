@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -118,6 +119,15 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static void pConsole(Object obj, boolean con) {
 		if (con)
 			pConsole(obj);
+	}
+
+	/** A complement to Java's built-in List-to-Array. Args: Array of any object (ints, strings, etc). */
+	public static HashSet makeSetFromArray(Object[] obj) {
+		HashSet li = new HashSet();
+		for (int i = 0; i < obj.length; i++) {
+			li.add(obj[i]);
+		}
+		return li;
 	}
 
 	/** A complement to Java's built-in List-to-Array. Args: Array of any object (ints, strings, etc). */

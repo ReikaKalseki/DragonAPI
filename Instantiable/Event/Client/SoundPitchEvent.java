@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event.Client;
 
 import net.minecraft.client.audio.ISound;
@@ -16,7 +25,7 @@ public class SoundPitchEvent extends Event {
 	public final double unclampedPitch;
 	public float pitch;
 
-	public SoundPitchEvent(ISound snd, SoundPoolEntry pl) {
+	private SoundPitchEvent(ISound snd, SoundPoolEntry pl) {
 		sound = snd;
 		pool = pl;
 

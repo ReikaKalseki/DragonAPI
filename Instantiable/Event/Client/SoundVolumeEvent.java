@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event.Client;
 
 import net.minecraft.client.Minecraft;
@@ -18,7 +27,7 @@ public class SoundVolumeEvent extends Event {
 	public final float originalVolume;
 	public float volume;
 
-	public SoundVolumeEvent(ISound snd, SoundPoolEntry pl, SoundCategory cat) {
+	private SoundVolumeEvent(ISound snd, SoundPoolEntry pl, SoundCategory cat) {
 		sound = snd;
 		pool = pl;
 		category = cat;

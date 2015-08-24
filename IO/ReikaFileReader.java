@@ -379,18 +379,17 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static void deleteFolderWithContents(File f, int tries) {
-		deleteFolderWithContents(f, tries, 0);
-	}
-
-	private static void deleteFolderWithContents(File f, int tries, int attempt) {
-		try {
-			FileUtils.deleteDirectory(f);
+		Exception e = null;
+		for (int i = 0; i < tries; i++) {
+			try {
+				FileUtils.deleteDirectory(f);
+				return;
+			}
+			catch (Exception ex) {
+				e = ex;
+			}
 		}
-		catch (Exception e) {
-			if (tries > attempt)
-				deleteFolderWithContents(f, tries, attempt+1);
-			else
-				e.printStackTrace();
-		}
+		if (e != null)
+			e.printStackTrace();
 	}
 }
