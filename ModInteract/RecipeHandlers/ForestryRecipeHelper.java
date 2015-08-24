@@ -18,6 +18,7 @@ import java.util.Map;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Instantiable.Data.Collections.ChancedOutputList;
 import Reika.DragonAPI.Libraries.Java.SemanticVersionParser;
@@ -49,40 +50,50 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 				Field output = recipe.getDeclaredField(p6 ? "outputs" : "products");
 				output.setAccessible(true);
 				ArrayList li = (ArrayList)list.get(null);
-				for (int i = 0; i < li.size(); i++) {
-					Object r = li.get(i);
+				for (Object r : li) {
 					ItemStack in = (ItemStack)input.get(r);
-					HashMap<ItemStack, Number> out = (HashMap)output.get(r);
+					Map<ItemStack, Number> out = (Map)output.get(r);
 					ChancedOutputList outputs = new ChancedOutputList();
 					for (ItemStack item : out.keySet()) {
 						Number chance = out.get(item);
-						outputs.addItem(item, p6 ? chance.floatValue() : chance.intValue());
+						outputs.addItem(item, p6 ? chance.floatValue()*100 : chance.intValue()); //he changed the %/1 thing again T_T
 					}
 					outputs.lock();
 					centrifuge.put(in, outputs);
 				}
 			}
 			catch (ClassNotFoundException e) {
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
 				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
 				e.printStackTrace();
 			}
+			catch (ClassCastException e) {
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
+				DragonAPICore.logError(this.getMod()+" classcast! "+e.getMessage());
+				e.printStackTrace();
+			}
 			catch (NoSuchFieldException e) {
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (SecurityException e) {
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
 				DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
 				e.printStackTrace();
 			}
 			catch (IllegalArgumentException e) {
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
 				DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 			catch (IllegalAccessException e) {
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
 				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
 			}
 			catch (NullPointerException e) {
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
 				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
