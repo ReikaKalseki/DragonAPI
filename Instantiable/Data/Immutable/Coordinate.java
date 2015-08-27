@@ -68,6 +68,10 @@ public final class Coordinate {
 		return this.offset(dir.offsetX*dist, dir.offsetY*dist, dir.offsetZ*dist);
 	}
 
+	public Coordinate offset(Coordinate c) {
+		return this.offset(c.xCoord, c.yCoord, c.zCoord);
+	}
+
 	public void writeToNBT(String tag, NBTTagCompound NBT) {
 		NBTTagCompound data = new NBTTagCompound();
 		data.setInteger("x", xCoord);
@@ -228,6 +232,10 @@ public final class Coordinate {
 
 	public ChunkCoordIntPair asChunkPair() {
 		return new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4);
+	}
+
+	public Coordinate negate() {
+		return new Coordinate(-xCoord, -yCoord, -zCoord);
 	}
 
 }

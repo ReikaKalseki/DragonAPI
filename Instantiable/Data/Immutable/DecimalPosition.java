@@ -54,11 +54,15 @@ public final class DecimalPosition {
 		this(hit.blockX+0.5, hit.blockY+0.5, hit.blockZ+0.5);
 	}
 
-	public DecimalPosition offset(int dx, int dy, int dz) {
+	public DecimalPosition(WorldLocation src) {
+		this(src.xCoord+0.5, src.yCoord+0.5, src.zCoord+0.5);
+	}
+
+	public DecimalPosition offset(double dx, double dy, double dz) {
 		return new DecimalPosition(xCoord+dx, yCoord+dy, zCoord+dz);
 	}
 
-	public DecimalPosition offset(ForgeDirection dir, int dist) {
+	public DecimalPosition offset(ForgeDirection dir, double dist) {
 		return this.offset(dir.offsetX*dist, dir.offsetY*dist, dir.offsetZ*dist);
 	}
 
@@ -209,6 +213,10 @@ public final class DecimalPosition {
 
 	public boolean setBlock(World world, Block id, int meta) {
 		return world != null && this.getCoordinate().setBlock(world, id, meta);
+	}
+
+	public DecimalPosition negate() {
+		return new DecimalPosition(xCoord, yCoord, zCoord);
 	}
 
 }

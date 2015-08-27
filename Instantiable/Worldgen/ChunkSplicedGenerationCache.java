@@ -36,7 +36,7 @@ public class ChunkSplicedGenerationCache {
 	}
 
 	public void setBlock(int x, int y, int z, BlockKey bk) {
-		this.setBlock(x, y, z, bk.blockID, bk.metadata);
+		this.setBlock(x, y, z, bk.blockID, bk.metadata >= 0 ? bk.metadata : 0);
 	}
 
 	public void setTileEntity(int x, int y, int z, Block b, int meta, TileCallback call) {

@@ -120,6 +120,10 @@ public class ReikaSoundHelper {
 	}
 
 	public static void playSound(SoundEnum s, String ch, World world, double x, double y, double z, float vol, float pitch) {
+		playSound(s, ch, world, x, y, z, vol, pitch, s.attenuate());
+	}
+
+	public static void playSound(SoundEnum s, String ch, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
 		long time = world.getTotalWorldTime();
 		if (!s.canOverlap()) {
 			Collection<SoundPlay> c = plays.get(s);
@@ -136,11 +140,11 @@ public class ReikaSoundHelper {
 			}
 			plays.addValue(s, new SoundPlay(time, x, y, z));
 		}
-		sendSound(ch, s, world, x, y, z, vol, pitch);
+		sendSound(ch, s, world, x, y, z, vol, pitch, atten);
 	}
 
-	private static void sendSound(String ch, SoundEnum s, World world, double x, double y, double z, float vol, float pitch) {
-		ReikaPacketHelper.sendSoundPacket(ch, s, world, x, y, z, vol, pitch, s.attenuate());
+	private static void sendSound(String ch, SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
+		ReikaPacketHelper.sendSoundPacket(ch, s, world, x, y, z, vol, pitch, atten);
 	}
 
 	@SideOnly(Side.CLIENT)

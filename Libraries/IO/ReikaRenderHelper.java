@@ -38,7 +38,7 @@ import org.lwjgl.opengl.GL12;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
-import Reika.DragonAPI.Instantiable.Rendering.ReikaModelledBreakFX;
+import Reika.DragonAPI.Instantiable.Effects.ReikaModelledBreakFX;
 import Reika.DragonAPI.Interfaces.TextureFetcher;
 import Reika.DragonAPI.Interfaces.TileModel;
 import Reika.DragonAPI.Interfaces.TileEntity.RenderFetcher;
