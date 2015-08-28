@@ -1,0 +1,20 @@
+package Reika.DragonAPI.Instantiable.Event;
+
+import net.minecraftforge.common.MinecraftForge;
+import cpw.mods.fml.common.eventhandler.Event;
+
+
+/** Generally not used for actual profiling handling, but for the massive number of hooks it provides into vanilla code. Check the profiler's calls
+  to see potential uses. */
+public class ProfileEvent extends Event {
+
+	public final String sectionName;
+
+	private ProfileEvent(String s) {
+		sectionName = s;
+	}
+
+	public static void fire(String tag) {
+		MinecraftForge.EVENT_BUS.post(new ProfileEvent(tag));
+	}
+}

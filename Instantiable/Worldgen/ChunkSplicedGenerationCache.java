@@ -55,7 +55,7 @@ public class ChunkSplicedGenerationCache {
 		map.put(new Coordinate(x, y, z), sb);
 	}
 
-	private int modAndAlign(int c) {
+	public static int modAndAlign(int c) {
 		c = c%16;
 		if (c < 0) {
 			c += 16;

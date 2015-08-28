@@ -11,8 +11,10 @@ package Reika.DragonAPI.ASM;
 
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.List;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.profiler.Profiler;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.ClassReader;
@@ -36,6 +38,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Event.ProfileEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -73,6 +76,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		MUSICEVENT("net.minecraft.client.audio.MusicTicker", "btg"),
 		SOUNDEVENTS("net.minecraft.client.audio.SoundManager", "btj"),
 		CLOUDRENDEREVENT("net.minecraft.client.settings.GameSettings", "bbj"),
+		PROFILER("net.minecraft.profiler.Profiler", "qi"),
 		;
 
 		private final String obfName;
@@ -878,6 +882,14 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.clear();
 					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/CloudRenderEvent", "fire", "()Z", false));
 					m.instructions.add(new InsnNode(Opcodes.IRETURN));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case PROFILER: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_76320_a", "startSection", "(Ljava/lang/String;)V");
+					m.instructions.insert(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/ProfileEvent", "fire", "(Ljava/lang/String;)V", false));
+					m.instructions.insert(new VarInsnNode(Opcodes.ALOAD, 1));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
 			}
@@ -901,9 +913,28 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	class test {
+	class test extends Profiler {
 
+		private String profilingSection;
+		private List sectionList;
+		private List timestampList;
 
+		@Override
+		public void startSection(String p_76320_1_)
+		{
+			ProfileEvent.fire(p_76320_1_);
+			if (profilingEnabled)
+			{
+				if (profilingSection.length() > 0)
+				{
+					profilingSection = profilingSection + ".";
+				}
+
+				profilingSection = profilingSection + p_76320_1_;
+				sectionList.add(profilingSection);
+				timestampList.add(Long.valueOf(System.nanoTime()));
+			}
+		}
 
 	}
 
