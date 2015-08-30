@@ -69,7 +69,7 @@ public class EdgeDetectionRenderer {
 	/** Render edge unless has block on that edge, and that block can render that face */
 	private void renderFace(IBlockAccess world, int x, int y, int z, RenderBlocks rb, ForgeDirection face) {
 		Tessellator v5 = Tessellator.instance;
-		double o = 0.001;
+		double o = 0.005;
 
 		boolean draw = false;
 		if (!v5.isDrawing) {

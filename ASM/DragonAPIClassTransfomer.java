@@ -11,11 +11,21 @@ package Reika.DragonAPI.ASM;
 
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.List;
+import java.util.Iterator;
 
+import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.profiler.Profiler;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ReportedException;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldSettings;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.ForgeModContainer;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -38,10 +48,11 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Event.ProfileEvent;
+import Reika.DragonAPI.Instantiable.Event.TileUpdateEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 
 public class DragonAPIClassTransfomer implements IClassTransformer {
@@ -71,7 +82,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		PLAYERRENDERPASS("net.minecraft.entity.player.EntityPlayer", "yz"),
 		//CHATSIZE("net.minecraft.client.gui.GuiNewChat", "bcc"),
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
-		//TILEUPDATE("net.minecraft.world.World", "ahb"),
+		TILEUPDATE("net.minecraft.world.World", "ahb"),
 		FURNACEUPDATE("net.minecraft.tileentity.TileEntityFurnace", "apg"),
 		MUSICEVENT("net.minecraft.client.audio.MusicTicker", "btg"),
 		SOUNDEVENTS("net.minecraft.client.audio.SoundManager", "btj"),
@@ -783,6 +794,28 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 				break;
 			}*/
+				case TILEUPDATE: {/*
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_72939_s", "updateEntities", "()V");
+					String name = FMLForgePlugin.RUNTIME_DEOBF ? "func_145837_r" : "isInvalid";
+					AbstractInsnNode pre = ReikaASMHelper.getNthMethodCall(cn, m, "net/minecraft/tileentity/TileEntity", name, "()Z", 1).getPrevious();
+					AbstractInsnNode post = ReikaASMHelper.getNthMethodCall(cn, m, "net/minecraft/tileentity/TileEntity", name, "()Z", 2).getPrevious();
+
+					while (post.getPrevious() instanceof FrameNode) {
+						post = post.getPrevious();
+					}
+
+					LabelNode label = new LabelNode();
+					InsnList evt = new InsnList();
+					evt.add(new VarInsnNode(Opcodes.ALOAD, 4));
+					evt.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/TileUpdateEvent", "fire", "(Lnet/minecraft/tileentity/TileEntity;)Z", false));
+					evt.add(new JumpInsnNode(Opcodes.IFEQ, label));
+
+					m.instructions.insertBefore(post, label);
+					m.instructions.insertBefore(pre, evt);
+					ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");*/
+					break;
+				}
 				case FURNACEUPDATE: {
 					InsnList pre = new InsnList();
 					LabelNode L1 = new LabelNode();
@@ -913,27 +946,67 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	class test extends Profiler {
+	abstract class test extends World {
 
-		private String profilingSection;
-		private List sectionList;
-		private List timestampList;
+		public test(ISaveHandler p_i45368_1_, String p_i45368_2_, WorldProvider p_i45368_3_, WorldSettings p_i45368_4_, Profiler p_i45368_5_) {
+			super(p_i45368_1_, p_i45368_2_, p_i45368_3_, p_i45368_4_, p_i45368_5_);
+			// TODO Auto-generated constructor stub
+		}
 
 		@Override
-		public void startSection(String p_76320_1_)
-		{
-			ProfileEvent.fire(p_76320_1_);
-			if (profilingEnabled)
+		public void updateEntities() {
+
+			CrashReport crashreport = null;
+			CrashReportCategory crashreportcategory = null;
+
+			Iterator iterator = loadedTileEntityList.iterator();
+
+			while (iterator.hasNext())
 			{
-				if (profilingSection.length() > 0)
-				{
-					profilingSection = profilingSection + ".";
+				TileEntity tileentity = (TileEntity)iterator.next();
+				if (TileUpdateEvent.fire(tileentity)) {
+					if (!tileentity.isInvalid() && tileentity.hasWorldObj() && this.blockExists(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord))
+					{
+						try
+						{
+							tileentity.updateEntity();
+						}
+						catch (Throwable throwable)
+						{
+							crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
+							crashreportcategory = crashreport.makeCategory("Block entity being ticked");
+							tileentity.func_145828_a(crashreportcategory);
+							if (ForgeModContainer.removeErroringTileEntities)
+							{
+								FMLLog.severe(crashreport.getCompleteReport());
+								tileentity.invalidate();
+								this.setBlockToAir(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
+							}
+							else
+							{
+								throw new ReportedException(crashreport);
+							}
+						}
+					}
+
 				}
 
-				profilingSection = profilingSection + p_76320_1_;
-				sectionList.add(profilingSection);
-				timestampList.add(Long.valueOf(System.nanoTime()));
+				if (tileentity.isInvalid())
+				{
+					iterator.remove();
+
+					if (this.chunkExists(tileentity.xCoord >> 4, tileentity.zCoord >> 4))
+					{
+						Chunk chunk = this.getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
+
+						if (chunk != null)
+						{
+							chunk.removeInvalidTileEntity(tileentity.xCoord & 15, tileentity.yCoord, tileentity.zCoord & 15);
+						}
+					}
+				}
 			}
+
 		}
 
 	}

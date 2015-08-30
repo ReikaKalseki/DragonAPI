@@ -418,7 +418,7 @@ public class ReikaASMHelper {
 		return getNthMethodCall(cn, m, owner, name, sig, 1);
 	}
 
-	private static MethodInsnNode getNthMethodCall(ClassNode cn, MethodNode m, String owner, String name, String sig, int n) {
+	public static MethodInsnNode getNthMethodCall(ClassNode cn, MethodNode m, String owner, String name, String sig, int n) {
 		int counter = 0;
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);
@@ -438,7 +438,7 @@ public class ReikaASMHelper {
 		return getNthFieldCall(cn, m, name, 1);
 	}
 
-	private static FieldInsnNode getNthFieldCall(ClassNode cn, MethodNode m, String name, int n) {
+	public static FieldInsnNode getNthFieldCall(ClassNode cn, MethodNode m, String name, int n) {
 		int counter = 0;
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);

@@ -21,7 +21,9 @@ import net.minecraft.util.MathHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 import Reika.DragonAPI.ModRegistry.ModOreList;
+import Reika.DragonAPI.ModRegistry.ModWoodList;
 
 public class BlockReplaceCommand extends DragonCommandBase {
 
@@ -49,6 +51,20 @@ public class BlockReplaceCommand extends DragonCommandBase {
 					for (ModOreList ore : ModOreList.oreList) {
 						for (ItemStack is : ore.getAllOreBlocks()) {
 							id1.add(Block.getIdFromBlock(Block.getBlockFromItem(is.getItem())));
+						}
+					}
+				}
+				else if (from.equals("all_trees")) {
+					for (ReikaTreeHelper tree : ReikaTreeHelper.treeList) {
+						id1.add(Block.getIdFromBlock(tree.getLogID()));
+						id1.add(Block.getIdFromBlock(tree.getLeafID()));
+						id1.add(Block.getIdFromBlock(tree.getSaplingID()));
+					}
+					for (ModWoodList tree : ModWoodList.woodList) {
+						if (tree.exists()) {
+							id1.add(Block.getIdFromBlock(tree.getLogID()));
+							id1.add(Block.getIdFromBlock(tree.getLeafID()));
+							id1.add(Block.getIdFromBlock(tree.getSaplingID()));
 						}
 					}
 				}
