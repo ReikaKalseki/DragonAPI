@@ -11,7 +11,6 @@ package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.MinecraftForge;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
 @Cancelable
@@ -19,13 +18,11 @@ public class TileUpdateEvent extends TileEntityEvent {
 
 	private TileUpdateEvent(TileEntity te) {
 		super(te);
-
-		ReikaJavaLibrary.pConsole("Updating "+te);
 	}
 
 	public static boolean fire(TileEntity te) {
-		if (te.isInvalid() || !te.hasWorldObj() || !te.worldObj.blockExists(te.xCoord, te.yCoord, te.zCoord))
-			return true;
+		//if (te.isInvalid() || !te.hasWorldObj() || !te.worldObj.blockExists(te.xCoord, te.yCoord, te.zCoord))
+		//	return true;
 		return MinecraftForge.EVENT_BUS.post(new TileUpdateEvent(te));
 	}
 

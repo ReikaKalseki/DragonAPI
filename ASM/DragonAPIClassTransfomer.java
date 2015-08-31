@@ -11,21 +11,10 @@ package Reika.DragonAPI.ASM;
 
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.Iterator;
 
-import net.minecraft.crash.CrashReport;
-import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.profiler.Profiler;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ReportedException;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.chunk.Chunk;
-import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.classloading.FMLForgePlugin;
-import net.minecraftforge.common.ForgeModContainer;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -52,7 +41,6 @@ import Reika.DragonAPI.Instantiable.Event.TileUpdateEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
 
 public class DragonAPIClassTransfomer implements IClassTransformer {
@@ -82,7 +70,9 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		PLAYERRENDERPASS("net.minecraft.entity.player.EntityPlayer", "yz"),
 		//CHATSIZE("net.minecraft.client.gui.GuiNewChat", "bcc"),
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
-		TILEUPDATE("net.minecraft.world.World", "ahb"),
+		//TILEUPDATE("net.minecraft.world.World", "ahb"),
+		TILEUPDATE1("net.minecraft.world.World", "ahb"),
+		TILEUPDATE2("net.minecraft.tileentity.TileEntity", "aor"),
 		FURNACEUPDATE("net.minecraft.tileentity.TileEntityFurnace", "apg"),
 		MUSICEVENT("net.minecraft.client.audio.MusicTicker", "btg"),
 		SOUNDEVENTS("net.minecraft.client.audio.SoundManager", "btj"),
@@ -793,8 +783,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				m.instructions.insert(min, exit);
 				ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 				break;
-			}*/
-				case TILEUPDATE: {/*
+			}*//*
+				case TILEUPDATE: {
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_72939_s", "updateEntities", "()V");
 					String name = FMLForgePlugin.RUNTIME_DEOBF ? "func_145837_r" : "isInvalid";
 					AbstractInsnNode pre = ReikaASMHelper.getNthMethodCall(cn, m, "net/minecraft/tileentity/TileEntity", name, "()Z", 1).getPrevious();
@@ -813,7 +803,38 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.insertBefore(post, label);
 					m.instructions.insertBefore(pre, evt);
 					ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
-					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");*/
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+					}*/
+				case TILEUPDATE1: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_72939_s", "updateEntities", "()V");
+					String name = FMLForgePlugin.RUNTIME_DEOBF ? "func_145845_h" : "updateEntity";
+					MethodInsnNode min = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/tileentity/TileEntity", name, "()V");
+					min.name = "updateEntity_DAPIRelay";
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case TILEUPDATE2: {
+
+					LabelNode L1 = new LabelNode();
+					LabelNode L2 = new LabelNode();
+
+					InsnList insns = new InsnList();
+
+					insns.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					insns.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/TileUpdateEvent", "fire", "(Lnet/minecraft/tileentity/TileEntity;)Z", false));
+					insns.add(new JumpInsnNode(Opcodes.IFNE, L1));
+					insns.add(L2);
+					insns.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					insns.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/tileentity/TileEntity", "updateEntity", "()V", false));
+					insns.add(L1);
+					//insns.add(new FrameNode(Opcodes.F_SAME));
+					insns.add(new InsnNode(Opcodes.RETURN));
+
+					ReikaASMHelper.addMethod(cn, insns, "updateEntity_DAPIRelay", "()V", Modifier.PUBLIC);
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
 				case FURNACEUPDATE: {
@@ -946,67 +967,12 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	abstract class test extends World {
+	abstract class test extends TileEntity {
 
-		public test(ISaveHandler p_i45368_1_, String p_i45368_2_, WorldProvider p_i45368_3_, WorldSettings p_i45368_4_, Profiler p_i45368_5_) {
-			super(p_i45368_1_, p_i45368_2_, p_i45368_3_, p_i45368_4_, p_i45368_5_);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		public void updateEntities() {
-
-			CrashReport crashreport = null;
-			CrashReportCategory crashreportcategory = null;
-
-			Iterator iterator = loadedTileEntityList.iterator();
-
-			while (iterator.hasNext())
-			{
-				TileEntity tileentity = (TileEntity)iterator.next();
-				if (TileUpdateEvent.fire(tileentity)) {
-					if (!tileentity.isInvalid() && tileentity.hasWorldObj() && this.blockExists(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord))
-					{
-						try
-						{
-							tileentity.updateEntity();
-						}
-						catch (Throwable throwable)
-						{
-							crashreport = CrashReport.makeCrashReport(throwable, "Ticking block entity");
-							crashreportcategory = crashreport.makeCategory("Block entity being ticked");
-							tileentity.func_145828_a(crashreportcategory);
-							if (ForgeModContainer.removeErroringTileEntities)
-							{
-								FMLLog.severe(crashreport.getCompleteReport());
-								tileentity.invalidate();
-								this.setBlockToAir(tileentity.xCoord, tileentity.yCoord, tileentity.zCoord);
-							}
-							else
-							{
-								throw new ReportedException(crashreport);
-							}
-						}
-					}
-
-				}
-
-				if (tileentity.isInvalid())
-				{
-					iterator.remove();
-
-					if (this.chunkExists(tileentity.xCoord >> 4, tileentity.zCoord >> 4))
-					{
-						Chunk chunk = this.getChunkFromChunkCoords(tileentity.xCoord >> 4, tileentity.zCoord >> 4);
-
-						if (chunk != null)
-						{
-							chunk.removeInvalidTileEntity(tileentity.xCoord & 15, tileentity.yCoord, tileentity.zCoord & 15);
-						}
-					}
-				}
+		public void updateEntity_Relay() {
+			if (!TileUpdateEvent.fire(this)) {
+				super.updateEntity();
 			}
-
 		}
 
 	}

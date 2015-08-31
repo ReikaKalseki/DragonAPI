@@ -516,7 +516,20 @@ public class ReikaASMHelper {
 		if (getMethodByNameAndSig(cn, name, sig) != null)
 			throw new ASMException.DuplicateASMMethodException(cn, name, sig);
 		MethodNode m = new MethodNode(flags, name, sig, null, new String[0]);
+
+		m.invisibleAnnotations = new ArrayList();
+		m.invisibleParameterAnnotations = new List[0];
+		m.invisibleLocalVariableAnnotations = new ArrayList();
+		m.invisibleTypeAnnotations = new ArrayList();
+		m.visibleAnnotations = new ArrayList();
+		m.visibleLocalVariableAnnotations = new ArrayList();
+		m.visibleParameterAnnotations = new List[0];
+		m.visibleTypeAnnotations = new ArrayList();
+
+		m.exceptions = new ArrayList();
+
 		m.instructions = insns;
+
 		cn.methods.add(m);
 	}
 
