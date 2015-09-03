@@ -37,11 +37,13 @@ public abstract class ASMException extends RuntimeException {
 
 		private final ClassNode owner;
 		private final MethodNode method;
+		protected final String memberOwner;
 
-		private NoSuchInstructionASMException(ClassNode cn, MethodNode m) {
+		private NoSuchInstructionASMException(ClassNode cn, MethodNode m, String own) {
 			super(null);
 			method = m;
 			owner = cn;
+			memberOwner = own;
 		}
 
 		@Override
@@ -59,8 +61,8 @@ public abstract class ASMException extends RuntimeException {
 		private final String callDesc;
 		private final int callInt;
 
-		public NoSuchASMMethodInstructionException(ClassNode cn, MethodNode m, String name, String sig, int n) {
-			super(cn, m);
+		public NoSuchASMMethodInstructionException(ClassNode cn, MethodNode m, String own, String name, String sig, int n) {
+			super(cn, m, own);
 			callName = name;
 			callDesc = sig;
 			callInt = n;
@@ -70,7 +72,7 @@ public abstract class ASMException extends RuntimeException {
 		public String getMessage() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(super.getMessage());
-			sb.append("Could not find an instruction for a method call to "+callName+" "+callDesc+":\n");
+			sb.append("Could not find an instruction for a method call to "+memberOwner+"'s "+callName+" "+callDesc+":\n");
 			if (callInt > 0)
 				sb.append("Was looking for call #"+callInt+" to that method call.\n");
 			return sb.toString();
@@ -83,8 +85,8 @@ public abstract class ASMException extends RuntimeException {
 		private final String callName;
 		private final int callInt;
 
-		public NoSuchASMFieldInstructionException(ClassNode cn, MethodNode m, String name, int n) {
-			super(cn, m);
+		public NoSuchASMFieldInstructionException(ClassNode cn, MethodNode m, String own, String name, int n) {
+			super(cn, m, own);
 			callName = name;
 			callInt = n;
 		}
@@ -93,7 +95,7 @@ public abstract class ASMException extends RuntimeException {
 		public String getMessage() {
 			StringBuilder sb = new StringBuilder();
 			sb.append(super.getMessage());
-			sb.append("Could not find an instruction for a field call to "+callName+":\n");
+			sb.append("Could not find an instruction for a field call to "+memberOwner+"'s "+callName+":\n");
 			if (callInt > 0)
 				sb.append("Was looking for call #"+callInt+" to that field call.\n");
 			return sb.toString();

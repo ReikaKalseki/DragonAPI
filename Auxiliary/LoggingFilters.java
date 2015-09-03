@@ -21,7 +21,7 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 
-import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.Side;
@@ -150,7 +150,7 @@ public class LoggingFilters {
 			String sg = msg.getFormattedMessage();
 			if (sg.contains(PREFIX)) {
 				String tex = sg.substring(PREFIX.length()+1);
-				DragonAPICore.logError("Texture Map could not find texture '"+tex+"'; File not found.");
+				ReikaJavaLibrary.pConsole("ERROR: Texture Map could not find texture '"+tex+"'; File not found.");
 				return null;//"ERROR: Texture Map could not find texture '"+tex+"'; File not found.";
 			}
 			return "";

@@ -13,7 +13,6 @@ import java.lang.reflect.Modifier;
 import java.util.Collection;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.ClassReader;
@@ -37,7 +36,6 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Event.TileUpdateEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -71,13 +69,16 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		//CHATSIZE("net.minecraft.client.gui.GuiNewChat", "bcc"),
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
 		//TILEUPDATE("net.minecraft.world.World", "ahb"),
-		TILEUPDATE1("net.minecraft.world.World", "ahb"),
-		TILEUPDATE2("net.minecraft.tileentity.TileEntity", "aor"),
+		//TILEUPDATE1("net.minecraft.world.World", "ahb"),
+		//TILEUPDATE2("net.minecraft.tileentity.TileEntity", "aor"),
 		FURNACEUPDATE("net.minecraft.tileentity.TileEntityFurnace", "apg"),
 		MUSICEVENT("net.minecraft.client.audio.MusicTicker", "btg"),
 		SOUNDEVENTS("net.minecraft.client.audio.SoundManager", "btj"),
 		CLOUDRENDEREVENT("net.minecraft.client.settings.GameSettings", "bbj"),
 		PROFILER("net.minecraft.profiler.Profiler", "qi"),
+		SPRINTEVENT("net.minecraft.network.NetHandlerPlayServer", "nh"),
+		//JUMPCHECKEVENTSERVER("net.minecraft.network.NetHandlerPlayServer", "nh"),
+		//JUMPCHECKEVENTCLIENT("net.minecraft.entity.EntityLivingBase", "sv"),
 		;
 
 		private final String obfName;
@@ -805,7 +806,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
-					}*/
+					}*//*
 				case TILEUPDATE1: {
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_72939_s", "updateEntities", "()V");
 					String name = FMLForgePlugin.RUNTIME_DEOBF ? "func_145845_h" : "updateEntity";
@@ -836,7 +837,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
-				}
+				}*/
 				case FURNACEUPDATE: {
 					InsnList pre = new InsnList();
 					LabelNode L1 = new LabelNode();
@@ -946,6 +947,83 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
+				case SPRINTEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147357_a", "processEntityAction", "(Lnet/minecraft/network/play/client/C0BPacketEntityAction;)V");
+					String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_70031_b" : "setSprinting";
+					AbstractInsnNode call = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/entity/player/EntityPlayerMP", func, "(Z)V");
+					InsnList evt = new InsnList();
+					evt.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					evt.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/network/NetHandlerPlayServer", "playerEntity", "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+					evt.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/PlayerSprintEvent", "fire", "(Lnet/minecraft/entity/player/EntityPlayer;)V", false));
+					m.instructions.insert(call, evt);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}/*
+				case JUMPCHECKEVENTSERVER: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147347_a", "processPlayer", "(Lnet/minecraft/network/play/client/C03PacketPlayer;)V");
+					String name = FMLForgePlugin.RUNTIME_DEOBF ? "field_70122_E" : "onGround";
+					AbstractInsnNode call = ReikaASMHelper.getNthFieldCall(cn, m, "net/minecraft/entity/player/EntityPlayerMP", name, 2);
+					AbstractInsnNode loc1 = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(call), Opcodes.ALOAD, 0);
+					AbstractInsnNode loc2 = ReikaASMHelper.getFirstInsnAfter(m.instructions, m.instructions.indexOf(call), Opcodes.DCMPL).getNext();
+					LabelNode tgt = ((JumpInsnNode)loc2).label;
+
+					Collection<AbstractInsnNode> c = new ArrayList();
+					int pre = m.instructions.indexOf(loc1);
+
+					for (int i = pre; i <= m.instructions.indexOf(loc2); i++) {
+						c.add(m.instructions.get(i));
+					}
+
+					for (AbstractInsnNode ain : c) {
+						m.instructions.remove(ain);
+					}
+
+					InsnList evt = new InsnList();
+
+					evt.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					evt.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/network/NetHandlerPlayServer", "playerEntity", "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+					evt.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					//evt.add(new VarInsnNode(Opcodes.DLOAD, 15));
+					evt.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/JumpCheckEvent", "fire", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/network/play/client/C03PacketPlayer;)Z", false));
+					evt.add(new JumpInsnNode(Opcodes.IFEQ, tgt));
+
+					m.instructions.insertBefore(m.instructions.get(pre), evt);
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case JUMPCHECKEVENTCLIENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70636_d", "onLivingUpdate", "()V");
+					String name = FMLForgePlugin.RUNTIME_DEOBF ? "field_70122_E" : "onGround";
+					AbstractInsnNode call = ReikaASMHelper.getFirstFieldCall(cn, m, "net/minecraft/entity/EntityLivingBase", name);
+					AbstractInsnNode loc1 = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(call), Opcodes.ALOAD, 0);
+					AbstractInsnNode loc2 = ReikaASMHelper.getFirstInsnAfter(m.instructions, m.instructions.indexOf(call), Opcodes.ALOAD, 0).getNext().getNext();
+					LabelNode tgt = ((JumpInsnNode)loc2).label;
+
+					Collection<AbstractInsnNode> c = new ArrayList();
+					int pre = m.instructions.indexOf(loc1);
+
+					for (int i = pre; i <= m.instructions.indexOf(loc2); i++) {
+						c.add(m.instructions.get(i));
+					}
+
+					for (AbstractInsnNode ain : c) {
+						m.instructions.remove(ain);
+					}
+
+					InsnList evt = new InsnList();
+
+					evt.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					evt.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					evt.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/EntityLivingBase", "jumpTicks", "I"));
+					evt.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/JumpCheckEventClient", "fire", "(Lnet/minecraft/entity/EntityLivingBase;I)Z", false));
+					evt.add(new JumpInsnNode(Opcodes.IFEQ, tgt));
+
+					m.instructions.insertBefore(m.instructions.get(pre), evt);
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}*/
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -967,13 +1045,9 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	abstract class test extends TileEntity {
+	abstract static class test {
 
-		public void updateEntity_Relay() {
-			if (!TileUpdateEvent.fire(this)) {
-				super.updateEntity();
-			}
-		}
+
 
 	}
 

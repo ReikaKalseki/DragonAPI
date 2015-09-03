@@ -431,27 +431,27 @@ public class ReikaASMHelper {
 				}
 			}
 		}
-		throw new ASMException.NoSuchASMMethodInstructionException(cn, m, name, sig, n > 1 ? n : -1);
+		throw new ASMException.NoSuchASMMethodInstructionException(cn, m, owner, name, sig, n > 1 ? n : -1);
 	}
 
-	public static FieldInsnNode getFirstFieldCall(ClassNode cn, MethodNode m, String name) {
-		return getNthFieldCall(cn, m, name, 1);
+	public static FieldInsnNode getFirstFieldCall(ClassNode cn, MethodNode m, String owner, String name) {
+		return getNthFieldCall(cn, m, owner, name, 1);
 	}
 
-	public static FieldInsnNode getNthFieldCall(ClassNode cn, MethodNode m, String name, int n) {
+	public static FieldInsnNode getNthFieldCall(ClassNode cn, MethodNode m, String owner, String name, int n) {
 		int counter = 0;
 		for (int i = 0; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);
 			if (ain instanceof FieldInsnNode) {
 				FieldInsnNode min = (FieldInsnNode)ain;
-				if (min.name.equals(name)) {
+				if (min.owner.equals(owner) && min.name.equals(name)) {
 					counter++;
 					if (counter >= n)
 						return min;
 				}
 			}
 		}
-		throw new ASMException.NoSuchASMFieldInstructionException(cn, m, name, n > 1 ? n : -1);
+		throw new ASMException.NoSuchASMFieldInstructionException(cn, m, owner, name, n > 1 ? n : -1);
 	}
 
 	/** Currently broken */

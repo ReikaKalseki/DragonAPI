@@ -14,11 +14,11 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashMap;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.input.Keyboard;
 
@@ -26,6 +26,8 @@ import Reika.DragonAPI.APIPacketHandler;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.Instantiable.Data.Maps.PlayerMap;
+import Reika.DragonAPI.Instantiable.Event.RawKeyPressEvent;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
@@ -130,7 +132,7 @@ public class KeyWatcher {
 
 	private static class KeyState {
 
-		private final HashMap<EntityPlayer, Boolean> data = new HashMap();
+		private final PlayerMap<Boolean> data = new PlayerMap();
 
 		public boolean getKeyState(EntityPlayer ep) {
 			return data.containsKey(ep) && data.get(ep);
@@ -162,6 +164,7 @@ public class KeyWatcher {
 					keyStates.put(key, isPressed);
 					key.sendPacket();
 					KeyWatcher.instance.setKey(Minecraft.getMinecraft().thePlayer, key.getServerKey(), isPressed);
+					MinecraftForge.EVENT_BUS.post(new RawKeyPressEvent(key.getServerKey(), Minecraft.getMinecraft().thePlayer));
 				}
 			}
 

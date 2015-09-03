@@ -63,9 +63,11 @@ public final class FluidHashMap<V> {
 
 	public V get(FluidStack is) {
 		TreeMap<Integer, V> map = this.data.get(is.getFluid());
-		for (int key : map.keySet()) {
-			if (is.amount >= key) {
-				return map.get(key);
+		if (map != null) {
+			for (int key : map.keySet()) {
+				if (is.amount >= key) {
+					return map.get(key);
+				}
 			}
 		}
 		return null;
@@ -73,9 +75,11 @@ public final class FluidHashMap<V> {
 
 	public boolean containsKey(FluidStack is) {
 		TreeMap<Integer, V> map = this.data.get(is.getFluid());
-		for (int key : map.keySet()) {
-			if (is.amount >= key) {
-				return true;
+		if (map != null) {
+			for (int key : map.keySet()) {
+				if (is.amount >= key) {
+					return true;
+				}
 			}
 		}
 		return false;
@@ -150,7 +154,8 @@ public final class FluidHashMap<V> {
 	}
 
 	private V removeKey(FluidStack is) {
-		return this.data.get(is.getFluid()).remove(is.amount);
+		TreeMap<Integer, V> map = this.data.get(is.getFluid());
+		return map != null ? map.remove(is.amount) : null;
 	}
 
 	public boolean removeValue(V value) {
