@@ -37,6 +37,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	private static final HashMap<BiomeGenBase, BiomeGenBase> parents = new HashMap();
 	private static final int[] biomeColors = new int[40];
 
+	private static final HashMap<BiomeGenBase, BiomeTemperatures> temperatures = new HashMap();
+
 	static {
 		addChildBiome(BiomeGenBase.desert, BiomeGenBase.desertHills);
 
@@ -117,6 +119,38 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 		biomeColors[BiomeGenBase.hell.biomeID] = 0x8F5353;
 		biomeColors[BiomeGenBase.sky.biomeID] = 0xD6D99B;
+
+		temperatures.put(BiomeGenBase.taiga, BiomeTemperatures.COOL);
+		temperatures.put(BiomeGenBase.extremeHills, BiomeTemperatures.COOL);
+		temperatures.put(BiomeGenBase.megaTaiga, BiomeTemperatures.COOL);
+
+		temperatures.put(BiomeGenBase.forest, BiomeTemperatures.TEMPERATE);
+		temperatures.put(BiomeGenBase.plains, BiomeTemperatures.TEMPERATE);
+		temperatures.put(BiomeGenBase.birchForest, BiomeTemperatures.TEMPERATE);
+		temperatures.put(BiomeGenBase.ocean, BiomeTemperatures.TEMPERATE);
+		temperatures.put(BiomeGenBase.deepOcean, BiomeTemperatures.TEMPERATE);
+		temperatures.put(BiomeGenBase.mushroomIsland, BiomeTemperatures.TEMPERATE);
+		temperatures.put(BiomeGenBase.swampland, BiomeTemperatures.TEMPERATE);
+		temperatures.put(BiomeGenBase.river, BiomeTemperatures.TEMPERATE);
+
+		temperatures.put(BiomeGenBase.roofedForest, BiomeTemperatures.WARM);
+		temperatures.put(BiomeGenBase.savanna, BiomeTemperatures.WARM);
+
+		temperatures.put(BiomeGenBase.desert, BiomeTemperatures.HOT);
+		temperatures.put(BiomeGenBase.mesa, BiomeTemperatures.HOT);
+		temperatures.put(BiomeGenBase.jungle, BiomeTemperatures.HOT);
+
+		temperatures.put(BiomeGenBase.coldTaiga, BiomeTemperatures.ICY);
+		temperatures.put(BiomeGenBase.coldBeach, BiomeTemperatures.ICY);
+		temperatures.put(BiomeGenBase.icePlains, BiomeTemperatures.ICY);
+		temperatures.put(BiomeGenBase.iceMountains, BiomeTemperatures.ICY);
+		temperatures.put(BiomeGenBase.frozenOcean, BiomeTemperatures.ICY);
+		temperatures.put(BiomeGenBase.frozenRiver, BiomeTemperatures.ICY);
+		temperatures.put(BiomeGenBase.iceMountains, BiomeTemperatures.ICY);
+
+		temperatures.put(BiomeGenBase.hell, BiomeTemperatures.FIERY);
+
+		temperatures.put(BiomeGenBase.sky, BiomeTemperatures.LUNAR);
 	}
 
 	private static void addChildBiome(BiomeGenBase parent, BiomeGenBase child) {
@@ -128,6 +162,22 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		if (isChild) {
 			children.addValue(parent, child);
 			parents.put(child, parent);
+		}
+	}
+
+	public static enum BiomeTemperatures {
+		LUNAR(-100),
+		ICY(-20),
+		COOL(10),
+		TEMPERATE(25),
+		WARM(30),
+		HOT(40),
+		FIERY(300);
+
+		public final int ambientTemperature;
+
+		private BiomeTemperatures(int t) {
+			ambientTemperature = t;
 		}
 	}
 
@@ -198,6 +248,19 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		return color;
 	}
 
+	/** Returns true if the passed biome is a cool but not cold biome.  Args: Biome */
+	public static boolean isCoolBiome(BiomeGenBase biome) {
+		if (biome == BiomeGenBase.taiga)
+			return true;
+		if (biome == BiomeGenBase.taigaHills)
+			return true;
+		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
+		for (int i = 0; i < types.length; i++) {
+
+		}
+		return false;
+	}
+
 	/** Returns true if the passed biome is a snow biome.  Args: Biome*/
 	public static boolean isSnowBiome(BiomeGenBase biome) {
 		if (biome == BiomeGenBase.frozenOcean)
@@ -266,23 +329,37 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	 * Args: biome */
 	public static int getBiomeTemp(BiomeGenBase biome) {
 		biome = getParentBiomeType(biome);
-		int Tamb = 25; //Most biomes = 25C
-		if (isSnowBiome(biome))
-			Tamb = -20; //-20C
-		if (isHotBiome(biome))
-			Tamb = 40;
-		if (biome == BiomeGenBase.sky)
-			Tamb = -100;
+		BiomeTemperatures temp = temperatures.get(biome);
+		if (temp == null) {
+			temp = calcBiomeTemp(biome);
+			temperatures.put(biome, temp);
+		}
+		return temp.ambientTemperature;
+	}
+
+	private static BiomeTemperatures calcBiomeTemp(BiomeGenBase biome) {
 		if (biome == BiomeGenBase.hell)
-			Tamb = 300;	//boils water, so 300C (3 x 100)
+			return BiomeTemperatures.FIERY;
+		else if (biome == BiomeGenBase.sky)
+			return BiomeTemperatures.LUNAR;
+
 		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
 		for (int i = 0; i < types.length; i++) {
 			if (types[i] == BiomeDictionary.Type.NETHER)
-				Tamb = 300;
-			if (types[i] == BiomeDictionary.Type.END)
-				Tamb = -100;
+				return BiomeTemperatures.FIERY;
+			else if (types[i] == BiomeDictionary.Type.END)
+				return BiomeTemperatures.LUNAR;
 		}
-		return Tamb;
+
+		if (isSnowBiome(biome))
+			return BiomeTemperatures.ICY;
+		else if (isHotBiome(biome))
+			return BiomeTemperatures.HOT;
+		else if (isCoolBiome(biome))
+			return BiomeTemperatures.COOL;
+		else
+			return BiomeTemperatures.TEMPERATE;
+
 	}
 
 	/** Returns a broad-stroke biome temperature in degrees centigrade.

@@ -156,15 +156,18 @@ public class KeyWatcher {
 		@Override
 		public void tick(TickType type, Object... tickData) {
 
-			for (int i = 0; i < Keys.keyList.length; i++) {
-				Keys key = Keys.keyList[i];
-				boolean wasPressed = keyStates.containsKey(key) && keyStates.get(key);
-				boolean isPressed = key.pollKey();
-				if (wasPressed != isPressed) {
-					keyStates.put(key, isPressed);
-					key.sendPacket();
-					KeyWatcher.instance.setKey(Minecraft.getMinecraft().thePlayer, key.getServerKey(), isPressed);
-					MinecraftForge.EVENT_BUS.post(new RawKeyPressEvent(key.getServerKey(), Minecraft.getMinecraft().thePlayer));
+			EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+			if (ep != null) {
+				for (int i = 0; i < Keys.keyList.length; i++) {
+					Keys key = Keys.keyList[i];
+					boolean wasPressed = keyStates.containsKey(key) && keyStates.get(key);
+					boolean isPressed = key.pollKey();
+					if (wasPressed != isPressed) {
+						keyStates.put(key, isPressed);
+						key.sendPacket();
+						KeyWatcher.instance.setKey(ep, key.getServerKey(), isPressed);
+						MinecraftForge.EVENT_BUS.post(new RawKeyPressEvent(key.getServerKey(), ep));
+					}
 				}
 			}
 

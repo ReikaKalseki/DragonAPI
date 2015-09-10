@@ -140,8 +140,8 @@ public final class CommandableUpdateChecker {
 
 			NBTTagCompound nbt = new NBTTagCompound();
 			nbt.setString("modDisplayName", mod.getDisplayName());
-			nbt.setString("oldVersion", version.toString());
-			nbt.setString("newVersion", latest.toString());
+			nbt.setString("oldVersion", "v"+version.toString());
+			nbt.setString("newVersion", "v"+latest.toString());
 			nbt.setString("updateUrl", mod.getDocumentationSite().toString());
 			nbt.setBoolean("isDirectLink", false);
 			nbt.setString("changeLog", mod.getDocumentationSite().toString());

@@ -12,7 +12,6 @@ package Reika.DragonAPI.Interfaces.Registry;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;

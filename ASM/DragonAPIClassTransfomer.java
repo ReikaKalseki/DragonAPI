@@ -12,6 +12,9 @@ package Reika.DragonAPI.ASM;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
@@ -36,6 +39,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Event.SlotEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -150,7 +154,16 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 					m.instructions.insertBefore(pos, new InsnNode(Opcodes.POP));
 
-					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 1!");
+
+					m = ReikaASMHelper.getMethodByName(cn, "func_75215_d", "putStack", "(Lnet/minecraft/item/ItemStack;)V");
+					pos = m.instructions.getFirst();
+
+					m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.insertBefore(pos, new VarInsnNode(Opcodes.ALOAD, 1));
+					m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/SlotEvent$AddToSlotEvent", "fire", "(Lnet/minecraft/inventory/Slot;Lnet/minecraft/item/ItemStack;)V", false));
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 2!");
 				}
 				break;
 				case ICECANCEL: {
@@ -953,7 +966,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					AbstractInsnNode call = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/entity/player/EntityPlayerMP", func, "(Z)V");
 					InsnList evt = new InsnList();
 					evt.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					evt.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/network/NetHandlerPlayServer", "playerEntity", "Lnet/minecraft/entity/player/EntityPlayerMP;"));
+					String field = FMLForgePlugin.RUNTIME_DEOBF ? "field_147369_b" : "playerEntity";
+					evt.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/network/NetHandlerPlayServer", field, "Lnet/minecraft/entity/player/EntityPlayerMP;"));
 					evt.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/PlayerSprintEvent", "fire", "(Lnet/minecraft/entity/player/EntityPlayer;)V", false));
 					m.instructions.insert(call, evt);
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
@@ -1045,9 +1059,22 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	abstract static class test {
+	abstract static class test extends Slot {
 
+		public test(IInventory p_i1824_1_, int p_i1824_2_, int p_i1824_3_, int p_i1824_4_) {
+			super(p_i1824_1_, p_i1824_2_, p_i1824_3_, p_i1824_4_);
+			// TODO Auto-generated constructor stub
+		}
 
+		private int slotIndex;
+
+		@Override
+		public void putStack(ItemStack is)
+		{
+			SlotEvent.AddToSlotEvent.fire(this, is);
+			inventory.setInventorySlotContents(slotIndex, is);
+			this.onSlotChanged();
+		}
 
 	}
 

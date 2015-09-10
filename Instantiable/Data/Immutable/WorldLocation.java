@@ -13,7 +13,6 @@ import java.lang.ref.WeakReference;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -27,8 +26,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class WorldLocation {
 
@@ -41,8 +38,7 @@ public class WorldLocation {
 
 	private boolean isRemote = false;
 
-	@SideOnly(Side.CLIENT)
-	private WeakReference<WorldClient> clientWorld;
+	private WeakReference<World> clientWorld;
 
 	public WorldLocation(World world, int x, int y, int z) {
 		this(world.provider.dimensionId, x, y, z);

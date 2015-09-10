@@ -72,7 +72,7 @@ public enum ModList implements ModEntry {
 	ENDERSTORAGE("EnderStorage"),
 	TREECAPITATOR("TreeCapitator"),
 	HARVESTCRAFT("harvestcraft", "com.pam.harvestcraft.BlockRegistry", "com.pam.harvestcraft.ItemRegistry"),
-	MYSTCRAFT("Mystcraft", new String[]{"com.xcompwiz.mystcraft.api.MystObjects", "com.xcompwiz.mystcraft.api.MystObjects$Blocks"}, new String[]{"com.xcompwiz.mystcraft.api.MystObjects", "com.xcompwiz.mystcraft.api.MystObjects$Items"}),
+	MYSTCRAFT("Mystcraft", new String[]{"com.xcompwiz.mystcraft.api.MystObjects$Blocks", "com.xcompwiz.mystcraft.api.MystObjects"}, new String[]{"com.xcompwiz.mystcraft.api.MystObjects$Items", "com.xcompwiz.mystcraft.api.MystObjects"}),
 	MAGICCROPS("magicalcrops", new String[]{"com.mark719.magicalcrops.MagicalCrops", "com.mark719.magicalcrops.handlers.MBlocks"}, new String[]{"com.mark719.magicalcrops.MagicalCrops", "com.mark719.magicalcrops.handlers.MItems"}),
 	MIMICRY("Mimicry", "com.sparr.mimicry.block.MimicryBlock", "com.sparr.mimicry.item.MimicryItem"),
 	QCRAFT("QuantumCraft", "dan200.QCraft"),

@@ -211,6 +211,8 @@ public enum ReikaOreHelper implements OreType {
 			vanillaOres.put(oreList[i].ore, oreList[i]);
 			oreNames.put(oreList[i].oreDict, oreList[i]);
 		}
+
+		vanillaOres.put(Blocks.lit_redstone_ore, REDSTONE);
 	}
 
 	public static boolean isVanillaOreType(String s) {

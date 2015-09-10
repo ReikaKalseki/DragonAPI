@@ -131,13 +131,52 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		if (var5.isDrawing)
 			var5.draw();
 		var5.startDrawing(GL11.GL_LINE_LOOP);
-		var5.setColorRGBA_I(rgba, rgba >> 24 & 255);
+		var5.setColorRGBA_I(rgba & 0xffffff, rgba >> 24 & 255);
 		var5.addVertex(x1, y1, z1);
 		var5.addVertex(x2, y2, z2);
 		var5.draw();
 		GL11.glDisable(GL12.GL_RESCALE_NORMAL);
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+	}
+
+	public static void renderTube(double x1, double y1, double z1, double x2, double y2, double z2, int c1, int c2, double r1, double r2) {
+		Tessellator v5 = Tessellator.instance;
+
+		double dx = x2-x1;
+		double dy = y2-y1;
+		double dz = z2-z1;
+
+		GL11.glPushMatrix();
+
+		GL11.glTranslated(x1, y1, z1);
+
+		double f7 = Math.sqrt(dx*dx+dz*dz);
+		double f8 = Math.sqrt(dx*dx+dy*dy+dz*dz);
+		double ang1 = -Math.atan2(dz, dx) * 180 / Math.PI - 90;
+		double ang2 = -Math.atan2(f7, dy) * 180 / Math.PI - 90;
+		GL11.glRotated(ang1, 0, 1, 0);
+		GL11.glRotated(ang2, 1, 0, 0);
+
+		int sides = 16;
+
+		v5.startDrawing(GL11.GL_TRIANGLE_STRIP);
+		v5.setBrightness(240);
+		for (int i = 0; i <= sides; i++) {
+			double f11a = r1*Math.sin(i % sides * Math.PI * 2 / sides) * 0.75;
+			double f12a = r1*Math.cos(i % sides * Math.PI * 2 / sides) * 0.75;
+			double f11b = r2*Math.sin(i % sides * Math.PI * 2 / sides) * 0.75;
+			double f12b = r2*Math.cos(i % sides * Math.PI * 2 / sides) * 0.75;
+			double f13 = i % sides * 1 / sides;
+			v5.setColorRGBA_I(c1 & 0xffffff, c1 >> 24 & 255);
+			v5.addVertex(f11a, f12a, 0);
+			v5.setColorRGBA_I(c2 & 0xffffff, c2 >> 24 & 255);
+			v5.addVertex(f11b, f12b, f8);
+		}
+
+		v5.draw();
+
+		GL11.glPopMatrix();
 	}
 
 	public static void disableLighting() {

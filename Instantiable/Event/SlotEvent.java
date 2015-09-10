@@ -11,7 +11,9 @@ package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
 
@@ -37,6 +39,10 @@ public class SlotEvent extends Event {
 
 		public final ItemStack getItem() {
 			return added != null ? added.copy() : added;
+		}
+
+		public static void fire(Slot s, ItemStack is) {
+			MinecraftForge.EVENT_BUS.post(new AddToSlotEvent(s.getSlotIndex(), s.inventory, is));
 		}
 
 	}
