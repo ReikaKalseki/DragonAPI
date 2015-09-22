@@ -12,6 +12,7 @@ package Reika.DragonAPI;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -22,11 +23,15 @@ import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.potion.Potion;
+import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
@@ -123,6 +128,7 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.GalacticCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HungerOverhaulHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.IC2Handler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.LegacyMagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MFRHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MagicaOreHandler;
@@ -143,6 +149,7 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerBlockHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TransitionalOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.VeryLegacyMagicCropHandler;
 import Reika.DragonAPI.ModInteract.RecipeHandlers.ForestryRecipeHelper;
 import Reika.DragonAPI.ModInteract.RecipeHandlers.SmelteryRecipeHandler;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
@@ -163,6 +170,7 @@ import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
+import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -248,6 +256,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		ReikaPacketHelper.registerVanillaPacketType(this, id, SyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
 		//if (DragonOptions.COMPOUNDSYNC.getState())
 		//	ReikaPacketHelper.registerVanillaPacketType(this, id+1, CompoundSyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
+
 		this.finishTiming();
 	}
 
@@ -431,10 +440,11 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Lavious", "7fb32de9-4d98-4d1f-9264-43bd1edf0ae0", 1);
 		PatreonController.instance.addPatron(this, "quok98", "f573f6a0-9e08-482a-9985-29c5bb89c4f4", 10); //Rich Edelman
 		PatreonController.instance.addPatron(this, "rxiv", "1cb1da91-d3ed-4c10-9506-ca27fd480634", 5);
-		//PatreonController.instance.addPatron(this, "shobu", "6712dff7-a5d3-4a55-9c25-33b50e173ee1", 5);
+		PatreonController.instance.addPatron(this, "shobu", "6712dff7-a5d3-4a55-9c25-33b50e173ee1", 5);
 		PatreonController.instance.addPatron(this, "Goof245", "79849e78-fe9a-4bb9-af6b-fb4c41fc8dd8", 20); //Aiden Young
 		PatreonController.instance.addPatron(this, "Solego", "2c85a7d8-af77-4c5e-9416-47e4a281497f", 40); //Aiden Young
 
+		logger.log("Credit to Techjar for hosting the version file and remote asset server.");
 
 		CommandableUpdateChecker.instance.checkAll();
 
@@ -497,6 +507,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@EventHandler
 	public void registerCommands(FMLServerStartingEvent evt) {
+		DragonAPICore.log("Server Starting...");
 		evt.registerServerCommand(new GuideCommand());
 		evt.registerServerCommand(new DonatorCommand());
 		evt.registerServerCommand(new LogControlCommand());
@@ -513,6 +524,17 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();
+	}
+
+	@EventHandler
+	public void overrideRecipes(FMLServerStartedEvent evt) {
+		DragonAPICore.log("Server Started.");
+		DragonAPICore.log("Total Crafting Recipes: "+CraftingManager.getInstance().getRecipeList().size());
+		DragonAPICore.log("Dimensions Present: "+Arrays.toString(DimensionManager.getStaticDimensionIDs()));
+		DragonAPICore.log("Mods Present: "+Loader.instance().getActiveModList().size());
+		DragonAPICore.log("ASM Transformers Loaded: "+Launch.classLoader.getTransformers().size());
+		if (MinecraftServer.getServer() != null)
+			DragonAPICore.log("Commands Loaded: "+MinecraftServer.getServer().getCommandManager().getCommands().size());
 	}
 
 	@SubscribeEvent
@@ -635,44 +657,44 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	private void loadHandlers() {
-		this.registerHandler(ModList.BCFACTORY, BCMachineHandler.class);
-		this.registerHandler(ModList.BCTRANSPORT, BCPipeHandler.class);
-		this.registerHandler(ModList.THAUMCRAFT, ThaumOreHandler.class);
-		this.registerHandler(ModList.THAUMCRAFT, ThaumBiomeHandler.class);
-		this.registerHandler(ModList.DARTCRAFT, DartOreHandler.class);
-		this.registerHandler(ModList.DARTCRAFT, DartItemHandler.class);
-		this.registerHandler(ModList.TINKERER, TinkerToolHandler.class);
-		this.registerHandler(ModList.TINKERER, TinkerBlockHandler.class);
-		this.registerHandler(ModList.TWILIGHT, TwilightForestHandler.class);
-		this.registerHandler(ModList.MEKANISM, MekanismHandler.class);
-		this.registerHandler(ModList.MEKTOOLS, MekToolHandler.class);
-		this.registerHandler(ModList.TRANSITIONAL, TransitionalOreHandler.class);
-		this.registerHandler(ModList.IC2, IC2Handler.class);
-		this.registerHandler(ModList.ARSMAGICA, MagicaOreHandler.class);
-		this.registerHandler(ModList.APPENG, AppEngHandler.class);
-		this.registerHandler(ModList.FORESTRY, ForestryHandler.class);
-		this.registerHandler(ModList.FORESTRY, ForestryRecipeHelper.class);
-		this.registerHandler(ModList.THERMALFOUNDATION, ThermalHandler.class);
-		this.registerHandler(ModList.MIMICRY, MimicryHandler.class);
-		this.registerHandler(ModList.MAGICCROPS, MagicCropHandler.class, new SearchVersionHandler("4.0.0_PUBLIC_BETA")); //Newest
-		//this.registerHandler(ModList.MAGICCROPS, LegacyMagicCropHandler.class, new SearchVersionHandler("4.0.0_BETA")); //Private Beta
-		//this.registerHandler(ModList.MAGICCROPS, VeryLegacyMagicCropHandler.class, new SearchVersionHandler("1.7.2 - 0.1 ALPHA")); //1.7.10 alpha
-		this.registerHandler(ModList.QCRAFT, QuantumOreHandler.class);;
-		this.registerHandler(ModList.TINKERER, OreBerryBushHandler.class);
-		this.registerHandler(ModList.NATURA, BerryBushHandler.class);
-		this.registerHandler(ModList.OPENBLOCKS, OpenBlockHandler.class);
-		this.registerHandler(ModList.FACTORIZATION, FactorizationHandler.class);
-		this.registerHandler(ModList.HARVESTCRAFT, HarvestCraftHandler.class);
-		this.registerHandler(ModList.ARSENAL, RedstoneArsenalHandler.class);
-		this.registerHandler(ModList.RAILCRAFT, RailcraftHandler.class);
-		this.registerHandler(ModList.MINEFACTORY, MFRHandler.class);
-		this.registerHandler(ModList.GALACTICRAFT, GalacticCraftHandler.class);
-		this.registerHandler(ModList.EXTRAUTILS, ExtraUtilsHandler.class);
-		this.registerHandler(ModList.MYSTCRAFT, MystCraftHandler.class);
-		this.registerHandler(ModList.BLOODMAGIC, BloodMagicHandler.class);
-		this.registerHandler(ModList.PNEUMATICRAFT, PneumaticPlantHandler.class);
-		this.registerHandler(ModList.BOP, BoPBlockHandler.class);
-		this.registerHandler(ModList.HUNGEROVERHAUL, HungerOverhaulHandler.class);
+		this.registerHandler(ModList.BCFACTORY, BCMachineHandler.class, "Block Handler");
+		this.registerHandler(ModList.BCTRANSPORT, BCPipeHandler.class, "Pipe Handler");
+		this.registerHandler(ModList.THAUMCRAFT, ThaumOreHandler.class, "Ore Handler");
+		this.registerHandler(ModList.THAUMCRAFT, ThaumBiomeHandler.class, "Biome Handler");
+		this.registerHandler(ModList.DARTCRAFT, DartOreHandler.class, "Ore Handler");
+		this.registerHandler(ModList.DARTCRAFT, DartItemHandler.class, "Item Handler");
+		this.registerHandler(ModList.TINKERER, TinkerToolHandler.class, "Tool Handler");
+		this.registerHandler(ModList.TINKERER, TinkerBlockHandler.class, "Block Handler");
+		this.registerHandler(ModList.TWILIGHT, TwilightForestHandler.class, "Handler");
+		this.registerHandler(ModList.MEKANISM, MekanismHandler.class, "Block Handler");
+		this.registerHandler(ModList.MEKTOOLS, MekToolHandler.class, "Tool Handler");
+		this.registerHandler(ModList.TRANSITIONAL, TransitionalOreHandler.class, "Handler");
+		this.registerHandler(ModList.IC2, IC2Handler.class, "Handler");
+		this.registerHandler(ModList.ARSMAGICA, MagicaOreHandler.class, "Ore Handler");
+		this.registerHandler(ModList.APPENG, AppEngHandler.class, "Handler");
+		this.registerHandler(ModList.FORESTRY, ForestryHandler.class, "Item Handler");
+		this.registerHandler(ModList.FORESTRY, ForestryRecipeHelper.class, "Recipe Handler");
+		this.registerHandler(ModList.THERMALFOUNDATION, ThermalHandler.class, "Handler");
+		this.registerHandler(ModList.MIMICRY, MimicryHandler.class, "Handler");
+		this.registerHandler(ModList.MAGICCROPS, MagicCropHandler.class, "Handler", new SearchVersionHandler("4.0.0_PUBLIC_BETA")); //Newest
+		this.registerHandler(ModList.MAGICCROPS, LegacyMagicCropHandler.class, "Handler", new SearchVersionHandler("4.0.0_BETA")); //Private Beta
+		this.registerHandler(ModList.MAGICCROPS, VeryLegacyMagicCropHandler.class, "Handler", new SearchVersionHandler("1.7.2 - 0.1 ALPHA")); //1.7.10 alpha
+		this.registerHandler(ModList.QCRAFT, QuantumOreHandler.class, "Handler");
+		this.registerHandler(ModList.TINKERER, OreBerryBushHandler.class, "Handler");
+		this.registerHandler(ModList.NATURA, BerryBushHandler.class, "Handler");
+		this.registerHandler(ModList.OPENBLOCKS, OpenBlockHandler.class, "Handler");
+		this.registerHandler(ModList.FACTORIZATION, FactorizationHandler.class, "Handler");
+		this.registerHandler(ModList.HARVESTCRAFT, HarvestCraftHandler.class, "Handler");
+		this.registerHandler(ModList.ARSENAL, RedstoneArsenalHandler.class, "Handler");
+		this.registerHandler(ModList.RAILCRAFT, RailcraftHandler.class, "Handler");
+		this.registerHandler(ModList.MINEFACTORY, MFRHandler.class, "Handler");
+		this.registerHandler(ModList.GALACTICRAFT, GalacticCraftHandler.class, "Handler");
+		this.registerHandler(ModList.EXTRAUTILS, ExtraUtilsHandler.class, "Handler");
+		this.registerHandler(ModList.MYSTCRAFT, MystCraftHandler.class, "Block Handler");
+		this.registerHandler(ModList.BLOODMAGIC, BloodMagicHandler.class, "Handler");
+		this.registerHandler(ModList.PNEUMATICRAFT, PneumaticPlantHandler.class, "Handler");
+		this.registerHandler(ModList.BOP, BoPBlockHandler.class, "Handler");
+		this.registerHandler(ModList.HUNGEROVERHAUL, HungerOverhaulHandler.class, "Handler");
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);
@@ -687,16 +709,16 @@ public class DragonAPIInit extends DragonAPIMod {
 		ModOreList.initializeAll();
 	}
 
-	private void registerHandler(ModList mod, Class<? extends ModHandlerBase> c) {
-		this.registerHandler(mod, c, new VersionIgnore());
+	private void registerHandler(ModList mod, Class<? extends ModHandlerBase> c, String id) {
+		this.registerHandler(mod, c, id, new VersionIgnore());
 	}
 
-	private void registerHandler(ModList mod, Class<? extends ModHandlerBase> c, VersionHandler vh) {
+	private void registerHandler(ModList mod, Class<? extends ModHandlerBase> c, String id, VersionHandler vh) {
 		if (mod.isLoaded()) {
 			try {
 				String ver = mod.getVersion();
 				if (vh.acceptVersion(ver)) {
-					this.initHandler(mod, c);
+					this.initHandler(mod, c, id);
 					logger.log("Loading handler "+c+" for mod "+mod+" "+ver+".");
 				}
 				else {
@@ -717,11 +739,11 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 	}
 
-	private void initHandler(ModList mod, Class<? extends ModHandlerBase> c) throws Exception {
+	private void initHandler(ModList mod, Class<? extends ModHandlerBase> c, String id) throws Exception {
 		ReikaJavaLibrary.initClass(c);
 		Method inst = c.getMethod("getInstance", null);
 		ModHandlerBase h = (ModHandlerBase)inst.invoke(null);
-		mod.registerHandler(h);
+		mod.registerHandler(h, id);
 	}
 
 	public static boolean canLoadHandlers() {

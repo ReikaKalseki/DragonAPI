@@ -119,9 +119,11 @@ public final class MTInteractionManager {
 	}
 
 	private void scanAndRemove() {
-		ArrayList<File> files = this.getFiles();
-		for (File f : files) {
-			this.parseFile(f);
+		if (!DragonAPICore.isSinglePlayer()) {
+			ArrayList<File> files = this.getFiles();
+			for (File f : files) {
+				this.parseFile(f);
+			}
 		}
 	}
 
@@ -411,8 +413,7 @@ public final class MTInteractionManager {
 
 		@Override
 		public void handle(Object r) {
-			if (!DragonAPICore.isSinglePlayer())
-				instance.scanAndRemove(); //Do not reload, because inf loop
+			instance.scanAndRemove(); //Do not reload, because inf loop
 		}
 
 	}

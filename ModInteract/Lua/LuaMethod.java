@@ -33,6 +33,9 @@ public abstract class LuaMethod {
 	private static final LuaMethod isTankFull = new LuaIsTankFull();
 	private static final LuaMethod hasItem = new LuaHasItem();
 	private static final LuaMethod trigger = new LuaTriggerAction();
+	private static final LuaMethod placer = new LuaGetPlacer();
+
+	private static final LuaMethod fluidColor = new LuaFluidColor();
 
 	public LuaMethod(String name, Class requiredParent) {
 		displayName = name;
@@ -56,6 +59,10 @@ public abstract class LuaMethod {
 	public abstract Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException;
 
 	public abstract String getDocumentation();
+
+	public boolean isDocumented() {
+		return true;
+	}
 
 	public final boolean isClassInstanceOf(Class<? extends TileEntity> te) {
 		return requiredClass != null ? requiredClass.isAssignableFrom(te) : true;

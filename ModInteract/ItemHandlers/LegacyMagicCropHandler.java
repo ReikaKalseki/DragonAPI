@@ -234,17 +234,21 @@ public class LegacyMagicCropHandler extends CropHandlerBase {
 				catch (NoSuchFieldException e) {
 					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 					e.printStackTrace();
+					this.logFailure(e);
 				}
 				catch (IllegalAccessException e) {
 					DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 					e.printStackTrace();
+					this.logFailure(e);
 				}
 				catch (NullPointerException e) {
 					DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 					e.printStackTrace();
+					this.logFailure(e);
 				}
 				catch (Exception e) {
 					e.printStackTrace();
+					this.logFailure(e);
 				}
 			}
 			try {
@@ -272,21 +276,26 @@ public class LegacyMagicCropHandler extends CropHandlerBase {
 			catch (ClassNotFoundException e) {
 				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (NoSuchFieldException e) {
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (IllegalAccessException e) {
 				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (NullPointerException e) {
 				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
+				this.logFailure(e);
 			}
 		}
 		else {
@@ -326,7 +335,7 @@ public class LegacyMagicCropHandler extends CropHandlerBase {
 		world.setBlockMetadataWithNotify(x, y, z, 7, 3);
 	}
 
-	private static LegacyMagicCropHandler getInstance() {
+	public static LegacyMagicCropHandler getInstance() {
 		return instance;
 	}
 

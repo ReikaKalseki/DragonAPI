@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -17,9 +18,11 @@ import java.util.concurrent.Future;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
@@ -130,14 +133,25 @@ public class MESystemReader {
 	public long removeItemFuzzy(ItemStack is, boolean simulate, FuzzyMode fz, boolean oredict) {
 		IMEMonitor<IAEItemStack> mon = this.getStorage();
 		IAEItemStack ae = this.createAEStack(is);
-		Collection<IAEItemStack> c = mon.getStorageList().findFuzzy(ae, fz);
+		Collection<IAEItemStack> c = new ArrayList(mon.getStorageList().findFuzzy(ae, fz)); //wrap in list so we can add entries
+		if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE) { //since AE does not handle this, a simple hack
+			ItemStack cp = is.copy();
+			cp.setItemDamage(0);
+			ae = this.createAEStack(cp);
+			c.addAll(mon.getStorageList().findFuzzy(ae, fz));
+		}
 		IAEItemStack most = null;
 		for (IAEItemStack iae : c) {
 			if ((most == null || iae.getStackSize() >= most.getStackSize()) && (oredict || is.getItem() == iae.getItem())) {
 				most = iae;
 			}
 		}
+		if (most == null)
+			return 0;
+		most.setStackSize(is.stackSize);
 		IAEItemStack ret = most != null ? mon.extractItems(most, simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource) : null;
+		if (ret != null)
+			ReikaJavaLibrary.pConsole(is+">"+ret);
 		return ret != null ? ret.getStackSize() : 0;
 	}
 

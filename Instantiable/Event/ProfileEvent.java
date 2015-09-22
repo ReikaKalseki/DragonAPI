@@ -19,7 +19,7 @@ public class ProfileEvent extends Event {
 
 	public final String sectionName;
 
-	private ProfileEvent(String s) {
+	public ProfileEvent(String s) {
 		sectionName = s;
 	}
 

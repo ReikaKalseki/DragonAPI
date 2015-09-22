@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
@@ -73,7 +74,8 @@ public class ReikaFileReader extends DragonAPICore {
 
 	public static BufferedReader getReader(URL url, int timeout, ConnectionErrorHandler ch, DataFetcher f) {
 		if (!isInternetAccessible(timeout)) {
-			ch.onNoInternet();
+			if (ch != null)
+				ch.onNoInternet();
 			return null;
 		}
 
@@ -91,13 +93,16 @@ public class ReikaFileReader extends DragonAPICore {
 			return new BufferedReader(new InputStreamReader(c.getInputStream()));
 		}
 		catch (UnknownHostException e) { //Server not found
-			ch.onServerNotFound();
+			if (ch != null)
+				ch.onServerNotFound();
 		}
 		catch (ConnectException e) { //Redirect/tampering
-			ch.onServerRedirected();
+			if (ch != null)
+				ch.onServerRedirected();
 		}
 		catch (SocketTimeoutException e) { //Slow internet, cannot load a text file...
-			ch.onTimedOut();
+			if (ch != null)
+				ch.onTimedOut();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -374,22 +379,73 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static void deleteFolderWithContents(File f) {
-		deleteFolderWithContents(f, 10);
+	public static boolean deleteFolderWithContents(File f) {
+		return deleteFolderWithContents(f, 10);
 	}
 
-	public static void deleteFolderWithContents(File f, int tries) {
+	public static boolean deleteFolderWithContents(File f, int tries) {
 		Exception e = null;
 		for (int i = 0; i < tries; i++) {
 			try {
-				FileUtils.deleteDirectory(f);
-				return;
+				FileUtils.forceDelete(f);
+				return true;
 			}
 			catch (Exception ex) {
 				e = ex;
 			}
 		}
-		if (e != null)
+		if (e != null) {
 			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public static void copyFile(InputStream in, OutputStream out, int size) throws FileReadException, FileWriteException {
+		copyFile(in, out, size, null);
+	}
+
+	public static void copyFile(InputStream in, OutputStream out, int size, WriteCallback call) throws FileReadException, FileWriteException {
+		byte[] bytes = new byte[size];
+		int count = 0;
+		while (count != -1) {
+			if (count > 0) {
+				try {
+					out.write(bytes, 0, count);
+					if (call != null)
+						call.onWrite(bytes);
+				}
+				catch (IOException e) {
+					throw new FileWriteException(e);
+				}
+			}
+			try {
+				count = in.read(bytes, 0, bytes.length);
+			}
+			catch (IOException e) {
+				throw new FileReadException(e);
+			}
+		}
+	}
+
+	public static class FileReadException extends IOException {
+
+		private FileReadException(IOException e) {
+			super(e);
+		}
+
+	}
+
+	public static class FileWriteException extends IOException {
+
+		private FileWriteException(IOException e) {
+			super(e);
+		}
+
+	}
+
+	public static interface WriteCallback {
+
+		public void onWrite(byte[] data);
+
 	}
 }

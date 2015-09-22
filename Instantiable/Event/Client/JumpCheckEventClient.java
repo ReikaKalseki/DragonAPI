@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event.Client;
 
 import net.minecraft.entity.EntityLivingBase;
@@ -15,7 +24,7 @@ public class JumpCheckEventClient extends LivingEvent {
 
 	public final boolean defaultResult;
 
-	private JumpCheckEventClient(EntityLivingBase e, int ticks) {
+	public JumpCheckEventClient(EntityLivingBase e, int ticks) {
 		super(e);
 
 		jumpTick = ticks;

@@ -489,6 +489,8 @@ public final class ReikaArrayHelper extends DragonAPICore {
 	}
 
 	public static int booleanToBitflags(boolean[] flags) {
+		if (flags.length > 31)
+			throw new IllegalArgumentException("You cannot store more than 31 bits on an int!");
 		int n = 0;
 		for (int i = 0; i < flags.length; i++) {
 			if (flags[i])
@@ -498,15 +500,20 @@ public final class ReikaArrayHelper extends DragonAPICore {
 	}
 
 	public static boolean[] booleanFromBitflags(int bitflags, int len) {
+		if (len > 31)
+			throw new IllegalArgumentException("You cannot store more than 31 bits on an int!");
 		boolean[] arr = new boolean[len];
 		for (int i = 0; i < len; i++) {
 			int n = (1 << i);
 			boolean flag = (bitflags & n) != 0;
+			arr[i] = flag;
 		}
 		return arr;
 	}
 
 	public static byte booleanToByteBitflags(boolean[] flags) {
+		if (flags.length > 8)
+			throw new IllegalArgumentException("You cannot store more than 8 bits on a byte!");
 		byte n = 0;
 		for (int i = 0; i < flags.length; i++) {
 			if (flags[i])
@@ -516,6 +523,8 @@ public final class ReikaArrayHelper extends DragonAPICore {
 	}
 
 	public static boolean[] booleanFromByteBitflags(byte bitflags, int len) {
+		if (len > 8)
+			throw new IllegalArgumentException("You cannot store more than 8 bits on a byte!");
 		boolean[] arr = new boolean[len];
 		for (int i = 0; i < len; i++) {
 			int n = (1 << i);
@@ -523,5 +532,15 @@ public final class ReikaArrayHelper extends DragonAPICore {
 			arr[i] = flag;
 		}
 		return arr;
+	}
+
+	public static int getIndexOfLargest(int[] arr) {
+		int idx = 0;
+		for (int i = 1; i < arr.length; i++) {
+			int n = arr[i];
+			if (n > arr[idx])
+				idx = i;
+		}
+		return idx;
 	}
 }

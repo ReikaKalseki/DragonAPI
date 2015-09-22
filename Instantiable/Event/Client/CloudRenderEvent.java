@@ -20,7 +20,7 @@ public class CloudRenderEvent extends Event {
 
 	public final boolean defaultResult;
 
-	private CloudRenderEvent() {
+	public CloudRenderEvent() {
 		GameSettings gs = Minecraft.getMinecraft().gameSettings;
 		defaultResult = gs.renderDistanceChunks >= 4 && gs.clouds;
 	}

@@ -19,7 +19,6 @@ import java.util.List;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Registry.ModEntry;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
@@ -87,7 +86,7 @@ public enum ModList implements ModEntry {
 	PROJRED("ProjRed|Core"),
 	WITCHERY("witchery", "com.emoniph.witchery.WitcheryBlocks", "com.emoniph.witchery.WitcheryItems"),
 	GALACTICRAFT("GalacticraftCore", "micdoodle8.mods.galacticraft.core.blocks.GCBlocks", "micdoodle8.mods.galacticraft.core.items.GCItems"),
-	MULTIPART("McMultipart"),
+	MULTIPART("ForgeMicroblock"),
 	OPENCOMPUTERS("OpenComputers"),
 	NEI("NotEnoughItems"),
 	ATG("ATG"),
@@ -108,18 +107,20 @@ public enum ModList implements ModEntry {
 	GENDUSTRY("gendustry"),
 	FLUXEDCRYSTALS("fluxedcrystals", "fluxedCrystals.init.FCBlocks", "fluxedCrystals.init.FCItems"),
 	HUNGEROVERHAUL("HungerOverhaul"),
-	CHISEL("chisel", "com.cricketcraft.chisel.init.ChiselBlocks", "com.cricketcraft.chisel.init.ChiselItems");
+	CHISEL("chisel", "com.cricketcraft.chisel.init.ChiselBlocks", "com.cricketcraft.chisel.init.ChiselItems"),
+	CARPENTER("CarpentersBlocks", "com.carpentersblocks.util.registry.BlockRegistry", "com.carpentersblocks.util.registry.ItemRegistry");
 
 	private final boolean condition;
 	public final String modLabel;
 	private final String[] itemClass;
 	private final String[] blockClass;
 
+	private final HashMap<String, ModHandlerBase> handlers = new HashMap();
+
 	//To save on repeated Class.forName
 	private static final EnumMap<ModList, Class> blockClasses = new EnumMap(ModList.class);
 	private static final EnumMap<ModList, Class> itemClasses = new EnumMap(ModList.class);
 	private static final HashMap<String, ModList> modIDs = new HashMap();
-	private static final MultiMap<ModList, ModHandlerBase> handlers = new MultiMap();
 
 	private static final Class liteClass;
 	private static final Class optiClass;
@@ -267,12 +268,16 @@ public enum ModList implements ModEntry {
 		return this.ordinal() <= CHROMATICRAFT.ordinal();
 	}
 
-	public void registerHandler(ModHandlerBase h) {
-		handlers.addValue(this, h);
+	public void registerHandler(ModHandlerBase h, String id) {
+		handlers.put(id, h);
 	}
 
 	public Collection<ModHandlerBase> getHandlers() {
-		return handlers.get(this);
+		return handlers.values();
+	}
+
+	public ModHandlerBase getHandler(String id) {
+		return handlers.get(id);
 	}
 
 	public static List<ModList> getReikasMods() {

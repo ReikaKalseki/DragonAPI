@@ -25,7 +25,9 @@ public enum InterfaceCache {
 	IC2WRENCH("ic2.api.tile.IWrenchable"),
 	NODE("thaumcraft.api.nodes.INode"),
 	GRIDHOST("appeng.api.networking.IGridHost"),
-	BCROBOT("buildcraft.api.robots.EntityRobotBase");
+	BCROBOT("buildcraft.api.robots.EntityRobotBase"),
+	AREAPROVIDER("buildcraft.api.core.IAreaProvider"),
+	TINKERTOOL("tconstruct.library.tools.ToolCore");
 
 	private final String classpath;
 	public final String name;

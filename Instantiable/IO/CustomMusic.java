@@ -9,8 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+import Reika.DragonAPI.DragonAPIInit;
 
 public class CustomMusic implements ISound {
 
@@ -21,6 +25,10 @@ public class CustomMusic implements ISound {
 	private final ResourceLocation res;
 
 	private boolean repeat = false;
+
+	private float posX;
+	private float posY;
+	private float posZ;
 
 	public CustomMusic(String path) {
 		this(path, 1, 1);
@@ -65,22 +73,34 @@ public class CustomMusic implements ISound {
 
 	@Override
 	public float getXPosF() {
-		return 0;
+		return posX;
 	}
 
 	@Override
 	public float getYPosF() {
-		return 0;
+		return posY;
 	}
 
 	@Override
 	public float getZPosF() {
-		return 0;
+		return posZ;
 	}
 
 	@Override
 	public AttenuationType getAttenuationType() {
 		return AttenuationType.NONE;
+	}
+
+	public void play(SoundHandler sh) {
+		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+		posX = (float)ep.posX;
+		posY = (float)ep.posY;
+		posZ = (float)ep.posZ;
+		sh.playSound(this);
+	}
+
+	public boolean resourceExists() {
+		return DragonAPIInit.class.getClassLoader().getResourceAsStream(path) != null;
 	}
 
 }

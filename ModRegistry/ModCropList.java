@@ -21,6 +21,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.CropHandlerBase;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Interfaces.CustomCropHandler;
@@ -32,7 +33,6 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.FluxedCrystalHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
-import Reika.DragonAPI.ModInteract.ItemHandlers.MagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.OreBerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.PneumaticPlantHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
@@ -42,7 +42,7 @@ public enum ModCropList implements ModCrop {
 	BARLEY(ModList.NATURA, 0xCDB14D, "crops", "seeds", 0, 0, 0, 3, VarType.INSTANCE),
 	COTTON(ModList.NATURA, 0xE366F5, "crops", "seeds", 0, 4, 6, 8, VarType.INSTANCE),
 	FLAX(ModList.BLUEPOWER, 0xD9C482, "flax_crop", "flax_seeds", 0, 0, 0, 8, VarType.INSTANCE),
-	MAGIC(ModList.MAGICCROPS, 0x6F9165, MagicCropHandler.getInstance()),
+	MAGIC(ModList.MAGICCROPS, 0x6F9165, (CropHandlerBase)ModList.MAGICCROPS.getHandler("Handler")),
 	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE),
 	BERRY(ModList.NATURA, 0x55ff33, BerryBushHandler.getInstance()),
 	OREBERRY(ModList.TINKERER, 0xcccccc, OreBerryBushHandler.getInstance()),
@@ -166,7 +166,7 @@ public enum ModCropList implements ModCrop {
 		harvestedMeta = -1;
 		ripeMeta = -1;
 		cropColor = color;
-		exists = h.initializedProperly();
+		exists = h != null && h.initializedProperly();
 	}
 
 	private ModCropList(ModList api, int color, String blockVar, String itemVar, int seedItem, int metamin, int metafresh, int metaripe, VarType type) {

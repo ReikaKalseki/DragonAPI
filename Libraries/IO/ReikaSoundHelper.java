@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.Iterator;
@@ -17,12 +18,17 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.Block.SoundType;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.audio.SoundManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import paulscode.sound.Library;
+import paulscode.sound.SoundSystem;
+import paulscode.sound.StreamThread;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.CustomSoundHandler;
@@ -39,6 +45,11 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ReikaSoundHelper {
 
 	private static final MultiMap<SoundEnum, SoundPlay> plays = new MultiMap();
+
+	private static Field soundManagerField;
+	private static Field soundSystemField;
+	private static Field soundLibraryField;
+	private static Field streamThreadField;
 
 	public static void playBreakSound(World world, int x, int y, int z, Block b) {
 		SoundType s = b.stepSound;
@@ -211,5 +222,56 @@ public class ReikaSoundHelper {
 
 	public static void playSoundFromServer(World world, double x, double y, double z, String name, float vol, float pitch, boolean scale) {
 		ReikaPacketHelper.writeDirectSound(DragonAPIInit.packetChannel, PacketIDs.SERVERSOUND.ordinal(), world, x, y, z, name, vol, pitch, scale);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static StreamThread getStreamingThread(SoundHandler sh) {
+		try {
+			SoundManager mgr = (SoundManager)soundManagerField.get(sh);
+			SoundSystem sys = (SoundSystem)soundSystemField.get(mgr);
+			Library lib = (Library)soundLibraryField.get(sys);
+			StreamThread s = (StreamThread)streamThreadField.get(lib);
+			return s;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	/** Recreates and relaunches the StreamThread. Only call this if the thread has crashed. */
+	@SideOnly(Side.CLIENT)
+	public static void restartStreamingSystem(SoundHandler sh) {
+		StreamThread thread = new StreamThread();
+		try {
+			SoundManager mgr = (SoundManager)soundManagerField.get(sh);
+			SoundSystem sys = (SoundSystem)soundSystemField.get(mgr);
+			Library lib = (Library)soundLibraryField.get(sys);
+			streamThreadField.set(lib, thread);
+
+			thread.start();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	static {
+		try {
+			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+				soundManagerField = SoundHandler.class.getDeclaredField("sndManager");
+				soundSystemField = SoundManager.class.getDeclaredField("sndSystem");
+				soundLibraryField = SoundSystem.class.getDeclaredField("soundLibrary");
+				streamThreadField = Library.class.getDeclaredField("streamThread");
+
+				soundManagerField.setAccessible(true);
+				soundSystemField.setAccessible(true);
+				soundLibraryField.setAccessible(true);
+				streamThreadField.setAccessible(true);
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }

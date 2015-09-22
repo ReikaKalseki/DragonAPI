@@ -27,7 +27,7 @@ public class SoundVolumeEvent extends Event {
 	public final float originalVolume;
 	public float volume;
 
-	private SoundVolumeEvent(ISound snd, SoundPoolEntry pl, SoundCategory cat) {
+	public SoundVolumeEvent(ISound snd, SoundPoolEntry pl, SoundCategory cat) {
 		sound = snd;
 		pool = pl;
 		category = cat;

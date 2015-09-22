@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
+import java.util.EnumMap;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
@@ -25,31 +26,42 @@ public final class TinkerToolHandler extends ModHandlerBase {
 	private static final TinkerToolHandler instance = new TinkerToolHandler();
 
 	public enum Tools {
-		PICK("pickaxe"),
-		SPADE("shovel"),
-		AXE("hatchet"),
-		BROADSWORD("broadsword"),
-		LONGSWORD("longsword"),
-		RAPIER("rapier"),
-		DAGGER("dagger"),
-		CUTLASS("cutlass"),
-		PAN("frypan"),
-		SIGN("battlesign"),
-		CHISEL("chisel"),
-		MATTOCK("mattock"),
-		SCYTHE("scythe"),
-		LUMBERAXE("lumberaxe"),
-		CLEAVER("cleaver"),
-		HAMMER("hammer"),
-		BATTLEAX("battleaxe");
+		PICK("pickaxe", ToolParts.PICK, ToolParts.ROD, ToolParts.BINDING),
+		SPADE("shovel", ToolParts.SHOVEL, ToolParts.ROD),
+		AXE("hatchet", ToolParts.AXEHEAD, ToolParts.ROD),
+		BROADSWORD("broadsword", ToolParts.SWORD, ToolParts.ROD, ToolParts.WIDEGUARD),
+		LONGSWORD("longsword", ToolParts.SWORD, ToolParts.ROD, ToolParts.HANDGUARD),
+		RAPIER("rapier", ToolParts.SWORD, ToolParts.ROD, ToolParts.CROSSBAR),
+		DAGGER("dagger", ToolParts.DAGGER, ToolParts.ROD, ToolParts.CROSSBAR),
+		CUTLASS("cutlass", ToolParts.SWORD, ToolParts.ROD, ToolParts.FULLGUARD),
+		PAN("frypan", ToolParts.PANHEAD, ToolParts.ROD),
+		SIGN("battlesign", ToolParts.SIGN, ToolParts.ROD),
+		CHISEL("chisel", ToolParts.CHISEL, ToolParts.ROD),
+		MATTOCK("mattock", ToolParts.AXEHEAD, ToolParts.ROD, ToolParts.SHOVEL),
+		SCYTHE("scythe", ToolParts.SCYTHE, ToolParts.TOUGHROD, ToolParts.TOUGHBINDING, ToolParts.TOUGHROD),
+		LUMBERAXE("lumberaxe", ToolParts.LUMBER, ToolParts.TOUGHROD, ToolParts.PLATE, ToolParts.TOUGHBINDING),
+		CLEAVER("cleaver", ToolParts.CLEAVER, ToolParts.TOUGHROD, ToolParts.PLATE, ToolParts.TOUGHROD),
+		HAMMER("hammer", ToolParts.HAMMER, ToolParts.TOUGHROD, ToolParts.PLATE, ToolParts.PLATE),
+		EXCAVATOR("excavator", ToolParts.EXCAVATOR, ToolParts.TOUGHROD, ToolParts.PLATE, ToolParts.TOUGHBINDING),
+		BATTLEAX("battleaxe", ToolParts.LUMBER, ToolParts.TOUGHROD, ToolParts.LUMBER, ToolParts.TOUGHBINDING);
 
 		private Item item;
 		private final String field;
 
+		public final ToolParts headPart;
+		public final ToolParts handlePart;
+		public final ToolParts accessoryPart;
+		public final ToolParts extraPart;
+
 		public static final Tools[] toolList = values();
 
-		private Tools(String s) {
+		private Tools(String s, ToolParts... parts) {
 			field = s;
+
+			headPart = parts.length > 0 ? parts[0] : null;
+			handlePart = parts.length > 1 ? parts[1] : null;
+			accessoryPart = parts.length > 2 ? parts[2] : null;
+			extraPart = parts.length > 3 ? parts[3] : null;
 		}
 
 		public Item getItem() {
@@ -192,6 +204,21 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		}
 	}
 
+	public static enum ToolPartType {
+		HEAD("Head"),
+		HANDLE("Handle"),
+		ACCESSORY("Accessory"),
+		EXTRA("Extra");
+
+		public final String NBTName;
+
+		public static final ToolPartType[] types = values();
+
+		private ToolPartType(String n) {
+			NBTName = n;
+		}
+	}
+
 	private boolean init = false;
 
 	public final Item toolCastItem;
@@ -204,6 +231,8 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 	private final HashMap<Item, Tools> tools = new HashMap();
 	private final HashMap<Item, Weapons> weapons = new HashMap();
+
+	private final EnumMap<Tools, EnumMap<ToolPartType, ToolParts>> toolPartMap = new EnumMap(Tools.class);
 
 	private TinkerToolHandler() {
 		super();
@@ -468,6 +497,16 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		weaponWoodPattern = pattern_w;
 
 		blankPattern = blank;
+
+		for (int i = 0; i < Tools.toolList.length; i++) {
+			Tools t = Tools.toolList[i];
+			EnumMap<ToolPartType, ToolParts> map = new EnumMap(ToolPartType.class);
+			toolPartMap.put(t, map);
+			map.put(ToolPartType.HEAD, t.headPart);
+			map.put(ToolPartType.HANDLE, t.handlePart);
+			map.put(ToolPartType.ACCESSORY, t.accessoryPart);
+			map.put(ToolPartType.EXTRA, t.extraPart);
+		}
 	}
 
 	public static TinkerToolHandler getInstance() {
@@ -517,6 +556,16 @@ public final class TinkerToolHandler extends ModHandlerBase {
 			return 0;
 		NBTTagCompound tag = is.stackTagCompound.getCompoundTag("InfiTool");
 		return tag.getInteger("HarvestLevel");
+	}
+
+	public int getToolMaterial(ItemStack tool, ToolPartType part) {
+		if (tool.stackTagCompound == null || !tool.stackTagCompound.hasKey("InfiTool"))
+			return -1;
+		return tool.stackTagCompound.getCompoundTag("InfiTool").getInteger(part.NBTName);
+	}
+
+	public ToolParts getPart(Tools tool, ToolPartType type) {
+		return toolPartMap.get(tool).get(type);
 	}
 
 	public boolean isStoneOrBetter(ItemStack is) {

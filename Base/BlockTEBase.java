@@ -37,6 +37,14 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 	public abstract TileEntity createTileEntity(World world, int meta);
 
 	@Override
+	public final float getBlockHardness(World world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		if (te instanceof TileEntityBase && ((TileEntityBase)te).isUnMineable())
+			return -1;
+		return blockHardness;
+	}
+
+	@Override
 	public final void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ)
 	{
 		ForgeDirection dir = ReikaDirectionHelper.getDirectionBetween(x, y, z, tileX, tileY, tileZ);

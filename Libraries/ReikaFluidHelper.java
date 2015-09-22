@@ -75,4 +75,8 @@ public class ReikaFluidHelper {
 
 	}
 
+	public static String fluidStackToString(FluidStack f) {
+		return f.amount+"x"+f.getUnlocalizedName()+"("+f.fluidID+")"+"{"+f.tag+"}";
+	}
+
 }

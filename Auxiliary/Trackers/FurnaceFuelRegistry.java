@@ -9,7 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary.Trackers;
 
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntityFurnace;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import cpw.mods.fml.common.IFuelHandler;
 
@@ -29,6 +32,11 @@ public final class FurnaceFuelRegistry implements IFuelHandler {
 
 	public void registerItem(ItemStack is, int ticks) {
 		data.put(is, ticks);
+	}
+
+	/** The amount a block of coal burns over the time an item of coal burns. 10x as of 1.7.10 */
+	public int getBlockOverItemFactor() {
+		return TileEntityFurnace.getItemBurnTime(new ItemStack(Blocks.coal_block))/TileEntityFurnace.getItemBurnTime(new ItemStack(Items.coal));
 	}
 
 	@Override

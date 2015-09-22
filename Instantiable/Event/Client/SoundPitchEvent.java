@@ -25,7 +25,7 @@ public class SoundPitchEvent extends Event {
 	public final double unclampedPitch;
 	public float pitch;
 
-	private SoundPitchEvent(ISound snd, SoundPoolEntry pl) {
+	public SoundPitchEvent(ISound snd, SoundPoolEntry pl) {
 		sound = snd;
 		pool = pl;
 

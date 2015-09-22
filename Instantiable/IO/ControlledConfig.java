@@ -22,10 +22,12 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.InvalidConfigException;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
+import Reika.DragonAPI.Interfaces.Configuration.BoundedConfig;
 import Reika.DragonAPI.Interfaces.Configuration.ConfigList;
 import Reika.DragonAPI.Interfaces.Configuration.DecimalConfig;
 import Reika.DragonAPI.Interfaces.Configuration.IntArrayConfig;
@@ -394,6 +396,8 @@ public class ControlledConfig {
 		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultState());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultState());
+		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
+			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return prop.getBoolean(cfg.getDefaultState());
 	}
 
@@ -401,6 +405,8 @@ public class ControlledConfig {
 		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultValue());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultValue());
+		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
+			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return prop.getInt();
 	}
 
@@ -408,6 +414,8 @@ public class ControlledConfig {
 		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultFloat());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultFloat());
+		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
+			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return (float)prop.getDouble(cfg.getDefaultFloat());
 	}
 
@@ -415,6 +423,8 @@ public class ControlledConfig {
 		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultString());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultString());
+		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
+			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return prop.getString();
 	}
 
@@ -422,6 +432,8 @@ public class ControlledConfig {
 		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultIntArray());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultIntArray());
+		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
+			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return prop.getIntList();
 	}
 
@@ -429,6 +441,8 @@ public class ControlledConfig {
 		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultStringArray());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultStringArray());
+		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
+			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return prop.getStringList();
 	}
 

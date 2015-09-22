@@ -13,17 +13,31 @@ import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.HashMap;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.fluids.Fluid;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.IDConflictException;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler.ToolPartType;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler.ToolParts;
+import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler.Tools;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler.WeaponParts;
 import Reika.DragonAPI.ModInteract.RecipeHandlers.SmelteryRecipeHandler;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.EventPriority;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class TinkerMaterialHelper {
 
@@ -51,12 +65,39 @@ public class TinkerMaterialHelper {
 
 	public static final TinkerMaterialHelper instance = new TinkerMaterialHelper();
 
-	private final HashMap<String, TinkerMaterial> customMaterialNames = new HashMap();
-	private final HashMap<Integer, TinkerMaterial> customMaterialIDs = new HashMap();
+	private final HashMap<String, AbstractMaterial> materialNames = new HashMap();
+	private final HashMap<Integer, AbstractMaterial> materialIDs = new HashMap();
 
 	private TinkerMaterialHelper() {
 		MinecraftForge.EVENT_BUS.register(this);
+		FMLCommonHandler.instance().bus().register(this);
 	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void breakDisallowedTools(BlockEvent.BreakEvent evt) { //Breaks tools cheated in with uncraftable parts
+		EntityPlayer ep = evt.getPlayer();
+		ItemStack tool = ep.getCurrentEquippedItem();
+		if (tool != null && InterfaceCache.TINKERTOOL.instanceOf(tool.getItem())) {
+			Tools t = TinkerToolHandler.getInstance().getTool(tool.getItem());
+			for (int i = 0; i < ToolPartType.types.length; i++) {
+				ToolPartType type = ToolPartType.types[i];
+				ToolParts p = TinkerToolHandler.getInstance().getPart(t, type);
+				if (p != null) {
+					int id = TinkerToolHandler.getInstance().getToolMaterial(tool, type);
+					AbstractMaterial mat = materialIDs.get(id);
+					if (mat instanceof CustomTinkerMaterial) {
+						if (!((CustomTinkerMaterial)mat).toolParts.contains(p)) { //forbidden part, had to be spawned in
+							ReikaSoundHelper.playSoundFromServer(ep.worldObj, ep.posX, ep.posY, ep.posZ, "random.break", 2, 1, true);
+							ep.attackEntityFrom(DamageSource.generic, 1);
+							ep.setCurrentItemOrArmor(0, null);
+							evt.setCanceled(true);
+						}
+					}
+				}
+			}
+		}
+	}
+
 	/*
 	@ModDependent(ModList.TINKERER)
 	@SubscribeEvent(priority = EventPriority.LOWEST)
@@ -86,6 +127,7 @@ public class TinkerMaterialHelper {
 		}
 	}
 	 */
+
 	static {
 		try {
 			Class c = Class.forName("tconstruct.library.TConstructRegistry");
@@ -99,6 +141,29 @@ public class TinkerMaterialHelper {
 			registerBowstringMaterial = c.getDeclaredMethod("addBowstringMaterial", int.class, int.class, ItemStack.class, ItemStack.class, float.class, float.class, float.class, int.class);
 			registerBowMaterial = c.getDeclaredMethod("addBowMaterial", int.class, int.class, float.class);
 			registerArrowMaterial = c.getDeclaredMethod("addArrowMaterial", int.class, float.class, float.class);
+
+			instance.addNativeToolMaterial(0, "Wood", 1, 97, 350, 0, 1.0F, 0, 0.0F, EnumChatFormatting.YELLOW.toString(), 7690273);
+			instance.addNativeToolMaterial(1, "Stone", 1, 131, 400, 1, 0.5F, 0, 1.0F, EnumChatFormatting.GRAY.toString(), 8355711);
+			instance.addNativeToolMaterial(2, "Iron", 2, 250, 600, 2, 1.3F, 1, 0.0F, EnumChatFormatting.WHITE.toString(), 14342874);
+			instance.addNativeToolMaterial(3, "Flint", 1, 171, 525, 2, 0.7F, 0, 0.0F, EnumChatFormatting.DARK_GRAY.toString(), 4737096);
+			instance.addNativeToolMaterial(4, "Cactus", 1, 150, 500, 2, 1.0F, 0, -1.0F, EnumChatFormatting.DARK_GREEN.toString(), 1206539);
+			instance.addNativeToolMaterial(5, "Bone", 1, 200, 400, 1, 1.0F, 0, 0.0F, EnumChatFormatting.YELLOW.toString(), 15592394);
+			instance.addNativeToolMaterial(6, "Obsidian", 3, 89, 700, 2, 0.8F, 3, 0.0F, EnumChatFormatting.LIGHT_PURPLE.toString(), 11173877);
+			instance.addNativeToolMaterial(7, "Netherrack", 2, 131, 400, 1, 1.2F, 0, 1.0F, EnumChatFormatting.DARK_RED.toString(), 8598072);
+			instance.addNativeToolMaterial(8, "Slime", 0, 500, 150, 0, 1.5F, 0, 0.0F, EnumChatFormatting.GREEN.toString(), 7254117);
+			instance.addNativeToolMaterial(9, "Paper", 0, 30, 200, 0, 0.3F, 0, 0.0F, EnumChatFormatting.WHITE.toString(), 16777215);
+			instance.addNativeToolMaterial(10, "Cobalt", 4, 800, 1400, 3, 1.75F, 2, 0.0F, EnumChatFormatting.DARK_AQUA.toString(), 2324189);
+			instance.addNativeToolMaterial(11, "Ardite", 4, 500, 800, 3, 2.0F, 0, 2.0F, EnumChatFormatting.DARK_RED.toString(), 10825728);
+			instance.addNativeToolMaterial(12, "Manyullyn", 5, 1200, 900, 4, 2.5F, 0, 0.0F, EnumChatFormatting.DARK_PURPLE.toString(), 7551141);
+			instance.addNativeToolMaterial(13, "Copper", 1, 180, 500, 2, 1.15F, 0, 0.0F, EnumChatFormatting.RED.toString(), 13394960);
+			instance.addNativeToolMaterial(14, "Bronze", 2, 550, 800, 2, 1.3F, 1, 0.0F, EnumChatFormatting.GOLD.toString(), 13277526);
+			instance.addNativeToolMaterial(15, "Alumite", 4, 700, 800, 3, 1.3F, 2, 0.0F, EnumChatFormatting.LIGHT_PURPLE.toString(), 16754665);
+			instance.addNativeToolMaterial(16, "Steel", 4, 750, 1000, 4, 1.3F, 2, 0.0F, EnumChatFormatting.GRAY.toString(), 10526880);
+			instance.addNativeToolMaterial(17, "BlueSlime", 0, 1200, 150, 0, 2.0F, 0, 0.0F, EnumChatFormatting.AQUA.toString(), 6729392);
+			instance.addNativeToolMaterial(18, "PigIron", 3, 250, 600, 2, 1.3F, 1, 0.0F, EnumChatFormatting.RED.toString(), 15771812);
+
+			if (ModList.THAUMCRAFT.isLoaded())
+				instance.addNativeToolMaterial(31, "Thaumium", 3, 400, 700, 2, 1.3F, 0, 0.0F, "§5", 5325692);
 		}
 		catch (Exception e) {
 			DragonAPICore.logError("Could not load Tool Material Handler!");
@@ -154,18 +219,64 @@ public class TinkerMaterialHelper {
 		}
 	}
 
-	public TinkerMaterial createMaterial(int id, String mod, String name) {
-		TinkerMaterial mat = new TinkerMaterial(id, mod, name);
-		customMaterialIDs.put(id, mat);
-		customMaterialNames.put(name, mat);
+	public CustomTinkerMaterial createMaterial(int id, DragonAPIMod mod, String name) {
+		AbstractMaterial prev = materialIDs.get(id);
+		if (prev != null)
+			throw new IDConflictException(mod, "Tool material ID "+id+" is already occupied by '"+prev.materialName+"'!");
+		CustomTinkerMaterial mat = new CustomTinkerMaterial(id, mod, name);
+		materialIDs.put(id, mat);
+		materialNames.put(name, mat);
 		return mat;
 	}
 
-	public static class TinkerMaterial {
+	private void addNativeToolMaterial(int id, String name, int harvestLevel, int dura, int speed, int attack, float handleModifier, int reinforced, float stonebound, String chat, int color) {
+		NativeTinkerMaterial mat = new NativeTinkerMaterial(id, name, harvestLevel, dura, speed, attack, handleModifier, reinforced, stonebound, chat, color);
+
+		materialIDs.put(id, mat);
+		materialNames.put(name, mat);
+	}
+
+	private abstract static class AbstractMaterial {
 
 		public final int id;
-		public final String modName;
 		public final String materialName;
+
+		protected AbstractMaterial(int id, String name) {
+			this.id = id;
+			materialName = name;
+		}
+	}
+
+	public static class NativeTinkerMaterial extends AbstractMaterial {
+
+		public final int harvestLevel;
+		public final int durability;
+		public final int miningSpeed;
+		public final int reinforced;
+		public final float handleModifier;
+		public final float stonebound;
+		public final int damageBoost;
+		public final int renderColor;
+		public final String chatColor;
+
+		private NativeTinkerMaterial(int id, String name, int harvestLevel, int dura, int speed, int attack, float handleModifier, int reinforced, float stonebound, String chat, int color) {
+			super(id, name);
+			this.harvestLevel = harvestLevel;
+			miningSpeed = speed;
+			durability = dura;
+			this.reinforced = reinforced;
+			this.handleModifier = handleModifier;
+			this.stonebound = stonebound;
+			damageBoost = attack;
+			renderColor = color;
+			chatColor = chat;
+		}
+
+	}
+
+	public static class CustomTinkerMaterial extends AbstractMaterial {
+
+		public final DragonAPIMod mod;
 
 		/** Pickaxe levels - 0: Wood, 1: Stone, 2: Redstone/Diamond, 3: Obsidian, 4: Cobalt/Ardite, 5: Manyullyn */
 		public int harvestLevel = 2;
@@ -188,53 +299,74 @@ public class TinkerMaterialHelper {
 		private final EnumSet<TinkerToolHandler.ToolParts> toolParts = EnumSet.allOf(TinkerToolHandler.ToolParts.class);
 		private final EnumSet<TinkerToolHandler.WeaponParts> weaponParts = EnumSet.allOf(TinkerToolHandler.WeaponParts.class);
 
-		private TinkerMaterial(int id, String mod, String name) {
-			this.id = id;
-			materialName = name;
-			modName = mod;
+		private CustomTinkerMaterial(int id, DragonAPIMod mod, String name) {
+			super(id, name);
+			this.mod = mod;
 		}
 
-		public TinkerMaterial setUnbreakable() {
+		public CustomTinkerMaterial setUnbreakable() {
 			reinforced = 10;
 			return this;
 		}
 
-		public TinkerMaterial addToolPart(TinkerToolHandler.ToolParts tool) {
+		public CustomTinkerMaterial setDisallowCheatedParts() {
+			reinforced = 10;
+			return this;
+		}
+
+		public CustomTinkerMaterial addToolPart(TinkerToolHandler.ToolParts tool) {
 			toolParts.add(tool);
 			return this;
 		}
 
-		public TinkerMaterial addWeaponPart(TinkerToolHandler.WeaponParts weapon) {
+		public CustomTinkerMaterial addWeaponPart(TinkerToolHandler.WeaponParts weapon) {
 			weaponParts.add(weapon);
 			return this;
 		}
 
-		public TinkerMaterial disableToolPart(TinkerToolHandler.ToolParts tool) {
+		public CustomTinkerMaterial disableToolPart(TinkerToolHandler.ToolParts tool) {
 			toolParts.remove(tool);
 			return this;
 		}
 
-		public TinkerMaterial disableWeaponPart(TinkerToolHandler.WeaponParts weapon) {
+		public CustomTinkerMaterial disableWeaponPart(TinkerToolHandler.WeaponParts weapon) {
 			weaponParts.remove(weapon);
 			return this;
 		}
 
-		public TinkerMaterial clearToolParts() {
+		public CustomTinkerMaterial clearToolParts() {
 			toolParts.clear();
 			return this;
 		}
 
-		public TinkerMaterial clearWeaponParts() {
+		public CustomTinkerMaterial clearWeaponParts() {
 			weaponParts.clear();
 			return this;
 		}
 
-		public TinkerMaterial register(boolean shard) {
+		public CustomTinkerMaterial register(boolean shard) {
 			try {
 				registerMaterial.invoke(null, id, materialName, harvestLevel, durability, miningSpeed, damageBoost, handleModifier, reinforced, stonebound, chatColor, renderColor);
 				registerDefaultMaterial.invoke(null, id);
 				if (shard)
 					registerChunkMaterial.invoke(null, id);
+
+				if (ModList.NEI.isLoaded()) {
+					for (int i = 0; i < ToolParts.partList.length; i++) {
+						ToolParts p = ToolParts.partList[i];
+						if (!toolParts.contains(p)) {
+							ItemStack is = p.getItem(id);
+							NEI_DragonAPI_Config.hideItem(is);
+						}
+					}
+					for (int i = 0; i < WeaponParts.partList.length; i++) {
+						WeaponParts p = WeaponParts.partList[i];
+						if (!weaponParts.contains(p)) {
+							ItemStack is = p.getItem(id);
+							NEI_DragonAPI_Config.hideItem(is);
+						}
+					}
+				}
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -244,9 +376,9 @@ public class TinkerMaterialHelper {
 		}
 
 		//Have to put textures in TiC subfolder for parts
-		public TinkerMaterial registerTexture(String path, boolean prependToolType) {
+		public CustomTinkerMaterial registerTexture(String path, boolean prependToolType) {
 			try {
-				registerTextures.invoke(null, id, modName, path, prependToolType);
+				registerTextures.invoke(null, id, mod.getDisplayName(), path, prependToolType);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -255,7 +387,7 @@ public class TinkerMaterialHelper {
 			return this;
 		}
 
-		public TinkerMaterial registerPatternBuilder(ItemStack input) {
+		public CustomTinkerMaterial registerPatternBuilder(ItemStack input) {
 			try {
 				registerPatterns.invoke(patternBuilder, input, 2, materialName, new ItemStack(toolShard, 1, id), new ItemStack(toolRod, 1, id), id);
 
@@ -270,7 +402,7 @@ public class TinkerMaterialHelper {
 			return this;
 		}
 
-		public TinkerMaterial registerSmelteryCasting(ItemStack input, Fluid molten, int temp, ItemStack render) {
+		public CustomTinkerMaterial registerSmelteryCasting(ItemStack input, Fluid molten, int temp, ItemStack render) {
 			int base = SmelteryRecipeHandler.INGOT_AMOUNT;
 			SmelteryRecipeHandler.addIngotMelting(input, render, temp, molten);
 			SmelteryRecipeHandler.addIngotCasting(input, molten, 40);
@@ -290,7 +422,7 @@ public class TinkerMaterialHelper {
 			return this;
 		}
 
-		public TinkerMaterial registerWeapons(ItemStack input, int drawSpeed, float drawSpeedMult, float arrowMass, float flightSpeed, float maxSpeed, float breakChance) {
+		public CustomTinkerMaterial registerWeapons(ItemStack input, int drawSpeed, float drawSpeedMult, float arrowMass, float flightSpeed, float maxSpeed, float breakChance) {
 			try {
 				for (WeaponParts p : weaponParts)
 					registerPartMapping.invoke(null, TinkerToolHandler.getInstance().weaponWoodPattern, p.castMeta, id, p.getItem(id));

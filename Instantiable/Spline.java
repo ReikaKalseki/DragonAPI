@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.Tessellator;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -56,18 +57,20 @@ public class Spline {
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		float w = GL11.glGetFloat(GL11.GL_LINE_WIDTH);
 		v5.startDrawing(GL11.GL_LINE_STRIP);
-		v5.setColorRGBA_I(color, 255);
+		int a = ReikaColorAPI.getAlpha(color);
+		int clr = color & 0xffffff;
+		v5.setColorRGBA_I(clr, a);
 		this.renderPoints(v5, li, x, y, z);
 		v5.draw();
 		if (glow) {
 			v5.startDrawing(GL11.GL_LINE_STRIP);
-			v5.setColorRGBA_I(color, 64);
+			v5.setColorRGBA_I(clr, a/4);
 			GL11.glLineWidth(5);
 			this.renderPoints(v5, li, x, y, z);
 			v5.draw();
 
 			v5.startDrawing(GL11.GL_LINE_STRIP);
-			v5.setColorRGBA_I(color, 64);
+			v5.setColorRGBA_I(clr, a/4);
 			GL11.glLineWidth(10);
 			this.renderPoints(v5, li, x, y, z);
 			v5.draw();
@@ -84,7 +87,7 @@ public class Spline {
 
 	/**
 	 * This method will calculate the Catmull-Rom interpolation curve, returning
-	 * it as a list of DecimalPosition DecimalPositioninate objects.  This method in particular
+	 * it as a list of DecimalPosition DecimalPosition objects.  This method in particular
 	 * adds the first and last control points which are not visible, but required
 	 * for calculating the spline.
 	 *
@@ -93,10 +96,8 @@ public class Spline {
 	 * @param fine The integer number of equally spaced points to
 	 * return along each curve.  The actual distance between each
 	 * point will depend on the spacing between the control points.
-	 * @return The list of interpolated DecimalPositioninates.
+	 * @return The list of interpolated DecimalPosition.
 	 * @param curveType Chordal (stiff), Uniform(floppy), or Centripetal(medium)
-	 * @throws gov.ca.water.shapelite.analysis.CatmullRomException if
-	 * pointsPerSegment is less than 2.
 	 */
 	private List<DecimalPosition> interpolate(int fine, boolean closed) {
 		List<DecimalPosition> vertices = new ArrayList();

@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -7,7 +16,7 @@ import net.minecraftforge.event.entity.player.PlayerEvent;
 
 public class PlayerSprintEvent extends PlayerEvent {
 
-	private PlayerSprintEvent(EntityPlayer ep) {
+	public PlayerSprintEvent(EntityPlayer ep) {
 		super(ep);
 	}
 

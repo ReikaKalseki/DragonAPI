@@ -10,14 +10,13 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.tileentity.TileEntityFurnace;
-import Reika.DragonAPI.Instantiable.Event.TileEntityEvent;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
 public abstract class FurnaceUpdateEvent extends TileEntityEvent {
 
 	public final TileEntityFurnace furnace;
 
-	private FurnaceUpdateEvent(TileEntityFurnace te) {
+	public FurnaceUpdateEvent(TileEntityFurnace te) {
 		super(te);
 		furnace = te;
 	}

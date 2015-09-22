@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModInteract;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import mcp.mobius.waila.api.IWailaDataAccessor;
 import mcp.mobius.waila.api.IWailaDataProvider;
@@ -26,6 +27,8 @@ public class LegacyWailaHelper {
 
 	private static final ArrayList<DataHandler> wailaData = new ArrayList();
 
+	private static final HashSet<Class> registeredBlocks = new HashSet();
+
 	private static long renderFrame;
 	private static WorldLocation lastLocation;
 
@@ -34,6 +37,9 @@ public class LegacyWailaHelper {
 		for (DataHandler h : wailaData) {
 			IWailaDataProvider b = (IWailaDataProvider)h.getBlock();
 			Class<?extends Block> c = h.getObjectClass();
+			if (registeredBlocks.contains(c))
+				continue;
+			registeredBlocks.add(c);
 			reg.registerHeadProvider(b, c);
 			reg.registerBodyProvider(b, c);
 			reg.registerTailProvider(b, c);

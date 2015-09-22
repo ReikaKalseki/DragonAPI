@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -14,7 +23,7 @@ public class JumpCheckEvent extends PlayerEvent {
 
 	public final boolean defaultResult;
 
-	private JumpCheckEvent(EntityPlayer e, C03PacketPlayer pk, double d5) {
+	public JumpCheckEvent(EntityPlayer e, C03PacketPlayer pk, double d5) {
 		super(e);
 
 		packet = pk;

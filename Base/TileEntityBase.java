@@ -113,6 +113,10 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	private long lastTickCall = -1;
 
+	/** For mapmakers */
+	private boolean unharvestable = false;
+	private boolean unmineable = false;
+
 	public TileEntityBase() {
 		super();
 		updateTimer = new StepTimer(this.getBlockUpdateDelay());
@@ -195,6 +199,9 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			if (node instanceof Component)
 				((Component)node).save(NBT);
 		}
+
+		NBT.setBoolean("no_drops", unharvestable);
+		NBT.setBoolean("no_mine", unmineable);
 	}
 
 	@Override
@@ -210,6 +217,21 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			if (node instanceof Component)
 				((Component)node).load(NBT);
 		}
+
+		unharvestable = NBT.getBoolean("no_drops");
+		unmineable = NBT.getBoolean("no_mine");
+	}
+
+	public final boolean isUnMineable() {
+		return unmineable;
+	}
+
+	public final boolean isUnHarvestable() {
+		return unharvestable;
+	}
+
+	public final void setUnmineable(boolean nomine) {
+		unmineable = nomine;
 	}
 
 	public final void scheduleBlockUpdate(int ticks) {
@@ -500,7 +522,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			int dim = worldObj.provider.dimensionId;
 			//PacketDispatcher.sendPacketToAllAround(xCoord, yCoord, zCoord, r, dim, syncTag);
 			this.sendPacketToAllAround(syncTag, r);
-			//DragonAPIInit.instance.getModLogger().debug("Packet "+syncTag+" sent from "+this);
+			//DragonAPICore.debug("Packet "+syncTag+" sent from "+this);
 		}
 		//}
 		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);

@@ -20,9 +20,9 @@ public interface ConnectedTextureGlass {
 	/** Returns the unconnected sides. Each integer represents one of 8 adjacent corners to a face, with the same
 	 * numbering convention as is found on a calculator or computer number pad. */
 	public ArrayList<Integer> getEdgesForFace(IBlockAccess world, int x, int y, int z, ForgeDirection face);
+	public IIcon getIconForEdge(IBlockAccess world, int x, int y, int z, int edge);
 
-	public IIcon getIconForEdge(int edge);
-
+	public IIcon getIconForEdge(int itemMeta, int edge);
 	public boolean renderCentralTextureForItem(int meta);
 
 }
