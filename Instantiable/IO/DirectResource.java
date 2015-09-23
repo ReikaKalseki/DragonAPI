@@ -10,6 +10,9 @@
 package Reika.DragonAPI.Instantiable.IO;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 import net.minecraft.client.resources.IResource;
@@ -29,12 +32,26 @@ public class DirectResource implements IResource {
 	@Override
 	public InputStream getInputStream() {
 		if (data == null) {
-			InputStream st = DragonAPIInit.class.getClassLoader().getResourceAsStream(path);
+			InputStream st = this.calcStream();
 			if (st == null)
 				throw new RuntimeException("Resource not found at "+path);
 			data = ReikaJavaLibrary.streamToBytes(st);
 		}
 		return new ByteArrayInputStream(data);
+	}
+
+	private InputStream calcStream() {
+		File f = new File(path);
+		if (f.exists()) {
+			try {
+				return new FileInputStream(f);
+			}
+			catch (FileNotFoundException e) {
+				return null;
+			}
+		}
+		else
+			return DragonAPIInit.class.getClassLoader().getResourceAsStream(path);
 	}
 
 	@Override

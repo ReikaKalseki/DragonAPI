@@ -66,83 +66,83 @@ public class APIPacketHandler implements PacketHandler {
 			//ReikaJavaLibrary.pConsole(inputStream.readInt()+":"+inputStream.readInt()+":"+inputStream.readInt()+":"+inputStream.readInt()+":"+inputStream.readInt()+":"+inputStream.readInt()+":"+inputStream.readInt());
 			PacketTypes packetType = packet.getType();
 			switch(packetType) {
-			case SOUND:
-				return;
-			case FULLSOUND:
-				control = inputStream.readInt();
-				pack = PacketIDs.getEnum(control);
-				break;
-			case STRING:
-				stringdata = packet.readString();
-				control = inputStream.readInt();
-				pack = PacketIDs.getEnum(control);
-				break;
-			case DATA:
-				control = inputStream.readInt();
-				pack = PacketIDs.getEnum(control);
-				len = pack.getNumberDataInts();
-				data = new int[len];
-				readinglong = pack.isLongPacket();
-				if (!readinglong) {
-					for (int i = 0; i < len; i++)
+				case SOUND:
+					return;
+				case FULLSOUND:
+					control = inputStream.readInt();
+					pack = PacketIDs.getEnum(control);
+					break;
+				case STRING:
+					stringdata = packet.readString();
+					control = inputStream.readInt();
+					pack = PacketIDs.getEnum(control);
+					break;
+				case DATA:
+					control = inputStream.readInt();
+					pack = PacketIDs.getEnum(control);
+					len = pack.getNumberDataInts();
+					data = new int[len];
+					readinglong = pack.isLongPacket();
+					if (!readinglong) {
+						for (int i = 0; i < len; i++)
+							data[i] = inputStream.readInt();
+					}
+					else
+						longdata = inputStream.readLong();
+					break;
+				case UPDATE:
+					control = inputStream.readInt();
+					pack = PacketIDs.getEnum(control);
+					break;
+				case FLOAT:
+					control = inputStream.readInt();
+					pack = PacketIDs.getEnum(control);
+					floatdata = inputStream.readFloat();
+					break;
+				case SYNC:
+					String name = packet.readString();
+					x = inputStream.readInt();
+					y = inputStream.readInt();
+					z = inputStream.readInt();
+					int value = inputStream.readInt();
+					ReikaPacketHelper.updateTileEntityData(world, x, y, z, name, value);
+					return;
+				case TANK:
+					String tank = packet.readString();
+					x = inputStream.readInt();
+					y = inputStream.readInt();
+					z = inputStream.readInt();
+					int level = inputStream.readInt();
+					ReikaPacketHelper.updateTileEntityTankData(world, x, y, z, tank, level);
+					return;
+				case RAW:
+					control = inputStream.readInt();
+					pack = PacketIDs.getEnum(control);
+					len = pack.getNumberDataInts();
+					data = new int[len];
+					readinglong = pack.isLongPacket();
+					if (!readinglong) {
+						for (int i = 0; i < len; i++)
+							data[i] = inputStream.readInt();
+					}
+					else
+						longdata = inputStream.readLong();
+					break;
+				case NBT:
+					control = inputStream.readInt();
+					pack = PacketIDs.getEnum(control);
+					NBT = ((DataPacket)packet).asNBT();
+					break;
+				case STRINGINT:
+					stringdata = packet.readString();
+					control = inputStream.readInt();
+					pack = PacketIDs.getEnum(control);
+					data = new int[pack.getNumberDataInts()];
+					for (int i = 0; i < data.length; i++)
 						data[i] = inputStream.readInt();
-				}
-				else
-					longdata = inputStream.readLong();
-				break;
-			case UPDATE:
-				control = inputStream.readInt();
-				pack = PacketIDs.getEnum(control);
-				break;
-			case FLOAT:
-				control = inputStream.readInt();
-				pack = PacketIDs.getEnum(control);
-				floatdata = inputStream.readFloat();
-				break;
-			case SYNC:
-				String name = packet.readString();
-				x = inputStream.readInt();
-				y = inputStream.readInt();
-				z = inputStream.readInt();
-				int value = inputStream.readInt();
-				ReikaPacketHelper.updateTileEntityData(world, x, y, z, name, value);
-				return;
-			case TANK:
-				String tank = packet.readString();
-				x = inputStream.readInt();
-				y = inputStream.readInt();
-				z = inputStream.readInt();
-				int level = inputStream.readInt();
-				ReikaPacketHelper.updateTileEntityTankData(world, x, y, z, tank, level);
-				return;
-			case RAW:
-				control = inputStream.readInt();
-				pack = PacketIDs.getEnum(control);
-				len = pack.getNumberDataInts();
-				data = new int[len];
-				readinglong = pack.isLongPacket();
-				if (!readinglong) {
-					for (int i = 0; i < len; i++)
-						data[i] = inputStream.readInt();
-				}
-				else
-					longdata = inputStream.readLong();
-				break;
-			case NBT:
-				control = inputStream.readInt();
-				pack = PacketIDs.getEnum(control);
-				NBT = ((DataPacket)packet).asNBT();
-				break;
-			case STRINGINT:
-				stringdata = packet.readString();
-				control = inputStream.readInt();
-				pack = PacketIDs.getEnum(control);
-				data = new int[pack.getNumberDataInts()];
-				for (int i = 0; i < data.length; i++)
-					data[i] = inputStream.readInt();
-				break;
-			default:
-				break;
+					break;
+				default:
+					break;
 			}
 			if (packetType.hasCoordinates()) {
 				x = inputStream.readInt();
@@ -156,56 +156,56 @@ public class APIPacketHandler implements PacketHandler {
 		}
 		try {
 			switch (pack) {
-			case BLOCKUPDATE:
-				//ReikaJavaLibrary.pConsole(x+", "+y+", "+z, Side.CLIENT);
-				world.markBlockForUpdate(x, y, z);
-				world.func_147479_m(x, y, z);
-				break;
-			case PARTICLE:
-				for (int i = 0; i < data[1]; i++) {
-					if (data[0] >= 0 && data[0] < ReikaParticleHelper.particleList.length) {
-						ReikaParticleHelper p = ReikaParticleHelper.particleList[data[0]];
-						world.spawnParticle(p.name, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), 0, 0, 0);
+				case BLOCKUPDATE:
+					//ReikaJavaLibrary.pConsole(x+", "+y+", "+z, Side.CLIENT);
+					world.markBlockForUpdate(x, y, z);
+					world.func_147479_m(x, y, z);
+					break;
+				case PARTICLE:
+					for (int i = 0; i < data[1]; i++) {
+						if (data[0] >= 0 && data[0] < ReikaParticleHelper.particleList.length) {
+							ReikaParticleHelper p = ReikaParticleHelper.particleList[data[0]];
+							world.spawnParticle(p.name, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), 0, 0, 0);
+						}
 					}
-				}
-				break;
-			case BIOMECHANGE:
-				ReikaWorldHelper.setBiomeForXZ(world, x, z, BiomeGenBase.biomeList[data[0]]);
-				world.markBlockRangeForRenderUpdate(x, 0, z, x, world.provider.getActualHeight(), z);
-				break;
-			case KEYUPDATE:
-				int ordinal = data[0];
-				boolean used = data[1] > 0;
-				Key key = Key.keyList[ordinal];
-				KeyWatcher.instance.setKey(ep, key, used);
-				MinecraftForge.EVENT_BUS.post(new RawKeyPressEvent(key, ep));
-				break;
-			case TILESYNC:
-				TileEntity te = world.getTileEntity(x, y, z);
-				if (te instanceof TileEntityBase && !world.isRemote) {
-					TileEntityBase tile = (TileEntityBase)te;
-					tile.syncAllData(data[0] > 0);
-				}
-				break;
-			case VTILESYNC:
-				int tx = NBT.getInteger("x");
-				int ty = NBT.getInteger("y");
-				int tz = NBT.getInteger("z");
-				TileEntity tile = world.getTileEntity(tx, ty, tz);
-				//ReikaJavaLibrary.pConsole(((IInventory)tile).getStackInSlot(0));
-				tile.readFromNBT(NBT);
-				break;
-			case TILEDELETE:
-				world.setBlockToAir(x, y, z);
-				break;
-			case PLAYERDATSYNC:
-			case PLAYERDATSYNC_CLIENT:
-				for (Object o : NBT.func_150296_c()) {
-					String name = (String)o;
-					NBTBase tag = NBT.getTag(name);
-					ep.getEntityData().setTag(name, tag);
-				}
-				break;/*
+					break;
+				case BIOMECHANGE:
+					ReikaWorldHelper.setBiomeForXZ(world, x, z, BiomeGenBase.biomeList[data[0]]);
+					world.markBlockRangeForRenderUpdate(x, 0, z, x, world.provider.getActualHeight(), z);
+					break;
+				case KEYUPDATE:
+					int ordinal = data[0];
+					boolean used = data[1] > 0;
+					Key key = Key.keyList[ordinal];
+					KeyWatcher.instance.setKey(ep, key, used);
+					MinecraftForge.EVENT_BUS.post(new RawKeyPressEvent(key, ep));
+					break;
+				case TILESYNC:
+					TileEntity te = world.getTileEntity(x, y, z);
+					if (te instanceof TileEntityBase && !world.isRemote) {
+						TileEntityBase tile = (TileEntityBase)te;
+						tile.syncAllData(data[0] > 0);
+					}
+					break;
+				case VTILESYNC:
+					int tx = NBT.getInteger("x");
+					int ty = NBT.getInteger("y");
+					int tz = NBT.getInteger("z");
+					TileEntity tile = world.getTileEntity(tx, ty, tz);
+					//ReikaJavaLibrary.pConsole(((IInventory)tile).getStackInSlot(0));
+					tile.readFromNBT(NBT);
+					break;
+				case TILEDELETE:
+					world.setBlockToAir(x, y, z);
+					break;
+				case PLAYERDATSYNC:
+				case PLAYERDATSYNC_CLIENT:
+					for (Object o : NBT.func_150296_c()) {
+						String name = (String)o;
+						NBTBase tag = NBT.getTag(name);
+						ep.getEntityData().setTag(name, tag);
+					}
+					break;/*
 			case PLAYERATTRSYNC:
 				for (Object o : NBT.func_150296_c()) { //Double tags
 					String name = (String)o;
@@ -213,36 +213,35 @@ public class APIPacketHandler implements PacketHandler {
 					BaseAttributeMap map = ep.getAttributeMap();
 				}
 				break;*/
-			case RERENDER:
-				ReikaRenderHelper.rerenderAllChunks();
-				break;
-			case COLOREDPARTICLE:
-				ReikaParticleHelper.spawnColoredParticlesWithOutset(world, x, y, z, data[0], data[1], data[2], data[3], data[4]/16D);
-				break;
-			case NUMBERPARTICLE:
-				break;
-			case IDDUMP:
-			case ENTITYDUMP:
-				break;
-			case EXPLODE:
-				break;
-			case OLDMODS:
-			case OLDMODSLOAD:
-				break;
-			case LOGIN:
-				break;
-			case SERVERSOUND:
-				if (world.isRemote) {
-					double dx = inputStream.readDouble();
-					double dy = inputStream.readDouble();
-					double dz = inputStream.readDouble();
-					String name = packet.readString();
-					float vol = inputStream.readFloat();
-					float pitch = inputStream.readFloat();
-					boolean flag = inputStream.readBoolean();
-					ReikaSoundHelper.playNormalClientSound(world, dx, dy, dz, name, vol, pitch, flag);
-				}
-				break;
+				case RERENDER:
+					ReikaRenderHelper.rerenderAllChunks();
+					break;
+				case COLOREDPARTICLE:
+					ReikaParticleHelper.spawnColoredParticlesWithOutset(world, x, y, z, data[0], data[1], data[2], data[3], data[4]/16D);
+					break;
+				case NUMBERPARTICLE:
+					break;
+				case IDDUMP:
+				case ENTITYDUMP:
+					break;
+				case EXPLODE:
+					break;
+				case OLDMODS:
+					break;
+				case LOGIN:
+					break;
+				case SERVERSOUND:
+					if (world.isRemote) {
+						double dx = inputStream.readDouble();
+						double dy = inputStream.readDouble();
+						double dz = inputStream.readDouble();
+						String name = packet.readString();
+						float vol = inputStream.readFloat();
+						float pitch = inputStream.readFloat();
+						boolean flag = inputStream.readBoolean();
+						ReikaSoundHelper.playNormalClientSound(world, dx, dy, dz, name, vol, pitch, flag);
+					}
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -255,30 +254,27 @@ public class APIPacketHandler implements PacketHandler {
 	@SideOnly(Side.CLIENT)
 	private void clientHandle(World world, int x, int y, int z, PacketIDs pack, int[] data, String sg, EntityPlayer player) {
 		switch(pack) {
-		case NUMBERPARTICLE:
-			Minecraft.getMinecraft().effectRenderer.addEffect(new NumberParticleFX(world, x+0.5, y+0.5, z+0.5, data[0]));
-			break;
-		case IDDUMP:
-			IDDumpCommand.dumpClientside(data[0]);
-			break;
-		case ENTITYDUMP:
-			EntityListCommand.dumpClientside();
-			break;
-		case EXPLODE:
-			ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "random.explode");
-			ReikaParticleHelper.EXPLODE.spawnAroundBlock(world, x, y, z, 1);
-			break;
-		case OLDMODS:
-			CommandableUpdateChecker.instance.onClientReceiveOldModID(sg);
-			break;
-		case OLDMODSLOAD:
-			CommandableUpdateChecker.instance.onClientReceiveOldModsNote(player);
-			break;
-		case LOGIN:
-			MinecraftForge.EVENT_BUS.post(new ClientLoginEvent(player));
-			break;
-		default:
-			break;
+			case NUMBERPARTICLE:
+				Minecraft.getMinecraft().effectRenderer.addEffect(new NumberParticleFX(world, x+0.5, y+0.5, z+0.5, data[0]));
+				break;
+			case IDDUMP:
+				IDDumpCommand.dumpClientside(data[0]);
+				break;
+			case ENTITYDUMP:
+				EntityListCommand.dumpClientside();
+				break;
+			case EXPLODE:
+				ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "random.explode");
+				ReikaParticleHelper.EXPLODE.spawnAroundBlock(world, x, y, z, 1);
+				break;
+			case OLDMODS:
+				CommandableUpdateChecker.instance.onClientReceiveOldModID(sg);
+				break;
+			case LOGIN:
+				MinecraftForge.EVENT_BUS.post(new ClientLoginEvent(player));
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -300,7 +296,6 @@ public class APIPacketHandler implements PacketHandler {
 		ENTITYDUMP(),
 		EXPLODE(),
 		OLDMODS(),
-		OLDMODSLOAD(),
 		LOGIN(),
 		SERVERSOUND();
 
@@ -318,22 +313,22 @@ public class APIPacketHandler implements PacketHandler {
 
 		public int getNumberDataInts() {
 			switch(this) {
-			case PARTICLE:
-				return 2;
-			case NUMBERPARTICLE:
-				return 1;
-			case COLOREDPARTICLE:
-				return 5;
-			case BIOMECHANGE:
-				return 1;
-			case KEYUPDATE:
-				return 2;
-			case TILESYNC:
-				return 1;
-			case IDDUMP:
-				return 1;
-			default:
-				return 0;
+				case PARTICLE:
+					return 2;
+				case NUMBERPARTICLE:
+					return 1;
+				case COLOREDPARTICLE:
+					return 5;
+				case BIOMECHANGE:
+					return 1;
+				case KEYUPDATE:
+					return 2;
+				case TILESYNC:
+					return 1;
+				case IDDUMP:
+					return 1;
+				default:
+					return 0;
 			}
 		}
 	}

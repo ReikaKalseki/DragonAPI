@@ -404,8 +404,8 @@ public class ReikaFileReader extends DragonAPICore {
 		copyFile(in, out, size, null);
 	}
 
-	public static void copyFile(InputStream in, OutputStream out, int size, WriteCallback call) throws FileReadException, FileWriteException {
-		byte[] bytes = new byte[size];
+	public static void copyFile(InputStream in, OutputStream out, int chunkSize, WriteCallback call) throws FileReadException, FileWriteException {
+		byte[] bytes = new byte[chunkSize];
 		int count = 0;
 		while (count != -1) {
 			if (count > 0) {

@@ -22,7 +22,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
@@ -150,8 +149,6 @@ public class MESystemReader {
 			return 0;
 		most.setStackSize(is.stackSize);
 		IAEItemStack ret = most != null ? mon.extractItems(most, simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource) : null;
-		if (ret != null)
-			ReikaJavaLibrary.pConsole(is+">"+ret);
 		return ret != null ? ret.getStackSize() : 0;
 	}
 

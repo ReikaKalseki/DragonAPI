@@ -62,6 +62,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.PatreonController;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
 import Reika.DragonAPI.Auxiliary.Trackers.SuggestedModsTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry;
 import Reika.DragonAPI.Auxiliary.Trackers.TickScheduler;
@@ -361,6 +362,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.startTiming(LoadPhase.LOAD);
 		proxy.registerSidedHandlersMain();
 
+		RemoteAssetLoader.instance.checkAndStartDownloads();
+
 		if (ReikaObfuscationHelper.isDeObfEnvironment())
 			TemporaryCodeCalls.load(event);
 
@@ -583,15 +586,30 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void onGameLoaded(GameFinishedLoadingEvent evt) {
-		if (ModList.liteLoaderInstalled())
-			Minecraft.getMinecraft().refreshResources();
+	public void onGameLoaded(GameFinishedLoadingEvent evt) throws InterruptedException {
+		this.checkRemoteAssetDownload();
+		//if (ModList.liteLoaderInstalled())
+		Minecraft.getMinecraft().refreshResources();
 		if (ModList.NEI.isLoaded()) {
 			NEIIntercept.instance.register();
 			//NEIFontRendererHandler.instance.register();
 		}
 		proxy.registerSidedHandlersGameLoaded();
 		ReflectiveFailureTracker.instance.print();
+	}
+
+	private void checkRemoteAssetDownload() throws InterruptedException {
+		long time = 0;
+		long d = 100;
+		while (!RemoteAssetLoader.instance.isDownloadComplete()) {
+			if (time%5000 == 0) {
+				String p = String.format("%.2f", 100*RemoteAssetLoader.instance.getDownloadProgress());
+				String s = "Remote asset downloads not yet complete (current = "+p+"%). Pausing game load. Total delay: "+time+" ms.";
+				logger.log(s);
+			}
+			Thread.sleep(d);
+			time += d;
+		}
 	}
 
 	@SubscribeEvent

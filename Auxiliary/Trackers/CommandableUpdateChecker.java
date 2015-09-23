@@ -32,6 +32,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
@@ -54,6 +55,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -79,7 +81,7 @@ public final class CommandableUpdateChecker {
 	private final HashMap<DragonAPIMod, UpdateHash> hashes = new HashMap();
 
 	private CommandableUpdateChecker() {
-
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	public void checkAll() {
@@ -250,7 +252,6 @@ public final class CommandableUpdateChecker {
 			for (DragonAPIMod mod : noURLMods) {
 				ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.OLDMODS.ordinal(), "URL_"+modNamesReverse.get(mod), pt);
 			}
-			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.OLDMODSLOAD.ordinal(), (EntityPlayerMP)ep);
 		}
 	}
 
@@ -361,8 +362,9 @@ public final class CommandableUpdateChecker {
 			c.add(mod);
 	}
 
+	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void onClientReceiveOldModsNote(EntityPlayer ep) {
+	public void onClientReceiveOldModsNote(ClientLoginEvent evt) {
 		ArrayList<String> li = new ArrayList();
 		for (DragonAPIMod mod : dispatchedOldMods) {
 			StringBuilder sb = new StringBuilder();
