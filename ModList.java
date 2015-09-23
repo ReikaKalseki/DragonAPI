@@ -108,7 +108,8 @@ public enum ModList implements ModEntry {
 	FLUXEDCRYSTALS("fluxedcrystals", "fluxedCrystals.init.FCBlocks", "fluxedCrystals.init.FCItems"),
 	HUNGEROVERHAUL("HungerOverhaul"),
 	CHISEL("chisel", "com.cricketcraft.chisel.init.ChiselBlocks", "com.cricketcraft.chisel.init.ChiselItems"),
-	CARPENTER("CarpentersBlocks", "com.carpentersblocks.util.registry.BlockRegistry", "com.carpentersblocks.util.registry.ItemRegistry");
+	CARPENTER("CarpentersBlocks", "com.carpentersblocks.util.registry.BlockRegistry", "com.carpentersblocks.util.registry.ItemRegistry"),
+	ENDEREXPANSION("HardcoreEnderExpansion");
 
 	private final boolean condition;
 	public final String modLabel;
