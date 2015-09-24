@@ -14,6 +14,8 @@ import java.util.Collection;
 import java.util.Collections;
 
 import net.minecraft.tileentity.TileEntity;
+import Reika.DragonAPI.ModInteract.Lua.Library.LuaFluidColor;
+import Reika.DragonAPI.ModInteract.Lua.Library.LuaGetBlock;
 import dan200.computercraft.api.lua.LuaException;
 
 public abstract class LuaMethod {
@@ -34,8 +36,10 @@ public abstract class LuaMethod {
 	private static final LuaMethod hasItem = new LuaHasItem();
 	private static final LuaMethod trigger = new LuaTriggerAction();
 	private static final LuaMethod placer = new LuaGetPlacer();
+	private static final LuaMethod nbt = new LuaGetNBTTag();
 
 	private static final LuaMethod fluidColor = new LuaFluidColor();
+	private static final LuaMethod getBlock = new LuaGetBlock();
 
 	public LuaMethod(String name, Class requiredParent) {
 		displayName = name;

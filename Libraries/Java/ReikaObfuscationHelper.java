@@ -129,6 +129,11 @@ public class ReikaObfuscationHelper {
 		addField("blockFlammability", "blockFlammability", false, Blocks.class);
 		addField("blockFireSpreadSpeed", "blockFireSpreadSpeed", false, Blocks.class);
 		addField("stringToIDMapping", "field_75622_f", false, EntityList.class);*/
+
+		if (isClientSide()) {
+			//addField("soundLibrary", "soundLibrary", false, SoundSystem.class);
+			//addField("streamThread", "streamThread", false, Library.class);
+		}
 	}
 
 	private static boolean isClientSide() {

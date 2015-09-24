@@ -161,6 +161,15 @@ public class RemoteAssetLoader {
 		private void download(AssetData dat) throws IOException {
 			String local = dat.asset.getLocalPath();
 			File f = new File(local);
+			if (!f.getAbsolutePath().startsWith(DragonAPICore.getMinecraftDirectoryString())) {
+				StringBuilder sb = new StringBuilder();
+				sb.append("Remote Asset "+dat.asset.getDisplayName()+" attempted to download to "+f.getAbsolutePath()+"!");
+				sb.append(" This is not in the MC directory and very likely either malicious or poorly implemented, or the remote server has been compromised!");
+				String s = sb.toString();
+				dat.asset.parent.logError(s, true);
+				return;
+				//throw new RuntimeException(s);
+			}
 			f.getParentFile().mkdirs();
 			f.delete();
 			f.createNewFile();

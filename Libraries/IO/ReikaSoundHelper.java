@@ -19,7 +19,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.Block.SoundType;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.audio.SoundManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -30,6 +29,7 @@ import paulscode.sound.Library;
 import paulscode.sound.SoundSystem;
 import paulscode.sound.StreamThread;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.CustomSoundHandler;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -46,8 +46,6 @@ public class ReikaSoundHelper {
 
 	private static final MultiMap<SoundEnum, SoundPlay> plays = new MultiMap();
 
-	private static Field soundManagerField;
-	private static Field soundSystemField;
 	private static Field soundLibraryField;
 	private static Field streamThreadField;
 
@@ -227,51 +225,46 @@ public class ReikaSoundHelper {
 	@SideOnly(Side.CLIENT)
 	public static StreamThread getStreamingThread(SoundHandler sh) {
 		try {
-			SoundManager mgr = (SoundManager)soundManagerField.get(sh);
-			SoundSystem sys = (SoundSystem)soundSystemField.get(mgr);
+			SoundSystem sys = sh.sndManager.sndSystem;
 			Library lib = (Library)soundLibraryField.get(sys);
 			StreamThread s = (StreamThread)streamThreadField.get(lib);
 			return s;
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException(e);
 		}
 	}
 
 	/** Recreates and relaunches the StreamThread. Only call this if the thread has crashed. */
 	@SideOnly(Side.CLIENT)
 	public static void restartStreamingSystem(SoundHandler sh) {
+		DragonAPICore.log("Restarting sound streaming thread.");
 		StreamThread thread = new StreamThread();
 		try {
-			SoundManager mgr = (SoundManager)soundManagerField.get(sh);
-			SoundSystem sys = (SoundSystem)soundSystemField.get(mgr);
+			SoundSystem sys = sh.sndManager.sndSystem;
 			Library lib = (Library)soundLibraryField.get(sys);
 			streamThreadField.set(lib, thread);
 
 			thread.start();
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
-	static {
+	@SideOnly(Side.CLIENT)
+	public static void injectPaulscodeAccesses() {
 		try {
-			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-				soundManagerField = SoundHandler.class.getDeclaredField("sndManager");
-				soundSystemField = SoundManager.class.getDeclaredField("sndSystem");
-				soundLibraryField = SoundSystem.class.getDeclaredField("soundLibrary");
-				streamThreadField = Library.class.getDeclaredField("streamThread");
+			DragonAPICore.log("Injecting accesses into paulscode...");
 
-				soundManagerField.setAccessible(true);
-				soundSystemField.setAccessible(true);
-				soundLibraryField.setAccessible(true);
-				streamThreadField.setAccessible(true);
-			}
+			soundLibraryField = SoundSystem.class.getDeclaredField("soundLibrary");
+			streamThreadField = Library.class.getDeclaredField("streamThread");
+
+			soundLibraryField.setAccessible(true);
+			streamThreadField.setAccessible(true);
 		}
 		catch (Exception e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 }

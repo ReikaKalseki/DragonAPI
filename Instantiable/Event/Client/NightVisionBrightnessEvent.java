@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.Event.Client;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.potion.Potion;
 import net.minecraft.util.MathHelper;
+import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -29,6 +30,12 @@ public class NightVisionBrightnessEvent extends Event {
 		player = ep;
 
 		brightness = this.getDefault();
+	}
+
+	public static float fire(EntityPlayer ep, float ptick) {
+		NightVisionBrightnessEvent evt = new NightVisionBrightnessEvent(ep, ptick);
+		MinecraftForge.EVENT_BUS.post(evt);
+		return evt.brightness;
 	}
 
 	public float getDefault() {

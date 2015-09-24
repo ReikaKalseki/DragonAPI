@@ -19,6 +19,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.PlayerSpecificRenderer;
 import Reika.DragonAPI.IO.DelegateFontRenderer;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Event.Client.ResourceReloadEvent;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import codechicken.lib.gui.GuiDraw;
 import cpw.mods.fml.client.FMLClientHandler;
 
@@ -52,6 +53,7 @@ public class APIProxyClient extends APIProxy {
 	@Override
 	public void registerSidedHandlersMain() {
 		rm.registerReloadListener(DirectResourceManager.getInstance());
+		ReikaSoundHelper.injectPaulscodeAccesses();
 		Minecraft.getMinecraft().fontRenderer = new DelegateFontRenderer(Minecraft.getMinecraft().fontRenderer);
 		if (ModList.NEI.isLoaded())
 			GuiDraw.fontRenderer = Minecraft.getMinecraft().fontRenderer;

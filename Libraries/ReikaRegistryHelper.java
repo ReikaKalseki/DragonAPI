@@ -35,6 +35,7 @@ import Reika.DragonAPI.ModInteract.LegacyWailaHelper;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.ModMetadata;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.registry.EntityRegistry;
@@ -312,5 +313,28 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 			return this;
 		}
 
+	}
+
+	public static ArrayList<String> getMods() {
+		ArrayList<String> ret = new ArrayList();
+		List<ModContainer> li = Loader.instance().getActiveModList();
+		for (ModContainer mc : li) {
+			Object mod = mc.getMod();
+			String name = mc.getModId();
+			if (mod instanceof DragonAPIMod)
+				name = ((DragonAPIMod)mod).getDisplayName();
+			else {
+				ModList en = ModList.getModFromID(mc.getModId());
+				if (en != null) {
+					name = en.getDisplayName();
+				}
+			}
+			String ver = mc.getDisplayVersion();
+			if (mod instanceof DragonAPIMod) {
+				ver = ((DragonAPIMod)mod).getModVersion().toString();
+			}
+			ret.add(name+": "+ver);
+		}
+		return ret;
 	}
 }

@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import net.minecraft.item.ItemStack;
@@ -185,6 +186,10 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 	}
 
+	public static NBTTypes getTagType(NBTBase base) {
+		return NBTTypes.IDMap.get(base.getId());
+	}
+
 	public static enum NBTTypes {
 		INT(new NBTTagInt(0).getId()),
 		BYTE(new NBTTagByte((byte)0).getId()),
@@ -201,8 +206,17 @@ public final class ReikaNBTHelper extends DragonAPICore {
 
 		public final int ID;
 
+		private static final NBTTypes[] list = values();
+		private static final HashMap<Integer, NBTTypes> IDMap = new HashMap();
+
 		private NBTTypes(int id) {
 			ID = id;
+		}
+
+		static {
+			for (int i = 0; i < list.length; i++) {
+				IDMap.put(list[i].ID, list[i]);
+			}
 		}
 	}
 

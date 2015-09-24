@@ -86,7 +86,8 @@ public class TinkerMaterialHelper {
 					int id = TinkerToolHandler.getInstance().getToolMaterial(tool, type);
 					AbstractMaterial mat = materialIDs.get(id);
 					if (mat instanceof CustomTinkerMaterial) {
-						if (!((CustomTinkerMaterial)mat).toolParts.contains(p)) { //forbidden part, had to be spawned in
+						CustomTinkerMaterial cm = (CustomTinkerMaterial)mat;
+						if (cm.enforceNoCheating && !cm.toolParts.contains(p)) { //forbidden part, had to be spawned in
 							ReikaSoundHelper.playSoundFromServer(ep.worldObj, ep.posX, ep.posY, ep.posZ, "random.break", 2, 1, true);
 							ep.attackEntityFrom(DamageSource.generic, 1);
 							ep.setCurrentItemOrArmor(0, null);
@@ -236,6 +237,21 @@ public class TinkerMaterialHelper {
 		materialNames.put(name, mat);
 	}
 
+	public int getMaterialID(String name) {
+		AbstractMaterial mat = materialNames.get(name);
+		return mat != null ? mat.id : null;
+	}
+
+	public boolean isPartEnabled(int id, ToolParts p) {
+		AbstractMaterial mat = materialIDs.get(id);
+		return mat instanceof CustomTinkerMaterial ? ((CustomTinkerMaterial)mat).toolParts.contains(p) : true;
+	}
+
+	public boolean isPartEnabled(int id, WeaponParts p) {
+		AbstractMaterial mat = materialIDs.get(id);
+		return mat instanceof CustomTinkerMaterial ? ((CustomTinkerMaterial)mat).weaponParts.contains(p) : true;
+	}
+
 	private abstract static class AbstractMaterial {
 
 		public final int id;
@@ -293,6 +309,8 @@ public class TinkerMaterialHelper {
 		public int renderColor = 0xffffff;
 		public String chatColor = "";
 
+		private boolean enforceNoCheating = false;
+
 		//private final EnumSet<TinkerToolHandler.Tools> tools = EnumSet.allOf(TinkerToolHandler.Tools.class);
 		//private final EnumSet<TinkerToolHandler.Weapons> weapons = EnumSet.allOf(TinkerToolHandler.Weapons.class);
 
@@ -310,7 +328,7 @@ public class TinkerMaterialHelper {
 		}
 
 		public CustomTinkerMaterial setDisallowCheatedParts() {
-			reinforced = 10;
+			enforceNoCheating = true;
 			return this;
 		}
 

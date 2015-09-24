@@ -558,6 +558,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				case NIGHTVISEVENT: {
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_82830_a", "getNightVisionBrightness", "(Lnet/minecraft/entity/player/EntityPlayer;F)F");
 					m.instructions.clear();
+					/*
 					m.instructions.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/NightVisionBrightnessEvent"));
 					m.instructions.add(new InsnNode(Opcodes.DUP));
 					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
@@ -571,6 +572,13 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3));
 					m.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/Client/NightVisionBrightnessEvent", "brightness", "F"));
 					m.instructions.add(new InsnNode(Opcodes.FRETURN));
+					 */
+
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					m.instructions.add(new VarInsnNode(Opcodes.FLOAD, 2));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/NightVisionBrightnessEvent", "fire", "(Lnet/minecraft/entity/player/EntityPlayer;F)F", false));
+					m.instructions.add(new InsnNode(Opcodes.FRETURN));
+
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
