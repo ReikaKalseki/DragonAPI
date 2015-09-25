@@ -88,7 +88,7 @@ public class RemoteAssetLoader {
 	}
 
 	public boolean isDownloadComplete() {
-		return downloadThread == null || !downloadThread.isAlive();
+		return downloadThread == null || !downloadThread.isAlive() || downloader == null || downloader.isComplete;
 	}
 
 	@SubscribeEvent
@@ -107,6 +107,8 @@ public class RemoteAssetLoader {
 		private RemoteAsset activeAsset;
 		private long currentDownload;
 
+		private boolean isComplete = false;
+
 		@Override
 		public void run() {
 			long time = System.currentTimeMillis();
@@ -118,6 +120,7 @@ public class RemoteAssetLoader {
 			}
 			long duration = System.currentTimeMillis()-time;
 			DragonAPICore.log("All asset downloads complete. Elapsed time: "+ReikaFormatHelper.millisToHMSms(duration));
+			isComplete = true;
 			MinecraftForge.EVENT_BUS.post(new RemoteAssetsDownloadCompleteEvent(instance.downloadingAssets, totalSize));
 		}
 
@@ -161,7 +164,7 @@ public class RemoteAssetLoader {
 		private void download(AssetData dat) throws IOException {
 			String local = dat.asset.getLocalPath();
 			File f = new File(local);
-			if (!f.getAbsolutePath().startsWith(DragonAPICore.getMinecraftDirectoryString())) {
+			if (!f.getAbsolutePath().replaceAll("\\\\", "/").startsWith(DragonAPICore.getMinecraftDirectoryString())) {
 				StringBuilder sb = new StringBuilder();
 				sb.append("Remote Asset "+dat.asset.getDisplayName()+" attempted to download to "+f.getAbsolutePath()+"!");
 				sb.append(" This is not in the MC directory and very likely either malicious or poorly implemented, or the remote server has been compromised!");
@@ -261,11 +264,42 @@ public class RemoteAssetLoader {
 				RemoteAsset a = this.parseAsset(s);
 				if (a != null) {
 					assets.add(a);
+					a.filename = a.setFilename(s);
+					a.extension = a.setExtension(s);
 					a.data = a.constructData(s);
 					a.requiresDownload = !a.data.match();
 				}
 			}
+			this.writeList();
 			DragonAPICore.log(assets.size()+" remote assets for "+mod.getDisplayName()+" found at "+this.getDisplayName()+": "+assets);
+		}
+
+		private void writeList() {
+			try {
+				String file = this.getLocalPath()+"file_list.dat";
+				File f = new File(file);
+				f.mkdirs();
+				f.delete();
+				f.createNewFile();
+				ArrayList<String> li = new ArrayList();
+				li.add("File list for remote asset repository '"+this.getDisplayName()+"'");
+				li.add("Downloaded from "+this.getRepositoryURL()+" to "+this.getLocalPath());
+				int n = li.get(li.size()-1).length();
+				StringBuilder sb = new StringBuilder();
+				for (int i = 0; i < n; i++) {
+					sb.append("=");
+				}
+				li.add(sb.toString());
+				for (RemoteAsset a : assets) {
+					li.add(a.getDisplayName()+" -> "+a.getLocalPath()+" {Size="+a.data.size+" B,  Hash="+a.data.hash+"}");
+				}
+				ReikaFileReader.writeLinesToFile(f, li, true);
+				DragonAPICore.log("Writing file list for remote asset repository '"+this.getDisplayName()+"' to disk.");
+			}
+			catch (IOException e) {
+				DragonAPICore.logError("Remote asset repository '"+this.getDisplayName()+"' could not save its file list to disk.");
+				e.printStackTrace();
+			}
 		}
 
 		protected abstract RemoteAsset parseAsset(String line);
@@ -274,7 +308,25 @@ public class RemoteAssetLoader {
 			return Collections.unmodifiableCollection(assets);
 		}
 
+		public final Collection<String> getAvailableResources() {
+			String file = this.getLocalPath()+"file_list.dat";
+			ArrayList<String> li = ReikaFileReader.getFileAsLines(file, true);
+			ArrayList<String> ret = new ArrayList();
+			for (String s : li) {
+				int idx = s.indexOf('>');
+				int idx2 = s.indexOf('{');
+				if (idx >= 0 && idx2 >= idx) {
+					String p = s.substring(idx+2, idx2-1);
+					File f = new File(p);
+					if (f.exists())
+						ret.add(p);
+				}
+			}
+			return ret;
+		}
+
 		public abstract String getRepositoryURL();
+		public abstract String getLocalPath();
 
 		@Override
 		public final void onServerRedirected() {
@@ -318,6 +370,8 @@ public class RemoteAssetLoader {
 		private final DragonAPIMod mod;
 		private final RemoteAssetRepository parent;
 
+		private String filename;
+		private String extension;
 		private boolean requiresDownload;
 		private AssetData data;
 		private boolean downloaded;
@@ -327,8 +381,14 @@ public class RemoteAssetLoader {
 			parent = rar;
 		}
 
-		public abstract String getLocalPath();
+		public abstract String setFilename(String line);
+		public abstract String setExtension(String line);
+
 		public abstract String getDisplayName();
+
+		public final String getLocalPath() {
+			return parent.getLocalPath()+filename+"."+extension;
+		}
 
 		@Override
 		public final String toString() {
