@@ -12,9 +12,6 @@ package Reika.DragonAPI.ASM;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Slot;
-import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
@@ -39,7 +36,6 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Event.SlotEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -78,7 +74,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		FURNACEUPDATE("net.minecraft.tileentity.TileEntityFurnace", "apg"),
 		MUSICEVENT("net.minecraft.client.audio.MusicTicker", "btg"),
 		SOUNDEVENTS("net.minecraft.client.audio.SoundManager", "btj"),
-		CLOUDRENDEREVENT("net.minecraft.client.settings.GameSettings", "bbj"),
+		CLOUDRENDEREVENT1("net.minecraft.client.settings.GameSettings", "bbj"),
+		CLOUDRENDEREVENT2("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		PROFILER("net.minecraft.profiler.Profiler", "qi"),
 		SPRINTEVENT("net.minecraft.network.NetHandlerPlayServer", "nh"),
 		//JUMPCHECKEVENTSERVER("net.minecraft.network.NetHandlerPlayServer", "nh"),
@@ -953,11 +950,21 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 
 					break;
 				}
-				case CLOUDRENDEREVENT: {
+				case CLOUDRENDEREVENT1: {
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_74309_c", "shouldRenderClouds", "()Z");
 					m.instructions.clear();
 					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/CloudRenderEvent", "fire", "()Z", false));
 					m.instructions.add(new InsnNode(Opcodes.IRETURN));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case CLOUDRENDEREVENT2: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_82829_a", "renderCloudsCheck", "(Lnet/minecraft/client/renderer/RenderGlobal;F)V");
+					AbstractInsnNode loc = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.IFEQ);
+					while (loc.getPrevious() instanceof FieldInsnNode || loc.getPrevious() instanceof MethodInsnNode) {
+						m.instructions.remove(loc.getPrevious());
+					}
+					m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/CloudRenderEvent", "fire", "()Z", false));
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
@@ -1067,22 +1074,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	abstract static class test extends Slot {
-
-		public test(IInventory p_i1824_1_, int p_i1824_2_, int p_i1824_3_, int p_i1824_4_) {
-			super(p_i1824_1_, p_i1824_2_, p_i1824_3_, p_i1824_4_);
-			// TODO Auto-generated constructor stub
-		}
-
-		private int slotIndex;
-
-		@Override
-		public void putStack(ItemStack is)
-		{
-			SlotEvent.AddToSlotEvent.fire(this, is);
-			inventory.setInventorySlotContents(slotIndex, is);
-			this.onSlotChanged();
-		}
+	abstract static class test {
 
 	}
 

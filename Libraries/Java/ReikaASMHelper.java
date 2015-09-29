@@ -350,6 +350,16 @@ public class ReikaASMHelper {
 
 	}
 
+	public static AbstractInsnNode getFirstOpcode(InsnList li, int opcode) {
+		int index = 0;
+		AbstractInsnNode ain = li.get(0);
+		while (ain.getOpcode() != opcode && index < li.size()) {
+			index++;
+			ain = li.get(index);
+		}
+		return ain.getOpcode() == opcode ? ain : null;
+	}
+
 	public static AbstractInsnNode getFirstInsnAfter(InsnList li, int index, int opcode, Object... args) {
 		AbstractInsnNode ain = li.get(index+1);
 		while (!match(ain, opcode, args) && index < li.size()) {

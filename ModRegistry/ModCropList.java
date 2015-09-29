@@ -30,6 +30,7 @@ import Reika.DragonAPI.Interfaces.Registry.ModCrop;
 import Reika.DragonAPI.Interfaces.Registry.ModEntry;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.ModInteract.ItemHandlers.AgriCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.FluxedCrystalHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
@@ -50,7 +51,8 @@ public enum ModCropList implements ModCrop {
 	ALGAE(ModList.EMASHER, 0x29D855, "algae", 0, VarType.INSTANCE),
 	ENDER(ModList.EXTRAUTILS, 0x00684A, "enderLily", 7, VarType.INSTANCE),
 	PNEUMATIC(ModList.PNEUMATICRAFT, 0x37FF69, PneumaticPlantHandler.getInstance()),
-	FLUXED(ModList.FLUXEDCRYSTALS, 0xd00000, FluxedCrystalHandler.getInstance());
+	FLUXED(ModList.FLUXEDCRYSTALS, 0xd00000, FluxedCrystalHandler.getInstance()),
+	AGRICRAFT(ModList.AGRICRAFT, 0x7E9612, AgriCraftHandler.getInstance()),
 	;
 
 	private final ModEntry mod;

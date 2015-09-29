@@ -39,6 +39,11 @@ public final class Perimeter {
 		return this;
 	}
 
+	public boolean isClosed() {
+		//ReikaJavaLibrary.spamConsole(points.getFirst()+" & "+points.getLast());
+		return !points.isEmpty() && points.getFirst().equals(points.getLast());
+	}
+
 	public boolean hasCoordinate(int x, int y, int z) {
 		return points.contains(new Coordinate(x, y, z));
 	}
@@ -67,14 +72,14 @@ public final class Perimeter {
 		return this;
 	}*/
 
-	public Perimeter addPoint(int x, int y, int z) {
+	public boolean addPoint(int x, int y, int z) {
 		if (this.isValidNextPoint(x, y, z)) {
 			points.add(new Coordinate(x, y, z));
+			return true;
 		}
 		else {
-
+			return false;
 		}
-		return this;
 	}
 
 	public Perimeter addPointBeforeLast(int x, int y, int z) {
@@ -92,7 +97,7 @@ public final class Perimeter {
 	private boolean isValidNextPoint(int x, int y, int z) {
 		if (points.isEmpty())
 			return true;
-		Coordinate loc = points.get(points.size()-2);
+		Coordinate loc = points.get(points.size()-1);
 		int dy = y-loc.yCoord;
 		if (dy != 0 && !allowVertical)
 			return false;

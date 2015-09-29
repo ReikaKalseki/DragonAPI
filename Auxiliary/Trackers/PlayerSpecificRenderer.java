@@ -123,7 +123,7 @@ public final class PlayerSpecificRenderer {
 		protected void rotateCorpse(EntityLivingBase ep, float par2, float par3, float partialTick)
 		{
 			super.rotateCorpse(ep, par2, par3, partialTick);
-			if (MinecraftForgeClient.getRenderPass() == 0 || MinecraftForgeClient.getRenderPass() == -1)
+			if (MinecraftForgeClient.getRenderPass() == 1 || MinecraftForgeClient.getRenderPass() == -1)
 				PlayerSpecificRenderer.instance.renderAdditionalObjects((EntityPlayer)ep, partialTick);
 		}
 

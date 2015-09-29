@@ -362,7 +362,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.startTiming(LoadPhase.LOAD);
 		proxy.registerSidedHandlersMain();
 
-		RemoteAssetLoader.instance.checkAndStartDownloads();
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			RemoteAssetLoader.instance.checkAndStartDownloads();
 
 		if (ReikaObfuscationHelper.isDeObfEnvironment())
 			TemporaryCodeCalls.load(event);

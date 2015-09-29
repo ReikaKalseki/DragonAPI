@@ -109,7 +109,8 @@ public enum ModList implements ModEntry {
 	HUNGEROVERHAUL("HungerOverhaul"),
 	CHISEL("chisel", "com.cricketcraft.chisel.init.ChiselBlocks", "com.cricketcraft.chisel.init.ChiselItems"),
 	CARPENTER("CarpentersBlocks", "com.carpentersblocks.util.registry.BlockRegistry", "com.carpentersblocks.util.registry.ItemRegistry"),
-	ENDEREXPANSION("HardcoreEnderExpansion");
+	ENDEREXPANSION("HardcoreEnderExpansion"),
+	AGRICRAFT("AgriCraft", "com.InfinityRaider.AgriCraft.init.Blocks", "com.InfinityRaider.AgriCraft.init.Items");
 
 	private final boolean condition;
 	public final String modLabel;

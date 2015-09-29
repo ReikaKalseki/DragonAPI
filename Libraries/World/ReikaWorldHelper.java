@@ -46,8 +46,12 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 import Reika.DragonAPI.APIPacketHandler;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
@@ -721,10 +725,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	/** Returns true if the coordinate is a liquid source Blocks. Args: World, x, y, z */
 	public static boolean isLiquidSourceBlock(World world, int x, int y, int z) {
-		if (world.getBlockMetadata(x, y, z) != 0)
-			return false;
 		Block b = world.getBlock(x, y, z);
 		if (b == Blocks.air)
+			return false;
+		int meta = world.getBlockMetadata(x, y, z);
+		if (b instanceof BlockFluidFinite)
+			return meta == 7;
+		if (meta != 0)
 			return false;
 		return b instanceof BlockLiquid || b instanceof BlockFluidBase;
 	}
@@ -1929,5 +1936,22 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 		return li;
+	}
+
+	public static FluidStack getDrainableFluid(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		if (b instanceof IFluidBlock) {
+			return ((IFluidBlock)b).drain(world, x, y, z, false);
+		}
+		else if (b instanceof BlockLiquid) {
+			if (meta != 0)
+				return null;
+			Fluid f = FluidRegistry.lookupFluidForBlock(b);
+			return f != null ? new FluidStack(f, FluidContainerRegistry.BUCKET_VOLUME) : null;
+		}
+		else {
+			return null;
+		}
 	}
 }
