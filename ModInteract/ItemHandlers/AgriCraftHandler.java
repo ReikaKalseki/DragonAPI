@@ -1,102 +1,52 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.HashSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
 
+import com.InfinityRaider.AgriCraft.api.API;
+import com.InfinityRaider.AgriCraft.api.APIBase;
+import com.InfinityRaider.AgriCraft.api.v1.APIv1;
+import com.InfinityRaider.AgriCraft.api.v1.ICropPlant;
 
 public class AgriCraftHandler extends CropHandlerBase {
 
 	private static final AgriCraftHandler instance = new AgriCraftHandler();
 
-	private static final Random rand = new Random();
+	private final APIv1 api;
+	private final int GROWN = 7;
 
-	private static final int GROWN = 7;
-
-	/** Static method */
-	private Method isValidSeed;
-
-	/** CropPlant instance method */
-	private Method getFruits;
-
-	/** TileEntity instance field */
-	private Field plant;
-
-	private final Block cropBlock;
-
-	private boolean init;
+	private final HashSet<Block> cropBlocks = new HashSet();
 
 	private AgriCraftHandler() {
 		super();
-		Block idcrop = null;
-		if (this.hasMod()) {
-			try {
-				Class blocks = this.getMod().getBlockClass();
-
-				Field crop = blocks.getField("blockCrop");
-				idcrop = (Block)crop.get(null);
-
-				Class handler = Class.forName("com.InfinityRaider.AgriCraft.farming.CropPlantHandler");
-				isValidSeed = handler.getMethod("isValidSeed", ItemStack.class);
-
-				Class plant = Class.forName("com.InfinityRaider.AgriCraft.apiimpl.v1.cropplant.CropPlant");
-				getFruits = plant.getMethod("getFruitsOnHarvest", int.class, Random.class);
-
-				Class tile = Class.forName("com.InfinityRaider.AgriCraft.tileentity.TileEntityCrop");
-				this.plant = tile.getDeclaredField("plant");
-				this.plant.setAccessible(true);
-
-				init = true;
+		if (this.getMod().isLoaded()) {
+			APIBase a = API.getAPI(1);
+			if (a.getStatus().isOK() && a.getVersion() == 1) {
+				api = (APIv1)a;
+				cropBlocks.addAll(api.getCropsBlocks());
 			}
-			catch (ClassNotFoundException e) {
-				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
-				e.printStackTrace();
-				this.logFailure(e);
-			}
-			catch (NoSuchFieldException e) {
-				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
-				e.printStackTrace();
-				this.logFailure(e);
-			}
-			catch (SecurityException e) {
-				DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
-				e.printStackTrace();
-				this.logFailure(e);
-			}
-			catch (IllegalArgumentException e) {
-				DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
-				e.printStackTrace();
-				this.logFailure(e);
-			}
-			catch (IllegalAccessException e) {
-				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
-				e.printStackTrace();
-				this.logFailure(e);
-			}
-			catch (NullPointerException e) {
-				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
-				e.printStackTrace();
-				this.logFailure(e);
-			}
-			catch (NoSuchMethodException e) {
-				DragonAPICore.logError(this.getMod()+" method not found! "+e.getMessage());
-				e.printStackTrace();
-				this.logFailure(e);
+			else {
+				api = null;
 			}
 		}
 		else {
-			this.noMod();
+			api = null;
 		}
-		cropBlock = idcrop;
 	}
 
 	public static AgriCraftHandler getInstance() {
@@ -110,7 +60,7 @@ public class AgriCraftHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isCrop(Block id, int meta) {
-		return id == cropBlock;
+		return cropBlocks.contains(id);
 	}
 
 	@Override
@@ -130,25 +80,14 @@ public class AgriCraftHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isSeedItem(ItemStack is) {
-		try {
-			return (Boolean)isValidSeed.invoke(null, is);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+		return api.isHandledByAgricraft(is);
 	}
 
 	@Override
 	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
-		TileEntity te = world.getTileEntity(x, y, z);
-		try {
-			Object cp = plant.get(te);
-			return (ArrayList<ItemStack>)getFruits.invoke(cp, 1+fortune*3/2, rand);
-		}
-		catch (Exception e) {
-			return null;
-		}
+		int gain = api.getStats(world, x, y, z).getGain();
+		ICropPlant plant = api.getCropPlant(world, x, y, z);
+		return gain > 0 && plant != null ? plant.getFruitsOnHarvest(gain, world.rand) : new ArrayList();
 	}
 
 	@Override
@@ -163,7 +102,7 @@ public class AgriCraftHandler extends CropHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return cropBlock != null && init;
+		return api != null;
 	}
 
 	@Override
