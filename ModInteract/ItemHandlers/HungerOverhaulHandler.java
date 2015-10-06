@@ -26,7 +26,7 @@ public class HungerOverhaulHandler extends ModHandlerBase {
 		int regenFood = -1;
 		if (this.hasMod()) {
 			try {
-				Class c = Class.forName("iguanaman.hungeroverhaul.IguanaConfig");
+				Class c = Class.forName("iguanaman.hungeroverhaul.config.IguanaConfig");
 
 				Field f = c.getField("minHungerToHeal");
 				regenFood = f.getInt(null);
