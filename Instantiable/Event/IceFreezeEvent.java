@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.WorldEvent;
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 
@@ -29,8 +30,22 @@ public class IceFreezeEvent extends WorldEvent {
 		needsEdge = edge;
 	}
 
-	public boolean wouldFreezeNaturally() {
+	public final boolean wouldFreezeNaturally() {
 		return world.provider.canBlockFreeze(x, y, z, needsEdge);
+	}
+
+	public static boolean fire(World world, int x, int y, int z, boolean edge) {
+		IceFreezeEvent evt = new IceFreezeEvent(world, x, y, z, edge);
+		MinecraftForge.EVENT_BUS.post(evt);
+		switch(evt.getResult()) {
+			case ALLOW:
+				return true;
+			case DEFAULT:
+			default:
+				return evt.wouldFreezeNaturally();
+			case DENY:
+				return false;
+		}
 	}
 
 }

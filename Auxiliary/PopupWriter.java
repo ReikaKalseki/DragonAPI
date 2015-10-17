@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
 import net.minecraftforge.common.MinecraftForge;
 
-import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -119,12 +119,12 @@ public class PopupWriter {
 	@SubscribeEvent
 	public void keyHandle(KeyInputEvent evt) {
 		if (!list.isEmpty() || ungrabbed) {
-			if (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) && !ungrabbed) {
+			if (GuiScreen.isCtrlKeyDown() && !ungrabbed) {
 				//ReikaJavaLibrary.pConsole("Press");
 				Minecraft.getMinecraft().mouseHelper.ungrabMouseCursor();
 				ungrabbed = true;
 			}
-			else {
+			else if (ungrabbed) {
 				//ReikaJavaLibrary.pConsole("Release");
 				Minecraft.getMinecraft().mouseHelper.grabMouseCursor();
 				ungrabbed = false;

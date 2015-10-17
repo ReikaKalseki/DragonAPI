@@ -37,7 +37,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 
 	private ExtraUtilsHandler() {
 		super();
-		int iddark = -1;
+		int iddark = -100;
 		Block iddeco = null;
 		if (this.hasMod()) {
 			try {
@@ -99,7 +99,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return darkID != -1 && decoID != null;
+		return decoID != null;
 	}
 
 	@Override

@@ -38,6 +38,8 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 
 	private static final DirectResourceManager instance = new DirectResourceManager();
 
+	private static final String TAG = "custom_path";
+
 	private DirectResourceManager() {
 		super();
 		//this.registerReloadListener(this);
@@ -45,6 +47,10 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 
 	public static DirectResourceManager getInstance() {
 		return instance;
+	}
+
+	public static ResourceLocation getResource(String path) {
+		return new ResourceLocation(TAG, path);
 	}
 
 	@Override
@@ -60,7 +66,7 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 	}
 
 	public void registerCustomPath(String path, SoundCategory cat, boolean streaming) {
-		ResourceLocation rl = new ResourceLocation("custom_path", path);
+		ResourceLocation rl = new ResourceLocation(TAG, path);
 		SoundPoolEntry spe = new SoundPoolEntry(rl, 1, 1, streaming);
 		SoundEventAccessor pos = new SoundEventAccessor(spe, 1);
 		SoundEventAccessorComposite cmp = new SoundEventAccessorComposite(rl, 1, 1, cat);
@@ -107,7 +113,7 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 	}*/
 
 	public Set<String> getResourceDomains() {
-		return ImmutableSet.of("custom_path");
+		return ImmutableSet.of(TAG);
 	}
 
 	public List<IResource> getAllResources(ResourceLocation resource) throws IOException {
@@ -116,7 +122,7 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 
 	@Override
 	public void onResourceManagerReload(IResourceManager rm) {
-		((SimpleReloadableResourceManager)rm).domainResourceManagers.put("custom_path", this);
+		((SimpleReloadableResourceManager)rm).domainResourceManagers.put(TAG, this);
 		this.initToSoundRegistry();
 	}
 

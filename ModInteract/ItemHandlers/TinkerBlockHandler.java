@@ -17,10 +17,13 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.ModInteract.DeepInteract.MantlePulsarHandler;
 
 public class TinkerBlockHandler extends ModHandlerBase {
 
 	private static final TinkerBlockHandler instance = new TinkerBlockHandler();
+
+	private final Object pulsar;
 
 	public final Block gravelOreID;
 	public final Block stoneOreID;
@@ -54,8 +57,45 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		Block idpane = null;
 		Block idseared = null;
 		Item idmaterial = null;
+		Object pulse = null;
 
 		if (this.hasMod()) {
+			try {
+				Class c = Class.forName("tconstruct.TConstruct");
+				Field p = c.getField("pulsar");
+				pulse = p.get(null);
+			}
+			catch (ClassNotFoundException e) {
+				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (NoSuchFieldException e) {
+				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (SecurityException e) {
+				DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (IllegalArgumentException e) {
+				DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (IllegalAccessException e) {
+				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (NullPointerException e) {
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+
 			try {
 				Class tink = ModList.TINKERER.getBlockClass();
 				Field gravel = tink.getField("oreGravel");
@@ -63,8 +103,34 @@ public class TinkerBlockHandler extends ModHandlerBase {
 
 				Field ore = tink.getField("oreSlag");
 				idnether = (Block)gravel.get(null);
-
-				tink = Class.forName("tconstruct.smeltery.TinkerSmeltery");
+			}
+			catch (NoSuchFieldException e) {
+				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (SecurityException e) {
+				DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (IllegalArgumentException e) {
+				DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (IllegalAccessException e) {
+				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (NullPointerException e) {
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			try {
+				Class tink = Class.forName("tconstruct.smeltery.TinkerSmeltery");
 				Field glass = tink.getField("clearGlass");
 				idglass = (Block)glass.get(null);
 
@@ -73,7 +139,39 @@ public class TinkerBlockHandler extends ModHandlerBase {
 
 				Field sear = tink.getField("searedBlock");
 				idseared = (Block)sear.get(null);
+			}
+			catch (ClassNotFoundException e) {
+				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (NoSuchFieldException e) {
+				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (SecurityException e) {
+				DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (IllegalArgumentException e) {
+				DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (IllegalAccessException e) {
+				DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (NullPointerException e) {
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
 
+			try {
 				Class tic = Class.forName("tconstruct.tools.TinkerTools");
 				Field mat = tic.getField("materials");
 				idmaterial = (Item)mat.get(null);
@@ -113,6 +211,8 @@ public class TinkerBlockHandler extends ModHandlerBase {
 			this.noMod();
 		}
 
+		pulsar = pulse;
+
 		gravelOreID = idgravel;
 		stoneOreID = idnether;
 		clearGlassID = idglass;
@@ -120,6 +220,25 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		searedBlockID = idseared;
 
 		materialID = idmaterial;
+	}
+
+	public static enum Pulses {
+		SMELTERY("Tinkers' Smeltery"),
+		TOOLS("Tinkers' Tools"),
+		WEAPONS("Tinkers' Weaponry"),
+		ARMOR("Tinkers' Armory"),
+		MECH("Tinkers' Mechworks"),
+		WORLD("Tinkers' World");
+
+		private final String id;
+
+		private Pulses(String s) {
+			id = s;
+		}
+
+		public boolean isLoaded() {
+			return MantlePulsarHandler.isPulseLoaded(instance.pulsar, id);
+		}
 	}
 
 	public static TinkerBlockHandler getInstance() {

@@ -92,4 +92,9 @@ public final class BlockKey implements BlockCheck {
 	public void place(World world, int x, int y, int z) {
 		world.setBlock(x, y, z, blockID, this.hasMetadata() ? metadata : 0, 3);
 	}
+
+	@Override
+	public BlockKey asBlockKey() {
+		return this;
+	}
 }

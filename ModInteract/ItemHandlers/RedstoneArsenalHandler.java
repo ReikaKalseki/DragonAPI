@@ -50,7 +50,7 @@ public class RedstoneArsenalHandler extends ModHandlerBase {
 				item = ars.getField("ingotElectrumFlux");
 				ingot = ((ItemStack)item.get(null));
 
-				Class c = Class.forName("redstonearsenal.RedstoneArsenal");
+				Class c = Class.forName("cofh.redstonearsenal.RedstoneArsenal");
 				Field config = c.getField("config");
 				Object obj = config.get(null);
 				Method get = obj.getClass().getMethod("get", String.class, String.class, int.class);

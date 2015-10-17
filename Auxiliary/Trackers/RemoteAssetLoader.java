@@ -223,7 +223,7 @@ public class RemoteAssetLoader {
 		}
 
 		private boolean match() {
-			return this.getLocalHash().equals(hash);
+			return this.getLocalHash().equalsIgnoreCase(hash);
 		}
 
 		public String getDisplayName() {

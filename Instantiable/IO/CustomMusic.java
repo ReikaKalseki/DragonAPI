@@ -15,6 +15,7 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.IO.DirectResourceManager;
 
 public class CustomMusic implements ISound {
 
@@ -36,7 +37,7 @@ public class CustomMusic implements ISound {
 
 	public CustomMusic(String path, float vol, float p) {
 		this.path = path;
-		res = new ResourceLocation("custom_path", path);
+		res = DirectResourceManager.getResource(path);
 		volume = vol;
 		pitch = p;
 	}

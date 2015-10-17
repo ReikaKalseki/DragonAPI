@@ -22,11 +22,14 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerBlockHandler.Pulses;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler;
 
 public class SmelteryRecipeHandler {
 
 	public static final int INGOT_AMOUNT = 144;
+
+	private static boolean isLoaded;
 
 	private static Method addMelting;
 	private static Method addCasting;
@@ -57,6 +60,8 @@ public class SmelteryRecipeHandler {
 		Block b = Block.getBlockFromItem(render.getItem());
 		if (!(render.getItem() instanceof ItemBlock) || b == null)
 			throw new MisuseException("The render block must be a non-null block!");
+		if (!isLoaded)
+			return;
 		try {
 			addMelting.invoke(smelteryInstance, is, b, render.getItemDamage(), temp, fluid);
 			DragonAPICore.log("Adding smeltery melting of "+is+" into "+fluidToString(fluid)+".");
@@ -90,6 +95,8 @@ public class SmelteryRecipeHandler {
 	}
 
 	public static void addCasting(ItemStack cast, ItemStack out, FluidStack in, int delay, boolean addCastRecipe) {
+		if (!isLoaded)
+			return;
 		try {
 			addCasting.invoke(castingInstance, out, in, cast, delay);
 			if (addCastRecipe)
@@ -130,6 +137,8 @@ public class SmelteryRecipeHandler {
 	public static void addBlockCasting(ItemStack block, FluidStack fluid, int delay) {
 		if (!(block.getItem() instanceof ItemBlock))
 			throw new MisuseException("You cannot cast a non-block as a block!");
+		if (!isLoaded)
+			return;
 		try {
 			addBlockCasting.invoke(castingBasinInstance, block, fluid, delay);
 			DragonAPICore.log("Adding block casting of "+fluidToString(fluid)+" to "+block+".");
@@ -156,7 +165,7 @@ public class SmelteryRecipeHandler {
 	}
 
 	static {
-		if (ModList.TINKERER.isLoaded()) {
+		if (ModList.TINKERER.isLoaded() && Pulses.SMELTERY.isLoaded()) {
 			try {
 				Class reg = Class.forName("tconstruct.library.TConstructRegistry");
 				Method getTableCasting = reg.getMethod("getTableCasting");
@@ -180,6 +189,10 @@ public class SmelteryRecipeHandler {
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TINKERER, e);
 			}
+			isLoaded = true;
+		}
+		else {
+			isLoaded = false;
 		}
 	}
 }

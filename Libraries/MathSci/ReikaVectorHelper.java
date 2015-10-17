@@ -9,17 +9,21 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.MathSci;
 
+import java.awt.Point;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.DoubleMatrix;
+import Reika.DragonAPI.Instantiable.LineClipper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.relauncher.Side;
@@ -225,6 +229,11 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		DoubleMatrix mat = new DoubleMatrix();
 		euler321Sequence(mat, rx, ry, rz);
 		return multiplyVectorByMatrix(vec, mat);
+	}
+
+	/** Returns null if no part of the line falls within the clipping box. Uses the Cohen Sutherland Method. */
+	public static ImmutablePair<Point, Point> clipLine(int x0, int x1, int y0, int y1, int minX, int minY, int maxX, int maxY) {
+		return new LineClipper(minX, minY, maxX, maxY).clip(x0, y0, x1, y1);
 	}
 
 }

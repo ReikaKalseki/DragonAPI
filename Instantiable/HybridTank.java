@@ -11,9 +11,11 @@ package Reika.DragonAPI.Instantiable;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** A tank class that can handle direct operations as well as standard Forge Liquid operations. */
@@ -27,20 +29,28 @@ public class HybridTank extends FluidTank {
 	}
 
 	public HybridTank(String name, FluidStack stack, int capacity) {
-		super(stack, capacity);
-		this.name = name;
+		this(name, capacity);
+		this.setFluid(stack);
 	}
 
 	public HybridTank(String name, Fluid fluid, int amount, int capacity) {
-		super(fluid, amount, capacity);
-		this.name = name;
+		this(name, new FluidStack(fluid, amount), capacity);
 	}
 
 	@Override
 	public final NBTTagCompound writeToNBT(NBTTagCompound NBT) {
 		NBTTagCompound tankData = new NBTTagCompound();
 		super.writeToNBT(tankData);
+
+		String fluidName = tankData.getString("FluidName");
+		String repl = ReikaFluidHelper.getFluidNameSwap(fluidName);
+		if (repl != null && FluidRegistry.getFluid(repl) != null) {
+			tankData.setString("FluidName", repl);
+			DragonAPICore.log("Tank "+this+" has replaced its FluidName of '"+fluidName+"' with '"+repl+"', as the fluid has changed names.");
+		}
+
 		NBT.setTag(name, tankData);
+
 		return NBT;
 	}
 
@@ -49,10 +59,16 @@ public class HybridTank extends FluidTank {
 		try {
 			if (NBT.hasKey(name)) {
 				NBTTagCompound tankData = NBT.getCompoundTag(name);
+				String fluidName = tankData.getString("FluidName");
+				String repl = ReikaFluidHelper.getFluidNameSwap(fluidName);
+				if (repl != null && FluidRegistry.getFluid(repl) != null) {
+					tankData.setString("FluidName", repl);
+					DragonAPICore.log("Tank "+this+" has replaced its FluidName of '"+fluidName+"' with '"+repl+"', as the fluid has changed names.");
+				}
 				super.readFromNBT(tankData);
 			}
 		}
-		catch (IllegalArgumentException e) { //"Empty String not allowed! caused by fluid save failure"
+		catch (IllegalArgumentException e) { //"Empty String not allowed!" caused by fluid save failure
 			DragonAPICore.logError("Loading HybridTank '"+name+"' has errored, its machine will not keep its fluid!");
 			e.printStackTrace();
 		}

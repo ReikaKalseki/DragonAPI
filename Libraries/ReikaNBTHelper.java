@@ -73,6 +73,9 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		String name = NBT.getString("liquid");
 		if (name == null || name.isEmpty() || name.equals("empty"))
 			return null;
+		String repl = ReikaFluidHelper.getFluidNameSwap(name);
+		if (repl != null && FluidRegistry.getFluid(repl) != null)
+			name = repl;
 		return FluidRegistry.getFluid(name);
 	}
 

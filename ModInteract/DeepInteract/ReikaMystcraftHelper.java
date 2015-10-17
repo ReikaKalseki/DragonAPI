@@ -12,8 +12,12 @@ package Reika.DragonAPI.ModInteract.DeepInteract;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
@@ -24,11 +28,14 @@ import net.minecraft.world.WorldProvider;
 import net.minecraftforge.fluids.Fluid;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
 
+import com.xcompwiz.mystcraft.api.MystAPI;
 import com.xcompwiz.mystcraft.api.linking.ILinkInfo;
 
 import cpw.mods.fml.common.event.FMLInterModComms;
@@ -38,11 +45,13 @@ public class ReikaMystcraftHelper {
 
 	private static final Random rand = new Random();
 
-	private static final HashMap<Integer, InstabilityInterface> ageData = new HashMap();
+	private static final HashMap<Integer, AgeInterface> ageData = new HashMap();
 
 	private static final Method getTile;
 	private static final Method getBook;
 	private static final Method getLink;
+
+	private static MystAPI mainAPI;
 
 	public static void disableFluidPage(Fluid f) {
 		FMLInterModComms.sendMessage(ModList.MYSTCRAFT.modLabel, "blacklistfluid", f.getName());
@@ -85,39 +94,46 @@ public class ReikaMystcraftHelper {
 	}
 	 */
 	public static int getInstabilityScoreForAge(World world) {
-		if (!InstabilityInterface.loadedCorrectly)
+		if (!AgeInterface.loadedCorrectly)
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getInstabilityScore() : 0;
 	}
 
 	public static int getBlockInstabilityForAge(World world) {
-		if (!InstabilityInterface.loadedCorrectly)
+		if (!AgeInterface.loadedCorrectly)
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getBlockInstability() : 0;
 	}
 
 	public static int getSymbolInstabilityForAge(World world) {
-		if (!InstabilityInterface.loadedCorrectly)
+		if (!AgeInterface.loadedCorrectly)
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getSymbolInstability() : 0;
 	}
 
 	public static short getBaseInstabilityForAge(World world) {
-		if (!InstabilityInterface.loadedCorrectly)
+		if (!AgeInterface.loadedCorrectly)
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).getBaseInstability() : 0;
 	}
 
 	public static int decrInstabilityForAge(World world, int amt) {
-		if (!InstabilityInterface.loadedCorrectly)
+		if (!AgeInterface.loadedCorrectly)
 			return 0;
 		return isMystAge(world) ? getOrCreateInterface(world).decrInstability(amt) : 0;
 	}
 
 	public static void addInstabilityForAge(World world, short amt) {
-		if (InstabilityInterface.loadedCorrectly && isMystAge(world)) {
+		if (AgeInterface.loadedCorrectly && isMystAge(world)) {
 			getOrCreateInterface(world).addBaseInstability(amt);
 		}
+	}
+
+	public static boolean isSymbolPresent(World world, String sym) {
+		if (AgeInterface.loadedCorrectly && isMystAge(world)) {
+			return getOrCreateInterface(world).symbolExists(sym);
+		}
+		return false;
 	}
 
 	/*
@@ -148,18 +164,18 @@ public class ReikaMystcraftHelper {
 	}
 	 */
 
-	private static InstabilityInterface getOrCreateInterface(World world) {
-		if (!InstabilityInterface.loadedCorrectly)
+	private static AgeInterface getOrCreateInterface(World world) {
+		if (!AgeInterface.loadedCorrectly)
 			return null;
-		InstabilityInterface ii = ageData.get(world.provider.dimensionId);
+		AgeInterface ii = ageData.get(world.provider.dimensionId);
 		if (ii == null) {
-			ii = new InstabilityInterface(world);
+			ii = new AgeInterface(world);
 			ageData.put(world.provider.dimensionId, ii);
 		}
 		return ii;
 	}
 
-	private static final class InstabilityInterface {
+	private static final class AgeInterface {
 
 		private static final Field age_controller;
 		private static final Field instability_controller;
@@ -168,6 +184,7 @@ public class ReikaMystcraftHelper {
 		private static final Field instabilityNumber;
 		private static final Field blockInstabilityNumber;
 		private static final Field baseInstability;
+		private static final Field symbolList;
 		private static final Method getScore;
 
 		private static boolean loadedCorrectly;
@@ -177,8 +194,9 @@ public class ReikaMystcraftHelper {
 		private Object ageController; //AgeController class
 		private Object instabilityController; //InstabilityController
 		private Object ageData; //AgeData class
+		private HashSet<String> ageSymbols;
 
-		InstabilityInterface(World world) {
+		private AgeInterface(World world) {
 			if (!isMystAge(world))
 				throw new IllegalArgumentException("Dimension "+world.provider.dimensionId+" is not a MystCraft age!");
 			provider = world.provider;
@@ -187,6 +205,7 @@ public class ReikaMystcraftHelper {
 				ageController = age_controller.get(provider);
 				instabilityController = instability_controller.get(ageController);
 				ageData = data.get(ageController);
+				ageSymbols = new HashSet((List<String>)symbolList.get(ageData));
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -302,6 +321,18 @@ public class ReikaMystcraftHelper {
 			}
 		}
 
+		public Set<String> getSymbols() {
+			return Collections.unmodifiableSet(ageSymbols);
+		}
+
+		public boolean symbolExists(String s) {
+			return ageSymbols.contains(s);
+		}
+
+		public boolean symbolExists(AgeSymbol s) {
+			return ageSymbols.contains(s.getID());
+		}
+
 		static {
 			Field cont = null;
 			Field insta = null;
@@ -310,6 +341,7 @@ public class ReikaMystcraftHelper {
 			Field numblock = null;
 			Field base = null;
 			Field adata = null;
+			Field sym = null;
 			Method score = null;
 			boolean load = true;
 			if (ModList.MYSTCRAFT.isLoaded()) {
@@ -330,6 +362,8 @@ public class ReikaMystcraftHelper {
 					Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
 					base = data.getDeclaredField("instability");
 					base.setAccessible(true);
+					sym = data.getDeclaredField("symbols");
+					sym.setAccessible(true);
 					score = age.getDeclaredMethod("getInstabilityScore");
 					score.setAccessible(true);
 					adata = age.getDeclaredField("agedata");
@@ -353,6 +387,7 @@ public class ReikaMystcraftHelper {
 			blockInstabilityNumber = numblock;
 			getScore = score;
 			baseInstability = base;
+			symbolList = sym;
 			data = adata;
 		}
 
@@ -389,13 +424,43 @@ public class ReikaMystcraftHelper {
 		return c.get(rand.nextInt(c.size()));
 	}
 
+	public static void registerAgeSymbol(Object o) {
+		if (AgeSymbol.ageSymbolInterf != null && AgeSymbol.ageSymbolInterf.isAssignableFrom(o.getClass())) {
+			try {
+				AgeSymbol.registerSymbol.invoke(AgeSymbol.symbolAPI, o);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			throw new MisuseException("You can only register instances of IAgeSymbol!");
+		}
+	}
+
+	@ModDependent(ModList.MYSTCRAFT)
+	public static MystAPI getAPI() {
+		return mainAPI;
+	}
+
 	public static class AgeSymbol {
 
 		private static boolean loadedCorrectly;
 
+		private static Class ageSymbolInterf;
+
 		private static Method id;
 		private static Method instability;
 		private static Method name;
+
+		private static Object symbolAPI;
+		private static Object wordAPI;
+
+		private static Method getSymbol;
+		private static Method registerSymbol;
+		private static Method blacklistSymbol;
+
+		private static Method registerWord;
 
 		private static Method getAgeSymbols;
 
@@ -458,16 +523,24 @@ public class ReikaMystcraftHelper {
 		static {
 			if (ModList.MYSTCRAFT.isLoaded()) {
 				try {
-					Class interf = Class.forName("com.xcompwiz.mystcraft.symbol.IAgeSymbol");
-					id = interf.getDeclaredMethod("identifier");
-					name = interf.getDeclaredMethod("displayName");
-					instability = interf.getDeclaredMethod("instabilityModifier", int.class);
+					ageSymbolInterf = Class.forName("com.xcompwiz.mystcraft.symbol.IAgeSymbol");
+					id = ageSymbolInterf.getDeclaredMethod("identifier");
+					name = ageSymbolInterf.getDeclaredMethod("displayName");
+					instability = ageSymbolInterf.getDeclaredMethod("instabilityModifier", int.class);
 
 					Class mgr = Class.forName("com.xcompwiz.mystcraft.symbol.SymbolManager");
 					getAgeSymbols = mgr.getDeclaredMethod("getAgeSymbols");
 
 					Class page = Class.forName("com.xcompwiz.mystcraft.page.Page");
 					createPage = page.getDeclaredMethod("createSymbolPage", String.class);
+
+					Class internal = Class.forName("com.xcompwiz.mystcraft.core.InternalAPI");
+					symbolAPI = internal.getField("symbol").get(null);
+
+					Class api = Class.forName("com.xcompwiz.mystcraft.oldapi.internal.ISymbolAPI");
+					registerSymbol = api.getMethod("registerSymbol", ageSymbolInterf);
+					getSymbol = api.getMethod("getSymbolForIdentifier", String.class);
+					blacklistSymbol = api.getMethod("blacklistIdentifier", String.class);
 
 					loadedCorrectly = true;
 				}
@@ -485,7 +558,9 @@ public class ReikaMystcraftHelper {
 		Method tile = null;
 		Method book = null;
 		Method link = null;
+
 		boolean load = true;
+
 		if (ModList.MYSTCRAFT.isLoaded()) {
 			try {
 				Class portal = Class.forName("com.xcompwiz.mystcraft.portal.PortalUtils");
@@ -500,6 +575,18 @@ public class ReikaMystcraftHelper {
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Error loading Mystcraft linkbook interfacing!");
+				e.printStackTrace();
+				load = false;
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
+			}
+
+			try {
+				Class internal = Class.forName("com.xcompwiz.mystcraft.core.InternalAPI");
+				Method get = internal.getMethod("getAPIInstance", String.class);
+				mainAPI = (MystAPI)get.invoke(null, ModList.MYSTCRAFT.modLabel);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Error loading Mystcraft API interfacing!");
 				e.printStackTrace();
 				load = false;
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);

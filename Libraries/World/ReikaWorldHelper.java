@@ -61,6 +61,7 @@ import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
@@ -70,6 +71,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -121,7 +123,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Caps the metadata at a certain value (eg, for leaves, metas are from 0-11, but there are only 4 types, and each type has 3 metas).
-	 * Args: Initial metadata, cap (# of types) */
+	 *Args: Initial metadata, cap (# of types) */
 	public static int capMetadata(int meta, int cap) {
 		while (meta >= cap)
 			meta -= cap;
@@ -169,7 +171,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Finds the top edge of the top water block in the column. Args: World, this.x,y,z.
-	 * DO NOT CALL if there is no water there, as there is a possibility of infinite loop. */
+	 *DO NOT CALL if there is no water there, as there is a possibility of infinite loop. */
 	public static double findWaterSurface(World world, double x, double y, double z) { //Returns double y-coord of top surface of top block
 
 		int xp = (int)x;
@@ -194,7 +196,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Finds the top edge of the top fluid block in the column. Args: World, this.x,y,z.
-	 * DO NOT CALL if there is no fluid there, as there is a possibility of infinite loop. */
+	 *DO NOT CALL if there is no fluid there, as there is a possibility of infinite loop. */
 	public static double findFluidSurface(World world, double x, double y, double z) { //Returns double y-coord of top surface of top block
 
 		int xp = (int)x;
@@ -222,7 +224,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Search for a specific block in a range. Returns true if found. Cannot identify if
-	 * found more than one, or where the found one(s) is/are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id */
+	 *found more than one, or where the found one(s) is/are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id */
 	public static boolean findNearBlock(World world, int x, int y, int z, int range, Block id) {
 		x -= range/2;
 		y -= range/2;
@@ -239,7 +241,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Search for a specific block in a range. Returns true if found. Cannot identify if
-	 * found more than one, or where the found one(s) is/are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id, meta */
+	 *found more than one, or where the found one(s) is/are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id, meta */
 	public static boolean findNearBlock(World world, int x, int y, int z, int range, Block id, int meta) {
 		x -= range/2;
 		y -= range/2;
@@ -256,7 +258,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Search for a specific block in a range. Returns number found. Cannot identify where they
-	 * are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id */
+	 *are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id */
 	public static int findNearBlocks(World world, int x, int y, int z, int range, Block id) {
 		int count = 0;
 		x -= range/2;
@@ -274,8 +276,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Tests for if a block of a certain id is in the "sights" of a directional block (eg dispenser).
-	 * Returns the number of blocks away it is. If not found, returns 0 (an impossibility).
-	 * Args: World, this.x,y,z, search range, target id, direction "f" */
+	 *Returns the number of blocks away it is. If not found, returns 0 (an impossibility).
+	 *Args: World, this.x,y,z, search range, target id, direction "f" */
 	public static int isLookingAt(World world, int x, int y, int z, int range, Block id, int f) {
 		Block idfound = Blocks.air;
 
@@ -328,7 +330,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns the direction in which a block of the specified ID was found.
-	 * Returns -1 if not found. Args: World, x,y,z, id to search. */
+	 *Returns -1 if not found. Args: World, x,y,z, id to search. */
 	public static ForgeDirection checkForAdjBlock(World world, int x, int y, int z, Block id) {
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
@@ -345,7 +347,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns the direction in which a block of the specified material was found.
-	 * Returns -1 if not found. Args: World, x,y,z, material to search. */
+	 *Returns -1 if not found. Args: World, x,y,z, material to search. */
 	public static ForgeDirection checkForAdjMaterial(World world, int x, int y, int z, Material mat) {
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
@@ -362,7 +364,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns the direction in which a source block of the specified liquid was found.
-	 * Returns -1 if not found. Args: World, x,y,z, material (water/lava) to search. */
+	 *Returns -1 if not found. Args: World, x,y,z, material (water/lava) to search. */
 	public static ForgeDirection checkForAdjSourceBlock(World world, int x, int y, int z, Material mat) {
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
@@ -379,7 +381,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Edits a block adjacent to the passed arguments, on the specified side.
-	 * Args: World, x, y, z, side, id to change to, metadata to change to */
+	 *Args: World, x, y, z, side, id to change to, metadata to change to */
 	public static void changeAdjBlock(World world, int x, int y, int z, ForgeDirection side, Block id, int meta) {
 		int dx = x+side.offsetX;
 		int dy = y+side.offsetY;
@@ -608,7 +610,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns the number of water blocks directly and continuously above the passed coordinates.
-	 * Returns -1 if invalid liquid specified. Args: World, x, y, z */
+	 *Returns -1 if invalid liquid specified. Args: World, x, y, z */
 	public static int getDepth(World world, int x, int y, int z, String liq) {
 		int i = 1;
 		if (liq == "water") {
@@ -627,7 +629,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns true if the block ID is one associated with caves, like air, cobwebs,
-	 * spawners, mushrooms, etc. Args: Block ID */
+	 *spawners, mushrooms, etc. Args: Block ID */
 	public static boolean caveBlock(Block id) {
 		if (id == Blocks.air || id == Blocks.flowing_water || id == Blocks.water || id == Blocks.flowing_lava ||
 				id == Blocks.lava || id == Blocks.web || id == Blocks.mob_spawner || id == Blocks.red_mushroom ||
@@ -637,9 +639,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Performs machine overheat effects (primarily intended for RotaryCraft).
-	 * Args: World, x, y, z, item drop id, item drop metadata, min drops, max drops,
-	 * spark particles yes/no, number-of-sparks multiplier (default 20-40),
-	 * flaming explosion yes/no, smoking explosion yes/no, explosion force (0 for none) */
+	 *Args: World, x, y, z, item drop id, item drop metadata, min drops, max drops,
+	 *spark particles yes/no, number-of-sparks multiplier (default 20-40),
+	 *flaming explosion yes/no, smoking explosion yes/no, explosion force (0 for none) */
 	public static void overheat(World world, int x, int y, int z, ItemStack drop, int mindrops, int maxdrops, boolean sparks, float sparkmultiplier, boolean flaming, boolean smoke, float force) {
 		if (force > 0 && !world.isRemote) {
 			if (flaming)
@@ -669,13 +671,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Takes a specified amount of XP and splits it randomly among a bunch of orbs.
-	 * Args: World, x, y, z, amount */
+	 *Args: World, x, y, z, amount */
 	public static void splitAndSpawnXP(World world, double x, double y, double z, int xp) {
 		splitAndSpawnXP(world, x, y, z, xp, 6000);
 	}
 
 	/** Takes a specified amount of XP and splits it randomly among a bunch of orbs.
-	 * Args: World, x, y, z, amount, life */
+	 *Args: World, x, y, z, amount, life */
 	public static void splitAndSpawnXP(World world, double x, double y, double z, int xp, int life) {
 		int max = xp/5+1;
 
@@ -697,7 +699,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns true if the coordinate specified is a lava source block and would be recreated according to the lava-duplication rules
-	 * that existed for a short time in Beta 1.9. Args: World, x, y, z */
+	 *that existed for a short time in Beta 1.9. Args: World, x, y, z */
 	public static boolean is1p9InfiniteLava(World world, int x, int y, int z) {
 		if (getMaterial(world, x, y, z) != Material.lava || world.getBlockMetadata(x, y, z) != 0)
 			return false;
@@ -713,7 +715,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns the y-coordinate of the top non-air block at the given xz coordinates, at or
-	 * below the specified y-coordinate. Returns -1 if none. Args: World, x, y, z */
+	 *below the specified y-coordinate. Returns -1 if none. Args: World, x, y, z */
 	public static int findTopBlockBelowY(World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		while (b == Blocks.air && y >= 0) {
@@ -737,7 +739,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Breaks a contiguous area of blocks recursively (akin to a fill tool in image editors).
-	 * Args: World, start x, start y, start z, id, metadata (-1 for any) */
+	 *Args: World, start x, start y, start z, id, metadata (-1 for any) */
 	public static void recursiveBreak(World world, int x, int y, int z, Block id, int meta) {
 		if (id == Blocks.air)
 			return;
@@ -759,7 +761,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Like the ordinary recursive break but with a spherical bounded volume. Args: World, x, y, z,
-	 * id to replace, metadata to replace (-1 for any), origin x,y,z, max radius */
+	 *id to replace, metadata to replace (-1 for any), origin x,y,z, max radius */
 	public static void recursiveBreakWithinSphere(World world, int x, int y, int z, Block id, int meta, int x0, int y0, int z0, double r) {
 		if (id == Blocks.air)
 			return;
@@ -783,7 +785,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Like the ordinary recursive break but with a bounded volume. Args: World, x, y, z,
-	 * id to replace, metadata to replace (-1 for any), min x,y,z, max x,y,z */
+	 *id to replace, metadata to replace (-1 for any), min x,y,z, max x,y,z */
 	public static void recursiveBreakWithBounds(World world, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
 		if (id == Blocks.air)
 			return;
@@ -807,8 +809,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Recursively fills a contiguous area of one block type with another, akin to a fill tool.
-	 * Args: World, start x, start y, start z, id to replace, id to fill with,
-	 * metadata to replace (-1 for any), metadata to fill with */
+	 *Args: World, start x, start y, start z, id to replace, id to fill with,
+	 *metadata to replace (-1 for any), metadata to fill with */
 	public static void recursiveFill(World world, int x, int y, int z, Block id, Block idto, int meta, int metato) {
 		if (world.getBlock(x, y, z) != id)
 			return;
@@ -826,8 +828,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Like the ordinary recursive fill but with a bounded volume. Args: World, x, y, z,
-	 * id to replace, id to fill with, metadata to replace (-1 for any),
-	 * metadata to fill with, min x,y,z, max x,y,z */
+	 *id to replace, id to fill with, metadata to replace (-1 for any),
+	 *metadata to fill with, min x,y,z, max x,y,z */
 	public static void recursiveFillWithBounds(World world, int x, int y, int z, Block id, Block idto, int meta, int metato, int x1, int y1, int z1, int x2, int y2, int z2) {
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
@@ -847,8 +849,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Like the ordinary recursive fill but with a spherical bounded volume. Args: World, x, y, z,
-	 * id to replace, id to fill with, metadata to replace (-1 for any),
-	 * metadata to fill with, origin x,y,z, max radius */
+	 *id to replace, id to fill with, metadata to replace (-1 for any),
+	 *metadata to fill with, origin x,y,z, max radius */
 	public static void recursiveFillWithinSphere(World world, int x, int y, int z, Block id, Block idto, int meta, int metato, int x0, int y0, int z0, double r) {
 		/*DragonAPICore.log(world.getBlock(x, y, z)+" & "+id+" @ "+x0+", "+y0+", "+z0);
 		DragonAPICore.log(world.getBlockMetadata(x, y, z)+" & "+meta+" @ "+x0+", "+y0+", "+z0);
@@ -871,7 +873,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns true if there is a clear line of sight between two points. Args: World, Start x,y,z, End x,y,z
-	 * NOTE: If one point is a block, use canBlockSee instead, as this method will always return false. */
+	 *NOTE: If one point is a block, use canBlockSee instead, as this method will always return false. */
 	public static boolean lineOfSight(World world, double x1, double y1, double z1, double x2, double y2, double z2) {
 		if (world.isRemote)
 			;//return false;
@@ -945,7 +947,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 					return true;
 				}
 				else if (id != locid && ReikaBlockHelper.isCollideable(world, dx, dy, dz) && !softBlocks(world, dx, dy, dz)) {
-					i = (float)(range + 1); //Hard loop break
+					i = (float)(range+1); //Hard loop break
 				}
 			}
 		}
@@ -997,8 +999,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns true if the entity can see a block, or if it could be moved to a position where it could see the block.
-	 * Args: World, Block x,y,z, Entity, Max Move Distance
-	 * DO NOT USE THIS - CPU INTENSIVE TO ALL HELL! */
+	 *Args: World, Block x,y,z, Entity, Max Move Distance
+	 *DO NOT USE THIS - CPU INTENSIVE TO ALL HELL! */
 	public static boolean canSeeOrMoveToSeeBlock(World world, int x, int y, int z, Entity ent, double r) {
 		double d = 4;//+ReikaMathLibrary.py3d(x-ent.posX, y-ent.posY, z-ent.posZ);
 		if (canBlockSee(world, x, y, z, ent.posX, ent.posY, ent.posZ, d))
@@ -1099,21 +1101,21 @@ public final class ReikaWorldHelper extends DragonAPICore {
 					double var17 = 999.0D;
 					double var19 = 999.0D;
 					if (var5 > var8)
-						var15 = var8 + 1.0D;
+						var15 = var8+1.0D;
 					else if (var5 < var8)
-						var15 = var8 + 0.0D;
+						var15 = var8+0.0D;
 					else
 						var39 = false;
 					if (var6 > var9)
-						var17 = var9 + 1.0D;
+						var17 = var9+1.0D;
 					else if (var6 < var9)
-						var17 = var9 + 0.0D;
+						var17 = var9+0.0D;
 					else
 						var40 = false;
 					if (var7 > var10)
-						var19 = var10 + 1.0D;
+						var19 = var10+1.0D;
 					else if (var7 < var10)
-						var19 = var10 + 0.0D;
+						var19 = var10+0.0D;
 					else
 						var41 = false;
 					double var21 = 999.0D;
@@ -1136,17 +1138,17 @@ public final class ReikaWorldHelper extends DragonAPICore {
 						else
 							var42 = 5;
 						par1Vec3.xCoord = var15;
-						par1Vec3.yCoord += var29 * var21;
-						par1Vec3.zCoord += var31 * var21;
+						par1Vec3.yCoord += var29*var21;
+						par1Vec3.zCoord += var31*var21;
 					}
 					else if (var23 < var25) {
 						if (var6 > var9)
 							var42 = 0;
 						else
 							var42 = 1;
-						par1Vec3.xCoord += var27 * var23;
+						par1Vec3.xCoord += var27*var23;
 						par1Vec3.yCoord = var17;
-						par1Vec3.zCoord += var31 * var23;
+						par1Vec3.zCoord += var31*var23;
 					}
 					else {
 						if (var7 > var10)
@@ -1154,8 +1156,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 						else
 							var42 = 3;
 
-						par1Vec3.xCoord += var27 * var25;
-						par1Vec3.yCoord += var29 * var25;
+						par1Vec3.xCoord += var27*var25;
+						par1Vec3.yCoord += var29*var25;
 						par1Vec3.zCoord = var19;
 					}
 					Vec3 var34 = Vec3.createVectorHelper(par1Vec3.xCoord, par1Vec3.yCoord, par1Vec3.zCoord);
@@ -1194,7 +1196,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}*/
 
 	/** Returns true if the specified corner has at least one air block adjacent to it,
-	 * but is not surrounded by air on all sides or in the void. Args: World, x, y, z */
+	 *but is not surrounded by air on all sides or in the void. Args: World, x, y, z */
 	public static boolean cornerHasAirAdjacent(World world, int x, int y, int z) {
 		if (y <= 0)
 			return false;
@@ -1219,7 +1221,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns true if the specified corner has at least one nonopaque block adjacent to it,
-	 * but is not surrounded by air on all sides or in the void. Args: World, x, y, z */
+	 *but is not surrounded by air on all sides or in the void. Args: World, x, y, z */
 	public static boolean cornerHasTransAdjacent(World world, int x, int y, int z) {
 		if (y <= 0)
 			return false;
@@ -1289,7 +1291,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Checks if a liquid block is part of a column (has same liquid above and below and none of them are source blocks).
-	 * Args: World, x, y, z */
+	 *Args: World, x, y, z */
 	public static boolean isLiquidAColumn(World world, int x, int y, int z) {
 		Fluid f = getFluid(world, x, y, z);
 		if (f == null)
@@ -1519,7 +1521,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Get the sun brightness as a fraction from 0-1. Args: World */
 	public static float getSunIntensity(World world) {
 		float ang = world.getCelestialAngle(0);
-		float base = 1.0F - (MathHelper.cos(ang * (float)Math.PI * 2.0F) * 2.0F + 0.2F);
+		float base = 1.0F - (MathHelper.cos(ang*(float)Math.PI*2.0F)*2.0F+0.2F);
 
 		if (base < 0.0F)
 			base = 0.0F;
@@ -1528,9 +1530,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			base = 1.0F;
 
 		base = 1.0F - base;
-		base = (float)(base * (1.0D - world.getRainStrength(0) * 5.0F / 16.0D));
-		base = (float)(base * (1.0D - world.getWeightedThunderStrength(0) * 5.0F / 16.0D));
-		return base * 0.8F + 0.2F;
+		base = (float)(base*(1.0D - world.getRainStrength(0)*5.0F / 16.0D));
+		base = (float)(base*(1.0D - world.getWeightedThunderStrength(0)*5.0F / 16.0D));
+		return base*0.8F+0.2F;
 	}
 
 	/** Returns the sun's declination, clamped to 0-90. Args: World */
@@ -1953,5 +1955,48 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		else {
 			return null;
 		}
+	}
+
+	/** A surrogate for the method in world, more performant and fires an event. */
+	public static EntityPlayer getClosestVulnerablePlayer(World world, double x, double y, double z, double r) {
+		double dd = Double.POSITIVE_INFINITY;
+		double dist = -1;
+		EntityPlayer ret = null;
+
+		for (EntityPlayer ep : ((List<EntityPlayer>)world.playerEntities)) {
+			boolean flag = false;
+			Result res = MobTargetingEvent.firePre(ep, world, x, y, z, r);
+			if (res != Result.DENY && (!ep.capabilities.disableDamage || res == Result.ALLOW) && ep.isEntityAlive()) {
+				dist = ep.getDistanceSq(x, y, z);
+
+				if (ep.isSneaking()) {
+					r *= 0.8;
+				}
+
+				if (ep.isInvisible()) {
+					float f = ep.getArmorVisibility();
+
+					if (f < 0.1F) {
+						f = 0.1F;
+					}
+
+					r *= 0.7F*f;
+				}
+
+				flag = (r < 0 || dist < r*r) && dist < dd;
+				flag = MobTargetingEvent.fire(ep, world, x, y, z, r, flag);
+			}
+
+			if (flag) {
+				dd = dist;
+				ret = ep;
+			}
+		}
+
+		EntityPlayer post = MobTargetingEvent.firePost(world, x, y, z, r);
+		if (post != null)
+			ret = post;
+
+		return ret;
 	}
 }

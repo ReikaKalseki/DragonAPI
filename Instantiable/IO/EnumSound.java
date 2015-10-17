@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable.IO;
 
 import net.minecraft.client.audio.ISound;
 import net.minecraft.util.ResourceLocation;
+import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 
 public class EnumSound implements ISound {
@@ -30,7 +31,7 @@ public class EnumSound implements ISound {
 
 	public EnumSound(SoundEnum obj, double x, double y, double z, float vol, float p, boolean att) {
 		sound = obj;
-		res = new ResourceLocation("custom_path", obj.getPath());
+		res = DirectResourceManager.getResource(obj.getPath());
 		posX = x;
 		posY = y;
 		posZ = z;

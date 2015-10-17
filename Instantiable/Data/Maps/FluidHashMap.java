@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.TreeMap;
 
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import Reika.DragonAPI.Interfaces.Matcher;
 import Reika.DragonAPI.Libraries.ReikaFluidHelper;
@@ -24,7 +25,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class FluidHashMap<V> {
 
-	private final HashMap<Fluid, TreeMap<Integer, V>> data = new HashMap();
+	private final HashMap<String, TreeMap<Integer, V>> data = new HashMap();
 	private ArrayList<FluidStack> sorted = null;
 	private Collection<FluidStack> keyset = null;
 	private boolean modifiedKeys = true;
@@ -53,16 +54,16 @@ public final class FluidHashMap<V> {
 	}
 
 	private V putKey(FluidStack is, V value) {
-		TreeMap<Integer, V> map = this.data.get(is.getFluid());
+		TreeMap<Integer, V> map = this.data.get(is.getFluid().getName());
 		if (map == null) {
 			map = new TreeMap(new ReikaJavaLibrary.ReverseComparator());
-			this.data.put(is.getFluid(), map);
+			this.data.put(is.getFluid().getName(), map);
 		}
 		return map.put(is.amount, value);
 	}
 
 	public V get(FluidStack is) {
-		TreeMap<Integer, V> map = this.data.get(is.getFluid());
+		TreeMap<Integer, V> map = this.data.get(is.getFluid().getName());
 		if (map != null) {
 			for (int key : map.keySet()) {
 				if (is.amount >= key) {
@@ -74,7 +75,7 @@ public final class FluidHashMap<V> {
 	}
 
 	public boolean containsKey(FluidStack is) {
-		TreeMap<Integer, V> map = this.data.get(is.getFluid());
+		TreeMap<Integer, V> map = this.data.get(is.getFluid().getName());
 		if (map != null) {
 			for (int key : map.keySet()) {
 				if (is.amount >= key) {
@@ -86,13 +87,13 @@ public final class FluidHashMap<V> {
 	}
 
 	public V put(FluidStack is, V value) {
-		if (oneWay && data.containsKey(is)) {
+		if (oneWay && data.containsKey(is.getFluid().getName())) {
 			if (matcher != null) {
 				V v = this.get(is);
 				if (v == value || matcher.match(v, value))
 					return v;
 			}
-			throw new UnsupportedOperationException("This map does not support overwriting values! Fluid "+is+" already mapped to '"+data.get(is)+"'!");
+			throw new UnsupportedOperationException("This map does not support overwriting values! Fluid "+is+" already mapped to '"+this.get(is)+"'!");
 		}
 		V ret = this.putKey(is, value);
 		this.modifiedKeys = true;
@@ -104,7 +105,7 @@ public final class FluidHashMap<V> {
 	}
 
 	public boolean containsKey(Fluid f) {
-		return data.containsKey(f);
+		return data.containsKey(f.getName());
 	}
 
 	public V put(Fluid i, int amt, V value) {
@@ -132,9 +133,9 @@ public final class FluidHashMap<V> {
 
 	private Collection<FluidStack> createKeySet() {
 		ArrayList<FluidStack> li = new ArrayList();
-		for (Fluid f : this.data.keySet()) {
-			for (int s : this.data.get(f).keySet()) {
-				li.add(new FluidStack(f, s));
+		for (String fs : this.data.keySet()) {
+			for (int s : this.data.get(fs).keySet()) {
+				li.add(new FluidStack(FluidRegistry.getFluid(fs), s));
 			}
 		}
 		return li;
@@ -142,7 +143,15 @@ public final class FluidHashMap<V> {
 
 	@Override
 	public String toString() {
-		return data.toString();
+		StringBuilder sb = new StringBuilder();
+		sb.append("{");
+		for (String fs : data.keySet()) {
+			Fluid f = FluidRegistry.getFluid(fs);
+			sb.append(ReikaFluidHelper.fluidToString(f)+"="+data.get(fs));
+			sb.append(",\n");
+		}
+		sb.append("}\n");
+		return sb.toString();
 	}
 
 	public V remove(FluidStack is) {
@@ -154,7 +163,7 @@ public final class FluidHashMap<V> {
 	}
 
 	private V removeKey(FluidStack is) {
-		TreeMap<Integer, V> map = this.data.get(is.getFluid());
+		TreeMap<Integer, V> map = this.data.get(is.getFluid().getName());
 		return map != null ? map.remove(is.amount) : null;
 	}
 

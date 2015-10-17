@@ -120,6 +120,7 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.BCPipeHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BloodMagicHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BoPBlockHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.CarpenterBlockHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
@@ -263,13 +264,15 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	private int getRecursionDepth() {
 		int config = ReikaJVMParser.getArgumentInteger("-DragonAPI_RecursionLimit");//DragonOptions.RECURSE.getValue();
+		if (config == -1)
+			config = 0;
 		int min = 500;
 		int max = 50000;
-		if (config < min) {
+		if (config < min && config != 0) {
 			logger.logError("Specified recursion limit of "+config+" is far too low, and has been clamped to "+min+".");
 			config = min;
 		}
-		if (config > max) {
+		if (config > max && config != 0) {
 			logger.logError("Specified recursion limit of "+config+" is far too high, and has been clamped to "+max+".");
 			config = max;
 		}
@@ -715,6 +718,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.registerHandler(ModList.PNEUMATICRAFT, PneumaticPlantHandler.class, "Handler");
 		this.registerHandler(ModList.BOP, BoPBlockHandler.class, "Handler");
 		this.registerHandler(ModList.HUNGEROVERHAUL, HungerOverhaulHandler.class, "Handler");
+		this.registerHandler(ModList.CARPENTER, CarpenterBlockHandler.class, "Handler");
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);

@@ -21,7 +21,9 @@ import net.minecraftforge.fluids.FluidStack;
 
 public class ReikaFluidHelper {
 
-	private static HashMap<Fluid, FluidContainer> containers = new HashMap();
+	private static final HashMap<Fluid, FluidContainer> containers = new HashMap();
+
+	private static final HashMap<String, String> nameSwaps = new HashMap();
 
 	public static void mapContainerToFluid(Fluid f, ItemStack empty, ItemStack filled) {
 		containers.put(f, new FluidContainer(filled, empty));
@@ -75,8 +77,27 @@ public class ReikaFluidHelper {
 
 	}
 
+	public static String fluidToString(Fluid f) {
+		return f.getUnlocalizedName()+"["+f+"]("+f.getID()+")";
+	}
+
 	public static String fluidStackToString(FluidStack f) {
-		return f.amount+"x"+f.getUnlocalizedName()+"("+f.fluidID+")"+"{"+f.tag+"}";
+		return f.amount+"x"+f.getUnlocalizedName()+"["+f.getFluid()+"]("+f.fluidID+")"+"{"+f.tag+"}";
+	}
+
+	public static void registerNameSwap(String old, String next) {
+		nameSwaps.put(old, next);
+	}
+
+	public static String getFluidNameSwap(String oldName) {
+		return nameSwaps.get(oldName);
+	}
+
+	public static String getOldNameIfApplicable(String fluidName) {
+		if (fluidName == null)
+			return fluidName;
+		String repl = nameSwaps.get(fluidName);
+		return repl != null ? repl : fluidName;
 	}
 
 }

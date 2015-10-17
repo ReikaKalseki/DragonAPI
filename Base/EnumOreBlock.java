@@ -11,6 +11,7 @@ package Reika.DragonAPI.Base;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
@@ -64,7 +65,7 @@ public abstract class EnumOreBlock extends Block {
 		boolean flag = super.removedByPlayer(world, player, x, y, z, harv);
 		if (harv && flag) {
 			this.onHarvested(world, x, y, z, player);
-			if (!ore.dropsSelf(world, x, y, z))
+			if (!ore.dropsSelf(world, x, y, z) && !EnchantmentHelper.getSilkTouchModifier(player))
 				ReikaWorldHelper.splitAndSpawnXP(world, x+0.5F, y+0.5F, z+0.5F, this.droppedXP(ore, world, x, y, z));
 		}
 		return flag;

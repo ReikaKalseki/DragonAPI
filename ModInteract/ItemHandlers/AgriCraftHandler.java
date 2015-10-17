@@ -27,24 +27,30 @@ public class AgriCraftHandler extends CropHandlerBase {
 
 	private static final AgriCraftHandler instance = new AgriCraftHandler();
 
-	private final APIv1 api;
+	private Object api;
 	private final int GROWN = 7;
 
 	private final HashSet<Block> cropBlocks = new HashSet();
 
 	private AgriCraftHandler() {
 		super();
-		if (this.getMod().isLoaded()) {
-			APIBase a = API.getAPI(1);
-			if (a.getStatus().isOK() && a.getVersion() == 1) {
-				api = (APIv1)a;
-				cropBlocks.addAll(api.getCropsBlocks());
+		try {
+			if (this.getMod().isLoaded()) {
+				APIBase a = API.getAPI(1);
+				if (a != null && a.getStatus().isOK() && a.getVersion() == 1) {
+					api = a;
+					cropBlocks.addAll(((APIv1)api).getCropsBlocks());
+				}
+				else {
+					api = null;
+				}
 			}
 			else {
 				api = null;
 			}
 		}
-		else {
+		catch (Throwable t) {
+			t.printStackTrace();
 			api = null;
 		}
 	}
@@ -80,13 +86,16 @@ public class AgriCraftHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isSeedItem(ItemStack is) {
-		return api.isHandledByAgricraft(is);
+		return api != null && ((APIv1)api).isHandledByAgricraft(is);
 	}
 
 	@Override
 	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
-		int gain = api.getStats(world, x, y, z).getGain();
-		ICropPlant plant = api.getCropPlant(world, x, y, z);
+		if (api == null)
+			return null;
+		APIv1 apiv1 = (APIv1)api;
+		int gain = apiv1.getStats(world, x, y, z).getGain();
+		ICropPlant plant = apiv1.getCropPlant(world, x, y, z);
 		return gain > 0 && plant != null ? plant.getFruitsOnHarvest(gain, world.rand) : new ArrayList();
 	}
 

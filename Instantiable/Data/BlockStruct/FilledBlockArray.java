@@ -163,6 +163,21 @@ public class FilledBlockArray extends StructuredBlockArray {
 		return true;
 	}
 
+	@Override
+	public BlockKey getBlockKeyAt(int x, int y, int z) {
+		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).asBlockKey() : null;
+	}
+
+	@Override
+	public Block getBlockAt(int x, int y, int z) {
+		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).asBlockKey().blockID : null;
+	}
+
+	@Override
+	public int getMetaAt(int x, int y, int z) {
+		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).asBlockKey().metadata : -1;
+	}
+
 	public ItemHashMap<Integer> tally() {
 		ItemHashMap<Integer> map = new ItemHashMap();
 		for (BlockCheck bc : data.values()) {
@@ -202,6 +217,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	@Override
 	public BlockArray offset(int x, int y, int z) {
+		super.offset(x, y, z);
 		HashMap map = new HashMap();
 		for (Coordinate key : data.keySet()) {
 			int dx = key.xCoord;
@@ -227,6 +243,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 			int meta = world.getBlockMetadata(x, y, z);
 			this.setBlock(x, y, z, b, meta);
 		}
+	}
+
+	@Override
+	public String toString() {
+		return data.toString();
 	}
 
 	private static class MultiKey implements BlockCheck {
@@ -271,6 +292,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 			return b != null && b != Blocks.air ? new ItemStack(b, 1, this.getMeta()) : null;
 		}
 
+		public BlockKey asBlockKey() {
+			return new BlockKey(this.getBlock(), this.getMeta());
+		}
+
 		public ItemStack getDisplay() {
 			return this.asItemStack();
 		}
@@ -310,6 +335,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 		public ItemStack asItemStack() {
 			ItemStack is = ReikaItemHelper.getContainerForFluid(fluid);
 			return is != null ? is : new ItemStack(this.getBlock());
+		}
+
+		public BlockKey asBlockKey() {
+			return new BlockKey(this.getBlock(), 0);
 		}
 
 		public ItemStack getDisplay() {
@@ -370,6 +399,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 		@Override
 		public ItemStack asItemStack() {
 			return null;
+		}
+
+		public BlockKey asBlockKey() {
+			return new BlockKey(Blocks.air);
 		}
 
 		public ItemStack getDisplay() {

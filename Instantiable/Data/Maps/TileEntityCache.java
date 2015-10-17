@@ -61,7 +61,7 @@ public final class TileEntityCache<V> {
 	}
 
 	public V get(TileEntity te) {
-		return this.get(new WorldLocation(te));
+		return te != null ? this.get(new WorldLocation(te)) : null;
 	}
 
 	public V get(WorldLocation c) {
@@ -73,7 +73,7 @@ public final class TileEntityCache<V> {
 	}
 
 	public boolean containsKey(TileEntity te) {
-		return this.containsKey(new WorldLocation(te));
+		return te != null && this.containsKey(new WorldLocation(te));
 	}
 
 	public boolean containsKey(WorldLocation c) {

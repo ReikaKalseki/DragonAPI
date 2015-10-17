@@ -750,6 +750,17 @@ public class BlockArray implements Iterable<Coordinate> {
 			blocks.add(c2);
 			keys.add(c2);
 		}
+
+		/*
+		minX += x;
+		maxX += x;
+		minY += y;
+		maxY += y;
+		minZ += z;
+		maxZ += z;
+		 */
+		this.resetLimits();
+
 		return this;
 	}
 
@@ -995,6 +1006,8 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	public void shaveToCube() {
 		//TODO
+
+		this.resetLimits();
 	}
 
 	public final AxisAlignedBB asAABB() {

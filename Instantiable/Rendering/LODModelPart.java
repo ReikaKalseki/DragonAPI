@@ -15,6 +15,7 @@ import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.client.MinecraftForgeClient;
 
 import org.lwjgl.input.Keyboard;
 
@@ -118,16 +119,16 @@ public class LODModelPart extends ModelRenderer {
 	private double getDistanceMultiplier() {
 		RenderDistance r = ReikaRenderHelper.getRenderDistance();
 		switch (r) {
-		case FAR:
-			return 2;
-		case NORMAL:
-			return 1;
-		case SHORT:
-			return 0.75;
-		case TINY:
-			return 0.4;
-		default:
-			return 1;
+			case FAR:
+				return 2;
+			case NORMAL:
+				return 1;
+			case SHORT:
+				return 0.75;
+			case TINY:
+				return 0.4;
+			default:
+				return 1;
 		}
 	}
 
@@ -142,7 +143,7 @@ public class LODModelPart extends ModelRenderer {
 		double dz = rz-te.zCoord;
 		double d = dx*dx+dy*dy+dz*dz;
 
-		if (!te.hasWorldObj() || this.shouldRender(d)) {
+		if (!te.hasWorldObj() || MinecraftForgeClient.getRenderPass() == -1 || this.shouldRender(d)) {
 			super.render(pixelSize);
 		}
 	}

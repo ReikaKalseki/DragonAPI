@@ -62,7 +62,7 @@ public class PreferentialItemStack {
 			Collection<ItemStack> items = OreDictionary.getOres(ore);
 			if (items != null) {
 				for (ItemStack is : items) {
-					if (!itemblacklist.contains(is.getItem()) && !ReikaItemHelper.collectionContainsItemStack(blacklist, is))
+					if (is != null && is.getItem() != null && !itemblacklist.contains(is.getItem()) && !ReikaItemHelper.collectionContainsItemStack(blacklist, is))
 						return ore;
 				}
 			}

@@ -40,6 +40,8 @@ public class ImagedGuiButton extends GuiButton {
 
 	public int textureSize = 256;
 
+	public boolean invisible = false;
+
 	private boolean lastHover;
 	private int ticks = 0;
 
@@ -126,7 +128,7 @@ public class ImagedGuiButton extends GuiButton {
 	@Override
 	public void drawButton(Minecraft mc, int mx, int my)
 	{
-		if (visible) {
+		if (visible && !invisible) {
 			int tex = GL11.GL_TEXTURE_BINDING_2D;
 			ReikaTextureHelper.bindTexture(modClass, this.getButtonTexture());
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -180,14 +182,14 @@ public class ImagedGuiButton extends GuiButton {
 	private int getLabelX() {
 		int base = textOffset+xPosition;
 		switch(alignment) {
-		case CENTER:
-			return base+width/2-renderer.getStringWidth(displayString)+1;
-		case LEFT:
-			return base+2;
-		case RIGHT:
-			return base+width-4-renderer.getStringWidth(displayString)*2;
-		default:
-			return base;
+			case CENTER:
+				return base+width/2-renderer.getStringWidth(displayString)+1;
+			case LEFT:
+				return base+2;
+			case RIGHT:
+				return base+width-4-renderer.getStringWidth(displayString)*2;
+			default:
+				return base;
 		}
 	}
 
@@ -203,14 +205,14 @@ public class ImagedGuiButton extends GuiButton {
 
 		private int getDX(FontRenderer f, String s) {
 			switch(this) {
-			case CENTER:
-				return f.getStringWidth(s)/2;
-			case LEFT:
-				return 0;
-			case RIGHT:
-				return f.getStringWidth(s);
-			default:
-				return 0;
+				case CENTER:
+					return f.getStringWidth(s)/2;
+				case LEFT:
+					return 0;
+				case RIGHT:
+					return f.getStringWidth(s);
+				default:
+					return 0;
 			}
 		}
 	}

@@ -15,6 +15,7 @@ import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Instantiable.Rendering.StructureRenderer;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
@@ -22,7 +23,7 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 	protected final ForgeDirection[] dirs = ForgeDirection.values();
 
 	public final boolean isValidMachineRenderPass(TileEntityBase te) {
-		if (!te.isInWorld())
+		if (!te.isInWorld() || StructureRenderer.isRenderingTiles())
 			return true;/*
 		int b = 0;
 		for (int i = 0; i < 6; i++) {

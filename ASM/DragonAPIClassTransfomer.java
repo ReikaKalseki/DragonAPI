@@ -12,12 +12,17 @@ package Reika.DragonAPI.ASM;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.profiler.Profiler;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldSettings;
+import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -38,6 +43,7 @@ import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
@@ -80,6 +86,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		SPRINTEVENT("net.minecraft.network.NetHandlerPlayServer", "nh"),
 		//JUMPCHECKEVENTSERVER("net.minecraft.network.NetHandlerPlayServer", "nh"),
 		//JUMPCHECKEVENTCLIENT("net.minecraft.entity.EntityLivingBase", "sv"),
+		MOBTARGETEVENT("net.minecraft.world.World", "ahb"),
 		;
 
 		private final String obfName;
@@ -118,8 +125,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.insert(pos, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/CreeperExplodeEvent"));
 					m.instructions.insert(pos, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
 				}
-				break;
 				case ITEMRENDEREVENT: {
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_146977_a", "func_146977_a", "(Lnet/minecraft/inventory/Slot;)V");
 					AbstractInsnNode pos = m.instructions.getFirst();
@@ -133,8 +140,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.insertBefore(pos, new InsnNode(Opcodes.POP));
 
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
 				}
-				break;
 				case SLOTCLICKEVENT: {
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_82870_a", "onPickupFromSlot", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/item/ItemStack;)V");
 					AbstractInsnNode pos = m.instructions.getFirst();
@@ -161,10 +168,11 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.insertBefore(pos, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/SlotEvent$AddToSlotEvent", "fire", "(Lnet/minecraft/inventory/Slot;Lnet/minecraft/item/ItemStack;)V", false));
 
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 2!");
+					break;
 				}
-				break;
 				case ICECANCEL: {
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_72834_c", "canBlockFreeze", "(IIIZ)Z");
+					/*
 					LabelNode l4 = new LabelNode(new Label());
 					LabelNode l6 = new LabelNode(new Label());
 					m.instructions.clear();
@@ -201,6 +209,16 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 5));
 					m.instructions.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "wouldFreezeNaturally", "()Z", false));
 					m.instructions.add(new InsnNode(Opcodes.IRETURN));
+					 */
+
+					m.instructions.clear();
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
+					m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 4));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/IceFreezeEvent", "fire", "(Lnet/minecraft/world/World;IIIZ)Z", false));
+					m.instructions.add(new InsnNode(Opcodes.IRETURN));
 
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
@@ -227,6 +245,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					break;
 				}
 				case POTIONEFFECTID: {
+					//if (Loader.isModLoaded("Potion ID Helper"))
+					//	break;
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_82719_a", "writeCustomPotionEffectToNBT", "(Lnet/minecraft/nbt/NBTTagCompound;)Lnet/minecraft/nbt/NBTTagCompound;");
 					for (int i = 0; i < m.instructions.size(); i++) {
 						AbstractInsnNode ain = m.instructions.get(i);
@@ -254,6 +274,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					break;
 				}
 				case POTIONPACKETID: {
+					//if (Loader.isModLoaded("Potion ID Helper"))
+					//	break;
 					FieldNode f = ReikaASMHelper.getFieldByName(cn, "field_149432_b", "field_149432_b");
 					f.desc = "I";
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 1!");
@@ -324,6 +346,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					break;
 				}
 				case POTIONPACKETID2: { //Changes the call to func_149427_e, which otherwise looks for ()B and NSMEs
+					//if (Loader.isModLoaded("Potion ID Helper"))
+					//	break;
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147260_a", "handleEntityEffect", "(Lnet/minecraft/network/play/server/S1DPacketEntityEffect;)V");
 					for (int i = 0; i < m.instructions.size(); i++) {
 						AbstractInsnNode ain = m.instructions.get(i);
@@ -1053,6 +1077,19 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}*/
+				case MOBTARGETEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_72846_b", "getClosestVulnerablePlayer", "(DDDD)Lnet/minecraft/entity/player/EntityPlayer;");
+					m.instructions.clear();
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.add(new VarInsnNode(Opcodes.DLOAD, 1));
+					m.instructions.add(new VarInsnNode(Opcodes.DLOAD, 3)); //+2 since double is 2 spots
+					m.instructions.add(new VarInsnNode(Opcodes.DLOAD, 5));
+					m.instructions.add(new VarInsnNode(Opcodes.DLOAD, 7));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Libraries/World/ReikaWorldHelper", "getClosestVulnerablePlayer", "(Lnet/minecraft/world/World;DDDD)Lnet/minecraft/entity/player/EntityPlayer;", false));
+					m.instructions.add(new InsnNode(Opcodes.ARETURN));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -1074,7 +1111,18 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	abstract static class test {
+	abstract static class test extends World {
+
+
+		public test(ISaveHandler p_i45368_1_, String p_i45368_2_, WorldProvider p_i45368_3_, WorldSettings p_i45368_4_, Profiler p_i45368_5_) {
+			super(p_i45368_1_, p_i45368_2_, p_i45368_3_, p_i45368_4_, p_i45368_5_);
+			// TODO Auto-generated constructor stub
+		}
+
+		@Override
+		public EntityPlayer getClosestVulnerablePlayer(double x, double y, double z, double r) {
+			return ReikaWorldHelper.getClosestVulnerablePlayer(this, x, y, z, r);
+		}
 
 	}
 

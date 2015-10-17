@@ -109,15 +109,15 @@ public class StructuredBlockArray extends BlockArray {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).metadata : -1;
 	}
 
-	public final BlockKey getBlockKeyAt(int x, int y, int z) {
+	public BlockKey getBlockKeyAt(int x, int y, int z) {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)) : null;
 	}
 
-	public final Block getBlockAt(int x, int y, int z) {
+	public Block getBlockAt(int x, int y, int z) {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).blockID : null;
 	}
 
-	public final int getMetaAt(int x, int y, int z) {
+	public int getMetaAt(int x, int y, int z) {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).metadata : -1;
 	}
 

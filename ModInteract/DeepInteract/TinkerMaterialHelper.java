@@ -28,6 +28,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerBlockHandler.Pulses;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler.ToolPartType;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerToolHandler.ToolParts;
@@ -75,26 +76,35 @@ public class TinkerMaterialHelper {
 
 	@SubscribeEvent(priority = EventPriority.HIGHEST)
 	public void breakDisallowedTools(BlockEvent.BreakEvent evt) { //Breaks tools cheated in with uncraftable parts
-		EntityPlayer ep = evt.getPlayer();
-		ItemStack tool = ep.getCurrentEquippedItem();
-		if (tool != null && InterfaceCache.TINKERTOOL.instanceOf(tool.getItem())) {
-			Tools t = TinkerToolHandler.getInstance().getTool(tool.getItem());
-			for (int i = 0; i < ToolPartType.types.length; i++) {
-				ToolPartType type = ToolPartType.types[i];
-				ToolParts p = TinkerToolHandler.getInstance().getPart(t, type);
-				if (p != null) {
-					int id = TinkerToolHandler.getInstance().getToolMaterial(tool, type);
-					AbstractMaterial mat = materialIDs.get(id);
-					if (mat instanceof CustomTinkerMaterial) {
-						CustomTinkerMaterial cm = (CustomTinkerMaterial)mat;
-						if (cm.enforceNoCheating && !cm.toolParts.contains(p)) { //forbidden part, had to be spawned in
-							ReikaSoundHelper.playSoundFromServer(ep.worldObj, ep.posX, ep.posY, ep.posZ, "random.break", 2, 1, true);
-							ep.attackEntityFrom(DamageSource.generic, 1);
-							ep.setCurrentItemOrArmor(0, null);
-							evt.setCanceled(true);
+		if (Pulses.TOOLS.isLoaded()) {
+			EntityPlayer ep = evt.getPlayer();
+			ItemStack tool = ep.getCurrentEquippedItem();
+			try {
+				if (tool != null && InterfaceCache.TINKERTOOL.instanceOf(tool.getItem())) {
+					Tools t = TinkerToolHandler.getInstance().getTool(tool.getItem());
+					if (t != null) {
+						for (int i = 0; i < ToolPartType.types.length; i++) {
+							ToolPartType type = ToolPartType.types[i];
+							ToolParts p = TinkerToolHandler.getInstance().getPart(t, type);
+							if (p != null) {
+								int id = TinkerToolHandler.getInstance().getToolMaterial(tool, type);
+								AbstractMaterial mat = materialIDs.get(id);
+								if (mat instanceof CustomTinkerMaterial) {
+									CustomTinkerMaterial cm = (CustomTinkerMaterial)mat;
+									if (cm.enforceNoCheating && !cm.toolParts.contains(p)) { //forbidden part, had to be spawned in
+										ReikaSoundHelper.playSoundFromServer(ep.worldObj, ep.posX, ep.posY, ep.posZ, "random.break", 2, 1, true);
+										ep.attackEntityFrom(DamageSource.generic, 1);
+										ep.setCurrentItemOrArmor(0, null);
+										evt.setCanceled(true);
+									}
+								}
+							}
 						}
 					}
 				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -225,6 +235,14 @@ public class TinkerMaterialHelper {
 		if (prev != null)
 			throw new IDConflictException(mod, "Tool material ID "+id+" is already occupied by '"+prev.materialName+"'!");
 		CustomTinkerMaterial mat = new CustomTinkerMaterial(id, mod, name);
+
+		if (!Pulses.TOOLS.isLoaded())
+			mat.clearToolParts();
+		if (!Pulses.WEAPONS.isLoaded())
+			mat.clearWeaponParts();
+
+		mat.disableWeaponPart(WeaponParts.FLETCHING).disableWeaponPart(WeaponParts.BOWSTRING); //technical
+
 		materialIDs.put(id, mat);
 		materialNames.put(name, mat);
 		return mat;
@@ -374,14 +392,16 @@ public class TinkerMaterialHelper {
 						ToolParts p = ToolParts.partList[i];
 						if (!toolParts.contains(p)) {
 							ItemStack is = p.getItem(id);
-							NEI_DragonAPI_Config.hideItem(is);
+							if (is != null)
+								NEI_DragonAPI_Config.hideItem(is);
 						}
 					}
 					for (int i = 0; i < WeaponParts.partList.length; i++) {
 						WeaponParts p = WeaponParts.partList[i];
 						if (!weaponParts.contains(p)) {
 							ItemStack is = p.getItem(id);
-							NEI_DragonAPI_Config.hideItem(is);
+							if (is != null)
+								NEI_DragonAPI_Config.hideItem(is);
 						}
 					}
 				}

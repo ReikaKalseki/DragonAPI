@@ -11,6 +11,7 @@ package Reika.DragonAPI.Interfaces;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 
 public interface BlockCheck {
 
@@ -19,4 +20,5 @@ public interface BlockCheck {
 	public void place(World world, int x, int y, int z);
 	public ItemStack asItemStack();
 	public ItemStack getDisplay();
+	public BlockKey asBlockKey();
 }

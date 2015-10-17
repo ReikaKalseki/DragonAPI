@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.init.Items;
@@ -181,8 +182,13 @@ public final class ReikaPotionHelper extends DragonAPICore {
 	 */
 
 	public static void clearBadPotions(EntityLivingBase player) {
+		clearBadPotions(player, null);
+	}
+
+	public static void clearBadPotions(EntityLivingBase player, Set<Integer> ignore) {
 		for (int id : badPotions) {
-			player.removePotionEffect(id);
+			if (ignore == null || !ignore.contains(id))
+				player.removePotionEffect(id);
 		}
 	}
 }
