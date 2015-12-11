@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ASM;
 
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -22,6 +23,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 
 public class FluidNamePatch implements IClassTransformer {
@@ -48,13 +50,14 @@ public class FluidNamePatch implements IClassTransformer {
 
 		MethodNode m = ReikaASMHelper.getMethodByName(classNode, "loadFluidStackFromNBT", "(Lnet/minecraft/nbt/NBTTagCompound;)Lnet/minecraftforge/fluids/FluidStack;");
 
-		AbstractInsnNode ain = ReikaASMHelper.getFirstMethodCall(classNode, m, "com/google/common/base/Strings", "isNullOrEmpty", "(Ljava/lang/String;)Z");
+		String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_74779_i" : "getString";
+		AbstractInsnNode ain = ReikaASMHelper.getFirstMethodCall(classNode, m, "net/minecraft/nbt/NBTTagCompound", func, "(Ljava/lang/String;)Ljava/lang/String;");
 
-		ain = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(ain), Opcodes.ASTORE, 1);
+		ain = ain.getNext(); //move to the ASTORE
 
 		m.instructions.insert(ain, call);
 
-		//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+		ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
 
 		ReikaASMHelper.log("Successfully applied Fluid Name patch.");
 

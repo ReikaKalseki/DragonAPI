@@ -86,10 +86,15 @@ public final class ChancedOutputList {
 	}
 
 	public ArrayList<ItemStack> calculate() {
+		return this.calculate(1);
+	}
+
+	public ArrayList<ItemStack> calculate(double factor) {
 		ArrayList<ItemStack> li = new ArrayList();
 		for (ItemStack key : data.keySet()) {
 			float c = data.get(key);
-			if (ReikaRandomHelper.doWithChance(c/100D)) // /100 to force all into 0-1 range
+			double ch = factor*c/100D;
+			if (ch >= 1 || ReikaRandomHelper.doWithChance(ch)) // /100 to force all into 0-1 range
 				li.add(key.copy());
 		}
 		return li;

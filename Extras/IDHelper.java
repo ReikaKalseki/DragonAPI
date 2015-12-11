@@ -111,13 +111,13 @@ public class IDHelper {
 		for (int i = 0; i < dat.length; i++) {
 			FluidContainerData fcd = dat[i];
 			FluidStack fs = fcd.fluid;
-			Fluid f = FluidRegistry.getFluid(fs.fluidID);
+			Fluid f = FluidRegistry.getFluid(fs.getFluidID());
 			ItemStack empty = fcd.emptyContainer;
 			ItemStack full = fcd.filledContainer;
 			String is1 = empty != null ? String.format("%s (%d:%d)", empty.getDisplayName(), Item.getIdFromItem(empty.getItem()), empty.getItemDamage()) : "null";
 			String is2 = full != null ? String.format("%s (%d:%d)", full.getDisplayName(), Item.getIdFromItem(full.getItem()), full.getItemDamage()) : "null";
 			String sg = String.format("%d of %s in %s > %s", fs.amount, f.getName(), is1, is2);
-			map.put(sg, fs.fluidID);
+			map.put(sg, fs.getFluidID());
 		}
 		return map;
 	}

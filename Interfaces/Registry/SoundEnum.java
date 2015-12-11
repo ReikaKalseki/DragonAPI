@@ -11,6 +11,8 @@ package Reika.DragonAPI.Interfaces.Registry;
 
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.world.World;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 
 /** This is an interface for ENUMS! */
@@ -33,5 +35,9 @@ public interface SoundEnum {
 	public void playSound(World world, double x, double y, double z, float volume, float pitch);
 
 	public boolean attenuate();
+
+	@SideOnly(Side.CLIENT)
+	/** Use this for clientside volume controls. */
+	public float getModulatedVolume();
 
 }

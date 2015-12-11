@@ -55,9 +55,9 @@ public class StructureRenderer {
 
 	private int secY;
 
-	private final FilledBlockArray array;
-	private final RenderAccess access;
-	private final RenderBlocks renderer;
+	protected final FilledBlockArray array;
+	protected final RenderAccess access;
+	protected final RenderBlocks renderer;
 
 	private final HashMap<Coordinate, ItemStack> overrides = new HashMap();
 	private final ItemHashMap<ItemStack> itemOverrides = new ItemHashMap();
@@ -66,12 +66,18 @@ public class StructureRenderer {
 	private final HashMap<Coordinate, EntityRender> entities = new HashMap();
 
 	private static boolean tileRendering = false;
+	private static boolean tileRenderingReal = false;
+
 	private static double renderRotationX = 0;
 	private static double renderRotationY = 0;
 	private static double renderRotationZ = 0;
 
 	public static boolean isRenderingTiles() {
 		return tileRendering;
+	}
+
+	public static boolean isRenderingRealTiles() {
+		return tileRenderingReal;
 	}
 
 	public static double getRenderRX() {
@@ -97,7 +103,6 @@ public class StructureRenderer {
 		rx = -30;
 		ry = 45;
 		rz = 0;//180;
-
 	}
 
 	public void rotate(double x, double y, double z) {
@@ -291,7 +296,7 @@ public class StructureRenderer {
 		GL11.glPopMatrix();
 	}
 	 */
-	public void draw3D(int j, int k, float ptick) {
+	public void draw3D(int j, int k, float ptick, boolean transl) {
 
 		if (array.isEmpty())
 			return;
@@ -303,50 +308,53 @@ public class StructureRenderer {
 
 		//GL11.glFrontFace(GL11.GL_CW);
 
-		int sc = ReikaRenderHelper.getGUIScale();
-		GuiScreen scr = Minecraft.getMinecraft().currentScreen;
-		GL11.glTranslated(j*0+scr.width/2D+16/sc, k*0+scr.height/2D+16/sc, 256);
+		if (transl) {
+			int sc = ReikaRenderHelper.getGUIScale();
+			GuiScreen scr = Minecraft.getMinecraft().currentScreen;
+			GL11.glTranslated(j*0+scr.width/2D+16/sc, k*0+scr.height/2D+16/sc, 256);
 
-		double s = 12;
+			double s = 12;
 
-		double d = 2;
-		if (max >= 18) {
-			d = 0.675;
-		}
-		else if (max >= 14) {
-			d = 0.8;
-		}
-		else if (max >= 12) {
-			d = 0.95;
-		}
-		else if (max >= 10) {
-			d = 1.2;
-		}
-		else if (max >= 8) {
-			d = 1.5;
-		}
-		else if (max >= 4) {
-			d = 1.75;
-		}
+			double d = 2;
+			if (max >= 18) {
+				d = 0.675;
+			}
+			else if (max >= 14) {
+				d = 0.8;
+			}
+			else if (max >= 12) {
+				d = 0.95;
+			}
+			else if (max >= 10) {
+				d = 1.2;
+			}
+			else if (max >= 8) {
+				d = 1.5;
+			}
+			else if (max >= 4) {
+				d = 1.75;
+			}
 
-		//double drx = (array.getMidX()-array.getMinX());//-2.75/d;
-		//double dry = (array.getMidY()-array.getMinY());//-2.75/d;
-		//double drz = (array.getMidZ()-array.getMinZ());//-2.75/d;
+			//double drx = (array.getMidX()-array.getMinX());//-2.75/d;
+			//double dry = (array.getMidY()-array.getMinY());//-2.75/d;
+			//double drz = (array.getMidZ()-array.getMinZ());//-2.75/d;
 
-		double dr = -5.75*d;
-		//GL11.glTranslated(drx, dry, drz);
-		GL11.glTranslated(dr, dr, dr);
-		GL11.glRotated(rx, 1, 0, 0);
-		GL11.glRotated(ry, 0, 1, 0);
-		GL11.glRotated(rz, 0, 0, 1);
-		GL11.glTranslated(-dr, -dr, -dr);
-		//GL11.glTranslated(-drx, -dry, -drz);
+			double dr = -5.75*d;
+			//GL11.glTranslated(drx, dry, drz);
+			GL11.glTranslated(dr, dr, dr);
+			GL11.glRotated(rx, 1, 0, 0);
+			GL11.glRotated(ry, 0, 1, 0);
+			GL11.glRotated(rz, 0, 0, 1);
+			GL11.glTranslated(-dr, -dr, -dr);
+			//GL11.glTranslated(-drx, -dry, -drz);
 
-		GL11.glScaled(-d*s, -d*s, -d*s);
+			GL11.glScaled(-d*s, -d*s, -d*s);
+		}
 
 		//GL11.glTranslated(-array.getMinX(), -array.getMinY(), -array.getMinZ());
 
 		tileRendering = true;
+		tileRenderingReal = !transl;
 
 		ReikaTextureHelper.bindTerrainTexture();
 		Tessellator.instance.startDrawingQuads();
@@ -354,12 +362,14 @@ public class StructureRenderer {
 			for (int y = array.getMinY(); y <= array.getMaxY(); y++) {
 				for (int z = array.getMinZ(); z <= array.getMaxZ(); z++) {
 					PositionData p = access.getData(x, y, z);
+					//ReikaJavaLibrary.pConsole(p+" @ "+x+","+y+","+z);
 					if (p.block.blockID != Blocks.air) {
 						BlockKey bk = this.getRenderBlock(new Coordinate(x, y, z), p.block);
 						if (!bk.equals(p.block)) {
 							access.data[x-array.getMinX()][y-array.getMinY()][z-array.getMinZ()] = new PositionData(bk.blockID, bk.metadata, p.tile);
 						}
 						renderer.renderBlockByRenderType(bk.blockID, x, y, z);
+						//ReikaJavaLibrary.pConsole("Rendering "+bk+" @ "+x+","+y+","+z);
 					}
 				}
 			}
@@ -385,11 +395,11 @@ public class StructureRenderer {
 			}
 		}
 
-		tileRendering = false;
+		tileRendering = tileRenderingReal = false;
 
 		for (Coordinate c : entities.keySet()) {
 			EntityRender e = entities.get(c);
-			e.renderer.doRender(e.entity, c.xCoord+0.5, c.yCoord+0.5, c.zCoord+0.5, 0, 0);
+			e.renderer.doRender(e.entity, c.xCoord+0.5, c.yCoord+0.5+0.375, c.zCoord+0.5, 0, 0);
 			e.entity.onUpdate();
 		}
 
@@ -397,6 +407,7 @@ public class StructureRenderer {
 		GL11.glPopAttrib();
 	}
 
+	@Deprecated
 	private static class VisibilityComparator implements Comparator<Vector3f> {
 
 		private boolean posX = true;
@@ -419,6 +430,7 @@ public class StructureRenderer {
 
 	}
 
+	@Deprecated
 	private static class CoordStack {
 
 		private final ItemStack item;
@@ -435,7 +447,7 @@ public class StructureRenderer {
 
 	}
 
-	private static class PositionData {
+	protected static class PositionData {
 
 		private final BlockKey block;
 		private final TileEntity tile;
@@ -449,22 +461,28 @@ public class StructureRenderer {
 			this(b, meta, null);
 		}
 
-		private PositionData(Block b, int meta, TileEntity te) {
+		protected PositionData(Block b, int meta, TileEntity te) {
 			block = new BlockKey(b, meta);
 			tile = te;
 			useTESR = tile != null && TileEntityRendererDispatcher.instance.getSpecialRenderer(tile) != null;
 		}
 
+		@Override
+		public String toString() {
+			return block.toString()+"|"+tile;
+		}
+
 	}
 
-	private static class RenderAccess implements IBlockAccess {
+	protected static class RenderAccess implements IBlockAccess {
 
-		private final PositionData[][][] data;
-		private final Coordinate negativeCorner;
+		protected final PositionData[][][] data;
+		protected final Coordinate negativeCorner;
+		protected final Coordinate offset;
 
 		private RenderAccess(FilledBlockArray arr) {
-
-			arr.offset(-arr.getMidX(), -arr.getMidY(), -arr.getMidZ());
+			offset = new Coordinate(-arr.getMidX(), -arr.getMidY(), -arr.getMidZ());
+			arr.offset(offset.xCoord, offset.yCoord, offset.zCoord);
 
 			data = new PositionData[arr.getSizeX()][arr.getSizeY()][arr.getSizeZ()];
 			negativeCorner = new Coordinate(arr.getMinX(), arr.getMinY(), arr.getMinZ());
@@ -548,7 +566,11 @@ public class StructureRenderer {
 			x -= negativeCorner.xCoord;
 			y -= negativeCorner.yCoord;
 			z -= negativeCorner.zCoord;
-
+			/*
+			ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+this.inBounds(x, y, z));
+			if (this.inBounds(x, y, z))
+				ReikaJavaLibrary.pConsole(" > "+data[x][y][z]);
+			 */
 			return this.inBounds(x, y, z) ? data[x][y][z] : new PositionData(Blocks.air);
 		}
 

@@ -27,6 +27,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
+import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.TemporaryInventory;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
@@ -35,6 +36,7 @@ import Reika.DragonAPI.Interfaces.Item.ActivatedInventoryItem;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
 
 public final class ReikaInventoryHelper extends DragonAPICore {
 
@@ -518,6 +520,9 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	}
 
 	public static int addToInventoryWithLeftover(ItemStack stack, IInventory inventory, boolean simulate) {
+		if (InterfaceCache.DSU.instanceOf(inventory)) {
+			return addToDSUWithLeftover((IDeepStorageUnit)inventory, stack, simulate);
+		}
 		int left = stack.stackSize;
 		int max = Math.min(inventory.getInventoryStackLimit(), stack.getMaxStackSize());
 		for (int i = 0; i < inventory.getSizeInventory(); i++) {
@@ -545,6 +550,36 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 		}
 		return left;
+	}
+
+	public static boolean addToDSU(IDeepStorageUnit dsu, ItemStack stack, boolean simulate) {
+		ItemStack in = dsu.getStoredItemType();
+		if (in != null && !ReikaItemHelper.matchStacks(in, stack))
+			return false;
+		int has = in != null ? in.stackSize : 0;
+		int space = dsu.getMaxStoredCount()-has;
+		if (space >= stack.stackSize) {
+			if (!simulate) {
+				dsu.setStoredItemType(stack, has+stack.stackSize);
+			}
+			return true;
+		}
+		else {
+			return false;
+		}
+	}
+
+	public static int addToDSUWithLeftover(IDeepStorageUnit dsu, ItemStack stack, boolean simulate) {
+		ItemStack in = dsu.getStoredItemType();
+		if (in != null && !ReikaItemHelper.matchStacks(in, stack))
+			return 0;
+		int has = in != null ? in.stackSize : 0;
+		int space = dsu.getMaxStoredCount()-has;
+		int add = Math.min(space, stack.stackSize);
+		if (!simulate) {
+			dsu.setStoredItemType(stack, has+add);
+		}
+		return stack.stackSize-add;
 	}
 
 	/** Returns the location of an empty slot in an inventory. Returns -1 if none.
@@ -808,6 +843,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Returns true iff succeeded; adds iff can fit whole stack */
 	public static boolean addToIInv(ItemStack is, IInventory ii, boolean overrideValid, int firstSlot, int maxSlot) {
+		if (InterfaceCache.DSU.instanceOf(ii))
+			return addToDSU((IDeepStorageUnit)ii, is, false);
 		is = is.copy();
 		if (!hasSpaceFor(is, ii, overrideValid, firstSlot, maxSlot)) {
 			return false;

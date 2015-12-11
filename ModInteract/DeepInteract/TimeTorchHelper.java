@@ -38,7 +38,13 @@ public class TimeTorchHelper {
 	static {
 		if (Loader.isModLoaded("Torcherino")) {
 			try {
-				Class c = Class.forName("com.sci.torcherino.tile.TileTorcherino");
+				Class c = null;
+				try {
+					c = Class.forName("com.sci.torcherino.TorcherinoRegistry");
+				}
+				catch (ClassNotFoundException e) {
+					c = Class.forName("com.sci.torcherino.tile.TileTorcherino");
+				}
 				Field f = c.getDeclaredField("blacklistedTiles");
 				f.setAccessible(true);
 				tileBlacklist = (HashSet<Class>)f.get(null);

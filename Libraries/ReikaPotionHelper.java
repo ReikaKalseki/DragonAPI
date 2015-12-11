@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -35,6 +36,8 @@ public final class ReikaPotionHelper extends DragonAPICore {
 
 	private static final ArrayList<Integer> badPotions = new ArrayList();
 	private static HashMap<Potion, Integer> potionDamageValues = new HashMap();
+
+	public static final Comparator effectSorter = new PotionEffectSorter();
 
 	/** Returns a potion ID from the damage value. Returns -1 if invalid damage value. */
 	public static int getPotionID(int dmg) {
@@ -190,5 +193,28 @@ public final class ReikaPotionHelper extends DragonAPICore {
 			if (ignore == null || !ignore.contains(id))
 				player.removePotionEffect(id);
 		}
+	}
+
+	private static class PotionEffectSorter implements Comparator<PotionEffect> {
+
+		private PotionEffectSorter() {
+
+		}
+
+		@Override
+		public int compare(PotionEffect o1, PotionEffect o2) {
+			return this.getFlags(o1)-this.getFlags(o2);
+		}
+
+		private int getFlags(PotionEffect o) {
+			int flags = 0;
+
+			flags += o.getPotionID()*10000000;
+			flags += o.getDuration()*100;
+			flags += o.getAmplifier();
+
+			return flags;
+		}
+
 	}
 }

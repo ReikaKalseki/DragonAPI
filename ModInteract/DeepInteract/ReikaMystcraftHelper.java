@@ -30,13 +30,17 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
-import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
 
-import com.xcompwiz.mystcraft.api.MystAPI;
+import com.xcompwiz.mystcraft.api.APIInstanceProvider;
+import com.xcompwiz.mystcraft.api.exception.APIUndefined;
+import com.xcompwiz.mystcraft.api.exception.APIVersionRemoved;
+import com.xcompwiz.mystcraft.api.exception.APIVersionUndefined;
+import com.xcompwiz.mystcraft.api.hook.SymbolAPI;
 import com.xcompwiz.mystcraft.api.linking.ILinkInfo;
+import com.xcompwiz.mystcraft.api.symbol.IAgeSymbol;
 
 import cpw.mods.fml.common.event.FMLInterModComms;
 
@@ -51,7 +55,7 @@ public class ReikaMystcraftHelper {
 	private static final Method getBook;
 	private static final Method getLink;
 
-	private static MystAPI mainAPI;
+	private static APIInstanceProvider apiProvider;
 
 	public static void disableFluidPage(Fluid f) {
 		FMLInterModComms.sendMessage(ModList.MYSTCRAFT.modLabel, "blacklistfluid", f.getName());
@@ -424,23 +428,56 @@ public class ReikaMystcraftHelper {
 		return c.get(rand.nextInt(c.size()));
 	}
 
-	public static void registerAgeSymbol(Object o) {
-		if (AgeSymbol.ageSymbolInterf != null && AgeSymbol.ageSymbolInterf.isAssignableFrom(o.getClass())) {
-			try {
-				AgeSymbol.registerSymbol.invoke(AgeSymbol.symbolAPI, o);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		else {
-			throw new MisuseException("You can only register instances of IAgeSymbol!");
+	public static void registerAgeSymbol(IAgeSymbol a) {
+		SymbolAPI api = getAPI(APISegment.SYMBOL, 1);
+		if (api != null) {
+			api.registerSymbol(a, false);
 		}
 	}
 
 	@ModDependent(ModList.MYSTCRAFT)
-	public static MystAPI getAPI() {
-		return mainAPI;
+	public static <A> A getAPI(APISegment type, int version) {
+		try {
+			return apiProvider != null ? (A)apiProvider.getAPIInstance(type.getTag(version)) : null;
+		}
+		catch (APIUndefined e) {
+			throw new RuntimeException("Invalid API type coded into DragonAPI! This is a serious error!");
+		}
+		catch (APIVersionUndefined e) {
+			e.printStackTrace();
+		}
+		catch (APIVersionRemoved e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static void receiveAPI(APIInstanceProvider provider) {
+		apiProvider = provider;
+	}
+
+	public static enum APISegment {
+		SYMBOL("symbol"), //SymbolAPI
+		WORD("word"), //WordAPI
+		GRAMMAR("grammar"), //GrammarAPI
+		INSTABILITY("instability"), //InstabilityAPI
+		LINKING("linking"), //LinkingAPI
+		LINKPROPERTY("linkproperty"), //LinkPropertyAPI
+		PAGE("page"), //PageAPI
+		SYMBOLVALUES("symbolvalues"), //SymbolValuesAPI
+		RENDER("render"), //RenderAPI
+		DIMENSION("dimension"), //DimensionAPI
+		;
+
+		private final String tag;
+
+		private APISegment(String n) {
+			tag = n;
+		}
+
+		public String getTag(int version) {
+			return tag+"-"+version;
+		}
 	}
 
 	public static class AgeSymbol {
@@ -575,18 +612,6 @@ public class ReikaMystcraftHelper {
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Error loading Mystcraft linkbook interfacing!");
-				e.printStackTrace();
-				load = false;
-				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
-			}
-
-			try {
-				Class internal = Class.forName("com.xcompwiz.mystcraft.core.InternalAPI");
-				Method get = internal.getMethod("getAPIInstance", String.class);
-				mainAPI = (MystAPI)get.invoke(null, ModList.MYSTCRAFT.modLabel);
-			}
-			catch (Exception e) {
-				DragonAPICore.logError("Error loading Mystcraft API interfacing!");
 				e.printStackTrace();
 				load = false;
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);

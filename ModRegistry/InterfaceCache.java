@@ -27,7 +27,8 @@ public enum InterfaceCache {
 	GRIDHOST("appeng.api.networking.IGridHost"),
 	BCROBOT("buildcraft.api.robots.EntityRobotBase"),
 	AREAPROVIDER("buildcraft.api.core.IAreaProvider"),
-	TINKERTOOL("tconstruct.library.tools.ToolCore");
+	TINKERTOOL("tconstruct.library.tools.ToolCore"),
+	DSU("powercrystals.minefactoryreloaded.api.IDeepStorageUnit");
 
 	private final String classpath;
 	public final String name;

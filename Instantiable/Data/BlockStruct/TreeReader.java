@@ -12,12 +12,14 @@ package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.ChromatiCraft.API.TreeGetter;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
@@ -30,8 +32,7 @@ public final class TreeReader extends BlockArray {
 	private int leafCount;
 	private int logCount;
 
-	private ReikaTreeHelper vanilla;
-	private ModWoodList wood;
+	private TreeType tree;
 	private ReikaDyeHelper dyeTree;
 
 	private final Block dyeLeafID;
@@ -70,20 +71,20 @@ public final class TreeReader extends BlockArray {
 			return;
 
 		if (id != dyeLeafID) {
-			ModWoodList wood = ModWoodList.getModWood(id, meta);
-			ReikaTreeHelper van = ReikaTreeHelper.getTree(id, meta);
+			TreeType tr = ReikaTreeHelper.getTree(id, meta);
+			if (tr == null)
+				tr = ModWoodList.getModWood(id, meta);
 			//DragonAPICore.log(wood+"/"+this.wood+"  :  "+van+"/"+vanilla);
-			if (this.wood == null && vanilla == null) {
+			if (tree == null) {
 				//DragonAPICore.log(this);
-				this.setModTree(wood);
-				this.setTree(van);
+				this.setTree(tr);
 			}
 			else {
-				if (wood != this.wood || van != vanilla)
+				if (tr != tree)
 					return;
 			}
 		}
-		if (vanilla == null && wood == null)
+		if (tree == null)
 			return;
 
 		if (id == dyeLeafID) {
@@ -188,22 +189,22 @@ public final class TreeReader extends BlockArray {
 	}
 
 	public void addModTree(World world, int x, int y, int z) {
-		if (wood == ModWoodList.SEQUOIA) {
+		if (tree == ModWoodList.SEQUOIA) {
 			DragonAPICore.logError("Use sequoia handler!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
-		if (wood == ModWoodList.DARKWOOD) {
+		if (tree == ModWoodList.DARKWOOD) {
 			DragonAPICore.logError("Use darkwood handler!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
-		if (wood == ModWoodList.IRONWOOD) {
+		if (tree == ModWoodList.IRONWOOD) {
 			DragonAPICore.logError("Use ironwood handler!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
-		if (wood == null) {
+		if (tree == null) {
 			throw new MisuseException("You must set the mod tree type!");
 		}
 		this.addModTree(world, x, y, z, x, y, z, 0);
@@ -221,14 +222,14 @@ public final class TreeReader extends BlockArray {
 
 		//DragonAPICore.log("ID:"+id+"  GET: "+get+"   WOOD: "+wood+"    LEAF: "+leaf);
 
-		if (get != wood && leaf != wood)
+		if (get != tree && leaf != tree)
 			return;
 
 		this.addBlockCoordinate(x, y, z);
 		//DragonAPICore.log(id+":"+get+":"+leaf);
-		if (get == wood)
+		if (get == tree)
 			logCount++;
-		else if (leaf == wood)
+		else if (leaf == tree)
 			leafCount++;
 
 		try {
@@ -247,7 +248,7 @@ public final class TreeReader extends BlockArray {
 	}
 
 	private void addTree(World world, int x, int y, int z, int x0, int y0, int z0, int depth) {
-		if (vanilla == null) {
+		if (tree == null) {
 			throw new MisuseException("You must set the tree type!");
 		}
 		if (Math.abs(x-x0) > 24) //For magic forests
@@ -260,15 +261,15 @@ public final class TreeReader extends BlockArray {
 		int meta = world.getBlockMetadata(x, y, z);
 		ReikaTreeHelper get = ReikaTreeHelper.getTree(id, meta);
 		ReikaTreeHelper leaf = ReikaTreeHelper.getTreeFromLeaf(id, meta);
-		if (get != vanilla && leaf != vanilla)
+		if (get != tree && leaf != tree)
 			return;
 
 		//DragonAPICore.logSideOnly("GET: "+get+"     LEAF: "+leaf+"    ## LOG: "+logCount+"    LEAVES: "+leafCount, Side.SERVER);
 
 		this.addBlockCoordinate(x, y, z);
-		if (get == vanilla)
+		if (get == tree)
 			logCount++;
-		else if (leaf == vanilla)
+		else if (leaf == tree)
 			leafCount++;
 
 		//DragonAPICore.log(depth+":"+maxDepth, Side.SERVER);
@@ -293,7 +294,7 @@ public final class TreeReader extends BlockArray {
 
 	/** For Natura's massive redwood trees. Warning: may lag-spike! */
 	public void addSequoia(World world, int x, int y, int z, boolean debug) {
-		this.setModTree(ModWoodList.SEQUOIA);
+		this.setTree(ModWoodList.SEQUOIA);
 		int r = 24;
 		int minx = x-r;
 		int maxx = x+r;
@@ -325,7 +326,7 @@ public final class TreeReader extends BlockArray {
 
 	/** For Highlands's ironwood trees. Warning: may lag-spike! */
 	public void addIronwood(World world, int x, int y, int z, boolean debug) {
-		this.setModTree(ModWoodList.IRONWOOD);
+		this.setTree(ModWoodList.IRONWOOD);
 		int r = 24;
 		int minx = x-r;
 		int maxx = x+r;
@@ -357,7 +358,7 @@ public final class TreeReader extends BlockArray {
 
 	/** For Twilight's dark forests. */
 	public void addDarkForest(World world, int x, int y, int z, int minx, int maxx, int minz, int maxz, boolean debug) {
-		this.setModTree(ModWoodList.DARKWOOD);
+		this.setTree(ModWoodList.DARKWOOD);
 		for (int j = y-24; j <= y+24; j++) {
 			for (int i = minx; i <= maxx; i++) {
 				for (int k = minz; k <= maxz; k++) {
@@ -466,18 +467,17 @@ public final class TreeReader extends BlockArray {
 	public void reset() {
 		logCount = 0;
 		leafCount = 0;
-		vanilla = null;
-		wood = null;
+		tree = null;
 		isDyeTree = false;
 		dyeMeta = -1;
 	}
 
-	public void setTree(ReikaTreeHelper tree) {
-		vanilla = tree;
+	public void setTree(TreeType tree) {
+		this.tree = tree;
 	}
 
-	public void setModTree(ModWoodList tree) {
-		wood = tree;
+	public ItemStack getSapling() {
+		return new ItemStack(tree.getSaplingID(), 1, tree.getSaplingMeta());
 	}
 
 	@Override
@@ -489,25 +489,13 @@ public final class TreeReader extends BlockArray {
 	}
 
 	public boolean isValidTree() {
-		if (wood == ModWoodList.SEQUOIA)
+		if (tree == ModWoodList.SEQUOIA)
 			return true;
 		return this.getNumberLeaves() >= ReikaTreeHelper.TREE_MIN_LEAF && this.getNumberLogs() >= ReikaTreeHelper.TREE_MIN_LOG;
 	}
 
-	public ReikaTreeHelper getVanillaTree() {
-		return vanilla;
-	}
-
-	public ModWoodList getModTree() {
-		return wood;
-	}
-
-	public boolean isModTree() {
-		return this.getModTree() != null;
-	}
-
-	public boolean isVanillaTree() {
-		return this.getVanillaTree() != null;
+	public TreeType getTreeType() {
+		return tree;
 	}
 
 	@Override
@@ -522,8 +510,7 @@ public final class TreeReader extends BlockArray {
 		copy.leafCount = leafCount;
 		copy.logCount = logCount;
 
-		copy.vanilla = vanilla;
-		copy.wood = wood;
+		copy.tree = tree;
 		copy.dyeTree = dyeTree;
 
 		copy.isDyeTree = isDyeTree;

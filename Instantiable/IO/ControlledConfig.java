@@ -386,8 +386,9 @@ public class ControlledConfig {
 				int min = s.indexOf('"');
 				int max = s.lastIndexOf('"');
 				String key = s.substring(min, max).replaceAll("\"", ""); //" [""="" "
-				String[] dat = key.split(":");
-				map.put(dat[0], dat[1]);
+				String[] dat = key.split("=");
+				if (dat.length == 2)
+					map.put(dat[0], dat[1]);
 			}
 		}
 	}

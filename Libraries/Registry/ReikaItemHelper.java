@@ -142,7 +142,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final ItemStack birchDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 2);
 	public static final ItemStack jungleDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 3);
 
-	private static final ItemComparator comparator = new ItemComparator();
+	public static final ItemComparator comparator = new ItemComparator();
 
 	private static HashMap<Fluid, ItemStack> fluidContainerData = new HashMap();
 
@@ -407,7 +407,20 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 		@Override
 		public int compare(ItemStack o1, ItemStack o2) {
-			return Item.getIdFromItem(o1.getItem())-Item.getIdFromItem(o2.getItem());
+			int diff = this.getFlags(o1)-this.getFlags(o2);
+			return diff;//diff != 0 ? diff : ReikaNBTHelper.compareNBTTags(o1.stackTagCompound, o2.stackTagCompound); this causes contract violation
+		}
+
+		private int getFlags(ItemStack is) {
+			int flags = 0;
+
+			flags += Item.getIdFromItem(is.getItem())*10000000;
+			flags += is.getItemDamage()*100;
+			flags += is.stackSize;
+			//if (is.stackTagCompound != null)
+			//	flags += is.stackTagCompound.hashCode();
+
+			return is.stackTagCompound == null ? flags+Integer.MIN_VALUE : flags; //force NBT versions to be at end (+ve)
 		}
 
 	}

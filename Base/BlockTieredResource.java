@@ -85,12 +85,13 @@ public abstract class BlockTieredResource extends Block {
 	public final boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
 	{
 		Collection<ItemStack> li = null;
+		boolean tier = this.isPlayerSufficientTier(world, x, y, z, player);
 		if (player.capabilities.isCreativeMode) {
 
 		}
 		else {
 			int fortune = EnchantmentHelper.getFortuneModifier(player);
-			if (this.isPlayerSufficientTier(world, x, y, z, player)) {
+			if (tier) {
 				li = this.getHarvestResources(world, x, y, z, fortune, player);
 			}
 			else {
@@ -98,7 +99,7 @@ public abstract class BlockTieredResource extends Block {
 			}
 		}
 		boolean flag = super.removedByPlayer(world, player, x, y, z, willHarvest);
-		if (flag && li != null) {
+		if (!player.capabilities.isCreativeMode && flag && li != null && tier) {
 			for (ItemStack is : li) {
 				double rx = ReikaRandomHelper.getRandomPlusMinus(x+0.5, 0.625);
 				double ry = ReikaRandomHelper.getRandomPlusMinus(y+0.5, 0.625);

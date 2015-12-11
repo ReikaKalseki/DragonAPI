@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import Reika.DragonAPI.Instantiable.HybridTank;
 
 public class ReikaFluidHelper {
 
@@ -67,11 +68,11 @@ public class ReikaFluidHelper {
 
 		@Override
 		public int compare(FluidStack o1, FluidStack o2) {
-			if (o1.fluidID == o2.fluidID) {
+			if (o1.getFluidID() == o2.getFluidID()) {
 				return o1.amount-o2.amount;
 			}
 			else {
-				return o1.fluidID-o2.fluidID;
+				return o1.getFluidID()-o2.getFluidID();
 			}
 		}
 
@@ -82,7 +83,7 @@ public class ReikaFluidHelper {
 	}
 
 	public static String fluidStackToString(FluidStack f) {
-		return f.amount+"x"+f.getUnlocalizedName()+"["+f.getFluid()+"]("+f.fluidID+")"+"{"+f.tag+"}";
+		return f.amount+"x"+f.getUnlocalizedName()+"["+f.getFluid()+"]("+f.getFluidID()+")"+"{"+f.tag+"}";
 	}
 
 	public static void registerNameSwap(String old, String next) {
@@ -98,6 +99,14 @@ public class ReikaFluidHelper {
 			return fluidName;
 		String repl = nameSwaps.get(fluidName);
 		return repl != null ? repl : fluidName;
+	}
+
+	public static boolean isFluidNullOrMatch(Fluid f, HybridTank tank) {
+		return f == null || f == tank.getActualFluid();
+	}
+
+	public static boolean isFluidDrainableFromTank(Fluid f, HybridTank tank) {
+		return !tank.isEmpty() && isFluidNullOrMatch(f, tank);
 	}
 
 }

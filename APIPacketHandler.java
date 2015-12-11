@@ -13,6 +13,7 @@ import java.io.DataInputStream;
 import java.io.IOException;
 import java.util.Random;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.nbt.NBTBase;
@@ -242,6 +243,8 @@ public class APIPacketHandler implements PacketHandler {
 						ReikaSoundHelper.playNormalClientSound(world, dx, dy, dz, name, vol, pitch, flag);
 					}
 					break;
+				case BREAKPARTICLES:
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -273,6 +276,9 @@ public class APIPacketHandler implements PacketHandler {
 			case LOGIN:
 				MinecraftForge.EVENT_BUS.post(new ClientLoginEvent(player));
 				break;
+			case BREAKPARTICLES:
+				Block b = Block.getBlockById(data[0]);
+				ReikaRenderHelper.spawnDropParticles(world, x, y, z, b, data[1]);
 			default:
 				break;
 		}
@@ -297,7 +303,8 @@ public class APIPacketHandler implements PacketHandler {
 		EXPLODE(),
 		OLDMODS(),
 		LOGIN(),
-		SERVERSOUND();
+		SERVERSOUND(),
+		BREAKPARTICLES();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -327,6 +334,8 @@ public class APIPacketHandler implements PacketHandler {
 					return 1;
 				case IDDUMP:
 					return 1;
+				case BREAKPARTICLES:
+					return 2;
 				default:
 					return 0;
 			}

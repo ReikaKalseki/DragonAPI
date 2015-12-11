@@ -44,7 +44,9 @@ import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
@@ -340,6 +342,24 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
 				Block id2 = world.getBlock(dx, dy, dz);
 				if (id == id2)
+					return dir;
+			}
+		}
+		return null;
+	}
+
+	/** Returns the direction in which a block of the specified ID was found.
+	 *Returns -1 if not found. Args: World, x,y,z, id to search. */
+	public static ForgeDirection checkForAdjBlock(World world, int x, int y, int z, Block id, int meta) {
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
+				Block id2 = world.getBlock(dx, dy, dz);
+				int meta2 = world.getBlockMetadata(dx, dy, dz);
+				if (id == id2 && meta2 == meta)
 					return dir;
 			}
 		}
@@ -1320,18 +1340,23 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Drops all items from a given Blocks. Args: World, x, y, z, fortune level */
-	public static void dropBlockAt(World world, int x, int y, int z, int fortune) {
+	public static void dropBlockAt(World world, int x, int y, int z, int fortune, EntityPlayer ep) {
 		Block b = world.getBlock(x, y, z);
 		if (b == Blocks.air)
 			return;
 		int meta = world.getBlockMetadata(x, y, z);
 		ArrayList<ItemStack> li = b.getDrops(world, x, y, z, meta, fortune);
+		if (ep != null) {
+			HarvestDropsEvent evt = new HarvestDropsEvent(x, y, z, world, b, meta, fortune, 1F, li, ep, false);
+			MinecraftForge.EVENT_BUS.post(evt);
+			li = evt.drops;
+		}
 		ReikaItemHelper.dropItems(world, x+0.5, y+0.5, z+0.5, li);
 	}
 
 	/** Drops all items from a given block with no fortune effect. Args: World, x, y, z */
-	public static void dropBlockAt(World world, int x, int y, int z) {
-		dropBlockAt(world, x, y, z, 0);
+	public static void dropBlockAt(World world, int x, int y, int z, EntityPlayer ep) {
+		dropBlockAt(world, x, y, z, 0, ep);
 	}
 
 	/** Sets the biome type at an xz column. Args: World, x, z, biome */
@@ -1351,7 +1376,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		ch.setBiomeArray(biomes);
 		ch.setChunkModified();
 		for (int i = 0; i < 256; i++)
-			temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(biome));
+			temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(world, biome));
 
 		if (!world.isRemote) {
 			int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
@@ -1385,7 +1410,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
 		for (int i = 0; i < 256; i++)
-			temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(biome));
+			temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(world, biome));
 
 		if (!world.isRemote) {
 			int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
@@ -1821,6 +1846,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 					}
 					catch (ConcurrentModificationException e) {
 						DragonAPICore.logError("Chunk at "+dx+", "+dz+" failed to allow population due to a ConcurrentModificationException! Contact Reika with information on any mods that might be multithreading worldgen!");
+						e.printStackTrace();
 					}
 					catch (Exception e) {
 						DragonAPICore.logError("Chunk at "+dx+", "+dz+" failed to allow population!");
@@ -1851,11 +1877,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return c;
 	}
 
-	public static void dropAndDestroyBlockAt(World world, int x, int y, int z, boolean breakAll) {
+	public static void dropAndDestroyBlockAt(World world, int x, int y, int z, EntityPlayer ep, boolean breakAll) {
 		Block b = world.getBlock(x, y, z);
 		if (b.blockHardness < 0 && !breakAll)
 			return;
-		dropBlockAt(world, x, y, z);
+		dropBlockAt(world, x, y, z, ep);
 		world.setBlock(x, y, z, Blocks.air);
 	}
 

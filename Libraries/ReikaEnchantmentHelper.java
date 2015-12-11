@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -22,6 +23,9 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaEnchantmentHelper extends DragonAPICore {
+
+	public static final Comparator<Enchantment> enchantmentNameSorter = new EnchantmentNameComparator();
+	public static final Comparator<Enchantment> enchantmentTypeSorter = new EnchantmentTypeComparator();
 
 	/** Get a listing of all enchantments on an ItemStack. Args: ItemStack */
 	public static HashMap<Enchantment,Integer> getEnchantments(ItemStack is) {
@@ -115,6 +119,24 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 	public static boolean hasEnchantments(ItemStack is) {
 		Map map = EnchantmentHelper.getEnchantments(is);
 		return map != null && !map.isEmpty();
+	}
+
+	private static class EnchantmentTypeComparator implements Comparator<Enchantment> {
+
+		@Override
+		public int compare(Enchantment o1, Enchantment o2) {
+			return o1.type.ordinal()-o2.type.ordinal();
+		}
+
+	}
+
+	private static class EnchantmentNameComparator implements Comparator<Enchantment> {
+
+		@Override
+		public int compare(Enchantment o1, Enchantment o2) {
+			return o1.getName().compareTo(o2.getName());
+		}
+
 	}
 
 }

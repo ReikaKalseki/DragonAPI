@@ -32,6 +32,7 @@ import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public enum ModWoodList implements TreeType {
 
@@ -91,7 +92,8 @@ public enum ModWoodList implements TreeType {
 	ROWAN(ModList.WITCHERY, 		0x374633, 0x9E774D, "LOG", "LEAVES", "SAPLING", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INSTANCE),
 	HAWTHORNE(ModList.WITCHERY, 	0x656566, 0xC3EEC3, "LOG", "LEAVES", "SAPLING", new int[]{2,6,10}, new int[]{2,10}, 2, VarType.INSTANCE),
 	ALDER(ModList.WITCHERY, 		0x52544C, 0xC3D562, "LOG", "LEAVES", "SAPLING", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE),
-	LIGHTED(ModList.CHROMATICRAFT,	0xA05F36, 0xFFD793, "GLOWLOG", "GLOWLEAF", "GLOWSAPLING", 0, new int[]{0,1,2,3,4}, 0, VarType.INSTANCE);
+	LIGHTED(ModList.CHROMATICRAFT,	0xA05F36, 0xFFD793, "GLOWLOG", "GLOWLEAF", "GLOWSAPLING", 0, new int[]{0,1,2,3,4}, 0, VarType.INSTANCE),
+	SLIME(ModList.TINKERER,			0x68FF7A, 0x8EFFE1, "slimeGel", "slimeLeaves", "slimeSapling", 1, 0, 0, VarType.INSTANCE);
 
 	private ModList mod;
 	private Block blockID = null;
@@ -188,6 +190,19 @@ public enum ModWoodList implements TreeType {
 					Block wood_b = this.loadBlock(cl, blockVar);
 					Block leaf_b = this.loadBlock(cl, leafVar);
 					Block sapling_b = this.loadBlock(cl, saplingVar);
+					if (wood_b == null || leaf_b == null || sapling_b == null) {
+						DragonAPICore.logError("Error loading "+this.getLabel()+": Block not instantiated!");
+						return;
+					}
+					id = wood_b;
+					idleaf = leaf_b;
+					idsapling = sapling_b;
+					break;
+				}
+				case REGISTRY: {
+					Block wood_b = GameRegistry.findBlock(mod.modLabel, blockVar);
+					Block leaf_b = GameRegistry.findBlock(mod.modLabel, leafVar);
+					Block sapling_b = GameRegistry.findBlock(mod.modLabel, saplingVar);
 					if (wood_b == null || leaf_b == null || sapling_b == null) {
 						DragonAPICore.logError("Error loading "+this.getLabel()+": Block not instantiated!");
 						return;
@@ -448,6 +463,10 @@ public enum ModWoodList implements TreeType {
 		return new ItemStack(saplingID, 1, saplingMeta);
 	}
 
+	public int getSaplingMeta() {
+		return saplingMeta;
+	}
+
 	public ModList getParentMod() {
 		return mod;
 	}
@@ -484,7 +503,8 @@ public enum ModWoodList implements TreeType {
 
 	public static enum VarType {
 		ITEMSTACK(),
-		INSTANCE();
+		INSTANCE(),
+		REGISTRY();
 		//INT();
 
 		@Override

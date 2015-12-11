@@ -192,6 +192,11 @@ public enum ReikaTreeHelper implements TreeType {
 		return true;
 	}
 
+	@Override
+	public int getSaplingMeta() {
+		return saplingMeta;
+	}
+
 	static {
 		for (int i = 0; i < treeList.length; i++) {
 			ReikaTreeHelper w = treeList[i];

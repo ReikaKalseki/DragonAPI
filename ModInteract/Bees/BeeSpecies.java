@@ -41,7 +41,6 @@ import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.IAllele;
 import forestry.api.genetics.IAlleleSpecies;
 import forestry.api.genetics.IClassification;
-import forestry.api.genetics.IGenome;
 import forestry.api.genetics.IIndividual;
 
 public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
@@ -119,16 +118,6 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	@Override
 	public IClassification getBranch() {
 		return branch;
-	}
-
-	@Override
-	public final Map getProducts() {
-		return Collections.unmodifiableMap(products);
-	}
-
-	@Override
-	public final Map getSpecialty() {
-		return Collections.unmodifiableMap(specials);
 	}
 
 	@Override
@@ -285,8 +274,8 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	public final void addBreeding(String parent1, String parent2, int chance) {
-		IAllele p1 = AlleleManager.alleleRegistry.getAllele("forestry.species"+parent1);
-		IAllele p2 = AlleleManager.alleleRegistry.getAllele("forestry.species"+parent2);
+		IAlleleBeeSpecies p1 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.species"+parent1);
+		IAlleleBeeSpecies p2 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.species"+parent2);
 		if (p1 == null)
 			throw new MisuseException("Error breeding from "+parent1+": You cannot breed a bee from null!");
 		if (p2 == null)
@@ -295,17 +284,17 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	public final void addBreeding(String parent1, BeeSpecies parent2, int chance) {
-		IAllele p1 = AlleleManager.alleleRegistry.getAllele("forestry.species"+parent1);
+		IAlleleBeeSpecies p1 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.species"+parent1);
 		if (p1 == null)
 			throw new MisuseException("Error breeding from "+parent1+": You cannot breed a bee from null!");
 		this.addBreeding(p1, parent2, chance);
 	}
 
 	public final void addBreeding(BeeSpecies parent1, BeeSpecies parent2, int chance) {
-		this.addBreeding((IAllele)parent1, (IAllele)parent2, chance);
+		this.addBreeding((IAlleleBeeSpecies)parent1, (IAlleleBeeSpecies)parent2, chance);
 	}
 
-	private final void addBreeding(IAllele p1, IAllele p2, int chance) {
+	private final void addBreeding(IAlleleBeeSpecies p1, IAlleleBeeSpecies p2, int chance) {
 		if (!isRegistered)
 			throw new MisuseException("You must register a bee before adding breeding pairs!");
 		if (p1 == null || p2 == null)
@@ -315,12 +304,12 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	private static final class BeeBreeding implements IBeeMutation {
 
-		public final IAllele parent1;
-		public final IAllele parent2;
+		public final IAlleleBeeSpecies parent1;
+		public final IAlleleBeeSpecies parent2;
 		public final int chance;
 		private final BeeSpecies bee;
 
-		private BeeBreeding(IAllele p1, IAllele p2, int chance, BeeSpecies bee) {
+		private BeeBreeding(IAlleleBeeSpecies p1, IAlleleBeeSpecies p2, int chance, BeeSpecies bee) {
 			parent1 = p1;
 			parent2 = p2;
 			this.chance = chance;
@@ -328,12 +317,12 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		}
 
 		@Override
-		public IAllele getAllele0() {
+		public IAlleleSpecies getAllele0() {
 			return parent1;
 		}
 
 		@Override
-		public IAllele getAllele1() {
+		public IAlleleSpecies getAllele1() {
 			return parent2;
 		}
 
@@ -387,12 +376,13 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 				return true;
 			return false;
 		}
-
+		/*
 		@Override
 		@Deprecated
 		public float getChance(IBeeHousing ibh, IAllele ia1, IAllele ia2, IGenome ig1, IGenome ig2) {
 			return this.isValidParents(ia1, ia2) ? chance : 0;
 		}
+		 */
 
 	}
 

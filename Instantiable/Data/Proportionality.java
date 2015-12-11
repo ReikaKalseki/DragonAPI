@@ -89,6 +89,10 @@ public class Proportionality<F> {
 
 	@SideOnly(Side.CLIENT)
 	public void renderAsPie(double x, double y, double r, double zeroAng, HashMap<F, Integer> colorMap) {
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_CULL_FACE);
 		double ang = zeroAng;
 		Tessellator v5 = Tessellator.instance;
 		int i = 0;
@@ -113,18 +117,25 @@ public class Proportionality<F> {
 			}
 			v5.setColorOpaque_I(c);
 
+			//ReikaJavaLibrary.pConsole(o+" > "+this.getFraction(o)+" = "+angw);
+
 			v5.addVertex(x, y, 0);
 
-			for (double d = ang; d <= ang+angw; d += 0.5) {
-				double dx = r*Math.cos(Math.toRadians(d));
-				double dy = r*Math.sin(Math.toRadians(d));
+			for (double d = ang; d <= ang+angw; d += 0.25) {
+				double dx = x+r*Math.cos(Math.toRadians(d));
+				double dy = y+r*Math.sin(Math.toRadians(d));
 				v5.addVertex(dx, dy, 0);
 			}
+
+			double dx = x+r*Math.cos(Math.toRadians(ang+angw));
+			double dy = y+r*Math.sin(Math.toRadians(ang+angw));
+			v5.addVertex(dx, dy, 0);
 
 			v5.draw();
 
 			ang += angw;
 		}
+		GL11.glPopAttrib();
 	}
 
 	private static ArrayList<Integer> defaultColors = new ArrayList();

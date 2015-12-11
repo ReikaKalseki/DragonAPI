@@ -163,8 +163,11 @@ public class ReikaSoundHelper {
 
 	@SideOnly(Side.CLIENT)
 	public static void playClientSound(SoundEnum s, double x, double y, double z, float vol, float pitch, boolean att) {
+		float v = vol*s.getModulatedVolume();
+		if (v <= 0)
+			return;
 		try {
-			FMLClientHandler.instance().getClient().getSoundHandler().playSound(new EnumSound(s, x, y, z, vol, pitch, att));
+			FMLClientHandler.instance().getClient().getSoundHandler().playSound(new EnumSound(s, x, y, z, v, pitch, att));
 		}
 		catch (ConcurrentModificationException e) {
 			e.printStackTrace();

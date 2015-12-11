@@ -22,6 +22,7 @@ public interface TreeType {
 	public Block getSaplingID();
 	public List<Integer> getLogMetadatas();
 	public List<Integer> getLeafMetadatas();
+	public int getSaplingMeta();
 	public boolean canBePlacedSideways();
 	public boolean exists();
 	public ItemStack getBasicLeaf();

@@ -248,7 +248,7 @@ public final class ItemHashMap<V> {
 			ItemStack in = ii.getStackInSlot(i);
 			Integer has = map.get(in);
 			int amt = has != null ? has.intValue() : 0;
-			map.put(in, has+1);
+			map.put(in, amt+1);
 		}
 		return map;
 	}

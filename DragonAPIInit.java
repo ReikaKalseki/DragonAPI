@@ -391,6 +391,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		FMLInterModComms.sendMessage("Waila", "register", "Reika.DragonAPI.ModInteract.LegacyWailaHelper.registerObjects");
 		FMLInterModComms.sendMessage("Waila", "register", "Reika.DragonAPI.ModInteract.WailaTechnicalOverride.registerOverride");
 
+		FMLInterModComms.sendMessage("Mystcraft", "API", "Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper.receiveAPI");
+
 		if (DragonOptions.UNNERFOBSIDIAN.getState())
 			Blocks.obsidian.setResistance(2000);
 
@@ -449,8 +451,10 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "rxiv", "1cb1da91-d3ed-4c10-9506-ca27fd480634", 5);
 		PatreonController.instance.addPatron(this, "shobu", "6712dff7-a5d3-4a55-9c25-33b50e173ee1", 5);
 		PatreonController.instance.addPatron(this, "Goof245", "79849e78-fe9a-4bb9-af6b-fb4c41fc8dd8", 20); //Aiden Young
-		PatreonController.instance.addPatron(this, "Solego", "2c85a7d8-af77-4c5e-9416-47e4a281497f", 40); //Aiden Young
+		PatreonController.instance.addPatron(this, "Solego", "2c85a7d8-af77-4c5e-9416-47e4a281497f", 40);
 		PatreonController.instance.addPatron(this, "Frazier", 25);
+		PatreonController.instance.addPatron(this, "ReignOfMagic", "f1025e8b-6789-4591-b987-e318e61d7061", 10);
+		PatreonController.instance.addPatron(this, "Iskandar", "b6fa35a3-8e74-499d-8cc6-ca83c912a14a", 10);
 
 		logger.log("Credit to Techjar for hosting the version file and remote asset server.");
 

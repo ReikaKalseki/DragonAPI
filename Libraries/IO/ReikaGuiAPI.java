@@ -238,7 +238,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glColor4f(1, 1, 1, 1);
 	}
 
-	public void drawCircle(int x, int y, int radius, int color) {
+	public void drawCircle(int x, int y, double radius, int color) {
 		boolean light = GL11.glIsEnabled(GL11.GL_LIGHTING);
 		boolean depth = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
 		boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
@@ -254,7 +254,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 		GL11.glColor4f(red/255F, green/255F, blue/255F, alpha/255F);
 		for (int i = 0; i < 360; i++) {
-			GL11.glVertex2i(x+(int)(radius*Math.cos(ReikaPhysicsHelper.degToRad(i))), y+(int)(radius*Math.sin(ReikaPhysicsHelper.degToRad(i))));
+			GL11.glVertex2f(x+(float)(radius*Math.cos(ReikaPhysicsHelper.degToRad(i))), y+(float)(radius*Math.sin(ReikaPhysicsHelper.degToRad(i))));
 		}
 		GL11.glEnd();
 		if (light)
@@ -303,8 +303,10 @@ public final class ReikaGuiAPI extends GuiScreen {
 		float var7 = (par5 >> 8 & 255) / 255.0F;
 		float var8 = (par5 & 255) / 255.0F;
 		Tessellator var9 = Tessellator.instance;
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glDisable(GL11.GL_LIGHTING);
 		BlendMode.DEFAULT.apply();
 		GL11.glColor4f(var6, var7, var8, var10);
 		if (var9.isDrawing)
@@ -315,8 +317,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		var9.addVertex(par3, par2, 0.0D);
 		var9.addVertex(par1, par2, 0.0D);
 		var9.draw();
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glPopAttrib();
 	}
 
 	public void renderFraction(FontRenderer fr, String num, String den, int x, int y, int color, boolean shadow, boolean center) {

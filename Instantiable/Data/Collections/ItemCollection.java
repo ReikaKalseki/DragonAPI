@@ -16,25 +16,48 @@ import java.util.Iterator;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ClassDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.InventorySlot;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
 
 public class ItemCollection {
 
 	private final ItemHashMap<Collection<InventorySlot>> data = new ItemHashMap();
 	private final Collection<IInventory> inventories = new HashSet();
 
+	private final ItemHashMap<Collection<IDeepStorageUnit>> dsus = new ItemHashMap();
+
 	public ItemCollection() {
 
 	}
 
 	public ItemCollection addInventory(IInventory ii) {
-		for (int i = 0; i < ii.getSizeInventory(); i++) {
-			this.addSlot(new InventorySlot(i, ii));
+		if (InterfaceCache.DSU.instanceOf(ii)) {
+			this.addDSU((IDeepStorageUnit)ii);
+		}
+		else {
+			for (int i = 0; i < ii.getSizeInventory(); i++) {
+				this.addSlot(new InventorySlot(i, ii));
+			}
 		}
 		inventories.add(ii);
 		return this;
+	}
+
+	@ClassDependent("powercrystals.minefactoryreloaded.api.IDeepStorageUnit")
+	private void addDSU(IDeepStorageUnit dsu) {
+		ItemStack is = dsu.getStoredItemType();
+		if (is != null) { //ignore empty DSUs, and ItemHashMap cannot take null key
+			Collection<IDeepStorageUnit> c = dsus.get(is);
+			if (c == null) {
+				c = new ArrayList();
+				dsus.put(is, c);
+			}
+			c.add(dsu);
+		}
 	}
 
 	public ItemCollection addSlot(InventorySlot slot) {
@@ -57,7 +80,7 @@ public class ItemCollection {
 	}
 
 	public boolean hasItem(ItemStack is) {
-		return data.containsKey(is);
+		return data.containsKey(is) || dsus.containsKey(is);
 	}
 
 	/** Returns how many items left over. */
@@ -74,17 +97,22 @@ public class ItemCollection {
 	}
 
 	public int getItemCount(ItemStack is) {
+		int count = 0;
 		Collection<InventorySlot> li = data.get(is);
 		if (li != null) {
-			int count = 0;
 			for (InventorySlot slot : li) {
-				count += slot.getStackSize();
+				if (is.stackTagCompound == null || is.stackTagCompound.equals(slot.getStack().stackTagCompound))
+					count += slot.getStackSize();
 			}
-			return count;
 		}
-		else {
-			return 0;
+		Collection<IDeepStorageUnit> li2 = dsus.get(is);
+		if (li2 != null) {
+			for (IDeepStorageUnit dsu : li2) {
+				if (is.stackTagCompound == null || is.stackTagCompound.equals(dsu.getStoredItemType().stackTagCompound))
+					count += dsu.getStoredItemType().stackSize;
+			}
 		}
+		return count;
 	}
 	/*
 	public int getItemCountWithOreEquivalence(ItemStack is) {
@@ -117,13 +145,33 @@ public class ItemCollection {
 			Iterator<InventorySlot> it = li.iterator();
 			while (it.hasNext()) {
 				InventorySlot slot = it.next();
-				int dec = slot.decrement(amt);
-				rem += dec;
-				amt -= dec;
-				if (slot.isEmpty())
-					it.remove();
-				if (amt <= 0)
-					return rem;
+				if (is.stackTagCompound == null || is.stackTagCompound.equals(slot.getStack().stackTagCompound)) {
+					int dec = slot.decrement(amt);
+					rem += dec;
+					amt -= dec;
+					if (slot.isEmpty())
+						it.remove();
+					if (amt <= 0)
+						return rem;
+				}
+			}
+		}
+		Collection<IDeepStorageUnit> li2 = dsus.get(is);
+		if (li2 != null) {
+			Iterator<IDeepStorageUnit> it = li2.iterator();
+			while (it.hasNext()) {
+				IDeepStorageUnit dsu = it.next();
+				if (is.stackTagCompound == null || is.stackTagCompound.equals(dsu.getStoredItemType().stackTagCompound)) {
+					int has = dsu.getStoredItemType().stackSize;
+					int dec = Math.min(amt, has);
+					rem += dec;
+					amt -= dec;
+					dsu.setStoredItemCount(has-dec);
+					if (dsu.getStoredItemType() == null || dsu.getStoredItemType().stackSize == 0)
+						it.remove();
+					if (amt <= 0)
+						return rem;
+				}
 			}
 		}
 		return rem;
@@ -136,6 +184,20 @@ public class ItemCollection {
 	@Override
 	public String toString() {
 		return data.toString();
+	}
+
+	private static abstract class InventoryInterface {
+
+		private final IInventory inventory;
+
+		private InventoryInterface(IInventory ii) {
+			inventory = ii;
+		}
+
+		protected abstract void removeItem(ItemStack is, int amt);
+		protected abstract void addItem(ItemStack is, int amt);
+		protected abstract int countItem(ItemStack is);
+
 	}
 
 }

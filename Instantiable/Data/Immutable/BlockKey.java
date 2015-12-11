@@ -65,7 +65,7 @@ public final class BlockKey implements BlockCheck {
 
 	@Override
 	public String toString() {
-		return blockID+":"+metadata;
+		return blockID.getUnlocalizedName()+":"+metadata;
 	}
 
 	public boolean hasMetadata() {

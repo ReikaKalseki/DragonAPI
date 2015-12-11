@@ -22,13 +22,16 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -823,7 +826,7 @@ public class BlockArray implements Iterable<Coordinate> {
 	}
 
 	/** Pre-collates them into forced stacks to help with FPS. Will not attempt to stack NBT-sensitive items. */
-	public final ArrayList<ItemStack> getAllDroppedItems(World world, int fortune) {
+	public final ArrayList<ItemStack> getAllDroppedItems(World world, int fortune, EntityPlayer ep) {
 		ArrayList<ItemStack> li = new ArrayList();
 		ArrayList<ItemStack> nbt = new ArrayList();
 		ItemHashMap<Integer> map = new ItemHashMap();
@@ -836,8 +839,10 @@ public class BlockArray implements Iterable<Coordinate> {
 			if (b != null && b != Blocks.air) {
 				int metadata = world.getBlockMetadata(x, y, z);
 				ArrayList<ItemStack> drop = b.getDrops(world, x, y, z, metadata, fortune);
-				for (int k = 0; k < drop.size(); k++) {
-					ItemStack is = drop.get(k);
+				HarvestDropsEvent evt = new HarvestDropsEvent(x, y, z, world, b, metadata, fortune, 1F, drop, ep, false);
+				MinecraftForge.EVENT_BUS.post(evt);
+				drop = evt.drops;
+				for (ItemStack is : drop) {
 					if (is.stackTagCompound != null) {
 						nbt.add(is);
 					}

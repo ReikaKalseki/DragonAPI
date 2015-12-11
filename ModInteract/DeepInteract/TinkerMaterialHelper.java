@@ -62,7 +62,7 @@ public class TinkerMaterialHelper {
 	private static Item bowstring;
 
 	private static Object patternBuilder;
-	private static Method registerPatterns;
+	private static Method registerRepairMaterial;
 
 	public static final TinkerMaterialHelper instance = new TinkerMaterialHelper();
 
@@ -221,7 +221,7 @@ public class TinkerMaterialHelper {
 			Class c = Class.forName("tconstruct.library.crafting.PatternBuilder");
 
 			patternBuilder = c.getDeclaredField("instance").get(null);
-			registerPatterns = c.getDeclaredMethod("registerFullMaterial", ItemStack.class, int.class, String.class, ItemStack.class, ItemStack.class, int.class);
+			registerRepairMaterial = c.getDeclaredMethod("registerFullMaterial", ItemStack.class, int.class, String.class, ItemStack.class, ItemStack.class, int.class);
 		}
 		catch (Exception e) {
 			DragonAPICore.logError("Could not load Tool Material Handler!");
@@ -425,10 +425,19 @@ public class TinkerMaterialHelper {
 			return this;
 		}
 
+		public CustomTinkerMaterial registerRepairMaterial(ItemStack input) {
+			try {
+				registerRepairMaterial.invoke(patternBuilder, input, 2, materialName, new ItemStack(toolShard, 1, id), new ItemStack(toolRod, 1, id), id);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TINKERER, e);
+			}
+			return this;
+		}
+
 		public CustomTinkerMaterial registerPatternBuilder(ItemStack input) {
 			try {
-				registerPatterns.invoke(patternBuilder, input, 2, materialName, new ItemStack(toolShard, 1, id), new ItemStack(toolRod, 1, id), id);
-
 				for (ToolParts p : toolParts) {
 					registerPartMapping.invoke(null, TinkerToolHandler.getInstance().toolWoodPattern, p.castMeta, id, p.getItem(id));
 				}

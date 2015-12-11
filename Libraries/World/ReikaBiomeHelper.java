@@ -29,6 +29,7 @@ import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.ModInteract.DeepInteract.ModSeasonHandler;
 
 public class ReikaBiomeHelper extends DragonAPICore {
 
@@ -327,14 +328,33 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 	/** Returns a broad-stroke biome temperature in degrees centigrade.
 	 * Args: biome */
-	public static int getBiomeTemp(BiomeGenBase biome) {
+	public static int getBiomeTemp(World world, BiomeGenBase biome) {
 		biome = getParentBiomeType(biome);
 		BiomeTemperatures temp = temperatures.get(biome);
 		if (temp == null) {
 			temp = calcBiomeTemp(biome);
 			temperatures.put(biome, temp);
 		}
-		return temp.ambientTemperature;
+
+		int Tamb = temp.ambientTemperature;
+
+		if (ModSeasonHandler.isLoaded()) { //account for seasons
+			Tamb += getBiomeSeasonStrength(biome, temp)*ModSeasonHandler.getSeasonTemperatureModifier(world);
+		}
+
+		return Tamb;
+	}
+
+	private static float getBiomeSeasonStrength(BiomeGenBase biome, BiomeTemperatures temp) {
+		if (temp == BiomeTemperatures.FIERY || temp == BiomeTemperatures.LUNAR)
+			return 0;
+		if (temp == BiomeTemperatures.HOT || temp == BiomeTemperatures.ICY)
+			return 0.2F;
+		if (temp == BiomeTemperatures.COOL || temp == BiomeTemperatures.WARM)
+			return 0.75F;
+		if (temp == BiomeTemperatures.TEMPERATE)
+			return 1F;
+		return 1;
 	}
 
 	private static BiomeTemperatures calcBiomeTemp(BiomeGenBase biome) {
@@ -366,7 +386,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	 * Args: World, x, z */
 	public static int getBiomeTemp(World world, int x, int z) {
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
-		return getBiomeTemp(biome);
+		return getBiomeTemp(world, biome);
 	}
 
 	public static float getBiomeHumidity(BiomeGenBase biome) {

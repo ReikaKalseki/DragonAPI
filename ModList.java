@@ -110,7 +110,8 @@ public enum ModList implements ModEntry {
 	CHISEL("chisel", "com.cricketcraft.chisel.init.ChiselBlocks", "com.cricketcraft.chisel.init.ChiselItems"),
 	CARPENTER("CarpentersBlocks", "com.carpentersblocks.util.registry.BlockRegistry", "com.carpentersblocks.util.registry.ItemRegistry"),
 	ENDEREXPANSION("HardcoreEnderExpansion"),
-	AGRICRAFT("AgriCraft", "com.InfinityRaider.AgriCraft.init.Blocks", "com.InfinityRaider.AgriCraft.init.Items");
+	AGRICRAFT("AgriCraft", "com.InfinityRaider.AgriCraft.init.Blocks", "com.InfinityRaider.AgriCraft.init.Items"),
+	THAUMICTINKER("thaumictinkerer");
 
 	private final boolean condition;
 	public final String modLabel;

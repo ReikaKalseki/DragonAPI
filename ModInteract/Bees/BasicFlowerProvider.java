@@ -9,59 +9,65 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Bees;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import forestry.api.apiculture.FlowerManager;
 import forestry.api.genetics.IFlower;
+import forestry.api.genetics.IFlowerGrowthHelper;
+import forestry.api.genetics.IFlowerGrowthRule;
 import forestry.api.genetics.IFlowerProvider;
+import forestry.api.genetics.IFlowerRegistry;
 import forestry.api.genetics.IIndividual;
 import forestry.api.genetics.IPollinatable;
 
 
-public abstract class BasicFlowerProvider implements IFlowerProvider {
+public abstract class BasicFlowerProvider implements IFlowerProvider, IFlowerGrowthRule {
 
 	public final BlockKey block;
+	private final String id;
 
-	private final List<IFlower> flowers = new ArrayList();
+	//private final List<IFlower> flowers = new ArrayList();
 
-	public BasicFlowerProvider(Block b, boolean plantable) {
-		this(b, -1, plantable);
+	public BasicFlowerProvider(Block b, String id) {
+		this(b, -1, id);
 	}
 
-	public BasicFlowerProvider(Block b, int meta, boolean plantable) {
-		this(new BlockKey(b, meta), plantable);
+	public BasicFlowerProvider(Block b, int meta, String id) {
+		this(new BlockKey(b, meta), id);
 	}
 
-	public BasicFlowerProvider(BlockKey bk, boolean plantable) {
+	public BasicFlowerProvider(BlockKey bk, String id) {
 		block = bk;
+		this.id = id;
 
 		if (bk.hasMetadata()) {
-			flowers.add(new BasicFlower(block, plantable));
+			FlowerManager.flowerRegistry.registerAcceptableFlower(block.blockID, bk.metadata, id);
 		}
 		else {
-			for (int i = 0; i < 16; i++) {
-				flowers.add(new BasicFlower(new BlockKey(block.blockID, i), plantable));
-			}
+			FlowerManager.flowerRegistry.registerAcceptableFlower(block.blockID, id);
 		}
+
+		FlowerManager.flowerRegistry.registerGrowthRule(this, id);
 	}
 
+	@Override
+	public final String getFlowerType() {
+		return id;
+	}
+
+	/*
 	@Override
 	public boolean isAcceptedFlower(World world, IIndividual individual, int x, int y, int z) {
 		return block.matchInWorld(world, x, y, z);
 	}
-
+	 */
 	@Override
 	public boolean isAcceptedPollinatable(World world, IPollinatable ip) {
-		return false;
-	}
-
-	@Override
-	public boolean growFlower(World world, IIndividual individual, int x, int y, int z) {
 		return false;
 	}
 
@@ -71,8 +77,24 @@ public abstract class BasicFlowerProvider implements IFlowerProvider {
 	}
 
 	@Override
-	public final List<IFlower> getFlowers() {
-		return Collections.unmodifiableList(flowers);
+	@Deprecated
+	public final boolean growFlower(World world, IIndividual individual, int x, int y, int z) {
+		return false;
 	}
+
+	@Override
+	public final Set<IFlower> getFlowers() {
+		return new HashSet();//Collections.unmodifiableSet(flowers);
+	}
+
+	public boolean growFlower(IFlowerGrowthHelper helper, String flowerType, World world, int x, int y, int z) {
+		return false;
+	}
+
+	public final boolean growFlower(IFlowerRegistry fr, String flowerType, World world, IIndividual individual, int x, int y, int z) {
+		return false;
+	}
+
+
 
 }

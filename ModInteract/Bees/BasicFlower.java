@@ -13,7 +13,7 @@ import net.minecraft.block.Block;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import forestry.api.genetics.IFlower;
 
-
+@Deprecated
 public final class BasicFlower implements IFlower {
 
 	public final BlockKey block;

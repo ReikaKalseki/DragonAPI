@@ -37,6 +37,7 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.OreBerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.PneumaticPlantHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public enum ModCropList implements ModCrop {
 	//seed meta, min meta, fresh meta, ripe meta
@@ -53,6 +54,7 @@ public enum ModCropList implements ModCrop {
 	PNEUMATIC(ModList.PNEUMATICRAFT, 0x37FF69, PneumaticPlantHandler.getInstance()),
 	FLUXED(ModList.FLUXEDCRYSTALS, 0xd00000, FluxedCrystalHandler.getInstance()),
 	AGRICRAFT(ModList.AGRICRAFT, 0x7E9612, AgriCraftHandler.getInstance()),
+	ASPECT(ModList.THAUMICTINKER, 0xC591D8, "infusedGrainBlock", "infusedGrain", 0, 0, 0, 7, VarType.REGISTRY),
 	;
 
 	private final ModEntry mod;
@@ -118,7 +120,7 @@ public enum ModCropList implements ModCrop {
 								exists = true;
 							}
 							break;
-						case INSTANCE:
+						case INSTANCE: {
 							b = blocks.getField(blockVar);
 							Block block = (Block)b.get(null);
 							if (block == null) {
@@ -130,6 +132,19 @@ public enum ModCropList implements ModCrop {
 								exists = true;
 							}
 							break;
+						}
+						case REGISTRY: {
+							Block block = GameRegistry.findBlock(mod.getModLabel(), blockVar);
+							if (block == null) {
+								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+								exists = false;
+							}
+							else {
+								id = block;
+								exists = true;
+							}
+							break;
+						}
 						default:
 							DragonAPICore.logError("Error loading crop "+this);
 							DragonAPICore.logError("Invalid variable type for field "+blockVar);
@@ -216,7 +231,7 @@ public enum ModCropList implements ModCrop {
 								exists = true;
 							}
 							break;
-						case INSTANCE:
+						case INSTANCE: {
 							b = blocks.getField(blockVar);
 							Block block = (Block)b.get(null);
 							if (block == null) {
@@ -227,12 +242,20 @@ public enum ModCropList implements ModCrop {
 								id = block;
 								exists = true;
 							}
-							break;/*
-					case INT:
-						b = blocks.getField(blockVar);
-						id = b.getInt(null);
-						exists = true;
-						break;*/
+							break;
+						}
+						case REGISTRY: {
+							Block block = GameRegistry.findBlock(mod.getModLabel(), blockVar);
+							if (block == null) {
+								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+								exists = false;
+							}
+							else {
+								id = block;
+								exists = true;
+							}
+							break;
+						}
 						default:
 							DragonAPICore.logError("Error loading crop "+this);
 							DragonAPICore.logError("Invalid variable type for field "+blockVar);
@@ -251,7 +274,7 @@ public enum ModCropList implements ModCrop {
 								exists = true;
 							}
 							break;
-						case INSTANCE:
+						case INSTANCE: {
 							i = items.getField(itemVar);
 							Item item = (Item)i.get(null);
 							if (item == null) {
@@ -262,12 +285,20 @@ public enum ModCropList implements ModCrop {
 								seed = item;
 								exists = true;
 							}
-							break;/*
-					case INT:
-						i = items.getField(itemVar);
-						seed = i.getInt(null);
-						exists = true;
-						break;*/
+							break;
+						}
+						case REGISTRY: {
+							Item item = GameRegistry.findItem(mod.getModLabel(), itemVar);
+							if (item == null) {
+								DragonAPICore.logError("Error loading crop "+this+": Item not instantiated!");
+								exists = false;
+							}
+							else {
+								seed = item;
+								exists = true;
+							}
+							break;
+						}
 						default:
 							DragonAPICore.logError("Error loading crop "+this);
 							DragonAPICore.logError("Invalid variable type for field "+itemVar);
@@ -400,7 +431,7 @@ public enum ModCropList implements ModCrop {
 	}
 
 	public boolean destroyOnHarvest() {
-		return this == ALGAE;
+		return this == ALGAE || this == ASPECT;
 	}
 
 	public boolean isBerryBush() {

@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
+import javax.swing.JOptionPane;
+
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.PopupWriter;
@@ -432,6 +434,14 @@ public class RemoteAssetLoader {
 		private RemoteAssetsDownloadCompleteEvent(ArrayList<RemoteAsset> li, long size) {
 			downloadQueue = Collections.unmodifiableCollection(li);
 			totalSize = size;
+		}
+
+	}
+
+	public static class DownloadDisplayWindow extends JOptionPane {
+
+		private DownloadDisplayWindow() {
+			//super(message, INFORMATION_MESSAGE, DEFAULT_OPTION, null, null, null);
 		}
 
 	}
