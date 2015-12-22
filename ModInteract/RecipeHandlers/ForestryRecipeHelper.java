@@ -9,19 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.RecipeHandlers;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.Map;
 
 import net.minecraft.item.ItemStack;
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Instantiable.Data.Collections.ChancedOutputList;
-import Reika.DragonAPI.Libraries.Java.SemanticVersionParser;
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import forestry.api.recipes.ICentrifugeRecipe;
+import forestry.api.recipes.RecipeManagers;
 
 public class ForestryRecipeHelper extends ModHandlerBase {
 
@@ -31,12 +28,24 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 		return instance;
 	}
 
-	private final HashMap<ItemStack, ChancedOutputList> centrifuge = new HashMap();
+	private final ItemHashMap<ChancedOutputList> centrifuge = new ItemHashMap();
 
 	private ForestryRecipeHelper() {
 		super();
 
 		if (this.hasMod()) {
+			Collection<ICentrifugeRecipe> c = RecipeManagers.centrifugeManager.recipes();
+			for (ICentrifugeRecipe r : c) {
+				ItemStack in = r.getInput();
+				ChancedOutputList outputs = new ChancedOutputList();
+				Map<ItemStack, Float> out = r.getAllProducts();
+				for (ItemStack is : out.keySet()) {
+					float chance = out.get(is)*100;
+					outputs.addItem(is, chance);
+				}
+				centrifuge.put(in, outputs);
+			}
+			/*
 			try {
 				String pre = "forestry.factory.gadgets.MachineCentrifuge$";
 				Class centri = Class.forName(pre+"RecipeManager");
@@ -97,14 +106,15 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
 				e.printStackTrace();
 			}
+			 */
 		}
 		else {
 			this.noMod();
 		}
 	}
 
-	public Map<ItemStack, ChancedOutputList> getCentrifugeRecipes() {
-		return Collections.unmodifiableMap(centrifuge);
+	public Collection<ItemStack> getCentrifugeRecipes() {
+		return centrifuge.keySet();
 	}
 
 	public ChancedOutputList getRecipeOutput(ItemStack in) {

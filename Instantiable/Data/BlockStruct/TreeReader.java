@@ -477,14 +477,14 @@ public final class TreeReader extends BlockArray {
 	}
 
 	public ItemStack getSapling() {
-		return new ItemStack(tree.getSaplingID(), 1, tree.getSaplingMeta());
+		return tree != null ? new ItemStack(tree.getSaplingID(), 1, tree.getSaplingMeta()) : null;
 	}
 
 	@Override
 	public Coordinate getNextAndMoveOn() {
 		Coordinate next = super.getNextAndMoveOn();
 		if (this.isEmpty())
-			this.reset();
+			;//this.reset();
 		return next;
 	}
 

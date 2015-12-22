@@ -38,6 +38,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	private static final HashMap<BiomeGenBase, BiomeGenBase> parents = new HashMap();
 	private static final int[] biomeColors = new int[40];
 
+	private static final HashMap<String, BiomeGenBase> nameMap = new HashMap();
+
 	private static final HashMap<BiomeGenBase, BiomeTemperatures> temperatures = new HashMap();
 
 	static {
@@ -152,6 +154,13 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		temperatures.put(BiomeGenBase.hell, BiomeTemperatures.FIERY);
 
 		temperatures.put(BiomeGenBase.sky, BiomeTemperatures.LUNAR);
+
+		for (int i = 0; i < BiomeGenBase.biomeList.length; i++) {
+			BiomeGenBase b = BiomeGenBase.biomeList[i];
+			if (b != null) {
+				nameMap.put(b.biomeName, b);
+			}
+		}
 	}
 
 	private static void addChildBiome(BiomeGenBase parent, BiomeGenBase child) {
@@ -498,5 +507,9 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 	public static int getBiomeUniqueColor(BiomeGenBase b) {
 		return biomeColors[b.biomeID];
+	}
+
+	public static BiomeGenBase getBiomeByName(String s) {
+		return nameMap.get(s);
 	}
 }

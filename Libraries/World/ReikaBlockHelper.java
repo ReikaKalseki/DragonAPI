@@ -17,6 +17,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.IFluidBlock;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Extras.BlockProperties;
@@ -150,7 +152,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		Material mat = b.getMaterial();
 		if (mat == Material.lava || mat == Material.water)
 			return true;
-		return b instanceof BlockLiquid;
+		return b instanceof BlockLiquid || b instanceof BlockFluidBase || b instanceof IFluidBlock;
 	}
 
 	public static boolean isPortalBlock(World world, int x, int y, int z) {

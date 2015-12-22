@@ -26,7 +26,18 @@ public class ReflectiveFailureTracker {
 	}
 
 	public void logModReflectiveFailure(ModEntry mod, Exception e) {
-		String className = Thread.currentThread().getStackTrace()[2].getClassName();
+		StringBuilder sb = new StringBuilder();
+		StackTraceElement[] tr = Thread.currentThread().getStackTrace();
+		//0 is Thread, 1 is ReflectiveFailureTracker, 2&3 are the class
+		for (int i = 2; i <= 3; i++) {
+			if (i < tr.length) {
+				sb.append(tr[i].getClassName());
+				if (i < tr.length-1 && i < 3) {
+					sb.append(" / ");
+				}
+			}
+		}
+		String className = sb.toString();
 		data.addValue(mod, new ExceptionLog(className, e));
 	}
 

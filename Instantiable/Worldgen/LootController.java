@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraftforge.common.ChestGenHooks;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaGenHelper;
 
 public class LootController {
 
@@ -27,12 +27,10 @@ public class LootController {
 			mod.getModLogger().log("Skipping dungeon loot generation, as it has been disabled.");
 			return;
 		}
-		for (int i = 0; i < items.size(); i++) {
-			LootStack ls = items.get(i);
+		for (LootStack ls : items) {
 			String itemName = ls.toString();
 			if (ls.lootTier <= tier) {
-				WeightedRandomChestContent stack = new WeightedRandomChestContent(ls.getItemStack(), ls.minSize, ls.maxSize, ls.weight);
-				ChestGenHooks.getInfo(ls.chestLocation.tag).addItem(stack);
+				ReikaGenHelper.addChestLoot(ls.chestLocation.tag, ls.item, ls.minSize, ls.maxSize, ls.weight);
 				mod.getModLogger().log("Adding "+itemName+" to "+ls.chestLocation);
 			}
 			else {

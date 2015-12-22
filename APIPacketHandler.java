@@ -16,6 +16,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -245,6 +246,9 @@ public class APIPacketHandler implements PacketHandler {
 					break;
 				case BREAKPARTICLES:
 					break;
+				case PLAYERKICK:
+					((EntityPlayerMP)ep).playerNetServerHandler.kickPlayerFromServer(stringdata);
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -304,7 +308,8 @@ public class APIPacketHandler implements PacketHandler {
 		OLDMODS(),
 		LOGIN(),
 		SERVERSOUND(),
-		BREAKPARTICLES();
+		BREAKPARTICLES(),
+		PLAYERKICK();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -315,7 +320,7 @@ public class APIPacketHandler implements PacketHandler {
 		}
 
 		public boolean hasLocation() {
-			return this != KEYUPDATE;
+			return this != KEYUPDATE && this != PLAYERKICK;
 		}
 
 		public int getNumberDataInts() {

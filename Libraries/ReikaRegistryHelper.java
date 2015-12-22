@@ -47,6 +47,8 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	private static final HashMap<ItemEnum, ArrayList<Integer>> itemVariants = new HashMap();
 	private static final IdentityHashMap<Object, RegistrationList> registries = new IdentityHashMap();
 	private static final IdentityHashMap<Object, EntityCollection> modEntityRegistries = new IdentityHashMap();
+	private static final HashMap<BlockEnum, String> blockRegNames = new HashMap();
+	private static final HashMap<ItemEnum, String> itemRegNames = new HashMap();
 
 	/** Instantiates all blocks and registers them to the game. Uses an Enum[] that implements RegistrationList.
 	 * Args: Mod, Enum.values(), Target Block[] array to save instances. */
@@ -73,6 +75,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 				GameRegistry.registerBlock(b, ItemBlockCustomLocalization.class, regname);
 			registries.put(b, r);
 			registries.put(Item.getItemFromBlock(b), r);
+			blockRegNames.put(r, regname);
 			int num = r.getNumberMetadatas();
 			for (int k = 0; k < num; k++)
 				registerBlockVariant(r, k);
@@ -115,6 +118,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 			}
 			GameRegistry.registerItem(it, regname);
 			registries.put(it, r);
+			itemRegNames.put(r, regname);
 			mod.getModLogger().log("Instantiating Item "+r.getBasicName()+" with ID "+it+" to Item Variable "+it.getClass().getSimpleName()+" (enum index "+idx+"). Has "+r.getNumberMetadatas()+" metadatas.");
 		}
 		else {
@@ -267,6 +271,14 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 
 	public static RegistrationList getRegistryForObject(Object o) {
 		return registries.get(o);
+	}
+
+	public static String getGameRegistryName(BlockEnum reg) {
+		return blockRegNames.get(reg);
+	}
+
+	public static String getGameRegistryName(ItemEnum reg) {
+		return itemRegNames.get(reg);
 	}
 
 	public static void registerModEntities(Object mod, EntityEnum[] list) {

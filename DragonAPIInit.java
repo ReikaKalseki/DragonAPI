@@ -78,6 +78,7 @@ import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
 import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
 import Reika.DragonAPI.Command.EntityListCommand;
+import Reika.DragonAPI.Command.FindBiomeCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
@@ -90,6 +91,7 @@ import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Extras.TemporaryCodeCalls;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
@@ -174,6 +176,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -455,6 +458,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Frazier", 25);
 		PatreonController.instance.addPatron(this, "ReignOfMagic", "f1025e8b-6789-4591-b987-e318e61d7061", 10);
 		PatreonController.instance.addPatron(this, "Iskandar", "b6fa35a3-8e74-499d-8cc6-ca83c912a14a", 10);
+		PatreonController.instance.addPatron(this, "Yoogain", "5d937faf-7a4f-489a-85db-a1d95bb29657", 25);
 
 		logger.log("Credit to Techjar for hosting the version file and remote asset server.");
 
@@ -533,6 +537,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new EntityListCommand());
 		evt.registerServerCommand(new FindTilesCommand());
 		evt.registerServerCommand(new ClearItemsCommand());
+		evt.registerServerCommand(new FindBiomeCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();
@@ -735,6 +740,13 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void lastLoad(FMLServerAboutToStartEvent evt) {
 		ReikaOreHelper.refreshAll();
 		ModOreList.initializeAll();
+	}
+
+	@EventHandler
+	public void lastLoad(FMLServerStoppedEvent evt) {
+		if (evt.getSide() == Side.CLIENT) {
+			MinecraftForge.EVENT_BUS.post(new SinglePlayerLogoutEvent());
+		}
 	}
 
 	private void registerHandler(ModList mod, Class<? extends ModHandlerBase> c, String id) {

@@ -23,7 +23,6 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 
 public class FluidNamePatch implements IClassTransformer {
@@ -57,7 +56,7 @@ public class FluidNamePatch implements IClassTransformer {
 
 		m.instructions.insert(ain, call);
 
-		ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+		//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
 
 		ReikaASMHelper.log("Successfully applied Fluid Name patch.");
 

@@ -28,7 +28,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S20PacketEntityProperties;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
@@ -38,13 +37,13 @@ import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 
@@ -198,6 +197,8 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			return true;
 		if (isAdmin(ep))
 			return true;
+		if (MinecraftServer.getServer().isBlockProtected(world, x, y, z, ep))
+			return false;
 		BreakEvent evt = new BreakEvent(x, y, z, world, id, meta, ep);
 		MinecraftForge.EVENT_BUS.post(evt);
 		return !evt.isCanceled();
@@ -213,6 +214,8 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		if (isAdmin(world, name, uuid))
 			return true;
 		FakePlayer fp = getFakePlayerByNameAndUUID(world, name, uuid);
+		if (MinecraftServer.getServer().isBlockProtected(world, x, y, z, fp))
+			return false;
 		BreakEvent evt = new BreakEvent(x, y, z, world, id, meta, fp);
 		MinecraftForge.EVENT_BUS.post(evt);
 		return !evt.isCanceled();
@@ -346,5 +349,14 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			}
 		}
 		return li;
+	}
+
+	public static void kickPlayer(EntityPlayerMP ep, String reason) {
+		ep.playerNetServerHandler.kickPlayerFromServer(reason);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void kickPlayerClientside(EntityPlayer ep, String reason) {
+		ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERKICK.ordinal(), reason, new PacketTarget.ServerTarget());
 	}
 }

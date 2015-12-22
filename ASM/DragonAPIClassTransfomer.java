@@ -11,14 +11,12 @@ package Reika.DragonAPI.ASM;
 
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.profiler.Profiler;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldProvider;
-import net.minecraft.world.WorldSettings;
-import net.minecraft.world.storage.ISaveHandler;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.ClassReader;
@@ -41,11 +39,12 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Event.Client.ItemTooltipEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class DragonAPIClassTransfomer implements IClassTransformer {
 
@@ -87,6 +86,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		//JUMPCHECKEVENTSERVER("net.minecraft.network.NetHandlerPlayServer", "nh"),
 		//JUMPCHECKEVENTCLIENT("net.minecraft.entity.EntityLivingBase", "sv"),
 		MOBTARGETEVENT("net.minecraft.world.World", "ahb"),
+		//TOOLTIPEVENT("net.minecraft.item.Item", "adb"),
 		;
 
 		private final String obfName;
@@ -1089,7 +1089,17 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.add(new InsnNode(Opcodes.ARETURN));
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
-				}
+				}/*
+				case TOOLTIPEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_77624_a", "addInformation", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Ljava/util/List;Z)V");
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 2));
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 3));
+					m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 4));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/ItemTooltipEvent", "fire", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Ljava/util/List;Z)V", false));
+					m.instructions.add(new InsnNode(Opcodes.RETURN));
+					break;
+				}*/
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -1111,17 +1121,13 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	abstract static class test extends World {
+	abstract static class test extends Item {
 
-
-		public test(ISaveHandler p_i45368_1_, String p_i45368_2_, WorldProvider p_i45368_3_, WorldSettings p_i45368_4_, Profiler p_i45368_5_) {
-			super(p_i45368_1_, p_i45368_2_, p_i45368_3_, p_i45368_4_, p_i45368_5_);
-			// TODO Auto-generated constructor stub
-		}
 
 		@Override
-		public EntityPlayer getClosestVulnerablePlayer(double x, double y, double z, double r) {
-			return ReikaWorldHelper.getClosestVulnerablePlayer(this, x, y, z, r);
+		@SideOnly(Side.CLIENT)
+		public void addInformation(ItemStack is, EntityPlayer ep, List li, boolean vb) {
+			ItemTooltipEvent.fire(is, ep, li, vb);
 		}
 
 	}

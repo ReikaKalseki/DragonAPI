@@ -85,8 +85,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return true;
 		if (b == Blocks.piston_extension)
 			return false;
-		;
-		if (b instanceof BlockLiquid)
+		if (ReikaBlockHelper.isLiquid(b))
 			return true;
 		if (b.isReplaceable(world, x, y, z))
 			return true;

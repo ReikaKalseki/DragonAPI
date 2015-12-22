@@ -10,8 +10,6 @@
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -19,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public class ForestryHandler extends ModHandlerBase {
 
@@ -27,55 +26,63 @@ public class ForestryHandler extends ModHandlerBase {
 	private static final ForestryHandler instance = new ForestryHandler();
 
 	public enum ItemEntry {
-		APATITE("apatite"),
-		FERTILIZER("fertilizerCompound"),
-		SAPLING("sapling"),
-		COMB("beeComb"),
-		HONEY("honeyDrop"),
-		HONEYDEW("honeydew"),
-		JELLY("royalJelly"),
-		PROPOLIS("propolis"),
-		WAX("beeswax"),
-		POLLEN("pollenCluster"),
-		TREEPOLLEN("pollenFertile"),
-		QUEEN("beeQueenGE"),
-		PRINCESS("beePrincessGE"),
-		DRONE("beeDroneGE"),
-		LARVA("beeLarvaeGE");
+		APATITE("forestry.core.items.ItemRegistryCore", "apatite"),
+		FERTILIZER("forestry.core.items.ItemRegistryCore", "fertilizerCompound"),
+		SAPLING("forestry.arboriculture.items.ItemRegistryArboriculture", "sapling"),
+		COMB("forestry.apiculture.items.ItemRegistryApiculture", "beeComb"),
+		HONEY("forestry.apiculture.items.ItemRegistryApiculture", "honeyDrop"),
+		HONEYDEW("forestry.apiculture.items.ItemRegistryApiculture", "honeydew"),
+		JELLY("forestry.apiculture.items.ItemRegistryApiculture", "royalJelly"),
+		PROPOLIS("forestry.apiculture.items.ItemRegistryApiculture", "propolis"),
+		WAX("forestry.core.items.ItemRegistryCore", "beeswax"),
+		REFWAX("forestry.core.items.ItemRegistryCore", "refractoryWax"),
+		POLLEN("forestry.apiculture.items.ItemRegistryApiculture", "pollenCluster"),
+		TREEPOLLEN("forestry.arboriculture.items.ItemRegistryArboriculture", "pollenFertile"),
+		QUEEN("forestry.apiculture.items.ItemRegistryApiculture", "beeQueenGE"),
+		PRINCESS("forestry.apiculture.items.ItemRegistryApiculture", "beePrincessGE"),
+		DRONE("forestry.apiculture.items.ItemRegistryApiculture", "beeDroneGE"),
+		LARVA("forestry.apiculture.items.ItemRegistryApiculture", "beeLarvaeGE");
 
+		private final String reg;
 		private final String tag;
 		private Item item;
 
 		private static final ItemEntry[] list = values();
 
-		private ItemEntry(String id) {
+		private ItemEntry(String c, String id) {
+			reg = c;
 			tag = id;
 		}
 
 		public Item getItem() {
 			return item;
 		}
+
+		private Object getRegistryObject() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException {
+			String n = reg.split("\\.")[1];
+			n = ReikaStringParser.capFirstChar(n);
+			n = "forestry.plugins.Plugin"+n;
+			Class c = Class.forName(n);
+			Field f = c.getDeclaredField("items");
+			f.setAccessible(true);
+			return f.get(null);
+		}
 	}
 
 	public enum BlockEntry {
-		SAPLING("saplingGE"),
-		LEAF("leaves"),
-		LOG1("log1"),
-		LOG2("log2"),
-		LOG3("log3"),
-		LOG4("log4"),
-		LOG5("log5"),
-		LOG6("log6"),
-		LOG7("log7"),
-		LOG8("log8"),
-		HIVE("beehives");
+		SAPLING("forestry.arboriculture.blocks.BlockRegistryArboriculture", "saplingGE"),
+		LEAF("forestry.arboriculture.blocks.BlockRegistryArboriculture", "leaves"),
+		LOG("forestry.arboriculture.blocks.BlockRegistryArboriculture", "logs"),
+		HIVE("forestry.apiculture.blocks.BlockRegistryApiculture", "beehives");
 
+		private final String reg;
 		private final String tag;
 		private Block item;
 
 		private static final BlockEntry[] list = values();
 
-		private BlockEntry(String id) {
+		private BlockEntry(String c, String id) {
+			reg = c;
 			tag = id;
 		}
 
@@ -83,97 +90,91 @@ public class ForestryHandler extends ModHandlerBase {
 			return item;
 		}
 
-		public boolean isLog() {
-			return this.name().toLowerCase().startsWith("log");
+		private Object getRegistryObject() throws ClassNotFoundException, NoSuchFieldException, IllegalAccessException, IllegalArgumentException {
+			String n = reg.split("\\.")[1];
+			n = ReikaStringParser.capFirstChar(n);
+			n = "forestry.plugins.Plugin"+n;
+			Class c = Class.forName(n);
+			Field f = c.getDeclaredField("blocks");
+			f.setAccessible(true);
+			return f.get(null);
 		}
 	}
 
 	private ForestryHandler() {
 		super();
 		if (this.hasMod()) {
-			try {
-
-				Class forest = this.getMod().getItemClass();
-				Method get = forest.getMethod("item");
-				for (int i = 0; i < ItemEntry.list.length; i++) {
-					ItemEntry ie = ItemEntry.list[i];
-					try {
-						Field f = forest.getDeclaredField(ie.tag); //is enum object now
-						Object entry = f.get(null);
-						Item item = (Item)get.invoke(entry);
-						ie.item = item;
-					}
-					catch (NoSuchFieldException e) {
-						DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
-						e.printStackTrace();
-						this.logFailure(e);
-					}
-					catch (IllegalArgumentException e) {
-						DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
-						e.printStackTrace();
-						this.logFailure(e);
-					}
-					catch (IllegalAccessException e) {
-						DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
-						e.printStackTrace();
-						this.logFailure(e);
-					}
-					catch (NullPointerException e) {
-						DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
-						e.printStackTrace();
-						this.logFailure(e);
-					}
-					catch (InvocationTargetException e) {
-						DragonAPICore.logError("Invocation target exception for reading "+this.getMod()+"!");
-						e.printStackTrace();
-						this.logFailure(e);
-					}
+			for (int i = 0; i < ItemEntry.list.length; i++) {
+				ItemEntry ie = ItemEntry.list[i];
+				try {
+					Class c = Class.forName(ie.reg);
+					Field f = c.getDeclaredField(ie.tag); //is no longer enum object
+					Object reg = ie.getRegistryObject();
+					ie.item = (Item)f.get(reg);
 				}
-
-				Class blocks = this.getMod().getBlockClass();
-				get = blocks.getMethod("block");
-				for (int i = 0; i < BlockEntry.list.length; i++) {
-					BlockEntry ie = BlockEntry.list[i];
-					try {
-						Field f = blocks.getDeclaredField(ie.tag); //is enum object now
-						Object entry = f.get(null);
-						Block b = (Block)get.invoke(entry);
-						ie.item = b;
-					}
-					catch (NoSuchFieldException e) {
-						DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
-						e.printStackTrace();
-						this.logFailure(e);
-					}
-					catch (IllegalArgumentException e) {
-						DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
-						e.printStackTrace();
-						this.logFailure(e);
-					}
-					catch (IllegalAccessException e) {
-						DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
-						e.printStackTrace();
-						this.logFailure(e);
-					}
-					catch (NullPointerException e) {
-						DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
-						e.printStackTrace();
-						this.logFailure(e);
-					}
-					catch (InvocationTargetException e) {
-						DragonAPICore.logError("Invocation target exception for reading "+this.getMod()+"!");
-						e.printStackTrace();
-						this.logFailure(e);
-					}
+				catch (NoSuchFieldException e) {
+					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
+					e.printStackTrace();
+					this.logFailure(e);
 				}
+				catch (IllegalArgumentException e) {
+					DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (IllegalAccessException e) {
+					DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (NullPointerException e) {
+					DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (ClassNotFoundException e) {
+					DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+			}
 
-				init = true;
+			for (int i = 0; i < BlockEntry.list.length; i++) {
+				BlockEntry ie = BlockEntry.list[i];
+				try {
+					Class c = Class.forName(ie.reg);
+					Field f = c.getDeclaredField(ie.tag); //is no longer enum object
+					Object reg = ie.getRegistryObject();
+					ie.item = (Block)f.get(reg);
+				}
+				catch (NoSuchFieldException e) {
+					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (IllegalArgumentException e) {
+					DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (IllegalAccessException e) {
+					DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (NullPointerException e) {
+					DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (ClassNotFoundException e) {
+					DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
+					e.printStackTrace();
+					this.logFailure(e);
+				}
 			}
-			catch (NoSuchMethodException e) {
-				DragonAPICore.logError(this.getMod()+" method not found! "+e.getMessage());
-				e.printStackTrace();
-				this.logFailure(e);
-			}
+
+			init = true;
 		}
 		else {
 			this.noMod();

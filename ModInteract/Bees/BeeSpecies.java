@@ -49,8 +49,8 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	private final IBeeRoot beeRoot;
 	private final IIcon[][] icons = new IIcon[EnumBeeType.VALUES.length][3];
-	private final HashMap specials = new HashMap();
-	private final HashMap products = new HashMap();
+	private final HashMap<ItemStack, Float> specials = new HashMap();
+	private final HashMap<ItemStack, Float> products = new HashMap();
 	private final BeeBranch branch;
 	private final String scientific;
 	private final String genus;
@@ -108,11 +108,11 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	public final void addSpecialty(ItemStack item, int chance) {
-		specials.put(item, chance);
+		specials.put(item, chance/100F);
 	}
 
 	public final void addProduct(ItemStack item, int chance) {
-		products.put(item, chance);
+		products.put(item, chance/100F);
 	}
 
 	@Override

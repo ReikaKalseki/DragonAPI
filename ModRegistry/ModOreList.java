@@ -61,7 +61,7 @@ public enum ModOreList implements OreType {
 	APATITE("Apatite", 0x3296C5, OreRarity.COMMON, "gemApatite", 3, "oreApatite"),
 	SALTPETER("Saltpeter", 0xFFFFFF, OreRarity.AVERAGE, "dustSaltpeter", 2, "oreSaltpeter"),
 	TUNGSTEN("Tungsten", 0x1E1E1E, OreRarity.COMMON, "dustTungsten", 1, "oreTungsten", "oreTungstate"),
-	NIKOLITE("Nikolite", 0x2DABB8, OreRarity.COMMON, "dustNikolite", 5, "oreNikolite"),
+	NIKOLITE("Nikolite", 0x2DABB8, OreRarity.COMMON, "dustElectrotine", 5, "oreNikolite", "oreElectrotine"),
 	PERIDOT("Peridot", 0x00C416, OreRarity.SCARCE, "gemPeridot", 1, "orePeridot"),
 	RUBY("Ruby", 0xBC0000, OreRarity.SCARCE, "gemRuby", 1, "oreRuby"),
 	SAPPHIRE("Sapphire", 0x0019AA, OreRarity.SCARCE, "gemSapphire", 1, "oreSapphire"),

@@ -62,16 +62,18 @@ public abstract class EnumOreBlock extends Block {
 	public final boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean harv)
 	{
 		OreEnum ore = this.getOre(world, x, y, z);
+		Block b = world.getBlock(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
 		boolean flag = super.removedByPlayer(world, player, x, y, z, harv);
 		if (harv && flag) {
-			this.onHarvested(world, x, y, z, player);
+			this.onHarvested(world, x, y, z, b, meta, ore, player);
 			if (!ore.dropsSelf(world, x, y, z) && !EnchantmentHelper.getSilkTouchModifier(player))
 				ReikaWorldHelper.splitAndSpawnXP(world, x+0.5F, y+0.5F, z+0.5F, this.droppedXP(ore, world, x, y, z));
 		}
 		return flag;
 	}
 
-	protected void onHarvested(World world, int x, int y, int z, EntityPlayer ep) {
+	protected void onHarvested(World world, int x, int y, int z, Block b, int meta, OreEnum ore, EntityPlayer ep) {
 
 	}
 

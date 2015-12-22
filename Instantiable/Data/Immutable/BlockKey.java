@@ -29,6 +29,8 @@ public final class BlockKey implements BlockCheck {
 	public BlockKey(Block b, int meta) {
 		metadata = meta;
 		blockID = b;
+		if (b == null)
+			throw new MisuseException("Cannot create a BlockKey from a null block!");
 	}
 
 	public BlockKey(ItemStack is) {

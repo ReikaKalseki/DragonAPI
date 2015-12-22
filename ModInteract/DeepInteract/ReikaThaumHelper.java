@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import net.minecraft.block.Block;
@@ -38,6 +39,7 @@ import thaumcraft.api.crafting.CrucibleRecipe;
 import thaumcraft.api.crafting.IArcaneRecipe;
 import thaumcraft.api.crafting.InfusionRecipe;
 import thaumcraft.api.research.ResearchCategories;
+import thaumcraft.api.research.ResearchItem;
 import thaumcraft.api.research.ResearchPage;
 import thaumcraft.common.entities.monster.EntityWisp;
 import Reika.DragonAPI.DragonAPICore;
@@ -76,7 +78,9 @@ public class ReikaThaumHelper {
 
 	private static Object proxy; //auto-sides to correct side
 
-	private static Collection<Aspect> allAspects = new ArrayList();
+	private static final Collection<Aspect> allAspects = new ArrayList();
+
+	private static final HashSet<String> nativeCategories = new HashSet();
 
 	public static void addAspects(ItemStack is, AspectList aspects) {
 		AspectList has = ThaumcraftApi.objectTags.get(Arrays.asList(is.getItem(), is.getItemDamage()));
@@ -420,6 +424,10 @@ public class ReikaThaumHelper {
 		}
 	}
 
+	public static boolean isNativeThaumResearch(ResearchItem ri) {
+		return nativeCategories.contains(ri.category);
+	}
+
 	/** Your lang file will have to include an entry tc.research_category.[name]=[Localized Name] entry. */
 	public static void addBookCategory(ResourceLocation icon, String name) {
 		ResourceLocation rl2 = new ResourceLocation("thaumcraft", "textures/gui/gui_researchback.png");
@@ -546,6 +554,14 @@ public class ReikaThaumHelper {
 
 	static {
 		if (ModList.THAUMCRAFT.isLoaded()) {
+
+			nativeCategories.add("BASICS");
+			nativeCategories.add("THAUMATURGY");
+			nativeCategories.add("ALCHEMY");
+			nativeCategories.add("ARTIFICE");
+			nativeCategories.add("GOLEMANCY");
+			nativeCategories.add("ELDRITCH");
+
 			try {
 				Class c = Class.forName("thaumcraft.common.Thaumcraft");
 				Field f = c.getField("proxy");

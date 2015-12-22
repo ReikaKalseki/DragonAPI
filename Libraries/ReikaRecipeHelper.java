@@ -479,6 +479,54 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return allowed;
 	}
 
+	public static void replaceIngredientInRecipe(ItemStack ingredient, ItemStack replacement, IRecipe ir) {
+		if (ingredient == null)
+			throw new MisuseException("You cannot replace null in recipes!");
+
+
+		if (ir instanceof ShapedRecipes) {
+			ShapedRecipes s = (ShapedRecipes) ir;
+			for (int i = 0; i < s.recipeItems.length; i++) {
+				if (ReikaItemHelper.matchStacks(ingredient, s.recipeItems[i])) {
+					s.recipeItems[i] = replacement;
+				}
+			}
+		}
+		else if (ir instanceof ShapelessRecipes) {
+			ShapelessRecipes s = (ShapelessRecipes) ir;
+			List<ItemStack> in = s.recipeItems;
+			for (int i = 0; i < in.size(); i++) {
+				if (ReikaItemHelper.matchStacks(ingredient, in.get(i))) {
+					in.set(i, replacement);
+				}
+			}
+		}
+		else if (ir instanceof ShapedOreRecipe) {
+			ShapedOreRecipe s = (ShapedOreRecipe) ir;
+			Object[] in = s.getInput();
+			for (int i = 0; i < in.length; i++) {
+				if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
+					in[i] = replacement;
+				}
+				else if (in[i] instanceof List && ReikaItemHelper.collectionContainsItemStack((List<ItemStack>)in[i], ingredient)) {
+					in[i] = replacement;
+				}
+			}
+		}
+		else if (ir instanceof ShapelessOreRecipe) {
+			ShapelessOreRecipe s = (ShapelessOreRecipe) ir;
+			ArrayList in = s.getInput();
+			for (int i = 0; i < in.size(); i++) {
+				if (in.get(i) instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in.get(i))) {
+					in.set(i, replacement);
+				}
+				else if (in.get(i) instanceof List && ReikaItemHelper.collectionContainsItemStack((List<ItemStack>)in.get(i), ingredient)) {
+					in.set(i, replacement);
+				}
+			}
+		}
+	}
+
 	public static void replaceIngredientInAllRecipes(ItemStack ingredient, ItemStack replacement, boolean makeCopy) {
 		if (ingredient == null)
 			throw new MisuseException("You cannot replace null in recipes!");

@@ -47,9 +47,9 @@ public enum ModList implements ModEntry {
 	BCTRANSPORT("BuildCraft|Transport", "buildcraft.BuildCraftTransport"),
 	BCSILICON("BuildCraft|Silicon", "buildcraft.BuildCraftSilicon"),
 	THAUMCRAFT("Thaumcraft", "thaumcraft.common.config.ConfigBlocks", "thaumcraft.common.config.ConfigItems"),
-	IC2("IC2", "ic2.core.Ic2Items"), //ensure still here
+	IC2("IC2", "ic2.core.Ic2Items"),
 	GREGTECH("gregtech"),
-	FORESTRY("Forestry", "forestry.core.config.ForestryBlock", "forestry.core.config.ForestryItem"),
+	FORESTRY("Forestry"),
 	APPENG("appliedenergistics2"), //appeng.api.definitions
 	MFFS("MFFS", "mffs.ModularForceFieldSystem"), //ensure still here
 	REDPOWER("RedPower"),
@@ -103,7 +103,7 @@ public enum ModList implements ModEntry {
 	CRAFTMANAGER("zcraftingmanager"),
 	MINECHEM("minechem"),
 	TFC("terrafirmacraft"),
-	BOTANIA("Botania"),
+	BOTANIA("Botania", "vazkii.botania.common.block.ModBlocks", "vazkii.botania.common.item.ModItems"),
 	GENDUSTRY("gendustry"),
 	FLUXEDCRYSTALS("fluxedcrystals", "fluxedCrystals.init.FCBlocks", "fluxedCrystals.init.FCItems"),
 	HUNGEROVERHAUL("HungerOverhaul"),

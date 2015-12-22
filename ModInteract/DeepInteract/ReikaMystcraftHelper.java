@@ -20,7 +20,9 @@ import java.util.Random;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -35,9 +37,11 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
 
 import com.xcompwiz.mystcraft.api.APIInstanceProvider;
+import com.xcompwiz.mystcraft.api.MystObjects;
 import com.xcompwiz.mystcraft.api.exception.APIUndefined;
 import com.xcompwiz.mystcraft.api.exception.APIVersionRemoved;
 import com.xcompwiz.mystcraft.api.exception.APIVersionUndefined;
+import com.xcompwiz.mystcraft.api.hook.PageAPI;
 import com.xcompwiz.mystcraft.api.hook.SymbolAPI;
 import com.xcompwiz.mystcraft.api.linking.ILinkInfo;
 import com.xcompwiz.mystcraft.api.symbol.IAgeSymbol;
@@ -54,6 +58,8 @@ public class ReikaMystcraftHelper {
 	private static final Method getTile;
 	private static final Method getBook;
 	private static final Method getLink;
+
+	private static final Method getRarity;
 
 	private static APIInstanceProvider apiProvider;
 
@@ -333,8 +339,8 @@ public class ReikaMystcraftHelper {
 			return ageSymbols.contains(s);
 		}
 
-		public boolean symbolExists(AgeSymbol s) {
-			return ageSymbols.contains(s.getID());
+		public boolean symbolExists(IAgeSymbol s) {
+			return ageSymbols.contains(s.identifier());
 		}
 
 		static {
@@ -397,35 +403,51 @@ public class ReikaMystcraftHelper {
 
 	}
 
-	public static ArrayList<AgeSymbol> getAllSymbols() {
-		ArrayList<AgeSymbol> c = new ArrayList();
-		if (AgeSymbol.loadedCorrectly) {
-			try {
-				ArrayList li = (ArrayList)AgeSymbol.getAgeSymbols.invoke(null);
-				for (Object o : li)
-					c.add(new AgeSymbol(o));
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+	public static ArrayList<IAgeSymbol> getAllSymbols() {
+		ArrayList<IAgeSymbol> c = new ArrayList();
+		SymbolAPI api = getAPI(APISegment.SYMBOL, 1);
+		if (api != null) {
+			c.addAll(api.getAllRegisteredSymbols());
 		}
 		return c;
 	}
 
 	public static ArrayList<ItemStack> getAllAgePages() {
-		ArrayList<AgeSymbol> c = getAllSymbols();
 		ArrayList<ItemStack> li = new ArrayList();
-		for (AgeSymbol a : c) {
-			ItemStack is = a.getPage();
-			if (is != null)
-				li.add(is);
+		ArrayList<IAgeSymbol> c = getAllSymbols();
+		for (IAgeSymbol a : c) {
+			li.add(getSymbolPage(a));
 		}
 		return li;
 	}
 
-	public static AgeSymbol getRandomPage() {
-		ArrayList<AgeSymbol> c = getAllSymbols();
+	public static ItemStack getSymbolPage(IAgeSymbol a) {
+		PageAPI api = getAPI(APISegment.PAGE, 1);
+		if (api != null) {
+			ItemStack is = new ItemStack((Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.page));
+			if (is != null && is.getItem() != null) {
+				is.stackTagCompound = new NBTTagCompound();
+				//is.stackTagCompound.setTag("symbol", new NBTTagCompound());
+				api.setPageSymbol(is, a.identifier());
+				return is;
+			}
+		}
+		return null;
+	}
+
+	public static IAgeSymbol getRandomPage() {
+		ArrayList<IAgeSymbol> c = getAllSymbols();
 		return c.get(rand.nextInt(c.size()));
+	}
+
+	public static int getPageRarity(IAgeSymbol a) {
+		try {
+			return (Integer)getRarity.invoke(null, a.identifier());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return 0;
+		}
 	}
 
 	public static void registerAgeSymbol(IAgeSymbol a) {
@@ -480,121 +502,12 @@ public class ReikaMystcraftHelper {
 		}
 	}
 
-	public static class AgeSymbol {
-
-		private static boolean loadedCorrectly;
-
-		private static Class ageSymbolInterf;
-
-		private static Method id;
-		private static Method instability;
-		private static Method name;
-
-		private static Object symbolAPI;
-		private static Object wordAPI;
-
-		private static Method getSymbol;
-		private static Method registerSymbol;
-		private static Method blacklistSymbol;
-
-		private static Method registerWord;
-
-		private static Method getAgeSymbols;
-
-		private static Method createPage;
-
-		private final Object iagesymbol;
-
-		private AgeSymbol(Object o) {
-			iagesymbol = o;
-		}
-
-		public String getID() {
-			if (!loadedCorrectly)
-				return "";
-			try {
-				return (String)id.invoke(iagesymbol);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return "";
-			}
-		}
-
-		public String getDisplayName() {
-			if (!loadedCorrectly)
-				return "";
-			try {
-				return (String)name.invoke(iagesymbol);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return "";
-			}
-		}
-
-		public int getInstability() {
-			if (!loadedCorrectly)
-				return 0;
-			try {
-				return (Integer)instability.invoke(iagesymbol, 1);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return 0;
-			}
-		}
-
-		public ItemStack getPage() {
-			if (!loadedCorrectly)
-				return null;
-			try {
-				return (ItemStack)createPage.invoke(iagesymbol, this.getID());
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		}
-
-		static {
-			if (ModList.MYSTCRAFT.isLoaded()) {
-				try {
-					ageSymbolInterf = Class.forName("com.xcompwiz.mystcraft.symbol.IAgeSymbol");
-					id = ageSymbolInterf.getDeclaredMethod("identifier");
-					name = ageSymbolInterf.getDeclaredMethod("displayName");
-					instability = ageSymbolInterf.getDeclaredMethod("instabilityModifier", int.class);
-
-					Class mgr = Class.forName("com.xcompwiz.mystcraft.symbol.SymbolManager");
-					getAgeSymbols = mgr.getDeclaredMethod("getAgeSymbols");
-
-					Class page = Class.forName("com.xcompwiz.mystcraft.page.Page");
-					createPage = page.getDeclaredMethod("createSymbolPage", String.class);
-
-					Class internal = Class.forName("com.xcompwiz.mystcraft.core.InternalAPI");
-					symbolAPI = internal.getField("symbol").get(null);
-
-					Class api = Class.forName("com.xcompwiz.mystcraft.oldapi.internal.ISymbolAPI");
-					registerSymbol = api.getMethod("registerSymbol", ageSymbolInterf);
-					getSymbol = api.getMethod("getSymbolForIdentifier", String.class);
-					blacklistSymbol = api.getMethod("blacklistIdentifier", String.class);
-
-					loadedCorrectly = true;
-				}
-				catch (Exception e) {
-					DragonAPICore.logError("Error loading Mystcraft page interfacing!");
-					e.printStackTrace();
-					ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
-				}
-			}
-		}
-
-	}
-
 	static {
 		Method tile = null;
 		Method book = null;
 		Method link = null;
+
+		Method rarity = null;
 
 		boolean load = true;
 
@@ -616,6 +529,17 @@ public class ReikaMystcraftHelper {
 				load = false;
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
 			}
+
+			try {
+				Class mgr = Class.forName("com.xcompwiz.mystcraft.symbol.SymbolManager");
+				rarity = mgr.getMethod("getSymbolItemCardRank", String.class);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Error loading Mystcraft symbol interfacing!");
+				e.printStackTrace();
+				load = false;
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
+			}
 		}
 		else {
 			load = false;
@@ -624,6 +548,8 @@ public class ReikaMystcraftHelper {
 		getTile = tile;
 		getBook = book;
 		getLink = link;
+
+		getRarity = rarity;
 	}
 
 }

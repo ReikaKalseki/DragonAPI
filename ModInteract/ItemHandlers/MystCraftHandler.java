@@ -12,12 +12,14 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Exception.ModReflectionException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
+
+import com.xcompwiz.mystcraft.api.MystObjects;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public class MystCraftHandler extends ModHandlerBase {
@@ -35,6 +37,7 @@ public class MystCraftHandler extends ModHandlerBase {
 		Block idcrystal = null;
 
 		if (this.hasMod()) {
+			/*
 			try {
 				iddecay = this.getBlockInstance("decay");
 				idportal = this.getBlockInstance("portal");
@@ -50,7 +53,10 @@ public class MystCraftHandler extends ModHandlerBase {
 				e.printStackTrace();
 				this.logFailure(e);
 			}
-
+			 */
+			iddecay = Block.getBlockFromName(MystObjects.Blocks.decay);
+			idportal = Block.getBlockFromName(MystObjects.Blocks.portal);
+			idcrystal = Block.getBlockFromName(MystObjects.Blocks.crystal);
 			ReikaJavaLibrary.initClass(ReikaMystcraftHelper.class);
 		}
 		else {

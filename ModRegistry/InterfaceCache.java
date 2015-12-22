@@ -28,7 +28,8 @@ public enum InterfaceCache {
 	BCROBOT("buildcraft.api.robots.EntityRobotBase"),
 	AREAPROVIDER("buildcraft.api.core.IAreaProvider"),
 	TINKERTOOL("tconstruct.library.tools.ToolCore"),
-	DSU("powercrystals.minefactoryreloaded.api.IDeepStorageUnit");
+	DSU("powercrystals.minefactoryreloaded.api.IDeepStorageUnit"),
+	STREAM("streams.block.FixedFlowBlock");
 
 	private final String classpath;
 	public final String name;

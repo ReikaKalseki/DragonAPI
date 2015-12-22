@@ -17,7 +17,9 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import Reika.DragonAPI.DragonAPICore;
@@ -29,10 +31,12 @@ import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
 import Reika.DragonAPI.Interfaces.Configuration.BoundedConfig;
 import Reika.DragonAPI.Interfaces.Configuration.ConfigList;
+import Reika.DragonAPI.Interfaces.Configuration.CustomCategoryConfig;
 import Reika.DragonAPI.Interfaces.Configuration.DecimalConfig;
 import Reika.DragonAPI.Interfaces.Configuration.IntArrayConfig;
 import Reika.DragonAPI.Interfaces.Configuration.IntegerConfig;
 import Reika.DragonAPI.Interfaces.Configuration.SegmentedConfigList;
+import Reika.DragonAPI.Interfaces.Configuration.SelectiveConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringArrayConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
 import Reika.DragonAPI.Interfaces.Registry.IDRegistry;
@@ -57,8 +61,11 @@ public class ControlledConfig {
 	private final HashMap<SegmentedConfigList, String> specialFiles = new HashMap();
 	private final MultiMap<String, SegmentedConfigList> specialConfigs = new MultiMap();
 	private final HashMap<String, HashMap<String, String>> extraFiles = new HashMap();
+	private final HashMap<String, HashMap<String, Object>> optionMap = new HashMap();
+	private final HashMap<String, HashMap<String, DataElement>> additionalOptions = new HashMap();
+	private final HashSet<String> orphanExclusions = new HashSet();
 
-	public ControlledConfig(DragonAPIMod mod, ConfigList[] option, IDRegistry[] id, int cfg) {
+	public ControlledConfig(DragonAPIMod mod, ConfigList[] option, IDRegistry[] id, int _cfg_) {
 		configMod = mod;
 		optionList = option;
 		IDList = id;
@@ -77,6 +84,33 @@ public class ControlledConfig {
 			otherIDs = new int[0];
 			IDList = new IDRegistry[0];
 		}
+
+		for (int i = 0; i < optionList.length; i++) {
+			ConfigList cfg = optionList[i];
+			String s1 = this.getCategory(cfg);
+			String s2 = cfg.getLabel();
+			this.registerOption(s1, s2, cfg);
+		}
+
+		for (int i = 0; i < IDList.length; i++) {
+			IDRegistry cfg = IDList[i];
+			String s1 = cfg.getCategory();
+			String s2 = cfg.getConfigName();
+			this.registerOption(s1, s2, cfg);
+		}
+	}
+
+	private void registerOption(String s1, String s2, Object cfg) {
+		HashMap<String, Object> map = optionMap.get(s1.toLowerCase());
+		if (map == null) {
+			map = new HashMap();
+			optionMap.put(s1.toLowerCase(), map);
+		}
+		map.put(s2, cfg);
+	}
+
+	protected final void registerOrphanExclusion(String s) {
+		orphanExclusions.add(s.toLowerCase());
 	}
 
 	private final String getConfigPath() {
@@ -204,12 +238,15 @@ public class ControlledConfig {
 	private void loadConfig() {
 		config.load();
 
+		this.stripOrhpanedEntries();
+
 		if (!specialFiles.isEmpty())
 			this.loadExtraFiles();
 
 		for (int i = 0; i < optionList.length; i++) {
-			String label = optionList[i].getLabel();
-			if (optionList[i].shouldLoad()) {
+			ConfigList cfg = optionList[i];
+			String label = cfg.getLabel();
+			if (cfg.shouldLoad()) {
 				controls[i] = this.loadValue(optionList[i]);
 			}
 			else {
@@ -229,6 +266,39 @@ public class ControlledConfig {
 
 		if (!specialFiles.isEmpty())
 			this.saveExtraFiles();
+	}
+
+	private void stripOrhpanedEntries() {
+		HashSet<ConfigCategory> catNames = new HashSet();
+		for (String s1 : config.getCategoryNames()) {
+			ConfigCategory cat = config.getCategory(s1);
+			HashMap<String, Object> map = optionMap.get(s1.toLowerCase());
+			if (map == null) {
+				if (orphanExclusions.contains(s1))
+					continue;
+				boolean flag = true;
+				for (String s : orphanExclusions) {
+					if (s.startsWith(s1) || s1.startsWith(s))
+						flag = false;
+				}
+				if (flag)
+					catNames.add(cat);
+			}
+			else {
+				HashSet<String> entryNames = new HashSet();
+				for (String s2 : cat.getValues().keySet()) {
+					if (!map.containsKey(s2)) {
+						entryNames.add(s2);
+					}
+				}
+				for (String s : entryNames) {
+					cat.remove(s);
+				}
+			}
+		}
+		for (ConfigCategory c : catNames) {
+			config.removeCategory(c);
+		}
 	}
 
 	private Object loadValue(ConfigList cfg) {
@@ -347,6 +417,7 @@ public class ControlledConfig {
 		for (SegmentedConfigList cfg : specialConfigs.get(s)) {
 			Object dat = controls[cfg.ordinal()];
 			if (cfg.saveIfUnspecified() || !dat.equals(this.getDefault(cfg))) {
+				//ReikaJavaLibrary.pConsole(cfg.getLabel()+" - "+cfg.saveIfUnspecified()+"/"+dat+"&"+this.getDefault(cfg));
 				String val = this.encodeData(cfg, dat);
 				String sg = "[\""+cfg.getLabel()+"\"=\""+val+"\"";
 				li.add(sg);
@@ -394,64 +465,136 @@ public class ControlledConfig {
 	}
 
 	private boolean setState(BooleanConfig cfg) {
-		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultState());
+		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultState());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultState());
+		if (cfg instanceof SelectiveConfig) {
+			SelectiveConfig sfg = (SelectiveConfig)cfg;
+			if (!sfg.saveIfUnspecified() && prop.getBoolean(cfg.getDefaultState()) == cfg.getDefaultState()) {
+				this.removeConfigEntry(cfg);
+				return cfg.getDefaultState();
+			}
+		}
 		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
 			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return prop.getBoolean(cfg.getDefaultState());
 	}
 
 	private int setValue(IntegerConfig cfg) {
-		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultValue());
+		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultValue());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultValue());
+		if (cfg instanceof SelectiveConfig) {
+			SelectiveConfig sfg = (SelectiveConfig)cfg;
+			if (!sfg.saveIfUnspecified() && prop.getInt(cfg.getDefaultValue()) == cfg.getDefaultValue()) {
+				this.removeConfigEntry(cfg);
+				return cfg.getDefaultValue();
+			}
+		}
 		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
 			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return prop.getInt();
 	}
 
 	private float setFloat(DecimalConfig cfg) {
-		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultFloat());
+		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultFloat());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultFloat());
+		if (cfg instanceof SelectiveConfig) {
+			SelectiveConfig sfg = (SelectiveConfig)cfg;
+			if (!sfg.saveIfUnspecified() && (float)prop.getDouble(cfg.getDefaultFloat()) == cfg.getDefaultFloat()) {
+				this.removeConfigEntry(cfg);
+				return cfg.getDefaultFloat();
+			}
+		}
 		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
 			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return (float)prop.getDouble(cfg.getDefaultFloat());
 	}
 
 	private String setString(StringConfig cfg) {
-		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultString());
+		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultString());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultString());
+		if (cfg instanceof SelectiveConfig) {
+			SelectiveConfig sfg = (SelectiveConfig)cfg;
+			if (!sfg.saveIfUnspecified() && prop.getString().equals(cfg.getDefaultString())) {
+				this.removeConfigEntry(cfg);
+				return cfg.getDefaultString();
+			}
+		}
 		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
 			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return prop.getString();
 	}
 
 	private int[] setIntArray(IntArrayConfig cfg) {
-		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultIntArray());
+		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultIntArray());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultIntArray());
+		if (cfg instanceof SelectiveConfig) {
+			SelectiveConfig sfg = (SelectiveConfig)cfg;
+			if (!sfg.saveIfUnspecified() && Arrays.equals(prop.getIntList(), cfg.getDefaultIntArray())) {
+				this.removeConfigEntry(cfg);
+				return cfg.getDefaultIntArray();
+			}
+		}
 		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
 			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return prop.getIntList();
 	}
 
 	private String[] setStringArray(StringArrayConfig cfg) {
-		Property prop = config.get("Control Setup", cfg.getLabel(), cfg.getDefaultStringArray());
+		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultStringArray());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultStringArray());
+		if (cfg instanceof SelectiveConfig) {
+			SelectiveConfig sfg = (SelectiveConfig)cfg;
+			if (!sfg.saveIfUnspecified() && Arrays.deepEquals(prop.getStringList(), cfg.getDefaultStringArray())) {
+				this.removeConfigEntry(cfg);
+				return cfg.getDefaultStringArray();
+			}
+		}
 		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
 			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
 		return prop.getStringList();
+	}
+
+	private String getCategory(ConfigList cfg) {
+		return cfg instanceof CustomCategoryConfig ? ((CustomCategoryConfig)cfg).getCategory() : "control setup";
+	}
+
+	private void removeConfigEntry(ConfigList cfg) {
+		ConfigCategory cat = config.getCategory(this.getCategory(cfg));
+		cat.remove(cfg.getLabel());
 	}
 
 	private int getValueFromConfig(IDRegistry id, Configuration config) {
 		return config.get(id.getCategory(), id.getConfigName(), id.getDefaultID()).getInt();
 	}
 
-	protected void loadAdditionalData() {}
+	private final void loadAdditionalData() {
+		for (String c : additionalOptions.keySet()) {
+			HashMap<String, DataElement> map = additionalOptions.get(c);
+			for (String n : map.keySet()) {
+				DataElement e = map.get(n);
+				e.data = e.load(config);
+			}
+		}
+	}
+
+	protected final <C> DataElement<C> registerAdditionalOption(String c, String n, C default_) {
+		c = c.toLowerCase();
+		HashMap<String, DataElement> map = additionalOptions.get(c);
+		if (map == null) {
+			map = new HashMap();
+			additionalOptions.put(c, map);
+		}
+		DataElement<C> e = new DataElement(c, n, default_);
+		map.put(n, e);
+		this.registerOption(c, n, e);
+		return e;
+	}
 	/*
 	public void reloadCategoryFromDefaults(String category) {
 		config.load();
@@ -461,4 +604,44 @@ public class ControlledConfig {
 		this.loadConfig();
 	}*/
 
+	protected static final class DataElement<C> {
+
+		private C data;
+		public final String category;
+		public final String name;
+
+		private DataElement(String c, String n, C default_) {
+			category = c;
+			name = n;
+			this.data = default_;
+		}
+
+		private Object load(Configuration config) {
+			if (data instanceof Boolean) {
+				return config.get(category, name, (Boolean)data).getBoolean();
+			}
+			else if (data instanceof Integer) {
+				return config.get(category, name, (Integer)data).getInt();
+			}
+			else if (data instanceof Float || data instanceof Double) {
+				return (float)(config.get(category, name, (Float)data).getDouble());
+			}
+			else if (data instanceof String) {
+				return config.get(category, name, (String)data).getString();
+			}
+			else if (data instanceof int[]) {
+				return config.get(category, name, (int[])data).getIntList();
+			}
+			else if (data instanceof String[]) {
+				return config.get(category, name, (String[])data).getStringList();
+			}
+			else {
+				return data;
+			}
+		}
+
+		public C getData() {
+			return data;
+		}
+	}
 }

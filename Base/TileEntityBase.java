@@ -543,12 +543,12 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	private void writeError(Throwable e) {
 		if (DragonOptions.CHATERRORS.getState()) {
-			ReikaChatHelper.write(this+" is throwing "+e.getClass()+" on update: "+e.getMessage());
+			ReikaChatHelper.write(this+" ["+FMLCommonHandler.instance().getEffectiveSide()+"] is throwing "+e.getClass()+" on update: "+e.getMessage());
 			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));
 			ReikaChatHelper.write("");
 		}
 
-		DragonAPICore.logError(this+" is throwing "+e.getClass()+" on update: "+e.getMessage());
+		DragonAPICore.logError(this+" ["+FMLCommonHandler.instance().getEffectiveSide()+"] is throwing "+e.getClass()+" on update: "+e.getMessage());
 		e.printStackTrace();
 		DragonAPICore.log("");
 	}

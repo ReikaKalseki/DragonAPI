@@ -414,13 +414,13 @@ public final class ReikaItemHelper extends DragonAPICore {
 		private int getFlags(ItemStack is) {
 			int flags = 0;
 
-			flags += Item.getIdFromItem(is.getItem())*10000000;
+			flags += Item.getIdFromItem(is.getItem())*1000000;
 			flags += is.getItemDamage()*100;
 			flags += is.stackSize;
 			//if (is.stackTagCompound != null)
 			//	flags += is.stackTagCompound.hashCode();
 
-			return is.stackTagCompound == null ? flags+Integer.MIN_VALUE : flags; //force NBT versions to be at end (+ve)
+			return flags;//is.stackTagCompound == null ? flags+Integer.MIN_VALUE : flags; //force NBT versions to be at end (+ve)
 		}
 
 	}
