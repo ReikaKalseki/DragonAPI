@@ -127,7 +127,7 @@ public class BlockReplaceCommand extends DragonCommandBase {
 
 		@Override
 		protected boolean replace(Block b, int meta) {
-			return ReikaTreeHelper.getTree(b, meta) != null || ReikaTreeHelper.getTreeFromLeaf(b, meta) != null || ModWoodList.isModWood(b, meta) || ModWoodList.isModLeaf(b, meta) || TreeGetter.isDyeLeaf(new ItemStack(b, 1, meta));
+			return ReikaTreeHelper.getTree(b, meta) != null || ReikaTreeHelper.getTreeFromLeaf(b, meta) != null || ModWoodList.isModWood(b, meta) || ModWoodList.isModLeaf(b, meta) || TreeGetter.isDyeLeaf(new ItemStack(b, 1, meta)) || TreeGetter.isRainbowLeaf(new ItemStack(b, 1, meta));
 		}
 
 	}

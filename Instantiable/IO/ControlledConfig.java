@@ -65,7 +65,7 @@ public class ControlledConfig {
 	private final HashMap<String, HashMap<String, DataElement>> additionalOptions = new HashMap();
 	private final HashSet<String> orphanExclusions = new HashSet();
 
-	public ControlledConfig(DragonAPIMod mod, ConfigList[] option, IDRegistry[] id, int _cfg_) {
+	public ControlledConfig(DragonAPIMod mod, ConfigList[] option, IDRegistry[] id) {
 		configMod = mod;
 		optionList = option;
 		IDList = id;
@@ -643,5 +643,11 @@ public class ControlledConfig {
 		public C getData() {
 			return data;
 		}
+	}
+
+	public final void reload() {
+		if (config == null)
+			throw new MisuseException("You cannot reload a config before it is initialized!");
+		this.loadConfig();
 	}
 }

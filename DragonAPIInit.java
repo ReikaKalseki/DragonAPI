@@ -195,7 +195,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Instance("DragonAPI")
 	public static DragonAPIInit instance = new DragonAPIInit();
 
-	public static final ControlledConfig config = new ControlledConfig(instance, DragonOptions.optionList, null, 0);
+	public static final ControlledConfig config = new ControlledConfig(instance, DragonOptions.optionList, null);
 
 	private static ModLogger logger;
 

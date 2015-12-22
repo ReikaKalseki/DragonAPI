@@ -14,7 +14,6 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.biome.BiomeGenBase;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 
@@ -25,7 +24,7 @@ public class FindBiomeCommand extends DragonCommandBase {
 		EntityPlayerMP ep = this.getCommandSenderAsPlayer(ics);
 		int r = 8192;
 		int step = 256;
-		BiomeGenBase target = args.length == 1 ? null : ReikaBiomeHelper.getBiomeByName(args[1]);
+		BiomeGenBase target = args.length == 1 ? null : BiomeGenBase.biomeList[Integer.parseInt(args[1])];
 		MultiMap<String, Coordinate> map = new MultiMap();
 		for (int x = -r; x <= r; x += step) {
 			for (int z = -r; z <= r; z += step) {

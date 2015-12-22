@@ -268,8 +268,10 @@ public class SlicedBlockBlueprint {
 				for (int m = 0; m < ids[k].length; m++) {
 					int dy = y+m;
 					Block id = ids[k][m];
-					int meta = metas[k][m];
-					array.setBlock(dx, dy, dz, id, meta);
+					if (id != null) { //"don't care"
+						int meta = metas[k][m];
+						array.setBlock(dx, dy, dz, id, meta);
+					}
 				}
 			}
 		}
