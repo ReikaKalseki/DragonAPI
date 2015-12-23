@@ -84,7 +84,7 @@ public class ReikaJVMParser {
 
 	private static int[] getJavaVersion() {
 		String v = System.getProperty("java.version");
-		String[] parts = v.replaceAll("_", ".").split("\\.");
+		String[] parts = v.replaceAll("[^0-9\\._]","").replaceAll("_", ".").split("\\.");
 		int[] ret = new int[parts.length-1]; //ignore the "1."
 		for (int i = 0; i < ret.length; i++) {
 			ret[i] = Integer.parseInt(parts[i+1]);
