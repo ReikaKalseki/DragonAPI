@@ -37,8 +37,6 @@ public class PopupWriter {
 
 	public static final PopupWriter instance = new PopupWriter();
 
-	private final FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-
 	private final ArrayList<String> list = new ArrayList();
 
 	private int buttonX;
@@ -66,6 +64,7 @@ public class PopupWriter {
 			int y = 2;
 			int w = 192;
 			int sw = w-25;
+			FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
 			int lines = fr.listFormattedStringToWidth(s, sw).size();
 			int h = 7+(lines)*(fr.FONT_HEIGHT);
 			Gui.drawRect(x, y, x+w, y+h, 0xff4a4a4a);

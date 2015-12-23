@@ -26,6 +26,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.InvalidConfigException;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
@@ -351,6 +352,8 @@ public class ControlledConfig {
 			else {
 				try {
 					Object o = this.parseData(cfg, s);
+					if (o == null)
+						throw new RegistrationException(configMod, "Config entry '"+cfg.getLabel()+"' returned a null value. This is invalid.");
 					controls[cfg.ordinal()] = o;
 				}
 				catch (Exception e) {

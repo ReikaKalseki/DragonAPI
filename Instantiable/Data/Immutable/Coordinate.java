@@ -22,6 +22,8 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
+import Reika.DragonAPI.Instantiable.Event.BlockTickEvent.UpdateFlags;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -223,7 +225,9 @@ public final class Coordinate {
 	}
 
 	public void updateTick(World world, Random r) {
-		this.getBlock(world).updateTick(world, xCoord, yCoord, zCoord, r);
+		Block b = this.getBlock(world);
+		b.updateTick(world, xCoord, yCoord, zCoord, r);
+		BlockTickEvent.fire(world, xCoord, yCoord, zCoord, b, UpdateFlags.FORCED.flag);
 	}
 
 	public void scheduleUpdateTick(World world, int delay) {

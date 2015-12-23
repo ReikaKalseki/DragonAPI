@@ -74,6 +74,7 @@ import Reika.DragonAPI.Base.ModHandlerBase.SearchVersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionIgnore;
 import Reika.DragonAPI.Command.BlockReplaceCommand;
+import Reika.DragonAPI.Command.ClassLoaderCommand;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
 import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
@@ -538,6 +539,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new FindTilesCommand());
 		evt.registerServerCommand(new ClearItemsCommand());
 		evt.registerServerCommand(new FindBiomeCommand());
+		evt.registerServerCommand(new ClassLoaderCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();

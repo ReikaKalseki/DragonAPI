@@ -11,13 +11,12 @@ package Reika.DragonAPI.ASM;
 
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.List;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.BiomeDictionary;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -39,12 +38,10 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Event.Client.ItemTooltipEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class DragonAPIClassTransfomer implements IClassTransformer {
 
@@ -87,12 +84,18 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		//JUMPCHECKEVENTCLIENT("net.minecraft.entity.EntityLivingBase", "sv"),
 		MOBTARGETEVENT("net.minecraft.world.World", "ahb"),
 		//TOOLTIPEVENT("net.minecraft.item.Item", "adb"),
+		PERMUTEDBIOMEREG("net.minecraftforge.common.BiomeDictionary"),
+		BLOCKTICKEVENT("net.minecraft.world.WorldServer", "mt"),
 		;
 
 		private final String obfName;
 		private final String deobfName;
 
 		private static final ClassPatch[] list = values();
+
+		private ClassPatch(String s) {
+			this(s, s);
+		}
 
 		private ClassPatch(String deobf, String obf) {
 			obfName = obf;
@@ -1100,6 +1103,76 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					m.instructions.add(new InsnNode(Opcodes.RETURN));
 					break;
 				}*/
+				case PERMUTEDBIOMEREG: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "registerVanillaBiomes", "()V");
+					m.instructions.insertBefore(m.instructions.getLast(), new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/DragonAPIClassTransfomer", "registerPermutedBiomesToDictionary", "()V", false));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case BLOCKTICKEVENT: {
+					String sig = "(Lnet/minecraft/world/World;IIILjava/util/Random;)V";
+					String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_149674_a" : "updateTick";
+
+					InsnList fire = new InsnList();
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 16));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 5));
+					fire.add(new InsnNode(Opcodes.IADD));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 18));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 13));
+					String getY = FMLForgePlugin.RUNTIME_DEOBF ? "func_76662_d" : "getYLocation";
+					fire.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/world/chunk/storage/ExtendedBlockStorage", getY, "()I", false));
+					fire.add(new InsnNode(Opcodes.IADD));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 17));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 6));
+					fire.add(new InsnNode(Opcodes.IADD));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 19));
+					fire.add(new FieldInsnNode(Opcodes.GETSTATIC, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags", "NATURAL", "LReika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags;"));
+					fire.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags", "flag", "I"));
+					fire.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent", "fire", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;I)V", false));
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147456_g", "func_147456_g", "()V");
+					AbstractInsnNode ain = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/block/Block", func, sig);
+					m.instructions.insert(ain, fire);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 1!");
+
+					String xc = FMLForgePlugin.RUNTIME_DEOBF ? "field_77183_a" : "xCoord";
+					String yc = FMLForgePlugin.RUNTIME_DEOBF ? "field_77181_b" : "yCoord";
+					String zc = FMLForgePlugin.RUNTIME_DEOBF ? "field_77182_c" : "zCoord";
+					fire.clear();
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 7));
+					fire.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/NextTickListEntry", xc, "I"));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 7));
+					fire.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/NextTickListEntry", yc, "I"));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 7));
+					fire.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/NextTickListEntry", zc, "I"));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 9));
+					fire.add(new FieldInsnNode(Opcodes.GETSTATIC, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags", "SCHEDULED", "LReika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags;"));
+					fire.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags", "flag", "I"));
+					fire.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent", "fire", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;I)V", false));
+					m = ReikaASMHelper.getMethodByName(cn, "func_147454_a", "scheduleBlockUpdateWithPriority", "(IIILnet/minecraft/block/Block;II)V");
+					ain = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/block/Block", func, sig);
+					m.instructions.insert(ain, fire);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 2!");
+
+					fire.clear();
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 4));
+					fire.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/NextTickListEntry", xc, "I"));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 4));
+					fire.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/NextTickListEntry", yc, "I"));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 4));
+					fire.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/world/NextTickListEntry", zc, "I"));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 6));
+					fire.add(new FieldInsnNode(Opcodes.GETSTATIC, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags", "SCHEDULED", "LReika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags;"));
+					fire.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags", "flag", "I"));
+					fire.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent", "fire", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;I)V", false));
+					m = ReikaASMHelper.getMethodByName(cn, "func_72955_a", "tickUpdates", "(Z)Z");
+					ain = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/block/Block", func, sig);
+					m.instructions.insert(ain, fire);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 3!");
+					break;
+				}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -1121,15 +1194,14 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 	}
 
-	abstract static class test extends Item {
-
-
-		@Override
-		@SideOnly(Side.CLIENT)
-		public void addInformation(ItemStack is, EntityPlayer ep, List li, boolean vb) {
-			ItemTooltipEvent.fire(is, ep, li, vb);
+	public static void registerPermutedBiomesToDictionary() { //Kept here to prevent premature init of ReikaBiomeHelper
+		for (int i = 0; i < BiomeGenBase.biomeList.length; i++) {
+			BiomeGenBase b = BiomeGenBase.biomeList[i];
+			if (b instanceof BiomeGenMutated) {
+				BiomeGenBase parent = ((BiomeGenMutated)b).baseBiome;
+				BiomeDictionary.registerBiomeType(b, BiomeDictionary.getTypesForBiome(parent));
+			}
 		}
-
 	}
 
 	@Override
