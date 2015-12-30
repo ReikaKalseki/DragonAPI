@@ -20,6 +20,8 @@ import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaEnchantmentHelper extends DragonAPICore {
@@ -137,6 +139,16 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 			return o1.getName().compareTo(o2.getName());
 		}
 
+	}
+
+	public static void addEnchantment(NBTTagCompound tag, Enchantment enchantment, int level) {
+		if (!tag.hasKey("ench", 9))
+			tag.setTag("ench", new NBTTagList());
+		NBTTagList li = tag.getTagList("ench", 10);
+		NBTTagCompound nbt = new NBTTagCompound();
+		nbt.setShort("id", (short)enchantment.effectId);
+		nbt.setShort("lvl", ((byte)level));
+		li.appendTag(nbt);
 	}
 
 }

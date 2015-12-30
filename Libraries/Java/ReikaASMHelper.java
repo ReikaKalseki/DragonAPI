@@ -360,6 +360,29 @@ public class ReikaASMHelper {
 		return ain.getOpcode() == opcode ? ain : null;
 	}
 
+	public static AbstractInsnNode getNthOpcode(InsnList li, int opcode, int n) {
+		int c = 0;
+		for (int i = 0; i < li.size(); i++) {
+			AbstractInsnNode ain = li.get(i);
+			if (ain.getOpcode() == opcode) {
+				c++;
+				if (c == n)
+					return ain;
+			}
+		}
+		return null;
+	}
+
+	public static AbstractInsnNode getLastOpcode(InsnList li, int opcode) {
+		AbstractInsnNode ret = null;
+		for (int i = 0; i < li.size(); i++) {
+			AbstractInsnNode ain = li.get(i);
+			if (ain.getOpcode() == opcode)
+				ret = ain;
+		}
+		return ret;
+	}
+
 	public static AbstractInsnNode getFirstInsnAfter(InsnList li, int index, int opcode, Object... args) {
 		AbstractInsnNode ain = li.get(index+1);
 		while (!match(ain, opcode, args) && index < li.size()) {

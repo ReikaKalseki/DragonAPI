@@ -10,7 +10,9 @@
 package Reika.DragonAPI.Libraries.World;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -24,9 +26,11 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Interfaces.Block.SpecialOreBlock;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModOreList;
+import Reika.DragonAPI.ModRegistry.ModWoodList;
 
 public final class ReikaBlockHelper extends DragonAPICore {
 
@@ -42,6 +46,50 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		if (m2 == Material.snow && m1 == Material.craftedSnow)
 			return true;
 		if (m1.getMaterialMapColor() == MapColor.foliageColor && m2.getMaterialMapColor() == MapColor.foliageColor)
+			return true;
+		return false;
+	}
+
+	public static boolean isWood(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		if (b instanceof BlockLog)
+			return true;
+		int meta = world.getBlockMetadata(x, y, z);
+		if (ReikaTreeHelper.getTree(b, meta) != null)
+			return true;
+		if (ModWoodList.getModWood(b, meta) != null)
+			return true;
+		return false;
+	}
+
+	public static boolean isLeaf(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		if (b instanceof BlockLeavesBase)
+			return true;
+		int meta = world.getBlockMetadata(x, y, z);
+		if (ReikaTreeHelper.getTreeFromLeaf(b, meta) != null)
+			return true;
+		if (ModWoodList.getModWoodFromLeaf(b, meta) != null)
+			return true;
+		return false;
+	}
+
+	public static boolean isWood(Block b, int meta) {
+		if (b instanceof BlockLog)
+			return true;
+		if (ReikaTreeHelper.getTree(b, meta) != null)
+			return true;
+		if (ModWoodList.getModWood(b, meta) != null)
+			return true;
+		return false;
+	}
+
+	public static boolean isLeaf(Block b, int meta) {
+		if (b instanceof BlockLeavesBase)
+			return true;
+		if (ReikaTreeHelper.getTreeFromLeaf(b, meta) != null)
+			return true;
+		if (ModWoodList.getModWoodFromLeaf(b, meta) != null)
 			return true;
 		return false;
 	}

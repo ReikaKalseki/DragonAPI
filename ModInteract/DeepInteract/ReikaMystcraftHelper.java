@@ -440,9 +440,10 @@ public class ReikaMystcraftHelper {
 		return c.get(rand.nextInt(c.size()));
 	}
 
-	public static int getPageRarity(IAgeSymbol a) {
+	/** Ranges from 0-1, lower is rarer; direct linear affect on page loot rarity */
+	public static float getPageRarity(IAgeSymbol a) {
 		try {
-			return (Integer)getRarity.invoke(null, a.identifier());
+			return (Float)getRarity.invoke(null, a.identifier());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -532,7 +533,7 @@ public class ReikaMystcraftHelper {
 
 			try {
 				Class mgr = Class.forName("com.xcompwiz.mystcraft.symbol.SymbolManager");
-				rarity = mgr.getMethod("getSymbolItemCardRank", String.class);
+				rarity = mgr.getMethod("getSymbolItemRarity", String.class);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Error loading Mystcraft symbol interfacing!");

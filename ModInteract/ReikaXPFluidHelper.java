@@ -24,8 +24,8 @@ public class ReikaXPFluidHelper {
 	private static int ratio;
 
 	static {
-		addFluid("openblocks.OpenBlocks$Fluids", "xpJuice", "openmods.utils.EnchantmentUtils", "RATIO");
 		addFluid("openblocks.OpenBlocks$Fluids", "xpJuice", "openblocks.Config", "xpToLiquidRatio");
+		addFluid("openblocks.OpenBlocks$Fluids", "xpJuice", "openmods.utils.EnchantmentUtils", "RATIO");
 		addFluid("mods.immibis.lxp.LiquidXPMod", "defaultFluid", "mods.immibis.lxp.LiquidXPMod", "mbPerXp");
 	}
 
@@ -50,6 +50,8 @@ public class ReikaXPFluidHelper {
 
 	/** Reflective version */
 	private static void addFluid(String s, String c, String f) {
+		if (loaded != null)
+			return;
 		try {
 			Class cl = Class.forName(c);
 			Field fd = cl.getDeclaredField(f);
@@ -63,6 +65,8 @@ public class ReikaXPFluidHelper {
 	}
 
 	private static void addFluid(Fluid f, int amt) {
+		if (loaded != null)
+			return;
 		if (f != null) {
 			register(f, amt);
 		}

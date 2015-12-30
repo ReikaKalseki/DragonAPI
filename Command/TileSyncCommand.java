@@ -28,7 +28,7 @@ public class TileSyncCommand extends DragonCommandBase {
 	public void processCommand(ICommandSender ics, String[] args) {
 		EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
 		if (args.length == 3) {
-			ep = ep.worldObj.getPlayerEntityByName(args[3]);
+			ep = ep.worldObj.getPlayerEntityByName(args[2]);
 		}
 		if (args.length != 2 && args.length != 3) {
 			ReikaChatHelper.sendChatToPlayer(ep, EnumChatFormatting.RED+"Invalid arguments. Specify a range and a sync depth.");

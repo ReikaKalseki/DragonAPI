@@ -12,10 +12,8 @@ package Reika.DragonAPI.Libraries;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -174,36 +172,6 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	}
 
-	/** provides a mapping between an Entity Class and an entity ID */
-	private static Map<Class, Integer> classToIDMapping = new HashMap();
-
-	/** Maps entity names to their numeric identifiers */
-	private static Map<String, Integer> stringToIDMapping = new HashMap();
-
-	public static void loadMappings()
-	{
-		if (!classToIDMapping.isEmpty())
-			return;
-		try {
-			Map map = EntityList.stringToIDMapping;
-			for (Object key : EntityList.stringToClassMapping.keySet()) {
-				String name = (String)key;
-				Class c = (Class)EntityList.stringToClassMapping.get(name);
-				//ReikaJavaLibrary.pConsole(name+":"+c);
-				if (map.containsKey(name)) {
-					int id = (Integer)map.get(name);
-					classToIDMapping.put(c, id);
-					stringToIDMapping.put(name, id);
-				}
-			}
-			//ReikaJavaLibrary.pConsole(map);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException(e);
-		}
-	}
-
 	private static int[] mobColorArray = new int[201]; //Highest Entity ID (endercrystal)+1
 
 	private static void setMobColors() {
@@ -290,7 +258,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	/** Converts a string mobname to its respective id. Args: Name */
 	public static int mobNameToID(String name) {
-		return stringToIDMapping.get(name);
+		return (int)EntityList.stringToIDMapping.get(name);
 	}
 
 	/** Converts a string mobname to its respective class file. Args: Name */
@@ -705,11 +673,11 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	}
 
 	public static boolean hasID(String mob) {
-		return stringToIDMapping.containsKey(mob);
+		return EntityList.stringToIDMapping.containsKey(mob);
 	}
 
 	public static boolean hasID(Class<? extends Entity> c) {
-		return classToIDMapping.containsKey(c);
+		return EntityList.classToIDMapping.containsKey(c);
 	}
 
 	public static String getEntityDisplayName(String name) {
@@ -720,6 +688,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return TameHostile.class.isAssignableFrom((Class)EntityList.stringToClassMapping.get(mob));
 	}
 
+	@Deprecated //Too easy to #%$^ up
 	public static void overrideEntity(Class mobClass, String name, int entityID) {
 		EntityEggInfo info = (EntityEggInfo)EntityList.entityEggs.get(entityID);
 		removeEntityMapping(mobClass, name, entityID);
@@ -729,6 +698,31 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		}
 	}
 
+	@Deprecated //Too easy to #%$^ up
+	public static void removeEntityFromRegistry(Class c) {
+		String s = (String)EntityList.classToStringMapping.remove(c);
+		int id = (int)EntityList.stringToIDMapping.remove(s);
+		EntityList.stringToClassMapping.remove(s);
+		EntityList.IDtoClassMapping.remove(id);
+		EntityList.classToIDMapping.remove(c);
+	}
+
+	@Deprecated //Too easy to #%$^ up
+	public static void overrideEntityAtSameID(Class oldClass, Class newClass) {
+		DragonAPICore.debug("Preparing to override Entity class "+oldClass+" with "+newClass);
+		String s = (String)EntityList.classToStringMapping.remove(oldClass);
+		int id = (int)EntityList.stringToIDMapping.remove(s);
+		DragonAPICore.debug("Found ID String '"+s+"' and numerical ID "+id);
+
+		EntityList.stringToClassMapping.remove(s);
+		EntityList.IDtoClassMapping.remove(id);
+		EntityList.classToIDMapping.remove(oldClass);
+
+		EntityList.addMapping(newClass, s, id);
+		DragonAPICore.debug("ID Mapping added. Getters: "+EntityList.classToStringMapping.get(newClass)+" & "+EntityList.classToIDMapping.get(newClass));
+	}
+
+	@Deprecated //Too easy to #%$^ up
 	private static void removeEntityMapping(Class mobClass, String name, int entityID) {
 		EntityList.stringToClassMapping.remove(name);
 		EntityList.entityEggs.remove(entityID);

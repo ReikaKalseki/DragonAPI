@@ -488,4 +488,16 @@ public final class ReikaItemHelper extends DragonAPICore {
 		UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(is.getItem());
 		return id != null ? id.modId : "[No Mod]";
 	}
+
+	public static boolean checkOreDictOverlap(ItemStack is1, ItemStack is2) {
+		int[] a1 = OreDictionary.getOreIDs(is1);
+		int[] a2 = OreDictionary.getOreIDs(is2);
+		for (int i = 0; i < a1.length; i++) {
+			for (int k = 0; k < a2.length; k++) {
+				if (a1[i] == a2[k])
+					return true;
+			}
+		}
+		return false;
+	}
 }

@@ -156,32 +156,48 @@ public final class MTInteractionManager {
 		this.addEntry(Prevention.NEWRECIPE, is, false, true);
 	}
 
-	public void blacklistRecipeRemovalFor(ItemStack is) {
-		this.addEntry(Prevention.REMOVERECIPE, is, false, true);
-	}
-
 	public void blacklistNewRecipesFor(Block i) {
 		this.addEntry(Prevention.NEWRECIPE, new ItemStack(i), true, true);
-	}
-
-	public void blacklistRecipeRemovalFor(Block i) {
-		this.addEntry(Prevention.REMOVERECIPE, new ItemStack(i), true, true);
 	}
 
 	public void blacklistNewRecipesFor(Item i) {
 		this.addEntry(Prevention.NEWRECIPE, new ItemStack(i), true, true);
 	}
 
-	public void blacklistRecipeRemovalFor(Item i) {
-		this.addEntry(Prevention.REMOVERECIPE, new ItemStack(i), true, true);
-	}
-
 	public void blacklistNewRecipesFor(ItemStack is, boolean ignoreMetadata, boolean ignoreNBT) {
 		this.addEntry(Prevention.NEWRECIPE, is, ignoreMetadata, ignoreNBT);
 	}
 
+	public void blacklistRecipeRemovalFor(ItemStack is) {
+		this.addEntry(Prevention.REMOVERECIPE, is, false, true);
+	}
+
+	public void blacklistRecipeRemovalFor(Block i) {
+		this.addEntry(Prevention.REMOVERECIPE, new ItemStack(i), true, true);
+	}
+
+	public void blacklistRecipeRemovalFor(Item i) {
+		this.addEntry(Prevention.REMOVERECIPE, new ItemStack(i), true, true);
+	}
+
 	public void blacklistRecipeRemovalFor(ItemStack is, boolean ignoreMetadata, boolean ignoreNBT) {
 		this.addEntry(Prevention.REMOVERECIPE, is, ignoreMetadata, ignoreNBT);
+	}
+
+	public void blacklistOreDictTagsFor(ItemStack is) {
+		this.addEntry(Prevention.OREDICT, is, false, true);
+	}
+
+	public void blacklistOreDictTagsFor(Block i) {
+		this.addEntry(Prevention.OREDICT, new ItemStack(i), true, true);
+	}
+
+	public void blacklistOreDictTagsFor(Item i) {
+		this.addEntry(Prevention.OREDICT, new ItemStack(i), true, true);
+	}
+
+	public void blacklistOreDictTagsFor(ItemStack is, boolean ignoreMetadata, boolean ignoreNBT) {
+		this.addEntry(Prevention.OREDICT, is, ignoreMetadata, ignoreNBT);
 	}
 
 	private void addEntry(Prevention p, ItemStack is, boolean ignoreMetadata, boolean ignoreNBT) {
@@ -221,7 +237,8 @@ public final class MTInteractionManager {
 
 	private static enum Prevention {
 		NEWRECIPE(),
-		REMOVERECIPE();
+		REMOVERECIPE(),
+		OREDICT();
 	}
 
 	private static final class MTItemEntry {
@@ -343,7 +360,7 @@ public final class MTInteractionManager {
 			else {
 				int period = s.indexOf('.');
 				if (period >= 0) {
-					return this.parseTruncLine(s.substring(period+1));
+					return this.parseTruncLine(s.substring(0, period-1), s.substring(period+1));
 				}
 				else { //not a recipe line
 					return false;
@@ -356,9 +373,14 @@ public final class MTInteractionManager {
 			DragonAPICore.logError("The line '"+s+"' "+desc+" Consider fixing this.");
 		}
 
-		private boolean parseTruncLine(String s) {
+		private boolean parseTruncLine(String pre, String s) {
 			if (s.startsWith("add")) {
-				return this.parse(s, Prevention.NEWRECIPE);
+				if (s.contains("ore:")) {
+					this.parse(s, Prevention.OREDICT);
+				}
+				else {
+					return this.parse(s, Prevention.NEWRECIPE);
+				}
 			}
 			else if (s.startsWith("remove")) {
 				return this.parse(s, Prevention.REMOVERECIPE);

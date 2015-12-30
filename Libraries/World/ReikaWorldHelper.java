@@ -414,7 +414,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static void temperatureEnvironment(World world, int x, int y, int z, int temperature) {
 		if (temperature < 0) {
 			for (int i = 0; i < 6; i++) {
-				ForgeDirection side = (checkForAdjMaterial(world, x, y, z, Material.water));
+				ForgeDirection side = checkForAdjMaterial(world, x, y, z, Material.water);
 				if (side != null)
 					changeAdjBlock(world, x, y, z, side, Blocks.ice, 0);
 			}
@@ -1825,12 +1825,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return count;
 	}
 
-	public static void forceGenAndPopulate(World world, int x, int y, int z, int meta) {
-		forceGenAndPopulate(world, x, y, z, meta, 0);
+	public static void forceGenAndPopulate(World world, int x, int z) {
+		forceGenAndPopulate(world, x, z, 0);
 	}
 
-	public static void forceGenAndPopulate(World world, int x, int y, int z, int meta, int range) {
-
+	public static void forceGenAndPopulate(World world, int x, int z, int range) {
 		for (int i = -range; i <= range; i++) {
 			for (int k = -range; k <= range; k++) {
 

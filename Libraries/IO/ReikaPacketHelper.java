@@ -906,7 +906,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		byte[] dat = bos.toByteArray();
 		DataPacket pack = new DataPacket();
-		pack.init(PacketTypes.STRING, pipe);
+		pack.init(PacketTypes.STRINGINT, pipe);
 		pack.setData(dat);
 
 		Side side = FMLCommonHandler.instance().getEffectiveSide();

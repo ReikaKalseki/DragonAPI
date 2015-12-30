@@ -79,6 +79,10 @@ public class BlockSpiral {
 		return blocks.getNthBlock(n);
 	}
 
+	public Coordinate getNextAndMoveOn() {
+		return blocks.getNextAndMoveOn();
+	}
+
 	public int getSize() {
 		return blocks.getSize();
 	}

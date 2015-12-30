@@ -646,6 +646,11 @@ public class ControlledConfig {
 		public C getData() {
 			return data;
 		}
+
+		@Override
+		public String toString() {
+			return this.category+":"+this.name+" > "+this.data.toString();
+		}
 	}
 
 	public final void reload() {
