@@ -382,12 +382,12 @@ public class BlockArray implements Iterable<Coordinate> {
 			return;
 		this.addBlockCoordinate(x, y, z);
 		try {
-			this.recursiveAddWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2, depth+1);
 		}
 		catch (StackOverflowError e) {
 			this.throwOverflow(depth);
