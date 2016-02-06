@@ -1121,16 +1121,6 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return null;
 	}
 
-	/** Returns whether an inventory is empty. Args: IInventory */
-	public static boolean isEmpty(IInventory ii) {
-		for (int i = 0; i < ii.getSizeInventory(); i++) {
-			ItemStack is = ii.getStackInSlot(i);
-			if (is != null)
-				return false;
-		}
-		return true;
-	}
-
 	/** Returns whether an inventory is full. Args: IInventory */
 	public static boolean isFull(IInventory ii) {
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
@@ -1385,5 +1375,19 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 		}
 		return -1;
+	}
+
+	/** Returns whether an inventory is empty. Args: IInventory */
+	public static boolean isEmpty(IInventory ii) {
+		return isEmptyFrom(ii, 0, ii.getSizeInventory()-1);
+	}
+
+	public static boolean isEmptyFrom(IInventory ii, int from, int to) {
+		for (int i = from; i <= to; i++) {
+			ItemStack is = ii.getStackInSlot(i);
+			if (is != null)
+				return false;
+		}
+		return true;
 	}
 }

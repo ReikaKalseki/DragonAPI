@@ -25,6 +25,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.item.crafting.RecipeBookCloning;
+import net.minecraft.item.crafting.RecipeFireworks;
+import net.minecraft.item.crafting.RecipesArmor;
+import net.minecraft.item.crafting.RecipesArmorDyes;
+import net.minecraft.item.crafting.RecipesCrafting;
+import net.minecraft.item.crafting.RecipesDyes;
+import net.minecraft.item.crafting.RecipesFood;
+import net.minecraft.item.crafting.RecipesIngots;
+import net.minecraft.item.crafting.RecipesMapCloning;
+import net.minecraft.item.crafting.RecipesMapExtending;
+import net.minecraft.item.crafting.RecipesTools;
+import net.minecraft.item.crafting.RecipesWeapons;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.oredict.OreDictionary;
@@ -115,12 +127,12 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		}
 	}
 
-	/** Finds a recipe by its product. */
+	/** Finds a recipe by its product. NOT PERFORMANT! */
 	public static IRecipe getRecipeByOutput(ItemStack out) {
 		return recipes.get(recipes.indexOf(out));
 	}
-
-	/** Finds recipes by product. */
+	/*
+	/** Finds recipes by product. NOT PERFORMANT! *//*
 	public static List<IRecipe> getRecipesByOutput(ItemStack out) {
 		List<IRecipe> li = new ArrayList<IRecipe>();
 		for (int i = 0; i < recipes.size(); i++) {
@@ -131,7 +143,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return li;
 	}
 
-	/** Finds recipes by product. */
+	/** Finds recipes by product. NOT PERFORMANT! *//*
 	public static List<ShapedRecipes> getShapedRecipesByOutput(ItemStack out) {
 		List<ShapedRecipes> li = new ArrayList<ShapedRecipes>();
 		for (int i = 0; i < recipes.size(); i++) {
@@ -144,7 +156,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return li;
 	}
 
-	/** Finds recipes by product. */
+	/** Finds recipes by product. NOT PERFORMANT! *//*
 	public static List<ShapedRecipes> getShapedRecipesByOutput(List<IRecipe> in, ItemStack out) {
 		List<ShapedRecipes> li = new ArrayList<ShapedRecipes>();
 		for (int i = 0; i < in.size(); i++) {
@@ -158,7 +170,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		//DragonAPICore.log(li);
 		return li;
 	}
-
+	 */
 	/** Returns the item in a shaped recipe at x, y in the grid. */
 	public static ItemStack getItemInRecipeAtXY(ShapedRecipes r, int x, int y) {
 		int xy = x+r.recipeWidth*y;
@@ -909,19 +921,34 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 	public static String toString(IRecipe r) {
 		if (r instanceof ShapedRecipes) {
-			return "Shaped "+Arrays.toString(((ShapedRecipes)r).recipeItems);
+			return "Shaped "+Arrays.toString(((ShapedRecipes)r).recipeItems)+" > "+r.getRecipeOutput();
 		}
 		else if (r instanceof ShapelessRecipes) {
-			return "Shapeless "+((ShapelessRecipes)r).recipeItems.toString();
+			return "Shapeless "+((ShapelessRecipes)r).recipeItems.toString()+" > "+r.getRecipeOutput();
 		}
 		else if (r instanceof ShapedOreRecipe) {
-			return "Shaped Ore "+Arrays.toString(((ShapedOreRecipe)r).getInput());
+			return "Shaped Ore "+Arrays.toString(((ShapedOreRecipe)r).getInput())+" > "+r.getRecipeOutput();
 		}
 		else if (r instanceof ShapelessOreRecipe) {
-			return "Shapeless Ore "+((ShapelessOreRecipe)r).getInput().toString();
+			return "Shapeless Ore "+((ShapelessOreRecipe)r).getInput().toString()+" > "+r.getRecipeOutput();
 		}
 		else {
-			return "Unknown '"+r.getClass().getName()+"'";
+			return "Unknown '"+r.getClass().getName()+"'"+" > "+r.getRecipeOutput();
 		}
+	}
+
+	public static boolean isNonVForgeRecipeClass(IRecipe r) {
+		Class c = r.getClass();
+		if (c == ShapedRecipes.class || c == ShapelessRecipes.class)
+			return false;
+		if (c == RecipeBookCloning.class || c == RecipeFireworks.class || c == RecipesArmor.class || c == RecipesArmorDyes.class)
+			return false;
+		if (c == RecipesCrafting.class || c == RecipesDyes.class || c == RecipesFood.class || c == RecipesIngots.class)
+			return false;
+		if (c == RecipesMapCloning.class || c == RecipesMapExtending.class || c == RecipesTools.class || c == RecipesWeapons.class)
+			return false;
+		if (c == ShapedOreRecipe.class || c == ShapelessOreRecipe.class)
+			return false;
+		return true;
 	}
 }

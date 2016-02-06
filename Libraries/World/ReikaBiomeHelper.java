@@ -285,6 +285,10 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			return true;
 		if (biome == BiomeGenBase.coldTaigaHills)
 			return true;
+		if (biome == BiomeGenBase.taiga)
+			return false;
+		if (biome == BiomeGenBase.taigaHills)
+			return false;
 		if (biome.getEnableSnow())
 			return true;
 		if (biome.biomeName.toLowerCase().contains("arctic"))

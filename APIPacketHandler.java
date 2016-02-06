@@ -15,6 +15,8 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.nbt.NBTBase;
@@ -23,8 +25,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
+import Reika.DragonAPI.Auxiliary.Trackers.ConfigMatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Base.TileEntityBase;
@@ -33,6 +37,7 @@ import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Instantiable.Effects.NumberParticleFX;
 import Reika.DragonAPI.Instantiable.Event.RawKeyPressEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.PlayerInteractEventClient;
 import Reika.DragonAPI.Interfaces.PacketHandler;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.DataPacket;
@@ -249,6 +254,27 @@ public class APIPacketHandler implements PacketHandler {
 				case PLAYERKICK:
 					((EntityPlayerMP)ep).playerNetServerHandler.kickPlayerFromServer(stringdata);
 					break;
+				case CONFIGSYNC:
+					ConfigMatcher.instance.register(ep, stringdata, data[0]);
+					break;
+				case CONFIGSYNCEND:
+					ConfigMatcher.instance.match((EntityPlayerMP)ep);
+					break;
+				case ITEMDROPPER:
+					break;
+				case ITEMDROPPERREQUEST:
+					Entity e = world.getEntityByID(data[0]);
+					if (e instanceof EntityItem && e.getEntityData().hasKey("dropper")) {
+						String s = e.getEntityData().getString("dropper");
+						//ReikaJavaLibrary.pConsole("Received request for Entity ID "+data[0]+"; response = '"+s+"'");
+						ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.ITEMDROPPER.ordinal(), (EntityPlayerMP)ep, s, data[0]);
+					}
+					break;
+				case PLAYERINTERACT:
+					MinecraftForge.EVENT_BUS.post(new PlayerInteractEventClient(ep, Action.values()[data[4]], data[0], data[1], data[2], data[3], world));
+					break;
+				case GUIRELOAD:
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -283,6 +309,21 @@ public class APIPacketHandler implements PacketHandler {
 			case BREAKPARTICLES:
 				Block b = Block.getBlockById(data[0]);
 				ReikaRenderHelper.spawnDropParticles(world, x, y, z, b, data[1]);
+				break;
+				//case CONFIGSYNCSTART:
+				//	ConfigMatcher.instance.dispatch();
+				//	break;
+			case ITEMDROPPER:
+				Entity e = world.getEntityByID(data[0]);
+				if (e instanceof EntityItem) {
+					//ReikaJavaLibrary.pConsole("Received response for Entity ID "+data[0]+"; response = '"+sg+"'");
+					e.getEntityData().setString("dropper", sg);
+				}
+				break;
+			case GUIRELOAD:
+				if (Minecraft.getMinecraft().currentScreen != null)
+					Minecraft.getMinecraft().currentScreen.initGui();
+				break;
 			default:
 				break;
 		}
@@ -309,7 +350,14 @@ public class APIPacketHandler implements PacketHandler {
 		LOGIN(),
 		SERVERSOUND(),
 		BREAKPARTICLES(),
-		PLAYERKICK();
+		PLAYERKICK(),
+		CONFIGSYNC(),
+		//CONFIGSYNCSTART(),
+		CONFIGSYNCEND(),
+		ITEMDROPPER(),
+		ITEMDROPPERREQUEST(),
+		PLAYERINTERACT(),
+		GUIRELOAD();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -320,7 +368,7 @@ public class APIPacketHandler implements PacketHandler {
 		}
 
 		public boolean hasLocation() {
-			return this != KEYUPDATE && this != PLAYERKICK;
+			return this != KEYUPDATE && this != PLAYERKICK && this != CONFIGSYNC;
 		}
 
 		public int getNumberDataInts() {
@@ -341,6 +389,13 @@ public class APIPacketHandler implements PacketHandler {
 					return 1;
 				case BREAKPARTICLES:
 					return 2;
+				case CONFIGSYNC:
+					return 1;
+				case ITEMDROPPER:
+				case ITEMDROPPERREQUEST:
+					return 1;
+				case PLAYERINTERACT:
+					return 5;
 				default:
 					return 0;
 			}

@@ -27,7 +27,6 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -48,6 +47,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.CustomThaumResearch;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumIDHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -72,8 +72,6 @@ public class ReikaThaumHelper {
 
 	private static Method researchComplete;
 
-	private static Potion warpWard;
-
 	private static Field wispTarget;
 
 	private static Object proxy; //auto-sides to correct side
@@ -90,7 +88,9 @@ public class ReikaThaumHelper {
 				aspects.merge(as, has.getAmount(as));
 			}
 		}
+		clearNullAspects(aspects);
 		ThaumcraftApi.registerObjectTag(is, new int[]{is.getItemDamage()}, aspects);
+		DragonAPICore.log("Registering "+is+" aspects "+aspectsToString(aspects));
 	}
 
 	public static void addAspectsToBlock(Block b, AspectList aspects) {
@@ -124,7 +124,9 @@ public class ReikaThaumHelper {
 				ot.merge(as, has.getAmount(as));
 			}
 		}
+		clearNullAspects(ot);
 		ThaumcraftApi.registerObjectTag(is, ot);
+		DragonAPICore.log("Registering "+is+" aspects "+aspectsToString(ot));
 	}
 
 	public static void addAspectsToBlock(Block b, Object... aspects) {
@@ -166,6 +168,10 @@ public class ReikaThaumHelper {
 			e.printStackTrace();
 		}
 		return ot;
+	}
+
+	public static void clearNullAspects(AspectList al) {
+		al.aspects.remove(null);
 	}
 
 	public static String aspectsToString(AspectList al) {
@@ -263,7 +269,7 @@ public class ReikaThaumHelper {
 	public static void giveWarpProtection(EntityPlayer ep, int time) {
 		if (!ModList.THAUMCRAFT.isLoaded())
 			return;
-		ep.addPotionEffect(new PotionEffect(warpWard.id, time, 0));
+		ep.addPotionEffect(new PotionEffect(ThaumIDHandler.Potions.WARPWARD.getID(), time, 0));
 	}
 
 	public static void removeWarp(EntityPlayer ep) {
@@ -371,6 +377,21 @@ public class ReikaThaumHelper {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/** Decomposes an Aspect down to its primal types. */
+	public static AspectList decompose(Aspect a) {
+		AspectList al = new AspectList();
+		if (a.isPrimal()) {
+			al.add(a, 1);
+		}
+		else {
+			HashMap<Aspect, Integer> map = getAspectDecomposition(a);
+			for (Aspect a2 : map.keySet()) {
+				al.add(a2, map.get(a2));
+			}
+		}
+		return al;
 	}
 
 	/** Decomposes an AspectList down to its primal types. */
@@ -589,17 +610,6 @@ public class ReikaThaumHelper {
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not load ThaumCraft PlayerKnowledge Handler!");
-				e.printStackTrace();
-				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
-			}
-
-			try {
-				Class pot = Class.forName("thaumcraft.common.lib.potions.PotionWarpWard");
-				Field ins = pot.getDeclaredField("instance");
-				warpWard = (Potion)ins.get(null);
-			}
-			catch (Exception e) {
-				DragonAPICore.logError("Could not load ThaumCraft Potion Handler!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}

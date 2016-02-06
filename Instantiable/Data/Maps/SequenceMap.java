@@ -245,4 +245,27 @@ public class SequenceMap<V> {
 
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (V v : data.keySet()) {
+			TreeEntry<V> e = data.get(v);
+			if (e.parents.isEmpty())
+				sb.append(this.getKeyString(v));
+		}
+		return sb.toString();
+	}
+
+	private String getKeyString(V v) {
+		StringBuilder sb = new StringBuilder();
+		TreeEntry<V> e = data.get(v);
+		sb.append(v);
+		sb.append("={");
+		for (V in : e.children) {
+			sb.append(this.getKeyString(in));
+		}
+		sb.append("}");
+		return sb.toString();
+	}
+
 }

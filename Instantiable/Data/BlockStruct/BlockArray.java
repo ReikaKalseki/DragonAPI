@@ -16,8 +16,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
@@ -382,12 +382,12 @@ public class BlockArray implements Iterable<Coordinate> {
 			return;
 		this.addBlockCoordinate(x, y, z);
 		try {
-			this.recursiveAddWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddWithBoundsNoFluidSource(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2, depth+1);
 		}
 		catch (StackOverflowError e) {
 			this.throwOverflow(depth);
@@ -429,11 +429,11 @@ public class BlockArray implements Iterable<Coordinate> {
 		}
 	}
 
-	public void recursiveAddMultipleWithBounds(World world, int x, int y, int z, List<Block> id, int x1, int y1, int z1, int x2, int y2, int z2) {
-		this.recursiveAddMultipleWithBounds(world, x, y, z, id, x1, y1, z1, x2, y2, z2, 0);
+	public void recursiveAddMultipleWithBounds(World world, int x, int y, int z, Set<BlockKey> ids, int x1, int y1, int z1, int x2, int y2, int z2) {
+		this.recursiveAddMultipleWithBounds(world, x, y, z, ids, x1, y1, z1, x2, y2, z2, 0, new HashMap());
 	}
 
-	private void recursiveAddMultipleWithBounds(World world, int x, int y, int z, List<Block> id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+	private void recursiveAddMultipleWithBounds(World world, int x, int y, int z, Set<BlockKey> ids, int x1, int y1, int z1, int x2, int y2, int z2, int depth, HashMap<Coordinate, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -441,23 +441,27 @@ public class BlockArray implements Iterable<Coordinate> {
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
 		boolean flag = false;
-		for (int i = 0; i < id.size(); i++) {
-			if (world.getBlock(x, y, z) == id.get(i)) {
-				flag = true;
-			}
+		BlockKey bk = BlockKey.getAt(world, x, y, z);
+		if (ids.contains(bk)) {
+			flag = true;
 		}
 		if (!flag)
 			return;
 		if (this.hasBlock(x, y, z))
+			;//return;
+		Coordinate c = new Coordinate(x, y, z);
+		if (map.containsKey(c) && depth >= map.get(c)) {
 			return;
+		}
 		this.addBlockCoordinate(x, y, z);
+		map.put(c, depth);
 		try {
-			this.recursiveAddMultipleWithBounds(world, x+1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddMultipleWithBounds(world, x-1, y, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddMultipleWithBounds(world, x, y+1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddMultipleWithBounds(world, x, y-1, z, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddMultipleWithBounds(world, x, y, z+1, id, x1, y1, z1, x2, y2, z2, depth+1);
-			this.recursiveAddMultipleWithBounds(world, x, y, z-1, id, x1, y1, z1, x2, y2, z2, depth+1);
+			this.recursiveAddMultipleWithBounds(world, x+1, y, z, ids, x1, y1, z1, x2, y2, z2, depth+1, map);
+			this.recursiveAddMultipleWithBounds(world, x-1, y, z, ids, x1, y1, z1, x2, y2, z2, depth+1, map);
+			this.recursiveAddMultipleWithBounds(world, x, y+1, z, ids, x1, y1, z1, x2, y2, z2, depth+1, map);
+			this.recursiveAddMultipleWithBounds(world, x, y-1, z, ids, x1, y1, z1, x2, y2, z2, depth+1, map);
+			this.recursiveAddMultipleWithBounds(world, x, y, z+1, ids, x1, y1, z1, x2, y2, z2, depth+1, map);
+			this.recursiveAddMultipleWithBounds(world, x, y, z-1, ids, x1, y1, z1, x2, y2, z2, depth+1, map);
 		}
 		catch (StackOverflowError e) {
 			this.throwOverflow(depth);
@@ -767,8 +771,9 @@ public class BlockArray implements Iterable<Coordinate> {
 		return this;
 	}
 
-	public final void sink(World world) {
+	public final int sink(World world) {
 		boolean canSink = true;
+		int n = 0;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
 				Coordinate c = this.getNthBlock(i);
@@ -779,13 +784,17 @@ public class BlockArray implements Iterable<Coordinate> {
 					canSink = false;
 				}
 			}
-			if (canSink)
+			if (canSink) {
 				this.offset(0, -1, 0);
+				n++;
+			}
 		}
+		return n;
 	}
 
-	public final void sink(World world, Blocks... overrides) {
+	public final int sink(World world, Blocks... overrides) {
 		boolean canSink = true;
+		int n = 0;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
 				Coordinate c = this.getNthBlock(i);
@@ -797,13 +806,17 @@ public class BlockArray implements Iterable<Coordinate> {
 					canSink = false;
 				}
 			}
-			if (canSink)
+			if (canSink) {
 				this.offset(0, -1, 0);
+				n++;
+			}
 		}
+		return n;
 	}
 
-	public final void sink(World world, Material... overrides) {
+	public final int sink(World world, Material... overrides) {
 		boolean canSink = true;
+		int n = 0;
 		while (canSink) {
 			for (int i = 0; i < blocks.size(); i++) {
 				Coordinate c = this.getNthBlock(i);
@@ -820,9 +833,12 @@ public class BlockArray implements Iterable<Coordinate> {
 					break;
 				}
 			}
-			if (canSink)
+			if (canSink) {
 				this.offset(0, -1, 0);
+				n++;
+			}
 		}
+		return n;
 	}
 
 	/** Pre-collates them into forced stacks to help with FPS. Will not attempt to stack NBT-sensitive items. */

@@ -18,10 +18,13 @@ import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerSpecificRenderer;
 import Reika.DragonAPI.IO.DelegateFontRenderer;
 import Reika.DragonAPI.IO.DirectResourceManager;
+import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
 import Reika.DragonAPI.Instantiable.Event.Client.ResourceReloadEvent;
+import Reika.DragonAPI.Instantiable.Rendering.RenderTumblingBlock;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import codechicken.lib.gui.GuiDraw;
 import cpw.mods.fml.client.FMLClientHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
 
 public class APIProxyClient extends APIProxy {
 
@@ -48,6 +51,8 @@ public class APIProxyClient extends APIProxy {
 
 		//key_nbt = new KeyBinding("TileEntity NBT Overlay", Keyboard.KEY_TAB, "DragonAPI");
 		//ClientRegistry.registerKeyBinding(key_nbt);
+
+		RenderingRegistry.registerEntityRenderingHandler(EntityTumblingBlock.class, new RenderTumblingBlock());
 	}
 
 	@Override

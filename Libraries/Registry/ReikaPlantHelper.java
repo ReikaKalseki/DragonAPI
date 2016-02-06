@@ -57,38 +57,56 @@ public enum ReikaPlantHelper {
 		int metabelow = world.getBlockMetadata(x, y-1, z);
 		Material matbelow = ReikaWorldHelper.getMaterial(world, x, y-1, z);
 		switch(this) {
-		case CACTUS:
-			return idbelow == Blocks.sand;
-		case FLOWER:
-			return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
-		case MUSHROOM:
-			return idbelow == Blocks.dirt || idbelow == Blocks.mycelium;
-		case SAPLING:/*
+			case CACTUS:
+				return idbelow == Blocks.sand;
+			case FLOWER:
+				return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
+			case MUSHROOM:
+				return idbelow == Blocks.dirt || idbelow == Blocks.mycelium;
+			case SAPLING:/*
 			if (idbelow == TwilightBlockHandler.getInstance().rootID) {
 				world.setBlock(x, y, z, Blocks.grass.blockID);
 				return true;
 			}*/
-			return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
-		case SUGARCANE:
-			if (idbelow != Blocks.sand && !ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow))
-				return false;
-			ForgeDirection water = ReikaWorldHelper.checkForAdjMaterial(world, x, y-1, z, Material.water);
-			return water != null && water.offsetY != 0;
-		case BUSH:
-			return idbelow == Blocks.sand;
-		case CROP:
-			return idbelow == Blocks.farmland;
-		case NETHERWART:
-			return idbelow == Blocks.soul_sand;
-		case TALLGRASS:
-			return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
-		case LILYPAD:
-			return matbelow == Material.water && metabelow == 0;
-		case VINES:
-			if (world.getBlock(x, y+1, z).isOpaqueCube())
-				return true;
+				return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
+			case SUGARCANE:
+				if (idbelow != Blocks.sand && !ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow))
+					return false;
+				ForgeDirection water = ReikaWorldHelper.checkForAdjMaterial(world, x, y-1, z, Material.water);
+				return water != null && water.offsetY == 0;
+			case BUSH:
+				return idbelow == Blocks.sand;
+			case CROP:
+				return idbelow == Blocks.farmland;
+			case NETHERWART:
+				return idbelow == Blocks.soul_sand;
+			case TALLGRASS:
+				return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
+			case LILYPAD:
+				return matbelow == Material.water && metabelow == 0;
+			case VINES:
+				for (int i = 1; i < 6; i++) {
+					ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+					if (world.getBlock(x+dir.offsetX, y+dir.offsetY, z+dir.offsetZ).isOpaqueCube())
+						return true;
+				}
 		}
 		return false;
+	}
+
+	public boolean grows() {
+		switch(this) {
+			case SAPLING:
+			case SUGARCANE:
+			case CACTUS:
+			case MUSHROOM:
+			case CROP:
+			case NETHERWART:
+			case VINES:
+				return true;
+			default:
+				return false;
+		}
 	}
 
 	static {

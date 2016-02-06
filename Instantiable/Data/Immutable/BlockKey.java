@@ -16,6 +16,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.BlockCheck;
+import Reika.DragonAPI.Interfaces.Registry.TileEnum;
 
 public final class BlockKey implements BlockCheck {
 
@@ -40,6 +41,11 @@ public final class BlockKey implements BlockCheck {
 		Block b = Block.getBlockFromItem(is.getItem());
 		if (b == null)
 			throw new MisuseException("Cannot create a BlockKey with an item with no block!");
+	}
+
+	public BlockKey(TileEnum m) {
+		metadata = m.getBlockMetadata();
+		blockID = m.getBlock();
 	}
 
 	public static BlockKey getAt(IBlockAccess world, int x, int y, int z) {
@@ -98,5 +104,9 @@ public final class BlockKey implements BlockCheck {
 	@Override
 	public BlockKey asBlockKey() {
 		return this;
+	}
+
+	public String getLocalized() {
+		return blockID.getLocalizedName()+":"+metadata;
 	}
 }

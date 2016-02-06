@@ -12,11 +12,13 @@ package Reika.DragonAPI.Libraries.IO;
 import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Block.SoundType;
+import net.minecraft.client.audio.MusicTicker.MusicType;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.Entity;
@@ -48,6 +50,9 @@ public class ReikaSoundHelper {
 
 	private static Field soundLibraryField;
 	private static Field streamThreadField;
+
+	@SideOnly(Side.CLIENT)
+	private static HashMap<ResourceLocation, MusicType> musicTypes;
 
 	public static void playBreakSound(World world, int x, int y, int z, Block b) {
 		SoundType s = b.stepSound;
@@ -268,6 +273,25 @@ public class ReikaSoundHelper {
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static MusicType getMusicTypeByResourceLocation(ResourceLocation loc) {
+		return musicTypes.get(loc);
+	}
+
+	static {
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			doClientInit();
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static void doClientInit() {
+		musicTypes = new HashMap();
+		for (MusicType type : MusicType.values()) {
+			musicTypes.put(type.getMusicTickerLocation(), type);
 		}
 	}
 }

@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Map;
 
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Instantiable.Data.Collections.ChancedOutputList;
@@ -34,16 +35,22 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 		super();
 
 		if (this.hasMod()) {
-			Collection<ICentrifugeRecipe> c = RecipeManagers.centrifugeManager.recipes();
-			for (ICentrifugeRecipe r : c) {
-				ItemStack in = r.getInput();
-				ChancedOutputList outputs = new ChancedOutputList();
-				Map<ItemStack, Float> out = r.getAllProducts();
-				for (ItemStack is : out.keySet()) {
-					float chance = out.get(is)*100;
-					outputs.addItem(is, chance);
+			try {
+				Collection<ICentrifugeRecipe> c = RecipeManagers.centrifugeManager.recipes();
+				for (ICentrifugeRecipe r : c) {
+					ItemStack in = r.getInput();
+					ChancedOutputList outputs = new ChancedOutputList();
+					Map<ItemStack, Float> out = r.getAllProducts();
+					for (ItemStack is : out.keySet()) {
+						float chance = out.get(is)*100;
+						outputs.addItem(is, chance);
+					}
+					centrifuge.put(in, outputs);
 				}
-				centrifuge.put(in, outputs);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Could not initialize Forestry recipe helper!");
+				e.printStackTrace();
 			}
 			/*
 			try {

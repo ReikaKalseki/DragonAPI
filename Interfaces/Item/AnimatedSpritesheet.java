@@ -25,4 +25,6 @@ public interface AnimatedSpritesheet extends IndexedItemSprites {
 
 	public int getBaseRow(ItemStack is);
 
+	public boolean verticalFrames();
+
 }

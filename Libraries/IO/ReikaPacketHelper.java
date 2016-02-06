@@ -260,10 +260,11 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
 			outputStream.writeInt(id);
-			if (data != null)
+			if (data != null) {
 				for (int i = 0; i < data.length; i++) {
 					outputStream.writeInt(data[i]);
 				}
+			}
 			outputStream.writeInt(te.xCoord);
 			outputStream.writeInt(te.yCoord);
 			outputStream.writeInt(te.zCoord);
@@ -882,12 +883,17 @@ public final class ReikaPacketHelper extends DragonAPICore {
 	}
 
 	public static void sendStringIntPacket(String ch, int id, EntityPlayerMP ep, String sg, int... data) {
-		int length = 0;
+		int length = data.length*4;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
 			writeString(sg, outputStream);
 			outputStream.writeInt(id);
+			if (data != null) {
+				for (int i = 0; i < data.length; i++) {
+					outputStream.writeInt(data[i]);
+				}
+			}
 			outputStream.writeInt(0);
 			outputStream.writeInt(0);
 			outputStream.writeInt(0);
@@ -925,6 +931,42 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		else {
 			// We are on the Bukkit server.
 		}
+	}
+
+	public static void sendStringIntPacket(String ch, int id, PacketTarget p, String sg, int... data) {
+		int length = data.length*4;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			writeString(sg, outputStream);
+			outputStream.writeInt(id);
+			if (data != null) {
+				for (int i = 0; i < data.length; i++) {
+					outputStream.writeInt(data[i]);
+				}
+			}
+			outputStream.writeInt(0);
+			outputStream.writeInt(0);
+			outputStream.writeInt(0);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			//throw new RuntimeException("String Packet for "+sg+" threw a packet exception!");
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.STRINGINT, pipe);
+		pack.setData(dat);
+
+		p.dispatch(pipe, pack);
 	}
 
 	public static void sendStringPacket(String ch, int id, String sg) {

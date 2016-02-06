@@ -30,6 +30,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import net.minecraft.world.World;
 
@@ -773,5 +774,32 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			return o2.compareTo(o1);
 		}
 
+	}
+
+	public static <E> Set<E> getSet(E... elements) {
+		return new HashSet(Arrays.asList(elements));
+	}
+
+	/** NOT PERFORMANT */
+	public static Thread getThreadByName(String name) {
+		ThreadGroup tg = getTopLevelThreadGroup();
+		Thread[] all = new Thread[tg.activeCount()];
+		tg.enumerate(all, true);
+		for (int i = 0; i < all.length; i++) {
+			Thread t = all[i];
+			String n = t.getName();
+			if (n != null && n.equals(name)) {
+				return t;
+			}
+		}
+		return null;
+	}
+
+	public static ThreadGroup getTopLevelThreadGroup() {
+		ThreadGroup tg = Thread.currentThread().getThreadGroup();
+		while (tg.getParent() != null) {
+			tg = tg.getParent();
+		}
+		return tg;
 	}
 }

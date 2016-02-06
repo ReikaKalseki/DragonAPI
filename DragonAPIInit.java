@@ -13,17 +13,22 @@ import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
+import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -36,6 +41,8 @@ import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.Fluid;
@@ -43,11 +50,13 @@ import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerRegisterEv
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
 import paulscode.sound.SoundSystemConfig;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
 import Reika.DragonAPI.Auxiliary.FindTilesCommand;
 import Reika.DragonAPI.Auxiliary.LoggingFilters;
+import Reika.DragonAPI.Auxiliary.ModularLogger.ModularLoggerCommand;
 import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
@@ -80,27 +89,36 @@ import Reika.DragonAPI.Command.ClassLoaderCommand;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
 import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
+import Reika.DragonAPI.Command.EntityCountCommand;
 import Reika.DragonAPI.Command.EntityListCommand;
 import Reika.DragonAPI.Command.FindBiomeCommand;
+import Reika.DragonAPI.Command.FindThreadCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
+import Reika.DragonAPI.Command.SpawnMobsCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Extras.TemporaryCodeCalls;
+import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
+import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
+import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.ReikaPotionHelper;
+import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
@@ -148,7 +166,7 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.PneumaticPlantHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.QuantumOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.RailcraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.RedstoneArsenalHandler;
-import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumBiomeHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumIDHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ThermalHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerBlockHandler;
@@ -267,6 +285,43 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.finishTiming();
 	}
 
+	@Override
+	protected void postPreLoad() {
+		this.rebuildAndRegisterVanillaRecipes();
+	}
+
+	private void rebuildAndRegisterVanillaRecipes() {
+		AddRecipeEvent.isVanillaPass = true;
+		AddSmeltingEvent.isVanillaPass = true;
+		ArrayList<IRecipe> li = new ArrayList(CraftingManager.getInstance().getRecipeList());
+		CraftingManager.getInstance().getRecipeList().clear();
+		for (IRecipe r : li) {
+			if (ReikaRecipeHelper.isNonVForgeRecipeClass(r)) {
+				DragonAPICore.log("Found a modded recipe registered in pre-init! This is a design error, as it can trigger a Forge bug and break the recipe! Recipe="+ReikaRecipeHelper.toString(r));
+			}
+			//if (!DragonAPIMod.EARLY_BUS.post(new AddRecipeEvent(r, true)))
+			CraftingManager.getInstance().getRecipeList().add(r);
+		}
+
+		HashMap<ItemStack, Object[]> map = new HashMap();
+		for (Object o : FurnaceRecipes.smelting().getSmeltingList().keySet()) {
+			ItemStack is = (ItemStack)o;
+			ItemStack is2 = (ItemStack)FurnaceRecipes.smelting().getSmeltingList().get(is);
+			Object[] dat = {is2, FurnaceRecipes.smelting().func_151398_b(is2)};
+			map.put(is, dat);
+		}
+		FurnaceRecipes.smelting().getSmeltingList().clear();
+		for (ItemStack is : map.keySet()) {
+			Object[] dat = map.get(is);
+			ItemStack is2 = (ItemStack)dat[0];
+			float xp = (float)dat[1];
+			//if (!DragonAPIMod.EARLY_BUS.post(new AddSmeltingEvent(is, is2, xp, true)))
+			ReikaRecipeHelper.addSmelting(is, is2, xp);
+		}
+		AddRecipeEvent.isVanillaPass = false;
+		AddSmeltingEvent.isVanillaPass = false;
+	}
+
 	private int getRecursionDepth() {
 		int config = ReikaJVMParser.getArgumentInteger("-DragonAPI_RecursionLimit");//DragonOptions.RECURSE.getValue();
 		if (config == -1)
@@ -382,6 +437,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		NetworkRegistry.INSTANCE.registerGuiHandler(instance, new APIGuiHandler());
 
+		ReikaRegistryHelper.registerModEntity(this, EntityTumblingBlock.class, "Tumbling Block", true, 128);
+
 		//ReikaPacketHelper.initPipelines();
 
 		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance);
@@ -398,6 +455,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		FMLInterModComms.sendMessage("Waila", "register", "Reika.DragonAPI.ModInteract.WailaTechnicalOverride.registerOverride");
 
 		FMLInterModComms.sendMessage("Mystcraft", "API", "Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper.receiveAPI");
+
+		FMLInterModComms.sendMessage("OpenBlocks", "donateUrl", "https://sites.google.com/site/reikasminecraft/support-me");
 
 		if (DragonOptions.UNNERFOBSIDIAN.getState())
 			Blocks.obsidian.setResistance(2000);
@@ -461,7 +520,12 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Frazier", 25);
 		PatreonController.instance.addPatron(this, "ReignOfMagic", "f1025e8b-6789-4591-b987-e318e61d7061", 10);
 		PatreonController.instance.addPatron(this, "Iskandar", "b6fa35a3-8e74-499d-8cc6-ca83c912a14a", 10);
-		PatreonController.instance.addPatron(this, "Yoogain", "5d937faf-7a4f-489a-85db-a1d95bb29657", 40);
+		PatreonController.instance.addPatron(this, "Yoogain", "5d937faf-7a4f-489a-85db-a1d95bb29657", 25);
+		PatreonController.instance.addPatron(this, "foxxmike11", "a52ba32c-edd0-41e8-81dc-de9759716624", 25); //foxxmike
+		PatreonController.instance.addPatron(this, "NihilistDandy", "3b29941b-924c-452a-abe5-2bfb6b94fecd", 40);
+		PatreonController.instance.addPatron(this, "EQDanteon", "ec00d292-1447-4e99-922c-2653f423e0cb", 40);
+		PatreonController.instance.addPatron(this, "Viper2g1", "3bf81769-1510-40b1-80d7-fea0c51aa304", 12); //Viperean
+		PatreonController.instance.addPatron(this, "StrayanDropbear", "e95b2aba-35c9-40da-b4cc-62ee68dc2962", 10);
 
 		logger.log("Credit to Techjar for hosting the version file and remote asset server.");
 
@@ -531,6 +595,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new TestControlCommand());
 		evt.registerServerCommand(new CheckerDisableCommand());
 		evt.registerServerCommand(new SelectiveKillCommand());
+		evt.registerServerCommand(new EntityCountCommand());
 		evt.registerServerCommand(new BlockReplaceCommand());
 		evt.registerServerCommand(new EditNearbyInventoryCommand());
 		evt.registerServerCommand(new TileSyncCommand());
@@ -541,6 +606,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new FindBiomeCommand());
 		evt.registerServerCommand(new ClassLoaderCommand());
 		evt.registerServerCommand(new ChunkGenCommand());
+		evt.registerServerCommand(new FindThreadCommand());
+		evt.registerServerCommand(new ModularLoggerCommand());
+		evt.registerServerCommand(new SpawnMobsCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();
@@ -630,9 +698,33 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	@SubscribeEvent
+	public void sendInteractToClient(PlayerInteractEvent evt) {
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ReikaPlayerAPI.isFake(evt.entityPlayer)) {
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERINTERACT.ordinal(), new PacketTarget.PlayerTarget((EntityPlayerMP)evt.entityPlayer), evt.x, evt.y, evt.z, evt.face, evt.action.ordinal());
+		}
+	}
+
+	@SubscribeEvent
 	public void clearItems(ItemUpdateEvent evt) {
 		if (ClearItemsCommand.clearItem(evt.entityItem)) {
 			evt.entityItem.setDead();
+		}
+	}
+
+	@SubscribeEvent
+	public void tagDroppedItems(ItemTossEvent evt) {
+		if (evt.player != null) {
+			String s = evt.player.getUniqueID().toString();
+			evt.entityItem.getEntityData().setString("dropper", s);
+			//ReikaPacketHelper.sendStringIntPacket(packetChannel, PacketIDs.ITEMDROPPER.ordinal(), new PacketTarget.DimensionTarget(evt.entityItem.worldObj), s, evt.entityItem.getEntityId());
+		}
+	}
+
+	@SubscribeEvent
+	public void tagDroppedItems(EntityJoinWorldEvent evt) {
+		if (evt.entity instanceof EntityItem && evt.world.isRemote) {
+			//ReikaJavaLibrary.pConsole("Sending clientside request for Entity ID "+evt.entity.getEntityId());
+			ReikaPacketHelper.sendDataPacket(packetChannel, PacketIDs.ITEMDROPPERREQUEST.ordinal(), new PacketTarget.ServerTarget(), evt.entity.getEntityId());
 		}
 	}
 
@@ -695,7 +787,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.registerHandler(ModList.BCFACTORY, BCMachineHandler.class, "Block Handler");
 		this.registerHandler(ModList.BCTRANSPORT, BCPipeHandler.class, "Pipe Handler");
 		this.registerHandler(ModList.THAUMCRAFT, ThaumOreHandler.class, "Ore Handler");
-		this.registerHandler(ModList.THAUMCRAFT, ThaumBiomeHandler.class, "Biome Handler");
+		this.registerHandler(ModList.THAUMCRAFT, ThaumIDHandler.class, "Biome Handler");
 		this.registerHandler(ModList.DARTCRAFT, DartOreHandler.class, "Ore Handler");
 		this.registerHandler(ModList.DARTCRAFT, DartItemHandler.class, "Item Handler");
 		this.registerHandler(ModList.TINKERER, TinkerToolHandler.class, "Tool Handler");
@@ -746,7 +838,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	@EventHandler
-	public void lastLoad(FMLServerStoppedEvent evt) {
+	public void singlePlayerLogout(FMLServerStoppedEvent evt) {
 		if (evt.getSide() == Side.CLIENT) {
 			MinecraftForge.EVENT_BUS.post(new SinglePlayerLogoutEvent());
 		}

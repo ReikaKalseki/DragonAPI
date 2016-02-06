@@ -19,11 +19,20 @@ public class WeightedRandom<V> {
 	private static final Random r = new Random();
 
 	private final HashMap<V, Double> data = new HashMap();
+	private double maxWeight = 0;
 	private double weightSum;
 
-	public void addEntry(V obj, double weight) {
+	public double addEntry(V obj, double weight) {
 		data.put(obj, weight);
 		this.weightSum += weight;
+		this.maxWeight = Math.max(this.maxWeight, weight);
+		return this.weightSum;
+	}
+
+	public double remove(V val) {
+		double ret = data.remove(val);
+		this.weightSum -= ret;
+		return ret;
 	}
 
 	public V getRandomEntry() {
@@ -51,12 +60,28 @@ public class WeightedRandom<V> {
 		return fallback;
 	}
 
+	public double getWeight(V obj) {
+		return data.get(obj);
+	}
+
+	public double getMaxWeight() {
+		return this.maxWeight;
+	}
+
+	public double getTotalWeight() {
+		return this.weightSum;
+	}
+
 	public boolean isEmpty() {
 		return data.isEmpty();
 	}
 
 	public int size() {
 		return data.size();
+	}
+
+	public boolean hasEntry(V obj) {
+		return data.containsKey(obj);
 	}
 
 	@Override

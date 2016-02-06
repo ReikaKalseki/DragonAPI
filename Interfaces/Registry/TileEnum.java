@@ -9,9 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces.Registry;
 
-public interface TileEnum<V> {
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 
-	public Class getTEClass();
+public interface TileEnum {
+
+	public Class<? extends TileEntity> getTEClass();
 	public String getName();
+	public Block getBlock();
+	public int getBlockMetadata();
+	public ItemStack getCraftedProduct();
 
 }

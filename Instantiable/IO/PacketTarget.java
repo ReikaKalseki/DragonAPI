@@ -20,8 +20,6 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public abstract class PacketTarget {
 
@@ -134,7 +132,7 @@ public abstract class PacketTarget {
 		}
 	}
 
-	@SideOnly(Side.CLIENT)
+	//@SideOnly(Side.CLIENT)
 	public static final class ServerTarget extends PacketTarget {
 
 		public ServerTarget() {

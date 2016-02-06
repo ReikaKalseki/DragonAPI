@@ -10,27 +10,29 @@
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Random;
+
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 
 public final class ColumnArray {
 
-	private final List<int[]> coords = new ArrayList<int[]>();
+	private static final Random rand = new Random();
 
-	public void add(int x, int z) {
+	private final ArrayList<Coordinate> coords = new ArrayList();
+	private final HashSet<Coordinate> set = new HashSet();
+
+	public boolean add(int x, int z) {
 		if (this.hasColumn(x, z))
-			return;
-		coords.add(new int[]{x,z});
+			return false;
+		coords.add(new Coordinate(x, 0, z));
+		return true;
 	}
 
 	public boolean hasColumn(int x, int z) {
-		for (int i = 0; i < coords.size(); i++) {
-			int[] e = coords.get(i);
-			if (e[0] == x && e[1] == z)
-				return true;
-		}
-		return false;
+		return set.contains(new Coordinate(x, 0, z));
 	}
 
 	public void remove(int index) {
@@ -42,10 +44,9 @@ public final class ColumnArray {
 		if (this.isEmpty())
 			return "Empty[]";
 		StringBuilder list = new StringBuilder();
-		for (int i = 0; i < this.getSize(); i++) {
-			list.append(Arrays.toString(coords.get(i)));
-			if (i != this.getSize()-1)
-				list.append(";");
+		for (Coordinate c : coords) {
+			list.append(c);
+			list.append(";");
 		}
 		return list.toString();
 	}
@@ -62,30 +63,33 @@ public final class ColumnArray {
 		coords.clear();
 	}
 
-	public int[] getNthColumn(int n) {
+	public Coordinate getNthColumn(int n) {
 		if (this.isEmpty())
 			return null;
 		return coords.get(n);
 	}
 
-	public int[] getNextColumn() {
+	public Coordinate getNextColumn() {
 		if (this.isEmpty())
 			return null;
 		return coords.get(0);
 	}
 
-	public int[] getNextAndMoveOn() {
+	public Coordinate getNextAndMoveOn() {
 		if (this.isEmpty())
 			return null;
-		int[] next = this.getNextColumn();
+		Coordinate next = this.getNextColumn();
 		coords.remove(0);
 		return next;
 	}
 
-	public int[] getRandomColumn() {
-		Random r = new Random();
+	public Coordinate getRandomColumn() {
 		int s = this.getSize();
-		return this.getNthColumn(r.nextInt(s));
+		return this.getNthColumn(rand.nextInt(s));
+	}
+
+	public void sort(Comparator<Coordinate> c) {
+		Collections.sort(coords, c);
 	}
 
 }

@@ -74,6 +74,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 		data.put(new Coordinate(x, y, z), new EmptyCheck(soft, nonsolid, exceptions));
 	}
 
+	public void addEmpty(int x, int y, int z, boolean soft, boolean nonsolid, Block... exceptions) {
+		super.addBlockCoordinate(x, y, z);
+		this.addBlockToCoord(new Coordinate(x, y, z), new EmptyCheck(soft, nonsolid, exceptions));
+	}
+
 	public void addBlock(int x, int y, int z, Block id) {
 		this.addBlock(x, y, z , new BlockKey(id));
 	}
@@ -87,7 +92,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 		this.addBlockToCoord(new Coordinate(x, y, z), bk);
 	}
 
-	private void addBlockToCoord(Coordinate c, BlockKey bk) {
+	private void addBlockToCoord(Coordinate c, BlockCheck bk) {
 		BlockCheck bc = data.get(c);
 		if (bc == null) {
 			MultiKey mk = new MultiKey();
@@ -96,7 +101,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 		else if (bc instanceof BlockKey) {
 			MultiKey mk = new MultiKey();
-			mk.add((BlockKey)bc);
+			mk.add(bc);
 			data.put(c, mk);
 		}
 		else {
@@ -252,33 +257,33 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	private static class MultiKey implements BlockCheck {
 
-		private ArrayList<BlockKey> keys = new ArrayList();
+		private ArrayList<BlockCheck> keys = new ArrayList();
 
-		private void add(BlockKey key) {
+		private void add(BlockCheck key) {
 			if (!keys.contains(key))
 				keys.add(key);
 		}
 
 		@Override
 		public boolean matchInWorld(World world, int x, int y, int z) {
-			return this.match(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
+			for (BlockCheck b : keys) {
+				if (b.matchInWorld(world, x, y, z))
+					return true;
+			}
+			return false;
 		}
 
 		@Override
 		public boolean match(Block b, int meta) {
-			return keys.contains(new BlockKey(b, meta));
+			for (BlockCheck c : keys) {
+				if (c.match(b, meta))
+					return true;
+			}
+			return false;
 		}
 
 		public void place(World world, int x, int y, int z) {
-			world.setBlock(x, y, z, this.getBlock(), this.getMeta(), 3);
-		}
-
-		private int getMeta() {
-			return keys.isEmpty() ? 0 : keys.get(0).hasMetadata() ? keys.get(0).metadata : 0;
-		}
-
-		private Block getBlock() {
-			return keys.isEmpty() ? Blocks.air : keys.get(0).blockID;
+			keys.get(0).place(world, x, y, z);
 		}
 
 		@Override
@@ -288,12 +293,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 		@Override
 		public ItemStack asItemStack() {
-			Block b = this.getBlock();
-			return b != null && b != Blocks.air ? new ItemStack(b, 1, this.getMeta()) : null;
+			return keys.get(0).asItemStack();
 		}
 
 		public BlockKey asBlockKey() {
-			return new BlockKey(this.getBlock(), this.getMeta());
+			return keys.get(0).asBlockKey();
 		}
 
 		public ItemStack getDisplay() {

@@ -113,7 +113,7 @@ public class LODModelPart extends ModelRenderer {
 	}
 
 	public final boolean shouldRender(double dist_squared) {
-		return Keyboard.isKeyDown(Keyboard.KEY_TAB) || renderDistanceSqr*this.getDistanceMultiplier() >= dist_squared;
+		return Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) || renderDistanceSqr*this.getDistanceMultiplier() >= dist_squared;
 	}
 
 	private double getDistanceMultiplier() {

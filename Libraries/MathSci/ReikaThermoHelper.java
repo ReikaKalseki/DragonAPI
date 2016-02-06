@@ -16,6 +16,7 @@ public class ReikaThermoHelper {
 
 	public static final double SODIUM_HEAT = 1.23;
 	public static final double CO2_HEAT = 1.168;
+	public static final double LIFBE_HEAT = 1.102;
 
 	public static final double WATER_BOIL_ENTHALPY = 2260; // kJ/kg
 

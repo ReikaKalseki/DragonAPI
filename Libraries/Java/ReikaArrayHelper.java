@@ -9,11 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
+import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Exception.MisuseException;
 
 public final class ReikaArrayHelper extends DragonAPICore {
 
@@ -550,5 +552,66 @@ public final class ReikaArrayHelper extends DragonAPICore {
 			arr[i] = true;
 		}
 		return arr;
+	}
+
+	public static void cycleArray(int[] arr, int newVal) {
+		for (int i = arr.length-1; i > 0; i--) {
+			arr[i] = arr[i-1];
+		}
+		arr[0] = newVal;
+	}
+
+	public static void cycleArray(double[] arr, double newVal) {
+		for (int i = arr.length-1; i > 0; i--) {
+			arr[i] = arr[i-1];
+		}
+		arr[0] = newVal;
+	}
+
+	public static void cycleArray(float[] arr, float newVal) {
+		for (int i = arr.length-1; i > 0; i--) {
+			arr[i] = arr[i-1];
+		}
+		arr[0] = newVal;
+	}
+
+	public static void cycleArray(boolean[] arr, boolean newVal) {
+		for (int i = arr.length-1; i > 0; i--) {
+			arr[i] = arr[i-1];
+		}
+		arr[0] = newVal;
+	}
+
+	public static <A> void cycleArray(A[] arr, A newVal) {
+		for (int i = arr.length-1; i > 0; i--) {
+			arr[i] = arr[i-1];
+		}
+		arr[0] = newVal;
+	}
+
+	public static <A> A[] getArrayOf(A val, int length) {
+		A[] arr = (A[])Array.newInstance(val.getClass(), length);
+		for (int i = 0; i < length; i++) {
+			arr[i] = val;
+		}
+		return arr;
+	}
+
+	public static double[] averageArrays(double[] a1, double[] a2) {
+		if (a1.length != a2.length)
+			throw new MisuseException("You cannot average arrays of different lengths!");
+		double[] ret = new double[a1.length];
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = (a1[i]+a2[i])/2D;
+		}
+		return ret;
+	}
+
+	public static double[] onesComplementArray(double[] arr) {
+		double[] ret = new double[arr.length];
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = 1-arr[i];
+		}
+		return ret;
 	}
 }

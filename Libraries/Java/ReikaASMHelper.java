@@ -487,6 +487,15 @@ public class ReikaASMHelper {
 		throw new ASMException.NoSuchASMFieldInstructionException(cn, m, owner, name, n > 1 ? n : -1);
 	}
 
+	public static AbstractInsnNode getFirstOpcodeAfter(InsnList li, int idx, int opcode) {
+		for (int i = idx; i < li.size(); i++) {
+			AbstractInsnNode ain = li.get(i);
+			if (ain.getOpcode() == opcode)
+				return ain;
+		}
+		return null;
+	}
+
 	/** Currently broken */
 	public static InsnList copyInsnList(InsnList li, LabelNode... pairs) {
 		Map<LabelNode, LabelNode> map = new HashMap();

@@ -16,6 +16,7 @@ import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 
 public final class ReikaRedstoneHelper extends DragonAPICore {
 
@@ -37,6 +38,10 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 		boolean rpt = isReceivingPowerFromRepeater(world, x, y, z, side);
 		//DragonAPICore.log(((sided || repeat) && pwr && !lastPower)+" for "+lastPower);
 		return ((sided && pwr) || rpt) && !lastPower && !lastRepeat;
+	}
+
+	public static boolean isPoweredOnSide(World world, int x, int y, int z, ForgeDirection side) {
+		return world.getIndirectPowerOutput(x+side.offsetX, y+side.offsetY, z+side.offsetZ, side.ordinal());
 	}
 
 	/** Is the block receiving power from a repeater on a side. Args: World, x, y, z, side */
@@ -98,10 +103,7 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 				ac = true;
 		}
 
-		for (int i = lastPower.length-1; i > 0; i--) {
-			lastPower[i] = lastPower[i-1];
-		}
-		lastPower[0] = currentpower;
+		ReikaArrayHelper.cycleArray(lastPower, currentpower);
 
 		return ac;
 	}

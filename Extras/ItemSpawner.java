@@ -72,6 +72,11 @@ public class ItemSpawner extends Item {
 
 	@Override
 	public boolean onItemUse(ItemStack is, EntityPlayer ep, World world, int x, int y, int z, int side, float par8, float par9, float par10) {
+		String name = ReikaSpawnerHelper.getSpawnerFromItemNBT(is);
+		if (name == null) {
+			ReikaChatHelper.write("Spawner has no type set!");
+			return false;
+		}
 		if (!this.isValidDimensionForSpawner(is, world)) {
 			ReikaChatHelper.write(ReikaSpawnerHelper.getSpawnerFromItemNBT(is)+" cannot be placed in dimension "+world.provider.getDimensionName()+"!");
 			return false;
@@ -128,14 +133,14 @@ public class ItemSpawner extends Item {
 		if (name.equals("EnderDragon"))
 			return dim == 1;
 		switch(dim) {
-		case 0:
-			break;
-		case 1: //end
-			break;
-		case -1: //nether
-			break;
-		case 7: //twilight forest
-			break;
+			case 0:
+				break;
+			case 1: //end
+				break;
+			case -1: //nether
+				break;
+			case 7: //twilight forest
+				break;
 		}
 		return true;
 	}

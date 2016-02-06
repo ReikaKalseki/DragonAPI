@@ -14,13 +14,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
@@ -37,6 +40,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import cpw.mods.fml.relauncher.Side;
@@ -141,6 +145,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final ItemStack spruceDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 1);
 	public static final ItemStack birchDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 2);
 	public static final ItemStack jungleDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 3);
+
+	public static final ItemStack tallgrass = new ItemStack(Blocks.tallgrass, 1, 1);
+	public static final ItemStack fern = new ItemStack(Blocks.tallgrass, 1, 2);
 
 	public static final ItemComparator comparator = new ItemComparator();
 
@@ -407,20 +414,35 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 		@Override
 		public int compare(ItemStack o1, ItemStack o2) {
-			int diff = this.getFlags(o1)-this.getFlags(o2);
-			return diff;//diff != 0 ? diff : ReikaNBTHelper.compareNBTTags(o1.stackTagCompound, o2.stackTagCompound); this causes contract violation
-		}
-
-		private int getFlags(ItemStack is) {
-			int flags = 0;
-
-			flags += Item.getIdFromItem(is.getItem())*1000000;
-			flags += is.getItemDamage()*100;
-			flags += is.stackSize;
-			//if (is.stackTagCompound != null)
-			//	flags += is.stackTagCompound.hashCode();
-
-			return flags;//is.stackTagCompound == null ? flags+Integer.MIN_VALUE : flags; //force NBT versions to be at end (+ve)
+			if (o1.getItem() == o2.getItem()) {
+				if (o1.getItemDamage() == o2.getItemDamage()) {
+					if (o1.stackSize == o2.stackSize) {
+						if (o1.stackTagCompound == o2.stackTagCompound || (o1.stackTagCompound != null && o1.stackTagCompound.equals(o2.stackTagCompound))) {
+							return 0;
+						}
+						else {
+							if (o1.stackTagCompound == null && o2.stackTagCompound != null) {
+								return -1;
+							}
+							else if (o2.stackTagCompound == null && o1.stackTagCompound != null) {
+								return 1;
+							}
+							else {
+								return ReikaNBTHelper.compareNBTTags(o1.stackTagCompound, o2.stackTagCompound);
+							}
+						}
+					}
+					else {
+						return o1.stackSize-o2.stackSize;
+					}
+				}
+				else {
+					return o1.getItemDamage()-o2.getItemDamage();
+				}
+			}
+			else {
+				return Item.getIdFromItem(o1.getItem())-Item.getIdFromItem(o2.getItem());
+			}
 		}
 
 	}
@@ -499,5 +521,30 @@ public final class ReikaItemHelper extends DragonAPICore {
 			}
 		}
 		return false;
+	}
+
+	public static EntityPlayer getDropper(EntityItem ei) {
+		if (ei.getEntityData().hasKey("dropper")) {
+			try {
+				return ei.worldObj.func_152378_a(UUID.fromString(ei.getEntityData().getString("dropper")));
+			}
+			catch (IllegalArgumentException e) {
+
+			}
+		}
+		return null;
+	}
+
+	public static HashSet<String> getOreNames(ItemStack in) {
+		HashSet<String> set = new HashSet();
+		int[] ids = OreDictionary.getOreIDs(in);
+		for (int i = 0; i < ids.length; i++) {
+			set.add(OreDictionary.getOreName(ids[i]));
+		}
+		return set;
+	}
+
+	public static boolean isInOreTag(ItemStack is, String name) {
+		return getOreNames(is).contains(name);
 	}
 }

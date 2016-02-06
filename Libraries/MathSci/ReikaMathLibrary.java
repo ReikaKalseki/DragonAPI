@@ -411,6 +411,10 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return val + multiple - val%multiple;
 	}
 
+	public static int roundToNearestX(int multiple, int val) {
+		return ((val+multiple/2)/multiple)*multiple;
+	}
+
 	public static double[] splitNumberByDigits(long num, int base) {
 		int len = 1+(int)logbase(num, base);
 		double[] arr = new double[len];
@@ -464,5 +468,26 @@ public final class ReikaMathLibrary extends DragonAPICore {
 
 	public static boolean isPointInsideEllipse(double x, double y, double z, double ra, double rb, double rc) {
 		return (ra > 0 ? ((x*x)/(ra*ra)) : 0) + (rb > 0 ? ((y*y)/(rb*rb)) : 0) + (rc > 0 ? ((z*z)/(rc*rc)) : 0) <= 1;
+	}
+
+	public static double linterpolate(double x, double x1, double x2, double y1, double y2) {
+		return (x-x1)/(x2-x1)*(y2-y1);
+	}
+
+	public static int bitRound(int val, int bits) {
+		return (val >> bits) << bits;
+	}
+
+	public static double cosInterpolation(double min, double max, double val) {
+		if (!isValueInsideBoundsIncl(min, max, val))
+			return 0;
+		double size = (max-min)/2D;
+		double mid = min+size;
+		if (val == mid) {
+			return 1;
+		}
+		else {
+			return 0.5+0.5*Math.cos(Math.toRadians((val-mid)/size*180));
+		}
 	}
 }

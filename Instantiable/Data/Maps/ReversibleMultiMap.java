@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Data.Maps;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionFactory;
 
@@ -74,6 +75,14 @@ public final class ReversibleMultiMap<K, V> {
 	@Override
 	public String toString() {
 		return "REVERSIBLE: "+this.forward.toString();
+	}
+
+	public Collection<K> keySet() {
+		return Collections.unmodifiableCollection(forward.keySet());
+	}
+
+	public Collection<V> values() {
+		return Collections.unmodifiableCollection(backward.keySet());
 	}
 
 }

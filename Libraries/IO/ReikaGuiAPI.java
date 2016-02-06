@@ -131,10 +131,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 	{
 		int var5;
 		if (!par6) {
-			int color = par5;
-			par5 /= 1000000; // make alpha-only
-			par5 *= 1000000; // pad back to alpha bitspace
-			par5 = 0xff000000+(color-par5); //subtract original color alpha, then add FF
+			par5 = par5 | 0xff000000;
 		}
 
 		if (par1 < par3)

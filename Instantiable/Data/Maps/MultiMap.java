@@ -43,7 +43,7 @@ public final class MultiMap<K, V> {
 			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		if (ordering != null && value instanceof List)
 			Collections.sort((List)value, ordering);
-		return data.put(key, value);
+		return data.put(key, factory.createCollection(value));
 	}
 
 	public Collection<V> putValue(K key, V value) {
@@ -209,26 +209,37 @@ public final class MultiMap<K, V> {
 		}
 	}
 
-	public static interface CollectionFactory {
+	public static interface CollectionFactory<C> {
 
-		public Collection createCollection();
+		public Collection<? extends C> createCollection();
+		public Collection<? extends C> createCollection(Collection c);
 
 	}
 
-	public static final class ListFactory implements CollectionFactory {
+	public static final class ListFactory implements CollectionFactory<ArrayList> {
 
 		@Override
-		public Collection createCollection() {
+		public ArrayList createCollection() {
 			return new ArrayList();
+		}
+
+		@Override
+		public ArrayList createCollection(Collection c) {
+			return new ArrayList(c);
 		}
 
 	}
 
-	public static final class HashSetFactory implements CollectionFactory {
+	public static final class HashSetFactory implements CollectionFactory<HashSet> {
 
 		@Override
-		public Collection createCollection() {
+		public HashSet createCollection() {
 			return new HashSet();
+		}
+
+		@Override
+		public HashSet createCollection(Collection c) {
+			return new HashSet(c);
 		}
 
 	}

@@ -17,6 +17,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -132,7 +133,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static Material getMaterial(World world, int x, int y, int z) {
-		return world.getBlock(x, y, z).getMaterial();
+		return world.checkChunksExist(x, y, z, x, y, z) ? world.getBlock(x, y, z).getMaterial() : Material.air;
 	}
 
 	public static boolean isAirBlock(World world, int x, int y, int z) {
@@ -227,12 +228,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Search for a specific block in a range. Returns true if found. Cannot identify if
 	 *found more than one, or where the found one(s) is/are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id */
 	public static boolean findNearBlock(World world, int x, int y, int z, int range, Block id) {
-		x -= range/2;
-		y -= range/2;
-		z -= range/2;
-		for (int i = 0; i < range; i++) {
-			for (int j = 0; j < range; j++) {
-				for (int k = 0; k < range; k++) {
+		for (int i = -range; i <= range; i++) {
+			for (int j = -range; j <= range; j++) {
+				for (int k = -range; k <= range; k++) {
 					if (world.getBlock(x+i, y+j, z+k) == id)
 						return true;
 				}
@@ -244,12 +242,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Search for a specific block in a range. Returns true if found. Cannot identify if
 	 *found more than one, or where the found one(s) is/are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id, meta */
 	public static boolean findNearBlock(World world, int x, int y, int z, int range, Block id, int meta) {
-		x -= range/2;
-		y -= range/2;
-		z -= range/2;
-		for (int i = 0; i < range; i++) {
-			for (int j = 0; j < range; j++) {
-				for (int k = 0; k < range; k++) {
+		for (int i = -range; i <= range; i++) {
+			for (int j = -range; j <= range; j++) {
+				for (int k = -range; k <= range; k++) {
 					if (world.getBlock(x+i, y+j, z+k) == id && world.getBlockMetadata(x+i, y+j, z+k) == meta)
 						return true;
 				}
@@ -262,12 +257,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	 *are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id */
 	public static int findNearBlocks(World world, int x, int y, int z, int range, Block id) {
 		int count = 0;
-		x -= range/2;
-		y -= range/2;
-		z -= range/2;
-		for (int i = 0; i < range; i++) {
-			for (int j = 0; j < range; j++) {
-				for (int k = 0; k < range; k++) {
+		for (int i = -range; i <= range; i++) {
+			for (int j = -range; j <= range; j++) {
+				for (int k = -range; k <= range; k++) {
 					if (world.getBlock(x+i, y+j, z+k) == id)
 						count++;
 				}
@@ -331,7 +323,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Returns the direction in which a block of the specified ID was found.
-	 *Returns -1 if not found. Args: World, x,y,z, id to search. */
+	 *Returns null if not found. Args: World, x,y,z, id to search. */
 	public static ForgeDirection checkForAdjBlock(World world, int x, int y, int z, Block id) {
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
@@ -342,6 +334,26 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				Block id2 = world.getBlock(dx, dy, dz);
 				if (id == id2)
 					return dir;
+			}
+		}
+		return null;
+	}
+
+	/** Returns the direction in which a block of the specified ID was found.
+	 *Returns null if not found. Args: World, x,y,z, id to search. */
+	public static Coordinate checkForAdjBlockWithCorners(World world, int x, int y, int z, Block id) {
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				for (int k = -1; k <= 1; k++) {
+					int dx = x+i;
+					int dy = y+j;
+					int dz = z+k;
+					if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
+						Block id2 = world.getBlock(dx, dy, dz);
+						if (id == id2)
+							return new Coordinate(i, j, k);
+					}
+				}
 			}
 		}
 		return null;
@@ -394,6 +406,23 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				Material mat2 = getMaterial(world, dx, dy, dz);
 				if (mat == mat2 && world.getBlockMetadata(dx, dy, dz) == 0)
 					return dir;
+			}
+		}
+		return null;
+	}
+
+	public static ForgeDirection checkForAdjTile(World world, int x, int y, int z, Class<? extends TileEntity> c, boolean inherit) {
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
+				TileEntity te = world.getTileEntity(dx, dy, dz);
+				if (te != null) {
+					if (te.getClass() == c || (inherit && te.getClass().isAssignableFrom(c)))
+						return dir;
+				}
 			}
 		}
 		return null;
@@ -662,6 +691,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	 *spark particles yes/no, number-of-sparks multiplier (default 20-40),
 	 *flaming explosion yes/no, smoking explosion yes/no, explosion force (0 for none) */
 	public static void overheat(World world, int x, int y, int z, ItemStack drop, int mindrops, int maxdrops, boolean sparks, float sparkmultiplier, boolean flaming, boolean smoke, float force) {
+		world.setBlock(x, y, z, Blocks.air);
 		if (force > 0 && !world.isRemote) {
 			if (flaming)
 				world.newExplosion(null, x, y, z, force, true, smoke);
@@ -1338,11 +1368,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		world.notifyBlocksOfNeighborChange(x, y, z, b);
 	}
 
-	/** Drops all items from a given Blocks. Args: World, x, y, z, fortune level */
-	public static void dropBlockAt(World world, int x, int y, int z, int fortune, EntityPlayer ep) {
+	public static ArrayList<ItemStack> getDropsAt(World world, int x, int y, int z, int fortune, EntityPlayer ep) {
 		Block b = world.getBlock(x, y, z);
 		if (b == Blocks.air)
-			return;
+			return new ArrayList();
 		int meta = world.getBlockMetadata(x, y, z);
 		ArrayList<ItemStack> li = b.getDrops(world, x, y, z, meta, fortune);
 		if (ep != null) {
@@ -1350,12 +1379,19 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			MinecraftForge.EVENT_BUS.post(evt);
 			li = evt.drops;
 		}
+		return li;
+	}
+
+	/** Drops all items from a given Blocks. Args: World, x, y, z, fortune level */
+	public static ArrayList<ItemStack> dropBlockAt(World world, int x, int y, int z, int fortune, EntityPlayer ep) {
+		ArrayList<ItemStack> li = getDropsAt(world, x, y, z, fortune, ep);
 		ReikaItemHelper.dropItems(world, x+0.5, y+0.5, z+0.5, li);
+		return li;
 	}
 
 	/** Drops all items from a given block with no fortune effect. Args: World, x, y, z */
-	public static void dropBlockAt(World world, int x, int y, int z, EntityPlayer ep) {
-		dropBlockAt(world, x, y, z, 0, ep);
+	public static ArrayList<ItemStack> dropBlockAt(World world, int x, int y, int z, EntityPlayer ep) {
+		return dropBlockAt(world, x, y, z, 0, ep);
 	}
 
 	/** Sets the biome type at an xz column. Args: World, x, z, biome */
@@ -1384,8 +1420,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static BiomeGenBase getNaturalGennedBiomeAt(World world, int x, int z) {
-		BiomeGenBase[] biomes = new BiomeGenBase[1];
-		biomes = world.getWorldChunkManager().loadBlockGeneratorData(biomes, x, z, 1, 1);
+		BiomeGenBase[] biomes = world.getWorldChunkManager().loadBlockGeneratorData(null, x, z, 1, 1);
 		BiomeGenBase natural = biomes != null && biomes.length > 0 ? biomes[0] : null;
 		return natural;
 	}
@@ -1904,8 +1939,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	/** Returns true if the chunk here (block coords) has been generated, whether or not it is currently loaded. */
 	public static boolean isChunkGenerated(WorldServer world, int x, int z) {
+		return isChunkGeneratedChunkCoords(world, x >> 4, z >> 4);
+	}
+
+	/** Returns true if the chunk here has been generated, whether or not it is currently loaded. */
+	public static boolean isChunkGeneratedChunkCoords(WorldServer world, int x, int z) {
 		IChunkLoader loader = world.theChunkProviderServer.currentChunkLoader;
-		return loader instanceof AnvilChunkLoader && ((AnvilChunkLoader)loader).chunkExists(world, x >> 4, z >> 4);
+		return loader instanceof AnvilChunkLoader && ((AnvilChunkLoader)loader).chunkExists(world, x, z);
 	}
 
 	public static int getWaterDepth(World world, int x, int y, int z) {
@@ -2022,5 +2062,34 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			ret = post;
 
 		return ret;
+	}
+
+	public static void erodeBlock(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		Material mat = b.getMaterial();
+		if (ReikaBlockHelper.isLiquid(b) || mat == Material.plants || mat == Material.leaves) {
+			world.setBlock(x, y, z, Blocks.air);
+		}
+		else if (b == Blocks.cobblestone) {
+			world.setBlock(x, y, z, Blocks.gravel);
+		}
+		else if (b == Blocks.gravel) {
+			world.setBlock(x, y, z, Blocks.sand);
+		}
+		else if (b == Blocks.sand) {
+			world.setBlock(x, y, z, Blocks.air);
+		}
+		else if (mat == Material.rock) {
+			world.setBlock(x, y, z, Blocks.cobblestone);
+		}
+		else if (b instanceof BlockLog) {
+			world.setBlock(x, y, z, Blocks.fire);
+		}
+		else if (mat == Material.ground) {
+			world.setBlock(x, y, z, Blocks.sand);
+		}
+		else if (mat == Material.grass || b == Blocks.grass) {
+			world.setBlock(x, y, z, Blocks.dirt);
+		}
 	}
 }

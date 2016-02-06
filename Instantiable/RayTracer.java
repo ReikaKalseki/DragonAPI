@@ -32,6 +32,7 @@ public final class RayTracer {
 	private double targetY;
 	private double targetZ;
 	public boolean softBlocksOnly = false;
+	public boolean allowFluids = true;
 
 	private final ArrayList<BlockKey> forbiddenBlocks = new ArrayList();
 	private final ArrayList<BlockKey> allowedBlocks = new ArrayList();
@@ -132,9 +133,11 @@ public final class RayTracer {
 		BlockKey key = new BlockKey(b, meta);
 		if (allowedBlocks.contains(key))
 			return false;
-		if (!ReikaWorldHelper.softBlocks(world, x, y, z) && (softBlocksOnly || ReikaBlockHelper.isCollideable(world, x, y, z)))
+		if (forbiddenBlocks.contains(key))
 			return true;
-		return forbiddenBlocks.contains(key);
+		if (!allowFluids && ReikaBlockHelper.isLiquid(b))
+			return true;
+		return !ReikaWorldHelper.softBlocks(world, x, y, z) || (softBlocksOnly && ReikaBlockHelper.isCollideable(world, x, y, z));
 	}
 
 }

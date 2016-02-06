@@ -20,6 +20,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -284,6 +285,18 @@ public class WorldLocation {
 	public static WorldLocation fromSerialString(String s) {
 		String[] parts = s.split(":");
 		return new WorldLocation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+	}
+
+	public ChunkCoordIntPair getChunk() {
+		return new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4);
+	}
+
+	public BlockKey getBlockKey() {
+		return new BlockKey(this.getBlock(), this.getBlockMetadata());
+	}
+
+	public boolean isWithinDistOnAllCoords(WorldLocation loc, int radius) {
+		return Math.abs(loc.xCoord-xCoord) <= radius && Math.abs(loc.yCoord-yCoord) <= radius && Math.abs(loc.zCoord-zCoord) <= radius;
 	}
 
 }

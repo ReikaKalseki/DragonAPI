@@ -22,6 +22,12 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Fertility;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Flowering;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Life;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Speeds;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Territory;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Tolerance;
 
 import com.mojang.authlib.GameProfile;
 
@@ -47,7 +53,8 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	protected final Random rand = new Random();
 
-	private final IBeeRoot beeRoot;
+	private static final IBeeRoot beeRoot;
+
 	private final IIcon[][] icons = new IIcon[EnumBeeType.VALUES.length][3];
 	private final HashMap<ItemStack, Float> specials = new HashMap();
 	private final HashMap<ItemStack, Float> products = new HashMap();
@@ -60,9 +67,11 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	private boolean isRegistered = false;
 	private final IAllele[] template = new IAllele[EnumBeeChromosome.values().length];
 
-	protected BeeSpecies(String name, String uid, String latinName, String creator) {
+	static {
 		beeRoot = (IBeeRoot)AlleleManager.alleleRegistry.getSpeciesRoot("rootBees");
+	}
 
+	protected BeeSpecies(String name, String uid, String latinName, String creator) {
 		branch = new BeeBranch(this);
 
 		this.name = name;
@@ -76,7 +85,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	public void register() {
 		System.arraycopy(this.getSpeciesTemplate(), 0, template, 0, template.length);
-		AlleleManager.alleleRegistry.registerAllele(this);
+		AlleleManager.alleleRegistry.registerAllele(this, EnumBeeChromosome.SPECIES);
 		beeRoot.registerTemplate(template);
 		AlleleManager.alleleRegistry.getClassification("family.apidae").addMemberGroup(branch);
 		isRegistered = true;
@@ -116,19 +125,21 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	@Override
-	public IClassification getBranch() {
+	public final IClassification getBranch() {
 		return branch;
 	}
 
 	@Override
-	public Map<ItemStack, Float> getProductChances() {
+	public final Map<ItemStack, Float> getProductChances() {
 		return Collections.unmodifiableMap(products);
 	}
 
 	@Override
-	public Map<ItemStack, Float> getSpecialtyChances() {
+	public final Map<ItemStack, Float> getSpecialtyChances() {
 		return Collections.unmodifiableMap(specials);
 	}
+
+	public abstract boolean isTolerantFlyer();
 
 	public abstract static class TraitsBee extends BeeSpecies {
 
@@ -203,6 +214,11 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		public final boolean isNocturnal() {
 			return traits.isNocturnal;
 		}
+
+		@Override
+		public final boolean isTolerantFlyer() {
+			return traits.isTolerant;
+		}
 	}
 
 	private static final class BeeBranch implements IClassification {
@@ -271,6 +287,10 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	public final ItemStack getBeeItem(World world, EnumBeeType type) {
 		return beeRoot.getMemberStack(beeRoot.getBee(world, beeRoot.templateAsGenome(template)), type.ordinal());
+	}
+
+	public static final ItemStack getBeeItem(World world, String bee, EnumBeeType type) {
+		return beeRoot.getMemberStack(beeRoot.getBee(world, beeRoot.templateAsGenome(beeRoot.getTemplate(bee))), type.ordinal());
 	}
 
 	public final void addBreeding(String parent1, String parent2, int chance) {
@@ -386,168 +406,6 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	}
 
-	public static enum Speeds {
-		SLOWEST("speedSlowest"),
-		SLOWER("speedSlower"),
-		SLOW("speedSlow"),
-		NORMAL("speedNorm"),
-		FAST("speedFast"),
-		FASTER("speedFaster"),
-		FASTEST("speedFastest");
-
-		public final String tag;
-
-		private Speeds(String s) {
-			tag = "forestry."+s;
-		}
-
-		public IAllele getAllele() {
-			return AlleleManager.alleleRegistry.getAllele(tag);
-		}
-	}
-
-	public static enum Fertility {
-		LOW("fertilityLow"),
-		NORMAL("fertilityNormal"),
-		HIGH("fertilityHigh"),
-		MAXIMUM("fertilityMaximum");
-
-		public final String tag;
-
-		private Fertility(String s) {
-			tag = "forestry."+s;
-		}
-
-		public IAllele getAllele() {
-			return AlleleManager.alleleRegistry.getAllele(tag);
-		}
-	}
-
-	public static enum Flower {
-		VANILLA("flowersVanilla"),
-		NETHER("flowersNether"),
-		CACTUS("flowersCacti"),
-		MUSHROOM("flowersMushrooms"),
-		ENDER("flowersEnd"),
-		JUNGLE("flowersJungle"),
-		SNOW("flowersSnow"),
-		WHEAT("flowersWheat"),
-		GOURD("flowersGourd");
-
-		public final String tag;
-
-		private Flower(String s) {
-			tag = "forestry."+s;
-		}
-
-		public IAllele getAllele() {
-			return AlleleManager.alleleRegistry.getAllele(tag);
-		}
-	}
-
-	public static enum Flowering {
-		SLOWEST("floweringSlowest"),
-		SLOWER("floweringSlower"),
-		SLOW("floweringSlow"),
-		AVERAGE("floweringAverage"),
-		FAST("floweringFast"),
-		FASTER("floweringFaster"),
-		FASTEST("floweringFastest"),
-		MAXIMUM("floweringMaximum"); //"gui.maximum"
-
-		public final String tag;
-
-		private Flowering(String s) {
-			tag = "forestry."+s;
-		}
-
-		public IAllele getAllele() {
-			return AlleleManager.alleleRegistry.getAllele(tag);
-		}
-	}
-
-	public static enum Territory {
-		DEFAULT("territoryDefault"),
-		LARGE("territoryLarge"),
-		LARGER("territoryLarger"),
-		LARGEST("territoryLargest");
-
-		public final String tag;
-
-		private Territory(String s) {
-			tag = "forestry."+s;
-		}
-
-		public IAllele getAllele() {
-			return AlleleManager.alleleRegistry.getAllele(tag);
-		}
-	}
-
-	public static enum Life {
-		SHORTEST("lifespanShortest"),
-		SHORTER("lifespanShorter"),
-		SHORT("lifespanShort"),
-		SHORTENED("lifespanShortened"),
-		NORMAL("lifespanNormal"),
-		ELONGATED("lifespanElongated"),
-		LONG("lifespanLong"),
-		LONGER("lifespanLonger"),
-		LONGEST("lifespanLongest");
-
-		public final String tag;
-
-		private Life(String s) {
-			tag = "forestry."+s;
-		}
-
-		public IAllele getAllele() {
-			return AlleleManager.alleleRegistry.getAllele(tag);
-		}
-	}
-
-	public static enum Tolerance {
-		UP("toleranceUp"),
-		DOWN("toleranceDown"),
-		BOTH("toleranceBoth"),
-		NONE("toleranceNone");
-
-		public final String tag;
-
-		private Tolerance(String s) {
-			tag = "forestry."+s;
-		}
-	}
-
-	public static enum Effect {
-		NONE("effectNone"),
-		AGRESSION("effectAggressive"),
-		HEROIC("effectHeroic"),
-		REGEN("effectBeatific"),
-		MIASMIC("effectMiasmic"),
-		MISANTHROPE("effectMisanthrope"),
-		ICY("effectGlacial"),
-		RADIATION("effectRadioactive"),
-		CREEPER("effectCreeper"),
-		FIRE("effectIgnition"),
-		EXPLORE("effectExploration"),
-		EASTER("effectFestiveEaster"),
-		SNOW("effectSnowing"),
-		NAUSEA("effectDrunkard"),
-		REANIMATE("effectReanimation"),
-		RESURRECT("effectResurrection"),
-		REPULSION("effectRepulsion");
-
-		public final String tag;
-
-		private Effect(String s) {
-			tag = "forestry."+s;
-		}
-
-		public IAllele getAllele() {
-			return AlleleManager.alleleRegistry.getAllele(tag);
-		}
-	}
-
 	public abstract IAllele getFlowerAllele();
 	public abstract IAllele getEffectAllele();
 	public abstract Speeds getProductionSpeed();
@@ -604,6 +462,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		alleles[EnumBeeChromosome.CAVE_DWELLING.ordinal()] = this.getGeneForBoolean(this.isCaveDwelling());
 		alleles[EnumBeeChromosome.TEMPERATURE_TOLERANCE.ordinal()] = this.getToleranceGene(this.getTemperatureToleranceDir(), this.getTemperatureTolerance());
 		alleles[EnumBeeChromosome.HUMIDITY_TOLERANCE.ordinal()] = this.getToleranceGene(this.getHumidityToleranceDir(), this.getHumidityTolerance());
+		alleles[EnumBeeChromosome.TOLERANT_FLYER.ordinal()] = this.getGeneForBoolean(this.isTolerantFlyer());
 		return alleles;
 	}
 

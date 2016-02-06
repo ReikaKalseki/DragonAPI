@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import net.minecraft.enchantment.Enchantment;
@@ -141,14 +142,25 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 
 	}
 
-	public static void addEnchantment(NBTTagCompound tag, Enchantment enchantment, int level) {
+	public static void addEnchantment(NBTTagCompound tag, Enchantment enchantment, int level, boolean append) {
+		//ReikaJavaLibrary.pConsole("Pre: "+tag.getTag("ench"));
 		if (!tag.hasKey("ench", 9))
 			tag.setTag("ench", new NBTTagList());
 		NBTTagList li = tag.getTagList("ench", 10);
+		if (!append) {
+			for (NBTTagCompound in : ((List<NBTTagCompound>)li.tagList)) {
+				short type = in.getShort("id");
+				if (type == enchantment.effectId) {
+					in.setShort("lvl", (byte)level);
+					return;
+				}
+			}
+		}
 		NBTTagCompound nbt = new NBTTagCompound();
 		nbt.setShort("id", (short)enchantment.effectId);
 		nbt.setShort("lvl", ((byte)level));
 		li.appendTag(nbt);
+		//ReikaJavaLibrary.pConsole("Post: "+tag.getTag("ench"));
 	}
 
 }

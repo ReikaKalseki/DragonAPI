@@ -43,13 +43,13 @@ public class NEIIntercept implements IContainerInputHandler {
 
 	@Override
 	public boolean lastKeyTyped(GuiContainer gui, char keyChar, int keyID) {
-		return keyID == NEIClientConfig.getKeyBinding("gui.recipe") && MinecraftForge.EVENT_BUS.post(new NEIRecipeCheckEvent(gui));
+		return keyID == NEIClientConfig.getKeyBinding("gui.recipe") && !NEIClientConfig.isHidden() && MinecraftForge.EVENT_BUS.post(new NEIRecipeCheckEvent(gui));
 	}
 
 	@Override
 	public boolean mouseClicked(GuiContainer gui, int mousex, int mousey, int button) {
 		if (button == 0) {
-			if (gui instanceof GuiRecipe)
+			if (gui instanceof GuiRecipe && !NEIClientConfig.isHidden())
 				return MinecraftForge.EVENT_BUS.post(new NEIRecipeCheckEvent(gui));
 			else {
 				ItemPanel panel = LayoutManager.itemPanel;

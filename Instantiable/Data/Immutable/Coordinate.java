@@ -21,6 +21,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent.UpdateFlags;
@@ -218,6 +219,10 @@ public final class Coordinate {
 
 	public boolean setBlock(World world, Block id, int meta, int flags) {
 		return world != null && world.setBlock(xCoord, yCoord, zCoord, id, meta, flags);
+	}
+
+	public BiomeGenBase getBiome(World world) {
+		return world.getBiomeGenForCoords(xCoord, zCoord);
 	}
 
 	public void updateTick(World world) {

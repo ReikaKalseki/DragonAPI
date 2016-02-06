@@ -24,6 +24,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.shader.TesselatorVertexState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
@@ -43,6 +44,7 @@ import Reika.DragonAPI.Interfaces.TextureFetcher;
 import Reika.DragonAPI.Interfaces.TileModel;
 import Reika.DragonAPI.Interfaces.TileEntity.RenderFetcher;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
@@ -154,8 +156,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 		double f7 = Math.sqrt(dx*dx+dz*dz);
 		double f8 = Math.sqrt(dx*dx+dy*dy+dz*dz);
-		double ang1 = -Math.atan2(dz, dx) * 180 / Math.PI - 90;
-		double ang2 = -Math.atan2(f7, dy) * 180 / Math.PI - 90;
+		double ang1 = -Math.atan2(dz, dx) * 180 / Math.PI-90;
+		double ang2 = -Math.atan2(f7, dy) * 180 / Math.PI-90;
 		GL11.glRotated(ang1, 0, 1, 0);
 		GL11.glRotated(ang2, 1, 0, 0);
 
@@ -233,7 +235,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	/** Renders break particles for custom-rendered TileEntities. Call this one from BlockDestroyEffects!
 	 * Args: Base path (contains TE textures, world, x, y, z, Block, EffectRenderer, Allowed Texture Regions<br><br>
 	 *
-	 * Explanation of Allowed Regions - Expects a list of size-4 double arrays, whose elements are as follows:<br>
+	 * Explanation of Allowed Regions-Expects a list of size-4 double arrays, whose elements are as follows:<br>
 	 * allowed[0]: Lower X-coordinate of allowed region in texture file (left)<br>
 	 * allowed[1]: Lower Y-coordinate of allowed region in texture file (top)<br>
 	 * allowed[2]: Upper X-coordinate of allowed region in texture file (right)<br>
@@ -355,8 +357,12 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	@SideOnly(Side.CLIENT)
 	public static void spawnDropParticles(World world, int x, int y, int z, Block b, int meta) {
-		for (int i = 0; i < 16; i++) {
-			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, meta, 0));
+		int n = 12+rand.nextInt(12);
+		for (int i = 0; i < n; i++) {
+			double vx = ReikaRandomHelper.getRandomPlusMinus(0D, 0.25);
+			double vz = ReikaRandomHelper.getRandomPlusMinus(0D, 0.25);
+			double vy = ReikaRandomHelper.getRandomBetween(0.125, 1);
+			Minecraft.getMinecraft().effectRenderer.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), vx, vy, vz, b, meta, 0));
 		}
 	}
 
@@ -502,26 +508,26 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					--y;
 				}
 
-				rb.aoBrightnessXYNN = b.getMixedBrightnessForBlock(iba, x - 1, y, z);
-				rb.aoBrightnessYZNN = b.getMixedBrightnessForBlock(iba, x, y, z - 1);
-				rb.aoBrightnessYZNP = b.getMixedBrightnessForBlock(iba, x, y, z + 1);
-				rb.aoBrightnessXYPN = b.getMixedBrightnessForBlock(iba, x + 1, y, z);
-				rb.aoLightValueScratchXYNN = iba.getBlock(x - 1, y, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchYZNN = iba.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchYZNP = iba.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchXYPN = iba.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
-				flag2 = iba.getBlock(x + 1, y - 1, z).getCanBlockGrass();
-				flag3 = iba.getBlock(x - 1, y - 1, z).getCanBlockGrass();
-				flag4 = iba.getBlock(x, y - 1, z + 1).getCanBlockGrass();
-				flag5 = iba.getBlock(x, y - 1, z - 1).getCanBlockGrass();
+				rb.aoBrightnessXYNN = b.getMixedBrightnessForBlock(iba, x-1, y, z);
+				rb.aoBrightnessYZNN = b.getMixedBrightnessForBlock(iba, x, y, z-1);
+				rb.aoBrightnessYZNP = b.getMixedBrightnessForBlock(iba, x, y, z+1);
+				rb.aoBrightnessXYPN = b.getMixedBrightnessForBlock(iba, x+1, y, z);
+				rb.aoLightValueScratchXYNN = iba.getBlock(x-1, y, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchYZNN = iba.getBlock(x, y, z-1).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchYZNP = iba.getBlock(x, y, z+1).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchXYPN = iba.getBlock(x+1, y, z).getAmbientOcclusionLightValue();
+				flag2 = iba.getBlock(x+1, y-1, z).getCanBlockGrass();
+				flag3 = iba.getBlock(x-1, y-1, z).getCanBlockGrass();
+				flag4 = iba.getBlock(x, y-1, z+1).getCanBlockGrass();
+				flag5 = iba.getBlock(x, y-1, z-1).getCanBlockGrass();
 
 				if (!flag5 && !flag3) {
 					rb.aoLightValueScratchXYZNNN = rb.aoLightValueScratchXYNN;
 					rb.aoBrightnessXYZNNN = rb.aoBrightnessXYNN;
 				}
 				else {
-					rb.aoLightValueScratchXYZNNN = iba.getBlock(x - 1, y, z - 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNNN = b.getMixedBrightnessForBlock(iba, x - 1, y, z - 1);
+					rb.aoLightValueScratchXYZNNN = iba.getBlock(x-1, y, z-1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNNN = b.getMixedBrightnessForBlock(iba, x-1, y, z-1);
 				}
 
 				if (!flag4 && !flag3) {
@@ -529,8 +535,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZNNP = rb.aoBrightnessXYNN;
 				}
 				else {
-					rb.aoLightValueScratchXYZNNP = iba.getBlock(x - 1, y, z + 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNNP = b.getMixedBrightnessForBlock(iba, x - 1, y, z + 1);
+					rb.aoLightValueScratchXYZNNP = iba.getBlock(x-1, y, z+1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNNP = b.getMixedBrightnessForBlock(iba, x-1, y, z+1);
 				}
 
 				if (!flag5 && !flag2) {
@@ -538,8 +544,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPNN = rb.aoBrightnessXYPN;
 				}
 				else {
-					rb.aoLightValueScratchXYZPNN = iba.getBlock(x + 1, y, z - 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPNN = b.getMixedBrightnessForBlock(iba, x + 1, y, z - 1);
+					rb.aoLightValueScratchXYZPNN = iba.getBlock(x+1, y, z-1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPNN = b.getMixedBrightnessForBlock(iba, x+1, y, z-1);
 				}
 
 				if (!flag4 && !flag2) {
@@ -547,8 +553,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPNP = rb.aoBrightnessXYPN;
 				}
 				else {
-					rb.aoLightValueScratchXYZPNP = iba.getBlock(x + 1, y, z + 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPNP = b.getMixedBrightnessForBlock(iba, x + 1, y, z + 1);
+					rb.aoLightValueScratchXYZPNP = iba.getBlock(x+1, y, z+1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPNP = b.getMixedBrightnessForBlock(iba, x+1, y, z+1);
 				}
 
 				if (rb.renderMinY <= 0.0D) {
@@ -557,15 +563,15 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 				i1 = l;
 
-				if (rb.renderMinY <= 0.0D || !iba.getBlock(x, y - 1, z).isOpaqueCube()) {
-					i1 = b.getMixedBrightnessForBlock(iba, x, y - 1, z);
+				if (rb.renderMinY <= 0.0D || !iba.getBlock(x, y-1, z).isOpaqueCube()) {
+					i1 = b.getMixedBrightnessForBlock(iba, x, y-1, z);
 				}
 
-				f7 = iba.getBlock(x, y - 1, z).getAmbientOcclusionLightValue();
-				f3 = (rb.aoLightValueScratchXYZNNP + rb.aoLightValueScratchXYNN + rb.aoLightValueScratchYZNP + f7) / 4.0F;
-				f6 = (rb.aoLightValueScratchYZNP + f7 + rb.aoLightValueScratchXYZPNP + rb.aoLightValueScratchXYPN) / 4.0F;
-				f5 = (f7 + rb.aoLightValueScratchYZNN + rb.aoLightValueScratchXYPN + rb.aoLightValueScratchXYZPNN) / 4.0F;
-				f4 = (rb.aoLightValueScratchXYNN + rb.aoLightValueScratchXYZNNN + f7 + rb.aoLightValueScratchYZNN) / 4.0F;
+				f7 = iba.getBlock(x, y-1, z).getAmbientOcclusionLightValue();
+				f3 = (rb.aoLightValueScratchXYZNNP+rb.aoLightValueScratchXYNN+rb.aoLightValueScratchYZNP+f7) / 4.0F;
+				f6 = (rb.aoLightValueScratchYZNP+f7+rb.aoLightValueScratchXYZPNP+rb.aoLightValueScratchXYPN) / 4.0F;
+				f5 = (f7+rb.aoLightValueScratchYZNN+rb.aoLightValueScratchXYPN+rb.aoLightValueScratchXYZPNN) / 4.0F;
+				f4 = (rb.aoLightValueScratchXYNN+rb.aoLightValueScratchXYZNNN+f7+rb.aoLightValueScratchYZNN) / 4.0F;
 				rb.brightnessTopLeft = rb.getAoBrightness(rb.aoBrightnessXYZNNP, rb.aoBrightnessXYNN, rb.aoBrightnessYZNP, i1);
 				rb.brightnessTopRight = rb.getAoBrightness(rb.aoBrightnessYZNP, rb.aoBrightnessXYZPNP, rb.aoBrightnessXYPN, i1);
 				rb.brightnessBottomRight = rb.getAoBrightness(rb.aoBrightnessYZNN, rb.aoBrightnessXYPN, rb.aoBrightnessXYZPNN, i1);
@@ -603,26 +609,26 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					++y;
 				}
 
-				rb.aoBrightnessXYNP = b.getMixedBrightnessForBlock(iba, x - 1, y, z);
-				rb.aoBrightnessXYPP = b.getMixedBrightnessForBlock(iba, x + 1, y, z);
-				rb.aoBrightnessYZPN = b.getMixedBrightnessForBlock(iba, x, y, z - 1);
-				rb.aoBrightnessYZPP = b.getMixedBrightnessForBlock(iba, x, y, z + 1);
-				rb.aoLightValueScratchXYNP = iba.getBlock(x - 1, y, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchXYPP = iba.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchYZPN = iba.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchYZPP = iba.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-				flag2 = iba.getBlock(x + 1, y + 1, z).getCanBlockGrass();
-				flag3 = iba.getBlock(x - 1, y + 1, z).getCanBlockGrass();
-				flag4 = iba.getBlock(x, y + 1, z + 1).getCanBlockGrass();
-				flag5 = iba.getBlock(x, y + 1, z - 1).getCanBlockGrass();
+				rb.aoBrightnessXYNP = b.getMixedBrightnessForBlock(iba, x-1, y, z);
+				rb.aoBrightnessXYPP = b.getMixedBrightnessForBlock(iba, x+1, y, z);
+				rb.aoBrightnessYZPN = b.getMixedBrightnessForBlock(iba, x, y, z-1);
+				rb.aoBrightnessYZPP = b.getMixedBrightnessForBlock(iba, x, y, z+1);
+				rb.aoLightValueScratchXYNP = iba.getBlock(x-1, y, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchXYPP = iba.getBlock(x+1, y, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchYZPN = iba.getBlock(x, y, z-1).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchYZPP = iba.getBlock(x, y, z+1).getAmbientOcclusionLightValue();
+				flag2 = iba.getBlock(x+1, y+1, z).getCanBlockGrass();
+				flag3 = iba.getBlock(x-1, y+1, z).getCanBlockGrass();
+				flag4 = iba.getBlock(x, y+1, z+1).getCanBlockGrass();
+				flag5 = iba.getBlock(x, y+1, z-1).getCanBlockGrass();
 
 				if (!flag5 && !flag3) {
 					rb.aoLightValueScratchXYZNPN = rb.aoLightValueScratchXYNP;
 					rb.aoBrightnessXYZNPN = rb.aoBrightnessXYNP;
 				}
 				else {
-					rb.aoLightValueScratchXYZNPN = iba.getBlock(x - 1, y, z - 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNPN = b.getMixedBrightnessForBlock(iba, x - 1, y, z - 1);
+					rb.aoLightValueScratchXYZNPN = iba.getBlock(x-1, y, z-1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNPN = b.getMixedBrightnessForBlock(iba, x-1, y, z-1);
 				}
 
 				if (!flag5 && !flag2) {
@@ -630,8 +636,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPPN = rb.aoBrightnessXYPP;
 				}
 				else {
-					rb.aoLightValueScratchXYZPPN = iba.getBlock(x + 1, y, z - 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPPN = b.getMixedBrightnessForBlock(iba, x + 1, y, z - 1);
+					rb.aoLightValueScratchXYZPPN = iba.getBlock(x+1, y, z-1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPPN = b.getMixedBrightnessForBlock(iba, x+1, y, z-1);
 				}
 
 				if (!flag4 && !flag3) {
@@ -639,8 +645,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZNPP = rb.aoBrightnessXYNP;
 				}
 				else {
-					rb.aoLightValueScratchXYZNPP = iba.getBlock(x - 1, y, z + 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNPP = b.getMixedBrightnessForBlock(iba, x - 1, y, z + 1);
+					rb.aoLightValueScratchXYZNPP = iba.getBlock(x-1, y, z+1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNPP = b.getMixedBrightnessForBlock(iba, x-1, y, z+1);
 				}
 
 				if (!flag4 && !flag2) {
@@ -648,8 +654,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPPP = rb.aoBrightnessXYPP;
 				}
 				else {
-					rb.aoLightValueScratchXYZPPP = iba.getBlock(x + 1, y, z + 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPPP = b.getMixedBrightnessForBlock(iba, x + 1, y, z + 1);
+					rb.aoLightValueScratchXYZPPP = iba.getBlock(x+1, y, z+1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPPP = b.getMixedBrightnessForBlock(iba, x+1, y, z+1);
 				}
 
 				if (rb.renderMaxY >= 1.0D) {
@@ -658,15 +664,15 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 				i1 = l;
 
-				if (rb.renderMaxY >= 1.0D || !iba.getBlock(x, y + 1, z).isOpaqueCube()) {
-					i1 = b.getMixedBrightnessForBlock(iba, x, y + 1, z);
+				if (rb.renderMaxY >= 1.0D || !iba.getBlock(x, y+1, z).isOpaqueCube()) {
+					i1 = b.getMixedBrightnessForBlock(iba, x, y+1, z);
 				}
 
-				f7 = iba.getBlock(x, y + 1, z).getAmbientOcclusionLightValue();
-				f6 = (rb.aoLightValueScratchXYZNPP + rb.aoLightValueScratchXYNP + rb.aoLightValueScratchYZPP + f7) / 4.0F;
-				f3 = (rb.aoLightValueScratchYZPP + f7 + rb.aoLightValueScratchXYZPPP + rb.aoLightValueScratchXYPP) / 4.0F;
-				f4 = (f7 + rb.aoLightValueScratchYZPN + rb.aoLightValueScratchXYPP + rb.aoLightValueScratchXYZPPN) / 4.0F;
-				f5 = (rb.aoLightValueScratchXYNP + rb.aoLightValueScratchXYZNPN + f7 + rb.aoLightValueScratchYZPN) / 4.0F;
+				f7 = iba.getBlock(x, y+1, z).getAmbientOcclusionLightValue();
+				f6 = (rb.aoLightValueScratchXYZNPP+rb.aoLightValueScratchXYNP+rb.aoLightValueScratchYZPP+f7) / 4.0F;
+				f3 = (rb.aoLightValueScratchYZPP+f7+rb.aoLightValueScratchXYZPPP+rb.aoLightValueScratchXYPP) / 4.0F;
+				f4 = (f7+rb.aoLightValueScratchYZPN+rb.aoLightValueScratchXYPP+rb.aoLightValueScratchXYZPPN) / 4.0F;
+				f5 = (rb.aoLightValueScratchXYNP+rb.aoLightValueScratchXYZNPN+f7+rb.aoLightValueScratchYZPN) / 4.0F;
 				rb.brightnessTopRight = rb.getAoBrightness(rb.aoBrightnessXYZNPP, rb.aoBrightnessXYNP, rb.aoBrightnessYZPP, i1);
 				rb.brightnessTopLeft = rb.getAoBrightness(rb.aoBrightnessYZPP, rb.aoBrightnessXYZPPP, rb.aoBrightnessXYPP, i1);
 				rb.brightnessBottomLeft = rb.getAoBrightness(rb.aoBrightnessYZPN, rb.aoBrightnessXYPP, rb.aoBrightnessXYZPPN, i1);
@@ -697,26 +703,26 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					--z;
 				}
 
-				rb.aoLightValueScratchXZNN = iba.getBlock(x - 1, y, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchYZNN = iba.getBlock(x, y - 1, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchYZPN = iba.getBlock(x, y + 1, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchXZPN = iba.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
-				rb.aoBrightnessXZNN = b.getMixedBrightnessForBlock(iba, x - 1, y, z);
-				rb.aoBrightnessYZNN = b.getMixedBrightnessForBlock(iba, x, y - 1, z);
-				rb.aoBrightnessYZPN = b.getMixedBrightnessForBlock(iba, x, y + 1, z);
-				rb.aoBrightnessXZPN = b.getMixedBrightnessForBlock(iba, x + 1, y, z);
-				flag2 = iba.getBlock(x + 1, y, z - 1).getCanBlockGrass();
-				flag3 = iba.getBlock(x - 1, y, z - 1).getCanBlockGrass();
-				flag4 = iba.getBlock(x, y + 1, z - 1).getCanBlockGrass();
-				flag5 = iba.getBlock(x, y - 1, z - 1).getCanBlockGrass();
+				rb.aoLightValueScratchXZNN = iba.getBlock(x-1, y, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchYZNN = iba.getBlock(x, y-1, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchYZPN = iba.getBlock(x, y+1, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchXZPN = iba.getBlock(x+1, y, z).getAmbientOcclusionLightValue();
+				rb.aoBrightnessXZNN = b.getMixedBrightnessForBlock(iba, x-1, y, z);
+				rb.aoBrightnessYZNN = b.getMixedBrightnessForBlock(iba, x, y-1, z);
+				rb.aoBrightnessYZPN = b.getMixedBrightnessForBlock(iba, x, y+1, z);
+				rb.aoBrightnessXZPN = b.getMixedBrightnessForBlock(iba, x+1, y, z);
+				flag2 = iba.getBlock(x+1, y, z-1).getCanBlockGrass();
+				flag3 = iba.getBlock(x-1, y, z-1).getCanBlockGrass();
+				flag4 = iba.getBlock(x, y+1, z-1).getCanBlockGrass();
+				flag5 = iba.getBlock(x, y-1, z-1).getCanBlockGrass();
 
 				if (!flag3 && !flag5) {
 					rb.aoLightValueScratchXYZNNN = rb.aoLightValueScratchXZNN;
 					rb.aoBrightnessXYZNNN = rb.aoBrightnessXZNN;
 				}
 				else {
-					rb.aoLightValueScratchXYZNNN = iba.getBlock(x - 1, y - 1, z).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNNN = b.getMixedBrightnessForBlock(iba, x - 1, y - 1, z);
+					rb.aoLightValueScratchXYZNNN = iba.getBlock(x-1, y-1, z).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNNN = b.getMixedBrightnessForBlock(iba, x-1, y-1, z);
 				}
 
 				if (!flag3 && !flag4) {
@@ -724,8 +730,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZNPN = rb.aoBrightnessXZNN;
 				}
 				else {
-					rb.aoLightValueScratchXYZNPN = iba.getBlock(x - 1, y + 1, z).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNPN = b.getMixedBrightnessForBlock(iba, x - 1, y + 1, z);
+					rb.aoLightValueScratchXYZNPN = iba.getBlock(x-1, y+1, z).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNPN = b.getMixedBrightnessForBlock(iba, x-1, y+1, z);
 				}
 
 				if (!flag2 && !flag5) {
@@ -733,8 +739,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPNN = rb.aoBrightnessXZPN;
 				}
 				else {
-					rb.aoLightValueScratchXYZPNN = iba.getBlock(x + 1, y - 1, z).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPNN = b.getMixedBrightnessForBlock(iba, x + 1, y - 1, z);
+					rb.aoLightValueScratchXYZPNN = iba.getBlock(x+1, y-1, z).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPNN = b.getMixedBrightnessForBlock(iba, x+1, y-1, z);
 				}
 
 				if (!flag2 && !flag4) {
@@ -742,8 +748,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPPN = rb.aoBrightnessXZPN;
 				}
 				else {
-					rb.aoLightValueScratchXYZPPN = iba.getBlock(x + 1, y + 1, z).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPPN = b.getMixedBrightnessForBlock(iba, x + 1, y + 1, z);
+					rb.aoLightValueScratchXYZPPN = iba.getBlock(x+1, y+1, z).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPPN = b.getMixedBrightnessForBlock(iba, x+1, y+1, z);
 				}
 
 				if (rb.renderMinZ <= 0.0D) {
@@ -752,15 +758,15 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 				i1 = l;
 
-				if (rb.renderMinZ <= 0.0D || !iba.getBlock(x, y, z - 1).isOpaqueCube()) {
-					i1 = b.getMixedBrightnessForBlock(iba, x, y, z - 1);
+				if (rb.renderMinZ <= 0.0D || !iba.getBlock(x, y, z-1).isOpaqueCube()) {
+					i1 = b.getMixedBrightnessForBlock(iba, x, y, z-1);
 				}
 
-				f7 = iba.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
-				f3 = (rb.aoLightValueScratchXZNN + rb.aoLightValueScratchXYZNPN + f7 + rb.aoLightValueScratchYZPN) / 4.0F;
-				f4 = (f7 + rb.aoLightValueScratchYZPN + rb.aoLightValueScratchXZPN + rb.aoLightValueScratchXYZPPN) / 4.0F;
-				f5 = (rb.aoLightValueScratchYZNN + f7 + rb.aoLightValueScratchXYZPNN + rb.aoLightValueScratchXZPN) / 4.0F;
-				f6 = (rb.aoLightValueScratchXYZNNN + rb.aoLightValueScratchXZNN + rb.aoLightValueScratchYZNN + f7) / 4.0F;
+				f7 = iba.getBlock(x, y, z-1).getAmbientOcclusionLightValue();
+				f3 = (rb.aoLightValueScratchXZNN+rb.aoLightValueScratchXYZNPN+f7+rb.aoLightValueScratchYZPN) / 4.0F;
+				f4 = (f7+rb.aoLightValueScratchYZPN+rb.aoLightValueScratchXZPN+rb.aoLightValueScratchXYZPPN) / 4.0F;
+				f5 = (rb.aoLightValueScratchYZNN+f7+rb.aoLightValueScratchXYZPNN+rb.aoLightValueScratchXZPN) / 4.0F;
+				f6 = (rb.aoLightValueScratchXYZNNN+rb.aoLightValueScratchXZNN+rb.aoLightValueScratchYZNN+f7) / 4.0F;
 				rb.brightnessTopLeft = rb.getAoBrightness(rb.aoBrightnessXZNN, rb.aoBrightnessXYZNPN, rb.aoBrightnessYZPN, i1);
 				rb.brightnessBottomLeft = rb.getAoBrightness(rb.aoBrightnessYZPN, rb.aoBrightnessXZPN, rb.aoBrightnessXYZPPN, i1);
 				rb.brightnessBottomRight = rb.getAoBrightness(rb.aoBrightnessYZNN, rb.aoBrightnessXYZPNN, rb.aoBrightnessXZPN, i1);
@@ -816,26 +822,26 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					++z;
 				}
 
-				rb.aoLightValueScratchXZNP = iba.getBlock(x - 1, y, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchXZPP = iba.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchYZNP = iba.getBlock(x, y - 1, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchYZPP = iba.getBlock(x, y + 1, z).getAmbientOcclusionLightValue();
-				rb.aoBrightnessXZNP = b.getMixedBrightnessForBlock(iba, x - 1, y, z);
-				rb.aoBrightnessXZPP = b.getMixedBrightnessForBlock(iba, x + 1, y, z);
-				rb.aoBrightnessYZNP = b.getMixedBrightnessForBlock(iba, x, y - 1, z);
-				rb.aoBrightnessYZPP = b.getMixedBrightnessForBlock(iba, x, y + 1, z);
-				flag2 = iba.getBlock(x + 1, y, z + 1).getCanBlockGrass();
-				flag3 = iba.getBlock(x - 1, y, z + 1).getCanBlockGrass();
-				flag4 = iba.getBlock(x, y + 1, z + 1).getCanBlockGrass();
-				flag5 = iba.getBlock(x, y - 1, z + 1).getCanBlockGrass();
+				rb.aoLightValueScratchXZNP = iba.getBlock(x-1, y, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchXZPP = iba.getBlock(x+1, y, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchYZNP = iba.getBlock(x, y-1, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchYZPP = iba.getBlock(x, y+1, z).getAmbientOcclusionLightValue();
+				rb.aoBrightnessXZNP = b.getMixedBrightnessForBlock(iba, x-1, y, z);
+				rb.aoBrightnessXZPP = b.getMixedBrightnessForBlock(iba, x+1, y, z);
+				rb.aoBrightnessYZNP = b.getMixedBrightnessForBlock(iba, x, y-1, z);
+				rb.aoBrightnessYZPP = b.getMixedBrightnessForBlock(iba, x, y+1, z);
+				flag2 = iba.getBlock(x+1, y, z+1).getCanBlockGrass();
+				flag3 = iba.getBlock(x-1, y, z+1).getCanBlockGrass();
+				flag4 = iba.getBlock(x, y+1, z+1).getCanBlockGrass();
+				flag5 = iba.getBlock(x, y-1, z+1).getCanBlockGrass();
 
 				if (!flag3 && !flag5) {
 					rb.aoLightValueScratchXYZNNP = rb.aoLightValueScratchXZNP;
 					rb.aoBrightnessXYZNNP = rb.aoBrightnessXZNP;
 				}
 				else {
-					rb.aoLightValueScratchXYZNNP = iba.getBlock(x - 1, y - 1, z).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNNP = b.getMixedBrightnessForBlock(iba, x - 1, y - 1, z);
+					rb.aoLightValueScratchXYZNNP = iba.getBlock(x-1, y-1, z).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNNP = b.getMixedBrightnessForBlock(iba, x-1, y-1, z);
 				}
 
 				if (!flag3 && !flag4) {
@@ -843,8 +849,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZNPP = rb.aoBrightnessXZNP;
 				}
 				else {
-					rb.aoLightValueScratchXYZNPP = iba.getBlock(x - 1, y + 1, z).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNPP = b.getMixedBrightnessForBlock(iba, x - 1, y + 1, z);
+					rb.aoLightValueScratchXYZNPP = iba.getBlock(x-1, y+1, z).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNPP = b.getMixedBrightnessForBlock(iba, x-1, y+1, z);
 				}
 
 				if (!flag2 && !flag5) {
@@ -852,8 +858,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPNP = rb.aoBrightnessXZPP;
 				}
 				else {
-					rb.aoLightValueScratchXYZPNP = iba.getBlock(x + 1, y - 1, z).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPNP = b.getMixedBrightnessForBlock(iba, x + 1, y - 1, z);
+					rb.aoLightValueScratchXYZPNP = iba.getBlock(x+1, y-1, z).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPNP = b.getMixedBrightnessForBlock(iba, x+1, y-1, z);
 				}
 
 				if (!flag2 && !flag4) {
@@ -861,8 +867,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPPP = rb.aoBrightnessXZPP;
 				}
 				else {
-					rb.aoLightValueScratchXYZPPP = iba.getBlock(x + 1, y + 1, z).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPPP = b.getMixedBrightnessForBlock(iba, x + 1, y + 1, z);
+					rb.aoLightValueScratchXYZPPP = iba.getBlock(x+1, y+1, z).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPPP = b.getMixedBrightnessForBlock(iba, x+1, y+1, z);
 				}
 
 				if (rb.renderMaxZ >= 1.0D) {
@@ -871,15 +877,15 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 				i1 = l;
 
-				if (rb.renderMaxZ >= 1.0D || !iba.getBlock(x, y, z + 1).isOpaqueCube()) {
-					i1 = b.getMixedBrightnessForBlock(iba, x, y, z + 1);
+				if (rb.renderMaxZ >= 1.0D || !iba.getBlock(x, y, z+1).isOpaqueCube()) {
+					i1 = b.getMixedBrightnessForBlock(iba, x, y, z+1);
 				}
 
-				f7 = iba.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-				f3 = (rb.aoLightValueScratchXZNP + rb.aoLightValueScratchXYZNPP + f7 + rb.aoLightValueScratchYZPP) / 4.0F;
-				f6 = (f7 + rb.aoLightValueScratchYZPP + rb.aoLightValueScratchXZPP + rb.aoLightValueScratchXYZPPP) / 4.0F;
-				f5 = (rb.aoLightValueScratchYZNP + f7 + rb.aoLightValueScratchXYZPNP + rb.aoLightValueScratchXZPP) / 4.0F;
-				f4 = (rb.aoLightValueScratchXYZNNP + rb.aoLightValueScratchXZNP + rb.aoLightValueScratchYZNP + f7) / 4.0F;
+				f7 = iba.getBlock(x, y, z+1).getAmbientOcclusionLightValue();
+				f3 = (rb.aoLightValueScratchXZNP+rb.aoLightValueScratchXYZNPP+f7+rb.aoLightValueScratchYZPP) / 4.0F;
+				f6 = (f7+rb.aoLightValueScratchYZPP+rb.aoLightValueScratchXZPP+rb.aoLightValueScratchXYZPPP) / 4.0F;
+				f5 = (rb.aoLightValueScratchYZNP+f7+rb.aoLightValueScratchXYZPNP+rb.aoLightValueScratchXZPP) / 4.0F;
+				f4 = (rb.aoLightValueScratchXYZNNP+rb.aoLightValueScratchXZNP+rb.aoLightValueScratchYZNP+f7) / 4.0F;
 				rb.brightnessTopLeft = rb.getAoBrightness(rb.aoBrightnessXZNP, rb.aoBrightnessXYZNPP, rb.aoBrightnessYZPP, i1);
 				rb.brightnessTopRight = rb.getAoBrightness(rb.aoBrightnessYZPP, rb.aoBrightnessXZPP, rb.aoBrightnessXYZPPP, i1);
 				rb.brightnessBottomRight = rb.getAoBrightness(rb.aoBrightnessYZNP, rb.aoBrightnessXYZPNP, rb.aoBrightnessXZPP, i1);
@@ -935,26 +941,26 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					--x;
 				}
 
-				rb.aoLightValueScratchXYNN = iba.getBlock(x, y - 1, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchXZNN = iba.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchXZNP = iba.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchXYNP = iba.getBlock(x, y + 1, z).getAmbientOcclusionLightValue();
-				rb.aoBrightnessXYNN = b.getMixedBrightnessForBlock(iba, x, y - 1, z);
-				rb.aoBrightnessXZNN = b.getMixedBrightnessForBlock(iba, x, y, z - 1);
-				rb.aoBrightnessXZNP = b.getMixedBrightnessForBlock(iba, x, y, z + 1);
-				rb.aoBrightnessXYNP = b.getMixedBrightnessForBlock(iba, x, y + 1, z);
-				flag2 = iba.getBlock(x - 1, y + 1, z).getCanBlockGrass();
-				flag3 = iba.getBlock(x - 1, y - 1, z).getCanBlockGrass();
-				flag4 = iba.getBlock(x - 1, y, z - 1).getCanBlockGrass();
-				flag5 = iba.getBlock(x - 1, y, z + 1).getCanBlockGrass();
+				rb.aoLightValueScratchXYNN = iba.getBlock(x, y-1, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchXZNN = iba.getBlock(x, y, z-1).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchXZNP = iba.getBlock(x, y, z+1).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchXYNP = iba.getBlock(x, y+1, z).getAmbientOcclusionLightValue();
+				rb.aoBrightnessXYNN = b.getMixedBrightnessForBlock(iba, x, y-1, z);
+				rb.aoBrightnessXZNN = b.getMixedBrightnessForBlock(iba, x, y, z-1);
+				rb.aoBrightnessXZNP = b.getMixedBrightnessForBlock(iba, x, y, z+1);
+				rb.aoBrightnessXYNP = b.getMixedBrightnessForBlock(iba, x, y+1, z);
+				flag2 = iba.getBlock(x-1, y+1, z).getCanBlockGrass();
+				flag3 = iba.getBlock(x-1, y-1, z).getCanBlockGrass();
+				flag4 = iba.getBlock(x-1, y, z-1).getCanBlockGrass();
+				flag5 = iba.getBlock(x-1, y, z+1).getCanBlockGrass();
 
 				if (!flag4 && !flag3) {
 					rb.aoLightValueScratchXYZNNN = rb.aoLightValueScratchXZNN;
 					rb.aoBrightnessXYZNNN = rb.aoBrightnessXZNN;
 				}
 				else {
-					rb.aoLightValueScratchXYZNNN = iba.getBlock(x, y - 1, z - 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNNN = b.getMixedBrightnessForBlock(iba, x, y - 1, z - 1);
+					rb.aoLightValueScratchXYZNNN = iba.getBlock(x, y-1, z-1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNNN = b.getMixedBrightnessForBlock(iba, x, y-1, z-1);
 				}
 
 				if (!flag5 && !flag3) {
@@ -962,8 +968,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZNNP = rb.aoBrightnessXZNP;
 				}
 				else {
-					rb.aoLightValueScratchXYZNNP = iba.getBlock(x, y - 1, z + 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNNP = b.getMixedBrightnessForBlock(iba, x, y - 1, z + 1);
+					rb.aoLightValueScratchXYZNNP = iba.getBlock(x, y-1, z+1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNNP = b.getMixedBrightnessForBlock(iba, x, y-1, z+1);
 				}
 
 				if (!flag4 && !flag2) {
@@ -971,8 +977,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZNPN = rb.aoBrightnessXZNN;
 				}
 				else {
-					rb.aoLightValueScratchXYZNPN = iba.getBlock(x, y + 1, z - 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNPN = b.getMixedBrightnessForBlock(iba, x, y + 1, z - 1);
+					rb.aoLightValueScratchXYZNPN = iba.getBlock(x, y+1, z-1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNPN = b.getMixedBrightnessForBlock(iba, x, y+1, z-1);
 				}
 
 				if (!flag5 && !flag2) {
@@ -980,8 +986,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZNPP = rb.aoBrightnessXZNP;
 				}
 				else {
-					rb.aoLightValueScratchXYZNPP = iba.getBlock(x, y + 1, z + 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZNPP = b.getMixedBrightnessForBlock(iba, x, y + 1, z + 1);
+					rb.aoLightValueScratchXYZNPP = iba.getBlock(x, y+1, z+1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZNPP = b.getMixedBrightnessForBlock(iba, x, y+1, z+1);
 				}
 
 				if (rb.renderMinX <= 0.0D) {
@@ -990,15 +996,15 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 				i1 = l;
 
-				if (rb.renderMinX <= 0.0D || !iba.getBlock(x - 1, y, z).isOpaqueCube()) {
-					i1 = b.getMixedBrightnessForBlock(iba, x - 1, y, z);
+				if (rb.renderMinX <= 0.0D || !iba.getBlock(x-1, y, z).isOpaqueCube()) {
+					i1 = b.getMixedBrightnessForBlock(iba, x-1, y, z);
 				}
 
-				f7 = iba.getBlock(x - 1, y, z).getAmbientOcclusionLightValue();
-				f6 = (rb.aoLightValueScratchXYNN + rb.aoLightValueScratchXYZNNP + f7 + rb.aoLightValueScratchXZNP) / 4.0F;
-				f3 = (f7 + rb.aoLightValueScratchXZNP + rb.aoLightValueScratchXYNP + rb.aoLightValueScratchXYZNPP) / 4.0F;
-				f4 = (rb.aoLightValueScratchXZNN + f7 + rb.aoLightValueScratchXYZNPN + rb.aoLightValueScratchXYNP) / 4.0F;
-				f5 = (rb.aoLightValueScratchXYZNNN + rb.aoLightValueScratchXYNN + rb.aoLightValueScratchXZNN + f7) / 4.0F;
+				f7 = iba.getBlock(x-1, y, z).getAmbientOcclusionLightValue();
+				f6 = (rb.aoLightValueScratchXYNN+rb.aoLightValueScratchXYZNNP+f7+rb.aoLightValueScratchXZNP) / 4.0F;
+				f3 = (f7+rb.aoLightValueScratchXZNP+rb.aoLightValueScratchXYNP+rb.aoLightValueScratchXYZNPP) / 4.0F;
+				f4 = (rb.aoLightValueScratchXZNN+f7+rb.aoLightValueScratchXYZNPN+rb.aoLightValueScratchXYNP) / 4.0F;
+				f5 = (rb.aoLightValueScratchXYZNNN+rb.aoLightValueScratchXYNN+rb.aoLightValueScratchXZNN+f7) / 4.0F;
 				rb.brightnessTopRight = rb.getAoBrightness(rb.aoBrightnessXYNN, rb.aoBrightnessXYZNNP, rb.aoBrightnessXZNP, i1);
 				rb.brightnessTopLeft = rb.getAoBrightness(rb.aoBrightnessXZNP, rb.aoBrightnessXYNP, rb.aoBrightnessXYZNPP, i1);
 				rb.brightnessBottomLeft = rb.getAoBrightness(rb.aoBrightnessXZNN, rb.aoBrightnessXYZNPN, rb.aoBrightnessXYNP, i1);
@@ -1054,26 +1060,26 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					++x;
 				}
 
-				rb.aoLightValueScratchXYPN = iba.getBlock(x, y - 1, z).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchXZPN = iba.getBlock(x, y, z - 1).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchXZPP = iba.getBlock(x, y, z + 1).getAmbientOcclusionLightValue();
-				rb.aoLightValueScratchXYPP = iba.getBlock(x, y + 1, z).getAmbientOcclusionLightValue();
-				rb.aoBrightnessXYPN = b.getMixedBrightnessForBlock(iba, x, y - 1, z);
-				rb.aoBrightnessXZPN = b.getMixedBrightnessForBlock(iba, x, y, z - 1);
-				rb.aoBrightnessXZPP = b.getMixedBrightnessForBlock(iba, x, y, z + 1);
-				rb.aoBrightnessXYPP = b.getMixedBrightnessForBlock(iba, x, y + 1, z);
-				flag2 = iba.getBlock(x + 1, y + 1, z).getCanBlockGrass();
-				flag3 = iba.getBlock(x + 1, y - 1, z).getCanBlockGrass();
-				flag4 = iba.getBlock(x + 1, y, z + 1).getCanBlockGrass();
-				flag5 = iba.getBlock(x + 1, y, z - 1).getCanBlockGrass();
+				rb.aoLightValueScratchXYPN = iba.getBlock(x, y-1, z).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchXZPN = iba.getBlock(x, y, z-1).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchXZPP = iba.getBlock(x, y, z+1).getAmbientOcclusionLightValue();
+				rb.aoLightValueScratchXYPP = iba.getBlock(x, y+1, z).getAmbientOcclusionLightValue();
+				rb.aoBrightnessXYPN = b.getMixedBrightnessForBlock(iba, x, y-1, z);
+				rb.aoBrightnessXZPN = b.getMixedBrightnessForBlock(iba, x, y, z-1);
+				rb.aoBrightnessXZPP = b.getMixedBrightnessForBlock(iba, x, y, z+1);
+				rb.aoBrightnessXYPP = b.getMixedBrightnessForBlock(iba, x, y+1, z);
+				flag2 = iba.getBlock(x+1, y+1, z).getCanBlockGrass();
+				flag3 = iba.getBlock(x+1, y-1, z).getCanBlockGrass();
+				flag4 = iba.getBlock(x+1, y, z+1).getCanBlockGrass();
+				flag5 = iba.getBlock(x+1, y, z-1).getCanBlockGrass();
 
 				if (!flag3 && !flag5) {
 					rb.aoLightValueScratchXYZPNN = rb.aoLightValueScratchXZPN;
 					rb.aoBrightnessXYZPNN = rb.aoBrightnessXZPN;
 				}
 				else {
-					rb.aoLightValueScratchXYZPNN = iba.getBlock(x, y - 1, z - 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPNN = b.getMixedBrightnessForBlock(iba, x, y - 1, z - 1);
+					rb.aoLightValueScratchXYZPNN = iba.getBlock(x, y-1, z-1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPNN = b.getMixedBrightnessForBlock(iba, x, y-1, z-1);
 				}
 
 				if (!flag3 && !flag4) {
@@ -1081,8 +1087,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPNP = rb.aoBrightnessXZPP;
 				}
 				else {
-					rb.aoLightValueScratchXYZPNP = iba.getBlock(x, y - 1, z + 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPNP = b.getMixedBrightnessForBlock(iba, x, y - 1, z + 1);
+					rb.aoLightValueScratchXYZPNP = iba.getBlock(x, y-1, z+1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPNP = b.getMixedBrightnessForBlock(iba, x, y-1, z+1);
 				}
 
 				if (!flag2 && !flag5) {
@@ -1090,8 +1096,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPPN = rb.aoBrightnessXZPN;
 				}
 				else {
-					rb.aoLightValueScratchXYZPPN = iba.getBlock(x, y + 1, z - 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPPN = b.getMixedBrightnessForBlock(iba, x, y + 1, z - 1);
+					rb.aoLightValueScratchXYZPPN = iba.getBlock(x, y+1, z-1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPPN = b.getMixedBrightnessForBlock(iba, x, y+1, z-1);
 				}
 
 				if (!flag2 && !flag4) {
@@ -1099,8 +1105,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					rb.aoBrightnessXYZPPP = rb.aoBrightnessXZPP;
 				}
 				else {
-					rb.aoLightValueScratchXYZPPP = iba.getBlock(x, y + 1, z + 1).getAmbientOcclusionLightValue();
-					rb.aoBrightnessXYZPPP = b.getMixedBrightnessForBlock(iba, x, y + 1, z + 1);
+					rb.aoLightValueScratchXYZPPP = iba.getBlock(x, y+1, z+1).getAmbientOcclusionLightValue();
+					rb.aoBrightnessXYZPPP = b.getMixedBrightnessForBlock(iba, x, y+1, z+1);
 				}
 
 				if (rb.renderMaxX >= 1.0D) {
@@ -1109,15 +1115,15 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 				i1 = l;
 
-				if (rb.renderMaxX >= 1.0D || !iba.getBlock(x + 1, y, z).isOpaqueCube()) {
-					i1 = b.getMixedBrightnessForBlock(iba, x + 1, y, z);
+				if (rb.renderMaxX >= 1.0D || !iba.getBlock(x+1, y, z).isOpaqueCube()) {
+					i1 = b.getMixedBrightnessForBlock(iba, x+1, y, z);
 				}
 
-				f7 = iba.getBlock(x + 1, y, z).getAmbientOcclusionLightValue();
-				f3 = (rb.aoLightValueScratchXYPN + rb.aoLightValueScratchXYZPNP + f7 + rb.aoLightValueScratchXZPP) / 4.0F;
-				f4 = (rb.aoLightValueScratchXYZPNN + rb.aoLightValueScratchXYPN + rb.aoLightValueScratchXZPN + f7) / 4.0F;
-				f5 = (rb.aoLightValueScratchXZPN + f7 + rb.aoLightValueScratchXYZPPN + rb.aoLightValueScratchXYPP) / 4.0F;
-				f6 = (f7 + rb.aoLightValueScratchXZPP + rb.aoLightValueScratchXYPP + rb.aoLightValueScratchXYZPPP) / 4.0F;
+				f7 = iba.getBlock(x+1, y, z).getAmbientOcclusionLightValue();
+				f3 = (rb.aoLightValueScratchXYPN+rb.aoLightValueScratchXYZPNP+f7+rb.aoLightValueScratchXZPP) / 4.0F;
+				f4 = (rb.aoLightValueScratchXYZPNN+rb.aoLightValueScratchXYPN+rb.aoLightValueScratchXZPN+f7) / 4.0F;
+				f5 = (rb.aoLightValueScratchXZPN+f7+rb.aoLightValueScratchXYZPPN+rb.aoLightValueScratchXYPP) / 4.0F;
+				f6 = (f7+rb.aoLightValueScratchXZPP+rb.aoLightValueScratchXYPP+rb.aoLightValueScratchXYZPPP) / 4.0F;
 				rb.brightnessTopLeft = rb.getAoBrightness(rb.aoBrightnessXYPN, rb.aoBrightnessXYZPNP, rb.aoBrightnessXZPP, i1);
 				rb.brightnessTopRight = rb.getAoBrightness(rb.aoBrightnessXZPP, rb.aoBrightnessXYPP, rb.aoBrightnessXYZPPP, i1);
 				rb.brightnessBottomRight = rb.getAoBrightness(rb.aoBrightnessXZPN, rb.aoBrightnessXYZPPN, rb.aoBrightnessXYPP, i1);
@@ -1210,6 +1216,151 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			return null;
 		}
 
+	}
+
+	public static void renderCrossTex(IBlockAccess world, int x, int y, int z, IIcon ico, Tessellator v5, RenderBlocks rb, double h) {
+		ico = rb.getIconSafe(ico);
+
+		float u = ico.getMinU();
+		float du = ico.getMaxU();
+		float v = ico.getMinV();
+		float dv = ico.getMaxV();
+
+		v5.addVertexWithUV(x, y+h, z, u, v);
+		v5.addVertexWithUV(x+1, y+h, z+1, du, v);
+		v5.addVertexWithUV(x+1, y, z+1, du, dv);
+		v5.addVertexWithUV(x, y, z, u, dv);
+
+		v5.addVertexWithUV(x, y, z, u, dv);
+		v5.addVertexWithUV(x+1, y, z+1, du, dv);
+		v5.addVertexWithUV(x+1, y+h, z+1, du, v);
+		v5.addVertexWithUV(x, y+h, z, u, v);
+
+		v5.addVertexWithUV(x, y+h, z+1, u, v);
+		v5.addVertexWithUV(x+1, y+h, z, du, v);
+		v5.addVertexWithUV(x+1, y, z, du, dv);
+		v5.addVertexWithUV(x, y, z+1, u, dv);
+
+		v5.addVertexWithUV(x, y, z+1, u, dv);
+		v5.addVertexWithUV(x+1, y, z, du, dv);
+		v5.addVertexWithUV(x+1, y+h, z, du, v);
+		v5.addVertexWithUV(x, y+h, z+1, u, v);
+	}
+
+	public static void renderFlatInnerTextureOnSide(IBlockAccess world, int x, int y, int z, IIcon ico, Tessellator v5, RenderBlocks rb, ForgeDirection dir, double inset, boolean needAdj) {
+		ico = rb.getIconSafe(ico);
+
+		float u = ico.getMinU();
+		float du = ico.getMaxU();
+		float v = ico.getMinV();
+		float dv = ico.getMaxV();
+
+		if (needAdj) {
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			Block b = world.getBlock(dx, dy, dz);
+			if (b == Blocks.air)
+				return;
+			if (b.isAir(world, dx, dy, dz))
+				return;
+			if (!b.getMaterial().isSolid())
+				return;
+		}
+
+		switch(dir) {
+			case DOWN:
+				v5.addVertexWithUV(x, y+inset, z+1, u, dv);
+				v5.addVertexWithUV(x+1, y+inset, z+1, u, v);
+				v5.addVertexWithUV(x+1, y+inset, z, du, v);
+				v5.addVertexWithUV(x, y+inset, z, du, dv);
+				break;
+			case UP:
+				v5.addVertexWithUV(x, y+1-inset, z, du, dv);
+				v5.addVertexWithUV(x+1, y+1-inset, z, u, dv);
+				v5.addVertexWithUV(x+1, y+1-inset, z+1, u, v);
+				v5.addVertexWithUV(x, y+1-inset, z+1, du, v);
+				break;
+			case EAST:
+				v5.addVertexWithUV(x+1-inset, y, z+1, u, dv);
+				v5.addVertexWithUV(x+1-inset, y+1, z+1, u, v);
+				v5.addVertexWithUV(x+1-inset, y+1, z, du, v);
+				v5.addVertexWithUV(x+1-inset, y, z, du, dv);
+				break;
+			case WEST:
+				v5.addVertexWithUV(x+inset, y, z, u, dv);
+				v5.addVertexWithUV(x+inset, y+1, z, u, v);
+				v5.addVertexWithUV(x+inset, y+1, z+1, du, v);
+				v5.addVertexWithUV(x+inset, y, z+1, du, dv);
+				break;
+			case NORTH:
+				v5.addVertexWithUV(x+1, y, z+inset, u, dv);
+				v5.addVertexWithUV(x+1, y+1, z+inset, u, v);
+				v5.addVertexWithUV(x, y+1, z+inset, du, v);
+				v5.addVertexWithUV(x, y, z+inset, du, dv);
+				break;
+			case SOUTH:
+				v5.addVertexWithUV(x, y, z+1-inset, du, dv);
+				v5.addVertexWithUV(x, y+1, z+1-inset, du, v);
+				v5.addVertexWithUV(x+1, y+1, z+1-inset, u, v);
+				v5.addVertexWithUV(x+1, y, z+1-inset, u, dv);
+				break;
+			case UNKNOWN:
+				break;
+		}
+	}
+
+	public static void renderCropTypeTex(IBlockAccess world, int x, int y, int z, IIcon ico, Tessellator v5, RenderBlocks rb, double space, double h) {
+		ico = rb.getIconSafe(ico);
+
+		float u = ico.getMinU();
+		float du = ico.getMaxU();
+		float v = ico.getMinV();
+		float dv = ico.getMaxV();
+
+		double d7 = x+0.5D-space;
+		double d8 = x+0.5D+space;
+		double d9 = z+0.5D-0.5D;
+		double d10 = z+0.5D+0.5D;
+
+		double dy = y-0.0625;
+
+		v5.addVertexWithUV(d7, dy+h, d9, u, v);
+		v5.addVertexWithUV(d7, dy+0, d9, u, dv);
+		v5.addVertexWithUV(d7, dy+0, d10, du, dv);
+		v5.addVertexWithUV(d7, dy+h, d10, du, v);
+		v5.addVertexWithUV(d7, dy+h, d10, u, v);
+		v5.addVertexWithUV(d7, dy+0, d10, u, dv);
+		v5.addVertexWithUV(d7, dy+0, d9, du, dv);
+		v5.addVertexWithUV(d7, dy+h, d9, du, v);
+		v5.addVertexWithUV(d8, dy+h, d10, u, v);
+		v5.addVertexWithUV(d8, dy+0, d10, u, dv);
+		v5.addVertexWithUV(d8, dy+0, d9, du, dv);
+		v5.addVertexWithUV(d8, dy+h, d9, du, v);
+		v5.addVertexWithUV(d8, dy+h, d9, u, v);
+		v5.addVertexWithUV(d8, dy+0, d9, u, dv);
+		v5.addVertexWithUV(d8, dy+0, d10, du, dv);
+		v5.addVertexWithUV(d8, dy+h, d10, du, v);
+		d7 = x+0.5D-0.5D;
+		d8 = x+0.5D+0.5D;
+		d9 = z+0.5D-space;
+		d10 = z+0.5D+space;
+		v5.addVertexWithUV(d7, dy+h, d9, u, v);
+		v5.addVertexWithUV(d7, dy+0, d9, u, dv);
+		v5.addVertexWithUV(d8, dy+0, d9, du, dv);
+		v5.addVertexWithUV(d8, dy+h, d9, du, v);
+		v5.addVertexWithUV(d8, dy+h, d9, u, v);
+		v5.addVertexWithUV(d8, dy+0, d9, u, dv);
+		v5.addVertexWithUV(d7, dy+0, d9, du, dv);
+		v5.addVertexWithUV(d7, dy+h, d9, du, v);
+		v5.addVertexWithUV(d8, dy+h, d10, u, v);
+		v5.addVertexWithUV(d8, dy+0, d10, u, dv);
+		v5.addVertexWithUV(d7, dy+0, d10, du, dv);
+		v5.addVertexWithUV(d7, dy+h, d10, du, v);
+		v5.addVertexWithUV(d7, dy+h, d10, u, v);
+		v5.addVertexWithUV(d7, dy+0, d10, u, dv);
+		v5.addVertexWithUV(d8, dy+0, d10, du, dv);
+		v5.addVertexWithUV(d8, dy+h, d10, du, v);
 	}
 
 }

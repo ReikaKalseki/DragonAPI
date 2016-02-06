@@ -137,6 +137,7 @@ public class ChunkManager implements LoadingCallback {
 		}
 	}
 
+	/** Range is in CHUNKS, not blocks!! */
 	public static Collection<ChunkCoordIntPair> getChunkSquare(int x, int z, int r) {
 		int x2 = x >> 4;
 		int z2 = z >> 4;

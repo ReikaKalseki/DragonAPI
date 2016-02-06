@@ -12,6 +12,8 @@ package Reika.DragonAPI.Instantiable.Data;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Exception.MisuseException;
 
@@ -142,54 +144,78 @@ public final class KeyedItemStack {
 		return ks;
 	}
 
+	public String getCriteriaAsChatFormatting() {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < enabledCriteria.length; i++) {
+			if (enabledCriteria[i])
+				sb.append(Criteria.list[i].chatChar.toString());
+		}
+		return sb.toString();
+	}
+
 	private static enum Criteria {
-		ID(true),
-		METADATA(true),
-		SIZE(false),
-		NBT(true);
+		ID(true, EnumChatFormatting.RESET), //none
+		METADATA(true, EnumChatFormatting.LIGHT_PURPLE),
+		SIZE(false, EnumChatFormatting.BOLD),
+		NBT(true, EnumChatFormatting.UNDERLINE);
 
 		private final boolean defaultState;
+		private final EnumChatFormatting chatChar;
 
 		private static final Criteria[] list = values();
 
-		private Criteria(boolean b) {
+		private Criteria(boolean b, EnumChatFormatting f) {
 			defaultState = b;
+			chatChar = f;
 		}
 
 		public int hash(KeyedItemStack ks) {
 			switch(this) {
-			case ID:
-				return ks.item.getItem().hashCode();
-			case METADATA:
-				return ks.item.getItemDamage();
-			case SIZE:
-				return ks.item.stackSize;
-			case NBT:
-				return ks.item.stackTagCompound != null ? ks.item.stackTagCompound.hashCode() : -1;
-			default:
-				return 0;
+				case ID:
+					return ks.item.getItem().hashCode();
+				case METADATA:
+					return ks.item.getItemDamage();
+				case SIZE:
+					return ks.item.stackSize;
+				case NBT:
+					return ks.item.stackTagCompound != null ? ks.item.stackTagCompound.hashCode() : -1;
+				default:
+					return 0;
 			}
 		}
 
 		private boolean match(KeyedItemStack k1, KeyedItemStack k2) {
 			switch(this) {
-			case ID:
-				return k1.item.getItem() == k2.item.getItem();
-			case METADATA:
-				if (k1.item.getItem().getHasSubtypes() || k2.item.getItem().getHasSubtypes()) {
-					int m1 = k1.item.getItemDamage();
-					int m2 = k2.item.getItemDamage();
-					return m1 == m2 || m1 == OreDictionary.WILDCARD_VALUE || m2 == OreDictionary.WILDCARD_VALUE;
-				}
-				else
-					return true;
-			case SIZE:
-				return k1.item.stackSize == k2.item.stackSize;
-			case NBT:
-				return ItemStack.areItemStackTagsEqual(k1.item, k2.item);
+				case ID:
+					return k1.item.getItem() == k2.item.getItem();
+				case METADATA:
+					if (k1.item.getItem().getHasSubtypes() || k2.item.getItem().getHasSubtypes()) {
+						int m1 = k1.item.getItemDamage();
+						int m2 = k2.item.getItemDamage();
+						return m1 == m2 || m1 == OreDictionary.WILDCARD_VALUE || m2 == OreDictionary.WILDCARD_VALUE;
+					}
+					else
+						return true;
+				case SIZE:
+					return k1.item.stackSize == k2.item.stackSize;
+				case NBT:
+					return ItemStack.areItemStackTagsEqual(k1.item, k2.item);
 			}
 			return false;
 		}
+	}
+
+	public static KeyedItemStack readFromNBT(NBTTagCompound nbt) {
+		return new KeyedItemStack(ItemStack.loadItemStackFromNBT(nbt)).setIgnoreMetadata(nbt.getBoolean("ignoremeta")).setIgnoreNBT(nbt.getBoolean("ignorenbt")).setSized(nbt.getBoolean("sized")).setSimpleHash(nbt.getBoolean("simplehash"));
+	}
+
+	public void writeToNBT(NBTTagCompound nbt) {
+		item.writeToNBT(nbt);
+		nbt.setBoolean("sized", enabledCriteria[Criteria.SIZE.ordinal()]);
+		nbt.setBoolean("ignorenbt", !enabledCriteria[Criteria.NBT.ordinal()]);
+		nbt.setBoolean("ignoremeta", !enabledCriteria[Criteria.METADATA.ordinal()]);
+		nbt.setBoolean("useID", enabledCriteria[Criteria.ID.ordinal()]);
+		nbt.setBoolean("simplehash", simpleHash);
 	}
 
 }

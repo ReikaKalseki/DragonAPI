@@ -9,12 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Bees;
 
-import Reika.DragonAPI.ModInteract.Bees.BeeSpecies.Fertility;
-import Reika.DragonAPI.ModInteract.Bees.BeeSpecies.Flowering;
-import Reika.DragonAPI.ModInteract.Bees.BeeSpecies.Life;
-import Reika.DragonAPI.ModInteract.Bees.BeeSpecies.Speeds;
-import Reika.DragonAPI.ModInteract.Bees.BeeSpecies.Territory;
-import Reika.DragonAPI.ModInteract.Bees.BeeSpecies.Tolerance;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Fertility;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Flowering;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Life;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Speeds;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Territory;
+import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Tolerance;
 import forestry.api.core.EnumHumidity;
 import forestry.api.core.EnumTemperature;
 
@@ -33,6 +33,7 @@ public class BeeTraits {
 	public EnumHumidity humidity;
 	public boolean isNocturnal;
 	public boolean isCaveDwelling;
+	public boolean isTolerant;
 
 	public BeeTraits() {
 		speed = Speeds.SLOWEST;
@@ -48,6 +49,7 @@ public class BeeTraits {
 		humidity = EnumHumidity.NORMAL;
 		isNocturnal = false;
 		isCaveDwelling = false;
+		isTolerant = false;
 	}
 
 	@Override

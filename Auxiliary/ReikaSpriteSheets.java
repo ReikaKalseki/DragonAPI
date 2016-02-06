@@ -83,9 +83,13 @@ public final class ReikaSpriteSheets {
 			if (item instanceof AnimatedSpritesheet) {
 				AnimatedSpritesheet a = (AnimatedSpritesheet)item;
 				if (a.useAnimatedRender(is)) {
-					col = a.getColumn(is);
 					int offset = (int)((System.currentTimeMillis()/32/a.getFrameSpeed()+a.getFrameOffset(is))%a.getFrameCount());
-					row = a.getBaseRow(is)+offset;
+					col = a.getColumn(is);
+					row = a.getBaseRow(is);
+					if (a.verticalFrames())
+						row += offset;
+					else
+						col += offset;
 					tex = a.getTexture(is);
 				}
 			}

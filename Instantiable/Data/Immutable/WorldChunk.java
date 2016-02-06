@@ -27,7 +27,11 @@ public final class WorldChunk {
 		this(world.provider.dimensionId, ch);
 	}
 
-	private WorldChunk(int dim, ChunkCoordIntPair ch) {
+	public WorldChunk(int dim, int x, int z) {
+		this(dim, new ChunkCoordIntPair(x, z));
+	}
+
+	public WorldChunk(int dim, ChunkCoordIntPair ch) {
 		dimensionID = dim;
 		chunk = ch;
 	}

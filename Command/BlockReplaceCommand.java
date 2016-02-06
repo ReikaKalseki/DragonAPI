@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
@@ -111,6 +112,9 @@ public class BlockReplaceCommand extends DragonCommandBase {
 		else if (s.startsWith("class_")) {
 			return new ClassCheck(s.substring(6).toLowerCase());
 		}
+		else if (s.equals("any") || s.equals("all") || s.equals("*")) {
+			return new AnyCheck();
+		}
 		else {
 			try {
 				int id = Integer.parseInt(s);
@@ -169,6 +173,19 @@ public class BlockReplaceCommand extends DragonCommandBase {
 		@Override
 		protected boolean replace(Block b, int meta) {
 			return Block.getIdFromBlock(b) == blockID;
+		}
+
+	}
+
+	private static class AnyCheck extends ReplaceCheck {
+
+		private AnyCheck() {
+			super();
+		}
+
+		@Override
+		protected boolean replace(Block b, int meta) {
+			return b != Blocks.air;
 		}
 
 	}

@@ -12,6 +12,7 @@ package Reika.DragonAPI.ASM;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
+import net.minecraft.item.Item;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenMutated;
@@ -46,6 +47,9 @@ import cpw.mods.fml.relauncher.Side;
 public class DragonAPIClassTransfomer implements IClassTransformer {
 
 	private static final MultiMap<String, ClassPatch> classes = new MultiMap().setNullEmpty();
+	private static boolean isKCauldronLoaded;
+	private static boolean nullItemPrintout = false;
+	private static boolean nullItemCrash = false;
 
 	private static enum ClassPatch {
 		CREEPERBOMBEVENT("net.minecraft.entity.monster.EntityCreeper", "xz"),
@@ -86,6 +90,13 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		//TOOLTIPEVENT("net.minecraft.item.Item", "adb"),
 		PERMUTEDBIOMEREG("net.minecraftforge.common.BiomeDictionary"),
 		BLOCKTICKEVENT("net.minecraft.world.WorldServer", "mt"),
+		ADDCRAFTINGEVENT("net.minecraft.item.crafting.CraftingManager", "afe"),
+		ADDSMELTINGEVENT("net.minecraft.item.crafting.FurnaceRecipes", "afa"),
+		ENDSEED("net.minecraft.world.WorldProviderEnd", "aqr"),
+		NETHERSEED("net.minecraft.world.WorldProviderHell", "aqp"),
+		MUSICTYPEEVENT("net.minecraft.client.Minecraft", "bao"),
+		//ITEMSTACKNULL("net.minecraft.item.ItemStack", "add"),
+		LIGHTMAP("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		;
 
 		private final String obfName;
@@ -1112,21 +1123,22 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				case BLOCKTICKEVENT: {
 					String sig = "(Lnet/minecraft/world/World;IIILjava/util/Random;)V";
 					String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_149674_a" : "updateTick";
+					int shift = isKCauldronLoaded ? 3 : 0;
 
 					InsnList fire = new InsnList();
 					fire.add(new VarInsnNode(Opcodes.ALOAD, 0));
-					fire.add(new VarInsnNode(Opcodes.ILOAD, 16));
-					fire.add(new VarInsnNode(Opcodes.ILOAD, 5));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 16+shift));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 5+shift));
 					fire.add(new InsnNode(Opcodes.IADD));
-					fire.add(new VarInsnNode(Opcodes.ILOAD, 18));
-					fire.add(new VarInsnNode(Opcodes.ALOAD, 13));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 18+shift));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 13+shift));
 					String getY = FMLForgePlugin.RUNTIME_DEOBF ? "func_76662_d" : "getYLocation";
 					fire.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/world/chunk/storage/ExtendedBlockStorage", getY, "()I", false));
 					fire.add(new InsnNode(Opcodes.IADD));
-					fire.add(new VarInsnNode(Opcodes.ILOAD, 17));
-					fire.add(new VarInsnNode(Opcodes.ILOAD, 6));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 17+shift));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 6+shift));
 					fire.add(new InsnNode(Opcodes.IADD));
-					fire.add(new VarInsnNode(Opcodes.ALOAD, 19));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 19+shift));
 					fire.add(new FieldInsnNode(Opcodes.GETSTATIC, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags", "NATURAL", "LReika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags;"));
 					fire.add(new FieldInsnNode(Opcodes.GETFIELD, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent$UpdateFlags", "flag", "I"));
 					fire.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BlockTickEvent", "fire", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;I)V", false));
@@ -1173,6 +1185,88 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 3!");
 					break;
 				}
+				case ADDCRAFTINGEVENT: { //replace list with one that fires events
+					//String name = FMLForgePlugin.RUNTIME_DEOBF ? "field_77597_b" : "recipes";
+					//for (FieldNode f : cn.fields) {
+					//	if (f.name.equals(name)) {
+					//
+					//	}
+					//}
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "<init>", "()V");
+					TypeInsnNode type = (TypeInsnNode)ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.NEW);
+					MethodInsnNode cons = (MethodInsnNode)type.getNext().getNext();
+
+					String s = "Reika/DragonAPI/Instantiable/Data/Collections/EventRecipeList";
+
+					type.desc = s;
+					cons.owner = s;
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case ADDSMELTINGEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_151394_a", "func_151394_a", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;F)V");
+					LabelNode L1 = new LabelNode();
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 2));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 3));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/AddSmeltingEvent", "fire", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;F)Z", false));
+					li.add(new JumpInsnNode(Opcodes.IFEQ, L1));
+					m.instructions.insert(li);
+
+					AbstractInsnNode ain = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.RETURN);
+					m.instructions.insertBefore(ain, L1);
+					break;
+				}
+				case ENDSEED: {
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/DimensionSeedEvent", "fire", "(Lnet/minecraft/world/WorldProvider;)J", false));
+					li.add(new InsnNode(Opcodes.LRETURN));
+					String name = FMLForgePlugin.RUNTIME_DEOBF ? "getSeed" : "getSeed"; //Forge
+					ReikaASMHelper.addMethod(cn, li, name, "()J", Modifier.PUBLIC);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case NETHERSEED: {
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/DimensionSeedEvent", "fire", "(Lnet/minecraft/world/WorldProvider;)J", false));
+					li.add(new InsnNode(Opcodes.LRETURN));
+					String name = FMLForgePlugin.RUNTIME_DEOBF ? "getSeed" : "getSeed"; //Forge
+					ReikaASMHelper.addMethod(cn, li, name, "()J", Modifier.PUBLIC);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case MUSICTYPEEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147109_W", "func_147109_W", "()Lnet/minecraft/client/audio/MusicTicker$MusicType;");
+					m.instructions.clear();
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/MusicTypeEvent", "fire", "(Lnet/minecraft/client/Minecraft;)Lnet/minecraft/client/audio/MusicTicker$MusicType;", false));
+					m.instructions.add(new InsnNode(Opcodes.ARETURN));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				/*
+				case ITEMSTACKNULL: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_150996_a", "(Lnet/minecraft/item/Item;)V");
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/DragonAPIClassTransfomer", "validateItemStack", "(Lnet/minecraft/item/Item;)V", false));
+					m.instructions.insert(li);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+				}
+				 */
+				case LIGHTMAP: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_78472_g", "updateLightmap", "(F)V");
+					String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_110564_a" : "updateDynamicTexture";
+					AbstractInsnNode loc = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/client/renderer/texture/DynamicTexture", func, "()V");
+					loc = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(loc), Opcodes.ALOAD, 0);
+					m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/LightmapEvent", "fire", "()V", false));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -1191,6 +1285,29 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		public boolean isExceptionThrowing() {
 			String tag = "-DragonAPI_silence_ASM_"+this.name();
 			return !ReikaJVMParser.isArgumentPresent(tag);
+		}
+	}
+
+	public static void validateItemStack(Item i) {
+		if (i == null) {
+			if (nullItemCrash || nullItemPrintout) {
+				String s = "A mod created an ItemStack of a null item.\n";
+				s += "Though somewhat common, this is a very bad practice as such ItemStacks crash almost immediately upon even basic use.\n";
+				s += "Check the Stacktrace for the mod code coming before ItemStack.func_150996_a or ItemStack.<init>.\n";
+				s += "Notify the developer of that mod.\n";
+				s += "Though it is possible that in this case, the mod was not going to do anything with the item, such stacks are commonly\n";
+				s += "registered the OreDictionary, dropped as entities, or added to dungeon loot tables, resulting in crashes in other mods.\n";
+				s += "As a result, and the fact that a null-item stack is never necessary, it should be avoided in all cases.\n";
+				if (nullItemCrash) {
+					s += "You can turn this crash off in the DragonAPI configs, but you would likely crash anyways, usually soon afterward.";
+					throw new IllegalStateException(s);
+				}
+				else {
+					s += "You can disable this printout with a JVM argument, but doing so is not recommended.";
+					ReikaASMHelper.logError(s);
+					Thread.dumpStack();
+				}
+			}
 		}
 	}
 
@@ -1244,6 +1361,19 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				ReikaASMHelper.log("IF THIS TRANSFORMER HAS BEEN DISABLED WITHOUT GOOD REASON, TURN IT BACK ON IMMEDIATELY!");
 				ReikaASMHelper.log("******************************************************************************************");
 			}
+		}
+
+		isKCauldronLoaded = testKCauldron();
+		nullItemPrintout = !ReikaJVMParser.isArgumentPresent("-DragonAPI_noNullItemPrint");
+	}
+
+	private static boolean testKCauldron() {
+		try {
+			Class.forName("kcauldron.KCauldron");
+			return true;
+		}
+		catch(ClassNotFoundException e) {
+			return false;
 		}
 	}
 }

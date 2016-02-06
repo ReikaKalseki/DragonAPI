@@ -43,6 +43,7 @@ import com.xcompwiz.mystcraft.api.exception.APIVersionRemoved;
 import com.xcompwiz.mystcraft.api.exception.APIVersionUndefined;
 import com.xcompwiz.mystcraft.api.hook.PageAPI;
 import com.xcompwiz.mystcraft.api.hook.SymbolAPI;
+import com.xcompwiz.mystcraft.api.hook.SymbolValuesAPI;
 import com.xcompwiz.mystcraft.api.linking.ILinkInfo;
 import com.xcompwiz.mystcraft.api.symbol.IAgeSymbol;
 
@@ -58,8 +59,6 @@ public class ReikaMystcraftHelper {
 	private static final Method getTile;
 	private static final Method getBook;
 	private static final Method getLink;
-
-	private static final Method getRarity;
 
 	private static APIInstanceProvider apiProvider;
 
@@ -441,14 +440,23 @@ public class ReikaMystcraftHelper {
 	}
 
 	/** Ranges from 0-1, lower is rarer; direct linear affect on page loot rarity */
-	public static float getPageRarity(IAgeSymbol a) {
-		try {
-			return (Float)getRarity.invoke(null, a.identifier());
+	public static float getPageWeight(IAgeSymbol a) {
+		SymbolValuesAPI api = getAPI(APISegment.SYMBOLVALUES, 1);
+		if (api != null) {
+			return api.getSymbolItemWeight(a.identifier());
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return 0;
+		return 0;
+	}
+
+	public static void setPageRank(IAgeSymbol a, int rank) {
+		SymbolValuesAPI api = getAPI(APISegment.SYMBOLVALUES, 1);
+		if (api != null) {
+			api.setSymbolCardRank(a, rank);
 		}
+	}
+
+	public static void setRandomAgeWeight(IAgeSymbol a, float weight) {
+		//TODO
 	}
 
 	public static void registerAgeSymbol(IAgeSymbol a) {
@@ -508,8 +516,6 @@ public class ReikaMystcraftHelper {
 		Method book = null;
 		Method link = null;
 
-		Method rarity = null;
-
 		boolean load = true;
 
 		if (ModList.MYSTCRAFT.isLoaded()) {
@@ -530,17 +536,6 @@ public class ReikaMystcraftHelper {
 				load = false;
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
 			}
-
-			try {
-				Class mgr = Class.forName("com.xcompwiz.mystcraft.symbol.SymbolManager");
-				rarity = mgr.getMethod("getSymbolItemRarity", String.class);
-			}
-			catch (Exception e) {
-				DragonAPICore.logError("Error loading Mystcraft symbol interfacing!");
-				e.printStackTrace();
-				load = false;
-				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
-			}
 		}
 		else {
 			load = false;
@@ -549,8 +544,6 @@ public class ReikaMystcraftHelper {
 		getTile = tile;
 		getBook = book;
 		getLink = link;
-
-		getRarity = rarity;
 	}
 
 }

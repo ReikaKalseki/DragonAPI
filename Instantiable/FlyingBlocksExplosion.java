@@ -28,6 +28,8 @@ public class FlyingBlocksExplosion extends Explosion {
 
 	private World world;
 
+	private TumbleCreator tumbleCreator = null;
+
 	public FlyingBlocksExplosion(WorldLocation loc, float power) {
 		this(loc.getWorld(), loc.xCoord+0.5, loc.yCoord+0.5, loc.zCoord+0.5, power);
 	}
@@ -46,6 +48,11 @@ public class FlyingBlocksExplosion extends Explosion {
 		this.doExplosionB(true);
 	}
 
+	public FlyingBlocksExplosion setTumbling(TumbleCreator c) {
+		tumbleCreator = c;
+		return this;
+	}
+
 	@Override
 	public void doExplosionA() {
 		int r = (int)explosionSize+2;
@@ -61,7 +68,7 @@ public class FlyingBlocksExplosion extends Explosion {
 						Block b = world.getBlock(i, j, k);
 						int meta = world.getBlockMetadata(i, j, k);
 						if (this.canEntitize(world, i, j, k, b, meta)) {
-							EntityFallingBlock e = new EntityFallingBlock(world, i, j, k, b, meta);
+							EntityFallingBlock e = tumbleCreator != null ? tumbleCreator.createBlock(world, i, j, k, b, meta) : new EntityFallingBlock(world, i, j, k, b, meta);
 							li.add(e);
 							e.field_145812_b = -10000;
 							e.field_145813_c = false;
@@ -111,6 +118,12 @@ public class FlyingBlocksExplosion extends Explosion {
 		}
 		double dd = ReikaMathLibrary.py3d(x+0.5-explosionX, y+0.5-explosionY, z+0.5-explosionZ);
 		return dd <= explosionSize+0.5;
+	}
+
+	public static interface TumbleCreator {
+
+		public EntityTumblingBlock createBlock(World world, int x, int y, int z, Block b, int meta);
+
 	}
 
 }

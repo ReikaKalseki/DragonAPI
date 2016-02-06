@@ -17,14 +17,19 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
@@ -36,9 +41,11 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
+import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -59,13 +66,14 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private final int maxDepth;
 		private int depth = 0;
 		private boolean isDone = false;
-		private final ArrayList<BlockKey> ids = new ArrayList();
+		private final HashSet<BlockKey> ids = new HashSet();
 		public boolean extraSpread = false;
 		public int tickRate = 1;
 		private int tick;
 		public int fortune = 0;
 		public boolean silkTouch = false;
 		public boolean drops = true;
+		public IInventory dropInventory = null;
 		public EntityPlayer player;
 		public BlockBox bounds = BlockBox.infinity();
 		public BreakerCallback call;
@@ -73,6 +81,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private boolean isBlacklist = false;
 		public boolean pathTracking = false;
 		private final Collection<Coordinate> path = new HashSet();
+		//public final BlockMap<BlockKey> looseMatches = new BlockMap();
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<BlockKey> ids) {
 			this.world = world;
@@ -109,6 +118,10 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			this(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), depth);
 		}
 
+		public void addBlock(BlockKey bk) {
+			ids.add(bk);
+		}
+
 		public void setBlacklist(BlockKey... keys) {
 			ids.clear();
 			isBlacklist = true;
@@ -130,6 +143,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 					int y = c.yCoord;
 					int z = c.zCoord;
 					Block b = world.getBlock(x, y, z);
+					if (b == Blocks.air)
+						continue;
 					int meta = world.getBlockMetadata(x, y, z);
 					if (call != null && !call.canBreak(this, world, x, y, z, b, meta))
 						continue;
@@ -203,28 +218,55 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 
 		private void dropBlock(World world, int x, int y, int z) {
 			Block id = world.getBlock(x, y, z);
+			if (id == Blocks.air)
+				return;
 			int meta = world.getBlockMetadata(x, y, z);
 			if (drops) {
+				ArrayList<ItemStack> drops = new ArrayList();
 				if (id instanceof BlockTieredResource) {
 					BlockTieredResource bt = (BlockTieredResource)id;
 					if (player != null) {
 						if (bt.isPlayerSufficientTier(world, x, y, z, player)) {
-							ReikaItemHelper.dropItems(world, x, y, z, bt.getHarvestResources(world, x, y, z, 0, player));
+							drops.addAll(bt.getHarvestResources(world, x, y, z, fortune, player));
 						}
 						else {
-							ReikaItemHelper.dropItems(world, x, y, z, bt.getNoHarvestResources(world, x, y, z, 0, player));
+							drops.addAll(bt.getNoHarvestResources(world, x, y, z, fortune, player));
 						}
 					}
 				}
 				else {
 					if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta))
-						ReikaItemHelper.dropItem(world, x, y, z, new ItemStack(id, 1, world.getBlockMetadata(x, y, z)));
+						drops.add(ReikaBlockHelper.getSilkTouch(world, x, y, z, id, meta));
 					else
-						ReikaWorldHelper.dropBlockAt(world, x, y, z, fortune, player);
+						drops.addAll(ReikaWorldHelper.getDropsAt(world, x, y, z, fortune, player));
+				}
+				for (ItemStack is : drops) {
+					boolean flag = false;
+					if (dropInventory != null) {
+						if (dropInventory instanceof InventoryPlayer) {
+							if (MinecraftForge.EVENT_BUS.post(new EntityItemPickupEvent(((InventoryPlayer)dropInventory).player, new EntityItem(world, x+0.5, y+0.5, z+0.5, is)))) {
+								continue;
+							}
+						}
+						flag = ReikaInventoryHelper.addToIInv(is, dropInventory);
+					}
+					if (!flag) {
+						ReikaItemHelper.dropItem(world, x+0.5, y+0.5, z+0.5, is);
+					}
 				}
 			}
+			if (ReikaBlockHelper.isLiquid(id)) {
+				if (id.getMaterial() == Material.water) {
+					ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "game.neutral.swim");
+				}
+				else {
+					ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "mob.ghast.fireball");
+				}
+			}
+			else {
+				ReikaSoundHelper.playBreakSound(world, x, y, z, id);
+			}
 			world.setBlockToAir(x, y, z);
-			ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 			world.markBlockForUpdate(x, y, z);
 			if (call != null)
 				call.onBreak(this, world, x, y, z, id, meta);

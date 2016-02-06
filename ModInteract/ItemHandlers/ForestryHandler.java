@@ -41,7 +41,8 @@ public class ForestryHandler extends ModHandlerBase {
 		QUEEN("forestry.apiculture.items.ItemRegistryApiculture", "beeQueenGE"),
 		PRINCESS("forestry.apiculture.items.ItemRegistryApiculture", "beePrincessGE"),
 		DRONE("forestry.apiculture.items.ItemRegistryApiculture", "beeDroneGE"),
-		LARVA("forestry.apiculture.items.ItemRegistryApiculture", "beeLarvaeGE");
+		LARVA("forestry.apiculture.items.ItemRegistryApiculture", "beeLarvaeGE"),
+		CRAFTING("forestry.core.items.ItemRegistryCore", "craftingMaterial");
 
 		private final String reg;
 		private final String tag;
@@ -98,6 +99,20 @@ public class ForestryHandler extends ModHandlerBase {
 			Field f = c.getDeclaredField("blocks");
 			f.setAccessible(true);
 			return f.get(null);
+		}
+	}
+
+	public static enum CraftingMaterials {
+		PULSEDUST(),
+		PULSEMESH(),
+		SILKWISP(),
+		WOVENSILK(),
+		DISSIPATION(),
+		ICESHARD(),
+		SCENTEDPANEL();
+
+		public ItemStack getItem() {
+			return new ItemStack(ItemEntry.CRAFTING.getItem(), 1, this.ordinal());
 		}
 	}
 

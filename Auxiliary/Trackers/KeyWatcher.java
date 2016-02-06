@@ -67,7 +67,14 @@ public class KeyWatcher {
 		CHAT(),
 		LCTRL(),
 		PGUP(),
-		PGDN();
+		PGDN(),
+		TAB(),
+		TILDE(),
+		BACKSPACE(),
+		HOME(),
+		END(),
+		INSERT(),
+		DELETE();
 
 		public static final Key[] keyList = values();
 	}
@@ -87,7 +94,14 @@ public class KeyWatcher {
 		CHAT(Minecraft.getMinecraft().gameSettings.keyBindChat),
 		LCTRL(Minecraft.isRunningOnMac ? Keyboard.KEY_LMETA : Keyboard.KEY_LCONTROL),
 		PGUP(Keyboard.KEY_PRIOR),
-		PGDN(Keyboard.KEY_NEXT);
+		PGDN(Keyboard.KEY_NEXT),
+		TAB(Keyboard.KEY_TAB),
+		TILDE(Keyboard.KEY_GRAVE), //Not on Euro keyboards
+		BACKSPACE(Keyboard.KEY_BACK),
+		HOME(Keyboard.KEY_HOME),
+		END(Keyboard.KEY_END),
+		INSERT(Keyboard.KEY_INSERT),
+		DELETE(Keyboard.KEY_DELETE);
 
 		private KeyBinding key;
 		private int keyInt;

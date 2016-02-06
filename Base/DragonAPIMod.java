@@ -16,6 +16,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
@@ -45,6 +46,7 @@ import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.eventhandler.EventBus;
 
 public abstract class DragonAPIMod {
 
@@ -53,6 +55,13 @@ public abstract class DragonAPIMod {
 	private static ModVersion apiVersion;
 	private static final HashMap<String, ModVersion> modVersions = new HashMap();
 	//private static final ModVersion api_version;
+
+	private static final HashMap<String, DragonAPIMod> mods = new HashMap();
+
+	private static final HashSet<DragonAPIMod> preInitSet = new HashSet();
+
+	public static final EventBus DEDICATED_BUS = new EventBus();
+	private static final EventBus EARLY_BUS = new EventBus();
 
 	private final LoadProfiler profiler;
 
@@ -78,13 +87,21 @@ public abstract class DragonAPIMod {
 
 		version = ModVersion.readFromFile(this);
 		modVersions.put(this.getClass().getSimpleName(), version);
+		mods.put(this.getTechnicalName(), this);
 		ReikaJavaLibrary.pConsole("Registered "+this+" as version "+version);
 		if (this.getClass() == DragonAPIInit.class) {
 			apiVersion = version;
 		}
 
+		DEDICATED_BUS.register(this);
+		EARLY_BUS.register(this);
+
 		ReikaJavaLibrary.pConsole(this.getTechnicalName()+": Constructed; Active Classloader is: "+this.getClass().getClassLoader());
 		profiler.finishTiming();
+	}
+
+	public static DragonAPIMod getByName(String name) {
+		return mods.get(name);
 	}
 
 	@EventHandler
@@ -96,10 +113,28 @@ public abstract class DragonAPIMod {
 	@EventHandler
 	public abstract void postload(FMLPostInitializationEvent evt);
 
+	/** Fired after preload (right after the last DragonAPIMod fires preinit) but before load */
+	protected void postPreLoad() {
+
+	}
+
 	protected final void basicSetup(FMLPreInitializationEvent evt) {
 		MinecraftForge.EVENT_BUS.register(this);
+		this.checkFinalPreload(this);
+		EARLY_BUS.unregister(this);
 		ReikaRegistryHelper.setupModData(this, evt);
 		CommandableUpdateChecker.instance.registerMod(this);
+	}
+
+	private static void checkFinalPreload(DragonAPIMod mod) {
+		preInitSet.add(mod);
+		DragonAPICore.log("Pre-initialized "+mod.getTechnicalName()+"; preloaded "+preInitSet.size()+"/"+mods.size()+" mods.");
+		if (preInitSet.size() == mods.size()) {
+			DragonAPICore.log("Finished all main preinit phases. Running post-pre init phase on "+preInitSet.size()+" mods.");
+			for (DragonAPIMod mod2 : mods.values()) {
+				mod2.postPreLoad();
+			}
+		}
 	}
 
 	protected final void verifyInstallation() {
@@ -283,7 +318,8 @@ public abstract class DragonAPIMod {
 			CONSTRUCT(),
 			PRELOAD(),
 			LOAD(),
-			POSTLOAD();
+			POSTLOAD(),
+			LOADCOMPLETE();
 		}
 
 	}

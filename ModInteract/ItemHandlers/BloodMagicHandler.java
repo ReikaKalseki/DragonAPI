@@ -27,6 +27,8 @@ public final class BloodMagicHandler extends ModHandlerBase {
 	public final Fluid lifeEssence;
 	public final Item orbID;
 
+	public final int soulFrayID;
+
 	public final Item boundHelmet;
 	public final Item boundChestplate;
 	public final Item boundLegs;
@@ -42,6 +44,8 @@ public final class BloodMagicHandler extends ModHandlerBase {
 		Item boots = null;
 
 		Fluid life = null;
+
+		int soulfray = -1;
 		if (this.hasMod()) {
 			try {
 				Class c = this.getMod().getItemClass();
@@ -69,6 +73,9 @@ public final class BloodMagicHandler extends ModHandlerBase {
 				Field f = c.getDeclaredField("lifeEssenceFluid");
 				f.setAccessible(true);
 				life = (Fluid)f.get(null);
+
+				f = c.getField("customPotionSoulFrayID");
+				soulfray = f.getInt(null);
 			}
 			catch (ClassNotFoundException e) {
 				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
@@ -112,6 +119,8 @@ public final class BloodMagicHandler extends ModHandlerBase {
 		boundLegs = legs;
 
 		lifeEssence = life;
+
+		soulFrayID = soulfray;
 	}
 
 	public static BloodMagicHandler getInstance() {

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
@@ -19,7 +20,11 @@ import net.minecraft.item.ItemDye;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.util.FakePlayer;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+
+import com.mojang.authlib.GameProfile;
 
 public class ReikaDispenserHelper {
 
@@ -101,7 +106,7 @@ public class ReikaDispenserHelper {
 
 	}
 
-	public static IBehaviorDispenseItem bonemealEffect = new IBehaviorDispenseItem() {
+	public static final IBehaviorDispenseItem bonemealEffect = new IBehaviorDispenseItem() {
 
 		@Override
 		public ItemStack dispense(IBlockSource ibs, ItemStack is) {
@@ -121,6 +126,13 @@ public class ReikaDispenserHelper {
 		}
 
 	};
+
+	private static final GameProfile fakePlayerProfile = new GameProfile(UUID.randomUUID(), "dispenser");
+
+	public static final FakePlayer getDispenserPlayer(IBlockSource ibs, ItemStack is) {
+		return ibs.getWorld() instanceof WorldServer ? new FakePlayer((WorldServer)ibs.getWorld(), fakePlayerProfile) : null;
+	}
+
 	/*
 	public static IBehaviorDispenseItem rightClickEffect = new IBehaviorDispenseItem() {
 

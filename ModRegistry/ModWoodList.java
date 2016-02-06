@@ -37,7 +37,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 public enum ModWoodList implements TreeType {
 
 	CANOPY(ModList.TWILIGHT, 		0x252517, 0x330464, "log", "leaves", "sapling", new int[]{1,13}, new int[]{1,9}, 1, VarType.INSTANCE),
-	DARKWOOD(ModList.TWILIGHT, 		0x35281A, 0x395F41, "log", "hedge", "sapling", new int[]{3,15}, 1, 3, VarType.INSTANCE),
+	DARKWOOD(ModList.TWILIGHT, 		0x35281A, 0x395F41, "log", "darkleaves", "sapling", new int[]{3,15}, 0, 3, VarType.INSTANCE),
 	MANGROVE(ModList.TWILIGHT, 		0x8D8980, 0x431445, "log", "leaves", "sapling", new int[]{2,14}, new int[]{2,10}, 2, VarType.INSTANCE),
 	TWILIGHTOAK(ModList.TWILIGHT, 	0x806654, 0x764952, "log", "leaves", "sapling", new int[]{0,12}, new int[]{0,8}, 0, VarType.INSTANCE),
 	//RAINBOWOAK(ModList.TWILIGHT, 	0x806654, 0x764952, "---", "leaves", "sapling", new int[]{0,12}, new int[]{3,11}, 9, VarType.INSTANCE),
@@ -56,20 +56,21 @@ public enum ModWoodList implements TreeType {
 	MAPLE(ModList.NATURA, 			0x503A23, 0x993412, "rareTree", "rareLeaves", "rareSapling", 0, new int[]{0,8}, 0, VarType.INSTANCE),
 	WILLOW(ModList.NATURA, 			0x584C30, 0x548941, "willow", "floraLeavesNoColor", "rareSapling", 0, new int[]{3,11}, 4, VarType.INSTANCE),
 	AMARANTH(ModList.NATURA, 		0x9C8B56, 0x3C9119, "rareTree", "rareLeaves", "rareSapling", 2, new int[]{2,10}, 2, VarType.INSTANCE),
-	BAMBOO(ModList.BOP, 			0xBBD26C, 0xAFD83B, "bamboo", "leaves1", "saplings", 0, 1, 2, VarType.INSTANCE),
-	MAGIC(ModList.BOP, 				0x78839E, 0x5687BE, "logs2", "leaves1", "saplings", 1, new int[]{2,10}, 3, VarType.INSTANCE),
-	DARK(ModList.BOP, 				0x664848, 0x312F42, "logs1", "leaves1", "saplings", 2, new int[]{3,11}, 4, VarType.INSTANCE),
-	FIR(ModList.BOP, 				0x675846, 0x518E5F, "logs1", "leaves2", "saplings", 3, new int[]{1,9}, 6, VarType.INSTANCE),
-	LOFTWOOD(ModList.BOP, 			0x817665, 0x3FD994, "logs2", "leaves2", "saplings", 0, new int[]{2,10}, 7, VarType.INSTANCE),
-	CHERRY(ModList.BOP, 			0x965441, 0xFFAFE0, "logs1", "leaves3", "saplings", new int[]{1,5,9}, new int[]{1,3,9,11}, 10, VarType.INSTANCE), //sapling 12 for white cherry
-	HELLBARK(ModList.BOP, 			0xB36F43, 0x7B5E1F, "logs4", "leaves4", "saplings", 1, 0, 13, VarType.INSTANCE),
-	JACARANDA(ModList.BOP, 			0x998177, 0x644F84, "logs4", "leaves4", "saplings", 2, new int[]{1,9}, 14, VarType.INSTANCE),
-	ACACIA(ModList.BOP, 			0x847956, 0x3E981A, "logs1", "colorizedLeaves1", "colorizedSaplings", 0, new int[]{0,8}, 0, VarType.INSTANCE),
-	BOPMANGROVE(ModList.BOP, 		0xDED1B5, 0x3E981A, "logs2", "colorizedLeaves1", "colorizedSaplings", 2, new int[]{1,9}, 1, VarType.INSTANCE),
-	PALM(ModList.BOP, 				0x936B40, 0x3E981A, "logs2", "colorizedLeaves1", "colorizedSaplings", 3, 2, 2, VarType.INSTANCE),
-	REDWOOD(ModList.BOP, 			0x722F0D, 0x3E981A, "logs3", "colorizedLeaves1", "colorizedSaplings", 0, new int[]{3,11}, 3, VarType.INSTANCE),
-	BOPWILLOW(ModList.BOP, 			0x767A47, 0x3E981A, "logs3", "colorizedLeaves2", "colorizedSaplings", 1, new int[]{0,8}, 4, VarType.INSTANCE),
-	PINE(ModList.BOP, 				0x896B4F, 0x3E981A, "logs4", "colorizedLeaves2", "colorizedSaplings", 0, new int[]{1,9}, 5, VarType.INSTANCE),
+	BAMBOO(ModList.BOP, 			0xBBD26C, 0xAFD83B, "bamboo", "leaves1", "saplings", 0, new int[]{1, 5, 9, 13}, 2, VarType.INSTANCE),
+	MAGIC(ModList.BOP, 				0x78839E, 0x5687BE, "logs2", "leaves1", "saplings", new int[]{1, 5, 9, 13}, new int[]{2, 6, 10, 14}, 3, VarType.INSTANCE),
+	DARK(ModList.BOP, 				0x664848, 0x312F42, "logs1", "leaves1", "saplings", new int[]{2, 6, 10, 14}, new int[]{3, 7, 11, 15}, 4, VarType.INSTANCE),
+	FIR(ModList.BOP, 				0x675846, 0x518E5F, "logs1", "leaves2", "saplings", new int[]{3, 7, 11, 15}, new int[]{1, 5, 9, 13}, 6, VarType.INSTANCE),
+	LOFTWOOD(ModList.BOP, 			0x817665, 0x3FD994, "logs2", "leaves2", "saplings", new int[]{0, 4, 8, 12}, new int[]{2, 6, 10, 14}, 7, VarType.INSTANCE),
+	CHERRY(ModList.BOP, 			0x965441, 0xFFAFE0, "logs1", "leaves3", "saplings", new int[]{1, 5, 9, 13}, new int[]{1, 3, 5, 7, 9, 11, 13, 15}, 10, VarType.INSTANCE), //sapling 12 for white cherry
+	HELLBARK(ModList.BOP, 			0xB36F43, 0x7B5E1F, "logs4", "leaves4", "saplings", new int[]{1, 5, 9, 13}, new int[]{0, 4, 8, 12}, 13, VarType.INSTANCE),
+	JACARANDA(ModList.BOP, 			0x998177, 0x644F84, "logs4", "leaves4", "saplings", new int[]{2, 6, 10, 14}, new int[]{1, 5, 9, 13}, 14, VarType.INSTANCE),
+	SACRED(ModList.BOP, 			0x896B4F, 0x3E981A, "logs1", "colorizedLeaves1", "colorizedSaplings", new int[]{0, 4, 8, 12}, new int[]{0, 4, 8, 12}, 0, VarType.INSTANCE),
+	BOPMANGROVE(ModList.BOP, 		0xDED1B5, 0x3E981A, "logs2", "colorizedLeaves1", "colorizedSaplings", new int[]{2, 6, 10, 14}, new int[]{1, 5, 9, 13}, 1, VarType.INSTANCE),
+	PALM(ModList.BOP, 				0x936B40, 0x3E981A, "logs2", "colorizedLeaves1", "colorizedSaplings", new int[]{3, 7, 11, 15}, new int[]{2, 6, 10, 14}, 2, VarType.INSTANCE),
+	REDWOOD(ModList.BOP, 			0x722F0D, 0x3E981A, "logs3", "colorizedLeaves1", "colorizedSaplings", new int[]{0, 4, 8, 12}, new int[]{3, 7, 11, 15}, 3, VarType.INSTANCE),
+	BOPWILLOW(ModList.BOP, 			0x767A47, 0x3E981A, "logs3", "colorizedLeaves2", "colorizedSaplings", new int[]{1, 5, 9, 13}, new int[]{0, 4, 8, 12}, 4, VarType.INSTANCE),
+	PINE(ModList.BOP, 				0x896B4F, 0x3E981A, "logs4", "colorizedLeaves2", "colorizedSaplings", new int[]{0, 4, 8, 12}, new int[]{1, 5, 9, 13}, 5, VarType.INSTANCE),
+	MAHOGANY(ModList.BOP, 			0x896B4F, 0x3E981A, "logs4", "colorizedLeaves2", "colorizedSaplings", new int[]{3, 7, 11, 15}, new int[]{2, 6, 10, 14}, 6, VarType.INSTANCE),
 	BXLREDWOOD(ModList.BXL, 		0x000000, 0x000000, null, null, null, 0, VarType.INSTANCE),
 	IC2RUBBER(ModList.IC2, 			0x3C2D20, 0x638143, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{1,2,3,4,5}, new int[]{0,8}, 0, VarType.ITEMSTACK),
 	MFRRUBBER(ModList.MINEFACTORY, 	0x7E5C25, 0x5DC123, "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5,13}, new int[]{0,8}, 0, VarType.INSTANCE),
@@ -480,6 +481,14 @@ public enum ModWoodList implements TreeType {
 	}
 
 	public boolean isRareTree() {
+		if (this.isMagicTFTree())
+			return true;
+		if (this == SILVERWOOD)
+			return true;
+		return false;
+	}
+
+	public boolean isMagicTFTree() {
 		if (this == TIMEWOOD)
 			return true;
 		if (this == SORTING)
@@ -487,8 +496,6 @@ public enum ModWoodList implements TreeType {
 		if (this == MINEWOOD)
 			return true;
 		if (this == TRANSFORMATION)
-			return true;
-		if (this == SILVERWOOD)
 			return true;
 		return false;
 	}

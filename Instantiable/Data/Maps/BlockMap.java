@@ -68,6 +68,10 @@ public final class BlockMap<V> {
 		return this.containsKey(new BlockKey(b, meta));
 	}
 
+	public boolean containsKey(Block b) {
+		return this.containsKey(new BlockKey(b));
+	}
+
 	public boolean containsKey(IBlockAccess world, int x, int y, int z) {
 		return this.containsKey(BlockKey.getAt(world, x, y, z));
 	}

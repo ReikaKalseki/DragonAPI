@@ -141,6 +141,8 @@ public final class CommandableUpdateChecker {
 			mod.getModLogger().log("Mod is in source code form. Not checking versions.");
 			return;
 		}
+		if (mod.getUpdateCheckURL() == null)
+			return;
 		String url = mod.getUpdateCheckURL()+"_"+Loader.MC_VERSION.replaceAll("\\.", "-")+".txt";
 		URL file = this.getURL(url);
 		if (file == null) {

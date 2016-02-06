@@ -13,7 +13,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
-import buildcraft.energy.fuels.FuelManager;
+import buildcraft.api.fuels.BuildcraftFuelRegistry;
 
 public class ReikaBuildCraftHelper extends DragonAPICore {
 
@@ -23,19 +23,19 @@ public class ReikaBuildCraftHelper extends DragonAPICore {
 	private static final Fluid fuel = FluidRegistry.getFluid("fuel");
 	private static double gasEnergyPerKg = 46.9; //MegaJoules
 
-	public static float getFuelMJPerTick() {
-		return FuelManager.INSTANCE.getFuel(fuel).getPowerPerCycle();
+	public static int getFuelRFPerTick() {
+		return BuildcraftFuelRegistry.fuel.getFuel(fuel).getPowerPerCycle();
 	}
 
 	/** In ticks */
-	public static float getFuelBucketDuration() {
-		return FuelManager.INSTANCE.getFuel(fuel).getTotalBurningTime();
+	public static int getFuelBucketDuration() {
+		return BuildcraftFuelRegistry.fuel.getFuel(fuel).getTotalBurningTime();
 	}
 
 	/** Minecraft joules per second */
 	@Deprecated
 	public static float getFuelMinecraftWatts() {
-		return 20*getFuelMJPerTick()/(getFuelBucketDuration()/20F);
+		return 20*getFuelRFPerTick()/(getFuelBucketDuration()/20F);
 	}
 
 	/** J/s for fuel */

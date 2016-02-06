@@ -239,4 +239,14 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		return false;
 	}
+
+	public static ItemStack getSilkTouch(World world, int x, int y, int z, Block id, int meta) {
+		if (id == Blocks.lit_redstone_ore)
+			id = Blocks.redstone_ore;
+		if (Item.getItemFromBlock(id) == null) {
+			DragonAPICore.logError("Something tried to silktouch null-item block "+id.getLocalizedName());
+			return null;
+		}
+		return new ItemStack(id, 1, meta);
+	}
 }
