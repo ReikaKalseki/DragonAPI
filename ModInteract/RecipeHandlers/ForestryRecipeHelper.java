@@ -48,7 +48,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 					centrifuge.put(in, outputs);
 				}
 			}
-			catch (Exception e) {
+			catch (Throwable e) {
 				DragonAPICore.logError("Could not initialize Forestry recipe helper!");
 				e.printStackTrace();
 			}
