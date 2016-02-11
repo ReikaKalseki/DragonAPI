@@ -60,6 +60,7 @@ public class BlockReplaceCommand extends DragonCommandBase {
 			int py = MathHelper.floor_double(ep.posY);
 			int pz = MathHelper.floor_double(ep.posZ);
 
+			long start = System.currentTimeMillis();
 			int count = 0;
 			for (int i = -range; i <= range; i++) {
 				for (int j = -range; j <= range; j++) {
@@ -67,13 +68,15 @@ public class BlockReplaceCommand extends DragonCommandBase {
 						int x = px+i;
 						int y = py+j;
 						int z = pz+k;
-						Block b = ep.worldObj.getBlock(x, y, z);
-						int meta = ep.worldObj.getBlockMetadata(x, y, z);
-						for (ReplaceCheck rc : li) {
-							if (rc.replace(b, meta)) {
-								ep.worldObj.setBlock(x, y, z, to.blockID, to.metadata, 3);
-								count++;
-								break;
+						if (y >= 0 && y <= 256) {
+							Block b = ep.worldObj.getBlock(x, y, z);
+							int meta = ep.worldObj.getBlockMetadata(x, y, z);
+							for (ReplaceCheck rc : li) {
+								if (rc.replace(b, meta)) {
+									ep.worldObj.setBlock(x, y, z, to.blockID, to.metadata, 3);
+									count++;
+									break;
+								}
 							}
 						}
 					}
@@ -82,7 +85,8 @@ public class BlockReplaceCommand extends DragonCommandBase {
 
 			if (count > 0) {
 				String s2 = to.blockID.getLocalizedName()+" (Metadata "+to.metadata+")";
-				String sg = EnumChatFormatting.GREEN+"Replaced "+count+" blocks with "+s2+" in range "+range+".";
+				long dur = System.currentTimeMillis()-start;
+				String sg = EnumChatFormatting.GREEN+"Replaced "+count+" blocks with "+s2+" in range "+range+". Took "+dur+" ms.";
 				ReikaChatHelper.sendChatToPlayer(ep, sg);
 			}
 		}

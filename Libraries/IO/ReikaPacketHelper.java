@@ -206,10 +206,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		for (int i = 0; i < data.length; i++) {
 			li.add(data[i]);
 		}
-		sendDataPacket(ch, id, li, ep);
+		sendDataPacket(ch, id, ep, li);
 	}
 
-	public static void sendDataPacket(String ch, int id, List<Integer> data, EntityPlayerMP ep) {
+	public static void sendDataPacket(String ch, int id, EntityPlayerMP ep, List<Integer> data) {
 		int npars;
 		if (data == null)
 			npars = 4;

@@ -97,6 +97,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	private int updateDelay = 0;
 
+	private int tileAge = 0;
+
 	private final TileEntity[] adjTEMap = new TileEntity[6];
 
 	protected final ForgeDirection[] dirs = ForgeDirection.values();
@@ -136,6 +138,11 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	public final int getTicksExisted() {
 		return ticksExisted;
+	}
+
+	/** Persistent across world saves, unlike getTicksExisted() */
+	public final int getTileEntityAge() {
+		return tileAge;
 	}
 
 	public int getPacketDelay() {
@@ -202,6 +209,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 		NBT.setBoolean("no_drops", unharvestable);
 		NBT.setBoolean("no_mine", unmineable);
+
+		NBT.setInteger("age_ticks", tileAge);
 	}
 
 	@Override
@@ -220,6 +229,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 		unharvestable = NBT.getBoolean("no_drops");
 		unmineable = NBT.getBoolean("no_mine");
+
+		tileAge = NBT.getInteger("age_ticks");
 	}
 
 	public final boolean isUnMineable() {
@@ -502,6 +513,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			}
 			 */
 			ticksExisted++;
+			tileAge++;
 		}
 	}
 

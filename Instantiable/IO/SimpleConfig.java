@@ -32,6 +32,8 @@ public final class SimpleConfig {
 	private boolean isReading = false;
 
 	public SimpleConfig(DragonAPIMod mod) {
+		if (mod == null)
+			throw new MisuseException("You cannot create a config with a null mod!");
 		configMod = mod;
 	}
 

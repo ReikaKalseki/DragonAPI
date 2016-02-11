@@ -67,6 +67,8 @@ public class ControlledConfig {
 	private final HashSet<String> orphanExclusions = new HashSet();
 
 	public ControlledConfig(DragonAPIMod mod, ConfigList[] option, IDRegistry[] id) {
+		if (mod == null)
+			throw new MisuseException("You cannot create a config with a null mod!");
 		configMod = mod;
 		optionList = option;
 		IDList = id;

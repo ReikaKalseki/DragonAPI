@@ -246,9 +246,11 @@ public final class ItemHashMap<V> {
 		int s = ii.getSizeInventory();
 		for (int i = 0; i < s; i++) {
 			ItemStack in = ii.getStackInSlot(i);
-			Integer has = map.get(in);
-			int amt = has != null ? has.intValue() : 0;
-			map.put(in, amt+1);
+			if (in != null) {
+				Integer has = map.get(in);
+				int amt = has != null ? has.intValue() : 0;
+				map.put(in, amt+1);
+			}
 		}
 		return map;
 	}

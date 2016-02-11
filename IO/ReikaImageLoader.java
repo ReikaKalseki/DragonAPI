@@ -151,9 +151,9 @@ public final class ReikaImageLoader {
 
 	static {
 		Graphics graphics = missingtex.getGraphics();
-		graphics.setColor(Color.decode("0x2F0044"));
+		graphics.setColor(new Color(0x2F0044));
 		graphics.fillRect(0, 0, 64, 64);
-		graphics.setColor(Color.decode("0x7F6A00"));
+		graphics.setColor(new Color(0x7F6A00));
 		int i = 10;
 		int j = 0;
 		while (i < 64) {
@@ -254,5 +254,15 @@ public final class ReikaImageLoader {
 			return true;
 		}
 
+	}
+
+	public static BufferedImage copyImage(BufferedImage buf) {
+		BufferedImage ret = new BufferedImage(buf.getWidth(), buf.getHeight(), buf.getType());
+		for (int i = 0; i < ret.getWidth(); i++) {
+			for (int k = 0; k < ret.getHeight(); k++) {
+				ret.setRGB(i, k, buf.getRGB(i, k));
+			}
+		}
+		return ret;
 	}
 }

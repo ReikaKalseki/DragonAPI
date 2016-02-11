@@ -32,6 +32,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.ConfigMatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Base.TileEntityBase;
+import Reika.DragonAPI.Command.BiomeMapCommand;
 import Reika.DragonAPI.Command.EntityListCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Instantiable.Effects.NumberParticleFX;
@@ -275,6 +276,19 @@ public class APIPacketHandler implements PacketHandler {
 					break;
 				case GUIRELOAD:
 					break;
+				case BIOMEPNGSTART:
+					BiomeMapCommand.startCollecting(data[0], stringdata, data[1], data[2], data[3], data[4], data[5], data[6]);
+					break;
+				case BIOMEPNGDAT:
+					int hash = data[0];
+					for (int i = 0; i < BiomeMapCommand.PACKET_COMPILE; i++) {
+						int a = 1+i*3;
+						BiomeMapCommand.addBiomePoint(hash, data[a], data[a+1], data[a+2]);
+					}
+					break;
+				case BIOMEPNGEND:
+					BiomeMapCommand.finishCollectingAndMakeImage(data[0]);
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -357,7 +371,10 @@ public class APIPacketHandler implements PacketHandler {
 		ITEMDROPPER(),
 		ITEMDROPPERREQUEST(),
 		PLAYERINTERACT(),
-		GUIRELOAD();
+		GUIRELOAD(),
+		BIOMEPNGSTART(),
+		BIOMEPNGDAT(),
+		BIOMEPNGEND();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -396,6 +413,12 @@ public class APIPacketHandler implements PacketHandler {
 					return 1;
 				case PLAYERINTERACT:
 					return 5;
+				case BIOMEPNGSTART:
+					return 7;
+				case BIOMEPNGDAT:
+					return 1+3*BiomeMapCommand.PACKET_COMPILE;
+				case BIOMEPNGEND:
+					return 1;
 				default:
 					return 0;
 			}

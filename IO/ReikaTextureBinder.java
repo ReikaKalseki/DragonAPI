@@ -14,7 +14,6 @@ import java.nio.IntBuffer;
 
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.client.settings.GameSettings;
-import net.minecraft.util.IntHashMap;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -26,7 +25,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ReikaTextureBinder
 {
 	/** A mapping from GL texture names (integers) to BufferedImage instances */
-	private IntHashMap textureNameToImageMap = new IntHashMap();
+	//private IntHashMap textureNameToImageMap = new IntHashMap(); Why was this here?
 
 	/** Stores the image data for the texture. */
 	private IntBuffer imageData = GLAllocation.createDirectIntBuffer(16777216); //8388608//was 4194304 of raw ARGB; doubled to 8MB to allow for bigger images
@@ -52,7 +51,7 @@ public class ReikaTextureBinder
 	{
 		int i = this.generateTextureNames();
 		this.setupTexture(buf, i);
-		textureNameToImageMap.addKey(i, buf);
+		//textureNameToImageMap.addKey(i, buf);
 		return i;
 	}
 
@@ -64,12 +63,12 @@ public class ReikaTextureBinder
 	/**
 	 * Copy the supplied image onto the specified OpenGL texture
 	 */
-	public void setupTexture(BufferedImage buf, int par2)
+	private void setupTexture(BufferedImage buf, int par2)
 	{
 		this.setupTextureExt(buf, par2, false, false);
 	}
 
-	public void setupTextureExt(BufferedImage buf, int par2, boolean par3, boolean par4)
+	private void setupTextureExt(BufferedImage buf, int par2, boolean par3, boolean par4)
 	{
 		this.bindTexture(par2);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
@@ -94,7 +93,7 @@ public class ReikaTextureBinder
 
 		int j = buf.getWidth();
 		int k = buf.getHeight();
-		//TextureFXManager.instance().setTextureDimensions(par2, j, k); no longer necessary? - might have been lost back in 1.5
+
 		int[] aint = new int[j * k];
 		buf.getRGB(0, 0, j, k, aint, 0, j);
 

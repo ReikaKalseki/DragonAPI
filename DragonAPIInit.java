@@ -83,6 +83,7 @@ import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Base.ModHandlerBase.SearchVersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionIgnore;
+import Reika.DragonAPI.Command.BiomeMapCommand;
 import Reika.DragonAPI.Command.BlockReplaceCommand;
 import Reika.DragonAPI.Command.ChunkGenCommand;
 import Reika.DragonAPI.Command.ClassLoaderCommand;
@@ -96,6 +97,7 @@ import Reika.DragonAPI.Command.FindThreadCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
+import Reika.DragonAPI.Command.PopulateMinimapCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.SpawnMobsCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
@@ -609,6 +611,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new FindThreadCommand());
 		evt.registerServerCommand(new ModularLoggerCommand());
 		evt.registerServerCommand(new SpawnMobsCommand());
+		evt.registerServerCommand(new PopulateMinimapCommand());
+		evt.registerServerCommand(new BiomeMapCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();
