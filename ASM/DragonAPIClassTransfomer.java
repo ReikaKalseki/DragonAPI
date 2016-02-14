@@ -97,6 +97,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		MUSICTYPEEVENT("net.minecraft.client.Minecraft", "bao"),
 		//ITEMSTACKNULL("net.minecraft.item.ItemStack", "add"),
 		LIGHTMAP("net.minecraft.client.renderer.EntityRenderer", "blt"),
+		CHATEVENT("net.minecraft.client.gui.GuiNewChat", "bcc"),
 		;
 
 		private final String obfName;
@@ -1264,6 +1265,17 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					AbstractInsnNode loc = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/client/renderer/texture/DynamicTexture", func, "()V");
 					loc = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(loc), Opcodes.ALOAD, 0);
 					m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/LightmapEvent", "fire", "()V", false));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case CHATEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_146234_a", "printChatMessageWithOptionalDeletion", "(Lnet/minecraft/util/IChatComponent;I)V");
+					m.instructions.insert(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/ChatEvent", "firePre", "(Lnet/minecraft/util/IChatComponent;)V", false));
+					m.instructions.insert(new VarInsnNode(Opcodes.ALOAD, 1));
+
+					AbstractInsnNode loc = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.INVOKEINTERFACE);
+					m.instructions.insert(loc, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/ChatEvent", "firePost", "(Lnet/minecraft/util/IChatComponent;)V", false));
+					m.instructions.insert(loc, new VarInsnNode(Opcodes.ALOAD, 1));
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}

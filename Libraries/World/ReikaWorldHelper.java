@@ -2092,4 +2092,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			world.setBlock(x, y, z, Blocks.dirt);
 		}
 	}
+
+	public static void hydrateFarmland(World world, int x, int y, int z, boolean fullHydrate) {
+		int meta = world.getBlockMetadata(x, y, z);
+		if (meta < 7) {
+			world.setBlockMetadataWithNotify(x, y, z, fullHydrate ? 7 : meta+1, 3);
+		}
+	}
 }

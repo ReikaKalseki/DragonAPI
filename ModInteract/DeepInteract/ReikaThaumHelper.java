@@ -44,6 +44,7 @@ import thaumcraft.common.entities.monster.EntityWisp;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Instantiable.Formula.MathExpression;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.CustomThaumResearch;
@@ -455,9 +456,12 @@ public class ReikaThaumHelper {
 		ResearchCategories.registerCategory(name, icon, rl2);
 	}
 
-	public static void addInfusionRecipeBookEntryViaXML(String id, String desc, String category, InfusionRecipe ir, int row, int col, Class root, String path) {
+	public static void addInfusionRecipeBookEntryViaXML(String id, String desc, String category, InfusionRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
 		ItemStack out = (ItemStack)ir.getRecipeOutput();
-		AspectList aspects = ir.getAspects();
+		AspectList aspects = new AspectList();
+		for (Aspect a : ir.getAspects().aspects.keySet()) {
+			aspects.add(a, Math.max(1, (int)(cost.evaluate(ir.getAspects().getAmount(a)))));
+		}
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
@@ -466,9 +470,12 @@ public class ReikaThaumHelper {
 		res.registerResearchItem();
 	}
 
-	public static void addCrucibleRecipeBookEntryViaXML(String id, String desc, String category, CrucibleRecipe ir, int row, int col, Class root, String path) {
+	public static void addCrucibleRecipeBookEntryViaXML(String id, String desc, String category, CrucibleRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
 		ItemStack out = ir.getRecipeOutput();
-		AspectList aspects = ir.aspects;
+		AspectList aspects = new AspectList();
+		for (Aspect a : ir.aspects.aspects.keySet()) {
+			aspects.add(a, Math.max(1, (int)(cost.evaluate(ir.aspects.getAmount(a)))));
+		}
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
@@ -477,9 +484,12 @@ public class ReikaThaumHelper {
 		res.registerResearchItem();
 	}
 
-	public static void addArcaneRecipeBookEntryViaXML(String id, String desc, String category, IArcaneRecipe ir, int row, int col, Class root, String path) {
+	public static void addArcaneRecipeBookEntryViaXML(String id, String desc, String category, IArcaneRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
 		ItemStack out = ir.getRecipeOutput();
-		AspectList aspects = ir.getAspects();
+		AspectList aspects = new AspectList();
+		for (Aspect a : ir.getAspects().aspects.keySet()) {
+			aspects.add(a, Math.max(1, (int)(cost.evaluate(ir.getAspects().getAmount(a)))));
+		}
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);

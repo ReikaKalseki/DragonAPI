@@ -12,6 +12,7 @@ package Reika.DragonAPI.Auxiliary;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.server.MinecraftServer;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -88,6 +89,76 @@ public class LoggingFilters {
 
 		/** Return null to silence the message. Return anything else to replace the message, except an empty string for "original message" */
 		protected abstract String parse(Message msg, Level lvl);
+	}
+
+	public static final class ReplyFilter extends CoreFilter {
+
+		private final String input;
+		private final String reply;
+
+		private final boolean sameStream;
+
+		private boolean nextPrint;
+
+		public ReplyFilter(Logger log, String seek, String msg) {
+			super(null);
+			input = seek;
+			reply = msg;
+
+			sameStream = log == getLogger(LoggerType.FML);
+		}
+
+		@Override
+		protected final String parse(Message msg, Level lvl) {
+			String sg = msg.getFormattedMessage();
+			if (nextPrint) {
+				nextPrint = false;
+				ReikaJavaLibrary.pConsole(reply);
+			}
+			if (sg.contains(input)) {
+				if (sameStream)
+					nextPrint = true;
+				else
+					ReikaJavaLibrary.pConsole(reply);
+			}
+			return "";
+		}
+
+	}
+
+	public static abstract class ReplyWithContextFilter extends CoreFilter {
+
+		private final String input;
+
+		private final boolean sameStream;
+
+		private boolean nextPrint;
+
+		public ReplyWithContextFilter(Logger log, String seek) {
+			super(null);
+			input = seek;
+
+			sameStream = log == getLogger(LoggerType.FML);
+		}
+
+		@Override
+		protected final String parse(Message msg, Level lvl) {
+			String sg = msg.getFormattedMessage();
+			if (nextPrint) {
+				nextPrint = false;
+				ReikaJavaLibrary.pConsole(this.getReply(sg));
+			}
+			if (sg.contains(input)) {
+				if (sameStream)
+					nextPrint = true;
+				else
+					ReikaJavaLibrary.pConsole(this.getReply(sg));
+			}
+			return "";
+		}
+
+		protected abstract String getReply(String msg);
+
 	}
 
 	private static class ItemBlockMismatchFilter extends CoreFilter {
@@ -178,6 +249,8 @@ public class LoggingFilters {
 				return (Logger)LogManager.getLogger(TextureMap.class);
 			case CHAT:
 				return (Logger)LogManager.getLogger(GuiNewChat.class);
+			case SERVER:
+				return (Logger)LogManager.getLogger(MinecraftServer.class);
 			default:
 				return null;
 		}
@@ -187,7 +260,8 @@ public class LoggingFilters {
 		FML(),
 		TEXTURE(),
 		SOUND(),
-		CHAT();
+		CHAT(),
+		SERVER();
 
 		public boolean isClientOnly() {
 			return this == TEXTURE || this == SOUND || this == CHAT;

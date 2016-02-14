@@ -35,6 +35,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.potion.Potion;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -49,6 +50,10 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerRegisterEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.Logger;
+
 import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
@@ -56,6 +61,7 @@ import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
 import Reika.DragonAPI.Auxiliary.FindTilesCommand;
 import Reika.DragonAPI.Auxiliary.LoggingFilters;
+import Reika.DragonAPI.Auxiliary.LoggingFilters.ReplyFilter;
 import Reika.DragonAPI.Auxiliary.ModularLogger.ModularLoggerCommand;
 import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
@@ -110,6 +116,7 @@ import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
 import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
@@ -122,6 +129,7 @@ import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.ReikaPotionHelper;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
@@ -733,6 +741,22 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void confirmNumericIDs(ChatEventPost evt) {
+		if (evt.chatMessage.startsWith("Warning: Using numeric IDs will not be supported in the future")) {
+			String item1 = EnumChatFormatting.GOLD+"/give item.forestry.apiculture.bee.template.root3";
+			String item2 = EnumChatFormatting.GOLD+"/give item.gregtech.machine.primary.transformer.hv.ruby";
+			String c = EnumChatFormatting.LIGHT_PURPLE.toString();
+			ReikaChatHelper.writeString(c+"Numeric IDs will remain functional as long as I am here,");
+			ReikaChatHelper.writeString(c+"because not everyone wants to type");
+			ReikaChatHelper.writeString(c+"'"+item1+c+"'");
+			ReikaChatHelper.writeString(c+"or");
+			ReikaChatHelper.writeString(c+"'"+item2+c+"'.");
+			ReikaChatHelper.writeString(c+"-DragonAPI");
+		}
+	}
+
+	@SubscribeEvent
 	public void addGuideGUI(PlayerInteractEvent evt) {
 		EntityPlayer ep = evt.entityPlayer;
 		ItemStack is = ep.getCurrentEquippedItem();
@@ -925,6 +949,13 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	private static void loadLogParsers() {
 		LoggingFilters.registerCoreFilters();
+
+		if (Loader.isModLoaded("endercore")) {
+			Logger enderCore = (Logger)LogManager.getLogger("EnderCore");
+			if (enderCore != null) {
+				enderCore.addFilter(new ReplyFilter(enderCore, "Removed 0 missing texture stacktraces. Tada!", "DRAGONAPI: Congratulations. Have 0 cookies."));
+			}
+		}
 	}
 
 }

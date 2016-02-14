@@ -11,6 +11,7 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import thaumcraft.api.IWarpingGear;
 import Reika.DragonAPI.ModList;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -102,6 +103,14 @@ public class ThaumItemHelper {
 
 	public static boolean isCrystalCluster(Block b) {
 		return b == BlockEntry.CRYSTAL.getBlock();
+	}
+
+	public static boolean isWarpingTool(ItemStack is) {
+		return is != null && is.getItem() instanceof IWarpingGear;
+	}
+
+	public static boolean isVoidMetalTool(ItemStack is) {
+		return is != null && is.getItem().getClass().getName().startsWith("thaumcraft.common.items.equipment.ItemVoid");
 	}
 
 }

@@ -405,6 +405,15 @@ public class ReikaASMHelper {
 		return match(ain, opcode, args) ? ain : null;
 	}
 
+	public static AbstractInsnNode getLastOpcodeBefore(InsnList li, int index, int opcode) {
+		AbstractInsnNode ain = li.get(index-1);
+		while (ain.getOpcode() != opcode && index > 0) {
+			index--;
+			ain = li.get(index);
+		}
+		return ain.getOpcode() == opcode ? ain : null;
+	}
+
 	public static boolean match(AbstractInsnNode ain, int opcode, Object... args) {
 		if (ain.getOpcode() != opcode)
 			return false;

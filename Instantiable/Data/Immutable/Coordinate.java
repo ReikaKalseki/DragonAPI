@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -241,6 +243,10 @@ public final class Coordinate {
 
 	public ChunkCoordIntPair asChunkPair() {
 		return new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4);
+	}
+
+	public List<Integer> asIntList() {
+		return Arrays.asList(xCoord, yCoord, zCoord);
 	}
 
 	public Coordinate negate() {
