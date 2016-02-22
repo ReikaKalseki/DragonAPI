@@ -934,4 +934,19 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return ForgeDirection.UNKNOWN;
 	}
 
+	public static Class<? extends EntityLivingBase> getEntityCategoryClass(EntityLivingBase e) {
+		if (e instanceof EntityPlayer)
+			return EntityPlayer.class;
+		//else if (e instanceof IBossDisplayData)
+		//	return IBossDisplayData.class;
+		else if (e instanceof EntityEnderman || e instanceof EntityPigZombie)
+			return e.getClass();
+		else if (e instanceof EntityMob)
+			return EntityMob.class;
+		else if (e instanceof EntityAnimal)
+			return EntityAnimal.class;
+		else
+			return e.getClass();
+	}
+
 }

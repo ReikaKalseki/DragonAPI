@@ -139,6 +139,21 @@ public class ChunkSplicedGenerationCache {
 		data.putAll(c.data);
 	}
 
+	public void addDataFromColumnData(int chunkX, int chunkZ, Block[] data) {
+		for (int dx = 0; dx < 16; dx++) {
+			for (int dz = 0; dz < 16; dz++) {
+				int x = chunkX*16+dx;
+				int z = chunkZ*16+dz;
+				int d = (dx*16+dz);
+				int posIndex = d*data.length/256;
+				for (int y = 0; y < 256; y++) {
+					Block b = data[y+posIndex];
+					this.setBlock(x, y, z, b);
+				}
+			}
+		}
+	}
+
 	@Override
 	public String toString() {
 		return data.toString();

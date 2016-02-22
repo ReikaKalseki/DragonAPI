@@ -18,6 +18,7 @@ public enum IDType {
 	ENTITY(),
 	BIOME(),
 	POTION(),
+	ENCHANTMENT(),
 	FLUID(),
 	FLUIDCONTAINER();
 

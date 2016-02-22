@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.Java;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -355,5 +356,25 @@ public class ReikaStringParser extends DragonAPICore {
 				idx = i;
 		}
 		return sgs[idx];
+	}
+
+	public static String getDelimited(String delimiter, ArrayList<Object> args) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < args.size(); i++) {
+			sb.append(args.get(i).toString());
+			if (i < args.size()-1)
+				sb.append(delimiter);
+		}
+		return sb.toString();
+	}
+
+	public static String getDelimited(String delimiter, Object... args) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < args.length; i++) {
+			sb.append(args[i].toString());
+			if (i < args.length-1)
+				sb.append(delimiter);
+		}
+		return sb.toString();
 	}
 }

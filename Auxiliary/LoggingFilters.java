@@ -13,6 +13,7 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.WorldServer;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -38,7 +39,7 @@ public class LoggingFilters {
 		private static boolean skipNext = false;
 		protected final LoggerType type;
 
-		private CoreFilter(LoggerType log) {
+		protected CoreFilter(LoggerType log) {
 			type = log;
 		}
 
@@ -251,6 +252,8 @@ public class LoggingFilters {
 				return (Logger)LogManager.getLogger(GuiNewChat.class);
 			case SERVER:
 				return (Logger)LogManager.getLogger(MinecraftServer.class);
+			case WORLD:
+				return (Logger)LogManager.getLogger(WorldServer.class);
 			default:
 				return null;
 		}
@@ -261,7 +264,8 @@ public class LoggingFilters {
 		TEXTURE(),
 		SOUND(),
 		CHAT(),
-		SERVER();
+		SERVER(),
+		WORLD();
 
 		public boolean isClientOnly() {
 			return this == TEXTURE || this == SOUND || this == CHAT;

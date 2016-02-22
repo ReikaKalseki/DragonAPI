@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EntityList;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,6 +34,7 @@ public class IDHelper {
 	private static final HashMap<String, Integer> items;
 	private static final HashMap<String, Integer> entities;
 	private static final HashMap<String, Integer> potions;
+	private static final HashMap<String, Integer> enchants;
 	private static final HashMap<String, Integer> biomes;
 	private static final HashMap<String, Integer> fluids;
 	private static final HashMap<String, Integer> fluidcontainers;
@@ -42,6 +44,7 @@ public class IDHelper {
 		items = ReikaJavaLibrary.sortMapByValues(calcItemIDs());
 		entities = ReikaJavaLibrary.sortMapByValues(calcEntityIDs());
 		potions = ReikaJavaLibrary.sortMapByValues(calcPotionIDs());
+		enchants = ReikaJavaLibrary.sortMapByValues(calcEnchantIDs());
 		biomes = ReikaJavaLibrary.sortMapByValues(calcBiomeIDs());
 		fluids = ReikaJavaLibrary.sortMapByValues(calcFluidIDs());
 		fluidcontainers = ReikaJavaLibrary.sortMapByValues(calcFluidContainers());
@@ -99,6 +102,17 @@ public class IDHelper {
 		return map;
 	}
 
+	private static HashMap<String, Integer> calcEnchantIDs() {
+		HashMap<String, Integer> map = new HashMap();
+		for (int i = 0; i < Enchantment.enchantmentsList.length; i++) {
+			Enchantment b = Enchantment.enchantmentsList[i];
+			if (b != null) {
+				map.put(b.getName(), i);
+			}
+		}
+		return map;
+	}
+
 	private static HashMap<String, Integer> calcFluidIDs() {
 		HashMap<String, Integer> map = new HashMap();
 		map.putAll(FluidRegistry.getRegisteredFluidIDs());
@@ -136,6 +150,10 @@ public class IDHelper {
 
 	public static Map<String, Integer> getPotionIDs() {
 		return Collections.unmodifiableMap(potions);
+	}
+
+	public static Map<String, Integer> getEnchantmentIDs() {
+		return Collections.unmodifiableMap(enchants);
 	}
 
 	public static Map<String, Integer> getBiomeIDs() {

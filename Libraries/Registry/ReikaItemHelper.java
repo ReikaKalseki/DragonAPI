@@ -547,4 +547,13 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static boolean isInOreTag(ItemStack is, String name) {
 		return getOreNames(is).contains(name);
 	}
+
+	public static Collection<ItemStack> getAllOreItemsExcept(String tag, ItemStack excl) {
+		ArrayList<ItemStack> li = new ArrayList();
+		for (ItemStack is : OreDictionary.getOres(tag)) {
+			if (!ReikaItemHelper.matchStacks(is, excl))
+				li.add(is);
+		}
+		return li;
+	}
 }

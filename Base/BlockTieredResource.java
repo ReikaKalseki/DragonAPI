@@ -101,9 +101,9 @@ public abstract class BlockTieredResource extends Block {
 		boolean flag = super.removedByPlayer(world, player, x, y, z, willHarvest);
 		if (!player.capabilities.isCreativeMode && flag && li != null && tier) {
 			for (ItemStack is : li) {
-				double rx = ReikaRandomHelper.getRandomPlusMinus(x+0.5, 0.625);
-				double ry = ReikaRandomHelper.getRandomPlusMinus(y+0.5, 0.625);
-				double rz = ReikaRandomHelper.getRandomPlusMinus(z+0.5, 0.625);
+				double rx = ReikaRandomHelper.getRandomPlusMinus(x+0.5, 0.25);
+				double ry = ReikaRandomHelper.getRandomPlusMinus(y+0.5, 0.25);
+				double rz = ReikaRandomHelper.getRandomPlusMinus(z+0.5, 0.25);
 				ReikaItemHelper.dropItem(world, rx, ry, rz, is, 0);
 			}
 			ReikaWorldHelper.splitAndSpawnXP(world, x+0.5, y+0.5, z+0.5, 2+rand.nextInt(5));

@@ -414,6 +414,24 @@ public class ReikaASMHelper {
 		return ain.getOpcode() == opcode ? ain : null;
 	}
 
+	public static AbstractInsnNode getLastFieldRefBefore(InsnList li, int index, String name) {
+		AbstractInsnNode ain = li.get(index-1);
+		while ((!(ain instanceof FieldInsnNode) || !((FieldInsnNode)ain).name.equals(name)) && index > 0) {
+			index--;
+			ain = li.get(index);
+		}
+		return ain instanceof FieldInsnNode && ((FieldInsnNode)ain).name.equals(name) ? ain : null;
+	}
+
+	public static AbstractInsnNode getLastNonZeroALOADBefore(InsnList li, int index) {
+		AbstractInsnNode ain = li.get(index-1);
+		while ((!(ain instanceof VarInsnNode) || ((VarInsnNode)ain).var == 0) && index > 0) {
+			index--;
+			ain = li.get(index);
+		}
+		return ain instanceof VarInsnNode && ((VarInsnNode)ain).var != 0 ? ain : null;
+	}
+
 	public static boolean match(AbstractInsnNode ain, int opcode, Object... args) {
 		if (ain.getOpcode() != opcode)
 			return false;

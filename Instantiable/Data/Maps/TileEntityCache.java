@@ -19,6 +19,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.ModularLogger;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldChunk;
@@ -36,6 +37,10 @@ public final class TileEntityCache<V> {
 
 	public TileEntityCache() {
 
+	}
+
+	static {
+		ModularLogger.instance.addLogger(DragonAPIInit.instance, LOGGER_ID);
 	}
 
 	public V put(World world, int x, int y, int z, V value) {
@@ -115,7 +120,8 @@ public final class TileEntityCache<V> {
 	public void removeWorld(World world) {
 		HashSet<WorldLocation> set = new HashSet(data.innerSet());
 		for (WorldLocation loc : set) {
-			data.removeAll(loc);
+			if (loc.dimensionID == world.provider.dimensionId)
+				data.removeAll(loc);
 		}
 	}
 

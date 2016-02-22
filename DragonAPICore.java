@@ -10,6 +10,7 @@
 package Reika.DragonAPI;
 
 import java.io.File;
+import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Random;
@@ -39,6 +40,8 @@ public class DragonAPICore {
 	public static boolean debugtest = false;
 
 	private static boolean loaded;
+
+	private static final long launchTime = ManagementFactory.getRuntimeMXBean().getStartTime();
 
 	private static final String MINFORGE = "required-after:Forge@[10.13.0.1558,);"; //was 1205/1231/1291
 	public static final String dependencies = MINFORGE+"after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;"+
@@ -176,5 +179,9 @@ public class DragonAPICore {
 
 	public static boolean hasGameLoaded() {
 		return loaded;
+	}
+
+	public static long getLaunchTime() {
+		return launchTime;
 	}
 }

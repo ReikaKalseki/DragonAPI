@@ -16,7 +16,7 @@ import java.util.TreeMap;
 
 public class WeightedRandom<V> {
 
-	private static final Random r = new Random();
+	private final Random rand = new Random();
 
 	private final HashMap<V, Double> data = new HashMap();
 	private double maxWeight = 0;
@@ -36,7 +36,7 @@ public class WeightedRandom<V> {
 	}
 
 	public V getRandomEntry() {
-		double d = r.nextDouble()*this.weightSum;
+		double d = rand.nextDouble()*this.weightSum;
 		double p = 0;
 		for (V obj : data.keySet()) {
 			p += data.get(obj);
@@ -49,7 +49,7 @@ public class WeightedRandom<V> {
 
 	public V getRandomEntry(V fallback, double wt) {
 		double sum = this.weightSum+wt;
-		double d = r.nextDouble()*sum;
+		double d = rand.nextDouble()*sum;
 		double p = 0;
 		for (V obj : data.keySet()) {
 			p += data.get(obj);
@@ -89,7 +89,14 @@ public class WeightedRandom<V> {
 		return data.toString();
 	}
 
+	public void setSeed(long seed) {
+		rand.setSeed(seed);
+	}
+
 	public static class InvertedWeightedRandom<V> {
+
+		private final Random rand = new Random();
+
 		private final NavigableMap<Double, V> data = new TreeMap<Double, V>();
 		private double weightSum;
 
@@ -99,7 +106,7 @@ public class WeightedRandom<V> {
 		}
 
 		public V getRandomEntry() {
-			double value = r.nextDouble()*this.weightSum;
+			double value = rand.nextDouble()*this.weightSum;
 			//ReikaJavaLibrary.pConsole(value+" of "+this.data.toString());
 			return data.ceilingEntry(value).getValue();
 		}

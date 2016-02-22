@@ -9,9 +9,17 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class ReikaFormatHelper {
+
+	private static final DateFormat dateFormatting = new SimpleDateFormat("MM-dd-yyyy_HH:mm:ss");
+	private static final DateFormat dateFormattingFilesafe = new SimpleDateFormat("MM-dd-yyyy_HH;mm;ss");
+	private static final Calendar calendar = Calendar.getInstance();
 
 	public static final int HOUR = 72000;
 	public static final int MINUTE = 1200;
@@ -58,6 +66,18 @@ public class ReikaFormatHelper {
 		long nano = in4-TimeUnit.MICROSECONDS.toNanos(micro);
 
 		return String.format("%dh:%dm:%ds:%dms:%dus:%sns", hour, minute, second, milli, micro, nano);
+	}
+
+	public static String getCurrentTime() {
+		return dateFormatting.format(calendar.getTime());
+	}
+
+	public static String getFormattedTime(long t) {
+		return dateFormatting.format(new Date(t));
+	}
+
+	public static String getFormattedTimeFilesafe(long t) {
+		return dateFormattingFilesafe.format(new Date(t));
 	}
 
 }

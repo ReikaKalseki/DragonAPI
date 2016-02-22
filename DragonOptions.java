@@ -31,6 +31,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig {
 	LOGSYNCCME("Log Sync Packet CME Avoidance", true),
 	SLOWSYNC("Slow Sync Packets - Only use this as a last resort", false),
 	NONULLITEMS("Disallow Null-Item ItemStacks to Prevent Crashes", true),
+	LAGWARNING("Minimum Delay (ms) for 'Can't Keep Up!' Log Warning", 0),
 	//RECURSE("Recursion Limit Override", -1),
 	;//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
 

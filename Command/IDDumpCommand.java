@@ -101,16 +101,16 @@ public class IDDumpCommand extends DragonCommandBase {
 
 	private void perform(Side side, EntityPlayerMP ep, IDType type) {
 		switch(side) {
-		case CLIENT:
-			this.sendPacket(ep, type);
-			break;
-		case SERVER:
-			Map<String, Integer> data = getData(type);
-			for (String s : data.keySet()) {
-				String sg = String.format("%s %s ID %d = %s", ReikaStringParser.capFirstChar(side.name()), type.getName(), data.get(s), s);
-				ReikaChatHelper.sendChatToPlayer(ep, sg);
-			}
-			break;
+			case CLIENT:
+				this.sendPacket(ep, type);
+				break;
+			case SERVER:
+				Map<String, Integer> data = getData(type);
+				for (String s : data.keySet()) {
+					String sg = String.format("%s %s ID %d = %s", ReikaStringParser.capFirstChar(side.name()), type.getName(), data.get(s), s);
+					ReikaChatHelper.sendChatToPlayer(ep, sg);
+				}
+				break;
 		}
 	}
 
@@ -120,22 +120,24 @@ public class IDDumpCommand extends DragonCommandBase {
 
 	private static Map<String, Integer> getData(IDType type) {
 		switch(type) {
-		case BIOME:
-			return IDHelper.getBiomeIDs();
-		case BLOCK:
-			return IDHelper.getBlockIDs();
-		case ENTITY:
-			return IDHelper.getEntityIDs();
-		case FLUID:
-			return IDHelper.getFluidIDs();
-		case ITEM:
-			return IDHelper.getItemIDs();
-		case POTION:
-			return IDHelper.getPotionIDs();
-		case FLUIDCONTAINER:
-			return IDHelper.getFluidContainers();
-		default:
-			return null;
+			case BIOME:
+				return IDHelper.getBiomeIDs();
+			case BLOCK:
+				return IDHelper.getBlockIDs();
+			case ENTITY:
+				return IDHelper.getEntityIDs();
+			case FLUID:
+				return IDHelper.getFluidIDs();
+			case ITEM:
+				return IDHelper.getItemIDs();
+			case POTION:
+				return IDHelper.getPotionIDs();
+			case ENCHANTMENT:
+				return IDHelper.getEnchantmentIDs();
+			case FLUIDCONTAINER:
+				return IDHelper.getFluidContainers();
+			default:
+				return null;
 		}
 	}
 

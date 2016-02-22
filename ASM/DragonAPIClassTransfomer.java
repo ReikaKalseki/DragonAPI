@@ -38,6 +38,7 @@ import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Exception.ASMException;
+import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodInstructionException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
@@ -98,6 +99,10 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		//ITEMSTACKNULL("net.minecraft.item.ItemStack", "add"),
 		LIGHTMAP("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		CHATEVENT("net.minecraft.client.gui.GuiNewChat", "bcc"),
+		POTIONITEM("net.minecraft.entity.projectile.EntityPotion", "zo"),
+		RAYTRACEEVENT1("net.minecraft.entity.projectile.EntityArrow", "zc"),
+		RAYTRACEEVENT2("net.minecraft.entity.projectile.EntityThrowable", "zk"),
+		RAYTRACEEVENT3("net.minecraft.entity.projectile.EntityFireball", "ze"),
 		;
 
 		private final String obfName;
@@ -1276,6 +1281,95 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					AbstractInsnNode loc = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.INVOKEINTERFACE);
 					m.instructions.insert(loc, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/ChatEvent", "firePost", "(Lnet/minecraft/util/IChatComponent;)V", false));
 					m.instructions.insert(loc, new VarInsnNode(Opcodes.ALOAD, 1));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case POTIONITEM: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70184_a", "onImpact", "(Lnet/minecraft/util/MovingObjectPosition;)V");
+					AbstractInsnNode start = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.GETSTATIC);
+					AbstractInsnNode end = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.ASTORE);
+					AbstractInsnNode pre = start.getPrevious();
+					String item = FMLForgePlugin.RUNTIME_DEOBF ? "field_151068_bn" : "potionitem";
+					String stack = FMLForgePlugin.RUNTIME_DEOBF ? "field_70197_d" : "potionDamage";
+					String getItem = FMLForgePlugin.RUNTIME_DEOBF ? "func_77973_b" : "getItem";
+					String getFX = FMLForgePlugin.RUNTIME_DEOBF ? "func_77832_l" : "getEffects";
+
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/projectile/EntityPotion", stack, "Lnet/minecraft/item/ItemStack;"));
+					li.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/item/ItemStack", getItem, "()Lnet/minecraft/item/Item;", false));
+					li.add(new TypeInsnNode(Opcodes.CHECKCAST, "net/minecraft/item/ItemPotion"));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/projectile/EntityPotion", stack, "Lnet/minecraft/item/ItemStack;"));
+					li.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/item/ItemPotion", getFX, "(Lnet/minecraft/item/ItemStack;)Ljava/util/List;", false));
+					li.add(new VarInsnNode(Opcodes.ASTORE, 2));
+
+					AbstractInsnNode loc = start;
+					while (loc != end) {
+						AbstractInsnNode loc2 = loc.getNext();
+						m.instructions.remove(loc);
+						loc = loc2;
+					}
+					m.instructions.remove(end);
+
+					m.instructions.insert(pre, li);
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case RAYTRACEEVENT1:
+				case RAYTRACEEVENT2:
+				case RAYTRACEEVENT3: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70071_h_", "onUpdate", "()V");
+
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/EntityAboutToRayTraceEvent", "fire", "(Lnet/minecraft/entity/Entity;)V", false));
+
+					String func1 = FMLForgePlugin.RUNTIME_DEOBF ? "func_149668_a" : "getCollisionBoundingBoxFromPool";
+					String func2 = FMLForgePlugin.RUNTIME_DEOBF ? "func_72933_a" : "rayTraceBlocks";
+					String func3 = FMLForgePlugin.RUNTIME_DEOBF ? "func_147447_a" : "func_147447_a";
+
+					String world = FMLForgePlugin.RUNTIME_DEOBF ? "field_70170_p" : "worldObj";
+
+					AbstractInsnNode min1 = null;
+					AbstractInsnNode min2 = null;
+					AbstractInsnNode min3 = null;
+
+					try {
+						min1 = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/block/Block", func1, "(Lnet/minecraft/world/World;III)Lnet/minecraft/util/AxisAlignedBB;");
+					}
+					catch (NoSuchASMMethodInstructionException e) {
+
+					}
+					try {
+						min2 = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/world/World", func2, "(Lnet/minecraft/util/Vec3;Lnet/minecraft/util/Vec3;)Lnet/minecraft/util/MovingObjectPosition;");
+					}
+					catch (NoSuchASMMethodInstructionException e) {
+
+					}
+					try {
+						min3 = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/world/World", func3, "(Lnet/minecraft/util/Vec3;Lnet/minecraft/util/Vec3;ZZZ)Lnet/minecraft/util/MovingObjectPosition;");
+					}
+					catch (NoSuchASMMethodInstructionException e) {
+
+					}
+
+					AbstractInsnNode pre1 = min1 != null ? ReikaASMHelper.getLastNonZeroALOADBefore(m.instructions, m.instructions.indexOf(min1)) : null;
+					AbstractInsnNode pre2 = min2 != null ? ReikaASMHelper.getLastFieldRefBefore(m.instructions, m.instructions.indexOf(min2), world).getPrevious() : null;
+					AbstractInsnNode pre3 = min3 != null ? ReikaASMHelper.getLastFieldRefBefore(m.instructions, m.instructions.indexOf(min3), world).getPrevious() : null;
+
+					if (pre1 != null) {
+						m.instructions.insertBefore(pre1, ReikaASMHelper.copyInsnList(li));
+					}
+					if (pre2 != null) {
+						m.instructions.insertBefore(pre2, ReikaASMHelper.copyInsnList(li));
+					}
+					if (pre3 != null) {
+						m.instructions.insertBefore(pre3, ReikaASMHelper.copyInsnList(li));
+					}
+
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}

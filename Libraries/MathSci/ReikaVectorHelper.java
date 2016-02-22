@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.MathSci;
 
 import java.awt.Point;
+import java.util.HashSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +25,7 @@ import org.lwjgl.util.vector.Vector3f;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.DoubleMatrix;
 import Reika.DragonAPI.Instantiable.LineClipper;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.relauncher.Side;
@@ -229,6 +231,20 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		DoubleMatrix mat = new DoubleMatrix();
 		euler321Sequence(mat, rx, ry, rz);
 		return multiplyVectorByMatrix(vec, mat);
+	}
+
+	public static HashSet<Coordinate> getCoordsAlongVector(double x1, double y1, double z1, double x2, double y2, double z2) {
+		HashSet<Coordinate> set = new HashSet();
+		double dd = ReikaMathLibrary.py3d(x2-x1, y2-y1, z2-z1);
+		for (double d = 0; d <= dd; d += 0.25) {
+			double f = d/dd;
+			double dx = x1+f*(x2-x1);
+			double dy = y1+f*(y2-y1);
+			double dz = z1+f*(z2-z1);
+			Coordinate c = new Coordinate(dx, dy, dz);
+			set.add(c);
+		}
+		return set;
 	}
 
 	/** Returns null if no part of the line falls within the clipping box. Uses the Cohen Sutherland Method. */

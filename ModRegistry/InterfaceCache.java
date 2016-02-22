@@ -29,7 +29,8 @@ public enum InterfaceCache {
 	AREAPROVIDER("buildcraft.api.core.IAreaProvider"),
 	TINKERTOOL("tconstruct.library.tools.ToolCore"),
 	DSU("powercrystals.minefactoryreloaded.api.IDeepStorageUnit"),
-	STREAM("streams.block.FixedFlowBlock");
+	STREAM("streams.block.FixedFlowBlock"),
+	SPELLSHOT("WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile");
 
 	private final String classpath;
 	public final String name;

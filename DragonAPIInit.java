@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFlower;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
@@ -50,10 +51,6 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerRegisterEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.core.Logger;
-
 import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
@@ -61,7 +58,7 @@ import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
 import Reika.DragonAPI.Auxiliary.FindTilesCommand;
 import Reika.DragonAPI.Auxiliary.LoggingFilters;
-import Reika.DragonAPI.Auxiliary.LoggingFilters.ReplyFilter;
+import Reika.DragonAPI.Auxiliary.LoggingFilters.LoggerType;
 import Reika.DragonAPI.Auxiliary.ModularLogger.ModularLoggerCommand;
 import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
@@ -70,6 +67,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.ChunkPregenerator;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.Trackers.CompatibilityTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.EnchantmentCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.FurnaceFuelRegistry;
 import Reika.DragonAPI.Auxiliary.Trackers.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.KeyTicker;
@@ -120,6 +118,7 @@ import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
+import Reika.DragonAPI.Instantiable.IO.LagWarningFilter;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
@@ -255,6 +254,12 @@ public class DragonAPIInit extends DragonAPIMod {
 		if (DragonOptions.FILELOG.getState())
 			logger.setOutput("**_Loading_Log.log");
 
+		int val = DragonOptions.LAGWARNING.getValue();
+		if (val > 0) {
+			LoggingFilters.registerFilter(new LagWarningFilter(val), LoggerType.SERVER);
+			logger.log("Preparing to filter unneeded and/or trivial 'can't keep up' server log messages with delays of less than "+val+" ms.");
+		}
+
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 			MinecraftForge.EVENT_BUS.register(DragonAPILoadWatcher.instance);
 		MinecraftForge.EVENT_BUS.register(DragonAPIEventWatcher.instance);
@@ -353,6 +358,10 @@ public class DragonAPIInit extends DragonAPIMod {
 		OreDictionary.initVanillaEntries();
 		OreDictionary.registerOre("netherrack", Blocks.netherrack);
 		OreDictionary.registerOre("soulsand", Blocks.soul_sand);
+		OreDictionary.registerOre("flower", Blocks.yellow_flower);
+		for (int i = 0; i < BlockFlower.field_149859_a.length; i++) {
+			OreDictionary.registerOre("flower", new ItemStack(Blocks.red_flower, 1, i));
+		}
 	}
 
 	private void increaseChunkCap() {
@@ -552,6 +561,14 @@ public class DragonAPIInit extends DragonAPIMod {
 		PackModificationTracker.instance.loadAll();
 
 		this.loadHandlers();
+		if (ModList.BOP.isLoaded() && BoPBlockHandler.getInstance().initializedProperly()) {
+			for (int i = 0; i < BoPBlockHandler.flower1Types.length; i++) {
+				OreDictionary.registerOre("flower", new ItemStack(BoPBlockHandler.getInstance().flower1, 1, i));
+			}
+			for (int i = 0; i < BoPBlockHandler.flower2Types.length; i++) {
+				OreDictionary.registerOre("flower", new ItemStack(BoPBlockHandler.getInstance().flower2, 1, i));
+			}
+		}
 
 		if (ReikaObfuscationHelper.isDeObfEnvironment())
 			TemporaryCodeCalls.postload(evt);
@@ -564,6 +581,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		BiomeCollisionTracker.instance.check();
 		PotionCollisionTracker.instance.check();
+		EnchantmentCollisionTracker.instance.check();
 		VanillaIntegrityTracker.instance.check();
 
 		CompatibilityTracker.instance.test();
@@ -753,6 +771,43 @@ public class DragonAPIInit extends DragonAPIMod {
 			ReikaChatHelper.writeString(c+"or");
 			ReikaChatHelper.writeString(c+"'"+item2+c+"'.");
 			ReikaChatHelper.writeString(c+"-DragonAPI");
+		}
+	}
+
+	@SubscribeEvent
+	public void verifyCraftingRecipe(AddRecipeEvent evt) {
+		if (!evt.isVanillaPass) {
+			try {
+
+			}
+			catch (Exception e) {
+				logger.logError("Could not parse crafting recipe");
+				e.printStackTrace();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void verifySmeltingRecipe(AddSmeltingEvent evt) {
+		if (!evt.isVanillaPass) {
+			try {
+				ItemStack in = evt.getInput();
+				ItemStack out = evt.getOutput();
+				if (in == null || in.getItem() == null) {
+					logger.logError("Found a null-input (or null-item input) smelting recipe! "+null+" > "+out+"! This is invalid!");
+					Thread.dumpStack();
+					evt.setCanceled(true);
+				}
+				else if (out == null || out.getItem() == null) {
+					logger.logError("Found a null-output (or null-item output) smelting recipe! "+in+" > "+null+"! This is invalid!");
+					Thread.dumpStack();
+					evt.setCanceled(true);
+				}
+			}
+			catch (Exception e) {
+				logger.logError("Could not parse smelting recipe");
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -950,12 +1005,14 @@ public class DragonAPIInit extends DragonAPIMod {
 	private static void loadLogParsers() {
 		LoggingFilters.registerCoreFilters();
 
+		/*
 		if (Loader.isModLoaded("endercore")) {
 			Logger enderCore = (Logger)LogManager.getLogger("EnderCore");
 			if (enderCore != null) {
 				enderCore.addFilter(new ReplyFilter(enderCore, "Removed 0 missing texture stacktraces. Tada!", "DRAGONAPI: Congratulations. Have 0 cookies."));
 			}
 		}
+		 */
 	}
 
 }
