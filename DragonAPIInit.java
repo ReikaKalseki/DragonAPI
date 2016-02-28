@@ -101,6 +101,7 @@ import Reika.DragonAPI.Command.FindThreadCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
+import Reika.DragonAPI.Command.PlayerNBTCommand;
 import Reika.DragonAPI.Command.PopulateMinimapCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.SpawnMobsCommand;
@@ -311,11 +312,16 @@ public class DragonAPIInit extends DragonAPIMod {
 		ArrayList<IRecipe> li = new ArrayList(CraftingManager.getInstance().getRecipeList());
 		CraftingManager.getInstance().getRecipeList().clear();
 		for (IRecipe r : li) {
-			if (ReikaRecipeHelper.isNonVForgeRecipeClass(r)) {
-				DragonAPICore.log("Found a modded recipe registered in pre-init! This is a design error, as it can trigger a Forge bug and break the recipe! Recipe="+ReikaRecipeHelper.toString(r));
+			if (ReikaRecipeHelper.verifyRecipe(r)) {
+				if (ReikaRecipeHelper.isNonVForgeRecipeClass(r)) {
+					DragonAPICore.log("Found a modded recipe registered in pre-init! This is a design error, as it can trigger a Forge bug and break the recipe! Recipe="+ReikaRecipeHelper.toString(r));
+				}
+				//if (!DragonAPIMod.EARLY_BUS.post(new AddRecipeEvent(r, true)))
+				CraftingManager.getInstance().getRecipeList().add(r);
 			}
-			//if (!DragonAPIMod.EARLY_BUS.post(new AddRecipeEvent(r, true)))
-			CraftingManager.getInstance().getRecipeList().add(r);
+			else {
+				DragonAPICore.logError("Found an invalid recipe in the list, with either nulled inputs or outputs! This is invalid! Class="+r.getClass());
+			}
 		}
 
 		HashMap<ItemStack, Object[]> map = new HashMap();
@@ -561,14 +567,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PackModificationTracker.instance.loadAll();
 
 		this.loadHandlers();
-		if (ModList.BOP.isLoaded() && BoPBlockHandler.getInstance().initializedProperly()) {
-			for (int i = 0; i < BoPBlockHandler.flower1Types.length; i++) {
-				OreDictionary.registerOre("flower", new ItemStack(BoPBlockHandler.getInstance().flower1, 1, i));
-			}
-			for (int i = 0; i < BoPBlockHandler.flower2Types.length; i++) {
-				OreDictionary.registerOre("flower", new ItemStack(BoPBlockHandler.getInstance().flower2, 1, i));
-			}
-		}
+		this.initFlowerRegistration();
 
 		if (ReikaObfuscationHelper.isDeObfEnvironment())
 			TemporaryCodeCalls.postload(evt);
@@ -610,6 +609,28 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.finishTiming();
 	}
 
+	private void initFlowerRegistration() {
+		if (ModList.BOP.isLoaded() && BoPBlockHandler.getInstance().initializedProperly()) {
+			for (int i = 0; i < BoPBlockHandler.flower1Types.length; i++) {
+				OreDictionary.registerOre("flower", new ItemStack(BoPBlockHandler.getInstance().flower1, 1, i));
+			}
+			for (int i = 0; i < BoPBlockHandler.flower2Types.length; i++) {
+				OreDictionary.registerOre("flower", new ItemStack(BoPBlockHandler.getInstance().flower2, 1, i));
+			}
+		}
+		if (ModList.BOTANIA.isLoaded()) {
+			Block flower = GameRegistry.findBlock(ModList.BOTANIA.modLabel, "flower");
+			Block tallflower1 = GameRegistry.findBlock(ModList.BOTANIA.modLabel, "doubleFlower1");
+			Block tallflower2 = GameRegistry.findBlock(ModList.BOTANIA.modLabel, "doubleFlower2");
+			for (int i = 0; i < 16; i++) {
+				Block tall = i >= 8 ? tallflower2 : tallflower1;
+				int tallm = i%8;
+				OreDictionary.registerOre("flower", new ItemStack(flower, 1, i));
+				OreDictionary.registerOre("flower", new ItemStack(tall, 1, tallm));
+			}
+		}
+	}
+
 	private void sortCreativeTabs() {
 
 	}
@@ -639,6 +660,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new SpawnMobsCommand());
 		evt.registerServerCommand(new PopulateMinimapCommand());
 		evt.registerServerCommand(new BiomeMapCommand());
+		evt.registerServerCommand(new PlayerNBTCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();
@@ -778,7 +800,10 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void verifyCraftingRecipe(AddRecipeEvent evt) {
 		if (!evt.isVanillaPass) {
 			try {
-
+				if (!ReikaRecipeHelper.verifyRecipe(evt.recipe)) {
+					logger.log("Invalid recipe, such as with nulled inputs, found. Removing to prevent crashes.");
+					evt.setCanceled(true);
+				}
 			}
 			catch (Exception e) {
 				logger.logError("Could not parse crafting recipe");
@@ -800,6 +825,16 @@ public class DragonAPIInit extends DragonAPIMod {
 				}
 				else if (out == null || out.getItem() == null) {
 					logger.logError("Found a null-output (or null-item output) smelting recipe! "+in+" > "+null+"! This is invalid!");
+					Thread.dumpStack();
+					evt.setCanceled(true);
+				}
+				else if (!ReikaItemHelper.verifyItemStack(in)) {
+					logger.logError("Found a smelting recipe with an invalid input!");
+					Thread.dumpStack();
+					evt.setCanceled(true);
+				}
+				else if (!ReikaItemHelper.verifyItemStack(out)) {
+					logger.logError("Found a smelting recipe with an invalid output!");
 					Thread.dumpStack();
 					evt.setCanceled(true);
 				}

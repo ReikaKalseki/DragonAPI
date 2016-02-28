@@ -301,59 +301,10 @@ public class ReikaASMHelper {
 		}
 	}
 
-	static {
-		try {
-			opcodeField = AbstractInsnNode.class.getDeclaredField("opcode");
-			opcodeField.setAccessible(true);
-		}
-		catch (Exception e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private static enum ReturnType {
-
-		VOID("V"),
-		INT("I"),
-		BOOLEAN("Z"),
-		BYTE("B"),
-		LONG("L"),
-		SHORT("S"),
-		FLOAT("F"),
-		DOUBLE("D"),
-		INTARRAY("[I"),
-		BYTEARRAY("[B"),
-		SHORTARRAY("[S"),
-		DOUBARRAY("[D"),
-		BOOLARRAY("[Z"),
-		FLOATARRAY("[F"),
-		OBJECT("");
-
-		private final String id;
-
-		private static final HashMap<String, ReturnType> map = new HashMap();
-
-		private ReturnType(String s) {
-			id = s;
-		}
-
-		private static ReturnType getFromSig(String id) {
-			return map.containsKey(id) ? map.get(id) : OBJECT;
-		}
-
-		static {
-			for (int i = 0; i < values().length; i++) {
-				ReturnType type = values()[i];
-				map.put(type.id, type);
-			}
-		}
-
-	}
-
 	public static AbstractInsnNode getFirstOpcode(InsnList li, int opcode) {
 		int index = 0;
 		AbstractInsnNode ain = li.get(0);
-		while (ain.getOpcode() != opcode && index < li.size()) {
+		while (ain.getOpcode() != opcode && index < li.size()-1) {
 			index++;
 			ain = li.get(index);
 		}
@@ -365,6 +316,19 @@ public class ReikaASMHelper {
 		for (int i = 0; i < li.size(); i++) {
 			AbstractInsnNode ain = li.get(i);
 			if (ain.getOpcode() == opcode) {
+				c++;
+				if (c == n)
+					return ain;
+			}
+		}
+		return null;
+	}
+
+	public static AbstractInsnNode getNthOfOpcodes(InsnList li, int n, int... opcodes) {
+		int c = 0;
+		for (int i = 0; i < li.size(); i++) {
+			AbstractInsnNode ain = li.get(i);
+			if (ReikaArrayHelper.contains(opcodes, ain.getOpcode())) {
 				c++;
 				if (c == n)
 					return ain;
@@ -385,7 +349,7 @@ public class ReikaASMHelper {
 
 	public static AbstractInsnNode getFirstInsnAfter(InsnList li, int index, int opcode, Object... args) {
 		AbstractInsnNode ain = li.get(index+1);
-		while (!match(ain, opcode, args) && index < li.size()) {
+		while (!match(ain, opcode, args) && index < li.size()-1) {
 			index++;
 			ain = li.get(index);
 		}
@@ -430,6 +394,45 @@ public class ReikaASMHelper {
 			ain = li.get(index);
 		}
 		return ain instanceof VarInsnNode && ((VarInsnNode)ain).var != 0 ? ain : null;
+	}
+
+	public static boolean match(AbstractInsnNode ain, AbstractInsnNode ain2) {
+		if (ain.getOpcode() != ain2.getOpcode())
+			return false;
+		if (ain instanceof InsnNode) {
+			return true;
+		}
+		else if (ain instanceof VarInsnNode) {
+			return ((VarInsnNode)ain).var == ((VarInsnNode)ain2).var;
+		}
+		else if (ain instanceof LdcInsnNode) {
+			return ((LdcInsnNode)ain2).cst.equals(((LdcInsnNode)ain).cst);
+		}
+		else if (ain instanceof IntInsnNode) {
+			return ((IntInsnNode)ain).operand == ((IntInsnNode)ain2).operand;
+		}
+		else if (ain instanceof TypeInsnNode) {
+			return ((TypeInsnNode)ain).desc.equals(((TypeInsnNode)ain2).desc);
+		}
+		else if (ain instanceof FieldInsnNode) {
+			FieldInsnNode fin = (FieldInsnNode)ain;
+			FieldInsnNode fin2 = (FieldInsnNode)ain2;
+			return fin.owner.equals(fin2.owner) && fin.name.equals(fin2.name) && fin.desc.equals(fin2.desc);
+		}
+		else if (ain instanceof MethodInsnNode) {
+			MethodInsnNode min = (MethodInsnNode)ain;
+			MethodInsnNode min2 = (MethodInsnNode)ain2;
+			return min.owner.equals(min2.owner) && min.name.equals(min2.name) && min.desc.equals(min2.desc) && min.itf == min2.itf;
+		}
+		else if (ain instanceof JumpInsnNode) {
+			return ((JumpInsnNode)ain).label == ((JumpInsnNode)ain2).label;
+		}
+		else if (ain instanceof IincInsnNode) {
+			IincInsnNode iin = (IincInsnNode)ain;
+			IincInsnNode iin2 = (IincInsnNode)ain2;
+			return iin.var == iin2.var && iin.incr == iin2.incr;
+		}
+		return false;
 	}
 
 	public static boolean match(AbstractInsnNode ain, int opcode, Object... args) {
@@ -607,6 +610,99 @@ public class ReikaASMHelper {
 			throw new ASMException.DuplicateASMFieldException(cn, name);
 		FieldNode m = new FieldNode(flags, name, type, null, init);
 		cn.fields.add(m);
+	}
+
+	public static AbstractInsnNode getPattern(InsnList li, Object... pattern) {
+		for (int i = 0; i < li.size(); i++) {
+			if (i+pattern.length <= li.size()) {
+				for (int k = 0; k < pattern.length; k++) {
+					AbstractInsnNode at = li.get(i+k);
+					Object o = pattern[k];
+					if (o instanceof Integer) {
+						if (at.getOpcode() == (int)o) {
+
+						}
+						else {
+							break;
+						}
+					}
+					else if (o instanceof AbstractInsnNode) {
+						if (match(at, (AbstractInsnNode)o)) {
+
+						}
+						else {
+							break;
+						}
+					}
+					else {
+						break;
+					}
+					if (k == pattern.length-1) {
+						return li.get(i);
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	public static void deleteFrom(InsnList li, AbstractInsnNode start, AbstractInsnNode end) {
+		AbstractInsnNode loc = start;
+		while (loc != end) {
+			AbstractInsnNode loc2 = loc.getNext();
+			li.remove(loc);
+			loc = loc2;
+		}
+		li.remove(end);
+	}
+
+	static {
+		try {
+			opcodeField = AbstractInsnNode.class.getDeclaredField("opcode");
+			opcodeField.setAccessible(true);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private static enum ReturnType {
+
+		VOID("V"),
+		INT("I"),
+		BOOLEAN("Z"),
+		BYTE("B"),
+		LONG("L"),
+		SHORT("S"),
+		FLOAT("F"),
+		DOUBLE("D"),
+		INTARRAY("[I"),
+		BYTEARRAY("[B"),
+		SHORTARRAY("[S"),
+		DOUBARRAY("[D"),
+		BOOLARRAY("[Z"),
+		FLOATARRAY("[F"),
+		OBJECT("");
+
+		private final String id;
+
+		private static final HashMap<String, ReturnType> map = new HashMap();
+
+		private ReturnType(String s) {
+			id = s;
+		}
+
+		private static ReturnType getFromSig(String id) {
+			return map.containsKey(id) ? map.get(id) : OBJECT;
+		}
+
+		static {
+			for (int i = 0; i < values().length; i++) {
+				ReturnType type = values()[i];
+				map.put(type.id, type);
+			}
+		}
+
 	}
 
 }

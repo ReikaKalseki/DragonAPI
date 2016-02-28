@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -115,6 +116,41 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		}
 		catch (SecurityException e) {
 			throw new MisuseException("Item Class "+cl.getSimpleName()+" threw security exception!");
+		}
+		catch (InstantiationException e) {
+			throw new MisuseException(cl.getSimpleName()+" did not allow instantiation!");
+		}
+		catch (IllegalAccessException e) {
+			throw new MisuseException(cl.getSimpleName()+" threw illegal access exception! (Nonpublic constructor)");
+		}
+		catch (IllegalArgumentException e) {
+			throw new MisuseException(cl.getSimpleName()+" was given invalid parameters!");
+		}
+		catch (InvocationTargetException e) {
+			Throwable t = e.getCause();
+			if (t instanceof IllegalArgumentException)
+				throw new IllegalArgumentException(t.getMessage());
+			else
+				throw new MisuseException(cl.getSimpleName()+" threw invocation target exception: "+e+" with "+e.getCause()+" ("+e.getCause().getMessage()+")");
+		}
+		catch (NoClassDefFoundError e) {
+			e.printStackTrace();
+			throw new RegistrationException(mod, "Failed to load "+cl+" due to a missing class: "+e);
+		}
+	}
+
+	public static Enchantment createEnchantmentInstance(DragonAPIMod mod, Class<? extends Enchantment> cl, int id, String unloc, boolean overwrite) {
+		Enchantment instance;
+		try {
+			Constructor c = cl.getConstructor(int.class);
+			instance = (Enchantment)(c.newInstance(id));
+			return (instance.setName(unloc));
+		}
+		catch (NoSuchMethodException e) {
+			throw new MisuseException("Enchantment Class "+cl.getSimpleName()+" does not have the specified constructor!");
+		}
+		catch (SecurityException e) {
+			throw new MisuseException("Enchantment Class "+cl.getSimpleName()+" threw security exception!");
 		}
 		catch (InstantiationException e) {
 			throw new MisuseException(cl.getSimpleName()+" did not allow instantiation!");

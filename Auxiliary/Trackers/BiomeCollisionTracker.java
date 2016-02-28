@@ -38,24 +38,14 @@ public final class BiomeCollisionTracker {
 	}
 
 	public void addBiomeID(DragonAPIMod mod, int id, Class biomeClass) {
-		this.addBiomeID(mod, id, biomeClass, true);
-	}
-
-	public void addBiomeID(DragonAPIMod mod, int id, Class biomeClass, boolean do128Check) {
 		if (id < 0 || id >= 255) {
 			throw new StupidIDException(mod, id, IDType.BIOME);
 		}
 		BiomeGenBase biome = BiomeGenBase.biomeList[id];
-		int altID = id < 128 ? id+128 : id-128;
-		BiomeGenBase alt = do128Check ? BiomeGenBase.biomeList[altID] : null;
 		if (biome != null)
 			this.onConflict(null, id, biome.getClass(), biomeClass);
-		else if (alt != null)
-			this.on128Conflict(null, id, altID, alt.getClass(), biomeClass);
 		else if (classes.containsKey(id))
 			this.onConflict(mod, id, classes.get(id), biomeClass);
-		else if (do128Check && classes.containsKey(altID))
-			this.on128Conflict(mod, id, altID, classes.get(altID), biomeClass);
 		else
 			this.addEntry(mod, id, biomeClass);
 	}
@@ -74,11 +64,6 @@ public final class BiomeCollisionTracker {
 					Class c1 = classes.get(id);
 					if (c1 != c)
 						this.onConflict(mod, id, c, c1);
-					int altid = id >= 128 ? id-128 : id+128;
-					BiomeGenBase alt = BiomeGenBase.biomeList[altid];
-					if (alt != null && alt != biome) {
-						this.on128Conflict(mod, id, altid, alt.getClass(), c1);
-					}
 				}
 			}
 		}
@@ -86,13 +71,6 @@ public final class BiomeCollisionTracker {
 
 	protected void onConflict(DragonAPIMod mod, int id, Class c, Class c1) {
 		String s = "Biome IDs: "+BiomeGenBase.biomeList[id]+" @ ID "+id+" ("+c.getSimpleName()+" & "+c1.getSimpleName()+")";
-		if (mod == null)
-			throw new IDConflictException(s);
-		throw new IDConflictException(mod, s);
-	}
-
-	protected void on128Conflict(DragonAPIMod mod, int id, int altid, Class c, Class c1) {
-		String s = "Biome IDs (128-offset): "+BiomeGenBase.biomeList[id]+"/"+BiomeGenBase.biomeList[altid]+" @ ID "+id+"/"+altid+" ("+c.getSimpleName()+" & "+c1.getSimpleName()+")";
 		if (mod == null)
 			throw new IDConflictException(s);
 		throw new IDConflictException(mod, s);

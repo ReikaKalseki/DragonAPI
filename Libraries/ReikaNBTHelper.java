@@ -31,6 +31,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public final class ReikaNBTHelper extends DragonAPICore {
 
@@ -150,8 +151,13 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	}
 
 	public static ArrayList<String> parseNBTAsLines(NBTTagCompound nbt) {
+		return parseNBTAsLines(nbt, 0);
+	}
+
+	private static ArrayList<String> parseNBTAsLines(NBTTagCompound nbt, int indent) {
 		ArrayList<String> li = new ArrayList();
 		Iterator<NBTBase> it = nbt.func_150296_c().iterator();
+		String idt = ReikaStringParser.getNOf("  ", indent);
 		for (Object o : nbt.func_150296_c()) {
 			String key = (String)o;
 			NBTBase b = nbt.getTag(key);/*
@@ -167,7 +173,13 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			else {
 				li.add(b.getName()+": "+b.toString());
 			}*/
-			li.add(key+": "+b.toString());
+			if (b instanceof NBTTagCompound) {
+				li.add(idt+key+": ");
+				li.addAll(parseNBTAsLines((NBTTagCompound)b, indent+1));
+			}
+			else {
+				li.add(idt+key+": "+b.toString());
+			}
 		}
 		return li;
 	}

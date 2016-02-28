@@ -46,6 +46,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 import com.mojang.authlib.GameProfile;
 
@@ -358,5 +359,10 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	@SideOnly(Side.CLIENT)
 	public static void kickPlayerClientside(EntityPlayer ep, String reason) {
 		ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERKICK.ordinal(), reason, new PacketTarget.ServerTarget());
+	}
+
+	public static void addOrDropItem(ItemStack is, EntityPlayer ep) {
+		if (!ReikaInventoryHelper.addToIInv(is, ep.inventory))
+			ReikaItemHelper.dropItem(ep, is);
 	}
 }

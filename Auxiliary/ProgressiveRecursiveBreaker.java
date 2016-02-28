@@ -80,6 +80,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		public boolean isOmni = false;
 		private boolean isBlacklist = false;
 		public boolean pathTracking = false;
+		public boolean dropFluids = true;
 		private final Collection<Coordinate> path = new HashSet();
 		//public final BlockMap<BlockKey> looseMatches = new BlockMap();
 
@@ -236,7 +237,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 				}
 				else {
 					if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta))
-						drops.add(ReikaBlockHelper.getSilkTouch(world, x, y, z, id, meta));
+						drops.add(ReikaBlockHelper.getSilkTouch(world, x, y, z, id, meta, dropFluids));
 					else
 						drops.addAll(ReikaWorldHelper.getDropsAt(world, x, y, z, fortune, player));
 				}

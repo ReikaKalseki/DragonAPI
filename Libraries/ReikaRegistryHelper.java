@@ -22,19 +22,22 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.util.EnumHelper;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.EnchantmentCollisionTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.ItemBlockCustomLocalization;
 import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
+import Reika.DragonAPI.Interfaces.Registry.EnchantmentEnum;
 import Reika.DragonAPI.Interfaces.Registry.EntityEnum;
 import Reika.DragonAPI.Interfaces.Registry.ItemEnum;
-import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
+import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.ModInteract.LegacyWailaHelper;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
@@ -52,7 +55,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 
 	private static final HashMap<BlockEnum, ArrayList<Integer>> blockVariants = new HashMap();
 	private static final HashMap<ItemEnum, ArrayList<Integer>> itemVariants = new HashMap();
-	private static final IdentityHashMap<Object, RegistrationList> registries = new IdentityHashMap();
+	private static final IdentityHashMap<Object, RegistryEntry> registries = new IdentityHashMap();
 	private static final IdentityHashMap<Object, EntityCollection> modEntityRegistries = new IdentityHashMap();
 	private static final HashMap<BlockEnum, String> blockRegNames = new HashMap();
 	private static final HashMap<ItemEnum, String> itemRegNames = new HashMap();
@@ -130,6 +133,35 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		}
 		else {
 			mod.getModLogger().log("Not instantiating Item "+r.getBasicName()+", as it is dummied out.");
+		}
+		return it;
+	}
+
+	/** Instantiates all Enchantments and registers them to the game. Uses an Enum[] that implements RegistrationList.
+	 * Args: Mod, Enum.values(), Target Enchantment[] array to save instances. */
+	public static void instantiateAndRegisterEnchantments(DragonAPIMod mod, EnchantmentEnum[] enumr, Enchantment[] target) {
+		if (enumr.length != target.length)
+			throw new RegistrationException(mod, "Invalid storage array!");
+		boolean canLoad = !Loader.instance().hasReachedState(LoaderState.INITIALIZATION);
+		if (!canLoad)
+			throw new RegistrationException(mod, "This mod is loading Enchantments too late in the setup!");
+		for (int i = 0; i < enumr.length; i++) {
+			EnchantmentEnum r = enumr[i];
+			target[i] = registerEnchantment(mod, r, i);
+		}
+	}
+
+	private static Enchantment registerEnchantment(DragonAPIMod mod, EnchantmentEnum r, int idx) {
+		Enchantment it = null;
+		if (!r.isDummiedOut()) {
+			EnchantmentCollisionTracker.instance.addEnchantmentID(mod, r.getEnchantmentID(), r.getObjectClass());
+			it = ReikaReflectionHelper.createEnchantmentInstance(mod, r.getObjectClass(), r.getEnchantmentID(), r.getUnlocalizedName(), false);
+			String regname = (mod.getTechnicalName()+"_enchantment_"+r.name()).toLowerCase();
+			registries.put(it, r);
+			mod.getModLogger().log("Instantiating Enchantment "+r.getBasicName()+" with ID "+it+" to Enchantment Variable "+it.getClass().getSimpleName()+" (enum index "+idx+").");
+		}
+		else {
+			mod.getModLogger().log("Not instantiating Enchantment "+r.getBasicName()+", as it is dummied out.");
 		}
 		return it;
 	}
@@ -293,7 +325,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		return cat;
 	}
 
-	public static RegistrationList getRegistryForObject(Object o) {
+	public static RegistryEntry getRegistryForObject(Object o) {
 		return registries.get(o);
 	}
 

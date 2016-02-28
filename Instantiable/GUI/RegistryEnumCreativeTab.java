@@ -14,7 +14,7 @@ import java.util.Comparator;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
-import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
+import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 
 public abstract class RegistryEnumCreativeTab extends SortedCreativeTab {
@@ -31,8 +31,8 @@ public abstract class RegistryEnumCreativeTab extends SortedCreativeTab {
 		public int compare(ItemStack is1, ItemStack is2) {
 			Item i1 = is1.getItem();
 			Item i2 = is2.getItem();
-			RegistrationList r1 = ReikaRegistryHelper.getRegistryForObject(i1);
-			RegistrationList r2 = ReikaRegistryHelper.getRegistryForObject(i2);
+			RegistryEntry r1 = ReikaRegistryHelper.getRegistryForObject(i1);
+			RegistryEntry r2 = ReikaRegistryHelper.getRegistryForObject(i2);
 			if (r1 != null && r2 != null) {
 				int d1 = r1.ordinal();
 				int d2 = r2.ordinal();

@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
+import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
@@ -87,7 +88,7 @@ public class CraftingManagerBlacklisting {
 
 		@Override
 		protected boolean isObject(ItemStack stack) {
-			RegistrationList reg = ReikaRegistryHelper.getRegistryForObject(stack.getItem());
+			RegistryEntry reg = ReikaRegistryHelper.getRegistryForObject(stack.getItem());
 			return reg != null && reg.getClass() == registryEnum;
 		}
 

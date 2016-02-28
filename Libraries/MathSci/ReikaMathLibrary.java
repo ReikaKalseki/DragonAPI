@@ -249,11 +249,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	/** Returns whether the two numbers are the same sign.
 	 * Will return true if both are zero. Args: Input 1, Input 2*/
 	public static boolean isSameSign(double val1, double val2) {
-		if (val1 == 0 || val2 == 0)
-			return true;
-		if ((1000*val1)/val2 > 0)
-			return true;
-		return false;
+		return Math.signum(val1) == Math.signum(val2);
 	}
 
 	/** Splits a number of items into an array; index 0 is number of stacks, index 1 is leftover

@@ -10,12 +10,16 @@
 package Reika.DragonAPI.Libraries.World;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockBed;
+import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -24,6 +28,7 @@ import net.minecraftforge.fluids.IFluidBlock;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Extras.BlockProperties;
+import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Interfaces.Block.SpecialOreBlock;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
@@ -33,6 +38,8 @@ import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 
 public final class ReikaBlockHelper extends DragonAPICore {
+
+	private static final BlockMap<ItemStack> silkTouchDrops = new BlockMap();
 
 	public static boolean matchMaterialsLoosely(Material m1, Material m2) {
 		if (m1 == m2)
@@ -240,13 +247,92 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		return false;
 	}
 
-	public static ItemStack getSilkTouch(World world, int x, int y, int z, Block id, int meta) {
-		if (id == Blocks.lit_redstone_ore)
-			id = Blocks.redstone_ore;
+	public static ItemStack getSilkTouch(World world, int x, int y, int z, Block id, int meta, boolean dropFluids) {
+		if (id == Blocks.air || id == Blocks.piston_extension || id == Blocks.piston_head || id == Blocks.fire)
+			return null;
+		if (id == Blocks.portal || id == Blocks.end_portal)
+			return null;
+		if ((id instanceof BlockDoor || id instanceof BlockBed) && meta >= 8)
+			return null;
+		ItemStack get = silkTouchDrops.get(id, meta);
+		if (get != null)
+			return get;
 		if (Item.getItemFromBlock(id) == null) {
 			DragonAPICore.logError("Something tried to silktouch null-item block "+id.getLocalizedName());
 			return null;
 		}
-		return new ItemStack(id, 1, meta);
+		if (ReikaBlockHelper.isLiquid(id) && !(dropFluids && ReikaWorldHelper.isLiquidSourceBlock(world, x, y, z)))
+			return null;
+		return new ItemStack(id, 1, getSilkTouchMetaDropped(id, meta));
+	}
+
+	public static int getSilkTouchMetaDropped(Block id, int meta) {
+		if (id == Blocks.torch)
+			return 0;
+		if (id == Blocks.redstone_torch || id == Blocks.unlit_redstone_torch)
+			return 0;
+		if (id == Blocks.leaves || id == Blocks.log || id == Blocks.leaves2 || id == Blocks.log2)
+			return meta&3;
+		if (id == Blocks.sapling)
+			return meta&3;
+		if (id == Blocks.vine)
+			return 0;
+		if (id == Blocks.waterlily)
+			return 0;
+		if (id == Blocks.sticky_piston || id == Blocks.piston)
+			return 0;
+		if (ReikaBlockHelper.isStairBlock(id))
+			return 0;
+		ModWoodList wood = ModWoodList.getModWood(id, meta);
+		if (wood != null) {
+			return wood.getLogMetadatas().get(0);
+		}
+		wood = ModWoodList.getModWoodFromLeaf(id, meta);
+		if (wood != null) {
+			return wood.getLeafMetadatas().get(0);
+		}
+		return meta;
+	}
+
+	static {
+		addSilkTouchDrop(Blocks.lit_redstone_ore, Blocks.redstone_ore);
+		addSilkTouchDrop(Blocks.redstone_wire, Items.redstone);
+		addSilkTouchDrop(Blocks.lit_redstone_lamp, Blocks.redstone_lamp);
+		addSilkTouchDrop(Blocks.unpowered_repeater, Items.repeater);
+		addSilkTouchDrop(Blocks.powered_repeater, Items.repeater);
+		addSilkTouchDrop(Blocks.unpowered_comparator, Items.comparator);
+		addSilkTouchDrop(Blocks.powered_comparator, Items.comparator);
+		addSilkTouchDrop(Blocks.pumpkin_stem, Items.pumpkin_seeds);
+		addSilkTouchDrop(Blocks.melon_stem, Items.melon_seeds);
+		addSilkTouchDrop(Blocks.wheat, Items.wheat);
+		addSilkTouchDrop(Blocks.carrots, Items.carrot);
+		addSilkTouchDrop(Blocks.potatoes, Items.potato);
+		addSilkTouchDrop(Blocks.nether_wart, Items.nether_wart);
+		addSilkTouchDrop(Blocks.bed, Items.bed);
+		addSilkTouchDrop(Blocks.brewing_stand, Items.brewing_stand);
+		addSilkTouchDrop(Blocks.cauldron, Items.cauldron);
+		addSilkTouchDrop(Blocks.flower_pot, Items.flower_pot);
+		addSilkTouchDrop(Blocks.tripwire, Items.string);
+		addSilkTouchDrop(Blocks.standing_sign, Items.sign);
+		addSilkTouchDrop(Blocks.wall_sign, Items.sign);
+		addSilkTouchDrop(Blocks.wooden_door, Items.wooden_door);
+		addSilkTouchDrop(Blocks.iron_door, Items.iron_door);
+		addSilkTouchDrop(Blocks.reeds, Items.reeds);
+	}
+
+	private static void addSilkTouchDrop(Block b, Block drop) {
+		addSilkTouchDrop(b, new ItemStack(drop));
+	}
+
+	private static void addSilkTouchDrop(Block b, Item drop) {
+		addSilkTouchDrop(b, new ItemStack(drop));
+	}
+
+	private static void addSilkTouchDrop(Block b, ItemStack drop) {
+		silkTouchDrops.put(b, drop);
+	}
+
+	public static boolean isUnbreakable(World world, int x, int y, int z, Block id, int meta, EntityPlayer ep) {
+		return id.getBlockHardness(world, x, y, z) < 0 || id.getPlayerRelativeBlockHardness(ep, world, x, y, z) < 0;
 	}
 }

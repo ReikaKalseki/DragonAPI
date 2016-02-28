@@ -556,4 +556,19 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 		return li;
 	}
+
+	public static boolean verifyItemStack(ItemStack is) {
+		if (is == null)
+			return true;
+		if (is.getItem() == null)
+			return false;
+		try {
+			is.toString();
+			is.getDisplayName();
+		}
+		catch (Exception e) {
+			return false;
+		}
+		return true;
+	}
 }

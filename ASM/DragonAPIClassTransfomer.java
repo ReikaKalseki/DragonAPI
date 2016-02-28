@@ -28,6 +28,7 @@ import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.IntInsnNode;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.LdcInsnNode;
@@ -103,6 +104,11 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		RAYTRACEEVENT1("net.minecraft.entity.projectile.EntityArrow", "zc"),
 		RAYTRACEEVENT2("net.minecraft.entity.projectile.EntityThrowable", "zk"),
 		RAYTRACEEVENT3("net.minecraft.entity.projectile.EntityFireball", "ze"),
+		ENDERATTACKTPEVENT("net.minecraft.entity.monster.EntityEnderman", "ya"),
+		ATTACKAGGROEVENT1("net.minecraft.entity.monster.EntityMob", "yg"),
+		ATTACKAGGROEVENT2("net.minecraft.entity.monster.EntityPigZombie", "yh"),
+		PIGZOMBIEAGGROSPREADEVENT("net.minecraft.entity.monster.EntityPigZombie", "yh"),
+		BIOMEMUTATIONEVENT("net.minecraft.world.gen.layer.GenLayerHills", "axr")
 		;
 
 		private final String obfName;
@@ -1304,13 +1310,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					li.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/item/ItemPotion", getFX, "(Lnet/minecraft/item/ItemStack;)Ljava/util/List;", false));
 					li.add(new VarInsnNode(Opcodes.ASTORE, 2));
 
-					AbstractInsnNode loc = start;
-					while (loc != end) {
-						AbstractInsnNode loc2 = loc.getNext();
-						m.instructions.remove(loc);
-						loc = loc2;
-					}
-					m.instructions.remove(end);
+					ReikaASMHelper.deleteFrom(m.instructions, start, end);
 
 					m.instructions.insert(pre, li);
 
@@ -1373,6 +1373,182 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
+				case ENDERATTACKTPEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70097_a", "attackEntityFrom", "(Lnet/minecraft/util/DamageSource;F)Z");
+
+					AbstractInsnNode loc = ReikaASMHelper.getNthOpcode(m.instructions, Opcodes.INSTANCEOF, 3);
+
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 2));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/EnderAttackTPEvent", "fire", "(Lnet/minecraft/entity/monster/EntityEnderman;Lnet/minecraft/util/DamageSource;F)Z", false));
+
+					//ReikaASMHelper.changeOpcode(loc.getNext(), Opcodes.IFNE);
+					m.instructions.insertBefore(loc.getPrevious(), li);
+					m.instructions.remove(loc.getPrevious());
+					m.instructions.remove(loc);
+
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+
+					//m.instructions.clear();
+					//m.instructions.add(new InsnNode(Opcodes.ICONST_0));
+					//m.instructions.add(new InsnNode(Opcodes.IRETURN));
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case ATTACKAGGROEVENT1: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70097_a", "attackEntityFrom", "(Lnet/minecraft/util/DamageSource;F)Z");
+					AbstractInsnNode loc = ReikaASMHelper.getNthOfOpcodes(m.instructions, 3, Opcodes.IF_ACMPEQ, Opcodes.IF_ACMPNE);
+
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 2));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/AttackAggroEvent", "fire", "(Lnet/minecraft/entity/monster/EntityMob;Lnet/minecraft/util/DamageSource;F)Z", false));
+
+					ReikaASMHelper.changeOpcode(loc, Opcodes.IFEQ);
+					m.instructions.insertBefore(loc.getPrevious().getPrevious(), li);
+					m.instructions.remove(loc.getPrevious().getPrevious());
+					m.instructions.remove(loc.getPrevious());
+
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case ATTACKAGGROEVENT2: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70097_a", "attackEntityFrom", "(Lnet/minecraft/util/DamageSource;F)Z");
+					AbstractInsnNode loc = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.INSTANCEOF);
+
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 2));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/AttackAggroEvent", "fire", "(Lnet/minecraft/entity/monster/EntityMob;Lnet/minecraft/util/DamageSource;F)Z", false));
+
+					//ReikaASMHelper.changeOpcode(loc.getNext(), Opcodes.IFNE);
+					m.instructions.insertBefore(loc.getPrevious(), li);
+					m.instructions.remove(loc.getPrevious());
+					m.instructions.remove(loc);
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case PIGZOMBIEAGGROSPREADEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70097_a", "attackEntityFrom", "(Lnet/minecraft/util/DamageSource;F)Z");
+					AbstractInsnNode loc = ReikaASMHelper.getNthOpcode(m.instructions, Opcodes.INSTANCEOF, 1); //would be 2, but since ASM remove the other, is 1
+
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ALOAD, ((VarInsnNode)loc.getPrevious()).var));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 2));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/PigZombieAggroSpreadEvent", "fire", "(Lnet/minecraft/entity/monster/EntityPigZombie;Lnet/minecraft/entity/Entity;Lnet/minecraft/util/DamageSource;F)Z", false));
+
+					//ReikaASMHelper.changeOpcode(loc.getNext(), Opcodes.IFNE);
+					m.instructions.insertBefore(loc.getPrevious(), li);
+					m.instructions.remove(loc.getPrevious());
+					m.instructions.remove(loc);
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case BIOMEMUTATIONEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_75904_a", "getInts", "(IIII)[I");
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					String get = FMLForgePlugin.RUNTIME_DEOBF ? "func_150568_d" : "getBiome";
+					Object[] patt = {
+							Opcodes.ILOAD,
+							new IntInsnNode(Opcodes.SIPUSH, 128),
+							new InsnNode(Opcodes.IADD),
+							new MethodInsnNode(Opcodes.INVOKESTATIC, "net/minecraft/world/biome/BiomeGenBase", get, "(I)Lnet/minecraft/world/biome/BiomeGenBase;", false),
+							Opcodes.IFNULL
+					};
+					VarInsnNode id = (VarInsnNode)ReikaASMHelper.getPattern(m.instructions, patt);
+					JumpInsnNode jump = (JumpInsnNode)m.instructions.get(m.instructions.indexOf(id)+patt.length-1);
+					int var = id.var; //10
+
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 8));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 9));
+					li.add(new VarInsnNode(Opcodes.ILOAD, var));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BiomeMutationEvent", "fireTry", "(Lnet/minecraft/world/gen/layer/GenLayer;IIIII)Z", false));
+
+					ReikaASMHelper.changeOpcode(jump, Opcodes.IFEQ);
+					ReikaASMHelper.deleteFrom(m.instructions, id, jump.getPrevious());
+					m.instructions.insertBefore(jump, li);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 1!");
+
+
+					AbstractInsnNode end = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.IASTORE);
+					AbstractInsnNode start = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(end), Opcodes.ILOAD, var);
+					AbstractInsnNode pre = start.getPrevious();
+
+					li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 8));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 9));
+					li.add(new VarInsnNode(Opcodes.ILOAD, var));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BiomeMutationEvent$GetMutatedBiomeEvent", "fireGet", "(Lnet/minecraft/world/gen/layer/GenLayer;IIIII)I", false));
+					li.add(new InsnNode(Opcodes.IASTORE));
+					ReikaASMHelper.deleteFrom(m.instructions, start, end);
+					m.instructions.insert(pre, li);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 2!");
+
+
+					id = (VarInsnNode)ReikaASMHelper.getPattern(m.instructions, patt);
+					jump = (JumpInsnNode)m.instructions.get(m.instructions.indexOf(id)+patt.length-1);
+					var = id.var; //13
+
+					li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 8));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 9));
+					li.add(new VarInsnNode(Opcodes.ILOAD, var));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BiomeMutationEvent", "fireTry", "(Lnet/minecraft/world/gen/layer/GenLayer;IIIII)Z", false));
+
+					ReikaASMHelper.changeOpcode(jump, Opcodes.IFEQ);
+					ReikaASMHelper.deleteFrom(m.instructions, id, jump.getPrevious());
+					m.instructions.insertBefore(jump, li);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 3!");
+
+
+					AbstractInsnNode ain = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.IINC, var, 128);
+					if (ain == null) {
+						ReikaASMHelper.log("Could not find normal IINC "+var+" 128 Insn. Checking for alternate.");
+						ain = ReikaASMHelper.getLastInsn(m.instructions, Opcodes.SIPUSH, 128);
+						start = ain.getPrevious();
+						end = ReikaASMHelper.getFirstOpcodeAfter(m.instructions, m.instructions.indexOf(ain), Opcodes.ISTORE);
+					}
+					else {
+						start = ain;
+						end = start;
+					}
+					pre = start.getPrevious();
+
+					li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 8));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 9));
+					li.add(new VarInsnNode(Opcodes.ILOAD, var));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BiomeMutationEvent$GetMutatedBiomeEvent", "fireGet", "(Lnet/minecraft/world/gen/layer/GenLayer;IIIII)I", false));
+					li.add(new VarInsnNode(Opcodes.ISTORE, var));
+					ReikaASMHelper.deleteFrom(m.instructions, start, end);
+					m.instructions.insert(pre, li);
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 4!");
+				}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -1380,6 +1556,19 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			byte[] newdata = writer.toByteArray();
 			//ClassNode vcn = new ClassNode(); //verify
 			//new ClassReader(newdata).accept(vcn, 0);
+			/*
+			try {
+				File f = new File("C:/testclass/"+cn.name+".class");
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+				FileOutputStream out = new FileOutputStream(f);
+				out.write(newdata);
+				out.close();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+			 */
 			return newdata;
 		}
 

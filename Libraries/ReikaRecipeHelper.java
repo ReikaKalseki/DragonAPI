@@ -951,4 +951,62 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			return false;
 		return true;
 	}
+
+	public static boolean verifyRecipe(IRecipe r) {
+		if (!ReikaItemHelper.verifyItemStack(r.getRecipeOutput()))
+			return false;
+		if (r instanceof ShapedRecipes) {
+			ItemStack[] in = ((ShapedRecipes)r).recipeItems;
+			for (int i = 0; i < in.length; i++) {
+				ItemStack is = in[i];
+				if (!ReikaItemHelper.verifyItemStack(is)) {
+					return false;
+				}
+			}
+		}
+		if (r instanceof ShapelessRecipes) {
+			List<ItemStack> in = ((ShapelessRecipes)r).recipeItems;
+			for (ItemStack is : in) {
+				if (!ReikaItemHelper.verifyItemStack(is)) {
+					return false;
+				}
+			}
+		}
+		if (r instanceof ShapedOreRecipe) {
+			Object[] in = ((ShapedOreRecipe)r).getInput();
+			for (int i = 0; i < in.length; i++) {
+				Object o = in[i];
+				if (o instanceof ItemStack) {
+					if (!ReikaItemHelper.verifyItemStack((ItemStack)o)) {
+						return false;
+					}
+				}
+				else if (o instanceof List) {
+					for (ItemStack is : ((List<ItemStack>)o)) {
+						if (!ReikaItemHelper.verifyItemStack(is)) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		if (r instanceof ShapelessOreRecipe) {
+			List in = ((ShapelessOreRecipe)r).getInput();
+			for (Object o : in) {
+				if (o instanceof ItemStack) {
+					if (!ReikaItemHelper.verifyItemStack((ItemStack)o)) {
+						return false;
+					}
+				}
+				else if (o instanceof List) {
+					for (ItemStack is : ((List<ItemStack>)o)) {
+						if (!ReikaItemHelper.verifyItemStack(is)) {
+							return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 }
