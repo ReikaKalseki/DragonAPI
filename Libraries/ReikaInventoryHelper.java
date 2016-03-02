@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -157,6 +158,21 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return false;
 	}
 
+	public static boolean checkForItemStack(KeyedItemStack is, ItemStack[] inv) {
+		for (int i = 0; i < inv.length; i++) {
+			ItemStack in = inv[i];
+			if (in != null) {
+				if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItemStack(is, ((ActivatedInventoryItem)in.getItem()).getInventory(in)))
+						return true;
+				}
+				if (is.match(in))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	/** Checks an itemstack array (eg an inventory) for a given itemstack.
 	 * Args: Check-for itemstack, Inventory, Match size T/F */
 	public static boolean checkForItemStack(ItemStack is, IInventory inv, boolean matchsize) {
@@ -199,6 +215,22 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 					if (ItemStack.areItemStackTagsEqual(is, in) && ReikaItemHelper.matchStacks(is, in)) {
 						return i;
 					}
+				}
+			}
+		}
+		return -1;
+	}
+
+	public static int locateInInventory(KeyedItemStack is, ItemStack[] inv) {
+		for (int i = 0; i < inv.length; i++) {
+			ItemStack in = inv[i];
+			if (in != null) {
+				if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItemStack(is, ((ActivatedInventoryItem)in.getItem()).getInventory(in)))
+						return i;
+				}
+				if (is.match(in)) {
+					return i;
 				}
 			}
 		}
@@ -1277,8 +1309,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return li;
 	}
 
-	public static ArrayList<Integer> getSlotsBetweenWithItemStack(ItemStack is, IInventory ii, int min, int max, boolean matchSize) {
-		ArrayList<Integer> li = new ArrayList();
+	public static HashSet<Integer> getSlotsBetweenWithItemStack(ItemStack is, IInventory ii, int min, int max, boolean matchSize) {
+		HashSet<Integer> li = new HashSet();
 		for (int i = min; i <= max; i++) {
 			ItemStack in = ii.getStackInSlot(i);
 			if (ReikaItemHelper.matchStacks(is, in)) {
@@ -1364,17 +1396,6 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 		}
 		return amt;
-	}
-
-	public static int locateInInventory(KeyedItemStack kis, ItemStack[] inv) {
-		for (int i = 0; i < inv.length; i++) {
-			ItemStack in = inv[i];
-			if (in != null) {
-				if (kis.match(in))
-					return i;
-			}
-		}
-		return -1;
 	}
 
 	/** Returns whether an inventory is empty. Args: IInventory */

@@ -705,6 +705,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 	}
 
 	public static void sendSoundPacket(String ch, SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
+		sendSoundPacket(ch, s, world, x, y, z, vol, pitch, atten, atten ? 20 : Integer.MAX_VALUE);
+	}
+
+	public static void sendSoundPacket(String ch, SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten, int range) {
 		int length = 0;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 		DataOutputStream outputStream = new DataOutputStream(bos);
@@ -742,7 +746,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			// We are on the server side.
 			//EntityPlayerMP player2 = (EntityPlayerMP) player;
 			//PacketDispatcher.sendPacketToAllAround(x, y, z, 20, world.provider.dimensionId, packet);
-			pipe.sendToAllAround(pack, world, x, y, z, atten ? 20 : Integer.MAX_VALUE);
+			pipe.sendToAllAround(pack, world, x, y, z, Math.min(range, atten ? 20 : Integer.MAX_VALUE));
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.

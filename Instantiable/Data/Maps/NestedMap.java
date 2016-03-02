@@ -23,8 +23,6 @@ public class NestedMap<K, M, V> {
 	private final MultiMap<M, K> innerSet = new MultiMap(new MultiMap.HashSetFactory());
 	private final HashSet<V> valueSet = new HashSet();
 
-	private int size = 0;
-
 	public NestedMap() {
 
 	}
@@ -35,8 +33,6 @@ public class NestedMap<K, M, V> {
 			map = new HashMap();
 			data.put(key, map);
 		}
-		if (!map.containsKey(inner))
-			size++;
 		innerSet.addValue(inner, key);
 		valueSet.add(value);
 		return map.put(inner, value);
@@ -51,7 +47,6 @@ public class NestedMap<K, M, V> {
 		HashMap<M, V> map = data.get(key);
 		if (map != null) {
 			if (map.containsKey(inner)) {
-				size--;
 				innerSet.remove(inner, key);
 				this.rebuildValues();
 			}
@@ -75,7 +70,7 @@ public class NestedMap<K, M, V> {
 	}
 
 	public int size() {
-		return size;
+		return this.valueSet.size();
 	}
 
 	public void putAll(NestedMap map) {
@@ -85,7 +80,6 @@ public class NestedMap<K, M, V> {
 	}
 
 	public void clear() {
-		size = 0;
 		data.clear();
 		innerSet.clear();
 		valueSet.clear();

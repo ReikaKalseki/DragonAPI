@@ -11,12 +11,14 @@ package Reika.DragonAPI.Libraries;
 
 import java.awt.Point;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Random;
 
 import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 
 public class ReikaDirectionHelper extends DragonAPICore {
@@ -153,6 +155,16 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		double phi = ReikaPhysicsHelper.cartesianToPolar(dx, 0, -dz)[2];
 		phi += 90; //since phi=0 is EAST
 		return (phi%360D+360D)%360D;
+	}
+
+	public static ArrayList<ForgeDirection> getRandomOrderedDirections(boolean vertical) {
+		ArrayList<ForgeDirection> li = ReikaJavaLibrary.makeListFromArray(ForgeDirection.VALID_DIRECTIONS);
+		if (!vertical) {
+			li.remove(ForgeDirection.UP.ordinal());
+			li.remove(ForgeDirection.DOWN.ordinal());
+		}
+		Collections.shuffle(li);
+		return li;
 	}
 
 }

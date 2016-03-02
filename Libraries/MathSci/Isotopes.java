@@ -39,7 +39,22 @@ public enum Isotopes {
 	Se79(327000, ReikaTimeHelper.YEAR, "Selenium-79"),
 	Gd155(4.76, ReikaTimeHelper.YEAR, "Gadolinium-155"),
 	Sb125(2.76, ReikaTimeHelper.YEAR, "Antimony-125"),
-	Sn126(230000, ReikaTimeHelper.YEAR, "Tin-126");
+	Sn126(230000, ReikaTimeHelper.YEAR, "Tin-126"),
+	Xe136(10e21, ReikaTimeHelper.YEAR, "Xenon-136"), //basically stable
+	//Mo95("Molybdenum-95"),
+	//Xe134("Xenon-134"),
+	//Nd143("Neodymium-143"),
+	//stable Cs133("Cesium-133"), //so stable it is used in atomic clocks
+	I135(6.6, ReikaTimeHelper.HOUR, "Iodine-135"),
+	Xe131(12, ReikaTimeHelper.DAY, "Xenon-131"),
+	//Nd145("Neodymium-145"),
+	//Ru101("Ruthenium-101"),
+	Ru103(1.69, ReikaTimeHelper.TICK, "Ruthenium-103"), //actually millis
+	//Kr83("Krypton-83"),
+	Pm149(53.08, ReikaTimeHelper.HOUR, "Promethium-149"),
+	Rh105(35.36, ReikaTimeHelper.HOUR, "Rhodium-105"),
+	//I127("Iodine-127");
+	;
 
 	private double half;
 	private ReikaTimeHelper base;

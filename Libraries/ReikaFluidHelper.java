@@ -109,4 +109,17 @@ public class ReikaFluidHelper {
 		return !tank.isEmpty() && isFluidNullOrMatch(f, tank);
 	}
 
+	public static boolean isFlammable(Fluid f) {
+		String s = f.getName().toLowerCase();
+		if (s.contains("fuel"))
+			return true;
+		if (s.contains("ethanol"))
+			return true;
+		if (s.contains("oil"))
+			return true;
+		if (s.equals("creosote"))
+			return true;
+		return false;
+	}
+
 }

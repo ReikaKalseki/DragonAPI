@@ -61,7 +61,8 @@ public class WeightedRandom<V> {
 	}
 
 	public double getWeight(V obj) {
-		return data.get(obj);
+		Double get = data.get(obj);
+		return get != null ? get.doubleValue() : 0;
 	}
 
 	public double getMaxWeight() {

@@ -15,7 +15,6 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -165,7 +164,11 @@ public final class Coordinate {
 	}
 
 	public boolean isEmpty(World world) {
-		return this.getBlock(world) == Blocks.air;
+		return this.getBlock(world).isAir(world, xCoord, yCoord, zCoord);
+	}
+
+	public boolean softBlock(World world) {
+		return ReikaWorldHelper.softBlocks(world, xCoord, yCoord, zCoord);
 	}
 
 	public int getBlockMetadata(World world) {

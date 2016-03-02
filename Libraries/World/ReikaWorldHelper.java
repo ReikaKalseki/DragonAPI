@@ -2099,4 +2099,21 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			world.setBlockMetadataWithNotify(x, y, z, fullHydrate ? 7 : meta+1, 3);
 		}
 	}
+
+	public static Coordinate findTreeNear(World world, int x, int y, int z, int r) {
+		int[] ddy = r > 2 ? new int[]{y-r, y-r/2, y-1, y, y+1, y+r/2, y+r} : new int[]{y-2, y-1, y, y+1, y+2};
+		for (int f = 0; f < ddy.length; f++) {
+			int dy = ddy[f];
+			for (int i = -r; i <= r; i++) {
+				for (int k = -r; k <= r; k++) {
+					if (ReikaBlockHelper.isWood(world, x+i, dy, z+k)) {
+						if (ReikaBlockHelper.isWood(world, x+i, dy+1, z+k) && ReikaBlockHelper.isWood(world, x+i, dy-1, z+k)) {
+							return new Coordinate(x+i, dy, z+k);
+						}
+					}
+				}
+			}
+		}
+		return null;
+	}
 }

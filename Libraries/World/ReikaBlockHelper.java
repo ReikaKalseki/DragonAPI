@@ -22,6 +22,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
@@ -57,7 +58,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		return false;
 	}
 
-	public static boolean isWood(World world, int x, int y, int z) {
+	public static boolean isWood(IBlockAccess world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		if (b instanceof BlockLog)
 			return true;
@@ -69,7 +70,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		return false;
 	}
 
-	public static boolean isLeaf(World world, int x, int y, int z) {
+	public static boolean isLeaf(IBlockAccess world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		if (b instanceof BlockLeavesBase)
 			return true;

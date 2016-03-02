@@ -68,6 +68,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.Trackers.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.EnchantmentCollisionTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.EnvironmentSanityChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.FurnaceFuelRegistry;
 import Reika.DragonAPI.Auxiliary.Trackers.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.KeyTicker;
@@ -563,6 +564,8 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void postload(FMLPostInitializationEvent evt) {
 		this.startTiming(LoadPhase.POSTLOAD);
+
+		EnvironmentSanityChecker.instance.check();
 
 		PackModificationTracker.instance.loadAll();
 
