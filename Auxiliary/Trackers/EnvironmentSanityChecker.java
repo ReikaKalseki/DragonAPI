@@ -1,16 +1,27 @@
 package Reika.DragonAPI.Auxiliary.Trackers;
 
+import java.util.ArrayList;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Exception.EnvironmentSanityException;
 import Reika.DragonAPI.Exception.EnvironmentSanityException.ErrorType;
+import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 
 public class EnvironmentSanityChecker {
@@ -27,6 +38,7 @@ public class EnvironmentSanityChecker {
 		this.checkBiomes();
 		this.checkEnchants();
 		this.checkPotions();
+		this.checkOreDict();
 	}
 
 	private void checkBlocks() {
@@ -103,6 +115,86 @@ public class EnvironmentSanityChecker {
 					this.verifyPotion(p);
 				}
 			}
+		}
+	}
+
+	private void checkOreDict() {
+		String[] tags = OreDictionary.getOreNames();
+		for (int i = 0; i < tags.length; i++) {
+			String tag = tags[i];
+			ArrayList<ItemStack> li = new ArrayList(OreDictionary.getOres(tag));
+			for (ItemStack is : li) {
+				try {
+					this.verifyOreDictItem(tag, is);
+				}
+				catch (EnvironmentSanityException e) {
+					if (DragonOptions.FIXSANITY.getState()) {
+						try {
+							DragonAPICore.logError("Found invalid item "+is+" registered to OreDict "+tag+": "+e);
+							e.printStackTrace();
+							ReikaItemHelper.removeOreDictEntry(tag, is);
+						}
+						catch (Exception ex) { //could not remove
+							ex.initCause(e);
+							throw new RuntimeException(ex);
+						}
+					}
+					else {
+						throw e;
+					}
+				}
+			}
+		}
+	}
+
+	private void verifyOreDictItem(String tag, ItemStack is) {
+		try {
+			is.getUnlocalizedName();
+		}
+		catch (Exception e) {
+			throw new EnvironmentSanityException(ErrorType.OREDICT, is, tag, e, "Name");
+		}
+		try {
+			is.getDisplayName();
+		}
+		catch (Exception e) {
+			throw new EnvironmentSanityException(ErrorType.OREDICT, is, tag, e, "Display Name");
+		}
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			this.doClientOreDictVerification(tag, is);
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	private void doClientOreDictVerification(String tag, ItemStack is) {
+		is.getItem().registerIcons(ReikaTextureHelper.dummyTextureMap);
+		Block b = Block.getBlockFromItem(is.getItem());
+		if (b != null) {
+			b.registerBlockIcons(ReikaTextureHelper.dummyTextureMap);
+		}
+		try {
+			is.getIconIndex();
+		}
+		catch (Exception e) {
+			throw new EnvironmentSanityException(ErrorType.OREDICT, is, tag, e, "Icon");
+		}
+		boolean draw = Tessellator.instance.isDrawing;
+		try {
+			ReikaGuiAPI.instance.drawItemStack(ReikaGuiAPI.itemRenderer, is, 0, 0);
+		}
+		catch (Exception e) {
+			/*
+			try {
+				tessellatorReset.invoke(Tessellator.instance);
+			}
+			catch (Exception ex) {
+				RuntimeException exc = new IllegalStateException("Could not reset tessellator when trying to recover parsing invalid OreDict entry");
+				ex.initCause(e);
+				exc.initCause(ex);
+				throw exc;
+			}*/
+			Tessellator.instance.isDrawing = draw;
+			throw new EnvironmentSanityException(ErrorType.OREDICT, is, tag, e, "Render");
 		}
 	}
 

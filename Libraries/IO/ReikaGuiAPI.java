@@ -70,6 +70,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 	private final RegionMap<ItemStack> items = new RegionMap();
 	private final boolean cacheRenders = ModList.NEI.isLoaded();
 
+	public static final RenderItem itemRenderer = new RenderItem();
+
 	private ReikaGuiAPI() {
 		mc = Minecraft.getMinecraft();
 		MinecraftForge.EVENT_BUS.register(this);

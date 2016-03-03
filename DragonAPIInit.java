@@ -565,7 +565,8 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void postload(FMLPostInitializationEvent evt) {
 		this.startTiming(LoadPhase.POSTLOAD);
 
-		EnvironmentSanityChecker.instance.check();
+		if (DragonOptions.CHECKSANITY.getState())
+			EnvironmentSanityChecker.instance.check();
 
 		PackModificationTracker.instance.loadAll();
 
@@ -684,6 +685,8 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void catchNullOreDict(OreRegisterEvent evt) {
 		if (evt.Ore == null || evt.Ore.getItem() == null)
 			throw new WTFException("Someone registered null to the OreDictionary under the name '"+evt.Name+"'!", true);
+		else if (evt.Name == null || evt.Name.isEmpty())
+			throw new WTFException("Someone registered "+evt.Ore+" under a null or empty OreDict name!", true);
 		else {
 			logger.log("Logged OreDict registration of "+evt.Ore+" as '"+evt.Name+"'.");
 		}
@@ -804,7 +807,12 @@ public class DragonAPIInit extends DragonAPIMod {
 		if (!evt.isVanillaPass) {
 			try {
 				if (!ReikaRecipeHelper.verifyRecipe(evt.recipe)) {
-					logger.log("Invalid recipe, such as with nulled inputs, found. Removing to prevent crashes.");
+					String msg = "Class="+evt.recipe.getClass();
+					if (evt.recipe.getRecipeOutput() != null && evt.recipe.getRecipeOutput().getItem() != null)
+						msg += ", Output="+evt.recipe.getRecipeOutput();
+					else if (evt.recipe.getRecipeOutput() != null)
+						msg += ", Output is a null-item ItemStack";
+					logger.log("Invalid recipe, such as with nulled inputs, found. Removing to prevent crashes. "+msg+".");
 					evt.setCanceled(true);
 				}
 			}

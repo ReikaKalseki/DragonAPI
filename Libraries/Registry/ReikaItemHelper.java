@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -152,6 +153,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final ItemComparator comparator = new ItemComparator();
 
 	private static HashMap<Fluid, ItemStack> fluidContainerData = new HashMap();
+
+	private static Field oreListField;
 
 	/** Returns true if the block or item has metadata variants. Args: ID *//*
 	public static boolean hasMetadata(Item id) {
@@ -570,5 +573,23 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return false;
 		}
 		return true;
+	}
+
+	public static void removeOreDictEntry(String tag, ItemStack is) throws Exception {
+		ArrayList<ItemStack> ores = OreDictionary.getOres(tag);
+		ArrayList<ItemStack> li = (ArrayList<ItemStack>)oreListField.get(ores);
+		li.remove(is);
+		DragonAPICore.log("Removed item "+is+" from OreDict tag '"+tag+"'");
+	}
+
+	static {
+		try {
+			Class c = Class.forName("net.minecraftforge.oredict.OreDictionary$UnmodifiableArrayList");
+			oreListField = c.getDeclaredField("list");
+			oreListField.setAccessible(true);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

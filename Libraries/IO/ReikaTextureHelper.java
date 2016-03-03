@@ -56,6 +56,8 @@ public class ReikaTextureHelper {
 	private static final HashMap<ReikaDyeHelper, Integer> colorOverrides = new HashMap();
 	private static boolean noColorPacks = false;
 
+	public static final TextureMap dummyTextureMap = new TextureMap(-1, "");
+
 	public static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
 	public static final ResourceLocation font = new ResourceLocation("textures/font/ascii.png");
