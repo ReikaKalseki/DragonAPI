@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.EnumChatFormatting;
@@ -30,14 +31,14 @@ public class ModularLogger {
 	}
 
 	public void addLogger(DragonAPIMod mod, String label) {
-		label = label.toLowerCase();
+		label = label.toLowerCase(Locale.ENGLISH);
 		if (loggers.containsKey(label))
 			throw new RegistrationException(mod, "Modular logger name '"+label+"' is already taken!");
 		loggers.put(label, new LoggerElement(mod, label));
 	}
 
 	public void log(String logger, String msg) {
-		LoggerElement e = loggers.get(logger.toLowerCase());
+		LoggerElement e = loggers.get(logger.toLowerCase(Locale.ENGLISH));
 		if (e == null) {
 			DragonAPICore.logError("Tried to use an unregistered logger '"+logger+"'!");
 		}
@@ -49,7 +50,7 @@ public class ModularLogger {
 	}
 
 	public boolean isEnabled(String logger) {
-		LoggerElement e = loggers.get(logger.toLowerCase());
+		LoggerElement e = loggers.get(logger.toLowerCase(Locale.ENGLISH));
 		return e != null && e.enabled;
 	}
 
@@ -75,7 +76,7 @@ public class ModularLogger {
 				this.sendChatToSender(ics, EnumChatFormatting.RED+"You must specify a logger ID and a status!");
 				return;
 			}
-			LoggerElement e = instance.loggers.get(args[0].toLowerCase());
+			LoggerElement e = instance.loggers.get(args[0].toLowerCase(Locale.ENGLISH));
 			if (e == null) {
 				this.sendChatToSender(ics, EnumChatFormatting.RED+"Unrecognized logger ID '"+args[0]+"'!");
 				return;

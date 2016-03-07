@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Map;
 
 import net.minecraft.block.Block;
@@ -465,7 +466,7 @@ public class ReikaThaumHelper {
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
-		XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
+		XMLResearch xml = new XMLResearch(id.toLowerCase(Locale.ENGLISH), root, path, ir, 2);
 		res.setPages(xml.getPages());
 		res.registerResearchItem();
 	}
@@ -479,7 +480,7 @@ public class ReikaThaumHelper {
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
-		XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
+		XMLResearch xml = new XMLResearch(id.toLowerCase(Locale.ENGLISH), root, path, ir, 2);
 		res.setPages(xml.getPages());
 		res.registerResearchItem();
 	}
@@ -493,7 +494,7 @@ public class ReikaThaumHelper {
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
-		XMLResearch xml = new XMLResearch(id.toLowerCase(), root, path, ir, 2);
+		XMLResearch xml = new XMLResearch(id.toLowerCase(Locale.ENGLISH), root, path, ir, 2);
 		res.setPages(xml.getPages());
 		res.registerResearchItem();
 	}
@@ -573,7 +574,7 @@ public class ReikaThaumHelper {
 
 			@Override
 			public String getTranslatedText() {
-				return info.getValueAtNode("researches:"+name.toLowerCase()+":page"+page);
+				return info.getValueAtNode("researches:"+name.toLowerCase(Locale.ENGLISH)+":page"+page);
 			}
 
 			@Override

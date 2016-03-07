@@ -17,6 +17,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
+import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -78,7 +79,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		Block b = null;
 		if (!r.isDummiedOut()) {
 			b = ReikaReflectionHelper.createBlockInstance(mod, r);
-			String regname = (mod.getTechnicalName()+"_block_"+r.name()).toLowerCase();
+			String regname = (mod.getTechnicalName()+"_block_"+r.name()).toLowerCase(Locale.ENGLISH);
 			if (r.hasItemBlock())
 				GameRegistry.registerBlock(b, r.getItemBlock(), regname);
 			else
@@ -121,7 +122,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		Item it = null;
 		if (!r.isDummiedOut()) {
 			it = ReikaReflectionHelper.createItemInstance(mod, r);
-			String regname = (mod.getTechnicalName()+"_item_"+r.name()).toLowerCase();
+			String regname = (mod.getTechnicalName()+"_item_"+r.name()).toLowerCase(Locale.ENGLISH);
 			int num = r.getNumberMetadatas();
 			for (int j = 0; j < num; j++) {
 				registerItemVariant(r, j);
@@ -156,7 +157,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		if (!r.isDummiedOut()) {
 			EnchantmentCollisionTracker.instance.addEnchantmentID(mod, r.getEnchantmentID(), r.getObjectClass());
 			it = ReikaReflectionHelper.createEnchantmentInstance(mod, r.getObjectClass(), r.getEnchantmentID(), r.getUnlocalizedName(), false);
-			String regname = (mod.getTechnicalName()+"_enchantment_"+r.name()).toLowerCase();
+			String regname = (mod.getTechnicalName()+"_enchantment_"+r.name()).toLowerCase(Locale.ENGLISH);
 			registries.put(it, r);
 			mod.getModLogger().log("Instantiating Enchantment "+r.getBasicName()+" with ID "+it+" to Enchantment Variable "+it.getClass().getSimpleName()+" (enum index "+idx+").");
 		}

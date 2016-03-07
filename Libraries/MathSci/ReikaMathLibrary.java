@@ -467,7 +467,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	}
 
 	public static double linterpolate(double x, double x1, double x2, double y1, double y2) {
-		return (x-x1)/(x2-x1)*(y2-y1);
+		return y1+(x-x1)/(x2-x1)*(y2-y1);
 	}
 
 	public static int bitRound(int val, int bits) {
@@ -485,5 +485,9 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		else {
 			return 0.5+0.5*Math.cos(Math.toRadians((val-mid)/size*180));
 		}
+	}
+
+	public static int toggleBit(int num, int bit) {
+		return num ^ (1 << bit);
 	}
 }

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Command;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.command.ICommandSender;
@@ -114,7 +115,7 @@ public class BlockReplaceCommand extends DragonCommandBase {
 			return new TreeCheck();
 		}
 		else if (s.startsWith("class_")) {
-			return new ClassCheck(s.substring(6).toLowerCase());
+			return new ClassCheck(s.substring(6).toLowerCase(Locale.ENGLISH));
 		}
 		else if (s.equals("any") || s.equals("all") || s.equals("*")) {
 			return new AnyCheck();
@@ -160,7 +161,7 @@ public class BlockReplaceCommand extends DragonCommandBase {
 
 		@Override
 		protected boolean replace(Block b, int meta) {
-			return b.getClass().getSimpleName().toLowerCase().equals(blockClass);
+			return b.getClass().getSimpleName().toLowerCase(Locale.ENGLISH).equals(blockClass);
 		}
 
 	}

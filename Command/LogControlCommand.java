@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
+import java.util.Locale;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
@@ -33,23 +35,23 @@ public class LogControlCommand extends DragonCommandBase {
 		if (args == null || args.length != 1)
 			ReikaChatHelper.sendChatToPlayer(ep, r+"You must specify \"enable\", \"disable\", or \"default\".");
 		else {
-			if ("enable".equals(args[0].toLowerCase())) {
+			if ("enable".equals(args[0].toLowerCase(Locale.ENGLISH))) {
 				ModLogger.setAllLoggingTrue();
 				ReikaChatHelper.sendChatToPlayer(ep, g+"All logging enabled. Change affects "+n+" loggers.");
 			}
-			else if ("disable".equals(args[0].toLowerCase())) {
+			else if ("disable".equals(args[0].toLowerCase(Locale.ENGLISH))) {
 				ModLogger.setAllLoggingFalse();
 				ReikaChatHelper.sendChatToPlayer(ep, g+"All logging disabled. Change affects "+n+" loggers.");
 			}
-			else if ("source".equals(args[0].toLowerCase())) {
+			else if ("source".equals(args[0].toLowerCase(Locale.ENGLISH))) {
 				ReikaJavaLibrary.toggleStackTrace();
 				ReikaChatHelper.sendChatToPlayer(ep, g+"All console prints now show a stack trace: "+ReikaJavaLibrary.dumpStack);
 			}
-			else if ("silence".equals(args[0].toLowerCase())) {
+			else if ("silence".equals(args[0].toLowerCase(Locale.ENGLISH))) {
 				ReikaJavaLibrary.toggleSilentMode();
 				ReikaChatHelper.sendChatToPlayer(ep, g+"All console prints disabled: "+ReikaJavaLibrary.silent);
 			}
-			else if ("default".equals(args[0].toLowerCase())) {
+			else if ("default".equals(args[0].toLowerCase(Locale.ENGLISH))) {
 				ModLogger.setAllLoggingDefault();
 				ReikaChatHelper.sendChatToPlayer(ep, g+"All logging restored to config settings. Change affects "+n+" loggers.");
 			}

@@ -17,23 +17,19 @@ public class ModExplosiveHandler {
 
 	private final Class ic2;
 	private final Class exp_plus;
-	private final Class icbm;
 
 	private ModExplosiveHandler() {
 		Class ic = null;
 		Class exp = null;
-		Class miss = null;
 		try {
 			ic = Class.forName("ic2.core.Blocks.EntityIC2Explosive");
 			exp = Class.forName("???");
-			miss = Class.forName(""); //The code is in another language... T_T
 		}
 		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
 		ic2 = ic;
 		exp_plus = exp;
-		icbm = miss;
 	}
 
 	public static ModExplosiveHandler getInstance() {

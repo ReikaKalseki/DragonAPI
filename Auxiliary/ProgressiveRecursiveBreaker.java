@@ -40,6 +40,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Interfaces.MachineRegistryBlock;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
@@ -234,6 +235,9 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 							drops.addAll(bt.getNoHarvestResources(world, x, y, z, fortune, player));
 						}
 					}
+				}
+				else if (id instanceof MachineRegistryBlock) {
+					drops.add(((MachineRegistryBlock)id).getMachine(world, x, y, z).getCraftedProduct());
 				}
 				else {
 					if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta))

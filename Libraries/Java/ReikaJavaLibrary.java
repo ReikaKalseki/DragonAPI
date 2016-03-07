@@ -28,6 +28,7 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -589,7 +590,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	private static Class getPrimitiveClass(Object o) {
-		String name = o.getClass().getSimpleName().toLowerCase();
+		String name = o.getClass().getSimpleName().toLowerCase(Locale.ENGLISH);
 		if (name.equals("byte"))
 			return byte.class;
 		if (name.equals("short"))
@@ -801,5 +802,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			tg = tg.getParent();
 		}
 		return tg;
+	}
+
+	public static boolean exceptionMentions(Throwable e, Class c) {
+		StackTraceElement[] arr = e.getStackTrace();
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[i].getClassName().equals(c.getName()))
+				return true;
+		}
+		return false;
 	}
 }

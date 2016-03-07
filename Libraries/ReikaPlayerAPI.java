@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -321,7 +322,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			return true;
 		if (ep.getCommandSenderName().contains("CoFH") || ep.getCommandSenderName().contains("Thaumcraft"))
 			return true;
-		if (ep.getClass().getName().toLowerCase().contains("fake"))
+		if (ep.getClass().getName().toLowerCase(Locale.ENGLISH).contains("fake"))
 			return true;
 		return false;
 	}

@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
@@ -56,7 +57,6 @@ import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
-import Reika.DragonAPI.Auxiliary.FindTilesCommand;
 import Reika.DragonAPI.Auxiliary.LoggingFilters;
 import Reika.DragonAPI.Auxiliary.LoggingFilters.LoggerType;
 import Reika.DragonAPI.Auxiliary.ModularLogger.ModularLoggerCommand;
@@ -67,6 +67,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.ChunkPregenerator;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.Trackers.CompatibilityTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.CrashNotifications;
 import Reika.DragonAPI.Auxiliary.Trackers.EnchantmentCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.EnvironmentSanityChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.FurnaceFuelRegistry;
@@ -99,6 +100,7 @@ import Reika.DragonAPI.Command.EntityCountCommand;
 import Reika.DragonAPI.Command.EntityListCommand;
 import Reika.DragonAPI.Command.FindBiomeCommand;
 import Reika.DragonAPI.Command.FindThreadCommand;
+import Reika.DragonAPI.Command.FindTilesCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
@@ -111,6 +113,7 @@ import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.LoginHandler;
+import Reika.DragonAPI.Extras.SanityCheckNotification;
 import Reika.DragonAPI.Extras.TemporaryCodeCalls;
 import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
@@ -238,7 +241,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void invalidSignature(FMLFingerprintViolationEvent evt) {
 		if (!ReikaObfuscationHelper.isDeObfEnvironment()) {
-			if (!evt.fingerprints.contains(evt.expectedFingerprint.toLowerCase().replaceAll(":", ""))) {
+			if (!evt.fingerprints.contains(evt.expectedFingerprint.toLowerCase(Locale.ENGLISH).replaceAll(":", ""))) {
 				throw new InvalidBuildException(this, evt.source);
 			}
 		}
@@ -298,6 +301,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		ReikaPacketHelper.registerVanillaPacketType(this, id, SyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
 		//if (DragonOptions.COMPOUNDSYNC.getState())
 		//	ReikaPacketHelper.registerVanillaPacketType(this, id+1, CompoundSyncPacket.class, Side.SERVER, EnumConnectionState.PLAY);
+
+		if (!DragonOptions.CHECKSANITY.getState())
+			CrashNotifications.instance.addNotification(null, new SanityCheckNotification());
 
 		this.finishTiming();
 	}
@@ -362,7 +368,6 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	private void initalizeVanillaOreDict() {
-		OreDictionary.initVanillaEntries();
 		OreDictionary.registerOre("netherrack", Blocks.netherrack);
 		OreDictionary.registerOre("soulsand", Blocks.soul_sand);
 		OreDictionary.registerOre("flower", Blocks.yellow_flower);

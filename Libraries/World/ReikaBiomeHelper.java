@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -291,13 +292,13 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			return false;
 		if (biome.getEnableSnow())
 			return true;
-		if (biome.biomeName.toLowerCase().contains("arctic"))
+		if (biome.biomeName.toLowerCase(Locale.ENGLISH).contains("arctic"))
 			return true;
-		if (biome.biomeName.toLowerCase().contains("tundra"))
+		if (biome.biomeName.toLowerCase(Locale.ENGLISH).contains("tundra"))
 			return true;
-		if (biome.biomeName.toLowerCase().contains("alpine"))
+		if (biome.biomeName.toLowerCase(Locale.ENGLISH).contains("alpine"))
 			return true;
-		if (biome.biomeName.toLowerCase().contains("frozen"))
+		if (biome.biomeName.toLowerCase(Locale.ENGLISH).contains("frozen"))
 			return true;
 		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
 		for (int i = 0; i < types.length; i++) {
@@ -467,7 +468,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			return true;
 		if (BiomeDictionary.isBiomeOfType(biome, Type.OCEAN))
 			return true;
-		return ReikaStringParser.containsWord(biome.biomeName.toLowerCase(), "ocean");
+		return ReikaStringParser.containsWord(biome.biomeName.toLowerCase(Locale.ENGLISH), "ocean");
 	}
 
 	public static void removeBiomeWithAssociates(BiomeGenBase biome) {

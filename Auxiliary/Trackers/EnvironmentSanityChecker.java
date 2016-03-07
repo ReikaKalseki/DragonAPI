@@ -1,15 +1,19 @@
 package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.EnumCreatureType;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
@@ -166,24 +170,27 @@ public class EnvironmentSanityChecker {
 	}
 
 	@SideOnly(Side.CLIENT)
-	private void doClientOreDictVerification(String tag, ItemStack is) {
-		is.getItem().registerIcons(ReikaTextureHelper.dummyTextureMap);
-		Block b = Block.getBlockFromItem(is.getItem());
+	private void doClientOreDictVerification(String tag, ItemStack is2) {
+		is2.getItem().registerIcons(ReikaTextureHelper.dummyTextureMap);
+		Block b = Block.getBlockFromItem(is2.getItem());
 		if (b != null) {
 			b.registerBlockIcons(ReikaTextureHelper.dummyTextureMap);
 		}
-		try {
-			is.getIconIndex();
-		}
-		catch (Exception e) {
-			throw new EnvironmentSanityException(ErrorType.OREDICT, is, tag, e, "Icon");
-		}
-		boolean draw = Tessellator.instance.isDrawing;
-		try {
-			ReikaGuiAPI.instance.drawItemStack(ReikaGuiAPI.itemRenderer, is, 0, 0);
-		}
-		catch (Exception e) {
-			/*
+		List<ItemStack> li = new ArrayList();
+		is2.getItem().getSubItems(is2.getItem(), is2.getItem().getCreativeTab(), li);
+		for (ItemStack is : li) {
+			try {
+				is.getIconIndex();
+			}
+			catch (Exception e) {
+				throw new EnvironmentSanityException(ErrorType.OREDICT, is, tag, e, "Icon");
+			}
+			boolean draw = Tessellator.instance.isDrawing;
+			try {
+				ReikaGuiAPI.instance.drawItemStack(ReikaGuiAPI.itemRenderer, is, 0, 0);
+			}
+			catch (Exception e) {
+				/*
 			try {
 				tessellatorReset.invoke(Tessellator.instance);
 			}
@@ -193,8 +200,9 @@ public class EnvironmentSanityChecker {
 				exc.initCause(ex);
 				throw exc;
 			}*/
-			Tessellator.instance.isDrawing = draw;
-			throw new EnvironmentSanityException(ErrorType.OREDICT, is, tag, e, "Render");
+				Tessellator.instance.isDrawing = draw;
+				throw new EnvironmentSanityException(ErrorType.OREDICT, is, tag, e, "Render");
+			}
 		}
 	}
 
@@ -236,16 +244,28 @@ public class EnvironmentSanityChecker {
 
 	public void verifyBiome(BiomeGenBase b) throws EnvironmentSanityException {
 		if (b.biomeName == null) {
-			throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.biomeName, "Name");
+			if (DragonOptions.FIXSANITY.getState())
+				b.biomeName = "NULL";
+			else
+				throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.biomeName, "Name");
 		}
 		if (b.topBlock == null) {
-			throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.topBlock, "Top Block");
+			if (DragonOptions.FIXSANITY.getState())
+				b.topBlock = Blocks.grass;
+			else
+				throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.topBlock, "Top Block");
 		}
 		if (b.fillerBlock == null) {
-			throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.fillerBlock, "Filler Block");
+			if (DragonOptions.FIXSANITY.getState())
+				b.fillerBlock = Blocks.dirt;
+			else
+				throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.fillerBlock, "Filler Block");
 		}
 		if (b.theBiomeDecorator == null) {
-			throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.theBiomeDecorator, "Decorator");
+			if (DragonOptions.FIXSANITY.getState())
+				b.theBiomeDecorator = new BiomeDecorator();
+			else
+				throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.theBiomeDecorator, "Decorator");
 		}
 
 		for (int i = 0; i < EnumCreatureType.values().length; i++) {
@@ -258,7 +278,10 @@ public class EnvironmentSanityChecker {
 
 	public void verifyEnchant(Enchantment e) throws EnvironmentSanityException {
 		if (e.type == null) {
-			throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, e, e.type, "Type");
+			if (DragonOptions.FIXSANITY.getState())
+				e.type = EnumEnchantmentType.all;
+			else
+				throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, e, e.type, "Type");
 		}
 		try {
 			e.getName();
@@ -276,7 +299,10 @@ public class EnvironmentSanityChecker {
 
 	public void verifyPotion(Potion p) throws EnvironmentSanityException {
 		if (p.getName() == null) {
-			throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, p, p.getName(), "Name");
+			if (DragonOptions.FIXSANITY.getState())
+				p.setPotionName("NULL");
+			else
+				throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, p, p.getName(), "Name");
 		}
 	}
 

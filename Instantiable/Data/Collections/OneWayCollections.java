@@ -45,7 +45,7 @@ public class OneWayCollections {
 
 		@Override
 		public final void clear() {
-			throw new UnsupportedOperationException("You cannot clear list!");
+			throw new UnsupportedOperationException("You cannot clear this list!");
 		}
 
 		@Override

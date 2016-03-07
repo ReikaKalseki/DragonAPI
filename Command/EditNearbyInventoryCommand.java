@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Command;
 
 import java.util.Collection;
+import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
@@ -97,7 +98,7 @@ public class EditNearbyInventoryCommand extends DragonCommandBase {
 		private static Mode get(String mode) {
 			for (int i = 0; i < values().length; i++) {
 				Mode m = values()[i];
-				if (m.name().toLowerCase().equals(mode.toLowerCase()))
+				if (m.name().toLowerCase(Locale.ENGLISH).equals(mode.toLowerCase(Locale.ENGLISH)))
 					return m;
 			}
 			return null;

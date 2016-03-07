@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Auxiliary;
+package Reika.DragonAPI.Command;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,7 +19,6 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
-import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 public class FindTilesCommand extends DragonCommandBase {

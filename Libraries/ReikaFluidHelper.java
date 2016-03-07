@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.Locale;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -110,7 +111,7 @@ public class ReikaFluidHelper {
 	}
 
 	public static boolean isFlammable(Fluid f) {
-		String s = f.getName().toLowerCase();
+		String s = f.getName().toLowerCase(Locale.ENGLISH);
 		if (s.contains("fuel"))
 			return true;
 		if (s.contains("ethanol"))

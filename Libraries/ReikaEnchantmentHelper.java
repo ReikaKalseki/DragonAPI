@@ -163,4 +163,20 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 		//ReikaJavaLibrary.pConsole("Post: "+tag.getTag("ench"));
 	}
 
+	public static void removeEnchantments(ItemStack is, Collection<Enchantment> c) {
+		for (Enchantment e : c) {
+			removeEnchantment(is, e);
+		}
+	}
+
+	public static void removeEnchantment(ItemStack is, Enchantment e) {
+		NBTTagList li = is.getEnchantmentTagList();
+		Iterator<NBTTagCompound> it = li.tagList.iterator();
+		while (it.hasNext()) {
+			NBTTagCompound tag = it.next();
+			short s = tag.getShort("id");
+			if (s == e.effectId)
+				it.remove();
+		}
+	}
 }

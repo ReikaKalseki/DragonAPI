@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
+import java.util.Locale;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -34,7 +36,7 @@ public class FindThreadCommand extends DragonCommandBase {
 		this.sendChatToSender(ics, "Thread is daemon: "+t.isDaemon());
 
 		if (args.length == 2) {
-			switch(args[1].toLowerCase()) {
+			switch(args[1].toLowerCase(Locale.ENGLISH)) {
 				case "stack":
 				case "stacktrace":
 				case "trace":

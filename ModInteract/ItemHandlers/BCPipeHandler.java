@@ -11,6 +11,7 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -241,13 +242,13 @@ public class BCPipeHandler extends ModHandlerBase {
 	}
 
 	private Types getType(String sg) {
-		sg = sg.toLowerCase();
+		sg = sg.toLowerCase(Locale.ENGLISH);
 		sg = sg.replaceAll("pipe", "");
 		sg = sg.replaceAll("items", "");
 		sg = sg.replaceAll("fluids", "");
 		sg = sg.replaceAll("power", "");
 		for (int i = 0; i < Types.pipeList.length; i++) {
-			String type = Types.pipeList[i].name().toLowerCase();
+			String type = Types.pipeList[i].name().toLowerCase(Locale.ENGLISH);
 			if (type.equals(sg))
 				return Types.pipeList[i];
 		}

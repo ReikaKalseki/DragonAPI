@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
@@ -104,16 +105,16 @@ public class ControlledConfig {
 	}
 
 	private void registerOption(String s1, String s2, Object cfg) {
-		HashMap<String, Object> map = optionMap.get(s1.toLowerCase());
+		HashMap<String, Object> map = optionMap.get(s1.toLowerCase(Locale.ENGLISH));
 		if (map == null) {
 			map = new HashMap();
-			optionMap.put(s1.toLowerCase(), map);
+			optionMap.put(s1.toLowerCase(Locale.ENGLISH), map);
 		}
 		map.put(s2, cfg);
 	}
 
 	protected final void registerOrphanExclusion(String s) {
-		orphanExclusions.add(s.toLowerCase());
+		orphanExclusions.add(s.toLowerCase(Locale.ENGLISH));
 	}
 
 	private final String getConfigPath() {
@@ -275,7 +276,7 @@ public class ControlledConfig {
 		HashSet<ConfigCategory> catNames = new HashSet();
 		for (String s1 : config.getCategoryNames()) {
 			ConfigCategory cat = config.getCategory(s1);
-			HashMap<String, Object> map = optionMap.get(s1.toLowerCase());
+			HashMap<String, Object> map = optionMap.get(s1.toLowerCase(Locale.ENGLISH));
 			if (map == null) {
 				if (orphanExclusions.contains(s1))
 					continue;
@@ -589,7 +590,7 @@ public class ControlledConfig {
 	}
 
 	protected final <C> DataElement<C> registerAdditionalOption(String c, String n, C default_) {
-		c = c.toLowerCase();
+		c = c.toLowerCase(Locale.ENGLISH);
 		HashMap<String, DataElement> map = additionalOptions.get(c);
 		if (map == null) {
 			map = new HashMap();

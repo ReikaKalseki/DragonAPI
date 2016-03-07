@@ -157,7 +157,7 @@ public final class CommandableUpdateChecker {
 		}
 		latestVersions.put(mod, latest);
 		checkers.add(c);
-		String label = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
+		String label = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase(Locale.ENGLISH));
 		modNames.put(label, mod);
 		modNamesReverse.put(mod, label);
 	}
@@ -194,7 +194,7 @@ public final class CommandableUpdateChecker {
 
 	private void setChecker(DragonAPIMod mod, boolean enable) {
 		File f = this.getFile();
-		String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
+		String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase(Locale.ENGLISH));
 		ModVersion latest = latestVersions.get(mod);
 		if (f.exists()) {
 			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
@@ -431,7 +431,7 @@ public final class CommandableUpdateChecker {
 			EntityPlayerMP ep = getCommandSenderAsPlayer(ics);
 			if (args.length == 2) {
 				String action = args[0];
-				String name = args[1].toLowerCase();
+				String name = args[1].toLowerCase(Locale.ENGLISH);
 				DragonAPIMod mod = instance.modNames.get(name);
 				if (mod != null) {
 					if (action.equals("disable")) {
@@ -477,7 +477,7 @@ public final class CommandableUpdateChecker {
 		private ModVersion getLatestVersion() {
 			try {
 				ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, 10000, false, this, this);
-				String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase());
+				String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase(Locale.ENGLISH));
 				for (String line : lines) {
 					if (line.toLowerCase().startsWith(name)) {
 						String[] parts = line.split(":");

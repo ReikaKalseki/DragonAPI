@@ -42,6 +42,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import cpw.mods.fml.relauncher.Side;
@@ -591,5 +592,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public static void toggleDamageBit(ItemStack is, int bit) {
+		is.setItemDamage(ReikaMathLibrary.toggleBit(is.getItemDamage(), bit));
 	}
 }

@@ -643,6 +643,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	/** Surrounds the block with fire. Args: World, x, y, z */
 	public static void ignite(World world, int x, int y, int z) {
+		if (world.getBlock(x, y, z) == Blocks.air)
+			return;
 		if (world.getBlock(x-1, y, z) == Blocks.air)
 			world.setBlock(x-1, y, z, Blocks.fire);
 		if (world.getBlock(x+1, y, z) == Blocks.air)
@@ -2115,5 +2117,35 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 		return null;
+	}
+
+	public static boolean isBlockEncased(World world, int x, int y, int z, Block b) {
+		return isBlockEncased(world, x, y, z, b, -1);
+	}
+
+	public static boolean isBlockEncased(World world, int x, int y, int z, Block b, int meta) {
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				for (int k = -1; k <= 1; k++) {
+					if (i != 0 || j != 0 || k != 0) {
+						int dx = x+i;
+						int dy = y+j;
+						int dz = z+k;
+						Block b2 = world.getBlock(dx, dy, dz);
+						int meta2 = world.getBlockMetadata(dx, dy, dz);
+						if (b != null) {
+							if (b2 != b || (meta != -1 && meta2 != meta)) {
+								return false;
+							}
+						}
+						else {
+							if (b2.isAir(world, dx, dy, dz))
+								return false;
+						}
+					}
+				}
+			}
+		}
+		return true;
 	}
 }

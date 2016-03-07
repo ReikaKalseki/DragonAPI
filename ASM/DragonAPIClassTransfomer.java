@@ -49,7 +49,7 @@ import cpw.mods.fml.relauncher.Side;
 public class DragonAPIClassTransfomer implements IClassTransformer {
 
 	private static final MultiMap<String, ClassPatch> classes = new MultiMap().setNullEmpty();
-	private static boolean isKCauldronLoaded;
+	private static int bukkitFlags;
 	private static boolean nullItemPrintout = false;
 	private static boolean nullItemCrash = false;
 
@@ -108,7 +108,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		ATTACKAGGROEVENT1("net.minecraft.entity.monster.EntityMob", "yg"),
 		ATTACKAGGROEVENT2("net.minecraft.entity.monster.EntityPigZombie", "yh"),
 		PIGZOMBIEAGGROSPREADEVENT("net.minecraft.entity.monster.EntityPigZombie", "yh"),
-		BIOMEMUTATIONEVENT("net.minecraft.world.gen.layer.GenLayerHills", "axr")
+		BIOMEMUTATIONEVENT("net.minecraft.world.gen.layer.GenLayerHills", "axr"),
+		CRASHNOTIFICATIONS("net.minecraft.crash.CrashReport", "b"),
 		;
 
 		private final String obfName;
@@ -1135,7 +1136,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				case BLOCKTICKEVENT: {
 					String sig = "(Lnet/minecraft/world/World;IIILjava/util/Random;)V";
 					String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_149674_a" : "updateTick";
-					int shift = isKCauldronLoaded ? 3 : 0;
+					int shift = ((bukkitFlags & (BukkitBitflags.CAULDRON.flag | BukkitBitflags.THERMOS.flag)) != 0) ? 3 : 0;
 
 					InsnList fire = new InsnList();
 					fire.add(new VarInsnNode(Opcodes.ALOAD, 0));
@@ -1548,6 +1549,15 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
 
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 4!");
+					break;
+				}
+				case CRASHNOTIFICATIONS: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_71504_g", "populateEnvironment", "()V");
+					InsnList li = new InsnList();
+					li.add(new FieldInsnNode(Opcodes.GETSTATIC, "Reika/DragonAPI/Auxiliary/Trackers/CrashNotifications", "instance", "LReika/DragonAPI/Auxiliary/Trackers/CrashNotifications;"));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "Reika/DragonAPI/Auxiliary/Trackers/CrashNotifications", "notifyCrash", "(Lnet/minecraft/crash/CrashReport;)V", false));
+					m.instructions.insertBefore(m.instructions.getLast(), li);
 				}
 			}
 
@@ -1658,17 +1668,42 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			}
 		}
 
-		isKCauldronLoaded = testKCauldron();
+		bukkitFlags = BukkitBitflags.calculateFlags();
 		nullItemPrintout = !ReikaJVMParser.isArgumentPresent("-DragonAPI_noNullItemPrint");
 	}
 
-	private static boolean testKCauldron() {
-		try {
-			Class.forName("kcauldron.KCauldron");
-			return true;
+	private static enum BukkitBitflags {
+		CAULDRON("kcauldron.KCauldron"),
+		THERMOS("thermos.Thermos");
+
+		private final String className;
+		private final int flag;
+
+		private static final BukkitBitflags[] list = values();
+
+		private BukkitBitflags(String s) {
+			className = s;
+			flag = 1 << this.ordinal();
 		}
-		catch(ClassNotFoundException e) {
-			return false;
+
+		private boolean test() {
+			try {
+				return Class.forName(className) != null;
+			}
+			catch (ClassNotFoundException e) {
+				return false;
+			}
+		}
+
+		private static int calculateFlags() {
+			int flags = 0;
+			for (int i = 0; i < list.length; i++) {
+				BukkitBitflags b = list[i];
+				if (b.test()) {
+					flags = flags | b.flag;
+				}
+			}
+			return flags;
 		}
 	}
 }

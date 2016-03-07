@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Command;
 
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Map;
 
 import net.minecraft.client.Minecraft;
@@ -46,7 +47,7 @@ public class EntityListCommand extends DragonCommandBase {
 			sb.append(EnumChatFormatting.RED+"Invalid side. Use one of the following: ");
 			for (int i = 0; i < Side.values().length; i++) {
 				sb.append("'");
-				sb.append(Side.values()[i].name().toLowerCase());
+				sb.append(Side.values()[i].name().toLowerCase(Locale.ENGLISH));
 				sb.append("'");
 				if (i < Side.values().length-1)
 					sb.append(", ");
@@ -81,15 +82,15 @@ public class EntityListCommand extends DragonCommandBase {
 
 	private void perform(Side side, EntityPlayerMP ep) {
 		switch(side) {
-		case CLIENT:
-			this.sendPacket(ep);
-			break;
-		case SERVER:
-			ArrayList<String> data = getData(ep, side);
-			for (String s : data) {
-				ReikaChatHelper.sendChatToPlayer(ep, s);
-			}
-			break;
+			case CLIENT:
+				this.sendPacket(ep);
+				break;
+			case SERVER:
+				ArrayList<String> data = getData(ep, side);
+				for (String s : data) {
+					ReikaChatHelper.sendChatToPlayer(ep, s);
+				}
+				break;
 		}
 	}
 

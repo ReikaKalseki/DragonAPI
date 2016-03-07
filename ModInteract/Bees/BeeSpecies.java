@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
@@ -483,13 +484,13 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		String mod = "forestry";
 
 		IIcon body1 = ico.registerIcon(mod + ":bees/" + iconType + "/body1");
-		IIcon larva = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.LARVAE.name().toLowerCase()+".body");
+		IIcon larva = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.LARVAE.name().toLowerCase(Locale.ENGLISH)+".body");
 
 		for (int i = 0; i < EnumBeeType.VALUES.length; i++) {
 			if (EnumBeeType.VALUES[i] != EnumBeeType.NONE) {
-				icons[i][0] = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.VALUES[i].name().toLowerCase()+".outline");
+				icons[i][0] = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.VALUES[i].name().toLowerCase(Locale.ENGLISH)+".outline");
 				icons[i][1] = EnumBeeType.VALUES[i] == EnumBeeType.LARVAE ? larva : body1;
-				icons[i][2] = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.VALUES[i].name().toLowerCase()+".body2");
+				icons[i][2] = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.VALUES[i].name().toLowerCase(Locale.ENGLISH)+".body2");
 			}
 		}
 	}

@@ -17,7 +17,7 @@ public enum InterfaceCache {
 	IGALACTICWORLD("micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider"),
 	ISOLARLEVEL("micdoodle8.mods.galacticraft.api.world.ISolarLevel"),
 	IELECTRICITEM("ic2.api.item.IElectricItem"),
-	IMISSILE("com.builtbroken.icbm.api"),
+	IMISSILE("com.builtbroken.icbm.api.missile.IMissileEntity"),
 	MUSEELECTRICITEM("net.machinemuse.api.electricity.MuseElectricItem"),
 	RFENERGYITEM("cofh.api.energy.IEnergyContainerItem"),
 	WAILA("mcp.mobius.waila.api.IWailaDataProvider"),

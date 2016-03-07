@@ -12,6 +12,7 @@ package Reika.DragonAPI.Extras;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -49,7 +50,7 @@ public class GuiGuide extends GuiScreen {
 		for (int i = 0; i < mods.size(); i++) {
 			ModList mod = mods.get(i);
 			for (int j = 0; j < tabTags.length; j++) {
-				String tag = "dragonapi:"+mod.name().toLowerCase()+":"+tabTags[j];
+				String tag = "dragonapi:"+mod.name().toLowerCase(Locale.ENGLISH)+":"+tabTags[j];
 				String desc = guide.getValueAtNode(tag);
 				//ReikaJavaLibrary.pConsole(tag+" ;; "+desc);
 				data.put(tag, desc);
@@ -179,7 +180,7 @@ public class GuiGuide extends GuiScreen {
 		 */
 		String s = "This book contains basic information about each of Reika's mods.";
 		if (screen > 0) {
-			String tag = "dragonapi:"+mods.get(screen-1).name().toLowerCase()+":"+tabTags[page];
+			String tag = "dragonapi:"+mods.get(screen-1).name().toLowerCase(Locale.ENGLISH)+":"+tabTags[page];
 			s = data.get(tag);
 		}
 		fontRendererObj.drawSplitString(String.format("%s", s), posX+9, posY+88, 241, 0xffffff);
