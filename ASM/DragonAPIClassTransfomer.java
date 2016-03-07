@@ -50,6 +50,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 
 	private static final MultiMap<String, ClassPatch> classes = new MultiMap().setNullEmpty();
 	private static boolean isKCauldronLoaded;
+	private static boolean isThermosLoaded;
 	private static boolean nullItemPrintout = false;
 	private static boolean nullItemCrash = false;
 
@@ -1659,12 +1660,23 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		}
 
 		isKCauldronLoaded = testKCauldron();
+		isThermosLoaded = testThermos();
 		nullItemPrintout = !ReikaJVMParser.isArgumentPresent("-DragonAPI_noNullItemPrint");
 	}
 
 	private static boolean testKCauldron() {
 		try {
 			Class.forName("kcauldron.KCauldron");
+			return true;
+		}
+		catch(ClassNotFoundException e) {
+			return false;
+		}
+	}
+	
+	private static boolean testThermos() {
+		try {
+			Class.forName("thermos.Thermos");
 			return true;
 		}
 		catch(ClassNotFoundException e) {
