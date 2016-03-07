@@ -1136,7 +1136,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				case BLOCKTICKEVENT: {
 					String sig = "(Lnet/minecraft/world/World;IIILjava/util/Random;)V";
 					String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_149674_a" : "updateTick";
-					int shift = isKCauldronLoaded ? 3 : 0;
+					int shift = (isKCauldronLoaded || isThermosLoaded) ? 3 : 0;
 
 					InsnList fire = new InsnList();
 					fire.add(new VarInsnNode(Opcodes.ALOAD, 0));
