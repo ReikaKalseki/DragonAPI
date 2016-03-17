@@ -605,6 +605,17 @@ public class ReikaASMHelper {
 		cn.methods.add(m);
 	}
 
+	public static void removeMethod(ClassNode cn, String name, String sig) {
+		Iterator<MethodNode> it = cn.methods.iterator();
+		while (it.hasNext()) {
+			MethodNode m = it.next();
+			if (m.name.equals(name) && m.desc.equals(sig)) {
+				it.remove();
+				return;
+			}
+		}
+	}
+
 	public static void addField(ClassNode cn, String name, String type, int flags, Object init) {
 		if (getFieldByName(cn, name) != null)
 			throw new ASMException.DuplicateASMFieldException(cn, name);

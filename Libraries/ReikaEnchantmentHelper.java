@@ -19,6 +19,7 @@ import java.util.Map;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -178,5 +179,35 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 			if (s == e.effectId)
 				it.remove();
 		}
+	}
+
+	public static ItemStack getBasicItemForEnchant(Enchantment e) {
+		switch(e.type) {
+			case all:
+				return new ItemStack(Items.diamond_pickaxe);
+			case armor:
+				return new ItemStack(Items.diamond_chestplate);
+			case armor_feet:
+				return new ItemStack(Items.iron_boots);
+			case armor_head:
+				return new ItemStack(Items.iron_helmet);
+			case armor_legs:
+				return new ItemStack(Items.iron_leggings);
+			case armor_torso:
+				return new ItemStack(Items.iron_chestplate);
+			case bow:
+				return new ItemStack(Items.bow);
+			case breakable:
+				return new ItemStack(Items.golden_pickaxe);
+			case digger:
+				return new ItemStack(Items.iron_shovel);
+			case fishing_rod:
+				return new ItemStack(Items.fishing_rod);
+			case weapon:
+				return new ItemStack(Items.iron_sword);
+			default:
+				break;
+		}
+		return new ItemStack(Blocks.dirt);
 	}
 }

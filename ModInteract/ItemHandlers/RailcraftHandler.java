@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
@@ -22,11 +23,15 @@ public final class RailcraftHandler extends ModHandlerBase {
 	private static final RailcraftHandler instance = new RailcraftHandler();
 
 	public final Block hiddenID;
+
+	private final Block cubeID;
+
 	public final Item firestoneID;
 
 	private RailcraftHandler() {
 		super();
 		Block idhidden = null;
+		Block idcube = null;
 		Item idfirestone = null;
 		if (this.hasMod()) {
 			try {
@@ -35,6 +40,12 @@ public final class RailcraftHandler extends ModHandlerBase {
 				block.setAccessible(true);
 				Block b = (Block)block.get(null);
 				idhidden = b; //may be disabled
+
+				c = Class.forName("mods.railcraft.common.blocks.aesthetics.cube.BlockCube");
+				block = c.getDeclaredField("instance");
+				block.setAccessible(true);
+				b = (Block)block.get(null);
+				idcube = b;
 
 				c = Class.forName("mods.railcraft.common.items.firestone.ItemFirestoneRaw");
 				Field item = c.getDeclaredField("item");
@@ -77,7 +88,35 @@ public final class RailcraftHandler extends ModHandlerBase {
 			this.noMod();
 		}
 		hiddenID = idhidden;
+		cubeID = idcube;
 		firestoneID = idfirestone;
+	}
+
+	public static enum Blocks {
+		COKE(),
+		CONCRETE(),
+		STEEL(),
+		INFERNALBRICK(),
+		CRUSHEDOBSIDIAN(),
+		SANDYBRICK(),
+		ABYSSAL(),
+		QUARRIED(),
+		CREOSOTE(),
+		COPPER(),
+		TIN(),
+		LEAD();
+
+		public int getMetadata() {
+			return this.ordinal();
+		}
+
+		public boolean match(Block b, int meta) {
+			return b == instance.cubeID && meta == this.getMetadata();
+		}
+
+		public ItemStack getItem() {
+			return new ItemStack(instance.cubeID, 1, this.getMetadata());
+		}
 	}
 
 	public static RailcraftHandler getInstance() {

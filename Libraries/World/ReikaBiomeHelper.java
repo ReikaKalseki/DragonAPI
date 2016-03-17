@@ -265,6 +265,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			return true;
 		if (biome == BiomeGenBase.taigaHills)
 			return true;
+		if (biome.biomeName.toLowerCase(Locale.ENGLISH).contains("maple woods"))
+			return true;
 		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
 		for (int i = 0; i < types.length; i++) {
 
@@ -289,6 +291,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		if (biome == BiomeGenBase.taiga)
 			return false;
 		if (biome == BiomeGenBase.taigaHills)
+			return false;
+		if (biome.biomeName.toLowerCase(Locale.ENGLISH).contains("maple woods")) //I do NOT live in the Arctic
 			return false;
 		if (biome.getEnableSnow())
 			return true;

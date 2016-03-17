@@ -240,8 +240,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 					drops.add(((MachineRegistryBlock)id).getMachine(world, x, y, z).getCraftedProduct());
 				}
 				else {
-					if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta))
-						drops.add(ReikaBlockHelper.getSilkTouch(world, x, y, z, id, meta, dropFluids));
+					if (silkTouch && ReikaBlockHelper.attemptSilkTouch(world, x, y, z) && id.canSilkHarvest(world, player, x, y, z, meta))
+						drops.add(ReikaBlockHelper.getSilkTouch(world, x, y, z, id, meta, player, dropFluids));
 					else
 						drops.addAll(ReikaWorldHelper.getDropsAt(world, x, y, z, fortune, player));
 				}

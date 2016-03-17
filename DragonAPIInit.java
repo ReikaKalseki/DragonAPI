@@ -94,6 +94,7 @@ import Reika.DragonAPI.Command.BlockReplaceCommand;
 import Reika.DragonAPI.Command.ChunkGenCommand;
 import Reika.DragonAPI.Command.ClassLoaderCommand;
 import Reika.DragonAPI.Command.ClearItemsCommand;
+import Reika.DragonAPI.Command.ConfigReloadCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
 import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
 import Reika.DragonAPI.Command.EntityCountCommand;
@@ -121,6 +122,7 @@ import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.LagWarningFilter;
@@ -670,6 +672,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new PopulateMinimapCommand());
 		evt.registerServerCommand(new BiomeMapCommand());
 		evt.registerServerCommand(new PlayerNBTCommand());
+		evt.registerServerCommand(new ConfigReloadCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();
@@ -737,7 +740,8 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void onGameLoaded(GameFinishedLoadingEvent evt) throws InterruptedException {
 		this.checkRemoteAssetDownload();
 		//if (ModList.liteLoaderInstalled())
-		Minecraft.getMinecraft().refreshResources();
+		if (!ReikaObfuscationHelper.isDeObfEnvironment())
+			Minecraft.getMinecraft().refreshResources();
 		if (ModList.NEI.isLoaded()) {
 			NEIIntercept.instance.register();
 			//NEIFontRendererHandler.instance.register();
@@ -758,6 +762,13 @@ public class DragonAPIInit extends DragonAPIMod {
 			Thread.sleep(d);
 			time += d;
 		}
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void stopHotbarSwap(HotbarKeyEvent evt) {
+		if (DragonOptions.NOHOTBARSWAP.getState())
+			evt.setCanceled(true);
 	}
 
 	@SubscribeEvent

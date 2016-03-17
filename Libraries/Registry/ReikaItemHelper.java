@@ -39,8 +39,10 @@ import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -596,5 +598,57 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 	public static void toggleDamageBit(ItemStack is, int bit) {
 		is.setItemDamage(ReikaMathLibrary.toggleBit(is.getItemDamage(), bit));
+	}
+
+	public static ArrayList<ItemStack> collateItemList(Collection<ItemStack> c) {
+		ArrayList<ItemStack> li = new ArrayList();
+		ItemHashMap<Integer> vals = new ItemHashMap();
+		for (ItemStack is : c) {
+			Integer get = vals.get(is);
+			int val = get != null ? get.intValue() : 0;
+			vals.put(is, val+is.stackSize);
+		}
+		for (ItemStack is : vals.keySet()) {
+			int val = vals.get(is);
+			while (val > 0) {
+				int amt = Math.min(val, is.getMaxStackSize());
+				ItemStack copy = getSizedItemStack(is, amt);
+				li.add(copy);
+				val -= amt;
+			}
+		}
+		return li;
+	}
+
+	public static ItemStack lookupItem(String s) {
+		String[] parts = s.split(":");
+		int m = 0;
+		if (parts.length == 3) {
+			try {
+				m = Integer.parseInt(parts[2]);
+			}
+			catch (NumberFormatException e) {
+
+			}
+		}
+		return lookupItem(parts[0], parts[1], m);
+	}
+
+	public static ItemStack lookupItem(ModList mod, String s, int meta) {
+		return lookupItem(mod.modLabel, s, meta);
+	}
+
+	public static ItemStack lookupItem(String mod, String item, int meta) {
+		Item i = GameRegistry.findItem(mod, item);
+		return i != null ? new ItemStack(i, 1, meta) : null;
+	}
+
+	public static ItemStack lookupBlock(ModList mod, String s, int meta) {
+		return lookupBlock(mod.modLabel, s, meta);
+	}
+
+	public static ItemStack lookupBlock(String mod, String s, int meta) {
+		Block b = Block.getBlockFromName(mod+":"+s);
+		return b != null ? new ItemStack(b, 1, meta) : null;
 	}
 }

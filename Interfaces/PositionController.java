@@ -7,14 +7,16 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Interfaces.TileEntity;
+package Reika.DragonAPI.Interfaces;
 
-public interface SidePlacedTile {
+import net.minecraft.entity.Entity;
 
-	public void placeOnSide(int s);
 
-	public boolean checkLocationValidity();
+public interface PositionController {
 
-	public void drop();
+	public void update(Entity e);
+	public double getPositionX(Entity e);
+	public double getPositionY(Entity e);
+	public double getPositionZ(Entity e);
 
 }

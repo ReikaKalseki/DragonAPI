@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import net.minecraft.client.renderer.Tessellator;
@@ -88,7 +89,7 @@ public class Proportionality<F> {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void renderAsPie(double x, double y, double r, double zeroAng, HashMap<F, Integer> colorMap) {
+	public void renderAsPie(double x, double y, double r, double zeroAng, Map<F, Integer> colorMap) {
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glDisable(GL11.GL_LIGHTING);

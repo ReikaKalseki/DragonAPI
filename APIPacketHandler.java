@@ -184,6 +184,10 @@ public class APIPacketHandler implements PacketHandler {
 				case KEYUPDATE:
 					int ordinal = data[0];
 					boolean used = data[1] > 0;
+					if (ordinal < 0 || ordinal > Key.keyList.length) {
+						DragonAPICore.logError("Caught key packet for key #"+ordinal+" (use="+used+"), yet no such key exists.");
+						break;
+					}
 					Key key = Key.keyList[ordinal];
 					KeyWatcher.instance.setKey(ep, key, used);
 					MinecraftForge.EVENT_BUS.post(new RawKeyPressEvent(key, ep));
@@ -318,7 +322,7 @@ public class APIPacketHandler implements PacketHandler {
 				CommandableUpdateChecker.instance.onClientReceiveOldModID(sg);
 				break;
 			case LOGIN:
-				MinecraftForge.EVENT_BUS.post(new ClientLoginEvent(player));
+				MinecraftForge.EVENT_BUS.post(new ClientLoginEvent(player, data[0] > 0));
 				break;
 			case BREAKPARTICLES:
 				Block b = Block.getBlockById(data[0]);
@@ -418,6 +422,8 @@ public class APIPacketHandler implements PacketHandler {
 				case BIOMEPNGDAT:
 					return 1+3*BiomeMapCommand.PACKET_COMPILE;
 				case BIOMEPNGEND:
+					return 1;
+				case LOGIN:
 					return 1;
 				default:
 					return 0;

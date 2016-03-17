@@ -19,8 +19,11 @@ public class ClientLoginEvent extends Event {
 
 	public final EntityPlayer player;
 
-	public ClientLoginEvent(EntityPlayer ep) {
+	public final boolean newLogin;
+
+	public ClientLoginEvent(EntityPlayer ep, boolean log) {
 		player = ep;
+		newLogin = log;
 	}
 
 }

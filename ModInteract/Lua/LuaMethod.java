@@ -99,6 +99,7 @@ public abstract class LuaMethod {
 	public static enum ReturnType {
 		VOID("void"),
 		INTEGER("int"),
+		LONG("long"),
 		ARRAY("Object[]"),
 		STRING("String"),
 		BOOLEAN("boolean"),

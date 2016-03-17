@@ -22,6 +22,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig {
 	TABNBT("Show TileEntity NBT when using TAB", false),
 	SOUNDCHANNELS("Increase sound channel count", true),
 	UNNERFOBSIDIAN("Restore Obsidian Blast Resistance", true),
+	NOHOTBARSWAP("Disable Hotbar Swapping", false),
 	CHATERRORS("Log errors to chat", true),
 	SORTCREATIVE("Sort Creative Tabs Alphabetically", true),
 	CUSTOMRENDER("Custom/Donator Renders", true),

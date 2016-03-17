@@ -152,13 +152,15 @@ public class FilledBlockArray extends StructuredBlockArray {
 	}
 
 	public boolean matchInWorld() {
+		if (world.isRemote)
+			return true;
 		for (Coordinate c : data.keySet()) {
 			int x = c.xCoord;
 			int y = c.yCoord;
 			int z = c.zCoord;
 			BlockCheck bk = this.getBlockKey(x, y, z);
 			//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk+" & "+world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z));
-			if (!world.isRemote && !bk.matchInWorld(world, x, y, z)) {
+			if (!bk.matchInWorld(world, x, y, z)) {
 				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk.getClass()+":"+bk+" & "+world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z));
 				//bk.place(world, x, y, z);
 				//world.setBlock(x, y, z, Blocks.brick_block);

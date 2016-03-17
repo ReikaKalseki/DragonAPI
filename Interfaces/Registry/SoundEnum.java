@@ -40,4 +40,7 @@ public interface SoundEnum {
 	/** Use this for clientside volume controls. */
 	public float getModulatedVolume();
 
+	/** Should this audio file be preloaded for real-time playback? */
+	public boolean preload();
+
 }

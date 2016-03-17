@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -28,12 +31,15 @@ import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.BlockTieredResource;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Interfaces.Block.SpecialOreBlock;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumItemHelper.BlockEntry;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
@@ -248,7 +254,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		return false;
 	}
 
-	public static ItemStack getSilkTouch(World world, int x, int y, int z, Block id, int meta, boolean dropFluids) {
+	public static ItemStack getSilkTouch(World world, int x, int y, int z, Block id, int meta, EntityPlayer ep, boolean dropFluids) {
 		if (id == Blocks.air || id == Blocks.piston_extension || id == Blocks.piston_head || id == Blocks.fire)
 			return null;
 		if (id == Blocks.portal || id == Blocks.end_portal)
@@ -264,6 +270,16 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		}
 		if (ReikaBlockHelper.isLiquid(id) && !(dropFluids && ReikaWorldHelper.isLiquidSourceBlock(world, x, y, z)))
 			return null;
+		if (id instanceof BlockTieredResource) {
+			BlockTieredResource b = (BlockTieredResource)id;
+			if (ep != null && b.isPlayerSufficientTier(world, x, y, z, ep)) {
+				return ReikaItemHelper.collateItemList(b.getHarvestResources(world, x, y, z, 0, ep)).get(0);
+			}
+			else {
+				Collection<ItemStack> li = b.getNoHarvestResources(world, x, y, z, 0, ep);
+				return li.isEmpty() ? null : new ArrayList<ItemStack>(li).get(0);
+			}
+		}
 		return new ItemStack(id, 1, getSilkTouchMetaDropped(id, meta));
 	}
 
@@ -335,5 +351,14 @@ public final class ReikaBlockHelper extends DragonAPICore {
 
 	public static boolean isUnbreakable(World world, int x, int y, int z, Block id, int meta, EntityPlayer ep) {
 		return id.getBlockHardness(world, x, y, z) < 0 || id.getPlayerRelativeBlockHardness(ep, world, x, y, z) < 0;
+	}
+
+	public static boolean attemptSilkTouch(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		if (b instanceof BlockTieredResource)
+			return false;
+		if (b == BlockEntry.NODE.getBlock())
+			return false;
+		return true;
 	}
 }

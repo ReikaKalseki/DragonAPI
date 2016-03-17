@@ -2148,4 +2148,22 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 		return true;
 	}
+
+	public static boolean matchBlock(IBlockAccess world, int x, int y, int z, Block b, int meta) {
+		return world.getBlock(x, y, z) == b && world.getBlockMetadata(x, y, z) == meta;
+	}
+
+	public static void fertilizeAndHealBlock(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		if (b == Blocks.dirt && meta == 0) {
+			world.setBlock(x, y, z, Blocks.grass);
+		}
+		else if (b == Blocks.deadbush || (b == Blocks.tallgrass && meta == 0)) {
+			world.setBlock(x, y, z, Blocks.tallgrass, rand.nextInt(6) == 0 ? 2 : 1, 3);
+		}
+		else if (b == Blocks.farmland) {
+			hydrateFarmland(world, x, y, z, true);
+		}
+	}
 }

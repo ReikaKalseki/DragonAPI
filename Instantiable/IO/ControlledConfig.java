@@ -47,6 +47,8 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ControlledConfig {
 
+	private static final HashMap<String, ControlledConfig> configs = new HashMap();
+
 	protected Configuration config;
 
 	private int readID;
@@ -73,6 +75,10 @@ public class ControlledConfig {
 		configMod = mod;
 		optionList = option;
 		IDList = id;
+		String n = ReikaStringParser.stripSpaces(mod.getDisplayName());
+		if (configs.containsKey(n))
+			throw new IllegalArgumentException("Only one config permitted per mod!");
+		configs.put(n, this);
 
 		if (option != null) {
 			controls = new Object[optionList.length];
@@ -660,5 +666,9 @@ public class ControlledConfig {
 		if (config == null)
 			throw new MisuseException("You cannot reload a config before it is initialized!");
 		this.loadConfig();
+	}
+
+	public static ControlledConfig getForMod(String mod) {
+		return configs.get(mod);
 	}
 }

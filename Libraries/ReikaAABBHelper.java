@@ -9,13 +9,19 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.HashSet;
+
+import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -153,6 +159,50 @@ public final class ReikaAABBHelper extends DragonAPICore {
 	public static AxisAlignedBB getSizedBlockAABB(int x, int y, int z, float size) {
 		size = size/2F;
 		return AxisAlignedBB.getBoundingBox(x+0.5-size, y+0.5-size, z+0.5-size, x+0.5+size, y+0.5+size, z+0.5+size);
+	}
+
+	public static HashSet<Coordinate> getBlocksIntersectingAABB(AxisAlignedBB box, World world, boolean checkCollideable) {
+		HashSet<Coordinate> c = new HashSet();
+		int minX = MathHelper.floor_double(box.minX);
+		int minY = MathHelper.floor_double(box.minY);
+		int minZ = MathHelper.floor_double(box.minZ);
+		int maxX = MathHelper.floor_double(box.maxX);
+		int maxY = MathHelper.floor_double(box.maxY);
+		int maxZ = MathHelper.floor_double(box.maxZ);
+		for (int x = minX; x <= maxX; x++) {
+			for (int y = minY; y <= maxY; y++) {
+				for (int z = minZ; z <= maxZ; z++) {
+					Block b = world.getBlock(x, y, z);
+					int meta = world.getBlockMetadata(x, y, z);
+					if (checkCollideable) {
+						if (!b.isCollidable())
+							continue;
+						if (!b.canCollideCheck(meta, false))
+							continue;
+					}
+					if (x == minX && box.minX >= x+b.getBlockBoundsMaxX()) {
+						continue;
+					}
+					else if (x == maxX && box.maxX <= x+b.getBlockBoundsMinX()) {
+						continue;
+					}
+					else if (y == minY && box.minY >= y+b.getBlockBoundsMaxY()) {
+						continue;
+					}
+					else if (y == maxY && box.maxY <= y+b.getBlockBoundsMinY()) {
+						continue;
+					}
+					else if (z == minZ && box.minZ >= z+b.getBlockBoundsMaxZ()) {
+						continue;
+					}
+					else if (z == maxZ && box.maxZ <= z+b.getBlockBoundsMinZ()) {
+						continue;
+					}
+					c.add(new Coordinate(x, y, z));
+				}
+			}
+		}
+		return c;
 	}
 
 }

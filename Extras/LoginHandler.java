@@ -76,7 +76,7 @@ public final class LoginHandler implements PlayerTracker {
 		if (ep instanceof EntityPlayerMP) {
 			EntityPlayerMP emp = (EntityPlayerMP)ep;
 			syncPlayer(emp);
-			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.LOGIN.ordinal(), emp);
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.LOGIN.ordinal(), emp, 1);
 		}
 		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(ep, ep.worldObj.provider.dimensionId));
 	}
@@ -91,6 +91,7 @@ public final class LoginHandler implements PlayerTracker {
 		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(player, player.worldObj.provider.dimensionId));
 		if (player instanceof EntityPlayerMP) {
 			syncPlayer((EntityPlayerMP)player);
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.LOGIN.ordinal(), (EntityPlayerMP)player, 0);
 		}
 	}
 

@@ -44,7 +44,7 @@ public class APIProxyClient extends APIProxy {
 		//mc.mcResourceManager = new CustomResourceManager((SimpleReloadableResourceManager)mc.mcResourceManager);
 
 		MinecraftForge.EVENT_BUS.register(DebugOverlay.instance);
-		ResourceReloadEvent.register();
+		ResourceReloadEvent.registerPre();
 
 		//MinecraftForge.EVENT_BUS.register(PlayerModelRenderer.instance);
 		//MinecraftForge.EVENT_BUS.register(CustomSoundHandler.instance);
@@ -67,6 +67,7 @@ public class APIProxyClient extends APIProxy {
 	@Override
 	public void registerSidedHandlersGameLoaded() {
 		PlayerSpecificRenderer.instance.registerIntercept();
+		ResourceReloadEvent.registerPost();
 	}
 
 	@Override

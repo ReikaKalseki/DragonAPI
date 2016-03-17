@@ -15,6 +15,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
+
 public interface ConnectedTextureGlass {
 
 	/** Returns the unconnected sides. Each integer represents one of 8 adjacent corners to a face, with the same

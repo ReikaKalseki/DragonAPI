@@ -11,7 +11,6 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.util.EnumMap;
 import java.util.EnumSet;
 
@@ -23,6 +22,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Keyboard;
 
 import Reika.DragonAPI.APIPacketHandler;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
@@ -131,16 +131,21 @@ public class KeyWatcher {
 		private void sendPacket() {
 			ByteArrayOutputStream bytes = new ByteArrayOutputStream(8);
 			DataOutputStream data = new DataOutputStream(bytes);
+			boolean flag = false;
 			try {
 				data.writeInt(APIPacketHandler.PacketIDs.KEYUPDATE.ordinal());
 				data.writeInt(this.ordinal());
 				data.writeInt(this.pollKey() ? 1 : 0);
+				flag = true;
 			}
-			catch (IOException e) {
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 
-			ReikaPacketHelper.sendRawPacket(DragonAPIInit.packetChannel, bytes);
+			if (flag)
+				ReikaPacketHelper.sendRawPacket(DragonAPIInit.packetChannel, bytes);
+			else
+				DragonAPICore.log("Could not send key "+this+" packet, as it was malformed.");
 		}
 	}
 

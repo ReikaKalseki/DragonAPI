@@ -110,6 +110,11 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		PIGZOMBIEAGGROSPREADEVENT("net.minecraft.entity.monster.EntityPigZombie", "yh"),
 		BIOMEMUTATIONEVENT("net.minecraft.world.gen.layer.GenLayerHills", "axr"),
 		CRASHNOTIFICATIONS("net.minecraft.crash.CrashReport", "b"),
+		KEEPINVEVENT("net.minecraft.entity.player.EntityPlayer", "yz"),
+		KEEPINVEVENT2("net.minecraft.entity.player.EntityPlayerMP", "mw"),
+		HOTBARKEYEVENT("net.minecraft.client.gui.inventory.GuiContainer", "bex"),
+		RENDERBLOCKEVENT("net.minecraft.client.renderer.WorldRenderer", "blo"),
+		MOUSEOVEREVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		;
 
 		private final String obfName;
@@ -1558,6 +1563,90 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					li.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "Reika/DragonAPI/Auxiliary/Trackers/CrashNotifications", "notifyCrash", "(Lnet/minecraft/crash/CrashReport;)V", false));
 					m.instructions.insertBefore(m.instructions.getLast(), li);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case KEEPINVEVENT: {
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/PlayerKeepInventoryEvent", "fire", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/entity/player/EntityPlayer;)Z", false));
+
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_71049_a", "clonePlayer", "(Lnet/minecraft/entity/player/EntityPlayer;Z)V");
+					AbstractInsnNode ain = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.LDC, "keepInventory");
+					AbstractInsnNode load = ReikaASMHelper.getLastOpcodeBefore(m.instructions, m.instructions.indexOf(ain), Opcodes.ALOAD);
+					ReikaASMHelper.deleteFrom(m.instructions, load.getNext(), ain.getNext());
+					m.instructions.insert(load, ReikaASMHelper.copyInsnList(li));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 1!");
+
+					li = new InsnList();
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/PlayerKeepInventoryEvent", "fire", "(Lnet/minecraft/entity/player/EntityPlayer;)Z", false));
+
+					m = ReikaASMHelper.getMethodByName(cn, "func_70645_a", "onDeath", "(Lnet/minecraft/util/DamageSource;)V");
+					ain = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.LDC, "keepInventory");
+					load = ReikaASMHelper.getLastOpcodeBefore(m.instructions, m.instructions.indexOf(ain), Opcodes.ALOAD);
+					ReikaASMHelper.deleteFrom(m.instructions, load.getNext(), ain.getNext());
+					m.instructions.insert(load, ReikaASMHelper.copyInsnList(li));
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler 2!");
+					break;
+				}
+				case KEEPINVEVENT2: {
+					InsnList li = new InsnList();
+					//li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/PlayerKeepInventoryEvent", "fire", "(Lnet/minecraft/entity/player/EntityPlayer;)Z", false));
+
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70645_a", "onDeath", "(Lnet/minecraft/util/DamageSource;)V");
+					AbstractInsnNode ain = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.LDC, "keepInventory");
+					AbstractInsnNode load = ReikaASMHelper.getLastOpcodeBefore(m.instructions, m.instructions.indexOf(ain), Opcodes.ALOAD);
+					ReikaASMHelper.deleteFrom(m.instructions, load.getNext(), ain.getNext());
+					m.instructions.insert(load, ReikaASMHelper.copyInsnList(li));
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case HOTBARKEYEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_146983_a", "checkHotbarKeys", "(I)Z");
+					String f = FMLForgePlugin.RUNTIME_DEOBF ? "field_147006_u" : "theSlot";
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/gui/inventory/GuiContainer", f, "Lnet/minecraft/inventory/Slot;"));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 1));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/HotbarKeyEvent", "fire", "(Lnet/minecraft/client/gui/inventory/GuiContainer;Lnet/minecraft/inventory/Slot;II)Z", false));
+					AbstractInsnNode jump = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.IF_ICMPNE);
+					AbstractInsnNode end = jump.getPrevious();
+					AbstractInsnNode start = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(end), Opcodes.ILOAD, 1);
+					ReikaASMHelper.deleteFrom(m.instructions, start, end);
+					m.instructions.insertBefore(jump, li);
+					ReikaASMHelper.changeOpcode(jump, Opcodes.IFEQ);
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case RENDERBLOCKEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147892_a", "updateRenderer", "(Lnet/minecraft/entity/EntityLivingBase;)V");
+					String name = FMLForgePlugin.RUNTIME_DEOBF ? "func_147805_b" : "renderBlockByRenderType";
+					AbstractInsnNode ain = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/client/renderer/RenderBlocks", name, "(Lnet/minecraft/block/Block;III)Z");
+					m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/RenderBlockAtPosEvent", "fire", "(Lnet/minecraft/client/renderer/WorldRenderer;Lnet/minecraft/client/renderer/RenderBlocks;Lnet/minecraft/block/Block;IIII)Z", false));
+					m.instructions.insert(ain, new VarInsnNode(Opcodes.ILOAD, 17)); //renderpass "k2"
+					AbstractInsnNode load = ain.getPrevious();
+					while (load.getPrevious() instanceof VarInsnNode) {
+						load = load.getPrevious();
+					}
+					m.instructions.insert(load, new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.remove(ain);
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case MOUSEOVEREVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_78473_a", "getMouseOver", "(F)V");
+					AbstractInsnNode ain = ReikaASMHelper.getNthOpcode(m.instructions, Opcodes.PUTFIELD, 2);
+					m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/GetMouseoverEvent", "fire", "(F)V", false));
+					m.instructions.insert(ain, new VarInsnNode(Opcodes.FLOAD, 1));
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
 				}
 			}
 

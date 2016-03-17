@@ -73,7 +73,8 @@ public class ThaumItemHelper {
 		ETHEREAL("blockCustomPlant", 4),
 		CRYSTAL("blockCrystal"),
 		JAR("blockJar"),
-		NODEPLACER("blockAiry", 0),
+		NODE("blockAiry", 0),
+		TOTEMNODE("blockAiry", 4),
 		;
 
 		public final int metadata;
@@ -98,7 +99,7 @@ public class ThaumItemHelper {
 	}
 
 	public static boolean isTotemBlock(Block b, int meta) {
-		return b == BlockEntry.TOTEM.getBlock() && meta < 2;
+		return (b == BlockEntry.TOTEM.getBlock() && meta < 2) || (b == BlockEntry.TOTEMNODE.getBlock() && meta == BlockEntry.TOTEMNODE.metadata);
 	}
 
 	public static boolean isCrystalCluster(Block b) {

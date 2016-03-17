@@ -154,6 +154,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 		GL11.glTranslated(x1, y1, z1);
 
+		//ReikaJavaLibrary.pConsole(x1+","+y1+","+z1+"  >  "+x2+","+y2+","+z2);
+
 		double f7 = Math.sqrt(dx*dx+dz*dz);
 		double f8 = Math.sqrt(dx*dx+dy*dy+dz*dz);
 		double ang1 = -Math.atan2(dz, dx) * 180 / Math.PI-90;

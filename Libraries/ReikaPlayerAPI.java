@@ -44,6 +44,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Event.GetPlayerLookEvent;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -106,7 +107,9 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		Vec3 vec2 = ep.getLook(1.0F);
 		Vec3 vec3 = vec.addVector(vec2.xCoord*reach, vec2.yCoord*reach, vec2.zCoord*reach);
 		MovingObjectPosition hit = ep.worldObj.rayTraceBlocks(vec, vec3, liq);
-
+		GetPlayerLookEvent evt = new GetPlayerLookEvent(ep, hit, vec, vec3);
+		MinecraftForge.EVENT_BUS.post(evt);
+		hit = evt.newLook;
 		if (hit != null && hit.typeOfHit == MovingObjectType.BLOCK)
 			return hit;
 		return null;

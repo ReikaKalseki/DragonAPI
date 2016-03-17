@@ -1031,6 +1031,46 @@ public class BlockArray implements Iterable<Coordinate> {
 		this.resetLimits();
 	}
 
+	public void intersectWith(BlockArray b) {
+		Iterator<Coordinate> it = blocks.iterator();
+		while (it.hasNext()) {
+			Coordinate c = it.next();
+			if (!b.keys.contains(c)) {
+				it.remove();
+				keys.remove(c);
+			}
+		}
+		this.resetLimits();
+	}
+
+	public static BlockArray getIntersectedBox(BlockArray b1, BlockArray b2) {
+		BlockArray b = b1.instantiate();
+		for (Coordinate c : b1.blocks) {
+			if (b2.keys.contains(c)) {
+				b.addKey(c);
+			}
+		}
+		return b;
+	}
+
+	public void unifyWith(BlockArray b) {
+		for (Coordinate c : b.blocks) {
+			this.addKey(c);
+		}
+		this.resetLimits();
+	}
+
+	public static BlockArray getUnifiedBox(BlockArray b1, BlockArray b2) {
+		BlockArray b = b1.instantiate();
+		for (Coordinate c : b1.blocks) {
+			b.addKey(c);
+		}
+		for (Coordinate c : b2.blocks) {
+			b.addKey(c);
+		}
+		return b;
+	}
+
 	public final AxisAlignedBB asAABB() {
 		return AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX+1, maxY+1, maxZ+1);
 	}
