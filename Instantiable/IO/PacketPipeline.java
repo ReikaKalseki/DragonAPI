@@ -83,15 +83,15 @@ public class PacketPipeline {
 		wrapper.sendTo(p, player);
 	}
 
-	public void sendToAllAround(PacketObj p, TileEntity te, int range) {
+	public void sendToAllAround(PacketObj p, TileEntity te, double range) {
 		this.sendToAllAround(p, new WorldLocation(te), range);
 	}
 
-	public void sendToAllAround(PacketObj p, World world, double x, double y, double z, int range) {
+	public void sendToAllAround(PacketObj p, World world, double x, double y, double z, double range) {
 		this.sendToAllAround(p, world.provider.dimensionId, x, y, z, range);
 	}
 
-	public void sendToAllAround(PacketObj p, int world, double x, double y, double z, int range) {
+	public void sendToAllAround(PacketObj p, int world, double x, double y, double z, double range) {
 		TargetPoint pt = new TargetPoint(world, x, y, z, range);
 		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
 		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(pt);
@@ -99,7 +99,7 @@ public class PacketPipeline {
 		wrapper.sendToAllAround(p, pt);
 	}
 
-	public void sendToAllAround(PacketObj p, Entity e, int range) {
+	public void sendToAllAround(PacketObj p, Entity e, double range) {
 		TargetPoint pt = new TargetPoint(e.worldObj.provider.dimensionId, e.posX, e.posY, e.posZ, range);
 		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
 		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(pt);
@@ -107,7 +107,7 @@ public class PacketPipeline {
 		wrapper.sendToAllAround(p, pt);
 	}
 
-	public void sendToAllAround(PacketObj p, WorldLocation loc, int range) {
+	public void sendToAllAround(PacketObj p, WorldLocation loc, double range) {
 		TargetPoint pt = new TargetPoint(loc.dimensionID, loc.xCoord, loc.yCoord, loc.zCoord, range);
 		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.ALLAROUNDPOINT);
 		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(pt);
@@ -145,12 +145,12 @@ public class PacketPipeline {
 		@Override
 		public IMessage onMessage(PacketObj message, MessageContext ctx) {
 			switch(ctx.side) {
-			case CLIENT:
-				message.handleClient(ctx.getClientHandler());
-				break;
-			case SERVER:
-				message.handleServer(ctx.getServerHandler());
-				break;
+				case CLIENT:
+					message.handleClient(ctx.getClientHandler());
+					break;
+				case SERVER:
+					message.handleServer(ctx.getServerHandler());
+					break;
 			}
 			return null; //return a packetObj if sending a reply
 		}

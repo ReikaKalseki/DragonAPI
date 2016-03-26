@@ -163,7 +163,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		if (ModOreList.isModOre(id, meta))
 			return true;
 		if (Item.getItemFromBlock(id) == null) {
-			DragonAPICore.logError("Block "+id+" has no item to compare against for Ore Check?!");
+			//DragonAPICore.logError("Block "+id+" has no item to compare against for Ore Check?!");
 			return false;
 		}
 		return ReikaOreHelper.getEntryByOreDict(new ItemStack(id, 1, meta)) != null;

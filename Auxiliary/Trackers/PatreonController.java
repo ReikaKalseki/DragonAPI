@@ -18,6 +18,7 @@ import java.util.UUID;
 import Reika.DragonAPI.Auxiliary.Trackers.DonatorController.Donator;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.Maps.CountMap;
 
 public final class PatreonController {
 
@@ -51,16 +52,16 @@ public final class PatreonController {
 		return Collections.unmodifiableCollection(data.get(mod).data.keySet());
 	}
 
-	public int getAmount(DragonAPIMod mod, String name) {
-		return data.get(mod).getAmount(name);
+	public int getAmount(DragonAPIMod mod, String name, UUID id) {
+		return data.get(mod).getAmount(name, id);
 	}
 
 	public Collection<Donator> getPatronsOver(DragonAPIMod mod, int amount) {
 		return data.get(mod).getPatronsOver(amount);
 	}
 
-	public boolean isPatronAtLeast(DragonAPIMod mod, String name, int amount) {
-		return data.get(mod).isPatronAtLeast(name, amount);
+	public boolean isPatronAtLeast(DragonAPIMod mod, String name, UUID id, int amount) {
+		return data.get(mod).isPatronAtLeast(name, id, amount);
 	}
 
 	public int getTotal(DragonAPIMod mod) {
@@ -74,16 +75,17 @@ public final class PatreonController {
 
 	private static class Patrons {
 
-		private final HashMap<Donator, Integer> data = new HashMap();
+		private final CountMap<Donator> data = new CountMap();
 
 		private int total;
 
 		private void addPatron(String name, UUID id, int amt) {
-			if (data.containsKey(name)) {
+			Donator d = new Donator(name, id);
+			if (data.containsKey(d)) {
 				throw new MisuseException("You cannot have two copies of the same patron!");
 			}
 			else {
-				data.put(new Donator(name, id), amt);
+				data.increment(d, amt);
 				total += amt;
 			}
 		}
@@ -92,9 +94,9 @@ public final class PatreonController {
 			return total;
 		}
 
-		private int getAmount(String name) {
-			Integer e = data.get(name);
-			return e != null ? e.intValue() : 0;
+		private int getAmount(String name, UUID id) {
+			Donator d = new Donator(name, id);
+			return data.get(d);
 		}
 
 		private Collection<Donator> getPatronsOver(int amount) {
@@ -107,8 +109,8 @@ public final class PatreonController {
 			return li;
 		}
 
-		private boolean isPatronAtLeast(String name, int amount) {
-			return this.getAmount(name) >= amount;
+		private boolean isPatronAtLeast(String name, UUID id, int amount) {
+			return this.getAmount(name, id) >= amount;
 		}
 
 		@Override

@@ -27,11 +27,12 @@ public class LuaGetSlot extends LuaMethod {
 		ItemStack is = ii.getStackInSlot(slot);
 		if (is == null)
 			return null;
-		Object[] o = new Object[4];
-		o[0] = is.getItem();
+		Object[] o = new Object[5];
+		o[0] = is.getItem().getUnlocalizedName();
 		o[1] = is.getItemDamage();
 		o[2] = is.stackSize;
 		o[3] = is.getDisplayName();
+		o[4] = is.stackTagCompound != null ? is.stackTagCompound.toString() : null;
 		return o;
 	}
 

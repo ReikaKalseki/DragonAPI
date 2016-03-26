@@ -102,6 +102,7 @@ public class ConfigMatcher {
 		else if (get.intValue() != val) {
 			map.put(s, new Mismatch(s, get.intValue(), val));
 		}
+		DragonAPICore.debug("Player "+ep.getCommandSenderName()+" logging in. Performing config check. "+mismatch+" / "+data);
 	}
 
 	public void match(EntityPlayerMP ep) {

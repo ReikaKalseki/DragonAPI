@@ -15,12 +15,14 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
 public class ImagedGuiButton extends GuiButton {
 
@@ -44,6 +46,10 @@ public class ImagedGuiButton extends GuiButton {
 
 	private boolean lastHover;
 	private int ticks = 0;
+
+	public IIcon icon = null;
+	public int iconWidth = width;
+	public int iconHeight = height;
 
 	public ImagedGuiButton(int par1, int par2, int par3, String par4Str, Class mod)
 	{
@@ -147,6 +153,18 @@ public class ImagedGuiButton extends GuiButton {
 				this.drawToolTip(mc, mx, my);
 			}
 			GL11.glColor4d(1, 1, 1, 1);
+
+			if (icon != null) {
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+				GL11.glEnable(GL11.GL_BLEND);
+				GL11.glDisable(GL11.GL_LIGHTING);
+				BlendMode.DEFAULT.apply();
+				ReikaTextureHelper.bindTerrainTexture();
+				int dx = (width-iconWidth)/2;
+				int dy = (height-iconHeight)/2;
+				ReikaGuiAPI.instance.drawTexturedModelRectFromIcon(xPosition+dx, yPosition+dy, icon, iconWidth, iconHeight);
+				GL11.glPopAttrib();
+			}
 
 			if (!lastHover && field_146123_n && ticks > 1) {
 				this.onHoverTo();

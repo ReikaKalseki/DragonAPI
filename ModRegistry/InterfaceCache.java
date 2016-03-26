@@ -30,7 +30,9 @@ public enum InterfaceCache {
 	TINKERTOOL("tconstruct.library.tools.ToolCore"),
 	DSU("powercrystals.minefactoryreloaded.api.IDeepStorageUnit"),
 	STREAM("streams.block.FixedFlowBlock"),
-	SPELLSHOT("WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile");
+	SPELLSHOT("WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile"),
+	GASITEM("mekanism.api.gas.IGasItem"),
+	;
 
 	private final String classpath;
 	public final String name;

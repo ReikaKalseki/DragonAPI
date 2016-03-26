@@ -31,6 +31,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.ConfigMatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
+import Reika.DragonAPI.Auxiliary.Trackers.ModFileVersionChecker;
 import Reika.DragonAPI.Base.TileEntityBase;
 import Reika.DragonAPI.Command.BiomeMapCommand;
 import Reika.DragonAPI.Command.EntityListCommand;
@@ -267,7 +268,7 @@ public class APIPacketHandler implements PacketHandler {
 					break;
 				case ITEMDROPPER:
 					break;
-				case ITEMDROPPERREQUEST:
+				case ITEMDROPPERREQUEST: {
 					Entity e = world.getEntityByID(data[0]);
 					if (e instanceof EntityItem && e.getEntityData().hasKey("dropper")) {
 						String s = e.getEntityData().getString("dropper");
@@ -275,6 +276,7 @@ public class APIPacketHandler implements PacketHandler {
 						ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.ITEMDROPPER.ordinal(), (EntityPlayerMP)ep, s, data[0]);
 					}
 					break;
+				}
 				case PLAYERINTERACT:
 					MinecraftForge.EVENT_BUS.post(new PlayerInteractEventClient(ep, Action.values()[data[4]], data[0], data[1], data[2], data[3], world));
 					break;
@@ -293,6 +295,20 @@ public class APIPacketHandler implements PacketHandler {
 				case BIOMEPNGEND:
 					BiomeMapCommand.finishCollectingAndMakeImage(data[0]);
 					break;
+				case FILEMATCH:
+					ModFileVersionChecker.instance.checkFiles((EntityPlayerMP)ep, stringdata);
+					break;
+				case ENTITYSYNC: {
+					int id = NBT.getInteger("dispatchID");
+					Entity e = world.getEntityByID(id);
+					if (e != null) {
+						e.readFromNBT(NBT);
+					}
+					else {
+						DragonAPICore.logError("Entity does not exist clientside to be synced!");
+					}
+					break;
+				}
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -378,7 +394,9 @@ public class APIPacketHandler implements PacketHandler {
 		GUIRELOAD(),
 		BIOMEPNGSTART(),
 		BIOMEPNGDAT(),
-		BIOMEPNGEND();
+		BIOMEPNGEND(),
+		FILEMATCH(),
+		ENTITYSYNC();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -389,7 +407,7 @@ public class APIPacketHandler implements PacketHandler {
 		}
 
 		public boolean hasLocation() {
-			return this != KEYUPDATE && this != PLAYERKICK && this != CONFIGSYNC;
+			return this != KEYUPDATE && this != PLAYERKICK && this != CONFIGSYNC && this != CONFIGSYNCEND && this != FILEMATCH;
 		}
 
 		public int getNumberDataInts() {

@@ -33,6 +33,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.TemporaryInventory;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Instantiable.Recipe.ItemMatch;
 import Reika.DragonAPI.Interfaces.Item.ActivatedInventoryItem;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
@@ -173,6 +174,21 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return false;
 	}
 
+	public static boolean checkForItemStack(ItemMatch is, ItemStack[] inv) {
+		for (int i = 0; i < inv.length; i++) {
+			ItemStack in = inv[i];
+			if (in != null) {
+				if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItemStack(is, ((ActivatedInventoryItem)in.getItem()).getInventory(in)))
+						return true;
+				}
+				if (is.match(in))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	/** Checks an itemstack array (eg an inventory) for a given itemstack.
 	 * Args: Check-for itemstack, Inventory, Match size T/F */
 	public static boolean checkForItemStack(ItemStack is, IInventory inv, boolean matchsize) {
@@ -222,6 +238,22 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	}
 
 	public static int locateInInventory(KeyedItemStack is, ItemStack[] inv) {
+		for (int i = 0; i < inv.length; i++) {
+			ItemStack in = inv[i];
+			if (in != null) {
+				if (in.getItem() instanceof ActivatedInventoryItem) {
+					if (checkForItemStack(is, ((ActivatedInventoryItem)in.getItem()).getInventory(in)))
+						return i;
+				}
+				if (is.match(in)) {
+					return i;
+				}
+			}
+		}
+		return -1;
+	}
+
+	public static int locateInInventory(ItemMatch is, ItemStack[] inv) {
 		for (int i = 0; i < inv.length; i++) {
 			ItemStack in = inv[i];
 			if (in != null) {

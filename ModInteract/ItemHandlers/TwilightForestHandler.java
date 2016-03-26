@@ -40,7 +40,9 @@ public class TwilightForestHandler extends ModHandlerBase {
 		FIREFLY("firefly"),
 		MOONWORM("moonworm"),
 		FIREFLYJAR("fireflyJar"),
-		CICADA("cicada");
+		CICADA("cicada"),
+		NAGASTONE("nagastone"),
+		AURORA("auroraBlock");
 
 		private final String tag;
 		private Block block;

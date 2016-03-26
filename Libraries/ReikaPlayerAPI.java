@@ -46,6 +46,7 @@ import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Event.GetPlayerLookEvent;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget.PlayerTarget;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -250,7 +251,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	}
 
 	public static void syncCustomData(EntityPlayerMP ep) {
-		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERDATSYNC.ordinal(), ep, ep.getEntityData());
+		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERDATSYNC.ordinal(), ep.getEntityData(), new PlayerTarget(ep));
 	}
 
 	public static void syncAttributes(EntityPlayerMP ep) {
@@ -268,7 +269,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	@SideOnly(Side.CLIENT)
 	public static void syncCustomDataFromClient(EntityPlayer ep) {
-		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERDATSYNC_CLIENT.ordinal(), ep.getEntityData());
+		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERDATSYNC_CLIENT.ordinal(), ep.getEntityData(), new PacketTarget.ServerTarget());
 	}
 
 	public static NBTTagCompound getDeathPersistentNBT(EntityPlayer ep) {

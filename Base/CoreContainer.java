@@ -18,7 +18,6 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
-import net.minecraft.inventory.ICrafting;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -109,8 +108,9 @@ public class CoreContainer extends Container {
 	@Override
 	public void detectAndSendChanges()
 	{
-		//super.detectAndSendChanges();
+		super.detectAndSendChanges();
 
+		/*
 		for (int i = 0; i < inventorySlots.size(); ++i) {
 			ItemStack itemstack = ((Slot)inventorySlots.get(i)).getStack();
 			ItemStack itemstack1 = (ItemStack)inventoryItemStacks.get(i);
@@ -126,6 +126,7 @@ public class CoreContainer extends Container {
 				}
 			}
 		}
+		 */
 
 		//for (int i = 0; i < crafters.size(); i++) {
 		//	ICrafting icrafting = (ICrafting)crafters.get(i);

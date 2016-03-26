@@ -50,7 +50,7 @@ public class TickScheduler implements TickHandler {
 
 	@Override
 	public EnumSet<TickType> getType() {
-		return EnumSet.of(TickType.SERVER);
+		return EnumSet.of(TickType.SERVER, TickType.CLIENT);
 	}
 
 	@Override

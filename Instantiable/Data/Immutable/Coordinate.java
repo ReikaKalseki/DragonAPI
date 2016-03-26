@@ -97,6 +97,12 @@ public final class Coordinate {
 		return null;
 	}
 
+	public void writeToTag(NBTTagCompound data) {
+		data.setInteger("x", xCoord);
+		data.setInteger("y", yCoord);
+		data.setInteger("z", zCoord);
+	}
+
 	public NBTTagCompound writeToTag() {
 		NBTTagCompound data = new NBTTagCompound();
 		data.setInteger("x", xCoord);

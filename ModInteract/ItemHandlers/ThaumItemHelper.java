@@ -96,6 +96,10 @@ public class ThaumItemHelper {
 		public ItemStack getItem() {
 			return new ItemStack(this.getBlock(), 1, metadata);
 		}
+
+		public boolean match(Block b, int meta) {
+			return b == this.getBlock() && meta == metadata;
+		}
 	}
 
 	public static boolean isTotemBlock(Block b, int meta) {

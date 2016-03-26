@@ -18,6 +18,7 @@ import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerSpecificRenderer;
 import Reika.DragonAPI.IO.DelegateFontRenderer;
 import Reika.DragonAPI.IO.DirectResourceManager;
+import Reika.DragonAPI.IO.VanillaOnlyResourceManager;
 import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
 import Reika.DragonAPI.Instantiable.Event.Client.ResourceReloadEvent;
 import Reika.DragonAPI.Instantiable.Rendering.RenderTumblingBlock;
@@ -58,6 +59,7 @@ public class APIProxyClient extends APIProxy {
 	@Override
 	public void registerSidedHandlersMain() {
 		rm.registerReloadListener(DirectResourceManager.getInstance());
+		rm.registerReloadListener(VanillaOnlyResourceManager.getInstance());
 		ReikaSoundHelper.injectPaulscodeAccesses();
 		Minecraft.getMinecraft().fontRenderer = new DelegateFontRenderer(Minecraft.getMinecraft().fontRenderer);
 		if (ModList.NEI.isLoaded())

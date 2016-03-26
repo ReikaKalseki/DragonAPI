@@ -67,6 +67,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		GUIEVENT("net.minecraft.entity.player.EntityPlayer", "yz"),
 		ITEMUPDATE("net.minecraft.entity.item.EntityItem", "xk"),
 		TILERENDER("net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher", "bmk"),
+		ENTITYRENDER("net.minecraft.client.renderer.entity.RenderManager", "bnn"),
 		WORLDRENDER("net.minecraft.client.renderer.RenderGlobal", "bma"),
 		NIGHTVISEVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
 		FARCLIPEVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
@@ -115,6 +116,10 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		HOTBARKEYEVENT("net.minecraft.client.gui.inventory.GuiContainer", "bex"),
 		RENDERBLOCKEVENT("net.minecraft.client.renderer.WorldRenderer", "blo"),
 		MOUSEOVEREVENT("net.minecraft.client.renderer.EntityRenderer", "blt"),
+		POSTITEMUSEEVENT("net.minecraft.item.ItemStack", "add"),
+		POSTITEMUSEEVENT2("net.minecraftforge.common.ForgeHooks"),
+		ITEMSIZETEXTEVENT("net.minecraft.client.renderer.entity.RenderItem", "bny"),
+		//NOREROUTECUSTOMTEXMAP("net.minecraft.client.renderer.texture.TextureMap", "bpz"),
 		;
 
 		private final String obfName;
@@ -570,6 +575,36 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 						if (ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
 							MethodInsnNode min = (MethodInsnNode)ain;
 							String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_147500_a" : "renderTileEntityAt";
+							if (min.name.equals(func)) {
+								m.instructions.insert(min, fire);
+								ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+								break;
+							}
+						}
+					}
+					break;
+				}
+				case ENTITYRENDER: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147939_a", "func_147939_a", "(Lnet/minecraft/entity/Entity;DDDFFZ)Z");
+					InsnList fire = new InsnList();
+					fire.add(new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
+					fire.add(new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/Client/EntityRenderEvent"));
+					fire.add(new InsnNode(Opcodes.DUP));
+					fire.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					fire.add(new VarInsnNode(Opcodes.DLOAD, 2));
+					fire.add(new VarInsnNode(Opcodes.DLOAD, 4));
+					fire.add(new VarInsnNode(Opcodes.DLOAD, 6));
+					fire.add(new VarInsnNode(Opcodes.FLOAD, 8));
+					fire.add(new VarInsnNode(Opcodes.FLOAD, 9));
+					fire.add(new VarInsnNode(Opcodes.ILOAD, 10));
+					fire.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/Client/EntityRenderEvent", "<init>", "(Lnet/minecraft/entity/Entity;DDDFFZ)V", false));
+					fire.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
+					fire.add(new InsnNode(Opcodes.POP));
+					for (int i = 0; i < m.instructions.size(); i++) {
+						AbstractInsnNode ain = m.instructions.get(i);
+						if (ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
+							MethodInsnNode min = (MethodInsnNode)ain;
+							String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_76986_a" : "doRender";
 							if (min.name.equals(func)) {
 								m.instructions.insert(min, fire);
 								ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
@@ -1648,6 +1683,75 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
+				case POSTITEMUSEEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_77943_a", "tryPlaceItemIntoWorld", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFF)Z");
+					AbstractInsnNode ain = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.INVOKEVIRTUAL);
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 2));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 3));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 4));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 5));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 6));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 7));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 8));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 9));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/PostItemUseEvent", "fire", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFF)V", false));
+					m.instructions.insert(ain, li);
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case POSTITEMUSEEVENT2: {
+					String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_71064_a" : "addStat";
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "onPlaceItemIntoWorld", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFF)Z");
+					AbstractInsnNode ain = ReikaASMHelper.getLastInsn(m.instructions, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/player/EntityPlayer", func, "(Lnet/minecraft/stats/StatBase;I)V", false);
+					if (ain == null)
+						throw new NullPointerException("addStat() Instruction not found!");
+					InsnList li = new InsnList();
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 2));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 3));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 4));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 5));
+					li.add(new VarInsnNode(Opcodes.ILOAD, 6));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 7));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 8));
+					li.add(new VarInsnNode(Opcodes.FLOAD, 9));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/PostItemUseEvent", "fire", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFF)V", false));
+					m.instructions.insert(ain, li);
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case ITEMSIZETEXTEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_94148_a", "renderItemOverlayIntoGUI", "(Lnet/minecraft/client/gui/FontRenderer;Lnet/minecraft/client/renderer/texture/TextureManager;Lnet/minecraft/item/ItemStack;IILjava/lang/String;)V");
+					AbstractInsnNode ain = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.ASTORE);
+					int var = ((VarInsnNode)ain).var;
+					m.instructions.insert(ain, new VarInsnNode(Opcodes.ASTORE, var));
+					m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/ItemSizeTextEvent", "fire", "(Lnet/minecraft/item/ItemStack;Ljava/lang/String;)Ljava/lang/String;", false));
+					m.instructions.insert(ain, new VarInsnNode(Opcodes.ALOAD, var));
+					m.instructions.insert(ain, new VarInsnNode(Opcodes.ALOAD, 3));
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				/*
+				case NOREROUTECUSTOMTEXMAP: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147634_a", "completeResourceLocation", "(Lnet/minecraft/util/ResourceLocation;I)Lnet/minecraft/util/ResourceLocation;");
+					m.instructions.clear();
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+					m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/IO/DirectResourceManager", "getCompletedResourcePath", "(Lnet/minecraft/client/renderer/texture/TextureMap;Lnet/minecraft/util/ResourceLocation;I)Lnet/minecraft/util/ResourceLocation;", false));
+					m.instructions.add(new InsnNode(Opcodes.ARETURN));
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				 */
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);

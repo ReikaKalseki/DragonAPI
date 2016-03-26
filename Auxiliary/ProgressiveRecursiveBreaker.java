@@ -83,6 +83,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		public boolean pathTracking = false;
 		public boolean dropFluids = true;
 		private final Collection<Coordinate> path = new HashSet();
+		public boolean taxiCabDistance = false;
 		//public final BlockMap<BlockKey> looseMatches = new BlockMap();
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<BlockKey> ids) {

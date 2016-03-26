@@ -159,6 +159,7 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BloodMagicHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BoPBlockHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.CarpenterBlockHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ChiselBlockHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
@@ -968,6 +969,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.registerHandler(ModList.BOP, BoPBlockHandler.class, "Handler");
 		this.registerHandler(ModList.HUNGEROVERHAUL, HungerOverhaulHandler.class, "Handler");
 		this.registerHandler(ModList.CARPENTER, CarpenterBlockHandler.class, "Handler");
+		this.registerHandler(ModList.CHISEL, ChiselBlockHandler.class, "Handler");
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);

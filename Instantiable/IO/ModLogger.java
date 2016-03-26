@@ -30,8 +30,8 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ModLogger {
 
-	private final boolean logLoading;
-	private final boolean printDebug;
+	private boolean logLoading;
+	private boolean printDebug;
 	private final boolean shouldWarn;
 
 	private final DragonAPIMod mod;
@@ -68,6 +68,11 @@ public class ModLogger {
 				file = file.replaceFirst("\\*", mod.getDisplayName());
 		}
 		return file;
+	}
+
+	private void reloadConfigs() {
+		logLoading = DragonOptions.LOGLOADING.getState();
+		printDebug = DragonOptions.DEBUGMODE.getState();
 	}
 
 	/** Preface with '*' to use the log folder as a parent and preface with an additional '*' to preface the mod name. */
@@ -190,6 +195,12 @@ public class ModLogger {
 
 	public static int getActiveLoggers() {
 		return loggers.size();
+	}
+
+	public static void reloadLoggers() {
+		for (ModLogger m : loggers) {
+			m.reloadConfigs();
+		}
 	}
 
 	private class LogLine {

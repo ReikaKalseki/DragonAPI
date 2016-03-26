@@ -24,6 +24,7 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
+import Reika.DragonAPI.Auxiliary.Trackers.ModFileVersionChecker;
 import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.InvalidBuildException;
@@ -34,6 +35,7 @@ import Reika.DragonAPI.Exception.VersionMismatchException;
 import Reika.DragonAPI.Exception.VersionMismatchException.APIMismatchException;
 import Reika.DragonAPI.Extras.ModVersion;
 import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.IO.ReikaFileReader.HashType;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaFormatHelper;
@@ -64,6 +66,8 @@ public abstract class DragonAPIMod {
 	private static final EventBus EARLY_BUS = new EventBus();
 
 	private final LoadProfiler profiler;
+
+	private String fileHash;
 
 	static {
 		//api_version = ModVersion.readFromFile();
@@ -100,6 +104,11 @@ public abstract class DragonAPIMod {
 		profiler.finishTiming();
 	}
 
+	/** Whether the jar files on client and server need to exactly match. */
+	protected boolean requireSameFilesOnClientAndServer() {
+		return true;
+	}
+
 	public static DragonAPIMod getByName(String name) {
 		return mods.get(name);
 	}
@@ -118,12 +127,24 @@ public abstract class DragonAPIMod {
 
 	}
 
+	public final String getFileHash() {
+		return fileHash;
+	}
+
+	public final boolean isSource() {
+		return version == ModVersion.source;
+	}
+
 	protected final void basicSetup(FMLPreInitializationEvent evt) {
 		MinecraftForge.EVENT_BUS.register(this);
 		this.checkFinalPreload(this);
 		EARLY_BUS.unregister(this);
 		ReikaRegistryHelper.setupModData(this, evt);
 		CommandableUpdateChecker.instance.registerMod(this);
+
+		fileHash = this.isSource() ? "Source" : ReikaFileReader.getHash(this.getModFile(), HashType.SHA256);
+		if (this.requireSameFilesOnClientAndServer())
+			ModFileVersionChecker.instance.addMod(this);
 	}
 
 	private static void checkFinalPreload(DragonAPIMod mod) {

@@ -74,6 +74,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S19PacketEntityHeadLook;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
@@ -948,6 +950,91 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return EntityAnimal.class;
 		else
 			return e.getClass();
+	}
+
+	public static class WrappedDamageSource extends DamageSource {
+
+		private final DamageSource wrapped;
+		public final EntityPlayer player;
+
+		public WrappedDamageSource(DamageSource src, EntityPlayer ep) {
+			super(src.damageType);
+			wrapped = src;
+			player = ep;
+		}
+
+		@Override
+		public boolean isProjectile()
+		{
+			return wrapped.isProjectile();
+		}
+
+		@Override
+		public boolean isExplosion()
+		{
+			return wrapped.isExplosion();
+		}
+
+		@Override
+		public boolean isUnblockable()
+		{
+			return wrapped.isUnblockable();
+		}
+
+		@Override
+		public float getHungerDamage()
+		{
+			return wrapped.getHungerDamage();
+		}
+
+		@Override
+		public boolean canHarmInCreative()
+		{
+			return wrapped.canHarmInCreative();
+		}
+
+		@Override
+		public boolean isDamageAbsolute()
+		{
+			return wrapped.isDamageAbsolute();
+		}
+
+		@Override
+		public Entity getEntity()
+		{
+			return player;
+		}
+
+		@Override
+		public IChatComponent func_151519_b(EntityLivingBase tg)
+		{
+			return wrapped.func_151519_b(tg);
+		}
+
+		@Override
+		public boolean isFireDamage()
+		{
+			return wrapped.isFireDamage();
+		}
+
+		@Override
+		public String getDamageType()
+		{
+			return wrapped.damageType;
+		}
+
+		@Override
+		public boolean isDifficultyScaled()
+		{
+			return wrapped.isDifficultyScaled();
+		}
+
+		@Override
+		public boolean isMagicDamage()
+		{
+			return wrapped.isMagicDamage();
+		}
+
 	}
 
 }

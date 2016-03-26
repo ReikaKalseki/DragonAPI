@@ -167,4 +167,25 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		return li;
 	}
 
+	public static enum CubeDirections {
+		NORTH(0, -1),
+		NORTHEAST(1, -1),
+		EAST(1, 0),
+		SOUTHEAST(1, 1),
+		SOUTH(0, 1),
+		SOUTHWEST(-1, 1),
+		WEST(-1, 0),
+		NORTHWEST(-1, -1);
+
+		public final int directionX;
+		public final int directionZ;
+
+		public static final CubeDirections[] list = values();
+
+		private CubeDirections(int x, int z) {
+			directionX = x;
+			directionZ = z;
+		}
+	}
+
 }

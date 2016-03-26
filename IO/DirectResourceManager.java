@@ -126,4 +126,15 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 		this.initToSoundRegistry();
 	}
 
+	/*
+	public static ResourceLocation getCompletedResourcePath(TextureMap map, ResourceLocation def, int tex) {
+		if (def.getResourceDomain().equals(TAG))
+			return def;
+		if (def.getResourceDomain().equals("vanilla"))
+			return def;
+		String s = map.getTextureType() == 0 ? "textures/blocks" : "textures/items";
+		return tex == 0 ? new ResourceLocation(def.getResourceDomain(), String.format("%s/%s%s", new Object[] {s, def.getResourcePath(), ".png"})): new ResourceLocation(def.getResourceDomain(), String.format("%s/mipmaps/%s.%d%s", new Object[] {s, def.getResourcePath(), Integer.valueOf(tex), ".png"}));
+	}
+	 */
+
 }

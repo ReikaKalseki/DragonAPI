@@ -48,6 +48,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.IO.PacketPipeline;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget.PlayerTarget;
 import Reika.DragonAPI.Interfaces.PacketHandler;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
@@ -1065,56 +1066,11 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
-	public static void sendUpdatePacket(String ch, int id, TileEntity te) {
-		int x = te.xCoord;
-		int y = te.yCoord;
-		int z = te.zCoord;
-		String name = te.getBlockType().getLocalizedName();
-
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
-		DataOutputStream outputStream = new DataOutputStream(bos);
-		try {
-			outputStream.writeInt(id);
-			outputStream.writeInt(x);
-			outputStream.writeInt(y);
-			outputStream.writeInt(z);
-
-		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			throw new RuntimeException("TileEntity "+name+" threw an update packet exception!");
-		}
-
-		PacketPipeline pipe = pipelines.get(ch);
-		if (pipe == null) {
-			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
-			ReikaJavaLibrary.dumpStack();
-			return;
-		}
-
-		byte[] dat = bos.toByteArray();
-		DataPacket pack = new DataPacket();
-		pack.init(PacketTypes.UPDATE, pipe);
-		pack.setData(dat);
-
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		if (side == Side.SERVER) {
-			// We are on the server side.
-			//PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
-			pipe.sendToDimension(pack, te.worldObj);
-		}
-		else if (side == Side.CLIENT) {
-			// We are on the client side.
-			//PacketDispatcher.sendPacketToServer(packet);
-			//PacketDispatcher.sendPacketToAllInDimension(packet, te.worldObj.provider.dimensionId);
-			pipe.sendToServer(pack);
-		}
-		else {
-			// We are on the Bukkit server.
-		}
+	public static void sendUpdatePacket(String ch, int id, TileEntity te, PacketTarget pt) {
+		sendUpdatePacket(ch, id, te.xCoord, te.yCoord, te.zCoord, pt);
 	}
 
-	public static void sendUpdatePacket(String ch, int id, World world, int x, int y, int z) {
+	public static void sendUpdatePacket(String ch, int id, int x, int y, int z, PacketTarget pt) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
@@ -1122,11 +1078,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			outputStream.writeInt(x);
 			outputStream.writeInt(y);
 			outputStream.writeInt(z);
-
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			throw new RuntimeException("Coordinates "+x+", "+y+", "+z+" threw an update packet exception!");
+			throw new RuntimeException("Packet "+ch+"/"+id+" @ "+x+","+y+","+z+" threw an update packet exception!");
 		}
 
 		PacketPipeline pipe = pipelines.get(ch);
@@ -1141,22 +1096,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		pack.init(PacketTypes.UPDATE, pipe);
 		pack.setData(dat);
 
-		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		if (side == Side.SERVER) {
-			// We are on the server side.
-			//PacketDispatcher.sendPacketToServer(packet);
-			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
-			pipe.sendToDimension(pack, world);
-		}
-		else if (side == Side.CLIENT) {
-			// We are on the client side.
-			//PacketDispatcher.sendPacketToServer(packet);
-			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
-			pipe.sendToServer(pack);
-		}
-		else {
-			// We are on the Bukkit server.
-		}
+		pt.dispatch(pipe, pack);
 	}
 
 	public static void sendFloatPacket(String ch, int id, TileEntity te, float data) {
@@ -1357,7 +1297,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
-	public static void sendNBTPacket(String ch, int id, NBTTagCompound nbt) {
+	public static void sendNBTPacket(String ch, int id, NBTTagCompound nbt, PacketTarget pt) {
 		DataPacket pack = getNBTPacket(id, nbt);
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
@@ -1367,19 +1307,14 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 		pack.init(PacketTypes.NBT, pipe);
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
-		if (side == Side.SERVER) {
-			pipe.sendToAllOnServer(pack);
-		}
-		else if (side == Side.CLIENT) {
-			pipe.sendToServer(pack);
-		}
-		else {
-			// We are on the Bukkit server.
-		}
+		pt.dispatch(pipe, pack);
 	}
 
-	public static void sendNBTPacket(String ch, int id, EntityPlayerMP ep, NBTTagCompound nbt) {
-		DataPacket pack = getNBTPacket(id, nbt);
+	public static void sendEntitySyncPacket(String ch, Entity e, double range) {
+		NBTTagCompound nbt = new NBTTagCompound();
+		e.writeToNBT(nbt);
+		nbt.setInteger("dispatchID", e.getEntityId());
+		DataPacket pack = getNBTPacket(PacketIDs.ENTITYSYNC.ordinal(), nbt);
 		PacketPipeline pipe = pipelines.get(ch);
 		if (pipe == null) {
 			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
@@ -1389,10 +1324,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		pack.init(PacketTypes.NBT, pipe);
 		Side side = FMLCommonHandler.instance().getEffectiveSide();
 		if (side == Side.SERVER) {
-			pipe.sendToPlayer(pack, ep);
+			pipe.sendToAllAround(pack, e, range);
 		}
 		else if (side == Side.CLIENT) {
-			pipe.sendToAllOnServer(pack);
+
 		}
 		else {
 			// We are on the Bukkit server.
@@ -1739,7 +1674,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		tile.writeToNBT(NBT);
 		List<EntityPlayerMP> li = tile.worldObj.getEntitiesWithinAABB(EntityPlayerMP.class, ReikaAABBHelper.getBlockAABB(tile.xCoord, tile.yCoord, tile.zCoord).expand(4, 4, 4));
 		for (EntityPlayerMP ep : li)
-			sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.VTILESYNC.ordinal(), ep, NBT);
+			sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.VTILESYNC.ordinal(), NBT, new PlayerTarget(ep));
 	}
 
 }

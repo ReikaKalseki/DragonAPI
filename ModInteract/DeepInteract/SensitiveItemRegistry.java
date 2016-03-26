@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
+import java.util.HashSet;
+
 import moze_intel.projecte.api.event.EMCRemapEvent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -16,9 +18,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
+import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayMap;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableArray;
+import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
 import Reika.DragonAPI.ModInteract.ReikaEEHelper;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -29,12 +34,14 @@ public final class SensitiveItemRegistry {
 	public static final SensitiveItemRegistry instance = new SensitiveItemRegistry();
 
 	private final OneWaySet<KeyedItemStack> keys = new OneWaySet();
+	private final OneWaySet<KeyedItemStack> recipeDisallowed = new OneWaySet();
+	private final OneWayMap<DragonAPIMod, OneWaySet<KeyedItemStack>> byMod = new OneWayMap();
 
 	private SensitiveItemRegistry() {
 		MinecraftForge.EVENT_BUS.register(this);
 	}
 
-	public void registerItem(Block item) {
+	public void registerItem(DragonAPIMod mod, Block item, boolean allowRecipes) {
 		for (int i = 0; i < Interactions.list.length; i++) {
 			Interactions it = Interactions.list.get(i);
 			if (it.isLoaded) {
@@ -42,10 +49,10 @@ public final class SensitiveItemRegistry {
 			}
 		}
 
-		keys.add(new KeyedItemStack(item).lock());
+		this.onRegisterItem(mod, new KeyedItemStack(item), allowRecipes);
 	}
 
-	public void registerItem(Item item) {
+	public void registerItem(DragonAPIMod mod, Item item, boolean allowRecipes) {
 		for (int i = 0; i < Interactions.list.length; i++) {
 			Interactions it = Interactions.list.get(i);
 			if (it.isLoaded) {
@@ -53,10 +60,10 @@ public final class SensitiveItemRegistry {
 			}
 		}
 
-		keys.add(new KeyedItemStack(item).lock());
+		this.onRegisterItem(mod, new KeyedItemStack(item), allowRecipes);
 	}
 
-	public void registerItem(ItemStack item) {
+	public void registerItem(DragonAPIMod mod, ItemStack item, boolean allowRecipes) {
 		for (int i = 0; i < Interactions.list.length; i++) {
 			Interactions it = Interactions.list.get(i);
 			if (it.isLoaded) {
@@ -64,7 +71,18 @@ public final class SensitiveItemRegistry {
 			}
 		}
 
-		keys.add(new KeyedItemStack(item).setSimpleHash(true).lock());
+		this.onRegisterItem(mod, new KeyedItemStack(item), allowRecipes);
+	}
+
+	private void onRegisterItem(DragonAPIMod mod, KeyedItemStack item, boolean allowRecipes) {
+		keys.add(item.setSimpleHash(true).lock());
+		if (!allowRecipes)
+			recipeDisallowed.add(item.setSimpleHash(true).lock());
+		byMod.get(mod);
+	}
+
+	public HashSet<KeyedItemStack> getItemsForMod(DragonAPIMod mod) {
+		return byMod.get(mod);
 	}
 
 	private static enum Interactions {
@@ -147,6 +165,22 @@ public final class SensitiveItemRegistry {
 		for (KeyedItemStack ks : keys) {
 			ItemStack is = ks.getItemStack();
 			ReikaEEHelper.blacklistItemStack(is);
+		}
+	}
+
+	@SubscribeEvent
+	public void preventDisallowedRecipes(AddRecipeEvent evt) {
+		if (!evt.isVanillaPass) {
+			this.removeDisallowedRecipe(evt);
+		}
+	}
+
+	private void removeDisallowedRecipe(AddRecipeEvent evt) {
+		ItemStack out = evt.recipe.getRecipeOutput();
+		if (out != null && out.getItem() != null) {
+			if (recipeDisallowed.contains(new KeyedItemStack(out).setSimpleHash(true))) {
+				evt.setCanceled(true);
+			}
 		}
 	}
 

@@ -23,6 +23,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
@@ -39,6 +40,7 @@ import Reika.DragonAPI.Interfaces.Registry.EnchantmentEnum;
 import Reika.DragonAPI.Interfaces.Registry.EntityEnum;
 import Reika.DragonAPI.Interfaces.Registry.ItemEnum;
 import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
+import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.ModInteract.LegacyWailaHelper;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
@@ -318,12 +320,17 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		SoundCategory.field_147169_k.put(Integer.valueOf(cat.getCategoryId()), cat);
 
 		EnumMap<SoundCategory, Float> map = (EnumMap<SoundCategory, Float>)Minecraft.getMinecraft().gameSettings.mapSoundLevels;
-		Minecraft.getMinecraft().gameSettings.mapSoundLevels = new EnumMap(SoundCategory.class);
+		Minecraft.getMinecraft().gameSettings.mapSoundLevels = useSoundHashMap() ? new HashMap() : new EnumMap(SoundCategory.class);
 		for (SoundCategory c : map.keySet()) {
 			Minecraft.getMinecraft().gameSettings.mapSoundLevels.put(c, map.get(c));
 		}
 		Minecraft.getMinecraft().gameSettings.mapSoundLevels.put(cat, 1F);
 		return cat;
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static boolean useSoundHashMap() {
+		return /*ModList.ENDEREXPANSION.isLoaded() && ModList.FORESTRY.isLoaded() && */ReikaJVMParser.getJavaVersion(0) == 8 && KeyBinding.getKeybinds().size() >= 63;
 	}
 
 	public static RegistryEntry getRegistryForObject(Object o) {

@@ -31,16 +31,17 @@ public enum ModList implements ModEntry {
 	REACTORCRAFT("ReactorCraft", "Reika.ReactorCraft.Registry.ReactorBlocks", "Reika.ReactorCraft.Registry.ReactorItems"),
 	EXPANDEDREDSTONE("ExpandedRedstone"),
 	GEOSTRATA("GeoStrata"),
-	FURRYKINGDOMS("FurryKingdoms"),
+	//FURRYKINGDOMS("FurryKingdoms"),
 	CRITTERPET("CritterPet"),
 	VOIDMONSTER("VoidMonster"),
 	USEFULTNT("UsefulTNT"),
 	METEORCRAFT("MeteorCraft"),
-	JETPLANE("JetPlane"),
+	//JETPLANE("JetPlane"),
 	CAVECONTROL("CaveControl"),
 	LEGACYCRAFT("LegacyCraft"),
 	ELECTRICRAFT("ElectriCraft", "Reika.ElectriCraft.Registry.ElectriBlocks", "Reika.ElectriCraft.Registry.ElectriItems"),
 	CHROMATICRAFT("ChromatiCraft", "Reika.ChromatiCraft.Registry.ChromaBlocks", "Reika.ChromatiCraft.Registry.ChromaItems"),
+	CONDENSEDORES("CondensedOres"),
 	BUILDCRAFT("BuildCraft|Core", "buildcraft.BuildCraftCore"),
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
 	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
@@ -268,7 +269,7 @@ public enum ModList implements ModEntry {
 	}
 
 	public boolean isReikasMod() {
-		return this.ordinal() <= CHROMATICRAFT.ordinal();
+		return this.ordinal() <= CONDENSEDORES.ordinal();
 	}
 
 	public void registerHandler(ModHandlerBase h, String id) {

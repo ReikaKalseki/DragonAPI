@@ -1,8 +1,18 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Command;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
+import Reika.DragonAPI.Instantiable.IO.ModLogger;
 
 
 public class ConfigReloadCommand extends DragonCommandBase {
@@ -15,6 +25,7 @@ public class ConfigReloadCommand extends DragonCommandBase {
 		}
 		else {
 			c.reload();
+			ModLogger.reloadLoggers();
 			this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Config for '"+args[0]+"' reloaded. Note that some settings may require restart.");
 		}
 	}

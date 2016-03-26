@@ -102,6 +102,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 		else if (bc instanceof BlockKey) {
 			MultiKey mk = new MultiKey();
 			mk.add(bc);
+			mk.add(bk);
 			data.put(c, mk);
 		}
 		else {

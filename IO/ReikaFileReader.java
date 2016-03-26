@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import java.util.jar.JarFile;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import Reika.DragonAPI.DragonAPICore;
 
@@ -447,5 +448,13 @@ public class ReikaFileReader extends DragonAPICore {
 
 		public void onWrite(byte[] data);
 
+	}
+
+	public static File createFileFromStream(InputStream in) throws IOException {
+		File tempFile = File.createTempFile("temp_"+String.valueOf(in.hashCode()), null);
+		tempFile.deleteOnExit();
+		FileOutputStream out = new FileOutputStream(tempFile);
+		IOUtils.copy(in, out);
+		return tempFile;
 	}
 }

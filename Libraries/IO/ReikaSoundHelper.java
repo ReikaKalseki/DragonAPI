@@ -230,6 +230,10 @@ public class ReikaSoundHelper {
 		ReikaPacketHelper.writeDirectSound(DragonAPIInit.packetChannel, PacketIDs.SERVERSOUND.ordinal(), world, x, y, z, name, vol, pitch, scale);
 	}
 
+	public static void playSoundFromServerAtBlock(World world, int x, int y, int z, String name, float vol, float pitch, boolean scale) {
+		playSoundFromServer(world, x+0.5, y+0.5, z+0.5, name, vol, pitch, scale);
+	}
+
 	@SideOnly(Side.CLIENT)
 	public static StreamThread getStreamingThread(SoundHandler sh) {
 		try {
