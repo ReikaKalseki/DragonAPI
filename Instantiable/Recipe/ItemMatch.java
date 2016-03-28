@@ -16,13 +16,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.ChromatiCraft.ChromatiCraft;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -76,8 +77,8 @@ public class ItemMatch {
 
 	private void addItem(KeyedItemStack ks) {
 		items.add(ks.setSimpleHash(true).lock());
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-			displayList.add(ks.getItemStack());
+		//if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+		displayList.add(ks.getItemStack());
 	}
 
 	public boolean match(ItemStack is) {
@@ -94,6 +95,10 @@ public class ItemMatch {
 
 	@SideOnly(Side.CLIENT)
 	public ItemStack getCycledItem() {
+		if (displayList.isEmpty()) {
+			DragonAPICore.logError("Could not provide cycled item for "+this+"!");
+			return new ItemStack(Blocks.fire);
+		}
 		return displayList.get((int)((System.currentTimeMillis()/2000+Math.abs(this.hashCode()))%displayList.size()));
 	}
 

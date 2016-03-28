@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +41,7 @@ import net.minecraft.entity.monster.EntityCaveSpider;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
 import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityGiantZombie;
 import net.minecraft.entity.monster.EntityGolem;
 import net.minecraft.entity.monster.EntityIronGolem;
 import net.minecraft.entity.monster.EntityMagmaCube;
@@ -48,6 +50,7 @@ import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySlime;
+import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.EntityZombie;
@@ -66,6 +69,9 @@ import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.entity.projectile.EntityFireball;
+import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
@@ -87,12 +93,16 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Interfaces.ComparableAI;
-import Reika.DragonAPI.Interfaces.TameHostile;
+import Reika.DragonAPI.Interfaces.Entity.CustomProjectile;
+import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
+import WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 
@@ -175,41 +185,71 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	}
 
-	private static int[] mobColorArray = new int[201]; //Highest Entity ID (endercrystal)+1
+	private static HashMap<Class, Integer> mobColorArray = new HashMap();
 
-	private static void setMobColors() {
-		mobColorArray[50] = ReikaColorAPI.RGBtoHex(65, 183, 54);
-		mobColorArray[51] = ReikaColorAPI.GStoHex(207); //Skeleton
-		mobColorArray[52] = ReikaColorAPI.RGBtoHex(90, 71, 43); //Spider
-		mobColorArray[53] = ReikaColorAPI.RGBtoHex(67, 109, 53); //Giant
-		mobColorArray[54] = ReikaColorAPI.RGBtoHex(67, 109, 53); //Zombie
-		mobColorArray[55] = ReikaColorAPI.RGBtoHex(90, 162, 68); //Slime
-		mobColorArray[56] = ReikaColorAPI.GStoHex(240); //Ghast
-		mobColorArray[57] = ReikaColorAPI.RGBtoHex(181, 131, 131); //PigZombie
-		mobColorArray[58] = ReikaColorAPI.RGBtoHex(204, 15, 248); //Enderman
-		mobColorArray[59] = ReikaColorAPI.RGBtoHex(18, 77, 90); //Cave Spider
-		mobColorArray[60] = ReikaColorAPI.GStoHex(140); //Silverfish
-		mobColorArray[61] = ReikaColorAPI.RGBtoHex(235, 180, 26); //Blaze
-		mobColorArray[62] = ReikaColorAPI.RGBtoHex(84, 14, 0); //LavaSlime
-		mobColorArray[63] = ReikaColorAPI.RGBtoHex(224, 121, 250); //Dragon
-		mobColorArray[64] = ReikaColorAPI.GStoHex(79); //Wither
-		mobColorArray[65] = ReikaColorAPI.RGBtoHex(118, 100, 61); //Bat
-		mobColorArray[66] = ReikaColorAPI.RGBtoHex(163, 148, 131); //Witch
+	/** Converts a mob ID to a color, based off the mob's color. Players return bright red.
+	 * Args: Mob ID */
+	public static int mobToColor(EntityLivingBase ent) {
+		Integer color = mobColorArray.get(ent.getClass());
+		if (color == null) {
+			color = calcMobColor(ent);
+			mobColorArray.put(ent.getClass(), color);
+		}
+		return color;
+	}
 
-		mobColorArray[90] = ReikaColorAPI.RGBtoHex(238, 158, 158); //Pig
-		mobColorArray[91] = ReikaColorAPI.GStoHex(214); //Sheep
-		mobColorArray[92] = ReikaColorAPI.RGBtoHex(67, 53, 37); //Cow
-		mobColorArray[93] = ReikaColorAPI.RGBtoHex(193, 147, 67); //Chicken
-		mobColorArray[94] = ReikaColorAPI.RGBtoHex(83, 108, 127); //Squid
-		mobColorArray[95] = ReikaColorAPI.RGBtoHex(183, 179, 180); //Wolf
-		mobColorArray[96] = ReikaColorAPI.RGBtoHex(151, 3, 4); //Mooshroom
-		mobColorArray[97] = ReikaColorAPI.RGBtoHex(226, 143, 34); //Snow Golem
-		mobColorArray[98] = ReikaColorAPI.RGBtoHex(242, 197, 110); //Ocelot
-		mobColorArray[99] = ReikaColorAPI.RGBtoHex(208, 185, 168); //Iron Golem
+	private static int calcMobColor(EntityLivingBase e) {
+		Class c = e.getClass();
+		Class s = c.getSuperclass();
+		while (s != null && s != Entity.class) {
+			if (mobColorArray.containsKey(s)) {
+				int clr = mobColorArray.get(s);
+				clr = ReikaColorAPI.getColorWithBrightnessMultiplier(clr, (float)ReikaRandomHelper.getRandomBetween(0.25, 1));
+				return clr;
+			}
+			c = s;
+			s = c.getSuperclass();
+		}
+		return 0xffffff;
+	}
 
-		mobColorArray[120] = ReikaColorAPI.RGBtoHex(178, 122, 98); //Villager
+	static {
+		mobColorArray.put(EntityCreeper.class, ReikaColorAPI.RGBtoHex(65, 183, 54));
+		mobColorArray.put(EntitySkeleton.class, ReikaColorAPI.GStoHex(207));//Skeleton
+		mobColorArray.put(EntitySpider.class, ReikaColorAPI.RGBtoHex(90, 71, 43));//Spider
+		mobColorArray.put(EntityGiantZombie.class, ReikaColorAPI.RGBtoHex(67, 109, 53));//Giant
+		mobColorArray.put(EntityZombie.class, ReikaColorAPI.RGBtoHex(67, 109, 53));//Zombie
+		mobColorArray.put(EntitySlime.class, ReikaColorAPI.RGBtoHex(90, 162, 68));//Slime
+		mobColorArray.put(EntityGhast.class, ReikaColorAPI.GStoHex(240));//Ghast
+		mobColorArray.put(EntityPigZombie.class, ReikaColorAPI.RGBtoHex(181, 131, 131));//PigZombie
+		mobColorArray.put(EntityEnderman.class, ReikaColorAPI.RGBtoHex(204, 15, 248));//Enderman
+		mobColorArray.put(EntityCaveSpider.class, ReikaColorAPI.RGBtoHex(18, 77, 90));//Cave Spider
+		mobColorArray.put(EntitySilverfish.class, ReikaColorAPI.GStoHex(140));//Silverfish
+		mobColorArray.put(EntityBlaze.class, ReikaColorAPI.RGBtoHex(235, 180, 26));//Blaze
+		mobColorArray.put(EntityMagmaCube.class, ReikaColorAPI.RGBtoHex(84, 14, 0));//LavaSlime
+		mobColorArray.put(EntityDragon.class, ReikaColorAPI.RGBtoHex(224, 121, 250));//Dragon
+		mobColorArray.put(EntityWither.class, ReikaColorAPI.GStoHex(79));//Wither
+		mobColorArray.put(EntityBat.class, ReikaColorAPI.RGBtoHex(118, 100, 61));//Bat
+		mobColorArray.put(EntityWitch.class, ReikaColorAPI.RGBtoHex(163, 148, 131));//Witch
 
+		mobColorArray.put(EntityPig.class, ReikaColorAPI.RGBtoHex(238, 158, 158));//Pig
+		mobColorArray.put(EntitySheep.class, ReikaColorAPI.GStoHex(214));//Sheep
+		mobColorArray.put(EntityCow.class, ReikaColorAPI.RGBtoHex(67, 53, 37));//Cow
+		mobColorArray.put(EntityChicken.class, ReikaColorAPI.RGBtoHex(193, 147, 67));//Chicken
+		mobColorArray.put(EntitySquid.class, ReikaColorAPI.RGBtoHex(83, 108, 127));//Squid
+		mobColorArray.put(EntityWolf.class, ReikaColorAPI.RGBtoHex(183, 179, 180));//Wolf
+		mobColorArray.put(EntityMooshroom.class, ReikaColorAPI.RGBtoHex(151, 3, 4));//Mooshroom
+		mobColorArray.put(EntitySnowman.class, ReikaColorAPI.RGBtoHex(226, 143, 34));//Snow Golem
+		mobColorArray.put(EntityOcelot.class, ReikaColorAPI.RGBtoHex(242, 197, 110));//Ocelot
+		mobColorArray.put(EntityIronGolem.class, ReikaColorAPI.RGBtoHex(208, 185, 168));//Iron Golem
 
+		mobColorArray.put(EntityVillager.class, ReikaColorAPI.RGBtoHex(178, 122, 98));//Villager
+
+		mobColorArray.put(EntityPlayer.class, 0x0000ff);
+		mobColorArray.put(EntityAnimal.class, 0x00a000);
+		mobColorArray.put(EntityGolem.class, 0x7f7f7f);
+		mobColorArray.put(EntityMob.class, 0xff0000);
+		mobColorArray.put(Entity.class, 0xffffff);
 	}
 
 	/** Returns true if the mob is a hostile one. Args: EntityLivingBase mob */
@@ -382,16 +422,6 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return new ItemStack(Items.fish);
 		}
 		return null;
-	}
-
-	/** Converts a mob ID to a color, based off the mob's color. Players return bright red.
-	 * Args: Mob ID */
-	public static int mobToColor(EntityLivingBase ent) {
-		int id = EntityList.getEntityID(ent);
-		if (ent instanceof EntityPlayer)
-			return 0xffff0000;
-		setMobColors();
-		return mobColorArray[id];
 	}
 
 	/** Returns true if the given pitch falls within the given creature's hearing range. */
@@ -1035,6 +1065,25 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return wrapped.isMagicDamage();
 		}
 
+	}
+
+	public static Entity getShootingEntity(Entity e) {
+		if (e instanceof EntityThrowable) {
+			return ((EntityThrowable)e).getThrower();
+		}
+		else if (e instanceof EntityFireball) {
+			return ((EntityFireball)e).shootingEntity;
+		}
+		else if (e instanceof EntityArrow) {
+			return ((EntityArrow)e).shootingEntity;
+		}
+		else if (e instanceof CustomProjectile) {
+			return ((CustomProjectile)e).getFiringEntity();
+		}
+		else if (ModList.BLOODMAGIC.isLoaded() && InterfaceCache.SPELLSHOT.instanceOf(e)) {
+			return ((EntitySpellProjectile)e).shootingEntity;
+		}
+		return null;
 	}
 
 }

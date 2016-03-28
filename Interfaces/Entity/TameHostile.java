@@ -7,14 +7,8 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Interfaces;
+package Reika.DragonAPI.Interfaces.Entity;
 
-import net.minecraft.world.IBlockAccess;
-import Reika.DragonAPI.Interfaces.Registry.TileEnum;
-
-
-public interface MachineRegistryBlock {
-
-	public TileEnum getMachine(IBlockAccess world, int x, int y, int z);
+public interface TameHostile {
 
 }

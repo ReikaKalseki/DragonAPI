@@ -178,10 +178,15 @@ public class ReikaASMHelper {
 
 	public static ArrayList<String> parseMethodArguments(MethodNode mn) {
 		//ReikaJavaLibrary.pConsole("PARSING METHOD: "+mn.desc);
-		String desc = mn.desc.substring(mn.desc.indexOf('(')+1, mn.desc.lastIndexOf(')')); //strip to inside brackets
-		ArrayList<String> li = new ArrayList();
-		parseArguments(li, desc);
+		ArrayList<String> li = parseMethodDesc(mn.desc);
 		//ReikaJavaLibrary.pConsole("PARSED METHOD: "+mn.desc+" > "+li);
+		return li;
+	}
+
+	private static ArrayList<String> parseMethodDesc(String desc) {
+		String s = desc.substring(desc.indexOf('(')+1, desc.lastIndexOf(')')); //strip to inside brackets
+		ArrayList<String> li = new ArrayList();
+		parseArguments(li, s);
 		return li;
 	}
 
@@ -548,6 +553,25 @@ public class ReikaASMHelper {
 	/** Currently broken */
 	public static AbstractInsnNode copyInstruction(AbstractInsnNode ain, Map<LabelNode, LabelNode> labels) {
 		return ain.clone(labels);
+	}
+
+	public static ArrayList<String> parseMethodSignature(MethodInsnNode min) {
+		int idx = min.desc.lastIndexOf(')');
+		String ret = min.desc.substring(idx+1);
+		ArrayList<String> li = parseMethodDesc(min.desc);
+		li.add(ret);
+		return li;
+	}
+
+	public static String compileSignature(ArrayList<String> argsAndRet) {
+		StringBuilder sb = new StringBuilder();
+		sb.append("(");
+		for (int i = 0; i < argsAndRet.size()-1; i++) {
+			sb.append(argsAndRet.get(i));
+		}
+		sb.append(")");
+		sb.append(argsAndRet.get(argsAndRet.size()-1));
+		return sb.toString();
 	}
 
 	public static String clearAnnotations(List<AnnotationNode> li) {

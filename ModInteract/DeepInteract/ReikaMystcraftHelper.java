@@ -32,6 +32,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
@@ -61,6 +62,8 @@ public class ReikaMystcraftHelper {
 	private static final Method getLink;
 
 	private static APIInstanceProvider apiProvider;
+
+	private static final ArrayList<MystcraftPageRegistry> registries = new ArrayList();
 
 	public static void disableFluidPage(Fluid f) {
 		FMLInterModComms.sendMessage(ModList.MYSTCRAFT.modLabel, "blacklistfluid", f.getName());
@@ -462,7 +465,16 @@ public class ReikaMystcraftHelper {
 	public static void registerAgeSymbol(IAgeSymbol a) {
 		SymbolAPI api = getAPI(APISegment.SYMBOL, 1);
 		if (api != null) {
-			api.registerSymbol(a, false);
+			boolean flag = api.registerSymbol(a, false);
+			if (flag) {
+				DragonAPICore.log("Registering MystCraft page '"+a.displayName()+"' ("+a.getClass()+"')");
+			}
+			else {
+				DragonAPICore.logError("Could not register MystCraft page '"+a.displayName()+"' ("+a.getClass()+"')");
+			}
+		}
+		else {
+			DragonAPICore.logError("Could not register MystCraft page '"+a.displayName()+"' ("+a.getClass()+"'); API object was null.");
 		}
 	}
 
@@ -485,6 +497,21 @@ public class ReikaMystcraftHelper {
 
 	public static void receiveAPI(APIInstanceProvider provider) {
 		apiProvider = provider;
+		for (MystcraftPageRegistry p : registries) {
+			p.register();
+		}
+	}
+
+	public static void registerPageRegistry(MystcraftPageRegistry p) {
+		if (registries.contains(p))
+			throw new MisuseException("You cannot register a MystCraft page provider twice!");
+		registries.add(p);
+	}
+
+	public static interface MystcraftPageRegistry {
+
+		public void register();
+
 	}
 
 	public static enum APISegment {
@@ -493,9 +520,9 @@ public class ReikaMystcraftHelper {
 		GRAMMAR("grammar"), //GrammarAPI
 		INSTABILITY("instability"), //InstabilityAPI
 		LINKING("linking"), //LinkingAPI
-		LINKPROPERTY("linkproperty"), //LinkPropertyAPI
+		LINKPROPERTY("linkingprop"), //LinkPropertyAPI
 		PAGE("page"), //PageAPI
-		SYMBOLVALUES("symbolvalues"), //SymbolValuesAPI
+		SYMBOLVALUES("symbolvals"), //SymbolValuesAPI
 		RENDER("render"), //RenderAPI
 		DIMENSION("dimension"), //DimensionAPI
 		;

@@ -39,21 +39,21 @@ public enum ReikaTimeHelper {
 
 	public int getMinecraftDuration() {
 		switch(this) {
-		case DAY:
-			return time/144; //10 minutes
-		case HOUR:
-			return time/144; //25 seconds
-		case MONTH: // Moon phases cycle every 8 days
-			return DAY.getMinecraftDuration()*8;
-		case WEEK: //20 minutes
-			return DAY.getMinecraftDuration()*2;
-		case YEAR: //8 real hours
-			return MONTH.getMinecraftDuration()*6;
-		case MINUTE:
-		case SECOND:
-		case TICK:
-		default:
-			return time;
+			case DAY:
+				return time/72; //20 minutes
+			case HOUR:
+				return time/144; //25 seconds
+			case MONTH: // Moon phases cycle every 8 days
+				return DAY.getMinecraftDuration()*8;
+			case WEEK: //20 minutes
+				return DAY.getMinecraftDuration()*2;
+			case YEAR: //8 real hours
+				return MONTH.getMinecraftDuration()*6;
+			case MINUTE:
+			case SECOND:
+			case TICK:
+			default:
+				return time;
 		}
 	}
 
