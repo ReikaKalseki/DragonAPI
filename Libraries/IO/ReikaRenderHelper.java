@@ -23,9 +23,11 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.shader.TesselatorVertexState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -376,6 +378,18 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	@SideOnly(Side.CLIENT)
 	public static void rerenderAllChunks() {
 		Minecraft.getMinecraft().renderGlobal.loadRenderers();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void rerenderAllChunksLazily() {
+		World world = Minecraft.getMinecraft().theWorld;
+		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+		int r = 192;
+		int x1 = MathHelper.floor_double(ep.posX-r);
+		int x2 = MathHelper.floor_double(ep.posX+r);
+		int z1 = MathHelper.floor_double(ep.posZ-r);
+		int z2 = MathHelper.floor_double(ep.posZ+r);
+		world.markBlockRangeForRenderUpdate(x1, 0, z1, x2, world.provider.getHeight()-1, z2);
 	}
 
 	public static int getFPS() {

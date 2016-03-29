@@ -20,8 +20,8 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.ChromatiCraft.ChromatiCraft;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import cpw.mods.fml.relauncher.Side;
@@ -53,13 +53,13 @@ public class ItemMatch {
 	public ItemMatch(String s) {
 		this.addAll(OreDictionary.getOres(s));
 		if (items.isEmpty())
-			throw new RegistrationException(ChromatiCraft.instance, "This recipe uses an OreDict tag with no registered items!");
+			throw new RegistrationException(DragonAPIInit.instance, "This recipe uses an OreDict tag with no registered items!");
 	}
 
 	public ItemMatch(Collection<ItemStack> c) {
 		this.addAll(c);
 		if (items.isEmpty())
-			throw new RegistrationException(ChromatiCraft.instance, "This recipe uses an list with no items!");
+			throw new RegistrationException(DragonAPIInit.instance, "This recipe uses an list with no items!");
 	}
 
 	private void addAll(Collection<ItemStack> li) {

@@ -120,6 +120,10 @@ public class ReikaFluidHelper {
 			return true;
 		if (s.equals("creosote"))
 			return true;
+		if (s.contains("gas"))
+			return true;
+		if (s.endsWith("ane") || s.endsWith("ene") || s.endsWith("yne")) //Hydrocarbons
+			return true;
 		return false;
 	}
 
