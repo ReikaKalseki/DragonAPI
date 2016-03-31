@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM;
 
-import java.io.IOException;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
@@ -20,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.ClassReader;
@@ -184,23 +182,14 @@ public class DependentMethodStripper implements IClassTransformer {
 			return false;
 		ArrayList<String> args = ReikaASMHelper.parseMethodArguments(mn);
 		for (String s : args) {
-			if (s.length() > 1 && !classExists(s.substring(1, s.length()-1))) //> 1 to avoid primitives, substring to drop L- and -;
+			if (s.length() > 1 && !ReikaASMHelper.checkForClass(s.substring(1, s.length()-1))) //> 1 to avoid primitives, substring to drop L- and -;
 				return true;
 		}
 		return false;
 	}
 
 	private static boolean processSmart(FieldNode fn) {
-		return ReikaASMHelper.memberHasAnnotationOfType(fn, "LReika/DragonAPI/ASM/DependentMethodStripper$SmartStrip") && !classExists(fn.desc);
-	}
-
-	private static boolean classExists(String name) {
-		try {
-			return Launch.classLoader.getClassBytes(name) != null;
-		}
-		catch (IOException e) {
-			return false;
-		}
+		return ReikaASMHelper.memberHasAnnotationOfType(fn, "LReika/DragonAPI/ASM/DependentMethodStripper$SmartStrip") && !ReikaASMHelper.checkForClass(fn.desc);
 	}
 
 	private static enum Annotations {
@@ -220,13 +209,13 @@ public class DependentMethodStripper implements IClassTransformer {
 
 		private boolean remove(String value) {
 			switch(this) {
-			case CLASS:
-				return !classExists(value);
-			case MOD:
-				ModList mod = ModList.valueOf(value);
-				return !mod.isLoaded();
-			default:
-				return false;
+				case CLASS:
+					return !ReikaASMHelper.checkForClass(value);
+				case MOD:
+					ModList mod = ModList.valueOf(value);
+					return !mod.isLoaded();
+				default:
+					return false;
 			}
 		}
 

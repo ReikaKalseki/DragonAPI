@@ -42,6 +42,7 @@ import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Event.GetPlayerLookEvent;
@@ -201,7 +202,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		}
 		if (DragonAPICore.isSinglePlayer())
 			return true;
-		if (isAdmin(ep))
+		if (isAdmin(ep) && DragonOptions.ADMINPERMBYPASS.getState())
 			return true;
 		if (MinecraftServer.getServer().isBlockProtected(world, x, y, z, ep))
 			return false;
@@ -217,7 +218,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		}
 		if (DragonAPICore.isSinglePlayer())
 			return true;
-		if (isAdmin(world, name, uuid))
+		if (isAdmin(world, name, uuid) && DragonOptions.ADMINPERMBYPASS.getState())
 			return true;
 		FakePlayer fp = getFakePlayerByNameAndUUID(world, name, uuid);
 		if (MinecraftServer.getServer().isBlockProtected(world, x, y, z, fp))

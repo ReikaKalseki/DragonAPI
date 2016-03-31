@@ -367,27 +367,29 @@ public final class CommandableUpdateChecker {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void onClientReceiveOldModsNote(ClientLoginEvent evt) {
-		ArrayList<String> li = new ArrayList();
-		for (DragonAPIMod mod : dispatchedOldMods) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(mod.getDisplayName());
-			sb.append(" ");
-			sb.append(mod.getModVersion());
-			sb.append(" is out of date. Update to ");
-			sb.append(latestVersions.get(mod).toString());
-			sb.append(" as soon as possible.");
-			li.add(sb.toString());
-		}
-		for (DragonAPIMod mod : dispatchedURLMods) {
-			StringBuilder sb = new StringBuilder();
-			sb.append(mod.getDisplayName());
-			sb.append(" could not verify its version; the version server may be inaccessible. Check your internet settings, and please notify ");
-			sb.append(mod.getModAuthorName());
-			sb.append(" if the server is not accessible.");
-			li.add(sb.toString());
-		}
-		for (String s : li) {
-			PopupWriter.instance.addMessage(s);
+		if (evt.newLogin) {
+			ArrayList<String> li = new ArrayList();
+			for (DragonAPIMod mod : dispatchedOldMods) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(mod.getDisplayName());
+				sb.append(" ");
+				sb.append(mod.getModVersion());
+				sb.append(" is out of date. Update to ");
+				sb.append(latestVersions.get(mod).toString());
+				sb.append(" as soon as possible.");
+				li.add(sb.toString());
+			}
+			for (DragonAPIMod mod : dispatchedURLMods) {
+				StringBuilder sb = new StringBuilder();
+				sb.append(mod.getDisplayName());
+				sb.append(" could not verify its version; the version server may be inaccessible. Check your internet settings, and please notify ");
+				sb.append(mod.getModAuthorName());
+				sb.append(" if the server is not accessible.");
+				li.add(sb.toString());
+			}
+			for (String s : li) {
+				PopupWriter.instance.addMessage(s);
+			}
 		}
 	}
 

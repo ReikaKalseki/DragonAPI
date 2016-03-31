@@ -15,6 +15,8 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import Reika.DragonAPI.Interfaces.ASMEnum;
+
 public abstract class ASMException extends RuntimeException {
 
 	public static final boolean DEV_ENV = !FMLForgePlugin.RUNTIME_DEOBF;
@@ -290,6 +292,51 @@ public abstract class ASMException extends RuntimeException {
 				String tag = f.name.equals(label) ? " * Name match" : "";
 				sb.append("\t"+f.name+" "+f.desc+tag+"\n");
 			}
+			return sb.toString();
+		}
+
+	}
+
+	public static final class ASMConflictException extends ASMException {
+
+		private final String asmMod;
+		private final ASMEnum patch;
+		private final String message;
+
+		private final MethodNode method;
+
+		public ASMConflictException(String mod, ClassNode cn, MethodNode m, ASMEnum e, String msg) {
+			super(cn);
+
+			asmMod = mod;
+			patch = e;
+			message = msg;
+
+			method = m;
+		}
+
+		@Override
+		public String getMessage() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(super.getMessage());
+			sb.append("An ASM conflict occurred when applying the patch ");
+			sb.append(patch.name());
+			sb.append(" to method '");
+			sb.append(method.name);
+			sb.append(" ");
+			sb.append(method.desc);
+			sb.append("'\n");
+			sb.append(message);
+			sb.append("\n");
+			sb.append("One of the mods involved: ");
+			sb.append(asmMod);
+			sb.append("\n");
+			sb.append("It is not possible to identify the other conflicting mod or mods; there may be multiple and the condition may be complex.");
+			sb.append("\n");
+			sb.append("However, try reproducing this error with ONLY a base Forge installation, without tweaks such as KCauldron, Optifine, or FastCraft.");
+			sb.append("Due to their nature, such tweak mods are the most likely causes of the conflict.");
+			sb.append("Once you identify the conflict, contact the developers of both mods so that a solution can be attempted.");
+			sb.append("Note that in a worst-case scenario, no solution may be possible.");
 			return sb.toString();
 		}
 

@@ -23,13 +23,13 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.util.EnumHelper;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.EnchantmentCollisionTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -40,7 +40,6 @@ import Reika.DragonAPI.Interfaces.Registry.EnchantmentEnum;
 import Reika.DragonAPI.Interfaces.Registry.EntityEnum;
 import Reika.DragonAPI.Interfaces.Registry.ItemEnum;
 import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
-import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.ModInteract.LegacyWailaHelper;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
@@ -330,7 +329,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 
 	@SideOnly(Side.CLIENT)
 	private static boolean useSoundHashMap() {
-		return /*ModList.ENDEREXPANSION.isLoaded() && ModList.FORESTRY.isLoaded() && */ReikaJVMParser.getJavaVersion(0) == 8 && KeyBinding.getKeybinds().size() >= 63;
+		return DragonOptions.SOUNDHASHMAP.getState();//*ModList.ENDEREXPANSION.isLoaded() && ModList.FORESTRY.isLoaded() && */ReikaJVMParser.getJavaVersion(0) == 8 && KeyBinding.getKeybinds().size() >= 63;
 	}
 
 	public static RegistryEntry getRegistryForObject(Object o) {

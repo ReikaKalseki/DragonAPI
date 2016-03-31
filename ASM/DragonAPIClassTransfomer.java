@@ -41,6 +41,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodInstructionException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Interfaces.ASMEnum;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -53,7 +54,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 	private static boolean nullItemPrintout = false;
 	private static boolean nullItemCrash = false;
 
-	private static enum ClassPatch {
+	private static enum ClassPatch implements ASMEnum {
+
 		CREEPERBOMBEVENT("net.minecraft.entity.monster.EntityCreeper", "xz"),
 		ITEMRENDEREVENT("net.minecraft.client.gui.inventory.GuiContainer", "bex"),
 		SLOTCLICKEVENT("net.minecraft.inventory.Slot", "aay"),
@@ -120,6 +122,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		POSTITEMUSEEVENT2("net.minecraftforge.common.ForgeHooks"),
 		ITEMSIZETEXTEVENT("net.minecraft.client.renderer.entity.RenderItem", "bny"),
 		//NOREROUTECUSTOMTEXMAP("net.minecraft.client.renderer.texture.TextureMap", "bpz"),
+		FARDESPAWNEVENT("net.minecraft.entity.EntityLiving", "sw"),
 		;
 
 		private final String obfName;
@@ -136,7 +139,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 			deobfName = deobf;
 		}
 
-		private byte[] apply(byte[] data) {
+		public byte[] apply(byte[] data) {
 			ClassNode cn = new ClassNode();
 			ClassReader classReader = new ClassReader(data);
 			classReader.accept(cn, 0);
@@ -1632,6 +1635,8 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70645_a", "onDeath", "(Lnet/minecraft/util/DamageSource;)V");
 					AbstractInsnNode ain = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.LDC, "keepInventory");
+					if (ain == null)
+						ReikaASMHelper.throwConflict(this, cn, m, "Could not find 'keepInventory' gamerule lookup");
 					AbstractInsnNode load = ReikaASMHelper.getLastOpcodeBefore(m.instructions, m.instructions.indexOf(ain), Opcodes.ALOAD);
 					ReikaASMHelper.deleteFrom(m.instructions, load.getNext(), ain.getNext());
 					m.instructions.insert(load, ReikaASMHelper.copyInsnList(li));
@@ -1752,6 +1757,15 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					break;
 				}
 				 */
+				case FARDESPAWNEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70692_ba", "canDespawn", "()Z");
+					m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/LivingFarDespawnEvent", "fire", "(Lnet/minecraft/entity/EntityLiving;)Z", false));
+					m.instructions.add(new InsnNode(Opcodes.IRETURN));
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);

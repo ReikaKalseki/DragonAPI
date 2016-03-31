@@ -11,9 +11,10 @@ package Reika.DragonAPI.ModRegistry;
 
 import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Interfaces.Registry.Dependency;
 
 
-public enum PowerTypes {
+public enum PowerTypes implements Dependency {
 
 	//MJ("buildcraft.api.power.IPowerReceptor", "buildcraft.api.power.IPowerEmitter"), killed by RF
 	RF("cofh.api.energy.IEnergyHandler", "cofh.api.energy.IEnergyContainerItem"),
@@ -49,7 +50,13 @@ public enum PowerTypes {
 		return true;
 	}
 
-	public boolean exists() {
+	@Override
+	public boolean isLoaded() {
 		return exists;
+	}
+
+	@Override
+	public String getDisplayName() {
+		return this.name();
 	}
 }

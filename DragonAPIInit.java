@@ -560,6 +560,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "EQDanteon", "ec00d292-1447-4e99-922c-2653f423e0cb", 40);
 		PatreonController.instance.addPatron(this, "Viper2g1", "3bf81769-1510-40b1-80d7-fea0c51aa304", 12); //Viperean
 		PatreonController.instance.addPatron(this, "StrayanDropbear", "e95b2aba-35c9-40da-b4cc-62ee68dc2962", 10);
+		PatreonController.instance.addPatron(this, "bludde", "b7e2eebd-51fe-4c32-87bd-40b28337c99e", 1);
 
 		logger.log("Credit to Techjar for hosting the version file and remote asset server.");
 

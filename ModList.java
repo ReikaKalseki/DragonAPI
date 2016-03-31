@@ -19,13 +19,14 @@ import java.util.List;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Interfaces.Registry.Dependency;
 import Reika.DragonAPI.Interfaces.Registry.ModEntry;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 
-public enum ModList implements ModEntry {
+public enum ModList implements ModEntry, Dependency {
 
 	ROTARYCRAFT("RotaryCraft", "Reika.RotaryCraft.Registry.BlockRegistry", "Reika.RotaryCraft.Registry.ItemRegistry"),
 	REACTORCRAFT("ReactorCraft", "Reika.ReactorCraft.Registry.ReactorBlocks", "Reika.ReactorCraft.Registry.ReactorItems"),

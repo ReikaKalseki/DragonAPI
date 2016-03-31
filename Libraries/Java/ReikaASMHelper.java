@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
@@ -19,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.apache.logging.log4j.Level;
@@ -46,8 +48,10 @@ import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
 
 import Reika.DragonAPI.Exception.ASMException;
+import Reika.DragonAPI.Exception.ASMException.ASMConflictException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
+import Reika.DragonAPI.Interfaces.ASMEnum;
 
 public class ReikaASMHelper {
 
@@ -738,6 +742,26 @@ public class ReikaASMHelper {
 			}
 		}
 
+	}
+
+	public static void throwConflict(ASMEnum c, ClassNode cn, MethodNode m, String msg) {
+		throwConflict(c, cn, m, msg, null);
+	}
+
+	public static void throwConflict(ASMEnum c, ClassNode cn, MethodNode m, String msg, Throwable t) {
+		ASMConflictException ex = new ASMConflictException(activeMod, cn, m, c, msg);
+		if (t != null)
+			ex.initCause(t);
+		throw ex;
+	}
+
+	public static boolean checkForClass(String s) {
+		try {
+			return Launch.classLoader.getClassBytes(s) != null;
+		}
+		catch (IOException e) {
+			return false;
+		}
 	}
 
 }
