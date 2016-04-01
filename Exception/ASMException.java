@@ -334,8 +334,11 @@ public abstract class ASMException extends RuntimeException {
 			sb.append("It is not possible to identify the other conflicting mod or mods; there may be multiple and the condition may be complex.");
 			sb.append("\n");
 			sb.append("However, try reproducing this error with ONLY a base Forge installation, without tweaks such as KCauldron, Optifine, or FastCraft.");
+			sb.append("\n");
 			sb.append("Due to their nature, such tweak mods are the most likely causes of the conflict.");
+			sb.append("\n");
 			sb.append("Once you identify the conflict, contact the developers of both mods so that a solution can be attempted.");
+			sb.append("\n");
 			sb.append("Note that in a worst-case scenario, no solution may be possible.");
 			return sb.toString();
 		}

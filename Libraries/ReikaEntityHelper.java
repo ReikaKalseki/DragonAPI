@@ -91,6 +91,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.DummyTeleporter;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Interfaces.ComparableAI;
 import Reika.DragonAPI.Interfaces.Entity.CustomProjectile;
@@ -826,7 +827,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 					e.worldObj.removeEntity(e);
 					e.isDead = false;
 					e.worldObj.theProfiler.startSection("reposition");
-					ms.getConfigurationManager().transferEntityToWorld(e, from_dim, from, to, t != null ? t : new Teleporter(to));
+					ms.getConfigurationManager().transferEntityToWorld(e, from_dim, from, to, t != null ? t : new DummyTeleporter(to));
 					e.worldObj.theProfiler.endStartSection("reloading");
 					Entity copy = EntityList.createEntityByName(EntityList.getEntityString(e), to);
 
@@ -852,7 +853,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		MinecraftServer mcs = ep.mcServer;
 		if (ep.timeUntilPortal > 0)
 			ep.timeUntilPortal = 10;
-		mcs.getConfigurationManager().transferPlayerToDimension(ep, to_dim, t != null ? t : new Teleporter(mcs.worldServerForDimension(to_dim)));
+		mcs.getConfigurationManager().transferPlayerToDimension(ep, to_dim, t != null ? t : new DummyTeleporter(mcs.worldServerForDimension(to_dim)));
 	}
 
 	public static <T extends Entity> T getNearestEntityOfSameType(T e, int r) {

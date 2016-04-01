@@ -14,9 +14,6 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonOptions;
-import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
 
@@ -51,8 +48,6 @@ public class RenderBlockAtPosEvent extends Event {
 	}
 
 	public static boolean fire(WorldRenderer wr, RenderBlocks rb, Block b, int x, int y, int z, int pass) {
-		if (DragonOptions.DEBUGMODE.getState())
-			DragonAPICore.debug("Firing RenderBlockAtPosEvent, pass="+pass+", loc="+b.getLocalizedName()+" @ "+new Coordinate(x, y, z));
 		Event evt = new RenderBlockAtPosEvent(wr, rb.blockAccess, rb, b, x, y, z, pass);
 		boolean flag = !MinecraftForge.EVENT_BUS.post(evt);
 		if (flag)

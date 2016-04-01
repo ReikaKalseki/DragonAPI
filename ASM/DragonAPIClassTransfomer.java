@@ -1634,6 +1634,10 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/PlayerKeepInventoryEvent", "fire", "(Lnet/minecraft/entity/player/EntityPlayer;)Z", false));
 
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70645_a", "onDeath", "(Lnet/minecraft/util/DamageSource;)V");
+					if (ReikaASMHelper.checkForClass("api.player.forge.PlayerAPITransformer")) {
+						m = ReikaASMHelper.getMethodByName(cn, "onDeath", "(Lnet/minecraft/util/DamageSource;)V"); //Try his method instead
+					}
+
 					AbstractInsnNode ain = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.LDC, "keepInventory");
 					if (ain == null)
 						ReikaASMHelper.throwConflict(this, cn, m, "Could not find 'keepInventory' gamerule lookup");

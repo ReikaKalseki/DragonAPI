@@ -76,7 +76,8 @@ public class ItemMatch {
 	}
 
 	private void addItem(KeyedItemStack ks) {
-		items.add(ks.setSimpleHash(true).lock());
+		ks = ks.setSimpleHash(true).setIgnoreNBT(ks.getItemStack().stackTagCompound == null).lock();
+		items.add(ks);
 		//if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 		displayList.add(ks.getItemStack());
 	}

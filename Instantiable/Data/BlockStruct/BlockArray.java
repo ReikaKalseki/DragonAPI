@@ -1120,9 +1120,34 @@ public class BlockArray implements Iterable<Coordinate> {
 	}
 
 	public void shaveToCube() {
-		//TODO
-
+		BlockArray b = getXORBox(this, fromBounds(minX, minY, minZ, maxX, maxY, maxZ));
+		this.intersectWith(b);
 		this.resetLimits();
+	}
+
+	public void XORWith(BlockArray b) {
+		HashSet<Coordinate> set = new HashSet();
+		set.addAll(blocks);
+		set.addAll(b.blocks);
+		this.clear();
+		for (Coordinate c : set) {
+			if (keys.contains(c) ^ b.keys.contains(c)) {
+				this.addKey(c);
+			}
+		}
+	}
+
+	public static BlockArray getXORBox(BlockArray b1, BlockArray b2) {
+		BlockArray b = b1.instantiate();
+		HashSet<Coordinate> set = new HashSet();
+		set.addAll(b1.blocks);
+		set.addAll(b2.blocks);
+		for (Coordinate c : set) {
+			if (b2.keys.contains(c) ^ b1.keys.contains(c)) {
+				b.addKey(c);
+			}
+		}
+		return b;
 	}
 
 	public void intersectWith(BlockArray b) {
@@ -1183,6 +1208,18 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	public void sort(Comparator<Coordinate> comparator) {
 		Collections.sort(blocks, comparator);
+	}
+
+	public static BlockArray fromBounds(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+		BlockArray b = new BlockArray();
+		for (int x = minX; x <= maxX; x++) {
+			for (int y = minY; y <= maxY; y++) {
+				for (int z = minZ; z <= maxZ; z++) {
+					b.addBlockCoordinate(x, y, z);
+				}
+			}
+		}
+		return b;
 	}
 
 	private static final Comparator<Coordinate> heightComparator = new HeightComparator();
