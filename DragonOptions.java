@@ -11,8 +11,9 @@ package Reika.DragonAPI;
 
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
 import Reika.DragonAPI.Interfaces.Configuration.IntegerConfig;
+import Reika.DragonAPI.Interfaces.Configuration.UserSpecificConfig;
 
-public enum DragonOptions implements IntegerConfig, BooleanConfig {
+public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificConfig {
 
 	LOGLOADING("Console Loading Info", true),
 	FILELOG("Log Loading Info To Separate File", false),
@@ -37,6 +38,8 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig {
 	FIXSANITY("Attempt to Repair Environment Sanity", false),
 	ADMINPERMBYPASS("Admins Bypass Permissions", true),
 	SOUNDHASHMAP("Use HashMap for Sound Categories - Only use if necessary", false),
+	FILEHASH("Compare mod file hashes between client and server", true),
+	APRIL("Enable Vernal Behavior", true)
 	//RECURSE("Recursion Limit Override", -1),
 	;//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
 
@@ -122,6 +125,30 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig {
 	@Override
 	public boolean shouldLoad() {
 		return true;
+	}
+
+	@Override
+	public boolean isUserSpecific() {
+		switch(this) {
+			case LOGLOADING:
+			case FILELOG:
+			case DEBUGMODE:
+			case NORENDERS:
+			case SOUNDCHANNELS:
+			case NOHOTBARSWAP:
+			case CHATERRORS:
+			case SORTCREATIVE:
+			case CUSTOMRENDER:
+			case LOGSYNCCME:
+			case SLOWSYNC:
+			case LAGWARNING:
+			case ADMINPERMBYPASS:
+			case FILEHASH:
+			case APRIL:
+				return true;
+			default:
+				return false;
+		}
 	}
 
 }

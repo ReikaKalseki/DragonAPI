@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -26,6 +28,7 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -52,6 +55,7 @@ import Reika.DragonAPI.Exception.ASMException.ASMConflictException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.Interfaces.ASMEnum;
+import cpw.mods.fml.relauncher.FMLInjectionData;
 
 public class ReikaASMHelper {
 
@@ -752,7 +756,38 @@ public class ReikaASMHelper {
 		ASMConflictException ex = new ASMConflictException(activeMod, cn, m, c, msg);
 		if (t != null)
 			ex.initCause(t);
+
+		printClassToFile(cn, getMinecraftDirectoryString()+"/ClassError");
+
 		throw ex;
+	}
+
+	private static String getMinecraftDirectoryString() {
+		String s = ((File)FMLInjectionData.data()[6]).getAbsolutePath();
+		if (s.endsWith("/.") || s.endsWith("\\.")) {
+			s = s.substring(0, s.length()-2);
+		}
+		s = s.replaceAll("\\\\", "/");
+		return s;
+	}
+
+	public static void printClassToFile(ClassNode cn, String path) {
+		if (!path.endsWith("/"))
+			path = path+"/";
+		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
+		cn.accept(writer);
+		byte[] newdata = writer.toByteArray();
+		try {
+			File f = new File(path+cn.name+".class");
+			f.getParentFile().mkdirs();
+			f.createNewFile();
+			FileOutputStream out = new FileOutputStream(f);
+			out.write(newdata);
+			out.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static boolean checkForClass(String s) {

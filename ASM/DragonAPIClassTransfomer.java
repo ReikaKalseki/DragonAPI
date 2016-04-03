@@ -1635,7 +1635,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70645_a", "onDeath", "(Lnet/minecraft/util/DamageSource;)V");
 					if (ReikaASMHelper.checkForClass("api.player.forge.PlayerAPITransformer")) {
-						m = ReikaASMHelper.getMethodByName(cn, "onDeath", "(Lnet/minecraft/util/DamageSource;)V"); //Try his method instead
+						m = ReikaASMHelper.getMethodByName(cn, "localOnDeath", "(Lnet/minecraft/util/DamageSource;)V"); //Try his method instead
 					}
 
 					AbstractInsnNode ain = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.LDC, "keepInventory");

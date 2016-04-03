@@ -147,6 +147,10 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1);
 	}
 
+	public static AxisAlignedBB getZeroAABB() {
+		return AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
+	}
+
 	/** Returns a sized bounding box centered on a Blocks. Args: x, y, z */
 	public static AxisAlignedBB getBlockCenteredAABB(int x, int y, int z, double range) {
 		return AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1).expand(range, range, range);
@@ -203,6 +207,10 @@ public final class ReikaAABBHelper extends DragonAPICore {
 			}
 		}
 		return c;
+	}
+
+	public static double getVolume(AxisAlignedBB box) {
+		return (box.maxX-box.minX)*(box.maxY-box.minY)*(box.maxZ-box.minZ);
 	}
 
 }

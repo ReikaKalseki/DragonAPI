@@ -16,6 +16,7 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.Interfaces.ASMEnum;
+import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 public abstract class ASMException extends RuntimeException {
 
@@ -340,6 +341,15 @@ public abstract class ASMException extends RuntimeException {
 			sb.append("Once you identify the conflict, contact the developers of both mods so that a solution can be attempted.");
 			sb.append("\n");
 			sb.append("Note that in a worst-case scenario, no solution may be possible.");
+			sb.append("\n");
+			sb.append("Method body:");
+			sb.append("\n");
+			for (int i = 0; i < method.instructions.size(); i++) {
+				sb.append(ReikaASMHelper.clearString(method.instructions.get(i)));
+				sb.append("\n");
+			}
+			sb.append("\n");
+			sb.append("A .class file was generated in your MC folder, under the \"ClassError\" subfolder. Find the one with the matching name.");
 			return sb.toString();
 		}
 

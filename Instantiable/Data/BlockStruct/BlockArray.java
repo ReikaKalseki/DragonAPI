@@ -1120,9 +1120,35 @@ public class BlockArray implements Iterable<Coordinate> {
 	}
 
 	public void shaveToCube() {
-		BlockArray b = getXORBox(this, fromBounds(minX, minY, minZ, maxX, maxY, maxZ));
-		this.intersectWith(b);
+		boolean changed = false;
+		do {
+			int s1 = this.getSize();
+
+			Collection<Coordinate> set = new HashSet(blocks);
+			for (Coordinate c : set) {
+				int n = this.countNeighbors(c);
+				if (n < 11) {
+					this.removeKey(c);
+				}
+			}
+
+			changed = this.getSize() != s1;
+		} while(changed);
+
 		this.resetLimits();
+	}
+
+	private int countNeighbors(Coordinate c) {
+		int n = 0;
+		for (int i = -1; i <= 1; i++) {
+			for (int j = -1; j <= 1; j++) {
+				for (int k = -1; k <= 1; k++) {
+					if (keys.contains(c.offset(i, j, k)))
+						n++;
+				}
+			}
+		}
+		return n;
 	}
 
 	public void XORWith(BlockArray b) {

@@ -216,6 +216,14 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 	}
 
+	public static boolean areNBTTagsEqual(NBTTagCompound tag1, NBTTagCompound tag2) {
+		if (tag1 == tag2)
+			return true;
+		if (tag1 == null || tag2 == null)
+			return false;
+		return tag1.equals(tag2);
+	}
+
 	public static NBTTypes getTagType(NBTBase base) {
 		return NBTTypes.IDMap.get(base.getId());
 	}

@@ -22,6 +22,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
@@ -123,13 +124,42 @@ public class MESystemReader {
 	}
 
 	/** Returns how many items removed */
-	public long removeItem(ItemStack is, boolean simulate) {
-		IAEItemStack ret = this.getStorage().extractItems(this.createAEStack(is), simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-		return ret != null ? ret.getStackSize() : 0;
+	public long removeItem(ItemStack is, boolean simulate, boolean nbt) {
+		IMEMonitor<IAEItemStack> mon = this.getStorage();
+		if (!nbt) {
+			Collection<IAEItemStack> c = this.getFuzzyItemList(is, FuzzyMode.IGNORE_ALL);
+			IAEItemStack most = null;
+			for (IAEItemStack iae : c) {
+				if ((most == null || iae.getStackSize() >= most.getStackSize()) && is.getItem() == iae.getItem() && is.getItemDamage() == iae.getItemDamage()) {
+					most = iae;
+				}
+			}
+			if (most == null)
+				return 0;
+			most.setStackSize(is.stackSize);
+			return most != null ? this.extract(most, simulate) : 0;
+		}
+		return this.extract(this.createAEStack(is), simulate);
 	}
 
 	/** Returns how many items removed. But Fuzzy! :D */
-	public long removeItemFuzzy(ItemStack is, boolean simulate, FuzzyMode fz, boolean oredict) {
+	public long removeItemFuzzy(ItemStack is, boolean simulate, FuzzyMode fz, boolean oredict, boolean nbt) {
+		IMEMonitor<IAEItemStack> mon = this.getStorage();
+		IAEItemStack ae = this.createAEStack(is);
+		Collection<IAEItemStack> c = this.getFuzzyItemList(is, fz);
+		IAEItemStack most = null;
+		for (IAEItemStack iae : c) {
+			if ((most == null || iae.getStackSize() >= most.getStackSize()) && (oredict || is.getItem() == iae.getItem()) && (!nbt || ReikaNBTHelper.areNBTTagsEqual(is.stackTagCompound, iae.getTagCompound().getNBTTagCompoundCopy()))) {
+				most = iae;
+			}
+		}
+		if (most == null)
+			return 0;
+		most.setStackSize(is.stackSize);
+		return most != null ? this.extract(most, simulate) : 0;
+	}
+
+	private Collection<IAEItemStack> getFuzzyItemList(ItemStack is, FuzzyMode fz) {
 		IMEMonitor<IAEItemStack> mon = this.getStorage();
 		IAEItemStack ae = this.createAEStack(is);
 		Collection<IAEItemStack> c = new ArrayList(mon.getStorageList().findFuzzy(ae, fz)); //wrap in list so we can add entries
@@ -139,22 +169,12 @@ public class MESystemReader {
 			ae = this.createAEStack(cp);
 			c.addAll(mon.getStorageList().findFuzzy(ae, fz));
 		}
-		IAEItemStack most = null;
-		for (IAEItemStack iae : c) {
-			if ((most == null || iae.getStackSize() >= most.getStackSize()) && (oredict || is.getItem() == iae.getItem())) {
-				most = iae;
-			}
-		}
-		if (most == null)
-			return 0;
-		most.setStackSize(is.stackSize);
-		IAEItemStack ret = most != null ? mon.extractItems(most, simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource) : null;
-		return ret != null ? ret.getStackSize() : 0;
+		return c;
 	}
 
-	/** AE Does not currently support this */
-	public long removeItemFuzzyIgnoreNBT(ItemStack is, boolean simulate, FuzzyMode fz, boolean oredict) {
-		return this.removeItemFuzzy(is, simulate, fz, oredict);
+	private long extract(IAEItemStack ae, boolean simulate) {
+		IAEItemStack is = this.getStorage().extractItems(ae, simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
+		return is != null ? is.getStackSize() : 0;
 	}
 
 	/** Returns how many items NOT added */
@@ -163,17 +183,12 @@ public class MESystemReader {
 		return ret != null ? ret.getStackSize() : 0;
 	}
 
-	public long getItemCount(ItemStack is) {
-		return this.removeItem(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true);
+	public long getItemCount(ItemStack is, boolean nbt) {
+		return this.removeItem(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true, nbt);
 	}
 
-	public long getFuzzyItemCount(ItemStack is, FuzzyMode fz, boolean ore) {
-		return this.removeItemFuzzy(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true, fz, ore);
-	}
-
-	/** AE does not currently support this */
-	public long getFuzzyItemCountIgnoreNBT(ItemStack is, FuzzyMode fz, boolean ore) {
-		return this.getFuzzyItemCount(is, fz, ore);
+	public long getFuzzyItemCount(ItemStack is, FuzzyMode fz, boolean ore, boolean nbt) {
+		return this.removeItemFuzzy(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true, fz, ore, nbt);
 	}
 
 	/** Triggers the native crafting system to craft a given amount of a given item. Callbacks is optional. */

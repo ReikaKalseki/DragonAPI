@@ -23,6 +23,7 @@ import java.util.jar.Manifest;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.ModFileVersionChecker;
 import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
@@ -143,7 +144,7 @@ public abstract class DragonAPIMod {
 		CommandableUpdateChecker.instance.registerMod(this);
 
 		fileHash = this.isSource() ? "Source" : ReikaFileReader.getHash(this.getModFile(), HashType.SHA256);
-		if (this.requireSameFilesOnClientAndServer())
+		if (this.requireSameFilesOnClientAndServer() && DragonOptions.FILEHASH.getState())
 			ModFileVersionChecker.instance.addMod(this);
 	}
 

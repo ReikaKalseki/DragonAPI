@@ -43,11 +43,16 @@ import Reika.DragonAPI.Interfaces.Configuration.StringArrayConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
 import Reika.DragonAPI.Interfaces.Registry.IDRegistry;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
+import com.google.common.base.Strings;
+
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 
 public class ControlledConfig {
 
 	private static final HashMap<String, ControlledConfig> configs = new HashMap();
+
+	private static final int userHash = genUserHash();
 
 	protected Configuration config;
 
@@ -98,7 +103,7 @@ public class ControlledConfig {
 		for (int i = 0; i < optionList.length; i++) {
 			ConfigList cfg = optionList[i];
 			String s1 = this.getCategory(cfg);
-			String s2 = cfg.getLabel();
+			String s2 = this.getLabel(cfg);
 			this.registerOption(s1, s2, cfg);
 		}
 
@@ -108,6 +113,26 @@ public class ControlledConfig {
 			String s2 = cfg.getConfigName();
 			this.registerOption(s1, s2, cfg);
 		}
+	}
+
+	private static int genUserHash() {
+		String username = System.getProperty("user.name");
+		long diskSize = new File("/").getTotalSpace();
+		int h1 = username.hashCode();
+		int h2 = Long.toHexString(diskSize).hashCode();
+		return h1 ^ h2;
+	}
+
+	private String getLabel(ConfigList cfg) {
+		String s = cfg.getLabel();
+		//if (cfg instanceof UserSpecificConfig && ((UserSpecificConfig)cfg).isUserSpecific()) {
+		//	s = "["+Character.toUpperCase(s.charAt(0))+this.getUserHash(cfg, s)+"] "+s; //First char prefix is to keep original sorting
+		//}
+		return s;
+	}
+
+	private String getUserHash(ConfigList cfg, String s) {
+		return Strings.padStart(Integer.toHexString(userHash - s.hashCode()), 8, '0');
 	}
 
 	private void registerOption(String s1, String s2, Object cfg) {
@@ -255,7 +280,7 @@ public class ControlledConfig {
 
 		for (int i = 0; i < optionList.length; i++) {
 			ConfigList cfg = optionList[i];
-			String label = cfg.getLabel();
+			String label = this.getLabel(cfg);
 			if (cfg.shouldLoad()) {
 				controls[i] = this.loadValue(optionList[i]);
 			}
@@ -354,7 +379,7 @@ public class ControlledConfig {
 		for (ConfigList cfg : specialFiles.keySet()) {
 			String file = specialFiles.get(cfg);
 			HashMap<String, String> data = extraFiles.get(file);
-			String s = data.get(cfg.getLabel());
+			String s = data.get(this.getLabel(cfg));
 			if (s == null) {
 				controls[cfg.ordinal()] = this.getDefault(cfg);
 			}
@@ -362,7 +387,7 @@ public class ControlledConfig {
 				try {
 					Object o = this.parseData(cfg, s);
 					if (o == null)
-						throw new RegistrationException(configMod, "Config entry '"+cfg.getLabel()+"' returned a null value. This is invalid.");
+						throw new RegistrationException(configMod, "Config entry '"+this.getLabel(cfg)+"' returned a null value. This is invalid.");
 					controls[cfg.ordinal()] = o;
 				}
 				catch (Exception e) {
@@ -429,9 +454,9 @@ public class ControlledConfig {
 		for (SegmentedConfigList cfg : specialConfigs.get(s)) {
 			Object dat = controls[cfg.ordinal()];
 			if (cfg.saveIfUnspecified() || !dat.equals(this.getDefault(cfg))) {
-				//ReikaJavaLibrary.pConsole(cfg.getLabel()+" - "+cfg.saveIfUnspecified()+"/"+dat+"&"+this.getDefault(cfg));
+				//ReikaJavaLibrary.pConsole(getLabel(cfg)+" - "+cfg.saveIfUnspecified()+"/"+dat+"&"+this.getDefault(cfg));
 				String val = this.encodeData(cfg, dat);
-				String sg = "[\""+cfg.getLabel()+"\"=\""+val+"\"";
+				String sg = "[\""+this.getLabel(cfg)+"\"=\""+val+"\"";
 				li.add(sg);
 			}
 		}
@@ -477,7 +502,7 @@ public class ControlledConfig {
 	}
 
 	private boolean setState(BooleanConfig cfg) {
-		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultState());
+		Property prop = config.get(this.getCategory(cfg), this.getLabel(cfg), cfg.getDefaultState());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultState());
 		if (cfg instanceof SelectiveConfig) {
@@ -493,7 +518,7 @@ public class ControlledConfig {
 	}
 
 	private int setValue(IntegerConfig cfg) {
-		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultValue());
+		Property prop = config.get(this.getCategory(cfg), this.getLabel(cfg), cfg.getDefaultValue());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultValue());
 		if (cfg instanceof SelectiveConfig) {
@@ -509,7 +534,7 @@ public class ControlledConfig {
 	}
 
 	private float setFloat(DecimalConfig cfg) {
-		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultFloat());
+		Property prop = config.get(this.getCategory(cfg), this.getLabel(cfg), cfg.getDefaultFloat());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultFloat());
 		if (cfg instanceof SelectiveConfig) {
@@ -525,7 +550,7 @@ public class ControlledConfig {
 	}
 
 	private String setString(StringConfig cfg) {
-		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultString());
+		Property prop = config.get(this.getCategory(cfg), this.getLabel(cfg), cfg.getDefaultString());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultString());
 		if (cfg instanceof SelectiveConfig) {
@@ -541,7 +566,7 @@ public class ControlledConfig {
 	}
 
 	private int[] setIntArray(IntArrayConfig cfg) {
-		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultIntArray());
+		Property prop = config.get(this.getCategory(cfg), this.getLabel(cfg), cfg.getDefaultIntArray());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultIntArray());
 		if (cfg instanceof SelectiveConfig) {
@@ -557,7 +582,7 @@ public class ControlledConfig {
 	}
 
 	private String[] setStringArray(StringArrayConfig cfg) {
-		Property prop = config.get(this.getCategory(cfg), cfg.getLabel(), cfg.getDefaultStringArray());
+		Property prop = config.get(this.getCategory(cfg), this.getLabel(cfg), cfg.getDefaultStringArray());
 		if (cfg.isEnforcingDefaults())
 			prop.set(cfg.getDefaultStringArray());
 		if (cfg instanceof SelectiveConfig) {
@@ -573,12 +598,17 @@ public class ControlledConfig {
 	}
 
 	private String getCategory(ConfigList cfg) {
-		return cfg instanceof CustomCategoryConfig ? ((CustomCategoryConfig)cfg).getCategory() : "control setup";
+		if (cfg instanceof CustomCategoryConfig)
+			return ((CustomCategoryConfig)cfg).getCategory();
+		//else if (cfg instanceof UserSpecificConfig && ((UserSpecificConfig)cfg).isUserSpecific())
+		//	return "instance specific";
+		else
+			return "control setup";
 	}
 
 	private void removeConfigEntry(ConfigList cfg) {
 		ConfigCategory cat = config.getCategory(this.getCategory(cfg));
-		cat.remove(cfg.getLabel());
+		cat.remove(this.getLabel(cfg));
 	}
 
 	private int getValueFromConfig(IDRegistry id, Configuration config) {

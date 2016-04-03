@@ -47,6 +47,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Recipe.ExpandedOreRecipe;
 import Reika.DragonAPI.Instantiable.Recipe.RecipePattern;
+import Reika.DragonAPI.Interfaces.CustomToStringRecipe;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -931,6 +932,9 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		}
 		else if (r instanceof ShapelessOreRecipe) {
 			return "Shapeless Ore "+((ShapelessOreRecipe)r).getInput().toString()+" > "+r.getRecipeOutput();
+		}
+		else if (r instanceof CustomToStringRecipe) {
+			return r.toString();
 		}
 		else {
 			return "Unknown '"+r.getClass().getName()+"'"+" > "+r.getRecipeOutput();

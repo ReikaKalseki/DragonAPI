@@ -28,6 +28,7 @@ public class SpawnMobsCommand extends DragonCommandBase {
 			this.sendChatToSender(ics, EnumChatFormatting.RED+"You must specify an entity name and a number to spawn.");
 			return;
 		}
+		args[0] = args[0].replaceAll("_", " ");
 		EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
 		World world = ep.worldObj;
 		Entity test = EntityList.createEntityByName(args[0], world);

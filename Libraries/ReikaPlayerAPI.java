@@ -39,6 +39,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
@@ -46,6 +47,8 @@ import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Event.GetPlayerLookEvent;
+import Reika.DragonAPI.Instantiable.Event.PlayerHasItemEvent;
+import Reika.DragonAPI.Instantiable.Event.RemovePlayerItemEvent;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget.PlayerTarget;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
@@ -151,19 +154,32 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	}
 
 	/** Returns true if the player has the given ID and metadata in their inventory, or is in creative mode.
-	 * Args: Player, ID, metadata (-1 for any) */
-	public static boolean playerHasOrIsCreative(EntityPlayer ep, Item id, int meta) {
+	 * Args: Player, stack */
+	public static boolean playerHasOrIsCreative(EntityPlayer ep, ItemStack is) {
 		if (ep.capabilities.isCreativeMode)
 			return true;
+		PlayerHasItemEvent evt = new PlayerHasItemEvent(ep, is);
+		switch (evt.getResult()) {
+			case DENY:
+				return false;
+			case ALLOW:
+				return true;
+			default:
+				break;
+		}
 		ItemStack[] ii = ep.inventory.mainInventory;
-		if (meta != -1)
-			return ReikaInventoryHelper.checkForItemStack(id, meta, ii);
+		if (is.getItem().getHasSubtypes() && is.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+			return ReikaInventoryHelper.checkForItemStack(is, ii, false);
 		else
-			return ReikaInventoryHelper.checkForItem(id, ii);
+			return ReikaInventoryHelper.checkForItem(is.getItem(), ii);
+	}
+
+	public static boolean playerHasOrIsCreative(EntityPlayer ep, Item id) {
+		return playerHasOrIsCreative(ep, new ItemStack(id));
 	}
 
 	public static boolean playerHasOrIsCreative(EntityPlayer ep, Block id, int meta) {
-		return playerHasOrIsCreative(ep, Item.getItemFromBlock(id), meta);
+		return playerHasOrIsCreative(ep, new ItemStack(id, 1, meta));
 	}
 
 	public static void setFoodLevel(EntityPlayer ep, int level) {
@@ -370,5 +386,22 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	public static void addOrDropItem(ItemStack is, EntityPlayer ep) {
 		if (!ReikaInventoryHelper.addToIInv(is, ep.inventory))
 			ReikaItemHelper.dropItem(ep, is);
+	}
+
+	public static void findAndDecrItem(EntityPlayer ep, Block b, int meta) {
+		findAndDecrItem(ep, new ItemStack(b, 1, meta));
+	}
+
+	public static void findAndDecrItem(EntityPlayer ep, Item i, int meta) {
+		findAndDecrItem(ep, new ItemStack(i, 1, meta));
+	}
+
+	public static void findAndDecrItem(EntityPlayer ep, ItemStack is) {
+		if (MinecraftForge.EVENT_BUS.post(new RemovePlayerItemEvent(ep, is)))
+			return;
+		int slot = ReikaInventoryHelper.locateInInventory(is, ep.inventory.mainInventory, false);
+		if (slot != -1) {
+			ReikaInventoryHelper.decrStack(slot, ep.inventory.mainInventory);
+		}
 	}
 }
