@@ -39,7 +39,8 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	ADMINPERMBYPASS("Admins Bypass Permissions", true),
 	SOUNDHASHMAP("Use HashMap for Sound Categories - Only use if necessary", false),
 	FILEHASH("Compare mod file hashes between client and server", true),
-	APRIL("Enable Vernal Behavior", true)
+	APRIL("Enable Vernal Amusement Behavior", true),
+	NOALPHATEST("Disable Alpha Clipping in WorldRenderer", true),
 	//RECURSE("Recursion Limit Override", -1),
 	;//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
 
@@ -139,12 +140,9 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 			case CHATERRORS:
 			case SORTCREATIVE:
 			case CUSTOMRENDER:
-			case LOGSYNCCME:
-			case SLOWSYNC:
-			case LAGWARNING:
-			case ADMINPERMBYPASS:
-			case FILEHASH:
 			case APRIL:
+			case NOALPHATEST:
+			case TABNBT:
 				return true;
 			default:
 				return false;

@@ -20,6 +20,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.Session;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -41,12 +43,17 @@ import Reika.DragonAPI.Interfaces.Configuration.SegmentedConfigList;
 import Reika.DragonAPI.Interfaces.Configuration.SelectiveConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringArrayConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
+import Reika.DragonAPI.Interfaces.Configuration.UserSpecificConfig;
 import Reika.DragonAPI.Interfaces.Registry.IDRegistry;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 import com.google.common.base.Strings;
+import com.mojang.authlib.GameProfile;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ControlledConfig {
 
@@ -116,23 +123,34 @@ public class ControlledConfig {
 	}
 
 	private static int genUserHash() {
+		/*
 		String username = System.getProperty("user.name");
 		long diskSize = new File("/").getTotalSpace();
 		int h1 = username.hashCode();
 		int h2 = Long.toHexString(diskSize).hashCode();
 		return h1 ^ h2;
+		 */
+		return FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? getClientUserHash() : 0;
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static int getClientUserHash() {
+		Session s = Minecraft.getMinecraft().getSession();
+		GameProfile p = s.func_148256_e();
+		String id = p != null ? p.getId().toString() : s.getUsername();
+		return id.hashCode();
 	}
 
 	private String getLabel(ConfigList cfg) {
 		String s = cfg.getLabel();
-		//if (cfg instanceof UserSpecificConfig && ((UserSpecificConfig)cfg).isUserSpecific()) {
-		//	s = "["+Character.toUpperCase(s.charAt(0))+this.getUserHash(cfg, s)+"] "+s; //First char prefix is to keep original sorting
-		//}
+		if (cfg instanceof UserSpecificConfig && ((UserSpecificConfig)cfg).isUserSpecific()) {
+			s = "["+Character.toUpperCase(s.charAt(0))+this.getUserHash(cfg, s)+"] "+s; //First char prefix is to keep original sorting
+		}
 		return s;
 	}
 
 	private String getUserHash(ConfigList cfg, String s) {
-		return Strings.padStart(Integer.toHexString(userHash - s.hashCode()), 8, '0');
+		return Strings.padStart(Integer.toHexString(userHash - s.hashCode()).toUpperCase(Locale.ENGLISH), 8, '0');
 	}
 
 	private void registerOption(String s1, String s2, Object cfg) {
@@ -600,8 +618,8 @@ public class ControlledConfig {
 	private String getCategory(ConfigList cfg) {
 		if (cfg instanceof CustomCategoryConfig)
 			return ((CustomCategoryConfig)cfg).getCategory();
-		//else if (cfg instanceof UserSpecificConfig && ((UserSpecificConfig)cfg).isUserSpecific())
-		//	return "instance specific";
+		else if (cfg instanceof UserSpecificConfig && ((UserSpecificConfig)cfg).isUserSpecific())
+			return "Client Specific";
 		else
 			return "control setup";
 	}

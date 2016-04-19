@@ -490,4 +490,8 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static int toggleBit(int num, int bit) {
 		return num ^ (1 << bit);
 	}
+
+	public static int getNBitflags(int length) {
+		return intpow2(2, length)-1;
+	}
 }

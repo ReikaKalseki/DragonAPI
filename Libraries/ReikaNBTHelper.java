@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -222,6 +223,21 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		if (tag1 == null || tag2 == null)
 			return false;
 		return tag1.equals(tag2);
+	}
+
+	public static boolean tagContains(NBTTagCompound tag, NBTTagCompound inner) {
+		Set<String> set = inner.func_150296_c();
+		for (String s : set) {
+			NBTBase b1 = inner.getTag(s);
+			NBTBase b2 = tag.getTag(s);
+			if (b1 == b2)
+				continue;
+			if (b1 == null || b2 == null)
+				return false;
+			if (!b1.equals(b2))
+				return false;
+		}
+		return true;
 	}
 
 	public static NBTTypes getTagType(NBTBase base) {

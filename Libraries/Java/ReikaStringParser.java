@@ -385,4 +385,21 @@ public class ReikaStringParser extends DragonAPICore {
 		}
 		return sb.toString();
 	}
+
+	public static String getAutoDecimal(double n) {
+		String s = Double.toString(n);
+		/*
+		String[] parts = s.split("\\.");
+		while (parts[1].charAt(0) == '0') {
+			parts[1] = parts[1].substring(1);
+		}
+		while (parts[1].charAt(parts[1].length()-1) == '0') {
+			parts[1] = parts[1].substring(0, parts[1].length()-1);
+		}
+		return parts[0]+"."+parts[1];
+		 */
+		while (s.indexOf('.') != -1 && (s.charAt(s.length()-1) == '0' || s.charAt(s.length()-1) == '.'))
+			s = s.substring(0, s.length()-1);
+		return s.isEmpty() ? "0" : s;
+	}
 }

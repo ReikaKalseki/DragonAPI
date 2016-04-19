@@ -41,6 +41,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
@@ -312,22 +313,15 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 	}
 
-	public static Block getWorldBlockIDFromItem(ItemStack is) {
+	public static BlockKey getWorldBlockFromItem(ItemStack is) {
 		if (is == null)
-			return Blocks.air;
+			return new BlockKey(Blocks.air);
 		if (!(is.getItem() instanceof ItemBlock))
-			return Blocks.air;
-		return Block.getBlockFromItem(is.getItem());
-	}
-
-	public static int getWorldBlockMetaFromItem(ItemStack is) {
-		if (is == null)
-			return 0;
-		if (!(is.getItem() instanceof ItemBlock))
-			return 0;
+			return new BlockKey(Blocks.air);
+		int meta = is.getItem().getMetadata(is.getItemDamage());
 		if (matchStackWithBlock(is, Blocks.piston) || matchStackWithBlock(is, Blocks.sticky_piston))
-			return 0;
-		return is.getItem().getMetadata(is.getItemDamage());
+			meta = 0;
+		return new BlockKey(Block.getBlockFromItem(is.getItem()), meta);
 	}
 
 	public static boolean canCombineStacks(ItemStack is, ItemStack is2) {
@@ -563,14 +557,15 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return li;
 	}
 
-	public static boolean verifyItemStack(ItemStack is) {
+	public static boolean verifyItemStack(ItemStack is, boolean fullCheck) {
 		if (is == null)
 			return true;
 		if (is.getItem() == null)
 			return false;
 		try {
 			is.toString();
-			is.getDisplayName();
+			if (fullCheck)
+				is.getDisplayName();
 		}
 		catch (Exception e) {
 			return false;

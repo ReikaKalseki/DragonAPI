@@ -85,6 +85,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -1085,6 +1086,14 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return ((EntitySpellProjectile)e).shootingEntity;
 		}
 		return null;
+	}
+
+	public static boolean canEntitySeeTheSky(Entity e) {
+		return e.worldObj.canBlockSeeTheSky(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ));
+	}
+
+	public static boolean isNearSkylight(Entity e) {
+		return e.worldObj.getSavedLightValue(EnumSkyBlock.Sky, MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ)) > 0;
 	}
 
 }

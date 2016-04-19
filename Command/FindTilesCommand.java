@@ -88,7 +88,7 @@ public class FindTilesCommand extends DragonCommandBase {
 
 	@Override
 	public String getCommandString() {
-		return "findmachines";
+		return "findtiles";
 	}
 
 	@Override

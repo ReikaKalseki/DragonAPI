@@ -19,6 +19,7 @@ import org.lwjgl.opengl.GL11;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -282,6 +283,85 @@ public class Spline {
 		public void update();
 		public DecimalPosition asPosition();
 
+	}
+
+	public static class BasicSplinePoint implements SplineAnchor {
+
+		protected double posX;
+		protected double posY;
+		protected double posZ;
+
+		public BasicSplinePoint(double x, double y, double z) {
+			posX = x;
+			posY = y;
+			posZ = z;
+		}
+
+		@Override
+		public void update() {
+
+		}
+
+		@Override
+		public DecimalPosition asPosition() {
+			return new DecimalPosition(posX, posY, posZ);
+		}
+
+	}
+
+	private static class BasicVariablePoint extends BasicSplinePoint {
+
+		private final double velocity;
+		private final double variance;
+		public double tolerance = 1;
+
+		private double targetX;
+		private double targetY;
+		private double targetZ;
+
+		private final DecimalPosition origin;
+
+		private BasicVariablePoint(DecimalPosition pos, double var, double vel) {
+			super(pos.xCoord, pos.yCoord, pos.zCoord);
+			origin = pos;
+			variance = var;
+			velocity = vel;
+
+			this.pickNewTarget();
+		}
+
+		@Override
+		public void update() {
+			double dx = targetX-posX;
+			double dy = targetY-posY;
+			double dz = targetZ-posZ;
+
+			if (this.atTarget(dx, dy, dz)) {
+				this.pickNewTarget();
+			}
+
+			this.move(dx, dy, dz);
+		}
+
+		private void move(double dx, double dy, double dz) {
+			//ReikaJavaLibrary.pConsole(dx+":"+dy+":"+dz+" from "+targetX+":"+targetY+":"+targetZ+" @ "+posX+":"+posY+":"+posZ);
+			if (Math.abs(dx) >= tolerance)
+				posX += velocity*Math.signum(dx);
+			if (Math.abs(dy) >= tolerance)
+				posY += velocity*Math.signum(dy);
+			if (Math.abs(dz) >= tolerance)
+				posZ += velocity*Math.signum(dz);
+		}
+
+		private boolean atTarget(double dx, double dy, double dz) {
+			return Math.abs(dx) < tolerance && Math.abs(dy) < tolerance && Math.abs(dz) < tolerance;
+		}
+
+		private void pickNewTarget() {
+			targetX = ReikaRandomHelper.getRandomPlusMinus(origin.xCoord, variance);
+			targetY = ReikaRandomHelper.getRandomPlusMinus(origin.yCoord, variance);
+			targetZ = ReikaRandomHelper.getRandomPlusMinus(origin.zCoord, variance);
+		}
 	}
 
 	public static enum SplineType {

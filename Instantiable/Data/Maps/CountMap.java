@@ -12,6 +12,8 @@ package Reika.DragonAPI.Instantiable.Data.Maps;
 import java.util.HashMap;
 import java.util.Set;
 
+import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
+
 
 public class CountMap<V> {
 
@@ -73,6 +75,18 @@ public class CountMap<V> {
 
 	public void clear() {
 		data.clear();
+	}
+
+	public WeightedRandom<V> asWeightedRandom() {
+		WeightedRandom<V> w = new WeightedRandom();
+		for (V key : data.keySet()) {
+			w.addEntry(key, this.get(key));
+		}
+		return w;
+	}
+
+	public boolean isEmpty() {
+		return data.isEmpty();
 	}
 
 }

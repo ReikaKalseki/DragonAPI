@@ -78,4 +78,9 @@ public class APIProxyClient extends APIProxy {
 		return FMLClientHandler.instance().getClient().theWorld;
 	}
 
+	@Override
+	public void postLoad() {
+		PlayerSpecificRenderer.instance.loadGlowFiles();
+	}
+
 }

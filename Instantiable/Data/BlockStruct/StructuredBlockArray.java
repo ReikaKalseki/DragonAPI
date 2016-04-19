@@ -190,6 +190,14 @@ public class StructuredBlockArray extends BlockArray {
 		}
 	}
 
+	@Override
+	public void addAll(BlockArray arr) {
+		super.addAll(arr);
+		if (arr instanceof StructuredBlockArray) {
+			data.putAll(((StructuredBlockArray)arr).data);
+		}
+	}
+
 	public ItemHashMap<Integer> getItems() {
 		ItemHashMap<Integer> map = new ItemHashMap();
 		for (Coordinate c : data.keySet()) {
@@ -204,5 +212,55 @@ public class StructuredBlockArray extends BlockArray {
 			map.put(is, amt+1);
 		}
 		return map;
+	}
+
+	@Override
+	public BlockArray rotate90Degrees(int ox, int oz, boolean left) {
+		StructuredBlockArray b = (StructuredBlockArray)super.rotate90Degrees(ox, oz, left);
+		for (Coordinate c : data.keySet()) {
+			BlockKey bc = data.get(c);
+			Coordinate c2 = c.rotate90About(ox, oz, left);
+			b.data.put(c2, bc);
+		}
+		return b;
+	}
+
+	@Override
+	public BlockArray rotate180Degrees(int ox, int oz) {
+		StructuredBlockArray b = (StructuredBlockArray)super.rotate180Degrees(ox, oz);
+		for (Coordinate c : data.keySet()) {
+			BlockKey bc = data.get(c);
+			Coordinate c2 = c.rotate180About(ox, oz);
+			b.data.put(c2, bc);
+		}
+		return b;
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
+		data.clear();
+	}
+
+	@Override
+	public BlockArray flipX() {
+		StructuredBlockArray b = (StructuredBlockArray)super.flipX();
+		for (Coordinate c : data.keySet()) {
+			BlockKey bc = data.get(c);
+			Coordinate c2 = new Coordinate(-c.xCoord, c.yCoord, c.zCoord);
+			b.data.put(c2, bc);
+		}
+		return b;
+	}
+
+	@Override
+	public BlockArray flipZ() {
+		StructuredBlockArray b = (StructuredBlockArray)super.flipZ();
+		for (Coordinate c : data.keySet()) {
+			BlockKey bc = data.get(c);
+			Coordinate c2 = new Coordinate(c.xCoord, c.yCoord, -c.zCoord);
+			b.data.put(c2, bc);
+		}
+		return b;
 	}
 }

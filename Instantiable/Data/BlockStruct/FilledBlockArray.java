@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -21,6 +22,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -31,9 +35,13 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.BlockCheck;
+import Reika.DragonAPI.Interfaces.BlockCheck.TileEntityCheck;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class FilledBlockArray extends StructuredBlockArray {
 
@@ -59,12 +67,16 @@ public class FilledBlockArray extends StructuredBlockArray {
 		this.setBlock(x, y, z , new BlockKey(id, meta));
 	}
 
+	public void setBlock(int x, int y, int z, Block id, int meta, TileEntity te, String... tags) {
+		this.setBlock(x, y, z , new BasicTileEntityCheck(id, meta, te, tags));
+	}
+
 	public void setFluid(int x, int y, int z, Fluid f) {
 		super.addBlockCoordinate(x, y, z);
 		data.put(new Coordinate(x, y, z), new FluidCheck(f));
 	}
 
-	public void setBlock(int x, int y, int z, BlockKey bk) {
+	public void setBlock(int x, int y, int z, BlockCheck bk) {
 		super.addBlockCoordinate(x, y, z);
 		data.put(new Coordinate(x, y, z), bk);
 	}
@@ -85,6 +97,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	public void addBlock(int x, int y, int z, Block id, int meta) {
 		this.addBlock(x, y, z , new BlockKey(id, meta));
+	}
+
+	public void addBlock(int x, int y, int z, BlockCheck b) {
+		super.addBlockCoordinate(x, y, z);
+		this.addBlockToCoord(new Coordinate(x, y, z), b);
 	}
 
 	private void addBlock(int x, int y, int z, BlockKey bk) {
@@ -162,7 +179,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 			BlockCheck bk = this.getBlockKey(x, y, z);
 			//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk+" & "+world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z));
 			if (!bk.matchInWorld(world, x, y, z)) {
-				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk.getClass()+":"+bk+" & "+world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z));
+				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk.getClass()+" : "+bk+" & "+world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z));
 				//bk.place(world, x, y, z);
 				//world.setBlock(x, y, z, Blocks.brick_block);
 				return false;
@@ -184,6 +201,14 @@ public class FilledBlockArray extends StructuredBlockArray {
 	@Override
 	public int getMetaAt(int x, int y, int z) {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).asBlockKey().metadata : -1;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public TileEntity getTileEntityAt(int x, int y, int z) {
+		if (!this.hasBlock(x, y, z))
+			return null;
+		BlockCheck b = data.get(new Coordinate(x, y, z));
+		return b instanceof TileEntityCheck ? ((TileEntityCheck)b).getTileEntity() : null;
 	}
 
 	public ItemHashMap<Integer> tally() {
@@ -418,20 +443,138 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	}
 
+	private static class BasicTileEntityCheck implements TileEntityCheck {
+
+		private final BlockKey block;
+		private final Class tileClass;
+		private final NBTTagCompound matchTag;
+		private final WeakReference<TileEntity> tileRef;
+
+		private BasicTileEntityCheck(Block b, int meta, TileEntity te, String... tags) {
+			block = new BlockKey(b, meta);
+			matchTag = new NBTTagCompound();
+			NBTTagCompound tag = new NBTTagCompound();
+			te.writeToNBT(tag);
+			for (int i = 0; i < tags.length; i++) {
+				NBTBase nbt = tag.getTag(tags[i]);
+				if (nbt != null)
+					matchTag.setTag(tags[i], nbt);
+			}
+			tileClass = te.getClass();
+			tileRef = new WeakReference(te);
+		}
+
+		public ItemStack asItemStack() {
+			return new ItemStack(block.blockID, 1, block.hasMetadata() ? block.metadata : 0);
+		}
+
+		public ItemStack getDisplay() {
+			return this.asItemStack();
+		}
+
+		public boolean match(Block b, int meta) {
+			return b == block.blockID && (!block.hasMetadata() || meta == block.metadata);
+		}
+
+		public boolean matchInWorld(World world, int x, int y, int z) {
+			return this.match(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z)) && this.matchTile(world.getTileEntity(x, y, z));
+		}
+
+		private boolean matchTile(TileEntity te) {
+			if (te == null || te.getClass() != tileClass)
+				return false;
+			NBTTagCompound tag = new NBTTagCompound();
+			te.writeToNBT(tag);
+			return ReikaNBTHelper.tagContains(tag, matchTag);
+		}
+
+		@Override
+		public void place(World world, int x, int y, int z) {
+			world.setBlock(x, y, z, block.blockID, block.hasMetadata() ? block.metadata : 0, 3);
+		}
+
+		@Override
+		public BlockKey asBlockKey() {
+			return block;
+		}
+
+		@Override
+		public TileEntity getTileEntity() {
+			return tileRef.get();
+		}
+
+		@Override
+		public String toString() {
+			return block.toString()+" NBT "+matchTag;
+		}
+	}
+
 	@Override
 	protected BlockArray instantiate() {
 		return new FilledBlockArray(world);
 	}
 
 	@Override
-	public void copyTo(BlockArray copy) {
-		super.copyTo(copy);
-		if (copy instanceof FilledBlockArray)
-			((FilledBlockArray)copy).data.putAll(data);
+	public void addAll(BlockArray arr) {
+		super.addAll(arr);
+		if (arr instanceof FilledBlockArray) {
+			data.putAll(((FilledBlockArray)arr).data);
+		}
 	}
+
 
 	public void fillFrom(SlicedBlockBlueprint sbb, int x, int y, int z, ForgeDirection dir) {
 		sbb.putInto(this, x, y, z, dir);
+	}
+
+	@Override
+	public BlockArray rotate90Degrees(int ox, int oz, boolean left) {
+		FilledBlockArray b = (FilledBlockArray)super.rotate90Degrees(ox, oz, left);
+		for (Coordinate c : data.keySet()) {
+			BlockCheck bc = data.get(c);
+			Coordinate c2 = c.rotate90About(ox, oz, left);
+			b.data.put(c2, bc);
+		}
+		return b;
+	}
+
+	@Override
+	public BlockArray rotate180Degrees(int ox, int oz) {
+		FilledBlockArray b = (FilledBlockArray)super.rotate180Degrees(ox, oz);
+		for (Coordinate c : data.keySet()) {
+			BlockCheck bc = data.get(c);
+			Coordinate c2 = c.rotate180About(ox, oz);
+			b.data.put(c2, bc);
+		}
+		return b;
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
+		data.clear();
+	}
+
+	@Override
+	public BlockArray flipX() {
+		FilledBlockArray b = (FilledBlockArray)super.flipX();
+		for (Coordinate c : data.keySet()) {
+			BlockCheck bc = data.get(c);
+			Coordinate c2 = new Coordinate(-c.xCoord, c.yCoord, c.zCoord);
+			b.data.put(c2, bc);
+		}
+		return b;
+	}
+
+	@Override
+	public BlockArray flipZ() {
+		FilledBlockArray b = (FilledBlockArray)super.flipZ();
+		for (Coordinate c : data.keySet()) {
+			BlockCheck bc = data.get(c);
+			Coordinate c2 = new Coordinate(c.xCoord, c.yCoord, -c.zCoord);
+			b.data.put(c2, bc);
+		}
+		return b;
 	}
 
 }

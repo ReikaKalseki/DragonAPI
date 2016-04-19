@@ -172,6 +172,8 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 
 	public static void removeEnchantment(ItemStack is, Enchantment e) {
 		NBTTagList li = is.getEnchantmentTagList();
+		if (li == null)
+			return;
 		Iterator<NBTTagCompound> it = li.tagList.iterator();
 		while (it.hasNext()) {
 			NBTTagCompound tag = it.next();

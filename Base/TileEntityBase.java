@@ -97,7 +97,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	private int updateDelay = 0;
 
-	private int tileAge = 0;
+	private long tileAge = 0;
 
 	private final TileEntity[] adjTEMap = new TileEntity[6];
 
@@ -141,7 +141,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	}
 
 	/** Persistent across world saves, unlike getTicksExisted() */
-	public final int getTileEntityAge() {
+	public final long getTileEntityAge() {
 		return tileAge;
 	}
 
@@ -210,7 +210,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		NBT.setBoolean("no_drops", unharvestable);
 		NBT.setBoolean("no_mine", unmineable);
 
-		NBT.setInteger("age_ticks", tileAge);
+		NBT.setLong("age_ticks", tileAge);
 	}
 
 	@Override
@@ -230,7 +230,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		unharvestable = NBT.getBoolean("no_drops");
 		unmineable = NBT.getBoolean("no_mine");
 
-		tileAge = NBT.getInteger("age_ticks");
+		tileAge = NBT.getLong("age_ticks");
 	}
 
 	public final boolean isUnMineable() {
@@ -553,7 +553,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		return !worldObj.isRemote;
 	}
 
-	private void writeError(Throwable e) {
+	protected void writeError(Throwable e) {
 		if (DragonOptions.CHATERRORS.getState()) {
 			ReikaChatHelper.write(this+" ["+FMLCommonHandler.instance().getEffectiveSide()+"] is throwing "+e.getClass()+" on update: "+e.getMessage());
 			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));

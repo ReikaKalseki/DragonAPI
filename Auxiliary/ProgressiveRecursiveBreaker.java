@@ -85,12 +85,18 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private final Collection<Coordinate> path = new HashSet();
 		public boolean taxiCabDistance = false;
 		//public final BlockMap<BlockKey> looseMatches = new BlockMap();
+		public final int originX;
+		public final int originY;
+		public final int originZ;
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<BlockKey> ids) {
 			this.world = world;
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
 			this.ids.addAll(ids);
+			originX = x;
+			originY = y;
+			originZ = z;
 		}
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth, BlockKey... ids) {
@@ -100,6 +106,9 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			for (int i = 0; i < ids.length; i++) {
 				this.ids.add(ids[i]);
 			}
+			originX = x;
+			originY = y;
+			originZ = z;
 		}
 
 		private ProgressiveBreaker(World world, int x, int y, int z, Block id, int depth) {
@@ -108,6 +117,9 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			maxDepth = depth;
 			for (int i = 0; i < 16; i++)
 				ids.add(new BlockKey(id, i));
+			originX = x;
+			originY = y;
+			originZ = z;
 		}
 
 		private ProgressiveBreaker(World world, int x, int y, int z, Block id, int meta, int depth) {
@@ -115,6 +127,9 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			start.addBlockCoordinate(x, y, z);
 			maxDepth = depth;
 			ids.add(new BlockKey(id, meta));
+			originX = x;
+			originY = y;
+			originZ = z;
 		}
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth) {
@@ -204,6 +219,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		}
 
 		private boolean canSpreadTo(World world, int x, int y, int z) {
+			if (taxiCabDistance && Math.abs(x-originX)+Math.abs(y-originY)+Math.abs(z-originZ) > maxDepth)
+				return false;
 			if (pathTracking && path.contains(new Coordinate(x, y, z)))
 				return false;
 			if (!bounds.isBlockInside(x, y, z))

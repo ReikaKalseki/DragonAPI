@@ -158,4 +158,18 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 			return 917;
 		return 2200;
 	}
+
+	public static double getProjectileVelocity(double dist, double ang, double dy, double gravity) {
+		ang = Math.toRadians(ang);
+		double denom = dist*Math.tan(ang)+dy;
+		double root = Math.sqrt(0.5*gravity*dist*dist/denom);
+		return root/Math.cos(ang);
+	}
+
+	public static double getProjectileRange(double vel, double ang, double dy, double gravity) {
+		ang = Math.toRadians(ang);
+		double root = Math.pow(vel*Math.sin(ang), 2)+2*g*dy;
+		double term = vel*Math.sin(ang)+Math.sqrt(root);
+		return vel*Math.cos(ang)/gravity*term;
+	}
 }

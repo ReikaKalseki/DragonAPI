@@ -2166,4 +2166,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			hydrateFarmland(world, x, y, z, true);
 		}
 	}
+
+	public static int getTopSolidOrLiquidBlockForDouble(World world, double x, double z) {
+		return world.getTopSolidOrLiquidBlock(MathHelper.floor_double(x), MathHelper.floor_double(z));
+	}
 }

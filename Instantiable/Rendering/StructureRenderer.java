@@ -496,9 +496,10 @@ public class StructureRenderer {
 						Block b = arr.getBlockAt(x, y, z);
 						//ReikaJavaLibrary.pConsole(x+", "+y+", "+z+"  >  "+b);
 						int m = arr.getMetaAt(x, y, z);
+						TileEntity te2 = arr.getTileEntityAt(x, y, z);
 						if (m < 0)
 							m = 0;
-						TileEntity te = b != null ? b.createTileEntity(Minecraft.getMinecraft().theWorld, m) : null;
+						TileEntity te = b != null ? te2 != null ? te2 : b.createTileEntity(Minecraft.getMinecraft().theWorld, m) : null;
 						data[i][j][k] = b != null ? new PositionData(b, m, te) : new PositionData(Blocks.air);
 					}
 				}

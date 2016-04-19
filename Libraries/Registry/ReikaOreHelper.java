@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.Registry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
@@ -183,14 +184,16 @@ public enum ReikaOreHelper implements OreType {
 		return rarity;
 	}
 
-	@Override
 	public boolean isNether() {
 		return this == QUARTZ;
 	}
 
-	@Override
 	public boolean isEnd() {
 		return false;
+	}
+
+	public EnumSet<OreLocation> getOreLocations() {
+		return this.isEnd() ? EnumSet.of(OreLocation.END) : this.isNether() ? EnumSet.of(OreLocation.NETHER) : EnumSet.of(OreLocation.OVERWORLD);
 	}
 
 	public boolean canGenerateIn(Block b) {

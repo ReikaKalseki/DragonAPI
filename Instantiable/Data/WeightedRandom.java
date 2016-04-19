@@ -14,6 +14,8 @@ import java.util.NavigableMap;
 import java.util.Random;
 import java.util.TreeMap;
 
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+
 public class WeightedRandom<V> {
 
 	private final Random rand = new Random();
@@ -124,6 +126,36 @@ public class WeightedRandom<V> {
 		public String toString() {
 			return data.toString();
 		}
+	}
+
+	public static WeightedRandom<Coordinate> fromArray(int[][] arr) {
+		WeightedRandom<Coordinate> w = new WeightedRandom();
+		int dx = arr.length/2;
+		for (int i = 0; i < arr.length; i++) {
+			int dz = arr[i].length/2;
+			for (int k = 0; k < arr[i].length; k++) {
+				if (arr[i][k] > 0) {
+					Coordinate c = new Coordinate(i-dx, 0, k-dz);
+					w.addEntry(c, arr[i][k]);
+				}
+			}
+		}
+		return w;
+	}
+
+	public static WeightedRandom<Coordinate> fromArray(double[][] arr) {
+		WeightedRandom<Coordinate> w = new WeightedRandom();
+		int dx = arr.length/2;
+		for (int i = 0; i < arr.length; i++) {
+			int dz = arr[i].length/2;
+			for (int k = 0; k < arr[i].length; k++) {
+				if (arr[i][k] > 0) {
+					Coordinate c = new Coordinate(i-dx, 0, k-dz);
+					w.addEntry(c, arr[i][k]);
+				}
+			}
+		}
+		return w;
 	}
 
 }

@@ -23,7 +23,7 @@ public final class PairMap<V> {
 	}
 
 	public boolean contains(V obj, V obj2) {
-		return data.containsKey(obj) && data.getMix(obj, obj2);
+		return data.containsKey(obj) && Boolean.TRUE.equals(data.getMix(obj, obj2));
 	}
 
 }

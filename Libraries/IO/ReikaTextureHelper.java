@@ -134,18 +134,18 @@ public class ReikaTextureHelper {
 		}
 	}
 
-	public static void bindRawTexture(Class root, String tex) {
-		Integer gl = (Integer)textures.get(root, tex);
+	public static void bindRawTexture(String tex) {
+		Integer gl = (Integer)textures.get(null, tex);
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.readHardPathImage(tex);
 			if (img == null) {
 				DragonAPICore.logError("No image found for "+tex+"!");
 				gl = new Integer(binder.allocateAndSetupTexture(ReikaImageLoader.getMissingTex()));
-				textures.put(gl, root, tex);
+				textures.put(gl, null, tex);
 			}
 			else {
 				gl = new Integer(binder.allocateAndSetupTexture(img));
-				textures.put(gl, root, tex);
+				textures.put(gl, null, tex);
 			}
 		}
 		if (gl != null)

@@ -262,4 +262,28 @@ public final class Coordinate {
 		return new Coordinate(-xCoord, -yCoord, -zCoord);
 	}
 
+	public Coordinate rotate90About(int ox, int oz, boolean left) {
+		int dx = xCoord-ox;
+		int dz = zCoord-oz;
+		int x2 = xCoord;
+		int z2 = zCoord;
+		if (left) { //pdx > ndz, pdz > pdx, ndz > ndx, ndx > pdz
+			x2 += dz;
+			z2 += -dx;
+		}
+		else { //pdx > pdz, pdz > ndx, ndz > pdx, ndx > ndz
+			x2 += -dz;
+			z2 += dx;
+		}
+		return new Coordinate(x2, yCoord, z2);
+	}
+
+	public Coordinate rotate180About(int ox, int oz) {
+		int dx = xCoord-ox;
+		int dz = zCoord-oz;
+		int x2 = ox-dx;
+		int z2 = oz-dz;
+		return new Coordinate(x2, yCoord, z2);
+	}
+
 }

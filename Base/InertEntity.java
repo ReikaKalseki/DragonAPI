@@ -58,4 +58,28 @@ public abstract class InertEntity extends Entity {
 	@Override
 	public final void setFire(int ticks) {}
 
+	@Override
+	public final boolean isPushedByWater()
+	{
+		return false;
+	}
+
+	@Override
+	public final boolean canAttackWithItem()
+	{
+		return false;
+	}
+
+	@Override
+	public final boolean canBePushed()
+	{
+		return false;
+	}
+
+	@Override
+	public final boolean canBeCollidedWith()
+	{
+		return false;
+	}
+
 }

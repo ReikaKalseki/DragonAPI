@@ -38,4 +38,8 @@ public class APIProxy {
 	public void registerSidedHandlersGameLoaded() {
 
 	}
+
+	public void postLoad() {
+
+	}
 }

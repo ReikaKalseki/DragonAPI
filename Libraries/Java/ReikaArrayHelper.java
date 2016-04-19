@@ -614,4 +614,13 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		}
 		return ret;
 	}
+
+	public static boolean isSquare(Object[][] arr) {
+		int l = arr.length;
+		for (int i = 0; i < l; i++) {
+			if (arr[i].length != l)
+				return false;
+		}
+		return true;
+	}
 }

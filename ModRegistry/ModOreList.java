@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
@@ -400,6 +401,12 @@ public enum ModOreList implements OreType {
 		if (this == SODALITE)
 			return true;
 		return false;
+	}
+
+	public EnumSet<OreLocation> getOreLocations() {
+		if (this == MIMICHITE)
+			return EnumSet.of(OreLocation.OVERWORLD, OreLocation.NETHER, OreLocation.END);
+		return this.isEnd() ? EnumSet.of(OreLocation.END) : this.isNether() ? EnumSet.of(OreLocation.NETHER) : EnumSet.of(OreLocation.OVERWORLD);
 	}
 
 	public boolean isArsMagica() {

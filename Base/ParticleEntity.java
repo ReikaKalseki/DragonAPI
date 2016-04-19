@@ -123,24 +123,6 @@ public abstract class ParticleEntity extends InertEntity {
 	}
 
 	@Override
-	public final boolean canBeCollidedWith()
-	{
-		return false;
-	}
-
-	@Override
-	public final boolean canBePushed()
-	{
-		return false;
-	}
-
-	@Override
-	public final boolean canAttackWithItem()
-	{
-		return false;
-	}
-
-	@Override
 	public final boolean isEntityInvulnerable()
 	{
 		return true;

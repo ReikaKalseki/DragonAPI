@@ -38,6 +38,8 @@ import net.minecraft.network.EnumConnectionState;
 import net.minecraft.potion.Potion;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
@@ -52,6 +54,9 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerRegisterEvent;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
+
+import org.lwjgl.opengl.GL11;
+
 import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
@@ -94,6 +99,7 @@ import Reika.DragonAPI.Command.BlockReplaceCommand;
 import Reika.DragonAPI.Command.ChunkGenCommand;
 import Reika.DragonAPI.Command.ClassLoaderCommand;
 import Reika.DragonAPI.Command.ClearItemsCommand;
+import Reika.DragonAPI.Command.CommandOwnerCommand;
 import Reika.DragonAPI.Command.ConfigReloadCommand;
 import Reika.DragonAPI.Command.DonatorCommand;
 import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
@@ -411,6 +417,9 @@ public class DragonAPIInit extends DragonAPIMod {
 				NEI_DragonAPI_Config.hideBlock(b);
 			}
 		}
+
+		DragonAPICore.log("Added technical blocks for "+Arrays.toString(technicalBlocks));
+		DragonAPICore.log("Note that if you remove DragonAPI, you will need to install the patch from Reika's website for the first launch afterwards.");
 	}
 
 	/*
@@ -474,6 +483,9 @@ public class DragonAPIInit extends DragonAPIMod {
 		ReikaRegistryHelper.registerModEntity(this, EntityTumblingBlock.class, "Tumbling Block", true, 128);
 
 		//ReikaPacketHelper.initPipelines();
+
+		BiomeGenBase.ocean.rainfall = Math.max(1, BiomeGenBase.ocean.rainfall);
+		BiomeGenBase.deepOcean.rainfall = Math.max(1, BiomeGenBase.deepOcean.rainfall);
 
 		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance);
 		TickRegistry.instance.registerTickHandler(TickScheduler.instance);
@@ -561,6 +573,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PatreonController.instance.addPatron(this, "Viper2g1", "3bf81769-1510-40b1-80d7-fea0c51aa304", 12); //Viperean
 		PatreonController.instance.addPatron(this, "StrayanDropbear", "e95b2aba-35c9-40da-b4cc-62ee68dc2962", 10);
 		PatreonController.instance.addPatron(this, "bludde", "b7e2eebd-51fe-4c32-87bd-40b28337c99e", 1);
+		PatreonController.instance.addPatron(this, "Tryfan26", "1a28c418-f637-4b21-9226-7412b2c52546", 40);
 
 		logger.log("Credit to Techjar for hosting the version file and remote asset server.");
 
@@ -599,6 +612,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		CompatibilityTracker.instance.test();
 
 		ReikaPotionHelper.loadBadPotions();
+
+		proxy.postLoad();
 
 		IntegrityChecker.instance.testIntegrity();
 
@@ -675,6 +690,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new BiomeMapCommand());
 		evt.registerServerCommand(new PlayerNBTCommand());
 		evt.registerServerCommand(new ConfigReloadCommand());
+		evt.registerServerCommand(new CommandOwnerCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();
@@ -774,6 +790,20 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void disableAlphaTest(RenderWorldEvent.Pre evt) {
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		if (DragonOptions.NOALPHATEST.getState())
+			GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.01F);
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void disableAlphaTest(RenderWorldEvent.Post evt) {
+		GL11.glPopAttrib();
+	}
+
+	@SubscribeEvent
 	public void sendInteractToClient(PlayerInteractEvent evt) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ReikaPlayerAPI.isFake(evt.entityPlayer)) {
 			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERINTERACT.ordinal(), new PacketTarget.PlayerTarget((EntityPlayerMP)evt.entityPlayer), evt.x, evt.y, evt.z, evt.face, evt.action.ordinal());
@@ -857,12 +887,12 @@ public class DragonAPIInit extends DragonAPIMod {
 					Thread.dumpStack();
 					evt.setCanceled(true);
 				}
-				else if (!ReikaItemHelper.verifyItemStack(in)) {
+				else if (!ReikaItemHelper.verifyItemStack(in, true)) {
 					logger.logError("Found a smelting recipe with an invalid input!");
 					Thread.dumpStack();
 					evt.setCanceled(true);
 				}
-				else if (!ReikaItemHelper.verifyItemStack(out)) {
+				else if (!ReikaItemHelper.verifyItemStack(out, true)) {
 					logger.logError("Found a smelting recipe with an invalid output!");
 					Thread.dumpStack();
 					evt.setCanceled(true);

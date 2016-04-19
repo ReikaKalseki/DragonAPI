@@ -184,4 +184,9 @@ public class DragonAPICore {
 	public static long getLaunchTime() {
 		return launchTime;
 	}
+
+	public static int getSystemTimeAsInt() {
+		long t = System.currentTimeMillis();
+		return (int)(t%(Integer.MAX_VALUE+1));
+	}
 }

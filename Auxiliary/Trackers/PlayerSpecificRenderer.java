@@ -9,10 +9,17 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary.Trackers;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+
+import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -31,8 +38,12 @@ import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Extras.ModifiedPlayerModel;
 import Reika.DragonAPI.Extras.ReikaModel;
 import Reika.DragonAPI.Extras.SamakiModel;
+import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.PlayerRenderObj;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -42,6 +53,8 @@ public final class PlayerSpecificRenderer {
 	public static final PlayerSpecificRenderer instance = new PlayerSpecificRenderer();
 
 	private final MultiMap<UUID, PlayerRenderObj> renders = new MultiMap().setNullEmpty().setOrdered(new RenderComparator());
+	private final HashMap<UUID, String> glows = new HashMap();
+	private final HashMap<UUID, String> customGlows = new HashMap();
 
 	private final ReikaModel modelReika = new ReikaModel();
 	private final SamakiModel modelSamaki = new SamakiModel();
@@ -49,6 +62,9 @@ public final class PlayerSpecificRenderer {
 	private PlayerSpecificRenderer() {
 		this.registerRenderer(DragonAPICore.Reika_UUID, new PlayerModelRenderer(modelReika));
 		this.registerRenderer(UUID.fromString("bca741d8-d934-4785-9c26-f6a4141be124"), new PlayerModelRenderer(modelSamaki));
+
+		this.registerGlow(DragonAPICore.Reika_UUID, "reika_glow");
+		this.registerGlow(UUID.fromString("bca741d8-d934-4785-9c26-f6a4141be124"), "samaki_glow");
 	}
 
 	public void registerIntercept() {
@@ -67,6 +83,34 @@ public final class PlayerSpecificRenderer {
 		//if (DragonAPICore.isReikasComputer() && ReikaObfuscationHelper.isDeObfEnvironment()) {
 		//	renders.addValue(DragonAPICore.Reika_UUID, r);
 		//}
+	}
+
+	private void registerGlow(UUID uuid, String s) {
+		glows.put(uuid, "/Reika/DragonAPI/Resources/"+s+".png");
+	}
+
+	public void loadGlowFiles() {
+		File f = new File(DragonAPICore.getMinecraftDirectory(), "config/Reika/glowrenders.dat");
+		if (f.exists()) {
+			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+			for (String s : li) {
+				try {
+					String[] parts = s.split("=");
+					UUID uid = UUID.fromString(parts[0]);
+					File img = new File(DragonAPICore.getMinecraftDirectory(), "config/Reika/glowrenders/"+parts[1]);
+					if (!img.exists())
+						throw new FileNotFoundException();
+					BufferedImage im = ImageIO.read(img);
+					if (im != null) {
+						customGlows.put(uid, img.getAbsolutePath());
+					}
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					DragonAPICore.logError("Could not load glow render entry "+s);
+				}
+			}
+		}
 	}
 
 	private void renderAdditionalObjects(EntityPlayer ep, float ptick) {
@@ -131,6 +175,66 @@ public final class PlayerSpecificRenderer {
 		protected void renderModel(EntityLivingBase ep, float f1, float f2, float f3, float f4, float f5, float f6) {
 			if (MinecraftForgeClient.getRenderPass() == 0 || MinecraftForgeClient.getRenderPass() == -1)
 				super.renderModel(ep, f1, f2, f3, f4, f5, f6);
+			String glow = PlayerSpecificRenderer.instance.getGlow(ep.getUniqueID());
+			if (glow != null) {
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+				GL11.glDisable(GL11.GL_LIGHTING);
+				ReikaRenderHelper.disableEntityLighting();
+				GL11.glEnable(GL11.GL_BLEND);
+				BlendMode.DEFAULT.apply();
+				if (glow.charAt(0) == '*') {
+					ReikaTextureHelper.bindRawTexture(glow.substring(1));
+				}
+				else {
+					ReikaTextureHelper.bindTexture(DragonAPICore.class, glow);
+				}
+				this.renderWithoutTextureBind(ep, f1, f2, f3, f4, f5, f6);
+				GL11.glPopAttrib();
+			}
+		}
+
+		@Override
+		public void renderFirstPersonArm(EntityPlayer ep)
+		{
+			super.renderFirstPersonArm(ep);
+			String glow = PlayerSpecificRenderer.instance.getGlow(ep.getUniqueID());
+			if (glow != null) {
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+				GL11.glDisable(GL11.GL_LIGHTING);
+				ReikaRenderHelper.disableEntityLighting();
+				GL11.glEnable(GL11.GL_BLEND);
+				BlendMode.DEFAULT.apply();
+				if (glow.charAt(0) == '*') {
+					ReikaTextureHelper.bindRawTexture(glow.substring(1));
+				}
+				else {
+					ReikaTextureHelper.bindTexture(DragonAPICore.class, glow);
+				}
+				super.renderFirstPersonArm(ep);
+				GL11.glPopAttrib();
+			}
+		}
+
+		private void renderWithoutTextureBind(EntityLivingBase ep, float f1, float f2, float f3, float f4, float f5, float f6) {
+			if (!ep.isInvisible()) {
+				mainModel.render(ep, f1, f2, f3, f4, f5, f6);
+			}
+			else if (!ep.isInvisibleToPlayer(Minecraft.getMinecraft().thePlayer)) {
+				GL11.glPushMatrix();
+				GL11.glColor4f(1.0F, 1.0F, 1.0F, 0.15F);
+				GL11.glDepthMask(false);
+				GL11.glEnable(GL11.GL_BLEND);
+				GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+				GL11.glAlphaFunc(GL11.GL_GREATER, 0.003921569F);
+				mainModel.render(ep, f1, f2, f3, f4, f5, f6);
+				GL11.glDisable(GL11.GL_BLEND);
+				GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
+				GL11.glPopMatrix();
+				GL11.glDepthMask(true);
+			}
+			else {
+				mainModel.setRotationAngles(f1, f2, f3, f4, f5, f6, ep);
+			}
 		}
 
 	}
@@ -231,6 +335,13 @@ public final class PlayerSpecificRenderer {
 			return p1 < p2 ? -1 : p1 > p2 ? 1 : 0;
 		}
 
+	}
+
+	public String getGlow(UUID uid) {
+		String s = glows.get(uid);
+		if (s == null)
+			s = customGlows.get(uid);
+		return s;
 	}
 
 }

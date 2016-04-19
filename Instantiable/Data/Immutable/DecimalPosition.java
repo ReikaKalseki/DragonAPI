@@ -219,4 +219,8 @@ public final class DecimalPosition {
 		return new DecimalPosition(xCoord, yCoord, zCoord);
 	}
 
+	public static DecimalPosition interpolate(DecimalPosition p1, DecimalPosition p2, double f) {
+		return new DecimalPosition(p1.xCoord+(p2.xCoord-p1.xCoord)*f, p1.yCoord+(p2.yCoord-p1.yCoord)*f, p1.zCoord+(p2.zCoord-p1.zCoord)*f);
+	}
+
 }

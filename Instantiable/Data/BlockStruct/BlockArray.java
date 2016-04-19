@@ -1015,6 +1015,14 @@ public class BlockArray implements Iterable<Coordinate> {
 		copy.maxZ = maxZ;*/
 	}
 
+	public void addAll(BlockArray arr) {
+		for (Coordinate c : arr.blocks) {
+			if (!keys.contains(c)) {
+				this.addBlockCoordinate(c.xCoord, c.yCoord, c.zCoord);
+			}
+		}
+	}
+
 	public final boolean isAtLeastXPercentNot(World world, double percent, Block id, int meta) {
 		double s = this.getSize();
 		int ct = 0;
@@ -1234,6 +1242,42 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	public void sort(Comparator<Coordinate> comparator) {
 		Collections.sort(blocks, comparator);
+	}
+
+	public BlockArray rotate90Degrees(int ox, int oz, boolean left) {
+		BlockArray b = this.instantiate();
+		for (Coordinate c : blocks) {
+			Coordinate c2 = c.rotate90About(ox, oz, left);
+			b.addBlockCoordinate(c2.xCoord, c2.yCoord, c2.zCoord);
+		}
+		return b;
+	}
+
+	public BlockArray rotate180Degrees(int ox, int oz) {
+		BlockArray b = this.instantiate();
+		for (Coordinate c : blocks) {
+			Coordinate c2 = c.rotate180About(ox, oz);
+			b.addBlockCoordinate(c2.xCoord, c2.yCoord, c2.zCoord);
+		}
+		return b;
+	}
+
+	public BlockArray flipX() {
+		BlockArray b = this.instantiate();
+		for (Coordinate c : blocks) {
+			Coordinate c2 = new Coordinate(-c.xCoord, c.yCoord, c.zCoord);
+			b.addBlockCoordinate(c2.xCoord, c2.yCoord, c2.zCoord);
+		}
+		return b;
+	}
+
+	public BlockArray flipZ() {
+		BlockArray b = this.instantiate();
+		for (Coordinate c : blocks) {
+			Coordinate c2 = new Coordinate(c.xCoord, c.yCoord, -c.zCoord);
+			b.addBlockCoordinate(c2.xCoord, c2.yCoord, c2.zCoord);
+		}
+		return b;
 	}
 
 	public static BlockArray fromBounds(int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
