@@ -102,7 +102,7 @@ public final class PlayerSpecificRenderer {
 						throw new FileNotFoundException();
 					BufferedImage im = ImageIO.read(img);
 					if (im != null) {
-						customGlows.put(uid, img.getAbsolutePath());
+						customGlows.put(uid, "*"+img.getAbsolutePath());
 					}
 				}
 				catch (Exception e) {

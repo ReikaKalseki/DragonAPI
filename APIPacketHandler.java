@@ -183,10 +183,14 @@ public class APIPacketHandler implements PacketHandler {
 					world.markBlockRangeForRenderUpdate(x, 0, z, x, world.provider.getActualHeight(), z);
 					break;
 				case KEYUPDATE:
+					if (data.length < 2) {
+						DragonAPICore.logError("Caught key packet missing data (len="+data.length+")! Packet="+packet);
+						break;
+					}
 					int ordinal = data[0];
 					boolean used = data[1] > 0;
 					if (ordinal < 0 || ordinal > Key.keyList.length) {
-						DragonAPICore.logError("Caught key packet for key #"+ordinal+" (use="+used+"), yet no such key exists.");
+						DragonAPICore.logError("Caught key packet for key #"+ordinal+" (use="+used+"), yet no such key exists. Packet="+packet);
 						break;
 					}
 					Key key = Key.keyList[ordinal];

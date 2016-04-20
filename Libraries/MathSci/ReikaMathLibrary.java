@@ -494,4 +494,14 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static int getNBitflags(int length) {
 		return intpow2(2, length)-1;
 	}
+
+	public static boolean isPerfectSquare(int val) {
+		double sqrt = Math.sqrt(val);
+		return sqrt == (int)sqrt;
+	}
+
+	/** Assumes val ranges from [-1 to +1] */
+	public static double normalizeToBounds(double val, double min, double max) {
+		return min+((max-min)*(val+1)/2);
+	}
 }

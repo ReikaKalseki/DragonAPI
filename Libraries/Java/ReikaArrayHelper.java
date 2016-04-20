@@ -16,6 +16,7 @@ import java.util.List;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class ReikaArrayHelper extends DragonAPICore {
 
@@ -622,5 +623,38 @@ public final class ReikaArrayHelper extends DragonAPICore {
 				return false;
 		}
 		return true;
+	}
+
+	public static double[][] splitSquareArray(double[] arr) {
+		if (!ReikaMathLibrary.isPerfectSquare(arr.length))
+			throw new MisuseException("You can only split square arrays!");
+		int d = (int)Math.sqrt(arr.length);
+		double[][] ret = new double[d][d];
+		for (int i = 0; i < d; i++) {
+			for (int k = 0; k < d; k++) {
+				int idx = i*d+k;
+				double val = arr[idx];
+				ret[i][k] = val;
+			}
+		}
+		return ret;
+	}
+
+	public static double getMinValue(double[] arr) {
+		double val = arr[0];
+		for (int i = 1; i < arr.length; i++) {
+			if (arr[i] < val)
+				val = arr[i];
+		}
+		return val;
+	}
+
+	public static double getMaxValue(double[] arr) {
+		double val = arr[0];
+		for (int i = 1; i < arr.length; i++) {
+			if (arr[i] > val)
+				val = arr[i];
+		}
+		return val;
 	}
 }

@@ -29,10 +29,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.util.EnumHelper;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.EnchantmentCollisionTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.ItemBlockCustomLocalization;
 import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
@@ -314,16 +316,27 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 
 	@SideOnly(Side.CLIENT)
 	public static SoundCategory addSoundCategory(String name, String label) {
-		SoundCategory cat = EnumHelper.addEnum(SoundCategory.class, name.toUpperCase(), new Class[]{String.class, int.class}, new Object[]{label, SoundCategory.values().length});
-		SoundCategory.field_147168_j.put(cat.getCategoryName(), cat);
-		SoundCategory.field_147169_k.put(Integer.valueOf(cat.getCategoryId()), cat);
+		SoundCategory cat = null;
+		try {
+			cat = EnumHelper.addEnum(SoundCategory.class, name.toUpperCase(), new Class[]{String.class, int.class}, new Object[]{label, SoundCategory.values().length});
+			SoundCategory.field_147168_j.put(cat.getCategoryName(), cat);
+			SoundCategory.field_147169_k.put(Integer.valueOf(cat.getCategoryId()), cat);
 
-		EnumMap<SoundCategory, Float> map = (EnumMap<SoundCategory, Float>)Minecraft.getMinecraft().gameSettings.mapSoundLevels;
-		Minecraft.getMinecraft().gameSettings.mapSoundLevels = useSoundHashMap() ? new HashMap() : new EnumMap(SoundCategory.class);
-		for (SoundCategory c : map.keySet()) {
-			Minecraft.getMinecraft().gameSettings.mapSoundLevels.put(c, map.get(c));
+			EnumMap<SoundCategory, Float> map = (EnumMap<SoundCategory, Float>)Minecraft.getMinecraft().gameSettings.mapSoundLevels;
+			Minecraft.getMinecraft().gameSettings.mapSoundLevels = useSoundHashMap() ? new HashMap() : new EnumMap(SoundCategory.class);
+			for (SoundCategory c : map.keySet()) {
+				Minecraft.getMinecraft().gameSettings.mapSoundLevels.put(c, map.get(c));
+			}
+			Minecraft.getMinecraft().gameSettings.mapSoundLevels.put(cat, 1F);
 		}
-		Minecraft.getMinecraft().gameSettings.mapSoundLevels.put(cat, 1F);
+		catch (Exception e) {
+			if (e instanceof ArrayIndexOutOfBoundsException) {
+				throw new InstallationException(DragonAPIInit.instance, "Could not add sound category "+name+"! Use the Sound HashMap config!");
+			}
+			else {
+				throw new RuntimeException("Could not add sound category "+name+"!", e);
+			}
+		}
 		return cat;
 	}
 
