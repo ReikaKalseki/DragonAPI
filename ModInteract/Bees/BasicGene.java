@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Bees;
 
+import forestry.api.apiculture.EnumBeeChromosome;
 import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.IAllele;
 
@@ -16,12 +17,14 @@ public abstract class BasicGene implements IAllele {
 
 	private final String uid;
 	public final String name;
+	public final EnumBeeChromosome geneType;
 
-	public BasicGene(String uid, String name) {
+	public BasicGene(String uid, String name, EnumBeeChromosome type) {
 		this.uid = uid;
 		this.name = name;
+		geneType = type;
 		this.preInit();
-		AlleleManager.alleleRegistry.registerAllele(this);
+		AlleleManager.alleleRegistry.registerAllele(this, type);
 	}
 
 	protected void preInit() {

@@ -23,13 +23,13 @@ public class BasicModEntry implements ModEntry {
 	}
 
 	public BasicModEntry(ModContainer mc) {
-		modId = mc.getModId();
+		modId = mc != null ? mc.getModId() : "";
 		container = mc;
 	}
 
 	@Override
 	public boolean isLoaded() {
-		return Loader.isModLoaded(modId);
+		return !modId.isEmpty() && Loader.isModLoaded(modId);
 	}
 
 	@Override

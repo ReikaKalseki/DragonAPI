@@ -117,11 +117,11 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		return name;
 	}
 
-	public final void addSpecialty(ItemStack item, int chance) {
+	public final void addSpecialty(ItemStack item, float chance) {
 		specials.put(item, chance/100F);
 	}
 
-	public final void addProduct(ItemStack item, int chance) {
+	public final void addProduct(ItemStack item, float chance) {
 		products.put(item, chance/100F);
 	}
 
@@ -290,10 +290,6 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		return beeRoot.getMemberStack(beeRoot.getBee(world, beeRoot.templateAsGenome(template)), type.ordinal());
 	}
 
-	public static final ItemStack getBeeItem(World world, String bee, EnumBeeType type) {
-		return beeRoot.getMemberStack(beeRoot.getBee(world, beeRoot.templateAsGenome(beeRoot.getTemplate(bee))), type.ordinal());
-	}
-
 	public final void addBreeding(String parent1, String parent2, int chance) {
 		IAlleleBeeSpecies p1 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.species"+parent1);
 		IAlleleBeeSpecies p2 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.species"+parent2);
@@ -444,11 +440,6 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		return AlleleManager.alleleRegistry.getAllele(String.format("i%dd", i));
 	}
 
-	private final IAllele getToleranceGene(Tolerance d, int i) {
-		String s = i != 0 ? String.format("%s%d", d.tag, Math.min(Math.abs(i), 5)) : Tolerance.NONE.tag;
-		return AlleleManager.alleleRegistry.getAllele(s);
-	}
-
 	protected final IAllele[] getSpeciesTemplate() {
 		IAllele[] alleles = beeRoot.getDefaultTemplate();
 		alleles[EnumBeeChromosome.SPECIES.ordinal()] = this;
@@ -461,8 +452,8 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		alleles[EnumBeeChromosome.EFFECT.ordinal()] = this.getEffectAllele();
 		alleles[EnumBeeChromosome.NOCTURNAL.ordinal()] = this.getGeneForBoolean(this.isNocturnal());
 		alleles[EnumBeeChromosome.CAVE_DWELLING.ordinal()] = this.getGeneForBoolean(this.isCaveDwelling());
-		alleles[EnumBeeChromosome.TEMPERATURE_TOLERANCE.ordinal()] = this.getToleranceGene(this.getTemperatureToleranceDir(), this.getTemperatureTolerance());
-		alleles[EnumBeeChromosome.HUMIDITY_TOLERANCE.ordinal()] = this.getToleranceGene(this.getHumidityToleranceDir(), this.getHumidityTolerance());
+		alleles[EnumBeeChromosome.TEMPERATURE_TOLERANCE.ordinal()] = ReikaBeeHelper.getToleranceGene(this.getTemperatureToleranceDir(), this.getTemperatureTolerance());
+		alleles[EnumBeeChromosome.HUMIDITY_TOLERANCE.ordinal()] = ReikaBeeHelper.getToleranceGene(this.getHumidityToleranceDir(), this.getHumidityTolerance());
 		alleles[EnumBeeChromosome.TOLERANT_FLYER.ordinal()] = this.getGeneForBoolean(this.isTolerantFlyer());
 		return alleles;
 	}

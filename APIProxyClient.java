@@ -18,6 +18,7 @@ import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerSpecificRenderer;
 import Reika.DragonAPI.IO.DelegateFontRenderer;
 import Reika.DragonAPI.IO.DirectResourceManager;
+import Reika.DragonAPI.IO.ThrottleableEffectRenderer;
 import Reika.DragonAPI.IO.VanillaOnlyResourceManager;
 import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
 import Reika.DragonAPI.Instantiable.Event.Client.ResourceReloadEvent;
@@ -64,6 +65,7 @@ public class APIProxyClient extends APIProxy {
 		Minecraft.getMinecraft().fontRenderer = new DelegateFontRenderer(Minecraft.getMinecraft().fontRenderer);
 		if (ModList.NEI.isLoaded())
 			GuiDraw.fontRenderer = Minecraft.getMinecraft().fontRenderer;
+		Minecraft.getMinecraft().effectRenderer = new ThrottleableEffectRenderer(Minecraft.getMinecraft().effectRenderer);
 	}
 
 	@Override

@@ -11,10 +11,12 @@ package Reika.DragonAPI.ModInteract.Bees;
 
 import net.minecraftforge.common.util.EnumHelper;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Maps.NestedMap;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import forestry.api.apiculture.EnumBeeChromosome;
 import forestry.api.apiculture.IAlleleBeeEffect;
 import forestry.api.genetics.AlleleManager;
+import forestry.api.genetics.IAllele;
 import forestry.api.genetics.IAlleleArea;
 import forestry.api.genetics.IAlleleFloat;
 import forestry.api.genetics.IAlleleFlowers;
@@ -24,8 +26,17 @@ import forestry.api.genetics.IAlleleTolerance;
 
 public class AlleleRegistry {
 
+	private static NestedMap<Class, String, BeeGene> geneMap = new NestedMap();
 
-	public static enum Speeds {
+	public static interface BeeGene {
+
+		BeeGene oneBetter();
+
+		public IAllele getAllele();
+
+	}
+
+	public static enum Speeds implements BeeGene {
 		SLOWEST("Slowest"), //0.3
 		SLOWER("Slower"),
 		SLOW("Slow"),
@@ -42,6 +53,7 @@ public class AlleleRegistry {
 
 		private Speeds(String pre, String s) {
 			tag = pre+"."+"speed"+s;
+			register(this, tag);
 		}
 
 		public IAlleleFloat getAllele() {
@@ -54,9 +66,14 @@ public class AlleleRegistry {
 			AlleleManager.alleleRegistry.registerAllele(allele, EnumBeeChromosome.SPEED);
 			return EnumHelper.addEnum(Speeds.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
 		}
+
+		@Override
+		public BeeGene oneBetter() {
+			return this == FASTEST ? null : values()[this.ordinal()+1];
+		}
 	}
 
-	public static enum Fertility {
+	public static enum Fertility implements BeeGene {
 		LOW("Low"), //1
 		NORMAL("Normal"),
 		HIGH("High"),
@@ -70,6 +87,7 @@ public class AlleleRegistry {
 
 		private Fertility(String pre, String s) {
 			tag = pre+"."+"fertility"+s;
+			register(this, tag);
 		}
 
 		public IAlleleInteger getAllele() {
@@ -82,9 +100,14 @@ public class AlleleRegistry {
 			AlleleManager.alleleRegistry.registerAllele(allele, EnumBeeChromosome.FERTILITY);
 			return EnumHelper.addEnum(Fertility.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
 		}
+
+		@Override
+		public BeeGene oneBetter() {
+			return this == MAXIMUM ? null : values()[this.ordinal()+1];
+		}
 	}
 
-	public static enum Flower {
+	public static enum Flower implements BeeGene {
 		VANILLA("Vanilla"),
 		NETHER("Nether"),
 		CACTUS("Cacti"),
@@ -103,14 +126,20 @@ public class AlleleRegistry {
 
 		private Flower(String pre, String s) {
 			tag = pre+"."+"flowers"+s;
+			register(this, tag);
 		}
 
 		public IAlleleFlowers getAllele() {
 			return (IAlleleFlowers)AlleleManager.alleleRegistry.getAllele(tag);
 		}
+
+		@Override
+		public BeeGene oneBetter() {
+			return null;
+		}
 	}
 
-	public static enum Flowering {
+	public static enum Flowering implements BeeGene {
 		SLOWEST("Slowest"), //5
 		SLOWER("Slower"),
 		SLOW("Slow"),
@@ -128,6 +157,7 @@ public class AlleleRegistry {
 
 		private Flowering(String pre, String s) {
 			tag = pre+"."+"flowering"+s;
+			register(this, tag);
 		}
 
 		public IAlleleInteger getAllele() {
@@ -140,9 +170,14 @@ public class AlleleRegistry {
 			AlleleManager.alleleRegistry.registerAllele(allele, EnumBeeChromosome.FLOWERING);
 			return EnumHelper.addEnum(Flowering.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
 		}
+
+		@Override
+		public BeeGene oneBetter() {
+			return this == MAXIMUM ? null : values()[this.ordinal()+1];
+		}
 	}
 
-	public static enum Territory {
+	public static enum Territory implements BeeGene {
 		DEFAULT("Default"), //9-6-9
 		LARGE("Large"),
 		LARGER("Larger"),
@@ -156,6 +191,7 @@ public class AlleleRegistry {
 
 		private Territory(String pre, String s) {
 			tag = pre+"."+"territory"+s;
+			register(this, tag);
 		}
 
 		public IAlleleArea getAllele() {
@@ -174,9 +210,14 @@ public class AlleleRegistry {
 			AlleleManager.alleleRegistry.registerAllele(allele, EnumBeeChromosome.TERRITORY);
 			return EnumHelper.addEnum(Territory.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
 		}
+
+		@Override
+		public BeeGene oneBetter() {
+			return this == LARGEST ? null : values()[this.ordinal()+1];
+		}
 	}
 
-	public static enum Life {
+	public static enum Life implements BeeGene {
 		SHORTEST("Shortest"), //10
 		SHORTER("Shorter"),
 		SHORT("Short"),
@@ -195,6 +236,7 @@ public class AlleleRegistry {
 
 		private Life(String pre, String s) {
 			tag = pre+"."+"lifespan"+s;
+			register(this, tag);
 		}
 
 		public IAlleleInteger getAllele() {
@@ -207,9 +249,14 @@ public class AlleleRegistry {
 			AlleleManager.alleleRegistry.registerAllele(allele, EnumBeeChromosome.LIFESPAN);
 			return EnumHelper.addEnum(Life.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
 		}
+
+		@Override
+		public BeeGene oneBetter() {
+			return null;
+		}
 	}
 
-	public static enum Tolerance {
+	public static enum Tolerance implements BeeGene {
 		UP("Up"),
 		DOWN("Down"),
 		BOTH("Both"),
@@ -223,6 +270,7 @@ public class AlleleRegistry {
 
 		private Tolerance(String pre, String s) {
 			tag = pre+"."+"tolerance"+s;
+			register(this, tag);
 		}
 
 		public IAlleleTolerance getAllele() {
@@ -235,9 +283,14 @@ public class AlleleRegistry {
 			AlleleManager.alleleRegistry.registerAllele(allele, EnumBeeChromosome.TEMPERATURE_TOLERANCE, EnumBeeChromosome.HUMIDITY_TOLERANCE);
 			return EnumHelper;
 		}*/
+
+		@Override
+		public BeeGene oneBetter() {
+			return null;
+		}
 	}
 
-	public static enum Effect {
+	public static enum Effect implements BeeGene {
 		NONE("effectNone"),
 		AGRESSION("effectAggressive"),
 		HEROIC("effectHeroic"),
@@ -264,10 +317,24 @@ public class AlleleRegistry {
 
 		private Effect(String pre, String s) {
 			tag = pre+"."+s;
+			register(this, tag);
 		}
 
 		public IAlleleBeeEffect getAllele() {
 			return (IAlleleBeeEffect)AlleleManager.alleleRegistry.getAllele(tag);
 		}
+
+		@Override
+		public BeeGene oneBetter() {
+			return null;
+		}
+	}
+
+	private static void register(BeeGene g, String n) {
+		geneMap.put(g.getClass(), n, g);
+	}
+
+	public static BeeGene getEnum(IAllele allele, Class<? extends BeeGene> type) {
+		return geneMap.get(type, allele.getUID());
 	}
 }

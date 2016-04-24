@@ -11,6 +11,8 @@ package Reika.DragonAPI.Libraries.IO;
 
 import java.awt.Color;
 
+import net.minecraft.util.MathHelper;
+
 public class ReikaColorAPI {
 
 	/** Converts an RGB array into a color multiplier. Args: RGB[], bit */
@@ -160,5 +162,32 @@ public class ReikaColorAPI {
 
 	public static int getHue(int rgb) {
 		return (int)(360*Color.RGBtoHSB(getRed(rgb), getGreen(rgb), getBlue(rgb), null)[0]);
+	}
+
+	public static int getShiftedDelta(int color, int base, int newbase) {
+		int red = getRed(color);
+		int green = getGreen(color);
+		int blue = getBlue(color);
+		float[] hsv = Color.RGBtoHSB(red, green, blue, null);
+
+		red = getRed(base);
+		green = getGreen(base);
+		blue = getBlue(base);
+
+		float[] hsvb = Color.RGBtoHSB(red, green, blue, null);
+
+		red = getRed(newbase);
+		green = getGreen(newbase);
+		blue = getBlue(newbase);
+
+		float[] hsvn = Color.RGBtoHSB(red, green, blue, null);
+
+		float[] ret = new float[3];
+		for (int i = 0; i < 3; i++) {
+			ret[i] = hsv[i]-hsvb[i]+hsvn[i];
+			if (i > 0)
+				ret[i] = MathHelper.clamp_float(ret[i], 0, 1);
+		}
+		return Color.HSBtoRGB(ret[0], ret[1], ret[2]);
 	}
 }

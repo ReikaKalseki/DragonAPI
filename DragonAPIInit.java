@@ -142,6 +142,7 @@ import Reika.DragonAPI.Libraries.ReikaPotionHelper;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaCommandHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
@@ -704,7 +705,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		DragonAPICore.log("Mods Present: "+Loader.instance().getActiveModList().size());
 		DragonAPICore.log("ASM Transformers Loaded: "+Launch.classLoader.getTransformers().size());
 		if (MinecraftServer.getServer() != null)
-			DragonAPICore.log("Commands Loaded: "+MinecraftServer.getServer().getCommandManager().getCommands().size());
+			DragonAPICore.log("Commands Loaded: "+ReikaCommandHelper.getCommandList().size());
 	}
 
 	@SubscribeEvent

@@ -502,6 +502,19 @@ public final class ReikaMathLibrary extends DragonAPICore {
 
 	/** Assumes val ranges from [-1 to +1] */
 	public static double normalizeToBounds(double val, double min, double max) {
-		return min+((max-min)*(val+1)/2);
+		return normalizeToBounds(val, min, max, -1, 1);
+	}
+
+	public static double normalizeToBounds(double val, double min, double max, double low, double high) {
+		return min+((max-min)*(val-low)/(high-low));
+	}
+
+	public static float roundToDecimalPlaces(float f, int i) {
+		float pow = (float)Math.pow(10, i);
+		return Math.round(f*pow)/pow;
+	}
+
+	public static int getWithinBoundsElse(int val, int min, int max, int fall) {
+		return isValueInsideBoundsIncl(min, max, val) ? val : fall;
 	}
 }

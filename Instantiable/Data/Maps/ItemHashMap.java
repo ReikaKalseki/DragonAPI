@@ -264,4 +264,8 @@ public final class ItemHashMap<V> {
 		return map;
 	}
 
+	public void putAll(ItemHashMap<V> map) {
+		this.data.putAll(map.data);
+	}
+
 }

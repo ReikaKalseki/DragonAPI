@@ -283,11 +283,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 		return data.toString();
 	}
 
-	private static class MultiKey implements BlockCheck {
+	public static class MultiKey implements BlockCheck {
 
 		private ArrayList<BlockCheck> keys = new ArrayList();
 
-		private void add(BlockCheck key) {
+		public void add(BlockCheck key) {
 			if (!keys.contains(key))
 				keys.add(key);
 		}

@@ -6,6 +6,7 @@ import java.util.List;
 import net.minecraft.command.ICommand;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.server.MinecraftServer;
+import Reika.DragonAPI.Libraries.IO.ReikaCommandHelper;
 
 
 public class CommandOwnerCommand extends DragonCommandBase {
@@ -13,7 +14,7 @@ public class CommandOwnerCommand extends DragonCommandBase {
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
 		if (args.length == 0) {
-			Collection<ICommand> li = MinecraftServer.getServer().getCommandManager().getCommands().values();
+			Collection<ICommand> li = ReikaCommandHelper.getCommandList();
 			for (ICommand c : li) {
 				this.printCommand(ics, c);
 			}

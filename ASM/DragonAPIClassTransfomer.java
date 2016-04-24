@@ -123,6 +123,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		ITEMSIZETEXTEVENT("net.minecraft.client.renderer.entity.RenderItem", "bny"),
 		//NOREROUTECUSTOMTEXMAP("net.minecraft.client.renderer.texture.TextureMap", "bpz"),
 		FARDESPAWNEVENT("net.minecraft.entity.EntityLiving", "sw"),
+		//PARTICLELIMIT("net.minecraft.client.particle.EffectRenderer", "bkn"),
 		;
 
 		private final String obfName;

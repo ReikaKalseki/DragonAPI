@@ -41,6 +41,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	FILEHASH("Compare mod file hashes between client and server", true),
 	APRIL("Enable Vernal Amusement Behavior", true),
 	NOALPHATEST("Disable Alpha Clipping in WorldRenderer", true),
+	PARTICLELIMIT("Particle Limit (Vanilla = 4000)", 4000),
 	//RECURSE("Recursion Limit Override", -1),
 	;//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
 

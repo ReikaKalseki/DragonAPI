@@ -11,11 +11,10 @@ package Reika.DragonAPI.Interfaces.Block;
 
 import java.util.ArrayList;
 
-import Reika.DragonAPI.Interfaces.Registry.OreType;
-
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Interfaces.Registry.OreType;
 
 public interface SpecialOreBlock {
 

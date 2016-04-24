@@ -18,6 +18,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Instantiable.Data.Collections.ChancedOutputList;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import forestry.api.recipes.ICentrifugeRecipe;
 import forestry.api.recipes.RecipeManagers;
 
@@ -43,7 +44,8 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 					Map<ItemStack, Float> out = r.getAllProducts();
 					for (ItemStack is : out.keySet()) {
 						float chance = out.get(is)*100;
-						outputs.addItem(is, chance);
+						for (int i = 0; i < is.stackSize; i++)
+							outputs.addItem(ReikaItemHelper.getSizedItemStack(is, 1), chance);
 					}
 					centrifuge.put(in, outputs);
 				}
