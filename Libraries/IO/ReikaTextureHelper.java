@@ -17,6 +17,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -95,6 +96,7 @@ public class ReikaTextureHelper {
 			Integer gl = (Integer)textures.get(root, tex);
 			if (gl == null) {
 				ArrayList<IResourcePack> li = getCurrentResourcePacks();
+				Collections.reverse(li); //because Mojang
 				for (IResourcePack res : li) {
 					gl = bindPackTexture(root, respath, res, img);
 					if (gl != null) {

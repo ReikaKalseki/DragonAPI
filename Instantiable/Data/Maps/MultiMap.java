@@ -23,6 +23,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 public final class MultiMap<K, V> {
 
 	private final HashMap<K, Collection<V>> data = new HashMap();
+	//private final HashSet<ImmutablePair<K, V>> pairSet = new HashSet();
 
 	private boolean modifiable = true;
 	private boolean nullEmpty = false;
@@ -43,11 +44,41 @@ public final class MultiMap<K, V> {
 			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		if (ordering != null && value instanceof List)
 			Collections.sort((List)value, ordering);
-		return data.put(key, factory.createCollection(value));
+		Collection<V> old = data.put(key, factory.createCollection(value));
+		if (old != null)
+			this.removeContainKeys(key, old);
+		this.addContainKeys(key, value);
+		return old;
+	}
+
+	private void removeContainKey(K key, V value) {
+		//pairSet.remove(new ImmutablePair(key, value));
+	}
+
+	private void removeContainKeys(K key, Collection<V> set) {
+		/*
+		for (V val : set) {
+			this.removeContainKey(key, val);
+		}
+		 */
+	}
+
+	private void addContainKey(K key, V value) {
+		//pairSet.add(new ImmutablePair(key, value));
+	}
+
+	private void addContainKeys(K key, Collection<V> set) {
+		/*
+		for (V val : set) {
+			this.addContainKey(key, val);
+		}
+		 */
 	}
 
 	public Collection<V> putValue(K key, V value) {
 		Collection<V> ret = this.remove(key);
+		if (ret != null)
+			this.removeContainKeys(key, ret);
 		this.addValue(key, value, false, false);
 		return ret;
 	}
@@ -70,10 +101,11 @@ public final class MultiMap<K, V> {
 			li = this.createCollection();
 			data.put(key, li);
 		}
-		if (copy || !li.contains(value)) {
+		if (copy || !factory.allowsDuplicates() || /*!li.contains(value)*/!this.containsValueForKey(key, value)) {
 			li.add(value);
 			if (ordering != null && li instanceof List)
 				Collections.sort((List)li, ordering);
+			this.addContainKey(key, value);
 			return true;
 		}
 		return false;
@@ -86,8 +118,9 @@ public final class MultiMap<K, V> {
 	public Collection<V> remove(K key) {
 		if (!modifiable)
 			throw new UnsupportedOperationException("Map "+this+" is locked!");
-		Collection<V> ret = data.get(key);
-		data.remove(key);
+		Collection<V> ret = data.remove(key);
+		if (ret != null)
+			this.removeContainKeys(key, ret);
 		return ret != null ? ret : new ArrayList();
 	}
 
@@ -114,6 +147,7 @@ public final class MultiMap<K, V> {
 		if (!modifiable)
 			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		data.clear();
+		//pairSet.clear();
 	}
 
 	public Collection<K> keySet() {
@@ -150,8 +184,11 @@ public final class MultiMap<K, V> {
 	}
 
 	public boolean containsValueForKey(K key, V value) {
+
 		Collection<V> c = data.get(key);
 		return c != null && c.contains(value);
+
+		//return pairSet.contains(new ImmutablePair(key, value));
 	}
 
 	public boolean remove(K key, V value) {
@@ -159,6 +196,7 @@ public final class MultiMap<K, V> {
 			throw new UnsupportedOperationException("Map "+this+" is locked!");
 		Collection<V> c = data.get(key);
 		boolean flag = c != null && c.remove(value);
+		this.removeContainKey(key, value);
 		if (flag && c.isEmpty()) {
 			this.data.remove(key);
 		}
@@ -213,6 +251,7 @@ public final class MultiMap<K, V> {
 
 		public Collection<? extends C> createCollection();
 		public Collection<? extends C> createCollection(Collection c);
+		public boolean allowsDuplicates();
 
 	}
 
@@ -228,6 +267,11 @@ public final class MultiMap<K, V> {
 			return new ArrayList(c);
 		}
 
+		@Override
+		public boolean allowsDuplicates() {
+			return true;
+		}
+
 	}
 
 	public static final class HashSetFactory implements CollectionFactory<HashSet> {
@@ -240,6 +284,11 @@ public final class MultiMap<K, V> {
 		@Override
 		public HashSet createCollection(Collection c) {
 			return new HashSet(c);
+		}
+
+		@Override
+		public boolean allowsDuplicates() {
+			return false;
 		}
 
 	}

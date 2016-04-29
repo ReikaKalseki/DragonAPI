@@ -297,6 +297,10 @@ public class Spline {
 			posZ = z;
 		}
 
+		public BasicSplinePoint(DecimalPosition p) {
+			this(p.xCoord, p.yCoord, p.zCoord);
+		}
+
 		@Override
 		public void update() {
 

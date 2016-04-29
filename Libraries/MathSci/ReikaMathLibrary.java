@@ -466,6 +466,10 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return (ra > 0 ? ((x*x)/(ra*ra)) : 0) + (rb > 0 ? ((y*y)/(rb*rb)) : 0) + (rc > 0 ? ((z*z)/(rc*rc)) : 0) <= 1;
 	}
 
+	public static boolean isPointInsidePowerEllipse(double x, double y, double z, double ra, double rb, double rc, double pow) {
+		return (ra > 0 ? (Math.pow(x, pow)/Math.pow(ra, pow)) : 0) + (rb > 0 ? (Math.pow(y, pow)/Math.pow(rb, pow)) : 0) + (rc > 0 ? (Math.pow(z, pow)/Math.pow(rc, pow)) : 0) <= 1;
+	}
+
 	public static double linterpolate(double x, double x1, double x2, double y1, double y2) {
 		return y1+(x-x1)/(x2-x1)*(y2-y1);
 	}
@@ -516,5 +520,25 @@ public final class ReikaMathLibrary extends DragonAPICore {
 
 	public static int getWithinBoundsElse(int val, int min, int max, int fall) {
 		return isValueInsideBoundsIncl(min, max, val) ? val : fall;
+	}
+
+	public static int cycleBitsLeft(int num, int n) {
+		n = n&31;
+		return (num << n) | (num >> (32-n));
+	}
+
+	public static long cycleBitsLeft(long num, int n) {
+		n = n&63;
+		return (num << n) | (num >> (64-n));
+	}
+
+	public static int cycleBitsRight(int num, int n) {
+		n = n&31;
+		return (num >> n) | (num << (32-n));
+	}
+
+	public static long cycleBitsRight(long num, int n) {
+		n = n&63;
+		return (num >> n) | (num << (64-n));
 	}
 }

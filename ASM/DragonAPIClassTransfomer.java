@@ -41,6 +41,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodInstructionException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
 import Reika.DragonAPI.Interfaces.ASMEnum;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
@@ -49,7 +50,7 @@ import cpw.mods.fml.relauncher.Side;
 
 public class DragonAPIClassTransfomer implements IClassTransformer {
 
-	private static final MultiMap<String, ClassPatch> classes = new MultiMap().setNullEmpty();
+	private static final MultiMap<String, ClassPatch> classes = new MultiMap(new HashSetFactory()).setNullEmpty();
 	private static int bukkitFlags;
 	private static boolean nullItemPrintout = false;
 	private static boolean nullItemCrash = false;

@@ -25,6 +25,7 @@ import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
@@ -291,6 +292,10 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			}
 			world.setBlockToAir(x, y, z);
 			world.markBlockForUpdate(x, y, z);
+			if (player != null) {
+				player.addStat(StatList.mineBlockStatArray[Block.getIdFromBlock(id)], 1);
+				player.addExhaustion(0.025F);
+			}
 			if (call != null)
 				call.onBreak(this, world, x, y, z, id, meta);
 		}

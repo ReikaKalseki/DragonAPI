@@ -144,6 +144,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 			case APRIL:
 			case NOALPHATEST:
 			case TABNBT:
+			case PARTICLELIMIT:
 				return true;
 			default:
 				return false;

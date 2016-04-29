@@ -27,6 +27,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.fluids.Fluid;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -67,6 +68,10 @@ public class ReikaMystcraftHelper {
 
 	public static void disableFluidPage(Fluid f) {
 		FMLInterModComms.sendMessage(ModList.MYSTCRAFT.modLabel, "blacklistfluid", f.getName());
+	}
+
+	public static void disableBiomePage(BiomeGenBase b) {
+		FMLInterModComms.sendMessage(ModList.MYSTCRAFT.modLabel, "blacklist", "Biome"+b.biomeID);
 	}
 
 	private static ILinkInfo getPortalInfo(World world, int x, int y, int z) {

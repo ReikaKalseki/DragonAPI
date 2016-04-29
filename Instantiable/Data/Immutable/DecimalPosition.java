@@ -42,6 +42,10 @@ public final class DecimalPosition {
 		this(te.xCoord+0.5, te.yCoord+0.5, te.zCoord+0.5);
 	}
 
+	public DecimalPosition(Coordinate c) {
+		this(c.xCoord+0.5, c.yCoord+0.5, c.zCoord+0.5);
+	}
+
 	public DecimalPosition(Entity e) {
 		this(e.posX, e.posY, e.posZ);
 	}
@@ -155,6 +159,14 @@ public final class DecimalPosition {
 
 	public double getDistanceTo(double x, double y, double z) {
 		return ReikaMathLibrary.py3d(x-xCoord, y-yCoord, z-zCoord);
+	}
+
+	public boolean isWithinSquare(Coordinate c, double d) {
+		return this.isWithinSquare(c, d, d, d);
+	}
+
+	public boolean isWithinSquare(Coordinate c, double dx, double dy, double dz) {
+		return Math.abs(c.xCoord-xCoord) <= dx && Math.abs(c.yCoord-yCoord) <= dy && Math.abs(c.zCoord-zCoord) <= dz;
 	}
 
 	public double[] toArray() {

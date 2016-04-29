@@ -39,6 +39,7 @@ import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Instantiable.Effects.NumberParticleFX;
 import Reika.DragonAPI.Instantiable.Event.RawKeyPressEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.ClientLogoutEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.PlayerInteractEventClient;
 import Reika.DragonAPI.Interfaces.PacketHandler;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -313,6 +314,8 @@ public class APIPacketHandler implements PacketHandler {
 					}
 					break;
 				}
+				case LOGOUT:
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -343,6 +346,9 @@ public class APIPacketHandler implements PacketHandler {
 				break;
 			case LOGIN:
 				MinecraftForge.EVENT_BUS.post(new ClientLoginEvent(player, data[0] > 0));
+				break;
+			case LOGOUT:
+				MinecraftForge.EVENT_BUS.post(new ClientLogoutEvent(player));
 				break;
 			case BREAKPARTICLES:
 				Block b = Block.getBlockById(data[0]);
@@ -386,6 +392,7 @@ public class APIPacketHandler implements PacketHandler {
 		EXPLODE(),
 		OLDMODS(),
 		LOGIN(),
+		LOGOUT(),
 		SERVERSOUND(),
 		BREAKPARTICLES(),
 		PLAYERKICK(),

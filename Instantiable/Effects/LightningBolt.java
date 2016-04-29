@@ -18,7 +18,7 @@ public class LightningBolt {
 
 	public final int nsteps;
 
-	public double variance;
+	public double variance = 1;
 	public double velocity = 1;
 
 	public final DecimalPosition start;

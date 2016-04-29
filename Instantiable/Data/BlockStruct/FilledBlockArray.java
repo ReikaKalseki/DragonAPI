@@ -111,10 +111,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	private void addBlockToCoord(Coordinate c, BlockCheck bk) {
 		BlockCheck bc = data.get(c);
-		if (bc == null) {
+		if (bc == null || bc instanceof EmptyCheck) {
 			MultiKey mk = new MultiKey();
 			mk.add(bk);
 			data.put(c, mk);
+			bc = mk;
 		}
 		else if (bc instanceof BlockKey) {
 			MultiKey mk = new MultiKey();

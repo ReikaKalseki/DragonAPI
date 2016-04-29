@@ -157,6 +157,14 @@ public final class Coordinate {
 		return this.getDistanceTo(e.posX, e.posY, e.posZ);
 	}
 
+	public boolean isWithinSquare(Coordinate c, int d) {
+		return this.isWithinSquare(c, d, d, d);
+	}
+
+	public boolean isWithinSquare(Coordinate c, int dx, int dy, int dz) {
+		return Math.abs(c.xCoord-xCoord) <= dx && Math.abs(c.yCoord-yCoord) <= dy && Math.abs(c.zCoord-zCoord) <= dz;
+	}
+
 	public int[] toArray() {
 		int[] a = new int[3];
 		a[0] = xCoord;

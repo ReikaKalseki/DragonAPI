@@ -260,6 +260,14 @@ public class WorldLocation {
 		return Math.abs(x-xCoord)+Math.abs(y-yCoord)+Math.abs(z-zCoord);
 	}
 
+	public boolean isWithinSquare(WorldLocation c, int d) {
+		return this.isWithinSquare(c, d, d, d);
+	}
+
+	public boolean isWithinSquare(WorldLocation c, int dx, int dy, int dz) {
+		return c.dimensionID == dimensionID && Math.abs(c.xCoord-xCoord) <= dx && Math.abs(c.yCoord-yCoord) <= dy && Math.abs(c.zCoord-zCoord) <= dz;
+	}
+
 	public DoubleWorldLocation decimalOffset(double dx, double dy, double dz) {
 		return new DoubleWorldLocation(this, dx, dy, dz);
 	}

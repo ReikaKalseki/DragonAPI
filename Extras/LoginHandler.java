@@ -82,8 +82,11 @@ public final class LoginHandler implements PlayerTracker {
 	}
 
 	@Override
-	public void onPlayerLogout(EntityPlayer player) {
-
+	public void onPlayerLogout(EntityPlayer ep) {
+		if (ep instanceof EntityPlayerMP) {
+			EntityPlayerMP emp = (EntityPlayerMP)ep;
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.LOGOUT.ordinal(), emp);
+		}
 	}
 
 	@Override

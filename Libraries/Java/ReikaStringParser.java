@@ -402,4 +402,13 @@ public class ReikaStringParser extends DragonAPICore {
 			s = s.substring(0, s.length()-1);
 		return s.isEmpty() ? "0" : s;
 	}
+
+	public static ArrayList<String> splitStringByNewlines(String s) {
+		ArrayList<String> li = new ArrayList();
+		String[] parts = s.split("\\n");
+		for (int i = 0; i < parts.length; i++) {
+			li.add(parts[i]);
+		}
+		return li;
+	}
 }

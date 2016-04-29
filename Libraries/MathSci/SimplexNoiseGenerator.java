@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Libraries.MathSci;
 
 import net.minecraft.util.MathHelper;
@@ -157,8 +166,7 @@ public class SimplexNoiseGenerator {
 
 	private double extrapolate(int xsb, int zsb, double dx, double dz) {
 		int index = perm[(perm[xsb & 0xFF] + zsb) & 0xFF] & 0x0E;
-		return gradients2D[index] * dx
-				+ gradients2D[index + 1] * dz;
+		return gradients2D[index] * dx + gradients2D[index + 1] * dz;
 	}
 
 	//Gradients for 2D. They approximate the directions to the
