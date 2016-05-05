@@ -296,10 +296,12 @@ public final class MTInteractionManager {
 		private final OneWayMap<String, OneWaySet<MTItemEntry>> variables = new OneWayMap();
 		private String lastItemMod;
 		private final File script;
+		private final Prevention protectionType;
 
 		private MTScriptScanner(Prevention p, File f) {
 			set = instance.data.get(p);
 			script = f;
+			protectionType = p;
 		}
 
 		@Override
@@ -389,6 +391,8 @@ public final class MTInteractionManager {
 		}
 
 		private boolean parse(String s, Prevention p) {
+			if (p != protectionType)
+				return false;
 			int lb = s.indexOf('<');
 			int rb = s.indexOf('>');
 			OneWaySet<MTItemEntry> items = new OneWaySet();

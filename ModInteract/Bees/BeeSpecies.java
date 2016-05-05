@@ -59,7 +59,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	private final IIcon[][] icons = new IIcon[EnumBeeType.VALUES.length][3];
 	private final HashMap<ItemStack, Float> specials = new HashMap();
 	private final HashMap<ItemStack, Float> products = new HashMap();
-	private final BeeBranch branch;
+	private final IClassification branch;
 	private final String scientific;
 	private final String genus;
 	private final String creator;
@@ -72,8 +72,8 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		beeRoot = (IBeeRoot)AlleleManager.alleleRegistry.getSpeciesRoot("rootBees");
 	}
 
-	protected BeeSpecies(String name, String uid, String latinName, String creator) {
-		branch = new BeeBranch(this);
+	protected BeeSpecies(String name, String uid, String latinName, String creator, IClassification g) {
+		branch = g;
 
 		this.name = name;
 		this.creator = creator;
@@ -146,8 +146,8 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 		protected final BeeTraits traits;
 
-		protected TraitsBee(String name, String uid, String latinName, String creator, BeeTraits traits) {
-			super(name, uid, latinName, creator);
+		protected TraitsBee(String name, String uid, String latinName, String creator, IClassification g, BeeTraits traits) {
+			super(name, uid, latinName, creator, g);
 			this.traits = traits;
 		}
 
@@ -222,37 +222,44 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		}
 	}
 
-	private static final class BeeBranch implements IClassification {
+	public static class BeeBranch implements IClassification {
 
-		public final BeeSpecies species;
+		public final String displayName;
+		public final String description;
 
-		private BeeBranch(BeeSpecies b) {
-			species = b;
+		private final String uid;
+		private final String latinName;
+
+		public BeeBranch(String id, String n, String latin, String desc) {
+			displayName = n;
+			description = desc;
+			latinName = latin;
+			uid = id;
 		}
 
 		@Override
-		public EnumClassLevel getLevel() {
+		public final EnumClassLevel getLevel() {
 			return EnumClassLevel.GENUS;
 		}
 
 		@Override
-		public String getUID() {
-			return species.getUID();
+		public final String getUID() {
+			return uid;
 		}
 
 		@Override
-		public String getName() {
-			return species.genus;
+		public final String getName() {
+			return displayName;
 		}
 
 		@Override
-		public String getScientific() {
-			return species.genus;
+		public final String getScientific() {
+			return latinName;
 		}
 
 		@Override
-		public String getDescription() {
-			return species.getDescription();
+		public final String getDescription() {
+			return description;
 		}
 
 		@Override

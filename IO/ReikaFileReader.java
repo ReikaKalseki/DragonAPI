@@ -11,6 +11,8 @@ package Reika.DragonAPI.IO;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -30,6 +32,10 @@ import java.net.UnknownHostException;
 import java.security.MessageDigest;
 import java.util.ArrayList;
 import java.util.jar.JarFile;
+
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTSizeTracker;
+import net.minecraft.nbt.NBTTagCompound;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -56,6 +62,16 @@ public class ReikaFileReader extends DragonAPICore {
 	public static BufferedReader getReader(File f) {
 		try {
 			return new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static BufferedReader getReader(InputStream in) {
+		try {
+			return new BufferedReader(new InputStreamReader(in));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -199,6 +215,10 @@ public class ReikaFileReader extends DragonAPICore {
 
 	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace) {
 		return getFileAsLines(getReader(f), printStackTrace);
+	}
+
+	public static ArrayList<String> getFileAsLines(InputStream in, boolean printStackTrace) {
+		return getFileAsLines(getReader(in), printStackTrace);
 	}
 
 	public static ArrayList<String> getFileAsLines(BufferedReader r, boolean printStackTrace) {
@@ -456,5 +476,21 @@ public class ReikaFileReader extends DragonAPICore {
 		FileOutputStream out = new FileOutputStream(tempFile);
 		IOUtils.copy(in, out);
 		return tempFile;
+	}
+
+	public static void writeUncompressedNBT(NBTTagCompound tag, File f) throws IOException {
+		writeUncompressedNBT(tag, new FileOutputStream(f));
+	}
+
+	public static void writeUncompressedNBT(NBTTagCompound tag, OutputStream out) throws IOException {
+		CompressedStreamTools.write(tag, new DataOutputStream(out));
+	}
+
+	public static NBTTagCompound readUncompressedNBT(File f) throws IOException {
+		return readUncompressedNBT(new FileInputStream(f));
+	}
+
+	public static NBTTagCompound readUncompressedNBT(InputStream in) throws IOException {
+		return CompressedStreamTools.func_152456_a(new DataInputStream(in), NBTSizeTracker.field_152451_a);
 	}
 }

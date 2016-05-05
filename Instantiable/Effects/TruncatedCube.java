@@ -13,8 +13,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import org.lwjgl.opengl.GL11;
+
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 
 
 public class TruncatedCube {
@@ -186,6 +191,65 @@ public class TruncatedCube {
 		li.add(li2);
 
 		return li;
+	}
+
+	public void render(double x, double y, double z, int c1, int c2, boolean edge, float pdist) {
+		int a1 = ReikaColorAPI.getAlpha(c1);
+		int a2 = ReikaColorAPI.getAlpha(c2);
+		Tessellator v5 = Tessellator.instance;
+		float p = GL11.glGetFloat(GL11.GL_LINE_WIDTH);
+		if (edge) {
+			float w = Math.max(0.125F, 2F-0.0625F*pdist);
+			GL11.glLineWidth(w);
+		}
+
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			List<DecimalPosition> li = this.getFaceVertices(dir, true, x, y, z);
+
+			v5.startDrawing(GL11.GL_TRIANGLE_FAN);
+			v5.setColorRGBA_I(c1 & 0xffffff, a1);
+			v5.setBrightness(240);
+			for (DecimalPosition d : li) {
+				v5.addVertex(d.xCoord, d.yCoord, d.zCoord);
+			}
+			v5.draw();
+
+			if (edge) {
+				li = this.getFaceVertices(dir, false, x, y, z);
+				v5.startDrawing(GL11.GL_LINE_LOOP);
+				v5.setColorRGBA_I(c2 & 0xffffff, a2);
+				v5.setBrightness(240);
+				for (DecimalPosition d : li) {
+					v5.addVertex(d.xCoord, d.yCoord, d.zCoord);
+				}
+				v5.draw();
+			}
+		}
+
+		for (List<DecimalPosition> li : this.getCornerVertices(x, y, z)) {
+			v5.startDrawing(GL11.GL_TRIANGLES);
+			v5.setColorRGBA_I(c1 & 0xffffff, a1);
+			v5.setBrightness(240);
+			for (DecimalPosition d : li) {
+				v5.addVertex(d.xCoord, d.yCoord, d.zCoord);
+			}
+			v5.draw();
+
+			if (edge) {
+				v5.startDrawing(GL11.GL_LINE_LOOP);
+				v5.setColorRGBA_I(c2 & 0xffffff, a2);
+				v5.setBrightness(240);
+				for (DecimalPosition d : li) {
+					v5.addVertex(d.xCoord, d.yCoord, d.zCoord);
+				}
+				v5.draw();
+			}
+		}
+
+		if (edge) {
+			GL11.glLineWidth(p);
+		}
 	}
 
 }

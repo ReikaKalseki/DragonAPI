@@ -45,6 +45,10 @@ public final class BlockBox {
 		return new BlockBox(Integer.MIN_VALUE, Integer.MAX_VALUE);
 	}
 
+	public static BlockBox nothing() {
+		return new BlockBox(Integer.MAX_VALUE, Integer.MIN_VALUE);
+	}
+
 	public int getSizeX() {
 		return maxX-minX+1;
 	}
@@ -85,26 +89,26 @@ public final class BlockBox {
 		int maxy = maxY;
 		int maxz = maxX;
 		switch(side) {
-		case DOWN:
-			miny = Math.max(value, miny);
-			break;
-		case UP:
-			maxy = Math.min(value, maxy);
-			break;
-		case EAST:
-			maxx = Math.min(value, maxx);
-			break;
-		case WEST:
-			minx = Math.max(value, minx);
-			break;
-		case NORTH:
-			minz = Math.max(value, minz);
-			break;
-		case SOUTH:
-			maxz = Math.min(value, maxz);
-			break;
-		default:
-			break;
+			case DOWN:
+				miny = Math.max(value, miny);
+				break;
+			case UP:
+				maxy = Math.min(value, maxy);
+				break;
+			case EAST:
+				maxx = Math.min(value, maxx);
+				break;
+			case WEST:
+				minx = Math.max(value, minx);
+				break;
+			case NORTH:
+				minz = Math.max(value, minz);
+				break;
+			case SOUTH:
+				maxz = Math.min(value, maxz);
+				break;
+			default:
+				break;
 		}
 		return new BlockBox(minx, miny, minz, maxx, maxy, maxz);
 	}

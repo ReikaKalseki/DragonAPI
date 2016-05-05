@@ -274,4 +274,11 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 	}
 
+	public static void overwriteNBT(NBTTagCompound tag, NBTTagCompound over) {
+		for (Object o : over.func_150296_c()) {
+			NBTBase b = over.getTag((String)o);
+			tag.setTag((String)o, b);
+		}
+	}
+
 }

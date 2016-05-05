@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable.Data.Immutable;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
@@ -108,5 +109,20 @@ public final class BlockKey implements BlockCheck {
 
 	public String getLocalized() {
 		return blockID.getLocalizedName()+":"+metadata;
+	}
+
+	public void writeToNBT(String tag, NBTTagCompound NBT) {
+		NBTTagCompound dat = new NBTTagCompound();
+		dat.setInteger("id", Block.getIdFromBlock(blockID));
+		dat.setInteger("meta", metadata);
+		NBT.setTag(tag, dat);
+	}
+
+	public static BlockKey readFromNBT(String tag, NBTTagCompound NBT) {
+		NBTTagCompound dat = NBT.getCompoundTag(tag);
+		int id = dat.getInteger("id");
+		Block b = Block.getBlockById(id);
+		int meta = dat.getInteger("meta");
+		return b != null ? new BlockKey(b, meta) : null;
 	}
 }

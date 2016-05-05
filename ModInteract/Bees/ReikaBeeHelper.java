@@ -27,6 +27,7 @@ import forestry.api.apiculture.EnumBeeChromosome;
 import forestry.api.apiculture.EnumBeeType;
 import forestry.api.apiculture.IBee;
 import forestry.api.apiculture.IBeeGenome;
+import forestry.api.apiculture.IBeeHousing;
 import forestry.api.apiculture.IBeeRoot;
 import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.EnumTolerance;
@@ -155,6 +156,29 @@ public class ReikaBeeHelper {
 	public static IAllele getToleranceGene(Tolerance d, int i) {
 		String s = i > 0 ? String.format("%s%d", d.tag, Math.min(Math.abs(i), 5)) : Tolerance.NONE.tag;
 		return AlleleManager.alleleRegistry.getAllele(s);
+	}
+
+	public static void runProductionCycle(IBeeHousing ibh) { //skips frame damage, other checks, and pollination
+		//ibh.getBeekeepingLogic().doWork();
+		if (ibh.getBeekeepingLogic().canWork()) {
+			ItemStack is = ibh.getBeeInventory().getQueen();
+			if (is != null) {
+				IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
+				if (bee instanceof IBee) {
+					ItemStack[] ret = ((IBee)bee).produceStacks(ibh);
+					if (ret != null) {
+						for (int i = 0; i < ret.length; i++) {
+							ItemStack in = ret[i];
+							ibh.getBeeInventory().addProduct(in, false);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public static void setBeeMate(IBee ii, IBee repl) {
+		ii.mate(repl);
 	}
 
 }

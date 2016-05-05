@@ -114,6 +114,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 		if (bc == null || bc instanceof EmptyCheck) {
 			MultiKey mk = new MultiKey();
 			mk.add(bk);
+			if (bc != null)
+				mk.add(bc);
 			data.put(c, mk);
 			bc = mk;
 		}

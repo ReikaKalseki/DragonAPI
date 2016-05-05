@@ -18,6 +18,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 
@@ -168,23 +169,59 @@ public class ReikaDirectionHelper extends DragonAPICore {
 	}
 
 	public static enum CubeDirections {
-		NORTH(0, -1),
-		NORTHEAST(1, -1),
-		EAST(1, 0),
-		SOUTHEAST(1, 1),
-		SOUTH(0, 1),
-		SOUTHWEST(-1, 1),
-		WEST(-1, 0),
-		NORTHWEST(-1, -1);
+		NORTH(0, -1, 90),
+		NORTHEAST(1, -1, 45),
+		EAST(1, 0, 0),
+		SOUTHEAST(1, 1, 315),
+		SOUTH(0, 1, 270),
+		SOUTHWEST(-1, 1, 225),
+		WEST(-1, 0, 180),
+		NORTHWEST(-1, -1, 135);
 
 		public final int directionX;
 		public final int directionZ;
 
-		public static final CubeDirections[] list = values();
+		public final int angle;
 
-		private CubeDirections(int x, int z) {
+		public static final CubeDirections[] list = values();
+		private static final PluralMap<CubeDirections> dirMap = new PluralMap(2);
+
+		private CubeDirections(int x, int z, int a) {
 			directionX = x;
 			directionZ = z;
+			angle = a;
+		}
+
+		public CubeDirections getRotation(boolean clockwise) {
+			return this.getRotation(clockwise, 1);
+		}
+
+		public CubeDirections getRotation(boolean clockwise, int num) {
+			int d = clockwise ? num : -num;
+			return getShiftedIndex(this.ordinal(), d);
+		}
+
+		public CubeDirections getOpposite() {
+			return getShiftedIndex(this.ordinal(), 4);
+		}
+
+		private static CubeDirections getShiftedIndex(int i, int d) {
+			int o = ((i+d)%list.length+list.length)%list.length;
+			return list[o];
+		}
+
+		public static CubeDirections getFromVectors(double dx, double dz) {
+			return dirMap.get((int)Math.signum(dx), (int)Math.signum(dz));
+		}
+
+		public boolean isCardinal() {
+			return directionX == 0 || directionZ == 0;
+		}
+
+		static {
+			for (int i = 0; i < list.length; i++) {
+				dirMap.put(list[i], list[i].directionX, list[i].directionZ);
+			}
 		}
 	}
 

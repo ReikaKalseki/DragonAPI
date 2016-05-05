@@ -110,11 +110,13 @@ import Reika.DragonAPI.Command.FindThreadCommand;
 import Reika.DragonAPI.Command.FindTilesCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
+import Reika.DragonAPI.Command.ItemNBTCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
 import Reika.DragonAPI.Command.PlayerNBTCommand;
 import Reika.DragonAPI.Command.PopulateMinimapCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.SpawnMobsCommand;
+import Reika.DragonAPI.Command.StructureExportCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
@@ -692,6 +694,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new PlayerNBTCommand());
 		evt.registerServerCommand(new ConfigReloadCommand());
 		evt.registerServerCommand(new CommandOwnerCommand());
+		evt.registerServerCommand(new StructureExportCommand());
+		evt.registerServerCommand(new ItemNBTCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();

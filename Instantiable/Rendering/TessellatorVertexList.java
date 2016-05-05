@@ -15,6 +15,8 @@ import java.util.LinkedList;
 
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 
 public class TessellatorVertexList {
 
@@ -43,6 +45,10 @@ public class TessellatorVertexList {
 		data.add(new TessellatorVertex(x, y, z, u, v));
 	}
 
+	public void addVertexWithUVColor(double x, double y, double z, double u, double v, int color) {
+		data.add(new TessellatorVertex(x, y, z, u, v, color));
+	}
+
 	public void render() {
 		for (TessellatorVertex v : data) {
 			v.addToTessellator();
@@ -61,7 +67,10 @@ public class TessellatorVertexList {
 		private double posU;
 		private double posV;
 
+		private int colorData;
+
 		private boolean hasUV;
+		private boolean hasColor;
 
 		private TessellatorVertex(double x, double y, double z) {
 			this(x, y, z, 0, 0);
@@ -69,15 +78,25 @@ public class TessellatorVertexList {
 		}
 
 		private TessellatorVertex(double x, double y, double z, double u, double v) {
+			this(x, y, z, u, v, 0);
+			hasColor = false;
+		}
+
+		private TessellatorVertex(double x, double y, double z, double u, double v, int color) {
 			posX = x;
 			posY = y;
 			posZ = z;
 			posU = u;
 			posV = v;
+			colorData = color;
 			hasUV = true;
+			hasColor = true;
 		}
 
 		private void addToTessellator() {
+			if (hasColor) {
+				Tessellator.instance.setColorOpaque_I(colorData);
+			}
 			if (hasUV)
 				Tessellator.instance.addVertexWithUV(posX, posY, posZ, posU, posV);
 			else
@@ -171,6 +190,15 @@ public class TessellatorVertexList {
 		this.reverse();
 	}
 
+	public void rotateNonOrthogonal(double rx, double ry, double rz) {
+		for (TessellatorVertex v : data) {
+			Vec3 ret = ReikaVectorHelper.rotateVector(Vec3.createVectorHelper(v.posX-originX, v.posY-originY, v.posZ-originZ), rx, ry, rz);
+			v.posX = originX+ret.xCoord;
+			v.posY = originY+ret.yCoord;
+			v.posZ = originZ+ret.zCoord;
+		}
+	}
+
 	public void clear() {
 		data.clear();
 	}
@@ -184,6 +212,11 @@ public class TessellatorVertexList {
 		if (list.isEmpty())
 			throw new IllegalStateException("Popped an empty list!");
 		data = list.pollLast();
+	}
+
+	public void addAll(TessellatorVertexList li) {
+		list.addAll(li.list);
+		data.addAll(li.data);
 	}
 
 }

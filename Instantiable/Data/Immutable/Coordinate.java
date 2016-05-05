@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -292,6 +294,23 @@ public final class Coordinate {
 		int x2 = ox-dx;
 		int z2 = oz-dz;
 		return new Coordinate(x2, yCoord, z2);
+	}
+
+	public void writeToBuf(ByteBuf data) {
+		data.writeInt(xCoord);
+		data.writeInt(yCoord);
+		data.writeInt(zCoord);
+	}
+
+	public static Coordinate readFromBuf(ByteBuf data) {
+		int x = data.readInt();
+		int y = data.readInt();
+		int z = data.readInt();
+		return new Coordinate(x, y, z);
+	}
+
+	public Coordinate getDifference(Coordinate c) {
+		return this.offset(c.negate());
 	}
 
 }

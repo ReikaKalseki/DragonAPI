@@ -9,21 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import java.util.Random;
-
-import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public class ReikaSpawnerHelper {
 
@@ -88,20 +85,12 @@ public class ReikaSpawnerHelper {
 		World world = spw.worldObj;
 		if (world.isRemote)
 			return;
-		Random r = new Random();
 		String name = getMobSpawnerMobName(spw);
 		for (int i = 0; i < num; i++) {
 			Entity e = EntityList.createEntityByName(name, world);
-			double ex = -8+r.nextDouble()*17+spw.xCoord;
-			double ez = -8+r.nextDouble()*17+spw.zCoord;
-			double ey = spw.yCoord;
-			Block id = world.getBlock((int)ex, (int)ey, (int)ez);
-			while (id != Blocks.air) {
-				ex = -8+r.nextDouble()*17+spw.xCoord;
-				ez = -8+r.nextDouble()*17+spw.zCoord;
-				ey = spw.yCoord;
-				id = world.getBlock((int)ex, (int)ey, (int)ez);
-			}
+			double ex = ReikaRandomHelper.getRandomPlusMinus(spw.xCoord+0.5, 3.5D);
+			double ez = ReikaRandomHelper.getRandomPlusMinus(spw.zCoord+0.5, 3.5D);
+			double ey = ReikaRandomHelper.getRandomPlusMinus(spw.yCoord+0.5, 1.5D);
 			e.setPositionAndRotation(ex, ey, ez, 0, 0);
 			if (e instanceof EntityLivingBase && potions != null) {
 				for (int m = 0; m < potions.length; m++)
