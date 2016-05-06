@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.item.ItemStack;
@@ -115,10 +117,71 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			return ((NBTTagByteArray)NBT).func_150292_c();
 		}
 		else if (NBT instanceof NBTTagCompound) {
-			return NBT;
+			HashMap<String, Object> map = new HashMap();
+			for (Object o : ((NBTTagCompound)NBT).func_150296_c()) {
+				String s = (String)o;
+				map.put(s, getValue(((NBTTagCompound)NBT).getTag(s)));
+			}
+			return map;
 		}
-		else if (NBT instanceof NBTBase) {
-			return NBT;
+		else if (NBT instanceof NBTTagList) {
+			ArrayList li = new ArrayList();
+			for (Object o : ((NBTTagList)NBT).tagList) {
+				li.add(getValue((NBTBase)o));
+			}
+			return li;
+		}
+		else {
+			return null;
+		}
+	}
+
+	public static NBTBase getTagForObject(Object o) {
+		if (o instanceof Integer || o.getClass() == int.class) {
+			return new NBTTagInt((Integer)o);
+		}
+		else if (o instanceof Byte || o.getClass() == byte.class) {
+			return new NBTTagByte((Byte)o);
+		}
+		else if (o instanceof Short || o.getClass() == Short.class) {
+			return new NBTTagShort((Short)o);
+		}
+		else if (o instanceof Long || o.getClass() == Long.class) {
+			return new NBTTagLong((Long)o);
+		}
+		else if (o instanceof Float || o.getClass() == Float.class) {
+			return new NBTTagFloat((Float)o);
+		}
+		else if (o instanceof Double || o.getClass() == Double.class) {
+			return new NBTTagDouble((Double)o);
+		}
+		else if (o instanceof int[]) {
+			return new NBTTagIntArray((int[])o);
+		}
+		else if (o instanceof String || o.getClass() == String.class) {
+			return new NBTTagString((String)o);
+		}
+		else if (o instanceof byte[]) {
+			return new NBTTagByteArray((byte[])o);
+		}
+		else if (o instanceof Map) {
+			NBTTagCompound tag = new NBTTagCompound();
+			for (Object k : ((Map)o).keySet()) {
+				if (k instanceof String) {
+					tag.setTag((String)k, getTagForObject(((Map)o).get(k)));
+				}
+			}
+			return tag;
+		}
+		else if (o instanceof List) {
+			NBTTagList li = new NBTTagList();
+			for (Object o2 : ((List)o)) {
+				li.appendTag(getTagForObject(o2));
+			}
+			return li;
+		}
+		else if (o instanceof NBTBase) {
+			return (NBTBase)o;
 		}
 		else {
 			return null;
@@ -278,6 +341,16 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		for (Object o : over.func_150296_c()) {
 			NBTBase b = over.getTag((String)o);
 			tag.setTag((String)o, b);
+		}
+	}
+
+	public static void addMapToTags(NBTTagCompound tag, HashMap<String, Object> map) {
+		for (String s : map.keySet()) {
+			Object o = map.get(s);
+			NBTBase b = getTagForObject(o);
+			if (b != null) {
+				tag.setTag(s, b);
+			}
 		}
 	}
 

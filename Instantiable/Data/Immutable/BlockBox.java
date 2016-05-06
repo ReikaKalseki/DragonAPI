@@ -162,4 +162,8 @@ public final class BlockBox {
 		tag.setInteger("maxz", maxZ);
 	}
 
+	public BlockBox offset(Coordinate offset) {
+		return new BlockBox(minX+offset.xCoord, minY+offset.yCoord, minZ+offset.zCoord, maxX+offset.xCoord, maxY+offset.yCoord, maxZ+offset.zCoord);
+	}
+
 }

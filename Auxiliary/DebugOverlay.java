@@ -55,7 +55,7 @@ public class DebugOverlay {
 				ReikaTextureHelper.bindHUDTexture();
 			}
 
-			if (DragonOptions.TABNBT.getState() && Keyboard.isKeyDown(Keyboard.KEY_TAB)) {
+			if (DragonOptions.TABNBT.getState() && Keyboard.isKeyDown(DragonOptions.DEBUGKEY.getValue())) {
 				//if (APIProxyClient.key_nbt.isPressed()) {
 				Minecraft mc = Minecraft.getMinecraft();
 				EntityPlayer ep = mc.thePlayer;

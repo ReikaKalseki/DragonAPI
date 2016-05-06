@@ -1435,6 +1435,22 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
+	public static void writeString(ByteBuf data, String s) {
+		data.writeInt(s.length());
+		for (int i = 0; i < s.length(); i++) {
+			data.writeChar(s.charAt(i));
+		}
+	}
+
+	public static String readString(ByteBuf data) {
+		int n = data.readInt();
+		char[] dat = new char[n];
+		for (int i = 0; i < n; i++) {
+			dat[i] = data.readChar();
+		}
+		return new String(dat);
+	}
+
 	public static Packet getPacket(String channel, PacketObj p) {
 		PacketPipeline pipe = pipelines.get(channel);
 		return pipe != null ? pipe.getMinecraftPacket(p) : null;

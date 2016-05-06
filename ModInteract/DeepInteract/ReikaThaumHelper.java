@@ -63,6 +63,7 @@ public class ReikaThaumHelper {
 	private static Map<String, ArrayList<String>> scannedEntities;
 	private static Map<String, ArrayList<String>> scannedPhenomena;
 	private static Map<String, Integer> playerWarp;
+	private static Map<String, Integer> playerStickyWarp;
 	private static Map<String, Integer> playerTempWarp;
 
 	private static Method addWandVis;
@@ -296,19 +297,39 @@ public class ReikaThaumHelper {
 		}
 		int left = amt-rem;
 		if (left > 0) {
-			int has = getPlayerWarp(ep);
-			int rem2 = Math.min(has, left);
-			if (has-rem2 > 0) {
-				playerWarp.put(s, has-rem2);
+			int stickhas = getPlayerStickyWarp(ep);
+			if (stickhas > 0) {
+				int rem2 = Math.min(stickhas, left);
+				if (stickhas-rem2 > 0) {
+					playerStickyWarp.put(s, stickhas-rem2);
+				}
+				else {
+					playerStickyWarp.remove(s);
+				}
+				left -= rem2;
 			}
-			else {
-				playerWarp.remove(s);
+			if (left > 0) {
+				int has = getPlayerWarp(ep);
+				if (has > 0) {
+					int rem2 = Math.min(has, left);
+					if (has-rem2 > 0) {
+						playerWarp.put(s, has-rem2);
+					}
+					else {
+						playerWarp.remove(s);
+					}
+				}
 			}
 		}
 	}
 
 	public static int getPlayerWarp(EntityPlayer ep) {
 		Integer has = playerWarp.get(ep.getCommandSenderName());
+		return has != null ? has.intValue() : 0;
+	}
+
+	public static int getPlayerStickyWarp(EntityPlayer ep) {
+		Integer has = playerStickyWarp.get(ep.getCommandSenderName());
 		return has != null ? has.intValue() : 0;
 	}
 
@@ -609,6 +630,7 @@ public class ReikaThaumHelper {
 				Field phen = ck.getField("phenomenaScanned");
 				Field asp = ck.getField("aspectsDiscovered");
 				Field warp = ck.getField("warp");
+				Field warpsticky = ck.getField("warpSticky");
 				Field warptemp = ck.getField("warpTemp");
 
 				aspects = (Map)asp.get(knowledge);
@@ -617,6 +639,7 @@ public class ReikaThaumHelper {
 				scannedEntities = (Map)ents.get(knowledge);
 				scannedPhenomena = (Map)phen.get(knowledge);
 				playerWarp = (Map)warp.get(knowledge);
+				playerStickyWarp = (Map)warpsticky.get(knowledge);
 				playerTempWarp = (Map)warptemp.get(knowledge);
 			}
 			catch (Exception e) {

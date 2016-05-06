@@ -251,4 +251,10 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 			spawnLocation.writeToNBT("spawn", tag);
 	}
 
+	@Override
+	public final void kill() {
+		this.onDeath();
+		super.kill();
+	}
+
 }

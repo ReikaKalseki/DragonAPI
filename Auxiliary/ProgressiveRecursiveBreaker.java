@@ -77,6 +77,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		public boolean drops = true;
 		public IInventory dropInventory = null;
 		public EntityPlayer player;
+		public float hungerFactor = 1;
 		public BlockBox bounds = BlockBox.infinity();
 		public BreakerCallback call;
 		public boolean isOmni = false;
@@ -294,7 +295,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			world.markBlockForUpdate(x, y, z);
 			if (player != null) {
 				player.addStat(StatList.mineBlockStatArray[Block.getIdFromBlock(id)], 1);
-				player.addExhaustion(0.025F);
+				player.addExhaustion(0.025F*hungerFactor);
 			}
 			if (call != null)
 				call.onBreak(this, world, x, y, z, id, meta);

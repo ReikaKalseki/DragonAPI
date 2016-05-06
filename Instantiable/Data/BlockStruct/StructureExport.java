@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2015
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
 import java.io.File;
@@ -9,8 +18,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 
 import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
@@ -34,13 +45,17 @@ public class StructureExport {
 	private final String filepath;
 	private final Class reference;
 
-	private static final HashMap<Coordinate, BlockData> data = new HashMap();
+	private final HashMap<Coordinate, BlockData> data = new HashMap();
 	private final HashSet<String> watchedNBT = new HashSet();
+	private final HashMap<String, Object> extraNBT = new HashMap();
+	private final HashMap<String, NBTCallback> overrides = new HashMap();
 	private final HashSet<BlockKey> ignoreSet = new HashSet();
 
 	public boolean compressData = false;
 
 	private BlockBox bounds = BlockBox.nothing();
+
+	public PlacementCallback placeCallback;
 
 	public StructureExport(String name) {
 		this(name, "", null);
@@ -69,6 +84,30 @@ public class StructureExport {
 		return this;
 	}
 
+	public void setExtraNBTTag(String s, Object val) {
+		NBTBase b = ReikaNBTHelper.getTagForObject(val);
+		if (b != null) {
+			extraNBT.put(s, val);
+			for (BlockData dat : data.values()) {
+				if (dat.hasTileEntity) {
+					dat.tileData.setTag(s, b);
+				}
+			}
+		}
+	}
+
+	public void addNBTOverride(String s, NBTCallback call) {
+		overrides.put(s, call);
+		for (BlockData dat : data.values()) {
+			if (dat.hasTileEntity && dat.tileData != null) {
+				NBTBase tag = dat.tileData.getTag(s);
+				if (tag != null) {
+					dat.tileData.setTag(s, call.getOverriddenValue(dat.position, dat.block, s, tag.copy(), (NBTTagCompound)dat.tileData.copy()));
+				}
+			}
+		}
+	}
+
 	public void addRegion(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
 		for (int x = x1; x <= x2; x++) {
 			for (int y = y1; y <= y2; y++) {
@@ -84,28 +123,30 @@ public class StructureExport {
 			return;
 		if (ignoreSet.contains(BlockKey.getAt(world, x, y, z)))
 			return;
-		BlockData dat = new BlockData(world, x, y, z, watchedNBT);
+		BlockData dat = new BlockData(world, x, y, z, watchedNBT, extraNBT, overrides);
 		data.put(dat.position, dat);
 		this.calcBounds();
 	}
 
 	private void calcBounds() {
-		bounds = BlockBox.nothing();
-		int minX = bounds.minX;
-		int minY = bounds.minY;
-		int minZ = bounds.minZ;
-		int maxX = bounds.maxX;
-		int maxY = bounds.maxY;
-		int maxZ = bounds.maxZ;
+		//bounds = BlockBox.nothing();
+		int minX = Integer.MAX_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int minZ = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int maxY = Integer.MIN_VALUE;
+		int maxZ = Integer.MIN_VALUE;
+		//ReikaJavaLibrary.pConsole("PRE "+bounds);
 		for (Coordinate c : data.keySet()) {
 			minX = Math.min(minX, c.xCoord);
 			minY = Math.min(minY, c.yCoord);
 			minZ = Math.min(minZ, c.zCoord);
-			maxX = Math.min(maxX, c.xCoord);
-			maxY = Math.min(maxY, c.yCoord);
-			maxZ = Math.min(maxZ, c.zCoord);
+			maxX = Math.max(maxX, c.xCoord);
+			maxY = Math.max(maxY, c.yCoord);
+			maxZ = Math.max(maxZ, c.zCoord);
 		}
 		bounds = new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
+		//ReikaJavaLibrary.pConsole(data.size()+": POST "+bounds+" for "+data.keySet());
 	}
 
 	public BlockBox getBounds() {
@@ -148,6 +189,10 @@ public class StructureExport {
 			li.appendTag(new NBTTagString(s));
 		}
 		header.setTag("tags", li);
+
+		NBTTagCompound extra = (NBTTagCompound)ReikaNBTHelper.getTagForObject(extraNBT);
+		header.setTag("extra", extra);
+
 		dat.setTag("header", header);
 
 		li = new NBTTagList();
@@ -166,13 +211,19 @@ public class StructureExport {
 			NBTTagString s = (NBTTagString)o;
 			watchedNBT.add(s.func_150285_a_());
 		}
+
+		NBTTagCompound extra = header.getCompoundTag("extra");
+		extraNBT.clear();
+		extraNBT.putAll((Map<String, Object>)ReikaNBTHelper.getValue(extra));
+
 		li = tag.getTagList("data", NBTTypes.COMPOUND.ID);
 		for (Object o : li.tagList) {
 			NBTTagCompound dat = (NBTTagCompound)o;
-			BlockData b = BlockData.readFromNBT(dat, watchedNBT);
+			BlockData b = BlockData.readFromNBT(dat, watchedNBT, extraNBT);
 			if (b != null) {
 				if (!ignoreSet.contains(b.block)) {
 					data.put(b.position, b);
+					//ReikaJavaLibrary.pConsole("Loaded "+b);
 				}
 			}
 		}
@@ -182,12 +233,18 @@ public class StructureExport {
 	public void place(World world) {
 		for (BlockData dat : data.values()) {
 			dat.place(world);
+			if (placeCallback != null) {
+				placeCallback.onPlace(dat.position, dat.block, dat.tileData != null ? (NBTTagCompound)dat.tileData.copy() : null);
+			}
 		}
 	}
 
 	public void place(ChunkSplicedGenerationCache world) {
 		for (BlockData dat : data.values()) {
 			dat.place(world);
+			if (placeCallback != null) {
+				placeCallback.onPlace(dat.position, dat.block, dat.tileData != null ? (NBTTagCompound)dat.tileData.copy() : null);
+			}
 		}
 	}
 
@@ -199,6 +256,7 @@ public class StructureExport {
 		}
 		data.clear();
 		data.putAll(next);
+		bounds = bounds.offset(offset);
 	}
 
 	private static class BlockData {
@@ -209,7 +267,7 @@ public class StructureExport {
 		private final boolean hasTileEntity;
 		private final NBTTagCompound tileData;
 
-		private BlockData(World world, int x, int y, int z, HashSet<String> tags) {
+		private BlockData(World world, int x, int y, int z, HashSet<String> tags, HashMap<String, Object> extraTags, HashMap<String, NBTCallback> overrides) {
 			position = new Coordinate(x, y, z);
 			block = BlockKey.getAt(world, x, y, z);
 			TileEntity te = world.getTileEntity(x, y, z);
@@ -218,6 +276,14 @@ public class StructureExport {
 			if (te != null) {
 				te.writeToNBT(tileData);
 				this.filterNBT(tags, tileData);
+				ReikaNBTHelper.addMapToTags(tileData, extraTags);
+				for (String s : overrides.keySet()) {
+					NBTBase tag = tileData.getTag(s);
+					if (tag != null) {
+						tag = overrides.get(s).getOverriddenValue(position, block, s, tag.copy(), (NBTTagCompound)tileData.copy());
+						tileData.setTag(s, tag);
+					}
+				}
 			}
 		}
 
@@ -238,11 +304,12 @@ public class StructureExport {
 			return NBT;
 		}
 
-		private static BlockData readFromNBT(NBTTagCompound NBT, HashSet<String> tags) {
+		private static BlockData readFromNBT(NBTTagCompound NBT, HashSet<String> tags, HashMap<String, Object> extraTags) {
 			NBTTagCompound tileDat = null;
 			if (NBT.hasKey("tiledat")) {
 				tileDat = NBT.getCompoundTag("tiledat");
 				filterNBT(tags, tileDat);
+				ReikaNBTHelper.addMapToTags(tileDat, extraTags);
 			}
 			Coordinate c = Coordinate.readFromNBT("loc", NBT);
 			BlockKey bk = BlockKey.readFromNBT("type", NBT);
@@ -286,6 +353,11 @@ public class StructureExport {
 			return new BlockData(position.offset(offset), block, hasTileEntity, tileData);
 		}
 
+		@Override
+		public String toString() {
+			return block+" @ "+position+" {"+tileData+"}";
+		}
+
 	}
 
 	private static class TileNBTCallback implements TileCallback {
@@ -305,6 +377,18 @@ public class StructureExport {
 				te.readFromNBT(tag);
 			}
 		}
+
+	}
+
+	public static interface PlacementCallback {
+
+		public void onPlace(Coordinate c, BlockKey bk, NBTTagCompound data);
+
+	}
+
+	public static interface NBTCallback {
+
+		public NBTBase getOverriddenValue(Coordinate c, BlockKey bk, String key, NBTBase original, NBTTagCompound data);
 
 	}
 

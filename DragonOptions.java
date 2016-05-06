@@ -20,7 +20,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	DEBUGMODE("Debug Mode", false),
 	SYNCPACKET("Sync Packet ID", 182),
 	NORENDERS("Disable Renders For Debug", false),
-	TABNBT("Show TileEntity NBT when using TAB", false),
+	TABNBT("Show TileEntity NBT when using Debug Key", false),
 	SOUNDCHANNELS("Increase sound channel count", true),
 	UNNERFOBSIDIAN("Restore Obsidian Blast Resistance", true),
 	NOHOTBARSWAP("Disable Hotbar Swapping", false),
@@ -42,6 +42,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	APRIL("Enable Vernal Amusement Behavior", true),
 	NOALPHATEST("Disable Alpha Clipping in WorldRenderer", true),
 	PARTICLELIMIT("Particle Limit (Vanilla = 4000)", 4000),
+	DEBUGKEY("Debug Overlay Key (LWJGL ID)", 0x0F); //Keyboard.KEY_TAB
 	//RECURSE("Recursion Limit Override", -1),
 	;//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
 
