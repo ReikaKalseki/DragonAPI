@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable;
 import java.util.Random;
 
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 
 
 public class LobulatedCurve {
@@ -41,6 +42,11 @@ public class LobulatedCurve {
 		radii = new double[(int)(360/da)];
 	}
 
+	public static LobulatedCurve fromMinMaxRadii(double min, double max, int d) {
+		double diff = (max-min)/2D;
+		return new LobulatedCurve(min+diff, diff/d, d);
+	}
+
 	public LobulatedCurve generate() {
 		return this.generate(delegateRand);
 	}
@@ -66,6 +72,16 @@ public class LobulatedCurve {
 		double didx = ((ang%360)+360)%360/angleStep;
 		int idx = (int)didx;
 		return ReikaMathLibrary.linterpolate(didx, idx, idx+1, radii[idx], radii[(idx+1)%radii.length]);
+	}
+
+	public boolean isPointInsideCurve(double x, double z) {
+		double[] arr = ReikaPhysicsHelper.cartesianToPolar(x, 0, z);
+		double ang = arr[2];
+		ang %= 360;
+		if (ang < 0)
+			ang += 360;
+		ang = ReikaMathLibrary.roundToNearestFraction(ang, angleStep);
+		return arr[0] <= this.getRadius(ang);
 	}
 
 }

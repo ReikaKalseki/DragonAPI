@@ -19,6 +19,8 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.BlockCheck;
 import Reika.DragonAPI.Interfaces.Registry.TileEnum;
 
+import com.google.common.base.Strings;
+
 public final class BlockKey implements BlockCheck {
 
 	public final Block blockID;
@@ -113,15 +115,15 @@ public final class BlockKey implements BlockCheck {
 
 	public void writeToNBT(String tag, NBTTagCompound NBT) {
 		NBTTagCompound dat = new NBTTagCompound();
-		dat.setInteger("id", Block.getIdFromBlock(blockID));
+		dat.setString("id", Block.blockRegistry.getNameForObject(blockID));
 		dat.setInteger("meta", metadata);
 		NBT.setTag(tag, dat);
 	}
 
 	public static BlockKey readFromNBT(String tag, NBTTagCompound NBT) {
 		NBTTagCompound dat = NBT.getCompoundTag(tag);
-		int id = dat.getInteger("id");
-		Block b = Block.getBlockById(id);
+		String id = dat.getString("id");
+		Block b = Strings.isNullOrEmpty(id) ? null : Block.getBlockFromName(id);
 		int meta = dat.getInteger("meta");
 		return b != null ? new BlockKey(b, meta) : null;
 	}

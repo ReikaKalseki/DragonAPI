@@ -753,18 +753,34 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static void cycleList(List li, int n) {
 		if (li.isEmpty())
 			return;
+		boolean neg = n < 0;
+		n = Math.abs(n);
 		for (int i = 0; i < n; i++) {
-			Object o = li.remove(li.size()-1);
-			li.add(0, o);
+			if (neg) {
+				Object o = li.remove(0);
+				li.add(o);
+			}
+			else {
+				Object o = li.remove(li.size()-1);
+				li.add(0, o);
+			}
 		}
 	}
 
 	public static void cycleLinkedList(LinkedList li, int n) {
 		if (li.isEmpty())
 			return;
+		boolean neg = n < 0;
+		n = Math.abs(n);
 		for (int i = 0; i < n; i++) {
-			Object o = li.removeLast();
-			li.addFirst(o);
+			if (neg) {
+				Object o = li.removeFirst();
+				li.addLast(o);
+			}
+			else {
+				Object o = li.removeLast();
+				li.addFirst(o);
+			}
 		}
 	}
 

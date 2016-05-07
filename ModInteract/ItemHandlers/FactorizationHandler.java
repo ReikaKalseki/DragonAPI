@@ -22,11 +22,13 @@ public final class FactorizationHandler extends ModHandlerBase {
 	private static final FactorizationHandler instance = new FactorizationHandler();
 
 	public final Block bedrockID;
+	public final Block bedrockID2;
 	public final Item ingotID;
 
 	private FactorizationHandler() {
 		super();
 		Block idbedrock = null;
+		Block idbedrock2 = null;
 		Item idingot = null;
 		if (this.hasMod()) {
 			try {
@@ -38,6 +40,10 @@ public final class FactorizationHandler extends ModHandlerBase {
 				Field bed = blocks.getField("fractured_bedrock_block");
 				Block b = (Block)bed.get(reg);
 				idbedrock = b;
+
+				bed = blocks.getField("blasted_bedrock_block");
+				b = (Block)bed.get(reg);
+				idbedrock2 = b;
 
 				Field ingot = blocks.getField("dark_iron");
 				Item i = (Item)ingot.get(reg);
@@ -78,6 +84,7 @@ public final class FactorizationHandler extends ModHandlerBase {
 			this.noMod();
 		}
 		bedrockID = idbedrock;
+		bedrockID2 = idbedrock2;
 		ingotID = idingot;
 	}
 

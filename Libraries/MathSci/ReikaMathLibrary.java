@@ -518,6 +518,11 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return Math.round(f*pow)/pow;
 	}
 
+	public static double roundToNearestFraction(double val, double frac) {
+		double fac = 1D/frac;
+		return Math.round(val*fac)/fac;
+	}
+
 	public static int getWithinBoundsElse(int val, int min, int max, int fall) {
 		return isValueInsideBoundsIncl(min, max, val) ? val : fall;
 	}

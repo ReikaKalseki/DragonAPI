@@ -17,6 +17,7 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class RailcraftHandler extends ModHandlerBase {
 
@@ -25,6 +26,7 @@ public final class RailcraftHandler extends ModHandlerBase {
 	public final Block hiddenID;
 
 	private final Block cubeID;
+	public final Block oreID;
 
 	public final Item firestoneID;
 
@@ -32,6 +34,7 @@ public final class RailcraftHandler extends ModHandlerBase {
 		super();
 		Block idhidden = null;
 		Block idcube = null;
+		Block idore = null;
 		Item idfirestone = null;
 		if (this.hasMod()) {
 			try {
@@ -46,6 +49,12 @@ public final class RailcraftHandler extends ModHandlerBase {
 				block.setAccessible(true);
 				b = (Block)block.get(null);
 				idcube = b;
+
+				c = Class.forName("mods.railcraft.common.blocks.ore.BlockOre");
+				block = c.getDeclaredField("instance");
+				block.setAccessible(true);
+				b = (Block)block.get(null);
+				idore = b;
 
 				c = Class.forName("mods.railcraft.common.items.firestone.ItemFirestoneRaw");
 				Field item = c.getDeclaredField("item");
@@ -89,6 +98,7 @@ public final class RailcraftHandler extends ModHandlerBase {
 		}
 		hiddenID = idhidden;
 		cubeID = idcube;
+		oreID = idore;
 		firestoneID = idfirestone;
 	}
 
@@ -117,6 +127,14 @@ public final class RailcraftHandler extends ModHandlerBase {
 		public ItemStack getItem() {
 			return new ItemStack(instance.cubeID, 1, this.getMetadata());
 		}
+	}
+
+	public boolean isPoorOre(Block b, int meta) {
+		return b == oreID && meta >= 7;
+	}
+
+	public boolean isDarkOre(Block b, int meta) {
+		return b == oreID && ReikaMathLibrary.isValueInsideBoundsIncl(2, 4, meta);
 	}
 
 	public static RailcraftHandler getInstance() {

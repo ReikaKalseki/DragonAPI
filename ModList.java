@@ -109,7 +109,7 @@ public enum ModList implements ModEntry, Dependency {
 	GENDUSTRY("gendustry"),
 	FLUXEDCRYSTALS("fluxedcrystals", "fluxedCrystals.init.FCBlocks", "fluxedCrystals.init.FCItems"),
 	HUNGEROVERHAUL("HungerOverhaul"),
-	CHISEL("chisel", "com.cricketcraft.chisel.init.ChiselBlocks", "com.cricketcraft.chisel.init.ChiselItems"),
+	CHISEL("chisel", new String[]{"com.cricketcraft.chisel.init.ChiselBlocks", "team.chisel.init.ChiselBlocks"}, new String[]{"com.cricketcraft.chisel.init.ChiselItems", "team.chisel.init.ChiselItems"}),
 	CARPENTER("CarpentersBlocks", "com.carpentersblocks.util.registry.BlockRegistry", "com.carpentersblocks.util.registry.ItemRegistry"),
 	ENDEREXPANSION("HardcoreEnderExpansion"),
 	AGRICRAFT("AgriCraft", "com.InfinityRaider.AgriCraft.init.Blocks", "com.InfinityRaider.AgriCraft.init.Items"),

@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.IO;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -1271,8 +1272,10 @@ public final class ReikaRenderHelper extends DragonAPICore {
 				return;
 			if (b.isAir(world, dx, dy, dz))
 				return;
-			if (!b.getMaterial().isSolid())
-				return;
+			if (!b.getClass().getName().toLowerCase(Locale.ENGLISH).contains("facade")) {
+				if (!b.getMaterial().isSolid())
+					return;
+			}
 		}
 
 		switch(dir) {

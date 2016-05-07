@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Command;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.UUID;
 
 import net.minecraft.command.ICommandSender;
@@ -24,12 +25,32 @@ import Reika.DragonAPI.Instantiable.Data.Maps.PlayerMap;
 public class StructureExportCommand extends DragonCommandBase {
 
 	private final PlayerMap<Coordinate> click = new PlayerMap();
+	private final PlayerMap<HashMap<String, Boolean>> states = new PlayerMap();
 	private final MultiMap<UUID, String> tags = new MultiMap();
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
 		EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
-		if (args.length > 0) {
+
+		if (args.length == 1) {
+			if (args[0].equals("cleartags")) {
+				tags.remove(ep.getUniqueID());
+				this.sendChatToSender(ics, EnumChatFormatting.GREEN+"NBT tags cleared.");
+			}
+			else {
+				HashMap<String, Boolean> map = states.get(ep);
+				if (map == null) {
+					map = new HashMap();
+					states.put(ep, map);
+				}
+				Boolean b = map.get(args[0]);
+				boolean e = b != null ? b.booleanValue() : false;
+				map.put(args[0], !e);
+				this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Flag '"+args[0]+"' toggled.");
+			}
+			return;
+		}
+		else if (args.length > 0) {
 			UUID uid = ep.getPersistentID();
 			for (int i = 0; i < args.length; i++) {
 				tags.addValue(uid, args[i]);
@@ -54,6 +75,14 @@ public class StructureExportCommand extends DragonCommandBase {
 			int z2 = Math.max(c1.zCoord, c2.zCoord);
 			s.addWatchedNBT(tags.get(ep.getPersistentID()));
 			s.addRegion(ep.worldObj, x1, y1, z1, x2, y2, z2);
+			HashMap<String, Boolean> map = states.get(ep);
+			if (map != null) {
+				Boolean b = map.get("encrypt");
+				s.encryptData = b != null && b.booleanValue();
+
+				b = map.get("compress");
+				s.compressData = b != null && b.booleanValue();
+			}
 			try {
 				s.save();
 				this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Structure exported.");

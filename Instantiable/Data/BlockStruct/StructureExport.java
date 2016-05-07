@@ -9,12 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,6 +56,7 @@ public class StructureExport {
 	private final HashSet<BlockKey> ignoreSet = new HashSet();
 
 	public boolean compressData = false;
+	public boolean encryptData = false;
 
 	private BlockBox bounds = BlockBox.nothing();
 
@@ -125,6 +130,7 @@ public class StructureExport {
 			return;
 		BlockData dat = new BlockData(world, x, y, z, watchedNBT, extraNBT, overrides);
 		data.put(dat.position, dat);
+		//ReikaJavaLibrary.pConsole("Generated "+dat);
 		this.calcBounds();
 	}
 
@@ -156,6 +162,10 @@ public class StructureExport {
 	public void load() throws IOException {
 		if (reference != null) {
 			InputStream in = reference.getResourceAsStream(filepath);
+
+			if (encryptData)
+				in = this.encryptStreamData(in, true);
+
 			NBTTagCompound tag = compressData ? CompressedStreamTools.readCompressed(in) : ReikaFileReader.readUncompressedNBT(in);
 			this.setDataFromLines(tag);
 		}
@@ -163,9 +173,49 @@ public class StructureExport {
 			File f = new File(filepath);
 			if (!f.exists())
 				return;
+
+			if (encryptData)
+				this.encryptFileData(f, true);
+
 			NBTTagCompound tag = compressData ? CompressedStreamTools.readCompressed(new FileInputStream(f)) : ReikaFileReader.readUncompressedNBT(f);
 			this.setDataFromLines(tag);
 		}
+	}
+
+	private InputStream encryptStreamData(InputStream in, boolean unpack) throws IOException {
+		ArrayList<Byte> data = new ArrayList();
+		int dat = in.read();
+		while (dat != -1) {
+			data.add((byte)dat);
+			dat = in.read();
+		}
+		in.close();
+		//ReikaJavaLibrary.cycleList(data, unpack ? -8 : 8);
+		Collections.reverse(data);
+		byte[] arr = new byte[data.size()];
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = data.get(i);
+		}
+		return new ByteArrayInputStream(arr);
+	}
+
+	private void encryptFileData(File f, boolean unpack) throws IOException {
+		InputStream in = new FileInputStream(f);
+		ArrayList<Byte> data = new ArrayList();
+		int dat = in.read();
+		while (dat != -1) {
+			data.add((byte)dat);
+			dat = in.read();
+		}
+		in.close();
+		//ReikaJavaLibrary.cycleList(data, unpack ? -8 : 8);
+		Collections.reverse(data);
+		OutputStream out = new FileOutputStream(f);
+		for (byte b : data) {
+			out.write(b);
+		}
+		out.flush();
+		out.close();
 	}
 
 	public void save() throws IOException {
@@ -179,6 +229,9 @@ public class StructureExport {
 			CompressedStreamTools.writeCompressed(tag, new FileOutputStream(f));
 		else
 			ReikaFileReader.writeUncompressedNBT(tag, f);
+
+		if (encryptData)
+			this.encryptFileData(f, false);
 	}
 
 	private NBTTagCompound getDataAsLines() {
@@ -197,6 +250,7 @@ public class StructureExport {
 
 		li = new NBTTagList();
 		for (BlockData b : data.values()) {
+			//ReikaJavaLibrary.pConsole("Saving "+b);
 			NBTTagCompound tag = b.writeToNBT();
 			li.appendTag(tag);
 		}
@@ -313,6 +367,8 @@ public class StructureExport {
 			}
 			Coordinate c = Coordinate.readFromNBT("loc", NBT);
 			BlockKey bk = BlockKey.readFromNBT("type", NBT);
+			if (bk == null)
+				return null;
 			boolean tile = NBT.getBoolean("tile");
 			return new BlockData(c, bk, tile, tileDat);
 		}

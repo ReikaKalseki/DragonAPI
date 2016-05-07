@@ -98,8 +98,8 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 		StringBuilder sb = new StringBuilder();
 		sb.append(super.getStatistics());
 		for (EffectRenderer eff : delegateSet) {
-			sb.append(";\t");
-			sb.append(eff.getClass());
+			sb.append("; ");
+			//sb.append(eff.getClass());
 			sb.append(eff.getStatistics());
 		}
 		return sb.toString();
