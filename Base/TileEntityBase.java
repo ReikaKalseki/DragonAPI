@@ -77,8 +77,7 @@ import dan200.computercraft.api.lua.LuaException;
 import dan200.computercraft.api.peripheral.IComputerAccess;
 import dan200.computercraft.api.peripheral.IPeripheral;
 
-@Injectable(value = {"dan200.computercraft.api.peripheral.IPeripheral", "li.cil.oc.api.network.Environment",
-"li.cil.oc.api.network.ManagedPeripheral"})
+@Injectable(value = {"dan200.computercraft.api.peripheral.IPeripheral"})
 public abstract class TileEntityBase extends TileEntity implements CompoundSyncPacketHandler {
 
 	protected static final Random rand = new Random();
@@ -766,7 +765,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		return this.getName().replaceAll(" ", "");
 	}
 
-	protected String getName() {
+	public final String getName() {
 		return this.getTEName();
 	}
 
