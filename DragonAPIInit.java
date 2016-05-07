@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
-import li.cil.oc.api.Driver;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
 import net.minecraft.client.Minecraft;
@@ -155,7 +154,6 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.BannedItemReader;
 import Reika.DragonAPI.ModInteract.MinetweakerHooks;
-import Reika.DragonAPI.ModInteract.PeripheralHandler;
 import Reika.DragonAPI.ModInteract.WailaTechnicalOverride;
 import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
 import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
@@ -525,9 +523,6 @@ public class DragonAPIInit extends DragonAPIMod {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-		if (ModList.OPENCOMPUTERS.isLoaded()) {
-			Driver.add(new PeripheralHandler());
 		}
 
 		PatreonController.instance.addPatron(this, "Dale Mahalko / Plawerth", 1);
