@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.Event.Client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
@@ -31,6 +32,10 @@ public class HotbarKeyEvent extends Event {
 		hotbarSlot = idx;
 		slotNumber = s.slotNumber;
 		keyCode = key;
+	}
+
+	public ItemStack getItem() {
+		return Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(hotbarSlot);
 	}
 
 	public static boolean fire(GuiContainer gui, Slot s, int idx, int key) {

@@ -108,13 +108,19 @@ import WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 
+	public static final IEntitySelector nonMobSelector = new IEntitySelector() {
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			return !(e instanceof EntityLivingBase) || !isHostile((EntityLivingBase)e);
+		}
+	};
+
 	public static final IEntitySelector itemSelector = new IEntitySelector() {
 		@Override
 		public boolean isEntityApplicable(Entity e) {
 			return e instanceof EntityItem;
 		}
 	};
-
 
 	public static final IEntitySelector itemOrXPSelector = new IEntitySelector() {
 		@Override

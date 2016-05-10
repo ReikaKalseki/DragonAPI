@@ -394,6 +394,8 @@ public enum ModOreList implements OreType {
 			return true;
 		if (this == AMMONIUM)
 			return true;
+		if (this == THORIUM)
+			return true;
 		return false;
 	}
 
@@ -406,6 +408,8 @@ public enum ModOreList implements OreType {
 	public EnumSet<OreLocation> getOreLocations() {
 		if (this == MIMICHITE)
 			return EnumSet.of(OreLocation.OVERWORLD, OreLocation.NETHER, OreLocation.END);
+		if (this == PITCHBLENDE)
+			return EnumSet.of(OreLocation.OVERWORLD, OreLocation.END);
 		return this.isEnd() ? EnumSet.of(OreLocation.END) : this.isNether() ? EnumSet.of(OreLocation.NETHER) : EnumSet.of(OreLocation.OVERWORLD);
 	}
 

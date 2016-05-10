@@ -77,7 +77,7 @@ public class ReikaObfuscationHelper {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: Registering reflexive field access to "+c+"."+deobf+" (obfuscated as "+obf+")"); //cannot use logger
 		}
 		catch (NoSuchFieldException e) {
-			throw new IllegalArgumentException("Tried to register nonexistent field "+deobf+"/"+obf);
+			throw new IllegalArgumentException("Tried to register nonexistent field "+deobf+"/"+obf, e);
 		}
 	}
 

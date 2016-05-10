@@ -32,6 +32,7 @@ public enum InterfaceCache {
 	STREAM("streams.block.FixedFlowBlock"),
 	SPELLSHOT("WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile"),
 	GASITEM("mekanism.api.gas.IGasItem"),
+	BEEHOUSE("forestry.api.apiculture.IBeeHousing"),
 	;
 
 	private final String classpath;

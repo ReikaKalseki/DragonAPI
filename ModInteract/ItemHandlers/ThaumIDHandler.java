@@ -23,14 +23,38 @@ public class ThaumIDHandler extends ModHandlerBase {
 
 	private static final ThaumIDHandler instance = new ThaumIDHandler();
 
+	public final int dimensionID;
+
 	private ThaumIDHandler() {
 		super();
+
+		int dim = 0;
 
 		if (this.hasMod()) {
 			Class thaum = ModList.THAUMCRAFT.getBlockClass();
 
 			try {
 				Class config = Class.forName("thaumcraft.common.config.Config");
+
+				try {
+					Field dimid = config.getField("dimensionOuterId");
+					dim = dimid.getInt(null);
+				}
+				catch (NoSuchFieldException e) {
+					DragonAPICore.logError("Could not load field from ThaumCraft config class!");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (IllegalArgumentException e) {
+					DragonAPICore.logError("Could not read field from ThaumCraft config class!");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (IllegalAccessException e) {
+					DragonAPICore.logError("Could not read field from ThaumCraft config class!");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
 
 				for (int i = 0; i < Biomes.list.length; i++) {
 					Biomes p = Biomes.list[i];
@@ -89,6 +113,7 @@ public class ThaumIDHandler extends ModHandlerBase {
 		else {
 			this.noMod();
 		}
+		dimensionID = dim;
 	}
 
 	public static enum Potions {
@@ -155,7 +180,7 @@ public class ThaumIDHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return biomeSet.size() == Biomes.list.length && potionSet.size() == Potions.list.length;
+		return biomeSet.size() == Biomes.list.length && potionSet.size() == Potions.list.length && dimensionID != 0;
 	}
 
 	@Override

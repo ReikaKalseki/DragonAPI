@@ -62,8 +62,10 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
+import Reika.DragonAPI.Instantiable.Data.Collections.TimedSet;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Immutable.WorldChunk;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -79,6 +81,8 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaWorldHelper extends DragonAPICore {
+
+	private static final TimedSet<WorldChunk> forcingChunkSet = new TimedSet();
 
 	public static boolean softBlocks(IBlockAccess world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
@@ -1874,6 +1878,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				int dz = z+k*16;
 
 				Chunk ch = world.getChunkFromBlockCoords(dx, dz);
+				WorldChunk wc = new WorldChunk(world, ch);
+				if (forcingChunkSet.contains(wc))
+					break;
+				forcingChunkSet.add(world.getTotalWorldTime(), wc);
 				IChunkProvider p = world.getChunkProvider();
 				if (!ch.isTerrainPopulated) {
 					try {
