@@ -14,8 +14,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -128,6 +131,48 @@ public class ReikaASMHelper {
 
 	public static boolean classContainsMethod(ClassNode cn, MethodNode mn) {
 		return getMethodByNameAndSig(cn, mn.name, mn.desc) != null;
+	}
+
+	public static boolean classContainsMethod(Class c, MethodNode mn) {
+		ArrayList<String> li = parseMethodSignature(mn);
+		ArrayList<Class> args = new ArrayList();
+		for (String s : li) {
+			args.add(parseClass(s));
+		}
+		Class ret = args.remove(args.size()-1);
+		Class[] params = args.toArray(new Class[args.size()]);
+		Method[] calls = c.getDeclaredMethods();
+		for (int i = 0; i < calls.length; i++) {
+			Method m = calls[i];
+			if (m.getReturnType() == ret) {
+				if (Arrays.equals(m.getParameterTypes(), params)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	public static Class parseClass(String s) {
+		if (s.charAt(0) == '[') {
+			Class c = parseClass(s.substring(1));
+			return Array.newInstance(c, 0).getClass();
+		}
+		if (s.length() == 1) {
+			return PrimitiveType.getFromSig(s).classType;
+		}
+		if (s.charAt(0) == 'L')
+			s = s.substring(1);
+		if (s.charAt(s.length()-1) == ';')
+			s = s.substring(0, s.length()-1);
+		s = s.replaceAll("/", ".");
+		try {
+			return Class.forName(s);
+		}
+		catch (ClassNotFoundException e) {
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 
 	private static MethodNode getMethodByNameAndSig(ClassNode c, String name, String sig) {
@@ -563,6 +608,14 @@ public class ReikaASMHelper {
 		return ain.clone(labels);
 	}
 
+	public static ArrayList<String> parseMethodSignature(MethodNode min) {
+		int idx = min.desc.lastIndexOf(')');
+		String ret = min.desc.substring(idx+1);
+		ArrayList<String> li = parseMethodDesc(min.desc);
+		li.add(ret);
+		return li;
+	}
+
 	public static ArrayList<String> parseMethodSignature(MethodInsnNode min) {
 		int idx = min.desc.lastIndexOf(')');
 		String ret = min.desc.substring(idx+1);
@@ -709,39 +762,41 @@ public class ReikaASMHelper {
 		}
 	}
 
-	private static enum ReturnType {
+	private static enum PrimitiveType {
 
-		VOID("V"),
-		INT("I"),
-		BOOLEAN("Z"),
-		BYTE("B"),
-		LONG("L"),
-		SHORT("S"),
-		FLOAT("F"),
-		DOUBLE("D"),
-		INTARRAY("[I"),
-		BYTEARRAY("[B"),
-		SHORTARRAY("[S"),
-		DOUBARRAY("[D"),
-		BOOLARRAY("[Z"),
-		FLOATARRAY("[F"),
-		OBJECT("");
+		VOID("V", void.class),
+		INT("I", int.class),
+		BOOLEAN("Z", boolean.class),
+		BYTE("B", byte.class),
+		LONG("L", long.class),
+		SHORT("S", short.class),
+		FLOAT("F", float.class),
+		DOUBLE("D", double.class),
+		INTARRAY("[I", int[].class),
+		BYTEARRAY("[B", byte[].class),
+		SHORTARRAY("[S", short[].class),
+		DOUBARRAY("[D", double[].class),
+		BOOLARRAY("[Z", boolean[].class),
+		FLOATARRAY("[F", float[].class),
+		OBJECT("", Object.class);
 
 		private final String id;
+		private final Class classType;
 
-		private static final HashMap<String, ReturnType> map = new HashMap();
+		private static final HashMap<String, PrimitiveType> map = new HashMap();
 
-		private ReturnType(String s) {
+		private PrimitiveType(String s, Class c) {
 			id = s;
+			classType = c;
 		}
 
-		private static ReturnType getFromSig(String id) {
+		private static PrimitiveType getFromSig(String id) {
 			return map.containsKey(id) ? map.get(id) : OBJECT;
 		}
 
 		static {
 			for (int i = 0; i < values().length; i++) {
-				ReturnType type = values()[i];
+				PrimitiveType type = values()[i];
 				map.put(type.id, type);
 			}
 		}
@@ -797,6 +852,23 @@ public class ReikaASMHelper {
 		catch (IOException e) {
 			return false;
 		}
+	}
+
+	public static boolean checkIfClassInheritsMethod(ClassNode cn, MethodNode mn) {
+		Class c;
+		try {
+			String s = cn.superName.replaceAll("/", ".");
+			c = Class.forName(s);
+			while (c != null) {
+				if (classContainsMethod(c, mn))
+					return true;
+				c = c.getSuperclass();
+			}
+		}
+		catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

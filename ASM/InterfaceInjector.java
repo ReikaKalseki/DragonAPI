@@ -101,7 +101,7 @@ public class InterfaceInjector implements IClassTransformer {
 	private void tryInjectInterface(ClassNode cn, ClassNode inter) {
 		Collection<MethodNode> missing = new ArrayList();
 		for (MethodNode mn : inter.methods) {
-			if (!ReikaASMHelper.classContainsMethod(cn, mn)) {
+			if (!ReikaASMHelper.classContainsMethod(cn, mn) && !ReikaASMHelper.checkIfClassInheritsMethod(cn, mn)) {
 				missing.add(mn);
 			}
 		}

@@ -69,7 +69,7 @@ public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 
 	@Override
 	public String getAccessTransformerClass() {
-		return "";
+		return null;
 	}
 
 }
