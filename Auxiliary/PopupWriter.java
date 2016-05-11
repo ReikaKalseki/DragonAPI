@@ -27,6 +27,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.InputEvent.KeyInputEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -56,8 +57,8 @@ public class PopupWriter {
 		list.add(sg);
 	}
 
-	@SubscribeEvent
-	public void drawOverlay(RenderGameOverlayEvent evt) {
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void drawOverlay(RenderGameOverlayEvent.Post evt) {
 		if (!list.isEmpty() && evt.type == ElementType.HELMET) {
 			String s = list.get(0);
 			int x = 2;
