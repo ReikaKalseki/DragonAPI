@@ -411,4 +411,8 @@ public class ReikaStringParser extends DragonAPICore {
 		}
 		return li;
 	}
+
+	public static char intToAlphaChar(int n) {
+		return (char)('a'+n);
+	}
 }

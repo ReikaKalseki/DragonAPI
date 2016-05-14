@@ -222,4 +222,15 @@ public enum ReikaOreHelper implements OreType {
 		return oreNames.containsKey(s);
 	}
 
+	public static ReikaOreHelper getByDrop(ItemStack is) {
+		int[] ids = OreDictionary.getOreIDs(is);
+		for (int i = 0; i < ids.length; i++) {
+			String s = OreDictionary.getOreName(ids[i]);
+			ReikaOreHelper ore = oreNames.get(s);
+			if (ore != null)
+				return ore;
+		}
+		return null;
+	}
+
 }

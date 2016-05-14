@@ -167,6 +167,10 @@ public final class Coordinate {
 		return Math.abs(c.xCoord-xCoord) <= dx && Math.abs(c.yCoord-yCoord) <= dy && Math.abs(c.zCoord-zCoord) <= dz;
 	}
 
+	public int getTaxicabDistanceTo(Coordinate c) {
+		return Math.abs(c.xCoord-xCoord)+Math.abs(c.yCoord-yCoord)+Math.abs(c.zCoord-zCoord);
+	}
+
 	public int[] toArray() {
 		int[] a = new int[3];
 		a[0] = xCoord;

@@ -36,6 +36,7 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 
 	public ParticleEntity(World world) {
 		super(world);
+		this.setSize((float)this.getHitboxSize(), (float)this.getHitboxSize());
 	}
 
 	public ParticleEntity(World world, int x, int y, int z) {
@@ -44,34 +45,44 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 		oldBlockY = y;
 		oldBlockZ = z;
 		spawnLocation = new Coordinate(x, y, z);
+		this.setSize((float)this.getHitboxSize(), (float)this.getHitboxSize());
 		this.setLocationAndAngles(x+0.5, y+0.5, z+0.5, 0, 0);
 	}
 
 	public ParticleEntity(World world, int x, int y, int z, ForgeDirection dir) {
 		this(world, x, y, z);
-		this.setDirection(dir);
+		this.setDirection(dir, true);
 	}
 
 	public ParticleEntity(World world, int x, int y, int z, CubeDirections dir) {
 		this(world, x, y, z);
-		this.setDirection(dir);
+		this.setDirection(dir, true);
 	}
+
+	@Override
+	public final boolean isInRangeToRenderDist(double rsq) {
+		return rsq <= this.getRenderRangeSquared();
+	}
+
+	public abstract double getRenderRangeSquared();
 
 	public Coordinate getSpawnLocation() {
 		return spawnLocation;
 	}
 
-	protected final void setDirection(ForgeDirection dir) {
-		this.setLocationAndAngles(this.getBlockX()+0.5, this.getBlockY()+0.5, this.getBlockZ()+0.5, 0, 0);
+	protected void setDirection(ForgeDirection dir, boolean setPos) {
+		if (setPos)
+			this.setLocationAndAngles(this.getBlockX()+0.5, this.getBlockY()+0.5, this.getBlockZ()+0.5, 0, 0);
 		motionX = dir.offsetX*this.getSpeed();
 		motionY = dir.offsetY*this.getSpeed();
 		motionZ = dir.offsetZ*this.getSpeed();
 		velocityChanged = true;
 	}
 
-	protected void setDirection(CubeDirections dir) {
+	protected void setDirection(CubeDirections dir, boolean setPos) {
 		//ReikaJavaLibrary.pConsole(worldObj.isRemote+": "+this.getBlockX()+":"+this.getBlockY()+":"+this.getBlockZ());
-		this.setLocationAndAngles(this.getBlockX()+0.5, this.getBlockY()+0.5, this.getBlockZ()+0.5, 0, 0);
+		if (setPos)
+			this.setLocationAndAngles(this.getBlockX()+0.5, this.getBlockY()+0.5, this.getBlockZ()+0.5, 0, 0);
 		motionX = dir.directionX*this.getSpeed();
 		motionY = 0;
 		motionZ = dir.directionZ*this.getSpeed();
@@ -97,6 +108,9 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 	public final void onUpdate()
 	{
 		this.onEntityUpdate();
+		if (this.needsSpeedUpdates()) {
+			this.updateSpeed();
+		}
 
 		if (motionX == 0 && motionY == 0 && motionZ == 0 && ticksExisted > 20) {
 			this.setDead();
@@ -152,6 +166,13 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 		this.onTick();
 	}
 
+	protected boolean needsSpeedUpdates() {
+		return false;
+	}
+
+	protected void updateSpeed() {
+
+	}
 
 	protected void onDeath() {
 

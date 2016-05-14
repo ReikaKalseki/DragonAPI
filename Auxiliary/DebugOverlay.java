@@ -30,6 +30,7 @@ import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 
 public class DebugOverlay {
@@ -40,8 +41,8 @@ public class DebugOverlay {
 
 	}
 
-	@SubscribeEvent
-	public void eventHandler(RenderGameOverlayEvent event) {
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void eventHandler(RenderGameOverlayEvent.Post event) {
 		if (event.type == ElementType.HELMET) {
 			if (DragonAPICore.debugtest) {
 				Minecraft mc = Minecraft.getMinecraft();

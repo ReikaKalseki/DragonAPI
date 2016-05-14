@@ -278,9 +278,12 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return true;
 		if (mob instanceof EntityWither)
 			return true;
-		if (mob.getClass().getSimpleName().toLowerCase(Locale.ENGLISH).contains("wisp"))
+		String n = mob.getClass().getName().toLowerCase(Locale.ENGLISH);
+		if (n.contains("wisp"))
 			return true;
-		if (mob.getClass().getSimpleName().toLowerCase(Locale.ENGLISH).contains("pech"))
+		if (n.contains("pech"))
+			return true;
+		if (n.contains("botania") && n.contains("doppleganger"))
 			return true;
 		return false;
 	}
@@ -1100,6 +1103,23 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	public static boolean isNearSkylight(Entity e) {
 		return e.worldObj.getSavedLightValue(EnumSkyBlock.Sky, MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ)) > 0;
+	}
+
+	public static boolean isEntityWearingPoweredArmor(EntityLivingBase e) {
+		for (int i = 1; i <= 4; i++) {
+			ItemStack is = e.getEquipmentInSlot(i);
+			if (is != null) {
+				if (InterfaceCache.GASITEM.instanceOf(is.getItem()))
+					return true;
+				if (InterfaceCache.RFENERGYITEM.instanceOf(is.getItem()))
+					return true;
+				if (InterfaceCache.IELECTRICITEM.instanceOf(is.getItem()))
+					return true;
+				if (InterfaceCache.MUSEELECTRICITEM.instanceOf(is.getItem()))
+					return true;
+			}
+		}
+		return false;
 	}
 
 }

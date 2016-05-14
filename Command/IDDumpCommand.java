@@ -75,9 +75,8 @@ public class IDDumpCommand extends DragonCommandBase {
 			return;
 		}
 
-		EntityPlayerMP ep = this.getCommandSenderAsPlayer(ics);
-		ReikaChatHelper.sendChatToPlayer(ep, "Found IDs:");
-		this.perform(side, ep, type);
+		sendChatToSender(ics, "Found IDs:");
+		this.perform(side, ics, type);
 	}
 
 	@Override
@@ -100,16 +99,16 @@ public class IDDumpCommand extends DragonCommandBase {
 		}
 	}
 
-	private void perform(Side side, EntityPlayerMP ep, IDType type) {
+	private void perform(Side side, ICommandSender ics, IDType type) {
 		switch(side) {
 			case CLIENT:
-				this.sendPacket(ep, type);
+				this.sendPacket(this.getCommandSenderAsPlayer(ics), type);
 				break;
 			case SERVER:
 				Map<String, Integer> data = getData(type);
 				for (String s : data.keySet()) {
 					String sg = String.format("%s %s ID %d = %s", ReikaStringParser.capFirstChar(side.name()), type.getName(), data.get(s), s);
-					ReikaChatHelper.sendChatToPlayer(ep, sg);
+					sendChatToSender(ics, sg);
 				}
 				break;
 		}

@@ -20,6 +20,8 @@ import Reika.DragonAPI.Base.ModHandlerBase;
 public class IC2Handler extends ModHandlerBase {
 
 	public final Item iridiumID;
+	public final Item scrapID;
+	public final Item scrapBoxID;
 
 	private ItemStack purifiedUranium;
 
@@ -28,15 +30,27 @@ public class IC2Handler extends ModHandlerBase {
 	private IC2Handler() {
 		super();
 		Item idiridium = null;
+		Item idscrap = null;
+		Item idscrapbox = null;
 		if (this.hasMod()) {
 			try {
 				Class ic2 = this.getMod().getItemClass();
-				Field irid = ic2.getField("iridiumOre");
+
+				Field f = ic2.getField("iridiumOre");
+				ItemStack is = (ItemStack)f.get(null);
+				idiridium = is.getItem();
+
 				Field crush = ic2.getField("purifiedCrushedUraniumOre");
-				ItemStack iridium = (ItemStack)irid.get(null);
-				idiridium = iridium.getItem();
 				ItemStack pureCrushU = (ItemStack)crush.get(null);
 				purifiedUranium = pureCrushU;
+
+				f = ic2.getField("scrap");
+				is = (ItemStack)f.get(null);
+				idscrap = is.getItem();
+
+				f = ic2.getField("scrapBox");
+				is = (ItemStack)f.get(null);
+				idscrapbox = is.getItem();
 			}
 			catch (NoSuchFieldException e) {
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
@@ -69,6 +83,8 @@ public class IC2Handler extends ModHandlerBase {
 		}
 
 		iridiumID = idiridium;
+		scrapBoxID = idscrapbox;
+		scrapID = idscrap;
 	}
 
 	public static IC2Handler getInstance() {
@@ -81,7 +97,7 @@ public class IC2Handler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return iridiumID != null && purifiedUranium != null;
+		return iridiumID != null && purifiedUranium != null && scrapBoxID != null && scrapID != null;
 	}
 
 	@Override

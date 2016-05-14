@@ -871,4 +871,10 @@ public class ReikaASMHelper {
 		return false;
 	}
 
+	public static AnnotationNode copyAnnotation(AnnotationNode a) {
+		AnnotationNode cp = new AnnotationNode(a.desc);
+		cp.values.addAll(a.values);
+		return cp;
+	}
+
 }

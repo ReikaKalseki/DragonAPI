@@ -65,6 +65,7 @@ public final class PlayerSpecificRenderer {
 
 		this.registerGlow(DragonAPICore.Reika_UUID, "reika_glow");
 		this.registerGlow(UUID.fromString("bca741d8-d934-4785-9c26-f6a4141be124"), "samaki_glow");
+		this.registerGlow(UUID.fromString("d859c5ea-37e9-43d7-b3b9-523e448bfda0"), "frey_glow");
 	}
 
 	public void registerIntercept() {

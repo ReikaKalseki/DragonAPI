@@ -13,6 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.BeeGene;
 import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Effect;
 import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Fertility;
@@ -38,6 +39,10 @@ import forestry.api.genetics.IIndividual;
 
 
 public class ReikaBeeHelper {
+
+	public static final ItemStack getBeeItem(String bee, EnumBeeType type) {
+		return getBeeItem(ReikaWorldHelper.getBasicReferenceWorld(), bee, type);
+	}
 
 	public static final ItemStack getBeeItem(World world, String bee, EnumBeeType type) {
 		IBeeRoot root = BeeManager.beeRoot;

@@ -596,7 +596,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		PackModificationTracker.instance.loadAll();
 
 		this.loadHandlers();
-		this.initFlowerRegistration();
+		this.initFlowerSeedsRegistration();
 
 		if (ReikaObfuscationHelper.isDeObfEnvironment())
 			TemporaryCodeCalls.postload(evt);
@@ -640,7 +640,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.finishTiming();
 	}
 
-	private void initFlowerRegistration() {
+	private void initFlowerSeedsRegistration() {
 		if (ModList.BOP.isLoaded() && BoPBlockHandler.getInstance().initializedProperly()) {
 			for (int i = 0; i < BoPBlockHandler.flower1Types.length; i++) {
 				OreDictionary.registerOre("flower", new ItemStack(BoPBlockHandler.getInstance().flower1, 1, i));
@@ -658,6 +658,36 @@ public class DragonAPIInit extends DragonAPIMod {
 				int tallm = i%8;
 				OreDictionary.registerOre("flower", new ItemStack(flower, 1, i));
 				OreDictionary.registerOre("flower", new ItemStack(tall, 1, tallm));
+			}
+		}
+		if (ModList.PROJRED.isLoaded()) {
+			Block flower = GameRegistry.findBlock("ProjRed|Exploration", "projectred.exploration.lily");
+			if (flower != null) {
+				OreDictionary.registerOre("flower", flower);
+			}
+			ItemStack seed = ReikaItemHelper.lookupItem("ProjRed|Exploration:projectred.exploration.lilyseed");
+			if (seed != null) {
+				OreDictionary.registerOre("seed", seed);
+			}
+		}
+		OreDictionary.registerOre("seed", Items.wheat_seeds);
+		OreDictionary.registerOre("seed", Items.pumpkin_seeds);
+		OreDictionary.registerOre("seed", Items.melon_seeds);
+		OreDictionary.registerOre("seed", Items.nether_wart);
+		for (int i = 0; i < ModCropList.cropList.length; i++) {
+			ModCropList mod = ModCropList.cropList[i];
+			if (mod.seedID != null) {
+				OreDictionary.registerOre("seed", new ItemStack(mod.seedID, 1, mod.seedMeta));
+			}
+		}
+		if (ModList.AGRICRAFT.isLoaded()) {
+			ItemStack pseed = ReikaItemHelper.lookupItem("AgriCraft:seedPotato");
+			if (pseed != null) {
+				OreDictionary.registerOre("seed", pseed);
+			}
+			ItemStack cseed = ReikaItemHelper.lookupItem("AgriCraft:seedCarrot");
+			if (cseed != null) {
+				OreDictionary.registerOre("seed", cseed);
 			}
 		}
 	}

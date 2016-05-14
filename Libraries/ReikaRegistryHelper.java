@@ -349,12 +349,12 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		return registries.get(o);
 	}
 
-	public static String getGameRegistryName(BlockEnum reg) {
-		return blockRegNames.get(reg);
+	public static String getGameRegistryName(DragonAPIMod mod, BlockEnum reg) {
+		return mod.getModContainer().getModId()+":"+blockRegNames.get(reg);
 	}
 
-	public static String getGameRegistryName(ItemEnum reg) {
-		return itemRegNames.get(reg);
+	public static String getGameRegistryName(DragonAPIMod mod, ItemEnum reg) {
+		return mod.getModContainer().getModId()+":"+itemRegNames.get(reg);
 	}
 
 	public static void registerModEntity(Object mod, Class<? extends Entity> e, String name, boolean sendVelocity, int trackingDist) {

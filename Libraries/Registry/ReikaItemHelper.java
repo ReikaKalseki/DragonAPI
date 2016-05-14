@@ -44,8 +44,10 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.ModRegistry.ModOreList;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import cpw.mods.fml.relauncher.Side;
@@ -645,5 +647,15 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static ItemStack lookupBlock(String mod, String s, int meta) {
 		Block b = Block.getBlockFromName(mod+":"+s);
 		return b != null ? new ItemStack(b, 1, meta) : null;
+	}
+
+	public static boolean isOreDrop(ItemStack is) {
+		OreType ore = ReikaOreHelper.getByDrop(is);
+		if (ore != null)
+			return true;
+		ore = ModOreList.getByDrop(is);
+		if (ore != null)
+			return true;
+		return false;
 	}
 }

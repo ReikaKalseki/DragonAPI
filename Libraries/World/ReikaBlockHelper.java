@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries.World;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
@@ -360,5 +361,20 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		if (b == BlockEntry.NODE.getBlock())
 			return false;
 		return true;
+	}
+
+	public static boolean isFacade(Block b) {
+		String n = b.getClass().getName().toLowerCase(Locale.ENGLISH);
+		if (n.contains("facade"))
+			return true;
+		if (n.contains("conduitbundle"))
+			return true;
+		if (n.contains("cover"))
+			return true;
+		if (n.contains("multipart"))
+			return true;
+		if (n.contains("cablebus"))
+			return true;
+		return false;
 	}
 }

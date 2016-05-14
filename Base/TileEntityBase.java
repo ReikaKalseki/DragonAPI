@@ -21,7 +21,6 @@ import java.util.UUID;
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;
-import li.cil.oc.api.network.Component;
 import li.cil.oc.api.network.Environment;
 import li.cil.oc.api.network.Message;
 import li.cil.oc.api.network.Node;
@@ -203,8 +202,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			NBT.setString("placeUUID", placerUUID.toString());
 
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
-			if (node instanceof Component)
-				((Component)node).save(NBT);
+			if (node != null)
+				((Node)node).save(NBT);
 		}
 
 		NBT.setBoolean("no_drops", unharvestable);
@@ -223,8 +222,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			placerUUID = UUID.fromString(NBT.getString("placeUUID"));
 
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
-			if (node instanceof Component)
-				((Component)node).load(NBT);
+			if (node != null)
+				((Node)node).load(NBT);
 		}
 
 		unharvestable = NBT.getBoolean("no_drops");
@@ -574,7 +573,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			for (int i = 0; i < 6; i++)
 				this.updateCache(dirs[i]);
 			if (ModList.OPENCOMPUTERS.isLoaded()) {
-				if (node instanceof Component && ((Component)node).network() == null)
+				if (node != null && ((Node)node).network() == null)
 					Network.joinOrCreateNetwork(this);
 			}
 			this.onFirstTick(worldObj, xCoord, yCoord, zCoord);
@@ -798,8 +797,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			adjTEMap[i] = null;
 
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
-			if (node instanceof Component)
-				((Component)node).remove();
+			if (node != null)
+				((Node)node).remove();
 		}
 
 		this.onInvalidateOrUnload(worldObj, xCoord, yCoord, zCoord, false);
@@ -813,8 +812,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			adjTEMap[i] = null;
 
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
-			if (node instanceof Component)
-				((Component)node).remove();
+			if (node != null)
+				((Node)node).remove();
 		}
 
 		this.onInvalidateOrUnload(worldObj, xCoord, yCoord, zCoord, true);
@@ -826,14 +825,9 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	private Object createNode() {
 		if (ModList.OPENCOMPUTERS.isLoaded())
-			return Network.newNode((Environment)this, Visibility.Network).withComponent(this.getType(), this.getOCNetworkVisibility()).create();
+			return Network.newNode((Environment)this, Visibility.None).create();
 		else
 			return null;
-	}
-
-	@ModDependent(ModList.OPENCOMPUTERS)
-	protected Visibility getOCNetworkVisibility() {
-		return Visibility.Network;
 	}
 
 	@ModDependent(ModList.OPENCOMPUTERS)

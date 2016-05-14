@@ -657,4 +657,13 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		}
 		return val;
 	}
+
+	public static int getMaxValue(int[] arr) {
+		int val = arr[0];
+		for (int i = 1; i < arr.length; i++) {
+			if (arr[i] > val)
+				val = arr[i];
+		}
+		return val;
+	}
 }

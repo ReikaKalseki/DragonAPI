@@ -14,7 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -143,7 +143,7 @@ public enum ModOreList implements OreType {
 	public static final ModOreList[] oreList = values();
 
 	private static final ItemHashMap<ModOreList> oreMappings = new ItemHashMap();
-	private static final HashSet<String> oreNames = new HashSet();
+	private static final HashMap<String, ModOreList> oreNames = new HashMap();
 
 	private ModOreList(String n, int color, OreRarity r, String prod, int count, String... ore) {
 		//if (!DragonAPIInit.canLoadHandlers())
@@ -193,7 +193,7 @@ public enum ModOreList implements OreType {
 		ores.clear();
 		for (int i = 0; i < oreLabel.length; i++) {
 			String label = oreLabel[i];
-			oreNames.add(label);
+			oreNames.put(label, this);
 			ArrayList<ItemStack> toadd = OreDictionary.getOres(label);
 			if (!toadd.isEmpty()) {
 				Iterator<ItemStack> it = toadd.iterator();
@@ -470,6 +470,17 @@ public enum ModOreList implements OreType {
 	}
 
 	public static boolean isModOreType(String s) {
-		return oreNames.contains(s);
+		return oreNames.containsKey(s);
+	}
+
+	public static ModOreList getByDrop(ItemStack is) {
+		int[] ids = OreDictionary.getOreIDs(is);
+		for (int i = 0; i < ids.length; i++) {
+			String s = OreDictionary.getOreName(ids[i]);
+			ModOreList ore = oreNames.get(s);
+			if (ore != null)
+				return ore;
+		}
+		return null;
 	}
 }

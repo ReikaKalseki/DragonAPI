@@ -11,7 +11,9 @@ package Reika.DragonAPI.Libraries.MathSci;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.Vec3;
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaPhysicsHelper extends DragonAPICore {
@@ -171,5 +173,21 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 		double root = Math.pow(vel*Math.sin(ang), 2)+2*g*dy;
 		double term = vel*Math.sin(ang)+Math.sqrt(root);
 		return vel*Math.cos(ang)/gravity*term;
+	}
+
+	public static void reflectEntitySpherical(double x, double y, double z, Entity e) {
+		double dx = e.posX-x;
+		double dy = e.posY-y;
+		double dz = e.posZ-z;
+		Vec3 vec = Vec3.createVectorHelper(dx, dy, dz);
+		double l = vec.lengthVector();
+		vec.xCoord /= l;
+		vec.yCoord /= l;
+		vec.zCoord /= l;
+		double vel = vec.dotProduct(Vec3.createVectorHelper(e.motionX, e.motionY, e.motionZ));
+		e.motionX += -2*vel*vec.xCoord;
+		e.motionY += -2*vel*vec.yCoord;
+		e.motionZ += -2*vel*vec.zCoord;
+		e.velocityChanged = true;
 	}
 }
