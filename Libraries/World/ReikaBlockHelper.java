@@ -284,7 +284,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		return new ItemStack(id, 1, getSilkTouchMetaDropped(id, meta));
 	}
 
-	public static int getSilkTouchMetaDropped(Block id, int meta) {
+	private static int getSilkTouchMetaDropped(Block id, int meta) {
 		if (id == Blocks.torch)
 			return 0;
 		if (id == Blocks.redstone_torch || id == Blocks.unlit_redstone_torch)

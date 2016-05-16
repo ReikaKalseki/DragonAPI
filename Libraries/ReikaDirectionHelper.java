@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Random;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
@@ -223,6 +225,24 @@ public class ReikaDirectionHelper extends DragonAPICore {
 				dirMap.put(list[i], list[i].directionX, list[i].directionZ);
 			}
 		}
+	}
+
+	public static ForgeDirection getImpactedSide(World world, int x, int y, int z, Entity e) {
+		int dx = (int)Math.round((e.posX-x-0.5)*2);
+		int dz = (int)Math.round((e.posZ-z-0.5)*2);
+		return getByDirection(dx, dz);
+	}
+
+	public static ForgeDirection getByDirection(int dx, int dz) {
+		if (dx > 0)
+			return ForgeDirection.EAST;
+		else if (dx < 0)
+			return ForgeDirection.WEST;
+		else if (dz > 0)
+			return ForgeDirection.SOUTH;
+		else if (dz < 0)
+			return ForgeDirection.NORTH;
+		return ForgeDirection.UNKNOWN;
 	}
 
 }

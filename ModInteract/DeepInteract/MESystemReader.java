@@ -16,6 +16,7 @@ import java.util.IdentityHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
@@ -34,6 +35,9 @@ import appeng.api.networking.crafting.ICraftingJob;
 import appeng.api.networking.crafting.ICraftingLink;
 import appeng.api.networking.crafting.ICraftingRequester;
 import appeng.api.networking.security.BaseActionSource;
+import appeng.api.networking.security.IActionHost;
+import appeng.api.networking.security.MachineSource;
+import appeng.api.networking.security.PlayerSource;
 import appeng.api.networking.storage.IStorageGrid;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.data.IAEItemStack;
@@ -48,8 +52,12 @@ public class MESystemReader {
 	private final IdentityHashMap<Future<ICraftingJob>, CraftCompleteCallback> crafting = new IdentityHashMap();
 	private final MultiMap<CraftCompleteCallback, ICraftingLink> craftingLinks = new MultiMap().setNullEmpty();
 
-	public MESystemReader(IGridNode ign, SourceType src) {
-		this(ign, new ActionSource(src));
+	public MESystemReader(IGridNode ign, EntityPlayer ep) {
+		this(ign, new PlayerSource(ep, null));
+	}
+
+	public MESystemReader(IGridNode ign, IActionHost iah) {
+		this(ign, new MachineSource(iah));
 	}
 
 	/** For loading all the data of the old reader */
@@ -265,34 +273,6 @@ public class MESystemReader {
 		public void onCraftingLinkReturned(ICraftingLink link);
 		public void onCraftingComplete(ICraftingLink link);
 
-	}
-
-	private static class ActionSource extends BaseActionSource {
-
-		private final SourceType type;
-
-		private ActionSource(SourceType s) {
-			type = s;
-		}
-
-		@Override
-		public boolean isPlayer()
-		{
-			return type == SourceType.PLAYER;
-		}
-
-		@Override
-		public boolean isMachine()
-		{
-			return type == SourceType.MACHINE;
-		}
-
-	}
-
-	public static enum SourceType {
-
-		MACHINE(),
-		PLAYER();
 	}
 	/*
 	private static class AEStack implements IAEItemStack, Comparable<AEStack> {

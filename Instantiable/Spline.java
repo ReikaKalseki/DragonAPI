@@ -52,6 +52,8 @@ public class Spline {
 
 	@SideOnly(Side.CLIENT)
 	public void render(Tessellator v5, double x, double y, double z, int color, boolean glow, boolean closed) {
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glDepthMask(false);
 		List<DecimalPosition> li = this.get(32, closed);
 		GL11.glEnable(GL11.GL_BLEND);
 		BlendMode.DEFAULT.apply();
@@ -61,27 +63,31 @@ public class Spline {
 		int a = ReikaColorAPI.getAlpha(color);
 		int clr = color & 0xffffff;
 		v5.setColorRGBA_I(clr, a);
-		this.renderPoints(v5, li, x, y, z);
+		this.renderPoints(v5, li, x, y, z, closed);
 		v5.draw();
 		if (glow) {
 			v5.startDrawing(GL11.GL_LINE_STRIP);
 			v5.setColorRGBA_I(clr, a/4);
 			GL11.glLineWidth(5);
-			this.renderPoints(v5, li, x, y, z);
+			this.renderPoints(v5, li, x, y, z, closed);
 			v5.draw();
 
 			v5.startDrawing(GL11.GL_LINE_STRIP);
 			v5.setColorRGBA_I(clr, a/4);
 			GL11.glLineWidth(10);
-			this.renderPoints(v5, li, x, y, z);
+			this.renderPoints(v5, li, x, y, z, closed);
 			v5.draw();
 		}
 		GL11.glLineWidth(w);
-		GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glPopAttrib();
 	}
 
-	private void renderPoints(Tessellator v5, List<DecimalPosition> li, double x, double y, double z) {
+	private void renderPoints(Tessellator v5, List<DecimalPosition> li, double x, double y, double z, boolean closed) {
 		for (DecimalPosition d : li) {
+			v5.addVertex(x+d.xCoord, y+d.yCoord, z+d.zCoord);
+		}
+		if (closed) {
+			DecimalPosition d = li.get(0);
 			v5.addVertex(x+d.xCoord, y+d.yCoord, z+d.zCoord);
 		}
 	}
@@ -313,7 +319,7 @@ public class Spline {
 
 	}
 
-	private static class BasicVariablePoint extends BasicSplinePoint {
+	public static class BasicVariablePoint extends BasicSplinePoint {
 
 		private final double velocity;
 		private final double variance;

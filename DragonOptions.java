@@ -42,9 +42,11 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	APRIL("Enable Vernal Amusement Behavior", true),
 	NOALPHATEST("Disable Alpha Clipping in WorldRenderer", true),
 	PARTICLELIMIT("Particle Limit (Vanilla = 4000)", 4000),
-	DEBUGKEY("Debug Overlay Key (LWJGL ID)", 0x0F); //Keyboard.KEY_TAB
+	DEBUGKEY("Debug Overlay Key (LWJGL ID)", 0x0F), //Keyboard.KEY_TAB
 	//RECURSE("Recursion Limit Override", -1),
-	;//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
+	//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
+	DIRECTOC("Direct OpenComputers Support", true);
+	;
 
 	private String label;
 	private boolean defaultState;
