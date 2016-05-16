@@ -824,10 +824,19 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	}
 
 	private Object createNode() {
-		if (ModList.OPENCOMPUTERS.isLoaded())
-			return Network.newNode((Environment)this, Visibility.None).create();
-		else
+		if (!ModList.OPENCOMPUTERS.isLoaded())
 			return null;
+		if (DragonOptions.DIRECTOC.getState()) {
+			return Network.newNode((Environment)this, Visibility.Network).withComponent(this.getType(), this.getOCNetworkVisibility()).create();
+		}
+		else {
+			return Network.newNode((Environment)this, Visibility.None).create();
+		}
+	}
+
+	@ModDependent(ModList.OPENCOMPUTERS)
+	protected Visibility getOCNetworkVisibility() {
+		return Visibility.Network;
 	}
 
 	@ModDependent(ModList.OPENCOMPUTERS)
