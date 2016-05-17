@@ -7,9 +7,10 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Instantiable;
+package Reika.DragonAPI.Instantiable.ParticleController;
 
 import net.minecraft.entity.Entity;
+import Reika.DragonAPI.Instantiable.Orbit;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Interfaces.PositionController;
 

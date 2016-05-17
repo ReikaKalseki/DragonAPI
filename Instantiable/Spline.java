@@ -51,10 +51,10 @@ public class Spline {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void render(Tessellator v5, double x, double y, double z, int color, boolean glow, boolean closed) {
+	public void render(Tessellator v5, double x, double y, double z, int color, boolean glow, boolean closed, int fineness) {
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glDepthMask(false);
-		List<DecimalPosition> li = this.get(32, closed);
+		List<DecimalPosition> li = this.get(fineness, closed);
 		GL11.glEnable(GL11.GL_BLEND);
 		BlendMode.DEFAULT.apply();
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
@@ -331,7 +331,7 @@ public class Spline {
 
 		private final DecimalPosition origin;
 
-		private BasicVariablePoint(DecimalPosition pos, double var, double vel) {
+		public BasicVariablePoint(DecimalPosition pos, double var, double vel) {
 			super(pos.xCoord, pos.yCoord, pos.zCoord);
 			origin = pos;
 			variance = var;

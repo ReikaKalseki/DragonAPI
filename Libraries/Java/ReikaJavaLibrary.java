@@ -828,4 +828,16 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 		return false;
 	}
+
+	public static <K> void subtractFromIntMap(Map<K, Integer> map, K key, int num) {
+		Integer get = map.get(key);
+		int ret = (get != null ? get.intValue() : 0)-num;
+		map.put(key, ret);
+	}
+
+	public static <K> void addToIntMap(Map<K, Integer> map, K key, int num) {
+		Integer get = map.get(key);
+		int ret = (get != null ? get.intValue() : 0)+num;
+		map.put(key, ret);
+	}
 }

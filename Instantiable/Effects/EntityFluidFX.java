@@ -13,12 +13,14 @@ import net.minecraft.client.particle.EntityFX;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import Reika.DragonAPI.Interfaces.MotionController;
+import Reika.DragonAPI.Interfaces.PositionController;
 
 public class EntityFluidFX extends EntityFX {
 
 	private Fluid type;
 
 	private MotionController motionController;
+	private PositionController positionController;
 
 	public EntityFluidFX(World world, double x, double y, double z, Fluid f) {
 		this(world, x, y, z, 0, 0, 0, f);
@@ -54,6 +56,11 @@ public class EntityFluidFX extends EntityFX {
 		return this;
 	}
 
+	public EntityFluidFX setPositionController(PositionController m) {
+		positionController = m;
+		return this;
+	}
+
 	@Override
 	public int getBrightnessForRender(float par1)
 	{
@@ -75,6 +82,13 @@ public class EntityFluidFX extends EntityFX {
 			motionY = motionController.getMotionY(this);
 			motionZ = motionController.getMotionZ(this);
 			motionController.update(this);
+		}
+
+		if (positionController != null) {
+			posX = positionController.getPositionX(this);
+			posY = positionController.getPositionY(this);
+			posZ = positionController.getPositionZ(this);
+			positionController.update(this);
 		}
 	}
 
