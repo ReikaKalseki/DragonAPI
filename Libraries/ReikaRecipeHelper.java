@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -255,10 +256,27 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	private static List<ItemStack> getRecipeItemStack(ItemStack is, boolean client) {
 		if (is == null)
 			return null;
-		if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE && client)
+		if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE && client) {
 			return ReikaItemHelper.getAllMetadataPermutations(is.getItem());
-		else
+		}
+		else {
 			return ReikaJavaLibrary.makeListFrom(is);
+		}
+	}
+
+	private static List<ItemStack> getRecipeItemStacks(Collection<ItemStack> c, boolean client) {
+		ArrayList<ItemStack> ret = new ArrayList();
+		for (ItemStack is : c) {
+			if (is == null)
+				continue;
+			if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE && client) {
+				ret.addAll(ReikaItemHelper.getAllMetadataPermutations(is.getItem()));
+			}
+			else {
+				ret.add(is);
+			}
+		}
+		return ret;
 	}
 
 	private static RecipeCache getRecipeCacheObject(IRecipe ir, boolean client) {
@@ -288,10 +306,15 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		RecipeCache r = getRecipeCacheObject(ir, true);
 		List<ItemStack>[] isin = r.items;
 
+		long ttick = System.currentTimeMillis();
+		if (GuiScreen.isShiftKeyDown())
+			ttick *= 4;
+		if (GuiScreen.isCtrlKeyDown())
+			ttick /= 8;
 		int time = 1000;
 		for (int i = 0; i < isin.length; i++) {
 			if (isin[i] != null && !isin[i].isEmpty()) {
-				if (System.currentTimeMillis()%time == 0) {
+				if (ttick%time == 0) {
 					permuOffsets[i] = rand.nextInt(isin[i].size());
 				}
 			}
@@ -302,7 +325,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		for (int i = 0; i < 9; i++) {
 			List<ItemStack> li = isin[i];
 			if (li != null && !li.isEmpty()) {
-				int tick = (int)(((System.currentTimeMillis()/time)+permuOffsets[i])%li.size());
+				int tick = (int)(((ttick/time)+permuOffsets[i])%li.size());
 				add[i] = li.get(tick);
 			}
 		}
@@ -395,7 +418,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				else if (objin[i] instanceof List) {
 					List<ItemStack> li = (List)objin[i];
 					if (!li.isEmpty()) {
-						isin[i] = li;
+						isin[i] = getRecipeItemStacks(li, client);
 					}
 				}
 			}
@@ -414,7 +437,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				else if (objin[i] instanceof List) {
 					List<ItemStack> li = (List)objin[i];
 					if (!li.isEmpty()) {
-						isin[i] = li;
+						isin[i] = getRecipeItemStacks(li, client);
 					}
 				}
 			}
@@ -440,7 +463,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				else if (obj instanceof List) {
 					List<ItemStack> li = (List)obj;
 					if (!li.isEmpty()) {
-						isin[i] = li;
+						isin[i] = getRecipeItemStacks(li, client);
 					}
 				}
 				//DragonAPICore.log(ire);

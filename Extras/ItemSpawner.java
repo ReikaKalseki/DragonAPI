@@ -11,7 +11,6 @@ package Reika.DragonAPI.Extras;
 
 import java.util.List;
 
-import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityList;
@@ -81,7 +80,7 @@ public class ItemSpawner extends Item {
 			ReikaChatHelper.write(ReikaSpawnerHelper.getSpawnerFromItemNBT(is)+" cannot be placed in dimension "+world.provider.getDimensionName()+"!");
 			return false;
 		}
-		if (!ReikaWorldHelper.softBlocks(world.getBlock(x, y, z)) && ReikaWorldHelper.getMaterial(world, x, y, z) != Material.water && ReikaWorldHelper.getMaterial(world, x, y, z) != Material.lava) {
+		if (!ReikaWorldHelper.softBlocks(world, x, y, z)) {
 			if (side == 0)
 				--y;
 			if (side == 1)
@@ -94,7 +93,7 @@ public class ItemSpawner extends Item {
 				--x;
 			if (side == 5)
 				++x;
-			if (!ReikaWorldHelper.softBlocks(world.getBlock(x, y, z)) && ReikaWorldHelper.getMaterial(world, x, y, z) != Material.water && ReikaWorldHelper.getMaterial(world, x, y, z) != Material.lava)
+			if (!ReikaWorldHelper.softBlocks(world, x, y, z))
 				return false;
 		}
 		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(x, y, z, x+1, y+1, z+1);

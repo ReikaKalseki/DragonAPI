@@ -20,5 +20,6 @@ public interface TileEnum {
 	public Block getBlock();
 	public int getBlockMetadata();
 	public ItemStack getCraftedProduct();
+	public ItemStack getCraftedProduct(TileEntity te);
 
 }

@@ -461,6 +461,10 @@ public final class ReikaGuiAPI extends GuiScreen {
 		FontRenderer f2 = Minecraft.getMinecraft().fontRenderer;//is.getItem().getFontRenderer(is);
 		if (f2 != null)
 			fr = f2;
+		if (is.getItemDamage() == 32767) {
+			is = is.copy();
+			is.setItemDamage(0);
+		}
 		this.drawItemStack(renderer, fr, is, x, y);
 
 		GL11.glTranslatef(0.0F, 0.0F, 32.0F);

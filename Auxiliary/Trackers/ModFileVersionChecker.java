@@ -11,8 +11,10 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.HashMap;
 
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
@@ -69,9 +71,30 @@ public class ModFileVersionChecker {
 	}
 
 	private void kick(EntityPlayerMP ep, String mod, String client, String server) {
-		String msg = mod+" jarfile mismatch. Client Hash: "+client+"; Expected (Server) Hash: "+server;
-		ReikaPlayerAPI.kickPlayer(ep, msg);
-		DragonAPICore.log("Player "+ep.getCommandSenderName()+" kicked due to "+msg);
+		HashKickEvent evt = new HashKickEvent(ep, mod, client, server);
+		if (!MinecraftForge.EVENT_BUS.post(evt)) {
+			String msg = mod+" jarfile mismatch. Client Hash: "+client+"; Expected (Server) Hash: "+server;
+			ReikaPlayerAPI.kickPlayer(ep, msg);
+			DragonAPICore.log("Player "+ep.getCommandSenderName()+" kicked due to "+msg);
+		}
+		else {
+			DragonAPICore.log("Player "+ep.getCommandSenderName()+" not kicked for hash mismatch; kick cancelled");
+		}
+	}
+
+	public static class HashKickEvent extends PlayerEvent {
+
+		public final String serverHash;
+		public final String clientHash;
+		public final String mod;
+
+		public HashKickEvent(EntityPlayer player, String mod, String client, String server) {
+			super(player);
+			this.mod = mod;
+			serverHash = server;
+			clientHash = client;
+		}
+
 	}
 
 }
