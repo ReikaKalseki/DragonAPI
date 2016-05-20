@@ -124,8 +124,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return BlockProperties.isFlammable(id);
 	}
 
-	public static boolean nonSolidBlocks(Block id) {
-		return BlockProperties.isNonSolid(id);
+	public static boolean nonSolidBlocks(IBlockAccess world, int x, int y, int z) {
+		return BlockProperties.isNonSolid(world.getBlock(x, y, z));
 	}
 
 	/** Caps the metadata at a certain value (eg, for leaves, metas are from 0-11, but there are only 4 types, and each type has 3 metas).

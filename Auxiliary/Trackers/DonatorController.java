@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary.Trackers;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,12 +20,17 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.util.EnumChatFormatting;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public final class DonatorController {
 
 	public static final DonatorController instance = new DonatorController();
+
+	public static final String reikaURL = "http://server.techjargaming.com/Reika/Donator/donators_";
 
 	private final HashMap<DragonAPIMod, DonationList> data = new HashMap();
 	private final MultiMap<DragonAPIMod, Donator> byModDonators = new MultiMap();
@@ -32,14 +40,50 @@ public final class DonatorController {
 
 	}
 
+	public void registerMod(DragonAPIMod mod, String root) {
+		String url = root+ReikaStringParser.stripSpaces(mod.getDisplayName())+".txt";
+		URL file = this.getURL(url);
+		if (file == null) {
+			DragonAPICore.logError("Could not create URL to donator file. Donators will not be loaded.");
+			return;
+		}
+		ArrayList<String> lines = ReikaFileReader.getFileAsLines(file, 10000, false, null);
+		if (lines != null)
+			this.addDonators(mod, lines);
+	}
+
+	private void addDonators(DragonAPIMod mod, ArrayList<String> lines) {
+		for (String s : lines) {
+			s = ReikaStringParser.stripSpaces(s);
+			String[] parts = s.split(":");
+			parts[parts.length-1] = ReikaStringParser.clipStringBefore(parts[parts.length-1], "//");
+			if (parts.length == 3) {
+				this.addDonation(mod, parts[0], parts[1], Float.parseFloat(parts[2]));
+			}
+			else {
+				this.addDonation(mod, parts[0], Float.parseFloat(parts[1]));
+			}
+		}
+	}
+
+	private URL getURL(String url) {
+		try {
+			return new URL(url);
+		}
+		catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	/** This function does all the work for you. Provide the donation in dollar.cent amounts (eg 12.50F).
 	 * Returns the total from this donator. */
-	public float addDonation(DragonAPIMod mod, String donator, float donation) {
+	private float addDonation(DragonAPIMod mod, String donator, float donation) {
 		return this.addDonation(mod, donator, null, donation);
 	}
 	/** This function does all the work for you. Provide the donation in dollar.cent amounts (eg 12.50F).
 	 * Returns the total from this donator. */
-	public float addDonation(DragonAPIMod mod, String donator, String ingame, float donation) {
+	private float addDonation(DragonAPIMod mod, String donator, String ingame, float donation) {
 		boolean flag = false;
 		DonationList li = data.get(mod);
 		if (li == null) {

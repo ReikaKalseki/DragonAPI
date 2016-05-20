@@ -140,4 +140,8 @@ public final class RayTracer {
 		return !ReikaWorldHelper.softBlocks(world, x, y, z) || (softBlocksOnly && ReikaBlockHelper.isCollideable(world, x, y, z));
 	}
 
+	public boolean isBlockPassable(World world, int x, int y, int z) {
+		return !this.isDisallowedBlock(world, x, y, z);
+	}
+
 }

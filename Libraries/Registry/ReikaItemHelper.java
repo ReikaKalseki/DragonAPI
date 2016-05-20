@@ -46,6 +46,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaEngLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -158,7 +159,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 	public static final ItemComparator comparator = new ItemComparator();
 
-	private static HashMap<Fluid, ItemStack> fluidContainerData = new HashMap();
+	private static final HashMap<Fluid, ItemStack> fluidContainerData = new HashMap();
+	private static final HashMap<Item, Double> itemMass = new HashMap();
 
 	private static Field oreListField;
 
@@ -591,6 +593,38 @@ public final class ReikaItemHelper extends DragonAPICore {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+
+		double ingotFactor = 0.0625/8; //to keep values reasonable
+		double massIron = ReikaEngLibrary.rhoiron/9D*ingotFactor;
+		double massGold = ReikaEngLibrary.rhogold/9D*ingotFactor;
+		double massDiamond = ReikaEngLibrary.rhodiamond/9D*ingotFactor;
+
+		itemMass.put(Items.iron_ingot, massIron);
+		itemMass.put(Items.gold_ingot, massGold);
+		itemMass.put(Items.diamond, massDiamond);
+
+		itemMass.put(Items.iron_helmet, massIron*5);
+		itemMass.put(Items.iron_chestplate, massIron*8);
+		itemMass.put(Items.iron_leggings, massIron*7);
+		itemMass.put(Items.iron_boots, massIron*4);
+
+		itemMass.put(Items.golden_helmet, massGold*5);
+		itemMass.put(Items.golden_chestplate, massGold*8);
+		itemMass.put(Items.golden_leggings, massGold*7);
+		itemMass.put(Items.golden_boots, massGold*4);
+
+		itemMass.put(Items.diamond_helmet, massDiamond*5);
+		itemMass.put(Items.diamond_chestplate, massDiamond*8);
+		itemMass.put(Items.diamond_leggings, massDiamond*7);
+		itemMass.put(Items.diamond_boots, massDiamond*4);
+	}
+
+	public static void registerItemMass(Item i, double density, int ingots) {
+		registerItemMass(i, density/9D*ingots*0.125);
+	}
+
+	public static void registerItemMass(Item i, double mass) {
+		itemMass.put(i, mass);
 	}
 
 	public static void toggleDamageBit(ItemStack is, int bit) {
@@ -657,5 +691,12 @@ public final class ReikaItemHelper extends DragonAPICore {
 		if (ore != null)
 			return true;
 		return false;
+	}
+
+	public static double getItemMass(ItemStack is) {
+		if (is == null)
+			return 0;
+		Double get = itemMass.get(is);
+		return get != null ? get.doubleValue() : 0;
 	}
 }

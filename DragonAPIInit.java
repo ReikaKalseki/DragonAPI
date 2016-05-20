@@ -529,59 +529,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		//	Driver.add(new PeripheralHandler());
 		//}
 
-		PatreonController.instance.addPatron(this, "Dale Mahalko / Plawerth", 1);
-		PatreonController.instance.addPatron(this, "Lasse Knudsen", 40);
-		PatreonController.instance.addPatron(this, "Jason Watson", 10);
-		PatreonController.instance.addPatron(this, "frogfigther the derp", "a52abe43-ee2a-482a-a99c-51d8203e49d3", 10);
-		PatreonController.instance.addPatron(this, "Fizyxnrd", 2);
-		PatreonController.instance.addPatron(this, "Jakbruce2012", "8286f5c2-3062-4034-a72b-21dde6dcaa1a", 10);
-		PatreonController.instance.addPatron(this, "Michael Luke", 5);
-		PatreonController.instance.addPatron(this, "Andrew Jones", 10);
-		PatreonController.instance.addPatron(this, "Steven Kane", 40);
-		PatreonController.instance.addPatron(this, "motsop", 1);
-		PatreonController.instance.addPatron(this, "Demethan", "d0ffe97b-3370-4135-8218-4399e7ec5184", 5); //Luc Levesque
-		PatreonController.instance.addPatron(this, "David Harris", 1);
-		PatreonController.instance.addPatron(this, "Michael Vaarning", 5);
-		PatreonController.instance.addPatron(this, "Renato", 1);
-		PatreonController.instance.addPatron(this, "BevoLJ", "1d6a73e8-cf9e-45e9-aada-c2e1609e1f77", 5);
-		PatreonController.instance.addPatron(this, "brian allred", 1);
-		PatreonController.instance.addPatron(this, "Joshua Kubiak", 5);
-		PatreonController.instance.addPatron(this, "Paul Luhman", 1);
-		PatreonController.instance.addPatron(this, "John Paul Douglass", 10);
-		PatreonController.instance.addPatron(this, "Jon M", "3c1c793a-a29d-4822-8e35-6be630315277", 5);
-		PatreonController.instance.addPatron(this, "Christhereaper", 5);
-		PatreonController.instance.addPatron(this, "Havgood", 10);
-		PatreonController.instance.addPatron(this, "David Carlson", 10);
-		PatreonController.instance.addPatron(this, "Frederik", 10);
-		PatreonController.instance.addPatron(this, "Tommy Miller", 10);
-		PatreonController.instance.addPatron(this, "Josh O'Connor-Chen", 10);
-		PatreonController.instance.addPatron(this, "Ariaxis", "bef0a130-c4f5-4239-bd6b-a19e24802120", 30);
-		PatreonController.instance.addPatron(this, "Dawson Dimmick", 25);
-		PatreonController.instance.addPatron(this, "Polymorph", "474c622e-80cb-4daa-b2c2-562c5d85aa4c", 10);
-		PatreonController.instance.addPatron(this, "SourC00lguy", "c0f67a07-a8aa-4044-a223-fb5640778c41", 1);
-		PatreonController.instance.addPatron(this, "DorinnB", "1a4c37c8-de99-4960-8157-90dc28ef4c65", 1);
-		PatreonController.instance.addPatron(this, "Kotaro_MC", "4e40b5a3-fa82-4496-acf2-d2fadeb5bf5d", 40);
-		PatreonController.instance.addPatron(this, "AnotherDeadBard", "147aac9c-c0d2-4273-a6cc-f272f5b2ae13", 5);
-		PatreonController.instance.addPatron(this, "Haggle1996", "bb7c2ac3-72aa-4ad8-8e00-4e0fb67a51ec", 10);
-		PatreonController.instance.addPatron(this, "acnotalpha", "dc7496be-2408-4c7e-a65e-6beb53355fa7", 10); //Jeremiah Winsley
-		PatreonController.instance.addPatron(this, "Lavious", "7fb32de9-4d98-4d1f-9264-43bd1edf0ae0", 1);
-		PatreonController.instance.addPatron(this, "quok98", "f573f6a0-9e08-482a-9985-29c5bb89c4f4", 10); //Rich Edelman
-		PatreonController.instance.addPatron(this, "rxiv", "1cb1da91-d3ed-4c10-9506-ca27fd480634", 5);
-		PatreonController.instance.addPatron(this, "shobu", "6712dff7-a5d3-4a55-9c25-33b50e173ee1", 5);
-		PatreonController.instance.addPatron(this, "Goof245", "79849e78-fe9a-4bb9-af6b-fb4c41fc8dd8", 20); //Aiden Young
-		PatreonController.instance.addPatron(this, "Solego", "2c85a7d8-af77-4c5e-9416-47e4a281497f", 40);
-		PatreonController.instance.addPatron(this, "Frazier", 25);
-		PatreonController.instance.addPatron(this, "ReignOfMagic", "f1025e8b-6789-4591-b987-e318e61d7061", 10);
-		PatreonController.instance.addPatron(this, "Iskandar", "b6fa35a3-8e74-499d-8cc6-ca83c912a14a", 10);
-		PatreonController.instance.addPatron(this, "Yoogain", "5d937faf-7a4f-489a-85db-a1d95bb29657", 25);
-		PatreonController.instance.addPatron(this, "foxxmike11", "a52ba32c-edd0-41e8-81dc-de9759716624", 25); //foxxmike
-		PatreonController.instance.addPatron(this, "NihilistDandy", "3b29941b-924c-452a-abe5-2bfb6b94fecd", 40);
-		PatreonController.instance.addPatron(this, "EQDanteon", "ec00d292-1447-4e99-922c-2653f423e0cb", 40);
-		PatreonController.instance.addPatron(this, "Viper2g1", "3bf81769-1510-40b1-80d7-fea0c51aa304", 12); //Viperean
-		PatreonController.instance.addPatron(this, "StrayanDropbear", "e95b2aba-35c9-40da-b4cc-62ee68dc2962", 10);
-		PatreonController.instance.addPatron(this, "bludde", "b7e2eebd-51fe-4c32-87bd-40b28337c99e", 1);
-		PatreonController.instance.addPatron(this, "Tryfan26", "1a28c418-f637-4b21-9226-7412b2c52546", 40);
-		PatreonController.instance.addPatron(this, "mtimmerije", "05f316b4-f16a-41e1-b213-6af6e831fb08", 10); //MTesseracT
+		PatreonController.instance.registerMod("Reika", PatreonController.reikaURL);
 
 		logger.log("Credit to Techjar for hosting the version file and remote asset server.");
 

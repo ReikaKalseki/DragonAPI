@@ -1122,4 +1122,12 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return false;
 	}
 
+	public static double getCarriedMass(EntityLivingBase e) {
+		double mass = 0;
+		for (int i = 0; i <= 4; i++) {
+			mass += ReikaItemHelper.getItemMass(e.getEquipmentInSlot(i));
+		}
+		return mass;
+	}
+
 }

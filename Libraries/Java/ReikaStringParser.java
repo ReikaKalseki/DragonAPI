@@ -415,4 +415,11 @@ public class ReikaStringParser extends DragonAPICore {
 	public static char intToAlphaChar(int n) {
 		return (char)('a'+n);
 	}
+
+	public static String clipStringBefore(String s, String clip) {
+		int idx = s.indexOf(clip);
+		if (idx == -1)
+			idx = s.length();
+		return s.substring(0, idx);
+	}
 }

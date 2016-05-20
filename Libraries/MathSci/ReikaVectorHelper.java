@@ -15,6 +15,7 @@ import java.util.HashSet;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
@@ -85,11 +86,11 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		int[] xyz = new int[3];
 		for (float i = 0; i <= range; i += 0.5) {
 			double[] look = getPlayerLookCoords(ep, i);
-			int x = (int)look[0];
-			int y = (int)look[1];
-			int z = (int)look[2];
+			int x = MathHelper.floor_double(look[0]);
+			int y = MathHelper.floor_double(look[1]);
+			int z = MathHelper.floor_double(look[2]);
 			Block id = world.getBlock(x, y, z);
-			if (id != Blocks.air && !(passthru && ReikaWorldHelper.softBlocks(id))) {
+			if (id != Blocks.air && !(passthru && ReikaWorldHelper.softBlocks(world, x, y, z))) {
 				xyz[0] = x;
 				xyz[1] = y;
 				xyz[2] = z;
