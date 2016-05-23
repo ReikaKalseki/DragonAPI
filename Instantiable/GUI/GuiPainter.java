@@ -192,64 +192,64 @@ public class GuiPainter {
 			Collection<Point> c = new ArrayList();
 			int r = 2;
 			switch(this) {
-			case CIRCLE:
-				for (int i = -r; i <= r; i++) {
-					for (int k = -r; k <= r; k++) {
-						if (ReikaMathLibrary.py3d(i, 0, k) <= r+0.5)
+				case CIRCLE:
+					for (int i = -r; i <= r; i++) {
+						for (int k = -r; k <= r; k++) {
+							if (ReikaMathLibrary.py3d(i, 0, k) <= r+0.5)
+								c.add(new Point(i, k));
+						}
+					}
+					break;
+				case DOT:
+					c.add(new Point(0, -1));
+					c.add(new Point(1, -1));
+					c.add(new Point(0, 0));
+					c.add(new Point(1, 0));
+					c.add(new Point(0, 1));
+					c.add(new Point(1, 1));
+					c.add(new Point(2, 0));
+					c.add(new Point(2, 1));
+					c.add(new Point(-1, 0));
+					c.add(new Point(-1, 1));
+					c.add(new Point(0, 2));
+					c.add(new Point(1, 2));
+					break;
+				case PIXEL:
+					c.add(new Point(0, 0));
+					break;
+				case SPRAY:
+					int n = 5+rand.nextInt(4);
+					for (int i = 0; i < n; i++) {
+						c.add(new Point(ReikaRandomHelper.getRandomPlusMinus(0, 4), ReikaRandomHelper.getRandomPlusMinus(0, 4)));
+					}
+					break;
+				case SQUARE:
+					for (int i = -r; i <= r; i++) {
+						for (int k = -r; k <= r; k++) {
 							c.add(new Point(i, k));
+						}
 					}
-				}
-				break;
-			case DOT:
-				c.add(new Point(0, -1));
-				c.add(new Point(1, -1));
-				c.add(new Point(0, 0));
-				c.add(new Point(1, 0));
-				c.add(new Point(0, 1));
-				c.add(new Point(1, 1));
-				c.add(new Point(2, 0));
-				c.add(new Point(2, 1));
-				c.add(new Point(-1, 0));
-				c.add(new Point(-1, 1));
-				c.add(new Point(0, 2));
-				c.add(new Point(1, 2));
-				break;
-			case PIXEL:
-				c.add(new Point(0, 0));
-				break;
-			case SPRAY:
-				int n = 5+rand.nextInt(4);
-				for (int i = 0; i < n; i++) {
-					c.add(new Point(ReikaRandomHelper.getRandomPlusMinus(0, 4), ReikaRandomHelper.getRandomPlusMinus(0, 4)));
-				}
-				break;
-			case SQUARE:
-				for (int i = -r; i <= r; i++) {
-					for (int k = -r; k <= r; k++) {
-						c.add(new Point(i, k));
+					break;
+				case CROSS:
+					c.add(new Point(0, 0));
+					c.add(new Point(1, 0));
+					c.add(new Point(-1, 0));
+					c.add(new Point(0, 1));
+					c.add(new Point(0, -1));
+					break;
+				case X2:
+					c.add(new Point(0, 0));
+					c.add(new Point(1, 0));
+					c.add(new Point(0, 1));
+					c.add(new Point(1, 1));
+					break;
+				case X3:
+					for (int i = -1; i <= 1; i++) {
+						for (int k = -1; k <= 1; k++) {
+							c.add(new Point(i, k));
+						}
 					}
-				}
-				break;
-			case CROSS:
-				c.add(new Point(0, 0));
-				c.add(new Point(1, 0));
-				c.add(new Point(-1, 0));
-				c.add(new Point(0, 1));
-				c.add(new Point(0, -1));
-				break;
-			case X2:
-				c.add(new Point(0, 0));
-				c.add(new Point(1, 0));
-				c.add(new Point(0, 1));
-				c.add(new Point(1, 1));
-				break;
-			case X3:
-				for (int i = -1; i <= 1; i++) {
-					for (int k = -1; k <= 1; k++) {
-						c.add(new Point(i, k));
-					}
-				}
-				break;
+					break;
 			}
 			return c;
 		}

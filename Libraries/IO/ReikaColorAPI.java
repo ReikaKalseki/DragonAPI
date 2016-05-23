@@ -190,4 +190,11 @@ public class ReikaColorAPI {
 		}
 		return Color.HSBtoRGB(ret[0], ret[1], ret[2]);
 	}
+
+	public static int multiplyChannels(int c, float r, float g, float b) {
+		int r2 = (int)Math.min(255, r*getRed(c));
+		int g2 = (int)Math.min(255, g*getGreen(c));
+		int b2 = (int)Math.min(255, b*getBlue(c));
+		return RGBtoHex(r2, g2, b2);
+	}
 }

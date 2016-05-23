@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Worldgen;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 
@@ -50,18 +51,18 @@ public class OriginBlockCache {
 	private void flip(int i) {
 		for (PositionedBlock b : data) {
 			switch(i) {
-			case 0:
-				int dx = b.posX-originX;
-				b.posX = originX-dx;
-				break;
-			case 1:
-				int dy = b.posY-originY;
-				b.posY = originY-dy;
-				break;
-			case 2:
-				int dz = b.posZ-originZ;
-				b.posZ = originZ-dz;
-				break;
+				case 0:
+					int dx = b.posX-originX;
+					b.posX = originX-dx;
+					break;
+				case 1:
+					int dy = b.posY-originY;
+					b.posY = originY-dy;
+					break;
+				case 2:
+					int dz = b.posZ-originZ;
+					b.posZ = originZ-dz;
+					break;
 			}
 		}
 	}
@@ -74,6 +75,17 @@ public class OriginBlockCache {
 			b.posX = originX+(int)(dx*x);
 			b.posY = originY+(int)(dy*y);
 			b.posZ = originZ+(int)(dz*z);
+		}
+
+		Collection<PositionedBlock> c = new ArrayList(data);
+		for (PositionedBlock b : c) {
+			for (int i = 0; i < (int)x; i++) {
+				for (int j = 0; j < (int)y; j++) {
+					for (int k = 0; k < (int)z; k++) {
+						data.add(new PositionedBlock(b.block, b.posX+i, b.posY+j, b.posZ+k));
+					}
+				}
+			}
 		}
 	}
 

@@ -1113,6 +1113,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 					return true;
 				if (InterfaceCache.RFENERGYITEM.instanceOf(is.getItem()))
 					return true;
+				if (InterfaceCache.ENERGYITEM.instanceOf(is.getItem()))
+					return true;
 				if (InterfaceCache.IELECTRICITEM.instanceOf(is.getItem()))
 					return true;
 				if (InterfaceCache.MUSEELECTRICITEM.instanceOf(is.getItem()))

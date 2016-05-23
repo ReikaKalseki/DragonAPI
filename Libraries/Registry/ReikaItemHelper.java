@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
+import ic2.api.item.IElectricItem;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +22,8 @@ import java.util.List;
 import java.util.Random;
 import java.util.UUID;
 
+import mekanism.api.gas.IGasItem;
+import net.machinemuse.api.electricity.MuseElectricItem;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
@@ -48,7 +52,12 @@ import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaEngLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import Reika.DragonAPI.ModRegistry.ModOreList;
+import cofh.api.energy.IEnergyContainerItem;
+
+import com.builtbroken.mc.api.items.energy.IEnergyItem;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import cpw.mods.fml.relauncher.Side;
@@ -698,5 +707,22 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return 0;
 		Double get = itemMass.get(is);
 		return get != null ? get.doubleValue() : 0;
+	}
+
+	public static ItemStack dechargeItem(ItemStack is) {
+		if (is != null) {
+			Item i = is.getItem();
+			if (InterfaceCache.GASITEM.instanceOf(i))
+				((IGasItem)i).removeGas(is, Integer.MAX_VALUE);
+			if (InterfaceCache.ENERGYITEM.instanceOf(i))
+				((IEnergyItem)i).discharge(is, Double.POSITIVE_INFINITY, true);
+			if (InterfaceCache.RFENERGYITEM.instanceOf(i))
+				((IEnergyContainerItem)i).extractEnergy(is, Integer.MAX_VALUE, false);
+			if (InterfaceCache.IELECTRICITEM.instanceOf(i))
+				is = new ItemStack(((IElectricItem)i).getEmptyItem(is));
+			if (InterfaceCache.MUSEELECTRICITEM.instanceOf(i))
+				((MuseElectricItem)i).extractEnergy(is, Integer.MAX_VALUE, false);
+		}
+		return is;
 	}
 }

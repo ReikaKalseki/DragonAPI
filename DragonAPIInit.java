@@ -67,6 +67,7 @@ import Reika.DragonAPI.Auxiliary.LoggingFilters.LoggerType;
 import Reika.DragonAPI.Auxiliary.ModularLogger.ModularLoggerCommand;
 import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
+import Reika.DragonAPI.Auxiliary.RebootScheduler;
 import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.ChunkPregenerator;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
@@ -493,6 +494,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance);
 		TickRegistry.instance.registerTickHandler(TickScheduler.instance);
 		TickRegistry.instance.registerTickHandler(ChunkPregenerator.instance);
+		if (DragonOptions.AUTOREBOOT.getValue() > 0)
+			TickRegistry.instance.registerTickHandler(RebootScheduler.instance);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			TickRegistry.instance.registerTickHandler(KeyTicker.instance);
 			TickRegistry.instance.registerTickHandler(new ReikaRenderHelper.RenderTick());

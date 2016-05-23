@@ -1292,6 +1292,37 @@ public class BlockArray implements Iterable<Coordinate> {
 		return b;
 	}
 
+	public void expand(int amt, boolean rounded) {
+		HashSet<Coordinate> set = new HashSet();
+		for (Coordinate c : blocks) {
+			if (rounded) {
+				for (int i = -amt; i <= amt; i++) {
+					for (int j = -amt; j <= amt; j++) {
+						for (int k = -amt; k <= amt; k++) {
+							Coordinate c2 = c.offset(i, j, k);
+							if (!keys.contains(c2)) {
+								set.add(c2);
+							}
+						}
+					}
+				}
+			}
+			else {
+				for (int i = 0; i < 6; i++) {
+					for (int k = 1; k <= amt; k++) {
+						Coordinate c2 = c.offset(ForgeDirection.VALID_DIRECTIONS[i], k);
+						if (!keys.contains(c2)) {
+							set.add(c2);
+						}
+					}
+				}
+			}
+		}
+		for (Coordinate c : set) {
+			this.addKey(c);
+		}
+	}
+
 	private static final Comparator<Coordinate> heightComparator = new HeightComparator();
 
 	private static class HeightComparator implements Comparator<Coordinate> {

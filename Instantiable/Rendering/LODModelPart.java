@@ -25,6 +25,9 @@ import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper.RenderDistance;
 public class LODModelPart extends ModelRenderer {
 
 	private double renderDistanceSqr = -1;
+	private double lastDistance;
+	private long lastTime;
+	private TileEntity lastLocation;
 
 	public LODModelPart(ModelBase baseModel, int textureX, int textureZ) {
 		super(baseModel, textureX, textureZ);
@@ -134,17 +137,31 @@ public class LODModelPart extends ModelRenderer {
 
 	public final void render(TileEntity te, float pixelSize)
 	{
-		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
-		double rx = ep.posX;
-		double ry = ep.posY;
-		double rz = ep.posZ;
-		double dx = rx-te.xCoord;
-		double dy = ry-te.yCoord;
-		double dz = rz-te.zCoord;
-		double d = dx*dx+dy*dy+dz*dz;
+		double d = this.calcAndCacheRenderDistance(te);
 
 		if (!te.hasWorldObj() || MinecraftForgeClient.getRenderPass() == -1 || this.shouldRender(d)) {
 			super.render(pixelSize);
+		}
+	}
+
+	private double calcAndCacheRenderDistance(TileEntity te) {
+		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+		long time = Minecraft.getMinecraft().theWorld.getTotalWorldTime();
+		if (te == lastLocation && time == lastTime) {
+			return lastDistance;
+		}
+		else {
+			double rx = ep.posX;
+			double ry = ep.posY;
+			double rz = ep.posZ;
+			double dx = rx-te.xCoord-0.5;
+			double dy = ry-te.yCoord-0.5;
+			double dz = rz-te.zCoord-0.5;
+			double d = dx*dx+dy*dy+dz*dz;
+			lastLocation = te;
+			lastTime = time;
+			lastDistance = d;
+			return d;
 		}
 	}
 
