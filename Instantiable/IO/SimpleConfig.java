@@ -85,6 +85,21 @@ public final class SimpleConfig {
 		}
 	}
 
+	public float getFloat(String category, String key, float defaultValue) {
+		boolean flag = !isReading;
+		if (data.containsKey(key))
+			return ((Double)data.get(key)).floatValue();
+		else {
+			if (flag)
+				this.loadIfNecessary();
+			double param = config.get(category, key, defaultValue).getDouble();
+			data.put(key, param);
+			if (flag)
+				this.saveIfNecessary();
+			return (float)param;
+		}
+	}
+
 	public boolean getBoolean(String category, String key, boolean defaultValue) {
 		boolean flag = !isReading;
 		if (data.containsKey(key))

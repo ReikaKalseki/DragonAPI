@@ -14,6 +14,7 @@ import java.util.HashSet;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -140,6 +141,10 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		GL11.glEnable(GL11.GL_CULL_FACE);
 		GL11.glDisable(GL11.GL_BLEND);
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
+	}
+
+	public static AxisAlignedBB getBlockAABB(TileEntity te) {
+		return getBlockAABB(te.xCoord, te.yCoord, te.zCoord);
 	}
 
 	/** Returns a 1-block bounding box. Args: x, y, z */

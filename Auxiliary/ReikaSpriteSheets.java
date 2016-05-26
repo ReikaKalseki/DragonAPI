@@ -165,14 +165,34 @@ public final class ReikaSpriteSheets {
 						GL11.glRotatef(180.0F - RenderManager.instance.playerViewY-90, 0.0F, 1.0F, 0.0F);
 						GL11.glRotatef(-RenderManager.instance.playerViewX, 1.0F, 0.0F, 0.0F);
 					}
+					int c1 = 0xffffff;
+					int c2 = 0xffffff;
+					int c3 = 0xffffff;
+					int c4 = 0xffffff;
+					if (item instanceof GradientBlend) {
+						GL11.glShadeModel(GL11.GL_SMOOTH);
+						GradientBlend g = (GradientBlend)item;
+						c1 = g.getColorOne(is);
+						c2 = g.getColorTwo(is);
+						c3 = g.getColorThree(is);
+						c4 = g.getColorFour(is);
+					}
+					else if (item instanceof BlendedColor) {
+						int c = ((BlendedColor)item).getColor(is);
+						c1 = c2 = c3 = c4 = c;
+					}
 					GL11.glColor4f(1, 1, 1, 1);
 					v5.startDrawingQuads();
 					float u = col/16F;
 					float v = row/16F;
 					v5.setColorOpaque(255, 255, 255);
+					v5.setColorOpaque_I(c1);
 					v5.addVertexWithUV(0, 0, 0, u, v+0.0625);
+					v5.setColorOpaque_I(c2);
 					v5.addVertexWithUV(1, 0, 0, u+0.0625, v+0.0625);
+					v5.setColorOpaque_I(c3);
 					v5.addVertexWithUV(1, 1, 0, u+0.0625, v);
+					v5.setColorOpaque_I(c4);
 					v5.addVertexWithUV(0, 1, 0, u, v);
 					v5.draw();
 				}

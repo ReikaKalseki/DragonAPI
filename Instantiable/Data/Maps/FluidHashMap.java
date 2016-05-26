@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
@@ -25,7 +24,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class FluidHashMap<V> {
 
-	private final HashMap<String, TreeMap<Integer, V>> data = new HashMap();
+	private final HashMap<String, ThresholdMapping<V>> data = new HashMap();
 	private ArrayList<FluidStack> sorted = null;
 	private Collection<FluidStack> keyset = null;
 	private boolean modifiedKeys = true;
@@ -54,20 +53,20 @@ public final class FluidHashMap<V> {
 	}
 
 	private V putKey(FluidStack is, V value) {
-		TreeMap<Integer, V> map = this.data.get(is.getFluid().getName());
+		ThresholdMapping<V> map = this.data.get(is.getFluid().getName());
 		if (map == null) {
-			map = new TreeMap(new ReikaJavaLibrary.ReverseComparator());
+			map = new ThresholdMapping(new ReikaJavaLibrary.ReverseComparator());
 			this.data.put(is.getFluid().getName(), map);
 		}
-		return map.put(is.amount, value);
+		return map.addMapping(is.amount, value);
 	}
 
 	public V get(FluidStack is) {
-		TreeMap<Integer, V> map = this.data.get(is.getFluid().getName());
+		ThresholdMapping<V> map = this.data.get(is.getFluid().getName());
 		if (map != null) {
-			for (int key : map.keySet()) {
+			for (double key : map.keySet()) {
 				if (is.amount >= key) {
-					return map.get(key);
+					return map.getForValue(key, false);
 				}
 			}
 		}
@@ -75,9 +74,9 @@ public final class FluidHashMap<V> {
 	}
 
 	public boolean containsKey(FluidStack is) {
-		TreeMap<Integer, V> map = this.data.get(is.getFluid().getName());
+		ThresholdMapping<V> map = this.data.get(is.getFluid().getName());
 		if (map != null) {
-			for (int key : map.keySet()) {
+			for (double key : map.keySet()) {
 				if (is.amount >= key) {
 					return true;
 				}
@@ -134,8 +133,8 @@ public final class FluidHashMap<V> {
 	private Collection<FluidStack> createKeySet() {
 		ArrayList<FluidStack> li = new ArrayList();
 		for (String fs : this.data.keySet()) {
-			for (int s : this.data.get(fs).keySet()) {
-				li.add(new FluidStack(FluidRegistry.getFluid(fs), s));
+			for (double s : this.data.get(fs).keySet()) {
+				li.add(new FluidStack(FluidRegistry.getFluid(fs), (int)s));
 			}
 		}
 		return li;
@@ -163,7 +162,7 @@ public final class FluidHashMap<V> {
 	}
 
 	private V removeKey(FluidStack is) {
-		TreeMap<Integer, V> map = this.data.get(is.getFluid().getName());
+		ThresholdMapping<V> map = this.data.get(is.getFluid().getName());
 		return map != null ? map.remove(is.amount) : null;
 	}
 

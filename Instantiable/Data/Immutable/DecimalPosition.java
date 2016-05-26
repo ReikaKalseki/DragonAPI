@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import io.netty.buffer.ByteBuf;
+
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -233,6 +235,19 @@ public final class DecimalPosition {
 
 	public static DecimalPosition interpolate(DecimalPosition p1, DecimalPosition p2, double f) {
 		return new DecimalPosition(p1.xCoord+(p2.xCoord-p1.xCoord)*f, p1.yCoord+(p2.yCoord-p1.yCoord)*f, p1.zCoord+(p2.zCoord-p1.zCoord)*f);
+	}
+
+	public void writeToBuf(ByteBuf buf) {
+		buf.writeDouble(xCoord);
+		buf.writeDouble(yCoord);
+		buf.writeDouble(zCoord);
+	}
+
+	public static DecimalPosition readFromBuf(ByteBuf buf) {
+		double x = buf.readDouble();
+		double y = buf.readDouble();
+		double z = buf.readDouble();
+		return new DecimalPosition(x, y, z);
 	}
 
 }

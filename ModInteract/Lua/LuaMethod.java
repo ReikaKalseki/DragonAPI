@@ -9,13 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Lua;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 
 import net.minecraft.tileentity.TileEntity;
 import Reika.DragonAPI.ModInteract.Lua.Library.LuaFluidColor;
 import Reika.DragonAPI.ModInteract.Lua.Library.LuaGetBlock;
+import Reika.DragonAPI.ModRegistry.PowerTypes;
 import dan200.computercraft.api.lua.LuaException;
 
 public abstract class LuaMethod {
@@ -23,7 +24,7 @@ public abstract class LuaMethod {
 	public final String displayName;
 	private final Class requiredClass;
 
-	private static final ArrayList<LuaMethod> methods = new ArrayList();
+	private static final Collection<LuaMethod> methods = new HashSet();
 
 	private static final LuaMethod tanks = new LuaGetTanks();
 	private static final LuaMethod readTank = new LuaReadTank();
@@ -38,8 +39,24 @@ public abstract class LuaMethod {
 	private static final LuaMethod placer = new LuaGetPlacer();
 	private static final LuaMethod nbt = new LuaGetNBTTag();
 
+	private static final LuaMethod getRFStorage;
+	private static final LuaMethod getRFCapacity;
+	//private static final LuaMethod getEUStorage = new LuaGetStoredEU();
+	//private static final LuaMethod getEUCapacity = new LuaGetEUCapacity();
+
 	private static final LuaMethod fluidColor = new LuaFluidColor();
 	private static final LuaMethod getBlock = new LuaGetBlock();
+
+	static {
+		if (PowerTypes.RF.isLoaded()) {
+			getRFStorage = new LuaGetStoredRF();
+			getRFCapacity = new LuaGetRFCapacity();
+		}
+		else {
+			getRFStorage = null;
+			getRFCapacity = null;
+		}
+	}
 
 	public LuaMethod(String name, Class requiredParent) {
 		displayName = name;

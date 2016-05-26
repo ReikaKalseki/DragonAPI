@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import net.minecraft.item.Item;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -48,7 +49,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
-public class DragonAPIClassTransfomer implements IClassTransformer {
+public class DragonAPIClassTransformer implements IClassTransformer {
 
 	private static final MultiMap<String, ClassPatch> classes = new MultiMap(new HashSetFactory()).setNullEmpty();
 	private static int bukkitFlags;
@@ -125,6 +126,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		//NOREROUTECUSTOMTEXMAP("net.minecraft.client.renderer.texture.TextureMap", "bpz"),
 		FARDESPAWNEVENT("net.minecraft.entity.EntityLiving", "sw"),
 		//PARTICLELIMIT("net.minecraft.client.particle.EffectRenderer", "bkn"),
+		SETBLOCKLIGHT("net.minecraft.world.World", "ahb"),
 		;
 
 		private final String obfName;
@@ -1174,7 +1176,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 				}*/
 				case PERMUTEDBIOMEREG: {
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "registerVanillaBiomes", "()V");
-					m.instructions.insertBefore(m.instructions.getLast(), new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/DragonAPIClassTransfomer", "registerPermutedBiomesToDictionary", "()V", false));
+					m.instructions.insertBefore(m.instructions.getLast(), new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/DragonAPIClassTransformer", "registerPermutedBiomesToDictionary", "()V", false));
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
@@ -1311,7 +1313,7 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_150996_a", "(Lnet/minecraft/item/Item;)V");
 					InsnList li = new InsnList();
 					li.add(new VarInsnNode(Opcodes.ALOAD, 1));
-					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/DragonAPIClassTransfomer", "validateItemStack", "(Lnet/minecraft/item/Item;)V", false));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/DragonAPIClassTransformer", "validateItemStack", "(Lnet/minecraft/item/Item;)V", false));
 					m.instructions.insert(li);
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 				}
@@ -1772,6 +1774,19 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
+				case SETBLOCKLIGHT:
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147465_d", "setBlock", "(IIILnet/minecraft/block/Block;II)Z");
+					MethodInsnNode min = ReikaASMHelper.getFirstMethodCall(cn, m, cn.name, "func_147451_t", "(III)Z");
+					min.owner = "Reika/DragonAPI/ASM/DragonAPIClassTransformer";
+					min.name = "updateSetBlockLighting";
+					min.desc = "(IIILnet/minecraft/world/World;I)Z";
+					min.setOpcode(Opcodes.INVOKESTATIC);
+					m.instructions.insertBefore(min, new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.insertBefore(min, new VarInsnNode(Opcodes.ILOAD, 5));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				default:
+					break;
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
@@ -1803,6 +1818,15 @@ public class DragonAPIClassTransfomer implements IClassTransformer {
 		public boolean isExceptionThrowing() {
 			String tag = "-DragonAPI_silence_ASM_"+this.name();
 			return !ReikaJVMParser.isArgumentPresent(tag);
+		}
+	}
+
+	public static boolean updateSetBlockLighting(int x, int y, int z, World world, int flags) {
+		if ((flags & 8) == 0) {
+			return world.func_147451_t(x, y, z);
+		}
+		else {
+			return false;
 		}
 	}
 

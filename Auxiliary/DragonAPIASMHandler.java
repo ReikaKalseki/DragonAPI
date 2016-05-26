@@ -14,7 +14,7 @@ import java.util.Map;
 import net.minecraft.launchwrapper.Launch;
 import Reika.DragonAPI.ASM.APIStripper;
 import Reika.DragonAPI.ASM.DependentMethodStripper;
-import Reika.DragonAPI.ASM.DragonAPIClassTransfomer;
+import Reika.DragonAPI.ASM.DragonAPIClassTransformer;
 import Reika.DragonAPI.ASM.FMLItemBlockPatch;
 import Reika.DragonAPI.ASM.FluidNamePatch;
 import Reika.DragonAPI.ASM.InterfaceInjector;
@@ -45,7 +45,7 @@ public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 		return new String[]{
 				InterfaceInjector.class.getName(), //Must run before dependent method stripper
 				APIStripper.class.getName(),
-				DragonAPIClassTransfomer.class.getName(),
+				DragonAPIClassTransformer.class.getName(),
 				FMLItemBlockPatch.class.getName(),
 				FluidNamePatch.class.getName(),
 				DependentMethodStripper.class.getName(),

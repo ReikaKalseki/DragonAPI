@@ -511,7 +511,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		if (allowed)
 			GameRegistry.addRecipe(so);
 		else
-			DragonAPICore.logError("Recipe for "+out.getDisplayName()+" requires missing Ore Dictionary items "+missing+", and has not been loaded.");
+			DragonAPICore.log("Recipe for "+out.getDisplayName()+" requires missing Ore Dictionary items "+missing+", and has not been loaded.");
 		return allowed;
 	}
 

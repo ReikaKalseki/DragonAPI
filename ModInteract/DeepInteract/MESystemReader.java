@@ -199,14 +199,22 @@ public class MESystemReader {
 		return this.removeItemFuzzy(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true, fz, ore, nbt);
 	}
 
+	public void triggerFuzzyCrafting(World world, ItemStack is, long amt, ICraftingCallback callback, CraftCompleteCallback callback2) {
+		this.triggerCrafting(world, is, amt, callback, callback2);
+	}
+
 	/** Triggers the native crafting system to craft a given amount of a given item. Callbacks is optional. */
 	public void triggerCrafting(World world, ItemStack is, long amt, ICraftingCallback callback, CraftCompleteCallback callback2) {
 		if (node == null || node.getGrid() == null)
 			return;
 		IAEItemStack iae = this.createAEStack(is);
 		iae.setStackSize(amt);
+		if (callback == null) {
+			callback = new NoopCraftingCallback();
+		}
 		Future<ICraftingJob> f = this.getCraftingGrid().beginCraftingJob(world, node.getGrid(), actionSource, iae, callback);
-		crafting.put(f, callback2);
+		if (callback2 != null)
+			crafting.put(f, callback2);
 	}
 
 	/** You are required to call this on your reader if you want things like crafting triggers to work. */
@@ -447,4 +455,13 @@ public class MESystemReader {
 		}
 
 	}*/
+
+	private static class NoopCraftingCallback implements ICraftingCallback {
+
+		@Override
+		public void calculationComplete(ICraftingJob job) {
+
+		}
+
+	}
 }

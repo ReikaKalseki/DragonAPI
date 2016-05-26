@@ -493,4 +493,17 @@ public class ReikaFileReader extends DragonAPICore {
 	public static NBTTagCompound readUncompressedNBT(InputStream in) throws IOException {
 		return CompressedStreamTools.func_152456_a(new DataInputStream(in), NBTSizeTracker.field_152451_a);
 	}
+
+	public static boolean isEmpty(File f) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(f));
+		String line = br.readLine();
+		if (line == null || (line.length() == 0 && br.readLine() == null)) {
+			br.close();
+			return true;
+		}
+		else {
+			br.close();
+			return false;
+		}
+	}
 }
