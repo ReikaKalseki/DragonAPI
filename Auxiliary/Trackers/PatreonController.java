@@ -123,7 +123,8 @@ public final class PatreonController {
 	}
 
 	public Collection<Donator> getModPatrons(String dev) {
-		return Collections.unmodifiableCollection(data.get(dev).data.keySet());
+		Patrons p = data.get(dev);
+		return p != null ? Collections.unmodifiableCollection(p.data.keySet()) : new ArrayList();
 	}
 
 	public int getAmount(String dev, String name, UUID id) {

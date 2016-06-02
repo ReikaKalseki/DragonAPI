@@ -98,7 +98,6 @@ import Reika.DragonAPI.Interfaces.ComparableAI;
 import Reika.DragonAPI.Interfaces.Entity.CustomProjectile;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
@@ -1186,7 +1185,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			xp.xpOrbAge = age;
 			xp.velocityChanged = true;
 			if (!world.isRemote) {
-				ReikaJavaLibrary.pConsole("Collated "+n+" from "+c.size()+" V="+value);
+				//ReikaJavaLibrary.pConsole("Collated "+n+" from "+c.size()+" V="+value);
 				world.spawnEntityInWorld(xp);
 			}
 			return xp;

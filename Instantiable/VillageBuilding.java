@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -162,6 +163,20 @@ public class VillageBuilding implements IVillageCreationHandler {
 			int y = this.getYWithOffset(j);
 			int z = this.getZWithOffset(i, k);
 			return world.getTileEntity(x, y, z);
+		}
+
+		protected void clearVolume(World world) {
+			this.clearVolume(world, 0, 0, 0, xSize, ySize, zSize);
+		}
+
+		protected void clearVolume(World world, int x1, int y1, int z1, int x2, int y2, int z2) {
+			for (int i = x1; i < x2; i++) {
+				for (int k = z1; k < z2; k++) {
+					for (int j = y1; j < y2; j++) {
+						this.placeBlockAtFixedPosition(world, i, j, k, Blocks.air);
+					}
+				}
+			}
 		}
 
 	}
