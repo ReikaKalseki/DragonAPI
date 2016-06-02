@@ -12,6 +12,7 @@ package Reika.DragonAPI.ASM;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
+import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.item.Item;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.world.World;
@@ -39,10 +40,12 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodInstructionException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
+import Reika.DragonAPI.Instantiable.Event.XPUpdateEvent;
 import Reika.DragonAPI.Interfaces.ASMEnum;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
@@ -127,6 +130,8 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 		FARDESPAWNEVENT("net.minecraft.entity.EntityLiving", "sw"),
 		//PARTICLELIMIT("net.minecraft.client.particle.EffectRenderer", "bkn"),
 		SETBLOCKLIGHT("net.minecraft.world.World", "ahb"),
+		XPUPDATE("net.minecraft.entity.item.EntityXPOrb", "sq"),
+		SPAWNERCHECK("net.minecraft.tileentity.MobSpawnerBaseLogic", "agq"),
 		;
 
 		private final String obfName;
@@ -1774,9 +1779,17 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
-				case SETBLOCKLIGHT:
+				case SETBLOCKLIGHT: {
+					if (CoreModDetection.fastCraftInstalled()) {
+						ReikaASMHelper.log("Skipping "+this+" ASM handler, not compatible with FastCraft!");
+						break;
+					}
 					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147465_d", "setBlock", "(IIILnet/minecraft/block/Block;II)Z");
-					MethodInsnNode min = ReikaASMHelper.getFirstMethodCall(cn, m, cn.name, "func_147451_t", "(III)Z");
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					String cl = /*CoreModDetection.fastCraftInstalled() ? "fastcraft/J" : */cn.name;
+					String func = /*CoreModDetection.fastCraftInstalled() ? "d" : */"func_147451_t";
+					String sig = /*CoreModDetection.fastCraftInstalled() ? "(Lnet/minecraft/world/World;III)Z" : */"(III)Z";
+					MethodInsnNode min = ReikaASMHelper.getFirstMethodCall(cn, m, cl, func, sig);
 					min.owner = "Reika/DragonAPI/ASM/DragonAPIClassTransformer";
 					min.name = "updateSetBlockLighting";
 					min.desc = "(IIILnet/minecraft/world/World;I)Z";
@@ -1785,6 +1798,30 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 					m.instructions.insertBefore(min, new VarInsnNode(Opcodes.ILOAD, 5));
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
+				}
+				case XPUPDATE: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70071_h_", "onUpdate", "()V");
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					AbstractInsnNode loc = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.RETURN);
+					m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/XPUpdateEvent", "fire", "(Lnet/minecraft/entity/item/EntityXPOrb;)V", false));
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
+				case SPAWNERCHECK: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_98278_g", "updateSpawner", "()V");
+					//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+					String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_70601_bi" : "getCanSpawnHere";
+					MethodInsnNode min = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/entity/EntityLiving", func, "()Z");
+					min.owner = "Reika/DragonAPI/Instantiable/Event/EntitySpawnerCheckEvent";
+					min.name = "fire";
+					min.desc = "(Lnet/minecraft/entity/EntityLiving;Lnet/minecraft/tileentity/MobSpawnerBaseLogic;)Z";
+					min.setOpcode(Opcodes.INVOKESTATIC);
+					m.instructions.insertBefore(min, new VarInsnNode(Opcodes.ALOAD, 0));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
 				default:
 					break;
 			}
@@ -1823,10 +1860,36 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 
 	public static boolean updateSetBlockLighting(int x, int y, int z, World world, int flags) {
 		if ((flags & 8) == 0) {
-			return world.func_147451_t(x, y, z);
+			return /*CoreModDetection.fastCraftInstalled() ? (boolean)ReikaReflectionHelper.cacheAndInvokeMethod("fastcraft.J", "d", world, x, y, z) : */world.func_147451_t(x, y, z);
 		}
 		else {
 			return false;
+		}
+	}
+
+	static class test extends EntityXPOrb {
+
+		public test(World p_i1586_1_) {
+			super(p_i1586_1_);
+		}
+
+		@Override
+		public void onUpdate() {
+			super.onUpdate();
+			if (onGround)
+			{
+				motionY *= -0.8999999761581421D;
+			}
+
+			++xpColor;
+			++xpOrbAge;
+
+			if (xpOrbAge >= 6000)
+			{
+				this.setDead();
+			}
+			XPUpdateEvent.fire(this);
+
 		}
 	}
 

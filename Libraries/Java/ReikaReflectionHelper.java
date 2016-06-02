@@ -26,11 +26,14 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 public final class ReikaReflectionHelper extends DragonAPICore {
+
+	private static final PluralMap<Method> methodCache = new PluralMap(2);
 
 	public static Block createBlockInstance(DragonAPIMod mod, RegistrationList list) {
 		try {
@@ -389,6 +392,38 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		catch (Exception e) {
 			return false;
 		}
+	}
+
+	/** Note that this does not support overloading, as to do so would compromise performance. */
+	public static Object cacheAndInvokeMethod(String cl, String name, Object ref, Object... args) {
+		try {
+			Method m = methodCache.get(cl, name);
+			if (m == null) {
+				try {
+					Class c = Class.forName(cl);
+					m = c.getDeclaredMethod(cl, getArgTypesFromArgs(args));
+					m.setAccessible(true);
+					methodCache.put(m, cl, name);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+			return m.invoke(ref, args);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	private static Class[] getArgTypesFromArgs(Object[] args) {
+		Class[] arr = new Class[args.length];
+		for (int i = 0; i < arr.length; i++) {
+			arr[i] = args[i].getClass();
+		}
+		return arr;
 	}
 
 }

@@ -19,10 +19,6 @@ import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -32,33 +28,16 @@ import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.launchwrapper.Launch;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.potion.Potion;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.client.event.RenderWorldEvent;
-import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerRegisterEvent;
 import net.minecraftforge.oredict.OreDictionary;
-import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
-
-import org.lwjgl.opengl.GL11;
-
-import paulscode.sound.SoundSystemConfig;
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
@@ -83,7 +62,6 @@ import Reika.DragonAPI.Auxiliary.Trackers.PackModificationTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.PatreonController;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.PotionCollisionTracker;
-import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
 import Reika.DragonAPI.Auxiliary.Trackers.SuggestedModsTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry;
@@ -121,30 +99,20 @@ import Reika.DragonAPI.Command.StructureExportCommand;
 import Reika.DragonAPI.Command.TestControlCommand;
 import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
-import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Extras.SanityCheckNotification;
 import Reika.DragonAPI.Extras.TemporaryCodeCalls;
 import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
 import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
-import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
-import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
-import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
-import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.LagWarningFilter;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
-import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
-import Reika.DragonAPI.Libraries.ReikaFluidHelper;
-import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
-import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.ReikaPotionHelper;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaCommandHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
@@ -158,7 +126,6 @@ import Reika.DragonAPI.ModInteract.MinetweakerHooks;
 import Reika.DragonAPI.ModInteract.WailaTechnicalOverride;
 import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
 import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
-import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaThaumHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.TwilightForestLootHooks;
@@ -224,12 +191,9 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
-import cpw.mods.fml.common.eventhandler.Event.Result;
-import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(modid = "DragonAPI", certificateFingerprint = "@GET_FINGERPRINT@", dependencies=DragonAPICore.dependencies)
 public class DragonAPIInit extends DragonAPIMod {
@@ -696,225 +660,6 @@ public class DragonAPIInit extends DragonAPIMod {
 		DragonAPICore.log("ASM Transformers Loaded: "+Launch.classLoader.getTransformers().size());
 		if (MinecraftServer.getServer() != null)
 			DragonAPICore.log("Commands Loaded: "+ReikaCommandHelper.getCommandList().size());
-	}
-
-	@SubscribeEvent
-	public void catchNullOreDict(OreRegisterEvent evt) {
-		if (evt.Ore == null || evt.Ore.getItem() == null)
-			throw new WTFException("Someone registered null to the OreDictionary under the name '"+evt.Name+"'!", true);
-		else if (evt.Name == null || evt.Name.isEmpty())
-			throw new WTFException("Someone registered "+evt.Ore+" under a null or empty OreDict name!", true);
-		else {
-			logger.log("Logged OreDict registration of "+evt.Ore+" as '"+evt.Name+"'.");
-		}
-	}
-
-	@SubscribeEvent
-	public void mapFluidContainers(FluidContainerRegisterEvent evt) {
-		Fluid f = evt.data.fluid.getFluid();
-		ItemStack fill = evt.data.filledContainer;
-		ItemStack empty = evt.data.emptyContainer;
-		StringBuilder sb = new StringBuilder();
-		sb.append("Logged FluidContainer registration of ");
-		sb.append(f.getName());
-		sb.append(" with filled '");
-		sb.append(fill != null ? fill.getDisplayName() : "[null]");
-		sb.append("' and empty '");
-		sb.append(empty != null ? empty.getDisplayName() : "[null]");
-		sb.append("'.");
-		logger.log(sb.toString());
-		ReikaFluidHelper.mapContainerToFluid(f, empty, fill);
-	}
-
-	@SubscribeEvent
-	public void onClose(WorldEvent.Unload evt) {
-
-	}
-
-	@SubscribeEvent
-	public void onLoad(WorldEvent.Load evt) {
-
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void increaseChannels(SoundSetupEvent evt) {
-		if (DragonOptions.SOUNDCHANNELS.getState()) {
-			SoundSystemConfig.setNumberNormalChannels(256);
-		}
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void onGameLoaded(GameFinishedLoadingEvent evt) throws InterruptedException {
-		this.checkRemoteAssetDownload();
-		//if (ModList.liteLoaderInstalled())
-		if (!ReikaObfuscationHelper.isDeObfEnvironment())
-			Minecraft.getMinecraft().refreshResources();
-		if (ModList.NEI.isLoaded()) {
-			NEIIntercept.instance.register();
-			//NEIFontRendererHandler.instance.register();
-		}
-		proxy.registerSidedHandlersGameLoaded();
-		ReflectiveFailureTracker.instance.print();
-	}
-
-	private void checkRemoteAssetDownload() throws InterruptedException {
-		long time = 0;
-		long d = 100;
-		while (!RemoteAssetLoader.instance.isDownloadComplete()) {
-			if (time%5000 == 0) {
-				String p = String.format("%.2f", 100*RemoteAssetLoader.instance.getDownloadProgress());
-				String s = "Remote asset downloads not yet complete (current = "+p+"%). Pausing game load. Total delay: "+time+" ms.";
-				logger.log(s);
-			}
-			Thread.sleep(d);
-			time += d;
-		}
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void stopHotbarSwap(HotbarKeyEvent evt) {
-		if (DragonOptions.NOHOTBARSWAP.getState())
-			evt.setCanceled(true);
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void disableAlphaTest(RenderWorldEvent.Pre evt) {
-		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-		if (DragonOptions.NOALPHATEST.getState())
-			GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.01F);
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void disableAlphaTest(RenderWorldEvent.Post evt) {
-		GL11.glPopAttrib();
-	}
-
-	@SubscribeEvent
-	public void sendInteractToClient(PlayerInteractEvent evt) {
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER && !ReikaPlayerAPI.isFake(evt.entityPlayer)) {
-			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERINTERACT.ordinal(), new PacketTarget.PlayerTarget((EntityPlayerMP)evt.entityPlayer), evt.x, evt.y, evt.z, evt.face, evt.action.ordinal());
-		}
-	}
-
-	@SubscribeEvent
-	public void clearItems(ItemUpdateEvent evt) {
-		if (ClearItemsCommand.clearItem(evt.entityItem)) {
-			evt.entityItem.setDead();
-		}
-	}
-
-	@SubscribeEvent
-	public void tagDroppedItems(ItemTossEvent evt) {
-		if (evt.player != null) {
-			String s = evt.player.getUniqueID().toString();
-			evt.entityItem.getEntityData().setString("dropper", s);
-			//ReikaPacketHelper.sendStringIntPacket(packetChannel, PacketIDs.ITEMDROPPER.ordinal(), new PacketTarget.DimensionTarget(evt.entityItem.worldObj), s, evt.entityItem.getEntityId());
-		}
-	}
-
-	@SubscribeEvent
-	public void tagDroppedItems(EntityJoinWorldEvent evt) {
-		if (evt.entity instanceof EntityItem && evt.world.isRemote) {
-			//ReikaJavaLibrary.pConsole("Sending clientside request for Entity ID "+evt.entity.getEntityId());
-			ReikaPacketHelper.sendDataPacket(packetChannel, PacketIDs.ITEMDROPPERREQUEST.ordinal(), new PacketTarget.ServerTarget(), evt.entity.getEntityId());
-		}
-	}
-
-	@SubscribeEvent
-	@SideOnly(Side.CLIENT)
-	public void confirmNumericIDs(ChatEventPost evt) {
-		if (evt.chatMessage.startsWith("Warning: Using numeric IDs will not be supported in the future")) {
-			String item1 = EnumChatFormatting.GOLD+"/give item.forestry.apiculture.bee.template.root3";
-			String item2 = EnumChatFormatting.GOLD+"/give item.gregtech.machine.primary.transformer.hv.ruby";
-			String c = EnumChatFormatting.LIGHT_PURPLE.toString();
-			ReikaChatHelper.writeString(c+"Numeric IDs will remain functional as long as I am here,");
-			ReikaChatHelper.writeString(c+"because not everyone wants to type");
-			ReikaChatHelper.writeString(c+"'"+item1+c+"'");
-			ReikaChatHelper.writeString(c+"or");
-			ReikaChatHelper.writeString(c+"'"+item2+c+"'.");
-			ReikaChatHelper.writeString(c+"-DragonAPI");
-		}
-	}
-
-	@SubscribeEvent
-	public void verifyCraftingRecipe(AddRecipeEvent evt) {
-		if (!evt.isVanillaPass) {
-			try {
-				if (!ReikaRecipeHelper.verifyRecipe(evt.recipe)) {
-					String msg = "Class="+evt.recipe.getClass();
-					if (evt.recipe.getRecipeOutput() != null && evt.recipe.getRecipeOutput().getItem() != null)
-						msg += ", Output="+evt.recipe.getRecipeOutput();
-					else if (evt.recipe.getRecipeOutput() != null)
-						msg += ", Output is a null-item ItemStack";
-					logger.log("Invalid recipe, such as with nulled inputs, found. Removing to prevent crashes. "+msg+".");
-					evt.setCanceled(true);
-				}
-			}
-			catch (Exception e) {
-				logger.logError("Could not parse crafting recipe");
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public void verifySmeltingRecipe(AddSmeltingEvent evt) {
-		if (!evt.isVanillaPass) {
-			try {
-				ItemStack in = evt.getInput();
-				ItemStack out = evt.getOutput();
-				if (in == null || in.getItem() == null) {
-					logger.logError("Found a null-input (or null-item input) smelting recipe! "+null+" > "+out+"! This is invalid!");
-					Thread.dumpStack();
-					evt.setCanceled(true);
-				}
-				else if (out == null || out.getItem() == null) {
-					logger.logError("Found a null-output (or null-item output) smelting recipe! "+in+" > "+null+"! This is invalid!");
-					Thread.dumpStack();
-					evt.setCanceled(true);
-				}
-				else if (!ReikaItemHelper.verifyItemStack(in, true)) {
-					logger.logError("Found a smelting recipe with an invalid input!");
-					Thread.dumpStack();
-					evt.setCanceled(true);
-				}
-				else if (!ReikaItemHelper.verifyItemStack(out, true)) {
-					logger.logError("Found a smelting recipe with an invalid output!");
-					Thread.dumpStack();
-					evt.setCanceled(true);
-				}
-			}
-			catch (Exception e) {
-				logger.logError("Could not parse smelting recipe");
-				e.printStackTrace();
-			}
-		}
-	}
-
-	@SubscribeEvent
-	public void addGuideGUI(PlayerInteractEvent evt) {
-		EntityPlayer ep = evt.entityPlayer;
-		ItemStack is = ep.getCurrentEquippedItem();
-		if (is != null && is.getItem() == Items.enchanted_book) {
-			if (is.stackTagCompound != null) {
-				NBTTagCompound disp = is.stackTagCompound.getCompoundTag("display");
-				if (disp != null) {
-					NBTTagList list = disp.getTagList("Lore", NBTTypes.STRING.ID);
-					if (list != null && list.tagCount() > 0) {
-						String sg = list.getStringTagAt(0);
-						if (sg != null && sg.equals("Reika's Mods Guide")) {
-							ep.openGui(instance, 0, ep.worldObj, 0, 0, 0);
-							evt.setResult(Result.ALLOW);
-						}
-					}
-				}
-			}
-		}
 	}
 
 	private void alCompat() { //Why the hell are there three standards for aluminum?

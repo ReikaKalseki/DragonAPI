@@ -238,6 +238,12 @@ public class BiomeMapCommand extends DragonCommandBase {
 		private int getBiomeColor(World world, int x, int z, BiomeGenBase b) {
 			if (b == null)
 				return 0x000000; //should never happen
+
+			boolean mutate = b instanceof BiomeGenMutated;
+			if (mutate) {
+				b = ((BiomeGenMutated)b).baseBiome;
+			}
+
 			if (b == BiomeGenBase.hell) {
 				return 0xC12603;
 			}
@@ -272,7 +278,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 				return 0x22aaff;
 
 			if (b instanceof BiomeGenMesa) {
-				return 0xC4542B;
+				return mutate ? 0xCE7352 : 0xC4542B;
 			}
 
 			if (b instanceof BiomeGenMushroomIsland) {
@@ -309,7 +315,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 			int c = b.getBiomeGrassColor(x, 64, z);
 
-			if (b instanceof BiomeGenMutated) {
+			if (mutate) {
 				c = ReikaColorAPI.getColorWithBrightnessMultiplier(c, 0.875F);
 			}
 			else if (ReikaBiomeHelper.isChildBiome(b)) {

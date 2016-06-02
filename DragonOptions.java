@@ -47,6 +47,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
 	DIRECTOC("Direct OpenComputers Support", true),
 	AUTOREBOOT("Automatic Reboot Interval (Seconds)", -1),
+	XPMERGE("Merge XP Orbs Like Items", true),
 	;
 
 	private String label;

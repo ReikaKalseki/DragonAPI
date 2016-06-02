@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Command;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import Reika.DragonAPI.Auxiliary.Trackers.ChunkPregenerator;
@@ -19,6 +20,10 @@ public class ChunkGenCommand extends DragonCommandBase {
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
+		if (args.length != 4) {
+			this.sendChatToSender(ics, EnumChatFormatting.RED+"Invalid arguments. Use [dim] [perTick] [ctrX] [ctrZ] [radius].");
+			return;
+		}
 		try {
 			int dim = Integer.parseInt(args[0]);
 			WorldServer world = DimensionManager.getWorld(dim);
@@ -27,10 +32,10 @@ public class ChunkGenCommand extends DragonCommandBase {
 			int ctrZ = Integer.parseInt(args[3]);
 			int radius = Integer.parseInt(args[4]);
 			ChunkPregenerator.instance.addChunks(world, pertick, ctrX, ctrZ, radius);
-			this.sendChatToSender(ics, "Queued a pregen of chunks R="+radius+" around "+ctrX+","+ctrZ+" in DIM"+dim+". Genning "+pertick+" c/t.");
+			this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Queued a pregen of chunks R="+radius+" around "+ctrX+","+ctrZ+" in DIM"+dim+". Genning "+pertick+" c/t.");
 		}
 		catch (NumberFormatException e) {
-			this.sendChatToSender(ics, "Error parsing argument: "+e.getMessage());
+			this.sendChatToSender(ics, EnumChatFormatting.RED+"Error parsing argument: "+e.getMessage());
 			e.printStackTrace();
 		}
 	}

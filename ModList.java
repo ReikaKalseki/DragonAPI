@@ -12,7 +12,6 @@ package Reika.DragonAPI;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
 
@@ -118,26 +117,23 @@ public enum ModList implements ModEntry, Dependency {
 
 	private final boolean condition;
 	public final String modLabel;
-	private final String[] itemClass;
-	private final String[] blockClass;
+	private final String[] itemClasses;
+	private final String[] blockClasses;
 
 	private final HashMap<String, ModHandlerBase> handlers = new HashMap();
 
 	//To save on repeated Class.forName
-	private static final EnumMap<ModList, Class> blockClasses = new EnumMap(ModList.class);
-	private static final EnumMap<ModList, Class> itemClasses = new EnumMap(ModList.class);
+	private Class blockClass;
+	private Class itemClass;
 	private static final HashMap<String, ModList> modIDs = new HashMap();
-
-	private static final Class liteClass;
-	private static final Class optiClass;
 
 	public static final ModList[] modList = values();
 
 	private ModList(String label, String[] blocks, String[] items) {
 		modLabel = label;
 		condition = Loader.isModLoaded(modLabel);
-		itemClass = items;
-		blockClass = blocks;
+		itemClasses = items;
+		blockClasses = blocks;
 		if (condition) {
 			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" detected in the MC installation. Adjusting behavior accordingly.");
 		}
@@ -187,55 +183,51 @@ public enum ModList implements ModEntry, Dependency {
 	}
 
 	public Class getBlockClass() {
-		if (blockClass == null || blockClass.length == 0) {
+		if (blockClasses == null || blockClasses.length == 0) {
 			DragonAPICore.logError("Could not load block class for "+this+". Null class provided.");
 			ReikaJavaLibrary.dumpStack();
 			return null;
 		}
-		Class c = blockClasses.get(this);
-		if (c == null) {
-			for (String s : blockClass) {
-				c = this.findClass(s);
-				if (c != null) {
-					blockClasses.put(this, c);
-					DragonAPICore.log("Found block class for "+this+": "+c);
+		if (blockClass == null) {
+			for (String s : blockClasses) {
+				blockClass = this.findClass(s);
+				if (blockClass != null) {
+					DragonAPICore.log("Found block class for "+this+": "+blockClass);
 					break;
 				}
 			}
-			if (c == null) {
-				String sgs = Arrays.toString(blockClass);
+			if (blockClass == null) {
+				String sgs = Arrays.toString(blockClasses);
 				DragonAPICore.logError("Could not load block class for "+this+". Not found: "+sgs);
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(this, new ClassNotFoundException(sgs));
 				return null;
 			}
 		}
-		return c;
+		return blockClass;
 	}
 
 	public Class getItemClass() {
-		if (itemClass == null || itemClass.length == 0) {
+		if (itemClasses == null || itemClasses.length == 0) {
 			DragonAPICore.logError("Could not load item class for "+this+". Null class provided.");
 			ReikaJavaLibrary.dumpStack();
 			return null;
 		}
-		Class c = itemClasses.get(this);
-		if (c == null) {
-			for (String s : itemClass) {
-				c = this.findClass(s);
-				if (c != null) {
-					itemClasses.put(this, c);
-					DragonAPICore.log("Found item class for "+this+": "+c);
+		if (itemClass == null) {
+			for (String s : itemClasses) {
+				itemClass = this.findClass(s);
+				if (itemClass != null) {
+					DragonAPICore.log("Found item class for "+this+": "+itemClass);
 					break;
 				}
 			}
-			if (c == null) {
-				String sgs = Arrays.toString(itemClass);
+			if (itemClass == null) {
+				String sgs = Arrays.toString(itemClasses);
 				DragonAPICore.logError("Could not load item class for "+this+". Not found: "+sgs);
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(this, new ClassNotFoundException(sgs));
 				return null;
 			}
 		}
-		return c;
+		return itemClass;
 	}
 
 	public boolean isLoaded() {
@@ -310,40 +302,6 @@ public enum ModList implements ModEntry, Dependency {
 			modIDs.put(id, null);
 			return null;
 		}
-	}
-
-	public static boolean liteLoaderInstalled() {
-		return liteClass != null;
-	}
-
-	public static boolean optifineInstalled() {
-		return optiClass != null;
-	}
-
-	static {
-		Class c = null;
-		try {
-			c = Class.forName("com.mumfrey.liteloader.core.LiteLoader");
-			ReikaJavaLibrary.pConsole("DRAGONAPI: LiteLoader detected. Loading compatibility features.");
-			ReikaJavaLibrary.pConsole("DRAGONAPI: \t\tNote that some parts of the game, especially sounds and textures, may error out.");
-			ReikaJavaLibrary.pConsole("DRAGONAPI: \t\tTry reloading resources (F3+T) to fix this.");
-		}
-		catch (ClassNotFoundException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: LiteLoader not detected.");
-		}
-		liteClass = c;
-
-		c = null;
-		try {
-			c = Class.forName("optifine.OptiFineTweaker");
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Optifine detected. Loading compatibility features.");
-			ReikaJavaLibrary.pConsole("DRAGONAPI: \t\tNote that some parts of the game, especially rendering and textures, may error out.");
-			ReikaJavaLibrary.pConsole("DRAGONAPI: \t\tTry reloading resources (F3+T) to fix this.");
-		}
-		catch (ClassNotFoundException e) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Optifine not detected.");
-		}
-		optiClass = c;
 	}
 
 }

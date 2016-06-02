@@ -21,6 +21,8 @@ import appeng.api.networking.GridNotification;
 import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridBlock;
 import appeng.api.networking.IGridHost;
+import appeng.api.networking.IGridNode;
+import appeng.api.networking.events.MENetworkPowerIdleChange;
 import appeng.api.util.AEColor;
 import appeng.api.util.DimensionalCoord;
 
@@ -30,16 +32,36 @@ public class BasicAEInterface implements IGridBlock {
 	private final TileEntity tile;
 	private final ItemStack item;
 
+	private double powerCost = 1;
+
 	public BasicAEInterface(TileEntity te, ItemStack is) {
+		this(te, is, 1);
+	}
+
+	public BasicAEInterface(TileEntity te, ItemStack is, double basePower) {
 		if (!(te instanceof IGridHost))
 			throw new MisuseException("You cannot use a non-AE-gridHost block!");
 		tile = te;
 		item = is;
+		powerCost = basePower;
+	}
+
+	public void setPowerCost(double val) {
+		if (val != powerCost) {
+			IGridNode ig = ((IGridHost)tile).getGridNode(ForgeDirection.UNKNOWN);
+			if (ig != null) {
+				IGrid g = ig.getGrid();
+				if (g != null) {
+					powerCost = val;
+					g.postEvent(new MENetworkPowerIdleChange(ig));
+				}
+			}
+		}
 	}
 
 	@Override
 	public double getIdlePowerUsage() {
-		return 1;
+		return powerCost;
 	}
 
 	@Override

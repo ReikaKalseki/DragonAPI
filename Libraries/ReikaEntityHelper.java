@@ -98,6 +98,7 @@ import Reika.DragonAPI.Interfaces.ComparableAI;
 import Reika.DragonAPI.Interfaces.Entity.CustomProjectile;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
@@ -1144,6 +1145,71 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			mass += ReikaItemHelper.getItemMass(e.getEquipmentInSlot(i));
 		}
 		return mass;
+	}
+
+	public static EntityXPOrb mergeXPOrbs(World world, Collection<EntityXPOrb> c) {
+		double x = 0;
+		double y = 0;
+		double z = 0;
+		double vx = 0;
+		double vy = 0;
+		double vz = 0;
+		int n = 0;
+		int value = 0;
+		int age = Integer.MAX_VALUE;
+		for (EntityXPOrb e : c) {
+			if (e.isDead || e.xpValue <= 0 || e.xpOrbAge < 2)
+				continue;
+			e.setDead();
+			x += e.posX;
+			y += e.posY;
+			z += e.posZ;
+			vx += e.motionX;
+			vy += e.motionY;
+			vz += e.motionZ;
+			n++;
+			value += e.xpValue;
+			age = Math.min(age, e.xpOrbAge);
+			e.xpValue = 0;
+		}
+		if (n > 0 && value > 0) {
+			x /= n;
+			y /= n;
+			z /= n;
+			vx /= n;
+			vy /= n;
+			vz /= n;
+			EntityXPOrb xp = new EntityXPOrb(world, x, y, z, value);
+			xp.motionX = vx;
+			xp.motionY = vy;
+			xp.motionZ = vz;
+			xp.xpOrbAge = age;
+			xp.velocityChanged = true;
+			if (!world.isRemote) {
+				ReikaJavaLibrary.pConsole("Collated "+n+" from "+c.size()+" V="+value);
+				world.spawnEntityInWorld(xp);
+			}
+			return xp;
+		}
+		return null;
+	}
+
+	public static EntityXPOrb mergeXPOrbs(EntityXPOrb e1, EntityXPOrb e2) {
+		if (e1.isDead)
+			return e2;
+		if (e2.isDead)
+			return e1;
+		e1.setDead();
+		e2.setDead();
+		double x = (e1.posX+e2.posX)/2;
+		double y = (e1.posY+e2.posY)/2;
+		double z = (e1.posZ+e2.posZ)/2;
+		EntityXPOrb xp = new EntityXPOrb(e1.worldObj, x, y, z, e1.xpValue+e2.xpValue);
+		xp.xpOrbAge = Math.min(e1.xpOrbAge, e2.xpOrbAge);
+		if (!e1.worldObj.isRemote) {
+			e1.worldObj.spawnEntityInWorld(xp);
+		}
+		return xp;
 	}
 
 }
