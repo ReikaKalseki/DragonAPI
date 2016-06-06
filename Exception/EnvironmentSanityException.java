@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Exception;
 
+import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Auxiliary.Trackers.EnvironmentSanityChecker;
+
 
 
 public class EnvironmentSanityException extends DragonAPIException {
@@ -27,6 +30,7 @@ public class EnvironmentSanityException extends DragonAPIException {
 		IDMISMATCH(),
 		INVALIDVALUE(),
 		UNPARSEABLE(),
+		LOOT(),
 		OREDICT();
 
 		public String getString(Object... data) {
@@ -42,7 +46,9 @@ public class EnvironmentSanityException extends DragonAPIException {
 				case UNPARSEABLE:
 					return data[0]+" ("+data[0].getClass()+") throws an exception ("+data[1]+") when trying to parse it for '"+data[2]+"'! This is almost certainly caused by an illegal internal state.";
 				case OREDICT:
-					return data[0]+" ("+data[0].getClass()+") registered to the OreDict as '"+data[1]+"', but is an invalid item, throwing "+data[2]+" when parsing '"+data[3]+"'!";
+					return EnvironmentSanityChecker.getSafeItemString((ItemStack)data[0])+" ("+data[0].getClass()+") registered to the OreDict as '"+data[1]+"', but is an invalid item, throwing "+data[2]+" when parsing '"+data[3]+"'!";
+				case LOOT:
+					return EnvironmentSanityChecker.getSafeItemString((ItemStack)data[0])+" was registered to the loot table '"+data[1]+"', and is invalid: "+data[2];
 			}
 			return "";
 		}

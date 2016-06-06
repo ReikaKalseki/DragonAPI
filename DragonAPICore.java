@@ -43,7 +43,7 @@ public class DragonAPICore {
 
 	private static final long launchTime = ManagementFactory.getRuntimeMXBean().getStartTime();
 
-	private static final String MINFORGE = "required-after:Forge@[10.13.0.1558,);"; //was 1205/1231/1291
+	private static final String MINFORGE = "required-after:Forge@[10.13.4.1558,);"; //was 1205/1231/1291
 	public static final String dependencies = MINFORGE+"after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;"+
 			"after:powersuits;after:GalacticCraft;after:Mystcraft;after:UniversalElectricity;after:Forestry;after:MagicBees;"+
 			"after:BinnieCore;after:Natura;after:TConstruct;after:ProjRed|Core;after:bluepower;after:Waila;after:funkylocomotion;after:chisel;"+

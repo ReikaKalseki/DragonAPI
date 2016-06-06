@@ -31,6 +31,11 @@ public class ThresholdMapping<V> {
 		return this.data.put(thresh, value);
 	}
 
+	public Double getKeyForValue(double v, boolean ceil) {
+		Double d = ceil ? data.ceilingKey(v) : data.floorKey(v);
+		return d != null ? d : null;
+	}
+
 	public V getForValue(double v, boolean ceil) {
 		Double d = ceil ? data.ceilingKey(v) : data.floorKey(v);
 		return d != null ? this.data.get(d) : null;

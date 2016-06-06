@@ -9,8 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary.Trackers;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.block.Block;
@@ -22,8 +25,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
+import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
@@ -51,6 +56,7 @@ public class EnvironmentSanityChecker {
 		this.checkBiomes();
 		this.checkEnchants();
 		this.checkPotions();
+		this.checkDungeonLoot();
 		this.checkOreDict();
 	}
 
@@ -131,6 +137,51 @@ public class EnvironmentSanityChecker {
 		}
 	}
 
+	private void checkDungeonLoot() {
+		try {
+			Field f = ChestGenHooks.class.getDeclaredField("chestInfo");
+			f.setAccessible(true);
+			Field f2 = ChestGenHooks.class.getDeclaredField("contents");
+			f2.setAccessible(true);
+			Map<String, ChestGenHooks> map = (Map<String, ChestGenHooks>)f.get(null);
+			for (String s : map.keySet()) {
+				ChestGenHooks c = map.get(s);
+				ArrayList<WeightedRandomChestContent> li = (ArrayList<WeightedRandomChestContent>)f2.get(c);
+				Iterator<WeightedRandomChestContent> it = li.iterator();
+				while (it.hasNext()) {
+					WeightedRandomChestContent w = it.next();
+					ItemStack is = w.theItemId;
+					try {
+						if (is == null) {
+							throw new EnvironmentSanityException(ErrorType.LOOT, is, s, "Null Stack");
+						}
+						else if (is.getItem() == null) {
+							throw new EnvironmentSanityException(ErrorType.LOOT, is, s, "Null-Item ItemStack");
+						}
+						else if (is.getItem() == null) {
+							throw new EnvironmentSanityException(ErrorType.LOOT, is, s, "Null-Item ItemStack");
+						}
+						else if (!ReikaItemHelper.verifyItemStack(is, true)) {
+							throw new EnvironmentSanityException(ErrorType.LOOT, is, s, "Errors on handling");
+						}
+					}
+					catch (EnvironmentSanityException e) {
+						if (DragonOptions.FIXSANITY.getState()) {
+							DragonAPICore.logError("Found invalid item "+getSafeItemString(is)+" registered to dungeon loot tag '"+s+"'");
+							it.remove();
+						}
+						else {
+							throw e;
+						}
+					}
+				}
+			}
+		}
+		catch (ReflectiveOperationException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private void checkOreDict() {
 		String[] tags = OreDictionary.getOreNames();
 		for (int i = 0; i < tags.length; i++) {
@@ -143,7 +194,7 @@ public class EnvironmentSanityChecker {
 				catch (EnvironmentSanityException e) {
 					if (DragonOptions.FIXSANITY.getState()) {
 						try {
-							DragonAPICore.logError("Found invalid item "+is+" registered to OreDict "+tag+": "+e);
+							DragonAPICore.logError("Found invalid item "+getSafeItemString(is)+" registered to OreDict "+tag+": "+e);
 							e.printStackTrace();
 							ReikaItemHelper.removeOreDictEntry(tag, is);
 						}
@@ -312,6 +363,20 @@ public class EnvironmentSanityChecker {
 				p.setPotionName("NULL");
 			else
 				throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, p, p.getName(), "Name");
+		}
+	}
+
+	public static String getSafeItemString(ItemStack is) {
+		if (is == null)
+			return "null";
+		else if (is.getItem() == null) {
+			return "null-item";
+		}
+		try {
+			return is.toString()+" {"+ReikaItemHelper.getRegistrantMod(is)+"}";
+		}
+		catch (Exception e) {
+			return "[THREW "+e.toString()+"]";
 		}
 	}
 

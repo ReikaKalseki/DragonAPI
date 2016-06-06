@@ -15,6 +15,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.Vec3;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Interpolation;
 
 public final class ReikaPhysicsHelper extends DragonAPICore {
 
@@ -28,6 +29,18 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 	public static final double ELECTRON_MASS = 9.11/ReikaMathLibrary.doubpow(10, 31);
 	public static final double NEUTRON_MASS = 1.674/ReikaMathLibrary.doubpow(10, 27);
 	public static final double PROTON_MASS = 1.672/ReikaMathLibrary.doubpow(10, 27);
+
+	private static final Interpolation tempColorList = new Interpolation();
+
+	static {
+		tempColorList.add(500, 0x000000);
+		tempColorList.add(700, 0x9C0000);
+		tempColorList.add(1700, 0xff0000);
+		tempColorList.add(2700, 0xFF9C00);
+		tempColorList.add(3700, 0xFFFF00);
+		tempColorList.add(5700, 0xFFFFFF);
+		tempColorList.add(9700, 0x56C4FF);
+	}
 
 	/** Converts 3D polar coordinates into cartesian ones. Use angles in degrees. Args: magnitude, theta, phi */
 	public static double[] polarToCartesian(double mag, double theta, double phi) {
@@ -189,5 +202,10 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 		e.motionY += -2*vel*vec.yCoord;
 		e.motionZ += -2*vel*vec.zCoord;
 		e.velocityChanged = true;
+	}
+
+	/** Blackbody */
+	public static int getColorForTemperature(int temp) {
+		return (int)tempColorList.getValue(temp);
 	}
 }

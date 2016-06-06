@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary.Trackers;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 
@@ -31,20 +29,20 @@ public class TickScheduler implements TickHandler {
 
 	@Override
 	public void tick(TickType type, Object... tickData) {
-		Collection<ScheduledTickEvent> remove = new ArrayList();
+		HashMap<ScheduledTickEvent, Integer> map = new HashMap();
 		for (ScheduledTickEvent evt : data.keySet()) {
 			int val = data.get(evt);
 			val--;
 			if (val == 0) {
 				evt.fire();
-				remove.add(evt);
 			}
 			else {
-				data.put(evt, val);
+				map.put(evt, val);
 			}
 		}
-		for (ScheduledTickEvent evt : remove) {
-			data.remove(evt);
+		if (!data.isEmpty() && !map.isEmpty()) {
+			data.clear();
+			data.putAll(map);
 		}
 	}
 

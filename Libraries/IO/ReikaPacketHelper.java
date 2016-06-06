@@ -1196,6 +1196,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 	}
 
 	public static void sendSyncPacket(String ch, TileEntity te, String field) {
+		sendSyncPacket(ch, te, field, false);
+	}
+
+	public static void sendSyncPacket(String ch, TileEntity te, String field, boolean forceClient) {
 		int x = te.xCoord;
 		int y = te.yCoord;
 		int z = te.zCoord;
@@ -1205,12 +1209,14 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		try {
 			Field f = ReikaReflectionHelper.getProtectedInheritedField(te, field);
 			f.setAccessible(true);
-			int data = f.getInt(te);
+			Object obj = f.get(te);
 			writeString(field, outputStream);
 			outputStream.writeInt(x);
 			outputStream.writeInt(y);
 			outputStream.writeInt(z);
-			outputStream.writeInt(data);
+			PacketableData type = PacketableData.getType(obj);
+			outputStream.writeInt(type.ordinal());
+			type.write(outputStream, obj);
 		}
 		catch (IllegalAccessException ex) {
 			ex.printStackTrace();
@@ -1237,10 +1243,84 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			new PacketTarget.RadiusTarget(te, 24).dispatch(pipe, pack);
 		}
 		else if (side == Side.CLIENT) {
-			DragonAPICore.logError(te+" sent a sync packet from the client! This is not allowed!");
+			if (forceClient)
+				new PacketTarget.ServerTarget().dispatch(pipe, pack);
+			else
+				DragonAPICore.logError(te+" sent a sync packet from the client! This is not allowed!");
 		}
 		else {
 			// We are on the Bukkit server.
+		}
+	}
+
+	private static enum PacketableData {
+		INT("I", Integer.class),
+		BOOLEAN("B", Boolean.class),
+		DOUBLE("D", Double.class),
+		FLOAT("F", Float.class),
+		STRING("S", String.class);
+
+		private final String id;
+		private final Class type;
+
+		private static final HashMap<String, PacketableData> typeMap = new HashMap();
+		private static final HashMap<Class, PacketableData> classMap = new HashMap();
+		private static final PacketableData[] list = values();
+
+		private PacketableData(String s, Class c) {
+			id = s;
+			type = c;
+		}
+
+		private void write(DataOutputStream out, Object obj) throws IOException {
+			switch(this) {
+				case BOOLEAN:
+					out.writeBoolean((boolean)obj);
+					break;
+				case DOUBLE:
+					out.writeDouble((double)obj);
+					break;
+				case FLOAT:
+					out.writeFloat((float)obj);
+					break;
+				case INT:
+					out.writeInt((int)obj);
+					break;
+				case STRING:
+					writeString((String)obj, out);
+					break;
+			}
+		}
+
+		private Object read(DataInputStream in) throws IOException {
+			switch(this) {
+				case BOOLEAN:
+					return in.readBoolean();
+				case DOUBLE:
+					return in.readDouble();
+				case FLOAT:
+					return in.readFloat();
+				case INT:
+					return in.readInt();
+				case STRING:
+					return readString(in);
+			}
+			return null;
+		}
+
+		private static PacketableData getType(Object o) {
+			return classMap.get(o.getClass());
+		}
+
+		private static PacketableData getType(String id) {
+			return typeMap.get(id);
+		}
+
+		static {
+			for (int i = 0; i < list.length; i++) {
+				typeMap.put(list[i].id, list[i]);
+				classMap.put(list[i].type, list[i]);
+			}
 		}
 	}
 
@@ -1340,7 +1420,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		return pack;
 	}
 
-	public static void updateTileEntityData(World world, int x, int y, int z, String name, int data) {
+	public static void updateTileEntityData(World world, int x, int y, int z, String name, DataInputStream in) {
 		if (world.checkChunksExist(x, y, z, x, y, z)) {
 			TileEntity te = world.getTileEntity(x, y, z);
 			if (te == null) {
@@ -1353,6 +1433,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 					//DragonAPICore.log("Null field for syncing tank field "+name);
 					return;
 				}
+				Object data = PacketableData.list[in.readInt()].read(in);
 				f.setAccessible(true);
 				f.set(te, data);
 			}

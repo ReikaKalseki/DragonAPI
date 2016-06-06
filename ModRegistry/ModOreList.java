@@ -125,7 +125,7 @@ public enum ModOreList implements OreType {
 	MANA("Mana", 0x70DAFC, OreRarity.SCARCE, "ingotMana", 1, "oreMana"),
 	NETHERSALTPETER("Nether Saltpeter", 0xdddddd, OreRarity.SCARCE, "dustSaltpeter", 4, "oreNetherSaltpeter"),
 	THORIUM("Thorium", 0x595959, OreRarity.SCARCE, "dustThorium", 1, "oreThorium", "oreThorite", "oreThorianite"),
-	DRACONIUM("Draconium", 0x9F01E2, OreRarity.SCATTERED, "dustDraconium", 1, "oreDraconium"),
+	DRACONIUM("Draconium", 0x9F01E2, OreRarity.SCATTERED, "dustDraconium", 2, "oreDraconium"),
 	ENDIUM("Endium", 0x372356, OreRarity.SCATTERED, "ingotEndium", 1, "oreEndium");
 
 	private ArrayList<ItemStack> ores = new ArrayList();
