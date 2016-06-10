@@ -84,7 +84,7 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 		PLAYERRENDERPASS("net.minecraft.entity.player.EntityPlayer", "yz"),
 		//CHATSIZE("net.minecraft.client.gui.GuiNewChat", "bcc"),
 		//PLAYERRENDER("net.minecraft.client.renderer.entity.RenderPlayer", "bop"),
-		//TILEUPDATE("net.minecraft.world.World", "ahb"),
+		TILEUPDATE("net.minecraft.world.World", "ahb"),
 		//TILEUPDATE1("net.minecraft.world.World", "ahb"),
 		//TILEUPDATE2("net.minecraft.tileentity.TileEntity", "aor"),
 		FURNACEUPDATE("net.minecraft.tileentity.TileEntityFurnace", "apg"),
@@ -959,6 +959,20 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}*/
+				case TILEUPDATE: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_72939_s", "updateEntities", "()V");
+					String name = FMLForgePlugin.RUNTIME_DEOBF ? "func_145837_r" : "isInvalid";
+					String name2 = FMLForgePlugin.RUNTIME_DEOBF ? "func_72899_e" : "blockExists";
+					MethodInsnNode loc1 = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/tileentity/TileEntity", name, "()Z");
+					MethodInsnNode loc2 = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/world/World", name2, "(III)Z");
+					JumpInsnNode jump = (JumpInsnNode)loc2.getNext();
+					jump.setOpcode(Opcodes.IFNE);
+					ReikaASMHelper.deleteFrom(m.instructions, loc1, loc2);
+					m.instructions.insertBefore(jump, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/TileUpdateEvent", "fire", "(Lnet/minecraft/tileentity/TileEntity;)Z", false));
+
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+					break;
+				}
 				case FURNACEUPDATE: {
 					InsnList pre = new InsnList();
 					LabelNode L1 = new LabelNode();

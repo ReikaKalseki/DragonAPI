@@ -30,17 +30,17 @@ public class TickScheduler implements TickHandler {
 	@Override
 	public void tick(TickType type, Object... tickData) {
 		HashMap<ScheduledTickEvent, Integer> map = new HashMap();
-		for (ScheduledTickEvent evt : data.keySet()) {
-			int val = data.get(evt);
-			val--;
-			if (val == 0) {
-				evt.fire();
+		if (!data.isEmpty()) {
+			for (ScheduledTickEvent evt : data.keySet()) {
+				int val = data.get(evt);
+				val--;
+				if (val == 0) {
+					evt.fire();
+				}
+				else {
+					map.put(evt, val);
+				}
 			}
-			else {
-				map.put(evt, val);
-			}
-		}
-		if (!data.isEmpty() && !map.isEmpty()) {
 			data.clear();
 			data.putAll(map);
 		}

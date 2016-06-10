@@ -97,7 +97,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		var5.startDrawing(GL11.GL_LINE_LOOP);
 		var5.setColorRGBA_I(rgba, rgba >> 24 & 255);
 		for (int i = 0; i < 360; i += step) {
-			var5.addVertex(x+r*Math.cos(Math.toRadians(i)), y, z+r*Math.sin(Math.toRadians(i)));
+			double a = Math.toRadians(i);
+			var5.addVertex(x+r*Math.cos(a), y, z+r*Math.sin(a));
 		}
 		var5.draw();
 		//GL11.glDisable(GL12.GL_RESCALE_NORMAL);
@@ -257,6 +258,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 					name = r.getImageFileName(te);
 			}
 		}
+		if (name == null)
+			return false;
 		String file = basedir+name;
 		for (int i = 0; i < 48; i++) {
 			int k = rand.nextInt(allowedRegions.size());

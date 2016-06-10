@@ -11,10 +11,22 @@ package Reika.DragonAPI.Exception;
 
 import net.minecraft.potion.Potion;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.config.Property;
+import net.minecraftforge.common.config.Property.Type;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Extras.IDType;
 
 public class StupidIDException extends DragonAPIException {
+
+	public StupidIDException(DragonAPIMod mod, Property id, Type req) {
+		message.append(mod.getDisplayName()+" was not installed correctly:\n");
+		message.append("ID '"+id.getString()+"' is completely invalid, as it is the wrong type ("+id.getType()+" when it should be "+req+").\n");
+		message.append("Please learn how IDs work before attempting to modify configs.\n");
+		if (req == Type.INTEGER)
+			message.append("IDs must be integers.\n");
+		message.append("This is NOT a mod bug. Do not post it or ask for support or you will look extremely foolish.");
+		this.crash();
+	}
 
 	public StupidIDException(DragonAPIMod mod, int ID, IDType type) {
 		message.append(mod.getDisplayName()+" was not installed correctly:\n");
@@ -36,16 +48,16 @@ public class StupidIDException extends DragonAPIException {
 
 	private int getMaxAllowable(IDType type) {
 		switch(type) {
-		case BIOME:
-			return BiomeGenBase.biomeList.length-1-1; //255 is reserved
-		case BLOCK:
-			return 4095;
-		case ITEM:
-			return 32767;
-		case POTION:
-			return Potion.potionTypes.length-1;
-		default:
-			return -1;
+			case BIOME:
+				return BiomeGenBase.biomeList.length-1-1; //255 is reserved
+			case BLOCK:
+				return 4095;
+			case ITEM:
+				return 32767;
+			case POTION:
+				return Potion.potionTypes.length-1;
+			default:
+				return -1;
 		}
 	}
 

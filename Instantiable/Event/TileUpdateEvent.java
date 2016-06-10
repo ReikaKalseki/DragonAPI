@@ -21,8 +21,8 @@ public class TileUpdateEvent extends TileEntityEvent {
 	}
 
 	public static boolean fire(TileEntity te) {
-		//if (te.isInvalid() || !te.hasWorldObj() || !te.worldObj.blockExists(te.xCoord, te.yCoord, te.zCoord))
-		//	return true;
+		if (te.isInvalid() || !te.hasWorldObj() || !te.worldObj.blockExists(te.xCoord, te.yCoord, te.zCoord))
+			return true;
 		return MinecraftForge.EVENT_BUS.post(new TileUpdateEvent(te));
 	}
 

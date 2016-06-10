@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.MathSci;
 
+import java.awt.Polygon;
+
 import net.minecraft.util.MathHelper;
 import Reika.DragonAPI.DragonAPICore;
 
@@ -545,5 +547,19 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static long cycleBitsRight(long num, int n) {
 		n = n&63;
 		return (num >> n) | (num << (64-n));
+	}
+
+	public static boolean isPointInsidePolygon(int x, int z, int n, int r) {
+		if (x*x+z*z > r*r)
+			return false;
+		double da = 360D/(2*n);
+		Polygon p = new Polygon();
+		for (int i = 0; i < n; i++) {
+			double a = Math.toRadians(da+i*360D/n);
+			double dx = r*Math.cos(a);
+			double dz = r*Math.sin(a);
+			p.addPoint((int)Math.round(dx), (int)Math.round(dz));
+		}
+		return p.contains(x, z);
 	}
 }

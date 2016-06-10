@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 import java.util.Set;
 
@@ -28,12 +29,15 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.fluids.Fluid;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Extras.NeedsImplementation;
 import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
@@ -43,12 +47,16 @@ import com.xcompwiz.mystcraft.api.MystObjects;
 import com.xcompwiz.mystcraft.api.exception.APIUndefined;
 import com.xcompwiz.mystcraft.api.exception.APIVersionRemoved;
 import com.xcompwiz.mystcraft.api.exception.APIVersionUndefined;
+import com.xcompwiz.mystcraft.api.hook.DimensionAPI;
 import com.xcompwiz.mystcraft.api.hook.PageAPI;
 import com.xcompwiz.mystcraft.api.hook.SymbolAPI;
 import com.xcompwiz.mystcraft.api.hook.SymbolValuesAPI;
 import com.xcompwiz.mystcraft.api.linking.ILinkInfo;
 import com.xcompwiz.mystcraft.api.symbol.IAgeSymbol;
+import com.xcompwiz.mystcraft.api.world.AgeDirector;
+import com.xcompwiz.mystcraft.api.world.logic.IPopulate;
 
+import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.event.FMLInterModComms;
 
 
@@ -101,7 +109,8 @@ public class ReikaMystcraftHelper {
 		int id = world.provider.dimensionId;
 		if (id == 0 || id == 1 || id == -1 || id == ReikaTwilightHelper.getDimensionID() || id == ExtraUtilsHandler.getInstance().darkID)
 			return false;
-		return world.provider.getClass().getSimpleName().equals("WorldProviderMyst");
+		DimensionAPI d = (DimensionAPI)getAPI(APISegment.DIMENSION, 1);
+		return d != null && d.isMystcraftAge(id);//world.provider.getClass().getSimpleName().equals("WorldProviderMyst");
 	}
 	/*
 	public static int getStabilityForAge(World world) {
@@ -463,6 +472,7 @@ public class ReikaMystcraftHelper {
 		}
 	}
 
+	@NeedsImplementation
 	public static void setRandomAgeWeight(IAgeSymbol a, float weight) {
 		//TODO
 	}
@@ -576,6 +586,89 @@ public class ReikaMystcraftHelper {
 		getTile = tile;
 		getBook = book;
 		getLink = link;
+	}
+
+	public static IAgeSymbol createIWorldGeneratorPage(IWorldGenerator gen, String[] poem, int instability) {
+		return new IWGSymbol(gen, poem, instability);
+	}
+
+	private static final class IWGSymbol extends BasicAgeSymbol {
+
+		private final IWorldGenerator generator;
+
+		public IWGSymbol(IWorldGenerator gen, String[] poem, int instability) {
+			super(gen.getClass().getName().toLowerCase(Locale.ENGLISH).replaceAll("\\.", "_"), gen.getClass().getSimpleName(), poem, instability);
+			generator = gen;
+		}
+
+		@Override
+		public void registerLogic(AgeDirector age, long seed) {
+			age.registerInterface(new IWGRelay(generator));
+		}
+
+	}
+
+	private static final class IWGRelay implements IPopulate {
+
+		private final IWorldGenerator generator;
+
+		public IWGRelay(IWorldGenerator gen) {
+			generator = gen;
+		}
+
+		@Override
+		public boolean populate(World world, Random rand, int x, int y, boolean flag) {
+			IChunkProvider prov = world.getChunkProvider();
+			IChunkProvider gen = ((ChunkProviderServer)prov).currentChunkProvider;
+			generator.generate(rand, x, y, world, gen, prov);
+			return true;
+		}
+
+	}
+
+	public static class BasicAgeSymbol implements IAgeSymbol {
+
+		public final String id;
+		public final String name;
+		private final String[] words;
+		public final int instability;
+
+		public BasicAgeSymbol(String id, String n, String[] poem) {
+			this(id, n, poem, 0);
+		}
+
+		public BasicAgeSymbol(String id, String n, String[] poem, int inst) {
+			this.id = id;
+			name = n;
+			words = poem;
+			instability = inst;
+		}
+
+		@Override
+		public void registerLogic(AgeDirector controller, long seed) {
+
+		}
+
+		@Override
+		public int instabilityModifier(int count) {
+			return instability;
+		}
+
+		@Override
+		public final String identifier() {
+			return id;
+		}
+
+		@Override
+		public final String displayName() {
+			return name;
+		}
+
+		@Override
+		public final String[] getPoem() {
+			return words;
+		}
+
 	}
 
 }

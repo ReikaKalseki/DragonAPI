@@ -87,4 +87,8 @@ public class BlockSpiral {
 		return blocks.getSize();
 	}
 
+	public boolean isEmpty() {
+		return blocks.isEmpty();
+	}
+
 }

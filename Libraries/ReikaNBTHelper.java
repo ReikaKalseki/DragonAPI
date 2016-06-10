@@ -118,9 +118,10 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 		else if (NBT instanceof NBTTagCompound) {
 			HashMap<String, Object> map = new HashMap();
-			for (Object o : ((NBTTagCompound)NBT).func_150296_c()) {
+			NBTTagCompound tag = (NBTTagCompound)NBT;
+			for (Object o : tag.func_150296_c()) {
 				String s = (String)o;
-				map.put(s, getValue(((NBTTagCompound)NBT).getTag(s)));
+				map.put(s, getValue(tag.getTag(s)));
 			}
 			return map;
 		}
@@ -166,9 +167,10 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 		else if (o instanceof Map) {
 			NBTTagCompound tag = new NBTTagCompound();
-			for (Object k : ((Map)o).keySet()) {
+			Map m = (Map)o;
+			for (Object k : m.keySet()) {
 				if (k instanceof String) {
-					tag.setTag((String)k, getTagForObject(((Map)o).get(k)));
+					tag.setTag((String)k, getTagForObject(m.get(k)));
 				}
 			}
 			return tag;
@@ -352,6 +354,15 @@ public final class ReikaNBTHelper extends DragonAPICore {
 				tag.setTag(s, b);
 			}
 		}
+	}
+
+	public static HashMap<String, ?> readMapFromNBT(NBTTagCompound tag, String s) {
+		return (HashMap<String, ?>)getValue(tag.getCompoundTag(s));
+	}
+
+	public static void writeMapToNBT(String s, NBTTagCompound tag, HashMap<String, ?> map) {
+		NBTBase dat = getTagForObject(map);
+		tag.setTag(s, dat);
 	}
 
 }

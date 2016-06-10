@@ -32,6 +32,7 @@ import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -875,6 +876,89 @@ public class ReikaASMHelper {
 		AnnotationNode cp = new AnnotationNode(a.desc);
 		cp.values.addAll(a.values);
 		return cp;
+	}
+
+	public static void changeFirstNumericalArgument(InsnList li, int num, int repl) {
+		int look = getOpcodeForNum(num);
+		AbstractInsnNode put = getInsnForNum(repl);
+		if (put != null) {
+			for (int i = 0; i < li.size(); i++) {
+				AbstractInsnNode ain = li.get(i);
+				if (ain.getOpcode() == look) {
+					if (matchNumberNode(ain, num)) {
+						li.insert(ain, put);
+						li.remove(ain);
+					}
+				}
+			}
+		}
+	}
+
+	public static boolean matchNumberNode(AbstractInsnNode ain, int val) {
+		switch(ain.getOpcode()) {
+			case Opcodes.ICONST_0:
+			case Opcodes.ICONST_1:
+			case Opcodes.ICONST_2:
+			case Opcodes.ICONST_3:
+			case Opcodes.ICONST_4:
+			case Opcodes.ICONST_5:
+				return true;
+			case Opcodes.BIPUSH:
+			case Opcodes.SIPUSH:
+				return ((IntInsnNode)ain).operand == val;
+			case Opcodes.LDC:
+				return ((LdcInsnNode)ain).cst.equals(val);
+		}
+		return false;
+	}
+
+	public static AbstractInsnNode getInsnForNum(int val) {
+		int set = getOpcodeForNum(val);
+		switch(set) {
+			case Opcodes.ICONST_0:
+			case Opcodes.ICONST_1:
+			case Opcodes.ICONST_2:
+			case Opcodes.ICONST_3:
+			case Opcodes.ICONST_4:
+			case Opcodes.ICONST_5:
+				return new InsnNode(set);
+			case Opcodes.BIPUSH:
+			case Opcodes.SIPUSH:
+				return new IntInsnNode(set, val);
+			case Opcodes.LDC:
+				return new LdcInsnNode(val);
+		}
+		return null;
+	}
+
+	private static int getOpcodeForNum(int val) {
+		if (val == 0) {
+			return Opcodes.ICONST_0;
+		}
+		else if (val == 1) {
+			return Opcodes.ICONST_1;
+		}
+		else if (val == 2) {
+			return Opcodes.ICONST_2;
+		}
+		else if (val == 3) {
+			return Opcodes.ICONST_3;
+		}
+		else if (val == 4) {
+			return Opcodes.ICONST_4;
+		}
+		else if (val == 5) {
+			return Opcodes.ICONST_5;
+		}
+		else if (val <= 255) {
+			return Opcodes.BIPUSH; //byte int push
+		}
+		else if (val <= 32767) {
+			return Opcodes.SIPUSH; //short int push
+		}
+		else {
+			return Opcodes.LDC;
+		}
 	}
 
 }

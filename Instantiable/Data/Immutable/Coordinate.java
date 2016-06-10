@@ -317,4 +317,8 @@ public final class Coordinate {
 		return this.offset(c.negate());
 	}
 
+	public void destroyBlockPartially(World world, double i) {
+		world.destroyBlockInWorldPartially(Block.getIdFromBlock(this.getBlock(world)), xCoord, yCoord, zCoord, (int)i);
+	}
+
 }

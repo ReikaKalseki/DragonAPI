@@ -46,8 +46,10 @@ public final class PatreonController {
 		}
 		DonatorFile f = new DonatorFile(dev);
 		ArrayList<String> lines = ReikaFileReader.getFileAsLines(file, 10000, false, f);
-		if (lines != null)
+		if (lines != null) {
+			DragonAPICore.log("Loading "+lines.size()+" patrons for "+dev);
 			this.addPatrons(dev, lines);
+		}
 	}
 
 	private void addPatrons(String dev, ArrayList<String> lines) {
@@ -111,6 +113,7 @@ public final class PatreonController {
 	private void addPatron(String dev, String name, String ingame, int amt) {
 		Patrons p = this.getOrCreate(dev);
 		p.addPatron(name, ingame != null ? UUID.fromString(ingame) : null, amt);
+		DragonAPICore.log("Adding patron to "+dev+": "+name+" / "+ingame+" @ $"+amt);
 	}
 
 	private Patrons getOrCreate(String dev) {

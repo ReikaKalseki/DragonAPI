@@ -25,11 +25,13 @@ import net.minecraft.util.Session;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.common.config.Property.Type;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.InvalidConfigException;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.Exception.StupidIDException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
@@ -532,6 +534,8 @@ public class ControlledConfig {
 		}
 		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
 			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
+		if (!prop.isBooleanValue())
+			throw new StupidIDException(configMod, prop, Type.BOOLEAN);
 		return prop.getBoolean(cfg.getDefaultState());
 	}
 
@@ -548,6 +552,8 @@ public class ControlledConfig {
 		}
 		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
 			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
+		if (!prop.isIntValue())
+			throw new StupidIDException(configMod, prop, Type.INTEGER);
 		return prop.getInt();
 	}
 
@@ -564,6 +570,8 @@ public class ControlledConfig {
 		}
 		if (cfg instanceof BoundedConfig && !((BoundedConfig)cfg).isValueValid(prop))
 			throw new InvalidConfigException(configMod, (BoundedConfig)cfg, prop);
+		if (!prop.isDoubleValue())
+			throw new StupidIDException(configMod, prop, Type.DOUBLE);
 		return (float)prop.getDouble(cfg.getDefaultFloat());
 	}
 
@@ -630,7 +638,10 @@ public class ControlledConfig {
 	}
 
 	private int getValueFromConfig(IDRegistry id, Configuration config) {
-		return config.get(id.getCategory(), id.getConfigName(), id.getDefaultID()).getInt();
+		Property prop = config.get(id.getCategory(), id.getConfigName(), String.valueOf(id.getDefaultID()));
+		if (!prop.isIntValue())
+			throw new StupidIDException(configMod, prop, Type.INTEGER);
+		return prop.getInt(id.getDefaultID());
 	}
 
 	private final void loadAdditionalData() {
