@@ -28,6 +28,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
 import Reika.DragonAPI.DragonAPICore;
@@ -376,5 +377,41 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		if (n.contains("cablebus"))
 			return true;
 		return false;
+	}
+
+	public static int getSignMetadataToConnectToWall(World world, int x, int y, int z, int meta) {
+		ForgeDirection dir = getWallSignDirection(meta);
+		if (dir == ForgeDirection.UNKNOWN)
+			return meta;
+		int dx = x+dir.offsetX;
+		int dz = z+dir.offsetZ;
+		Block b = world.getBlock(dx, y, dz);
+		if (b.isOpaqueCube() || b.isSideSolid(world, dx, y, dz, dir.getOpposite()))
+			return meta;
+		for (int i = 2; i < 6; i++) {
+			ForgeDirection dir2 = getWallSignDirection(i);
+			if (dir == ForgeDirection.UNKNOWN)
+				return meta;
+			int ddx = x+dir2.offsetX;
+			int ddz = z+dir2.offsetZ;
+			Block b2 = world.getBlock(ddx, y, ddz);
+			if (b2.isOpaqueCube() || b2.isSideSolid(world, ddx, y, ddz, dir2.getOpposite()))
+				return i;
+		}
+		return meta;
+	}
+
+	public static ForgeDirection getWallSignDirection(int meta) {
+		switch(meta) {
+			case 2:
+				return ForgeDirection.SOUTH;
+			case 3:
+				return ForgeDirection.NORTH;
+			case 4:
+				return ForgeDirection.EAST;
+			case 5:
+				return ForgeDirection.WEST;
+		}
+		return ForgeDirection.UNKNOWN;
 	}
 }

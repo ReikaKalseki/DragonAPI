@@ -460,7 +460,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 		if (this.shouldRunUpdateCode()) {
 			try {
-				this.updateTileEntity();
+				if (!same)
+					this.updateTileEntity();
 				this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
 			}
 			catch (IndexOutOfBoundsException e) {

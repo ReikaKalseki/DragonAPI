@@ -32,6 +32,7 @@ import org.objectweb.asm.tree.MethodNode;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 
@@ -39,6 +40,7 @@ public class DependentMethodStripper implements IClassTransformer {
 
 	private static final String baseString = "LReika/DragonAPI/ASM/DependentMethodStripper$";
 	private static final boolean DEBUG = true;
+	private static final boolean runInDev = ReikaJVMParser.isArgumentPresent("-DragonAPI_ForceMethodStrip");
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] bytes) {
@@ -104,7 +106,7 @@ public class DependentMethodStripper implements IClassTransformer {
 		if (anns == null) {
 			return null;
 		}
-		if (!FMLForgePlugin.RUNTIME_DEOBF) //prevents needing to always reload game in dev env (ASM not run on src edit, so Eclipse thinks new methods)
+		if (!FMLForgePlugin.RUNTIME_DEOBF && !runInDev) //prevents needing to always reload game in dev env (ASM not run on src edit, so Eclipse thinks new methods)
 			return null;
 		for (AnnotationNode ann : anns) {
 			if (isDependencyAnnotation(ann)) {

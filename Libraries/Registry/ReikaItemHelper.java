@@ -520,6 +520,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static String getRegistrantMod(ItemStack is) {
+		if (isVanillaItem(is))
+			return "Minecraft";
 		UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(is.getItem());
 		return id != null ? id.modId : "[No Mod]";
 	}
@@ -555,6 +557,15 @@ public final class ReikaItemHelper extends DragonAPICore {
 			set.add(OreDictionary.getOreName(ids[i]));
 		}
 		return set;
+	}
+
+	public static String[] getOreNamesArray(ItemStack is) {
+		int[] ids = OreDictionary.getOreIDs(is);
+		String[] ore = new String[ids.length];
+		for (int i = 0; i < ore.length; i++) {
+			ore[i] = OreDictionary.getOreName(ids[i]);
+		}
+		return ore;
 	}
 
 	public static boolean isInOreTag(ItemStack is, String name) {

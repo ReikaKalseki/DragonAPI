@@ -268,6 +268,9 @@ public class BiomeMapCommand extends DragonCommandBase {
 			else if (b.biomeName.equalsIgnoreCase("Lush Swamp")) {
 				return 0x009000;
 			}
+			else if (b.biomeName.equalsIgnoreCase("Bayou")) {
+				return 0x7B7F4F; //Eew
+			}
 			else if (ReikaBiomeHelper.isOcean(b)) {
 				if (b == BiomeGenBase.deepOcean)
 					return 0x0000b0;

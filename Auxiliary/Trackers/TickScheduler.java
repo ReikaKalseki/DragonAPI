@@ -22,6 +22,7 @@ public class TickScheduler implements TickHandler {
 	public static final TickScheduler instance = new TickScheduler();
 
 	private final HashMap<ScheduledTickEvent, Integer> data = new HashMap();
+	private static final Object lock = new Object();
 
 	private TickScheduler() {
 
@@ -29,20 +30,22 @@ public class TickScheduler implements TickHandler {
 
 	@Override
 	public void tick(TickType type, Object... tickData) {
-		HashMap<ScheduledTickEvent, Integer> map = new HashMap();
-		if (!data.isEmpty()) {
-			for (ScheduledTickEvent evt : data.keySet()) {
-				int val = data.get(evt);
-				val--;
-				if (val == 0) {
-					evt.fire();
+		synchronized(lock) {
+			HashMap<ScheduledTickEvent, Integer> map = new HashMap();
+			if (!data.isEmpty()) {
+				for (ScheduledTickEvent evt : data.keySet()) {
+					int val = data.get(evt);
+					val--;
+					if (val == 0) {
+						evt.fire();
+					}
+					else {
+						map.put(evt, val);
+					}
 				}
-				else {
-					map.put(evt, val);
-				}
+				data.clear();
+				data.putAll(map);
 			}
-			data.clear();
-			data.putAll(map);
 		}
 	}
 
@@ -62,7 +65,9 @@ public class TickScheduler implements TickHandler {
 	}
 
 	public void scheduleEvent(ScheduledTickEvent evt, int ticks) {
-		data.put(evt, ticks);
+		synchronized(lock) {
+			data.put(evt, ticks);
+		}
 	}
 
 }

@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces.TileEntity;
 
-public interface InertIInv {
+import net.minecraft.inventory.IInventory;
+
+public interface InertIInv extends IInventory {
 
 }

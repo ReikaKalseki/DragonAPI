@@ -602,7 +602,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 						inarr[i] = in.get(i);
 					}
 					//GameRegistry.addShapelessRecipe(s.getRecipeOutput(), inarr);
-					copies.add(new ShapelessRecipes(s.getRecipeOutput(), ReikaJavaLibrary.copyList(in)));
+					copies.add(new ShapelessRecipes(s.getRecipeOutput(), new ArrayList(in)));
 				}
 				if (match) {
 					for (int i = 0; i < in.size(); i++) {

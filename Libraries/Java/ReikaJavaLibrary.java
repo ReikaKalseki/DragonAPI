@@ -204,14 +204,6 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return null;
 	}
 
-	/** Copies a list. Can accept a null argument. */
-	public static <T> List<T> copyList(List<T> li) {
-		if (li == null)
-			return null;
-		List<T> n = new ArrayList<T>(li);
-		return n;
-	}
-
 	public static boolean doesClassExist(String cl) {
 		try {
 			Class.forName(cl);

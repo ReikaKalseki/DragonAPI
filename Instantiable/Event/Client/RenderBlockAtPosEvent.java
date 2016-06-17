@@ -47,7 +47,7 @@ public class RenderBlockAtPosEvent extends Event {
 		renderPass = pass;
 	}
 
-	public static boolean fire(WorldRenderer wr, RenderBlocks rb, Block b, int x, int y, int z, int pass) {
+	public static boolean fire(RenderBlocks rb, Block b, int x, int y, int z, WorldRenderer wr, int pass) {
 		Event evt = new RenderBlockAtPosEvent(wr, rb.blockAccess, rb, b, x, y, z, pass);
 		boolean flag = !MinecraftForge.EVENT_BUS.post(evt);
 		if (flag)

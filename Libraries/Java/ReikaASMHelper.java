@@ -17,6 +17,7 @@ import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -415,6 +416,19 @@ public class ReikaASMHelper {
 		return match(ain, opcode, args) ? ain : null;
 	}
 
+	public static AbstractInsnNode getNthInsn(int n, InsnList li, int opcode, Object... args) {
+		int count = 0;
+		for (int i = 0; i < li.size(); i++) {
+			AbstractInsnNode ain = li.get(i);
+			if (match(ain, opcode, args)) {
+				count++;
+				if (count == n)
+					return ain;
+			}
+		}
+		return null;
+	}
+
 	public static AbstractInsnNode getLastInsn(InsnList li, int opcode, Object... args) {
 		return getLastInsnBefore(li, li.size()-1, opcode, args);
 	}
@@ -765,30 +779,36 @@ public class ReikaASMHelper {
 
 	private static enum PrimitiveType {
 
-		VOID("V", void.class),
-		INT("I", int.class),
-		BOOLEAN("Z", boolean.class),
-		BYTE("B", byte.class),
-		LONG("L", long.class),
-		SHORT("S", short.class),
-		FLOAT("F", float.class),
-		DOUBLE("D", double.class),
-		INTARRAY("[I", int[].class),
-		BYTEARRAY("[B", byte[].class),
-		SHORTARRAY("[S", short[].class),
-		DOUBARRAY("[D", double[].class),
-		BOOLARRAY("[Z", boolean[].class),
-		FLOATARRAY("[F", float[].class),
-		OBJECT("", Object.class);
+		VOID("V",			void.class, 		Opcodes.RETURN,		Opcodes.ACONST_NULL, 	Opcodes.ASTORE),
+		INT("I",			int.class, 			Opcodes.IRETURN, 	Opcodes.ILOAD, 			Opcodes.ISTORE),
+		BOOLEAN("Z",		boolean.class, 		Opcodes.IRETURN,	Opcodes.ILOAD, 			Opcodes.ISTORE),
+		BYTE("B",			byte.class,			Opcodes.IRETURN, 	Opcodes.ILOAD, 			Opcodes.ISTORE),
+		LONG("L",			long.class,			Opcodes.LRETURN, 	Opcodes.LLOAD, 			Opcodes.LSTORE),
+		SHORT("S",			short.class, 		Opcodes.IRETURN, 	Opcodes.ILOAD, 			Opcodes.ISTORE),
+		FLOAT("F",			float.class, 		Opcodes.FRETURN, 	Opcodes.FLOAD, 			Opcodes.FSTORE),
+		DOUBLE("D",			double.class, 		Opcodes.DRETURN, 	Opcodes.DLOAD, 			Opcodes.DSTORE),
+		INTARRAY("[I",		int[].class, 		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE),
+		BYTEARRAY("[B",		byte[].class, 		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE),
+		SHORTARRAY("[S",	short[].class, 		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE),
+		DOUBARRAY("[D",		double[].class, 	Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE),
+		BOOLARRAY("[Z",		boolean[].class,	Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE),
+		FLOATARRAY("[F",	float[].class,		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE),
+		OBJECT("",			Object.class,		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE);
 
 		private final String id;
 		private final Class classType;
+		private final int returnCode;
+		private final int loadCode;
+		private final int storeCode;
 
 		private static final HashMap<String, PrimitiveType> map = new HashMap();
 
-		private PrimitiveType(String s, Class c) {
+		private PrimitiveType(String s, Class c, int retcode, int loadcode, int storecode) {
 			id = s;
 			classType = c;
+			returnCode = retcode;
+			loadCode = loadcode;
+			storeCode = storecode;
 		}
 
 		private static PrimitiveType getFromSig(String id) {
@@ -959,6 +979,36 @@ public class ReikaASMHelper {
 		else {
 			return Opcodes.LDC;
 		}
+	}
+
+	public static MethodInsnNode getCallerInsn(String owner, MethodNode mn) {
+		int opcode = Opcodes.INVOKEVIRTUAL;
+		if ((mn.access & Modifier.PRIVATE) != 0)
+			opcode = Opcodes.INVOKESPECIAL;
+		if (mn.name.equals("<init>"))
+			opcode = Opcodes.INVOKESPECIAL;
+		if ((mn.access & Modifier.STATIC) != 0)
+			opcode = Opcodes.INVOKESTATIC;
+		if ((mn.access & Modifier.INTERFACE) != 0)
+			opcode = Opcodes.INVOKEINTERFACE;
+		return new MethodInsnNode(opcode, owner, mn.name, mn.desc, opcode == Opcodes.INVOKEINTERFACE);
+	}
+
+	public static int getOpcodeForMethodReturn(MethodInsnNode m) {
+		ArrayList<String> li = parseMethodSignature(m);
+		String type = li.get(li.size()-1);
+		PrimitiveType p = PrimitiveType.getFromSig(type);
+		if (p != null) {
+			return p.returnCode;
+		}
+		return Opcodes.ARETURN;
+	}
+
+	public static InsnList getIntReturnInsnList(int val) {
+		InsnList li = new InsnList();
+		li.add(getInsnForNum(val));
+		li.add(new InsnNode(Opcodes.IRETURN));
+		return li;
 	}
 
 }

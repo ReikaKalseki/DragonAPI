@@ -365,4 +365,22 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		tag.setTag(s, dat);
 	}
 
+	public static NBTBase getNestedNBTTag(NBTTagCompound tag, ArrayList<String> li, String name) {
+		for (String s : li) {
+			tag = tag.getCompoundTag(s);
+			if (tag == null || tag.hasNoTags())
+				return null;
+		}
+		return tag.getTag(name);
+	}
+
+	public static void replaceTag(NBTTagCompound NBT, String s, NBTBase tag) {
+		NBT.setTag(s, tag);
+	}
+
+	public static void replaceTag(NBTTagList NBT, int idx, NBTBase tag) {
+		NBT.tagList.remove(idx);
+		NBT.tagList.add(idx, tag);
+	}
+
 }

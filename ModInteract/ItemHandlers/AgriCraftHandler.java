@@ -13,19 +13,25 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
+import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
 
 import com.InfinityRaider.AgriCraft.api.API;
 import com.InfinityRaider.AgriCraft.api.APIBase;
-import com.InfinityRaider.AgriCraft.api.v1.APIv1;
-import com.InfinityRaider.AgriCraft.api.v1.ICropPlant;
+import com.InfinityRaider.AgriCraft.api.v2.APIv2;
+import com.InfinityRaider.AgriCraft.api.v2.ICrop;
+import com.InfinityRaider.AgriCraft.api.v2.ICropPlant;
 
 public class AgriCraftHandler extends CropHandlerBase {
 
 	private static final AgriCraftHandler instance = new AgriCraftHandler();
+
+	private static final WeightedRandom<Integer> tallGrassRand = new WeightedRandom();
 
 	private Object api;
 	private final int GROWN = 7;
@@ -36,10 +42,10 @@ public class AgriCraftHandler extends CropHandlerBase {
 		super();
 		try {
 			if (this.getMod().isLoaded()) {
-				APIBase a = API.getAPI(1);
-				if (a != null && a.getStatus().isOK() && a.getVersion() == 1) {
+				APIBase a = API.getAPI(2);
+				if (a != null && a.getStatus().isOK() && a.getVersion() == 2) {
 					api = a;
-					cropBlocks.addAll(((APIv1)api).getCropsBlocks());
+					cropBlocks.addAll(((APIv2)api).getCropsBlocks());
 				}
 				else {
 					api = null;
@@ -86,22 +92,30 @@ public class AgriCraftHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isSeedItem(ItemStack is) {
-		return api != null && ((APIv1)api).isHandledByAgricraft(is);
+		return api != null && ((APIv2)api).isHandledByAgricraft(is);
 	}
 
 	@Override
 	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
 		if (api == null)
 			return null;
-		APIv1 apiv1 = (APIv1)api;
-		int gain = apiv1.getStats(world, x, y, z).getGain();
-		ICropPlant plant = apiv1.getCropPlant(world, x, y, z);
+		APIv2 apiv2 = (APIv2)api;
+		int gain = apiv2.getStats(world, x, y, z).getGain();
+		ICropPlant plant = apiv2.getCropPlant(world, x, y, z);
 		return gain > 0 && plant != null ? plant.getFruitsOnHarvest(gain, world.rand) : new ArrayList();
 	}
 
 	@Override
 	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune) {
-		return null;
+		ArrayList<ItemStack> li = new ArrayList();
+		TileEntity te = world.getTileEntity(x, y, z);
+		if (te instanceof ICrop) {
+			ICrop ic = (ICrop)te;
+			if (ic.isMature() && ic.hasWeed()) {
+				li.add(new ItemStack(Blocks.tallgrass, 1, tallGrassRand.getRandomEntry()));
+			}
+		}
+		return li;
 	}
 
 	@Override
@@ -117,6 +131,11 @@ public class AgriCraftHandler extends CropHandlerBase {
 	@Override
 	public ModList getMod() {
 		return ModList.AGRICRAFT;
+	}
+
+	static {
+		tallGrassRand.addEntry(1, 20);
+		tallGrassRand.addEntry(2, 1);
 	}
 
 }

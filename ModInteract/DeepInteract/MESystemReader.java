@@ -92,6 +92,7 @@ public class MESystemReader {
 		return ((ICraftingGrid)node.getGrid().getCache(ICraftingGrid.class));
 	}
 
+	/** NOT NBT-Sensitive!! */
 	public ItemHashMap<Long> getMESystemContents() {
 		ItemHashMap<Long> map = new ItemHashMap();
 		if (node == null || node.getGrid() == null || this.getStorage() == null) {
@@ -125,6 +126,19 @@ public class MESystemReader {
 			}
 		}
 		return map;
+	}
+
+	public Collection<ItemStack> getRawMESystemContents() {
+		Collection<ItemStack> c = new ArrayList();
+		if (node == null || node.getGrid() == null || this.getStorage() == null) {
+			return c;
+		}
+		for (IAEItemStack iae : this.getStorage().getStorageList()) {
+			if (iae.isItem() && iae.isMeaningful()) {
+				c.add(iae.getItemStack());
+			}
+		}
+		return c;
 	}
 
 	private IAEItemStack createAEStack(ItemStack is) {

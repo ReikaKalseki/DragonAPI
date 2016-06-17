@@ -25,6 +25,7 @@ import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Start;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import cpw.mods.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
 
 
@@ -138,6 +139,9 @@ public class VillageBuilding implements IVillageCreationHandler {
 			int i1 = this.getXWithOffset(i, k);
 			int j1 = this.getYWithOffset(j);
 			int k1 = this.getZWithOffset(i, k);
+
+			if (b == Blocks.wall_sign)
+				meta = ReikaBlockHelper.getSignMetadataToConnectToWall(world, i1, j1, k1, meta);
 
 			//if (structureBox.isVecInside(i1, j1, k1))  {
 			world.setBlock(i1, j1, k1, b, meta, 3);
