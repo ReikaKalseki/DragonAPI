@@ -470,6 +470,12 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	public static boolean isOcean(BiomeGenBase biome) {
 		if (biome == BiomeGenBase.ocean || biome == BiomeGenBase.frozenOcean || biome == BiomeGenBase.deepOcean)
 			return true;
+		if (BiomeDictionary.isBiomeOfType(biome, Type.FOREST))
+			return false;
+		if (BiomeDictionary.isBiomeOfType(biome, Type.DRY))
+			return false;
+		if (BiomeDictionary.isBiomeOfType(biome, Type.DENSE))
+			return false;
 		if (BiomeDictionary.isBiomeOfType(biome, Type.OCEAN))
 			return true;
 		return ReikaStringParser.containsWord(biome.biomeName.toLowerCase(Locale.ENGLISH), "ocean");

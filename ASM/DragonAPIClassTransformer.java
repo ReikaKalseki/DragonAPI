@@ -42,6 +42,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Exception.ASMException;
+import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodInstructionException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
@@ -132,6 +133,8 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 		SETBLOCKLIGHT("net.minecraft.world.World", "ahb"),
 		XPUPDATE("net.minecraft.entity.item.EntityXPOrb", "sq"),
 		SPAWNERCHECK("net.minecraft.tileentity.MobSpawnerBaseLogic", "agq"),
+		FIRESPREADEVENT("net.minecraft.block.BlockFire", "alb"),
+		SUBMERGEABLE("net.minecraft.block.BlockLiquid", "alw"),
 		;
 
 		private final String obfName;
@@ -1868,8 +1871,41 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
 				}
-				default:
+				case FIRESPREADEVENT: {
+					MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_149674_a", "updateTick", "(Lnet/minecraft/world/World;IIILjava/util/Random;)V");
+					AbstractInsnNode ain = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.LDC);
+					JumpInsnNode test = (JumpInsnNode)ain.getNext().getNext();
+					m.instructions.remove(ain.getPrevious());
+					m.instructions.remove(ain.getNext());
+					m.instructions.remove(ain);
+					m.instructions.insertBefore(test, new VarInsnNode(Opcodes.ILOAD, 2));
+					m.instructions.insertBefore(test, new VarInsnNode(Opcodes.ILOAD, 3));
+					m.instructions.insertBefore(test, new VarInsnNode(Opcodes.ILOAD, 4));
+					m.instructions.insertBefore(test, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/FireSpreadEvent", "fire", "(Lnet/minecraft/world/World;III)Z", false));
+					ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
 					break;
+				}
+				case SUBMERGEABLE: {
+					if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+						try {
+							MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_149646_a", "shouldSideBeRendered", "(Lnet/minecraft/world/IBlockAccess;IIII)Z");
+							m.instructions.clear();
+							m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
+							m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 2));
+							m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 3));
+							m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 4));
+							m.instructions.add(new VarInsnNode(Opcodes.ILOAD, 5));
+							m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+							m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Libraries/World/ReikaBlockHelper", "renderLiquidSide", "(Lnet/minecraft/world/IBlockAccess;IIIILnet/minecraft/block/Block;)Z", false));
+							m.instructions.add(new InsnNode(Opcodes.IRETURN));
+							ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
+						}
+						catch (NoSuchASMMethodException e) {
+
+						}
+					}
+					break;
+				}
 			}
 
 			ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);

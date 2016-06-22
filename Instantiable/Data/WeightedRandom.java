@@ -96,6 +96,12 @@ public class WeightedRandom<V> {
 		rand.setSeed(seed);
 	}
 
+	public void clear() {
+		this.data.clear();
+		this.maxWeight = 0;
+		this.weightSum = 0;
+	}
+
 	public static class InvertedWeightedRandom<V> {
 
 		private final Random rand = new Random();

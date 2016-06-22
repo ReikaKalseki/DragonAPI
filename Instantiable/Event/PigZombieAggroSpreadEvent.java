@@ -27,7 +27,11 @@ public class PigZombieAggroSpreadEvent extends LivingAttackEvent {
 	}
 
 	public static boolean fire(EntityPigZombie e, Entity other, DamageSource src, float amt) {
-		return other instanceof EntityPigZombie && !MinecraftForge.EVENT_BUS.post(new PigZombieAggroSpreadEvent(e, (EntityPigZombie)other, src, amt));
+		if (!(other instanceof EntityPigZombie))
+			return false;
+		PigZombieAggroSpreadEvent evt = new PigZombieAggroSpreadEvent(e, (EntityPigZombie)other, src, amt);
+		boolean flag = MinecraftForge.EVENT_BUS.post(evt);
+		return !flag;
 	}
 
 }

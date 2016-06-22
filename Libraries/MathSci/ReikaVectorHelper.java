@@ -149,10 +149,11 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		return false;
 	}
 
-	public static double[] cartesianToSpherical(Vec3 vec) {
-		double[] xyz = new double[3];
-		//TODO This code is still being written
-		return xyz;
+	public static double getDistFromPointToLine(double x1, double y1, double z1, double x2, double y2, double z2, double x, double y, double z) {
+		Vec3 v01 = getVec2Pt(x, y, z, x1, y1, z1);
+		Vec3 v02 = getVec2Pt(x, y, z, x2, y2, z2);
+		Vec3 v21 = getVec2Pt(x2, y2, z2, x1, y1, z1);
+		return Math.abs(v01.crossProduct(v02).lengthVector()/v21.lengthVector());
 	}
 
 	public static Vec3 scaleVector(Vec3 vec, double len) {

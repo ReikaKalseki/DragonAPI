@@ -37,6 +37,7 @@ import Reika.DragonAPI.Base.BlockTieredResource;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Interfaces.Block.SpecialOreBlock;
+import Reika.DragonAPI.Interfaces.Block.Submergeable;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
@@ -413,5 +414,34 @@ public final class ReikaBlockHelper extends DragonAPICore {
 				return ForgeDirection.WEST;
 		}
 		return ForgeDirection.UNKNOWN;
+	}
+
+	/** Note that x,y,z are already offset by side, as per WorldRenderer */
+	public static boolean renderLiquidSide(IBlockAccess iba, int x, int y, int z, int side, Block b) {
+		Block at = iba.getBlock(x, y, z);
+		int meta = iba.getBlockMetadata(x, y, z);
+		if (at.getMaterial() == b.getMaterial())
+			return false;
+		if (at instanceof Submergeable)
+			return false;
+		if (side == 1)
+			return true;
+		return genericShouldSideBeRendered(iba, x, y, z, side, b);
+	}
+
+	public static boolean genericShouldSideBeRendered(IBlockAccess iba, int x, int y, int z, int side, Block b) {
+		if (side == 0 && b.getBlockBoundsMinY() > 0.0D)
+			return true;
+		if (side == 1 && b.getBlockBoundsMaxY() < 1.0D)
+			return true;
+		if (side == 2 && b.getBlockBoundsMinZ() > 0.0D)
+			return true;
+		if (side == 3 && b.getBlockBoundsMaxZ() < 1.0D)
+			return true;
+		if (side == 4 && b.getBlockBoundsMinX() > 0.0D)
+			return true;
+		if (side == 5 && b.getBlockBoundsMaxX() < 1.0D)
+			return true;
+		return !iba.getBlock(x, y, z).isOpaqueCube();
 	}
 }

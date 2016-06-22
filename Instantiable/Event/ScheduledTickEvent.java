@@ -12,10 +12,11 @@ package Reika.DragonAPI.Instantiable.Event;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap.TimerCallback;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 import cpw.mods.fml.common.eventhandler.Event;
 
-public final class ScheduledTickEvent extends Event {
+public final class ScheduledTickEvent extends Event implements TimerCallback {
 
 	private final ScheduledEvent action;
 
@@ -106,5 +107,10 @@ public final class ScheduledTickEvent extends Event {
 
 		public abstract void fire();
 
+	}
+
+	@Override
+	public void call() {
+		this.fire();
 	}
 }

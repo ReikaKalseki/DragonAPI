@@ -16,10 +16,10 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Interfaces.ISBRH;
 import Reika.DragonAPI.Interfaces.Block.WireBlock;
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
-public class CustomWireRenderer implements ISimpleBlockRenderingHandler {
+public class CustomWireRenderer implements ISBRH {
 
 	private final int renderID;
 

@@ -2107,11 +2107,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 	}
 
-	public static void hydrateFarmland(World world, int x, int y, int z, boolean fullHydrate) {
+	public static boolean hydrateFarmland(World world, int x, int y, int z, boolean fullHydrate) {
 		int meta = world.getBlockMetadata(x, y, z);
 		if (meta < 7) {
 			world.setBlockMetadataWithNotify(x, y, z, fullHydrate ? 7 : meta+1, 3);
+			return true;
 		}
+		return false;
 	}
 
 	public static Coordinate findTreeNear(World world, int x, int y, int z, int r) {
@@ -2188,5 +2190,19 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		TileEntityMobSpawner te = (TileEntityMobSpawner)world.getTileEntity(x, y, z);
 		ReikaSpawnerHelper.setMobSpawnerMob(te, (String)EntityList.classToStringMapping.get(mob));
 		return te.func_145881_a();
+	}
+
+	public static boolean hasAdjacentWater(IBlockAccess world, int x, int y, int z, boolean vertical, boolean source) {
+		for (int i = vertical ? 0 : 2; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			Block id2 = world.getBlock(dx, dy, dz);
+			int meta2 = world.getBlockMetadata(dx, dy, dz);
+			if ((id2 == Blocks.water || id2 == Blocks.flowing_water) && (meta2 == 0 || !source))
+				return true;
+		}
+		return false;
 	}
 }

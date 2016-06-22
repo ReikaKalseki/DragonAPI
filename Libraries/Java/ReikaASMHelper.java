@@ -1011,4 +1011,14 @@ public class ReikaASMHelper {
 		return li;
 	}
 
+	public static LabelNode getFirstLabelAfter(InsnList li, int idx) {
+		for (int i = idx; i < li.size(); i++) {
+			AbstractInsnNode ain = li.get(i);
+			if (ain instanceof LabelNode) {
+				return (LabelNode)ain;
+			}
+		}
+		return null;
+	}
+
 }

@@ -20,7 +20,7 @@ public class ChunkGenCommand extends DragonCommandBase {
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
-		if (args.length != 4) {
+		if (args.length != 5) {
 			this.sendChatToSender(ics, EnumChatFormatting.RED+"Invalid arguments. Use [dim] [perTick] [ctrX] [ctrZ] [radius].");
 			return;
 		}

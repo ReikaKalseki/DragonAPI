@@ -7,14 +7,11 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Interfaces.TileEntity;
+package Reika.DragonAPI.Interfaces;
 
-import net.minecraft.block.Block;
-import net.minecraft.world.World;
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 
 
-public interface AdjacentUpdateWatcher {
-
-	public void onAdjacentUpdate(World world, int x, int y, int z, Block b);
+public interface ISBRH extends ISimpleBlockRenderingHandler {
 
 }

@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
@@ -41,6 +42,10 @@ public class ChunkSplicedGenerationCache {
 
 	public void setTileEntity(int x, int y, int z, Block b, int meta, TileCallback call) {
 		this.place(x, y, z, new TileSet(call, b, meta));
+	}
+
+	public void setAir(int x, int y, int z) {
+		this.setBlock(x, y, z, Blocks.air);
 	}
 
 	public void place(int x, int y, int z, BlockPlace sb) {

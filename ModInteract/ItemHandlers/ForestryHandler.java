@@ -74,7 +74,8 @@ public class ForestryHandler extends ModHandlerBase {
 		SAPLING("forestry.arboriculture.blocks.BlockRegistryArboriculture", "saplingGE"),
 		LEAF("forestry.arboriculture.blocks.BlockRegistryArboriculture", "leaves"),
 		LOG("forestry.arboriculture.blocks.BlockRegistryArboriculture", "logs"),
-		HIVE("forestry.apiculture.blocks.BlockRegistryApiculture", "beehives");
+		HIVE("forestry.apiculture.blocks.BlockRegistryApiculture", "beehives"),
+		SOIL("forestry.core.blocks.BlockRegistryCore", "soil");
 
 		private final String reg;
 		private final String tag;
@@ -230,6 +231,26 @@ public class ForestryHandler extends ModHandlerBase {
 
 		public ItemStack getItem() {
 			return new ItemStack(ItemEntry.COMB.getItem(), 1, damageValue);
+		}
+	}
+
+	public static enum SoilType {
+		HUMUS(),
+		BOG_EARTH(),
+		PEAT();
+
+		public static SoilType getTypeFromMeta(int meta) {
+			int type = meta & 0x3;
+			int maturity = meta >> 2;
+
+			if (type == 1) {
+				if (maturity < 3) {
+					return BOG_EARTH;
+				}
+				return PEAT;
+			}
+
+			return HUMUS;
 		}
 	}
 

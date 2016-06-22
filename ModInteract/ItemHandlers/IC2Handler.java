@@ -95,6 +95,7 @@ public class IC2Handler extends ModHandlerBase {
 		BRONZECHESTPLATE("bronzeChestplate"),
 		BRONZELEGGINGS("bronzeLeggings"),
 		BRONZEBOOTS("bronzeBoots"),
+		BIOCHAFF("biochaff"),
 		//RSH(),
 		//LZH(),
 		;

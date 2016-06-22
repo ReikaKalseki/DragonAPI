@@ -13,14 +13,14 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
 import Reika.DragonAPI.Auxiliary.ReikaBlockRenderer;
+import Reika.DragonAPI.Interfaces.ISBRH;
 import Reika.DragonAPI.Interfaces.Block.SidedTextureIndex;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public final class BlockSheetTexRenderer implements ISimpleBlockRenderingHandler {
+public final class BlockSheetTexRenderer implements ISBRH {
 
 	private String textureSheet;
 	private boolean is3D;

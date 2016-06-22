@@ -31,12 +31,14 @@ public class DirectResource implements IResource {
 
 	@Override
 	public InputStream getInputStream() {
+		//ReikaJavaLibrary.pConsole("Loading "+path+", data="+data);
 		if (data == null) {
 			InputStream st = this.calcStream();
 			if (st == null)
 				throw new RuntimeException("Resource not found at "+path);
 			data = ReikaJavaLibrary.streamToBytes(st);
 		}
+		//ReikaJavaLibrary.pConsole("Loaded "+path+", data="+data);
 		return new ByteArrayInputStream(data);
 	}
 

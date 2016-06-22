@@ -14,9 +14,9 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import Reika.DragonAPI.Interfaces.ISBRH;
 
-public abstract class BaseBlockRenderer implements ISimpleBlockRenderingHandler {
+public abstract class BaseBlockRenderer implements ISBRH {
 
 	protected final ForgeDirection[] dirs = ForgeDirection.values();
 

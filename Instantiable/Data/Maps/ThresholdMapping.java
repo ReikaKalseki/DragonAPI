@@ -53,4 +53,8 @@ public class ThresholdMapping<V> {
 		return data.isEmpty() ? 0 : data.lastKey();
 	}
 
+	public Collection<V> values() {
+		return Collections.unmodifiableCollection(data.values());
+	}
+
 }

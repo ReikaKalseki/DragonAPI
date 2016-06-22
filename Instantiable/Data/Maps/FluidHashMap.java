@@ -127,7 +127,12 @@ public final class FluidHashMap<V> {
 	}
 
 	public Collection<V> values() {
-		return ReikaJavaLibrary.getValuesForMapOfMaps(data);
+		Collection<V> li = new ArrayList();
+		for (Object k : data.keySet()) {
+			ThresholdMapping o = data.get(k);
+			li.addAll(o.values());
+		}
+		return li;
 	}
 
 	private Collection<FluidStack> createKeySet() {

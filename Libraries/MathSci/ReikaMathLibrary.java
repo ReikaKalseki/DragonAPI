@@ -562,4 +562,8 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		}
 		return p.contains(x, z);
 	}
+
+	public static double getUnequalAverage(double a, double b, double bias) {
+		return (1-bias)*a+bias*b;
+	}
 }
