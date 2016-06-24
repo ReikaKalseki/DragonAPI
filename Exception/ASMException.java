@@ -15,7 +15,6 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 
-import Reika.DragonAPI.Interfaces.ASMEnum;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 public abstract class ASMException extends RuntimeException {
@@ -301,16 +300,16 @@ public abstract class ASMException extends RuntimeException {
 	public static final class ASMConflictException extends ASMException {
 
 		private final String asmMod;
-		private final ASMEnum patch;
+		private final String patch;
 		private final String message;
 
 		private final MethodNode method;
 
-		public ASMConflictException(String mod, ClassNode cn, MethodNode m, ASMEnum e, String msg) {
+		public ASMConflictException(String mod, ClassNode cn, MethodNode m, String p, String msg) {
 			super(cn);
 
 			asmMod = mod;
-			patch = e;
+			patch = p;
 			message = msg;
 
 			method = m;
@@ -321,7 +320,7 @@ public abstract class ASMException extends RuntimeException {
 			StringBuilder sb = new StringBuilder();
 			sb.append(super.getMessage());
 			sb.append("An ASM conflict occurred when applying the patch ");
-			sb.append(patch.name());
+			sb.append(patch);
 			sb.append(" to method '");
 			sb.append(method.name);
 			sb.append(" ");

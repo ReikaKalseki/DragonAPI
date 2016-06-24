@@ -45,6 +45,9 @@ import org.objectweb.asm.tree.MethodNode;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+
+import com.google.common.reflect.ClassPath;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
@@ -831,5 +834,18 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		Integer get = map.get(key);
 		int ret = (get != null ? get.intValue() : 0)+num;
 		map.put(key, ret);
+	}
+
+	/** Not exactly performant. Do not call this excessively, or ever during the main game loop. */
+	public static Collection<Class> getAllClassesFromPackage(String pack) throws Exception {
+		ClassLoader loader = Thread.currentThread().getContextClassLoader();
+		Collection<Class> li = new ArrayList();
+		for (ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
+			if (info.getName().startsWith(pack)) {
+				Class c = info.load();
+				li.add(c);
+			}
+		}
+		return li;
 	}
 }

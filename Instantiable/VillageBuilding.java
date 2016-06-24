@@ -14,8 +14,10 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
@@ -25,6 +27,7 @@ import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Start;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
+import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import cpw.mods.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
 
@@ -127,6 +130,24 @@ public class VillageBuilding implements IVillageCreationHandler {
 			return this.generate(world, rand);
 		}
 
+		@Override
+		public final int hashCode() {
+			return structureBox.func_151535_h().hashCode() ^ this.getClass().hashCode();
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			return o.getClass() == this.getClass() && ((VillagePiece)o).structureBox.func_151535_h().equals(structureBox.func_151535_h());
+		}
+
+		protected final void clearDroppedItems(World world) {
+			AxisAlignedBB box = ReikaAABBHelper.structureToAABB(boundingBox).expand(2, 2, 2);
+			List<EntityItem> li = world.getEntitiesWithinAABB(EntityItem.class, box);
+			for (EntityItem ei : li) {
+				ei.setDead();
+			}
+		}
+
 		protected abstract boolean generate(World world, Random rand);
 
 		protected final void placeBlockAtCurrentPosition(World world, int i, int j, int k, Block b) {
@@ -144,8 +165,15 @@ public class VillageBuilding implements IVillageCreationHandler {
 				meta = ReikaBlockHelper.getSignMetadataToConnectToWall(world, i1, j1, k1, meta);
 
 			//if (structureBox.isVecInside(i1, j1, k1))  {
-			world.setBlock(i1, j1, k1, b, meta, 3);
+			this.tryPlaceBlock(world, i1, j1, k1, b, meta, 3);
 			//}
+		}
+
+		private void tryPlaceBlock(World world, int x, int y, int z, Block b, int meta, int flags) {
+			Block b2 = world.getBlock(x, y, z);
+			int meta2 = world.getBlockMetadata(x, y, z);
+			if (b2 != b || meta2 != meta)
+				world.setBlock(x, y, z, b, meta, flags);
 		}
 
 		protected final void placeBlockAtFixedPosition(World world, int i, int j, int k, Block b) {
@@ -153,11 +181,11 @@ public class VillageBuilding implements IVillageCreationHandler {
 		}
 
 		protected final void placeBlockAtFixedPosition(World world, int i, int j, int k, Block b, int meta) {
-			world.setBlock(i+boundingBox.minX, j+boundingBox.minY, k+boundingBox.minZ, b, meta, 3);
+			this.tryPlaceBlock(world, i+boundingBox.minX, j+boundingBox.minY, k+boundingBox.minZ, b, meta, 3);
 		}
 
 		protected final TileEntity placeTileEntityAtFixedPosition(World world, int i, int j, int k, Block b, int meta) {
-			world.setBlock(i+boundingBox.minX, j+boundingBox.minY, k+boundingBox.minZ, b, meta, 3);
+			this.tryPlaceBlock(world, i+boundingBox.minX, j+boundingBox.minY, k+boundingBox.minZ, b, meta, 3);
 			return world.getTileEntity(i+boundingBox.minX, j+boundingBox.minY, k+boundingBox.minZ);
 		}
 

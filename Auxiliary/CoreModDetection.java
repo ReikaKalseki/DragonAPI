@@ -25,6 +25,8 @@ public enum CoreModDetection {
 	private final String warning;
 	private final String message;
 
+	public static final CoreModDetection[] list = values();
+
 	private CoreModDetection(String s, String w, String m) {
 		this(ReikaJavaLibrary.getClassNoException(s), w, m);
 	}

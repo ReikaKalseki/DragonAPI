@@ -59,7 +59,6 @@ import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Exception.ASMException.ASMConflictException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
-import Reika.DragonAPI.Interfaces.ASMEnum;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 
 public class ReikaASMHelper {
@@ -824,12 +823,12 @@ public class ReikaASMHelper {
 
 	}
 
-	public static void throwConflict(ASMEnum c, ClassNode cn, MethodNode m, String msg) {
-		throwConflict(c, cn, m, msg, null);
+	public static void throwConflict(String patcher, ClassNode cn, MethodNode m, String msg) {
+		throwConflict(patcher, cn, m, msg, null);
 	}
 
-	public static void throwConflict(ASMEnum c, ClassNode cn, MethodNode m, String msg, Throwable t) {
-		ASMConflictException ex = new ASMConflictException(activeMod, cn, m, c, msg);
+	public static void throwConflict(String patcher, ClassNode cn, MethodNode m, String msg, Throwable t) {
+		ASMConflictException ex = new ASMConflictException(activeMod, cn, m, patcher, msg);
 		if (t != null)
 			ex.initCause(t);
 

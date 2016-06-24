@@ -1718,10 +1718,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		{
 			ByteArrayDataOutput buf = ByteStreams.newDataOutput();
 			if (tag == null)
-				buf.writeShort(-1);
+				buf.writeInt(-1);
 			else {
 				byte[] abyte = CompressedStreamTools.compress(tag);
-				buf.writeShort((short)abyte.length);
+				buf.writeInt(abyte.length);
 				buf.write(abyte);
 			}
 			return buf.toByteArray();
@@ -1730,7 +1730,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		protected final NBTTagCompound readNBTTagCompoundFromBuffer(byte[] bytes) throws IOException
 		{
 			ByteArrayDataInput buf = ByteStreams.newDataInput(bytes);
-			short short1 = buf.readShort();
+			int short1 = buf.readInt();
 			if (short1 < 0)
 				return null;
 			else {

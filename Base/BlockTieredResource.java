@@ -114,7 +114,7 @@ public abstract class BlockTieredResource extends Block {
 	public abstract Collection<ItemStack> getHarvestResources(World world, int x, int y, int z, int fortune, EntityPlayer player);
 
 	public Collection<ItemStack> getNoHarvestResources(World world, int x, int y, int z, int fortune, EntityPlayer player) {
-		return null;
+		return new ArrayList();
 	}
 
 	public abstract boolean isPlayerSufficientTier(IBlockAccess world, int x, int y, int z, EntityPlayer ep);

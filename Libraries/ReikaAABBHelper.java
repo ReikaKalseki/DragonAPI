@@ -18,6 +18,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.structure.StructureBoundingBox;
 
 import org.lwjgl.opengl.GL11;
 
@@ -216,6 +217,10 @@ public final class ReikaAABBHelper extends DragonAPICore {
 
 	public static double getVolume(AxisAlignedBB box) {
 		return (box.maxX-box.minX)*(box.maxY-box.minY)*(box.maxZ-box.minZ);
+	}
+
+	public static AxisAlignedBB structureToAABB(StructureBoundingBox box) {
+		return AxisAlignedBB.getBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
 	}
 
 }

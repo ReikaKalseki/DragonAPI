@@ -287,7 +287,7 @@ public class APIPacketHandler implements PacketHandler {
 				case GUIRELOAD:
 					break;
 				case BIOMEPNGSTART:
-					BiomeMapCommand.startCollecting(data[0], stringdata, data[1], data[2], data[3], data[4], data[5], data[6]);
+					BiomeMapCommand.startCollecting(data[0], stringdata, data[1], data[2], data[3], data[4], data[5], data[6], data[7] > 0);
 					break;
 				case BIOMEPNGDAT:
 					int hash = data[0];
@@ -446,7 +446,7 @@ public class APIPacketHandler implements PacketHandler {
 				case PLAYERINTERACT:
 					return 5;
 				case BIOMEPNGSTART:
-					return 7;
+					return 8;
 				case BIOMEPNGDAT:
 					return 1+3*BiomeMapCommand.PACKET_COMPILE;
 				case BIOMEPNGEND:

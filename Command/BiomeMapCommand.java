@@ -51,12 +51,13 @@ public class BiomeMapCommand extends DragonCommandBase {
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
 		if (args.length < 2) {
-			this.sendChatToSender(ics, EnumChatFormatting.RED.toString()+"Illegal arguments. Use [range] [resolution] <grid>.");
+			this.sendChatToSender(ics, EnumChatFormatting.RED.toString()+"Illegal arguments. Use [range] [resolution] <grid> <fullGrid>.");
 			return;
 		}
 		int range = Integer.parseInt(args[0]);
 		int res = Integer.parseInt(args[1]);
 		int grid = args.length >= 3 ? Integer.parseInt(args[2]) : -1;
+		boolean fullGrid = grid > 0 && args.length >= 4 && Boolean.parseBoolean(args[3]);
 		EntityPlayerMP ep = this.getCommandSenderAsPlayer(ics);
 		int x = MathHelper.floor_double(ep.posX);
 		int z = MathHelper.floor_double(ep.posZ);
@@ -66,7 +67,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 		String name = ep.worldObj.getWorldInfo().getWorldName();
 		int dim = ep.worldObj.provider.dimensionId;
-		ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGSTART.ordinal(), ep, name, hash, dim, x, z, range, res, grid);
+		ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGSTART.ordinal(), ep, name, hash, dim, x, z, range, res, grid, fullGrid ? 1 : 0);
 
 		ArrayList<Integer> dat = new ArrayList();
 		dat.add(hash);
@@ -118,8 +119,8 @@ public class BiomeMapCommand extends DragonCommandBase {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void startCollecting(int hash, String world, int dim, int x, int z, int range, int res, int grid) {
-		BiomeMap map = new BiomeMap(world, dim, x, z, range, res, grid);
+	public static void startCollecting(int hash, String world, int dim, int x, int z, int range, int res, int grid, boolean fullGrid) {
+		BiomeMap map = new BiomeMap(world, dim, x, z, range, res, grid, fullGrid);
 		activeMaps.put(hash, map);
 	}
 
@@ -159,12 +160,13 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 		private final int resolution;
 		private final int gridSize;
+		private final boolean fullGrid;
 
 		private final long startTime;
 
 		private final int[][] data;
 
-		private BiomeMap(String name, int dim, int x, int z, int r, int res, int grid) {
+		private BiomeMap(String name, int dim, int x, int z, int r, int res, int grid, boolean fgrid) {
 			startTime = System.currentTimeMillis();
 
 			worldName = name;
@@ -175,6 +177,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 			range = r;
 			resolution = res;
 			gridSize = grid;
+			fullGrid = fgrid;
 
 			data = new int[range*2/resolution+1][range*2/resolution+1];
 		}
@@ -187,7 +190,9 @@ public class BiomeMapCommand extends DragonCommandBase {
 						int k = (range+(dz-originZ))/resolution;
 						int i2 = dx-originX;
 						int k2 = dz-originZ;
-						if (i2%gridSize == 0 && k2%gridSize == 0) {
+						boolean flag1 = i2%gridSize == 0;
+						boolean flag2 = k2%gridSize == 0;
+						if ((flag1 || flag2) && ((flag1 && flag2) || fullGrid)) {
 							data[i][k] = ReikaColorAPI.mixColors(data[i][k], i2 == 0 && k2 == 0 ? 0xffff0000 : 0xffffffff, 0.25F);
 							if (i-1 >= 0)
 								data[i-1][k] = ReikaColorAPI.mixColors(data[i-1][k], 0xff000000, 0.5F);
@@ -231,7 +236,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 		private String getFilename() {
 			String sr = String.valueOf(range*2+1);
-			return "BiomeMap/"+worldName+"/DIM"+dimensionID+"/"+originX+", "+originZ+" ("+sr+"x"+sr+"; [R="+resolution+" b-px, G="+gridSize+"]).png";
+			return "BiomeMap/"+worldName+"/DIM"+dimensionID+"/"+originX+", "+originZ+" ("+sr+"x"+sr+"; [R="+resolution+" b-px, G="+gridSize+"-"+fullGrid+"]).png";
 		}
 
 		@SideOnly(Side.CLIENT)
