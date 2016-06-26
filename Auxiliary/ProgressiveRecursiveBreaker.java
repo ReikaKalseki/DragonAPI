@@ -90,6 +90,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		public final int originX;
 		public final int originY;
 		public final int originZ;
+		public boolean causeUpdates = true;
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<BlockKey> ids) {
 			this.world = world;
@@ -291,8 +292,9 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			else {
 				ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 			}
-			world.setBlockToAir(x, y, z);
-			world.markBlockForUpdate(x, y, z);
+			world.setBlock(x, y, z, Blocks.air, 0, causeUpdates ? 3 : 2);
+			if (causeUpdates)
+				world.markBlockForUpdate(x, y, z);
 			if (player != null) {
 				player.addStat(StatList.mineBlockStatArray[Block.getIdFromBlock(id)], 1);
 				player.addExhaustion(0.025F*hungerFactor);

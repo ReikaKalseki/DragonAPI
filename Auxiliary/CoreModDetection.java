@@ -18,7 +18,7 @@ public enum CoreModDetection {
 	OPTIFINE("optifine.OptiFineTweaker", "rendering and textures", ""),
 	LITELOADER("com.mumfrey.liteloader.core.LiteLoader", "sounds and textures", "Try reloading resources (F3+T) to fix this."),
 	FASTCRAFT(Launch.blackboard.get("fcVersion") != null, "render and block changes", ""),
-	VIVE("com.mtbs3d.minecrift.gui.framework.BaseGuiSettings", "rendering and interface", "");
+	VIVE("com.mtbs3d.minecrift.api.IRoomscaleAdapter", "rendering and interface", "");
 
 	private final Class refClass;
 	private final boolean isLoaded;

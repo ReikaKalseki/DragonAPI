@@ -60,6 +60,7 @@ import Reika.DragonAPI.Exception.ASMException.ASMConflictException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import cpw.mods.fml.relauncher.FMLInjectionData;
+import cpw.mods.fml.relauncher.Side;
 
 public class ReikaASMHelper {
 
@@ -1018,6 +1019,10 @@ public class ReikaASMHelper {
 			}
 		}
 		return null;
+	}
+
+	public static Side getSide() {
+		return ReikaJavaLibrary.doesClassExist("net.minecraft.client.ClientBrandRetriever") ? Side.CLIENT : Side.SERVER;
 	}
 
 }

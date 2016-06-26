@@ -25,7 +25,9 @@ public final class BloodMagicHandler extends ModHandlerBase {
 	private static final BloodMagicHandler instance = new BloodMagicHandler();
 
 	public final Fluid lifeEssence;
+
 	public final Item orbID;
+	public final Item demonShardID;
 
 	public final int soulFrayID;
 
@@ -36,7 +38,9 @@ public final class BloodMagicHandler extends ModHandlerBase {
 
 	private BloodMagicHandler() {
 		super();
+
 		Item idorb = null;
+		Item idshard = null;
 
 		Item helm = null;
 		Item chest = null;
@@ -52,6 +56,10 @@ public final class BloodMagicHandler extends ModHandlerBase {
 				Field item = c.getDeclaredField("sacrificialDagger");
 				item.setAccessible(true);
 				idorb = (Item)item.get(null);
+
+				item = c.getDeclaredField("demonBloodShard");
+				item.setAccessible(true);
+				idshard = (Item)item.get(null);
 
 				item = c.getDeclaredField("boundHelmet");
 				item.setAccessible(true);
@@ -112,6 +120,7 @@ public final class BloodMagicHandler extends ModHandlerBase {
 			this.noMod();
 		}
 		orbID = idorb;
+		demonShardID = idshard;
 
 		boundBoots = boots;
 		boundChestplate = chest;

@@ -209,10 +209,13 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 
 	public static boolean doesClassExist(String cl) {
 		try {
-			Class.forName(cl);
+			Class.forName(cl, false, Thread.currentThread().getContextClassLoader());
 			return true;
 		}
 		catch (ClassNotFoundException e) {
+			return false;
+		}
+		catch (NoClassDefFoundError e) {
 			return false;
 		}
 	}

@@ -468,8 +468,11 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return (ra > 0 ? ((x*x)/(ra*ra)) : 0) + (rb > 0 ? ((y*y)/(rb*rb)) : 0) + (rc > 0 ? ((z*z)/(rc*rc)) : 0) <= 1;
 	}
 
-	public static boolean isPointInsidePowerEllipse(double x, double y, double z, double ra, double rb, double rc, double pow) {
-		return (ra > 0 ? (Math.pow(x, pow)/Math.pow(ra, pow)) : 0) + (rb > 0 ? (Math.pow(y, pow)/Math.pow(rb, pow)) : 0) + (rc > 0 ? (Math.pow(z, pow)/Math.pow(rc, pow)) : 0) <= 1;
+	public static boolean isPointInsidePowerEllipse(double x, double y, double z, double rx, double ry, double rz, double pow) {
+		x = Math.abs(x);
+		y = Math.abs(y);
+		z = Math.abs(z);
+		return (rx > 0 ? (Math.pow(x, pow)/Math.pow(rx, pow)) : 0) + (ry > 0 ? (Math.pow(y, pow)/Math.pow(ry, pow)) : 0) + (rz > 0 ? (Math.pow(z, pow)/Math.pow(rz, pow)) : 0) <= 1;
 	}
 
 	public static double linterpolate(double x, double x1, double x2, double y1, double y2) {

@@ -11,7 +11,6 @@ import org.objectweb.asm.tree.ClassNode;
 import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
 public abstract class Patcher {
@@ -31,7 +30,7 @@ public abstract class Patcher {
 	}
 
 	public final byte[] apply(byte[] data) {
-		Side s = FMLCommonHandler.instance().getEffectiveSide();
+		Side s = ReikaASMHelper.getSide();
 		if (!this.runsOnSide(s)) {
 			ReikaASMHelper.log("Skipping " + this + " ASM handler; does not run on side " + s);
 			return data;
@@ -93,7 +92,7 @@ public abstract class Patcher {
 	}
 
 	public final boolean patchesForgeCode() {
-		return !this.isObfable() && (deobfName.startsWith("net.minecraftforge") || deobfName.startsWith("cpw.fml"));
+		return !this.isObfable() && (deobfName.startsWith("net.minecraftforge") || deobfName.startsWith("cpw.mods.fml"));
 	}
 
 	public final boolean patchesModCode() {
