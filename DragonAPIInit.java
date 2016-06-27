@@ -60,6 +60,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.KeyTicker;
 import Reika.DragonAPI.Auxiliary.Trackers.PackModificationTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.PatreonController;
+import Reika.DragonAPI.Auxiliary.Trackers.PlayerChunkTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
@@ -464,6 +465,8 @@ public class DragonAPIInit extends DragonAPIMod {
 			TickRegistry.instance.registerTickHandler(KeyTicker.instance);
 			TickRegistry.instance.registerTickHandler(new ReikaRenderHelper.RenderTick());
 		}
+		TickRegistry.instance.registerTickHandler(PlayerChunkTracker.instance);
+
 		//if (DragonOptions.COMPOUNDSYNC.getState())
 		//	TickRegistry.instance.registerTickHandler(CompoundSyncPacketTracker.instance, Side.SERVER);
 
