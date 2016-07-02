@@ -9,17 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Data.Maps.CountMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
-public class ObjectWeb<V> {
+public final class ObjectWeb<V> {
 
-	private final HashMap<V, ArrayList<V>> web = new HashMap();
+	private final HashMap<V, CountMap<V>> web = new HashMap();
 
 	public ObjectWeb() {
 
@@ -28,28 +29,34 @@ public class ObjectWeb<V> {
 	public boolean isDirectionallyConnectedTo(V parent, V child) {
 		if (!this.hasNode(parent))
 			return false;
-		return web.get(parent).contains(child);
+		return web.get(parent).containsKey(child);
 	}
 
 	public boolean isBilaterallyConnectedTo(V a, V b) {
 		if (this.hasNode(a) && this.hasNode(b))
-			return web.get(a).contains(b) || web.get(b).contains(a);
+			return web.get(a).containsKey(b) || web.get(b).containsKey(a);
 		else if (this.hasNode(a))
-			return web.get(a).contains(b);
+			return web.get(a).containsKey(b);
 		else if (this.hasNode(b))
-			return web.get(b).contains(a);
+			return web.get(b).containsKey(a);
 		return false;
 	}
 
-	public List<V> getChildren(V obj) {
+	public Collection<V> getChildren(V obj) {
 		if (!this.hasNode(obj))
-			return new ArrayList();
-		return Collections.unmodifiableList(web.get(obj));
+			return new HashSet();
+		return Collections.unmodifiableCollection(web.get(obj).keySet());
+	}
+
+	public int getNumberConnections(V o1, V o2) {
+		if (!this.hasNode(o1))
+			return 0;
+		return this.web.get(o1).get(o2);
 	}
 
 	public void addNode(V obj) {
 		if (!this.hasNode(obj))
-			web.put(obj, new ArrayList());
+			web.put(obj, new CountMap());
 	}
 
 	public boolean hasNode(V obj) {
@@ -78,13 +85,8 @@ public class ObjectWeb<V> {
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
-		ArrayList<V> li = web.get(parent);
-		if (li.contains(child)) {
-			DragonAPICore.logError("Child "+child+" already exists for node "+parent+"!");
-			ReikaJavaLibrary.dumpStack();
-			return;
-		}
-		li.add(child);
+		CountMap<V> li = web.get(parent);
+		li.increment(child);
 		web.put(parent, li);
 	}
 
@@ -94,14 +96,27 @@ public class ObjectWeb<V> {
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
-		ArrayList<V> li = web.get(parent);
-		if (!li.contains(child)) {
+		CountMap<V> li = web.get(parent);
+		if (!li.containsKey(child)) {
 			DragonAPICore.logError("Child "+child+" does not exist for node "+parent+"! Cannot remove!");
 			ReikaJavaLibrary.dumpStack();
 			return;
 		}
 		li.remove(child);
 		web.put(parent, li);
+	}
+
+	public Collection<V> objects() {
+		return Collections.unmodifiableCollection(web.keySet());
+	}
+
+	public void clear() {
+		web.clear();
+	}
+
+	@Override
+	public String toString() {
+		return web.toString();
 	}
 
 }

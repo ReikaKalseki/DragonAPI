@@ -28,6 +28,10 @@ public final class BloodMagicHandler extends ModHandlerBase {
 
 	public final Item orbID;
 	public final Item demonShardID;
+	public final Item resourceID;
+
+	public static final int RED_SHARD_META = 28;
+	public static final int BLUE_SHARD_META = 29;
 
 	public final int soulFrayID;
 
@@ -41,6 +45,7 @@ public final class BloodMagicHandler extends ModHandlerBase {
 
 		Item idorb = null;
 		Item idshard = null;
+		Item idres = null;
 
 		Item helm = null;
 		Item chest = null;
@@ -60,6 +65,10 @@ public final class BloodMagicHandler extends ModHandlerBase {
 				item = c.getDeclaredField("demonBloodShard");
 				item.setAccessible(true);
 				idshard = (Item)item.get(null);
+
+				item = c.getDeclaredField("baseItems");
+				item.setAccessible(true);
+				idres = (Item)item.get(null);
 
 				item = c.getDeclaredField("boundHelmet");
 				item.setAccessible(true);
@@ -121,6 +130,7 @@ public final class BloodMagicHandler extends ModHandlerBase {
 		}
 		orbID = idorb;
 		demonShardID = idshard;
+		resourceID = idres;
 
 		boundBoots = boots;
 		boundChestplate = chest;

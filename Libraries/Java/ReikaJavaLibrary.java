@@ -62,6 +62,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 
 	private static final HashMap<String, Object> threadLock = new HashMap();
 
+	private static final char[] IDChars = new char[] {
+		'\u03b1', '\u03b2', '\u03b3', '\u03b4', '\u03b5', '\u03b6', '\u03b7', '\u03b8', '\u03b9', '\u03ba', '\u03bb', '\u03bc', '\u03bd', '\u03be',
+		'\u03bf', '\u03c0', '\u03c1', '\u03c2', '\u03c3', '\u03c4', '\u03c5', '\u03c6', '\u03c7', '\u03c8', '\u03c9', '\u0393', '\u0394', '\u0398',
+		'\u039b', '\u03a0', '\u03a3', '\u03a6', '\u03a8', '\u03a9', '\u0414', '\u0416', '\u0418', '\u0428', '\u042c', '\u042d', '\u042e', '\u042f',
+		'\u05d0', '\u05d1', '\u05d2', '\u05d3', '\u05d4', '\u05d7', '\u05d8', '\u05da', '\u05db', '\u05dc', '\u05dd', '\u05de', '\u05e1', '\u05e2',
+		'\u05e3', '\u05e4', '\u05e6', '\u05e7', '\u05e8', '\u05e9', '\u05ea'
+	};
+
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Object obj) {
 		pConsole(Level.INFO, obj);
@@ -850,5 +858,10 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			}
 		}
 		return li;
+	}
+
+	/** Starts at lowercase alpha, goes through entire alphabet, reuses some as caps, moves onto Cryllic, then Hebrew. */
+	public static char getIDChar(int id) {
+		return IDChars[id%IDChars.length];
 	}
 }

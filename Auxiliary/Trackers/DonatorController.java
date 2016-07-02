@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -41,7 +42,7 @@ public final class DonatorController {
 	}
 
 	public void registerMod(DragonAPIMod mod, String root) {
-		String url = root+ReikaStringParser.stripSpaces(mod.getDisplayName())+".txt";
+		String url = root+ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase(Locale.ENGLISH))+".txt";
 		URL file = this.getURL(url);
 		if (file == null) {
 			DragonAPICore.logError("Could not create URL to donator file. Donators will not be loaded.");

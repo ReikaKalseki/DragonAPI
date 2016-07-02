@@ -41,6 +41,10 @@ public class CountMap<V> {
 			data.remove(key);
 	}
 
+	public Integer remove(V key) {
+		return data.remove(key);
+	}
+
 	public int get(V key) {
 		Integer get = data.get(key);
 		return get != null ? get.intValue() : 0;

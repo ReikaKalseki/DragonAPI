@@ -12,6 +12,8 @@ package Reika.DragonAPI.Instantiable.Data.Maps;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.UUID;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -67,6 +69,14 @@ public class PlayerMap<V> {
 	@Override
 	public String toString() {
 		return data.toString();
+	}
+
+	public boolean isEmpty() {
+		return data.isEmpty();
+	}
+
+	public Iterator<Entry<UUID, V>> iterator() {
+		return this.data.entrySet().iterator();
 	}
 
 }
