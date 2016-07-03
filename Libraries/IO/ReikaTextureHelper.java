@@ -154,6 +154,16 @@ public class ReikaTextureHelper {
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
 	}
 
+	public static void bindRawTexture(BufferedImage tex, String id) {
+		Integer gl = (Integer)textures.get(null, id);
+		if (gl == null) {
+			gl = new Integer(binder.allocateAndSetupTexture(tex));
+			textures.put(gl, null, id);
+		}
+		if (gl != null)
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
+	}
+
 	private static Integer bindPackTexture(Class root, String tex, IResourcePack res, ImageEditor editor) {
 		BufferedImage img = ReikaImageLoader.getImageFromResourcePack(tex, res, editor);
 		return img != null ? new Integer(binder.allocateAndSetupTexture(img)) : null;

@@ -124,6 +124,8 @@ public class ReikaFluidHelper {
 			return true;
 		if (s.endsWith("ane") || s.endsWith("ene") || s.endsWith("yne")) //Hydrocarbons
 			return true;
+		if (s.endsWith("ol") || s.endsWith("al") || s.endsWith("one")) //Other organics
+			return true;
 		return false;
 	}
 

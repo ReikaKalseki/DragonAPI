@@ -14,7 +14,9 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap.TimerCallback;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event;
+import cpw.mods.fml.relauncher.Side;
 
 public final class ScheduledTickEvent extends Event implements TimerCallback {
 
@@ -101,16 +103,24 @@ public final class ScheduledTickEvent extends Event implements TimerCallback {
 			return entity != null ? entity.posZ : posZ;
 		}
 
+		@Override
+		public boolean runOnSide(Side s) {
+			return s == Side.CLIENT;
+		}
+
 	}
 
 	public static interface ScheduledEvent {
 
 		public abstract void fire();
 
+		public abstract boolean runOnSide(Side s);
+
 	}
 
 	@Override
 	public void call() {
-		this.fire();
+		if (action.runOnSide(FMLCommonHandler.instance().getEffectiveSide()))
+			this.fire();
 	}
 }
