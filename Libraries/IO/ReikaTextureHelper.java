@@ -71,6 +71,10 @@ public class ReikaTextureHelper {
 		return Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.isKeyDown(Keyboard.KEY_T);
 	}
 
+	public static void resetTexture(Class c, String tex) {
+		textures.remove(c, tex);
+	}
+
 	public static void bindTexture(Class root, String tex) {
 		bindTexture(root, tex, null);
 	}

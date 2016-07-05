@@ -19,6 +19,7 @@ import java.util.Map;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
@@ -211,5 +212,27 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 				break;
 		}
 		return new ItemStack(Blocks.dirt);
+	}
+
+	public static ItemStack getEnchantedBook(Enchantment e, int lvl) {
+		ItemStack is = new ItemStack(Items.enchanted_book);
+		HashMap<Enchantment, Integer> map = new HashMap();
+		map.put(e, lvl);
+		applyEnchantments(is, map);
+		return is;
+	}
+
+	public static Enchantment getRandomEnchantment(EnumEnchantmentType cat, boolean modded) {
+		int idx = rand.nextInt(Enchantment.enchantmentsList.length);
+		Enchantment e = Enchantment.enchantmentsList[idx];
+		while (e == null || (cat != null && e.type != cat) || (!modded && !isVanillaEnchant(e))) {
+			idx = rand.nextInt(Enchantment.enchantmentsList.length);
+			e = Enchantment.enchantmentsList[idx];
+		}
+		return e;
+	}
+
+	public static boolean isVanillaEnchant(Enchantment e) {
+		return e.getClass().getName().startsWith("net.minecraft");
 	}
 }

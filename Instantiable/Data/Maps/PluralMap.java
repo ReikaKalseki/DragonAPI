@@ -50,6 +50,12 @@ public class PluralMap<V> extends HashMap {
 		return li;
 	}
 
+	public V remove(Object... key) {
+		if (key.length != keySize)
+			throw new IllegalArgumentException("Invalid key length!");
+		return (V)super.remove(this.toList(key));
+	}
+
 	public Collection<List<Object>> pluralKeySet() {
 		return Collections.unmodifiableCollection(this.keySet());
 	}

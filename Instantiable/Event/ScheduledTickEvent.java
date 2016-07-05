@@ -105,7 +105,7 @@ public final class ScheduledTickEvent extends Event implements TimerCallback {
 
 		@Override
 		public boolean runOnSide(Side s) {
-			return s == Side.CLIENT;
+			return s == Side.SERVER;
 		}
 
 	}
