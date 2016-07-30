@@ -46,7 +46,7 @@ public class TimerMap<V> {
 			Iterator<Entry<V, Integer>> it = timer.entrySet().iterator();
 			while (it.hasNext()) {
 				Entry<V, Integer> e = it.next();
-				if (e.getValue() >= amt) {
+				if (e.getValue() > amt) {
 					e.setValue(e.getValue()-amt);
 				}
 				else {
@@ -73,6 +73,15 @@ public class TimerMap<V> {
 
 	public int get(V val) {
 		return timer.get(val);
+	}
+
+	@Override
+	public final String toString() {
+		return timer.toString();
+	}
+
+	public final int size() {
+		return timer.size();
 	}
 
 	public static interface TimerCallback {

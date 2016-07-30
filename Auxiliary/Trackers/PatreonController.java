@@ -55,14 +55,26 @@ public final class PatreonController {
 	private void addPatrons(String dev, ArrayList<String> lines) {
 		for (String s : lines) {
 			s = ReikaStringParser.stripSpaces(s);
-			String[] parts = s.split(":");
-			parts[parts.length-1] = ReikaStringParser.clipStringBefore(parts[parts.length-1], "//");
-			if (parts.length == 3) {
-				this.addPatron(dev, parts[0], parts[1], Integer.parseInt(parts[2]));
+			try {
+				this.tryLoadingPatron(dev, s);
 			}
-			else {
-				this.addPatron(dev, parts[0], Integer.parseInt(parts[1]));
+			catch (Exception e) {
+				DragonAPICore.logError("Invalid patreon line: "+s+" for "+dev+": "+e.toString());
 			}
+		}
+	}
+
+	private void tryLoadingPatron(String dev, String s) {
+		String[] parts = s.split(":");
+		parts[parts.length-1] = ReikaStringParser.clipStringBefore(parts[parts.length-1], "//");
+		if (parts.length == 3) {
+			this.addPatron(dev, parts[0], parts[1], Integer.parseInt(parts[2]));
+		}
+		else if (parts.length == 2) {
+			this.addPatron(dev, parts[0], Integer.parseInt(parts[1]));
+		}
+		else {
+			throw new IllegalArgumentException("Too few arguments!");
 		}
 	}
 

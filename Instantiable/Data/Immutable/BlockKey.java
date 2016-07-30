@@ -127,4 +127,9 @@ public final class BlockKey implements BlockCheck {
 		int meta = dat.getInteger("meta");
 		return b != null ? new BlockKey(b, meta) : null;
 	}
+
+	@Override
+	public boolean match(BlockCheck bc) {
+		return bc instanceof BlockKey && ((BlockKey)bc).equals(this);
+	}
 }

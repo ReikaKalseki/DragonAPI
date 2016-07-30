@@ -363,6 +363,11 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	@SideOnly(Side.CLIENT)
 	public static void spawnDropParticles(World world, int x, int y, int z, Block b, int meta) {
 		int n = 12+rand.nextInt(12);
+		spawnDropParticles(world, x, y, z, b, meta, n);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void spawnDropParticles(World world, int x, int y, int z, Block b, int meta, int n) {
 		for (int i = 0; i < n; i++) {
 			double vx = ReikaRandomHelper.getRandomPlusMinus(0D, 0.25);
 			double vz = ReikaRandomHelper.getRandomPlusMinus(0D, 0.25);

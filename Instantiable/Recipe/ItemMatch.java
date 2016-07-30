@@ -79,7 +79,8 @@ public class ItemMatch {
 		ks = ks.setSimpleHash(true).setIgnoreNBT(ks.getItemStack().stackTagCompound == null).lock();
 		items.add(ks);
 		//if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-		displayList.add(ks.getItemStack());
+		ItemStack is2 = ks.getItemStack();
+		displayList.add(is2);
 	}
 
 	public boolean match(ItemStack is) {
@@ -100,7 +101,14 @@ public class ItemMatch {
 			DragonAPICore.logError("Could not provide cycled item for "+this+"!");
 			return new ItemStack(Blocks.fire);
 		}
-		return displayList.get((int)((System.currentTimeMillis()/2000+Math.abs(this.hashCode()))%displayList.size()));
+		ItemStack ret = displayList.get((int)((System.currentTimeMillis()/2000+Math.abs(this.hashCode()))%displayList.size()));
+		if (ret.getItemDamage() == OreDictionary.WILDCARD_VALUE) {
+			ArrayList<ItemStack> li = new ArrayList();
+			ret.getItem().getSubItems(ret.getItem(), ret.getItem().getCreativeTab(), li);
+			int idx = (int)((System.currentTimeMillis()/500)%li.size());
+			ret = li.get(idx);
+		}
+		return ret;
 	}
 
 	public Set<KeyedItemStack> getItemList() {

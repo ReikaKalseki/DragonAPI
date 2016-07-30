@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.Registry;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 
 import net.minecraft.init.Blocks;
@@ -64,6 +65,10 @@ public enum ReikaDyeHelper {
 		color = c;
 		colorName = n;
 		colorNameNoSpaces = ReikaStringParser.stripSpaces(n);
+	}
+
+	public static ReikaDyeHelper getByName(String s) {
+		return ReikaDyeHelper.valueOf(s.toUpperCase(Locale.ENGLISH).replaceAll(" ", ""));
 	}
 
 	public static boolean isDyeItem(ItemStack is) {

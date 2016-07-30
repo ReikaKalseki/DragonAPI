@@ -29,6 +29,7 @@ public enum InterfaceCache {
 	AREAPROVIDER("buildcraft.api.core.IAreaProvider"),
 	TINKERTOOL("tconstruct.library.tools.ToolCore"),
 	DSU("powercrystals.minefactoryreloaded.api.IDeepStorageUnit"),
+	MEINTERFACE("appeng.tile.misc.TileInterface"),
 	STREAM("streams.block.FixedFlowBlock"),
 	SPELLSHOT("WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile"),
 	GASITEM("mekanism.api.gas.IGasItem"),
@@ -57,6 +58,10 @@ public enum InterfaceCache {
 
 	public boolean instanceOf(Class c) {
 		return object != null && object.isAssignableFrom(c);
+	}
+
+	public Class getClassType() {
+		return object;
 	}
 }
 //}

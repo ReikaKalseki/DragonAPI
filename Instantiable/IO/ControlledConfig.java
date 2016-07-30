@@ -730,4 +730,10 @@ public class ControlledConfig {
 	public static ControlledConfig getForMod(String mod) {
 		return configs.get(mod);
 	}
+
+	public static void reloadAll() {
+		for (ControlledConfig c : configs.values()) {
+			c.reload();
+		}
+	}
 }

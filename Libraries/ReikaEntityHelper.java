@@ -789,9 +789,10 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	private static EntityCreeper dummy;
 
-	public static EntityLivingBase getDummyMob(World world) {
+	public static EntityLivingBase getDummyMob(World world, double x, double y, double z) {
 		if (dummy == null)
 			dummy = new EntityCreeper(world);
+		dummy.setLocationAndAngles(x, y, z, 0, 0);
 		return dummy;
 	}
 

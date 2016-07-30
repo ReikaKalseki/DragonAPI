@@ -79,4 +79,8 @@ public class PlayerMap<V> {
 		return this.data.entrySet().iterator();
 	}
 
+	public Collection<Entry<UUID, V>> entrySet() {
+		return Collections.unmodifiableCollection(data.entrySet());
+	}
+
 }

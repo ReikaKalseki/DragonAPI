@@ -14,10 +14,14 @@ import java.util.Locale;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.EnumChatFormatting;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 
 
 public class ModularLogger {
@@ -68,6 +72,14 @@ public class ModularLogger {
 
 	}
 
+	public void setState(String logger, boolean enable) {
+		String id = logger.toLowerCase(Locale.ENGLISH);
+		LoggerElement e = instance.loggers.get(id);
+		if (e != null) {
+			e.enabled = enable;
+		}
+	}
+
 	public static class ModularLoggerCommand extends DragonCommandBase {
 
 		@Override
@@ -76,7 +88,8 @@ public class ModularLogger {
 				this.sendChatToSender(ics, EnumChatFormatting.RED+"You must specify a logger ID and a status!");
 				return;
 			}
-			LoggerElement e = instance.loggers.get(args[0].toLowerCase(Locale.ENGLISH));
+			String id = args[0].toLowerCase(Locale.ENGLISH);
+			LoggerElement e = instance.loggers.get(id);
 			if (e == null) {
 				this.sendChatToSender(ics, EnumChatFormatting.RED+"Unrecognized logger ID '"+args[0]+"'!");
 				return;
@@ -84,6 +97,7 @@ public class ModularLogger {
 			e.enabled = args[1].equalsIgnoreCase("yes") || args[1].equalsIgnoreCase("enable") || args[1].equalsIgnoreCase("1") || Boolean.parseBoolean(args[1]);
 			String status = e.enabled ? "enabled" : "disabled";
 			this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Logger '"+args[0]+"' "+status+".");
+			ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.MODULARLOGGER.ordinal(), new PacketTarget.AllPlayersTarget(), id, e.enabled ? 1 : 0);
 		}
 
 		@Override

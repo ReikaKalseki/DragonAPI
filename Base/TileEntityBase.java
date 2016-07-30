@@ -763,7 +763,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	public void detach(IComputerAccess computer) {}
 
 	public String getType() {
-		return this.getName().replaceAll(" ", "");
+		return this.getClass().getSimpleName().substring("TileEntity".length());
 	}
 
 	public final String getName() {

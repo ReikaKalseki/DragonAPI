@@ -92,6 +92,7 @@ import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.ItemNBTCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
+import Reika.DragonAPI.Command.MemoryUsageCommand;
 import Reika.DragonAPI.Command.PlayerNBTCommand;
 import Reika.DragonAPI.Command.PopulateMinimapCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
@@ -649,6 +650,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new CommandOwnerCommand());
 		evt.registerServerCommand(new StructureExportCommand());
 		evt.registerServerCommand(new ItemNBTCommand());
+		evt.registerServerCommand(new MemoryUsageCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();

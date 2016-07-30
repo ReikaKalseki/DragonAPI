@@ -158,9 +158,6 @@ public class EnvironmentSanityChecker {
 						else if (is.getItem() == null) {
 							throw new EnvironmentSanityException(ErrorType.LOOT, is, s, "Null-Item ItemStack");
 						}
-						else if (is.getItem() == null) {
-							throw new EnvironmentSanityException(ErrorType.LOOT, is, s, "Null-Item ItemStack");
-						}
 						else if (!ReikaItemHelper.verifyItemStack(is, true)) {
 							throw new EnvironmentSanityException(ErrorType.LOOT, is, s, "Errors on handling");
 						}

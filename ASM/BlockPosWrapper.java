@@ -10,7 +10,11 @@
 package Reika.DragonAPI.ASM;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
+import net.minecraftforge.classloading.FMLForgePlugin;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
@@ -28,6 +32,29 @@ public class BlockPosWrapper {
 	private static final String BLOCKPOS_CLASS = "net/minecraft/util/math/BlockPos";
 	private static final String BLOCKPOS_CONSTR = "(III)V";
 	private static final String BLOCKPOS_ARG = "L"+BLOCKPOS_CLASS+";";
+
+	private static final HashMap<String, ImmutablePair<String, String>> classes = new HashMap();
+
+	private static void addClass(String deobf, String obf) {
+		ImmutablePair<String, String> p = new ImmutablePair(deobf, obf);
+		classes.put(deobf, p);
+		classes.put(obf, p);
+	}
+
+	private static boolean runForClass(String name, ClassNode cn) {
+		ImmutablePair<String, String> p = classes.get(name);
+		return p != null && name.equals(FMLForgePlugin.RUNTIME_DEOBF ? p.right : p.left);
+	}
+
+	public static void injectBlockPosWrappers(String name, ClassNode cn) {
+		if (runForClass(name, cn)) {
+			for (MethodNode mn : cn.methods) {
+				if (mn.desc.contains(BLOCKPOS_ARG)) {
+					injectBlockPosWrapper(cn, mn);
+				}
+			}
+		}
+	}
 
 	public static void injectBlockPosWrapper(ClassNode cn, MethodNode mn) {
 		injectBlockPosWrapper(cn, mn, 1);

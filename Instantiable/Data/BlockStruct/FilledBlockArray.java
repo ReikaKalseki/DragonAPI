@@ -13,6 +13,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -335,6 +336,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 			return this.asItemStack();
 		}
 
+		@Override
+		public boolean match(BlockCheck bc) {
+			return bc instanceof MultiKey && ((MultiKey)bc).keys.equals(keys);
+		}
+
 	}
 
 	private static class FluidCheck implements BlockCheck {
@@ -378,6 +384,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 		public ItemStack getDisplay() {
 			return new ItemStack(this.getBlock());
+		}
+
+		@Override
+		public boolean match(BlockCheck bc) {
+			return bc instanceof FluidCheck && ((FluidCheck)bc).fluid == fluid;
 		}
 
 	}
@@ -442,6 +453,15 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 		public ItemStack getDisplay() {
 			return null;
+		}
+
+		@Override
+		public boolean match(BlockCheck bc) {
+			if (bc instanceof EmptyCheck) {
+				EmptyCheck ec = (EmptyCheck)bc;
+				return ec.allowNonSolid == allowNonSolid && ec.allowSoft == allowSoft && ec.exceptions.equals(exceptions);
+			}
+			return false;
 		}
 
 	}
@@ -509,6 +529,15 @@ public class FilledBlockArray extends StructuredBlockArray {
 		@Override
 		public String toString() {
 			return block.toString()+" NBT "+matchTag;
+		}
+
+		@Override
+		public boolean match(BlockCheck bc) {
+			if (bc instanceof BasicTileEntityCheck) {
+				BasicTileEntityCheck bt = (BasicTileEntityCheck)bc;
+				return bt.block.equals(block) && bt.tileClass == tileClass && bt.matchTag.equals(matchTag);
+			}
+			return false;
 		}
 	}
 
@@ -578,6 +607,17 @@ public class FilledBlockArray extends StructuredBlockArray {
 			b.data.put(c2, bc);
 		}
 		return b;
+	}
+
+	public Collection<Coordinate> getAllLocationsOf(BlockCheck key) {
+		HashSet<Coordinate> set = new HashSet();
+		for (Coordinate c : data.keySet()) {
+			BlockCheck bc = data.get(c);
+			if (bc.match(key)) {
+				set.add(c);
+			}
+		}
+		return set;
 	}
 
 }

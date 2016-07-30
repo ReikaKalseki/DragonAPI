@@ -11,6 +11,8 @@ package Reika.DragonAPI.Command;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.Instantiable.Event.ConfigReloadEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 
@@ -19,6 +21,13 @@ public class ConfigReloadCommand extends DragonCommandBase {
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
+		if (args[0].equals("all") || args[0].equals("*")) {
+			ControlledConfig.reloadAll();
+			MinecraftForge.EVENT_BUS.post(new ConfigReloadEvent());
+			this.sendChatToSender(ics, EnumChatFormatting.GREEN+"All configs reloaded. Note that some settings may require restart.");
+			return;
+		}
+
 		ControlledConfig c = ControlledConfig.getForMod(args[0]);
 		if (c == null) {
 			this.sendChatToSender(ics, EnumChatFormatting.RED+"No such config for mod '"+args[0]+"'!");

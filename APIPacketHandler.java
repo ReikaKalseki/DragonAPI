@@ -26,6 +26,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import Reika.DragonAPI.Auxiliary.ModularLogger;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.ConfigMatcher;
@@ -315,6 +316,9 @@ public class APIPacketHandler implements PacketHandler {
 				}
 				case LOGOUT:
 					break;
+				case MODULARLOGGER:
+					ModularLogger.instance.setState(stringdata, data[0] > 0);
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -406,7 +410,8 @@ public class APIPacketHandler implements PacketHandler {
 		BIOMEPNGDAT(),
 		BIOMEPNGEND(),
 		FILEMATCH(),
-		ENTITYSYNC();
+		ENTITYSYNC(),
+		MODULARLOGGER();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -417,7 +422,7 @@ public class APIPacketHandler implements PacketHandler {
 		}
 
 		public boolean hasLocation() {
-			return this != KEYUPDATE && this != PLAYERKICK && this != CONFIGSYNC && this != CONFIGSYNCEND && this != FILEMATCH;
+			return this != KEYUPDATE && this != PLAYERKICK && this != CONFIGSYNC && this != CONFIGSYNCEND && this != FILEMATCH && this != MODULARLOGGER;
 		}
 
 		public int getNumberDataInts() {
@@ -452,6 +457,8 @@ public class APIPacketHandler implements PacketHandler {
 				case BIOMEPNGEND:
 					return 1;
 				case LOGIN:
+					return 1;
+				case MODULARLOGGER:
 					return 1;
 				default:
 					return 0;

@@ -20,6 +20,7 @@ public interface BlockCheck {
 
 	public boolean matchInWorld(World world, int x, int y, int z);
 	public boolean match(Block b, int meta);
+	public boolean match(BlockCheck bc);
 	public void place(World world, int x, int y, int z);
 	public ItemStack asItemStack();
 

@@ -1,4 +1,4 @@
-package Reika.DragonAPI.ASM.Patchers.Hooks.Event;
+package Reika.DragonAPI.ASM.Patchers.Hooks.Event.Item;
 
 import net.minecraftforge.classloading.FMLForgePlugin;
 

@@ -29,7 +29,7 @@ public final class KeyedItemStack {
 	}
 
 	public KeyedItemStack(Item i) {
-		this(new ItemStack(i));
+		this(new ItemStack(i, 1, OreDictionary.WILDCARD_VALUE));
 		this.setIgnoreMetadata(true);
 		this.setSized(false);
 		this.setIgnoreNBT(true);

@@ -130,6 +130,10 @@ public class BlockArray implements Iterable<Coordinate> {
 		keys.remove(c);
 	}
 
+	protected boolean containsKey(Coordinate c) {
+		return keys.contains(c);
+	}
+
 	public void recalcLimits() {
 		this.resetLimits();
 	}
@@ -260,7 +264,7 @@ public class BlockArray implements Iterable<Coordinate> {
 	}
 
 	public final boolean hasBlock(int x, int y, int z) {
-		return keys.contains(new Coordinate(x, y, z));
+		return this.containsKey(new Coordinate(x, y, z));
 	}
 
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.

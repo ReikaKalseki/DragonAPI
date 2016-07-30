@@ -32,5 +32,8 @@ public class MultiSheetItemRenderer extends ItemSpriteSheetRenderer {
 			String sheet = iis.getSpritesheet(item);
 			ReikaSpriteSheets.renderItem(modClass, sheet, index, type, item, data);
 		}
+		else {
+			super.renderItem(type, item, data);
+		}
 	}
 }

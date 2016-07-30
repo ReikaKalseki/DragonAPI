@@ -9,9 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
+import java.util.ArrayList;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 public class ItemNBTCommand extends DragonCommandBase {
@@ -20,8 +23,17 @@ public class ItemNBTCommand extends DragonCommandBase {
 	public void processCommand(ICommandSender ics, String[] args) {
 		EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
 		ItemStack is = ep.getCurrentEquippedItem();
-		String s = is != null ? is.stackTagCompound != null ? is.stackTagCompound.toString() : "{No Tag}" : "[No Item]";
-		ReikaChatHelper.sendChatToPlayer(ep, s);
+		if (is == null) {
+			ReikaChatHelper.sendChatToPlayer(ep, "[No Item]");
+			return;
+		}
+		if (is.stackTagCompound == null) {
+			ReikaChatHelper.sendChatToPlayer(ep, "{No Tag}");
+			return;
+		}
+		ArrayList<String> li = ReikaNBTHelper.parseNBTAsLines(is.stackTagCompound);
+		for (String s : li)
+			ReikaChatHelper.sendChatToPlayer(ep, s);
 	}
 
 	@Override

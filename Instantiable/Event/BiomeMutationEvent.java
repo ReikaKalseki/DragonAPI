@@ -37,7 +37,13 @@ public class BiomeMutationEvent extends Event {
 
 	public static boolean fireTry(GenLayer gen, int chunkX, int chunkZ, int x, int z, int originalID) {
 		BiomeMutationEvent evt = new BiomeMutationEvent(gen, (chunkX << 4)+x, (chunkZ << 4)+z, originalID);
-		return !MinecraftForge.EVENT_BUS.post(evt) && BiomeGenBase.biomeList[evt.originalMutatedID] != null && BiomeGenBase.biomeList[evt.originalMutatedID] instanceof BiomeGenMutated;
+		return !MinecraftForge.EVENT_BUS.post(evt) && BiomeGenBase.biomeList[evt.originalMutatedID] != null && isValidMutant(originalID, evt.originalMutatedID);
+	}
+
+	private static boolean isValidMutant(int originalID, int originalMutatedID) {
+		BiomeGenBase child = BiomeGenBase.biomeList[originalMutatedID];
+		BiomeGenBase parent = BiomeGenBase.biomeList[originalID];
+		return child instanceof BiomeGenMutated || parent.getClass().isAssignableFrom(child.getClass());
 	}
 
 	public static class GetMutatedBiomeEvent extends BiomeMutationEvent {

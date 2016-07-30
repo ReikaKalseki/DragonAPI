@@ -422,4 +422,14 @@ public class ReikaStringParser extends DragonAPICore {
 			idx = s.length();
 		return s.substring(0, idx);
 	}
+
+	public static boolean isWholeWord(String s, String lv) {
+		int idx1 = lv.indexOf(s);
+		int idx2 = lv.indexOf(s)+s.length();
+		return (idx1 == 0 || isWordSeparator(lv.charAt(idx1-1))) && (idx2 == lv.length() || isWordSeparator(lv.charAt(idx2)));
+	}
+
+	public static boolean isWordSeparator(char c) {
+		return c == ' ' || c == '.' || c == '!' || c == '?' || c == ',' || c == ';';
+	}
 }

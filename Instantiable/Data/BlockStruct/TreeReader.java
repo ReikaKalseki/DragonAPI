@@ -9,22 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
+import java.util.HashSet;
+import java.util.Iterator;
+
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import Reika.ChromatiCraft.API.TreeGetter;
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 
 public final class TreeReader extends BlockArray {
@@ -37,6 +33,9 @@ public final class TreeReader extends BlockArray {
 
 	private final Block dyeLeafID;
 	private final Block rainbowLeafID;
+	private final Block rainbowSaplingID;
+	private final Block dyeSaplingID;
+
 	private boolean isDyeTree = false;
 	private boolean isRainbowTree = false;
 	private int dyeMeta = -1;
@@ -46,98 +45,14 @@ public final class TreeReader extends BlockArray {
 		if (ModList.CHROMATICRAFT.isLoaded()) {
 			dyeLeafID = TreeGetter.getNaturalDyeLeafID();
 			rainbowLeafID = TreeGetter.getRainbowLeafID();
+			rainbowSaplingID = TreeGetter.getRainbowSaplingID();
+			dyeSaplingID = TreeGetter.getSaplingID();
 		}
 		else {
 			dyeLeafID = null;
 			rainbowLeafID = null;
-		}
-	}
-
-	private void checkAndAddDyeTree(World world, int x, int y, int z, int ox, int oy, int oz, int depth) {
-		if (Math.abs(x-ox) > 6 || Math.abs(y-oy) > 14 || Math.abs(z-oz) > 6)
-			return;
-		if (depth > 150)
-			return;
-		Block id = world.getBlock(x, y, z);
-		if (id == Blocks.air)
-			return;
-		int meta = world.getBlockMetadata(x, y, z);
-		if (this.hasBlock(x, y, z))
-			return;
-		//DragonAPICore.log(id+":"+meta);
-		if (id != Blocks.log && id != Blocks.log2 && id != dyeLeafID && !ModWoodList.isModWood(id, meta))
-			return;
-		if (id == dyeLeafID && dyeMeta != -1 && dyeMeta != meta)
-			return;
-
-		if (id != dyeLeafID) {
-			TreeType tr = ReikaTreeHelper.getTree(id, meta);
-			if (tr == null)
-				tr = ModWoodList.getModWood(id, meta);
-			//DragonAPICore.log(wood+"/"+this.wood+"  :  "+van+"/"+vanilla);
-			if (tree == null) {
-				//DragonAPICore.log(this);
-				this.setTree(tr);
-			}
-			else {
-				if (tr != tree)
-					return;
-			}
-		}
-		if (tree == null)
-			return;
-
-		if (id == dyeLeafID) {
-			isDyeTree = true;
-			dyeMeta = meta;
-			leafCount++;
-		}
-		else
-			logCount++;
-		this.addBlockCoordinate(x, y, z);
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
-				for (int k = -1; k <= 1; k++) {
-					this.checkAndAddDyeTree(world, x+i, y+j, z+k, ox, oy, oz, depth+1);
-				}
-			}
-		}
-	}
-
-	public void checkAndAddDyeTree(World world, int x, int y, int z) {
-		this.checkAndAddDyeTree(world, x, y, z, x, y, z, 0);
-	}
-
-	public void checkAndAddRainbowTree(World world, int x, int y, int z) {
-		this.checkAndAddRainbowTree(world, x, y, z, 0);
-	}
-
-	private void checkAndAddRainbowTree(World world, int x, int y, int z, int depth) {
-		if (this.hasBlock(x, y, z))
-			return;
-		if (depth > 120)
-			return;
-		Block id = world.getBlock(x, y, z);
-		int meta = world.getBlockMetadata(x, y, z);
-
-		if (id != Blocks.log && id != Blocks.log2 && id != rainbowLeafID && !ModWoodList.isModWood(id, meta))
-			return;
-
-		this.addBlockCoordinate(x, y, z);
-
-		if (id == Blocks.log || id == Blocks.log2 || ModWoodList.isModWood(id, meta))
-			logCount++;
-		else {
-			leafCount++;
-			isRainbowTree = true;
-		}
-
-		for (int i = -1; i <= 1; i++) {
-			for (int j = -1; j <= 1; j++) {
-				for (int k = -1; k <= 1; k++) {
-					this.checkAndAddRainbowTree(world, x+i, y+j, z+k, depth+1);
-				}
-			}
+			rainbowSaplingID = null;
+			dyeSaplingID = null;
 		}
 	}
 
@@ -153,306 +68,80 @@ public final class TreeReader extends BlockArray {
 		return dyeMeta;
 	}
 
-	public void addTree(World world, int x, int y, int z, Block blockID, int blockMeta) {
-		this.addTree(world, x, y, z, blockID, blockMeta, 0);
-	}
-
-	private void addTree(World world, int x, int y, int z, Block blockID, int blockMeta, int depth) {
-		Block id = world.getBlock(x, y, z);
-		if (id == Blocks.air)
-			return;
-		int meta = world.getBlockMetadata(x, y, z);
-		if (id != blockID)
-			return;
-		if (meta != blockMeta)
-			return;
-		if (id != Blocks.log || id != Blocks.log2 && !ModWoodList.isModWood(id, meta))
-			return;
-		if (this.hasBlock(x, y, z))
-			return;
-		this.addBlockCoordinate(x, y, z);
-
-		try {
-			for (int i = -1; i <= 1; i++) {
-				for (int j = -1; j <= 1; j++) {
-					for (int k = -1; k <= 1; k++) {
-						if (i != 0 || j != 0 || k != 0)
-							this.addTree(world, x+i, y+j, z+k, blockID, blockMeta, depth+1);
-					}
-				}
-			}
-		}
-		catch (StackOverflowError e) {
-			this.throwOverflow(depth);
-			e.printStackTrace();
-		}
-	}
-
-	public void addModTree(World world, int x, int y, int z) {
-		if (tree == ModWoodList.SEQUOIA) {
-			DragonAPICore.logError("Use sequoia handler!");
-			ReikaJavaLibrary.dumpStack();
-			return;
-		}
-		if (tree == ModWoodList.DARKWOOD) {
-			DragonAPICore.logError("Use darkwood handler!");
-			ReikaJavaLibrary.dumpStack();
-			return;
-		}
-		if (tree == ModWoodList.IRONWOOD) {
-			DragonAPICore.logError("Use ironwood handler!");
-			ReikaJavaLibrary.dumpStack();
-			return;
-		}
-		if (tree == null) {
-			throw new MisuseException("You must set the mod tree type!");
-		}
-		this.addModTree(world, x, y, z, x, y, z, 0);
-	}
-
-	private void addModTree(World world, int x, int y, int z, int x0, int y0, int z0, int depth) {
-		if (Math.abs(x-x0) > 24 || Math.abs(z-z0) > 24)
-			return;
-		if (this.hasBlock(x, y, z))
-			return;
-		Block id = world.getBlock(x, y, z);
-		int meta = world.getBlockMetadata(x, y, z);
-		ModWoodList get = ModWoodList.getModWood(id, meta);
-		ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
-
-		//DragonAPICore.log("ID:"+id+"  GET: "+get+"   WOOD: "+wood+"    LEAF: "+leaf);
-
-		if (get != tree && leaf != tree)
-			return;
-
-		this.addBlockCoordinate(x, y, z);
-		//DragonAPICore.log(id+":"+get+":"+leaf);
-		if (get == tree)
-			logCount++;
-		else if (leaf == tree)
-			leafCount++;
-
-		try {
-			for (int i = -1; i <= 1; i++) {
-				for (int j = -1; j <= 1; j++) {
-					for (int k = -1; k <= 1; k++) {
-						this.addModTree(world, x+i, y+j, z+k, x0, y0, z0, depth+1);
-					}
-				}
-			}
-		}
-		catch (StackOverflowError e) {
-			this.throwOverflow(depth);
-			e.printStackTrace();
-		}
-	}
-
-	private void addTree(World world, int x, int y, int z, int x0, int y0, int z0, int depth) {
-		if (tree == null) {
-			throw new MisuseException("You must set the tree type!");
-		}
-		if (Math.abs(x-x0) > 24) //For magic forests
-			return;
-		if (Math.abs(z-z0) > 24)
-			return;
-		if (this.hasBlock(x, y, z))
-			return;
-		Block id = world.getBlock(x, y, z);
-		int meta = world.getBlockMetadata(x, y, z);
-		ReikaTreeHelper get = ReikaTreeHelper.getTree(id, meta);
-		ReikaTreeHelper leaf = ReikaTreeHelper.getTreeFromLeaf(id, meta);
-		if (get != tree && leaf != tree)
-			return;
-
-		//DragonAPICore.logSideOnly("GET: "+get+"     LEAF: "+leaf+"    ## LOG: "+logCount+"    LEAVES: "+leafCount, Side.SERVER);
-
-		this.addBlockCoordinate(x, y, z);
-		if (get == tree)
-			logCount++;
-		else if (leaf == tree)
-			leafCount++;
-
-		//DragonAPICore.log(depth+":"+maxDepth, Side.SERVER);
-		try {
-			for (int i = -1; i <= 1; i++) {
-				for (int j = -1; j <= 1; j++) {
-					for (int k = -1; k <= 1; k++) {
-						this.addTree(world, x+i, y+j, z+k, x0, y0, z0, depth+1);
-					}
-				}
-			}
-		}
-		catch (StackOverflowError e) {
-			this.throwOverflow(depth);
-			e.printStackTrace();
-		}
-	}
-
 	public void addTree(World world, int x, int y, int z) {
-		this.addTree(world, x, y, z, x, y, z, 0);
-	}
+		// Using LinkedLists over ArrayLists. we expect those lists to grow fast
+		// and we don't need indexed access.
+		HashSet<Coordinate> search = new HashSet();
+		HashSet<Coordinate> failed = new HashSet();
+		HashSet<Coordinate> next = new HashSet();
 
-	/** For Natura's massive redwood trees. Warning: may lag-spike! */
-	public void addSequoia(World world, int x, int y, int z, boolean debug) {
-		this.setTree(ModWoodList.SEQUOIA);
-		int r = 24;
-		int minx = x-r;
-		int maxx = x+r;
-		int minz = z-r;
-		int maxz = z+r;
+		int iterations = 0;
 
-		int yr = 16;
+		this.validateAndAdd(world, x, y, z, search, failed);
 
-		for (int j = y; j <= y+yr; j++) {
-			for (int i = minx; i <= maxx; i++) {
-				for (int k = minz; k <= maxz; k++) {
-					Block id = world.getBlock(i, j, k);
-					int meta = world.getBlockMetadata(i, j, k);
-					ModWoodList get = ModWoodList.getModWood(id, meta);
-					ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
+		while (!search.isEmpty() && iterations < maxDepth) {
+			iterations++;
 
-					if (get == ModWoodList.SEQUOIA) {
-						logCount++;
-						this.addBlockCoordinate(i, j, k);
-					}
-					else if (leaf == ModWoodList.SEQUOIA) {
-						leafCount++;
-						this.addBlockCoordinate(i, j, k);
-					}
-				}
-			}
-		}
-	}
+			Iterator<Coordinate> it = search.iterator();
+			while (it.hasNext()) {
+				Coordinate c = it.next();
+				this.addBlockCoordinate(c.xCoord, c.yCoord, c.zCoord);
 
-	/** For Highlands's ironwood trees. Warning: may lag-spike! */
-	public void addIronwood(World world, int x, int y, int z, boolean debug) {
-		this.setTree(ModWoodList.IRONWOOD);
-		int r = 24;
-		int minx = x-r;
-		int maxx = x+r;
-		int minz = z-r;
-		int maxz = z+r;
+				for (int dx = -1; dx <= 1; dx++) {
+					for (int dy = -1; dy <= 1; dy++) {
+						for (int dz = -1; dz <= 1; dz++) {
+							if (dx == 0 && dy == 0 && dz == 0)
+								continue;
 
-		int yr = 16;
-
-		for (int j = y; j <= y+yr; j++) {
-			for (int i = minx; i <= maxx; i++) {
-				for (int k = minz; k <= maxz; k++) {
-					Block id = world.getBlock(i, j, k);
-					int meta = world.getBlockMetadata(i, j, k);
-					ModWoodList get = ModWoodList.getModWood(id, meta);
-					ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
-
-					if (get == ModWoodList.IRONWOOD) {
-						logCount++;
-						this.addBlockCoordinate(i, j, k);
-					}
-					else if (leaf == ModWoodList.IRONWOOD) {
-						leafCount++;
-						this.addBlockCoordinate(i, j, k);
-					}
-				}
-			}
-		}
-	}
-
-	/** For Twilight's dark forests. */
-	public void addDarkForest(World world, int x, int y, int z, int minx, int maxx, int minz, int maxz, boolean debug) {
-		this.setTree(ModWoodList.DARKWOOD);
-		for (int j = y-24; j <= y+24; j++) {
-			for (int i = minx; i <= maxx; i++) {
-				for (int k = minz; k <= maxz; k++) {
-					Block id = world.getBlock(i, j, k);
-					int meta = world.getBlockMetadata(i, j, k);
-					ModWoodList get = ModWoodList.getModWood(id, meta);
-					ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
-
-					if (get == ModWoodList.DARKWOOD) {
-						logCount++;
-						this.addBlockCoordinate(i, j, k);
-					}
-					else if (leaf == ModWoodList.DARKWOOD) {
-						leafCount++;
-						this.addBlockCoordinate(i, j, k);
-					}
-				}
-			}
-		}
-	}
-
-	@Deprecated
-	public void addGenerousTree(World world, int x, int y, int z, int dw) {
-		if (this.hasBlock(x, y, z))
-			return;
-		try {
-			Block id = world.getBlock(x, y, z);
-			int meta = world.getBlockMetadata(x, y, z);
-			Material mat = ReikaWorldHelper.getMaterial(world, x, y, z);
-			ModWoodList wood = ModWoodList.getModWood(id, meta);
-			if (wood == ModWoodList.SEQUOIA) {
-				DragonAPICore.logError("Use sequoia handler for "+id+":"+meta+"!");
-				ReikaJavaLibrary.dumpStack();
-				return;
-			}
-			//ItemStack leaf = wood.getCorrespondingLeaf();
-			if (id == Blocks.log || id == Blocks.log2 || wood != null || id == TwilightForestHandler.BlockEntry.TREECORE.getBlock()) {
-				this.addBlockCoordinate(x, y, z);
-				for (int i = -1; i <= 1; i++) {
-					for (int j = -1; j <= 1; j++) {
-						for (int k = -1; k <= 1; k++) {
-							if (!this.hasBlock(x+i, y+j, z+k)) {
-								Material read = ReikaWorldHelper.getMaterial(world, x+i, y+j, z+k);
-								Block readid = world.getBlock(x+i, y+j, z+k);
-								int readmeta = world.getBlockMetadata(x+i, y+j, z+k);
-								if (read == Material.leaves) {
-									Block leafID = readid;
-									int leafMeta = readmeta;
-									ModWoodList leaf = ModWoodList.getModWoodFromLeaf(leafID, leafMeta);
-									if (leaf == wood)
-										//this.recursiveAddWithBoundsMetadata(world, x+i, y+j, z+k, leafID, leafMeta, x-dw, 0, z-dw, x+dw, 256, z+dw);
-										this.addGenerousTree(world, x+i, y+j, z+k, dw);
-									else {
-										ReikaTreeHelper tree = ReikaTreeHelper.getTreeFromLeaf(leafID, leafMeta);
-										if (tree != null) {
-											this.addGenerousTree(world, x+i, y+j, z+k, dw);
-										}
-									}
-								}
-								else if (readid == Blocks.log || readid == Blocks.log2 || ModWoodList.getModWood(readid, readmeta) == wood)
-									this.addGenerousTree(world, x+i, y+j, z+k, dw);
+							Coordinate c2 = c.offset(dx, dy, dz);
+							if (!search.contains(c2) && !next.contains(c2) && !this.containsKey(c2) && !failed.contains(c2)) {
+								this.validateAndAdd(world, c2.xCoord, c2.yCoord, c2.zCoord, next, failed);
 							}
 						}
 					}
 				}
+				it.remove();
 			}
-			else if (mat == Material.leaves) {
-				ModWoodList leaf = ModWoodList.getModWoodFromLeaf(id, meta);
-				ReikaTreeHelper tree = ReikaTreeHelper.getTreeFromLeaf(id, meta);
-				if (leaf != null) {
-					this.addBlockCoordinate(x, y, z);
-					for (int i = -1; i <= 1; i++) {
-						for (int j = -1; j <= 1; j++) {
-							for (int k = -1; k <= 1; k++) {
-								this.addGenerousTree(world, x+i, y+j, z+k, dw);
-							}
-						}
-					}
-				}
-				else if (tree != null) {
-					this.addBlockCoordinate(x, y, z);
-					for (int i = -1; i <= 1; i++) {
-						for (int j = -1; j <= 1; j++) {
-							for (int k = -1; k <= 1; k++) {
-								this.addGenerousTree(world, x+i, y+j, z+k, dw);
-							}
-						}
-					}
-				}
-			}
+
+			search.addAll(next);
+			next.clear();
 		}
-		catch (StackOverflowError e) {
-			this.throwOverflow(0);
-			e.printStackTrace();
+	}
+
+	private boolean isTree(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		if (tree != null && tree.getLogID() == b) {
+			logCount++;
+			return true;
+		}
+		else if (!isRainbowTree && b == dyeLeafID && (dyeMeta == -1 || dyeMeta == meta)) {
+			dyeMeta = meta;
+			isDyeTree = true;
+			leafCount++;
+			maxDepth = 12;
+			return true;
+		}
+		else if (!isDyeTree && b == rainbowLeafID) {
+			isRainbowTree = true;
+			leafCount++;
+			maxDepth = 36;
+			return true;
+		}
+		else if (tree != null && !isDyeTree && !isRainbowTree && b == tree.getLeafID() && tree.getLeafMetadatas().contains(meta)) {
+			leafCount++;
+			return true;
+		}
+		return false;
+	}
+
+	private void validateAndAdd(World world, int x, int y, int z, HashSet<Coordinate> search, HashSet<Coordinate> failed) {
+		Coordinate c = new Coordinate(x, y, z);
+		if (this.isTree(world, x, y, z)) {
+			search.add(c);
+		}
+		else {
+			failed.add(c);
 		}
 	}
 
@@ -474,9 +163,53 @@ public final class TreeReader extends BlockArray {
 
 	public void setTree(TreeType tree) {
 		this.tree = tree;
+		if (tree != null)
+			maxDepth = this.getMaxDepthFromTreeType(tree);
+	}
+
+	public static int getMaxDepthFromTreeType(TreeType tree) {
+		if (tree instanceof ReikaTreeHelper) {
+			switch((ReikaTreeHelper)tree) {
+				case ACACIA:
+					return 12;
+				case BIRCH:
+					return 6;
+				case DARKOAK:
+					return 12;
+				case JUNGLE:
+					return 36;
+				case OAK:
+					return 18;
+				case SPRUCE:
+					return 48;
+				default:
+					return 12;
+			}
+		}
+		if (tree instanceof ModWoodList) {
+			switch((ModWoodList)tree) {
+				case IRONWOOD:
+					return 60;
+				case SEQUOIA:
+					return 200;
+				case REDWOOD:
+					return 130;
+				case DARKWOOD:
+					return 80;
+				case SACRED:
+					return 50;
+				default:
+					return 12;
+			}
+		}
+		return 12;
 	}
 
 	public ItemStack getSapling() {
+		if (isDyeTree)
+			return new ItemStack(dyeSaplingID, 1, dyeMeta);
+		if (isRainbowTree)
+			return new ItemStack(rainbowSaplingID);
 		return tree != null ? new ItemStack(tree.getSaplingID(), 1, tree.getSaplingMeta()) : null;
 	}
 
@@ -484,7 +217,7 @@ public final class TreeReader extends BlockArray {
 	public Coordinate getNextAndMoveOn() {
 		Coordinate next = super.getNextAndMoveOn();
 		if (this.isEmpty())
-			;//this.reset();
+			;// this.reset();
 		return next;
 	}
 
@@ -514,6 +247,7 @@ public final class TreeReader extends BlockArray {
 		copy.dyeTree = dyeTree;
 
 		copy.isDyeTree = isDyeTree;
+		copy.isRainbowTree = isRainbowTree;
 		copy.dyeMeta = dyeMeta;
 	}
 

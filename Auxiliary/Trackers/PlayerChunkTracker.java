@@ -1,15 +1,13 @@
 package Reika.DragonAPI.Auxiliary.Trackers;
 
-import cpw.mods.fml.common.gameevent.TickEvent;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-
-import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
+
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import cpw.mods.fml.common.gameevent.TickEvent;
 
 //MultiThread-safe PlayerChunkLoadTracker
 //Can be used to disable chunk loading around a specific player.

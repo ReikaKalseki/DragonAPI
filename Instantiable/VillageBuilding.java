@@ -16,6 +16,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -27,6 +28,7 @@ import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Start;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import cpw.mods.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
@@ -93,13 +95,17 @@ public class VillageBuilding implements IVillageCreationHandler {
 
 	public static abstract class VillagePiece extends Village {
 
-		public final int xSize;
-		public final int ySize;
-		public final int zSize;
+		private int xSize;
+		private int ySize;
+		private int zSize;
 
 		private int averageGroundLevel = -1;
 
 		private StructureBoundingBox structureBox;
+
+		public VillagePiece() {
+			super();
+		}
 
 		protected VillagePiece(StructureVillagePieces.Start start, int par2, Random rand, StructureBoundingBox bb, int par5, int x, int y, int z) {
 			super(start, par2);
@@ -109,6 +115,15 @@ public class VillageBuilding implements IVillageCreationHandler {
 			xSize = x;
 			ySize = y;
 			zSize = z;
+		}
+
+		@Override
+		public final void func_143009_a(World world, NBTTagCompound tag) {
+			super.func_143009_a(world, tag);
+
+			xSize = tag.getInteger("sizeX");
+			ySize = tag.getInteger("sizeY");
+			zSize = tag.getInteger("sizeZ");
 		}
 
 		@Override
@@ -182,6 +197,10 @@ public class VillageBuilding implements IVillageCreationHandler {
 
 		protected final void placeBlockAtFixedPosition(World world, int i, int j, int k, Block b, int meta) {
 			this.tryPlaceBlock(world, i+boundingBox.minX, j+boundingBox.minY, k+boundingBox.minZ, b, meta, 3);
+		}
+
+		protected final void placeBlockAtFixedPosition(World world, int i, int j, int k, BlockKey bk) {
+			this.placeBlockAtFixedPosition(world, i, j, k, bk.blockID, Math.max(0, bk.metadata));
 		}
 
 		protected final TileEntity placeTileEntityAtFixedPosition(World world, int i, int j, int k, Block b, int meta) {

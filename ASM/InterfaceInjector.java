@@ -117,7 +117,7 @@ public class InterfaceInjector implements IClassTransformer {
 		else {
 			cn.interfaces.add(inter.name);
 			if (DEBUG)
-				ReikaJavaLibrary.pConsole("DRAGONAPI ASM: Interface class "+inter.name+" successfully injected.");
+				ReikaJavaLibrary.pConsole("DRAGONAPI ASM: Interface class "+inter.name+" successfully injected into "+cn.name+".");
 		}
 	}
 
