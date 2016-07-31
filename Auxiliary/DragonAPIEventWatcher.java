@@ -103,6 +103,7 @@ public class DragonAPIEventWatcher {
 
 	@SubscribeEvent
 	public void mapFluidContainers(FluidContainerRegisterEvent evt) {
+		ReikaFluidHelper.initEarlyRegistrations();
 		Fluid f = evt.data.fluid.getFluid();
 		ItemStack fill = evt.data.filledContainer;
 		ItemStack empty = evt.data.emptyContainer;

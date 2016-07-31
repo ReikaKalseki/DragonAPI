@@ -17,30 +17,54 @@ import java.util.Locale;
 
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import Reika.DragonAPI.Instantiable.HybridTank;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 
 public class ReikaFluidHelper {
 
-	private static final HashMap<Fluid, FluidContainer> containers = new HashMap();
+	private static final MultiMap<Fluid, FluidContainer> containers = new MultiMap();
 
 	private static final HashMap<String, String> nameSwaps = new HashMap();
+	private static boolean init = false;
+
+	public static void initEarlyRegistrations() {
+		if (!init) {
+			FluidContainerData[] dat = FluidContainerRegistry.getRegisteredFluidContainerData();
+			for (int i = 0; i < dat.length; i++) {
+				FluidContainerData fcd = dat[i];
+				if (fcd.fluid != null && fcd.filledContainer != null) {
+					mapContainerToFluid(fcd.fluid.getFluid(), fcd.emptyContainer, fcd.filledContainer);
+				}
+			}
+
+			init = true;
+		}
+	}
 
 	public static void mapContainerToFluid(Fluid f, ItemStack empty, ItemStack filled) {
-		containers.put(f, new FluidContainer(filled, empty));
+		containers.addValue(f, new FluidContainer(filled, empty));
 	}
 
-	public static ItemStack getFilledContainerFor(Fluid f) {
-		FluidContainer fc = containers.get(f);
-		ItemStack is = fc != null ? fc.filled : null;
-		return is != null ? is.copy() : null;
+	public static ArrayList<ItemStack> getAllContainersFor(Fluid f) {
+		ArrayList<ItemStack> c = new ArrayList();
+		for (FluidContainer fc : containers.get(f)) {
+			if (fc.filled != null)
+				c.add(fc.filled);
+		}
+		return c;
 	}
 
-	public static ItemStack getEmptyContainerFor(Fluid f) {
-		FluidContainer fc = containers.get(f);
-		ItemStack is = fc != null ? fc.empty : null;
-		return is != null ? is.copy() : null;
+	public static ArrayList<ItemStack> getAllEmptyContainers() {
+		ArrayList<ItemStack> c = new ArrayList();
+		for (FluidContainer fc : containers.allValues(false)) {
+			if (fc.empty != null)
+				c.add(fc.empty);
+		}
+		return c;
 	}
 
 	public static boolean isInfinite(Fluid f) {

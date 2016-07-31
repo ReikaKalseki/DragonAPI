@@ -19,11 +19,13 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -51,15 +53,42 @@ public class ItemMatch {
 	}
 
 	public ItemMatch(String s) {
-		this.addAll(OreDictionary.getOres(s));
+		String[] parts = s.split("/");
+		for (String s2 : parts)
+			this.addAll(OreDictionary.getOres(s2));
 		if (items.isEmpty())
 			throw new RegistrationException(DragonAPIInit.instance, "This recipe uses an OreDict tag with no registered items!");
+	}
+
+	public ItemMatch(Fluid f) {
+		this(ReikaFluidHelper.getAllContainersFor(f));
 	}
 
 	public ItemMatch(Collection<ItemStack> c) {
 		this.addAll(c);
 		if (items.isEmpty())
 			throw new RegistrationException(DragonAPIInit.instance, "This recipe uses an list with no items!");
+	}
+
+	public static ItemMatch createFromObject(Object o) {
+		if (o instanceof Block) {
+			return new ItemMatch((Block)o);
+		}
+		else if (o instanceof Item) {
+			return new ItemMatch((Item)o);
+		}
+		else if (o instanceof ItemStack) {
+			return new ItemMatch((ItemStack)o);
+		}
+		else if (o instanceof String) {
+			return new ItemMatch((String)o);
+		}
+		else if (o instanceof Fluid) {
+			return new ItemMatch((Fluid)o);
+		}
+		else {
+			throw new IllegalArgumentException("Invalid item matching type!");
+		}
 	}
 
 	private void addAll(Collection<ItemStack> li) {

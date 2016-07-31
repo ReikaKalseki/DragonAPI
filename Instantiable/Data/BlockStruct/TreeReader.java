@@ -198,6 +198,14 @@ public final class TreeReader extends BlockArray {
 					return 80;
 				case SACRED:
 					return 50;
+				case CANOPY:
+					return 40;
+				case TWILIGHTOAK:
+					return 200;
+				case MANGROVE:
+					return 30;
+				case SAKURA:
+					return 24;
 				default:
 					return 12;
 			}
