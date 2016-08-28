@@ -71,6 +71,7 @@ public class ReikaMystcraftHelper {
 	private static final Method getLink;
 
 	private static APIInstanceProvider apiProvider;
+	private static final int API_VERSION = 1;
 
 	private static final ArrayList<MystcraftPageRegistry> registries = new ArrayList();
 
@@ -91,8 +92,18 @@ public class ReikaMystcraftHelper {
 			ItemStack book = (ItemStack)getBook.invoke(te);
 			if (book == null)
 				return null;
-			ILinkInfo info = (ILinkInfo)getLink.invoke(book.getItem(), book);
+			ILinkInfo info = getLinkbookLink(book);
 			return info;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static ILinkInfo getLinkbookLink(ItemStack book) {
+		try {
+			return (ILinkInfo)getLink.invoke(book.getItem(), book);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -109,7 +120,7 @@ public class ReikaMystcraftHelper {
 		int id = world.provider.dimensionId;
 		if (id == 0 || id == 1 || id == -1 || id == ReikaTwilightHelper.getDimensionID() || id == ExtraUtilsHandler.getInstance().darkID)
 			return false;
-		DimensionAPI d = (DimensionAPI)getAPI(APISegment.DIMENSION, 1);
+		DimensionAPI d = (DimensionAPI)getAPI(APISegment.DIMENSION);
 		return world.provider.getClass().getSimpleName().equals("WorldProviderMyst");//d != null && d.isMystcraftAge(id);
 	}
 	/*
@@ -160,6 +171,13 @@ public class ReikaMystcraftHelper {
 			return getOrCreateInterface(world).symbolExists(sym);
 		}
 		return false;
+	}
+
+	public static Set<String> getAgeSymbols(World world) {
+		if (AgeInterface.loadedCorrectly && isMystAge(world)) {
+			return getOrCreateInterface(world).getSymbols();
+		}
+		return new HashSet();
 	}
 
 	/*
@@ -421,7 +439,7 @@ public class ReikaMystcraftHelper {
 
 	public static ArrayList<IAgeSymbol> getAllSymbols() {
 		ArrayList<IAgeSymbol> c = new ArrayList();
-		SymbolAPI api = getAPI(APISegment.SYMBOL, 1);
+		SymbolAPI api = getAPI(APISegment.SYMBOL);
 		if (api != null) {
 			c.addAll(api.getAllRegisteredSymbols());
 		}
@@ -438,7 +456,7 @@ public class ReikaMystcraftHelper {
 	}
 
 	public static ItemStack getSymbolPage(IAgeSymbol a) {
-		PageAPI api = getAPI(APISegment.PAGE, 1);
+		PageAPI api = getAPI(APISegment.PAGE);
 		if (api != null) {
 			ItemStack is = new ItemStack((Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.page));
 			if (is != null && is.getItem() != null) {
@@ -451,6 +469,10 @@ public class ReikaMystcraftHelper {
 		return null;
 	}
 
+	public static int getSymbolRank(IAgeSymbol ia) {
+		return (int)((SymbolValuesAPI)getAPI(APISegment.SYMBOLVALUES)).getSymbolItemWeight(ia.identifier());
+	}
+
 	public static IAgeSymbol getRandomPage() {
 		ArrayList<IAgeSymbol> c = getAllSymbols();
 		return c.get(rand.nextInt(c.size()));
@@ -458,7 +480,7 @@ public class ReikaMystcraftHelper {
 
 	/** Ranges from 0-1, lower is rarer; direct linear affect on page loot rarity */
 	public static float getPageWeight(IAgeSymbol a) {
-		SymbolValuesAPI api = getAPI(APISegment.SYMBOLVALUES, 1);
+		SymbolValuesAPI api = getAPI(APISegment.SYMBOLVALUES);
 		if (api != null) {
 			return api.getSymbolItemWeight(a.identifier());
 		}
@@ -466,7 +488,7 @@ public class ReikaMystcraftHelper {
 	}
 
 	public static void setPageRank(IAgeSymbol a, int rank) {
-		SymbolValuesAPI api = getAPI(APISegment.SYMBOLVALUES, 1);
+		SymbolValuesAPI api = getAPI(APISegment.SYMBOLVALUES);
 		if (api != null) {
 			api.setSymbolCardRank(a, rank);
 		}
@@ -478,7 +500,7 @@ public class ReikaMystcraftHelper {
 	}
 
 	public static void registerAgeSymbol(IAgeSymbol a) {
-		SymbolAPI api = getAPI(APISegment.SYMBOL, 1);
+		SymbolAPI api = getAPI(APISegment.SYMBOL);
 		if (api != null) {
 			boolean flag = api.registerSymbol(a, false);
 			if (flag) {
@@ -494,9 +516,9 @@ public class ReikaMystcraftHelper {
 	}
 
 	@ModDependent(ModList.MYSTCRAFT)
-	public static <A> A getAPI(APISegment type, int version) {
+	public static <A> A getAPI(APISegment type) {
 		try {
-			return apiProvider != null ? (A)apiProvider.getAPIInstance(type.getTag(version)) : null;
+			return apiProvider != null ? (A)apiProvider.getAPIInstance(type.getTag(API_VERSION)) : null;
 		}
 		catch (APIUndefined e) {
 			throw new RuntimeException("Invalid API type coded into DragonAPI! This is a serious error!");

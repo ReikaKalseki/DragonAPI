@@ -33,6 +33,7 @@ import net.minecraft.world.biome.BiomeGenRiver;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Interfaces.CustomBiomeDistributionWorld;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -74,12 +75,12 @@ public class BiomeMapCommand extends DragonCommandBase {
 		int n = 0;
 		for (int dx = x-range; dx <= x+range; dx += res) {
 			for (int dz = z-range; dz <= z+range; dz += res) {
-				BiomeGenBase b = ep.worldObj.getBiomeGenForCoords(dx, dz);
+				int biome = this.getBiome(ep.worldObj, dx, dz);
 				//ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGDAT.ordinal(), ep, hash, dx, dz, b.biomeID);
 				n++;
 				dat.add(dx);
 				dat.add(dz);
-				dat.add(b.biomeID);
+				dat.add(biome);
 				if (n >= PACKET_COMPILE) {
 					ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGDAT.ordinal(), ep, dat);
 					n = 0;
@@ -92,11 +93,11 @@ public class BiomeMapCommand extends DragonCommandBase {
 		if (dat.size() > 1) {
 			//pad to fit normal packet size expectation
 			int m = (dat.size()-1)/3;
-			BiomeGenBase b = ep.worldObj.getBiomeGenForCoords(x, z);
+			int biome = this.getBiome(ep.worldObj, x, z);
 			for (int i = m; i < PACKET_COMPILE; i++) {
 				dat.add(x);
 				dat.add(z);
-				dat.add(b.biomeID);
+				dat.add(biome);
 			}
 
 			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGDAT.ordinal(), ep, dat);
@@ -106,6 +107,13 @@ public class BiomeMapCommand extends DragonCommandBase {
 		}
 
 		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGEND.ordinal(), ep, hash);
+	}
+
+	private int getBiome(World world, int x, int z) {
+		if (world.provider instanceof CustomBiomeDistributionWorld) {
+			return ((CustomBiomeDistributionWorld)world.provider).getBiomeID(world, x, z);
+		}
+		return world.getBiomeGenForCoords(x, z).biomeID;
 	}
 
 	@Override

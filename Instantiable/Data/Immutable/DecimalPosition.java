@@ -250,4 +250,9 @@ public final class DecimalPosition {
 		return new DecimalPosition(x, y, z);
 	}
 
+	public String formattedString(int decimal) {
+		String part = "%."+decimal+"f";
+		return String.format(part+", "+part+", "+part, xCoord, yCoord, zCoord);
+	}
+
 }

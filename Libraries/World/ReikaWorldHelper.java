@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockLog;
 import net.minecraft.block.material.Material;
@@ -23,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
@@ -1059,7 +1061,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	/** Returns true if the entity can see a block, or if it could be moved to a position where it could see the block.
 	 *Args: World, Block x,y,z, Entity, Max Move Distance
-	 *DO NOT USE THIS - CPU INTENSIVE TO ALL HELL! */
+	 *DO NOT USE THIS-CPU INTENSIVE TO ALL HELL! */
 	public static boolean canSeeOrMoveToSeeBlock(World world, int x, int y, int z, Entity ent, double r) {
 		double d = 4;//+ReikaMathLibrary.py3d(x-ent.posX, y-ent.posY, z-ent.posZ);
 		if (canBlockSee(world, x, y, z, ent.posX, ent.posY, ent.posZ, d))
@@ -1180,15 +1182,15 @@ public final class ReikaWorldHelper extends DragonAPICore {
 					double var21 = 999.0D;
 					double var23 = 999.0D;
 					double var25 = 999.0D;
-					double var27 = par2Vec3.xCoord - par1Vec3.xCoord;
-					double var29 = par2Vec3.yCoord - par1Vec3.yCoord;
-					double var31 = par2Vec3.zCoord - par1Vec3.zCoord;
+					double var27 = par2Vec3.xCoord-par1Vec3.xCoord;
+					double var29 = par2Vec3.yCoord-par1Vec3.yCoord;
+					double var31 = par2Vec3.zCoord-par1Vec3.zCoord;
 					if (var39)
-						var21 = (var15 - par1Vec3.xCoord) / var27;
+						var21 = (var15-par1Vec3.xCoord) / var27;
 					if (var40)
-						var23 = (var17 - par1Vec3.yCoord) / var29;
+						var23 = (var17-par1Vec3.yCoord) / var29;
 					if (var41)
-						var25 = (var19 - par1Vec3.zCoord) / var31;
+						var25 = (var19-par1Vec3.zCoord) / var31;
 					boolean var33 = false;
 					byte var42;
 					if (var21 < var23 && var21 < var25) {
@@ -1590,7 +1592,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Get the sun brightness as a fraction from 0-1. Args: World */
 	public static float getSunIntensity(World world) {
 		float ang = world.getCelestialAngle(0);
-		float base = 1.0F - (MathHelper.cos(ang*(float)Math.PI*2.0F)*2.0F+0.2F);
+		float base = 1.0F-(MathHelper.cos(ang*(float)Math.PI*2.0F)*2.0F+0.2F);
 
 		if (base < 0.0F)
 			base = 0.0F;
@@ -1598,9 +1600,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (base > 1.0F)
 			base = 1.0F;
 
-		base = 1.0F - base;
-		base = (float)(base*(1.0D - world.getRainStrength(0)*5.0F / 16.0D));
-		base = (float)(base*(1.0D - world.getWeightedThunderStrength(0)*5.0F / 16.0D));
+		base = 1.0F-base;
+		base = (float)(base*(1.0D-world.getRainStrength(0)*5.0F / 16.0D));
+		base = (float)(base*(1.0D-world.getWeightedThunderStrength(0)*5.0F / 16.0D));
 		return base*0.8F+0.2F;
 	}
 
@@ -2204,5 +2206,41 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				return true;
 		}
 		return false;
+	}
+
+	public static void triggerFallingBlock(World world, int x, int y, int z, Block b) {
+		if (y >= 0 && BlockFalling.func_149831_e(world, x, y-1, z)) {
+			int r = 32;
+
+			if (!BlockFalling.fallInstantly && world.checkChunksExist(x-r, y-r, z-r, x+r, y+r, z+r)) {
+				if (!world.isRemote) {
+					EntityFallingBlock e = new EntityFallingBlock(world, x+0.5, y+0.5, z+0.5, b, world.getBlockMetadata(x, y, z));
+					world.spawnEntityInWorld(e);
+				}
+			}
+			else {
+				world.setBlockToAir(x, y, z);
+
+				while (BlockFalling.func_149831_e(world, x, y-1, z) && y > 0) {
+					y--;
+				}
+				if (y > 0) {
+					world.setBlock(x, y, z, b);
+				}
+			}
+		}
+	}
+
+	public static boolean isBlockSurroundedBySolid(World world, int x, int y, int z, boolean vertical) {
+		for (int i = vertical ? 0 : 2; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			Block id = world.getBlock(dx, dy, dz);
+			if (!id.getMaterial().isSolid())
+				return false;
+		}
+		return true;
 	}
 }

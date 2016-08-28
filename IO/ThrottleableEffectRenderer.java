@@ -18,6 +18,10 @@ import net.minecraft.client.particle.EntityFX;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
+
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Instantiable.Event.Client.AddParticleEvent;
 
@@ -71,10 +75,13 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 	@Override
 	public void renderParticles(Entity e, float ptick) {
+		if (renderThroughWalls())
+			GL11.glDisable(GL11.GL_DEPTH_TEST);
 		super.renderParticles(e, ptick);
 		for (EffectRenderer eff : delegateSet) {
 			eff.renderParticles(e, ptick);
 		}
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	@Override
@@ -107,6 +114,10 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 	public static ThrottleableEffectRenderer getRegisteredInstance() {
 		return (ThrottleableEffectRenderer)Minecraft.getMinecraft().effectRenderer;
+	}
+
+	public static boolean renderThroughWalls() {
+		return Keyboard.isKeyDown(Keyboard.KEY_INSERT);
 	}
 
 }

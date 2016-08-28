@@ -65,6 +65,11 @@ public final class ChancedOutputList {
 		return get != null ? get.floatValue() : 0;
 	}
 
+	public float getNormalizedItemChance(ItemStack is) {
+		float f = this.getItemChance(is);
+		return Math.min(1, f/100F);
+	}
+
 	public ArrayList<ItemStack> getAllWithChance(float chance) {
 		ArrayList<ItemStack> li = new ArrayList();
 		for (ItemStack key : data.keySet()) {

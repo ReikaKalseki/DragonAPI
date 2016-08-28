@@ -11,6 +11,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
+import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -74,7 +75,17 @@ public class PotionPacketID1 extends Patcher {
 		}
 
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-			m = ReikaASMHelper.getMethodByName(cn, "func_149427_e", "func_149427_e", "()B");
+			try {
+				m = ReikaASMHelper.getMethodByName(cn, "func_149427_e", "func_149427_e", "()B");
+			}
+			catch (NoSuchASMMethodException e1) {
+				try {
+					ReikaASMHelper.getMethodByName(cn, "func_149427_e", "func_149427_e", "()I");
+				}
+				catch (NoSuchASMMethodException e2) {
+					throw e1;
+				}
+			}
 			m.desc = "()I"; // Change getID() return to int; does not need code
 			// changes elsewhere, as it is passed into a
 			// PotionEffect <init>.

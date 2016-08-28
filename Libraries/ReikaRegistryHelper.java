@@ -434,4 +434,9 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		}
 		return ret;
 	}
+
+	public static String getActiveLoadingMod() {
+		ModContainer mc = Loader.instance().activeModContainer();
+		return mc != null ? mc.getName() : "Null";
+	}
 }

@@ -283,16 +283,19 @@ public class CoreContainer extends Container {
 			String o = "A mod tried to access an invalid slot "+index+" for TileEntity "+tile+".";
 			String o2 = "It is likely assuming the TileEntity has an inventory when it does not.";
 			String o3 = "Check for any inventory-modifying mods and items you are carrying.";
+			String o4 = "Slot List = "+inventorySlots.size()+": "+inventorySlots.toString();
 			DragonAPICore.log(o);
 			DragonAPICore.log(o2);
 			DragonAPICore.log(o3);
+			DragonAPICore.log(o4);
 			if (DragonOptions.CHATERRORS.getState()) {
 				ReikaChatHelper.write(o);
 				ReikaChatHelper.write(o2);
 				ReikaChatHelper.write(o3);
+				ReikaChatHelper.write(o4);
 			}
 			//Thread.dumpStack();
-			return new Slot(fakeChest, index, -20, -20); //create new slot off screen; hacky fix, but should work
+			return new Slot(fakeChest, 0, -20, -20); //create new slot off screen; hacky fix, but should work
 		}
 		return (Slot)inventorySlots.get(index);
 	}

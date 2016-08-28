@@ -46,6 +46,7 @@ import Reika.DragonAPI.Auxiliary.LoggingFilters.LoggerType;
 import Reika.DragonAPI.Auxiliary.ModularLogger.ModularLoggerCommand;
 import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
+import Reika.DragonAPI.Auxiliary.RainTicker;
 import Reika.DragonAPI.Auxiliary.RebootScheduler;
 import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.ChunkPregenerator;
@@ -88,6 +89,7 @@ import Reika.DragonAPI.Command.EntityListCommand;
 import Reika.DragonAPI.Command.FindBiomeCommand;
 import Reika.DragonAPI.Command.FindThreadCommand;
 import Reika.DragonAPI.Command.FindTilesCommand;
+import Reika.DragonAPI.Command.GetUUIDCommand;
 import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.ItemNBTCommand;
@@ -460,6 +462,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance);
 		TickRegistry.instance.registerTickHandler(TickScheduler.instance);
 		TickRegistry.instance.registerTickHandler(ChunkPregenerator.instance);
+		if (DragonOptions.RAINTICK.getState())
+			TickRegistry.instance.registerTickHandler(RainTicker.instance);
 		if (DragonOptions.AUTOREBOOT.getValue() > 0)
 			TickRegistry.instance.registerTickHandler(RebootScheduler.instance);
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
@@ -651,6 +655,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new StructureExportCommand());
 		evt.registerServerCommand(new ItemNBTCommand());
 		evt.registerServerCommand(new MemoryUsageCommand());
+		evt.registerServerCommand(new GetUUIDCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();

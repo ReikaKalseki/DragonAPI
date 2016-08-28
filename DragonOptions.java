@@ -48,6 +48,9 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	DIRECTOC("Direct OpenComputers Support", true),
 	AUTOREBOOT("Automatic Reboot Interval (Seconds)", -1),
 	XPMERGE("Merge XP Orbs Like Items", true),
+	RAINTICK("Extra Block Ticks When Raining", true),
+	PROTECTNEW("Prevent Mobs From Targeting Players Immediately After Logging In", true),
+	SKINCACHE("Cache Skins", true),
 	;
 
 	private String label;

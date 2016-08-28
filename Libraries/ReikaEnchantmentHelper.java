@@ -235,4 +235,18 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 	public static boolean isVanillaEnchant(Enchantment e) {
 		return e.getClass().getName().startsWith("net.minecraft");
 	}
+
+	public static Enchantment getEnchantmentByName(String s) {
+		for (int i = 0; i < Enchantment.enchantmentsList.length; i++) {
+			Enchantment e = Enchantment.enchantmentsList[i];
+			if (e == null)
+				continue;
+			String n = e.getName();
+			if (n.startsWith("enchantment."))
+				n = n.substring("enchantment.".length());
+			if (n.equalsIgnoreCase(s))
+				return e;
+		}
+		return null;
+	}
 }

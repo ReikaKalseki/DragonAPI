@@ -22,6 +22,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 
 	public final Block decoID;
 	public final Block deco2ID;
+	public final Block etherealBlockID;
 
 	public final int edgedBrick = 0;
 	public final int enderObsidian = 1;
@@ -34,6 +35,13 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 	public final int magicWood = 8;
 	public final int sandyGlass = 9;
 
+	public final int ethereal = 0;
+	public final int ineffable = 1;
+	public final int darkethereal = 2;
+	public final int invethereal = 3;
+	public final int invineffable = 4;
+	public final int darkinvethereal = 5;
+
 	private static final ExtraUtilsHandler instance = new ExtraUtilsHandler();
 
 	private ExtraUtilsHandler() {
@@ -41,16 +49,20 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 		int iddark = -100;
 		Block iddeco = null;
 		Block iddeco2 = null;
+		Block idether = null;
 		if (this.hasMod()) {
 			try {
 				Class c = this.getMod().getBlockClass();
 				iddark = this.getDimID(c);
 
-				Field deco = c.getField("decorative1");
-				iddeco = ((Block)deco.get(null));
+				Field f = c.getField("decorative1");
+				iddeco = ((Block)f.get(null));
 
-				deco = c.getField("decorative2");
-				iddeco2 = ((Block)deco.get(null));
+				f = c.getField("decorative2");
+				iddeco2 = ((Block)f.get(null));
+
+				f = c.getField("etheralBlock"); //NOT A TYPO
+				idether = ((Block)f.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
@@ -85,6 +97,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 		darkID = iddark;
 		decoID = iddeco;
 		deco2ID = iddeco2;
+		etherealBlockID = idether;
 	}
 
 	private int getDimID(Class c) throws NoSuchFieldException, IllegalAccessException {

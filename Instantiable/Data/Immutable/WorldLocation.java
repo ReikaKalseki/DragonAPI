@@ -307,4 +307,8 @@ public class WorldLocation {
 		return Math.abs(loc.xCoord-xCoord) <= radius && Math.abs(loc.yCoord-yCoord) <= radius && Math.abs(loc.zCoord-zCoord) <= radius;
 	}
 
+	public boolean canSeeTheSky() {
+		return this.getWorld().canBlockSeeTheSky(xCoord, yCoord+1, zCoord);
+	}
+
 }

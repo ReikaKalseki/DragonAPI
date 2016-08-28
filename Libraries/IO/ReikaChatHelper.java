@@ -160,6 +160,15 @@ public final class ReikaChatHelper extends DragonAPICore {
 	}
 
 	public static void sendChatToPlayer(EntityPlayer ep, String sg) {
+		if (sg.length() > 32767) {
+			int idx = 0;
+			while (idx < sg.length()) {
+				String sg2 = sg.substring(idx, Math.min(idx+32767, sg.length()));
+				sendChatToPlayer(ep, sg);
+				idx += 32767;
+			}
+			return;
+		}
 		String[] parts = sg.split("\\n");
 		for (int i = 0; i < parts.length; i++) {
 			ChatComponentTranslation chat = new ChatComponentTranslation(parts[i]);

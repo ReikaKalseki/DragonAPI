@@ -49,6 +49,7 @@ import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
 import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
+import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
 import Reika.DragonAPI.Instantiable.Event.XPUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
@@ -68,6 +69,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -78,6 +80,13 @@ public class DragonAPIEventWatcher {
 
 	private DragonAPIEventWatcher() {
 
+	}
+
+	@SubscribeEvent(priority=EventPriority.LOWEST)
+	public void protectNewPlayers(MobTargetingEvent.Pre evt) {
+		if (evt.player.ticksExisted < 200 && DragonOptions.PROTECTNEW.getState()) { //10s
+			evt.setResult(Result.DENY);
+		}
 	}
 
 	@SubscribeEvent

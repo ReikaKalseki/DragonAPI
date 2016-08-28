@@ -9,8 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces.Registry;
 
+import Reika.DragonAPI.Interfaces.Configuration.MatchingConfig;
 
-public interface IDRegistry {
+
+public interface IDRegistry extends MatchingConfig {
 
 	public String getConfigName();
 

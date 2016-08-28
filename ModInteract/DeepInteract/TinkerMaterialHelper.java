@@ -441,6 +441,9 @@ public class TinkerMaterialHelper {
 				for (ToolParts p : toolParts) {
 					registerPartMapping.invoke(null, TinkerToolHandler.getInstance().toolWoodPattern, p.castMeta, id, p.getItem(id));
 				}
+				for (WeaponParts p : weaponParts) {
+					registerPartMapping.invoke(null, TinkerToolHandler.getInstance().weaponWoodPattern, p.castMeta, id, p.getItem(id));
+				}
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -471,9 +474,6 @@ public class TinkerMaterialHelper {
 
 		public CustomTinkerMaterial registerWeapons(ItemStack input, int drawSpeed, float drawSpeedMult, float arrowMass, float flightSpeed, float maxSpeed, float breakChance) {
 			try {
-				for (WeaponParts p : weaponParts)
-					registerPartMapping.invoke(null, TinkerToolHandler.getInstance().weaponWoodPattern, p.castMeta, id, p.getItem(id));
-
 				registerBowstringMaterial.invoke(null, 1, 2, input, new ItemStack(bowstring, 1, 1), durability, drawSpeedMult, flightSpeed, renderColor);
 				registerBowMaterial.invoke(null, id, drawSpeed, maxSpeed);
 				registerArrowMaterial.invoke(null, id, arrowMass, reinforced == 10 ? 0 : breakChance);
