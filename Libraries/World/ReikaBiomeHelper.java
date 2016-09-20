@@ -441,26 +441,30 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			return 0.4F;
 		if (biome == BiomeGenBase.mushroomIsland)
 			return 0.75F;
+
 		BiomeDictionary.Type[] types = BiomeDictionary.getTypesForBiome(biome);
+		float val = 0.5F;
 		for (int i = 0; i < types.length; i++) {
 			if (types[i] == BiomeDictionary.Type.BEACH)
-				return 0.95F;
+				val = Math.max(val, 0.95F);
 			if (types[i] == BiomeDictionary.Type.OCEAN || types[i] == BiomeDictionary.Type.RIVER || types[i] == BiomeDictionary.Type.WATER)
-				return 1F;
+				val = Math.max(val, 1F);
 			if (types[i] == BiomeDictionary.Type.JUNGLE)
-				return 1;
+				val = Math.max(val, 0.95F);
 			if (types[i] == BiomeDictionary.Type.DESERT || types[i] == BiomeDictionary.Type.SANDY)
-				return 0.2F;
+				val = Math.min(val, 0.2F);
 			if (types[i] == BiomeDictionary.Type.NETHER || types[i] == BiomeDictionary.Type.END)
-				return 0.1F;
+				val = Math.min(val, 0.1F);
 			if (types[i] == BiomeDictionary.Type.WASTELAND)
-				return 0.1F;
+				val = Math.min(val, 0.1F);
+			if (types[i] == BiomeDictionary.Type.LUSH)
+				val = Math.max(val, 0.6F);
 			if (types[i] == BiomeDictionary.Type.WET)
-				return 0.7F;
+				val = Math.max(val, 0.7F);
 			if (types[i] == BiomeDictionary.Type.DRY)
-				return 0.3F;
+				val = Math.min(val, 0.3F);
 		}
-		return 0.5F;
+		return val;
 	}
 
 	public static float getBiomeHumidity(World world, int x, int z) {

@@ -20,6 +20,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -64,6 +65,10 @@ public final class Coordinate {
 
 	public Coordinate(MovingObjectPosition hit) {
 		this(hit.blockX, hit.blockY, hit.blockZ);
+	}
+
+	public Coordinate(ChunkCoordinates cc) {
+		this(cc.posX, cc.posY, cc.posZ);
 	}
 
 	public Coordinate offset(int dx, int dy, int dz) {
@@ -319,6 +324,10 @@ public final class Coordinate {
 
 	public void destroyBlockPartially(World world, double i) {
 		world.destroyBlockInWorldPartially(Block.getIdFromBlock(this.getBlock(world)), xCoord, yCoord, zCoord, (int)i);
+	}
+
+	public ChunkCoordinates asChunkCoordinates() {
+		return new ChunkCoordinates(xCoord, yCoord, zCoord);
 	}
 
 }

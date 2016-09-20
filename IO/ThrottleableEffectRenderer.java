@@ -48,6 +48,8 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 	@Override
 	public void addEffect(EntityFX fx) {
+		if (fx == null)
+			throw new IllegalArgumentException("You cannot spawn a null particle! This is a bug in the mod calling this code!");
 		AddParticleEvent evt = new AddParticleEvent(fx);
 		if (MinecraftForge.EVENT_BUS.post(evt))
 			return;

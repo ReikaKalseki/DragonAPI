@@ -75,12 +75,6 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		pConsole(Level.INFO, obj);
 	}
 
-	public static void pCollConsole(Collection c) {
-		for (Object o : c) {
-			pConsole(o);
-		}
-	}
-
 	/** Generic write-to-console function. Args: Object */
 	public static void pConsole(Level level, Object obj) {
 		if (silent)

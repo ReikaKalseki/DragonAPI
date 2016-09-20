@@ -33,6 +33,21 @@ public class Comparators {
 
 	}
 
+	public static class TaxicabCoordinateDistanceComparator implements Comparator<Coordinate> {
+
+		private final Coordinate target;
+
+		public TaxicabCoordinateDistanceComparator(Coordinate p) {
+			target = p;
+		}
+
+		@Override
+		public int compare(Coordinate o1, Coordinate o2) {
+			return Integer.compare(o1.getTaxicabDistanceTo(target), o2.getTaxicabDistanceTo(target));
+		}
+
+	}
+
 	public static class PointDistanceComparator implements Comparator<Point> {
 
 		private final Point target;

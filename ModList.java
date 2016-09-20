@@ -113,7 +113,9 @@ public enum ModList implements ModEntry, Dependency {
 	ENDEREXPANSION("HardcoreEnderExpansion"),
 	AGRICRAFT("AgriCraft", "com.InfinityRaider.AgriCraft.init.Blocks", "com.InfinityRaider.AgriCraft.init.Items"),
 	THAUMICTINKER("ThaumicTinkerer"),
-	RFTOOLS("rftools"); //classes scattered
+	RFTOOLS("rftools"), //classes scattered
+	DRACONICEVO("DraconicEvolution"),
+	MAGICBEES("MagicBees", "magicbees.main.Config");
 
 	private final boolean condition;
 	public final String modLabel;

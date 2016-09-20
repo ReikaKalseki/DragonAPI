@@ -452,6 +452,15 @@ public class ReikaASMHelper {
 		return ain.getOpcode() == opcode ? ain : null;
 	}
 
+	public static AbstractInsnNode getLastJumpBefore(InsnList li, int index) {
+		AbstractInsnNode ain = li.get(index-1);
+		while (!(ain instanceof JumpInsnNode) && index > 0) {
+			index--;
+			ain = li.get(index);
+		}
+		return ain instanceof JumpInsnNode ? ain : null;
+	}
+
 	public static AbstractInsnNode getLastFieldRefBefore(InsnList li, int index, String name) {
 		AbstractInsnNode ain = li.get(index-1);
 		while ((!(ain instanceof FieldInsnNode) || !((FieldInsnNode)ain).name.equals(name)) && index > 0) {
@@ -617,6 +626,11 @@ public class ReikaASMHelper {
 			copy.add(copyInstruction(ain, labels));
 		}
 		return copy;
+	}
+
+	/** Currently broken */
+	public static AbstractInsnNode copyInstruction(AbstractInsnNode ain) {
+		return copyInstruction(ain, new HashMap());
 	}
 
 	/** Currently broken */

@@ -142,11 +142,12 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 			oldBlockX = x;
 			oldBlockY = y;
 			oldBlockZ = z;
-			if (ticksExisted < 5 && !this.canInteractWithSpawnLocation() && !outOfSpawn) {
+			outOfSpawn = !new Coordinate(x, y, z).equals(spawnLocation);
+			//ReikaJavaLibrary.pConsole(spawnLocation+" @ "+new Coordinate(this)+" > "+outOfSpawn);
+			if (/*ticksExisted < 5 && */!this.canInteractWithSpawnLocation() && !outOfSpawn) {
 
 			}
 			else {
-				outOfSpawn = true;
 				if (this.onEnterBlock(worldObj, x, y, z)) {
 					this.onDeath();
 					this.setDead();

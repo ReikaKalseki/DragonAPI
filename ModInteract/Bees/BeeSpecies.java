@@ -69,7 +69,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	private final IAllele[] template = new IAllele[EnumBeeChromosome.values().length];
 
 	static {
-		beeRoot = (IBeeRoot)AlleleManager.alleleRegistry.getSpeciesRoot("rootBees");
+		beeRoot = ReikaBeeHelper.getBeeRoot();
 	}
 
 	protected BeeSpecies(String name, String uid, String latinName, String creator, IClassification g) {

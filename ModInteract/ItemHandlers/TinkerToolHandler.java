@@ -68,6 +68,33 @@ public final class TinkerToolHandler extends ModHandlerBase {
 			return item;
 		}
 
+		public ItemStack getToolOfMaterials(int head, int handle, int acc, int extra) {
+			ItemStack is = new ItemStack(this.getItem());
+			is.stackTagCompound = new NBTTagCompound();
+			NBTTagCompound infi = new NBTTagCompound();
+
+			if (headPart != null) {
+				infi.setInteger(ToolPartType.HEAD.NBTName, head);
+				infi.setInteger("RenderHead", head);
+			}
+			if (handlePart != null) {
+				infi.setInteger(ToolPartType.HANDLE.NBTName, handle);
+				infi.setInteger("RenderHandle", handle);
+			}
+			if (accessoryPart != null) {
+				infi.setInteger(ToolPartType.ACCESSORY.NBTName, acc);
+				infi.setInteger("RenderAccessory", acc);
+			}
+			if (extraPart != null) {
+				infi.setInteger(ToolPartType.EXTRA.NBTName, extra);
+				infi.setInteger("RenderExtra", extra);
+			}
+
+			is.stackTagCompound.setTag("InfiTool", infi);
+			//ReikaJavaLibrary.pConsole(is.stackTagCompound);
+			return is;
+		}
+
 	}
 
 	public enum Weapons {
@@ -116,7 +143,7 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 	}
 
-	public enum ToolParts {
+	public enum ToolParts implements TinkerPart {
 		ROD("toolRod", 1, 0.5F),
 		BINDING("binding", 9, 0.5F),
 		TOUGHBINDING("toughBinding", 15, 3),
@@ -164,9 +191,17 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		public ItemStack getCast() {
 			return new ItemStack(getInstance().toolCastItem, 1, castMeta);
 		}
+
+		public ItemStack getPattern() {
+			return new ItemStack(getInstance().toolWoodPattern, 1, castMeta);
+		}
+
+		public float getIngotCost() {
+			return ingotCost;
+		}
 	}
 
-	public enum WeaponParts {
+	public enum WeaponParts implements TinkerPart {
 		ARROWHEAD("arrowhead", false, 25, 0.5F),
 		SHURIKEN("partShuriken", true, 0, 0.5F),
 		BOWSTRING("bowstring", false, 23, 3),
@@ -202,6 +237,26 @@ public final class TinkerToolHandler extends ModHandlerBase {
 		public ItemStack getCast() {
 			return new ItemStack(weaponCast ? getInstance().weaponCastItem : getInstance().toolCastItem, 1, castMeta);
 		}
+
+		public ItemStack getPattern() {
+			return new ItemStack(weaponCast ? getInstance().weaponWoodPattern : getInstance().toolWoodPattern, 1, castMeta);
+		}
+
+		public float getIngotCost() {
+			return ingotCost;
+		}
+	}
+
+	public static interface TinkerPart {
+
+		ItemStack getItem(int material);
+
+		ItemStack getCast();
+
+		ItemStack getPattern();
+
+		float getIngotCost();
+
 	}
 
 	public static enum ToolPartType {
@@ -529,6 +584,18 @@ public final class TinkerToolHandler extends ModHandlerBase {
 
 	public boolean isHammer(ItemStack is) {
 		return is != null && is.getItem() == Tools.HAMMER.item;
+	}
+
+	public boolean isExcavator(ItemStack is) {
+		return is != null && is.getItem() == Tools.EXCAVATOR.item;
+	}
+
+	public boolean isTool(ItemStack is) {
+		return is != null && tools.containsKey(is.getItem());
+	}
+
+	public boolean isWeapon(ItemStack is) {
+		return is != null && weapons.containsKey(is.getItem());
 	}
 
 	public ItemStack getIngotCast() {

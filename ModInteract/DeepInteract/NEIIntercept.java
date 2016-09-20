@@ -25,6 +25,7 @@ import org.lwjgl.input.Keyboard;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Instantiable.Event.NEIRecipeCheckEvent;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
@@ -120,11 +121,11 @@ public class NEIIntercept implements IContainerInputHandler {
 	public void onMouseDragged(GuiContainer gui, int mousex, int mousey, int button, long heldTime) {}
 
 	@SubscribeEvent
-	public void onKeyEvent(InputEvent.KeyInputEvent event)
-	{
+	@ModDependent(ModList.WAILA)
+	public void onKeyEvent(InputEvent.KeyInputEvent event) {
 		int key = Keyboard.getEventKey();
 		if (Keyboard.getEventKeyState()) {
-			if (key == wailaNEILookup.getKeyCode()) {
+			if (wailaNEILookup != null && key == wailaNEILookup.getKeyCode()) {
 				MovingObjectPosition mov = ReikaPlayerAPI.getLookedAtBlockClient(4.5, false);
 				if (mov != null) {
 					Minecraft mc = Minecraft.getMinecraft();

@@ -19,6 +19,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
 
@@ -221,6 +222,29 @@ public final class ReikaAABBHelper extends DragonAPICore {
 
 	public static AxisAlignedBB structureToAABB(StructureBoundingBox box) {
 		return AxisAlignedBB.getBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+	}
+
+	public static AxisAlignedBB getBeamBox(int x, int y, int z, ForgeDirection dir, int dist) {
+		AxisAlignedBB box = ReikaAABBHelper.getBlockAABB(x, y, z);
+		int dx = dir.offsetX*dist;
+		int dy = dir.offsetY*dist;
+		int dz = dir.offsetZ*dist;
+		box = box.addCoord(dx+1, dy+1, dz+1);
+		return box;
+	}
+
+	public static AxisAlignedBB getBeamBox(int x, int y, int z, ForgeDirection dir, int d1, int d2) {
+		int x1 = x+dir.offsetX*d1;
+		int y1 = y+dir.offsetY*d1;
+		int z1 = z+dir.offsetZ*d1;
+		int x2 = dir.offsetX*d2;
+		int y2 = dir.offsetY*d2;
+		int z2 = dir.offsetZ*d2;
+		return getBeamBox(x1, y1, z1, x2, y2, z2);
+	}
+
+	public static AxisAlignedBB getBeamBox(int x1, int y1, int z1, int x2, int y2, int z2) {
+		return AxisAlignedBB.getBoundingBox(x1, y1, z1, x1+1, y1+1, z1+1).addCoord(x2, y2, z2);
 	}
 
 }

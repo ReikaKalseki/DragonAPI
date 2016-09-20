@@ -500,7 +500,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			if (updateDelay > 0) {
 				updateDelay--;
 				if (updateDelay == 0) {
-					worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+					this.triggerBlockUpdate();
 				}
 			}
 
@@ -515,6 +515,10 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			ticksExisted++;
 			tileAge++;
 		}
+	}
+
+	public final void triggerBlockUpdate() {
+		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
 	}
 
 	private boolean shouldSendSyncPacket() {

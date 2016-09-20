@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
-import java.util.Comparator;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
@@ -29,7 +28,6 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.util.vector.Vector3f;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.FilledBlockArray;
@@ -44,8 +42,6 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class StructureRenderer {
-
-	private static final VisibilityComparator visibility = new VisibilityComparator();
 
 	private static final RenderItem itemRender = new RenderItem();
 
@@ -65,6 +61,7 @@ public class StructureRenderer {
 	private final ItemHashMap<BlockRenderHook> renderHooks = new ItemHashMap();
 	private final HashMap<Coordinate, EntityRender> entities = new HashMap();
 
+	private static RenderAccess staticRenderAccess = null;
 	private static boolean tileRendering = false;
 	private static boolean tileRenderingReal = false;
 
@@ -355,6 +352,7 @@ public class StructureRenderer {
 
 		tileRendering = true;
 		tileRenderingReal = !transl;
+		staticRenderAccess = access;
 
 		ReikaTextureHelper.bindTerrainTexture();
 		Tessellator.instance.startDrawingQuads();
@@ -396,6 +394,7 @@ public class StructureRenderer {
 		}
 
 		tileRendering = tileRenderingReal = false;
+		staticRenderAccess = null;
 
 		for (Coordinate c : entities.keySet()) {
 			EntityRender e = entities.get(c);
@@ -407,44 +406,8 @@ public class StructureRenderer {
 		GL11.glPopAttrib();
 	}
 
-	@Deprecated
-	private static class VisibilityComparator implements Comparator<Vector3f> {
-
-		private boolean posX = true;
-		private boolean posY = true;
-		private boolean posZ = true;
-
-		@Override
-		public int compare(Vector3f o1, Vector3f o2) {
-			/*
-			int dx = o1.xCoord-o2.xCoord;
-			int dy = o1.yCoord-o2.yCoord;
-			int dz = o1.zCoord-o2.zCoord;
-			int mx = posX ? dx : -dx;
-			int my = posY ? dy : -dy;
-			int mz = posZ ? dz : -dz;
-			return mx+my+mz;
-			 */
-			return (int)Math.signum(o1.z-o2.z);
-		}
-
-	}
-
-	@Deprecated
-	private static class CoordStack {
-
-		private final ItemStack item;
-		private final Coordinate coord;
-
-		private CoordStack(ItemStack is, int x, int y, int z) {
-			this(is, new Coordinate(x, y, z));
-		}
-
-		private CoordStack(ItemStack is, Coordinate c) {
-			coord = c;
-			item = is;
-		}
-
+	public static RenderAccess getRenderAccess() {
+		return staticRenderAccess;
 	}
 
 	protected static class PositionData {
@@ -500,6 +463,11 @@ public class StructureRenderer {
 						if (m < 0)
 							m = 0;
 						TileEntity te = b != null ? te2 != null ? te2 : b.createTileEntity(Minecraft.getMinecraft().theWorld, m) : null;
+						if (te != null) {
+							te.xCoord = x;
+							te.yCoord = y;
+							te.zCoord = z;
+						}
 						data[i][j][k] = b != null ? new PositionData(b, m, te) : new PositionData(Blocks.air);
 					}
 				}

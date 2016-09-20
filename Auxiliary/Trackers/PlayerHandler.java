@@ -38,21 +38,21 @@ public class PlayerHandler {
 	}
 
 	@SubscribeEvent
-	public void onLogin(PlayerEvent.PlayerLoggedOutEvent evt) {
+	public void onLogout(PlayerEvent.PlayerLoggedOutEvent evt) {
 		for (PlayerTracker p : trackers) {
 			p.onPlayerLogout(evt.player);
 		}
 	}
 
 	@SubscribeEvent
-	public void onLogin(PlayerEvent.PlayerRespawnEvent evt) {
+	public void onRespawn(PlayerEvent.PlayerRespawnEvent evt) {
 		for (PlayerTracker p : trackers) {
 			p.onPlayerRespawn(evt.player);
 		}
 	}
 
 	@SubscribeEvent
-	public void onLogin(PlayerEvent.PlayerChangedDimensionEvent evt) {
+	public void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent evt) {
 		for (PlayerTracker p : trackers) {
 			p.onPlayerChangedDimension(evt.player, evt.fromDim, evt.toDim);
 		}

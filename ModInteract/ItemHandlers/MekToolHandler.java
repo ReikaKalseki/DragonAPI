@@ -12,11 +12,15 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.lang.reflect.Field;
 import java.util.EnumMap;
 
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class MekToolHandler extends ModHandlerBase {
 
@@ -53,6 +57,38 @@ public final class MekToolHandler extends ModHandlerBase {
 					return false;
 			}
 		}
+
+		public Item getItem(Tools t) {
+			return instance.itemsMaterial.get(this).get(t);
+		}
+
+		public ItemStack getRawMaterial() {
+			switch(this) {
+				case BRONZE:
+					return new ItemStack(MekanismHandler.getInstance().ingotID, 1, MekanismHandler.bronzeIngotMeta);
+				case GLOWSTONE:
+					return new ItemStack(MekanismHandler.getInstance().ingotID, 1, MekanismHandler.glowstoneIngotMeta);
+				case OBSIDIAN:
+					return new ItemStack(MekanismHandler.getInstance().ingotID, 1, MekanismHandler.obsidianIngotMeta);
+				case OSMIUM:
+					return new ItemStack(MekanismHandler.getInstance().ingotID, 1, MekanismHandler.osmiumIngotMeta);
+				case STEEL:
+					return new ItemStack(MekanismHandler.getInstance().ingotID, 1, MekanismHandler.steelIngotMeta);
+				case STONE:
+					return new ItemStack(Blocks.cobblestone);
+				case WOOD:
+					return new ItemStack(Blocks.planks, 1, OreDictionary.WILDCARD_VALUE);
+				case GOLD:
+					return new ItemStack(Items.gold_ingot);
+				case IRON:
+					return new ItemStack(Items.iron_ingot);
+				case LAPIS:
+					return ReikaItemHelper.lapisDye.copy();
+				case DIAMOND:
+					return new ItemStack(Items.diamond);
+			}
+			return null;
+		}
 	}
 
 	public static enum Tools {
@@ -77,6 +113,36 @@ public final class MekToolHandler extends ModHandlerBase {
 
 		public boolean isCombineableWith(Materials m) {
 			return this == PAXEL ? true : !m.isVanillaMaterial();
+		}
+
+		public Item getItem(Materials m) {
+			return instance.itemsTool.get(this).get(m);
+		}
+
+		public int getNumberIngots(Materials m) {
+			switch(this) {
+				case AXE:
+					return 3;
+				case HOE:
+					return 2;
+				case PAXEL:
+					return 6;
+				case PICK:
+					return 3;
+				case SHOVEL:
+					return 1;
+				case SWORD:
+					return 2;
+				case BOOTS:
+					return m == Materials.STEEL ? 2 : 4;
+				case CHEST:
+					return m == Materials.STEEL ? 5 : 8;
+				case HELMET:
+					return m == Materials.STEEL ? 3 : 5;
+				case LEGS:
+					return m == Materials.STEEL ? 5 : 7;
+			}
+			return 0;
 		}
 	}
 

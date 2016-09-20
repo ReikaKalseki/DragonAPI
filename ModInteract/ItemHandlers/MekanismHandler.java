@@ -23,16 +23,24 @@ public final class MekanismHandler extends ModHandlerBase {
 	private static final MekanismHandler instance = new MekanismHandler();
 
 	public final Block oreID;
+	public final Item ingotID;
 	//public final Block cableID;
 
 	public static final int osmiumMeta = 0;
 	public static final int copperMeta = 1;
 	public static final int tinMeta = 2;
 
+	public static final int obsidianIngotMeta = 0;
+	public static final int osmiumIngotMeta = 1;
+	public static final int bronzeIngotMeta = 2;
+	public static final int glowstoneIngotMeta = 3;
+	public static final int steelIngotMeta = 4;
+
 	private MekanismHandler() {
 		super();
 		Block idore = null;
 		//Block idcable = null;
+		Item idingot = null;
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
@@ -43,6 +51,11 @@ public final class MekanismHandler extends ModHandlerBase {
 				//Field wire = blocks.getField("Transmitter");
 				//b = (Block)wire.get(null);
 				//idcable = b;
+
+				Class items = this.getMod().getItemClass();
+				Field ingot = items.getField("Ingot");
+				Item i = (Item)ingot.get(null);
+				idingot = i;
 			}
 			catch (NoSuchFieldException e) {
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
@@ -75,6 +88,7 @@ public final class MekanismHandler extends ModHandlerBase {
 		}
 		oreID = idore;
 		//cableID = idcable;
+		ingotID = idingot;
 	}
 
 	public static MekanismHandler getInstance() {

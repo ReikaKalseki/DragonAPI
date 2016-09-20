@@ -96,17 +96,24 @@ public class GuiPainter {
 	protected void put(int dx, int dy, PaintElement p) {
 		PaintElement prev = data[dx][dy];
 		if (this.canReplace(prev, p)) {
+			Point pt = new Point(dx, dy);
+			/*
 			Collection c1 = locations.get(prev);
-			c1.remove(new Point(dx, dy));
+			c1.remove(pt);
 			if (c1.isEmpty())
 				locations.remove(prev);
 			else
-				locations.put(prev, c1);
+			locations.put(prev, c1);
+			 */
+			locations.remove(prev, pt);
 			data[dx][dy] = p;
 			if (p != null) {
+				/*
 				Collection c2 = locations.get(p);
-				c2.add(new Point(dx, dy));
+				c2.add(pt);
 				locations.put(p, c2);
+				 */
+				locations.addValue(p, pt);
 			}
 		}
 	}
@@ -148,6 +155,14 @@ public class GuiPainter {
 			f.drawString(p.getName(), x+s+2, dy, 0xffffff);
 			dy += f.FONT_HEIGHT+4;
 		}
+	}
+
+	public PaintElement get(int x, int y) {
+		return data[x][y];
+	}
+
+	public boolean isPainted(int x, int y) {
+		return this.get(x, y) != this.getDefaultEntry(x, y);
 	}
 
 	public static interface PaintElement {

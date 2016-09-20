@@ -19,8 +19,10 @@ import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Interfaces.PacketHandler;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import cpw.mods.fml.common.network.NetworkRegistry.TargetPoint;
 import cpw.mods.fml.common.network.simpleimpl.IMessage;
@@ -77,6 +79,10 @@ public class PacketPipeline {
 	}
 
 	public void sendToPlayer(PacketObj p, EntityPlayerMP player) {
+		if (player == null)
+			throw new MisuseException("You cannot send a packet to a null player!");
+		if (ReikaPlayerAPI.isFake(player))
+			throw new MisuseException("You cannot send a packet to a fake player!");
 		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGET).set(FMLOutboundHandler.OutboundTarget.PLAYER);
 		//channels.get(Side.SERVER).attr(FMLOutboundHandler.FML_MESSAGETARGETARGS).set(player);
 		//channels.get(Side.SERVER).writeAndFlush(p);

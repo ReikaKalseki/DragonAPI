@@ -42,7 +42,10 @@ public class ForestryHandler extends ModHandlerBase {
 		PRINCESS("forestry.apiculture.items.ItemRegistryApiculture", "beePrincessGE"),
 		DRONE("forestry.apiculture.items.ItemRegistryApiculture", "beeDroneGE"),
 		LARVA("forestry.apiculture.items.ItemRegistryApiculture", "beeLarvaeGE"),
-		CRAFTING("forestry.core.items.ItemRegistryCore", "craftingMaterial");
+		CRAFTING("forestry.core.items.ItemRegistryCore", "craftingMaterial"),
+		BASICFRAME("forestry.apiculture.items.ItemRegistryApiculture", "frameUntreated"),
+		IMPREGFRAME("forestry.apiculture.items.ItemRegistryApiculture", "frameImpregnated"),
+		PROVENFRAME("forestry.apiculture.items.ItemRegistryApiculture", "frameProven");
 
 		private final String reg;
 		private final String tag;
