@@ -337,18 +337,6 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return new BlockKey(Block.getBlockFromItem(is.getItem()), meta);
 	}
 
-	public static boolean canCombineStacks(ItemStack is, ItemStack is2) {
-		if (is == null || is2 == null)
-			return false;
-		if (is.getItem() != is2.getItem())
-			return false;
-		if (is.getItemDamage() != is2.getItemDamage())
-			return false;
-		if (is.stackSize+is2.stackSize > is.getMaxStackSize())
-			return false;
-		return ItemStack.areItemStackTagsEqual(is, is2);
-	}
-
 	public static boolean oreItemExists(String tag) {
 		ArrayList<ItemStack> li = OreDictionary.getOres(tag);
 		return li != null && !li.isEmpty();
@@ -527,14 +515,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static boolean checkOreDictOverlap(ItemStack is1, ItemStack is2) {
-		int[] a1 = OreDictionary.getOreIDs(is1);
-		int[] a2 = OreDictionary.getOreIDs(is2);
-		for (int i = 0; i < a1.length; i++) {
-			for (int k = 0; k < a2.length; k++) {
-				if (a1[i] == a2[k])
-					return true;
-			}
-		}
+		for (String s : getOreNames(is1))
+			if (isInOreTag(is2, s))
+				return true;
 		return false;
 	}
 
@@ -741,5 +724,27 @@ public final class ReikaItemHelper extends DragonAPICore {
 		ItemStack ret = is.copy();
 		ret.setItemDamage(OreDictionary.WILDCARD_VALUE);
 		return ret;
+	}
+
+	public static boolean areStacksCombinable(ItemStack is1, ItemStack is2, int limit) {
+		if (is1 != null)
+			limit = Math.min(limit, is1.getMaxStackSize());
+		return is1 != null && is2 != null && matchStacks(is1, is2) && ItemStack.areItemStackTagsEqual(is1, is2) && is1.stackSize+is2.stackSize <= limit;
+	}
+
+	public static ItemStack parseItem(Object o) {
+		if (o instanceof ItemStack) {
+			return ((ItemStack)o).copy();
+		}
+		else if (o instanceof Item) {
+			return new ItemStack((Item)o);
+		}
+		else if (o instanceof Block) {
+			return new ItemStack((Block)o);
+		}
+		else if (o instanceof String) {
+			return lookupItem((String)o);
+		}
+		return null;
 	}
 }

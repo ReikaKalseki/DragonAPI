@@ -28,16 +28,17 @@ public class LuaReadTank extends LuaMethod {
 		FluidTankInfo info = ifl.getTankInfo(ForgeDirection.UP)[ordinal];
 		if (info.fluid == null)
 			return new Object[]{null, 0, info.capacity};
-		Object[] o = new Object[3];
-		o[0] = info.fluid.getFluid().getLocalizedName();
+		Object[] o = new Object[4];
+		o[0] = info.fluid.getFluid().getLocalizedName(info.fluid);
 		o[1] = info.fluid.amount;
 		o[2] = info.capacity;
+		o[3] = info.fluid.getFluid().getName();
 		return o;
 	}
 
 	@Override
 	public String getDocumentation() {
-		return "Returns the contents of an fluid tank.\nArgs: Tank Index\nReturns: [Fluid, Amount, Capacity]";
+		return "Returns the contents of an fluid tank.\nArgs: Tank Index\nReturns: [Fluid, Amount, Capacity, Internal Name]";
 	}
 
 	@Override

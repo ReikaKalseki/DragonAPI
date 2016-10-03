@@ -14,26 +14,31 @@ import java.util.Collection;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class ChancedOutputList {
 
 	private final ItemHashMap<Float> data = new ItemHashMap();
 
 	private boolean modifiable = true;
+	private final boolean allowOverflow;
 
-	public ChancedOutputList() {
-
+	public ChancedOutputList(boolean allowOver100) {
+		allowOverflow = false;
 	}
 
-	public ChancedOutputList(ItemHashMap<Float> output) {
+	public ChancedOutputList(boolean allowOver100, ItemHashMap<Float> output) {
+		this(allowOver100);
 		for (ItemStack is : output.keySet()) {
 			data.put(is.copy(), output.get(is));
 		}
 	}
 
-	public ChancedOutputList(ItemStack[] items, float... chances) {
+	public ChancedOutputList(boolean allowOver100, ItemStack[] items, float... chances) {
+		this(allowOver100);
 		for (int i = 0; i < items.length; i++) {
 			data.put(items[i].copy(), chances[i]);
 		}
@@ -62,7 +67,7 @@ public final class ChancedOutputList {
 
 	public float getItemChance(ItemStack is) {
 		Float get = data.get(is);
-		return get != null ? get.floatValue() : 0;
+		return get != null ? allowOverflow ? get.floatValue() : MathHelper.clamp_float(get.floatValue(), 0, 100) : 0;
 	}
 
 	public float getNormalizedItemChance(ItemStack is) {
@@ -99,6 +104,12 @@ public final class ChancedOutputList {
 		for (ItemStack key : data.keySet()) {
 			float c = data.get(key);
 			double ch = factor*c/100D;
+			if (allowOverflow) {
+				while (ch >= 1) {
+					ch -= 1;
+					li.add(key.copy());
+				}
+			}
 			if (ch >= 1 || ReikaRandomHelper.doWithChance(ch)) // /100 to force all into 0-1 range
 				li.add(key.copy());
 		}
@@ -106,7 +117,7 @@ public final class ChancedOutputList {
 	}
 
 	public ChancedOutputList copy() {
-		return new ChancedOutputList(data);
+		return new ChancedOutputList(allowOverflow, data);
 	}
 
 	public ChancedOutputList lock() {
@@ -145,7 +156,10 @@ public final class ChancedOutputList {
 		if (!modifiable)
 			throw new UnsupportedOperationException("This ChancedOutputList is locked!");
 		for (ItemStack is : data.keySet()) {
-			data.put(is, MathHelper.clamp_float(cm.getChance(data.get(is)), 0, 100));
+			float c = cm.getChance(data.get(is));
+			if (!allowOverflow)
+				c = MathHelper.clamp_float(c, 0, 100);
+			data.put(is, c);
 		}
 	}
 
@@ -185,6 +199,22 @@ public final class ChancedOutputList {
 			return (float)(100*num);
 		}
 
+	}
+
+	public static ChancedOutputList parseFromArray(boolean allowOver100, Object[] arr) {
+		if (arr.length%2 != 0)
+			throw new MisuseException("Every item must have a specified chance!");
+		ChancedOutputList c = new ChancedOutputList(allowOver100);
+		for (int i = 0; i < arr.length; i += 2) {
+			ItemStack is = ReikaItemHelper.parseItem(arr[i]);
+			if (is != null) {
+				Object chance = arr[i+1];
+				if (chance instanceof Integer)
+					chance = new Float((Integer)chance);
+				c.addItem(is, (Float)chance);
+			}
+		}
+		return c;
 	}
 
 }

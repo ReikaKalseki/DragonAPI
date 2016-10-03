@@ -9,22 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -32,31 +22,23 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.IO.NBTFile;
 import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerationCache;
 import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerationCache.TileCallback;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 
 
-public class StructureExport {
-
-	public final String name;
-
-	private final String filepath;
-	private final Class reference;
+public class StructureExport extends NBTFile {
 
 	private final HashMap<Coordinate, BlockData> data = new HashMap();
 	private final HashSet<String> watchedNBT = new HashSet();
 	private final HashMap<String, Object> extraNBT = new HashMap();
 	private final HashMap<String, NBTCallback> overrides = new HashMap();
 	private final HashSet<BlockKey> ignoreSet = new HashSet();
-
-	public boolean compressData = false;
-	public boolean encryptData = false;
 
 	private BlockBox bounds = BlockBox.nothing();
 
@@ -67,9 +49,7 @@ public class StructureExport {
 	}
 
 	public StructureExport(String name, String path, Class c) {
-		this.name = name;
-		filepath = c != null ? path+"/"+name+".struct" : DragonAPICore.getMinecraftDirectoryString()+"/StructureData/"+path+"/"+name+".struct";
-		reference = c;
+		super(name, c != null ? path+"/"+name+".struct" : DragonAPICore.getMinecraftDirectoryString()+"/StructureData/"+path+"/"+name+".struct", c);
 	}
 
 	public StructureExport addWatchedNBT(String tag) {
@@ -157,131 +137,6 @@ public class StructureExport {
 
 	public BlockBox getBounds() {
 		return bounds;
-	}
-
-	public void load() throws IOException {
-		if (reference != null) {
-			InputStream in = reference.getResourceAsStream(filepath);
-
-			if (encryptData)
-				in = this.encryptStreamData(in, true);
-
-			NBTTagCompound tag = compressData ? CompressedStreamTools.readCompressed(in) : ReikaFileReader.readUncompressedNBT(in);
-			this.setDataFromLines(tag);
-		}
-		else {
-			File f = new File(filepath);
-			if (!f.exists())
-				return;
-
-			if (encryptData)
-				this.encryptFileData(f, true);
-
-			NBTTagCompound tag = compressData ? CompressedStreamTools.readCompressed(new FileInputStream(f)) : ReikaFileReader.readUncompressedNBT(f);
-			this.setDataFromLines(tag);
-		}
-	}
-
-	private InputStream encryptStreamData(InputStream in, boolean unpack) throws IOException {
-		ArrayList<Byte> data = new ArrayList();
-		int dat = in.read();
-		while (dat != -1) {
-			data.add((byte)dat);
-			dat = in.read();
-		}
-		in.close();
-		//ReikaJavaLibrary.cycleList(data, unpack ? -8 : 8);
-		Collections.reverse(data);
-		byte[] arr = new byte[data.size()];
-		for (int i = 0; i < arr.length; i++) {
-			arr[i] = data.get(i);
-		}
-		return new ByteArrayInputStream(arr);
-	}
-
-	private void encryptFileData(File f, boolean unpack) throws IOException {
-		InputStream in = new FileInputStream(f);
-		ArrayList<Byte> data = new ArrayList();
-		int dat = in.read();
-		while (dat != -1) {
-			data.add((byte)dat);
-			dat = in.read();
-		}
-		in.close();
-		//ReikaJavaLibrary.cycleList(data, unpack ? -8 : 8);
-		Collections.reverse(data);
-		OutputStream out = new FileOutputStream(f);
-		for (byte b : data) {
-			out.write(b);
-		}
-		out.flush();
-		out.close();
-	}
-
-	public void save() throws IOException {
-		File f = new File(filepath);
-		f.getParentFile().mkdirs();
-		f.delete();
-		f.createNewFile();
-		NBTTagCompound tag = this.getDataAsLines();
-
-		if (compressData)
-			CompressedStreamTools.writeCompressed(tag, new FileOutputStream(f));
-		else
-			ReikaFileReader.writeUncompressedNBT(tag, f);
-
-		if (encryptData)
-			this.encryptFileData(f, false);
-	}
-
-	private NBTTagCompound getDataAsLines() {
-		NBTTagCompound dat = new NBTTagCompound();
-		NBTTagCompound header = new NBTTagCompound();
-		NBTTagList li = new NBTTagList();
-		for (String s : watchedNBT) {
-			li.appendTag(new NBTTagString(s));
-		}
-		header.setTag("tags", li);
-
-		NBTTagCompound extra = (NBTTagCompound)ReikaNBTHelper.getTagForObject(extraNBT);
-		header.setTag("extra", extra);
-
-		dat.setTag("header", header);
-
-		li = new NBTTagList();
-		for (BlockData b : data.values()) {
-			//ReikaJavaLibrary.pConsole("Saving "+b);
-			NBTTagCompound tag = b.writeToNBT();
-			li.appendTag(tag);
-		}
-		dat.setTag("data", li);
-		return dat;
-	}
-
-	private void setDataFromLines(NBTTagCompound tag) {
-		NBTTagCompound header = tag.getCompoundTag("header");
-		NBTTagList li = header.getTagList("tags", NBTTypes.STRING.ID);
-		for (Object o : li.tagList) {
-			NBTTagString s = (NBTTagString)o;
-			watchedNBT.add(s.func_150285_a_());
-		}
-
-		NBTTagCompound extra = header.getCompoundTag("extra");
-		extraNBT.clear();
-		extraNBT.putAll((Map<String, Object>)ReikaNBTHelper.getValue(extra));
-
-		li = tag.getTagList("data", NBTTypes.COMPOUND.ID);
-		for (Object o : li.tagList) {
-			NBTTagCompound dat = (NBTTagCompound)o;
-			BlockData b = BlockData.readFromNBT(dat, watchedNBT, extraNBT);
-			if (b != null) {
-				if (!ignoreSet.contains(b.block)) {
-					data.put(b.position, b);
-					//ReikaJavaLibrary.pConsole("Loaded "+b);
-				}
-			}
-		}
-		this.calcBounds();
 	}
 
 	public void place(World world) {
@@ -446,6 +301,59 @@ public class StructureExport {
 
 		public NBTBase getOverriddenValue(Coordinate c, BlockKey bk, String key, NBTBase original, NBTTagCompound data);
 
+	}
+
+	@Override
+	protected void readHeader(NBTTagCompound header) {
+		NBTTagList li = header.getTagList("tags", NBTTypes.STRING.ID);
+		for (Object o : li.tagList) {
+			NBTTagString s = (NBTTagString)o;
+			watchedNBT.add(s.func_150285_a_());
+		}
+	}
+
+	@Override
+	protected void readData(NBTTagList li) {
+		for (Object o : li.tagList) {
+			NBTTagCompound dat = (NBTTagCompound)o;
+			BlockData b = BlockData.readFromNBT(dat, watchedNBT, extraNBT);
+			if (b != null) {
+				if (!ignoreSet.contains(b.block)) {
+					data.put(b.position, b);
+					//ReikaJavaLibrary.pConsole("Loaded "+b);
+				}
+			}
+		}
+		this.calcBounds();
+	}
+
+	@Override
+	protected void readExtraData(NBTTagCompound extra) {
+		extraNBT.clear();
+		extraNBT.putAll((Map<String, Object>)ReikaNBTHelper.getValue(extra));
+	}
+
+	@Override
+	protected void writeHeader(NBTTagCompound header) {
+		NBTTagList li = new NBTTagList();
+		for (String s : watchedNBT) {
+			li.appendTag(new NBTTagString(s));
+		}
+		header.setTag("tags", li);
+	}
+
+	@Override
+	protected void writeData(NBTTagList li) {
+		for (BlockData b : data.values()) {
+			//ReikaJavaLibrary.pConsole("Saving "+b);
+			NBTTagCompound tag = b.writeToNBT();
+			li.appendTag(tag);
+		}
+	}
+
+	@Override
+	protected NBTTagCompound writeExtraData() {
+		return (NBTTagCompound)ReikaNBTHelper.getTagForObject(extraNBT);
 	}
 
 }

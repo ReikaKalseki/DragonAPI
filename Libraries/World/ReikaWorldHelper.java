@@ -2243,4 +2243,17 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 		return true;
 	}
+
+	public static boolean checkForAdjSolidBlock(World world, int x, int y, int z) {
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			Block id = world.getBlock(dx, dy, dz);
+			if (id.getMaterial().isSolid())
+				return true;
+		}
+		return false;
+	}
 }

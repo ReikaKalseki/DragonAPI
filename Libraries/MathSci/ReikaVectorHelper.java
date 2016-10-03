@@ -254,4 +254,9 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		return new LineClipper(minX, minY, maxX, maxY).clip(x0, y0, x1, y1);
 	}
 
+	/** Gets the angle between two vectors. */
+	public static double getAngleBetween(Vec3 v1, Vec3 v2) {
+		return Math.toDegrees(Math.acos(v1.dotProduct(v2)/(v1.lengthVector()*v2.lengthVector())));
+	}
+
 }

@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Exception.ModReflectionException;
@@ -30,11 +31,15 @@ public class MystCraftHandler extends ModHandlerBase {
 	public final Block portalID;
 	public final Block crystalID;
 
+	public final Item folderID;
+
 	private MystCraftHandler() {
 		super();
 		Block iddecay = null;
 		Block idportal = null;
 		Block idcrystal = null;
+
+		Item idfolder = null;
 
 		if (this.hasMod()) {
 			/*
@@ -54,9 +59,12 @@ public class MystCraftHandler extends ModHandlerBase {
 				this.logFailure(e);
 			}
 			 */
-			iddecay = Block.getBlockFromName(MystObjects.Blocks.decay);
-			idportal = Block.getBlockFromName(MystObjects.Blocks.portal);
-			idcrystal = Block.getBlockFromName(MystObjects.Blocks.crystal);
+			iddecay = Block.getBlockFromName(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Blocks.decay);
+			idportal = Block.getBlockFromName(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Blocks.portal);
+			idcrystal = Block.getBlockFromName(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Blocks.crystal);
+
+			idfolder = (Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.folder);
+
 			ReikaJavaLibrary.initClass(ReikaMystcraftHelper.class);
 		}
 		else {
@@ -66,6 +74,7 @@ public class MystCraftHandler extends ModHandlerBase {
 		decayID = iddecay;
 		portalID = idportal;
 		crystalID = idcrystal;
+		folderID = idfolder;
 	}
 
 	private Block getBlockInstance(String name) throws ModReflectionException {

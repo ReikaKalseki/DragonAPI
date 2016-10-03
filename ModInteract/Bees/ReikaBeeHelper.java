@@ -36,6 +36,8 @@ import forestry.api.apiculture.IBee;
 import forestry.api.apiculture.IBeeGenome;
 import forestry.api.apiculture.IBeeHousing;
 import forestry.api.apiculture.IBeeRoot;
+import forestry.api.core.EnumHumidity;
+import forestry.api.core.EnumTemperature;
 import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.EnumTolerance;
 import forestry.api.genetics.IAllele;
@@ -66,6 +68,16 @@ public class ReikaBeeHelper {
 			//ReikaJavaLibrary.pConsole(bee);
 			if (bee != null) {
 				bee.analyze();
+				saveBee(bee, is);
+			}
+		}
+	}
+
+	public static void ageBee(World world, ItemStack is, float modifier) {
+		if (is != null) {
+			IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
+			if (bee instanceof IBee) {
+				((IBee)bee).age(world, modifier);
 				saveBee(bee, is);
 			}
 		}
@@ -104,7 +116,7 @@ public class ReikaBeeHelper {
 	public static Tolerance getToleranceType(EnumTolerance t) {
 		if (t == EnumTolerance.NONE)
 			return Tolerance.NONE;
-		String s = t.name().substring(0, t.name().indexOf('_')+1);
+		String s = t.name().substring(0, t.name().indexOf('_'));
 		return Tolerance.valueOf(s);
 	}
 
@@ -202,40 +214,41 @@ public class ReikaBeeHelper {
 	}
 
 	public static ArrayList<String> getGenesAsStringList(ItemStack is) {
-		ArrayList<String> li = new ArrayList();
-		IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
-		if (bee instanceof IBee) {
-			IGenome ig = bee.getGenome();
-			IAlleleBeeSpecies sp1 = (IAlleleBeeSpecies)ig.getPrimary();
-			IAlleleBeeSpecies sp2 = (IAlleleBeeSpecies)ig.getSecondary();
-			EnumBeeChromosome[] order = {
-					EnumBeeChromosome.SPECIES,
-					EnumBeeChromosome.LIFESPAN,
-					EnumBeeChromosome.SPEED,
-					EnumBeeChromosome.FLOWERING,
-					EnumBeeChromosome.FLOWER_PROVIDER,
-					EnumBeeChromosome.FERTILITY,
-					EnumBeeChromosome.TERRITORY,
-					EnumBeeChromosome.EFFECT,
-					//EnumBeeChromosome.TEMPERATURE_TOLERANCE,
-					//EnumBeeChromosome.HUMIDITY_TOLERANCE,
-					EnumBeeChromosome.NOCTURNAL,
-					EnumBeeChromosome.TOLERANT_FLYER,
-					EnumBeeChromosome.CAVE_DWELLING
-			};
+		IIndividual ii = AlleleManager.alleleRegistry.getIndividual(is);
+		return ii != null ? getGenesAsStringList(ii.getGenome()) : new ArrayList();
+	}
 
-			for (int i = 0; i < order.length; i++) {
-				IAllele ia1 = ig.getActiveAllele(order[i]);
-				IAllele ia2 = ig.getActiveAllele(order[i]);
-				li.add(getGeneDisplay(ia1, order[i], true, true)+" / "+getGeneDisplay(ia2, order[i], false, false));
-				if (order[i] == EnumBeeChromosome.EFFECT) {
-					String t1 = getTemperatureDisplay(sp1, (IAlleleTolerance)ig.getActiveAllele(EnumBeeChromosome.TEMPERATURE_TOLERANCE), true, true);
-					String t2 = getTemperatureDisplay(sp2, (IAlleleTolerance)ig.getActiveAllele(EnumBeeChromosome.TEMPERATURE_TOLERANCE), false, false);
-					li.add(t1+" / "+t2);
-					String h1 = getHumidityDisplay(sp1, (IAlleleTolerance)ig.getActiveAllele(EnumBeeChromosome.HUMIDITY_TOLERANCE), true, true);
-					String h2 = getHumidityDisplay(sp2, (IAlleleTolerance)ig.getActiveAllele(EnumBeeChromosome.HUMIDITY_TOLERANCE), false, false);
-					li.add(h1+" / "+h2);
-				}
+	public static ArrayList<String> getGenesAsStringList(IGenome ig) {
+		ArrayList<String> li = new ArrayList();
+		IAlleleBeeSpecies sp1 = (IAlleleBeeSpecies)ig.getPrimary();
+		IAlleleBeeSpecies sp2 = (IAlleleBeeSpecies)ig.getSecondary();
+		EnumBeeChromosome[] order = {
+				EnumBeeChromosome.SPECIES,
+				EnumBeeChromosome.LIFESPAN,
+				EnumBeeChromosome.SPEED,
+				EnumBeeChromosome.FLOWERING,
+				EnumBeeChromosome.FLOWER_PROVIDER,
+				EnumBeeChromosome.FERTILITY,
+				EnumBeeChromosome.TERRITORY,
+				EnumBeeChromosome.EFFECT,
+				//EnumBeeChromosome.TEMPERATURE_TOLERANCE,
+				//EnumBeeChromosome.HUMIDITY_TOLERANCE,
+				EnumBeeChromosome.NOCTURNAL,
+				EnumBeeChromosome.TOLERANT_FLYER,
+				EnumBeeChromosome.CAVE_DWELLING
+		};
+
+		for (int i = 0; i < order.length; i++) {
+			IAllele ia1 = ig.getActiveAllele(order[i]);
+			IAllele ia2 = ig.getInactiveAllele(order[i]);
+			li.add(getGeneDisplay(ia1, order[i], true, true)+" / "+getGeneDisplay(ia2, order[i], false, false));
+			if (order[i] == EnumBeeChromosome.EFFECT) {
+				String t1 = getTemperatureDisplay(sp1, (IAlleleTolerance)ig.getActiveAllele(EnumBeeChromosome.TEMPERATURE_TOLERANCE), true, true);
+				String t2 = getTemperatureDisplay(sp2, (IAlleleTolerance)ig.getInactiveAllele(EnumBeeChromosome.TEMPERATURE_TOLERANCE), false, false);
+				li.add(t1+" / "+t2);
+				String h1 = getHumidityDisplay(sp1, (IAlleleTolerance)ig.getActiveAllele(EnumBeeChromosome.HUMIDITY_TOLERANCE), true, true);
+				String h2 = getHumidityDisplay(sp2, (IAlleleTolerance)ig.getInactiveAllele(EnumBeeChromosome.HUMIDITY_TOLERANCE), false, false);
+				li.add(h1+" / "+h2);
 			}
 		}
 		return li;
@@ -328,6 +341,50 @@ public class ReikaBeeHelper {
 	public static IBeeGenome getGenome(ItemStack is) {
 		IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
 		return bee instanceof IBee ? ((IBee)bee).getGenome() : null;
+	}
+
+	public static IBee getBee(ItemStack is) {
+		IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
+		return bee instanceof IBee ? (IBee)bee : null;
+	}
+
+	public static IAlleleBeeSpecies getSpecies(ItemStack is) {
+		IBeeGenome ig = getGenome(is);
+		return ig != null ? ig.getPrimary() : null;
+	}
+
+	public static float getTemperatureRangeCenter(EnumTemperature t) {
+		switch(t) {
+			case ICY:
+				return -0.1F;
+			case COLD:
+				return 0.175F;
+			case NORMAL:
+				return 0.6F;
+			case WARM:
+				return 0.925F;
+			case HOT:
+				return 1.1F;
+			case HELLISH:
+				return 2F;
+			case NONE:
+			default:
+				return Float.NaN;
+		}
+	}
+
+	public static float getHumidityRangeCenter(EnumHumidity h) {
+		switch(h) {
+			case ARID:
+				return 0.15F;
+			case NORMAL:
+				return 0.5F;
+			case DAMP:
+				return 1F;
+			default:
+				return Float.NaN;
+
+		}
 	}
 
 

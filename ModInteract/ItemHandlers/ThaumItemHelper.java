@@ -37,6 +37,7 @@ public class ThaumItemHelper {
 		SALTS("ItemBathSalts"),
 		ELDRITCHEYE("ItemEldritchObject"),
 		BALANCED("ItemShard", 6),
+		PHIAL("ItemEssence", 0),
 		;
 
 		public final int metadata;

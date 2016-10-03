@@ -260,7 +260,7 @@ public class ReikaMusicHelper {
 		private static final EnumMap<Note, KeySignature> keyMap = new EnumMap(Note.class);
 		private static final EnumMap<Note, KeySignature> minorKeyMap = new EnumMap(Note.class);
 
-		private static final KeySignature[] keys = values();
+		public static final KeySignature[] keys = values();
 
 		private KeySignature(Note ton, Note... key) {
 			for (int i = 0; i < key.length; i++) {

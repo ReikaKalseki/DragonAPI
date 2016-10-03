@@ -29,6 +29,25 @@ public class ReikaFluidHelper {
 	private static final MultiMap<Fluid, FluidContainer> containers = new MultiMap();
 
 	private static final HashMap<String, String> nameSwaps = new HashMap();
+	private static final HashMap<String, Integer> fluidColorMap = new HashMap();
+
+	static {
+		fluidColorMap.put("water", 0x0065FF);
+		fluidColorMap.put("lava", 0xFF3300);
+		fluidColorMap.put("ender", 0x006470);
+		fluidColorMap.put("glowstone", 0xFFE45E);
+		fluidColorMap.put("redstone", 0xBC0000);
+		fluidColorMap.put("cryotheum", 0x42DFFF);
+		fluidColorMap.put("steam", 0xd0d0d0);
+		fluidColorMap.put("xp", 0x84FF00);
+		fluidColorMap.put("for.honey", 0xFFA300);
+		fluidColorMap.put("ic2distilledwater", 0x4F65E2);
+		fluidColorMap.put("oil", 0x101010);
+		fluidColorMap.put("fuel", 0xC4A300);
+		fluidColorMap.put("creosote", 0x963700);
+		fluidColorMap.put("biomass", 0x35A536);
+	}
+
 	private static boolean init = false;
 
 	public static void initEarlyRegistrations() {
@@ -151,6 +170,14 @@ public class ReikaFluidHelper {
 		if (s.endsWith("ol") || s.endsWith("al") || s.endsWith("one")) //Other organics
 			return true;
 		return false;
+	}
+
+	public static int getFluidColor(Fluid f) {
+		int c = f.getColor();
+		if (c == 0xffffff && fluidColorMap.containsKey(f.getName())) {
+			c = fluidColorMap.get(f.getName());
+		}
+		return c;
 	}
 
 }

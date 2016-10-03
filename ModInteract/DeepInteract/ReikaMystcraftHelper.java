@@ -21,6 +21,7 @@ import java.util.Random;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -51,6 +52,8 @@ import com.xcompwiz.mystcraft.api.hook.DimensionAPI;
 import com.xcompwiz.mystcraft.api.hook.PageAPI;
 import com.xcompwiz.mystcraft.api.hook.SymbolAPI;
 import com.xcompwiz.mystcraft.api.hook.SymbolValuesAPI;
+import com.xcompwiz.mystcraft.api.item.IItemOrderablePageProvider;
+import com.xcompwiz.mystcraft.api.item.IItemPageProvider;
 import com.xcompwiz.mystcraft.api.linking.ILinkInfo;
 import com.xcompwiz.mystcraft.api.symbol.IAgeSymbol;
 import com.xcompwiz.mystcraft.api.world.AgeDirector;
@@ -691,6 +694,16 @@ public class ReikaMystcraftHelper {
 			return words;
 		}
 
+	}
+
+	public static List<ItemStack> getPagesInFolder(EntityPlayer ep, ItemStack is, boolean clear) {
+		List<ItemStack> li = ((IItemPageProvider)is.getItem()).getPageList(ep, is);
+		if (clear) {
+			for (int i = 0; i < li.size(); i++) {
+				((IItemOrderablePageProvider)is.getItem()).removePage(ep, is, i);
+			}
+		}
+		return li;
 	}
 
 }

@@ -345,6 +345,8 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			return true;
 		if (ep.getClass().getName().toLowerCase(Locale.ENGLISH).contains("fake"))
 			return true;
+		if (ep instanceof EntityPlayerMP && ((EntityPlayerMP)ep).playerNetServerHandler == null)
+			return true;
 		return false;
 	}
 

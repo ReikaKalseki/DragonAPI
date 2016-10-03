@@ -506,4 +506,21 @@ public class ReikaFileReader extends DragonAPICore {
 			return false;
 		}
 	}
+
+	public static void emptyDirectory(File dir) {
+		File[] f = dir.listFiles();
+		for (int i = 0; i < f.length; i++) {
+			f[i].delete();
+		}
+	}
+
+	public static void clearFile(File f) {
+		try {
+			f.delete();
+			f.createNewFile();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

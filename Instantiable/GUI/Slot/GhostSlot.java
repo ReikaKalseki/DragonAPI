@@ -16,8 +16,8 @@ import net.minecraft.item.ItemStack;
 /** A slot that needs no inventory. Use it for things like ghost items (like diamond pipes). */
 public final class GhostSlot extends Slot {
 
-	public GhostSlot(IInventory par1iInventory, int par2, int par3, int par4) {
-		super(par1iInventory, par2, par3, par4);
+	public GhostSlot(IInventory ii, int id, int x, int y) {
+		super(ii, id, x, y);
 	}
 
 	public GhostSlot(int idx, int x, int y) {

@@ -478,4 +478,68 @@ public class MESystemReader {
 		}
 
 	}
+
+	public static enum MatchMode {
+		EXACT(0xffcc00, "Exact Match"),
+		FUZZY(0x00aaff, "Fuzzy Match"),
+		FUZZYORE(0x00ff00, "Fuzzy/Ore Match"),
+		FUZZYNBT(0xaa00ff, "Fuzzy/Ore Match, Ignore NBT");
+
+		public final int color;
+		public final String desc;
+
+		public static final MatchMode[] list = values();
+
+		private MatchMode(int c, String s) {
+			color = c;
+			desc = s;
+		}
+
+		public long countItems(MESystemReader net, ItemStack is) {
+			switch(this) {
+				case EXACT:
+					return net.getItemCount(is, true);
+				case FUZZY:
+					return net.getFuzzyItemCount(is, FuzzyMode.IGNORE_ALL, false, true);
+				case FUZZYORE:
+					return net.getFuzzyItemCount(is, FuzzyMode.IGNORE_ALL, true, true);
+				case FUZZYNBT:
+					return net.getFuzzyItemCount(is, FuzzyMode.IGNORE_ALL, true, false);
+			}
+			return 0;
+		}
+
+		public long removeItems(MESystemReader net, ItemStack is, boolean simulate) {
+			switch(this) {
+				case EXACT:
+					return net.removeItem(is, simulate, true);
+				case FUZZY:
+					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, false, true);
+				case FUZZYORE:
+					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, true, true);
+				case FUZZYNBT:
+					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, true, false);
+			}
+			return 0;
+		}
+
+		public MatchMode next() {
+			return list[(this.ordinal()+1)%list.length];
+		}
+
+		public boolean compare(ItemStack is1, ItemStack is2) {
+			switch(this) {
+				case EXACT:
+					return ReikaItemHelper.matchStacks(is1, is2) && ItemStack.areItemStackTagsEqual(is1, is2);
+				case FUZZY:
+					return is1.getItem() == is2.getItem() && ItemStack.areItemStackTagsEqual(is1, is2);
+				case FUZZYNBT:
+					return is1.getItem() == is2.getItem();
+				case FUZZYORE:
+					return ReikaItemHelper.checkOreDictOverlap(is1, is2);
+				default:
+					return false;
+			}
+		}
+	}
 }

@@ -14,6 +14,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.fluids.IFluidBlock;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Interpolation;
 
@@ -139,6 +140,8 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 			return 2800;
 		if (b == Blocks.gravel)
 			return 1680;
+		if (b instanceof IFluidBlock)
+			return ((IFluidBlock)b).getFluid().getDensity();
 		if (b.getMaterial() == Material.rock)
 			return ReikaEngLibrary.rhorock;
 		if (b.getMaterial() == Material.glass)

@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary.Trackers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -81,6 +82,7 @@ public class ConfigMatcher {
 		for (String s : data.keySet()) {
 			ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.CONFIGSYNC.ordinal(), new PacketTarget.ServerTarget(), s, data.get(s));
 		}
+		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.CONFIGSYNCEND.ordinal(), new PacketTarget.ServerTarget());
 	}
 
 	public void register(EntityPlayer ep, String s, int val) {
@@ -106,10 +108,10 @@ public class ConfigMatcher {
 	}
 
 	public void match(EntityPlayerMP ep) {
-		Collection<Mismatch> c = mismatch.get(ep).values();
-		for (String s : checkedValues.get(ep)) { //Serverside configs for which client never sent data
-			c.add(new ConfigStructureMismatch(s));
-		}
+		Collection<Mismatch> c = new ArrayList(mismatch.get(ep).values());
+		//for (String s : checkedValues.get(ep)) { //Serverside configs for which client never sent data
+		//	c.add(new ConfigStructureMismatch(s));
+		//}
 		if (!c.isEmpty()) {
 			StringBuilder sb = new StringBuilder();
 			StringBuilder sb2 = new StringBuilder();

@@ -569,4 +569,10 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static double getUnequalAverage(double a, double b, double bias) {
 		return (1-bias)*a+bias*b;
 	}
+
+	public static int clipLeadingHexBits(int val) {
+		while (val > 0 && (val&0xF) == 0)
+			val = val >> 4;
+		return val;
+	}
 }

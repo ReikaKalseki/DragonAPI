@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract.Lua.Library;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.ModInteract.Lua.LibraryLuaMethod;
 import dan200.computercraft.api.lua.LuaException;
 
@@ -28,7 +29,7 @@ public class LuaFluidColor extends LibraryLuaMethod {
 		Fluid f = FluidRegistry.getFluid(name);
 		if (f == null)
 			throw new IllegalArgumentException("No such fluid with name '"+name+"'.");
-		return new Object[]{f.getColor()};
+		return new Object[]{ReikaFluidHelper.getFluidColor(f)};
 	}
 
 	@Override

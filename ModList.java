@@ -115,7 +115,8 @@ public enum ModList implements ModEntry, Dependency {
 	THAUMICTINKER("ThaumicTinkerer"),
 	RFTOOLS("rftools"), //classes scattered
 	DRACONICEVO("DraconicEvolution"),
-	MAGICBEES("MagicBees", "magicbees.main.Config");
+	MAGICBEES("MagicBees", "magicbees.main.Config"),
+	IMMERSIVEENG("ImmersiveEngineering", "blusunrize.immersiveengineering.common.IEContent");
 
 	private final boolean condition;
 	public final String modLabel;

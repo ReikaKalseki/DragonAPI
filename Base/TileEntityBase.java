@@ -51,9 +51,12 @@ import Reika.DragonAPI.ASM.InterfaceInjector.Injectable;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.CompoundSyncPacket;
 import Reika.DragonAPI.IO.CompoundSyncPacket.CompoundSyncPacketHandler;
+import Reika.DragonAPI.Instantiable.BlockUpdateCallback;
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
+import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap.TimerCallback;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
 import Reika.DragonAPI.Interfaces.DataSync;
 import Reika.DragonAPI.Interfaces.TileEntity.PartialInventory;
@@ -94,7 +97,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	private final StepTimer fullSyncTimer;
 	private boolean forceSync = true;
 
-	private int updateDelay = 0;
+	private final TimerMap<TimerCallback> callbacks = new TimerMap();
 
 	private long tileAge = 0;
 
@@ -242,10 +245,6 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	public final void setUnmineable(boolean nomine) {
 		unmineable = nomine;
-	}
-
-	public final void scheduleBlockUpdate(int ticks) {
-		updateDelay = ticks;
 	}
 
 	private void sendPacketToAllAround(S35PacketUpdateTileEntity p, int r) {
@@ -497,12 +496,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 				}
 			}
 
-			if (updateDelay > 0) {
-				updateDelay--;
-				if (updateDelay == 0) {
-					this.triggerBlockUpdate();
-				}
-			}
+			callbacks.tick();
 
 			/*
 			if (worldObj.isRemote && this.needsToCauseBlockUpdates()) {
@@ -519,6 +513,14 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	public final void triggerBlockUpdate() {
 		worldObj.markBlockForUpdate(xCoord, yCoord, zCoord);
+	}
+
+	public final void scheduleBlockUpdate(int ticks) {
+		this.scheduleCallback(new BlockUpdateCallback(this), ticks);
+	}
+
+	public final void scheduleCallback(TimerCallback c, int delay) {
+		callbacks.put(c, delay);
 	}
 
 	private boolean shouldSendSyncPacket() {

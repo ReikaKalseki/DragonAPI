@@ -40,7 +40,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 				Collection<ICentrifugeRecipe> c = RecipeManagers.centrifugeManager.recipes();
 				for (ICentrifugeRecipe r : c) {
 					ItemStack in = r.getInput();
-					ChancedOutputList outputs = new ChancedOutputList();
+					ChancedOutputList outputs = new ChancedOutputList(false);
 					Map<ItemStack, Float> out = r.getAllProducts();
 					for (ItemStack is : out.keySet()) {
 						float chance = out.get(is)*100;

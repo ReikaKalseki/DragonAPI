@@ -12,6 +12,7 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayer;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.PlayerEvent;
@@ -32,6 +33,8 @@ public class PlayerHandler {
 
 	@SubscribeEvent
 	public void onLogin(PlayerEvent.PlayerLoggedInEvent evt) {
+		if (ReikaPlayerAPI.isFake(evt.player))
+			return;
 		for (PlayerTracker p : trackers) {
 			p.onPlayerLogin(evt.player);
 		}
@@ -39,6 +42,8 @@ public class PlayerHandler {
 
 	@SubscribeEvent
 	public void onLogout(PlayerEvent.PlayerLoggedOutEvent evt) {
+		if (ReikaPlayerAPI.isFake(evt.player))
+			return;
 		for (PlayerTracker p : trackers) {
 			p.onPlayerLogout(evt.player);
 		}
@@ -46,6 +51,8 @@ public class PlayerHandler {
 
 	@SubscribeEvent
 	public void onRespawn(PlayerEvent.PlayerRespawnEvent evt) {
+		if (ReikaPlayerAPI.isFake(evt.player))
+			return;
 		for (PlayerTracker p : trackers) {
 			p.onPlayerRespawn(evt.player);
 		}
@@ -53,6 +60,8 @@ public class PlayerHandler {
 
 	@SubscribeEvent
 	public void onDimensionChange(PlayerEvent.PlayerChangedDimensionEvent evt) {
+		if (ReikaPlayerAPI.isFake(evt.player))
+			return;
 		for (PlayerTracker p : trackers) {
 			p.onPlayerChangedDimension(evt.player, evt.fromDim, evt.toDim);
 		}
