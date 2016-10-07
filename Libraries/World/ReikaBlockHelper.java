@@ -273,6 +273,8 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		}
 		if (ReikaBlockHelper.isLiquid(id) && !(dropFluids && ReikaWorldHelper.isLiquidSourceBlock(world, x, y, z)))
 			return null;
+		if (ModList.THAUMCRAFT.isLoaded() && id == BlockEntry.NODE.getBlock())
+			return null;
 		if (id instanceof BlockTieredResource) {
 			BlockTieredResource b = (BlockTieredResource)id;
 			if (ep != null && b.isPlayerSufficientTier(world, x, y, z, ep)) {
@@ -354,15 +356,6 @@ public final class ReikaBlockHelper extends DragonAPICore {
 
 	public static boolean isUnbreakable(World world, int x, int y, int z, Block id, int meta, EntityPlayer ep) {
 		return id.getBlockHardness(world, x, y, z) < 0 || id.getPlayerRelativeBlockHardness(ep, world, x, y, z) < 0;
-	}
-
-	public static boolean attemptSilkTouch(World world, int x, int y, int z) {
-		Block b = world.getBlock(x, y, z);
-		if (b instanceof BlockTieredResource)
-			return false;
-		if (b == BlockEntry.NODE.getBlock())
-			return false;
-		return true;
 	}
 
 	public static boolean isFacade(Block b) {

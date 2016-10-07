@@ -101,6 +101,9 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	private long tileAge = 0;
 
+	private boolean lastRedstone;
+	private boolean redstoneInput;
+
 	private final TileEntity[] adjTEMap = new TileEntity[6];
 
 	protected final ForgeDirection[] dirs = ForgeDirection.values();
@@ -128,6 +131,23 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		//packetTimer = new StepTimer(this.getPacketDelay());
 		fullSyncTimer = new StepTimer(1200);
 		fullSyncTimer.randomizeTick(rand);
+	}
+
+	public final boolean hasRedstoneSignal() {
+		return redstoneInput;
+	}
+
+	public void onBlockUpdate() {
+		lastRedstone = redstoneInput;
+		redstoneInput = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+		if (redstoneInput && !lastRedstone)
+			this.onPositiveRedstoneEdge();
+		if (redstoneInput != lastRedstone)
+			this.syncAllData(false);
+	}
+
+	protected void onPositiveRedstoneEdge() {
+
 	}
 
 	public boolean allowTickAcceleration() {
@@ -186,12 +206,18 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	protected void writeSyncTag(NBTTagCompound NBT) {
 		NBT.setInteger("meta", pseudometa);
+
+		NBT.setBoolean("lastredstone", lastRedstone);
+		NBT.setBoolean("thisredstone", redstoneInput);
 	}
 
 	protected void readSyncTag(NBTTagCompound NBT) {
 		pseudometa = NBT.getInteger("meta");
 		if (pseudometa > 15)
 			pseudometa = 15;
+
+		lastRedstone = NBT.getBoolean("lastredstone");
+		redstoneInput = NBT.getBoolean("thisredstone");
 	}
 
 	@Override

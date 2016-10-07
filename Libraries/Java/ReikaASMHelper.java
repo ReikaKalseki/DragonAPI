@@ -266,6 +266,10 @@ public class ReikaASMHelper {
 		}
 	}
 
+	public static boolean memberHasAnnotationOfType(ClassNode cn, String type) {
+		return hasAnnotation(cn.visibleAnnotations, type);
+	}
+
 	public static boolean memberHasAnnotationOfType(MethodNode mn, String type) {
 		return hasAnnotation(mn.visibleAnnotations, type);
 	}

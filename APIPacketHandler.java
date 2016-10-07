@@ -265,6 +265,9 @@ public class APIPacketHandler implements PacketHandler {
 				case PLAYERKICK:
 					((EntityPlayerMP)ep).playerNetServerHandler.kickPlayerFromServer(stringdata);
 					break;
+				case CONFIGSYNCSTART:
+					ConfigMatcher.instance.clear(ep);
+					break;
 				case CONFIGSYNC:
 					ConfigMatcher.instance.register(ep, stringdata, data[0]);
 					break;
@@ -400,7 +403,7 @@ public class APIPacketHandler implements PacketHandler {
 		BREAKPARTICLES(),
 		PLAYERKICK(),
 		CONFIGSYNC(),
-		//CONFIGSYNCSTART(),
+		CONFIGSYNCSTART(),
 		CONFIGSYNCEND(),
 		ITEMDROPPER(),
 		ITEMDROPPERREQUEST(),

@@ -175,19 +175,19 @@ public final class MekToolHandler extends ModHandlerBase {
 	}
 
 	private void addEntry(Item tool, Materials m, Tools t) {
-		EnumMap<Materials, Item> map1 = itemsTool.get(tool);
+		EnumMap<Materials, Item> map1 = itemsTool.get(t);
 		if (map1 == null) {
 			map1 = new EnumMap(Materials.class);
 			itemsTool.put(t, map1);
 		}
-		itemsTool.put(t, map1);
+		map1.put(m, tool);
 
-		EnumMap<Tools, Item> map2 = itemsMaterial.get(tool);
+		EnumMap<Tools, Item> map2 = itemsMaterial.get(t);
 		if (map2 == null) {
 			map2 = new EnumMap(Tools.class);
 			itemsMaterial.put(m, map2);
 		}
-		itemsMaterial.put(m, map2);
+		map2.put(t, tool);
 	}
 
 	private String getField(Materials m, Tools t) {

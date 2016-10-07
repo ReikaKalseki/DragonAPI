@@ -261,8 +261,13 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 					drops.add(((MachineRegistryBlock)id).getMachine(world, x, y, z).getCraftedProduct(world.getTileEntity(x, y, z)));
 				}
 				else {
-					if (silkTouch && ReikaBlockHelper.attemptSilkTouch(world, x, y, z) && id.canSilkHarvest(world, player, x, y, z, meta))
-						drops.add(ReikaBlockHelper.getSilkTouch(world, x, y, z, id, meta, player, dropFluids));
+					if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta)) {
+						ItemStack silk = ReikaBlockHelper.getSilkTouch(world, x, y, z, id, meta, player, dropFluids);
+						if (silk != null)
+							drops.add(silk);
+						else
+							drops.addAll(ReikaWorldHelper.getDropsAt(world, x, y, z, fortune, player));
+					}
 					else
 						drops.addAll(ReikaWorldHelper.getDropsAt(world, x, y, z, fortune, player));
 				}
@@ -292,6 +297,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			else {
 				ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 			}
+			if (call != null)
+				call.onPreBreak(this, world, x, y, z, id, meta);
 			world.setBlock(x, y, z, Blocks.air, 0, causeUpdates ? 3 : 2);
 			if (causeUpdates)
 				world.markBlockForUpdate(x, y, z);
@@ -300,14 +307,15 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 				player.addExhaustion(0.025F*hungerFactor);
 			}
 			if (call != null)
-				call.onBreak(this, world, x, y, z, id, meta);
+				call.onPostBreak(this, world, x, y, z, id, meta);
 		}
 	}
 
 	public static interface BreakerCallback {
 
 		public boolean canBreak(ProgressiveBreaker b, World world, int x, int y, int z, Block id, int meta);
-		public void onBreak(ProgressiveBreaker b, World world, int x, int y, int z, Block id, int meta);
+		public void onPreBreak(ProgressiveBreaker b, World world, int x, int y, int z, Block id, int meta);
+		public void onPostBreak(ProgressiveBreaker b, World world, int x, int y, int z, Block id, int meta);
 		public void onFinish(ProgressiveBreaker b);
 
 	}

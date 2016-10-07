@@ -229,7 +229,7 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		int dx = dir.offsetX*dist;
 		int dy = dir.offsetY*dist;
 		int dz = dir.offsetZ*dist;
-		box = box.addCoord(dx+1, dy+1, dz+1);
+		box = box.addCoord(dx, dy, dz);
 		return box;
 	}
 
@@ -244,7 +244,7 @@ public final class ReikaAABBHelper extends DragonAPICore {
 	}
 
 	public static AxisAlignedBB getBeamBox(int x1, int y1, int z1, int x2, int y2, int z2) {
-		return AxisAlignedBB.getBoundingBox(x1, y1, z1, x1+1, y1+1, z1+1).addCoord(x2, y2, z2);
+		return AxisAlignedBB.getBoundingBox(x1, y1, z1, x1, y1, z1).addCoord(x2, y2, z2);
 	}
 
 }

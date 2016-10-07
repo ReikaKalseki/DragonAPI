@@ -21,6 +21,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 public final class ReikaRedstoneHelper extends DragonAPICore {
 
 	/** Returns true on the postive redstone edge. Args: World, x, y, z, last power state */
+	@Deprecated
 	public static boolean isPositiveEdge(World world, int x, int y, int z, boolean lastPower) {
 		if (world.isBlockIndirectlyGettingPowered(x, y, z) == lastPower)
 			return false;
@@ -63,6 +64,7 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 	}
 
 	/** Returns true on the negative redstone edge. Args: World, x, y, z, last power state*/
+	@Deprecated
 	public static boolean isNegativeEdge(World world, int x, int y, int z, boolean lastPower) {
 		if (world.isBlockIndirectlyGettingPowered(x, y, z) == lastPower)
 			return false;
@@ -72,6 +74,7 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 	}
 
 	/** Returns true on a redstone edge. Args: World, x, y, z, last power state */
+	@Deprecated
 	public static boolean isEdge(World world, int x, int y, int z, boolean lastPower) {
 		if (world.isBlockIndirectlyGettingPowered(x, y, z) == lastPower)
 			return false;

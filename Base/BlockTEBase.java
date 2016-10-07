@@ -45,6 +45,14 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 	}
 
 	@Override
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block b)
+	{
+		TileEntityBase te = (TileEntityBase)world.getTileEntity(x, y, z);
+		if (te != null)
+			te.onBlockUpdate();
+	}
+
+	@Override
 	public final void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ)
 	{
 		ForgeDirection dir = ReikaDirectionHelper.getDirectionBetween(x, y, z, tileX, tileY, tileZ);

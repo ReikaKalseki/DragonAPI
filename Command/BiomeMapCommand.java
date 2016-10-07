@@ -324,6 +324,9 @@ public class BiomeMapCommand extends DragonCommandBase {
 			if (b.biomeName.equalsIgnoreCase("Ender Forest")) {
 				return 0xC872DB;
 			}
+			if (b.biomeName.equalsIgnoreCase("Luminous Cliffs")) {
+				return 0x22aaff;
+			}
 
 			if (ReikaBiomeHelper.isSnowBiome(b)) {
 				return 0xffffff;

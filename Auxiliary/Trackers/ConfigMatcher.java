@@ -79,10 +79,16 @@ public class ConfigMatcher {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void dispatch(ClientLoginEvent evt) {
+		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.CONFIGSYNCSTART.ordinal(), new PacketTarget.ServerTarget());
 		for (String s : data.keySet()) {
 			ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.CONFIGSYNC.ordinal(), new PacketTarget.ServerTarget(), s, data.get(s));
 		}
 		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.CONFIGSYNCEND.ordinal(), new PacketTarget.ServerTarget());
+	}
+
+	public void clear(EntityPlayer ep) {
+		mismatch.remove(ep);
+		checkedValues.remove(ep);
 	}
 
 	public void register(EntityPlayer ep, String s, int val) {

@@ -133,6 +133,13 @@ public class AgriCraftHandler extends CropHandlerBase {
 		return ModList.AGRICRAFT;
 	}
 
+	public ICropPlant getCropObject(World world, int x, int y, int z) {
+		if (api == null)
+			return null;
+		APIv2 apiv2 = (APIv2)api;
+		return apiv2.getCropPlant(world, x, y, z);
+	}
+
 	static {
 		tallGrassRand.addEntry(1, 20);
 		tallGrassRand.addEntry(2, 1);
