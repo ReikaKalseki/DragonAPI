@@ -36,6 +36,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.BlockTieredResource;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
+import Reika.DragonAPI.Interfaces.Block.SemiUnbreakable;
 import Reika.DragonAPI.Interfaces.Block.SpecialOreBlock;
 import Reika.DragonAPI.Interfaces.Block.Submergeable;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -355,7 +356,11 @@ public final class ReikaBlockHelper extends DragonAPICore {
 	}
 
 	public static boolean isUnbreakable(World world, int x, int y, int z, Block id, int meta, EntityPlayer ep) {
-		return id.getBlockHardness(world, x, y, z) < 0 || id.getPlayerRelativeBlockHardness(ep, world, x, y, z) < 0;
+		if (id.getBlockHardness(world, x, y, z) < 0 || (ep != null && id.getPlayerRelativeBlockHardness(ep, world, x, y, z) < 0))
+			return true;
+		if (id instanceof SemiUnbreakable && ((SemiUnbreakable)id).isUnbreakable(world, x, y, z, world.getBlockMetadata(x, y, z)))
+			return true;
+		return false;
 	}
 
 	public static boolean isFacade(Block b) {

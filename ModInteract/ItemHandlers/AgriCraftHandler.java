@@ -18,6 +18,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Base.CropHandlerBase;
 import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
 
@@ -133,6 +134,7 @@ public class AgriCraftHandler extends CropHandlerBase {
 		return ModList.AGRICRAFT;
 	}
 
+	@ModDependent(ModList.AGRICRAFT)
 	public ICropPlant getCropObject(World world, int x, int y, int z) {
 		if (api == null)
 			return null;

@@ -59,7 +59,7 @@ public final class MekToolHandler extends ModHandlerBase {
 		}
 
 		public Item getItem(Tools t) {
-			return instance.itemsMaterial.get(this).get(t);
+			return instance.initializedProperly() ? instance.itemsMaterial.get(this).get(t) : null;
 		}
 
 		public ItemStack getRawMaterial() {
@@ -116,7 +116,7 @@ public final class MekToolHandler extends ModHandlerBase {
 		}
 
 		public Item getItem(Materials m) {
-			return instance.itemsTool.get(this).get(m);
+			return instance.initializedProperly() ? instance.itemsTool.get(this).get(m) : null;
 		}
 
 		public int getNumberIngots(Materials m) {
