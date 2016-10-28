@@ -1768,24 +1768,26 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				int mult = world.isRaining() ? 10 : 20;
 				temp += (sun-0.75F)*mult;
 			}
-			int h = world.provider.getAverageGroundLevel();
-			int dy = h-y;
-			if (dy > 0) {
-				if (dy < 20) {
-					temp -= dy;
-					temp = Math.max(temp, Tamb-20);
+			if (!isVoidWorld(world, x, z)) {
+				int h = world.provider.getAverageGroundLevel();
+				int dy = h-y;
+				if (dy > 0) {
+					if (dy < 20) {
+						temp -= dy;
+						temp = Math.max(temp, Tamb-20);
+					}
+					else if (dy < 25) {
+						temp -= 2*(25-dy);
+						temp = Math.max(temp, Tamb-20);
+					}
+					else {
+						temp += 100*(dy-20)/h;
+						temp = Math.min(temp, Tamb+70);
+					}
 				}
-				else if (dy < 25) {
-					temp -= 2*(25-dy);
-					temp = Math.max(temp, Tamb-20);
+				if (y > 96) {
+					temp -= (y-96)/4;
 				}
-				else {
-					temp += 100*(dy-20)/h;
-					temp = Math.min(temp, Tamb+70);
-				}
-			}
-			if (y > 96) {
-				temp -= (y-96)/4;
 			}
 		}
 
@@ -2255,5 +2257,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				return true;
 		}
 		return false;
+	}
+
+	public static boolean isVoidWorld(World world, int x, int z) {
+		//if (world.getChunkProvider().provideChunk(x >> 4, z >> 4) instanceof EmptyChunk) want the provider that only returns these
+		//	return true;
+		return world.getBlock(x, 0, z) == Blocks.air || world.canBlockSeeTheSky(x, 1, z);
 	}
 }

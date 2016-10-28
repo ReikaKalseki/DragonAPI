@@ -17,6 +17,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
 
+@Deprecated
 public class GuideCommand extends DragonCommandBase {
 
 	@Override

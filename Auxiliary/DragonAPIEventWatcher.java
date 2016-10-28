@@ -14,12 +14,8 @@ import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumChatFormatting;
@@ -59,7 +55,6 @@ import Reika.DragonAPI.Interfaces.TileEntity.PlayerBreakHook;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaFluidHelper;
-import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
@@ -297,7 +292,7 @@ public class DragonAPIEventWatcher {
 			}
 		}
 	}
-
+	/*
 	@SubscribeEvent
 	public void addGuideGUI(PlayerInteractEvent evt) {
 		EntityPlayer ep = evt.entityPlayer;
@@ -318,6 +313,7 @@ public class DragonAPIEventWatcher {
 			}
 		}
 	}
+	 */
 
 	@SubscribeEvent
 	public void collateXP(XPUpdateEvent evt) {

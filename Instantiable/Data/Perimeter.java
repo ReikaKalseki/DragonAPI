@@ -173,7 +173,7 @@ public final class Perimeter {
 	}
 
 	public boolean isEmpty() {
-		return points.isEmpty();
+		return points.isEmpty() || points.size() == 1;
 	}
 
 	public Perimeter copy() {

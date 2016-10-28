@@ -90,13 +90,13 @@ import Reika.DragonAPI.Command.FindBiomeCommand;
 import Reika.DragonAPI.Command.FindThreadCommand;
 import Reika.DragonAPI.Command.FindTilesCommand;
 import Reika.DragonAPI.Command.GetUUIDCommand;
-import Reika.DragonAPI.Command.GuideCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.ItemNBTCommand;
 import Reika.DragonAPI.Command.LogControlCommand;
 import Reika.DragonAPI.Command.MemoryUsageCommand;
 import Reika.DragonAPI.Command.PlayerNBTCommand;
 import Reika.DragonAPI.Command.PopulateMinimapCommand;
+import Reika.DragonAPI.Command.ReflectionCommand;
 import Reika.DragonAPI.Command.SelectiveKillCommand;
 import Reika.DragonAPI.Command.SpawnMobsCommand;
 import Reika.DragonAPI.Command.StructureExportCommand;
@@ -627,7 +627,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void registerCommands(FMLServerStartingEvent evt) {
 		DragonAPICore.log("Server Starting...");
-		evt.registerServerCommand(new GuideCommand());
+		//evt.registerServerCommand(new GuideCommand());
 		evt.registerServerCommand(new DonatorCommand());
 		evt.registerServerCommand(new LogControlCommand());
 		evt.registerServerCommand(new TestControlCommand());
@@ -656,6 +656,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new ItemNBTCommand());
 		evt.registerServerCommand(new MemoryUsageCommand());
 		evt.registerServerCommand(new GetUUIDCommand());
+		evt.registerServerCommand(new ReflectionCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();

@@ -285,15 +285,36 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		return false;
 	}
 
+	public static Field getProtectedInheritedField(Object o, String field) {
+		return getProtectedInheritedField(o.getClass(), field);
+	}
+
 	/** Gets a nonvisible field that may be inherited by any of the superclasses. Returns null if none exists. */
-	public static Field getProtectedInheritedField(Object obj, String field) {
-		Class c = obj.getClass();
+	public static Field getProtectedInheritedField(Class c, String field) {
 		Field f = null;
 		while (f == null && c != null) {
 			try {
 				f = c.getDeclaredField(field);
 			}
 			catch (NoSuchFieldException e2) {
+				c = c.getSuperclass();
+			}
+		}
+		return f;
+	}
+
+	public static Method getProtectedInheritedMethod(Object o, String method, Class... types) {
+		return getProtectedInheritedMethod(o.getClass(), method, types);
+	}
+
+	/** Gets a nonvisible Method that may be inherited by any of the superclasses. Returns null if none exists. */
+	public static Method getProtectedInheritedMethod(Class c, String method, Class... types) {
+		Method f = null;
+		while (f == null && c != null) {
+			try {
+				f = c.getDeclaredMethod(method);
+			}
+			catch (NoSuchMethodException e2) {
 				c = c.getSuperclass();
 			}
 		}

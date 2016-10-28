@@ -212,6 +212,41 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return false;
 	}
 
+	/*
+	public static ItemStack[] getInternalItemStacks(ItemStack is) {
+		Item it = is.getItem();
+		String n = it.getClass().getName()/*.toLowerCase(Locale.ENGLISH)*//*;
+		if (n.contains("ItemGoldenBag")) { //ExU
+			ItemStack[] ret = new ItemStack[54];
+			if (is.stackTagCompound != null) {
+				for (int i = 0; i < ret.length; i++) {
+					ret[i] = ItemStack.loadItemStackFromNBT(is.stackTagCompound.getCompoundTag("items_"+i));
+				}
+			}
+			return ret;
+		}
+		else if (n.contains("de.eydamos.backpack")) { //backpack mod
+			IInventory ii = getBackpackInventory.invoke();
+			return IInvToItemStackArray(ii);
+		}
+		else if () { //ichorium pouch
+
+		}
+		else if () { //te strongbox
+
+		}
+
+		return null;
+}*/
+
+	public static ItemStack[] IInvToItemStackArray(IInventory ii) {
+		ItemStack[] ret = new ItemStack[ii.getSizeInventory()];
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = ii.getStackInSlot(i);
+		}
+		return ret;
+	}
+
 	/** Returns the location (array index) of an itemstack in the specified inventory.
 	 * Returns -1 if not present. Args: Itemstack to check, Inventory, Match size T/F */
 	public static int locateInInventory(ItemStack is, ItemStack[] inv, boolean matchsize) {

@@ -21,8 +21,11 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.shader.TesselatorVertexState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -36,6 +39,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import Reika.ChromatiCraft.ChromatiCraft;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
@@ -1376,6 +1380,81 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		v5.addVertexWithUV(d7, dy+0, d10, u, dv);
 		v5.addVertexWithUV(d8, dy+0, d10, du, dv);
 		v5.addVertexWithUV(d8, dy+h, d10, du, v);
+	}
+
+	//A big block of hack
+	@SideOnly(Side.CLIENT)
+	public static void setCameraPosition(EntityPlayer ep, double cx, double cy, double cz, double cxPrev, double cyPrev, double czPrev, double yaw, double yawPrev, double pitch, double pitchPrev, boolean setPos, boolean setAngs) {
+		ChromatiCraft.logger.debug("Moving "+ep.getCommandSenderName()+" camera to "+cx+","+cy+","+cz+" @ "+yaw+" / "+pitch);
+		RenderManager rm = RenderManager.instance;
+		if (setPos) {
+			RenderManager.renderPosX = cx;
+			RenderManager.renderPosY = cy;
+			RenderManager.renderPosZ = cz;
+			rm.viewerPosX = cx;
+			rm.viewerPosY = cy;
+			rm.viewerPosZ = cz;
+		}
+		if (rm.field_147941_i != null) {
+			if (setPos) {
+				rm.field_147941_i.posX = cx;
+				rm.field_147941_i.posY = cy;
+				rm.field_147941_i.posZ = cz;
+				rm.field_147941_i.lastTickPosX = cxPrev;
+				rm.field_147941_i.lastTickPosY = cyPrev;
+				rm.field_147941_i.lastTickPosZ = czPrev;
+				rm.field_147941_i.prevPosX = cxPrev;
+				rm.field_147941_i.prevPosY = cyPrev;
+				rm.field_147941_i.prevPosZ = czPrev;
+			}
+			rm.cacheActiveRenderInfo(rm.worldObj, rm.renderEngine, Minecraft.getMinecraft().fontRenderer, ep, rm.field_147941_i, rm.options, 0);
+		}
+		if (setPos) {
+			TileEntityRendererDispatcher.staticPlayerX = cx;
+			TileEntityRendererDispatcher.staticPlayerY = cy;
+			TileEntityRendererDispatcher.staticPlayerZ = cz;
+		}
+		EntityPlayer mcp = Minecraft.getMinecraft().thePlayer;
+		EntityLivingBase mcp2 = Minecraft.getMinecraft().renderViewEntity;
+		if (setPos) {
+			mcp.posX = cx;
+			mcp.posY = cy;
+			mcp.posZ = cz;
+			mcp.lastTickPosX = cxPrev;
+			mcp.lastTickPosY = cyPrev;
+			mcp.lastTickPosZ = czPrev;
+			mcp.prevPosX = cxPrev;
+			mcp.prevPosY = cyPrev;
+			mcp.prevPosZ = czPrev;
+
+			mcp2.posX = cx;
+			mcp2.posY = cy;
+			mcp2.posZ = cz;
+			mcp2.lastTickPosX = cxPrev;
+			mcp2.lastTickPosY = cyPrev;
+			mcp2.lastTickPosZ = czPrev;
+			mcp2.prevPosX = cxPrev;
+			mcp2.prevPosY = cyPrev;
+			mcp2.prevPosZ = czPrev;
+		}
+		if (setAngs) {
+			mcp.rotationYawHead = (float)yaw;
+			mcp.rotationYaw = (float)yaw;
+			mcp.prevRotationYaw = (float)yawPrev;
+			mcp.prevRotationYawHead = (float)yawPrev;
+			mcp.cameraYaw = (float)yaw;
+			mcp.prevCameraYaw = (float)yawPrev;
+			mcp.rotationPitch = (float)pitch;
+			mcp.prevRotationPitch = (float)pitchPrev;
+
+			mcp2.rotationYawHead = (float)yaw;
+			mcp2.rotationYaw = (float)yaw;
+			mcp2.prevRotationYaw = (float)yawPrev;
+			mcp2.prevRotationYawHead = (float)yawPrev;
+			mcp2.rotationPitch = (float)pitch;
+			mcp2.prevRotationPitch = (float)pitchPrev;
+		}
+		Minecraft.getMinecraft().mouseHelper.grabMouseCursor();
 	}
 
 }

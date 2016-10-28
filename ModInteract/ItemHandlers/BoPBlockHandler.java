@@ -26,6 +26,9 @@ public class BoPBlockHandler extends ModHandlerBase {
 	public final Block flower1;
 	public final Block flower2;
 
+	public final Block newGrass;
+	public final Block newDirt;
+
 	public static final String[] flower1Types = {
 		"clover",
 		"swampflower",
@@ -65,6 +68,9 @@ public class BoPBlockHandler extends ModHandlerBase {
 		Block idflower1 = null;
 		Block idflower2 = null;
 
+		Block idgrass = null;
+		Block iddirt = null;
+
 		if (this.hasMod()) {
 			try {
 				Class blocks = this.getMod().getBlockClass();
@@ -79,6 +85,12 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 				Field f2 = blocks.getField("flowers2");
 				idflower2 = ((Block)f2.get(null));
+
+				Field gr = blocks.getField("newBopGrass");
+				Field dt = blocks.getField("newBopDirt");
+
+				idgrass = (Block)gr.get(null);
+				iddirt = (Block)dt.get(null);
 			}
 			catch (NoSuchFieldException e) {
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
@@ -115,6 +127,9 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 		flower1 = idflower1;
 		flower2 = idflower2;
+
+		newDirt = iddirt;
+		newGrass = idgrass;
 	}
 
 	public static BoPBlockHandler getInstance() {
