@@ -322,7 +322,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 	}
 
 	public static void setFinalField(Class c, String s, Object instance, Object o) throws Exception {
-		setFinalField(c.getField(s), instance, o);
+		setFinalField(getProtectedInheritedField(c, s), instance, o);
 	}
 
 	public static void setFinalField(Field f, Object instance, Object o) throws Exception {

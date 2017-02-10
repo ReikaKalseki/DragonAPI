@@ -590,6 +590,13 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		arr[0] = newVal;
 	}
 
+	public static <A> void cycleArrayReverse(A[] arr, A newVal) {
+		for (int i = 0; i < arr.length-1; i++) {
+			arr[i] = arr[i+1];
+		}
+		arr[arr.length-1] = newVal;
+	}
+
 	public static <A> A[] getArrayOf(A val, int length) {
 		A[] arr = (A[])Array.newInstance(val.getClass(), length);
 		for (int i = 0; i < length; i++) {

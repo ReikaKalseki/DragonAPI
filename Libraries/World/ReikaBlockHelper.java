@@ -201,7 +201,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 	}
 
 	/** Tests if a block is a dirt-type one, such that non-farm plants can grow on it. Args: id, metadata, material */
-	public static boolean isDirtType(Block id, int meta, Material mat) {
+	public static boolean isDirtType(Block id, int meta) {
 		if (id == Blocks.dirt)
 			return true;
 		if (id == Blocks.grass)

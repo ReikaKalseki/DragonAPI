@@ -48,6 +48,9 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.IChunkLoader;
+import net.minecraft.world.gen.ChunkProviderFlat;
+import net.minecraft.world.gen.FlatGeneratorInfo;
+import net.minecraft.world.gen.FlatLayerInfo;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -61,6 +64,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
 import Reika.DragonAPI.APIPacketHandler;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
@@ -380,7 +384,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			if (world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
 				Block id2 = world.getBlock(dx, dy, dz);
 				int meta2 = world.getBlockMetadata(dx, dy, dz);
-				if (id == id2 && meta2 == meta)
+				if (id == id2 && (meta2 == meta || meta == -1))
 					return dir;
 			}
 		}
@@ -673,13 +677,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	 *Returns -1 if invalid liquid specified. Args: World, x, y, z */
 	public static int getDepth(World world, int x, int y, int z, String liq) {
 		int i = 1;
-		if (liq == "water") {
+		if (liq.equals("water")) {
 			while (world.getBlock(x, y+i, z) == Blocks.flowing_water || world.getBlock(x, y+i, z) == Blocks.water) {
 				i++;
 			}
 			return (i-1);
 		}
-		if (liq == "lava") {
+		if (liq.equals("lava")) {
 			while (world.getBlock(x, y+i, z) == Blocks.flowing_lava || world.getBlock(x, y+i, z) == Blocks.lava) {
 				i++;
 			}
@@ -1930,10 +1934,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	public static void dropAndDestroyBlockAt(World world, int x, int y, int z, EntityPlayer ep, boolean breakAll) {
 		Block b = world.getBlock(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
 		if (b.blockHardness < 0 && !breakAll)
 			return;
 		dropBlockAt(world, x, y, z, ep);
 		world.setBlock(x, y, z, Blocks.air);
+		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BREAKPARTICLES.ordinal(), world, x, y, z, Block.getIdFromBlock(b), meta);
+		ReikaSoundHelper.playBreakSound(world, x, y, z, b);
 	}
 
 	public static boolean matchWithItemStack(World world, int x, int y, int z, ItemStack is) {
@@ -2263,5 +2270,16 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		//if (world.getChunkProvider().provideChunk(x >> 4, z >> 4) instanceof EmptyChunk) want the provider that only returns these
 		//	return true;
 		return world.getBlock(x, 0, z) == Blocks.air || world.canBlockSeeTheSky(x, 1, z);
+	}
+
+	public static int getSuperflatHeight(World world) {
+		ChunkProviderFlat f = (ChunkProviderFlat)world.provider.createChunkGenerator();
+		FlatGeneratorInfo ifo = f.flatWorldGenInfo;
+		int sum = 0;
+		for (Object o : ifo.getFlatLayers()) {
+			FlatLayerInfo fi = (FlatLayerInfo)o;
+			sum += fi.getLayerCount();
+		}
+		return sum;
 	}
 }

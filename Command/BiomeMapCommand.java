@@ -34,6 +34,7 @@ import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Interfaces.CustomBiomeDistributionWorld;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -51,6 +52,13 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
+		Object[] ret = this.getPlayer(ics, args);
+		EntityPlayerMP ep = (EntityPlayerMP)ret[0];
+		if ((boolean)ret[1]) {
+			String[] nargs = new String[args.length-1];
+			System.arraycopy(args, 1, nargs, 0, nargs.length);
+			args = nargs;
+		}
 		if (args.length < 2) {
 			this.sendChatToSender(ics, EnumChatFormatting.RED.toString()+"Illegal arguments. Use [range] [resolution] <grid> <fullGrid>.");
 			return;
@@ -59,7 +67,6 @@ public class BiomeMapCommand extends DragonCommandBase {
 		int res = Integer.parseInt(args[1]);
 		int grid = args.length >= 3 ? Integer.parseInt(args[2]) : -1;
 		boolean fullGrid = grid > 0 && args.length >= 4 && Boolean.parseBoolean(args[3]);
-		EntityPlayerMP ep = this.getCommandSenderAsPlayer(ics);
 		int x = MathHelper.floor_double(ep.posX);
 		int z = MathHelper.floor_double(ep.posZ);
 		long start = System.currentTimeMillis();
@@ -109,11 +116,25 @@ public class BiomeMapCommand extends DragonCommandBase {
 		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGEND.ordinal(), ep, hash);
 	}
 
+	private Object[] getPlayer(ICommandSender ics, String[] args) {
+		try {
+			return new Object[]{this.getCommandSenderAsPlayer(ics), false};
+		}
+		catch (Exception e) {
+			EntityPlayerMP ep = ReikaPlayerAPI.getPlayerByNameAnyWorld(args[0]);
+			if (ep == null) {
+				this.sendChatToSender(ics, "If you specify a player, they must exist.");
+				throw new IllegalArgumentException(e);
+			}
+			return new Object[]{ep, true};
+		}
+	}
+
 	private int getBiome(World world, int x, int z) {
 		if (world.provider instanceof CustomBiomeDistributionWorld) {
 			return ((CustomBiomeDistributionWorld)world.provider).getBiomeID(world, x, z);
 		}
-		return world.getBiomeGenForCoords(x, z).biomeID;
+		return world.getWorldChunkManager().getBiomeGenAt(x, z).biomeID;//world.getBiomeGenForCoords(x, z).biomeID;
 	}
 
 	@Override
@@ -328,11 +349,15 @@ public class BiomeMapCommand extends DragonCommandBase {
 				return 0x22aaff;
 			}
 
+			int c = b.getBiomeGrassColor(x, 64, z);
+
 			if (ReikaBiomeHelper.isSnowBiome(b)) {
-				return 0xffffff;
+				c = 0xffffff;
 			}
 
-			int c = b.getBiomeGrassColor(x, 64, z);
+			if (b == BiomeGenBase.coldTaiga) {
+				c = 0xADFFCB;
+			}
 
 			if (mutate) {
 				c = ReikaColorAPI.getColorWithBrightnessMultiplier(c, 0.875F);

@@ -31,6 +31,7 @@ import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
 
 
@@ -103,6 +104,8 @@ public class VillageBuilding implements IVillageCreationHandler {
 
 		private StructureBoundingBox structureBox;
 
+		private static final BlockKey BASIC_SUPPORT = new BlockKey(Blocks.cobblestone);
+
 		public VillagePiece() {
 			super();
 		}
@@ -170,6 +173,10 @@ public class VillageBuilding implements IVillageCreationHandler {
 		}
 
 		protected final void placeBlockAtCurrentPosition(World world, int i, int j, int k, Block b, int meta) {
+			this.placeBlockAtCurrentPosition(world, i, j, k, b, meta, BASIC_SUPPORT);
+		}
+
+		protected final void placeBlockAtCurrentPosition(World world, int i, int j, int k, Block b, int meta, BlockKey support) {
 			//this.placeBlockAtCurrentPosition(world, b, meta, i, j, k, structureBox);
 
 			int i1 = this.getXWithOffset(i, k);
@@ -180,15 +187,27 @@ public class VillageBuilding implements IVillageCreationHandler {
 				meta = ReikaBlockHelper.getSignMetadataToConnectToWall(world, i1, j1, k1, meta);
 
 			//if (structureBox.isVecInside(i1, j1, k1))  {
-			this.tryPlaceBlock(world, i1, j1, k1, b, meta, 3);
+			this.tryPlaceBlock(world, i1, j1, k1, b, meta, 3, support);
 			//}
 		}
 
 		private void tryPlaceBlock(World world, int x, int y, int z, Block b, int meta, int flags) {
+			this.tryPlaceBlock(world, x, y, z, b, meta, flags, BASIC_SUPPORT);
+		}
+
+		private void tryPlaceBlock(World world, int x, int y, int z, Block b, int meta, int flags, BlockKey support) {
 			Block b2 = world.getBlock(x, y, z);
 			int meta2 = world.getBlockMetadata(x, y, z);
 			if (b2 != b || meta2 != meta)
 				world.setBlock(x, y, z, b, meta, flags);
+
+			if (b.getMaterial().isSolid() && support != null && y == boundingBox.minY) {
+				int dy = y-1;
+				while (dy > 0 && ReikaWorldHelper.softBlocks(world, x, dy, z) && world.getBlock(x, dy, z) != b) {
+					world.setBlock(x, dy, z, support.blockID, support.metadata, 3);
+					dy--;
+				}
+			}
 		}
 
 		protected final void placeBlockAtFixedPosition(World world, int i, int j, int k, Block b) {
@@ -196,7 +215,11 @@ public class VillageBuilding implements IVillageCreationHandler {
 		}
 
 		protected final void placeBlockAtFixedPosition(World world, int i, int j, int k, Block b, int meta) {
-			this.tryPlaceBlock(world, i+boundingBox.minX, j+boundingBox.minY, k+boundingBox.minZ, b, meta, 3);
+			this.placeBlockAtFixedPosition(world, i, j, k, b, meta, BASIC_SUPPORT);
+		}
+
+		protected final void placeBlockAtFixedPosition(World world, int i, int j, int k, Block b, int meta, BlockKey support) {
+			this.tryPlaceBlock(world, i+boundingBox.minX, j+boundingBox.minY, k+boundingBox.minZ, b, meta, 3, support);
 		}
 
 		protected final void placeBlockAtFixedPosition(World world, int i, int j, int k, BlockKey bk) {

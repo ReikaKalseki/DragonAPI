@@ -1147,19 +1147,20 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
-	public static void sendPositionPacket(String ch, int id, Entity e, int data, PacketTarget pt) {
-		sendPositionPacket(ch, id, e.worldObj, e.posX, e.posY, e.posZ, data, pt);
+	public static void sendPositionPacket(String ch, int id, Entity e, PacketTarget pt, int... data) {
+		sendPositionPacket(ch, id, e.worldObj, e.posX, e.posY, e.posZ, pt, data);
 	}
 
-	public static void sendPositionPacket(String ch, int id, World world, double x, double y, double z, int data, PacketTarget pt) {
-		ByteArrayOutputStream bos = new ByteArrayOutputStream(20);
+	public static void sendPositionPacket(String ch, int id, World world, double x, double y, double z, PacketTarget pt, int... data) {
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(16+4*data.length);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
 			outputStream.writeInt(id);
 			outputStream.writeDouble(x);
 			outputStream.writeDouble(y);
 			outputStream.writeDouble(z);
-			outputStream.writeInt(data);
+			for (int i = 0; i < data.length; i++)
+				outputStream.writeInt(data[i]);
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();

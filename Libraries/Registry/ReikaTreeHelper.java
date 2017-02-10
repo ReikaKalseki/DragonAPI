@@ -166,6 +166,10 @@ public enum ReikaTreeHelper implements TreeType {
 		return sapling;
 	}
 
+	public int getBaseLogMeta() {
+		return logMeta[0];
+	}
+
 	@Override
 	public ArrayList<Integer> getLogMetadatas() {
 		ArrayList<Integer> li = new ArrayList();

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import thaumcraft.api.IWarpingGear;
 import Reika.DragonAPI.ModList;
@@ -38,6 +39,7 @@ public class ThaumItemHelper {
 		ELDRITCHEYE("ItemEldritchObject"),
 		BALANCED("ItemShard", 6),
 		PHIAL("ItemEssence", 0),
+		NUGGETCLUSTER("ItemNugget", 0),
 		;
 
 		public final int metadata;
@@ -53,8 +55,8 @@ public class ThaumItemHelper {
 		}
 
 		public ItemStack getItem() {
-			ItemStack is = GameRegistry.findItemStack(ModList.THAUMCRAFT.modLabel, item, 1);
-			return new ItemStack(is.getItem(), 1, metadata);
+			Item is = GameRegistry.findItem(ModList.THAUMCRAFT.modLabel, item);
+			return new ItemStack(is, 1, metadata);
 		}
 	}
 

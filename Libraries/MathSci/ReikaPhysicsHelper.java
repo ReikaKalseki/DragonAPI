@@ -31,16 +31,16 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 	public static final double NEUTRON_MASS = 1.674/ReikaMathLibrary.doubpow(10, 27);
 	public static final double PROTON_MASS = 1.672/ReikaMathLibrary.doubpow(10, 27);
 
-	private static final Interpolation tempColorList = new Interpolation();
+	private static final Interpolation tempColorList = new Interpolation(true);
 
 	static {
-		tempColorList.add(500, 0x000000);
-		tempColorList.add(700, 0x9C0000);
-		tempColorList.add(1700, 0xff0000);
-		tempColorList.add(2700, 0xFF9C00);
-		tempColorList.add(3700, 0xFFFF00);
-		tempColorList.add(5700, 0xFFFFFF);
-		tempColorList.add(9700, 0x56C4FF);
+		tempColorList.addPoint(500, 0x000000);
+		tempColorList.addPoint(700, 0x9C0000);
+		tempColorList.addPoint(1700, 0xff0000);
+		tempColorList.addPoint(2700, 0xFF9C00);
+		tempColorList.addPoint(3700, 0xFFFF00);
+		tempColorList.addPoint(5700, 0xFFFFFF);
+		tempColorList.addPoint(9700, 0x56C4FF);
 	}
 
 	/** Converts 3D polar coordinates into cartesian ones. Use angles in degrees. Args: magnitude, theta, phi */

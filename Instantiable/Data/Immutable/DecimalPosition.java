@@ -21,6 +21,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -70,6 +71,10 @@ public final class DecimalPosition {
 
 	public DecimalPosition offset(ForgeDirection dir, double dist) {
 		return this.offset(dir.offsetX*dist, dir.offsetY*dist, dir.offsetZ*dist);
+	}
+
+	public DecimalPosition offset(DecimalPosition p) {
+		return this.offset(p.xCoord, p.yCoord, p.zCoord);
 	}
 
 	public boolean sharesBlock(DecimalPosition dec) {
@@ -253,6 +258,10 @@ public final class DecimalPosition {
 	public String formattedString(int decimal) {
 		String part = "%."+decimal+"f";
 		return String.format(part+", "+part+", "+part, xCoord, yCoord, zCoord);
+	}
+
+	public Vec3 toVec3() {
+		return Vec3.createVectorHelper(xCoord, yCoord, zCoord);
 	}
 
 }

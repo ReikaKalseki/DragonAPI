@@ -16,6 +16,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent.ElementType;
@@ -23,8 +24,12 @@ import net.minecraftforge.common.MinecraftForge;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -45,15 +50,29 @@ public class PopupWriter {
 
 	private boolean ungrabbed = false;
 
+	private final ArrayList<String> serverMessages = new ArrayList();
+
 	private PopupWriter() {
 		MinecraftForge.EVENT_BUS.register(this);
 		FMLCommonHandler.instance().bus().register(this);
 	}
 
 	public void addMessage(String s) {
-		//sb.append(" CTRL-ALT-click to close this message.");
-		String sg = s+" Hold CTRL to be able to click this message.";
-		list.add(sg);
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
+			serverMessages.add(s);
+		}
+		else {
+			//sb.append(" CTRL-ALT-click to close this message.");
+			String sg = s+" Hold CTRL to be able to click this message.";
+			list.add(sg);
+		}
+	}
+
+	public void sendServerMessages(EntityPlayerMP ep) {
+		PacketTarget pt = new PacketTarget.PlayerTarget(ep);
+		for (String s : serverMessages) {
+			ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.POPUP.ordinal(), s, pt);
+		}
 	}
 
 	@SubscribeEvent

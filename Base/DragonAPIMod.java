@@ -244,6 +244,8 @@ public abstract class DragonAPIMod {
 
 	public abstract String getWiki();
 
+	public abstract File getConfigFolder();
+
 	public final URL getWikiLink() {
 		try {
 			return new URL(this.getWiki());

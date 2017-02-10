@@ -1036,4 +1036,27 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		}
 		return true;
 	}
+
+	public static Object[] decode2DArray(Object[][] array) {
+		String[] input = new String[array.length];
+		ArrayList objects = new ArrayList();
+		ArrayList entries = new ArrayList();
+		for (int i = 0; i < array.length; i++) {
+			StringBuilder sb = new StringBuilder();
+			for (int k = 0; k < array[i].length; k++) {
+				Object o = array[i][k];
+				char c = o == null ? ' ' : (char)('a'+(i*3+k));
+				sb.append(String.valueOf(c));
+				if (o != null) {
+					entries.add(c);
+					entries.add(o);
+				}
+			}
+			input[i] = sb.toString();
+		}
+		for (int i = 0; i < input.length; i++)
+			objects.add(input[i]);
+		objects.addAll(entries);
+		return objects.toArray(new Object[objects.size()]);
+	}
 }

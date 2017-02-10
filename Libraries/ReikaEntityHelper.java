@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import ic2.api.item.IElectricItem;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +19,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
+import mekanism.api.gas.GasStack;
+import mekanism.api.gas.IGasItem;
+import net.machinemuse.api.electricity.MuseElectricItem;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.command.IEntitySelector;
@@ -80,6 +85,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S19PacketEntityHeadLook;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
@@ -97,6 +103,7 @@ import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Interfaces.ComparableAI;
 import Reika.DragonAPI.Interfaces.Entity.CustomProjectile;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
+import Reika.DragonAPI.Interfaces.Item.UnbreakableArmor;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -105,6 +112,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile;
+import cofh.api.energy.IEnergyContainerItem;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 
@@ -140,6 +148,20 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		@Override
 		public boolean isEntityApplicable(Entity e) {
 			return e instanceof EntityItem || e instanceof EntityXPOrb;
+		}
+	};
+
+	public static final class NotSelfSelector implements IEntitySelector {
+
+		private final Entity reference;
+
+		public NotSelfSelector(Entity e) {
+			reference = e;
+		}
+
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			return e != reference;
 		}
 	};
 
@@ -1210,6 +1232,57 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			e1.worldObj.spawnEntityInWorld(xp);
 		}
 		return xp;
+	}
+
+	public static void damageArmor(EntityLivingBase e, int amt) {
+		for (int i = 1; i < 5; i++) {
+			ItemStack arm = e.getEquipmentInSlot(i);
+			if (arm != null && canDamageArmorOf(e)) {
+				Item item = arm.getItem();
+				if (InterfaceCache.MUSEELECTRICITEM.instanceOf(item)) {
+					MuseElectricItem ms = (MuseElectricItem)item;
+					ms.extractEnergy(arm, 5000, false);
+				}
+				else if (InterfaceCache.RFENERGYITEM.instanceOf(item)) {
+					IEnergyContainerItem ie = (IEnergyContainerItem)item;
+					ie.extractEnergy(arm, 5000, false);
+				}
+				else if (InterfaceCache.IELECTRICITEM.instanceOf(item)) {
+					IElectricItem ie = (IElectricItem)item;
+					///???
+					Item id = ie.getEmptyItem(arm);
+					ItemStack newarm = new ItemStack(id, 1, 0);
+					e.setCurrentItemOrArmor(i, newarm);
+				}
+				else if (InterfaceCache.GASITEM.instanceOf(item)) {
+					IGasItem ie = (IGasItem)item;
+					GasStack gas = ie.getGas(arm);
+					if (gas != null && gas.amount > 0)
+						ie.removeGas(arm, Math.max(1, gas.amount/4));
+				}
+				else if (item instanceof UnbreakableArmor && !((UnbreakableArmor)item).canBeDamaged()) {
+					//do nothing
+				}
+				else {
+					arm.damageItem(amt, e);
+					if (arm.getItemDamage() > arm.getMaxDamage() || arm.stackSize <= 0) {
+						arm = null;
+						e.setCurrentItemOrArmor(i, null);
+					}
+					e.playSound("random.break", 0.1F, 0.8F);
+				}
+			}
+		}
+	}
+
+	private static boolean canDamageArmorOf(EntityLivingBase target) {
+		MinecraftServer ms = MinecraftServer.getServer();
+		return target instanceof EntityPlayer ? ms != null && ms.isPVPEnabled() : true;
+	}
+
+	public static boolean existsAnotherEntityWithin(Entity e, double dist) {
+		AxisAlignedBB box = ReikaAABBHelper.getEntityCenteredAABB(e, dist);
+		return e.worldObj.selectEntitiesWithinAABB(e.getClass(), box, new NotSelfSelector(e)).size() > 0;
 	}
 
 }

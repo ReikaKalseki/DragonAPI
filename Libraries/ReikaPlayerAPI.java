@@ -325,9 +325,9 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return ops;
 	}
 
-	public static EntityPlayer getPlayerByNameAnyWorld(String name) {
+	public static EntityPlayerMP getPlayerByNameAnyWorld(String name) {
 		for (World world : DimensionManager.getWorlds()) {
-			EntityPlayer ep = world.getPlayerEntityByName(name);
+			EntityPlayerMP ep = (EntityPlayerMP)world.getPlayerEntityByName(name);
 			if (ep != null)
 				return ep;
 		}

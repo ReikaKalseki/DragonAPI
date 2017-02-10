@@ -780,7 +780,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	}
 
 	@ModDependent(ModList.COMPUTERCRAFT)
-	public final boolean equals(IPeripheral other) {
+	public boolean equals(IPeripheral other) {
 		return other == this;
 	}
 

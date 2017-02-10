@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -838,6 +839,11 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	public ModLogger getModLogger() {
 		return logger;
+	}
+
+	@Override
+	public File getConfigFolder() {
+		return config.getConfigFolder();
 	}
 
 	static {

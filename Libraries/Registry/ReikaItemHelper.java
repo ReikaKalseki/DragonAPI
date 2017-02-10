@@ -112,12 +112,13 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final ItemStack carvedQuartz = new ItemStack(Blocks.quartz_block, 1, 1);
 	public static final ItemStack columnQuartz = new ItemStack(Blocks.quartz_block, 1, 2);
 
+	/*
 	public static final ItemStack oakLog = new ItemStack(Blocks.log, 1, 0);
 	public static final ItemStack spruceLog = new ItemStack(Blocks.log, 1, 1);
 	public static final ItemStack birchLog = new ItemStack(Blocks.log, 1, 2);
 	public static final ItemStack jungleLog = new ItemStack(Blocks.log, 1, 3);
-	public static final ItemStack acaciaLog = new ItemStack(Blocks.log, 1, 0);
-	public static final ItemStack darkOakLog = new ItemStack(Blocks.log, 1, 1);
+	public static final ItemStack acaciaLog = new ItemStack(Blocks.log2, 1, 0);
+	public static final ItemStack darkOakLog = new ItemStack(Blocks.log2, 1, 1);
 	public static final ItemStack oakLeaves = new ItemStack(Blocks.leaves, 1, 0);
 	public static final ItemStack spruceLeaves = new ItemStack(Blocks.leaves, 1, 1);
 	public static final ItemStack birchLeaves = new ItemStack(Blocks.leaves, 1, 2);
@@ -130,6 +131,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final ItemStack jungleSapling = new ItemStack(Blocks.sapling, 1, 3);
 	public static final ItemStack acaciaSapling = new ItemStack(Blocks.sapling, 1, 4);
 	public static final ItemStack darkOakSapling = new ItemStack(Blocks.sapling, 1, 5);
+	 */
 	public static final ItemStack oakWood = new ItemStack(Blocks.planks, 1, 0);
 	public static final ItemStack spruceWood = new ItemStack(Blocks.planks, 1, 1);
 	public static final ItemStack birchWood = new ItemStack(Blocks.planks, 1, 2);
@@ -165,6 +167,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 	public static final ItemStack tallgrass = new ItemStack(Blocks.tallgrass, 1, 1);
 	public static final ItemStack fern = new ItemStack(Blocks.tallgrass, 1, 2);
+
+	public static final ItemStack chiseledQuartz = new ItemStack(Blocks.quartz_block, 1, 1);
+	public static final ItemStack quartzPillar = new ItemStack(Blocks.quartz_block, 1, 2);
 
 	public static final ItemComparator comparator = new ItemComparator();
 

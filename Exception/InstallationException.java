@@ -22,6 +22,14 @@ public class InstallationException extends DragonAPIException {
 		this.crash();
 	}
 
+	public InstallationException(String modname, String msg) {
+		message.append(modname+" was not installed correctly:\n");
+		message.append(msg+"\n");
+		message.append("Try consulting the mod website for information.\n");
+		message.append("This is not a bug. Do not post it unless you are really stuck.");
+		this.crash();
+	}
+
 	public InstallationException(ModList mod, String msg) {
 		message.append(mod.name()+" was not installed correctly:\n");
 		message.append(msg+"\n");

@@ -10,6 +10,8 @@
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -60,6 +62,10 @@ public class Proportionality<F> {
 
 	public double getFraction(F o) {
 		return this.getValue(o)/this.totalValue;
+	}
+
+	public Collection<F> getElements() {
+		return Collections.unmodifiableCollection(this.data.keySet());
 	}
 
 	public boolean hasMajority(F o) {

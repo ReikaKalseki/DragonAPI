@@ -11,18 +11,25 @@ package Reika.DragonAPI.Instantiable;
 
 import Reika.DragonAPI.Instantiable.Data.Maps.ThresholdMapping;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 
 public class Interpolation {
 
 	private final ThresholdMapping<Double> data = new ThresholdMapping();
 
-	public Interpolation() {
+	private final boolean isColor;
 
+	public boolean cosInterpolate = false;
+
+	/** "Is this for color mixing or simple interpolation" */
+	public Interpolation(boolean iscolor) {
+		isColor = iscolor;
 	}
 
-	public void add(double c, double val) {
+	public Interpolation addPoint(double c, double val) {
 		data.addMapping(c, val);
+		return this;
 	}
 
 	public double getValue(double key) {
@@ -39,7 +46,8 @@ public class Interpolation {
 		else if (x2 == null) {
 			return d1;
 		}
-		return ReikaColorAPI.mixColors(d2.intValue(), d1.intValue(), (float)((key-x1)/(x2-x1)));//ReikaMathLibrary.linterpolate(key, x1, x2, d1, d2);
+		float f = (float)((key-x1)/(x2-x1));
+		return isColor ? ReikaColorAPI.mixColors(d2.intValue(), d1.intValue(), f) : (cosInterpolate ? ReikaMathLibrary.cosInterpolation(key, x1, x2, d1, d2) : ReikaMathLibrary.linterpolate(key, x1, x2, d1, d2));
 	}
 
 }

@@ -60,7 +60,7 @@ public enum ReikaPlantHelper {
 			case CACTUS:
 				return idbelow == Blocks.sand;
 			case FLOWER:
-				return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
+				return ReikaBlockHelper.isDirtType(idbelow, metabelow);
 			case MUSHROOM:
 				return idbelow == Blocks.dirt || idbelow == Blocks.mycelium;
 			case SAPLING:/*
@@ -68,9 +68,9 @@ public enum ReikaPlantHelper {
 				world.setBlock(x, y, z, Blocks.grass.blockID);
 				return true;
 			}*/
-				return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
+				return ReikaBlockHelper.isDirtType(idbelow, metabelow);
 			case SUGARCANE:
-				if (idbelow != Blocks.sand && !ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow))
+				if (idbelow != Blocks.sand && !ReikaBlockHelper.isDirtType(idbelow, metabelow))
 					return false;
 				ForgeDirection water = ReikaWorldHelper.checkForAdjMaterial(world, x, y-1, z, Material.water);
 				return water != null && water.offsetY == 0;
@@ -81,7 +81,7 @@ public enum ReikaPlantHelper {
 			case NETHERWART:
 				return idbelow == Blocks.soul_sand;
 			case TALLGRASS:
-				return ReikaBlockHelper.isDirtType(idbelow, metabelow, matbelow);
+				return ReikaBlockHelper.isDirtType(idbelow, metabelow);
 			case LILYPAD:
 				return matbelow == Material.water && metabelow == 0;
 			case VINES:

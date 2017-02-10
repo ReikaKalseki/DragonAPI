@@ -28,6 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import Reika.DragonAPI.Auxiliary.ModularLogger;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
+import Reika.DragonAPI.Auxiliary.PopupWriter;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.ConfigMatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
@@ -322,6 +323,8 @@ public class APIPacketHandler implements PacketHandler {
 				case MODULARLOGGER:
 					ModularLogger.instance.setState(stringdata, data[0] > 0);
 					break;
+				case POPUP:
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -374,6 +377,9 @@ public class APIPacketHandler implements PacketHandler {
 				if (Minecraft.getMinecraft().currentScreen != null)
 					Minecraft.getMinecraft().currentScreen.initGui();
 				break;
+			case POPUP:
+				PopupWriter.instance.addMessage(sg);
+				break;
 			default:
 				break;
 		}
@@ -414,7 +420,8 @@ public class APIPacketHandler implements PacketHandler {
 		BIOMEPNGEND(),
 		FILEMATCH(),
 		ENTITYSYNC(),
-		MODULARLOGGER();
+		MODULARLOGGER(),
+		POPUP();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -425,7 +432,7 @@ public class APIPacketHandler implements PacketHandler {
 		}
 
 		public boolean hasLocation() {
-			return this != KEYUPDATE && this != PLAYERKICK && this != CONFIGSYNC && this != CONFIGSYNCEND && this != FILEMATCH && this != MODULARLOGGER;
+			return this != KEYUPDATE && this != PLAYERKICK && this != CONFIGSYNC && this != CONFIGSYNCEND && this != FILEMATCH && this != MODULARLOGGER && this != POPUP;
 		}
 
 		public int getNumberDataInts() {

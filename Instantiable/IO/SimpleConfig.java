@@ -37,6 +37,10 @@ public final class SimpleConfig {
 		configMod = mod;
 	}
 
+	public final File getConfigFolder() {
+		return configFile.getParentFile();
+	}
+
 	public void loadCustomConfigFile(FMLPreInitializationEvent event, String file) {
 		configFile = new File(file);
 	}

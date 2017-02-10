@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Random;
 
 import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
@@ -435,14 +434,13 @@ public enum ModOreList implements OreType {
 	}
 
 	public boolean canGenerateIn(Block b) {
-		if (this.isNether())
-			return b == Blocks.netherrack;
-		if (this.isEnd())
-			return b == Blocks.end_stone;
-		return b == Blocks.stone;
+		for (OreLocation loc : this.getOreLocations())
+			if (loc.genBlock == b)
+				return true;
+		return false;
 	}
 
-	public ItemStack getGennableIn(Block b) {
+	public Collection<ItemStack> getGennableIn(Block b) {
 		for (int i = 0; i < ores.size(); i++) {
 			ItemStack is = ores.get(i);
 			Block ore = Block.getBlockFromItem(is.getItem());

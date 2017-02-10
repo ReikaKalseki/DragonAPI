@@ -22,6 +22,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 
 public class ReikaDirectionHelper extends DragonAPICore {
@@ -183,7 +184,13 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		public final int directionX;
 		public final int directionZ;
 
+		public final double offsetX;
+		public final double offsetZ;
+
 		public final int angle;
+
+		/** 1 for cardinal directions and sqrt(2) for angle directions. */
+		public final double projectionFactor;
 
 		public static final CubeDirections[] list = values();
 		private static final PluralMap<CubeDirections> dirMap = new PluralMap(2);
@@ -192,6 +199,11 @@ public class ReikaDirectionHelper extends DragonAPICore {
 			directionX = x;
 			directionZ = z;
 			angle = a;
+
+			offsetX = Math.cos(Math.toRadians(angle));
+			offsetZ = Math.sin(Math.toRadians(angle));
+
+			projectionFactor = ReikaMathLibrary.py3d(directionX, 0, directionZ);
 		}
 
 		public CubeDirections getRotation(boolean clockwise) {
@@ -213,6 +225,77 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		}
 
 		public static CubeDirections getFromVectors(double dx, double dz) {
+			return dirMap.get((int)Math.signum(dx), (int)Math.signum(dz));
+		}
+
+		public boolean isCardinal() {
+			return directionX == 0 || directionZ == 0;
+		}
+
+		static {
+			for (int i = 0; i < list.length; i++) {
+				dirMap.put(list[i], list[i].directionX, list[i].directionZ);
+			}
+		}
+	}
+
+	public static enum FanDirections {
+		N(0, -1, 90),
+		NNE(1, -1, 67.5),
+		NE(1, -1, 45),
+		ENE(1, -1, 22.5),
+		E(1, 0, 0),
+		ESE(1, 1, 337.5),
+		SE(1, 1, 315),
+		SSE(1, 1, 292.5),
+		S(0, 1, 270),
+		SSW(-1, 1, 247.5),
+		SW(-1, 1, 225),
+		WSW(-1, 1, 202.5),
+		W(-1, 0, 180),
+		WNW(-1, -1, 157.5),
+		NW(-1, -1, 135),
+		NNW(-1, -1, 112.5);
+
+		public final int directionX;
+		public final int directionZ;
+
+		public final double offsetX;
+		public final double offsetZ;
+
+		public final double angle;
+
+		public static final FanDirections[] list = values();
+		private static final PluralMap<FanDirections> dirMap = new PluralMap(2);
+
+		private FanDirections(int x, int z, double a) {
+			directionX = x;
+			directionZ = z;
+			angle = a;
+
+			offsetX = Math.cos(Math.toRadians(angle));
+			offsetZ = Math.sin(Math.toRadians(angle));
+		}
+
+		public FanDirections getRotation(boolean clockwise) {
+			return this.getRotation(clockwise, 1);
+		}
+
+		public FanDirections getRotation(boolean clockwise, int num) {
+			int d = clockwise ? num : -num;
+			return getShiftedIndex(this.ordinal(), d);
+		}
+
+		public FanDirections getOpposite() {
+			return getShiftedIndex(this.ordinal(), 4);
+		}
+
+		private static FanDirections getShiftedIndex(int i, int d) {
+			int o = ((i+d)%list.length+list.length)%list.length;
+			return list[o];
+		}
+
+		public static FanDirections getFromVectors(double dx, double dz) {
 			return dirMap.get((int)Math.signum(dx), (int)Math.signum(dz));
 		}
 

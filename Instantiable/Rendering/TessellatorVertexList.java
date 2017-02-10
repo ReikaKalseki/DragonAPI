@@ -59,7 +59,7 @@ public class TessellatorVertexList {
 		Collections.reverse(data);
 	}
 
-	private static class TessellatorVertex {
+	public static class TessellatorVertex {
 		private double posX;
 		private double posY;
 		private double posZ;
@@ -72,17 +72,17 @@ public class TessellatorVertexList {
 		private boolean hasUV;
 		private boolean hasColor;
 
-		private TessellatorVertex(double x, double y, double z) {
+		public TessellatorVertex(double x, double y, double z) {
 			this(x, y, z, 0, 0);
 			hasUV = false;
 		}
 
-		private TessellatorVertex(double x, double y, double z, double u, double v) {
+		public TessellatorVertex(double x, double y, double z, double u, double v) {
 			this(x, y, z, u, v, 0);
 			hasColor = false;
 		}
 
-		private TessellatorVertex(double x, double y, double z, double u, double v, int color) {
+		public TessellatorVertex(double x, double y, double z, double u, double v, int color) {
 			posX = x;
 			posY = y;
 			posZ = z;
@@ -93,7 +93,7 @@ public class TessellatorVertexList {
 			hasColor = true;
 		}
 
-		private void addToTessellator() {
+		public void addToTessellator() {
 			if (hasColor) {
 				Tessellator.instance.setColorOpaque_I(colorData);
 			}
@@ -113,13 +113,35 @@ public class TessellatorVertexList {
 			}
 			return false;
 		}
+
+		public double x() {
+			return posX;
+		}
+
+		public double y() {
+			return posY;
+		}
+
+		public double z() {
+			return posZ;
+		}
+
+		public TessellatorVertex copy() {
+			if (hasColor)
+				return new TessellatorVertex(posX, posY, posZ, posU, posV, colorData);
+			return hasUV ? new TessellatorVertex(posX, posY, posZ, posU, posV) : new TessellatorVertex(posX, posY, posZ);
+		}
+
+		public void offset(double dx, double dy, double dz) {
+			posX += dx;
+			posY += dy;
+			posZ += dz;
+		}
 	}
 
 	public void offset(double dx, double dy, double dz) {
 		for (TessellatorVertex v : data) {
-			v.posX += dx;
-			v.posY += dy;
-			v.posZ += dz;
+			v.offset(dx, dy, dz);
 		}
 	}
 

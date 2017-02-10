@@ -401,6 +401,18 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return count;
 	}
 
+	public static int countItem(Item id, int meta, IInventory inv) {
+		int count = 0;
+		for (int i = 0; i < inv.getSizeInventory(); i++) {
+			if (inv.getStackInSlot(i) != null) {
+				if (inv.getStackInSlot(i).getItem() == id && inv.getStackInSlot(i).getItemDamage() == meta) {
+					count += inv.getStackInSlot(i).stackSize;
+				}
+			}
+		}
+		return count;
+	}
+
 	public static boolean findAndDecrStack(Block id, int meta, ItemStack[] inv) {
 		return findAndDecrStack(Item.getItemFromBlock(id), meta, inv);
 	}

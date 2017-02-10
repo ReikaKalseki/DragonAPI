@@ -159,13 +159,15 @@ public class MESystemReader {
 			if (most == null)
 				return 0;
 			most.setStackSize(is.stackSize);
-			return most != null ? this.extract(most, simulate) : 0;
+			ExtractedItem ei = this.extract(most, simulate);
+			return ei != null ? ei.amount : 0;
 		}
-		return this.extract(this.createAEStack(is), simulate);
+		ExtractedItem ei = this.extract(this.createAEStack(is), simulate);
+		return ei != null ? ei.amount : 0;
 	}
 
 	/** Returns how many items removed. But Fuzzy! :D */
-	public long removeItemFuzzy(ItemStack is, boolean simulate, FuzzyMode fz, boolean oredict, boolean nbt) {
+	public ExtractedItem removeItemFuzzy(ItemStack is, boolean simulate, FuzzyMode fz, boolean oredict, boolean nbt) {
 		IMEMonitor<IAEItemStack> mon = this.getStorage();
 		IAEItemStack ae = this.createAEStack(is);
 		Collection<IAEItemStack> c = this.getFuzzyItemList(is, fz);
@@ -176,9 +178,9 @@ public class MESystemReader {
 			}
 		}
 		if (most == null)
-			return 0;
+			return null;
 		most.setStackSize(is.stackSize);
-		return most != null ? this.extract(most, simulate) : 0;
+		return most != null ? this.extract(most, simulate) : null;
 	}
 
 	private Collection<IAEItemStack> getFuzzyItemList(ItemStack is, FuzzyMode fz) {
@@ -194,9 +196,9 @@ public class MESystemReader {
 		return c;
 	}
 
-	private long extract(IAEItemStack ae, boolean simulate) {
+	private ExtractedItem extract(IAEItemStack ae, boolean simulate) {
 		IAEItemStack is = this.getStorage().extractItems(ae, simulate ? Actionable.SIMULATE : Actionable.MODULATE, actionSource);
-		return is != null ? is.getStackSize() : 0;
+		return is != null ? new ExtractedItem(is) : null;
 	}
 
 	/** Returns how many items NOT added */
@@ -210,7 +212,8 @@ public class MESystemReader {
 	}
 
 	public long getFuzzyItemCount(ItemStack is, FuzzyMode fz, boolean ore, boolean nbt) {
-		return this.removeItemFuzzy(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true, fz, ore, nbt);
+		ExtractedItem ei = this.removeItemFuzzy(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true, fz, ore, nbt);
+		return ei != null ? ei.amount : 0;
 	}
 
 	public void triggerFuzzyCrafting(World world, ItemStack is, long amt, ICraftingCallback callback, CraftCompleteCallback callback2) {
@@ -509,10 +512,11 @@ public class MESystemReader {
 			return 0;
 		}
 
-		public long removeItems(MESystemReader net, ItemStack is, boolean simulate) {
+		public ExtractedItem removeItems(MESystemReader net, ItemStack is, boolean simulate) {
 			switch(this) {
 				case EXACT:
-					return net.removeItem(is, simulate, true);
+					long amt = net.removeItem(is, simulate, true);
+					return amt != 0 ? new ExtractedItem(is, amt) : null;
 				case FUZZY:
 					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, false, true);
 				case FUZZYORE:
@@ -520,7 +524,7 @@ public class MESystemReader {
 				case FUZZYNBT:
 					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, true, false);
 			}
-			return 0;
+			return null;
 		}
 
 		public MatchMode next() {
@@ -541,5 +545,25 @@ public class MESystemReader {
 					return false;
 			}
 		}
+	}
+
+	public static final class ExtractedItem {
+
+		private final ItemStack item;
+		public final long amount;
+
+		private ExtractedItem(ItemStack is, long amt) {
+			item = is;
+			amount = amt;
+		}
+
+		private ExtractedItem(IAEItemStack iae) {
+			this(iae.getItemStack(), iae.getStackSize());
+		}
+
+		public ItemStack getItem() {
+			return item.copy();
+		}
+
 	}
 }

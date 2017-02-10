@@ -32,6 +32,7 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -59,6 +60,7 @@ import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Exception.ASMException.ASMConflictException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
+import Reika.DragonAPI.IO.ReikaFileReader;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -70,6 +72,14 @@ public class ReikaASMHelper {
 	private static final Logger logger = LogManager.getLogger();
 
 	public static String activeMod;
+
+	public static final int forgeVersion_Major = Integer.parseInt((String)FMLInjectionData.data()[0]);
+	public static final int forgeVersion_Minor = Integer.parseInt((String)FMLInjectionData.data()[1]);
+	public static final int forgeVersion_Revision = Integer.parseInt((String)FMLInjectionData.data()[2]);
+	public static final int forgeVersion_Build = Integer.parseInt((String)FMLInjectionData.data()[3]);
+
+	public static final String REIKA_SRGS = "C:/Users/Reika/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1614-1.7.10/reika/custom/srgs/";
+	private static HashMap<String, String> srgMap = new HashMap();
 
 	public static void log(Object o) {
 		write(activeMod+": "+o, false);
@@ -613,6 +623,19 @@ public class ReikaASMHelper {
 		return null;
 	}
 
+	public static AbstractInsnNode getNthOpcodeAfter(InsnList li, int n, int idx, int opcode) {
+		int c = 0;
+		for (int i = idx; i < li.size(); i++) {
+			AbstractInsnNode ain = li.get(i);
+			if (ain.getOpcode() == opcode) {
+				c++;
+				if (c == n)
+					return ain;
+			}
+		}
+		return null;
+	}
+
 	/** Currently broken */
 	public static InsnList copyInsnList(InsnList li, LabelNode... pairs) {
 		Map<LabelNode, LabelNode> map = new HashMap();
@@ -812,7 +835,7 @@ public class ReikaASMHelper {
 		DOUBARRAY("[D",		double[].class, 	Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE),
 		BOOLARRAY("[Z",		boolean[].class,	Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE),
 		FLOATARRAY("[F",	float[].class,		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE),
-		OBJECT("",			Object.class,		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE);
+		OBJECT("L*;",		Object.class,		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE);
 
 		private final String id;
 		private final Class classType;
@@ -1041,7 +1064,103 @@ public class ReikaASMHelper {
 	}
 
 	public static Side getSide() {
-		return FMLLaunchHandler.side();//ReikaJavaLibrary.doesClassExist("net.minecraft.client.ClientBrandRetriever") ? Side.CLIENT : Side.SERVER;
+		return FMLLaunchHandler.side();
+	}
+
+	public static void writeClassFile(ClassNode cn, String path) {
+		if (FMLForgePlugin.RUNTIME_DEOBF) {
+			cn = copyClassNode(cn);
+			deobfClassFile(cn);
+		}
+
+		ClassWriter writer = new ClassWriter(0);
+		cn.accept(writer);
+		byte[] data = writer.toByteArray();
+
+		try {
+			File f = new File(path+"/"+cn.name+".class");
+			f.getParentFile().mkdirs();
+			f.createNewFile();
+			FileOutputStream out = new FileOutputStream(f);
+			out.write(data);
+			out.close();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static ClassNode copyClassNode(ClassNode cn) {
+		ClassWriter writer = new ClassWriter(0);
+		cn.accept(writer);
+		byte[] data = writer.toByteArray();
+
+		ClassNode cn2 = new ClassNode();
+		ClassReader classReader = new ClassReader(data);
+		classReader.accept(cn2, 0);
+
+		return cn2;
+	}
+
+	public static void deobfClassFile(ClassNode cn) {
+		if (srgMap.isEmpty()) {
+			loadSRGs();
+		}
+		for (FieldNode f : cn.fields) {
+			deobfField(f);
+		}
+		for (MethodNode m : cn.methods) {
+			deobfMethod(m);
+		}
+	}
+
+	private static void deobfField(FieldNode f) {
+		String repl = srgMap.get(f.name);
+		if (repl != null)
+			f.name = repl;
+	}
+
+	private static void deobfMethod(MethodNode m) {
+		String repl = srgMap.get(m.name);
+		if (repl != null)
+			m.name = repl;
+		for (int i = 0; i < m.instructions.size(); i++) {
+			AbstractInsnNode ain = m.instructions.get(i);
+			if (ain instanceof FieldInsnNode) {
+				FieldInsnNode fin = (FieldInsnNode)ain;
+				repl = srgMap.get(fin.name);
+				if (repl != null)
+					fin.name = repl;
+			}
+			else if (ain instanceof MethodInsnNode) {
+				MethodInsnNode min = (MethodInsnNode)ain;
+				repl = srgMap.get(min.name);
+				if (repl != null)
+					min.name = repl;
+			}
+		}
+	}
+
+	private static void loadSRGs() {
+		File f = new File(REIKA_SRGS+"mcp-srg.srg");
+		ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
+		for (String s : li) {
+			if (!s.startsWith("CL")) {
+				String[] parts = s.split(" ");
+
+				int deobfidx = s.startsWith("MD") ? 1 : 1;
+				int obfidx = s.startsWith("MD") ? 3 : 2;
+
+				String deobf = parts[deobfidx];
+				String obf = parts[obfidx];
+
+				if (!deobf.equals(obf)) {
+					deobf = deobf.substring(deobf.lastIndexOf('/')+1);
+					obf = obf.substring(obf.lastIndexOf('/')+1);
+					srgMap.put(obf, deobf);
+				}
+			}
+		}
 	}
 
 }

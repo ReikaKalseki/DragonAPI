@@ -209,6 +209,8 @@ public final class TreeReader extends BlockArray {
 				case GREATWOOD:
 				case SILVERWOOD:
 					return 28;
+				case MFRRUBBER:
+					return 80;
 				default:
 					return 12;
 			}

@@ -10,8 +10,8 @@
 package Reika.DragonAPI.Instantiable.ParticleController;
 
 import net.minecraft.entity.Entity;
-import Reika.ChromatiCraft.Auxiliary.Interfaces.ColorController;
 import Reika.DragonAPI.Instantiable.Formula.MathExpression;
+import Reika.DragonAPI.Interfaces.ColorController;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 
 

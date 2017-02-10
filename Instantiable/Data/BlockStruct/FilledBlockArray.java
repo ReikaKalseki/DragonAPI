@@ -514,6 +514,13 @@ public class FilledBlockArray extends StructuredBlockArray {
 		@Override
 		public void place(World world, int x, int y, int z) {
 			world.setBlock(x, y, z, block.blockID, block.hasMetadata() ? block.metadata : 0, 3);
+			TileEntity te = world.getTileEntity(x, y, z);
+			if (te != null && te.getClass() == tileClass) {
+				NBTTagCompound NBT = new NBTTagCompound();
+				te.writeToNBT(NBT);
+				ReikaNBTHelper.overwriteNBT(NBT, matchTag);
+				te.readFromNBT(NBT);
+			}
 		}
 
 		@Override
@@ -528,7 +535,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 		@Override
 		public String toString() {
-			return block.toString()+" NBT "+matchTag;
+			return block.toString()+"; NBT "+matchTag;
 		}
 
 		@Override

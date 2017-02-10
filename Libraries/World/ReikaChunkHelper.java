@@ -20,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper.ClassEntitySelector;
@@ -244,5 +245,11 @@ public final class ReikaChunkHelper extends DragonAPICore {
 				}
 			}
 		}
+	}
+
+	public static boolean chunkContainsBiome(World world, int cx, int cz, BiomeGenBase b) {
+		int x = cx << 4;
+		int z = cz << 4;
+		return world.getBiomeGenForCoords(x, z) == b || world.getBiomeGenForCoords(x+15, z) == b || world.getBiomeGenForCoords(x, z+15) == b || world.getBiomeGenForCoords(x+15, z+15) == b;
 	}
 }

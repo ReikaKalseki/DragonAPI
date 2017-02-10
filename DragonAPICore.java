@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import net.minecraftforge.common.ForgeVersion;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
@@ -57,9 +58,7 @@ public class DragonAPICore {
 			return new URL(FORUM_PAGE);
 		}
 		catch (MalformedURLException e) {
-			DragonAPICore.logError("Reika's mods provided a malformed URL for their documentation site!");
-			e.printStackTrace();
-			return null;
+			throw new RegistrationException(DragonAPIInit.instance, "Reika's mods provided a malformed URL for their documentation site!", e);
 		}
 	}
 

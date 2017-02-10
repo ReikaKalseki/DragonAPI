@@ -7,7 +7,10 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Libraries.MathSci;
+package Reika.DragonAPI.Instantiable;
+
+import java.util.ArrayList;
+import java.util.Collection;
 
 import net.minecraft.util.MathHelper;
 
@@ -21,6 +24,14 @@ public class SimplexNoiseGenerator {
 	private static final double NORM_CONSTANT = 47;
 
 	private int[] perm;
+
+	private double inputFactor = 1;
+
+	private Collection<Octave> octaves = new ArrayList();
+	private double maxRange = 1;
+
+	/** As opposed to scaling */
+	public boolean clampEdge = false;
 
 	//Initializes the class using a permutation array generated from a 64-bit seed.
 	//Generates a proper permutation (i.e. doesn't merely perform N successive pair swaps on a base array)
@@ -43,9 +54,49 @@ public class SimplexNoiseGenerator {
 		}
 	}
 
+	public SimplexNoiseGenerator setFrequency(double f) {
+		inputFactor = f;
+		return this;
+	}
+
+	public SimplexNoiseGenerator addOctave(double relativeFrequency, double relativeAmplitude) {
+		return this.addOctave(relativeFrequency, relativeAmplitude, 0);
+	}
+
+	public SimplexNoiseGenerator addOctave(double relativeFrequency, double relativeAmplitude, double phaseShift) {
+		octaves.add(new Octave(relativeFrequency, relativeAmplitude, phaseShift));
+		maxRange += relativeAmplitude;
+		return this;
+	}
+
 	//2D OpenSimplex Noise.
 	/** Returns a value from -1 to +1 */
 	public double getValue(double x, double z) {
+
+		x *= inputFactor;
+		z *= inputFactor;
+
+		double val = this.calcValue(x, z, 1, 1);
+
+		if (!octaves.isEmpty()) {
+			for (Octave o : octaves) {
+				val += this.calcValue(x+o.phaseShift, z+o.phaseShift, o.frequency, o.amplitude);
+			}
+			if (clampEdge)
+				val = MathHelper.clamp_double(val, -1, 1);
+			else
+				val /= maxRange;
+		}
+
+		return val;
+	}
+
+	private double calcValue(double x, double z, double f, double a) {
+
+		if (f != 1 && f > 0) {
+			x *= f;
+			z *= f;
+		}
 
 		//Place input coordinates onto grid.
 		double stretchOffset = (x + z) * STRETCH_CONSTANT;
@@ -161,7 +212,7 @@ public class SimplexNoiseGenerator {
 			value += attn_ext * attn_ext * this.extrapolate(xsv_ext, zsv_ext, dx_ext, dz_ext);
 		}
 
-		return value / NORM_CONSTANT;
+		return a * value / NORM_CONSTANT;
 	}
 
 	private double extrapolate(int xsb, int zsb, double dx, double dz) {
@@ -177,4 +228,18 @@ public class SimplexNoiseGenerator {
 		5, -2,    2, -5,
 		-5, -2,   -2, -5,
 	};
+
+	private static class Octave {
+
+		private final double frequency;
+		private final double amplitude;
+		private final double phaseShift;
+
+		private Octave(double f, double a, double p) {
+			amplitude = a;
+			frequency = f;
+			phaseShift = p;
+		}
+
+	}
 }

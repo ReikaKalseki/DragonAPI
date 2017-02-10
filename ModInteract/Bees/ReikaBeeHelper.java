@@ -36,6 +36,12 @@ import forestry.api.apiculture.IBee;
 import forestry.api.apiculture.IBeeGenome;
 import forestry.api.apiculture.IBeeHousing;
 import forestry.api.apiculture.IBeeRoot;
+import forestry.api.arboriculture.EnumTreeChromosome;
+import forestry.api.arboriculture.IAlleleFruit;
+import forestry.api.arboriculture.IAlleleGrowth;
+import forestry.api.arboriculture.IAlleleTreeSpecies;
+import forestry.api.arboriculture.ITreeGenome;
+import forestry.api.arboriculture.ITreeRoot;
 import forestry.api.core.EnumHumidity;
 import forestry.api.core.EnumTemperature;
 import forestry.api.genetics.AlleleManager;
@@ -45,6 +51,7 @@ import forestry.api.genetics.IAlleleArea;
 import forestry.api.genetics.IAlleleBoolean;
 import forestry.api.genetics.IAlleleFloat;
 import forestry.api.genetics.IAlleleInteger;
+import forestry.api.genetics.IAlleleSpecies;
 import forestry.api.genetics.IAlleleTolerance;
 import forestry.api.genetics.IChromosome;
 import forestry.api.genetics.IGenome;
@@ -220,35 +227,61 @@ public class ReikaBeeHelper {
 
 	public static ArrayList<String> getGenesAsStringList(IGenome ig) {
 		ArrayList<String> li = new ArrayList();
-		IAlleleBeeSpecies sp1 = (IAlleleBeeSpecies)ig.getPrimary();
-		IAlleleBeeSpecies sp2 = (IAlleleBeeSpecies)ig.getSecondary();
-		EnumBeeChromosome[] order = {
-				EnumBeeChromosome.SPECIES,
-				EnumBeeChromosome.LIFESPAN,
-				EnumBeeChromosome.SPEED,
-				EnumBeeChromosome.FLOWERING,
-				EnumBeeChromosome.FLOWER_PROVIDER,
-				EnumBeeChromosome.FERTILITY,
-				EnumBeeChromosome.TERRITORY,
-				EnumBeeChromosome.EFFECT,
-				//EnumBeeChromosome.TEMPERATURE_TOLERANCE,
-				//EnumBeeChromosome.HUMIDITY_TOLERANCE,
-				EnumBeeChromosome.NOCTURNAL,
-				EnumBeeChromosome.TOLERANT_FLYER,
-				EnumBeeChromosome.CAVE_DWELLING
-		};
+		if (ig instanceof IBeeGenome) {
+			IAlleleBeeSpecies sp1 = (IAlleleBeeSpecies)ig.getPrimary();
+			IAlleleBeeSpecies sp2 = (IAlleleBeeSpecies)ig.getSecondary();
+			EnumBeeChromosome[] order = {
+					EnumBeeChromosome.SPECIES,
+					EnumBeeChromosome.LIFESPAN,
+					EnumBeeChromosome.SPEED,
+					EnumBeeChromosome.FLOWERING,
+					EnumBeeChromosome.FLOWER_PROVIDER,
+					EnumBeeChromosome.FERTILITY,
+					EnumBeeChromosome.TERRITORY,
+					EnumBeeChromosome.EFFECT,
+					//EnumBeeChromosome.TEMPERATURE_TOLERANCE,
+					//EnumBeeChromosome.HUMIDITY_TOLERANCE,
+					EnumBeeChromosome.NOCTURNAL,
+					EnumBeeChromosome.TOLERANT_FLYER,
+					EnumBeeChromosome.CAVE_DWELLING
+			};
 
-		for (int i = 0; i < order.length; i++) {
-			IAllele ia1 = ig.getActiveAllele(order[i]);
-			IAllele ia2 = ig.getInactiveAllele(order[i]);
-			li.add(getGeneDisplay(ia1, order[i], true, true)+" / "+getGeneDisplay(ia2, order[i], false, false));
-			if (order[i] == EnumBeeChromosome.EFFECT) {
-				String t1 = getTemperatureDisplay(sp1, (IAlleleTolerance)ig.getActiveAllele(EnumBeeChromosome.TEMPERATURE_TOLERANCE), true, true);
-				String t2 = getTemperatureDisplay(sp2, (IAlleleTolerance)ig.getInactiveAllele(EnumBeeChromosome.TEMPERATURE_TOLERANCE), false, false);
-				li.add(t1+" / "+t2);
-				String h1 = getHumidityDisplay(sp1, (IAlleleTolerance)ig.getActiveAllele(EnumBeeChromosome.HUMIDITY_TOLERANCE), true, true);
-				String h2 = getHumidityDisplay(sp2, (IAlleleTolerance)ig.getInactiveAllele(EnumBeeChromosome.HUMIDITY_TOLERANCE), false, false);
-				li.add(h1+" / "+h2);
+			for (int i = 0; i < order.length; i++) {
+				IAllele ia1 = ig.getActiveAllele(order[i]);
+				IAllele ia2 = ig.getInactiveAllele(order[i]);
+				li.add(getGeneDisplay(ia1, order[i], true, true)+" / "+getGeneDisplay(ia2, order[i], false, false));
+				if (order[i] == EnumBeeChromosome.EFFECT) {
+					String t1 = getTemperatureDisplay(sp1, (IAlleleTolerance)ig.getActiveAllele(EnumBeeChromosome.TEMPERATURE_TOLERANCE), true, true);
+					String t2 = getTemperatureDisplay(sp2, (IAlleleTolerance)ig.getInactiveAllele(EnumBeeChromosome.TEMPERATURE_TOLERANCE), false, false);
+					li.add(t1+" / "+t2);
+					String h1 = getHumidityDisplay(sp1, (IAlleleTolerance)ig.getActiveAllele(EnumBeeChromosome.HUMIDITY_TOLERANCE), true, true);
+					String h2 = getHumidityDisplay(sp2, (IAlleleTolerance)ig.getInactiveAllele(EnumBeeChromosome.HUMIDITY_TOLERANCE), false, false);
+					li.add(h1+" / "+h2);
+				}
+			}
+		}
+		else if (ig instanceof ITreeGenome) {
+			IAlleleTreeSpecies sp1 = (IAlleleTreeSpecies)ig.getPrimary();
+			IAlleleTreeSpecies sp2 = (IAlleleTreeSpecies)ig.getSecondary();
+			EnumTreeChromosome[] order = {
+					EnumTreeChromosome.SPECIES,
+					EnumTreeChromosome.FERTILITY,
+					EnumTreeChromosome.MATURATION,
+					EnumTreeChromosome.HEIGHT,
+					EnumTreeChromosome.GIRTH,
+					EnumTreeChromosome.YIELD,
+					EnumTreeChromosome.SAPPINESS,
+					EnumTreeChromosome.FIREPROOF,
+					EnumTreeChromosome.EFFECT,
+					EnumTreeChromosome.GROWTH,
+					EnumTreeChromosome.PLANT,
+					EnumTreeChromosome.FRUITS,
+			};
+
+			for (int i = 0; i < order.length; i++) {
+				IAllele ia1 = ig.getActiveAllele(order[i]);
+				IAllele ia2 = ig.getInactiveAllele(order[i]);
+				li.add(getGeneDisplay((ITreeGenome)ig, ia1, order[i], true, true)+" / "+getGeneDisplay((ITreeGenome)ig, ia2, order[i], false, false));
 			}
 		}
 		return li;
@@ -268,6 +301,68 @@ public class ReikaBeeHelper {
 		if (title)
 			ret = EnumChatFormatting.LIGHT_PURPLE+"Humidity: "+EnumChatFormatting.RESET+ret;
 		return ret;
+	}
+
+	public static String getGeneDisplay(ITreeGenome itg, IAllele gene, EnumTreeChromosome type, boolean title, boolean primary) {
+		EnumChatFormatting ec = primary ? EnumChatFormatting.GREEN : EnumChatFormatting.RED;
+		String tag = "";
+		String val = gene.getName();
+		switch(type) {
+			case EFFECT:
+				tag = "for.gui.effect";
+				break;
+			case MATURATION:
+				tag = "for.gui.maturity";
+				val += " ("+((IAlleleInteger)gene).getValue()+" growth ticks)";
+				break;
+			case FERTILITY:
+				tag = "for.gui.fertility";
+				val += " ("+((IAlleleFloat)gene).getValue()+" %/leaf)";
+				break;
+			case HEIGHT:
+				tag = "for.gui.height";
+				val += " ("+((IAlleleFloat)gene).getValue()+"x)";
+				break;
+			case YIELD:
+				tag = "for.gui.yield";
+				val += " ("+((IAlleleFloat)gene).getValue()+"x)";
+				break;
+			case SAPPINESS:
+				tag = "for.gui.sappiness";
+				val += " ("+((IAlleleFloat)gene).getValue()+"x)";
+				break;
+			case GIRTH:
+				tag = "for.gui.girth";
+				val = ((IAlleleInteger)gene).getValue()+"x"+((IAlleleInteger)gene).getValue();
+				break;
+			case SPECIES:
+				tag = "for.gui.species";
+				break;
+			case FRUITS:
+				tag = "for.gui.fruits";
+				val = StatCollector.translateToLocal("for."+((IAlleleFruit)gene).getProvider().getDescription());
+				break;
+			case PLANT:
+				tag = "for.gui.native";
+				val = StatCollector.translateToLocal((primary ? itg.getPrimary().getPlantType().toString() : itg.getSecondary().getPlantType().toString()));
+				break;
+			case GROWTH:
+				tag = "for.gui.growth";
+				val = StatCollector.translateToLocal(((IAlleleGrowth)gene).getProvider().getDescription());
+				break;
+			case TERRITORY:
+				tag = "for.gui.area";
+				IAlleleArea ia = (IAlleleArea)gene;
+				val += " ("+ia.getValue()[0]+"x"+ia.getValue()[1]+"x"+ia.getValue()[2]+")";
+				break;
+			case FIREPROOF:
+				tag = "for.gui.fireproof";
+				val = StatCollector.translateToLocal(((IAlleleBoolean)gene).getValue() ? "for.yes" : "for.no");
+				break;
+			default:
+				break;
+		}
+		return title ? EnumChatFormatting.LIGHT_PURPLE+StatCollector.translateToLocal(tag)+": "+EnumChatFormatting.RESET+ec+val+EnumChatFormatting.RESET : ec+val+EnumChatFormatting.RESET;
 	}
 
 	public static String getGeneDisplay(IAllele gene, EnumBeeChromosome type, boolean title, boolean primary) {
@@ -333,12 +428,16 @@ public class ReikaBeeHelper {
 		return (IBeeRoot)AlleleManager.alleleRegistry.getSpeciesRoot("rootBees");
 	}
 
+	public static ITreeRoot getTreeRoot() {
+		return (ITreeRoot)AlleleManager.alleleRegistry.getSpeciesRoot("rootTrees");
+	}
+
 	public static boolean isPristine(ItemStack is) {
 		IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
 		return bee instanceof IBee && ((IBee)bee).isNatural();
 	}
 
-	public static IBeeGenome getGenome(ItemStack is) {
+	public static IGenome getGenome(ItemStack is) {
 		IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
 		return bee instanceof IBee ? ((IBee)bee).getGenome() : null;
 	}
@@ -348,8 +447,8 @@ public class ReikaBeeHelper {
 		return bee instanceof IBee ? (IBee)bee : null;
 	}
 
-	public static IAlleleBeeSpecies getSpecies(ItemStack is) {
-		IBeeGenome ig = getGenome(is);
+	public static IAlleleSpecies getSpecies(ItemStack is) {
+		IGenome ig = getGenome(is);
 		return ig != null ? ig.getPrimary() : null;
 	}
 
@@ -385,6 +484,10 @@ public class ReikaBeeHelper {
 				return Float.NaN;
 
 		}
+	}
+
+	public static boolean isTree(ItemStack is) {
+		return is.getItem() == ForestryHandler.ItemEntry.SAPLING.getItem();
 	}
 
 

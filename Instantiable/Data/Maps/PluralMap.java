@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Maps;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -43,11 +43,13 @@ public class PluralMap<V> extends HashMap {
 	}
 
 	private List<Object> toList(Object[] key) {
+		/*
 		List<Object> li = new ArrayList();
 		for (int i = 0; i < this.keySize; i++) {
 			li.add(key[i]);
 		}
-		return li;
+		 */
+		return Arrays.asList(key);//li;
 	}
 
 	public V remove(Object... key) {

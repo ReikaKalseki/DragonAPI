@@ -23,7 +23,6 @@ public class FindBiomeCommand extends DragonCommandBase {
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
 		EntityPlayerMP ep = this.getCommandSenderAsPlayer(ics);
-		int r = 8192;
 		int step = 256;
 		BiomeGenBase target = null;
 		if (args.length == 1) {
@@ -34,20 +33,29 @@ public class FindBiomeCommand extends DragonCommandBase {
 				target = ReikaBiomeHelper.getBiomeByName(args[0]);
 			}
 		}
-		MultiMap<String, Coordinate> map = new MultiMap();
-		for (int x = -r; x <= r; x += step) {
-			for (int z = -r; z <= r; z += step) {
-				BiomeGenBase b = ReikaWorldHelper.getNaturalGennedBiomeAt(ep.worldObj, x, z);
-				map.addValue(b.biomeName, new Coordinate(x, 0, z));
+
+		int[] rstep = target != null ? new int[]{2048, 8192, 16384, 32768, 65536} : new int[]{4096};
+		boolean found = false;
+
+		for (int i = 0; i < rstep.length && !found; i++) {
+			int r = rstep[i];
+			MultiMap<String, Coordinate> map = new MultiMap();
+			for (int x = -r; x <= r; x += step) {
+				for (int z = -r; z <= r; z += step) {
+					BiomeGenBase b = ReikaWorldHelper.getNaturalGennedBiomeAt(ep.worldObj, x, z);
+					if (target != null && b == target)
+						found = true;
+					map.addValue(b.biomeName, new Coordinate(x, 0, z));
+				}
 			}
-		}
-		if (target == null) {
-			for (String n : map.keySet()) {
-				this.sendChatToSender(ics, n+": "+map.get(n));
+			if (target == null) {
+				for (String n : map.keySet()) {
+					this.sendChatToSender(ics, "Search R="+r+": "+n+": "+map.get(n));
+				}
 			}
-		}
-		else {
-			this.sendChatToSender(ics, target.biomeName+": "+map.get(target.biomeName));
+			else {
+				this.sendChatToSender(ics, "Search R="+r+": "+target.biomeName+": "+map.get(target.biomeName));
+			}
 		}
 	}
 

@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM.Patchers;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.util.Locale;
 
 import org.objectweb.asm.ClassReader;
@@ -69,12 +67,7 @@ public abstract class Patcher {
 
 		if (genClasses) {
 			try {
-				File f = new File("C:/testclass/"+cn.name+".class");
-				f.getParentFile().mkdirs();
-				f.createNewFile();
-				FileOutputStream out = new FileOutputStream(f);
-				out.write(newdata);
-				out.close();
+				ReikaASMHelper.writeClassFile(cn, "C:/testclass");
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -82,6 +75,10 @@ public abstract class Patcher {
 		}
 
 		return newdata;
+	}
+
+	protected final void log(String s) {
+		ReikaASMHelper.log(s);
 	}
 
 	protected abstract void apply(ClassNode cn);

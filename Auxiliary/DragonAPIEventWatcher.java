@@ -73,6 +73,8 @@ public class DragonAPIEventWatcher {
 
 	public static final DragonAPIEventWatcher instance = new DragonAPIEventWatcher();
 
+	private long IDMsgCooldown = 0;
+
 	private DragonAPIEventWatcher() {
 
 	}
@@ -225,7 +227,7 @@ public class DragonAPIEventWatcher {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void confirmNumericIDs(ChatEventPost evt) {
-		if (evt.chatMessage.startsWith("Warning: Using numeric IDs will not be supported in the future")) {
+		if (System.currentTimeMillis()-IDMsgCooldown >= 30000 && evt.chatMessage.startsWith("Warning: Using numeric IDs will not be supported in the future")) {
 			String item1 = EnumChatFormatting.GOLD+"/give item.forestry.apiculture.bee.template.root3";
 			String item2 = EnumChatFormatting.GOLD+"/give item.gregtech.machine.primary.transformer.hv.ruby";
 			String c = EnumChatFormatting.LIGHT_PURPLE.toString();
@@ -235,6 +237,7 @@ public class DragonAPIEventWatcher {
 			ReikaChatHelper.writeString(c+"or");
 			ReikaChatHelper.writeString(c+"'"+item2+c+"'.");
 			ReikaChatHelper.writeString(c+"-DragonAPI");
+			IDMsgCooldown = System.currentTimeMillis();
 		}
 	}
 

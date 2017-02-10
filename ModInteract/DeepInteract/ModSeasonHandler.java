@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import net.minecraft.world.World;
@@ -21,6 +22,7 @@ public class ModSeasonHandler { //if other mods have seasons, add to here
 
 	private static boolean isLoaded;
 
+	private static Field isActive;
 	private static Method getSeasonTemp;
 	private static Method getSeasonRain;
 
@@ -28,6 +30,8 @@ public class ModSeasonHandler { //if other mods have seasons, add to here
 		if (!isLoaded)
 			return 0;
 		try {
+			if (!isActive.getBoolean(null))
+				return 0;
 			return (Float)getSeasonRain.invoke(null, world.getTotalWorldTime()); //0.2+0.4*sin in his code
 		}
 		catch (Exception e) {
@@ -40,6 +44,8 @@ public class ModSeasonHandler { //if other mods have seasons, add to here
 		if (!isLoaded)
 			return 0;
 		try {
+			if (!isActive.getBoolean(null))
+				return 0;
 			return -25+50*(Float)getSeasonTemp.invoke(null, world.getTotalWorldTime()); //0.6*sin in his code
 		}
 		catch (Exception e) {
@@ -55,6 +61,7 @@ public class ModSeasonHandler { //if other mods have seasons, add to here
 
 				getSeasonTemp = c.getDeclaredMethod("getSeasonTemp", long.class);
 				getSeasonRain = c.getDeclaredMethod("getSeasonRain", long.class);
+				isActive = c.getDeclaredField("doYearCycle");
 
 				isLoaded = true;
 			}

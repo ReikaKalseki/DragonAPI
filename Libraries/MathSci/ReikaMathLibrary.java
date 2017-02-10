@@ -391,22 +391,15 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return count >= number;
 	}
 
-	/** Returns +1 or -1 depending on the sign of the argument. */
-	public static int sign(int val) {
-		return val/Math.abs(val);
-	}
-
-	/** Returns +1 or -1 depending on the sign of the argument. */
-	public static double sign(double val) {
-		return val/Math.abs(val);
-	}
-
 	public static int roundDownToX(int multiple, int val) {
-		return val - val%multiple;
+		int ret = val - val%multiple;
+		if (val < 0)
+			ret -= multiple;
+		return ret;
 	}
 
 	public static int roundUpToX(int multiple, int val) {
-		return val + multiple - val%multiple;
+		return roundDownToX(multiple, val)+multiple;
 	}
 
 	public static int roundToNearestX(int multiple, int val) {
@@ -496,6 +489,10 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		}
 	}
 
+	public static double cosInterpolation(double min, double max, double val, double y1, double y2) {
+		return y1+(y2-y1)*cosInterpolation(min, max, val);
+	}
+
 	public static int toggleBit(int num, int bit) {
 		return num ^ (1 << bit);
 	}
@@ -574,5 +571,13 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		while (val > 0 && (val&0xF) == 0)
 			val = val >> 4;
 		return val;
+	}
+
+	public static double ellipticalInterpolation(double x, double x1, double x2, double y1, double y2) {
+		return (y2-y1)*Math.sqrt(Math.pow(x2-x1, 2)-Math.pow(x-x1, 2))/(x2-x1);
+	}
+
+	public static double powerInterpolation(double x, double x1, double x2, double y1, double y2, double power) {
+		return (y2-y1)*Math.pow(Math.pow(x2-x1, power)-Math.pow(x-x1, power), 1D/power)/(x2-x1);
 	}
 }
