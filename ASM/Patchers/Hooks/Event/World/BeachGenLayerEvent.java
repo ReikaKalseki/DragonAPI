@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2016
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.ASM.Patchers.Hooks.Event.World;
 
 import net.minecraftforge.classloading.FMLForgePlugin;
@@ -30,6 +39,7 @@ public class BeachGenLayerEvent extends Patcher {
 		//ReikaASMHelper.log(ReikaASMHelper.clearString(m.instructions));
 
 		int version = ReikaASMHelper.forgeVersion_Build;
+
 		if (version == 1614) {
 			this.apply_1614(m);
 		}

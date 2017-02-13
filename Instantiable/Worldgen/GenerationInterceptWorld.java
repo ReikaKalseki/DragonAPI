@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2016
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Worldgen;
 
 import java.io.File;
@@ -21,6 +30,7 @@ import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 
@@ -30,7 +40,7 @@ public final class GenerationInterceptWorld extends World {
 	private World delegate;
 
 	private final HashSet<BlockKey> disallowedBlocks = new HashSet();
-	//private final HashSet<Coordinate> changeList = new HashSet();
+	private final HashSet<Coordinate> changeList = new HashSet();
 	private final Collection<TileHook> hooks = new ArrayList();
 
 	public GenerationInterceptWorld() {
@@ -84,7 +94,7 @@ public final class GenerationInterceptWorld extends World {
 	public boolean setBlock(int x, int y, int z, Block b) {
 		boolean flag = this.check(b, 0) ? delegate.setBlock(x, y, z, b) : false;
 		if (flag) {
-			this.runHooks(x, y, z);
+			this.markHook(x, y, z);
 		}
 		return flag;
 	}
@@ -93,7 +103,7 @@ public final class GenerationInterceptWorld extends World {
 	public boolean setBlock(int x, int y, int z, Block b, int meta, int flags) {
 		boolean flag = this.check(b, meta) ? delegate.setBlock(x, y, z, b, meta, flags) : false;
 		if (flag) {
-			this.runHooks(x, y, z);
+			this.markHook(x, y, z);
 		}
 		return flag;
 	}
@@ -102,7 +112,7 @@ public final class GenerationInterceptWorld extends World {
 	public boolean setBlockMetadataWithNotify(int x, int y, int z, int meta, int flags) {
 		boolean flag = this.check(delegate.getBlock(x, y, z), meta) ? delegate.setBlockMetadataWithNotify(x, y, z, meta, flags) : false;
 		if (flag) {
-			this.runHooks(x, y, z);
+			this.markHook(x, y, z);
 		}
 		return flag;
 	}
@@ -111,7 +121,7 @@ public final class GenerationInterceptWorld extends World {
 	public void setTileEntity(int x, int y, int z, TileEntity te) {
 		//if (changeList.contains(new Coordinate(x, y, z)))
 		delegate.setTileEntity(x, y, z, te);
-		this.runHooks(x, y, z);
+		this.markHook(x, y, z);
 	}
 
 	/*
@@ -151,12 +161,28 @@ public final class GenerationInterceptWorld extends World {
 	}
 	 */
 
+	private void markHook(int x, int y, int z) {
+		changeList.add(new Coordinate(x, y, z));
+	}
+	/*
 	private void runHooks(int x, int y, int z) {
 		TileEntity te = delegate.getTileEntity(x, y, z);
 		for (TileHook th : hooks) {
 			if (th.shouldRun(delegate, x, y, z))
 				th.onTileChanged(te);
 		}
+	}
+	 */
+
+	public void runHooks() {
+		for (Coordinate c : changeList) {
+			TileEntity te = c.getTileEntity(delegate);
+			for (TileHook th : hooks) {
+				if (th.shouldRun(delegate, c.xCoord, c.yCoord, c.zCoord))
+					th.onTileChanged(te);
+			}
+		}
+		changeList.clear();
 	}
 
 	@Override

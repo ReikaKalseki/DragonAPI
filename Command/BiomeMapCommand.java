@@ -348,6 +348,9 @@ public class BiomeMapCommand extends DragonCommandBase {
 			if (b.biomeName.equalsIgnoreCase("Luminous Cliffs")) {
 				return 0x22aaff;
 			}
+			if (b.biomeName.equalsIgnoreCase("Luminous Cliffs Shores")) {
+				return 0x428AFF;
+			}
 
 			int c = b.getBiomeGrassColor(x, 64, z);
 

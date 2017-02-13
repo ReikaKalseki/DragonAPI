@@ -37,7 +37,6 @@ import cpw.mods.fml.common.gameevent.InputEvent.KeyInputEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
 public class PopupWriter {
 
 	public static final PopupWriter instance = new PopupWriter();
@@ -76,6 +75,7 @@ public class PopupWriter {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void drawOverlay(RenderGameOverlayEvent evt) {
 		if (!list.isEmpty() && evt.type == ElementType.HELMET) {
 			String s = list.get(0);
@@ -135,6 +135,7 @@ public class PopupWriter {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void keyHandle(KeyInputEvent evt) {
 		if (!list.isEmpty() || ungrabbed) {
 			if (GuiScreen.isCtrlKeyDown() && !ungrabbed) {
@@ -151,6 +152,7 @@ public class PopupWriter {
 	}
 
 	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void click(MouseEvent evt) {
 		if (!list.isEmpty() && evt.buttonstate && evt.button == 0 && ungrabbed && buttonX > 0 && buttonY > 0) {
 			int x = evt.x;

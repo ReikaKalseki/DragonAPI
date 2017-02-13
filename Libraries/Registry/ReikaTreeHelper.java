@@ -124,6 +124,10 @@ public enum ReikaTreeHelper implements TreeType {
 		return new ItemStack(leaf, 1, leafMeta[dmg]);
 	}
 
+	public int getBaseLeafMeta() {
+		return leafMeta[0];
+	}
+
 	public String getName() {
 		return ReikaStringParser.capFirstChar(this.name());
 	}

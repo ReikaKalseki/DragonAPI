@@ -250,6 +250,20 @@ public final class ReikaChunkHelper extends DragonAPICore {
 	public static boolean chunkContainsBiome(World world, int cx, int cz, BiomeGenBase b) {
 		int x = cx << 4;
 		int z = cz << 4;
+		return chunkContainsBiomeBlockCoords(world, cx, cz, b);
+	}
+
+	public static boolean chunkContainsBiomeBlockCoords(World world, int x, int z, BiomeGenBase b) {
 		return world.getBiomeGenForCoords(x, z) == b || world.getBiomeGenForCoords(x+15, z) == b || world.getBiomeGenForCoords(x, z+15) == b || world.getBiomeGenForCoords(x+15, z+15) == b;
+	}
+
+	public static boolean chunkContainsBiomeType(World world, int cx, int cz, Class<? extends BiomeGenBase> c) {
+		int x = cx << 4;
+		int z = cz << 4;
+		return chunkContainsBiomeTypeBlockCoords(world, cx, cz, c);
+	}
+
+	public static boolean chunkContainsBiomeTypeBlockCoords(World world, int x, int z, Class<? extends BiomeGenBase> c) {
+		return c.isInstance(world.getBiomeGenForCoords(x, z)) || c.isInstance(world.getBiomeGenForCoords(x+15, z)) || c.isInstance(world.getBiomeGenForCoords(x, z+15)) || c.isInstance(world.getBiomeGenForCoords(x+15, z+15));
 	}
 }

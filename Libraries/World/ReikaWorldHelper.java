@@ -39,6 +39,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -1932,15 +1933,17 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return c;
 	}
 
-	public static void dropAndDestroyBlockAt(World world, int x, int y, int z, EntityPlayer ep, boolean breakAll) {
+	public static void dropAndDestroyBlockAt(World world, int x, int y, int z, EntityPlayer ep, boolean breakAll, boolean FX) {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		if (b.blockHardness < 0 && !breakAll)
 			return;
 		dropBlockAt(world, x, y, z, ep);
 		world.setBlock(x, y, z, Blocks.air);
-		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BREAKPARTICLES.ordinal(), world, x, y, z, Block.getIdFromBlock(b), meta);
-		ReikaSoundHelper.playBreakSound(world, x, y, z, b);
+		if (FX) {
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BREAKPARTICLES.ordinal(), world, x, y, z, Block.getIdFromBlock(b), meta);
+			ReikaSoundHelper.playBreakSound(world, x, y, z, b);
+		}
 	}
 
 	public static boolean matchWithItemStack(World world, int x, int y, int z, ItemStack is) {
@@ -2281,5 +2284,14 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			sum += fi.getLayerCount();
 		}
 		return sum;
+	}
+
+	public static Coordinate getRandomLoadedCoordinate(World world) {
+		ArrayList<ChunkCoordIntPair> li = new ArrayList(world.activeChunkSet);
+		if (li.isEmpty())
+			return null;
+		int idx = rand.nextInt(li.size());
+		ChunkCoordIntPair cp = li.get(idx);
+		return new Coordinate((cp.chunkXPos << 4)+rand.nextInt(16), 0, (cp.chunkZPos << 4)+rand.nextInt(16));
 	}
 }

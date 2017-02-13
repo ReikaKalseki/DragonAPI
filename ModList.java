@@ -41,6 +41,7 @@ public enum ModList implements ModEntry, Dependency {
 	LEGACYCRAFT("LegacyCraft"),
 	ELECTRICRAFT("ElectriCraft", "Reika.ElectriCraft.Registry.ElectriBlocks", "Reika.ElectriCraft.Registry.ElectriItems"),
 	CHROMATICRAFT("ChromatiCraft", "Reika.ChromatiCraft.Registry.ChromaBlocks", "Reika.ChromatiCraft.Registry.ChromaItems"),
+	TERRITORYZONE("TerritoryZone"),
 	CONDENSEDORES("CondensedOres"),
 	BUILDCRAFT("BuildCraft|Core", "buildcraft.BuildCraftCore"),
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),

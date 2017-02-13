@@ -30,6 +30,8 @@ public class FlyingBlocksExplosion extends Explosion {
 
 	private TumbleCreator tumbleCreator = null;
 
+	public boolean canBreakBedrock = false;
+
 	public FlyingBlocksExplosion(WorldLocation loc, float power) {
 		this(loc.getWorld(), loc.xCoord+0.5, loc.yCoord+0.5, loc.zCoord+0.5, power);
 	}
@@ -67,14 +69,8 @@ public class FlyingBlocksExplosion extends Explosion {
 					for (int k = z-r; k <= z+r; k++) {
 						Block b = world.getBlock(i, j, k);
 						int meta = world.getBlockMetadata(i, j, k);
-						if (this.canEntitize(world, i, j, k, b, meta)) {
-							EntityFallingBlock e = tumbleCreator != null ? tumbleCreator.createBlock(world, i, j, k, b, meta) : new EntityFallingBlock(world, i, j, k, b, meta);
-							li.add(e);
-							e.field_145812_b = -10000;
-							e.field_145813_c = false;
-							world.setBlockToAir(i, j, k);
-							world.spawnEntityInWorld(e);
-						}
+						Effect e = this.calcEffect(world, i, j, k, b, meta);
+						e.trigger(world, i, j, k, b, meta, tumbleCreator, li);
 					}
 				}
 			}
@@ -100,30 +96,62 @@ public class FlyingBlocksExplosion extends Explosion {
 		}
 	}
 
-	protected final boolean canEntitize(World world, int x, int y, int z, Block b, int meta) {
+	protected final Effect calcEffect(World world, int x, int y, int z, Block b, int meta) {
+		Effect e = this.getEffect(world, x, y, z, b, meta);
+		if (e == Effect.NOTHING)
+			return e;
+		double dd = ReikaMathLibrary.py3d(x+0.5-explosionX, y+0.5-explosionY, z+0.5-explosionZ);
+		return dd <= explosionSize+0.5 ? e : Effect.NOTHING;
+	}
+
+	protected final Effect getEffect(World world, int x, int y, int z, Block b, int meta) {
 		if (b == Blocks.air)
-			return false;
+			return Effect.NOTHING;
 		if (b == Blocks.bedrock)
-			return false;
+			return canBreakBedrock ? Effect.ENTITIZE : Effect.NOTHING;
 		if (b.blockHardness < 0)
-			return false;
+			return canBreakBedrock ? Effect.ENTITIZE : Effect.NOTHING;
 		if (b instanceof SemiUnbreakable)
-			return !((SemiUnbreakable)b).isUnbreakable(world, x, y, z, meta);
+			return ((SemiUnbreakable)b).isUnbreakable(world, x, y, z, meta) ? Effect.NOTHING : Effect.ENTITIZE;
 		if (b.hasTileEntity(meta))
-			return false;
+			return Effect.NOTHING;
 		if (ReikaWorldHelper.softBlocks(world, x, y, z))
-			return false;
+			return Effect.BREAK;
 		if (b.getRenderType() != 0 && !b.renderAsNormalBlock() && !b.isOpaqueCube()) { //To prevent weird looking flying sand entities
 			;//return false;
 		}
-		double dd = ReikaMathLibrary.py3d(x+0.5-explosionX, y+0.5-explosionY, z+0.5-explosionZ);
-		return dd <= explosionSize+0.5;
+		return Effect.ENTITIZE;
 	}
 
 	public static interface TumbleCreator {
 
 		public EntityTumblingBlock createBlock(World world, int x, int y, int z, Block b, int meta);
 
+	}
+
+	private static enum Effect {
+		ENTITIZE(),
+		BREAK(),
+		NOTHING();
+
+		public void trigger(World world, int x, int y, int z, Block b, int meta, TumbleCreator c, List<EntityFallingBlock> li) {
+			switch(this) {
+				case BREAK:
+					ReikaWorldHelper.dropAndDestroyBlockAt(world, x, y, z, null, true, false);
+					break;
+				case ENTITIZE:
+					EntityFallingBlock e = c != null ? c.createBlock(world, x, y, z, b, meta) : new EntityFallingBlock(world, x, y, z, b, meta);
+					li.add(e);
+					e.field_145812_b = -10000;
+					e.field_145813_c = false;
+					world.setBlockToAir(x, y, z);
+					world.spawnEntityInWorld(e);
+					break;
+				case NOTHING:
+				default:
+					break;
+			}
+		}
 	}
 
 }
