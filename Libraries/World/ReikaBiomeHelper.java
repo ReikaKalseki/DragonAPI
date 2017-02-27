@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Locale;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -150,7 +151,6 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		temperatures.put(BiomeGenBase.iceMountains, BiomeTemperatures.ICY);
 		temperatures.put(BiomeGenBase.frozenOcean, BiomeTemperatures.ICY);
 		temperatures.put(BiomeGenBase.frozenRiver, BiomeTemperatures.ICY);
-		temperatures.put(BiomeGenBase.iceMountains, BiomeTemperatures.ICY);
 
 		temperatures.put(BiomeGenBase.hell, BiomeTemperatures.FIERY);
 
@@ -233,28 +233,28 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 	/** Converts the given coordinates to an RGB representation of those coordinates' biome's color, for the given material type.
 	 * Args: World, x, z, material (String) */
-	public static int[] biomeToRGB(IBlockAccess world, int x, int y, int z, String material) {
+	public static int[] biomeToRGB(IBlockAccess world, int x, int y, int z, Material material) {
 		int color = biomeToHex(world, x, y, z, material);
 		return ReikaColorAPI.HexToRGB(color);
 	}
 
 	/** Converts the given coordinates to a hex representation of those coordinates' biome's color, for the given material type.
 	 * Args: World, x, z, material (String) */
-	public static int biomeToHexColor(IBlockAccess world, int x, int y, int z, String material) {
+	public static int biomeToHexColor(IBlockAccess world, int x, int y, int z, Material material) {
 		int color = biomeToHex(world, x, y, z, material);
 		return color;
 	}
 
-	private static int biomeToHex(IBlockAccess world, int x, int y, int z, String mat) {
+	private static int biomeToHex(IBlockAccess world, int x, int y, int z, Material mat) {
 		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 		int color = 0;
-		if (mat == "Leaves")
+		if (mat == Material.water)
 			color = biome.getBiomeFoliageColor(x, y, z);
-		if (mat == "Grass")
+		if (mat == Material.grass)
 			color = biome.getBiomeGrassColor(x, y, z);
-		if (mat == "Water")
+		if (mat == Material.water)
 			color = biome.getWaterColorMultiplier();
-		if (mat == "Sky")
+		if (mat == Material.air)
 			color = biome.getSkyColorByTemp(biome.getFloatTemperature(x, y, z));
 		return color;
 	}

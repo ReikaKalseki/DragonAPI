@@ -9,11 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
@@ -50,6 +53,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.AnvilChunkLoader;
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.gen.ChunkProviderFlat;
+import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.FlatGeneratorInfo;
 import net.minecraft.world.gen.FlatLayerInfo;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -71,6 +75,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.BlockProperties;
+import Reika.DragonAPI.Instantiable.ResettableRandom;
 import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
 import Reika.DragonAPI.Instantiable.Data.Collections.TimedSet;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
@@ -87,13 +92,32 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaWorldHelper extends DragonAPICore {
 
 	private static final TimedSet<WorldChunk> forcingChunkSet = new TimedSet();
+	private static Field moddedGeneratorList;
+	private static Method computeModdedGeneratorList;
+	private static final Random moddedGenRand_Calcer = new Random();
+	private static final ResettableRandom moddedGenRand = new ResettableRandom();
+
+	static {
+		try {
+			moddedGeneratorList = GameRegistry.class.getDeclaredField("sortedGeneratorList");
+			moddedGeneratorList.setAccessible(true);
+
+			computeModdedGeneratorList = GameRegistry.class.getDeclaredMethod("computeSortedGeneratorList");
+			computeModdedGeneratorList.setAccessible(true);
+		}
+		catch (Exception e) {
+			throw new RuntimeException("Could not find GameRegistry IWorldGenerator data!", e);
+		}
+	}
 
 	public static boolean softBlocks(IBlockAccess world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
@@ -2293,5 +2317,35 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int idx = rand.nextInt(li.size());
 		ChunkCoordIntPair cp = li.get(idx);
 		return new Coordinate((cp.chunkXPos << 4)+rand.nextInt(16), 0, (cp.chunkZPos << 4)+rand.nextInt(16));
+	}
+
+	/** Returns true if the chunk is loaded by the ChunkProviderServer, which is true if the noiseGen phase has been completed. */
+	public static boolean isChunkPastNoiseGen(World world, int x, int z) {
+		return world instanceof WorldServer ? ((ChunkProviderServer)world.getChunkProvider()).loadedChunkHashMap.containsItem(ChunkCoordIntPair.chunkXZ2Int(x, z)) : true;
+	}
+
+	public static List<IWorldGenerator> getModdedGenerators() {
+		try {
+			List<IWorldGenerator> li = (List<IWorldGenerator>)moddedGeneratorList.get(null);
+			while (li == null) {
+				computeModdedGeneratorList.invoke(null);
+				li = (List<IWorldGenerator>)moddedGeneratorList.get(null);
+			}
+			return li;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	/** Note that you must reset the seed of this random for every generator (so they all get the same seed)! */
+	public static ResettableRandom getModdedGeneratorChunkRand(int cx, int cz, World world) {
+		long worldSeed = world.getSeed();
+		moddedGenRand_Calcer.setSeed(worldSeed);
+		long xSeed = moddedGenRand_Calcer.nextLong() >> 2 + 1L;
+		long zSeed = moddedGenRand_Calcer.nextLong() >> 2 + 1L;
+		long seed = (xSeed * cx + zSeed * cz) ^ worldSeed;
+		moddedGenRand.setSeed(seed);
+		return moddedGenRand;
 	}
 }

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.IBlockAccess;
@@ -25,6 +26,8 @@ public final class BlockKey implements BlockCheck {
 
 	public final Block blockID;
 	public final int metadata;
+
+	public static final BlockKey AIR = new BlockKey(Blocks.air);
 
 	public BlockKey(Block b) {
 		this(b, -1);
@@ -101,7 +104,11 @@ public final class BlockKey implements BlockCheck {
 
 	@Override
 	public void place(World world, int x, int y, int z) {
-		world.setBlock(x, y, z, blockID, this.hasMetadata() ? metadata : 0, 3);
+		this.place(world, x, y, z, 3);
+	}
+
+	public void place(World world, int x, int y, int z, int flags) {
+		world.setBlock(x, y, z, blockID, this.hasMetadata() ? metadata : 0, flags);
 	}
 
 	@Override

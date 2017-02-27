@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Bees;
 
+import java.util.EnumMap;
+import java.util.Locale;
+
 import net.minecraftforge.common.util.EnumHelper;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.NestedMap;
@@ -23,10 +26,31 @@ import forestry.api.genetics.IAlleleFlowers;
 import forestry.api.genetics.IAlleleInteger;
 import forestry.api.genetics.IAlleleTolerance;
 
+/** Bees only. */
+public class BeeAlleleRegistry {
 
-public class AlleleRegistry {
+	private static final NestedMap<Class, String, BeeGene> geneMap = new NestedMap();
+	private static final EnumMap<EnumBeeChromosome, Class<? extends BeeGene>> classTypes = new EnumMap(EnumBeeChromosome.class);
 
-	private static NestedMap<Class, String, BeeGene> geneMap = new NestedMap();
+	static {
+		classTypes.put(EnumBeeChromosome.SPEED, Speeds.class);
+		classTypes.put(EnumBeeChromosome.LIFESPAN, Life.class);
+		classTypes.put(EnumBeeChromosome.FERTILITY, Fertility.class);
+		classTypes.put(EnumBeeChromosome.FLOWERING, Flowering.class);
+		classTypes.put(EnumBeeChromosome.FLOWER_PROVIDER, Flower.class);
+		classTypes.put(EnumBeeChromosome.TERRITORY, Territory.class);
+		//classTypes.put(EnumBeeChromosome.TEMPERATURE_TOLERANCE, Tolerance.class);
+		//classTypes.put(EnumBeeChromosome.HUMIDITY_TOLERANCE, Tolerance.class);
+		classTypes.put(EnumBeeChromosome.EFFECT, Effect.class);
+	}
+
+	public static Class<? extends BeeGene> getEnumType(EnumBeeChromosome ebc) {
+		return classTypes.get(ebc);
+	}
+
+	public static BeeGene getEnum(EnumBeeChromosome ebc, String name) {
+		return (BeeGene)Enum.valueOf((Class<? extends Enum>)getEnumType(ebc), name.toUpperCase(Locale.ENGLISH));
+	}
 
 	public static interface BeeGene {
 

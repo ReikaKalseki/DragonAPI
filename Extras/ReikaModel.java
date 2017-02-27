@@ -80,6 +80,9 @@ public class ReikaModel extends ModifiedPlayerModel {
 		this.setPartAngles(ep, tick);
 		float f5 = 0.0625F;
 
+		GL11.glPushMatrix();
+		GL11.glTranslated(0, 0, -0.042);
+
 		if (this.renderTail()) {
 			tail.render(f5);
 			tail3.render(f5);
@@ -106,13 +109,17 @@ public class ReikaModel extends ModifiedPlayerModel {
 			GL11.glRotated(this.getWingAngle()*180/3.14, 0, 1, 0);
 		}*/
 
+		GL11.glPopMatrix();
+		GL11.glPushMatrix();
+
 		double d = 0.25;
 		if (ep.isSneaking())
 			d = 0.3125;
 		GL11.glTranslated(0, d, 0);
 		hornL.render(f5);
 		hornR.render(f5);
-		GL11.glTranslated(0, -d, 0);
+
+		GL11.glPopMatrix();
 	}
 
 	private boolean renderTail() {

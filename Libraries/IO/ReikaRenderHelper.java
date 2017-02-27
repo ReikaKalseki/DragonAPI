@@ -14,6 +14,7 @@ import java.util.EnumSet;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.particle.EffectRenderer;
@@ -85,7 +86,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	/** Converts a biome to a color multiplier (for use in things like leaf textures).
 	 * Args: World, x, z, material (grass, water, etc), bit */
-	public static float biomeToColorMultiplier(World world, int x, int y, int z, String mat, int bit) {
+	public static float biomeToColorMultiplier(World world, int x, int y, int z, Material mat, int bit) {
 		int[] color = ReikaBiomeHelper.biomeToRGB(world, x, y, z, mat);
 		float mult = ReikaColorAPI.RGBtoColorMultiplier(color, bit);
 		return mult;

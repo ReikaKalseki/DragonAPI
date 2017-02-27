@@ -250,7 +250,7 @@ public final class ReikaChunkHelper extends DragonAPICore {
 	public static boolean chunkContainsBiome(World world, int cx, int cz, BiomeGenBase b) {
 		int x = cx << 4;
 		int z = cz << 4;
-		return chunkContainsBiomeBlockCoords(world, cx, cz, b);
+		return chunkContainsBiomeBlockCoords(world, x, z, b);
 	}
 
 	public static boolean chunkContainsBiomeBlockCoords(World world, int x, int z, BiomeGenBase b) {
@@ -260,7 +260,7 @@ public final class ReikaChunkHelper extends DragonAPICore {
 	public static boolean chunkContainsBiomeType(World world, int cx, int cz, Class<? extends BiomeGenBase> c) {
 		int x = cx << 4;
 		int z = cz << 4;
-		return chunkContainsBiomeTypeBlockCoords(world, cx, cz, c);
+		return chunkContainsBiomeTypeBlockCoords(world, x, z, c);
 	}
 
 	public static boolean chunkContainsBiomeTypeBlockCoords(World world, int x, int z, Class<? extends BiomeGenBase> c) {

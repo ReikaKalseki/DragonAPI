@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Rendering;
 
 import java.util.ArrayList;
+import java.util.Random;
 
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 
@@ -20,10 +21,12 @@ public class ColorBlendList {
 	/** Larger = slower */
 	private final float cycleModulus;
 
+	/** Larger = slower */
 	public ColorBlendList(float speed) {
 		cycleModulus = speed;
 	}
 
+	/** Larger = slower */
 	public ColorBlendList(float speed, int... colors) {
 		this(speed);
 		this.addAll(colors);
@@ -102,6 +105,10 @@ public class ColorBlendList {
 		}
 		sb.append("]");
 		return sb.toString();
+	}
+
+	public int getRandomBlendedColor(Random rand) {
+		return this.getColor(rand.nextDouble()*data.size()*cycleModulus);
 	}
 
 }

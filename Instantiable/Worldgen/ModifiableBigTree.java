@@ -20,7 +20,6 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	/** random seed for GenBigTree */
 	protected final Random rand = new Random();
 	/** Reference to the World object. */
-	private World worldObj;
 	private int[] basePos = new int[] {0, 0, 0};
 	private int heightLimit;
 	private int height;
@@ -45,7 +44,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	/**
 	 * Generates a list of leaf nodes for the tree, to be populated by generateLeaves.
 	 */
-	private void generateLeafNodeList() {
+	private void generateLeafNodeList(World world) {
 		height = (int)(heightLimit * heightAttenuation);
 
 		if (height >= heightLimit) {
@@ -86,7 +85,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 					int[] aint1 = new int[] {k1, j, l1};
 					int[] aint2 = new int[] {k1, j + leafDistanceLimit, l1};
 
-					if (this.checkBlockLine(aint1, aint2) == -1) {
+					if (this.checkBlockLine(world, aint1, aint2) == -1) {
 						int[] aint3 = new int[] {basePos[0], basePos[1], basePos[2]};
 						double d3 = Math.sqrt(Math.pow(Math.abs(basePos[0] - aint1[0]), 2.0D) + Math.pow(Math.abs(basePos[2] - aint1[2]), 2.0D));
 						double d4 = d3 * branchSlope;
@@ -98,7 +97,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 							aint3[1] = (int)(aint1[1] - d4);
 						}
 
-						if (this.checkBlockLine(aint3, aint1) == -1) {
+						if (this.checkBlockLine(world, aint3, aint1) == -1) {
 							aint[k][0] = k1;
 							aint[k][1] = j;
 							aint[k][2] = l1;
@@ -117,7 +116,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 		System.arraycopy(aint, 0, leafNodes, 0, k);
 	}
 
-	private void func_150529_a(int x, int y, int z, float p_150529_4_, byte p_150529_5_) {
+	private void func_150529_a(World world, int x, int y, int z, float p_150529_4_, byte p_150529_5_) {
 		int l = (int)(p_150529_4_ + 0.618D);
 		byte b1 = otherCoordPairs[p_150529_5_];
 		byte b2 = otherCoordPairs[p_150529_5_ + 3];
@@ -138,13 +137,13 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 				}
 				else {
 					pos2[b2] = pos1[b2] + j1;
-					Block block1 = worldObj.getBlock(pos2[0], pos2[1], pos2[2]);
+					Block block1 = world.getBlock(pos2[0], pos2[1], pos2[2]);
 
-					if (!block1.isAir(worldObj, pos2[0], pos2[1], pos2[2]) && !block1.isLeaves(worldObj, pos2[0], pos2[1], pos2[2])) {
+					if (!block1.isAir(world, pos2[0], pos2[1], pos2[2]) && !block1.isLeaves(world, pos2[0], pos2[1], pos2[2])) {
 						++j1;
 					}
 					else {
-						this.setBlockAndNotifyAdequately(worldObj, pos2[0], pos2[1], pos2[2], this.getLeafBlock(pos2[0], pos2[1], pos2[2]), this.getLeafMetadata(pos2[0], pos2[1], pos2[2]));
+						this.setBlockAndNotifyAdequately(world, pos2[0], pos2[1], pos2[2], this.getLeafBlock(pos2[0], pos2[1], pos2[2]), this.getLeafMetadata(pos2[0], pos2[1], pos2[2]));
 						++j1;
 					}
 				}
@@ -202,16 +201,16 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	/**
 	 * Generates the leaves surrounding an individual entry in the leafNodes list.
 	 */
-	private void generateLeafNode(int x, int y, int z) {
+	private void generateLeafNode(World world, int x, int y, int z) {
 		int l = y;
 
 		for (int i1 = y + leafDistanceLimit; l < i1; ++l) {
 			float f = this.leafSize(l - y);
-			this.func_150529_a(x, l, z, f, (byte)1);
+			this.func_150529_a(world, x, l, z, f, (byte)1);
 		}
 	}
 
-	private void func_150530_a(int[] pos1, int[] pos2) {
+	private void func_150530_a(World world, int[] pos1, int[] pos2) {
 		int[] aint2 = new int[] {0, 0, 0};
 		byte b0 = 0;
 		byte b1;
@@ -259,7 +258,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 					}
 				}
 
-				this.setBlockAndNotifyAdequately(worldObj, pos3[0], pos3[1], pos3[2], this.getLogBlock(pos3[0], pos3[1], pos3[2]), b5);
+				this.setBlockAndNotifyAdequately(world, pos3[0], pos3[1], pos3[2], this.getLogBlock(pos3[0], pos3[1], pos3[2]), b5);
 			}
 		}
 	}
@@ -267,14 +266,14 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	/**
 	 * Generates the leaf portion of the tree as specified by the leafNodes list.
 	 */
-	private void generateLeaves() {
+	private void generateLeaves(World world) {
 		int i = 0;
 
 		for (int j = leafNodes.length; i < j; ++i) {
 			int k = leafNodes[i][0];
 			int l = leafNodes[i][1];
 			int i1 = leafNodes[i][2];
-			this.generateLeafNode(k, l, i1);
+			this.generateLeafNode(world, k, l, i1);
 		}
 	}
 
@@ -289,32 +288,32 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	 * Places the trunk for the big tree that is being generated. Able to generate double-sized trunks by changing a
 	 * field that is always 1 to 2.
 	 */
-	private void generateTrunk() {
+	private void generateTrunk(World world) {
 		int i = basePos[0];
 		int j = basePos[1];
 		int k = basePos[1] + height;
 		int l = basePos[2];
 		int[] aint = new int[] {i, j, l};
 		int[] aint1 = new int[] {i, k, l};
-		this.func_150530_a(aint, aint1);
+		this.func_150530_a(world, aint, aint1);
 
 		if (trunkSize == 2) {
 			++aint[0];
 			++aint1[0];
-			this.func_150530_a(aint, aint1);
+			this.func_150530_a(world, aint, aint1);
 			++aint[2];
 			++aint1[2];
-			this.func_150530_a(aint, aint1);
+			this.func_150530_a(world, aint, aint1);
 			aint[0] += -1;
 			aint1[0] += -1;
-			this.func_150530_a(aint, aint1);
+			this.func_150530_a(world, aint, aint1);
 		}
 	}
 
 	/**
 	 * Generates additional wood blocks to fill out the bases of different leaf nodes that would otherwise degrade.
 	 */
-	private void generateLeafNodeBases() {
+	private void generateLeafNodeBases(World world) {
 		int i = 0;
 		int j = leafNodes.length;
 
@@ -325,7 +324,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 			int k = aint[1] - basePos[1];
 
 			if (this.leafNodeNeedsBase(k)) {
-				this.func_150530_a(aint, aint2);
+				this.func_150530_a(world, aint, aint2);
 			}
 		}
 	}
@@ -334,7 +333,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	 * Checks a line of blocks in the world from the first coordinate to triplet to the second, returning the distance
 	 * (in blocks) before a non-air, non-leaf block is encountered and/or the end is encountered.
 	 */
-	private int checkBlockLine(int[] c1, int[] c2) {
+	private int checkBlockLine(World world, int[] c1, int[] c2) {
 		int[] aint2 = new int[] {0, 0, 0};
 		byte b0 = 0;
 		byte b1;
@@ -372,9 +371,9 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 				aint3[b1] = c1[b1] + i;
 				aint3[b2] = MathHelper.floor_double(c1[b2] + i * d0);
 				aint3[b3] = MathHelper.floor_double(c1[b3] + i * d1);
-				Block block = worldObj.getBlock(aint3[0], aint3[1], aint3[2]);
+				Block block = world.getBlock(aint3[0], aint3[1], aint3[2]);
 
-				if (!this.isReplaceable(worldObj, aint3[0], aint3[1], aint3[2])) {
+				if (!this.isReplaceable(world, aint3[0], aint3[1], aint3[2])) {
 					break;
 				}
 			}
@@ -387,17 +386,17 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	 * Returns a boolean indicating whether or not the current location for the tree, spanning basePos to to the height
 	 * limit, is valid.
 	 */
-	private boolean validTreeLocation() {
+	private boolean validTreeLocation(World world) {
 		int[] aint = new int[] {basePos[0], basePos[1], basePos[2]};
 		int[] aint1 = new int[] {basePos[0], basePos[1] + heightLimit - 1, basePos[2]};
-		Block block = worldObj.getBlock(basePos[0], basePos[1] - 1, basePos[2]);
+		Block block = world.getBlock(basePos[0], basePos[1] - 1, basePos[2]);
 
-		boolean isSoil = block.canSustainPlant(worldObj, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Blocks.sapling);
+		boolean isSoil = block.canSustainPlant(world, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Blocks.sapling);
 		if (!isSoil) {
 			return false;
 		}
 		else {
-			int i = this.checkBlockLine(aint, aint1);
+			int i = this.checkBlockLine(world, aint, aint1);
 
 			if (i == -1) {
 				return true;
@@ -429,7 +428,6 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 
 	@Override
 	public boolean generate(World world, Random r, int x, int y, int z) {
-		worldObj = world;
 		long l = r.nextLong();
 		rand.setSeed(l);
 		basePos[0] = x;
@@ -440,16 +438,14 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 			heightLimit = 5 + rand.nextInt(heightLimitLimit);
 		}
 
-		if (!this.validTreeLocation()) {
-			worldObj = null; //Fix vanilla Mem leak, holds latest world
+		if (!this.validTreeLocation(world)) {
 			return false;
 		}
 		else {
-			this.generateLeafNodeList();
-			this.generateLeaves();
-			this.generateTrunk();
-			this.generateLeafNodeBases();
-			worldObj = null; //Fix vanilla Mem leak, holds latest world
+			this.generateLeafNodeList(world);
+			this.generateLeaves(world);
+			this.generateTrunk(world);
+			this.generateLeafNodeBases(world);
 			return true;
 		}
 	}

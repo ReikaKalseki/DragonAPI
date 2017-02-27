@@ -52,19 +52,19 @@ public class RainTicker implements TickHandler {
 						for (int n = 0; n < TICKS_PER_CHUNK; n++) {
 							updateLCG = updateLCG * 3 + 1013904223;
 							int pos = updateLCG >> 2;
-							int dx = pos & 15;
-							int dz = pos >> 8 & 15;
-							BiomeGenBase b = world.getBiomeGenForCoords(dx, dz);
-							if (b.canSpawnLightningBolt()) {
-								int dy = pos >> 16 & 15;
-								if (world.canBlockSeeTheSky(dx, dy + 1, dz)) {
-									Block block = extb.getBlockByExtId(dx, dy, dz);
+						int dx = pos & 15;
+						int dz = pos >> 8 & 15;
+				BiomeGenBase b = world.getBiomeGenForCoords(dx, dz);
+				if (b.canSpawnLightningBolt()) {
+					int dy = pos >> 16 & 15;
+				if (world.canBlockSeeTheSky(dx, dy + 1, dz)) {
+					Block block = extb.getBlockByExtId(dx, dy, dz);
 
-									if (block.getTickRandomly()) {
-										block.updateTick(world, cx + dx, cy + dy, cz + dz, world.rand);
-									}
-								}
-							}
+					if (block.getTickRandomly()) {
+						block.updateTick(world, cx + dx, cy + dy, cz + dz, world.rand);
+					}
+				}
+				}
 						}
 					}
 				}

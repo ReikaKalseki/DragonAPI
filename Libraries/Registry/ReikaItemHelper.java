@@ -664,7 +664,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 		int m = 0;
 		if (parts.length == 3) {
 			try {
-				m = Integer.parseInt(parts[2]);
+				m = parts[2].equalsIgnoreCase("*") ? OreDictionary.WILDCARD_VALUE : Integer.parseInt(parts[2]);
 			}
 			catch (NumberFormatException e) {
 

@@ -12,16 +12,23 @@ package Reika.DragonAPI.Instantiable;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import Reika.ChromatiCraft.Registry.ChromaBlocks;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerBlockHandler;
+import Reika.RotaryCraft.Registry.BlockRegistry;
 
 public final class RayTracer {
 
@@ -142,6 +149,50 @@ public final class RayTracer {
 
 	public boolean isBlockPassable(World world, int x, int y, int z) {
 		return !this.isDisallowedBlock(world, x, y, z);
+	}
+
+	public static RayTracer getVisualLOS() {
+		RayTracer trace = new RayTracer(0, 0, 0, 0, 0, 0);
+
+		trace.addTransparentBlock(Blocks.glass);
+		trace.addTransparentBlock(Blocks.ice);
+		trace.addTransparentBlock(Blocks.glass_pane);
+		trace.addTransparentBlock(Blocks.iron_bars);
+		trace.addTransparentBlock(Blocks.fence);
+		trace.addTransparentBlock(Blocks.nether_brick_fence);
+		trace.addTransparentBlock(Blocks.mob_spawner);
+		trace.addTransparentBlock(Blocks.leaves);
+		trace.addTransparentBlock(Blocks.leaves2);
+		trace.allowFluids = true;
+
+		if (ModList.CHROMATICRAFT.isLoaded()) {
+			addCCGlass(trace);
+		}
+		if (ModList.ROTARYCRAFT.isLoaded()) {
+			addRCGlass(trace);
+		}
+		if (ModList.EXTRAUTILS.isLoaded()) {
+			trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 1);
+			trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 2);
+			trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 4);
+		}
+		if (ModList.TINKERER.isLoaded()) {
+			trace.addTransparentBlock(TinkerBlockHandler.getInstance().clearGlassID);
+		}
+
+		return trace;
+	}
+
+	@ModDependent(ModList.ROTARYCRAFT)
+	private static void addCCGlass(RayTracer trace) {
+		trace.addTransparentBlock(ChromaBlocks.GLASS.getBlockInstance());
+		trace.addTransparentBlock(ChromaBlocks.SELECTIVEGLASS.getBlockInstance());
+	}
+
+	@ModDependent(ModList.ROTARYCRAFT)
+	private static void addRCGlass(RayTracer trace) {
+		trace.addTransparentBlock(BlockRegistry.BLASTGLASS.getBlockInstance());
+		trace.addTransparentBlock(BlockRegistry.BLASTPANE.getBlockInstance());
 	}
 
 }

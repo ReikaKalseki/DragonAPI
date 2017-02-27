@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,25 +23,58 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.IO.LuaBlock.LuaBlockDatabase;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.BeeGene;
+import Reika.DragonAPI.ModInteract.Bees.ButterflyAlleleRegistry;
+import Reika.DragonAPI.ModInteract.Bees.ButterflyAlleleRegistry.ButterflyGene;
+import Reika.DragonAPI.ModInteract.Bees.ReikaBeeHelper;
+import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry;
+import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.TreeGene;
+import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 
 import com.google.common.base.Strings;
 
+import forestry.api.apiculture.EnumBeeChromosome;
+import forestry.api.apiculture.EnumBeeType;
+import forestry.api.apiculture.IBeeGenome;
+import forestry.api.arboriculture.EnumGermlingType;
+import forestry.api.arboriculture.EnumTreeChromosome;
+import forestry.api.arboriculture.ITreeGenome;
+import forestry.api.genetics.EnumTolerance;
+import forestry.api.genetics.IAllele;
+import forestry.api.lepidopterology.EnumButterflyChromosome;
+import forestry.api.lepidopterology.EnumFlutterType;
+import forestry.api.lepidopterology.IButterflyGenome;
 
-public class CustomRecipeList {
+
+public final class CustomRecipeList {
 
 	private final DragonAPIMod mod;
 	public final String recipeType;
 
-	private final LuaBlockDatabase data = new LuaBlockDatabase();
+	private LuaBlockDatabase data = new LuaBlockDatabase();
 	private final HashSet<LuaBlock> entries = new HashSet();
 
 	private final HashMap<String, Class> lookups = new HashMap();
+	private static final HashMap<String, DelegateLookup> delegateCalls = new HashMap();
+
+	static {
+		if (ModList.MYSTCRAFT.isLoaded())
+			delegateCalls.put("myst_page", new MystPageLookup());
+		if (ModList.FORESTRY.isLoaded()) {
+			delegateCalls.put("forestry_bee", new BeeLookup());
+			delegateCalls.put("forestry_tree", new TreeLookup());
+			delegateCalls.put("forestry_butterfly", new ButterflyLookup());
+		}
+	}
 
 	private static final Pattern STACKSIZE_PATTERN = Pattern.compile("(.+?)(?:\\*(\\d+))?$");
 
@@ -58,10 +92,24 @@ public class CustomRecipeList {
 		if (!folder.exists() || !folder.isDirectory())
 			return;
 		ArrayList<File> files = ReikaFileReader.getAllFilesInFolder(folder, this.getExtension());
+		this.load(files);
+	}
+
+	public final void load(File f) {
+		this.load(ReikaJavaLibrary.makeListFrom(f));
+	}
+
+	public final void load(Collection<File> files) {
+		this.clear();
 		for (File f : files) {
 			data.loadFromFile(f);
 		}
 		this.parseLuaBlocks();
+	}
+
+	public void clear() {
+		data = new LuaBlockDatabase();
+		entries.clear();
 	}
 
 	private void parseLuaBlocks() {
@@ -135,7 +183,17 @@ public class CustomRecipeList {
 		}
 
 		String key = s.substring(0, s.indexOf(':'));
-		if (lookups.containsKey(key)) {
+		if (key.equals("delegate")) {
+			lookup = lookup.substring(key.length()+1);
+			DelegateLookup delegate = delegateCalls.get(lookup);
+			if (delegate == null)
+				throw new IllegalArgumentException("No such Delegate Lookup '"+lookup+"'!");
+			ItemStack is = delegate.getItem(nbt);
+			if (is == null && !tolerateNull)
+				throw new IllegalArgumentException("Delegate Lookup '"+lookup+"' yielded no item!");
+			return is;
+		}
+		else if (lookups.containsKey(key)) {
 			try {
 				lookup = lookup.substring(key.length()+1);
 				ret = (ItemStack)lookups.get(key).getField(lookup).get(null);
@@ -223,6 +281,181 @@ public class CustomRecipeList {
 				inputs[i] = o;
 			}
 			return new ShapelessOreRecipe(output, inputs);
+		}
+	}
+
+	public static interface DelegateLookup {
+
+		public ItemStack getItem(LuaBlock data);
+
+	}
+
+	private static class MystPageLookup implements DelegateLookup {
+
+		@Override
+		public ItemStack getItem(LuaBlock data) {
+			return ReikaMystcraftHelper.getSymbolPage(data.getString("symbol"));
+		}
+
+	}
+
+	private static class BeeLookup implements DelegateLookup {
+
+		@Override
+		public ItemStack getItem(LuaBlock data) {
+			EnumBeeType type = EnumBeeType.valueOf(data.getString("class"));
+			ItemStack ret = ReikaBeeHelper.getBeeItem(data.getString("species"), type);
+			for (int i = 0; i < EnumBeeChromosome.values().length; i++) {
+				EnumBeeChromosome ec = EnumBeeChromosome.values()[i];
+				if (ec != EnumBeeChromosome.SPECIES) {
+					String key = ec.name().toLowerCase(Locale.ENGLISH);
+
+					if (data.containsKey(key)) {
+						IAllele ia = null;
+
+						switch(ec) {
+							case CAVE_DWELLING:
+							case NOCTURNAL:
+							case TOLERANT_FLYER:
+								ia = ReikaBeeHelper.getBooleanAllele(data.getBoolean(key));
+								break;
+							case EFFECT:
+							case FERTILITY:
+							case FLOWER_PROVIDER:
+							case FLOWERING:
+							case LIFESPAN:
+							case SPEED:
+							case TERRITORY:
+								String val = data.getString(key);
+								BeeGene bg = BeeAlleleRegistry.getEnum(ec, val);
+								ia = bg.getAllele();
+								break;
+							case HUMIDITY_TOLERANCE:
+							case TEMPERATURE_TOLERANCE:
+								EnumTolerance et = EnumTolerance.valueOf(data.getString(key).toUpperCase(Locale.ENGLISH));
+								ia = ReikaBeeHelper.getToleranceGene(et);
+								break;
+							case SPECIES:
+							case HUMIDITY:
+							default:
+								break;
+						}
+
+						if (ia != null) {
+							IBeeGenome ibg = (IBeeGenome)ReikaBeeHelper.getGenome(ret);
+							ReikaBeeHelper.setGene(ret, ibg, ec, ia, false);
+							ReikaBeeHelper.setGene(ret, ibg, ec, ia, true);
+						}
+					}
+				}
+			}
+			return ret;
+		}
+	}
+
+	/** Not yet implemented. */
+	private static class TreeLookup implements DelegateLookup {
+
+		@Override
+		public ItemStack getItem(LuaBlock data) {
+			EnumGermlingType type = EnumGermlingType.valueOf(data.getString("class"));
+			ItemStack ret = ReikaBeeHelper.getTreeItem(data.getString("species"), type);
+			for (int i = 0; i < EnumTreeChromosome.values().length; i++) {
+				EnumTreeChromosome ec = EnumTreeChromosome.values()[i];
+				if (ec != EnumTreeChromosome.SPECIES) {
+					String key = ec.name().toLowerCase(Locale.ENGLISH);
+
+					if (data.containsKey(key)) {
+						IAllele ia = null;
+
+						switch(ec) {
+							case FIREPROOF:
+								ia = ReikaBeeHelper.getBooleanAllele(data.getBoolean(key));
+								break;
+							case EFFECT:
+							case FERTILITY:
+							case FRUITS:
+							case GIRTH:
+							case HEIGHT:
+							case MATURATION:
+							case PLANT:
+							case SAPPINESS:
+							case TERRITORY:
+							case YIELD:
+							case GROWTH:
+								String val = data.getString(key);
+								TreeGene bg = TreeAlleleRegistry.getEnum(ec, val);
+								ia = bg.getAllele();
+								break;
+							case SPECIES:
+							default:
+								break;
+						}
+
+						if (ia != null) {
+							ITreeGenome ibg = (ITreeGenome)ReikaBeeHelper.getGenome(ret);
+							ReikaBeeHelper.setGene(ret, ibg, ec, ia, false);
+							ReikaBeeHelper.setGene(ret, ibg, ec, ia, true);
+						}
+					}
+				}
+			}
+			return ret;
+		}
+	}
+
+	/** Not yet implemented. */
+	private static class ButterflyLookup implements DelegateLookup {
+
+		@Override
+		public ItemStack getItem(LuaBlock data) {
+			EnumFlutterType type = EnumFlutterType.valueOf(data.getString("class"));
+			ItemStack ret = ReikaBeeHelper.getButterflyItem(data.getString("species"), type);
+			for (int i = 0; i < EnumButterflyChromosome.values().length; i++) {
+				EnumButterflyChromosome ec = EnumButterflyChromosome.values()[i];
+				if (ec != EnumButterflyChromosome.SPECIES) {
+					String key = ec.name().toLowerCase(Locale.ENGLISH);
+
+					if (data.containsKey(key)) {
+						IAllele ia = null;
+
+						switch(ec) {
+							case NOCTURNAL:
+							case TOLERANT_FLYER:
+							case FIRE_RESIST:
+								ia = ReikaBeeHelper.getBooleanAllele(data.getBoolean(key));
+								break;
+							case EFFECT:
+							case TERRITORY:
+							case FERTILITY:
+							case FLOWER_PROVIDER:
+							case LIFESPAN:
+							case METABOLISM:
+							case SIZE:
+							case SPEED:
+								String val = data.getString(key);
+								ButterflyGene bg = ButterflyAlleleRegistry.getEnum(ec, val);
+								ia = bg.getAllele();
+								break;
+							case HUMIDITY_TOLERANCE:
+							case TEMPERATURE_TOLERANCE:
+								EnumTolerance et = EnumTolerance.valueOf(data.getString(key).toUpperCase(Locale.ENGLISH));
+								ia = ReikaBeeHelper.getToleranceGene(et);
+								break;
+							case SPECIES:
+							default:
+								break;
+						}
+
+						if (ia != null) {
+							IButterflyGenome ibg = (IButterflyGenome)ReikaBeeHelper.getGenome(ret);
+							ReikaBeeHelper.setGene(ret, ibg, ec, ia, false);
+							ReikaBeeHelper.setGene(ret, ibg, ec, ia, true);
+						}
+					}
+				}
+			}
+			return ret;
 		}
 	}
 

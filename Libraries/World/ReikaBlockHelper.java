@@ -442,4 +442,12 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		return !iba.getBlock(x, y, z).isOpaqueCube();
 	}
+
+	public static boolean isGroundType(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		if (b == Blocks.dirt || b == Blocks.grass || b == Blocks.stone)
+			return true;
+		Material mat = b.getMaterial();
+		return mat == Material.ground;
+	}
 }

@@ -39,6 +39,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.ChromatiCraft.World.GenLootCommand;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
@@ -658,6 +659,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new MemoryUsageCommand());
 		evt.registerServerCommand(new GetUUIDCommand());
 		evt.registerServerCommand(new ReflectionCommand());
+		evt.registerServerCommand(new GenLootCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();

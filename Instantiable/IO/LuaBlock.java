@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
@@ -30,18 +31,47 @@ public abstract class LuaBlock {
 
 	protected final HashSet<String> requiredElements = new HashSet();
 
+	private boolean isListEntry = false;
+	private boolean isList = false;
+
 	protected LuaBlock(String n, LuaBlock lb, LuaBlockDatabase db) {
-		if (n.equals("{"))
+		if (n.equals("{")) {
 			n = Integer.toHexString(System.identityHashCode(this));
+			isListEntry = true;
+		}
 		name = n;
 		parent = lb;
 		tree = lb != null ? lb.tree : db;
 		if (tree == null)
 			throw new MisuseException("You cannot create a LuaBlock without a containing tree!");
-		if (parent != null)
+		if (parent != null) {
 			parent.children.put(name, this);
+			parent.checkListType();
+		}
 
 		requiredElements.add("type");
+	}
+
+	private void checkListType() {
+		if (!data.isEmpty()) {
+			isList = false;
+			return;
+		}
+		for (LuaBlock lb : children.values()) {
+			if (!lb.isListEntry()) {
+				isList = false;
+				return;
+			}
+		}
+		isList = true;
+	}
+
+	public final boolean isList() {
+		return isList;
+	}
+
+	public final boolean isListEntry() {
+		return isListEntry;
 	}
 
 	public final LuaBlock getParent() {
@@ -57,15 +87,15 @@ public abstract class LuaBlock {
 	}
 
 	public final double getDouble(String key) {
-		return Double.parseDouble(this.getString(key));
+		return this.containsKey(key) ? Double.parseDouble(this.getString(key)) : 0;
 	}
 
 	public final boolean getBoolean(String key) {
-		return Boolean.parseBoolean(this.getString(key));
+		return this.containsKey(key) ? Boolean.parseBoolean(this.getString(key)) : false;
 	}
 
 	public final int getInt(String key) {
-		return Integer.parseInt(this.getString(key));
+		return this.containsKey(key) ? Integer.parseInt(this.getString(key)) : 0;
 	}
 
 	public final long getLong(String key) {
@@ -256,6 +286,8 @@ public abstract class LuaBlock {
 			if (s.length() > 0) {
 				while (s.charAt(s.length()-1) == ' ')
 					s = s.substring(0, s.length()-1);
+				while (s.charAt(0) == ' ')
+					s = s.substring(1, s.length());
 			}
 			return s;
 		}
@@ -285,9 +317,23 @@ public abstract class LuaBlock {
 		}
 		for (String s : children.keySet()) {
 			LuaBlock b = children.get(s);
-			ret.put(s, b.asHashMap());
+			ret.put(s, this.getObject(b));
 		}
 		return ret;
+	}
+
+	public final List<Object> asList() {
+		List ret = new ArrayList();
+
+		for (LuaBlock b : children.values()) {
+			ret.add(this.getObject(b));
+		}
+
+		return ret;
+	}
+
+	private Object getObject(LuaBlock b) {
+		return b.isListEntry() && b.data.size() == 1 && b.children.isEmpty() ? this.parseObject(b.data.values().iterator().next()) : b.isList() ? b.asList() : b.asHashMap();
 	}
 
 	private Object parseObject(String s) {

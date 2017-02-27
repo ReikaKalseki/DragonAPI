@@ -21,7 +21,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 
-public class ControllableOreVein extends WorldGenerator {
+public abstract class ControllableOreVein extends WorldGenerator {
 
 	private final BlockKey block;
 
@@ -95,9 +95,7 @@ public class ControllableOreVein extends WorldGenerator {
 		return true;
 	}
 
-	public boolean canPlaceBlockHere(World world, int x, int y, int z) {
-		return true;
-	}
+	public abstract boolean canPlaceBlockHere(World world, int x, int y, int z);
 
 	public static final class ExposedOreVein extends ControllableOreVein {
 

@@ -472,6 +472,24 @@ public class ReikaMystcraftHelper {
 		return null;
 	}
 
+	public static ItemStack getSymbolPage(String id) {
+		PageAPI api = getAPI(APISegment.PAGE);
+		if (api != null) {
+			SymbolAPI api2 = getAPI(APISegment.SYMBOL);
+			IAgeSymbol ias = api2.getSymbol(id);
+			if (ias == null)
+				throw new IllegalArgumentException("No such symbol '"+id+"'!");
+			ItemStack is = new ItemStack((Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.page));
+			if (is != null && is.getItem() != null) {
+				is.stackTagCompound = new NBTTagCompound();
+				//is.stackTagCompound.setTag("symbol", new NBTTagCompound());
+				api.setPageSymbol(is, id);
+				return is;
+			}
+		}
+		return null;
+	}
+
 	public static int getSymbolRank(IAgeSymbol ia) {
 		return (int)((SymbolValuesAPI)getAPI(APISegment.SYMBOLVALUES)).getSymbolItemWeight(ia.identifier());
 	}

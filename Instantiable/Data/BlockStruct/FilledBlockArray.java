@@ -627,4 +627,17 @@ public class FilledBlockArray extends StructuredBlockArray {
 		return set;
 	}
 
+	public boolean isSpaceEmpty(World world, boolean allowSoft) {
+		for (Coordinate c : this.keySet()) {
+			Block b = c.getBlock(world);
+			if (b.isAir(world, c.xCoord, c.yCoord, c.zCoord) || (allowSoft && ReikaWorldHelper.softBlocks(world, c.xCoord, c.yCoord, c.zCoord))) {
+
+			}
+			else {
+				return false;
+			}
+		}
+		return true;
+	}
+
 }

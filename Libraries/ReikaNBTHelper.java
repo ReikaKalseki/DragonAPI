@@ -347,6 +347,15 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 	}
 
+	public static void addListToTags(NBTTagList tag, List<Object> li) {
+		for (Object o : li) {
+			NBTBase b = getTagForObject(o);
+			if (b != null) {
+				tag.appendTag(b);
+			}
+		}
+	}
+
 	public static void addMapToTags(NBTTagCompound tag, HashMap<String, Object> map) {
 		for (String s : map.keySet()) {
 			Object o = map.get(s);
@@ -364,6 +373,27 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	public static void writeMapToNBT(String s, NBTTagCompound tag, HashMap<String, ?> map) {
 		NBTBase dat = getTagForObject(map);
 		tag.setTag(s, dat);
+	}
+
+	public static void writeCollectionToNBT(Collection c, NBTTagCompound NBT, String key) {
+		NBTTagList li = new NBTTagList();
+		for (Object o : c) {
+			NBTBase b = getTagForObject(o);
+			NBTTagCompound tag = new NBTTagCompound();
+			tag.setTag("value", b);
+			li.appendTag(tag);
+		}
+		NBT.setTag(key, li);
+	}
+
+	public static void readCollectionFromNBT(Collection c, NBTTagCompound NBT, String key) {
+		c.clear();
+		NBTTagList li = NBT.getTagList(key, NBTTypes.COMPOUND.ID);
+		for (Object o : li.tagList) {
+			NBTTagCompound tag = (NBTTagCompound)o;
+			NBTBase b = tag.getTag("value");
+			c.add(getValue(b));
+		}
 	}
 
 	public static NBTBase getNestedNBTTag(NBTTagCompound tag, ArrayList<String> li, String name) {
@@ -385,6 +415,8 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	}
 
 	public static NBTTagCompound constructNBT(LuaBlock lb) {
+		if (lb.isList())
+			throw new IllegalArgumentException("The top-level LuaBlock must be a map type (root NBTTagCompound)!");
 		NBTTagCompound tag = new NBTTagCompound();
 		addMapToTags(tag, lb.asHashMap());
 		return tag;

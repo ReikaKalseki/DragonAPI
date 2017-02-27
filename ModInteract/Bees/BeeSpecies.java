@@ -23,12 +23,12 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Fertility;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Flowering;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Life;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Speeds;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Territory;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Tolerance;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Fertility;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Flowering;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Life;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Speeds;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Territory;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Tolerance;
 
 import com.mojang.authlib.GameProfile;
 

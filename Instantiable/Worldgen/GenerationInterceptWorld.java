@@ -31,6 +31,7 @@ import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 
@@ -42,6 +43,7 @@ public final class GenerationInterceptWorld extends World {
 	private final HashSet<BlockKey> disallowedBlocks = new HashSet();
 	private final HashSet<Coordinate> changeList = new HashSet();
 	private final Collection<TileHook> hooks = new ArrayList();
+	private final BlockMap<BlockKey> overrides = new BlockMap();
 
 	public GenerationInterceptWorld() {
 		super(new NoSaveHandler(), null, new WorldSettings(0, GameType.NOT_SET, false, false, WorldType.DEFAULT), null, null);
@@ -52,6 +54,25 @@ public final class GenerationInterceptWorld extends World {
 
 		if (delegate == world)
 			return;
+
+		if (world == null) {
+			try {
+				delegate = null;
+				boolean obf = !ReikaObfuscationHelper.isDeObfEnvironment();
+				ReikaReflectionHelper.setFinalField(World.class, obf ? "field_73019_z" : "saveHandler", this, null);
+				ReikaReflectionHelper.setFinalField(World.class, obf ? "field_73011_w" : "provider", this, null);
+				worldInfo = null;
+				ReikaReflectionHelper.setFinalField(World.class, obf ? "field_72984_F" : "theProfiler", this, null);
+				mapStorage = null;
+				chunkProvider = null;
+				ReikaReflectionHelper.setFinalField(World.class, obf ? "perWorldStorage" : "perWorldStorage", this, null);
+				villageCollectionObj = null;
+			}
+			catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			return;
+		}
 
 		delegate = world;
 		try {
@@ -84,6 +105,18 @@ public final class GenerationInterceptWorld extends World {
 
 	public void addHook(TileHook th) {
 		hooks.add(th);
+	}
+
+	public void addGetOverride(Block b, int meta, Block overb) {
+		this.addGetOverride(b, meta, overb, 0);
+	}
+
+	public void addGetOverride(Block b, int meta, Block overb, int overm) {
+		this.addGetOverride(b, meta, new BlockKey(overb, overm));
+	}
+
+	public void addGetOverride(Block b, int meta, BlockKey override) {
+		overrides.put(b, meta, override);
 	}
 
 	private boolean check(Block b, int meta) {
@@ -124,17 +157,22 @@ public final class GenerationInterceptWorld extends World {
 		this.markHook(x, y, z);
 	}
 
-	/*
+	/**/
 	@Override
 	public Block getBlock(int x, int y, int z) {
-		return delegate.getBlock(x, y, z);
+		Block ret = delegate.getBlock(x, y, z);
+		BlockKey over = overrides.get(ret, delegate.getBlockMetadata(x, y, z));
+		return over != null ? over.blockID : ret;
 	}
 
 	@Override
 	public int getBlockMetadata(int x, int y, int z) {
-		return delegate.getBlockMetadata(x, y, z);
+		int ret = delegate.getBlockMetadata(x, y, z);
+		BlockKey over = overrides.get(delegate.getBlock(x, y, z), ret);
+		return over != null ? over.metadata : ret;
 	}
 
+	/*
 	@Override
 	public TileEntity getTileEntity(int x, int y, int z) {
 		return delegate.getTileEntity(x, y, z);
@@ -175,11 +213,12 @@ public final class GenerationInterceptWorld extends World {
 	 */
 
 	public void runHooks() {
-		for (Coordinate c : changeList) {
-			TileEntity te = c.getTileEntity(delegate);
-			for (TileHook th : hooks) {
-				if (th.shouldRun(delegate, c.xCoord, c.yCoord, c.zCoord))
+		for (TileHook th : hooks) {
+			for (Coordinate c : changeList) {
+				if (th.shouldRun(delegate, c.xCoord, c.yCoord, c.zCoord)) {
+					TileEntity te = c.getTileEntity(delegate);
 					th.onTileChanged(te);
+				}
 			}
 		}
 		changeList.clear();

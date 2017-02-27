@@ -580,4 +580,22 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	public static double powerInterpolation(double x, double x1, double x2, double y1, double y2, double power) {
 		return (y2-y1)*Math.pow(Math.pow(x2-x1, power)-Math.pow(x-x1, power), 1D/power)/(x2-x1);
 	}
+
+	public static long cantorCombine(long... vals) {
+		long ret = cantorCombine(vals[0], vals[1]);
+		for (int i = 2; i < vals.length; i++) {
+			ret = cantorCombine(ret, vals[i]);
+		}
+		return ret;
+	}
+
+	public static long cantorCombine(long a, long b) {
+		long k1 = a*2;
+		long k2 = b*2;
+		if (a < 0)
+			k1 = a*-2-1;
+		if (b < 0)
+			k2 = b*-2-1;
+		return (long)(0.5*(k1 + k2)*(k1 + k2 + 1) + k2);
+	}
 }

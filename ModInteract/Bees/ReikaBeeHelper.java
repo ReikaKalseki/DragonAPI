@@ -16,17 +16,20 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+
+import org.apache.commons.lang3.text.WordUtils;
+
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.BeeGene;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Effect;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Fertility;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Flower;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Flowering;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Life;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Speeds;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Territory;
-import Reika.DragonAPI.ModInteract.Bees.AlleleRegistry.Tolerance;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.BeeGene;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Effect;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Fertility;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Flower;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Flowering;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Life;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Speeds;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Territory;
+import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Tolerance;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ForestryHandler;
 import forestry.api.apiculture.BeeManager;
 import forestry.api.apiculture.EnumBeeChromosome;
@@ -36,12 +39,14 @@ import forestry.api.apiculture.IBee;
 import forestry.api.apiculture.IBeeGenome;
 import forestry.api.apiculture.IBeeHousing;
 import forestry.api.apiculture.IBeeRoot;
+import forestry.api.arboriculture.EnumGermlingType;
 import forestry.api.arboriculture.EnumTreeChromosome;
 import forestry.api.arboriculture.IAlleleFruit;
 import forestry.api.arboriculture.IAlleleGrowth;
 import forestry.api.arboriculture.IAlleleTreeSpecies;
 import forestry.api.arboriculture.ITreeGenome;
 import forestry.api.arboriculture.ITreeRoot;
+import forestry.api.arboriculture.TreeManager;
 import forestry.api.core.EnumHumidity;
 import forestry.api.core.EnumTemperature;
 import forestry.api.genetics.AlleleManager;
@@ -56,6 +61,11 @@ import forestry.api.genetics.IAlleleTolerance;
 import forestry.api.genetics.IChromosome;
 import forestry.api.genetics.IGenome;
 import forestry.api.genetics.IIndividual;
+import forestry.api.lepidopterology.ButterflyManager;
+import forestry.api.lepidopterology.EnumButterflyChromosome;
+import forestry.api.lepidopterology.EnumFlutterType;
+import forestry.api.lepidopterology.IButterflyGenome;
+import forestry.api.lepidopterology.IButterflyRoot;
 
 
 public class ReikaBeeHelper {
@@ -67,6 +77,20 @@ public class ReikaBeeHelper {
 	public static final ItemStack getBeeItem(World world, String bee, EnumBeeType type) {
 		IBeeRoot root = BeeManager.beeRoot;
 		return root.getMemberStack(root.getBee(world, root.templateAsGenome(root.getTemplate(bee))), type.ordinal());
+	}
+
+	public static final ItemStack getTreeItem(String Tree, EnumGermlingType type) {
+		return getTreeItem(ReikaWorldHelper.getBasicReferenceWorld(), Tree, type);
+	}
+
+	public static final ItemStack getTreeItem(World world, String Tree, EnumGermlingType type) {
+		ITreeRoot root = TreeManager.treeRoot;
+		return root.getMemberStack(root.getTree(world, root.templateAsGenome(root.getTemplate(Tree))), type.ordinal());
+	}
+
+	public static final ItemStack getButterflyItem(String Butterfly, EnumFlutterType type) {
+		IButterflyRoot root = ButterflyManager.butterflyRoot;
+		return root.getMemberStack(root.templateAsIndividual(root.getTemplate(Butterfly)), type.ordinal());
 	}
 
 	public static void analyzeBee(ItemStack is) {
@@ -163,26 +187,68 @@ public class ReikaBeeHelper {
 			analyzeBee(queen);
 	}
 
+	public static void setGene(ItemStack queen, ITreeGenome ibg, EnumTreeChromosome gene, IAllele value, boolean inactive) {
+		boolean ana = AlleleManager.alleleRegistry.getIndividual(queen).isAnalyzed();
+		IChromosome[] ic = ibg.getChromosomes();
+		IAllele[] arr = TreeManager.treeRoot.getDefaultTemplate();
+		IAllele[] arr2 = TreeManager.treeRoot.getDefaultTemplate();
+		for (int i = 0; i < arr.length; i++) {
+			if (ic[i] != null) {
+				arr[i] = ic[i].getActiveAllele();
+				arr2[i] = ic[i].getInactiveAllele();
+			}
+		}
+		arr[gene.ordinal()] = value;
+		if (inactive) {
+			arr2[gene.ordinal()] = value;
+		}
+		ITreeGenome repl = TreeManager.treeRoot.templateAsGenome(arr, arr2);
+		saveBee(repl, queen);
+		if (ana)
+			analyzeBee(queen);
+	}
+
+	public static void setGene(ItemStack queen, IButterflyGenome ibg, EnumButterflyChromosome gene, IAllele value, boolean inactive) {
+		boolean ana = AlleleManager.alleleRegistry.getIndividual(queen).isAnalyzed();
+		IChromosome[] ic = ibg.getChromosomes();
+		IAllele[] arr = ButterflyManager.butterflyRoot.getDefaultTemplate();
+		IAllele[] arr2 = ButterflyManager.butterflyRoot.getDefaultTemplate();
+		for (int i = 0; i < arr.length; i++) {
+			if (ic[i] != null) {
+				arr[i] = ic[i].getActiveAllele();
+				arr2[i] = ic[i].getInactiveAllele();
+			}
+		}
+		arr[gene.ordinal()] = value;
+		if (inactive) {
+			arr2[gene.ordinal()] = value;
+		}
+		IButterflyGenome repl = ButterflyManager.butterflyRoot.templateAsGenome(arr, arr2);
+		saveBee(repl, queen);
+		if (ana)
+			analyzeBee(queen);
+	}
+
 	public static BeeGene getGeneEnum(EnumBeeChromosome gene, IBeeGenome ibg) {
 		switch(gene) {
 			case EFFECT:
-				return AlleleRegistry.getEnum(ibg.getActiveAllele(gene), Effect.class);
+				return BeeAlleleRegistry.getEnum(ibg.getActiveAllele(gene), Effect.class);
 			case FERTILITY:
-				return AlleleRegistry.getEnum(ibg.getActiveAllele(gene), Fertility.class);
+				return BeeAlleleRegistry.getEnum(ibg.getActiveAllele(gene), Fertility.class);
 			case FLOWERING:
-				return AlleleRegistry.getEnum(ibg.getActiveAllele(gene), Flowering.class);
+				return BeeAlleleRegistry.getEnum(ibg.getActiveAllele(gene), Flowering.class);
 			case FLOWER_PROVIDER:
-				return AlleleRegistry.getEnum(ibg.getActiveAllele(gene), Flower.class);
+				return BeeAlleleRegistry.getEnum(ibg.getActiveAllele(gene), Flower.class);
 			case HUMIDITY_TOLERANCE:
 				return getToleranceType(ibg.getToleranceHumid());
 			case TEMPERATURE_TOLERANCE:
 				return getToleranceType(ibg.getToleranceTemp());
 			case LIFESPAN:
-				return AlleleRegistry.getEnum(ibg.getActiveAllele(gene), Life.class);
+				return BeeAlleleRegistry.getEnum(ibg.getActiveAllele(gene), Life.class);
 			case SPEED:
-				return AlleleRegistry.getEnum(ibg.getActiveAllele(gene), Speeds.class);
+				return BeeAlleleRegistry.getEnum(ibg.getActiveAllele(gene), Speeds.class);
 			case TERRITORY:
-				return AlleleRegistry.getEnum(ibg.getActiveAllele(gene), Territory.class);
+				return BeeAlleleRegistry.getEnum(ibg.getActiveAllele(gene), Territory.class);
 			default:
 				return null;
 		}
@@ -214,6 +280,10 @@ public class ReikaBeeHelper {
 				}
 			}
 		}
+	}
+
+	public static IAlleleBoolean getBooleanAllele(boolean value) { //exact same as forestry code
+		return (IAlleleBoolean)AlleleManager.alleleRegistry.getAllele("forestry.bool"+WordUtils.capitalize(Boolean.toString(value)));
 	}
 
 	public static void setBeeMate(IBee ii, IBee repl) {
