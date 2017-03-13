@@ -247,4 +247,8 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		return AxisAlignedBB.getBoundingBox(x1, y1, z1, x1, y1, z1).addCoord(x2, y2, z2);
 	}
 
+	public static AxisAlignedBB copyAABB(AxisAlignedBB box) {
+		return AxisAlignedBB.getBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+	}
+
 }

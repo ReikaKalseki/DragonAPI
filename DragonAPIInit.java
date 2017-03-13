@@ -201,7 +201,7 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 
-@Mod(modid = "DragonAPI", certificateFingerprint = "@GET_FINGERPRINT@", dependencies=DragonAPICore.dependencies)
+@Mod(modid = "DragonAPI", version = "v@MAJOR_VERSION@@MINOR_VERSION@", certificateFingerprint = "@GET_FINGERPRINT@", dependencies=DragonAPICore.dependencies)
 public class DragonAPIInit extends DragonAPIMod {
 
 	public static final String packetChannel = "DragonAPIData";

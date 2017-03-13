@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 import java.util.Set;
 
 import net.minecraft.world.World;
@@ -701,12 +702,21 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return arr;
 	}
 
-	public static <E> E getRandomListEntry(List<E> li) {
-		return li.isEmpty() ? null : li.get(DragonAPICore.rand.nextInt(li.size()));
+	public static <E> E getRandomListEntry(Random rand, List<E> li) {
+		return li.isEmpty() ? null : li.get(rand.nextInt(li.size()));
 	}
 
-	public static <E> E getRandomCollectionEntry(Collection<E> c) {
-		return c.isEmpty() ? null : new ArrayList<E>(c).get(DragonAPICore.rand.nextInt(c.size()));
+	public static <E> E getRandomCollectionEntry(Random rand, Collection<E> c) {
+		return c.isEmpty() ? null : c instanceof List ? getRandomListEntry(rand, (List<E>)c) : new ArrayList<E>(c).get(rand.nextInt(c.size()));
+	}
+
+	public static <E> E getAndRemoveRandomCollectionEntry(Random rand, Collection<E> c) {
+		if (c instanceof List) {
+			return ((List<E>)c).remove(rand.nextInt(c.size()));
+		}
+		E val = getRandomCollectionEntry(rand, c);
+		c.remove(val);
+		return val;
 	}
 
 	public static String getTopLevelPackage(Class c) {
@@ -788,6 +798,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 				li.addFirst(o);
 			}
 		}
+	}
+
+	public static <V> Collection<V> combineCollections(Collection<V>... colls) {
+		Collection<V> ret = new ArrayList();
+		for (int i = 0; i < colls.length; i++) {
+			ret.addAll(colls[i]);
+		}
+		return ret;
 	}
 
 	public static class ReverseComparator implements Comparator<Comparable> {

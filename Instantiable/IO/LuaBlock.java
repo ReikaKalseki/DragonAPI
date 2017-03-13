@@ -284,9 +284,9 @@ public abstract class LuaBlock {
 				s = s.substring(0, s.indexOf("//"));
 			}
 			if (s.length() > 0) {
-				while (s.charAt(s.length()-1) == ' ')
+				while (!s.isEmpty() && s.charAt(s.length()-1) == ' ')
 					s = s.substring(0, s.length()-1);
-				while (s.charAt(0) == ' ')
+				while (!s.isEmpty() && s.charAt(0) == ' ')
 					s = s.substring(1, s.length());
 			}
 			return s;

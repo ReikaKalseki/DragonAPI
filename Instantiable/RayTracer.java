@@ -172,9 +172,11 @@ public final class RayTracer {
 			addRCGlass(trace);
 		}
 		if (ModList.EXTRAUTILS.isLoaded()) {
-			trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 1);
-			trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 2);
-			trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 4);
+			if (ExtraUtilsHandler.getInstance().deco2ID != null) {
+				trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 1);
+				trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 2);
+				trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 4);
+			}
 		}
 		if (ModList.TINKERER.isLoaded()) {
 			trace.addTransparentBlock(TinkerBlockHandler.getInstance().clearGlassID);
@@ -183,7 +185,7 @@ public final class RayTracer {
 		return trace;
 	}
 
-	@ModDependent(ModList.ROTARYCRAFT)
+	@ModDependent(ModList.CHROMATICRAFT)
 	private static void addCCGlass(RayTracer trace) {
 		trace.addTransparentBlock(ChromaBlocks.GLASS.getBlockInstance());
 		trace.addTransparentBlock(ChromaBlocks.SELECTIVEGLASS.getBlockInstance());

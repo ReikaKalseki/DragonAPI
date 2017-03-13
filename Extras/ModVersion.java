@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.Properties;
+import java.util.zip.ZipFile;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -104,6 +105,30 @@ public class ModVersion implements Comparable<ModVersion> {
 
 	public boolean isNewerMinorVersion(ModVersion v) {
 		return v.majorVersion == majorVersion && v.getSubVersionIndex() < this.getSubVersionIndex();
+	}
+
+	/** Not for setting ModContainer data; only use this during construction to pass to FML @Mod! */
+	public static ModVersion readFromJar(ZipFile jar, String innerName) {
+		if (DragonAPICore.isReikasComputer() && ReikaObfuscationHelper.isDeObfEnvironment())
+			return source;
+		Properties p = new Properties();
+		String path = ReikaStringParser.stripSpaces("version_"+ReikaStringParser.stripSpaces(innerName+".properties"));
+		try {
+			InputStream stream = ModVersion.class.getClassLoader().getResourceAsStream(path);
+			if (stream == null) {
+				return ModVersion.error;
+			}
+			p.load(stream);
+			String mj = p.getProperty("Major");
+			String mn = p.getProperty("Minor");
+			if (mj == null || mn == null || mj.equals("null") || mn.equals("null") || mj.isEmpty() || mn.isEmpty())
+				return ModVersion.error;
+			return getFromString(mj+mn);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return ModVersion.error;
+		}
 	}
 
 	public static ModVersion readFromFile(DragonAPIMod mod) {

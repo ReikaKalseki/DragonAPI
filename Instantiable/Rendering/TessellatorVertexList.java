@@ -137,6 +137,13 @@ public class TessellatorVertexList {
 			posY += dy;
 			posZ += dz;
 		}
+
+		public void rotate(double rx, double ry, double rz, double ox, double oy, double oz) {
+			Vec3 ret = ReikaVectorHelper.rotateVector(Vec3.createVectorHelper(posX-ox, posY-oy, posZ-oz), rx, ry, rz);
+			posX = ox+ret.xCoord;
+			posY = oy+ret.yCoord;
+			posZ = oz+ret.zCoord;
+		}
 	}
 
 	public void offset(double dx, double dy, double dz) {
@@ -214,11 +221,23 @@ public class TessellatorVertexList {
 
 	public void rotateNonOrthogonal(double rx, double ry, double rz) {
 		for (TessellatorVertex v : data) {
-			Vec3 ret = ReikaVectorHelper.rotateVector(Vec3.createVectorHelper(v.posX-originX, v.posY-originY, v.posZ-originZ), rx, ry, rz);
-			v.posX = originX+ret.xCoord;
-			v.posY = originY+ret.yCoord;
-			v.posZ = originZ+ret.zCoord;
+			v.rotate(rx, ry, rz, originX, originY, originZ);
 		}
+	}
+
+	public void center() {
+		double cx = 0;
+		double cy = 0;
+		double cz = 0;
+		for (TessellatorVertex v : data) {
+			cx += v.posX;
+			cy += v.posY;
+			cz += v.posZ;
+		}
+		cx /= data.size();
+		cy /= data.size();
+		cz /= data.size();
+		this.offset(-cx, -cy, -cz);
 	}
 
 	public void clear() {

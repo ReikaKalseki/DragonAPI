@@ -28,9 +28,9 @@ public class VillagerTradeEvent extends Patcher {
 	@Override
 	protected void apply(ClassNode cn) {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70933_a", "useRecipe", "(Lnet/minecraft/village/MerchantRecipe;)V");
-		m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
-		m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 1));
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/VillagerTradeEvent", "fire", "(Lnet/minecraft/entity/passive/EntityVillager;Lnet/minecraft/village/MerchantRecipe;)V", false));
+		m.instructions.insert(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/VillagerTradeEvent", "fire", "(Lnet/minecraft/entity/passive/EntityVillager;Lnet/minecraft/village/MerchantRecipe;)V", false));
+		m.instructions.insert(new VarInsnNode(Opcodes.ALOAD, 1));
+		m.instructions.insert(new VarInsnNode(Opcodes.ALOAD, 0));
 	}
 
 }

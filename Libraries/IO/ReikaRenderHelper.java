@@ -45,6 +45,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.Instantiable.Effects.ReikaModelledBreakFX;
+import Reika.DragonAPI.Instantiable.Rendering.TessellatorVertexList;
 import Reika.DragonAPI.Interfaces.TextureFetcher;
 import Reika.DragonAPI.Interfaces.TileModel;
 import Reika.DragonAPI.Interfaces.TileEntity.RenderFetcher;
@@ -1284,7 +1285,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 				return;
 			if (b.isAir(world, dx, dy, dz))
 				return;
-			if (!b.getMaterial().isSolid() && !b.isSideSolid(world, dx, dy, dz, dir.getOpposite()))
+			if (!b.getMaterial().isSolid() || !b.isSideSolid(world, dx, dy, dz, dir.getOpposite()))
 				return;
 		}
 
@@ -1456,6 +1457,170 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			mcp2.prevRotationPitch = (float)pitchPrev;
 		}
 		Minecraft.getMinecraft().mouseHelper.grabMouseCursor();
+	}
+
+	public static void renderBlockSubCube(int x, int y, int z, double dx, double dy, double dz, double sz, Tessellator v5, RenderBlocks rb, Block b, int meta) {
+		/*
+		for (int s = 0; s < 6; s++) {
+			IIcon ico = rb.getIconSafe(b.getIcon(s, meta));
+			double d1 = 0;
+			double d2 = 0;
+			switch(s) {
+				case 0:
+					d1 = dx;
+					d2 = dz;
+					break;
+				case 1:
+					d1 = dx;
+					d2 = dz;
+					break;
+				case 2:
+					d1 = dy;
+					d2 = dz;
+					break;
+				case 3:
+					d1 = dy;
+					d2 = dz;
+					break;
+				case 4:
+					d1 = dy;
+					d2 = dx;
+					break;
+				case 5:
+					d1 = dy;
+					d2 = dx;
+					break;
+			}
+			float u = ico.getInterpolatedU(d1);
+			float v = ico.getInterpolatedV(d2);
+			float du = ico.getInterpolatedU(d1+sz);
+			float dv = ico.getInterpolatedV(d2+sz);
+			switch(s) {
+				case 0:
+					v5.setColorOpaque_F(0.5F, 0.5F, 0.5F);
+					v5.addVertexWithUV(x+dx/16,			y+dy/16, z+dz/16,			u, v);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, z+dz/16,			du, v);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, z+dz/16+sz/16,		du, dv);
+					v5.addVertexWithUV(x+dx/16,			y+dy/16, z+dz/16+sz/16,		u, dv);
+					break;
+				case 1:
+					v5.setColorOpaque_F(1, 1, 1);
+					v5.addVertexWithUV(x+dx/16,			y+dy/16+sz/16, z+dz/16+sz/16,	u, dv);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16+sz/16,	du, dv);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16,			du, v);
+					v5.addVertexWithUV(x+dx/16,			y+dy/16+sz/16, z+dz/16,			u, v);
+					break;
+				case 2:
+					v5.setColorOpaque_F(0.6F, 0.6F, 0.6F);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, z+dz/16,				du, dv);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16,			du, v);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16+sz/16,	u, v);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, z+dz/16+sz/16,			u, dv);
+					break;
+				case 3:
+					v5.setColorOpaque_F(0.6F, 0.6F, 0.6F);
+					v5.addVertexWithUV(x+dx/16,	y+dy/16, z+dz/16+sz/16,			du, dv);
+					v5.addVertexWithUV(x+dx/16,	y+dy/16+sz/16, z+dz/16+sz/16,	du, v);
+					v5.addVertexWithUV(x+dx/16,	y+dy/16+sz/16, z+dz/16,			u, v);
+					v5.addVertexWithUV(x+dx/16,	y+dy/16, z+dz/16,				u, dv);
+					break;
+				case 4:
+					v5.setColorOpaque_F(0.75F, 0.75F, 0.75F);
+					v5.addVertexWithUV(x+dx/16,			y+dy/16, 		z+dz/16+sz/16,	u, dv);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, 		z+dz/16+sz/16,	du, dv);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16+sz/16,	du, v);
+					v5.addVertexWithUV(x+dx/16,			y+dy/16+sz/16, z+dz/16+sz/16,	u, v);
+					break;
+				case 5:
+					v5.setColorOpaque_F(0.75F, 0.75F, 0.75F);
+					v5.addVertexWithUV(x+dx/16,			y+dy/16+sz/16, z+dz/16,		du, v);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16,		u, v);
+					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, 		z+dz/16,	u, dv);
+					v5.addVertexWithUV(x+dx/16,			y+dy/16, 		z+dz/16,	du, dv);
+					break;
+			}
+		}
+		 */
+		rb.renderAllFaces = true;
+		rb.renderMinX = dx/16;
+		rb.renderMinY = dy/16;
+		rb.renderMinZ = dz/16;
+		rb.renderMaxX = rb.renderMinX+sz/16;
+		rb.renderMaxY = rb.renderMinY+sz/16;
+		rb.renderMaxZ = rb.renderMinZ+sz/16;
+		rb.partialRenderBounds = true;
+		rb.renderStandardBlockWithAmbientOcclusion(b, x, y, z, 1, 1, 1);
+		rb.setRenderBounds(0, 0, 0, 1, 1, 1);
+	}
+
+	public static void renderIconIn3D(TessellatorVertexList v5, IIcon ico, int x, int y, int z) {
+		float t = 0.0625F;
+		float w = ico.getIconWidth();
+		float h = ico.getIconHeight();
+		float maxu = ico.getMaxU();
+		float maxv = ico.getMaxV();
+		float minu = ico.getMinU();
+		float minv = ico.getMinV();
+
+		//v5.setNormal(0.0F, 0.0F, 1.0F);
+		v5.addVertexWithUVColor(0.0D, 0.0D, 0.0D, maxu, maxv, 0xffffffff);
+		v5.addVertexWithUVColor(1.0D, 0.0D, 0.0D, minu, maxv, 0xffffffff);
+		v5.addVertexWithUVColor(1.0D, 1.0D, 0.0D, minu, minv, 0xffffffff);
+		v5.addVertexWithUVColor(0.0D, 1.0D, 0.0D, maxu, minv, 0xffffffff);
+
+		//v5.setNormal(0.0F, 0.0F, -1.0F);
+		v5.addVertexWithUVColor(0.0D, 1.0D, 0.0F - t, maxu, minv, 0xffa0a0a0);
+		v5.addVertexWithUVColor(1.0D, 1.0D, 0.0F - t, minu, minv, 0xffa0a0a0);
+		v5.addVertexWithUVColor(1.0D, 0.0D, 0.0F - t, minu, maxv, 0xffa0a0a0);
+		v5.addVertexWithUVColor(0.0D, 0.0D, 0.0F - t, maxu, maxv, 0xffa0a0a0);
+
+		float f5 = 0.5F * (maxu - minu) / w;
+		float f6 = 0.5F * (maxv - minv) / h;
+		//v5.setNormal(-1.0F, 0.0F, 0.0F);
+		int k;
+		float f7;
+		float f8;
+		for (k = 0; k < w; ++k) {
+			f7 = k / w;
+			f8 = maxu + (minu - maxu) * f7 - f5;
+			v5.addVertexWithUVColor(f7, 0.0D, 0.0F - t, f8, maxv, 0xffb5b5b5);
+			v5.addVertexWithUVColor(f7, 0.0D, 0.0D, f8, maxv, 0xffb5b5b5);
+			v5.addVertexWithUVColor(f7, 1.0D, 0.0D, f8, minv, 0xffb5b5b5);
+			v5.addVertexWithUVColor(f7, 1.0D, 0.0F - t, f8, minv, 0xffb5b5b5);
+		}
+
+		//v5.setNormal(1.0F, 0.0F, 0.0F);
+		float f9;
+		for (k = 0; k < w; ++k) {
+			f7 = k / w;
+			f8 = maxu + (minu - maxu) * f7 - f5;
+			f9 = f7 + 1.0F / w;
+			v5.addVertexWithUVColor(f9, 1.0D, 0.0F - t, f8, minv, 0xffb5b5b5);
+			v5.addVertexWithUVColor(f9, 1.0D, 0.0D, f8, minv, 0xffb5b5b5);
+			v5.addVertexWithUVColor(f9, 0.0D, 0.0D, f8, maxv, 0xffb5b5b5);
+			v5.addVertexWithUVColor(f9, 0.0D, 0.0F - t, f8, maxv, 0xffb5b5b5);
+		}
+
+		//v5.setNormal(0.0F, 1.0F, 0.0F);
+		for (k = 0; k < h; ++k) {
+			f7 = k / h;
+			f8 = maxv + (minv - maxv) * f7 - f6;
+			f9 = f7 + 1.0F / h;
+			v5.addVertexWithUVColor(0.0D, f9, 0.0D, maxu, f8, 0xffb5b5b5);
+			v5.addVertexWithUVColor(1.0D, f9, 0.0D, minu, f8, 0xffb5b5b5);
+			v5.addVertexWithUVColor(1.0D, f9, 0.0F - t, minu, f8, 0xffb5b5b5);
+			v5.addVertexWithUVColor(0.0D, f9, 0.0F - t, maxu, f8, 0xffb5b5b5);
+		}
+
+		//v5.setNormal(0.0F, -1.0F, 0.0F);
+		for (k = 0; k < h; ++k) {
+			f7 = k / h;
+			f8 = maxv + (minv - maxv) * f7 - f6;
+			v5.addVertexWithUVColor(1.0D, f7, 0.0D, minu, f8, 0xffb5b5b5);
+			v5.addVertexWithUVColor(0.0D, f7, 0.0D, maxu, f8, 0xffb5b5b5);
+			v5.addVertexWithUVColor(0.0D, f7, 0.0F - t, maxu, f8, 0xffb5b5b5);
+			v5.addVertexWithUVColor(1.0D, f7, 0.0F - t, minu, f8, 0xffb5b5b5);
+		}
 	}
 
 }

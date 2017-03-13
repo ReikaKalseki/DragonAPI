@@ -101,6 +101,11 @@ public final class ReikaGuiAPI extends GuiScreen {
 		par1FontRenderer.drawString(par2Str, par3 - par1FontRenderer.getStringWidth(par2Str) / 2, par4, par5);
 	}
 
+	@Override
+	public void drawGradientRect(int x1, int y1, int x2, int y2, int c1, int c2) {
+		super.drawGradientRect(x1, y1, x2, y2, c1, c2);
+	}
+
 	/**
 	 * Draws a textured rectangle at the stored z-value. Args: x, y, u, v, width, height
 	 */

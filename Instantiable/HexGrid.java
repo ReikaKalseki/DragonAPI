@@ -1,18 +1,27 @@
 package Reika.DragonAPI.Instantiable;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.Vec3;
+
+import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 
 public class HexGrid {
 
-	private static ArrayList<Hex> directions = ReikaJavaLibrary.makeListFrom(new Hex(1, 1, 0, -1), new Hex(1, 1, -1, 0), new Hex(1, 0, -1, 1), new Hex(1, -1, 0, 1), new Hex(1, -1, 1, 0), new Hex(1, 0, 1, -1));
-	private static ArrayList<Hex> diagonals = ReikaJavaLibrary.makeListFrom(new Hex(1, 2, -1, -1), new Hex(1, 1, -2, 1), new Hex(1, -1, -1, 2), new Hex(1, -2, 1, 1), new Hex(1, -1, 2, -1), new Hex(1, 1, 1, -2));
+	private static final List<Hex> directions = Collections.unmodifiableList(ReikaJavaLibrary.makeListFrom(new Hex(1, 1, -1, 0), new Hex(1, 0, -1, 1), new Hex(1, -1, 0, 1), new Hex(1, -1, 1, 0), new Hex(1, 0, 1, -1), new Hex(1, 1, 0, -1)));
+	private static final List<Hex> diagonals = Collections.unmodifiableList(ReikaJavaLibrary.makeListFrom(new Hex(1, 2, -1, -1), new Hex(1, 1, -2, 1), new Hex(1, -1, -1, 2), new Hex(1, -2, 1, 1), new Hex(1, -1, 2, -1), new Hex(1, 1, 1, -2)));
 
 	private static final Orientation angled = new Orientation(Math.sqrt(3D), Math.sqrt(3D) / 2D, 0D, 3D / 2D, Math.sqrt(3D) / 3D, -1D / 3D, 0D, 2D / 3D, 0.5);
 	private static final Orientation flat = new Orientation(3D / 2D, 0D, Math.sqrt(3D) / 2D, Math.sqrt(3D), 2D / 3D, 0D, -1D / 3D, Math.sqrt(3D) / 3D, 0D);
@@ -25,11 +34,21 @@ public class HexGrid {
 	private final Orientation style;
 	private final MapShape shape;
 
+	private GridProperties properties;
+
+	/** Size is a diameter! */
 	public HexGrid(int s, double s2, boolean flatTop, MapShape shape) {
 		style = flatTop ? flat : angled;
 		size = s;
 		this.shape = shape;
 		hexSize = s2;
+	}
+
+	public GridProperties getGridProperties() {
+		if (properties == null) {
+			properties = new GridProperties(this);
+		}
+		return properties;
 	}
 
 	public HexGrid addHex(Hex h) {
@@ -43,14 +62,15 @@ public class HexGrid {
 			throw new IllegalArgumentException("Position outside grid!");
 		if (!hexes.containsKey(new Coordinate(q, r, s)))
 			hexes.put(new Coordinate(q, r, s), new Hex(hexSize, q, r, s));
+		properties = null;
 		return this;
 	}
 
 	/** Expands in rings; ideal for creating hexagonal shapes. */
 	public HexGrid flower() {
 		this.addHex(0, 0, 0);
-		for (int i = 1; i <= size; i += 2) {
-			Collection<Hex> cp = new HashSet(hexes.values());
+		for (int i = 1; i < size; i += 2) {
+			Collection<Hex> cp = new HashSet(this.getAllHexes());
 			for (Hex h : cp) {
 				Collection<Hex> c = h.getNeighbors();
 				for (Hex h2 : c) {
@@ -67,8 +87,25 @@ public class HexGrid {
 		return hexes.size();
 	}
 
+	public Collection<Hex> getAllHexes() {
+		return Collections.unmodifiableCollection(hexes.values());
+	}
+
 	public Hex getHex(int q, int r, int s) {
 		return hexes.get(new Coordinate(q, r, s));//this.getHex(shape.getI(q, r, s), shape.getK(q, r, s));
+	}
+
+	public Hex getRandomEdgeCell(Random rand) { //alternative: keep picking random cells until find one without six neighbors
+		int d = rand.nextInt(6);
+		Hex h = new Hex(hexSize, 0, 0, 0);
+		while (this.containsHex(h.getNeighbor(d))) {
+			h = h.getNeighbor(d);
+		}
+		return h;
+	}
+
+	public boolean isHexAtEdge(Hex h) {
+		return Math.abs(h.q)+Math.abs(h.r)+Math.abs(h.s) == size-1;
 	}
 
 	public static enum MapShape {
@@ -77,14 +114,14 @@ public class HexGrid {
 		HEXAGON(),
 		RHOMBUS();
 
-		public boolean isInGrid(Hex h, int radius) {
-			return this.isInGrid(h.q, h.r, h.s, radius);
+		public boolean isInGrid(Hex h, int diameter) {
+			return this.isInGrid(h.q, h.r, h.s, diameter);
 		}
 
-		public boolean isInGrid(int q, int r, int s, int radius) {
+		public boolean isInGrid(int q, int r, int s, int diameter) {
 			switch(this) {
 				case HEXAGON:
-					return Math.abs(q+r+s) <= radius;
+					return Math.abs(q)+Math.abs(r)+Math.abs(s) <= diameter-1;
 				case RECTANGLE:
 					break; //TODO
 				case RHOMBUS:
@@ -157,19 +194,210 @@ public class HexGrid {
 		}*/
 	}
 
-	public Point hexToPixel(Hex h) {
-		double x = (style.f0 * h.q + style.f1 * h.r) * hexSize;
-		double y = (style.f2 * h.q + style.f3 * h.r) * hexSize;
-		return new Point((int)Math.round(x), (int)Math.round(y));
+	public Point getHexLocation(Hex h) {
+		double x = (style.f0 * h.q + style.f1 * h.r) * hexSize/2D;
+		double y = (style.f2 * h.q + style.f3 * h.r) * hexSize/2D;
+		return new Point(x, y);
 	}
 
-	public FractionalHex pixelToHex(Point p) {
-		double dx = p.x/hexSize;
-		double dy = p.y/hexSize;
+	public Hex getHexAtLocation(int x, int y) {
+		FractionalHex f = this.getFHexAtLocation(x, y);
+		Hex h = f.hexRound();
+		return this.containsHex(h) ? h : null;
+	}
+
+	public boolean containsHex(Hex h) {
+		return hexes.containsKey(new Coordinate(h.q, h.r, h.s));
+	}
+
+	public boolean containsHex(int q, int r, int s) {
+		return hexes.containsKey(new Coordinate(q, r, s));
+	}
+
+	private FractionalHex getFHexAtLocation(int x, int y) {
+		double dx = x*2D/hexSize;
+		double dy = y*2D/hexSize;
 		double q = style.b0 * dx + style.b1 * dy;
 		double r = style.b2 * dx + style.b3 * dy;
 		return new FractionalHex(hexSize, q, r, -q - r);
 	}
+
+	public int getNeighborDirection(double angle) {
+		angle = (angle+360D)%360D;
+		double a = angle;//-Math.toDegrees(style.start_angle);
+		int val = (int)Math.floor(a/60D);
+		return val;
+	}
+
+	public void drawHexEdges(Tessellator v5, Hex h, int color) {
+		float f = GL11.glGetFloat(GL11.GL_LINE_WIDTH);
+		GL11.glLineWidth(3);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		v5.startDrawing(GL11.GL_LINE_LOOP);
+		v5.setColorRGBA_I(color & 0xFFFFFF, ReikaColorAPI.getAlpha(color));
+
+		double r = hexSize/2;
+		for (double a = Math.toDegrees(style.start_angle); a < 360; a += 60) {
+			double dx = r+0.1+r*Math.cos(Math.toRadians(a));
+			double dy = r-1+r*Math.sin(Math.toRadians(a));
+			v5.addVertex(dx, dy, 0);
+		}
+
+		v5.draw();
+		GL11.glLineWidth(f);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
+	}
+
+	public void drawFilledHex(Tessellator v5, Hex h, int color) {
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		v5.startDrawing(GL11.GL_TRIANGLE_FAN);
+		v5.setColorRGBA_I(color & 0xFFFFFF, ReikaColorAPI.getAlpha(color));
+
+		double r = hexSize/2;
+		v5.addVertex(r+0.1, r-1, 0);
+
+		for (double a = Math.toDegrees(style.start_angle); a <= 360+style.start_angle; a += 60) {
+			double dx = r+0.1+r*Math.cos(Math.toRadians(a));
+			double dy = r-1+r*Math.sin(Math.toRadians(a));
+			v5.addVertex(dx, dy, 0);
+		}
+
+		v5.draw();
+		GL11.glPopAttrib();
+	}
+
+	public void drawTexturedGrid(Tessellator v5) {
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glDisable(GL11.GL_CULL_FACE);
+
+		double minX = Double.POSITIVE_INFINITY;
+		double maxX = Double.NEGATIVE_INFINITY;
+		double minY = Double.POSITIVE_INFINITY;
+		double maxY = Double.NEGATIVE_INFINITY;
+		for (Hex h : hexes.values()) {
+			Point p = this.getHexLocation(h);
+			minX = Math.min(minX, p.x);
+			minY = Math.min(minY, p.y);
+			maxX = Math.max(maxX, p.x);
+			maxY = Math.max(maxY, p.y);
+		}
+		minX -= hexSize/2;
+		minY -= hexSize/2;
+		maxX += hexSize/2;
+		maxY += hexSize/2;
+
+		double sizeX = maxX-minX;
+		double sizeY = maxY-minY;
+		for (Hex h : hexes.values()) {
+			Point p = this.getHexLocation(h);
+			double fx = (p.x-hexSize/2)/sizeX;
+			double fy = (p.y-hexSize/2)/sizeY;
+			GL11.glPushMatrix();
+			GL11.glTranslated(p.x, p.y, 0);
+			v5.startDrawing(GL11.GL_TRIANGLE_FAN);
+			v5.setColorRGBA_I(0xffffff, 255);
+
+			double cu = 0.5+fx;
+			double cv = 0.5+fy;
+			//this.drawTexturedHex(v5, h, 0.5+fx, 0.5+fy, 1D/size*0.625);
+
+			double r = hexSize/2;
+			double x = r+0.1;
+			double y = r-1;
+			double u = cu+x/sizeX;
+			double v = cv+y/sizeY;
+			v5.addVertexWithUV(x, y, 0, u, v);
+
+			for (double a = Math.toDegrees(style.start_angle); a <= 360+style.start_angle; a += 60) {
+				double ang = Math.toRadians(a);
+				double dx = r+0.1+r*Math.cos(ang);
+				double dy = r-1+r*Math.sin(ang);
+
+				u = cu+dx/sizeX;
+				v = cv+dy/sizeY;
+				v5.addVertexWithUV(dx, dy, 0, u, v);
+			}
+
+			v5.draw();
+			GL11.glPopMatrix();
+		}
+
+		GL11.glPopAttrib();
+	}
+
+	public void drawTexturedHex(Tessellator v5, Hex h, double cu, double cv, double tr) {
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glDisable(GL11.GL_CULL_FACE);
+		v5.startDrawing(GL11.GL_TRIANGLE_FAN);
+		v5.setColorRGBA_I(0xffffff, 255);
+
+		double r = hexSize/2;
+		v5.addVertexWithUV(r+0.1, r-1, 0, cu, cv);
+
+		for (double a = Math.toDegrees(style.start_angle); a <= 360+style.start_angle; a += 60) {
+			double ang = Math.toRadians(a);
+			double dx = r+0.1+r*Math.cos(ang);
+			double dy = r-1+r*Math.sin(ang);
+			double u = cu+tr*Math.cos(ang);
+			double v = cv+tr*Math.sin(ang);
+			v5.addVertexWithUV(dx, dy, 0, u, v);
+		}
+
+		v5.draw();
+		GL11.glPopAttrib();
+	}
+
+	public ArrayList<Integer> getValidMovementDirections(Hex location) {
+		ArrayList<Integer> ret = new ArrayList();
+		for (int i = 0; i < 6; i++) {
+			Hex h = location.getNeighbor(i);
+			if (this.containsHex(h))
+				ret.add(i);
+		}
+		return ret;
+	}
+
+	public int getOppositeDirection(int dir) {
+		return (dir+3)%6;
+	}
+
+	public Collection<Hex> getRegion(Hex start, Collection<Hex> exclusions) {
+		return this.getRegion(start, new HashSet(exclusions));
+	}
+
+	private Collection<Hex> getRegion(Hex start, HashSet<Hex> exclusions) {
+		exclusions.add(start);
+		Collection<Hex> ret = new HashSet();
+		ret.add(start);
+		for (Hex h : start.getNeighbors()) {
+			if (this.containsHex(h) && !exclusions.contains(h)) {
+				ret.addAll(this.getRegion(h, exclusions));
+			}
+		}
+		return ret;
+	}
+
+	public boolean dividesGrid(Hex start, Collection<Hex> exclusions) {
+		return this.dividesGrid(start, new HashSet(exclusions));
+	}
+
+	private boolean dividesGrid(Hex start, HashSet<Hex> exclusions) {
+		Collection<Hex> region = null;
+		for (Hex h : start.getNeighbors()) {
+			if (this.containsHex(h) && !exclusions.contains(h)) {
+				Collection<Hex> region2 = this.getRegion(start, exclusions);
+				//ReikaJavaLibrary.pConsole(start+" > "+region2.size());
+				if (region == null)
+					region = region2;
+				if (!region.equals(region2))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	/*
 public Point hexCornerOffset(int corner) {
 	Point size = layout.size;
@@ -212,8 +440,8 @@ public ArrayList<Point> polygonCorners(Hex h) {
 			return new Hex(size, q * k, r * k, s * k);
 		}
 
-		public Hex neighbor(int direction) {
-			return add(size, this, relativeDirection(direction));
+		public Hex getNeighbor(int direction) {
+			return add(size, this, directions.get(direction));
 		}
 
 		public Hex diagonalNeighbor(int direction) {
@@ -236,6 +464,18 @@ public ArrayList<Point> polygonCorners(Hex h) {
 			return Hex.subtract(size, a, b).length();
 		}
 
+		public Hex offset(Hex h) {
+			return add(size, this, h);
+		}
+
+		public Hex offset(int q, int r, int s) {
+			return add(size, this, new Hex(size, q, r, s));
+		}
+
+		public Hex subtract(Hex h) {
+			return subtract(size, this, h);
+		}
+
 		public static Hex add(double size, Hex a, Hex b) {
 			return new Hex(size, a.q + b.q, a.r + b.r, a.s + b.s);
 		}
@@ -244,8 +484,23 @@ public ArrayList<Point> polygonCorners(Hex h) {
 			return new Hex(size, a.q - b.q, a.r - b.r, a.s - b.s);
 		}
 
-		private static Hex relativeDirection(int direction) {
-			return directions.get(direction);
+		@Override
+		public int hashCode() {
+			return (-q*17 ^ r*77) * s*37;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof Hex) {
+				Hex h = (Hex)o;
+				return h.q == q && h.r == r && h.s == s;
+			}
+			return false;
+		}
+
+		@Override
+		public String toString() {
+			return q+","+r+","+s;
 		}
 	}
 
@@ -284,6 +539,11 @@ public ArrayList<Point> polygonCorners(Hex h) {
 				}
 			}
 			return new Hex(size, q, r, s);
+		}
+
+		@Override
+		public String toString() {
+			return q+", "+r+", "+s;
 		}
 
 		public static FractionalHex hexLerp(double size, FractionalHex a, FractionalHex b, double t) {
@@ -367,6 +627,75 @@ public ArrayList<Point> polygonCorners(Hex h) {
 			this.b3 = b3;
 			this.start_angle = start_angle;
 		}
+	}
+
+	public static final class Point {
+
+		public final double x;
+		public final double y;
+
+		public Point(double x, double y) {
+			this.x = x;
+			this.y = y;
+		}
+
+		public Point translate(double dx, double dy) {
+			return new Point(x+dx, y+dy);
+		}
+
+		public Point scale(double d) {
+			return this.scale(d, d);
+		}
+
+		public Point scale(double sx, double sy) {
+			return new Point(x*sx, y*sy);
+		}
+
+		public Point rotate(double r, int ox, int oz) {
+			Vec3 ret = ReikaVectorHelper.rotateVector(Vec3.createVectorHelper(x-ox, 0, y-oz), 0, r, 0);
+			double x2 = ox+ret.xCoord;
+			double y2 = oz+ret.zCoord;
+			return new Point(x2, y2);
+		}
+
+	}
+
+	public static final class GridProperties {
+
+		public final double minX;
+		public final double maxX;
+		public final double minY;
+		public final double maxY;
+		public final double sizeX;
+		public final double sizeY;
+
+		private GridProperties(HexGrid g) {
+			double nx = Double.POSITIVE_INFINITY;
+			double px = Double.NEGATIVE_INFINITY;
+			double ny = Double.POSITIVE_INFINITY;
+			double py = Double.NEGATIVE_INFINITY;
+
+			for (Hex h : g.hexes.values()) {
+				Point p = g.getHexLocation(h);
+				nx = Math.min(nx, p.x);
+				ny = Math.min(ny, p.y);
+				px = Math.max(px, p.x);
+				py = Math.max(py, p.y);
+			}
+			nx -= g.hexSize/2D;
+			ny -= g.hexSize/2D;
+			px += g.hexSize/2D;
+			py += g.hexSize/2D;
+
+			minX = nx;
+			maxX = px;
+			minY = ny;
+			maxY = py;
+
+			sizeX = maxX-minX;
+			sizeY = maxY-minY;
+		}
+
 	}
 
 }
