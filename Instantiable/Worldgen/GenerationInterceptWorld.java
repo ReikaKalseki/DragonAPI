@@ -32,6 +32,8 @@ import net.minecraft.world.storage.WorldInfo;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 
@@ -41,6 +43,7 @@ public final class GenerationInterceptWorld extends World {
 	private World delegate;
 
 	private final HashSet<BlockKey> disallowedBlocks = new HashSet();
+	private final MultiMap<BlockKey, BlockKey> disallowedChanges = new MultiMap(new HashSetFactory());
 	private final HashSet<Coordinate> changeList = new HashSet();
 	private final Collection<TileHook> hooks = new ArrayList();
 	private final BlockMap<BlockKey> overrides = new BlockMap();
@@ -103,6 +106,14 @@ public final class GenerationInterceptWorld extends World {
 		disallowedBlocks.add(bk);
 	}
 
+	public void disallowBlockChange(Block b, Block b2) {
+		this.disallowBlockChange(new BlockKey(b), new BlockKey(b2));
+	}
+
+	public void disallowBlockChange(BlockKey b, BlockKey b2) {
+		disallowedChanges.addValue(b, b2);
+	}
+
 	public void addHook(TileHook th) {
 		hooks.add(th);
 	}
@@ -119,13 +130,18 @@ public final class GenerationInterceptWorld extends World {
 		overrides.put(b, meta, override);
 	}
 
-	private boolean check(Block b, int meta) {
-		return !disallowedBlocks.contains(new BlockKey(b, meta));
+	private boolean check(int x, int y, int z, Block b, int meta) {
+		BlockKey bk = new BlockKey(b, meta);
+		if (disallowedBlocks.contains(bk))
+			return false;
+		if (disallowedChanges.get(BlockKey.getAt(delegate, x, y, z)).contains(bk))
+			return false;
+		return true;
 	}
 
 	@Override
 	public boolean setBlock(int x, int y, int z, Block b) {
-		boolean flag = this.check(b, 0) ? delegate.setBlock(x, y, z, b) : false;
+		boolean flag = this.check(x, y, z, b, 0) ? delegate.setBlock(x, y, z, b) : false;
 		if (flag) {
 			this.markHook(x, y, z);
 		}
@@ -134,7 +150,7 @@ public final class GenerationInterceptWorld extends World {
 
 	@Override
 	public boolean setBlock(int x, int y, int z, Block b, int meta, int flags) {
-		boolean flag = this.check(b, meta) ? delegate.setBlock(x, y, z, b, meta, flags) : false;
+		boolean flag = this.check(x, y, z, b, meta) ? delegate.setBlock(x, y, z, b, meta, flags) : false;
 		if (flag) {
 			this.markHook(x, y, z);
 		}
@@ -143,7 +159,7 @@ public final class GenerationInterceptWorld extends World {
 
 	@Override
 	public boolean setBlockMetadataWithNotify(int x, int y, int z, int meta, int flags) {
-		boolean flag = this.check(delegate.getBlock(x, y, z), meta) ? delegate.setBlockMetadataWithNotify(x, y, z, meta, flags) : false;
+		boolean flag = this.check(x, y, z, delegate.getBlock(x, y, z), meta) ? delegate.setBlockMetadataWithNotify(x, y, z, meta, flags) : false;
 		if (flag) {
 			this.markHook(x, y, z);
 		}

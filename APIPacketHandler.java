@@ -44,11 +44,13 @@ import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLogoutEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.PlayerInteractEventClient;
 import Reika.DragonAPI.Interfaces.PacketHandler;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.DataPacket;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.relauncher.Side;
@@ -325,6 +327,12 @@ public class APIPacketHandler implements PacketHandler {
 					break;
 				case POPUP:
 					break;
+				case GETLATENCY:
+					int[] l = ReikaJavaLibrary.splitLong(System.currentTimeMillis());
+					ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.SENDLATENCY.ordinal(), (EntityPlayerMP)ep, data[0], data[1], l[0], l[1]);
+					break;
+				case SENDLATENCY:
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -380,6 +388,14 @@ public class APIPacketHandler implements PacketHandler {
 			case POPUP:
 				PopupWriter.instance.addMessage(sg);
 				break;
+			case SENDLATENCY:
+				long t3 = System.currentTimeMillis();
+				long t1 = ReikaJavaLibrary.packLong(data[0], data[1]);
+				long t2 = ReikaJavaLibrary.packLong(data[2], data[3]);
+				long toServerTime = t2-t1;
+				long toClientTime = t3-t2;
+				ReikaChatHelper.write("Total latency: "+toServerTime+"ms to server, "+toClientTime+"ms from server.");
+				break;
 			default:
 				break;
 		}
@@ -421,7 +437,9 @@ public class APIPacketHandler implements PacketHandler {
 		FILEMATCH(),
 		ENTITYSYNC(),
 		MODULARLOGGER(),
-		POPUP();
+		POPUP(),
+		GETLATENCY(),
+		SENDLATENCY();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -470,6 +488,10 @@ public class APIPacketHandler implements PacketHandler {
 					return 1;
 				case MODULARLOGGER:
 					return 1;
+				case GETLATENCY:
+					return 2;
+				case SENDLATENCY:
+					return 4;
 				default:
 					return 0;
 			}

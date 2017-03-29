@@ -31,18 +31,14 @@ public class ReikaXMLBase {
 		return null;
 	}
 
-	public static Document getXMLDocument(Class root, String path) {
-		InputStream in = root.getResourceAsStream(path);
-		if (in == null) {
-			throw new RuntimeException("XML file at "+path+" relative to "+root.getCanonicalName()+" not found!");
-		}
+	public static Document getXMLDocument(InputStream in) {
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
 			return builder.parse(in);
 		}
 		catch (Exception e) {
-			throw new RuntimeException("XML file at "+path+" relative to "+root.getCanonicalName()+" failed to load!", e);
+			throw new RuntimeException("XML file failed to load!", e);
 		}
 	}
 

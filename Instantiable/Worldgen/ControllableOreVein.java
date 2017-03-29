@@ -97,7 +97,7 @@ public abstract class ControllableOreVein extends WorldGenerator {
 
 	public abstract boolean canPlaceBlockHere(World world, int x, int y, int z);
 
-	public static final class ExposedOreVein extends ControllableOreVein {
+	public static class ExposedOreVein extends ControllableOreVein {
 
 		public ExposedOreVein(Block block, int size) {
 			super(block, size);

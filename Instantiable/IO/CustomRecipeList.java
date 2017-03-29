@@ -303,7 +303,7 @@ public final class CustomRecipeList {
 
 		@Override
 		public ItemStack getItem(LuaBlock data) {
-			EnumBeeType type = EnumBeeType.valueOf(data.getString("class"));
+			EnumBeeType type = EnumBeeType.valueOf(data.getString("class").toUpperCase(Locale.ENGLISH));
 			ItemStack ret = ReikaBeeHelper.getBeeItem(data.getString("species"), type);
 			for (int i = 0; i < EnumBeeChromosome.values().length; i++) {
 				EnumBeeChromosome ec = EnumBeeChromosome.values()[i];
@@ -358,7 +358,7 @@ public final class CustomRecipeList {
 
 		@Override
 		public ItemStack getItem(LuaBlock data) {
-			EnumGermlingType type = EnumGermlingType.valueOf(data.getString("class"));
+			EnumGermlingType type = EnumGermlingType.valueOf(data.getString("class").toUpperCase(Locale.ENGLISH));
 			ItemStack ret = ReikaBeeHelper.getTreeItem(data.getString("species"), type);
 			for (int i = 0; i < EnumTreeChromosome.values().length; i++) {
 				EnumTreeChromosome ec = EnumTreeChromosome.values()[i];
@@ -409,7 +409,7 @@ public final class CustomRecipeList {
 
 		@Override
 		public ItemStack getItem(LuaBlock data) {
-			EnumFlutterType type = EnumFlutterType.valueOf(data.getString("class"));
+			EnumFlutterType type = EnumFlutterType.valueOf(data.getString("class").toUpperCase(Locale.ENGLISH));
 			ItemStack ret = ReikaBeeHelper.getButterflyItem(data.getString("species"), type);
 			for (int i = 0; i < EnumButterflyChromosome.values().length; i++) {
 				EnumButterflyChromosome ec = EnumButterflyChromosome.values()[i];

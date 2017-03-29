@@ -19,6 +19,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
@@ -262,6 +263,10 @@ public final class DecimalPosition {
 
 	public Vec3 toVec3() {
 		return Vec3.createVectorHelper(xCoord, yCoord, zCoord);
+	}
+
+	public AxisAlignedBB getAABB(double radius) {
+		return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord).expand(radius, radius, radius);
 	}
 
 }

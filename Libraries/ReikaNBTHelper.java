@@ -268,6 +268,13 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 	}
 
+	public static void copyNBT(NBTTagCompound from, NBTTagCompound to) {
+		Collection<String> tags = new ArrayList(from.func_150296_c());
+		for (String tag : tags) {
+			to.setTag(tag, from.getTag(tag).copy());
+		}
+	}
+
 	public static int compareNBTTags(NBTTagCompound o1, NBTTagCompound o2) {
 		if (o1 == o2 || (o1 != null && o1.equals(o2))) {
 			return 0;

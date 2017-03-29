@@ -180,7 +180,7 @@ public class ControlledConfig {
 		return Collections.unmodifiableCollection(extraFiles.keySet());
 	}
 
-	public Object getControl(int i) {
+	public final Object getControl(int i) {
 		return controls[i];
 	}
 

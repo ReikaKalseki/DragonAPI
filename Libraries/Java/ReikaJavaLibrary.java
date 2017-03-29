@@ -882,4 +882,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static char getIDChar(int id) {
 		return IDChars[id%IDChars.length];
 	}
+
+	public static int[] splitLong(long val) {
+		int l1 = (int)(val >>> 32);
+		int l2 = (int)(val & 0xFFFFFFFFL);
+		return new int[]{l1, l2};
+	}
+
+	public static long packLong(int l1, int l2) {
+		return ((long)l1 << 32) | (l2 & 0xffffffffL);
+	}
 }

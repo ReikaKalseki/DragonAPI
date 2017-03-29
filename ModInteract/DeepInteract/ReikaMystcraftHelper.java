@@ -233,6 +233,7 @@ public class ReikaMystcraftHelper {
 		private static final Field baseInstability;
 		private static final Field symbolList;
 		private static final Method getScore;
+		private static final Method getGroundLevel;
 
 		private static boolean loadedCorrectly;
 
@@ -380,6 +381,16 @@ public class ReikaMystcraftHelper {
 			return ageSymbols.contains(s.identifier());
 		}
 
+		public int getGroundLevel() {
+			try {
+				return (int)getGroundLevel.invoke(ageController);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return 64;
+			}
+		}
+
 		static {
 			Field cont = null;
 			Field insta = null;
@@ -390,6 +401,7 @@ public class ReikaMystcraftHelper {
 			Field adata = null;
 			Field sym = null;
 			Method score = null;
+			Method level = null;
 			boolean load = true;
 			if (ModList.MYSTCRAFT.isLoaded()) {
 				try {
@@ -399,6 +411,8 @@ public class ReikaMystcraftHelper {
 					Class age = Class.forName("com.xcompwiz.mystcraft.world.AgeController");
 					insta = age.getDeclaredField("instabilityController");
 					insta.setAccessible(true);
+					level = age.getDeclaredMethod("getAverageGroundLevel");
+					level.setAccessible(true);
 					Class controller = Class.forName("com.xcompwiz.mystcraft.instability.InstabilityController");
 					//stable = controller.getDeclaredField("stabilization");*
 					//stable.setAccessible(true);
@@ -436,6 +450,7 @@ public class ReikaMystcraftHelper {
 			baseInstability = base;
 			symbolList = sym;
 			data = adata;
+			getGroundLevel = level;
 		}
 
 	}
@@ -722,6 +737,11 @@ public class ReikaMystcraftHelper {
 			}
 		}
 		return li;
+	}
+
+	public static int getFlatWorldThickness(World world) {
+		AgeInterface a = getOrCreateInterface(world);
+		return a != null ? a.getGroundLevel() : world.provider.getAverageGroundLevel();
 	}
 
 }

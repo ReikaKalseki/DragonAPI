@@ -10,6 +10,9 @@
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -22,6 +25,8 @@ import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 public class ForestryHandler extends ModHandlerBase {
 
 	private boolean init = false;
+
+	private Field crateList;
 
 	private static final ForestryHandler instance = new ForestryHandler();
 
@@ -193,6 +198,22 @@ public class ForestryHandler extends ModHandlerBase {
 				}
 			}
 
+			try {
+				Class c = Class.forName("forestry.plugins.PluginStorage");
+				crateList = c.getDeclaredField("crates");
+				crateList.setAccessible(true);
+			}
+			catch (ClassNotFoundException e) {
+				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (NoSuchFieldException e) {
+				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+
 			init = true;
 		}
 		else {
@@ -254,6 +275,20 @@ public class ForestryHandler extends ModHandlerBase {
 			}
 
 			return HUMUS;
+		}
+	}
+
+	public Collection<Item> getAllCrates() {
+		try {
+			return Collections.unmodifiableCollection((Collection<Item>)crateList.get(null));
+		}
+		catch (IllegalArgumentException e) {
+			e.printStackTrace();
+			return new ArrayList();
+		}
+		catch (IllegalAccessException e) {
+			e.printStackTrace();
+			return new ArrayList();
 		}
 	}
 

@@ -143,6 +143,10 @@ public enum ReikaOreHelper implements OreType {
 		return Collections.unmodifiableCollection(OreDictionary.getOres(this.getOreDictName()));
 	}
 
+	public boolean contains(ItemStack is) {
+		return ReikaItemHelper.collectionContainsItemStack(this.getAllOreBlocks(), is);
+	}
+
 	@Override
 	public ItemStack getFirstOreBlock() {
 		return new ItemStack(ore);

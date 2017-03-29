@@ -43,6 +43,7 @@ public enum ModList implements ModEntry, Dependency {
 	CHROMATICRAFT("ChromatiCraft", "Reika.ChromatiCraft.Registry.ChromaBlocks", "Reika.ChromatiCraft.Registry.ChromaItems"),
 	TERRITORYZONE("TerritoryZone"),
 	CONDENSEDORES("CondensedOres"),
+	LOOTTWEAKS("LootTweaks"),
 	BUILDCRAFT("BuildCraft|Core", "buildcraft.BuildCraftCore"),
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
 	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
@@ -117,7 +118,8 @@ public enum ModList implements ModEntry, Dependency {
 	RFTOOLS("rftools"), //classes scattered
 	DRACONICEVO("DraconicEvolution"),
 	MAGICBEES("MagicBees", "magicbees.main.Config"),
-	IMMERSIVEENG("ImmersiveEngineering", "blusunrize.immersiveengineering.common.IEContent");
+	IMMERSIVEENG("ImmersiveEngineering", "blusunrize.immersiveengineering.common.IEContent"),
+	FORBIDDENMAGIC("ForbiddenMagic", "fox.spiteful.forbidden.blocks.ForbiddenBlocks", "fox.spiteful.forbidden.items.ForbiddenItems");
 
 	private final boolean condition;
 	public final String modLabel;

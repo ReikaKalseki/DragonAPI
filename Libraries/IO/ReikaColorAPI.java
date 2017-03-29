@@ -203,4 +203,9 @@ public class ReikaColorAPI {
 		int b2 = (int)Math.min(255, b*getBlue(c));
 		return RGBtoHex(r2, g2, b2);
 	}
+
+	/** Alpha is 0-255, not 0-1! */
+	public static int getColorWithAlpha(int color, float alpha) {
+		return (color & 0xffffff) | (((int)alpha) << 24);
+	}
 }

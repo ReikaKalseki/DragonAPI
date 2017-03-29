@@ -44,6 +44,7 @@ import net.minecraft.util.MovingObjectPosition.MovingObjectType;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeDecorator;
@@ -91,6 +92,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
+import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.eventhandler.Event.Result;
@@ -2300,6 +2302,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static int getSuperflatHeight(World world) {
+		if (ModList.MYSTCRAFT.isLoaded() && ReikaMystcraftHelper.isMystAge(world)) {
+			return ReikaMystcraftHelper.getFlatWorldThickness(world);
+		}
 		ChunkProviderFlat f = (ChunkProviderFlat)world.provider.createChunkGenerator();
 		FlatGeneratorInfo ifo = f.flatWorldGenInfo;
 		int sum = 0;
@@ -2347,5 +2352,26 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		long seed = (xSeed * cx + zSeed * cz) ^ worldSeed;
 		moddedGenRand.setSeed(seed);
 		return moddedGenRand;
+	}
+
+	public static void cancelScheduledTick(WorldServer world, int x, int y, int z, Block b) {
+		Chunk c = world.getChunkFromBlockCoords(x, z);
+		List<NextTickListEntry> li = world.getPendingBlockUpdates(c, true);
+		for (NextTickListEntry e : li) {
+			if (e.xCoord == x && e.yCoord == y && e.zCoord == z && e.func_151351_a() == b) {
+
+			}
+			else {
+				rescheduleTick(world, e);
+			}
+		}
+	}
+
+	private static void rescheduleTick(WorldServer world, NextTickListEntry e) {
+		world.scheduleBlockUpdateWithPriority(e.xCoord, e.yCoord, e.zCoord, e.func_151351_a(), (int)(e.scheduledTime-world.getTotalWorldTime()), e.priority);
+	}
+
+	public static boolean regionContainsBiome(World world, int x0, int x1, int z0, int z1, BiomeGenBase b) {
+		return world.getBiomeGenForCoords(x0, z0) == b || world.getBiomeGenForCoords(x1, z0) == b || world.getBiomeGenForCoords(x0, z1) == b || world.getBiomeGenForCoords(x1, z1) == b;
 	}
 }

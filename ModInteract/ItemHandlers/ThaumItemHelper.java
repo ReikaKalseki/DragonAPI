@@ -40,6 +40,9 @@ public class ThaumItemHelper {
 		BALANCED("ItemShard", 6),
 		PHIAL("ItemEssence", 0),
 		NUGGETCLUSTER("ItemNugget", 0),
+		LOOTBAG1("ItemLootBag", 0),
+		LOOTBAG2("ItemLootBag", 1),
+		LOOTBAG3("ItemLootBag", 2),
 		;
 
 		public final int metadata;

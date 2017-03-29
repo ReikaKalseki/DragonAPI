@@ -22,6 +22,7 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper.ClassEntitySelector;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -265,5 +266,51 @@ public final class ReikaChunkHelper extends DragonAPICore {
 
 	public static boolean chunkContainsBiomeTypeBlockCoords(World world, int x, int z, Class<? extends BiomeGenBase> c) {
 		return c.isInstance(world.getBiomeGenForCoords(x, z)) || c.isInstance(world.getBiomeGenForCoords(x+15, z)) || c.isInstance(world.getBiomeGenForCoords(x, z+15)) || c.isInstance(world.getBiomeGenForCoords(x+15, z+15));
+	}
+
+	private static ExtendedBlockStorage getStorageInChunk(Chunk c, int y) {
+		return c.getBlockStorageArray()[y >> 4];
+	}
+
+	private static ExtendedBlockStorage getOrCreateStorageInChunk(Chunk c, int y) {
+		ExtendedBlockStorage exb = getStorageInChunk(c, y);
+		if (exb == null) {
+			exb = new ExtendedBlockStorage(y >> 4 << 4, !c.worldObj.provider.hasNoSky);
+			c.getBlockStorageArray()[y >> 4] = exb;
+		}
+		return exb;
+	}
+
+	public static Block[] getChunkAsColumnData(Chunk c) {
+		Block[] data = new Block[65536];
+		for (int i = 0; i < 16; i++) {
+			for (int k = 0; k < 16; k++) {
+				for (int j = 0; j < 256; j++) {
+					int idx = j+256*(i*16+k);
+					Block b = null;
+					ExtendedBlockStorage exb = getStorageInChunk(c, j);
+					if (exb != null)
+						b = exb.getBlockByExtId(i, j & 15, k);
+					if (b == Blocks.air)
+						b = null;
+					data[idx] = b;
+				}
+			}
+		}
+		return data;
+	}
+
+	public static void writeBlockColumnToChunk(Chunk c, Block[] data) {
+		for (int i = 0; i < 16; i++) {
+			for (int k = 0; k < 16; k++) {
+				for (int j = 0; j < 256; j++) {
+					int idx = j+256*(i*16+k);
+					if (data[idx] == null)
+						data[idx] = Blocks.air;
+					ExtendedBlockStorage exb = getOrCreateStorageInChunk(c, j);
+					exb.func_150818_a(i, j & 15, k, data[idx]);
+				}
+			}
+		}
 	}
 }

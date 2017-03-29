@@ -13,14 +13,18 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public abstract class LuaBlock {
+
+	private static final Comparator<String> outputSorter = new OutputSorter();
 
 	public final String name;
 	private final LuaBlock parent;
@@ -87,7 +91,7 @@ public abstract class LuaBlock {
 	}
 
 	public final double getDouble(String key) {
-		return this.containsKey(key) ? Double.parseDouble(this.getString(key)) : 0;
+		return this.containsKeyInherit(key) ? Double.parseDouble(this.getString(key)) : 0;
 	}
 
 	public final boolean getBoolean(String key) {
@@ -95,11 +99,15 @@ public abstract class LuaBlock {
 	}
 
 	public final int getInt(String key) {
-		return this.containsKey(key) ? Integer.parseInt(this.getString(key)) : 0;
+		return this.containsKeyInherit(key) ? Integer.parseInt(this.getString(key)) : 0;
 	}
 
 	public final long getLong(String key) {
 		return Long.parseLong(this.getString(key));
+	}
+
+	private boolean isString(String s) {
+		return !Character.isDigit(s.charAt(s.charAt(0) == '-' && s.length() > 1 ? 1 : 0)) && !s.equalsIgnoreCase("true") && !s.equalsIgnoreCase("false");
 	}
 
 	public final String getString(String key) {
@@ -108,6 +116,10 @@ public abstract class LuaBlock {
 		if (!this.canInherit(key))
 			throw new IllegalArgumentException("Missing key '"+key+"' for '"+name+"'");
 		return this.inherit(key);
+	}
+
+	public final Collection<String> getKeys() {
+		return Collections.unmodifiableCollection(data.keySet());
 	}
 
 	public final Collection<String> getDataValues() {
@@ -120,6 +132,15 @@ public abstract class LuaBlock {
 
 	public final boolean containsKey(String key) {
 		return data.containsKey(key);
+	}
+
+	public final boolean containsKeyInherit(String key) {
+		if (data.containsKey(key))
+			return true;
+		if (parent != null) {
+			return parent.containsKeyInherit(key);
+		}
+		return false;
 	}
 
 	public boolean hasChild(String s) {
@@ -360,6 +381,53 @@ public abstract class LuaBlock {
 
 		}
 		return s;
+	}
+
+	public ArrayList<String> writeToStrings() {
+		return this.writeToStrings(1);
+	}
+
+	private ArrayList<String> writeToStrings(int indent) {
+		ArrayList<String> li = new ArrayList();
+		String pre = ReikaStringParser.getNOf("\t", indent);
+		if (indent == 1)
+			li.add("{");
+		ArrayList<String> keys = new ArrayList(data.keySet());
+		Collections.sort(keys, outputSorter);
+		for (String s : keys) {
+			String val = data.get(s);
+			if (this.isString(val))
+				val = "\""+val+"\"";
+			if (this.isList())
+				li.add(pre+val);
+			else
+				li.add(pre+s+" = "+val);
+		}
+		keys = new ArrayList(children.keySet());
+		Collections.sort(keys, outputSorter);
+		for (String s : keys) {
+			LuaBlock c = children.get(s);
+			li.add(pre+s+" = {");
+			li.addAll(this.writeToStrings(indent+1));
+			li.add(pre+"}");
+		}
+		if (indent == 1)
+			li.add("}");
+		return li;
+	}
+
+	private static class OutputSorter implements Comparator<String> {
+
+		@Override
+		public int compare(String o1, String o2) {
+			if (o1.equals("type"))
+				return Integer.MIN_VALUE;
+			else if (o2.equals("type"))
+				return Integer.MAX_VALUE;
+			else
+				return o1.compareToIgnoreCase(o2);
+		}
+
 	}
 
 }

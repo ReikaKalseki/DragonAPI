@@ -27,7 +27,8 @@ public enum BiomeTypeList {
 	MUSHROOM(BiomeGenBase.mushroomIsland, BiomeGenBase.mushroomIslandShore),
 	JUNGLE(BiomeGenBase.jungle, BiomeGenBase.jungleHills),
 	RAINBOW("Rainbow Forest", ModList.CHROMATICRAFT, "Reika.ChromatiCraft.World.BiomeRainbowForest"),
-	ENDER("Ender Forest", ModList.CHROMATICRAFT, "Reika.ChromatiCraft.World.BiomeEnderForest");
+	ENDER("Ender Forest", ModList.CHROMATICRAFT, "Reika.ChromatiCraft.World.BiomeEnderForest"),
+	GLOWCLIFFS("Luminous Cliffs", ModList.CHROMATICRAFT, "Reika.ChromatiCraft.World.BiomeGlowingCliffs");
 
 	private String[] biomes;
 	private ModList dependency;

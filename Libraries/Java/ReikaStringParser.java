@@ -432,4 +432,10 @@ public class ReikaStringParser extends DragonAPICore {
 	public static boolean isWordSeparator(char c) {
 		return c == ' ' || c == '.' || c == '!' || c == '?' || c == ',' || c == ';';
 	}
+
+	public static String padToLength(String s, int len, String pad) {
+		while (s.length() < len)
+			s = s+pad;
+		return s;
+	}
 }

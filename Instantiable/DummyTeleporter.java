@@ -44,7 +44,7 @@ public class DummyTeleporter extends Teleporter {
 	}
 
 	@Override
-	public boolean makePortal(Entity e) { //NOOP - custom worldgen for return portal
+	public boolean makePortal(Entity e) {
 		return false;//super.makePortal(e);
 	}
 

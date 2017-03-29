@@ -9,6 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 
@@ -23,9 +27,9 @@ public class XMLInterface {
 
 	private Document doc;
 
-	private final Class rootClass;
-	private final String filepath;
 	private final boolean requireFile;
+	private final Object[] loadData;
+	private final LoadFormat format;
 
 	private final HashMap<String, String> data = new HashMap();
 	private final MultiMap<String, String> tree = new MultiMap();
@@ -36,32 +40,57 @@ public class XMLInterface {
 		this(root, path, false);
 	}
 
-	public XMLInterface(Class root, String path, boolean crashIfNull) {
-		rootClass = root;
-		filepath = path;
+	public XMLInterface(File path, boolean crashIfNull) {
+		format = LoadFormat.FILE;
+		loadData = new Object[]{path};
 		requireFile = crashIfNull;
 		try {
-			doc = ReikaXMLBase.getXMLDocument(root, path);
+			doc = ReikaXMLBase.getXMLDocument(new FileInputStream(path));
+		}
+		catch (Exception e) {
+			if (requireFile)
+				throw new RuntimeException("Could not load XML at "+path, e);
+			else
+				e.printStackTrace();
+		}
+	}
+
+	public XMLInterface(Class root, String path, boolean crashIfNull) {
+		format = LoadFormat.JARPATH;
+		requireFile = crashIfNull;
+		loadData = new Object[]{root, path};
+		try {
+			InputStream in = root.getResourceAsStream(path);
+			if (in == null)
+				throw new RuntimeException("XML file at "+path+" relative to "+root.getName()+" not found!");
+			doc = ReikaXMLBase.getXMLDocument(in);
 		}
 		catch (RuntimeException e) {
 			if (requireFile)
-				throw new RuntimeException(e);
+				throw new RuntimeException("Could not load XML at "+path+" relative to "+root.getName(), e);
+			else
+				e.printStackTrace();
 		}
 		this.readFileToMap();
 	}
 
 	public void reread() {
 		try {
-			doc = ReikaXMLBase.getXMLDocument(rootClass, filepath);
+			InputStream in = format.getInputStream(loadData);
+			doc = ReikaXMLBase.getXMLDocument(in);
 			this.readFileToMap();
 		}
-		catch (RuntimeException e) {
+		catch (Exception e) {
 			if (requireFile)
-				throw new RuntimeException(e);
+				throw new RuntimeException("Could not load XML: "+Arrays.toString(loadData), e);
+			else
+				e.printStackTrace();
 		}
 	}
 
 	private void readFileToMap() {
+		data.clear();
+		tree.clear();
 		this.recursiveRead("$TOP$", doc);
 	}
 
@@ -93,14 +122,27 @@ public class XMLInterface {
 						val = null;
 				}
 				if (val != null) {
-					val = val.replace("\t", "");
 					//ReikaJavaLibrary.pConsole("TREE: "+ReikaXMLBase.getNodeNameTree(ch));
 					if (data.containsKey(key))
 						;//throw new RuntimeException("Your input XML has multiple node trees with the EXACT same names! Resolve this!");
-					data.put(key, val);
+					data.put(key, this.cleanString(val));
 				}
 			}
 		}
+	}
+
+	private String cleanString(String val) {
+		val = val.replace("\t", "");
+		while (!val.isEmpty() && val.endsWith("\\n")) {
+			val = val.substring(0, val.length()-2);
+		}
+		while (!val.isEmpty() && val.charAt(0) == ' ') {
+			val = val.substring(1);
+		}
+		while (!val.isEmpty() && val.charAt(val.length()-1) == ' ') {
+			val = val.substring(0, val.length()-1);
+		}
+		return val;
 	}
 
 	public String getValueAtNode(String name) {
@@ -128,5 +170,20 @@ public class XMLInterface {
 		return data.toString();
 	}
 
+	private static enum LoadFormat {
 
+		JARPATH(),
+		FILE();
+
+		private InputStream getInputStream(Object[] data) throws Exception {
+			switch(this) {
+				case FILE:
+					return new FileInputStream((File)data[0]);
+				case JARPATH:
+					return ((Class)data[0]).getResourceAsStream((String)data[1]);
+			}
+			return null; //never happens
+		}
+
+	}
 }

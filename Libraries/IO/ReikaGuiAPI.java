@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -213,15 +212,13 @@ public final class ReikaGuiAPI extends GuiScreen {
 	public void drawLine(int x, int y, int x2, int y2, int color) {
 		if (GL11.glGetFloat(GL11.GL_LINE_WIDTH) < 1.5F)
 			GL11.glLineWidth(1.5F);
-		boolean light = GL11.glIsEnabled(GL11.GL_LIGHTING);
-		boolean depth = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
-		boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
-		boolean tex = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
-
-		float alpha = Color.decode(String.valueOf(color)).getAlpha();
-		float red = Color.decode(String.valueOf(color)).getRed();
-		float green = Color.decode(String.valueOf(color)).getGreen();
-		float blue = Color.decode(String.valueOf(color)).getBlue();
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		int alpha = ReikaColorAPI.getAlpha(color);
+		if (alpha == 0 && color != 0)
+			alpha = 255;
+		int red = ReikaColorAPI.getRed(color);
+		int green = ReikaColorAPI.getGreen(color);
+		int blue = ReikaColorAPI.getBlue(color);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_BLEND);
@@ -231,26 +228,36 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glVertex2i(x, y);
 		GL11.glVertex2i(x2, y2);
 		GL11.glEnd();
-		if (light)
-			GL11.glEnable(GL11.GL_LIGHTING);
-		if (depth)
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
-		if (blend)
-			GL11.glDisable(GL11.GL_BLEND);
-		if (tex)
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glColor4f(1, 1, 1, 1);
+		GL11.glPopAttrib();
+	}
+
+	/** Draws a line between two points. Args: Start x,y, end x,y, color */
+	public void drawLine_Double(double x, double y, double x2, double y2, int color) {
+		if (GL11.glGetFloat(GL11.GL_LINE_WIDTH) < 1.5F)
+			GL11.glLineWidth(1.5F);
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		int alpha = ReikaColorAPI.getAlpha(color);
+		int red = ReikaColorAPI.getRed(color);
+		int green = ReikaColorAPI.getGreen(color);
+		int blue = ReikaColorAPI.getBlue(color);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		//GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glBegin(GL11.GL_LINES);
+		GL11.glColor4f(red/255F, green/255F, blue/255F, alpha/255F);
+		GL11.glVertex2d(x, y);
+		GL11.glVertex2d(x2, y2);
+		GL11.glEnd();
+		GL11.glPopAttrib();
 	}
 
 	public void drawCircle(int x, int y, double radius, int color) {
-		boolean light = GL11.glIsEnabled(GL11.GL_LIGHTING);
-		boolean depth = GL11.glIsEnabled(GL11.GL_DEPTH_TEST);
-		boolean blend = GL11.glIsEnabled(GL11.GL_BLEND);
-		boolean tex = GL11.glIsEnabled(GL11.GL_TEXTURE_2D);
-		float alpha = Color.decode(String.valueOf(color)).getAlpha();
-		float red = Color.decode(String.valueOf(color)).getRed();
-		float green = Color.decode(String.valueOf(color)).getGreen();
-		float blue = Color.decode(String.valueOf(color)).getBlue();
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		int alpha = ReikaColorAPI.getAlpha(color);
+		int red = ReikaColorAPI.getRed(color);
+		int green = ReikaColorAPI.getGreen(color);
+		int blue = ReikaColorAPI.getBlue(color);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_BLEND);
@@ -261,14 +268,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 			GL11.glVertex2f(x+(float)(radius*Math.cos(ReikaPhysicsHelper.degToRad(i))), y+(float)(radius*Math.sin(ReikaPhysicsHelper.degToRad(i))));
 		}
 		GL11.glEnd();
-		if (light)
-			GL11.glEnable(GL11.GL_LIGHTING);
-		if (depth)
-			GL11.glEnable(GL11.GL_DEPTH_TEST);
-		if (blend)
-			GL11.glDisable(GL11.GL_BLEND);
-		if (tex)
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glPopAttrib();
 	}
 
 	/**

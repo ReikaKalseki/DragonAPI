@@ -33,6 +33,7 @@ import net.minecraft.network.EnumConnectionState;
 import net.minecraft.potion.Potion;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -78,6 +79,7 @@ import Reika.DragonAPI.Base.ModHandlerBase.SearchVersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionIgnore;
 import Reika.DragonAPI.Command.BiomeMapCommand;
+import Reika.DragonAPI.Command.BlockInfoCommand;
 import Reika.DragonAPI.Command.BlockReplaceCommand;
 import Reika.DragonAPI.Command.ChunkGenCommand;
 import Reika.DragonAPI.Command.ClassLoaderCommand;
@@ -91,6 +93,7 @@ import Reika.DragonAPI.Command.EntityListCommand;
 import Reika.DragonAPI.Command.FindBiomeCommand;
 import Reika.DragonAPI.Command.FindThreadCommand;
 import Reika.DragonAPI.Command.FindTilesCommand;
+import Reika.DragonAPI.Command.GetLatencyCommand;
 import Reika.DragonAPI.Command.GetUUIDCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
 import Reika.DragonAPI.Command.ItemNBTCommand;
@@ -567,6 +570,9 @@ public class DragonAPIInit extends DragonAPIMod {
 			MinetweakerHooks.instance.registerAll();
 		}
 
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			ClientCommandHandler.instance.registerCommand(new GetLatencyCommand());
+
 		this.finishTiming();
 	}
 
@@ -660,6 +666,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		evt.registerServerCommand(new GetUUIDCommand());
 		evt.registerServerCommand(new ReflectionCommand());
 		evt.registerServerCommand(new GenLootCommand());
+		evt.registerServerCommand(new BlockInfoCommand());
+		//evt.registerServerCommand(new GetLatencyCommand());
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();

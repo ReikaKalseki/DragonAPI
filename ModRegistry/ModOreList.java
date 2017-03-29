@@ -449,6 +449,10 @@ public enum ModOreList implements OreType {
 		return null;
 	}
 
+	public boolean contains(ItemStack is) {
+		return ReikaItemHelper.collectionContainsItemStack(this.getAllOreBlocks(), is);
+	}
+
 	public static ModList getOreModFromItemStack(ItemStack is) {
 		if (ReikaBlockHelper.isOre(is)) {
 			if (ReikaItemHelper.isBlock(is)) {

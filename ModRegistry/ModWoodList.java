@@ -94,7 +94,8 @@ public enum ModWoodList implements TreeType {
 	HAWTHORNE(ModList.WITCHERY, 	0x656566, 0xC3EEC3, "LOG", "LEAVES", "SAPLING", new int[]{2,6,10}, new int[]{2,10}, 2, VarType.INSTANCE),
 	ALDER(ModList.WITCHERY, 		0x52544C, 0xC3D562, "LOG", "LEAVES", "SAPLING", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE),
 	LIGHTED(ModList.CHROMATICRAFT,	0xA05F36, 0xFFD793, "GLOWLOG", "GLOWLEAF", "GLOWSAPLING", 0, new int[]{0,1,2,3,4}, 0, VarType.INSTANCE),
-	SLIME(ModList.TINKERER,			0x68FF7A, 0x8EFFE1, "slimeGel", "slimeLeaves", "slimeSapling", 1, 0, 0, VarType.INSTANCE);
+	SLIME(ModList.TINKERER,			0x68FF7A, 0x8EFFE1, "slimeGel", "slimeLeaves", "slimeSapling", 1, 0, 0, VarType.INSTANCE),
+	TAINTED(ModList.FORBIDDENMAGIC,	0x40374B, 0x530D7B,	"taintLog", "taintLeaves", "taintSapling", new int[]{0,4,8}, 0, 0, VarType.INSTANCE);
 
 	private ModList mod;
 	private Block blockID = null;

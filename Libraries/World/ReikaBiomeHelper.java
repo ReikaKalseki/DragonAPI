@@ -22,6 +22,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.BiomeManager;
@@ -223,7 +224,21 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 	/** Returns the biome's parent. Args: Biome */
 	public static BiomeGenBase getParentBiomeType(BiomeGenBase biome) {
-		return parents.containsKey(biome) ? parents.get(biome) : biome;
+		BiomeGenBase b = parents.get(biome);
+		if (b != null)
+			return b;
+		if (biome instanceof BiomeGenMutated)
+			biome = ((BiomeGenMutated)biome).baseBiome;
+		if (biome.biomeID >= 128) {
+			BiomeGenBase below = BiomeGenBase.biomeList[biome.biomeID-128];
+			if (below != null) {
+				if (below.getClass().isAssignableFrom(biome.getClass())) {
+					biome = below;
+					parents.put(biome, below);
+				}
+			}
+		}
+		return biome;
 	}
 
 	/** Returns whether the biome is a variant of a parent. Args: Biome */

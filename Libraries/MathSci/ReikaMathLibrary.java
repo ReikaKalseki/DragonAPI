@@ -525,6 +525,16 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return Math.round(val*fac)/fac;
 	}
 
+	public static double roundUpToFraction(double val, double frac) {
+		double fac = 1D/frac;
+		return Math.ceil(val*fac)/fac;
+	}
+
+	public static double roundDownToFraction(double val, double frac) {
+		double fac = 1D/frac;
+		return Math.floor(val*fac)/fac;
+	}
+
 	public static int getWithinBoundsElse(int val, int min, int max, int fall) {
 		return isValueInsideBoundsIncl(min, max, val) ? val : fall;
 	}
