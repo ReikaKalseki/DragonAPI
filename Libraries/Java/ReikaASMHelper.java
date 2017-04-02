@@ -1163,4 +1163,16 @@ public class ReikaASMHelper {
 		}
 	}
 
+	public static void addLeadingArgument(MethodInsnNode min, String arg) {
+		ArrayList<String> li = parseMethodSignature(min);
+		li.add(0, arg);
+		min.desc = compileSignature(li);
+	}
+
+	public static void addTrailingArgument(MethodInsnNode min, String arg) {
+		ArrayList<String> li = parseMethodSignature(min);
+		li.add(li.size()-2, arg);
+		min.desc = compileSignature(li);
+	}
+
 }

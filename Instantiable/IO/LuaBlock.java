@@ -137,10 +137,7 @@ public abstract class LuaBlock {
 	public final boolean containsKeyInherit(String key) {
 		if (data.containsKey(key))
 			return true;
-		if (parent != null) {
-			return parent.containsKeyInherit(key);
-		}
-		return false;
+		return !this.inherit(key).startsWith("[NULL");
 	}
 
 	public boolean hasChild(String s) {
@@ -171,11 +168,12 @@ public abstract class LuaBlock {
 			else
 				throw new IllegalStateException("'"+orig.parent.name+"/"+orig.name+"' tried to inherit property '"+key+"', but could not.");
 		}
+		//ReikaJavaLibrary.pConsole("'"+b.getString("type")+"' inheriting property '"+steps+"/"+key+"' from parent '"+inherit+"'");
 		return lb.data.containsKey(key) ? lb.getString(key) : "[NULL DATA]";
 	}
 
 	private boolean canInherit(String key) {
-		return /*!requiredElements.contains(name) && */!requiredElements.contains(key);
+		return /*!requiredElements.contains(name) && */!requiredElements.contains(key) && !key.equals("inherit");
 	}
 
 	public final LuaBlock getChild(String key) {
@@ -407,8 +405,11 @@ public abstract class LuaBlock {
 		Collections.sort(keys, outputSorter);
 		for (String s : keys) {
 			LuaBlock c = children.get(s);
-			li.add(pre+s+" = {");
-			li.addAll(this.writeToStrings(indent+1));
+			if (this.isList() || c.isListEntry() || s.equals("-"))
+				li.add(pre+"{");
+			else
+				li.add(pre+s+" = {");
+			li.addAll(c.writeToStrings(indent+1));
 			li.add(pre+"}");
 		}
 		if (indent == 1)

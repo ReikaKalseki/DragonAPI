@@ -52,6 +52,12 @@ public final class ChancedOutputList {
 		return this;
 	}
 
+	public Float removeItem(ItemStack is) {
+		if (!modifiable)
+			throw new UnsupportedOperationException("This ChancedOutputList is locked!");
+		return data.remove(is);
+	}
+
 	public ChancedOutputList addItems(ArrayList<ItemStack> li, float chance) {
 		for (ItemStack is : li)
 			this.addItem(is, chance);

@@ -390,8 +390,8 @@ public class APIPacketHandler implements PacketHandler {
 				break;
 			case SENDLATENCY:
 				long t3 = System.currentTimeMillis();
-				long t1 = ReikaJavaLibrary.packLong(data[0], data[1]);
-				long t2 = ReikaJavaLibrary.packLong(data[2], data[3]);
+				long t1 = ReikaJavaLibrary.buildLong(data[0], data[1]);
+				long t2 = ReikaJavaLibrary.buildLong(data[2], data[3]);
 				long toServerTime = t2-t1;
 				long toClientTime = t3-t2;
 				ReikaChatHelper.write("Total latency: "+toServerTime+"ms to server, "+toClientTime+"ms from server.");

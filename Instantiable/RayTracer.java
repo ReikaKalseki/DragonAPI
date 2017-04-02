@@ -178,7 +178,7 @@ public final class RayTracer {
 				trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 4);
 			}
 		}
-		if (ModList.TINKERER.isLoaded()) {
+		if (ModList.TINKERER.isLoaded() && TinkerBlockHandler.getInstance().clearGlassID != null) {
 			trace.addTransparentBlock(TinkerBlockHandler.getInstance().clearGlassID);
 		}
 

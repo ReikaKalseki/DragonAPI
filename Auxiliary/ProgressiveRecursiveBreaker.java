@@ -84,6 +84,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private boolean isBlacklist = false;
 		public boolean pathTracking = false;
 		public boolean dropFluids = true;
+		public boolean breakAir = false;
 		private final Collection<Coordinate> path = new HashSet();
 		public boolean taxiCabDistance = false;
 		//public final BlockMap<BlockKey> looseMatches = new BlockMap();
@@ -164,7 +165,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 					int y = c.yCoord;
 					int z = c.zCoord;
 					Block b = world.getBlock(x, y, z);
-					if (b == Blocks.air)
+					if (b == Blocks.air && !breakAir)
 						continue;
 					int meta = world.getBlockMetadata(x, y, z);
 					if (call != null && !call.canBreak(this, world, x, y, z, b, meta))
@@ -230,7 +231,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 				return false;
 			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
-			if (id == Blocks.air)
+			if (id == Blocks.air && !breakAir)
 				return false;
 			if (!isOmni) {
 				if (!ids.contains(new BlockKey(id, meta)))
@@ -241,65 +242,67 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 
 		private void dropBlock(World world, int x, int y, int z) {
 			Block id = world.getBlock(x, y, z);
-			if (id == Blocks.air)
-				return;
 			int meta = world.getBlockMetadata(x, y, z);
-			if (drops) {
-				ArrayList<ItemStack> drops = new ArrayList();
-				if (id instanceof BlockTieredResource) {
-					BlockTieredResource bt = (BlockTieredResource)id;
-					if (player != null) {
-						if (bt.isPlayerSufficientTier(world, x, y, z, player)) {
-							drops.addAll(bt.getHarvestResources(world, x, y, z, fortune, player));
-						}
-						else {
-							drops.addAll(bt.getNoHarvestResources(world, x, y, z, fortune, player));
+			if (id != Blocks.air) {
+				if (drops) {
+					ArrayList<ItemStack> drops = new ArrayList();
+					if (id instanceof BlockTieredResource) {
+						BlockTieredResource bt = (BlockTieredResource)id;
+						if (player != null) {
+							if (bt.isPlayerSufficientTier(world, x, y, z, player)) {
+								drops.addAll(bt.getHarvestResources(world, x, y, z, fortune, player));
+							}
+							else {
+								drops.addAll(bt.getNoHarvestResources(world, x, y, z, fortune, player));
+							}
 						}
 					}
-				}
-				else if (id instanceof MachineRegistryBlock) {
-					drops.add(((MachineRegistryBlock)id).getMachine(world, x, y, z).getCraftedProduct(world.getTileEntity(x, y, z)));
-				}
-				else {
-					if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta)) {
-						ItemStack silk = ReikaBlockHelper.getSilkTouch(world, x, y, z, id, meta, player, dropFluids);
-						if (silk != null)
-							drops.add(silk);
+					else if (id instanceof MachineRegistryBlock) {
+						drops.add(((MachineRegistryBlock)id).getMachine(world, x, y, z).getCraftedProduct(world.getTileEntity(x, y, z)));
+					}
+					else {
+						if (silkTouch && id.canSilkHarvest(world, player, x, y, z, meta)) {
+							ItemStack silk = ReikaBlockHelper.getSilkTouch(world, x, y, z, id, meta, player, dropFluids);
+							if (silk != null)
+								drops.add(silk);
+							else
+								drops.addAll(ReikaWorldHelper.getDropsAt(world, x, y, z, fortune, player));
+						}
 						else
 							drops.addAll(ReikaWorldHelper.getDropsAt(world, x, y, z, fortune, player));
 					}
-					else
-						drops.addAll(ReikaWorldHelper.getDropsAt(world, x, y, z, fortune, player));
-				}
-				for (ItemStack is : drops) {
-					boolean flag = false;
-					if (dropInventory != null) {
-						if (dropInventory instanceof InventoryPlayer) {
-							if (MinecraftForge.EVENT_BUS.post(new EntityItemPickupEvent(((InventoryPlayer)dropInventory).player, new EntityItem(world, x+0.5, y+0.5, z+0.5, is)))) {
-								continue;
+					for (ItemStack is : drops) {
+						boolean flag = false;
+						if (dropInventory != null) {
+							if (dropInventory instanceof InventoryPlayer) {
+								if (MinecraftForge.EVENT_BUS.post(new EntityItemPickupEvent(((InventoryPlayer)dropInventory).player, new EntityItem(world, x+0.5, y+0.5, z+0.5, is)))) {
+									continue;
+								}
 							}
+							flag = ReikaInventoryHelper.addToIInv(is, dropInventory);
 						}
-						flag = ReikaInventoryHelper.addToIInv(is, dropInventory);
-					}
-					if (!flag) {
-						ReikaItemHelper.dropItem(world, x+0.5, y+0.5, z+0.5, is);
+						if (!flag) {
+							ReikaItemHelper.dropItem(world, x+0.5, y+0.5, z+0.5, is);
+						}
 					}
 				}
-			}
-			if (ReikaBlockHelper.isLiquid(id)) {
-				if (id.getMaterial() == Material.water) {
-					ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "game.neutral.swim");
+				if (ReikaBlockHelper.isLiquid(id)) {
+					if (id.getMaterial() == Material.water) {
+						ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "game.neutral.swim");
+					}
+					else {
+						ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "mob.ghast.fireball");
+					}
 				}
 				else {
-					ReikaSoundHelper.playSoundAtBlock(world, x, y, z, "mob.ghast.fireball");
+					ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 				}
-			}
-			else {
-				ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 			}
 			if (call != null)
 				call.onPreBreak(this, world, x, y, z, id, meta);
-			world.setBlock(x, y, z, Blocks.air, 0, causeUpdates ? 3 : 2);
+			if (id != Blocks.air) {
+				world.setBlock(x, y, z, Blocks.air, 0, causeUpdates ? 3 : 2);
+			}
 			if (causeUpdates)
 				world.markBlockForUpdate(x, y, z);
 			if (player != null) {

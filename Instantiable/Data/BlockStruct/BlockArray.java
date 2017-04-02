@@ -1240,8 +1240,12 @@ public class BlockArray implements Iterable<Coordinate> {
 		Collections.reverse(blocks);
 	}
 
-	public void sortBlocksByHeight() {
-		this.sort(heightComparator);
+	public void sortBlocksByHeight(boolean reverse) {
+		this.sort(reverse ? heightComparator2 : heightComparator);
+	}
+
+	public void sortBlocksByDistance(Coordinate loc) {
+		this.sort(new InwardsComparator(loc));
 	}
 
 	public void sort(Comparator<Coordinate> comparator) {
@@ -1327,13 +1331,35 @@ public class BlockArray implements Iterable<Coordinate> {
 		}
 	}
 
-	private static final Comparator<Coordinate> heightComparator = new HeightComparator();
+	private static final Comparator<Coordinate> heightComparator = new HeightComparator(false);
+	private static final Comparator<Coordinate> heightComparator2 = new HeightComparator(true);
 
 	private static class HeightComparator implements Comparator<Coordinate> {
 
+		private final boolean reverse;
+
+		private HeightComparator(boolean rev) {
+			reverse = rev;
+		}
+
 		@Override
 		public int compare(Coordinate o1, Coordinate o2) {
-			return o1.yCoord - o2.yCoord;
+			return reverse ? o2.yCoord - o1.yCoord : o1.yCoord - o2.yCoord;
+		}
+
+	}
+
+	private class InwardsComparator implements Comparator<Coordinate> {
+
+		private final Coordinate location;
+
+		private InwardsComparator(Coordinate c) {
+			location = c;
+		}
+
+		@Override
+		public int compare(Coordinate o1, Coordinate o2) {
+			return (int)Math.signum(o2.getDistanceTo(location)-o1.getDistanceTo(location));
 		}
 
 	}

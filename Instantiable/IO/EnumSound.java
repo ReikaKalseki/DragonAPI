@@ -30,7 +30,11 @@ public class EnumSound implements ISound {
 	private boolean repeat = false;
 
 	public EnumSound(SoundEnum obj, ISound ref) {
-		this(obj, ref.getXPosF(), ref.getYPosF(), ref.getZPosF(), ref.getVolume(), ref.getPitch(), ref.getAttenuationType() != AttenuationType.NONE);
+		this(obj, ref, ref.getAttenuationType() != AttenuationType.NONE);
+	}
+
+	public EnumSound(SoundEnum obj, ISound ref, boolean atten) {
+		this(obj, ref.getXPosF(), ref.getYPosF(), ref.getZPosF(), ref.getVolume(), ref.getPitch(), atten);
 	}
 
 	public EnumSound(SoundEnum obj, double x, double y, double z, float vol, float p, boolean att) {

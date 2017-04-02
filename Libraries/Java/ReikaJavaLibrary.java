@@ -889,7 +889,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return new int[]{l1, l2};
 	}
 
-	public static long packLong(int l1, int l2) {
+	public static long buildLong(int l1, int l2) {
 		return ((long)l1 << 32) | (l2 & 0xffffffffL);
 	}
 }

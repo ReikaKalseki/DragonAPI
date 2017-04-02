@@ -18,6 +18,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.Block.SoundType;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.MusicTicker.MusicType;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
@@ -177,6 +178,11 @@ public class ReikaSoundHelper {
 		catch (ConcurrentModificationException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void playClientSound(String snd, double x, double y, double z, float vol, float pitch, boolean atten) {
+		Minecraft.getMinecraft().theWorld.playSound(x, y, z, snd, vol, pitch, atten);
 	}
 
 	@SideOnly(Side.CLIENT)

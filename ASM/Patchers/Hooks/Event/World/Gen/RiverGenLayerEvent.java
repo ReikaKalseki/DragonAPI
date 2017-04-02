@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.ASM.Patchers.Hooks.Event.World;
+package Reika.DragonAPI.ASM.Patchers.Hooks.Event.World.Gen;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;

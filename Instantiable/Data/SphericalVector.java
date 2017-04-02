@@ -44,4 +44,11 @@ public class SphericalVector {
 		return this.getCartesian()[2];
 	}
 
+	public void aimFrom(double x1, double y1, double z1, double x2, double y2, double z2) {
+		double[] dat = ReikaPhysicsHelper.cartesianToPolar(x2-x1, y2-y1, z2-z1);
+		magnitude = dat[0];
+		inclination = -(dat[1]-90);
+		rotation = -dat[2]-90;
+	}
+
 }

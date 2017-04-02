@@ -68,6 +68,15 @@ public enum ReikaParticleHelper {
 		this.spawnAt(e.worldObj, e.posX, e.posY, e.posZ);
 	}
 
+	public void spawnAround(Entity e, int n, double r) {
+		for (int i = 0; i < n; i++) {
+			double dx = ReikaRandomHelper.getRandomPlusMinus(e.posX, r);
+			double dy = ReikaRandomHelper.getRandomPlusMinus(e.posY, r);
+			double dz = ReikaRandomHelper.getRandomPlusMinus(e.posZ, r);
+			this.spawnAt(e.worldObj, dx, dy, dz);
+		}
+	}
+
 	public void spawnAt(World world, double x, double y, double z, double vx, double vy, double vz) {
 		world.spawnParticle(name, x, y, z, vx, vy, vz);
 	}

@@ -520,45 +520,72 @@ public class ReikaThaumHelper {
 		res.registerResearchItem();
 	}
 
+	public static void addResearchForMultipleRecipesViaXML(String name, ItemStack icon, String id, String desc, String category, Class root, String path, int row, int col, Object[] recipes, int numPagesEach, int leadingText) {
+		XMLResearch xml = getResearchForMultipleRecipes(id.toLowerCase(Locale.ENGLISH), root, path, leadingText, numPagesEach, recipes);
+		CustomThaumResearch res = new CustomThaumResearch(id, category, new AspectList(), col, row, 0, icon).setName(name);
+		res.setDescription(desc);
+		res.setPages(xml.getPages());
+		res.registerResearchItem();
+	}
+
+	private static XMLResearch getResearchForMultipleRecipes(String name, Class root, String path, int leadingText, int numPagesEach, Object[] recipes) {
+		XMLResearch res = new XMLResearch(name, root, path);
+		int id = 0;
+		for (int n = 0; n < leadingText; n++) {
+			res.pages.add(new XMLPage(res, id));
+			id++;
+		}
+		for (int i = 0; i < recipes.length; i++) {
+			for (int n = 0; n < numPagesEach; n++) {
+				XMLPage p = n == 0 ? XMLPage.getPageForObject(res, recipes[i], id) : new XMLPage(res, id);
+				res.pages.add(p);
+				id++;
+			}
+		}
+		return res;
+	}
+
 	public static class XMLResearch {
 
 		private final XMLInterface info;
 		private final ArrayList<ResearchPage> pages = new ArrayList();
 		public final String name;
 
-		private XMLResearch(String name, Class root, String path, InfusionRecipe recipe, int num) {
+		private XMLResearch(String name, Class root, String path) {
 			info = new XMLInterface(root, path);
 			this.name = name;
-			XMLPage page = new XMLPage(recipe);
+		}
+
+		private XMLResearch(String name, Class root, String path, InfusionRecipe recipe, int num) {
+			this(name, root, path);
+			XMLPage page = new XMLPage(this, recipe, 0);
 			pages.add(page);
 			for (int i = 1; i < num; i++) {
-				pages.add(new XMLPage(i));
+				pages.add(new XMLPage(this, i));
 			}
 		}
 
 		private XMLResearch(String name, Class root, String path, IArcaneRecipe recipe, int num) {
-			info = new XMLInterface(root, path);
-			this.name = name;
-			XMLPage page = new XMLPage(recipe);
+			this(name, root, path);
+			XMLPage page = new XMLPage(this, recipe, 0);
 			pages.add(page);
 			for (int i = 1; i < num; i++) {
-				pages.add(new XMLPage(i));
+				pages.add(new XMLPage(this, i));
 			}
 		}
 
 		private XMLResearch(String name, Class root, String path, CrucibleRecipe recipe, int num) {
-			info = new XMLInterface(root, path);
-			this.name = name;
-			XMLPage page = new XMLPage(recipe);
+			this(name, root, path);
+			XMLPage page = new XMLPage(this, recipe, 0);
 			pages.add(page);
 			for (int i = 1; i < num; i++) {
-				pages.add(new XMLPage(i));
+				pages.add(new XMLPage(this, i));
 			}
 		}
 
 		public void addPage() {
 			int num = pages.size();
-			pages.add(new XMLPage(num));
+			pages.add(new XMLPage(this, num));
 		}
 
 		public ResearchPage[] getPages() {
@@ -568,40 +595,58 @@ public class ReikaThaumHelper {
 			}
 			return arr;
 		}
+	}
 
-		private class XMLPage extends ResearchPage {
+	private static class XMLPage extends ResearchPage {
 
-			private final int page;
+		private final XMLResearch research;
+		private final int page;
 
-			private XMLPage(InfusionRecipe recipe) {
-				super(recipe);
-				page = 0;
+		private XMLPage(XMLResearch res, InfusionRecipe recipe, int id) {
+			super(recipe);
+			research = res;
+			page = id;
+		}
+
+		private XMLPage(XMLResearch res, IArcaneRecipe recipe, int id) {
+			super(recipe);
+			research = res;
+			page = id;
+		}
+
+		private XMLPage(XMLResearch res, CrucibleRecipe recipe, int id) {
+			super(recipe);
+			research = res;
+			page = id;
+		}
+
+		private XMLPage(XMLResearch res, int id) {
+			super("");
+			research = res;
+			page = id;
+		}
+
+		@Override
+		public String getTranslatedText() {
+			return research.info.getValueAtNode("researches:"+research.name.toLowerCase(Locale.ENGLISH)+":page"+page);
+		}
+
+		@Override
+		public String toString() {
+			return research.name+": "+this.getTranslatedText();
+		}
+
+		private static XMLPage getPageForObject(XMLResearch r, Object o, int id) {
+			if (o instanceof InfusionRecipe) {
+				return new XMLPage(r, (InfusionRecipe)o, id);
 			}
-
-			private XMLPage(IArcaneRecipe recipe) {
-				super(recipe);
-				page = 0;
+			else if (o instanceof IArcaneRecipe) {
+				return new XMLPage(r, (IArcaneRecipe)o, id);
 			}
-
-			private XMLPage(CrucibleRecipe recipe) {
-				super(recipe);
-				page = 0;
+			else if (o instanceof CrucibleRecipe) {
+				return new XMLPage(r, (CrucibleRecipe)o, id);
 			}
-
-			private XMLPage(int id) {
-				super("");
-				page = id;
-			}
-
-			@Override
-			public String getTranslatedText() {
-				return info.getValueAtNode("researches:"+name.toLowerCase(Locale.ENGLISH)+":page"+page);
-			}
-
-			@Override
-			public String toString() {
-				return name+": "+this.getTranslatedText();
-			}
+			return new XMLPage(r, id);
 		}
 	}
 
