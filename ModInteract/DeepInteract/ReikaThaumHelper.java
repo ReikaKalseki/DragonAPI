@@ -520,9 +520,9 @@ public class ReikaThaumHelper {
 		res.registerResearchItem();
 	}
 
-	public static void addResearchForMultipleRecipesViaXML(String name, ItemStack icon, String id, String desc, String category, Class root, String path, int row, int col, Object[] recipes, int numPagesEach, int leadingText) {
+	public static void addResearchForMultipleRecipesViaXML(String name, ItemStack icon, String id, String desc, String category, Class root, String path, int row, int col, Object[] recipes, int numPagesEach, int leadingText, AspectList al) {
 		XMLResearch xml = getResearchForMultipleRecipes(id.toLowerCase(Locale.ENGLISH), root, path, leadingText, numPagesEach, recipes);
-		CustomThaumResearch res = new CustomThaumResearch(id, category, new AspectList(), col, row, 0, icon).setName(name);
+		CustomThaumResearch res = new CustomThaumResearch(id, category, al, col, row, 0, icon).setName(name);
 		res.setDescription(desc);
 		res.setPages(xml.getPages());
 		res.registerResearchItem();

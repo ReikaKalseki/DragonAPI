@@ -115,7 +115,11 @@ public class IDHelper {
 
 	private static HashMap<String, Integer> calcFluidIDs() {
 		HashMap<String, Integer> map = new HashMap();
-		map.putAll(FluidRegistry.getRegisteredFluidIDs());
+		Map<String, Fluid> data = FluidRegistry.getRegisteredFluids();
+		for (String s : data.keySet()) {
+			Fluid f = data.get(s);
+			map.put(s, f.getID());
+		}
 		return map;
 	}
 
@@ -161,7 +165,7 @@ public class IDHelper {
 	}
 
 	public static Map<String, Integer> getFluidIDs() {
-		return Collections.unmodifiableMap(fluids);
+		return Collections.unmodifiableMap(/*fluids*/ReikaJavaLibrary.sortMapByValues(calcFluidIDs()));
 	}
 
 	public static Map<String, Integer> getFluidContainers() {

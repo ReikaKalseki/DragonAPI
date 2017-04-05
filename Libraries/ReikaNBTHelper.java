@@ -377,7 +377,7 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		return (HashMap<String, ?>)getValue(tag.getCompoundTag(s));
 	}
 
-	public static void writeMapToNBT(String s, NBTTagCompound tag, HashMap<String, ?> map) {
+	public static void writeMapToNBT(String s, NBTTagCompound tag, Map<String, ?> map) {
 		NBTBase dat = getTagForObject(map);
 		tag.setTag(s, dat);
 	}

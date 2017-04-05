@@ -33,6 +33,10 @@ public class TimerMap<V> {
 		this.timer.put(val, time);
 	}
 
+	public void putAll(Map<V, Integer> map) {
+		this.timer.putAll(map);
+	}
+
 	public void clear() {
 		timer.clear();
 	}
@@ -82,6 +86,10 @@ public class TimerMap<V> {
 
 	public final int size() {
 		return timer.size();
+	}
+
+	public Map<V, Integer> toMap() {
+		return Collections.unmodifiableMap(timer);
 	}
 
 	public static interface TimerCallback {
