@@ -299,42 +299,49 @@ public class ReikaASMHelper {
 	}
 
 	public static void clearMethodBody(MethodNode m) {
-		m.instructions.clear();/*
-		String[] s = m.desc.split("\\)");
-		String ret = s[s.length-1];
-		ReturnType type = ReturnType.getFromSig(ret);
+		m.instructions.clear();
+		ArrayList<String> li = parseMethodSignature(m);
+		PrimitiveType type = PrimitiveType.getFromSig(li.get(li.size()-1));
 		AbstractInsnNode retcall = null;
+		AbstractInsnNode retobj = null;
 		switch(type) {
-		case LONG:
-			retcall = new InsnNode(Opcodes.LRETURN);
-			break;
-		case DOUBLE:
-			retcall = new InsnNode(Opcodes.DRETURN);
-			break;
-		case FLOAT:
-			retcall = new InsnNode(Opcodes.FRETURN);
-			break;
-		case INT:
-		case BYTE:
-		case SHORT:
-		case BOOLEAN:
-			retcall = new InsnNode(Opcodes.IRETURN);
-			break;
-		case FLOATARRAY:
-		case INTARRAY:
-		case BOOLARRAY:
-		case SHORTARRAY:
-		case DOUBARRAY:
-		case BYTEARRAY:
-		case OBJECT:
-			retcall = new InsnNode(Opcodes.ARETURN);
-			break;
-		case VOID:
-			retcall = new InsnNode(Opcodes.RETURN);
-			break;
+			case LONG:
+				retcall = new InsnNode(Opcodes.LRETURN);
+				retobj = new InsnNode(Opcodes.LCONST_0);
+				break;
+			case DOUBLE:
+				retcall = new InsnNode(Opcodes.DRETURN);
+				retobj = new InsnNode(Opcodes.DCONST_0);
+				break;
+			case FLOAT:
+				retcall = new InsnNode(Opcodes.FRETURN);
+				retobj = new InsnNode(Opcodes.FCONST_0);
+				break;
+			case INT:
+			case BYTE:
+			case SHORT:
+			case BOOLEAN:
+				retcall = new InsnNode(Opcodes.IRETURN);
+				retobj = new InsnNode(Opcodes.ICONST_0);
+				break;
+			case FLOATARRAY:
+			case INTARRAY:
+			case BOOLARRAY:
+			case SHORTARRAY:
+			case DOUBARRAY:
+			case BYTEARRAY:
+			case OBJECT:
+				retcall = new InsnNode(Opcodes.ARETURN);
+				retobj = new InsnNode(Opcodes.ACONST_NULL);
+				break;
+			case VOID:
+				retcall = new InsnNode(Opcodes.RETURN);
+				break;
 		}
+		if (retobj != null)
+			m.instructions.add(retobj);
 		if (retcall != null)
-			m.instructions.add(retcall);*/
+			m.instructions.add(retcall);
 	}
 
 	public static String clearString(InsnList c) {
@@ -475,13 +482,13 @@ public class ReikaASMHelper {
 		return ain instanceof JumpInsnNode ? ain : null;
 	}
 
-	public static AbstractInsnNode getLastFieldRefBefore(InsnList li, int index, String name) {
+	public static FieldInsnNode getLastFieldRefBefore(InsnList li, int index, String name) {
 		AbstractInsnNode ain = li.get(index-1);
 		while ((!(ain instanceof FieldInsnNode) || !((FieldInsnNode)ain).name.equals(name)) && index > 0) {
 			index--;
 			ain = li.get(index);
 		}
-		return ain instanceof FieldInsnNode && ((FieldInsnNode)ain).name.equals(name) ? ain : null;
+		return ain instanceof FieldInsnNode && ((FieldInsnNode)ain).name.equals(name) ? (FieldInsnNode)ain : null;
 	}
 
 	public static AbstractInsnNode getLastNonZeroALOADBefore(InsnList li, int index) {
@@ -666,9 +673,13 @@ public class ReikaASMHelper {
 	}
 
 	public static ArrayList<String> parseMethodSignature(MethodNode min) {
-		int idx = min.desc.lastIndexOf(')');
-		String ret = min.desc.substring(idx+1);
-		ArrayList<String> li = parseMethodDesc(min.desc);
+		return parseMethodSignature(min.desc);
+	}
+
+	public static ArrayList<String> parseMethodSignature(String sig) {
+		int idx = sig.lastIndexOf(')');
+		String ret = sig.substring(idx+1);
+		ArrayList<String> li = parseMethodDesc(sig);
 		li.add(ret);
 		return li;
 	}
@@ -1163,16 +1174,38 @@ public class ReikaASMHelper {
 		}
 	}
 
-	public static void addLeadingArgument(MethodInsnNode min, String arg) {
-		ArrayList<String> li = parseMethodSignature(min);
+	public static String addLeadingArgument(String sig, String arg) {
+		ArrayList<String> li = parseMethodSignature(sig);
 		li.add(0, arg);
-		min.desc = compileSignature(li);
+		return compileSignature(li);
+	}
+
+	public static String addTrailingArgument(String sig, String arg) {
+		ArrayList<String> li = parseMethodSignature(sig);
+		li.add(li.size()-1, arg);
+		return compileSignature(li);
+	}
+
+	public static void addLeadingArgument(MethodInsnNode min, String arg) {
+		min.desc = addLeadingArgument(min.desc, arg);
 	}
 
 	public static void addTrailingArgument(MethodInsnNode min, String arg) {
-		ArrayList<String> li = parseMethodSignature(min);
-		li.add(li.size()-2, arg);
-		min.desc = compileSignature(li);
+		min.desc = addTrailingArgument(min.desc, arg);
+	}
+
+	public static void replaceInstruction(InsnList li, AbstractInsnNode tgt, AbstractInsnNode repl) {
+		li.insertBefore(tgt, repl);
+		li.remove(tgt);
+	}
+
+	public static void clearClass(ClassNode cn) {
+		Collection<MethodNode> c = new ArrayList(cn.methods);
+		for (MethodNode m : cn.methods) {
+			clearMethodBody(m);
+			cn.methods.remove(m);
+			addMethod(cn, copyInsnList(m.instructions), m.name, m.desc, m.access);
+		}
 	}
 
 }

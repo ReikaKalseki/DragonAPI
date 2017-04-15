@@ -128,15 +128,26 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	private static boolean isInternetAccessible(int timeout) {
-		try {
-			URLConnection c = new URL("http://www.google.com").openConnection();
-			c.setConnectTimeout(timeout);
-			((HttpURLConnection)c).getResponseCode();
-			return true;
+		String[] attempts = {
+				"http://www.google.com",
+				"http://en.wikipedia.org/wiki/Main_Page",
+				"http://github.com/",
+				"http://msdn.microsoft.com/en-us/default.aspx",
+				"https://aws.amazon.com/",
+				"ns1.telstra.net"
+		};
+		for (int i = 0; i < attempts.length; i++) {
+			try {
+				URLConnection c = new URL(attempts[i]).openConnection();
+				c.setConnectTimeout(timeout);
+				((HttpURLConnection)c).getResponseCode();
+				return true;
+			}
+			catch (IOException ex) {
+
+			}
 		}
-		catch (IOException ex) {
-			return false;
-		}
+		return false;
 	}
 
 	/** Gets all files with the given extension in a directory and any subdirectories. */

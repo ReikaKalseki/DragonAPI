@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM;
 
+import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
 
@@ -127,7 +128,7 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 				}
 			}
 		}
-		catch (Exception e) {
+		catch (IOException e) {
 			throw new RuntimeException("Could not find DragonAPI ASM handlers", e);
 		}
 

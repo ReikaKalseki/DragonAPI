@@ -479,6 +479,8 @@ public final class CommandableUpdateChecker {
 		private ModVersion getLatestVersion() {
 			try {
 				ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, 10000, false, this, this);
+				if (lines == null || lines.isEmpty())
+					throw new VersionNotLoadableException("File was empty or null");
 				String name = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase(Locale.ENGLISH));
 				for (String line : lines) {
 					if (line.toLowerCase().startsWith(name)) {

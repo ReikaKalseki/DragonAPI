@@ -1234,18 +1234,19 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return xp;
 	}
 
-	public static void damageArmor(EntityLivingBase e, int amt) {
+	public static int damageArmor(EntityLivingBase e, int amt) {
+		int ret = 0;
 		for (int i = 1; i < 5; i++) {
 			ItemStack arm = e.getEquipmentInSlot(i);
 			if (arm != null && canDamageArmorOf(e)) {
 				Item item = arm.getItem();
 				if (InterfaceCache.MUSEELECTRICITEM.instanceOf(item)) {
 					MuseElectricItem ms = (MuseElectricItem)item;
-					ms.extractEnergy(arm, 5000, false);
+					ret += ms.extractEnergy(arm, amt*50, false);
 				}
 				else if (InterfaceCache.RFENERGYITEM.instanceOf(item)) {
 					IEnergyContainerItem ie = (IEnergyContainerItem)item;
-					ie.extractEnergy(arm, 5000, false);
+					ret += ie.extractEnergy(arm, amt*50, false);
 				}
 				else if (InterfaceCache.IELECTRICITEM.instanceOf(item)) {
 					IElectricItem ie = (IElectricItem)item;
@@ -1253,12 +1254,14 @@ public final class ReikaEntityHelper extends DragonAPICore {
 					Item id = ie.getEmptyItem(arm);
 					ItemStack newarm = new ItemStack(id, 1, 0);
 					e.setCurrentItemOrArmor(i, newarm);
+					ret += amt;
 				}
 				else if (InterfaceCache.GASITEM.instanceOf(item)) {
 					IGasItem ie = (IGasItem)item;
 					GasStack gas = ie.getGas(arm);
 					if (gas != null && gas.amount > 0)
-						ie.removeGas(arm, Math.max(1, gas.amount/4));
+						gas = ie.removeGas(arm, Math.max(amt, gas.amount*amt/400));
+					ret += gas != null ? gas.amount : 0;
 				}
 				else if (item instanceof UnbreakableArmor && !((UnbreakableArmor)item).canBeDamaged()) {
 					//do nothing
@@ -1270,9 +1273,11 @@ public final class ReikaEntityHelper extends DragonAPICore {
 						e.setCurrentItemOrArmor(i, null);
 					}
 					e.playSound("random.break", 0.1F, 0.8F);
+					ret += amt;
 				}
 			}
 		}
+		return ret;
 	}
 
 	private static boolean canDamageArmorOf(EntityLivingBase target) {
@@ -1283,6 +1288,19 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	public static boolean existsAnotherEntityWithin(Entity e, double dist) {
 		AxisAlignedBB box = ReikaAABBHelper.getEntityCenteredAABB(e, dist);
 		return e.worldObj.selectEntitiesWithinAABB(e.getClass(), box, new NotSelfSelector(e)).size() > 0;
+	}
+
+	public static void doSetHealthDamage(EntityLivingBase e, DamageSource src, float amt) {
+		if (amt >= e.getHealth()) { //kill
+			e.setHealth(0.1F);
+			e.attackEntityFrom(src, Float.MAX_VALUE);
+		}
+		else
+			e.setHealth(e.getHealth()-amt);
+	}
+
+	public static boolean isInWorld(Entity e) {
+		return e.worldObj != null && e.worldObj.getEntityByID(e.getEntityId()) == e;
 	}
 
 }

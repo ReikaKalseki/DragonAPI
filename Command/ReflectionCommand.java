@@ -16,26 +16,13 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.Instantiable.Data.Maps.PlayerMap;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 
 
-public class ReflectionCommand extends DragonCommandBase {
-
-	private final UUID consoleUUID = UUID.randomUUID();
+public class ReflectionCommand extends ReflectiveBasedCommand {
 
 	private final PlayerMap<Object> referenceObjects = new PlayerMap();
-
-	private static final HashMap<String, String> SRGMap = new HashMap();
-
-	static {
-		SRGMap.put("getBlock", "func_147439_a");
-		SRGMap.put("getBlockMetadata", "func_72805_g");
-		SRGMap.put("getTileEntity", "func_147438_o");
-		SRGMap.put("getPlayerEntityByName", "func_72924_a");
-		SRGMap.put("getPlayerEntityByUUID", "func_152378_a");
-	}
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
@@ -50,15 +37,21 @@ public class ReflectionCommand extends DragonCommandBase {
 
 		Class c = null;
 		try {
-			c = Class.forName(args[0]);
+			c = this.findClass(args[0]);
 		}
 		catch (ClassNotFoundException e) {
 			this.error(ics, "No such class '"+args[0]+"'");
 			return;
 		}
 
-		if (SRGMap.containsKey(args[1]))
-			args[1] = SRGMap.get(args[1]);
+		boolean meta = false;
+		if (args[1].startsWith("*")) {
+			args[1] = args[1].substring(1);
+			meta = true;
+			c = Class.class;
+		}
+
+		args[1] = this.deSRG(c, args[1]);
 
 		Field f = ReikaReflectionHelper.getProtectedInheritedField(c, args[1]);
 		Method m = null;
@@ -80,24 +73,15 @@ public class ReflectionCommand extends DragonCommandBase {
 		}
 
 		if (f != null) {
-			this.tryInvokeField(ics, args, f, prefabReferences);
+			this.tryInvokeField(ics, args, f, prefabReferences, meta ? c : null);
 		}
 		else if (m != null) {
-			if (args.length < 5) {
+			if (args.length < 5 && !meta) {
 				this.error(ics, "Not enough arguments. Need to specify class, method name, reference object (optional), method arg types, and method args.");
 				return;
 			}
-			this.tryInvokeMethod(ics, args, m, prefabReferences);
+			this.tryInvokeMethod(ics, args, m, prefabReferences, meta ? c : null);
 		}
-	}
-
-	private Class[] parseTypes(String arg) throws ClassNotFoundException {
-		String[] parts = arg.split(";");
-		Class[] types = new Class[parts.length];
-		for (int i = 0; i < types.length; i++) {
-			types[i] = Class.forName(parts[i]);
-		}
-		return types;
 	}
 
 	private Object[] parseArgs(String arg) {
@@ -109,49 +93,29 @@ public class ReflectionCommand extends DragonCommandBase {
 		return vals;
 	}
 
-	private Object parseObject(String s) {
-		if (s.equalsIgnoreCase("null") || s.equalsIgnoreCase("nil"))
-			return null;
-		if (s.equalsIgnoreCase("true"))
-			return true;
-		if (s.equalsIgnoreCase("false"))
-			return false;
-		try {
-			return Integer.parseInt(s);
-		}
-		catch (NumberFormatException e) {
-
-		}
-		try {
-			return Double.parseDouble(s);
-		}
-		catch (NumberFormatException e) {
-
-		}
-		return s;
-	}
-
-	private void tryInvokeField(ICommandSender ics, String[] args, Field f, HashMap<String, Object> prefabReferences) {
+	private void tryInvokeField(ICommandSender ics, String[] args, Field f, HashMap<String, Object> prefabReferences, Class meta) {
 		f.setAccessible(true);
 		boolean canInvoke = false;
-		if (Modifier.isStatic(f.getModifiers())) {
-			referenceObjects.directRemove(this.getUUID(ics));
-			canInvoke = true;
-		}
-		else if (args.length == 3 && prefabReferences.containsKey(args[2])) {
-			referenceObjects.directPut(this.getUUID(ics), prefabReferences.get(args[2]));
-			canInvoke = true;
-		}
-		else {
-			canInvoke = referenceObjects.directGet(this.getUUID(ics)) != null;
+		if (meta == null) {
+			if (Modifier.isStatic(f.getModifiers())) {
+				referenceObjects.directRemove(this.getUID(ics));
+				canInvoke = true;
+			}
+			else if (args.length == 3 && prefabReferences.containsKey(args[2])) {
+				referenceObjects.directPut(this.getUID(ics), prefabReferences.get(args[2]));
+				canInvoke = true;
+			}
+			else {
+				canInvoke = referenceObjects.directGet(this.getUID(ics)) != null;
+			}
 		}
 
-		if (canInvoke) {
+		if (meta != null || canInvoke) {
 			try {
-				UUID uid = this.getUUID(ics);
-				Object ret = f.get(referenceObjects.directGet(uid));
+				UUID uid = this.getUID(ics);
+				Object ret = f.get(meta != null ? meta : referenceObjects.directGet(uid));
 				referenceObjects.directPut(uid, ret);
-				this.sendChatToSender(ics, ret != null ? ret.getClass()+": "+String.valueOf(ret) : "null");
+				this.sendChatToSender(ics, ret != null ? ret.getClass()+": "+this.toReadableString(ret) : "null");
 			}
 			catch (ReflectiveOperationException e) {
 				this.error(ics, e.toString());
@@ -162,27 +126,29 @@ public class ReflectionCommand extends DragonCommandBase {
 		}
 	}
 
-	private void tryInvokeMethod(ICommandSender ics, String[] args, Method m, HashMap<String, Object> prefabReferences) {
+	private void tryInvokeMethod(ICommandSender ics, String[] args, Method m, HashMap<String, Object> prefabReferences, Class meta) {
 		m.setAccessible(true);
 		boolean canInvoke = false;
-		if (Modifier.isStatic(m.getModifiers())) {
-			referenceObjects.directRemove(this.getUUID(ics));
-			canInvoke = true;
-		}
-		else if (prefabReferences.containsKey(args[3])) {
-			referenceObjects.directPut(this.getUUID(ics), prefabReferences.get(args[3]));
-			canInvoke = true;
-		}
-		else {
-			canInvoke = referenceObjects.directGet(this.getUUID(ics)) != null;
+		if (meta == null) {
+			if (Modifier.isStatic(m.getModifiers())) {
+				referenceObjects.directRemove(this.getUID(ics));
+				canInvoke = true;
+			}
+			else if (prefabReferences.containsKey(args[3])) {
+				referenceObjects.directPut(this.getUID(ics), prefabReferences.get(args[3]));
+				canInvoke = true;
+			}
+			else {
+				canInvoke = referenceObjects.directGet(this.getUID(ics)) != null;
+			}
 		}
 
-		if (canInvoke) {
+		if (meta != null || canInvoke) {
 			try {
-				UUID uid = this.getUUID(ics);
-				Object ret = m.invoke(referenceObjects.directGet(uid), this.parseArgs(args[4]));
+				UUID uid = this.getUID(ics);
+				Object ret = m.invoke(meta != null ? meta : referenceObjects.directGet(uid), this.parseArgs(meta != null ? args[3] : args[4]));
 				referenceObjects.directPut(uid, ret);
-				this.sendChatToSender(ics, ret != null ? ret.getClass()+": "+String.valueOf(ret) : "null");
+				this.sendChatToSender(ics, ret != null ? ret.getClass()+": "+this.toReadableString(ret) : "null");
 			}
 			catch (ReflectiveOperationException e) {
 				this.error(ics, e.toString());
@@ -193,28 +159,11 @@ public class ReflectionCommand extends DragonCommandBase {
 		}
 	}
 
-	private UUID getUUID(ICommandSender ics) {
-		try {
-			return this.getCommandSenderAsPlayer(ics).getPersistentID();
-		}
-		catch (Exception e) {
-			return consoleUUID;
-		}
-	}
-
-	private void error(ICommandSender ics, String s) {
-		this.sendChatToSender(ics, EnumChatFormatting.RED+s);
-	}
-
 	@Override
 	public String getCommandString() {
 		return "reflectiveget";
 	}
 
-	@Override
-	protected boolean isAdminOnly() {
-		return true;
-	}
 	/*
 	private static abstract class Reflection { //A reflective get
 

@@ -1,4 +1,4 @@
-package Reika.DragonAPI.Instantiable;
+package Reika.DragonAPI.Instantiable.Math;
 
 import java.util.ArrayList;
 import java.util.Collection;

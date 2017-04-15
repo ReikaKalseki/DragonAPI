@@ -50,10 +50,10 @@ public class ColorBlendList {
 		//int idx = this.getIndex(tick);
 		//int idxp = idx == data.size()-1 ? 0 : idx+1;
 		//int idxm = idx == 0 ? data.size()-1 : idx-1;
-		int f1 = (int)(tick/cycleModulus);
+		long f1 = (long)(tick/cycleModulus);
 		f1 = (f1+data.size())%data.size();
-		int c1 = data.get(f1%data.size());
-		int c2 = data.get((f1+1)%data.size());
+		int c1 = data.get((int)(f1)%data.size());
+		int c2 = data.get(((int)(f1)+1)%data.size());
 		float f = (float)(tick%cycleModulus/cycleModulus);
 		return ReikaColorAPI.mixColors(c1, c2, 1-f);
 	}

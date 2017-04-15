@@ -189,6 +189,7 @@ public final class RayTracer {
 	private static void addCCGlass(RayTracer trace) {
 		trace.addTransparentBlock(ChromaBlocks.GLASS.getBlockInstance());
 		trace.addTransparentBlock(ChromaBlocks.SELECTIVEGLASS.getBlockInstance());
+		trace.addTransparentBlock(ChromaBlocks.DOOR.getBlockInstance());
 	}
 
 	@ModDependent(ModList.ROTARYCRAFT)

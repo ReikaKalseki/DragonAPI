@@ -47,6 +47,11 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 		this.setTickRandomly(tick || this.decays() || this.shouldRandomTick());
 	}
 
+	@Override
+	public final boolean getCanBlockGrass() {
+		return false;
+	}
+
 	/** Overridden to allow conditional disabling of mod leaf control hacks, like the one in RandomThings. */
 	@Override
 	public final void onNeighborBlockChange(World world, int x, int y, int z, Block neighborID) {

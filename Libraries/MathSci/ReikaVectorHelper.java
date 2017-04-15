@@ -24,9 +24,9 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Instantiable.DoubleMatrix;
-import Reika.DragonAPI.Instantiable.LineClipper;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Math.DoubleMatrix;
+import Reika.DragonAPI.Instantiable.Math.LineClipper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.relauncher.Side;

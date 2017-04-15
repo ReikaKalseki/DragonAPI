@@ -12,9 +12,11 @@ package Reika.DragonAPI.Libraries;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -240,25 +242,27 @@ public class ReikaDirectionHelper extends DragonAPICore {
 	}
 
 	public static enum FanDirections {
-		N(0, -1, 90),
-		NNE(1, -1, 67.5),
+		N(0, -2, 90),
+		NNE(2, -1, 67.5),
 		NE(1, -1, 45),
-		ENE(1, -1, 22.5),
-		E(1, 0, 0),
-		ESE(1, 1, 337.5),
+		ENE(2, -1, 22.5),
+		E(2, 0, 0),
+		ESE(2, 1, 337.5),
 		SE(1, 1, 315),
-		SSE(1, 1, 292.5),
-		S(0, 1, 270),
-		SSW(-1, 1, 247.5),
+		SSE(1, 2, 292.5),
+		S(0, 2, 270),
+		SSW(-1, 2, 247.5),
 		SW(-1, 1, 225),
-		WSW(-1, 1, 202.5),
-		W(-1, 0, 180),
-		WNW(-1, -1, 157.5),
+		WSW(-2, 1, 202.5),
+		W(-2, 0, 180),
+		WNW(-2, -1, 157.5),
 		NW(-1, -1, 135),
-		NNW(-1, -1, 112.5);
+		NNW(-1, -2, 112.5);
 
 		public final int directionX;
 		public final int directionZ;
+		public final int normalizedX;
+		public final int normalizedZ;
 
 		public final double offsetX;
 		public final double offsetZ;
@@ -267,10 +271,15 @@ public class ReikaDirectionHelper extends DragonAPICore {
 
 		public static final FanDirections[] list = values();
 		private static final PluralMap<FanDirections> dirMap = new PluralMap(2);
+		private static final HashMap<Double, FanDirections> angleMap = new HashMap();
 
 		private FanDirections(int x, int z, double a) {
 			directionX = x;
 			directionZ = z;
+
+			normalizedX = z == 0 ? x : x/2;
+			normalizedZ = x == 0 ? z : z/2;
+
 			angle = a;
 
 			offsetX = Math.cos(Math.toRadians(angle));
@@ -295,8 +304,23 @@ public class ReikaDirectionHelper extends DragonAPICore {
 			return list[o];
 		}
 
-		public static FanDirections getFromVectors(double dx, double dz) {
-			return dirMap.get((int)Math.signum(dx), (int)Math.signum(dz));
+		public static FanDirections getFromVectors(int dx, int dz) {
+			if (dx == 0 && Math.abs(dz) == 1)
+				dz *= 2;
+			else if (dz == 0 && Math.abs(dx) == 1)
+				dx *= 2;
+			return dirMap.get(dx, dz);
+		}
+
+		public static FanDirections getFromPlayerLook(EntityPlayer ep) {
+			return getFromAngle(-ep.rotationYawHead-90);
+		}
+
+		public static FanDirections getFromAngle(double angle) {
+			angle = (angle+360)%360;
+			angle = ReikaMathLibrary.roundToNearestFraction(angle, 22.5);
+			angle = (angle+360)%360;
+			return angleMap.get(angle);
 		}
 
 		public boolean isCardinal() {
@@ -306,6 +330,7 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		static {
 			for (int i = 0; i < list.length; i++) {
 				dirMap.put(list[i], list[i].directionX, list[i].directionZ);
+				angleMap.put(list[i].angle, list[i]);
 			}
 		}
 	}

@@ -44,7 +44,8 @@ public abstract class SortedCreativeTab extends CreativeTabs {
 	public final void displayAllReleventItems(List li) { //"Relevent"...
 		List add = new ArrayList();
 		super.displayAllReleventItems(add);
-		Collections.sort(add, this.getComparator());
+		if (this.getComparator() != null)
+			Collections.sort(add, this.getComparator());
 		li.addAll(add);
 	}
 

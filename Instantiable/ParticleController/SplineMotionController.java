@@ -12,9 +12,9 @@ package Reika.DragonAPI.Instantiable.ParticleController;
 import java.util.List;
 
 import net.minecraft.entity.Entity;
-import Reika.DragonAPI.Instantiable.Spline;
-import Reika.DragonAPI.Instantiable.Spline.BasicVariablePoint;
-import Reika.DragonAPI.Instantiable.Spline.SplineType;
+import Reika.DragonAPI.Instantiable.Math.Spline;
+import Reika.DragonAPI.Instantiable.Math.Spline.BasicVariablePoint;
+import Reika.DragonAPI.Instantiable.Math.Spline.SplineType;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Interfaces.PositionController;
 

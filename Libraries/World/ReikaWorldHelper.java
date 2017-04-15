@@ -90,9 +90,11 @@ import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaCropHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
+import Reika.DragonAPI.ModRegistry.ModCropList;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.eventhandler.Event.Result;
@@ -1620,9 +1622,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 	}
 
-	/** Get the sun brightness as a fraction from 0-1. Args: World */
-	public static float getSunIntensity(World world) {
-		float ang = world.getCelestialAngle(0);
+	/** Get the sun brightness as a fraction from 0-1. Args: World, whether to apply weather modulation */
+	public static float getSunIntensity(World world, boolean weather, float ptick) {
+		float ang = world.getCelestialAngle(ptick);
 		float base = 1.0F-(MathHelper.cos(ang*(float)Math.PI*2.0F)*2.0F+0.2F);
 
 		if (base < 0.0F)
@@ -1632,8 +1634,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			base = 1.0F;
 
 		base = 1.0F-base;
-		base = (float)(base*(1.0D-world.getRainStrength(0)*5.0F / 16.0D));
-		base = (float)(base*(1.0D-world.getWeightedThunderStrength(0)*5.0F / 16.0D));
+		if (weather) {
+			base = (float)(base*(1.0D-world.getRainStrength(ptick)*5.0F / 16.0D));
+			base = (float)(base*(1.0D-world.getWeightedThunderStrength(ptick)*5.0F / 16.0D));
+		}
 		return base*0.8F+0.2F;
 	}
 
@@ -1795,7 +1799,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 		if (!world.provider.hasNoSky) {
 			if (world.canBlockSeeTheSky(x, y+1, z)) {
-				float sun = getSunIntensity(world);
+				float sun = getSunIntensity(world, true, 0);
 				int mult = world.isRaining() ? 10 : 20;
 				temp += (sun-0.75F)*mult;
 			}
@@ -2373,5 +2377,18 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	public static boolean regionContainsBiome(World world, int x0, int x1, int z0, int z1, BiomeGenBase b) {
 		return world.getBiomeGenForCoords(x0, z0) == b || world.getBiomeGenForCoords(x1, z0) == b || world.getBiomeGenForCoords(x0, z1) == b || world.getBiomeGenForCoords(x1, z1) == b;
+	}
+
+	public static boolean isAdjacentToCrop(IBlockAccess iba, int x, int y, int z) {
+		for (int i = 2; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dz = z+dir.offsetZ;
+			Block id = iba.getBlock(dx, y, dz);
+			if (ReikaCropHelper.getCrop(id) != null || ModCropList.getModCrop(id, iba.getBlockMetadata(dx, y, dz)) != null) {
+				return true;
+			}
+		}
+		return false;
 	}
 }

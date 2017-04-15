@@ -312,7 +312,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		Method f = null;
 		while (f == null && c != null) {
 			try {
-				f = c.getDeclaredMethod(method);
+				f = c.getDeclaredMethod(method, types);
 			}
 			catch (NoSuchMethodException e2) {
 				c = c.getSuperclass();

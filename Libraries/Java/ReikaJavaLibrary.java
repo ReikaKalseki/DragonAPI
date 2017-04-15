@@ -153,7 +153,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return li;
 	}
 
-	public static ArrayList<Integer> makeIntListFromArray(int[] obj) {
+	public static ArrayList<Integer> makeIntListFromArray(int... obj) {
 		ArrayList li = new ArrayList();
 		for (int i = 0; i < obj.length; i++) {
 			li.add(obj[i]);
@@ -866,7 +866,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	/** Not exactly performant. Do not call this excessively, or ever during the main game loop. */
-	public static Collection<Class> getAllClassesFromPackage(String pack) throws Exception {
+	public static Collection<Class> getAllClassesFromPackage(String pack) throws IOException {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		Collection<Class> li = new ArrayList();
 		for (ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {

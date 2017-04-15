@@ -66,6 +66,10 @@ public final class DecimalPosition {
 		this(src.xCoord+0.5, src.yCoord+0.5, src.zCoord+0.5);
 	}
 
+	public DecimalPosition(Vec3 vec) {
+		this(vec.xCoord, vec.yCoord, vec.zCoord);
+	}
+
 	public DecimalPosition offset(double dx, double dy, double dz) {
 		return new DecimalPosition(xCoord+dx, yCoord+dy, zCoord+dz);
 	}

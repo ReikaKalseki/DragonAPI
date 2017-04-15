@@ -12,13 +12,17 @@ package Reika.DragonAPI.Auxiliary;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -53,6 +57,7 @@ import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Interfaces.TileEntity.PlayerBreakHook;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
+import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
@@ -77,6 +82,19 @@ public class DragonAPIEventWatcher {
 
 	private DragonAPIEventWatcher() {
 
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void fixRespirationFourPlusFog(EntityViewRenderEvent.FogDensity evt) {
+		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+		if (ep.isPotionActive(Potion.blindness))
+			return;
+		ItemStack helm = ep.getCurrentArmor(3);
+		if (helm != null && ReikaEnchantmentHelper.getEnchantmentLevel(Enchantment.respiration, helm) > 3) {
+			evt.density = 0.05F;
+			evt.setCanceled(true);
+		}
 	}
 
 	@SubscribeEvent(priority=EventPriority.LOWEST)

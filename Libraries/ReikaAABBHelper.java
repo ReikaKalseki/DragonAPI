@@ -25,6 +25,7 @@ import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -244,11 +245,24 @@ public final class ReikaAABBHelper extends DragonAPICore {
 	}
 
 	public static AxisAlignedBB getBeamBox(int x1, int y1, int z1, int x2, int y2, int z2) {
-		return AxisAlignedBB.getBoundingBox(x1, y1, z1, x1, y1, z1).addCoord(x2, y2, z2);
+		return getBlockAABB(x1, y1, z1).addCoord(x2, y2, z2);
 	}
 
 	public static AxisAlignedBB copyAABB(AxisAlignedBB box) {
 		return AxisAlignedBB.getBoundingBox(box.minX, box.minY, box.minZ, box.maxX, box.maxY, box.maxZ);
+	}
+
+	public static AxisAlignedBB fromPoints(DecimalPosition... points) {
+		double[] limits = new double[]{Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY};
+		for (int i = 0; i < points.length; i++) {
+			limits[0] = Math.min(limits[0], points[i].xCoord);
+			limits[1] = Math.min(limits[1], points[i].yCoord);
+			limits[2] = Math.min(limits[2], points[i].zCoord);
+			limits[3] = Math.max(limits[3], points[i].xCoord);
+			limits[4] = Math.max(limits[4], points[i].yCoord);
+			limits[5] = Math.max(limits[5], points[i].zCoord);
+		}
+		return AxisAlignedBB.getBoundingBox(limits[0], limits[1], limits[2], limits[3], limits[4], limits[5]);
 	}
 
 }

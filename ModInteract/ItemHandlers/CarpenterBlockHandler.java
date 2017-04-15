@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import Reika.DragonAPI.DragonAPICore;
@@ -21,6 +22,8 @@ public class CarpenterBlockHandler extends ModHandlerBase {
 	private boolean init = false;
 
 	private static final CarpenterBlockHandler instance = new CarpenterBlockHandler();
+
+	private final HashMap<Block, Blocks> blockMap = new HashMap();
 
 	public static enum Blocks {
 		BLOCK("Block"),
@@ -63,6 +66,7 @@ public class CarpenterBlockHandler extends ModHandlerBase {
 					Field f = blocks.getDeclaredField(ie.tag);
 					Block b = (Block)f.get(null);
 					ie.item = b;
+					blockMap.put(b, ie);
 				}
 				catch (NoSuchFieldException e) {
 					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
@@ -105,6 +109,14 @@ public class CarpenterBlockHandler extends ModHandlerBase {
 	@Override
 	public ModList getMod() {
 		return ModList.CARPENTER;
+	}
+
+	public boolean isCarpenterBlock(Block b) {
+		return blockMap.containsKey(b);
+	}
+
+	public Blocks getCarpenterBlock(Block b) {
+		return blockMap.get(b);
 	}
 
 }

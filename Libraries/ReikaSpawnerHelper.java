@@ -14,12 +14,15 @@ import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.IEntityLivingData;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public class ReikaSpawnerHelper {
@@ -70,6 +73,17 @@ public class ReikaSpawnerHelper {
 			return;
 		String name = is.stackTagCompound.getString("Spawner");
 		setMobSpawnerMob(spw, name);
+		if (is.stackTagCompound.hasKey("logic")) {
+			MobSpawnerBaseLogic lgc = new ConstructableSpawnerLogic(spw);
+			lgc.readFromNBT(is.stackTagCompound.getCompoundTag("logic"));
+			setSpawnerLogic(spw, lgc);
+		}
+	}
+
+	private static void setSpawnerLogic(TileEntityMobSpawner spw, MobSpawnerBaseLogic lgc) {
+		NBTTagCompound tag = new NBTTagCompound();
+		lgc.writeToNBT(tag);
+		spw.readFromNBT(tag);
 	}
 
 	public static void setSpawnerItemNBT(ItemStack is, String mob, boolean force) {
@@ -77,6 +91,19 @@ public class ReikaSpawnerHelper {
 			is.setTagCompound(new NBTTagCompound());
 		if (force || !is.stackTagCompound.hasKey("Spawner")) {
 			is.stackTagCompound.setString("Spawner", mob);
+		}
+	}
+
+	public static void setSpawnerItemNBT(ItemStack is, MobSpawnerBaseLogic lgc, boolean force) {
+		if (is.stackTagCompound == null)
+			is.setTagCompound(new NBTTagCompound());
+		if (force || !is.stackTagCompound.hasKey("Spawner")) {
+			is.stackTagCompound.setString("Spawner", lgc.getEntityNameToSpawn());
+		}
+		if (force || !is.stackTagCompound.hasKey("logic")) {
+			NBTTagCompound tag = new NBTTagCompound();
+			lgc.writeToNBT(tag);
+			is.stackTagCompound.setTag("logic", tag);
 		}
 	}
 
@@ -112,6 +139,41 @@ public class ReikaSpawnerHelper {
 			return null;
 		String name = is.stackTagCompound.getString("Spawner");
 		return name;
+	}
+
+	private static class ConstructableSpawnerLogic extends MobSpawnerBaseLogic {
+
+		private final WorldLocation location;
+
+		private ConstructableSpawnerLogic(TileEntity te) {
+			location = new WorldLocation(te);
+		}
+
+		@Override
+		public void func_98267_a(int val) {
+			this.getSpawnerWorld().addBlockEvent(this.getSpawnerX(), this.getSpawnerY(), this.getSpawnerZ(), Blocks.mob_spawner, val, 0);
+		}
+
+		@Override
+		public World getSpawnerWorld() {
+			return location.getWorld();
+		}
+
+		@Override
+		public int getSpawnerX() {
+			return location.xCoord;
+		}
+
+		@Override
+		public int getSpawnerY() {
+			return location.yCoord;
+		}
+
+		@Override
+		public int getSpawnerZ() {
+			return location.zCoord;
+		}
+
 	}
 
 }

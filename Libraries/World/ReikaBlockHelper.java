@@ -445,9 +445,9 @@ public final class ReikaBlockHelper extends DragonAPICore {
 
 	public static boolean isGroundType(World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
-		if (b == Blocks.dirt || b == Blocks.grass || b == Blocks.stone)
+		if (b == Blocks.dirt || b == Blocks.grass || b == Blocks.stone || b == Blocks.sand || b == Blocks.sandstone || b == Blocks.clay || b == Blocks.gravel || b == Blocks.snow_layer)
 			return true;
 		Material mat = b.getMaterial();
-		return mat == Material.ground;
+		return mat == Material.ground || b.isReplaceableOreGen(world, x, y, z, Blocks.stone);
 	}
 }

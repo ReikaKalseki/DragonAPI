@@ -10,7 +10,9 @@
 package Reika.DragonAPI;
 
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -45,7 +47,6 @@ import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
 import Reika.DragonAPI.Auxiliary.LoggingFilters;
 import Reika.DragonAPI.Auxiliary.LoggingFilters.LoggerType;
-import Reika.DragonAPI.Auxiliary.ModularLogger.ModularLoggerCommand;
 import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.RainTicker;
@@ -53,7 +54,6 @@ import Reika.DragonAPI.Auxiliary.RebootScheduler;
 import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.ChunkPregenerator;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
-import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.Trackers.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.CrashNotifications;
 import Reika.DragonAPI.Auxiliary.Trackers.EnchantmentCollisionTracker;
@@ -77,36 +77,9 @@ import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Base.ModHandlerBase.SearchVersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionIgnore;
-import Reika.DragonAPI.Command.BiomeMapCommand;
-import Reika.DragonAPI.Command.BlockInfoCommand;
-import Reika.DragonAPI.Command.BlockReplaceCommand;
-import Reika.DragonAPI.Command.ChunkGenCommand;
-import Reika.DragonAPI.Command.ClassLoaderCommand;
-import Reika.DragonAPI.Command.ClearItemsCommand;
-import Reika.DragonAPI.Command.CommandOwnerCommand;
-import Reika.DragonAPI.Command.ConfigReloadCommand;
-import Reika.DragonAPI.Command.DonatorCommand;
-import Reika.DragonAPI.Command.EditNearbyInventoryCommand;
-import Reika.DragonAPI.Command.EntityCountCommand;
-import Reika.DragonAPI.Command.EntityListCommand;
-import Reika.DragonAPI.Command.FindBiomeCommand;
-import Reika.DragonAPI.Command.FindThreadCommand;
-import Reika.DragonAPI.Command.FindTilesCommand;
-import Reika.DragonAPI.Command.GenLootCommand;
+import Reika.DragonAPI.Command.DragonClientCommand;
+import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Command.GetLatencyCommand;
-import Reika.DragonAPI.Command.GetUUIDCommand;
-import Reika.DragonAPI.Command.IDDumpCommand;
-import Reika.DragonAPI.Command.ItemNBTCommand;
-import Reika.DragonAPI.Command.LogControlCommand;
-import Reika.DragonAPI.Command.MemoryUsageCommand;
-import Reika.DragonAPI.Command.PlayerNBTCommand;
-import Reika.DragonAPI.Command.PopulateMinimapCommand;
-import Reika.DragonAPI.Command.ReflectionCommand;
-import Reika.DragonAPI.Command.SelectiveKillCommand;
-import Reika.DragonAPI.Command.SpawnMobsCommand;
-import Reika.DragonAPI.Command.StructureExportCommand;
-import Reika.DragonAPI.Command.TestControlCommand;
-import Reika.DragonAPI.Command.TileSyncCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Extras.SanityCheckNotification;
@@ -635,39 +608,23 @@ public class DragonAPIInit extends DragonAPIMod {
 	@EventHandler
 	public void registerCommands(FMLServerStartingEvent evt) {
 		DragonAPICore.log("Server Starting...");
-		//evt.registerServerCommand(new GuideCommand());
-		evt.registerServerCommand(new DonatorCommand());
-		evt.registerServerCommand(new LogControlCommand());
-		evt.registerServerCommand(new TestControlCommand());
-		evt.registerServerCommand(new CheckerDisableCommand());
-		evt.registerServerCommand(new SelectiveKillCommand());
-		evt.registerServerCommand(new EntityCountCommand());
-		evt.registerServerCommand(new BlockReplaceCommand());
-		evt.registerServerCommand(new EditNearbyInventoryCommand());
-		evt.registerServerCommand(new TileSyncCommand());
-		evt.registerServerCommand(new IDDumpCommand());
-		evt.registerServerCommand(new EntityListCommand());
-		evt.registerServerCommand(new FindTilesCommand());
-		evt.registerServerCommand(new ClearItemsCommand());
-		evt.registerServerCommand(new FindBiomeCommand());
-		evt.registerServerCommand(new ClassLoaderCommand());
-		evt.registerServerCommand(new ChunkGenCommand());
-		evt.registerServerCommand(new FindThreadCommand());
-		evt.registerServerCommand(new ModularLoggerCommand());
-		evt.registerServerCommand(new SpawnMobsCommand());
-		evt.registerServerCommand(new PopulateMinimapCommand());
-		evt.registerServerCommand(new BiomeMapCommand());
-		evt.registerServerCommand(new PlayerNBTCommand());
-		evt.registerServerCommand(new ConfigReloadCommand());
-		evt.registerServerCommand(new CommandOwnerCommand());
-		evt.registerServerCommand(new StructureExportCommand());
-		evt.registerServerCommand(new ItemNBTCommand());
-		evt.registerServerCommand(new MemoryUsageCommand());
-		evt.registerServerCommand(new GetUUIDCommand());
-		evt.registerServerCommand(new ReflectionCommand());
-		evt.registerServerCommand(new GenLootCommand());
-		evt.registerServerCommand(new BlockInfoCommand());
-		//evt.registerServerCommand(new GetLatencyCommand());
+		try {
+			for (Class c : ReikaJavaLibrary.getAllClassesFromPackage("Reika.DragonAPI.Command")) {
+				if (DragonCommandBase.class.isAssignableFrom(c)) {
+					if ((c.getModifiers() & Modifier.ABSTRACT) != 0 || DragonClientCommand.class.isAssignableFrom(c) || c.isAnnotationPresent(Deprecated.class))
+						continue;
+					try {
+						evt.registerServerCommand((DragonCommandBase)c.newInstance());
+					}
+					catch (Exception e) {
+						throw new RuntimeException("Could not construct command '"+c+"'!");
+					}
+				}
+			}
+		}
+		catch (IOException e) {
+			throw new RuntimeException("Could not find DragonAPI commands!", e);
+		}
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();

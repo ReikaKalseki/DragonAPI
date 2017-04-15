@@ -6,11 +6,8 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
-public class GetLatencyCommand extends DragonCommandBase {
+public class GetLatencyCommand extends DragonClientCommand {
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
@@ -23,11 +20,6 @@ public class GetLatencyCommand extends DragonCommandBase {
 	@Override
 	public String getCommandString() {
 		return "latency";
-	}
-
-	@Override
-	protected boolean isAdminOnly() {
-		return false;
 	}
 
 }
