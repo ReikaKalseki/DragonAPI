@@ -18,6 +18,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Interfaces.BlockCheck;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 
@@ -140,6 +141,32 @@ public abstract class ControllableOreVein extends WorldGenerator {
 		@Override
 		public boolean canPlaceBlockHere(World world, int x, int y, int z) {
 			return ReikaWorldHelper.checkForAdjBlock(world, x, y, z, check.blockID, check.metadata) != null;
+		}
+
+	}
+
+	public static final class BlockExcludingOreVein extends ControllableOreVein {
+
+		private final BlockCheck check;
+
+		public BlockExcludingOreVein(Block block, int size, BlockCheck ch) {
+			super(block, size);
+			check = ch;
+		}
+
+		public BlockExcludingOreVein(Block block, int meta, int size, BlockCheck ch) {
+			super(block, meta, size);
+			check = ch;
+		}
+
+		public BlockExcludingOreVein(BlockKey block, int size, BlockCheck ch) {
+			super(block, size);
+			check = ch;
+		}
+
+		@Override
+		public boolean canPlaceBlockHere(World world, int x, int y, int z) {
+			return !check.matchInWorld(world, x, y, z);
 		}
 
 	}

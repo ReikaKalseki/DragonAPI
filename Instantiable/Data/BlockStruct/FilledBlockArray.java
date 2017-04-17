@@ -12,8 +12,10 @@ package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -197,6 +199,33 @@ public class FilledBlockArray extends StructuredBlockArray {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).asBlockKey() : null;
 	}
 
+	public boolean isMultiKey(int x, int y, int z) {
+		return data.get(new Coordinate(x, y, z)) instanceof MultiKey;
+	}
+
+	public MultiKey getMultiKeyAt(int x, int y, int z) {
+		if (!this.hasBlock(x, y, z))
+			return null;
+		BlockCheck b = data.get(new Coordinate(x, y, z));
+		return b instanceof MultiKey ? (MultiKey)b : null;
+	}
+
+	public ArrayList<BlockKey> getMultiListAt(int x, int y, int z) {
+		if (!this.hasBlock(x, y, z))
+			return null;
+		BlockCheck b = data.get(new Coordinate(x, y, z));
+		if (b instanceof MultiKey) {
+			ArrayList<BlockKey> li = new ArrayList();
+			for (BlockCheck bc : ((MultiKey)b).keys) {
+				li.add(bc.asBlockKey());
+			}
+			return li;
+		}
+		else {
+			return ReikaJavaLibrary.makeListFrom(b.asBlockKey());
+		}
+	}
+
 	@Override
 	public Block getBlockAt(int x, int y, int z) {
 		return this.hasBlock(x, y, z) ? data.get(new Coordinate(x, y, z)).asBlockKey().blockID : null;
@@ -339,6 +368,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 		@Override
 		public boolean match(BlockCheck bc) {
 			return bc instanceof MultiKey && ((MultiKey)bc).keys.equals(keys);
+		}
+
+		public List<BlockCheck> viewKeys() {
+			return Collections.unmodifiableList(keys);
 		}
 
 	}

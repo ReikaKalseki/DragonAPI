@@ -16,6 +16,7 @@ import java.util.Iterator;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ClassDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.InventorySlot;
@@ -85,6 +86,7 @@ public class ItemCollection {
 
 	/** Returns how many items left over. */
 	public int addItemsToUnderlyingInventories(ItemStack is, boolean simulate) {
+		this.validateInventories();
 		int left = is.stackSize;
 		for (IInventory ii : inventories) {
 			left = ReikaInventoryHelper.addToInventoryWithLeftover(is, ii, simulate);
@@ -139,6 +141,7 @@ public class ItemCollection {
 	}
 	 */
 	public int removeXItems(ItemStack is, int amt) {
+		this.validateInventories();
 		Collection<InventorySlot> li = data.get(is);
 		int rem = 0;
 		if (li != null) {
@@ -177,8 +180,31 @@ public class ItemCollection {
 		return rem;
 	}
 
+	private void validateInventories() {
+		Iterator<IInventory> it = inventories.iterator();
+		while (it.hasNext()) {
+			IInventory ii = it.next();
+			if (ii instanceof TileEntity) {
+				if (((TileEntity)ii).isInvalid()) {
+					it.remove();
+					for (Collection<InventorySlot> c2 : data.values()) {
+						Iterator<InventorySlot> it2 = c2.iterator();
+						while (it2.hasNext()) {
+							InventorySlot s = it2.next();
+							if (s.inventory == ii) {
+								it2.remove();
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
 	public void clear() {
 		data.clear();
+		inventories.clear();
+		dsus.clear();
 	}
 
 	@Override

@@ -11,6 +11,7 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.List;
 
+import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.item.EntityItem;
@@ -86,14 +87,39 @@ public class DragonAPIEventWatcher {
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
-	public void fixRespirationFourPlusFog(EntityViewRenderEvent.FogDensity evt) {
+	public void fixRespirationFourPlusFog(EntityViewRenderEvent.FogColors evt) {
 		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
-		if (ep.isPotionActive(Potion.blindness))
-			return;
 		ItemStack helm = ep.getCurrentArmor(3);
 		if (helm != null && ReikaEnchantmentHelper.getEnchantmentLevel(Enchantment.respiration, helm) > 3) {
-			evt.density = 0.05F;
-			evt.setCanceled(true);
+			if (ep.isPotionActive(Potion.blindness)) {
+				evt.red = evt.green = evt.blue = 0;
+			}
+			else if (ep.isInsideOfMaterial(Material.water)) {
+				evt.blue = 1;
+				evt.red = 0.6F;
+				evt.green = 0.8F;
+			}
+			else if (ep.isInsideOfMaterial(Material.lava)) {
+				evt.blue = 0.2F;
+				evt.red = 1F;
+				evt.green = 0.6F;
+			}
+		}
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void fixRespirationFourPlusFog(EntityViewRenderEvent.FogDensity evt) {
+		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
+		ItemStack helm = ep.getCurrentArmor(3);
+		if (helm != null && ReikaEnchantmentHelper.getEnchantmentLevel(Enchantment.respiration, helm) > 3) {
+			if (ep.isInsideOfMaterial(Material.water) || ep.isInsideOfMaterial(Material.lava)) {
+				GL11.glFogi(GL11.GL_FOG_MODE, GL11.GL_EXP);
+				evt.density = Math.min(evt.density, ep.isInsideOfMaterial(Material.lava) ? 0.1F : 0.0025F);
+				if (ep.isPotionActive(Potion.blindness))
+					evt.density = 0.9F;
+				evt.setCanceled(true);
+			}
 		}
 	}
 

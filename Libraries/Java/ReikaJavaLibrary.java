@@ -757,11 +757,20 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return s;
 	}
 
-	public static Collection getValuesForMapOfMaps(Map<?, Map> map) {
-		Collection li = new ArrayList();
+	public static <V> Collection<V> getValuesForMapOfMaps(Map<?, Map<?, V>> map) {
+		Collection<V> li = new ArrayList();
 		for (Object k : map.keySet()) {
-			Map o = map.get(k);
+			Map<?, V> o = map.get(k);
 			li.addAll(o.values());
+		}
+		return li;
+	}
+
+	public static <E> Collection<E> getValuesForMapOfCollections(Map<?, Collection<E>> map) {
+		Collection<E> li = new ArrayList();
+		for (Object k : map.keySet()) {
+			Collection<E> o = map.get(k);
+			li.addAll(o);
 		}
 		return li;
 	}

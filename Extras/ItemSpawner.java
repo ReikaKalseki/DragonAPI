@@ -112,7 +112,7 @@ public class ItemSpawner extends Item {
 				world.playSoundEffect(x+0.5, y+0.5, z+0.5, "step.stone", 1F, 1.5F);
 				MobSpawnerBaseLogic lgc = spw.func_145881_a();
 				ReikaSpawnerHelper.setSpawnerFromItemNBT(is, spw);
-				lgc.spawnDelay = itemRand.nextInt(900); //20s delay
+				lgc.spawnDelay = Math.max(lgc.minSpawnDelay, itemRand.nextInt(Math.min(900, 1+lgc.maxSpawnDelay))); //20s delay
 			}
 		}
 		//ModLoader.getMinecraftInstance().ingameGUI.addChatMessage(String.format("%d", world.getBlockMetadata(x, y, z)));

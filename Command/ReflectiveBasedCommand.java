@@ -24,6 +24,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.FluidStack;
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
@@ -89,6 +92,9 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		classShortcuts.put("DimensionManager", DimensionManager.class);
 		classShortcuts.put("FML", FMLCommonHandler.class);
 		classShortcuts.put("Forge", MinecraftForge.class);
+		classShortcuts.put("Fluid", Fluid.class);
+		classShortcuts.put("FluidStack", FluidStack.class);
+		classShortcuts.put("FluidRegistry", FluidRegistry.class);
 
 		classShortcuts.put("ASMHelper", ReikaASMHelper.class);
 		classShortcuts.put("ReflectionHelper", ReikaReflectionHelper.class);

@@ -72,16 +72,17 @@ public class ReikaSpawnerHelper {
 		if (!is.stackTagCompound.hasKey("Spawner"))
 			return;
 		String name = is.stackTagCompound.getString("Spawner");
-		setMobSpawnerMob(spw, name);
 		if (is.stackTagCompound.hasKey("logic")) {
 			MobSpawnerBaseLogic lgc = new ConstructableSpawnerLogic(spw);
 			lgc.readFromNBT(is.stackTagCompound.getCompoundTag("logic"));
 			setSpawnerLogic(spw, lgc);
 		}
+		setMobSpawnerMob(spw, name);
 	}
 
 	private static void setSpawnerLogic(TileEntityMobSpawner spw, MobSpawnerBaseLogic lgc) {
 		NBTTagCompound tag = new NBTTagCompound();
+		spw.writeToNBT(tag);
 		lgc.writeToNBT(tag);
 		spw.readFromNBT(tag);
 	}
@@ -92,6 +93,10 @@ public class ReikaSpawnerHelper {
 		if (force || !is.stackTagCompound.hasKey("Spawner")) {
 			is.stackTagCompound.setString("Spawner", mob);
 		}
+	}
+
+	public static void setSpawnerItemNBT(ItemStack is, int minDelay, int maxDelay, int maxNear, int spawnCount, int spawnRange, int activeRange, boolean force) {
+		setSpawnerItemNBT(is, new TemporarySpawnerLogic(minDelay, maxDelay, maxNear, spawnCount, spawnRange, activeRange), force);
 	}
 
 	public static void setSpawnerItemNBT(ItemStack is, MobSpawnerBaseLogic lgc, boolean force) {
@@ -139,6 +144,42 @@ public class ReikaSpawnerHelper {
 			return null;
 		String name = is.stackTagCompound.getString("Spawner");
 		return name;
+	}
+
+	private static class TemporarySpawnerLogic extends MobSpawnerBaseLogic {
+
+		private TemporarySpawnerLogic(int minDelay, int maxDelay, int maxNear, int spawnCount, int spawnRange, int activeRange) {
+			maxSpawnDelay = maxDelay;
+			minSpawnDelay = minDelay;
+			maxNearbyEntities = maxNear;
+			this.spawnCount = spawnCount;
+			this.spawnRange = spawnRange;
+			activatingRangeFromPlayer = activeRange;
+		}
+
+		@Override
+		public void func_98267_a(int p_98267_1_) {}
+
+		@Override
+		public World getSpawnerWorld() {
+			return null;
+		}
+
+		@Override
+		public int getSpawnerX() {
+			return 0;
+		}
+
+		@Override
+		public int getSpawnerY() {
+			return 0;
+		}
+
+		@Override
+		public int getSpawnerZ() {
+			return 0;
+		}
+
 	}
 
 	private static class ConstructableSpawnerLogic extends MobSpawnerBaseLogic {

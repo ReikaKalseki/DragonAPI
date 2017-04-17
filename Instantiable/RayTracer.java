@@ -163,6 +163,7 @@ public final class RayTracer {
 		trace.addTransparentBlock(Blocks.mob_spawner);
 		trace.addTransparentBlock(Blocks.leaves);
 		trace.addTransparentBlock(Blocks.leaves2);
+		trace.addTransparentBlock(Blocks.tallgrass);
 		trace.allowFluids = true;
 
 		if (ModList.CHROMATICRAFT.isLoaded()) {
