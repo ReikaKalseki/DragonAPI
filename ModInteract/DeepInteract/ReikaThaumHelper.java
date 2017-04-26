@@ -33,6 +33,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import thaumcraft.api.ThaumcraftApi;
+import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.CrucibleRecipe;
@@ -269,6 +270,17 @@ public class ReikaThaumHelper {
 		aspects.remove(ep.getCommandSenderName());
 	}
 
+	public static void giveResearchPoint(Aspect a, int amt, EntityPlayer ep) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return;
+		AspectList get = aspects.get(ep.getCommandSenderName());
+		if (get == null) {
+			get = new AspectList();
+			aspects.put(ep.getCommandSenderName(), get);
+		}
+		get.add(a, amt);
+	}
+
 	public static void giveWarpProtection(EntityPlayer ep, int time) {
 		if (!ModList.THAUMCRAFT.isLoaded())
 			return;
@@ -457,15 +469,7 @@ public class ReikaThaumHelper {
 	}
 
 	public static boolean isResearchComplete(EntityPlayer ep, String research) {
-		if (!ModList.THAUMCRAFT.isLoaded())
-			return false;
-		try {
-			return (Boolean)researchComplete.invoke(null, ep.getCommandSenderName(), research);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
-		}
+		return ThaumcraftApiHelper.isResearchComplete(ep.getCommandSenderName(), research);
 	}
 
 	public static boolean isNativeThaumResearch(ResearchItem ri) {
@@ -478,7 +482,7 @@ public class ReikaThaumHelper {
 		ResearchCategories.registerCategory(name, icon, rl2);
 	}
 
-	public static void addInfusionRecipeBookEntryViaXML(String id, String desc, String category, InfusionRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
+	public static ResearchItem addInfusionRecipeBookEntryViaXML(String id, String desc, String category, InfusionRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
 		ItemStack out = (ItemStack)ir.getRecipeOutput();
 		AspectList aspects = new AspectList();
 		for (Aspect a : ir.getAspects().aspects.keySet()) {
@@ -489,10 +493,10 @@ public class ReikaThaumHelper {
 		res.setDescription(desc);
 		XMLResearch xml = new XMLResearch(id.toLowerCase(Locale.ENGLISH), root, path, ir, 2);
 		res.setPages(xml.getPages());
-		res.registerResearchItem();
+		return res.registerResearchItem();
 	}
 
-	public static void addCrucibleRecipeBookEntryViaXML(String id, String desc, String category, CrucibleRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
+	public static ResearchItem addCrucibleRecipeBookEntryViaXML(String id, String desc, String category, CrucibleRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
 		ItemStack out = ir.getRecipeOutput();
 		AspectList aspects = new AspectList();
 		for (Aspect a : ir.aspects.aspects.keySet()) {
@@ -503,10 +507,10 @@ public class ReikaThaumHelper {
 		res.setDescription(desc);
 		XMLResearch xml = new XMLResearch(id.toLowerCase(Locale.ENGLISH), root, path, ir, 2);
 		res.setPages(xml.getPages());
-		res.registerResearchItem();
+		return res.registerResearchItem();
 	}
 
-	public static void addArcaneRecipeBookEntryViaXML(String id, String desc, String category, IArcaneRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
+	public static ResearchItem addArcaneRecipeBookEntryViaXML(String id, String desc, String category, IArcaneRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
 		ItemStack out = ir.getRecipeOutput();
 		AspectList aspects = new AspectList();
 		for (Aspect a : ir.getAspects().aspects.keySet()) {
@@ -517,15 +521,15 @@ public class ReikaThaumHelper {
 		res.setDescription(desc);
 		XMLResearch xml = new XMLResearch(id.toLowerCase(Locale.ENGLISH), root, path, ir, 2);
 		res.setPages(xml.getPages());
-		res.registerResearchItem();
+		return res.registerResearchItem();
 	}
 
-	public static void addResearchForMultipleRecipesViaXML(String name, ItemStack icon, String id, String desc, String category, Class root, String path, int row, int col, Object[] recipes, int numPagesEach, int leadingText, AspectList al) {
+	public static ResearchItem addResearchForMultipleRecipesViaXML(String name, ItemStack icon, String id, String desc, String category, Class root, String path, int row, int col, Object[] recipes, int numPagesEach, int leadingText, AspectList al) {
 		XMLResearch xml = getResearchForMultipleRecipes(id.toLowerCase(Locale.ENGLISH), root, path, leadingText, numPagesEach, recipes);
 		CustomThaumResearch res = new CustomThaumResearch(id, category, al, col, row, 0, icon).setName(name);
 		res.setDescription(desc);
 		res.setPages(xml.getPages());
-		res.registerResearchItem();
+		return res.registerResearchItem();
 	}
 
 	private static XMLResearch getResearchForMultipleRecipes(String name, Class root, String path, int leadingText, int numPagesEach, Object[] recipes) {

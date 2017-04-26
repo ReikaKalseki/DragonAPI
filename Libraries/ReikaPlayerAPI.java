@@ -286,7 +286,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	@SideOnly(Side.CLIENT)
 	public static void syncCustomDataFromClient(EntityPlayer ep) {
-		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERDATSYNC_CLIENT.ordinal(), ep.getEntityData(), new PacketTarget.ServerTarget());
+		ReikaPacketHelper.sendNBTPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERDATSYNC_CLIENT.ordinal(), ep.getEntityData(), PacketTarget.server);
 	}
 
 	public static NBTTagCompound getDeathPersistentNBT(EntityPlayer ep) {
@@ -382,7 +382,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	@SideOnly(Side.CLIENT)
 	public static void kickPlayerClientside(EntityPlayer ep, String reason) {
-		ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERKICK.ordinal(), reason, new PacketTarget.ServerTarget());
+		ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.PLAYERKICK.ordinal(), reason, PacketTarget.server);
 	}
 
 	public static void addOrDropItem(ItemStack is, EntityPlayer ep) {

@@ -9,10 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.IO;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
@@ -37,71 +40,70 @@ public final class ReikaMIDIReader {
 	public static final String[] NOTE_NAMES = {"F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "Eb", "E", "F"};
 	public static final int MIDI_C5 = 60;
 
-	public static Sequence getMIDIFromFile(Class root, String path, String back) {
-		DragonAPICore.log("Reading MIDI at "+path+" with backup at "+back);
-		InputStream input = root.getResourceAsStream(path);
-		InputStream backup = root.getResourceAsStream(back);
+	private static final Sequencer MIDI_LOADER = getSequencer();
 
-		if (input == null && backup == null) {
-			DragonAPICore.logError("Neither main file at "+path+" nor backup at "+back+" found. Aborting.");
-			return null;
-		}
-
-		Sequencer seq = null;
-
+	private static Sequencer getSequencer() {
 		try {
-			seq = MidiSystem.getSequencer();
+			return MidiSystem.getSequencer();
 		}
 		catch (MidiUnavailableException e1) {
-			//e1.printStackTrace();
 			DragonAPICore.logError("MIDI system unavailable.");
 			return null;
 		}
+	}
 
+	public static Sequence getMIDIFromFile(Class root, String path) {
+		DragonAPICore.log("Reading MIDI at "+path);
+		InputStream input = root.getResourceAsStream(path);
+		if (input == null) {
+			DragonAPICore.logError("File at "+path+" not found. Aborting.");
+			return null;
+		}
 		try {
-			seq.setSequence(input);
+			return readMIDIFromFile(input);
 		}
-		catch (IOException e1) {
-			//e1.printStackTrace();
-			if (backup != null) {
-				DragonAPICore.logError("MIDI File at "+path+" unreadable. Switching to backup.");
-				try {
-					seq.setSequence(backup);
-				}
-				catch (IOException e) {
-					//e.printStackTrace();
-					DragonAPICore.logError("Backup MIDI File at "+back+" unreadable.");
-				}
-				catch (InvalidMidiDataException e) {
-					//e.printStackTrace();
-					DragonAPICore.logError("Backup MIDI File at "+back+" invalid.");
-				}
-			}
-			else {
-				DragonAPICore.logError("MIDI File at "+path+" unreadable, and no backup was available.");
-			}
+		catch (IOException e) {
+			DragonAPICore.logError("MIDI File at "+path+" unreadable.");
 		}
-		catch (InvalidMidiDataException e1) {
-			//e1.printStackTrace();
-			if (backup != null) {
-				DragonAPICore.log("MIDI File at "+path+" invalid. Switching to backup.");
-				try {
-					seq.setSequence(backup);
-				}
-				catch (IOException e) {
-					//e.printStackTrace();
-					DragonAPICore.logError("Backup MIDI File at "+back+" unreadable.");
-				}
-				catch (InvalidMidiDataException e) {
-					//e.printStackTrace();
-					DragonAPICore.logError("Backup MIDI File at "+back+" invalid.");
-				}
-			}
-			else {
-				DragonAPICore.logError("MIDI File at "+path+" unreadable, and no backup was available.");
-			}
+		catch (InvalidMidiDataException e) {
+			DragonAPICore.logError("MIDI File at "+path+" invalid.");
 		}
-		return seq.getSequence();
+		return null;
+	}
+
+	public static Sequence getMIDIFromFile(File f) {
+		try {
+			return readMIDIFromFile(new FileInputStream(f));
+		}
+		catch (IOException e) {
+			DragonAPICore.logError("MIDI File at "+f.getAbsolutePath()+" unreadable.");
+		}
+		catch (InvalidMidiDataException e) {
+			DragonAPICore.logError("MIDI File at "+f.getAbsolutePath()+" invalid.");
+		}
+		return null;
+	}
+
+	public static Sequence getMIDIFromFile(InputStream in) {
+		try {
+			return readMIDIFromFile(in);
+		}
+		catch (IOException e) {
+			DragonAPICore.logError("MIDI File unreadable.");
+		}
+		catch (InvalidMidiDataException e) {
+			DragonAPICore.logError("MIDI File invalid.");
+		}
+		return null;
+	}
+
+	private static Sequence readMIDIFromFile(InputStream in) throws IOException, InvalidMidiDataException {
+		if (MIDI_LOADER == null) {
+			DragonAPICore.logError("Could not load MIDI; MIDI system unavailable.");
+			return null;
+		}
+		MIDI_LOADER.setSequence(in);
+		return MIDI_LOADER.getSequence();
 	}
 
 	/** Reads a parameter from a MIDI Sequence. Args: Sequence, channel (1-16), time, task (0 = note, 1 = voice, 2 = volume) *//*
@@ -263,16 +265,16 @@ public final class ReikaMIDIReader {
 		return length;
 	}
 
-	public static int MIDITickToMCTick(Sequence seq, long ti) {
-		return (int)(ti*getMillisPerTick(seq)/5F);
+	public static int MIDITickToMCTick(Sequence seq, long ti, float bpm) {
+		return (int)(ti*getMillisPerTick(seq, bpm)/5F);
 	}
 
-	public static long MCTickToMIDITick(Sequence seq, int ti) {
-		return (long)(ti/getMillisPerTick(seq)*5F);
+	public static long MCTickToMIDITick(Sequence seq, int ti, float bpm) {
+		return (long)(ti/getMillisPerTick(seq, bpm)*5F);
 	}
 
-	private static float getMillisPerTick(Sequence seq) {
-		float bpm = 90;
+	private static float getMillisPerTick(Sequence seq, float bpm) {
+		//bpm = 90; //why does this not work when dynamic??
 		return 60000F/(seq.getResolution()*bpm);//1/1.2333F;
 	}
 
@@ -289,7 +291,7 @@ public final class ReikaMIDIReader {
 	}
 
 	private static int getMCTickLength(Sequence seq) {
-		return MIDITickToMCTick(seq, getMIDITickLength(seq));
+		return MIDITickToMCTick(seq, getMIDITickLength(seq), 90);
 	}
 
 	public static int[][][] readMIDIFileToArray(Sequence seq) {
@@ -306,11 +308,12 @@ public final class ReikaMIDIReader {
 		int note = 0;
 		int instru = 0;
 		int channel;
+		int tempo = 120;
 		Track[] tr = seq.getTracks();
 		for (int i = 0; i < tr.length; i++) {
 			for (int j = 0; j < tr[i].size(); j++) {
 				MidiEvent event = tr[i].get(j);
-				time = MIDITickToMCTick(seq, event.getTick());
+				time = MIDITickToMCTick(seq, event.getTick(), tempo);
 				//DragonAPICore.log(event.getTick()+" midi to "+time+" MC, out of length "+getSequenceLength(seq)+" ("+getSequenceLength(seq)/20F+") s");
 				MidiMessage message = event.getMessage();
 				if (message instanceof ShortMessage) {
@@ -351,6 +354,16 @@ public final class ReikaMIDIReader {
 						}
 					}
 				}
+				else if (message instanceof MetaMessage) {
+					MetaMessage mm = (MetaMessage)message;
+					byte[] bytes = mm.getData();
+					int val = (bytes[0] & 0xff) << 16 | (bytes[1] & 0xff) << 8 | (bytes[2] & 0xff);
+					switch (mm.getType()) {
+						case TEMPO:
+							tempo = 60000000 / val;
+							break;
+					}
+				}
 			}
 		}
 		return data;
@@ -366,40 +379,63 @@ public final class ReikaMIDIReader {
 		int key = 0;
 		int instru = 0;
 		int channel;
+		int tempo = 120;
 		Track[] tr = seq.getTracks();
+		MIDINote[][] lastOn = new MIDINote[16][256];
 		for (int i = 0; i < tr.length; i++) {
-			MIDINote[] lastOn = new MIDINote[256];
 			for (int j = 0; j < tr[i].size(); j++) {
 				MidiEvent event = tr[i].get(j);
-				int time = MIDITickToMCTick(seq, event.getTick());
+				int time = MIDITickToMCTick(seq, event.getTick(), tempo);
 				//DragonAPICore.log(event.getTick()+" midi to "+time+" MC, out of length "+getSequenceLength(seq)+" ("+getSequenceLength(seq)/20F+") s");
 				MidiMessage message = event.getMessage();
 				if (message instanceof ShortMessage) {
 					ShortMessage sm = (ShortMessage) message;
-					channel = i;
-					if (channel == 0) {
-						throw new RuntimeException("Invalid MIDI has notes in the tempo track (track 0)!");
+					channel = sm.getChannel();//i-1;
+					//if (channel == 0) {
+					//	throw new RuntimeException("Invalid MIDI has notes in the tempo track (track 0)!");
+					//}
+					if (channel == 9) { //skip percussion
+						continue;
+					}
+					if (channel >= 16) {
+						throw new RuntimeException("Invalid MIDI has more than 16 tracks!?!");
 					}
 					switch(sm.getCommand()) {
 						case NOTE_ON:
 							key = sm.getData1();
 							int vol = sm.getData2();
-							lastOn[key] = new MIDINote(event.getTick(), time, key, instru, vol);
+							lastOn[channel][key] = new MIDINote(event.getTick(), time, key, instru, vol);
+							//ReikaJavaLibrary.pConsole("ON: "+key+" @ "+time+": "+lastOn[channel][key]);
 							break;
 						case NOTE_OFF:
+							key = sm.getData1(); //so turns off the right note
 							break;
 						case INSTRU_CHANGE:
 							instru = sm.getData1();
 							break;
 					}
-					if (lastOn[key] != null && sm.getCommand() == NOTE_OFF) {
-						MIDINote m = lastOn[key];
+					//ReikaJavaLibrary.pConsole("OFF: "+key+" @ "+time+": "+lastOn[channel][key], sm.getCommand() == NOTE_OFF);
+					if (lastOn[channel][key] != null && sm.getCommand() == NOTE_OFF) {
+						MIDINote m = lastOn[channel][key];
 						int len = time-m.timeOn;
 						MusicKey note = MusicKey.getKeyFromMIDI(key);
-						data.addNote(m.timeOn, channel-1, note, m.voice, m.velocity, len);
+						data.addNote(m.timeOn, channel, note, m.voice, m.velocity, len);
+						//ReikaJavaLibrary.pConsole(m);
 						//ReikaJavaLibrary.pConsole("Note "+note+" on channel "+channel+" @ "+time+" (event time="+event.getTick()+")");
 						//ReikaJavaLibrary.pConsole("Note "+note+" on channel "+channel+" ("+m+"), tick off="+time+"/tick_"+event.getTick()+", length = "+len);
-						lastOn[key] = null;
+						lastOn[channel][key] = null;
+					}
+				}
+				else if (message instanceof MetaMessage) {
+					MetaMessage mm = (MetaMessage)message;
+					byte[] bytes = mm.getData();
+					if (bytes.length == 3) {
+						int val = (bytes[0] & 0xff) << 16 | (bytes[1] & 0xff) << 8 | (bytes[2] & 0xff);
+						switch (mm.getType()) {
+							case TEMPO:
+								tempo = 60000000 / val;
+								break;
+						}
 					}
 				}
 			}

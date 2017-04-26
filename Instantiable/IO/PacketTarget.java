@@ -23,6 +23,9 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public abstract class PacketTarget {
 
+	public static final PacketTarget server = new ServerTarget();
+	public static final PacketTarget allPlayers = new AllPlayersTarget();
+
 	public abstract void dispatch(PacketPipeline p, PacketObj pk);
 
 	public static final class PlayerTarget extends PacketTarget {
@@ -122,7 +125,7 @@ public abstract class PacketTarget {
 
 	public static final class AllPlayersTarget extends PacketTarget {
 
-		public AllPlayersTarget() {
+		private AllPlayersTarget() {
 
 		}
 
@@ -135,7 +138,7 @@ public abstract class PacketTarget {
 	//@SideOnly(Side.CLIENT)
 	public static final class ServerTarget extends PacketTarget {
 
-		public ServerTarget() {
+		private ServerTarget() {
 
 		}
 

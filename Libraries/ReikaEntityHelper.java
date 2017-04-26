@@ -11,6 +11,7 @@ package Reika.DragonAPI.Libraries;
 
 import ic2.api.item.IElectricItem;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -225,6 +226,41 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		@Override
 		public boolean isEntityApplicable(Entity e) {
 			return EntityList.getEntityID(e) == entityID;
+		}
+
+	}
+
+	private static abstract class CombinedEntitySelector implements IEntitySelector {
+
+		protected final Collection<IEntitySelector> callers = new ArrayList();
+
+		private final CombinedEntitySelector addSelector(IEntitySelector e) {
+			callers.add(e);
+			return this;
+		}
+
+	}
+
+	private static final class CombinedEntitySelectorAND extends CombinedEntitySelector {
+
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			for (IEntitySelector ie : callers)
+				if (!ie.isEntityApplicable(e))
+					return false;
+			return true;
+		}
+
+	}
+
+	private static final class CombinedEntitySelectorOR extends CombinedEntitySelector {
+
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			for (IEntitySelector ie : callers)
+				if (!ie.isEntityApplicable(e))
+					return false;
+			return true;
 		}
 
 	}
@@ -1288,6 +1324,19 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	public static boolean existsAnotherEntityWithin(Entity e, double dist) {
 		AxisAlignedBB box = ReikaAABBHelper.getEntityCenteredAABB(e, dist);
 		return e.worldObj.selectEntitiesWithinAABB(e.getClass(), box, new NotSelfSelector(e)).size() > 0;
+	}
+
+	public static boolean existsAnotherValidEntityWithin(Entity e, double dist, IEntitySelector check) {
+		AxisAlignedBB box = ReikaAABBHelper.getEntityCenteredAABB(e, dist);
+		return e.worldObj.selectEntitiesWithinAABB(e.getClass(), box, combineEntitySelectors(true, new NotSelfSelector(e), check)).size() > 0;
+	}
+
+	public static IEntitySelector combineEntitySelectors(boolean and, IEntitySelector... s) {
+		CombinedEntitySelector ret = and ? new CombinedEntitySelectorAND() : new CombinedEntitySelectorOR();
+		for (int i = 0; i < s.length; i++) {
+			ret.addSelector(s[i]);
+		}
+		return ret;
 	}
 
 	public static void doSetHealthDamage(EntityLivingBase e, DamageSource src, float amt) {

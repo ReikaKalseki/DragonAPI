@@ -1245,7 +1245,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 		else if (side == Side.CLIENT) {
 			if (forceClient)
-				new PacketTarget.ServerTarget().dispatch(pipe, pack);
+				PacketTarget.server.dispatch(pipe, pack);
 			else
 				DragonAPICore.logError(te+" sent a sync packet from the client! This is not allowed!");
 		}

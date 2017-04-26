@@ -14,7 +14,7 @@ public class GetLatencyCommand extends DragonClientCommand {
 		long time = System.currentTimeMillis();
 		int[] l = ReikaJavaLibrary.splitLong(time);
 		long val = ReikaJavaLibrary.buildLong(l[0], l[1]);
-		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.GETLATENCY.ordinal(), new PacketTarget.ServerTarget(), l[0], l[1]);
+		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.GETLATENCY.ordinal(), PacketTarget.server, l[0], l[1]);
 	}
 
 	@Override

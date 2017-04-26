@@ -22,11 +22,14 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
@@ -36,11 +39,19 @@ import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaCropHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.ModRegistry.ModCropList;
+import Reika.DragonAPI.ModRegistry.ModOreList;
+import Reika.DragonAPI.ModRegistry.ModWoodList;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
 
 
 
@@ -92,6 +103,8 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		classShortcuts.put("DimensionManager", DimensionManager.class);
 		classShortcuts.put("FML", FMLCommonHandler.class);
 		classShortcuts.put("Forge", MinecraftForge.class);
+		classShortcuts.put("ForgeDirection", ForgeDirection.class);
+		classShortcuts.put("Loader", Loader.class);
 		classShortcuts.put("Fluid", Fluid.class);
 		classShortcuts.put("FluidStack", FluidStack.class);
 		classShortcuts.put("FluidRegistry", FluidRegistry.class);
@@ -109,6 +122,14 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		classShortcuts.put("ItemHelper", ReikaItemHelper.class);
 		classShortcuts.put("InventoryHelper", ReikaInventoryHelper.class);
 		classShortcuts.put("PlayerAPI", ReikaPlayerAPI.class);
+		classShortcuts.put("PlantHelper", ReikaPlantHelper.class);
+		classShortcuts.put("CropHelper", ReikaCropHelper.class);
+		classShortcuts.put("OreHelper", ReikaOreHelper.class);
+		classShortcuts.put("TreeHelper", ReikaTreeHelper.class);
+		classShortcuts.put("ModList", ModList.class);
+		classShortcuts.put("ModOreList", ModOreList.class);
+		classShortcuts.put("ModWoodList", ModWoodList.class);
+		classShortcuts.put("ModCropList", ModCropList.class);
 	}
 
 	protected static boolean addClassShortcut(Class c) {
@@ -210,6 +231,12 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 
 		}
 		try {
+			return Float.parseFloat(s);
+		}
+		catch (NumberFormatException e) {
+
+		}
+		try {
 			return Double.parseDouble(s);
 		}
 		catch (NumberFormatException e) {
@@ -223,6 +250,8 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 	}
 
 	protected final String deSRG(Class c, String s) {
+		if (!FMLForgePlugin.RUNTIME_DEOBF)
+			return s;
 		HashMap<String, String> map = SRGMap.get(c);
 		if (map == null)
 			return s;

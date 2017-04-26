@@ -11,7 +11,9 @@ package Reika.DragonAPI.Instantiable.Data.Immutable;
 
 import io.netty.buffer.ByteBuf;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
@@ -328,6 +330,14 @@ public final class Coordinate {
 
 	public ChunkCoordinates asChunkCoordinates() {
 		return new ChunkCoordinates(xCoord, yCoord, zCoord);
+	}
+
+	public Collection<Coordinate> getAdjacentCoordinates() {
+		ArrayList<Coordinate> li = new ArrayList();
+		for (int i = 0; i < 6; i++) {
+			li.add(this.offset(ForgeDirection.VALID_DIRECTIONS[i], 1));
+		}
+		return li;
 	}
 
 }

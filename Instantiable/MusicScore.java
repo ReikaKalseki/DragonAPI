@@ -11,12 +11,15 @@ package Reika.DragonAPI.Instantiable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMusicHelper.MusicKey;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -24,7 +27,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class MusicScore {
 
-	private final TreeMap<Integer, Note>[] music;
+	private final TreeMap<Integer, Collection<Note>>[] music;
 	private final int channelCount;
 	private int length;
 
@@ -41,26 +44,35 @@ public class MusicScore {
 		if (music[channel] == null) {
 			music[channel] = new TreeMap();
 		}
-		music[channel].put(time, note);
+		Collection<Note> c = music[channel].get(time);
+		if (c == null) {
+			c = new ArrayList();
+			music[channel].put(time, c);
+		}
+		else {
+			//ReikaJavaLibrary.pConsole("Adding "+note+" @ C"+channel+" : "+time+" to "+c);
+		}
+		c.add(note);
 		length = Math.max(length, time);
 	}
 
 	public ArrayList<Note> getNotes(int time) {
 		ArrayList<Note> li = new ArrayList();
 		for (int i = 0; i < channelCount; i++) {
-			Note n = music[i] != null ? music[i].get(time) : null;
+			Collection<Note> n = music[i] != null ? music[i].get(time) : null;
 			if (n != null) {
-				li.add(n);
+				li.addAll(n);
 			}
 		}
 		return li;
 	}
 
-	public Note getNote(int channel, int time) {
-		return music[channel] != null ? music[channel].get(time) : null;
+	public Collection<Note> getNotes(int channel, int time) {
+		Collection<Note> c = music[channel] != null ? music[channel].get(time) : null;
+		return c != null ? Collections.unmodifiableCollection(c) : null;
 	}
 
-	public Map<Integer, Note> getTrack(int channel) {
+	public Map<Integer, Collection<Note>> getTrack(int channel) {
 		return music[channel] != null ? Collections.unmodifiableMap(music[channel]) : new HashMap();
 	}
 
@@ -72,14 +84,20 @@ public class MusicScore {
 		return length;
 	}
 
+	public int countTracks() {
+		return music.length;
+	}
+
 	public MusicScore scaleSpeed(float factor) {
 		MusicScore mus = new MusicScore(channelCount);
 
 		for (int i = 0; i < channelCount; i++) {
 			if (music[i] != null) {
 				for (int time : music[i].keySet()) {
-					Note n = music[i].get(time);
-					mus.addNote(i, (int)(time/factor), n);
+					Collection<Note> c = music[i].get(time);
+					if (c != null)
+						for (Note n : c)
+							mus.addNote(i, (int)(time/factor), n);
 				}
 			}
 		}
@@ -144,9 +162,14 @@ public class MusicScore {
 			NBTTagCompound nbt = new NBTTagCompound();
 			if (music[i] != null) {
 				for (int time : music[i].keySet()) {
-					NBTTagCompound val = new NBTTagCompound();
-					music[i].get(time).writeToNBT(val);
-					nbt.setTag(String.valueOf(time), val);
+					Collection<Note> c = music[i].get(time);
+					NBTTagList li = new NBTTagList();
+					for (Note n : c) {
+						NBTTagCompound val = new NBTTagCompound();
+						n.writeToNBT(val);
+						li.appendTag(val);
+					}
+					nbt.setTag(String.valueOf(time), li);
 				}
 			}
 			tag.setTag("Ch_"+i, nbt);
@@ -163,8 +186,15 @@ public class MusicScore {
 				NBTTagCompound nbt = tag.getCompoundTag("Ch_"+i);
 				for (Object o : nbt.func_150296_c()) {
 					String s = (String)o;
-					NBTTagCompound val = nbt.getCompoundTag(s);
-					mus.music[i].put(Integer.parseInt(s), Note.readFromNBT(val));
+					int time = Integer.parseInt(s);
+					NBTTagList li = nbt.getTagList(s, NBTTypes.COMPOUND.ID);
+					Collection<Note> c = new ArrayList();
+					for (Object o2 : li.tagList) {
+						NBTTagCompound val = (NBTTagCompound)o2;
+						Note n = Note.readFromNBT(val);
+						c.add(n);
+					}
+					mus.music[i].put(time, c);
 				}
 			}
 		}

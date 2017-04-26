@@ -264,7 +264,7 @@ public class DragonAPIEventWatcher {
 	public void tagDroppedItems(EntityJoinWorldEvent evt) {
 		if (evt.entity instanceof EntityItem && evt.world.isRemote) {
 			//ReikaJavaLibrary.pConsole("Sending clientside request for Entity ID "+evt.entity.getEntityId());
-			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.ITEMDROPPERREQUEST.ordinal(), new PacketTarget.ServerTarget(), evt.entity.getEntityId());
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.ITEMDROPPERREQUEST.ordinal(), PacketTarget.server, evt.entity.getEntityId());
 		}
 	}
 

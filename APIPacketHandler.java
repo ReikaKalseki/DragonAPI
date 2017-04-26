@@ -333,6 +333,8 @@ public class APIPacketHandler implements PacketHandler {
 					break;
 				case SENDLATENCY:
 					break;
+				case REDSTONECHANGE:
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -396,6 +398,8 @@ public class APIPacketHandler implements PacketHandler {
 				long toClientTime = t3-t2;
 				ReikaChatHelper.write("Total latency: "+toServerTime+"ms to server, "+toClientTime+"ms from server.");
 				break;
+			case REDSTONECHANGE:
+				((TileEntityBase)world.getTileEntity(x, y, z)).onRedstoneChangedClientside(data[0] > 0, data[1] > 0);
 			default:
 				break;
 		}
@@ -439,7 +443,8 @@ public class APIPacketHandler implements PacketHandler {
 		MODULARLOGGER(),
 		POPUP(),
 		GETLATENCY(),
-		SENDLATENCY();
+		SENDLATENCY(),
+		REDSTONECHANGE();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -492,6 +497,8 @@ public class APIPacketHandler implements PacketHandler {
 					return 2;
 				case SENDLATENCY:
 					return 4;
+				case REDSTONECHANGE:
+					return 2;
 				default:
 					return 0;
 			}

@@ -18,17 +18,23 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalLineSegment;
+import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
+import Reika.DragonAPI.Instantiable.Data.Immutable.LineSegment;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class Perimeter {
 
-	//private final ArrayList<LineSegment> lines = new ArrayList();
-	//private int lastX = Integer.MIN_VALUE;
-	//private int lastY = Integer.MIN_VALUE;
-	//private int lastZ = Integer.MIN_VALUE;
 	private final LinkedList<Coordinate> points = new LinkedList();
 	private boolean allowVertical = true;
+
+	private int minX = Integer.MAX_VALUE;
+	private int maxX = Integer.MIN_VALUE;
+	private int minY = Integer.MAX_VALUE;
+	private int maxY = Integer.MIN_VALUE;
+	private int minZ = Integer.MAX_VALUE;
+	private int maxZ = Integer.MIN_VALUE;
 
 	public Perimeter() {
 
@@ -40,7 +46,6 @@ public final class Perimeter {
 	}
 
 	public boolean isClosed() {
-		//ReikaJavaLibrary.spamConsole(points.getFirst()+" & "+points.getLast());
 		return !points.isEmpty() && points.getFirst().equals(points.getLast());
 	}
 
@@ -52,29 +57,10 @@ public final class Perimeter {
 		return Collections.unmodifiableCollection(points);
 	}
 
-	/*
-	private Perimeter addLine(LineSegment ls) {
-		lines.add(ls);
-		return this;
-	}
-
-	public Perimeter addPoint(int x, int y, int z) {
-		if (this.isValidNextPoint(x, y, z)) {
-			LineSegment ls = LineSegment.getFromDXYZ(lastX, x, lastY, y, lastZ, z);
-			lines.add(ls);
-			lastX = x;
-			lastY = y;
-			lastZ = z;
-		}
-		else {
-
-		}
-		return this;
-	}*/
-
 	public boolean addPoint(int x, int y, int z) {
 		if (this.isValidNextPoint(x, y, z)) {
 			points.add(new Coordinate(x, y, z));
+			this.setLimits(x, y, z);
 			return true;
 		}
 		else {
@@ -87,11 +73,27 @@ public final class Perimeter {
 			Coordinate loc = points.removeLast();
 			points.add(new Coordinate(x, y, z));
 			points.addLast(loc);
+			this.setLimits(x, y, z);
 		}
 		else {
 
 		}
 		return this;
+	}
+
+	private final void setLimits(int x, int y, int z) {
+		if (x < minX)
+			minX = x;
+		if (x > maxX)
+			maxX = x;
+		if (y < minY)
+			minY = y;
+		if (y > maxY)
+			maxY = y;
+		if (z < minZ)
+			minZ = z;
+		if (z > maxZ)
+			maxZ = z;
 	}
 
 	private boolean isValidNextPoint(int x, int y, int z) {
@@ -129,6 +131,46 @@ public final class Perimeter {
 			int zmax = Math.max(z1, z2);
 			AxisAlignedBB box = AxisAlignedBB.getBoundingBox(xmin, ymin, zmin, xmax, ymax, zmax);
 			li.add(box);
+		}
+		return li;
+	}
+
+	//TODO
+	public ArrayList<AxisAlignedBB> getAreaAABBs() {
+		ArrayList<AxisAlignedBB> li = new ArrayList();
+		return li;
+	}
+
+	public AxisAlignedBB getCircumscribedBox() {
+		return AxisAlignedBB.getBoundingBox(minX, minY, minZ, maxX, maxY, maxZ);
+	}
+
+	public Collection<DecimalPosition> findIntersections(double x, double y, double z) {
+		DecimalLineSegment line = new DecimalLineSegment(minX-4, minY, minZ-4, x, y, z);
+		Collection<DecimalPosition> c = new ArrayList();
+		for (LineSegment l : this.getLineSegments()) {
+			DecimalPosition p = line.findIntersection2D(l.asDecimalSegment());
+			if (p != null)
+				c.add(p);
+		}
+		return c;
+	}
+
+	public boolean isPointInside(double x, double y, double z) {
+		return this.findIntersections(x, y, z).size()%2 == 1;
+	}
+
+	private ArrayList<LineSegment> getLineSegments() {
+		ArrayList<LineSegment> li = new ArrayList();
+		Coordinate last = null;
+		for (Coordinate c : points) {
+			if (last != null) {
+				li.add(new LineSegment(last, c));
+			}
+			last = c;
+		}
+		if (this.isClosed()) {
+			li.add(new LineSegment(points.getLast(), points.getFirst()));
 		}
 		return li;
 	}

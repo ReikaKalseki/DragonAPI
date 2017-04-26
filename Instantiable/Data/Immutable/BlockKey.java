@@ -139,4 +139,8 @@ public final class BlockKey implements BlockCheck {
 	public boolean match(BlockCheck bc) {
 		return bc instanceof BlockKey && ((BlockKey)bc).equals(this);
 	}
+
+	public int getBlockID() {
+		return Block.getIdFromBlock(blockID);
+	}
 }

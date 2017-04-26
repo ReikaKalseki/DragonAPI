@@ -11,7 +11,10 @@ import java.util.Stack;
 import java.util.UUID;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.MovingObjectPosition;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 
 /** Example use:
 	LDC {dimID} [+1 stack]<br>
@@ -52,6 +55,21 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 			}
 			catch (ClassNotFoundException e) {
 				this.sendChatToSender(ics, EnumChatFormatting.RED+"No such class: "+args[1]);
+			}
+			return;
+		}
+		else if (args[0].equalsIgnoreCase("look")) {
+			EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
+			MovingObjectPosition mov = ReikaPlayerAPI.getLookedAtBlock(ep, 4.5, false);
+			if (mov != null) {
+				this.getStack(ics).push(ep.worldObj);
+				this.getStack(ics).push(mov.blockX);
+				this.getStack(ics).push(mov.blockY);
+				this.getStack(ics).push(mov.blockZ);
+				this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Loaded looked position onto the stack.");
+			}
+			else {
+				this.sendChatToSender(ics, EnumChatFormatting.RED+"Not looking at a block.");
 			}
 			return;
 		}

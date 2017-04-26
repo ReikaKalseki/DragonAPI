@@ -142,8 +142,16 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		redstoneInput = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		if (redstoneInput && !lastRedstone)
 			this.onPositiveRedstoneEdge();
-		if (redstoneInput != lastRedstone)
+		if (redstoneInput != lastRedstone) {
+			ReikaPacketHelper.sendDataPacketWithRadius(DragonAPIInit.packetChannel, PacketIDs.REDSTONECHANGE.ordinal(), this, 32, redstoneInput ? 1 : 0, lastRedstone ? 1 : 0);
 			this.syncAllData(false);
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	public final void onRedstoneChangedClientside(boolean redstone, boolean last) {
+		if (redstone && !last)
+			this.onPositiveRedstoneEdge();
 	}
 
 	protected void onPositiveRedstoneEdge() {

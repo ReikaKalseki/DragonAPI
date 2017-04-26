@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
@@ -30,6 +32,7 @@ import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Exception.JarZipException;
+import Reika.DragonAPI.Exception.MissingASMException;
 import Reika.DragonAPI.Exception.MissingDependencyException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Exception.VersionMismatchException;
@@ -164,6 +167,22 @@ public abstract class DragonAPIMod {
 		if (this.getModFile().getName().endsWith(".jar.zip"))
 			throw new JarZipException(this);
 		this.verifyHash();
+		Class asm = this.getASMClass();
+		if (asm != null) {
+			this.verifyASMLoaded(asm);
+		}
+	}
+
+	protected Class<? extends IClassTransformer> getASMClass() {
+		return null;
+	}
+
+	private void verifyASMLoaded(Class c) {
+		for (IClassTransformer ic : Launch.classLoader.getTransformers()) {
+			if (c.isAssignableFrom(c.getClass()))
+				return;
+		}
+		throw new MissingASMException(this);
 	}
 
 	private void verifyHash() {

@@ -51,30 +51,34 @@ public class Spline {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public void render(Tessellator v5, double x, double y, double z, int color, boolean glow, boolean closed, int fineness) {
+	public void render(Tessellator v5, double x, double y, double z, int color, boolean glow, boolean closed, int fineness, float lineWidthFactor, BlendMode blend) {
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glDepthMask(false);
 		List<DecimalPosition> li = this.get(fineness, closed);
 		GL11.glEnable(GL11.GL_BLEND);
-		BlendMode.DEFAULT.apply();
+		blend.apply();
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		float w = GL11.glGetFloat(GL11.GL_LINE_WIDTH);
 		v5.startDrawing(GL11.GL_LINE_STRIP);
 		int a = ReikaColorAPI.getAlpha(color);
 		int clr = color & 0xffffff;
+		if (blend.isColorBlending() && a < 255)
+			clr = ReikaColorAPI.getColorWithBrightnessMultiplier(clr, a/255F/lineWidthFactor);
 		v5.setColorRGBA_I(clr, a);
 		this.renderPoints(v5, li, x, y, z, closed);
 		v5.draw();
 		if (glow) {
 			v5.startDrawing(GL11.GL_LINE_STRIP);
 			v5.setColorRGBA_I(clr, a/4);
-			GL11.glLineWidth(5);
+			GL11.glLineWidth(5*lineWidthFactor);
 			this.renderPoints(v5, li, x, y, z, closed);
 			v5.draw();
 
 			v5.startDrawing(GL11.GL_LINE_STRIP);
+			if (blend.isColorBlending())
+				clr = ReikaColorAPI.getColorWithBrightnessMultiplier(clr, a/4/255F);
 			v5.setColorRGBA_I(clr, a/4);
-			GL11.glLineWidth(10);
+			GL11.glLineWidth(10*lineWidthFactor);
 			this.renderPoints(v5, li, x, y, z, closed);
 			v5.draw();
 		}
@@ -284,10 +288,20 @@ public class Spline {
 		return C12;
 	}
 
+	@Override
+	public String toString() {
+		return anchors.toString();
+	}
+
+	public int length() {
+		return anchors.size();
+	}
+
 	public static interface SplineAnchor {
 
 		public void update();
 		public DecimalPosition asPosition();
+		public String toString();
 
 	}
 

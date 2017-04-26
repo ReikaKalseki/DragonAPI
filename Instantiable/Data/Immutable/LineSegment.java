@@ -9,60 +9,58 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
+import Reika.DragonAPI.Libraries.ReikaDirectionHelper.CubeDirections;
 
 
 public final class LineSegment {
 
-	public final int originX;
-	public final int originY;
-	public final int originZ;
+	public final Coordinate origin;
+	public final Coordinate target;
 
-	public final ForgeDirection direction;
-
-	public final int length;
-
-	public LineSegment(int x, int y, int z, ForgeDirection dir, int len) {
-		originX = x;
-		originY = y;
-		originZ = z;
-		direction = dir;
-		length = len;
+	public LineSegment(int x, int y, int z, int x2, int y2, int z2) {
+		origin = new Coordinate(x, y, z);
+		target = new Coordinate(x2, y2, z2);
 	}
 
-	public static final LineSegment getFromDXYZ(int x1, int x2, int y1, int y2, int z1, int z2) {
-		ForgeDirection dir = ReikaDirectionHelper.getDirectionBetween(x1, y1, z1, x2, y2, z2);
-		if (dir == null) {
-			DragonAPICore.logError("Invalid coordinates!");
-			return null;
-		}
-		int len = Math.abs(x2-x1+y2-y1+z2-z1);
-		return new LineSegment(x1, y1, z1, dir, len);
+	public LineSegment(Coordinate c1, Coordinate c2) {
+		this(c1.xCoord, c1.yCoord, c1.zCoord, c2.xCoord, c2.yCoord, c2.zCoord);
+	}
+
+	public static final LineSegment getFromXYZDir(int x1, int y1, int z1, ForgeDirection dir, int len) {
+		return new LineSegment(x1, y1, z1,x1+len*dir.offsetX, y1+len*dir.offsetY, z1+len*dir.offsetZ);
+	}
+
+	public static final LineSegment getFromXYZDir(int x1, int y1, int z1, CubeDirections dir, double len) {
+		return new LineSegment(x1, y1, z1, MathHelper.floor_double(x1+len*dir.offsetX), y1, MathHelper.floor_double(z1+len*dir.offsetZ));
+	}
+
+	public double getLength() {
+		return target.getDistanceTo(origin);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("%d, %d, %d >> %d %s", originX, originY, originZ, length, direction.toString());
+		return origin.toString()+" >> "+target.toString();
 	}
 
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof LineSegment) {
 			LineSegment ls = (LineSegment)o;
-			return this.matchOrigin(ls) && ls.direction == direction && ls.length == length;
+			return ls.origin.equals(origin) && ls.target.equals(target);
 		}
 		return false;
 	}
 
-	public boolean matchOrigin(LineSegment ls) {
-		return ls.originX == originX && ls.originY == originY && ls.originZ == originZ;
-	}
-
 	@Override
 	public int hashCode() {
-		return originX+originY+originZ+(direction.ordinal() << 24)+(length << 16);
+		return origin.hashCode() ^ target.hashCode();
+	}
+
+	public DecimalLineSegment asDecimalSegment() {
+		return new DecimalLineSegment(new DecimalPosition(origin), new DecimalPosition(target));
 	}
 
 }

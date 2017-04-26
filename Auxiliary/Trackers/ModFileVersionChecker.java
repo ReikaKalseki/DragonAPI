@@ -47,7 +47,7 @@ public class ModFileVersionChecker {
 	public void dispatch(ClientLoginEvent evt) {
 		for (String mod : data.keySet()) {
 			String s = mod+":"+data.get(mod);
-			ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.FILEMATCH.ordinal(), new PacketTarget.ServerTarget(), s);
+			ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.FILEMATCH.ordinal(), PacketTarget.server, s);
 		}
 	}
 

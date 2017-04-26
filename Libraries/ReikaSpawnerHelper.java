@@ -9,6 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
+import java.util.List;
+
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
@@ -21,6 +24,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityMobSpawner;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
@@ -87,6 +91,33 @@ public class ReikaSpawnerHelper {
 		spw.readFromNBT(tag);
 	}
 
+	public static void generateSpawnerTooltip(ItemStack is, List li) {
+		if (is.stackTagCompound.hasKey("Spawner")) {
+			li.add("Spawns "+ReikaEntityHelper.getEntityDisplayName(is.stackTagCompound.getString("Spawner")));
+		}
+		else {
+			li.add("No entity data");
+		}
+		if (is.stackTagCompound.hasKey("logic")) {
+			if (GuiScreen.isShiftKeyDown()) {
+				MobSpawnerBaseLogic lgc = new TemporarySpawnerLogic();
+				lgc.readFromNBT(is.stackTagCompound.getCompoundTag("logic"));
+				li.add("Min Delay: "+EnumChatFormatting.WHITE+lgc.minSpawnDelay+" ticks");
+				li.add("Max Delay: "+EnumChatFormatting.WHITE+lgc.maxSpawnDelay+" ticks");
+				li.add("Max Near Mobs: "+EnumChatFormatting.WHITE+lgc.maxNearbyEntities);
+				li.add("Spawn Count: "+EnumChatFormatting.WHITE+lgc.spawnCount);
+				li.add("Spawn Range: "+EnumChatFormatting.WHITE+lgc.spawnRange+"m");
+				li.add("Activation Range: "+EnumChatFormatting.WHITE+lgc.activatingRangeFromPlayer+"m");
+			}
+			else {
+				li.add(EnumChatFormatting.LIGHT_PURPLE+"Hold LSHIFT for spawner parameters");
+			}
+		}
+		else {
+			li.add("Default spawn parameters");
+		}
+	}
+
 	public static void setSpawnerItemNBT(ItemStack is, String mob, boolean force) {
 		if (is.stackTagCompound == null)
 			is.setTagCompound(new NBTTagCompound());
@@ -146,7 +177,21 @@ public class ReikaSpawnerHelper {
 		return name;
 	}
 
+	public static boolean hasCustomLogic(TileEntityMobSpawner spw) {
+		MobSpawnerBaseLogic lgc = spw.func_145881_a();
+		return !isDefaultParams(lgc);
+	}
+
+	private static boolean isDefaultParams(MobSpawnerBaseLogic lgc) {
+		TemporarySpawnerLogic lgc2 = new TemporarySpawnerLogic();
+		return lgc.minSpawnDelay == lgc2.minSpawnDelay && lgc.maxSpawnDelay == lgc2.maxSpawnDelay && lgc.maxNearbyEntities == lgc2.maxNearbyEntities && lgc.spawnCount == lgc2.spawnCount && lgc.spawnRange == lgc2.spawnRange && lgc.activatingRangeFromPlayer == lgc2.activatingRangeFromPlayer;
+	}
+
 	private static class TemporarySpawnerLogic extends MobSpawnerBaseLogic {
+
+		private TemporarySpawnerLogic() {
+			//init with defaults
+		}
 
 		private TemporarySpawnerLogic(int minDelay, int maxDelay, int maxNear, int spawnCount, int spawnRange, int activeRange) {
 			maxSpawnDelay = maxDelay;

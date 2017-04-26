@@ -24,7 +24,6 @@ import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -41,8 +40,7 @@ public class ItemSpawner extends Item {
 	public void addInformation(ItemStack is, EntityPlayer ep, List par3List, boolean par4) {
 		if (is.stackTagCompound == null)
 			return;
-		if (is.stackTagCompound.hasKey("Spawner"))
-			par3List.add("Spawns "+ReikaEntityHelper.getEntityDisplayName(is.stackTagCompound.getString("Spawner")));
+		ReikaSpawnerHelper.generateSpawnerTooltip(is, par3List);
 	}
 
 	@Override

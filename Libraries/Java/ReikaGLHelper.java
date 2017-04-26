@@ -35,6 +35,10 @@ public class ReikaGLHelper {
 		public void apply() {
 			GL11.glBlendFunc(sfactor, dfactor);
 		}
+
+		public boolean isColorBlending() {
+			return this == ADDITIVE || this == ADDITIVE2 || this == ADDITIVEDARK;
+		}
 	}
 
 }

@@ -901,4 +901,11 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static long buildLong(int l1, int l2) {
 		return ((long)l1 << 32) | (l2 & 0xffffffffL);
 	}
+
+	public static String getClassLocation(Class c) {
+		String ret = c.getResource(c.getSimpleName() + ".class").toString();
+		ret = ret.substring("file:\\".length());
+		ret = ret.replaceAll("%20", " ");
+		return ret;
+	}
 }

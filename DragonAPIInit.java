@@ -30,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.network.EnumConnectionState;
 import net.minecraft.potion.Potion;
@@ -43,10 +44,12 @@ import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
+import Reika.DragonAPI.ASM.DragonAPIClassTransformer;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
 import Reika.DragonAPI.Auxiliary.LoggingFilters;
 import Reika.DragonAPI.Auxiliary.LoggingFilters.LoggerType;
+import Reika.DragonAPI.Auxiliary.ModularLogger.ModularLoggerCommand;
 import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.RainTicker;
@@ -54,6 +57,7 @@ import Reika.DragonAPI.Auxiliary.RebootScheduler;
 import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.ChunkPregenerator;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
+import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.Trackers.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.CrashNotifications;
 import Reika.DragonAPI.Auxiliary.Trackers.EnchantmentCollisionTracker;
@@ -626,6 +630,9 @@ public class DragonAPIInit extends DragonAPIMod {
 			throw new RuntimeException("Could not find DragonAPI commands!", e);
 		}
 
+		evt.registerServerCommand(new CheckerDisableCommand());
+		evt.registerServerCommand(new ModularLoggerCommand());
+
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();
 	}
@@ -811,6 +818,11 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	public File getConfigFolder() {
 		return config.getConfigFolder();
+	}
+
+	@Override
+	protected Class<? extends IClassTransformer> getASMClass() {
+		return DragonAPIClassTransformer.class;
 	}
 
 	static {

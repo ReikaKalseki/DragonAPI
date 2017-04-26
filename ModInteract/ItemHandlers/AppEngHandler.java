@@ -17,6 +17,7 @@ import java.util.Collection;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.launchwrapper.Launch;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
@@ -110,7 +111,7 @@ public class AppEngHandler extends ModHandlerBase {
 	}
 
 	private void initGetters() throws Exception {
-		Class ae = Class.forName("appeng.core.Api");
+		Class ae = Class.forName("appeng.core.Api", false, Launch.classLoader);
 		Object inst = this.getInstance(ae);
 
 		Field b = ae.getDeclaredField("blocks");

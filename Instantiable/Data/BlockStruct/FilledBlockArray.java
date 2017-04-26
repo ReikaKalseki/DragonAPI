@@ -31,6 +31,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
+import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -379,6 +380,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 	private static class FluidCheck implements BlockCheck {
 
 		public final Fluid fluid;
+		public boolean needsSourceBlock = true;
 
 		private FluidCheck(Fluid f) {
 			if (!f.canBePlacedInWorld())
@@ -388,12 +390,12 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 		@Override
 		public boolean matchInWorld(World world, int x, int y, int z) {
-			return this.match(world.getBlock(x, y, z), 0);
+			return this.match(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 		}
 
 		@Override
 		public boolean match(Block b, int meta) {
-			return b instanceof BlockFluidBase && ((BlockFluidBase)b).getFluid() == fluid || FluidRegistry.lookupFluidForBlock(b) == fluid;
+			return ((b instanceof BlockFluidBase && ((BlockFluidBase)b).getFluid() == fluid) || FluidRegistry.lookupFluidForBlock(b) == fluid) && (!needsSourceBlock || (b instanceof BlockFluidFinite ? meta == 7 : meta == 0));
 		}
 
 		@Override

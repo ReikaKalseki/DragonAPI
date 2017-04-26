@@ -95,6 +95,18 @@ public class ReikaMusicHelper {
 	}
 
 	public static enum MusicKey {
+		C1(33),
+		Cs1(35),
+		D1(37),
+		Eb1(39),
+		E1(41),
+		F1(44),
+		Fs1(46),
+		G1(49),
+		Ab1(52),
+		A1(55),
+		Bb1(58),
+		B1(62),
 		C2(65),
 		Cs2(69),
 		D2(73),
@@ -156,6 +168,18 @@ public class ReikaMusicHelper {
 		Bb6(1865),
 		B6(1976),
 		C7(2093),
+		Cs7(2218),
+		D7(2349),
+		Eb7(2489),
+		E7(2637),
+		F7(2794),
+		Fs7(2960),
+		G7(3136),
+		Ab7(3322),
+		A7(3520),
+		Bb7(3729),
+		B7(3951),
+		C8(4186),
 		;
 
 		public final int pitch;

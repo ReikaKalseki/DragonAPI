@@ -118,13 +118,18 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			return ((NBTTagByteArray)NBT).func_150292_c();
 		}
 		else if (NBT instanceof NBTTagCompound) {
-			HashMap<String, Object> map = new HashMap();
-			NBTTagCompound tag = (NBTTagCompound)NBT;
-			for (Object o : tag.func_150296_c()) {
-				String s = (String)o;
-				map.put(s, getValue(tag.getTag(s)));
+			if (((NBTTagCompound)NBT).getBoolean("flag_isItemStack")) {
+				return ItemStack.loadItemStackFromNBT((NBTTagCompound)NBT);
 			}
-			return map;
+			else {
+				HashMap<String, Object> map = new HashMap();
+				NBTTagCompound tag = (NBTTagCompound)NBT;
+				for (Object o : tag.func_150296_c()) {
+					String s = (String)o;
+					map.put(s, getValue(tag.getTag(s)));
+				}
+				return map;
+			}
 		}
 		else if (NBT instanceof NBTTagList) {
 			ArrayList li = new ArrayList();
@@ -185,6 +190,11 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 		else if (o instanceof NBTBase) {
 			return (NBTBase)o;
+		}
+		else if (o instanceof ItemStack) {
+			NBTTagCompound tag = ((ItemStack)o).writeToNBT(new NBTTagCompound());
+			tag.setBoolean("flag_isItemStack", true);
+			return tag;
 		}
 		else {
 			return null;

@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
 
+import java.io.File;
+
 import javax.sound.midi.Sequence;
 
 import Reika.DragonAPI.IO.ReikaMIDIReader;
@@ -18,12 +20,12 @@ public final class MIDIInterface {
 
 	private final Sequence midi;
 
-	public MIDIInterface(Class root, String path) {
-		this(root, path, "");
+	public MIDIInterface(File f) {
+		midi = ReikaMIDIReader.getMIDIFromFile(f);
 	}
 
-	public MIDIInterface(Class root, String path, String back) {
-		midi = ReikaMIDIReader.getMIDIFromFile(root, path, back);
+	public MIDIInterface(Class root, String path) {
+		midi = ReikaMIDIReader.getMIDIFromFile(root, path);
 	}
 	/*
 	/** Returns the note at the given track and time. Args: Track, Time *//*

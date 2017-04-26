@@ -16,4 +16,6 @@ public interface PlayerBreakHook {
 	/** Return false to cancel the block break. */
 	public boolean breakByPlayer(EntityPlayer ep);
 
+	public boolean isBreakable(EntityPlayer ep);
+
 }

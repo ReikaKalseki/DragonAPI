@@ -1,9 +1,12 @@
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import java.util.ArrayList;
+
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 
@@ -157,6 +160,36 @@ public class BlockBounds {
 
 	public AxisAlignedBB asAABB(int x, int y, int z) {
 		return AxisAlignedBB.getBoundingBox(x+negativeX, y+negativeY, z+negativeZ, x+positiveX, y+positiveY, z+positiveZ);
+	}
+
+	public double getBound(ForgeDirection dir) {
+		switch(dir) {
+			case DOWN:
+				return negativeY;
+			case EAST:
+				return positiveX;
+			case NORTH:
+				return negativeZ;
+			case SOUTH:
+				return positiveZ;
+			case UP:
+				return positiveY;
+			case WEST:
+				return negativeX;
+			default:
+				break;
+		}
+		return Double.NaN;
+	}
+
+	public ArrayList<String> toClearString() {
+		ArrayList<String> li = new ArrayList();
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			String s = dir == ForgeDirection.UP ? "Top" : dir == ForgeDirection.DOWN ? "Bottom" : ReikaStringParser.capFirstChar(dir.name());
+			li.add(String.format("%s: %.1f px", s, 16*this.getBound(dir)));
+		}
+		return li;
 	}
 
 }

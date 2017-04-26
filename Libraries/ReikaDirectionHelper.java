@@ -234,6 +234,10 @@ public class ReikaDirectionHelper extends DragonAPICore {
 			return directionX == 0 || directionZ == 0;
 		}
 
+		public static CubeDirections getFromForgeDirection(ForgeDirection dir) {
+			return getFromVectors(dir.offsetX, dir.offsetZ);
+		}
+
 		static {
 			for (int i = 0; i < list.length; i++) {
 				dirMap.put(list[i], list[i].directionX, list[i].directionZ);

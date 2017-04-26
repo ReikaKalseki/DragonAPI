@@ -42,6 +42,7 @@ import Reika.DragonAPI.Interfaces.Block.Submergeable;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ChiselBlockHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumItemHelper.BlockEntry;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
@@ -358,7 +359,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 	public static boolean isUnbreakable(World world, int x, int y, int z, Block id, int meta, EntityPlayer ep) {
 		if (id.getBlockHardness(world, x, y, z) < 0 || (ep != null && id.getPlayerRelativeBlockHardness(ep, world, x, y, z) < 0))
 			return true;
-		if (id instanceof SemiUnbreakable && ((SemiUnbreakable)id).isUnbreakable(world, x, y, z, world.getBlockMetadata(x, y, z)))
+		if (id instanceof SemiUnbreakable && ((SemiUnbreakable)id).isUnbreakable(world, x, y, z, meta))
 			return true;
 		return false;
 	}
@@ -449,5 +450,19 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		Material mat = b.getMaterial();
 		return mat == Material.ground || b.isReplaceableOreGen(world, x, y, z, Blocks.stone);
+	}
+
+	public static boolean isNaturalStone(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		if (b == Blocks.stone || b == Blocks.sandstone || b == Blocks.bedrock)
+			return true;
+		if (b.isReplaceableOreGen(world, x, y, z, Blocks.stone))
+			return true;
+		int meta = world.getBlockMetadata(x, y, z);
+		if (ReikaBlockHelper.isOre(b, meta))
+			return true;
+		if (ModList.CHISEL.isLoaded() && ChiselBlockHandler.isWorldgenBlock(b, meta))
+			return true;
+		return false;
 	}
 }

@@ -24,6 +24,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 
 public abstract class NBTFile {
@@ -106,7 +107,14 @@ public abstract class NBTFile {
 	}
 
 	public final void save() throws IOException {
-		File f = new File(filepath);
+		String path = filepath;
+		if (reference != null) {
+			String pre = ReikaJavaLibrary.getClassLocation(reference).replaceAll("\\\\", "/");
+			pre = pre.substring(0, pre.length()-reference.getSimpleName().length()-".class".length());
+			pre = pre.replaceAll("/bin/", "/src/");
+			path = pre+path;
+		}
+		File f = new File(path);
 		f.getParentFile().mkdirs();
 		f.delete();
 		f.createNewFile();

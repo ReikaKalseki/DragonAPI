@@ -356,4 +356,32 @@ public class StructureExport extends NBTFile {
 		return (NBTTagCompound)ReikaNBTHelper.getTagForObject(extraNBT);
 	}
 
+	public StructureExport copy() {
+		StructureExport cp = new StructureExport(name+"_copy");
+		cp.encryptData = encryptData;
+		cp.compressData = compressData;
+		cp.data.putAll(data);
+		cp.watchedNBT.addAll(watchedNBT);
+		cp.extraNBT.putAll(extraNBT);
+		cp.overrides.putAll(overrides);
+		cp.ignoreSet.addAll(ignoreSet);
+		cp.bounds = bounds;
+
+		return cp;
+	}
+
+	public StructureExport copy(String path, Class c) {
+		StructureExport cp = new StructureExport(name+"_copy", path, c);
+		cp.encryptData = encryptData;
+		cp.compressData = compressData;
+		cp.data.putAll(data);
+		cp.watchedNBT.addAll(watchedNBT);
+		cp.extraNBT.putAll(extraNBT);
+		cp.overrides.putAll(overrides);
+		cp.ignoreSet.addAll(ignoreSet);
+		cp.bounds = bounds;
+
+		return cp;
+	}
+
 }

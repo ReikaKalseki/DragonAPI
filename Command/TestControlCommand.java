@@ -9,24 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
-import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
-public class TestControlCommand extends CommandBase {
+public class TestControlCommand extends DragonCommandBase {
 
 	private final String tag = "debugtest";
-
-	@Override
-	public String getCommandName() {
-		return tag;
-	}
-
-	@Override
-	public String getCommandUsage(ICommandSender icommandsender) {
-		return "/"+tag;
-	}
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
@@ -35,7 +24,12 @@ public class TestControlCommand extends CommandBase {
 	}
 
 	@Override
-	public int getRequiredPermissionLevel() {
-		return 4;
+	public String getCommandString() {
+		return tag;
+	}
+
+	@Override
+	protected boolean isAdminOnly() {
+		return true;
 	}
 }
