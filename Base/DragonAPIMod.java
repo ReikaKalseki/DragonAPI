@@ -179,7 +179,7 @@ public abstract class DragonAPIMod {
 
 	private void verifyASMLoaded(Class c) {
 		for (IClassTransformer ic : Launch.classLoader.getTransformers()) {
-			if (c.isAssignableFrom(c.getClass()))
+			if (c.isAssignableFrom(ic.getClass()))
 				return;
 		}
 		throw new MissingASMException(this);
