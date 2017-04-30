@@ -74,6 +74,7 @@ import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.BlockTieredResource;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Instantiable.ResettableRandom;
@@ -1420,6 +1421,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int meta = world.getBlockMetadata(x, y, z);
 		ArrayList<ItemStack> li = b.getDrops(world, x, y, z, meta, fortune);
 		if (ep != null) {
+			if (b instanceof BlockTieredResource) {
+				BlockTieredResource bt = (BlockTieredResource)b;
+				li = new ArrayList(bt.isPlayerSufficientTier(world, x, y, z, ep) ? bt.getHarvestResources(world, x, y, z, fortune, ep) : bt.getNoHarvestResources(world, x, y, z, fortune, ep));
+			}
 			HarvestDropsEvent evt = new HarvestDropsEvent(x, y, z, world, b, meta, fortune, 1F, li, ep, false);
 			MinecraftForge.EVENT_BUS.post(evt);
 			li = evt.drops;

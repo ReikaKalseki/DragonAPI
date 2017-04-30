@@ -46,7 +46,6 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
-import Reika.DragonAPI.Instantiable.Recipe.ExpandedOreRecipe;
 import Reika.DragonAPI.Instantiable.Recipe.RecipePattern;
 import Reika.DragonAPI.Interfaces.CustomToStringRecipe;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -207,20 +206,6 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			if (ir instanceof ShapedOreRecipe) {
 				if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
 					li.add((ShapedOreRecipe)ir);
-			}
-		}
-		//DragonAPICore.log(li);
-		return li;
-	}
-
-	/** Finds recipes by product. */
-	public static List<ExpandedOreRecipe> getExpandedOreRecipesByOutput(List<IRecipe> in, ItemStack out) {
-		List<ExpandedOreRecipe> li = new ArrayList<ExpandedOreRecipe>();
-		for (IRecipe ir : in) {
-			//DragonAPICore.log(ir.getRecipeOutput()+" == "+out);
-			if (ir instanceof ExpandedOreRecipe) {
-				if (ReikaItemHelper.matchStacks(ir.getRecipeOutput(), out))
-					li.add((ExpandedOreRecipe)ir);
 			}
 		}
 		//DragonAPICore.log(li);
@@ -410,25 +395,6 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			//DragonAPICore.log(Arrays.toString(objin));
 			w = 3;
 			h = 3;
-			for (int i = 0; i < objin.length; i++) {
-				if (objin[i] instanceof ItemStack) {
-					ItemStack is = (ItemStack)objin[i];
-					isin[i] = getRecipeItemStack(is, client);
-				}
-				else if (objin[i] instanceof List) {
-					List<ItemStack> li = (List)objin[i];
-					if (!li.isEmpty()) {
-						isin[i] = getRecipeItemStacks(li, client);
-					}
-				}
-			}
-		}
-		else if (ire instanceof ExpandedOreRecipe) {
-			ExpandedOreRecipe so = (ExpandedOreRecipe)ire;
-			Object[] objin = so.getInputCopy();
-			//DragonAPICore.log(Arrays.toString(objin));
-			w = so.getWidth();
-			h = so.getHeight();
 			for (int i = 0; i < objin.length; i++) {
 				if (objin[i] instanceof ItemStack) {
 					ItemStack is = (ItemStack)objin[i];
@@ -778,17 +744,6 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				}
 			}
 		}
-		else if (ire instanceof ExpandedOreRecipe) {
-			ExpandedOreRecipe so = (ExpandedOreRecipe)ire;
-			Object[] objin = so.getInputCopy();
-			for (int i = 0; i < objin.length; i++) {
-				if (objin[i] instanceof ItemStack)
-					li.add((ItemStack)objin[i]);
-				else if (objin[i] instanceof ArrayList) {
-					li.addAll((ArrayList)objin[i]);
-				}
-			}
-		}
 		else if (ire instanceof ShapelessRecipes) {
 			ShapelessRecipes sr = (ShapelessRecipes)ire;
 			li.addAll(sr.recipeItems);
@@ -813,31 +768,29 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		Object[] out = new Object[9];
 		if (ire instanceof ShapedRecipes) {
 			ShapedRecipes r = (ShapedRecipes)ire;
-			for (int i = 0; i < r.recipeItems.length; i++) {
-				if (r.recipeItems[i] != null)
-					out[i] = r.recipeItems[i].copy();
+			for (int i = 0; i < Math.min(3, r.recipeWidth); i++) {
+				for (int k = 0; k < Math.min(3, r.recipeHeight); k++) {
+					int idx = i+k*r.recipeWidth;
+					int idx2 = i+k*3;
+					if (r.recipeItems[idx] != null)
+						out[idx2] = r.recipeItems[idx].copy();
+				}
 			}
 		}
 		else if (ire instanceof ShapedOreRecipe) {
 			ShapedOreRecipe so = (ShapedOreRecipe)ire;
 			Object[] objin = so.getInput();
-			for (int i = 0; i < objin.length; i++) {
-				Object o = objin[i];
-				if (o instanceof ItemStack)
-					out[i] = ((ItemStack)o).copy();
-				else if (o instanceof List)
-					out[i] = new ArrayList((List)o);
-			}
-		}
-		else if (ire instanceof ExpandedOreRecipe) {
-			ExpandedOreRecipe so = (ExpandedOreRecipe)ire;
-			Object[] objin = so.getInputCopy();
-			for (int i = 0; i < objin.length; i++) {
-				Object o = objin[i];
-				if (o instanceof ItemStack)
-					out[i] = ((ItemStack)o).copy();
-				else if (o instanceof List)
-					out[i] = new ArrayList((List)o);
+			int w = getOreRecipeWidth(so);
+			for (int i = 0; i < Math.min(3, w); i++) {
+				for (int k = 0; k < Math.min(3, getOreRecipeHeight(so)); k++) {
+					int idx = i*w+k;
+					int idx2 = i*3+k;
+					Object o = objin[i];
+					if (o instanceof ItemStack)
+						out[i] = ((ItemStack)o).copy();
+					else if (o instanceof List)
+						out[i] = new ArrayList((List)o);
+				}
 			}
 		}
 		else if (ire instanceof ShapelessRecipes) {
@@ -872,13 +825,6 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		else if (ire instanceof ShapedOreRecipe) {
 			ShapedOreRecipe so = (ShapedOreRecipe)ire;
 			Object[] objin = so.getInput();
-			for (int i = 0; i < objin.length; i++) {
-				li.add(objin[i]);
-			}
-		}
-		else if (ire instanceof ExpandedOreRecipe) {
-			ExpandedOreRecipe so = (ExpandedOreRecipe)ire;
-			Object[] objin = so.getInputCopy();
 			for (int i = 0; i < objin.length; i++) {
 				li.add(objin[i]);
 			}

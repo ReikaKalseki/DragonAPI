@@ -1352,4 +1352,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return e.worldObj != null && e.worldObj.getEntityByID(e.getEntityId()) == e;
 	}
 
+	public static boolean isInRain(Entity e) {
+		return e.worldObj.canLightningStrikeAt(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ)) || e.worldObj.canLightningStrikeAt(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY + e.height), MathHelper.floor_double(e.posZ));
+	}
+
 }

@@ -45,9 +45,9 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
-import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaEngLibrary;
@@ -641,17 +641,18 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 	public static ArrayList<ItemStack> collateItemList(Collection<ItemStack> c) {
 		ArrayList<ItemStack> li = new ArrayList();
-		ItemHashMap<Integer> vals = new ItemHashMap();
+		HashMap<KeyedItemStack, Integer> vals = new HashMap();
 		for (ItemStack is : c) {
-			Integer get = vals.get(is);
+			KeyedItemStack ks = new KeyedItemStack(is).setSimpleHash(true).setIgnoreNBT(false);
+			Integer get = vals.get(ks);
 			int val = get != null ? get.intValue() : 0;
-			vals.put(is, val+is.stackSize);
+			vals.put(ks, val+is.stackSize);
 		}
-		for (ItemStack is : vals.keySet()) {
+		for (KeyedItemStack is : vals.keySet()) {
 			int val = vals.get(is);
 			while (val > 0) {
-				int amt = Math.min(val, is.getMaxStackSize());
-				ItemStack copy = getSizedItemStack(is, amt);
+				int amt = Math.min(val, is.getItemStack().getMaxStackSize());
+				ItemStack copy = getSizedItemStack(is.getItemStack(), amt);
 				li.add(copy);
 				val -= amt;
 			}

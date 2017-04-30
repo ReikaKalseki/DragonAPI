@@ -18,14 +18,20 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraft.world.gen.ChunkProviderServer;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper.ClassEntitySelector;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class ReikaChunkHelper extends DragonAPICore {
 
@@ -35,11 +41,30 @@ public final class ReikaChunkHelper extends DragonAPICore {
 		return in;
 	}
 
-	/** Regens a chunk from the seed. Args: World, x, z */
-	public static void regenChunk(World world, int x, int z) {
-		Chunk in = world.getChunkFromBlockCoords(x, z);
-		in.setChunkModified();
-		//TODO
+	/** Regens a chunk from the seed. Args: World, x, z (block coords) */
+	public static void regenChunk(WorldServer world, int x, int z) {
+		ChunkProviderServer prov = (ChunkProviderServer)world.getChunkProvider();
+		IChunkProvider gen = prov.currentChunkProvider;
+		Chunk regen = gen.provideChunk(x >> 4, z >> 4);
+		copyChunk(world.getChunkFromBlockCoords(x, z), regen);
+
+		gen.populate(prov, x >> 4, z >> 4);
+		GameRegistry.generateWorld(x >> 4, z >> 4, world, gen, prov);
+		regen.setChunkModified();
+		world.getBiomeGenForCoords(x+16, z+16).decorate(world, rand, x, z);
+	}
+
+	private static void copyChunk(Chunk tgt, Chunk repl) {
+		tgt.setStorageArrays(repl.getBlockStorageArray());
+		tgt.setBiomeArray(repl.getBiomeArray());
+		for (ChunkPosition cc : ((Collection<ChunkPosition>)tgt.chunkTileEntityMap.keySet())) {
+			tgt.removeTileEntity(cc.chunkPosX, cc.chunkPosY, cc.chunkPosZ);
+		}
+		tgt.chunkTileEntityMap = repl.chunkTileEntityMap;
+		for (TileEntity te : ((Collection<TileEntity>)tgt.chunkTileEntityMap.values())) {
+			tgt.addTileEntity(te);
+		}
+		//tgt.entityLists = repl.entityLists;
 	}
 
 	/** Deletes ALL entities of all kinds (except players) in a chunk.
