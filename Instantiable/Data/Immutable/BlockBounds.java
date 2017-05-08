@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -27,6 +28,11 @@ public class BlockBounds {
 	public final double positiveX;
 	public final double positiveY;
 	public final double positiveZ;
+
+	public static BlockBounds fromBlock(Block b, IBlockAccess world, int x, int y, int z) {
+		b.setBlockBoundsBasedOnState(world, x, y, z);
+		return new BlockBounds(b.getBlockBoundsMinX(), b.getBlockBoundsMinY(), b.getBlockBoundsMinZ(), b.getBlockBoundsMaxX(), b.getBlockBoundsMaxY(), b.getBlockBoundsMaxZ());
+	}
 
 	public BlockBounds(double nx, double ny, double nz, double px, double py, double pz) {
 		negativeX = Math.max(0, nx);
@@ -191,6 +197,24 @@ public class BlockBounds {
 		return Double.NaN;
 	}
 
+	public boolean isFullDistance(ForgeDirection dir) {
+		int val = dir.offsetX+dir.offsetY+dir.offsetZ == 1 ? 1 : 0;
+		return this.getBound(dir) == val;
+	}
+
+	public boolean isFullFace(ForgeDirection dir) {
+		if (this.isFullDistance(dir))
+			return false;
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir2 = ForgeDirection.VALID_DIRECTIONS[i];
+			if (dir2 != dir && dir2 != dir.getOpposite()) {
+				if (!this.isFullDistance(dir2))
+					return false;
+			}
+		}
+		return true;
+	}
+
 	public ArrayList<String> toClearString() {
 		ArrayList<String> li = new ArrayList();
 		for (int i = 0; i < 6; i++) {
@@ -199,6 +223,11 @@ public class BlockBounds {
 			li.add(String.format("%s: %.1f px", s, 16*this.getBound(dir)));
 		}
 		return li;
+	}
+
+	@Override
+	public String toString() {
+		return negativeX+","+negativeY+","+negativeZ+" > "+positiveX+","+positiveY+","+positiveZ;
 	}
 
 }

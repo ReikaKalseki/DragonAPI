@@ -26,9 +26,9 @@ public class ReikaFormatHelper {
 	public static final int SECOND = 20;
 	public static final int MILLI = 1000;
 
-	public static String getTickAsHMS(int ticks) {
-		int hour = ticks/HOUR;
-		int minute = (ticks-hour*HOUR)/MINUTE;
+	public static String getTickAsHMS(long ticks) {
+		long hour = ticks/HOUR;
+		long minute = (ticks-hour*HOUR)/MINUTE;
 		double second = (ticks-hour*HOUR-minute*MINUTE)/(double)SECOND;
 
 		return String.format("%dh:%dm:%.2fs", hour, minute, second);

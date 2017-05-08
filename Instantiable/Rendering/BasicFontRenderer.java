@@ -54,7 +54,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	public final int FONT_HEIGHT = 9;
 	public Random fontRandom = new Random();
 	/** Array of the start/end column (in upper/lower nibble) for every glyph in the /font directory. */
-	protected final byte[] glyphWidth = new byte[65536];
+	protected byte[] glyphWidth = new byte[65536];
 	/**
 	 * Array of RGB triplets defining the 16 standard chat colors followed by 16 darker version of the same colors for
 	 * drop shadows.
@@ -148,10 +148,14 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 
 	private void readGlyphSizes() {
 		try {
+			glyphWidth = new byte[65536];
 			InputStream in = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("font/glyph_sizes.bin")).getInputStream();
 			in.read(glyphWidth);
 		}
 		catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -231,6 +235,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	/**
 	 * Render a single Unicode character at current (posX,posY) location using one of the /font/glyph_XX.png files...
 	 */
+	@Override
 	protected float renderUnicodeChar(char c, boolean italic) {
 		if (glyphWidth[c] == 0) {
 			return 0.0F;

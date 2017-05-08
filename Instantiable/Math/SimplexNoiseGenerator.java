@@ -23,12 +23,12 @@ public class SimplexNoiseGenerator {
 
 	private static final double NORM_CONSTANT = 47;
 
-	private int[] perm;
+	protected final int[] perm = new int[256];
 
-	private double inputFactor = 1;
+	protected double inputFactor = 1;
 
-	private Collection<Octave> octaves = new ArrayList();
-	private double maxRange = 1;
+	protected final Collection<Octave> octaves = new ArrayList();
+	protected double maxRange = 1;
 
 	/** As opposed to scaling */
 	public boolean clampEdge = false;
@@ -37,7 +37,6 @@ public class SimplexNoiseGenerator {
 	//Generates a proper permutation (i.e. doesn't merely perform N successive pair swaps on a base array)
 	//Uses a simple 64-bit LCG.
 	public SimplexNoiseGenerator(long seed) {
-		perm = new int[256];
 		int[] source = new int[256];
 		for (int i = 0; i < 256; i++)
 			source[i] = i;
@@ -229,11 +228,11 @@ public class SimplexNoiseGenerator {
 		-5, -2,   -2, -5,
 	};
 
-	private static class Octave {
+	protected static class Octave {
 
-		private final double frequency;
-		private final double amplitude;
-		private final double phaseShift;
+		protected final double frequency;
+		protected final double amplitude;
+		protected final double phaseShift;
 
 		private Octave(double f, double a, double p) {
 			amplitude = a;

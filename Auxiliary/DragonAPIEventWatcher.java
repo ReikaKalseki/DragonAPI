@@ -130,6 +130,13 @@ public class DragonAPIEventWatcher {
 		}
 	}
 
+	@SubscribeEvent(priority=EventPriority.LOWEST)
+	public void stillAllowPetTargeting(MobTargetingEvent.Pre evt) {
+		if (ReikaEntityHelper.tameMobTargeting) {
+			evt.setResult(Result.ALLOW);
+		}
+	}
+
 	@SubscribeEvent
 	public void trackBrokenBlocks(BlockEvent.BreakEvent evt) {
 		TileEntity te = evt.world.getTileEntity(evt.x, evt.y, evt.z);

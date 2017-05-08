@@ -25,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -32,6 +33,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent.UpdateFlags;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
@@ -125,10 +127,6 @@ public final class Coordinate {
 		int y = data.getInteger("y");
 		int z = data.getInteger("z");
 		return new Coordinate(x, y, z);
-	}
-
-	public Coordinate copy() {
-		return new Coordinate(xCoord, yCoord, zCoord);
 	}
 
 	@Override
@@ -296,7 +294,11 @@ public final class Coordinate {
 			x2 += -dz;
 			z2 += dx;
 		}
-		return new Coordinate(x2, yCoord, z2);
+		Vec3 vec = Vec3.createVectorHelper(xCoord-ox, yCoord, zCoord-oz);
+		vec = ReikaVectorHelper.rotateVector(vec, 0, 90, 0);
+		vec.xCoord += ox;
+		vec.zCoord += oz;
+		return new Coordinate(vec.xCoord, yCoord, vec.zCoord);//new Coordinate(x2, yCoord, z2);
 	}
 
 	public Coordinate rotate180About(int ox, int oz) {

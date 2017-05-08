@@ -9,7 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import java.util.Random;
+
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -47,6 +50,14 @@ public final class BlockBox {
 
 	public static BlockBox nothing() {
 		return new BlockBox(Integer.MAX_VALUE, Integer.MIN_VALUE);
+	}
+
+	public static BlockBox block(int x, int y, int z) {
+		return new BlockBox(x, y, z, x+1, y+1, z);
+	}
+
+	public static BlockBox block(TileEntity te) {
+		return block(te.xCoord, te.yCoord, te.zCoord);
 	}
 
 	public int getSizeX() {
@@ -113,6 +124,10 @@ public final class BlockBox {
 		return new BlockBox(minx, miny, minz, maxx, maxy, maxz);
 	}
 
+	public boolean isBlockInside(Coordinate c) {
+		return this.isBlockInside(c.xCoord, c.yCoord, c.zCoord);
+	}
+
 	public boolean isBlockInside(int x, int y, int z) {
 		boolean ix = ReikaMathLibrary.isValueInsideBoundsIncl(minX, maxX, x);
 		boolean iy = ReikaMathLibrary.isValueInsideBoundsIncl(minY, maxY, y);
@@ -164,6 +179,10 @@ public final class BlockBox {
 
 	public BlockBox offset(Coordinate offset) {
 		return new BlockBox(minX+offset.xCoord, minY+offset.yCoord, minZ+offset.zCoord, maxX+offset.xCoord, maxY+offset.yCoord, maxZ+offset.zCoord);
+	}
+
+	public Coordinate getRandomContainedCoordinate(Random rand) {
+		return new Coordinate(minX+rand.nextInt(maxX-minX+1), minY+rand.nextInt(maxY-minY+1), minZ+rand.nextInt(maxZ-minZ+1));
 	}
 
 }

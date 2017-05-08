@@ -267,6 +267,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	private static HashMap<Class, Integer> mobColorArray = new HashMap();
 
+	public static boolean tameMobTargeting;
+
 	/** Converts a mob ID to a color, based off the mob's color. Players return bright red.
 	 * Args: Mob ID */
 	public static int mobToColor(EntityLivingBase ent) {

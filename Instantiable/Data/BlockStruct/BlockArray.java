@@ -35,6 +35,7 @@ import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
@@ -608,6 +609,47 @@ public class BlockArray implements Iterable<Coordinate> {
 				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
 				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
 				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
+			}
+		}
+		catch (StackOverflowError e) {
+			this.throwOverflow(depth);
+			e.printStackTrace();
+		}
+	}
+
+	public void recursiveAddCallbackWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f) {
+		this.recursiveAddCallbackWithBounds(world, x, y, z, x, y, z, x1, y1, z1, x2, y2, z2, f, 0);
+	}
+
+	private void recursiveAddCallbackWithBounds(World world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f, int depth) {
+		if (overflow)
+			return;
+		if (depth > maxDepth)
+			return;
+		if (taxiCabDistance && Math.abs(x-x0)+Math.abs(y-y0)+Math.abs(z-z0) > maxDepth)
+			return;
+		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
+			return;
+		if (!f.isValidLocation(world, x, y, z)) {
+			return;
+		}
+		if (this.hasBlock(x, y, z))
+			return;
+		this.addBlockCoordinate(x, y, z);
+		try {
+			if (extraSpread) {
+				for (int i = -1; i <= 1; i++)
+					for (int j = -1; j <= 1; j++)
+						for (int k = -1; k <= 1; k++)
+							this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x+i, y+j, z+k, x1, y1, z1, x2, y2, z2, f, depth+1);
+			}
+			else {
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x+1, y, z, x1, y1, z1, x2, y2, z2, f, depth+1);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x-1, y, z, x1, y1, z1, x2, y2, z2, f, depth+1);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y+1, z, x1, y1, z1, x2, y2, z2, f, depth+1);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y-1, z, x1, y1, z1, x2, y2, z2, f, depth+1);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y, z+1, x1, y1, z1, x2, y2, z2, f, depth+1);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y, z-1, x1, y1, z1, x2, y2, z2, f, depth+1);
 			}
 		}
 		catch (StackOverflowError e) {

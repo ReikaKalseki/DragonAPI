@@ -148,6 +148,15 @@ public class FilledBlockArray extends StructuredBlockArray {
 	}
 	 */
 
+	@Override
+	public boolean addBlockCoordinate(int x, int y, int z) {
+		if (super.addBlockCoordinate(x, y, z)) {
+			data.put(new Coordinate(x, y, z), BlockKey.getAt(world, x, y, z));
+			return true;
+		}
+		return false;
+	}
+
 	public void place() {
 		this.placeExcept(null);
 	}

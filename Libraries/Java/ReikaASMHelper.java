@@ -1228,4 +1228,11 @@ public class ReikaASMHelper {
 		}
 	}
 
+	public static void exposeMethod(ClassNode cn, String name, String sig) {
+		MethodNode m = getMethodByName(cn, name, sig);
+		m.access = m.access & ~Modifier.PRIVATE;
+		m.access = m.access & ~Modifier.PROTECTED;
+		m.access = m.access | Modifier.PUBLIC;
+	}
+
 }
