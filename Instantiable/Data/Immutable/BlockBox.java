@@ -53,7 +53,7 @@ public final class BlockBox {
 	}
 
 	public static BlockBox block(int x, int y, int z) {
-		return new BlockBox(x, y, z, x+1, y+1, z);
+		return new BlockBox(x, y, z, x+1, y+1, z+1);
 	}
 
 	public static BlockBox block(TileEntity te) {
@@ -80,6 +80,38 @@ public final class BlockBox {
 		return this.expand(amt, amt, amt);
 	}
 
+	public BlockBox expand(ForgeDirection dir, int amt) {
+		int minx = minX;
+		int miny = minY;
+		int minz = minZ;
+		int maxx = maxX;
+		int maxy = maxY;
+		int maxz = maxZ;
+		switch(dir) {
+			case EAST:
+				maxx++;
+				break;
+			case WEST:
+				minx--;
+				break;
+			case NORTH:
+				minz--;
+				break;
+			case SOUTH:
+				maxz++;
+				break;
+			case UP:
+				maxy++;
+				break;
+			case DOWN:
+				miny--;
+				break;
+			default:
+				break;
+		}
+		return new BlockBox(minx, miny, minz, maxx, maxy, maxz);
+	}
+
 	public BlockBox expand(int dx, int dy, int dz) {
 		return new BlockBox(minX-dx, minY-dy, minZ-dz, maxX+dx, maxY+dy, maxZ+dz);
 	}
@@ -90,6 +122,42 @@ public final class BlockBox {
 
 	public BlockBox shift(int dx, int dy, int dz) {
 		return new BlockBox(minX+dx, minY+dy, minZ+dz, maxX+dx, maxY+dy, maxZ+dz);
+	}
+
+	public BlockBox contract(ForgeDirection dir, int amt) {
+		int minx = minX;
+		int miny = minY;
+		int minz = minZ;
+		int maxx = maxX;
+		int maxy = maxY;
+		int maxz = maxZ;
+		switch(dir) {
+			case EAST:
+				maxx--;
+				break;
+			case WEST:
+				minx++;
+				break;
+			case NORTH:
+				minz++;
+				break;
+			case SOUTH:
+				maxz--;
+				break;
+			case UP:
+				maxy--;
+				break;
+			case DOWN:
+				miny++;
+				break;
+			default:
+				break;
+		}
+		return new BlockBox(minx, miny, minz, maxx, maxy, maxz);
+	}
+
+	public BlockBox contract(int dx, int dy, int dz) {
+		return new BlockBox(minX+dx, minY+dy, minZ+dz, maxX-dx, maxY-dy, maxZ-dz);
 	}
 
 	public BlockBox clamp(ForgeDirection side, int value) {
@@ -124,14 +192,24 @@ public final class BlockBox {
 		return new BlockBox(minx, miny, minz, maxx, maxy, maxz);
 	}
 
+	public BlockBox combineWith(BlockBox box) {
+		int minX = Math.min(this.minX, box.minX);
+		int minY = Math.min(this.minY, box.minY);
+		int minZ = Math.min(this.minZ, box.minZ);
+		int maxX = Math.max(this.maxX, box.maxX);
+		int maxY = Math.max(this.maxY, box.maxY);
+		int maxZ = Math.max(this.maxZ, box.maxZ);
+		return new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
+	}
+
 	public boolean isBlockInside(Coordinate c) {
 		return this.isBlockInside(c.xCoord, c.yCoord, c.zCoord);
 	}
 
 	public boolean isBlockInside(int x, int y, int z) {
-		boolean ix = ReikaMathLibrary.isValueInsideBoundsIncl(minX, maxX, x);
-		boolean iy = ReikaMathLibrary.isValueInsideBoundsIncl(minY, maxY, y);
-		boolean iz = ReikaMathLibrary.isValueInsideBoundsIncl(minZ, maxZ, z);
+		boolean ix = ReikaMathLibrary.isValueInsideBoundsIncl(minX, maxX-1, x);
+		boolean iy = ReikaMathLibrary.isValueInsideBoundsIncl(minY, maxY-1, y);
+		boolean iz = ReikaMathLibrary.isValueInsideBoundsIncl(minZ, maxZ-1, z);
 		return ix && iy && iz;
 	}
 
@@ -178,7 +256,11 @@ public final class BlockBox {
 	}
 
 	public BlockBox offset(Coordinate offset) {
-		return new BlockBox(minX+offset.xCoord, minY+offset.yCoord, minZ+offset.zCoord, maxX+offset.xCoord, maxY+offset.yCoord, maxZ+offset.zCoord);
+		return this.offset(offset.xCoord, offset.yCoord, offset.zCoord);
+	}
+
+	public BlockBox offset(int x, int y, int z) {
+		return new BlockBox(minX+x, minY+y, minZ+z, maxX+x, maxY+y, maxZ+z);
 	}
 
 	public Coordinate getRandomContainedCoordinate(Random rand) {

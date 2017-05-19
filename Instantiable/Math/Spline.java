@@ -400,4 +400,12 @@ public class Spline {
 		}
 	}
 
+	public static class VibratingSpline extends Spline {
+
+		public VibratingSpline(SplineType t) {
+			super(t);
+		}
+
+	}
+
 }

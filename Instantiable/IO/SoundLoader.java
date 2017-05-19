@@ -10,22 +10,28 @@
 package Reika.DragonAPI.Instantiable.IO;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class SoundLoader {
 
-	private SoundEnum[] soundList;
+	private Collection<SoundEnum> soundList;
 
-	public SoundLoader(SoundEnum[] sounds) {
-		soundList = sounds;
+	public SoundLoader(Collection<SoundEnum> sounds) {
+		soundList = new ArrayList(sounds);
+	}
+
+	public SoundLoader(SoundEnum... sounds) {
+		soundList = ReikaJavaLibrary.makeListFrom(sounds);
 	}
 
 	public void register() {
-		for (int i = 0; i < soundList.length; i++) {
-			SoundEnum e = soundList[i];
+		for (SoundEnum e : soundList) {
 			DirectResourceManager.getInstance().registerCustomPath(e.getPath(), e.getCategory(), false);
 			if (e.preload()) {
 				try {

@@ -621,6 +621,26 @@ public class ReikaASMHelper {
 		throw new ASMException.NoSuchASMMethodInstructionException(cn, m, "[unspecified]", name, "[unspecified]", n > 1 ? n : -1);
 	}
 
+	public static FieldInsnNode getFirstFieldCallByName(ClassNode cn, MethodNode m, String name) {
+		return getNthFieldCallByName(cn, m, name, 1);
+	}
+
+	public static FieldInsnNode getNthFieldCallByName(ClassNode cn, MethodNode m, String name, int n) {
+		int counter = 0;
+		for (int i = 0; i < m.instructions.size(); i++) {
+			AbstractInsnNode ain = m.instructions.get(i);
+			if (ain instanceof FieldInsnNode) {
+				FieldInsnNode min = (FieldInsnNode)ain;
+				if (min.name.equals(name)) {
+					counter++;
+					if (counter >= n)
+						return min;
+				}
+			}
+		}
+		throw new ASMException.NoSuchASMFieldInstructionException(cn, m, "[unspecified]", name, n > 1 ? n : -1);
+	}
+
 	public static FieldInsnNode getFirstFieldCall(ClassNode cn, MethodNode m, String owner, String name) {
 		return getNthFieldCall(cn, m, owner, name, 1);
 	}

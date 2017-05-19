@@ -102,11 +102,11 @@ public final class BlockKey implements BlockCheck {
 		return this.match(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 	}
 
-	@Override
 	public void place(World world, int x, int y, int z) {
 		this.place(world, x, y, z, 3);
 	}
 
+	@Override
 	public void place(World world, int x, int y, int z, int flags) {
 		world.setBlock(x, y, z, blockID, this.hasMetadata() ? metadata : 0, flags);
 	}

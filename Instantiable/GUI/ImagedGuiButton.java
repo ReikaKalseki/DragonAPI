@@ -26,8 +26,8 @@ import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
 public class ImagedGuiButton extends GuiButton {
 
-	private int u;
-	private int v;
+	private final int baseU;
+	private final int baseV;
 	private int color;
 	private boolean shadow = true;
 	private String filepath;
@@ -35,6 +35,9 @@ public class ImagedGuiButton extends GuiButton {
 	private final Class modClass;
 
 	public String sound = "gui.button.press";
+
+	protected int u;
+	protected int v;
 
 	public TextAlign alignment = TextAlign.CENTER;
 	public int textOffset = 0;
@@ -57,6 +60,8 @@ public class ImagedGuiButton extends GuiButton {
 
 		hasToolTip = false;
 		modClass = mod;
+		baseU = u = 0;
+		baseV = v = 0;
 	}
 
 	/** Draw a Gui Button with an image background. Args: id, x, y, width, height, u, v, filepath, class root */
@@ -74,6 +79,8 @@ public class ImagedGuiButton extends GuiButton {
 
 		u = par7;
 		v = par8;
+		baseU = u;
+		baseV = v;
 		filepath = file;
 
 		hasToolTip = false;
@@ -96,6 +103,8 @@ public class ImagedGuiButton extends GuiButton {
 
 		u = par7;
 		v = par8;
+		baseU = u;
+		baseV = v;
 		color = par9;
 		shadow = par10;
 		filepath = file;
@@ -119,6 +128,8 @@ public class ImagedGuiButton extends GuiButton {
 
 		u = par7;
 		v = par8;
+		baseU = u;
+		baseV = v;
 		color = par9;
 		shadow = par10;
 		filepath = file;
@@ -138,10 +149,11 @@ public class ImagedGuiButton extends GuiButton {
 			int tex = GL11.GL_TEXTURE_BINDING_2D;
 			ReikaTextureHelper.bindTexture(modClass, this.getButtonTexture());
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-			this.drawTexturedModalRect(xPosition, yPosition, u, v, width, height);
 
 			field_146123_n = mx >= xPosition && my >= yPosition && mx < xPosition+width && my < yPosition+height;
 			int k = this.getHoverState(field_146123_n);
+
+			this.drawTexturedModalRect(xPosition, yPosition, u, v, width, height);
 
 			this.mouseDragged(mc, mx, my);
 			if (displayString != null && !hasToolTip) {
@@ -173,6 +185,21 @@ public class ImagedGuiButton extends GuiButton {
 			lastHover = field_146123_n;
 			ticks++;
 		}
+	}
+
+	@Override
+	public int getHoverState(boolean flag) {
+		int ret = super.getHoverState(flag);
+		u = baseU;
+		v = baseV;
+		if (ret == 2) {
+			this.getHoveredTextureCoordinates();
+		}
+		return ret;
+	}
+
+	protected void getHoveredTextureCoordinates() {
+
 	}
 
 	protected void onHoverTo() {

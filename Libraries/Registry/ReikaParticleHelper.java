@@ -14,6 +14,7 @@ import java.util.Random;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public enum ReikaParticleHelper {
@@ -119,6 +120,10 @@ public enum ReikaParticleHelper {
 
 	public static void spawnColoredParticlesWithOutset(World world, int x, int y, int z, double r, double g, double b, int number, double outset) {
 		REDSTONE.spawnAroundBlockWithOutset(world, x, y, z, r, g, b, number, outset);
+	}
+
+	public static void spawnColoredParticleAt(World world, double x, double y, double z, int color) {
+		REDSTONE.spawnAt(world, x, y, z, ReikaColorAPI.getRed(color)/255D, ReikaColorAPI.getGreen(color)/255D, ReikaColorAPI.getBlue(color)/255D);
 	}
 
 	public static void spawnColoredParticleAt(World world, double x, double y, double z, double r, double g, double b) {

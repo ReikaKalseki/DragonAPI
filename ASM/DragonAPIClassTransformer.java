@@ -12,6 +12,7 @@ package Reika.DragonAPI.ASM;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
+import java.util.List;
 
 import net.minecraft.item.Item;
 import net.minecraft.launchwrapper.IClassTransformer;
@@ -20,6 +21,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.BiomeDictionary;
+import Reika.CritterPet.Interfaces.TamedMob;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
@@ -42,6 +44,14 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 		else {
 			return false;
 		}
+	}
+
+	public static boolean allowMobSleeping(List li) {
+		for (Object o : li) {
+			if (!(o instanceof TamedMob))
+				return false;
+		}
+		return true;
 	}
 
 	public static void validateItemStack(Item i) {

@@ -33,6 +33,8 @@ public class SimplexNoiseGenerator {
 	/** As opposed to scaling */
 	public boolean clampEdge = false;
 
+	public final long seed;
+
 	//Initializes the class using a permutation array generated from a 64-bit seed.
 	//Generates a proper permutation (i.e. doesn't merely perform N successive pair swaps on a base array)
 	//Uses a simple 64-bit LCG.
@@ -51,6 +53,7 @@ public class SimplexNoiseGenerator {
 			perm[i] = source[r];
 			source[r] = source[i];
 		}
+		this.seed = seed;
 	}
 
 	public SimplexNoiseGenerator setFrequency(double f) {

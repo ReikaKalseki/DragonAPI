@@ -158,16 +158,20 @@ public class FilledBlockArray extends StructuredBlockArray {
 	}
 
 	public void place() {
-		this.placeExcept(null);
+		this.placeExcept(null, 3);
 	}
 
-	public void placeExcept(Coordinate e) {
+	public void place(int flags) {
+		this.placeExcept(null, flags);
+	}
+
+	public void placeExcept(Coordinate e, int flags) {
 		for (Coordinate c : data.keySet()) {
 			//Block b = this.getBlock(x, y, z);
 			//int meta = this.getBlockMetadata(x, y, z);
 			//world.setBlock(x, y, z, b, meta, 3);
 			if (!c.equals(e))
-				data.get(c).place(world, c.xCoord, c.yCoord, c.zCoord);
+				data.get(c).place(world, c.xCoord, c.yCoord, c.zCoord, flags);
 		}
 	}
 
@@ -353,8 +357,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 			return false;
 		}
 
-		public void place(World world, int x, int y, int z) {
-			keys.get(0).place(world, x, y, z);
+		public void place(World world, int x, int y, int z, int flags) {
+			keys.get(0).place(world, x, y, z, flags);
 		}
 
 		@Override
@@ -408,8 +412,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 
 		@Override
-		public void place(World world, int x, int y, int z) {
-			world.setBlock(x, y, z, this.getBlock());
+		public void place(World world, int x, int y, int z, int flags) {
+			world.setBlock(x, y, z, this.getBlock(), 0, flags);
 		}
 
 		private Block getBlock() {
@@ -477,7 +481,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 
 		@Override
-		public void place(World world, int x, int y, int z) {
+		public void place(World world, int x, int y, int z, int flags) {
 			world.setBlock(x, y, z, Blocks.air);
 		}
 
@@ -556,8 +560,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 
 		@Override
-		public void place(World world, int x, int y, int z) {
-			world.setBlock(x, y, z, block.blockID, block.hasMetadata() ? block.metadata : 0, 3);
+		public void place(World world, int x, int y, int z, int flags) {
+			world.setBlock(x, y, z, block.blockID, block.hasMetadata() ? block.metadata : 0, flags);
 			TileEntity te = world.getTileEntity(x, y, z);
 			if (te != null && te.getClass() == tileClass) {
 				NBTTagCompound NBT = new NBTTagCompound();

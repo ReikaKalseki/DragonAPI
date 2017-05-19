@@ -559,15 +559,19 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return (num >> n) | (num << (64-n));
 	}
 
-	public static boolean isPointInsidePolygon(int x, int z, int n, int r) {
-		if (x*x+z*z > r*r)
+	public static boolean isPointInsidePolygon(double x, double z, double n, double r) {
+		return isPointInsidePolygon(x, z, n, r, r);
+	}
+
+	public static boolean isPointInsidePolygon(double x, double z, double n, double rx, double rz) {
+		if (x*x+z*z > rx*rz)
 			return false;
 		double da = 360D/(2*n);
 		Polygon p = new Polygon();
 		for (int i = 0; i < n; i++) {
 			double a = Math.toRadians(da+i*360D/n);
-			double dx = r*Math.cos(a);
-			double dz = r*Math.sin(a);
+			double dx = rx*Math.cos(a);
+			double dz = rz*Math.sin(a);
 			p.addPoint((int)Math.round(dx), (int)Math.round(dz));
 		}
 		return p.contains(x, z);

@@ -39,4 +39,8 @@ public class PlayerPlaceBlockEvent extends Event {
 		player = ep;
 	}
 
+	public ItemStack getItem() {
+		return held.copy();
+	}
+
 }
