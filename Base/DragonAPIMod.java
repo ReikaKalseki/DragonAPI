@@ -164,7 +164,7 @@ public abstract class DragonAPIMod {
 
 	protected final void verifyInstallation() {
 		this.verifyVersions();
-		if (this.getModFile().getName().endsWith(".jar.zip"))
+		if (this.getModFile().getName().endsWith(".zip"))
 			throw new JarZipException(this);
 		this.verifyHash();
 		Class asm = this.getASMClass();
