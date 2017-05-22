@@ -21,11 +21,11 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.BiomeDictionary;
-import Reika.CritterPet.Interfaces.TamedMob;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
+import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -48,7 +48,7 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 
 	public static boolean allowMobSleeping(List li) {
 		for (Object o : li) {
-			if (!(o instanceof TamedMob))
+			if (!(o instanceof TameHostile))
 				return false;
 		}
 		return true;
