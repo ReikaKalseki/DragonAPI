@@ -28,7 +28,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
-public final class DecimalPosition {
+public final class DecimalPosition implements Comparable<DecimalPosition> {
 
 	private static final Random rand = new Random();
 
@@ -244,7 +244,11 @@ public final class DecimalPosition {
 	}
 
 	public static DecimalPosition interpolate(DecimalPosition p1, DecimalPosition p2, double f) {
-		return new DecimalPosition(p1.xCoord+(p2.xCoord-p1.xCoord)*f, p1.yCoord+(p2.yCoord-p1.yCoord)*f, p1.zCoord+(p2.zCoord-p1.zCoord)*f);
+		return interpolate(p1.xCoord, p1.yCoord, p1.zCoord, p2.xCoord, p2.yCoord, p2.zCoord, f);
+	}
+
+	public static DecimalPosition interpolate(double x1, double y1, double z1, double x2, double y2, double z2, double f) {
+		return new DecimalPosition(x1+(x2-x1)*f, y1+(y2-y1)*f, z1+(z2-z1)*f);
 	}
 
 	public void writeToBuf(ByteBuf buf) {
@@ -271,6 +275,21 @@ public final class DecimalPosition {
 
 	public AxisAlignedBB getAABB(double radius) {
 		return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord).expand(radius, radius, radius);
+	}
+
+	@Override
+	public int compareTo(DecimalPosition o) {
+		int val = Integer.compare(this.hashCode(), o.hashCode());
+		if (val != 0)
+			return val;
+		val = Double.compare(xCoord, o.xCoord);
+		if (val != 0)
+			return val;
+		val = Double.compare(yCoord, o.yCoord);
+		if (val != 0)
+			return val;
+		val = Double.compare(zCoord, o.zCoord);
+		return val;
 	}
 
 }

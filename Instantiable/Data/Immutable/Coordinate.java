@@ -37,7 +37,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
-public final class Coordinate {
+public final class Coordinate implements Comparable<Coordinate> {
 
 	private static final Random rand = new Random();
 
@@ -340,6 +340,21 @@ public final class Coordinate {
 			li.add(this.offset(ForgeDirection.VALID_DIRECTIONS[i], 1));
 		}
 		return li;
+	}
+
+	@Override
+	public int compareTo(Coordinate o) {
+		int val = Integer.compare(this.hashCode(), o.hashCode());
+		if (val != 0)
+			return val;
+		val = Integer.compare(xCoord, o.xCoord);
+		if (val != 0)
+			return val;
+		val = Integer.compare(yCoord, o.yCoord);
+		if (val != 0)
+			return val;
+		val = Integer.compare(zCoord, o.zCoord);
+		return val;
 	}
 
 }

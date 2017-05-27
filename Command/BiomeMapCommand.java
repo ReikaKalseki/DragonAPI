@@ -34,6 +34,7 @@ import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Interfaces.CustomBiomeDistributionWorld;
+import Reika.DragonAPI.Interfaces.CustomMapColorBiome;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
@@ -272,6 +273,9 @@ public class BiomeMapCommand extends DragonCommandBase {
 		private int getBiomeColor(World world, int x, int z, BiomeGenBase b) {
 			if (b == null)
 				return 0x000000; //should never happen
+
+			if (b instanceof CustomMapColorBiome)
+				return ((CustomMapColorBiome)b).getMapColor(world, x, z);
 
 			boolean mutate = b instanceof BiomeGenMutated;
 			if (mutate) {
