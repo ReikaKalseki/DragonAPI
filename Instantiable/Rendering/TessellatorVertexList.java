@@ -220,8 +220,12 @@ public class TessellatorVertexList {
 	}
 
 	public void rotateNonOrthogonal(double rx, double ry, double rz) {
+		this.rotateNonOrthogonal(rx, ry, rz, originX, originY, originZ);
+	}
+
+	public void rotateNonOrthogonal(double rx, double ry, double rz, double ox, double oy, double oz) {
 		for (TessellatorVertex v : data) {
-			v.rotate(rx, ry, rz, originX, originY, originZ);
+			v.rotate(rx, ry, rz, ox, oy, oz);
 		}
 	}
 

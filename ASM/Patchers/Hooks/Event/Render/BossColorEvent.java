@@ -19,6 +19,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
+import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 
@@ -51,6 +52,11 @@ public class BossColorEvent extends Patcher {
 
 		lin = (LdcInsnNode)ReikaASMHelper.getFirstOpcodeAfter(m.instructions, idx, Opcodes.LDC); //blue 0.6F*
 		ReikaASMHelper.replaceInstruction(m.instructions, lin, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/BossColorEvent", "returnBlue", "()F", false));
+	}
+
+	@Override
+	public boolean runWithCoreMod(CoreModDetection c) {
+		return c != CoreModDetection.COLOREDLIGHTS;
 	}
 
 }

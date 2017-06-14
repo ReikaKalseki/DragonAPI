@@ -296,8 +296,41 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return false;
 	}
 
-	public static void dropInventory(World world, int x, int y, int z)
-	{
+	public static void dropInventory(EntityPlayer ep) {
+		IInventory ii = ep.inventory;
+		Random par5Random = new Random();
+		if (ii != null) {
+			label0:
+				for (int i = 0; i < ii.getSizeInventory(); i++){
+					ItemStack itemstack = ii.getStackInSlot(i);
+					if (itemstack == null)
+						continue;
+					float f = par5Random.nextFloat() * 0.8F + 0.1F;
+					float f1 = par5Random.nextFloat() * 0.8F + 0.1F;
+					float f2 = par5Random.nextFloat() * 0.8F + 0.1F;
+					do {
+						if (itemstack.stackSize <= 0)
+							continue label0;
+						int j = par5Random.nextInt(21) + 10;
+						if (j > itemstack.stackSize)
+							j = itemstack.stackSize;
+						itemstack.stackSize -= j;
+						EntityItem ei = new EntityItem(ep.worldObj, ep.posX + f, ep.posY+0.25 + f1, ep.posZ + f2, new ItemStack(itemstack.getItem(), j, itemstack.getItemDamage()));
+						if (itemstack.hasTagCompound())
+							ei.getEntityItem().setTagCompound((NBTTagCompound)itemstack.getTagCompound().copy());
+						float f3 = 0.05F;
+						ei.motionX = (float)par5Random.nextGaussian() * f3;
+						ei.motionY = (float)par5Random.nextGaussian() * f3 + 0.2F;
+						ei.motionZ = (float)par5Random.nextGaussian() * f3;
+						ei.delayBeforeCanPickup = 10;
+						ep.worldObj.spawnEntityInWorld(ei);
+					}
+					while (true);
+				}
+		}
+	}
+
+	public static void dropInventory(World world, int x, int y, int z) {
 		IInventory ii = (IInventory)world.getTileEntity(x, y, z);
 		Random par5Random = new Random();
 		if (ii != null) {

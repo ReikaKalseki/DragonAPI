@@ -292,4 +292,17 @@ public final class DecimalPosition implements Comparable<DecimalPosition> {
 		return val;
 	}
 
+	public static DecimalPosition average(DecimalPosition... pos) {
+		double sx = 0;
+		double sy = 0;
+		double sz = 0;
+		int n = pos.length;
+		for (int i = 0; i < n; i++) {
+			sx += pos[i].xCoord;
+			sy += pos[i].yCoord;
+			sz += pos[i].zCoord;
+		}
+		return new DecimalPosition(sx/n, sy/n, sz/n);
+	}
+
 }

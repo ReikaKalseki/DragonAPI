@@ -29,7 +29,7 @@ public interface PlayerSpecificTrade {
 				if (!(mr instanceof PlayerSpecificTrade)) {
 					flag = true;
 				}
-				else {
+				else if (ep != null) {
 					if (((PlayerSpecificTrade)mr).isValid(ep)) {
 						flag = true;
 					}

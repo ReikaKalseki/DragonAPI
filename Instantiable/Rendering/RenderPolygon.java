@@ -54,6 +54,10 @@ public class RenderPolygon {
 		return false;
 	}
 
+	public int locationHash() {
+		return DecimalPosition.average(pos1, pos2, pos3).hashCode();
+	}
+
 	@Override
 	public int hashCode() {
 		return pos1.hashCode() + pos2.hashCode() + pos3.hashCode();

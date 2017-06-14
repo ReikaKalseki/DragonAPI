@@ -2314,7 +2314,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (ModList.MYSTCRAFT.isLoaded() && ReikaMystcraftHelper.isMystAge(world)) {
 			return ReikaMystcraftHelper.getFlatWorldThickness(world);
 		}
-		ChunkProviderFlat f = (ChunkProviderFlat)world.provider.createChunkGenerator();
+		IChunkProvider icp = world.provider.createChunkGenerator();
+		if (!(icp instanceof ChunkProviderFlat))
+			return 4;
+		ChunkProviderFlat f = (ChunkProviderFlat)icp;
 		FlatGeneratorInfo ifo = f.flatWorldGenInfo;
 		int sum = 0;
 		for (Object o : ifo.getFlatLayers()) {

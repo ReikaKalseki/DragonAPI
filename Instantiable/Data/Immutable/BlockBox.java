@@ -207,6 +207,17 @@ public final class BlockBox {
 	}
 
 	public boolean isBlockInside(int x, int y, int z) {
+		boolean ix = ReikaMathLibrary.isValueInsideBoundsIncl(minX, maxX, x);
+		boolean iy = ReikaMathLibrary.isValueInsideBoundsIncl(minY, maxY, y);
+		boolean iz = ReikaMathLibrary.isValueInsideBoundsIncl(minZ, maxZ, z);
+		return ix && iy && iz;
+	}
+
+	public boolean isBlockInsideExclusive(Coordinate c) {
+		return this.isBlockInsideExclusive(c.xCoord, c.yCoord, c.zCoord);
+	}
+
+	public boolean isBlockInsideExclusive(int x, int y, int z) {
 		boolean ix = ReikaMathLibrary.isValueInsideBoundsIncl(minX, maxX-1, x);
 		boolean iy = ReikaMathLibrary.isValueInsideBoundsIncl(minY, maxY-1, y);
 		boolean iz = ReikaMathLibrary.isValueInsideBoundsIncl(minZ, maxZ-1, z);
