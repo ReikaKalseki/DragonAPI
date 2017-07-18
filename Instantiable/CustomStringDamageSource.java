@@ -27,8 +27,7 @@ public class CustomStringDamageSource extends DamageSource {
 	}
 
 	@Override
-	public final IChatComponent func_151519_b(EntityLivingBase e)
-	{
+	public final IChatComponent func_151519_b(EntityLivingBase e) {
 		IChatComponent ch = new ChatComponentTranslation(e.getCommandSenderName()+" "+message);
 		return ch;
 	}

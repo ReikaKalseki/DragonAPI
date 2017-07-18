@@ -89,22 +89,22 @@ public final class BlockBox {
 		int maxz = maxZ;
 		switch(dir) {
 			case EAST:
-				maxx++;
+				maxx += amt;
 				break;
 			case WEST:
-				minx--;
+				minx -= amt;
 				break;
 			case NORTH:
-				minz--;
+				minz -= amt;
 				break;
 			case SOUTH:
-				maxz++;
+				maxz += amt;
 				break;
 			case UP:
-				maxy++;
+				maxy += amt;
 				break;
 			case DOWN:
-				miny--;
+				miny -= amt;
 				break;
 			default:
 				break;
@@ -133,22 +133,22 @@ public final class BlockBox {
 		int maxz = maxZ;
 		switch(dir) {
 			case EAST:
-				maxx--;
+				maxx -= amt;
 				break;
 			case WEST:
-				minx++;
+				minx += amt;
 				break;
 			case NORTH:
-				minz++;
+				minz += amt;
 				break;
 			case SOUTH:
-				maxz--;
+				maxz -= amt;
 				break;
 			case UP:
-				maxy--;
+				maxy -= amt;
 				break;
 			case DOWN:
-				miny++;
+				miny += amt;
 				break;
 			default:
 				break;

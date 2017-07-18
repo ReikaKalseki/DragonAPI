@@ -82,6 +82,8 @@ public class ModVersion implements Comparable<ModVersion> {
 	public static ModVersion getFromString(String s) {
 		if (s.startsWith("$") || s.startsWith("@"))
 			return source;
+		if (s.contains("URL TIMEOUT"))
+			return timeout;
 		if (s.startsWith("v") || s.startsWith("V"))
 			s = s.substring(1);
 		char c = s.charAt(s.length()-1);

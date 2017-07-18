@@ -179,6 +179,7 @@ public final class CommandableUpdateChecker {
 	private void getOverrides() {
 		File f = this.getFile();
 		if (f.exists()) {
+			boolean deleteFile = false;
 			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
 			for (int i = 0; i < li.size(); i++) {
 				String line = li.get(i);
@@ -186,9 +187,13 @@ public final class CommandableUpdateChecker {
 				DragonAPIMod mod = modNames.get(parts[0]);
 				boolean b = Boolean.parseBoolean(parts[1]);
 				ModVersion version = ModVersion.getFromString(parts[2]);
-				if (version.equals(latestVersions.get(mod)))
+				if (version == ModVersion.timeout)
+					deleteFile = true;
+				else if (version.equals(latestVersions.get(mod)))
 					overrides.put(mod, b);
 			}
+			if (deleteFile)
+				f.delete();
 		}
 	}
 

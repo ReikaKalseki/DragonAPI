@@ -50,7 +50,7 @@ public class TimerMap<V> {
 			Iterator<Entry<V, Integer>> it = timer.entrySet().iterator();
 			while (it.hasNext()) {
 				Entry<V, Integer> e = it.next();
-				if (e.getValue() > amt) {
+				if (e.getValue() >= amt) {
 					e.setValue(e.getValue()-amt);
 				}
 				else {

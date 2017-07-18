@@ -11,6 +11,7 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.util.EnumSet;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap;
@@ -51,6 +52,11 @@ public class TickScheduler implements TickHandler {
 	}
 
 	public void scheduleEvent(ScheduledTickEvent evt, int ticks) {
+		if (ticks <= 0) {
+			DragonAPICore.logError("Something tried scheduling a delayed event with zero delay!");
+			Thread.dumpStack();
+			return;
+		}
 		synchronized(lock) {
 			data.put(evt, ticks);
 		}
