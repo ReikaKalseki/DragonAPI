@@ -1,7 +1,7 @@
 /*******************************************************************************
  * @author Reika Kalseki
  * 
- * Copyright 2016
+ * Copyright 2017
  * 
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
@@ -258,6 +258,21 @@ public final class GenerationInterceptWorld extends World {
 	@Override
 	public Entity getEntityByID(int id) {
 		return delegate.getEntityByID(id);
+	}
+
+	@Override
+	public void updateEntities() { //not in worldgen!
+
+	}
+
+	@Override
+	public void updateEntity(Entity e) { //not in worldgen!
+
+	}
+
+	@Override
+	public void updateEntityWithOptionalForce(Entity e, boolean flag) { //not in worldgen!
+
 	}
 
 	private static class NoSaveHandler implements ISaveHandler {
