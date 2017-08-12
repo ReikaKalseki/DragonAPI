@@ -11,28 +11,27 @@ package Reika.DragonAPI.ASM.Patchers.Fixes;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
+public class LavaHandlingFix extends Patcher {
 
-public class TamedMobBeds extends Patcher {
-
-	public TamedMobBeds() {
-		super("net.minecraft.entity.player.EntityPlayer", "yz");
+	public LavaHandlingFix() {
+		super("net.minecraft.entity.Entity", "sa");
 	}
 
 	@Override
 	protected void apply(ClassNode cn) {
-		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_71018_a", "sleepInBedAt", "(III)Lnet/minecraft/entity/player/EntityPlayer$EnumStatus;");
-		MethodInsnNode min = ReikaASMHelper.getFirstMethodCall(cn, m, "java/util/List", "isEmpty", "()Z");
-		min.setOpcode(Opcodes.INVOKESTATIC);
-		min.owner = "Reika/DragonAPI/ASM/ASMCalls";
-		min.name = "allowMobSleeping";
-		min.desc = "(Ljava/util/List;)Z";
-		min.itf = false;
+		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70058_J", "handleLavaMovement", "()Z");
+		m.instructions.clear();
+		m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/ASMCalls", "handleLavaMovement", "(Lnet/minecraft/entity/Entity;)Z", false));
+		m.instructions.add(new InsnNode(Opcodes.IRETURN));
 	}
 
 }

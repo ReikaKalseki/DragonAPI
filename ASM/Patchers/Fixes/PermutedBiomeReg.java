@@ -26,6 +26,6 @@ public class PermutedBiomeReg extends Patcher {
 	@Override
 	protected void apply(ClassNode cn) {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "registerVanillaBiomes", "()V");
-		m.instructions.insertBefore(m.instructions.getLast(), new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/DragonAPIClassTransformer", "registerPermutedBiomesToDictionary", "()V", false));
+		m.instructions.insertBefore(m.instructions.getLast(), new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/ASMCalls", "registerPermutedBiomesToDictionary", "()V", false));
 	}
 }

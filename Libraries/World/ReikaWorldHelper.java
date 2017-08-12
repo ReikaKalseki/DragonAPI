@@ -176,8 +176,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return meta;
 	}
 
-	public static Material getMaterial(World world, int x, int y, int z) {
-		return world.checkChunksExist(x, y, z, x, y, z) ? world.getBlock(x, y, z).getMaterial() : Material.air;
+	public static Material getMaterial(IBlockAccess world, int x, int y, int z) {
+		return (!(world instanceof World) || ((World)world).checkChunksExist(x, y, z, x, y, z)) ? world.getBlock(x, y, z).getMaterial() : Material.air;
 	}
 
 	public static boolean isAirBlock(World world, int x, int y, int z) {

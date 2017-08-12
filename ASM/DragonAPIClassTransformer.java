@@ -12,20 +12,15 @@ package Reika.DragonAPI.ASM;
 import java.io.IOException;
 import java.lang.reflect.Modifier;
 import java.util.Collection;
-import java.util.List;
 
 import net.minecraft.item.Item;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraftforge.classloading.FMLForgePlugin;
-import net.minecraftforge.common.BiomeDictionary;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
-import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -44,14 +39,6 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 		else {
 			return false;
 		}
-	}
-
-	public static boolean allowMobSleeping(List li) {
-		for (Object o : li) {
-			if (!(o instanceof TameHostile))
-				return false;
-		}
-		return true;
 	}
 
 	public static void validateItemStack(Item i) {
@@ -73,16 +60,6 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 					ReikaASMHelper.logError(s);
 					Thread.dumpStack();
 				}
-			}
-		}
-	}
-
-	public static void registerPermutedBiomesToDictionary() { //Kept here to prevent premature init of ReikaBiomeHelper
-		for (int i = 0; i < BiomeGenBase.biomeList.length; i++) {
-			BiomeGenBase b = BiomeGenBase.biomeList[i];
-			if (b instanceof BiomeGenMutated) {
-				BiomeGenBase parent = ((BiomeGenMutated)b).baseBiome;
-				BiomeDictionary.registerBiomeType(b, BiomeDictionary.getTypesForBiome(parent));
 			}
 		}
 	}
