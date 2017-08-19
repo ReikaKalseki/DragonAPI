@@ -12,9 +12,7 @@ package Reika.DragonAPI.Libraries.IO;
 import java.util.HashMap;
 import java.util.Map;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
@@ -24,6 +22,7 @@ import net.minecraftforge.fluids.FluidStack;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockModelRenderer;
 import Reika.DragonAPI.Auxiliary.BlockModelRenderer.ModelBlockInterface;
 
@@ -34,6 +33,7 @@ public class ReikaLiquidRenderer {
 	public static final int LEVELS = 100;
 	private static final ModelBlockInterface liquidBlock = new ModelBlockInterface();
 
+	/*
 	public static IIcon getFluidTexture(FluidStack fluidStack, boolean flowing) {
 		if (fluidStack == null) {
 			return null;
@@ -50,7 +50,7 @@ public class ReikaLiquidRenderer {
 			icon = ((TextureMap) Minecraft.getMinecraft().getTextureManager().getTexture(TextureMap.locationBlocksTexture)).getAtlasSprite("missingno");
 		}
 		return icon;
-	}
+	}*/
 
 	public static void setFluidColor(FluidStack fluidstack) {
 		if (fluidstack == null)
@@ -89,10 +89,11 @@ public class ReikaLiquidRenderer {
 
 		if (fluid.getBlock() != null) {
 			liquidBlock.baseBlock = fluid.getBlock();
-			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
-		} else {
+			liquidBlock.texture = getFluidIconSafe(fluid, flowing);
+		}
+		else {
 			liquidBlock.baseBlock = Blocks.water;
-			liquidBlock.texture = getFluidTexture(fluidStack, flowing);
+			liquidBlock.texture = getFluidIconSafe(fluid, flowing);
 		}
 
 		cache.put(fluid, diplayLists);
@@ -124,5 +125,20 @@ public class ReikaLiquidRenderer {
 		GL11.glEnable(GL11.GL_LIGHTING);
 
 		return diplayLists;
+	}
+
+	public static IIcon getFluidIconSafe(Fluid f) {
+		return getFluidIconSafe(f, false);
+	}
+
+	public static IIcon getFluidIconSafe(Fluid f, boolean flowing) {
+		IIcon ico = flowing ? f.getFlowingIcon() : f.getStillIcon();
+		if (ico == null) {
+			DragonAPICore.logError("Fluid "+f.getID()+" ("+f.getLocalizedName()+") exists (block ID "+f.getBlock()+") but has no icon! Registering missingtex as a placeholder!");
+			//ico = Blocks.bedrock.getIcon(0, 0);
+			ico = ReikaTextureHelper.getMissingIcon();
+			f.setIcons(ico);
+		}
+		return ico;
 	}
 }

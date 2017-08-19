@@ -14,6 +14,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import Reika.DragonAPI.Interfaces.MotionController;
 import Reika.DragonAPI.Interfaces.PositionController;
+import Reika.DragonAPI.Libraries.IO.ReikaLiquidRenderer;
 
 public class EntityFluidFX extends EntityFX {
 
@@ -28,7 +29,7 @@ public class EntityFluidFX extends EntityFX {
 
 	public EntityFluidFX(World world, double x, double y, double z, double vx, double vy, double vz, Fluid f) {
 		super(world, x, y, z, vx, vy, vz);
-		particleIcon = f.getStillIcon();
+		particleIcon = ReikaLiquidRenderer.getFluidIconSafe(f);
 		particleScale = 1F;
 		type = f;
 		motionX = vx;

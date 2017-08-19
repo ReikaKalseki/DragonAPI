@@ -53,7 +53,7 @@ public class TankDisplay {
 	}
 
 	private IIcon getIcon() {
-		return this.getFluid().getIcon();
+		return ReikaLiquidRenderer.getFluidIconSafe(this.getFluid());
 	}
 
 	public void render(boolean lines) {

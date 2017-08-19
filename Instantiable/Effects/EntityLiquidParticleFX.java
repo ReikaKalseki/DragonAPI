@@ -16,6 +16,7 @@ import net.minecraftforge.fluids.Fluid;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.Libraries.IO.ReikaLiquidRenderer;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
@@ -30,7 +31,7 @@ public class EntityLiquidParticleFX extends EntityFX {
 		motionX = vx;
 		motionY = vy;
 		motionZ = vz;
-		particleIcon = f.getStillIcon();
+		particleIcon = ReikaLiquidRenderer.getFluidIconSafe(f);
 	}
 
 	@Override
