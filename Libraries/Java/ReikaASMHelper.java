@@ -1097,6 +1097,32 @@ public class ReikaASMHelper {
 		return Opcodes.ARETURN;
 	}
 
+	public static int getOpcodeForMethodReturn(MethodNode m) {
+		ArrayList<String> li = parseMethodSignature(m);
+		String type = li.get(li.size()-1);
+		PrimitiveType p = PrimitiveType.getFromSig(type);
+		if (p != null) {
+			return p.returnCode;
+		}
+		return Opcodes.ARETURN;
+	}
+
+	public static int getLoadOpcodeForArgument(String type) {
+		PrimitiveType p = PrimitiveType.getFromSig(type);
+		if (p != null) {
+			return p.loadCode;
+		}
+		return Opcodes.ALOAD;
+	}
+
+	public static int getStoreOpcodeForArgument(String type) {
+		PrimitiveType p = PrimitiveType.getFromSig(type);
+		if (p != null) {
+			return p.storeCode;
+		}
+		return Opcodes.ASTORE;
+	}
+
 	public static InsnList getIntReturnInsnList(int val) {
 		InsnList li = new InsnList();
 		li.add(getInsnForNum(val));

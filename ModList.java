@@ -310,4 +310,8 @@ public enum ModList implements ModEntry, Dependency {
 		}
 	}
 
+	public String getRegisteredName() {
+		return Loader.instance().getIndexedModList().get(modLabel).getName();
+	}
+
 }

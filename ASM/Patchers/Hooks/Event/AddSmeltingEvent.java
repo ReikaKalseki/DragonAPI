@@ -9,18 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM.Patchers.Hooks.Event;
 
-import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.JumpInsnNode;
-import org.objectweb.asm.tree.LabelNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
-import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 public class AddSmeltingEvent extends Patcher {
 
@@ -30,6 +21,8 @@ public class AddSmeltingEvent extends Patcher {
 
 	@Override
 	protected void apply(ClassNode cn) {
+		/* No longer necessary due to override
+		 * 
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_151394_a", "func_151394_a", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;F)V");
 		LabelNode L1 = new LabelNode();
 		InsnList li = new InsnList();
@@ -42,5 +35,6 @@ public class AddSmeltingEvent extends Patcher {
 
 		AbstractInsnNode ain = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.RETURN);
 		m.instructions.insertBefore(ain, L1);
+		 */
 	}
 }

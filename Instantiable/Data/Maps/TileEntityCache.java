@@ -153,6 +153,7 @@ public final class TileEntityCache<V> {
 	}
 
 	public void readFromNBT(NBTTagCompound tag) {
+		data.clear();
 		NBTTagList li = tag.getTagList("locs", NBTTypes.COMPOUND.ID);
 		for (Object o : li.tagList) {
 			NBTTagCompound data = (NBTTagCompound)o;

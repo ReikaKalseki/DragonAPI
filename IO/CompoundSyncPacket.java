@@ -277,7 +277,7 @@ public final class CompoundSyncPacket extends Packet implements DataSync {
 		for (WorldLocation loc : data.keySet()) {
 			if (loc.dimensionID == world.provider.dimensionId) {
 				if (world.blockExists(loc.xCoord, loc.yCoord, loc.zCoord)) {
-					TileEntity te = world.getTileEntity(loc.xCoord, loc.yCoord, loc.zCoord);
+					TileEntity te = loc.getTileEntity(world);
 					if (te instanceof CompoundSyncPacketHandler) {
 						((CompoundSyncPacketHandler)te).handleCompoundSyncPacket(this);
 					}

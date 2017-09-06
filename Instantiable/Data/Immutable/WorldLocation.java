@@ -92,7 +92,11 @@ public class WorldLocation {
 	}
 
 	public TileEntity getTileEntity() {
-		World world = this.getWorld();
+		return this.getTileEntity(null);
+	}
+
+	public TileEntity getTileEntity(World call) {
+		World world = call != null ? call : this.getWorld();
 		return world != null ? world.getTileEntity(xCoord, yCoord, zCoord) : null;
 	}
 

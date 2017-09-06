@@ -133,4 +133,8 @@ public class IC2Handler extends ModHandlerBase {
 		return ModList.IC2;
 	}
 
+	public boolean isIC2Classic() {
+		return ModList.IC2.getRegisteredName().equals("Industrial Craft Classic");
+	}
+
 }

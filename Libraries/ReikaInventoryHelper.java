@@ -844,6 +844,17 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return slots;
 	}
 
+	/** Converts a crafting inventory to a standard ItemStack array. Args: InventoryCrafting */
+	public static ArrayList<ItemStack> convertCraftToItemList(InventoryCrafting ic) {
+		ArrayList<ItemStack> slots = new ArrayList();
+		for (int i = 0; i < ic.getSizeInventory(); i++) {
+			ItemStack is = ic.getStackInSlot(i);
+			if (is != null)
+				slots.add(is);
+		}
+		return slots;
+	}
+
 	/** Counts the number of empty slots in an inventory. Args: Inventory */
 	public static int countEmptySlots(ItemStack[] inv) {
 		int num = 0;

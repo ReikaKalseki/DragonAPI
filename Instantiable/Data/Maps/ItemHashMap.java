@@ -249,7 +249,7 @@ public final class ItemHashMap<V> {
 			if (in != null) {
 				Integer has = map.get(in);
 				int amt = has != null ? has.intValue() : 0;
-				map.put(in, amt+1);
+				map.put(in, amt+in.stackSize);
 			}
 		}
 		return map;

@@ -16,7 +16,6 @@ import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
@@ -28,7 +27,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
@@ -86,11 +84,11 @@ import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Command.GetLatencyCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Extras.LoginHandler;
+import Reika.DragonAPI.Extras.ReplacementSmeltingHandler;
 import Reika.DragonAPI.Extras.SanityCheckNotification;
 import Reika.DragonAPI.Extras.TemporaryCodeCalls;
 import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
-import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.LagWarningFilter;
@@ -278,7 +276,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	private void rebuildAndRegisterVanillaRecipes() {
 		AddRecipeEvent.isVanillaPass = true;
-		AddSmeltingEvent.isVanillaPass = true;
+		//AddSmeltingEvent.isVanillaPass = true;
 		ArrayList<IRecipe> li = new ArrayList(CraftingManager.getInstance().getRecipeList());
 		CraftingManager.getInstance().getRecipeList().clear();
 		for (IRecipe r : li) {
@@ -294,6 +292,8 @@ public class DragonAPIInit extends DragonAPIMod {
 			}
 		}
 
+		ReplacementSmeltingHandler.fireEventsForVanillaRecipes();
+		/* Not needed anymore since overwrite of vanilla system
 		HashMap<ItemStack, Object[]> map = new HashMap();
 		for (Object o : FurnaceRecipes.smelting().getSmeltingList().keySet()) {
 			ItemStack is = (ItemStack)o;
@@ -306,11 +306,12 @@ public class DragonAPIInit extends DragonAPIMod {
 			Object[] dat = map.get(is);
 			ItemStack is2 = (ItemStack)dat[0];
 			float xp = (float)dat[1];
-			//if (!DragonAPIMod.EARLY_BUS.post(new AddSmeltingEvent(is, is2, xp, true)))
 			ReikaRecipeHelper.addSmelting(is, is2, xp);
 		}
+		 */
+
 		AddRecipeEvent.isVanillaPass = false;
-		AddSmeltingEvent.isVanillaPass = false;
+		//AddSmeltingEvent.isVanillaPass = false;
 	}
 
 	private int getRecursionDepth() {
