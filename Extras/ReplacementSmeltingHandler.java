@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -13,17 +14,15 @@ import net.minecraft.item.ItemFishFood;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 /** Because apparently Notch is retarded, his original code DEFINITELY is retarded, and everyone is sick of wasting a huge amount
  * of tick time on every smelter iterating over 4000 recipes three times a tick EACH. */
 public class ReplacementSmeltingHandler {
 
-	private static HashMap<KeyedItemStack, FurnaceRecipe> smeltingList = new HashMap();
+	private static ConcurrentHashMap<KeyedItemStack, FurnaceRecipe> smeltingList = new ConcurrentHashMap();
 	private static Collection<FurnaceRecipe> vanillaRecipes = new ArrayList(); //for the rebuild function
 	private static final ArrayList<MapChange> directMapChanges = new ArrayList();
 
@@ -80,12 +79,14 @@ public class ReplacementSmeltingHandler {
 	}
 
 	public static void addRecipe(ItemStack in, ItemStack out, float xp) {
+		/*
 		if (buildingGettableList) {
 			ReikaChatHelper.write("Cannot add smelting recipe while being iterated! Check your logs for errors.");
 			DragonAPICore.log("Cannot add smelting recipe while being iterated!");
 			Thread.dumpStack();
 			return;
 		}
+		 */
 		AddSmeltingEvent evt = new AddSmeltingEvent(in, out, xp);
 		MinecraftForge.EVENT_BUS.post(evt);
 		if (!evt.isCanceled()) {
@@ -114,12 +115,13 @@ public class ReplacementSmeltingHandler {
 	}
 
 	public static void removeRecipe(ItemStack in) {
+		/*
 		if (buildingGettableList) {
 			ReikaChatHelper.write("Cannot add smelting recipe while being iterated! Check your logs for errors.");
 			DragonAPICore.log("Cannot add smelting recipe while being iterated!");
 			Thread.dumpStack();
 			return;
-		}
+		}*/
 		smeltingList.remove(createKey(in));
 	}
 

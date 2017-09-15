@@ -1416,8 +1416,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		ItemHashMap<Integer> inv = ItemHashMap.getFromInventory(ii);
 		for (ItemStack is : map.keySet()) {
 			int need = map.get(is);
-			int has = inv.get(is);
-			if (need > has)
+			Integer has = inv.get(is);
+			if (has == null || need > has.intValue())
 				return false;
 		}
 		return true;
@@ -1431,6 +1431,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 				ItemStack in = ii.getStackInSlot(loc);
 				int max = Math.min(need, in.stackSize);
 				decrStack(loc, ii, max);
+				need -= max;
 				loc = locateInInventory(is, ii, false);
 			}
 		}

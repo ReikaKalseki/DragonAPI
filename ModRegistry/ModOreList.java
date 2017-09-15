@@ -144,6 +144,7 @@ public enum ModOreList implements OreType {
 
 	private static final ItemHashMap<ModOreList> oreMappings = new ItemHashMap();
 	private static final HashMap<String, ModOreList> oreNames = new HashMap();
+	private static final HashMap<String, ModOreList> enumNames = new HashMap();
 
 	private ModOreList(String n, int color, OreRarity r, String prod, int count, String... ore) {
 		//if (!DragonAPIInit.canLoadHandlers())
@@ -485,5 +486,15 @@ public enum ModOreList implements OreType {
 				return ore;
 		}
 		return null;
+	}
+
+	public static ModOreList getByEnumName(String name) {
+		return enumNames.get(name);
+	}
+
+	static {
+		for (int i = 0; i < oreList.length; i++) {
+			enumNames.put(oreList[i].name(), oreList[i]);
+		}
 	}
 }

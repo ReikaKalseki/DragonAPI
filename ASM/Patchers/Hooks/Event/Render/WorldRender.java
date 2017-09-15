@@ -25,10 +25,11 @@ import org.objectweb.asm.tree.VarInsnNode;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
+@Deprecated
 public class WorldRender extends Patcher {
 
 	public WorldRender() {
-		super("net.minecraft.client.renderer.RenderGlobal", "bma");
+		super("net.minecraft.client.renderer.RenderGlobal#", "bma#");
 	}
 
 	@Override

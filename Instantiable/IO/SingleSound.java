@@ -62,6 +62,10 @@ public final class SingleSound implements SoundEnum {
 
 	}
 
+	public void playSoundNoAttenuation(World world, double x, double y, double z, float vol, float pitch, int broadcast) {
+
+	}
+
 	@Override
 	public boolean attenuate() {
 		return true;

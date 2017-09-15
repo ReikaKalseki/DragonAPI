@@ -22,6 +22,7 @@ public interface OreType extends RegistryType {
 	public OreRarity getRarity();
 
 	public String[] getOreDictNames();
+	public String getProductOreDictName();
 
 	public Collection<ItemStack> getAllOreBlocks();
 	public ItemStack getFirstOreBlock();
@@ -65,5 +66,6 @@ public interface OreType extends RegistryType {
 	}
 
 	public int ordinal();
+	public String name();
 
 }

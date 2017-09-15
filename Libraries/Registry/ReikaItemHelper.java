@@ -21,6 +21,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import mekanism.api.gas.IGasItem;
 import net.machinemuse.api.electricity.MuseElectricItem;
@@ -177,6 +179,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	private static final HashMap<Item, Double> itemMass = new HashMap();
 
 	private static Field oreListField;
+
+	private static final Pattern ORE_MATERIAL_PATTERN = Pattern.compile("[A-Z].*$");
 
 	/** Returns true if the block or item has metadata variants. Args: ID *//*
 	public static boolean hasMetadata(Item id) {
@@ -785,5 +789,17 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return lookupItem((String)o);
 		}
 		return null;
+	}
+
+	public static OreType parseOreTypeName(String name) {
+		Matcher m = ORE_MATERIAL_PATTERN.matcher(name);
+		return m.find() ? getOreType(m.group()) : null;
+	}
+
+	public static OreType getOreType(String name) {
+		OreType ore = ReikaOreHelper.getByEnumName(name);
+		if (ore == null)
+			ore = ModOreList.getByEnumName(name);
+		return ore;
 	}
 }

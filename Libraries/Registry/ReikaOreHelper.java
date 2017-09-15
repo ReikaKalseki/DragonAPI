@@ -48,6 +48,7 @@ public enum ReikaOreHelper implements OreType {
 	private static final HashMap<String, String> cases = new HashMap();
 	private static final HashMap<Block, ReikaOreHelper> vanillaOres = new HashMap();
 	private static final HashMap<String, ReikaOreHelper> oreNames = new HashMap();
+	private static final HashMap<String, ReikaOreHelper> enumNames = new HashMap();
 	private static final ItemHashMap<ReikaOreHelper> itemMap = new ItemHashMap();
 
 	public static final ReikaOreHelper[] oreList = ReikaOreHelper.values();
@@ -99,6 +100,11 @@ public enum ReikaOreHelper implements OreType {
 
 	public String[] getOreDictNames() {
 		return new String[]{oreDict};
+	}
+
+	@Override
+	public String getProductOreDictName() {
+		return dropOreDict;
 	}
 
 	public String getDropOreDictName() {
@@ -217,6 +223,7 @@ public enum ReikaOreHelper implements OreType {
 		for (int i = 0; i < oreList.length; i++) {
 			vanillaOres.put(oreList[i].ore, oreList[i]);
 			oreNames.put(oreList[i].oreDict, oreList[i]);
+			enumNames.put(oreList[i].name(), oreList[i]);
 		}
 
 		vanillaOres.put(Blocks.lit_redstone_ore, REDSTONE);
@@ -235,6 +242,10 @@ public enum ReikaOreHelper implements OreType {
 				return ore;
 		}
 		return null;
+	}
+
+	public static ReikaOreHelper getByEnumName(String name) {
+		return enumNames.get(name);
 	}
 
 }

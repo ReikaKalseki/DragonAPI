@@ -279,8 +279,15 @@ public abstract class LuaBlock {
 				if (!s.equals("{") && !s.equals("}") && !s.equals(block.name)) {
 					s = s.replaceAll("\"", "");
 					String[] parts = s.split("=");
-					if (parts.length == 2)
-						block.putData(parts[0].substring(0, parts[0].length()-1), parts[1].substring(1));
+					if (parts.length == 2) {
+						String s1 = parts[0].substring(0, parts[0].length()-1);
+						if (s1.charAt(s1.length()-1) == ' ')
+							s1 = s1.substring(1);
+						String s2 = parts[1];
+						if (s2.charAt(0) == ' ')
+							s2 = s2.substring(1);
+						block.putData(s1, s2);
+					}
 					else
 						block.putData(String.valueOf(block.data.size()), s);
 				}

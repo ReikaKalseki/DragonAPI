@@ -57,7 +57,6 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ReikaRecipeHelper extends DragonAPICore {
 
 	private static final CraftingManager cr = CraftingManager.getInstance();
-	private static final List<IRecipe> recipes = cr.getRecipeList();
 
 	private static final Random rand = new Random();
 
@@ -126,11 +125,6 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			e.printStackTrace();
 			return 0;
 		}
-	}
-
-	/** Finds a recipe by its product. NOT PERFORMANT! */
-	public static IRecipe getRecipeByOutput(ItemStack out) {
-		return recipes.get(recipes.indexOf(out));
 	}
 	/*
 	/** Finds recipes by product. NOT PERFORMANT! *//*

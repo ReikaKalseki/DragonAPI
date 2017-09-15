@@ -62,7 +62,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaPlayerAPI extends DragonAPICore {
 
-	private static final HashMap<String, FakePlayer> fakePlayers = new HashMap();
+	//private static final HashMap<String, FakePlayer> fakePlayers = new HashMap();
 	private static final HashMap<String, UUID> uuidMap = new HashMap();
 
 	/** Transfers a player's entire inventory to an inventory. Args: Player, Inventory */
@@ -127,12 +127,15 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	}
 
 	public static FakePlayer getFakePlayerByNameAndUUID(WorldServer world, String name, UUID uuid) {
+		/*
 		FakePlayer fp = fakePlayers.get(name);
 		if (fp == null) {
 			fp = FakePlayerFactory.get(world, new GameProfile(uuid, name));
 			fakePlayers.put(name, fp);
 		}
 		return fp;
+		 */
+		return FakePlayerFactory.get(world, new GameProfile(uuid, name));
 	}
 
 	private static boolean isAdmin(WorldServer world, String name, UUID uuid) {
@@ -405,5 +408,9 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		if (slot != -1) {
 			ReikaInventoryHelper.decrStack(slot, ep.inventory.mainInventory);
 		}
+	}
+
+	public static void syncInventory(EntityPlayer ep) {
+		ep.openContainer.detectAndSendChanges();
 	}
 }

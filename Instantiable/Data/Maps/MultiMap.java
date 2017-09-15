@@ -17,12 +17,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class MultiMap<K, V> {
 
-	private final HashMap<K, Collection<V>> data = new HashMap();
+	private final Map<K, Collection<V>> data;
 
 	private boolean modifiable = true;
 	private boolean nullEmpty = false;
@@ -35,7 +36,12 @@ public final class MultiMap<K, V> {
 	}
 
 	public MultiMap(CollectionFactory cf) {
+		this(cf, null);
+	}
+
+	public MultiMap(CollectionFactory cf, MapDeterminator md) {
 		factory = cf != null ? cf : new ListFactory();
+		data = md != null ? md.getMapType() : new HashMap();
 	}
 
 	public Collection<V> put(K key, Collection<V> value) {
@@ -108,6 +114,13 @@ public final class MultiMap<K, V> {
 			return true;
 		}
 		return false;
+	}
+
+	public void sort(Comparator<V> sorter) {
+		for (Collection<V> c : this.data.values()) {
+			if (c instanceof List)
+				Collections.sort((List)c, sorter);
+		}
 	}
 
 	private Collection<V> createCollection() {
@@ -254,6 +267,12 @@ public final class MultiMap<K, V> {
 
 	}
 
+	public static interface MapDeterminator<K, V> {
+
+		public Map<? extends K, ? extends V> getMapType();
+
+	}
+
 	public static final class ListFactory implements CollectionFactory<ArrayList> {
 
 		@Override
@@ -288,6 +307,15 @@ public final class MultiMap<K, V> {
 		@Override
 		public boolean allowsDuplicates() {
 			return false;
+		}
+
+	}
+
+	public static final class ConcurrencyDeterminator implements MapDeterminator {
+
+		@Override
+		public Map getMapType() {
+			return new ConcurrentHashMap();
 		}
 
 	}

@@ -27,7 +27,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
-import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraft.network.EnumConnectionState;
@@ -37,6 +36,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
+import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
@@ -84,18 +84,17 @@ import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Command.GetLatencyCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Extras.LoginHandler;
+import Reika.DragonAPI.Extras.ReplacementCraftingHandler;
 import Reika.DragonAPI.Extras.ReplacementSmeltingHandler;
 import Reika.DragonAPI.Extras.SanityCheckNotification;
 import Reika.DragonAPI.Extras.TemporaryCodeCalls;
 import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
-import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.LagWarningFilter;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
 import Reika.DragonAPI.Libraries.ReikaPotionHelper;
-import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaCommandHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -169,6 +168,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLFingerprintViolationEvent;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.FMLLoadCompleteEvent;
 import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
@@ -275,6 +275,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	private void rebuildAndRegisterVanillaRecipes() {
+		/*
 		AddRecipeEvent.isVanillaPass = true;
 		//AddSmeltingEvent.isVanillaPass = true;
 		ArrayList<IRecipe> li = new ArrayList(CraftingManager.getInstance().getRecipeList());
@@ -291,7 +292,8 @@ public class DragonAPIInit extends DragonAPIMod {
 				DragonAPICore.logError("Found an invalid recipe in the list, with either nulled inputs or outputs! This is invalid! Class="+r.getClass());
 			}
 		}
-
+		 */
+		ReplacementCraftingHandler.fireEventsForVanillaRecipes();
 		ReplacementSmeltingHandler.fireEventsForVanillaRecipes();
 		/* Not needed anymore since overwrite of vanilla system
 		HashMap<ItemStack, Object[]> map = new HashMap();
@@ -310,7 +312,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 		 */
 
-		AddRecipeEvent.isVanillaPass = false;
+		//AddRecipeEvent.isVanillaPass = false;
 		//AddSmeltingEvent.isVanillaPass = false;
 	}
 
@@ -611,6 +613,12 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	@EventHandler
+	public void sortRecipes(FMLLoadCompleteEvent evt) {
+		if (ForgeModContainer.shouldSortRecipies)
+			ReplacementCraftingHandler.sortRecipes();
+	}
+
+	@EventHandler
 	public void registerCommands(FMLServerStartingEvent evt) {
 		DragonAPICore.log("Server Starting...");
 		try {
@@ -639,7 +647,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	}
 
 	@EventHandler
-	public void overrideRecipes(FMLServerStartedEvent evt) {
+	public void printPackData(FMLServerStartedEvent evt) {
 		DragonAPICore.log("Server Started.");
 		DragonAPICore.log("Total Crafting Recipes: "+CraftingManager.getInstance().getRecipeList().size());
 		DragonAPICore.log("Dimensions Present: "+Arrays.toString(DimensionManager.getStaticDimensionIDs()));

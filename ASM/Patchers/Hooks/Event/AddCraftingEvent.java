@@ -18,6 +18,7 @@ import org.objectweb.asm.tree.TypeInsnNode;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
+//@Deprecated
 public class AddCraftingEvent extends Patcher {
 
 	public AddCraftingEvent() { //replace list with one that fires events

@@ -623,7 +623,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return null;
 	}
 
-	public static <K,T> boolean collectionMapContainsValue(HashMap<K, Collection<T>> map, T value) {
+	public static <K,T> boolean collectionMapContainsValue(Map<K, Collection<T>> map, T value) {
 		for (Collection<T> c : map.values()) {
 			if (c != null && c.contains(value))
 				return true;

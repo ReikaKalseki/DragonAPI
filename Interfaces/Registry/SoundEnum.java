@@ -36,6 +36,8 @@ public interface SoundEnum {
 
 	public void playSound(World world, double x, double y, double z, float volume, float pitch, boolean attenuate);
 
+	public void playSoundNoAttenuation(World world, double x, double y, double z, float volume, float pitch, int range);
+
 	public boolean attenuate();
 
 	@SideOnly(Side.CLIENT)

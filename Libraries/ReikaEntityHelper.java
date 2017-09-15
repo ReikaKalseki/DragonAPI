@@ -1358,4 +1358,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return e.worldObj.canLightningStrikeAt(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ)) || e.worldObj.canLightningStrikeAt(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY + e.height), MathHelper.floor_double(e.posZ));
 	}
 
+	public static void chargeCreeper(EntityCreeper e) {
+		e.getDataWatcher().updateObject(17, (byte)1);
+	}
+
 }

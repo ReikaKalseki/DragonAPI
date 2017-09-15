@@ -63,6 +63,7 @@ public final class ScheduledTickEvent extends Event implements TimerCallback {
 		private Entity entity;
 
 		public boolean attenuate = true;
+		public int broadcastRange = 64;
 
 		private ScheduledSoundEvent(SoundEnum s, float v, float p) {
 			sound = s;
@@ -85,7 +86,10 @@ public final class ScheduledTickEvent extends Event implements TimerCallback {
 
 		@Override
 		public void fire() {
-			sound.playSound(this.getWorld(), this.getX(), this.getY(), this.getZ(), volume, pitch, attenuate);
+			if (attenuate)
+				sound.playSound(this.getWorld(), this.getX(), this.getY(), this.getZ(), volume, pitch, true);
+			else
+				sound.playSoundNoAttenuation(this.getWorld(), this.getX(), this.getY(), this.getZ(), volume, pitch, broadcastRange);
 		}
 
 		protected Entity getEntity() {
