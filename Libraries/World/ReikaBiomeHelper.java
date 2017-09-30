@@ -381,6 +381,12 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	private static float getBiomeSeasonStrength(BiomeGenBase biome, BiomeTemperatures temp) {
 		if (temp == BiomeTemperatures.FIERY || temp == BiomeTemperatures.LUNAR)
 			return 0;
+		if (BiomeDictionary.isBiomeOfType(biome, Type.SANDY))
+			return 1.5F;
+		if (BiomeDictionary.isBiomeOfType(biome, Type.SAVANNA))
+			return 1.25F;
+		if (BiomeDictionary.isBiomeOfType(biome, Type.JUNGLE))
+			return 0.4F;
 		if (temp == BiomeTemperatures.HOT || temp == BiomeTemperatures.ICY)
 			return 0.2F;
 		if (temp == BiomeTemperatures.COOL || temp == BiomeTemperatures.WARM)

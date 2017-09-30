@@ -12,25 +12,17 @@ package Reika.DragonAPI.Instantiable.Event;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import cpw.mods.fml.common.eventhandler.Event;
 
 
-public class BlockTickEvent extends Event {
+public class BlockTickEvent extends PositionEvent {
 
-	public final World world;
 	public final Block block;
-	public final int xCoord;
-	public final int yCoord;
-	public final int zCoord;
 
 	private final int flags;
 
 	public BlockTickEvent(World world, int x, int y, int z, Block b, int flags) {
-		this.world = world;
+		super(world, x, y, z);
 		block = b;
-		xCoord = x;
-		yCoord = y;
-		zCoord = z;
 		this.flags = flags;
 	}
 

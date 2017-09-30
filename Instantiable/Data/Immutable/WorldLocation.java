@@ -315,4 +315,8 @@ public class WorldLocation {
 		return this.getWorld().canBlockSeeTheSky(xCoord, yCoord+1, zCoord);
 	}
 
+	public WorldLocation to2D() {
+		return this.move(0, -yCoord, 0);
+	}
+
 }

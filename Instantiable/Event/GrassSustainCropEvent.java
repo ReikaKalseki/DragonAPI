@@ -20,21 +20,13 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 
 @HasResult
-public class GrassSustainCropEvent extends Event {
-
-	public final World world;
-	public final int xCoord;
-	public final int yCoord;
-	public final int zCoord;
+public class GrassSustainCropEvent extends PositionEvent {
 
 	public final ForgeDirection side;
 	public final IPlantable crop;
 
 	public GrassSustainCropEvent(World world, int x, int y, int z, ForgeDirection dir, IPlantable p) {
-		this.world = world;
-		xCoord = x;
-		yCoord = y;
-		zCoord = z;
+		super(world, x, y, z);
 		side = dir;
 		crop = p;
 	}

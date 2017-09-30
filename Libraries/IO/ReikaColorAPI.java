@@ -68,6 +68,18 @@ public class ReikaColorAPI {
 		return color;
 	}
 
+	public static int getColorWithBrightnessMultiplierRGBA(int rgba, float mult) {
+		int alpha = (rgba & 0xFF);
+		int red = Math.min(255, (int) (((rgba >> 24) & 0xFF)*mult)) & 0xFF;
+		int green = Math.min(255, (int) (((rgba >> 16) & 0xFF)*mult)) & 0xFF;
+		int blue = Math.min(255, (int) (((rgba >> 8) & 0xFF)*mult)) & 0xFF;
+		int color = red;
+		color = (color << 8) + green;
+		color = (color << 8) + blue;
+		color = (color << 8) + alpha;
+		return color;
+	}
+
 	private static float[] RGBtoHSB(int rgb) {
 		return Color.RGBtoHSB(getRed(rgb), getGreen(rgb), getBlue(rgb), null);
 	}
@@ -79,6 +91,7 @@ public class ReikaColorAPI {
 	public static int getModifiedSat(int rgb, float factor) {
 		float[] hsb = RGBtoHSB(rgb);
 		hsb[1] *= factor;
+		hsb[1] = Math.min(hsb[1], 1);
 		return Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
 	}
 
@@ -155,7 +168,10 @@ public class ReikaColorAPI {
 	}
 
 	public static int getPackedIntForColoredLight(int color, int lightval) {
-		return (getBlue(color) << 15) | (getGreen(color) << 10) | (getRed(color) << 5) | lightval;
+		int red = getRed(color)*15/255;
+		int green = getGreen(color)*15/255;
+		int blue = getBlue(color)*15/255;
+		return lightval | (blue << 15) | (green << 10) | (red << 5);//(getBlue(color) << 15) | (getGreen(color) << 10) | (getRed(color) << 5) | lightval;
 	}
 
 	public static int invertColor(int rgb) {

@@ -335,7 +335,7 @@ public final class MTInteractionManager {
 			if (s.startsWith("//") || s.startsWith("##")) { //comment
 				return false;
 			}
-			else if (s.startsWith("val")) { //variable
+			else if (s.startsWith("val") || s.startsWith("var")) { //variable
 				int eq = s.indexOf("=");
 				if (eq < 0) {
 					this.logError(s, "is a variable declaration that lacks a variable definition.");

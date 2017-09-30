@@ -16,6 +16,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.text.WordUtils;
+
 import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaStringParser extends DragonAPICore {
@@ -437,5 +439,10 @@ public class ReikaStringParser extends DragonAPICore {
 		while (s.length() < len)
 			s = s+pad;
 		return s;
+	}
+
+	public static String capitalizeWords(String s) {
+		s = capFirstChar(s);
+		return WordUtils.capitalize(s);
 	}
 }

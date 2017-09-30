@@ -33,6 +33,11 @@ public final class ScheduledTickEvent extends Event implements TimerCallback {
 		MinecraftForge.EVENT_BUS.post(this);
 		action.fire();
 	}
+
+	public final boolean runOnSide(Side s) {
+		return action.runOnSide(s);
+	}
+
 	/*
 	public static class ScheduledPlayerEvent implements ScheduledEvent {
 

@@ -369,7 +369,7 @@ public final class ReikaMIDIReader {
 		return data;
 	}
 
-	public static MusicScore readMIDIFileToScore(Sequence seq) {
+	public static MusicScore readMIDIFileToScore(Sequence seq, boolean readPercussion) {
 		//debugMIDI(seq);
 		MusicScore data = new MusicScore(16);
 		if (seq == null) {
@@ -394,7 +394,7 @@ public final class ReikaMIDIReader {
 					//if (channel == 0) {
 					//	throw new RuntimeException("Invalid MIDI has notes in the tempo track (track 0)!");
 					//}
-					if (channel == 9) { //skip percussion
+					if (channel == 9 && !readPercussion) { //skip percussion
 						continue;
 					}
 					if (channel >= 16) {
@@ -419,7 +419,7 @@ public final class ReikaMIDIReader {
 						MIDINote m = lastOn[channel][key];
 						int len = time-m.timeOn;
 						MusicKey note = MusicKey.getKeyFromMIDI(key);
-						data.addNote(m.timeOn, channel, note, m.voice, m.velocity, len);
+						data.addNote(m.timeOn, channel, note, m.voice, m.velocity, len, channel == 9);
 						//ReikaJavaLibrary.pConsole(m);
 						//ReikaJavaLibrary.pConsole("Note "+note+" on channel "+channel+" @ "+time+" (event time="+event.getTick()+")");
 						//ReikaJavaLibrary.pConsole("Note "+note+" on channel "+channel+" ("+m+"), tick off="+time+"/tick_"+event.getTick()+", length = "+len);

@@ -11,27 +11,20 @@ package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.WorldEvent;
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 
 @HasResult
-public class IceFreezeEvent extends WorldEvent {
+public class IceFreezeEvent extends PositionEvent {
 
-	public final int x;
-	public final int y;
-	public final int z;
 	public final boolean needsEdge;
 
 	public IceFreezeEvent(World world, int x, int y, int z, boolean edge) {
-		super(world);
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		super(world, x, y, z);
 		needsEdge = edge;
 	}
 
 	public final boolean wouldFreezeNaturally() {
-		return world.provider.canBlockFreeze(x, y, z, needsEdge);
+		return world.provider.canBlockFreeze(xCoord, yCoord, zCoord, needsEdge);
 	}
 
 	public static boolean fire(World world, int x, int y, int z, boolean edge) {

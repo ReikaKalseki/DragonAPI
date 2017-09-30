@@ -17,12 +17,14 @@ import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap;
 import Reika.DragonAPI.Instantiable.Event.ScheduledTickEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import cpw.mods.fml.relauncher.Side;
 
 public class TickScheduler implements TickHandler {
 
 	public static final TickScheduler instance = new TickScheduler();
 
-	private final TimerMap<ScheduledTickEvent> data = new TimerMap();
+	private final TimerMap<ScheduledTickEvent> serverData = new TimerMap();
+	private final TimerMap<ScheduledTickEvent> clientData = new TimerMap();
 	private static final Object lock = new Object();
 
 	private TickScheduler() {
@@ -32,6 +34,7 @@ public class TickScheduler implements TickHandler {
 	@Override
 	public void tick(TickType type, Object... tickData) {
 		synchronized(lock) {
+			TimerMap<ScheduledTickEvent> data = type == TickType.SERVER ? serverData : clientData;
 			data.tick();
 		}
 	}
@@ -58,7 +61,10 @@ public class TickScheduler implements TickHandler {
 			return;
 		}
 		synchronized(lock) {
-			data.put(evt, ticks);
+			if (evt.runOnSide(Side.SERVER))
+				serverData.put(evt, ticks);
+			if (evt.runOnSide(Side.CLIENT))
+				clientData.put(evt, ticks);
 		}
 	}
 

@@ -342,6 +342,10 @@ public final class Coordinate implements Comparable<Coordinate> {
 		return li;
 	}
 
+	public Coordinate to2D() {
+		return this.offset(0, -yCoord, 0);
+	}
+
 	@Override
 	public int compareTo(Coordinate o) {
 		int val = Integer.compare(this.hashCode(), o.hashCode());

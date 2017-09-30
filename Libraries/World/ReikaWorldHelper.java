@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
@@ -78,6 +79,8 @@ import Reika.DragonAPI.Base.BlockTieredResource;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.BlockProperties;
 import Reika.DragonAPI.Instantiable.ResettableRandom;
+import Reika.DragonAPI.Instantiable.TemperatureEffect;
+import Reika.DragonAPI.Instantiable.TemperatureEffect.TemperatureCallback;
 import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
 import Reika.DragonAPI.Instantiable.Data.Collections.TimedSet;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
@@ -110,6 +113,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	private static Method computeModdedGeneratorList;
 	private static final Random moddedGenRand_Calcer = new Random();
 	private static final ResettableRandom moddedGenRand = new ResettableRandom();
+	private static HashMap<Material, TemperatureEffect> temperatureBlockEffects = new HashMap();
 
 	static {
 		try {
@@ -118,6 +122,22 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 			computeModdedGeneratorList = GameRegistry.class.getDeclaredMethod("computeSortedGeneratorList");
 			computeModdedGeneratorList.setAccessible(true);
+
+			temperatureBlockEffects.put(Material.rock, TemperatureEffect.rockMelting);
+			temperatureBlockEffects.put(Material.iron, TemperatureEffect.rockMelting);
+			temperatureBlockEffects.put(Material.ice, TemperatureEffect.iceMelting);
+			temperatureBlockEffects.put(Material.snow, TemperatureEffect.snowVaporization);
+			temperatureBlockEffects.put(Material.craftedSnow, TemperatureEffect.snowVaporization);
+			temperatureBlockEffects.put(Material.cloth, TemperatureEffect.woolIgnition);
+			temperatureBlockEffects.put(Material.wood, TemperatureEffect.woodIgnition);
+			temperatureBlockEffects.put(Material.grass, TemperatureEffect.groundGlassing);
+			temperatureBlockEffects.put(Material.sand, TemperatureEffect.groundGlassing);
+			temperatureBlockEffects.put(Material.ground, TemperatureEffect.groundGlassing);
+			temperatureBlockEffects.put(Material.leaves, TemperatureEffect.plantIgnition);
+			temperatureBlockEffects.put(Material.plants, TemperatureEffect.plantIgnition);
+			temperatureBlockEffects.put(Material.vine, TemperatureEffect.plantIgnition);
+			temperatureBlockEffects.put(Material.web, TemperatureEffect.plantIgnition);
+			temperatureBlockEffects.put(Material.tnt, TemperatureEffect.tntIgnition);
 		}
 		catch (Exception e) {
 			throw new RuntimeException("Could not find GameRegistry IWorldGenerator data!", e);
@@ -485,185 +505,27 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	/** Applies temperature effects to the environment. Args: World, x, y, z, temperature */
 	public static void temperatureEnvironment(World world, int x, int y, int z, int temperature) {
+		temperatureEnvironment(world, x, y, z, temperature, null);
+	}
+
+	/** Applies temperature effects to the environment. Args: World, x, y, z, temperature */
+	public static void temperatureEnvironment(World world, int x, int y, int z, int temperature, TemperatureCallback callback) {
 		if (temperature < 0) {
-			for (int i = 0; i < 6; i++) {
-				ForgeDirection side = checkForAdjMaterial(world, x, y, z, Material.water);
-				if (side != null)
-					changeAdjBlock(world, x, y, z, side, Blocks.ice, 0);
-			}
+			ForgeDirection side = checkForAdjMaterial(world, x, y, z, Material.water);
+			if (side != null)
+				changeAdjBlock(world, x, y, z, side, Blocks.ice, 0);
 		}
-		if (temperature > 450)	{ // Wood autoignition
-			for (int i = 0; i < 4; i++) {
-				if (getMaterial(world, x-i, y, z) == Material.wood)
-					ignite(world, x-i, y, z);
-				if (getMaterial(world, x+i, y, z) == Material.wood)
-					ignite(world, x+i, y, z);
-				if (getMaterial(world, x, y-i, z) == Material.wood)
-					ignite(world, x, y-i, z);
-				if (getMaterial(world, x, y+i, z) == Material.wood)
-					ignite(world, x, y+i, z);
-				if (getMaterial(world, x, y, z-i) == Material.wood)
-					ignite(world, x, y, z-i);
-				if (getMaterial(world, x, y, z+i) == Material.wood)
-					ignite(world, x, y, z+i);
-			}
-		}
-		if (temperature > 600)	{ // Wool autoignition
-			for (int i = 0; i < 4; i++) {
-				if (getMaterial(world, x-i, y, z) == Material.cloth)
-					ignite(world, x-i, y, z);
-				if (getMaterial(world, x+i, y, z) == Material.cloth)
-					ignite(world, x+i, y, z);
-				if (getMaterial(world, x, y-i, z) == Material.cloth)
-					ignite(world, x, y-i, z);
-				if (getMaterial(world, x, y+i, z) == Material.cloth)
-					ignite(world, x, y+i, z);
-				if (getMaterial(world, x, y, z-i) == Material.cloth)
-					ignite(world, x, y, z-i);
-				if (getMaterial(world, x, y, z+i) == Material.cloth)
-					ignite(world, x, y, z+i);
-			}
-		}
-		if (temperature > 300)	{ // TNT autoignition
-			for (int i = 0; i < 4; i++) {
-				if (getMaterial(world, x-i, y, z) == Material.tnt)
-					ignite(world, x-i, y, z);
-				if (getMaterial(world, x+i, y, z) == Material.tnt)
-					ignite(world, x+i, y, z);
-				if (getMaterial(world, x, y-i, z) == Material.tnt)
-					ignite(world, x, y-i, z);
-				if (getMaterial(world, x, y+i, z) == Material.tnt)
-					ignite(world, x, y+i, z);
-				if (getMaterial(world, x, y, z-i) == Material.tnt)
-					ignite(world, x, y, z-i);
-				if (getMaterial(world, x, y, z+i) == Material.tnt)
-					ignite(world, x, y, z+i);
-			}
-		}
-		if (temperature > 230)	{ // Grass/leaves/plant autoignition
-			for (int i = 0; i < 4; i++) {
-				if (flammable(world, x-i, y, z))
-					if (getMaterial(world, x-i, y, z) == Material.leaves || getMaterial(world, x-i, y, z) == Material.vine || getMaterial(world, x-i, y, z) == Material.plants || getMaterial(world, x-i, y, z) == Material.web)
-						ignite(world, x-i, y, z);
-				if (flammable(world, x+i, y, z))
-					if (getMaterial(world, x+i, y, z) == Material.leaves || getMaterial(world, x+i, y, z) == Material.vine || getMaterial(world, x+i, y, z) == Material.plants || getMaterial(world, x+i, y, z) == Material.web)
-						ignite(world, x+i, y, z);
-				if (flammable(world, x, y-i, z))
-					if (getMaterial(world, x, y-i, z) == Material.leaves || getMaterial(world, x, y-i, z) == Material.vine || getMaterial(world, x, y-i, z) == Material.plants || getMaterial(world, x, y-i, z) == Material.web)
-						ignite(world, x, y-i, z);
-				if (flammable(world, x, y+i, z))
-					if (getMaterial(world, x, y+i, z) == Material.leaves || getMaterial(world, x, y+i, z) == Material.vine || getMaterial(world, x, y+i, z) == Material.plants || getMaterial(world, x, y+i, z) == Material.web)
-						ignite(world, x, y+i, z);
-				if (flammable(world, x, y, z-i))
-					if (getMaterial(world, x, y, z-i) == Material.leaves || getMaterial(world, x, y, z-i) == Material.vine || getMaterial(world, x, y, z-i) == Material.plants || getMaterial(world, x, y, z-i) == Material.web)
-						ignite(world, x, y, z-i);
-				if (flammable(world, x, y, z+i))
-					if (getMaterial(world, x, y, z+i) == Material.leaves || getMaterial(world, x, y, z+i) == Material.vine || getMaterial(world, x, y, z+i) == Material.plants || getMaterial(world, x, y, z+i) == Material.web)
-						ignite(world, x, y, z+i);
-			}
-		}
-
-		if (temperature > 0)	{ // Melting snow/ice
-			for (int i = 0; i < 3; i++) {
-				if (getMaterial(world, x-i, y, z) == Material.ice)
-					world.setBlock(x-i, y, z, Blocks.flowing_water);
-				if (getMaterial(world, x+i, y, z) == Material.ice)
-					world.setBlock(x+i, y, z, Blocks.flowing_water);
-				if (getMaterial(world, x, y-i, z) == Material.ice)
-					world.setBlock(x, y-i, z, Blocks.flowing_water);
-				if (getMaterial(world, x, y+i, z) == Material.ice)
-					world.setBlock(x, y+i, z, Blocks.flowing_water);
-				if (getMaterial(world, x, y, z-i) == Material.ice)
-					world.setBlock(x, y, z-i, Blocks.flowing_water);
-				if (getMaterial(world, x, y, z+i) == Material.ice)
-					world.setBlock(x, y, z+i, Blocks.flowing_water);
-			}
-		}
-		if (temperature > 0)	{ // Melting snow/ice
-			for (int i = 0; i < 3; i++) {
-				if (getMaterial(world, x-i, y, z) == Material.snow)
-					world.setBlockToAir(x-i, y, z);
-				if (getMaterial(world, x+i, y, z) == Material.snow)
-					world.setBlockToAir(x+i, y, z);
-				if (getMaterial(world, x, y-i, z) == Material.snow)
-					world.setBlockToAir(x, y-i, z);
-				if (getMaterial(world, x, y+i, z) == Material.snow)
-					world.setBlockToAir(x, y+i, z);
-				if (getMaterial(world, x, y, z-i) == Material.snow)
-					world.setBlockToAir(x, y, z-i);
-				if (getMaterial(world, x, y, z+i) == Material.snow)
-					world.setBlockToAir(x, y, z+i);
-
-				if (getMaterial(world, x-i, y, z) == Material.craftedSnow)
-					world.setBlockToAir(x-i, y, z);
-				if (getMaterial(world, x+i, y, z) == Material.craftedSnow)
-					world.setBlockToAir(x+i, y, z);
-				if (getMaterial(world, x, y-i, z) == Material.craftedSnow)
-					world.setBlockToAir(x, y-i, z);
-				if (getMaterial(world, x, y+i, z) == Material.craftedSnow)
-					world.setBlockToAir(x, y+i, z);
-				if (getMaterial(world, x, y, z-i) == Material.craftedSnow)
-					world.setBlockToAir(x, y, z-i);
-				if (getMaterial(world, x, y, z+i) == Material.craftedSnow)
-					world.setBlockToAir(x, y, z+i);
-			}
-		}
-		if (temperature > 900)	{ // Melting sand, ground
-			for (int i = 0; i < 3; i++) {
-				if (getMaterial(world, x-i, y, z) == Material.sand)
-					world.setBlock(x-i, y, z, Blocks.glass);
-				if (getMaterial(world, x+i, y, z) == Material.sand)
-					world.setBlock(x+i, y, z, Blocks.glass);
-				if (getMaterial(world, x, y-i, z) == Material.sand)
-					world.setBlock(x, y-i, z, Blocks.glass);
-				if (getMaterial(world, x, y+i, z) == Material.sand)
-					world.setBlock(x, y+i, z, Blocks.glass);
-				if (getMaterial(world, x, y, z-i) == Material.sand)
-					world.setBlock(x, y, z-i, Blocks.glass);
-				if (getMaterial(world, x, y, z+i) == Material.sand)
-					world.setBlock(x, y, z+i, Blocks.glass);
-
-				if (getMaterial(world, x-i, y, z) == Material.ground)
-					world.setBlock(x-i, y, z, Blocks.glass);
-				if (getMaterial(world, x+i, y, z) == Material.ground)
-					world.setBlock(x+i, y, z, Blocks.glass);
-				if (getMaterial(world, x, y-i, z) == Material.ground)
-					world.setBlock(x, y-i, z, Blocks.glass);
-				if (getMaterial(world, x, y+i, z) == Material.ground)
-					world.setBlock(x, y+i, z, Blocks.glass);
-				if (getMaterial(world, x, y, z-i) == Material.ground)
-					world.setBlock(x, y, z-i, Blocks.glass);
-				if (getMaterial(world, x, y, z+i) == Material.ground)
-					world.setBlock(x, y, z+i, Blocks.glass);
-
-				if (getMaterial(world, x-i, y, z) == Material.grass)
-					world.setBlock(x-i, y, z, Blocks.glass);
-				if (getMaterial(world, x+i, y, z) == Material.grass)
-					world.setBlock(x+i, y, z, Blocks.glass);
-				if (getMaterial(world, x, y-i, z) == Material.grass)
-					world.setBlock(x, y-i, z, Blocks.glass);
-				if (getMaterial(world, x, y+i, z) == Material.grass)
-					world.setBlock(x, y+i, z, Blocks.glass);
-				if (getMaterial(world, x, y, z-i) == Material.grass)
-					world.setBlock(x, y, z-i, Blocks.glass);
-				if (getMaterial(world, x, y, z+i) == Material.grass)
-					world.setBlock(x, y, z+i, Blocks.glass);
-			}
-		}
-		if (temperature > 1500)	{ // Melting rock
-			for (int i = 0; i < 3; i++) {
-				if (isMeltable(world, x-i, y, z, temperature))
-					world.setBlock(x-i, y, z, Blocks.flowing_lava);
-				if (isMeltable(world, x+i, y, z, temperature))
-					world.setBlock(x+i, y, z, Blocks.flowing_lava);
-				if (isMeltable(world, x, y-i, z, temperature))
-					world.setBlock(x, y-i, z, Blocks.flowing_lava);
-				if (isMeltable(world, x, y+i, z, temperature))
-					world.setBlock(x, y+i, z, Blocks.flowing_lava);
-				if (isMeltable(world, x, y, z-i, temperature))
-					world.setBlock(x, y, z-i, Blocks.flowing_lava);
-				if (isMeltable(world, x, y, z+i, temperature))
-					world.setBlock(x, y, z+i, Blocks.flowing_lava);
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			for (int d = 1; d < 4; d++) {
+				int dx = x+dir.offsetX*d;
+				int dy = y+dir.offsetY*d;
+				int dz = z+dir.offsetZ*d;
+				Material mat = getMaterial(world, dx, dy, dz);
+				TemperatureEffect eff = temperatureBlockEffects .get(mat);
+				if (eff != null && temperature >= eff.minimumTemperature) {
+					eff.apply(world, dx, dy, dz, temperature, callback);
+				}
 			}
 		}
 	}
@@ -673,14 +535,14 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (b == Blocks.air || b == Blocks.bedrock)
 			return false;
 		if (b == Blocks.obsidian) {
-			return temperature > 1800;
+			return temperature >= 1800;
 		}
 		Material m = b.getMaterial();
 		if (m == Material.rock) {
-			return temperature > 1500;
+			return temperature >= 1500;
 		}
 		if (m == Material.iron) {
-			return temperature > 2000;
+			return temperature >= 2000;
 		}
 		return false;
 	}

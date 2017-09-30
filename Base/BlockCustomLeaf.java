@@ -84,8 +84,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	public abstract CreativeTabs getCreativeTab();
 
 	@Override
-	public IIcon getIcon(int par1, int par2)
-	{
+	public IIcon getIcon(int par1, int par2) {
 		return icon[par2][this.getOpacityIndex()];
 	}
 
@@ -95,20 +94,27 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	}
 
 	@Override
-	public int getFlammability(IBlockAccess world, int x, int y, int z, ForgeDirection face)
-	{
+	public int getLightOpacity(IBlockAccess world, int x, int y, int z) {
+		return 1;
+	}
+
+	@Override
+	public boolean isOpaqueCube() {
+		return false;
+	}
+
+	@Override
+	public int getFlammability(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
 		return 30;
 	}
 
 	@Override
-	public int getFireSpreadSpeed(IBlockAccess world, int x, int y, int z, ForgeDirection face)
-	{
+	public int getFireSpreadSpeed(IBlockAccess world, int x, int y, int z, ForgeDirection face) {
 		return 60;
 	}
 
 	@Override
-	public final void updateTick(World world, int x, int y, int z, Random par5Random)
-	{
+	public final void updateTick(World world, int x, int y, int z, Random par5Random) {
 		int meta = world.getBlockMetadata(x, y, z);
 		//ReikaJavaLibrary.pConsole(Block.getIdFromBlock(this)+" @ "+x+", "+y+", "+z+" : "+this.decays()+"&"+this.shouldTryDecay(world, x, y, z, meta));
 		boolean flag = false;
@@ -165,16 +171,14 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	}
 
 	@Override
-	public final void beginLeavesDecay(World world, int x, int y, int z)
-	{
+	public final void beginLeavesDecay(World world, int x, int y, int z) {
 		if (this.decays()) {
 
 		}
 	}
 
 	@Override
-	public void registerBlockIcons(IIconRegister ico)
-	{
+	public void registerBlockIcons(IIconRegister ico) {
 		for (int i = 0; i < 16; i++) {
 			icon[i][0] = ico.registerIcon(this.getFancyGraphicsIcon(i));
 			icon[i][1] = ico.registerIcon(this.getFastGraphicsIcon(i));

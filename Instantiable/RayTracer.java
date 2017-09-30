@@ -199,4 +199,8 @@ public final class RayTracer {
 		trace.addTransparentBlock(BlockRegistry.BLASTPANE.getBlockInstance());
 	}
 
+	public double getLength() {
+		return ReikaMathLibrary.py3d(originX-targetX, originY-targetY, originZ-targetZ);
+	}
+
 }

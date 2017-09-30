@@ -50,8 +50,8 @@ public final class MIDIInterface {
 		return ReikaMIDIReader.readMIDIFileToArray(midi);
 	}
 
-	public MusicScore fillToScore() {
-		return ReikaMIDIReader.readMIDIFileToScore(midi);
+	public MusicScore fillToScore(boolean readPercussion) {
+		return ReikaMIDIReader.readMIDIFileToScore(midi, readPercussion);
 	}
 
 }

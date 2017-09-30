@@ -14,25 +14,17 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 
 @Cancelable
-public class PlayerPlaceBlockEvent extends Event {
+public class PlayerPlaceBlockEvent extends PositionEvent {
 
-	public final World world;
-	public final int x;
-	public final int y;
-	public final int z;
 	public final Block block;
 	public final int metadata;
 	private final ItemStack held;
 	public final EntityPlayer player;
 
 	public PlayerPlaceBlockEvent(World world, int x, int y, int z, Block b, int meta, ItemStack is, EntityPlayer ep) {
-		this.world = world;
-		this.x = x;
-		this.y = y;
-		this.z = z;
+		super(world, x, y, z);
 		block = b;
 		metadata = meta;
 		held = is;

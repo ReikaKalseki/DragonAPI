@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2017
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
 import java.util.ArrayList;
@@ -23,6 +32,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 public class ReplacementSmeltingHandler {
 
 	private static ConcurrentHashMap<KeyedItemStack, FurnaceRecipe> smeltingList = new ConcurrentHashMap();
+	private static ConcurrentHashMap<KeyedItemStack, Float> outputToExperienceMap = new ConcurrentHashMap();
 	private static Collection<FurnaceRecipe> vanillaRecipes = new ArrayList(); //for the rebuild function
 	private static final ArrayList<MapChange> directMapChanges = new ArrayList();
 
@@ -92,6 +102,8 @@ public class ReplacementSmeltingHandler {
 		if (!evt.isCanceled()) {
 			FurnaceRecipe f = new FurnaceRecipe(in, out, evt.experienceValue);
 			smeltingList.put(createKey(in), f);
+			if (xp > 0)
+				outputToExperienceMap.put(createKey(out), Math.max(func_151398_b(out), xp));
 			if (AddSmeltingEvent.isVanillaPass)
 				vanillaRecipes.add(f);
 		}
@@ -122,7 +134,7 @@ public class ReplacementSmeltingHandler {
 			Thread.dumpStack();
 			return;
 		}*/
-		smeltingList.remove(createKey(in));
+		/*outputToExperienceMap.remove(*/smeltingList.remove(createKey(in))/*.output)*/;
 	}
 
 	public static void modifyExperience(ItemStack is, float newXP) {
@@ -150,15 +162,15 @@ public class ReplacementSmeltingHandler {
 		return buildGettableList();
 	}
 
-	public static float getSmeltingXP(ItemStack is) {
-		return func_151398_b(is);
-	}
-
 	/** Get recipe experience */
 	public static float func_151398_b(ItemStack is) {
+		return getSmeltingXPByOutput(is);
+	}
+
+	public static float getSmeltingXPByOutput(ItemStack output) {
 		handleDirectMapChanges();
-		FurnaceRecipe rec = smeltingList.get(createKey(is));
-		return rec != null ? rec.getExperience() : 0;
+		Float rec = /*smeltingList.get(*/outputToExperienceMap.get(createKey(output))/*)*/;
+		return rec != null ? rec.floatValue() : 0;
 	}
 
 	private static KeyedItemStack createKey(ItemStack is) {

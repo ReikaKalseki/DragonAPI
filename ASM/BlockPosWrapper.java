@@ -33,6 +33,8 @@ public class BlockPosWrapper {
 	private static final String BLOCKPOS_CONSTR = "(III)V";
 	private static final String BLOCKPOS_ARG = "L"+BLOCKPOS_CLASS+";";
 
+	///may want to change by having a mutable blockpos and always use and ref that; faster than constant obj creation
+
 	private static final HashMap<String, ImmutablePair<String, String>> classes = new HashMap();
 
 	private static void addClass(String deobf, String obf) {

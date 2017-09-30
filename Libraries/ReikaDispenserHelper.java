@@ -22,6 +22,7 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
+import net.minecraftforge.common.util.FakePlayerFactory;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 
 import com.mojang.authlib.GameProfile;
@@ -130,7 +131,7 @@ public class ReikaDispenserHelper {
 	private static final GameProfile fakePlayerProfile = new GameProfile(UUID.randomUUID(), "dispenser");
 
 	public static final FakePlayer getDispenserPlayer(IBlockSource ibs, ItemStack is) {
-		return ibs.getWorld() instanceof WorldServer ? new FakePlayer((WorldServer)ibs.getWorld(), fakePlayerProfile) : null;
+		return ibs.getWorld() instanceof WorldServer ? FakePlayerFactory.get((WorldServer)ibs.getWorld(), fakePlayerProfile) : null;
 	}
 
 	/*

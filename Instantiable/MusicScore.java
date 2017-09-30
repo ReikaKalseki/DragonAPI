@@ -36,8 +36,8 @@ public class MusicScore {
 		music = new TreeMap[channels];
 	}
 
-	public void addNote(int time, int channel, MusicKey note, int voice, int vol, int len) {
-		this.addNote(channel, time, new Note(note, voice, vol, len));
+	public void addNote(int time, int channel, MusicKey note, int voice, int vol, int len, boolean perc) {
+		this.addNote(channel, time, new Note(note, voice, vol, len, perc));
 	}
 
 	private void addNote(int channel, int time, Note note) {
@@ -118,11 +118,14 @@ public class MusicScore {
 		/** In MC ticks */
 		public final int length;
 
-		private Note(MusicKey note, int instru, int vol, int len) {
+		public final boolean percussion;
+
+		private Note(MusicKey note, int instru, int vol, int len, boolean perc) {
 			key = note;
 			voice = instru;
 			volume = vol;
 			length = len;
+			percussion = perc;
 		}
 
 		public void writeToNBT(NBTTagCompound nbt) {
@@ -130,15 +133,16 @@ public class MusicScore {
 			nbt.setInteger("volume", volume);
 			nbt.setInteger("voice", voice);
 			nbt.setInteger("length", length);
+			nbt.setBoolean("percussion", percussion);
 		}
 
 		public static Note readFromNBT(NBTTagCompound nbt) {
-			return new Note(MusicKey.getByIndex(nbt.getInteger("key")), nbt.getInteger("voice"), nbt.getInteger("volume"), nbt.getInteger("length"));
+			return new Note(MusicKey.getByIndex(nbt.getInteger("key")), nbt.getInteger("voice"), nbt.getInteger("volume"), nbt.getInteger("length"), nbt.getBoolean("percussion"));
 		}
 
 		@Override
 		public String toString() {
-			return key.name()+"/"+voice+"/"+volume;
+			return key.name()+" / instr="+voice+" / vol="+volume+" / len="+length;
 		}
 
 		@Override

@@ -12,21 +12,12 @@ package Reika.DragonAPI.Instantiable.Event;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 
 @Cancelable
-public class FireSpreadEvent extends Event {
-
-	public final World world;
-	public final int xCoord;
-	public final int yCoord;
-	public final int zCoord;
+public class FireSpreadEvent extends PositionEvent {
 
 	public FireSpreadEvent(World world, int x, int y, int z) {
-		this.world = world;
-		xCoord = x;
-		yCoord = y;
-		zCoord = z;
+		super(world, x, y, z);
 	}
 
 	public static boolean fire(World world, int x, int y, int z) {

@@ -1260,6 +1260,17 @@ public class ReikaASMHelper {
 		min.desc = addTrailingArgument(min.desc, arg);
 	}
 
+	public static void changeReturnType(MethodInsnNode min, String arg) {
+		min.desc = changeReturnType(min.desc, arg);
+	}
+
+	public static String changeReturnType(String sig, String arg) {
+		ArrayList<String> li = parseMethodSignature(sig);
+		li.remove(li.size()-1);
+		li.add(arg);
+		return compileSignature(li);
+	}
+
 	public static void replaceInstruction(InsnList li, AbstractInsnNode tgt, AbstractInsnNode repl) {
 		li.insertBefore(tgt, repl);
 		li.remove(tgt);
