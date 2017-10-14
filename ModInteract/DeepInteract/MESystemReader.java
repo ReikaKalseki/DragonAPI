@@ -9,18 +9,29 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
+import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
@@ -28,7 +39,10 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import appeng.api.AEApi;
 import appeng.api.config.Actionable;
 import appeng.api.config.FuzzyMode;
+import appeng.api.implementations.tiles.IChestOrDrive;
+import appeng.api.networking.IGrid;
 import appeng.api.networking.IGridNode;
+import appeng.api.networking.IMachineSet;
 import appeng.api.networking.crafting.ICraftingCallback;
 import appeng.api.networking.crafting.ICraftingGrid;
 import appeng.api.networking.crafting.ICraftingJob;
@@ -38,11 +52,23 @@ import appeng.api.networking.security.BaseActionSource;
 import appeng.api.networking.security.IActionHost;
 import appeng.api.networking.security.MachineSource;
 import appeng.api.networking.security.PlayerSource;
+import appeng.api.networking.storage.IBaseMonitor;
 import appeng.api.networking.storage.IStorageGrid;
+import appeng.api.storage.ICellProvider;
 import appeng.api.storage.IMEMonitor;
+import appeng.api.storage.IMEMonitorHandlerReceiver;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.util.IReadOnlyCollection;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
-public class MESystemReader {
+public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
+
+	private static Class gridCache;
+	private static Field activeCellProviders;
+	private static Object tickHandlerInstance;
+	private static Method getNetworks;
+
+	private static Collection<MESystemEffect> systemEffects = new ArrayList();
 
 	private final IGridNode node;
 	private final BaseActionSource actionSource;
@@ -51,6 +77,9 @@ public class MESystemReader {
 
 	private final IdentityHashMap<Future<ICraftingJob>, CraftCompleteCallback> crafting = new IdentityHashMap();
 	private final MultiMap<CraftCompleteCallback, ICraftingLink> craftingLinks = new MultiMap().setNullEmpty();
+	private final MultiMap<KeyedItemStack, ChangeCallback> changeCallbacks = new MultiMap();
+
+	private Object monitorToken = new Object();
 
 	public MESystemReader(IGridNode ign, EntityPlayer ep) {
 		this(ign, new PlayerSource(ep, null));
@@ -78,6 +107,16 @@ public class MESystemReader {
 	public MESystemReader setRequester(ICraftingRequester icr) {
 		requester = icr;
 		return this;
+	}
+
+	public MESystemReader addCallback(ItemStack is, ChangeCallback call) {
+		changeCallbacks.addValue(new KeyedItemStack(is).setSimpleHash(true).setIgnoreNBT(true), call);
+		this.getStorage().addListener(this, monitorToken);
+		return this;
+	}
+
+	public void clearCallbacks() {
+		changeCallbacks.clear();
 	}
 
 	private IMEMonitor<IAEItemStack> getStorage() {
@@ -141,8 +180,25 @@ public class MESystemReader {
 		return c;
 	}
 
-	private IAEItemStack createAEStack(ItemStack is) {
+	public static IAEItemStack createAEStack(ItemStack is) {
 		return AEApi.instance().storage().createItemStack(is);
+	}
+
+	public static HashSet<ICellProvider> getAllCellContainers(IStorageGrid isg) {
+		try {
+			if (isg.getClass() == gridCache) {
+				HashSet<ICellProvider> set = (HashSet<ICellProvider>)activeCellProviders.get(isg);
+				return set;
+			}
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public static IChestOrDrive getContainer(ICellProvider icp) {
+		return null;
 	}
 
 	/** Returns how many items removed */
@@ -193,7 +249,16 @@ public class MESystemReader {
 			ae = this.createAEStack(cp);
 			c.addAll(mon.getStorageList().findFuzzy(ae, fz));
 		}
-		return c;
+		Collection<IAEItemStack> c2 = new ArrayList();
+		for (IAEItemStack iae : c) {
+			ExtractedItem ei = this.extract(iae, true);
+			if (ei != null) {
+				IAEItemStack iae2 = this.createAEStack(ei.getItem());
+				iae2.setStackSize(ei.amount);
+				c2.add(iae2);
+			}
+		}
+		return c2;
 	}
 
 	private ExtractedItem extract(IAEItemStack ae, boolean simulate) {
@@ -293,10 +358,114 @@ public class MESystemReader {
 		}
 	}
 
+	@Override
+	public boolean isValid(Object verificationToken) {
+		return verificationToken.equals(monitorToken);
+	}
+
+	@Override
+	public void postChange(IBaseMonitor<IAEItemStack> monitor, Iterable<IAEItemStack> change, BaseActionSource actionSource) {
+		for (IAEItemStack iae : change) {
+			KeyedItemStack ks = new KeyedItemStack(iae.getItemStack()).setSimpleHash(true).setIgnoreNBT(true);
+			Collection<ChangeCallback> c = changeCallbacks.get(ks);
+			for (ChangeCallback cc : c) {
+				cc.onItemChange(iae);
+			}
+		}
+	}
+
+	@Override
+	public void onListUpdate() {
+		for (ChangeCallback cc : changeCallbacks.allValues(false)) {
+			cc.onItemChange(null);
+		}
+	}
+
+	public static Collection<IGrid> getAllMENetworks() {
+		try {
+			return (Collection<IGrid>)getNetworks.invoke(tickHandlerInstance); //TickHandler.INSTANCE.getGridList();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return new ArrayList();
+		}
+	}
+
+	public static void registerMESystemEffect(MESystemEffect effect) {
+		systemEffects.add(effect);
+	}
+
+	public static void registerEffectHandler() {
+		if (!systemEffects.isEmpty()) {
+			TickRegistry.instance.registerTickHandler(new EffectHandler());
+		}
+	}
+
+	private static class EffectHandler implements TickHandler {
+
+		@Override
+		public void tick(TickType type, Object... tickData) {
+			Collection<IGrid> grids = null;
+			long tick = DimensionManager.getWorld(0).getTotalWorldTime();
+			for (MESystemEffect effect : systemEffects) {
+				if (tick%effect.getTickFrequency() == 0) {
+					if (grids == null) {
+						grids = getAllMENetworks();
+					}
+					for (IGrid g : grids) {
+						if (!g.isEmpty()) {
+							effect.performEffect(g);
+						}
+					}
+				}
+			}
+		}
+
+		@Override
+		public EnumSet<TickType> getType() {
+			return EnumSet.of(TickType.SERVER);
+		}
+
+		@Override
+		public boolean canFire(Phase p) {
+			return p == Phase.END;
+		}
+
+		@Override
+		public String getLabel() {
+			return "ME System Tick";
+		}
+
+	}
+
+	static {
+		try {
+			Class c = Class.forName("appeng.hooks.TickHandler");
+			Field inst = c.getField("INSTANCE");
+			tickHandlerInstance = inst.get(null);
+			getNetworks = c.getDeclaredMethod("getGridList");
+
+			gridCache = Class.forName("appeng.me.cache.GridStorageCache");
+			activeCellProviders = gridCache.getDeclaredField("activeCellProviders");
+			activeCellProviders.setAccessible(true);
+		}
+		catch (Exception e) {
+			DragonAPICore.logError("Could not build getter to ME system list!");
+			ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.APPENG, e);
+		}
+	}
+
 	public static interface CraftCompleteCallback {
 
 		public void onCraftingLinkReturned(ICraftingLink link);
 		public void onCraftingComplete(ICraftingLink link);
+
+	}
+
+	public static interface ChangeCallback {
+
+		/** May be null if a total AE list rebuild. Assume that means what you care about changed. */
+		void onItemChange(IAEItemStack iae);
 
 	}
 	/*
@@ -565,5 +734,63 @@ public class MESystemReader {
 			return item.copy();
 		}
 
+	}
+
+	public static interface MESystemEffect {
+
+		public void performEffect(IGrid grid);
+
+		/** The smaller you make this, the more computationally expensive it becomes. */
+		public int getTickFrequency();
+
+	}
+
+	public static abstract class ItemInSystemEffect implements MESystemEffect {
+
+		private final ItemStack itemKey;
+
+		public ItemInSystemEffect(ItemStack is) {
+			itemKey = is;
+		}
+
+		@Override
+		public final void performEffect(IGrid grid) {
+			if (grid.isEmpty() || grid.getNodes().isEmpty() || !grid.getNodes().iterator().hasNext())
+				return;
+			IMachineSet iah = grid.getMachines(IActionHost.class);
+			MESystemReader me = null;
+			if (iah.isEmpty()) {
+				IReadOnlyCollection<IGridNode> ign = grid.getNodes();
+				try {
+					Iterator<IGridNode> it = ign.iterator();
+					me = !it.hasNext() ? null : new MESystemReader(it.next(), new GenericActionSource());
+				}
+				catch (Exception e) {
+					DragonAPICore.logError("Detected invalid ME system: "+grid.getNodes());
+				}
+			}
+			else {
+				IActionHost ia = (IActionHost)iah.iterator().next();
+				me = new MESystemReader(ia.getActionableNode(), new MachineSource(ia));
+			}
+			if (me == null)
+				return;
+			long amt = me.getItemCount(itemKey, itemKey.stackTagCompound != null);
+			if (amt > 0) {
+				this.doEffect(grid, amt);
+			}
+		}
+
+		protected abstract void doEffect(IGrid grid, long amt);
+
+	}
+
+	private static class GenericActionSource extends BaseActionSource {
+
+		@Override
+		public boolean isMachine()
+		{
+			return true;
+		}
 	}
 }

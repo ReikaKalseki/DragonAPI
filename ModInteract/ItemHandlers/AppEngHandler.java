@@ -48,6 +48,11 @@ public class AppEngHandler extends ModHandlerBase {
 	private ItemStack quartzProcessor;
 	private ItemStack diamondProcessor;
 
+	private Item cell1k;
+	private Item cell4k;
+	private Item cell16k;
+	private Item cell64k;
+
 	public final Block skystone;
 	public final Block quartzGlass;
 
@@ -96,6 +101,11 @@ public class AppEngHandler extends ModHandlerBase {
 
 				sky = this.getBlock("blockSkyStone");
 				glass = this.getBlock("blockQuartzGlass");
+
+				cell1k = this.getItem("itemCell1k");
+				cell4k = this.getItem("itemCell4k");
+				cell16k = this.getItem("itemCell16k");
+				cell64k = this.getItem("itemCell64k");
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Cannot read AE class contents!");
@@ -271,6 +281,22 @@ public class AppEngHandler extends ModHandlerBase {
 
 	public ItemStack getDiamondProcessor() {
 		return diamondProcessor != null ? diamondProcessor.copy() : null;
+	}
+
+	public Item get1KCell() {
+		return cell1k;
+	}
+
+	public Item get4KCell() {
+		return cell4k;
+	}
+
+	public Item get16KCell() {
+		return cell16k;
+	}
+
+	public Item get64KCell() {
+		return cell64k;
 	}
 
 }

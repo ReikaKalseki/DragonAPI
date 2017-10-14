@@ -14,6 +14,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.text.WordUtils;
@@ -26,6 +27,24 @@ public class ReikaStringParser extends DragonAPICore {
 	private static final String NUMBER_METHOD_CODE = "PARSE_NUMBER_METHOD";
 	private static final String STRING_FORMAT_CODE = "PARSE_STRING_FORMAT";
 	private static final String ENUM_FUNCTION_CODE = "PARSE_ENUM";
+
+	private final static TreeMap<Integer, String> romanNumerals = new TreeMap();
+
+	static {
+		romanNumerals.put(1000, "M");
+		romanNumerals.put(900, "CM");
+		romanNumerals.put(500, "D");
+		romanNumerals.put(400, "CD");
+		romanNumerals.put(100, "C");
+		romanNumerals.put(90, "XC");
+		romanNumerals.put(50, "L");
+		romanNumerals.put(40, "XL");
+		romanNumerals.put(10, "X");
+		romanNumerals.put(9, "IX");
+		romanNumerals.put(5, "V");
+		romanNumerals.put(4, "IV");
+		romanNumerals.put(1, "I");
+	}
 
 	public static String getStringWithEmbeddedReferences(String sg) {
 		String[] parts = sg.split("\\+");
@@ -444,5 +463,12 @@ public class ReikaStringParser extends DragonAPICore {
 	public static String capitalizeWords(String s) {
 		s = capFirstChar(s);
 		return WordUtils.capitalize(s);
+	}
+
+	public static String parseRomanRumeral(int val) {
+		int digit = romanNumerals.floorKey(val);
+		if (val == digit)
+			return romanNumerals.get(val);
+		return romanNumerals.get(digit) + parseRomanRumeral(val-digit);
 	}
 }

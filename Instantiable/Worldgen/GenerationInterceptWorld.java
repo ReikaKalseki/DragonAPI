@@ -18,26 +18,29 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldSettings.GameType;
 import net.minecraft.world.WorldType;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.IChunkLoader;
 import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
+import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 
-
+@Deprecated
+/** This class was, in hindsight, a dumb idea. */
 public final class GenerationInterceptWorld extends World {
 
 	private World delegate;
@@ -48,6 +51,7 @@ public final class GenerationInterceptWorld extends World {
 	private final Collection<TileHook> hooks = new ArrayList();
 	private final BlockMap<BlockKey> overrides = new BlockMap();
 
+	@Deprecated
 	public GenerationInterceptWorld() {
 		super(new NoSaveHandler(), null, new WorldSettings(0, GameType.NOT_SET, false, false, WorldType.DEFAULT), null, null);
 	}
@@ -58,6 +62,7 @@ public final class GenerationInterceptWorld extends World {
 		if (delegate == world)
 			return;
 
+		/*
 		if (world == null) {
 			try {
 				delegate = null;
@@ -76,8 +81,11 @@ public final class GenerationInterceptWorld extends World {
 			}
 			return;
 		}
+		 */
 
 		delegate = world;
+
+		/*
 		try {
 			boolean obf = !ReikaObfuscationHelper.isDeObfEnvironment();
 			ReikaReflectionHelper.setFinalField(World.class, obf ? "field_73019_z" : "saveHandler", this, world.getSaveHandler());
@@ -92,6 +100,7 @@ public final class GenerationInterceptWorld extends World {
 		catch (Exception e) {
 			throw new RuntimeException(e);
 		}
+		 */
 	}
 
 	public void disallowBlock(Block b) {
@@ -188,7 +197,7 @@ public final class GenerationInterceptWorld extends World {
 		return over != null ? over.metadata : ret;
 	}
 
-	/*
+
 	@Override
 	public TileEntity getTileEntity(int x, int y, int z) {
 		return delegate.getTileEntity(x, y, z);
@@ -206,14 +215,49 @@ public final class GenerationInterceptWorld extends World {
 
 	@Override
 	protected boolean chunkExists(int x, int z) {
-		return delegate.chunkExists(x, z);
+		return delegate.getChunkProvider().chunkExists(x, z); //its internal code
+	}
+
+	@Override
+	public Chunk getChunkFromChunkCoords(int x, int z) {
+		return delegate.getChunkFromChunkCoords(x, z);
 	}
 
 	@Override
 	public BiomeGenBase getBiomeGenForCoordsBody(int x, int z) {
 		return delegate.getBiomeGenForCoordsBody(x, z);
 	}
-	 */
+
+	@Override
+	public boolean isSideSolid(int x, int y, int z, ForgeDirection side, boolean _default) {
+		return delegate.isSideSolid(x, y, z, side, _default);
+	}
+
+	@Override
+	public IChunkProvider getChunkProvider() {
+		return delegate.getChunkProvider();
+	}
+
+	@Override
+	public WorldInfo getWorldInfo() {
+		return delegate.getWorldInfo();
+	}
+
+	@Override
+	public GameRules getGameRules() {
+		return delegate.getGameRules();
+	}
+
+	@Override
+	public boolean isBlockNormalCubeDefault(int x, int y, int z, boolean def) {
+		return delegate.isBlockNormalCubeDefault(x, y, z, def);
+	}
+
+	@Override
+	public String getProviderName() {
+		return delegate.getProviderName();
+	}
+
 
 	private void markHook(int x, int y, int z) {
 		changeList.add(new Coordinate(x, y, z));

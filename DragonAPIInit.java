@@ -108,6 +108,7 @@ import Reika.DragonAPI.ModInteract.BannedItemReader;
 import Reika.DragonAPI.ModInteract.MinetweakerHooks;
 import Reika.DragonAPI.ModInteract.WailaTechnicalOverride;
 import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
+import Reika.DragonAPI.ModInteract.DeepInteract.MESystemReader;
 import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaThaumHelper;
@@ -545,6 +546,10 @@ public class DragonAPIInit extends DragonAPIMod {
 		ReikaJavaLibrary.initClass(ReikaThaumHelper.class);
 		ReikaJavaLibrary.initClass(SmelteryRecipeHandler.class);
 		ReikaJavaLibrary.initClass(TwilightForestLootHooks.class);
+
+		if (ModList.APPENG.isLoaded()) {
+			MESystemReader.registerEffectHandler();
+		}
 
 		if (MTInteractionManager.isMTLoaded()) {
 			MinetweakerHooks.instance.registerAll();

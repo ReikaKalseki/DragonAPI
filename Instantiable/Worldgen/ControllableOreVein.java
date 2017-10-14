@@ -54,36 +54,41 @@ public abstract class ControllableOreVein extends WorldGenerator {
 		double ypos_2 = y + rand.nextInt(3) - 2;
 
 		for (int l = 0; l <= veinSize; l++ ) {
-			double d6 = xvar_pos + (xvar_neg - xvar_pos) * l / veinSize;
-			double d7 = ypos_1 + (ypos_2 - ypos_1) * l / veinSize;
-			double d8 = zvar_pos + (zvar_neg - zvar_pos) * l / veinSize;
-			double d9 = rand.nextDouble() * veinSize / 16D;
-			double d10 = (MathHelper.sin(l * (float)Math.PI / veinSize) + 1F) * d9 + 1D;
-			double d11 = (MathHelper.sin(l * (float)Math.PI / veinSize) + 1F) * d9 + 1D;
+			double posx = xvar_pos + (xvar_neg - xvar_pos) * l / veinSize;
+			double posy = ypos_1 + (ypos_2 - ypos_1) * l / veinSize;
+			double posz = zvar_pos + (zvar_neg - zvar_pos) * l / veinSize;
+			double range = rand.nextDouble() * veinSize / 16D;
+			double range_horiz = (MathHelper.sin(l * (float)Math.PI / veinSize) + 1F) * range + 1D;
+			double range_vert = (MathHelper.sin(l * (float)Math.PI / veinSize) + 1F) * range + 1D;
 
-			int i1 = MathHelper.floor_double(d6 - d10 / 2D);
-			int j1 = MathHelper.floor_double(d7 - d11 / 2D);
-			int k1 = MathHelper.floor_double(d8 - d10 / 2D);
-			int l1 = MathHelper.floor_double(d6 + d10 / 2D);
-			int i2 = MathHelper.floor_double(d7 + d11 / 2D);
-			int j2 = MathHelper.floor_double(d8 + d10 / 2D);
+			int minx = MathHelper.floor_double(posx - range_horiz / 2D);
+			int miny = MathHelper.floor_double(posy - range_vert / 2D);
+			int minz = MathHelper.floor_double(posz - range_horiz / 2D);
+			int maxx = MathHelper.floor_double(posx + range_horiz / 2D);
+			int maxy = MathHelper.floor_double(posy + range_vert / 2D);
+			int maxz = MathHelper.floor_double(posz + range_horiz / 2D);
 
-			for (int dx = i1; dx <= l1; dx++ ) {
-				double rx = (dx + 0.5D - d6) / (d10 / 2D);
+			for (int dx = minx; dx <= maxx; dx++ ) {
+				double rx = (dx + 0.5D - posx) / (range_horiz / 2D);
 
 				if (rx * rx < 1D) {
-					for (int dy = j1; dy <= i2; dy++ ) {
-						double ry = (dy + 0.5D - d7) / (d11 / 2D);
+					for (int dy = miny; dy <= maxy; dy++ ) {
+						double ry = (dy + 0.5D - posy) / (range_vert / 2D);
 
 						if (rx * rx + ry * ry < 1D) {
-							for (int dz = k1; dz <= j2; dz++ ) {
-								double rz = (dz + 0.5D - d8) / (d10 / 2D);
+							for (int dz = minz; dz <= maxz; dz++ ) {
+								double rz = (dz + 0.5D - posz) / (range_horiz / 2D);
 
 								if (rx * rx + ry * ry + rz * rz < 1D) {
 									if (world.getBlock(dx, dy, dz).isReplaceableOreGen(world, dx, dy, dz, target)) {
+										//if (!world.checkChunksExist(dx, dy, dz, dx, dy, dz)) {
 										if (this.canPlaceBlockHere(world, dx, dy, dz)) {
 											world.setBlock(dx, dy, dz, block.blockID, block.metadata, 2);
+										}/*
 										}
+										else {
+
+										}*/
 									}
 								}
 							}

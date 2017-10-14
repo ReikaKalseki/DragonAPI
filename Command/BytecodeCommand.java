@@ -73,6 +73,12 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 			this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Loaded self onto the stack.");
 			return;
 		}
+		else if (args[0].equalsIgnoreCase("held")) {
+			EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
+			this.getStack(ics).push(ep.getCurrentEquippedItem());
+			this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Loaded held item onto the stack.");
+			return;
+		}
 		else if (args[0].equalsIgnoreCase("look")) {
 			EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
 			MovingObjectPosition mov = ReikaPlayerAPI.getLookedAtBlock(ep, 4.5, false);

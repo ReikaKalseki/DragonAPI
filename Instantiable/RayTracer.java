@@ -191,6 +191,7 @@ public final class RayTracer {
 		trace.addTransparentBlock(ChromaBlocks.GLASS.getBlockInstance());
 		trace.addTransparentBlock(ChromaBlocks.SELECTIVEGLASS.getBlockInstance());
 		trace.addTransparentBlock(ChromaBlocks.DOOR.getBlockInstance());
+		trace.addTransparentBlock(ChromaBlocks.PYLON.getBlockInstance());
 	}
 
 	@ModDependent(ModList.ROTARYCRAFT)

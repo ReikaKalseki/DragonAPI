@@ -35,6 +35,7 @@ public enum InterfaceCache {
 	GASITEM("mekanism.api.gas.IGasItem"),
 	BEEHOUSE("forestry.api.apiculture.IBeeHousing"),
 	ENERGYITEM("com.builtbroken.mc.api.items.energy.IEnergyItem"),
+	IMMERSIVEWIRE("blusunrize.immersiveengineering.api.energy.IImmersiveConnectable"),
 	;
 
 	private final String classpath;

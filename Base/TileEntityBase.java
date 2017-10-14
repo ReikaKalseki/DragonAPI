@@ -618,6 +618,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 					Network.joinOrCreateNetwork(this);
 			}
 			this.onFirstTick(worldObj, xCoord, yCoord, zCoord);
+			redstoneInput = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		}
 	}
 

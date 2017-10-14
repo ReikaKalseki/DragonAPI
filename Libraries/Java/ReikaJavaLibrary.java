@@ -45,6 +45,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 import com.google.common.reflect.ClassPath;
@@ -907,5 +908,47 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		ret = ret.substring("file:\\".length());
 		ret = ret.replaceAll("%20", " ");
 		return ret;
+	}
+
+	public static double buildDoubleFromInts(int i1, int i2) {
+		/*
+		byte[] arr = new byte[8];
+		ByteBuffer buf = ByteBuffer.wrap(arr);
+		buf.putInt(i1);
+		buf.putInt(i2);
+		return ByteBuffer.wrap(arr).getDouble();
+		 */
+		return Double.longBitsToDouble(buildLong(i1, i2));
+	}
+
+	public static int[] splitDoubleToInts(double val) {
+		/*
+		byte[] arr = new byte[8];
+		ByteBuffer.wrap(arr).putDouble(val);
+		ByteBuffer buf = ByteBuffer.wrap(arr);
+		int i1 = buf.getInt();
+		int i2 = buf.getInt();
+		return new int[]{i1, i2};
+		 */
+		return splitLong(Double.doubleToRawLongBits(val));
+	}
+
+	public static byte[] splitIntToHexChars(int val) {
+		byte[] arr = new byte[8];
+		for (int i = 0; i < 8; i++) {
+			byte hex = (byte)((val >> (i*4)) & 0xF);
+			arr[i] = hex;
+		}
+		return arr;
+	}
+
+	public static int buildIntFromHexChars(byte[] chars) {
+		if (chars.length != 8)
+			throw new MisuseException("You cannot build an int from less than or more than 8 nibbles!");
+		int val = 0;
+		for (int i = 0; i < 8; i++) {
+			val |= chars[i] << (i*4);
+		}
+		return val;
 	}
 }

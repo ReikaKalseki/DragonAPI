@@ -34,7 +34,15 @@ public class FXCollection {
 	}
 
 	public void addEffect(double x, double y, double z, IIcon ico, int life, float size, int color) {
-		data.add(new BasicFX(x, y, z, ico, life, size, color));
+		this.addEffect(x, y, z, ico, life, size, color, false);
+	}
+
+	public void addEffect(double x, double y, double z, IIcon ico, int life, float size, int color, boolean rapidExpand) {
+		data.add(new BasicFX(x, y, z, ico, life, size, color, rapidExpand));
+	}
+
+	public void addEffectWithVelocity(double x, double y, double z, double vx, double vy, double vz, IIcon ico, int life, float size, int color, boolean rapidExpand) {
+		data.add(new MovingBasicFX(x, y, z, ico, life, size, color, rapidExpand, vx, vy, vz));
 	}
 
 	public void update() {
@@ -71,19 +79,21 @@ public class FXCollection {
 
 	private static class BasicFX {
 
-		private final double posX;
-		private final double posY;
-		private final double posZ;
+		protected double posX;
+		protected double posY;
+		protected double posZ;
 
 		private final int lifespan;
 		private final int renderColor;
 		private final float size;
 
+		private final boolean rapidExpand;
+
 		private final IIcon icon;
 
 		private int ticks;
 
-		private BasicFX(double x, double y, double z, IIcon ico, int life, float size, int color) {
+		private BasicFX(double x, double y, double z, IIcon ico, int life, float size, int color, boolean rapid) {
 			posX = x;
 			posY = y;
 			posZ = z;
@@ -91,6 +101,7 @@ public class FXCollection {
 			renderColor = color;
 			this.size = size;
 			icon = ico;
+			rapidExpand = rapid;
 		}
 
 		public boolean update() {
@@ -107,7 +118,7 @@ public class FXCollection {
 			float f3 = ActiveRenderInfo.rotationYZ;
 			float f4 = ActiveRenderInfo.rotationXY;
 
-			double fs = 0.1*size*Math.sin(Math.toRadians(180D*ticks/lifespan));
+			double fs = rapidExpand ? 0.1*size*(lifespan/(ticks+1) >= 12 ? (ticks+1)*12D/lifespan : 1-(ticks+1)/(double)lifespan) : 0.1*size*Math.sin(Math.toRadians(180D*ticks/lifespan));
 
 			float u = icon.getMinU();
 			float v = icon.getMinV();
@@ -119,6 +130,30 @@ public class FXCollection {
 			v5.addVertexWithUV(posX + f1 * fs + f3 * fs, posY + f5 * fs, posZ + f2 * fs + f4 * fs, u, v);
 			v5.addVertexWithUV(posX + f1 * fs - f3 * fs, posY - f5 * fs, posZ + f2 * fs - f4 * fs, u, dv);
 
+		}
+
+	}
+
+	private static class MovingBasicFX extends BasicFX {
+
+		private final double motionX;
+		private final double motionY;
+		private final double motionZ;
+
+		private MovingBasicFX(double x, double y, double z, IIcon ico, int life, float size, int color, boolean rapid, double vx, double vy, double vz) {
+			super(x, y, z, ico, life, size, color, rapid);
+
+			motionX = vx;
+			motionY = vy;
+			motionZ = vz;
+		}
+
+		@Override
+		public boolean update() {
+			posX += motionX;
+			posY += motionY;
+			posZ += motionZ;
+			return super.update();
 		}
 
 	}

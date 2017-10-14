@@ -82,12 +82,20 @@ public class WorldLocation {
 		return world != null ? world.getBlock(xCoord, yCoord, zCoord) : null;
 	}
 
+	public Block getBlock(World world) {
+		return world != null ? world.getBlock(xCoord, yCoord, zCoord) : null;
+	}
+
 	public boolean isEmpty() {
 		return this.getBlock() == Blocks.air;
 	}
 
 	public int getBlockMetadata() {
 		World world = this.getWorld();
+		return world != null ? world.getBlockMetadata(xCoord, yCoord, zCoord) : -1;
+	}
+
+	public int getBlockMetadata(World world) {
 		return world != null ? world.getBlockMetadata(xCoord, yCoord, zCoord) : -1;
 	}
 
@@ -305,6 +313,10 @@ public class WorldLocation {
 
 	public BlockKey getBlockKey() {
 		return new BlockKey(this.getBlock(), this.getBlockMetadata());
+	}
+
+	public BlockKey getBlockKey(World world) {
+		return new BlockKey(this.getBlock(world), this.getBlockMetadata(world));
 	}
 
 	public boolean isWithinDistOnAllCoords(WorldLocation loc, int radius) {

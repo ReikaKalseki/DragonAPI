@@ -13,6 +13,9 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import thaumcraft.api.IWarpingGear;
+import thaumcraft.api.aspects.Aspect;
+import thaumcraft.api.aspects.AspectList;
+import thaumcraft.api.aspects.IEssentiaContainerItem;
 import Reika.DragonAPI.ModList;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -39,6 +42,7 @@ public class ThaumItemHelper {
 		ELDRITCHEYE("ItemEldritchObject"),
 		BALANCED("ItemShard", 6),
 		PHIAL("ItemEssence", 0),
+		CRYSTALESSENCE("ItemCrystalEssence", 0),
 		NUGGETCLUSTER("ItemNugget", 0),
 		LOOTBAG1("ItemLootBag", 0),
 		LOOTBAG2("ItemLootBag", 1),
@@ -122,6 +126,12 @@ public class ThaumItemHelper {
 
 	public static boolean isVoidMetalTool(ItemStack is) {
 		return is != null && is.getItem().getClass().getName().startsWith("thaumcraft.common.items.equipment.ItemVoid");
+	}
+
+	public static ItemStack getCrystallizedEssentia(Aspect a) {
+		ItemStack is = ItemEntry.CRYSTALESSENCE.getItem();
+		((IEssentiaContainerItem)is.getItem()).setAspects(is, new AspectList().add(a, 1));
+		return is;
 	}
 
 }

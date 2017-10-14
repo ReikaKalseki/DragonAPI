@@ -282,6 +282,7 @@ public final class Coordinate implements Comparable<Coordinate> {
 	}
 
 	public Coordinate rotate90About(int ox, int oz, boolean left) {
+		/*
 		int dx = xCoord-ox;
 		int dz = zCoord-oz;
 		int x2 = xCoord;
@@ -294,8 +295,9 @@ public final class Coordinate implements Comparable<Coordinate> {
 			x2 += -dz;
 			z2 += dx;
 		}
+		 */
 		Vec3 vec = Vec3.createVectorHelper(xCoord-ox, yCoord, zCoord-oz);
-		vec = ReikaVectorHelper.rotateVector(vec, 0, 90, 0);
+		vec = ReikaVectorHelper.rotateVector(vec, 0, left ? -90 : 90, 0);
 		vec.xCoord += ox;
 		vec.zCoord += oz;
 		return new Coordinate(vec.xCoord, yCoord, vec.zCoord);//new Coordinate(x2, yCoord, z2);

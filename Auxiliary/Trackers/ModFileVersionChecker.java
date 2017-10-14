@@ -79,7 +79,7 @@ public class ModFileVersionChecker {
 			DragonAPICore.log("Player "+ep.getCommandSenderName()+" kicked due to "+msg);
 		}
 		else {
-			DragonAPICore.log("Player "+ep.getCommandSenderName()+" not kicked for hash mismatch; kick cancelled");
+			DragonAPICore.log("Player "+ep.getCommandSenderName()+" not kicked for "+mod+" hash mismatch; kick cancelled");
 		}
 	}
 

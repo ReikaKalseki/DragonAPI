@@ -677,6 +677,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static ArrayList<ItemStack> collateItemList(Collection<ItemStack> c) {
+		if (c.size() <= 1)
+			return new ArrayList(c);
 		ArrayList<ItemStack> li = new ArrayList();
 		HashMap<KeyedItemStack, Integer> vals = new HashMap();
 		for (ItemStack is : c) {

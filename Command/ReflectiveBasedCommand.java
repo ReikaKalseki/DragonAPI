@@ -80,6 +80,16 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		addSRGMapping(World.class, "getPlayerEntityByUUID", "func_152378_a");
 		addSRGMapping(EntityLivingBase.class, "getHealth", "func_110143_aJ");
 		addSRGMapping(EntityPlayer.class, "getCurrentEquippedItem", "func_71045_bC");
+		addSRGMapping(ItemStack.class, "getItem", "func_77973_b");
+		addSRGMapping(ItemStack.class, "getItemDamage", "func_77960_j");
+		addSRGMapping(TileEntity.class, "worldObj", "field_145850_b");
+		addSRGMapping(TileEntity.class, "xCoord", "field_145851_c");
+		addSRGMapping(TileEntity.class, "yCoord", "field_145848_d");
+		addSRGMapping(TileEntity.class, "zCoord", "field_145849_e");
+		addSRGMapping(Entity.class, "worldObj", "field_70170_p");
+		addSRGMapping(Entity.class, "posX", "field_70165_t");
+		addSRGMapping(Entity.class, "posY", "field_70163_u");
+		addSRGMapping(Entity.class, "posZ", "field_70161_v");
 
 		packageShortcuts.put("mcforge", "net.minecraftforge");
 		packageShortcuts.put("mcworld", "net.minecraft.world"); //TODO: not fully implemented

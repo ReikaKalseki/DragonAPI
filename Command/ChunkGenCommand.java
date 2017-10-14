@@ -42,7 +42,7 @@ public class ChunkGenCommand extends DragonCommandBase {
 
 	@Override
 	public String getCommandString() {
-		return "pregen";
+		return "dapipregen";
 	}
 
 	@Override

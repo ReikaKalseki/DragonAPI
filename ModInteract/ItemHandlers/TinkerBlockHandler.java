@@ -17,7 +17,11 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.MantlePulsarHandler;
+import Reika.DragonAPI.ModRegistry.ModWoodList;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public class TinkerBlockHandler extends ModHandlerBase {
 
@@ -31,6 +35,12 @@ public class TinkerBlockHandler extends ModHandlerBase {
 	public final Block clearPaneID;
 	public final Block searedBlockID;
 	private final Item materialID;
+
+	public final BlockKey slimeDirt;
+	public final BlockKey slimeGrass;
+	public final Block slimeWater;
+	public final Block congealedSlime;
+	public final Block slimeTallGrass;
 
 	public enum Materials {
 		SLIMECRYSTAL(1),
@@ -220,6 +230,12 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		searedBlockID = idseared;
 
 		materialID = idmaterial;
+
+		slimeDirt = new BlockKey(ReikaItemHelper.lookupBlock(this.getMod(), "CraftedSoil", 5));
+		slimeGrass = new BlockKey(ReikaItemHelper.lookupBlock(this.getMod(), "slime.grass", 5));
+		congealedSlime = GameRegistry.findBlock(this.getMod().modLabel, "slime.gel");
+		slimeWater = GameRegistry.findBlock(this.getMod().modLabel, "liquid.slime");
+		slimeTallGrass = GameRegistry.findBlock(this.getMod().modLabel, "slime.grass.tall");
 	}
 
 	public static enum Pulses {
@@ -265,6 +281,12 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		if (!this.initializedProperly())
 			return false;
 		return Block.getBlockFromItem(block.getItem()) == stoneOreID && block.getItemDamage() < 3;
+	}
+
+	public boolean isSlimeIslandBlock(Block b, int meta) {
+		if (slimeDirt.match(b, meta) || slimeGrass.match(b, meta) || b == slimeWater || b == slimeTallGrass || b == congealedSlime)
+			return true;
+		return ModWoodList.getModWood(b, meta) == ModWoodList.SLIME || ModWoodList.getModWoodFromLeaf(b, meta) == ModWoodList.SLIME;
 	}
 
 }

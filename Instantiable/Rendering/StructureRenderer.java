@@ -578,4 +578,10 @@ public class StructureRenderer {
 		}
 
 	}
+
+	public static interface StructureRenderingParticleSpawner {
+
+		public void tickFX();
+
+	}
 }

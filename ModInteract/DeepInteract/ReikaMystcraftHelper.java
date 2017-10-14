@@ -73,6 +73,9 @@ public class ReikaMystcraftHelper {
 	private static final Method getBook;
 	private static final Method getLink;
 
+	private static final Class biomeWrapper;
+	private static final Field parentBiome;
+
 	private static APIInstanceProvider apiProvider;
 	private static final int API_VERSION = 1;
 
@@ -615,6 +618,8 @@ public class ReikaMystcraftHelper {
 		Method tile = null;
 		Method book = null;
 		Method link = null;
+		Class biome = null;
+		Field base = null;
 
 		boolean load = true;
 
@@ -629,6 +634,9 @@ public class ReikaMystcraftHelper {
 				Class item = Class.forName("com.xcompwiz.mystcraft.item.ItemLinking");
 				link = item.getDeclaredMethod("getLinkInfo", ItemStack.class);
 				link.setAccessible(true);
+				biome = Class.forName("com.xcompwiz.mystcraft.world.biome.BiomeWrapperMyst");
+				base = biome.getDeclaredField("baseBiome");
+				base.setAccessible(true);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Error loading Mystcraft linkbook interfacing!");
@@ -644,6 +652,8 @@ public class ReikaMystcraftHelper {
 		getTile = tile;
 		getBook = book;
 		getLink = link;
+		biomeWrapper = biome;
+		parentBiome = base;
 	}
 
 	public static IAgeSymbol createIWorldGeneratorPage(IWorldGenerator gen, String[] poem, int instability) {
@@ -742,6 +752,19 @@ public class ReikaMystcraftHelper {
 	public static int getFlatWorldThickness(World world) {
 		AgeInterface a = getOrCreateInterface(world);
 		return a != null ? a.getGroundLevel() : world.provider.getAverageGroundLevel();
+	}
+
+	public static BiomeGenBase getMystParentBiome(BiomeGenBase b) {
+		if (b.getClass() != biomeWrapper) {
+			return b;
+		}
+		try {
+			return (BiomeGenBase)parentBiome.get(b);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return b;
+		}
 	}
 
 }

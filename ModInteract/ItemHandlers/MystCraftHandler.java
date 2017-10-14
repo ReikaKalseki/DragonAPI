@@ -32,6 +32,7 @@ public class MystCraftHandler extends ModHandlerBase {
 	public final Block crystalID;
 
 	public final Item folderID;
+	public final Item sealedBookID;
 
 	private MystCraftHandler() {
 		super();
@@ -40,6 +41,7 @@ public class MystCraftHandler extends ModHandlerBase {
 		Block idcrystal = null;
 
 		Item idfolder = null;
+		Item idnotebook = null;
 
 		if (this.hasMod()) {
 			/*
@@ -64,6 +66,7 @@ public class MystCraftHandler extends ModHandlerBase {
 			idcrystal = Block.getBlockFromName(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Blocks.crystal);
 
 			idfolder = (Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.folder);
+			idnotebook = (Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.booster);
 
 			ReikaJavaLibrary.initClass(ReikaMystcraftHelper.class);
 		}
@@ -75,6 +78,7 @@ public class MystCraftHandler extends ModHandlerBase {
 		portalID = idportal;
 		crystalID = idcrystal;
 		folderID = idfolder;
+		sealedBookID = idnotebook;
 	}
 
 	private Block getBlockInstance(String name) throws ModReflectionException {
@@ -105,7 +109,7 @@ public class MystCraftHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return decayID != null && portalID != null && crystalID != null;
+		return decayID != null && portalID != null && crystalID != null && sealedBookID != null && folderID != null;
 	}
 
 	@Override
