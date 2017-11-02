@@ -259,4 +259,13 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		return Math.toDegrees(Math.acos(v1.dotProduct(v2)/(v1.lengthVector()*v2.lengthVector())));
 	}
 
+	public static double getAngleDifference(double a1, double a2) {
+		double difference = a2-a1;
+		while (difference < -180)
+			difference += 360;
+		while (difference > 180)
+			difference -= 360;
+		return difference;
+	}
+
 }

@@ -44,6 +44,7 @@ import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLogoutEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.PlayerInteractEventClient;
 import Reika.DragonAPI.Interfaces.PacketHandler;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.DataPacket;
@@ -164,6 +165,7 @@ public class APIPacketHandler implements PacketHandler {
 			}
 		}
 		catch (IOException e) {
+			DragonAPICore.logError("Error when handling "+pack+" packet ["+packet+"]: "+e.toString());
 			e.printStackTrace();
 			return;
 		}
@@ -175,10 +177,33 @@ public class APIPacketHandler implements PacketHandler {
 					world.func_147479_m(x, y, z);
 					break;
 				case PARTICLE:
-					for (int i = 0; i < data[1]; i++) {
-						if (data[0] >= 0 && data[0] < ReikaParticleHelper.particleList.length) {
+				case PARTICLEWITHPOS:
+				case PARTICLEWITHPOSVEL:
+					if (data[0] >= 0 && data[0] < ReikaParticleHelper.particleList.length) {
+						double px;
+						double py;
+						double pz;
+						if (pack == PacketIDs.PARTICLE) {
+							px = x+rand.nextDouble();
+							py = y+rand.nextDouble();
+							pz = z+rand.nextDouble();
+						}
+						else {
+							px = ReikaJavaLibrary.buildDoubleFromInts(data[2], data[3]);
+							py = ReikaJavaLibrary.buildDoubleFromInts(data[4], data[5]);
+							pz = ReikaJavaLibrary.buildDoubleFromInts(data[6], data[7]);
+						}
+						double vx = 0;
+						double vy = 0;
+						double vz = 0;
+						if (pack == PacketIDs.PARTICLEWITHPOSVEL) {
+							vx = ReikaJavaLibrary.buildDoubleFromInts(data[8], data[9]);
+							vy = ReikaJavaLibrary.buildDoubleFromInts(data[10], data[11]);
+							vz = ReikaJavaLibrary.buildDoubleFromInts(data[12], data[13]);
+						}
+						for (int i = 0; i < data[1]; i++) {
 							ReikaParticleHelper p = ReikaParticleHelper.particleList[data[0]];
-							world.spawnParticle(p.name, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), 0, 0, 0);
+							world.spawnParticle(p.name, px, py, pz, vx, vy, vz);
 						}
 					}
 					break;
@@ -335,11 +360,22 @@ public class APIPacketHandler implements PacketHandler {
 					break;
 				case REDSTONECHANGE:
 					break;
+				case ENTITYVERIFY:
+					ReikaEntityHelper.performEntityVerification((EntityPlayerMP)ep, data[0], data[1], data[2]);
+					break;
+				case ENTITYVERIFYFAIL:
+					Entity e = world.getEntityByID(data[0]);
+					if (e != null) {
+						e.setDead();
+						DragonAPICore.log("Removing client-only entity "+e);
+					}
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
 		}
 		catch (Exception e) {
+			DragonAPICore.logError("Error when handling "+pack+" packet ["+packet+"]: "+e.toString());
 			e.printStackTrace();
 		}
 	}
@@ -409,6 +445,8 @@ public class APIPacketHandler implements PacketHandler {
 		BIOMECHANGE(),
 		BLOCKUPDATE(),
 		PARTICLE(),
+		PARTICLEWITHPOS(),
+		PARTICLEWITHPOSVEL(),
 		KEYUPDATE(),
 		TILESYNC(),
 		VTILESYNC(),
@@ -444,7 +482,9 @@ public class APIPacketHandler implements PacketHandler {
 		POPUP(),
 		GETLATENCY(),
 		SENDLATENCY(),
-		REDSTONECHANGE();
+		REDSTONECHANGE(),
+		ENTITYVERIFY(),
+		ENTITYVERIFYFAIL();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -454,14 +494,19 @@ public class APIPacketHandler implements PacketHandler {
 			return false;
 		}
 
+		/*
 		public boolean hasLocation() {
 			return this != KEYUPDATE && this != PLAYERKICK && this != CONFIGSYNC && this != CONFIGSYNCEND && this != FILEMATCH && this != MODULARLOGGER && this != POPUP;
-		}
+		}*/
 
 		public int getNumberDataInts() {
 			switch(this) {
 				case PARTICLE:
 					return 2;
+				case PARTICLEWITHPOS:
+					return 2+2*3;
+				case PARTICLEWITHPOSVEL:
+					return 2+2*6;
 				case NUMBERPARTICLE:
 					return 1;
 				case COLOREDPARTICLE:
@@ -498,6 +543,10 @@ public class APIPacketHandler implements PacketHandler {
 				case SENDLATENCY:
 					return 4;
 				case REDSTONECHANGE:
+					return 2;
+				case ENTITYVERIFY:
+					return 3;
+				case ENTITYVERIFYFAIL:
 					return 2;
 				default:
 					return 0;

@@ -94,12 +94,15 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 			}
 			return;
 		}
+		boolean removeTop = !args[0].startsWith("&");
+		if (!removeTop)
+			args[0] = args[0].substring(1);
 		Opcodes o = Opcodes.valueOf(args[0].toUpperCase(Locale.ENGLISH));
 		args = Arrays.copyOfRange(args, 1, args.length);
 		try {
-			o.call(this, ics, args, this.getStack(ics));
+			o.call(this, ics, args, this.getStack(ics), removeTop);
 			if (o != Opcodes.OUTPUT)
-				Opcodes.OUTPUT.call(this, ics, null, this.getStack(ics));
+				Opcodes.OUTPUT.call(this, ics, null, this.getStack(ics), false);
 		}
 		catch (ClassNotFoundException e) {
 			this.error(ics, "No such class: "+e);
@@ -128,7 +131,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 	protected void error(ICommandSender ics, String s) {
 		super.error(ics, s);
 		try {
-			Opcodes.FLUSH.call(this, ics, null, this.getStack(ics));
+			//Opcodes.FLUSH.call(this, ics, null, this.getStack(ics));
 		}
 		catch (Exception e) {
 			//never happens
@@ -167,7 +170,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 
 		private static final Opcodes[] list = values();
 
-		private void call(ReflectiveBasedCommand cmd, ICommandSender ics, String[] args, Stack s) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
+		private void call(ReflectiveBasedCommand cmd, ICommandSender ics, String[] args, Stack s, boolean removeTop) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
 			switch(this) {
 				case FLUSH:
 					s.clear();
@@ -178,7 +181,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					f.setAccessible(true);
 					if (s.isEmpty())
 						throw new IllegalArgumentException("Operand stack underflow");
-					s.push(f.get(s.pop()));
+					s.push(f.get(removeTop ? s.pop() : s.peek()));
 					break;
 				}
 				case SETFIELD: {
@@ -188,7 +191,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					if (s.size() < 2)
 						throw new IllegalArgumentException("Operand stack underflow");
 					Object arg = s.pop();
-					f.set(s.pop(), arg);
+					f.set(removeTop ? s.pop() : s.peek(), arg);
 					break;
 				}
 				case GETSTATIC: {
@@ -223,7 +226,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					for (int i = vals.length-1; i >= 0; i--) {
 						vals[i] = s.pop();
 					}
-					s.push(m.invoke(s.pop(), vals));
+					s.push(m.invoke(removeTop ? s.pop() : s.peek(), vals));
 					break;
 				}
 				case LDC:

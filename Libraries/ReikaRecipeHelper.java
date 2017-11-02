@@ -774,18 +774,20 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		else if (ire instanceof ShapedOreRecipe) {
 			ShapedOreRecipe so = (ShapedOreRecipe)ire;
 			Object[] objin = so.getInput();
-			int w = getOreRecipeWidth(so);
-			for (int i = 0; i < Math.min(3, w); i++) {
-				for (int k = 0; k < Math.min(3, getOreRecipeHeight(so)); k++) {
+			int w = Math.min(3, getOreRecipeWidth(so));
+			int h = Math.min(3, getOreRecipeHeight(so));
+			for (int i = 0; i < w; i++) {
+				for (int k = 0; k < h; k++) {
 					int idx = i*w+k;
 					int idx2 = i*3+k;
-					Object o = objin[i];
+					Object o = objin[idx];
 					if (o instanceof ItemStack)
-						out[i] = ((ItemStack)o).copy();
+						out[idx2] = ((ItemStack)o).copy();
 					else if (o instanceof List)
-						out[i] = new ArrayList((List)o);
+						out[idx2] = new ArrayList((List)o);
 				}
 			}
+			//ReikaJavaLibrary.pConsole(w+" & "+h+"  > "+Arrays.toString(so.getInput())+" & "+Arrays.toString(out));
 		}
 		else if (ire instanceof ShapelessRecipes) {
 			ShapelessRecipes sr = (ShapelessRecipes)ire;
@@ -897,7 +899,53 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			return "Shapeless Ore "+((ShapelessOreRecipe)r).getInput().toString()+" > "+r.getRecipeOutput();
 		}
 		else if (r instanceof CustomToStringRecipe) {
-			return r.toString();
+			return ((CustomToStringRecipe)r).toDisplayString();
+		}
+		else {
+			return "Unknown '"+r.getClass().getName()+"'"+" > "+r.getRecipeOutput();
+		}
+	}
+
+	/** Rather slower than toString, so only use this where necessary. */
+	public static String toDeterministicString(IRecipe r) {
+		if (r instanceof ShapedRecipes) {
+			ItemStack[] arr = Arrays.copyOf(((ShapedRecipes)r).recipeItems, ((ShapedRecipes)r).recipeItems.length);
+			//Arrays.sort(arr, ReikaItemHelper.comparator); DO NOT CHANGE RECIPE ORDER
+			return "Shaped "+Arrays.toString(arr)+" > "+r.getRecipeOutput();
+		}
+		else if (r instanceof ShapelessRecipes) {
+			ArrayList<ItemStack> li = new ArrayList(((ShapelessRecipes)r).recipeItems);
+			Collections.sort(li, ReikaItemHelper.comparator);
+			return "Shapeless "+li.toString()+" > "+r.getRecipeOutput();
+		}
+		else if (r instanceof ShapedOreRecipe) {
+			Object[] arr = Arrays.copyOf(((ShapedOreRecipe)r).getInput(), ((ShapedOreRecipe)r).getInput().length);
+			//Arrays.sort(arr, ReikaItemHelper.itemListComparator);
+			for (int i = 0; i < arr.length; i++) {
+				Object o = arr[i];
+				if (o instanceof List) {
+					o = new ArrayList((List)o);
+					Collections.sort((List)o, ReikaItemHelper.comparator);
+					arr[i] = o;
+				}
+			}
+			return "Shaped Ore "+Arrays.toString(arr)+" > "+r.getRecipeOutput();
+		}
+		else if (r instanceof ShapelessOreRecipe) {
+			ArrayList<Object> li = new ArrayList(((ShapelessOreRecipe)r).getInput());
+			Collections.sort(li, ReikaItemHelper.itemListComparator);
+			for (int i = 0; i < li.size(); i++) {
+				Object o = li.get(i);
+				if (o instanceof List) {
+					o = new ArrayList((List)o);
+					Collections.sort((List)o, ReikaItemHelper.comparator);
+					li.set(i, o);
+				}
+			}
+			return "Shapeless Ore "+li.toString()+" > "+r.getRecipeOutput();
+		}
+		else if (r instanceof CustomToStringRecipe) {
+			return ((CustomToStringRecipe)r).toDeterministicString();
 		}
 		else {
 			return "Unknown '"+r.getClass().getName()+"'"+" > "+r.getRecipeOutput();

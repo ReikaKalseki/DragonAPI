@@ -28,6 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -41,6 +42,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.Block.SemiTransparent;
+import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -71,7 +73,16 @@ public class BlockArray implements Iterable<Coordinate> {
 	protected static final Random rand = new Random();
 
 	public BlockArray() {
+		this(null);
+	}
+
+	public BlockArray(Collection<Coordinate> li) {
 		computer = new BlockArrayComputer(this);
+		if (li != null) {
+			for (Coordinate c : li) {
+				this.addBlockCoordinate(c.xCoord, c.yCoord, c.zCoord);
+			}
+		}
 	}
 
 	public BlockArray setWorld(World world) {
@@ -270,11 +281,11 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow */
-	public void recursiveAdd(World world, int x, int y, int z, Block id) {
+	public void recursiveAdd(IBlockAccess world, int x, int y, int z, Block id) {
 		this.recursiveAdd(world, x, y, z, x, y, z, id, 0, new HashMap());
 	}
 
-	private void recursiveAdd(World world, int x0, int y0, int z0, int x, int y, int z, Block id, int depth, HashMap<Coordinate, Integer> map) {
+	private void recursiveAdd(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, Block id, int depth, HashMap<Coordinate, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -312,11 +323,11 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow, metadata to follow */
-	public void recursiveAddWithMetadata(World world, int x, int y, int z, Block id, int meta) {
+	public void recursiveAddWithMetadata(IBlockAccess world, int x, int y, int z, Block id, int meta) {
 		this.recursiveAddWithMetadata(world, x, y, z, x, y, z, id, meta, 0, new HashMap());
 	}
 
-	private void recursiveAddWithMetadata(World world, int x0, int y0, int z0, int x, int y, int z, Block id, int meta, int depth, HashMap<Coordinate, Integer> map) {
+	private void recursiveAddWithMetadata(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, Block id, int meta, int depth, HashMap<Coordinate, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -356,11 +367,11 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	public void recursiveAddWithBounds(World world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void recursiveAddWithBounds(IBlockAccess world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2) {
 		this.recursiveAddWithBounds(world, x, y, z, x, y, z, id, x1, y1, z1, x2, y2, z2, 0);
 	}
 
-	private void recursiveAddWithBounds(World world, int x0, int y0, int z0, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+	private void recursiveAddWithBounds(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -399,11 +410,11 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	/** Like the ordinary recursive add but with a bounded volume; specifically excludes fluid source (meta == 0) blocks. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	public void recursiveAddWithBoundsNoFluidSource(World world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void recursiveAddWithBoundsNoFluidSource(IBlockAccess world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2) {
 		this.recursiveAddWithBoundsNoFluidSource(world, x, y, z, x, y, z, id, x1, y1, z1, x2, y2, z2, 0);
 	}
 
-	private void recursiveAddWithBoundsNoFluidSource(World world, int x0, int y0, int z0, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+	private void recursiveAddWithBoundsNoFluidSource(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -444,11 +455,11 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	public void recursiveAddWithBoundsRanged(World world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int r) {
+	public void recursiveAddWithBoundsRanged(IBlockAccess world, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int r) {
 		this.recursiveAddWithBoundsRanged(world, x, y, z, x, y, z, id, x1, y1, z1, x2, y2, z2, r, 0);
 	}
 
-	private void recursiveAddWithBoundsRanged(World world, int x0, int y0, int z0, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int r, int depth) {
+	private void recursiveAddWithBoundsRanged(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, Block id, int x1, int y1, int z1, int x2, int y2, int z2, int r, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -478,11 +489,11 @@ public class BlockArray implements Iterable<Coordinate> {
 		}
 	}
 
-	public void recursiveAddMultipleWithBounds(World world, int x, int y, int z, Set<BlockKey> ids, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void recursiveAddMultipleWithBounds(IBlockAccess world, int x, int y, int z, Set<BlockKey> ids, int x1, int y1, int z1, int x2, int y2, int z2) {
 		this.recursiveAddMultipleWithBounds(world, x, y, z, x, y, z, ids, x1, y1, z1, x2, y2, z2, 0, new HashMap());
 	}
 
-	private void recursiveAddMultipleWithBounds(World world, int x0, int y0, int z0, int x, int y, int z, Set<BlockKey> ids, int x1, int y1, int z1, int x2, int y2, int z2, int depth, HashMap<Coordinate, Integer> map) {
+	private void recursiveAddMultipleWithBounds(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, Set<BlockKey> ids, int x1, int y1, int z1, int x2, int y2, int z2, int depth, HashMap<Coordinate, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -528,13 +539,13 @@ public class BlockArray implements Iterable<Coordinate> {
 		}
 	}
 
-	public void recursiveMultiAddWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, Block... ids) {
+	public void recursiveMultiAddWithBounds(IBlockAccess world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, Block... ids) {
 		this.recursiveMultiAddWithBounds(world, x, y, z, x, y, z, x1, y1, z1, x2, y2, z2, 0, ids);
 	}
 
 	/** Like the ordinary recursive add but with a bounded volume and tolerance for multiple IDs. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	private void recursiveMultiAddWithBounds(World world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int depth, Block... ids) {
+	private void recursiveMultiAddWithBounds(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int depth, Block... ids) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -576,11 +587,11 @@ public class BlockArray implements Iterable<Coordinate> {
 		}
 	}
 
-	public void recursiveAddWithBoundsMetadata(World world, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void recursiveAddWithBoundsMetadata(IBlockAccess world, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
 		this.recursiveAddWithBoundsMetadata(world, x, y, z, x, y, z, id, meta, x1, y1, z1, x2, y2, z2, 0);
 	}
 
-	private void recursiveAddWithBoundsMetadata(World world, int x0, int y0, int z0, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+	private void recursiveAddWithBoundsMetadata(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -617,11 +628,11 @@ public class BlockArray implements Iterable<Coordinate> {
 		}
 	}
 
-	public void recursiveAddCallbackWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f) {
+	public void recursiveAddCallbackWithBounds(IBlockAccess world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f) {
 		this.recursiveAddCallbackWithBounds(world, x, y, z, x, y, z, x1, y1, z1, x2, y2, z2, f, 0);
 	}
 
-	private void recursiveAddCallbackWithBounds(World world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f, int depth) {
+	private void recursiveAddCallbackWithBounds(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -662,13 +673,13 @@ public class BlockArray implements Iterable<Coordinate> {
 		liquidMat = mat;
 	}
 
-	public void recursiveAddLiquidWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public void recursiveAddLiquidWithBounds(IBlockAccess world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2) {
 		this.recursiveAddLiquidWithBounds(world, x, y, z, x, y, z, x1, y1, z1, x2, y2, z2, 0);
 	}
 
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	private void recursiveAddLiquidWithBounds(World world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+	private void recursiveAddLiquidWithBounds(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -709,7 +720,7 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	/** Like the ordinary recursive add but with a spherical bounded volume. Args: World, x, y, z,
 	 * id to replace, origin x,y,z, max radius */
-	private void recursiveAddWithinSphere(World world, int x0, int y0, int z0, int x, int y, int z, Block id, int dx, int dy, int dz, double r, int depth) {
+	private void recursiveAddWithinSphere(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, Block id, int dx, int dy, int dz, double r, int depth) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -985,7 +996,7 @@ public class BlockArray implements Iterable<Coordinate> {
 	public final ArrayList<ItemStack> getAllDroppedItems(World world, int fortune, EntityPlayer ep) {
 		ArrayList<ItemStack> li = new ArrayList();
 		ArrayList<ItemStack> nbt = new ArrayList();
-		ItemHashMap<Integer> map = new ItemHashMap();
+		ItemHashMap<Integer> map = new ItemHashMap().enableNBT();
 		for (int i = 0; i < blocks.size(); i++) {
 			Coordinate c = this.getNthBlock(i);
 			int x = c.xCoord;
@@ -1174,6 +1185,8 @@ public class BlockArray implements Iterable<Coordinate> {
 	}
 
 	public void shaveToCube() {
+		if (this.isEmpty())
+			return;
 		boolean changed = false;
 		do {
 			int s1 = this.getSize();
@@ -1371,6 +1384,51 @@ public class BlockArray implements Iterable<Coordinate> {
 		for (Coordinate c : set) {
 			this.addKey(c);
 		}
+	}
+
+	public Collection<BlockArray> splitToRectangles() {
+		ArrayList<BlockArray> li = new ArrayList();
+		HashSet<Coordinate> locs = new HashSet(keys);
+		while (!locs.isEmpty()) {
+			ArrayList<Coordinate> locList = new ArrayList(locs);
+			int idx = rand.nextInt(locs.size());
+			Coordinate c = locList.remove(idx);
+			locs.remove(c);
+			ArrayList<Coordinate> block = new ArrayList();
+			block.add(c);
+			ArrayList<ForgeDirection> dirs = ReikaDirectionHelper.getRandomOrderedDirections(true);
+			while (!dirs.isEmpty()) {
+				ForgeDirection dir = dirs.remove(0);
+				int d = 1;
+				boolean flag = true;
+				while (flag) {
+					ArrayList<Coordinate> add = new ArrayList();
+					for (Coordinate in : block) {
+						Coordinate offset = in.offset(dir, d);
+						if (!block.contains(offset)) {
+							if (!locs.contains(offset)) {
+								//ReikaJavaLibrary.pConsole("Failed to expand "+block+" "+dir+" due to bounds @ "+offset);
+								flag = false;
+								break;
+							}
+							else {
+								add.add(offset);
+							}
+						}
+					}
+					if (flag) {
+						//ReikaJavaLibrary.pConsole("Adding "+add+" to "+block);
+						for (Coordinate in : add) {
+							block.add(in);
+							locs.remove(in);
+						}
+						//d++;
+					}
+				}
+			}
+			li.add(new BlockArray(block));
+		}
+		return li;
 	}
 
 	private static final Comparator<Coordinate> heightComparator = new HeightComparator(false);

@@ -146,8 +146,8 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	/** A complement to Java's built-in List-to-Array. Args: Array of any object (ints, strings, etc). */
-	public static ArrayList makeListFromArray(Object[] obj) {
-		ArrayList li = new ArrayList();
+	public static <E> ArrayList makeListFromArray(E[] obj) {
+		ArrayList<E> li = new ArrayList();
 		for (int i = 0; i < obj.length; i++) {
 			li.add(obj[i]);
 		}
@@ -162,14 +162,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return li;
 	}
 
-	public static ArrayList makeListFrom(Object obj) {
-		ArrayList li = new ArrayList();
+	public static <E> ArrayList<E> makeListFrom(E obj) {
+		ArrayList<E> li = new ArrayList();
 		li.add(obj);
 		return li;
 	}
 
-	public static ArrayList makeListFrom(Object... obj) {
-		ArrayList li = new ArrayList();
+	public static <E> ArrayList makeListFrom(E... obj) {
+		ArrayList<E> li = new ArrayList();
 		for (int i = 0; i < obj.length; i++) {
 			li.add(obj[i]);
 		}

@@ -21,6 +21,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Fertility;
@@ -300,6 +301,16 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	public final void addBreeding(String parent1, String parent2, int chance) {
 		IAlleleBeeSpecies p1 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.species"+parent1);
 		IAlleleBeeSpecies p2 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.species"+parent2);
+		if (p1 == null)
+			throw new MisuseException("Error breeding from "+parent1+": You cannot breed a bee from null!");
+		if (p2 == null)
+			throw new MisuseException("Error breeding from "+parent2+": You cannot breed a bee from null!");
+		this.addBreeding(p1, p2, chance);
+	}
+
+	public final void addBreeding(String parent1, ModList mod1, String parent2, ModList mod2, int chance) {
+		IAlleleBeeSpecies p1 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele(mod1.modLabel.toLowerCase(Locale.ENGLISH)+".species"+parent1);
+		IAlleleBeeSpecies p2 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele(mod2.modLabel.toLowerCase(Locale.ENGLISH)+".species"+parent2);
 		if (p1 == null)
 			throw new MisuseException("Error breeding from "+parent1+": You cannot breed a bee from null!");
 		if (p2 == null)

@@ -307,8 +307,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		else
 			npars = data.size()+4;
 
-		PacketTarget pt = new PacketTarget.RadiusTarget(te, radius);
-
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(npars*4); //4 bytes an int
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
@@ -342,6 +340,8 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		if (side == Side.SERVER) {
 			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
+
+			PacketTarget pt = new PacketTarget.RadiusTarget(te, radius);
 			pt.dispatch(pipe, pack);
 		}
 		else if (side == Side.CLIENT) {
@@ -456,7 +456,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
-	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, List<Integer> data) {
+	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, PacketTarget pt, List<Integer> data) {
 
 		int npars;
 		if (data == null)
@@ -495,7 +495,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 		if (!world.isRemote) {
 			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
-			pipe.sendToDimension(pack, world);
+			pt.dispatch(pipe, pack);
 		}
 		else if (world.isRemote) {
 			//PacketDispatcher.sendPacketToServer(packet);
@@ -607,8 +607,14 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		sendDataPacketToEntireServer(ch, id, ReikaJavaLibrary.makeIntListFromArray(data));
 	}
 
-	public static void sendDataPacket(String ch, int id, TileEntity te, int data) {
-		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
+	@SideOnly(Side.CLIENT)
+	public static void sendPacketToServer(String ch, int id, int... data) {
+		sendDataPacket(ch, id, Minecraft.getMinecraft().theWorld, 0, 0, 0, PacketTarget.server, ReikaJavaLibrary.makeIntListFromArray(data));
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void sendPacketToServer(String ch, int id, TileEntity te, int... data) {
+		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, PacketTarget.server, ReikaJavaLibrary.makeIntListFromArray(data));
 	}
 
 	public static void sendDataPacketWithRadius(String ch, int id, TileEntity te, int radius, int... data) {
@@ -619,39 +625,15 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		sendDataPacket(ch, id, pt, ReikaJavaLibrary.makeIntListFromArray(data));
 	}
 
-	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, int data) {
-		sendDataPacket(ch, id, world, x, y, z, ReikaJavaLibrary.makeListFrom(data));
+	public static void sendDataPacketWithRadius(String ch, int id, World world, int x, int y, int z, int radius, int... data) {
+		sendDataPacket(ch, id, world, x, y, z, new PacketTarget.RadiusTarget(world, x+0.5, y+0.5, z+0.5, radius), ReikaJavaLibrary.makeIntListFromArray(data));
 	}
 
-	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, int data1, int data2) {
-		sendDataPacket(ch, id, world, x, y, z, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2}));
-	}
-
-	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, int... data) {
-		sendDataPacket(ch, id, world, x, y, z, ReikaJavaLibrary.makeIntListFromArray(data));
+	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, PacketTarget pt, int... data) {
+		sendDataPacket(ch, id, world, x, y, z, pt, ReikaJavaLibrary.makeIntListFromArray(data));
 	}
 
 	public static void sendLongDataPacket(String ch, int id, TileEntity te, long data) {
-		sendLongDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
-	}
-
-	public static void sendDataPacket(String ch, int id, TileEntity te, int data1, int data2) {
-		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2}));
-	}
-
-	public static void sendDataPacket(String ch, int id, TileEntity te, int data1, int data2, int data3) {
-		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2, data3}));
-	}
-
-	public static void sendDataPacket(String ch, int id, TileEntity te, int data1, int data2, int data3, int data4) {
-		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFromArray(new Object[]{data1, data2, data3, data4}));
-	}
-
-	public static void sendDataPacket(String ch, int id, TileEntity te, int... data) {
-		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeIntListFromArray(data));
-	}
-
-	public static void sendDataPacket(String ch, int id, TileEntity te, long data) {
 		sendLongDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, ReikaJavaLibrary.makeListFrom(data));
 	}
 
@@ -926,6 +908,57 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			//PacketDispatcher.sendPacketToServer(packet);
 			//PacketDispatcher.sendPacketToAllPlayers(packet);
 			pipe.sendToPlayer(pack, ep);
+		}
+		else if (side == Side.CLIENT) {
+			// We are on the client side.
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllPlayers(packet);
+			pipe.sendToServer(pack);
+		}
+		else {
+			// We are on the Bukkit server.
+		}
+	}
+
+	public static void sendStringIntPacket(String ch, int id, TileEntity te, String sg, int... data) {
+		int length = data.length*4;
+		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
+		DataOutputStream outputStream = new DataOutputStream(bos);
+		try {
+			writeString(sg, outputStream);
+			outputStream.writeInt(id);
+			if (data != null) {
+				for (int i = 0; i < data.length; i++) {
+					outputStream.writeInt(data[i]);
+				}
+			}
+			outputStream.writeInt(te.xCoord);
+			outputStream.writeInt(te.yCoord);
+			outputStream.writeInt(te.zCoord);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			//throw new RuntimeException("String Packet for "+sg+" threw a packet exception!");
+		}
+
+		PacketPipeline pipe = pipelines.get(ch);
+		if (pipe == null) {
+			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
+
+		byte[] dat = bos.toByteArray();
+		DataPacket pack = new DataPacket();
+		pack.init(PacketTypes.STRINGINTLOC, pipe);
+		pack.setData(dat);
+
+		Side side = FMLCommonHandler.instance().getEffectiveSide();
+		if (side == Side.SERVER) {
+			// We are on the server side.
+			//PacketDispatcher.sendPacketToServer(packet);
+			//PacketDispatcher.sendPacketToAllPlayers(packet);
+			pipe.sendToAllAround(pack, te, 32);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.

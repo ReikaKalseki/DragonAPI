@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.AxisAlignedBB;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalLineSegment;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
@@ -135,10 +136,27 @@ public final class Perimeter {
 		return li;
 	}
 
-	//TODO
-	public ArrayList<AxisAlignedBB> getAreaAABBs() {
-		ArrayList<AxisAlignedBB> li = new ArrayList();
+	public Collection<AxisAlignedBB> getAreaAABBs() {
+		Collection<AxisAlignedBB> li = new ArrayList();
+		BlockArray b = this.asBlockArray();
+		for (BlockArray b2 : b.splitToRectangles()) {
+			li.add(b2.asAABB());
+		}
 		return li;
+	}
+
+	public BlockArray asBlockArray() {
+		BlockArray ret = new BlockArray();
+		for (int x = minX; x <= maxX; x++) {
+			for (int y = minY; y <= maxY; y++) {
+				for (int z = minZ; z <= maxZ; z++) {
+					if (this.isBlockInside(x, y, z)) {
+						ret.addBlockCoordinate(x, y, z);
+					}
+				}
+			}
+		}
+		return ret;
 	}
 
 	public AxisAlignedBB getCircumscribedBox() {
@@ -154,6 +172,10 @@ public final class Perimeter {
 				c.add(p);
 		}
 		return c;
+	}
+
+	public boolean isBlockInside(int x, int y, int z) {
+		return this.isPointInside(x+0.5, y+0.5, z+0.5);
 	}
 
 	public boolean isPointInside(double x, double y, double z) {

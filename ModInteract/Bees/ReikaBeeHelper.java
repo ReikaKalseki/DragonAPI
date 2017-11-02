@@ -9,16 +9,22 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Bees;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+import Reika.ChromatiCraft.ModInterface.Bees.ApiaryAcceleration;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.BeeGene;
@@ -38,7 +44,9 @@ import forestry.api.apiculture.IAlleleBeeSpecies;
 import forestry.api.apiculture.IBee;
 import forestry.api.apiculture.IBeeGenome;
 import forestry.api.apiculture.IBeeHousing;
+import forestry.api.apiculture.IBeeModifier;
 import forestry.api.apiculture.IBeeRoot;
+import forestry.api.apiculture.IBeekeepingLogic;
 import forestry.api.arboriculture.EnumGermlingType;
 import forestry.api.arboriculture.EnumTreeChromosome;
 import forestry.api.arboriculture.IAlleleFruit;
@@ -66,9 +74,26 @@ import forestry.api.lepidopterology.EnumButterflyChromosome;
 import forestry.api.lepidopterology.EnumFlutterType;
 import forestry.api.lepidopterology.IButterflyGenome;
 import forestry.api.lepidopterology.IButterflyRoot;
+import forestry.api.multiblock.IAlvearyController;
 
 
 public class ReikaBeeHelper {
+
+	private static Field beeHealth;
+
+	static {
+		if (ModList.FORESTRY.isLoaded()) {
+			try {
+				beeHealth = Class.forName("forestry.core.genetics.IndividualLiving").getDeclaredField("health");
+				beeHealth.setAccessible(true);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Could not find forestry bee life parameter!");
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
+				e.printStackTrace();
+			}
+		}
+	}
 
 	public static final ItemStack getBeeItem(String bee, EnumBeeType type) {
 		return getBeeItem(ReikaWorldHelper.getBasicReferenceWorld(), bee, type);
@@ -111,6 +136,50 @@ public class ReikaBeeHelper {
 				((IBee)bee).age(world, modifier);
 				saveBee(bee, is);
 			}
+		}
+	}
+
+	public static void rejuvenateBee(IAlvearyController iac, ItemStack is) {
+		if (is != null) {
+			IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
+			if (bee instanceof IBee) {
+				int max = ((IBee)bee).getMaxHealth();
+				setBeeHealth(iac, (IBee)bee, max);
+				saveBee(bee, is);
+			}
+		}
+	}
+
+	private static void setBeeHealth(IAlvearyController iac, IBee bee, int health) {
+		try {
+			beeHealth.set(bee, health);
+			ApiaryAcceleration.instance.updateBeeHealthBar(iac, bee);
+			ApiaryAcceleration.instance.resetProgress(iac.getBeekeepingLogic());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void rejuvenateBee(TileEntity te, IBeekeepingLogic lgc, ItemStack is) {
+		if (is != null) {
+			IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
+			if (bee instanceof IBee) {
+				int max = ((IBee)bee).getMaxHealth();
+				setBeeHealth(te, lgc, (IBee)bee, max);
+				saveBee(bee, is);
+			}
+		}
+	}
+
+	private static void setBeeHealth(TileEntity te, IBeekeepingLogic lgc, IBee bee, int health) {
+		try {
+			beeHealth.set(bee, health);
+			ApiaryAcceleration.instance.updateBeeHealthBar(te, lgc, bee);
+			ApiaryAcceleration.instance.resetProgress(lgc);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -558,6 +627,17 @@ public class ReikaBeeHelper {
 
 	public static boolean isTree(ItemStack is) {
 		return is.getItem() == ForestryHandler.ItemEntry.SAPLING.getItem();
+	}
+
+	public static int[] getFinalTerritory(IBeeGenome ibg, IBeeHousing ibh) {
+		float f = 1;
+		for (IBeeModifier ibm : ibh.getBeeModifiers()) {
+			f *= ibm.getTerritoryModifier(ibg, f);
+		}
+		int[] ret = ibg.getTerritory();
+		for (int i = 0; i < ret.length; i++)
+			ret[i] *= f;
+		return ret;
 	}
 
 

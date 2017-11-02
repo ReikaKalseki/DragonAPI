@@ -82,6 +82,7 @@ import Reika.DragonAPI.Base.ModHandlerBase.VersionIgnore;
 import Reika.DragonAPI.Command.DragonClientCommand;
 import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Command.GetLatencyCommand;
+import Reika.DragonAPI.Command.ToggleBlockChangePacketCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Extras.ReplacementCraftingHandler;
@@ -555,8 +556,10 @@ public class DragonAPIInit extends DragonAPIMod {
 			MinetweakerHooks.instance.registerAll();
 		}
 
-		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+			ClientCommandHandler.instance.registerCommand(new ToggleBlockChangePacketCommand());
 			ClientCommandHandler.instance.registerCommand(new GetLatencyCommand());
+		}
 
 		this.finishTiming();
 	}

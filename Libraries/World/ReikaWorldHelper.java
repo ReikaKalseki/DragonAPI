@@ -86,6 +86,7 @@ import Reika.DragonAPI.Instantiable.Data.Collections.TimedSet;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldChunk;
+import Reika.DragonAPI.Instantiable.Event.IceFreezeEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
@@ -511,9 +512,16 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	/** Applies temperature effects to the environment. Args: World, x, y, z, temperature */
 	public static void temperatureEnvironment(World world, int x, int y, int z, int temperature, TemperatureCallback callback) {
 		if (temperature < 0) {
-			ForgeDirection side = checkForAdjMaterial(world, x, y, z, Material.water);
-			if (side != null)
-				changeAdjBlock(world, x, y, z, side, Blocks.ice, 0);
+			for (int i = 0; i < 6; i++) {
+				ForgeDirection side = ForgeDirection.VALID_DIRECTIONS[i];
+				int dx = x+side.offsetX;
+				int dy = y+side.offsetX;
+				int dz = z+side.offsetX;
+				if (FluidRegistry.lookupFluidForBlock(world.getBlock(dx, dy, dz)) == FluidRegistry.WATER) {
+					if (IceFreezeEvent.fire_IgnoreVanilla(world, dx, dy, dz))
+						changeAdjBlock(world, x, y, z, side, Blocks.ice, 0);
+				}
+			}
 		}
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
@@ -1327,7 +1335,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 		if (!world.isRemote) {
 			int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
-			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, packet, world, x, 0, z, biome.biomeID);
+			ReikaPacketHelper.sendDataPacketWithRadius(DragonAPIInit.packetChannel, packet, world, x, 0, z, 1024, biome.biomeID);
 		}
 	}
 
@@ -1360,7 +1368,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 		if (!world.isRemote) {
 			int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
-			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, packet, world, x, 0, z, biome.biomeID);
+			ReikaPacketHelper.sendDataPacketWithRadius(DragonAPIInit.packetChannel, packet, world, x, 0, z, 1024, biome.biomeID);
 		}
 
 		Block fillerID = from.fillerBlock;
@@ -1838,7 +1846,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		dropBlockAt(world, x, y, z, ep);
 		world.setBlock(x, y, z, Blocks.air);
 		if (FX) {
-			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BREAKPARTICLES.ordinal(), world, x, y, z, Block.getIdFromBlock(b), meta);
+			ReikaPacketHelper.sendDataPacketWithRadius(DragonAPIInit.packetChannel, PacketIDs.BREAKPARTICLES.ordinal(), world, x, y, z, 128, Block.getIdFromBlock(b), meta);
 			ReikaSoundHelper.playBreakSound(world, x, y, z, b);
 		}
 	}
@@ -2260,5 +2268,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 		return false;
+	}
+
+	public static boolean isPositionEmpty(World world, double dx, double dy, double dz) {
+		int x = MathHelper.floor_double(dx);
+		int y = MathHelper.floor_double(dy);
+		int z = MathHelper.floor_double(dz);
+		Block b = world.getBlock(x, y, z);
+		return b.isAir(world, x, y, z);
 	}
 }

@@ -21,6 +21,7 @@ public enum PacketTypes {
 	RAW(),
 	NBT(),
 	STRINGINT(),
+	STRINGINTLOC(),
 	UUID(),
 	PREFIXED(),
 	POS(),

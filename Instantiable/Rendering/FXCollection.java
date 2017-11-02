@@ -56,6 +56,8 @@ public class FXCollection {
 	}
 
 	public void render(boolean additive) {
+		if (data.isEmpty())
+			return;
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		ReikaTextureHelper.bindTerrainTexture();
 		GL11.glEnable(GL11.GL_BLEND);

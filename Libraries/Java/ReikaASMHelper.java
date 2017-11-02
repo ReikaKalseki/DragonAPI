@@ -683,7 +683,6 @@ public class ReikaASMHelper {
 		return null;
 	}
 
-	/** Currently broken */
 	public static InsnList copyInsnList(InsnList li, LabelNode... pairs) {
 		Map<LabelNode, LabelNode> map = new HashMap();
 		for (int i = 0; i < pairs.length; i += 2) {
@@ -692,7 +691,6 @@ public class ReikaASMHelper {
 		return copyInsnList(li, map);
 	}
 
-	/** Currently broken */
 	public static InsnList copyInsnList(InsnList li, Map<LabelNode, LabelNode> labels) {
 		InsnList copy = new InsnList();
 		for (int i = 0; i < li.size(); i++) {
@@ -702,12 +700,10 @@ public class ReikaASMHelper {
 		return copy;
 	}
 
-	/** Currently broken */
 	public static AbstractInsnNode copyInstruction(AbstractInsnNode ain) {
 		return copyInstruction(ain, new HashMap());
 	}
 
-	/** Currently broken */
 	public static AbstractInsnNode copyInstruction(AbstractInsnNode ain, Map<LabelNode, LabelNode> labels) {
 		return ain.clone(labels);
 	}

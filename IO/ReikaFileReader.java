@@ -11,6 +11,7 @@ package Reika.DragonAPI.IO;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -21,15 +22,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.jar.JarFile;
 
@@ -41,6 +46,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReikaFileReader extends DragonAPICore {
 
@@ -349,6 +355,43 @@ public class ReikaFileReader extends DragonAPICore {
 
 		private HashType(String s) {
 			tag = s;
+		}
+
+		public String hash(Object o) {
+			return this.hashBytes(this.getBytes(o));
+		}
+
+		private String hashBytes(byte[] bytes) {
+			try {
+				MessageDigest messageDigest = MessageDigest.getInstance(tag);
+				messageDigest.update(bytes);
+				return new String(messageDigest.digest(), StandardCharsets.UTF_8);
+			}
+			catch (NoSuchAlgorithmException e) {
+				return null; //never happens
+			}
+		}
+
+		private byte[] getBytes(Object o) {
+			if (o instanceof byte[])
+				return (byte[])o;
+			if (o instanceof Integer)
+				return ReikaJavaLibrary.splitIntToHexChars((int)o);
+			if (o instanceof String)
+				return ((String)o).getBytes();
+			if (o instanceof Serializable) {
+				try {
+					ByteArrayOutputStream buf = new ByteArrayOutputStream();
+					ObjectOutputStream oo = new ObjectOutputStream(buf);
+					oo.writeObject(o);
+					return buf.toByteArray();
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			DragonAPICore.logError("Cannot serialize an object "+o+" of type "+o.getClass()+"!");
+			return new byte[0]; //unserializable
 		}
 	}
 

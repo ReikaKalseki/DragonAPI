@@ -44,6 +44,15 @@ public class EntityRenderLoop extends Patcher {
 
 		min = ReikaASMHelper.getNthMethodCall(cn, m, "net/minecraft/client/renderer/RenderGlobal", func, sig, 2);
 		m.instructions.insert(min, ReikaASMHelper.copyInsnList(li));
+
+		/*
+		min = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/client/renderer/culling/Frustrum", FMLForgePlugin.RUNTIME_DEOBF ? "func_78547_a" : "setPosition", "(DDD)V");
+		li = new InsnList();
+		int var = ((VarInsnNode)ReikaASMHelper.getLastOpcodeBefore(m.instructions, m.instructions.indexOf(min), Opcodes.ALOAD)).var;
+		li.add(new VarInsnNode(Opcodes.ALOAD, var));
+		li.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Reika/DragonAPI/Libraries/IO/ReikaRenderHelper", "renderFrustrum", "Lnet/minecraft/client/renderer/culling/ICamera;"));
+		m.instructions.insert(min, li);
+		 */
 	}
 
 }

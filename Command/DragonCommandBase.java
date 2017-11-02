@@ -11,6 +11,7 @@ package Reika.DragonAPI.Command;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
@@ -34,6 +35,8 @@ public abstract class DragonCommandBase extends CommandBase {
 	protected static final void sendChatToSender(ICommandSender ics, String s) {
 		if (ics instanceof EntityPlayerMP)
 			ReikaChatHelper.sendChatToPlayer(getCommandSenderAsPlayer(ics), s);
+		else if (ics instanceof EntityPlayer)
+			ReikaChatHelper.sendChatToPlayer((EntityPlayer)ics, s);
 		else
 			ReikaJavaLibrary.pConsole(s);
 	}

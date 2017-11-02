@@ -60,7 +60,6 @@ import net.minecraft.entity.monster.EntitySnowman;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
@@ -96,16 +95,22 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.DummyTeleporter;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Interfaces.ComparableAI;
 import Reika.DragonAPI.Interfaces.Entity.CustomProjectile;
+import Reika.DragonAPI.Interfaces.Entity.EtherealEntity;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Interfaces.Item.UnbreakableArmor;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
@@ -114,6 +119,8 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile;
 import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 
@@ -121,6 +128,13 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		@Override
 		public boolean isEntityApplicable(Entity e) {
 			return e instanceof EntityLivingBase && (e instanceof EntityPlayer || isHostile((EntityLivingBase)e));
+		}
+	};
+
+	public static final IEntitySelector playerSelector = new IEntitySelector() {
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			return e instanceof EntityPlayer;
 		}
 	};
 
@@ -266,6 +280,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	}
 
 	private static HashMap<Class, Integer> mobColorArray = new HashMap();
+	private static HashMap<Class, Boolean> hostilityMap = new HashMap();
 
 	public static boolean tameMobTargeting;
 
@@ -336,6 +351,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	/** Returns true if the mob is a hostile one. Args: EntityLivingBase mob */
 	public static boolean isHostile(EntityLivingBase mob) {
+		/*
 		if (mob instanceof TameHostile)
 			return false;
 		if (mob instanceof EntityMob)
@@ -357,12 +373,20 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return true;
 		if (n.contains("pech"))
 			return true;
-		if (n.contains("botania") && n.contains("doppleganger"))
-			return true;
-		return false;
+		return false;*/
+		return isHostile(mob.getClass());
 	}
 
-	public static boolean isHostile(Class<? extends EntityLiving> mob) {
+	public static boolean isHostile(Class<? extends EntityLivingBase> mob) {
+		Boolean ret = hostilityMap.get(mob);
+		if (ret == null) {
+			ret = calcHostility(mob);
+			hostilityMap.put(mob, ret);
+		}
+		return ret.booleanValue();
+	}
+
+	private static boolean calcHostility(Class<? extends EntityLivingBase> mob) {
 		if (TameHostile.class.isAssignableFrom(mob))
 			return false;
 		if (EntityMob.class.isAssignableFrom(mob))
@@ -377,9 +401,12 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return true;
 		if (EntityWither.class.isAssignableFrom(mob))
 			return true;
-		if (mob.getSimpleName().toLowerCase(Locale.ENGLISH).contains("wisp"))
+		String n = mob.getClass().getName().toLowerCase(Locale.ENGLISH);
+		if (n.contains("wisp"))
 			return true;
-		if (mob.getSimpleName().toLowerCase(Locale.ENGLISH).contains("pech"))
+		if (n.contains("pech"))
+			return true;
+		if (n.contains("botania") && n.contains("doppleganger"))
 			return true;
 		return false;
 	}
@@ -1360,6 +1387,67 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	public static void chargeCreeper(EntityCreeper e) {
 		e.getDataWatcher().updateObject(17, (byte)1);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static void verifyClientEntity(Entity e) {
+		//ReikaJavaLibrary.pConsole("Verifying existence of "+e+" on side "+FMLCommonHandler.instance().getEffectiveSide());
+		int id = e.getEntityId();
+		int dim = e.worldObj.provider.dimensionId;
+		int cl = e.getClass().getName().hashCode();
+		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.ENTITYVERIFY.ordinal(), PacketTarget.server, id, dim, cl);
+	}
+
+	public static void performEntityVerification(EntityPlayerMP ep, int entityID, int dim, int classHash) {
+		//ReikaJavaLibrary.pConsole("Verifying existence of "+entityID+" on side "+FMLCommonHandler.instance().getEffectiveSide());
+		World world = DimensionManager.getWorld(dim);
+		if (world != null) {
+			Entity e = world.getEntityByID(entityID);
+			if (e != null) {
+				if (e.getClass().getName().hashCode() == classHash) {
+					//ReikaJavaLibrary.pConsole("Verified existence of "+e+" on side "+FMLCommonHandler.instance().getEffectiveSide());
+					return;
+				}
+			}
+		}
+		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.ENTITYVERIFYFAIL.ordinal(), ep, entityID, dim);
+		//ReikaJavaLibrary.pConsole("Verified NON-existence of "+entityID+" on side "+FMLCommonHandler.instance().getEffectiveSide());
+	}
+
+	public static boolean isLookingAt(EntityLivingBase e, Entity tg) {
+		return isLookingAt(e, tg.posX, tg.posY+tg.height/2, tg.posZ);
+	}
+
+	public static boolean isLookingAt(EntityLivingBase e, double x, double y, double z) {
+		double dx = x-e.posX;
+		double dy = y-e.posY;
+		double dz = z-e.posZ;
+
+		float yaw = e.rotationYawHead%360;
+		float pitch = e.rotationPitch+90;
+		if (yaw < 0)
+			yaw += 360;
+
+		double dl = ReikaMathLibrary.py3d(dx, 0, dz);
+		double arel = -Math.toDegrees(Math.atan2(dx, dz));
+		double prel = 90-Math.toDegrees(Math.atan2(dy, dl));
+		if (arel < 0)
+			arel += 360;
+
+		double phi = arel-yaw;
+		double theta = prel-pitch;
+		return Math.abs(phi) < 50 && Math.abs(theta) < 35;
+	}
+
+	public static boolean isSolidEntity(Entity e) {
+		if (e instanceof EtherealEntity)
+			return false;
+		String name = e.getClass().getSimpleName();
+		if (name.equalsIgnoreCase("EntityTFMobileFirefly"))
+			return false;
+		if (name.equalsIgnoreCase("EntityWisp"))
+			return false;
+		return true;
 	}
 
 }

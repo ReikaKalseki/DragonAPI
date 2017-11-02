@@ -12,12 +12,9 @@ package Reika.DragonAPI.ASM.Patchers.Hooks.Event.World;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
@@ -40,6 +37,7 @@ public class SetBlock extends Patcher {
 			if (ain.getOpcode() == Opcodes.IRETURN) {
 				if (ain.getPrevious().getOpcode() == Opcodes.ICONST_1) {
 					AbstractInsnNode loc = ain.getPrevious();
+					/*
 					m.instructions.insertBefore(loc, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
 					m.instructions.insertBefore(loc, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent$Post"));
 					m.instructions.insertBefore(loc, new InsnNode(Opcodes.DUP));
@@ -50,6 +48,12 @@ public class SetBlock extends Patcher {
 					m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent$Post", "<init>", "(Lnet/minecraft/world/chunk/Chunk;III)V", false));
 					m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 					m.instructions.insertBefore(loc, new InsnNode(Opcodes.POP));
+					 */
+					m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 1));
+					m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 2));
+					m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 3));
+					m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent$Post", "fire", "(Lnet/minecraft/world/chunk/Chunk;III)V", false));
 					break;
 				}
 			}
@@ -72,6 +76,7 @@ public class SetBlock extends Patcher {
 			if (ain.getOpcode() == Opcodes.IRETURN) {
 				if (ain.getPrevious().getOpcode() == Opcodes.ICONST_1) {
 					AbstractInsnNode loc = ain.getPrevious();
+					/*
 					m.instructions.insertBefore(loc, new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/common/MinecraftForge", "EVENT_BUS", "Lcpw/mods/fml/common/eventhandler/EventBus;"));
 					m.instructions.insertBefore(loc, new TypeInsnNode(Opcodes.NEW, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent$Post"));
 					m.instructions.insertBefore(loc, new InsnNode(Opcodes.DUP));
@@ -82,6 +87,12 @@ public class SetBlock extends Patcher {
 					m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent$Post", "<init>", "(Lnet/minecraft/world/chunk/Chunk;III)V", false));
 					m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 					m.instructions.insertBefore(loc, new InsnNode(Opcodes.POP));
+					 */
+					m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ALOAD, 0));
+					m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 1));
+					m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 2));
+					m.instructions.insertBefore(loc, new VarInsnNode(Opcodes.ILOAD, 3));
+					m.instructions.insertBefore(loc, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/SetBlockEvent$Post", "fire", "(Lnet/minecraft/world/chunk/Chunk;III)V", false));
 					break;
 				}
 			}

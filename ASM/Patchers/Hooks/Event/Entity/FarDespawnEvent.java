@@ -28,6 +28,7 @@ public class FarDespawnEvent extends Patcher {
 	@Override
 	protected void apply(ClassNode cn) {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70692_ba", "canDespawn", "()Z");
+		m.instructions.clear();
 		m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
 		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/LivingFarDespawnEvent", "fire", "(Lnet/minecraft/entity/EntityLiving;)Z", false));
 		m.instructions.add(new InsnNode(Opcodes.IRETURN));

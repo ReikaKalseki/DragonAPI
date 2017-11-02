@@ -18,12 +18,14 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -71,6 +73,10 @@ public class WorldLocation {
 
 	public WorldLocation(World world, Coordinate loc) {
 		this(world, loc.xCoord, loc.yCoord, loc.zCoord);
+	}
+
+	public WorldLocation(int dim, Coordinate loc) {
+		this(dim, loc.xCoord, loc.yCoord, loc.zCoord);
 	}
 
 	public WorldLocation(World world, MovingObjectPosition hit) {
@@ -276,8 +282,20 @@ public class WorldLocation {
 		return this.isWithinSquare(c, d, d, d);
 	}
 
+	public boolean isWithinSquare(World world, int x, int y, int z, int d) {
+		return this.isWithinSquare(world, x, y, z, d, d, d);
+	}
+
+	public boolean isWithinSquare(World world, int x, int y, int z, int dx, int dy, int dz) {
+		return this.isWithinSquare(world.provider.dimensionId, x, y, z, dx, dy, dz);
+	}
+
 	public boolean isWithinSquare(WorldLocation c, int dx, int dy, int dz) {
-		return c.dimensionID == dimensionID && Math.abs(c.xCoord-xCoord) <= dx && Math.abs(c.yCoord-yCoord) <= dy && Math.abs(c.zCoord-zCoord) <= dz;
+		return this.isWithinSquare(c.dimensionID, c.xCoord, c.yCoord, c.zCoord, dx, dy, dz);
+	}
+
+	private boolean isWithinSquare(int dim, int x, int y, int z, int dx, int dy, int dz) {
+		return dim == dimensionID && Math.abs(x-xCoord) <= dx && Math.abs(y-yCoord) <= dy && Math.abs(z-zCoord) <= dz;
 	}
 
 	public DoubleWorldLocation decimalOffset(double dx, double dy, double dz) {
@@ -329,6 +347,10 @@ public class WorldLocation {
 
 	public WorldLocation to2D() {
 		return this.move(0, -yCoord, 0);
+	}
+
+	public AxisAlignedBB asAABB() {
+		return ReikaAABBHelper.getBlockAABB(xCoord, yCoord, zCoord);
 	}
 
 }

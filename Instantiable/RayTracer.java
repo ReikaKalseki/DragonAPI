@@ -22,6 +22,7 @@ import Reika.ChromatiCraft.Registry.ChromaBlocks;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
@@ -38,8 +39,10 @@ public final class RayTracer {
 	private double targetX;
 	private double targetY;
 	private double targetZ;
+
 	public boolean softBlocksOnly = false;
 	public boolean allowFluids = true;
+	public boolean uniDirectionalChecks = false;
 
 	private final ArrayList<BlockKey> forbiddenBlocks = new ArrayList();
 	private final ArrayList<BlockKey> allowedBlocks = new ArrayList();
@@ -94,6 +97,11 @@ public final class RayTracer {
 	public boolean isClearLineOfSight(World world) {
 		Vec3 vec1 = Vec3.createVectorHelper(originX, originY, originZ);
 		Vec3 vec2 = Vec3.createVectorHelper(targetX, targetY, targetZ);
+		if (uniDirectionalChecks && new DecimalPosition(vec1).hashCode() < new DecimalPosition(vec2).hashCode()) {
+			Vec3 vec = vec1;
+			vec1 = vec2;
+			vec2 = vec;
+		}
 		Vec3 ray = ReikaVectorHelper.subtract(vec1, vec2);
 		double dx = vec2.xCoord-vec1.xCoord;
 		double dy = vec2.yCoord-vec1.yCoord;

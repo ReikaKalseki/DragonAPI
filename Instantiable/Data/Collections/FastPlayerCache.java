@@ -73,4 +73,8 @@ public class FastPlayerCache {
 		}
 	}
 
+	public void clear() {
+		data.clear();
+	}
+
 }

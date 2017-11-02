@@ -15,13 +15,21 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import com.google.common.collect.Sets;
+
 /** A multi-key HashMap. */
 public class PluralMap<V> extends HashMap {
 
 	public final int keySize;
+	private boolean bidi = false;
 
 	public PluralMap(int size) {
 		keySize = size;
+	}
+
+	public PluralMap<V> setBidirectional() {
+		this.bidi = true;
+		return this;
 	}
 
 	public V put(V value, Object... key) {
@@ -42,14 +50,14 @@ public class PluralMap<V> extends HashMap {
 		return super.containsKey(this.toList(key));
 	}
 
-	private List<Object> toList(Object[] key) {
+	private Collection<Object> toList(Object[] key) {
 		/*
 		List<Object> li = new ArrayList();
 		for (int i = 0; i < this.keySize; i++) {
 			li.add(key[i]);
 		}
 		 */
-		return Arrays.asList(key);//li;
+		return bidi ? Sets.newHashSet(key) : Arrays.asList(key);//li;
 	}
 
 	public V remove(Object... key) {

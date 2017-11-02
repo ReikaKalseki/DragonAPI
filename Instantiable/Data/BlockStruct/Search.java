@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
@@ -60,12 +61,12 @@ public class Search {
 		return result;
 	}
 
-	public static Search getPath(World world, int x, int y, int z, TerminationCondition t, PropagationCondition c) {
+	public static LinkedList<Coordinate> getPath(World world, int x, int y, int z, TerminationCondition t, PropagationCondition c) {
 		Search s = new Search(x, y, z);
 		while (!s.tick(world, c, t)) {
 
 		}
-		return s.result.isEmpty() ? null : s;
+		return s.result.isEmpty() ? null : s.result;
 	}
 
 	private static class SearchHead {
@@ -94,9 +95,24 @@ public class Search {
 
 	}
 
+	public static final class LocationTerminus implements TerminationCondition {
+
+		public final Coordinate target;
+
+		public LocationTerminus(Coordinate c) {
+			target = c;
+		}
+
+		@Override
+		public boolean isValidTerminus(World world, int x, int y, int z) {
+			return target.equals(x, y, z);
+		}
+
+	}
+
 	public static interface PropagationCondition {
 
-		public boolean isValidLocation(World world, int x, int y, int z);
+		public boolean isValidLocation(IBlockAccess world, int x, int y, int z);
 
 	}
 
@@ -109,7 +125,7 @@ public class Search {
 		}
 
 		@Override
-		public boolean isValidLocation(World world, int x, int y, int z) {
+		public boolean isValidLocation(IBlockAccess world, int x, int y, int z) {
 			return world.getBlock(x, y, z).isAir(world, x, y, z);
 		}
 

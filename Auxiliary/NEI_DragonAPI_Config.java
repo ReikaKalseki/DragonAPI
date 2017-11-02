@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.ModInteract.TooltipOccluder;
 import codechicken.nei.api.API;
 import codechicken.nei.api.IConfigureNEI;
@@ -32,7 +33,7 @@ public class NEI_DragonAPI_Config implements IConfigureNEI {
 	}
 
 	public static void hideBlock(Block block) {
-		hideItem(new ItemStack(block));
+		hideItem(new ItemStack(block, 1, OreDictionary.WILDCARD_VALUE));
 	}
 
 	public static void hideItems(Item... item) {
@@ -41,7 +42,7 @@ public class NEI_DragonAPI_Config implements IConfigureNEI {
 	}
 
 	public static void hideItem(Item item) {
-		hideItem(new ItemStack(item));
+		hideItem(new ItemStack(item, 1, OreDictionary.WILDCARD_VALUE));
 	}
 
 	public static void hideItem(ItemStack item) {

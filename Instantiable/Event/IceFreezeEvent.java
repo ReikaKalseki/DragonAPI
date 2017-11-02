@@ -41,4 +41,10 @@ public class IceFreezeEvent extends PositionEvent {
 		}
 	}
 
+	public static boolean fire_IgnoreVanilla(World world, int x, int y, int z) {
+		IceFreezeEvent evt = new IceFreezeEvent(world, x, y, z, false);
+		MinecraftForge.EVENT_BUS.post(evt);
+		return evt.getResult() != Result.DENY;
+	}
+
 }

@@ -32,6 +32,7 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent.UpdateFlags;
+import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerationCache;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -361,6 +362,18 @@ public final class Coordinate implements Comparable<Coordinate> {
 			return val;
 		val = Integer.compare(zCoord, o.zCoord);
 		return val;
+	}
+
+	public void setBlock(ChunkSplicedGenerationCache world, Block b) {
+		world.setBlock(xCoord, yCoord, zCoord, b);
+	}
+
+	public void setBlock(ChunkSplicedGenerationCache world, Block b, int meta) {
+		world.setBlock(xCoord, yCoord, zCoord, b, meta);
+	}
+
+	public boolean isChunkLoaded(World world) {
+		return world.checkChunksExist(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
 	}
 
 }

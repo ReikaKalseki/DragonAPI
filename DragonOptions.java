@@ -39,7 +39,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	ADMINPERMBYPASS("Admins Bypass Permissions", true),
 	SOUNDHASHMAP("Use HashMap for Sound Categories - Only use if necessary", false),
 	FILEHASH("Compare mod file hashes between client and server", true),
-	APRIL("Enable Vernal Amusement Behavior", true),
+	APRIL("Enable Temporally Dependent Amusement Behavior", true),
 	NOALPHATEST("Disable Alpha Clipping in WorldRenderer", true),
 	PARTICLELIMIT("Particle Limit (Vanilla = 4000)", 4000),
 	DEBUGKEY("Debug Overlay Key (LWJGL ID)", 0x0F), //Keyboard.KEY_TAB

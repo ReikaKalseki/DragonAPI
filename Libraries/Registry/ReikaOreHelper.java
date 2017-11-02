@@ -248,4 +248,8 @@ public enum ReikaOreHelper implements OreType {
 		return enumNames.get(name);
 	}
 
+	public static boolean isGregOre(Block b) {
+		return Block.blockRegistry.getNameForObject(b).startsWith("gt.blockores");
+	}
+
 }

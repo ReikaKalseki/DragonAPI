@@ -112,7 +112,7 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 			this.updateSpeed();
 		}
 
-		if (motionX == 0 && motionY == 0 && motionZ == 0 && ticksExisted > 20) {
+		if (this.dieOnNoVelocity() && (motionX == 0 && motionY == 0 && motionZ == 0) && ticksExisted > 20) {
 			this.setDead();
 			this.onDeath();
 			return;
@@ -165,6 +165,10 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 		}
 
 		this.onTick();
+	}
+
+	protected boolean dieOnNoVelocity() {
+		return true;
 	}
 
 	protected boolean needsSpeedUpdates() {
@@ -255,6 +259,8 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 	public void writeSpawnData(ByteBuf data) {
 		if (spawnLocation != null)
 			spawnLocation.writeToBuf(data);
+		else
+			new Coordinate(0, 0, 0).writeToBuf(data);
 	}
 
 	@Override

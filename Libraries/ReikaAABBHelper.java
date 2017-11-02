@@ -266,9 +266,9 @@ public final class ReikaAABBHelper extends DragonAPICore {
 	}
 
 	public static AxisAlignedBB scaleAABB(AxisAlignedBB box, double sx, double sy, double sz) {
-		double dx = sx*(box.maxX-box.minX);
-		double dy = sy*(box.maxY-box.minY);
-		double dz = sz*(box.maxZ-box.minZ);
+		double dx = (sx-1)*(box.maxX-box.minX);
+		double dy = (sy-1)*(box.maxY-box.minY);
+		double dz = (sz-1)*(box.maxZ-box.minZ);
 		return box.expand(dx, dy, dz);
 	}
 

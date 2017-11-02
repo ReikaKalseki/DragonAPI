@@ -14,6 +14,7 @@ import java.util.List;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
@@ -30,6 +31,7 @@ import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerRegisterEvent;
@@ -47,15 +49,19 @@ import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Exception.WTFException;
+import Reika.DragonAPI.Extras.ChangePacketRenderer;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
 import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
+import Reika.DragonAPI.Instantiable.Event.ProfileEvent.ProfileEventWatcher;
 import Reika.DragonAPI.Instantiable.Event.XPUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
+import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderingLoopEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
 import Reika.DragonAPI.Interfaces.TileEntity.PlayerBreakHook;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
@@ -67,6 +73,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaChunkHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event.Result;
@@ -75,14 +82,40 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class DragonAPIEventWatcher {
+public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
 	public static final DragonAPIEventWatcher instance = new DragonAPIEventWatcher();
 
 	private long IDMsgCooldown = 0;
 
 	private DragonAPIEventWatcher() {
+		//ProfileEvent.registerHandler("blockentities", this);
+	}
 
+	public void onCall(String tag) {
+
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void renderUpdateHalos(EntityRenderingLoopEvent evt) {
+		if (ChangePacketRenderer.isActive && evt.renderPass == 1) {
+			ChangePacketRenderer.instance.render();
+		}
+	}
+
+	@SubscribeEvent
+	public void unloadMonster(WorldEvent.Unload evt) {
+		for (Entity e : ((List<Entity>)evt.world.loadedEntityList)) {
+			if (e instanceof DestroyOnUnload) {
+				((DestroyOnUnload)e).destroy();
+			}
+		}
+	}
+
+	@SubscribeEvent
+	public void unloadChunkLightnings(ChunkEvent.Unload evt) {
+		ReikaChunkHelper.clearUnloadableEntities(evt.getChunk());
 	}
 
 	@SubscribeEvent

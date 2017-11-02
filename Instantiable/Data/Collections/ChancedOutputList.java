@@ -21,7 +21,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class ChancedOutputList {
 
-	private final ItemHashMap<Float> data = new ItemHashMap();
+	private final ItemHashMap<Float> data = new ItemHashMap().enableNBT();
 
 	private boolean modifiable = true;
 	private final boolean allowOverflow;

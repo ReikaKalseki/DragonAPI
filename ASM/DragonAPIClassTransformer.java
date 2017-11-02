@@ -15,9 +15,11 @@ import java.util.Collection;
 
 import net.minecraft.item.Item;
 import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
+import Reika.DragonAPI.Auxiliary.WorldGenInterceptionRegistry;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
@@ -31,6 +33,20 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 	private static int bukkitFlags;
 	private static boolean nullItemPrintout = false;
 	private static boolean nullItemCrash = false;
+
+	public static boolean doLightUpdate(World world, int x, int y, int z) {
+		if (WorldGenInterceptionRegistry.skipLighting)
+			return false;
+
+		boolean flag = false;
+
+		if (!world.provider.hasNoSky) {
+			flag |= world.updateLightByType(EnumSkyBlock.Sky, x, y, z);
+		}
+		flag |= world.updateLightByType(EnumSkyBlock.Block, x, y, z);
+
+		return flag;
+	}
 
 	public static boolean updateSetBlockLighting(int x, int y, int z, World world, int flags) {
 		if ((flags & 8) == 0) {

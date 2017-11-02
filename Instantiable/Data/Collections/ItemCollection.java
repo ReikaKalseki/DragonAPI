@@ -26,10 +26,10 @@ import Reika.DragonAPI.ModRegistry.InterfaceCache;
 
 public class ItemCollection {
 
-	private final ItemHashMap<Collection<InventorySlot>> data = new ItemHashMap();
+	private final ItemHashMap<Collection<InventorySlot>> data = new ItemHashMap().enableNBT();
 	private final Collection<IInventory> inventories = new HashSet();
 
-	private final ItemHashMap<Collection<IDeepStorageUnit>> dsus = new ItemHashMap();
+	private final ItemHashMap<Collection<IDeepStorageUnit>> dsus = new ItemHashMap().enableNBT();
 
 	public ItemCollection() {
 

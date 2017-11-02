@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.IO;
 import java.awt.Color;
 
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 
 public class ReikaColorAPI {
 
@@ -223,5 +224,9 @@ public class ReikaColorAPI {
 	/** Alpha is 0-255, not 0-1! */
 	public static int getColorWithAlpha(int color, float alpha) {
 		return (color & 0xffffff) | (((int)alpha) << 24);
+	}
+
+	public static int fromVec3(Vec3 vec) {
+		return RGBtoHex((int)(vec.xCoord*255), (int)(vec.yCoord*255), (int)(vec.zCoord*255));
 	}
 }

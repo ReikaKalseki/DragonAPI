@@ -180,4 +180,12 @@ public class ReikaFluidHelper {
 		return c;
 	}
 
+	public static ItemStack getFluidStackAsItem(FluidStack fs) {
+		Fluid f = fs.getFluid();
+		if (f.getBlock() != null)
+			return new ItemStack(f.getBlock());
+		ArrayList<ItemStack> li = getAllContainersFor(f);
+		return li.isEmpty() ? null : li.get(0);
+	}
+
 }

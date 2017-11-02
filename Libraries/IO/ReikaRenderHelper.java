@@ -22,6 +22,8 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.culling.Frustrum;
+import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.shader.TesselatorVertexState;
@@ -60,6 +62,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 public final class ReikaRenderHelper extends DragonAPICore {
 
 	private static final RenderBlocks rb = new RenderBlocks();
+
+	private static boolean entityLighting;
+	private static boolean generalLighting;
 
 	public static enum RenderDistance {
 		FAR(),
@@ -149,7 +154,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
-	public static void renderTube(double x1, double y1, double z1, double x2, double y2, double z2, int c1, int c2, double r1, double r2) {
+	public static void renderTube(double x1, double y1, double z1, double x2, double y2, double z2, int c1, int c2, double r1, double r2, int sides) {
 
 		Tessellator v5 = Tessellator.instance;
 
@@ -169,8 +174,6 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		double ang2 = -Math.atan2(f7, dy) * 180 / Math.PI-90;
 		GL11.glRotated(ang1, 0, 1, 0);
 		GL11.glRotated(ang2, 1, 0, 0);
-
-		int sides = 16;
 
 		v5.startDrawing(GL11.GL_TRIANGLE_STRIP);
 		v5.setBrightness(240);
@@ -213,6 +216,23 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+	}
+
+	public static void pushTESRLightingState() {
+		OpenGlHelper.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+		entityLighting = GL11.glGetBoolean(GL11.GL_TEXTURE_2D);
+		OpenGlHelper.setActiveTexture(OpenGlHelper.defaultTexUnit);
+		generalLighting = GL11.glGetBoolean(GL11.GL_LIGHTING);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		if (entityLighting)
+			disableEntityLighting();
+	}
+
+	public static void popTESRLightingState() {
+		if (entityLighting)
+			enableEntityLighting();
+		if (generalLighting)
+			GL11.glEnable(GL11.GL_LIGHTING);
 	}
 
 	/** Prepare for drawing primitive geometry by disabling all lighting and textures. Args: Is alpha going to be used */
@@ -1213,6 +1233,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	private static int frame = -1;
 	private static float ptick = -1;
+	public static ICamera renderFrustrum = new Frustrum();
 
 	public static class RenderTick implements TickHandler {
 

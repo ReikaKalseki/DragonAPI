@@ -24,8 +24,19 @@ public class ChunkSplicedGenerationCache {
 
 	private final HashMap<ChunkCoordIntPair, HashMap<Coordinate, BlockPlace>> data = new HashMap();
 
+	private boolean isWrapping = false;
+	private int wrapDistanceX;
+	private int wrapDistanceZ;
+
 	public ChunkSplicedGenerationCache() {
 
+	}
+
+	public ChunkSplicedGenerationCache setWrapping(int distX, int distZ) {
+		isWrapping = true;
+		wrapDistanceX = distX >> 4;
+		wrapDistanceZ = distZ >> 4;
+		return this;
 	}
 
 	public void setBlock(int x, int y, int z, Block b) {
@@ -50,6 +61,9 @@ public class ChunkSplicedGenerationCache {
 
 	public void place(int x, int y, int z, BlockPlace sb) {
 		ChunkCoordIntPair key = this.getKey(x, z);
+		if (isWrapping) {
+			key = this.wrap(key);
+		}
 		HashMap<Coordinate, BlockPlace> map = data.get(key);
 		if (map == null) {
 			map = new HashMap();
@@ -58,6 +72,10 @@ public class ChunkSplicedGenerationCache {
 		x = this.modAndAlign(x);
 		z = this.modAndAlign(z);
 		map.put(new Coordinate(x, y, z), sb);
+	}
+
+	private ChunkCoordIntPair wrap(ChunkCoordIntPair key) {
+		return new ChunkCoordIntPair((key.chunkXPos+wrapDistanceX)%wrapDistanceX, (key.chunkZPos+wrapDistanceZ)%wrapDistanceZ);
 	}
 
 	public static int modAndAlign(int c) {

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.IO;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
@@ -147,12 +148,15 @@ public class CustomMusic implements ISound {
 				audioLine.start();
 				this.playInputStream(audioInputStream, audioLine);
 			}
+
+			call.onFinishedMusicTrack();
 		}
 
 		private AudioInputStream verifyInputStream() {
 			AudioInputStream audioInputStream = null;
 			try {
-				audioInputStream = AudioSystem.getAudioInputStream(DirectResourceManager.getInstance().getResource(res).getInputStream());
+				InputStream in = DirectResourceManager.getInstance().getResource(res).getInputStream();
+				audioInputStream = AudioSystem.getAudioInputStream(in);
 			}
 			catch (UnsupportedAudioFileException e) {
 				e.printStackTrace();
@@ -195,7 +199,6 @@ public class CustomMusic implements ISound {
 						audioLine.write(abData, 0, nBytesRead);
 					}
 				}
-				call.onFinishedMusicTrack();
 			}
 			catch (IOException e) {
 				e.printStackTrace();

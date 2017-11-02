@@ -119,6 +119,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	private final SyncPacket syncTag = new SyncPacket();
 
 	private long lastTickCall = -1;
+	private boolean isNaturalTick = true;
 
 	/** For mapmakers */
 	private boolean unharvestable = false;
@@ -291,9 +292,10 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		}
 	}
 
+	/** Can be called from the client to request a sync from the server */
 	public final void syncAllData(boolean fullNBT) {
 		if (worldObj.isRemote) {
-			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.TILESYNC.ordinal(), this, fullNBT ? 1 : 0);
+			ReikaPacketHelper.sendDataPacketWithRadius(DragonAPIInit.packetChannel, PacketIDs.TILESYNC.ordinal(), this, 512, fullNBT ? 1 : 0);
 		}
 		else {
 			worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
@@ -484,16 +486,16 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	@Override
 	public final void updateEntity() {
 		long time = worldObj.getTotalWorldTime();
-		boolean same = time == lastTickCall;
+		isNaturalTick = time != lastTickCall;
 
-		if (same && !this.allowTickAcceleration())
+		if (!isNaturalTick && !this.allowTickAcceleration())
 			return;
 
 		lastTickCall = time;
 
 		if (this.shouldRunUpdateCode()) {
 			try {
-				if (!same)
+				if (isNaturalTick)
 					this.updateTileEntity();
 				this.updateEntity(worldObj, xCoord, yCoord, zCoord, this.getBlockMetadata());
 			}
@@ -514,7 +516,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			}
 		}
 
-		if (!same) {
+		if (isNaturalTick) {
 			if (this.getTicksExisted() < 20 && this.getTicksExisted()%4 == 0)
 				this.syncAllData(true);
 			//packetTimer.update();
@@ -543,6 +545,10 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			ticksExisted++;
 			tileAge++;
 		}
+	}
+
+	protected boolean isTickingNaturally() {
+		return isNaturalTick;
 	}
 
 	public final void triggerBlockUpdate() {

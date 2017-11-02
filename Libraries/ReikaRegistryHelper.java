@@ -369,15 +369,17 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	public static void registerModEntities(Object mod, EntityEnum[] list) {
 		for (int i = 0; i < list.length; i++) {
 			EntityEnum e = list[i];
-			boolean upd = e.sendsVelocityUpdates();
-			int dist = e.getTrackingDistance();
-			EntityCollection ec = getNextCollectionFor(mod);
-			int id = ec.maxID;
-			EntityRegistry.registerModEntity(e.getObjectClass(), e.getUnlocalizedName(), id, mod, dist, upd ? 20 : 1, upd);
-			if (e.hasSpawnEgg()) {
-				//EntityList.entityEggs.put(id, new EntityEggInfo(id, e.eggColor1(), e.eggColor2()));
+			if (!e.isDummiedOut()) {
+				boolean upd = e.sendsVelocityUpdates();
+				int dist = e.getTrackingDistance();
+				EntityCollection ec = getNextCollectionFor(mod);
+				int id = ec.maxID;
+				EntityRegistry.registerModEntity(e.getObjectClass(), e.getUnlocalizedName(), id, mod, dist, upd ? 20 : 1, upd);
+				if (e.hasSpawnEgg()) {
+					//EntityList.entityEggs.put(id, new EntityEggInfo(id, e.eggColor1(), e.eggColor2()));
+				}
+				ec.addEntry(e);
 			}
-			ec.addEntry(e);
 		}
 	}
 

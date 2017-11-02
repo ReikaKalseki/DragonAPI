@@ -89,7 +89,7 @@ public class MENetwork {
 	}
 
 	public ItemHashMap<Long> getMEContents() {
-		ItemHashMap<Long> cache = new ItemHashMap();
+		ItemHashMap<Long> cache = new ItemHashMap().enableNBT();
 		ItemList items = new ItemList();
 		for (IMEInventoryHandler ime : itemCache) {
 			items = (ItemList)ime.getAvailableItems(items);

@@ -173,7 +173,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final ItemStack chiseledQuartz = new ItemStack(Blocks.quartz_block, 1, 1);
 	public static final ItemStack quartzPillar = new ItemStack(Blocks.quartz_block, 1, 2);
 
-	public static final ItemComparator comparator = new ItemComparator();
+	public static final Comparator<ItemStack> comparator = new ItemComparator();
+	public static final Comparator<Object> itemListComparator = new ItemListComparator();
 
 	private static final HashMap<Fluid, ItemStack> fluidContainerData = new HashMap();
 	private static final HashMap<Item, Double> itemMass = new HashMap();
@@ -451,43 +452,6 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 	public static void sortItems(List<ItemStack> li) {
 		Collections.sort(li, comparator);
-	}
-
-	private static class ItemComparator implements Comparator<ItemStack> {
-
-		@Override
-		public int compare(ItemStack o1, ItemStack o2) {
-			if (o1.getItem() == o2.getItem()) {
-				if (o1.getItemDamage() == o2.getItemDamage()) {
-					if (o1.stackSize == o2.stackSize) {
-						if (o1.stackTagCompound == o2.stackTagCompound || (o1.stackTagCompound != null && o1.stackTagCompound.equals(o2.stackTagCompound))) {
-							return 0;
-						}
-						else {
-							if (o1.stackTagCompound == null && o2.stackTagCompound != null) {
-								return -1;
-							}
-							else if (o2.stackTagCompound == null && o1.stackTagCompound != null) {
-								return 1;
-							}
-							else {
-								return ReikaNBTHelper.compareNBTTags(o1.stackTagCompound, o2.stackTagCompound);
-							}
-						}
-					}
-					else {
-						return o1.stackSize-o2.stackSize;
-					}
-				}
-				else {
-					return o1.getItemDamage()-o2.getItemDamage();
-				}
-			}
-			else {
-				return Item.getIdFromItem(o1.getItem())-Item.getIdFromItem(o2.getItem());
-			}
-		}
-
 	}
 
 	public static boolean isItemAddedByMod(Item i, String modID) {
@@ -803,5 +767,119 @@ public final class ReikaItemHelper extends DragonAPICore {
 		if (ore == null)
 			ore = ModOreList.getByEnumName(name);
 		return ore;
+	}
+
+	/** For formatting like "tile.TFPlant/3,4,8-11,13,14" */
+	public static Collection<ItemStack> parseMultiRangedMeta(ModList mod, String s) {
+		ArrayList<ItemStack> li = new ArrayList();
+		String[] parts = s.split("/");
+		String item = parts[0];
+		if (parts.length > 1) {
+			ArrayList<Integer> metas = new ArrayList();
+			String[] parts2 = parts[1].split(",");
+			for (int i = 0; i < parts2.length; i++) {
+				String part = parts2[i];
+				if (part.contains("-")) {
+					String[] parts3 = part.split("-");
+					int low = Integer.parseInt(parts3[0]);
+					int high = Integer.parseInt(parts3[1]);
+					for (int v = low; v <= high; v++)
+						metas.add(v);
+				}
+				else {
+					metas.add(Integer.parseInt(part));
+				}
+			}
+			for (int meta : metas) {
+				li.add(ReikaItemHelper.lookupItem(mod, item, meta));
+			}
+		}
+		else {
+			li.add(ReikaItemHelper.lookupItem(mod, item, 0));
+		}
+		return li;
+	}
+
+	public static boolean isOreNugget(ItemStack is) {
+		for (String s : getOreNames(is))
+			if (s.startsWith("nugget"))
+				return true;
+		return false;
+	}
+
+	private static class ItemComparator implements Comparator<ItemStack> {
+
+		@Override
+		public int compare(ItemStack o1, ItemStack o2) {
+			if (o1.getItem() == o2.getItem()) {
+				if (o1.getItemDamage() == o2.getItemDamage()) {
+					if (o1.stackSize == o2.stackSize) {
+						if (o1.stackTagCompound == o2.stackTagCompound || (o1.stackTagCompound != null && o1.stackTagCompound.equals(o2.stackTagCompound))) {
+							return 0;
+						}
+						else {
+							if (o1.stackTagCompound == null && o2.stackTagCompound != null) {
+								return -1;
+							}
+							else if (o2.stackTagCompound == null && o1.stackTagCompound != null) {
+								return 1;
+							}
+							else {
+								return ReikaNBTHelper.compareNBTTags(o1.stackTagCompound, o2.stackTagCompound);
+							}
+						}
+					}
+					else {
+						return o1.stackSize-o2.stackSize;
+					}
+				}
+				else {
+					return o1.getItemDamage()-o2.getItemDamage();
+				}
+			}
+			else {
+				return Item.getIdFromItem(o1.getItem())-Item.getIdFromItem(o2.getItem());
+			}
+		}
+
+	}
+
+	/** Suitable for either raw ItemStacks or lists thereof, like what is found inside an OreRecipe. */
+	private static class ItemListComparator implements Comparator<Object> {
+
+		@Override
+		public int compare(Object o1, Object o2) {
+			if (o1 instanceof ItemStack) {
+				if (o2 instanceof ItemStack) {
+					return comparator.compare((ItemStack)o1, (ItemStack)o2);
+				}
+				else {
+					return Integer.MIN_VALUE;
+				}
+			}
+			else if (o2 instanceof ItemStack) {
+				return Integer.MAX_VALUE;
+			}
+			List<ItemStack> l1 = (List<ItemStack>)o1;
+			List<ItemStack> l2 = (List<ItemStack>)o2;
+			int fast = Integer.compare(l1.size(), l2.size());
+			if (fast != 0)
+				return fast;
+			ArrayList<ItemStack> li1 = new ArrayList(l1);
+			ArrayList<ItemStack> li2 = new ArrayList(l2);
+			if (li1.size() > 1) {
+				Collections.sort(li1, comparator);
+				Collections.sort(li2, comparator);
+			}
+			for (int i = 0; i < li1.size(); i++) { //must be same size
+				ItemStack is1 = li1.get(i);
+				ItemStack is2 = li2.get(i);
+				int get = comparator.compare(is1, is2);
+				if (get != 0)
+					return get;
+			}
+			return 0;
+		}
+
 	}
 }

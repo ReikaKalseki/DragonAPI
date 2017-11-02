@@ -11,8 +11,11 @@ package Reika.DragonAPI.Exception;
 
 import net.minecraftforge.classloading.FMLForgePlugin;
 
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
@@ -38,7 +41,7 @@ public abstract class ASMException extends RuntimeException {
 	private abstract static class NoSuchInstructionASMException extends ASMException {
 
 		private final ClassNode owner;
-		private final MethodNode method;
+		protected final MethodNode method;
 		protected final String memberOwner;
 
 		private NoSuchInstructionASMException(ClassNode cn, MethodNode m, String own) {
@@ -77,6 +80,24 @@ public abstract class ASMException extends RuntimeException {
 			sb.append("Could not find an instruction for a method call to "+memberOwner+"'s "+callName+" "+callDesc+":\n");
 			if (callInt > 0)
 				sb.append("Was looking for call #"+callInt+" to that method call.\n");
+			sb.append("Found method calls:\n");
+			for (int i = 0; i < method.instructions.size(); i++) {
+				AbstractInsnNode ain = method.instructions.get(i);
+				if (ain instanceof MethodInsnNode) {
+					MethodInsnNode min = (MethodInsnNode)ain;
+					String s = ReikaASMHelper.clearString(min).replace("\n", "");
+					if (min.owner.equals(memberOwner)) {
+						s = s+" * Owner match";
+					}
+					if (min.name.equals(callName)) {
+						s = s+" * Name match";
+					}
+					if (min.desc.equals(callDesc)) {
+						s = s+" * Desc match";
+					}
+					sb.append(s+"\n");
+				}
+			}
 			return sb.toString();
 		}
 
@@ -85,11 +106,13 @@ public abstract class ASMException extends RuntimeException {
 	public static class NoSuchASMFieldInstructionException extends NoSuchInstructionASMException {
 
 		private final String callName;
+		//private final String callDesc;
 		private final int callInt;
 
 		public NoSuchASMFieldInstructionException(ClassNode cn, MethodNode m, String own, String name, int n) {
 			super(cn, m, own);
 			callName = name;
+			//callDesc = desc;
 			callInt = n;
 		}
 
@@ -100,6 +123,24 @@ public abstract class ASMException extends RuntimeException {
 			sb.append("Could not find an instruction for a field call to "+memberOwner+"'s "+callName+":\n");
 			if (callInt > 0)
 				sb.append("Was looking for call #"+callInt+" to that field call.\n");
+			sb.append("Found field calls:\n");
+			for (int i = 0; i < method.instructions.size(); i++) {
+				AbstractInsnNode ain = method.instructions.get(i);
+				if (ain instanceof FieldInsnNode) {
+					FieldInsnNode min = (FieldInsnNode)ain;
+					String s = ReikaASMHelper.clearString(min);
+					if (min.owner.equals(memberOwner)) {
+						s = s+" * Owner match";
+					}
+					if (min.name.equals(callName)) {
+						s = s+" * Name match";
+					}
+					//if (min.desc.equals(callDesc)) {
+					//	s = s+" * Desc match";
+					//}
+					sb.append(s);
+				}
+			}
 			return sb.toString();
 		}
 

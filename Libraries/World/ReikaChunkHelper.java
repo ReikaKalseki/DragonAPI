@@ -29,6 +29,7 @@ import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderServer;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper.ClassEntitySelector;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -268,6 +269,17 @@ public final class ReikaChunkHelper extends DragonAPICore {
 			for (Entity e : li) {
 				if (sel == null || sel.isEntityApplicable(e)) {
 					e.setDead();
+				}
+			}
+		}
+	}
+
+	public static void clearUnloadableEntities(Chunk ch) {
+		for (int i = 0; i < ch.entityLists.length; i++) {
+			List<Entity> li = ch.entityLists[i];
+			for (Entity e : li) {
+				if (e instanceof DestroyOnUnload) {
+					((DestroyOnUnload)e).destroy();
 				}
 			}
 		}

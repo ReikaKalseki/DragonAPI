@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.fluids.IFluidBlock;
 import Reika.DragonAPI.DragonAPICore;
@@ -23,6 +24,9 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 	public static final double TNTenergy = 12420000000D;
 
 	public static final double g = 9.81D;
+
+	private static final double DEG_TO_RAD = Math.PI/180D;
+	private static final double RAD_TO_DEG = 180D/Math.PI;
 
 	public static final double LIGHT_SPEED = 299792458D;
 
@@ -43,6 +47,17 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 		tempColorList.addPoint(9700, 0x56C4FF);
 	}
 
+	public static double[] polarToCartesianFast(double mag, double theta, double phi) {
+		double[] coords = new double[3];
+		theta = degToRad(theta);
+		phi = degToRad(phi);
+		double ct = MathHelper.cos((float)theta);
+		coords[0] = mag*ct*MathHelper.cos((float)phi);
+		coords[1] = mag*MathHelper.sin((float)theta);
+		coords[2] = mag*ct*MathHelper.sin((float)phi);
+		return coords;
+	}
+
 	/** Converts 3D polar coordinates into cartesian ones. Use angles in degrees. Args: magnitude, theta, phi */
 	public static double[] polarToCartesian(double mag, double theta, double phi) {
 		double[] coords = new double[3];
@@ -54,29 +69,39 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 		return coords;
 	}
 
-	/** Converts 3D cartesian coordinates into polar ones. Returns angles in degrees, mapped 0-360. Args: x, y, z; Returns: Dist, Theta, Phi */
-	public static double[] cartesianToPolar(double x, double y, double z) {
+	public static double[] cartesianToPolarFast(double x, double y, double z) {
 		double[] coords = new double[3];
-		boolean is90to270 = false;
 		coords[0] = ReikaMathLibrary.py3d(x, y, z); //length
 		coords[1] = Math.acos(y/coords[0]);
 		coords[2] = Math.atan2(x, z);
 		coords[1] = radToDeg(coords[1]);
 		coords[2] = 180+radToDeg(coords[2]);
-		if (is90to270) {
-			coords[2] *= -1;
-		}
+		return coords;
+	}
+
+	/** Converts 3D cartesian coordinates into polar ones. Returns angles in degrees, mapped 0-360. Args: x, y, z; Returns: Dist, Theta, Phi */
+	public static double[] cartesianToPolar(double x, double y, double z) {
+		double[] coords = new double[3];
+		//boolean is90to270 = false;
+		coords[0] = ReikaMathLibrary.py3d(x, y, z); //length
+		coords[1] = Math.acos(y/coords[0]);
+		coords[2] = Math.atan2(x, z);
+		coords[1] = radToDeg(coords[1]);
+		coords[2] = 180+radToDeg(coords[2]);
+		//if (is90to270) {
+		//	coords[2] *= -1;
+		//}
 		return coords;
 	}
 
 	/** Converts a degree angle to a radian one. Args: Angle */
 	public static double degToRad(double ang) {
-		return (ang*Math.PI/180);
+		return ang*DEG_TO_RAD;
 	}
 
 	/** Converts a degree angle to a radian one. Args: Angle */
 	public static double radToDeg(double ang) {
-		return (ang*180/Math.PI);
+		return ang*RAD_TO_DEG;
 	}
 
 	/** Calculates the required velocity (in xyz cartesian coordinates) required to travel in

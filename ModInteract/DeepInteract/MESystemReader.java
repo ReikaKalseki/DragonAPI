@@ -131,9 +131,9 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 		return ((ICraftingGrid)node.getGrid().getCache(ICraftingGrid.class));
 	}
 
-	/** NOT NBT-Sensitive!! */
+	/** Now NBT-Sensitive */
 	public ItemHashMap<Long> getMESystemContents() {
-		ItemHashMap<Long> map = new ItemHashMap();
+		ItemHashMap<Long> map = new ItemHashMap().enableNBT();
 		if (node == null || node.getGrid() == null || this.getStorage() == null) {
 			/*
 			StringBuilder sb = new StringBuilder();
@@ -229,7 +229,7 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 		Collection<IAEItemStack> c = this.getFuzzyItemList(is, fz);
 		IAEItemStack most = null;
 		for (IAEItemStack iae : c) {
-			if ((most == null || iae.getStackSize() >= most.getStackSize()) && (oredict || is.getItem() == iae.getItem()) && (!nbt || ReikaNBTHelper.areNBTTagsEqual(is.stackTagCompound, iae.getTagCompound().getNBTTagCompoundCopy()))) {
+			if ((most == null || iae.getStackSize() >= most.getStackSize()) && (oredict || is.getItem() == iae.getItem()) && (!nbt || ReikaNBTHelper.areNBTTagsEqual(is.stackTagCompound, (iae.hasTagCompound() ? iae.getTagCompound().getNBTTagCompoundCopy() : null)))) {
 				most = iae;
 			}
 		}

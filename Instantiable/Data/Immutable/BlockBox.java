@@ -14,7 +14,11 @@ import java.util.Random;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Interfaces.BlockCheck;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class BlockBox {
@@ -58,6 +62,10 @@ public final class BlockBox {
 
 	public static BlockBox block(TileEntity te) {
 		return block(te.xCoord, te.yCoord, te.zCoord);
+	}
+
+	public static BlockBox block(ChunkCoordinates cc) {
+		return block(cc.posX, cc.posY, cc.posZ);
 	}
 
 	public int getSizeX() {
@@ -110,6 +118,19 @@ public final class BlockBox {
 				break;
 		}
 		return new BlockBox(minx, miny, minz, maxx, maxy, maxz);
+	}
+
+	public BlockBox expandScale(double sx, double sy, double sz) {
+		int midX = (minX+maxX)/2;
+		int midY = (minY+maxY)/2;
+		int midZ = (minZ+maxZ)/2;
+		int nx = MathHelper.floor_double(midX-sx*(midX-minX));
+		int px = MathHelper.ceiling_double_int(midX+sx*(maxX-midX));
+		int ny = MathHelper.floor_double(midY-sy*(midY-minY));
+		int py = MathHelper.ceiling_double_int(midY+sy*(maxY-midY));
+		int nz = MathHelper.floor_double(midZ-sz*(midZ-minZ));
+		int pz = MathHelper.ceiling_double_int(midZ+sz*(maxZ-midZ));
+		return new BlockBox(nx, ny, nz, px, py, pz);
 	}
 
 	public BlockBox expand(int dx, int dy, int dz) {
@@ -276,6 +297,19 @@ public final class BlockBox {
 
 	public Coordinate getRandomContainedCoordinate(Random rand) {
 		return new Coordinate(minX+rand.nextInt(maxX-minX+1), minY+rand.nextInt(maxY-minY+1), minZ+rand.nextInt(maxZ-minZ+1));
+	}
+
+	public Coordinate findBlock(World world, BlockCheck bc) {
+		for (int x = minX; x <= maxX; x++) {
+			for (int z = minZ; z <= maxZ; z++) {
+				for (int y = minY; y <= maxY; y++) {
+					//ReikaJavaLibrary.pConsole(new Coordinate(x, y, z));
+					if (bc.matchInWorld(world, x, y, z))
+						return new Coordinate(x, y, z);
+				}
+			}
+		}
+		return null;
 	}
 
 }

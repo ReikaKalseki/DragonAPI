@@ -1,6 +1,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -23,6 +24,8 @@ import cpw.mods.fml.common.registry.GameRegistry;
 public class WorldGenInterceptionRegistry {
 
 	public static final WorldGenInterceptionRegistry instance = new WorldGenInterceptionRegistry();
+
+	public static boolean skipLighting = false;
 
 	private int runningChunkDecoration = 0;
 	private final HashMap<Coordinate, BlockSetData> data = new HashMap();
@@ -59,8 +62,9 @@ public class WorldGenInterceptionRegistry {
 			return;
 		if (runningChunkDecoration <= 0)
 			return;
-		if (dispatchingChanges)
+		if (dispatchingChanges) {
 			return;
+		}
 		for (InterceptionException e : exceptions)
 			if (e.doesExceptionApply(evt.world, evt.xCoord, evt.yCoord, evt.zCoord))
 				return;
@@ -71,8 +75,11 @@ public class WorldGenInterceptionRegistry {
 	public void postPopulation(World world, int cx, int cz) {
 		//ReikaJavaLibrary.pConsole("Watching chunk "+cx+","+cz+" block change set with "+set.size()+" blocks");
 		dispatchingChanges = true;
-		for (BlockSetWatcher w : watchers) {
-			w.onChunkGeneration(world, data);
+		if (!data.isEmpty()) {
+			Map<Coordinate, BlockSetData> map = Collections.unmodifiableMap(new HashMap(data));
+			for (BlockSetWatcher w : watchers) {
+				w.onChunkGeneration(world, map);
+			}
 		}
 		dispatchingChanges = false;
 		data.clear();
@@ -82,7 +89,7 @@ public class WorldGenInterceptionRegistry {
 	}
 
 	@SubscribeEvent
-	public void onSetBlock(SinglePlayerLogoutEvent evt) {
+	public void onSSPLogout(SinglePlayerLogoutEvent evt) {
 		data.clear();
 		runningChunkDecoration = 0;
 		dispatchingChanges = false;

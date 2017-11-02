@@ -19,10 +19,12 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Interfaces.Matcher;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
@@ -34,6 +36,7 @@ public final class ItemHashMap<V> {
 	private boolean modifiedKeys = true;
 	private Matcher<V> matcher = null;
 	private boolean oneWay = false;
+	private boolean nbtEnabled = false;
 
 	public ItemHashMap() {
 
@@ -41,6 +44,11 @@ public final class ItemHashMap<V> {
 
 	public ItemHashMap<V> setOneWay() {
 		return this.setOneWay(null);
+	}
+
+	public ItemHashMap<V> enableNBT() {
+		this.nbtEnabled = true;
+		return this;
 	}
 
 	public ItemHashMap<V> setOneWay(Matcher m) {
@@ -74,16 +82,20 @@ public final class ItemHashMap<V> {
 		return data.get(is);
 	}
 
+	private ItemKey createKey(ItemStack is) {
+		return this.nbtEnabled && is.stackTagCompound != null ? new NBTItemKey(is) : new ItemKey(is);
+	}
+
 	private boolean containsKey(ItemKey is) {
 		return data.containsKey(is);
 	}
 
 	public V put(ItemStack is, V value) {
-		return this.put(new ItemKey(is), value);
+		return this.put(this.createKey(is), value);
 	}
 
 	public V get(ItemStack is) {
-		return this.get(new ItemKey(is));
+		return this.get(this.createKey(is));
 	}
 
 	public V get(ImmutableItemStack is) {
@@ -91,7 +103,7 @@ public final class ItemHashMap<V> {
 	}
 
 	public boolean containsKey(ItemStack is) {
-		return this.containsKey(new ItemKey(is));
+		return this.containsKey(this.createKey(is));
 	}
 
 	public V put(Block i, V value) {
@@ -159,7 +171,7 @@ public final class ItemHashMap<V> {
 	}
 
 	public V remove(ItemStack is) {
-		return this.remove(new ItemKey(is));
+		return this.remove(this.createKey(is));
 	}
 
 	private V remove(ItemKey is) {
@@ -192,12 +204,40 @@ public final class ItemHashMap<V> {
 		return this.data.isEmpty();
 	}
 
-	private static final class ItemKey implements Comparable<ItemKey> {
+	private static final class NBTItemKey extends ItemKey {
+
+		private final NBTTagCompound tag;
+
+		private NBTItemKey(ItemStack is) {
+			super(is);
+			tag = is.stackTagCompound != null ? (NBTTagCompound)is.stackTagCompound.copy() : null;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			return super.equals(o) && o instanceof NBTItemKey && ReikaNBTHelper.areNBTTagsEqual(tag, ((NBTItemKey)o).tag);
+		}
+
+		@Override
+		public final ItemStack asItemStack() {
+			ItemStack is = super.asItemStack();
+			is.stackTagCompound = tag != null ? (NBTTagCompound)tag.copy() : null;
+			return is;
+		}
+
+		@Override
+		public String toString() {
+			return super.toString()+" >> "+String.valueOf(tag);
+		}
+
+	}
+
+	private static class ItemKey implements Comparable<ItemKey> {
 
 		public final Item itemID;
 		private final int metadata;
 
-		private ItemKey(ItemStack is) {
+		protected ItemKey(ItemStack is) {
 			if (is == null)
 				throw new MisuseException("You cannot add a null itemstack to the map!");
 			if (is.getItem() == null)
@@ -207,7 +247,7 @@ public final class ItemHashMap<V> {
 		}
 
 		@Override
-		public int hashCode() {
+		public final int hashCode() {
 			return itemID.hashCode()/* + metadata << 24*/;
 		}
 
@@ -226,7 +266,7 @@ public final class ItemHashMap<V> {
 			return itemID.getUnlocalizedName()+":"+metadata;
 		}
 
-		public boolean hasMetadata() {
+		public final boolean hasMetadata() {
 			return metadata >= 0 && metadata != OreDictionary.WILDCARD_VALUE;
 		}
 
@@ -235,7 +275,7 @@ public final class ItemHashMap<V> {
 		}
 
 		@Override
-		public int compareTo(ItemKey o) {
+		public final int compareTo(ItemKey o) {
 			return Item.getIdFromItem(itemID)-Item.getIdFromItem(o.itemID);
 		}
 
@@ -266,6 +306,18 @@ public final class ItemHashMap<V> {
 
 	public void putAll(ItemHashMap<V> map) {
 		this.data.putAll(map.data);
+	}
+
+	public static ItemHashMap<Integer> subtract(ItemHashMap<Integer> map, ItemHashMap<Integer> subtr) {
+		ItemHashMap<Integer> ret = new ItemHashMap();
+		for (ItemKey ik : map.data.keySet()) {
+			int get = map.get(ik);
+			Integer get2 = subtr.get(ik);
+			int res = get2 != null ? Math.max(0, get-get2) : get;
+			if (res > 0)
+				ret.put(ik, res);
+		}
+		return ret;
 	}
 
 }
