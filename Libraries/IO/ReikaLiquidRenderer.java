@@ -104,7 +104,7 @@ public class ReikaLiquidRenderer {
 
 		for (int s = 0; s < LEVELS; ++s) {
 			diplayLists[s] = GLAllocation.generateDisplayLists(1);
-			GL11.glNewList(diplayLists[s], 4864 /*GL_COMPILE*/);
+			GL11.glNewList(diplayLists[s], GL11.GL_COMPILE);
 
 			liquidBlock.minX = 0.01f;
 			liquidBlock.minY = 0;

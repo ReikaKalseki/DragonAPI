@@ -208,7 +208,7 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 			Collection<IAEItemStack> c = this.getFuzzyItemList(is, FuzzyMode.IGNORE_ALL);
 			IAEItemStack most = null;
 			for (IAEItemStack iae : c) {
-				if ((most == null || iae.getStackSize() >= most.getStackSize()) && is.getItem() == iae.getItem() && is.getItemDamage() == iae.getItemDamage()) {
+				if ((most == null || iae.getStackSize() >= most.getStackSize()) && is.getItem() == iae.getItem() && (is.getItemDamage() == iae.getItemDamage() || is.getItemDamage() == OreDictionary.WILDCARD_VALUE)) {
 					most = iae;
 				}
 			}

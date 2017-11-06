@@ -188,14 +188,19 @@ public class ImagedGuiButton extends GuiButton {
 	}
 
 	@Override
-	public int getHoverState(boolean flag) {
+	public final int getHoverState(boolean flag) {
 		int ret = super.getHoverState(flag);
 		u = baseU;
 		v = baseV;
+		this.modifyTextureUV();
 		if (ret == 2) {
 			this.getHoveredTextureCoordinates();
 		}
 		return ret;
+	}
+
+	protected void modifyTextureUV() {
+
 	}
 
 	protected void getHoveredTextureCoordinates() {

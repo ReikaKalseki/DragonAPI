@@ -13,6 +13,11 @@ import java.util.Collection;
 import java.util.Map;
 
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
@@ -20,6 +25,7 @@ import Reika.DragonAPI.Instantiable.Data.Collections.ChancedOutputList;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import forestry.api.recipes.ICentrifugeRecipe;
+import forestry.api.recipes.ISqueezerRecipe;
 import forestry.api.recipes.RecipeManagers;
 
 public class ForestryRecipeHelper extends ModHandlerBase {
@@ -31,6 +37,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 	}
 
 	private final ItemHashMap<ChancedOutputList> centrifuge = new ItemHashMap();
+	private final ItemHashMap<ImmutablePair<ChancedOutputList, FluidStack>> squeezer = new ItemHashMap();
 
 	private ForestryRecipeHelper() {
 		super();
@@ -48,6 +55,16 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 							outputs.addItem(ReikaItemHelper.getSizedItemStack(is, 1), chance);
 					}
 					centrifuge.put(in, outputs);
+				}
+
+				for (ISqueezerRecipe in : RecipeManagers.squeezerManager.recipes()) {
+					ItemStack[] items = in.getResources();
+					if (items.length == 1 && !FluidContainerRegistry.isFilledContainer(items[0])) {
+						ChancedOutputList out = new ChancedOutputList(false);
+						out.addItem(in.getRemnants(), in.getRemnantsChance()*100);
+						FluidStack fs = in.getFluidOutput();
+						squeezer.put(items[0], new ImmutablePair(out, fs));
+					}
 				}
 			}
 			catch (Exception e) {
@@ -126,13 +143,21 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 		return centrifuge.keySet();
 	}
 
-	public ChancedOutputList getRecipeOutput(ItemStack in) {
+	public Collection<ItemStack> getSqueezerRecipes() {
+		return squeezer.keySet();
+	}
+
+	public ChancedOutputList getCentrifugeOutput(ItemStack in) {
 		return centrifuge.get(in).copy();
+	}
+
+	public ImmutablePair<ChancedOutputList, FluidStack> getSqueezerOutput(ItemStack in) {
+		return squeezer.get(in);
 	}
 
 	@Override
 	public boolean initializedProperly() {
-		return !centrifuge.isEmpty();
+		return !centrifuge.isEmpty() && !squeezer.isEmpty();
 	}
 
 	@Override

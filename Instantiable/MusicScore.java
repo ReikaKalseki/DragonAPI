@@ -72,6 +72,11 @@ public class MusicScore {
 		return c != null ? Collections.unmodifiableCollection(c) : null;
 	}
 
+	public void backspace(int channel) {
+		if (music[channel] != null && !music[channel].isEmpty())
+			music[channel].remove(music[channel].lastKey());
+	}
+
 	public Map<Integer, Collection<Note>> getTrack(int channel) {
 		return music[channel] != null ? Collections.unmodifiableMap(music[channel]) : new HashMap();
 	}

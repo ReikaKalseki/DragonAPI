@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.GUI;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 
 public class CustomSoundGuiButton extends GuiButton {
 
@@ -84,14 +85,60 @@ public class CustomSoundGuiButton extends GuiButton {
 		}
 
 		@Override
-		public void func_146113_a(SoundHandler sh)
-		{
+		public final void func_146113_a(SoundHandler sh) {
 			gui.playButtonSound(this);
 		}
 
 		@Override
-		protected void onHoverTo() {
+		protected final void onHoverTo() {
 			gui.playHoverSound(this);
+		}
+
+	}
+
+	public static class CustomSoundImagedGuiButtonSneakIcon extends CustomSoundImagedGuiButton {
+
+		private final int sneakU;
+		private final int sneakV;
+
+		public CustomSoundImagedGuiButtonSneakIcon(int par1, int par2, int par3, String par4Str, Class mod, CustomSoundGui gui, int u2, int v2)
+		{
+			super(par1, par2, par3, par4Str, mod, gui);
+			sneakU = u2;
+			sneakV = v2;
+		}
+
+		/** Draw a Gui Button with an image background. Args: id, x, y, width, height, u, v, filepath, class root */
+		public CustomSoundImagedGuiButtonSneakIcon(int par1, int par2, int par3, int par4, int par5, int par7, int par8, String file, Class mod, CustomSoundGui gui, int u2, int v2)
+		{
+			super(par1, par2, par3, par4, par5, par7, par8, file, mod, gui);
+			sneakU = u2;
+			sneakV = v2;
+		}
+
+		/** Draw a Gui Button with an image background and text overlay.
+		 *Args: id, x, y, width, height, u, v, text overlay, text color, shadow, filepath, class root */
+		public CustomSoundImagedGuiButtonSneakIcon(int par1, int par2, int par3, int par4, int par5, int par7, int par8, String par6Str, int par9, boolean par10, String file, Class mod, CustomSoundGui gui, int u2, int v2)
+		{
+			super(par1, par2, par3, par4, par5, par7, par8, par6Str, par9, par10, file, mod, gui);
+			sneakU = u2;
+			sneakV = v2;
+		}
+
+		/** Draw a Gui Button with an image background and text tooltip. Args: id, x, y, width, height, u, v, filepath, text tooltip, text color, shadow */
+		public CustomSoundImagedGuiButtonSneakIcon(int par1, int par2, int par3, int par4, int par5, int par7, int par8, String file, String par6Str, int par9, boolean par10, Class mod, CustomSoundGui gui, int u2, int v2)
+		{
+			super(par1, par2, par3, par4, par5, par7, par8, file, par6Str, par9, par10, mod, gui);
+			sneakU = u2;
+			sneakV = v2;
+		}
+
+		@Override
+		protected final void modifyTextureUV() {
+			if (GuiScreen.isShiftKeyDown()) {
+				u = sneakU;
+				v = sneakV;
+			}
 		}
 
 	}

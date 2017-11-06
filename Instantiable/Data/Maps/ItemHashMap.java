@@ -90,6 +90,14 @@ public final class ItemHashMap<V> {
 		return data.containsKey(is);
 	}
 
+	public int add(ItemStack is, int value) {
+		Integer get = ((ItemHashMap<Integer>)this).get(is);
+		int has = get != null ? get.intValue() : 0;
+		int sum = has+value;
+		((ItemHashMap<Integer>)this).put(is, sum);
+		return sum;
+	}
+
 	public V put(ItemStack is, V value) {
 		return this.put(this.createKey(is), value);
 	}
@@ -263,7 +271,7 @@ public final class ItemHashMap<V> {
 
 		@Override
 		public String toString() {
-			return itemID.getUnlocalizedName()+":"+metadata;
+			return itemID.getUnlocalizedName()+":"+metadata+" ("+this.asItemStack().getDisplayName()+")";
 		}
 
 		public final boolean hasMetadata() {

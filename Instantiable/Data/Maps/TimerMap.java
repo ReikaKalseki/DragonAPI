@@ -50,12 +50,19 @@ public class TimerMap<V> {
 			Iterator<Entry<V, Integer>> it = timer.entrySet().iterator();
 			while (it.hasNext()) {
 				Entry<V, Integer> e = it.next();
+				V key = e.getKey();
+				if (key instanceof FreezableTimer) {
+					if (((FreezableTimer)key).isFrozen()) {
+						continue;
+					}
+				}
+
 				if (e.getValue() >= amt) {
 					e.setValue(e.getValue()-amt);
 				}
 				else {
-					if (e.getKey() instanceof TimerCallback) {
-						((TimerCallback)e.getKey()).call();
+					if (key instanceof TimerCallback) {
+						((TimerCallback)key).call();
 					}
 					it.remove();
 				}
@@ -95,6 +102,12 @@ public class TimerMap<V> {
 	public static interface TimerCallback {
 
 		void call();
+
+	}
+
+	public static interface FreezableTimer extends TimerCallback {
+
+		boolean isFrozen();
 
 	}
 

@@ -80,8 +80,14 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		this.creator = creator;
 
 		String[] s = latinName.split(" ");
+		if (s.length < 2)
+			throw new RuntimeException("Bee latin names must be at least two words (genus and species)!");
 		genus = s[0];
-		scientific = s[1];
+		String scn = s[1];
+		for (int i = 2; i < s.length; i++) {
+			scn = scn+" "+s[i];
+		}
+		scientific = scn;
 		this.uid = uid;
 	}
 
@@ -318,6 +324,13 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		this.addBreeding(p1, p2, chance);
 	}
 
+	public final void addBreeding(String parent1, ModList mod1, BeeSpecies parent2, int chance) {
+		IAlleleBeeSpecies p1 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele(mod1.modLabel.toLowerCase(Locale.ENGLISH)+".species"+parent1);
+		if (p1 == null)
+			throw new MisuseException("Error breeding from "+parent1+": You cannot breed a bee from null!");
+		this.addBreeding(p1, parent2, chance);
+	}
+
 	public final void addBreeding(String parent1, BeeSpecies parent2, int chance) {
 		IAlleleBeeSpecies p1 = (IAlleleBeeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.species"+parent1);
 		if (p1 == null)
@@ -441,12 +454,16 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 			case 0:
 				return this.getOutlineColor();
 			case 1:
-				return 0xffff00;
+				return this.getBeeStripeColor();
 			case 2:
 				return 0xffffff;
 			default:
 				return 0xffffff;
 		}
+	}
+
+	public int getBeeStripeColor() {
+		return 0xffff00;
 	}
 
 	private final IAllele getGeneForBoolean(boolean b) {
@@ -489,19 +506,35 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	@Override
 	public final void registerIcons(IIconRegister ico) {
-		String iconType = "default";
-		String mod = "forestry";
+		String iconType = this.getIconCategory();
+		String mod = this.getIconMod();
+		String body = this.simplifiedIconSystem() ? "/body" : "/body1";
 
-		IIcon body1 = ico.registerIcon(mod + ":bees/" + iconType + "/body1");
+		IIcon body1 = ico.registerIcon(mod + ":bees/" + iconType + body);
 		IIcon larva = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.LARVAE.name().toLowerCase(Locale.ENGLISH)+".body");
 
 		for (int i = 0; i < EnumBeeType.VALUES.length; i++) {
 			if (EnumBeeType.VALUES[i] != EnumBeeType.NONE) {
-				icons[i][0] = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.VALUES[i].name().toLowerCase(Locale.ENGLISH)+".outline");
+				String type = EnumBeeType.VALUES[i].name().toLowerCase(Locale.ENGLISH);
+				String out = EnumBeeType.VALUES[i] != EnumBeeType.LARVAE && this.simplifiedIconSystem() ? "outline" : type+".outline";
+				icons[i][0] = ico.registerIcon(mod+":bees/"+iconType+"/"+out);
 				icons[i][1] = EnumBeeType.VALUES[i] == EnumBeeType.LARVAE ? larva : body1;
-				icons[i][2] = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.VALUES[i].name().toLowerCase(Locale.ENGLISH)+".body2");
+				String clas = this.simplifiedIconSystem() ? type : type+".body2";
+				icons[i][2] = ico.registerIcon(mod+":bees/"+iconType+"/"+clas);
 			}
 		}
+	}
+
+	protected String getIconMod() {
+		return "forestry";
+	}
+
+	protected String getIconCategory() {
+		return "default";
+	}
+
+	protected boolean simplifiedIconSystem() {
+		return false;
 	}
 
 	@Override

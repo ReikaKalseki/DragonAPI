@@ -14,14 +14,14 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap.TimerCallback;
+import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap.FreezableTimer;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.Side;
 
-public final class ScheduledTickEvent extends Event implements TimerCallback {
+public final class ScheduledTickEvent extends Event implements FreezableTimer {
 
 	private final ScheduledEvent action;
 
@@ -36,6 +36,10 @@ public final class ScheduledTickEvent extends Event implements TimerCallback {
 
 	public final boolean runOnSide(Side s) {
 		return action.runOnSide(s);
+	}
+
+	public final boolean isFrozen() {
+		return action instanceof DelayableSchedulableEvent && !((DelayableSchedulableEvent)action).canTick();
 	}
 
 	/*
@@ -215,6 +219,12 @@ public final class ScheduledTickEvent extends Event implements TimerCallback {
 		public abstract void fire();
 
 		public abstract boolean runOnSide(Side s);
+
+	}
+
+	public static interface DelayableSchedulableEvent extends ScheduledEvent {
+
+		public boolean canTick();
 
 	}
 

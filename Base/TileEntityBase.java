@@ -163,10 +163,6 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		return true;
 	}
 
-	public final boolean isChunkLoaded() {
-		return worldObj.checkChunksExist(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
-	}
-
 	public final int getTicksExisted() {
 		return ticksExisted;
 	}
@@ -718,6 +714,14 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	public final WorldLocation getAdjacentLocation(ForgeDirection dir) {
 		return new WorldLocation(worldObj, xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
+	}
+
+	public final boolean isChunkLoaded() {
+		return worldObj.checkChunksExist(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
+	}
+
+	public final boolean isChunkLoadedOnSide(ForgeDirection dir) {
+		return worldObj.checkChunksExist(xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ, xCoord+dir.offsetX, yCoord+dir.offsetY, zCoord+dir.offsetZ);
 	}
 
 	public final TileEntity getTileEntity(int x, int y, int z) {
