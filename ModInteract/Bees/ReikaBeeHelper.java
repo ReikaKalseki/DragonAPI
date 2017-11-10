@@ -11,6 +11,9 @@ package Reika.DragonAPI.ModInteract.Bees;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -25,6 +28,7 @@ import Reika.ChromatiCraft.ModInterface.Bees.ApiaryAcceleration;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.BeeGene;
@@ -80,6 +84,7 @@ import forestry.api.multiblock.IAlvearyController;
 public class ReikaBeeHelper {
 
 	private static Field beeHealth;
+	private static final HashSet<String> allBees = new HashSet();
 
 	static {
 		if (ModList.FORESTRY.isLoaded()) {
@@ -93,6 +98,24 @@ public class ReikaBeeHelper {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static void buildSpeciesList() {
+		allBees.clear();
+		for (IAllele ia : AlleleManager.alleleRegistry.getRegisteredAlleles(EnumBeeChromosome.SPECIES)) {
+			if (ia != null && ia.getUID() != null) //because someone is being stupid
+				allBees.add(ia.getUID());
+		}
+	}
+
+	public static Set<String> getAllBeeSpecies() {
+		if (allBees.isEmpty())
+			buildSpeciesList();
+		return Collections.unmodifiableSet(allBees);
+	}
+
+	public static String getRandomBeeSpecies() {
+		return ReikaJavaLibrary.getRandomCollectionEntry(DragonAPICore.rand, getAllBeeSpecies());
 	}
 
 	public static final ItemStack getBeeItem(String bee, EnumBeeType type) {

@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -316,6 +317,25 @@ public final class MultiMap<K, V> {
 		@Override
 		public Map getMapType() {
 			return new ConcurrentHashMap();
+		}
+
+	}
+
+	public static final class SortedDeterminator implements MapDeterminator {
+
+		private final Comparator sorter;
+
+		public SortedDeterminator() {
+			this(null);
+		}
+
+		public SortedDeterminator(Comparator c) {
+			this.sorter = c;
+		}
+
+		@Override
+		public Map getMapType() {
+			return new TreeMap(sorter);
 		}
 
 	}

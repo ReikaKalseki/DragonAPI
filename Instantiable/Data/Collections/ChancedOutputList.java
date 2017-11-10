@@ -11,6 +11,8 @@ package Reika.DragonAPI.Instantiable.Data.Collections;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -21,7 +23,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class ChancedOutputList {
 
-	private final ItemHashMap<Float> data = new ItemHashMap().enableNBT();
+	private final ArrayList<ItemWithChance> data = new ArrayList();
 
 	private boolean modifiable = true;
 	private final boolean allowOverflow;
@@ -33,14 +35,21 @@ public final class ChancedOutputList {
 	public ChancedOutputList(boolean allowOver100, ItemHashMap<Float> output) {
 		this(allowOver100);
 		for (ItemStack is : output.keySet()) {
-			data.put(is.copy(), output.get(is));
+			this.putItem(is.copy(), output.get(is));
+		}
+	}
+
+	public ChancedOutputList(boolean allowOver100, Collection<ItemWithChance> output) {
+		this(allowOver100);
+		for (ItemWithChance is : output) {
+			data.add(is);
 		}
 	}
 
 	public ChancedOutputList(boolean allowOver100, ItemStack[] items, float... chances) {
 		this(allowOver100);
 		for (int i = 0; i < items.length; i++) {
-			data.put(items[i].copy(), chances[i]);
+			this.putItem(items[i].copy(), chances[i]);
 		}
 	}
 
@@ -48,14 +57,23 @@ public final class ChancedOutputList {
 	public ChancedOutputList addItem(ItemStack is, float chance) {
 		if (!modifiable)
 			throw new UnsupportedOperationException("This ChancedOutputList is locked!");
-		data.put(is, chance);
+		this.putItem(is, chance);
 		return this;
 	}
 
-	public Float removeItem(ItemStack is) {
+	private void putItem(ItemStack is, float chance) {
+		data.add(new ItemWithChance(is, chance));
+	}
+
+	public void removeItem(ItemStack is) {
 		if (!modifiable)
 			throw new UnsupportedOperationException("This ChancedOutputList is locked!");
-		return data.remove(is);
+		Iterator<ItemWithChance> it = data.iterator();
+		while (it.hasNext()) {
+			ItemWithChance ic = it.next();
+			if (ItemStack.areItemStacksEqual(is, ic.item))
+				it.remove();
+		}
 	}
 
 	public ChancedOutputList addItems(ArrayList<ItemStack> li, float chance) {
@@ -64,13 +82,18 @@ public final class ChancedOutputList {
 		return this;
 	}
 
-	public Collection<ItemStack> keySet() {
+	public Collection<ItemStack> itemSet() {
 		Collection<ItemStack> c = new ArrayList();
-		for (ItemStack is : data.keySet())
-			c.add(is.copy());
+		for (ItemWithChance ic : data)
+			c.add(ic.getItem());
 		return c;
 	}
 
+	public Collection<ItemWithChance> keySet() {
+		return Collections.unmodifiableCollection(data);
+	}
+
+	/*
 	public float getItemChance(ItemStack is) {
 		Float get = data.get(is);
 		return get != null ? allowOverflow ? get.floatValue() : MathHelper.clamp_float(get.floatValue(), 0, 100) : 0;
@@ -80,23 +103,21 @@ public final class ChancedOutputList {
 		float f = this.getItemChance(is);
 		return Math.min(1, f/100F);
 	}
-
+	 */
 	public ArrayList<ItemStack> getAllWithChance(float chance) {
 		ArrayList<ItemStack> li = new ArrayList();
-		for (ItemStack key : data.keySet()) {
-			float c = data.get(key);
-			if (c == chance)
-				li.add(key.copy());
+		for (ItemWithChance key : data) {
+			if (key.chance == chance)
+				li.add(key.getItem());
 		}
 		return li;
 	}
 
 	public ArrayList<ItemStack> getAllWithAtLeastChance(float chance) {
 		ArrayList<ItemStack> li = new ArrayList();
-		for (ItemStack key : data.keySet()) {
-			float c = data.get(key);
-			if (c >= chance)
-				li.add(key.copy());
+		for (ItemWithChance key : data) {
+			if (key.chance >= chance)
+				li.add(key.getItem());
 		}
 		return li;
 	}
@@ -107,17 +128,17 @@ public final class ChancedOutputList {
 
 	public ArrayList<ItemStack> calculate(double factor) {
 		ArrayList<ItemStack> li = new ArrayList();
-		for (ItemStack key : data.keySet()) {
-			float c = data.get(key);
+		for (ItemWithChance key : data) {
+			float c = key.chance;
 			double ch = factor*c/100D;
 			if (allowOverflow) {
 				while (ch >= 1) {
 					ch -= 1;
-					li.add(key.copy());
+					li.add(key.getItem());
 				}
 			}
 			if (ch >= 1 || ReikaRandomHelper.doWithChance(ch)) // /100 to force all into 0-1 range
-				li.add(key.copy());
+				li.add(key.getItem());
 		}
 		return li;
 	}
@@ -161,11 +182,11 @@ public final class ChancedOutputList {
 	public void manipulateChances(ChanceManipulator cm) {
 		if (!modifiable)
 			throw new UnsupportedOperationException("This ChancedOutputList is locked!");
-		for (ItemStack is : data.keySet()) {
-			float c = cm.getChance(data.get(is));
+		for (ItemWithChance is : data) {
+			float c = cm.getChance(is.chance);
 			if (!allowOverflow)
 				c = MathHelper.clamp_float(c, 0, 100);
-			data.put(is, c);
+			is.chance = c;
 		}
 	}
 
@@ -221,6 +242,31 @@ public final class ChancedOutputList {
 			}
 		}
 		return c;
+	}
+
+	public static class ItemWithChance {
+
+		private final ItemStack item;
+		private float chance;
+
+		private ItemWithChance(ItemStack is, float c) {
+			item = is;
+			chance = c;
+		}
+
+		public ItemStack getItem() {
+			return item.copy();
+		}
+
+		public final float getChance() {
+			return chance;
+		}
+
+		public float getNormalizedChance() {
+			float f = this.getChance();
+			return Math.min(1, f/100F);
+		}
+
 	}
 
 }

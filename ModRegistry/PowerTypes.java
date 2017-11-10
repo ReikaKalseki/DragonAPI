@@ -11,6 +11,7 @@ package Reika.DragonAPI.ModRegistry;
 
 import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Interfaces.Registry.Dependency;
 
 
@@ -23,7 +24,8 @@ public enum PowerTypes implements Dependency {
 	ROTARYCRAFT("Reika.RotaryCraft.API.Power.ShaftMachine"),
 	PNEUMATIC("pneumaticCraft.api.tileentity.IPneumaticMachine"),
 	HYDRAULIC(),
-	STEAM(FluidRegistry.getFluid("steam") != null);
+	STEAM(FluidRegistry.getFluid("steam") != null),
+	ELECTRICRAFT(ModList.ELECTRICRAFT.isLoaded());
 
 	private final boolean exists;
 

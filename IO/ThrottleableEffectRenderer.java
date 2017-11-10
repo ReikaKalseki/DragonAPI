@@ -37,6 +37,8 @@ import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 public class ThrottleableEffectRenderer extends EffectRenderer {
 
+	public static boolean renderParticles = true;
+
 	public final int limit;
 
 	private final EffectRenderer original;
@@ -89,14 +91,16 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 	@Override
 	public void renderParticles(Entity e, float ptick) {
-		if (renderThroughWalls())
-			GL11.glDisable(GL11.GL_DEPTH_TEST);
-		//super.renderParticles(e, ptick);
-		this.doRenderParticles(e, ptick);
-		for (EffectRenderer eff : delegateSet) {
-			eff.renderParticles(e, ptick);
+		if (renderParticles) {
+			if (renderThroughWalls())
+				GL11.glDisable(GL11.GL_DEPTH_TEST);
+			//super.renderParticles(e, ptick);
+			this.doRenderParticles(e, ptick);
+			for (EffectRenderer eff : delegateSet) {
+				eff.renderParticles(e, ptick);
+			}
+			GL11.glEnable(GL11.GL_DEPTH_TEST);
 		}
-		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
 	private void doRenderParticles(Entity e, float ptick) {

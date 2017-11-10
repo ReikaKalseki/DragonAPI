@@ -44,7 +44,7 @@ public class HybridTank extends FluidTank {
 
 		String fluidName = tankData.getString("FluidName");
 		String repl = ReikaFluidHelper.getFluidNameSwap(fluidName);
-		if (repl != null && FluidRegistry.getFluid(repl) != null) {
+		if (repl != null && FluidRegistry.getFluid(repl) != null && !fluidName.equals(repl)) {
 			tankData.setString("FluidName", repl);
 			DragonAPICore.log("Tank "+this+" has replaced its FluidName of '"+fluidName+"' with '"+repl+"', as the fluid has changed names.");
 		}
@@ -61,7 +61,7 @@ public class HybridTank extends FluidTank {
 				NBTTagCompound tankData = NBT.getCompoundTag(name);
 				String fluidName = tankData.getString("FluidName");
 				String repl = ReikaFluidHelper.getFluidNameSwap(fluidName);
-				if (repl != null && FluidRegistry.getFluid(repl) != null) {
+				if (repl != null && FluidRegistry.getFluid(repl) != null && !fluidName.equals(repl)) {
 					tankData.setString("FluidName", repl);
 					DragonAPICore.log("Tank "+this+" has replaced its FluidName of '"+fluidName+"' with '"+repl+"', as the fluid has changed names.");
 				}

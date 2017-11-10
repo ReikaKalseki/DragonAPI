@@ -477,6 +477,10 @@ public enum ModOreList implements OreType {
 		return oreNames.containsKey(s);
 	}
 
+	public static ModOreList getByOreName(String s) {
+		return oreNames.get(s);
+	}
+
 	public static ModOreList getByDrop(ItemStack is) {
 		int[] ids = OreDictionary.getOreIDs(is);
 		for (int i = 0; i < ids.length; i++) {

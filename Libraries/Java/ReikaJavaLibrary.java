@@ -137,7 +137,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	/** A complement to Java's built-in List-to-Array. Args: Array of any object (ints, strings, etc). */
-	public static HashSet makeSetFromArray(Object[] obj) {
+	public static <E> HashSet<E> makeSetFromArray(E[] obj) {
 		HashSet li = new HashSet();
 		for (int i = 0; i < obj.length; i++) {
 			li.add(obj[i]);

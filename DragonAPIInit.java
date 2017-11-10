@@ -108,6 +108,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.BannedItemReader;
 import Reika.DragonAPI.ModInteract.MinetweakerHooks;
 import Reika.DragonAPI.ModInteract.WailaTechnicalOverride;
+import Reika.DragonAPI.ModInteract.Bees.ReikaBeeHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
 import Reika.DragonAPI.ModInteract.DeepInteract.MESystemReader;
 import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
@@ -752,6 +753,9 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void lastLoad(FMLServerAboutToStartEvent evt) {
 		ReikaOreHelper.refreshAll();
 		ModOreList.initializeAll();
+		if (ModList.FORESTRY.isLoaded()) {
+			ReikaBeeHelper.buildSpeciesList();
+		}
 	}
 
 	@EventHandler

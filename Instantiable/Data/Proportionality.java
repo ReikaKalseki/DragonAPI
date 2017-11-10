@@ -20,7 +20,9 @@ import net.minecraft.client.renderer.Tessellator;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.MapDeterminator;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -29,12 +31,22 @@ public class Proportionality<F> {
 
 	private static final Random rand = new Random();
 
-	private final HashMap<F, Double> data = new HashMap();
+	private final Map<F, Double> data;
+	private final HashMap<F, ColorCallback> renderColors = new HashMap();
 
 	private double totalValue = 0;
 
-	public Proportionality() {
+	private double centerX;
+	private double centerY;
+	private double renderRadius;
+	private double renderOrigin;
 
+	public Proportionality() {
+		this(null);
+	}
+
+	public Proportionality(MapDeterminator<F, ?> md) {
+		data = md != null ? md.getMapType() : new HashMap();
 	}
 
 	public void addValue(F o, double amt) {
@@ -42,6 +54,8 @@ public class Proportionality<F> {
 		double val = get != null ? get.doubleValue() : 0;
 		data.put(o, val+amt);
 		this.totalValue += amt;
+		if (o instanceof ColorCallback)
+			this.addColorRenderer(o, (ColorCallback)o);
 	}
 
 	public void removeValue(F o, double amt) {
@@ -89,6 +103,27 @@ public class Proportionality<F> {
 		data.clear();
 	}
 
+	public void addColorRenderer(F type, ColorCallback call) {
+		this.renderColors.put(type, call);
+	}
+
+	public F getClickedSection(int x, int y) {
+		double d = ReikaMathLibrary.py3d(x-centerX, y-centerY, 0);
+		if (d > this.renderRadius)
+			return null;
+		double relAng = (Math.toDegrees(Math.atan2(y-centerY, x-centerX))+360)%360;
+		double ang = this.renderOrigin;
+		for (F o : data.keySet()) {
+			double angw = 360D*this.getFraction(o);
+			//ReikaJavaLibrary.pConsole(o+" > "+ang+" - "+(ang+angw)+" @ "+relAng);
+			if (ang <= relAng && ang+angw >= relAng) {
+				return o;
+			}
+			ang += angw;
+		}
+		return null;
+	}
+
 	@SideOnly(Side.CLIENT)
 	public void renderAsPie(double x, double y, double r, double zeroAng) {
 		this.renderAsPie(x, y, r, zeroAng, null);
@@ -96,6 +131,11 @@ public class Proportionality<F> {
 
 	@SideOnly(Side.CLIENT)
 	public void renderAsPie(double x, double y, double r, double zeroAng, Map<F, Integer> colorMap) {
+		this.centerX = x;
+		this.centerY = y;
+		this.renderRadius = r;
+		this.renderOrigin = zeroAng;
+
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glDisable(GL11.GL_LIGHTING);
@@ -112,15 +152,21 @@ public class Proportionality<F> {
 				c = colorMap.get(o);
 			}
 			else {
-				if (i >= defaultColors.size()) {
-					int newcolor = ReikaColorAPI.RGBtoHex(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
-					defaultColors.add(newcolor);
-					c = newcolor;
+				ColorCallback call = this.renderColors.get(o);
+				if (call != null) {
+					c = call.getColor(o);
 				}
 				else {
-					c = defaultColors.get(i);
+					if (i >= defaultColors.size()) {
+						int newcolor = ReikaColorAPI.RGBtoHex(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255));
+						defaultColors.add(newcolor);
+						c = newcolor;
+					}
+					else {
+						c = defaultColors.get(i);
+					}
+					i++;
 				}
-				i++;
 			}
 			v5.setColorOpaque_I(c);
 
@@ -143,6 +189,12 @@ public class Proportionality<F> {
 			ang += angw;
 		}
 		GL11.glPopAttrib();
+	}
+
+	public static interface ColorCallback {
+
+		public int getColor(Object key);
+
 	}
 
 	private static ArrayList<Integer> defaultColors = new ArrayList();

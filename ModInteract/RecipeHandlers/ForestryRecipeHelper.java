@@ -21,9 +21,12 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Collections.ChancedOutputList;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderState;
 import forestry.api.recipes.ICentrifugeRecipe;
 import forestry.api.recipes.ISqueezerRecipe;
 import forestry.api.recipes.RecipeManagers;
@@ -43,6 +46,8 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 		super();
 
 		if (this.hasMod()) {
+			if (!Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION))
+				throw new MisuseException("You cannot load other mod's machine recipes before postload!");
 			try {
 				Collection<ICentrifugeRecipe> c = RecipeManagers.centrifugeManager.recipes();
 				for (ICentrifugeRecipe r : c) {
@@ -60,8 +65,11 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 				for (ISqueezerRecipe in : RecipeManagers.squeezerManager.recipes()) {
 					ItemStack[] items = in.getResources();
 					if (items.length == 1 && !FluidContainerRegistry.isFilledContainer(items[0])) {
-						ChancedOutputList out = new ChancedOutputList(false);
-						out.addItem(in.getRemnants(), in.getRemnantsChance()*100);
+						ChancedOutputList out = null;
+						if (in.getRemnants() != null) {
+							out = new ChancedOutputList(false);
+							out.addItem(in.getRemnants(), in.getRemnantsChance()*100);
+						}
 						FluidStack fs = in.getFluidOutput();
 						squeezer.put(items[0], new ImmutablePair(out, fs));
 					}

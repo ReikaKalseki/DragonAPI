@@ -135,11 +135,15 @@ public class ReikaFluidHelper {
 	}
 
 	public static String getFluidNameSwap(String oldName) {
+		if (FluidRegistry.isFluidRegistered(oldName)) //to avoid accidental unification
+			return oldName;
 		return nameSwaps.get(oldName);
 	}
 
 	public static String getOldNameIfApplicable(String fluidName) {
 		if (fluidName == null)
+			return fluidName;
+		if (FluidRegistry.isFluidRegistered(fluidName)) //to avoid accidental unification
 			return fluidName;
 		String repl = nameSwaps.get(fluidName);
 		return repl != null ? repl : fluidName;

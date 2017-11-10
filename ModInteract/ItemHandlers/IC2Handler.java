@@ -96,6 +96,11 @@ public class IC2Handler extends ModHandlerBase {
 		BRONZELEGGINGS("bronzeLeggings"),
 		BRONZEBOOTS("bronzeBoots"),
 		BIOCHAFF("biochaff"),
+		U235("Uran235"),
+		U238("Uran238"),
+		Pu239("Plutonium"),
+		U235_TINY("smallUran235"),
+		Pu239_TINY("smallPlutonium"),
 		//RSH(),
 		//LZH(),
 		;
