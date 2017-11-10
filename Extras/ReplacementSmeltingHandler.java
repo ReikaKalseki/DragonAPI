@@ -150,6 +150,10 @@ public class ReplacementSmeltingHandler {
 
 	public static ItemStack func_151395_a(ItemStack is) { //obf name - wtf; it works in the dev env too, and dev env does not work with both?!
 		handleDirectMapChanges();
+		if (is == null)
+			throw new IllegalArgumentException("You cannot fetch the smelting recipes for null!");
+		if (is.getItem() == null)
+			throw new IllegalArgumentException("You cannot fetch the smelting recipes for a stack with a null item!");
 		FurnaceRecipe rec = smeltingList.get(createKey(is));
 		return rec != null ? rec.output.copy() : null;
 	}

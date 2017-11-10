@@ -50,6 +50,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class FilledBlockArray extends StructuredBlockArray {
 
 	private final HashMap<Coordinate, BlockCheck> data = new HashMap();
+	private final HashMap<Coordinate, BlockKey> placementOverrides = new HashMap();
 
 	public FilledBlockArray(World world) {
 		super(world);
@@ -134,6 +135,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 	}
 
+	public void setPlacementOverride(int x, int y, int z, Block id, int meta) {
+		placementOverrides.put(new Coordinate(x, y, z), new BlockKey(id, meta));
+	}
+
 	private BlockCheck getBlockKey(int x, int y, int z) {
 		return data.get(new Coordinate(x, y, z));
 	}
@@ -170,8 +175,15 @@ public class FilledBlockArray extends StructuredBlockArray {
 			//Block b = this.getBlock(x, y, z);
 			//int meta = this.getBlockMetadata(x, y, z);
 			//world.setBlock(x, y, z, b, meta, 3);
-			if (!c.equals(e))
-				data.get(c).place(world, c.xCoord, c.yCoord, c.zCoord, flags);
+			if (!c.equals(e)) {
+				BlockKey po = placementOverrides.get(c);
+				if (po != null) {
+					po.place(world, c.xCoord, c.yCoord, c.zCoord, flags);
+				}
+				else {
+					data.get(c).place(world, c.xCoord, c.yCoord, c.zCoord, flags);
+				}
+			}
 		}
 	}
 
@@ -328,6 +340,98 @@ public class FilledBlockArray extends StructuredBlockArray {
 	@Override
 	public String toString() {
 		return data.toString();
+	}
+
+	@Override
+	protected BlockArray instantiate() {
+		return new FilledBlockArray(world);
+	}
+
+	@Override
+	public void addAll(BlockArray arr) {
+		super.addAll(arr);
+		if (arr instanceof FilledBlockArray) {
+			data.putAll(((FilledBlockArray)arr).data);
+		}
+	}
+
+
+	public void fillFrom(SlicedBlockBlueprint sbb, int x, int y, int z, ForgeDirection dir) {
+		sbb.putInto(this, x, y, z, dir);
+	}
+
+	@Override
+	public BlockArray rotate90Degrees(int ox, int oz, boolean left) {
+		FilledBlockArray b = (FilledBlockArray)super.rotate90Degrees(ox, oz, left);
+		for (Coordinate c : data.keySet()) {
+			BlockCheck bc = data.get(c);
+			Coordinate c2 = c.rotate90About(ox, oz, left);
+			b.data.put(c2, bc);
+		}
+		return b;
+	}
+
+	@Override
+	public BlockArray rotate180Degrees(int ox, int oz) {
+		FilledBlockArray b = (FilledBlockArray)super.rotate180Degrees(ox, oz);
+		for (Coordinate c : data.keySet()) {
+			BlockCheck bc = data.get(c);
+			Coordinate c2 = c.rotate180About(ox, oz);
+			b.data.put(c2, bc);
+		}
+		return b;
+	}
+
+	@Override
+	public void clear() {
+		super.clear();
+		data.clear();
+	}
+
+	@Override
+	public BlockArray flipX() {
+		FilledBlockArray b = (FilledBlockArray)super.flipX();
+		for (Coordinate c : data.keySet()) {
+			BlockCheck bc = data.get(c);
+			Coordinate c2 = new Coordinate(-c.xCoord, c.yCoord, c.zCoord);
+			b.data.put(c2, bc);
+		}
+		return b;
+	}
+
+	@Override
+	public BlockArray flipZ() {
+		FilledBlockArray b = (FilledBlockArray)super.flipZ();
+		for (Coordinate c : data.keySet()) {
+			BlockCheck bc = data.get(c);
+			Coordinate c2 = new Coordinate(c.xCoord, c.yCoord, -c.zCoord);
+			b.data.put(c2, bc);
+		}
+		return b;
+	}
+
+	public Collection<Coordinate> getAllLocationsOf(BlockCheck key) {
+		HashSet<Coordinate> set = new HashSet();
+		for (Coordinate c : data.keySet()) {
+			BlockCheck bc = data.get(c);
+			if (bc.match(key)) {
+				set.add(c);
+			}
+		}
+		return set;
+	}
+
+	public boolean isSpaceEmpty(World world, boolean allowSoft) {
+		for (Coordinate c : this.keySet()) {
+			Block b = c.getBlock(world);
+			if (b.isAir(world, c.xCoord, c.yCoord, c.zCoord) || (allowSoft && ReikaWorldHelper.softBlocks(world, c.xCoord, c.yCoord, c.zCoord))) {
+
+			}
+			else {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public static class MultiKey implements BlockCheck {
@@ -594,98 +698,6 @@ public class FilledBlockArray extends StructuredBlockArray {
 			}
 			return false;
 		}
-	}
-
-	@Override
-	protected BlockArray instantiate() {
-		return new FilledBlockArray(world);
-	}
-
-	@Override
-	public void addAll(BlockArray arr) {
-		super.addAll(arr);
-		if (arr instanceof FilledBlockArray) {
-			data.putAll(((FilledBlockArray)arr).data);
-		}
-	}
-
-
-	public void fillFrom(SlicedBlockBlueprint sbb, int x, int y, int z, ForgeDirection dir) {
-		sbb.putInto(this, x, y, z, dir);
-	}
-
-	@Override
-	public BlockArray rotate90Degrees(int ox, int oz, boolean left) {
-		FilledBlockArray b = (FilledBlockArray)super.rotate90Degrees(ox, oz, left);
-		for (Coordinate c : data.keySet()) {
-			BlockCheck bc = data.get(c);
-			Coordinate c2 = c.rotate90About(ox, oz, left);
-			b.data.put(c2, bc);
-		}
-		return b;
-	}
-
-	@Override
-	public BlockArray rotate180Degrees(int ox, int oz) {
-		FilledBlockArray b = (FilledBlockArray)super.rotate180Degrees(ox, oz);
-		for (Coordinate c : data.keySet()) {
-			BlockCheck bc = data.get(c);
-			Coordinate c2 = c.rotate180About(ox, oz);
-			b.data.put(c2, bc);
-		}
-		return b;
-	}
-
-	@Override
-	public void clear() {
-		super.clear();
-		data.clear();
-	}
-
-	@Override
-	public BlockArray flipX() {
-		FilledBlockArray b = (FilledBlockArray)super.flipX();
-		for (Coordinate c : data.keySet()) {
-			BlockCheck bc = data.get(c);
-			Coordinate c2 = new Coordinate(-c.xCoord, c.yCoord, c.zCoord);
-			b.data.put(c2, bc);
-		}
-		return b;
-	}
-
-	@Override
-	public BlockArray flipZ() {
-		FilledBlockArray b = (FilledBlockArray)super.flipZ();
-		for (Coordinate c : data.keySet()) {
-			BlockCheck bc = data.get(c);
-			Coordinate c2 = new Coordinate(c.xCoord, c.yCoord, -c.zCoord);
-			b.data.put(c2, bc);
-		}
-		return b;
-	}
-
-	public Collection<Coordinate> getAllLocationsOf(BlockCheck key) {
-		HashSet<Coordinate> set = new HashSet();
-		for (Coordinate c : data.keySet()) {
-			BlockCheck bc = data.get(c);
-			if (bc.match(key)) {
-				set.add(c);
-			}
-		}
-		return set;
-	}
-
-	public boolean isSpaceEmpty(World world, boolean allowSoft) {
-		for (Coordinate c : this.keySet()) {
-			Block b = c.getBlock(world);
-			if (b.isAir(world, c.xCoord, c.yCoord, c.zCoord) || (allowSoft && ReikaWorldHelper.softBlocks(world, c.xCoord, c.yCoord, c.zCoord))) {
-
-			}
-			else {
-				return false;
-			}
-		}
-		return true;
 	}
 
 }
