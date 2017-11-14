@@ -88,6 +88,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldChunk;
 import Reika.DragonAPI.Instantiable.Event.IceFreezeEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
+import Reika.DragonAPI.Interfaces.Callbacks.PositionCallable;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -1282,6 +1283,20 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static void causeAdjacentUpdates(World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		world.notifyBlocksOfNeighborChange(x, y, z, b);
+	}
+
+	/** Updates all blocks adjacent to the coordinate given, provided they meet a criterion. Args: World, x, y, z */
+	public static void causeAdjacentUpdatesIf(World world, int x, int y, int z, PositionCallable<Boolean> criteria) {
+		Block b = world.getBlock(x, y, z);
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetY;
+			int dz = z+dir.offsetZ;
+			if (criteria.call(world, dx, dy, dz)) {
+				world.notifyBlockOfNeighborChange(dx, dy, dz, b);
+			}
+		}
 	}
 
 	public static ArrayList<ItemStack> getDropsAt(World world, int x, int y, int z, int fortune, EntityPlayer ep) {

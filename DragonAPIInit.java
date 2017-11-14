@@ -79,6 +79,7 @@ import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Base.ModHandlerBase.SearchVersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionIgnore;
+import Reika.DragonAPI.Command.ClearParticlesCommand;
 import Reika.DragonAPI.Command.DragonClientCommand;
 import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Command.GetLatencyCommand;
@@ -561,6 +562,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			ClientCommandHandler.instance.registerCommand(new ToggleBlockChangePacketCommand());
 			ClientCommandHandler.instance.registerCommand(new GetLatencyCommand());
+			ClientCommandHandler.instance.registerCommand(new ClearParticlesCommand());
 		}
 
 		this.finishTiming();

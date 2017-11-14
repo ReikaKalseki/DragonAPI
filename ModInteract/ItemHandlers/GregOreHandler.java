@@ -26,6 +26,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModRegistry.ModOreList;
+import cpw.mods.fml.common.Loader;
 
 public final class GregOreHandler extends ModHandlerBase {
 
@@ -137,6 +138,10 @@ public final class GregOreHandler extends ModHandlerBase {
 		public String toString() {
 			return this.name()+" (~"+counterpart.toString()+" x "+yieldFraction+") < "+internalNames;
 		}
+	}
+
+	public boolean isGreg6() {
+		return Loader.isModLoaded("gregapi_post");
 	}
 
 }

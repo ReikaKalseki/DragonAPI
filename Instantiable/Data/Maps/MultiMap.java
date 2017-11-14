@@ -189,7 +189,10 @@ public final class MultiMap<K, V> {
 	}
 
 	public int totalSize() {
-		return this.allValues(true).size();
+		int s = 0;
+		for (Collection<V> c : data.values())
+			s += c.size();
+		return s;
 	}
 
 	public boolean containsValue(V value) {

@@ -37,7 +37,7 @@ public class ChangePacketRenderer {
 	public static void onBlockChangePacket(int x, int y, int z, Block b, int meta) {
 		if (isActive) {
 			//DragonAPICore.log("Received block change packet @ "+x+", "+y+", "+z+" for "+b.getClass().getName()+" | "+b.getUnlocalizedName()+" meta "+meta);
-			ChangePacketRenderer.instance.addCoordinate(x, y, z, false);
+			instance.addCoordinate(x, y, z, false);
 		}
 	}
 
@@ -54,19 +54,26 @@ public class ChangePacketRenderer {
 				for (int x = mx+1; x <= px-1; x++) {
 					for (int y = my+1; y <= py-1; y++) {
 						for (int z = mz+1; z <= pz-1; z++) {
-							ChangePacketRenderer.instance.addCoordinate(x, y, z, true);
+							instance.addCoordinate(x, y, z, true);
 						}
 					}
 				}
 			}
 			else {
-				ChangePacketRenderer.instance.addCoordinate(px, py, pz, true);
+				instance.addCoordinate(px, py, pz, true);
 			}
 		}
 	}
 
 	public void addCoordinate(int x, int y, int z, boolean reRender) {
 		Coordinate c = new Coordinate(x, y, z);
+		if (!reRender) {
+			RenderBox rb = data.get(c);
+			if (rb != null && rb.isReRender) {
+				rb.renderLife = LIFETIME;
+				return;
+			}
+		}
 		data.put(c, new RenderBox(c, reRender ? 0x45ff0000 : 0x60ffd050, reRender));
 	}
 
@@ -164,6 +171,21 @@ public class ChangePacketRenderer {
 
 			v5.addVertex(c.xCoord, c.yCoord, c.zCoord+16);
 			v5.addVertex(c.xCoord, c.yCoord+16, c.zCoord+16);
+
+			v5.setColorRGBA_I(0xffffff, (int)(48*f));
+			for (int i = 1; i <= 15; i++) {
+				v5.addVertex(c.xCoord+i, c.yCoord, c.zCoord);
+				v5.addVertex(c.xCoord+i, c.yCoord+16, c.zCoord);
+
+				v5.addVertex(c.xCoord+i, c.yCoord, c.zCoord+16);
+				v5.addVertex(c.xCoord+i, c.yCoord+16, c.zCoord+16);
+
+				v5.addVertex(c.xCoord, c.yCoord, c.zCoord+i);
+				v5.addVertex(c.xCoord, c.yCoord+16, c.zCoord+i);
+
+				v5.addVertex(c.xCoord+16, c.yCoord, c.zCoord+i);
+				v5.addVertex(c.xCoord+16, c.yCoord+16, c.zCoord+i);
+			}
 
 			if (val < 0) {
 				v5.setColorRGBA_I(0xff50e0, (int)(255*f));

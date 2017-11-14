@@ -31,6 +31,7 @@ import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
@@ -45,6 +46,9 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 	private final HashMap<Class, EffectRenderer> delegates = new HashMap();
 	private final HashSet<EffectRenderer> delegateSet = new HashSet();
+
+	private boolean isRendering;
+	private boolean isTicking;
 
 	private static final ResourceLocation particleTextures = new ResourceLocation("textures/particle/particles.png");
 	private static AxisAlignedBB particleBox = AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
@@ -73,6 +77,17 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 			return;
 		}
 
+		if (isRendering) {
+			DragonAPICore.logError("Tried adding a particle mid-render!");
+			Thread.dumpStack();
+			return;
+		}
+		if (isTicking) {
+			DragonAPICore.logError("Tried adding a particle mid-update!");
+			Thread.dumpStack();
+			return;
+		}
+
 		int i = fx.getFXLayer();
 		if (fxLayers[i].size() >= limit) {
 			fxLayers[i].remove(0);
@@ -83,7 +98,9 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 	@Override
 	public void updateEffects() {
+		//isTicking = true;
 		super.updateEffects();
+		//isTicking = false;
 		for (EffectRenderer eff : delegateSet) {
 			eff.updateEffects();
 		}
@@ -112,6 +129,8 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 		EntityFX.interpPosX = e.lastTickPosX + (e.posX - e.lastTickPosX) * ptick;
 		EntityFX.interpPosY = e.lastTickPosY + (e.posY - e.lastTickPosY) * ptick;
 		EntityFX.interpPosZ = e.lastTickPosZ + (e.posZ - e.lastTickPosZ) * ptick;
+
+		isRendering = true;
 
 		for (int i = 0; i < 3; i++)  {
 			if (!fxLayers[i].isEmpty())  {
@@ -144,6 +163,8 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 				GL11.glAlphaFunc(GL11.GL_GREATER, 0.1F);
 			}
 		}
+
+		isRendering = false;
 	}
 
 	private void bindTexture(int i) {
@@ -206,6 +227,18 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 		return sb.toString();
 	}
 
+	public int getParticleCount() {
+		int base = 0;
+		for (Collection<EntityFX> fx : fxLayers) {
+			base += fx.size();
+		}
+		for (EffectRenderer eff : delegateSet) {
+			if (eff instanceof CustomEffectRenderer)
+				base += ((CustomEffectRenderer)eff).getParticleCount();
+		}
+		return base;
+	}
+
 	public static ThrottleableEffectRenderer getRegisteredInstance() {
 		return (ThrottleableEffectRenderer)Minecraft.getMinecraft().effectRenderer;
 	}
@@ -220,6 +253,12 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 	private static AxisAlignedBB getBoundingBox(EntityFX fx) {
 		return particleBox.setBounds(fx.posX-fx.particleScale, fx.posY-fx.particleScale, fx.posZ-fx.particleScale, fx.posX+fx.particleScale, fx.posY+fx.particleScale, fx.posZ+fx.particleScale);
+	}
+
+	public static interface CustomEffectRenderer {
+
+		public int getParticleCount();
+
 	}
 
 }

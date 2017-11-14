@@ -216,9 +216,22 @@ public class TinkerBlockHandler extends ModHandlerBase {
 				e.printStackTrace();
 				this.logFailure(e);
 			}
+
+
+			slimeDirt = new BlockKey(ReikaItemHelper.lookupBlock(this.getMod(), "CraftedSoil", 5));
+			slimeGrass = new BlockKey(ReikaItemHelper.lookupBlock(this.getMod(), "slime.grass", 5));
+			congealedSlime = GameRegistry.findBlock(this.getMod().modLabel, "slime.gel");
+			slimeWater = GameRegistry.findBlock(this.getMod().modLabel, "liquid.slime");
+			slimeTallGrass = GameRegistry.findBlock(this.getMod().modLabel, "slime.grass.tall");
 		}
 		else {
 			this.noMod();
+
+			slimeDirt = null;
+			slimeGrass = null;
+			congealedSlime = null;
+			slimeWater = null;
+			slimeTallGrass = null;
 		}
 
 		pulsar = pulse;
@@ -230,12 +243,6 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		searedBlockID = idseared;
 
 		materialID = idmaterial;
-
-		slimeDirt = new BlockKey(ReikaItemHelper.lookupBlock(this.getMod(), "CraftedSoil", 5));
-		slimeGrass = new BlockKey(ReikaItemHelper.lookupBlock(this.getMod(), "slime.grass", 5));
-		congealedSlime = GameRegistry.findBlock(this.getMod().modLabel, "slime.gel");
-		slimeWater = GameRegistry.findBlock(this.getMod().modLabel, "liquid.slime");
-		slimeTallGrass = GameRegistry.findBlock(this.getMod().modLabel, "slime.grass.tall");
 	}
 
 	public static enum Pulses {

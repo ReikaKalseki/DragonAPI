@@ -17,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
@@ -91,8 +92,8 @@ public class ItemDrop {
 		ReikaItemHelper.dropItem(world, x, y, z, this.getItem());
 	}
 
-	public void drop(Entity e) {
-		ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY+0.25, e.posZ, this.getItem());
+	public EntityItem drop(Entity e) {
+		return ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY+0.25, e.posZ, this.getItem());
 	}
 
 	public Item getID() {
