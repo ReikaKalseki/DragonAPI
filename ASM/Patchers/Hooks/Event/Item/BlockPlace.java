@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.ASM.Patchers.Hooks.Event.World;
+package Reika.DragonAPI.ASM.Patchers.Hooks.Event.Item;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -33,10 +33,10 @@ public class BlockPlace extends Patcher {
 	@Override
 	protected void apply(ClassNode cn) {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "placeBlockAt", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFFI)Z"); // Forge
-																																																// func,
-																																																// so
-																																																// no
-																																																// srg
+		// func,
+		// so
+		// no
+		// srg
 		/*for (int i = 0; i < m.instructions.size(); i++) { AbstractInsnNode ain
 		 * = m.instructions.get(i); if (ain.getOpcode() ==
 		 * Opcodes.INVOKEVIRTUAL) { MethodInsnNode min = (MethodInsnNode)ain;
@@ -79,12 +79,13 @@ public class BlockPlace extends Patcher {
 		pre.add(new VarInsnNode(Opcodes.ILOAD, 4));
 		pre.add(new VarInsnNode(Opcodes.ILOAD, 5));
 		pre.add(new VarInsnNode(Opcodes.ILOAD, 6));
+		pre.add(new VarInsnNode(Opcodes.ILOAD, 7));
 		pre.add(new VarInsnNode(Opcodes.ALOAD, 0));
 		pre.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/item/ItemBlock", "field_150939_a", "Lnet/minecraft/block/Block;"));
 		pre.add(new VarInsnNode(Opcodes.ILOAD, 11));
 		pre.add(new VarInsnNode(Opcodes.ALOAD, 1));
 		pre.add(new VarInsnNode(Opcodes.ALOAD, 2));
-		pre.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/PlayerPlaceBlockEvent", "<init>", "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;ILnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V", false));
+		pre.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "Reika/DragonAPI/Instantiable/Event/PlayerPlaceBlockEvent", "<init>", "(Lnet/minecraft/world/World;IIIILnet/minecraft/block/Block;ILnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V", false));
 		pre.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "cpw/mods/fml/common/eventhandler/EventBus", "post", "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
 		pre.add(new JumpInsnNode(Opcodes.IFEQ, L1));
 		pre.add(L2);

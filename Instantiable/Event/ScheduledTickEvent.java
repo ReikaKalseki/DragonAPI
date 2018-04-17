@@ -9,14 +9,21 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap.FreezableTimer;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.Side;
@@ -212,6 +219,56 @@ public final class ScheduledTickEvent extends Event implements FreezableTimer {
 			return s == Side.SERVER;
 		}
 
+	}
+
+	public static class ScheduledBlockPlace implements ScheduledEvent {
+
+		private final BlockKey block;
+		private final WorldLocation location;
+
+		public ScheduledBlockPlace(World world, int x, int y, int z, Block b) {
+			this(world, x, y, z, b, 0);
+		}
+
+		public ScheduledBlockPlace(World world, int x, int y, int z, Block b, int meta) {
+			block = new BlockKey(b, meta);
+			location = new WorldLocation(world, x, y, z);
+		}
+
+		@Override
+		public void fire() {
+			location.setBlock(block.blockID, block.metadata);
+			World world = location.getWorld();
+			int x = location.xCoord;
+			int y = location.yCoord;
+			int z = location.zCoord;
+			ReikaPacketHelper.sendDataPacketWithRadius(DragonAPIInit.packetChannel, PacketIDs.BREAKPARTICLES.ordinal(), world, x, y, z, 128, Block.getIdFromBlock(block.blockID), block.metadata);
+			ReikaSoundHelper.playBreakSound(world, x, y, z, block.blockID);
+		}
+
+		@Override
+		public boolean runOnSide(Side s) {
+			return s == Side.SERVER;
+		}
+	}
+
+	public static class ScheduledBlockBreak implements ScheduledEvent {
+
+		private final WorldLocation location;
+
+		public ScheduledBlockBreak(WorldLocation loc) {
+			location = loc;
+		}
+
+		@Override
+		public void fire() {
+			ReikaWorldHelper.dropAndDestroyBlockAt(location.getWorld(), location.xCoord, location.yCoord, location.zCoord, null, true, true);
+		}
+
+		@Override
+		public boolean runOnSide(Side s) {
+			return s == Side.SERVER;
+		}
 	}
 
 	public static interface ScheduledEvent {

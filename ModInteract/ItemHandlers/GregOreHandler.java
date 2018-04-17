@@ -64,7 +64,8 @@ public final class GregOreHandler extends ModHandlerBase {
 	}
 
 	public boolean isGregOre(Block b) {
-		return Block.blockRegistry.getNameForObject(b).startsWith("gt.blockores");
+		String n = Block.blockRegistry.getNameForObject(b);
+		return n.startsWith("gt.") && (n.startsWith("gt.blockores") || n.startsWith("gt.meta.ore.") || n.startsWith("gt.block.rockores"));
 	}
 
 	public boolean isHandledGregOre(ItemStack is) {

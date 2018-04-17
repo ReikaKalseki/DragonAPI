@@ -33,6 +33,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -53,7 +55,6 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	private final ArrayList<Coordinate> blocks = new ArrayList();
 	private final HashSet<Coordinate> keys = new HashSet();
-	protected Material liquidMat;
 	protected boolean overflow = false;
 	protected World refWorld;
 
@@ -669,17 +670,13 @@ public class BlockArray implements Iterable<Coordinate> {
 		}
 	}
 
-	public void setLiquid(Material mat) {
-		liquidMat = mat;
-	}
-
-	public void recursiveAddLiquidWithBounds(IBlockAccess world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2) {
-		this.recursiveAddLiquidWithBounds(world, x, y, z, x, y, z, x1, y1, z1, x2, y2, z2, 0);
+	public void recursiveAddLiquidWithBounds(IBlockAccess world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, Fluid liquid) {
+		this.recursiveAddLiquidWithBounds(world, x, y, z, x, y, z, x1, y1, z1, x2, y2, z2, 0, liquid);
 	}
 
 	/** Like the ordinary recursive add but with a bounded volume. Args: World, x, y, z,
 	 * id to replace, min x,y,z, max x,y,z */
-	private void recursiveAddLiquidWithBounds(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+	private void recursiveAddLiquidWithBounds(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, int depth, Fluid liquid) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -689,7 +686,7 @@ public class BlockArray implements Iterable<Coordinate> {
 		//DragonAPICore.log(liquidID+" and "+world.getBlock(x, y, z));;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
-		if (ReikaWorldHelper.getMaterial(world, x, y, z) != liquidMat) {
+		if (liquid != null && FluidRegistry.lookupFluidForBlock(world.getBlock(x, y, z)) != liquid) {
 			//DragonAPICore.log("Could not match id "+world.getBlock(x, y, z)+" to "+liquidID);
 			return;
 		}
@@ -701,15 +698,15 @@ public class BlockArray implements Iterable<Coordinate> {
 				for (int i = -1; i <= 1; i++)
 					for (int j = -1; j <= 1; j++)
 						for (int k = -1; k <= 1; k++)
-							this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x+i, y+j, z+k, x1, y1, z1, x2, y2, z2, depth+1);
+							this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x+i, y+j, z+k, x1, y1, z1, x2, y2, z2, depth+1, liquid);
 			}
 			else {
-				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x+1, y, z, x1, y1, z1, x2, y2, z2, depth+1);
-				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x-1, y, z, x1, y1, z1, x2, y2, z2, depth+1);
-				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x, y+1, z, x1, y1, z1, x2, y2, z2, depth+1);
-				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x, y-1, z, x1, y1, z1, x2, y2, z2, depth+1);
-				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x, y, z+1, x1, y1, z1, x2, y2, z2, depth+1);
-				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x, y, z-1, x1, y1, z1, x2, y2, z2, depth+1);
+				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x+1, y, z, x1, y1, z1, x2, y2, z2, depth+1, liquid);
+				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x-1, y, z, x1, y1, z1, x2, y2, z2, depth+1, liquid);
+				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x, y+1, z, x1, y1, z1, x2, y2, z2, depth+1, liquid);
+				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x, y-1, z, x1, y1, z1, x2, y2, z2, depth+1, liquid);
+				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x, y, z+1, x1, y1, z1, x2, y2, z2, depth+1, liquid);
+				this.recursiveAddLiquidWithBounds(world, x0, y0, z0, x, y, z-1, x1, y1, z1, x2, y2, z2, depth+1, liquid);
 			}
 		}
 		catch (StackOverflowError e) {
@@ -1056,7 +1053,6 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	public void copyTo(BlockArray copy) {
 		copy.refWorld = refWorld;
-		copy.liquidMat = liquidMat;
 		copy.overflow = overflow;
 		copy.blocks.clear();
 		copy.blocks.addAll(blocks);

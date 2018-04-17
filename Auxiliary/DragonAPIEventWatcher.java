@@ -71,6 +71,7 @@ import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaChunkHelper;
@@ -85,6 +86,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
 	public static final DragonAPIEventWatcher instance = new DragonAPIEventWatcher();
+
+	private static boolean doAlphaClip = ReikaJVMParser.isArgumentPresent("-DragonAPI_ForceAlphaClip");
 
 	private long IDMsgCooldown = 0;
 
@@ -266,6 +269,8 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void disableAlphaTest(RenderWorldEvent.Pre evt) {
+		if (doAlphaClip)
+			return;
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		if (DragonOptions.NOALPHATEST.getState())
 			GL11.glAlphaFunc(GL11.GL_GEQUAL, 0.01F);
@@ -274,6 +279,8 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void disableAlphaTest(RenderWorldEvent.Post evt) {
+		if (doAlphaClip)
+			return;
 		GL11.glPopAttrib();
 	}
 

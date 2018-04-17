@@ -15,7 +15,7 @@ import cpw.mods.fml.relauncher.Side;
 public class ParticleEventPhaseReset extends Patcher {
 
 	public ParticleEventPhaseReset() {
-		super("Reika.DragonAPI.Instantiable.Event.Client.AddParticleEvent");
+		super("Reika.DragonAPI.Instantiable.Event.Client.AddParticleEvent#");
 	}
 
 	@Override
