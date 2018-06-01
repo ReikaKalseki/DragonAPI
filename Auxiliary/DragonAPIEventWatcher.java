@@ -24,6 +24,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
@@ -50,8 +51,10 @@ import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.ChangePacketRenderer;
+import Reika.DragonAPI.Instantiable.Interpolation;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
 import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
+import Reika.DragonAPI.Instantiable.Event.FireChanceEvent;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent.ProfileEventWatcher;
@@ -91,12 +94,32 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
 	private long IDMsgCooldown = 0;
 
+	private final Interpolation biomeHumidityFlammability = new Interpolation(false);
+
 	private DragonAPIEventWatcher() {
 		//ProfileEvent.registerHandler("blockentities", this);
+
+		biomeHumidityFlammability.addPoint(0, 3);
+		biomeHumidityFlammability.addPoint(0.1, 2);
+		biomeHumidityFlammability.addPoint(0.25, 1.5);
+		biomeHumidityFlammability.addPoint(0.4, 1.1);
+		biomeHumidityFlammability.addPoint(0.5, 1);
+		biomeHumidityFlammability.addPoint(0.8, 0.9);
+		biomeHumidityFlammability.addPoint(0.9, 0.75);
+		biomeHumidityFlammability.addPoint(1, 0.5);
 	}
 
 	public void onCall(String tag) {
 
+	}
+
+	@SubscribeEvent
+	public void modifyFireSpread(FireChanceEvent evt) {
+		if (DragonOptions.BIOMEFIRE.getState()) {
+			BiomeGenBase b = evt.world.getBiomeGenForCoords(evt.xCoord, evt.zCoord);
+			float humid = b.rainfall; //ranges from 0 (desert, nether, etc) to 1 (ocean) //ReikaBiomeHelper.getBiomeHumidity(b);
+			evt.spreadChance *= biomeHumidityFlammability.getValue(humid); //*= 2-humid*1.5;  //1F/(0.5F+humid); //doubled for 0, unchanged for 0.5, halved for 1
+		}
 	}
 
 	@SubscribeEvent
@@ -301,8 +324,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SubscribeEvent
 	public void tagDroppedItems(ItemTossEvent evt) {
 		if (evt.player != null) {
-			String s = evt.player.getUniqueID().toString();
-			evt.entityItem.getEntityData().setString("dropper", s);
+			ReikaItemHelper.setDropper(evt.entityItem, evt.player);
 			//ReikaPacketHelper.sendStringIntPacket(packetChannel, PacketIDs.ITEMDROPPER.ordinal(), new PacketTarget.DimensionTarget(evt.entityItem.worldObj), s, evt.entityItem.getEntityId());
 		}
 	}

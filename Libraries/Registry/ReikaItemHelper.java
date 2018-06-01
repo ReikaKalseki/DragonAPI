@@ -539,6 +539,11 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return null;
 	}
 
+	public static void setDropper(EntityItem ei, EntityPlayer ep) {
+		String s = ep.getUniqueID().toString();
+		ei.getEntityData().setString("dropper", s);
+	}
+
 	public static HashSet<String> getOreNames(ItemStack in) {
 		HashSet<String> set = new HashSet();
 		int[] ids = OreDictionary.getOreIDs(in);

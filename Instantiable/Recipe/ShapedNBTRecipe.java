@@ -12,8 +12,14 @@ package Reika.DragonAPI.Instantiable.Recipe;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapedRecipes;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.RecipeSorter.Category;
 
 public class ShapedNBTRecipe extends ShapedRecipes {
+
+	static {
+		RecipeSorter.register("dragonapi:shapednbt", ShapedNBTRecipe.class, Category.SHAPED, "after:minecraft:shaped");
+	}
 
 	public ShapedNBTRecipe(int w, int h, ItemStack[] in, ItemStack out) {
 		super(w, h, in, out);

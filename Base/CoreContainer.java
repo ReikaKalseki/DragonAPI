@@ -288,6 +288,8 @@ public class CoreContainer extends Container {
 			DragonAPICore.log(o2);
 			DragonAPICore.log(o3);
 			DragonAPICore.log(o4);
+			DragonAPICore.log("Stack Trace:");
+			Thread.dumpStack();
 			if (DragonOptions.CHATERRORS.getState()) {
 				ReikaChatHelper.write(o);
 				ReikaChatHelper.write(o2);

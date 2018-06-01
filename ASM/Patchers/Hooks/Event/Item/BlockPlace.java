@@ -32,42 +32,7 @@ public class BlockPlace extends Patcher {
 
 	@Override
 	protected void apply(ClassNode cn) {
-		MethodNode m = ReikaASMHelper.getMethodByName(cn, "placeBlockAt", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFFI)Z"); // Forge
-		// func,
-		// so
-		// no
-		// srg
-		/*for (int i = 0; i < m.instructions.size(); i++) { AbstractInsnNode ain
-		 * = m.instructions.get(i); if (ain.getOpcode() ==
-		 * Opcodes.INVOKEVIRTUAL) { MethodInsnNode min = (MethodInsnNode)ain;
-		 * String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_149689_a" :
-		 * "onBlockPlacedBy"; if (min.name.equals(func)) {
-		 * m.instructions.insert(min, new InsnNode(Opcodes.POP));
-		 * m.instructions.insert(min, new MethodInsnNode(Opcodes.INVOKEVIRTUAL,
-		 * "cpw/mods/fml/common/eventhandler/EventBus", "post",
-		 * "(Lcpw/mods/fml/common/eventhandler/Event;)Z", false));
-		 * m.instructions.insert(min, new MethodInsnNode(Opcodes.INVOKESPECIAL,
-		 * "Reika/DragonAPI/Instantiable/Event/PlayerPlaceBlockEvent", "<init>",
-		 * "(Lnet/minecraft/world/World;IIILnet/minecraft/block/Block;ILnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;)V"
-		 * , false)); m.instructions.insert(min, new VarInsnNode(Opcodes.ALOAD,
-		 * 2)); m.instructions.insert(min, new VarInsnNode(Opcodes.ALOAD, 1));
-		 * m.instructions.insert(min, new VarInsnNode(Opcodes.ILOAD, 11));
-		 * m.instructions.insert(min, new FieldInsnNode(Opcodes.GETFIELD,
-		 * "net/minecraft/item/ItemBlock", "field_150939_a",
-		 * "Lnet/minecraft/block/Block;")); m.instructions.insert(min, new
-		 * VarInsnNode(Opcodes.ALOAD, 0)); m.instructions.insert(min, new
-		 * VarInsnNode(Opcodes.ILOAD, 6)); m.instructions.insert(min, new
-		 * VarInsnNode(Opcodes.ILOAD, 5)); m.instructions.insert(min, new
-		 * VarInsnNode(Opcodes.ILOAD, 4)); m.instructions.insert(min, new
-		 * VarInsnNode(Opcodes.ALOAD, 3)); m.instructions.insert(min, new
-		 * InsnNode(Opcodes.DUP)); m.instructions.insert(min, new
-		 * TypeInsnNode(Opcodes.NEW,
-		 * "Reika/DragonAPI/Instantiable/Event/PlayerPlaceBlockEvent"));
-		 * m.instructions.insert(min, new FieldInsnNode(Opcodes.GETSTATIC,
-		 * "net/minecraftforge/common/MinecraftForge", "EVENT_BUS",
-		 * "Lcpw/mods/fml/common/eventhandler/EventBus;"));
-		 * ReikaASMHelper.log("Successfully applied "+this+" ASM handler!");
-		 * break; } } } */
+		MethodNode m = ReikaASMHelper.getMethodByName(cn, "placeBlockAt", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/world/World;IIIIFFFI)Z");
 
 		InsnList pre = new InsnList();
 		LabelNode L1 = new LabelNode();

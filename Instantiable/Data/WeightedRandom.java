@@ -14,6 +14,7 @@ import java.util.NavigableMap;
 import java.util.Random;
 import java.util.TreeMap;
 
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 
 public class WeightedRandom<V> {
@@ -25,6 +26,8 @@ public class WeightedRandom<V> {
 	private double weightSum;
 
 	public double addEntry(V obj, double weight) {
+		if (weight < 0)
+			throw new MisuseException("You cannot have an entry with a negative weight!");
 		data.put(obj, weight);
 		this.weightSum += weight;
 		this.maxWeight = Math.max(this.maxWeight, weight);

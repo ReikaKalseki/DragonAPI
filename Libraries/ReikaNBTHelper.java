@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,6 +18,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagByte;
@@ -90,7 +93,14 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	}
 
 	public static Object getValue(NBTBase NBT) {
-		if (NBT instanceof NBTTagInt) {
+		return getValue(NBT, null);
+	}
+
+	public static Object getValue(NBTBase NBT, NBTIO converter) {
+		if (converter != null) {
+			return converter.createFromNBT(NBT);
+		}
+		else if (NBT instanceof NBTTagInt) {
 			return ((NBTTagInt)NBT).func_150287_d();
 		}
 		else if (NBT instanceof NBTTagByte) {
@@ -144,7 +154,14 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	}
 
 	public static NBTBase getTagForObject(Object o) {
-		if (o instanceof Integer || o.getClass() == int.class) {
+		return getTagForObject(o, null);
+	}
+
+	public static NBTBase getTagForObject(Object o, NBTIO converter) {
+		if (converter != null) {
+			return converter.convertToNBT(o);
+		}
+		else if (o instanceof Integer || o.getClass() == int.class) {
 			return new NBTTagInt((Integer)o);
 		}
 		else if (o instanceof Byte || o.getClass() == byte.class) {
@@ -393,9 +410,13 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	}
 
 	public static void writeCollectionToNBT(Collection c, NBTTagCompound NBT, String key) {
+		writeCollectionToNBT(c, NBT, key, null);
+	}
+
+	public static void writeCollectionToNBT(Collection c, NBTTagCompound NBT, String key, NBTIO converter) {
 		NBTTagList li = new NBTTagList();
 		for (Object o : c) {
-			NBTBase b = getTagForObject(o);
+			NBTBase b = getTagForObject(o, converter);
 			NBTTagCompound tag = new NBTTagCompound();
 			tag.setTag("value", b);
 			li.appendTag(tag);
@@ -404,12 +425,16 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	}
 
 	public static void readCollectionFromNBT(Collection c, NBTTagCompound NBT, String key) {
+		readCollectionFromNBT(c, NBT, key, null);
+	}
+
+	public static void readCollectionFromNBT(Collection c, NBTTagCompound NBT, String key, NBTIO converter) {
 		c.clear();
 		NBTTagList li = NBT.getTagList(key, NBTTypes.COMPOUND.ID);
 		for (Object o : li.tagList) {
 			NBTTagCompound tag = (NBTTagCompound)o;
 			NBTBase b = tag.getTag("value");
-			c.add(getValue(b));
+			c.add(getValue(b, converter));
 		}
 	}
 
@@ -437,6 +462,70 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		NBTTagCompound tag = new NBTTagCompound();
 		addMapToTags(tag, lb.asHashMap());
 		return tag;
+	}
+
+	public interface NBTIO<V> {
+
+		public V createFromNBT(NBTBase nbt);
+		public NBTBase convertToNBT(V obj);
+
+	}
+
+	public static class EnumNBTConverter implements NBTIO {
+
+		private final List<Enum> enumData;
+
+		public EnumNBTConverter(Class<? extends Enum> c) {
+			enumData = (List<Enum>)Arrays.asList(c.getEnumConstants());
+		}
+
+		@Override
+		public Object createFromNBT(NBTBase nbt) {
+			int idx = ((NBTTagInt)nbt).func_150287_d();
+			return idx >= 0 && idx < enumData.size() ? enumData.get(idx) : null;
+		}
+
+		@Override
+		public NBTBase convertToNBT(Object obj) {
+			return new NBTTagInt(enumData.indexOf(obj));
+		}
+
+	}
+
+	public static class BlockConverter implements NBTIO<Block> {
+
+		public BlockConverter() {
+
+		}
+
+		@Override
+		public Block createFromNBT(NBTBase nbt) {
+			return Block.getBlockFromName((((NBTTagString)nbt).func_150285_a_()));
+		}
+
+		@Override
+		public NBTBase convertToNBT(Block obj) {
+			return new NBTTagString(Block.blockRegistry.getNameForObject(obj));
+		}
+
+	}
+
+	public static class ItemConverter implements NBTIO<Item> {
+
+		public ItemConverter() {
+
+		}
+
+		@Override
+		public Item createFromNBT(NBTBase nbt) {
+			return (Item)Item.itemRegistry.getObject((((NBTTagString)nbt).func_150285_a_()));
+		}
+
+		@Override
+		public NBTBase convertToNBT(Item obj) {
+			return new NBTTagString(Item.itemRegistry.getNameForObject(obj));
+		}
+
 	}
 
 }

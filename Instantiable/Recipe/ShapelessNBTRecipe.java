@@ -19,8 +19,14 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.RecipeSorter.Category;
 
 public class ShapelessNBTRecipe extends ShapelessRecipes {
+
+	static {
+		RecipeSorter.register("dragonapi:shapelessnbt", ShapelessNBTRecipe.class, Category.SHAPELESS, "after:minecraft:shapeless");
+	}
 
 	public ShapelessNBTRecipe(ItemStack is, Object... in) {
 		super(is, getList(in));
@@ -48,8 +54,7 @@ public class ShapelessNBTRecipe extends ShapelessRecipes {
 	}
 
 	@Override
-	public boolean matches(InventoryCrafting ic, World world)
-	{
+	public boolean matches(InventoryCrafting ic, World world) {
 		ArrayList arraylist = new ArrayList(recipeItems);
 
 		for (int i = 0; i < 3; ++i) {

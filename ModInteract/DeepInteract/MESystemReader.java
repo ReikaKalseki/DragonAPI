@@ -81,6 +81,8 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 
 	private Object monitorToken = new Object();
 
+	public final boolean isEmpty;
+
 	public MESystemReader(IGridNode ign, EntityPlayer ep) {
 		this(ign, new PlayerSource(ep, null));
 	}
@@ -102,6 +104,9 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 	private MESystemReader(IGridNode ign, BaseActionSource src) {
 		node = ign;
 		actionSource = src;
+
+		IReadOnlyCollection<IGridNode> nodes = ign.getGrid().getNodes();
+		isEmpty = nodes.isEmpty() || (nodes.size() == 1 && nodes.iterator().next() == node);
 	}
 
 	public MESystemReader setRequester(ICraftingRequester icr) {

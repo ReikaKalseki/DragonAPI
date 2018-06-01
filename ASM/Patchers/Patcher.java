@@ -16,6 +16,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 
 import Reika.DragonAPI.Auxiliary.CoreModDetection;
+import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.relauncher.Side;
@@ -124,6 +125,19 @@ public abstract class Patcher {
 
 	public boolean computeFrames() {
 		return false;
+	}
+
+	private class ASMApplicationException extends RuntimeException {
+
+		private ASMApplicationException(ASMException e) {
+			super(e);
+		}
+		/*
+		@Override
+		public String getMessage() {
+			return "Error running Patcher '"+Patcher.this.name()+":\n"+super.getMessage();
+		}*/
+
 	}
 
 }

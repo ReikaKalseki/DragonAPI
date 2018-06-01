@@ -19,6 +19,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
+import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Auxiliary.WorldGenInterceptionRegistry;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
@@ -137,6 +138,8 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 
 		bukkitFlags = BukkitBitflags.calculateFlags();
 		nullItemPrintout = !ReikaJVMParser.isArgumentPresent("-DragonAPI_noNullItemPrint");
+
+		ReikaJavaLibrary.initClass(CoreModDetection.class);
 	}
 
 	public static int getBukkitFlags() {

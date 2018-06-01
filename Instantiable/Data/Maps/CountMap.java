@@ -12,12 +12,17 @@ package Reika.DragonAPI.Instantiable.Data.Maps;
 import java.util.HashMap;
 import java.util.Set;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTIO;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 
 
 public class CountMap<V> {
 
 	private final HashMap<V, Integer> data = new HashMap();
+	private int total;
 
 	public CountMap() {
 
@@ -32,6 +37,7 @@ public class CountMap<V> {
 		int has = get != null ? get.intValue() : 0;
 		int next = has+num;
 		this.set(key, next);
+		total += num;
 	}
 
 	public void set(V key, int num) {
@@ -41,8 +47,12 @@ public class CountMap<V> {
 			data.remove(key);
 	}
 
-	public Integer remove(V key) {
-		return data.remove(key);
+	public int remove(V key) {
+		Integer amt = data.remove(key);
+		if (amt == null)
+			amt = 0;
+		this.total -= amt;
+		return amt;
 	}
 
 	public int get(V key) {
@@ -52,6 +62,10 @@ public class CountMap<V> {
 
 	public int size() {
 		return data.size();
+	}
+
+	public int getTotalCount() {
+		return total;
 	}
 
 	@Override
@@ -89,8 +103,40 @@ public class CountMap<V> {
 		return w;
 	}
 
+	public double getFraction(V k) {
+		if (this.total == 0)
+			return 0;
+		return this.get(k)/(double)this.getTotalCount();
+	}
+
 	public boolean isEmpty() {
 		return data.isEmpty();
+	}
+
+	public void readFromNBT(NBTTagCompound tag, NBTIO<V> converter) {
+		total = tag.getInteger("total");
+
+		data.clear();
+		NBTTagList li = tag.getTagList("data", NBTTypes.COMPOUND.ID);
+		for (Object o : li.tagList) {
+			NBTTagCompound dat = (NBTTagCompound)o;
+			V key = converter.createFromNBT(dat.getTag("key"));
+			int amt = dat.getInteger("value");
+			data.put(key, amt);
+		}
+	}
+
+	public void writeToNBT(NBTTagCompound tag, NBTIO<V> converter) {
+		tag.setInteger("total", total);
+		NBTTagList li = new NBTTagList();
+		for (V k : data.keySet()) {
+			NBTTagCompound dat = new NBTTagCompound();
+			int amt = data.get(k);
+			dat.setTag("key", converter.convertToNBT(k));
+			dat.setInteger("value", amt);
+			li.appendTag(dat);
+		}
+		tag.setTag("data", li);
 	}
 
 }

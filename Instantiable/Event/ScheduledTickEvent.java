@@ -271,6 +271,44 @@ public final class ScheduledTickEvent extends Event implements FreezableTimer {
 		}
 	}
 
+	public static final class ScheduledPacket implements ScheduledEvent {
+
+		public final String channel;
+		public final int packetID;
+		public final int radius;
+
+		private final World world;
+		private final int xCoord;
+		private final int yCoord;
+		private final int zCoord;
+
+		private final int[] data;
+
+		public ScheduledPacket(String ch, int id, World world, int x, int y, int z, int r, int... data) {
+			channel = ch;
+			packetID = id;
+			radius = r;
+
+			this.world = world;
+			xCoord = x;
+			yCoord = y;
+			zCoord = z;
+
+			this.data = data;
+		}
+
+		@Override
+		public void fire() {
+			ReikaPacketHelper.sendDataPacketWithRadius(channel, packetID, world, xCoord, yCoord, zCoord, radius, data);
+		}
+
+		@Override
+		public boolean runOnSide(Side s) {
+			return s == Side.SERVER;
+		}
+
+	}
+
 	public static interface ScheduledEvent {
 
 		public abstract void fire();

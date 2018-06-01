@@ -190,6 +190,10 @@ public final class ChancedOutputList {
 		}
 	}
 
+	public int size() {
+		return data.size();
+	}
+
 	public static interface ChanceManipulator {
 
 		public float getChance(float original);

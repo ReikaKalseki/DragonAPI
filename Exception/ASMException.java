@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Exception;
 
+import java.util.Arrays;
+
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -150,6 +152,8 @@ public abstract class ASMException extends RuntimeException {
 
 		protected final String label;
 
+		private NoSuchMemberASMException secondaryCheck;
+
 		private NoSuchMemberASMException(ClassNode cn, String name) {
 			super(cn);
 			label = name;
@@ -166,6 +170,10 @@ public abstract class ASMException extends RuntimeException {
 			sb.append("This is a critical ASM error and the class transformer operation cannot proceed.");
 			sb.append(" If you are the developer of this mod, check for proper use of SRG/deobf names and/or sideonly elements.");
 			sb.append(" If not, report it to the developer.");
+			if (secondaryCheck != null) {
+				sb.append(" The backup lookup also failed: ");
+				sb.append(Arrays.toString(secondaryCheck.getStackTrace()));
+			}
 			sb.append("\n\nAdditional information:\n");
 			sb.append(this.getAdditionalInformation());
 			return sb.toString();
@@ -176,6 +184,10 @@ public abstract class ASMException extends RuntimeException {
 
 		public final boolean isVanillaClass() {
 			return ASMException.isVanillaClass(node); //need the direct class reference or compiler has a seizure <_<
+		}
+
+		public final void addSecondary(NoSuchMemberASMException e2) {
+			secondaryCheck = e2;
 		}
 
 	}

@@ -14,12 +14,19 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.oredict.OreDictionary;
+import net.minecraftforge.oredict.RecipeSorter;
+import net.minecraftforge.oredict.RecipeSorter.Category;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 
 
 public class FluidInputRecipe extends ShapedOreRecipe {
+
+	static {
+		RecipeSorter.register("dragonapi:shapedfluid", FluidInputRecipe.class, Category.SHAPED, "after:minecraft:shaped");
+		RecipeSorter.register("dragonapi:shapelessfluid", ShapelessFluidInputRecipe.class, Category.SHAPELESS, "after:minecraft:shapeless");
+	}
 
 	private static final MultiMap<String, ItemStack> fluidItems = new MultiMap().setNullEmpty();
 

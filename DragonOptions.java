@@ -51,6 +51,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	RAINTICK("Extra Block Ticks When Raining", true),
 	PROTECTNEW("Prevent Mobs From Targeting Players Immediately After Logging In", true),
 	SKINCACHE("Cache Skins", true),
+	BIOMEFIRE("Biome Humidity Dependent Fire Spread", true),
 	;
 
 	private String label;

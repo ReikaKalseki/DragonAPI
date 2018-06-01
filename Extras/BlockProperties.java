@@ -94,7 +94,7 @@ public class BlockProperties {
 		softBlocksArray.put(Blocks.tallgrass, true);
 		softBlocksArray.put(Blocks.deadbush, true);
 		softBlocksArray.put(Blocks.fire, true);
-		softBlocksArray.put(Blocks.snow, true);
+		softBlocksArray.put(Blocks.snow_layer, true);
 		softBlocksArray.put(Blocks.vine, true);
 	}
 

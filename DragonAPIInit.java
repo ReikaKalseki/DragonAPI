@@ -565,6 +565,11 @@ public class DragonAPIInit extends DragonAPIMod {
 			ClientCommandHandler.instance.registerCommand(new ClearParticlesCommand());
 		}
 
+		if (DragonOptions.BIOMEFIRE.getState()) {
+			BiomeGenBase.desert.rainfall = BiomeGenBase.desertHills.rainfall; //to differentiate hell and desert
+			BiomeGenBase.ocean.rainfall = BiomeGenBase.deepOcean.rainfall = 1F;
+		}
+
 		this.finishTiming();
 	}
 
