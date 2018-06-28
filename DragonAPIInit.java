@@ -40,6 +40,7 @@ import net.minecraftforge.common.ForgeModContainer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
 import Reika.DragonAPI.ASM.DragonAPIClassTransformer;
@@ -569,6 +570,8 @@ public class DragonAPIInit extends DragonAPIMod {
 			BiomeGenBase.desert.rainfall = BiomeGenBase.desertHills.rainfall; //to differentiate hell and desert
 			BiomeGenBase.ocean.rainfall = BiomeGenBase.deepOcean.rainfall = 1F;
 		}
+
+		FluidRegistry.WATER.setBlock(Blocks.water); //needs to be re-set due to CoFH overwriting
 
 		this.finishTiming();
 	}
