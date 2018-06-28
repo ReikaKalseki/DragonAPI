@@ -13,6 +13,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.util.EnumMap;
 import java.util.EnumSet;
+import java.util.Locale;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
@@ -26,8 +27,12 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.InstallationException;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.PlayerMap;
 import Reika.DragonAPI.Instantiable.Event.RawKeyPressEvent;
+import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
@@ -74,9 +79,26 @@ public class KeyWatcher {
 		HOME(),
 		END(),
 		INSERT(),
-		DELETE();
+		DELETE(),
+		ENTER(),
+		MINUS(),
+		PLUS(),
+		PRTSCRN(),
+		PAUSE();
 
 		public static final Key[] keyList = values();
+
+		public static Key readFromConfig(DragonAPIMod mod, StringConfig cfg) {
+			if (!cfg.isString())
+				throw new MisuseException(mod, "Cannot read a key from a non-string config!");
+			String s = cfg.getString().toUpperCase(Locale.ENGLISH);
+			try {
+				return Key.valueOf(s);
+			}
+			catch (IllegalArgumentException e) {
+				throw new InstallationException(mod, "Invalid specified keybind for config entry '"+cfg.getLabel()+"'; no such key '"+s+"' exists!");
+			}
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -101,7 +123,12 @@ public class KeyWatcher {
 		HOME(Keyboard.KEY_HOME),
 		END(Keyboard.KEY_END),
 		INSERT(Keyboard.KEY_INSERT),
-		DELETE(Keyboard.KEY_DELETE);
+		DELETE(Keyboard.KEY_DELETE),
+		ENTER(Keyboard.KEY_RETURN),
+		MINUS(Keyboard.KEY_MINUS),
+		PLUS(Keyboard.KEY_EQUALS),
+		PRTSCRN(Keyboard.KEY_SYSRQ), //no idea how common this one is
+		PAUSE(Keyboard.KEY_PAUSE);
 
 		private KeyBinding key;
 		private int keyInt;

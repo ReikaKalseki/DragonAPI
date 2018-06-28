@@ -771,7 +771,8 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 					me = !it.hasNext() ? null : new MESystemReader(it.next(), new GenericActionSource());
 				}
 				catch (Exception e) {
-					DragonAPICore.logError("Detected invalid ME system: "+grid.getNodes());
+					DragonAPICore.logError("Detected invalid ME system when running "+this+": "+grid.getNodes()+"\n; Threw exception on access: ");
+					e.printStackTrace();
 				}
 			}
 			else {

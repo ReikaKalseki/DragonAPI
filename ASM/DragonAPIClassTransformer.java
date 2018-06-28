@@ -34,6 +34,7 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 	private static int bukkitFlags;
 	private static boolean nullItemPrintout = false;
 	private static boolean nullItemCrash = false;
+	private static boolean init = false;
 
 	public static boolean doLightUpdate(World world, int x, int y, int z) {
 		if (WorldGenInterceptionRegistry.skipLighting)
@@ -86,6 +87,12 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 		if (!classes.isEmpty()) {
 			Collection<Patcher> c = classes.get(className);
 			if (c != null) {
+
+				if (!init) {
+					ReikaJavaLibrary.initClass(CoreModDetection.class);
+					init = true;
+				}
+
 				ReikaASMHelper.activeMod = "DragonAPI";
 				for (Patcher p : c) {
 					ReikaASMHelper.log("Running patcher "+p);
@@ -110,12 +117,16 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 
 	static {
 		try {
+			int patchCount = 0;
+			int enabledCount = 0;
 			Collection<Class> li = ReikaJavaLibrary.getAllClassesFromPackage("Reika.DragonAPI.ASM.Patchers");
 			for (Class c : li) {
 				if ((c.getModifiers() & Modifier.ABSTRACT) == 0 && Patcher.class.isAssignableFrom(c)) {
 					try {
+						patchCount++;
 						Patcher p = (Patcher)c.newInstance();
 						if (p.isEnabled()) {
+							enabledCount++;
 							String s = !FMLForgePlugin.RUNTIME_DEOBF ? p.deobfName : p.obfName;
 							classes.addValue(s, p);
 						}
@@ -131,6 +142,7 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 					}
 				}
 			}
+			ReikaASMHelper.log("Registered "+patchCount+" ASM handlers, of which "+enabledCount+" are enabled.");
 		}
 		catch (IOException e) {
 			throw new RuntimeException("Could not find DragonAPI ASM handlers", e);
@@ -138,8 +150,6 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 
 		bukkitFlags = BukkitBitflags.calculateFlags();
 		nullItemPrintout = !ReikaJVMParser.isArgumentPresent("-DragonAPI_noNullItemPrint");
-
-		ReikaJavaLibrary.initClass(CoreModDetection.class);
 	}
 
 	public static int getBukkitFlags() {

@@ -286,9 +286,12 @@ public class ControlledConfig {
 		config = new Configuration(configFile);
 		this.onInit();
 		this.loadConfig();
+		this.afterInit();
 	}
 
 	protected void onInit() {}
+
+	protected void afterInit() {}
 
 	private void loadConfig() {
 		config.load();
@@ -624,12 +627,18 @@ public class ControlledConfig {
 	}
 
 	private String getCategory(ConfigList cfg) {
-		if (cfg instanceof CustomCategoryConfig)
-			return ((CustomCategoryConfig)cfg).getCategory();
+		String ret = "Control Setup";
+
+		if (cfg instanceof CustomCategoryConfig) {
+			String s = ((CustomCategoryConfig)cfg).getCategory();
+			if (!Strings.isNullOrEmpty(s))
+				ret = s;
+		}
 		else if (cfg instanceof UserSpecificConfig && ((UserSpecificConfig)cfg).isUserSpecific())
-			return "Client Specific";
-		else
-			return "control setup";
+			ret = "Client Specific";
+
+
+		return ret;
 	}
 
 	private void removeConfigEntry(ConfigList cfg) {
