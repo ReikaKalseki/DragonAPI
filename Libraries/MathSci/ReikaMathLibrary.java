@@ -109,13 +109,9 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	}
 
 	/** Calculates the magnitude of the difference between two values. Args: a, b */
+	@Deprecated
 	public static double leftover(double a, double b) {
-		double val;
-		if (a > b)
-			val = a - b;
-		else
-			val = b - a;
-		return val;
+		return Math.abs(a-b);
 	}
 
 	public static int logbase2(long inp) {
@@ -130,6 +126,8 @@ public final class ReikaMathLibrary extends DragonAPICore {
 
 	/** Returns the logarithm of a specified base. Args: input, logbase */
 	public static double logbase(double inp, double base) {
+		if (base == 2 && isInteger(inp) && isPowerOfTwo((long)inp))
+			return logbase2((long)inp);
 		return Math.log(inp)/(Math.log(base));
 	}
 

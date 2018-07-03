@@ -98,13 +98,13 @@ public final class ReikaSpriteSheets {
 			initGL(type);
 
 			Tessellator v5 = Tessellator.instance;
+			boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
+			int dst = GL11.glGetInteger(GL11.GL_BLEND_DST);
+			int src = GL11.glGetInteger(GL11.GL_BLEND_SRC);
+			GL11.glEnable(GL11.GL_BLEND);
 			if (type == type.INVENTORY) {
 				if (v5.isDrawing)
 					v5.draw();
-				boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
-				GL11.glEnable(GL11.GL_BLEND);
-				int dst = GL11.glGetInteger(GL11.GL_BLEND_DST);
-				int src = GL11.glGetInteger(GL11.GL_BLEND_SRC);
 				GL11.glPushMatrix();
 				prepareInvRender();
 				v5.startDrawingQuads();
@@ -134,9 +134,6 @@ public final class ReikaSpriteSheets {
 				v5.addVertexWithUV(0, 1, z, 0.0625F*col, 0.0625F*row);
 				v5.draw();
 				GL11.glPopMatrix();
-				GL11.glBlendFunc(src, dst);
-				if (!blend)
-					GL11.glDisable(GL11.GL_BLEND);
 				GL11.glShadeModel(GL11.GL_FLAT);
 			}
 			if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
@@ -198,6 +195,9 @@ public final class ReikaSpriteSheets {
 				}
 			}
 			GL11.glPopMatrix();
+			GL11.glBlendFunc(src, dst);
+			if (!blend)
+				GL11.glDisable(GL11.GL_BLEND);
 		}
 		renderEffect(type, is);
 

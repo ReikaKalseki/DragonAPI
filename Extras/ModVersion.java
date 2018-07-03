@@ -33,13 +33,13 @@ public class ModVersion implements Comparable<ModVersion> {
 		@Override public boolean verify() {return false;}
 	};
 
-	private static final ModVersion error = new ModVersion(0) {
+	private static final ModVersion error = new ModVersion(1) {
 		@Override public boolean equals(Object o) {return o == this;}
 		@Override public String toString() {return "[NO FILE]";}
 		@Override public boolean verify() {return false;}
 	};
 
-	public static final ModVersion timeout = new ModVersion(0) {
+	public static final ModVersion timeout = new ModVersion(-1) {
 		@Override public boolean equals(Object o) {return o == this;}
 		@Override public String toString() {return "[URL TIMEOUT]";}
 		@Override public boolean verify() {return false;}
@@ -55,6 +55,11 @@ public class ModVersion implements Comparable<ModVersion> {
 	private ModVersion(int major, char minor) {
 		majorVersion = major;
 		subVersion = minor == '\0' ? "" : Character.toString(minor).toLowerCase(Locale.ENGLISH);
+	}
+
+	@Override
+	public int hashCode() {
+		return (majorVersion << 16) | (subVersion.isEmpty() ? 0 : subVersion.charAt(0));
 	}
 
 	@Override
