@@ -2,7 +2,7 @@ package Reika.DragonAPI.Command;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
-import Reika.DragonAPI.IO.ThrottleableEffectRenderer;
+import Reika.DragonAPI.Extras.ThrottleableEffectRenderer;
 
 
 public class ClearParticlesCommand extends DragonClientCommand {

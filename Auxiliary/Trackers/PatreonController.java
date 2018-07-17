@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
+import net.minecraft.util.EnumChatFormatting;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.DonatorController.Donator;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -163,6 +164,20 @@ public final class PatreonController {
 		return data.toString();
 	}
 
+	public String getDisplayList() {
+		StringBuilder sb = new StringBuilder();
+		for (String dev : data.keySet()) {
+			Patrons li = data.get(dev);
+			sb.append(EnumChatFormatting.BLUE.toString());
+			sb.append("Patreon for ");
+			sb.append(dev);
+			sb.append(":\n");
+			sb.append(li.toString());
+			sb.append("\n");
+		}
+		return sb.toString();
+	}
+
 	private static class Patrons {
 
 		private final CountMap<Donator> data = new CountMap();
@@ -205,7 +220,31 @@ public final class PatreonController {
 
 		@Override
 		public String toString() {
-			return data.toString();
+			StringBuilder sb = new StringBuilder();
+			for (Donator d : data.keySet()) {
+				int amt = data.get(d);
+				sb.append(String.format("  %s%s%s: %s%d%s\n", this.getDisplayColor(amt).toString(), this.getFormatting(amt), d.toString(), "$", amt, "/mo"));
+			}
+			return sb.toString();
+		}
+
+		public String getFormatting(int amt) {
+			return /*amt >= 50 ? EnumChatFormatting.BOLD.toString() : */"";
+		}
+
+		public EnumChatFormatting getDisplayColor(int amt) {
+			if (amt >= 30) {
+				return EnumChatFormatting.GOLD;
+			}
+			else if (amt >= 20) {
+				return EnumChatFormatting.LIGHT_PURPLE;
+			}
+			else if (amt >= 10) {
+				return EnumChatFormatting.GREEN;
+			}
+			else {
+				return EnumChatFormatting.WHITE;
+			}
 		}
 
 	}

@@ -165,6 +165,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		GETFIELD(),
 		SETFIELD(),
 		//THROW(),
+		INSTANCEOF(),
 		OUTPUT(),
 		FLUSH();
 
@@ -270,6 +271,14 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					Object o2 = s.pop();
 					s.push(top);
 					s.push(o2);
+					break;
+				}
+				case INSTANCEOF: {
+					if (s.size() < 2)
+						throw new IllegalArgumentException("Operand stack underflow");
+					Object obj = s.pop();
+					Object type = s.pop();
+					s.push(((Class)type).isAssignableFrom(obj.getClass()));
 					break;
 				}
 			}

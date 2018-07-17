@@ -141,9 +141,6 @@ public final class DonatorController {
 
 	public String getDisplayList() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(EnumChatFormatting.AQUA.toString());
-		sb.append("Thank you to all these people whose donations made the following mods possible:");
-		sb.append("\n\n");
 		for (DragonAPIMod mod : data.keySet()) {
 			DonationList li = data.get(mod);
 			sb.append(EnumChatFormatting.BLUE.toString());
@@ -242,7 +239,7 @@ public final class DonatorController {
 
 		@Override
 		public String toString() {
-			return displayName+" ("+ingameName+")";
+			return displayName;//+" ("+ingameName+")";
 		}
 
 	}
@@ -260,6 +257,16 @@ public final class DonatorController {
 			}
 			dn.donationAmount += amt;
 			return d;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			for (Donation d : data.values()) {
+				sb.append(d.toString());
+				sb.append("\n");
+			}
+			return sb.toString();
 		}
 
 	}

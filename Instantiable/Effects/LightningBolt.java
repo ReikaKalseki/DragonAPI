@@ -29,6 +29,10 @@ public class LightningBolt {
 	private final double[][] offsets;
 	private final double[][] offsetTargets;
 
+	public LightningBolt(double x1, double y1, double z1, double x2, double y2, double z2, int steps) {
+		this(new DecimalPosition(x1, y1, z1), new DecimalPosition(x2, y2, z2), steps);
+	}
+
 	public LightningBolt(DecimalPosition p1, DecimalPosition p2, int steps) {
 		nsteps = steps;
 		start = p1;

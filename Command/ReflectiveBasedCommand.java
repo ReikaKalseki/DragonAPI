@@ -78,6 +78,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		addSRGMapping(World.class, "getTileEntity", "func_147438_o");
 		addSRGMapping(World.class, "getPlayerEntityByName", "func_72924_a");
 		addSRGMapping(World.class, "getPlayerEntityByUUID", "func_152378_a");
+		addSRGMapping(World.class, "provider", "field_73011_w");
 		addSRGMapping(EntityLivingBase.class, "getHealth", "func_110143_aJ");
 		addSRGMapping(EntityPlayer.class, "getCurrentEquippedItem", "func_71045_bC");
 		addSRGMapping(ItemStack.class, "getItem", "func_77973_b");

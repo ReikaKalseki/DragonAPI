@@ -16,6 +16,7 @@ import Reika.DragonAPI.Instantiable.Event.ChunkGenerationEvent;
 import Reika.DragonAPI.Instantiable.Event.ChunkPopulationEvent;
 import Reika.DragonAPI.Instantiable.Event.SetBlockEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -65,6 +66,8 @@ public class WorldGenInterceptionRegistry {
 		if (dispatchingChanges) {
 			return;
 		}
+		if (InterfaceCache.IGALACTICWORLD.instanceOf(evt.world)) //it is his world anyways, and this just breaks there
+			return;
 		for (InterceptionException e : exceptions)
 			if (e.doesExceptionApply(evt.world, evt.xCoord, evt.yCoord, evt.zCoord))
 				return;

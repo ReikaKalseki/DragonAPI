@@ -2254,12 +2254,14 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static void cancelScheduledTick(WorldServer world, int x, int y, int z, Block b) {
 		Chunk c = world.getChunkFromBlockCoords(x, z);
 		List<NextTickListEntry> li = world.getPendingBlockUpdates(c, true);
-		for (NextTickListEntry e : li) {
-			if (e.xCoord == x && e.yCoord == y && e.zCoord == z && e.func_151351_a() == b) {
+		if (li != null) {
+			for (NextTickListEntry e : li) {
+				if (e.xCoord == x && e.yCoord == y && e.zCoord == z && e.func_151351_a() == b) {
 
-			}
-			else {
-				rescheduleTick(world, e);
+				}
+				else {
+					rescheduleTick(world, e);
+				}
 			}
 		}
 	}

@@ -26,6 +26,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import Reika.DragonAPI.Instantiable.InertItem;
 import Reika.DragonAPI.Interfaces.Item.AnimatedSpritesheet;
 import Reika.DragonAPI.Interfaces.Item.BlendedColor;
 import Reika.DragonAPI.Interfaces.Item.GradientBlend;
@@ -98,10 +99,10 @@ public final class ReikaSpriteSheets {
 			initGL(type);
 
 			Tessellator v5 = Tessellator.instance;
-			boolean blend = GL11.glGetBoolean(GL11.GL_BLEND);
-			int dst = GL11.glGetInteger(GL11.GL_BLEND_DST);
-			int src = GL11.glGetInteger(GL11.GL_BLEND_SRC);
+			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			GL11.glEnable(GL11.GL_BLEND);
+			if (type != type.ENTITY || data[1].getClass() != InertItem.class)
+				BlendMode.DEFAULT.apply();
 			if (type == type.INVENTORY) {
 				if (v5.isDrawing)
 					v5.draw();
@@ -195,13 +196,11 @@ public final class ReikaSpriteSheets {
 				}
 			}
 			GL11.glPopMatrix();
-			GL11.glBlendFunc(src, dst);
-			if (!blend)
-				GL11.glDisable(GL11.GL_BLEND);
+			GL11.glPopAttrib();
 		}
 		renderEffect(type, is);
 
-		GL11.glEnable(GL11.GL_LIGHTING);
+		GL11.glPopAttrib();
 		ReikaTextureHelper.bindItemTexture();
 		GL11.glPopMatrix();
 	}
@@ -254,7 +253,6 @@ public final class ReikaSpriteSheets {
 	}
 
 	private static void prepareInvRender() {
-		BlendMode.DEFAULT.apply();
 		double r = 45;
 		double r2 = -30;
 		double s = 1.6;
@@ -266,6 +264,7 @@ public final class ReikaSpriteSheets {
 	}
 
 	private static void initGL(ItemRenderType type) {
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		if (type == ItemRenderType.INVENTORY) {
 			GL11.glDisable(GL11.GL_LIGHTING);
 		}

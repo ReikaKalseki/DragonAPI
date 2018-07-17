@@ -24,6 +24,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -58,6 +59,7 @@ import appeng.api.storage.ICellProvider;
 import appeng.api.storage.IMEMonitor;
 import appeng.api.storage.IMEMonitorHandlerReceiver;
 import appeng.api.storage.data.IAEItemStack;
+import appeng.api.util.AECableType;
 import appeng.api.util.IReadOnlyCollection;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
@@ -768,7 +770,10 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 				IReadOnlyCollection<IGridNode> ign = grid.getNodes();
 				try {
 					Iterator<IGridNode> it = ign.iterator();
-					me = !it.hasNext() ? null : new MESystemReader(it.next(), new GenericActionSource());
+					if (it.hasNext()) {
+						IGridNode ign2 = it.next();
+						me = new MESystemReader(ign2, new FakeActionSource(ign2));
+					}
 				}
 				catch (Exception e) {
 					DragonAPICore.logError("Detected invalid ME system when running "+this+": "+grid.getNodes()+"\n; Threw exception on access: ");
@@ -791,6 +796,13 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 
 	}
 
+	private static class FakeActionSource extends MachineSource {
+
+		private FakeActionSource(IGridNode ign) {
+			super(new FakeActionHost(ign));
+		}
+	}
+
 	private static class GenericActionSource extends BaseActionSource {
 
 		@Override
@@ -798,5 +810,35 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 		{
 			return true;
 		}
+	}
+
+	private static class FakeActionHost implements IActionHost {
+
+		private IGridNode node;
+
+		private FakeActionHost(IGridNode ign) {
+			node = ign;
+		}
+
+		@Override
+		public IGridNode getGridNode(ForgeDirection dir) {
+			return node;
+		}
+
+		@Override
+		public AECableType getCableConnectionType(ForgeDirection dir) {
+			return AECableType.GLASS;
+		}
+
+		@Override
+		public void securityBreak() {
+
+		}
+
+		@Override
+		public IGridNode getActionableNode() {
+			return node;
+		}
+
 	}
 }
