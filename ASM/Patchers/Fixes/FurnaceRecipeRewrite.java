@@ -9,55 +9,114 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM.Patchers.Fixes;
 
-import java.lang.reflect.Modifier;
-import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+
+import net.minecraft.item.ItemStack;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FrameNode;
+import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
+import Reika.DragonAPI.Extras.ReplacementSmeltingHandler;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 
 public class FurnaceRecipeRewrite extends Patcher {
 
+	private final HashMap<String, String> redirects = new HashMap();
+
 	public FurnaceRecipeRewrite() {
 		super("net.minecraft.item.crafting.FurnaceRecipes", "afa");
+
+		redirects.put("getSmeltingResult", "getResult");
+		redirects.put("func_151395_a", "getResult");
+
+		redirects.put("getSmeltingList", "getList");
+		redirects.put("func_77599_b", "getList");
+
+		redirects.put("func_151398_b", "getSmeltingXPByOutput");
 	}
 
 	@Override
 	protected void apply(ClassNode cn) {
 		//cn.fields.clear();
-		Iterator<MethodNode> it = cn.methods.iterator();
-		while (it.hasNext()) {
-			MethodNode m = it.next();
-			if (m.name.contains("init")) { //leave constructor empty
-				m.instructions.add(new InsnNode(Opcodes.RETURN));
+		Collection<MethodNode> c = new ArrayList(cn.methods);
+		for (MethodNode m : c) {
+			if (m.name.equals("<init>")) { //leave constructor empty
+				AbstractInsnNode ain = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.INVOKEVIRTUAL);
+				m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Extras/ReplacementSmeltingHandler", "onSmeltingInit", "(Lnet/minecraft/item/crafting/FurnaceRecipes;)V", false));
+				m.instructions.insert(ain, new VarInsnNode(Opcodes.ALOAD, 0));
+				//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+				//ReikaJavaLibrary.pConsole("");
 			}
 			else {
-				if ((m.access & Modifier.STATIC) != 0) {
-					//skip
-				}
-				else if ((m.access & Modifier.PRIVATE) != 0) {
-					it.remove();
-				}
-				else {
-					m.instructions.clear();
+				String redirect = redirects.get(m.name);
+				if (redirect != null) {
+					String orig = m.name;
+					m.name = orig+"_redirect";
+
+					InsnList args = new InsnList();
 					int i = 1;
 					for (String s : ReikaASMHelper.parseMethodArguments(m)) {
-						m.instructions.add(new VarInsnNode(ReikaASMHelper.getLoadOpcodeForArgument(s), i));
+						args.add(new VarInsnNode(ReikaASMHelper.getLoadOpcodeForArgument(s), i));
 						i++;
 					}
-					m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Extras/ReplacementSmeltingHandler", m.name, m.desc, false));
-					m.instructions.add(new InsnNode(ReikaASMHelper.getOpcodeForMethodReturn(m)));
-					ReikaASMHelper.log("Redirecting furnace smelting recipes method '"+m.name+"' with desc '"+m.desc+"'");
+
+					LabelNode L1 = new LabelNode();
+					LabelNode L2 = new LabelNode();
+
+					InsnList li = new InsnList();
+
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Extras/ReplacementSmeltingHandler", "isCompiled", "()Z", false));
+					li.add(new JumpInsnNode(Opcodes.IFEQ, L1));
+
+					li.add(ReikaASMHelper.copyInsnList(args));
+					li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Extras/ReplacementSmeltingHandler", redirect, m.desc, false));
+
+					li.add(new JumpInsnNode(Opcodes.GOTO, L2));
+					li.add(L1);
+					li.add(new FrameNode(Opcodes.F_SAME, 0, new Object[0], 0, new Object[0]));
+					li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+					li.add(ReikaASMHelper.copyInsnList(args));
+					li.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cn.name, m.name, m.desc, false));
+					li.add(L2);
+					String frame = ReikaASMHelper.convertLPrefixToPlain(ReikaASMHelper.getMethodReturnType(m));
+					if (frame.equals("F")) {
+						frame = "float";
+					}
+					li.add(new FrameNode(Opcodes.F_SAME1, 0, new Object[0], 1, new Object[]{frame}));
+					li.add(new InsnNode(ReikaASMHelper.getOpcodeForMethodReturn(m)));
+
+					ReikaASMHelper.addMethod(cn, li, orig, m.desc, m.access);
+
+					ReikaASMHelper.log("Redirecting furnace smelting recipes method '"+orig+"' to DragonAPI replacement '"+redirect+"' (delegating to '"+m.name+"') with signature '"+m.desc+"'");
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean computeFrames() {
+		return super.computeFrames();//true;
+	}
+
+	public float getSmeltingResult(ItemStack is) {
+		return ReplacementSmeltingHandler.isCompiled() ? ReplacementSmeltingHandler.getSmeltingXPByOutput(is) : this.getRedirected(is);
+	}
+
+	public float getRedirected(ItemStack is) {
+		return 0;
 	}
 
 }

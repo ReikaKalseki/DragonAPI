@@ -765,6 +765,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void lastLoad(FMLServerAboutToStartEvent evt) {
 		ReikaOreHelper.refreshAll();
 		ModOreList.initializeAll();
+		ReplacementSmeltingHandler.build();
 		if (ModList.FORESTRY.isLoaded()) {
 			ReikaBeeHelper.buildSpeciesList();
 		}

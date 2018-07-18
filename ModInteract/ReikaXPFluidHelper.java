@@ -44,7 +44,7 @@ public class ReikaXPFluidHelper {
 			addFluid((Fluid)fdf.get(null), fd.getInt(null));
 		}
 		catch (Exception e) {
-			DragonAPICore.logError("Error loading xp fluid type as loaded from "+cf+"#"+sf+": "+e);
+			DragonAPICore.log("Could not load xp fluid type as loaded from "+cf+"#"+sf+": "+e);
 			//e.printStackTrace();
 		}
 	}

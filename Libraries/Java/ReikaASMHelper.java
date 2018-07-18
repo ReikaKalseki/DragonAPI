@@ -256,6 +256,14 @@ public class ReikaASMHelper {
 		return li;
 	}
 
+	public static String convertLPrefixToPlain(String arg) {
+		if (arg.startsWith("L")) {
+			int semi = arg.indexOf(';');
+			arg = arg.substring(1, semi);
+		}
+		return arg;
+	}
+
 	private static void parseArguments(ArrayList<String> args, String desc) {
 		//ReikaJavaLibrary.pConsole("PARSING: "+desc);
 		if (desc.startsWith("L")) { //Class
@@ -364,6 +372,7 @@ public class ReikaASMHelper {
 		return sb.toString();
 	}
 
+	/** Note for FrameNodes: SAME AND SAME1, the types, if any, are STACK, not locals! */
 	public static String clearString(AbstractInsnNode ain) {
 		Textifier t = new Textifier();
 		TraceMethodVisitor mv = new TraceMethodVisitor(t);
@@ -706,6 +715,12 @@ public class ReikaASMHelper {
 
 	public static AbstractInsnNode copyInstruction(AbstractInsnNode ain, Map<LabelNode, LabelNode> labels) {
 		return ain.clone(labels);
+	}
+
+	public static String getMethodReturnType(MethodNode m) {
+		ArrayList<String> li = parseMethodSignature(m);
+		String type = li.get(li.size()-1);
+		return type;
 	}
 
 	public static ArrayList<String> parseMethodSignature(MethodNode min) {
