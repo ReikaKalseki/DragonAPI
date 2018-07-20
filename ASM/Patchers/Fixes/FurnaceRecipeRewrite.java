@@ -52,13 +52,39 @@ public class FurnaceRecipeRewrite extends Patcher {
 	protected void apply(ClassNode cn) {
 		//cn.fields.clear();
 		Collection<MethodNode> c = new ArrayList(cn.methods);
+
+
 		for (MethodNode m : c) {
-			if (m.name.equals("<init>")) { //leave constructor empty
+			if (m.name.equals("<init>")) {
 				AbstractInsnNode ain = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.INVOKEVIRTUAL);
 				m.instructions.insert(ain, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Extras/ReplacementSmeltingHandler", "onSmeltingInit", "(Lnet/minecraft/item/crafting/FurnaceRecipes;)V", false));
 				m.instructions.insert(ain, new VarInsnNode(Opcodes.ALOAD, 0));
 				//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
 				//ReikaJavaLibrary.pConsole("");
+			}
+			else if (m.name.equals("func_151394_a")) { //addRecipe
+				String orig = m.name;
+				m.name = orig+"_redirect";
+
+				LabelNode L1 = new LabelNode();
+				LabelNode L2 = new LabelNode();
+
+				InsnList li = new InsnList();
+				li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+				li.add(new VarInsnNode(Opcodes.ALOAD, 2));
+				li.add(new VarInsnNode(Opcodes.FLOAD, 3));
+				li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Extras/ReplacementSmeltingHandler", "checkRecipe", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;F)Z", false));
+				li.add(new JumpInsnNode(Opcodes.IFEQ, L1));
+				li.add(L2);
+				li.add(new VarInsnNode(Opcodes.ALOAD, 0));
+				li.add(new VarInsnNode(Opcodes.ALOAD, 1));
+				li.add(new VarInsnNode(Opcodes.ALOAD, 2));
+				li.add(new VarInsnNode(Opcodes.FLOAD, 3));
+				li.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, cn.name, m.name, "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;F)V", false));
+				li.add(L1);
+				li.add(new FrameNode(Opcodes.F_SAME, 0, new Object[0], 0, new Object[0]));
+				li.add(new InsnNode(Opcodes.RETURN));
+				ReikaASMHelper.addMethod(cn, li, orig, m.desc, m.access);
 			}
 			else {
 				String redirect = redirects.get(m.name);
@@ -111,12 +137,14 @@ public class FurnaceRecipeRewrite extends Patcher {
 		return super.computeFrames();//true;
 	}
 
-	public float getSmeltingResult(ItemStack is) {
-		return ReplacementSmeltingHandler.isCompiled() ? ReplacementSmeltingHandler.getSmeltingXPByOutput(is) : this.getRedirected(is);
+	public void addRecipe(ItemStack in, ItemStack out, float xp) {
+		if (ReplacementSmeltingHandler.checkRecipe(in, out, xp)) {
+			this.doAddRecipe(in, out, xp);
+		}
 	}
 
-	public float getRedirected(ItemStack is) {
-		return 0;
+	public void doAddRecipe(ItemStack in, ItemStack out, float xp) {
+
 	}
 
 }

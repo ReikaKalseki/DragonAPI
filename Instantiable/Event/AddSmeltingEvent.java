@@ -23,7 +23,7 @@ public class AddSmeltingEvent extends Event {
 	public final float originalXP;
 	public float experienceValue;
 
-	public static boolean isVanillaPass;
+	public static boolean isVanillaPass = false;
 
 	public AddSmeltingEvent(ItemStack in, ItemStack out, float xp) {
 		this(in, out, xp, isVanillaPass);

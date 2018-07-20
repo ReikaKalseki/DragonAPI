@@ -227,7 +227,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		BiomeGenBase b = parents.get(biome);
 		if (b != null)
 			return b;
-		if (biome instanceof BiomeGenMutated)
+		if (biome instanceof BiomeGenMutated && ((BiomeGenMutated)biome).baseBiome != null)
 			biome = ((BiomeGenMutated)biome).baseBiome;
 		if (biome.biomeID >= 128) {
 			BiomeGenBase below = BiomeGenBase.biomeList[biome.biomeID-128];

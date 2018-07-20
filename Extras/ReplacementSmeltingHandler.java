@@ -11,7 +11,9 @@ package Reika.DragonAPI.Extras;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -19,17 +21,29 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.OreDictionary;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
 
 /** Because apparently Notch is retarded, his original code DEFINITELY is retarded, and everyone is sick of wasting a huge amount
  * of tick time on every smelter iterating over 4000 recipes three times a tick EACH. */
 public class ReplacementSmeltingHandler {
 
-	private static HashMap<KeyedItemStack, FurnaceRecipe> smeltingList = new HashMap();
-	private static HashMap<KeyedItemStack, Float> outputToExperienceMap = new HashMap();
-	private static Collection<FurnaceRecipe> vanillaRecipes = new ArrayList(); //for the rebuild function
+	private static final HashMap<KeyedItemStack, FurnaceRecipe> smeltingList = new HashMap();
+	private static final HashMap<KeyedItemStack, Float> outputToExperienceMap = new HashMap();
+	private static final Collection<FurnaceRecipe> vanillaRecipes = new ArrayList();
+
+	private static final HashMap<KeyedItemStack, FurnaceRecipe> unpermutedSmeltingList = new HashMap();
+
+	private static final ArrayList<MapChange<ItemStack, ItemStack>> MTChanges = new ArrayList();
+	private static final HashMap<KeyedItemStack, Float> cachedMTExperience = new HashMap();
+	private static boolean isMTRunning;
+	private static final Collection<FurnaceRecipe> MTAddedRecipes = new ArrayList();
+	private static boolean isDeterminingMT;
 
 	private static FurnaceRecipes loadingInstance;
 	private static boolean isInitialized;
@@ -57,8 +71,58 @@ public class ReplacementSmeltingHandler {
 		return isInitialized ? FurnaceRecipes.smelting() : loadingInstance;
 	}
 
-	public void applyMinetweakerChanges() {
+	public static void prepareForMinetweakerChanges() {
+		DragonAPICore.log("Restoring furnace recipes to pre-Minetweaker state. Contains "+unpermutedSmeltingList.size()+" recipes (from "+smeltingList.size()+").");
+		smeltingList.clear();
+		smeltingList.putAll(unpermutedSmeltingList);
 
+		ReikaJavaLibrary.pConsole("=============CURRENT PRE RECIPES==============");
+		ArrayList<FurnaceRecipe> li = new ArrayList(smeltingList.values());
+		Collections.sort(li);
+		int i = 1;
+		for (FurnaceRecipe r : li) {
+			ReikaJavaLibrary.pConsole("#"+i+": "+r.toString());
+			i++;
+		}
+		ReikaJavaLibrary.pConsole("==========================================");
+
+		isMTRunning = true;
+		DragonAPICore.log("Preparing to read Minetweaker changes to smelting recipes.");
+	}
+
+	public static void applyMinetweakerChanges() {
+		handleDirectMapChanges();
+		isMTRunning = false;
+		DragonAPICore.log("Successfully applied "+MTChanges.size()+" Minetweaker changes to smelting recipes.");
+		MTChanges.clear();
+		cachedMTExperience.clear();
+
+		ReikaJavaLibrary.pConsole("=============CURRENT POST RECIPES==============");
+		ArrayList<FurnaceRecipe> li = new ArrayList(smeltingList.values());
+		Collections.sort(li);
+		int i = 1;
+		for (FurnaceRecipe r : li) {
+			ReikaJavaLibrary.pConsole("#"+i+": "+r.toString());
+			i++;
+		}
+		ReikaJavaLibrary.pConsole("==========================================");
+	}
+
+	private static void handleDirectMapChanges() {
+		if (!MTChanges.isEmpty()) {
+			for (MapChange<ItemStack, ItemStack> chg : MTChanges) {
+				log("Handling Minetweaker recipe change: "+chg);
+				switch(chg.operation) {
+					case ADD:
+						Float xp = cachedMTExperience.get(chg.key);
+						registerRecipe(chg.key, chg.value, xp != null ? xp.floatValue() : 0);
+						break;
+					case REMOVE:
+						removeRecipe(chg.key);
+						break;
+				}
+			}
+		}
 	}
 
 	public static void build() {
@@ -70,39 +134,105 @@ public class ReplacementSmeltingHandler {
 			ItemStack in = e.getKey();
 			ItemStack out = e.getValue();
 			AddSmeltingEvent.isVanillaPass = vanillaRecipes.contains(new FurnaceRecipe(in, out, 0));
-			addRecipe(in, out, getInstance().func_151398_b(out));
+			registerRecipe(in, out, getInstance().func_151398_b(out));
 		}
 		AddSmeltingEvent.isVanillaPass = false;
 
+		unpermutedSmeltingList.clear();
+		unpermutedSmeltingList.putAll(smeltingList);
+
+		determineMinetweakerRecipes();
+
+		DragonAPICore.log("Compiled replacement smelting system.");
+
+		ReikaJavaLibrary.pConsole("=============CURRENT RECIPES==============");
+		ArrayList<FurnaceRecipe> li = new ArrayList(smeltingList.values());
+		Collections.sort(li);
+		int i = 1;
+		for (FurnaceRecipe r : li) {
+			ReikaJavaLibrary.pConsole("#"+i+": "+r.toString());
+			i++;
+		}
+		ReikaJavaLibrary.pConsole("==========================================");
+
+		ReikaJavaLibrary.pConsole("=============ORIGINAL RECIPES==============");
+		li = new ArrayList(unpermutedSmeltingList.values());
+		Collections.sort(li);
+		i = 1;
+		for (FurnaceRecipe r : li) {
+			ReikaJavaLibrary.pConsole("#"+i+": "+r.toString());
+			i++;
+		}
+		ReikaJavaLibrary.pConsole("==========================================");
+
 		isCompiled = true;
+
+		//if (MTInteractionManager.isMTLoaded()) {
+		//	applyMinetweakerChanges();
+		//}
 	}
 
-	private static void addRecipe(ItemStack in, ItemStack out, float xp) {
-		//ReikaJavaLibrary.pConsole("Registering smelting of "+in+" to "+out+" giving "+xp+" XP; is vanilla = "+AddSmeltingEvent.isVanillaPass);
-		AddSmeltingEvent evt = new AddSmeltingEvent(in, out, xp);
-		MinecraftForge.EVENT_BUS.post(evt);
-		if (!evt.isCanceled()) {
-			FurnaceRecipe f = new FurnaceRecipe(in, out, evt.experienceValue);
-			smeltingList.put(createKey(in), f);
-			if (xp > 0)
-				outputToExperienceMap.put(createKey(out), Math.max(getSmeltingXPByOutput(out), xp));
+	private static void determineMinetweakerRecipes() {
+		log("Determining which smelting recipes are added by Minetweaker");
+		MTAddedRecipes.clear();
+		isDeterminingMT = true;
+		MTInteractionManager.instance.reloadMT();
+		isDeterminingMT = false;
+		log("Found "+MTAddedRecipes.size()+" recipes: "+MTAddedRecipes.toString());
+		for (FurnaceRecipe f : MTAddedRecipes) {
+			unpermutedSmeltingList.remove(createKey(f.input));
 		}
+	}
+
+	public static boolean checkRecipe(ItemStack in, ItemStack out, float xp) {
+		AddSmeltingEvent evt = new AddSmeltingEvent(in, out, xp);
+		//ReikaJavaLibrary.pConsole("Checking recipe add for "+in+" to "+out+"; MT is active: "+isMTRunning);
+		if (MinecraftForge.EVENT_BUS.post(evt)) {
+			log("Recipe for "+in+" to "+out+" was cancelled by another mod; it will not be added");
+			return false;
+		}
+		if (isMTRunning) {
+			if (isDeterminingMT){
+				MTAddedRecipes.add(new FurnaceRecipe(in, out, xp));
+			}
+			else {
+				MTChanges.add(new MapChange(Operations.ADD, in, out));
+				cachedMTExperience.put(createKey(in), xp);
+			}
+		}
+		return true;
+	}
+
+	private static void registerRecipe(ItemStack in, ItemStack out, float xp) {
+		FurnaceRecipe f = new FurnaceRecipe(in, out, xp);
+		KeyedItemStack key = createKey(in);
+		smeltingList.put(key, f);
+		if (xp > 0)
+			outputToExperienceMap.put(createKey(out), Math.max(getSmeltingXPByOutput(out), xp));
 	}
 
 	public static void fireEventsForVanillaRecipes() {
 		AddSmeltingEvent.isVanillaPass = true;
-		HashMap<ItemStack, Object[]> map = new HashMap();
-		for (FurnaceRecipe r : vanillaRecipes) {
-			AddSmeltingEvent evt = new AddSmeltingEvent(r.getInput(), r.getOutput(), r.getExperience());
-			MinecraftForge.EVENT_BUS.post(evt);
-			if (evt.isCanceled()) {
-				removeRecipe(r.getInput());
-			}
-			else if (r.getExperience() != evt.experienceValue) {
-				r.experience = evt.experienceValue;
-				modifyExperience(r.getInput(), evt.experienceValue);
+
+		Map<ItemStack, ItemStack> map = getInstance().getSmeltingList();
+		Iterator<Entry<ItemStack, ItemStack>> it = map.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<ItemStack, ItemStack> e = it.next();
+			ItemStack in = e.getKey();
+			ItemStack out = e.getValue();
+			if (vanillaRecipes.contains(new FurnaceRecipe(in, out, 0))) {
+				float xp = FurnaceRecipes.smelting().func_151398_b(out);
+				AddSmeltingEvent evt = new AddSmeltingEvent(in, out, xp);
+				MinecraftForge.EVENT_BUS.post(evt);
+				if (evt.isCanceled()) {
+					it.remove();
+				}
+				else if (xp != evt.experienceValue) {
+					FurnaceRecipes.smelting().experienceList.put(out, evt.experienceValue);
+				}
 			}
 		}
+
 		AddSmeltingEvent.isVanillaPass = false;
 	}
 
@@ -133,11 +263,22 @@ public class ReplacementSmeltingHandler {
 		if (!isCompiled) {
 			return getInstance().func_151398_b(output);
 		}
+		float base = output.getItem().getSmeltingExperience(output);
+		if (base != -1)
+			return base;
 		Float rec = /*smeltingList.get(*/outputToExperienceMap.get(createKey(output))/*)*/;
 		return rec != null ? rec.floatValue() : 0;
 	}
 
 	public static Map getList() {
+		if (isMTRunning) {
+			BackWritableHashMap map = new BackWritableHashMap();
+			for (FurnaceRecipe r : smeltingList.values()) {
+				map.put(r.getInput(), r.getOutput());
+			}
+			map.tracking = true;
+			return map;
+		}
 		if (!isCompiled) {
 			return getInstance().getSmeltingList();
 		}
@@ -160,7 +301,11 @@ public class ReplacementSmeltingHandler {
 		return isCompiled;
 	}
 
-	public static class FurnaceRecipe {
+	private static void log(String s) {
+		DragonAPICore.log("Replacement Smelting System: "+s);
+	}
+
+	public static class FurnaceRecipe implements Comparable<FurnaceRecipe> {
 
 		private final ItemStack input;
 		private final ItemStack output;
@@ -172,6 +317,10 @@ public class ReplacementSmeltingHandler {
 		}
 
 		private FurnaceRecipe(ItemStack in, ItemStack out, float xp) {
+			if (in == null)
+				throw new IllegalArgumentException("You cannot smelt null to anything!");
+			if (out == null)
+				throw new IllegalArgumentException("You cannot smelt anything to null!");
 			input = in;
 			output = out;
 			experience = xp;
@@ -208,5 +357,76 @@ public class ReplacementSmeltingHandler {
 			return input+" > "+output+" + "+experience+" xp";
 		}
 
+		@Override
+		public int compareTo(FurnaceRecipe f) {
+			return ReikaItemHelper.comparator.compare(input, f.input);
+		}
+
+	}
+
+	private static class BackWritableHashMap<K, V> extends HashMap<K, V> {
+
+		private boolean tracking = false;
+
+		@Override
+		public V put(K key, V val) {
+			if (tracking) {
+				MTChanges.add(new MapChange<ItemStack, ItemStack>(Operations.ADD, (ItemStack)key, (ItemStack)val));
+			}
+			return super.put(key, val);
+		}
+
+		@Override
+		public void putAll(Map<? extends K, ? extends V> map) {
+			if (tracking) {
+				for (Map.Entry<? extends K, ? extends V> e : map.entrySet()) {
+					MTChanges.add(new MapChange<ItemStack, ItemStack>(Operations.ADD, (ItemStack)e.getKey(), (ItemStack)e.getValue()));
+				}
+			}
+			super.putAll(map);
+		}
+
+		@Override
+		public void clear() {
+			throw new UnsupportedOperationException(".....Why?!");
+		}
+
+		@Override
+		public V remove(Object key) {
+			if (tracking) {
+				MTChanges.add(new MapChange<ItemStack, ItemStack>(Operations.REMOVE, (ItemStack)key, null));
+			}
+			return super.remove(key);
+		}
+
+	}
+
+	private static class MapChange<K, V> {
+
+		private final Operations operation;
+		private final K key;
+		private final V value;
+
+		private MapChange(Operations o, K k, V v) {
+			operation = o;
+			key = k;
+			value = v;
+		}
+
+		@Override
+		public String toString() {
+			return operation.toString()+" "+key+" > "+value;
+		}
+
+	}
+
+	private static enum Operations {
+		ADD(),
+		REMOVE();
+
+		@Override
+		public String toString() {
+			return ReikaStringParser.capFirstChar(this.name());
+		}
 	}
 }

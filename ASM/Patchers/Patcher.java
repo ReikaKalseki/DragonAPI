@@ -68,7 +68,7 @@ public abstract class Patcher {
 
 		if (genClasses) {
 			try {
-				ReikaASMHelper.writeClassFile(cn, "C:/testclass");
+				ReikaASMHelper.writeClassFile(cn, "E:/testclass");
 			}
 			catch (Exception e) {
 				e.printStackTrace();

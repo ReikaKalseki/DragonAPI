@@ -20,6 +20,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Extras.ReplacementSmeltingHandler;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.LineEditor;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
@@ -62,12 +63,10 @@ public final class MTInteractionManager {
 	private final OneWayMap<Prevention, OneWayMap<KeyedItemStack, String>> data = new OneWayMap();
 
 	private final Method reloadMethod;
-	private final Method addReloadWatcher;
 
 	private MTInteractionManager() {
 		if (!isMTLoaded()) {
 			reloadMethod = null;
-			addReloadWatcher = null;
 			return;
 		}
 		Method rl = null;
@@ -77,18 +76,16 @@ public final class MTInteractionManager {
 			rl = getReloadMethod(api);
 			rlw = api.getDeclaredMethod("onReloadEvent", IEventHandler.class);
 			rlw.setAccessible(true);
+			rlw.invoke(null, new PreReloadHandler());
+
+			rlw = api.getDeclaredMethod("onPostReload", IEventHandler.class);
+			rlw.setAccessible(true);
+			rlw.invoke(null, new PostReloadHandler());
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 		reloadMethod = rl;
-		addReloadWatcher = rlw;
-		try {
-			addReloadWatcher.invoke(null, new ReloadHandler());
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 
 	private static Method getReloadMethod(Class api) {
@@ -135,7 +132,7 @@ public final class MTInteractionManager {
 	}
 
 	/** Reloads the MT scripts, by invoking the same method that /mt reload does. */
-	private void reloadMT() {
+	public void reloadMT() {
 		if (reloadMethod == null)
 			return;
 		try {
@@ -435,11 +432,21 @@ public final class MTInteractionManager {
 		}
 	}
 
-	private class ReloadHandler implements IEventHandler {
+	private class PreReloadHandler implements IEventHandler {
 
 		@Override
 		public void handle(Object r) {
 			instance.scanAndRemove(); //Do not reload, because inf loop
+
+			ReplacementSmeltingHandler.prepareForMinetweakerChanges();
+		}
+	}
+
+	private class PostReloadHandler implements IEventHandler {
+
+		@Override
+		public void handle(Object r) {
+			ReplacementSmeltingHandler.applyMinetweakerChanges();
 		}
 
 	}

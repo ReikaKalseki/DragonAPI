@@ -187,7 +187,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 	}
 
 	@Override
-	protected final boolean isAdminOnly() {
+	protected boolean isAdminOnly() {
 		return true;
 	}
 
