@@ -20,7 +20,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnumEnchantmentType;
-import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -325,12 +324,13 @@ public class EnvironmentSanityChecker {
 				throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.theBiomeDecorator, "Decorator");
 		}
 
+		/* null is valid
 		for (int i = 0; i < EnumCreatureType.values().length; i++) {
 			EnumCreatureType e = EnumCreatureType.values()[i];
 			if (b.getSpawnableList(e) == null) {
 				throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.getSpawnableList(e), "Spawnable List");
 			}
-		}
+		}*/
 	}
 
 	public void verifyEnchant(Enchantment e) throws EnvironmentSanityException {

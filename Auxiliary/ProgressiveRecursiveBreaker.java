@@ -18,6 +18,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -29,8 +30,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 import net.minecraftforge.event.world.WorldEvent;
-import Reika.ChromatiCraft.Items.Tools.ItemInventoryLinker;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.Base.BlockTieredResource;
@@ -274,7 +275,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 						boolean flag = false;
 						if (dropInventory != null) {
 							if (dropInventory instanceof InventoryPlayer) {
-								if (ItemInventoryLinker.tryLinkItem(((InventoryPlayer)dropInventory).player, is)) {
+								if (MinecraftForge.EVENT_BUS.post(new EntityItemPickupEvent(((InventoryPlayer)dropInventory).player, new EntityItem(world, x+0.5, y+0.5, z+0.5, is)))) {
 									continue;
 								}
 							}

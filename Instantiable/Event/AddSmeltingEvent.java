@@ -23,6 +23,8 @@ public class AddSmeltingEvent extends Event {
 	public final float originalXP;
 	public float experienceValue;
 
+	private boolean isInvalid = false;
+
 	public static boolean isVanillaPass = false;
 
 	public AddSmeltingEvent(ItemStack in, ItemStack out, float xp) {
@@ -45,6 +47,27 @@ public class AddSmeltingEvent extends Event {
 
 	public ItemStack getOutput() {
 		return output.copy();
+	}
+
+	public void markInvalid() {
+		isInvalid = true;
+		this.setCanceled(true);
+	}
+
+	@Override
+	public void setCanceled(boolean cancel) {
+		if (isInvalid)
+			cancel = true;
+		super.setCanceled(cancel);
+	}
+
+	@Override
+	public boolean isCanceled() {
+		return super.isCanceled() || isInvalid;
+	}
+
+	public boolean isValid() {
+		return !isInvalid;
 	}
 
 	/** Returns true if recipe was added. */

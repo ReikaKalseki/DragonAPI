@@ -71,6 +71,7 @@ public class KeyWatcher {
 		USE(),
 		CHAT(),
 		LCTRL(),
+		LALT(),
 		PGUP(),
 		PGDN(),
 		TAB(),

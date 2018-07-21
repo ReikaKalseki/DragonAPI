@@ -188,11 +188,14 @@ public class ReplacementSmeltingHandler {
 		AddSmeltingEvent evt = new AddSmeltingEvent(in, out, xp);
 		//ReikaJavaLibrary.pConsole("Checking recipe add for "+in+" to "+out+"; MT is active: "+isMTRunning);
 		if (MinecraftForge.EVENT_BUS.post(evt)) {
-			log("Recipe for "+in+" to "+out+" was cancelled by another mod; it will not be added");
+			if (evt.isValid())
+				log("Recipe for "+in+" to "+out+" was cancelled by another mod; it will not be added");
+			else
+				log("Recipe was marked invalid, it will not be added!");
 			return false;
 		}
 		if (isMTRunning) {
-			if (isDeterminingMT){
+			if (isDeterminingMT) {
 				MTAddedRecipes.add(new FurnaceRecipe(in, out, xp));
 			}
 			else {

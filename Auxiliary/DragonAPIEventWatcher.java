@@ -384,26 +384,26 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 				if (in == null || in.getItem() == null) {
 					DragonAPICore.logError("Found a null-input (or null-item input) smelting recipe! "+null+" > "+out+"! This is invalid!");
 					Thread.dumpStack();
-					evt.setCanceled(true);
+					evt.markInvalid();
 				}
 				else if (out == null || out.getItem() == null) {
 					DragonAPICore.logError("Found a null-output (or null-item output) smelting recipe! "+in+" > "+null+"! This is invalid!");
 					Thread.dumpStack();
-					evt.setCanceled(true);
+					evt.markInvalid();
 				}
 				else if (!ReikaItemHelper.verifyItemStack(in, true)) {
 					DragonAPICore.logError("Found a smelting recipe with an invalid input!");
 					Thread.dumpStack();
-					evt.setCanceled(true);
+					evt.markInvalid();
 				}
 				else if (!ReikaItemHelper.verifyItemStack(out, true)) {
 					DragonAPICore.logError("Found a smelting recipe with an invalid output!");
 					Thread.dumpStack();
-					evt.setCanceled(true);
+					evt.markInvalid();
 				}
 			}
 			catch (Exception e) {
-				DragonAPICore.logError("Could not parse smelting recipe");
+				DragonAPICore.logError("Could not parse smelting recipe: ");
 				e.printStackTrace();
 			}
 		}
