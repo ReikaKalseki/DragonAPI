@@ -111,6 +111,7 @@ import Reika.DragonAPI.ModInteract.BannedItemReader;
 import Reika.DragonAPI.ModInteract.MinetweakerHooks;
 import Reika.DragonAPI.ModInteract.WailaTechnicalOverride;
 import Reika.DragonAPI.ModInteract.Bees.ReikaBeeHelper;
+import Reika.DragonAPI.ModInteract.Computers.PeripheralHandlerRelay;
 import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
 import Reika.DragonAPI.ModInteract.DeepInteract.MESystemReader;
 import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
@@ -477,23 +478,12 @@ public class DragonAPIInit extends DragonAPIMod {
 			Blocks.obsidian.setResistance(2000);
 
 		if (ModList.COMPUTERCRAFT.isLoaded()) {
-			try {
-				Class interf = Class.forName("dan200.computercraft.api.peripheral.IPeripheralProvider");
-				Class handler = Class.forName("Reika.DragonAPI.ModInteract.PeripheralHandler");
-				Object handlerObj = handler.newInstance();
-				Class api = Class.forName("dan200.computercraft.api.ComputerCraftAPI");
-				Method register = api.getDeclaredMethod("registerPeripheralProvider", interf);
-				register.invoke(null, handlerObj);
-				//ComputerCraftAPI.registerPeripheralProvider(new PeripheralHandler()); Nonreflective code crashes
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
+			PeripheralHandlerRelay.registerCCHandler();
 		}
 
-		//if (ModList.OPENCOMPUTERS.isLoaded() && !DragonOptions.DIRECTOC.getState()) {
-		//	Driver.add(new PeripheralHandler());
-		//}
+		if (ModList.OPENCOMPUTERS.isLoaded() && !DragonOptions.DIRECTOC.getState()) {
+			PeripheralHandlerRelay.registerOCHandler();
+		}
 
 		PatreonController.instance.registerMod("Reika", PatreonController.reikaURL);
 

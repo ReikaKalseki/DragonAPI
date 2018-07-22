@@ -52,6 +52,10 @@ public final class Coordinate implements Comparable<Coordinate> {
 		zCoord = z;
 	}
 
+	public Coordinate(Vec3 vec) {
+		this(vec.xCoord, vec.yCoord, vec.zCoord);
+	}
+
 	public Coordinate(double x, double y, double z) {
 		this(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
 	}

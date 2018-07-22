@@ -62,8 +62,8 @@ public abstract class SetBlockEvent extends PositionEvent {
 		public Pre(Chunk ch, int x, int y, int z, Block b, int meta) {
 			super(ch, x, y, z);
 
-			currentBlock = this.getBlock();
-			currentMeta = this.getMetadata();
+			currentBlock = ch.getBlock(x, y, z); //USE CHUNK, NOT WORLD
+			currentMeta = ch.getBlockMetadata(x, y, z);
 
 			newBlock = b != null ? b : currentBlock; //is a call to setMeta
 			newMeta = meta;

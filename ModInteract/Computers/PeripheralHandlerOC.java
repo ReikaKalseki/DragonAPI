@@ -7,27 +7,20 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.ModInteract;
+package Reika.DragonAPI.ModInteract.Computers;
 
+import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.network.ManagedPeripheral;
+import li.cil.oc.api.network.Visibility;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Base.TileEntityBase;
-import dan200.computercraft.api.peripheral.IPeripheral;
-import dan200.computercraft.api.peripheral.IPeripheralProvider;
 
-public class PeripheralHandler extends DriverSidedTileEntity implements IPeripheralProvider {
-
-	@Override
-	public IPeripheral getPeripheral(World world, int x, int y, int z, int side) {
-		TileEntity te = world.getTileEntity(x, y, z);
-		return te instanceof TileEntityBase ? (IPeripheral)te : null;
-	}
+public class PeripheralHandlerOC extends DriverSidedTileEntity {
 
 	@Override
 	public ManagedEnvironment createEnvironment(World world, int x, int y, int z, ForgeDirection side) {
@@ -45,6 +38,8 @@ public class PeripheralHandler extends DriverSidedTileEntity implements IPeriphe
 
 		private OCManagedEnvironment(TileEntityBase te) {
 			tile = te;
+
+			this.setNode(Network.newNode(this, Visibility.Network).withComponent(te.getType(), te.getOCNetworkVisibility()).create());
 		}
 
 		@Override
@@ -64,7 +59,7 @@ public class PeripheralHandler extends DriverSidedTileEntity implements IPeriphe
 
 		@Override
 		public String preferredName() {
-			return tile.getName();
+			return tile.getType();
 		}
 
 	}

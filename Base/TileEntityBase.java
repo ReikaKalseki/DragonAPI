@@ -887,7 +887,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	}
 
 	@ModDependent(ModList.OPENCOMPUTERS)
-	protected Visibility getOCNetworkVisibility() {
+	public Visibility getOCNetworkVisibility() {
 		return Visibility.Network;
 	}
 

@@ -21,6 +21,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -81,6 +82,14 @@ public class WorldLocation {
 
 	public WorldLocation(World world, MovingObjectPosition hit) {
 		this(world, hit.blockX, hit.blockY, hit.blockZ);
+	}
+
+	public WorldLocation(World world, Vec3 vec) {
+		this(world, vec.xCoord, vec.yCoord, vec.zCoord);
+	}
+
+	public WorldLocation(World world, double x, double y, double z) {
+		this(world, MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
 	}
 
 	public Block getBlock() {

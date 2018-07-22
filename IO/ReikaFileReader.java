@@ -50,6 +50,8 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReikaFileReader extends DragonAPICore {
 
+	private static long internetLastUnavailable = -1;
+
 	public static int getFileLength(File f) {
 		int len;
 		try {
@@ -134,6 +136,8 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	private static boolean isInternetAccessible(int timeout) {
+		if (internetLastUnavailable+60*1000 >= System.currentTimeMillis()) //only check at most once a minute
+			return false;
 		String[] attempts = {
 				"http://www.google.com",
 				"http://en.wikipedia.org/wiki/Main_Page",
@@ -153,6 +157,7 @@ public class ReikaFileReader extends DragonAPICore {
 
 			}
 		}
+		internetLastUnavailable = System.currentTimeMillis();
 		return false;
 	}
 

@@ -11,7 +11,6 @@ package Reika.DragonAPI.Extras;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -24,7 +23,6 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.MTInteractionManager;
@@ -76,6 +74,7 @@ public class ReplacementSmeltingHandler {
 		smeltingList.clear();
 		smeltingList.putAll(unpermutedSmeltingList);
 
+		/*
 		ReikaJavaLibrary.pConsole("=============CURRENT PRE RECIPES==============");
 		ArrayList<FurnaceRecipe> li = new ArrayList(smeltingList.values());
 		Collections.sort(li);
@@ -85,6 +84,7 @@ public class ReplacementSmeltingHandler {
 			i++;
 		}
 		ReikaJavaLibrary.pConsole("==========================================");
+		 */
 
 		isMTRunning = true;
 		DragonAPICore.log("Preparing to read Minetweaker changes to smelting recipes.");
@@ -97,6 +97,7 @@ public class ReplacementSmeltingHandler {
 		MTChanges.clear();
 		cachedMTExperience.clear();
 
+		/*
 		ReikaJavaLibrary.pConsole("=============CURRENT POST RECIPES==============");
 		ArrayList<FurnaceRecipe> li = new ArrayList(smeltingList.values());
 		Collections.sort(li);
@@ -106,6 +107,7 @@ public class ReplacementSmeltingHandler {
 			i++;
 		}
 		ReikaJavaLibrary.pConsole("==========================================");
+		 */
 	}
 
 	private static void handleDirectMapChanges() {
@@ -145,6 +147,7 @@ public class ReplacementSmeltingHandler {
 
 		DragonAPICore.log("Compiled replacement smelting system.");
 
+		/*
 		ReikaJavaLibrary.pConsole("=============CURRENT RECIPES==============");
 		ArrayList<FurnaceRecipe> li = new ArrayList(smeltingList.values());
 		Collections.sort(li);
@@ -164,6 +167,7 @@ public class ReplacementSmeltingHandler {
 			i++;
 		}
 		ReikaJavaLibrary.pConsole("==========================================");
+		 */
 
 		isCompiled = true;
 

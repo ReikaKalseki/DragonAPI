@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -23,6 +24,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
+import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
@@ -44,8 +46,12 @@ public final class RayTracer {
 	public boolean allowFluids = true;
 	public boolean uniDirectionalChecks = false;
 
+	public boolean cacheBlockRay = false;
+
 	private final ArrayList<BlockKey> forbiddenBlocks = new ArrayList();
 	private final ArrayList<BlockKey> allowedBlocks = new ArrayList();
+
+	private final HashSet<WorldLocation> blockRay = new HashSet();
 
 	public RayTracer(double x1, double y1, double z1, double x2, double y2, double z2) {
 		originX = x1;
@@ -63,6 +69,7 @@ public final class RayTracer {
 		targetX = x2;
 		targetY = y2;
 		targetZ = z2;
+		blockRay.clear();
 	}
 
 	public void offset(double dx, double dy, double dz) {
@@ -76,6 +83,7 @@ public final class RayTracer {
 		targetX += dx2;
 		targetY += dy2;
 		targetZ += dz2;
+		blockRay.clear();
 	}
 
 	public void addOpaqueBlock(Block b) {
@@ -116,6 +124,12 @@ public final class RayTracer {
 			vec.xCoord += vec1.xCoord;
 			vec.yCoord += vec1.yCoord;
 			vec.zCoord += vec1.zCoord;
+
+			if (cacheBlockRay) {
+				blockRay.add(new WorldLocation(world, vec));
+				blockRay.add(new WorldLocation(world, vec0));
+			}
+
 			MovingObjectPosition mov = world.rayTraceBlocks(vec, vec0);
 			if (mov != null) {
 				if (mov.typeOfHit == MovingObjectType.BLOCK) {

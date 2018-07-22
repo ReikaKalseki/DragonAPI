@@ -45,7 +45,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	DEBUGKEY("Debug Overlay Key (LWJGL ID)", 0x0F), //Keyboard.KEY_TAB
 	//RECURSE("Recursion Limit Override", -1),
 	//COMPOUNDSYNC("Compound Sync Packet System - Use at own risk", false);
-	DIRECTOC("Direct OpenComputers Support", true),
+	DIRECTOC("Direct OpenComputers Support", false),
 	AUTOREBOOT("Automatic Reboot Interval (Seconds)", -1),
 	XPMERGE("Merge XP Orbs Like Items", true),
 	RAINTICK("Extra Block Ticks When Raining", true),
