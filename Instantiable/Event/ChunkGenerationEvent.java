@@ -16,7 +16,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkEvent;
 
 
-/** Calls like setBlock are SAFE to do! */
+/** This is fired AFTER terrain gen but BEFORE decorators!<br>
+ * Calls like setBlock are SAFE to do! */
 public class ChunkGenerationEvent extends ChunkEvent {
 
 	public final IChunkProvider generator;

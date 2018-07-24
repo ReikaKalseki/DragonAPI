@@ -52,6 +52,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	PROTECTNEW("Prevent Mobs From Targeting Players Immediately After Logging In", true),
 	SKINCACHE("Cache Skins", true),
 	BIOMEFIRE("Biome Humidity Dependent Fire Spread", true),
+	ADMINPROFILERS("Restrict profiling abilities to admins", true),
 	;
 
 	private String label;

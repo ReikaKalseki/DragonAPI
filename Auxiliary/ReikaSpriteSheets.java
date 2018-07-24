@@ -26,6 +26,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.InertItem;
 import Reika.DragonAPI.Interfaces.Item.AnimatedSpritesheet;
 import Reika.DragonAPI.Interfaces.Item.BlendedColor;
@@ -44,17 +45,23 @@ public final class ReikaSpriteSheets {
 
 	private static final RenderItem itemRender = new RenderItem();
 
+	private static int attribPop;
+	private static int attribPush;
+	private static int matrixPop;
+	private static int matrixPush;
+
 	/** Call this from a registered ItemRenderer class that implements IItemRenderer to actually render the Items.
 	 * It will automatically compensate for being used for inventory/entity/held items.
 	 * Args: Texture root class, Texture path, Sprite Index, ItemRenderType, ItemStack, Data */
 	public static void renderItem(Class root, String tex, int idx, ItemRenderType type, ItemStack is, Object... data) {
+		attribPop = attribPush = matrixPop = matrixPush = 0;
 		if (is == null)
 			return;
 		Item item = is.getItem();
 		if (item == null)
 			return;
 		if (item instanceof SpriteRenderCallback) {
-			GL11.glPushMatrix();
+			pushMatrix();
 			SpriteRenderCallback spr = (SpriteRenderCallback)item;
 			if (spr.doPreGLTransforms(is, type)) {
 				if (type == ItemRenderType.INVENTORY)
@@ -65,18 +72,20 @@ public final class ReikaSpriteSheets {
 					prepareHeldRender();
 			}
 			boolean res = spr.onRender(itemRender, is, type);
-			GL11.glPopMatrix();
-			if (res)
+			popMatrix();
+			if (res) {
+				checkPushPop(is, type);
 				return;
+			}
 		}
 		int[] indices = new int[]{idx};
 		if (item instanceof MultiLayerItemSprite) {
 			MultiLayerItemSprite m = (MultiLayerItemSprite)item;
 			indices = m.getIndices(is);
 		}
-		GL11.glPushMatrix();
+		pushMatrix();
 		for (int i = 0; i < indices.length; i++) {
-			GL11.glPushMatrix();
+			pushMatrix();
 			double z = 0.001*i;
 			int index = indices[i];
 			int row = index/16;
@@ -99,14 +108,14 @@ public final class ReikaSpriteSheets {
 			initGL(type);
 
 			Tessellator v5 = Tessellator.instance;
-			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+			pushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			GL11.glEnable(GL11.GL_BLEND);
 			if (type != type.ENTITY || data[1].getClass() != InertItem.class)
 				BlendMode.DEFAULT.apply();
 			if (type == type.INVENTORY) {
 				if (v5.isDrawing)
 					v5.draw();
-				GL11.glPushMatrix();
+				pushMatrix();
 				prepareInvRender();
 				v5.startDrawingQuads();
 				int c1 = 0xffffff;
@@ -134,7 +143,7 @@ public final class ReikaSpriteSheets {
 				v5.setColorOpaque_I(c4);
 				v5.addVertexWithUV(0, 1, z, 0.0625F*col, 0.0625F*row);
 				v5.draw();
-				GL11.glPopMatrix();
+				popMatrix();
 				GL11.glShadeModel(GL11.GL_FLAT);
 			}
 			if (type == type.EQUIPPED || type == type.EQUIPPED_FIRST_PERSON || type == type.ENTITY) {
@@ -195,14 +204,43 @@ public final class ReikaSpriteSheets {
 					v5.draw();
 				}
 			}
-			GL11.glPopMatrix();
-			GL11.glPopAttrib();
+			popMatrix();
+			popAttrib();
 		}
 		renderEffect(type, is);
 
-		GL11.glPopAttrib();
+		popAttrib();
 		ReikaTextureHelper.bindItemTexture();
+		popMatrix();
+
+		checkPushPop(is, type);
+	}
+
+	private static void checkPushPop(ItemStack item, ItemRenderType type) {
+		if (matrixPush != matrixPop)
+			DragonAPICore.logError("Matrix push operations do not match matrix pop operations when rendering "+item+" as "+type+"!");
+		if (attribPush != attribPop)
+			DragonAPICore.logError("Attrib push operations do not match matrix pop operations when rendering "+item+" as "+type+"!");
+	}
+
+	private static void pushMatrix() {
+		GL11.glPushMatrix();
+		matrixPush++;
+	}
+
+	private static void pushAttrib(int bits) {
+		GL11.glPushAttrib(bits);
+		attribPush++;
+	}
+
+	private static void popMatrix() {
 		GL11.glPopMatrix();
+		matrixPop++;
+	}
+
+	private static void popAttrib() {
+		GL11.glPopAttrib();
+		attribPop++;
 	}
 
 	private static void prepareHeldToolRender() {
@@ -264,20 +302,20 @@ public final class ReikaSpriteSheets {
 	}
 
 	private static void initGL(ItemRenderType type) {
-		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		pushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		if (type == ItemRenderType.INVENTORY) {
 			GL11.glDisable(GL11.GL_LIGHTING);
 		}
-		GL11.glPushMatrix();
+		pushMatrix();
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		GL11.glScalef(1.0F, -1.0F, -1.0F);
 		GL11.glTranslatef(0.5F, 0.5F, 0.5F);
-		GL11.glPopMatrix();
+		popMatrix();
 	}
 
 	public static void renderEffect(ItemRenderType ir, ItemStack is) {
-		GL11.glPushMatrix();
+		pushMatrix();
 		int pass = MinecraftForgeClient.getRenderPass();
 		Tessellator tessellator = Tessellator.instance;
 
@@ -302,21 +340,21 @@ public final class ReikaSpriteSheets {
 					float f13 = 0.76F;
 					GL11.glColor4f(0.5F * f13, 0.25F * f13, 0.8F * f13, 1.0F);
 					GL11.glMatrixMode(GL11.GL_TEXTURE);
-					GL11.glPushMatrix();
+					pushMatrix();
 					float f14 = 0.125F;
 					GL11.glScalef(f14, f14, f14);
 					float f15 = Minecraft.getSystemTime() % 3000L / 3000.0F * 8.0F;
 					GL11.glTranslatef(f15, 0.0F, 0.0F);
 					GL11.glRotatef(-50.0F, 0.0F, 0.0F, 1.0F);
 					ItemRenderer.renderItemIn2D(tessellator, 0.0F, 0.0F, 1.0F, 1.0F, 255, 255, f12);
-					GL11.glPopMatrix();
-					GL11.glPushMatrix();
+					popMatrix();
+					pushMatrix();
 					GL11.glScalef(f14, f14, f14);
 					f15 = Minecraft.getSystemTime() % 4873L / 4873.0F * 8.0F;
 					GL11.glTranslatef(-f15, 0.0F, 0.0F);
 					GL11.glRotatef(10.0F, 0.0F, 0.0F, 1.0F);
 					ItemRenderer.renderItemIn2D(tessellator, 0.0F, 0.0F, 1.0F, 1.0F, 255, 255, f12);
-					GL11.glPopMatrix();
+					popMatrix();
 					GL11.glMatrixMode(GL11.GL_MODELVIEW);
 					GL11.glDisable(GL11.GL_BLEND);
 					GL11.glEnable(GL11.GL_LIGHTING);
@@ -324,7 +362,7 @@ public final class ReikaSpriteSheets {
 				}
 			}
 		}
-		GL11.glPopMatrix();
+		popMatrix();
 	}
 
 	private static void renderEffect(TextureManager manager, int x, int y)

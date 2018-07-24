@@ -46,7 +46,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
 public class ReikaFileReader extends DragonAPICore {
 
@@ -136,7 +138,12 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	private static boolean isInternetAccessible(int timeout) {
-		if (internetLastUnavailable+60*1000 >= System.currentTimeMillis()) //only check at most once a minute
+		if (ReikaObfuscationHelper.isDeObfEnvironment() && ReikaJVMParser.isArgumentPresent("-DragonAPI_NoInternet")) {
+			DragonAPICore.log("Internet is marked inaccessible.");
+			return false;
+		}
+		int dt = 60*1000*(ReikaObfuscationHelper.isDeObfEnvironment() ? 5 : 1);
+		if (internetLastUnavailable+dt >= System.currentTimeMillis()) //only check at most once a minute (five for dev)
 			return false;
 		String[] attempts = {
 				"http://www.google.com",

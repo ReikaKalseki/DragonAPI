@@ -10,7 +10,9 @@
 package Reika.DragonAPI.Instantiable;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -23,8 +25,8 @@ import Reika.ChromatiCraft.Registry.ChromaBlocks;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
-import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
@@ -51,7 +53,7 @@ public final class RayTracer {
 	private final ArrayList<BlockKey> forbiddenBlocks = new ArrayList();
 	private final ArrayList<BlockKey> allowedBlocks = new ArrayList();
 
-	private final HashSet<WorldLocation> blockRay = new HashSet();
+	private final HashSet<Coordinate> blockRay = new HashSet();
 
 	public RayTracer(double x1, double y1, double z1, double x2, double y2, double z2) {
 		originX = x1;
@@ -126,8 +128,8 @@ public final class RayTracer {
 			vec.zCoord += vec1.zCoord;
 
 			if (cacheBlockRay) {
-				blockRay.add(new WorldLocation(world, vec));
-				blockRay.add(new WorldLocation(world, vec0));
+				blockRay.add(new Coordinate(vec));
+				blockRay.add(new Coordinate(vec0));
 			}
 
 			MovingObjectPosition mov = world.rayTraceBlocks(vec, vec0);
@@ -146,6 +148,10 @@ public final class RayTracer {
 			}
 		}
 		return true;
+	}
+
+	public Set<Coordinate> getRayBlocks() {
+		return Collections.unmodifiableSet(blockRay);
 	}
 
 	private boolean isNonTerminal(int x, int y, int z) {

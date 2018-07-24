@@ -108,11 +108,11 @@ public final class MultiMap<K, V> {
 			data.put(key, li);
 		}
 		if (copy || !factory.allowsDuplicates() || /*!li.contains(value)*/!this.containsValueForKey(key, value)) {
-			li.add(value);
+			boolean ret = li.add(value);
 			if (ordering != null && li instanceof List)
 				Collections.sort((List)li, ordering);
 			this.addContainKey(key, value);
-			return true;
+			return ret;
 		}
 		return false;
 	}
