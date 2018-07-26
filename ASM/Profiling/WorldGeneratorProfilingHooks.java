@@ -7,9 +7,8 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.ASM;
+package Reika.DragonAPI.ASM.Profiling;
 
-import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,15 +25,17 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
-public class WorldGeneratorHooks implements IClassTransformer {
+public class WorldGeneratorProfilingHooks implements IClassTransformer {
 
 	private final HashSet<String> superClasses = new HashSet();
 
-	public WorldGeneratorHooks() {
+	public WorldGeneratorProfilingHooks() {
 		superClasses.add("net/minecraft/world/gen/feature/WorldGenerator");
 		superClasses.add("net/minecraft/world/gen/feature/WorldGenAbstractTree");
+		superClasses.add("net/minecraft/world/gen/feature/WorldGenHugeTrees");
 	}
 
 	@Override
@@ -47,20 +48,26 @@ public class WorldGeneratorHooks implements IClassTransformer {
 		ClassReader classReader = new ClassReader(bytes);
 		classReader.accept(classNode, 0);
 
-		if (superClasses.contains(classNode.superName) && (classNode.access & Modifier.ABSTRACT) == 0) {
+		if (superClasses.contains(classNode.superName)) {
 			ReikaASMHelper.activeMod = "DragonAPI";
-			MethodNode m = ReikaASMHelper.getMethodByName(classNode, "func_76484_a", "generate", "(Lnet/minecraft/world/World;Ljava/util/Random;III)Z");
-			Collection<AbstractInsnNode> c = new ArrayList();
-			for (int i = 0; i < m.instructions.size(); i++) {
-				AbstractInsnNode ain = m.instructions.get(i);
-				if (ain.getOpcode() == Opcodes.IRETURN) {
-					c.add(ain);
+			//if ((classNode.access & Modifier.ABSTRACT) == 0) {
+			try {
+				MethodNode m = ReikaASMHelper.getMethodByName(classNode, "func_76484_a", "generate", "(Lnet/minecraft/world/World;Ljava/util/Random;III)Z");
+				Collection<AbstractInsnNode> c = new ArrayList();
+				for (int i = 0; i < m.instructions.size(); i++) {
+					AbstractInsnNode ain = m.instructions.get(i);
+					if (ain.getOpcode() == Opcodes.IRETURN) {
+						c.add(ain);
+					}
 				}
+				this.inject(m, m.instructions.getFirst(), true);
+				for (AbstractInsnNode ain : c)
+					this.inject(m, ain, false);
+				ReikaASMHelper.log("Injected "+(c.size()+1)+" profiling hooks into "+classNode.name);
 			}
-			this.inject(m, m.instructions.getFirst(), true);
-			for (AbstractInsnNode ain : c)
-				this.inject(m, ain, false);
-			ReikaASMHelper.log("Injected "+(c.size()+1)+" profiling hooks into "+classNode.name);
+			catch (NoSuchASMMethodException e) {
+				ReikaASMHelper.log("Skipping profiling hooks on "+classNode.name+"; does not contain generate method");
+			}
 			ReikaASMHelper.activeMod = null;
 		}
 
@@ -74,14 +81,9 @@ public class WorldGeneratorHooks implements IClassTransformer {
 		InsnList li = new InsnList();
 		li.add(new VarInsnNode(Opcodes.ALOAD, 1));
 		li.add(new VarInsnNode(Opcodes.ALOAD, 0));
-		if (isPre) {
-			li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Auxiliary/Trackers/WorldgenProfiler", "startGenerator", "(Lnet/minecraft/world/World;Lnet/minecraft/world/gen/feature/WorldGenerator;)V", false));
-		}
-		else {
-			li.add(new VarInsnNode(Opcodes.ILOAD, 3)); //x
-			li.add(new VarInsnNode(Opcodes.ILOAD, 5)); //z
-			li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Auxiliary/Trackers/WorldgenProfiler", "onRunGenerator", "(Lnet/minecraft/world/World;Lnet/minecraft/world/gen/feature/WorldGenerator;II)V", false));
-		}
+		li.add(new VarInsnNode(Opcodes.ILOAD, 3)); //x
+		li.add(new VarInsnNode(Opcodes.ILOAD, 5)); //z
+		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Auxiliary/Trackers/WorldgenProfiler", isPre ? "startGenerator" : "onRunGenerator", "(Lnet/minecraft/world/World;Lnet/minecraft/world/gen/feature/WorldGenerator;II)V", false));
 
 		m.instructions.insertBefore(ain, li);
 	}

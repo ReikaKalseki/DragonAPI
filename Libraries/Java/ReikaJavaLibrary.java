@@ -951,4 +951,30 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 		return val;
 	}
+
+	public static <V> ArrayList<V> makeSortedListFromCollection(Collection<V> c, Class baseElementType) {
+		ArrayList<V> li = new ArrayList(c);
+		if (!li.isEmpty()) {
+			Collections.sort(li, new FallbackComparator(baseElementType));
+		}
+		return li;
+	}
+
+	private static class FallbackComparator implements Comparator {
+
+		private final boolean useDefaultCompare;
+
+		private FallbackComparator(Class test) {
+			useDefaultCompare = Comparable.class.isAssignableFrom(test);
+		}
+
+		@Override
+		public int compare(Object o1, Object o2) {
+			if (useDefaultCompare)
+				return ((Comparable)o1).compareTo(o2);
+			else
+				return Integer.compare(o1.hashCode(), o2.hashCode());
+		}
+
+	}
 }

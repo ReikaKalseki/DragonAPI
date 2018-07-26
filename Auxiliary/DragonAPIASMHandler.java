@@ -18,7 +18,9 @@ import Reika.DragonAPI.ASM.DragonAPIClassTransformer;
 import Reika.DragonAPI.ASM.FMLItemBlockPatch;
 import Reika.DragonAPI.ASM.FluidNamePatch;
 import Reika.DragonAPI.ASM.InterfaceInjector;
-import Reika.DragonAPI.ASM.WorldGeneratorHooks;
+import Reika.DragonAPI.ASM.Profiling.ChunkInitProfilingHooks;
+import Reika.DragonAPI.ASM.Profiling.MapGeneratorProfilingHooks;
+import Reika.DragonAPI.ASM.Profiling.WorldGeneratorProfilingHooks;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
@@ -46,11 +48,18 @@ public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 		return new String[]{
 				InterfaceInjector.class.getName(), //Must run before dependent method stripper
 				APIStripper.class.getName(),
+
 				DragonAPIClassTransformer.class.getName(),
+
 				FMLItemBlockPatch.class.getName(),
 				FluidNamePatch.class.getName(),
+
 				DependentMethodStripper.class.getName(),
-				WorldGeneratorHooks.class.getName(),
+
+				WorldGeneratorProfilingHooks.class.getName(),
+				MapGeneratorProfilingHooks.class.getName(),
+				ChunkInitProfilingHooks.class.getName(),
+				//BiomeTerrainProfilingHooks.class.getName(),
 		};
 	}
 

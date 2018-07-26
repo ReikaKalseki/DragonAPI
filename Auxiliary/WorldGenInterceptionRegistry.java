@@ -109,9 +109,9 @@ public class WorldGenInterceptionRegistry {
 			for (BlockSetWatcher w : watchers) {
 				w.onChunkGeneration(world, map);
 			}
-			if (WorldgenProfiler.profilingEnabled() && !currentlyRunningGenerators.isEmpty()) {
-				WorldgenProfiler.registerBlockChanges(currentlyRunningGenerators.getLast(), map.size());
-			}
+			//if (WorldgenProfiler.profilingEnabled() && !currentlyRunningGenerators.isEmpty()) {
+			//	WorldgenProfiler.registerBlockChanges(currentlyRunningGenerators.getLast(), map.size());
+			//}
 		}
 		dispatchingChanges = false;
 		data.clear();
@@ -119,6 +119,10 @@ public class WorldGenInterceptionRegistry {
 		if (runningChunkDecoration < 0)
 			runningChunkDecoration = 0;
 		//DragonAPICore.log("Finished decoration for "+cx+", "+cz);
+
+		if (WorldgenProfiler.profilingEnabled()) {
+			WorldgenProfiler.onChunkFinished(cx, cz);
+		}
 	}
 
 	@SubscribeEvent
@@ -171,16 +175,14 @@ public class WorldGenInterceptionRegistry {
 		int id = 0;
 		if (WorldgenProfiler.profilingEnabled()) {
 			id = world.provider.dimensionId;
-			WorldgenProfiler.startGenerator(id, gen);
+			WorldgenProfiler.startGenerator(id, gen, cx, cz);
 		}
 
 		gen.generate(random, cx, cz, world, generator, loader);
 
 		if (WorldgenProfiler.profilingEnabled()) {
 			WorldgenProfiler.onRunGenerator(id, gen, cx, cz);
-		}
 
-		if (WorldgenProfiler.profilingEnabled()) {
 			instance.currentlyRunningGenerators.removeLast();
 			instance.currentlyRunningChunkX.removeLast();
 			instance.currentlyRunningChunkZ.removeLast();

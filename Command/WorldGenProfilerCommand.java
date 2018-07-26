@@ -48,7 +48,8 @@ public class WorldGenProfilerCommand extends DragonCommandBase {
 					long time = g.getAverageTime();
 					String s = ReikaStringParser.padToLength("'"+g.identifier+"'", 96, " ");
 					double percent = g.getTotalTime()*100D/total;
-					String sg = String.format("Generator %s - Average Time Per Chunk: %7.3f microseconds (%2.3f%s); Spilled chunks: %4d; Block changes: %7d", s, time/1000D, percent, "%%", g.getSpilledChunks(), g.getBlockChanges());
+					//String sg = String.format("Generator %s - Average Time Per Chunk: %7.3f microseconds (%2.3f%s); Spilled chunks: %4d; Block changes: %7d", s, time/1000D, percent, "%%", g.getSpilledChunks(), g.getBlockChanges());
+					String sg = String.format("Generator %s - Average Time Per Chunk: %7.3f microseconds (%2.3f%s); Spilled chunks: %4d", s, time/1000D, percent, "%%", g.getSpilledChunks());
 					this.sendChatToSender(ics, sg);
 					DragonAPICore.log(sg);
 				}
@@ -61,7 +62,7 @@ public class WorldGenProfilerCommand extends DragonCommandBase {
 
 	@Override
 	public String getCommandString() {
-		return "profileiwg";
+		return "profilegen";
 	}
 
 	@Override

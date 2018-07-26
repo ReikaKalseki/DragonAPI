@@ -22,7 +22,7 @@ import Reika.DragonAPI.Interfaces.Registry.TileEnum;
 
 import com.google.common.base.Strings;
 
-public final class BlockKey implements BlockCheck {
+public final class BlockKey implements BlockCheck, Comparable<BlockKey> {
 
 	public final Block blockID;
 	public final int metadata;
@@ -142,5 +142,16 @@ public final class BlockKey implements BlockCheck {
 
 	public int getBlockID() {
 		return Block.getIdFromBlock(blockID);
+	}
+
+	@Override
+	public int compareTo(BlockKey o) {
+		return 100000*Integer.compare(this.getBlockID(), o.getBlockID())+Integer.compare(this.getMetadataForCompare(), o.getMetadataForCompare());
+	}
+
+	private int getMetadataForCompare() {
+		if (metadata == -1 || metadata == OreDictionary.WILDCARD_VALUE)
+			return 65536;
+		return metadata;
 	}
 }

@@ -25,6 +25,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 
@@ -114,6 +115,9 @@ public class BlockReplaceCommand extends DragonCommandBase {
 		else if (s.equals("all_trees")) {
 			return new TreeCheck();
 		}
+		else if (s.equals("all_fluids")) {
+			return new FluidCheck();
+		}
 		else if (s.startsWith("class_")) {
 			return new ClassCheck(s.substring(6).toLowerCase(Locale.ENGLISH));
 		}
@@ -146,6 +150,15 @@ public class BlockReplaceCommand extends DragonCommandBase {
 		@Override
 		protected boolean replace(Block b, int meta) {
 			return ReikaOreHelper.isVanillaOre(b) || ModOreList.isModOre(b, meta);
+		}
+
+	}
+
+	private static class FluidCheck extends ReplaceCheck {
+
+		@Override
+		protected boolean replace(Block b, int meta) {
+			return ReikaBlockHelper.isLiquid(b);
 		}
 
 	}
