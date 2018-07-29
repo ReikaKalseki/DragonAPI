@@ -38,6 +38,7 @@ public class WorldGenInterceptionRegistry {
 	private final ArrayList<InterceptionException> exceptions = new ArrayList();
 	private boolean dispatchingChanges = false;
 
+	//breaks due to concurrency
 	private final LinkedList<IWorldGenerator> currentlyRunningGenerators = new LinkedList();
 	private final LinkedList<Integer> currentlyRunningChunkX = new LinkedList();
 	private final LinkedList<Integer> currentlyRunningChunkZ = new LinkedList();
@@ -52,6 +53,7 @@ public class WorldGenInterceptionRegistry {
 
 	public void addIWGWatcher(IWGWatcher w) {
 		IWGwatchers.add(w);
+
 	}
 
 	public void addException(InterceptionException e) {
@@ -77,7 +79,7 @@ public class WorldGenInterceptionRegistry {
 					WorldgenProfiler.onChunkSpills(spiller, cx, cz, cx2, cz2, time, gen);
 				}
 				//long dur = System.nanoTime()-time;
-				//WorldgenProfiler.subtractTime(spiller, dur);
+				//Wor													ldgenProfiler.subtractTime(spiller, dur);
 			}
 		}
 	}

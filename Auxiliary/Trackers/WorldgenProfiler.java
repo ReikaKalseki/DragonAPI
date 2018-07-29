@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -32,6 +31,7 @@ public class WorldgenProfiler {
 	private static final ArrayList<GeneratorProfile> profileDataDisplay = new ArrayList();
 	private static final HashMap<Long, ProfileTiming> profiledChunks = new HashMap();
 	private static final HashMap<Object, WorldProfilerParent> subGenerators = new HashMap();
+	private final static HashMap<Long, GeneratorProfile> whoGennedWhat = new HashMap();
 	//private static long totalProfiledTime;
 
 	//THIS DOES NOT WORK BECAUSE POPULATION IS ASYNC!
@@ -45,6 +45,7 @@ public class WorldgenProfiler {
 			enableProfiling = true;
 			profileData.clear();
 			profiledChunks.clear();
+			whoGennedWhat.clear();
 			//SpillageProfile.instance.reset();
 			InitProfile.instance.reset();
 			//totalProfiledTime = 0;
@@ -535,7 +536,7 @@ public class WorldgenProfiler {
 		protected long totalTime;
 
 		private final MultiMap<Long, Long> spilledChunks = new MultiMap(new HashSetFactory());
-		private final HashSet<Long> gennedChunks = new HashSet();
+		//private final HashSet<Long> gennedChunks = new HashSet();
 
 		@Deprecated
 		private int blockChanges;
@@ -565,11 +566,13 @@ public class WorldgenProfiler {
 			long key = ChunkCoordIntPair.chunkXZ2Int(cx, cz);
 			//DragonAPICore.log("Finishing "+identifier+" on "+cx+", "+cz);
 			ProfileTiming p = timing.remove(key);
-			if (p == null)
+			if (p == null) {
 				DragonAPICore.logError("GeneratorProfile '"+identifier+"' is not running on chunk "+cx+", "+cz+"!");
-			else
+			}
+			else {
 				p.stop(time);
-			this.addValue(p.total());
+				this.addValue(p.total());
+			}
 		}
 
 		protected void pause(long time, int cx, int cz) {
@@ -597,8 +600,15 @@ public class WorldgenProfiler {
 			long to = ChunkCoordIntPair.chunkXZ2Int(cx2, cz2);
 			if (spilledChunks.addValue(from, to)) {
 				//DragonAPICore.log("Generator "+identifier+" has spilled from ["+cx+", "+cz+"] into adjacent chunk ["+cx2+", "+cz2+"]!");
-				if (gen)
-					gennedChunks.add(to);
+				if (gen) {
+					//gennedChunks.add(to);
+					if (whoGennedWhat.containsKey(to)) {
+						DragonAPICore.logError("Generator "+identifier+" was marked as having forced a gen of "+cx2+", "+cz2+", but that chunk was already credited to "+whoGennedWhat.get(to).identifier+"!");
+					}
+					else { //only add to map if is first, since that one obviously si the actual gen-forcer
+						whoGennedWhat.put(to, this);
+					}
+				}
 				return true;
 			}
 			return false;
@@ -610,10 +620,12 @@ public class WorldgenProfiler {
 
 		public final long getTotalTime() {
 			long t = totalTime;
+			/* IT DOES NOT ACTUALLY COUNT AGAINST IT! - checked and subtraction made no change to ordering
 			for (long chunk : spilledChunks.allValues(false)) {
-				if (gennedChunks.contains(chunk))
-					t -= getTotalGenTime(chunk);
+				if (whoGennedWhat.get(chunk) == this)
+					t -= 0*getTotalGenTime(chunk);
 			}
+			 */
 			return t;
 		}
 
@@ -643,7 +655,7 @@ public class WorldgenProfiler {
 		protected final void reset() {
 			totalTime = 0;
 			spilledChunks.clear();
-			gennedChunks.clear();
+			//gennedChunks.clear();
 			blockChanges = 0;
 			timing.clear();
 		}
