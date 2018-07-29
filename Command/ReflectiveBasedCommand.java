@@ -14,7 +14,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import net.minecraft.block.Block;
@@ -159,6 +161,10 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 			return true;
 		}
 		return false;
+	}
+
+	public static Map<String, Class> getClassShortcuts() {
+		return Collections.unmodifiableMap(classShortcuts);
 	}
 
 	protected final Class findClass(String name) throws ClassNotFoundException {

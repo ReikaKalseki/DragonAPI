@@ -2226,6 +2226,14 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return world instanceof WorldServer ? ((ChunkProviderServer)world.getChunkProvider()).loadedChunkHashMap.containsItem(ChunkCoordIntPair.chunkXZ2Int(x, z)) : true;
 	}
 
+	public static boolean isChunkPastCompletelyFinishedGenerating(World world, int x, int z) {
+		if (isChunkPastNoiseGen(world, x, z)) {
+			Chunk c = world.getChunkFromChunkCoords(x, z);
+			return c.isTerrainPopulated;// && c.isLightPopulated;
+		}
+		return false;
+	}
+
 	public static List<IWorldGenerator> getModdedGenerators() {
 		try {
 			List<IWorldGenerator> li = (List<IWorldGenerator>)moddedGeneratorList.get(null);

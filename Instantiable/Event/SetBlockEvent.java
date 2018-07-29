@@ -14,8 +14,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
-/** Fired both before, and when a setBlock propagates and succeeds inside a chunk. This is fired both client and server side. */
+/** Fired both before, and when a setBlock propagates and succeeds inside a chunk. This is fired both client and server side.
+ * This is called hundreds of thousands of times all over the codebase, dozens of times a tick, so you need to be efficient. */
 public abstract class SetBlockEvent extends PositionEvent {
 
 	/** You can toggle this off briefly to bypass the events if you are doing a lot of block sets (eg large scale worldgen) and you do not care
@@ -26,6 +28,9 @@ public abstract class SetBlockEvent extends PositionEvent {
 	 * about other interceptions failing. ENSURE IT IS BACK ON AFTERWARDS. */
 	public static boolean eventEnabledPost = true;
 
+	/** Is this being called as part of a chunk generation. Usually indicates irrelevance to stuff like trackers. Also usually indicates
+	 * being called thousands of times in rapid succession. As a result, you MUST be efficient in handling these ones. */
+	public final boolean isWorldgen;
 	private final Chunk chunk;
 
 	public final ChunkCoordIntPair chunkLocation;
@@ -34,6 +39,7 @@ public abstract class SetBlockEvent extends PositionEvent {
 		super(ch.worldObj, ch.xPosition*16+x, y, ch.zPosition*16+z);
 		chunk = ch;
 		chunkLocation = new ChunkCoordIntPair(ch.xPosition, ch.zPosition);
+		isWorldgen = !ReikaWorldHelper.isChunkPastCompletelyFinishedGenerating(world, x, z);
 	}
 
 	public final boolean isAir() {

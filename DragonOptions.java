@@ -11,9 +11,10 @@ package Reika.DragonAPI;
 
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
 import Reika.DragonAPI.Interfaces.Configuration.IntegerConfig;
+import Reika.DragonAPI.Interfaces.Configuration.StringArrayConfig;
 import Reika.DragonAPI.Interfaces.Configuration.UserSpecificConfig;
 
-public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificConfig {
+public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayConfig, UserSpecificConfig {
 
 	LOGLOADING("Console Loading Info", true),
 	FILELOG("Log Loading Info To Separate File", false),
@@ -53,12 +54,14 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 	SKINCACHE("Cache Skins", true),
 	BIOMEFIRE("Biome Humidity Dependent Fire Spread", true),
 	ADMINPROFILERS("Restrict profiling abilities to admins", true),
+	BYTECODELIST("Bytecodeexec command user UUID whitelist", new String[0]),
 	;
 
 	private String label;
 	private boolean defaultState;
 	private int defaultValue;
 	private String defaultString;
+	private String[] defaultStringArray;
 	private Class type;
 	private boolean enforcing = false;
 
@@ -85,6 +88,12 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 		label = l;
 		defaultString = s;
 		type = String.class;
+	}
+
+	private DragonOptions(String l, String[] s) {
+		label = l;
+		defaultStringArray = s;
+		type = String[].class;
 	}
 
 	public boolean isBoolean() {
@@ -160,6 +169,21 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, UserSpecificC
 			default:
 				return false;
 		}
+	}
+
+	@Override
+	public boolean isStringArray() {
+		return type == String[].class;
+	}
+
+	@Override
+	public String[] getStringArray() {
+		return (String[])DragonAPIInit.config.getControl(this.ordinal());
+	}
+
+	@Override
+	public String[] getDefaultStringArray() {
+		return defaultStringArray;
 	}
 
 }

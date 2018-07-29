@@ -42,7 +42,7 @@ public class WorldGenProfilerCommand extends DragonCommandBase {
 				long total = WorldgenProfiler.getTotalProfilingTime();
 				String totalt = String.format("%.6f", total/1000000D);
 				String desc = "Profiling data for world #"+worldid+" contains "+li.size()+" generators across "+chunks+" chunks, total time "+totalt+" ms:";
-				this.sendChatToSender(ics, desc);
+				//this.sendChatToSender(ics, desc);
 				DragonAPICore.log(desc);
 				for (GeneratorProfile g : li) {
 					long time = g.getAverageTime();
@@ -50,9 +50,10 @@ public class WorldGenProfilerCommand extends DragonCommandBase {
 					double percent = g.getTotalTime()*100D/total;
 					//String sg = String.format("Generator %s - Average Time Per Chunk: %7.3f microseconds (%2.3f%s); Spilled chunks: %4d; Block changes: %7d", s, time/1000D, percent, "%%", g.getSpilledChunks(), g.getBlockChanges());
 					String sg = String.format("Generator %s - Average Time Per Chunk: %7.3f microseconds (%2.3f%s); Spilled chunks: %4d", s, time/1000D, percent, "%%", g.getSpilledChunks());
-					this.sendChatToSender(ics, sg);
+					//this.sendChatToSender(ics, sg);
 					DragonAPICore.log(sg);
 				}
+				this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Profiling data written to log.");
 				break;
 			default:
 				this.sendChatToSender(ics, EnumChatFormatting.RED+"Invalid argument. Specify 'disable', 'enable', or 'display'.");

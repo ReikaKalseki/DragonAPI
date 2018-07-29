@@ -821,8 +821,13 @@ public class ReikaASMHelper {
 	}
 
 	public static void addField(ClassNode cn, String name, String type, int flags, Object init) {
-		if (getFieldByName(cn, name) != null)
+		try {
+			getFieldByName(cn, name);
 			throw new ASMException.DuplicateASMFieldException(cn, name);
+		}
+		catch (NoSuchASMFieldException e) {
+
+		}
 		FieldNode m = new FieldNode(flags, name, type, null, init);
 		cn.fields.add(m);
 	}

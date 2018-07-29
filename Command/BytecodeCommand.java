@@ -26,10 +26,14 @@ import java.util.UUID;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.rcon.RConConsoleSource;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MovingObjectPosition;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Command.BytecodeCommand.BytecodeProgram.ByteCodeInstruction;
+import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 
@@ -50,11 +54,24 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 
 	private static final HashMap<UUID, Stack> objectStack = new HashMap();
 
+	private final HashSet<UUID> playerPermissions = new HashSet();
+
 	private BytecodeProgram program;
+
+	public BytecodeCommand() {
+		for (String s : DragonOptions.BYTECODELIST.getStringArray()) {
+			try {
+				playerPermissions.add(UUID.fromString(s));
+			}
+			catch (IllegalArgumentException e) {
+				throw new InstallationException(DragonAPIInit.instance, "Invalid UUID in whitelist for "+this.getCommandString()+": "+s);
+			}
+		}
+	}
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
-		boolean admin = (!(ics instanceof EntityPlayerMP)) || ReikaPlayerAPI.isAdmin(this.getCommandSenderAsPlayer(ics)); //console always has admin
+		boolean admin = this.hasPermissionToRun(ics);
 		if (args[0].equalsIgnoreCase("define")) {
 			if (admin) {
 				try {
@@ -82,6 +99,15 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 			}
 			else {
 				this.sendChatToSender(ics, EnumChatFormatting.RED+"You do not have permission to use this command in this way.");
+			}
+			return;
+		}
+		else if (args[0].equalsIgnoreCase("shortcuts")) {
+			EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
+			this.sendChatToSender(ics, "Defined class shortcuts: ");
+			for (String s : this.getClassShortcuts().keySet()) {
+				String sg = "#"+s+" - "+this.getClassShortcuts().get(s).getName();
+				this.sendChatToSender(ics, sg);
 			}
 			return;
 		}
@@ -120,6 +146,22 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 				}
 				else {
 					this.sendChatToSender(ics, EnumChatFormatting.RED+"Not looking at a block.");
+				}
+			}
+			else {
+				this.sendChatToSender(ics, EnumChatFormatting.RED+"You do not have permission to use this command in this way.");
+			}
+			return;
+		}
+		else if (args[0].equalsIgnoreCase("getclass")) {
+			if (admin) {
+				EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
+				try {
+					this.getStack(ics).push(this.findClass(args[1]));
+					this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Loaded held item onto the stack.");
+				}
+				catch (ClassNotFoundException e) {
+					this.sendChatToSender(ics, EnumChatFormatting.RED+"No such class '"+args[1]+'!');
 				}
 			}
 			else {
@@ -202,6 +244,15 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 				this.error(ics, "Could not construct object: "+e);
 			}
 		}
+	}
+
+	private boolean hasPermissionToRun(ICommandSender ics) {
+		if (ics instanceof RConConsoleSource) //console
+			return true;
+		if (DragonAPICore.isSinglePlayer())
+			return true;
+		EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
+		return playerPermissions.contains(ep.getUniqueID());
 	}
 
 	@Override

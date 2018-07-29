@@ -60,18 +60,25 @@ public class WorldGenInterceptionRegistry {
 
 	@SubscribeEvent
 	public void chunkRequested(ChunkRequestEvent evt) {
-		if (WorldgenProfiler.profilingEnabled() && !currentlyRunningGenerators.isEmpty()) {
-			long time = System.nanoTime();
-			IWorldGenerator spiller = currentlyRunningGenerators.getLast();
-			int cx = currentlyRunningChunkX.getLast();
-			int cz = currentlyRunningChunkZ.getLast();
+		if (WorldgenProfiler.profilingEnabled()) {
 			int cx2 = evt.chunkX;
 			int cz2 = evt.chunkZ;
-			if (cx != cx2 || cz != cz2) {
-				WorldgenProfiler.onChunkSpills(spiller, cx, cz, cx2, cz2);
+			boolean gen = !evt.chunkIsLoaded() && !evt.chunkExistsOnDisk();
+			if (gen) {
+				WorldgenProfiler.startChunk(cx2, cz2);
 			}
-			long dur = System.nanoTime()-time;
-			WorldgenProfiler.subtractTime(spiller, dur);
+
+			if (!currentlyRunningGenerators.isEmpty()) {
+				long time = System.nanoTime();
+				IWorldGenerator spiller = currentlyRunningGenerators.getLast();
+				int cx = currentlyRunningChunkX.getLast();
+				int cz = currentlyRunningChunkZ.getLast();
+				if (cx != cx2 || cz != cz2) {
+					WorldgenProfiler.onChunkSpills(spiller, cx, cz, cx2, cz2, time, gen);
+				}
+				//long dur = System.nanoTime()-time;
+				//WorldgenProfiler.subtractTime(spiller, dur);
+			}
 		}
 	}
 
@@ -121,7 +128,7 @@ public class WorldGenInterceptionRegistry {
 		//DragonAPICore.log("Finished decoration for "+cx+", "+cz);
 
 		if (WorldgenProfiler.profilingEnabled()) {
-			WorldgenProfiler.onChunkFinished(cx, cz);
+			WorldgenProfiler.finishChunk(System.nanoTime(), cx, cz);
 		}
 	}
 

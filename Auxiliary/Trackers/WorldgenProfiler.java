@@ -2,7 +2,6 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -18,6 +17,7 @@ import net.minecraft.world.gen.feature.WorldGenLiquids;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.event.terraingen.ChunkProviderEvent.ReplaceBiomeBlocks;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.EventProfiler.EventProfile;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
@@ -30,7 +30,7 @@ public class WorldgenProfiler {
 	private static boolean enableProfiling;
 	private static final HashMap<ProfileKey, GeneratorProfile> profileData = new HashMap();
 	private static final ArrayList<GeneratorProfile> profileDataDisplay = new ArrayList();
-	private static final HashSet<ChunkCoordIntPair> profiledChunks = new HashSet();
+	private static final HashMap<Long, ProfileTiming> profiledChunks = new HashMap();
 	private static final HashMap<Object, WorldProfilerParent> subGenerators = new HashMap();
 	//private static long totalProfiledTime;
 
@@ -78,8 +78,21 @@ public class WorldgenProfiler {
 		return Collections.unmodifiableList(profileDataDisplay);
 	}
 
-	public static Collection<ChunkCoordIntPair> getProfiledChunks() {
-		return Collections.unmodifiableCollection(profiledChunks);
+	public static HashMap<ChunkCoordIntPair, Long> getProfiledChunks() {
+		HashMap<ChunkCoordIntPair, Long> map = new HashMap();
+		for (ProfileTiming e : profiledChunks.values()) {
+			map.put(new ChunkCoordIntPair(e.chunkX, e.chunkZ), e.total());
+		}
+		return map;
+	}
+
+	public static long getTotalGenTime(int cx, int cz) {
+		return getTotalGenTime(ChunkCoordIntPair.chunkXZ2Int(cx, cz));
+	}
+
+	private static long getTotalGenTime(long id) {
+		ProfileTiming p = profiledChunks.get(id);
+		return p != null ? p.total() : 0;
 	}
 
 	public static long getTotalProfilingTime() {
@@ -94,6 +107,24 @@ public class WorldgenProfiler {
 
 	public static int getWorld() {
 		return currentProfilingWorld;
+	}
+
+	public static void startChunk(int cx, int cz) {
+		ProfileTiming p = new ProfileTiming("Chunk Total", cx, cz);
+		profiledChunks.put(ChunkCoordIntPair.chunkXZ2Int(cx, cz), p);
+		p.start();
+	}
+
+	public static void finishChunk(long now, int cx, int cz) {
+		//if (SpillageProfile.instance.isRunning)
+		//	finishGenerator(SpillageProfile.instance, System.nanoTime(), cx, cz);
+		ProfileTiming p = profiledChunks.get(ChunkCoordIntPair.chunkXZ2Int(cx, cz));
+		if (p == null) { //this is not actually wrong; since population is decoupled from generation, this can be called much later, even in a later load of the save
+			;//throw new IllegalStateException("Chunk "+cx+", "+cz+" was finished generating before it started!?");
+		}
+		else {
+			p.stop(now);
+		}
 	}
 
 	public static void startChunkInit(IChunkProvider prov, int cx, int cz) {
@@ -151,10 +182,10 @@ public class WorldgenProfiler {
 		initGenerator(getOrCreateGenerator(gen), x >> 4, z >> 4);
 	}
 
-	public static void startGenerator(World world, WorldProfilerParent gen, int x, int z) {
+	public static void startGenerator(World world, WorldProfilerParent gen, int cx, int cz) {
 		if (!enableProfiling || world.provider.dimensionId != currentProfilingWorld)
 			return;
-		initGenerator(getOrCreateGenerator(gen), x >> 4, z >> 4);
+		initGenerator(getOrCreateGenerator(gen), cx, cz);
 	}
 
 	public static void startGenerator(World world, String id, int cx, int cz) {
@@ -164,6 +195,8 @@ public class WorldgenProfiler {
 	}
 
 	private static void initGenerator(GeneratorProfile a, int cx, int cz) {
+		if (a == null)
+			return;
 		//if (!currentlyRunning.isEmpty())
 		//	currentlyRunning.getLast().pause(System.nanoTime(), cx, cz);
 		//currentlyRunning.add(a);
@@ -232,10 +265,11 @@ public class WorldgenProfiler {
 	}
 
 	private static void finishGenerator(GeneratorProfile a, long now, int cx, int cz) {
+		if (a == null)
+			return;
 		a.finish(now, cx, cz);
 
 		//currentlyRunning.removeLast();
-		profiledChunks.add(new ChunkCoordIntPair(cx, cz));
 		//if (!currentlyRunning.isEmpty()) {
 		//	currentlyRunning.getLast().resume(System.nanoTime(), cx, cz); //not 'now', since that would include some of the above code
 		//}
@@ -263,7 +297,7 @@ public class WorldgenProfiler {
 
 	private static GeneratorProfile getOrCreateGenerator(BiomeGenBase gen) {
 		if (subGenerators.containsKey(gen))
-			return getOrCreateGenerator(subGenerators.get(gen));
+			return null;//getOrCreateGenerator(subGenerators.get(gen));
 		ProfileKey key = new ProfileKey(gen);
 		GeneratorProfile a = profileData.get(key);
 		if (a == null) {
@@ -275,7 +309,7 @@ public class WorldgenProfiler {
 
 	private static GeneratorProfile getOrCreateGenerator(WorldGenerator gen) {
 		if (subGenerators.containsKey(gen))
-			return getOrCreateGenerator(subGenerators.get(gen));
+			return null;//getOrCreateGenerator(subGenerators.get(gen));
 		ProfileKey key = new ProfileKey(gen);
 		GeneratorProfile a = profileData.get(key);
 		if (a == null) {
@@ -287,7 +321,7 @@ public class WorldgenProfiler {
 
 	private static GeneratorProfile getOrCreateGenerator(MapGenBase gen) {
 		if (subGenerators.containsKey(gen))
-			return getOrCreateGenerator(subGenerators.get(gen));
+			return null;//getOrCreateGenerator(subGenerators.get(gen));
 		ProfileKey key = new ProfileKey(gen);
 		GeneratorProfile a = profileData.get(key);
 		if (a == null) {
@@ -299,7 +333,7 @@ public class WorldgenProfiler {
 
 	private static GeneratorProfile getOrCreateGenerator(IWorldGenerator gen) {
 		if (subGenerators.containsKey(gen))
-			return getOrCreateGenerator(subGenerators.get(gen));
+			return null;//getOrCreateGenerator(subGenerators.get(gen));
 		ProfileKey key = new ProfileKey(gen);
 		GeneratorProfile a = profileData.get(key);
 		if (a == null) {
@@ -309,16 +343,11 @@ public class WorldgenProfiler {
 		return a;
 	}
 
-	public static void onChunkSpills(IWorldGenerator spiller, int cx, int cz, int cx2, int cz2) {
-		long now = System.nanoTime();
+	public static void onChunkSpills(IWorldGenerator spiller, int cx, int cz, int cx2, int cz2, long now, boolean gen) {
 		GeneratorProfile a = getOrCreateGenerator(spiller);
-		if (a.addSpilledChunk(cx, cz, cx2, cz2))
-			;//initGenerator(SpillageProfile.instance, cx, cz);
-	}
-
-	public static void onChunkFinished(int cx, int cz) {
-		//if (SpillageProfile.instance.isRunning)
-		//	finishGenerator(SpillageProfile.instance, System.nanoTime(), cx, cz);
+		if (a.isRunning(cx, cz))
+			if (a.addSpilledChunk(cx, cz, cx2, cz2, gen))
+				;//initGenerator(SpillageProfile.instance, cx, cz);
 	}
 
 	@Deprecated
@@ -330,6 +359,9 @@ public class WorldgenProfiler {
 	/** Used for cases where in the middle of profiling another function is run that does not 'count'. */
 	public static void subtractTime(IWorldGenerator gen, long time) {
 		GeneratorProfile a = getOrCreateGenerator(gen);
+		if (time > a.totalTime) {
+			DragonAPICore.logError("Subtracted "+time+" from only "+a.totalTime+" for "+a);
+		}
 		a.totalTime -= time;
 		//totalProfiledTime -= time;
 	}
@@ -501,7 +533,10 @@ public class WorldgenProfiler {
 		public final String identifier;
 		//private final RunningAverage average = new RunningAverage();
 		protected long totalTime;
+
 		private final MultiMap<Long, Long> spilledChunks = new MultiMap(new HashSetFactory());
+		private final HashSet<Long> gennedChunks = new HashSet();
+
 		@Deprecated
 		private int blockChanges;
 
@@ -511,10 +546,15 @@ public class WorldgenProfiler {
 			identifier = s;
 		}
 
+		public boolean isRunning(int cx, int cz) {
+			long key = ChunkCoordIntPair.chunkXZ2Int(cx, cz);
+			return timing.containsKey(key);
+		}
+
 		protected void start(int cx, int cz) {
 			long key = ChunkCoordIntPair.chunkXZ2Int(cx, cz);
 			if (timing.containsKey(key))
-				throw new IllegalStateException("GeneratorProfile '"+identifier+"' is already running on chunk "+cx+", "+cz+"!");
+				DragonAPICore.logError("GeneratorProfile '"+identifier+"' is already running on chunk "+cx+", "+cz+"!");
 			ProfileTiming p = new ProfileTiming(identifier, cx, cz);
 			timing.put(key, p);
 			//DragonAPICore.log("Starting "+identifier+" on "+cx+", "+cz);
@@ -526,7 +566,9 @@ public class WorldgenProfiler {
 			//DragonAPICore.log("Finishing "+identifier+" on "+cx+", "+cz);
 			ProfileTiming p = timing.remove(key);
 			if (p == null)
-				throw new IllegalStateException("GeneratorProfile '"+identifier+"' is not running on chunk "+cx+", "+cz+"!");
+				DragonAPICore.logError("GeneratorProfile '"+identifier+"' is not running on chunk "+cx+", "+cz+"!");
+			else
+				p.stop(time);
 			this.addValue(p.total());
 		}
 
@@ -535,8 +577,9 @@ public class WorldgenProfiler {
 			long key = ChunkCoordIntPair.chunkXZ2Int(cx, cz);
 			ProfileTiming p = timing.get(key);
 			if (p == null)
-				throw new IllegalStateException("GeneratorProfile '"+identifier+"' is not running on chunk "+cx+", "+cz+"!");
-			p.stop(time);
+				DragonAPICore.logError("GeneratorProfile '"+identifier+"' is not running on chunk "+cx+", "+cz+"!");
+			else
+				p.stop(time);
 		}
 
 		protected void resume(long time, int cx, int cz) {
@@ -544,15 +587,18 @@ public class WorldgenProfiler {
 			long key = ChunkCoordIntPair.chunkXZ2Int(cx, cz);
 			ProfileTiming p = timing.get(key);
 			if (p == null)
-				throw new IllegalStateException("GeneratorProfile '"+identifier+"' is not running on chunk "+cx+", "+cz+"!");
-			p.start(time);
+				DragonAPICore.logError("GeneratorProfile '"+identifier+"' is not running on chunk "+cx+", "+cz+"!");
+			else
+				p.start(time);
 		}
 
-		protected final boolean addSpilledChunk(int cx, int cz, int cx2, int cz2) {
+		protected final boolean addSpilledChunk(int cx, int cz, int cx2, int cz2, boolean gen) {
 			long from = ChunkCoordIntPair.chunkXZ2Int(cx, cz);
 			long to = ChunkCoordIntPair.chunkXZ2Int(cx2, cz2);
 			if (spilledChunks.addValue(from, to)) {
 				//DragonAPICore.log("Generator "+identifier+" has spilled from ["+cx+", "+cz+"] into adjacent chunk ["+cx2+", "+cz2+"]!");
+				if (gen)
+					gennedChunks.add(to);
 				return true;
 			}
 			return false;
@@ -563,11 +609,16 @@ public class WorldgenProfiler {
 		}
 
 		public final long getTotalTime() {
-			return totalTime;
+			long t = totalTime;
+			for (long chunk : spilledChunks.allValues(false)) {
+				if (gennedChunks.contains(chunk))
+					t -= getTotalGenTime(chunk);
+			}
+			return t;
 		}
 
 		public long getAverageTime() {
-			return this.getTotalTime()/profiledChunks.size();
+			return profiledChunks.size() == 0 ? 0 : this.getTotalTime()/profiledChunks.size();
 		}
 
 		public final int getSpilledChunks() {
@@ -592,6 +643,7 @@ public class WorldgenProfiler {
 		protected final void reset() {
 			totalTime = 0;
 			spilledChunks.clear();
+			gennedChunks.clear();
 			blockChanges = 0;
 			timing.clear();
 		}
@@ -620,14 +672,14 @@ public class WorldgenProfiler {
 
 		private void start(long time) {
 			if (isRunning)
-				throw new IllegalStateException("GeneratorProfile '"+id+"' is already running on chunk "+chunkX+", "+chunkZ+"!");
+				DragonAPICore.logError("GeneratorProfile '"+id+"' is already running on chunk "+chunkX+", "+chunkZ+"!");
 			isRunning = true;
 			lastStart = time;
 		}
 
 		private void stop(long time) {
 			if (!isRunning)
-				throw new IllegalStateException("GeneratorProfile '"+id+"' is not running on chunk "+chunkX+", "+chunkZ+"!");
+				DragonAPICore.logError("GeneratorProfile '"+id+"' is not running on chunk "+chunkX+", "+chunkZ+"!");
 			totalTime += time-lastStart;
 			isRunning = false;
 		}

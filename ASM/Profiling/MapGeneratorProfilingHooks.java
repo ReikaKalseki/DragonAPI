@@ -26,6 +26,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
+import Reika.DragonAPI.Interfaces.Subgenerator;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 public class MapGeneratorProfilingHooks implements IClassTransformer {
@@ -42,16 +43,16 @@ public class MapGeneratorProfilingHooks implements IClassTransformer {
 			return null;
 		}
 
-		ClassNode classNode = new ClassNode();
+		ClassNode cn = new ClassNode();
 		ClassReader classReader = new ClassReader(bytes);
-		classReader.accept(classNode, 0);
+		classReader.accept(cn, 0);
 
-		if (superClasses.contains(classNode.superName)) {
+		if (superClasses.contains(cn.superName) && !cn.interfaces.contains(Subgenerator.class.getName().replace(".", "/"))) {
 			ReikaASMHelper.activeMod = "DragonAPI";
 			//if ((classNode.access & Modifier.ABSTRACT) == 0) {
 			try {
 				ReikaASMHelper.activeMod = "DragonAPI";
-				MethodNode m = ReikaASMHelper.getMethodByName(classNode, "func_151538_a", "func_151538_a", "(Lnet/minecraft/world/World;IIII[Lnet/minecraft/block/Block;)V");
+				MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_151538_a", "func_151538_a", "(Lnet/minecraft/world/World;IIII[Lnet/minecraft/block/Block;)V");
 				Collection<AbstractInsnNode> c = new ArrayList();
 				for (int i = 0; i < m.instructions.size(); i++) {
 					AbstractInsnNode ain = m.instructions.get(i);
@@ -62,17 +63,17 @@ public class MapGeneratorProfilingHooks implements IClassTransformer {
 				this.inject(m, m.instructions.getFirst(), true);
 				for (AbstractInsnNode ain : c)
 					this.inject(m, ain, false);
-				ReikaASMHelper.log("Injected "+(c.size()+1)+" profiling hooks into "+classNode.name);
+				ReikaASMHelper.log("Injected "+(c.size()+1)+" profiling hooks into "+cn.name);
 			}
 			catch (NoSuchASMMethodException e) {
-				ReikaASMHelper.log("Skipping profiling hooks on "+classNode.name+"; does not contain generate method");
+				ReikaASMHelper.log("Skipping profiling hooks on "+cn.name+"; does not contain generate method");
 			}
 			ReikaASMHelper.activeMod = null;
 		}
 
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
-		classNode.accept(writer);
-		classNode.check(classNode.version);
+		cn.accept(writer);
+		cn.check(cn.version);
 		return writer.toByteArray();
 	}
 
