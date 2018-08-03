@@ -401,7 +401,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return true;
 		if (EntityWither.class.isAssignableFrom(mob))
 			return true;
-		String n = mob.getClass().getName().toLowerCase(Locale.ENGLISH);
+		String n = mob.getName().toLowerCase(Locale.ENGLISH);
 		if (n.contains("wisp"))
 			return true;
 		if (n.contains("pech"))
@@ -454,10 +454,12 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return 100; //220 lbs; TNT is heavy
 		if (ent instanceof EntitySkeleton)
 			return 30;	//66 lbs
-		if (ent instanceof EntityZombie || ent instanceof EntityPlayer || ent instanceof EntityVillager || ent instanceof EntityWitch)
-			return 70; // 180 lbs
 		if (ent instanceof EntityPigZombie)
 			return 90;
+		if (ent instanceof EntityZombie || ent instanceof EntityPlayer || ent instanceof EntityVillager || ent instanceof EntityWitch)
+			return 70; // 180 lbs
+		if (ent instanceof EntityCaveSpider)
+			return 30;
 		if (ent instanceof EntitySpider)
 			return 60;	//
 		if (ent instanceof EntityPig)
@@ -482,8 +484,6 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return 1;
 		if (ent instanceof EntityChicken)
 			return 2;
-		if (ent instanceof EntityCaveSpider)
-			return 30;
 		if (ent instanceof EntityDragon)
 			return 10000; //really conjectural
 		if (ent instanceof EntityWither)

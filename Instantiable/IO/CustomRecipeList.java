@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import Reika.DragonAPI.ModList;
@@ -151,11 +152,21 @@ public final class CustomRecipeList {
 	public final Collection<ItemStack> parseItemCollection(Collection<String> in, boolean tolerateNull) {
 		Collection<ItemStack> c = new ArrayList();
 		for (String s : in) {
-			ItemStack is = this.parseItemString(s, null, tolerateNull);
-			if (is != null)
-				c.add(is);
-			else if (!tolerateNull)
-				throw new IllegalArgumentException("Null stack not permitted!");
+			if (s.startsWith("ore:")) {
+				s = s.substring("ore:".length());
+				ArrayList<ItemStack> li = OreDictionary.getOres(s);
+				if (li.isEmpty() && !tolerateNull)
+					throw new IllegalArgumentException("Ore dictionary tag '"+s+"' has no items!");
+				else
+					c.addAll(li);
+			}
+			else {
+				ItemStack is = this.parseItemString(s, null, tolerateNull);
+				if (is != null)
+					c.add(is);
+				else if (!tolerateNull)
+					throw new IllegalArgumentException("Null stack not permitted!");
+			}
 		}
 		return c;
 	}

@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
+import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
@@ -48,6 +49,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.NextTickListEntry;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.Chunk;
@@ -95,11 +97,13 @@ import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaCropHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IWorldGenerator;
@@ -214,81 +218,35 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		world.setBlock(x, y, z, Block.getBlockFromItem(is.getItem()), is.getItemDamage(), flag);
 	}
 
-	/** Finds the top edge of the top solid (nonair) block in the column. Args: World, this.x,y,z */
-	public static double findSolidSurface(World world, double x, double y, double z) { //Returns double y-coord of top surface of top block
-
-		int xp = (int)x;
-		int zp = (int)z;
-		boolean lowestsolid = false;
-		boolean solidup = false;
-		boolean soliddown = false;
-
-		while (!(!solidup && soliddown)) {
-			solidup = (getMaterial(world, xp, (int)y, zp) != Material.air);
-			soliddown = (getMaterial(world, xp, (int)y-1, zp) != Material.air);
-			if (solidup && soliddown) //Both blocks are solid -> below surface
-				y++;
-			if (solidup && !soliddown) //Upper only is solid -> should never happen
-				y += 2;					// Fix attempt
-			if (!solidup && soliddown) // solid lower only
-				;						// the case we want
-			if (!solidup && !soliddown) //Neither solid -> above surface
-				y--;
-		}
-		return y;
+	public static int findFluidSurface(World world, int x, int y, int z) {
+		return findFluidSurface(world, x, y, z, null);
 	}
 
-	/** Finds the top edge of the top water block in the column. Args: World, this.x,y,z.
-	 *DO NOT CALL if there is no water there, as there is a possibility of infinite loop. */
-	public static double findWaterSurface(World world, double x, double y, double z) { //Returns double y-coord of top surface of top block
+	/** Finds the top edge of the top fluid block in the column. Returns -1 if not a fluid block even at the search start. */
+	public static int findFluidSurface(World world, int x, int y, int z, Fluid look) {
+		Block b = world.getBlock(x, y, z);
 
-		int xp = (int)x;
-		int zp = (int)z;
-		boolean lowestwater = false;
-		boolean waterup = false;
-		boolean waterdown = false;
+		if (b == Blocks.flowing_water)
+			b = Blocks.water;
+		else if (b == Blocks.flowing_lava)
+			b = Blocks.lava;
 
-		while (!(!waterup && waterdown)) {
-			waterup = (getMaterial(world, xp, (int)y, zp) == Material.water);
-			waterdown = (getMaterial(world, xp, (int)y-1, zp) == Material.water);
-			if (waterup && waterdown) //Both blocks are water -> below surface
-				y++;
-			if (waterup && !waterdown) //Upper only is water -> should never happen
-				return y+3;		//Return and exit function
-			if (!waterup && waterdown) // Water lower only
-				;						// the case we want
-			if (!waterup && !waterdown) //Neither water -> above surface
-				y--;
+		Fluid f = FluidRegistry.lookupFluidForBlock(b);
+		if (f == null || (look != null && f != look))
+			return -1;
+
+		Block b2 = b;
+		int dy = y;
+
+		while ((b2 == b) && dy < 256) {
+			dy++;
+			b2 = world.getBlock(x, dy, z);
+			if (b2 == Blocks.flowing_water)
+				b2 = Blocks.water;
+			else if (b2 == Blocks.flowing_lava)
+				b2 = Blocks.lava;
 		}
-		return y;
-	}
-
-	/** Finds the top edge of the top fluid block in the column. Args: World, this.x,y,z.
-	 *DO NOT CALL if there is no fluid there, as there is a possibility of infinite loop. */
-	public static double findFluidSurface(World world, double x, double y, double z) { //Returns double y-coord of top surface of top block
-
-		int xp = (int)x;
-		int zp = (int)z;
-		boolean lowestfluid = false;
-		boolean fluidup = false;
-		boolean fluiddown = false;
-		Fluid f = FluidRegistry.lookupFluidForBlock(world.getBlock(xp, (int)y, zp));
-		if (f == null)
-			return y+3;
-
-		while (!(!fluidup && fluiddown)) {
-			fluidup = (getFluid(world, xp, (int)y, zp) == f);
-			fluiddown = (getFluid(world, xp, (int)y-1, zp) == f);
-			if (fluidup && fluiddown) //Both blocks are fluid -> below surface
-				y++;
-			if (fluidup && !fluiddown) //Upper only is fluid -> should never happen
-				return y+3;		//Return and exit function
-			if (!fluidup && fluiddown) // fluid lower only
-				;						// the case we want
-			if (!fluidup && !fluiddown) //Neither fluid -> above surface
-				y--;
-		}
-		return y;
+		return dy;
 	}
 
 	/** Search for a specific block in a range. Returns true if found. Cannot identify if
@@ -1276,7 +1234,12 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static Fluid getFluid(World world, int x, int y, int z) {
-		return FluidRegistry.lookupFluidForBlock(world.getBlock(x, y, z));
+		Block b = world.getBlock(x, y, z);
+		if (b == Blocks.flowing_water || b == Blocks.water)
+			return FluidRegistry.WATER;
+		if (b == Blocks.flowing_lava || b == Blocks.lava)
+			return FluidRegistry.LAVA;
+		return FluidRegistry.lookupFluidForBlock(b);
 	}
 
 	/** Updates all blocks adjacent to the coordinate given. Args: World, x, y, z */
@@ -2301,5 +2264,62 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int z = MathHelper.floor_double(dz);
 		Block b = world.getBlock(x, y, z);
 		return b.isAir(world, x, y, z);
+	}
+
+	public static double getAmbientPressureAt(World world, int x, int y, int z, boolean checkLiquidColumn) {
+		double Pamb = 101.3;
+		if (world.getBiomeGenForCoords(x, z) == BiomeGenBase.hell)
+			Pamb = 20000;
+		if (y < 30 && world.getWorldInfo().getTerrainType() != WorldType.FLAT) {
+			double f = (30-y)/30D;
+			Pamb *= 1+0.5*f;
+		}
+		if (y > 64 && world.getWorldInfo().getTerrainType() == WorldType.FLAT) {
+			double f = (y-128)/(192D-128D);
+			Pamb *= 1-0.2*f;
+		}
+		if (y > 128) {
+			double f = (y-128)/(192D-128D);
+			Pamb *= 1-0.2*f;
+		}
+		if (y > 192) {
+			double f = (y-128)/(256D-192D);
+			Pamb *= 1-0.4*f;
+		}
+		if (InterfaceCache.IGALACTICWORLD.instanceOf(world.provider)) {
+			Pamb /= ((IGalacticraftWorldProvider)world.provider).getSoundVolReductionAmount(); //higher for thin atmo
+		}
+		if (checkLiquidColumn) {
+			double fluid = getFluidColumnPressure(world, x, y+1, z);
+			if (InterfaceCache.IGALACTICWORLD.instanceOf(world.provider)) {
+				fluid *= 1+((IGalacticraftWorldProvider)world.provider).getGravity()-0.03125;
+			}
+			Pamb += fluid;
+		}
+		return Pamb;
+	}
+
+	/** In kPa -> rho g h */
+	public static double getFluidColumnPressure(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		if (b == Blocks.flowing_water)
+			b = Blocks.water;
+		else if (b == Blocks.flowing_lava)
+			b = Blocks.lava;
+		Fluid f = FluidRegistry.lookupFluidForBlock(b);
+		int p = 0;
+		while (f != null && y < 256) {
+			p += f.getDensity(world, x, y, z)*ReikaPhysicsHelper.g;
+
+			y++;
+
+			b = world.getBlock(x, y, z);
+			if (b == Blocks.flowing_water)
+				b = Blocks.water;
+			else if (b == Blocks.flowing_lava)
+				b = Blocks.lava;
+			f = FluidRegistry.lookupFluidForBlock(b);
+		}
+		return p/1000D;
 	}
 }

@@ -101,7 +101,7 @@ public class WorldGenInterceptionRegistry {
 		if (dispatchingChanges) {
 			return;
 		}
-		if (InterfaceCache.IGALACTICWORLD.instanceOf(evt.world)) //it is his world anyways, and this just breaks there
+		if (InterfaceCache.IGALACTICWORLD.instanceOf(evt.world.provider)) //it is his world anyways, and this just breaks there
 			return;
 		for (InterceptionException e : exceptions)
 			if (e.doesExceptionApply(evt.world, evt.xCoord, evt.yCoord, evt.zCoord))

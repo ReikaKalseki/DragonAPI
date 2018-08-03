@@ -49,12 +49,14 @@ public final class ReikaSpriteSheets {
 	private static int attribPush;
 	private static int matrixPop;
 	private static int matrixPush;
+	private static int matrixStackSize;
+	private static int attribStackSize;
 
 	/** Call this from a registered ItemRenderer class that implements IItemRenderer to actually render the Items.
 	 * It will automatically compensate for being used for inventory/entity/held items.
 	 * Args: Texture root class, Texture path, Sprite Index, ItemRenderType, ItemStack, Data */
 	public static void renderItem(Class root, String tex, int idx, ItemRenderType type, ItemStack is, Object... data) {
-		attribPop = attribPush = matrixPop = matrixPush = 0;
+		attribPop = attribPush = matrixPop = matrixPush = matrixStackSize = attribStackSize = 0;
 		if (is == null)
 			return;
 		Item item = is.getItem();
@@ -206,10 +208,10 @@ public final class ReikaSpriteSheets {
 			}
 			popMatrix();
 			popAttrib();
+			popAttrib();
 		}
 		renderEffect(type, is);
 
-		popAttrib();
 		ReikaTextureHelper.bindItemTexture();
 		popMatrix();
 
@@ -218,29 +220,35 @@ public final class ReikaSpriteSheets {
 
 	private static void checkPushPop(ItemStack item, ItemRenderType type) {
 		if (matrixPush != matrixPop)
-			DragonAPICore.logError("Matrix push operations do not match matrix pop operations when rendering "+item+" as "+type+"!");
+			DragonAPICore.logError("Matrix push operations do not match matrix pop operations when rendering "+item+" as "+type+": "+matrixPush+"/"+matrixPop+"!");
 		if (attribPush != attribPop)
-			DragonAPICore.logError("Attrib push operations do not match matrix pop operations when rendering "+item+" as "+type+"!");
+			DragonAPICore.logError("Attrib push operations do not match attrib pop operations when rendering "+item+" as "+type+": "+attribPush+"/"+attribPop+"!");
 	}
 
 	private static void pushMatrix() {
 		GL11.glPushMatrix();
+		//ReikaJavaLibrary.pConsole("Stack "+matrixStackSize+" > "+(matrixStackSize+1));
 		matrixPush++;
+		matrixStackSize++;
 	}
 
 	private static void pushAttrib(int bits) {
 		GL11.glPushAttrib(bits);
 		attribPush++;
+		attribStackSize++;
 	}
 
 	private static void popMatrix() {
 		GL11.glPopMatrix();
+		//ReikaJavaLibrary.pConsole("Stack "+matrixStackSize+" > "+(matrixStackSize-1));
 		matrixPop++;
+		matrixStackSize--;
 	}
 
 	private static void popAttrib() {
 		GL11.glPopAttrib();
 		attribPop++;
+		attribStackSize--;
 	}
 
 	private static void prepareHeldToolRender() {
