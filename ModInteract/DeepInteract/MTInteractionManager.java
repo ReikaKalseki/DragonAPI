@@ -27,6 +27,7 @@ import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayMap;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -447,6 +448,7 @@ public final class MTInteractionManager {
 		@Override
 		public void handle(Object r) {
 			ReplacementSmeltingHandler.applyMinetweakerChanges();
+			ReikaDyeHelper.buildItemCache();
 		}
 
 	}

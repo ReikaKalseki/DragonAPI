@@ -50,6 +50,7 @@ import Reika.DragonAPI.Instantiable.Recipe.RecipePattern;
 import Reika.DragonAPI.Interfaces.CustomToStringRecipe;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -1046,5 +1047,12 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			objects.add(input[i]);
 		objects.addAll(entries);
 		return objects.toArray(new Object[objects.size()]);
+	}
+
+	public static ItemStack getShapelessCraftResult(ItemStack... in) {
+		if (in.length > 9)
+			throw new MisuseException("Too many input items!");
+		RecipePattern ic = new RecipePattern(in);
+		return CraftingManager.getInstance().findMatchingRecipe(ic, ReikaWorldHelper.getBasicReferenceWorld());
 	}
 }

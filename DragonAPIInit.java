@@ -105,6 +105,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.ModInteract.BannedItemReader;
@@ -756,6 +757,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		ReikaOreHelper.refreshAll();
 		ModOreList.initializeAll();
 		ReplacementSmeltingHandler.build();
+		ReikaDyeHelper.buildItemCache();
 		if (ModList.FORESTRY.isLoaded()) {
 			ReikaBeeHelper.buildSpeciesList();
 		}

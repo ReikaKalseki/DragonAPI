@@ -11,7 +11,8 @@ package Reika.DragonAPI.Libraries.Registry;
 
 import java.awt.Color;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Random;
 
@@ -22,6 +23,9 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import org.lwjgl.opengl.GL11;
 
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.relauncher.Side;
@@ -49,11 +53,12 @@ public enum ReikaDyeHelper {
 	public final int color;
 	public final String colorName;
 	public final String colorNameNoSpaces;
+
 	private static final Random rand = new Random();
 
 	public static final ReikaDyeHelper[] dyes = ReikaDyeHelper.values();
-	private static final HashMap<ReikaDyeHelper, ArrayList<ItemStack>> oreDict = new HashMap();
-	private static final HashMap<ItemStack, ReikaDyeHelper> oreDict2 = new HashMap();
+	private final ArrayList<ItemStack> items = new ArrayList();
+	private static final MultiMap<KeyedItemStack, ReikaDyeHelper> colorMap = new MultiMap(new HashSetFactory()).setNullEmpty();
 
 	private ReikaDyeHelper(int c) {
 		color = c;
@@ -72,7 +77,7 @@ public enum ReikaDyeHelper {
 	}
 
 	public static boolean isDyeItem(ItemStack is) {
-		return getColorFromItem(is) != null;
+		return getColorsFromItem(is) != null;
 	}
 
 	public static ReikaDyeHelper getColorFromItem(ItemStack is) {
@@ -80,33 +85,38 @@ public enum ReikaDyeHelper {
 			return null;
 		if (is.getItem() == Items.dye)
 			return getColorFromDamage(is.getItemDamage());
-		return getDyeByOreDictionary(is);
+		Collection<ReikaDyeHelper> c = getDyeByOreDictionary(is);
+		return c != null ? c.iterator().next() : null;
 	}
 
-	private static ReikaDyeHelper getDyeByOreDictionary(ItemStack is) {
-		ReikaDyeHelper color = oreDict2.get(is);
-		if (color != null)
-			return color;
+	public static Collection<ReikaDyeHelper> getColorsFromItem(ItemStack is) {
+		Collection<ReikaDyeHelper> c = getDyeByOreDictionary(is);
+		return Collections.unmodifiableCollection(c);
+	}
+
+	private static Collection<ReikaDyeHelper> getDyeByOreDictionary(ItemStack is) {
+		Collection<ReikaDyeHelper> c = colorMap.get(createKey(is));
+		return c == null || c.isEmpty() ? null : c;
+	}
+
+	public static void buildItemCache() {
+		colorMap.clear();
 		for (int i = 0; i < dyes.length; i++) {
-			ReikaDyeHelper dye = dyes[i];
-			String name = dye.getOreDictName();
-			ArrayList<ItemStack> li = OreDictionary.getOres(name);
-			if (ReikaItemHelper.collectionContainsItemStack(li, is)) {
-				addItemMapping(dye, is);
-				return dye;
+			dyes[i].items.clear();
+
+			for (ItemStack is : OreDictionary.getOres(dyes[i].getOreDictName())) {
+				addItemMapping(dyes[i], is);
 			}
 		}
-		return null;
 	}
 
 	private static void addItemMapping(ReikaDyeHelper dye, ItemStack is) {
-		ArrayList<ItemStack> li = oreDict.get(dye);
-		if (li == null) {
-			li = new ArrayList();
-			oreDict.put(dye, li);
-		}
-		li.add(is);
-		oreDict2.put(is, dye);
+		dye.items.add(is);
+		colorMap.addValue(createKey(is), dye);
+	}
+
+	private static KeyedItemStack createKey(ItemStack is) {
+		return new KeyedItemStack(is).setIgnoreNBT(true).setIgnoreMetadata(false).setSized(false).setSimpleHash(true);
 	}
 
 	public static ReikaDyeHelper getColorFromDamage(int damage) {
