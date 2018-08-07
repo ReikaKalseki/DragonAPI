@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Power;
 
+import Reika.DragonAPI.ModInteract.ItemHandlers.IC2Handler;
+
 public class ReikaEUHelper {
 
 	private static final double WATTS_PER_EU_default = 2080D;
@@ -19,6 +21,9 @@ public class ReikaEUHelper {
 	}
 
 	public static int getIC2TierFromEUVoltage(double voltage) {
+		if (IC2Handler.getInstance().isIC2Classic()) {
+			return (int)Math.ceil(Math.log(voltage/8.0D)/Math.log(4.0D));
+		}
 		if (voltage >= 8192) { //"Ultra"
 			return 5;
 		}
@@ -35,6 +40,10 @@ public class ReikaEUHelper {
 			return 1;
 		}
 		return 0; //"Micro"
+	}
+
+	public static double getIC2ClassicTierVoltage(int tier) {
+		return 8 << tier*2;
 	}
 
 	public static int getIC2TierFromPower(double power) {

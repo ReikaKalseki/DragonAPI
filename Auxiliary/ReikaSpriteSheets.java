@@ -52,11 +52,15 @@ public final class ReikaSpriteSheets {
 	private static int matrixStackSize;
 	private static int attribStackSize;
 
+	private static int renderingItem = 0;
+
 	/** Call this from a registered ItemRenderer class that implements IItemRenderer to actually render the Items.
 	 * It will automatically compensate for being used for inventory/entity/held items.
 	 * Args: Texture root class, Texture path, Sprite Index, ItemRenderType, ItemStack, Data */
 	public static void renderItem(Class root, String tex, int idx, ItemRenderType type, ItemStack is, Object... data) {
-		attribPop = attribPush = matrixPop = matrixPush = matrixStackSize = attribStackSize = 0;
+		if (renderingItem == 0)
+			attribPop = attribPush = matrixPop = matrixPush = matrixStackSize = attribStackSize = 0;
+		renderingItem++;
 		if (is == null)
 			return;
 		Item item = is.getItem();
@@ -76,7 +80,9 @@ public final class ReikaSpriteSheets {
 			boolean res = spr.onRender(itemRender, is, type);
 			popMatrix();
 			if (res) {
-				checkPushPop(is, type);
+				renderingItem--;
+				if (renderingItem == 0)
+					checkPushPop(is, type);
 				return;
 			}
 		}
@@ -112,7 +118,7 @@ public final class ReikaSpriteSheets {
 			Tessellator v5 = Tessellator.instance;
 			pushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 			GL11.glEnable(GL11.GL_BLEND);
-			if (type != type.ENTITY || data[1].getClass() != InertItem.class)
+			if (type != type.ENTITY || data[0].getClass() != InertItem.class)
 				BlendMode.DEFAULT.apply();
 			if (type == type.INVENTORY) {
 				if (v5.isDrawing)
@@ -215,14 +221,16 @@ public final class ReikaSpriteSheets {
 		ReikaTextureHelper.bindItemTexture();
 		popMatrix();
 
-		checkPushPop(is, type);
+		renderingItem--;
+		if (renderingItem == 0)
+			checkPushPop(is, type);
 	}
 
 	private static void checkPushPop(ItemStack item, ItemRenderType type) {
 		if (matrixPush != matrixPop)
-			DragonAPICore.logError("Matrix push operations do not match matrix pop operations when rendering "+item+" as "+type+": "+matrixPush+"/"+matrixPop+"!");
+			DragonAPICore.logError("Matrix push operations do not match matrix pop operations when rendering "+item+" "+item.stackTagCompound+" as "+type+": "+matrixPush+"/"+matrixPop+"!");
 		if (attribPush != attribPop)
-			DragonAPICore.logError("Attrib push operations do not match attrib pop operations when rendering "+item+" as "+type+": "+attribPush+"/"+attribPop+"!");
+			DragonAPICore.logError("Attrib push operations do not match attrib pop operations when rendering "+item+" "+item.stackTagCompound+" as "+type+": "+attribPush+"/"+attribPop+"!");
 	}
 
 	private static void pushMatrix() {

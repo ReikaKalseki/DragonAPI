@@ -514,22 +514,26 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return false;
 	}
 
-	/** Surrounds the block with fire. Args: World, x, y, z */
 	public static void ignite(World world, int x, int y, int z) {
+		ignite(world, x, y, z, 0);
+	}
+
+	/** Surrounds the block with fire. Args: World, x, y, z */
+	public static void ignite(World world, int x, int y, int z, int meta) {
 		if (world.getBlock(x, y, z) == Blocks.air)
 			return;
 		if (world.getBlock(x-1, y, z) == Blocks.air)
-			world.setBlock(x-1, y, z, Blocks.fire);
+			world.setBlock(x-1, y, z, Blocks.fire, meta, 3);
 		if (world.getBlock(x+1, y, z) == Blocks.air)
-			world.setBlock(x+1, y, z, Blocks.fire);
+			world.setBlock(x+1, y, z, Blocks.fire, meta, 3);
 		if (world.getBlock(x, y-1, z) == Blocks.air)
-			world.setBlock(x, y-1, z, Blocks.fire);
+			world.setBlock(x, y-1, z, Blocks.fire, meta, 3);
 		if (world.getBlock(x, y+1, z) == Blocks.air)
-			world.setBlock(x, y+1, z, Blocks.fire);
+			world.setBlock(x, y+1, z, Blocks.fire, meta, 3);
 		if (world.getBlock(x, y, z-1) == Blocks.air)
-			world.setBlock(x, y, z-1, Blocks.fire);
+			world.setBlock(x, y, z-1, Blocks.fire, meta, 3);
 		if (world.getBlock(x, y, z+1) == Blocks.air)
-			world.setBlock(x, y, z+1, Blocks.fire);
+			world.setBlock(x, y, z+1, Blocks.fire, meta, 3);
 	}
 
 	/** Returns the number of water blocks directly and continuously above the passed coordinates.
