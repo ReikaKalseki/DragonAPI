@@ -193,13 +193,13 @@ public abstract class DragonAPIMod {
 				String hash = "@TEMPHASH@";//ReikaFileReader.getHash(folder, HashType.SHA256);
 				Manifest mf = jf.getManifest();
 				if (mf == null)
-					throw new InvalidBuildException(this, this.getModFile());
+					throw new InvalidBuildException(this, this.getModFile(), "No manifest found!");
 				String attr = mf.getMainAttributes().getValue("ModHash");
 				if (attr == null || hash == null || !hash.equals(attr))
-					throw new InvalidBuildException(this, this.getModFile());
+					throw new InvalidBuildException(this, this.getModFile(), attr == null ? "Manifest does not contain hash!" : "Mismatched compile hash!");
 			}
 			catch (IOException e) {
-				throw new InvalidBuildException(this, this.getModFile());
+				throw new InvalidBuildException(this, this.getModFile(), "Threw IOException: "+e.toString());
 			}
 		}
 	}

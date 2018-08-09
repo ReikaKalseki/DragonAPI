@@ -211,7 +211,7 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void invalidSignature(FMLFingerprintViolationEvent evt) {
 		if (!ReikaObfuscationHelper.isDeObfEnvironment()) {
 			if (!evt.fingerprints.contains(evt.expectedFingerprint.toLowerCase(Locale.ENGLISH).replaceAll(":", ""))) {
-				throw new InvalidBuildException(this, evt.source);
+				throw new InvalidBuildException(this, evt.source, "Invalid mod jarsign fingerprint!");
 			}
 		}
 	}
@@ -655,6 +655,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		if (MTInteractionManager.isMTLoaded() && !DragonAPICore.isSinglePlayer())
 			MTInteractionManager.instance.scanAndRevert();
+
+		DragonAPICore.setGameLoaded();
 	}
 
 	@EventHandler

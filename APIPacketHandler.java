@@ -370,6 +370,8 @@ public class APIPacketHandler implements PacketHandler {
 						DragonAPICore.log("Removing client-only entity "+e);
 					}
 					break;
+				case CLEARCHAT:
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -436,6 +438,10 @@ public class APIPacketHandler implements PacketHandler {
 				break;
 			case REDSTONECHANGE:
 				((TileEntityBase)world.getTileEntity(x, y, z)).onRedstoneChangedClientside(data[0] > 0, data[1] > 0);
+				break;
+			case CLEARCHAT:
+				ReikaChatHelper.clearChat();
+				break;
 			default:
 				break;
 		}
@@ -484,7 +490,8 @@ public class APIPacketHandler implements PacketHandler {
 		SENDLATENCY(),
 		REDSTONECHANGE(),
 		ENTITYVERIFY(),
-		ENTITYVERIFYFAIL();
+		ENTITYVERIFYFAIL(),
+		CLEARCHAT();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];

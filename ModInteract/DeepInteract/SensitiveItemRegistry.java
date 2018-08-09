@@ -111,7 +111,7 @@ public final class SensitiveItemRegistry {
 					MatterOverdriveHandler.blacklist(item);
 					break;
 				case EE:
-					ReikaEEHelper.blacklistItemStack(new ItemStack(item));
+					ReikaEEHelper.blacklistBlock(item);
 					break;
 			}
 		}
@@ -128,7 +128,7 @@ public final class SensitiveItemRegistry {
 					MatterOverdriveHandler.blacklist(item);
 					break;
 				case EE:
-					ReikaEEHelper.blacklistItemStack(new ItemStack(item));
+					ReikaEEHelper.blacklistItem(item);
 					break;
 			}
 		}

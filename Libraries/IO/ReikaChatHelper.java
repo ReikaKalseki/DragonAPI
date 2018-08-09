@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -23,7 +24,9 @@ import net.minecraft.util.ChatComponentTranslation;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -32,8 +35,15 @@ import cpw.mods.fml.relauncher.SideOnly;
 public final class ReikaChatHelper extends DragonAPICore {
 
 	public static void clearChat() {
+		clearChat(null);
+	}
+
+	public static void clearChat(EntityPlayerMP ep) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			clearChatGui();
+		}
+		else if (ep != null) {
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.CLEARCHAT.ordinal(), ep);
 		}
 	}
 

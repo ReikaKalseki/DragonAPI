@@ -178,6 +178,10 @@ public class DragonAPICore {
 		return loaded;
 	}
 
+	public static void setGameLoaded() {
+		loaded = true;
+	}
+
 	public static long getLaunchTime() {
 		return launchTime;
 	}
