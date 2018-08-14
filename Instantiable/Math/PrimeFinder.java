@@ -3,6 +3,7 @@ package Reika.DragonAPI.Instantiable.Math;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 import Reika.DragonAPI.Exception.MisuseException;
 
@@ -11,12 +12,15 @@ public class PrimeFinder {
 
 	private long countLimit;
 
-	private final HashSet<Long> primes;
+	private final ArrayList<Long> primes;
+	private final HashSet<Long> primeSet;
 
 	/** The expected highest value you will query. It can be expanded later, with a brief performance cost. */
 	public PrimeFinder(long limit) {
 		countLimit = limit;
-		primes = new HashSet((int)Math.sqrt(limit), 0.5F);
+		int cap = (int)Math.sqrt(limit);
+		primeSet = new HashSet(cap, 0.5F);
+		primes = new ArrayList(cap);
 		this.calculateFrom(3, limit);
 	}
 
@@ -33,6 +37,7 @@ public class PrimeFinder {
 		for (long val = low; val <= hi; val += 2) {
 			if (this.evaluate(val)) {
 				primes.add(val);
+				primeSet.add(val);
 			}
 		}
 	}
@@ -49,6 +54,8 @@ public class PrimeFinder {
 		for (long p : primes) {
 			if (val%p == 0)
 				return false;
+			if (p >= Math.sqrt(val))
+				break;
 		}
 		return true;
 	}
@@ -57,13 +64,11 @@ public class PrimeFinder {
 		val = Math.abs(val);
 		if (val > countLimit)
 			throw new MisuseException("You cannot query values larger than the calculated range!");
-		return primes.contains(val);
+		return primeSet.contains(val);
 	}
 
-	public ArrayList<Long> getPrimes() {
-		ArrayList<Long> li = new ArrayList(primes);
-		Collections.sort(li);
-		return li;
+	public List<Long> getPrimes() {
+		return Collections.unmodifiableList(primes);
 	}
 
 }
