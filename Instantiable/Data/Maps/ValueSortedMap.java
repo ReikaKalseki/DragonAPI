@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -66,16 +67,24 @@ public class ValueSortedMap<K, V extends Comparable> {
 		data.clear();
 	}
 
-	public Set keySet() {
+	public Set<K> keySet() {
 		return Collections.unmodifiableSet(data.keySet());
 	}
 
-	public Collection values() {
+	public Collection<V> values() {
 		return Collections.unmodifiableCollection(data.values());
 	}
 
-	public Set entrySet() {
+	public Set<Entry<K, V>> entrySet() {
 		return Collections.unmodifiableSet(data.entrySet());
+	}
+
+	public K getFirstKey() {
+		return this.isEmpty() ? null : data.firstEntry().getKey();
+	}
+
+	public V getFirst() {
+		return this.isEmpty() ? null : data.firstEntry().getValue();
 	}
 
 	private class ValueComparator implements Comparator<K> {
