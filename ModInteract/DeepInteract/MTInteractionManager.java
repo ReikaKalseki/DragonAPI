@@ -226,8 +226,10 @@ public final class MTInteractionManager {
 		if (li.containsKey(ks)) {
 			for (Map.Entry<KeyedItemStack, String> e : li.entrySet()) {
 				KeyedItemStack key = e.getKey();
-				if (key.equals(ks) && !key.exactMatch(ks))
-					throw new MisuseException("This item, '"+is.getDisplayName()+"' ("+ks+"), is already listed, but under the wider tag "+key+".");
+				if (key.equals(ks) && key.contains(ks)) {
+					DragonAPICore.log("Note: This item, '"+is.getDisplayName()+"' ("+ks+"), is already listed, but under the wider tag "+key+".");
+					return;
+				}
 			}
 		}
 		li.put(ks, mc.getModId());

@@ -2272,8 +2272,16 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	public static double getAmbientPressureAt(World world, int x, int y, int z, boolean checkLiquidColumn) {
 		double Pamb = 101.3;
-		if (world.getBiomeGenForCoords(x, z) == BiomeGenBase.hell)
+		if (world.provider.dimensionId == -1)
 			Pamb = 20000;
+		else if (world.provider.dimensionId == 1)
+			Pamb = 24; //0.2atm
+
+		if (world.isThundering())
+			Pamb -= 5;
+		else if (world.isRaining())
+			Pamb -= 2.5;
+
 		if (y < 30 && world.getWorldInfo().getTerrainType() != WorldType.FLAT) {
 			double f = (30-y)/30D;
 			Pamb *= 1+0.5*f;

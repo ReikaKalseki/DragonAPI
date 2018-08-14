@@ -36,6 +36,7 @@ import Reika.DragonAPI.Command.BytecodeCommand.BytecodeProgram.ByteCodeInstructi
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 /** Example use:
 	LDC {dimID} [+1 stack]<br>
@@ -219,6 +220,11 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		else {
 			try {
 				o.call(this, ics, args, this.getStack(ics), removeTop);
+				for (EntityPlayer ep : ReikaPlayerAPI.getOps()) {
+					if (ep != ics) {
+						ReikaChatHelper.sendChatToPlayer(ep, "Player "+ics+" ran bytecode command: "+Arrays.toString(args));
+					}
+				}
 				if (o != Opcodes.OUTPUT)
 					Opcodes.OUTPUT.call(this, ics, null, this.getStack(ics), false);
 			}

@@ -218,4 +218,17 @@ public final class KeyedItemStack {
 		nbt.setBoolean("simplehash", simpleHash);
 	}
 
+	public boolean contains(KeyedItemStack ks) {
+		if (!this.exactMatch(ks) && this.equals(ks)) {
+			boolean flag = true;
+			for (int i = 0; i < Criteria.list.length; i++) {
+				Criteria c = Criteria.list[i];
+				if (!enabledCriteria[i] && ks.enabledCriteria[i]) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
 }
