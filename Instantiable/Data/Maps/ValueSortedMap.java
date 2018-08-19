@@ -1,3 +1,12 @@
+/*******************************************************************************
+ * @author Reika Kalseki
+ * 
+ * Copyright 2018
+ * 
+ * All rights reserved.
+ * Distribution of the software in any form is only allowed with
+ * explicit, prior permission from the owner.
+ ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Maps;
 
 import java.util.Collection;
@@ -85,6 +94,11 @@ public class ValueSortedMap<K, V extends Comparable> {
 
 	public V getFirst() {
 		return this.isEmpty() ? null : data.firstEntry().getValue();
+	}
+
+	@Override
+	public String toString() {
+		return raw.toString();
 	}
 
 	private class ValueComparator implements Comparator<K> {
