@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Registry;
 
-import ic2.api.item.IElectricItem;
+import ic2.api.item.ElectricItem;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -727,7 +727,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 			if (InterfaceCache.RFENERGYITEM.instanceOf(i))
 				((IEnergyContainerItem)i).extractEnergy(is, Integer.MAX_VALUE, false);
 			if (InterfaceCache.IELECTRICITEM.instanceOf(i))
-				is = new ItemStack(((IElectricItem)i).getEmptyItem(is));
+				ElectricItem.manager.discharge(is, Double.POSITIVE_INFINITY, Integer.MAX_VALUE, true, false, false);
 			if (InterfaceCache.MUSEELECTRICITEM.instanceOf(i))
 				((MuseElectricItem)i).extractEnergy(is, Integer.MAX_VALUE, false);
 		}

@@ -9,7 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
 
-import ic2.api.item.IElectricItem;
+import ic2.api.item.ElectricItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -119,6 +119,9 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile;
 import cofh.api.energy.IEnergyContainerItem;
+
+import com.google.common.base.Function;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -1300,26 +1303,27 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	}
 
 	public static int damageArmor(EntityLivingBase e, int amt) {
+		return damageArmor(e, amt, null);
+	}
+
+	public static int damageArmor(EntityLivingBase e, int amt, Function<ItemStack, Boolean> handle) {
 		int ret = 0;
 		for (int i = 1; i < 5; i++) {
 			ItemStack arm = e.getEquipmentInSlot(i);
 			if (arm != null && canDamageArmorOf(e)) {
+				if (handle != null && handle.apply(arm))
+					continue;
 				Item item = arm.getItem();
 				if (InterfaceCache.MUSEELECTRICITEM.instanceOf(item)) {
 					MuseElectricItem ms = (MuseElectricItem)item;
-					ret += ms.extractEnergy(arm, amt*50, false);
+					ret += ms.extractEnergy(arm, amt*300, false);
 				}
 				else if (InterfaceCache.RFENERGYITEM.instanceOf(item)) {
 					IEnergyContainerItem ie = (IEnergyContainerItem)item;
-					ret += ie.extractEnergy(arm, amt*50, false);
+					ret += ie.extractEnergy(arm, amt*300, false);
 				}
 				else if (InterfaceCache.IELECTRICITEM.instanceOf(item)) {
-					IElectricItem ie = (IElectricItem)item;
-					///???
-					Item id = ie.getEmptyItem(arm);
-					ItemStack newarm = new ItemStack(id, 1, 0);
-					e.setCurrentItemOrArmor(i, newarm);
-					ret += amt;
+					ret += ElectricItem.manager.discharge(arm, amt*250, Integer.MAX_VALUE, true, false, false);
 				}
 				else if (InterfaceCache.GASITEM.instanceOf(item)) {
 					IGasItem ie = (IGasItem)item;

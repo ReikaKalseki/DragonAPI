@@ -36,6 +36,7 @@ public enum InterfaceCache {
 	BEEHOUSE("forestry.api.apiculture.IBeeHousing"),
 	ENERGYITEM("com.builtbroken.mc.api.items.energy.IEnergyItem"),
 	IMMERSIVEWIRE("blusunrize.immersiveengineering.api.energy.IImmersiveConnectable"),
+	IC2POWERTILE("ic2.api.energy.tile.IEnergyTile"),
 	;
 
 	private final String classpath;

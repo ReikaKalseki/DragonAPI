@@ -18,6 +18,7 @@ import Reika.DragonAPI.ASM.DragonAPIClassTransformer;
 import Reika.DragonAPI.ASM.FMLItemBlockPatch;
 import Reika.DragonAPI.ASM.FluidNamePatch;
 import Reika.DragonAPI.ASM.InterfaceInjector;
+import Reika.DragonAPI.ASM.SpecialBiomePlacement;
 import Reika.DragonAPI.ASM.Profiling.ChunkInitProfilingHooks;
 import Reika.DragonAPI.ASM.Profiling.MapGeneratorProfilingHooks;
 import Reika.DragonAPI.ASM.Profiling.WorldGeneratorProfilingHooks;
@@ -60,6 +61,8 @@ public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 				MapGeneratorProfilingHooks.class.getName(),
 				ChunkInitProfilingHooks.class.getName(),
 				//BiomeTerrainProfilingHooks.class.getName(),
+
+				SpecialBiomePlacement.class.getName(),
 		};
 	}
 

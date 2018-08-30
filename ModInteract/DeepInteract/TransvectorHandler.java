@@ -24,7 +24,7 @@ public class TransvectorHandler {
 
 	public static TileEntity getRelayedTile(TileEntity tv) {
 		try {
-			return tileClass != null && tileClass.isAssignableFrom(tv.getClass()) ? (TileEntity)getRelayTile.invoke(tv) : tv;
+			return tileClass != null && tv != null && tileClass.isAssignableFrom(tv.getClass()) ? (TileEntity)getRelayTile.invoke(tv) : tv;
 		}
 		catch (Exception e) {
 			throw new RuntimeException(e);

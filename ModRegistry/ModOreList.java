@@ -126,7 +126,10 @@ public enum ModOreList implements OreType {
 	THORIUM("Thorium", 0x595959, OreRarity.SCARCE, "dustThorium", 1, "oreThorium", "oreThorite", "oreThorianite"),
 	DRACONIUM("Draconium", 0x9F01E2, OreRarity.SCATTERED, "dustDraconium", 2, "oreDraconium"),
 	ENDIUM("Endium", 0x372356, OreRarity.SCATTERED, "ingotEndium", 1, "oreEndium", "oreHeeEndium"),
-	DILITHIUM("Dilithium", 0xC7BAB7, OreRarity.SCATTERED, "dustDilithium", 1, "oreDilithium");
+	DILITHIUM("Dilithium", 0xC7BAB7, OreRarity.SCATTERED, "dustDilithium", 1, "oreDilithium"),
+	EXIMITE("Eximite", 0x7C5A96, OreRarity.SCARCE, "ingotEximite", 1, "oreEximite"),
+	MEUTOITE("Meutoite", 0x5F5269, OreRarity.SCARCE, "ingotMeutoite", 1, "oreMeutoite"),
+	;
 
 	private final ArrayList<ItemStack> ores = new ArrayList();
 	public final String displayName;

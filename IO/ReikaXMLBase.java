@@ -26,6 +26,11 @@ import org.xml.sax.SAXException;
 public class ReikaXMLBase {
 
 	public static Document getXMLDocument(InputStream in) throws SAXException, IOException {
+		ArrayList<String> li = ReikaFileReader.getFileAsLines(in, true);
+		while (!li.isEmpty() && !li.get(0).startsWith("<?xml version")) { //automatically clear any header crap
+			li.remove(0);
+		}
+		in = ReikaFileReader.convertLinesToStream(li, true);
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();

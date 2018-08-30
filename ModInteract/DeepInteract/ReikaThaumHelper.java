@@ -49,6 +49,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Instantiable.Formula.MathExpression;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.ModInteract.CustomThaumResearch;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumIDHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -556,8 +557,15 @@ public class ReikaThaumHelper {
 		public final String name;
 
 		private XMLResearch(String name, Class root, String path) {
-			info = new XMLInterface(root, path);
+			info = loadData(root, path);
 			this.name = name;
+		}
+
+		private static XMLInterface loadData(Class root, String path) {
+			XMLInterface xml = new XMLInterface(root, path, !ReikaObfuscationHelper.isDeObfEnvironment());
+			//xml.setFallback(getParent(false)+name+".xml");
+			xml.init();
+			return xml;
 		}
 
 		private XMLResearch(String name, Class root, String path, InfusionRecipe recipe, int num) {

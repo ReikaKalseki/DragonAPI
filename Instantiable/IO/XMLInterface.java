@@ -73,6 +73,7 @@ public class XMLInterface {
 		try {
 			doc = ReikaXMLBase.getXMLDocument(loadData.getInputStream());
 			this.readFileToMap();
+			hasLoaded = true;
 		}
 		catch (FileNotFoundException e) {
 			if (requireFile)
@@ -92,7 +93,6 @@ public class XMLInterface {
 			else
 				e.printStackTrace();
 		}
-		hasLoaded = true;
 	}
 
 	public void reread() {

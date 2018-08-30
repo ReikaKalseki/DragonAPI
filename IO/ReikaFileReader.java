@@ -11,6 +11,7 @@ package Reika.DragonAPI.IO;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -24,6 +25,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.net.ConnectException;
@@ -298,6 +300,24 @@ public class ReikaFileReader extends DragonAPICore {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public static InputStream convertLinesToStream(ArrayList<String> li, boolean printStackTrace) {
+		String sep = System.getProperty("line.separator");
+		ByteArrayOutputStream bos = new ByteArrayOutputStream();
+		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(bos));
+		try {
+			for (String s : li)
+				writer.write(s+sep);
+			writer.close();
+		}
+		catch (IOException e) {
+			if (printStackTrace) {
+				e.printStackTrace();
+			}
+		}
+		byte[] bytes = bos.toByteArray();
+		return new ByteArrayInputStream(bytes);
 	}
 
 	public static String getHash(String path, HashType type) {
