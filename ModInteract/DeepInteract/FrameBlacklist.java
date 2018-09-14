@@ -13,11 +13,13 @@ import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
 import Reika.DragonAPI.ASM.DependentMethodStripper.SmartStrip;
 
 import com.amadornes.framez.api.FramezApi;
 import com.amadornes.framez.api.movement.BlockMovementType;
+import com.amadornes.framez.api.movement.IMovement;
 import com.amadornes.framez.api.Priority;
 import com.amadornes.framez.api.movement.IMovementHandler;
 import com.amadornes.framez.api.movement.IMovingBlock;
@@ -32,7 +34,7 @@ public class FrameBlacklist {
 
 	private FrameBlacklist() {
 		if (Loader.isModLoaded("framez"))
-			FramezApi.inst().getMovementApi().registerMovementHandler(new FramezHandler());
+			FramezApi.instance().movement().registerMovementHandler(new FramezHandler());
 	}
 
 	private boolean isBlacklisted(World world, int x, int y, int z, Block b, int meta, TileEntity te) {
@@ -49,22 +51,27 @@ public class FrameBlacklist {
 		@Override
 		@SmartStrip
 		@Priority(Priority.PriorityEnum.HIGH)
-		public boolean handleStartMoving(IMovingBlock block) {
+		public boolean startMoving(IMovingBlock block) {
 			return FrameBlacklist.this.isBlacklisted(block.getWorld(), block.getX(), block.getY(), block.getZ(), block.getBlock(), block.getMetadata(), block.getTileEntity());
 		}
 
 		@Override
 		@SmartStrip
 		@Priority(Priority.PriorityEnum.HIGH)
-		public boolean handleFinishMoving(IMovingBlock block) {
+		public boolean finishMoving(IMovingBlock block) {
 			return FrameBlacklist.this.isBlacklisted(block.getWorld(), block.getX(), block.getY(), block.getZ(), block.getBlock(), block.getMetadata(), block.getTileEntity());
 		}
 
 		@Override
-		@SmartStrip
-		@Priority(Priority.PriorityEnum.HIGH)
-		public BlockMovementType getMovementType(World world, Integer x, Integer y, Integer z) {
+		public BlockMovementType getMovementType(World world, int x, int y, int z, ForgeDirection side,
+				IMovement movement) {
 			return FrameBlacklist.this.isBlacklisted(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), world.getTileEntity(x, y, z)) ? BlockMovementType.UNMOVABLE : null;
+		}
+
+		@Override
+		public boolean canHandle(World world, int x, int y, int z) {
+			// TODO Auto-generated method stub
+			return false;
 		}
 
 	}
