@@ -18,8 +18,7 @@ import Reika.DragonAPI.ASM.DependentMethodStripper.SmartStrip;
 
 import com.amadornes.framez.api.FramezApi;
 import com.amadornes.framez.api.movement.BlockMovementType;
-import com.amadornes.framez.api.movement.HandlingPriority;
-import com.amadornes.framez.api.movement.HandlingPriority.Priority;
+import com.amadornes.framez.api.Priority;
 import com.amadornes.framez.api.movement.IMovementHandler;
 import com.amadornes.framez.api.movement.IMovingBlock;
 
@@ -49,21 +48,21 @@ public class FrameBlacklist {
 
 		@Override
 		@SmartStrip
-		@HandlingPriority(Priority.HIGH)
+		@Priority(Priority.PriorityEnum.HIGH)
 		public boolean handleStartMoving(IMovingBlock block) {
 			return FrameBlacklist.this.isBlacklisted(block.getWorld(), block.getX(), block.getY(), block.getZ(), block.getBlock(), block.getMetadata(), block.getTileEntity());
 		}
 
 		@Override
 		@SmartStrip
-		@HandlingPriority(Priority.HIGH)
+		@Priority(Priority.PriorityEnum.HIGH)
 		public boolean handleFinishMoving(IMovingBlock block) {
 			return FrameBlacklist.this.isBlacklisted(block.getWorld(), block.getX(), block.getY(), block.getZ(), block.getBlock(), block.getMetadata(), block.getTileEntity());
 		}
 
 		@Override
 		@SmartStrip
-		@HandlingPriority(Priority.HIGH)
+		@Priority(Priority.PriorityEnum.HIGH)
 		public BlockMovementType getMovementType(World world, Integer x, Integer y, Integer z) {
 			return FrameBlacklist.this.isBlacklisted(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), world.getTileEntity(x, y, z)) ? BlockMovementType.UNMOVABLE : null;
 		}
