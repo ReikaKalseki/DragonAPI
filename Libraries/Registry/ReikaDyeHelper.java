@@ -77,7 +77,7 @@ public enum ReikaDyeHelper {
 	}
 
 	public static boolean isDyeItem(ItemStack is) {
-		return getColorsFromItem(is) != null;
+		return is != null && getColorsFromItem(is) != null;
 	}
 
 	public static ReikaDyeHelper getColorFromItem(ItemStack is) {
@@ -90,8 +90,10 @@ public enum ReikaDyeHelper {
 	}
 
 	public static Collection<ReikaDyeHelper> getColorsFromItem(ItemStack is) {
+		if (is == null)
+			return null;
 		Collection<ReikaDyeHelper> c = getDyeByOreDictionary(is);
-		return Collections.unmodifiableCollection(c);
+		return c != null ? Collections.unmodifiableCollection(c) : null;
 	}
 
 	private static Collection<ReikaDyeHelper> getDyeByOreDictionary(ItemStack is) {

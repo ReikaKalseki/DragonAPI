@@ -25,22 +25,19 @@ public class EventSlot extends Slot {
 	}
 
 	@Override
-	public void onPickupFromSlot(EntityPlayer ep, ItemStack is)
-	{
+	public void onPickupFromSlot(EntityPlayer ep, ItemStack is) {
 		if (!MinecraftForge.EVENT_BUS.post(new RemoveFromSlotEvent(slotNumber, inventory, is, ep)))
 			super.onPickupFromSlot(ep, is);
 	}
 
 	@Override
-	public void putStack(ItemStack is)
-	{
-		if (!MinecraftForge.EVENT_BUS.post(new AddToSlotEvent(slotNumber, inventory, is)))
+	public void putStack(ItemStack is) {
+		if (!MinecraftForge.EVENT_BUS.post(new AddToSlotEvent(slotNumber, inventory, is, this.getStack())))
 			super.putStack(is);
 	}
 
 	@Override
-	public void onSlotChanged()
-	{
+	public void onSlotChanged() {
 		super.onSlotChanged();
 		MinecraftForge.EVENT_BUS.post(new SlotEvent(slotNumber, inventory));
 	}

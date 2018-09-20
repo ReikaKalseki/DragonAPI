@@ -31,18 +31,24 @@ public class SlotEvent extends Event {
 	public static class AddToSlotEvent extends SlotEvent {
 
 		private final ItemStack added;
+		private final ItemStack previous;
 
-		public AddToSlotEvent(int id, IInventory ii, ItemStack is) {
+		public AddToSlotEvent(int id, IInventory ii, ItemStack is, ItemStack pre) {
 			super(id, ii);
 			added = is;
+			previous = pre;
 		}
 
 		public final ItemStack getItem() {
 			return added != null ? added.copy() : added;
 		}
 
+		public final ItemStack getPreviousItem() {
+			return previous != null ? previous.copy() : previous;
+		}
+
 		public static void fire(Slot s, ItemStack is) {
-			MinecraftForge.EVENT_BUS.post(new AddToSlotEvent(s.getSlotIndex(), s.inventory, is));
+			MinecraftForge.EVENT_BUS.post(new AddToSlotEvent(s.getSlotIndex(), s.inventory, is, s.getStack()));
 		}
 
 	}

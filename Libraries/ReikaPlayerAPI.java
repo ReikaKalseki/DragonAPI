@@ -413,4 +413,8 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	public static void syncInventory(EntityPlayer ep) {
 		ep.openContainer.detectAndSendChanges();
 	}
+
+	public static void syncCapabilities(EntityPlayer ep) {
+		ep.sendPlayerAbilities(); //it is NOT client-to-server
+	}
 }
