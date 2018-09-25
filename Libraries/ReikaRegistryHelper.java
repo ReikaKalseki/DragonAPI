@@ -32,7 +32,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Auxiliary.Trackers.EnchantmentCollisionTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.IDCollisionTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.RegistrationException;
@@ -158,7 +158,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	private static Enchantment registerEnchantment(DragonAPIMod mod, EnchantmentEnum r, int idx) {
 		Enchantment it = null;
 		if (!r.isDummiedOut()) {
-			EnchantmentCollisionTracker.instance.addEnchantmentID(mod, r.getEnchantmentID(), r.getObjectClass());
+			IDCollisionTracker.instance.addEnchantmentID(mod, r.getEnchantmentID(), r.getObjectClass());
 			it = ReikaReflectionHelper.createEnchantmentInstance(mod, r.getObjectClass(), r.getEnchantmentID(), r.getUnlocalizedName(), false);
 			String regname = (mod.getTechnicalName()+"_enchantment_"+r.name()).toLowerCase(Locale.ENGLISH);
 			registries.put(it, r);

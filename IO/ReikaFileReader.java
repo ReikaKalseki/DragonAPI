@@ -271,6 +271,16 @@ public class ReikaFileReader extends DragonAPICore {
 		return li;
 	}
 
+	public static BufferedWriter getWriter(File f) {
+		try {
+			return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f)));
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static void writeLinesToFile(String s, ArrayList<String> li, boolean printStackTrace) {
 		writeLinesToFile(new File(s), li, printStackTrace);
 	}

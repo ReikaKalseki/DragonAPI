@@ -53,22 +53,20 @@ import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.RainTicker;
 import Reika.DragonAPI.Auxiliary.RebootScheduler;
-import Reika.DragonAPI.Auxiliary.Trackers.BiomeCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.ChunkPregenerator;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker.CheckerDisableCommand;
 import Reika.DragonAPI.Auxiliary.Trackers.CompatibilityTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.CrashNotifications;
-import Reika.DragonAPI.Auxiliary.Trackers.EnchantmentCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.EnvironmentSanityChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.FurnaceFuelRegistry;
+import Reika.DragonAPI.Auxiliary.Trackers.IDCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.IntegrityChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.KeyTicker;
 import Reika.DragonAPI.Auxiliary.Trackers.PackModificationTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.PatreonController;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerChunkTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler;
-import Reika.DragonAPI.Auxiliary.Trackers.PotionCollisionTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
 import Reika.DragonAPI.Auxiliary.Trackers.SuggestedModsTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry;
@@ -517,9 +515,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		//ReikaPacketHelper.postInitPipelines();
 
-		BiomeCollisionTracker.instance.check();
-		PotionCollisionTracker.instance.check();
-		EnchantmentCollisionTracker.instance.check();
+		IDCollisionTracker.instance.check();
 		VanillaIntegrityTracker.instance.check();
 
 		CompatibilityTracker.instance.test();

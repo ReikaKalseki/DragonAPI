@@ -29,6 +29,11 @@ public class ValueSortedMap<K, V extends Comparable> {
 		data = new TreeMap(new ValueComparator());
 	}
 
+	public ValueSortedMap(Map<K, V> data) {
+		this();
+		this.putAll(data);
+	}
+
 	public int size() {
 		return raw.size();
 	}

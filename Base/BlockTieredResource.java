@@ -23,6 +23,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
@@ -76,21 +78,19 @@ public abstract class BlockTieredResource extends Block {
 	}
 
 	@Override
-	public final boolean canHarvestBlock(EntityPlayer player, int meta)
-	{
+	public final boolean canHarvestBlock(EntityPlayer player, int meta) {
 		return false;
 	}
 
 	@Override
-	public final boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest)
-	{
+	public final boolean removedByPlayer(World world, EntityPlayer player, int x, int y, int z, boolean willHarvest) {
 		Collection<ItemStack> li = null;
 		boolean tier = this.isPlayerSufficientTier(world, x, y, z, player);
+		int fortune = EnchantmentHelper.getFortuneModifier(player);
 		if (player.capabilities.isCreativeMode) {
 
 		}
 		else {
-			int fortune = EnchantmentHelper.getFortuneModifier(player);
 			if (tier) {
 				li = this.getHarvestResources(world, x, y, z, fortune, player);
 			}
@@ -100,6 +100,8 @@ public abstract class BlockTieredResource extends Block {
 		}
 		boolean flag = super.removedByPlayer(world, player, x, y, z, willHarvest);
 		if (!player.capabilities.isCreativeMode && flag && li != null && tier) {
+			li = new ArrayList(li);
+			MinecraftForge.EVENT_BUS.post(new HarvestDropsEvent(x, y, z, world, this, world.getBlockMetadata(x, y, z), fortune, 1, (ArrayList<ItemStack>)li, player, false));
 			for (ItemStack is : li) {
 				double rx = ReikaRandomHelper.getRandomPlusMinus(x+0.5, 0.25);
 				double ry = ReikaRandomHelper.getRandomPlusMinus(y+0.5, 0.25);
