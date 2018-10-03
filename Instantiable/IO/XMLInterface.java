@@ -24,6 +24,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaXMLBase;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 
@@ -36,6 +37,8 @@ public class XMLInterface {
 	private final LoadFormat format;
 	private final String pathString;
 	private Class referenceClass;
+
+	private boolean isEncrypted;
 
 	private final HashMap<String, String> data = new HashMap();
 	private final MultiMap<String, String> tree = new MultiMap();
@@ -69,9 +72,16 @@ public class XMLInterface {
 		loadData.addEntry(s);
 	}
 
+	public void setEncrypted() {
+		isEncrypted = true;
+	}
+
 	public void init() {
 		try {
-			doc = ReikaXMLBase.getXMLDocument(loadData.getInputStream());
+			InputStream in = loadData.getInputStream();
+			if (isEncrypted)
+				in = ReikaFileReader.decryptInputStream(in);
+			doc = ReikaXMLBase.getXMLDocument(in);
 			this.readFileToMap();
 			hasLoaded = true;
 		}

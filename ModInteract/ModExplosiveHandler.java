@@ -22,7 +22,7 @@ public class ModExplosiveHandler {
 		Class ic = null;
 		Class exp = null;
 		try {
-			ic = Class.forName("ic2.core.Blocks.EntityIC2Explosive");
+			ic = Class.forName("ic2.core.block.EntityIC2Explosive");
 			exp = Class.forName("???");
 		}
 		catch (ClassNotFoundException e) {

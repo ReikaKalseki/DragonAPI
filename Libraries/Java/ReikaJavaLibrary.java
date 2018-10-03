@@ -977,4 +977,8 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		}
 
 	}
+
+	public static byte flipBits(byte get) {
+		return (byte)(Integer.reverse(get) >>> 24);
+	}
 }

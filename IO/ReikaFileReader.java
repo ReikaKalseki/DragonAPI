@@ -38,6 +38,9 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
 import java.util.jar.JarFile;
 
 import net.minecraft.nbt.CompressedStreamTools;
@@ -51,6 +54,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public class ReikaFileReader extends DragonAPICore {
 
@@ -271,6 +275,24 @@ public class ReikaFileReader extends DragonAPICore {
 		return li;
 	}
 
+	public static ArrayList<Byte> getFileAsBytes(InputStream in, boolean printStackTrace) {
+		BufferedReader r = getReader(in);
+		ArrayList<Byte> li = new ArrayList();
+		try {
+			byte b = (byte)r.read();
+			while (b != -1) {
+				li.add(b);
+				b = (byte)r.read();
+			}
+			r.close();
+		}
+		catch (Exception e) {
+			if (printStackTrace)
+				e.printStackTrace();
+		}
+		return li;
+	}
+
 	public static BufferedWriter getWriter(File f) {
 		try {
 			return new BufferedWriter(new OutputStreamWriter(new FileOutputStream(f)));
@@ -301,6 +323,26 @@ public class ReikaFileReader extends DragonAPICore {
 		try {
 			for (String s : li) {
 				p.write(s+sep);
+			}
+			p.flush();
+			p.close();
+		}
+		catch (IOException e) {
+			if (printStackTrace) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void writeDataToFile(File f, ArrayList<Byte> li, boolean printStackTrace) {
+		try {
+			f.delete();
+			f.getParentFile().mkdirs();
+			f.createNewFile();
+			FileOutputStream fos = new FileOutputStream(f);
+			BufferedWriter p = new BufferedWriter(new OutputStreamWriter(fos));
+			for (byte b : li) {
+				p.write(b);
 			}
 			p.flush();
 			p.close();
@@ -620,5 +662,108 @@ public class ReikaFileReader extends DragonAPICore {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static void flipFileBytes(InputStream in, File out) {
+		try {
+			ArrayList<Byte> li = new ArrayList();
+			byte b = (byte)in.read();
+			while (b != -1) {
+				li.add(b);
+				b = (byte)in.read();
+			}
+			Collections.reverse(li);
+			writeDataToFile(out, li, true);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static ArrayList<String> encryptFileBytes(InputStream in) {
+		try {
+			ArrayList<Byte> li = new ArrayList();
+			byte b = (byte)in.read();
+			while (b != -1) {
+				li.add(b);
+				b = (byte)in.read();
+			}
+			encryptByteList(li);
+			ArrayList<String> li2 = new ArrayList();
+			String line = "";
+			StringBuilder sb = new StringBuilder();
+			for (int i = 0; i < li.size(); i++) {
+				byte b2 = li.get(i);
+				int val = Math.abs(b2);
+				String s = String.valueOf(val);
+				if (val < 10)
+					s = "0"+s;
+				if (val < 100)
+					s = "0"+s;
+				if (b2 < 0)
+					s = "-"+s;
+				else
+					s = "0"+s;
+				sb.append(s);
+				if (i%56 == 55 || i == li.size()-1) {
+					li2.add(sb.toString());
+					sb = new StringBuilder();
+				}
+			}
+			return li2;
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	public static void encryptByteList(ArrayList<Byte> li) {
+		Collections.reverse(li);
+		for (int i = li.size()-1; i >= 0; i--) {
+			byte get = li.get(i);
+			get = ReikaJavaLibrary.flipBits(get);
+			get = (byte)(~get);
+			li.set(i, get);
+			li.add(i+1, (byte)rand.nextInt(255));
+		}
+	}
+
+	public static ArrayList<Byte> decryptFileBytes(InputStream in) {
+		return decryptByteList(getFileAsLines(in, true));
+	}
+
+	public static ArrayList<Byte> decryptByteList(ArrayList<String> li2) {
+		ArrayList<Byte> li = new ArrayList();
+		for (String s : li2) {
+			List<String> arr = ReikaStringParser.splitStringByLength(s, 4);
+			for (String s2 : arr) {
+				byte b = Byte.parseByte(s2);
+				li.add(b);
+			}
+		}
+		Iterator<Byte> it = li.iterator();
+		int idx = 0;
+		while (it.hasNext()) {
+			byte b2 = it.next();
+			if (idx%2 == 1)
+				it.remove();
+			idx++;
+		}
+		for (int i = 0; i < li.size(); i++) {
+			byte get = li.get(i);
+			get = (byte)(~get);
+			get = ReikaJavaLibrary.flipBits(get);
+			li.set(i, get);
+		}
+		Collections.reverse(li);
+		return li;
+	}
+
+	public static InputStream decryptInputStream(InputStream in)  {
+		ArrayList<Byte> data = decryptFileBytes(in);
+		ByteArrayOutputStream bin = new ByteArrayOutputStream();
+		for (byte b : data)
+			bin.write(b);
+		return new ByteArrayInputStream(bin.toByteArray());
 	}
 }
