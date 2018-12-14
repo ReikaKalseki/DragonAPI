@@ -723,7 +723,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 			if (InterfaceCache.GASITEM.instanceOf(i))
 				((IGasItem)i).removeGas(is, Integer.MAX_VALUE);
 			if (InterfaceCache.ENERGYITEM.instanceOf(i))
-				((IEnergyItem)i).discharge(is, Double.POSITIVE_INFINITY, true);
+				((IEnergyItem)i).discharge(is, Integer.MAX_VALUE, true);
 			if (InterfaceCache.RFENERGYITEM.instanceOf(i))
 				((IEnergyContainerItem)i).extractEnergy(is, Integer.MAX_VALUE, false);
 			if (InterfaceCache.IELECTRICITEM.instanceOf(i))

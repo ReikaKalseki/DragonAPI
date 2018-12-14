@@ -209,9 +209,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 			int y = c.yCoord;
 			int z = c.zCoord;
 			BlockCheck bk = this.getBlockKey(x, y, z);
-			//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk+" & "+world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z));
 			if (!bk.matchInWorld(world, x, y, z)) {
-				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > "+bk.getClass()+" : "+bk+" & "+world.getBlock(x, y, z)+":"+world.getBlockMetadata(x, y, z));
+				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > Wanted ["+bk.getClass().getSimpleName()+"] "+bk+", found "+world.getBlock(x, y, z).getLocalizedName()+":"+world.getBlockMetadata(x, y, z));
 				//bk.place(world, x, y, z);
 				//world.setBlock(x, y, z, Blocks.brick_block);
 				return false;

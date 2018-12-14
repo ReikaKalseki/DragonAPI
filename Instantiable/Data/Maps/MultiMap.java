@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -306,6 +307,27 @@ public final class MultiMap<K, V> {
 		@Override
 		public HashSet createCollection(Collection c) {
 			return new HashSet(c);
+		}
+
+		@Override
+		public boolean allowsDuplicates() {
+			return false;
+		}
+
+	}
+
+	public static final class ConcurrentHashSetFactory implements CollectionFactory<Set> {
+
+		@Override
+		public Set createCollection() {
+			return Collections.newSetFromMap(new ConcurrentHashMap());
+		}
+
+		@Override
+		public Set createCollection(Collection c) {
+			Set s = Collections.newSetFromMap(new ConcurrentHashMap());
+			s.addAll(c);
+			return s;
 		}
 
 		@Override

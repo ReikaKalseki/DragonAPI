@@ -19,9 +19,7 @@ import javax.sound.midi.MetaMessage;
 import javax.sound.midi.MidiEvent;
 import javax.sound.midi.MidiMessage;
 import javax.sound.midi.MidiSystem;
-import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
-import javax.sound.midi.Sequencer;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
@@ -39,18 +37,6 @@ public final class ReikaMIDIReader {
 	public static final int TEMPO = 0x51;
 	public static final String[] NOTE_NAMES = {"F#", "G", "G#", "A", "Bb", "B", "C", "C#", "D", "Eb", "E", "F"};
 	public static final int MIDI_C5 = 60;
-
-	private static final Sequencer MIDI_LOADER = getSequencer();
-
-	private static Sequencer getSequencer() {
-		try {
-			return MidiSystem.getSequencer();
-		}
-		catch (MidiUnavailableException e1) {
-			DragonAPICore.logError("MIDI system unavailable.");
-			return null;
-		}
-	}
 
 	public static Sequence getMIDIFromFile(Class root, String path) {
 		DragonAPICore.log("Reading MIDI at "+path);
@@ -98,12 +84,7 @@ public final class ReikaMIDIReader {
 	}
 
 	private static Sequence readMIDIFromFile(InputStream in) throws IOException, InvalidMidiDataException {
-		if (MIDI_LOADER == null) {
-			DragonAPICore.logError("Could not load MIDI; MIDI system unavailable.");
-			return null;
-		}
-		MIDI_LOADER.setSequence(in);
-		return MIDI_LOADER.getSequence();
+		return MidiSystem.getSequence(in);
 	}
 
 	/** Reads a parameter from a MIDI Sequence. Args: Sequence, channel (1-16), time, task (0 = note, 1 = voice, 2 = volume) *//*

@@ -33,7 +33,9 @@ public final class RecipePattern extends InventoryCrafting {
 		super(craft, 3, 3);
 		for (int i = 0; i < 3; i++) {
 			for (int j = 0; j < 3; j++) {
-				this.setInventorySlotContents(i*3+j, items[i*3+j]); //no//since will otherwise add vertically
+				int idx = i*3+j;
+				if (idx < items.length)
+					this.setInventorySlotContents(i*3+j, items[idx]); //no//since will otherwise add vertically
 			}
 		}
 	}
