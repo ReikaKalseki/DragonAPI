@@ -16,6 +16,8 @@ import java.net.URL;
 import java.util.Random;
 import java.util.UUID;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.PropertyManager;
 import net.minecraftforge.common.ForgeVersion;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
@@ -77,6 +79,27 @@ public class DragonAPICore {
 		}
 		s = s.replaceAll("\\\\", "/");
 		return s;
+	}
+
+	public static String getServerRootFolder() {
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			return getMinecraftDirectoryString();
+		if (MinecraftServer.getServer() != null) {
+			if (MinecraftServer.getServer().worldServers.length > 0 && MinecraftServer.getServer().worldServers[0] != null) {
+				return MinecraftServer.getServer().worldServers[0].getSaveHandler().getWorldDirectory().getAbsolutePath();
+			}
+		}
+		File props = new File("server.properties");
+		if (!props.exists()) {
+			File root = getMinecraftDirectory();
+			props = new File(root, "server.properties");
+		}
+		if (props.exists()) {
+			return new PropertyManager(props).getStringProperty("level-name", "world");
+		}
+		else {
+			return null;
+		}
 	}
 
 	private static boolean calculateReikasComputer() {

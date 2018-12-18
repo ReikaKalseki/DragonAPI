@@ -12,12 +12,14 @@ package Reika.DragonAPI.ModInteract.DeepInteract;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Map;
 
 import minetweaker.util.IEventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.ReplacementSmeltingHandler;
@@ -26,6 +28,7 @@ import Reika.DragonAPI.IO.ReikaFileReader.LineEditor;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayMap;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
+import Reika.DragonAPI.Instantiable.Event.MTReloadEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import cpw.mods.fml.common.Loader;
@@ -129,6 +132,10 @@ public final class MTInteractionManager {
 		for (Prevention p : data.keySet()) {
 			MTScriptScanner scan = new MTScriptScanner(p, f);
 			scan.performChanges(f);
+			if (!scan.extraComments.isEmpty()) {
+				scan.setPhase2();
+				scan.performChanges(f);
+			}
 		}
 	}
 
@@ -298,37 +305,100 @@ public final class MTInteractionManager {
 		private final File script;
 		private final Prevention protectionType;
 
+		private int commentBlockStart;
+		private String partialLine;
+
+		private final HashSet<String> extraComments = new HashSet();
+
+		private boolean phase2;
+
 		private MTScriptScanner(Prevention p, File f) {
 			set = instance.data.get(p);
 			script = f;
 			protectionType = p;
 		}
 
-		@Override
-		protected String getReplacementLine(String s, String newline) { //comment, plus note
-			return "//"+s+newline+"//The above line was commented out because the mod registering the item for which a recipe is being added or "+
-			"removed ("+lastItemMod+") has requested not to allow this. See your logs for more information, including on who to go to if you have "+
-			"further questions.";
+		private void setPhase2() {
+			phase2 = true;
 		}
 
 		@Override
-		public boolean editLine(String s) {
+		protected String getReplacementLine(String s, String newline, int idx) { //comment, plus note
+			if (phase2)
+				return "//"+s;
+
+			return "//"+s+newline+"//The above line(s) was/were commented out because the mod registering the item for which a recipe" +
+			"is being added or removed ("+lastItemMod+") has requested not to allow changes of that form. See your logs for more" +
+			"information, including on who to go to if you have further questions.";
+		}
+
+		@Override
+		public boolean editLine(String s, int idx) {
+			if (phase2) {
+				return extraComments.contains(s);
+			}
 			s = ReikaStringParser.stripSpaces(s);
 			boolean flag = false;
-			try {
-				flag = this.parseLine(s);
-			}
-			catch (Exception e) {
-				DragonAPICore.logError("Error parsing line '"+s+"' in '"+script.getName()+"':");
-				e.printStackTrace();
-				return false;
-			}
-			if (flag) {
-				DragonAPICore.log("The line '"+s+"' has been commented out of the Minetweaker script, as "+lastItemMod+" has "+
-						"requested to disallow such actions. This is NOT a bug in either that mod or Minetweaker; do not bother StanHebben "+
-						"with it. You may ask the developer of "+lastItemMod+" for further questions or to request a removal. Be civil.");
+			s = this.parseOutCommentedSections(s, idx);
+			if (!s.isEmpty()) {
+				try {
+					flag = this.parseLine(s);
+				}
+				catch (Exception e) {
+					DragonAPICore.logError("Error parsing line '"+this.getOriginalLine(idx)+"' in '"+script.getName()+"':");
+					e.printStackTrace();
+					return false;
+				}
+				if (flag) {
+					DragonAPICore.log("The line '"+s+"' has been commented out of the Minetweaker script, as "+lastItemMod+" has "+
+							"requested to disallow such actions. This is NOT a bug in either that mod or Minetweaker; do not bother" +
+							"StanHebben with it. You may ask the developer of "+lastItemMod+" for further questions or to request a" +
+							"removal. Be civil.");
+				}
 			}
 			return flag;
+		}
+
+		private String parseOutCommentedSections(String s, int lineNum) {
+			while (s.contains("/*") && s.contains("*/")) {
+				if (s.indexOf("/*") < s.indexOf("*/")) {
+					int idx1 = s.indexOf("/*");
+					int idx2 = s.indexOf("*/")+2;
+					String p1 = s.substring(0, idx1);
+					String p2 = s.substring(idx2);
+					s = p1+p2;
+				}
+				else {
+					if (partialLine == null)
+						partialLine = "";
+					partialLine += s.substring(s.indexOf("*/")+2, s.indexOf("/*"));
+					if (commentBlockStart == 0)
+						commentBlockStart = lineNum;
+					s = "";
+				}
+			}
+
+			if (s.contains("/*")) {
+				int idx = s.indexOf("/*");
+				partialLine = s.substring(0, idx);
+				commentBlockStart = lineNum;
+				return "";
+			}
+			else if (s.contains("*/")) {
+				int idx = s.indexOf("*/")+2;
+				String ret = partialLine+s.substring(idx);
+				if (commentBlockStart != 0) {
+					for (int i = commentBlockStart; i < lineNum; i++) {
+						extraComments.add(this.getOriginalLine(i));
+					}
+				}
+				commentBlockStart = 0;
+				partialLine = null;
+				return ret;
+			}
+			else {
+				return partialLine != null ? "" : s; //not just 's', so it skips lines between /* and */
+			}
 		}
 
 		private boolean parseLine(String s) {
@@ -376,15 +446,15 @@ public final class MTInteractionManager {
 		}
 
 		private boolean parseTruncLine(String pre, String s) {
-			if (s.startsWith("add")) {
-				if (s.contains("ore:")) {
+			if (s.toLowerCase().startsWith("add")) {
+				if (s.toLowerCase().contains("ore:")) {
 					this.parse(s, Prevention.OREDICT);
 				}
 				else {
 					return this.parse(s, Prevention.NEWRECIPE);
 				}
 			}
-			else if (s.startsWith("remove")) {
+			else if (s.toLowerCase().startsWith("remove")) {
 				return this.parse(s, Prevention.REMOVERECIPE);
 			}
 			return false;
@@ -451,6 +521,7 @@ public final class MTInteractionManager {
 		public void handle(Object r) {
 			ReplacementSmeltingHandler.applyMinetweakerChanges();
 			ReikaDyeHelper.buildItemCache();
+			MinecraftForge.EVENT_BUS.post(new MTReloadEvent());
 		}
 
 	}

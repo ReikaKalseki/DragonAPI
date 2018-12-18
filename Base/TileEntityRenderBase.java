@@ -9,22 +9,33 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import java.awt.image.BufferedImage;
+import java.util.HashMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.common.util.ForgeDirection;
+import Reika.DragonAPI.Auxiliary.Trackers.ModLockController;
+import Reika.DragonAPI.IO.ReikaImageLoader;
 import Reika.DragonAPI.Instantiable.Rendering.StructureRenderer;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.RotaryCraft.Auxiliary.RotaryAux;
 
 public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 
 	protected final ForgeDirection[] dirs = ForgeDirection.values();
 
+	private final HashMap<String, String> textureOverrides = new HashMap();
+
 	public final boolean isValidMachineRenderPass(TileEntityBase te) {
 		if (!te.isInWorld() || StructureRenderer.isRenderingTiles())
-			return true;/*
+			return true;
+		if (!ModLockController.instance.verify(this.getOwnerMod()))
+			return false;
+		/*
 		int b = 0;
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = dirs[i];
@@ -45,6 +56,19 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 	public abstract String getTextureFolder();
 
 	public final void bindTextureByName(String tex) {
+		String over = textureOverrides.get(tex);
+		if (over != null) {
+			ReikaTextureHelper.bindTexture(this.getModClass(), over);
+			return;
+		}
+		if (RotaryAux.loadXmasTextures()) {
+			String xmas = tex.replace(".png", "")+"_xmas.png";
+			BufferedImage ret = ReikaImageLoader.readImage(this.getModClass(), xmas, null);
+			String bind = ret != null && ret != ReikaImageLoader.getMissingTex() ? xmas : tex;
+			textureOverrides.put(tex, bind);
+			this.bindTextureByName(bind);
+			return;
+		}
 		ReikaTextureHelper.bindTexture(this.getModClass(), tex);
 	}
 
@@ -52,6 +76,7 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 		ReikaTextureHelper.bindTexture(this.getModClass(), this.getTextureFolder()+img);
 	}
 
+	protected abstract DragonAPIMod getOwnerMod();
 	protected abstract Class getModClass();
 
 	protected final FontRenderer getFontRenderer() {

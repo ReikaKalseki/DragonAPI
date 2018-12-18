@@ -981,4 +981,10 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	public static byte flipBits(byte get) {
 		return (byte)(Integer.reverse(get) >>> 24);
 	}
+
+	public static <K, V> HashMap<K, V> makeMapOf(K key, V val) {
+		HashMap<K, V> map = new HashMap();
+		map.put(key, val);
+		return map;
+	}
 }

@@ -39,6 +39,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
@@ -482,11 +483,13 @@ public class ReikaFileReader extends DragonAPICore {
 	/** Edits individual lines matching in a file if they match a given criterion. */
 	public static abstract class LineEditor {
 
-		/** Attempt line editing? */
-		public abstract boolean editLine(String s);
+		private final HashMap<Integer, String> lines = new HashMap();
 
-		/** The line used to replace strings that match the criteria. Args: Original line, newline separator */
-		protected abstract String getReplacementLine(String s, String newline);
+		/** Attempt line editing? */
+		public abstract boolean editLine(String s, int idx);
+
+		/** The line used to replace strings that match the criteria. Args: Original line, newline separator, line index */
+		protected abstract String getReplacementLine(String s, String newline, int idx);
 
 		public final boolean performChanges(File f) {
 			try {
@@ -494,8 +497,10 @@ public class ReikaFileReader extends DragonAPICore {
 				String sep = System.getProperty("line.separator");
 				String line = r.readLine();
 				StringBuilder out = new StringBuilder();
+				int idx = 1;
 				while (line != null) {
-					String rep = this.editLine(line) ? this.getReplacementLine(line, sep) : line;
+					lines.put(idx, line);
+					String rep = this.editLine(line, idx) ? this.getReplacementLine(line, sep, idx) : line;
 					if (rep == null) {
 
 					}
@@ -503,6 +508,7 @@ public class ReikaFileReader extends DragonAPICore {
 						out.append(rep+sep);
 					}
 					line = r.readLine();
+					idx++;
 				}
 				r.close();
 				FileOutputStream os = new FileOutputStream(f);
@@ -514,6 +520,10 @@ public class ReikaFileReader extends DragonAPICore {
 				e.printStackTrace();
 				return false;
 			}
+		}
+
+		protected final String getOriginalLine(int i) {
+			return lines.get(i);
 		}
 
 	}

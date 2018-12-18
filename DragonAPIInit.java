@@ -255,11 +255,6 @@ public class DragonAPIInit extends DragonAPIMod {
 		if (ReikaObfuscationHelper.isDeObfEnvironment())
 			TemporaryCodeCalls.preload(evt);
 
-		BannedItemReader.instance.initWith("BanItem");
-		BannedItemReader.instance.initWith("ItemBan");
-		BannedItemReader.instance.initWith("TekkitCustomizerData");
-		BannedItemReader.instance.initWith("TekkitCustomizer");
-
 		this.basicSetup(evt);
 
 		ReikaPacketHelper.registerPacketHandler(instance, packetChannel, new APIPacketHandler());
@@ -278,6 +273,13 @@ public class DragonAPIInit extends DragonAPIMod {
 	@Override
 	protected void postPreLoad() {
 		this.rebuildAndRegisterVanillaRecipes();
+
+		BannedItemReader.instance.initWith(BannedItemReader.PLUGIN_PATH+"/BanItem", "*");
+		BannedItemReader.instance.initWith(BannedItemReader.PLUGIN_PATH+"/ItemBan", "*");
+		BannedItemReader.instance.initWith(BannedItemReader.PLUGIN_PATH+"/TekkitCustomizerData", "*");
+		BannedItemReader.instance.initWith(BannedItemReader.PLUGIN_PATH+"/TekkitCustomizer", "*");
+		BannedItemReader.instance.initWith(DragonAPICore.getServerRootFolder(), "ItemBlacklist.json");
+		BannedItemReader.instance.initWith(Loader.instance().getConfigDir().getAbsolutePath(), "ItemBlacklist.json");
 	}
 
 	private void rebuildAndRegisterVanillaRecipes() {

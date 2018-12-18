@@ -697,7 +697,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				itemstack1 = (ItemStack)in[i + 1];
 			}
 
-			hashmap.put(character, itemstack1);
+			if (itemstack1 != null) //allow nulls to specify spaces
+				hashmap.put(character, itemstack1);
 		}
 
 		ItemStack[] aitemstack = new ItemStack[j * k];

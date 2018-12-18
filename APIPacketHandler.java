@@ -32,6 +32,7 @@ import Reika.DragonAPI.Auxiliary.PopupWriter;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.ConfigMatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
+import Reika.DragonAPI.Auxiliary.Trackers.ModLockController;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.Trackers.ModFileVersionChecker;
 import Reika.DragonAPI.Base.TileEntityBase;
@@ -372,6 +373,8 @@ public class APIPacketHandler implements PacketHandler {
 					break;
 				case CLEARCHAT:
 					break;
+				case MODLOCK:
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -442,6 +445,9 @@ public class APIPacketHandler implements PacketHandler {
 			case CLEARCHAT:
 				ReikaChatHelper.clearChat();
 				break;
+			case MODLOCK:
+				ModLockController.instance.readSync(player, sg);
+				break;
 			default:
 				break;
 		}
@@ -491,7 +497,8 @@ public class APIPacketHandler implements PacketHandler {
 		REDSTONECHANGE(),
 		ENTITYVERIFY(),
 		ENTITYVERIFYFAIL(),
-		CLEARCHAT();
+		CLEARCHAT(),
+		MODLOCK();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];

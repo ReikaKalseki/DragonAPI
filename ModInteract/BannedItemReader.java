@@ -14,122 +14,164 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Map.Entry;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWayList;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public final class BannedItemReader {
 
 	public static final BannedItemReader instance = new BannedItemReader();
 
-	private final OneWayList<ItemBanEntry> allEntries = new OneWayList();
-	private final OneWaySet<Integer> allIds = new OneWaySet();
+	private final OneWaySet<KeyedItemStack> allEntries = new OneWaySet();
+
+	public static final String PLUGIN_PATH = System.getProperty("user.dir").replaceAll("\\\\", "/")+"/plugins/";
 
 	private BannedItemReader() {
 
 	}
 
-	public void initWith(String path) {
-		String main = System.getProperty("user.dir").replaceAll("\\\\", "/");
-		String file = main+"/plugins/"+path;
-		File f = new File(file);
-		if (f.exists() && f.isDirectory()) {
-			try {
-				this.parseDirectory(f);
+	public void initWith(String dir, String file) {
+		if (file.equals("*")) {
+			File f = new File(dir);
+			if (f.exists() && f.isDirectory()) {
+				try {
+					this.parseDirectory(f);
+				}
+				catch (Exception e) {
+
+				}
 			}
-			catch (Exception e) {}
 		}
-	}
+		else {
+			File f = new File(dir, file);
+			if (f.exists() && !f.isDirectory()) {
+				try {
+					this.parseFile(f);
+				}
+				catch (Exception e) {
 
-	private static final class ItemBanEntry {
-
-		public final int itemID;
-		public final int itemDamage;
-
-		private ItemBanEntry(int id, int meta) {
-			itemID = id;
-			itemDamage = meta;
+				}
+			}
 		}
-
-		private ItemBanEntry(int id) {
-			this(id, -1);
-		}
-
-		public boolean hasMeta() {
-			return itemDamage >= 0;
-		}
-
-		@Override
-		public String toString() {
-			return itemID+":"+itemDamage;
-		}
-
-		public boolean matches(ItemStack is) {
-			return itemID == Item.getIdFromItem(is.getItem()) && (itemDamage < 0 || itemDamage == is.getItemDamage());
-		}
-
 	}
 
 	public boolean containsID(Block id) {
-		return this.containsID(Block.getIdFromBlock(id));
+		return this.containsItem(new ItemStack(id, 1, OreDictionary.WILDCARD_VALUE));
 	}
 
 	public boolean containsID(Item item) {
-		return this.containsID(Item.getIdFromItem(item));
-	}
-
-	private boolean containsID(int id) {
-		return allIds.contains(id);
+		return this.containsItem(new ItemStack(item, 1, OreDictionary.WILDCARD_VALUE));
 	}
 
 	public boolean containsItem(ItemStack is) {
-		for (int i = 0; i < allEntries.size(); i++) {
-			ItemBanEntry e = allEntries.get(i);
-			if (e.matches(is))
-				return true;
-		}
-		return false;
+		return allEntries.contains(this.createKey(is));
+	}
+
+	private KeyedItemStack createKey(ItemStack is) {
+		return new KeyedItemStack(is).setSimpleHash(true).setIgnoreNBT(true).setSized(false);
 	}
 
 	private void parseDirectory(File f) throws Exception {
-		ArrayList<File> li = ReikaFileReader.getAllFilesInFolder(f, "yml", "txt", "dat", "cfg");
-		for (int i = 0; i < li.size(); i++) {
-			this.parseFile(li.get(i));
+		ArrayList<File> li = ReikaFileReader.getAllFilesInFolder(f, "yml", "txt", "dat", "cfg", "json");
+		for (File in : li) {
+			this.parseFile(in);
 		}
 	}
 
 	private void parseFile(File f) throws Exception {
-		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-		String line = in.readLine();
-		while (line != null) {
-			String oline = line;
-			while(!line.isEmpty() && !Character.isDigit(line.charAt(0))) {
-				line = line.substring(1);
-			}
+		if (f.getName().endsWith("json")) {
+			this.parseJSONFile(f);
+		}
+		else {
+			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+			String line = in.readLine();
+			while (line != null) {
+				String oline = line;
+				boolean flag = false;
 
-			if (!line.isEmpty()) {
-				String[] parts = line.split(":");
-				if (parts != null && parts.length > 1) {
-					try {
-						String id = parts[0];
-						String meta = parts[1];
-						int intid = Integer.parseInt(id);
-						int intmeta = meta.equals("*") ? -1 : Integer.parseInt(meta);
-						allEntries.add(new ItemBanEntry(intid, intmeta));
+				while(!line.isEmpty() && !Character.isDigit(line.charAt(0))) {
+					line = line.substring(1);
+				}
+
+				if (!line.isEmpty()) {
+					String[] parts = line.split(":");
+					if (parts != null && parts.length > 1) {
+						try {
+							String id = parts[0];
+							String meta = parts[1];
+							try {
+								int intid = Integer.parseInt(id);
+								int intmeta = meta.equals("*") ? -1 : Integer.parseInt(meta);
+								Item item = Item.getItemById(intid);
+								allEntries.add(intmeta >= 0 ? this.createKey(new ItemStack(item, intmeta)) : this.createKey(new ItemStack(item)));
+								flag = true;
+							}
+							catch (NumberFormatException e) {
+
+							}
+						}
+						catch (Exception e) {
+							//e.printStackTrace();
+						}
 					}
-					catch (Exception e) {
-						//e.printStackTrace();
+				}
+
+				if (!flag && !oline.isEmpty()) {
+					allEntries.add(this.createKey(ReikaItemHelper.lookupItem(oline)));
+				}
+
+				line = in.readLine();
+			}
+			in.close();
+		}
+	}
+
+	private void parseJSONFile(File f) {
+		JsonElement e = new JsonParser().parse(ReikaFileReader.getReader(f));
+		if (e instanceof JsonObject) {
+			JsonObject j = (JsonObject)e;
+			for (Entry<String, JsonElement> entry : j.entrySet()) {
+				JsonElement val = entry.getValue();
+				JsonArray arr = val.getAsJsonArray();
+				for (JsonElement idx : arr) {
+					if (idx instanceof JsonObject) {
+						JsonObject data = (JsonObject)idx;
+						String item = data.get("item").getAsString();
+						String dmg = data.get("damage").getAsString();
+						ItemStack stack = ReikaItemHelper.lookupItem(item+":"+dmg);
+						allEntries.add(this.createKey(stack));
 					}
 				}
 			}
-
-			line = in.readLine();
+			/*
+			if (j.getAsJsonPrimitive("enable").getAsBoolean()) {
+				JsonArray dims = j.getAsJsonArray("dimensions");
+				int x = j.getAsJsonPrimitive("x").getAsInt();
+				int y = j.getAsJsonPrimitive("y").getAsInt();
+				int z = j.getAsJsonPrimitive("z").getAsInt();
+				String id = j.getAsJsonPrimitive("name").getAsString();
+				try {
+					WarpPoint p = new WarpPoint(id, new WorldLocation(dims.get(0).getAsInt(), x, y, z));
+					map.add(p);
+				}
+				catch (Exception ex) {
+					ChromatiCraft.logger.logError("Could not parse waypoint entry: "+e.toString());
+					ex.printStackTrace();
+				}
+			}*/
 		}
-		in.close();
 	}
 
 }
