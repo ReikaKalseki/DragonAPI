@@ -336,9 +336,10 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	public static void printClassMetadata(String path, Class c) {
-		String filename = path+".classdata";
+		String filename = "FailedClasses/"+path+".classdata";
 		try {
 			File f = new File(filename);
+			f.getParentFile().mkdirs();
 			f.createNewFile();
 			BufferedWriter p = new BufferedWriter(new PrintWriter(f));
 			printClassMetadata(p, c);
@@ -355,13 +356,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			p.write("General:\n");
 			p.write("\t"+c.getName()+"\n");
 			p.write("\tAnnotations: "+Arrays.toString(c.getAnnotations())+"\n");
-			p.write("\tModifiers: "+Integer.toBinaryString(c.getModifiers())+"\n");
+			p.write("\tModifiers: "+parseModifiers(c.getModifiers())+"\n");
 			p.write("\tSuperclass: "+c.getSuperclass()+"\n");
 			p.write("\tInterfaces: "+Arrays.toString(c.getInterfaces())+"\n");
 			p.write("\tSynthetic: "+c.isSynthetic()+"\n");
 			p.write("\n\n");
 		}
 		catch (Throwable t) {
+			p.write("ERRORED ROOT DATA\n");
 			t.printStackTrace();
 		}
 
@@ -369,9 +371,12 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			p.write("Internal Classes:\n");
 			for (Class cs : c.getDeclaredClasses()) {
 				try {
+					p.write("-------------------------\n");
 					printClassMetadata(p, cs);
+					p.write("-------------------------\n");
 				}
 				catch (Throwable t) {
+					p.write("ERRORED INTERNAL CLASS\n");
 					t.printStackTrace();
 				}
 			}
@@ -386,12 +391,13 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			for (Constructor cs : c.getDeclaredConstructors()) {
 				try {
 					p.write("\t\tAnnotations: "+Arrays.toString(cs.getAnnotations())+"\n");
-					p.write("\t\tModifiers: "+Integer.toBinaryString(cs.getModifiers())+"\n");
+					p.write("\t\tModifiers: "+parseModifiers(cs.getModifiers())+"\n");
 					p.write("\t\tSignature: "+Arrays.toString(cs.getParameterTypes())+"\n");
 					p.write("\t\tExceptions: "+Arrays.toString(cs.getExceptionTypes())+"\n");
-					p.write("\tSynthetic: "+cs.isSynthetic()+"\n");
+					p.write("\t\tSynthetic: "+cs.isSynthetic()+"\n\n");
 				}
 				catch (Throwable t) {
+					p.write("ERRORED CONSTRUCTOR\n");
 					t.printStackTrace();
 				}
 			}
@@ -407,11 +413,12 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 				try {
 					p.write("\t"+fd.getName()+"\n");
 					p.write("\t\tAnnotations: "+Arrays.toString(fd.getAnnotations())+"\n");
-					p.write("\t\tModifiers: "+Integer.toBinaryString(fd.getModifiers())+"\n");
+					p.write("\t\tModifiers: "+parseModifiers(fd.getModifiers())+"\n");
 					p.write("\t\tType: "+fd.getType()+"\n");
-					p.write("\tSynthetic: "+fd.isSynthetic()+"\n");
+					p.write("\t\tSynthetic: "+fd.isSynthetic()+"\n\n");
 				}
 				catch (Throwable t) {
+					p.write("ERRORED FIELD\n");
 					t.printStackTrace();
 				}
 			}
@@ -425,15 +432,16 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			p.write("Methods:\n");
 			for (Method m : c.getDeclaredMethods()) {
 				try {
-					p.write("\t"+m.getName());
+					p.write("\t"+m.getName()+"\n");
 					p.write("\t\tAnnotations: "+Arrays.toString(m.getAnnotations())+"\n");
-					p.write("\t\tModifiers: "+Integer.toBinaryString(m.getModifiers())+"\n");
+					p.write("\t\tModifiers: "+parseModifiers(m.getModifiers())+"\n");
 					p.write("\t\tSignature: "+Arrays.toString(m.getParameterTypes())+"\n");
 					p.write("\t\tExceptions: "+Arrays.toString(m.getExceptionTypes())+"\n");
 					p.write("\t\tReturn: "+m.getReturnType()+"\n");
-					p.write("\tSynthetic: "+m.isSynthetic()+"\n");
+					p.write("\t\tSynthetic: "+m.isSynthetic()+"\n\n");
 				}
 				catch (Throwable t) {
+					p.write("ERRORED METHOD\n");
 					t.printStackTrace();
 				}
 			}
@@ -442,6 +450,16 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		catch (Throwable t) {
 			t.printStackTrace();
 		}
+	}
+
+	private static String parseModifiers(int modifiers) {
+		ArrayList<String> params = new ArrayList();
+		for (ClassModifiers mod : ClassModifiers.values()) {
+			if (mod.match(modifiers)) {
+				params.add(mod.toString());
+			}
+		}
+		return params.toString();
 	}
 
 	public static void printClassASM(String path, byte[] data) {

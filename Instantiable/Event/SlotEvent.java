@@ -33,6 +33,8 @@ public class SlotEvent extends Event {
 		private final ItemStack added;
 		private final ItemStack previous;
 
+		private static Slot currentSlotCall;
+
 		public AddToSlotEvent(int id, IInventory ii, ItemStack is, ItemStack pre) {
 			super(id, ii);
 			added = is;
@@ -48,7 +50,11 @@ public class SlotEvent extends Event {
 		}
 
 		public static void fire(Slot s, ItemStack is) {
+			if (currentSlotCall == s) //prevent AE SOE
+				return;
+			currentSlotCall = s;
 			MinecraftForge.EVENT_BUS.post(new AddToSlotEvent(s.getSlotIndex(), s.inventory, is, s.getStack()));
+			currentSlotCall = null;
 		}
 
 	}

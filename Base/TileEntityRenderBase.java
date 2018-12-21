@@ -22,7 +22,6 @@ import Reika.DragonAPI.Auxiliary.Trackers.ModLockController;
 import Reika.DragonAPI.IO.ReikaImageLoader;
 import Reika.DragonAPI.Instantiable.Rendering.StructureRenderer;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.RotaryCraft.Auxiliary.RotaryAux;
 
 public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 
@@ -61,7 +60,7 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 			ReikaTextureHelper.bindTexture(this.getModClass(), over);
 			return;
 		}
-		if (RotaryAux.loadXmasTextures()) {
+		if (this.loadXmasTextures()) {
 			String xmas = tex.replace(".png", "")+"_xmas.png";
 			BufferedImage ret = ReikaImageLoader.readImage(this.getModClass(), xmas, null);
 			String bind = ret != null && ret != ReikaImageLoader.getMissingTex() ? xmas : tex;
@@ -70,6 +69,10 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 			return;
 		}
 		ReikaTextureHelper.bindTexture(this.getModClass(), tex);
+	}
+
+	protected boolean loadXmasTextures() {
+		return false;
 	}
 
 	public final void bindImageByName(String img) {

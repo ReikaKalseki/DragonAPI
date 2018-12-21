@@ -74,7 +74,7 @@ public class TinkerSmelteryHandler {
 	}
 
 	public static boolean isSmelteryController(TileEntity te) {
-		return te.getClass() == tileClass;
+		return te != null && te.getClass() == tileClass;
 	}
 
 	public static class SmelteryWrapper {

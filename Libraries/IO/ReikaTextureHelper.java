@@ -67,7 +67,7 @@ public class ReikaTextureHelper {
 	private static final ResourceLocation hud = new ResourceLocation("textures/gui/icons.png");
 	private static final ResourceLocation ench = new ResourceLocation("textures/misc/enchanted_item_glint.png");
 
-	private static boolean reload() {
+	public static boolean reload() {
 		return Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.isKeyDown(Keyboard.KEY_T);
 	}
 

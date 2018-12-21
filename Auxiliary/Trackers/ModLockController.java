@@ -8,8 +8,11 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -26,6 +29,8 @@ public class ModLockController {
 	}
 
 	public void registerMod(DragonAPIMod mod) {
+		if (Loader.instance().hasReachedState(LoaderState.INITIALIZATION))
+			throw new MisuseException(mod, "Mods can only be registered at the beginning of preinit!");
 		data.put(mod.getTechnicalName(), this.hash(mod));
 	}
 

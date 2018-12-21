@@ -1720,7 +1720,6 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			Block b = world.getBlock(dx, dy, dz);
 			if (b == Blocks.air)
 				return true;
-			;
 			if (b == null)
 				return true;
 			if (b.getCollisionBoundingBoxFromPool(world, dx, dy, dz) == null)

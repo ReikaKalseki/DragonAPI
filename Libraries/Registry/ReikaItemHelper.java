@@ -510,6 +510,10 @@ public final class ReikaItemHelper extends DragonAPICore {
 		if (i == null)
 			return null;
 		String s = Item.itemRegistry.getNameForObject(i);
+		if (s == null) {
+			DragonAPICore.logError("Found null ID string for non-null item '"+i.getClass().getName()+"'!");
+			return "ERROR";
+		}
 		return s.substring(0, s.indexOf(':'));
 	}
 
