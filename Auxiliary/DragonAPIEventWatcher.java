@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.block.material.Material;
@@ -19,6 +20,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
@@ -28,9 +30,11 @@ import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
+import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
@@ -46,6 +50,8 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
+import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
 import Reika.DragonAPI.Command.ClearItemsCommand;
@@ -70,10 +76,12 @@ import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaFluidHelper;
+import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -111,6 +119,42 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
 	public void onCall(String tag) {
 
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void collectAll(PlayerInteractEvent evt) {
+		if (!evt.world.isRemote && evt.action == Action.LEFT_CLICK_BLOCK) {
+			Key k = DragonOptions.getCollectKey();
+			if (k != null && KeyWatcher.instance.isKeyDown(evt.entityPlayer, k)) {
+				TileEntity te = evt.world.getTileEntity(evt.x, evt.y, evt.z);
+				if (te instanceof IInventory) {
+					boolean flag2 = false;
+					ReikaChatHelper.clearChat((EntityPlayerMP)evt.entityPlayer);
+					IInventory ii = (IInventory)te;
+					for (int i = 0; i < 6; i++) {
+						HashMap<Integer, ItemStack> map = ReikaInventoryHelper.getLocatedTransferrables(ForgeDirection.VALID_DIRECTIONS[i], ii);
+						for (int slot : map.keySet()) {
+							boolean flag = true;
+							ItemStack is = map.get(slot);
+							if (evt.entityPlayer.isSneaking())
+								ReikaPlayerAPI.addOrDropItem(is, evt.entityPlayer);
+							else
+								flag = ReikaInventoryHelper.addToIInv(is, evt.entityPlayer.inventory);
+							if (flag) {
+								ii.setInventorySlotContents(slot, null);
+								String s = "Collected "+is.stackSize+" "+is.getDisplayName();
+								ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.STRINGPARTICLE.ordinal(), s, te);
+								flag2 = true;
+							}
+						}
+					}
+					if (flag2) {
+						ReikaSoundHelper.playSoundAtEntity(evt.world, evt.entityPlayer, "random.click", 1, 1.5F);
+					}
+					evt.setCanceled(true);
+				}
+			}
+		}
 	}
 
 	@SubscribeEvent

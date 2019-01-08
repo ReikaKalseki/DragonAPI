@@ -46,6 +46,15 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 		return ench;
 	}
 
+	public static void applyEnchantment(ItemStack is, Enchantment e, int level) {
+		if (is.getItem() == Items.enchanted_book) {
+			Items.enchanted_book.addEnchantment(is, new EnchantmentData(e, level));
+		}
+		else {
+			is.addEnchantment(e, level);
+		}
+	}
+
 	/** Applies all enchantments to an ItemStack. Args: ItemStack, enchantment map */
 	public static void applyEnchantments(ItemStack is, HashMap<Enchantment,Integer> en) {
 		if (en == null)
@@ -53,12 +62,7 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 		for (Enchantment e : en.keySet()) {
 			int level = en.get(e);
 			if (level > 0) {
-				if (is.getItem() == Items.enchanted_book) {
-					Items.enchanted_book.addEnchantment(is, new EnchantmentData(e, level));
-				}
-				else {
-					is.addEnchantment(e, level);
-				}
+				applyEnchantment(is, e, level);
 			}
 		}
 	}

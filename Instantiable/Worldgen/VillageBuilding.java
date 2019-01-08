@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Worldgen;
 
 import java.lang.reflect.Constructor;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -30,6 +31,7 @@ import net.minecraft.world.gen.structure.StructureVillagePieces.Start;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
@@ -38,14 +40,14 @@ import cpw.mods.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
 public class VillageBuilding implements IVillageCreationHandler {
 
 	public final Class buildingClass;
-	public final int weight;
+	public final float weight;
 	private final Constructor<VillagePiece> constructor;
 
 	public final int xSize;
 	public final int ySize;
 	public final int zSize;
 
-	public VillageBuilding(Class<? extends VillagePiece> c, int w, String n, int x, int y, int z) {
+	public VillageBuilding(Class<? extends VillagePiece> c, float w, String n, int x, int y, int z) {
 		buildingClass = c;
 		weight = w;
 		try {
@@ -62,7 +64,7 @@ public class VillageBuilding implements IVillageCreationHandler {
 
 	@Override
 	public PieceWeight getVillagePieceWeight(Random random, int i) {
-		return new StructureVillagePieces.PieceWeight(buildingClass, weight, MathHelper.getRandomIntegerInRange(random, 0 + i, 1 + i));
+		return new FractionalWeight(buildingClass, weight, MathHelper.getRandomIntegerInRange(random, 0 + i, 1 + i));
 	}
 
 	@Override
@@ -92,6 +94,50 @@ public class VillageBuilding implements IVillageCreationHandler {
 
 	private boolean canVillageGoDeeper(StructureBoundingBox var8) {
 		return var8 != null && var8.minY > 10;
+	}
+
+	public static List applyFractionalWeights(List<PieceWeight> li) {
+		ArrayList<PieceWeight> ret = new ArrayList();
+		boolean hasFractions = false;
+		for (PieceWeight pw : li) {
+			if (pw instanceof FractionalWeight) {
+				hasFractions = true;
+				break;
+			}
+		}
+		if (!hasFractions)
+			return li;
+		int nDec = 0;
+		for (PieceWeight pw : li) {
+			int dec = pw instanceof FractionalWeight ? ReikaMathLibrary.countDecimalPlaces(((FractionalWeight)pw).decimalWeight) : 0;
+			nDec = Math.max(nDec, dec);
+		}
+		int fac = ReikaMathLibrary.intpow2(10, nDec);
+		for (PieceWeight pw : li) {
+			try {
+				ret.add(clonePieceWeightModified(pw, fac));
+			}
+			catch (Exception e) {
+				throw new RuntimeException("Could not clone PieceWeight: "+pw.getClass()+" : "+pw.toString(), e);
+			}
+		}
+		return ret;
+	}
+
+	private static PieceWeight clonePieceWeightModified(PieceWeight pw, int f) throws Exception {
+		int w = (int)(f*(pw instanceof FractionalWeight ? ((FractionalWeight)pw).decimalWeight : pw.villagePieceWeight));
+		return PieceWeight.class.getConstructor(Class.class, int.class, int.class).newInstance(pw.villagePieceClass, w, pw.villagePiecesLimit);
+	}
+
+	private static final class FractionalWeight extends PieceWeight {
+
+		public final float decimalWeight;
+
+		public FractionalWeight(Class c, float weight, int limit) {
+			super(c, MathHelper.ceiling_float_int(weight), limit);
+			decimalWeight = weight;
+		}
+
 	}
 
 	public static abstract class VillagePiece extends Village {
@@ -259,13 +305,13 @@ public class VillageBuilding implements IVillageCreationHandler {
 
 		public final Class structureClass;
 		public final String identifier;
-		public final int weight;
+		public final float weight;
 
 		public final int xSize;
 		public final int ySize;
 		public final int zSize;
 
-		public StructureEntry(Class<? extends VillagePiece> c, int w, String s, int x, int y, int z) {
+		public StructureEntry(Class<? extends VillagePiece> c, float w, String s, int x, int y, int z) {
 			structureClass = c;
 			weight = w;
 			identifier = s;

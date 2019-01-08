@@ -13,11 +13,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeaves;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import Reika.DragonAPI.Base.BlockCustomLeaf;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.ModRegistry.ModWoodList;
 
 public enum ReikaTreeHelper implements TreeType {
 
@@ -221,6 +226,40 @@ public enum ReikaTreeHelper implements TreeType {
 				leafMappings.put(leaf, leafmetas[k], w);
 			}
 			saplingMappings.put(sapling, saplingMeta, w);
+		}
+	}
+
+	public static boolean isNaturalLeaf(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		int meta = world.getBlockMetadata(x, y, z);
+		if (b instanceof BlockCustomLeaf)
+			return ((BlockCustomLeaf)b).isNatural();
+		ModWoodList mod = ModWoodList.getModWoodFromLeaf(b, meta);
+		if (mod != null) {
+			return mod.isNaturalLeaf(world, x, y, z);
+		}
+		if (b instanceof BlockLeaves)
+			return (meta&4) == 0;
+		return true;
+	}
+
+	@Override
+	public BlockBox getTypicalMaximumSize() {
+		switch(this) {
+			case ACACIA:
+				return BlockBox.origin().expand(9, 12, 9);
+			case BIRCH:
+				return BlockBox.origin().expand(5, 9, 5);
+			case DARKOAK:
+				return BlockBox.origin().expand(6, 11, 6);
+			case JUNGLE:
+				return BlockBox.origin().expand(10, 50, 10);
+			case OAK:
+				return BlockBox.origin().expand(15, 25, 15);
+			case SPRUCE:
+				return BlockBox.origin().expand(9, 40, 9);
+			default:
+				return BlockBox.nothing();
 		}
 	}
 

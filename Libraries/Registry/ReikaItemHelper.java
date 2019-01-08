@@ -200,6 +200,21 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return matchStacks(a, b.getItemStack());
 	}
 
+	public static boolean matchStacks(ItemStack a, Object b) {
+		if (b instanceof ItemStack) {
+			return matchStacks(a, (ItemStack)b);
+		}
+		else if (b instanceof Collection) {
+			return ReikaItemHelper.listContainsItemStack((Collection<ItemStack>)b, a, false);
+		}
+		else if (b instanceof String) {
+			return ReikaItemHelper.listContainsItemStack(OreDictionary.getOres((String)b), a, false);
+		}
+		else {
+			return false;
+		}
+	}
+
 	/** Like .equals for comparing ItemStacks, but does not care about size or NBT tags.
 	 * Returns true if the ids and metadata match (or both are null).
 	 * Args: ItemStacks a, b */

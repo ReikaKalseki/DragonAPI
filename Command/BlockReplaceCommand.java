@@ -124,6 +124,15 @@ public class BlockReplaceCommand extends DragonCommandBase {
 		else if (s.equals("any") || s.equals("all") || s.equals("*")) {
 			return new AnyCheck();
 		}
+		else if (s.startsWith("!") || s.startsWith("~")) {
+			try {
+				int id = Integer.parseInt(s.substring(1));
+				return new AnyButCheck(id);
+			}
+			catch (NumberFormatException e) {
+
+			}
+		}
 		else {
 			try {
 				int id = Integer.parseInt(s);
@@ -204,6 +213,22 @@ public class BlockReplaceCommand extends DragonCommandBase {
 		@Override
 		protected boolean replace(Block b, int meta) {
 			return b != Blocks.air;
+		}
+
+	}
+
+	private static class AnyButCheck extends ReplaceCheck {
+
+		private final int blockID;
+
+		private AnyButCheck(int id) {
+			super();
+			blockID = id;
+		}
+
+		@Override
+		protected boolean replace(Block b, int meta) {
+			return Block.getIdFromBlock(b) != blockID;
 		}
 
 	}

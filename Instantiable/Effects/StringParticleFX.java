@@ -22,13 +22,13 @@ import org.lwjgl.opengl.GL11;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
-public class NumberParticleFX extends EntityFX {
+public class StringParticleFX extends EntityFX {
 
 	private final String string;
 
-	public NumberParticleFX(World world, double x, double y, double z, int num) {
+	public StringParticleFX(World world, double x, double y, double z, String s) {
 		super(world, x, y, z);
-		string = String.valueOf(num);
+		string = s;
 		particleGravity = 0.225F;
 		motionY = 0.18;
 		particleMaxAge = 15;
@@ -36,9 +36,17 @@ public class NumberParticleFX extends EntityFX {
 		noClip = true;
 	}
 
+	public void setScale(float f) {
+		particleScale = f;
+		motionY *= f/0.025;
+	}
+
+	public void setLife(int f) {
+		particleMaxAge = f;
+	}
+
 	@Override
-	public void renderParticle(Tessellator v5, float par2, float par3, float par4, float par5, float par6, float par7)
-	{
+	public void renderParticle(Tessellator v5, float par2, float par3, float par4, float par5, float par6, float par7) {
 		rotationYaw = (-Minecraft.getMinecraft().thePlayer.rotationYaw);
 		rotationPitch = Minecraft.getMinecraft().thePlayer.rotationPitch;
 		boolean depth = true;
@@ -50,6 +58,8 @@ public class NumberParticleFX extends EntityFX {
 		locY = ((float)(prevPosY+(posY - prevPosY) * par2 - interpPosY));
 		locZ = ((float)(prevPosZ+(posZ - prevPosZ) * par2 - interpPosZ));
 		GL11.glPushMatrix();
+
+		motionY = Math.max(motionY, 0);
 
 		if (!depth)
 			GL11.glDisable(GL11.GL_DEPTH_TEST);

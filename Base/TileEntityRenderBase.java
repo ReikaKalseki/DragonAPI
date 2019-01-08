@@ -61,7 +61,7 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 			return;
 		}
 		if (this.loadXmasTextures()) {
-			String xmas = tex.replace(".png", "")+"_xmas.png";
+			String xmas = tex.replace(".png", "").replace("_xmas", "")+"_xmas.png";
 			BufferedImage ret = ReikaImageLoader.readImage(this.getModClass(), xmas, null);
 			String bind = ret != null && ret != ReikaImageLoader.getMissingTex() ? xmas : tex;
 			textureOverrides.put(tex, bind);

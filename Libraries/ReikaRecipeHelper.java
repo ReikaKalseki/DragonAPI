@@ -476,25 +476,33 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return allowed;
 	}
 
-	public static void replaceIngredientInRecipe(ItemStack ingredient, ItemStack replacement, IRecipe ir) {
+	public static void replaceIngredientInRecipe(ItemStack ingredient, Object replacement, IRecipe ir) {
 		if (ingredient == null)
 			throw new MisuseException("You cannot replace null in recipes!");
 
+		if (replacement instanceof String)
+			replacement = OreDictionary.getOres((String)replacement);
 
 		if (ir instanceof ShapedRecipes) {
+			if (!(replacement instanceof ItemStack)) {
+				throw new MisuseException("You cannot put non-single-stack entries into a basic recipe type!");
+			}
 			ShapedRecipes s = (ShapedRecipes) ir;
 			for (int i = 0; i < s.recipeItems.length; i++) {
 				if (ReikaItemHelper.matchStacks(ingredient, s.recipeItems[i])) {
-					s.recipeItems[i] = replacement;
+					s.recipeItems[i] = (ItemStack)replacement;
 				}
 			}
 		}
 		else if (ir instanceof ShapelessRecipes) {
+			if (!(replacement instanceof ItemStack)) {
+				throw new MisuseException("You cannot put non-single-stack entries into a basic recipe type!");
+			}
 			ShapelessRecipes s = (ShapelessRecipes) ir;
 			List<ItemStack> in = s.recipeItems;
 			for (int i = 0; i < in.size(); i++) {
 				if (ReikaItemHelper.matchStacks(ingredient, in.get(i))) {
-					in.set(i, replacement);
+					in.set(i, (ItemStack)replacement);
 				}
 			}
 		}

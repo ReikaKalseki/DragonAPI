@@ -32,14 +32,15 @@ import Reika.DragonAPI.Auxiliary.PopupWriter;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.ConfigMatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
-import Reika.DragonAPI.Auxiliary.Trackers.ModLockController;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.Trackers.ModFileVersionChecker;
+import Reika.DragonAPI.Auxiliary.Trackers.ModLockController;
 import Reika.DragonAPI.Base.TileEntityBase;
 import Reika.DragonAPI.Command.BiomeMapCommand;
 import Reika.DragonAPI.Command.EntityListCommand;
 import Reika.DragonAPI.Command.IDDumpCommand;
-import Reika.DragonAPI.Instantiable.Effects.NumberParticleFX;
+import Reika.DragonAPI.Command.OreDumpCommand;
+import Reika.DragonAPI.Instantiable.Effects.StringParticleFX;
 import Reika.DragonAPI.Instantiable.Event.RawKeyPressEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLogoutEvent;
@@ -267,6 +268,7 @@ public class APIPacketHandler implements PacketHandler {
 					ReikaParticleHelper.spawnColoredParticlesWithOutset(world, x, y, z, data[0], data[1], data[2], data[3], data[4]/16D);
 					break;
 				case NUMBERPARTICLE:
+				case STRINGPARTICLE:
 					break;
 				case IDDUMP:
 				case ENTITYDUMP:
@@ -375,6 +377,8 @@ public class APIPacketHandler implements PacketHandler {
 					break;
 				case MODLOCK:
 					break;
+				case OREDUMP:
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -389,7 +393,13 @@ public class APIPacketHandler implements PacketHandler {
 	private void clientHandle(World world, int x, int y, int z, PacketIDs pack, int[] data, String sg, EntityPlayer player) {
 		switch(pack) {
 			case NUMBERPARTICLE:
-				Minecraft.getMinecraft().effectRenderer.addEffect(new NumberParticleFX(world, x+0.5, y+0.5, z+0.5, data[0]));
+				Minecraft.getMinecraft().effectRenderer.addEffect(new StringParticleFX(world, x+0.5, y+0.5, z+0.5, String.valueOf(data[0])));
+				break;
+			case STRINGPARTICLE:
+				StringParticleFX fx = new StringParticleFX(world, x+0.5, y+0.5, z+0.5, sg);
+				fx.setLife(Math.max(15, 3*sg.length()));
+				fx.setScale(Math.max(0.01F, Math.min(1, 0.5F/sg.length())));
+				Minecraft.getMinecraft().effectRenderer.addEffect(fx);
 				break;
 			case IDDUMP:
 				IDDumpCommand.dumpClientside(data[0]);
@@ -448,6 +458,9 @@ public class APIPacketHandler implements PacketHandler {
 			case MODLOCK:
 				ModLockController.instance.readSync(player, sg);
 				break;
+			case OREDUMP:
+				OreDumpCommand.dumpClientside(sg);
+				break;
 			default:
 				break;
 		}
@@ -469,6 +482,7 @@ public class APIPacketHandler implements PacketHandler {
 		RERENDER(),
 		COLOREDPARTICLE(),
 		NUMBERPARTICLE(),
+		STRINGPARTICLE(),
 		IDDUMP(),
 		ENTITYDUMP(),
 		EXPLODE(),
@@ -498,7 +512,8 @@ public class APIPacketHandler implements PacketHandler {
 		ENTITYVERIFY(),
 		ENTITYVERIFYFAIL(),
 		CLEARCHAT(),
-		MODLOCK();
+		MODLOCK(),
+		OREDUMP();
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];

@@ -29,6 +29,8 @@ public class BoPBlockHandler extends ModHandlerBase {
 	public final Block newGrass;
 	public final Block newDirt;
 
+	public final Block foliage;
+
 	public static final String[] flower1Types = {
 		"clover",
 		"swampflower",
@@ -60,6 +62,25 @@ public class BoPBlockHandler extends ModHandlerBase {
 		"rose"
 	};
 
+	public static final String[] foliageTypes = {
+		"duckweed",
+		"shortgrass",
+		"mediumgrass",
+		"flaxbottom",
+		"bush",
+		"sprout",
+		"flaxtop",
+		"poisonivy",
+		"berrybush",
+		"shrub",
+		"wheatgrass",
+		"dampgrass",
+		"koru",
+		"cloverpatch",
+		"leafpile",
+		"deadleafpile"
+	};
+
 	private BoPBlockHandler() {
 		super();
 		Block idcoral1 = null;
@@ -70,6 +91,8 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 		Block idgrass = null;
 		Block iddirt = null;
+
+		Block idfoliage = null;
 
 		if (this.hasMod()) {
 			try {
@@ -91,6 +114,9 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 				idgrass = (Block)gr.get(null);
 				iddirt = (Block)dt.get(null);
+
+				Field fol = blocks.getField("foliage");
+				idfoliage = ((Block)fol.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
@@ -130,6 +156,8 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 		newDirt = iddirt;
 		newGrass = idgrass;
+
+		foliage = idfoliage;
 	}
 
 	public static BoPBlockHandler getInstance() {
@@ -138,7 +166,7 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 	@Override
 	public boolean initializedProperly() {
-		return coral1 != null && coral2 != null && flower1 != null && flower2 != null;
+		return coral1 != null && coral2 != null && flower1 != null && flower2 != null && foliage != null;
 	}
 
 	@Override

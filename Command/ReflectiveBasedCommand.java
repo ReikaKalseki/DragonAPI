@@ -63,6 +63,7 @@ import Reika.DragonAPI.ModRegistry.ModOreList;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 
 
@@ -121,7 +122,9 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		classShortcuts.put("Items", Items.class);
 		classShortcuts.put("ItemStack", ItemStack.class);
 		classShortcuts.put("Biome", BiomeGenBase.class);
+		classShortcuts.put("BiomeGenBase", BiomeGenBase.class);
 		classShortcuts.put("Server", MinecraftServer.class);
+		classShortcuts.put("MinecraftServer", MinecraftServer.class);
 
 		classShortcuts.put("DimensionManager", DimensionManager.class);
 		classShortcuts.put("FML", FMLCommonHandler.class);
@@ -131,6 +134,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		classShortcuts.put("Fluid", Fluid.class);
 		classShortcuts.put("FluidStack", FluidStack.class);
 		classShortcuts.put("FluidRegistry", FluidRegistry.class);
+		classShortcuts.put("GameRegistry", GameRegistry.class);
 
 		classShortcuts.put("ASMHelper", ReikaASMHelper.class);
 		classShortcuts.put("ReflectionHelper", ReikaReflectionHelper.class);
@@ -269,7 +273,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		catch (NumberFormatException e) {
 
 		}
-		return s;
+		return s.replaceAll("__sp__", " ");
 	}
 
 	protected void error(ICommandSender ics, String s) {

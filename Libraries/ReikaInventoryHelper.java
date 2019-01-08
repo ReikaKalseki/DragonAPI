@@ -17,10 +17,12 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.WeightedRandomChestContent;
@@ -974,6 +976,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		int max = Math.min(ii.getInventoryStackLimit(), is.getMaxStackSize());
 		for (int i = firstSlot; i < maxSlot; i++) {
 			if (overrideValid || ii.isItemValidForSlot(i, is)) {
+				if (ii instanceof InventoryPlayer && !(is.getItem() instanceof ItemArmor)) {
+					if (i >= ((InventoryPlayer)ii).mainInventory.length)
+						continue;
+				}
 				ItemStack in = ii.getStackInSlot(i);
 				if (in == null) {
 					int added = Math.min(is.stackSize, max);

@@ -28,11 +28,13 @@ public class Search {
 	private LinkedList<Coordinate> result = new LinkedList();
 
 	public BlockBox limit = BlockBox.infinity();
+	public int depthLimit = Integer.MAX_VALUE;
 
 	public Search(int x, int y, int z) {
 		activeSearches.add(new SearchHead(new Coordinate(x, y, z)));
 	}
 
+	/** Note that the propagation condition must include the termination condition, or it will never be moved into! */
 	public boolean tick(World world, PropagationCondition propagation, TerminationCondition terminate) {
 		Collection<SearchHead> current = new ArrayList(activeSearches);
 		activeSearches.clear();
@@ -40,7 +42,7 @@ public class Search {
 			Collection<Coordinate> li = s.headLocation.getAdjacentCoordinates();
 			Collection<Coordinate> li2 = new ArrayList();
 			for (Coordinate c : li) {
-				if (c.yCoord >= 0 && c.yCoord < 256 && !searchedCoords.contains(c) && propagation.isValidLocation(world, c.xCoord, c.yCoord, c.zCoord) && limit.isBlockInside(c.xCoord, c.yCoord, c.zCoord)) {
+				if (c.yCoord >= 0 && c.yCoord < 256 && !searchedCoords.contains(c) && propagation.isValidLocation(world, c.xCoord, c.yCoord, c.zCoord) && s.length() < depthLimit && limit.isBlockInside(c.xCoord, c.yCoord, c.zCoord)) {
 					if (terminate.isValidTerminus(world, c.xCoord, c.yCoord, c.zCoord)) {
 						activeSearches.clear();
 						result.addAll(s.path);
@@ -61,6 +63,12 @@ public class Search {
 		return result;
 	}
 
+	public void complete(World world, PropagationCondition propagation, TerminationCondition terminate) {
+		while (!this.tick(world, propagation, terminate)) {
+
+		}
+	}
+
 	public static LinkedList<Coordinate> getPath(World world, int x, int y, int z, TerminationCondition t, PropagationCondition c) {
 		Search s = new Search(x, y, z);
 		while (!s.tick(world, c, t)) {
@@ -77,6 +85,10 @@ public class Search {
 		private SearchHead(Coordinate c) {
 			headLocation = c;
 			path.add(c);
+		}
+
+		public int length() {
+			return path.size();
 		}
 
 		public SearchHead extendTo(Coordinate c) {

@@ -9,12 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
 import Reika.DragonAPI.Interfaces.Configuration.IntegerConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringArrayConfig;
+import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
 import Reika.DragonAPI.Interfaces.Configuration.UserSpecificConfig;
 
-public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayConfig, UserSpecificConfig {
+public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayConfig, StringConfig, UserSpecificConfig {
 
 	LOGLOADING("Console Loading Info", true),
 	FILELOG("Log Loading Info To Separate File", false),
@@ -55,6 +57,8 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	BIOMEFIRE("Biome Humidity Dependent Fire Spread", true),
 	ADMINPROFILERS("Restrict profiling abilities to admins", true),
 	BYTECODELIST("Bytecodeexec command user UUID whitelist", new String[0]),
+	CTRLCOLLECT("Automatic Collection of Inventories; set to 'NULL' to disable", Key.LCTRL.name()),
+	AFK("AFK Timer Threshold (Seconds); Set to 0 to Disable", 120), //2 min
 	;
 
 	private String label;
@@ -124,6 +128,10 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 		return (Integer)DragonAPIInit.config.getControl(this.ordinal());
 	}
 
+	public String getString() {
+		return (String)DragonAPIInit.config.getControl(this.ordinal());
+	}
+
 	public boolean isDummiedOut() {
 		return type == null;
 	}
@@ -184,6 +192,17 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	@Override
 	public String[] getDefaultStringArray() {
 		return defaultStringArray;
+	}
+
+	@Override
+	public String getDefaultString() {
+		return defaultString;
+	}
+
+	public static Key getCollectKey() {
+		if (CTRLCOLLECT.getString().equalsIgnoreCase("null"))
+			return null;
+		return Key.readFromConfig(DragonAPIInit.instance, CTRLCOLLECT);
 	}
 
 }

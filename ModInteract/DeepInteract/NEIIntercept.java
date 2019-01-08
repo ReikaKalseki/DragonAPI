@@ -134,7 +134,7 @@ public class NEIIntercept implements IContainerInputHandler {
 					int meta = world.getBlockMetadata(mov.blockX, mov.blockY, mov.blockZ);
 					ItemStack is = new ItemStack(b, 1, meta);
 					ArrayList<ItemStack> li = b.getDrops(world, mov.blockX, mov.blockY, mov.blockZ, meta, 0);
-					if (!li.isEmpty()) {
+					if (li != null && !li.isEmpty()) {
 						is = li.get(0);
 					}
 					GuiContainer prevscreen = mc.currentScreen instanceof GuiContainer ? (GuiContainer)mc.currentScreen : null;

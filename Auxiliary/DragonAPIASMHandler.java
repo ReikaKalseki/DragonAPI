@@ -35,6 +35,7 @@ public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 		Launch.classLoader.addTransformerExclusion("Reika.LegacyCraft.LegacyASMHandler");
 		Launch.classLoader.addTransformerExclusion("Reika.ChromatiCraft.Auxiliary.ChromaASMHandler");
 		Launch.classLoader.addTransformerExclusion("Reika.RotaryCraft.Auxiliary.RotaryASMHandler");
+		Launch.classLoader.addTransformerExclusion("Reika.RotaryCraft.Auxiliary.TreeClimbingASMHandler");
 		Launch.classLoader.addTransformerExclusion("Reika.RotaryCraft.Auxiliary.RotaryIntegrationManager");
 
 		Launch.classLoader.addTransformerExclusion("Reika.DragonAPI.Libraries.Java.ReikaASMHelper");

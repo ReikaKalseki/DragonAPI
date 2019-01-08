@@ -14,7 +14,7 @@ import java.util.Iterator;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.world.IBlockAccess;
 import Reika.ChromatiCraft.API.TreeGetter;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
@@ -40,6 +40,8 @@ public final class TreeReader extends BlockArray {
 	private boolean isRainbowTree = false;
 	private int dyeMeta = -1;
 
+	private boolean stopIfValid = false;
+
 	public TreeReader() {
 		super();
 		if (ModList.CHROMATICRAFT.isLoaded()) {
@@ -56,6 +58,11 @@ public final class TreeReader extends BlockArray {
 		}
 	}
 
+	public TreeReader setStopIfValid() {
+		stopIfValid = true;
+		return this;
+	}
+
 	public boolean isDyeTree() {
 		return isDyeTree;
 	}
@@ -68,9 +75,7 @@ public final class TreeReader extends BlockArray {
 		return dyeMeta;
 	}
 
-	public void addTree(World world, int x, int y, int z) {
-		// Using LinkedLists over ArrayLists. we expect those lists to grow fast
-		// and we don't need indexed access.
+	public void addTree(IBlockAccess world, int x, int y, int z) {
 		HashSet<Coordinate> search = new HashSet();
 		HashSet<Coordinate> failed = new HashSet();
 		HashSet<Coordinate> next = new HashSet();
@@ -85,17 +90,19 @@ public final class TreeReader extends BlockArray {
 			Iterator<Coordinate> it = search.iterator();
 			while (it.hasNext()) {
 				Coordinate c = it.next();
-				this.addBlockCoordinate(c.xCoord, c.yCoord, c.zCoord);
+				if (bounds.isBlockInside(c)) {
+					this.addBlockCoordinate(c.xCoord, c.yCoord, c.zCoord);
 
-				for (int dx = -1; dx <= 1; dx++) {
-					for (int dy = -1; dy <= 1; dy++) {
-						for (int dz = -1; dz <= 1; dz++) {
-							if (dx == 0 && dy == 0 && dz == 0)
-								continue;
+					for (int dx = -1; dx <= 1; dx++) {
+						for (int dy = -1; dy <= 1; dy++) {
+							for (int dz = -1; dz <= 1; dz++) {
+								if (dx == 0 && dy == 0 && dz == 0)
+									continue;
 
-							Coordinate c2 = c.offset(dx, dy, dz);
-							if (!search.contains(c2) && !next.contains(c2) && !this.containsKey(c2) && !failed.contains(c2)) {
-								this.validateAndAdd(world, c2.xCoord, c2.yCoord, c2.zCoord, next, failed);
+								Coordinate c2 = c.offset(dx, dy, dz);
+								if (!search.contains(c2) && !next.contains(c2) && !this.containsKey(c2) && !failed.contains(c2)) {
+									this.validateAndAdd(world, c2.xCoord, c2.yCoord, c2.zCoord, next, failed);
+								}
 							}
 						}
 					}
@@ -103,12 +110,15 @@ public final class TreeReader extends BlockArray {
 				it.remove();
 			}
 
+			if (stopIfValid && this.isValidTree())
+				return;
+
 			search.addAll(next);
 			next.clear();
 		}
 	}
 
-	private boolean isTree(World world, int x, int y, int z) {
+	private boolean isTree(IBlockAccess world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		if (tree != null && tree.getLogID() == b) {
@@ -135,7 +145,7 @@ public final class TreeReader extends BlockArray {
 		return false;
 	}
 
-	private void validateAndAdd(World world, int x, int y, int z, HashSet<Coordinate> search, HashSet<Coordinate> failed) {
+	private void validateAndAdd(IBlockAccess world, int x, int y, int z, HashSet<Coordinate> search, HashSet<Coordinate> failed) {
 		Coordinate c = new Coordinate(x, y, z);
 		if (this.isTree(world, x, y, z)) {
 			search.add(c);
@@ -163,8 +173,9 @@ public final class TreeReader extends BlockArray {
 
 	public void setTree(TreeType tree) {
 		this.tree = tree;
-		if (tree != null)
+		if (tree != null) {
 			maxDepth = this.getMaxDepthFromTreeType(tree);
+		}
 	}
 
 	public static int getMaxDepthFromTreeType(TreeType tree) {
@@ -197,7 +208,7 @@ public final class TreeReader extends BlockArray {
 				case DARKWOOD:
 					return 80;
 				case SACRED:
-					return 50;
+					return 160;
 				case CANOPY:
 					return 40;
 				case TWILIGHTOAK:
@@ -211,6 +222,10 @@ public final class TreeReader extends BlockArray {
 					return 28;
 				case MFRRUBBER:
 					return 80;
+				case LIGHTED:
+					return 15;
+				case FIR:
+					return 50;
 				default:
 					return 12;
 			}

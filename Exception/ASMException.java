@@ -198,7 +198,7 @@ public abstract class ASMException extends RuntimeException {
 	}
 
 	private static final boolean isVanillaClass(ClassNode node) {
-		return !node.name.startsWith("net.minecraftforge") && !node.name.startsWith("cpw");
+		return node.name.startsWith("net/minecraft");
 	}
 
 	public static final class NoSuchASMMethodException extends NoSuchMemberASMException {

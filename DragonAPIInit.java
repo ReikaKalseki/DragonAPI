@@ -243,6 +243,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.registerTechnicalBlocks();
 
 		ChunkManager.instance.register();
+		DragonOptions.getCollectKey(); //just to init
 
 		this.initalizeVanillaOreDict();
 

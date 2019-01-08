@@ -11,6 +11,7 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
+import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Locale;
@@ -61,7 +62,7 @@ public class KeyWatcher {
 	public static enum Key {
 		JUMP(),
 		SNEAK(),
-		FOWARD(),
+		FORWARD(),
 		BACK(),
 		LEFT(),
 		RIGHT(),
@@ -97,7 +98,7 @@ public class KeyWatcher {
 				return Key.valueOf(s);
 			}
 			catch (IllegalArgumentException e) {
-				throw new InstallationException(mod, "Invalid specified keybind for config entry '"+cfg.getLabel()+"'; no such key '"+s+"' exists!");
+				throw new InstallationException(mod, "Invalid specified keybind for config entry '"+cfg.getLabel()+"'; no such key '"+s+"' exists! Valid options: "+Arrays.toString(values()));
 			}
 		}
 	}

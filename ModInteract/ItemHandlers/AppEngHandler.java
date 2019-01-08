@@ -27,6 +27,7 @@ public class AppEngHandler extends ModHandlerBase {
 	private static final AppEngHandler instance = new AppEngHandler();
 
 	private ItemStack certus;
+	private ItemStack chargedCertus;
 	private ItemStack dust;
 
 	private ItemStack fluix;
@@ -79,6 +80,7 @@ public class AppEngHandler extends ModHandlerBase {
 				this.initGetters();
 
 				certus = this.getMaterial("materialCertusQuartzCrystal");
+				chargedCertus = this.getMaterial("materialCertusQuartzCrystalCharged");
 				dust = this.getMaterial("materialCertusQuartzDust");
 				fluix = this.getMaterial("materialFluixCrystal");
 				fluixdust = this.getMaterial("materialFluixDust");
@@ -214,6 +216,10 @@ public class AppEngHandler extends ModHandlerBase {
 
 	public ItemStack getCertusQuartz() {
 		return certus != null ? certus.copy() : null;
+	}
+
+	public ItemStack getChargedCertusQuartz() {
+		return chargedCertus != null ? chargedCertus.copy() : null;
 	}
 
 	public ItemStack getCertusQuartzDust() {

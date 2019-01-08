@@ -13,6 +13,7 @@ import java.util.List;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 
 public interface TreeType {
 
@@ -26,5 +27,6 @@ public interface TreeType {
 	public boolean canBePlacedSideways();
 	public boolean exists();
 	public ItemStack getBasicLeaf();
+	public BlockBox getTypicalMaximumSize();
 
 }

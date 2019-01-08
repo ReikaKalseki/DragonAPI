@@ -27,6 +27,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
@@ -36,66 +37,66 @@ import cpw.mods.fml.common.registry.GameRegistry;
 
 public enum ModWoodList implements TreeType {
 
-	CANOPY(ModList.TWILIGHT, 		0x252517, 0x330464, "log", "leaves", "sapling", new int[]{1,13}, new int[]{1,9}, 1, VarType.INSTANCE),
-	DARKWOOD(ModList.TWILIGHT, 		0x35281A, 0x395F41, "log", "darkleaves", "sapling", new int[]{3,15}, 0, 3, VarType.INSTANCE),
-	MANGROVE(ModList.TWILIGHT, 		0x8D8980, 0x431445, "log", "leaves", "sapling", new int[]{2,14}, new int[]{2,10}, 2, VarType.INSTANCE),
-	TWILIGHTOAK(ModList.TWILIGHT, 	0x806654, 0x764952, "log", "leaves", "sapling", new int[]{0,12}, new int[]{0,8}, 0, VarType.INSTANCE),
-	//RAINBOWOAK(ModList.TWILIGHT, 	0x806654, 0x764952, "---", "leaves", "sapling", new int[]{0,12}, new int[]{3,11}, 9, VarType.INSTANCE),
-	GREATWOOD(ModList.THAUMCRAFT, 	0x4F3E37, 0x71924C, "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INSTANCE),
-	SILVERWOOD(ModList.THAUMCRAFT, 	0xC9C3AC, 0x5782C7, "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE),
-	EUCALYPTUS(ModList.NATURA, 		0xE2CEB1, 0x3C9119, "tree", "floraLeaves", "floraSapling", 0, new int[]{1,9}, 1, VarType.INSTANCE),
-	SEQUOIA(ModList.NATURA, 		0x8C7162, 0x3C9119, "redwood", "floraLeaves", "floraSapling", new int[]{0,1,2}, new int[]{0,8}, 0, VarType.INSTANCE),
-	SAKURA(ModList.NATURA, 			0x703C02, 0xEB7F98, "tree", "floraLeavesNoColor", "floraSapling", new int[]{1,5,9}, new int[]{0,8}, 3, VarType.INSTANCE),
-	GHOSTWOOD(ModList.NATURA, 		0xB3B3B3, 0xEEE6D1, "tree", "floraLeavesNoColor", "floraSapling", new int[]{2,6,10}, new int[]{1,9}, 4, VarType.INSTANCE),
-	HOPSEED(ModList.NATURA, 		0x9F8661, 0x3C9119, "tree", "floraLeaves", "floraSapling", 3, new int[]{2,10}, 2, VarType.INSTANCE),
-	NATURADARKWOOD(ModList.NATURA, 	0x234D85, 0x061E4C, "darkTree", "darkLeaves", "floraSapling", 0, new int[]{0,1,2,8,9,10}, 6, VarType.INSTANCE),
-	BLOODWOOD(ModList.NATURA, 		0x8D4F05, 0xB10000, "bloodwood", "floraLeavesNoColor", "floraSapling", new int[]{0,1,2,3,4,5,15}, new int[]{2,10}, 5, VarType.INSTANCE),
-	FUSEWOOD(ModList.NATURA, 		0x2C3E38, 0x28818D, "darkTree", "darkLeaves", "floraSapling", 1, new int[]{3,11}, 7, VarType.INSTANCE),
-	TIGERWOOD(ModList.NATURA, 		0x544936, 0x5B2900, "rareTree", "rareLeaves", "rareSapling", 3, new int[]{3,11}, 3, VarType.INSTANCE),
-	SILVERBELL(ModList.NATURA, 		0x939C85, 0x73B849, "rareTree", "rareLeaves", "rareSapling", 1, new int[]{1,9}, 1, VarType.INSTANCE),
-	MAPLE(ModList.NATURA, 			0x503A23, 0x993412, "rareTree", "rareLeaves", "rareSapling", 0, new int[]{0,8}, 0, VarType.INSTANCE),
-	WILLOW(ModList.NATURA, 			0x584C30, 0x548941, "willow", "floraLeavesNoColor", "rareSapling", 0, new int[]{3,11}, 4, VarType.INSTANCE),
-	AMARANTH(ModList.NATURA, 		0x9C8B56, 0x3C9119, "rareTree", "rareLeaves", "rareSapling", 2, new int[]{2,10}, 2, VarType.INSTANCE),
-	BAMBOO(ModList.BOP, 			0xBBD26C, 0xAFD83B, "bamboo", "leaves1", "saplings", 0, new int[]{1, 5, 9, 13}, 2, VarType.INSTANCE),
-	MAGIC(ModList.BOP, 				0x78839E, 0x5687BE, "logs2", "leaves1", "saplings", new int[]{1, 5, 9, 13}, new int[]{2, 6, 10, 14}, 3, VarType.INSTANCE),
-	DARK(ModList.BOP, 				0x664848, 0x312F42, "logs1", "leaves1", "saplings", new int[]{2, 6, 10, 14}, new int[]{3, 7, 11, 15}, 4, VarType.INSTANCE),
-	FIR(ModList.BOP, 				0x675846, 0x518E5F, "logs1", "leaves2", "saplings", new int[]{3, 7, 11, 15}, new int[]{1, 5, 9, 13}, 6, VarType.INSTANCE),
-	LOFTWOOD(ModList.BOP, 			0x817665, 0x3FD994, "logs2", "leaves2", "saplings", new int[]{0, 4, 8, 12}, new int[]{2, 6, 10, 14}, 7, VarType.INSTANCE),
-	CHERRY(ModList.BOP, 			0x965441, 0xFFAFE0, "logs1", "leaves3", "saplings", new int[]{1, 5, 9, 13}, new int[]{1, 3, 5, 7, 9, 11, 13, 15}, 10, VarType.INSTANCE), //sapling 12 for white cherry
-	HELLBARK(ModList.BOP, 			0xB36F43, 0x7B5E1F, "logs4", "leaves4", "saplings", new int[]{1, 5, 9, 13}, new int[]{0, 4, 8, 12}, 13, VarType.INSTANCE),
-	JACARANDA(ModList.BOP, 			0x998177, 0x644F84, "logs4", "leaves4", "saplings", new int[]{2, 6, 10, 14}, new int[]{1, 5, 9, 13}, 14, VarType.INSTANCE),
-	SACRED(ModList.BOP, 			0x896B4F, 0x3E981A, "logs1", "colorizedLeaves1", "colorizedSaplings", new int[]{0, 4, 8, 12}, new int[]{0, 4, 8, 12}, 0, VarType.INSTANCE),
-	BOPMANGROVE(ModList.BOP, 		0xDED1B5, 0x3E981A, "logs2", "colorizedLeaves1", "colorizedSaplings", new int[]{2, 6, 10, 14}, new int[]{1, 5, 9, 13}, 1, VarType.INSTANCE),
-	PALM(ModList.BOP, 				0x936B40, 0x3E981A, "logs2", "colorizedLeaves1", "colorizedSaplings", new int[]{3, 7, 11, 15}, new int[]{2, 6, 10, 14}, 2, VarType.INSTANCE),
-	REDWOOD(ModList.BOP, 			0x722F0D, 0x3E981A, "logs3", "colorizedLeaves1", "colorizedSaplings", new int[]{0, 4, 8, 12}, new int[]{3, 7, 11, 15}, 3, VarType.INSTANCE),
-	BOPWILLOW(ModList.BOP, 			0x767A47, 0x3E981A, "logs3", "colorizedLeaves2", "colorizedSaplings", new int[]{1, 5, 9, 13}, new int[]{0, 4, 8, 12}, 4, VarType.INSTANCE),
-	PINE(ModList.BOP, 				0x896B4F, 0x3E981A, "logs4", "colorizedLeaves2", "colorizedSaplings", new int[]{0, 4, 8, 12}, new int[]{1, 5, 9, 13}, 5, VarType.INSTANCE),
-	MAHOGANY(ModList.BOP, 			0x896B4F, 0x3E981A, "logs4", "colorizedLeaves2", "colorizedSaplings", new int[]{3, 7, 11, 15}, new int[]{2, 6, 10, 14}, 6, VarType.INSTANCE),
-	BXLREDWOOD(ModList.BXL, 		0x000000, 0x000000, null, null, null, 0, VarType.INSTANCE),
-	IC2RUBBER(ModList.IC2, 			0x3C2D20, 0x638143, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,8}, 0, VarType.ITEMSTACK),
-	MFRRUBBER(ModList.MINEFACTORY, 	0x7E5C25, 0x5DC123, "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5,13}, new int[]{0,8}, 0, VarType.INSTANCE),
-	TIMEWOOD(ModList.TWILIGHT, 		0x4F301D, 6986775, "magicLog", "magicLeaves", "sapling", new int[]{0,12}, new int[]{1,8}, 5, VarType.INSTANCE),
-	TRANSFORMATION(ModList.TWILIGHT, 0x66727F, 7130346, "magicLog", "magicLeaves", "sapling", new int[]{1,13}, new int[]{1,9}, 6, VarType.INSTANCE),
-	MINEWOOD(ModList.TWILIGHT, 		0xC5A982, 16576836, "magicLog", "magicLeaves", "sapling", new int[]{2,14}, new int[]{2,10}, 7, VarType.INSTANCE),
-	SORTING(ModList.TWILIGHT, 		0x705835, 3558403, "magicLog", "magicLeaves", "sapling", new int[]{3,15}, new int[]{3,11}, 8, VarType.INSTANCE),
-	GLOW(ModList.TRANSITIONAL, 		0xE2B87B, 0xFFBC5E, "GlowWood", "GlowLeaf", "GlowSapling", 0, 0, 0, VarType.INSTANCE),
-	FORCE(ModList.DARTCRAFT, 		0xE0B749, 0xD9B22C, "forceLog", "forceLeaves", "forceSapling", 0, new int[]{0,8}, 0, VarType.INSTANCE),
-	HIGHFIR(ModList.HIGHLANDS, 		0x77ee77, 0x88dd88, "firWood", "firLeaves", "firSapling", VarType.INSTANCE),
-	HIGHACACIA(ModList.HIGHLANDS, 	0x77ee77, 0x88dd88, "acaciaWood", "acaciaLeaves", "acaciaSapling", VarType.INSTANCE),
-	HIGHREDWOOD(ModList.HIGHLANDS, 	0x77ee77, 0x88dd88, "redwoodWood", "redwoodLeaves", "redwoodSapling", VarType.INSTANCE),
-	POPLAR(ModList.HIGHLANDS, 		0x77ee77, 0x88dd88, "poplarWood", "poplarLeaves", "poplarSapling", VarType.INSTANCE),
-	HIGHCANOPY(ModList.HIGHLANDS, 	0x77ee77, 0x88dd88, "canopyWood", "canopyLeaves", "canopySapling", VarType.INSTANCE),
-	HIGHPALM(ModList.HIGHLANDS, 	0x77ee77, 0x88dd88, "palmWood", "palmLeaves", "palmSapling", VarType.INSTANCE),
-	IRONWOOD(ModList.HIGHLANDS, 	0x77ee77, 0x88dd88, "ironWood", "ironwoodLeaves", "ironwoodSapling", VarType.INSTANCE),
-	HIGHMANGROVE(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, "mangroveWood", "mangroveLeaves", "mangroveSapling", VarType.INSTANCE),
-	ASH(ModList.HIGHLANDS, 			0x77ee77, 0x88dd88, "ashWood", "ashLeaves", "ashSapling", VarType.INSTANCE),
-	WITCHWOOD(ModList.ARSMAGICA, 	0x584D32, 0x1F4719, "witchwoodLog", "witchwoodLeaves", "witchwoodSapling", VarType.INSTANCE),
-	ROWAN(ModList.WITCHERY, 		0x374633, 0x9E774D, "LOG", "LEAVES", "SAPLING", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INSTANCE),
-	HAWTHORNE(ModList.WITCHERY, 	0x656566, 0xC3EEC3, "LOG", "LEAVES", "SAPLING", new int[]{2,6,10}, new int[]{2,10}, 2, VarType.INSTANCE),
-	ALDER(ModList.WITCHERY, 		0x52544C, 0xC3D562, "LOG", "LEAVES", "SAPLING", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE),
-	LIGHTED(ModList.CHROMATICRAFT,	0xA05F36, 0xFFD793, "GLOWLOG", "GLOWLEAF", "GLOWSAPLING", 0, new int[]{0,1,2,3,4}, 0, VarType.INSTANCE),
-	SLIME(ModList.TINKERER,			0x68FF7A, 0x8EFFE1, "slimeGel", "slimeLeaves", "slimeSapling", 1, 0, 0, VarType.INSTANCE),
-	TAINTED(ModList.FORBIDDENMAGIC,	0x40374B, 0x530D7B,	"taintLog", "taintLeaves", "taintSapling", new int[]{0,4,8}, 0, 0, VarType.INSTANCE);
+	CANOPY(ModList.TWILIGHT, 		0x252517, 0x330464, 18, 30, "log", "leaves", "sapling", new int[]{1,13}, new int[]{1,9}, 1, VarType.INSTANCE),
+	DARKWOOD(ModList.TWILIGHT, 		0x35281A, 0x395F41, 60, 20, "log", "darkleaves", "sapling", new int[]{3,15}, 0, 3, VarType.INSTANCE),
+	MANGROVE(ModList.TWILIGHT, 		0x8D8980, 0x431445, 10, 18, "log", "leaves", "sapling", new int[]{2,14}, new int[]{2,10}, 2, VarType.INSTANCE),
+	TWILIGHTOAK(ModList.TWILIGHT, 	0x806654, 0x764952, 30, 180, "log", "leaves", "sapling", new int[]{0,12}, new int[]{0,8}, 0, VarType.INSTANCE),
+	//RAINBOWOAK(ModList.TWILIGHT, 	0x806654, 0x764952, ?, ?, "---", "leaves", "sapling", new int[]{0,12}, new int[]{3,11}, 9, VarType.INSTANCE),
+	GREATWOOD(ModList.THAUMCRAFT, 	0x4F3E37, 0x71924C, 10, 30, "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INSTANCE),
+	SILVERWOOD(ModList.THAUMCRAFT, 	0xC9C3AC, 0x5782C7, 8, 24, "blockMagicalLog", "blockMagicalLeaves", "blockCustomPlant", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE),
+	EUCALYPTUS(ModList.NATURA, 		0xE2CEB1, 0x3C9119, 10, 14, "tree", "floraLeaves", "floraSapling", 0, new int[]{1,9}, 1, VarType.INSTANCE),
+	SEQUOIA(ModList.NATURA, 		0x8C7162, 0x3C9119, 50, 250, "redwood", "floraLeaves", "floraSapling", new int[]{0,1,2}, new int[]{0,8}, 0, VarType.INSTANCE),
+	SAKURA(ModList.NATURA, 			0x703C02, 0xEB7F98, 16, 30, "tree", "floraLeavesNoColor", "floraSapling", new int[]{1,5,9}, new int[]{0,8}, 3, VarType.INSTANCE),
+	GHOSTWOOD(ModList.NATURA, 		0xB3B3B3, 0xEEE6D1, 7, 12, "tree", "floraLeavesNoColor", "floraSapling", new int[]{2,6,10}, new int[]{1,9}, 4, VarType.INSTANCE),
+	HOPSEED(ModList.NATURA, 		0x9F8661, 0x3C9119, 10, 7, "tree", "floraLeaves", "floraSapling", 3, new int[]{2,10}, 2, VarType.INSTANCE),
+	NATURADARKWOOD(ModList.NATURA, 	0x234D85, 0x061E4C, 7, 12, "darkTree", "darkLeaves", "floraSapling", 0, new int[]{0,1,2,8,9,10}, 6, VarType.INSTANCE),
+	BLOODWOOD(ModList.NATURA, 		0x8D4F05, 0xB10000, 14, 16, "bloodwood", "floraLeavesNoColor", "floraSapling", new int[]{0,1,2,3,4,5,15}, new int[]{2,10}, 5, VarType.INSTANCE),
+	FUSEWOOD(ModList.NATURA, 		0x2C3E38, 0x28818D, 7, 12, "darkTree", "darkLeaves", "floraSapling", 1, new int[]{3,11}, 7, VarType.INSTANCE),
+	TIGERWOOD(ModList.NATURA, 		0x544936, 0x5B2900, 7, 12, "rareTree", "rareLeaves", "rareSapling", 3, new int[]{3,11}, 3, VarType.INSTANCE),
+	SILVERBELL(ModList.NATURA, 		0x939C85, 0x73B849, 7, 12, "rareTree", "rareLeaves", "rareSapling", 1, new int[]{1,9}, 1, VarType.INSTANCE),
+	MAPLE(ModList.NATURA, 			0x503A23, 0x993412, 7, 12, "rareTree", "rareLeaves", "rareSapling", 0, new int[]{0,8}, 0, VarType.INSTANCE),
+	WILLOW(ModList.NATURA, 			0x584C30, 0x548941, 9, 14, "willow", "floraLeavesNoColor", "rareSapling", 0, new int[]{3,11}, 4, VarType.INSTANCE),
+	AMARANTH(ModList.NATURA, 		0x9C8B56, 0x3C9119, 6, 20, "rareTree", "rareLeaves", "rareSapling", 2, new int[]{2,10}, 2, VarType.INSTANCE),
+	BAMBOO(ModList.BOP, 			0xBBD26C, 0xAFD83B, 5, 20, "bamboo", "leaves1", "saplings", 0, new int[]{1, 5, 9, 13}, 2, VarType.INSTANCE),
+	MAGIC(ModList.BOP, 				0x78839E, 0x5687BE, 7, 12, "logs2", "leaves1", "saplings", new int[]{1, 5, 9, 13}, new int[]{2, 6, 10, 14}, 3, VarType.INSTANCE),
+	DARK(ModList.BOP, 				0x664848, 0x312F42, 7, 12, "logs1", "leaves1", "saplings", new int[]{2, 6, 10, 14}, new int[]{3, 7, 11, 15}, 4, VarType.INSTANCE),
+	FIR(ModList.BOP, 				0x675846, 0x518E5F, 12, 60, "logs1", "leaves2", "saplings", new int[]{3, 7, 11, 15}, new int[]{1, 5, 9, 13}, 6, VarType.INSTANCE),
+	LOFTWOOD(ModList.BOP, 			0x817665, 0x3FD994, 8, 16, "logs2", "leaves2", "saplings", new int[]{0, 4, 8, 12}, new int[]{2, 6, 10, 14}, 7, VarType.INSTANCE),
+	CHERRY(ModList.BOP, 			0x965441, 0xFFAFE0, 15, 20, "logs1", "leaves3", "saplings", new int[]{1, 5, 9, 13}, new int[]{1, 3, 5, 7, 9, 11, 13, 15}, 10, VarType.INSTANCE), //sapling 12 for white cherry
+	HELLBARK(ModList.BOP, 			0xB36F43, 0x7B5E1F, 2, 5, "logs4", "leaves4", "saplings", new int[]{1, 5, 9, 13}, new int[]{0, 4, 8, 12}, 13, VarType.INSTANCE),
+	JACARANDA(ModList.BOP, 			0x998177, 0x644F84, 7, 12, "logs4", "leaves4", "saplings", new int[]{2, 6, 10, 14}, new int[]{1, 5, 9, 13}, 14, VarType.INSTANCE),
+	SACRED(ModList.BOP, 			0x896B4F, 0x3E981A, 30, 160, "logs1", "colorizedLeaves1", "colorizedSaplings", new int[]{0, 4, 8, 12}, new int[]{0, 4, 8, 12}, 0, VarType.INSTANCE),
+	BOPMANGROVE(ModList.BOP, 		0xDED1B5, 0x3E981A, 5, 15, "logs2", "colorizedLeaves1", "colorizedSaplings", new int[]{2, 6, 10, 14}, new int[]{1, 5, 9, 13}, 1, VarType.INSTANCE),
+	PALM(ModList.BOP, 				0x936B40, 0x3E981A, 6, 14, "logs2", "colorizedLeaves1", "colorizedSaplings", new int[]{3, 7, 11, 15}, new int[]{2, 6, 10, 14}, 2, VarType.INSTANCE),
+	REDWOOD(ModList.BOP, 			0x722F0D, 0x3E981A, 6, 50, "logs3", "colorizedLeaves1", "colorizedSaplings", new int[]{0, 4, 8, 12}, new int[]{3, 7, 11, 15}, 3, VarType.INSTANCE),
+	BOPWILLOW(ModList.BOP, 			0x767A47, 0x3E981A, 8, 15, "logs3", "colorizedLeaves2", "colorizedSaplings", new int[]{1, 5, 9, 13}, new int[]{0, 4, 8, 12}, 4, VarType.INSTANCE),
+	PINE(ModList.BOP, 				0x896B4F, 0x3E981A, 8, 25, "logs4", "colorizedLeaves2", "colorizedSaplings", new int[]{0, 4, 8, 12}, new int[]{1, 5, 9, 13}, 5, VarType.INSTANCE),
+	MAHOGANY(ModList.BOP, 			0x896B4F, 0x3E981A, 9, 16, "logs4", "colorizedLeaves2", "colorizedSaplings", new int[]{3, 7, 11, 15}, new int[]{2, 6, 10, 14}, 6, VarType.INSTANCE),
+	BXLREDWOOD(ModList.BXL, 		0x000000, 0x000000, -1, -1, null, null, null, 0, VarType.INSTANCE),
+	IC2RUBBER(ModList.IC2, 			0x3C2D20, 0x638143, 6, 15, "rubberWood", "rubberLeaves", "rubberSapling", new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,8}, 0, VarType.ITEMSTACK),
+	MFRRUBBER(ModList.MINEFACTORY, 	0x7E5C25, 0x5DC123, 30, 90, "rubberWoodBlock", "rubberLeavesBlock", "rubberSaplingBlock", new int[]{0,1,2,3,4,5,13}, new int[]{0,8}, 0, VarType.INSTANCE),
+	TIMEWOOD(ModList.TWILIGHT, 		0x4F301D, 6986775, 10, 20, "magicLog", "magicLeaves", "sapling", new int[]{0,12}, new int[]{1,8}, 5, VarType.INSTANCE),
+	TRANSFORMATION(ModList.TWILIGHT, 0x66727F, 7130346, 12, 20, "magicLog", "magicLeaves", "sapling", new int[]{1,13}, new int[]{1,9}, 6, VarType.INSTANCE),
+	MINEWOOD(ModList.TWILIGHT, 		0xC5A982, 16576836, 15, 20, "magicLog", "magicLeaves", "sapling", new int[]{2,14}, new int[]{2,10}, 7, VarType.INSTANCE),
+	SORTING(ModList.TWILIGHT, 		0x705835, 3558403, 12, 20, "magicLog", "magicLeaves", "sapling", new int[]{3,15}, new int[]{3,11}, 8, VarType.INSTANCE),
+	GLOW(ModList.TRANSITIONAL, 		0xE2B87B, 0xFFBC5E, 7, 12, "GlowWood", "GlowLeaf", "GlowSapling", 0, 0, 0, VarType.INSTANCE),
+	FORCE(ModList.DARTCRAFT, 		0xE0B749, 0xD9B22C, 7, 12, "forceLog", "forceLeaves", "forceSapling", 0, new int[]{0,8}, 0, VarType.INSTANCE),
+	HIGHFIR(ModList.HIGHLANDS, 		0x77ee77, 0x88dd88, 10, 30, "firWood", "firLeaves", "firSapling", VarType.INSTANCE),
+	HIGHACACIA(ModList.HIGHLANDS, 	0x77ee77, 0x88dd88, 12, 10, "acaciaWood", "acaciaLeaves", "acaciaSapling", VarType.INSTANCE),
+	HIGHREDWOOD(ModList.HIGHLANDS, 	0x77ee77, 0x88dd88, 12, 45, "redwoodWood", "redwoodLeaves", "redwoodSapling", VarType.INSTANCE),
+	POPLAR(ModList.HIGHLANDS, 		0x77ee77, 0x88dd88, 8, 12, "poplarWood", "poplarLeaves", "poplarSapling", VarType.INSTANCE),
+	HIGHCANOPY(ModList.HIGHLANDS, 	0x77ee77, 0x88dd88, 12, 30, "canopyWood", "canopyLeaves", "canopySapling", VarType.INSTANCE),
+	HIGHPALM(ModList.HIGHLANDS, 	0x77ee77, 0x88dd88, 4, 12, "palmWood", "palmLeaves", "palmSapling", VarType.INSTANCE),
+	IRONWOOD(ModList.HIGHLANDS, 	0x77ee77, 0x88dd88, 20, 50, "ironWood", "ironwoodLeaves", "ironwoodSapling", VarType.INSTANCE),
+	HIGHMANGROVE(ModList.HIGHLANDS, 0x77ee77, 0x88dd88, 6, 10, "mangroveWood", "mangroveLeaves", "mangroveSapling", VarType.INSTANCE),
+	ASH(ModList.HIGHLANDS, 			0x77ee77, 0x88dd88, 12, 25, "ashWood", "ashLeaves", "ashSapling", VarType.INSTANCE),
+	WITCHWOOD(ModList.ARSMAGICA, 	0x584D32, 0x1F4719, 10, 20, "witchwoodLog", "witchwoodLeaves", "witchwoodSapling", VarType.INSTANCE),
+	ROWAN(ModList.WITCHERY, 		0x374633, 0x9E774D, 7, 12, "LOG", "LEAVES", "SAPLING", new int[]{0,4,8}, new int[]{0,8}, 0, VarType.INSTANCE),
+	HAWTHORNE(ModList.WITCHERY, 	0x656566, 0xC3EEC3, 10, 16, "LOG", "LEAVES", "SAPLING", new int[]{2,6,10}, new int[]{2,10}, 2, VarType.INSTANCE),
+	ALDER(ModList.WITCHERY, 		0x52544C, 0xC3D562, 6, 10, "LOG", "LEAVES", "SAPLING", new int[]{1,5,9}, new int[]{1,9}, 1, VarType.INSTANCE),
+	LIGHTED(ModList.CHROMATICRAFT,	0xA05F36, 0xFFD793, 10, 14, "GLOWLOG", "GLOWLEAF", "GLOWSAPLING", 0, new int[]{0,1,2,3,4}, 0, VarType.INSTANCE),
+	SLIME(ModList.TINKERER,			0x68FF7A, 0x8EFFE1, 12, 15, "slimeGel", "slimeLeaves", "slimeSapling", 1, 0, 0, VarType.INSTANCE),
+	TAINTED(ModList.FORBIDDENMAGIC,	0x40374B, 0x530D7B,	7, 12, "taintLog", "taintLeaves", "taintSapling", new int[]{0,4,8}, 0, 0, VarType.INSTANCE);
 
 	private ModList mod;
 	private Block blockID = null;
@@ -109,6 +110,7 @@ public enum ModWoodList implements TreeType {
 
 	public final int logColor;
 	public final int leafColor;
+	public final BlockBox bounds;
 
 	private String varName;
 	private Class containerClass;
@@ -123,32 +125,33 @@ public enum ModWoodList implements TreeType {
 
 	private static final MultiMap<ModList, ModWoodList> modMappings = new MultiMap(new MultiMap.HashSetFactory());
 
-	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, VarType type) {
-		this(req, color, leaf, blockVar, leafVar, saplingVar, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, type);
+	private ModWoodList(ModList req, int color, int leaf, int w, int h, String blockVar, String leafVar, String saplingVar, VarType type) {
+		this(req, color, leaf, w, h, blockVar, leafVar, saplingVar, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, type);
 	}
 
-	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, int meta, int metaleaf, int metasapling, VarType type) {
-		this(req, color, leaf, blockVar, leafVar, saplingVar, new int[]{meta}, new int[]{metaleaf}, metasapling, type);
+	private ModWoodList(ModList req, int color, int leaf, int w, int h, String blockVar, String leafVar, String saplingVar, int meta, int metaleaf, int metasapling, VarType type) {
+		this(req, color, leaf, w, h, blockVar, leafVar, saplingVar, new int[]{meta}, new int[]{metaleaf}, metasapling, type);
 	}
 
-	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, int meta, VarType type) {
-		this(req, color, leaf, blockVar, leafVar, saplingVar, new int[]{meta}, new int[]{meta}, meta, type);
+	private ModWoodList(ModList req, int color, int leaf, int w, int h, String blockVar, String leafVar, String saplingVar, int meta, VarType type) {
+		this(req, color, leaf, w, h, blockVar, leafVar, saplingVar, new int[]{meta}, new int[]{meta}, meta, type);
 	}
 
-	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, int[] meta, int metaleaf, int metasapling, VarType type) {
-		this(req, color, leaf, blockVar, leafVar, saplingVar, meta, new int[]{metaleaf}, metasapling, type);
+	private ModWoodList(ModList req, int color, int leaf, int w, int h, String blockVar, String leafVar, String saplingVar, int[] meta, int metaleaf, int metasapling, VarType type) {
+		this(req, color, leaf, w, h, blockVar, leafVar, saplingVar, meta, new int[]{metaleaf}, metasapling, type);
 	}
 
-	private ModWoodList(ModList req, int color, int leaf, String blockVar, String leafVar, String saplingVar, int meta, int[] metaleaf, int metasapling, VarType type) {
-		this(req, color, leaf, blockVar, leafVar, saplingVar, new int[]{meta}, metaleaf, metasapling, type);
+	private ModWoodList(ModList req, int color, int leaf, int w, int h, String blockVar, String leafVar, String saplingVar, int meta, int[] metaleaf, int metasapling, VarType type) {
+		this(req, color, leaf, w, h, blockVar, leafVar, saplingVar, new int[]{meta}, metaleaf, metasapling, type);
 	}
 
-	private ModWoodList(ModList req, int color, int leafcolor, String blockVar, String leafVar, String saplingVar, int[] meta, int[] metaleaf, int metasapling, VarType type) {
+	private ModWoodList(ModList req, int color, int leafcolor, int w, int h, String blockVar, String leafVar, String saplingVar, int[] meta, int[] metaleaf, int metasapling, VarType type) {
 		if (!DragonAPIInit.canLoadHandlers())
 			throw new MisuseException("Accessed registry enum too early! Wait until postInit!");
 		mod = req;
 		leafColor = leafcolor;
 		logColor = color;
+		bounds = BlockBox.origin().expand(w, h, w);
 		if (!mod.isLoaded()) {
 			DragonAPICore.log("DRAGONAPI: Not loading "+this.getLabel()+": Mod not present.");
 			blockMeta = new int[]{0};
@@ -503,6 +506,17 @@ public enum ModWoodList implements TreeType {
 
 	public boolean canBePlacedSideways() {
 		return this.getLogMetadatas().size() == 3;
+	}
+
+	public boolean isNaturalLeaf(World world, int x, int y, int z) {
+		if (this.getParentMod() == ModList.BOP || this.getParentMod() == ModList.THAUMCRAFT || this.getParentMod() == ModList.NATURA || this.getParentMod() == ModList.TWILIGHT)
+			return (world.getBlockMetadata(x, y, z)&4) == 0; //these mods use the vanilla rules
+		return true;
+	}
+
+	@Override
+	public BlockBox getTypicalMaximumSize() {
+		return bounds;
 	}
 
 	public static Collection<ModWoodList> getAllWoodsByMod(ModList mod) {

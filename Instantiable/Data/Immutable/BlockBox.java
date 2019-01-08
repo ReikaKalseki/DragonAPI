@@ -56,6 +56,10 @@ public final class BlockBox {
 		return new BlockBox(Integer.MAX_VALUE, Integer.MIN_VALUE);
 	}
 
+	public static BlockBox origin() {
+		return new BlockBox(-1, 1); //not 0,1
+	}
+
 	public static BlockBox block(int x, int y, int z) {
 		return new BlockBox(x, y, z, x+1, y+1, z+1);
 	}
@@ -211,6 +215,16 @@ public final class BlockBox {
 				break;
 		}
 		return new BlockBox(minx, miny, minz, maxx, maxy, maxz);
+	}
+
+	public BlockBox clampTo(BlockBox box) {
+		int minX = Math.max(this.minX, box.minX);
+		int minY = Math.max(this.minY, box.minY);
+		int minZ = Math.max(this.minZ, box.minZ);
+		int maxX = Math.min(this.maxX, box.maxX);
+		int maxY = Math.min(this.maxY, box.maxY);
+		int maxZ = Math.min(this.maxZ, box.maxZ);
+		return new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
 	public BlockBox combineWith(BlockBox box) {

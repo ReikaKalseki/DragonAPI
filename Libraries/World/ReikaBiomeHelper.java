@@ -13,8 +13,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -29,6 +32,8 @@ import net.minecraftforge.common.BiomeManager;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.RGB;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.ListFactory;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.MapDeterminator;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
@@ -67,6 +72,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 		addChildBiome(BiomeGenBase.extremeHills, BiomeGenBase.extremeHillsEdge);
 		addChildBiome(BiomeGenBase.extremeHills, BiomeGenBase.extremeHillsPlus);
+
+		addChildBiome(BiomeGenBase.mushroomIsland, BiomeGenBase.mushroomIslandShore);
 
 		addChildBiome(BiomeGenBase.mesa, BiomeGenBase.mesaPlateau);
 		addChildBiome(BiomeGenBase.mesa, BiomeGenBase.mesaPlateau_F);
@@ -165,7 +172,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		}
 	}
 
-	private static void addChildBiome(BiomeGenBase parent, BiomeGenBase child) {
+	public static void addChildBiome(BiomeGenBase parent, BiomeGenBase child) {
 		addChildBiome(parent, child, true);
 	}
 
@@ -227,8 +234,10 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		BiomeGenBase b = parents.get(biome);
 		if (b != null)
 			return b;
-		if (biome instanceof BiomeGenMutated && ((BiomeGenMutated)biome).baseBiome != null)
+		if (biome instanceof BiomeGenMutated && ((BiomeGenMutated)biome).baseBiome != null) {
+			parents.put(biome, ((BiomeGenMutated)biome).baseBiome);
 			biome = ((BiomeGenMutated)biome).baseBiome;
+		}
 		if (biome.biomeID >= 128) {
 			BiomeGenBase below = BiomeGenBase.biomeList[biome.biomeID-128];
 			if (below != null) {
@@ -551,5 +560,36 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 	public static BiomeGenBase getBiomeByName(String s) {
 		return nameMap.get(s);
+	}
+
+	public static MultiMap<Integer, Integer> getBiomeHierearchy() {
+		MultiMap<Integer, Integer> data = new MultiMap(new ListFactory(), new MapDeterminator(){
+
+			@Override
+			public Map getMapType() {
+				return new TreeMap();
+			}});
+
+		for (BiomeGenBase b : getAllBiomes()) {
+			for (BiomeGenBase b2 : getChildBiomes(b)) {
+				data.addValue(b.biomeID, b2.biomeID);
+			}
+		}
+		for (BiomeGenBase b : getAllBiomes()) {
+			BiomeGenBase parent = getParentBiomeType(b);
+			if (b != parent) {
+				data.addValue(parent.biomeID, b.biomeID);
+			}
+		}
+		for (BiomeGenBase b : getAllBiomes()) {
+			if (!data.containsKey(b.biomeID)) {
+				data.put(b.biomeID, new ArrayList());
+			}
+		}
+		HashSet<Integer> set = new HashSet(data.allValues(false));
+		for (int id : set) {
+			data.remove(id);
+		}
+		return data;
 	}
 }

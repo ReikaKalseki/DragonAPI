@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 
 public class OreBerryBushHandler extends CropHandlerBase {
 
@@ -34,11 +35,20 @@ public class OreBerryBushHandler extends CropHandlerBase {
 		GOLD(),
 		COPPER(),
 		TIN(),
-		ALUMNINUM(),
+		ALUMINUM(),
 		XP();
 
 		public ItemStack getStack() {
 			return new ItemStack(instance.berryID, 1, this.ordinal());
+		}
+
+		/** Metadatas are the worldgen values, which are the ripe ones. Subtract 4 for harvested. */
+		public BlockKey getBush() {
+			Block b = this == ALUMINUM || this == XP ? instance.secondbushID : instance.bushID;
+			int meta = 12+this.ordinal();
+			if (b == instance.secondbushID)
+				meta -= ALUMINUM.ordinal();
+			return new BlockKey(b, meta);
 		}
 	}
 

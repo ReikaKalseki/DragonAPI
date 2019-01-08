@@ -1737,6 +1737,36 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return false;
 	}
 
+	public static boolean isExposedToAirWithException(World world, int x, int y, int z, Block ex) {
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+			int dx = x+dir.offsetX;
+			int dy = y+dir.offsetZ;
+			int dz = z+dir.offsetY;
+			if (!world.checkChunksExist(dx, dy, dz, dx, dy, dz))
+				continue;
+			Block b = world.getBlock(dx, dy, dz);
+			if (b == ex)
+				continue;
+			if (b == Blocks.air)
+				return true;
+			if (b == null)
+				return true;
+			if (b.getCollisionBoundingBoxFromPool(world, dx, dy, dz) == null)
+				return true;
+			Material mat = b.getMaterial();
+			if (mat != null) {
+				if (mat == Material.circuits || mat == Material.air || mat == Material.cactus || mat == Material.fire)
+					return true;
+				if (mat == Material.plants || mat == Material.portal || mat == Material.vine || mat == Material.web)
+					return true;
+				if (!mat.isSolid())
+					return true;
+			}
+		}
+		return false;
+	}
+
 	public static int countAdjacentBlocks(World world, int x, int y, int z, Block id, boolean checkCorners) {
 		int count = 0;
 		for (int i = 0; i < 6; i++) {
@@ -1798,6 +1828,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 			}
 		}
+		forcingChunkSet.clear();
 	}
 
 	public static Collection<IInventory> getAllInventories(World world, int x, int y, int z, int r) {

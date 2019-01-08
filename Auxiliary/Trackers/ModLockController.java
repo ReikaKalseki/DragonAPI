@@ -6,11 +6,14 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.eventhandler.Event;
@@ -23,6 +26,7 @@ public class ModLockController {
 	public static final ModLockController instance = new ModLockController();
 
 	private final HashMap<String, String> data = new HashMap();
+	private final OneWaySet<String> wasEverRegistered = new OneWaySet();
 
 	private ModLockController() {
 
@@ -31,7 +35,12 @@ public class ModLockController {
 	public void registerMod(DragonAPIMod mod) {
 		if (Loader.instance().hasReachedState(LoaderState.INITIALIZATION))
 			throw new MisuseException(mod, "Mods can only be registered at the beginning of preinit!");
+		this.doRegisterMod(mod);
+	}
+
+	private void doRegisterMod(DragonAPIMod mod) {
 		data.put(mod.getTechnicalName(), this.hash(mod));
+		wasEverRegistered.add(mod.getTechnicalName());
 	}
 
 	private String hash(DragonAPIMod mod) {
@@ -39,7 +48,14 @@ public class ModLockController {
 	}
 
 	public boolean verify(DragonAPIMod mod) {
-		return this.hash(mod).equals(data.get(mod.getTechnicalName()));
+		String n = mod.getTechnicalName();
+		if (!wasEverRegistered.contains(n)) {
+			if (ReikaObfuscationHelper.isDeObfEnvironment())
+				DragonAPICore.logError("Cannot verify an unregistered mod "+n+"!");
+			this.doRegisterMod(mod);
+			return true;
+		}
+		return this.hash(mod).equals(data.get(n));
 	}
 
 	public void unverify(DragonAPIMod mod) {

@@ -610,4 +610,13 @@ public final class ReikaMathLibrary extends DragonAPICore {
 			k2 = b*-2-1;
 		return (long)(0.5*(k1 + k2)*(k1 + k2 + 1) + k2);
 	}
+
+	public static int countDecimalPlaces(float f) {
+		if (f == Float.NaN || f == Float.NEGATIVE_INFINITY || f == Float.POSITIVE_INFINITY)
+			return 0;
+		float dec = f-(int)f;
+		if (dec == 0)
+			return 0;
+		return String.valueOf(dec).split("\\.")[1].length();
+	}
 }

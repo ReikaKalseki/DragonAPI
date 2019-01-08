@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashSet;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -363,6 +364,7 @@ public final class ReikaMIDIReader {
 		int tempo = 120;
 		Track[] tr = seq.getTracks();
 		MIDINote[][] lastOn = new MIDINote[16][256];
+		HashSet<Integer> activeChannels = new HashSet();
 		for (int i = 0; i < tr.length; i++) {
 			for (int j = 0; j < tr[i].size(); j++) {
 				MidiEvent event = tr[i].get(j);
@@ -381,6 +383,8 @@ public final class ReikaMIDIReader {
 					if (channel >= 16) {
 						throw new RuntimeException("Invalid MIDI has more than 16 tracks!?!");
 					}
+					activeChannels.add(channel);
+					//ReikaJavaLibrary.pConsole(sm.getCommand()+" on channel "+channel+" @ "+time);
 					switch(sm.getCommand()) {
 						case NOTE_ON:
 							key = sm.getData1();
@@ -421,6 +425,7 @@ public final class ReikaMIDIReader {
 				}
 			}
 		}
+		//ReikaJavaLibrary.pConsole(activeChannels);
 		return data;
 	}
 

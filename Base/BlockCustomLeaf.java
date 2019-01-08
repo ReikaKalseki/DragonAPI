@@ -16,12 +16,14 @@ import net.minecraft.block.BlockLeaves;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import Reika.DragonAPI.ModRegistry.ModWoodList;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.TerminationCondition;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 
@@ -77,6 +79,8 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 
 	public abstract boolean decays();
 
+	public abstract boolean isNatural();
+
 	public abstract boolean allowModDecayControl();
 
 	public abstract boolean showInCreative();
@@ -131,40 +135,31 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 
 	public abstract boolean shouldTryDecay(World world, int x, int y, int z, int meta);
 
-	protected boolean decay(World world, int x, int y, int z, Random par5Random) {
-		int r = 4;
-		boolean decay = true;
-		for (int i = -r; i <= r; i++) {
-			for (int j = -r; j <= r; j++) {
-				for (int k = -r; k <= r; k++) {
-					Block id = world.getBlock(x+i, y+j, z+k);
-					int meta = world.getBlockMetadata(x+i, y+j, z+k);
-					if (id == Blocks.log || id == Blocks.log2 || ModWoodList.isModWood(id, meta)) {
-						decay = false;
-						i = j = k = r+1;
-					}
-				}
-			}
-		}
+	protected boolean decay(World world, final int x, final int y, final int z, Random par5Random) {
+		TerminationCondition t = new TerminationCondition(){
 
-		boolean hasAdj = false;
-		for (int i = 0; i < 6; i++) {
-			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
-			int dx = x+dir.offsetX;
-			int dy = y+dir.offsetY;
-			int dz = z+dir.offsetZ;
-			Block b = world.getBlock(dx, dy, dz);
-			if (b != Blocks.air) {
-				hasAdj = true;
-				i = 6;
+			@Override
+			public boolean isValidTerminus(World world, int dx, int dy, int dz) {
+				return BlockCustomLeaf.this.isValidLog(world, x, y, z, dx, dy, dz);
 			}
-		}
-		if (!hasAdj)
-			decay = true;
+		};
 
-		int meta = world.getBlockMetadata(x, y, z);
+		PropagationCondition c = new PropagationCondition(){
+
+			@Override
+			public boolean isValidLocation(IBlockAccess world, int dx, int dy, int dz) {
+				return BlockCustomLeaf.this.isMatchingLeaf(world, x, y, z, dx, dy, dz) || BlockCustomLeaf.this.isValidLog(world, x, y, z, dx, dy, dz);
+			}
+
+		};
+
+		Search s = new Search(x, y, z);
+		s.limit = BlockBox.block(x, y, z).expand(this.getMaximumLogSearchRadius());
+		s.depthLimit = this.getMaximumLogSearchDepth();
+		s.complete(world, c, t);
+		boolean decay = s.getResult().isEmpty();
 		if (decay) {
-			this.dropBlockAsItemWithChance(world, x, y, z, meta, 1, 0);
+			this.dropBlockAsItemWithChance(world, x, y, z, world.getBlockMetadata(x, y, z), 1, 0);
 			world.setBlockToAir(x, y, z);
 		}
 		return decay;
@@ -187,5 +182,11 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 
 	public abstract String getFastGraphicsIcon(int meta);
 	public abstract String getFancyGraphicsIcon(int meta);
+
+	public abstract boolean isMatchingLeaf(IBlockAccess iba, int thisX, int thisY, int thisZ, int lookX, int lookY, int lookZ);
+	public abstract boolean isValidLog(IBlockAccess iba, int thisX, int thisY, int thisZ, int lookX, int lookY, int lookZ);
+
+	public abstract int getMaximumLogSearchRadius();
+	public abstract int getMaximumLogSearchDepth();
 
 }

@@ -99,6 +99,7 @@ public class LootController {
 		}
 	}
 
+	@Deprecated
 	public enum Location {
 		BONUS(ChestGenHooks.BONUS_CHEST),
 		VILLAGE(ChestGenHooks.VILLAGE_BLACKSMITH),

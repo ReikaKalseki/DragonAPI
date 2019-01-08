@@ -9,11 +9,16 @@
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 
 import javax.imageio.ImageIO;
@@ -25,20 +30,24 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldType;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenMesa;
 import net.minecraft.world.biome.BiomeGenMushroomIsland;
 import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraft.world.biome.BiomeGenRiver;
+import net.minecraft.world.biome.WorldChunkManager;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.CustomBiomeDistributionWorld;
 import Reika.DragonAPI.Interfaces.CustomMapColorBiome;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -54,6 +63,30 @@ public class BiomeMapCommand extends DragonCommandBase {
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
 		Object[] ret = this.getPlayer(ics, args);
+		Collection<BiomeProvider> set = new ArrayList();
+		if (args[0].toLowerCase(Locale.ENGLISH).startsWith("seed=")) {
+			args[0] = args[0].substring(5);
+			if (args[0].contains(",")) {
+				String[] parts = args[0].split(",");
+				for (String s : parts) {
+					set.add(new SeedBiomes(Long.parseLong(s)));
+				}
+			}
+			else if (args[0].contains("-")) {
+				String[] parts = args[0].split("\\-");
+				long s1 = Long.parseLong(parts[0]);
+				long s2 = Long.parseLong(parts[1]);
+				for (long seed = s1; seed <= s2; seed++) {
+					set.add(new SeedBiomes(seed));
+				}
+			}
+			else {
+				set.add(new SeedBiomes(Long.parseLong(args[0])));
+			}
+			String[] nargs = new String[args.length-1];
+			System.arraycopy(args, 1, nargs, 0, nargs.length);
+			args = nargs;
+		}
 		EntityPlayerMP ep = (EntityPlayerMP)ret[0];
 		if ((boolean)ret[1]) {
 			String[] nargs = new String[args.length-1];
@@ -61,7 +94,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 			args = nargs;
 		}
 		if (args.length < 2) {
-			this.sendChatToSender(ics, EnumChatFormatting.RED.toString()+"Illegal arguments. Use [range] [resolution] <grid> <fullGrid>.");
+			this.sendChatToSender(ics, EnumChatFormatting.RED.toString()+"Illegal arguments. Use <seed> [range] [resolution] <grid> <fullGrid>.");
 			return;
 		}
 		int range = Integer.parseInt(args[0]);
@@ -72,28 +105,50 @@ public class BiomeMapCommand extends DragonCommandBase {
 		int z = MathHelper.floor_double(ep.posZ);
 		long start = System.currentTimeMillis();
 
+		if (set.isEmpty())
+			set.add(new WorldBiomes(ep.worldObj));
+
+		for (BiomeProvider bp : set)
+			this.generateMap(bp, ep, start, x, z, range, res, grid, fullGrid);
+	}
+
+	private void generateMap(BiomeProvider bp, EntityPlayerMP ep, long start, int x, int z, int range, int res, int grid, boolean fullGrid) {
 		int hash = rand.nextInt();
 
-		String name = ep.worldObj.getWorldInfo().getWorldName();
-		int dim = ep.worldObj.provider.dimensionId;
-		ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGSTART.ordinal(), ep, name, hash, dim, x, z, range, res, grid, fullGrid ? 1 : 0);
+		int dim = bp instanceof WorldBiomes ? 0 : ep.worldObj.provider.dimensionId;
+		if (DragonAPICore.isSinglePlayer()) {
+			this.startCollecting(hash, bp.getName(), dim, x, z, range, res, grid, fullGrid);
+		}
+		else {
+			ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGSTART.ordinal(), ep, bp.getName(), hash, dim, x, z, range, res, grid, fullGrid ? 1 : 0);
+		}
 
 		ArrayList<Integer> dat = new ArrayList();
 		dat.add(hash);
 		int n = 0;
 		for (int dx = x-range; dx <= x+range; dx += res) {
 			for (int dz = z-range; dz <= z+range; dz += res) {
-				int biome = this.getBiome(ep.worldObj, dx, dz);
+				int biome = bp.getBiome(dx, dz);
 				//ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGDAT.ordinal(), ep, hash, dx, dz, b.biomeID);
 				n++;
-				dat.add(dx);
-				dat.add(dz);
-				dat.add(biome);
+				if (DragonAPICore.isSinglePlayer()) {
+					this.addBiomePoint(hash, dx, dz, biome);
+				}
+				else {
+					dat.add(dx);
+					dat.add(dz);
+					dat.add(biome);
+				}
 				if (n >= PACKET_COMPILE) {
-					ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGDAT.ordinal(), ep, dat);
-					n = 0;
-					dat.clear();
-					dat.add(hash);
+					if (DragonAPICore.isSinglePlayer()) {
+
+					}
+					else {
+						ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGDAT.ordinal(), ep, dat);
+						n = 0;
+						dat.clear();
+						dat.add(hash);
+					}
 				}
 			}
 		}
@@ -101,20 +156,28 @@ public class BiomeMapCommand extends DragonCommandBase {
 		if (dat.size() > 1) {
 			//pad to fit normal packet size expectation
 			int m = (dat.size()-1)/3;
-			int biome = this.getBiome(ep.worldObj, x, z);
-			for (int i = m; i < PACKET_COMPILE; i++) {
-				dat.add(x);
-				dat.add(z);
-				dat.add(biome);
+			int biome = bp.getBiome(x, z);
+			if (DragonAPICore.isSinglePlayer()) {
+				this.addBiomePoint(hash, x, z, biome);
 			}
-
-			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGDAT.ordinal(), ep, dat);
-			n = 0;
-			dat.clear();
-			dat.add(hash);
+			else {
+				for (int i = m; i < PACKET_COMPILE; i++) {
+					dat.add(x);
+					dat.add(z);
+					dat.add(biome);
+				}
+				ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGDAT.ordinal(), ep, dat);
+				n = 0;
+				dat.clear();
+				dat.add(hash);
+			}
 		}
-
-		ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGEND.ordinal(), ep, hash);
+		if (DragonAPICore.isSinglePlayer()) {
+			this.finishCollectingAndMakeImage(hash);
+		}
+		else {
+			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.BIOMEPNGEND.ordinal(), ep, hash);
+		}
 	}
 
 	private Object[] getPlayer(ICommandSender ics, String[] args) {
@@ -129,13 +192,6 @@ public class BiomeMapCommand extends DragonCommandBase {
 			}
 			return new Object[]{ep, true};
 		}
-	}
-
-	private int getBiome(World world, int x, int z) {
-		if (world.provider instanceof CustomBiomeDistributionWorld) {
-			return ((CustomBiomeDistributionWorld)world.provider).getBiomeID(world, x, z);
-		}
-		return world.getWorldChunkManager().getBiomeGenAt(x, z).biomeID;//world.getBiomeGenForCoords(x, z).biomeID;
 	}
 
 	@Override
@@ -177,6 +233,69 @@ public class BiomeMapCommand extends DragonCommandBase {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	private static interface BiomeProvider {
+
+		//public String getFileName(long seed, String name, int x, int z, int range, int res, int grid, boolean fullGrid);
+		public int getBiome(int x, int z);
+		public String getName();
+
+	}
+
+	private static class WorldBiomes implements BiomeProvider {
+
+		private final World world;
+
+		private WorldBiomes(World world) {
+			this.world = world;
+		}
+		/*
+		@Override
+		public String getFileName(long seed, String name, int x, int z, int range, int res, int grid, boolean fullGrid) {
+
+		}*/
+
+		@Override
+		public int getBiome(int x, int z) {
+			if (world.provider instanceof CustomBiomeDistributionWorld) {
+				return ((CustomBiomeDistributionWorld)world.provider).getBiomeID(world, x, z);
+			}
+			return world.getWorldChunkManager().getBiomeGenAt(x, z).biomeID;
+		}
+
+		@Override
+		public String getName() {
+			return world.getWorldInfo().getWorldName()+"/["+world.getSaveHandler().getWorldDirectoryName()+"]";
+		}
+
+	}
+
+	private static class SeedBiomes implements BiomeProvider {
+
+		private final long seed;
+		private final WorldChunkManager world;
+
+		private SeedBiomes(long seed) {
+			this.seed = seed;
+			world = new WorldChunkManager(seed, WorldType.DEFAULT);
+		}
+		/*
+		@Override
+		public String getFileName(long seed, String name, int x, int z, int range, int res, int grid, boolean fullGrid) {
+			return "BiomeMap/Forced/"+worldName+"; "+x+", "+z+" ("+sr+"x"+sr+"; [R="+res+" b-px, G="+grid+"-"+fullGrid+"]).png";
+		}*/
+
+		@Override
+		public int getBiome(int x, int z) {
+			return world.getBiomeGenAt(x, z).biomeID;
+		}
+
+		@Override
+		public String getName() {
+			return "SEED="+seed;
+		}
+
 	}
 
 	private static class BiomeMap {
@@ -240,7 +359,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 		@SideOnly(Side.CLIENT)
 		private void addPoint(int x, int z, int biomeID) {
-			int c = 0xff000000 | this.getBiomeColor(Minecraft.getMinecraft().theWorld, x, z, BiomeGenBase.biomeList[biomeID]);
+			int c = 0xff000000 | this.getBiomeColor(x, z, BiomeGenBase.biomeList[biomeID]);
 			int i = (range+(x-originX))/resolution;
 			int k = (range+(z-originZ))/resolution;
 			data[i][k] = c;
@@ -261,21 +380,70 @@ public class BiomeMapCommand extends DragonCommandBase {
 				}
 			}
 			ImageIO.write(img, "png", f);
+
+			this.createLegend(f);
+
 			return f.getAbsolutePath();
+		}
+
+		private void createLegend(File f) throws IOException {
+			File f2 = new File(f.getParentFile(), "!legend.png");
+			if (f2.exists() && !ReikaObfuscationHelper.isDeObfEnvironment())
+				return;
+			f2.createNewFile();
+
+			MultiMap<Integer, Integer> li = ReikaBiomeHelper.getBiomeHierearchy();
+			int heightPerBiome = 18;
+			int height = (4+heightPerBiome)*(1+li.totalSize()+li.keySet().size());
+			//height = ReikaMathLibrary.ceil2PseudoExp(height);
+
+			BufferedImage img = new BufferedImage(256, height, BufferedImage.TYPE_INT_ARGB);
+
+			Graphics graphics = img.getGraphics();
+			Font ft = graphics.getFont();
+			graphics.setFont(new Font(ft.getName(), ft.getStyle(), ft.getSize()*1));
+			graphics.setColor(new Color(0xff000000));
+			int y = 2;
+			for (Integer b : li.keySet()) {
+				this.createLegendEntry(b, 2, y, graphics, img, heightPerBiome);
+				y += heightPerBiome+4;
+				for (Integer b2 : li.get(b)) {
+					this.createLegendEntry(b2, 24, y, graphics, img, heightPerBiome);
+					y += heightPerBiome+4;
+				}
+			}
+			graphics.dispose();
+
+			ImageIO.write(img, "png", f2);
+		}
+
+		private void createLegendEntry(int b, int x, int y, Graphics g, BufferedImage img, int hpb) {
+			BiomeGenBase biome = BiomeGenBase.biomeList[b];
+			g.drawString(biome.biomeName+" ["+biome.biomeID+"]", x+hpb+4, y+hpb/2+4);
+			for (int i = -1; i <= hpb; i++) {
+				for (int k = -1; k <= hpb; k++) {
+					int clr = i == -1 || k == -1 || i == hpb || k == hpb ? 0xff000000 : 0xff000000 | this.getBiomeColor(i*12, k*12, biome);
+					img.setRGB(x+i, y+k, clr);
+				}
+			}
 		}
 
 		private String getFilename() {
 			String sr = String.valueOf(range*2+1);
-			return "BiomeMap/"+worldName+"/DIM"+dimensionID+"/"+originX+", "+originZ+" ("+sr+"x"+sr+"; [R="+resolution+" b-px, G="+gridSize+"-"+fullGrid+"]).png";
+			String ret = "BiomeMap/"+worldName+"/DIM"+dimensionID+"/"+originX+", "+originZ+" ("+sr+"x"+sr+"; [R="+resolution+" b-px, G="+gridSize+"-"+fullGrid+"]).png";
+			if (worldName.contains("SEED=")) {
+				ret = "BiomeMap/Forced/"+worldName+"; "+originX+", "+originZ+" ("+sr+"x"+sr+"; [R="+resolution+" b-px, G="+gridSize+"-"+fullGrid+"]).png";
+			}
+			return ret;
 		}
 
 		@SideOnly(Side.CLIENT)
-		private int getBiomeColor(World world, int x, int z, BiomeGenBase b) {
+		private int getBiomeColor(int x, int z, BiomeGenBase b) {
 			if (b == null)
 				return 0x000000; //should never happen
 
 			if (b instanceof CustomMapColorBiome)
-				return ((CustomMapColorBiome)b).getMapColor(world, x, z);
+				return ((CustomMapColorBiome)b).getMapColor(Minecraft.getMinecraft().theWorld, x, z);
 
 			boolean mutate = b instanceof BiomeGenMutated;
 			if (mutate) {
@@ -294,6 +462,9 @@ public class BiomeMapCommand extends DragonCommandBase {
 			}
 			if (b.biomeID == BiomeGenBase.icePlains.biomeID+128) { //Ice Spikes
 				return 0x7FFFFF;
+			}
+			if (b == BiomeGenBase.iceMountains) {
+				return 0xd0d0d0;
 			}
 
 			//Because some BoP forests secretly identify as ocean-kin
@@ -370,7 +541,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 				c = ReikaColorAPI.getColorWithBrightnessMultiplier(c, 0.875F);
 			}
 			else if (ReikaBiomeHelper.isChildBiome(b)) {
-				c = ReikaColorAPI.getColorWithBrightnessMultiplier(c, 1.125F);
+				c = c == 0xffffff ? 0xd0d0d0 : ReikaColorAPI.getColorWithBrightnessMultiplier(c, 1.125F);
 			}
 
 			return c;

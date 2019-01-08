@@ -19,6 +19,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Auxiliary.Trackers.WorldgenProfiler;
@@ -44,6 +45,7 @@ public class WorldGenInterceptionRegistry {
 	private final HashMap<Coordinate, BlockSetData> data = new HashMap();
 	private final ArrayList<BlockSetWatcher> watchers = new ArrayList();
 	private final ArrayList<IWGWatcher> IWGwatchers = new ArrayList();
+	private final ArrayList<DecorationWatcher> decorationWatchers = new ArrayList();
 	private final ArrayList<InterceptionException> exceptions = new ArrayList();
 	private boolean dispatchingChanges = false;
 
@@ -62,7 +64,10 @@ public class WorldGenInterceptionRegistry {
 
 	public void addIWGWatcher(IWGWatcher w) {
 		IWGwatchers.add(w);
+	}
 
+	public void addDecorationWatcher(DecorationWatcher w) {
+		decorationWatchers.add(w);
 	}
 
 	public void addException(InterceptionException e) {
@@ -207,6 +212,14 @@ public class WorldGenInterceptionRegistry {
 		}
 	}
 
+	public static void runBiomeDecorator(BiomeGenBase b, World world, Random rand, int x, int z) {
+		for (DecorationWatcher w : instance.decorationWatchers) {
+			if (!w.canDecorate(b, world, rand, x, z))
+				return;
+		}
+		b.decorate(world, rand, x, z);
+	}
+
 	public static interface BlockSetWatcher {
 
 		public void onChunkGeneration(World world, Map<Coordinate, BlockSetData> set);
@@ -222,6 +235,12 @@ public class WorldGenInterceptionRegistry {
 	public static interface IWGWatcher {
 
 		public boolean canIWGRun(IWorldGenerator gen, Random random, int cx, int cz, World world, IChunkProvider generator, IChunkProvider loader);
+
+	}
+
+	public static interface DecorationWatcher {
+
+		public boolean canDecorate(BiomeGenBase biome, World world, Random random, int cx, int cz);
 
 	}
 

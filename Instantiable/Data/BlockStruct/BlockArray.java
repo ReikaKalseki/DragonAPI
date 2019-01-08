@@ -71,6 +71,8 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	private final BlockArrayComputer computer;
 
+	public BlockBox bounds = BlockBox.infinity();
+
 	protected static final Random rand = new Random();
 
 	public BlockArray() {
@@ -95,6 +97,8 @@ public class BlockArray implements Iterable<Coordinate> {
 		if (overflow)
 			return false;
 		if (this.hasBlock(x, y, z))
+			return false;
+		if (!bounds.isBlockInside(x, y, z))
 			return false;
 		Coordinate c = new Coordinate(x, y, z);
 		this.addKey(c);
