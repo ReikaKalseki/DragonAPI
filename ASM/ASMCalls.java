@@ -17,13 +17,16 @@ import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenMutated;
+import net.minecraft.world.gen.structure.StructureStrongholdPieces;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
 import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
@@ -31,6 +34,10 @@ import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
+
+	public static ChunkPosition getStrongholdSeekPos(StructureStrongholdPieces.Stairs2 struct) {
+		return DragonOptions.REROUTEEYES.getState() ? new ChunkPosition(struct.getBoundingBox().getCenterX(), struct.getBoundingBox().getCenterY(), struct.getBoundingBox().getCenterZ()) : struct.strongholdPortalRoom.func_151553_a();
+	}
 
 	public static boolean canSnowAccumulate(World world, int x, int y, int z) {
 		Block block = world.getBlock(x, y - 1, z);

@@ -14,6 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -22,7 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.ITickableTextureObject;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.IResourcePack;
@@ -58,6 +61,7 @@ public class ReikaTextureHelper {
 	private static boolean noColorPacks = false;
 
 	public static final TextureMap dummyTextureMap = new TextureMap(-1, "");
+	private static TextureMap itemTextureMap;
 
 	public static final ReikaTextureBinder binder = new ReikaTextureBinder();
 
@@ -195,6 +199,27 @@ public class ReikaTextureHelper {
 
 	public static void bindHUDTexture() {
 		Minecraft.getMinecraft().renderEngine.bindTexture(hud);
+	}
+
+	public static TextureMap getItemTextureMap() {
+		if (itemTextureMap == null) {
+			try {
+				TextureManager mgr = Minecraft.getMinecraft().renderEngine;
+				Field f = mgr.getClass().getDeclaredField("listTickables");
+				f.setAccessible(true);
+				List<ITickableTextureObject> li = (List<ITickableTextureObject>)f.get(mgr);
+				for (ITickableTextureObject obj : li) {
+					if (obj instanceof TextureMap && ((TextureMap)obj).getTextureType() == 1) {
+						itemTextureMap = (TextureMap)obj;
+						break;
+					}
+				}
+			}
+			catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		}
+		return itemTextureMap;
 	}
 
 	public static int getIconHeight() {

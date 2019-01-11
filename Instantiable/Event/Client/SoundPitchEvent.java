@@ -13,6 +13,8 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundPoolEntry;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.MinecraftForge;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import cpw.mods.fml.common.eventhandler.Event;
 
 
@@ -35,6 +37,18 @@ public class SoundPitchEvent extends Event {
 	}
 
 	private double getDefaultPitch(ISound snd, SoundPoolEntry pool) {
+		if (snd == null) {
+			DragonAPICore.logError("Tried to play null sound!");
+			ReikaChatHelper.write("Error from the soundsystem, check your logs.");
+			Thread.dumpStack();
+			return 0;
+		}
+		if (pool == null) {
+			DragonAPICore.logError("Tried to play sound with null pool!");
+			ReikaChatHelper.write("Error from the soundsystem, check your logs.");
+			Thread.dumpStack();
+			return 0;
+		}
 		return snd.getPitch() * pool.getPitch();
 	}
 

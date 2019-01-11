@@ -59,6 +59,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	BYTECODELIST("Bytecodeexec command user UUID whitelist", new String[0]),
 	CTRLCOLLECT("Automatic Collection of Inventories; set to 'NULL' to disable", Key.LCTRL.name()),
 	AFK("AFK Timer Threshold (Seconds); Set to 0 to Disable", 120), //2 min
+	REROUTEEYES("Reroute Ender Eyes to Stronghold Entrances", false),
 	;
 
 	private String label;

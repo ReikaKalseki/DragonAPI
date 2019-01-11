@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import net.minecraft.launchwrapper.Launch;
@@ -90,6 +91,8 @@ public class ReikaASMHelper {
 	}
 
 	private static void write(String s, boolean err) {
+		if (activeMod == null)
+			logger.log(Level.ERROR, "Called output without active mod!");
 		logger.log(err ? Level.ERROR : Level.INFO, s);
 	}
 
@@ -1170,8 +1173,12 @@ public class ReikaASMHelper {
 		cn.accept(writer);
 		byte[] data = writer.toByteArray();
 
+		String cname = cn.name.replaceAll("\\.", "/").replaceAll("\\\\", "/");
+		if (activeMod != null)
+			cname = "[BY "+activeMod.toUpperCase(Locale.ENGLISH)+"] "+cname;
+
 		try {
-			File f = new File(path+"/"+cn.name+".class");
+			File f = new File(path, cname+".class");
 			f.getParentFile().mkdirs();
 			f.createNewFile();
 			FileOutputStream out = new FileOutputStream(f);
@@ -1306,6 +1313,26 @@ public class ReikaASMHelper {
 		m.access = m.access & ~Modifier.PRIVATE;
 		m.access = m.access & ~Modifier.PROTECTED;
 		m.access = m.access | Modifier.PUBLIC;
+	}
+
+	public static void rerouteMethod(ClassNode cn, String name, String ownerNew, String nameNew, String sig, boolean loadSelf) {
+		MethodNode m = getMethodByName(cn, name, sig);
+		m.instructions.clear();
+		ArrayList<String> args = parseMethodArguments(m);
+		String ret = getMethodReturnType(m);
+		boolean stat = (m.access & Modifier.STATIC) != 0;
+		int idx = stat ? 0 : 1;
+		if (loadSelf) {
+			if (stat)
+				throw new IllegalArgumentException("You cannot load 'this' in a static method!");
+			m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+		}
+		for (String s : args) {
+			m.instructions.add(new VarInsnNode(getLoadOpcodeForArgument(s), idx));
+			idx++;
+		}
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ownerNew, nameNew, sig));
+		m.instructions.add(new InsnNode(getOpcodeForMethodReturn(m)));
 	}
 
 }

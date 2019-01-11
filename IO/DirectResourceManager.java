@@ -84,7 +84,7 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 		accessors.put(path, cmp);
 	}
 
-	private void initToSoundRegistry() {
+	public void initToSoundRegistry() {
 		SoundHandler sh = Minecraft.getMinecraft().getSoundHandler();
 		if (sh == null) {
 			DragonAPICore.logError("Attempted to initialize sound entries before the sound handler was created!");

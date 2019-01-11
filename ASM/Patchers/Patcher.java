@@ -26,7 +26,7 @@ public abstract class Patcher {
 	public final String obfName;
 	public final String deobfName;
 
-	private static final boolean genClasses = ReikaJVMParser.isArgumentPresent("-DragonAPI_exportASM");
+	public static final boolean genClasses = ReikaJVMParser.isArgumentPresent("-DragonAPI_exportASM");
 
 	public Patcher(String s) {
 		this(s, s);
@@ -68,7 +68,7 @@ public abstract class Patcher {
 
 		if (genClasses) {
 			try {
-				ReikaASMHelper.writeClassFile(cn, "E:/testclass");
+				ReikaASMHelper.writeClassFile(cn, "ASMOutput");
 			}
 			catch (Exception e) {
 				e.printStackTrace();

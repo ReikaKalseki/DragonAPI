@@ -266,6 +266,15 @@ public class BlockArray implements Iterable<Coordinate> {
 		return next;
 	}
 
+	public final int getBottomBlockAtXZ(int x, int z) {
+		int minY = Integer.MAX_VALUE;
+		for (Coordinate c : this.keySet()) {
+			if (c.yCoord < minY)
+				minY = c.yCoord;
+		}
+		return minY;
+	}
+
 	public final int getSize() {
 		return blocks.size();
 	}

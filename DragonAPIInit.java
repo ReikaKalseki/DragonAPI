@@ -46,6 +46,7 @@ import Reika.DragonAPI.DragonAPICore.DragonAPILoadWatcher;
 import Reika.DragonAPI.ASM.DragonAPIClassTransformer;
 import Reika.DragonAPI.Auxiliary.ChunkManager;
 import Reika.DragonAPI.Auxiliary.DragonAPIEventWatcher;
+import Reika.DragonAPI.Auxiliary.DynamicRetrogenSettings;
 import Reika.DragonAPI.Auxiliary.LoggingFilters;
 import Reika.DragonAPI.Auxiliary.LoggingFilters.LoggerType;
 import Reika.DragonAPI.Auxiliary.ModularLogger.ModularLoggerCommand;
@@ -626,6 +627,8 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void sortRecipes(FMLLoadCompleteEvent evt) {
 		if (ForgeModContainer.shouldSortRecipies)
 			ReplacementCraftingHandler.sortRecipes();
+
+		DynamicRetrogenSettings.instance.loadConfig();
 	}
 
 	@EventHandler

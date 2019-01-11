@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
@@ -57,6 +58,10 @@ public class RetroGenController {
 		GameRegistry.registerWorldGenerator(gen, weight);
 		if (retro)
 			this.addRetroGenerator(gen, weight);
+	}
+
+	public Set<String> getActiveRetroGenerators() {
+		return Collections.unmodifiableSet(retrogens.keySet());
 	}
 
 	public void excludeWorld(int dim) {

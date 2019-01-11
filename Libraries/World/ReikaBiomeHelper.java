@@ -230,8 +230,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	}
 
 	/** Returns the biome's parent. Args: Biome */
-	public static BiomeGenBase getParentBiomeType(BiomeGenBase biome) {
-		BiomeGenBase b = parents.get(biome);
+	public static BiomeGenBase getParentBiomeType(BiomeGenBase biome, boolean onlyDirect) {
+		BiomeGenBase b = onlyDirect ? null : parents.get(biome);
 		if (b != null)
 			return b;
 		if (biome instanceof BiomeGenMutated && ((BiomeGenMutated)biome).baseBiome != null) {
@@ -371,7 +371,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	/** Returns a broad-stroke biome temperature in degrees centigrade.
 	 * Args: biome */
 	public static int getBiomeTemp(World world, BiomeGenBase biome) {
-		biome = getParentBiomeType(biome);
+		biome = getParentBiomeType(biome, false);
 		BiomeTemperatures temp = temperatures.get(biome);
 		if (temp == null) {
 			temp = calcBiomeTemp(biome);
@@ -438,7 +438,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	}
 
 	public static float getBiomeHumidity(BiomeGenBase biome) {
-		biome = getParentBiomeType(biome);
+		biome = getParentBiomeType(biome, false);
 		if (biome == BiomeGenBase.jungle)
 			return 0.95F;
 		if (biome == BiomeGenBase.ocean)
@@ -576,7 +576,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			}
 		}
 		for (BiomeGenBase b : getAllBiomes()) {
-			BiomeGenBase parent = getParentBiomeType(b);
+			BiomeGenBase parent = getParentBiomeType(b, false);
 			if (b != parent) {
 				data.addValue(parent.biomeID, b.biomeID);
 			}

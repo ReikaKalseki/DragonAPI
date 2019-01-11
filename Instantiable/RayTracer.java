@@ -44,6 +44,7 @@ public final class RayTracer {
 	private double targetY;
 	private double targetZ;
 
+	public boolean airOnly = false;
 	public boolean softBlocksOnly = false;
 	public boolean allowFluids = true;
 	public boolean uniDirectionalChecks = false;
@@ -166,6 +167,8 @@ public final class RayTracer {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		BlockKey key = new BlockKey(b, meta);
+		if (airOnly && b != Blocks.air)
+			return true;
 		if (allowedBlocks.contains(key))
 			return false;
 		if (forbiddenBlocks.contains(key))
