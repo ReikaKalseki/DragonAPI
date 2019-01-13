@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -17,6 +17,24 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
+import com.mojang.authlib.GameProfile;
+
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Event.GetPlayerLookEvent;
+import Reika.DragonAPI.Instantiable.Event.PlayerHasItemEvent;
+import Reika.DragonAPI.Instantiable.Event.RemovePlayerItemEvent;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget.PlayerTarget;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.ai.attributes.ServersideAttributeMap;
@@ -40,25 +58,6 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.DragonOptions;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
-import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Instantiable.Event.GetPlayerLookEvent;
-import Reika.DragonAPI.Instantiable.Event.PlayerHasItemEvent;
-import Reika.DragonAPI.Instantiable.Event.RemovePlayerItemEvent;
-import Reika.DragonAPI.Instantiable.IO.PacketTarget;
-import Reika.DragonAPI.Instantiable.IO.PacketTarget.PlayerTarget;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-
-import com.mojang.authlib.GameProfile;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaPlayerAPI extends DragonAPICore {
 
@@ -106,6 +105,19 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return null;*//*
 		return getLookedAtBlock()
 	}*/
+
+	public static MovingObjectPosition getLookedAtEntity(EntityPlayer ep, double reach, boolean liq) {
+		Vec3 vec = Vec3.createVectorHelper(ep.posX, (ep.posY + 1.62) - ep.yOffset, ep.posZ);
+		Vec3 vec2 = ep.getLook(1.0F);
+		Vec3 vec3 = vec.addVector(vec2.xCoord*reach, vec2.yCoord*reach, vec2.zCoord*reach);
+		MovingObjectPosition hit = ep.worldObj.rayTraceBlocks(vec, vec3, liq);
+		GetPlayerLookEvent evt = new GetPlayerLookEvent(ep, hit, vec, vec3);
+		MinecraftForge.EVENT_BUS.post(evt);
+		hit = evt.newLook;
+		if (hit != null && hit.typeOfHit == MovingObjectType.ENTITY && hit.entityHit != null)
+			return hit;
+		return null;
+	}
 
 	public static MovingObjectPosition getLookedAtBlock(EntityPlayer ep, double reach, boolean liq) {
 		Vec3 vec = Vec3.createVectorHelper(ep.posX, (ep.posY + 1.62) - ep.yOffset, ep.posZ);

@@ -1,16 +1,22 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.ASM;
 
+import java.io.File;
 import java.util.List;
 
+import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
+import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
+import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
@@ -26,14 +32,13 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import Reika.DragonAPI.DragonOptions;
-import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
-import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
-import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
+
+	public static boolean isGitFile(File f) {
+		return f.getName().contains(".git");
+	}
 
 	public static ChunkPosition getStrongholdSeekPos(StructureStrongholdPieces.Stairs2 struct) {
 		return DragonOptions.REROUTEEYES.getState() ? new ChunkPosition(struct.getBoundingBox().getCenterX(), struct.getBoundingBox().getCenterY(), struct.getBoundingBox().getCenterZ()) : struct.strongholdPortalRoom.func_151553_a();

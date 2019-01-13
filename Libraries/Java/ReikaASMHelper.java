@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -26,9 +26,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-
-import net.minecraft.launchwrapper.Launch;
-import net.minecraftforge.classloading.FMLForgePlugin;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -65,6 +62,8 @@ import Reika.DragonAPI.IO.ReikaFileReader;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 public class ReikaASMHelper {
 
@@ -1331,7 +1330,7 @@ public class ReikaASMHelper {
 			m.instructions.add(new VarInsnNode(getLoadOpcodeForArgument(s), idx));
 			idx++;
 		}
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ownerNew, nameNew, sig));
+		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ownerNew, nameNew, sig, false));
 		m.instructions.add(new InsnNode(getOpcodeForMethodReturn(m)));
 	}
 

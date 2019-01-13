@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -17,10 +17,17 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 public abstract class LuaBlock {
 
@@ -31,21 +38,21 @@ public abstract class LuaBlock {
 	private final HashMap<String, LuaBlock> children = new HashMap();
 	private final HashMap<String, String> data = new HashMap();
 
-	private final LuaBlockDatabase tree;
+	protected final LuaBlockDatabase tree;
 
 	protected final HashSet<String> requiredElements = new HashSet();
 
 	private boolean isListEntry = false;
 	private boolean isList = false;
 
-	protected LuaBlock(String n, LuaBlock lb, LuaBlockDatabase db) {
+	protected LuaBlock(String n, LuaBlock parent, LuaBlockDatabase db) {
 		if (n.equals("{")) {
 			n = Integer.toHexString(System.identityHashCode(this));
 			isListEntry = true;
 		}
 		name = n;
-		parent = lb;
-		tree = lb != null ? lb.tree : db;
+		this.parent = parent;
+		tree = parent != null ? parent.tree : db;
 		if (tree == null)
 			throw new MisuseException("You cannot create a LuaBlock without a containing tree!");
 		if (parent != null) {
@@ -246,6 +253,49 @@ public abstract class LuaBlock {
 
 	}
 
+	public static final class ItemStackLuaBlock extends LuaBlock {
+
+		public ItemStackLuaBlock(String n, LuaBlock parent, LuaBlockDatabase db) {
+			super(n, parent, db);
+		}
+
+		public void write(ItemStack is, boolean writeSize) {
+			this.putData("item_id", Item.itemRegistry.getNameForObject(is.getItem()));
+			this.putData("metadata", String.valueOf(is.getItemDamage()));
+			if (writeSize)
+				this.putData("stack_size", String.valueOf(is.stackSize));
+			this.putData("display_name", is.getDisplayName());
+			LuaBlock nbt = is.stackTagCompound != null ? new NBTLuaBlock("nbt", this, tree, is.stackTagCompound) : null;
+		}
+	}
+
+	public static final class NBTLuaBlock extends LuaBlock {
+
+		public NBTLuaBlock(String n, LuaBlock parent, LuaBlockDatabase db, NBTTagCompound tag) {
+			super(n, parent, db);
+			HashMap<String, ?> map = this.parseEnchantments(ReikaNBTHelper.readMapFromNBT(tag));
+			this.writeData(map);
+		}
+
+		private HashMap parseEnchantments(HashMap map) {
+			Object ench = map.remove("StoredEnchantments");
+			if (ench == null) {
+				ench = map.remove("ench");
+			}
+			if (ench instanceof ArrayList) {
+				ArrayList<String> li = new ArrayList();
+				ArrayList<HashMap> data = (ArrayList<HashMap>)ench;
+				for (HashMap<String, Short> in : data) {
+					short lvl = in.get("lvl");
+					short id = in.get("id");
+					li.add(Enchantment.enchantmentsList[id].getTranslatedName(lvl));
+				}
+				map.put("Enchantments", li);
+			}
+			return map;
+		}
+	}
+
 	public static class LuaBlockDatabase {
 
 		private LuaBlock block = new BasicLuaBlock("top", null, this);
@@ -334,6 +384,12 @@ public abstract class LuaBlock {
 			return block.getTopParent();
 		}
 
+		public LuaBlock createRootBlock() {
+			LuaBlock lb = new BasicLuaBlock("base", null, this);
+			this.addBlock("base", lb);
+			return lb;
+		}
+
 	}
 
 	public final HashMap<String, Object> asHashMap() {
@@ -346,6 +402,30 @@ public abstract class LuaBlock {
 			ret.put(s, this.getObject(b));
 		}
 		return ret;
+	}
+
+	public void writeData(List li) {
+		int idx = 0;
+		for (Object o : li) {
+			this.putData(String.valueOf(idx), String.valueOf(o));
+			idx++;
+		}
+	}
+
+	public void writeData(Map<String, ?> map) {
+		for (Entry<String, ?> e : map.entrySet()) {
+			if (e.getValue() instanceof Map) {
+				LuaBlock child = new BasicLuaBlock(e.getKey(), this, tree);
+				child.writeData((Map)e.getValue());
+			}
+			else if (e.getValue() instanceof List) {
+				LuaBlock child = new BasicLuaBlock(e.getKey(), this, tree);
+				child.writeData((List)e.getValue());
+			}
+			else {
+				this.putData(e.getKey(), String.valueOf(e.getValue()));
+			}
+		}
 	}
 
 	public final List<Object> asList() {

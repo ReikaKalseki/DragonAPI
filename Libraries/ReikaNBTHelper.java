@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.IO.LuaBlock;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -35,10 +39,6 @@ import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.IO.LuaBlock;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public final class ReikaNBTHelper extends DragonAPICore {
 
@@ -400,8 +400,8 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 	}
 
-	public static HashMap<String, ?> readMapFromNBT(NBTTagCompound tag, String s) {
-		return (HashMap<String, ?>)getValue(tag.getCompoundTag(s));
+	public static HashMap<String, ?> readMapFromNBT(NBTTagCompound tag) {
+		return (HashMap<String, ?>)getValue(tag);
 	}
 
 	public static void writeMapToNBT(String s, NBTTagCompound tag, Map<String, ?> map) {

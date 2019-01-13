@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,39 +12,8 @@ package Reika.DragonAPI.Auxiliary;
 import java.util.HashMap;
 import java.util.List;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.client.Minecraft;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraftforge.client.event.EntityViewRenderEvent;
-import net.minecraftforge.client.event.RenderWorldEvent;
-import net.minecraftforge.client.event.sound.SoundSetupEvent;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.event.entity.EntityJoinWorldEvent;
-import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
-import net.minecraftforge.event.world.BlockEvent;
-import net.minecraftforge.event.world.ChunkEvent;
-import net.minecraftforge.event.world.WorldEvent;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerRegisterEvent;
-import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
-
 import org.lwjgl.opengl.GL11;
 
-import paulscode.sound.SoundSystemConfig;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
@@ -94,6 +63,36 @@ import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Potion;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.client.event.EntityViewRenderEvent;
+import net.minecraftforge.client.event.RenderWorldEvent;
+import net.minecraftforge.client.event.sound.SoundSetupEvent;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
+import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
+import net.minecraftforge.event.world.BlockEvent;
+import net.minecraftforge.event.world.ChunkEvent;
+import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerRegisterEvent;
+import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
+import paulscode.sound.SoundSystemConfig;
 
 public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
@@ -302,12 +301,14 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SideOnly(Side.CLIENT)
 	public void onGameLoaded(GameFinishedLoadingEvent evt) throws InterruptedException {
 		this.checkRemoteAssetDownload();
+
 		//if (ModList.liteLoaderInstalled())
 		if (!ReikaObfuscationHelper.isDeObfEnvironment())
-			if (ReikaJVMParser.isArgumentPresent("-DragonAPI_noAssetReload"))
-				DirectResourceManager.getInstance().initToSoundRegistry();
-			else
-				Minecraft.getMinecraft().refreshResources();
+			//if (ReikaJVMParser.isArgumentPresent("-DragonAPI_noAssetReload"))
+			DirectResourceManager.getInstance().initToSoundRegistry();
+		//else
+		//	Minecraft.getMinecraft().refreshResources();
+
 		if (ModList.NEI.isLoaded()) {
 			NEIIntercept.instance.register();
 			//NEIFontRendererHandler.instance.register();

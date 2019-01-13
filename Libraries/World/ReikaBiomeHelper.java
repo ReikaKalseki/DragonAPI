@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -19,17 +19,9 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.init.Blocks;
-import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
-import net.minecraft.world.biome.BiomeGenMutated;
-import net.minecraftforge.common.BiomeDictionary;
-import net.minecraftforge.common.BiomeDictionary.Type;
-import net.minecraftforge.common.BiomeManager;
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.RGB;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.ListFactory;
@@ -38,6 +30,19 @@ import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.ModInteract.DeepInteract.ModSeasonHandler;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
+import biomesoplenty.api.biome.BOPBiome;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.init.Blocks;
+import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
+import net.minecraft.world.biome.BiomeDecorator;
+import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.biome.BiomeGenMutated;
+import net.minecraftforge.common.BiomeDictionary;
+import net.minecraftforge.common.BiomeDictionary.Type;
+import net.minecraftforge.common.BiomeManager;
 
 public class ReikaBiomeHelper extends DragonAPICore {
 
@@ -591,5 +596,17 @@ public class ReikaBiomeHelper extends DragonAPICore {
 			data.remove(id);
 		}
 		return data;
+	}
+
+	public static BiomeDecorator getBiomeDecorator(BiomeGenBase b) {
+		if (InterfaceCache.BOPBIOME.instanceOf(b)) {
+			return getBOPDecorator(b);
+		}
+		return b.theBiomeDecorator;
+	}
+
+	@ModDependent(ModList.BOP)
+	private static BiomeDecorator getBOPDecorator(BiomeGenBase b) {
+		return ((BOPBiome)b).theBiomeDecorator;
 	}
 }

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -18,9 +18,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Random;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
@@ -36,6 +33,9 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.MekanismHandler;
 import Reika.DragonAPI.ModInteract.RecipeHandlers.ModOreCompat;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 public enum ModOreList implements OreType {
 
@@ -503,5 +503,10 @@ public enum ModOreList implements OreType {
 		for (int i = 0; i < oreList.length; i++) {
 			enumNames.put(oreList[i].name(), oreList[i]);
 		}
+	}
+
+	@Override
+	public int getDisplayColor() {
+		return oreColor;
 	}
 }

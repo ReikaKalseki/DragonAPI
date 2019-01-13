@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,15 +15,15 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Interfaces.Registry.OreType;
+import Reika.DragonAPI.ModInteract.RecipeHandlers.ModOreCompat;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
-import Reika.DragonAPI.Interfaces.Registry.OreType;
-import Reika.DragonAPI.ModInteract.RecipeHandlers.ModOreCompat;
 
 public enum ReikaOreHelper implements OreType {
 
@@ -246,6 +246,30 @@ public enum ReikaOreHelper implements OreType {
 
 	public static ReikaOreHelper getByEnumName(String name) {
 		return enumNames.get(name);
+	}
+
+	@Override
+	public int getDisplayColor() {
+		switch(this) {
+			case COAL:
+				return 0x141414;
+			case DIAMOND:
+				return 0x00ffff;
+			case EMERALD:
+				return 0x00ff00;
+			case GOLD:
+				return 0xffd010;
+			case IRON:
+				return 0xCC998F;
+			case LAPIS:
+				return 0x2050ff;
+			case QUARTZ:
+				return 0xc0b0a0;
+			case REDSTONE:
+				return 0xff2020;
+			default:
+				return 0xffffff;
+		}
 	}
 
 }

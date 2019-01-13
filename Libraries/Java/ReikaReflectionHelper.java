@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -18,9 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 
-import net.minecraft.block.Block;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.item.Item;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
@@ -30,6 +27,9 @@ import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import net.minecraft.block.Block;
+import net.minecraft.enchantment.Enchantment;
+import net.minecraft.item.Item;
 
 public final class ReikaReflectionHelper extends DragonAPICore {
 
@@ -326,11 +326,21 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 	}
 
 	public static void setFinalField(Field f, Object instance, Object o) throws Exception {
-		f.setAccessible(true);
-		Field modifiersField = Field.class.getDeclaredField("modifiers");
-		modifiersField.setAccessible(true);
-		modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
-		f.set(instance, o);
+		try {
+			f.setAccessible(true);
+			Field modifiersField = Field.class.getDeclaredField("modifiers");
+			modifiersField.setAccessible(true);
+			modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+			f.set(instance, o);
+		}
+		catch (IllegalAccessException e) {
+			if (e.toString().contains("Can not set final")) {
+				throw new RuntimeException("You need to un-final a field BEFORE any accesses (ie f.get() calls)!", e);
+			}
+			else {
+				throw e;
+			}
+		}
 	}
 
 	public static Collection<Field> getFields(Class c, FieldSelector sel) {

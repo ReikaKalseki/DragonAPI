@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -19,6 +19,46 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
+import Reika.DragonAPI.APIPacketHandler;
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.BlockTieredResource;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Extras.BlockProperties;
+import Reika.DragonAPI.Instantiable.ResettableRandom;
+import Reika.DragonAPI.Instantiable.TemperatureEffect;
+import Reika.DragonAPI.Instantiable.TemperatureEffect.TemperatureCallback;
+import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
+import Reika.DragonAPI.Instantiable.Data.Collections.TimedSet;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Immutable.WorldChunk;
+import Reika.DragonAPI.Instantiable.Event.IceFreezeEvent;
+import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
+import Reika.DragonAPI.Interfaces.Callbacks.PositionCallable;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaCropHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
+import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
+import Reika.DragonAPI.ModInteract.ItemHandlers.NaturaBlockHandler;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
+import Reika.DragonAPI.ModRegistry.ModCropList;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.eventhandler.Event.Result;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
@@ -72,45 +112,6 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
-import Reika.DragonAPI.APIPacketHandler;
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.BlockTieredResource;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Extras.BlockProperties;
-import Reika.DragonAPI.Instantiable.ResettableRandom;
-import Reika.DragonAPI.Instantiable.TemperatureEffect;
-import Reika.DragonAPI.Instantiable.TemperatureEffect.TemperatureCallback;
-import Reika.DragonAPI.Instantiable.Data.Collections.RelativePositionList;
-import Reika.DragonAPI.Instantiable.Data.Collections.TimedSet;
-import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
-import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Instantiable.Data.Immutable.WorldChunk;
-import Reika.DragonAPI.Instantiable.Event.IceFreezeEvent;
-import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
-import Reika.DragonAPI.Interfaces.Callbacks.PositionCallable;
-import Reika.DragonAPI.Libraries.ReikaEntityHelper;
-import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaCropHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
-import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
-import Reika.DragonAPI.ModRegistry.ModCropList;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.IWorldGenerator;
-import cpw.mods.fml.common.eventhandler.Event.Result;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaWorldHelper extends DragonAPICore {
 
@@ -1910,12 +1911,12 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return DimensionManager.getWorld(dim) != null;
 	}
 
-	public static int getTopNonAirBlock(World world, int x, int z) {
+	public static int getTopNonAirBlock(World world, int x, int z, boolean skipClouds) {
 		Chunk ch = world.getChunkFromBlockCoords(x, z);
 		int top = ch.getTopFilledSegment()+15;
 		for (int y = top; y > 0; y--) {
 			Block b = ch.getBlock(x&15, y, z&15);
-			if (!b.isAir(world, x, y, z)) {
+			if (!b.isAir(world, x, y, z) && (!skipClouds || b != NaturaBlockHandler.getInstance().cloudID)) {
 				return y;
 			}
 		}
