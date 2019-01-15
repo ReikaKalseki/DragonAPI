@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -247,6 +247,8 @@ public enum ModList implements ModEntry, Dependency {
 	public String getDisplayName() {
 		if (this.isReikasMod())
 			return modLabel;
+		if (this == TWILIGHT)
+			return "Twilight Forest";
 		return ReikaStringParser.capFirstChar(this.name());
 	}
 

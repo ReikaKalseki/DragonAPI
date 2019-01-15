@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -23,6 +23,21 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.IO.MapOutput;
+import Reika.DragonAPI.Interfaces.CustomBiomeDistributionWorld;
+import Reika.DragonAPI.Interfaces.CustomMapColorBiome;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -37,20 +52,6 @@ import net.minecraft.world.biome.BiomeGenMushroomIsland;
 import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraft.world.biome.BiomeGenRiver;
 import net.minecraft.world.biome.WorldChunkManager;
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Interfaces.CustomBiomeDistributionWorld;
-import Reika.DragonAPI.Interfaces.CustomMapColorBiome;
-import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 
 public class BiomeMapCommand extends DragonCommandBase {
@@ -298,92 +299,20 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 	}
 
-	private static class BiomeMap {
-
-		private final String worldName;
-		private final int dimensionID;
-
-		private final int originX;
-		private final int originZ;
-		private final int range;
-
-		private final int resolution;
-		private final int gridSize;
-		private final boolean fullGrid;
-
-		private final long startTime;
-
-		private final int[][] data;
+	private static class BiomeMap extends MapOutput<Integer> {
 
 		private BiomeMap(String name, int dim, int x, int z, int r, int res, int grid, boolean fgrid) {
-			startTime = System.currentTimeMillis();
-
-			worldName = name;
-			dimensionID = dim;
-
-			originX = x;
-			originZ = z;
-			range = r;
-			resolution = res;
-			gridSize = grid;
-			fullGrid = fgrid;
-
-			data = new int[range*2/resolution+1][range*2/resolution+1];
+			super(name, dim, x, z, r, res, grid, fgrid);
 		}
 
-		private void addGrid() {
-			if (gridSize > 0) {
-				for (int dx = originX-range; dx <= originX+range; dx += resolution) {
-					for (int dz = originZ-range; dz <= originZ+range; dz += resolution) {
-						int i = (range+(dx-originX))/resolution;
-						int k = (range+(dz-originZ))/resolution;
-						int i2 = dx-originX;
-						int k2 = dz-originZ;
-						boolean flag1 = i2%gridSize == 0;
-						boolean flag2 = k2%gridSize == 0;
-						if ((flag1 || flag2) && ((flag1 && flag2) || fullGrid)) {
-							data[i][k] = ReikaColorAPI.mixColors(data[i][k], i2 == 0 && k2 == 0 ? 0xffff0000 : 0xffffffff, 0.25F);
-							if (i-1 >= 0)
-								data[i-1][k] = ReikaColorAPI.mixColors(data[i-1][k], 0xff000000, 0.5F);
-							if (i+1 < data.length)
-								data[i+1][k] = ReikaColorAPI.mixColors(data[i+1][k], 0xff000000, 0.5F);
-							if (k-1 >= 0)
-								data[i][k-1] = ReikaColorAPI.mixColors(data[i][k-1], 0xff000000, 0.5F);
-							if (k+1 < data[i].length)
-								data[i][k+1] = ReikaColorAPI.mixColors(data[i][k+1], 0xff000000, 0.5F);
-						}
-					}
-				}
-			}
-		}
-
-		@SideOnly(Side.CLIENT)
-		private void addPoint(int x, int z, int biomeID) {
-			int c = 0xff000000 | this.getBiomeColor(x, z, BiomeGenBase.biomeList[biomeID]);
-			int i = (range+(x-originX))/resolution;
-			int k = (range+(z-originZ))/resolution;
-			data[i][k] = c;
-		}
-
-		@SideOnly(Side.CLIENT)
-		private String createImage() throws IOException {
-			String name = this.getFilename();
-			File f = new File(DragonAPICore.getMinecraftDirectory(), name);
-			if (f.exists())
-				f.delete();
-			f.getParentFile().mkdirs();
-			f.createNewFile();
-			BufferedImage img = new BufferedImage(data.length, data.length, BufferedImage.TYPE_INT_ARGB);
-			for (int i = 0; i < data.length; i++) {
-				for (int k = 0; k < data[i].length; k++) {
-					img.setRGB(i, k, data[i][k]);
-				}
-			}
-			ImageIO.write(img, "png", f);
-
+		@Override
+		protected void onImageCreate(File f) throws IOException {
 			this.createLegend(f);
+		}
 
-			return f.getAbsolutePath();
+		@Override
+		protected int getColor(int x, int z, Integer data) {
+			return this.getBiomeColor(x, z, BiomeGenBase.biomeList[data.intValue()]);
 		}
 
 		private void createLegend(File f) throws IOException {
@@ -426,15 +355,6 @@ public class BiomeMapCommand extends DragonCommandBase {
 					img.setRGB(x+i, y+k, clr);
 				}
 			}
-		}
-
-		private String getFilename() {
-			String sr = String.valueOf(range*2+1);
-			String ret = "BiomeMap/"+worldName+"/DIM"+dimensionID+"/"+originX+", "+originZ+" ("+sr+"x"+sr+"; [R="+resolution+" b-px, G="+gridSize+"-"+fullGrid+"]).png";
-			if (worldName.contains("SEED=")) {
-				ret = "BiomeMap/Forced/"+worldName+"; "+originX+", "+originZ+" ("+sr+"x"+sr+"; [R="+resolution+" b-px, G="+gridSize+"-"+fullGrid+"]).png";
-			}
-			return ret;
 		}
 
 		@SideOnly(Side.CLIENT)
