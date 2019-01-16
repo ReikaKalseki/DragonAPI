@@ -12,6 +12,7 @@ package Reika.DragonAPI.ASM;
 import java.io.File;
 import java.util.List;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
@@ -41,6 +42,14 @@ public class ASMCalls {
 	}
 
 	public static ChunkPosition getStrongholdSeekPos(StructureStrongholdPieces.Stairs2 struct) {
+		if (struct == null) {
+			DragonAPICore.logError("Cannot get the stronghold position for a null structure!");
+			return null;
+		}
+		else if (struct.strongholdPortalRoom == null) {
+			DragonAPICore.log("Structure has no portal!");
+			return new ChunkPosition(struct.getBoundingBox().getCenterX(), struct.getBoundingBox().getCenterY(), struct.getBoundingBox().getCenterZ());
+		}
 		return DragonOptions.REROUTEEYES.getState() ? new ChunkPosition(struct.getBoundingBox().getCenterX(), struct.getBoundingBox().getCenterY(), struct.getBoundingBox().getCenterZ()) : struct.strongholdPortalRoom.func_151553_a();
 	}
 
