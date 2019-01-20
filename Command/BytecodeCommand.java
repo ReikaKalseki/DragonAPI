@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -23,12 +23,6 @@ import java.util.Locale;
 import java.util.Stack;
 import java.util.UUID;
 
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.network.rcon.RConConsoleSource;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.MovingObjectPosition;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
@@ -37,6 +31,12 @@ import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.network.rcon.RConConsoleSource;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.MovingObjectPosition;
 
 /** Example use:
 	LDC {dimID} [+1 stack]<br>
@@ -364,6 +364,8 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		SETFIELD(),
 		//THROW(),
 		INSTANCEOF(),
+		GETARRAY(),
+		SETARRAY(),
 		OUTPUT(),
 		FLUSH();
 
@@ -479,6 +481,24 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					s.push(((Class)type).isAssignableFrom(obj.getClass()));
 					break;
 				}
+				case GETARRAY: {
+					if (s.size() < 2)
+						throw new IllegalArgumentException("Operand stack underflow");
+					Object[] arr = (Object[])s.pop();
+					int idx = (int)s.pop();
+					s.push(arr[idx]);
+					break;
+				}
+				case SETARRAY: {
+					if (s.size() < 3)
+						throw new IllegalArgumentException("Operand stack underflow");
+					Object[] arr = (Object[])s.pop();
+					int idx = (int)s.pop();
+					arr[idx] = s.pop();
+					break;
+				}
+				default:
+					break;
 			}
 		}
 	}

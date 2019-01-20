@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,11 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Random;
-
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
+import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
@@ -30,6 +26,10 @@ import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 public enum ReikaDyeHelper {
 
@@ -59,6 +59,7 @@ public enum ReikaDyeHelper {
 	public static final ReikaDyeHelper[] dyes = ReikaDyeHelper.values();
 	private final ArrayList<ItemStack> items = new ArrayList();
 	private static final MultiMap<KeyedItemStack, ReikaDyeHelper> colorMap = new MultiMap(new HashSetFactory()).setNullEmpty();
+	private static final MultiMap<ReikaDyeHelper, ReikaDyeHelper> similarityMap = new MultiMap(new HashSetFactory());
 
 	private ReikaDyeHelper(int c) {
 		color = c;
@@ -196,5 +197,67 @@ public enum ReikaDyeHelper {
 	public void setGLColorBlend() {
 		Color c = this.getJavaColor();
 		GL11.glColor3d(this.getRed()/255D, this.getGreen()/255D, this.getBlue()/255D);
+	}
+
+	public Set<ReikaDyeHelper> getSimilarColors() {
+		return Collections.unmodifiableSet((Set<ReikaDyeHelper>)similarityMap.get(this));
+	}
+
+	static {
+		similarityMap.addValue(BLACK, GRAY);
+		similarityMap.addValue(BLACK, LIGHTGRAY);
+		similarityMap.addValue(BLACK, WHITE);
+
+		similarityMap.addValue(RED, PURPLE);
+		similarityMap.addValue(RED, PINK);
+		similarityMap.addValue(RED, MAGENTA);
+		similarityMap.addValue(RED, ORANGE);
+
+		similarityMap.addValue(GREEN, LIME);
+		similarityMap.addValue(GREEN, CYAN);
+
+		similarityMap.addValue(BROWN, ORANGE);
+
+		similarityMap.addValue(BLUE, PURPLE);
+		similarityMap.addValue(BLUE, CYAN);
+		similarityMap.addValue(BLUE, LIGHTBLUE);
+
+		similarityMap.addValue(PURPLE, RED);
+		similarityMap.addValue(PURPLE, PINK);
+		similarityMap.addValue(PURPLE, MAGENTA);
+
+		similarityMap.addValue(CYAN, BLUE);
+		similarityMap.addValue(CYAN, GREEN);
+
+		similarityMap.addValue(LIGHTGRAY, WHITE);
+		similarityMap.addValue(LIGHTGRAY, GRAY);
+		similarityMap.addValue(LIGHTGRAY, BLACK);
+
+		similarityMap.addValue(GRAY, WHITE);
+		similarityMap.addValue(GRAY, LIGHTGRAY);
+		similarityMap.addValue(GRAY, BLACK);
+
+		similarityMap.addValue(PINK, RED);
+		similarityMap.addValue(PINK, MAGENTA);
+
+		similarityMap.addValue(LIME, YELLOW);
+		similarityMap.addValue(LIME, GREEN);
+
+		similarityMap.addValue(YELLOW, LIME);
+		similarityMap.addValue(YELLOW, ORANGE);
+
+		similarityMap.addValue(LIGHTBLUE, BLUE);
+		similarityMap.addValue(LIGHTBLUE, WHITE);
+
+		similarityMap.addValue(MAGENTA, PURPLE);
+		similarityMap.addValue(MAGENTA, PINK);
+		similarityMap.addValue(MAGENTA, RED);
+
+		similarityMap.addValue(ORANGE, RED);
+		similarityMap.addValue(ORANGE, YELLOW);
+
+		similarityMap.addValue(WHITE, LIGHTGRAY);
+		similarityMap.addValue(WHITE, GRAY);
+		similarityMap.addValue(WHITE, BLACK);
 	}
 }

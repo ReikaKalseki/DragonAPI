@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -11,13 +11,6 @@ package Reika.DragonAPI.Libraries.MathSci;
 
 import java.awt.Point;
 import java.util.HashSet;
-
-import net.minecraft.block.Block;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.lwjgl.util.vector.Matrix4f;
@@ -31,6 +24,12 @@ import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 public final class ReikaVectorHelper extends DragonAPICore {
 
@@ -266,6 +265,20 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		while (difference > 180)
 			difference -= 360;
 		return difference;
+	}
+
+	/** Will return a result relative to the origin of the vector; if 'vec' is a speed vector, that is relative to 0,0,0. */
+	public static Vec3 getPointAroundVector(Vec3 vec, double r, double ang) { //P(t) = (acost)U + (asint)V + (bt)W
+		Vec3 w = vec.normalize();
+		Vec3 u = w.crossProduct(Vec3.createVectorHelper(1, 0, 0));
+		Vec3 v = w.crossProduct(u);
+		double a1 = r*Math.cos(Math.toRadians(ang)); //a*Math.cos(t);
+		double a2 = r*Math.sin(Math.toRadians(ang)); //a*Math.sin(t);
+		double a3 = 0; //bt;
+		Vec3 v1 = Vec3.createVectorHelper(u.xCoord*a1, u.yCoord*a1, u.zCoord*a1);
+		Vec3 v2 = Vec3.createVectorHelper(v.xCoord*a2, v.yCoord*a2, v.zCoord*a2);
+		Vec3 v3 = Vec3.createVectorHelper(w.xCoord*a3, w.yCoord*a3, w.zCoord*a3);
+		return Vec3.createVectorHelper(v1.xCoord+v2.xCoord+v3.xCoord, v1.yCoord+v2.yCoord+v3.yCoord, v1.zCoord+v2.zCoord+v3.zCoord);
 	}
 
 }

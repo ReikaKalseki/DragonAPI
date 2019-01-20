@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -34,8 +34,6 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
-import net.minecraft.world.World;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 import org.objectweb.asm.ClassReader;
@@ -43,16 +41,16 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodNode;
 
+import com.google.common.reflect.ClassPath;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-
-import com.google.common.reflect.ClassPath;
-
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
+import net.minecraft.world.World;
 
 public final class ReikaJavaLibrary extends DragonAPICore {
 
@@ -65,11 +63,11 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	private static final HashMap<String, Object> threadLock = new HashMap();
 
 	private static final char[] IDChars = new char[] {
-		'\u03b1', '\u03b2', '\u03b3', '\u03b4', '\u03b5', '\u03b6', '\u03b7', '\u03b8', '\u03b9', '\u03ba', '\u03bb', '\u03bc', '\u03bd', '\u03be',
-		'\u03bf', '\u03c0', '\u03c1', '\u03c2', '\u03c3', '\u03c4', '\u03c5', '\u03c6', '\u03c7', '\u03c8', '\u03c9', '\u0393', '\u0394', '\u0398',
-		'\u039b', '\u03a0', '\u03a3', '\u03a6', '\u03a8', '\u03a9', '\u0414', '\u0416', '\u0418', '\u0428', '\u042c', '\u042d', '\u042e', '\u042f',
-		'\u05d0', '\u05d1', '\u05d2', '\u05d3', '\u05d4', '\u05d7', '\u05d8', '\u05da', '\u05db', '\u05dc', '\u05dd', '\u05de', '\u05e1', '\u05e2',
-		'\u05e3', '\u05e4', '\u05e6', '\u05e7', '\u05e8', '\u05e9', '\u05ea'
+			'\u03b1', '\u03b2', '\u03b3', '\u03b4', '\u03b5', '\u03b6', '\u03b7', '\u03b8', '\u03b9', '\u03ba', '\u03bb', '\u03bc', '\u03bd', '\u03be',
+			'\u03bf', '\u03c0', '\u03c1', '\u03c2', '\u03c3', '\u03c4', '\u03c5', '\u03c6', '\u03c7', '\u03c8', '\u03c9', '\u0393', '\u0394', '\u0398',
+			'\u039b', '\u03a0', '\u03a3', '\u03a6', '\u03a8', '\u03a9', '\u0414', '\u0416', '\u0418', '\u0428', '\u042c', '\u042d', '\u042e', '\u042f',
+			'\u05d0', '\u05d1', '\u05d2', '\u05d3', '\u05d4', '\u05d7', '\u05d8', '\u05da', '\u05db', '\u05dc', '\u05dd', '\u05de', '\u05e1', '\u05e2',
+			'\u05e3', '\u05e4', '\u05e6', '\u05e7', '\u05e8', '\u05e9', '\u05ea'
 	};
 
 	/** Generic write-to-console function. Args: Object */
@@ -155,6 +153,14 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	public static ArrayList<Integer> makeIntListFromArray(int... obj) {
+		ArrayList li = new ArrayList();
+		for (int i = 0; i < obj.length; i++) {
+			li.add(obj[i]);
+		}
+		return li;
+	}
+
+	public static ArrayList<Byte> makeIntListFromArray(byte... obj) {
 		ArrayList li = new ArrayList();
 		for (int i = 0; i < obj.length; i++) {
 			li.add(obj[i]);

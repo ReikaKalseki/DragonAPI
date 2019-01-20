@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,10 +13,12 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
-import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.ChunkCoordIntPair;
 
 public final class ReikaArrayHelper extends DragonAPICore {
 
@@ -672,5 +674,13 @@ public final class ReikaArrayHelper extends DragonAPICore {
 				val = arr[i];
 		}
 		return val;
+	}
+
+	public static Coordinate[] chunkCoordsToBlockCoords(ChunkCoordIntPair[] pos) {
+		Coordinate[] ret = new Coordinate[pos.length];
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = new Coordinate(pos[i].chunkXPos << 4, 0, pos[i].chunkZPos << 4);
+		}
+		return ret;
 	}
 }
