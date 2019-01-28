@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -48,6 +48,11 @@ public class Interpolation {
 		}
 		float f = (float)((key-x1)/(x2-x1));
 		return isColor ? ReikaColorAPI.mixColors(d2.intValue(), d1.intValue(), f) : (cosInterpolate ? ReikaMathLibrary.cosInterpolation(key, x1, x2, d1, d2) : ReikaMathLibrary.linterpolate(key, x1, x2, d1, d2));
+	}
+
+	@Override
+	public String toString() {
+		return data.toString();
 	}
 
 }

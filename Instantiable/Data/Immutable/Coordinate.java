@@ -1,15 +1,13 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
-
-import io.netty.buffer.ByteBuf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -17,6 +15,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Random;
 
+import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
+import Reika.DragonAPI.Instantiable.Event.BlockTickEvent.UpdateFlags;
+import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerationCache;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
@@ -27,16 +33,10 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
-import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
-import Reika.DragonAPI.Instantiable.Event.BlockTickEvent.UpdateFlags;
-import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerationCache;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public final class Coordinate implements Comparable<Coordinate> {
 
@@ -189,27 +189,27 @@ public final class Coordinate implements Comparable<Coordinate> {
 		return a;
 	}
 
-	public Block getBlock(World world) {
+	public Block getBlock(IBlockAccess world) {
 		return world != null ? world.getBlock(xCoord, yCoord, zCoord) : null;
 	}
 
-	public boolean isEmpty(World world) {
+	public boolean isEmpty(IBlockAccess world) {
 		return this.getBlock(world).isAir(world, xCoord, yCoord, zCoord);
 	}
 
-	public boolean softBlock(World world) {
+	public boolean softBlock(IBlockAccess world) {
 		return ReikaWorldHelper.softBlocks(world, xCoord, yCoord, zCoord);
 	}
 
-	public int getBlockMetadata(World world) {
+	public int getBlockMetadata(IBlockAccess world) {
 		return world != null ? world.getBlockMetadata(xCoord, yCoord, zCoord) : -1;
 	}
 
-	public BlockKey getBlockKey(World world) {
+	public BlockKey getBlockKey(IBlockAccess world) {
 		return world != null ? new BlockKey(world.getBlock(xCoord, yCoord, zCoord), world.getBlockMetadata(xCoord, yCoord, zCoord)) : null;
 	}
 
-	public TileEntity getTileEntity(World world) {
+	public TileEntity getTileEntity(IBlockAccess world) {
 		return world != null ? world.getTileEntity(xCoord, yCoord, zCoord) : null;
 	}
 
@@ -223,6 +223,12 @@ public final class Coordinate implements Comparable<Coordinate> {
 			if (adjacent) {
 				ReikaWorldHelper.causeAdjacentUpdates(world, xCoord, yCoord, zCoord);
 			}
+		}
+	}
+
+	public void triggerRenderUpdate(World world) {
+		if (world != null) {
+			world.markBlockRangeForRenderUpdate(xCoord-1, yCoord-1, zCoord-1, xCoord+1, yCoord+1, zCoord+1);
 		}
 	}
 

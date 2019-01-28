@@ -10,6 +10,9 @@
 //package Reika.DragonAPI.Auxiliary;
 package Reika.DragonAPI.ModRegistry;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public enum InterfaceCache {
@@ -38,6 +41,7 @@ public enum InterfaceCache {
 	IMMERSIVEWIRE("blusunrize.immersiveengineering.api.energy.IImmersiveConnectable"),
 	IC2POWERTILE("ic2.api.energy.tile.IEnergyTile"),
 	BOPBIOME("biomesoplenty.api.biome.BOPBiome"),
+	PAINTABLE("crazypants.enderio.machine.painter.IPaintableTileEntity"),
 	;
 
 	private final String classpath;
@@ -65,6 +69,18 @@ public enum InterfaceCache {
 
 	public Class getClassType() {
 		return object;
+	}
+
+	public Field getField(String s) throws Exception {
+		Field f = this.getClassType().getDeclaredField(s);
+		f.setAccessible(true);
+		return f;
+	}
+
+	public Method getMethod(String s, Class... args) throws Exception {
+		Method m = this.getClassType().getDeclaredMethod(s, args);
+		m.setAccessible(true);
+		return m;
 	}
 }
 //}

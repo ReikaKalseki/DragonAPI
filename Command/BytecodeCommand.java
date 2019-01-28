@@ -20,6 +20,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
 
@@ -341,6 +343,68 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		return s;
 	}
 
+	private void writeObjectToFile(File f, int idx, Object o) throws IOException {
+		String s = "#"+idx+" - "+o.getClass().getName().replaceAll("\\\\.", "/");
+		File f2 = new File(f, s+".txt");
+		f2.getParentFile().mkdirs();
+		f2.delete();
+		f2.createNewFile();
+		ReikaFileReader.writeLinesToFile(f2, this.getObjectData(o, 0), true);
+	}
+
+	private ArrayList<String> getObjectData(Object o, int depth) {
+		ArrayList<String> li = new ArrayList();
+		if (o instanceof Map) {
+			li.add(this.pad(depth)+"Map ["+o.getClass()+"]:");
+			Map m = (Map)o;
+			Set<Map.Entry> st = m.entrySet(); //not sure why this requires independent declaration
+			for (Map.Entry e : st) {
+				li.add(this.pad(depth+1)+"Key:");
+				for (String s : this.getObjectData(e.getKey(), depth+2)) {
+					li.add(s);
+				}
+				li.add(this.pad(depth+1)+"Value:");
+				for (String s : this.getObjectData(e.getValue(), depth+2)) {
+					li.add(s);
+				}
+				li.add("----");
+			}
+		}
+		else if (o instanceof Object[]) {
+			li.add(this.pad(depth+1)+"Array:");
+			for (Object o2 : ((Object[])o)) {
+				for (String s : this.getObjectData(o2, depth+2)) {
+					li.add(s);
+				}
+				li.add("----");
+			}
+		}
+		else if (o instanceof Iterable) {
+			li.add(this.pad(depth+1)+"Iterable ["+o.getClass()+"]:");
+			for (Object o2 : ((Iterable)o)) {
+				for (String s : this.getObjectData(o2, depth+2)) {
+					li.add(s);
+				}
+				li.add("----");
+			}
+		}
+		else if (o == null) {
+			li.add(this.pad(depth)+"<null>");
+		}
+		else {
+			li.add(this.pad(depth)+"["+o.getClass().getName()+"]"+" toString() : "+o.toString());
+		}
+		return li;
+	}
+
+	private String pad(int d) {
+		StringBuilder sb = new StringBuilder();
+		for (int i = 0; i < d; i++) {
+			sb.append("\t\t");
+		}
+		return sb.toString();
+	}
+
 	@Override
 	public String getCommandString() {
 		return "bytecodeexec";
@@ -367,11 +431,12 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		GETARRAY(),
 		SETARRAY(),
 		OUTPUT(),
+		WRITE(),
 		FLUSH();
 
 		private static final Opcodes[] list = values();
 
-		private void call(ReflectiveBasedCommand cmd, ICommandSender ics, String[] args, Stack s, boolean removeTop) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
+		private void call(BytecodeCommand cmd, ICommandSender ics, String[] args, Stack s, boolean removeTop) throws ClassNotFoundException, NoSuchFieldException, IllegalArgumentException, IllegalAccessException, NoSuchMethodException, InvocationTargetException, InstantiationException {
 			switch(this) {
 				case FLUSH:
 					s.clear();
@@ -453,6 +518,18 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					for (Object o : s)
 						sendChatToSender(ics, cmd.toReadableString(o));
 					sendChatToSender(ics, "]");
+					break;
+				case WRITE:
+					try {
+						File f = new File(DragonAPICore.getMinecraftDirectory(), "/ByteCodeStackOut/"+args[0]);
+						for (Object o : s)
+							cmd.writeObjectToFile(f, s.indexOf(o), o);
+						sendChatToSender(ics, s.size()+" objects written to files in "+f.getAbsolutePath());
+					}
+					catch (IOException e) {
+						sendChatToSender(ics, "Could not write output file: "+e.toString());
+						e.printStackTrace();
+					}
 					break;
 				case DUP:
 					if (s.isEmpty())

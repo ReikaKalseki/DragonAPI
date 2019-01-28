@@ -272,4 +272,16 @@ public enum ReikaOreHelper implements OreType {
 		}
 	}
 
+	@Override
+	public int getDropCount() {
+		switch(this) {
+			case REDSTONE:
+				return 4;
+			case LAPIS:
+				return 6;
+			default:
+				return 1;
+		}
+	}
+
 }

@@ -1,15 +1,13 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
-
-import gnu.trove.map.hash.TCharIntHashMap;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -18,27 +16,27 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
-import net.minecraft.util.ResourceLocation;
-
 import org.lwjgl.opengl.GL11;
-
-import Reika.DragonAPI.Instantiable.Event.Client.TextureReloadEvent;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 import com.ibm.icu.text.ArabicShaping;
 import com.ibm.icu.text.ArabicShapingException;
 import com.ibm.icu.text.Bidi;
 
+import Reika.DragonAPI.Instantiable.Event.Client.TextureReloadEvent;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import gnu.trove.map.hash.TCharIntHashMap;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ResourceLocation;
 
 /** Cloned from the vanilla FontRenderer to allow for rewrites and to avoid Optifine compat issues */
 @SideOnly(Side.CLIENT)
@@ -94,6 +92,8 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	protected String currentString;
 
 	private WipeEffect wipe;
+
+	public boolean parseBBCode;
 
 	public BasicFontRenderer(boolean unicode) {
 		super(Minecraft.getMinecraft().gameSettings, ReikaTextureHelper.font, Minecraft.getMinecraft().renderEngine, unicode);
@@ -362,6 +362,16 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 	 * Render a single line string at the current (posX,posY) and update posX
 	 */
 	private void renderStringAtPos(String sg, boolean shadow) {
+		if (parseBBCode) {
+			sg = sg.replaceAll("\\[i\\]", EnumChatFormatting.ITALIC.toString());
+			sg = sg.replaceAll("\\[b\\]", EnumChatFormatting.BOLD.toString());
+			sg = sg.replaceAll("\\[u\\]", EnumChatFormatting.UNDERLINE.toString());
+			sg = sg.replaceAll("\\[s\\]", EnumChatFormatting.STRIKETHROUGH.toString());
+			sg = sg.replaceAll("\\[/i\\]", EnumChatFormatting.RESET.toString());
+			sg = sg.replaceAll("\\[/b\\]", EnumChatFormatting.RESET.toString());
+			sg = sg.replaceAll("\\[/u\\]", EnumChatFormatting.RESET.toString());
+			sg = sg.replaceAll("\\[/s\\]", EnumChatFormatting.RESET.toString());
+		}
 		currentString = sg;
 		for (int i = 0; i < sg.length(); i++) {
 			if (this.renderCharInString(sg, i, shadow))
@@ -879,7 +889,7 @@ public abstract class BasicFontRenderer extends FontRenderer implements IResourc
 		}
 
 		String form = "0123456789abcdefklmnor";
-		chars = key.toCharArray();
+		chars = form.toCharArray();
 		for (int i = 0; i < chars.length; i++) {
 			formatMap.put(chars[i], i);
 		}

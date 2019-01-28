@@ -31,6 +31,8 @@ public interface OreType extends RegistryType {
 
 	public boolean canGenerateIn(Block b);
 
+	public int getDropCount();
+
 	public static enum OreRarity {
 		EVERYWHERE("Large and very common veins", "Copper and Fluorite"), //Copper, Fluorite
 		COMMON("Larger sized and common veins", "Tin and Redstone"), //Tin, Redstone

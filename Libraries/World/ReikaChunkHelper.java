@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -14,12 +14,19 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper.ClassEntitySelector;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
@@ -28,11 +35,6 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderServer;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
-import Reika.DragonAPI.Libraries.ReikaEntityHelper.ClassEntitySelector;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class ReikaChunkHelper extends DragonAPICore {
 
@@ -349,5 +351,10 @@ public final class ReikaChunkHelper extends DragonAPICore {
 				}
 			}
 		}
+	}
+
+	public static Chunk getRandomLoadedChunk(World world) {
+		ChunkCoordIntPair p = (ChunkCoordIntPair)ReikaJavaLibrary.getRandomCollectionEntry(rand, world.activeChunkSet);
+		return world.getChunkFromChunkCoords(p.chunkXPos, p.chunkZPos);
 	}
 }

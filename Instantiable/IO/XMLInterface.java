@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -27,6 +27,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaXMLBase;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import net.minecraft.util.EnumChatFormatting;
 
 public class XMLInterface {
 
@@ -164,6 +165,14 @@ public class XMLInterface {
 		while (!val.isEmpty() && val.charAt(val.length()-1) == ' ') {
 			val = val.substring(0, val.length()-1);
 		}
+		val = val.replaceAll("\\[i\\]", EnumChatFormatting.ITALIC.toString());
+		val = val.replaceAll("\\[b\\]", EnumChatFormatting.BOLD.toString());
+		val = val.replaceAll("\\[u\\]", EnumChatFormatting.UNDERLINE.toString());
+		val = val.replaceAll("\\[s\\]", EnumChatFormatting.STRIKETHROUGH.toString());
+		val = val.replaceAll("\\[/i\\]", EnumChatFormatting.RESET.toString());
+		val = val.replaceAll("\\[/b\\]", EnumChatFormatting.RESET.toString());
+		val = val.replaceAll("\\[/u\\]", EnumChatFormatting.RESET.toString());
+		val = val.replaceAll("\\[/s\\]", EnumChatFormatting.RESET.toString());
 		return val;
 	}
 

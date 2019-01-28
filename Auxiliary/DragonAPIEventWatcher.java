@@ -54,6 +54,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMusicHelper.MusicKey;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaChunkHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
@@ -65,6 +66,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -77,6 +79,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderWorldEvent;
@@ -315,6 +318,12 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 		}
 		DragonAPIInit.proxy.registerSidedHandlersGameLoaded();
 		ReflectiveFailureTracker.instance.print();
+
+		Minecraft.getMinecraft().getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, 1, 0, 0, 0));
+		Thread.sleep(100);
+		float f = (float)MusicKey.Cs5.getRatio(MusicKey.Fs4);
+		Minecraft.getMinecraft().getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, 1, 0, 0, 0));
+		Minecraft.getMinecraft().getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, f, 0, 0, 0));
 	}
 
 	private void checkRemoteAssetDownload() throws InterruptedException {

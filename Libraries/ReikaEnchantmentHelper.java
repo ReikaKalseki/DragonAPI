@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import Reika.DragonAPI.DragonAPICore;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -25,7 +26,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaEnchantmentHelper extends DragonAPICore {
 
@@ -188,6 +188,8 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 			if (s == e.effectId)
 				it.remove();
 		}
+		if (li.tagList.isEmpty())
+			is.stackTagCompound.removeTag("ench");
 	}
 
 	public static ItemStack getBasicItemForEnchant(Enchantment e) {

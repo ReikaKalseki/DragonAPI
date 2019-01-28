@@ -1,15 +1,13 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Libraries;
-
-import ic2.api.item.ElectricItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,6 +18,33 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 
+import com.google.common.base.Function;
+
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.DummyTeleporter;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Interfaces.ComparableAI;
+import Reika.DragonAPI.Interfaces.Entity.CustomProjectile;
+import Reika.DragonAPI.Interfaces.Entity.EtherealEntity;
+import Reika.DragonAPI.Interfaces.Entity.TameHostile;
+import Reika.DragonAPI.Interfaces.Item.UnbreakableArmor;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
+import WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile;
+import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import ic2.api.item.ElectricItem;
 import mekanism.api.gas.GasStack;
 import mekanism.api.gas.IGasItem;
 import net.machinemuse.api.electricity.MuseElectricItem;
@@ -97,33 +122,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Instantiable.DummyTeleporter;
-import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
-import Reika.DragonAPI.Instantiable.IO.PacketTarget;
-import Reika.DragonAPI.Interfaces.ComparableAI;
-import Reika.DragonAPI.Interfaces.Entity.CustomProjectile;
-import Reika.DragonAPI.Interfaces.Entity.EtherealEntity;
-import Reika.DragonAPI.Interfaces.Entity.TameHostile;
-import Reika.DragonAPI.Interfaces.Item.UnbreakableArmor;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
-import WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile;
-import cofh.api.energy.IEnergyContainerItem;
-
-import com.google.common.base.Function;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 
@@ -166,6 +164,20 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		@Override
 		public boolean isEntityApplicable(Entity e) {
 			return e instanceof EntityItem || e instanceof EntityXPOrb;
+		}
+	};
+
+	public static final class NameContainsSelector implements IEntitySelector {
+
+		private final String seek;
+
+		public NameContainsSelector(String s) {
+			seek = s;
+		}
+
+		@Override
+		public boolean isEntityApplicable(Entity e) {
+			return e.getClass().getName().contains(seek);
 		}
 	};
 

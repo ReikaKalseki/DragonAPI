@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -21,8 +23,6 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class ItemDrop {
 
@@ -79,21 +79,37 @@ public class ItemDrop {
 	}
 
 	public ItemStack getItem() {
-		int num = this.getDropCount();
+		return this.getItem(1);
+	}
+
+	public ItemStack getItem(float f) {
+		int num = this.getDropCount(f);
 		ItemStack is = ReikaItemHelper.getSizedItemStack(item.copy(), num);
 		return is;
 	}
 
 	public int getDropCount() {
-		return minDrops+rand.nextInt(1+maxDrops-minDrops);
+		return this.getDropCount(1);
+	}
+
+	public int getDropCount(float multiplier) {
+		return minDrops+(int)(multiplier*rand.nextInt(1+maxDrops-minDrops));
 	}
 
 	public void drop(World world, double x, double y, double z) {
-		ReikaItemHelper.dropItem(world, x, y, z, this.getItem());
+		this.drop(world, x, y, z, 1);
+	}
+
+	public void drop(World world, double x, double y, double z, float f) {
+		ReikaItemHelper.dropItem(world, x, y, z, this.getItem(f));
 	}
 
 	public EntityItem drop(Entity e) {
-		return ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY+0.25, e.posZ, this.getItem());
+		return this.drop(e, 1);
+	}
+
+	public EntityItem drop(Entity e, float f) {
+		return ReikaItemHelper.dropItem(e.worldObj, e.posX, e.posY+0.25, e.posZ, this.getItem(f));
 	}
 
 	public Item getID() {
