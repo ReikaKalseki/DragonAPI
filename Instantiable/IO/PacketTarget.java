@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,17 +12,17 @@ package Reika.DragonAPI.Instantiable.IO;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.PacketObj;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 public abstract class PacketTarget {
 
@@ -134,7 +134,7 @@ public abstract class PacketTarget {
 		}
 	}
 
-	public static final class AllPlayersTarget extends PacketTarget {
+	private static final class AllPlayersTarget extends PacketTarget {
 
 		private AllPlayersTarget() {
 
@@ -147,7 +147,7 @@ public abstract class PacketTarget {
 	}
 
 	//@SideOnly(Side.CLIENT)
-	public static final class ServerTarget extends PacketTarget {
+	private static final class ServerTarget extends PacketTarget {
 
 		private ServerTarget() {
 

@@ -309,7 +309,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			S35PacketUpdateTileEntity p = new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 2, var1);
 			this.sendPacketToAllAround(p, this.getUpdatePacketRadius());
 
-			this.syncTankData();
+			//this.syncTankData();
 
 			this.onDataSync(fullNBT);
 		}

@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import net.minecraft.enchantment.Enchantment;
@@ -402,6 +403,14 @@ public abstract class LuaBlock {
 			ret.put(s, this.getObject(b));
 		}
 		return ret;
+	}
+
+	public final WeightedRandom<String> asWeightedRandom() {
+		WeightedRandom<String> wr = new WeightedRandom();
+		for (String s : data.keySet()) {
+			wr.addEntry(s, this.getDouble(s));
+		}
+		return wr;
 	}
 
 	public void writeData(List li) {

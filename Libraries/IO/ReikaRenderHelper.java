@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,6 +13,24 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.Instantiable.Effects.ReikaModelledBreakFX;
+import Reika.DragonAPI.Instantiable.Rendering.TessellatorVertexList;
+import Reika.DragonAPI.Interfaces.TextureFetcher;
+import Reika.DragonAPI.Interfaces.TileModel;
+import Reika.DragonAPI.Interfaces.TileEntity.RenderFetcher;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -38,26 +56,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
-import Reika.ChromatiCraft.ChromatiCraft;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
-import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
-import Reika.DragonAPI.Instantiable.Effects.ReikaModelledBreakFX;
-import Reika.DragonAPI.Instantiable.Rendering.TessellatorVertexList;
-import Reika.DragonAPI.Interfaces.TextureFetcher;
-import Reika.DragonAPI.Interfaces.TileModel;
-import Reika.DragonAPI.Interfaces.TileEntity.RenderFetcher;
-import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaRenderHelper extends DragonAPICore {
 
@@ -1408,7 +1406,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	//A big block of hack
 	@SideOnly(Side.CLIENT)
 	public static void setCameraPosition(EntityPlayer ep, double cx, double cy, double cz, double cxPrev, double cyPrev, double czPrev, double yaw, double yawPrev, double pitch, double pitchPrev, boolean setPos, boolean setAngs) {
-		ChromatiCraft.logger.debug("Moving "+ep.getCommandSenderName()+" camera to "+cx+","+cy+","+cz+" @ "+yaw+" / "+pitch);
+		DragonAPICore.debug("Moving "+ep.getCommandSenderName()+" camera to "+cx+","+cy+","+cz+" @ "+yaw+" / "+pitch);
 		RenderManager rm = RenderManager.instance;
 		if (setPos) {
 			RenderManager.renderPosX = cx;

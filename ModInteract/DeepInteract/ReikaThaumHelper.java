@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -21,6 +21,18 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Instantiable.Formula.MathExpression;
+import Reika.DragonAPI.Instantiable.IO.XMLInterface;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.ModInteract.CustomThaumResearch;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumIDHandler;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -43,18 +55,6 @@ import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.api.research.ResearchPage;
 import thaumcraft.common.entities.monster.EntityWisp;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
-import Reika.DragonAPI.Instantiable.Formula.MathExpression;
-import Reika.DragonAPI.Instantiable.IO.XMLInterface;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.ModInteract.CustomThaumResearch;
-import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumIDHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class ReikaThaumHelper {
 
@@ -349,6 +349,24 @@ public class ReikaThaumHelper {
 	public static int getPlayerTempWarp(EntityPlayer ep) {
 		Integer has = playerTempWarp.get(ep.getCommandSenderName());
 		return has != null ? has.intValue() : 0;
+	}
+
+	public static void addPlayerWarp(EntityPlayer ep, int amt) {
+		Integer has = playerWarp.get(ep.getCommandSenderName());
+		int val = has != null ? has.intValue() : 0;
+		playerWarp.put(ep.getCommandSenderName(), val+amt);
+	}
+
+	public static void addPlayerStickyWarp(EntityPlayer ep, int amt) {
+		Integer has = playerStickyWarp.get(ep.getCommandSenderName());
+		int val =  has != null ? has.intValue() : 0;
+		playerStickyWarp.put(ep.getCommandSenderName(), val+amt);
+	}
+
+	public static void addPlayerTempWarp(EntityPlayer ep, int amt) {
+		Integer has = playerTempWarp.get(ep.getCommandSenderName());
+		int val =  has != null ? has.intValue() : 0;
+		playerTempWarp.put(ep.getCommandSenderName(), val+amt);
 	}
 
 	public static int getWandSpaceFor(ItemStack wand, Aspect a) {

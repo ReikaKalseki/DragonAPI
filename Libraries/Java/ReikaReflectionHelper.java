@@ -349,7 +349,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			Field[] fd = c.getDeclaredFields();
 			for (int i = 0; i < fd.length; i++) {
 				Field f = fd[i];
-				if (sel.isValid(f))
+				if (sel == null || sel.isValid(f))
 					li.add(f);
 			}
 			c = c.getSuperclass();
@@ -363,7 +363,7 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			Method[] fd = c.getDeclaredMethods();
 			for (int i = 0; i < fd.length; i++) {
 				Method f = fd[i];
-				if (sel.isValid(f))
+				if (sel == null || sel.isValid(f))
 					li.add(f);
 			}
 			c = c.getSuperclass();

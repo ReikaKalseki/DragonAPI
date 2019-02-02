@@ -49,7 +49,11 @@ public class ThresholdMapping<V> {
 		return Collections.unmodifiableCollection(data.keySet());
 	}
 
-	public double maxValue() {
+	public double firstValue() {
+		return data.isEmpty() ? 0 : data.firstKey();
+	}
+
+	public double lastValue() {
 		return data.isEmpty() ? 0 : data.lastKey();
 	}
 

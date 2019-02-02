@@ -55,4 +55,12 @@ public class Interpolation {
 		return data.toString();
 	}
 
+	public double getInitialValue() {
+		return this.getValue(data.firstValue());
+	}
+
+	public double getFinalValue() {
+		return this.getValue(data.lastValue());
+	}
+
 }

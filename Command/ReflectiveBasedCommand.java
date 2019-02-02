@@ -193,7 +193,12 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 	}
 
 	protected final String toReadableString(Object o) {
-		return (o instanceof Object[] ? Arrays.deepToString((Object[])o) : String.valueOf(o));
+		try {
+			return (o instanceof Object[] ? Arrays.deepToString((Object[])o) : String.valueOf(o));
+		}
+		catch (Exception e) {
+			return "Object "+o.getClass().getName()+" threw exception on toString(): "+e.toString();
+		}
 	}
 
 	@Override

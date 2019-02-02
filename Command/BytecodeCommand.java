@@ -15,6 +15,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -33,12 +34,20 @@ import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import cpw.mods.fml.common.registry.RegistryDelegate;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.network.rcon.RConConsoleSource;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
 
 /** Example use:
 	LDC {dimID} [+1 stack]<br>
@@ -251,6 +260,10 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 			catch (InstantiationException e) {
 				this.error(ics, "Could not construct object: "+e);
 			}
+			catch (Exception e) {
+				this.error(ics, "Could not execute: "+e);
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -343,28 +356,35 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		return s;
 	}
 
-	private void writeObjectToFile(File f, int idx, Object o) throws IOException {
+	private void writeObjectToFile(File f, int idx, Object o, boolean fullValues) throws IOException {
 		String s = "#"+idx+" - "+o.getClass().getName().replaceAll("\\\\.", "/");
-		File f2 = new File(f, s+".txt");
+		File f2 = new File(f, s+".log");
 		f2.getParentFile().mkdirs();
 		f2.delete();
 		f2.createNewFile();
-		ReikaFileReader.writeLinesToFile(f2, this.getObjectData(o, 0), true);
+		ReikaFileReader.writeLinesToFile(f2, this.getObjectData(o, 0, fullValues, new HashSet()), true);
 	}
 
-	private ArrayList<String> getObjectData(Object o, int depth) {
+	private ArrayList<String> getObjectData(Object o, int depth, boolean fullValues, HashSet<Object> chain) {
 		ArrayList<String> li = new ArrayList();
+		if (!chain.isEmpty()) {
+			if (o instanceof RegistryDelegate || o instanceof World || o instanceof MinecraftServer)
+				return li;
+		}
+		if (chain.contains(o) && !((o instanceof String || o instanceof Number || o instanceof Boolean || o instanceof Object[] || o instanceof Iterable || o instanceof Map || o instanceof Enum)))
+			return li;
+		chain.add(o);
 		if (o instanceof Map) {
 			li.add(this.pad(depth)+"Map ["+o.getClass()+"]:");
 			Map m = (Map)o;
 			Set<Map.Entry> st = m.entrySet(); //not sure why this requires independent declaration
 			for (Map.Entry e : st) {
 				li.add(this.pad(depth+1)+"Key:");
-				for (String s : this.getObjectData(e.getKey(), depth+2)) {
+				for (String s : this.getObjectData(e.getKey(), depth+2, fullValues, chain)) {
 					li.add(s);
 				}
 				li.add(this.pad(depth+1)+"Value:");
-				for (String s : this.getObjectData(e.getValue(), depth+2)) {
+				for (String s : this.getObjectData(e.getValue(), depth+2, fullValues, chain)) {
 					li.add(s);
 				}
 				li.add("----");
@@ -373,7 +393,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		else if (o instanceof Object[]) {
 			li.add(this.pad(depth+1)+"Array:");
 			for (Object o2 : ((Object[])o)) {
-				for (String s : this.getObjectData(o2, depth+2)) {
+				for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
 					li.add(s);
 				}
 				li.add("----");
@@ -382,19 +402,59 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		else if (o instanceof Iterable) {
 			li.add(this.pad(depth+1)+"Iterable ["+o.getClass()+"]:");
 			for (Object o2 : ((Iterable)o)) {
-				for (String s : this.getObjectData(o2, depth+2)) {
+				for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
 					li.add(s);
 				}
 				li.add("----");
 			}
 		}
+		else if (o instanceof ItemStack) {
+			li.add(this.pad(depth)+"ItemStack: "+this.fullID((ItemStack)o));
+		}
 		else if (o == null) {
 			li.add(this.pad(depth)+"<null>");
 		}
 		else {
-			li.add(this.pad(depth)+"["+o.getClass().getName()+"]"+" toString() : "+o.toString());
+			String ts;
+			try {
+				ts = "toString() : "+o.toString();
+			}
+			catch (Exception e) {
+				ts = "threw Exception: "+e.toString();
+			}
+			li.add(this.pad(depth)+"["+o.getClass().getName()+"] "+ts);
+		}
+
+		if (fullValues && o != null && !(o instanceof String || o instanceof Number || o instanceof Boolean || o instanceof Object[] || o instanceof Iterable || o instanceof Map || o instanceof Enum)) {
+			try {
+				li.add(this.pad(depth+1)+"Fields:");
+				for (Field f : ReikaReflectionHelper.getFields(o.getClass(), null)) {
+					if ((f.getModifiers() & Modifier.STATIC) == 0 && !f.isSynthetic()) {
+						f.setAccessible(true);
+						ReikaJavaLibrary.pConsole(f.getName());
+						Object o2 = f.get(o);
+						if (o != o2) {
+							li.add(this.pad(depth+2)+f.getName()+" ["+f.getType()+"]:");
+							for (String s : this.getObjectData(o2, depth+3, fullValues, chain)) {
+								li.add(s);
+							}
+						}
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return li;
+	}
+
+	private final String fullID(ItemStack is) {
+		if (is == null)
+			return "[null]";
+		else if (is.getItem() == null)
+			return "[null-item stack]";
+		return is.stackSize+"x"+Item.itemRegistry.getNameForObject(is.getItem())+"@"+is.getItemDamage()+"{"+is.stackTagCompound+"}["+ReikaItemHelper.getRegistrantMod(is)+"]";
 	}
 
 	private String pad(int d) {
@@ -523,7 +583,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					try {
 						File f = new File(DragonAPICore.getMinecraftDirectory(), "/ByteCodeStackOut/"+args[0]);
 						for (Object o : s)
-							cmd.writeObjectToFile(f, s.indexOf(o), o);
+							cmd.writeObjectToFile(f, s.indexOf(o), o, args.length > 1 && args[1].equalsIgnoreCase("full"));
 						sendChatToSender(ics, s.size()+" objects written to files in "+f.getAbsolutePath());
 					}
 					catch (IOException e) {

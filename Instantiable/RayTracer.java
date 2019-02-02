@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,20 +10,12 @@
 package Reika.DragonAPI.Instantiable;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.MovingObjectPosition.MovingObjectType;
-import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
-import Reika.ChromatiCraft.Registry.ChromaBlocks;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
@@ -33,7 +25,13 @@ import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.TinkerBlockHandler;
-import Reika.RotaryCraft.Registry.BlockRegistry;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.MovingObjectPosition.MovingObjectType;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 public final class RayTracer {
 
@@ -55,6 +53,9 @@ public final class RayTracer {
 	private final ArrayList<BlockKey> allowedBlocks = new ArrayList();
 
 	private final HashSet<Coordinate> blockRay = new HashSet();
+
+	private static final Collection<BlockKey> visuallyTransparent = new HashSet();
+	private static boolean loadedTransparent = false;
 
 	public RayTracer(double x1, double y1, double z1, double x2, double y2, double z2) {
 		originX = x1;
@@ -182,53 +183,56 @@ public final class RayTracer {
 		return !this.isDisallowedBlock(world, x, y, z);
 	}
 
-	public static RayTracer getVisualLOS() {
-		RayTracer trace = new RayTracer(0, 0, 0, 0, 0, 0);
+	public static void addVisuallyTransparentBlock(Block b) {
+		visuallyTransparent.add(new BlockKey(b));
+	}
 
-		trace.addTransparentBlock(Blocks.glass);
-		trace.addTransparentBlock(Blocks.ice);
-		trace.addTransparentBlock(Blocks.glass_pane);
-		trace.addTransparentBlock(Blocks.iron_bars);
-		trace.addTransparentBlock(Blocks.fence);
-		trace.addTransparentBlock(Blocks.nether_brick_fence);
-		trace.addTransparentBlock(Blocks.mob_spawner);
-		trace.addTransparentBlock(Blocks.leaves);
-		trace.addTransparentBlock(Blocks.leaves2);
-		trace.addTransparentBlock(Blocks.tallgrass);
-		trace.allowFluids = true;
+	public static void addVisuallyTransparentBlock(Block b, int meta) {
+		visuallyTransparent.add(new BlockKey(b, meta));
+	}
 
-		if (ModList.CHROMATICRAFT.isLoaded()) {
-			addCCGlass(trace);
-		}
-		if (ModList.ROTARYCRAFT.isLoaded()) {
-			addRCGlass(trace);
-		}
+	static {
+		addVisuallyTransparentBlock(Blocks.glass);
+		addVisuallyTransparentBlock(Blocks.ice);
+		addVisuallyTransparentBlock(Blocks.glass_pane);
+		addVisuallyTransparentBlock(Blocks.iron_bars);
+		addVisuallyTransparentBlock(Blocks.fence);
+		addVisuallyTransparentBlock(Blocks.nether_brick_fence);
+		addVisuallyTransparentBlock(Blocks.mob_spawner);
+		addVisuallyTransparentBlock(Blocks.leaves);
+		addVisuallyTransparentBlock(Blocks.leaves2);
+		addVisuallyTransparentBlock(Blocks.tallgrass);
+	}
+
+	private static void loadLastTransparent() {
+		if (loadedTransparent)
+			return;
+		loadedTransparent = true;
 		if (ModList.EXTRAUTILS.isLoaded()) {
 			if (ExtraUtilsHandler.getInstance().deco2ID != null) {
-				trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 1);
-				trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 2);
-				trace.addTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 4);
+				addVisuallyTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 1);
+				addVisuallyTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 2);
+				addVisuallyTransparentBlock(ExtraUtilsHandler.getInstance().deco2ID, 4);
 			}
 		}
 		if (ModList.TINKERER.isLoaded() && TinkerBlockHandler.getInstance().clearGlassID != null) {
-			trace.addTransparentBlock(TinkerBlockHandler.getInstance().clearGlassID);
+			addVisuallyTransparentBlock(TinkerBlockHandler.getInstance().clearGlassID);
 		}
+	}
+
+	public static RayTracer getVisualLOS() {
+		RayTracer trace = new RayTracer(0, 0, 0, 0, 0, 0);
+		loadLastTransparent();
+
+		for (BlockKey bk : visuallyTransparent) {
+			if (bk.hasMetadata())
+				trace.addTransparentBlock(bk.blockID, bk.metadata);
+			else
+				trace.addTransparentBlock(bk.blockID);
+		}
+		trace.allowFluids = true;
 
 		return trace;
-	}
-
-	@ModDependent(ModList.CHROMATICRAFT)
-	private static void addCCGlass(RayTracer trace) {
-		trace.addTransparentBlock(ChromaBlocks.GLASS.getBlockInstance());
-		trace.addTransparentBlock(ChromaBlocks.SELECTIVEGLASS.getBlockInstance());
-		trace.addTransparentBlock(ChromaBlocks.DOOR.getBlockInstance());
-		trace.addTransparentBlock(ChromaBlocks.PYLON.getBlockInstance());
-	}
-
-	@ModDependent(ModList.ROTARYCRAFT)
-	private static void addRCGlass(RayTracer trace) {
-		trace.addTransparentBlock(BlockRegistry.BLASTGLASS.getBlockInstance());
-		trace.addTransparentBlock(BlockRegistry.BLASTPANE.getBlockInstance());
 	}
 
 	public double getLength() {

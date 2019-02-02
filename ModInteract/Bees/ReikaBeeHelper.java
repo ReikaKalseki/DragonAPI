@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,16 +15,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StatCollector;
-import net.minecraft.world.World;
-
 import org.apache.commons.lang3.text.WordUtils;
 
-import Reika.ChromatiCraft.ModInterface.Bees.ApiaryAcceleration;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
@@ -40,6 +32,7 @@ import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Life;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Speeds;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Territory;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Tolerance;
+import Reika.DragonAPI.ModInteract.Bees.BeeEvent.BeeSetHealthEvent;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ForestryHandler;
 import forestry.api.apiculture.BeeManager;
 import forestry.api.apiculture.EnumBeeChromosome;
@@ -79,6 +72,12 @@ import forestry.api.lepidopterology.EnumFlutterType;
 import forestry.api.lepidopterology.IButterflyGenome;
 import forestry.api.lepidopterology.IButterflyRoot;
 import forestry.api.multiblock.IAlvearyController;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 
 
 public class ReikaBeeHelper {
@@ -176,15 +175,14 @@ public class ReikaBeeHelper {
 	private static void setBeeHealth(IAlvearyController iac, IBee bee, int health) {
 		try {
 			beeHealth.set(bee, health);
-			ApiaryAcceleration.instance.updateBeeHealthBar(iac, bee);
-			ApiaryAcceleration.instance.resetProgress(iac.getBeekeepingLogic());
+			MinecraftForge.EVENT_BUS.post(new BeeSetHealthEvent(iac, iac.getBeekeepingLogic(), bee));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public static void rejuvenateBee(TileEntity te, IBeekeepingLogic lgc, ItemStack is) {
+	public static void rejuvenateBee(IBeeHousing te, IBeekeepingLogic lgc, ItemStack is) {
 		if (is != null) {
 			IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
 			if (bee instanceof IBee) {
@@ -195,11 +193,10 @@ public class ReikaBeeHelper {
 		}
 	}
 
-	private static void setBeeHealth(TileEntity te, IBeekeepingLogic lgc, IBee bee, int health) {
+	private static void setBeeHealth(IBeeHousing te, IBeekeepingLogic lgc, IBee bee, int health) {
 		try {
 			beeHealth.set(bee, health);
-			ApiaryAcceleration.instance.updateBeeHealthBar(te, lgc, bee);
-			ApiaryAcceleration.instance.resetProgress(lgc);
+			MinecraftForge.EVENT_BUS.post(new BeeSetHealthEvent(te, lgc, bee));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -662,7 +659,4 @@ public class ReikaBeeHelper {
 			ret[i] *= f;
 		return ret;
 	}
-
-
-
 }

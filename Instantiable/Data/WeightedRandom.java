@@ -1,17 +1,19 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.NavigableMap;
 import java.util.Random;
+import java.util.Set;
 import java.util.TreeMap;
 
 import Reika.DragonAPI.Exception.MisuseException;
@@ -165,6 +167,10 @@ public class WeightedRandom<V> {
 			}
 		}
 		return w;
+	}
+
+	public Set<V> getValues() {
+		return Collections.unmodifiableSet(data.keySet());
 	}
 
 }
