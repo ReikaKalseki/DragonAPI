@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -11,6 +11,10 @@ package Reika.DragonAPI.Extras;
 
 import java.util.List;
 
+import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityList;
@@ -24,10 +28,6 @@ import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 
 public class ItemSpawner extends Item {
 
@@ -109,7 +109,7 @@ public class ItemSpawner extends Item {
 			if (spw != null) {
 				world.playSoundEffect(x+0.5, y+0.5, z+0.5, "step.stone", 1F, 1.5F);
 				MobSpawnerBaseLogic lgc = spw.func_145881_a();
-				ReikaSpawnerHelper.setSpawnerFromItemNBT(is, spw);
+				ReikaSpawnerHelper.setSpawnerFromItemNBT(is, spw, true);
 				lgc.spawnDelay = Math.max(lgc.minSpawnDelay, itemRand.nextInt(Math.min(900, 1+lgc.maxSpawnDelay))); //20s delay
 			}
 		}

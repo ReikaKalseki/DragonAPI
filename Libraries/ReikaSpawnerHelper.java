@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -11,6 +11,8 @@ package Reika.DragonAPI.Libraries;
 
 import java.util.List;
 
+import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -26,8 +28,6 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public class ReikaSpawnerHelper {
 
@@ -68,7 +68,7 @@ public class ReikaSpawnerHelper {
 	}
 
 	/** Sets a spawner's spawn type from an Items. Args: Item, Spawner TileEntity */
-	public static void setSpawnerFromItemNBT(ItemStack is, TileEntityMobSpawner spw) {
+	public static void setSpawnerFromItemNBT(ItemStack is, TileEntityMobSpawner spw, boolean keepLogic) {
 		if (is == null)
 			return;
 		if (is.stackTagCompound == null)
@@ -76,7 +76,7 @@ public class ReikaSpawnerHelper {
 		if (!is.stackTagCompound.hasKey("Spawner"))
 			return;
 		String name = is.stackTagCompound.getString("Spawner");
-		if (is.stackTagCompound.hasKey("logic")) {
+		if (keepLogic && is.stackTagCompound.hasKey("logic")) {
 			MobSpawnerBaseLogic lgc = new ConstructableSpawnerLogic(spw);
 			lgc.readFromNBT(is.stackTagCompound.getCompoundTag("logic"));
 			setSpawnerLogic(spw, lgc);
@@ -127,19 +127,21 @@ public class ReikaSpawnerHelper {
 	}
 
 	public static void setSpawnerItemNBT(ItemStack is, int minDelay, int maxDelay, int maxNear, int spawnCount, int spawnRange, int activeRange, boolean force) {
-		setSpawnerItemNBT(is, new TemporarySpawnerLogic(minDelay, maxDelay, maxNear, spawnCount, spawnRange, activeRange), force);
+		setSpawnerItemNBT(is, new TemporarySpawnerLogic(minDelay, maxDelay, maxNear, spawnCount, spawnRange, activeRange), force, true);
 	}
 
-	public static void setSpawnerItemNBT(ItemStack is, MobSpawnerBaseLogic lgc, boolean force) {
+	public static void setSpawnerItemNBT(ItemStack is, MobSpawnerBaseLogic lgc, boolean force, boolean keepLogic) {
 		if (is.stackTagCompound == null)
 			is.setTagCompound(new NBTTagCompound());
 		if (force || !is.stackTagCompound.hasKey("Spawner")) {
 			is.stackTagCompound.setString("Spawner", lgc.getEntityNameToSpawn());
 		}
-		if (force || !is.stackTagCompound.hasKey("logic")) {
-			NBTTagCompound tag = new NBTTagCompound();
-			lgc.writeToNBT(tag);
-			is.stackTagCompound.setTag("logic", tag);
+		if (keepLogic) {
+			if (force || !is.stackTagCompound.hasKey("logic")) {
+				NBTTagCompound tag = new NBTTagCompound();
+				lgc.writeToNBT(tag);
+				is.stackTagCompound.setTag("logic", tag);
+			}
 		}
 	}
 

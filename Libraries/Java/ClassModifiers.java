@@ -31,7 +31,7 @@ public enum ClassModifiers {
 	}
 
 	public boolean match(int modifiers) {
-		return (modifiers ^ bits) != 0;
+		return (modifiers & bits) != 0;
 	}
 
 	@Override

@@ -569,7 +569,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					}
 					Constructor cn = c.getDeclaredConstructor(types);
 					cn.setAccessible(true);
-					Object o = cn.newInstance(args);
+					Object o = cn.newInstance(vals);
 					s.push(o);
 					break;
 				}

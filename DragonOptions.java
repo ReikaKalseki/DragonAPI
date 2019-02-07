@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,6 +15,7 @@ import Reika.DragonAPI.Interfaces.Configuration.IntegerConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringArrayConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
 import Reika.DragonAPI.Interfaces.Configuration.UserSpecificConfig;
+import net.minecraft.world.ChunkCoordIntPair;
 
 public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayConfig, StringConfig, UserSpecificConfig {
 
@@ -60,6 +61,9 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	CTRLCOLLECT("Automatic Collection of Inventories; set to 'NULL' to disable", Key.LCTRL.name()),
 	AFK("AFK Timer Threshold (Seconds); Set to 0 to Disable", 120), //2 min
 	REROUTEEYES("Reroute Ender Eyes to Stronghold Entrances", false),
+	WORLDSIZE("Expected Approximate Maximum World Size (Radius)", 5000),
+	WORLDCENTERX("Expected Approximate World Center Location X", 0),
+	WORLDCENTERZ("Expected Approximate World Center Location Z", 0);
 	;
 
 	private String label;
@@ -204,6 +208,11 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 		if (CTRLCOLLECT.getString().equalsIgnoreCase("null"))
 			return null;
 		return Key.readFromConfig(DragonAPIInit.instance, CTRLCOLLECT);
+	}
+
+	/** In block coords */
+	public static ChunkCoordIntPair getWorldCenter() {
+		return new ChunkCoordIntPair(WORLDCENTERX.getValue(), WORLDCENTERZ.getValue());
 	}
 
 }
