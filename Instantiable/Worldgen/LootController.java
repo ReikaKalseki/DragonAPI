@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,11 +12,11 @@ package Reika.DragonAPI.Instantiable.Worldgen;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ChestGenHooks;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaGenHelper;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ChestGenHooks;
 
 public class LootController {
 
@@ -99,7 +99,6 @@ public class LootController {
 		}
 	}
 
-	@Deprecated
 	public enum Location {
 		BONUS(ChestGenHooks.BONUS_CHEST),
 		VILLAGE(ChestGenHooks.VILLAGE_BLACKSMITH),
@@ -110,7 +109,8 @@ public class LootController {
 		STRONGHOLD_HALLWAY(ChestGenHooks.STRONGHOLD_CORRIDOR),
 		PYRAMID(ChestGenHooks.PYRAMID_DESERT_CHEST),
 		JUNGLE_DISPENSER(ChestGenHooks.PYRAMID_JUNGLE_DISPENSER),
-		JUNGLE_PUZZLE(ChestGenHooks.PYRAMID_JUNGLE_CHEST);
+		JUNGLE_PUZZLE(ChestGenHooks.PYRAMID_JUNGLE_CHEST),
+		NETHER_FORTRESS("");
 
 		public final String tag;
 

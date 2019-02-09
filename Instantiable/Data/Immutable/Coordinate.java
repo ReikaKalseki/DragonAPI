@@ -386,4 +386,8 @@ public final class Coordinate implements Comparable<Coordinate> {
 		return world.checkChunksExist(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord);
 	}
 
+	public boolean isWithinDistOnAllCoords(Coordinate loc, int radius) {
+		return Math.abs(loc.xCoord-xCoord) <= radius && Math.abs(loc.yCoord-yCoord) <= radius && Math.abs(loc.zCoord-zCoord) <= radius;
+	}
+
 }

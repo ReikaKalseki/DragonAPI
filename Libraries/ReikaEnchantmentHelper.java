@@ -145,7 +145,7 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 
 		@Override
 		public int compare(Enchantment o1, Enchantment o2) {
-			return o1.getTranslatedName(1).compareTo(o2.getTranslatedName(1));
+			return o1.getTranslatedName(1).compareToIgnoreCase(o2.getTranslatedName(1));
 		}
 
 	}

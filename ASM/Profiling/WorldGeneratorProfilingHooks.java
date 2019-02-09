@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,8 +13,6 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-
-import net.minecraft.launchwrapper.IClassTransformer;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
@@ -30,6 +28,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.Interfaces.Subgenerator;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
+import net.minecraft.launchwrapper.IClassTransformer;
 
 public class WorldGeneratorProfilingHooks implements IClassTransformer {
 
@@ -92,6 +91,9 @@ public class WorldGeneratorProfilingHooks implements IClassTransformer {
 			}
 
 			ReikaASMHelper.activeMod = null;
+		}
+		else {
+			return bytes;
 		}
 
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);

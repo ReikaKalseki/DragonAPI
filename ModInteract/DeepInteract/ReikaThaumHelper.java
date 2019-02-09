@@ -180,11 +180,18 @@ public class ReikaThaumHelper {
 	}
 
 	public static String aspectsToString(AspectList al) {
+		if (al == null)
+			return "null";
 		StringBuilder sb = new StringBuilder();
 		sb.append("{");
 		for (Aspect a : al.aspects.keySet()) {
-			int amt = al.getAmount(a);
-			sb.append(a.getTag()+"="+amt);
+			if (a == null) {
+				sb.append("<NULL>");
+			}
+			else {
+				int amt = al.getAmount(a);
+				sb.append(a.getTag()+"="+amt);
+			}
 			sb.append(", ");
 		}
 		sb.append("}");
