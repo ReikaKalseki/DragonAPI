@@ -20,14 +20,13 @@ import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraftforge.classloading.FMLForgePlugin;
 
 public abstract class Patcher {
 
 	public final String obfName;
 	public final String deobfName;
 
-	public static final boolean genClasses = ReikaJVMParser.isArgumentPresent("-DragonAPI_exportASM") || !FMLForgePlugin.RUNTIME_DEOBF;
+	public static final boolean genClasses = ReikaJVMParser.isArgumentPresent("-DragonAPI_exportASM");
 
 	public Patcher(String s) {
 		this(s, s);

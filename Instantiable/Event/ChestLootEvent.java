@@ -2,11 +2,8 @@ package Reika.DragonAPI.Instantiable.Event;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Worldgen.LootController.Location;
-import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 import cpw.mods.fml.common.eventhandler.Event;
-import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.gen.feature.WorldGenDungeons;
 import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces.DesertPyramid;
 import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces.JunglePyramid;
@@ -32,11 +29,6 @@ public class ChestLootEvent extends Event {
 		Location table = calculateTable(struct);
 		if (table != null) {
 			MinecraftForge.EVENT_BUS.post(new ChestLootEvent(ii, table));
-
-			ReikaInventoryHelper.clearInventory(ii);
-			ItemStack is = new ItemStack(Blocks.wool, 1, table.ordinal());
-			is.setStackDisplayName(table.toString());
-			ReikaInventoryHelper.addToIInv(is, ii);
 		}
 		else {
 			DragonAPICore.logError("Tried to fire an event for chest loot from an unrecognized structure "+struct+"!");
