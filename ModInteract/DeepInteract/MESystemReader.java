@@ -108,7 +108,7 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 		actionSource = src;
 
 		IReadOnlyCollection<IGridNode> nodes = ign.getGrid().getNodes();
-		isEmpty = nodes.isEmpty() || (nodes.size() == 1 && nodes.iterator().next() == node);
+		isEmpty = nodes.isEmpty() || (nodes.size() == 1 && nodes.iterator().hasNext() && nodes.iterator().next() == node);
 	}
 
 	public MESystemReader setRequester(ICraftingRequester icr) {
