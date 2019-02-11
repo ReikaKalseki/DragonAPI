@@ -1,4 +1,4 @@
-package Reika.DragonAPI.ASM.Patchers.Fixes;
+package Reika.DragonAPI.ASM.Patchers.Hooks;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -21,6 +21,7 @@ public class ControllableVillageLists extends Patcher {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "<init>", "(Lnet/minecraft/world/World;Ljava/util/Random;III)V");
 		MethodInsnNode min = (MethodInsnNode)ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.INVOKESTATIC);
 		min.owner = "Reika/DragonAPI/ASM/ASMCalls";
+		min.name = "buildVillageStructureList";
 		ReikaASMHelper.addTrailingArgument(min, "L"+cn.name.replace(".", "/")+";");
 		m.instructions.insertBefore(min, new VarInsnNode(Opcodes.ALOAD, 0));
 	}

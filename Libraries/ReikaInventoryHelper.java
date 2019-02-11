@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,6 +15,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.TemporaryInventory;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Instantiable.Recipe.ItemMatch;
+import Reika.DragonAPI.Interfaces.Item.ActivatedInventoryItem;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -31,16 +41,6 @@ import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Instantiable.TemporaryInventory;
-import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
-import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
-import Reika.DragonAPI.Instantiable.Recipe.ItemMatch;
-import Reika.DragonAPI.Interfaces.Item.ActivatedInventoryItem;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
 
 public final class ReikaInventoryHelper extends DragonAPICore {
 
@@ -1183,6 +1183,21 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 		else
 			return null;
+	}
+
+	public static boolean addOrSetStack(ItemStack is, IInventory inv, int slot) {
+		if (is == null)
+			return false;
+		ItemStack at = inv.getStackInSlot(slot);
+		if (at == null) {
+			inv.setInventorySlotContents(slot, is.copy());
+			return true;
+		}
+		int max = at.getMaxStackSize();
+		if (!(ReikaItemHelper.matchStacks(is, at) && ItemStack.areItemStackTagsEqual(is, at)) || at.stackSize+is.stackSize > max)
+			return false;
+		at.stackSize += is.stackSize;
+		return true;
 	}
 
 	public static boolean addOrSetStack(ItemStack is, ItemStack[] inv, int slot) {

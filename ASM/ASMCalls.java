@@ -45,7 +45,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
 
-	public static List getStructureVillageWeightedPieceList(Random rand, int val, MapGenVillage.Start s) {
+	public static List buildVillageStructureList(Random rand, int val, MapGenVillage.Start s) {
 		ArrayList li = new ArrayList();
 		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House4Garden.class, 4, MathHelper.getRandomIntegerInRange(rand, 2 + val, 4 + val * 2)));
 		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.Church.class, 20, MathHelper.getRandomIntegerInRange(rand, 0 + val, 1 + val)));
