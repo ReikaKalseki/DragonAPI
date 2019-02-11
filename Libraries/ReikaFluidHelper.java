@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,14 +15,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 
+import Reika.DragonAPI.Instantiable.HybridTank;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import Reika.DragonAPI.Instantiable.HybridTank;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 
 public class ReikaFluidHelper {
 
@@ -113,11 +113,22 @@ public class ReikaFluidHelper {
 		@Override
 		public int compare(FluidStack o1, FluidStack o2) {
 			if (o1.getFluidID() == o2.getFluidID()) {
-				return o1.amount-o2.amount;
+				return Integer.compare(o1.amount, o2.amount);
 			}
 			else {
-				return o1.getFluidID()-o2.getFluidID();
+				return Integer.compare(o1.getFluidID(), o2.getFluidID());
 			}
+		}
+
+	}
+
+	public static final Comparator<Fluid> fluidComparator = new FluidComparator();
+
+	private static class FluidComparator implements Comparator<Fluid> {
+
+		@Override
+		public int compare(Fluid o1, Fluid o2) {
+			return Integer.compare(o1.getID(), o2.getID());
 		}
 
 	}

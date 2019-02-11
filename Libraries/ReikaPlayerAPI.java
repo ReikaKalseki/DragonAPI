@@ -183,7 +183,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 				break;
 		}
 		ItemStack[] ii = ep.inventory.mainInventory;
-		if (is.getItem().getHasSubtypes() && is.getItemDamage() != OreDictionary.WILDCARD_VALUE)
+		if (is.stackTagCompound != null || (is.getItem().getHasSubtypes() && is.getItemDamage() != OreDictionary.WILDCARD_VALUE))
 			return ReikaInventoryHelper.checkForItemStack(is, ii, false);
 		else
 			return ReikaInventoryHelper.checkForItem(is.getItem(), ii);

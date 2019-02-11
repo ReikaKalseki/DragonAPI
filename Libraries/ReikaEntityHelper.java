@@ -294,6 +294,15 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	}
 
+	public static final Comparator<String> entityByDisplayComparator = new Comparator<String>() {
+
+		@Override
+		public int compare(String o1, String o2) {
+			return String.CASE_INSENSITIVE_ORDER.compare(getEntityDisplayName(o1), getEntityDisplayName(o2));
+		}
+
+	};
+
 	private static HashMap<Class, Integer> mobColorArray = new HashMap();
 	private static HashMap<Class, Boolean> hostilityMap = new HashMap();
 

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -16,9 +16,6 @@ import java.net.URL;
 import java.util.Random;
 import java.util.UUID;
 
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.PropertyManager;
-import net.minecraftforge.common.ForgeVersion;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
@@ -29,6 +26,9 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.PropertyManager;
+import net.minecraftforge.common.ForgeVersion;
 
 public class DragonAPICore {
 
@@ -50,7 +50,7 @@ public class DragonAPICore {
 	public static final String dependencies = MINFORGE+"after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;"+
 			"after:powersuits;after:GalacticCraft;after:Mystcraft;after:UniversalElectricity;after:Forestry;after:MagicBees;"+
 			"after:ExtraBees;after:Natura;after:TConstruct;after:ProjRed|Core;after:bluepower;after:Waila;after:funkylocomotion;after:chisel;"+
-			"after:ComputerCraft;after:ThermalFoundation;after:CarpentersBlocks;after:AgriCraft";
+			"after:ComputerCraft;after:ThermalFoundation;after:CarpentersBlocks;after:AgriCraft;after:MineFactoryReloaded";
 
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
 	public static final UUID Reika_UUID = UUID.fromString("e5248026-6874-4954-9a02-aa8910d08f31");

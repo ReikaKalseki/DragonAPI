@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -16,22 +16,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.Base.BlockTieredResource;
@@ -52,6 +36,22 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModRegistry.ModWoodList;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.stats.StatList;
+import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
+import net.minecraftforge.event.world.WorldEvent;
 
 public class ProgressiveRecursiveBreaker implements TickHandler {
 
@@ -69,6 +69,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private int depth = 0;
 		private boolean isDone = false;
 		private final HashSet<BlockKey> ids = new HashSet();
+		public final HashSet<BlockKey> passthrough = new HashSet();
 		public boolean extraSpread = false;
 		public int tickRate = 1;
 		private int tick;
@@ -234,7 +235,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			if (id == Blocks.air && !breakAir)
 				return false;
 			if (!isOmni) {
-				if (!ids.contains(new BlockKey(id, meta)))
+				BlockKey bk = new BlockKey(id, meta);
+				if (!ids.contains(bk) && !passthrough.contains(bk))
 					return false;
 			}
 			return player == null || (!world.isRemote && ReikaPlayerAPI.playerCanBreakAt((WorldServer)world, x, y, z, (EntityPlayerMP)player));
@@ -243,7 +245,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private void dropBlock(World world, int x, int y, int z) {
 			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
-			if (id != Blocks.air) {
+			boolean pass = passthrough.contains(new BlockKey(id, meta));
+			if (!pass && id != Blocks.air) {
 				if (drops) {
 					ArrayList<ItemStack> drops = new ArrayList();
 					if (id instanceof BlockTieredResource) {
@@ -300,12 +303,12 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			}
 			if (call != null)
 				call.onPreBreak(this, world, x, y, z, id, meta);
-			if (id != Blocks.air) {
+			if (!pass && id != Blocks.air) {
 				world.setBlock(x, y, z, Blocks.air, 0, causeUpdates ? 3 : 2);
 			}
-			if (causeUpdates)
+			if (!pass && causeUpdates)
 				world.markBlockForUpdate(x, y, z);
-			if (player != null) {
+			if (!pass && player != null) {
 				player.addStat(StatList.mineBlockStatArray[Block.getIdFromBlock(id)], 1);
 				player.addExhaustion(0.025F*hungerFactor);
 			}
