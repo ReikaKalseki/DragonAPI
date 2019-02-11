@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,10 +10,14 @@
 package Reika.DragonAPI.Instantiable.Worldgen;
 
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Libraries.ReikaAABBHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import cpw.mods.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
@@ -21,20 +25,16 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.structure.MapGenStructureIO;
+import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.gen.structure.StructureComponent;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Start;
 import net.minecraft.world.gen.structure.StructureVillagePieces.Village;
-import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
-import Reika.DragonAPI.Libraries.ReikaAABBHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import cpw.mods.fml.common.registry.VillagerRegistry.IVillageCreationHandler;
 
 
 public class VillageBuilding implements IVillageCreationHandler {
@@ -64,16 +64,17 @@ public class VillageBuilding implements IVillageCreationHandler {
 
 	@Override
 	public PieceWeight getVillagePieceWeight(Random random, int i) {
-		return new FractionalWeight(buildingClass, weight, MathHelper.getRandomIntegerInRange(random, 0 + i, 1 + i));
+		int c = MathHelper.getRandomIntegerInRange(random, 0 + i, 1 + i);
+		return new PieceWeight(buildingClass, (int)weight, c);
 	}
 
 	@Override
-	public Class<?> getComponentClass() {
+	public final Class<?> getComponentClass() {
 		return buildingClass;
 	}
 
 	@Override
-	public Object buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List pieces, Random random, int p1, int p2, int p3, int p4, int p5)
+	public final Object buildComponent(StructureVillagePieces.PieceWeight villagePiece, StructureVillagePieces.Start startPiece, List pieces, Random random, int p1, int p2, int p3, int p4, int p5)
 	{
 		return this.buildComponent(startPiece, pieces, random, p1, p2, p3, p4, p5);
 	}
@@ -96,6 +97,22 @@ public class VillageBuilding implements IVillageCreationHandler {
 		return var8 != null && var8.minY > 10;
 	}
 
+	public static class PerVillageBuilding extends VillageBuilding {
+
+		public final int perVillage;
+
+		public PerVillageBuilding(Class<? extends VillagePiece> c, float w, String n, int x, int y, int z, int p) {
+			super(c, w, n, x, y, z);
+			perVillage = p;
+		}
+
+		@Override
+		public PieceWeight getVillagePieceWeight(Random random, int i) {
+			int c = MathHelper.getRandomIntegerInRange(random, 0 + i, 1 + i);
+			return new PerVillageWeight(buildingClass, Math.max(1, Math.round(weight)), c, perVillage);
+		}
+	}
+	/*
 	public static List applyFractionalWeights(List<PieceWeight> li) {
 		ArrayList<PieceWeight> ret = new ArrayList();
 		boolean hasFractions = false;
@@ -138,6 +155,24 @@ public class VillageBuilding implements IVillageCreationHandler {
 			decimalWeight = weight;
 		}
 
+	}*/
+
+	public static final class PerVillageWeight extends PieceWeight {
+
+		private final int chancePerVillage;
+
+		public PerVillageWeight(Class c, int weight, int limit, int ch) {
+			super(c, weight, limit);
+			chancePerVillage = ch;
+		}
+
+		public boolean canGenerate(MapGenVillage.Start s) {
+			return this.hash(s)%chancePerVillage == 0;
+		}
+
+		private long hash(MapGenVillage.Start s) {
+			return ChunkCoordIntPair.chunkXZ2Int(s.func_143019_e(), s.func_143018_f());
+		}
 	}
 
 	public static abstract class VillagePiece extends Village {
@@ -152,6 +187,9 @@ public class VillageBuilding implements IVillageCreationHandler {
 
 		private static final BlockKey BASIC_SUPPORT = new BlockKey(Blocks.cobblestone);
 
+		protected StructureVillagePieces.Start villageCore;
+		private long villageHash;
+
 		public VillagePiece() {
 			super();
 		}
@@ -160,10 +198,23 @@ public class VillageBuilding implements IVillageCreationHandler {
 			super(start, par2);
 			coordBaseMode = par5;
 			boundingBox = bb;
+			villageCore = start;
+			if (villageCore != null) {
+				villageHash = ChunkCoordIntPair.chunkXZ2Int(start.getBoundingBox().getCenterX(), start.getBoundingBox().getCenterZ());
+			}
 
 			xSize = x;
 			ySize = y;
 			zSize = z;
+		}
+
+		//public abstract int getMinimumSeparation();
+
+		@Override
+		public final NBTTagCompound func_143010_b()  {
+			NBTTagCompound ret = super.func_143010_b();
+			ret.setLong("vposhash", villageHash);
+			return ret;
 		}
 
 		@Override
@@ -173,6 +224,7 @@ public class VillageBuilding implements IVillageCreationHandler {
 			xSize = tag.getInteger("sizeX");
 			ySize = tag.getInteger("sizeY");
 			zSize = tag.getInteger("sizeZ");
+			villageHash = tag.getLong("vposhash");
 		}
 
 		@Override
@@ -190,6 +242,19 @@ public class VillageBuilding implements IVillageCreationHandler {
 
 				boundingBox.offset(0, averageGroundLevel - boundingBox.maxY + ySize - 1, 0);
 			}
+
+			/*
+			int mind = this.getMinimumSeparation();
+			if (mind > 0 && world instanceof WorldServer) {
+				ChunkProviderGenerate gen = (ChunkProviderGenerate)((WorldServer)world).theChunkProviderServer.currentChunkProvider;
+				MapGenVillage mgv = null;
+				for (StructureStart s : ((Collection<StructureStart>)mgv.structureMap.values())) {
+					if (s.isSizeableStructure()) {
+						StructureBoundingBox box = s.getBoundingBox();
+						if (ReikaMathLibrary.py3d(dx, dy, dz))
+					}
+				}
+			}*/
 
 			return this.generate(world, rand);
 		}
@@ -260,6 +325,14 @@ public class VillageBuilding implements IVillageCreationHandler {
 			this.placeBlockAtFixedPosition(world, i, j, k, b, 0);
 		}
 
+		protected final Block getBlockAtFixedPosition(World world, int i, int j, int k) {
+			return world.getBlock(i+boundingBox.minX, j+boundingBox.minY, k+boundingBox.minZ);
+		}
+
+		protected final int getMetaAtFixedPosition(World world, int i, int j, int k) {
+			return world.getBlockMetadata(i+boundingBox.minX, j+boundingBox.minY, k+boundingBox.minZ);
+		}
+
 		protected final void placeBlockAtFixedPosition(World world, int i, int j, int k, Block b, int meta) {
 			this.placeBlockAtFixedPosition(world, i, j, k, b, meta, BASIC_SUPPORT);
 		}
@@ -299,6 +372,45 @@ public class VillageBuilding implements IVillageCreationHandler {
 			}
 		}
 
+		public int countIntersectingBlocks(World world) {
+			int c = 0;
+			for (int i = 0; i < xSize; i++) {
+				for (int k = 0; k < zSize; k++) {
+					for (int j = 0; j < ySize; j++) {
+						Block b = this.getBlockAtFixedPosition(world, i, j, k);
+						if (!ReikaWorldHelper.softBlocks(b))
+							c++;
+					}
+				}
+			}
+			return c;
+		}
+
+		public int getVolume() {
+			return xSize*ySize*zSize;
+		}
+
+		public void rise(World world) {
+			boolean flag = false;
+			do {
+				int c = 0;
+				int t = 0;
+				for (int i = 0; i < xSize; i++) {
+					for (int k = 0; k < zSize; k++) {
+						Block b = this.getBlockAtFixedPosition(world, i, 1, k);
+						if (b == Blocks.stone || b == Blocks.dirt || b == Blocks.grass || b == Blocks.gravel || b == Blocks.sand || b == Blocks.sandstone || b == Blocks.hardened_clay || b == Blocks.stained_hardened_clay || ReikaBlockHelper.isLiquid(b)) {
+							c++;
+						}
+						t++;
+					}
+				}
+				flag = c >= t/4;
+				if (flag) {
+					boundingBox.offset(0, 1, 0);
+				}
+			} while(flag);
+		}
+
 	}
 
 	public static class StructureEntry {
@@ -324,6 +436,22 @@ public class VillageBuilding implements IVillageCreationHandler {
 			return new VillageBuilding(structureClass, weight, identifier, xSize, ySize, zSize);
 		}
 
+	}
+
+	public static class PerVillageStructureEntry extends StructureEntry {
+
+		public final int perVillageChance;
+
+		/** Higher 'chance' = less spawning; think <b>rand.nextInt()<b> */
+		public PerVillageStructureEntry(Class<? extends VillagePiece> c, float w, String s, int x, int y, int z, int p) {
+			super(c, w, s, x, y, z);
+			perVillageChance = p;
+		}
+
+		@Override
+		public VillageBuilding build() {
+			return new PerVillageBuilding(structureClass, weight, identifier, xSize, ySize, zSize, perVillageChance);
+		}
 	}
 
 }

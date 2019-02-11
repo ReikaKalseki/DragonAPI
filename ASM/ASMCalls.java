@@ -10,14 +10,19 @@
 package Reika.DragonAPI.ASM;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Worldgen.VillageBuilding.PerVillageWeight;
 import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
 import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
+import cpw.mods.fml.common.registry.VillagerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
@@ -28,7 +33,10 @@ import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenMutated;
+import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces;
+import net.minecraft.world.gen.structure.StructureVillagePieces;
+import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -36,6 +44,33 @@ import net.minecraftforge.fluids.FluidRegistry;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
+
+	public static List getStructureVillageWeightedPieceList(Random rand, int val, MapGenVillage.Start s) {
+		ArrayList li = new ArrayList();
+		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House4Garden.class, 4, MathHelper.getRandomIntegerInRange(rand, 2 + val, 4 + val * 2)));
+		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.Church.class, 20, MathHelper.getRandomIntegerInRange(rand, 0 + val, 1 + val)));
+		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House1.class, 20, MathHelper.getRandomIntegerInRange(rand, 0 + val, 2 + val)));
+		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.WoodHut.class, 3, MathHelper.getRandomIntegerInRange(rand, 2 + val, 5 + val * 3)));
+		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.Hall.class, 15, MathHelper.getRandomIntegerInRange(rand, 0 + val, 2 + val)));
+		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.Field1.class, 3, MathHelper.getRandomIntegerInRange(rand, 1 + val, 4 + val)));
+		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.Field2.class, 3, MathHelper.getRandomIntegerInRange(rand, 2 + val, 4 + val * 2)));
+		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House2.class, 15, MathHelper.getRandomIntegerInRange(rand, 0, 1 + val)));
+		li.add(new StructureVillagePieces.PieceWeight(StructureVillagePieces.House3.class, 8, MathHelper.getRandomIntegerInRange(rand, 0 + val, 3 + val * 2)));
+		VillagerRegistry.addExtraVillageComponents(li, rand, val);
+
+		Iterator<PieceWeight> it = li.iterator();
+		while (it.hasNext()) {
+			PieceWeight pw = it.next();
+			if (pw.villagePiecesLimit == 0) {
+				it.remove();
+			}
+			else if (pw instanceof PerVillageWeight && !((PerVillageWeight)pw).canGenerate(s)) {
+				it.remove();
+			}
+		}
+
+		return li;
+	}
 
 	public static boolean isGitFile(File f) {
 		return f.getName().contains(".git");
