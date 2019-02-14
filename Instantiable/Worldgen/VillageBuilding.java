@@ -13,6 +13,7 @@ import java.lang.reflect.Constructor;
 import java.util.List;
 import java.util.Random;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
@@ -206,6 +207,7 @@ public class VillageBuilding implements IVillageCreationHandler {
 			xSize = x;
 			ySize = y;
 			zSize = z;
+			this.initSizes();
 		}
 
 		//public abstract int getMinimumSeparation();
@@ -224,13 +226,23 @@ public class VillageBuilding implements IVillageCreationHandler {
 			xSize = tag.getInteger("sizeX");
 			ySize = tag.getInteger("sizeY");
 			zSize = tag.getInteger("sizeZ");
+			this.initSizes();
 			villageHash = tag.getLong("vposhash");
+		}
+
+		private void initSizes() {
+			StructureBoundingBox box = boundingBox;
+			if (box == null)
+				return;
+			xSize = Math.max(xSize, box.maxX-box.minX+1);
+			ySize = Math.max(ySize, box.maxY-box.minY+1);
+			zSize = Math.max(zSize, box.maxZ-box.minZ+1);
 		}
 
 		@Override
 		public final boolean addComponentParts(World world, Random rand, StructureBoundingBox box) {
 			structureBox = box;
-
+			this.initSizes();
 			if (averageGroundLevel < 0)
 			{
 				averageGroundLevel = this.getAverageGroundLevel(world, box);
@@ -392,6 +404,11 @@ public class VillageBuilding implements IVillageCreationHandler {
 
 		public void rise(World world) {
 			boolean flag = false;
+			if (xSize <= 0 || zSize <= 0) {
+				DragonAPICore.logError("Tried to raise a structure that had a zero size!");
+				Thread.dumpStack();
+				return;
+			}
 			do {
 				int c = 0;
 				int t = 0;
@@ -405,6 +422,8 @@ public class VillageBuilding implements IVillageCreationHandler {
 					}
 				}
 				flag = c >= t/4;
+				if (boundingBox.maxY >= 255)
+					flag = false;
 				if (flag) {
 					boundingBox.offset(0, 1, 0);
 				}

@@ -17,8 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
-
-import com.google.common.base.Function;
+import java.util.function.BiFunction;
 
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
@@ -34,6 +33,7 @@ import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Interfaces.Item.UnbreakableArmor;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
@@ -52,6 +52,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EntityLiving;
@@ -1327,13 +1328,18 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return damageArmor(e, amt, null);
 	}
 
-	public static int damageArmor(EntityLivingBase e, int amt, Function<ItemStack, Boolean> handle) {
+	public static int damageArmor(EntityLivingBase e, int amt, BiFunction<ItemStack, Integer, Integer> handle) {
 		int ret = 0;
 		for (int i = 1; i < 5; i++) {
 			ItemStack arm = e.getEquipmentInSlot(i);
 			if (arm != null && canDamageArmorOf(e)) {
-				if (handle != null && handle.apply(arm))
-					continue;
+				if (handle != null) {
+					Integer get = handle.apply(arm, amt);
+					if (get != null) {
+						ret += get.intValue();
+						continue;
+					}
+				}
 				Item item = arm.getItem();
 				if (InterfaceCache.MUSEELECTRICITEM.instanceOf(item)) {
 					MuseElectricItem ms = (MuseElectricItem)item;
@@ -1473,6 +1479,28 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (name.equalsIgnoreCase("EntityWisp"))
 			return false;
 		return true;
+	}
+
+	public static void playAggroSound(EntityCreature ec) {
+		if (ec instanceof EntityEnderman) {
+			ec.playSound("mob.endermen.scream", 0.6F, 1);
+		}
+		else if (ec instanceof EntityPigZombie) {
+			ec.playSound("mob.zombiepig.zpigangry", 1, 1);
+		}
+		else {
+			playHurtSound(ec);
+		}
+	}
+
+	private static void playHurtSound(EntityLivingBase e) {
+		try {
+			String s = (String)ReikaObfuscationHelper.getMethod("getHurtSound").invoke(e);
+			e.playSound(s, 1, 1);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 }

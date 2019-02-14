@@ -1,14 +1,16 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
+import Reika.DragonAPI.ModList;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,8 +18,6 @@ import thaumcraft.api.IWarpingGear;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.aspects.IEssentiaContainerItem;
-import Reika.DragonAPI.ModList;
-import cpw.mods.fml.common.registry.GameRegistry;
 
 public class ThaumItemHelper {
 
@@ -47,6 +47,7 @@ public class ThaumItemHelper {
 		LOOTBAG1("ItemLootBag", 0),
 		LOOTBAG2("ItemLootBag", 1),
 		LOOTBAG3("ItemLootBag", 2),
+		MANABEAN("ItemManaBean"),
 		;
 
 		public final int metadata;
@@ -120,7 +121,7 @@ public class ThaumItemHelper {
 		return b == BlockEntry.CRYSTAL.getBlock();
 	}
 
-	public static boolean isWarpingTool(ItemStack is) {
+	public static boolean isWarpingToolOrArmor(ItemStack is) {
 		return is != null && is.getItem() instanceof IWarpingGear;
 	}
 
@@ -128,8 +129,18 @@ public class ThaumItemHelper {
 		return is != null && is.getItem().getClass().getName().startsWith("thaumcraft.common.items.equipment.ItemVoid");
 	}
 
+	public static boolean isVoidMetalArmor(ItemStack is) {
+		return is != null && is.getItem().getClass().getName().startsWith("thaumcraft.common.items.armor.ItemVoid");
+	}
+
 	public static ItemStack getCrystallizedEssentia(Aspect a) {
 		ItemStack is = ItemEntry.CRYSTALESSENCE.getItem();
+		((IEssentiaContainerItem)is.getItem()).setAspects(is, new AspectList().add(a, 1));
+		return is;
+	}
+
+	public static ItemStack getManaBean(Aspect a) {
+		ItemStack is = ItemEntry.MANABEAN.getItem();
 		((IEssentiaContainerItem)is.getItem()).setAspects(is, new AspectList().add(a, 1));
 		return is;
 	}

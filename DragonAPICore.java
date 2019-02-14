@@ -158,6 +158,10 @@ public class DragonAPICore {
 		return getSide() == Side.SERVER && !FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer();
 	}
 
+	public static boolean isRemoteSinglePlayer() {
+		return isOnActualServer() && MinecraftServer.getServer().getConfigurationManager().getMaxPlayers() == 1;
+	}
+
 	public static void debugPrint(Object o) {
 		ReikaJavaLibrary.pConsole(o);
 		if (!ReikaObfuscationHelper.isDeObfEnvironment())

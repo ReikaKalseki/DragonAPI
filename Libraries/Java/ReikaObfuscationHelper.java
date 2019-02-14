@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,13 +13,13 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
+import Reika.DragonAPI.Exception.VanillaIntegrityException;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraftforge.classloading.FMLForgePlugin;
-import Reika.DragonAPI.Exception.VanillaIntegrityException;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 
 public class ReikaObfuscationHelper {
 
@@ -108,6 +108,7 @@ public class ReikaObfuscationHelper {
 		addMethod("dropEquipment", "func_82160_b", false, EntityLivingBase.class, boolean.class, int.class);
 		addMethod("dropRareDrop", "func_70600_l", false, EntityLivingBase.class, int.class);
 		addMethod("jump", "func_70664_aZ", false, EntityLivingBase.class);
+		addMethod("getHurtSound", "func_70621_aR", false, EntityLivingBase.class);
 		if (isClientSide()) {
 			addMethod("getInputStreamByName", "func_110591_a", false, AbstractResourcePack.class, String.class);
 		}/*

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -19,6 +19,21 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.Set;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Interfaces.Block.SemiTransparent;
+import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
@@ -35,21 +50,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
-import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
-import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
-import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
-import Reika.DragonAPI.Interfaces.Block.SemiTransparent;
-import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
-import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
-import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class BlockArray implements Iterable<Coordinate> {
 
@@ -699,7 +699,10 @@ public class BlockArray implements Iterable<Coordinate> {
 		//DragonAPICore.log(liquidID+" and "+world.getBlock(x, y, z));;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
-		if (liquid != null && FluidRegistry.lookupFluidForBlock(world.getBlock(x, y, z)) != liquid) {
+		Fluid f2 = FluidRegistry.lookupFluidForBlock(world.getBlock(x, y, z));
+		if (f2 == null)
+			return;
+		if (liquid != null && f2 != liquid) {
 			//DragonAPICore.log("Could not match id "+world.getBlock(x, y, z)+" to "+liquidID);
 			return;
 		}

@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -31,6 +32,8 @@ import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.ModInteract.CustomThaumResearch;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumIDHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
@@ -38,6 +41,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
@@ -76,6 +80,9 @@ public class ReikaThaumHelper {
 	private static Method clearWandInUse;
 
 	private static Method researchComplete;
+
+	private static SimpleNetworkWrapper packetHandlerInstance;
+	private static Constructor<IMessage> aspectPacketConstructor;
 
 	private static Field wispTarget;
 
@@ -278,7 +285,14 @@ public class ReikaThaumHelper {
 		aspects.remove(ep.getCommandSenderName());
 	}
 
-	public static void giveResearchPoint(Aspect a, int amt, EntityPlayer ep) {
+	public static int getResearchPoolCount(EntityPlayer ep, Aspect a) {
+		if (!ModList.THAUMCRAFT.isLoaded())
+			return 0;
+		AspectList al = aspects.get(ep.getCommandSenderName());
+		return al.getAmount(a);
+	}
+
+	public static void giveResearchPoint(Aspect a, short amt, EntityPlayer ep) {
 		if (!ModList.THAUMCRAFT.isLoaded())
 			return;
 		AspectList get = aspects.get(ep.getCommandSenderName());
@@ -287,6 +301,19 @@ public class ReikaThaumHelper {
 			aspects.put(ep.getCommandSenderName(), get);
 		}
 		get.add(a, amt);
+		if (ep instanceof EntityPlayerMP)
+			sendAspectGetPacket((EntityPlayerMP)ep, a, amt);
+	}
+
+	private static void sendAspectGetPacket(EntityPlayerMP ep, Aspect a, short amt) {
+		try {
+			short total = (short)getResearchPoolCount(ep, a);
+			IMessage pkt = aspectPacketConstructor.newInstance(a.getTag(), amt, total);
+			packetHandlerInstance.sendTo(pkt, ep);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public static void giveWarpProtection(EntityPlayer ep, int time) {
@@ -726,6 +753,20 @@ public class ReikaThaumHelper {
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not load ThaumCraft PlayerKnowledge Handler!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
+			}
+
+			try {
+				Class c = Class.forName("thaumcraft.common.lib.network.PacketHandler");
+				Field f = c.getField("INSTANCE");
+				packetHandlerInstance = (SimpleNetworkWrapper)f.get(null);
+
+				Class pkt = Class.forName("thaumcraft.common.lib.network.playerdata.PacketAspectPool");
+				aspectPacketConstructor = pkt.getConstructor(String.class, Short.class, Short.class);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Could not load ThaumCraft Packet Handler!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}

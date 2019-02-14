@@ -30,6 +30,7 @@ public class ChestLootEvent extends Event {
 		String table = calculateTable(struct);
 		if (table != null) {
 			MinecraftForge.EVENT_BUS.post(new ChestLootEvent(ii, table));
+			//ReikaJavaLibrary.pConsole("Generated a "+table+" in "+(struct instanceof StructureComponent ? struct+" - "+((StructureComponent)struct).getBoundingBox() : struct.toString()));
 		}
 		else {
 			DragonAPICore.logError("Tried to fire an event for chest loot from an unrecognized structure "+struct+"!");
