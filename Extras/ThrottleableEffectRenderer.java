@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -14,6 +14,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.Callable;
 
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
+
+import Reika.ChromatiCraft.Auxiliary.Interfaces.CustomRenderFX;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
@@ -27,13 +34,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
-
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonOptions;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 
 public class ThrottleableEffectRenderer extends EffectRenderer {
@@ -146,13 +146,15 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 				for (EntityFX fx : ((Collection<EntityFX>)fxLayers[i]))  {
 					if (fx != null && isParticleVisible(fx)) {
-						v5.setBrightness(fx.getBrightnessForRender(ptick));
+						if (isEntityCloseEnough(fx, EntityFX.interpPosX, EntityFX.interpPosY, EntityFX.interpPosZ)) {
+							v5.setBrightness(fx.getBrightnessForRender(ptick));
 
-						try {
-							fx.renderParticle(v5, ptick, f1, f5, f2, f3, f4);
-						}
-						catch (Throwable throwable) {
-							this.throwCrash(i, fx, throwable);
+							try {
+								fx.renderParticle(v5, ptick, f1, f5, f2, f3, f4);
+							}
+							catch (Throwable throwable) {
+								this.throwCrash(i, fx, throwable);
+							}
 						}
 					}
 				}
@@ -251,7 +253,7 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 		return ReikaRenderHelper.renderFrustrum.isBoundingBoxInFrustum(getBoundingBox(fx));
 	}
 
-	private static AxisAlignedBB getBoundingBox(EntityFX fx) {
+	public static AxisAlignedBB getBoundingBox(EntityFX fx) {
 		return particleBox.setBounds(fx.posX-fx.particleScale, fx.posY-fx.particleScale, fx.posZ-fx.particleScale, fx.posX+fx.particleScale, fx.posY+fx.particleScale, fx.posZ+fx.particleScale);
 	}
 
@@ -259,6 +261,16 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 		public int getParticleCount();
 
+	}
+
+	public static boolean isEntityCloseEnough(EntityFX fx, double x, double y, double z) {
+		if (fx instanceof CustomRenderFX) {
+			double dx = fx.posX-x;
+			double dy = fx.posY-y;
+			double dz = fx.posZ-z;
+			return ((CustomRenderFX)fx).getRenderRange()*30 >= dx*dx+dy*dy+dz*dz;
+		}
+		return true;
 	}
 
 }

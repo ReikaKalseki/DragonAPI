@@ -1,14 +1,28 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL12;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.InertItem;
+import Reika.DragonAPI.Interfaces.Item.AnimatedSpritesheet;
+import Reika.DragonAPI.Interfaces.Item.BlendedColor;
+import Reika.DragonAPI.Interfaces.Item.GradientBlend;
+import Reika.DragonAPI.Interfaces.Item.MultiLayerItemSprite;
+import Reika.DragonAPI.Interfaces.Item.SpriteRenderCallback;
+import Reika.DragonAPI.Interfaces.Item.ToolSprite;
+import Reika.DragonAPI.Interfaces.Item.VariableSizeSpritesheet;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -22,20 +36,6 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.MinecraftForgeClient;
-
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL12;
-
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Instantiable.InertItem;
-import Reika.DragonAPI.Interfaces.Item.AnimatedSpritesheet;
-import Reika.DragonAPI.Interfaces.Item.BlendedColor;
-import Reika.DragonAPI.Interfaces.Item.GradientBlend;
-import Reika.DragonAPI.Interfaces.Item.MultiLayerItemSprite;
-import Reika.DragonAPI.Interfaces.Item.SpriteRenderCallback;
-import Reika.DragonAPI.Interfaces.Item.ToolSprite;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
 public final class ReikaSpriteSheets {
 
@@ -111,6 +111,13 @@ public final class ReikaSpriteSheets {
 					tex = a.getTexture(is);
 				}
 			}
+			float su = 0.0625F;
+			float sv = 0.0625F;
+			if (item instanceof VariableSizeSpritesheet) {
+				int size = ((VariableSizeSpritesheet)item).getSpriteSize(is);
+				su *= size;
+				sv *= size;
+			}
 			ReikaTextureHelper.bindTexture(root, tex);
 
 			initGL(type);
@@ -143,11 +150,11 @@ public final class ReikaSpriteSheets {
 					c1 = c2 = c3 = c4 = c;
 				}
 				v5.setColorOpaque_I(c1);
-				v5.addVertexWithUV(0, 0, z, 0.0625F*col, 0.0625F+0.0625F*row);
+				v5.addVertexWithUV(0, 0, z, 0.0625F*col, sv+0.0625F*row);
 				v5.setColorOpaque_I(c2);
-				v5.addVertexWithUV(1, 0, z, 0.0625F+0.0625F*col, 0.0625F+0.0625F*row);
+				v5.addVertexWithUV(1, 0, z, su+0.0625F*col, sv+0.0625F*row);
 				v5.setColorOpaque_I(c3);
-				v5.addVertexWithUV(1, 1, z, 0.0625F+0.0625F*col, 0.0625F*row);
+				v5.addVertexWithUV(1, 1, z, su+0.0625F*col, 0.0625F*row);
 				v5.setColorOpaque_I(c4);
 				v5.addVertexWithUV(0, 1, z, 0.0625F*col, 0.0625F*row);
 				v5.draw();
@@ -174,7 +181,7 @@ public final class ReikaSpriteSheets {
 				}
 				float thick = 0.0625F;
 				if (Minecraft.getMinecraft().gameSettings.fancyGraphics || type == type.EQUIPPED_FIRST_PERSON || type == type.EQUIPPED)
-					ItemRenderer.renderItemIn2D(v5, 0.0625F+0.0625F*col, 0.0625F*row, 0.0625F*col, 0.0625F+0.0625F*row, 16, 16, thick);
+					ItemRenderer.renderItemIn2D(v5, su+0.0625F*col, 0.0625F*row, 0.0625F*col, sv+0.0625F*row, 16, 16, thick);
 				else {
 					if (type == type.ENTITY) {
 						GL11.glRotatef(180.0F - RenderManager.instance.playerViewY-90, 0.0F, 1.0F, 0.0F);
@@ -202,11 +209,11 @@ public final class ReikaSpriteSheets {
 					float v = row/16F;
 					v5.setColorOpaque(255, 255, 255);
 					v5.setColorOpaque_I(c1);
-					v5.addVertexWithUV(0, 0, 0, u, v+0.0625);
+					v5.addVertexWithUV(0, 0, 0, u, v+sv);
 					v5.setColorOpaque_I(c2);
-					v5.addVertexWithUV(1, 0, 0, u+0.0625, v+0.0625);
+					v5.addVertexWithUV(1, 0, 0, u+su, v+sv);
 					v5.setColorOpaque_I(c3);
-					v5.addVertexWithUV(1, 1, 0, u+0.0625, v);
+					v5.addVertexWithUV(1, 1, 0, u+su, v);
 					v5.setColorOpaque_I(c4);
 					v5.addVertexWithUV(0, 1, 0, u, v);
 					v5.draw();

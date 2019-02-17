@@ -86,6 +86,8 @@ public class ThaumItemHelper {
 		JAR("blockJar"),
 		NODE("blockAiry", 0),
 		TOTEMNODE("blockAiry", 4),
+		GREATWOODPLANKS("blockWoodenDevice", 6),
+		SILVERWOODPLANKS("blockWoodenDevice", 7),
 		;
 
 		public final int metadata;
