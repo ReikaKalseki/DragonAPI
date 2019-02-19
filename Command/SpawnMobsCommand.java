@@ -1,14 +1,15 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -17,7 +18,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 
 public class SpawnMobsCommand extends DragonCommandBase {
@@ -41,12 +41,12 @@ public class SpawnMobsCommand extends DragonCommandBase {
 				int dy = MathHelper.floor_double(ey)-1;
 				int dx = MathHelper.floor_double(ex);
 				int dz = MathHelper.floor_double(ez);
-				while (world.getBlock(dx, dy, dz).isAir(world, dx, dy, dz)) {
+				while (world.getBlock(dx, dy, dz).isAir(world, dx, dy, dz) && dy >= 0) {
 					ey--;
 					dy--;
 				}
 				dy = MathHelper.floor_double(ey)+1;
-				while (!world.getBlock(dx, dy, dz).isAir(world, dx, dy, dz)) {
+				while (!world.getBlock(dx, dy, dz).isAir(world, dx, dy, dz) && dy >= 0) {
 					ey++;
 					dy++;
 				}

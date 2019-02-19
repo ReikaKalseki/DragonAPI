@@ -36,6 +36,8 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLeaves;
+import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.ai.attributes.ServersideAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
@@ -181,6 +183,15 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 				return true;
 			default:
 				break;
+		}
+		Block b = Block.getBlockFromItem(is.getItem());
+		if (b != null) {
+			if (b instanceof BlockLeaves) {
+				is.setItemDamage(is.getItemDamage()%4);
+			}
+			if (b instanceof BlockRotatedPillar) {
+				is.setItemDamage(is.getItemDamage()%4);
+			}
 		}
 		ItemStack[] ii = ep.inventory.mainInventory;
 		if (is.stackTagCompound != null || (is.getItem().getHasSubtypes() && is.getItemDamage() != OreDictionary.WILDCARD_VALUE))
@@ -405,21 +416,34 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			ReikaItemHelper.dropItem(ep, is);
 	}
 
-	public static void findAndDecrItem(EntityPlayer ep, Block b, int meta) {
-		findAndDecrItem(ep, new ItemStack(b, 1, meta));
+	public static boolean findAndDecrItem(EntityPlayer ep, Block b, int meta) {
+		return findAndDecrItem(ep, new ItemStack(b, 1, meta));
 	}
 
-	public static void findAndDecrItem(EntityPlayer ep, Item i, int meta) {
-		findAndDecrItem(ep, new ItemStack(i, 1, meta));
+	public static boolean findAndDecrItem(EntityPlayer ep, Item i, int meta) {
+		return findAndDecrItem(ep, new ItemStack(i, 1, meta));
 	}
 
-	public static void findAndDecrItem(EntityPlayer ep, ItemStack is) {
+	public static boolean findAndDecrItem(EntityPlayer ep, ItemStack is) {
 		if (MinecraftForge.EVENT_BUS.post(new RemovePlayerItemEvent(ep, is)))
-			return;
+			return true;
+
+		Block b = Block.getBlockFromItem(is.getItem());
+		if (b != null) {
+			if (b instanceof BlockLeaves) {
+				is.setItemDamage(is.getItemDamage()%4);
+			}
+			if (b instanceof BlockRotatedPillar) {
+				is.setItemDamage(is.getItemDamage()%4);
+			}
+		}
+
 		int slot = ReikaInventoryHelper.locateInInventory(is, ep.inventory.mainInventory, false);
 		if (slot != -1) {
 			ReikaInventoryHelper.decrStack(slot, ep.inventory.mainInventory);
+			return true;
 		}
+		return false;
 	}
 
 	public static void syncInventory(EntityPlayer ep) {

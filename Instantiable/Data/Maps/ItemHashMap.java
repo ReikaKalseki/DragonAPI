@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,18 +15,18 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import net.minecraft.block.Block;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Interfaces.Matcher;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import net.minecraft.block.Block;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.oredict.OreDictionary;
 
 public final class ItemHashMap<V> {
 
@@ -250,8 +250,8 @@ public final class ItemHashMap<V> {
 				throw new MisuseException("You cannot add a null itemstack to the map!");
 			if (is.getItem() == null)
 				throw new MisuseException("You cannot add a null-item itemstack to the map!");
-			this.itemID = is.getItem();
-			this.metadata = is.getItemDamage();
+			itemID = is.getItem();
+			metadata = is.getItemDamage();
 		}
 
 		@Override
@@ -298,6 +298,18 @@ public final class ItemHashMap<V> {
 				Integer has = map.get(in);
 				int amt = has != null ? has.intValue() : 0;
 				map.put(in, amt+in.stackSize);
+			}
+		}
+		return map;
+	}
+
+	public static ItemHashMap<Integer> locateFromInventory(IInventory ii) {
+		ItemHashMap<Integer> map = new ItemHashMap();
+		int s = ii.getSizeInventory();
+		for (int i = 0; i < s; i++) {
+			ItemStack in = ii.getStackInSlot(i);
+			if (in != null && !map.containsKey(in)) {
+				map.put(in, i);
 			}
 		}
 		return map;

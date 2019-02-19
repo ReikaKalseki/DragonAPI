@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -11,11 +11,11 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
 
-import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import net.minecraft.item.ItemStack;
 
 public class IC2Handler extends ModHandlerBase {
 
@@ -101,6 +101,7 @@ public class IC2Handler extends ModHandlerBase {
 		Pu239("Plutonium"),
 		U235_TINY("smallUran235"),
 		Pu239_TINY("smallPlutonium"),
+		REFINEDIRON("advIronIngot"),
 		//RSH(),
 		//LZH(),
 		;
