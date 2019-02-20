@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,13 +12,13 @@ package Reika.DragonAPI.Libraries.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import Reika.DragonAPI.Interfaces.Registry.CropType;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
-import Reika.DragonAPI.Interfaces.Registry.CropType;
 
 public enum ReikaCropHelper implements CropType {
 
@@ -124,6 +124,11 @@ public enum ReikaCropHelper implements CropType {
 	@Override
 	public boolean neverDropsSecondSeed() {
 		return false;
+	}
+
+	@Override
+	public CropFormat getShape() {
+		return this == COCOA ? CropFormat.POD : CropFormat.PLANT;
 	}
 
 

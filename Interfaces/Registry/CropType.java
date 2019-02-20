@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -35,6 +35,8 @@ public interface CropType extends RegistryType {
 
 	public boolean neverDropsSecondSeed();
 
+	public CropFormat getShape();
+
 	public static class CropMethods {
 
 		public static void removeOneSeed(CropType c, ArrayList<ItemStack> li) {
@@ -51,6 +53,18 @@ public interface CropType extends RegistryType {
 					return;
 				}
 			}
+		}
+	}
+
+	public static enum CropFormat {
+
+		PLANT(),
+		POD(),
+		BLOCK(),
+		BLOCKSIDE();
+
+		public boolean isSolid() {
+			return this == BLOCK || this == BLOCKSIDE;
 		}
 	}
 

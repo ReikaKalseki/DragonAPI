@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,12 +12,6 @@ package Reika.DragonAPI.ModRegistry;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.EnumHelper;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
@@ -34,10 +28,17 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.AgriCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.FluxedCrystalHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.IC2RubberLogHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.OreBerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.PneumaticPlantHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
 import cpw.mods.fml.common.registry.GameRegistry;
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.EnumHelper;
 
 public enum ModCropList implements ModCrop {
 	//seed meta, min meta, fresh meta, ripe meta
@@ -55,6 +56,7 @@ public enum ModCropList implements ModCrop {
 	FLUXED(ModList.FLUXEDCRYSTALS, 0xd00000, FluxedCrystalHandler.getInstance()),
 	AGRICRAFT(ModList.AGRICRAFT, 0x7E9612, AgriCraftHandler.getInstance()),
 	ASPECT(ModList.THAUMICTINKER, 0xC591D8, "infusedGrainBlock", "infusedGrain", 0, 0, 0, 7, VarType.REGISTRY),
+	RUBBERLOG(ModList.IC2, 0xC66902, IC2RubberLogHandler.getInstance()/*"rubberWood", "resin", 0, 0, 0, 7, VarType.ITEMSTACK*/),
 	;
 
 	private final ModEntry mod;
@@ -504,5 +506,32 @@ public enum ModCropList implements ModCrop {
 	@Override
 	public boolean neverDropsSecondSeed() {
 		return this.isHandlered() ? handler.neverDropsSecondSeed() : false;
+	}
+
+	@Override
+	public CropFormat getShape() {
+		switch(this) {
+			case AGRICRAFT:
+			case ASPECT:
+			case BARLEY:
+			case COTTON:
+			case ENDER:
+			case FLAX:
+			case FLUXED:
+			case MAGIC:
+			case PAM:
+			case ALGAE:
+			case PNEUMATIC:
+				return CropFormat.PLANT;
+			case MANA:
+				return CropFormat.POD;
+			case BERRY:
+			case OREBERRY:
+				return CropFormat.BLOCK;
+			case RUBBERLOG:
+				return CropFormat.BLOCKSIDE;
+
+		}
+		return null;
 	}
 }
