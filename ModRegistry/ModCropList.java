@@ -507,9 +507,11 @@ public enum ModCropList implements ModCrop {
 	public boolean neverDropsSecondSeed() {
 		return this.isHandlered() ? handler.neverDropsSecondSeed() : false;
 	}
-
+	/*
 	@Override
 	public CropFormat getShape() {
+		if (this.isHandlered())
+			return handler.getShape();
 		switch(this) {
 			case AGRICRAFT:
 			case ASPECT:
@@ -533,5 +535,5 @@ public enum ModCropList implements ModCrop {
 
 		}
 		return null;
-	}
+	}*/
 }

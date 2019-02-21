@@ -35,7 +35,7 @@ public interface CropType extends RegistryType {
 
 	public boolean neverDropsSecondSeed();
 
-	public CropFormat getShape();
+	//public CropFormat getShape();
 
 	public static class CropMethods {
 
@@ -55,7 +55,7 @@ public interface CropType extends RegistryType {
 			}
 		}
 	}
-
+	/*
 	public static enum CropFormat {
 
 		PLANT(),
@@ -66,6 +66,6 @@ public interface CropType extends RegistryType {
 		public boolean isSolid() {
 			return this == BLOCK || this == BLOCKSIDE;
 		}
-	}
+	}*/
 
 }

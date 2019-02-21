@@ -32,6 +32,12 @@ public class IC2RubberLogHandler extends CropHandlerBase {
 	private IC2RubberLogHandler() {
 		super();
 
+		if (!ModList.IC2.isLoaded()) {
+			logBlock = null;
+			resin = null;
+			return;
+		}
+
 		logBlock = this.getFieldBlock("rubberWood");
 		resin = this.getField("resin");
 	}
@@ -51,7 +57,6 @@ public class IC2RubberLogHandler extends CropHandlerBase {
 		catch (Exception e) {
 			e.printStackTrace();
 			DragonAPICore.logError("Exception for reading "+this.getMod()+"!");
-			e.printStackTrace();
 			this.logFailure(e);
 			return null;
 		}
@@ -126,5 +131,10 @@ public class IC2RubberLogHandler extends CropHandlerBase {
 	public ModList getMod() {
 		return ModList.IC2;
 	}
+	/*
+	@Override
+	public CropFormat getShape() {
+		return CropFormat.BLOCKSIDE;
+	}*/
 
 }

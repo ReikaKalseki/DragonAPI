@@ -125,11 +125,11 @@ public enum ReikaCropHelper implements CropType {
 	public boolean neverDropsSecondSeed() {
 		return false;
 	}
-
+	/*
 	@Override
 	public CropFormat getShape() {
 		return this == COCOA ? CropFormat.POD : CropFormat.PLANT;
-	}
+	}*/
 
 
 }
