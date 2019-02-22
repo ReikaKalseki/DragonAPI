@@ -18,6 +18,10 @@ import java.util.TreeMap;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Interfaces.ObjectToNBTSerializer;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 public class WeightedRandom<V> {
 
@@ -171,6 +175,37 @@ public class WeightedRandom<V> {
 
 	public Set<V> getValues() {
 		return Collections.unmodifiableSet(data.keySet());
+	}
+
+	public void writeToNBT(String s, NBTTagCompound tag, ObjectToNBTSerializer<V> serializer) {
+		NBTTagCompound nbt = new NBTTagCompound();
+		NBTTagList li = new NBTTagList();
+		for (V key : this.data.keySet()) {
+			Double wt = this.data.get(key);
+			NBTTagCompound e = new NBTTagCompound();
+			e.setTag("key", serializer.save(key));
+			e.setDouble("weight", wt);
+			li.appendTag(e);
+		}
+		nbt.setTag("entries", li);
+		nbt.setDouble("total", weightSum);
+		nbt.setDouble("max", maxWeight);
+	}
+
+	public void readFromNBT(String s, NBTTagCompound tag, ObjectToNBTSerializer<V> serializer) {
+		if (!tag.hasKey(s))
+			return;
+		NBTTagCompound data = tag.getCompoundTag(s);
+		this.clear();
+		NBTTagList li = data.getTagList("entries", NBTTypes.COMPOUND.ID);
+		for (Object o : li.tagList) {
+			NBTTagCompound e = (NBTTagCompound)o;
+			V key = serializer.construct(e.getCompoundTag("key"));
+			double wt = e.getDouble("weight");
+			this.data.put(key, wt);
+		}
+		this.weightSum = data.getDouble("total");
+		this.maxWeight = data.getDouble("max");
 	}
 
 }

@@ -48,6 +48,7 @@ public class ThaumItemHelper {
 		LOOTBAG2("ItemLootBag", 1),
 		LOOTBAG3("ItemLootBag", 2),
 		MANABEAN("ItemManaBean"),
+		ZOMBIEBRAIN("ItemZombieBrain"),
 		;
 
 		public final int metadata;

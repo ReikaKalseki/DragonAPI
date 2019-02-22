@@ -42,6 +42,7 @@ public enum InterfaceCache {
 	IC2POWERTILE("ic2.api.energy.tile.IEnergyTile"),
 	BOPBIOME("biomesoplenty.api.biome.BOPBiome"),
 	PAINTABLE("crazypants.enderio.machine.painter.IPaintableTileEntity"),
+	EIOCONDUIT("crazypants.enderio.conduit.IConduitBundle"),
 	RECONFIGURABLEFACE("cofh.api.tileentity.IReconfigurableFacing"),
 	;
 

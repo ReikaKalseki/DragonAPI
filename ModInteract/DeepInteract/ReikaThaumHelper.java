@@ -27,6 +27,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Instantiable.Formula.MathExpression;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
+import Reika.DragonAPI.Interfaces.ObjectToNBTSerializer;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.ModInteract.CustomThaumResearch;
@@ -44,6 +45,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -91,6 +93,22 @@ public class ReikaThaumHelper {
 	private static final Collection<Aspect> allAspects = new ArrayList();
 
 	private static final HashSet<String> nativeCategories = new HashSet();
+
+	public static final ObjectToNBTSerializer<Aspect> aspectSerializer = new ObjectToNBTSerializer<Aspect>() {
+
+		@Override
+		public NBTTagCompound save(Aspect obj) {
+			NBTTagCompound ret = new NBTTagCompound();
+			ret.setString("aspect", obj.getTag());
+			return ret;
+		}
+
+		@Override
+		public Aspect construct(NBTTagCompound tag) {
+			return Aspect.getAspect(tag.getString("aspect"));
+		}
+
+	};
 
 	public static void addAspects(ItemStack is, AspectList aspects) {
 		AspectList has = ThaumcraftApi.objectTags.get(Arrays.asList(is.getItem(), is.getItemDamage()));

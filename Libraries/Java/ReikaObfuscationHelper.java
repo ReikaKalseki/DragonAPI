@@ -19,6 +19,7 @@ import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
+import net.minecraft.world.gen.structure.MapGenStructure;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 public class ReikaObfuscationHelper {
@@ -109,6 +110,7 @@ public class ReikaObfuscationHelper {
 		addMethod("dropRareDrop", "func_70600_l", false, EntityLivingBase.class, int.class);
 		addMethod("jump", "func_70664_aZ", false, EntityLivingBase.class);
 		addMethod("getHurtSound", "func_70621_aR", false, EntityLivingBase.class);
+		addMethod("getCoordList", "func_75052_o_", false, MapGenStructure.class);
 		if (isClientSide()) {
 			addMethod("getInputStreamByName", "func_110591_a", false, AbstractResourcePack.class, String.class);
 		}/*

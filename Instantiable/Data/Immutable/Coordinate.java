@@ -33,6 +33,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -78,6 +79,10 @@ public final class Coordinate implements Comparable<Coordinate> {
 
 	public Coordinate(ChunkCoordinates cc) {
 		this(cc.posX, cc.posY, cc.posZ);
+	}
+
+	public Coordinate(ChunkPosition pos) {
+		this(pos.chunkPosX, pos.chunkPosY, pos.chunkPosZ);
 	}
 
 	public Coordinate offset(int dx, int dy, int dz) {
