@@ -1478,98 +1478,23 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		Minecraft.getMinecraft().mouseHelper.grabMouseCursor();
 	}
 
-	public static void renderBlockSubCube(int x, int y, int z, double dx, double dy, double dz, double sz, Tessellator v5, RenderBlocks rb, Block b, int meta) {
-		/*
-		for (int s = 0; s < 6; s++) {
-			IIcon ico = rb.getIconSafe(b.getIcon(s, meta));
-			double d1 = 0;
-			double d2 = 0;
-			switch(s) {
-				case 0:
-					d1 = dx;
-					d2 = dz;
-					break;
-				case 1:
-					d1 = dx;
-					d2 = dz;
-					break;
-				case 2:
-					d1 = dy;
-					d2 = dz;
-					break;
-				case 3:
-					d1 = dy;
-					d2 = dz;
-					break;
-				case 4:
-					d1 = dy;
-					d2 = dx;
-					break;
-				case 5:
-					d1 = dy;
-					d2 = dx;
-					break;
-			}
-			float u = ico.getInterpolatedU(d1);
-			float v = ico.getInterpolatedV(d2);
-			float du = ico.getInterpolatedU(d1+sz);
-			float dv = ico.getInterpolatedV(d2+sz);
-			switch(s) {
-				case 0:
-					v5.setColorOpaque_F(0.5F, 0.5F, 0.5F);
-					v5.addVertexWithUV(x+dx/16,			y+dy/16, z+dz/16,			u, v);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, z+dz/16,			du, v);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, z+dz/16+sz/16,		du, dv);
-					v5.addVertexWithUV(x+dx/16,			y+dy/16, z+dz/16+sz/16,		u, dv);
-					break;
-				case 1:
-					v5.setColorOpaque_F(1, 1, 1);
-					v5.addVertexWithUV(x+dx/16,			y+dy/16+sz/16, z+dz/16+sz/16,	u, dv);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16+sz/16,	du, dv);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16,			du, v);
-					v5.addVertexWithUV(x+dx/16,			y+dy/16+sz/16, z+dz/16,			u, v);
-					break;
-				case 2:
-					v5.setColorOpaque_F(0.6F, 0.6F, 0.6F);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, z+dz/16,				du, dv);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16,			du, v);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16+sz/16,	u, v);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, z+dz/16+sz/16,			u, dv);
-					break;
-				case 3:
-					v5.setColorOpaque_F(0.6F, 0.6F, 0.6F);
-					v5.addVertexWithUV(x+dx/16,	y+dy/16, z+dz/16+sz/16,			du, dv);
-					v5.addVertexWithUV(x+dx/16,	y+dy/16+sz/16, z+dz/16+sz/16,	du, v);
-					v5.addVertexWithUV(x+dx/16,	y+dy/16+sz/16, z+dz/16,			u, v);
-					v5.addVertexWithUV(x+dx/16,	y+dy/16, z+dz/16,				u, dv);
-					break;
-				case 4:
-					v5.setColorOpaque_F(0.75F, 0.75F, 0.75F);
-					v5.addVertexWithUV(x+dx/16,			y+dy/16, 		z+dz/16+sz/16,	u, dv);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, 		z+dz/16+sz/16,	du, dv);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16+sz/16,	du, v);
-					v5.addVertexWithUV(x+dx/16,			y+dy/16+sz/16, z+dz/16+sz/16,	u, v);
-					break;
-				case 5:
-					v5.setColorOpaque_F(0.75F, 0.75F, 0.75F);
-					v5.addVertexWithUV(x+dx/16,			y+dy/16+sz/16, z+dz/16,		du, v);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16+sz/16, z+dz/16,		u, v);
-					v5.addVertexWithUV(x+dx/16+sz/16,	y+dy/16, 		z+dz/16,	u, dv);
-					v5.addVertexWithUV(x+dx/16,			y+dy/16, 		z+dz/16,	du, dv);
-					break;
-			}
-		}
-		 */
+	public static void renderBlockSubCube(int x, int y, int z, double dx, double dy, double dz, double s, Tessellator v5, RenderBlocks rb, Block b, int meta) {
+		renderBlockSubCube(x, y, z, dx, dy, dz, s, s, s, v5, rb, b, meta);
+	}
+
+	public static void renderBlockSubCube(int x, int y, int z, double dx, double dy, double dz, double sx, double sy, double sz, Tessellator v5, RenderBlocks rb, Block b, int meta) {
+		boolean flag = rb.renderAllFaces;
 		rb.renderAllFaces = true;
 		rb.renderMinX = dx/16;
 		rb.renderMinY = dy/16;
 		rb.renderMinZ = dz/16;
-		rb.renderMaxX = rb.renderMinX+sz/16;
-		rb.renderMaxY = rb.renderMinY+sz/16;
+		rb.renderMaxX = rb.renderMinX+sx/16;
+		rb.renderMaxY = rb.renderMinY+sy/16;
 		rb.renderMaxZ = rb.renderMinZ+sz/16;
 		rb.partialRenderBounds = true;
 		rb.renderStandardBlockWithAmbientOcclusion(b, x, y, z, 1, 1, 1);
 		rb.setRenderBounds(0, 0, 0, 1, 1, 1);
+		rb.renderAllFaces = flag;
 	}
 
 	public static void renderIconIn3D(TessellatorVertexList v5, IIcon ico, int x, int y, int z) {

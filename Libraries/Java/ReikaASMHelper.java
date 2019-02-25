@@ -1298,6 +1298,11 @@ public class ReikaASMHelper {
 		li.remove(tgt);
 	}
 
+	public static void replaceInstruction(InsnList li, AbstractInsnNode tgt, InsnList repl) {
+		li.insertBefore(tgt, repl);
+		li.remove(tgt);
+	}
+
 	public static void clearClass(ClassNode cn) {
 		Collection<MethodNode> c = new ArrayList(cn.methods);
 		for (MethodNode m : cn.methods) {

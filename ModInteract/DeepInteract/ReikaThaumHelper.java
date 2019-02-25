@@ -275,7 +275,7 @@ public class ReikaThaumHelper {
 	}
 
 	public static Collection<? extends Aspect> getAllAspects() {
-		return Collections.unmodifiableCollection(allAspects);
+		return Aspect.aspects.values();//Collections.unmodifiableCollection(allAspects);
 	}
 
 	public static void sortAspectList(ArrayList<Aspect> list) {

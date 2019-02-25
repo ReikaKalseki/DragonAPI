@@ -53,6 +53,7 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.command.IEntitySelector;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EntityLiving;
@@ -933,7 +934,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	}
 
-	public static boolean isBossMob(EntityLiving e) {
+	public static boolean isBossMob(EntityLivingBase e) {
 		if (e instanceof EntityWither || e instanceof EntityDragon)
 			return true;
 		String name = e.getClass().getName().toLowerCase(Locale.ENGLISH);
@@ -1116,6 +1117,10 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return EntityMob.class;
 		else if (e instanceof EntityAnimal)
 			return EntityAnimal.class;
+		else if (e instanceof EntitySlime)
+			return EntitySlime.class;
+		else if (e instanceof EntityFlying)
+			return EntityFlying.class;
 		else
 			return e.getClass();
 	}
@@ -1493,7 +1498,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		}
 	}
 
-	private static void playHurtSound(EntityLivingBase e) {
+	public static void playHurtSound(EntityLivingBase e) {
 		try {
 			String s = (String)ReikaObfuscationHelper.getMethod("getHurtSound").invoke(e);
 			e.playSound(s, 1, 1);
