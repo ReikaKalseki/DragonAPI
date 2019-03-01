@@ -13,6 +13,7 @@ import java.util.Comparator;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
 import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;

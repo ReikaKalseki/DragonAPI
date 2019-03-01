@@ -28,6 +28,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.util.EnumHelper;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
@@ -45,6 +46,7 @@ import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.ModInteract.LegacyWailaHelper;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.ModContainer;

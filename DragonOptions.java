@@ -9,13 +9,14 @@
  ******************************************************************************/
 package Reika.DragonAPI;
 
+import net.minecraft.world.ChunkCoordIntPair;
+
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
 import Reika.DragonAPI.Interfaces.Configuration.IntegerConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringArrayConfig;
 import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
 import Reika.DragonAPI.Interfaces.Configuration.UserSpecificConfig;
-import net.minecraft.world.ChunkCoordIntPair;
 
 public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayConfig, StringConfig, UserSpecificConfig {
 

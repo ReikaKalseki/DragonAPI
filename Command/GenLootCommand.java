@@ -15,18 +15,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
-import Reika.DragonAPI.Instantiable.RelayInventory;
-import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Instantiable.Worldgen.LootController.Location;
-import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.ModInteract.DeepInteract.MESystemReader;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
-import appeng.api.networking.IGridHost;
-import appeng.api.networking.IGridNode;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityMinecartChest;
@@ -40,6 +28,20 @@ import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.gen.structure.StructureNetherBridgePieces;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
+import Reika.DragonAPI.Instantiable.RelayInventory;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Worldgen.LootController.Location;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.ModInteract.DeepInteract.MESystemReader;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
+
+import appeng.api.networking.IGridHost;
+import appeng.api.networking.IGridNode;
 
 
 public class GenLootCommand extends DragonCommandBase {

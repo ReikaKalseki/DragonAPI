@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.Event.Client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraftforge.common.MinecraftForge;
+
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 

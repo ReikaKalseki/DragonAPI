@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -31,18 +31,18 @@ public final class MultiMap<K, V> {
 	private boolean nullEmpty = false;
 	private Comparator<V> ordering = null;
 
-	private final CollectionFactory factory;
+	private final CollectionType factory;
 
 	public MultiMap() {
-		this(null);
+		this(CollectionType.LIST);
 	}
 
-	public MultiMap(CollectionFactory cf) {
+	public MultiMap(CollectionType cf) {
 		this(cf, null);
 	}
 
-	public MultiMap(CollectionFactory cf, MapDeterminator md) {
-		factory = cf != null ? cf : new ListFactory();
+	public MultiMap(CollectionType cf, MapDeterminator md) {
+		factory = cf;
 		data = md != null ? md.getMapType() : new HashMap();
 	}
 
@@ -108,7 +108,7 @@ public final class MultiMap<K, V> {
 			li = this.createCollection();
 			data.put(key, li);
 		}
-		if (copy || !factory.allowsDuplicates() || /*!li.contains(value)*/!this.containsValueForKey(key, value)) {
+		if (copy || !factory.allowsDuplicates || /*!li.contains(value)*/!this.containsValueForKey(key, value)) {
 			boolean ret = li.add(value);
 			if (ordering != null && li instanceof List)
 				Collections.sort((List)li, ordering);
@@ -270,77 +270,49 @@ public final class MultiMap<K, V> {
 		}
 	}
 
-	public static interface CollectionFactory<C> {
-
-		public Collection<? extends C> createCollection();
-		public Collection<? extends C> createCollection(Collection c);
-		public boolean allowsDuplicates();
-
-	}
-
 	public static interface MapDeterminator<K, V> {
 
 		public Map<? extends K, ? extends V> getMapType();
 
 	}
 
-	public static final class ListFactory implements CollectionFactory<ArrayList> {
+	public static enum CollectionType {
+		LIST(true),
+		HASHSET(false),
+		CONCURRENTSET(false);
 
-		@Override
-		public ArrayList createCollection() {
-			return new ArrayList();
+		private final boolean allowsDuplicates;
+
+		private CollectionType(boolean b) {
+			allowsDuplicates = b;
 		}
 
-		@Override
-		public ArrayList createCollection(Collection c) {
-			return new ArrayList(c);
+		public Collection createCollection() {
+			switch(this) {
+				case CONCURRENTSET:
+					return Collections.newSetFromMap(new ConcurrentHashMap());
+				case HASHSET:
+					return new HashSet();
+				case LIST:
+					return new ArrayList();
+			}
+			return null;
 		}
 
-		@Override
-		public boolean allowsDuplicates() {
-			return true;
+		public Collection createCollection(Collection c) {
+			switch(this) {
+				case CONCURRENTSET:
+					Set s = Collections.newSetFromMap(new ConcurrentHashMap());
+					s.addAll(c);
+					return s;
+				case HASHSET:
+					return new HashSet(c);
+				case LIST:
+					return new ArrayList(c);
+
+			}
+			return null;
 		}
-
-	}
-
-	public static final class HashSetFactory implements CollectionFactory<HashSet> {
-
-		@Override
-		public HashSet createCollection() {
-			return new HashSet();
-		}
-
-		@Override
-		public HashSet createCollection(Collection c) {
-			return new HashSet(c);
-		}
-
-		@Override
-		public boolean allowsDuplicates() {
-			return false;
-		}
-
-	}
-
-	public static final class ConcurrentHashSetFactory implements CollectionFactory<Set> {
-
-		@Override
-		public Set createCollection() {
-			return Collections.newSetFromMap(new ConcurrentHashMap());
-		}
-
-		@Override
-		public Set createCollection(Collection c) {
-			Set s = Collections.newSetFromMap(new ConcurrentHashMap());
-			s.addAll(c);
-			return s;
-		}
-
-		@Override
-		public boolean allowsDuplicates() {
-			return false;
-		}
-
 	}
 
 	public static final class ConcurrencyDeterminator implements MapDeterminator {
@@ -361,7 +333,7 @@ public final class MultiMap<K, V> {
 		}
 
 		public SortedDeterminator(Comparator c) {
-			this.sorter = c;
+			sorter = c;
 		}
 
 		@Override

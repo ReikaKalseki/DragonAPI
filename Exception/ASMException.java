@@ -11,14 +11,14 @@ package Reika.DragonAPI.Exception;
 
 import java.util.Arrays;
 
-import net.minecraftforge.classloading.FMLForgePlugin;
-
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 

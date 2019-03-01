@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import net.minecraft.launchwrapper.Launch;
+
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 

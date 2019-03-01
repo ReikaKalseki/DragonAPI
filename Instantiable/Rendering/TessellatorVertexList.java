@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 
 public class TessellatorVertexList {

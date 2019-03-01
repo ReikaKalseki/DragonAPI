@@ -14,9 +14,11 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import net.minecraft.tileentity.TileEntity;
+
 import Reika.DragonAPI.ModInteract.Lua.Library.LuaFluidColor;
 import Reika.DragonAPI.ModInteract.Lua.Library.LuaGetBlock;
 import Reika.DragonAPI.ModRegistry.PowerTypes;
+
 import dan200.computercraft.api.lua.LuaException;
 
 public abstract class LuaMethod {

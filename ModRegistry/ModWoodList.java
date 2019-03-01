@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -23,6 +23,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
@@ -30,9 +31,11 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 
 public enum ModWoodList implements TreeType {
@@ -123,7 +126,7 @@ public enum ModWoodList implements TreeType {
 	private static final BlockMap<ModWoodList> leafMappings = new BlockMap();
 	private static final BlockMap<ModWoodList> saplingMappings = new BlockMap();
 
-	private static final MultiMap<ModList, ModWoodList> modMappings = new MultiMap(new MultiMap.HashSetFactory());
+	private static final MultiMap<ModList, ModWoodList> modMappings = new MultiMap(CollectionType.HASHSET);
 
 	private ModWoodList(ModList req, int color, int leaf, int w, int h, String blockVar, String leafVar, String saplingVar, VarType type) {
 		this(req, color, leaf, w, h, blockVar, leafVar, saplingVar, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, type);

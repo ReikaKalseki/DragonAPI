@@ -12,11 +12,11 @@ package Reika.DragonAPI.ModInteract.RecipeHandlers;
 import java.util.Collection;
 import java.util.Map;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
-import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -25,6 +25,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Collections.ChancedOutputList;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import forestry.api.recipes.ICentrifugeRecipe;

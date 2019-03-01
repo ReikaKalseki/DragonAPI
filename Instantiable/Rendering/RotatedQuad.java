@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.Rendering;
 import java.util.Arrays;
 
 import net.minecraft.util.Vec3;
+
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 
 

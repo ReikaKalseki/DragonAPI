@@ -19,11 +19,14 @@ import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.google.common.base.Strings;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;
@@ -40,8 +43,6 @@ import Reika.DragonAPI.ModInteract.Bees.ReikaBeeHelper;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.TreeGene;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
-
-import com.google.common.base.Strings;
 
 import forestry.api.apiculture.EnumBeeChromosome;
 import forestry.api.apiculture.EnumBeeType;

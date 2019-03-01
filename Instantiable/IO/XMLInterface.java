@@ -23,11 +23,12 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import net.minecraft.util.EnumChatFormatting;
+
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaXMLBase;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import net.minecraft.util.EnumChatFormatting;
 
 public class XMLInterface {
 

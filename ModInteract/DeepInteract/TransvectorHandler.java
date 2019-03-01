@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract.DeepInteract;
 import java.lang.reflect.Method;
 
 import net.minecraft.tileentity.TileEntity;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;

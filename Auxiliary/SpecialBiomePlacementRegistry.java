@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import net.minecraft.world.biome.BiomeGenBase;
+
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
+
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 

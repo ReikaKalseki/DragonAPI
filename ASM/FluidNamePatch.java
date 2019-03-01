@@ -9,9 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM;
 
-import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraftforge.classloading.FMLForgePlugin;
-
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
@@ -21,6 +18,9 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import net.minecraft.launchwrapper.IClassTransformer;
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 

@@ -14,6 +14,7 @@ import java.util.Locale;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;

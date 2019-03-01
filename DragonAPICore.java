@@ -16,19 +16,21 @@ import java.net.URL;
 import java.util.Random;
 import java.util.UUID;
 
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.dedicated.PropertyManager;
+import net.minecraftforge.common.ForgeVersion;
+
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.dedicated.PropertyManager;
-import net.minecraftforge.common.ForgeVersion;
 
 public class DragonAPICore {
 

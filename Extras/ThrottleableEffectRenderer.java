@@ -17,10 +17,6 @@ import java.util.concurrent.Callable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import Reika.ChromatiCraft.Auxiliary.Interfaces.CustomRenderFX;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonOptions;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
@@ -34,6 +30,11 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import Reika.ChromatiCraft.Auxiliary.Interfaces.CustomRenderFX;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 
 
 public class ThrottleableEffectRenderer extends EffectRenderer {

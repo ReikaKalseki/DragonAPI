@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -25,8 +23,11 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
+import io.netty.buffer.ByteBuf;
 
 public final class DecimalPosition implements Comparable<DecimalPosition> {
 

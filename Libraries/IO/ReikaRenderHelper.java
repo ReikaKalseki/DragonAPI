@@ -16,21 +16,6 @@ import java.util.List;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
-import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
-import Reika.DragonAPI.Instantiable.Effects.ReikaModelledBreakFX;
-import Reika.DragonAPI.Instantiable.Rendering.TessellatorVertexList;
-import Reika.DragonAPI.Interfaces.TextureFetcher;
-import Reika.DragonAPI.Interfaces.TileModel;
-import Reika.DragonAPI.Interfaces.TileEntity.RenderFetcher;
-import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
-import cpw.mods.fml.common.gameevent.TickEvent.Phase;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
@@ -56,6 +41,23 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
+import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.Instantiable.Effects.ReikaModelledBreakFX;
+import Reika.DragonAPI.Instantiable.Rendering.TessellatorVertexList;
+import Reika.DragonAPI.Interfaces.TextureFetcher;
+import Reika.DragonAPI.Interfaces.TileModel;
+import Reika.DragonAPI.Interfaces.TileEntity.RenderFetcher;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
+
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaRenderHelper extends DragonAPICore {
 

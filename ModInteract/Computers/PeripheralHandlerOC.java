@@ -9,6 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Computers;
 
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import Reika.DragonAPI.Base.TileEntityBase;
+
 import li.cil.oc.api.Network;
 import li.cil.oc.api.machine.Arguments;
 import li.cil.oc.api.machine.Context;
@@ -16,9 +21,6 @@ import li.cil.oc.api.network.ManagedEnvironment;
 import li.cil.oc.api.network.ManagedPeripheral;
 import li.cil.oc.api.network.Visibility;
 import li.cil.oc.api.prefab.DriverSidedTileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-import Reika.DragonAPI.Base.TileEntityBase;
 
 public class PeripheralHandlerOC extends DriverSidedTileEntity {
 

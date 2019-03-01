@@ -15,11 +15,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 
-import minetweaker.util.IEventHandler;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.ReplacementSmeltingHandler;
@@ -31,10 +31,12 @@ import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet
 import Reika.DragonAPI.Instantiable.Event.MTReloadEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import minetweaker.util.IEventHandler;
 
 /** Used to prevent Minetweaker from interfering with the balance of a mod; mods can register items whose recipes cannot be removed or items which
  * cannot have additional recipes added. It does not allow for the prevention of creating recipes that <i>use</i> the items, as there is no harm that

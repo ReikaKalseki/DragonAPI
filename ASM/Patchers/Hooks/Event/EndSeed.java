@@ -11,14 +11,14 @@ package Reika.DragonAPI.ASM.Patchers.Hooks.Event;
 
 import java.lang.reflect.Modifier;
 
-import net.minecraftforge.classloading.FMLForgePlugin;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;

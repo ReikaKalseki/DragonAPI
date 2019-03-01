@@ -2,10 +2,15 @@ package Reika.DragonAPI.ModInteract.DeepInteract;
 
 import java.util.LinkedList;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.FilledBlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+
 import buildcraft.BuildCraftBuilders;
 import buildcraft.api.blueprints.IBuilderContext;
 import buildcraft.api.blueprints.SchematicBlock;
@@ -15,9 +20,6 @@ import buildcraft.core.blueprints.Blueprint;
 import buildcraft.core.blueprints.BptContext;
 import buildcraft.core.blueprints.LibraryId;
 import buildcraft.core.blueprints.SchematicRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public class BCBlueprintBuilder {
 

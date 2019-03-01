@@ -20,6 +20,7 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 public class EntityCountCommand extends DragonCommandBase {

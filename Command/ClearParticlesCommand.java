@@ -11,6 +11,7 @@ package Reika.DragonAPI.Command;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
+
 import Reika.DragonAPI.Extras.ThrottleableEffectRenderer;
 
 

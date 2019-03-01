@@ -9,13 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
+import org.lwjgl.input.Mouse;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.player.EntityPlayer;
-
-import org.lwjgl.input.Mouse;
 
 public abstract class ModifiedPlayerModel extends ModelBiped {
 

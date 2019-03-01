@@ -17,6 +17,7 @@ import java.io.InputStream;
 
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.data.IMetadataSection;
+
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 

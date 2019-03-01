@@ -11,15 +11,17 @@ package Reika.DragonAPI.ModInteract;
 
 import java.lang.reflect.Method;
 
-import moze_intel.projecte.api.ProjectEAPI;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
 import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
+
+import moze_intel.projecte.api.ProjectEAPI;
 
 public class ReikaEEHelper {
 

@@ -11,7 +11,9 @@ package Reika.DragonAPI.ModInteract.Computers;
 
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Base.TileEntityBase;
+
 import dan200.computercraft.api.peripheral.IPeripheral;
 import dan200.computercraft.api.peripheral.IPeripheralProvider;
 

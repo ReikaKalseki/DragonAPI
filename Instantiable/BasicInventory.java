@@ -14,6 +14,7 @@ import java.util.Arrays;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 
 public abstract class BasicInventory implements IInventory {

@@ -13,14 +13,16 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 
-import Reika.DragonAPI.Exception.VanillaIntegrityException;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.gen.structure.MapGenStructure;
 import net.minecraftforge.classloading.FMLForgePlugin;
+
+import Reika.DragonAPI.Exception.VanillaIntegrityException;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 
 public class ReikaObfuscationHelper {
 

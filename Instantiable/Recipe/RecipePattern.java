@@ -14,6 +14,7 @@ import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
 import net.minecraft.item.ItemStack;
+
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class RecipePattern extends InventoryCrafting {

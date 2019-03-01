@@ -11,6 +11,7 @@ package Reika.DragonAPI.Interfaces;
 
 
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.IWorldGenerator;
 
 public interface RetroactiveGenerator extends IWorldGenerator {

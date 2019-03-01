@@ -16,6 +16,9 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Set;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
@@ -24,9 +27,6 @@ import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.SimpleResource;
 import net.minecraft.client.resources.data.IMetadataSerializer;
 import net.minecraft.util.ResourceLocation;
-
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableSet;
 
 @Deprecated
 public class VanillaOnlyResourceManager implements IResourceManager, IResourceManagerReloadListener {

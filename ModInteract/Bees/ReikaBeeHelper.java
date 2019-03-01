@@ -17,6 +17,13 @@ import java.util.Set;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.StatCollector;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
@@ -34,6 +41,7 @@ import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Territory;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Tolerance;
 import Reika.DragonAPI.ModInteract.Bees.BeeEvent.BeeSetHealthEvent;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ForestryHandler;
+
 import forestry.api.apiculture.BeeManager;
 import forestry.api.apiculture.EnumBeeChromosome;
 import forestry.api.apiculture.EnumBeeType;
@@ -72,12 +80,6 @@ import forestry.api.lepidopterology.EnumFlutterType;
 import forestry.api.lepidopterology.IButterflyGenome;
 import forestry.api.lepidopterology.IButterflyRoot;
 import forestry.api.multiblock.IAlvearyController;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.StatCollector;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
 
 
 public class ReikaBeeHelper {

@@ -12,6 +12,7 @@ package Reika.DragonAPI.Auxiliary.Trackers;
 import java.util.Collection;
 
 import net.minecraft.tileentity.TileEntity;
+
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 
 public class TileEntityTickWatcher {

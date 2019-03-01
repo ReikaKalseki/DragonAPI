@@ -16,12 +16,13 @@ import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Interfaces.ObjectToNBTSerializer;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
 
 public class WeightedRandom<V> {
 

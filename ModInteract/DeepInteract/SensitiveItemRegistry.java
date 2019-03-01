@@ -11,11 +11,11 @@ package Reika.DragonAPI.ModInteract.DeepInteract;
 
 import java.util.HashSet;
 
-import moze_intel.projecte.api.event.EMCRemapEvent;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
+
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -25,8 +25,10 @@ import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableArray;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
 import Reika.DragonAPI.ModInteract.ReikaEEHelper;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import moze_intel.projecte.api.event.EMCRemapEvent;
 
 /** Register progression/balance-sensitive items here to blacklist normal recipe systems from adding new recipes for them. */
 public final class SensitiveItemRegistry {

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.world.World;
+
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
 /** Fired right before a block is burned by fire. Cancel it to stop the consumption. */

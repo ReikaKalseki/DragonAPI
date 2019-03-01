@@ -23,10 +23,11 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import net.minecraft.launchwrapper.IClassTransformer;
+
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.Interfaces.Subgenerator;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
-import net.minecraft.launchwrapper.IClassTransformer;
 
 public class MapGeneratorProfilingHooks implements IClassTransformer {
 

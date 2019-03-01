@@ -10,7 +10,9 @@
 package Reika.DragonAPI.Interfaces;
 
 import net.minecraft.entity.player.EntityPlayer;
+
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerSpecificRenderer.PlayerRotationData;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 

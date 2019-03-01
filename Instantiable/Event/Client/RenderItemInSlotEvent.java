@@ -9,14 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event.Client;
 
+import org.lwjgl.input.Mouse;
+
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 
-import org.lwjgl.input.Mouse;
-
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
+
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

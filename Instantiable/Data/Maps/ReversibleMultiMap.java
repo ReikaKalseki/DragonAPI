@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,7 +12,7 @@ package Reika.DragonAPI.Instantiable.Data.Maps;
 import java.util.Collection;
 import java.util.Collections;
 
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionFactory;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 
 public final class ReversibleMultiMap<K, V> {
 
@@ -20,10 +20,10 @@ public final class ReversibleMultiMap<K, V> {
 	private final MultiMap<V, K> backward;
 
 	public ReversibleMultiMap() {
-		this(null);
+		this(CollectionType.LIST);
 	}
 
-	public ReversibleMultiMap(CollectionFactory cf) {
+	public ReversibleMultiMap(CollectionType cf) {
 		forward = new MultiMap(cf);
 		backward = new MultiMap(cf);
 	}

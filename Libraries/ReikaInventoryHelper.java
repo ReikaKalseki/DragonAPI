@@ -15,16 +15,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Instantiable.TemporaryInventory;
-import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
-import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
-import Reika.DragonAPI.Instantiable.Recipe.ItemMatch;
-import Reika.DragonAPI.Interfaces.Item.ActivatedInventoryItem;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -40,6 +30,18 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.ChestGenHooks;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.TemporaryInventory;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Instantiable.Recipe.ItemMatch;
+import Reika.DragonAPI.Interfaces.Item.ActivatedInventoryItem;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
+
 import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 public final class ReikaInventoryHelper extends DragonAPICore {

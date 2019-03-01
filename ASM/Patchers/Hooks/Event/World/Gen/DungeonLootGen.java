@@ -4,10 +4,11 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import net.minecraftforge.classloading.FMLForgePlugin;
+
 import Reika.DragonAPI.ASM.StructureLootHooks;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
-import net.minecraftforge.classloading.FMLForgePlugin;
 
 public class DungeonLootGen extends Patcher {
 

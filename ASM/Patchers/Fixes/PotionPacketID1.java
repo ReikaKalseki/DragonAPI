@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM.Patchers.Fixes;
 
-import net.minecraftforge.classloading.FMLForgePlugin;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -19,9 +17,12 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import net.minecraftforge.classloading.FMLForgePlugin;
+
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 

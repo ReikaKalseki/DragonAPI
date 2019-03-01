@@ -12,11 +12,11 @@ package Reika.DragonAPI.IO;
 import java.awt.image.BufferedImage;
 import java.nio.IntBuffer;
 
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.client.settings.GameSettings;
-
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+
+import net.minecraft.client.renderer.GLAllocation;
+import net.minecraft.client.settings.GameSettings;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

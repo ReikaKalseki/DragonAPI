@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Command;
 
 import net.minecraft.command.ICommandSender;
+
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;

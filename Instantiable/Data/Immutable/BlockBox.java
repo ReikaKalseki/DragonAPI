@@ -18,6 +18,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import Reika.DragonAPI.Interfaces.BlockCheck;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 

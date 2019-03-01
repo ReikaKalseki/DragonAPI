@@ -16,9 +16,11 @@ import java.util.Locale;
 
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper.FieldSelector;
 import Reika.DragonAPI.Libraries.MathSci.ReikaThermoHelper;
+
 import cofh.api.energy.IEnergyHandler;
 import cofh.api.energy.IEnergyStorage;
 

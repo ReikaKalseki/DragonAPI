@@ -21,22 +21,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
-import Reika.DragonAPI.Instantiable.Formula.MathExpression;
-import Reika.DragonAPI.Instantiable.IO.XMLInterface;
-import Reika.DragonAPI.Interfaces.ObjectToNBTSerializer;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.ModInteract.CustomThaumResearch;
-import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumIDHandler;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.network.simpleimpl.IMessage;
-import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -50,6 +36,24 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Instantiable.Data.Maps.TierMap;
+import Reika.DragonAPI.Instantiable.Formula.MathExpression;
+import Reika.DragonAPI.Instantiable.IO.XMLInterface;
+import Reika.DragonAPI.Interfaces.ObjectToNBTSerializer;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.ModInteract.CustomThaumResearch;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumIDHandler;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.network.simpleimpl.IMessage;
+import cpw.mods.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import thaumcraft.api.ThaumcraftApi;
 import thaumcraft.api.ThaumcraftApiHelper;
 import thaumcraft.api.aspects.Aspect;
@@ -90,7 +94,7 @@ public class ReikaThaumHelper {
 
 	private static Object proxy; //auto-sides to correct side
 
-	private static final Collection<Aspect> allAspects = new ArrayList();
+	private static final TierMap<Aspect> aspectTiers = new TierMap();
 
 	private static final HashSet<String> nativeCategories = new HashSet();
 
@@ -824,24 +828,6 @@ public class ReikaThaumHelper {
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
 
-			try {
-				Field[] fds = Aspect.class.getDeclaredFields();
-				for (int i = 0; i < fds.length; i++) {
-					Field fd = fds[i];
-					if (fd.getType() == Aspect.class) {
-						Aspect a = (Aspect)fd.get(null);
-						if (a != null) {
-							allAspects.add(a);
-						}
-					}
-				}
-			}
-			catch (Exception e) {
-				DragonAPICore.logError("Could not load ThaumCraft Aspect Handler!");
-				e.printStackTrace();
-				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
-			}
-
 			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 				try {
 					Class clip = Class.forName("thaumcraft.client.ClientProxy");
@@ -942,5 +928,46 @@ public class ReikaThaumHelper {
 			return a;
 	}
 	 */
+
+	public static int getAspectTier(Aspect a) {
+		if (aspectTiers.isEmpty())
+			buildAspectTiers();
+		return aspectTiers.getTier(a);
+	}
+
+	public static Set<Aspect> getAspectsByTier(int t) {
+		if (aspectTiers.isEmpty())
+			buildAspectTiers();
+		return aspectTiers.getByTier(t);
+	}
+
+	public static int getMaxAspectTier() {
+		if (aspectTiers.isEmpty())
+			buildAspectTiers();
+		return aspectTiers.getMaxTier();
+	}
+
+	private static void buildAspectTiers() {
+		for (Aspect a : getAllAspects()) {
+			if (!aspectTiers.containsKey(a))
+				aspectTiers.addObject(a, calculateAspectTier(a));
+		}
+	}
+
+	private static int calculateAspectTier(Aspect a) {
+		if (a.isPrimal())
+			return 0;
+		Aspect[] parents = a.getComponents();
+		int maxt = 0;
+		for (Aspect a2 : parents) {
+			int t2 = aspectTiers.getTier(a2);
+			if (t2 == -1) {
+				t2 = calculateAspectTier(a2);
+				aspectTiers.addObject(a2, t2);
+			}
+			maxt = Math.max(maxt, t2);
+		}
+		return maxt+1;
+	}
 }
 

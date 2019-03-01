@@ -17,6 +17,7 @@ import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
+
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 
 public final class BlockMap<V> {

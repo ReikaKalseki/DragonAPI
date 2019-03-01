@@ -15,14 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonOptions;
-import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Instantiable.Worldgen.VillageBuilding.PerVillageWeight;
-import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
-import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
-import Reika.DragonAPI.Interfaces.Entity.TameHostile;
-import cpw.mods.fml.common.registry.VillagerRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
@@ -41,6 +33,16 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Worldgen.VillageBuilding.PerVillageWeight;
+import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
+import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
+import Reika.DragonAPI.Interfaces.Entity.TameHostile;
+
+import cpw.mods.fml.common.registry.VillagerRegistry;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {

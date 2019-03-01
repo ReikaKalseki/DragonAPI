@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import net.minecraft.world.biome.BiomeGenBase;
+
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 

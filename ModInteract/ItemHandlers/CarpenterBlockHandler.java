@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import net.minecraft.block.Block;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;

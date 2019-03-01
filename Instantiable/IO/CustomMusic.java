@@ -25,6 +25,7 @@ import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
+
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.IO.DirectResourceManager;
 

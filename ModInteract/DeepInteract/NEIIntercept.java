@@ -12,6 +12,8 @@ package Reika.DragonAPI.ModInteract.DeepInteract;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -21,14 +23,13 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
-import org.lwjgl.input.Keyboard;
-
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Instantiable.Event.NEIRecipeCheckEvent;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+
 import codechicken.nei.ItemPanel;
 import codechicken.nei.ItemPanel.ItemPanelSlot;
 import codechicken.nei.LayoutManager;

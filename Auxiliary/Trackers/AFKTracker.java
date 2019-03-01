@@ -5,6 +5,7 @@ import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C03PacketPlayer;
 import net.minecraft.network.play.client.C03PacketPlayer.C04PacketPlayerPosition;
+
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Instantiable.Data.Maps.PlayerMap;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;

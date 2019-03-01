@@ -14,9 +14,11 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import net.minecraft.nbt.NBTTagCompound;
-import thaumcraft.api.aspects.Aspect;
+
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
+
+import thaumcraft.api.aspects.Aspect;
 
 public class CompoundAspectTank {
 

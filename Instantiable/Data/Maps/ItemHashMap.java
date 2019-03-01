@@ -15,18 +15,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
-import Reika.DragonAPI.Interfaces.Matcher;
-import Reika.DragonAPI.Libraries.ReikaNBTHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
+
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
+import Reika.DragonAPI.Interfaces.Matcher;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class ItemHashMap<V> {
 

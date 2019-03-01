@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.MathSci;
 
 import net.minecraft.util.MathHelper;
+
 import Reika.DragonAPI.DragonAPICore;
 
 

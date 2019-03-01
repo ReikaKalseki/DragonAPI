@@ -26,6 +26,17 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
 
+import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.network.rcon.RConConsoleSource;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.world.World;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
@@ -37,17 +48,8 @@ import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
 import cpw.mods.fml.common.registry.RegistryDelegate;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.network.rcon.RConConsoleSource;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.EnumChatFormatting;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.World;
 
 /** Example use:
 	LDC {dimID} [+1 stack]<br>
@@ -374,6 +376,10 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		if (chain.contains(o) && !((o instanceof String || o instanceof Number || o instanceof Boolean || o instanceof Object[] || o instanceof Iterable || o instanceof Map || o instanceof Enum)))
 			return li;
 		chain.add(o);
+		if (o == null) {
+			li.add(this.pad(depth)+"<null>");
+			return li;
+		}
 		if (o instanceof Map) {
 			li.add(this.pad(depth)+"Map ["+o.getClass()+"]:");
 			Map m = (Map)o;
@@ -390,13 +396,79 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 				li.add("----");
 			}
 		}
-		else if (o instanceof Object[]) {
+		else if (o.getClass().isArray()) {
 			li.add(this.pad(depth+1)+"Array:");
-			for (Object o2 : ((Object[])o)) {
-				for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
-					li.add(s);
+			if (o instanceof int[]) {
+				for (int o2 : (int[])o) {
+					for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
+						li.add(s);
+					}
+					li.add("----");
 				}
-				li.add("----");
+			}
+			else if (o instanceof boolean[]) {
+				for (boolean o2 : (boolean[])o) {
+					for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
+						li.add(s);
+					}
+					li.add("----");
+				}
+			}
+			else if (o instanceof float[]) {
+				for (float o2 : (float[])o) {
+					for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
+						li.add(s);
+					}
+					li.add("----");
+				}
+			}
+			else if (o instanceof double[]) {
+				for (double o2 : (double[])o) {
+					for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
+						li.add(s);
+					}
+					li.add("----");
+				}
+			}
+			else if (o instanceof short[]) {
+				for (short o2 : (short[])o) {
+					for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
+						li.add(s);
+					}
+					li.add("----");
+				}
+			}
+			else if (o instanceof long[]) {
+				for (long o2 : (long[])o) {
+					for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
+						li.add(s);
+					}
+					li.add("----");
+				}
+			}
+			else if (o instanceof byte[]) {
+				for (byte o2 : (byte[])o) {
+					for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
+						li.add(s);
+					}
+					li.add("----");
+				}
+			}
+			else if (o instanceof char[]) {
+				for (char o2 : (char[])o) {
+					for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
+						li.add(s);
+					}
+					li.add("----");
+				}
+			}
+			else {
+				for (Object o2 : ((Object[])o)) {
+					for (String s : this.getObjectData(o2, depth+2, fullValues, chain)) {
+						li.add(s);
+					}
+					li.add("----");
+				}
 			}
 		}
 		else if (o instanceof Iterable) {
@@ -410,9 +482,6 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		}
 		else if (o instanceof ItemStack) {
 			li.add(this.pad(depth)+"ItemStack: "+this.fullID((ItemStack)o));
-		}
-		else if (o == null) {
-			li.add(this.pad(depth)+"<null>");
 		}
 		else {
 			String ts;

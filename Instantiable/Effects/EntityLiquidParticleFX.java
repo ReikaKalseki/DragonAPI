@@ -9,12 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Effects;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
-
-import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Libraries.IO.ReikaLiquidRenderer;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;

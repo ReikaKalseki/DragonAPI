@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable.IO;
 
 import net.minecraft.client.audio.ISound;
 import net.minecraft.util.ResourceLocation;
+
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 

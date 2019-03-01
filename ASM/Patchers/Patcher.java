@@ -19,6 +19,7 @@ import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
+
 import cpw.mods.fml.relauncher.Side;
 
 public abstract class Patcher {

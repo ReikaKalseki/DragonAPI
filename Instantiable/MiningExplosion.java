@@ -30,6 +30,7 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class MiningExplosion extends Explosion {

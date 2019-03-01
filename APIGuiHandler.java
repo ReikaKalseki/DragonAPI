@@ -11,7 +11,9 @@ package Reika.DragonAPI;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Extras.GuiGuide;
+
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class APIGuiHandler implements IGuiHandler {

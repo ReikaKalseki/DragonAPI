@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable.ParticleController;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
+
 import Reika.DragonAPI.Interfaces.MotionController;
 
 

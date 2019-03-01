@@ -12,13 +12,14 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import net.minecraft.block.Block;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.CropHandlerBase;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 public class IC2RubberLogHandler extends CropHandlerBase {
 

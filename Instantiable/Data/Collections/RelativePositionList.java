@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable.Data.Collections;
 
 
 import net.minecraft.util.Vec3;
+
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 

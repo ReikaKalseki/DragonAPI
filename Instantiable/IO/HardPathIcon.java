@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.IO;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.util.ResourceLocation;
+
 import Reika.DragonAPI.IO.DirectResourceManager;
 
 

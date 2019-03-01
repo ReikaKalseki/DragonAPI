@@ -26,13 +26,15 @@ import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
+
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.ResettableRandom;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Instantiable.Event.ChunkGenerationEvent;
 import Reika.DragonAPI.Interfaces.RetroactiveGenerator;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
@@ -226,7 +228,7 @@ public class RetroGenController {
 
 		private final int dimensionID;
 		private final long worldSeed;
-		private final MultiMap<String, ChunkCoordIntPair> generatedChunks = new MultiMap(new HashSetFactory());
+		private final MultiMap<String, ChunkCoordIntPair> generatedChunks = new MultiMap(CollectionType.HASHSET);
 
 		private DataCache(World world) {
 			dimensionID = world.provider.dimensionId;

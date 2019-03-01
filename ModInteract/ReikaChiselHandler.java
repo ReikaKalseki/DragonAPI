@@ -7,10 +7,11 @@ import com.cricketcraft.chisel.api.carving.CarvingUtils;
 import com.cricketcraft.chisel.api.carving.ICarvingGroup;
 import com.cricketcraft.chisel.api.carving.ICarvingVariation;
 
-import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 
 public class ReikaChiselHandler {
 

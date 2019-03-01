@@ -9,11 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import org.apache.logging.log4j.Level;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-
-import org.apache.logging.log4j.Level;
 
 import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;

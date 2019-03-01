@@ -9,12 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.gui.GuiNewChat;
-import net.minecraft.client.renderer.texture.TextureMap;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.WorldServer;
-
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Marker;
@@ -23,7 +17,14 @@ import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.Logger;
 import org.apache.logging.log4j.message.Message;
 
+import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.gui.GuiNewChat;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.WorldServer;
+
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.FMLRelaunchLog;
 import cpw.mods.fml.relauncher.Side;

@@ -14,6 +14,7 @@ import java.util.Locale;
 
 import net.minecraft.client.audio.SoundCategory;
 import net.minecraft.util.ResourceLocation;
+
 import Reika.DragonAPI.IO.DirectResourceManager;
 
 @Deprecated

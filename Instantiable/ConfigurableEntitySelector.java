@@ -14,6 +14,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.player.EntityPlayer;
+
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 
 public class ConfigurableEntitySelector implements IEntitySelector {

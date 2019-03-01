@@ -17,10 +17,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
@@ -30,8 +33,6 @@ import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Life;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Speeds;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Territory;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Tolerance;
-
-import com.mojang.authlib.GameProfile;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

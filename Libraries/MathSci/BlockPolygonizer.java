@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Rendering.RenderPolygon;

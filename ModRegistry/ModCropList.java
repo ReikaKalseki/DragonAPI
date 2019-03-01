@@ -12,6 +12,13 @@ package Reika.DragonAPI.ModRegistry;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.EnumHelper;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
@@ -32,13 +39,8 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.IC2RubberLogHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.OreBerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.PneumaticPlantHandler;
 import Reika.DragonAPI.ModRegistry.ModWoodList.VarType;
+
 import cpw.mods.fml.common.registry.GameRegistry;
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.EnumHelper;
 
 public enum ModCropList implements ModCrop {
 	//seed meta, min meta, fresh meta, ripe meta

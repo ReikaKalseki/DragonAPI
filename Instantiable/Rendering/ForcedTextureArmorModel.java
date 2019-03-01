@@ -9,10 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.entity.Entity;
-
-import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 

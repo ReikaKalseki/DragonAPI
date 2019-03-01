@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract.Lua;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+
 import dan200.computercraft.api.lua.LuaException;
 
 public class LuaGetSlot extends LuaMethod {

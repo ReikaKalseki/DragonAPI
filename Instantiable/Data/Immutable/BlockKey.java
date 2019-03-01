@@ -9,6 +9,8 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import com.google.common.base.Strings;
+
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -16,11 +18,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.BlockCheck;
 import Reika.DragonAPI.Interfaces.Registry.TileEnum;
-
-import com.google.common.base.Strings;
 
 public final class BlockKey implements BlockCheck, Comparable<BlockKey> {
 

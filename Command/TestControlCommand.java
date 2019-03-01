@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Command;
 
 import net.minecraft.command.ICommandSender;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 

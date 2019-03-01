@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable;
 
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.FilledBlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;

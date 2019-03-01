@@ -18,6 +18,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class ReikaModelledBreakFX extends EntityDiggingFX {

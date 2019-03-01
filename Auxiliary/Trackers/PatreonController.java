@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import net.minecraft.util.EnumChatFormatting;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.DonatorController.Donator;
 import Reika.DragonAPI.Exception.MisuseException;

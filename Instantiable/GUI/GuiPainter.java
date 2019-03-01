@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -14,14 +14,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Random;
 
+import org.lwjgl.input.Mouse;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 
-import org.lwjgl.input.Mouse;
-
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Instantiable.GUI.ImagedGuiButton.TextAlign;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
@@ -38,7 +39,7 @@ public class GuiPainter {
 
 	protected final int pixelSize;
 	public PaintElement activeElement;
-	private MultiMap<PaintElement, Point> locations = new MultiMap(new MultiMap.HashSetFactory());
+	private MultiMap<PaintElement, Point> locations = new MultiMap(CollectionType.HASHSET);
 	public Brush brush = Brush.PIXEL;
 
 	private boolean init;

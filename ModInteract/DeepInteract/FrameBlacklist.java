@@ -9,20 +9,21 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
-import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.ForgeDirection;
-import Reika.DragonAPI.ASM.APIStripper.Strippable;
-import Reika.DragonAPI.ASM.DependentMethodStripper.SmartStrip;
-
 import com.amadornes.framez.api.FramezApi;
 import com.amadornes.framez.api.Priority;
 import com.amadornes.framez.api.movement.BlockMovementType;
 import com.amadornes.framez.api.movement.IMovement;
 import com.amadornes.framez.api.movement.IMovementHandler;
 import com.amadornes.framez.api.movement.IMovingBlock;
+
+import net.minecraft.block.Block;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import Reika.DragonAPI.ASM.APIStripper.Strippable;
+import Reika.DragonAPI.ASM.DependentMethodStripper.SmartStrip;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.Cancelable;

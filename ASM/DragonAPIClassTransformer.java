@@ -18,19 +18,20 @@ import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.classloading.FMLForgePlugin;
+
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Auxiliary.WorldGenInterceptionRegistry;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class DragonAPIClassTransformer implements IClassTransformer {
 
-	private static final MultiMap<String, Patcher> classes = new MultiMap(new HashSetFactory()).setNullEmpty();
+	private static final MultiMap<String, Patcher> classes = new MultiMap(CollectionType.HASHSET).setNullEmpty();
 	private static int bukkitFlags;
 	private static boolean nullItemPrintout = false;
 	private static boolean nullItemCrash = false;

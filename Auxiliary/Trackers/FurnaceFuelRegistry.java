@@ -13,7 +13,9 @@ import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityFurnace;
+
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+
 import cpw.mods.fml.common.IFuelHandler;
 
 public final class FurnaceFuelRegistry implements IFuelHandler {

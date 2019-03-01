@@ -11,7 +11,9 @@ package Reika.DragonAPI.ModInteract.Lua;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+
 import Reika.DragonAPI.Base.TileEntityBase;
+
 import dan200.computercraft.api.lua.LuaException;
 
 

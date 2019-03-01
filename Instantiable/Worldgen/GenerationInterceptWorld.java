@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -33,11 +33,12 @@ import net.minecraft.world.storage.IPlayerFileData;
 import net.minecraft.world.storage.ISaveHandler;
 import net.minecraft.world.storage.WorldInfo;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 
 @Deprecated
 /** This class was, in hindsight, a dumb idea. */
@@ -46,7 +47,7 @@ public final class GenerationInterceptWorld extends World {
 	private World delegate;
 
 	private final HashSet<BlockKey> disallowedBlocks = new HashSet();
-	private final MultiMap<BlockKey, BlockKey> disallowedChanges = new MultiMap(new HashSetFactory());
+	private final MultiMap<BlockKey, BlockKey> disallowedChanges = new MultiMap(CollectionType.HASHSET);
 	private final HashSet<Coordinate> changeList = new HashSet();
 	private final Collection<TileHook> hooks = new ArrayList();
 	private final BlockMap<BlockKey> overrides = new BlockMap();

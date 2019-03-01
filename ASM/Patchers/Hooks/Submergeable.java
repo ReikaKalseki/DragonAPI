@@ -18,6 +18,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
+
 import cpw.mods.fml.relauncher.Side;
 
 public class Submergeable extends Patcher {

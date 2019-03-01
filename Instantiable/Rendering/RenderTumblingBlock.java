@@ -9,11 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Rendering;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.entity.RenderFallingBlock;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.item.EntityFallingBlock;
-
-import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
 

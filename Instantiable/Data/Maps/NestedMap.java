@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,11 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
+
 
 public class NestedMap<K, M, V> {
 
 	private final HashMap<K, HashMap<M, V>> data = new HashMap();
-	private final MultiMap<M, K> innerSet = new MultiMap(new MultiMap.HashSetFactory());
+	private final MultiMap<M, K> innerSet = new MultiMap(CollectionType.HASHSET);
 	private final HashMap<V, Integer> valueSet = new HashMap();
 
 	public NestedMap() {

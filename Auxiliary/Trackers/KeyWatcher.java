@@ -16,12 +16,12 @@ import java.util.EnumMap;
 import java.util.EnumSet;
 import java.util.Locale;
 
+import org.lwjgl.input.Keyboard;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
-
-import org.lwjgl.input.Keyboard;
 
 import Reika.DragonAPI.APIPacketHandler;
 import Reika.DragonAPI.DragonAPICore;
@@ -35,6 +35,7 @@ import Reika.DragonAPI.Instantiable.Data.Maps.PlayerMap;
 import Reika.DragonAPI.Instantiable.Event.RawKeyPressEvent;
 import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

@@ -11,15 +11,16 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
 
+import com.xcompwiz.mystcraft.api.MystObjects;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Exception.ModReflectionException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
-
-import com.xcompwiz.mystcraft.api.MystObjects;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 

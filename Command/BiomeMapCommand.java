@@ -23,21 +23,6 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.IO.MapOutput;
-import Reika.DragonAPI.Interfaces.CustomBiomeDistributionWorld;
-import Reika.DragonAPI.Interfaces.CustomMapColorBiome;
-import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -52,6 +37,23 @@ import net.minecraft.world.biome.BiomeGenMushroomIsland;
 import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraft.world.biome.BiomeGenRiver;
 import net.minecraft.world.biome.WorldChunkManager;
+
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.IO.MapOutput;
+import Reika.DragonAPI.Interfaces.CustomBiomeDistributionWorld;
+import Reika.DragonAPI.Interfaces.CustomMapColorBiome;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 
 public class BiomeMapCommand extends DragonCommandBase {

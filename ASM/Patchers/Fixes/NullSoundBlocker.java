@@ -12,11 +12,11 @@ package Reika.DragonAPI.ASM.Patchers.Fixes;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import net.minecraft.client.audio.ISound;
-
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import net.minecraft.client.audio.ISound;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;

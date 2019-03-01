@@ -13,7 +13,9 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 import net.minecraftforge.common.MinecraftForge;
+
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent.ClientTickEvent;

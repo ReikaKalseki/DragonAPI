@@ -19,22 +19,6 @@ import java.util.UUID;
 
 import com.mojang.authlib.GameProfile;
 
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.DragonOptions;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
-import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Instantiable.Event.GetPlayerLookEvent;
-import Reika.DragonAPI.Instantiable.Event.PlayerHasItemEvent;
-import Reika.DragonAPI.Instantiable.Event.RemovePlayerItemEvent;
-import Reika.DragonAPI.Instantiable.IO.PacketTarget;
-import Reika.DragonAPI.Instantiable.IO.PacketTarget.PlayerTarget;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockRotatedPillar;
@@ -60,6 +44,24 @@ import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
 import net.minecraftforge.event.world.BlockEvent.BreakEvent;
 import net.minecraftforge.oredict.OreDictionary;
+
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Event.GetPlayerLookEvent;
+import Reika.DragonAPI.Instantiable.Event.PlayerHasItemEvent;
+import Reika.DragonAPI.Instantiable.Event.RemovePlayerItemEvent;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget.PlayerTarget;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaPlayerAPI extends DragonAPICore {
 

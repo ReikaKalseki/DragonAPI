@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 
 public final class GuiStringBuilder extends GuiScreen {

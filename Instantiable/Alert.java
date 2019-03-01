@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable;
 import java.util.logging.Level;
 
 import net.minecraft.util.EnumChatFormatting;
+
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
 import Reika.DragonAPI.Interfaces.Configuration.ConfigList;
 import Reika.DragonAPI.Interfaces.Configuration.DecimalConfig;

@@ -15,15 +15,16 @@ import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 
-import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
-import Reika.DragonAPI.Interfaces.Registry.OreType;
-import Reika.DragonAPI.ModInteract.RecipeHandlers.ModOreCompat;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
+import Reika.DragonAPI.Interfaces.Registry.OreType;
+import Reika.DragonAPI.ModInteract.RecipeHandlers.ModOreCompat;
 
 public enum ReikaOreHelper implements OreType {
 

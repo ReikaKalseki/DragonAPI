@@ -9,13 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Auxiliary;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-
-import org.lwjgl.opengl.GL11;
 
 public final class ReikaBlockRenderer extends RenderBlocks {
 

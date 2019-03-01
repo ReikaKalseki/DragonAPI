@@ -15,18 +15,19 @@ import java.util.HashSet;
 import java.util.Random;
 
 import net.minecraftforge.common.util.ForgeDirection;
+
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Ray;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 
 
 public class Lattice {
 
 	private final HashSet<Coordinate> originPoints = new HashSet();
-	private final MultiMap<Coordinate, Ray> rays = new MultiMap(new HashSetFactory());
+	private final MultiMap<Coordinate, Ray> rays = new MultiMap(CollectionType.HASHSET);
 
 	private final BlockBox bounds;
 

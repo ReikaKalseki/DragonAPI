@@ -12,7 +12,9 @@ package Reika.DragonAPI.ModInteract.Power;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
+
 import Reika.DragonAPI.DragonAPICore;
+
 import buildcraft.api.fuels.BuildcraftFuelRegistry;
 
 public class ReikaBuildCraftHelper extends DragonAPICore {

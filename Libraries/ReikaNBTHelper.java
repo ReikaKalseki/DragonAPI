@@ -18,10 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.IO.LuaBlock;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -39,6 +35,11 @@ import net.minecraft.nbt.NBTTagShort;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.IO.LuaBlock;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public final class ReikaNBTHelper extends DragonAPICore {
 

@@ -11,10 +11,11 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
 
+import net.minecraft.block.Block;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
-import net.minecraft.block.Block;
 
 public class NaturaBlockHandler extends ModHandlerBase {
 

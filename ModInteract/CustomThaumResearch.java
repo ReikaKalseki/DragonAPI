@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModInteract;
 
 import net.minecraft.item.ItemStack;
+
 import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.research.ResearchItem;
 

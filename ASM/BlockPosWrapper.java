@@ -12,8 +12,6 @@ package Reika.DragonAPI.ASM;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import net.minecraftforge.classloading.FMLForgePlugin;
-
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -23,6 +21,8 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 

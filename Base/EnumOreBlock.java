@@ -14,6 +14,7 @@ import net.minecraft.block.material.Material;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Interfaces.Registry.OreEnum;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;

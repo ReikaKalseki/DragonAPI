@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable;
 
 import Reika.DragonAPI.Interfaces.Registry.ModEntry;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 

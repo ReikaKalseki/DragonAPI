@@ -22,6 +22,7 @@ import Reika.DragonAPI.Interfaces.Registry.Dependency;
 import Reika.DragonAPI.Interfaces.Registry.ModEntry;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
 

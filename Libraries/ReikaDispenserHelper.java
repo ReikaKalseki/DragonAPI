@@ -12,6 +12,8 @@ package Reika.DragonAPI.Libraries;
 import java.util.HashMap;
 import java.util.UUID;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.block.BlockDispenser;
 import net.minecraft.dispenser.BehaviorDefaultDispenseItem;
 import net.minecraft.dispenser.IBehaviorDispenseItem;
@@ -23,9 +25,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.common.util.FakePlayerFactory;
-import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 
-import com.mojang.authlib.GameProfile;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 
 public class ReikaDispenserHelper {
 

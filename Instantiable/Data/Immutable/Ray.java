@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
 import net.minecraft.util.Vec3;
+
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 
 

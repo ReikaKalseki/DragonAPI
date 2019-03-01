@@ -15,6 +15,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.BlockEvent;
+
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 
 @HasResult

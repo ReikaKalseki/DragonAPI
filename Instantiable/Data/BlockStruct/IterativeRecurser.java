@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.HashSet;
 
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;

@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable;
 import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
+
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public final class StepTimer {

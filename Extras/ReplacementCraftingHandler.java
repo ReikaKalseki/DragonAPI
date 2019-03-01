@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -24,10 +24,11 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.oredict.RecipeSorter;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.ConcurrencyDeterminator;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.ListFactory;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
@@ -36,7 +37,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class ReplacementCraftingHandler {
 
-	private static final MultiMap<Integer, IRecipe> mainData = new MultiMap(new ListFactory(), new ConcurrencyDeterminator());
+	private static final MultiMap<Integer, IRecipe> mainData = new MultiMap(CollectionType.LIST, new ConcurrencyDeterminator());
 	private static final ArrayList<IRecipe> nonCategorizableRecipes = new ArrayList();
 
 	private static BackWritableList<IRecipe> cachedRecipeList;

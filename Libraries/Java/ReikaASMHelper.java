@@ -54,16 +54,18 @@ import org.objectweb.asm.tree.VarInsnNode;
 import org.objectweb.asm.util.Textifier;
 import org.objectweb.asm.util.TraceMethodVisitor;
 
+import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.classloading.FMLForgePlugin;
+
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Exception.ASMException.ASMConflictException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.IO.ReikaFileReader;
+
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.launchwrapper.Launch;
-import net.minecraftforge.classloading.FMLForgePlugin;
 
 public class ReikaASMHelper {
 
@@ -137,11 +139,23 @@ public class ReikaASMHelper {
 
 	public static MethodNode getMethodByName(ClassNode c, String obf, String deobf, String sig) throws NoSuchASMMethodException {
 		String s = FMLForgePlugin.RUNTIME_DEOBF ? obf : deobf;
-		MethodNode mn = getMethodByNameAndSig(c, s, sig);
-		if (mn == null)
-			throw new NoSuchASMMethodException(c, s, sig);
-		else
-			return mn;
+		if (sig.equals("*")) {
+			List<MethodNode> methods = c.methods;
+			for (int k = 0; k < methods.size(); k++) {
+				MethodNode m = methods.get(k);
+				if (m.name.equals(s)) {
+					return m;
+				}
+			}
+			throw new NoSuchASMMethodException(c, s, "[Any]");
+		}
+		else {
+			MethodNode mn = getMethodByNameAndSig(c, s, sig);
+			if (mn == null)
+				throw new NoSuchASMMethodException(c, s, sig);
+			else
+				return mn;
+		}
 	}
 
 	public static boolean classContainsMethod(ClassNode cn, MethodNode mn) {
@@ -352,6 +366,8 @@ public class ReikaASMHelper {
 			m.instructions.add(retobj);
 		if (retcall != null)
 			m.instructions.add(retcall);
+		if (m.attrs != null)
+			m.attrs.clear();
 	}
 
 	public static String clearString(InsnList c) {

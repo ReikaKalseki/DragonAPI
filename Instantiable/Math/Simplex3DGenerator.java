@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Math;
 
 import net.minecraft.util.MathHelper;
+
 import Reika.DragonAPI.Exception.MisuseException;
 
 /** The 3D system from the source of the 2D system this extends. Same comments and author. */

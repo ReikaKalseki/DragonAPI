@@ -19,17 +19,19 @@ import java.util.Set;
 
 import org.lwjgl.opengl.GL11;
 
-import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public enum ReikaDyeHelper {
 
@@ -58,8 +60,8 @@ public enum ReikaDyeHelper {
 
 	public static final ReikaDyeHelper[] dyes = ReikaDyeHelper.values();
 	private final ArrayList<ItemStack> items = new ArrayList();
-	private static final MultiMap<KeyedItemStack, ReikaDyeHelper> colorMap = new MultiMap(new HashSetFactory()).setNullEmpty();
-	private static final MultiMap<ReikaDyeHelper, ReikaDyeHelper> similarityMap = new MultiMap(new HashSetFactory());
+	private static final MultiMap<KeyedItemStack, ReikaDyeHelper> colorMap = new MultiMap(CollectionType.HASHSET).setNullEmpty();
+	private static final MultiMap<ReikaDyeHelper, ReikaDyeHelper> similarityMap = new MultiMap(CollectionType.HASHSET);
 
 	private ReikaDyeHelper(int c) {
 		color = c;

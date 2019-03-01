@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Interfaces.Item;
 
 import net.minecraft.item.ItemStack;
+
 import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
 
 public interface EnumItem {

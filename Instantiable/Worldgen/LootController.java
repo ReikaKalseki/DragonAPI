@@ -12,11 +12,12 @@ package Reika.DragonAPI.Instantiable.Worldgen;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.ChestGenHooks;
+
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaGenHelper;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.ChestGenHooks;
 
 public class LootController {
 

@@ -11,11 +11,12 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
 
+import net.minecraft.item.ItemStack;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import net.minecraft.item.ItemStack;
 
 public class IC2Handler extends ModHandlerBase {
 

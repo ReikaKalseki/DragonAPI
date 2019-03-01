@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.fluids.FluidRegistry;
+
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public enum IDType {

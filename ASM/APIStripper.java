@@ -16,10 +16,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Arrays;
 
-import net.minecraft.launchwrapper.IClassTransformer;
-
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+
+import net.minecraft.launchwrapper.IClassTransformer;
 
 import cpw.mods.fml.common.DummyModContainer;
 import cpw.mods.fml.common.LoadController;

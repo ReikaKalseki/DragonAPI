@@ -9,10 +9,11 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Computers;
 
-import li.cil.oc.api.Driver;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
+
 import dan200.computercraft.api.ComputerCraftAPI;
+import li.cil.oc.api.Driver;
 
 
 public class PeripheralHandlerRelay {

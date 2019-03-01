@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.lang.reflect.Field;
 
 import net.minecraft.item.Item;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;

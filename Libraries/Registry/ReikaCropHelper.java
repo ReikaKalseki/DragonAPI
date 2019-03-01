@@ -12,13 +12,14 @@ package Reika.DragonAPI.Libraries.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import Reika.DragonAPI.Interfaces.Registry.CropType;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
+import Reika.DragonAPI.Interfaces.Registry.CropType;
 
 public enum ReikaCropHelper implements CropType {
 

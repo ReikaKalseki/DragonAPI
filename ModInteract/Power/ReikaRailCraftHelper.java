@@ -11,14 +11,15 @@ package Reika.DragonAPI.ModInteract.Power;
 
 import java.lang.reflect.Field;
 
+import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.MathSci.ReikaThermoHelper;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 
 public class ReikaRailCraftHelper extends DragonAPICore {
 

@@ -20,12 +20,16 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 
+import com.google.common.base.Strings;
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.common.config.Property;
 import net.minecraftforge.common.config.Property.Type;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.InvalidConfigException;
@@ -48,9 +52,6 @@ import Reika.DragonAPI.Interfaces.Configuration.StringConfig;
 import Reika.DragonAPI.Interfaces.Configuration.UserSpecificConfig;
 import Reika.DragonAPI.Interfaces.Registry.IDRegistry;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-
-import com.google.common.base.Strings;
-import com.mojang.authlib.GameProfile;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;

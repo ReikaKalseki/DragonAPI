@@ -14,8 +14,10 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
+
 import Reika.DragonAPI.Instantiable.Event.ThermalRecipeEvent;
 import Reika.DragonAPI.Instantiable.Event.ThermalRecipeEvent.ThermalMachine;
+
 import cpw.mods.fml.common.event.FMLInterModComms;
 
 public class ThermalRecipeHelper {

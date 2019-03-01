@@ -13,23 +13,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Locale;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Base.BlockTieredResource;
-import Reika.DragonAPI.Extras.BlockProperties;
-import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
-import Reika.DragonAPI.Interfaces.Block.SemiUnbreakable;
-import Reika.DragonAPI.Interfaces.Block.SpecialOreBlock;
-import Reika.DragonAPI.Interfaces.Block.Submergeable;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
-import Reika.DragonAPI.ModInteract.ItemHandlers.ChiselBlockHandler;
-import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
-import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumItemHelper.BlockEntry;
-import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
-import Reika.DragonAPI.ModRegistry.ModOreList;
-import Reika.DragonAPI.ModRegistry.ModWoodList;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockBed;
 import net.minecraft.block.BlockDoor;
@@ -48,6 +31,24 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.IFluidBlock;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Base.BlockTieredResource;
+import Reika.DragonAPI.Extras.BlockProperties;
+import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
+import Reika.DragonAPI.Interfaces.Block.SemiUnbreakable;
+import Reika.DragonAPI.Interfaces.Block.SpecialOreBlock;
+import Reika.DragonAPI.Interfaces.Block.Submergeable;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ChiselBlockHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumItemHelper.BlockEntry;
+import Reika.DragonAPI.ModInteract.ItemHandlers.TwilightForestHandler;
+import Reika.DragonAPI.ModRegistry.ModOreList;
+import Reika.DragonAPI.ModRegistry.ModWoodList;
 
 public final class ReikaBlockHelper extends DragonAPICore {
 

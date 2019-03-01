@@ -14,8 +14,10 @@ import java.util.EnumSet;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
 import Reika.DragonAPI.Exception.MisuseException;
+
 import appeng.api.networking.GridFlags;
 import appeng.api.networking.GridNotification;
 import appeng.api.networking.IGrid;

@@ -9,11 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Math;
 
-import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
-import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
+
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 
 
 public class MovingAverage {

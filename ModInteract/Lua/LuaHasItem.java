@@ -13,7 +13,9 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
+
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
+
 import dan200.computercraft.api.lua.LuaException;
 
 public class LuaHasItem extends LuaMethod {

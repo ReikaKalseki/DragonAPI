@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.MathSci;
 import java.awt.Polygon;
 
 import net.minecraft.util.MathHelper;
+
 import Reika.DragonAPI.DragonAPICore;
 
 public final class ReikaMathLibrary extends DragonAPICore {

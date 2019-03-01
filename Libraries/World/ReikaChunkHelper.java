@@ -14,12 +14,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
-import Reika.DragonAPI.Libraries.ReikaEntityHelper.ClassEntitySelector;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,6 +29,14 @@ import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderServer;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper.ClassEntitySelector;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+
+import cpw.mods.fml.common.registry.GameRegistry;
 
 public final class ReikaChunkHelper extends DragonAPICore {
 

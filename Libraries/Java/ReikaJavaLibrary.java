@@ -43,14 +43,16 @@ import org.objectweb.asm.tree.MethodNode;
 
 import com.google.common.reflect.ClassPath;
 
+import net.minecraft.world.World;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.FMLLog;
 import cpw.mods.fml.relauncher.Side;
-import net.minecraft.world.World;
 
 public final class ReikaJavaLibrary extends DragonAPICore {
 

@@ -24,25 +24,6 @@ import java.util.regex.Pattern;
 
 import com.builtbroken.mc.api.items.energy.IEnergyItem;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
-import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
-import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
-import Reika.DragonAPI.Interfaces.Registry.OreType;
-import Reika.DragonAPI.Libraries.ReikaNBTHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaEngLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
-import Reika.DragonAPI.ModRegistry.ModOreList;
-import cofh.api.energy.IEnergyContainerItem;
-import cpw.mods.fml.common.registry.GameRegistry;
-import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ic2.api.item.ElectricItem;
-import mekanism.api.gas.IGasItem;
 import net.machinemuse.api.electricity.MuseElectricItem;
 import net.minecraft.block.Block;
 import net.minecraft.creativetab.CreativeTabs;
@@ -67,6 +48,27 @@ import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
+import Reika.DragonAPI.Interfaces.Registry.OreType;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaEngLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
+import Reika.DragonAPI.ModRegistry.ModOreList;
+
+import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import ic2.api.item.ElectricItem;
+import mekanism.api.gas.IGasItem;
 
 public final class ReikaItemHelper extends DragonAPICore {
 

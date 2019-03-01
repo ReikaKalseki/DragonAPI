@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.ParticleController;
 
 import net.minecraft.entity.Entity;
+
 import Reika.DragonAPI.Interfaces.PositionController;
 
 

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Exception;
 
 import net.minecraftforge.common.config.Property;
+
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Interfaces.Configuration.BoundedConfig;
 import Reika.DragonAPI.Interfaces.Configuration.ConfigList;

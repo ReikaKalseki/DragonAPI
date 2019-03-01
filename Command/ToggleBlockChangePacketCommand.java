@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Command;
 
 import net.minecraft.command.ICommandSender;
+
 import Reika.DragonAPI.Extras.ChangePacketRenderer;
 
 public class ToggleBlockChangePacketCommand extends DragonClientCommand {

@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable;
 import java.util.HashMap;
 
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 

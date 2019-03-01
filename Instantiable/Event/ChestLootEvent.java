@@ -1,8 +1,5 @@
 package Reika.DragonAPI.Instantiable.Event;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Instantiable.Worldgen.LootController.Location;
-import cpw.mods.fml.common.eventhandler.Event;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.world.gen.feature.WorldGenDungeons;
 import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces.DesertPyramid;
@@ -15,6 +12,11 @@ import net.minecraft.world.gen.structure.StructureStrongholdPieces.Library;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces.RoomCrossing;
 import net.minecraft.world.gen.structure.StructureVillagePieces.House2;
 import net.minecraftforge.common.MinecraftForge;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Worldgen.LootController.Location;
+
+import cpw.mods.fml.common.eventhandler.Event;
 
 public class ChestLootEvent extends Event {
 

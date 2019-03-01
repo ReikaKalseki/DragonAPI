@@ -14,8 +14,10 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 
 import net.minecraft.item.ItemStack;
+
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
+
 import cpw.mods.fml.common.ModContainer;
 
 public class ItemStackRepository {

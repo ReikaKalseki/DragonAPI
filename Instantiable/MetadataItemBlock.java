@@ -9,11 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
-import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
-import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemBlockWithMetadata;
 import net.minecraft.item.ItemStack;
+
+import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
+import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 
 
 public final class MetadataItemBlock extends ItemBlockWithMetadata {

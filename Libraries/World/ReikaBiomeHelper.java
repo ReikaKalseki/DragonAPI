@@ -19,19 +19,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
-import Reika.DragonAPI.Instantiable.Data.Immutable.RGB;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.ListFactory;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.MapDeterminator;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-import Reika.DragonAPI.ModInteract.DeepInteract.ModSeasonHandler;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
-import biomesoplenty.api.biome.BOPBiome;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
@@ -43,6 +30,21 @@ import net.minecraft.world.biome.BiomeGenMutated;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.BiomeManager;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
+import Reika.DragonAPI.Instantiable.Data.Immutable.RGB;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.MapDeterminator;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.ModInteract.DeepInteract.ModSeasonHandler;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
+
+import biomesoplenty.api.biome.BOPBiome;
 
 public class ReikaBiomeHelper extends DragonAPICore {
 
@@ -568,7 +570,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	}
 
 	public static MultiMap<Integer, Integer> getBiomeHierearchy() {
-		MultiMap<Integer, Integer> data = new MultiMap(new ListFactory(), new MapDeterminator(){
+		MultiMap<Integer, Integer> data = new MultiMap(CollectionType.LIST, new MapDeterminator(){
 
 			@Override
 			public Map getMapType() {

@@ -25,6 +25,7 @@ import java.util.Collections;
 import javax.swing.JOptionPane;
 
 import net.minecraftforge.common.MinecraftForge;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.PopupWriter;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -37,6 +38,7 @@ import Reika.DragonAPI.IO.ReikaFileReader.WriteCallback;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
 import Reika.DragonAPI.Libraries.IO.ReikaFormatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 

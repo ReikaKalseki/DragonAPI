@@ -9,12 +9,12 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM.Patchers.Hooks.Event.Entity;
 
-import net.minecraftforge.classloading.FMLForgePlugin;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
+
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;

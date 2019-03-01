@@ -10,7 +10,9 @@
 package Reika.DragonAPI.ModInteract.Lua.Library;
 
 import net.minecraft.tileentity.TileEntity;
+
 import Reika.DragonAPI.ModInteract.Lua.LibraryLuaMethod;
+
 import dan200.computercraft.api.lua.LuaException;
 
 

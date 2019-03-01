@@ -16,6 +16,7 @@ import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public class SlotApprovedItems extends Slot {

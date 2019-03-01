@@ -25,10 +25,12 @@ import net.minecraft.world.gen.feature.WorldGenLiquids;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.event.terraingen.ChunkProviderEvent.ReplaceBiomeBlocks;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.EventProfiler.EventProfile;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.HashSetFactory;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
+
 import cpw.mods.fml.common.IWorldGenerator;
 
 
@@ -544,7 +546,7 @@ public class WorldgenProfiler {
 		//private final RunningAverage average = new RunningAverage();
 		protected long totalTime;
 
-		private final MultiMap<Long, Long> spilledChunks = new MultiMap(new HashSetFactory());
+		private final MultiMap<Long, Long> spilledChunks = new MultiMap(CollectionType.HASHSET);
 		//private final HashSet<Long> gennedChunks = new HashSet();
 
 		@Deprecated

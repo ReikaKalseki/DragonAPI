@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -43,7 +43,10 @@ import net.minecraft.item.crafting.ShapelessRecipes;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
+
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Recipe.RecipePattern;
@@ -51,9 +54,11 @@ import Reika.DragonAPI.Interfaces.CustomToStringRecipe;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import ic2.api.recipe.IRecipeInput;
 
 public class ReikaRecipeHelper extends DragonAPICore {
 
@@ -69,6 +74,13 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	private static Field shapedOreHeight;
 	private static Field shapedOreWidth;
 	private static Field shapedOreInput;
+
+	private static Class ic2ShapedClass;
+	private static Class ic2ShapelessClass;
+
+	private static Field shapedIc2Input;
+	private static Field shapedIc2InputMirror;
+	private static Field shapelessIc2Input;
 
 	private static class RecipeCache {
 		private final List<ItemStack>[] items;
@@ -91,6 +103,27 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			shapedOreHeight.setAccessible(true);
 			shapedOreWidth.setAccessible(true);
 			shapedOreInput.setAccessible(true);
+
+			if (ModList.IC2.isLoaded()) {
+				try {
+					ic2ShapedClass = Class.forName("ic2.core.AdvRecipe");
+					ic2ShapelessClass = Class.forName("ic2.core.AdvShapelessRecipe");
+
+					shapedIc2Input = ic2ShapedClass.getDeclaredField("input");
+					shapedIc2Input.setAccessible(true);
+
+					shapedIc2InputMirror = ic2ShapedClass.getDeclaredField("inputMirrored");
+					shapedIc2InputMirror.setAccessible(true);
+
+					shapelessIc2Input = ic2ShapelessClass.getDeclaredField("input");
+					shapelessIc2Input.setAccessible(true);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					DragonAPICore.logError("Could not load IC2 recipe handling!");
+					ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.IC2, e);
+				}
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -476,7 +509,10 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return allowed;
 	}
 
-	public static void replaceIngredientInRecipe(ItemStack ingredient, Object replacement, IRecipe ir) {
+	public static boolean replaceIngredientInRecipe(ItemStack ingredient, Object replacement, IRecipe ir) {
+		if (ir == null)
+			return false;
+		boolean flag = false;
 		if (ingredient == null)
 			throw new MisuseException("You cannot replace null in recipes!");
 
@@ -490,6 +526,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			ShapedRecipes s = (ShapedRecipes) ir;
 			for (int i = 0; i < s.recipeItems.length; i++) {
 				if (ReikaItemHelper.matchStacks(ingredient, s.recipeItems[i])) {
+					flag = true;
 					s.recipeItems[i] = (ItemStack)replacement;
 				}
 			}
@@ -502,6 +539,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			List<ItemStack> in = s.recipeItems;
 			for (int i = 0; i < in.size(); i++) {
 				if (ReikaItemHelper.matchStacks(ingredient, in.get(i))) {
+					flag = true;
 					in.set(i, (ItemStack)replacement);
 				}
 			}
@@ -511,9 +549,11 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			Object[] in = s.getInput();
 			for (int i = 0; i < in.length; i++) {
 				if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
+					flag = true;
 					in[i] = replacement;
 				}
 				else if (in[i] instanceof List && ReikaItemHelper.collectionContainsItemStack((List<ItemStack>)in[i], ingredient)) {
+					flag = true;
 					in[i] = replacement;
 				}
 			}
@@ -523,13 +563,116 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			ArrayList in = s.getInput();
 			for (int i = 0; i < in.size(); i++) {
 				if (in.get(i) instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in.get(i))) {
+					flag = true;
 					in.set(i, replacement);
 				}
 				else if (in.get(i) instanceof List && ReikaItemHelper.collectionContainsItemStack((List<ItemStack>)in.get(i), ingredient)) {
+					flag = true;
 					in.set(i, replacement);
 				}
 			}
 		}
+		else if (ir.getClass() == ic2ShapedClass) {
+			try {
+				Object[] in = (Object[])shapedIc2Input.get(ir);
+				for (int i = 0; i < in.length; i++) {
+					if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
+						flag = true;
+						in[i] = replacement;
+					}
+					else if (in[i] instanceof IRecipeInput && ((IRecipeInput)in[i]).matches(ingredient)) {
+						flag = true;
+						in[i] = replacement;
+					}
+					else if (in[i] instanceof Iterable) {
+						boolean repl = false;
+						for (Object o : (Iterable)in[i]) {
+							if (o instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack)o)) {
+								repl = true;
+								break;
+							}
+							else if (o instanceof IRecipeInput && ((IRecipeInput)o).matches(ingredient)) {
+								repl = true;
+								break;
+							}
+						}
+						if (repl) {
+							flag = true;
+							in[i] = replacement;
+						}
+					}
+				}
+				Object[] in2 = (Object[])shapedIc2InputMirror.get(ir);
+				if (in2 != null) {
+					for (int i = 0; i < in2.length; i++) {
+						if (in2[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in2[i])) {
+							flag = true;
+							in2[i] = replacement;
+						}
+						else if (in2[i] instanceof IRecipeInput && ((IRecipeInput)in2[i]).matches(ingredient)) {
+							flag = true;
+							in2[i] = replacement;
+						}
+						else if (in2[i] instanceof Iterable) {
+							boolean repl = false;
+							for (Object o : (Iterable)in2[i]) {
+								if (o instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack)o)) {
+									repl = true;
+									break;
+								}
+								else if (o instanceof IRecipeInput && ((IRecipeInput)o).matches(ingredient)) {
+									repl = true;
+									break;
+								}
+							}
+							if (repl) {
+								flag = true;
+								in2[i] = replacement;
+							}
+						}
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ir.getClass() == ic2ShapelessClass) {
+			try {
+				Object[] in = (Object[])shapelessIc2Input.get(ir);
+				for (int i = 0; i < in.length; i++) {
+					if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
+						flag = true;
+						in[i] = replacement;
+					}
+					else if (in[i] instanceof IRecipeInput && ((IRecipeInput)in[i]).matches(ingredient)) {
+						flag = true;
+						in[i] = replacement;
+					}
+					else if (in[i] instanceof Iterable) {
+						boolean repl = false;
+						for (Object o : (Iterable)in[i]) {
+							if (o instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack)o)) {
+								repl = true;
+								break;
+							}
+							else if (o instanceof IRecipeInput && ((IRecipeInput)o).matches(ingredient)) {
+								repl = true;
+								break;
+							}
+						}
+						if (repl) {
+							flag = true;
+							in[i] = replacement;
+						}
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return flag;
 	}
 
 	public static void replaceIngredientInAllRecipes(ItemStack ingredient, ItemStack replacement, boolean makeCopy) {
@@ -896,7 +1039,10 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	}
 
 	public static String toString(IRecipe r) {
-		if (r instanceof ShapedRecipes) {
+		if (r == null) {
+			return "<NULL>";
+		}
+		else if (r instanceof ShapedRecipes) {
 			return "Shaped "+Arrays.toString(((ShapedRecipes)r).recipeItems)+" > "+r.getRecipeOutput();
 		}
 		else if (r instanceof ShapelessRecipes) {
@@ -907,6 +1053,26 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		}
 		else if (r instanceof ShapelessOreRecipe) {
 			return "Shapeless Ore "+((ShapelessOreRecipe)r).getInput().toString()+" > "+r.getRecipeOutput();
+		}
+		else if (r.getClass() == ic2ShapedClass) {
+			try {
+				Object[] in = (Object[])shapedIc2Input.get(r);
+				return "Shaped IC2 "+Arrays.deepToString(in)+" > "+r.getRecipeOutput();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return e.toString();
+			}
+		}
+		else if (r.getClass() == ic2ShapelessClass) {
+			try {
+				Object[] in = (Object[])shapelessIc2Input.get(r);
+				return "Shapeless IC2 "+Arrays.deepToString(in)+" > "+r.getRecipeOutput();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return e.toString();
+			}
 		}
 		else if (r instanceof CustomToStringRecipe) {
 			return ((CustomToStringRecipe)r).toDisplayString();

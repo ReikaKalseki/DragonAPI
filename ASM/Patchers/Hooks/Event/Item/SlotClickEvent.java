@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM.Patchers.Hooks.Event.Item;
 
-import net.minecraftforge.classloading.FMLForgePlugin;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -20,6 +18,8 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;

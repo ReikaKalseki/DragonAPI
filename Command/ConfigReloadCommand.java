@@ -12,6 +12,7 @@ package Reika.DragonAPI.Command;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
+
 import Reika.DragonAPI.Instantiable.Event.ConfigReloadEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;

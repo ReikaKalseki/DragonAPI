@@ -11,6 +11,8 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.Map;
 
+import net.minecraft.launchwrapper.Launch;
+
 import Reika.DragonAPI.ASM.APIStripper;
 import Reika.DragonAPI.ASM.DependentMethodStripper;
 import Reika.DragonAPI.ASM.DragonAPIClassTransformer;
@@ -22,10 +24,10 @@ import Reika.DragonAPI.ASM.StructureLootHooks;
 import Reika.DragonAPI.ASM.Profiling.ChunkInitProfilingHooks;
 import Reika.DragonAPI.ASM.Profiling.MapGeneratorProfilingHooks;
 import Reika.DragonAPI.ASM.Profiling.WorldGeneratorProfilingHooks;
+
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.MCVersion;
 import cpw.mods.fml.relauncher.IFMLLoadingPlugin.SortingIndex;
-import net.minecraft.launchwrapper.Launch;
 
 @SortingIndex(1001)
 @MCVersion("1.7.10")

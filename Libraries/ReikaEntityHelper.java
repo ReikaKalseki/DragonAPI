@@ -19,34 +19,6 @@ import java.util.List;
 import java.util.Locale;
 import java.util.function.BiFunction;
 
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Instantiable.DummyTeleporter;
-import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
-import Reika.DragonAPI.Instantiable.IO.PacketTarget;
-import Reika.DragonAPI.Interfaces.ComparableAI;
-import Reika.DragonAPI.Interfaces.Entity.CustomProjectile;
-import Reika.DragonAPI.Interfaces.Entity.EtherealEntity;
-import Reika.DragonAPI.Interfaces.Entity.TameHostile;
-import Reika.DragonAPI.Interfaces.Item.UnbreakableArmor;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
-import WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile;
-import cofh.api.energy.IEnergyContainerItem;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import ic2.api.item.ElectricItem;
-import mekanism.api.gas.GasStack;
-import mekanism.api.gas.IGasItem;
 import net.machinemuse.api.electricity.MuseElectricItem;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -124,6 +96,36 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
+
+import Reika.DragonAPI.APIPacketHandler.PacketIDs;
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.DummyTeleporter;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Interfaces.ComparableAI;
+import Reika.DragonAPI.Interfaces.Entity.CustomProjectile;
+import Reika.DragonAPI.Interfaces.Entity.EtherealEntity;
+import Reika.DragonAPI.Interfaces.Entity.TameHostile;
+import Reika.DragonAPI.Interfaces.Item.UnbreakableArmor;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
+
+import WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile;
+import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import ic2.api.item.ElectricItem;
+import mekanism.api.gas.GasStack;
+import mekanism.api.gas.IGasItem;
 
 public final class ReikaEntityHelper extends DragonAPICore {
 
@@ -377,29 +379,6 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	/** Returns true if the mob is a hostile one. Args: EntityLivingBase mob */
 	public static boolean isHostile(EntityLivingBase mob) {
-		/*
-		if (mob instanceof TameHostile)
-			return false;
-		if (mob instanceof EntityMob)
-			return true;
-		if (mob instanceof IMob)
-			return true;
-		if (mob instanceof EntityGhast)
-			return true;
-		if (mob instanceof EntitySlime)
-			return true;
-		if (mob instanceof EntityWitch)
-			return true;
-		if (mob instanceof EntityDragon)
-			return true;
-		if (mob instanceof EntityWither)
-			return true;
-		String n = mob.getClass().getName().toLowerCase(Locale.ENGLISH);
-		if (n.contains("wisp"))
-			return true;
-		if (n.contains("pech"))
-			return true;
-		return false;*/
 		return isHostile(mob.getClass());
 	}
 
@@ -433,6 +412,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (n.contains("pech"))
 			return true;
 		if (n.contains("botania") && n.contains("doppleganger"))
+			return true;
+		if (n.contains("tconstruct") && n.contains("blueslime"))
 			return true;
 		return false;
 	}

@@ -13,6 +13,7 @@ import java.util.HashMap;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.ModIntegrityException;
 import Reika.DragonAPI.Interfaces.Registry.BlockEnum;

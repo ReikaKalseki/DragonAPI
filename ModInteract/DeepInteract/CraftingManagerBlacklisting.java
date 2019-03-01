@@ -11,21 +11,22 @@ package Reika.DragonAPI.ModInteract.DeepInteract;
 
 import java.lang.reflect.Field;
 
+import com.creativemd.craftingmanager.api.utils.sorting.ItemSortingList;
+import com.creativemd.craftingmanager.api.utils.sorting.SortingItem;
+import com.creativemd.craftingmanager.api.utils.sorting.items.BlockSorting;
+import com.creativemd.craftingmanager.api.utils.sorting.items.ItemSorting;
+import com.creativemd.craftingmanager.api.utils.sorting.items.ItemStackSorting;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
 import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-
-import com.creativemd.craftingmanager.api.utils.sorting.ItemSortingList;
-import com.creativemd.craftingmanager.api.utils.sorting.SortingItem;
-import com.creativemd.craftingmanager.api.utils.sorting.items.BlockSorting;
-import com.creativemd.craftingmanager.api.utils.sorting.items.ItemSorting;
-import com.creativemd.craftingmanager.api.utils.sorting.items.ItemStackSorting;
 
 public class CraftingManagerBlacklisting {
 

@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import net.minecraft.util.EnumChatFormatting;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;

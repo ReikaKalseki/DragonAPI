@@ -18,6 +18,7 @@ import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
+
 import cpw.mods.fml.relauncher.Side;
 
 @Deprecated

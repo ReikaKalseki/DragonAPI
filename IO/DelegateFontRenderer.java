@@ -9,16 +9,17 @@
  ******************************************************************************/
 package Reika.DragonAPI.IO;
 
+import com.google.common.collect.HashBiMap;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraftforge.common.MinecraftForge;
+
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Rendering.BasicFontRenderer;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-
-import com.google.common.collect.HashBiMap;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;

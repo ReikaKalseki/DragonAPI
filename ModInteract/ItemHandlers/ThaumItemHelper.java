@@ -9,11 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
-import Reika.DragonAPI.ModList;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import Reika.DragonAPI.ModList;
+
+import cpw.mods.fml.common.registry.GameRegistry;
 import thaumcraft.api.IWarpingGear;
 import thaumcraft.api.aspects.Aspect;
 import thaumcraft.api.aspects.AspectList;

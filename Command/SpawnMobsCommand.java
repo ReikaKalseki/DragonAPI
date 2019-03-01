@@ -9,7 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
-import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
@@ -18,6 +17,8 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 
 public class SpawnMobsCommand extends DragonCommandBase {

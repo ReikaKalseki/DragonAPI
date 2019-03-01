@@ -12,21 +12,22 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import net.minecraft.block.Block;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
-import Reika.DragonAPI.Base.CropHandlerBase;
-import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
-
 import com.InfinityRaider.AgriCraft.api.API;
 import com.InfinityRaider.AgriCraft.api.APIBase;
 import com.InfinityRaider.AgriCraft.api.v2.APIv2;
 import com.InfinityRaider.AgriCraft.api.v2.ICrop;
 import com.InfinityRaider.AgriCraft.api.v2.ICropPlant;
+
+import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
+
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
+import Reika.DragonAPI.Base.CropHandlerBase;
+import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
 
 public class AgriCraftHandler extends CropHandlerBase {
 

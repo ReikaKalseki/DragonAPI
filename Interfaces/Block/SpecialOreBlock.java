@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.Interfaces.Registry.OreType;
 
 public interface SpecialOreBlock {

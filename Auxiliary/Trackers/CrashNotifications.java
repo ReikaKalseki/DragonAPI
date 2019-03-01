@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Auxiliary.Trackers;
 
 import net.minecraft.crash.CrashReport;
+
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 
 

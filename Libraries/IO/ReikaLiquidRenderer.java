@@ -12,6 +12,8 @@ package Reika.DragonAPI.Libraries.IO;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
@@ -19,8 +21,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
-
-import org.lwjgl.opengl.GL11;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockModelRenderer;

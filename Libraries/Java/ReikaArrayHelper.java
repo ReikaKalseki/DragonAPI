@@ -13,12 +13,13 @@ import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
 
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.ChunkCoordIntPair;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.ChunkCoordIntPair;
 
 public final class ReikaArrayHelper extends DragonAPICore {
 

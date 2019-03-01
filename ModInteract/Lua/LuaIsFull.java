@@ -11,7 +11,9 @@ package Reika.DragonAPI.ModInteract.Lua;
 
 import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
+
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
+
 import dan200.computercraft.api.lua.LuaException;
 
 public class LuaIsFull extends LuaMethod {

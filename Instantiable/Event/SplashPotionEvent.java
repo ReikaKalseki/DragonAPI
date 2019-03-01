@@ -14,6 +14,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.util.DamageSource;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
+
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
 @Cancelable

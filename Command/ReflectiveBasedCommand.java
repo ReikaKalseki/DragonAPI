@@ -19,30 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
-import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
-import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
-import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
-import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaCropHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
-import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-import Reika.DragonAPI.ModRegistry.ModCropList;
-import Reika.DragonAPI.ModRegistry.ModOreList;
-import Reika.DragonAPI.ModRegistry.ModWoodList;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
@@ -64,6 +40,32 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaCropHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.ModRegistry.ModCropList;
+import Reika.DragonAPI.ModRegistry.ModOreList;
+import Reika.DragonAPI.ModRegistry.ModWoodList;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.registry.GameRegistry;
 
 
 
@@ -194,7 +196,36 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 
 	protected final String toReadableString(Object o) {
 		try {
-			return (o instanceof Object[] ? Arrays.deepToString((Object[])o) : String.valueOf(o));
+			if (o != null && o.getClass().isArray()) {
+				if (o instanceof int[]) {
+					return Arrays.toString((int[])o);
+				}
+				else if (o instanceof boolean[]) {
+					return Arrays.toString((boolean[])o);
+				}
+				else if (o instanceof float[]) {
+					return Arrays.toString((float[])o);
+				}
+				else if (o instanceof double[]) {
+					return Arrays.toString((double[])o);
+				}
+				else if (o instanceof short[]) {
+					return Arrays.toString((short[])o);
+				}
+				else if (o instanceof long[]) {
+					return Arrays.toString((long[])o);
+				}
+				else if (o instanceof byte[]) {
+					return Arrays.toString((byte[])o);
+				}
+				else if (o instanceof char[]) {
+					return Arrays.toString((char[])o);
+				}
+				else {
+					return Arrays.deepToString((Object[])o);
+				}
+			}
+			return String.valueOf(o);
 		}
 		catch (Exception e) {
 			return "Object "+o.getClass().getName()+" threw exception on toString(): "+e.toString();

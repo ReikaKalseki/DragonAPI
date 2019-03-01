@@ -16,19 +16,20 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
-import net.minecraft.block.Block;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
-import Reika.DragonAPI.IO.ReikaFileReader;
-import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
-import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
-import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import net.minecraft.block.Block;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
+
+import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
+import Reika.DragonAPI.Instantiable.Data.Collections.OneWayCollections.OneWaySet;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class BannedItemReader {
 

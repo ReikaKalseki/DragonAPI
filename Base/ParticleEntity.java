@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
-import io.netty.buffer.ByteBuf;
-
 import java.util.List;
 
 import net.minecraft.entity.Entity;
@@ -18,11 +16,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
+
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.ReikaDirectionHelper.CubeDirections;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+import io.netty.buffer.ByteBuf;
 
 public abstract class ParticleEntity extends InertEntity implements IEntityAdditionalSpawnData {
 

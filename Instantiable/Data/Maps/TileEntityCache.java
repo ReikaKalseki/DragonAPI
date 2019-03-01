@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -18,13 +18,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.ModularLogger;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldChunk;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
-import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionFactory;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -173,7 +174,7 @@ public final class TileEntityCache<V> {
 		return data.containsValue(value);
 	}
 
-	public MultiMap<V, WorldLocation> invert(CollectionFactory cf) {
+	public MultiMap<V, WorldLocation> invert(CollectionType cf) {
 		MultiMap map = new MultiMap(cf);
 		for (WorldLocation loc : this.data.innerSet()) {
 			map.addValue(data.get(this.getChunk(loc), loc), loc);
@@ -182,7 +183,7 @@ public final class TileEntityCache<V> {
 	}
 
 	public MultiMap<V, WorldLocation> invert() {
-		return this.invert(null);
+		return this.invert(CollectionType.LIST);
 	}
 
 	/** Note that this returns everything in all chunks intersected by the radius. Distances to the actual WorldLocs may be somewhat larger than

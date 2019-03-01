@@ -10,7 +10,9 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.entity.player.EntityPlayer;
+
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
+
 import cpw.mods.fml.common.eventhandler.Event;
 
 public class RawKeyPressEvent extends Event {

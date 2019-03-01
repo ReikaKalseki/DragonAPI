@@ -17,12 +17,14 @@ import java.util.Iterator;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
+
 import Reika.DragonAPI.ASM.DependentMethodStripper.ClassDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.InventorySlot;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
+
+import powercrystals.minefactoryreloaded.api.IDeepStorageUnit;
 
 public class ItemCollection {
 

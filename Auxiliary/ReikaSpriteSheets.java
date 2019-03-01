@@ -12,17 +12,6 @@ package Reika.DragonAPI.Auxiliary;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
-import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Instantiable.InertItem;
-import Reika.DragonAPI.Interfaces.Item.AnimatedSpritesheet;
-import Reika.DragonAPI.Interfaces.Item.BlendedColor;
-import Reika.DragonAPI.Interfaces.Item.GradientBlend;
-import Reika.DragonAPI.Interfaces.Item.MultiLayerItemSprite;
-import Reika.DragonAPI.Interfaces.Item.SpriteRenderCallback;
-import Reika.DragonAPI.Interfaces.Item.ToolSprite;
-import Reika.DragonAPI.Interfaces.Item.VariableSizeSpritesheet;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
-import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemRenderer;
 import net.minecraft.client.renderer.Tessellator;
@@ -36,6 +25,18 @@ import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
 import net.minecraftforge.client.IItemRenderer.ItemRenderType;
 import net.minecraftforge.client.MinecraftForgeClient;
+
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.InertItem;
+import Reika.DragonAPI.Interfaces.Item.AnimatedSpritesheet;
+import Reika.DragonAPI.Interfaces.Item.BlendedColor;
+import Reika.DragonAPI.Interfaces.Item.GradientBlend;
+import Reika.DragonAPI.Interfaces.Item.MultiLayerItemSprite;
+import Reika.DragonAPI.Interfaces.Item.SpriteRenderCallback;
+import Reika.DragonAPI.Interfaces.Item.ToolSprite;
+import Reika.DragonAPI.Interfaces.Item.VariableSizeSpritesheet;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
 public final class ReikaSpriteSheets {
 

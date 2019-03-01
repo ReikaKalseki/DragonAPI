@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.IO;
 import java.io.File;
 
 import net.minecraftforge.common.config.Configuration;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 

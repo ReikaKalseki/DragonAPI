@@ -9,8 +9,6 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM.Patchers;
 
-import net.minecraftforge.classloading.FMLForgePlugin;
-
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -18,6 +16,8 @@ import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
+
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodInstructionException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
