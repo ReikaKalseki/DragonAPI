@@ -1859,7 +1859,12 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (b.blockHardness < 0 && !breakAll)
 			return;
 		dropBlockAt(world, x, y, z, ep);
-		world.setBlock(x, y, z, Blocks.air);
+		if (ep != null)
+			b.onBlockDestroyedByPlayer(world, x, y, z, meta);
+		if (ep != null)
+			b.removedByPlayer(world, ep, x, y, z, true);
+		else
+			world.setBlock(x, y, z, Blocks.air);
 		if (FX) {
 			ReikaPacketHelper.sendDataPacketWithRadius(DragonAPIInit.packetChannel, PacketIDs.BREAKPARTICLES.ordinal(), world, x, y, z, 128, Block.getIdFromBlock(b), meta);
 			ReikaSoundHelper.playBreakSound(world, x, y, z, b);

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -97,9 +97,8 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 	}
 
 	@Override
-	public final int getComparatorInputOverride(World world, int x, int y, int z, int par5)
-	{
-		return ((TileEntityBase)world.getTileEntity(x, y, z)).getRedstoneOverride();
+	public final int getComparatorInputOverride(World world, int x, int y, int z, int par5) {
+		return ((TileEntityBase)world.getTileEntity(x, y, z)).getComparatorOverride();
 	}
 
 	@Override

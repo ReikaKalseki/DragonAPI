@@ -17,6 +17,7 @@ import java.util.concurrent.Callable;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.particle.EffectRenderer;
 import net.minecraft.client.particle.EntityFX;
@@ -27,6 +28,7 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.crash.CrashReportCategory;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
@@ -35,6 +37,7 @@ import Reika.ChromatiCraft.Auxiliary.Interfaces.CustomRenderFX;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 
 public class ThrottleableEffectRenderer extends EffectRenderer {
@@ -72,6 +75,8 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 		//AddParticleEvent evt = AddParticleEvent.getForParticle(fx);
 		//if (MinecraftForge.EVENT_BUS.post(evt))
 		//	return;
+		//if (this.isInWall(fx))
+		//	return;
 		EffectRenderer eff = delegates.get(fx.getClass());
 		if (eff != null) {
 			eff.addEffect(fx);
@@ -95,6 +100,27 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 		}
 
 		fxLayers[i].add(fx);
+	}
+
+	private boolean isInWall(EntityFX fx) {
+		int x = MathHelper.floor_double(fx.posX);
+		int y = MathHelper.floor_double(fx.posY);
+		int z = MathHelper.floor_double(fx.posZ);
+		Block b = fx.worldObj.getBlock(x, y, z);
+		if (b.isOpaqueCube() && b.renderAsNormalBlock() && b.getRenderType() == 0) {
+			double d = 0.4;
+			double minX = x+b.getBlockBoundsMinX()+d;
+			double minY = y+b.getBlockBoundsMinY()+d;
+			double minZ = z+b.getBlockBoundsMinZ()+d;
+			double maxX = x+b.getBlockBoundsMaxX()-d;
+			double maxY = y+b.getBlockBoundsMaxY()-d;
+			double maxZ = z+b.getBlockBoundsMaxZ()-d;
+			if (ReikaMathLibrary.isValueInsideBounds(minX, maxX, fx.posX) && ReikaMathLibrary.isValueInsideBounds(minY, maxY, fx.posY) && ReikaMathLibrary.isValueInsideBounds(minZ, maxZ, fx.posZ)) {
+				//DragonAPICore.log("Skipping particle "+fx+"; inside block");
+				return true;
+			}
+		}
+		return false;
 	}
 
 	@Override

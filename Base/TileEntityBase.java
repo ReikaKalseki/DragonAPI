@@ -47,6 +47,7 @@ import Reika.DragonAPI.IO.CompoundSyncPacket;
 import Reika.DragonAPI.IO.CompoundSyncPacket.CompoundSyncPacketHandler;
 import Reika.DragonAPI.Instantiable.BlockUpdateCallback;
 import Reika.DragonAPI.Instantiable.HybridTank;
+import Reika.DragonAPI.Instantiable.RedstoneTracker;
 import Reika.DragonAPI.Instantiable.StepTimer;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap;
@@ -118,6 +119,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	public abstract int getRedstoneOverride();
 
+	private final RedstoneTracker comparatorTracker = new RedstoneTracker();
+
 	private final SyncPacket syncTag = new SyncPacket();
 
 	private long lastTickCall = -1;
@@ -134,6 +137,10 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		//packetTimer = new StepTimer(this.getPacketDelay());
 		fullSyncTimer = new StepTimer(1200);
 		fullSyncTimer.randomizeTick(rand);
+	}
+
+	public final int getComparatorOverride() {
+		return comparatorTracker.getValue();
 	}
 
 	public final boolean hasRedstoneSignal() {
@@ -628,6 +635,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			}
 			this.onFirstTick(worldObj, xCoord, yCoord, zCoord);
 			redstoneInput = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
+			if (this.getTicksExisted()%8 == 0)
+				comparatorTracker.update(this);
 		}
 	}
 

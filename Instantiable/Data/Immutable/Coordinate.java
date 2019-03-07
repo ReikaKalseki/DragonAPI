@@ -397,4 +397,8 @@ public final class Coordinate implements Comparable<Coordinate> {
 		return Math.abs(loc.xCoord-xCoord) <= radius && Math.abs(loc.yCoord-yCoord) <= radius && Math.abs(loc.zCoord-zCoord) <= radius;
 	}
 
+	public boolean isWithinDistOnAllCoords(int x, int y, int z, int radius) {
+		return Math.abs(x-xCoord) <= radius && Math.abs(y-yCoord) <= radius && Math.abs(z-zCoord) <= radius;
+	}
+
 }

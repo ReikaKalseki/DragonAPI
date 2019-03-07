@@ -57,11 +57,14 @@ import org.objectweb.asm.util.TraceMethodVisitor;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
+import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Exception.ASMException.ASMConflictException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
@@ -1321,7 +1324,9 @@ public class ReikaASMHelper {
 
 	public static void clearClass(ClassNode cn) {
 		Collection<MethodNode> c = new ArrayList(cn.methods);
-		for (MethodNode m : cn.methods) {
+		for (MethodNode m : c) {
+			if (m.name.equals("<init>"))
+				continue;
 			clearMethodBody(m);
 			cn.methods.remove(m);
 			addMethod(cn, copyInsnList(m.instructions), m.name, m.desc, m.access);
@@ -1353,6 +1358,46 @@ public class ReikaASMHelper {
 		}
 		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ownerNew, nameNew, sig, false));
 		m.instructions.add(new InsnNode(getOpcodeForMethodReturn(m)));
+	}
+
+	public static MultiMap<String, Patcher> getPatchers(String mod, String pack) {
+		activeMod = mod;
+		MultiMap<String, Patcher> ret = new MultiMap(CollectionType.HASHSET);
+		try {
+			int patchCount = 0;
+			int enabledCount = 0;
+			Collection<Class> li = ReikaJavaLibrary.getAllClassesFromPackage(pack);
+			for (Class c : li) {
+				if ((c.getModifiers() & Modifier.ABSTRACT) == 0 && Patcher.class.isAssignableFrom(c)) {
+					if (c.getAnnotation(Deprecated.class) != null)
+						continue;
+					try {
+						patchCount++;
+						Patcher p = (Patcher)c.newInstance();
+						if (p.isEnabled()) {
+							enabledCount++;
+							String s = !FMLForgePlugin.RUNTIME_DEOBF ? p.deobfName : p.obfName;
+							ret.addValue(s, p);
+						}
+						else {
+							ReikaASMHelper.log("******************************************************************************************");
+							ReikaASMHelper.log("WARNING: ASM TRANSFORMER '"+p+"' HAS BEEN DISABLED. THIS CAN BREAK MANY THINGS.");
+							ReikaASMHelper.log("IF THIS TRANSFORMER HAS BEEN DISABLED WITHOUT GOOD REASON, TURN IT BACK ON IMMEDIATELY!");
+							ReikaASMHelper.log("******************************************************************************************");
+						}
+					}
+					catch (Exception e) {
+						throw new RuntimeException("Could not create "+mod+" ASM handler "+c, e);
+					}
+				}
+			}
+			ReikaASMHelper.log("Registered "+patchCount+" ASM handlers, of which "+enabledCount+" are enabled.");
+		}
+		catch (IOException e) {
+			throw new RuntimeException("Could not find "+mod+" ASM handlers", e);
+		}
+		activeMod = null;
+		return ret;
 	}
 
 }

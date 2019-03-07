@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -66,7 +66,7 @@ public class SplineMotionController implements PositionController {
 
 	private int getIndex(Entity e) {
 		int t = tick*points.size()/entityLife;
-		return Math.min(t, points.size()-1);
+		return Math.max(0, Math.min(t, points.size()-1));
 	}
 
 	@Override

@@ -1,23 +1,20 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.ASM;
 
-import java.io.IOException;
-import java.lang.reflect.Modifier;
 import java.util.Collection;
 
 import net.minecraft.item.Item;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
-import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Auxiliary.CoreModDetection;
@@ -117,37 +114,8 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 	}
 
 	static {
-		try {
-			int patchCount = 0;
-			int enabledCount = 0;
-			Collection<Class> li = ReikaJavaLibrary.getAllClassesFromPackage("Reika.DragonAPI.ASM.Patchers");
-			for (Class c : li) {
-				if ((c.getModifiers() & Modifier.ABSTRACT) == 0 && Patcher.class.isAssignableFrom(c)) {
-					try {
-						patchCount++;
-						Patcher p = (Patcher)c.newInstance();
-						if (p.isEnabled()) {
-							enabledCount++;
-							String s = !FMLForgePlugin.RUNTIME_DEOBF ? p.deobfName : p.obfName;
-							classes.addValue(s, p);
-						}
-						else {
-							ReikaASMHelper.log("******************************************************************************************");
-							ReikaASMHelper.log("WARNING: ASM TRANSFORMER '"+p+"' HAS BEEN DISABLED. THIS CAN BREAK MANY THINGS.");
-							ReikaASMHelper.log("IF THIS TRANSFORMER HAS BEEN DISABLED WITHOUT GOOD REASON, TURN IT BACK ON IMMEDIATELY!");
-							ReikaASMHelper.log("******************************************************************************************");
-						}
-					}
-					catch (Exception e) {
-						throw new RuntimeException("Could not create DragonAPI ASM handler "+c, e);
-					}
-				}
-			}
-			ReikaASMHelper.log("Registered "+patchCount+" ASM handlers, of which "+enabledCount+" are enabled.");
-		}
-		catch (IOException e) {
-			throw new RuntimeException("Could not find DragonAPI ASM handlers", e);
-		}
+		MultiMap<String, Patcher> map = ReikaASMHelper.getPatchers("DragonAPI", "Reika.DragonAPI.ASM.Patchers");
+		classes.putAll(map);
 
 		bukkitFlags = BukkitBitflags.calculateFlags();
 		nullItemPrintout = !ReikaJVMParser.isArgumentPresent("-DragonAPI_noNullItemPrint");

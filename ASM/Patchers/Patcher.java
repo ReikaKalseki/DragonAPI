@@ -9,14 +9,18 @@
  ******************************************************************************/
 package Reika.DragonAPI.ASM.Patchers;
 
+import java.util.Arrays;
 import java.util.Locale;
 
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 
+import com.google.common.base.Strings;
+
 import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Exception.ASMException;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 
@@ -36,6 +40,12 @@ public abstract class Patcher {
 	public Patcher(String deobf, String obf) {
 		deobfName = deobf;
 		obfName = obf;
+		if (deobfName.length() < obfName.length() && !deobfName.contains(".")) {
+			throw new MisuseException("Swapped obf and deobf names!");
+		}
+		if (Strings.isNullOrEmpty(obf) || Strings.isNullOrEmpty(deobf)) {
+			throw new MisuseException("Empty class specification! If you want to disable the patcher, mark it deprecated!");
+		}
 	}
 
 	public final byte[] apply(byte[] data) {
@@ -74,6 +84,10 @@ public abstract class Patcher {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
+		}
+
+		if (Arrays.equals(data, newdata)) {
+			ReikaASMHelper.log("WARNING: ASM handler "+this+" made no changes to the class!");
 		}
 
 		return newdata;
@@ -121,7 +135,7 @@ public abstract class Patcher {
 
 	@Override
 	public final String toString() {
-		return this.name()+" ["+deobfName+"/"+obfName+"]";
+		return this.name()+" ["+(this.isObfable() ? deobfName+"/"+obfName : deobfName)+"]";
 	}
 
 	public boolean computeFrames() {
