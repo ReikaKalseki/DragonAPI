@@ -349,7 +349,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void disableAlphaTest(RenderWorldEvent.Pre evt) {
-		GL11.glAlphaFunc(GL11.GL_GEQUAL, 1/255F);
+		//GL11.glAlphaFunc(GL11.GL_GEQUAL, 1/255F);
 	}
 
 	@SubscribeEvent

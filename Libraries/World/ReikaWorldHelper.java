@@ -95,6 +95,7 @@ import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
@@ -1280,9 +1281,12 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				BlockTieredResource bt = (BlockTieredResource)b;
 				li = new ArrayList(bt.isPlayerSufficientTier(world, x, y, z, ep) ? bt.getHarvestResources(world, x, y, z, fortune, ep) : bt.getNoHarvestResources(world, x, y, z, fortune, ep));
 			}
+			ThreadLocal harvesters = (ThreadLocal)ReikaObfuscationHelper.get("harvesters", b);
+			harvesters.set(ep);
 			HarvestDropsEvent evt = new HarvestDropsEvent(x, y, z, world, b, meta, fortune, 1F, li, ep, false);
 			MinecraftForge.EVENT_BUS.post(evt);
 			li = evt.drops;
+			harvesters.set(null);
 		}
 		return li;
 	}

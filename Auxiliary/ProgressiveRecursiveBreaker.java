@@ -440,4 +440,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		return p == Phase.START;
 	}
 
+	public void clearBreakers() {
+		breakers.clear();
+	}
+
 }

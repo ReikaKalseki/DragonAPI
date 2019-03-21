@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,6 +12,7 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.lang.reflect.Field;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -43,6 +44,8 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 	public final int invineffable = 4;
 	public final int darkinvethereal = 5;
 
+	public final Item soulID;
+
 	private static final ExtraUtilsHandler instance = new ExtraUtilsHandler();
 
 	private ExtraUtilsHandler() {
@@ -51,6 +54,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 		Block iddeco = null;
 		Block iddeco2 = null;
 		Block idether = null;
+		Item idsoul = null;
 		if (this.hasMod()) {
 			try {
 				Class c = this.getMod().getBlockClass();
@@ -64,6 +68,10 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 
 				f = c.getField("etheralBlock"); //NOT A TYPO
 				idether = ((Block)f.get(null));
+
+				c = this.getMod().getItemClass();
+				f = c.getField("soul");
+				idsoul = ((Item)f.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
@@ -99,6 +107,7 @@ public class ExtraUtilsHandler extends ModHandlerBase {
 		decoID = iddeco;
 		deco2ID = iddeco2;
 		etherealBlockID = idether;
+		soulID = idsoul;
 	}
 
 	private int getDimID(Class c) throws NoSuchFieldException, IllegalAccessException {

@@ -363,7 +363,7 @@ public final class Coordinate implements Comparable<Coordinate> {
 	}
 
 	public Coordinate to2D() {
-		return this.offset(0, -yCoord, 0);
+		return new Coordinate(xCoord, 0, zCoord);
 	}
 
 	@Override

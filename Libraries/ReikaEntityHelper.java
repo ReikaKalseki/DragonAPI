@@ -1481,7 +1481,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 	public static void playHurtSound(EntityLivingBase e) {
 		try {
-			String s = (String)ReikaObfuscationHelper.getMethod("getHurtSound").invoke(e);
+			String s = (String)ReikaObfuscationHelper.invoke("getHurtSound", e);
 			e.playSound(s, 1, 1);
 		}
 		catch (Exception ex) {

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -34,6 +34,8 @@ public class RenderBlockAtPosEvent extends Event {
 
 	public final int renderPass;
 
+	public boolean continueRendering = true;
+
 	public RenderBlockAtPosEvent(WorldRenderer wr, IBlockAccess iba, RenderBlocks rb, Block b, int x, int y, int z, int pass) {
 		renderer = wr;
 
@@ -48,8 +50,14 @@ public class RenderBlockAtPosEvent extends Event {
 		renderPass = pass;
 	}
 
+	@Override
+	public void setCanceled(boolean cancel) {
+		super.setCanceled(cancel);
+		continueRendering = !cancel;
+	}
+
 	public static boolean fire(RenderBlocks rb, Block b, int x, int y, int z, WorldRenderer wr, int pass) {
-		Event evt = new RenderBlockAtPosEvent(wr, rb.blockAccess, rb, b, x, y, z, pass);
+		RenderBlockAtPosEvent evt = new RenderBlockAtPosEvent(wr, rb.blockAccess, rb, b, x, y, z, pass);
 		boolean flag = !MinecraftForge.EVENT_BUS.post(evt);
 		if (flag)
 			flag &= rb.renderBlockByRenderType(b, x, y, z);
@@ -64,7 +72,7 @@ public class RenderBlockAtPosEvent extends Event {
 				return flag;
 		}
 		 */
-		return flag;
+		return flag || evt.continueRendering;
 	}
 
 }

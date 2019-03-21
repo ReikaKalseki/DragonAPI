@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -36,7 +36,7 @@ public class PlayerNBTCommand extends DragonCommandBase {
 
 	@Override
 	protected boolean isAdminOnly() {
-		return true;
+		return false;
 	}
 
 }

@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import org.lwjgl.opengl.GL11;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
@@ -46,6 +48,10 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
+
+	public static void preTessellatorStart() {
+		GL11.glAlphaFunc(GL11.GL_GEQUAL, 1/255F);
+	}
 
 	public static List buildVillageStructureList(Random rand, int val, MapGenVillage.Start s) {
 		ArrayList li = new ArrayList();

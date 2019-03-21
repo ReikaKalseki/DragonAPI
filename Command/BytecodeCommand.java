@@ -559,6 +559,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		INSTANCEOF(),
 		GETARRAY(),
 		SETARRAY(),
+		DECOMPOSE(),
 		OUTPUT(),
 		WRITE(),
 		FLUSH();
@@ -702,7 +703,17 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					int idx = (int)s.pop();
 					arr[idx] = s.pop();
 					break;
-				}
+				}/*
+				case DECOMPOSE: {
+					String func = (String)s.pop();
+					String cl = (String)s.pop();
+					Class c1 = cmd.findClass(cl);
+					ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+					InputStream in = classLoader.getResourceAsStream(c1.getName()+".class");
+					OutputStream out = new FileOutputStream(new File(DragonAPICore.getMinecraftDirectory(), "HELLO"));
+					ReikaFileReader.copyFile(in, out, 512, null);
+					break;
+				}*/
 				default:
 					break;
 			}

@@ -51,6 +51,7 @@ public class ThaumItemHelper {
 		LOOTBAG3("ItemLootBag", 2),
 		MANABEAN("ItemManaBean"),
 		ZOMBIEBRAIN("ItemZombieBrain"),
+		WISP("ItemWispEssence"),
 		;
 
 		public final int metadata;
@@ -147,6 +148,12 @@ public class ThaumItemHelper {
 	public static ItemStack getManaBean(Aspect a) {
 		ItemStack is = ItemEntry.MANABEAN.getItem();
 		((IEssentiaContainerItem)is.getItem()).setAspects(is, new AspectList().add(a, 1));
+		return is;
+	}
+
+	public static ItemStack getWispEssence(Aspect a) {
+		ItemStack is = ItemEntry.WISP.getItem();
+		((IEssentiaContainerItem)is.getItem()).setAspects(is, new AspectList().add(a, 2)); //2, not 1
 		return is;
 	}
 

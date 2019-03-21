@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,8 +15,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -47,6 +45,7 @@ import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
 import Reika.DragonAPI.Instantiable.Event.Client.TextureReloadEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper.ReflectiveAccessExceptionHandler;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 
 import cpw.mods.fml.relauncher.Side;
@@ -71,6 +70,19 @@ public class ReikaTextureHelper {
 	private static final ResourceLocation gui = new ResourceLocation("textures/gui/widgets.png");
 	private static final ResourceLocation hud = new ResourceLocation("textures/gui/icons.png");
 	private static final ResourceLocation ench = new ResourceLocation("textures/misc/enchanted_item_glint.png");
+
+	static {
+		ReikaObfuscationHelper.registerExceptionHandler(new ResourcePackErrorSilencer());
+	}
+
+	private static class ResourcePackErrorSilencer implements ReflectiveAccessExceptionHandler {
+
+		@Override
+		public boolean handleException(Exception e) {
+			return !(e.getCause() instanceof ResourcePackFileNotFoundException);
+		}
+
+	}
 
 	public static boolean reload() {
 		return Keyboard.isKeyDown(Keyboard.KEY_F3) && Keyboard.isKeyDown(Keyboard.KEY_T);
@@ -273,27 +285,7 @@ public class ReikaTextureHelper {
 	}
 
 	public static InputStream getStreamFromTexturePack(String path, AbstractResourcePack pack) {
-		try {
-			Method m = ReikaObfuscationHelper.getMethod("getInputStreamByName");
-			//m.setAccessible(true);
-			Object o = m.invoke(pack, path);
-			if (o == null)
-				return null;
-			InputStream in = (InputStream)o;
-			//m.setAccessible(false);
-			return in;
-		}
-		catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		catch (InvocationTargetException e) {
-			if (e.getCause() instanceof ResourcePackFileNotFoundException) {
-
-			}
-			else
-				e.printStackTrace();
-		}
-		return null;
+		return (InputStream)ReikaObfuscationHelper.invoke("getInputStreamByName", pack, path);
 	}
 
 	public static int getColorOverride(ReikaDyeHelper dye) {

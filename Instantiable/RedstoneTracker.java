@@ -8,12 +8,13 @@ public class RedstoneTracker {
 	private int value;
 
 	public void update(TileEntityBase te) {
-		int v = te.getRedstoneOverride();
-		if (v != value) {
+		int last = value;
+		value = te.getRedstoneOverride();
+		if (last != value) {
+			//ReikaJavaLibrary.pConsole(last+" > "+value);
 			te.triggerBlockUpdate();
 			ReikaWorldHelper.causeAdjacentUpdates(te.worldObj, te.xCoord, te.yCoord, te.zCoord);
 		}
-		value = v;
 	}
 
 	public int getValue() {

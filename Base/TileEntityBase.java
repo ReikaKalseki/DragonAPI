@@ -635,9 +635,9 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			}
 			this.onFirstTick(worldObj, xCoord, yCoord, zCoord);
 			redstoneInput = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
-			if (this.getTicksExisted()%8 == 0)
-				comparatorTracker.update(this);
 		}
+		if (!worldObj.isRemote && this.getTicksExisted()%8 == 0)
+			comparatorTracker.update(this);
 	}
 
 	protected void onFirstTick(World world, int x, int y, int z) {

@@ -468,4 +468,29 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			return true;
 		return false;
 	}
+	/*
+	public static void doBlockHarvest(World world, EntityPlayer ep, int x, int y, int z, int meta, Block b, ThreadLocal<EntityPlayer> harvesters) {
+		ep.addStat(StatList.mineBlockStatArray[Block.getIdFromBlock(b)], 1);
+		ep.addExhaustion(0.025F);
+
+		if (b.canSilkHarvest(world, ep, x, y, z, meta) && EnchantmentHelper.getSilkTouchModifier(ep)) {
+			ArrayList<ItemStack> items = new ArrayList<ItemStack>();
+			ItemStack itemstack = b.createStackedBlock(meta);
+
+			if (itemstack != null) {
+				items.add(itemstack);
+			}
+
+			ForgeEventFactory.fireBlockHarvesting(items, world, b, x, y, z, meta, 0, 1.0f, true, ep);
+			for (ItemStack is : items) {
+				b.dropBlockAsItem(world, x, y, z, is);
+			}
+		}
+		else {
+			harvesters.set(ep);
+			int i1 = EnchantmentHelper.getFortuneModifier(ep);
+			b.dropBlockAsItem(world, x, y, z, meta, i1);
+			harvesters.set(null);
+		}
+	}*/
 }

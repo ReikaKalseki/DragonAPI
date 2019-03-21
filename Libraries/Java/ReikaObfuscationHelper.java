@@ -12,7 +12,9 @@ package Reika.DragonAPI.Libraries.Java;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
@@ -32,6 +34,8 @@ public class ReikaObfuscationHelper {
 	private static final HashMap<String, Field> fields = new HashMap();
 	private static final HashMap<String, String> labels = new HashMap();
 
+	private static final HashSet<ReflectiveAccessExceptionHandler> errorHandlers = new HashSet();
+
 	private static boolean testDeobf() {/*
 		try {
 			Method m = ItemHoe.class.getMethod("onItemUse", ItemStack.class, EntityPlayer.class, World.class, int.class, int.class, int.class, int.class, float.class, float.class, float.class);
@@ -43,16 +47,58 @@ public class ReikaObfuscationHelper {
 		return !FMLForgePlugin.RUNTIME_DEOBF;
 	}
 
+	public static void registerExceptionHandler(ReflectiveAccessExceptionHandler h) {
+		errorHandlers.add(h);
+	}
+
 	public static boolean isDeObfEnvironment() {
 		return deobf;
 	}
 
-	public static Field getField(String deobf) {
+	private static Field getField(String deobf) {
 		return fields.get(deobf);
 	}
 
-	public static Method getMethod(String deobf) {
+	private static Method getMethod(String deobf) {
 		return methods.get(deobf);
+	}
+
+	public static Object get(String method, Object ref) {
+		try {
+			return getField(method).get(ref);
+		}
+		catch (Exception e) {
+			handleException(e);
+			return null;
+		}
+	}
+
+	public static void set(String method, Object ref, Object val) {
+		try {
+			getField(method).set(ref, val);
+		}
+		catch (Exception e) {
+			handleException(e);
+		}
+	}
+
+	public static Object invoke(String method, Object ref, Object... args) {
+		try {
+			return getMethod(method).invoke(ref, args);
+		}
+		catch (Exception e) {
+			handleException(e);
+			return null;
+		}
+	}
+
+	private static void handleException(Exception e) {
+		boolean print = true;
+		for (ReflectiveAccessExceptionHandler h : errorHandlers) {
+			print &= h.handleException(e);
+		}
+		if (print)
+			e.printStackTrace();
 	}
 
 	public static String getLabelName(String deobf) {
@@ -134,6 +180,7 @@ public class ReikaObfuscationHelper {
 		addField("blockFlammability", "blockFlammability", false, Blocks.class);
 		addField("blockFireSpreadSpeed", "blockFireSpreadSpeed", false, Blocks.class);
 		addField("stringToIDMapping", "field_75622_f", false, EntityList.class);*/
+		addField("harvesters", "harvesters", false, Block.class);
 
 		if (isClientSide()) {
 			//addField("soundLibrary", "soundLibrary", false, SoundSystem.class);
@@ -143,5 +190,12 @@ public class ReikaObfuscationHelper {
 
 	private static boolean isClientSide() {
 		return FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT;
+	}
+
+	public static interface ReflectiveAccessExceptionHandler {
+
+		/** Return false to silence the stacktrace at the end. */
+		public boolean handleException(Exception e);
+
 	}
 }
