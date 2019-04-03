@@ -86,6 +86,7 @@ public class ReikaThaumHelper {
 	private static Method clearWandInUse;
 
 	private static Method researchComplete;
+	private static Method createNote;
 
 	private static SimpleNetworkWrapper packetHandlerInstance;
 	private static Constructor<IMessage> aspectPacketConstructor;
@@ -194,7 +195,16 @@ public class ReikaThaumHelper {
 		AspectList ot = new AspectList();
 		try {
 			for (int i = 0; i < aspects.length; i += 2) {
-				ot.add((Aspect)aspects[i], (Integer)aspects[i+1]);
+				Aspect a = null;
+				Object seek = aspects[i];
+				if (seek instanceof Aspect)
+					a = (Aspect)seek;
+				else if (seek instanceof String)
+					a = Aspect.getAspect((String)seek);
+				if (a != null)
+					ot.add(a, (Integer)aspects[i+1]);
+				else
+					DragonAPICore.logError("Cannot generate aspect from input '"+seek+"'!");
 			}
 		}
 		catch (ClassCastException e) {
@@ -810,6 +820,7 @@ public class ReikaThaumHelper {
 			try {
 				Class mgr = Class.forName("thaumcraft.common.lib.research.ResearchManager");
 				researchComplete = mgr.getMethod("isResearchComplete", String.class, String.class);
+				createNote = mgr.getMethod("createNote", ItemStack.class, String.class, World.class);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not load ThaumCraft Research Handler!");
@@ -968,6 +979,15 @@ public class ReikaThaumHelper {
 			maxt = Math.max(maxt, t2);
 		}
 		return maxt+1;
+	}
+
+	public static void programResearchNote(ItemStack is, String key, World world) {
+		try {
+			createNote.invoke(null, is, key, world);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
 

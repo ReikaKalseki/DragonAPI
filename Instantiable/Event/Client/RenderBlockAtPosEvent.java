@@ -34,7 +34,7 @@ public class RenderBlockAtPosEvent extends Event {
 
 	public final int renderPass;
 
-	public boolean continueRendering = true;
+	public boolean continueRendering = false;
 
 	public RenderBlockAtPosEvent(WorldRenderer wr, IBlockAccess iba, RenderBlocks rb, Block b, int x, int y, int z, int pass) {
 		renderer = wr;
@@ -72,6 +72,7 @@ public class RenderBlockAtPosEvent extends Event {
 				return flag;
 		}
 		 */
+		//ReikaJavaLibrary.pConsole(b, !flag && evt.continueRendering);
 		return flag || evt.continueRendering;
 	}
 

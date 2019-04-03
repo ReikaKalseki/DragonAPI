@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -270,6 +270,11 @@ public final class ChancedOutputList {
 		public float getNormalizedChance() {
 			float f = this.getChance();
 			return Math.min(1, f/100F);
+		}
+
+		@Override
+		public String toString() {
+			return item.getDisplayName()+": "+chance+"%";
 		}
 
 	}

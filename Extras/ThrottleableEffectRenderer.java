@@ -173,16 +173,16 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 				for (EntityFX fx : ((Collection<EntityFX>)fxLayers[i]))  {
 					if (fx != null && isParticleVisible(fx)) {
-						if (isEntityCloseEnough(fx, EntityFX.interpPosX, EntityFX.interpPosY, EntityFX.interpPosZ)) {
-							v5.setBrightness(fx.getBrightnessForRender(ptick));
+						//if (isEntityCloseEnough(fx, EntityFX.interpPosX, EntityFX.interpPosY, EntityFX.interpPosZ)) {
+						v5.setBrightness(fx.getBrightnessForRender(ptick));
 
-							try {
-								fx.renderParticle(v5, ptick, f1, f5, f2, f3, f4);
-							}
-							catch (Throwable throwable) {
-								this.throwCrash(i, fx, throwable);
-							}
+						try {
+							fx.renderParticle(v5, ptick, f1, f5, f2, f3, f4);
 						}
+						catch (Throwable throwable) {
+							this.throwCrash(i, fx, throwable);
+						}
+						//}
 					}
 				}
 
@@ -290,6 +290,7 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 
 	}
 
+	/*
 	public static boolean isEntityCloseEnough(EntityFX fx, double x, double y, double z) {
 		if (fx instanceof CustomRenderFX) {
 			double dx = fx.posX-x;
@@ -298,6 +299,6 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 			return ((CustomRenderFX)fx).getRenderRange()*30 >= dx*dx+dy*dy+dz*dz;
 		}
 		return true;
-	}
+	}*/
 
 }

@@ -20,6 +20,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.world.gen.structure.MapGenStructure;
 import net.minecraftforge.classloading.FMLForgePlugin;
+import net.minecraftforge.common.ForgeHooks;
 
 import Reika.DragonAPI.Exception.VanillaIntegrityException;
 
@@ -32,6 +33,7 @@ public class ReikaObfuscationHelper {
 
 	private static final HashMap<String, Method> methods = new HashMap();
 	private static final HashMap<String, Field> fields = new HashMap();
+	private static final HashMap<String, Class> classes = new HashMap();
 	private static final HashMap<String, String> labels = new HashMap();
 
 	private static final HashSet<ReflectiveAccessExceptionHandler> errorHandlers = new HashSet();
@@ -63,9 +65,9 @@ public class ReikaObfuscationHelper {
 		return methods.get(deobf);
 	}
 
-	public static Object get(String method, Object ref) {
+	public static Object get(String field, Object ref) {
 		try {
-			return getField(method).get(ref);
+			return getField(field).get(ref);
 		}
 		catch (Exception e) {
 			handleException(e);
@@ -111,6 +113,21 @@ public class ReikaObfuscationHelper {
 			return sg;
 	}
 
+	private static void addClass(String key, String n) {
+		try {
+			Class c = Class.forName(n);
+			classes.put(key, c);
+			ReikaJavaLibrary.pConsole("DRAGONAPI: Registering reflexive field access to class "+c); //cannot use logger
+		}
+		catch (ClassNotFoundException e) {
+			throw new IllegalArgumentException("Tried to register nonexistent class "+n, e);
+		}
+	}
+
+	private static void addField(String deobf, String obf, boolean isVisible, String k) {
+		addField(deobf, obf, isVisible, classes.get(k));
+	}
+
 	private static void addField(String deobf, String obf, boolean isVisible, Class c) {
 		try {
 			String sg = isDeObfEnvironment() ? deobf : obf;
@@ -151,6 +168,7 @@ public class ReikaObfuscationHelper {
 	}
 
 	static {
+		addClass("SeedEntry", ForgeHooks.class.getName()+"$SeedEntry");
 
 		//addMethod("onItemUse", "func_77648_a", true, Item.class, ItemStack.class, EntityPlayer.class, World.class, int.class, int.class, int.class, int.class, float.class, float.class, float.class);
 		addMethod("dropFewItems", "func_70628_a", false, EntityLivingBase.class, boolean.class, int.class);
@@ -181,6 +199,8 @@ public class ReikaObfuscationHelper {
 		addField("blockFireSpreadSpeed", "blockFireSpreadSpeed", false, Blocks.class);
 		addField("stringToIDMapping", "field_75622_f", false, EntityList.class);*/
 		addField("harvesters", "harvesters", false, Block.class);
+		addField("seedList", "seedList", false, ForgeHooks.class);
+		addField("seed", "seed", false, "SeedEntry");
 
 		if (isClientSide()) {
 			//addField("soundLibrary", "soundLibrary", false, SoundSystem.class);

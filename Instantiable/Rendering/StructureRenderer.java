@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Rendering;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.lwjgl.opengl.GL11;
 
@@ -38,6 +39,7 @@ import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -91,8 +93,12 @@ public class StructureRenderer {
 	}
 
 	public StructureRenderer(FilledBlockArray structure) {
+		this(structure, null);
+	}
+
+	public StructureRenderer(FilledBlockArray structure, HashSet<Coordinate> alpha) {
 		array = structure;
-		access = new RenderAccess(array);
+		access = new RenderAccess(array, alpha);
 		renderer = new RenderBlocks(access);
 		this.reset();
 	}
@@ -303,6 +309,7 @@ public class StructureRenderer {
 		//ReikaJavaLibrary.pConsole(max);
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glEnable(GL11.GL_BLEND);
 
 		//GL11.glFrontFace(GL11.GL_CW);
 
@@ -361,6 +368,8 @@ public class StructureRenderer {
 			for (int y = array.getMinY(); y <= array.getMaxY(); y++) {
 				for (int z = array.getMinZ(); z <= array.getMaxZ(); z++) {
 					PositionData p = access.getData(x, y, z);
+					if (p.isAlpha)
+						continue;
 					//ReikaJavaLibrary.pConsole(p+" @ "+x+","+y+","+z);
 					if (p.block.blockID != Blocks.air) {
 						BlockKey bk = this.getRenderBlock(new Coordinate(x, y, z), p.block);
@@ -374,6 +383,34 @@ public class StructureRenderer {
 			}
 		}
 		Tessellator.instance.draw();
+
+		if (access.hasAnyAlpha) {
+			BlendMode.ADDITIVE2.apply();
+
+			ReikaTextureHelper.bindTerrainTexture();
+			Tessellator.instance.startDrawingQuads();
+			for (int x = array.getMinX(); x <= array.getMaxX(); x++) {
+				for (int y = array.getMinY(); y <= array.getMaxY(); y++) {
+					for (int z = array.getMinZ(); z <= array.getMaxZ(); z++) {
+						PositionData p = access.getData(x, y, z);
+						if (!p.isAlpha)
+							continue;
+						if (p.block.blockID != Blocks.air) {
+							//ReikaJavaLibrary.pConsole(p+" @ "+x+","+y+","+z);
+							BlockKey bk = this.getRenderBlock(new Coordinate(x, y, z), p.block);
+							if (!bk.equals(p.block)) {
+								access.data[x-array.getMinX()][y-array.getMinY()][z-array.getMinZ()] = new PositionData(bk.blockID, bk.metadata, p.tile);
+							}
+							renderer.renderBlockByRenderType(bk.blockID, x, y, z);
+							//ReikaJavaLibrary.pConsole("Rendering "+bk+" @ "+x+","+y+","+z);
+						}
+					}
+				}
+			}
+			Tessellator.instance.draw();
+		}
+
+		BlendMode.DEFAULT.apply();
 
 		for (int x = array.getMinX(); x <= array.getMaxX(); x++) {
 			for (int y = array.getMinY(); y <= array.getMaxY(); y++) {
@@ -417,6 +454,8 @@ public class StructureRenderer {
 		private final TileEntity tile;
 		private boolean useTESR;
 
+		public boolean isAlpha;
+
 		private PositionData(Block b) {
 			this(b, 0, null);
 		}
@@ -444,12 +483,38 @@ public class StructureRenderer {
 		protected final Coordinate negativeCorner;
 		protected final Coordinate offset;
 
-		private RenderAccess(FilledBlockArray arr) {
+		private boolean hasAnyAlpha = false;
+
+		private RenderAccess(FilledBlockArray arr, HashSet<Coordinate> alpha) {
 			offset = new Coordinate(-arr.getMidX(), -arr.getMidY(), -arr.getMidZ());
 			arr.offset(offset.xCoord, offset.yCoord, offset.zCoord);
 
 			data = new PositionData[arr.getSizeX()][arr.getSizeY()][arr.getSizeZ()];
 			negativeCorner = new Coordinate(arr.getMinX(), arr.getMinY(), arr.getMinZ());
+
+			int axo = Integer.MAX_VALUE;
+			int ayo = Integer.MAX_VALUE;
+			int azo = Integer.MAX_VALUE;
+			int bxo = Integer.MIN_VALUE;
+			int byo = Integer.MIN_VALUE;
+			int bzo = Integer.MIN_VALUE;
+			if (alpha != null) {
+				for (Coordinate c : alpha) {
+					axo = Math.min(axo, c.xCoord);
+					ayo = Math.min(ayo, c.yCoord);
+					azo = Math.min(azo, c.zCoord);
+					bxo = Math.max(bxo, c.xCoord);
+					byo = Math.max(byo, c.yCoord);
+					bzo = Math.max(bzo, c.zCoord);
+				}
+				int cxo = axo+(bxo-axo+1)/2;
+				int cyo = ayo+(byo-ayo+1)/2;
+				int czo = azo+(bzo-azo+1)/2;
+
+				axo = cxo-arr.getMidX();
+				ayo = cyo-arr.getMidY();
+				azo = czo-arr.getMidZ();
+			}
 
 			for (int i = 0; i < data.length; i++) {
 				for (int j = 0; j < data[i].length; j++) {
@@ -470,6 +535,8 @@ public class StructureRenderer {
 							te.zCoord = z;
 						}
 						data[i][j][k] = b != null ? new PositionData(b, m, te) : new PositionData(Blocks.air);
+						data[i][j][k].isAlpha = b != null && alpha != null && alpha.contains(new Coordinate(x+axo, y+ayo, z+azo));
+						hasAnyAlpha |= data[i][j][k].isAlpha;
 					}
 				}
 			}

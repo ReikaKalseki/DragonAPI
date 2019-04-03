@@ -12,8 +12,11 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ModInteract.DeepInteract.ReikaThaumHelper;
 
 import cpw.mods.fml.common.registry.GameRegistry;
 import thaumcraft.api.IWarpingGear;
@@ -52,6 +55,7 @@ public class ThaumItemHelper {
 		MANABEAN("ItemManaBean"),
 		ZOMBIEBRAIN("ItemZombieBrain"),
 		WISP("ItemWispEssence"),
+		RESEARCH("ItemResearchNotes"),
 		;
 
 		public final int metadata;
@@ -154,6 +158,20 @@ public class ThaumItemHelper {
 	public static ItemStack getWispEssence(Aspect a) {
 		ItemStack is = ItemEntry.WISP.getItem();
 		((IEssentiaContainerItem)is.getItem()).setAspects(is, new AspectList().add(a, 2)); //2, not 1
+		return is;
+	}
+
+	public static ItemStack getResearchNote(String key, World world, boolean complete) {
+		ItemStack is = ItemEntry.RESEARCH.getItem();
+		ReikaThaumHelper.programResearchNote(is, key, world);
+		if (is.stackTagCompound == null) {
+			DragonAPICore.logError("Research '"+key+"' does not exist!");
+			return null;
+		}
+		is.stackTagCompound.setBoolean("complete", complete);
+		if (complete) {
+			is.setItemDamage(64);
+		}
 		return is;
 	}
 
