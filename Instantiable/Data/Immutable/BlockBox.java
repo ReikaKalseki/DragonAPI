@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -31,6 +31,8 @@ public final class BlockBox {
 	public final int maxY;
 	public final int maxZ;
 
+	private boolean isEmpty = false;
+
 	public BlockBox(int min, int max) {
 		this(min, min, min, max, max, max);
 	}
@@ -54,7 +56,9 @@ public final class BlockBox {
 	}
 
 	public static BlockBox nothing() {
-		return new BlockBox(Integer.MAX_VALUE, Integer.MIN_VALUE);
+		BlockBox ret = new BlockBox(0, 0);
+		ret.isEmpty = true;
+		return ret;
 	}
 
 	public static BlockBox origin() {
@@ -325,6 +329,19 @@ public final class BlockBox {
 			}
 		}
 		return null;
+	}
+
+	public BlockBox addCoordinate(int x, int y, int z) {
+		if (isEmpty) {
+			return block(x, y, z);
+		}
+		int minX = Math.min(x, this.minX);
+		int minY = Math.min(y, this.minY);
+		int minZ = Math.min(z, this.minZ);
+		int maxX = Math.max(x, this.maxX);
+		int maxY = Math.max(y, this.maxY);
+		int maxZ = Math.max(z, this.maxZ);
+		return new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
 }

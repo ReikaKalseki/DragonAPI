@@ -1965,6 +1965,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		Block b = world.getBlock(x, y, z);
 		int meta = world.getBlockMetadata(x, y, z);
 		if (b instanceof IFluidBlock) {
+			Fluid f = ((IFluidBlock)b).getFluid();
+			if (f == null) {
+				DragonAPICore.logError("Found a fluid block "+b+":"+b.getUnlocalizedName()+" with a null fluid @ "+x+", "+y+", "+z+"!");
+				return null;
+			}
 			return ((IFluidBlock)b).drain(world, x, y, z, false);
 		}
 		else if (b instanceof BlockLiquid) {

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -26,6 +26,8 @@ public class EdgeDetectionRenderer {
 	//private final float[][] icons = new float[4][4];
 	private IIcon[] icons = new IIcon[4];
 
+	public boolean renderOnOcclusion = true;
+
 	public EdgeDetectionRenderer(Block b) {
 		this(new BlockKey(b));
 	}
@@ -40,7 +42,7 @@ public class EdgeDetectionRenderer {
 		block = bk;
 	}
 
-	public EdgeDetectionRenderer setIcons(IIcon[] icons) {
+	public final EdgeDetectionRenderer setIcons(IIcon[] icons) {
 		if (icons.length != 4)
 			throw new IllegalArgumentException("You must provide only four icons!");
 		/*
@@ -56,7 +58,7 @@ public class EdgeDetectionRenderer {
 		return this;
 	}
 
-	public void renderBlock(IBlockAccess world, int x, int y, int z, RenderBlocks rb) {
+	public final void renderBlock(IBlockAccess world, int x, int y, int z, RenderBlocks rb) {
 		for (int i = 0; i < 6; i++) {
 			if (this.canRenderFace(world, x, y, z))
 				this.renderFace(world, x, y, z, rb, ForgeDirection.VALID_DIRECTIONS[i]);
@@ -69,6 +71,8 @@ public class EdgeDetectionRenderer {
 
 	/** Render edge unless has block on that edge, and that block can render that face */
 	private void renderFace(IBlockAccess world, int x, int y, int z, RenderBlocks rb, ForgeDirection face) {
+		if (!block.blockID.shouldSideBeRendered(world, x+face.offsetX, y+face.offsetY, z+face.offsetZ, face.ordinal()))
+			return;
 		Tessellator v5 = Tessellator.instance;
 		double o = 0.005;
 
@@ -78,13 +82,10 @@ public class EdgeDetectionRenderer {
 			draw = true;
 		}
 
-		BlockKey bk;
-
 		switch(face) {
 			case DOWN:
 
-				bk = BlockKey.getAt(world, x+1, y, z);
-				if (!bk.equals(block) || !world.getBlock(x+1, y, z).shouldSideBeRendered(world, x+1, y-1, z, 0)) {
+				if (!this.match(world, x, y, z, x+1, y, z) || (renderOnOcclusion && !world.getBlock(x+1, y, z).shouldSideBeRendered(world, x+1, y-1, z, 0))) {
 					//render bottom east
 					//v5.addVertexWithUV(1, 0, 0);
 					//v5.addVertexWithUV(1, 0, 1);
@@ -96,8 +97,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(0, -o, 1, ico.getMinU(), ico.getMaxV());
 				}
 
-				bk = BlockKey.getAt(world, x-1, y, z);
-				if (!bk.equals(block) || !world.getBlock(x-1, y, z).shouldSideBeRendered(world, x-1, y-1, z, 0)) {
+				if (!this.match(world, x, y, z, x-1, y, z) || (renderOnOcclusion && !world.getBlock(x-1, y, z).shouldSideBeRendered(world, x-1, y-1, z, 0))) {
 					//render bottom west
 					//v5.addVertexWithUV(0, 0, 0);
 					//v5.addVertexWithUV(0, 0, 1);
@@ -109,8 +109,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(0, -o, 1, ico.getMinU(), ico.getMaxV());
 				}
 
-				bk = BlockKey.getAt(world, x, y, z+1);
-				if (!bk.equals(block) || !world.getBlock(x, y, z+1).shouldSideBeRendered(world, x, y-1, z+1, 0)) {
+				if (!this.match(world, x, y, z, x, y, z+1) || (renderOnOcclusion && !world.getBlock(x, y, z+1).shouldSideBeRendered(world, x, y-1, z+1, 0))) {
 					//render bottom south
 					//v5.addVertexWithUV(0, 0, 1);
 					//v5.addVertexWithUV(1, 0, 1);
@@ -122,8 +121,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(0, -o, 1, ico.getMinU(), ico.getMaxV());
 				}
 
-				bk = BlockKey.getAt(world, x, y, z-1);
-				if (!bk.equals(block) || !world.getBlock(x, y, z-1).shouldSideBeRendered(world, x, y-1, z-1, 0)) {
+				if (!this.match(world, x, y, z, x, y, z-1) || (renderOnOcclusion && !world.getBlock(x, y, z-1).shouldSideBeRendered(world, x, y-1, z-1, 0))) {
 					//render bottom north
 					//v5.addVertexWithUV(0, 0, 0);
 					//v5.addVertexWithUV(1, 0, 0);
@@ -137,9 +135,7 @@ public class EdgeDetectionRenderer {
 
 				break;
 			case UP:
-
-				bk = BlockKey.getAt(world, x+1, y, z);
-				if (!bk.equals(block) || !world.getBlock(x+1, y, z).shouldSideBeRendered(world, x+1, y+1, z, 0)) {
+				if (!this.match(world, x, y, z, x+1, y, z) || (renderOnOcclusion && !world.getBlock(x+1, y, z).shouldSideBeRendered(world, x+1, y+1, z, 0))) {
 					//render top east
 					//v5.addVertexWithUV(1, 1, 0);
 					//v5.addVertexWithUV(1, 1, 1);
@@ -151,8 +147,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(0, 1+o, 0, ico.getMinU(), ico.getMinV());
 				}
 
-				bk = BlockKey.getAt(world, x-1, y, z);
-				if (!bk.equals(block) || !world.getBlock(x-1, y, z).shouldSideBeRendered(world, x-1, y+1, z, 0)) {
+				if (!this.match(world, x, y, z, x-1, y, z) || (renderOnOcclusion && !world.getBlock(x-1, y, z).shouldSideBeRendered(world, x-1, y+1, z, 0))) {
 					//render top west
 					//v5.addVertexWithUV(0, 1, 0);
 					//v5.addVertexWithUV(0, 1, 1);
@@ -164,8 +159,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(0, 1+o, 0, ico.getMinU(), ico.getMinV());
 				}
 
-				bk = BlockKey.getAt(world, x, y, z+1);
-				if (!bk.equals(block) || !world.getBlock(x, y, z+1).shouldSideBeRendered(world, x, y+1, z+1, 0)) {
+				if (!this.match(world, x, y, z, x, y, z+1) || (renderOnOcclusion && !world.getBlock(x, y, z+1).shouldSideBeRendered(world, x, y+1, z+1, 0))) {
 					//render top south
 					//v5.addVertexWithUV(0, 1, 1);
 					//v5.addVertexWithUV(1, 1, 1);
@@ -177,8 +171,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(0, 1+o, 0, ico.getMinU(), ico.getMinV());
 				}
 
-				bk = BlockKey.getAt(world, x, y, z-1);
-				if (!bk.equals(block) || !world.getBlock(x, y, z-1).shouldSideBeRendered(world, x, y+1, z-1, 0)) {
+				if (!this.match(world, x, y, z, x, y, z-1) || (renderOnOcclusion && !world.getBlock(x, y, z-1).shouldSideBeRendered(world, x, y+1, z-1, 0))) {
 					//render top north
 					//v5.addVertexWithUV(0, 1, 0);
 					//v5.addVertexWithUV(1, 1, 0);
@@ -193,9 +186,7 @@ public class EdgeDetectionRenderer {
 				break;
 
 			case EAST:
-
-				bk = BlockKey.getAt(world, x, y+1, z);
-				if (!bk.equals(block) || !world.getBlock(x, y+1, z).shouldSideBeRendered(world, x+1, y+1, z, 0)) {
+				if (!this.match(world, x, y, z, x, y+1, z) || (renderOnOcclusion && !world.getBlock(x, y+1, z).shouldSideBeRendered(world, x+1, y+1, z, 0))) {
 					IIcon ico = icons[2];
 					v5.addVertexWithUV(1+o, 0, 0, ico.getMinU(), ico.getMinV());
 					v5.addVertexWithUV(1+o, 1, 0, ico.getMaxU(), ico.getMinV());
@@ -203,8 +194,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(1+o, 0, 1, ico.getMinU(), ico.getMaxV());
 				}
 
-				bk = BlockKey.getAt(world, x, y-1, z);
-				if (!bk.equals(block) || !world.getBlock(x, y-1, z).shouldSideBeRendered(world, x+1, y-1, z, 0)) {
+				if (!this.match(world, x, y, z, x, y-1, z) || (renderOnOcclusion && !world.getBlock(x, y-1, z).shouldSideBeRendered(world, x+1, y-1, z, 0))) {
 					IIcon ico = icons[0];
 					v5.addVertexWithUV(1+o, 0, 0, ico.getMinU(), ico.getMinV());
 					v5.addVertexWithUV(1+o, 1, 0, ico.getMaxU(), ico.getMinV());
@@ -212,8 +202,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(1+o, 0, 1, ico.getMinU(), ico.getMaxV());
 				}
 
-				bk = BlockKey.getAt(world, x, y, z+1);
-				if (!bk.equals(block) || !world.getBlock(x, y, z+1).shouldSideBeRendered(world, x+1, y, z+1, 0)) {
+				if (!this.match(world, x, y, z, x, y, z+1) || (renderOnOcclusion && !world.getBlock(x, y, z+1).shouldSideBeRendered(world, x+1, y, z+1, 0))) {
 					IIcon ico = icons[3];
 					v5.addVertexWithUV(1+o, 0, 0, ico.getMinU(), ico.getMinV());
 					v5.addVertexWithUV(1+o, 1, 0, ico.getMaxU(), ico.getMinV());
@@ -221,8 +210,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(1+o, 0, 1, ico.getMinU(), ico.getMaxV());
 				}
 
-				bk = BlockKey.getAt(world, x, y, z-1);
-				if (!bk.equals(block) || !world.getBlock(x, y, z-1).shouldSideBeRendered(world, x+1, y, z-1, 0)) {
+				if (!this.match(world, x, y, z, x, y, z-1) || (renderOnOcclusion && !world.getBlock(x, y, z-1).shouldSideBeRendered(world, x+1, y, z-1, 0))) {
 					IIcon ico = icons[1];
 					v5.addVertexWithUV(1+o, 0, 0, ico.getMinU(), ico.getMinV());
 					v5.addVertexWithUV(1+o, 1, 0, ico.getMaxU(), ico.getMinV());
@@ -232,9 +220,7 @@ public class EdgeDetectionRenderer {
 
 				break;
 			case WEST:
-
-				bk = BlockKey.getAt(world, x, y+1, z);
-				if (!bk.equals(block) || !world.getBlock(x, y+1, z).shouldSideBeRendered(world, x-1, y+1, z, 0)) {
+				if (!this.match(world, x, y, z, x, y+1, z) || (renderOnOcclusion && !world.getBlock(x, y+1, z).shouldSideBeRendered(world, x-1, y+1, z, 0))) {
 					IIcon ico = icons[2];
 					v5.addVertexWithUV(-o, 0, 1, ico.getMinU(), ico.getMaxV());
 					v5.addVertexWithUV(-o, 1, 1, ico.getMaxU(), ico.getMaxV());
@@ -242,8 +228,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(-o, 0, 0, ico.getMinU(), ico.getMinV());
 				}
 
-				bk = BlockKey.getAt(world, x, y-1, z);
-				if (!bk.equals(block) || !world.getBlock(x, y-1, z).shouldSideBeRendered(world, x-1, y-1, z, 0)) {
+				if (!this.match(world, x, y, z, x, y-1, z) || (renderOnOcclusion && !world.getBlock(x, y-1, z).shouldSideBeRendered(world, x-1, y-1, z, 0))) {
 					IIcon ico = icons[0];
 					v5.addVertexWithUV(-o, 0, 1, ico.getMinU(), ico.getMaxV());
 					v5.addVertexWithUV(-o, 1, 1, ico.getMaxU(), ico.getMaxV());
@@ -251,8 +236,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(-o, 0, 0, ico.getMinU(), ico.getMinV());
 				}
 
-				bk = BlockKey.getAt(world, x, y, z+1);
-				if (!bk.equals(block) || !world.getBlock(x, y, z+1).shouldSideBeRendered(world, x-1, y, z+1, 0)) {
+				if (!this.match(world, x, y, z, x, y, z+1) || (renderOnOcclusion && !world.getBlock(x, y, z+1).shouldSideBeRendered(world, x-1, y, z+1, 0))) {
 					IIcon ico = icons[3];
 					v5.addVertexWithUV(-o, 0, 1, ico.getMinU(), ico.getMaxV());
 					v5.addVertexWithUV(-o, 1, 1, ico.getMaxU(), ico.getMaxV());
@@ -260,8 +244,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(-o, 0, 0, ico.getMinU(), ico.getMinV());
 				}
 
-				bk = BlockKey.getAt(world, x, y, z-1);
-				if (!bk.equals(block) || !world.getBlock(x, y, z-1).shouldSideBeRendered(world, x-1, y, z-1, 0)) {
+				if (!this.match(world, x, y, z, x, y, z-1) || (renderOnOcclusion && !world.getBlock(x, y, z-1).shouldSideBeRendered(world, x-1, y, z-1, 0))) {
 					IIcon ico = icons[1];
 					v5.addVertexWithUV(-o, 0, 1, ico.getMinU(), ico.getMaxV());
 					v5.addVertexWithUV(-o, 1, 1, ico.getMaxU(), ico.getMaxV());
@@ -272,9 +255,7 @@ public class EdgeDetectionRenderer {
 				break;
 
 			case NORTH:
-
-				bk = BlockKey.getAt(world, x, y+1, z);
-				if (!bk.equals(block) || !world.getBlock(x, y+1, z).shouldSideBeRendered(world, x, y+1, z-1, 0)) {
+				if (!this.match(world, x, y, z, x, y+1, z) || (renderOnOcclusion && !world.getBlock(x, y+1, z).shouldSideBeRendered(world, x, y+1, z-1, 0))) {
 					IIcon ico = icons[2];
 					v5.addVertexWithUV(0, 0, -o, ico.getMinU(), ico.getMinV());
 					v5.addVertexWithUV(0, 1, -o, ico.getMaxU(), ico.getMinV());
@@ -282,8 +263,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(1, 0, -o, ico.getMinU(), ico.getMaxV());
 				}
 
-				bk = BlockKey.getAt(world, x, y-1, z);
-				if (!bk.equals(block) || !world.getBlock(x, y-1, z).shouldSideBeRendered(world, x, y-1, z-1, 0)) {
+				if (!this.match(world, x, y, z, x, y-1, z) || (renderOnOcclusion && !world.getBlock(x, y-1, z).shouldSideBeRendered(world, x, y-1, z-1, 0))) {
 					IIcon ico = icons[0];
 					v5.addVertexWithUV(0, 0, -o, ico.getMinU(), ico.getMinV());
 					v5.addVertexWithUV(0, 1, -o, ico.getMaxU(), ico.getMinV());
@@ -291,8 +271,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(1, 0, -o, ico.getMinU(), ico.getMaxV());
 				}
 
-				bk = BlockKey.getAt(world, x+1, y, z);
-				if (!bk.equals(block) || !world.getBlock(x+1, y, z).shouldSideBeRendered(world, x+1, y, z-1, 0)) {
+				if (!this.match(world, x, y, z, x+1, y, z) || (renderOnOcclusion && !world.getBlock(x+1, y, z).shouldSideBeRendered(world, x+1, y, z-1, 0))) {
 					IIcon ico = icons[3];
 					v5.addVertexWithUV(0, 0, -o, ico.getMinU(), ico.getMinV());
 					v5.addVertexWithUV(0, 1, -o, ico.getMaxU(), ico.getMinV());
@@ -300,8 +279,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(1, 0, -o, ico.getMinU(), ico.getMaxV());
 				}
 
-				bk = BlockKey.getAt(world, x-1, y, z);
-				if (!bk.equals(block) || !world.getBlock(x-1, y, z).shouldSideBeRendered(world, x-1, y, z-1, 0)) {
+				if (!this.match(world, x, y, z, x-1, y, z) || (renderOnOcclusion && !world.getBlock(x-1, y, z).shouldSideBeRendered(world, x-1, y, z-1, 0))) {
 					IIcon ico = icons[1];
 					v5.addVertexWithUV(0, 0, -o, ico.getMinU(), ico.getMinV());
 					v5.addVertexWithUV(0, 1, -o, ico.getMaxU(), ico.getMinV());
@@ -312,8 +290,7 @@ public class EdgeDetectionRenderer {
 				break;
 			case SOUTH:
 
-				bk = BlockKey.getAt(world, x, y+1, z);
-				if (!bk.equals(block) || !world.getBlock(x, y+1, z).shouldSideBeRendered(world, x, y+1, z+1, 0)) {
+				if (!this.match(world, x, y, z, x, y+1, z) || (renderOnOcclusion && !world.getBlock(x, y+1, z).shouldSideBeRendered(world, x, y+1, z+1, 0))) {
 					IIcon ico = icons[2];
 					v5.addVertexWithUV(1, 0, 1+o, ico.getMinU(), ico.getMaxV());
 					v5.addVertexWithUV(1, 1, 1+o, ico.getMaxU(), ico.getMaxV());
@@ -321,8 +298,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(0, 0, 1+o, ico.getMinU(), ico.getMinV());
 				}
 
-				bk = BlockKey.getAt(world, x, y-1, z);
-				if (!bk.equals(block) || !world.getBlock(x, y-1, z).shouldSideBeRendered(world, x, y-1, z+1, 0)) {
+				if (!this.match(world, x, y, z, x, y-1, z) || (renderOnOcclusion && !world.getBlock(x, y-1, z).shouldSideBeRendered(world, x, y-1, z+1, 0))) {
 					IIcon ico = icons[0];
 					v5.addVertexWithUV(1, 0, 1+o, ico.getMinU(), ico.getMaxV());
 					v5.addVertexWithUV(1, 1, 1+o, ico.getMaxU(), ico.getMaxV());
@@ -330,8 +306,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(0, 0, 1+o, ico.getMinU(), ico.getMinV());
 				}
 
-				bk = BlockKey.getAt(world, x+1, y, z);
-				if (!bk.equals(block) || !world.getBlock(x+1, y, z).shouldSideBeRendered(world, x+1, y, z+1, 0)) {
+				if (!this.match(world, x, y, z, x+1, y, z) || (renderOnOcclusion && !world.getBlock(x+1, y, z).shouldSideBeRendered(world, x+1, y, z+1, 0))) {
 					IIcon ico = icons[3];
 					v5.addVertexWithUV(1, 0, 1+o, ico.getMinU(), ico.getMaxV());
 					v5.addVertexWithUV(1, 1, 1+o, ico.getMaxU(), ico.getMaxV());
@@ -339,8 +314,7 @@ public class EdgeDetectionRenderer {
 					v5.addVertexWithUV(0, 0, 1+o, ico.getMinU(), ico.getMinV());
 				}
 
-				bk = BlockKey.getAt(world, x-1, y, z);
-				if (!bk.equals(block) || !world.getBlock(x-1, y, z).shouldSideBeRendered(world, x-1, y, z+1, 0)) {
+				if (!this.match(world, x, y, z, x-1, y, z) || (renderOnOcclusion && !world.getBlock(x-1, y, z).shouldSideBeRendered(world, x-1, y, z+1, 0))) {
 					IIcon ico = icons[1];
 					v5.addVertexWithUV(1, 0, 1+o, ico.getMinU(), ico.getMaxV());
 					v5.addVertexWithUV(1, 1, 1+o, ico.getMaxU(), ico.getMaxV());
@@ -355,6 +329,10 @@ public class EdgeDetectionRenderer {
 
 		if (draw)
 			v5.draw();
+	}
+
+	protected boolean match(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z) {
+		return BlockKey.getAt(world, x, y, z).equals(block);
 	}
 
 }

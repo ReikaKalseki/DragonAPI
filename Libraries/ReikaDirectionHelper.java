@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,6 +13,7 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
@@ -235,6 +236,10 @@ public class ReikaDirectionHelper extends DragonAPICore {
 			return directionX == 0 || directionZ == 0;
 		}
 
+		public ForgeDirection getCardinal() {
+			return this.isCardinal() ? ReikaDirectionHelper.getByDirection(directionX, directionZ) : null;
+		}
+
 		public static CubeDirections getFromForgeDirection(ForgeDirection dir) {
 			return getFromVectors(dir.offsetX, dir.offsetZ);
 		}
@@ -356,6 +361,19 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		else if (dz < 0)
 			return ForgeDirection.NORTH;
 		return ForgeDirection.UNKNOWN;
+	}
+
+	public static HashSet<ForgeDirection> setDirections(boolean vertical) {
+		HashSet<ForgeDirection> ret = new HashSet();
+		ret.add(ForgeDirection.EAST);
+		ret.add(ForgeDirection.WEST);
+		ret.add(ForgeDirection.NORTH);
+		ret.add(ForgeDirection.SOUTH);
+		if (vertical) {
+			ret.add(ForgeDirection.UP);
+			ret.add(ForgeDirection.DOWN);
+		}
+		return ret;
 	}
 
 }

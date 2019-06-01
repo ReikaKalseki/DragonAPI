@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -28,6 +28,7 @@ import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.ChestGenHooks;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -270,6 +271,9 @@ public class EnvironmentSanityChecker {
 		}
 		if (b.stepSound == null) {
 			throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, b.stepSound, "Step Sound");
+		}
+		if (b instanceof IFluidBlock && ((IFluidBlock)b).getFluid() == null) {
+			throw new EnvironmentSanityException(ErrorType.INVALIDVALUE, b, null, "Null-fluid fluid block");
 		}
 		try {
 			b.getLocalizedName();

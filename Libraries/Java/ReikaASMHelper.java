@@ -907,7 +907,7 @@ public class ReikaASMHelper {
 		}
 	}
 
-	private static enum PrimitiveType {
+	public static enum PrimitiveType {
 
 		VOID("V",			void.class, 		Opcodes.RETURN,		Opcodes.ACONST_NULL, 	Opcodes.ASTORE),
 		INT("I",			int.class, 			Opcodes.IRETURN, 	Opcodes.ILOAD, 			Opcodes.ISTORE),
@@ -925,7 +925,7 @@ public class ReikaASMHelper {
 		FLOATARRAY("[F",	float[].class,		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE),
 		OBJECT("L*;",		Object.class,		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE);
 
-		private final String id;
+		public final String id;
 		private final Class classType;
 		private final int returnCode;
 		private final int loadCode;

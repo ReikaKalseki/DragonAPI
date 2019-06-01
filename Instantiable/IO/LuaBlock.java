@@ -17,8 +17,11 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
@@ -29,11 +32,14 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaASMHelper.PrimitiveType;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public abstract class LuaBlock {
 
 	private static final Comparator<String> outputSorter = new OutputSorter();
+
+	private static final Pattern TYPE_SPECIFIER = Pattern.compile("\\[(.*?)\\]");
 
 	public final String name;
 	private final LuaBlock parent;
@@ -457,6 +463,40 @@ public abstract class LuaBlock {
 			return true;
 		if (s.equalsIgnoreCase("false"))
 			return false;
+		PrimitiveType override = null;
+		if (s.contains("[datatype=")) {
+			String type = s.replace("datatype=", "");
+			Matcher m = TYPE_SPECIFIER.matcher(type);
+			type = m.find() ? m.group(1) : null;
+			s = s.replace("[datatype="+type+"]", "");
+			try {
+				override = PrimitiveType.valueOf(type.toUpperCase(Locale.ENGLISH));
+			}
+			catch (IllegalArgumentException e) {
+
+			}
+		}
+		if (override != null) {
+			try {
+				switch(override) {
+					case BYTE:
+						return (byte)Byte.parseByte(s);
+					case SHORT:
+						return (byte)Short.parseShort(s);
+					case LONG:
+						return (long)Long.parseLong(s);
+					case FLOAT:
+						return (float)Float.parseFloat(s);
+					case DOUBLE:
+						return (float)Double.parseDouble(s);
+					default:
+						break;
+				}
+			}
+			catch (Exception e) {
+
+			}
+		}
 		try {
 			return (int)Integer.parseInt(s);
 		}

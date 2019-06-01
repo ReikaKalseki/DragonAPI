@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -24,6 +24,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 public class ChunkSplicedGenerationCache {
 
 	private final HashMap<ChunkCoordIntPair, HashMap<Coordinate, BlockPlace>> data = new HashMap();
+	private final HashSet<ChunkCoordIntPair> generated = new HashSet();
 
 	private boolean isWrapping = false;
 	private int wrapDistanceX;
@@ -152,6 +153,11 @@ public class ChunkSplicedGenerationCache {
 				bp.place(world, x, y, z);
 			}
 		}
+		generated.add(cp);
+	}
+
+	public boolean isChunkGenerated(int x, int z) {
+		return generated.contains(new ChunkCoordIntPair(x >> 4, z >> 4));
 	}
 
 	public void clear() {
