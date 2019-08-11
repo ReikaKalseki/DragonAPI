@@ -150,7 +150,7 @@ public class ImagedGuiButton extends GuiButton {
 			ReikaTextureHelper.bindTexture(modClass, this.getButtonTexture());
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
-			field_146123_n = mx >= xPosition && my >= yPosition && mx < xPosition+width && my < yPosition+height;
+			field_146123_n = this.isPositionWithin(mx, my);
 			int k = this.getHoverState(field_146123_n);
 
 			this.drawTexturedModalRect(xPosition, yPosition, u, v, width, height);
@@ -185,6 +185,15 @@ public class ImagedGuiButton extends GuiButton {
 			lastHover = field_146123_n;
 			ticks++;
 		}
+	}
+
+	@Override
+	public final boolean mousePressed(Minecraft mc, int x, int y) {
+		return enabled && visible && this.isPositionWithin(x, y);
+	}
+
+	protected boolean isPositionWithin(int mx, int my) {
+		return mx >= xPosition && my >= yPosition && mx < xPosition+width && my < yPosition+height;
 	}
 
 	@Override

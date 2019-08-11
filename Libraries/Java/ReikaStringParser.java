@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -470,5 +470,34 @@ public class ReikaStringParser extends DragonAPICore {
 		if (val == digit)
 			return romanNumerals.get(val);
 		return romanNumerals.get(digit) + parseRomanRumeral(val-digit);
+	}
+
+	public static String stripToAlphabet(String s, char repl) {
+		char[] arr = s.toCharArray();
+		for (int i = 0; i < arr.length; i++) {
+			char c = arr[i];
+			if (!Character.isLetter(c)) {
+				arr[i] = repl;
+			}
+		}
+		return new String(arr);
+	}
+
+	public static String stripToAlphaNumeric(String s, char repl) {
+		char[] arr = s.toCharArray();
+		for (int i = 0; i < arr.length; i++) {
+			char c = arr[i];
+			if (!Character.isLetterOrDigit(c)) {
+				arr[i] = repl;
+			}
+		}
+		return new String(arr);
+	}
+
+	public static String clearDoubledSpaces(String s) {
+		while (s.contains("  ")) {
+			s = s.replace("  ", " ");
+		}
+		return s;
 	}
 }

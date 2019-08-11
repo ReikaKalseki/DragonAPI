@@ -1177,6 +1177,10 @@ public class ReikaASMHelper {
 		return null;
 	}
 
+	public static void removeFinal(MethodNode m) {
+		m.access &= ~Modifier.FINAL;
+	}
+
 	public static Side getSide() {
 		return FMLLaunchHandler.side();
 	}

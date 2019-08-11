@@ -13,9 +13,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 
 public class NestedMap<K, M, V> {
@@ -154,6 +156,14 @@ public class NestedMap<K, M, V> {
 	public Map<M, V> getMap(K key) {
 		HashMap<M, V> map = this.data.get(key);
 		return map != null ? Collections.unmodifiableMap(map) : null;
+	}
+
+	public K getRandomOuterKey(Random rand) {
+		return ReikaJavaLibrary.getRandomCollectionEntry(rand, data.keySet());
+	}
+
+	public M getRandomInnerKey(Random rand) {
+		return ReikaJavaLibrary.getRandomCollectionEntry(rand, innerSet.keySet());
 	}
 
 }

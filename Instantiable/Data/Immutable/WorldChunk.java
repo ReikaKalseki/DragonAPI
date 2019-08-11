@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -25,6 +25,10 @@ public final class WorldChunk {
 
 	public WorldChunk(World world, ChunkCoordIntPair ch) {
 		this(world.provider.dimensionId, ch);
+	}
+
+	public WorldChunk(World world, int x, int z) {
+		this(world.provider.dimensionId, new ChunkCoordIntPair(x, z));
 	}
 
 	public WorldChunk(int dim, int x, int z) {

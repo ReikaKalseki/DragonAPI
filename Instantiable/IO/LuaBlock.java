@@ -316,7 +316,7 @@ public abstract class LuaBlock {
 
 		public final void loadFromFile(File f) {
 			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, false);
-			ArrayList<ArrayList<String>> data = new ArrayList();
+			//ArrayList<ArrayList<String>> data = new ArrayList();
 			int bracketLevel = 0;
 			for (String s : li) {
 				s = this.cleanString(s);

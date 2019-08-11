@@ -48,11 +48,16 @@ import Reika.DragonAPI.Interfaces.Block.SemiTransparent;
 import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 public class BlockArray implements Iterable<Coordinate> {
+
+	private static final int DEPTH_LIMIT = getMaxDepth();
+
+	protected static final Random rand = new Random();
 
 	private final ArrayList<Coordinate> blocks = new ArrayList();
 	private final HashSet<Coordinate> keys = new HashSet();
@@ -66,7 +71,7 @@ public class BlockArray implements Iterable<Coordinate> {
 	private int minZ = Integer.MAX_VALUE;
 	private int maxZ = Integer.MIN_VALUE;
 
-	public int maxDepth = Integer.MAX_VALUE;
+	public int maxDepth = DEPTH_LIMIT;
 	public boolean extraSpread = false;
 	public boolean taxiCabDistance = false;
 
@@ -74,10 +79,13 @@ public class BlockArray implements Iterable<Coordinate> {
 
 	public BlockBox bounds = BlockBox.infinity();
 
-	protected static final Random rand = new Random();
-
 	public BlockArray() {
 		this(null);
+	}
+
+	private static int getMaxDepth() {
+		int get = ReikaJavaLibrary.getMaximumRecursiveDepth();
+		return get > 1000 ? get-250 : Integer.MAX_VALUE;
 	}
 
 	public BlockArray(Collection<Coordinate> li) {

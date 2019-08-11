@@ -12,6 +12,7 @@ package Reika.DragonAPI;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URL;
 import java.util.Random;
 import java.util.UUID;
@@ -218,5 +219,11 @@ public class DragonAPICore {
 	public static int getSystemTimeAsInt() {
 		long t = System.currentTimeMillis();
 		return (int)(t%(Integer.MAX_VALUE+1));
+	}
+
+	public static void openURL(String url) throws Exception {
+		Class oclass = Class.forName("java.awt.Desktop");
+		Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
+		oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, new Object[] {new URI(url)});
 	}
 }

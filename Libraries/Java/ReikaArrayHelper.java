@@ -23,6 +23,15 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class ReikaArrayHelper extends DragonAPICore {
 
+	public static int countTrue(boolean[] arr) {
+		int c = 0;
+		for (int i = 0; i < arr.length; i++) {
+			if (arr[i])
+				c++;
+		}
+		return c;
+	}
+
 	public static boolean containsTrue(boolean[] arr) {
 		for (int i = 0; i < arr.length; i++) {
 			if (arr[i])
@@ -591,6 +600,13 @@ public final class ReikaArrayHelper extends DragonAPICore {
 			arr[i] = arr[i-1];
 		}
 		arr[0] = newVal;
+	}
+
+	public static void cycleArrayReverse(boolean[] arr, boolean newVal) {
+		for (int i = 0; i < arr.length-1; i++) {
+			arr[i] = arr[i+1];
+		}
+		arr[arr.length-1] = newVal;
 	}
 
 	public static <A> void cycleArrayReverse(A[] arr, A newVal) {

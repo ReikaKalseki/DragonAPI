@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -106,12 +106,13 @@ public class ItemMatch {
 		return m;
 	}
 
-	private void addItem(KeyedItemStack ks) {
+	public ItemMatch addItem(KeyedItemStack ks) {
 		ks = ks.setSimpleHash(true).setIgnoreNBT(ks.getItemStack().stackTagCompound == null).lock();
 		items.add(ks);
 		//if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 		ItemStack is2 = ks.getItemStack();
 		displayList.add(is2);
+		return this;
 	}
 
 	public boolean match(ItemStack is) {

@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Random;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -227,6 +228,10 @@ public final class TileEntityCache<V> {
 
 	private static WorldChunk getChunk(WorldLocation loc) {
 		return new WorldChunk(loc.dimensionID, loc.getChunk());
+	}
+
+	public WorldLocation getRandomEntry(Random rand) {
+		return data.getRandomInnerKey(rand);
 	}
 
 }
