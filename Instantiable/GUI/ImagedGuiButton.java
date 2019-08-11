@@ -31,8 +31,8 @@ public class ImagedGuiButton extends GuiButton {
 	private int color;
 	private boolean shadow = true;
 	private String filepath;
-	private final boolean hasToolTip;
-	private final Class modClass;
+	protected final boolean hasToolTip;
+	protected final Class modClass;
 
 	public String sound = "gui.button.press";
 
@@ -48,6 +48,10 @@ public class ImagedGuiButton extends GuiButton {
 	public boolean invisible = false;
 
 	private boolean lastHover;
+	protected int hoverTicks;
+	private float hoverFade;
+	public float hoverFadeSpeedUp = 0.08F;
+	public float hoverFadeSpeedDown = 0.15F;
 	private int ticks = 0;
 
 	public IIcon icon = null;
@@ -138,28 +142,29 @@ public class ImagedGuiButton extends GuiButton {
 		modClass = mod;
 	}
 
-	private final String getButtonTexture() {
+	public ImagedGuiButton setTextAlign(TextAlign ta) {
+		alignment = ta;
+		return this;
+	}
+
+	protected final String getButtonTexture() {
 		return filepath;
 	}
 
 	@Override
-	public void drawButton(Minecraft mc, int mx, int my)
+	public final void drawButton(Minecraft mc, int mx, int my)
 	{
 		if (visible && !invisible) {
-			int tex = GL11.GL_TEXTURE_BINDING_2D;
-			ReikaTextureHelper.bindTexture(modClass, this.getButtonTexture());
-			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-
 			field_146123_n = this.isPositionWithin(mx, my);
 			int k = this.getHoverState(field_146123_n);
 
-			this.drawTexturedModalRect(xPosition, yPosition, u, v, width, height);
+			this.renderButton();
 
 			this.mouseDragged(mc, mx, my);
 			if (displayString != null && !hasToolTip) {
-				ReikaTextureHelper.bindFontTexture();
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
-				renderer.drawString(displayString, this.getLabelX()+alignment.getDX(renderer, displayString), yPosition+(height-8)/2, color, shadow);
+				//ReikaTextureHelper.bindFontTexture();
+				//GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
+				renderer.drawString(displayString, this.getLabelX()+alignment.getDX(renderer, displayString), this.getLabelY(), color, shadow);
 			}
 			else if (k == 2 && displayString != null && hasToolTip) {
 				this.drawToolTip(mc, mx, my);
@@ -183,8 +188,22 @@ public class ImagedGuiButton extends GuiButton {
 			}
 
 			lastHover = field_146123_n;
+			hoverTicks = lastHover ? hoverTicks+1 : 0;
+			if (lastHover) {
+				hoverFade = Math.min(1, hoverFade+hoverFadeSpeedUp);
+			}
+			else {
+				hoverFade = Math.max(0, hoverFade-hoverFadeSpeedDown);
+			}
 			ticks++;
 		}
+	}
+
+	protected void renderButton() {
+		//int tex = GL11.GL_TEXTURE_BINDING_2D;
+		ReikaTextureHelper.bindTexture(modClass, this.getButtonTexture());
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		this.drawTexturedModalRect(xPosition, yPosition, u, v, width, height);
 	}
 
 	@Override
@@ -238,7 +257,7 @@ public class ImagedGuiButton extends GuiButton {
 		sh.playSound(PositionedSoundRecord.func_147674_a(new ResourceLocation(sound), 1.0F));
 	}
 
-	private int getLabelX() {
+	protected int getLabelX() {
 		int base = textOffset+xPosition;
 		switch(alignment) {
 			case CENTER:
@@ -252,9 +271,17 @@ public class ImagedGuiButton extends GuiButton {
 		}
 	}
 
-	private void drawToolTip(Minecraft mc, int mx, int my) {
+	protected int getLabelY() {
+		return yPosition+(height-8)/2;
+	}
+
+	protected void drawToolTip(Minecraft mc, int mx, int my) {
 		ReikaGuiAPI.instance.drawTooltip(mc.fontRenderer, displayString);
 		ReikaTextureHelper.bindFontTexture();
+	}
+
+	public float getHoverFade() {
+		return hoverFade;
 	}
 
 	public static enum TextAlign {
@@ -262,7 +289,7 @@ public class ImagedGuiButton extends GuiButton {
 		CENTER(),
 		RIGHT();
 
-		private int getDX(FontRenderer f, String s) {
+		public int getDX(FontRenderer f, String s) {
 			switch(this) {
 				case CENTER:
 					return f.getStringWidth(s)/2;
