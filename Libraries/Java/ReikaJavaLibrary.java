@@ -1013,4 +1013,23 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		map.put(key, val);
 		return map;
 	}
+
+	public static <E> Collection<E> cloneCollectionObjects(Collection<E> c, CloneCallback<E> call) {
+		Collection<E> ret = new ArrayList();
+		for (E o : c) {
+			ret.add(call.clone(o));
+		}
+		return ret;
+	}
+
+	public static interface CloneCallback<E> {
+
+		E clone(E o);
+
+	}
+
+	/** Order agnostic */
+	public static <E> boolean collectionsHaveSameValues(Collection<E> c1, Collection<E> c2) {
+		return new HashSet(c1).equals(new HashSet(c2));
+	}
 }

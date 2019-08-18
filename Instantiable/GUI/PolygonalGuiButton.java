@@ -29,8 +29,10 @@ public class PolygonalGuiButton extends ImagedGuiButton {
 	private int labelY;
 	private boolean relativeLabel;
 
-	public int defaultColor = 0xffffff;
-	public int hoverColor = 0xffffff;
+	private int defaultColor = 0xffffff;
+	private int hoverColor = 0xffffff;
+
+	private ButtonColorHook colorHook = null;
 
 	public PolygonalGuiButton(int par1, String par4Str, Class mod, DoublePolygon p, ComplexSubdividedTexture tex) {
 		super(par1, (int)p.getBounds().x, (int)p.getBounds().y, par4Str, mod);
@@ -90,6 +92,11 @@ public class PolygonalGuiButton extends ImagedGuiButton {
 		return this;
 	}
 
+	public PolygonalGuiButton setColorCallback(ButtonColorHook bk) {
+		colorHook = bk;
+		return this;
+	}
+
 	@Override
 	protected boolean isPositionWithin(int mx, int my) {
 		return shape.contains(mx, my);
@@ -107,7 +114,15 @@ public class PolygonalGuiButton extends ImagedGuiButton {
 		double cy = shape.getBounds().y+shape.getBounds().height/2;
 		Tessellator.instance.startDrawing(shape.npoints == 4 ? GL11.GL_QUADS : GL11.GL_TRIANGLE_FAN);
 		int c = ReikaColorAPI.mixColors(hoverColor, defaultColor, this.getHoverFade());
-		Tessellator.instance.setColorOpaque_I(c);
+		if (colorHook != null) {
+			c = colorHook.getColor(c);
+			//ReikaJavaLibrary.pConsole(Integer.toHexString(c));
+		}
+		int a = (c >> 24) & 0xff;
+		if (a <= 0)
+			a = 255;
+		//ReikaJavaLibrary.pConsole(a);
+		Tessellator.instance.setColorRGBA_I(c & 0xFFFFFF, a);
 		for (int i = 0; i < shape.npoints; i++) {
 			double x = shape.xpoints[i];
 			double y = shape.ypoints[i];
@@ -144,6 +159,21 @@ public class PolygonalGuiButton extends ImagedGuiButton {
 	@Override
 	protected int getLabelY() {
 		return labelY;
+	}
+
+	@Override
+	public int getLabelColor() {
+		int base = super.getLabelColor();
+		if (colorHook != null) {
+			return colorHook.getColor(base);
+		}
+		return base;
+	}
+
+	public static interface ButtonColorHook {
+
+		public int getColor(int orig);
+
 	}
 
 }

@@ -164,7 +164,7 @@ public class ImagedGuiButton extends GuiButton {
 			if (displayString != null && !hasToolTip) {
 				//ReikaTextureHelper.bindFontTexture();
 				//GL11.glBindTexture(GL11.GL_TEXTURE_2D, tex);
-				renderer.drawString(displayString, this.getLabelX()+alignment.getDX(renderer, displayString), this.getLabelY(), color, shadow);
+				renderer.drawString(displayString, this.getLabelX()+alignment.getDX(renderer, displayString), this.getLabelY(), this.getLabelColor(), shadow);
 			}
 			else if (k == 2 && displayString != null && hasToolTip) {
 				this.drawToolTip(mc, mx, my);
@@ -273,6 +273,10 @@ public class ImagedGuiButton extends GuiButton {
 
 	protected int getLabelY() {
 		return yPosition+(height-8)/2;
+	}
+
+	public int getLabelColor() {
+		return color;
 	}
 
 	protected void drawToolTip(Minecraft mc, int mx, int my) {
