@@ -45,6 +45,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.Instantiable.CubePoints;
 import Reika.DragonAPI.Instantiable.Effects.ReikaModelledBreakFX;
 import Reika.DragonAPI.Instantiable.Rendering.TessellatorVertexList;
 import Reika.DragonAPI.Interfaces.TextureFetcher;
@@ -1497,6 +1498,78 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		rb.renderStandardBlockWithAmbientOcclusion(b, x, y, z, 1, 1, 1);
 		rb.setRenderBounds(0, 0, 0, 1, 1, 1);
 		rb.renderAllFaces = flag;
+	}
+
+	public static void renderBlockPieceNonCuboid(IBlockAccess iba, int x, int y, int z, CubePoints points, Tessellator v5, RenderBlocks rb, Block b) {
+		v5.addTranslation(x, y, z);
+
+		ForgeDirection dir = ForgeDirection.DOWN;
+		IIcon ico = b.getIcon(iba, x, y, z, dir.ordinal());
+		double u = points.getTextureU(ico, dir);
+		double v = points.getTextureV(ico, dir);
+		double du = points.getTextureDU(ico, dir);
+		double dv = points.getTextureDV(ico, dir);
+		v5.addVertexWithUV(points.x1y1z1.position.xCoord, points.x1y1z1.position.yCoord, points.x1y1z1.position.zCoord, u, v);
+		v5.addVertexWithUV(points.x2y1z1.position.xCoord, points.x2y1z1.position.yCoord, points.x2y1z1.position.zCoord, du, v);
+		v5.addVertexWithUV(points.x2y1z2.position.xCoord, points.x2y1z2.position.yCoord, points.x2y1z2.position.zCoord, du, dv);
+		v5.addVertexWithUV(points.x1y1z2.position.xCoord, points.x1y1z2.position.yCoord, points.x1y1z2.position.zCoord, u, dv);
+
+		dir = ForgeDirection.UP;
+		ico = b.getIcon(iba, x, y, z, dir.ordinal());
+		u = points.getTextureU(ico, dir);
+		v = points.getTextureV(ico, dir);
+		du = points.getTextureDU(ico, dir);
+		dv = points.getTextureDV(ico, dir);
+		v5.addVertexWithUV(points.x1y2z2.position.xCoord, points.x1y2z2.position.yCoord, points.x1y2z2.position.zCoord, u, dv);
+		v5.addVertexWithUV(points.x2y2z2.position.xCoord, points.x2y2z2.position.yCoord, points.x2y2z2.position.zCoord, du, dv);
+		v5.addVertexWithUV(points.x2y2z1.position.xCoord, points.x2y2z1.position.yCoord, points.x2y2z1.position.zCoord, du, v);
+		v5.addVertexWithUV(points.x1y2z1.position.xCoord, points.x1y2z1.position.yCoord, points.x1y2z1.position.zCoord, u, v);
+
+		dir = ForgeDirection.WEST;
+		ico = b.getIcon(iba, x, y, z, dir.ordinal());
+		u = points.getTextureU(ico, dir);
+		v = points.getTextureV(ico, dir);
+		du = points.getTextureDU(ico, dir);
+		dv = points.getTextureDV(ico, dir);
+		v5.addVertexWithUV(points.x1y1z2.position.xCoord, points.x1y1z2.position.yCoord, points.x1y1z2.position.zCoord, u, dv);
+		v5.addVertexWithUV(points.x1y2z2.position.xCoord, points.x1y2z2.position.yCoord, points.x1y2z2.position.zCoord, du, dv);
+		v5.addVertexWithUV(points.x1y2z1.position.xCoord, points.x1y2z1.position.yCoord, points.x1y2z1.position.zCoord, du, v);
+		v5.addVertexWithUV(points.x1y1z1.position.xCoord, points.x1y1z1.position.yCoord, points.x1y1z1.position.zCoord, u, v);
+
+		dir = ForgeDirection.EAST;
+		ico = b.getIcon(iba, x, y, z, dir.ordinal());
+		u = points.getTextureU(ico, dir);
+		v = points.getTextureV(ico, dir);
+		du = points.getTextureDU(ico, dir);
+		dv = points.getTextureDV(ico, dir);
+		v5.addVertexWithUV(points.x2y1z1.position.xCoord, points.x2y1z1.position.yCoord, points.x2y1z1.position.zCoord, u, v);
+		v5.addVertexWithUV(points.x2y2z1.position.xCoord, points.x2y2z1.position.yCoord, points.x2y2z1.position.zCoord, du, v);
+		v5.addVertexWithUV(points.x2y2z2.position.xCoord, points.x2y2z2.position.yCoord, points.x2y2z2.position.zCoord, du, dv);
+		v5.addVertexWithUV(points.x2y1z2.position.xCoord, points.x2y1z2.position.yCoord, points.x2y1z2.position.zCoord, u, dv);
+
+		dir = ForgeDirection.NORTH;
+		ico = b.getIcon(iba, x, y, z, dir.ordinal());
+		u = points.getTextureU(ico, dir);
+		v = points.getTextureV(ico, dir);
+		du = points.getTextureDU(ico, dir);
+		dv = points.getTextureDV(ico, dir);
+		v5.addVertexWithUV(points.x1y1z1.position.xCoord, points.x1y1z1.position.yCoord, points.x1y1z1.position.zCoord, u, v);
+		v5.addVertexWithUV(points.x1y2z1.position.xCoord, points.x1y2z1.position.yCoord, points.x1y2z1.position.zCoord, du, v);
+		v5.addVertexWithUV(points.x2y2z1.position.xCoord, points.x2y2z1.position.yCoord, points.x2y2z1.position.zCoord, du, dv);
+		v5.addVertexWithUV(points.x2y1z1.position.xCoord, points.x2y1z1.position.yCoord, points.x2y1z1.position.zCoord, u, dv);
+
+		dir = ForgeDirection.SOUTH;
+		ico = b.getIcon(iba, x, y, z, dir.ordinal());
+		u = points.getTextureU(ico, dir);
+		v = points.getTextureV(ico, dir);
+		du = points.getTextureDU(ico, dir);
+		dv = points.getTextureDV(ico, dir);
+		v5.addVertexWithUV(points.x2y1z2.position.xCoord, points.x2y1z2.position.yCoord, points.x2y1z2.position.zCoord, u, dv);
+		v5.addVertexWithUV(points.x2y2z2.position.xCoord, points.x2y2z2.position.yCoord, points.x2y2z2.position.zCoord, du, dv);
+		v5.addVertexWithUV(points.x1y2z2.position.xCoord, points.x1y2z2.position.yCoord, points.x1y2z2.position.zCoord, du, v);
+		v5.addVertexWithUV(points.x1y1z2.position.xCoord, points.x1y1z2.position.yCoord, points.x1y1z2.position.zCoord, u, v);
+
+		v5.addTranslation(-x, -y, -z);
 	}
 
 	public static void renderIconIn3D(TessellatorVertexList v5, IIcon ico, int x, int y, int z) {
