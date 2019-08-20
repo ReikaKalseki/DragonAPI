@@ -1,13 +1,12 @@
 package Reika.DragonAPI.Instantiable;
 
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.Instantiable.GridDistortion.OffsetGroup;
-
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public class CubePoints {
 
@@ -34,6 +33,9 @@ public class CubePoints {
 	}
 
 	public void applyOffset(ForgeDirection side, OffsetGroup off) {
+		//Random rand = new Random(Minecraft.getMinecraft().theWorld.getTotalWorldTime());
+		//rand.nextBoolean();
+		//double amt = 0.125*0;//0.0625+rand.nextDouble()*0.3125;
 		switch(side) {
 			case DOWN:
 				x1y1z1.position.xCoord += off.offsetAMM;
@@ -100,6 +102,33 @@ public class CubePoints {
 		}
 	}
 
+	public void clamp() {
+		x1y1z1.position.xCoord = MathHelper.clamp_double(x1y1z1.position.xCoord, 0, 1);
+		x1y1z1.position.yCoord = MathHelper.clamp_double(x1y1z1.position.yCoord, 0, 1);
+		x1y1z1.position.zCoord = MathHelper.clamp_double(x1y1z1.position.zCoord, 0, 1);
+		x2y1z1.position.xCoord = MathHelper.clamp_double(x2y1z1.position.xCoord, 0, 1);
+		x2y1z1.position.yCoord = MathHelper.clamp_double(x2y1z1.position.yCoord, 0, 1);
+		x2y1z1.position.zCoord = MathHelper.clamp_double(x2y1z1.position.zCoord, 0, 1);
+		x1y1z2.position.xCoord = MathHelper.clamp_double(x1y1z2.position.xCoord, 0, 1);
+		x1y1z2.position.yCoord = MathHelper.clamp_double(x1y1z2.position.yCoord, 0, 1);
+		x1y1z2.position.zCoord = MathHelper.clamp_double(x1y1z2.position.zCoord, 0, 1);
+		x2y1z2.position.xCoord = MathHelper.clamp_double(x2y1z2.position.xCoord, 0, 1);
+		x2y1z2.position.yCoord = MathHelper.clamp_double(x2y1z2.position.yCoord, 0, 1);
+		x2y1z2.position.zCoord = MathHelper.clamp_double(x2y1z2.position.zCoord, 0, 1);
+		x1y2z1.position.xCoord = MathHelper.clamp_double(x1y2z1.position.xCoord, 0, 1);
+		x1y2z1.position.yCoord = MathHelper.clamp_double(x1y2z1.position.yCoord, 0, 1);
+		x1y2z1.position.zCoord = MathHelper.clamp_double(x1y2z1.position.zCoord, 0, 1);
+		x2y2z1.position.xCoord = MathHelper.clamp_double(x2y2z1.position.xCoord, 0, 1);
+		x2y2z1.position.yCoord = MathHelper.clamp_double(x2y2z1.position.yCoord, 0, 1);
+		x2y2z1.position.zCoord = MathHelper.clamp_double(x2y2z1.position.zCoord, 0, 1);
+		x1y2z2.position.xCoord = MathHelper.clamp_double(x1y2z2.position.xCoord, 0, 1);
+		x1y2z2.position.yCoord = MathHelper.clamp_double(x1y2z2.position.yCoord, 0, 1);
+		x1y2z2.position.zCoord = MathHelper.clamp_double(x1y2z2.position.zCoord, 0, 1);
+		x2y2z2.position.xCoord = MathHelper.clamp_double(x2y2z2.position.xCoord, 0, 1);
+		x2y2z2.position.yCoord = MathHelper.clamp_double(x2y2z2.position.yCoord, 0, 1);
+		x2y2z2.position.zCoord = MathHelper.clamp_double(x2y2z2.position.zCoord, 0, 1);
+	}
+
 	public void setSidePosition(ForgeDirection side, double val) {
 		switch(side) {
 			case DOWN:
@@ -143,12 +172,14 @@ public class CubePoints {
 		}
 	}
 
+	/*
 	@SideOnly(Side.CLIENT)
 	public double getTextureU(IIcon ico, ForgeDirection side) {
 		switch(side) {
 			case DOWN:
 				return ico.getInterpolatedU(16*x1y1z1.position.xCoord);
 			case UP:
+				//ReikaJavaLibrary.pConsole(x1y2z1.position);
 				return ico.getInterpolatedU(16*x1y2z1.position.xCoord);
 			case WEST:
 				return ico.getInterpolatedU(16*x1y1z1.position.zCoord);
@@ -211,24 +242,67 @@ public class CubePoints {
 			case UP:
 				return ico.getInterpolatedV(16*x1y2z2.position.zCoord);
 			case WEST:
-				return ico.getInterpolatedV(16*x1y2z2.position.yCoord);
+				return ico.getInterpolatedV(16*x1y2z1.position.yCoord);
 			case EAST:
-				return ico.getInterpolatedV(16*x2y2z2.position.yCoord);
-			case NORTH:
 				return ico.getInterpolatedV(16*x2y2z1.position.yCoord);
+			case NORTH:
+				return ico.getInterpolatedV(16*x1y2z1.position.yCoord);
 			case SOUTH:
-				return ico.getInterpolatedV(16*x2y2z2.position.yCoord);
+				return ico.getInterpolatedV(16*x1y2z2.position.yCoord);
 			default:
 				return 0;
 		}
-	}
+	}*/
 
-	public static final class CubeVertex {
+	public final class CubeVertex {
 
-		public final Vec3 position;
+		private final Vec3 position;
 
 		private CubeVertex(Vec3 pos) {
 			position = pos;
+		}
+
+		public double textureU(IIcon icon, ForgeDirection side) {
+			switch(side) {
+				case DOWN:
+					return icon.getInterpolatedU(16*position.xCoord);
+				case UP:
+					//ReikaJavaLibrary.pConsole(x1y2z1.position);
+					return icon.getInterpolatedU(16*position.xCoord);
+				case WEST:
+					return icon.getInterpolatedU(16*position.zCoord);
+				case EAST:
+					return icon.getInterpolatedU(16*position.zCoord);
+				case NORTH:
+					return icon.getInterpolatedU(16*position.xCoord);
+				case SOUTH:
+					return icon.getInterpolatedU(16*position.xCoord);
+				default:
+					return 0;
+			}
+		}
+
+		public double textureV(IIcon icon, ForgeDirection side) {
+			switch(side) {
+				case DOWN:
+					return icon.getInterpolatedV(16*position.zCoord);
+				case UP:
+					return icon.getInterpolatedV(16*position.zCoord);
+				case WEST:
+					return icon.getInterpolatedV(16*position.yCoord);
+				case EAST:
+					return icon.getInterpolatedV(16*position.yCoord);
+				case NORTH:
+					return icon.getInterpolatedV(16*position.yCoord);
+				case SOUTH:
+					return icon.getInterpolatedV(16*position.yCoord);
+				default:
+					return 0;
+			}
+		}
+
+		public void draw(Tessellator v5, IIcon ico, ForgeDirection side) {
+			v5.addVertexWithUV(position.xCoord, position.yCoord, position.zCoord, this.textureU(ico, side), this.textureV(ico, side));
 		}
 
 	}

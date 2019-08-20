@@ -26,6 +26,17 @@ public class GridDistortion {
 				offsetsB[i][k] = -maxDeviation+maxDeviation*2*rand.nextDouble();
 			}
 		}
+
+		if (snapToEdges) {
+			for (int i = 0; i < offsetsA.length; i++) {
+				offsetsA[i][0] = 0;
+				offsetsA[i][offsetsA.length-1] = 0;
+			}
+			for (int i = 0; i < offsetsB.length; i++) {
+				offsetsB[i][0] = 0;
+				offsetsB[i][offsetsB.length-1] = 0;
+			}
+		}
 	}
 
 	public OffsetGroup getOffset(int a, int b) {
@@ -38,25 +49,6 @@ public class GridDistortion {
 		double bpm = offsetsB[a+1][b];
 		double bmp = offsetsB[a][b+1];
 		double bpp = offsetsB[a+1][b+1];
-
-		if (snapToEdges) {
-			if (a == 0) {
-				amm = 0;
-				amp = 0;
-			}
-			if (a == gridSize) {
-				apm = 0;
-				app = 0;
-			}
-			if (b == 0) {
-				bmm = 0;
-				bmp = 0;
-			}
-			if (b == gridSize) {
-				bpm = 0;
-				bpp = 0;
-			}
-		}
 
 		return new OffsetGroup(amm, apm, amp, app, bmm, bpm, bmp, bpp);
 	}
