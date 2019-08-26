@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -204,6 +204,10 @@ public class FilledBlockArray extends StructuredBlockArray {
 	}
 
 	public boolean matchInWorld() {
+		return this.matchInWorld(null);
+	}
+
+	public boolean matchInWorld(BlockMatchFailCallback call) {
 		if (world.isRemote)
 			return true;
 		for (Coordinate c : data.keySet()) {
@@ -215,6 +219,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > Wanted ["+bk.getClass().getSimpleName()+"] "+bk+", found "+world.getBlock(x, y, z).getLocalizedName()+":"+world.getBlockMetadata(x, y, z));
 				//bk.place(world, x, y, z);
 				//world.setBlock(x, y, z, Blocks.brick_block);
+				if (call != null)
+					call.onBlockFailure(world, x, y, z, bk);
 				return false;
 			}
 		}
@@ -546,7 +552,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	}
 
-	private static class EmptyCheck implements BlockCheck {
+	public static class EmptyCheck implements BlockCheck {
 
 		public final boolean allowNonSolid;
 		public final boolean allowSoft;
@@ -699,6 +705,12 @@ public class FilledBlockArray extends StructuredBlockArray {
 			}
 			return false;
 		}
+	}
+
+	public static interface BlockMatchFailCallback {
+
+		public void onBlockFailure(World world, int x, int y, int z, BlockCheck seek);
+
 	}
 
 }

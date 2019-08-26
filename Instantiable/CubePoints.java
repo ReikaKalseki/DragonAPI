@@ -4,6 +4,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.Instantiable.GridDistortion.OffsetGroup;
@@ -59,22 +60,22 @@ public class CubePoints {
 				break;
 			case WEST:
 				x1y1z1.position.yCoord += off.offsetAMM;
-				x1y2z1.position.yCoord += off.offsetAPM;
-				x1y1z2.position.yCoord += off.offsetAMP;
+				x1y2z1.position.yCoord += off.offsetAMP;
+				x1y1z2.position.yCoord += off.offsetAPM;
 				x1y2z2.position.yCoord += off.offsetAPP;
 				x1y1z1.position.zCoord += off.offsetBMM;
-				x1y2z1.position.zCoord += off.offsetBPM;
-				x1y1z2.position.zCoord += off.offsetBMP;
+				x1y2z1.position.zCoord += off.offsetBMP;
+				x1y1z2.position.zCoord += off.offsetBPM;
 				x1y2z2.position.zCoord += off.offsetBPP;
 				break;
 			case EAST:
 				x2y1z1.position.yCoord += off.offsetAMM;
-				x2y2z1.position.yCoord += off.offsetAPM;
-				x2y1z2.position.yCoord += off.offsetAMP;
+				x2y2z1.position.yCoord += off.offsetAMP;
+				x2y1z2.position.yCoord += off.offsetAPM;
 				x2y2z2.position.yCoord += off.offsetAPP;
 				x2y1z1.position.zCoord += off.offsetBMM;
-				x2y2z1.position.zCoord += off.offsetBPM;
-				x2y1z2.position.zCoord += off.offsetBMP;
+				x2y2z1.position.zCoord += off.offsetBMP;
+				x2y1z2.position.zCoord += off.offsetBPM;
 				x2y2z2.position.zCoord += off.offsetBPP;
 				break;
 			case NORTH:
@@ -305,10 +306,61 @@ public class CubePoints {
 			v5.addVertexWithUV(position.xCoord, position.yCoord, position.zCoord, this.textureU(ico, side), this.textureV(ico, side));
 		}
 
+		public void drawWithUV(Tessellator v5, ForgeDirection side, double u, double v) {
+			v5.addVertexWithUV(position.xCoord, position.yCoord, position.zCoord, u, v);
+		}
+
 	}
 
 	public static CubePoints fullBlock() {
 		return new CubePoints(Vec3.createVectorHelper(0, 0, 0), Vec3.createVectorHelper(1, 0, 0), Vec3.createVectorHelper(0, 0, 1), Vec3.createVectorHelper(1, 0, 1), Vec3.createVectorHelper(0, 1, 0), Vec3.createVectorHelper(1, 1, 0), Vec3.createVectorHelper(0, 1, 1), Vec3.createVectorHelper(1, 1, 1));
+	}
+
+	public void renderIconOnSides(IBlockAccess world, int x, int y, int z, IIcon ico, Tessellator v5) {
+		v5.addTranslation(x, y, z);
+
+		double u = ico.getMinU();
+		double du = ico.getMaxU();
+		double v = ico.getMinV();
+		double dv = ico.getMaxV();
+
+		ForgeDirection dir = ForgeDirection.DOWN;
+		x1y1z1.drawWithUV(v5, dir, u, v);
+		x2y1z1.drawWithUV(v5, dir, du, v);
+		x2y1z2.drawWithUV(v5, dir, du, dv);
+		x1y1z2.drawWithUV(v5, dir, u, dv);
+
+		dir = ForgeDirection.UP;
+		x1y2z2.drawWithUV(v5, dir, u, dv);
+		x2y2z2.drawWithUV(v5, dir, du, dv);
+		x2y2z1.drawWithUV(v5, dir, du, v);
+		x1y2z1.drawWithUV(v5, dir, u, v);
+
+		dir = ForgeDirection.WEST;
+		x1y1z2.drawWithUV(v5, dir, u, dv);
+		x1y2z2.drawWithUV(v5, dir, du, dv);
+		x1y2z1.drawWithUV(v5, dir, du, v);
+		x1y1z1.drawWithUV(v5, dir, u, v);
+
+		dir = ForgeDirection.EAST;
+		x2y1z1.drawWithUV(v5, dir, u, v);
+		x2y2z1.drawWithUV(v5, dir, du, v);
+		x2y2z2.drawWithUV(v5, dir, du, dv);
+		x2y1z2.drawWithUV(v5, dir, u, dv);
+
+		dir = ForgeDirection.NORTH;
+		x1y1z1.drawWithUV(v5, dir, u, v);
+		x1y2z1.drawWithUV(v5, dir, u, dv);
+		x2y2z1.drawWithUV(v5, dir, du, dv);
+		x2y1z1.drawWithUV(v5, dir, du, v);
+
+		dir = ForgeDirection.SOUTH;
+		x2y1z2.drawWithUV(v5, dir, du, v);
+		x2y2z2.drawWithUV(v5, dir, du, dv);
+		x1y2z2.drawWithUV(v5, dir, u, dv);
+		x1y1z2.drawWithUV(v5, dir, u, v);
+
+		v5.addTranslation(-x, -y, -z);
 	}
 
 }

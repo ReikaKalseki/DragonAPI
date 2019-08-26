@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -35,7 +35,7 @@ public class CompositeParticle {
 
 	private final FXState[] data;
 
-	public CompositeParticle(World world, int x, int y, int z, int n, ParticleSpawner p) {
+	public CompositeParticle(World world, int x, int y, int z, int n, SubParticleCreator p) {
 		frameLength = n;
 		data = new FXState[n];
 
@@ -108,7 +108,7 @@ public class CompositeParticle {
 
 	}
 
-	public static interface ParticleSpawner {
+	public static interface SubParticleCreator {
 
 		public void createNewFX(Collection<CacheableFX> li, int frame);
 

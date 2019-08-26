@@ -302,6 +302,10 @@ public class BlockArray implements Iterable<Coordinate> {
 		return this.containsKey(new Coordinate(x, y, z));
 	}
 
+	public final boolean hasBlock(Coordinate c) {
+		return this.containsKey(c);
+	}
+
 	/** Recursively adds a contiguous area of one block type, akin to a fill tool.
 	 * Args: World, start x, start y, start z, id to follow */
 	public void recursiveAdd(IBlockAccess world, int x, int y, int z, Block id) {

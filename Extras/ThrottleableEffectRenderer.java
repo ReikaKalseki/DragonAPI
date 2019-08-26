@@ -33,7 +33,6 @@ import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 
-import Reika.ChromatiCraft.Auxiliary.Interfaces.CustomRenderFX;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
@@ -52,6 +51,7 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 	private final HashSet<EffectRenderer> delegateSet = new HashSet();
 
 	private boolean isRendering;
+	@Deprecated
 	private boolean isTicking;
 
 	private static final ResourceLocation particleTextures = new ResourceLocation("textures/particle/particles.png");
@@ -88,11 +88,12 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 			Thread.dumpStack();
 			return;
 		}
+		/*
 		if (isTicking) {
 			DragonAPICore.logError("Tried adding a particle mid-update!");
 			Thread.dumpStack();
 			return;
-		}
+		}*/
 
 		int i = fx.getFXLayer();
 		if (fxLayers[i].size() >= limit) {

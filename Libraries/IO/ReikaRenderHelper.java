@@ -1500,21 +1500,11 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		rb.renderAllFaces = flag;
 	}
 
-	public static void renderBlockPieceNonCuboid(IBlockAccess iba, int x, int y, int z, CubePoints points, Tessellator v5, RenderBlocks rb, Block b) {
+	public static void renderBlockPieceNonCuboid(IBlockAccess iba, int x, int y, int z, Block b, Tessellator v5, CubePoints points) {
 		v5.addTranslation(x, y, z);
 
 		ForgeDirection dir = ForgeDirection.DOWN;
 		IIcon ico = b.getIcon(iba, x, y, z, dir.ordinal());
-		/*
-		double u = points.getTextureU(ico, dir);
-		double v = points.getTextureV(ico, dir);
-		double du = points.getTextureDU(ico, dir);
-		double dv = points.getTextureDV(ico, dir);
-		 */
-		//v5.addVertexWithUV(points.x1y1z1.position.xCoord, points.x1y1z1.position.yCoord, points.x1y1z1.position.zCoord, u, v);
-		//v5.addVertexWithUV(points.x2y1z1.position.xCoord, points.x2y1z1.position.yCoord, points.x2y1z1.position.zCoord, du, v);
-		//v5.addVertexWithUV(points.x2y1z2.position.xCoord, points.x2y1z2.position.yCoord, points.x2y1z2.position.zCoord, du, dv);
-		//v5.addVertexWithUV(points.x1y1z2.position.xCoord, points.x1y1z2.position.yCoord, points.x1y1z2.position.zCoord, u, dv);
 		points.x1y1z1.draw(v5, ico, dir);
 		points.x2y1z1.draw(v5, ico, dir);
 		points.x2y1z2.draw(v5, ico, dir);
@@ -1522,54 +1512,13 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 		dir = ForgeDirection.UP;
 		ico = b.getIcon(iba, x, y, z, dir.ordinal());
-		/*
-		u = points.getTextureU(ico, dir);
-		v = points.getTextureV(ico, dir);
-		du = points.getTextureDU(ico, dir);
-		dv = points.getTextureDV(ico, dir);
-		 */
-		/*
-		u = ico.getMinU()+(ico.getMaxU()-ico.getMinU())*0.125;
-		v = ico.getMinV()+(ico.getMaxV()-ico.getMinV())*0.125;
-		double uu = (u-ico.getMinU())/(ico.getMaxU()-ico.getMinU());
-		double uu2 = (du-ico.getMinU())/(ico.getMaxU()-ico.getMinU());
-		double vv = (v-ico.getMinV())/(ico.getMaxV()-ico.getMinV());
-		double vv2 = (dv-ico.getMinV())/(ico.getMaxV()-ico.getMinV());
-		ReikaJavaLibrary.pConsole("["+uu+" > "+uu2+"], ["+vv+" > "+vv2+"]");
-		 */
-		//v5.addVertexWithUV(points.x1y2z2.position.xCoord, points.x1y2z2.position.yCoord, points.x1y2z2.position.zCoord, u, dv);
-		//v5.addVertexWithUV(points.x2y2z2.position.xCoord, points.x2y2z2.position.yCoord, points.x2y2z2.position.zCoord, du, dv);
-		//v5.addVertexWithUV(points.x2y2z1.position.xCoord, points.x2y2z1.position.yCoord, points.x2y2z1.position.zCoord, du, v);
-		//v5.addVertexWithUV(points.x1y2z1.position.xCoord, points.x1y2z1.position.yCoord, points.x1y2z1.position.zCoord, u, v);
 		points.x1y2z2.draw(v5, ico, dir);
 		points.x2y2z2.draw(v5, ico, dir);
 		points.x2y2z1.draw(v5, ico, dir);
 		points.x1y2z1.draw(v5, ico, dir);
-		/*
-		double u1 = ico.getMinU();
-		double u2 = ico.getMaxU();
-		double uu = u2-u1;
-		double v1 = ico.getMinV();
-		double v2 = ico.getMaxV();
-		double vv = v2-v1;
-		v5.addVertexWithUV(0.25, 1, 0.75, u1+uu*0.25, v2-vv*0.25);
-		v5.addVertexWithUV(1, 1, 1, u2, v2);
-		v5.addVertexWithUV(1, 1, 0, u2, v1);
-		v5.addVertexWithUV(0, 1, 0, u1, v1);
-		 */
 
 		dir = ForgeDirection.WEST;
 		ico = b.getIcon(iba, x, y, z, dir.ordinal());
-		/*
-		u = points.getTextureU(ico, dir);
-		v = points.getTextureV(ico, dir);
-		du = points.getTextureDU(ico, dir);
-		dv = points.getTextureDV(ico, dir);
-		 */
-		//v5.addVertexWithUV(points.x1y1z2.position.xCoord, points.x1y1z2.position.yCoord, points.x1y1z2.position.zCoord, du, dv);
-		//v5.addVertexWithUV(points.x1y2z2.position.xCoord, points.x1y2z2.position.yCoord, points.x1y2z2.position.zCoord, du, v);
-		//v5.addVertexWithUV(points.x1y2z1.position.xCoord, points.x1y2z1.position.yCoord, points.x1y2z1.position.zCoord, u, v);
-		//v5.addVertexWithUV(points.x1y1z1.position.xCoord, points.x1y1z1.position.yCoord, points.x1y1z1.position.zCoord, u, dv);
 		points.x1y1z2.draw(v5, ico, dir);
 		points.x1y2z2.draw(v5, ico, dir);
 		points.x1y2z1.draw(v5, ico, dir);
@@ -1577,16 +1526,6 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 		dir = ForgeDirection.EAST;
 		ico = b.getIcon(iba, x, y, z, dir.ordinal());
-		/*
-		u = points.getTextureU(ico, dir);
-		v = points.getTextureV(ico, dir);
-		du = points.getTextureDU(ico, dir);
-		dv = points.getTextureDV(ico, dir);
-		 */
-		//v5.addVertexWithUV(points.x2y1z1.position.xCoord, points.x2y1z1.position.yCoord, points.x2y1z1.position.zCoord, du, dv);
-		//v5.addVertexWithUV(points.x2y2z1.position.xCoord, points.x2y2z1.position.yCoord, points.x2y2z1.position.zCoord, du, v);
-		//v5.addVertexWithUV(points.x2y2z2.position.xCoord, points.x2y2z2.position.yCoord, points.x2y2z2.position.zCoord, u, v);
-		//v5.addVertexWithUV(points.x2y1z2.position.xCoord, points.x2y1z2.position.yCoord, points.x2y1z2.position.zCoord, u, dv);
 		points.x2y1z1.draw(v5, ico, dir);
 		points.x2y2z1.draw(v5, ico, dir);
 		points.x2y2z2.draw(v5, ico, dir);
@@ -1594,16 +1533,6 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 		dir = ForgeDirection.NORTH;
 		ico = b.getIcon(iba, x, y, z, dir.ordinal());
-		/*
-		u = points.getTextureU(ico, dir);
-		v = points.getTextureV(ico, dir);
-		du = points.getTextureDU(ico, dir);
-		dv = points.getTextureDV(ico, dir);
-		 */
-		//v5.addVertexWithUV(points.x1y1z1.position.xCoord, points.x1y1z1.position.yCoord, points.x1y1z1.position.zCoord, du, dv);
-		//v5.addVertexWithUV(points.x1y2z1.position.xCoord, points.x1y2z1.position.yCoord, points.x1y2z1.position.zCoord, du, v);
-		//v5.addVertexWithUV(points.x2y2z1.position.xCoord, points.x2y2z1.position.yCoord, points.x2y2z1.position.zCoord, u, v);
-		//v5.addVertexWithUV(points.x2y1z1.position.xCoord, points.x2y1z1.position.yCoord, points.x2y1z1.position.zCoord, u, dv);
 		points.x1y1z1.draw(v5, ico, dir);
 		points.x1y2z1.draw(v5, ico, dir);
 		points.x2y2z1.draw(v5, ico, dir);
@@ -1611,16 +1540,6 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 		dir = ForgeDirection.SOUTH;
 		ico = b.getIcon(iba, x, y, z, dir.ordinal());
-		/*
-		u = points.getTextureU(ico, dir);
-		v = points.getTextureV(ico, dir);
-		du = points.getTextureDU(ico, dir);
-		dv = points.getTextureDV(ico, dir);
-		 */
-		//v5.addVertexWithUV(points.x2y1z2.position.xCoord, points.x2y1z2.position.yCoord, points.x2y1z2.position.zCoord, du, dv);
-		//v5.addVertexWithUV(points.x2y2z2.position.xCoord, points.x2y2z2.position.yCoord, points.x2y2z2.position.zCoord, du, v);
-		//v5.addVertexWithUV(points.x1y2z2.position.xCoord, points.x1y2z2.position.yCoord, points.x1y2z2.position.zCoord, u, v);
-		//v5.addVertexWithUV(points.x1y1z2.position.xCoord, points.x1y1z2.position.yCoord, points.x1y1z2.position.zCoord, u, dv);
 		points.x2y1z2.draw(v5, ico, dir);
 		points.x2y2z2.draw(v5, ico, dir);
 		points.x1y2z2.draw(v5, ico, dir);

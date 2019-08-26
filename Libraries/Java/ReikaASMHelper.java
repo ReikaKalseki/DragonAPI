@@ -809,7 +809,7 @@ public class ReikaASMHelper {
 		}
 	}
 
-	public static void addMethod(ClassNode cn, InsnList insns, String name, String sig, int flags) {
+	public static MethodNode addMethod(ClassNode cn, InsnList insns, String name, String sig, int flags) {
 		if (getMethodByNameAndSig(cn, name, sig) != null)
 			throw new ASMException.DuplicateASMMethodException(cn, name, sig);
 		MethodNode m = new MethodNode(flags, name, sig, null, new String[0]);
@@ -828,6 +828,8 @@ public class ReikaASMHelper {
 		m.instructions = insns;
 
 		cn.methods.add(m);
+
+		return m;
 	}
 
 	public static void removeMethod(ClassNode cn, String name, String sig) {
@@ -1179,6 +1181,16 @@ public class ReikaASMHelper {
 
 	public static void removeFinal(MethodNode m) {
 		m.access &= ~Modifier.FINAL;
+	}
+
+	public static String convertClassName(Class c, boolean appendPrePostFixes) {
+		String base = c.getName().replace('.', '/');
+		return appendPrePostFixes ? "L"+base+";" : base;
+	}
+
+	public static String convertClassName(ClassNode cn, boolean appendPrePostFixes) {
+		String base = cn.name.replace('.', '/');
+		return appendPrePostFixes ? "L"+base+";" : base;
 	}
 
 	public static Side getSide() {

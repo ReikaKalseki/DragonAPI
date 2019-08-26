@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -227,32 +227,27 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 	}
 
 	@Override
-	protected final boolean canTriggerWalking()
-	{
+	protected final boolean canTriggerWalking() {
 		return false;
 	}
 
 	@Override
-	public final AxisAlignedBB getBoundingBox()
-	{
+	public final AxisAlignedBB getBoundingBox() {
 		return null;
 	}
 
 	@Override
-	public final boolean isEntityInvulnerable()
-	{
+	public final boolean isEntityInvulnerable() {
 		return true;
 	}
 
 	@Override
-	public final boolean doesEntityNotTriggerPressurePlate()
-	{
+	public final boolean doesEntityNotTriggerPressurePlate() {
 		return true;
 	}
 
 	@Override
-	public final boolean canRenderOnFire()
-	{
+	public final boolean canRenderOnFire() {
 		return false;
 	}
 

@@ -12,14 +12,18 @@ public class GridDistortion {
 	public double maxDeviation;
 	public boolean snapToEdges = true;
 
+	private OffsetGroup[][] offsets;
+
 	public GridDistortion(int steps) {
 		gridSize = steps;
 		offsetsA = new double[steps+1][steps+1];
 		offsetsB = new double[steps+1][steps+1];
+		offsets = new OffsetGroup[steps][steps];
 		maxDeviation = 0.5D/steps;
 	}
 
 	public void randomize(Random rand) {
+		offsets = new OffsetGroup[gridSize][gridSize]; //empty
 		for (int i = 0; i < offsetsA.length; i++) {
 			for (int k = 0; k < offsetsA.length; k++) {
 				offsetsA[i][k] = -maxDeviation+maxDeviation*2*rand.nextDouble();
@@ -40,17 +44,20 @@ public class GridDistortion {
 	}
 
 	public OffsetGroup getOffset(int a, int b) {
-		double amm = offsetsA[a][b];
-		double apm = offsetsA[a+1][b];
-		double amp = offsetsA[a][b+1];
-		double app = offsetsA[a+1][b+1];
+		if (offsets[a][b] == null) {
+			double amm = offsetsA[a][b];
+			double apm = offsetsA[a+1][b];
+			double amp = offsetsA[a][b+1];
+			double app = offsetsA[a+1][b+1];
 
-		double bmm = offsetsB[a][b];
-		double bpm = offsetsB[a+1][b];
-		double bmp = offsetsB[a][b+1];
-		double bpp = offsetsB[a+1][b+1];
+			double bmm = offsetsB[a][b];
+			double bpm = offsetsB[a+1][b];
+			double bmp = offsetsB[a][b+1];
+			double bpp = offsetsB[a+1][b+1];
 
-		return new OffsetGroup(amm, apm, amp, app, bmm, bpm, bmp, bpp);
+			offsets[a][b] = new OffsetGroup(amm, apm, amp, app, bmm, bpm, bmp, bpp);
+		}
+		return offsets[a][b];
 	}
 
 	public static class OffsetGroup {

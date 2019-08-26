@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -35,8 +35,13 @@ public class TinkerBlockHandler extends ModHandlerBase {
 	public final Block stoneOreID;
 	public final Block clearGlassID;
 	public final Block clearPaneID;
-	public final Block searedBlockID;
 	private final Item materialID;
+
+	public final Block searedBlockID; //table, basin, faucet
+	public final Block smelteryTankID;
+	public final Block smelteryBlockID; //includes all smeltery structure blocks
+	public final Block netherSmelteryID;
+	public final Block netherTankID; //includes all smeltery structure blocks
 
 	public final BlockKey slimeDirt;
 	public final BlockKey slimeGrass;
@@ -61,15 +66,54 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		}
 	}
 
+	public enum SmelteryBlocks {
+		CONTROLLER(),
+		DRAIN(),
+		BRICK(),
+		STONE(),
+		COBBLE(),
+		PAVER(), //cubes
+		CRACKED(),
+		ROAD(), //2x2 mini tiles
+		FANCY(),
+		CHISELED(), // aka circle stone brick
+		CREEPER(); //also called chiseled
+
+		public static final SmelteryBlocks[] list = values();
+
+		private SmelteryBlocks() {
+
+		}
+
+		public ItemStack getItem() {
+			return new ItemStack(instance.smelteryBlockID, 1, this.ordinal());
+		}
+
+		public boolean isBasicBuildingBlock() {
+			switch(this) {
+				case CONTROLLER:
+				case DRAIN:
+					return false;
+				default:
+					return true;
+			}
+		}
+	}
+
 	private TinkerBlockHandler() {
 		super();
 		Block idgravel = null;
 		Block idnether = null;
 		Block idglass = null;
 		Block idpane = null;
-		Block idseared = null;
 		Item idmaterial = null;
 		Object pulse = null;
+
+		Block idseared = null;
+		Block idtank = null;
+		Block idsmelt = null;
+		Block idtanknether = null;
+		Block idsmeltnether = null;
 
 		if (this.hasMod()) {
 			try {
@@ -151,6 +195,18 @@ public class TinkerBlockHandler extends ModHandlerBase {
 
 				Field sear = tink.getField("searedBlock");
 				idseared = (Block)sear.get(null);
+
+				Field tank = tink.getField("lavaTank");
+				idtank = (Block)tank.get(null);
+
+				Field smelt = tink.getField("smeltery");
+				idsmelt = (Block)smelt.get(null);
+
+				Field tanknether = tink.getField("lavaTankNether");
+				idtanknether = (Block)tanknether.get(null);
+
+				Field smeltnether = tink.getField("smelteryNether");
+				idsmeltnether = (Block)smeltnether.get(null);
 			}
 			catch (ClassNotFoundException e) {
 				DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
@@ -243,6 +299,10 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		clearGlassID = idglass;
 		clearPaneID = idpane;
 		searedBlockID = idseared;
+		smelteryBlockID = idsmelt;
+		smelteryTankID = idtank;
+		netherSmelteryID = idsmeltnether;
+		netherTankID = idtanknether;
 
 		materialID = idmaterial;
 	}
@@ -296,6 +356,10 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		if (slimeDirt.match(b, meta) || slimeGrass.match(b, meta) || b == slimeWater || b == slimeTallGrass || b == congealedSlime)
 			return true;
 		return ModWoodList.getModWood(b, meta) == ModWoodList.SLIME || ModWoodList.getModWoodFromLeaf(b, meta) == ModWoodList.SLIME;
+	}
+
+	public boolean isSmelteryBlock(Block b) {
+		return b == smelteryBlockID || b == smelteryTankID || b == netherSmelteryID || b == netherTankID;
 	}
 
 }
