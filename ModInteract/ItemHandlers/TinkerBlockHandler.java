@@ -51,9 +51,15 @@ public class TinkerBlockHandler extends ModHandlerBase {
 
 	public enum Materials {
 		SLIMECRYSTAL(1),
+		SEAREDBRICK(2),
 		MOSSBALL(6),
 		LAVACRYSTAL(7),
-		NECROTICBONE(8);
+		NECROTICBONE(8),
+		SLIMECRYSTAL2(17),
+		SILKYCLOTH(25),
+		SILKYJEWEL(26),
+		GLUE(36),
+		NETHERBRICK(37);
 
 		private final int metadata;
 
@@ -70,6 +76,7 @@ public class TinkerBlockHandler extends ModHandlerBase {
 		CONTROLLER(),
 		DRAIN(),
 		BRICK(),
+		NONE(), //does not exist
 		STONE(),
 		COBBLE(),
 		PAVER(), //cubes
@@ -85,8 +92,8 @@ public class TinkerBlockHandler extends ModHandlerBase {
 
 		}
 
-		public ItemStack getItem() {
-			return new ItemStack(instance.smelteryBlockID, 1, this.ordinal());
+		public ItemStack getItem(boolean nether) {
+			return new ItemStack(nether ? instance.netherSmelteryID : instance.smelteryBlockID, 1, this.ordinal());
 		}
 
 		public boolean isBasicBuildingBlock() {
@@ -97,6 +104,24 @@ public class TinkerBlockHandler extends ModHandlerBase {
 				default:
 					return true;
 			}
+		}
+	}
+
+	public enum SmelteryTanks {
+		TANK(0), //The basic ISBRH one
+		GLASS(1), //The full glass block
+		WINDOW(2); //The oval one
+
+		public final int metadata;
+
+		public static final SmelteryTanks[] list = values();
+
+		private SmelteryTanks(int meta) {
+			metadata = meta;
+		}
+
+		public ItemStack getItem(boolean nether) {
+			return new ItemStack(nether ? instance.netherTankID : instance.smelteryTankID, 1, metadata);
 		}
 	}
 

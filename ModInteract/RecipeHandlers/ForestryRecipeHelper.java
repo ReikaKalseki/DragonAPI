@@ -1,14 +1,15 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.RecipeHandlers;
 
+import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 
@@ -43,6 +44,8 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 	private final ItemHashMap<ChancedOutputList> centrifuge = new ItemHashMap();
 	private final ItemHashMap<ImmutablePair<ChancedOutputList, FluidStack>> squeezer = new ItemHashMap();
 
+	private Field centrifugeOutputs;
+
 	private ForestryRecipeHelper() {
 		super();
 
@@ -62,6 +65,10 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 					}
 					centrifuge.put(in, outputs);
 				}
+
+				Class cl = Class.forName("forestry.factory.recipes.CentrifugeRecipe");
+				centrifugeOutputs = cl.getDeclaredField("outputs");
+				centrifugeOutputs.setAccessible(true);
 
 				for (ISqueezerRecipe in : RecipeManagers.squeezerManager.recipes()) {
 					ItemStack[] items = in.getResources();
@@ -162,6 +169,22 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 
 	public ImmutablePair<ChancedOutputList, FluidStack> getSqueezerOutput(ItemStack in) {
 		return squeezer.get(in);
+	}
+
+	/** Chances are in percentages! */
+	public void addOutputToRecipe(ICentrifugeRecipe ir, ItemStack is, float chance) {
+		try {
+			Map<ItemStack, Float> map = (Map<ItemStack, Float>)centrifugeOutputs.get(ir);
+			if (map.containsKey(is))
+				throw new IllegalArgumentException("Item "+is+" already present in recipe!");
+			map.put(is, chance/100F);
+
+			ChancedOutputList c = centrifuge.get(ir.getInput());
+			c.addItem(is, chance);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
