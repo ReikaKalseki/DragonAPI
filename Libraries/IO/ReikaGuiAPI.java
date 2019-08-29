@@ -720,4 +720,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glDisable(GL11.GL_BLEND);
 	}
 
+	public void setZLevel(float z) {
+		zLevel = z;
+	}
+
 }

@@ -1489,4 +1489,22 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		}
 	}
 
+	public static int getCreeperFuse(EntityCreeper e) {
+		NBTTagCompound tag = new NBTTagCompound();
+		e.writeEntityToNBT(tag);
+		return tag.getInteger("Fuse");
+	}
+
+	public static boolean isCreeperCharged(EntityCreeper e) {
+		NBTTagCompound tag = new NBTTagCompound();
+		e.writeEntityToNBT(tag);
+		return tag.getBoolean("powered");
+	}
+
+	public static boolean isPigZombieAngry(EntityPigZombie e) {
+		NBTTagCompound tag = new NBTTagCompound();
+		e.writeEntityToNBT(tag);
+		return tag.getInteger("Anger") > 0;
+	}
+
 }

@@ -170,8 +170,8 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 	public ImmutablePair<ChancedOutputList, FluidStack> getSqueezerOutput(ItemStack in) {
 		return squeezer.get(in);
 	}
-
-	/** Chances are in percentages! */
+	/*
+	/** Chances are in percentages! *//*
 	public void addOutputToRecipe(ICentrifugeRecipe ir, ItemStack is, float chance) {
 		try {
 			Map<ItemStack, Float> map = (Map<ItemStack, Float>)centrifugeOutputs.get(ir);
@@ -186,7 +186,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 			e.printStackTrace();
 		}
 	}
-
+	 */
 	@Override
 	public boolean initializedProperly() {
 		return !centrifuge.isEmpty() && !squeezer.isEmpty();

@@ -65,6 +65,7 @@ import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
+import Reika.DragonRealmCore.ASM.LegacyPatcher;
 
 import cpw.mods.fml.relauncher.FMLInjectionData;
 import cpw.mods.fml.relauncher.FMLLaunchHandler;
@@ -1384,6 +1385,8 @@ public class ReikaASMHelper {
 			int enabledCount = 0;
 			Collection<Class> li = ReikaJavaLibrary.getAllClassesFromPackage(pack);
 			for (Class c : li) {
+				if (c == LegacyPatcher.class)
+					continue;
 				if ((c.getModifiers() & Modifier.ABSTRACT) == 0 && Patcher.class.isAssignableFrom(c)) {
 					if (c.getAnnotation(Deprecated.class) != null)
 						continue;
