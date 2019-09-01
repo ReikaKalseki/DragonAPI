@@ -19,6 +19,7 @@ import net.minecraft.block.BlockDoor;
 import net.minecraft.block.BlockLeavesBase;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockLog;
+import net.minecraft.block.BlockPistonBase;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,6 +41,7 @@ import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Interfaces.Block.SemiUnbreakable;
 import Reika.DragonAPI.Interfaces.Block.SpecialOreBlock;
 import Reika.DragonAPI.Interfaces.Block.Submergeable;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
@@ -493,4 +495,15 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			harvesters.set(null);
 		}
 	}*/
+
+	public static void extendPiston(World world, int x, int y, int z) {
+		BlockPistonBase b = (BlockPistonBase)world.getBlock(x, y, z);
+		int dir = b.getPistonOrientation(world.getBlockMetadata(x, y, z));
+		if (dir != 7) {
+			//b.tryExtend(world, x, y, z, dir);
+			ReikaObfuscationHelper.invoke("tryExtend", b, world, x, y, z, dir);
+			world.setBlockMetadataWithNotify(x, y, z, dir | 8, 2);
+			world.playSoundEffect(x+0.5, y+0.5, z+0.5, "tile.piston.out", 0.5F, world.rand.nextFloat()*0.25F+0.6F);
+		}
+	}
 }

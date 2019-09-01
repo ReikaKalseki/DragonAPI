@@ -18,6 +18,7 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ChunkCoordinates;
@@ -34,6 +35,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent.UpdateFlags;
 import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerationCache;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTIO;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -42,6 +44,20 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import io.netty.buffer.ByteBuf;
 
 public final class Coordinate implements Comparable<Coordinate> {
+
+	public static final NBTIO<Coordinate> nbtHandler = new NBTIO<Coordinate>() {
+
+		@Override
+		public Coordinate createFromNBT(NBTBase nbt) {
+			return Coordinate.readTag((NBTTagCompound)nbt);
+		}
+
+		@Override
+		public NBTBase convertToNBT(Coordinate obj) {
+			return obj.writeToTag();
+		}
+
+	};
 
 	private static final Random rand = new Random();
 

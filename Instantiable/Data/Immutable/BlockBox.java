@@ -78,19 +78,23 @@ public final class BlockBox {
 	}
 
 	public int getSizeX() {
-		return maxX-minX+1;
+		return maxX-minX;
 	}
 
 	public int getSizeY() {
-		return maxY-minY+1;
+		return maxY-minY;
 	}
 
 	public int getSizeZ() {
-		return maxZ-minZ+1;
+		return maxZ-minZ;
 	}
 
 	public int getVolume() {
 		return this.getSizeX()*this.getSizeY()*this.getSizeZ();
+	}
+
+	public int getSurfaceArea() {
+		return 2*this.getSizeX()+2*this.getSizeY()+2*this.getSizeZ();
 	}
 
 	public BlockBox expand(int amt) {
@@ -242,6 +246,19 @@ public final class BlockBox {
 		return new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
+	public BlockBox addCoordinate(int x, int y, int z) {
+		if (isEmpty) {
+			return block(x, y, z);
+		}
+		int minX = Math.min(this.minX, x);
+		int minY = Math.min(this.minY, y);
+		int minZ = Math.min(this.minZ, z);
+		int maxX = Math.max(this.maxX, x+1);
+		int maxY = Math.max(this.maxY, y+1);
+		int maxZ = Math.max(this.maxZ, z+1);
+		return new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
+	}
+
 	public boolean isBlockInside(Coordinate c) {
 		return this.isBlockInside(c.xCoord, c.yCoord, c.zCoord);
 	}
@@ -329,19 +346,6 @@ public final class BlockBox {
 			}
 		}
 		return null;
-	}
-
-	public BlockBox addCoordinate(int x, int y, int z) {
-		if (isEmpty) {
-			return block(x, y, z);
-		}
-		int minX = Math.min(x, this.minX);
-		int minY = Math.min(y, this.minY);
-		int minZ = Math.min(z, this.minZ);
-		int maxX = Math.max(x, this.maxX);
-		int maxY = Math.max(y, this.maxY);
-		int maxZ = Math.max(z, this.maxZ);
-		return new BlockBox(minX, minY, minZ, maxX, maxY, maxZ);
 	}
 
 }

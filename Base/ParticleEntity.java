@@ -42,12 +42,8 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 
 	public ParticleEntity(World world, int x, int y, int z) {
 		super(world);
-		oldBlockX = x;
-		oldBlockY = y;
-		oldBlockZ = z;
-		spawnLocation = new Coordinate(x, y, z);
+		this.spawnAt(x, y, z);
 		this.setSize((float)this.getHitboxSize(), (float)this.getHitboxSize());
-		this.setLocationAndAngles(x+0.5, y+0.5, z+0.5, 0, 0);
 	}
 
 	public ParticleEntity(World world, int x, int y, int z, ForgeDirection dir) {
@@ -58,6 +54,18 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 	public ParticleEntity(World world, int x, int y, int z, CubeDirections dir) {
 		this(world, x, y, z);
 		this.setDirection(dir, true);
+	}
+
+	protected final void spawnAt(Coordinate c) {
+		this.spawnAt(c.xCoord, c.yCoord, c.zCoord);
+	}
+
+	protected final void spawnAt(int x, int y, int z) {
+		oldBlockX = x;
+		oldBlockY = y;
+		oldBlockZ = z;
+		spawnLocation = new Coordinate(x, y, z);
+		this.setLocationAndAngles(x+0.5, y+0.5, z+0.5, 0, 0);
 	}
 
 	@Override
