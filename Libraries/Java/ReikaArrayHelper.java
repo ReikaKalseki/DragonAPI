@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.Java;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -414,9 +415,13 @@ public final class ReikaArrayHelper extends DragonAPICore {
 	}
 
 	public static void shuffleArray(Object[] a) {
+		shuffleArray(a, rand);
+	}
+
+	public static void shuffleArray(Object[] a, Random r) {
 		int mid = a.length / 2;
 		for (int i = mid; i < a.length; i++) {
-			int lo = rand.nextInt(mid);
+			int lo = r.nextInt(mid);
 			Object buffer = a[lo];
 			a[lo] = a[i];
 			a[i] = buffer;

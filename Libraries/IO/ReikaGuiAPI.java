@@ -607,7 +607,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 	public void renderStatic(int minx, int miny, int maxx, int maxy) {
 		for (int i = minx; i <= maxx; i++) {
 			for (int k = miny; k <= maxy; k++) {
-				int br = ReikaRandomHelper.getRandomPlusMinus(127, 127);
+				int br = ReikaRandomHelper.getRandomBetween(0, 255);
 				int color = ReikaColorAPI.GStoHex(br);
 				this.drawRect(i, k, i+1, k+1, 0xff000000 | color);
 			}

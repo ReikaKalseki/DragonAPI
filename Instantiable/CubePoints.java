@@ -1,5 +1,9 @@
 package Reika.DragonAPI.Instantiable;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
@@ -21,7 +25,21 @@ public class CubePoints {
 	public final CubeVertex x1y2z2;
 	public final CubeVertex x2y2z2;
 
+	private final HashMap<String, CubeVertex> vertices = new HashMap();
+
 	public CubePoints(Vec3 x1y1z1, Vec3 x2y1z1, Vec3 x1y1z2, Vec3 x2y1z2, Vec3 x1y2z1, Vec3 x2y2z1, Vec3 x1y2z2, Vec3 x2y2z2) {
+		this.x1y1z1 = new CubeVertex("111", x1y1z1);
+		this.x2y1z1 = new CubeVertex("211", x2y1z1);
+		this.x1y1z2 = new CubeVertex("112", x1y1z2);
+		this.x2y1z2 = new CubeVertex("212", x2y1z2);
+
+		this.x1y2z1 = new CubeVertex("121", x1y2z1);
+		this.x2y2z1 = new CubeVertex("221", x2y2z1);
+		this.x1y2z2 = new CubeVertex("122", x1y2z2);
+		this.x2y2z2 = new CubeVertex("222", x2y2z2);
+	}
+
+	private CubePoints(CubeVertex x1y1z1, CubeVertex x2y1z1, CubeVertex x1y1z2, CubeVertex x2y1z2, CubeVertex x1y2z1, CubeVertex x2y2z1, CubeVertex x1y2z2, CubeVertex x2y2z2) {
 		this.x1y1z1 = new CubeVertex(x1y1z1);
 		this.x2y1z1 = new CubeVertex(x2y1z1);
 		this.x1y1z2 = new CubeVertex(x1y1z2);
@@ -31,6 +49,19 @@ public class CubePoints {
 		this.x2y2z1 = new CubeVertex(x2y2z1);
 		this.x1y2z2 = new CubeVertex(x1y2z2);
 		this.x2y2z2 = new CubeVertex(x2y2z2);
+	}
+
+	public Vec3 getCenter() {
+		Vec3 vec = Vec3.createVectorHelper(0, 0, 0);
+		for (CubeVertex cv : vertices.values()) {
+			vec.xCoord += cv.position.xCoord;
+			vec.yCoord += cv.position.yCoord;
+			vec.zCoord += cv.position.zCoord;
+		}
+		vec.xCoord /= vertices.size();
+		vec.yCoord /= vertices.size();
+		vec.zCoord /= vertices.size();
+		return vec;
 	}
 
 	public void applyOffset(ForgeDirection side, OffsetGroup off) {
@@ -130,6 +161,44 @@ public class CubePoints {
 		x2y2z2.position.zCoord = MathHelper.clamp_double(x2y2z2.position.zCoord, 0, 1);
 	}
 
+	public void expand(double amt) {
+		this.expand(amt, amt, amt);
+	}
+
+	public void expand(double x, double y, double z) {
+		x1y1z1.position.xCoord -= x;
+		x1y1z1.position.yCoord -= y;
+		x1y1z1.position.zCoord -= z;
+
+		x2y1z1.position.xCoord += x;
+		x2y1z1.position.yCoord -= y;
+		x2y1z1.position.zCoord -= z;
+
+		x1y2z1.position.xCoord -= x;
+		x1y2z1.position.yCoord += y;
+		x1y2z1.position.zCoord -= z;
+
+		x2y2z1.position.xCoord += x;
+		x2y2z1.position.yCoord += y;
+		x2y2z1.position.zCoord -= z;
+
+		x1y1z2.position.xCoord -= x;
+		x1y1z2.position.yCoord -= y;
+		x1y1z2.position.zCoord += z;
+
+		x2y1z2.position.xCoord += x;
+		x2y1z2.position.yCoord -= y;
+		x2y1z2.position.zCoord += z;
+
+		x1y2z2.position.xCoord -= x;
+		x1y2z2.position.yCoord += y;
+		x1y2z2.position.zCoord += z;
+
+		x2y2z2.position.xCoord += x;
+		x2y2z2.position.yCoord += y;
+		x2y2z2.position.zCoord += z;
+	}
+
 	public void setSidePosition(ForgeDirection side, double val) {
 		switch(side) {
 			case DOWN:
@@ -171,6 +240,18 @@ public class CubePoints {
 			default:
 				break;
 		}
+	}
+
+	public CubePoints copy() {
+		return new CubePoints(x1y1z1, x2y1z1, x1y1z2, x2y1z2, x1y2z1, x2y2z1, x1y2z2, x2y2z2);
+	}
+
+	public Collection<CubeVertex> getVertices() {
+		return Collections.unmodifiableCollection(vertices.values());
+	}
+
+	public CubeVertex getVertex(String id) {
+		return vertices.get(id);
 	}
 
 	/*
@@ -258,9 +339,16 @@ public class CubePoints {
 	public final class CubeVertex {
 
 		private final Vec3 position;
+		public final String ID;
 
-		private CubeVertex(Vec3 pos) {
+		private CubeVertex(String id, Vec3 pos) {
 			position = pos;
+			ID = id;
+			this.parent().vertices.put(id, this);
+		}
+
+		private CubeVertex(CubeVertex pos) {
+			this(pos.ID, Vec3.createVectorHelper(pos.position.xCoord, pos.position.yCoord, pos.position.zCoord));
 		}
 
 		public double textureU(IIcon icon, ForgeDirection side) {
@@ -308,6 +396,32 @@ public class CubePoints {
 
 		public void drawWithUV(Tessellator v5, ForgeDirection side, double u, double v) {
 			v5.addVertexWithUV(position.xCoord, position.yCoord, position.zCoord, u, v);
+		}
+
+		public Vec3 getOffsetFromCenter() {
+			Vec3 v = this.parent().getCenter();
+			Vec3 v2 = position.subtract(v);
+			return v2;
+		}
+
+		public void offset(double x, double y, double z) {
+			position.xCoord += x;
+			position.yCoord += y;
+			position.zCoord += z;
+		}
+
+		public void setPosition(CubeVertex cv) {
+			this.setPosition(cv.position.xCoord, cv.position.yCoord, cv.position.zCoord);
+		}
+
+		public void setPosition(double x, double y, double z) {
+			position.xCoord = x;
+			position.yCoord = y;
+			position.zCoord = z;
+		}
+
+		private CubePoints parent() {
+			return CubePoints.this;
 		}
 
 	}

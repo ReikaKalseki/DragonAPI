@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -304,6 +304,10 @@ public final class DecimalPosition implements Comparable<DecimalPosition> {
 			sz += pos[i].zCoord;
 		}
 		return new DecimalPosition(sx/n, sy/n, sz/n);
+	}
+
+	public static DecimalPosition getRandomWithin(Coordinate c, Random rand) {
+		return new DecimalPosition(c.xCoord+rand.nextDouble(), c.yCoord+rand.nextDouble(), c.zCoord+rand.nextDouble());
 	}
 
 }

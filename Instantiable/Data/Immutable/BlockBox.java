@@ -348,4 +348,8 @@ public final class BlockBox {
 		return null;
 	}
 
+	public int getLongestEdge() {
+		return ReikaMathLibrary.multiMax(this.getSizeX(), this.getSizeY(), this.getSizeZ());
+	}
+
 }

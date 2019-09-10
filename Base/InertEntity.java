@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -80,6 +80,13 @@ public abstract class InertEntity extends Entity {
 	public final boolean canBeCollidedWith()
 	{
 		return false;
+	}
+
+	@Override
+	protected final boolean func_145771_j(double x, double y, double z) {
+		if (noClip)
+			return true;
+		return super.func_145771_j(x, y, z);
 	}
 
 }
