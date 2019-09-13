@@ -285,4 +285,9 @@ public enum ReikaOreHelper implements OreType {
 		}
 	}
 
+	@Override
+	public String getDisplayName() {
+		return name;
+	}
+
 }

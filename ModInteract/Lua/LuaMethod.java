@@ -1,23 +1,26 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Lua;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 
 import net.minecraft.tileentity.TileEntity;
 
-import Reika.DragonAPI.ModInteract.Lua.Library.LuaFluidColor;
-import Reika.DragonAPI.ModInteract.Lua.Library.LuaGetBlock;
-import Reika.DragonAPI.ModRegistry.PowerTypes;
+import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 import dan200.computercraft.api.lua.LuaException;
 
@@ -26,8 +29,9 @@ public abstract class LuaMethod {
 	public final String displayName;
 	private final Class requiredClass;
 
-	private static final Collection<LuaMethod> methods = new HashSet();
+	private static final HashMap<MethodKey, LuaMethod> methods = new HashMap();
 
+	/*
 	private static final LuaMethod tanks = new LuaGetTanks();
 	private static final LuaMethod readTank = new LuaReadTank();
 	private static final LuaMethod getSlot = new LuaGetSlot();
@@ -48,8 +52,10 @@ public abstract class LuaMethod {
 
 	private static final LuaMethod fluidColor = new LuaFluidColor();
 	private static final LuaMethod getBlock = new LuaGetBlock();
+	 */
 
 	static {
+		/*
 		if (PowerTypes.RF.isLoaded()) {
 			getRFStorage = new LuaGetStoredRF();
 			getRFCapacity = new LuaGetRFCapacity();
@@ -57,7 +63,8 @@ public abstract class LuaMethod {
 		else {
 			getRFStorage = null;
 			getRFCapacity = null;
-		}
+		}*/
+		registerMethods("Reika.DragonAPI.ModInteract.Lua");
 	}
 
 	public LuaMethod(String name, Class requiredParent) {
@@ -65,14 +72,19 @@ public abstract class LuaMethod {
 
 		requiredClass = requiredParent;
 
-		if (methods.contains(this))
+		MethodKey mk = this.getKey();
+		if (methods.containsKey(mk))
 			throw new IllegalArgumentException("This method is a duplicate of one that already exists!");
 		else
-			methods.add(this);
+			methods.put(mk, this);
 	}
 
 	public static final Collection<LuaMethod> getMethods() {
-		return Collections.unmodifiableCollection(methods);
+		return Collections.unmodifiableCollection(methods.values());
+	}
+
+	public static final LuaMethod getMethod(String name, Class c) {
+		return methods.get(new MethodKey(name, c));
 	}
 
 	public static final int getNumberMethods() {
@@ -105,9 +117,37 @@ public abstract class LuaMethod {
 	}
 
 	@Override
+	public final int hashCode() {
+		return displayName.hashCode() ^ requiredClass.hashCode();
+	}
+
+	@Override
 	public final String toString() {
 		String name = requiredClass != null ? requiredClass.getSimpleName() : "Any TileEntity";
 		return displayName+"() for "+name;
+	}
+
+	private final MethodKey getKey() {
+		return new MethodKey(this);
+	}
+
+	public static void registerMethods(String folder) {
+		try {
+			for (Class c : ReikaJavaLibrary.getAllClassesFromPackage(folder, LuaMethod.class, true, true)) {
+				if (c.isAnnotationPresent(ModTileDependent.class)) {
+					String[] vals = ((ModTileDependent)c.getAnnotation(ModTileDependent.class)).value();
+					for (String s : vals) {
+						if (!ReikaASMHelper.checkForClass(s)) {
+							continue;
+						}
+					}
+				}
+				c.newInstance();
+			}
+		}
+		catch (Exception e) {
+			throw new RuntimeException("Could not load LuaMethods!", e);
+		}
 	}
 
 	/** Without "( )" */
@@ -130,6 +170,28 @@ public abstract class LuaMethod {
 			displayName = name;
 		}
 
+	}
+
+	private static class MethodKey {
+
+		private final String name;
+		private final Class parent;
+
+		private MethodKey(LuaMethod m) {
+			this(m.displayName, m.requiredClass);
+		}
+
+		private MethodKey(String s, Class c) {
+			name = s;
+			parent = c;
+		}
+
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.TYPE})
+	public static @interface ModTileDependent {
+		String[] value();
 	}
 
 }

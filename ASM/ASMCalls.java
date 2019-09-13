@@ -21,8 +21,11 @@ import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
+import net.minecraft.village.MerchantRecipe;
+import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -43,11 +46,45 @@ import Reika.DragonAPI.Instantiable.Worldgen.VillageBuilding.PerVillageWeight;
 import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
 import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
+import Reika.DragonAPI.Interfaces.Item.MetadataSpecificTrade;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
+
+	public static MerchantRecipe getMatchingTrade(MerchantRecipeList li, ItemStack is1, ItemStack is2, int idx) {
+		if (idx > 0 && idx < li.size()) {
+			MerchantRecipe rec = (MerchantRecipe)li.get(idx);
+			return matchFirst(rec, is1) && matchSecond(rec, is2) ? rec : null;
+		}
+		else {
+			for (int j = 0; j < li.size(); ++j) {
+				MerchantRecipe ret = (MerchantRecipe)li.get(j);
+				if (matchFirst(ret, is1) && matchSecond(ret, is2)) {
+					return ret;
+				}
+			}
+			return null;
+		}
+	}
+
+	private static boolean matchFirst(MerchantRecipe rec, ItemStack is1) {
+		return matchItem(rec.getItemToBuy(), is1);
+	}
+
+	private static boolean matchSecond(MerchantRecipe rec, ItemStack is2) {
+		if (rec.getSecondItemToBuy() == null) {
+			return is2 == null;
+		}
+		else {
+			return is2 != null && matchItem(rec.getSecondItemToBuy(), is2);
+		}
+	}
+
+	private static boolean matchItem(ItemStack a, ItemStack b) {
+		return a.getItem() == b.getItem() && b.stackSize >= a.stackSize && ((a.getItem() instanceof MetadataSpecificTrade || b.getItem() instanceof MetadataSpecificTrade) ? a.getItemDamage() == b.getItemDamage() : true);
+	}
 
 	public static void preTessellatorStart() {
 		GL11.glAlphaFunc(GL11.GL_GEQUAL, 1/255F);

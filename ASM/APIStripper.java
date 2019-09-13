@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -56,9 +56,6 @@ public class APIStripper implements IClassTransformer {
 	 * When used on a class, methods from referenced interfaces will not be removed <br>
 	 * When using this annotation on methods, ensure you do not switch on an enum inside that method.
 	 * JavaC implementation details means this will cause crashes.
-	 * <p>
-	 * Can also strip on modid using "mod:CoFHCore" as a value <br>
-	 * Can also strip on API using "api:CoFHAPI|energy" as a value
 	 */
 	@Documented
 	@Retention(RetentionPolicy.RUNTIME)

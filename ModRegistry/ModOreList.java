@@ -455,6 +455,11 @@ public enum ModOreList implements OreType {
 		return null;
 	}
 
+	@Override
+	public String getDisplayName() {
+		return displayName;
+	}
+
 	public boolean contains(ItemStack is) {
 		return ReikaItemHelper.collectionContainsItemStack(this.getAllOreBlocks(), is);
 	}

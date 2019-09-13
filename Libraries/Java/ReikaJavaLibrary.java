@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -902,13 +903,19 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	/** Not exactly performant. Do not call this excessively, or ever during the main game loop. */
-	public static Collection<Class> getAllClassesFromPackage(String pack) throws IOException {
+	public static Collection<Class> getAllClassesFromPackage(String pack, Class parent, boolean skipAbstract, boolean skipDeprecated) throws IOException {
 		ClassLoader loader = Thread.currentThread().getContextClassLoader();
 		Collection<Class> li = new ArrayList();
 		for (ClassPath.ClassInfo info : ClassPath.from(loader).getTopLevelClasses()) {
 			if (info.getName().startsWith(pack)) {
 				Class c = info.load();
-				li.add(c);
+				if (parent == null || parent.isAssignableFrom(c)) {
+					if (skipAbstract && (c.getModifiers() & Modifier.ABSTRACT) != 0)
+						continue;
+					if (skipDeprecated && c.isAnnotationPresent(Deprecated.class))
+						continue;
+					li.add(c);
+				}
 			}
 		}
 		return li;

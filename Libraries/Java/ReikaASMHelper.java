@@ -1383,32 +1383,29 @@ public class ReikaASMHelper {
 		try {
 			int patchCount = 0;
 			int enabledCount = 0;
-			Collection<Class> li = ReikaJavaLibrary.getAllClassesFromPackage(pack);
+			Collection<Class> li = ReikaJavaLibrary.getAllClassesFromPackage(pack, Patcher.class, true, true);
 			for (Class c : li) {
 				if (LegacyPatcher.class.isAssignableFrom(c))
 					continue;
-				if ((c.getModifiers() & Modifier.ABSTRACT) == 0 && Patcher.class.isAssignableFrom(c)) {
-					if (c.getAnnotation(Deprecated.class) != null)
-						continue;
-					try {
-						patchCount++;
-						Patcher p = (Patcher)c.newInstance();
-						if (p.isEnabled()) {
-							enabledCount++;
-							String s = !FMLForgePlugin.RUNTIME_DEOBF ? p.deobfName : p.obfName;
-							ret.addValue(s, p);
-						}
-						else {
-							ReikaASMHelper.log("******************************************************************************************");
-							ReikaASMHelper.log("WARNING: ASM TRANSFORMER '"+p+"' HAS BEEN DISABLED. THIS CAN BREAK MANY THINGS.");
-							ReikaASMHelper.log("IF THIS TRANSFORMER HAS BEEN DISABLED WITHOUT GOOD REASON, TURN IT BACK ON IMMEDIATELY!");
-							ReikaASMHelper.log("******************************************************************************************");
-						}
+				try {
+					patchCount++;
+					Patcher p = (Patcher)c.newInstance();
+					if (p.isEnabled()) {
+						enabledCount++;
+						String s = !FMLForgePlugin.RUNTIME_DEOBF ? p.deobfName : p.obfName;
+						ret.addValue(s, p);
 					}
-					catch (Exception e) {
-						throw new RuntimeException("Could not create "+mod+" ASM handler "+c, e);
+					else {
+						ReikaASMHelper.log("******************************************************************************************");
+						ReikaASMHelper.log("WARNING: ASM TRANSFORMER '"+p+"' HAS BEEN DISABLED. THIS CAN BREAK MANY THINGS.");
+						ReikaASMHelper.log("IF THIS TRANSFORMER HAS BEEN DISABLED WITHOUT GOOD REASON, TURN IT BACK ON IMMEDIATELY!");
+						ReikaASMHelper.log("******************************************************************************************");
 					}
 				}
+				catch (Exception e) {
+					throw new RuntimeException("Could not create "+mod+" ASM handler "+c, e);
+				}
+
 			}
 			ReikaASMHelper.log("Registered "+patchCount+" ASM handlers, of which "+enabledCount+" are enabled.");
 		}

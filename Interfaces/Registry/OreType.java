@@ -70,5 +70,6 @@ public interface OreType extends RegistryType {
 	public int ordinal();
 	public String name();
 	public int getDisplayColor();
+	public String getDisplayName();
 
 }

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,9 +12,12 @@ package Reika.DragonAPI.ModInteract.Lua;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import Reika.DragonAPI.ModInteract.Lua.LuaMethod.ModTileDependent;
+
 import cofh.api.energy.IEnergyReceiver;
 import dan200.computercraft.api.lua.LuaException;
 
+@ModTileDependent(value = {"cofh.api.energy.IEnergyProvider", "cofh.api.energy.IEnergyReceiver"})
 public class LuaGetStoredRF extends LuaMethod {
 
 	public LuaGetStoredRF() {

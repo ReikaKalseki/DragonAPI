@@ -12,7 +12,6 @@ package Reika.DragonAPI;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -638,16 +637,14 @@ public class DragonAPIInit extends DragonAPIMod {
 	public void registerCommands(FMLServerStartingEvent evt) {
 		DragonAPICore.log("Server Starting...");
 		try {
-			for (Class c : ReikaJavaLibrary.getAllClassesFromPackage("Reika.DragonAPI.Command")) {
-				if (DragonCommandBase.class.isAssignableFrom(c)) {
-					if ((c.getModifiers() & Modifier.ABSTRACT) != 0 || DragonClientCommand.class.isAssignableFrom(c) || c.isAnnotationPresent(Deprecated.class))
-						continue;
-					try {
-						evt.registerServerCommand((DragonCommandBase)c.newInstance());
-					}
-					catch (Exception e) {
-						throw new RuntimeException("Could not construct command '"+c+"'!");
-					}
+			for (Class c : ReikaJavaLibrary.getAllClassesFromPackage("Reika.DragonAPI.Command", DragonCommandBase.class, true, true)) {
+				if (DragonClientCommand.class.isAssignableFrom(c))
+					continue;
+				try {
+					evt.registerServerCommand((DragonCommandBase)c.newInstance());
+				}
+				catch (Exception e) {
+					throw new RuntimeException("Could not construct command '"+c+"'!");
 				}
 			}
 		}
