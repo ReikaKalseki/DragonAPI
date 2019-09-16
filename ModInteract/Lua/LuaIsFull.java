@@ -14,8 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 
-import dan200.computercraft.api.lua.LuaException;
-
 public class LuaIsFull extends LuaMethod {
 
 	public LuaIsFull() {
@@ -23,7 +21,7 @@ public class LuaIsFull extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		IInventory ii = (IInventory)te;
 		return new Object[]{ReikaInventoryHelper.isFull(ii)};
 	}

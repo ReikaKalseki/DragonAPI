@@ -495,7 +495,9 @@ public final class ReikaNBTHelper extends DragonAPICore {
 
 	public static class BlockConverter implements NBTIO<Block> {
 
-		public BlockConverter() {
+		public static final BlockConverter instance = new BlockConverter();
+
+		private BlockConverter() {
 
 		}
 
@@ -513,7 +515,9 @@ public final class ReikaNBTHelper extends DragonAPICore {
 
 	public static class ItemConverter implements NBTIO<Item> {
 
-		public ItemConverter() {
+		public static final ItemConverter instance = new ItemConverter();
+
+		private ItemConverter() {
 
 		}
 
@@ -528,5 +532,27 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 
 	}
+	/*
+	public static class ItemStackConverter implements NBTIO<ItemStack> {
 
+		public static final ItemStackConverter instance = new ItemStackConverter();
+
+		private ItemStackConverter() {
+
+		}
+
+		@Override
+		public ItemStack createFromNBT(NBTBase nbt) {
+			return ItemStack.loadItemStackFromNBT((NBTTagCompound)nbt);
+		}
+
+		@Override
+		public NBTBase convertToNBT(ItemStack obj) {
+			NBTTagCompound ret = new NBTTagCompound();
+			obj.writeToNBT(ret);
+			return ret;
+		}
+
+	}
+	 */
 }

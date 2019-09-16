@@ -19,6 +19,8 @@ import java.util.HashMap;
 
 import net.minecraft.tileentity.TileEntity;
 
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -91,7 +93,30 @@ public abstract class LuaMethod {
 		return methods.size();
 	}
 
-	public abstract Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException;
+	@ModDependent(ModList.COMPUTERCRAFT)
+	public static Object[] invokeCC(LuaMethod m, TileEntity te, Object[] args) throws LuaException, InterruptedException {
+		try {
+			return m.invoke(te, args);
+		}
+		catch (LuaMethodException e) {
+			throw new LuaException(e.getMessage());
+		}
+	}
+
+	@ModDependent(ModList.OPENCOMPUTERS)
+	public static Object[] invokeOC(LuaMethod m, TileEntity te, Object[] args) throws RuntimeException {
+		try {
+			return m.invoke(te, args);
+		}
+		catch (LuaMethodException e) {
+			throw new RuntimeException(e);
+		}
+		catch (InterruptedException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	protected abstract Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException;
 
 	public abstract String getDocumentation();
 
@@ -192,6 +217,21 @@ public abstract class LuaMethod {
 	@Target({ElementType.TYPE})
 	public static @interface ModTileDependent {
 		String[] value();
+	}
+
+	public final class LuaMethodException extends Exception {
+
+		public LuaMethodException(Exception e)  {
+			super(e);
+		}
+
+		public LuaMethodException(String s, Exception e)  {
+			super(s, e);
+		}
+
+		public LuaMethodException(String s)  {
+			super(s);
+		}
 	}
 
 }

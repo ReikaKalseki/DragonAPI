@@ -909,7 +909,36 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return li;
 	}
 
-
+	public static int getRecipeIngredientCount(IRecipe recipe) {
+		if (recipe instanceof ShapedRecipes) {
+			ShapedRecipes r = (ShapedRecipes)recipe;
+			int ret = 0;
+			for (int i = 0; i < r.recipeItems.length; i++) {
+				if (r.recipeItems[i] != null)
+					ret++;
+			}
+			return ret;
+		}
+		else if (recipe instanceof ShapedOreRecipe) {
+			ShapedOreRecipe so = (ShapedOreRecipe)recipe;
+			Object[] objin = so.getInput();
+			int ret = 0;
+			for (int i = 0; i < objin.length; i++) {
+				if (objin[i] != null)
+					ret++;
+			}
+			return ret;
+		}
+		else if (recipe instanceof ShapelessRecipes) {
+			ShapelessRecipes sr = (ShapelessRecipes)recipe;
+			return sr.recipeItems.size();
+		}
+		else if (recipe instanceof ShapelessOreRecipe) {
+			ShapelessOreRecipe so = (ShapelessOreRecipe)recipe;
+			return so.getRecipeSize();
+		}
+		return -1;
+	}
 
 	public static Object[] getInputArrayCopy(IRecipe ire) {
 		Object[] out = new Object[9];

@@ -14,8 +14,6 @@ import net.minecraft.tileentity.TileEntity;
 
 import Reika.DragonAPI.Base.TileEntityBase;
 
-import dan200.computercraft.api.lua.LuaException;
-
 
 public class LuaGetPlacer extends LuaMethod {
 
@@ -24,7 +22,7 @@ public class LuaGetPlacer extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		TileEntityBase tile = (TileEntityBase)te;
 		EntityPlayer ep = tile.getPlacer();
 		return new Object[]{ep.getCommandSenderName(), ep.getUniqueID()};

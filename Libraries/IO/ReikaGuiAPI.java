@@ -724,4 +724,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 		zLevel = z;
 	}
 
+	public float getZLevel() {
+		return zLevel;
+	}
+
 }

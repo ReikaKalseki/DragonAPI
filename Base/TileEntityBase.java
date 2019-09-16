@@ -821,7 +821,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 
 	@ModDependent(ModList.COMPUTERCRAFT)
 	public Object[] callMethod(IComputerAccess computer, ILuaContext context, int method, Object[] arguments) throws LuaException, InterruptedException {
-		return luaMethods.containsKey(method) ? luaMethods.get(method).invoke(this, arguments) : null;
+		return luaMethods.containsKey(method) ? LuaMethod.invokeCC(luaMethods.get(method), this, arguments) : null;
 	}
 
 	@ModDependent(ModList.COMPUTERCRAFT)
@@ -854,7 +854,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			if (objs[i] instanceof byte[])
 				objs[i] = new String((byte[])objs[i]);
 		}
-		return methodNames.containsKey(method) ? methodNames.get(method).invoke(this, objs) : null;
+		return methodNames.containsKey(method) ? LuaMethod.invokeOC(methodNames.get(method), this, objs) : null;
 	}
 
 	@Override

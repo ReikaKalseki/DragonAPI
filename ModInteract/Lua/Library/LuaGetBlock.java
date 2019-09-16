@@ -13,8 +13,6 @@ import net.minecraft.tileentity.TileEntity;
 
 import Reika.DragonAPI.ModInteract.Lua.LibraryLuaMethod;
 
-import dan200.computercraft.api.lua.LuaException;
-
 
 public class LuaGetBlock extends LibraryLuaMethod {
 
@@ -23,7 +21,7 @@ public class LuaGetBlock extends LibraryLuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		int x = ((Double)args[0]).intValue();
 		int y = ((Double)args[1]).intValue();
 		int z = ((Double)args[2]).intValue();

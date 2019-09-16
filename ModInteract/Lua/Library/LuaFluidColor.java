@@ -16,8 +16,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.ModInteract.Lua.LibraryLuaMethod;
 
-import dan200.computercraft.api.lua.LuaException;
-
 
 public class LuaFluidColor extends LibraryLuaMethod {
 
@@ -26,7 +24,7 @@ public class LuaFluidColor extends LibraryLuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		String name = (String)args[0];
 		Fluid f = FluidRegistry.getFluid(name);
 		if (f == null)

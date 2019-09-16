@@ -14,8 +14,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 
-import dan200.computercraft.api.lua.LuaException;
-
 public class LuaIsTankFull extends LuaMethod {
 
 	public LuaIsTankFull() {
@@ -23,7 +21,7 @@ public class LuaIsTankFull extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaException, InterruptedException {
+	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		IFluidHandler ifl = (IFluidHandler)te;
 		int ordinal = ((Double)args[0]).intValue();
 		FluidTankInfo info = ifl.getTankInfo(ForgeDirection.UP)[ordinal];
