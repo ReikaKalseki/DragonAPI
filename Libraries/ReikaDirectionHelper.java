@@ -253,7 +253,7 @@ public class ReikaDirectionHelper extends DragonAPICore {
 
 	public static enum FanDirections {
 		N(0, -2, 90),
-		NNE(2, -1, 67.5),
+		NNE(1, -2, 67.5),
 		NE(1, -1, 45),
 		ENE(2, -1, 22.5),
 		E(2, 0, 0),
@@ -335,6 +335,10 @@ public class ReikaDirectionHelper extends DragonAPICore {
 
 		public boolean isCardinal() {
 			return directionX == 0 || directionZ == 0;
+		}
+
+		public boolean isOctagonal() {
+			return this.name().length() <= 2;
 		}
 
 		static {

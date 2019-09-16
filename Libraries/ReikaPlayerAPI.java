@@ -65,6 +65,9 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public final class ReikaPlayerAPI extends DragonAPICore {
 
+	@SideOnly(Side.CLIENT)
+	private static GameProfile clientProfile;
+
 	//private static final HashMap<String, FakePlayer> fakePlayers = new HashMap();
 	private static final HashMap<String, UUID> uuidMap = new HashMap();
 
@@ -454,5 +457,12 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	public static void syncCapabilities(EntityPlayer ep) {
 		ep.sendPlayerAbilities(); //it is NOT client-to-server
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static GameProfile getClientProfile() {
+		if (clientProfile == null && DragonAPICore.hasGameLoaded() && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().thePlayer.ticksExisted > 100 && Minecraft.getMinecraft().getSession().getPlayerID() != null)
+			clientProfile = Minecraft.getMinecraft().getSession().func_148256_e();
+		return clientProfile;
 	}
 }

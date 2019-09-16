@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -26,6 +26,8 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.entity.RenderPlayer;
@@ -146,9 +148,10 @@ public final class PlayerSpecificRenderer {
 					GL11.glRotated(22.5, 1, 0, 0);
 					GL11.glTranslated(-0.02, 0.1, -0.05);
 				}
-				//GL11.glFrontFace(GL11.GL_CW);
+				GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+				GL11.glFrontFace(GL11.GL_CW);
 				model.renderBodyParts(ep, tick);
-				//GL11.glFrontFace(GL11.GL_CCW);
+				GL11.glPopAttrib();
 				GL11.glPopMatrix();
 			}
 		}
@@ -159,16 +162,36 @@ public final class PlayerSpecificRenderer {
 		}
 	}
 
+	private static class ModelReikaEars extends ModelRenderer {
+
+		public ModelReikaEars(ModelBase b, int x, int y) {
+			super(b, x, y);
+			this.addBox(3.2F, -5F, 3.5F, 2, 1, 5);
+			this.addBox(-3.2F, -5F, 3.5F, 2, 1, 5);
+			this.addBox(3.2F, -4F, 3.5F, 2, 1, 5);
+			this.addBox(-3.2F, -4F, 3.5F, 2, 1, 5);
+			this.setRotationPoint(-1, -0.5F, -0.2F);
+			rotateAngleX = 35;
+			rotateAngleY = 25; //-25 for R
+			rotateAngleZ = 30; //-30 for R
+
+			//-35, -35, 22 for DR, -35, 35, -22 for DL
+			this.setTextureSize(64, 32);
+		}
+
+	}
+
 	private static final class CustomPlayerRenderer extends RenderPlayer {
 
 		private CustomPlayerRenderer(Render original) {
 			super();
 			renderManager = RenderManager.instance;
+
+			//modelBipedMain.bipedHeadwear = new ModelReikaEars(modelBipedMain, 40, 25);
 		}
 
 		@Override
-		protected void rotateCorpse(EntityLivingBase ep, float par2, float par3, float partialTick)
-		{
+		protected void rotateCorpse(EntityLivingBase ep, float par2, float par3, float partialTick) {
 			super.rotateCorpse(ep, par2, par3, partialTick);
 			if (ep.isPotionActive(Potion.invisibility))
 				return;
