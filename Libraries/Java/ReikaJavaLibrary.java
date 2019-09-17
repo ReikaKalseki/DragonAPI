@@ -735,7 +735,7 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	}
 
 	public static <E> E getRandomCollectionEntry(Random rand, Collection<E> c) {
-		return c.isEmpty() ? null : c instanceof List ? getRandomListEntry(rand, (List<E>)c) : new ArrayList<E>(c).get(rand.nextInt(c.size()));
+		return c.isEmpty() ? null : c instanceof List ? getRandomListEntry(rand, (List<E>)c) : getRandomListEntry(rand, new ArrayList<E>(c));
 	}
 
 	public static <E> E getAndRemoveRandomCollectionEntry(Random rand, Collection<E> c) {

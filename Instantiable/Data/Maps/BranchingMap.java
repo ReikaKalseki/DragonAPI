@@ -14,64 +14,56 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
-public class SequenceMap<V> {
+
+public class BranchingMap<V> {
 
 	//private final ObjectWeb<V> data = new ObjectWeb();
 
 	private final HashMap<V, TreeEntry<V>> data = new HashMap();
 
-	public SequenceMap() {
+	public BranchingMap() {
 
 	}
 
-	public Collection<V> getParents(V obj) {
-		TreeEntry t = data.get(obj);
-		return t != null ? Collections.unmodifiableCollection(t.parents) : null;
+	public V getParent(V obj) {
+		TreeEntry<V> t = data.get(obj);
+		return t != null && t.parent != null ? t.parent.value : null;
 	}
 
 	public Collection<V> getChildren(V obj) {
-		TreeEntry t = data.get(obj);
-		return t != null ? Collections.unmodifiableCollection(t.children) : null;
-	}
-
-	public Collection<V> getRecursiveParents(V obj) {
-		Collection c = new ArrayList();
-		TreeEntry<V> tree = data.get(obj);
-		if (tree != null) {
-			for (V par : tree.parents) {
-				c.add(par);
-				c.addAll(this.getRecursiveParents(par));
-			}
+		TreeEntry<V> t = data.get(obj);
+		if (t == null)
+			return null;
+		ArrayList<V> ret = new ArrayList();
+		for (TreeEntry<V> c : t.children) {
+			ret.add(c.value);
 		}
-		return c;
+		return ret;
 	}
 
 	public Collection<V> getRecursiveChildren(V obj) {
-		Collection c = new ArrayList();
-		TreeEntry<V> tree = data.get(obj);
+		return this.getRecursiveChildren(data.get(obj));
+	}
+
+	private Collection<V> getRecursiveChildren(TreeEntry<V> tree) {
+		Collection<V> c = new ArrayList();
 		if (tree != null) {
-			for (V par : tree.children) {
-				c.add(par);
+			for (TreeEntry<V> par : tree.children) {
+				c.add(par.value);
 				c.addAll(this.getRecursiveChildren(par));
 			}
 		}
 		return c;
 	}
 
-	public void addParent(V obj, V parent) {
-		this.addParent(obj, parent, true);
-	}
-
-	public void addChild(V obj, V child) {
-		this.addChild(obj, child, true);
-	}
-
 	public void addChildless(V obj) {
-		data.put(obj, new TreeEntry());
+		data.put(obj, new TreeEntry(obj));
 	}
 	/*
 	public void addOrphan(V obj) {
@@ -88,30 +80,18 @@ public class SequenceMap<V> {
 		return null;
 	}
 	 */
-	private void addParent(V obj, V parent, boolean cross) {
-		TreeEntry tree = this.data.get(obj);
-		if (tree == null) {
-			tree = new TreeEntry();
-			data.put(obj, tree);
-		}
-		tree.parents.add(parent);
-		if (cross)
-			this.addChild(parent, obj, false);
-	}
 
-	private void addChild(V obj, V child, boolean cross) {
-		TreeEntry tree = this.data.get(obj);
+	public void addChild(V obj, V child) {
+		TreeEntry<V> tree = this.data.get(obj);
 		if (tree == null) {
-			tree = new TreeEntry();
+			tree = new TreeEntry(obj);
 			data.put(obj, tree);
 		}
-		tree.children.add(child);
-		if (cross)
-			this.addParent(child, obj, false);
+		data.put(child, tree.addChild(child));
 	}
 
 	public boolean containsStep(V p1, V p2) {
-		TreeEntry tree = this.data.get(p1);
+		TreeEntry<V> tree = this.data.get(p1);
 		return tree != null && tree.children.contains(p2);
 	}
 
@@ -120,8 +100,8 @@ public class SequenceMap<V> {
 	}
 
 	public boolean hasElementAsChild(V obj) {
-		for (TreeEntry e : data.values()) {
-			if (e.children.contains(obj))
+		for (TreeEntry<V> e : data.values()) {
+			if (e.containsChild(obj))
 				return true;
 		}
 		return false;
@@ -138,7 +118,7 @@ public class SequenceMap<V> {
 	public Collection valueSet() {
 		Collection<V> values = new ArrayList();
 		for (TreeEntry<V> t : data.values()) {
-			values.addAll(t.children);
+			values.addAll(t.getChildValues());
 		}
 		return values;
 	}
@@ -152,26 +132,62 @@ public class SequenceMap<V> {
 		return values;
 	}
 
+	/** Only works for nodes which exist as parents! */
+	public LinkedList<V> getPathTo(V obj) {
+		LinkedList<V> ret = new LinkedList();
+		TreeEntry<V> e = this.data.get(obj);
+		while (e != null) {
+			ret.add(e.value);
+			e = e.parent;
+		}
+		Collections.reverse(ret);
+		return ret;
+	}
+
 	private static class TreeEntry<V> {
 
-		private Collection<V> parents = new ArrayList();
-		private Collection<V> children = new ArrayList();
+		private TreeEntry<V> parent;
+		private Collection<TreeEntry<V>> children = new ArrayList();
+		public final V value;
 
-		private TreeEntry() {
+		private TreeEntry(V val) {
+			this.value = val;
+		}
 
+		private TreeEntry<V> addChild(V c) {
+			TreeEntry ret = new TreeEntry(c);
+			ret.parent = this;
+			this.children.add(ret);
+			return ret;
+		}
+
+		private boolean containsChild(V c) {
+			for (TreeEntry<V> e : this.children) {
+				if (e.value.equals(c))
+					return true;
+			}
+			return false;
+		}
+
+		private Collection<V> getChildValues() {
+			Collection<V> c = new ArrayList();
+			for (TreeEntry<V> e : this.children) {
+				c.add(e.value);
+			}
+			return c;
 		}
 
 	}
 
 	public static class Topology<V> {
 
-		private final SequenceMap<V> map;
+		private final BranchingMap<V> map;
 		private final HashMap<V, Integer> depths = new HashMap();
 		private final MultiMap<Integer, V> depthInverse = new MultiMap();
 
 		private int maxDepth = 0;
 
-		private Topology(SequenceMap m) {
+		private Topology(BranchingMap m) {
 			map = m;
 			this.calculateDepths();
 		}
@@ -189,16 +205,14 @@ public class SequenceMap<V> {
 				while (it.hasNext()) {
 					V obj = it.next();
 					boolean locchange = false;
-					Collection<V> par = this.getParents(obj);
-					for (V p : par) {
-						int o = depths.get(obj);
-						int d = depths.get(p)+1;
-						if (d > o) {
-							depths.put(obj, d);
-							maxDepth = Math.max(maxDepth, d);
-							change = true;
-							locchange = true;
-						}
+					V par = this.getParent(obj);
+					int o = depths.get(obj);
+					int d = par == null ? 0 : depths.get(par)+1;
+					if (d > o) {
+						depths.put(obj, d);
+						maxDepth = Math.max(maxDepth, d);
+						change = true;
+						locchange = true;
 					}
 					if (!locchange)
 						it.remove();
@@ -210,10 +224,6 @@ public class SequenceMap<V> {
 			}
 		}
 
-		public int getNumberParents(V obj) {
-			return map.data.get(obj).parents.size();
-		}
-
 		public int getNumberChildren(V obj) {
 			return map.data.get(obj).children.size();
 		}
@@ -222,8 +232,8 @@ public class SequenceMap<V> {
 			return map.getChildren(obj);
 		}
 
-		public Collection<V> getParents(V obj) {
-			return map.getParents(obj);
+		public V getParent(V obj) {
+			return map.getParent(obj);
 		}
 
 		public Map<V, Integer> getDepthMap() {
@@ -245,13 +255,32 @@ public class SequenceMap<V> {
 
 	}
 
+	private Collection<TreeEntry<V>> getRoots() {
+		Collection<TreeEntry<V>> ret = new ArrayList();
+		for (TreeEntry<V> e : data.values()) {
+			if (e.parent == null) {
+				ret.add(e);
+			}
+		}
+		return ret;
+	}
+
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (V v : data.keySet()) {
-			TreeEntry<V> e = data.get(v);
-			if (e.parents.isEmpty())
-				sb.append(this.getKeyString(v));
+		sb.append("Branching map:\n");
+		for (TreeEntry<V> v : this.getRoots()) {
+			if (v != null)
+				sb.append(this.getString(v, 0));
+		}
+		return sb.toString();
+	}
+
+	private String getString(TreeEntry<V> e, int depth) {
+		StringBuilder sb = new StringBuilder();
+		sb.append(ReikaStringParser.getNOf(" ", 4*depth)+e.value+"\n");
+		for (TreeEntry<V> e2 : e.children) {
+			sb.append(this.getString(e2, depth+1));
 		}
 		return sb.toString();
 	}
@@ -261,8 +290,8 @@ public class SequenceMap<V> {
 		TreeEntry<V> e = data.get(v);
 		sb.append(v);
 		sb.append("={");
-		for (V in : e.children) {
-			sb.append(this.getKeyString(in));
+		for (TreeEntry<V> in : e.children) {
+			sb.append(this.getKeyString(in.value));
 		}
 		sb.append("}");
 		return sb.toString();
