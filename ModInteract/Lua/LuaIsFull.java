@@ -21,7 +21,7 @@ public class LuaIsFull extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
+	protected Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		IInventory ii = (IInventory)te;
 		return new Object[]{ReikaInventoryHelper.isFull(ii)};
 	}

@@ -24,7 +24,7 @@ public class LuaFluidColor extends LibraryLuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
+	protected Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		String name = (String)args[0];
 		Fluid f = FluidRegistry.getFluid(name);
 		if (f == null)

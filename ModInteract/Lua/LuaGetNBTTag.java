@@ -31,7 +31,7 @@ public class LuaGetNBTTag extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
+	protected Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		NBTTagCompound nbt = new NBTTagCompound();
 		te.writeToNBT(nbt);
 		Object o = null;

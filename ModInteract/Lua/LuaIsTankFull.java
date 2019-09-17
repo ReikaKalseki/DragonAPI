@@ -21,7 +21,7 @@ public class LuaIsTankFull extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
+	protected Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		IFluidHandler ifl = (IFluidHandler)te;
 		int ordinal = ((Double)args[0]).intValue();
 		FluidTankInfo info = ifl.getTankInfo(ForgeDirection.UP)[ordinal];

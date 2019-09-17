@@ -24,7 +24,7 @@ public class LuaGetRFCapacity extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
+	protected Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		return new Object[]{((IEnergyReceiver)te).getMaxEnergyStored(ForgeDirection.valueOf(((String)args[0]).toUpperCase()))};
 	}
 

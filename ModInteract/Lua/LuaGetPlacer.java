@@ -22,7 +22,7 @@ public class LuaGetPlacer extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
+	protected Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		TileEntityBase tile = (TileEntityBase)te;
 		EntityPlayer ep = tile.getPlacer();
 		return new Object[]{ep.getCommandSenderName(), ep.getUniqueID()};

@@ -22,7 +22,7 @@ public class LuaPrintInv extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
+	protected Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		ArrayList<String> li = new ArrayList();
 		IInventory ii = (IInventory) te;
 		for (int i = 0; i < ii.getSizeInventory(); i++) {

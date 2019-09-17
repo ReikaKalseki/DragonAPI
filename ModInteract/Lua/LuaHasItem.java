@@ -23,7 +23,7 @@ public class LuaHasItem extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
+	protected Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		IInventory ii = (IInventory) te;
 		boolean flag = false;
 		switch(args.length) {

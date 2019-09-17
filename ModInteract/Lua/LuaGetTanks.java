@@ -23,7 +23,7 @@ public class LuaGetTanks extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
+	protected Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		IFluidHandler ifl = (IFluidHandler)te;
 		ArrayList<FluidTankInfo> li = new ArrayList();
 		for (int i = 0; i < 6*0+1; i++) {

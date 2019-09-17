@@ -20,7 +20,7 @@ public class LuaGetSlot extends LuaMethod {
 	}
 
 	@Override
-	public Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
+	protected Object[] invoke(TileEntity te, Object[] args) throws LuaMethodException, InterruptedException {
 		int slot = ((Double)args[0]).intValue();
 		IInventory ii = (IInventory)te;
 		ItemStack is = ii.getStackInSlot(slot);
