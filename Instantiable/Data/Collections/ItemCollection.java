@@ -2,6 +2,7 @@ package Reika.DragonAPI.Instantiable.Data.Collections;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 
 import net.minecraft.item.ItemStack;
@@ -86,6 +87,23 @@ public class ItemCollection {
 				break;
 		}
 		return ret;
+	}
+
+	public Collection<ItemStack> getItems() {
+		return Collections.unmodifiableCollection(data);
+	}
+
+	public void removeItem(ItemStack is) {
+		data.remove(is);
+	}
+
+	public void clearEmpties() {
+		Iterator<ItemStack> it = data.iterator();
+		while (it.hasNext()) {
+			ItemStack is = it.next();
+			if (is.stackSize <= 0)
+				it.remove();
+		}
 	}
 
 }
