@@ -114,6 +114,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
@@ -516,7 +517,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (ent instanceof EntityTNTPrimed)
 			return 2700; //2.7 g/cc
 		if (ent instanceof EntityFallingBlock)
-			return 2000; //2 g/cc
+			return ReikaPhysicsHelper.getBlockDensity(((EntityFallingBlock)ent).func_145805_f()); //2 g/cc
 		return 100;
 	}
 

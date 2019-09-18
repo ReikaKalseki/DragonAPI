@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -39,6 +39,12 @@ public class CountMap<V> {
 		int next = has+num;
 		this.set(key, next);
 		total += num;
+	}
+
+	public void increment(CountMap<V> map) {
+		for (V val : map.data.keySet()) {
+			this.increment(val, map.data.get(val));
+		}
 	}
 
 	public void set(V key, int num) {

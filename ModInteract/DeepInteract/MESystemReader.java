@@ -13,6 +13,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.IdentityHashMap;
@@ -73,6 +75,15 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 	private static Method getNetworks;
 
 	private static Collection<MESystemEffect> systemEffects = new ArrayList();
+
+	private static final Comparator<IAEItemStack> sizeSorter = new Comparator<IAEItemStack>() {
+
+		@Override
+		public int compare(IAEItemStack o1, IAEItemStack o2) {
+			return -Long.compare(o1.getStackSize(), o2.getStackSize());
+		}
+
+	};
 
 	private final IGridNode node;
 	private final BaseActionSource actionSource;
@@ -232,21 +243,34 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 		return ei != null ? ei.amount : 0;
 	}
 
-	/** Returns how many items removed. But Fuzzy! :D */
-	public ExtractedItem removeItemFuzzy(ItemStack is, boolean simulate, FuzzyMode fz, boolean oredict, boolean nbt) {
+	/** Returns how many items removed. But Fuzzy! :D
+	 * @param allowMultiple */
+	public ExtractedItemGroup removeItemFuzzy(ItemStack is, boolean simulate, FuzzyMode fz, boolean oredict, boolean nbt, boolean allowMultiple) {
 		IMEMonitor<IAEItemStack> mon = this.getStorage();
 		IAEItemStack ae = this.createAEStack(is);
 		Collection<IAEItemStack> c = this.getFuzzyItemList(is, fz);
-		IAEItemStack most = null;
+		ArrayList<IAEItemStack> li = new ArrayList();
 		for (IAEItemStack iae : c) {
-			if ((most == null || iae.getStackSize() >= most.getStackSize()) && (oredict || is.getItem() == iae.getItem()) && (!nbt || ReikaNBTHelper.areNBTTagsEqual(is.stackTagCompound, (iae.hasTagCompound() ? iae.getTagCompound().getNBTTagCompoundCopy() : null)))) {
-				most = iae;
+			if ((oredict || is.getItem() == iae.getItem()) && (!nbt || ReikaNBTHelper.areNBTTagsEqual(is.stackTagCompound, (iae.hasTagCompound() ? iae.getTagCompound().getNBTTagCompoundCopy() : null)))) {
+				li.add(iae.copy());
 			}
 		}
-		if (most == null)
-			return null;
-		most.setStackSize(is.stackSize);
-		return most != null ? this.extract(most, simulate) : null;
+		Collections.sort(li, sizeSorter);
+		int wanted = is.stackSize;
+		ExtractedItemGroup ret = new ExtractedItemGroup();
+		for (IAEItemStack iae : li) {
+			long amt = Math.min(wanted, iae.getStackSize());
+			iae.setStackSize(amt);
+			ExtractedItem ei = this.extract(iae, simulate);
+			ret.addItem(ei);
+			long has = Math.min(iae.getStackSize(), ei.amount);
+			wanted -= has;
+			if (wanted <= 0)
+				break;
+			if (!allowMultiple)
+				break;
+		}
+		return ret.isEmpty() ? null : ret;
 	}
 
 	private Collection<IAEItemStack> getFuzzyItemList(ItemStack is, FuzzyMode fz) {
@@ -287,8 +311,8 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 	}
 
 	public long getFuzzyItemCount(ItemStack is, FuzzyMode fz, boolean ore, boolean nbt) {
-		ExtractedItem ei = this.removeItemFuzzy(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true, fz, ore, nbt);
-		return ei != null ? ei.amount : 0;
+		ExtractedItemGroup ei = this.removeItemFuzzy(ReikaItemHelper.getSizedItemStack(is, Integer.MAX_VALUE), true, fz, ore, nbt, true);
+		return ei != null ? ei.count() : 0;
 	}
 
 	public void triggerFuzzyCrafting(World world, ItemStack is, long amt, ICraftingCallback callback, CraftCompleteCallback callback2) {
@@ -691,17 +715,17 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 			return 0;
 		}
 
-		public ExtractedItem removeItems(MESystemReader net, ItemStack is, boolean simulate) {
+		public ExtractedItemGroup removeItems(MESystemReader net, ItemStack is, boolean simulate, boolean allowMultiple) {
 			switch(this) {
 				case EXACT:
 					long amt = net.removeItem(is, simulate, true);
-					return amt != 0 ? new ExtractedItem(is, amt) : null;
+					return amt != 0 ? new ExtractedItemGroup(new ExtractedItem(is, amt)) : null;
 				case FUZZY:
-					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, false, true);
+					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, false, true, allowMultiple);
 				case FUZZYORE:
-					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, true, true);
+					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, true, true, allowMultiple);
 				case FUZZYNBT:
-					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, true, false);
+					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, true, false, allowMultiple);
 			}
 			return null;
 		}
@@ -742,6 +766,51 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 
 		public ItemStack getItem() {
 			return item.copy();
+		}
+
+	}
+
+	public static final class ExtractedItemGroup {
+
+		private final ArrayList<ExtractedItem> items = new ArrayList();
+
+		private ExtractedItemGroup() {
+
+		}
+
+		private ExtractedItemGroup(ExtractedItem... li) {
+			for (ExtractedItem ei : li)
+				this.addItem(ei);
+		}
+
+		private void addItem(ExtractedItem ei) {
+			items.add(ei);
+		}
+
+		public long count() {
+			long ret = 0;
+			for (ExtractedItem ei : items) {
+				ret += ei.amount;
+			}
+			return ret;
+		}
+
+		public boolean isEmpty() {
+			return items.isEmpty();
+		}
+
+		public ExtractedItem getBiggest() {
+			ExtractedItem ret = null;
+			for (ExtractedItem ei : items) {
+				if (ret == null || ei.amount > ret.amount) {
+					ret = ei;
+				}
+			}
+			return ret;
+		}
+
+		public Collection<ExtractedItem> getItems() {
+			return Collections.unmodifiableCollection(items);
 		}
 
 	}

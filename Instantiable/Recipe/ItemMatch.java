@@ -19,6 +19,8 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.oredict.OreDictionary;
 
@@ -27,6 +29,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Libraries.ReikaFluidHelper;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -40,6 +43,11 @@ public class ItemMatch {
 
 	private ItemMatch() {
 
+	}
+
+	private ItemMatch(HashSet<KeyedItemStack> set, ArrayList<ItemStack> li) {
+		items.addAll(set);
+		displayList.addAll(li);
 	}
 
 	public ItemMatch(Block b) {
@@ -182,6 +190,44 @@ public class ItemMatch {
 		else {
 			return false;
 		}
+	}
+
+	public void writeToNBT(NBTTagCompound NBT) {
+		NBTTagList li = new NBTTagList();
+		for (KeyedItemStack ks : items) {
+			NBTTagCompound tag = new NBTTagCompound();
+			ks.writeToNBT(tag);
+			li.appendTag(tag);
+		}
+		NBT.setTag("items", li);
+
+		li = new NBTTagList();
+		for (ItemStack is : displayList) {
+			NBTTagCompound tag = new NBTTagCompound();
+			is.writeToNBT(tag);
+			li.appendTag(tag);
+		}
+		NBT.setTag("display", li);
+	}
+
+	public static ItemMatch readFromNBT(NBTTagCompound NBT) {
+		ArrayList<ItemStack> dis = new ArrayList();
+		HashSet<KeyedItemStack> set = new HashSet();
+		NBTTagList li = NBT.getTagList("items", NBTTypes.COMPOUND.ID);
+		for (Object o : li.tagList) {
+			NBTTagCompound tag = (NBTTagCompound)o;
+			KeyedItemStack ks = KeyedItemStack.readFromNBT(tag);
+			set.add(ks);
+		}
+
+		li = NBT.getTagList("display", NBTTypes.COMPOUND.ID);
+		for (Object o : li.tagList) {
+			NBTTagCompound tag = (NBTTagCompound)o;
+			ItemStack is = ItemStack.loadItemStackFromNBT(tag);
+			dis.add(is);
+		}
+
+		return new ItemMatch(set, dis);
 	}
 
 }
