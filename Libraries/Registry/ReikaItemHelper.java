@@ -89,94 +89,74 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final ItemStack orangeDye = new ItemStack(Items.dye, 1, 14);
 	public static final ItemStack bonemeal = new ItemStack(Items.dye, 1, 15);
 
-	public static final ItemStack blackWool = new ItemStack(Blocks.wool, 1, 15);
-	public static final ItemStack redWool = new ItemStack(Blocks.wool, 1, 14);
-	public static final ItemStack greenWool = new ItemStack(Blocks.wool, 1, 13);
-	public static final ItemStack brownWool = new ItemStack(Blocks.wool, 1, 12);
-	public static final ItemStack blueWool = new ItemStack(Blocks.wool, 1, 11);
-	public static final ItemStack purpleWool = new ItemStack(Blocks.wool, 1, 10);
-	public static final ItemStack cyanWool = new ItemStack(Blocks.wool, 1, 9);
-	public static final ItemStack lgrayWool = new ItemStack(Blocks.wool, 1, 8);
-	public static final ItemStack grayWool = new ItemStack(Blocks.wool, 1, 7);
-	public static final ItemStack pinkWool = new ItemStack(Blocks.wool, 1, 6);
-	public static final ItemStack limeWool = new ItemStack(Blocks.wool, 1, 5);
-	public static final ItemStack yellowWool = new ItemStack(Blocks.wool, 1, 4);
-	public static final ItemStack lblueWool = new ItemStack(Blocks.wool, 1, 3);
-	public static final ItemStack magentaWool = new ItemStack(Blocks.wool, 1, 2);
-	public static final ItemStack orangeWool = new ItemStack(Blocks.wool, 1, 1);
-	public static final ItemStack whiteWool = new ItemStack(Blocks.wool, 1, 0);
+	public static final BlockKey blackWool = new BlockKey(Blocks.wool, 15);
+	public static final BlockKey redWool = new BlockKey(Blocks.wool, 14);
+	public static final BlockKey greenWool = new BlockKey(Blocks.wool, 13);
+	public static final BlockKey brownWool = new BlockKey(Blocks.wool, 12);
+	public static final BlockKey blueWool = new BlockKey(Blocks.wool, 11);
+	public static final BlockKey purpleWool = new BlockKey(Blocks.wool, 10);
+	public static final BlockKey cyanWool = new BlockKey(Blocks.wool, 9);
+	public static final BlockKey lgrayWool = new BlockKey(Blocks.wool, 8);
+	public static final BlockKey grayWool = new BlockKey(Blocks.wool, 7);
+	public static final BlockKey pinkWool = new BlockKey(Blocks.wool, 6);
+	public static final BlockKey limeWool = new BlockKey(Blocks.wool, 5);
+	public static final BlockKey yellowWool = new BlockKey(Blocks.wool, 4);
+	public static final BlockKey lblueWool = new BlockKey(Blocks.wool, 3);
+	public static final BlockKey magentaWool = new BlockKey(Blocks.wool, 2);
+	public static final BlockKey orangeWool = new BlockKey(Blocks.wool, 1);
+	public static final BlockKey whiteWool = new BlockKey(Blocks.wool, 0);
 
-	public static final ItemStack stoneBricks = new ItemStack(Blocks.stonebrick, 1, 0);
-	public static final ItemStack mossyBricks = new ItemStack(Blocks.stonebrick, 1, 1);
-	public static final ItemStack crackBricks = new ItemStack(Blocks.stonebrick, 1, 2);
-	public static final ItemStack circleBricks = new ItemStack(Blocks.stonebrick, 1, 3);
+	public static final BlockKey stoneBricks = new BlockKey(Blocks.stonebrick, 0);
+	public static final BlockKey mossyBricks = new BlockKey(Blocks.stonebrick, 1);
+	public static final BlockKey crackBricks = new BlockKey(Blocks.stonebrick, 2);
+	public static final BlockKey circleBricks = new BlockKey(Blocks.stonebrick, 3);
 
-	public static final ItemStack sandstone = new ItemStack(Blocks.sandstone, 1, 0);
-	public static final ItemStack carvedSandstone = new ItemStack(Blocks.sandstone, 1, 1);
-	public static final ItemStack smoothSandstone = new ItemStack(Blocks.sandstone, 1, 2);
+	public static final BlockKey sandstone = new BlockKey(Blocks.sandstone, 0);
+	public static final BlockKey carvedSandstone = new BlockKey(Blocks.sandstone, 1);
+	public static final BlockKey smoothSandstone = new BlockKey(Blocks.sandstone, 2);
 
-	public static final ItemStack quartz = new ItemStack(Blocks.quartz_block, 1, 0);
-	public static final ItemStack carvedQuartz = new ItemStack(Blocks.quartz_block, 1, 1);
-	public static final ItemStack columnQuartz = new ItemStack(Blocks.quartz_block, 1, 2);
+	public static final BlockKey quartz = new BlockKey(Blocks.quartz_block, 0);
+	public static final BlockKey carvedQuartz = new BlockKey(Blocks.quartz_block, 1);
+	public static final BlockKey columnQuartz = new BlockKey(Blocks.quartz_block, 2);
 
-	/*
-	public static final ItemStack oakLog = new ItemStack(Blocks.log, 1, 0);
-	public static final ItemStack spruceLog = new ItemStack(Blocks.log, 1, 1);
-	public static final ItemStack birchLog = new ItemStack(Blocks.log, 1, 2);
-	public static final ItemStack jungleLog = new ItemStack(Blocks.log, 1, 3);
-	public static final ItemStack acaciaLog = new ItemStack(Blocks.log2, 1, 0);
-	public static final ItemStack darkOakLog = new ItemStack(Blocks.log2, 1, 1);
-	public static final ItemStack oakLeaves = new ItemStack(Blocks.leaves, 1, 0);
-	public static final ItemStack spruceLeaves = new ItemStack(Blocks.leaves, 1, 1);
-	public static final ItemStack birchLeaves = new ItemStack(Blocks.leaves, 1, 2);
-	public static final ItemStack jungleLeaves = new ItemStack(Blocks.leaves, 1, 3);
-	public static final ItemStack acaciaLeaves = new ItemStack(Blocks.leaves2, 1, 0);
-	public static final ItemStack darkOakLeaves = new ItemStack(Blocks.leaves2, 1, 1);
-	public static final ItemStack oakSapling = new ItemStack(Blocks.sapling, 1, 0);
-	public static final ItemStack spruceSapling = new ItemStack(Blocks.sapling, 1, 1);
-	public static final ItemStack birchSapling = new ItemStack(Blocks.sapling, 1, 2);
-	public static final ItemStack jungleSapling = new ItemStack(Blocks.sapling, 1, 3);
-	public static final ItemStack acaciaSapling = new ItemStack(Blocks.sapling, 1, 4);
-	public static final ItemStack darkOakSapling = new ItemStack(Blocks.sapling, 1, 5);
-	 */
-	public static final ItemStack oakWood = new ItemStack(Blocks.planks, 1, 0);
-	public static final ItemStack spruceWood = new ItemStack(Blocks.planks, 1, 1);
-	public static final ItemStack birchWood = new ItemStack(Blocks.planks, 1, 2);
-	public static final ItemStack jungleWood = new ItemStack(Blocks.planks, 1, 3);
-	public static final ItemStack acaciaWood = new ItemStack(Blocks.planks, 1, 4);
-	public static final ItemStack darkOakWood = new ItemStack(Blocks.planks, 1, 5);
+	public static final BlockKey oakWood = new BlockKey(Blocks.planks, 0);
+	public static final BlockKey spruceWood = new BlockKey(Blocks.planks, 1);
+	public static final BlockKey birchWood = new BlockKey(Blocks.planks, 2);
+	public static final BlockKey jungleWood = new BlockKey(Blocks.planks, 3);
+	public static final BlockKey acaciaWood = new BlockKey(Blocks.planks, 4);
+	public static final BlockKey darkOakWood = new BlockKey(Blocks.planks, 5);
 
-	public static final ItemStack stoneSlab = new ItemStack(Blocks.stone_slab, 1, 0);
-	public static final ItemStack sandstoneSlab = new ItemStack(Blocks.stone_slab, 1, 1);
-	public static final ItemStack cobbleSlab = new ItemStack(Blocks.stone_slab, 1, 3);
-	public static final ItemStack brickSlab = new ItemStack(Blocks.stone_slab, 1, 4);
-	public static final ItemStack stonebrickSlab = new ItemStack(Blocks.stone_slab, 1, 5);
-	public static final ItemStack netherSlab = new ItemStack(Blocks.stone_slab, 1, 6);
-	public static final ItemStack quartzSlab = new ItemStack(Blocks.stone_slab, 1, 7);
+	public static final BlockKey stoneSlab = new BlockKey(Blocks.stone_slab, 0);
+	public static final BlockKey sandstoneSlab = new BlockKey(Blocks.stone_slab, 1);
+	public static final BlockKey cobbleSlab = new BlockKey(Blocks.stone_slab, 3);
+	public static final BlockKey brickSlab = new BlockKey(Blocks.stone_slab, 4);
+	public static final BlockKey stonebrickSlab = new BlockKey(Blocks.stone_slab, 5);
+	public static final BlockKey netherSlab = new BlockKey(Blocks.stone_slab, 6);
+	public static final BlockKey quartzSlab = new BlockKey(Blocks.stone_slab, 7);
 
-	public static final ItemStack stoneDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 0);
-	public static final ItemStack sandstoneDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 1);
-	public static final ItemStack cobbleDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 3);
-	public static final ItemStack brickDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 4);
-	public static final ItemStack stonebrickDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 5);
-	public static final ItemStack netherDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 6);
-	public static final ItemStack quartzDoubleSlab = new ItemStack(Blocks.double_stone_slab, 1, 7);
+	public static final BlockKey stoneDoubleSlab = new BlockKey(Blocks.double_stone_slab, 0);
+	public static final BlockKey sandstoneDoubleSlab = new BlockKey(Blocks.double_stone_slab, 1);
+	public static final BlockKey cobbleDoubleSlab = new BlockKey(Blocks.double_stone_slab, 3);
+	public static final BlockKey brickDoubleSlab = new BlockKey(Blocks.double_stone_slab, 4);
+	public static final BlockKey stonebrickDoubleSlab = new BlockKey(Blocks.double_stone_slab, 5);
+	public static final BlockKey netherDoubleSlab = new BlockKey(Blocks.double_stone_slab, 6);
+	public static final BlockKey quartzDoubleSlab = new BlockKey(Blocks.double_stone_slab, 7);
 
-	public static final ItemStack oakSlab = new ItemStack(Blocks.wooden_slab, 1, 0);
-	public static final ItemStack spruceSlab = new ItemStack(Blocks.wooden_slab, 1, 1);
-	public static final ItemStack birchSlab = new ItemStack(Blocks.wooden_slab, 1, 2);
-	public static final ItemStack jungleSlab = new ItemStack(Blocks.wooden_slab, 1, 3);
+	public static final BlockKey oakSlab = new BlockKey(Blocks.wooden_slab, 0);
+	public static final BlockKey spruceSlab = new BlockKey(Blocks.wooden_slab, 1);
+	public static final BlockKey birchSlab = new BlockKey(Blocks.wooden_slab, 2);
+	public static final BlockKey jungleSlab = new BlockKey(Blocks.wooden_slab, 3);
 
-	public static final ItemStack oakDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 0);
-	public static final ItemStack spruceDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 1);
-	public static final ItemStack birchDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 2);
-	public static final ItemStack jungleDoubleSlab = new ItemStack(Blocks.double_wooden_slab, 1, 3);
+	public static final BlockKey oakDoubleSlab = new BlockKey(Blocks.double_wooden_slab, 0);
+	public static final BlockKey spruceDoubleSlab = new BlockKey(Blocks.double_wooden_slab, 1);
+	public static final BlockKey birchDoubleSlab = new BlockKey(Blocks.double_wooden_slab, 2);
+	public static final BlockKey jungleDoubleSlab = new BlockKey(Blocks.double_wooden_slab, 3);
 
-	public static final ItemStack tallgrass = new ItemStack(Blocks.tallgrass, 1, 1);
-	public static final ItemStack fern = new ItemStack(Blocks.tallgrass, 1, 2);
+	public static final BlockKey tallgrass = new BlockKey(Blocks.tallgrass, 1);
+	public static final BlockKey fern = new BlockKey(Blocks.tallgrass, 2);
 
-	public static final ItemStack chiseledQuartz = new ItemStack(Blocks.quartz_block, 1, 1);
-	public static final ItemStack quartzPillar = new ItemStack(Blocks.quartz_block, 1, 2);
+	public static final BlockKey chiseledQuartz = new BlockKey(Blocks.quartz_block, 1);
+	public static final BlockKey quartzPillar = new BlockKey(Blocks.quartz_block, 2);
 
 	public static final Comparator<ItemStack> comparator = new ItemComparator();
 	public static final Comparator<Object> itemListComparator = new ItemListComparator();

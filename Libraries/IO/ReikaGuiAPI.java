@@ -215,7 +215,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 			GL11.glLineWidth(1.5F);
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		int alpha = ReikaColorAPI.getAlpha(color);
-		if (alpha == 0 && color != 0)
+		if (alpha == 0)
 			alpha = 255;
 		int red = ReikaColorAPI.getRed(color);
 		int green = ReikaColorAPI.getGreen(color);
@@ -238,6 +238,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 			GL11.glLineWidth(1.5F);
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		int alpha = ReikaColorAPI.getAlpha(color);
+		if (alpha == 0)
+			alpha = 255;
 		int red = ReikaColorAPI.getRed(color);
 		int green = ReikaColorAPI.getGreen(color);
 		int blue = ReikaColorAPI.getBlue(color);
@@ -256,6 +258,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 	public void drawCircle(int x, int y, double radius, int color) {
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		int alpha = ReikaColorAPI.getAlpha(color);
+		if (alpha == 0)
+			alpha = 255;
 		int red = ReikaColorAPI.getRed(color);
 		int green = ReikaColorAPI.getGreen(color);
 		int blue = ReikaColorAPI.getBlue(color);

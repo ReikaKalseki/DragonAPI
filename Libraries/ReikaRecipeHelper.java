@@ -48,6 +48,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Recipe.RecipePattern;
 import Reika.DragonAPI.Interfaces.CustomToStringRecipe;
@@ -846,6 +847,10 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			else if (in[i + 1] instanceof ItemStack)
 			{
 				itemstack1 = (ItemStack)in[i + 1];
+			}
+			else if (in[i + 1] instanceof BlockKey)
+			{
+				itemstack1 = ((BlockKey)in[i + 1]).asItemStack();
 			}
 
 			if (itemstack1 != null) //allow nulls to specify spaces

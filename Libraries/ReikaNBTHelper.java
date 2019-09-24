@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -555,4 +556,24 @@ public final class ReikaNBTHelper extends DragonAPICore {
 
 	}
 	 */
+
+	public static class UUIDConverter implements NBTIO<UUID> {
+
+		public static final UUIDConverter instance = new UUIDConverter();
+
+		private UUIDConverter() {
+
+		}
+
+		@Override
+		public UUID createFromNBT(NBTBase nbt) {
+			return UUID.fromString(((NBTTagString)nbt).func_150285_a_());
+		}
+
+		@Override
+		public NBTBase convertToNBT(UUID obj) {
+			return new NBTTagString(obj.toString());
+		}
+
+	}
 }

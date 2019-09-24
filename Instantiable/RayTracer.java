@@ -52,6 +52,7 @@ public final class RayTracer {
 
 	private final ArrayList<BlockKey> forbiddenBlocks = new ArrayList();
 	private final ArrayList<BlockKey> allowedBlocks = new ArrayList();
+	private final ArrayList<BlockKey> allowedOneTimeBlocks = new ArrayList();
 
 	private final HashSet<Coordinate> blockRay = new HashSet();
 
@@ -107,6 +108,14 @@ public final class RayTracer {
 		allowedBlocks.add(new BlockKey(b, meta));
 	}
 
+	public void addOneTimeIgnoredBlock(Block b) {
+		this.addOneTimeIgnoredBlock(b, -1);
+	}
+
+	public void addOneTimeIgnoredBlock(Block b, int meta) {
+		allowedOneTimeBlocks.add(new BlockKey(b, meta));
+	}
+
 	public boolean isClearLineOfSight(World world) {
 		Vec3 vec1 = Vec3.createVectorHelper(originX, originY, originZ);
 		Vec3 vec2 = Vec3.createVectorHelper(targetX, targetY, targetZ);
@@ -144,12 +153,14 @@ public final class RayTracer {
 					if (this.isNonTerminal(bx, by, bz)) {
 						if (this.isDisallowedBlock(world, bx, by, bz)) {
 							//ReikaJavaLibrary.pConsole(mov+":"+world.getBlock(bx, by, bz), Side.SERVER);
+							allowedOneTimeBlocks.clear();
 							return false;
 						}
 					}
 				}
 			}
 		}
+		allowedOneTimeBlocks.clear();
 		return true;
 	}
 
@@ -172,6 +183,8 @@ public final class RayTracer {
 		if (airOnly && b != Blocks.air)
 			return true;
 		if (allowedBlocks.contains(key))
+			return false;
+		if (allowedOneTimeBlocks.contains(key))
 			return false;
 		if (forbiddenBlocks.contains(key))
 			return true;
