@@ -19,6 +19,8 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+import com.google.common.base.Strings;
+
 import Reika.DragonAPI.DragonAPICore;
 
 public class ReikaStringParser extends DragonAPICore {
@@ -366,7 +368,10 @@ public class ReikaStringParser extends DragonAPICore {
 	}
 
 	public static boolean containsWord(String s, String word) {
-		return Pattern.compile("\\s"+word+"[\\s]|\\s"+word+"$|^"+word+"\\s|^"+word+"$").matcher(s).find();
+		if (Strings.isNullOrEmpty(s))
+			return false;
+		Pattern p = Pattern.compile(".*\\b" + word + "\\b.*");
+		return p.matcher(word).matches();
 	}
 
 	public static String getLongestString(String[] sgs) {

@@ -765,7 +765,7 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 		}
 
 		public ItemStack getItem() {
-			return item.copy();
+			return ReikaItemHelper.getSizedItemStack(item, (int)Math.min(Integer.MAX_VALUE, amount));
 		}
 
 	}

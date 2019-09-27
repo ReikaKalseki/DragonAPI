@@ -120,7 +120,8 @@ public enum ModList implements ModEntry, Dependency {
 	DRACONICEVO("DraconicEvolution"),
 	MAGICBEES("MagicBees", "magicbees.main.Config"),
 	IMMERSIVEENG("ImmersiveEngineering", "blusunrize.immersiveengineering.common.IEContent"),
-	FORBIDDENMAGIC("ForbiddenMagic", "fox.spiteful.forbidden.blocks.ForbiddenBlocks", "fox.spiteful.forbidden.items.ForbiddenItems");
+	FORBIDDENMAGIC("ForbiddenMagic", "fox.spiteful.forbidden.blocks.ForbiddenBlocks", "fox.spiteful.forbidden.items.ForbiddenItems"),
+	ADVROCKET("advancedRocketry");
 
 	private final boolean condition;
 	public final String modLabel;

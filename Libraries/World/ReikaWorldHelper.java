@@ -478,8 +478,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			for (int i = 0; i < 6; i++) {
 				ForgeDirection side = ForgeDirection.VALID_DIRECTIONS[i];
 				int dx = x+side.offsetX;
-				int dy = y+side.offsetX;
-				int dz = z+side.offsetX;
+				int dy = y+side.offsetY;
+				int dz = z+side.offsetZ;
 				if (FluidRegistry.lookupFluidForBlock(world.getBlock(dx, dy, dz)) == FluidRegistry.WATER) {
 					if (IceFreezeEvent.fire_IgnoreVanilla(world, dx, dy, dz))
 						changeAdjBlock(world, x, y, z, side, Blocks.ice, 0);
@@ -493,7 +493,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				int dy = y+dir.offsetY*d;
 				int dz = z+dir.offsetZ*d;
 				Material mat = getMaterial(world, dx, dy, dz);
-				TemperatureEffect eff = temperatureBlockEffects .get(mat);
+				TemperatureEffect eff = temperatureBlockEffects.get(mat);
 				if (eff != null && temperature >= eff.minimumTemperature) {
 					eff.apply(world, dx, dy, dz, temperature, callback);
 				}

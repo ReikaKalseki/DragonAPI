@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -156,6 +156,7 @@ public final class MekToolHandler extends ModHandlerBase {
 		super();
 		if (this.hasMod()) {
 			Class item = this.getMod().getItemClass();
+			DragonAPICore.log("Loading Mek Tools");
 
 			for (int i = 0; i < Materials.list.length; i++) {
 				Materials m = Materials.list[i];
@@ -164,7 +165,11 @@ public final class MekToolHandler extends ModHandlerBase {
 					if (t.isCombineableWith(m)) {
 						String varname = this.getField(m, t);
 						Item tool = this.getID(item, varname);
+						DragonAPICore.log("Loading MekTool "+m+" x "+t);
 						this.addEntry(tool, m, t);
+					}
+					else {
+						DragonAPICore.log("Skipping MekTool "+m+" x "+t);
 					}
 				}
 			}
