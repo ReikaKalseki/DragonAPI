@@ -21,8 +21,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
-import com.google.common.collect.Sets;
-
+import Reika.DragonAPI.Instantiable.Data.Collections.ThreadSafeSet;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class MultiMap<K, V> {
@@ -292,7 +291,7 @@ public final class MultiMap<K, V> {
 		public Collection createCollection() {
 			switch(this) {
 				case CONCURRENTSET:
-					return Sets.newConcurrentHashSet();
+					return new ThreadSafeSet();
 				case HASHSET:
 					return new HashSet();
 				case LIST:
@@ -304,7 +303,7 @@ public final class MultiMap<K, V> {
 		public Collection createCollection(Collection c) {
 			switch(this) {
 				case CONCURRENTSET:
-					Set s = Sets.newConcurrentHashSet();
+					Set s = new ThreadSafeSet();
 					s.addAll(c);
 					return s;
 				case HASHSET:
