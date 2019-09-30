@@ -1,6 +1,5 @@
 package Reika.DragonAPI.Auxiliary;
 
-import java.lang.reflect.Method;
 import java.util.HashMap;
 
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -17,17 +16,8 @@ public class IconLookupRegistry {
 
 	}
 
-	public void registerIcons(DragonAPIMod mod, Class<? extends IconEnum> c) {
-		if (!Enum.class.isAssignableFrom(c))
-			throw new RegistrationException(mod, "Invalid icon class '"+c+"'; not an enum!");
-		try {
-			Method m = c.getMethod("values");
-			IconEnum[] ar = (IconEnum[])m.invoke(null);
-			this.registerIcons(mod, ar);
-		}
-		catch (Exception e) {
-			throw new RegistrationException(mod, "Could not parse icon enum class!", e);
-		}
+	public <T extends Enum & IconEnum> void registerIcons(DragonAPIMod mod, Class<T> c) {
+		this.registerIcons(mod, c.getEnumConstants());
 	}
 
 	public void registerIcons(DragonAPIMod mod, IconEnum[] ar) {
