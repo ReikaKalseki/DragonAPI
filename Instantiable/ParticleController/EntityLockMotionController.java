@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -51,7 +51,7 @@ public class EntityLockMotionController implements MotionController {
 
 	@Override
 	public double getMotionY(Entity e) {
-		return -(e.posY-target.posY+target.height/2F)*velocityXZ/e.getDistanceToEntity(target);
+		return -(e.posY-target.posY-target.height/2F)*velocityXZ/e.getDistanceToEntity(target);
 	}
 
 	@Override

@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.HashMap;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
@@ -12,6 +13,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.Instantiable.GridDistortion.OffsetGroup;
+import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public class CubePoints {
 
@@ -254,6 +256,24 @@ public class CubePoints {
 		return vertices.get(id);
 	}
 
+	public void applyVelocities() {
+		this.applyVelocities(null);
+	}
+
+	public void applyVelocities(AxisAlignedBB bounds) {
+		for (CubeVertex v : vertices.values()) {
+			v.applyVelocity(bounds);
+		}
+	}
+
+	public void setRandomVelocities(double bounds) {
+		for (CubeVertex v : vertices.values()) {
+			v.velocity.xCoord = ReikaRandomHelper.getRandomPlusMinus(0, bounds);
+			v.velocity.yCoord = ReikaRandomHelper.getRandomPlusMinus(0, bounds);
+			v.velocity.zCoord = ReikaRandomHelper.getRandomPlusMinus(0, bounds);
+		}
+	}
+
 	/*
 	@SideOnly(Side.CLIENT)
 	public double getTextureU(IIcon ico, ForgeDirection side) {
@@ -339,6 +359,7 @@ public class CubePoints {
 	public final class CubeVertex {
 
 		private final Vec3 position;
+		public final Vec3 velocity = Vec3.createVectorHelper(0, 0, 0);
 		public final String ID;
 
 		private CubeVertex(String id, Vec3 pos) {
@@ -349,6 +370,42 @@ public class CubePoints {
 
 		private CubeVertex(CubeVertex pos) {
 			this(pos.ID, Vec3.createVectorHelper(pos.position.xCoord, pos.position.yCoord, pos.position.zCoord));
+		}
+
+		public void applyVelocity() {
+			this.applyVelocity(null);
+		}
+
+		public void applyVelocity(AxisAlignedBB bounds) {
+			position.xCoord += velocity.xCoord;
+			position.yCoord += velocity.yCoord;
+			position.zCoord += velocity.zCoord;
+			if (bounds != null) {
+				if (position.xCoord >= bounds.maxX) {
+					velocity.xCoord = -velocity.xCoord;
+					position.xCoord = bounds.maxX;
+				}
+				else if (position.xCoord <= bounds.minX) {
+					velocity.xCoord = -velocity.xCoord;
+					position.xCoord = bounds.minX;
+				}
+				if (position.yCoord >= bounds.maxY) {
+					velocity.yCoord = -velocity.yCoord;
+					position.yCoord = bounds.maxY;
+				}
+				else if (position.yCoord <= bounds.minY) {
+					velocity.yCoord = -velocity.yCoord;
+					position.yCoord = bounds.minY;
+				}
+				if (position.zCoord >= bounds.maxZ) {
+					velocity.zCoord = -velocity.zCoord;
+					position.zCoord = bounds.maxZ;
+				}
+				else if (position.zCoord <= bounds.minZ) {
+					velocity.zCoord = -velocity.zCoord;
+					position.zCoord = bounds.minZ;
+				}
+			}
 		}
 
 		public double textureU(IIcon icon, ForgeDirection side) {

@@ -41,42 +41,42 @@ public class ThreadSafeSet<E> implements Set<E> {
 	}
 
 	@Override
-	public boolean add(E e) {
-		data = new HashSet(data);
-		return data.add(e);
-	}
-
-	@Override
-	public boolean remove(Object o) {
-		data = new HashSet(data);
-		return data.remove(o);
-	}
-
-	@Override
 	public boolean containsAll(Collection<?> c) {
 		return data.containsAll(c);
 	}
 
 	@Override
-	public boolean addAll(Collection<? extends E> c) {
+	public synchronized boolean add(E e) {
+		data = new HashSet(data);
+		return data.add(e);
+	}
+
+	@Override
+	public synchronized boolean remove(Object o) {
+		data = new HashSet(data);
+		return data.remove(o);
+	}
+
+	@Override
+	public synchronized boolean addAll(Collection<? extends E> c) {
 		data = new HashSet(data);
 		return data.addAll(c);
 	}
 
 	@Override
-	public boolean retainAll(Collection<?> c) {
+	public synchronized boolean retainAll(Collection<?> c) {
 		data = new HashSet(data);
 		return data.retainAll(c);
 	}
 
 	@Override
-	public boolean removeAll(Collection<?> c) {
+	public synchronized boolean removeAll(Collection<?> c) {
 		data = new HashSet(data);
 		return data.removeAll(c);
 	}
 
 	@Override
-	public void clear() {
+	public synchronized void clear() {
 		data = new HashSet();
 	}
 

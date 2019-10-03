@@ -1548,6 +1548,50 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		v5.addTranslation(-x, -y, -z);
 	}
 
+	public static void renderBlockPieceNonCuboid(Block b, int meta, Tessellator v5, CubePoints points) {
+		ForgeDirection dir = ForgeDirection.DOWN;
+		IIcon ico = b.getIcon(dir.ordinal(), meta);
+		points.x1y1z1.draw(v5, ico, dir);
+		points.x2y1z1.draw(v5, ico, dir);
+		points.x2y1z2.draw(v5, ico, dir);
+		points.x1y1z2.draw(v5, ico, dir);
+
+		dir = ForgeDirection.UP;
+		ico = b.getIcon(dir.ordinal(), meta);
+		points.x1y2z2.draw(v5, ico, dir);
+		points.x2y2z2.draw(v5, ico, dir);
+		points.x2y2z1.draw(v5, ico, dir);
+		points.x1y2z1.draw(v5, ico, dir);
+
+		dir = ForgeDirection.WEST;
+		ico = b.getIcon(dir.ordinal(), meta);
+		points.x1y1z2.draw(v5, ico, dir);
+		points.x1y2z2.draw(v5, ico, dir);
+		points.x1y2z1.draw(v5, ico, dir);
+		points.x1y1z1.draw(v5, ico, dir);
+
+		dir = ForgeDirection.EAST;
+		ico = b.getIcon(dir.ordinal(), meta);
+		points.x2y1z1.draw(v5, ico, dir);
+		points.x2y2z1.draw(v5, ico, dir);
+		points.x2y2z2.draw(v5, ico, dir);
+		points.x2y1z2.draw(v5, ico, dir);
+
+		dir = ForgeDirection.NORTH;
+		ico = b.getIcon(dir.ordinal(), meta);
+		points.x1y1z1.draw(v5, ico, dir);
+		points.x1y2z1.draw(v5, ico, dir);
+		points.x2y2z1.draw(v5, ico, dir);
+		points.x2y1z1.draw(v5, ico, dir);
+
+		dir = ForgeDirection.SOUTH;
+		ico = b.getIcon(dir.ordinal(), meta);
+		points.x2y1z2.draw(v5, ico, dir);
+		points.x2y2z2.draw(v5, ico, dir);
+		points.x1y2z2.draw(v5, ico, dir);
+		points.x1y1z2.draw(v5, ico, dir);
+	}
+
 	public static void renderIconIn3D(TessellatorVertexList v5, IIcon ico, int x, int y, int z) {
 		float t = 0.0625F;
 		float w = ico.getIconWidth();

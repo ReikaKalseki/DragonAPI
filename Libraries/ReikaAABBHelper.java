@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -271,6 +271,24 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		double dy = (sy-1)*(box.maxY-box.minY);
 		double dz = (sz-1)*(box.maxZ-box.minZ);
 		return box.expand(dx, dy, dz);
+	}
+
+	public static void compressAABB(AxisAlignedBB box, double dx, double dy, double dz) {
+		box.minX += dx;
+		box.minY += dy;
+		box.minZ += dz;
+		box.maxX -= dx;
+		box.maxY -= dy;
+		box.maxZ -= dz;
+	}
+
+	public static void fillAABB(AxisAlignedBB box, int nx, int ny, int nz, int mx, int my, int mz) {
+		box.maxX = Math.max(box.maxX, mx);
+		box.maxY = Math.max(box.maxY, my);
+		box.maxZ = Math.max(box.maxZ, mz);
+		box.minX = Math.min(box.minX, nx);
+		box.minY = Math.min(box.minY, ny);
+		box.minZ = Math.min(box.minZ, nz);
 	}
 
 }

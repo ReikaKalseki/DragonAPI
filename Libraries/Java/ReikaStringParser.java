@@ -13,13 +13,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.TreeMap;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.text.WordUtils;
-
-import com.google.common.base.Strings;
 
 import Reika.DragonAPI.DragonAPICore;
 
@@ -30,7 +28,9 @@ public class ReikaStringParser extends DragonAPICore {
 	private static final String STRING_FORMAT_CODE = "PARSE_STRING_FORMAT";
 	private static final String ENUM_FUNCTION_CODE = "PARSE_ENUM";
 
-	private final static TreeMap<Integer, String> romanNumerals = new TreeMap();
+	private static final TreeMap<Integer, String> romanNumerals = new TreeMap();
+
+	private static final HashSet<Character> wordChars = new HashSet();
 
 	static {
 		romanNumerals.put(1000, "M");
@@ -46,6 +46,17 @@ public class ReikaStringParser extends DragonAPICore {
 		romanNumerals.put(5, "V");
 		romanNumerals.put(4, "IV");
 		romanNumerals.put(1, "I");
+
+		for (char c = 'a'; c <= 'z'; c++) {
+			wordChars.add(c);
+		}
+		for (char c = 'A'; c <= 'Z'; c++) {
+			wordChars.add(c);
+		}
+		for (char c = '0'; c <= '9'; c++) {
+			wordChars.add(c);
+		}
+		wordChars.add('\'');
 	}
 
 	public static String getStringWithEmbeddedReferences(String sg) {
@@ -357,10 +368,8 @@ public class ReikaStringParser extends DragonAPICore {
 		return li;*/
 	}
 
-	public static boolean isSplittingChar(char c) {
-		if (c == '.' || c == ',' || c == '-' || c == ' ')
-			return true;
-		return false;
+	public static boolean isWordSplittingChar(char c) {
+		return !wordChars.contains(c);
 	}
 
 	public static String getFirstWord(String s) {
@@ -368,10 +377,23 @@ public class ReikaStringParser extends DragonAPICore {
 	}
 
 	public static boolean containsWord(String s, String word) {
-		if (Strings.isNullOrEmpty(s))
+		if (s == null || s.length() < word.length())
 			return false;
-		Pattern p = Pattern.compile(".*\\b" + word + "\\b.*");
-		return p.matcher(word).matches();
+		//return s.matches(".*\\b" + Pattern.quote(word) + "\\b.*"); //does not treat '
+		int len = word.length();
+		if (s.regionMatches(0, word, 0, len)) {
+			if (s.length() == word.length() || isWordSplittingChar(s.charAt(len)))
+				return true;
+		}
+		for (int i = 0; i < s.length()-len; i++) {
+			if (isWordSplittingChar(s.charAt(i))) {
+				if (s.regionMatches(i+1, word, 0, len)) {
+					if (word.length()+i+1 == s.length() || isWordSplittingChar(s.charAt(i+1+len)))
+						return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	public static String getLongestString(String[] sgs) {

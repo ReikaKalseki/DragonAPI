@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -228,5 +228,9 @@ public class ReikaColorAPI {
 
 	public static int fromVec3(Vec3 vec) {
 		return RGBtoHex((int)(vec.xCoord*255), (int)(vec.yCoord*255), (int)(vec.zCoord*255));
+	}
+
+	public static int mixColorBiDirectional(int c, int c1, int c2, float f) {
+		return f <= 0.5 ? mixColors(c, c1, f*2) : mixColors(c2, c, (f-0.5F)*2);
 	}
 }
