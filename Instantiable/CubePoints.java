@@ -266,11 +266,27 @@ public class CubePoints {
 		}
 	}
 
+	public void multiplyVelocities(double d) {
+		for (CubeVertex v : vertices.values()) {
+			v.velocity.xCoord *= d;
+			v.velocity.yCoord *= d;
+			v.velocity.zCoord *= d;
+		}
+	}
+
 	public void setRandomVelocities(double bounds) {
 		for (CubeVertex v : vertices.values()) {
 			v.velocity.xCoord = ReikaRandomHelper.getRandomPlusMinus(0, bounds);
 			v.velocity.yCoord = ReikaRandomHelper.getRandomPlusMinus(0, bounds);
 			v.velocity.zCoord = ReikaRandomHelper.getRandomPlusMinus(0, bounds);
+		}
+	}
+
+	public void setVelocities(Vec3 vec) {
+		for (CubeVertex v : vertices.values()) {
+			v.velocity.xCoord = vec.xCoord;
+			v.velocity.yCoord = vec.yCoord;
+			v.velocity.zCoord = vec.zCoord;
 		}
 	}
 

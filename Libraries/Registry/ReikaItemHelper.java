@@ -763,6 +763,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 		else if (o instanceof String) {
 			return lookupItem((String)o);
 		}
+		else if (o instanceof BlockKey) {
+			return ((BlockKey)o).asItemStack();
+		}
 		return null;
 	}
 

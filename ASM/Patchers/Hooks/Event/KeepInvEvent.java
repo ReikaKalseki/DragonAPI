@@ -35,7 +35,7 @@ public class KeepInvEvent extends Patcher {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_71049_a", "clonePlayer", "(Lnet/minecraft/entity/player/EntityPlayer;Z)V");
 		AbstractInsnNode ain = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.LDC, "keepInventory");
 		AbstractInsnNode load = ReikaASMHelper.getLastOpcodeBefore(m.instructions, m.instructions.indexOf(ain), Opcodes.ALOAD);
-		ReikaASMHelper.deleteFrom(m.instructions, load.getNext(), ain.getNext());
+		ReikaASMHelper.deleteFrom(cn, m.instructions, load.getNext(), ain.getNext());
 		m.instructions.insert(load, ReikaASMHelper.copyInsnList(li));
 
 		li = new InsnList();
@@ -44,7 +44,7 @@ public class KeepInvEvent extends Patcher {
 		m = ReikaASMHelper.getMethodByName(cn, "func_70645_a", "onDeath", "(Lnet/minecraft/util/DamageSource;)V");
 		ain = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.LDC, "keepInventory");
 		load = ReikaASMHelper.getLastOpcodeBefore(m.instructions, m.instructions.indexOf(ain), Opcodes.ALOAD);
-		ReikaASMHelper.deleteFrom(m.instructions, load.getNext(), ain.getNext());
+		ReikaASMHelper.deleteFrom(cn, m.instructions, load.getNext(), ain.getNext());
 		m.instructions.insert(load, ReikaASMHelper.copyInsnList(li));
 		//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
 	}

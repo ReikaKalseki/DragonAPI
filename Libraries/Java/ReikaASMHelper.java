@@ -38,6 +38,7 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.IincInsnNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.InsnNode;
@@ -60,6 +61,7 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Exception.ASMException.ASMConflictException;
+import Reika.DragonAPI.Exception.ASMException.InvalidASMArgumentException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMFieldException;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.IO.ReikaFileReader;
@@ -571,9 +573,12 @@ public class ReikaASMHelper {
 	}
 
 	public static boolean match(AbstractInsnNode ain, int opcode, Object... args) {
+		int code = ain.getOpcode();
+		if (ain instanceof FrameNode)
+			code = ((FrameNode)ain).type;
 		if (ain.getOpcode() != opcode)
 			return false;
-		if (ain instanceof InsnNode) {
+		if (ain instanceof InsnNode || ain instanceof FrameNode) {
 			return true;
 		}
 		else if (ain instanceof VarInsnNode) {
@@ -890,7 +895,11 @@ public class ReikaASMHelper {
 		return null;
 	}
 
-	public static void deleteFrom(InsnList li, AbstractInsnNode start, AbstractInsnNode end) {
+	public static void deleteFrom(ClassNode cn, InsnList li, AbstractInsnNode start, AbstractInsnNode end) {
+		if (start == null)
+			throw new InvalidASMArgumentException(cn, "Null start instruction");
+		if (end == null)
+			throw new InvalidASMArgumentException(cn, "Null end instruction");
 		AbstractInsnNode loc = start;
 		while (loc != end) {
 			AbstractInsnNode loc2 = loc.getNext();

@@ -40,7 +40,7 @@ public class KeepInvEvent2 extends Patcher {
 		if (ain == null)
 			ReikaASMHelper.throwConflict(this.toString(), cn, m, "Could not find 'keepInventory' gamerule lookup");
 		AbstractInsnNode load = ReikaASMHelper.getLastOpcodeBefore(m.instructions, m.instructions.indexOf(ain), Opcodes.ALOAD);
-		ReikaASMHelper.deleteFrom(m.instructions, load.getNext(), ain.getNext());
+		ReikaASMHelper.deleteFrom(cn, m.instructions, load.getNext(), ain.getNext());
 		m.instructions.insert(load, ReikaASMHelper.copyInsnList(li));
 		//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
 	}

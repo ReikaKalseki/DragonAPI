@@ -11,6 +11,7 @@ package Reika.DragonAPI.ASM;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -38,6 +39,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
@@ -47,11 +49,39 @@ import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
 import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Interfaces.Item.MetadataSpecificTrade;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
+
+	public static HashMap<Character, Object> parseItemMappings(int i, boolean ore, Object[] in) {
+		HashMap<Character, Object> ret = new HashMap();
+		for (; i < in.length; i += 2) {
+			Character c = (Character)in[i];
+			Object o = in[i+1];
+			if (o == null) {
+				//throw new IllegalArgumentException("Null objects in recipes are not acceptable, but was supplied for char "+c+"!");
+				continue;
+			}
+			Object is = null;
+			if (ore) {
+				if (o instanceof String) {
+					is = OreDictionary.getOres((String)o);
+				}
+			}
+			if (is == null)
+				is = ReikaItemHelper.parseItem(o);
+			if (is == null) {
+				throw new IllegalArgumentException("Invalid ingredient object type "+o.getClass()+" with value "+o.toString()+" for char "+c);
+			}
+			ReikaJavaLibrary.pConsole("Parsed char "+c+" with "+o+" to "+is);
+			ret.put(c, is);
+		}
+		return ret;
+	}
 
 	public static MerchantRecipe getMatchingTrade(MerchantRecipeList li, ItemStack is1, ItemStack is2, int idx) {
 		if (idx > 0 && idx < li.size()) {

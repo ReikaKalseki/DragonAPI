@@ -1,13 +1,15 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
+
+import java.util.Random;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
@@ -35,6 +37,12 @@ public class ReikaRandomHelper extends DragonAPICore {
 
 	/** Returns true with a percentage probability. Args: chance (out of 1 or a %) */
 	public static boolean doWithChance(double num) {
+		return doWithChance(num, rand);
+	}
+
+	/** Returns true with a percentage probability. Args: chance (out of 1 or a %), Rand */
+	public static boolean doWithChance(double num, Random r) {
+		//ReikaJavaLibrary.pConsole(num, Side.SERVER);
 		if (num >= 100)
 			return true;
 		if (num > 1)
@@ -45,10 +53,10 @@ public class ReikaRandomHelper extends DragonAPICore {
 			return false;
 
 		if (num < 10e-15) { //to help precision
-			return rand.nextDouble()*10e12 < num*10e12;
+			return r.nextDouble()*10e12 < num*10e12;
 		}
 
-		return rand.nextDouble() < num;
+		return r.nextDouble() < num;
 	}
 
 	public static short getRandomShort(int max) {

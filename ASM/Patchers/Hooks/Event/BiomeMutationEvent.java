@@ -57,7 +57,7 @@ public class BiomeMutationEvent extends Patcher {
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BiomeMutationEvent", "fireTry", "(Lnet/minecraft/world/gen/layer/GenLayer;IIIII)Z", false));
 
 		ReikaASMHelper.changeOpcode(jump, Opcodes.IFEQ);
-		ReikaASMHelper.deleteFrom(m.instructions, id, jump.getPrevious());
+		ReikaASMHelper.deleteFrom(cn, m.instructions, id, jump.getPrevious());
 		m.instructions.insertBefore(jump, li);
 
 
@@ -74,7 +74,7 @@ public class BiomeMutationEvent extends Patcher {
 		li.add(new VarInsnNode(Opcodes.ILOAD, var));
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BiomeMutationEvent$GetMutatedBiomeEvent", "fireGet", "(Lnet/minecraft/world/gen/layer/GenLayer;IIIII)I", false));
 		li.add(new InsnNode(Opcodes.IASTORE));
-		ReikaASMHelper.deleteFrom(m.instructions, start, end);
+		ReikaASMHelper.deleteFrom(cn, m.instructions, start, end);
 		m.instructions.insert(pre, li);
 
 
@@ -92,7 +92,7 @@ public class BiomeMutationEvent extends Patcher {
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BiomeMutationEvent", "fireTry", "(Lnet/minecraft/world/gen/layer/GenLayer;IIIII)Z", false));
 
 		ReikaASMHelper.changeOpcode(jump, Opcodes.IFEQ);
-		ReikaASMHelper.deleteFrom(m.instructions, id, jump.getPrevious());
+		ReikaASMHelper.deleteFrom(cn, m.instructions, id, jump.getPrevious());
 		m.instructions.insertBefore(jump, li);
 
 
@@ -118,7 +118,7 @@ public class BiomeMutationEvent extends Patcher {
 		li.add(new VarInsnNode(Opcodes.ILOAD, var));
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/BiomeMutationEvent$GetMutatedBiomeEvent", "fireGet", "(Lnet/minecraft/world/gen/layer/GenLayer;IIIII)I", false));
 		li.add(new VarInsnNode(Opcodes.ISTORE, var));
-		ReikaASMHelper.deleteFrom(m.instructions, start, end);
+		ReikaASMHelper.deleteFrom(cn, m.instructions, start, end);
 		m.instructions.insert(pre, li);
 		//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
 	}

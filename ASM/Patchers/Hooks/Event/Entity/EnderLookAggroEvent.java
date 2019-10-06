@@ -30,7 +30,7 @@ public class EnderLookAggroEvent extends Patcher {
 	protected void apply(ClassNode cn) {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_70821_d", "shouldAttackPlayer", "(Lnet/minecraft/entity/player/EntityPlayer;)Z");
 		AbstractInsnNode ain = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.IF_ACMPNE);
-		ReikaASMHelper.deleteFrom(m.instructions, m.instructions.getFirst(), ain.getPrevious());
+		ReikaASMHelper.deleteFrom(cn, m.instructions, m.instructions.getFirst(), ain.getPrevious());
 		InsnList li = new InsnList();
 		li.add(new VarInsnNode(Opcodes.ALOAD, 1));
 		li.add(new VarInsnNode(Opcodes.ALOAD, 0));

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -402,6 +402,26 @@ public abstract class ASMException extends RuntimeException {
 			}
 			sb.append("\n");
 			sb.append("A .class file was generated in your MC folder, under the \"ClassError\" subfolder. Find the one with the matching name.");
+			return sb.toString();
+		}
+
+	}
+
+	public static final class InvalidASMArgumentException extends ASMException {
+
+		public final String message;
+
+		public InvalidASMArgumentException(ClassNode cn, String msg) {
+			super(cn);
+			message = msg;
+		}
+
+		@Override
+		public final String getMessage() {
+			StringBuilder sb = new StringBuilder();
+			sb.append(super.getMessage());
+			sb.append("Invalid argument to function:\n");
+			sb.append(message);
 			return sb.toString();
 		}
 

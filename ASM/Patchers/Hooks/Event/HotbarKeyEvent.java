@@ -43,7 +43,7 @@ public class HotbarKeyEvent extends Patcher {
 		AbstractInsnNode jump = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.IF_ICMPNE);
 		AbstractInsnNode end = jump.getPrevious();
 		AbstractInsnNode start = ReikaASMHelper.getLastInsnBefore(m.instructions, m.instructions.indexOf(end), Opcodes.ILOAD, 1);
-		ReikaASMHelper.deleteFrom(m.instructions, start, end);
+		ReikaASMHelper.deleteFrom(cn, m.instructions, start, end);
 		m.instructions.insertBefore(jump, li);
 		ReikaASMHelper.changeOpcode(jump, Opcodes.IFEQ);
 	}

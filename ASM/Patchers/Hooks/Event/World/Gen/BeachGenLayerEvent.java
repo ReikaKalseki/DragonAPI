@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -44,21 +44,21 @@ public class BeachGenLayerEvent extends Patcher {
 			this.apply_1614(m);
 		}
 		else if (version == 1558) {
-			this.apply_1558(m);
+			this.apply_1558(cn, m);
 		}
 		else {
 			throw new InstallationException("DragonAPI", "Unsupported Forge version! Use either 1558 or 1614!");
 		}
 	}
 
-	private void apply_1558(MethodNode m) {
+	private void apply_1558(ClassNode cn, MethodNode m) {
 		String s = FMLForgePlugin.RUNTIME_DEOBF ? "field_150574_L" : "jungleEdge";
 		AbstractInsnNode ref = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.GETSTATIC, "net/minecraft/world/biome/BiomeGenBase", s, "Lnet/minecraft/world/biome/BiomeGenBase;");
 		int idx = m.instructions.indexOf(ref);
 		AbstractInsnNode first = ReikaASMHelper.getFirstOpcodeAfter(m.instructions, idx, Opcodes.ILOAD);
 		JumpInsnNode last = (JumpInsnNode)ReikaASMHelper.getNthOpcodeAfter(m.instructions, 3, idx, Opcodes.IF_ICMPEQ);
 
-		ReikaASMHelper.deleteFrom(m.instructions, first.getNext(), last.getPrevious());
+		ReikaASMHelper.deleteFrom(cn, m.instructions, first.getNext(), last.getPrevious());
 		InsnList li = new InsnList();
 		//li.add(new VarInsnNode(Opcodes.ILOAD, 9));
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/GenLayerBeachEvent", "fire", "(I)Z", false));

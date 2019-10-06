@@ -35,7 +35,7 @@ public class TileUpdate extends Patcher {
 		MethodInsnNode loc2 = ReikaASMHelper.getFirstMethodCall(cn, m, "net/minecraft/world/World", name2, "(III)Z");
 		JumpInsnNode jump = (JumpInsnNode)loc2.getNext();
 		jump.setOpcode(Opcodes.IFNE);
-		ReikaASMHelper.deleteFrom(m.instructions, loc1, loc2);
+		ReikaASMHelper.deleteFrom(cn, m.instructions, loc1, loc2);
 		m.instructions.insertBefore(jump, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/TileUpdateEvent", "fire", "(Lnet/minecraft/tileentity/TileEntity;)Z", false));
 	}
 }

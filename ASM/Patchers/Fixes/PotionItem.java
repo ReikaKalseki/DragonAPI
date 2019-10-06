@@ -51,7 +51,7 @@ public class PotionItem extends Patcher {
 		li.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/item/ItemPotion", getFX, "(Lnet/minecraft/item/ItemStack;)Ljava/util/List;", false));
 		li.add(new VarInsnNode(Opcodes.ASTORE, 2));
 
-		ReikaASMHelper.deleteFrom(m.instructions, start, end);
+		ReikaASMHelper.deleteFrom(cn, m.instructions, start, end);
 
 		m.instructions.insert(pre, li);
 	}

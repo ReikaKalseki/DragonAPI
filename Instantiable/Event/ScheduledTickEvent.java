@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -21,6 +21,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap.FreezableTimer;
+import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
@@ -277,31 +278,23 @@ public final class ScheduledTickEvent extends Event implements FreezableTimer {
 
 		public final String channel;
 		public final int packetID;
-		public final int radius;
-
-		private final World world;
-		private final int xCoord;
-		private final int yCoord;
-		private final int zCoord;
-
+		private final PacketTarget target;
 		private final int[] data;
 
 		public ScheduledPacket(String ch, int id, World world, int x, int y, int z, int r, int... data) {
+			this(ch, id, new PacketTarget.RadiusTarget(world, x+0.5, y+0.5, z+0.5, r), data);
+		}
+
+		public ScheduledPacket(String ch, int id, PacketTarget pt, int... data) {
 			channel = ch;
 			packetID = id;
-			radius = r;
-
-			this.world = world;
-			xCoord = x;
-			yCoord = y;
-			zCoord = z;
-
+			target = pt;
 			this.data = data;
 		}
 
 		@Override
 		public void fire() {
-			ReikaPacketHelper.sendDataPacketWithRadius(channel, packetID, world, xCoord, yCoord, zCoord, radius, data);
+			ReikaPacketHelper.sendDataPacket(channel, packetID, target, data);
 		}
 
 		@Override

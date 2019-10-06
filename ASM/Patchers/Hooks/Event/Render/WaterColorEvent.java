@@ -49,7 +49,7 @@ public class WaterColorEvent extends Patcher {
 		AbstractInsnNode ref = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.IRETURN);
 		AbstractInsnNode last = ref.getPrevious();
 
-		ReikaASMHelper.deleteFrom(m.instructions, first, last);
+		ReikaASMHelper.deleteFrom(cn, m.instructions, first, last);
 		m.instructions.insertBefore(ref, li);
 	}
 
