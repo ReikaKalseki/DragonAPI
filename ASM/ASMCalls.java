@@ -49,7 +49,6 @@ import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
 import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Interfaces.Item.MetadataSpecificTrade;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
@@ -77,7 +76,7 @@ public class ASMCalls {
 			if (is == null) {
 				throw new IllegalArgumentException("Invalid ingredient object type "+o.getClass()+" with value "+o.toString()+" for char "+c);
 			}
-			ReikaJavaLibrary.pConsole("Parsed char "+c+" with "+o+" to "+is);
+			//ReikaJavaLibrary.pConsole("Parsed char "+c+" with "+o+" to "+is);
 			ret.put(c, is);
 		}
 		return ret;
@@ -117,7 +116,7 @@ public class ASMCalls {
 	}
 
 	public static void preTessellatorStart() {
-		GL11.glAlphaFunc(GL11.GL_GEQUAL, 1/255F);
+		GL11.glAlphaFunc(GL11.GL_GEQUAL, 2/255F);
 	}
 
 	public static List buildVillageStructureList(Random rand, int val, MapGenVillage.Start s) {

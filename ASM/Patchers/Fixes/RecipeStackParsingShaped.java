@@ -33,7 +33,7 @@ public class RecipeStackParsingShaped extends RecipeStackParser {
 
 	@Override
 	protected MethodNode getMethod(ClassNode cn) {
-		return ReikaASMHelper.getMethodByName(cn, "net/minecraft/item/crafting/CraftingManager/func_92103_a", "addRecipe", "(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)Lnet/minecraft/item/crafting/ShapedRecipes;");
+		return ReikaASMHelper.getMethodByName(cn, "func_92103_a", "addRecipe", "(Lnet/minecraft/item/ItemStack;[Ljava/lang/Object;)Lnet/minecraft/item/crafting/ShapedRecipes;");
 	}
 
 

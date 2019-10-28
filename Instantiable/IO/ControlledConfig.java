@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.IO;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -83,6 +84,8 @@ public class ControlledConfig {
 	private final HashMap<String, HashMap<String, Object>> optionMap = new HashMap();
 	private final HashMap<String, HashMap<String, DataElement>> additionalOptions = new HashMap();
 	private final HashSet<String> orphanExclusions = new HashSet();
+
+	private final ArrayList<String> queuedExceptions = new ArrayList();
 
 	public ControlledConfig(DragonAPIMod mod, ConfigList[] option, IDRegistry[] id) {
 		if (mod == null)
@@ -163,6 +166,19 @@ public class ControlledConfig {
 			optionMap.put(s1.toLowerCase(Locale.ENGLISH), map);
 		}
 		map.put(s2, cfg);
+	}
+
+	protected final void registerProperty(String property, Object value) {
+		if (optionList != null && optionList.length > 0) {
+			try {
+				Field f = optionList[0].getClass().getDeclaredField(property);
+				f.setAccessible(true);
+				f.set(null, value);
+			}
+			catch (Exception e) {
+				queuedExceptions.add("Could not set config value property "+property+": "+e.toString());
+			}
+		}
 	}
 
 	protected final void registerOrphanExclusion(String s) {
@@ -319,6 +335,10 @@ public class ControlledConfig {
 
 		this.loadAdditionalData();
 
+		if (!queuedExceptions.isEmpty()) {
+			throw new RegistrationException(configMod, "Errors found loading config data!\n"+Arrays.toString(queuedExceptions.toArray(new String[queuedExceptions.size()])));
+		}
+
 		/*******************************/
 		//save the data
 		config.save();
@@ -408,15 +428,18 @@ public class ControlledConfig {
 				controls[cfg.ordinal()] = this.getDefault(cfg);
 			}
 			else {
+				Object o = this.getDefault(cfg);
 				try {
-					Object o = this.parseData(cfg, s);
-					if (o == null)
-						throw new RegistrationException(configMod, "Config entry '"+this.getLabel(cfg)+"' returned a null value. This is invalid.");
-					controls[cfg.ordinal()] = o;
+					o = this.parseData(cfg, s);
+					if (o == null) {
+						o = this.getDefault(cfg);
+						queuedExceptions.add("Config entry '"+this.getLabel(cfg)+"' returned a null value. This is invalid.");
+					}
 				}
 				catch (Exception e) {
-					controls[cfg.ordinal()] = this.getDefault(cfg);
+					configMod.getModLogger().logError("Could not parse config value for "+this.getLabel(cfg));
 				}
+				controls[cfg.ordinal()] = o;
 			}
 		}
 	}
@@ -671,7 +694,7 @@ public class ControlledConfig {
 			map = new HashMap();
 			additionalOptions.put(c, map);
 		}
-		DataElement<C> e = new DataElement(c, n, default_);
+		DataElement<C> e = new DataElement(this, c, n, default_);
 		map.put(n, e);
 		this.registerOption(c, n, e);
 		return e;
@@ -690,8 +713,10 @@ public class ControlledConfig {
 		private C data;
 		public final String category;
 		public final String name;
+		private final ControlledConfig parent;
 
-		private DataElement(String c, String n, C default_) {
+		private DataElement(ControlledConfig p, String c, String n, C default_) {
+			parent = p;
 			category = c;
 			name = n;
 			this.data = default_;
@@ -713,11 +738,14 @@ public class ControlledConfig {
 			else if (data instanceof int[]) {
 				return config.get(category, name, (int[])data).getIntList();
 			}
+			else if (data instanceof boolean[]) {
+				return config.get(category, name, (boolean[])data).getIntList();
+			}
 			else if (data instanceof String[]) {
 				return config.get(category, name, (String[])data).getStringList();
 			}
 			else {
-				return data;
+				throw new RegistrationException(parent.configMod, "Invalid data element type: "+data+"!");
 			}
 		}
 
