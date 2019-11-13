@@ -43,7 +43,7 @@ public abstract class LuaBlock {
 
 	public final String name;
 	private final LuaBlock parent;
-	private final HashMap<String, LuaBlock> children = new HashMap();
+	private final HashMap<LuaBlockKey, LuaBlock> children = new HashMap();
 	private final HashMap<String, String> data = new HashMap();
 
 	protected final LuaBlockDatabase tree;
@@ -64,11 +64,15 @@ public abstract class LuaBlock {
 		if (tree == null)
 			throw new MisuseException("You cannot create a LuaBlock without a containing tree!");
 		if (parent != null) {
-			parent.children.put(name, this);
+			parent.children.put(this.createKey(name), this);
 			parent.checkListType();
 		}
 
 		requiredElements.add("type");
+	}
+
+	private LuaBlockKey createKey(String n) {
+		return tree.hasDuplicateKeys ? new LuaBlockKey(n, n+"_"+parent.children.size()) : new LuaBlockKey(n);
 	}
 
 	private void checkListType() {
@@ -191,11 +195,12 @@ public abstract class LuaBlock {
 		return /*!requiredElements.contains(name) && */!requiredElements.contains(key) && !key.equals("inherit");
 	}
 
-	public final LuaBlock getChild(String key) {
-		return children.containsKey(key) ? children.get(key) : this.inheritChild(key);
+	public final LuaBlock getChild(String s) {
+		LuaBlockKey key = new LuaBlockKey(s);
+		return children.containsKey(key) ? children.get(key) : this.inheritChild(s);
 	}
 
-	private LuaBlock inheritChild(String key) {
+	private LuaBlock inheritChild(String sg) {
 		LuaBlock b = this;
 		Collection<String> steps = new ArrayList();
 		while (!b.data.containsKey("inherit") && b.parent != null) {
@@ -212,6 +217,7 @@ public abstract class LuaBlock {
 		for (String s : steps) {
 			lb = lb.children.get(s);
 		}
+		LuaBlockKey key = new LuaBlockKey(sg);
 		return lb.children.containsKey(key) ? lb.children.get(key) : null;
 	}
 
@@ -310,12 +316,17 @@ public abstract class LuaBlock {
 
 		private final HashMap<String, LuaBlock> rawData = new HashMap();
 
+		public boolean hasDuplicateKeys = false;
+
 		public LuaBlockDatabase() {
 			//this.addBlock("top", block);
 		}
 
 		public final void loadFromFile(File f) {
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(f, false);
+			this.loadFromLines(ReikaFileReader.getFileAsLines(f, false));
+		}
+
+		public final void loadFromLines(ArrayList<String> li) {
 			//ArrayList<ArrayList<String>> data = new ArrayList();
 			int bracketLevel = 0;
 			for (String s : li) {
@@ -405,9 +416,9 @@ public abstract class LuaBlock {
 		for (String s : data.keySet()) {
 			ret.put(s, this.parseObject(data.get(s)));
 		}
-		for (String s : children.keySet()) {
+		for (LuaBlockKey s : children.keySet()) {
 			LuaBlock b = children.get(s);
-			ret.put(s, this.getObject(b));
+			ret.put(s.lookupKey, this.getObject(b));
 		}
 		return ret;
 	}
@@ -538,14 +549,14 @@ public abstract class LuaBlock {
 			else
 				li.add(pre+s+" = "+val);
 		}
-		keys = new ArrayList(children.keySet());
-		Collections.sort(keys, outputSorter);
-		for (String s : keys) {
+		ArrayList<LuaBlockKey> keys2 = new ArrayList(children.keySet());
+		Collections.sort(keys2);
+		for (LuaBlockKey s : keys2) {
 			LuaBlock c = children.get(s);
-			if (this.isList() || c.isListEntry() || s.equals("-"))
+			if (this.isList() || c.isListEntry() || s.name.equals("-"))
 				li.add(pre+"{");
 			else
-				li.add(pre+s+" = {");
+				li.add(pre+s.name+" = {");
 			li.addAll(c.writeToStrings(indent+1));
 			li.add(pre+"}");
 		}
@@ -564,6 +575,42 @@ public abstract class LuaBlock {
 				return Integer.MAX_VALUE;
 			else
 				return o1.compareToIgnoreCase(o2);
+		}
+
+	}
+
+	private static class LuaBlockKey implements Comparable<LuaBlockKey> {
+
+		public final String name;
+		public final String lookupKey;
+
+		private LuaBlockKey(String s) {
+			this(s, s);
+		}
+
+		private LuaBlockKey(String s, String k) {
+			name = s;
+			lookupKey = k;
+		}
+
+		@Override
+		public String toString() {
+			return name;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			return o instanceof LuaBlockKey && ((LuaBlockKey)o).lookupKey.equals(lookupKey);
+		}
+
+		@Override
+		public int hashCode() {
+			return lookupKey.hashCode();
+		}
+
+		@Override
+		public int compareTo(LuaBlockKey o) {
+			return name.compareTo(o.name);
 		}
 
 	}

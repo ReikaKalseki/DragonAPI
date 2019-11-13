@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
@@ -41,6 +42,8 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 
 public final class Coordinate implements Comparable<Coordinate> {
@@ -101,6 +104,11 @@ public final class Coordinate implements Comparable<Coordinate> {
 
 	public Coordinate(ChunkPosition pos) {
 		this(pos.chunkPosX, pos.chunkPosY, pos.chunkPosZ);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public Coordinate(WorldRenderer cc) {
+		this(cc.posX, cc.posY, cc.posZ);
 	}
 
 	public Coordinate offset(int dx, int dy, int dz) {

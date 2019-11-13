@@ -226,6 +226,38 @@ public final class BlockBox {
 		return new BlockBox(minx, miny, minz, maxx, maxy, maxz);
 	}
 
+	public BlockBox clamp(ForgeDirection side, int x0, int y0, int z0, int dist) {
+		int minx = minX;
+		int miny = minY;
+		int minz = minZ;
+		int maxx = maxX;
+		int maxy = maxY;
+		int maxz = maxX;
+		switch(side) {
+			case DOWN:
+				miny = Math.max(y0-dist, miny);
+				break;
+			case UP:
+				maxy = Math.min(y0+1+dist, maxy);
+				break;
+			case EAST:
+				maxx = Math.min(x0+1+dist, maxx);
+				break;
+			case WEST:
+				minx = Math.max(x0-dist, minx);
+				break;
+			case NORTH:
+				minz = Math.max(z0-dist, minz);
+				break;
+			case SOUTH:
+				maxz = Math.min(z0+1+dist, maxz);
+				break;
+			default:
+				break;
+		}
+		return new BlockBox(minx, miny, minz, maxx, maxy, maxz);
+	}
+
 	public BlockBox clampTo(BlockBox box) {
 		int minX = Math.max(this.minX, box.minX);
 		int minY = Math.max(this.minY, box.minY);

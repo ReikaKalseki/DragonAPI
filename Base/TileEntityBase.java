@@ -363,8 +363,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	}
 
 	@Override
-	public final void onDataPacket(NetworkManager netManager, S35PacketUpdateTileEntity packet)
-	{
+	public final void onDataPacket(NetworkManager netManager, S35PacketUpdateTileEntity packet) {
 		if (packet instanceof DataSync) {
 			DataSync p = (DataSync)packet;
 			if (!p.hasNoData()) {

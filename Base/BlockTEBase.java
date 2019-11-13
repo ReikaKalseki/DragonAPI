@@ -47,16 +47,14 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 	}
 
 	@Override
-	public void onNeighborBlockChange(World world, int x, int y, int z, Block b)
-	{
+	public void onNeighborBlockChange(World world, int x, int y, int z, Block b) {
 		TileEntityBase te = (TileEntityBase)world.getTileEntity(x, y, z);
 		if (te != null)
 			te.onBlockUpdate();
 	}
 
 	@Override
-	public final void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ)
-	{
+	public final void onNeighborChange(IBlockAccess world, int x, int y, int z, int tileX, int tileY, int tileZ) {
 		ForgeDirection dir = ReikaDirectionHelper.getDirectionBetween(x, y, z, tileX, tileY, tileZ);
 		TileEntityBase te = (TileEntityBase)world.getTileEntity(x, y, z);
 		if (te != null)
@@ -91,8 +89,7 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 	}
 
 	@Override
-	public final boolean hasComparatorInputOverride()
-	{
+	public final boolean hasComparatorInputOverride() {
 		return true;
 	}
 
@@ -102,8 +99,7 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 	}
 
 	@Override
-	public boolean canEntityDestroy(IBlockAccess world, int x, int y, int z, Entity e)
-	{
+	public boolean canEntityDestroy(IBlockAccess world, int x, int y, int z, Entity e) {
 		return false;
 	}
 
