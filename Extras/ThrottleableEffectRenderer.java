@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Extras;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,6 +55,8 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 	@Deprecated
 	private boolean isTicking;
 
+	private ArrayList<ParticleSpawnHandler> particleSpawnHandlers = null;
+
 	private static final ResourceLocation particleTextures = new ResourceLocation("textures/particle/particles.png");
 	private static AxisAlignedBB particleBox = AxisAlignedBB.getBoundingBox(0, 0, 0, 0, 0, 0);
 
@@ -68,6 +71,13 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 		delegateSet.add(renderer);
 	}
 
+	public void addSpawnHandler(ParticleSpawnHandler p) {
+		if (particleSpawnHandlers == null) {
+			particleSpawnHandlers = new ArrayList();
+		}
+		particleSpawnHandlers.add(p);
+	}
+
 	@Override
 	public void addEffect(EntityFX fx) {
 		if (fx == null)
@@ -77,6 +87,13 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 		//	return;
 		//if (this.isInWall(fx))
 		//	return;
+		if (particleSpawnHandlers != null) {
+			for (ParticleSpawnHandler p : particleSpawnHandlers) {
+				if (p.cancel(fx)) {
+					return;
+				}
+			}
+		}
 		EffectRenderer eff = delegates.get(fx.getClass());
 		if (eff != null) {
 			eff.addEffect(fx);
@@ -288,6 +305,12 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 	public static interface CustomEffectRenderer {
 
 		public int getParticleCount();
+
+	}
+
+	public static interface ParticleSpawnHandler {
+
+		public boolean cancel(EntityFX fx);
 
 	}
 
