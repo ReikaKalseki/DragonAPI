@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -24,6 +24,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ReikaXMLBase {
+
+	private ReikaXMLBase() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	public static Document getXMLDocument(InputStream in) throws SAXException, IOException {
 		ArrayList<String> li = ReikaFileReader.getFileAsLines(in, true);
