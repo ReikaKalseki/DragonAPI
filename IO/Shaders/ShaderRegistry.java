@@ -1,20 +1,17 @@
 package Reika.DragonAPI.IO.Shaders;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.ARBFragmentShader;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 
-import com.google.common.base.Throwables;
-
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.OpenGlHelper;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -22,6 +19,10 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class ShaderRegistry {
 
 	private ShaderRegistry() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
@@ -29,40 +30,26 @@ public class ShaderRegistry {
 	private static final HashMap<Integer, ShaderProgram> shaders = new HashMap();
 	private static final HashMap<String, ShaderProgram> shaderIDs = new HashMap();
 
-	public static ShaderProgram createShader(DragonAPIMod mod, String id, Class root, String pv, String pf) {
-		return createShader(mod, id, root.getResourceAsStream(pv), root.getResourceAsStream(pf));
-	}
-
-	public static ShaderProgram createShader(DragonAPIMod mod, String id, File fv, File ff) throws FileNotFoundException {
-		return createShader(mod, id, new FileInputStream(fv), new FileInputStream(ff));
-	}
-
-	public static ShaderProgram createShader(DragonAPIMod mod, String id, InputStream fv, InputStream ff) {
+	public static ShaderProgram createShader(DragonAPIMod mod, String id, Class root, String pathPre) {
 		if (!OpenGlHelper.shadersSupported)
 			return null;
 		if (shaderIDs.containsKey(id))
 			throw new RegistrationException(mod, "Shader id "+id+" is already in use!");
-		int vert = 0;
-		int frag = 0;
+		int prog = ARBShaderObjects.glCreateProgramObjectARB();
+		if (prog == 0) {
+			throw new RegistrationException(mod, "Shader program could not be assigned an ID!");
+		}
+		ShaderProgram sh = new ShaderProgram(mod, root, pathPre, id, prog);
 		try {
-			vert = constructShader(mod, fv, ShaderTypes.VERTEX);
-			frag = constructShader(mod, ff, ShaderTypes.FRAGMENT);
-			int prog = ARBShaderObjects.glCreateProgramObjectARB();
-			if (prog == 0) {
-				throw new RegistrationException(mod, "Shader program could not be assigned an ID!");
-			}
-			ShaderProgram sh = new ShaderProgram(mod, id, prog);
-			sh.load(fv, ff);
-			shaders.put(sh.programID, sh);
-			shaderIDs.put(sh.identifier, sh);
-			DragonAPICore.log("Registered "+mod.getTechnicalName()+" shader "+sh);
-			return sh;
+			sh.load();
 		}
-		catch (Exception e) {
-			ARBShaderObjects.glDeleteObjectARB(vert);
-			ARBShaderObjects.glDeleteObjectARB(frag);
-			throw Throwables.propagate(e);
+		catch (IOException e) {
+			throw new RegistrationException(mod, "Shader program data could not be loaded!", e);
 		}
+		shaders.put(sh.programID, sh);
+		shaderIDs.put(sh.identifier, sh);
+		DragonAPICore.log("Registered "+mod.getTechnicalName()+" shader "+sh);
+		return sh;
 	}
 
 	public void removeShader(String id) {
@@ -74,8 +61,8 @@ public class ShaderRegistry {
 		shaders.remove(s.programID);
 	}
 
-	public static void reloadShader(String id, InputStream fv, InputStream ff) throws IOException {
-		shaderIDs.get(id).load(fv, ff);
+	public static void reloadShader(String id) throws IOException {
+		shaderIDs.get(id).load();
 	}
 
 	public static void runShader(int id) {
@@ -89,6 +76,14 @@ public class ShaderRegistry {
 	public static void runShader(ShaderProgram sh) {
 		if (!OpenGlHelper.shadersSupported || sh == null)
 			return;
+		if (GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_Z)) {
+			try {
+				sh.load();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		sh.run();
 	}
 
@@ -125,14 +120,20 @@ public class ShaderRegistry {
 		return sb.toString();
 	}
 
+	public static void runGlobalShaders() {
+
+	}
+
 	public static enum ShaderTypes {
-		FRAGMENT(ARBFragmentShader.GL_FRAGMENT_SHADER_ARB),
-		VERTEX(ARBVertexShader.GL_VERTEX_SHADER_ARB);
+		FRAGMENT(ARBFragmentShader.GL_FRAGMENT_SHADER_ARB, "frag"),
+		VERTEX(ARBVertexShader.GL_VERTEX_SHADER_ARB, "vert");
 
 		public final int glValue;
+		public final String extension;
 
-		private ShaderTypes(int id) {
+		private ShaderTypes(int id, String s) {
 			glValue = id;
+			extension = s;
 		}
 	}
 

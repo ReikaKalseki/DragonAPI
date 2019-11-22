@@ -19,6 +19,7 @@ import java.util.Random;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Blocks;
@@ -43,6 +44,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.IO.Shaders.ShaderRegistry;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Worldgen.VillageBuilding.PerVillageWeight;
 import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
@@ -55,6 +57,12 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
+
+	public static void onRenderFrameBuffer(Framebuffer fb, int w, int h) {
+		ShaderRegistry.runGlobalShaders();
+		fb.framebufferRender(w, h);
+		ShaderRegistry.completeShader();
+	}
 
 	public static HashMap<Character, Object> parseItemMappings(int i, boolean ore, Object[] in) {
 		HashMap<Character, Object> ret = new HashMap();

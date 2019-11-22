@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
@@ -80,6 +81,28 @@ public abstract class InertEntity extends Entity {
 	public final boolean canBeCollidedWith()
 	{
 		return false;
+	}
+
+	//Step sounds
+	@Override
+	protected final void func_145780_a(int x, int y, int z, Block b) {
+
+	}
+
+	@Override
+	protected final boolean canTriggerWalking()
+	{
+		return false;
+	}
+
+	@Override
+	public final boolean doesEntityNotTriggerPressurePlate() {
+		return true;
+	}
+
+	@Override
+	protected final String getSplashSound() {
+		return "";
 	}
 
 	@Override

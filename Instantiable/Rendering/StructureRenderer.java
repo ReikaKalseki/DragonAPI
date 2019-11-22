@@ -58,7 +58,7 @@ public class StructureRenderer {
 	protected final RenderAccess access;
 	protected final RenderBlocks renderer;
 
-	private final HashMap<Coordinate, ItemStack> overrides = new HashMap();
+	private final HashMap<Coordinate, BlockChoiceHook> overrides = new HashMap();
 	private final ItemHashMap<ItemStack> itemOverrides = new ItemHashMap();
 	private final HashMap<Block, BlockChoiceHook> choiceHooks = new HashMap();
 	private final ItemHashMap<BlockRenderHook> renderHooks = new ItemHashMap();
@@ -141,7 +141,11 @@ public class StructureRenderer {
 	}
 
 	public void addOverride(int x, int y, int z, ItemStack is) {
-		overrides.put(new Coordinate(x, y, z), is);
+		overrides.put(new Coordinate(x, y, z), new SingleBlockChoice(is));
+	}
+
+	public void addOverride(int x, int y, int z, BlockChoiceHook bc) {
+		overrides.put(new Coordinate(x, y, z), bc);
 	}
 
 	public void addOverride(ItemStack is, ItemStack render) {
@@ -162,11 +166,12 @@ public class StructureRenderer {
 
 	private ItemStack getRenderStack(Coordinate pos) {
 		ItemStack is = array.getDisplayAt(pos.xCoord, pos.yCoord, pos.zCoord);
-		ItemStack over = overrides.get(pos);
-		if (over != null)
-			is = over;
+		BlockChoiceHook call = overrides.get(pos);
+		if (call != null) {
+			is = call.getBlock(pos);
+		}
 		if (is != null && is.getItem() != null) {
-			over = itemOverrides.get(is);
+			ItemStack over = itemOverrides.get(is);
 			if (over != null)
 				is = over;
 		}
@@ -175,7 +180,7 @@ public class StructureRenderer {
 			if (b != null) {
 				BlockChoiceHook bc = choiceHooks.get(b);
 				if (bc != null) {
-					is = bc.getBlock(pos, is.getItemDamage());
+					is = bc.getBlock(pos);
 				}
 			}
 		}
@@ -183,13 +188,15 @@ public class StructureRenderer {
 	}
 
 	private BlockKey getRenderBlock(Coordinate pos, BlockKey is) {
-		ItemStack over = overrides.get(pos);
-		if (over != null)
-			is = new BlockKey(over);
+		BlockChoiceHook over = overrides.get(pos);
+		if (over != null) {
+			ItemStack at = over.getBlock(pos);
+			is = at != null ? new BlockKey(at) : null;
+		}
 		if (is != null && is.blockID != null) {
 			BlockChoiceHook bc = choiceHooks.get(is.blockID);
 			if (bc != null) {
-				is = new BlockKey(bc.getBlock(pos, is.metadata));
+				is = new BlockKey(bc.getBlock(pos));
 			}
 		}
 		return is;
@@ -373,6 +380,8 @@ public class StructureRenderer {
 					//ReikaJavaLibrary.pConsole(p+" @ "+x+","+y+","+z);
 					if (p.block.blockID != Blocks.air) {
 						BlockKey bk = this.getRenderBlock(new Coordinate(x, y, z), p.block);
+						if (bk == null)
+							continue;
 						if (!bk.equals(p.block)) {
 							access.data[x-array.getMinX()][y-array.getMinY()][z-array.getMinZ()] = new PositionData(bk.blockID, bk.metadata, p.tile);
 						}
@@ -398,6 +407,8 @@ public class StructureRenderer {
 						if (p.block.blockID != Blocks.air) {
 							//ReikaJavaLibrary.pConsole(p+" @ "+x+","+y+","+z);
 							BlockKey bk = this.getRenderBlock(new Coordinate(x, y, z), p.block);
+							if (bk == null)
+								continue;
 							if (!bk.equals(p.block)) {
 								access.data[x-array.getMinX()][y-array.getMinY()][z-array.getMinZ()] = new PositionData(bk.blockID, bk.metadata, p.tile);
 							}
@@ -627,7 +638,22 @@ public class StructureRenderer {
 
 	public interface BlockChoiceHook {
 
-		public ItemStack getBlock(Coordinate pos, int meta);
+		public ItemStack getBlock(Coordinate pos);
+
+	}
+
+	public static final class SingleBlockChoice implements BlockChoiceHook {
+
+		private final ItemStack item;
+
+		public SingleBlockChoice(ItemStack is) {
+			item = is.copy();
+		}
+
+		@Override
+		public ItemStack getBlock(Coordinate pos) {
+			return item;
+		}
 
 	}
 

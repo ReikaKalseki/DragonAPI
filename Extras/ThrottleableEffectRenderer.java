@@ -194,11 +194,21 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 						//if (isEntityCloseEnough(fx, EntityFX.interpPosX, EntityFX.interpPosY, EntityFX.interpPosZ)) {
 						v5.setBrightness(fx.getBrightnessForRender(ptick));
 
+						boolean draw = v5.isDrawing;
 						try {
 							fx.renderParticle(v5, ptick, f1, f5, f2, f3, f4);
 						}
 						catch (Throwable throwable) {
 							this.throwCrash(i, fx, throwable);
+						}
+						if (v5.isDrawing != draw) {
+							DragonAPICore.logError("Particle "+fx+" left the tessellator in a bad state!");
+							if (draw) {
+								v5.startDrawingQuads();
+							}
+							else {
+								v5.draw();
+							}
 						}
 						//}
 					}

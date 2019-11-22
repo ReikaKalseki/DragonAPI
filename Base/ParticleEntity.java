@@ -235,22 +235,12 @@ public abstract class ParticleEntity extends InertEntity implements IEntityAddit
 	}
 
 	@Override
-	protected final boolean canTriggerWalking() {
-		return false;
-	}
-
-	@Override
 	public final AxisAlignedBB getBoundingBox() {
 		return null;
 	}
 
 	@Override
 	public final boolean isEntityInvulnerable() {
-		return true;
-	}
-
-	@Override
-	public final boolean doesEntityNotTriggerPressurePlate() {
 		return true;
 	}
 
