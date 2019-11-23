@@ -2,6 +2,8 @@ package Reika.DragonAPI.IO.Shaders;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map.Entry;
 
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
@@ -34,6 +36,8 @@ public class ShaderProgram implements Comparable<ShaderProgram> {
 	private int ordering;
 
 	private boolean isEnabled = true;
+
+	private final HashMap<String, Object> variables = new HashMap();
 
 	ShaderProgram(DragonAPIMod mod, Class c, String p, String s, int id, ShaderDomain dom) {
 		identifier = s;
@@ -73,14 +77,8 @@ public class ShaderProgram implements Comparable<ShaderProgram> {
 		return this;
 	}
 
-	public void setField(String field, int value) {
-		int loc = ARBShaderObjects.glGetUniformLocationARB(programID, field);
-		ARBShaderObjects.glUniform1iARB(loc, value);
-	}
-
-	public void setField(String field, float value) {
-		int loc = ARBShaderObjects.glGetUniformLocationARB(programID, field);
-		ARBShaderObjects.glUniform1fARB(loc, value);
+	public void setField(String field, Object value) {
+		variables.put(field, value);
 	}
 
 	void run() {
@@ -89,9 +87,24 @@ public class ShaderProgram implements Comparable<ShaderProgram> {
 		if (Minecraft.getMinecraft().thePlayer == null)
 			return;
 		ARBShaderObjects.glUseProgramObjectARB(programID);
+		this.applyVariables();
 		this.setField("time", Minecraft.getMinecraft().thePlayer.ticksExisted);
 		if (hook != null)
 			hook.onRender(this);
+	}
+
+	private void applyVariables() {
+		for (Entry<String, Object> e : variables.entrySet()) {
+			int loc = ARBShaderObjects.glGetUniformLocationARB(programID, e.getKey());
+			Object val = e.getValue();
+			if (val instanceof Integer) {
+				ARBShaderObjects.glUniform1iARB(loc, (int)val);
+			}
+			else if (val instanceof Float || val instanceof Double) {
+				ARBShaderObjects.glUniform1fARB(loc, (float)val);
+			}
+		}
+		//variables.clear();
 	}
 
 	void register() {
