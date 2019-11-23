@@ -71,6 +71,7 @@ import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
 import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderingLoopEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.SettingsEvent;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
 import Reika.DragonAPI.Interfaces.TileEntity.PlayerBreakHook;
@@ -121,6 +122,16 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
 	public void onCall(String tag) {
 
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void collectAll(SettingsEvent.Save evt) {
+		evt.settings.fboEnable = true;
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void collectAll(SettingsEvent.Load evt) {
+		evt.settings.fboEnable = true;
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)

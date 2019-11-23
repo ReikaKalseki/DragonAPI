@@ -29,6 +29,7 @@ import net.minecraft.client.renderer.culling.Frustrum;
 import net.minecraft.client.renderer.culling.ICamera;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.client.shader.TesselatorVertexState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -45,6 +46,8 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.IO.Shaders.ShaderProgram;
+import Reika.DragonAPI.IO.Shaders.ShaderRegistry;
 import Reika.DragonAPI.Instantiable.CubePoints;
 import Reika.DragonAPI.Instantiable.Effects.ReikaModelledBreakFX;
 import Reika.DragonAPI.Instantiable.Rendering.TessellatorVertexList;
@@ -66,6 +69,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	private static boolean entityLighting;
 	private static boolean generalLighting;
+
+	private static ScratchFramebuffer tempBuffer;
 
 	public static enum RenderDistance {
 		FAR(),
@@ -1660,6 +1665,41 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			v5.addVertexWithUVColor(0.0D, f7, 0.0F - t, maxu, f8, 0xffb5b5b5);
 			v5.addVertexWithUVColor(1.0D, f7, 0.0F - t, minu, f8, 0xffb5b5b5);
 		}
+	}
+
+	public static void renderFrameBufferToItself(Framebuffer fb, int w, int h, ShaderProgram p) {
+		if (!p.isEnabled())
+			return;
+		if (tempBuffer == null) {
+			tempBuffer = new ScratchFramebuffer(w, h, true);
+			tempBuffer.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
+		}
+		tempBuffer.createBindFramebuffer(w, h);
+		setRenderTarget(tempBuffer);
+		ShaderRegistry.runShader(p);
+		fb.framebufferRender(w, h);
+		ShaderRegistry.completeShader();
+		setRenderTarget(fb);
+		tempBuffer.framebufferRender(w, h);
+	}
+
+	/** Supply null to make the screen the render target. */
+	public static void setRenderTarget(Framebuffer fb) {
+		OpenGlHelper.func_153171_g(OpenGlHelper.field_153198_e, fb != null ? fb.framebufferObject : 0);
+	}
+
+	private static class ScratchFramebuffer extends Framebuffer {
+
+		public ScratchFramebuffer(int w, int h, boolean depth) {
+			super(w, h, depth);
+		}
+
+		@Override
+		public void createBindFramebuffer(int w, int h) {
+			if (w != framebufferWidth || h != framebufferHeight)
+				super.createBindFramebuffer(w, h);
+		}
+
 	}
 
 }

@@ -51,6 +51,7 @@ import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
 import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Interfaces.Item.MetadataSpecificTrade;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
@@ -59,9 +60,9 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 public class ASMCalls {
 
 	public static void onRenderFrameBuffer(Framebuffer fb, int w, int h) {
-		ShaderRegistry.runGlobalShaders();
+		ShaderRegistry.runGlobalShaders(fb, w, h);
+		ReikaRenderHelper.setRenderTarget(null);
 		fb.framebufferRender(w, h);
-		ShaderRegistry.completeShader();
 	}
 
 	public static HashMap<Character, Object> parseItemMappings(int i, boolean ore, Object[] in) {
