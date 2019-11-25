@@ -9,7 +9,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
+import Reika.DragonAPI.ModInteract.DeepInteract.PlanetDimensionHandler;
 
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 import micdoodle8.mods.galacticraft.api.world.OxygenHooks;
@@ -22,11 +22,13 @@ public class AtmosphereHandler {
 	private static Method get;
 
 	@ModDependent(ModList.ADVROCKET)
-	public static IAtmosphere getAtmo(World world, int x, int y, int z) {
-		if (!ModList.ADVROCKET.isLoaded())
-			return null;
+	private static IAtmosphere getAtmo(World world, int x, int y, int z) {
 		try {
 			Object o = lookup.invoke(null, world.provider.dimensionId);
+			if (o == null) {
+				DragonAPICore.logError("World #"+world.provider.dimensionId+" / "+world+" / "+world.provider+" had a null atmo handler!");
+				return null;
+			}
 			return (IAtmosphere)get.invoke(o, x, y, z);
 		}
 		catch (Exception e) {
@@ -36,12 +38,12 @@ public class AtmosphereHandler {
 	}
 
 	public static boolean isNoAtmo(World world, int x, int y, int z, Block b, boolean needsO2) {
-		if (ModList.ADVROCKET.isLoaded()) {
+		if (PlanetDimensionHandler.isAdvRWorld(world)) {
 			IAtmosphere atmo = getAtmo(world, x, y, z);
 			if (atmo != null && !atmo.allowsCombustion())
 				return true;
 		}
-		if (ModList.GALACTICRAFT.isLoaded() && InterfaceCache.IGALACTICWORLD.instanceOf(world.provider)) {
+		else if (PlanetDimensionHandler.isGalacticWorld(world)) {
 			if (needsO2) {
 				if (OxygenHooks.noAtmosphericCombustion(world.provider)) {
 					if (!(OxygenHooks.inOxygenBubble(world, x+0.5, y+0.5, z+0.5) && OxygenHooks.checkTorchHasOxygen(world, b, x, y, z)))
@@ -55,6 +57,17 @@ public class AtmosphereHandler {
 			}
 		}
 		return false;
+	}
+
+	public static float getAtmoDensity(World world) {
+		if (PlanetDimensionHandler.isAdvRWorld(world)) {
+
+		}
+		else if (PlanetDimensionHandler.isGalacticWorld(world)) {
+			IGalacticraftWorldProvider igw = (IGalacticraftWorldProvider)world.provider;
+			return 1F/igw.getSoundVolReductionAmount();
+		}
+		return 1;
 	}
 
 	static {

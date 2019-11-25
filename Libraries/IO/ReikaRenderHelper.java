@@ -9,12 +9,15 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.util.vector.Matrix4f;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -1266,6 +1269,59 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	}
 
+	public static void renderTorch(IBlockAccess world, double x, double y, double z, IIcon ico, Tessellator v5, RenderBlocks rb, double h, double w) {
+		ico = rb.getIconSafe(ico);
+
+		double u = ico.getMinU();
+		double v = ico.getMinV();
+		double du = ico.getMaxU();
+		double dv = ico.getMaxV();
+		double d9 = ico.getInterpolatedU(7.0D);
+		double d10 = ico.getInterpolatedV(6.0D);
+		double d11 = ico.getInterpolatedU(9.0D);
+		double d12 = ico.getInterpolatedV(8.0D);
+		double d13 = ico.getInterpolatedU(7.0D);
+		double d14 = ico.getInterpolatedV(13.0D);
+		double d15 = ico.getInterpolatedU(9.0D);
+		double d16 = ico.getInterpolatedV(15.0D);
+		x += 0.5D;
+		z += 0.5D;
+		double xmin = x - 0.5D;
+		double xmax = x + 0.5D;
+		double zmin = z - 0.5D;
+		double zmax = z + 0.5D;
+
+		v5.addVertexWithUV(x - w, y + h, z - w, d9, d10);
+		v5.addVertexWithUV(x - w, y + h, z + w, d9, d12);
+		v5.addVertexWithUV(x + w, y + h, z + w, d11, d12);
+		v5.addVertexWithUV(x + w, y + h, z - w, d11, d10);
+
+		v5.addVertexWithUV(x + w, y, z - w, d15, d14);
+		v5.addVertexWithUV(x + w, y, z + w, d15, d16);
+		v5.addVertexWithUV(x - w, y, z + w, d13, d16);
+		v5.addVertexWithUV(x - w, y, z - w, d13, d14);
+
+		v5.addVertexWithUV(x - w, y + 1.0D, zmin, u, v);
+		v5.addVertexWithUV(x - w, y + 0.0D, zmin, u, dv);
+		v5.addVertexWithUV(x - w, y + 0.0D, zmax, du, dv);
+		v5.addVertexWithUV(x - w, y + 1.0D, zmax, du, v);
+
+		v5.addVertexWithUV(x + w, y + 1.0D, zmax, u, v);
+		v5.addVertexWithUV(x + w, y + 0.0D, zmax, u, dv);
+		v5.addVertexWithUV(x + w, y + 0.0D, zmin, du, dv);
+		v5.addVertexWithUV(x + w, y + 1.0D, zmin, du, v);
+
+		v5.addVertexWithUV(xmin, y + 1.0D, z + w, u, v);
+		v5.addVertexWithUV(xmin, y + 0.0D, z + w, u, dv);
+		v5.addVertexWithUV(xmax, y + 0.0D, z + w, du, dv);
+		v5.addVertexWithUV(xmax, y + 1.0D, z + w, du, v);
+
+		v5.addVertexWithUV(xmax, y + 1.0D, z - w, u, v);
+		v5.addVertexWithUV(xmax, y + 0.0D, z - w, u, dv);
+		v5.addVertexWithUV(xmin, y + 0.0D, z - w, du, dv);
+		v5.addVertexWithUV(xmin, y + 1.0D, z - w, du, v);
+	}
+
 	public static void renderCrossTex(IBlockAccess world, int x, int y, int z, IIcon ico, Tessellator v5, RenderBlocks rb, double h) {
 		ico = rb.getIconSafe(ico);
 
@@ -1667,7 +1723,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		}
 	}
 
-	public static void renderFrameBufferToItself(Framebuffer fb, int w, int h, ShaderProgram p) {
+	public static void renderFrameBufferToItself(Framebuffer fb, int w, int h, ShaderProgram p/*, Matrix4f model, Matrix4f proj*/) {
 		if (!p.isEnabled())
 			return;
 		if (tempBuffer == null) {
@@ -1676,6 +1732,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		}
 		tempBuffer.createBindFramebuffer(w, h);
 		setRenderTarget(tempBuffer);
+		//p.setMatrices(model, proj);
 		ShaderRegistry.runShader(p);
 		fb.framebufferRender(w, h);
 		ShaderRegistry.completeShader();
@@ -1700,6 +1757,27 @@ public final class ReikaRenderHelper extends DragonAPICore {
 				super.createBindFramebuffer(w, h);
 		}
 
+	}
+
+	public static Matrix4f getModelviewMatrix() {
+		return getMatrix(GL11.GL_MODELVIEW_MATRIX);
+	}
+
+	public static Matrix4f getProjectionMatrix() {
+		return getMatrix(GL11.GL_PROJECTION_MATRIX);
+	}
+
+	public static Matrix4f getTextureMatrix() {
+		return getMatrix(GL11.GL_TEXTURE_MATRIX);
+	}
+
+	private static Matrix4f getMatrix(int id) {
+		FloatBuffer buf = BufferUtils.createFloatBuffer(16);
+		GL11.glGetFloat(id, buf);
+		buf.rewind();
+		Matrix4f mat = new Matrix4f();
+		mat.load(buf);
+		return mat;
 	}
 
 }

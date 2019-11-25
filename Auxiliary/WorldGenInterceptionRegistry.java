@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2018
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -30,7 +30,7 @@ import Reika.DragonAPI.Instantiable.Event.ChunkPopulationEvent;
 import Reika.DragonAPI.Instantiable.Event.ChunkRequestEvent;
 import Reika.DragonAPI.Instantiable.Event.SetBlockEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
+import Reika.DragonAPI.ModInteract.DeepInteract.PlanetDimensionHandler;
 
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -117,7 +117,7 @@ public class WorldGenInterceptionRegistry {
 		if (dispatchingChanges) {
 			return;
 		}
-		if (InterfaceCache.IGALACTICWORLD.instanceOf(evt.world.provider)) //it is his world anyways, and this just breaks there
+		if (PlanetDimensionHandler.isGalacticWorld(evt.world)) //it is his world anyways, and this just breaks there
 			return;
 		for (InterceptionException e : exceptions)
 			if (e.doesExceptionApply(evt.world, evt.xCoord, evt.yCoord, evt.zCoord))

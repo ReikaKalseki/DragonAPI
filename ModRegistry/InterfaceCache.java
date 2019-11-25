@@ -44,6 +44,7 @@ public enum InterfaceCache {
 	PAINTABLE("crazypants.enderio.machine.painter.IPaintableTileEntity"),
 	EIOCONDUIT("crazypants.enderio.conduit.IConduitBundle"),
 	RECONFIGURABLEFACE("cofh.api.tileentity.IReconfigurableFacing"),
+	IPLANETWORLD("zmaster587.advancedRocketry.api.IPlanetaryProvider"),
 	;
 
 	private final String classpath;

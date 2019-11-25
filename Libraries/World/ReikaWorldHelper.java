@@ -103,9 +103,10 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaCropHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
+import Reika.DragonAPI.ModInteract.AtmosphereHandler;
+import Reika.DragonAPI.ModInteract.DeepInteract.PlanetDimensionHandler;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.NaturaBlockHandler;
-import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -114,7 +115,6 @@ import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
 
 public final class ReikaWorldHelper extends DragonAPICore {
 
@@ -2345,14 +2345,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			double f = (y-128)/(256D-192D);
 			Pamb *= 1-0.4*f;
 		}
-		if (InterfaceCache.IGALACTICWORLD.instanceOf(world.provider)) {
-			Pamb /= ((IGalacticraftWorldProvider)world.provider).getSoundVolReductionAmount(); //higher for thin atmo
-		}
+		Pamb *= AtmosphereHandler.getAtmoDensity(world); //higher for thin atmo
 		if (checkLiquidColumn) {
 			double fluid = getFluidColumnPressure(world, x, y+1, z);
-			if (InterfaceCache.IGALACTICWORLD.instanceOf(world.provider)) {
-				fluid *= 1+((IGalacticraftWorldProvider)world.provider).getGravity()-0.03125;
-			}
+			fluid *= 1+PlanetDimensionHandler.getExtraGravity(world)-0.03125;
 			Pamb += fluid;
 		}
 		return Pamb;

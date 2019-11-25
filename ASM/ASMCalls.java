@@ -19,6 +19,8 @@ import java.util.Random;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
@@ -45,6 +47,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry;
+import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderDomain;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Worldgen.VillageBuilding.PerVillageWeight;
 import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
@@ -59,8 +62,13 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
 
+	public static void onRenderWorld(EntityRenderer er, float ptick, long systime) {
+		er.renderWorld(ptick, systime);
+		ShaderRegistry.runShaderDomain(Minecraft.getMinecraft().getFramebuffer(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, ShaderDomain.GLOBALNOGUI);
+	}
+
 	public static void onRenderFrameBuffer(Framebuffer fb, int w, int h) {
-		ShaderRegistry.runGlobalShaders(fb, w, h);
+		ShaderRegistry.runShaderDomain(fb, w, h, ShaderDomain.GLOBAL);
 		ReikaRenderHelper.setRenderTarget(null);
 		fb.framebufferRender(w, h);
 	}

@@ -31,28 +31,22 @@ public class ShaderRegistry {
 
 	private ShaderRegistry() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
-	private static final HashMap<Integer, ShaderProgram> shaders = new HashMap();
-	private static final HashMap<String, ShaderProgram> shaderIDs = new HashMap();
+	private static final HashMap<String, ShaderProgram> shaders = new HashMap();
 	private static final EnumMap<ShaderDomain, ArrayList<ShaderProgram>> shaderSets = new EnumMap(ShaderDomain.class);
 
 	public static ShaderProgram createShader(DragonAPIMod mod, String id, Class root, String pathPre, ShaderDomain dom) {
 		if (!OpenGlHelper.shadersSupported)
 			return null;
-		if (shaderIDs.containsKey(id))
+		if (shaders.containsKey(id))
 			throw new RegistrationException(mod, "Shader id "+id+" is already in use!");
-		int prog = ARBShaderObjects.glCreateProgramObjectARB();
-		if (prog == 0) {
-			throw new RegistrationException(mod, "Shader program could not be assigned an ID!");
-		}
-		ShaderProgram sh = new ShaderProgram(mod, root, pathPre, id, prog, dom);
+		ShaderProgram sh = new ShaderProgram(mod, root, pathPre, id, dom);
 		try {
 			sh.load();
 		}
 		catch (IOException e) {
 			throw new RegistrationException(mod, "Shader program data could not be loaded!", e);
 		}
-		shaders.put(sh.programID, sh);
-		shaderIDs.put(sh.identifier, sh);
+		shaders.put(sh.identifier, sh);
 		addShaderToSet(dom, sh);
 		DragonAPICore.log("Registered "+mod.getTechnicalName()+" shader "+sh);
 		return sh;
@@ -75,34 +69,21 @@ public class ShaderRegistry {
 		}
 	}
 
-	public static void removeShader(String id) {
-		removeShader(shaderIDs.get(id));
-	}
-
-	public static void removeShader(ShaderProgram s) {
-		shaderIDs.remove(s.identifier);
-		shaders.remove(s.programID);
-		removeShaderFromSet(s.domain, s);
-	}
-
 	public static void reloadShader(String id) throws IOException {
-		shaderIDs.get(id).load();
-	}
-
-	public static void runShader(int id) {
-		runShader(shaders.get(id));
+		DragonAPICore.log("Reloading shader "+id);
+		shaders.get(id).load();
 	}
 
 	public static void runShader(String id) {
-		runShader(shaderIDs.get(id));
+		runShader(shaders.get(id));
 	}
 
 	public static void runShader(ShaderProgram sh) {
 		if (!OpenGlHelper.shadersSupported || sh == null)
 			return;
-		if (GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_Z)) {
+		if (GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_X)) {
 			try {
-				sh.load();
+				reloadShader(sh.identifier);
 			}
 			catch (IOException e) {
 				e.printStackTrace();
@@ -144,9 +125,11 @@ public class ShaderRegistry {
 		return sb.toString();
 	}
 
-	public static void runGlobalShaders(Framebuffer fb, int w, int h) {
-		ArrayList<ShaderProgram> li = shaderSets.get(ShaderDomain.GLOBAL);
+	public static void runShaderDomain(Framebuffer fb, int w, int h, ShaderDomain sd) {
+		ArrayList<ShaderProgram> li = shaderSets.get(sd);
 		if (li != null) {
+			//Matrix4f model = ReikaRenderHelper.getModelviewMatrix();
+			//Matrix4f proj = ReikaRenderHelper.getProjectionMatrix();
 			for (ShaderProgram s : li) {
 				ReikaRenderHelper.renderFrameBufferToItself(fb, w, h, s);
 			}
@@ -161,7 +144,8 @@ public class ShaderRegistry {
 		WORLD,
 		TESR,
 		GUI,
-		GLOBAL;
+		GLOBAL,
+		GLOBALNOGUI();
 	}
 
 	public static enum ShaderTypes {
