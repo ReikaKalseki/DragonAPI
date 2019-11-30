@@ -19,7 +19,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderDomain;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderTypes;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
@@ -191,17 +190,17 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	void register() {
 		programID = ARBShaderObjects.glCreateProgramObjectARB();
 		if (programID == 0) {
-			throw new RegistrationException(owner, "Shader program could not be assigned an ID!");
+			ShaderRegistry.error(owner, "Shader program could not be assigned an ID!");
 		}
 		ARBShaderObjects.glAttachObjectARB(programID, vertexID);
 		ARBShaderObjects.glAttachObjectARB(programID, fragmentID);
 		ARBShaderObjects.glLinkProgramARB(programID);
 		if (ARBShaderObjects.glGetObjectParameteriARB(programID, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE) {
-			throw new RegistrationException(owner, "Shader was not linked properly: "+ShaderRegistry.parseError(programID));
+			ShaderRegistry.error(owner, "Shader was not linked properly: "+ShaderRegistry.parseError(programID));
 		}
 		ARBShaderObjects.glValidateProgramARB(programID);
 		if (ARBShaderObjects.glGetObjectParameteriARB(programID, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE) {
-			throw new RegistrationException(owner, "Shader failed to validate: "+ShaderRegistry.parseError(programID));
+			ShaderRegistry.error(owner, "Shader failed to validate: "+ShaderRegistry.parseError(programID));
 		}
 	}
 

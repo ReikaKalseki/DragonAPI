@@ -38,13 +38,13 @@ public class ShaderRegistry {
 		if (!OpenGlHelper.shadersSupported)
 			return null;
 		if (shaders.containsKey(id))
-			throw new RegistrationException(mod, "Shader id "+id+" is already in use!");
+			error(mod, "Shader id "+id+" is already in use!");
 		ShaderProgram sh = new ShaderProgram(mod, root, pathPre, id, dom);
 		try {
 			sh.load();
 		}
 		catch (IOException e) {
-			throw new RegistrationException(mod, "Shader program data could not be loaded!", e);
+			error(mod, "Shader program data could not be loaded!", e);
 		}
 		shaders.put(sh.identifier, sh);
 		addShaderToSet(dom, sh);
@@ -100,19 +100,34 @@ public class ShaderRegistry {
 
 	static int constructShader(DragonAPIMod mod, InputStream data, ShaderTypes type) throws IOException {
 		if (data == null)
-			throw new RegistrationException(mod, "Shader has null program data!");
+			error(mod, "Shader has null program data!");
 		int id = ARBShaderObjects.glCreateShaderObjectARB(type.glValue);
 
 		if (id == 0)
-			throw new RegistrationException(mod, "Shader was not able to be assigned an ID!");
+			error(mod, "Shader was not able to be assigned an ID!");
 
 		ARBShaderObjects.glShaderSourceARB(id, readData(data));
 		ARBShaderObjects.glCompileShaderARB(id);
 
 		if (ARBShaderObjects.glGetObjectParameteriARB(id, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE)
-			throw new RegistrationException(mod, "Shader was not able to be constructed: "+ShaderRegistry.parseError(id));
+			error(mod, "Shader was not able to be constructed: "+ShaderRegistry.parseError(id));
 
 		return id;
+	}
+
+	static void error(DragonAPIMod mod, String msg) {
+		error(mod, msg, null);
+	}
+
+	static void error(DragonAPIMod mod, String msg, Exception e) {
+		if (DragonAPICore.hasGameLoaded()) { //do not crash game if already running and shader is being reloaded
+			mod.getModLogger().logError("Shader error: "+msg);
+			if (e != null)
+				e.printStackTrace();
+		}
+		else {
+			throw new RegistrationException(mod, msg, e);
+		}
 	}
 
 	private static String readData(InputStream data) {
