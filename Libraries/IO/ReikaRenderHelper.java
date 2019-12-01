@@ -1724,6 +1724,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	}
 
 	public static void renderFrameBufferToItself(Framebuffer fb, int w, int h, ShaderProgram p/*, Matrix4f model, Matrix4f proj*/) {
+		p.updateEnabled();
 		if (!p.isEnabled())
 			return;
 		if (tempBuffer == null) {

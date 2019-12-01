@@ -10,6 +10,7 @@ import java.util.HashMap;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.ARBFragmentShader;
 import org.lwjgl.opengl.ARBShaderObjects;
+import org.lwjgl.opengl.ARBTessellationShader;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
 
@@ -89,6 +90,9 @@ public class ShaderRegistry {
 				e.printStackTrace();
 			}
 		}
+		if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_LMENU) && Keyboard.isKeyDown(Keyboard.KEY_C)) {
+			return;
+		}
 		sh.run();
 	}
 
@@ -165,7 +169,8 @@ public class ShaderRegistry {
 
 	public static enum ShaderTypes {
 		FRAGMENT(ARBFragmentShader.GL_FRAGMENT_SHADER_ARB, "frag"),
-		VERTEX(ARBVertexShader.GL_VERTEX_SHADER_ARB, "vert");
+		VERTEX(ARBVertexShader.GL_VERTEX_SHADER_ARB, "vert"),
+		TESSELLATION(ARBTessellationShader.GL_TESS_EVALUATION_SHADER, "tess");
 
 		public final int glValue;
 		public final String extension;

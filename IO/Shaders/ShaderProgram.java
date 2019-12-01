@@ -10,9 +10,7 @@ import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.vector.Matrix4f;
-import org.lwjgl.util.vector.Vector2f;
 import org.lwjgl.util.vector.Vector3f;
-import org.lwjgl.util.vector.Vector4f;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
@@ -131,32 +129,39 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	}
 
 	void run() {
-		if (!isEnabled)
+		if (hook != null)
+			hook.onPreRender(this);
+
+		if (!this.isEnabled())
 			return;
 		if (Minecraft.getMinecraft().thePlayer == null)
 			return;
+
 		ARBShaderObjects.glUseProgramObjectARB(programID);
 		if (modelview != null && projection != null)
 			this.applyMatrices();
+		if (focusLocation != null) {
+			this.applyFocus();
+		}
 		this.applyVariables();
 		this.applyField("time", Minecraft.getMinecraft().thePlayer.ticksExisted);
 		this.applyField("screenWidth", Minecraft.getMinecraft().displayWidth);
 		this.applyField("screenHeight", Minecraft.getMinecraft().displayHeight);
 
+		/*
 		if (focusLocation != null && modelview != null && projection != null) {
 			Vector4f target = new Vector4f(focusLocation.x*0, focusLocation.y*0, focusLocation.z*0, 1.0F);
 			Vector4f clipspace = Matrix4f.transform(modelview, target, null);
 			clipspace = Matrix4f.transform(projection, clipspace, null);
-			Vector3f ndcspace = new Vector3f(clipspace.x/clipspace.w, clipspace.y/clipspace.w, clipspace.z/clipspace.w);
+			Vector3f ndcspace = new Vector3f(clipspace.x/clipspace.w, clipspace.y/clipspace.w, clipspace.z/clipspace.w); //should be [-1,+1]
 			Vector2f screenXY = new Vector2f(ndcspace.x/2 + 0.5F, ndcspace.y/2 + 0.5F);
-			screenXY.x *= Minecraft.getMinecraft().displayWidth;
-			screenXY.y *= Minecraft.getMinecraft().displayHeight;
 			this.applyField("screenX", screenXY.x);
 			this.applyField("screenY", screenXY.y);
 		}
+		 */
 
 		if (hook != null)
-			hook.onRender(this);
+			hook.onPostRender(this);
 	}
 
 	private void applyVariables() {
@@ -166,11 +171,21 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		//variables.clear();
 	}
 
+	private void applyFocus() {
+		FloatBuffer b = BufferUtils.createFloatBuffer(3);
+		focusLocation.store(b);
+		b.rewind();
+		int loc = ARBShaderObjects.glGetUniformLocationARB(programID, "focus");
+		ARBShaderObjects.glUniform3ARB(loc, b);
+	}
+
 	private void applyMatrices() {
 		FloatBuffer b1 = BufferUtils.createFloatBuffer(16);
 		modelview.store(b1);
+		b1.rewind();
 		FloatBuffer b2 = BufferUtils.createFloatBuffer(16);
 		projection.store(b2);
+		b2.rewind();
 		int loc = ARBShaderObjects.glGetUniformLocationARB(programID, "modelview");
 		ARBShaderObjects.glUniformMatrix4ARB(loc, false, b1);
 		loc = ARBShaderObjects.glGetUniformLocationARB(programID, "projection");
@@ -202,6 +217,11 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		if (ARBShaderObjects.glGetObjectParameteriARB(programID, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE) {
 			ShaderRegistry.error(owner, "Shader failed to validate: "+ShaderRegistry.parseError(programID));
 		}
+	}
+
+	public void updateEnabled() {
+		if (hook != null)
+			hook.updateEnabled(this);
 	}
 
 	public boolean isEnabled() {
