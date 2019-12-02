@@ -197,8 +197,11 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		if (val instanceof Integer) {
 			ARBShaderObjects.glUniform1iARB(loc, (int)val);
 		}
-		else if (val instanceof Float || val instanceof Double) {
+		else if (val instanceof Float) {
 			ARBShaderObjects.glUniform1fARB(loc, (float)val);
+		}
+		else if (val instanceof Double) {
+			ARBShaderObjects.glUniform1fARB(loc, ((Double)val).floatValue());
 		}
 	}
 
