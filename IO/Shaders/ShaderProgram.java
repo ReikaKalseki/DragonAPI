@@ -3,6 +3,7 @@ package Reika.DragonAPI.IO.Shaders;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
@@ -48,6 +49,8 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	private Matrix4f modelview;
 	private Matrix4f projection;
 	private Vector3f focusLocation;
+
+	private ArrayList<RenderState> compoundLocation = null;
 
 	ShaderProgram(DragonAPIMod mod, Class c, String p, String s, ShaderDomain dom) {
 		identifier = s;
@@ -120,6 +123,38 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		return this;
 	}
 
+	public ShaderProgram clearFoci() {
+		compoundLocation = null;
+		return this;
+	}
+
+	public ShaderProgram addFocus(Coordinate e) {
+		return this.addFocus(e.xCoord+0.5, e.yCoord+0.5, e.zCoord+0.5);
+	}
+
+	public ShaderProgram addFocus(TileEntity e) {
+		return this.addFocus(e.xCoord+0.5, e.yCoord+0.5, e.zCoord+0.5);
+	}
+
+	public ShaderProgram addFocus(Entity e) {
+		return this.addFocus(e.posX, e.posY, e.posZ);
+	}
+
+	public ShaderProgram addFocus(double x, double y, double z) {
+		return this.addFocus(x, y, z, null, null);
+	}
+
+	public ShaderProgram addFocus(double x, double y, double z, Matrix4f model, Matrix4f proj) {
+		if (compoundLocation == null)
+			compoundLocation = new ArrayList();
+		if (model == null)
+			model = ReikaRenderHelper.getModelviewMatrix();
+		if (proj == null)
+			proj = ReikaRenderHelper.getProjectionMatrix();
+		compoundLocation.add(new RenderState(new Vector3f((float)x, (float)y, (float)z), model, proj));
+		return this;
+	}
+
 	public void setField(String field, Object value) {
 		variables.put(field, value);
 	}
@@ -128,21 +163,32 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		this.setField("intensity", f);
 	}
 
-	void run() {
+	boolean run() {
+		if (!this.isEnabled())
+			return false;
+		if (Minecraft.getMinecraft().thePlayer == null)
+			return false;
+
 		if (hook != null)
 			hook.onPreRender(this);
 
-		if (!this.isEnabled())
-			return;
-		if (Minecraft.getMinecraft().thePlayer == null)
-			return;
-
 		ARBShaderObjects.glUseProgramObjectARB(programID);
-		if (modelview != null && projection != null)
-			this.applyMatrices();
+		boolean flag = false;
+		if (compoundLocation != null) {
+			RenderState rs = compoundLocation.remove(0);
+			focusLocation = rs.position;
+			modelview = rs.modelview;
+			projection = rs.projection;
+			if (compoundLocation.isEmpty())
+				compoundLocation = null;
+			else
+				flag = true;
+		}
 		if (focusLocation != null) {
 			this.applyFocus();
 		}
+		if (modelview != null && projection != null)
+			this.applyMatrices();
 		this.applyVariables();
 		this.applyField("time", Minecraft.getMinecraft().thePlayer.ticksExisted);
 		this.applyField("screenWidth", Minecraft.getMinecraft().displayWidth);
@@ -162,6 +208,8 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 
 		if (hook != null)
 			hook.onPostRender(this);
+
+		return flag;
 	}
 
 	private void applyVariables() {
@@ -239,6 +287,20 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	@Override
 	public int compareTo(ShaderProgram o) {
 		return Integer.compare(ordering, o.ordering);
+	}
+
+	public static class RenderState {
+
+		private Vector3f position;
+		private Matrix4f modelview;
+		private Matrix4f projection;
+
+		private RenderState(Vector3f vec, Matrix4f m, Matrix4f p) {
+			position = vec;
+			modelview = m;
+			projection = p;
+		}
+
 	}
 
 }

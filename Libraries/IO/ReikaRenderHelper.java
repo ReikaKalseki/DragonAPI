@@ -1734,11 +1734,14 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		tempBuffer.createBindFramebuffer(w, h);
 		setRenderTarget(tempBuffer);
 		//p.setMatrices(model, proj);
-		ShaderRegistry.runShader(p);
-		fb.framebufferRender(w, h);
-		ShaderRegistry.completeShader();
-		setRenderTarget(fb);
-		tempBuffer.framebufferRender(w, h);
+		boolean flag = true;
+		while (flag) {
+			flag = ShaderRegistry.runShader(p);
+			fb.framebufferRender(w, h);
+			ShaderRegistry.completeShader();
+			setRenderTarget(fb);
+			tempBuffer.framebufferRender(w, h);
+		}
 	}
 
 	/** Supply null to make the screen the render target. */

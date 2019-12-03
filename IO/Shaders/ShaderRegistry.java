@@ -81,9 +81,9 @@ public class ShaderRegistry {
 		runShader(shaders.get(id));
 	}
 
-	public static void runShader(ShaderProgram sh) {
+	public static boolean runShader(ShaderProgram sh) {
 		if (!OpenGlHelper.shadersSupported || sh == null)
-			return;
+			return false;
 		if (GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_X)) {
 			try {
 				reloadShader(sh.identifier);
@@ -93,9 +93,9 @@ public class ShaderRegistry {
 			}
 		}
 		if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_LMENU) && Keyboard.isKeyDown(Keyboard.KEY_C)) {
-			return;
+			return false;
 		}
-		sh.run();
+		return sh.run();
 	}
 
 	public static void completeShader() {
