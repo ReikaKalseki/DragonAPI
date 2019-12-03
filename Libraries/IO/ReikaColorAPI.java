@@ -50,17 +50,17 @@ public class ReikaColorAPI {
 
 	public static int[] HexToRGB (int hex) {
 		int[] color = new int[4];
-		color[0] = hex >> 16 & 0xFF;
-		color[1] = hex >> 8 & 0xFF;
-		color[2] = hex & 0xFF;
-		color[3] = hex >> 24 & 0xFF;
+		color[0] = (hex >>> 16) & 0xFF;
+		color[1] = (hex >>> 8) & 0xFF;
+		color[2] = (hex) & 0xFF;
+		color[3] = (hex >>> 24) & 0xFF;
 		return color;
 	}
 
 	public static int getColorWithBrightnessMultiplier(int argb, float mult) {
-		int alpha = ((argb >> 24) & 0xFF);
-		int red = Math.min(255, (int) (((argb >> 16) & 0xFF)*mult)) & 0xFF;
-		int green = Math.min(255, (int) (((argb >> 8) & 0xFF)*mult)) & 0xFF;
+		int alpha = ((argb >>> 24) & 0xFF);
+		int red = Math.min(255, (int) (((argb >>> 16) & 0xFF)*mult)) & 0xFF;
+		int green = Math.min(255, (int) (((argb >>> 8) & 0xFF)*mult)) & 0xFF;
 		int blue = Math.min(255, (int) ((argb & 0xFF)*mult)) & 0xFF;
 		int color = alpha;
 		color = (color << 8) + red;
@@ -71,9 +71,9 @@ public class ReikaColorAPI {
 
 	public static int getColorWithBrightnessMultiplierRGBA(int rgba, float mult) {
 		int alpha = (rgba & 0xFF);
-		int red = Math.min(255, (int) (((rgba >> 24) & 0xFF)*mult)) & 0xFF;
-		int green = Math.min(255, (int) (((rgba >> 16) & 0xFF)*mult)) & 0xFF;
-		int blue = Math.min(255, (int) (((rgba >> 8) & 0xFF)*mult)) & 0xFF;
+		int red = Math.min(255, (int) (((rgba >>> 24) & 0xFF)*mult)) & 0xFF;
+		int green = Math.min(255, (int) (((rgba >>> 16) & 0xFF)*mult)) & 0xFF;
+		int blue = Math.min(255, (int) (((rgba >>> 8) & 0xFF)*mult)) & 0xFF;
 		int color = red;
 		color = (color << 8) + green;
 		color = (color << 8) + blue;
@@ -113,23 +113,19 @@ public class ReikaColorAPI {
 	}
 
 	public static int getRed(int color) {
-		int r = (color >> 16) & 0xFF;
-		return r;
+		return (color >>> 16) & 0xFF;
 	}
 
 	public static int getGreen(int color) {
-		int g = (color >> 8) & 0xFF;
-		return g;
+		return (color >>> 8) & 0xFF;
 	}
 
 	public static int getBlue(int color) {
-		int b = (color >> 0) & 0xFF;
-		return b;
+		return (color >>> 0) & 0xFF;
 	}
 
 	public static int getAlpha(int color) {
-		int a = (color >> 24) & 0xFF;
-		return a;
+		return (color >>> 24) & 0xFF;
 	}
 
 	public static boolean isRGBNonZero(int color) {

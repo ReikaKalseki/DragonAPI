@@ -936,6 +936,19 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return ((long)l1 << 32) | (l2 & 0xffffffffL);
 	}
 
+	public static byte[] splitInt(int val) {
+		byte[] ret = new byte[4];
+		ret[0] = (byte)((val) & 255);
+		ret[1] = (byte)((val >>> 8) & 255);
+		ret[2] = (byte)((val >>> 16) & 255);
+		ret[3] = (byte)((val >>> 24) & 255);
+		return ret;
+	}
+
+	public static int buildInt(byte b1, byte b2, byte b3, byte b4) {
+		return (b1 & 255) | ((b2 & 255) << 8) | ((b3 & 255) << 16) | ((b4 & 255) << 24);
+	}
+
 	public static String getClassLocation(Class c) {
 		String ret = c.getResource(c.getSimpleName() + ".class").toString();
 		ret = ret.substring("file:\\".length());

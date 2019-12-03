@@ -35,6 +35,8 @@ public class ShaderRegistry {
 	private static final HashMap<String, ShaderProgram> shaders = new HashMap();
 	private static final EnumMap<ShaderDomain, ArrayList<ShaderProgram>> shaderSets = new EnumMap(ShaderDomain.class);
 
+	private static String BASE_DATA;
+
 	public static ShaderProgram createShader(DragonAPIMod mod, String id, Class root, String pathPre, ShaderDomain dom) {
 		if (!OpenGlHelper.shadersSupported)
 			return null;
@@ -110,7 +112,16 @@ public class ShaderRegistry {
 		if (id == 0)
 			error(mod, "Shader was not able to be assigned an ID!");
 
-		ARBShaderObjects.glShaderSourceARB(id, readData(data));
+		if (BASE_DATA == null) {
+			BASE_DATA = readData(DragonAPICore.class.getResourceAsStream("Resources/shaderbase.txt"));
+		}
+		String sdata = "";
+		if (type == ShaderTypes.FRAGMENT) {
+			sdata = sdata+"uniform sampler2D bgl_RenderedTexture;\n";
+		}
+		sdata = sdata+BASE_DATA+"\n";
+		sdata = sdata+readData(data);
+		ARBShaderObjects.glShaderSourceARB(id, sdata);
 		ARBShaderObjects.glCompileShaderARB(id);
 
 		if (ARBShaderObjects.glGetObjectParameteriARB(id, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE)

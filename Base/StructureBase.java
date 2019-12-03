@@ -14,7 +14,7 @@ public abstract class StructureBase {
 	private boolean isDisplayCall;
 
 	@SideOnly(Side.CLIENT)
-	public final FilledBlockArray getStructureForDisplay() {
+	public synchronized final FilledBlockArray getStructureForDisplay() {
 		isDisplayCall = true;
 		this.initDisplayData();
 		FilledBlockArray ret = this.getArray(Minecraft.getMinecraft().theWorld, 0, 0, 0);

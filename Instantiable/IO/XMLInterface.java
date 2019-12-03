@@ -29,6 +29,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaXMLBase;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Interfaces.DataProvider;
 
 public class XMLInterface {
 
@@ -70,6 +71,10 @@ public class XMLInterface {
 		referenceClass = root;
 	}
 
+	public XMLInterface(DataProvider p, boolean crashIfNull) {
+		this(LoadFormat.CUSTOM, p, "Custom loader "+p, crashIfNull);
+	}
+
 	public void setFallback(String s) {
 		loadData.addEntry(s);
 	}
@@ -78,7 +83,7 @@ public class XMLInterface {
 		isEncrypted = true;
 	}
 
-	public void init() {
+	public XMLInterface init() {
 		try {
 			InputStream in = loadData.getInputStream();
 			if (isEncrypted)
@@ -105,9 +110,12 @@ public class XMLInterface {
 			else
 				e.printStackTrace();
 		}
+		return this;
 	}
 
 	public void reread() {
+		if (format == LoadFormat.CUSTOM && !((DataProvider)loadData.paths.get(0)).canBeReloaded())
+			throw new MisuseException("This data provider cannot be reloaded!");
 		hasLoaded = false;
 		data.clear();
 		tree.clear();
@@ -224,17 +232,26 @@ public class XMLInterface {
 					break;
 				case JARPATH:
 					break;
+				case CUSTOM:
+					break;
 			}
 			paths.add(add);
 		}
 
-		private InputStream getInputStream() throws FileNotFoundException {
-			FileNotFoundException ex = null;
+		private InputStream getInputStream() throws IOException {
+			IOException ex = null;
 			for (int i = 0; i < paths.size(); i++) {
 				try {
-					return format == LoadFormat.JARPATH ? format.getInputStream(referenceClass, paths.get(i)) : format.getInputStream(paths.get(i));
+					switch(format) {
+						case FILE:
+							return format.getInputStream(paths.get(i));
+						case JARPATH:
+							return format.getInputStream(referenceClass, paths.get(i));
+						case CUSTOM:
+							return format.getInputStream(paths.get(i));
+					}
 				}
-				catch (FileNotFoundException e) {
+				catch (IOException e) {
 					if (i == 0) {
 						ex = e;
 					}
@@ -250,9 +267,10 @@ public class XMLInterface {
 
 	private static enum LoadFormat {
 		JARPATH(),
-		FILE();
+		FILE(),
+		CUSTOM();
 
-		private InputStream getInputStream(Object... data) throws FileNotFoundException {
+		private InputStream getInputStream(Object... data) throws IOException {
 			switch(this) {
 				case FILE:
 					return new FileInputStream((File)data[0]);
@@ -263,6 +281,8 @@ public class XMLInterface {
 						throw new FileNotFoundException(s+" >> "+(String)data[1]);
 					}
 					return ret;
+				case CUSTOM:
+					return ((DataProvider)data[0]).getDataStream();
 			}
 			return null; //never happens
 		}
