@@ -1731,11 +1731,11 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			tempBuffer = new ScratchFramebuffer(w, h, true);
 			tempBuffer.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
 		}
-		tempBuffer.createBindFramebuffer(w, h);
-		setRenderTarget(tempBuffer);
-		//p.setMatrices(model, proj);
 		boolean flag = true;
 		while (flag) {
+			tempBuffer.createBindFramebuffer(w, h);
+			setRenderTarget(tempBuffer);
+			//p.setMatrices(model, proj);
 			flag = ShaderRegistry.runShader(p);
 			fb.framebufferRender(w, h);
 			ShaderRegistry.completeShader();

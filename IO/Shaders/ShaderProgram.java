@@ -155,6 +155,13 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		return this;
 	}
 
+	public ShaderProgram modifyLastCompoundFocus(float intensity, HashMap<String, Object> vars) {
+		RenderState rs = compoundLocation.get(compoundLocation.size()-1);
+		rs.intensity = intensity;
+		rs.variables = vars;
+		return this;
+	}
+
 	public void setField(String field, Object value) {
 		variables.put(field, value);
 	}
@@ -177,8 +184,15 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		if (compoundLocation != null) {
 			RenderState rs = compoundLocation.remove(0);
 			focusLocation = rs.position;
+			//ReikaJavaLibrary.pConsole(focusLocation);
 			modelview = rs.modelview;
 			projection = rs.projection;
+			this.setIntensity(rs.intensity);
+			if (rs.variables != null) {
+				for (Entry<String, Object> e : rs.variables.entrySet()) {
+					this.setField(e.getKey(), e.getValue());
+				}
+			}
 			if (compoundLocation.isEmpty())
 				compoundLocation = null;
 			else
@@ -253,6 +267,10 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		}
 	}
 
+	public boolean hasOngoingFoci() {
+		return compoundLocation != null;
+	}
+
 	void register() {
 		programID = ARBShaderObjects.glCreateProgramObjectARB();
 		if (programID == 0) {
@@ -294,11 +312,19 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		private Vector3f position;
 		private Matrix4f modelview;
 		private Matrix4f projection;
+		private float intensity;
+		private HashMap<String, Object> variables;
 
 		private RenderState(Vector3f vec, Matrix4f m, Matrix4f p) {
+			this(vec, m, p, 1, null);
+		}
+
+		private RenderState(Vector3f vec, Matrix4f m, Matrix4f p, float f, HashMap<String, Object> vars) {
 			position = vec;
 			modelview = m;
 			projection = p;
+			intensity = f;
+			variables = vars;
 		}
 
 	}
