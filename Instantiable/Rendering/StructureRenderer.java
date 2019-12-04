@@ -203,21 +203,29 @@ public class StructureRenderer {
 	}
 
 	public void drawSlice(int j, int k) {
-		int y = array.getMinY()+secY;
+		double s = 1;
 		int max = Math.max(array.getSizeX(), array.getSizeZ());
-		int dd = max > 16 ? Math.max(12, 28-max) : 14;
+		double dd = max > 16 ? Math.max(12, 28-max) : 14;
+		if (max >= 20) {
+			s -= 0.05*(max-20);
+			dd -= 0.625*(max-20);
+		}
+		GL11.glPushMatrix();
+		GL11.glScaled(s, s, s);
+		int y = array.getMinY()+secY;
 		int ox = 120;
 		int oy = 105;
 		for (int x = array.getMinX(); x <= array.getMaxX(); x++) {
 			for (int z = array.getMinZ(); z <= array.getMaxZ(); z++) {
 				ItemStack is = this.getRenderStack(new Coordinate(x, y, z));
 				if (is != null && is.getItem() != null) {
-					int dx = (x-array.getMidX())*dd;
-					int dz = (z-array.getMidZ())*dd;
-					ReikaGuiAPI.instance.drawItemStack(itemRender, is, j+dx+ox, k+dz+oy);
+					double dx = (x-array.getMidX())*dd;
+					double dz = (z-array.getMidZ())*dd;
+					ReikaGuiAPI.instance.drawItemStack(itemRender, is, (int)((j+dx+ox)/s), (int)((k+dz+oy)/s));
 				}
 			}
 		}
+		GL11.glPopMatrix();
 	}
 	/*
 	public void draw3D(int j, int k) {
@@ -328,7 +336,13 @@ public class StructureRenderer {
 			double s = 12;
 
 			double d = 2;
-			if (max >= 18) {
+			if (max >= 24) {
+				d = 0.5;
+			}
+			else if (max >= 21) {
+				d = 0.625;
+			}
+			else if (max >= 18) {
 				d = 0.675;
 			}
 			else if (max >= 14) {

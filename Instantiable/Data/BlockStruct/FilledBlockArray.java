@@ -41,6 +41,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.BlockCheck;
 import Reika.DragonAPI.Interfaces.BlockCheck.TileEntityCheck;
+import Reika.DragonAPI.Interfaces.Registry.TileEnum;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -74,10 +75,15 @@ public class FilledBlockArray extends StructuredBlockArray {
 		this.setBlock(x, y, z , new BlockKey(id, meta));
 	}
 
-	public void setBlock(int x, int y, int z, Block id, int meta, TileEntity te, String... tags) {
+	public void setTile(int x, int y, int z, Block id, int meta, TileEntity te, String... tags) {
 		this.setBlock(x, y, z , new BasicTileEntityCheck(id, meta, te, tags));
 	}
 
+	/*
+	public void setTile(int x, int y, int z, TileEnum tile, String... tags) {
+		this.setBlock(x, y, z , new BasicTileEntityCheck(tile, tags));
+	}
+	 */
 	public void setFluid(int x, int y, int z, Fluid f) {
 		super.addBlockCoordinate(x, y, z);
 		data.put(new Coordinate(x, y, z), new FluidCheck(f));
@@ -630,11 +636,20 @@ public class FilledBlockArray extends StructuredBlockArray {
 		private final BlockKey block;
 		private final Class tileClass;
 		private final NBTTagCompound matchTag;
-		private final WeakReference<TileEntity> tileRef;
+		private WeakReference<TileEntity> tileRef;
 
-		private BasicTileEntityCheck(Block b, int meta, TileEntity te, String... tags) {
+		private BasicTileEntityCheck(TileEnum te, String... tags) {
+			this(te.getBlock(), te.getBlockMetadata(), te.getTEClass(), tags);
+		}
+
+		private BasicTileEntityCheck(Block b, int meta, Class<? extends TileEntity> c, String... tags) {
 			block = new BlockKey(b, meta);
 			matchTag = new NBTTagCompound();
+			tileClass = c;
+		}
+
+		private BasicTileEntityCheck(Block b, int meta, TileEntity te, String... tags) {
+			this(b, meta, te.getClass(), tags);
 			NBTTagCompound tag = new NBTTagCompound();
 			te.writeToNBT(tag);
 			for (int i = 0; i < tags.length; i++) {
@@ -642,7 +657,6 @@ public class FilledBlockArray extends StructuredBlockArray {
 				if (nbt != null)
 					matchTag.setTag(tags[i], nbt);
 			}
-			tileClass = te.getClass();
 			tileRef = new WeakReference(te);
 		}
 
