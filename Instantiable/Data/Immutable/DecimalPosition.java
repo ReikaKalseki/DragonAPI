@@ -55,6 +55,10 @@ public final class DecimalPosition implements Comparable<DecimalPosition> {
 		this(e.posX, e.posY, e.posZ);
 	}
 
+	public DecimalPosition(Entity e, float ptick) {
+		this(e.lastTickPosX+ptick*(e.posX-e.lastTickPosX), e.lastTickPosY+ptick*(e.posY-e.lastTickPosY), e.lastTickPosZ+ptick*(e.posZ-e.lastTickPosZ));
+	}
+
 	public DecimalPosition(DecimalPosition loc) {
 		this(loc.xCoord, loc.yCoord, loc.zCoord);
 	}

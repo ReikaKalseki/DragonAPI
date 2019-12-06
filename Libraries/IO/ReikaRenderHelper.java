@@ -1243,6 +1243,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	private static int frame = -1;
 	private static float ptick = -1;
 	public static ICamera renderFrustrum = new Frustrum();
+	public static double thirdPersonDistance;
 
 	public static class RenderTick implements TickHandler {
 

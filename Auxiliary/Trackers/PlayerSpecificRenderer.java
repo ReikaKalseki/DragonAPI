@@ -40,10 +40,12 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Extras.ModifiedPlayerModel;
 import Reika.DragonAPI.Extras.ReikaModel;
+import Reika.DragonAPI.Extras.ReikaShader;
 import Reika.DragonAPI.Extras.SamakiModel;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.PlayerRenderObj;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
@@ -119,6 +121,9 @@ public final class PlayerSpecificRenderer {
 	}
 
 	private void renderAdditionalObjects(EntityPlayer ep, float ptick) {
+		if (ReikaPlayerAPI.isReika(ep)) {
+			ReikaShader.instance.render(ep);
+		}
 		if (ep == Minecraft.getMinecraft().thePlayer && !DragonOptions.CUSTOMRENDER.getState())
 			return;
 		Collection<PlayerRenderObj> c = renders.get(ep.getUniqueID());

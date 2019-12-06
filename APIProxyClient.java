@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -17,6 +17,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.Auxiliary.DebugOverlay;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerSpecificRenderer;
+import Reika.DragonAPI.Extras.ReikaShader;
 import Reika.DragonAPI.Extras.ThrottleableEffectRenderer;
 import Reika.DragonAPI.IO.DelegateFontRenderer;
 import Reika.DragonAPI.IO.DirectResourceManager;
@@ -57,6 +58,7 @@ public class APIProxyClient extends APIProxy {
 		//ClientRegistry.registerKeyBinding(key_nbt);
 
 		RenderingRegistry.registerEntityRenderingHandler(EntityTumblingBlock.class, new RenderTumblingBlock());
+		ReikaShader.instance.register();
 	}
 
 	@Override
