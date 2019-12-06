@@ -7,7 +7,7 @@ void main() {
 	
 	float distv = distsq(focusXY, texcoord);
 	float distfac_color = max(0.0, min(1.0, 1.0-10.0*distv*distance));
-	float distfac_vertex = max(0.0, min(1.0, 2.0-45.0*distv*distance));
+	float distfac_vertex = max(0.0, min(1.0, 2.0-15.0*distv*distance));
 	float cf = colorIntensity*intensity*distfac_color;
 	float vf = distortionIntensity*intensity*distfac_vertex;
 	

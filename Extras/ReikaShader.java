@@ -80,16 +80,12 @@ public class ReikaShader implements ShaderHook, TickHandler {
 			dist += ReikaRenderHelper.thirdPersonDistance;
 		}
 		float ptick = ReikaRenderHelper.getPartialTickTime();
-		double px = ep.posX;//ep.lastTickPosX+(ep.posX-ep.lastTickPosX)*ptick;
-		double py = ep.posY;//ep.lastTickPosY+(ep.posY-ep.lastTickPosY)*ptick;
-		double pz = ep.posZ;//ep.lastTickPosZ+(ep.posZ-ep.lastTickPosZ)*ptick;
-
-		//px += ep.posX-mc.thePlayer.posX;
-		//py += ep.posY-mc.thePlayer.posY;
-		//pz += ep.posZ-mc.thePlayer.posZ;
+		double px = ep.lastTickPosX+(ep.posX-ep.lastTickPosX)*ptick;
+		double py = ep.lastTickPosY+(ep.posY-ep.lastTickPosY)*ptick;
+		double pz = ep.lastTickPosZ+(ep.posZ-ep.lastTickPosZ)*ptick;
 
 		GL11.glTranslated(RenderManager.renderPosX-ep.posX, RenderManager.renderPosY-ep.posY, RenderManager.renderPosZ-ep.posZ);
-		GL11.glTranslated(0, -0.9, 0);
+		GL11.glTranslated(0, -0.8, 0);
 		GL11.glRotated(180, 0, 1, 0);
 		shader.setEnabled(true);
 		HashMap<String, Object> map = new HashMap();
@@ -99,6 +95,12 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		rendering = true;
 		for (ShaderPoint pt : points) {
 			float f = pt.getIntensity();
+			double f2 = 1;
+			double d2 = pt.position.getDistanceTo(ep.posX, ep.posY, ep.posZ);
+			if (d2 <= 2) {
+				f2 = d2/2D;
+			}
+			f *= f2;
 			if (f > 0) {
 				GL11.glPushMatrix();
 				DecimalPosition p = pt.position;
