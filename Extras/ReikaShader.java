@@ -8,6 +8,7 @@ import java.util.Iterator;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -46,6 +47,8 @@ public class ReikaShader implements ShaderHook, TickHandler {
 	public void updatePosition(Entity ep) {
 		if (rendering)
 			return;
+		if (ep == Minecraft.getMinecraft().thePlayer)
+			return;
 		boolean flag = true;
 		long time = ep.worldObj.getTotalWorldTime();
 		Iterator<ShaderPoint> it = points.iterator();
@@ -77,15 +80,17 @@ public class ReikaShader implements ShaderHook, TickHandler {
 			dist += ReikaRenderHelper.thirdPersonDistance;
 		}
 		float ptick = ReikaRenderHelper.getPartialTickTime();
-		double px = ep.lastTickPosX+(ep.posX-ep.lastTickPosX)*ptick;
-		double py = ep.lastTickPosY+(ep.posY-ep.lastTickPosY)*ptick;
-		double pz = ep.lastTickPosZ+(ep.posZ-ep.lastTickPosZ)*ptick;
+		double px = ep.posX;//ep.lastTickPosX+(ep.posX-ep.lastTickPosX)*ptick;
+		double py = ep.posY;//ep.lastTickPosY+(ep.posY-ep.lastTickPosY)*ptick;
+		double pz = ep.posZ;//ep.lastTickPosZ+(ep.posZ-ep.lastTickPosZ)*ptick;
 
-		px += ep.posX-mc.thePlayer.posX;
-		py += ep.posY-mc.thePlayer.posY;
-		pz += ep.posZ-mc.thePlayer.posZ;
+		//px += ep.posX-mc.thePlayer.posX;
+		//py += ep.posY-mc.thePlayer.posY;
+		//pz += ep.posZ-mc.thePlayer.posZ;
 
-		GL11.glTranslated(0, 0.8, 0);
+		GL11.glTranslated(RenderManager.renderPosX-ep.posX, RenderManager.renderPosY-ep.posY, RenderManager.renderPosZ-ep.posZ);
+		GL11.glTranslated(0, -0.9, 0);
+		GL11.glRotated(180, 0, 1, 0);
 		shader.setEnabled(true);
 		HashMap<String, Object> map = new HashMap();
 		map.put("distance", dist);
@@ -97,8 +102,9 @@ public class ReikaShader implements ShaderHook, TickHandler {
 			if (f > 0) {
 				GL11.glPushMatrix();
 				DecimalPosition p = pt.position;
-				GL11.glTranslated(px-p.xCoord, py-p.yCoord-py, pz-p.zCoord);
+				GL11.glTranslated(p.xCoord-px, p.yCoord-py, p.zCoord-pz);
 				shader.addFocus(p.xCoord, p.yCoord, p.zCoord);
+				shader.addFocus(ep);
 				shader.modifyLastCompoundFocus(f, map);
 				GL11.glPopMatrix();
 			}
