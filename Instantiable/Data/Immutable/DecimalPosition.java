@@ -166,7 +166,7 @@ public final class DecimalPosition implements Comparable<DecimalPosition> {
 		return false;
 	}
 
-	private boolean equals(double x, double y, double z) {
+	public boolean equals(double x, double y, double z) {
 		return x == xCoord && y == yCoord && z == zCoord;
 	}
 

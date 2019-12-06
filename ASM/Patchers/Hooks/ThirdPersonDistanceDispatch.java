@@ -14,6 +14,7 @@ import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
@@ -36,6 +37,26 @@ public class ThirdPersonDistanceDispatch extends Patcher {
 		AbstractInsnNode ain = ReikaASMHelper.getFirstFieldCallByName(cn, m, FMLForgePlugin.RUNTIME_DEOBF ? "field_78490_B" : "thirdPersonDistance");
 		ain = ReikaASMHelper.getFirstOpcodeAfter(m.instructions, m.instructions.indexOf(ain), Opcodes.DSTORE);
 		int var = ((VarInsnNode)ain).var;
+
+		String sin = FMLForgePlugin.RUNTIME_DEOBF ? "func_76126_a" : "sin";
+		boolean primed = false;
+		for (int i = m.instructions.indexOf(ain); i < m.instructions.size(); i++) {
+			ain = m.instructions.get(i);
+			if (ain.getOpcode() == Opcodes.INVOKESTATIC) {
+				MethodInsnNode min = (MethodInsnNode)ain;
+				if (primed) {
+					if (min.name.equals("glTranslatef")) {
+						break;
+					}
+				}
+				else {
+					if (min.name.equals(sin)) {
+						primed = true;
+					}
+				}
+			}
+		}
+		ain = ReikaASMHelper.getLastOpcodeBefore(m.instructions, m.instructions.indexOf(ain), Opcodes.INVOKESTATIC);
 
 		InsnList li = new InsnList();
 		li.add(new VarInsnNode(Opcodes.DLOAD, var));
