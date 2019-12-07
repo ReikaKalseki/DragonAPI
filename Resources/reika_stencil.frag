@@ -10,6 +10,10 @@ void main() {
     vec4 color = texture2D(bgl_RenderedTexture, texcoord);
 	
 	float gs = max(color.r, vf);
+	float count = color.a;
+	count++;
+	float new = (gs-color.r)/(color.r-vf);
+	float xy = mix(vec2(color.g, color.b), focusXY, new);
 	
-    gl_FragColor = vec4(gs, 1, 1, 1);
+    gl_FragColor = vec4(gs, xy.x, xy.y, count);
 }
