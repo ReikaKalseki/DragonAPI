@@ -1733,6 +1733,10 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			tempBuffer = new ScratchFramebuffer(w, h, true);
 			tempBuffer.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
 		}
+		runMultipassShader(fb, w, h, p);
+	}
+
+	public static void runMultipassShader(Framebuffer fb, int w, int h, ShaderProgram p) {
 		boolean flag = true;
 		while (flag) {
 			tempBuffer.createBindFramebuffer(w, h);

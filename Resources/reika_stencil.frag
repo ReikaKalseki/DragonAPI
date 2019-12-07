@@ -12,7 +12,8 @@ void main() {
 	
 	float gs = max(color.a, vf);
 	float new = (color.a-gs)/(color.a-vf);
-	float xy = mix(vec2(color.g, color.b), focusXY, new);
+	vec2 xy = mix(vec2(color.g, color.b), focusXY, new);
 	
-    gl_FragColor = vec4(age, xy.x, xy.y, gs);
+    //gl_FragColor = vec4(age, xy.x, xy.y, gs);
+	gl_FragColor = vec4(1, 1, 1, 1);
 }

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.Tessellator;
@@ -35,7 +36,10 @@ public class ReikaShader implements ShaderHook, TickHandler {
 
 	private ShaderProgram stencilShader;
 	private ShaderProgram effectShader;
+	
 	private ScratchFramebuffer stencil;
+	private ScratchFramebuffer blank;
+	
 	private final ArrayList<ShaderPoint> points = new ArrayList();
 	private boolean rendering;
 
@@ -49,6 +53,10 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		TickRegistry.instance.registerTickHandler(this);
 		stencil = new ScratchFramebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
 		stencil.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
+		blank = new ScratchFramebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
+		blank.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
+		effectShader.setHook(this);
+		stencilShader.setHook(this);
 	}
 
 	public void updatePosition(Entity ep) {
@@ -125,11 +133,13 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		stencil.clear();
 		stencil.createBindFramebuffer(mc.displayWidth, mc.displayHeight);
 		ReikaRenderHelper.setRenderTarget(stencil);
-		ShaderRegistry.runShader(stencilShader);
+		ReikaRenderHelper.runMultipassShader(fb, w, h, p);
 		Tessellator.instance.startDrawingQuads();
-		Tessellator.instance.addVertex(0, 0, 0);
-		Tessellator.instance.addVertex(0, 0, 0);
-		Tessellator.instance.addVertex(0, 0, 0);
+		Tessellator.instance.setBrightness(240);
+		Tessellator.instance.setColorOpaque_I(0xffffff);
+		Tessellator.instance.addVertex(0, mc.displayHeight, 0);
+		Tessellator.instance.addVertex(mc.displayWidth, mc.displayHeight, 0);
+		Tessellator.instance.addVertex(mc.displayWidth, 0, 0);
 		Tessellator.instance.addVertex(0, 0, 0);
 		Tessellator.instance.draw();
 		ShaderRegistry.completeShader();
@@ -141,13 +151,22 @@ public class ReikaShader implements ShaderHook, TickHandler {
 
 	@Override
 	public void onPreRender(ShaderProgram s) {
+		if (s == effectShader) {
+			s.setField("stencilTex", 1);
 
+			int base = GL11.glGetInteger(GL13.GL_ACTIVE_TEXTURE);
+			GL13.glActiveTexture(base + 1); // Texture unit 1
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, stencil.framebufferTexture);
+			GL13.glActiveTexture(base); // Texture unit 0
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, Minecraft.getMinecraft().getFramebuffer().framebufferTexture);
+		}
 	}
 
 	@Override
 	public void onPostRender(ShaderProgram s) {
 		//if (!effectShader.hasOngoingFoci()) {
-		effectShader.setEnabled(false);
+		if (s == effectShader)
+			s.setEnabled(false);
 		//	effectShader.clearFoci();
 		//}
 	}
