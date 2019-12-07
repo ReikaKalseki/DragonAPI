@@ -1,11 +1,11 @@
-uniform float distance;
 uniform sampler2D stencilTex;
 
 void main() {
-    vec2 focusXY = getScreenPos(0.0, 0.0, 0.0);
 	
 	vec4 stencil = texture2D(stencilTex, texcoord);
-	float factor = stencil.r;
+	float factor = stencil.a;
+	float age = stencil.r;
+	vec2 focusXY = stencil.gb;
 	
 	texcoord = mix(texcoord, focusXY, factor/6.0);
 	

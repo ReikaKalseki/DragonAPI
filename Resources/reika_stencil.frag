@@ -1,4 +1,5 @@
 uniform float distance;
+uniform float age;
 
 void main() {
     vec2 focusXY = getScreenPos(0.0, 0.0, 0.0);
@@ -9,11 +10,9 @@ void main() {
 	
     vec4 color = texture2D(bgl_RenderedTexture, texcoord);
 	
-	float gs = max(color.r, vf);
-	float count = color.a;
-	count++;
-	float new = (gs-color.r)/(color.r-vf);
+	float gs = max(color.a, vf);
+	float new = (color.a-gs)/(color.a-vf);
 	float xy = mix(vec2(color.g, color.b), focusXY, new);
 	
-    gl_FragColor = vec4(gs, xy.x, xy.y, count);
+    gl_FragColor = vec4(age, xy.x, xy.y, gs);
 }

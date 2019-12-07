@@ -109,6 +109,7 @@ public class ReikaShader implements ShaderHook, TickHandler {
 			}
 			f *= f2;
 			if (f > 0) {
+				map.put("age", pt.age/(float)pt.LIFESPAN);
 				GL11.glPushMatrix();
 				DecimalPosition p = pt.position;
 				GL11.glTranslated(p.xCoord-px, p.yCoord-py, p.zCoord-pz);
