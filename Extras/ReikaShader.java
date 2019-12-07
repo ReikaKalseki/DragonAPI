@@ -8,6 +8,7 @@ import java.util.Iterator;
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -24,6 +25,7 @@ import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderDomain;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper.ScratchFramebuffer;
 
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
@@ -31,7 +33,9 @@ public class ReikaShader implements ShaderHook, TickHandler {
 
 	public static final ReikaShader instance = new ReikaShader();
 
-	private ShaderProgram shader;
+	private ShaderProgram stencilShader;
+	private ShaderProgram effectShader;
+	private ScratchFramebuffer stencil;
 	private final ArrayList<ShaderPoint> points = new ArrayList();
 	private boolean rendering;
 
@@ -40,8 +44,11 @@ public class ReikaShader implements ShaderHook, TickHandler {
 	}
 
 	public void register() {
-		shader = ShaderRegistry.createShader(DragonAPIInit.instance, "reika", DragonAPICore.class, "Resources/", ShaderDomain.GLOBALNOGUI).setEnabled(false);
+		stencilShader = ShaderRegistry.createShader(DragonAPIInit.instance, "reika_stencil", DragonAPICore.class, "Resources/", ShaderDomain.ENTITY).setEnabled(false);
+		effectShader = ShaderRegistry.createShader(DragonAPIInit.instance, "reika_effect", DragonAPICore.class, "Resources/", ShaderDomain.GLOBALNOGUI).setEnabled(false);
 		TickRegistry.instance.registerTickHandler(this);
+		stencil = new ScratchFramebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
+		stencil.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
 	}
 
 	public void updatePosition(Entity ep) {
@@ -74,6 +81,7 @@ public class ReikaShader implements ShaderHook, TickHandler {
 			return;
 		if (points.isEmpty())
 			return;
+
 		GL11.glPushMatrix();
 		double dist = ep.getDistanceSqToEntity(mc.thePlayer);
 		if (mc.gameSettings.thirdPersonView > 0) {
@@ -87,11 +95,10 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		GL11.glTranslated(RenderManager.renderPosX-ep.posX, RenderManager.renderPosY-ep.posY, RenderManager.renderPosZ-ep.posZ);
 		GL11.glTranslated(0, -0.8, 0);
 		GL11.glRotated(180, 0, 1, 0);
-		shader.setEnabled(true);
+		stencilShader.setEnabled(true);
+		effectShader.setEnabled(true);
 		HashMap<String, Object> map = new HashMap();
 		map.put("distance", dist);
-		map.put("colorIntensity", 0.25F);
-		map.put("distortionIntensity", 1F);
 		rendering = true;
 		for (ShaderPoint pt : points) {
 			float f = pt.getIntensity();
@@ -105,14 +112,30 @@ public class ReikaShader implements ShaderHook, TickHandler {
 				GL11.glPushMatrix();
 				DecimalPosition p = pt.position;
 				GL11.glTranslated(p.xCoord-px, p.yCoord-py, p.zCoord-pz);
-				shader.addFocus(p.xCoord, p.yCoord, p.zCoord);
-				shader.addFocus(ep);
-				shader.modifyLastCompoundFocus(f, map);
+				stencilShader.addFocus(p.xCoord, p.yCoord, p.zCoord);
+				//stencilShader.addFocus(ep);
+				stencilShader.modifyLastCompoundFocus(f, map);
 				GL11.glPopMatrix();
 			}
 		}
 		rendering = false;
 		GL11.glPopMatrix();
+
+		stencil.clear();
+		stencil.createBindFramebuffer(mc.displayWidth, mc.displayHeight);
+		ReikaRenderHelper.setRenderTarget(stencil);
+		ShaderRegistry.runShader(stencilShader);
+		Tessellator.instance.startDrawingQuads();
+		Tessellator.instance.addVertex(0, 0, 0);
+		Tessellator.instance.addVertex(0, 0, 0);
+		Tessellator.instance.addVertex(0, 0, 0);
+		Tessellator.instance.addVertex(0, 0, 0);
+		Tessellator.instance.draw();
+		ShaderRegistry.completeShader();
+		ReikaRenderHelper.setRenderTarget(mc.getFramebuffer());
+
+		stencilShader.clearFoci();
+		stencilShader.setEnabled(false);
 	}
 
 	@Override
@@ -122,10 +145,10 @@ public class ReikaShader implements ShaderHook, TickHandler {
 
 	@Override
 	public void onPostRender(ShaderProgram s) {
-		if (!shader.hasOngoingFoci()) {
-			shader.setEnabled(false);
-			shader.clearFoci();
-		}
+		//if (!effectShader.hasOngoingFoci()) {
+		effectShader.setEnabled(false);
+		//	effectShader.clearFoci();
+		//}
 	}
 
 	@Override

@@ -173,6 +173,7 @@ public class ShaderRegistry {
 	public static enum ShaderDomain {
 		WORLD,
 		TESR,
+		ENTITY,
 		GUI,
 		GLOBAL,
 		GLOBALNOGUI();

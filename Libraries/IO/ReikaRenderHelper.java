@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.IO;
 
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -1750,7 +1751,15 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		OpenGlHelper.func_153171_g(OpenGlHelper.field_153198_e, fb != null ? fb.framebufferObject : 0);
 	}
 
-	private static class ScratchFramebuffer extends Framebuffer {
+	public static void renderTextureToFramebuffer(int texture, Framebuffer fb) {
+		IntBuffer pixelBuffer = BufferUtils.createIntBuffer(fb.framebufferHeight*fb.framebufferWidth);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
+		GL11.glGetTexImage(GL11.GL_TEXTURE_2D, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, pixelBuffer);
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fb.framebufferTexture);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, fb.framebufferWidth, fb.framebufferHeight, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, pixelBuffer);
+	}
+
+	public static class ScratchFramebuffer extends Framebuffer {
 
 		public ScratchFramebuffer(int w, int h, boolean depth) {
 			super(w, h, depth);
@@ -1760,6 +1769,16 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		public void createBindFramebuffer(int w, int h) {
 			if (w != framebufferWidth || h != framebufferHeight)
 				super.createBindFramebuffer(w, h);
+		}
+
+		public void clear() {
+			IntBuffer pixelBuffer = BufferUtils.createIntBuffer(framebufferHeight*framebufferWidth);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, framebufferTexture);
+			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, framebufferWidth, framebufferHeight, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, pixelBuffer);
+		}
+
+		public void replaceWith(int texture) {
+			ReikaRenderHelper.renderTextureToFramebuffer(texture, this);
 		}
 
 	}
