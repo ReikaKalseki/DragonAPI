@@ -122,7 +122,7 @@ public final class PlayerSpecificRenderer {
 
 	private void renderAdditionalObjects(EntityPlayer ep, float ptick) {
 		if (ReikaPlayerAPI.isReika(ep)) {
-			ReikaShader.instance.render(ep);
+			ReikaShader.instance.prepareRender(ep);
 		}
 		if (ep == Minecraft.getMinecraft().thePlayer && !DragonOptions.CUSTOMRENDER.getState())
 			return;

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -11,8 +11,10 @@ package Reika.DragonAPI.Command;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.util.ChatComponentTranslation;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
@@ -38,6 +40,8 @@ public abstract class DragonCommandBase extends CommandBase {
 			ReikaChatHelper.sendChatToPlayer(getCommandSenderAsPlayer(ics), s);
 		else if (ics instanceof EntityPlayer)
 			ReikaChatHelper.sendChatToPlayer((EntityPlayer)ics, s);
+		else if (ics instanceof CommandBlockLogic)
+			((CommandBlockLogic)ics).addChatMessage(new ChatComponentTranslation(s));
 		else
 			ReikaJavaLibrary.pConsole(s);
 	}

@@ -21,6 +21,7 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
+import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -37,6 +38,7 @@ import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.BlockEvent;
@@ -58,6 +60,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.ChangePacketRenderer;
+import Reika.DragonAPI.Extras.ReikaShader;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Interpolation;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
@@ -65,9 +68,11 @@ import Reika.DragonAPI.Instantiable.Event.AddSmeltingEvent;
 import Reika.DragonAPI.Instantiable.Event.FireChanceEvent;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
+import Reika.DragonAPI.Instantiable.Event.ProfileEvent;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent.ProfileEventWatcher;
 import Reika.DragonAPI.Instantiable.Event.XPUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
+import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderingLoopEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
@@ -85,7 +90,10 @@ import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaEngLibrary;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMusicHelper.MusicKey;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaChunkHelper;
@@ -108,7 +116,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	private final Interpolation biomeHumidityFlammability = new Interpolation(false);
 
 	private DragonAPIEventWatcher() {
-		//ProfileEvent.registerHandler("blockentities", this);
+		ProfileEvent.registerHandler("debug", this);
 
 		biomeHumidityFlammability.addPoint(0, 3);
 		biomeHumidityFlammability.addPoint(0.1, 2);
@@ -121,16 +129,37 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	}
 
 	public void onCall(String tag) {
+		if (tag.equals("debug")) {
+			long amt = ReikaTextureHelper.binder.getTotalBytesLoaded();
+			String pre = ReikaEngLibrary.getSIPrefix(amt);
+			double base = ReikaMathLibrary.getThousandBase(amt);
+			String sg = String.format("%.3f %sbytes in texture data", base, pre);
+			Minecraft mc = Minecraft.getMinecraft();
+			int len = FMLCommonHandler.instance().getBrandings(false).size();
+			mc.ingameGUI.drawString(mc.fontRenderer, sg, mc.displayWidth/2-10-mc.fontRenderer.getStringWidth(sg), 73+(len-4)*(2+mc.fontRenderer.FONT_HEIGHT), 0xffffff);
+		}
+	}
 
+	@SubscribeEvent
+	public void creeperShaderReikaDelegate(LivingUpdateEvent evt) {
+		if (evt.entityLiving instanceof EntityCreeper && evt.entityLiving.worldObj.isRemote) {
+			ReikaShader.instance.updatePosition(evt.entityLiving);
+		}
+	}
+	@SubscribeEvent
+	public void creeperShaderReikaDelegate(EntityRenderEvent evt) {
+		if (evt.entity instanceof EntityCreeper) {
+			ReikaShader.instance.prepareRender(evt.entity);
+		}
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void collectAll(SettingsEvent.Save evt) {
+	public void forceFramebuffer(SettingsEvent.Save evt) {
 		evt.settings.fboEnable = true;
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void collectAll(SettingsEvent.Load evt) {
+	public void forceFramebuffer(SettingsEvent.Load evt) {
 		evt.settings.fboEnable = true;
 	}
 

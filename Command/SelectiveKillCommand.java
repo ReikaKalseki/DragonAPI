@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,6 +12,7 @@ package Reika.DragonAPI.Command;
 import java.util.List;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
@@ -24,7 +25,6 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
-import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
@@ -37,25 +37,32 @@ public class SelectiveKillCommand extends DragonCommandBase {
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
-		EntityPlayerMP ep = getCommandSenderAsPlayer(ics);
+		World world = null;
+		if (ics instanceof CommandBlockLogic) {
+			world = ((CommandBlockLogic)ics).getEntityWorld();
+		}
+		else {
+			EntityPlayerMP ep = getCommandSenderAsPlayer(ics);
+			world = ep.worldObj;
+		}
 
 		if (args.length == 2) {
 			String c = args[0];
 			int percentage = ReikaJavaLibrary.safeIntParse(args[1]);
 			if (percentage == 0) {
 				String sg = EnumChatFormatting.RED+"Invalid percentage.";
-				ReikaChatHelper.sendChatToPlayer(ep, sg);
+				sendChatToSender(ics, sg);
 				return;
 			}
-			int amt = this.killEntity(ep.worldObj, c, percentage);
+			int amt = this.killEntity(world, c, percentage);
 			String sg = EnumChatFormatting.GREEN+"Killed "+amt+" of "+c+".";
-			ReikaChatHelper.sendChatToPlayer(ep, sg);
+			sendChatToSender(ics, sg);
 		}
 		else {
 			String sg = EnumChatFormatting.RED+"You must specify an entity class and a kill percentage!";
 			String sg2 = "'EntityAnimal', 'EntityMob', 'EntityCreature', and 'EntityLiving' are accepted parent classes.";
-			ReikaChatHelper.sendChatToPlayer(ep, sg);
-			ReikaChatHelper.sendChatToPlayer(ep, sg2);
+			sendChatToSender(ics, sg);
+			sendChatToSender(ics, sg2);
 		}
 	}
 

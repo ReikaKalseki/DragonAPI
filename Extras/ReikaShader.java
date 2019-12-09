@@ -1,16 +1,17 @@
 package Reika.DragonAPI.Extras;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL13;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
@@ -25,8 +26,10 @@ import Reika.DragonAPI.IO.Shaders.ShaderRegistry;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderDomain;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper.ScratchFramebuffer;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
@@ -36,12 +39,13 @@ public class ReikaShader implements ShaderHook, TickHandler {
 
 	private ShaderProgram stencilShader;
 	private ShaderProgram effectShader;
-	
 	private ScratchFramebuffer stencil;
-	private ScratchFramebuffer blank;
-	
+
 	private final ArrayList<ShaderPoint> points = new ArrayList();
 	private boolean rendering;
+
+	private BufferedImage tempImage;
+	private int tempTex;
 
 	private ReikaShader() {
 
@@ -52,11 +56,19 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		effectShader = ShaderRegistry.createShader(DragonAPIInit.instance, "reika_effect", DragonAPICore.class, "Resources/", ShaderDomain.GLOBALNOGUI).setEnabled(false);
 		TickRegistry.instance.registerTickHandler(this);
 		stencil = new ScratchFramebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
-		stencil.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
-		blank = new ScratchFramebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
-		blank.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
+		stencil.setFramebufferColor(0.0F, 0.0F, 0.0F, 1);
 		effectShader.setHook(this);
 		stencilShader.setHook(this);
+
+		tempImage = new BufferedImage(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, BufferedImage.TYPE_INT_ARGB);
+		Random rand = new Random();
+		rand.nextBoolean();
+		for (int i = 0; i < 1000; i++) {
+			int x = rand.nextInt(tempImage.getWidth());
+			int y = rand.nextInt(tempImage.getHeight());
+			tempImage.setRGB(x, y, ReikaColorAPI.RGBtoHex(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 255));
+		}
+		tempTex = ReikaTextureHelper.binder.allocateAndSetupTexture(tempImage);
 	}
 
 	public void updatePosition(Entity ep) {
@@ -104,10 +116,11 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		GL11.glTranslated(0, -0.8, 0);
 		GL11.glRotated(180, 0, 1, 0);
 		stencilShader.setEnabled(true);
-		effectShader.setEnabled(true);
+		effectShader.setEnabled(false);
 		HashMap<String, Object> map = new HashMap();
 		map.put("distance", dist);
 		rendering = true;
+		/*
 		for (ShaderPoint pt : points) {
 			float f = pt.getIntensity();
 			double f2 = 1;
@@ -127,26 +140,25 @@ public class ReikaShader implements ShaderHook, TickHandler {
 				GL11.glPopMatrix();
 			}
 		}
+		 */
+		stencilShader.setIntensity(1);
+		stencilShader.setFocus(ep);
+		stencilShader.setField("age", 0.5F);
 		rendering = false;
 		GL11.glPopMatrix();
 
 		stencil.clear();
 		stencil.createBindFramebuffer(mc.displayWidth, mc.displayHeight);
-		ReikaRenderHelper.setRenderTarget(stencil);
-		ReikaRenderHelper.runMultipassShader(fb, w, h, p);
-		Tessellator.instance.startDrawingQuads();
-		Tessellator.instance.setBrightness(240);
-		Tessellator.instance.setColorOpaque_I(0xffffff);
-		Tessellator.instance.addVertex(0, mc.displayHeight, 0);
-		Tessellator.instance.addVertex(mc.displayWidth, mc.displayHeight, 0);
-		Tessellator.instance.addVertex(mc.displayWidth, 0, 0);
-		Tessellator.instance.addVertex(0, 0, 0);
-		Tessellator.instance.draw();
-		ShaderRegistry.completeShader();
+		ReikaRenderHelper.renderFrameBufferToItself(stencil, mc.displayWidth, mc.displayHeight, stencilShader);
 		ReikaRenderHelper.setRenderTarget(mc.getFramebuffer());
+		//stencil.framebufferRender(mc.displayWidth, mc.displayHeight);
 
 		stencilShader.clearFoci();
 		stencilShader.setEnabled(false);
+	}
+
+	public Framebuffer getStencil() {
+		return stencil;
 	}
 
 	@Override
@@ -154,11 +166,11 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		if (s == effectShader) {
 			s.setField("stencilTex", 1);
 
-			int base = GL11.glGetInteger(GL13.GL_ACTIVE_TEXTURE);
-			GL13.glActiveTexture(base + 1); // Texture unit 1
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, stencil.framebufferTexture);
-			GL13.glActiveTexture(base); // Texture unit 0
-			GL11.glBindTexture(GL11.GL_TEXTURE_2D, Minecraft.getMinecraft().getFramebuffer().framebufferTexture);
+			//int base = GL11.glGetInteger(GL13.GL_ACTIVE_TEXTURE);
+			//GL13.glActiveTexture(base + 1); // Texture unit 1
+			//GL11.glBindTexture(GL11.GL_TEXTURE_2D, stencil.framebufferTexture);
+			//GL13.glActiveTexture(base); // Texture unit 0
+			//GL11.glBindTexture(GL11.GL_TEXTURE_2D, Minecraft.getMinecraft().getFramebuffer().framebufferTexture);
 		}
 	}
 

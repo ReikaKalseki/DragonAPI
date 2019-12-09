@@ -92,15 +92,16 @@ public class ReikaTextureHelper {
 		textures.remove(c, tex);
 	}
 
-	public static void bindTexture(Class root, String tex) {
-		bindTexture(root, tex, null);
+	public static int bindTexture(Class root, String tex) {
+		return bindTexture(root, tex, null);
 	}
 
-	public static void bindTexture(Class root, String tex, ImageEditor img) {
+	public static int bindTexture(Class root, String tex, ImageEditor img) {
 		if (reload()) {
 			textures.clear();
 			colorOverrides.clear();
 			MinecraftForge.EVENT_BUS.post(new TextureReloadEvent());
+			return 0;
 		}
 		else {
 			if (root == null) {
@@ -133,17 +134,19 @@ public class ReikaTextureHelper {
 				textures.put(gl, root, tex);
 			}
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
+			return gl.intValue();
 		}
 	}
 
 	/** To disallow resource packs to change it */
-	public static void bindFinalTexture(Class root, String tex) {
+	public static int bindFinalTexture(Class root, String tex) {
 		Integer gl = (Integer)textures.get(root, tex);
 		if (gl == null) {
 			gl = bindClassReferencedTexture(root, tex, null);
 			textures.put(gl, root, tex);
 		}
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
+		return gl.intValue();
 	}
 
 	private static Integer bindClassReferencedTexture(Class root, String tex, ImageEditor editor) {
@@ -157,7 +160,7 @@ public class ReikaTextureHelper {
 		}
 	}
 
-	public static void bindRawTexture(String tex) {
+	public static int bindRawTexture(String tex) {
 		Integer gl = (Integer)textures.get(null, tex);
 		if (gl == null) {
 			BufferedImage img = ReikaImageLoader.readHardPathImage(tex);
@@ -173,9 +176,10 @@ public class ReikaTextureHelper {
 		}
 		if (gl != null)
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
+		return gl != null ? gl.intValue() : 0;
 	}
 
-	public static void bindRawTexture(BufferedImage tex, String id) {
+	public static int bindRawTexture(BufferedImage tex, String id) {
 		Integer gl = (Integer)textures.get(null, id);
 		if (gl == null) {
 			gl = new Integer(binder.allocateAndSetupTexture(tex));
@@ -183,6 +187,7 @@ public class ReikaTextureHelper {
 		}
 		if (gl != null)
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, gl.intValue());
+		return gl != null ? gl.intValue() : 0;
 	}
 
 	private static Integer bindPackTexture(Class root, String tex, IResourcePack res, ImageEditor editor) {

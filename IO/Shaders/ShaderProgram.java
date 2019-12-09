@@ -42,6 +42,7 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 
 	private ShaderHook hook;
 	private int ordering;
+	private long lastLoad;
 
 	private boolean isEnabled = true;
 
@@ -61,6 +62,10 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	}
 
 	public void load() throws IOException {
+		long time = System.currentTimeMillis();
+		if (time-lastLoad < 1000)
+			return;
+		lastLoad = time;
 		if (vertexID != 0)
 			ARBShaderObjects.glDeleteObjectARB(vertexID);
 		if (fragmentID != 0)

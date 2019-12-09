@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -55,29 +55,27 @@ public abstract class TileEntityRenderBase extends TileEntitySpecialRenderer {
 
 	public abstract String getTextureFolder();
 
-	public final void bindTextureByName(String tex) {
+	public final int bindTextureByName(String tex) {
 		String over = textureOverrides.get(tex);
 		if (over != null) {
-			ReikaTextureHelper.bindTexture(this.getModClass(), over);
-			return;
+			return ReikaTextureHelper.bindTexture(this.getModClass(), over);
 		}
 		if (this.loadXmasTextures()) {
 			String xmas = tex.replace(".png", "").replace("_xmas", "")+"_xmas.png";
 			BufferedImage ret = ReikaImageLoader.readImage(this.getModClass(), xmas, null);
 			String bind = ret != null && ret != ReikaImageLoader.getMissingTex() ? xmas : tex;
 			textureOverrides.put(tex, bind);
-			this.bindTextureByName(bind);
-			return;
+			return this.bindTextureByName(bind);
 		}
-		ReikaTextureHelper.bindTexture(this.getModClass(), tex);
+		return ReikaTextureHelper.bindTexture(this.getModClass(), tex);
 	}
 
 	protected boolean loadXmasTextures() {
 		return false;
 	}
 
-	public final void bindImageByName(String img) {
-		ReikaTextureHelper.bindTexture(this.getModClass(), this.getTextureFolder()+img);
+	public final int bindImageByName(String img) {
+		return ReikaTextureHelper.bindTexture(this.getModClass(), this.getTextureFolder()+img);
 	}
 
 	protected abstract DragonAPIMod getOwnerMod();

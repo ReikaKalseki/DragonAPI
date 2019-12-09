@@ -46,6 +46,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Extras.ReikaShader;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderDomain;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
@@ -64,7 +65,9 @@ public class ASMCalls {
 
 	public static void onRenderWorld(EntityRenderer er, float ptick, long systime) {
 		er.renderWorld(ptick, systime);
-		ShaderRegistry.runShaderDomain(Minecraft.getMinecraft().getFramebuffer(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, ShaderDomain.GLOBALNOGUI);
+		Minecraft mc = Minecraft.getMinecraft();
+		ReikaShader.instance.render(mc);
+		ShaderRegistry.runShaderDomain(mc.getFramebuffer(), mc.displayWidth, mc.displayHeight, ShaderDomain.GLOBALNOGUI);
 	}
 
 	public static void onRenderFrameBuffer(Framebuffer fb, int w, int h) {

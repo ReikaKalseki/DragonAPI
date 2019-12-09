@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.IO;
 
+import java.io.File;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.ScreenShotHelper;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -51,7 +53,6 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
 import Reika.DragonAPI.IO.Shaders.ShaderProgram;
-import Reika.DragonAPI.IO.Shaders.ShaderRegistry;
 import Reika.DragonAPI.Instantiable.CubePoints;
 import Reika.DragonAPI.Instantiable.Effects.ReikaModelledBreakFX;
 import Reika.DragonAPI.Instantiable.Rendering.TessellatorVertexList;
@@ -1733,20 +1734,48 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			tempBuffer = new ScratchFramebuffer(w, h, true);
 			tempBuffer.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
 		}
-		runMultipassShader(fb, w, h, p);
-	}
-
-	public static void runMultipassShader(Framebuffer fb, int w, int h, ShaderProgram p) {
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPushMatrix();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glPushMatrix();
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glDisable(GL11.GL_CULL_FACE);
 		boolean flag = true;
+		int pass = 0;
 		while (flag) {
 			tempBuffer.createBindFramebuffer(w, h);
 			setRenderTarget(tempBuffer);
 			//p.setMatrices(model, proj);
-			flag = ShaderRegistry.runShader(p);
+			//exportFramebuffer(fb, pass, p);
+			flag = false;//ShaderRegistry.runShader(p);
 			fb.framebufferRender(w, h);
-			ShaderRegistry.completeShader();
+			//ShaderRegistry.completeShader();
 			setRenderTarget(fb);
 			tempBuffer.framebufferRender(w, h);
+			pass++;
+		}
+		//exportFramebuffer(fb, -1, p);
+		GL11.glPopAttrib();
+		GL11.glMatrixMode(GL11.GL_PROJECTION);
+		GL11.glPopMatrix();
+		GL11.glMatrixMode(GL11.GL_MODELVIEW);
+		GL11.glPopMatrix();
+	}
+
+	private static void exportFramebuffer(Framebuffer fb, int pass, ShaderProgram p) {
+		if (!p.identifier.contains("reika"))
+			return;
+		try {
+			File root = new File(Minecraft.getMinecraft().mcDataDir, "FramebufferExport");
+			String name = pass == -1 ? p.identifier+"_end" : pass == 0 ? p.identifier+"_begin" : p.identifier+"_c_pass_"+pass;
+			name = name+".png";
+			File f = new File(new File(root, "screenshots"), name);
+			if (f.exists())
+				return;
+			ScreenShotHelper.saveScreenshot(root, name, fb.framebufferWidth, fb.framebufferHeight, fb);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -1776,9 +1805,15 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		}
 
 		public void clear() {
+			/*
 			IntBuffer pixelBuffer = BufferUtils.createIntBuffer(framebufferHeight*framebufferWidth);
+			for (int i = 0; i < pixelBuffer.capacity(); i++) {
+				pixelBuffer.put(i, 0xffffffff); //argb
+			}
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, framebufferTexture);
 			GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGBA, framebufferWidth, framebufferHeight, 0, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, pixelBuffer);
+			 */
+			this.framebufferClear();
 		}
 
 		public void replaceWith(int texture) {
