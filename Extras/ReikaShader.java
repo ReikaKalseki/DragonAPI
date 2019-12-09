@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL13;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -56,7 +57,7 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		effectShader = ShaderRegistry.createShader(DragonAPIInit.instance, "reika_effect", DragonAPICore.class, "Resources/", ShaderDomain.GLOBALNOGUI).setEnabled(false);
 		TickRegistry.instance.registerTickHandler(this);
 		stencil = new ScratchFramebuffer(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, true);
-		stencil.setFramebufferColor(0.0F, 0.0F, 0.0F, 1);
+		stencil.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
 		effectShader.setHook(this);
 		stencilShader.setHook(this);
 
@@ -95,7 +96,7 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		}
 	}
 
-	public void render(Entity ep) {
+	public void prepareRender(Entity ep) {
 		Minecraft mc = Minecraft.getMinecraft();
 		if (ep == mc.thePlayer)
 			return;
@@ -116,11 +117,10 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		GL11.glTranslated(0, -0.8, 0);
 		GL11.glRotated(180, 0, 1, 0);
 		stencilShader.setEnabled(true);
-		effectShader.setEnabled(false);
+		effectShader.setEnabled(true);
 		HashMap<String, Object> map = new HashMap();
 		map.put("distance", dist);
 		rendering = true;
-		/*
 		for (ShaderPoint pt : points) {
 			float f = pt.getIntensity();
 			double f2 = 1;
@@ -140,14 +140,13 @@ public class ReikaShader implements ShaderHook, TickHandler {
 				GL11.glPopMatrix();
 			}
 		}
-		 */
-		stencilShader.setIntensity(1);
-		stencilShader.setFocus(ep);
-		stencilShader.setField("age", 0.5F);
 		rendering = false;
 		GL11.glPopMatrix();
+	}
 
+	public void render(Minecraft mc) {
 		stencil.clear();
+		stencil.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
 		stencil.createBindFramebuffer(mc.displayWidth, mc.displayHeight);
 		ReikaRenderHelper.renderFrameBufferToItself(stencil, mc.displayWidth, mc.displayHeight, stencilShader);
 		ReikaRenderHelper.setRenderTarget(mc.getFramebuffer());
@@ -164,13 +163,12 @@ public class ReikaShader implements ShaderHook, TickHandler {
 	@Override
 	public void onPreRender(ShaderProgram s) {
 		if (s == effectShader) {
-			s.setField("stencilTex", 1);
-
-			//int base = GL11.glGetInteger(GL13.GL_ACTIVE_TEXTURE);
-			//GL13.glActiveTexture(base + 1); // Texture unit 1
-			//GL11.glBindTexture(GL11.GL_TEXTURE_2D, stencil.framebufferTexture);
-			//GL13.glActiveTexture(base); // Texture unit 0
-			//GL11.glBindTexture(GL11.GL_TEXTURE_2D, Minecraft.getMinecraft().getFramebuffer().framebufferTexture);
+			int base = GL11.glGetInteger(GL13.GL_ACTIVE_TEXTURE);
+			GL13.glActiveTexture(base + 1); // Texture unit 1
+			s.setField("stencilTex", base+1);
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, stencil.framebufferTexture);
+			GL13.glActiveTexture(base); // Texture unit 0
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, Minecraft.getMinecraft().getFramebuffer().framebufferTexture);
 		}
 	}
 

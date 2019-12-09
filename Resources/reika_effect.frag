@@ -18,8 +18,8 @@ void main() {
 	color.b = min(1.0, color.b*f+d);	
 	
 	
-	float f3 = 1.0;//0.5+0.5*sin(float(time)/10.0);
-	color = mix(color, vec4(stencil.r, stencil.r, stencil.r, 1.0), f3);
+	float f3 = 1.0;//pow(0.5+0.5*sin(float(time)/10.0), 2.0);
+	color = mix(color, vec4(stencil.r, stencil.g, stencil.b, 1.0), f3);
 	
     gl_FragColor = vec4(color.r, color.g, color.b, color.a);
 }
