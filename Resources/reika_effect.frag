@@ -19,7 +19,7 @@ void main() {
 	float d = factor/8.0;
 	float d2 = factor/6.0;	
 	color.rgb = rgb2hsb(color.rgb);
-	color.r = min(0.8, color.r+(f2-1)*0.2);
+	color.r = mix(color.r, 280.0/360.0, pow(factor, 2.0)*0.2);
 	color.g = min(1.0, color.g*f2+d2);
 	color.rgb = hsb2rgb(color.rgb);
 	color.r = min(1.0, color.r*f+d);
