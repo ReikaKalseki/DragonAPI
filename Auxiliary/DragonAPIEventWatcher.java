@@ -21,7 +21,6 @@ import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
-import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
@@ -38,7 +37,6 @@ import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
-import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.BlockEvent;
@@ -60,7 +58,6 @@ import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.ChangePacketRenderer;
-import Reika.DragonAPI.Extras.ReikaShader;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Interpolation;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
@@ -72,7 +69,6 @@ import Reika.DragonAPI.Instantiable.Event.ProfileEvent;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent.ProfileEventWatcher;
 import Reika.DragonAPI.Instantiable.Event.XPUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
-import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderingLoopEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
@@ -137,19 +133,6 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 			Minecraft mc = Minecraft.getMinecraft();
 			int len = FMLCommonHandler.instance().getBrandings(false).size();
 			mc.ingameGUI.drawString(mc.fontRenderer, sg, mc.displayWidth/2-10-mc.fontRenderer.getStringWidth(sg), 73+(len-4)*(2+mc.fontRenderer.FONT_HEIGHT), 0xffffff);
-		}
-	}
-
-	@SubscribeEvent
-	public void creeperShaderReikaDelegate(LivingUpdateEvent evt) {
-		if (evt.entityLiving instanceof EntityCreeper && evt.entityLiving.worldObj.isRemote) {
-			ReikaShader.instance.updatePosition(evt.entityLiving);
-		}
-	}
-	@SubscribeEvent
-	public void creeperShaderReikaDelegate(EntityRenderEvent evt) {
-		if (evt.entity instanceof EntityCreeper) {
-			ReikaShader.instance.prepareRender(evt.entity);
 		}
 	}
 
