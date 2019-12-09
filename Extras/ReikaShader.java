@@ -1,11 +1,9 @@
 package Reika.DragonAPI.Extras;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL13;
@@ -13,7 +11,6 @@ import org.lwjgl.opengl.GL13;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.shader.Framebuffer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -27,10 +24,9 @@ import Reika.DragonAPI.IO.Shaders.ShaderRegistry;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderDomain;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper.ScratchFramebuffer;
-import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
@@ -44,9 +40,7 @@ public class ReikaShader implements ShaderHook, TickHandler {
 
 	private final ArrayList<ShaderPoint> points = new ArrayList();
 	private boolean rendering;
-
-	private BufferedImage tempImage;
-	private int tempTex;
+	private float intensity;
 
 	private ReikaShader() {
 
@@ -60,19 +54,9 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		stencil.setFramebufferColor(0.0F, 0.0F, 0.0F, 0.0F);
 		effectShader.setHook(this);
 		stencilShader.setHook(this);
-
-		tempImage = new BufferedImage(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, BufferedImage.TYPE_INT_ARGB);
-		Random rand = new Random();
-		rand.nextBoolean();
-		for (int i = 0; i < 1000; i++) {
-			int x = rand.nextInt(tempImage.getWidth());
-			int y = rand.nextInt(tempImage.getHeight());
-			tempImage.setRGB(x, y, ReikaColorAPI.RGBtoHex(rand.nextInt(255), rand.nextInt(255), rand.nextInt(255), 255));
-		}
-		tempTex = ReikaTextureHelper.binder.allocateAndSetupTexture(tempImage);
 	}
 
-	public void updatePosition(Entity ep) {
+	public void updatePosition(EntityPlayer ep) {
 		if (rendering)
 			return;
 		if (ep == Minecraft.getMinecraft().thePlayer)
@@ -91,12 +75,12 @@ public class ReikaShader implements ShaderHook, TickHandler {
 			}
 		}
 		if (flag) {
-			ShaderPoint p = new ShaderPoint(ep);
+			ShaderPoint p = new ShaderPoint(ep, points.isEmpty() ? null : points.get(0));
 			points.add(0, p);
 		}
 	}
 
-	public void prepareRender(Entity ep) {
+	public void prepareRender(EntityPlayer ep) {
 		Minecraft mc = Minecraft.getMinecraft();
 		if (ep == mc.thePlayer)
 			return;
@@ -116,30 +100,33 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		GL11.glTranslated(RenderManager.renderPosX-ep.posX, RenderManager.renderPosY-ep.posY, RenderManager.renderPosZ-ep.posZ);
 		GL11.glTranslated(0, -0.8, 0);
 		GL11.glRotated(180, 0, 1, 0);
-		stencilShader.setEnabled(true);
-		effectShader.setEnabled(true);
-		HashMap<String, Object> map = new HashMap();
-		map.put("distance", dist);
 		rendering = true;
+		boolean flag = false;
 		for (ShaderPoint pt : points) {
 			float f = pt.getIntensity();
-			double f2 = 1;
-			double d2 = pt.position.getDistanceTo(ep.posX, ep.posY, ep.posZ);
-			if (d2 <= 2) {
-				f2 = d2/2D;
-			}
-			f *= f2;
 			if (f > 0) {
+				HashMap<String, Object> map = new HashMap();
+				map.put("distance", dist);
 				map.put("age", pt.age/(float)pt.LIFESPAN);
-				GL11.glPushMatrix();
 				DecimalPosition p = pt.position;
-				GL11.glTranslated(p.xCoord-px, p.yCoord-py, p.zCoord-pz);
-				stencilShader.addFocus(p.xCoord, p.yCoord, p.zCoord);
-				//stencilShader.addFocus(ep);
+				map.put("dx", p.xCoord-px);
+				map.put("dy", p.yCoord-py);
+				map.put("dz", p.zCoord-pz);
+				//stencilShader.addFocus(p.xCoord, p.yCoord, p.zCoord);
+				stencilShader.addFocus(ep);
 				stencilShader.modifyLastCompoundFocus(f, map);
-				GL11.glPopMatrix();
+				flag = true;
 			}
 		}
+		stencilShader.setEnabled(flag);
+		effectShader.setEnabled(flag);
+		if (flag && points.get(0).speed > 0.08) {
+			intensity = Math.min(1, intensity*1.02F+0.005F);
+		}
+		else {
+			intensity = Math.max(0, intensity*0.99F-0.02F);
+		}
+		effectShader.setIntensity(intensity);
 		rendering = false;
 		GL11.glPopMatrix();
 	}
@@ -150,7 +137,9 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		stencil.createBindFramebuffer(mc.displayWidth, mc.displayHeight);
 		ReikaRenderHelper.renderFrameBufferToItself(stencil, mc.displayWidth, mc.displayHeight, stencilShader);
 		ReikaRenderHelper.setRenderTarget(mc.getFramebuffer());
-		//stencil.framebufferRender(mc.displayWidth, mc.displayHeight);
+		if (stencilShader.isEnabled()) {
+			//stencil.renderWithAlpha(mc.displayWidth, mc.displayHeight);
+		}
 
 		stencilShader.clearFoci();
 		stencilShader.setEnabled(false);
@@ -164,8 +153,10 @@ public class ReikaShader implements ShaderHook, TickHandler {
 	public void onPreRender(ShaderProgram s) {
 		if (s == effectShader) {
 			int base = GL11.glGetInteger(GL13.GL_ACTIVE_TEXTURE);
-			GL13.glActiveTexture(base + 1); // Texture unit 1
-			s.setField("stencilTex", base+1);
+			int offset = 2;
+			GL13.glActiveTexture(base + offset); // Texture unit 1
+			s.setField("stencilTex", offset);
+			s.setField("stencilVal", (float)offset);
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, stencil.framebufferTexture);
 			GL13.glActiveTexture(base); // Texture unit 0
 			GL11.glBindTexture(GL11.GL_TEXTURE_2D, Minecraft.getMinecraft().getFramebuffer().framebufferTexture);
@@ -191,13 +182,21 @@ public class ReikaShader implements ShaderHook, TickHandler {
 		private static final int LIFESPAN = 30;
 
 		private final DecimalPosition position;
+		private final double speed;
 
 		private long creation;
 		private int age;
 
-		private ShaderPoint(Entity ep) {
+		private ShaderPoint(EntityPlayer ep, ShaderPoint last) {
 			position = new DecimalPosition(ep);
 			creation = ep.worldObj.getTotalWorldTime();
+			double vx = ep.motionX;
+			double vy = ep.motionY+0.0784000015258789;
+			double vz = ep.motionZ;
+			double v = ReikaMathLibrary.py3d(vx, vy, vz);
+			if (last != null)
+				v += last.position.getDistanceTo(position);
+			speed = v;
 		}
 
 		public void refresh(long world) {
@@ -211,14 +210,21 @@ public class ReikaShader implements ShaderHook, TickHandler {
 			return val >= LIFESPAN;
 		}
 
-		public float getIntensity() {
-			if (age < 5) {
+		private float getAgeFactor() {
+			if (true) {
+				return 1F-age/(float)LIFESPAN;
+			}
+			if (age < 4) {
 				return 0;
 			}
 			else if (age < 10) {
-				return (age-5)/5F;
+				return (age-4)/6F;
 			}
 			return 1F-(age-10)/(float)(LIFESPAN-10);
+		}
+
+		public float getIntensity() {
+			return Math.min(1, (float)Math.pow(this.getAgeFactor()*speed*5, 1.5));
 		}
 
 	}
