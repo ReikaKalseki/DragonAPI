@@ -948,6 +948,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 					e.isDead = false;
 					e.worldObj.theProfiler.startSection("reposition");
 					ms.getConfigurationManager().transferEntityToWorld(e, from_dim, from, to, t != null ? t : new DummyTeleporter(to));
+					/*
 					e.worldObj.theProfiler.endStartSection("reloading");
 					Entity copy = EntityList.createEntityByName(EntityList.getEntityString(e), to);
 
@@ -957,6 +958,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 					}
 
 					e.isDead = true;
+					 */
 					e.worldObj.theProfiler.endSection();
 					from.resetUpdateEntityTick();
 					to.resetUpdateEntityTick();

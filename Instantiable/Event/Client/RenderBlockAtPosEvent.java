@@ -76,4 +76,8 @@ public class RenderBlockAtPosEvent extends Event {
 		return flag || evt.continueRendering;
 	}
 
+	public int getMetadata() {
+		return world.getBlockMetadata(xCoord, yCoord, zCoord);
+	}
+
 }
