@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.ARBFragmentShader;
@@ -13,6 +14,7 @@ import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.ARBTessellationShader;
 import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.Util;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -23,6 +25,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -34,6 +37,9 @@ public class ShaderRegistry {
 
 	private static final HashMap<String, ShaderProgram> shaders = new HashMap();
 	private static final EnumMap<ShaderDomain, ArrayList<ShaderProgram>> shaderSets = new EnumMap(ShaderDomain.class);
+
+	private static ShaderProgram currentlyRunning;
+	private static HashSet<String> errors = new HashSet();
 
 	private static String BASE_DATA;
 
@@ -75,6 +81,7 @@ public class ShaderRegistry {
 	public static void reloadShader(String id) throws IOException {
 		DragonAPICore.log("Reloading shader "+id);
 		shaders.get(id).load();
+		errors.remove(id);
 	}
 
 	public static void runShader(String id) {
@@ -83,6 +90,8 @@ public class ShaderRegistry {
 
 	public static boolean runShader(ShaderProgram sh) {
 		if (!OpenGlHelper.shadersSupported || sh == null)
+			return false;
+		if (errors.contains(sh.identifier))
 			return false;
 		if (GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_X)) {
 			try {
@@ -95,6 +104,7 @@ public class ShaderRegistry {
 		if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_LMENU) && Keyboard.isKeyDown(Keyboard.KEY_C)) {
 			return false;
 		}
+		currentlyRunning = sh;
 		return sh.run();
 	}
 
@@ -102,6 +112,14 @@ public class ShaderRegistry {
 		if (!OpenGlHelper.shadersSupported)
 			return;
 		ARBShaderObjects.glUseProgramObjectARB(0);
+		if (ReikaObfuscationHelper.isDeObfEnvironment()) {
+			int res = GL11.glGetError();
+			if (res != GL11.GL_NO_ERROR) {
+				DragonAPICore.logError("Shader "+currentlyRunning+" threw error: "+Util.translateGLErrorString(res)+"!");
+				errors.add(currentlyRunning.identifier);
+			}
+		}
+		currentlyRunning = null;
 	}
 
 	static int constructShader(DragonAPIMod mod, InputStream data, ShaderTypes type) throws IOException {

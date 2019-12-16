@@ -25,14 +25,16 @@ public class ChunkWorldRenderEvent extends Event {
 	/** posX, posY, posZ are block coords of the subchunk origin */
 	public final WorldRenderer renderer;
 	public final int renderPass;
+	public final int defaultGLListID;
 
-	public ChunkWorldRenderEvent(WorldRenderer wr, int pass) {
+	public ChunkWorldRenderEvent(WorldRenderer wr, int pass, int id) {
 		renderer = wr;
 		renderPass = pass;
+		defaultGLListID = id;
 	}
 
 	public static int fire(int ret, WorldRenderer wr, int pass) {
-		ChunkWorldRenderEvent evt = new ChunkWorldRenderEvent(wr, pass);
+		ChunkWorldRenderEvent evt = new ChunkWorldRenderEvent(wr, pass, ret);
 		return MinecraftForge.EVENT_BUS.post(evt) ? -1 : ret;
 	}
 

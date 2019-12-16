@@ -20,9 +20,9 @@ import org.objectweb.asm.tree.VarInsnNode;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
-public class WorldRenderCall extends Patcher {
+public class WorldRenderGetLists extends Patcher {
 
-	public WorldRenderCall() {
+	public WorldRenderGetLists() {
 		super("net.minecraft.client.renderer.WorldRenderer", "blo");
 	}
 

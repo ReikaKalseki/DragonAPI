@@ -21,6 +21,7 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
@@ -62,6 +63,10 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
+
+	public static void onCallChunkRenderLists(RenderGlobal rg, int pass, double ptick) {
+		rg.renderAllRenderLists(pass, ptick);
+	}
 
 	public static void onRenderWorld(EntityRenderer er, float ptick, long systime) {
 		er.renderWorld(ptick, systime);
