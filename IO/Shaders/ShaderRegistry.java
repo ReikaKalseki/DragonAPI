@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.shader.Framebuffer;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
@@ -36,6 +37,8 @@ public class ShaderRegistry {
 	private static final HashMap<String, ShaderProgram> shaders = new HashMap();
 	private static final EnumMap<ShaderDomain, ArrayList<ShaderProgram>> shaderSets = new EnumMap(ShaderDomain.class);
 
+	private static final int GLSL_VERSION = 120;
+
 	private static ShaderProgram currentlyRunning;
 	private static HashSet<String> errors = new HashSet();
 
@@ -45,13 +48,13 @@ public class ShaderRegistry {
 		if (!OpenGlHelper.shadersSupported)
 			return null;
 		if (shaders.containsKey(id))
-			error(mod, "Shader id "+id+" is already in use!");
+			error(mod, "Shader id "+id+" is already in use!", null);
 		ShaderProgram sh = new ShaderProgram(mod, root, pathPre, id, dom);
 		try {
 			sh.load();
 		}
 		catch (IOException e) {
-			error(mod, "Shader program data could not be loaded!", e);
+			error(mod, "Shader program data could not be loaded!", null, e);
 		}
 		shaders.put(sh.identifier, sh);
 		addShaderToSet(dom, sh);
@@ -89,8 +92,12 @@ public class ShaderRegistry {
 	public static boolean runShader(ShaderProgram sh) {
 		if (!OpenGlHelper.shadersSupported || sh == null)
 			return false;
+		if (GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_X))
+			errors.clear();
 		if (errors.contains(sh.identifier))
 			return false;
+		if (currentlyRunning != null && currentlyRunning != sh)
+			error(sh.owner, "Cannot start one shader while another is running!", null);
 		if (GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_X)) {
 			try {
 				reloadShader(sh.identifier);
@@ -109,6 +116,8 @@ public class ShaderRegistry {
 	public static void completeShader() {
 		if (!OpenGlHelper.shadersSupported)
 			return;
+		if (currentlyRunning == null)
+			error(DragonAPIInit.instance, "Cannot stop a shader when none is running!", null);
 		GL20.glUseProgram(0);
 		if (ReikaObfuscationHelper.isDeObfEnvironment()) {
 			int res = GL11.glGetError();
@@ -122,16 +131,16 @@ public class ShaderRegistry {
 
 	static int constructShader(DragonAPIMod mod, InputStream data, ShaderTypes type) throws IOException {
 		if (data == null)
-			error(mod, "Shader has null program data!");
+			error(mod, "Shader has null program data!", type);
 		int id = GL20.glCreateShader(type.glValue);
 
 		if (id == 0)
-			error(mod, "Shader was not able to be assigned an ID!");
+			error(mod, "Shader was not able to be assigned an ID!", type);
 
 		if (BASE_DATA == null) {
 			BASE_DATA = readData(DragonAPICore.class.getResourceAsStream("Resources/shaderbase.txt"));
 		}
-		String sdata = "";
+		String sdata = "#version "+GLSL_VERSION+"\n";
 		if (type == ShaderTypes.FRAGMENT) {
 			sdata = sdata+"uniform sampler2D bgl_RenderedTexture;\n";
 		}
@@ -141,23 +150,24 @@ public class ShaderRegistry {
 		GL20.glCompileShader(id);
 
 		if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
-			error(mod, "Shader was not able to be constructed: "+ShaderRegistry.parseError(id));
+			error(mod, "Shader was not able to be constructed: "+ShaderRegistry.parseError(id), type);
 
 		return id;
 	}
 
-	static void error(DragonAPIMod mod, String msg) {
-		error(mod, msg, null);
+	static void error(DragonAPIMod mod, String msg, ShaderTypes type) {
+		error(mod, msg, type, null);
 	}
 
-	static void error(DragonAPIMod mod, String msg, Exception e) {
+	static void error(DragonAPIMod mod, String msg, ShaderTypes type, Exception e) {
+		String t = type != null ? type.name() : "";
 		if (DragonAPICore.hasGameLoaded()) { //do not crash game if already running and shader is being reloaded
-			mod.getModLogger().logError("Shader error: "+msg);
+			mod.getModLogger().logError(t+" shader error: "+msg);
 			if (e != null)
 				e.printStackTrace();
 		}
 		else {
-			throw new RegistrationException(mod, msg, e);
+			throw new RegistrationException(mod, t+" "+msg, e);
 		}
 	}
 

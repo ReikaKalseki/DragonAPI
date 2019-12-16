@@ -9,9 +9,9 @@ void main() {
 	
 	factor *= intensity;
 	
-	texcoord = mix(texcoord, focusXY, factor/4.0);
+	vec2 texUV = mix(texcoord, focusXY, factor/4.0);
 	
-    vec4 color = texture2D(bgl_RenderedTexture, texcoord);
+    vec4 color = texture2D(bgl_RenderedTexture, texUV);
 	vec3 orig = color.rgb;
 	
 	float f = 1.0+0.05*factor;

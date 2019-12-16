@@ -14,6 +14,7 @@ import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 
@@ -175,6 +176,10 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		this.setField("intensity", f);
 	}
 
+	public void setTextureUnit(String field, int constant) {
+		this.setField(field, constant-OpenGlHelper.defaultTexUnit);
+	}
+
 	boolean run() {
 		if (!this.isEnabled())
 			return false;
@@ -279,17 +284,17 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	private void register() {
 		programID = GL20.glCreateProgram();
 		if (programID == 0) {
-			ShaderRegistry.error(owner, "Shader program could not be assigned an ID!");
+			ShaderRegistry.error(owner, "Shader program could not be assigned an ID!", null);
 		}
 		GL20.glAttachShader(programID, vertexID);
 		GL20.glAttachShader(programID, fragmentID);
 		GL20.glLinkProgram(programID);
 		if (GL20.glGetShaderi(programID, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
-			ShaderRegistry.error(owner, "Shader was not linked properly: "+ShaderRegistry.parseError(programID));
+			ShaderRegistry.error(owner, "Shader was not linked properly: "+ShaderRegistry.parseError(programID), null);
 		}
 		GL20.glValidateProgram(programID);
 		if (GL20.glGetShaderi(programID, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
-			ShaderRegistry.error(owner, "Shader failed to validate: "+ShaderRegistry.parseError(programID));
+			ShaderRegistry.error(owner, "Shader failed to validate: "+ShaderRegistry.parseError(programID), null);
 		}
 	}
 
