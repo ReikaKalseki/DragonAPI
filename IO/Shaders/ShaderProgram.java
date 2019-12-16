@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import org.lwjgl.BufferUtils;
-import org.lwjgl.opengl.ARBShaderObjects;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -67,11 +67,11 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 			return;
 		lastLoad = time;
 		if (vertexID != 0)
-			ARBShaderObjects.glDeleteObjectARB(vertexID);
+			GL20.glDeleteShader(vertexID);
 		if (fragmentID != 0)
-			ARBShaderObjects.glDeleteObjectARB(fragmentID);
+			GL20.glDeleteShader(fragmentID);
 		if (programID != 0) {
-			ARBShaderObjects.glDeleteObjectARB(programID);
+			GL20.glDeleteShader(programID);
 		}
 		vertexID = ShaderRegistry.constructShader(owner, this.getShaderData(ShaderTypes.VERTEX), ShaderTypes.VERTEX);
 		fragmentID = ShaderRegistry.constructShader(owner, this.getShaderData(ShaderTypes.FRAGMENT), ShaderTypes.FRAGMENT);
@@ -184,7 +184,7 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		if (hook != null)
 			hook.onPreRender(this);
 
-		ARBShaderObjects.glUseProgramObjectARB(programID);
+		GL20.glUseProgram(programID);
 		boolean flag = false;
 		if (compoundLocation != null) {
 			RenderState rs = compoundLocation.remove(0);
@@ -242,8 +242,8 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		FloatBuffer b = BufferUtils.createFloatBuffer(3);
 		focusLocation.store(b);
 		b.rewind();
-		int loc = ARBShaderObjects.glGetUniformLocationARB(programID, "focus");
-		ARBShaderObjects.glUniform3ARB(loc, b);
+		int loc = GL20.glGetUniformLocation(programID, "focus");
+		GL20.glUniform3(loc, b);
 	}
 
 	private void applyMatrices() {
@@ -253,22 +253,22 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		FloatBuffer b2 = BufferUtils.createFloatBuffer(16);
 		projection.store(b2);
 		b2.rewind();
-		int loc = ARBShaderObjects.glGetUniformLocationARB(programID, "modelview");
-		ARBShaderObjects.glUniformMatrix4ARB(loc, false, b1);
-		loc = ARBShaderObjects.glGetUniformLocationARB(programID, "projection");
-		ARBShaderObjects.glUniformMatrix4ARB(loc, false, b2);
+		int loc = GL20.glGetUniformLocation(programID, "modelview");
+		GL20.glUniformMatrix4(loc, false, b1);
+		loc = GL20.glGetUniformLocation(programID, "projection");
+		GL20.glUniformMatrix4(loc, false, b2);
 	}
 
 	private void applyField(String f, Object val) {
-		int loc = ARBShaderObjects.glGetUniformLocationARB(programID, f);
+		int loc = GL20.glGetUniformLocation(programID, f);
 		if (val instanceof Integer) {
-			ARBShaderObjects.glUniform1iARB(loc, (int)val);
+			GL20.glUniform1i(loc, (int)val);
 		}
 		else if (val instanceof Float) {
-			ARBShaderObjects.glUniform1fARB(loc, (float)val);
+			GL20.glUniform1f(loc, (float)val);
 		}
 		else if (val instanceof Double) {
-			ARBShaderObjects.glUniform1fARB(loc, ((Double)val).floatValue());
+			GL20.glUniform1f(loc, ((Double)val).floatValue());
 		}
 	}
 
@@ -276,19 +276,19 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		return compoundLocation != null;
 	}
 
-	void register() {
-		programID = ARBShaderObjects.glCreateProgramObjectARB();
+	private void register() {
+		programID = GL20.glCreateProgram();
 		if (programID == 0) {
 			ShaderRegistry.error(owner, "Shader program could not be assigned an ID!");
 		}
-		ARBShaderObjects.glAttachObjectARB(programID, vertexID);
-		ARBShaderObjects.glAttachObjectARB(programID, fragmentID);
-		ARBShaderObjects.glLinkProgramARB(programID);
-		if (ARBShaderObjects.glGetObjectParameteriARB(programID, ARBShaderObjects.GL_OBJECT_LINK_STATUS_ARB) == GL11.GL_FALSE) {
+		GL20.glAttachShader(programID, vertexID);
+		GL20.glAttachShader(programID, fragmentID);
+		GL20.glLinkProgram(programID);
+		if (GL20.glGetShaderi(programID, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
 			ShaderRegistry.error(owner, "Shader was not linked properly: "+ShaderRegistry.parseError(programID));
 		}
-		ARBShaderObjects.glValidateProgramARB(programID);
-		if (ARBShaderObjects.glGetObjectParameteriARB(programID, ARBShaderObjects.GL_OBJECT_VALIDATE_STATUS_ARB) == GL11.GL_FALSE) {
+		GL20.glValidateProgram(programID);
+		if (GL20.glGetShaderi(programID, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
 			ShaderRegistry.error(owner, "Shader failed to validate: "+ShaderRegistry.parseError(programID));
 		}
 	}

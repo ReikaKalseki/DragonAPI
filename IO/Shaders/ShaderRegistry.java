@@ -9,11 +9,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.ARBFragmentShader;
-import org.lwjgl.opengl.ARBShaderObjects;
-import org.lwjgl.opengl.ARBTessellationShader;
-import org.lwjgl.opengl.ARBVertexShader;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL40;
 import org.lwjgl.opengl.Util;
 
 import net.minecraft.client.gui.GuiScreen;
@@ -111,7 +109,7 @@ public class ShaderRegistry {
 	public static void completeShader() {
 		if (!OpenGlHelper.shadersSupported)
 			return;
-		ARBShaderObjects.glUseProgramObjectARB(0);
+		GL20.glUseProgram(0);
 		if (ReikaObfuscationHelper.isDeObfEnvironment()) {
 			int res = GL11.glGetError();
 			if (res != GL11.GL_NO_ERROR) {
@@ -125,7 +123,7 @@ public class ShaderRegistry {
 	static int constructShader(DragonAPIMod mod, InputStream data, ShaderTypes type) throws IOException {
 		if (data == null)
 			error(mod, "Shader has null program data!");
-		int id = ARBShaderObjects.glCreateShaderObjectARB(type.glValue);
+		int id = GL20.glCreateShader(type.glValue);
 
 		if (id == 0)
 			error(mod, "Shader was not able to be assigned an ID!");
@@ -139,10 +137,10 @@ public class ShaderRegistry {
 		}
 		sdata = sdata+BASE_DATA+"\n";
 		sdata = sdata+readData(data);
-		ARBShaderObjects.glShaderSourceARB(id, sdata);
-		ARBShaderObjects.glCompileShaderARB(id);
+		GL20.glShaderSource(id, sdata);
+		GL20.glCompileShader(id);
 
-		if (ARBShaderObjects.glGetObjectParameteriARB(id, ARBShaderObjects.GL_OBJECT_COMPILE_STATUS_ARB) == GL11.GL_FALSE)
+		if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
 			error(mod, "Shader was not able to be constructed: "+ShaderRegistry.parseError(id));
 
 		return id;
@@ -185,7 +183,7 @@ public class ShaderRegistry {
 	}
 
 	public static String parseError(int programID) {
-		return ARBShaderObjects.glGetInfoLogARB(programID, ARBShaderObjects.glGetObjectParameteriARB(programID, ARBShaderObjects.GL_OBJECT_INFO_LOG_LENGTH_ARB));
+		return GL20.glGetShaderInfoLog(programID, GL20.glGetShaderi(programID, GL20.GL_INFO_LOG_LENGTH));
 	}
 
 	public static enum ShaderDomain {
@@ -198,9 +196,9 @@ public class ShaderRegistry {
 	}
 
 	public static enum ShaderTypes {
-		FRAGMENT(ARBFragmentShader.GL_FRAGMENT_SHADER_ARB, "frag"),
-		VERTEX(ARBVertexShader.GL_VERTEX_SHADER_ARB, "vert"),
-		TESSELLATION(ARBTessellationShader.GL_TESS_EVALUATION_SHADER, "tess");
+		FRAGMENT(GL20.GL_FRAGMENT_SHADER, "frag"),
+		VERTEX(GL20.GL_VERTEX_SHADER, "vert"),
+		TESSELLATION(GL40.GL_TESS_EVALUATION_SHADER, "tess");
 
 		public final int glValue;
 		public final String extension;
