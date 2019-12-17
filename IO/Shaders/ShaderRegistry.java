@@ -38,9 +38,11 @@ public class ShaderRegistry {
 	private static final EnumMap<ShaderDomain, ArrayList<ShaderProgram>> shaderSets = new EnumMap(ShaderDomain.class);
 
 	private static final int GLSL_VERSION = 120;
+	private static final int ERROR_CHECK_RATE = ReikaObfuscationHelper.isDeObfEnvironment() ? 10 : 120;
 
 	private static ShaderProgram currentlyRunning;
 	private static HashSet<String> errors = new HashSet();
+	private static int tick;
 
 	private static String BASE_DATA;
 
@@ -48,13 +50,13 @@ public class ShaderRegistry {
 		if (!OpenGlHelper.shadersSupported)
 			return null;
 		if (shaders.containsKey(id))
-			error(mod, "Shader id "+id+" is already in use!", null);
+			error(mod, id, "Shader id "+id+" is already in use!", null);
 		ShaderProgram sh = new ShaderProgram(mod, root, pathPre, id, dom);
 		try {
 			sh.load();
 		}
 		catch (IOException e) {
-			error(mod, "Shader program data could not be loaded!", null, e);
+			error(mod, id, "Shader program data could not be loaded!", null, e);
 		}
 		shaders.put(sh.identifier, sh);
 		addShaderToSet(dom, sh);
@@ -92,13 +94,10 @@ public class ShaderRegistry {
 	public static boolean runShader(ShaderProgram sh) {
 		if (!OpenGlHelper.shadersSupported || sh == null)
 			return false;
-		if (GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_X))
-			errors.clear();
-		if (errors.contains(sh.identifier))
-			return false;
 		if (currentlyRunning != null && currentlyRunning != sh)
-			error(sh.owner, "Cannot start one shader while another is running!", null);
-		if (GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_X)) {
+			error(sh.owner, sh.identifier, "Cannot start one shader while another is running!", null);
+		if (reloadKey()) {
+			errors.remove(sh.identifier);
 			try {
 				reloadShader(sh.identifier);
 			}
@@ -106,20 +105,27 @@ public class ShaderRegistry {
 				e.printStackTrace();
 			}
 		}
-		if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_LMENU) && Keyboard.isKeyDown(Keyboard.KEY_C)) {
+		currentlyRunning = sh;
+		if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_LMENU) && Keyboard.isKeyDown(Keyboard.KEY_C) && ReikaObfuscationHelper.isDeObfEnvironment()) {
 			return false;
 		}
-		currentlyRunning = sh;
+		if (errors.contains(sh.identifier))
+			return false;
 		return sh.run();
+	}
+
+	private static boolean reloadKey() {
+		return GuiScreen.isCtrlKeyDown() && GuiScreen.isShiftKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_X);
 	}
 
 	public static void completeShader() {
 		if (!OpenGlHelper.shadersSupported)
 			return;
 		if (currentlyRunning == null)
-			error(DragonAPIInit.instance, "Cannot stop a shader when none is running!", null);
+			error(DragonAPIInit.instance, null, "Cannot stop a shader when none is running!", null);
 		GL20.glUseProgram(0);
-		if (ReikaObfuscationHelper.isDeObfEnvironment()) {
+		tick++;
+		if (tick%ERROR_CHECK_RATE == 0) {
 			int res = GL11.glGetError();
 			if (res != GL11.GL_NO_ERROR) {
 				DragonAPICore.logError("Shader "+currentlyRunning+" threw error: "+Util.translateGLErrorString(res)+"!");
@@ -129,13 +135,13 @@ public class ShaderRegistry {
 		currentlyRunning = null;
 	}
 
-	static int constructShader(DragonAPIMod mod, InputStream data, ShaderTypes type) throws IOException {
+	static int constructShader(DragonAPIMod mod, String name, InputStream data, ShaderTypes type) throws IOException {
 		if (data == null)
-			error(mod, "Shader has null program data!", type);
+			error(mod, name, "Shader has null program data!", type);
 		int id = GL20.glCreateShader(type.glValue);
 
 		if (id == 0)
-			error(mod, "Shader was not able to be assigned an ID!", type);
+			error(mod, name, "Shader was not able to be assigned an ID!", type);
 
 		if (BASE_DATA == null) {
 			BASE_DATA = readData(DragonAPICore.class.getResourceAsStream("Resources/shaderbase.txt"));
@@ -150,16 +156,18 @@ public class ShaderRegistry {
 		GL20.glCompileShader(id);
 
 		if (GL20.glGetShaderi(id, GL20.GL_COMPILE_STATUS) == GL11.GL_FALSE)
-			error(mod, "Shader was not able to be constructed: "+ShaderRegistry.parseError(id), type);
+			error(mod, name, "Shader was not able to be constructed: "+ShaderRegistry.parseError(id), type);
 
 		return id;
 	}
 
-	static void error(DragonAPIMod mod, String msg, ShaderTypes type) {
-		error(mod, msg, type, null);
+	static void error(DragonAPIMod mod, String id, String msg, ShaderTypes type) {
+		error(mod, id, msg, type, null);
 	}
 
-	static void error(DragonAPIMod mod, String msg, ShaderTypes type, Exception e) {
+	static void error(DragonAPIMod mod, String id, String msg, ShaderTypes type, Exception e) {
+		if (id != null)
+			errors.add(id);
 		String t = type != null ? type.name() : "";
 		if (DragonAPICore.hasGameLoaded()) { //do not crash game if already running and shader is being reloaded
 			mod.getModLogger().logError(t+" shader error: "+msg);

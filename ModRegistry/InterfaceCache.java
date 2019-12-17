@@ -45,6 +45,7 @@ public enum InterfaceCache {
 	EIOCONDUIT("crazypants.enderio.conduit.IConduitBundle"),
 	RECONFIGURABLEFACE("cofh.api.tileentity.IReconfigurableFacing"),
 	IPLANETWORLD("zmaster587.advancedRocketry.api.IPlanetaryProvider"),
+	BCPIPE("buildcraft.api.transport.IPipeTile"),
 	;
 
 	private final String classpath;
