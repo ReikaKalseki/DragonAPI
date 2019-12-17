@@ -14,6 +14,7 @@ import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL40;
 import org.lwjgl.opengl.Util;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.shader.Framebuffer;
@@ -42,7 +43,7 @@ public class ShaderRegistry {
 
 	private static ShaderProgram currentlyRunning;
 	private static HashSet<String> errors = new HashSet();
-	private static int tick;
+	private static long tick;
 
 	private static String BASE_DATA;
 
@@ -94,6 +95,8 @@ public class ShaderRegistry {
 	public static boolean runShader(ShaderProgram sh) {
 		if (!OpenGlHelper.shadersSupported || sh == null)
 			return false;
+		if (Minecraft.getMinecraft().thePlayer == null)
+			return false;
 		if (currentlyRunning != null && currentlyRunning != sh)
 			error(sh.owner, sh.identifier, "Cannot start one shader while another is running!", null);
 		if (reloadKey()) {
@@ -106,6 +109,7 @@ public class ShaderRegistry {
 			}
 		}
 		currentlyRunning = sh;
+		tick = Minecraft.getMinecraft().theWorld.getTotalWorldTime();
 		if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_LMENU) && Keyboard.isKeyDown(Keyboard.KEY_C) && ReikaObfuscationHelper.isDeObfEnvironment()) {
 			return false;
 		}
@@ -121,10 +125,11 @@ public class ShaderRegistry {
 	public static void completeShader() {
 		if (!OpenGlHelper.shadersSupported)
 			return;
+		if (Minecraft.getMinecraft().thePlayer == null)
+			return;
 		if (currentlyRunning == null)
 			error(DragonAPIInit.instance, null, "Cannot stop a shader when none is running!", null);
 		GL20.glUseProgram(0);
-		tick++;
 		if (tick%ERROR_CHECK_RATE == 0) {
 			int res = GL11.glGetError();
 			if (res != GL11.GL_NO_ERROR) {

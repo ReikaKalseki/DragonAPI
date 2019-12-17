@@ -183,8 +183,6 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	boolean run() {
 		if (!this.isEnabled())
 			return false;
-		if (Minecraft.getMinecraft().thePlayer == null)
-			return false;
 
 		if (hook != null)
 			hook.onPreRender(this);
