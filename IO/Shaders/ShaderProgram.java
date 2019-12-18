@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.Util;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
@@ -44,6 +45,8 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	private ShaderHook hook;
 	private int ordering;
 	private long lastLoad;
+	private boolean errored = false;
+	private boolean errorChecked = false;
 
 	private boolean isEnabled = true;
 
@@ -66,6 +69,8 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		long time = System.currentTimeMillis();
 		if (time-lastLoad < 1000)
 			return;
+		errored = false;
+		errorChecked = false;
 		lastLoad = time;
 		if (vertexID != 0)
 			GL20.glDeleteShader(vertexID);
@@ -234,6 +239,20 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		return flag;
 	}
 
+	void checkForError() {
+		if (!errorChecked) {
+			errorChecked = true;
+			int res = GL11.glGetError();
+			if (res != GL11.GL_NO_ERROR) {
+				ShaderRegistry.error(owner, identifier, "Shader "+this+" threw error: "+Util.translateGLErrorString(res)+"!", null);
+			}
+		}
+	}
+
+	void markErrored() {
+		errored = true;
+	}
+
 	private void applyVariables() {
 		for (Entry<String, Object> e : variables.entrySet()) {
 			this.applyField(e.getKey(), e.getValue());
@@ -302,7 +321,7 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	}
 
 	public boolean isEnabled() {
-		return isEnabled;
+		return isEnabled && !errored;
 	}
 
 	@Override

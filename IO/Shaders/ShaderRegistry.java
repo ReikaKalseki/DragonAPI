@@ -6,13 +6,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL40;
-import org.lwjgl.opengl.Util;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -24,6 +22,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 
@@ -39,13 +38,10 @@ public class ShaderRegistry {
 	private static final EnumMap<ShaderDomain, ArrayList<ShaderProgram>> shaderSets = new EnumMap(ShaderDomain.class);
 
 	private static final int GLSL_VERSION = 120;
-	private static final int ERROR_CHECK_RATE = ReikaObfuscationHelper.isDeObfEnvironment() ? 10 : 120;
-
-	private static ShaderProgram currentlyRunning;
-	private static HashSet<String> errors = new HashSet();
-	private static long tick;
 
 	private static String BASE_DATA;
+
+	private static ShaderProgram currentlyRunning;
 
 	public static ShaderProgram createShader(DragonAPIMod mod, String id, Class root, String pathPre, ShaderDomain dom) {
 		if (!OpenGlHelper.shadersSupported)
@@ -85,7 +81,6 @@ public class ShaderRegistry {
 	public static void reloadShader(String id) throws IOException {
 		DragonAPICore.log("Reloading shader "+id);
 		shaders.get(id).load();
-		errors.remove(id);
 	}
 
 	public static void runShader(String id) {
@@ -100,21 +95,17 @@ public class ShaderRegistry {
 		if (currentlyRunning != null && currentlyRunning != sh)
 			error(sh.owner, sh.identifier, "Cannot start one shader while another is running!", null);
 		if (reloadKey()) {
-			errors.remove(sh.identifier);
 			try {
 				reloadShader(sh.identifier);
 			}
 			catch (IOException e) {
-				e.printStackTrace();
+				error(sh.owner, sh.identifier, "Shader threw IOException during reload!", null, e);
 			}
 		}
 		currentlyRunning = sh;
-		tick = Minecraft.getMinecraft().theWorld.getTotalWorldTime();
 		if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_LMENU) && Keyboard.isKeyDown(Keyboard.KEY_C) && ReikaObfuscationHelper.isDeObfEnvironment()) {
 			return false;
 		}
-		if (errors.contains(sh.identifier))
-			return false;
 		return sh.run();
 	}
 
@@ -130,13 +121,7 @@ public class ShaderRegistry {
 		if (currentlyRunning == null)
 			error(DragonAPIInit.instance, null, "Cannot stop a shader when none is running!", null);
 		GL20.glUseProgram(0);
-		if (tick%ERROR_CHECK_RATE == 0) {
-			int res = GL11.glGetError();
-			if (res != GL11.GL_NO_ERROR) {
-				DragonAPICore.logError("Shader "+currentlyRunning+" threw error: "+Util.translateGLErrorString(res)+"!");
-				errors.add(currentlyRunning.identifier);
-			}
-		}
+		currentlyRunning.checkForError();
 		currentlyRunning = null;
 	}
 
@@ -171,11 +156,16 @@ public class ShaderRegistry {
 	}
 
 	static void error(DragonAPIMod mod, String id, String msg, ShaderTypes type, Exception e) {
-		if (id != null)
-			errors.add(id);
+		if (id != null) {
+			ShaderProgram p = shaders.get(id);
+			if (p != null)
+				p.markErrored();
+		}
 		String t = type != null ? type.name() : "";
 		if (DragonAPICore.hasGameLoaded()) { //do not crash game if already running and shader is being reloaded
-			mod.getModLogger().logError(t+" shader error: "+msg);
+			String s = t+" shader error: "+msg;
+			mod.getModLogger().logError(s);
+			ReikaChatHelper.write(s);
 			if (e != null)
 				e.printStackTrace();
 		}
