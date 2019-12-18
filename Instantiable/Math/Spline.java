@@ -312,6 +312,8 @@ public class Spline {
 		protected double posY;
 		protected double posZ;
 
+		private DecimalPosition relative;
+
 		public BasicSplinePoint(double x, double y, double z) {
 			posX = x;
 			posY = y;
@@ -322,14 +324,23 @@ public class Spline {
 			this(p.xCoord, p.yCoord, p.zCoord);
 		}
 
+		public BasicSplinePoint setRelativeTo(double x, double y, double z) {
+			return this.setRelativeTo(new DecimalPosition(x, y, z));
+		}
+
+		public BasicSplinePoint setRelativeTo(DecimalPosition p) {
+			relative = p;
+			return this;
+		}
+
 		@Override
 		public void update() {
 
 		}
 
 		@Override
-		public DecimalPosition asPosition() {
-			return new DecimalPosition(posX, posY, posZ);
+		public final DecimalPosition asPosition() {
+			return relative != null ? relative.offset(posX, posY, posZ) : new DecimalPosition(posX, posY, posZ);
 		}
 
 	}
@@ -399,14 +410,6 @@ public class Spline {
 		private SplineType(double p) {
 			power = p;
 		}
-	}
-
-	public static class VibratingSpline extends Spline {
-
-		public VibratingSpline(SplineType t) {
-			super(t);
-		}
-
 	}
 
 }

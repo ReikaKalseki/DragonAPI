@@ -186,7 +186,7 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	}
 
 	boolean run() {
-		if (!this.isEnabled())
+		if (!this.isEnabled() || errored)
 			return false;
 
 		if (hook != null)
@@ -321,7 +321,7 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	}
 
 	public boolean isEnabled() {
-		return isEnabled && !errored;
+		return isEnabled;
 	}
 
 	@Override
