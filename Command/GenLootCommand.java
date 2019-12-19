@@ -110,11 +110,7 @@ public class GenLootCommand extends DragonCommandBase {
 				return te;
 			}
 		}
-		mov = ReikaPlayerAPI.getLookedAtEntity(ep, 5, false);
-		if (mov != null) {
-			return mov.entityHit;
-		}
-		return null;
+		return ReikaPlayerAPI.getLookedAtEntity(ep, 5, 0.25);
 	}
 
 	private void addItems(ICommandSender ics, EntityPlayer ep, Object inv, String type, WeightedRandomChestContent[] types, int count) {

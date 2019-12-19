@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.lwjgl.BufferUtils;
@@ -171,6 +172,10 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		rs.intensity = intensity;
 		rs.variables = vars;
 		return this;
+	}
+
+	public void setFields(Map<String, Object> data) {
+		variables.putAll(data);
 	}
 
 	public void setField(String field, Object value) {

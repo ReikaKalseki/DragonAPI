@@ -23,6 +23,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockLeaves;
 import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.ServersideAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -113,16 +114,19 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return getLookedAtBlock()
 	}*/
 
-	public static MovingObjectPosition getLookedAtEntity(EntityPlayer ep, double reach, boolean liq) {
+	public static Entity getLookedAtEntity(EntityPlayer ep, double reach, double boxSize) {
 		Vec3 vec = Vec3.createVectorHelper(ep.posX, (ep.posY + 1.62) - ep.yOffset, ep.posZ);
-		Vec3 vec2 = ep.getLook(1.0F);
-		Vec3 vec3 = vec.addVector(vec2.xCoord*reach, vec2.yCoord*reach, vec2.zCoord*reach);
-		MovingObjectPosition hit = ep.worldObj.rayTraceBlocks(vec, vec3, liq);
-		GetPlayerLookEvent evt = new GetPlayerLookEvent(ep, hit, vec, vec3);
-		MinecraftForge.EVENT_BUS.post(evt);
-		hit = evt.newLook;
-		if (hit != null && hit.typeOfHit == MovingObjectType.ENTITY && hit.entityHit != null)
-			return hit;
+		Vec3 vec2 = ep.getLookVec();
+		double s = boxSize;
+		for (double d = 0; d <= reach; d += boxSize*2) {
+			double x = vec.xCoord+d*vec2.xCoord;
+			double y = vec.yCoord+d*vec2.yCoord;
+			double z = vec.zCoord+d*vec2.zCoord;
+			AxisAlignedBB box = AxisAlignedBB.getBoundingBox(x-s, y-s, z-s, x+s, y+s, z+s);
+			List<Entity> li = ep.worldObj.getEntitiesWithinAABBExcludingEntity(ep, box);
+			if (!li.isEmpty())
+				return li.get(0);
+		}
 		return null;
 	}
 
