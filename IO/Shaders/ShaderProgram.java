@@ -50,11 +50,10 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 
 	private boolean isEnabled = true;
 
+	private final HashMap<String, Object> variables = new HashMap();
 	private Matrix4f modelview;
 	private Matrix4f projection;
 	private Vector3f focusLocation;
-
-	private ShaderComponent mainData = new ShaderComponent();
 
 	private ArrayList<RenderState> compoundLocation = null;
 
@@ -169,13 +168,13 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 
 	public ShaderProgram modifyLastCompoundFocus(float intensity, HashMap<String, Object> vars) {
 		RenderState rs = compoundLocation.get(compoundLocation.size()-1);
-		rs.data.setIntensity(intensity);
-		rs.data.setVariables(vars);
+		rs.intensity = intensity;
+		rs.variables = vars;
 		return this;
 	}
 
 	public void setField(String field, Object value) {
-		mainData.setVariable(field, value);
+		variables.put(field, value);
 	}
 
 	public void setIntensity(float f) {
@@ -201,7 +200,12 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 			//ReikaJavaLibrary.pConsole(focusLocation);
 			modelview = rs.modelview;
 			projection = rs.projection;
-			this.applyShaderData(rs.data);
+			this.setIntensity(rs.intensity);
+			if (rs.variables != null) {
+				for (Entry<String, Object> e : rs.variables.entrySet()) {
+					this.setField(e.getKey(), e.getValue());
+				}
+			}
 			if (compoundLocation.isEmpty())
 				compoundLocation = null;
 			else
@@ -235,15 +239,6 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		return flag;
 	}
 
-	public void applyShaderData(ShaderComponent sc) {
-		this.setIntensity(sc.getIntensity());
-		if (sc.hasVariables()) {
-			for (Entry<String, Object> e : sc.getVariables()) {
-				this.setField(e.getKey(), e.getValue());
-			}
-		}
-	}
-
 	void checkForError() {
 		if (!errorChecked) {
 			errorChecked = true;
@@ -259,7 +254,7 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	}
 
 	private void applyVariables() {
-		for (Entry<String, Object> e : mainData.getVariables()) {
+		for (Entry<String, Object> e : variables.entrySet()) {
 			this.applyField(e.getKey(), e.getValue());
 		}
 		//variables.clear();
@@ -344,7 +339,8 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		private Vector3f position;
 		private Matrix4f modelview;
 		private Matrix4f projection;
-		private final ShaderComponent data;
+		private float intensity;
+		private HashMap<String, Object> variables;
 
 		private RenderState(Vector3f vec, Matrix4f m, Matrix4f p) {
 			this(vec, m, p, 1, null);
@@ -354,8 +350,8 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 			position = vec;
 			modelview = m;
 			projection = p;
-			data = new ShaderComponent(vars);
-			data.setIntensity(f);
+			intensity = f;
+			variables = vars;
 		}
 
 	}

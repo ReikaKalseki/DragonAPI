@@ -200,7 +200,6 @@ public class ShaderRegistry {
 	}
 
 	public static enum ShaderDomain {
-		BLOCK, /** note there can only be one active "WORLD" shader! */
 		WORLD,
 		TESR,
 		ENTITY,
