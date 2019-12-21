@@ -106,6 +106,9 @@ public class ShaderRegistry {
 		if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_LMENU) && Keyboard.isKeyDown(Keyboard.KEY_C) && ReikaObfuscationHelper.isDeObfEnvironment()) {
 			return false;
 		}
+		if (currentlyRunning.needsErrorChecking()) {
+			while (GL11.glGetError() != GL11.GL_NO_ERROR);
+		}
 		return sh.run();
 	}
 

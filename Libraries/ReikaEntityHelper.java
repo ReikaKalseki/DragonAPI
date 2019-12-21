@@ -219,6 +219,10 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 		private final KeyedItemStack item;
 
+		public SpecificItemSelector(ItemStack is) {
+			this(new KeyedItemStack(is).setSimpleHash(true));
+		}
+
 		public SpecificItemSelector(KeyedItemStack ks) {
 			item = ks;
 		}

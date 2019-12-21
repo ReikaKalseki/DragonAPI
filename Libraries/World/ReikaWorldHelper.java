@@ -2377,4 +2377,19 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 		return p/1000D;
 	}
+
+	/** Radius is in CHUNKS! */
+	public static boolean isRadiusLoaded(World world, int x, int z, int r) {
+		int x0 = (x >> 4)-r;
+		int x1 = (x >> 4)+r;
+		int z0 = (z >> 4)-r;
+		int z1 = (z >> 4)+r;
+		for (int dx = x0; dx <= x1; dx++) {
+			for (int dz = z0; dz <= z1; dz++) {
+				if (!world.getChunkProvider().chunkExists(dx, dx))
+					return false;
+			}
+		}
+		return true;
+	}
 }

@@ -248,10 +248,18 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		if (!errorChecked) {
 			errorChecked = true;
 			int res = GL11.glGetError();
-			if (res != GL11.GL_NO_ERROR) {
-				ShaderRegistry.error(owner, identifier, "Shader "+this+" threw error: "+Util.translateGLErrorString(res)+"!", null);
+			String data = "";
+			while (res != GL11.GL_NO_ERROR) {
+				data = data+","+Util.translateGLErrorString(res);
+				res = GL11.glGetError();
 			}
+			if (!data.isEmpty())
+				ShaderRegistry.error(owner, identifier, "Shader "+this+" threw errors: "+data+"!", null);
 		}
+	}
+
+	public boolean needsErrorChecking() {
+		return !errorChecked;
 	}
 
 	void markErrored() {
