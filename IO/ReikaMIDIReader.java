@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,7 +13,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MetaMessage;
@@ -363,13 +366,19 @@ public final class ReikaMIDIReader {
 		int channel;
 		int tempo = 120;
 		Track[] tr = seq.getTracks();
+		ArrayList<NoteData>[] rawNotes = new ArrayList[16];
+		for (int i = 0; i < 16; i++) {
+			rawNotes[i] = new ArrayList();
+		}
 		MIDINote[][] lastOn = new MIDINote[16][256];
 		HashSet<Integer> activeChannels = new HashSet();
+		TreeMap<Long, Integer> tempoCurve = new TreeMap();
+		tempoCurve.put(0L, tempo);
 		for (int i = 0; i < tr.length; i++) {
 			for (int j = 0; j < tr[i].size(); j++) {
 				MidiEvent event = tr[i].get(j);
-				int time = MIDITickToMCTick(seq, event.getTick(), tempo);
-				//DragonAPICore.log(event.getTick()+" midi to "+time+" MC, out of length "+getSequenceLength(seq)+" ("+getSequenceLength(seq)/20F+") s");
+				long tick = event.getTick();
+				//DragonAPICore.log(tick+" midi to "+time+" MC, out of length "+getSequenceLength(seq)+" ("+getSequenceLength(seq)/20F+") s");
 				MidiMessage message = event.getMessage();
 				if (message instanceof ShortMessage) {
 					ShortMessage sm = (ShortMessage) message;
@@ -389,7 +398,7 @@ public final class ReikaMIDIReader {
 						case NOTE_ON:
 							key = sm.getData1();
 							int vol = sm.getData2();
-							lastOn[channel][key] = new MIDINote(event.getTick(), time, key, instru, vol);
+							lastOn[channel][key] = new MIDINote(tick, key, instru, vol);
 							//ReikaJavaLibrary.pConsole("ON: "+key+" @ "+time+": "+lastOn[channel][key]);
 							break;
 						case NOTE_OFF:
@@ -402,9 +411,11 @@ public final class ReikaMIDIReader {
 					//ReikaJavaLibrary.pConsole("OFF: "+key+" @ "+time+": "+lastOn[channel][key], sm.getCommand() == NOTE_OFF);
 					if (lastOn[channel][key] != null && sm.getCommand() == NOTE_OFF) {
 						MIDINote m = lastOn[channel][key];
-						int len = time-m.timeOn;
 						MusicKey note = MusicKey.getKeyFromMIDI(key);
-						data.addNote(m.timeOn, channel, note, m.voice, m.velocity, len, channel == 9);
+
+						//data.addNote(m.timeOn, channel, note, m.voice, m.velocity, len, channel == 9);
+						rawNotes[channel].add(new NoteData(tick, m));
+
 						//ReikaJavaLibrary.pConsole(m);
 						//ReikaJavaLibrary.pConsole("Note "+note+" on channel "+channel+" @ "+time+" (event time="+event.getTick()+")");
 						//ReikaJavaLibrary.pConsole("Note "+note+" on channel "+channel+" ("+m+"), tick off="+time+"/tick_"+event.getTick()+", length = "+len);
@@ -419,27 +430,60 @@ public final class ReikaMIDIReader {
 						switch (mm.getType()) {
 							case TEMPO:
 								tempo = 60000000 / val;
+								//ReikaJavaLibrary.pConsole("changing tempo @ tick "+tick+" to "+tempo);
+								tempoCurve.put(tick, tempo);
 								break;
 						}
 					}
 				}
 			}
 		}
+
+		for (int i = 0; i < 16; i++) {
+			ArrayList<NoteData> li = rawNotes[i];
+			if (!li.isEmpty()) {
+				for (NoteData n : li) {
+					int timeOn = getTimeAtTick(seq, tempoCurve, n.tickOn);
+					int timeOff = getTimeAtTick(seq, tempoCurve, n.tickOff);
+					MusicKey note = MusicKey.getKeyFromMIDI(n.pitch);
+					data.addNote(timeOn, i, note, n.voice, n.velocity, timeOff-timeOn, i == 9);
+				}
+			}
+		}
+
 		//ReikaJavaLibrary.pConsole(activeChannels);
 		return data;
 	}
 
+	private static int getTimeAtTick(Sequence seq, TreeMap<Long, Integer> tempos, long tick) {
+		Entry<Long, Integer> e2 = tempos.floorEntry(tick);
+		long ticks = tick-e2.getKey();
+		int tempo = e2.getValue();
+		int mcticks = MIDITickToMCTick(seq, ticks, tempo);
+		Entry<Long, Integer> e1 = tempos.lowerEntry(e2.getKey());
+		while (e1 != null) {
+			ticks = e2.getKey()-e1.getKey();
+			tempo = e1.getValue();
+			mcticks += MIDITickToMCTick(seq, ticks, tempo);
+			e2 = e1;
+			e1 = tempos.lowerEntry(e1.getKey());
+		}
+		return mcticks;
+	}
+
 	private static class MIDINote {
 
-		private final long tick;
-		private final int timeOn;
-		private final int pitch;
-		private final int voice;
-		private final int velocity;
+		public final long tickOn;
+		public final int pitch;
+		public final int voice;
+		public final int velocity;
 
-		private MIDINote(long tk, int t, int key, int inst, int vol) {
-			tick = tk;
-			timeOn = t;
+		protected MIDINote(MIDINote m) {
+			this(m.tickOn, m.pitch, m.voice, m.velocity);
+		}
+
+		protected MIDINote(long tk, int key, int inst, int vol) {
+			tickOn = tk;
 			pitch = key;
 			velocity = vol;
 			voice = inst;
@@ -447,7 +491,27 @@ public final class ReikaMIDIReader {
 
 		@Override
 		public String toString() {
-			return String.format("Tick: %d, P:%d, Vel:%d, Voice:%d, Time:%d", tick, pitch, velocity, voice, timeOn);
+			return String.format("Tick: %d, P:%d, Vel:%d, Voice:%d", tickOn, pitch, velocity, voice);
+		}
+
+	}
+
+	private static class NoteData extends MIDINote {
+
+		public final long tickOff;
+
+		protected NoteData(long tk, MIDINote start) {
+			super(start);
+			tickOff = tk;
+		}
+
+		public long length() {
+			return tickOff-tickOn;
+		}
+
+		@Override
+		public String toString() {
+			return super.toString()+" Tick Off: "+tickOff+" (len = "+this.length()+")";
 		}
 
 	}
