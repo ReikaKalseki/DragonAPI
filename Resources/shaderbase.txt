@@ -70,3 +70,7 @@ vec2 getScreenPos(float x, float y, float z) {
 vec2 getScreenPosVec(vec3 worldPos) {
 	return getScreenPos(worldPos.x, worldPos.y, worldPos.z);
 }
+
+float roundToNearest(float val, float base) {
+	return ceil(val/base)*base;
+}

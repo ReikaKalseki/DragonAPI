@@ -174,6 +174,12 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		return this;
 	}
 
+	public void clearData() {
+		for (Entry<String, Object> e : variables.entrySet()) {
+			e.setValue(e.getValue() instanceof Integer ? 0 : 0F);
+		}
+	}
+
 	public void setFields(Map<String, Object> data) {
 		variables.putAll(data);
 	}
