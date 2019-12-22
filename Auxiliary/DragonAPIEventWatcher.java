@@ -55,6 +55,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
+import Reika.DragonAPI.Auxiliary.Trackers.SpecialDayTracker;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.ChangePacketRenderer;
@@ -73,6 +74,7 @@ import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderingLoopEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SettingsEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.SkyColorEvent;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
 import Reika.DragonAPI.Interfaces.TileEntity.PlayerBreakHook;
@@ -84,6 +86,7 @@ import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
@@ -133,6 +136,29 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 			Minecraft mc = Minecraft.getMinecraft();
 			int len = FMLCommonHandler.instance().getBrandings(false).size();
 			mc.ingameGUI.drawString(mc.fontRenderer, sg, mc.displayWidth/2-10-mc.fontRenderer.getStringWidth(sg), 73+(len-4)*(2+mc.fontRenderer.FONT_HEIGHT), 0xffffff);
+		}
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void xmasFog(EntityViewRenderEvent.FogColors evt) {
+		if (SpecialDayTracker.instance.loadXmasTextures()) {
+			int c0 = ReikaColorAPI.RGBtoHex((int)(evt.red*255), (int)(evt.green*255), (int)(evt.blue*255));
+			int c1 = 0x425766;
+
+			int c = ReikaColorAPI.mixColors(c1, c0, SpecialDayTracker.instance.getXmasWeatherStrength(Minecraft.getMinecraft().theWorld));
+
+			evt.red = ReikaColorAPI.getRed(c)/255F;
+			evt.green = ReikaColorAPI.getGreen(c)/255F;
+			evt.blue = ReikaColorAPI.getBlue(c)/255F;
+		}
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void xmasSky(SkyColorEvent evt) {
+		if (SpecialDayTracker.instance.loadXmasTextures()) {
+			evt.color = ReikaColorAPI.mixColors(0x688499, evt.color, SpecialDayTracker.instance.getXmasWeatherStrength(Minecraft.getMinecraft().theWorld));
 		}
 	}
 
