@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -16,7 +16,6 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
@@ -262,20 +261,24 @@ public class ModLogger {
 		@Override
 		public void run() {
 			while (!terminated || !messages.isEmpty()) { //killed by MC if closes (deamon thread)
-				Collection<LogLine> printed = new ArrayList();
-				for (LogLine l : messages) {
-					try {
-						outputFile.write(l.toString());
+				LogLine current = null;
+				try {
+					while (!messages.isEmpty()) {
+						current = messages.remove();
+						outputFile.write(current.toString());
+					}
+					if (current != null)
 						outputFile.flush();
-						printed.add(l);
-					}
-					catch (IOException e) {
-						ReikaJavaLibrary.pConsole("ERROR: Could not output logger line to its IO destination '"+destination+"'!");
-						ReikaJavaLibrary.pConsole(l.level, l.message);
-						e.printStackTrace();
-					}
+					Thread.sleep(50);
 				}
-				messages.removeAll(printed);
+				catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				catch (IOException e) {
+					ReikaJavaLibrary.pConsole("ERROR: Could not output logger line to its IO destination '"+destination+"'!");
+					ReikaJavaLibrary.pConsole(current.level, current.message);
+					e.printStackTrace();
+				}
 			}
 			try {
 				outputFile.close();
