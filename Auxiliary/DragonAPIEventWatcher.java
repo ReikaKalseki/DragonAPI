@@ -88,6 +88,7 @@ import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
@@ -97,6 +98,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMusicHelper.MusicKey;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaChunkHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
+import Reika.DragonAPI.ModInteract.DeepInteract.PlanetDimensionHandler;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event.Result;
@@ -129,20 +131,25 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
 	public void onCall(String tag) {
 		if (tag.equals("debug")) {
-			long amt = ReikaTextureHelper.binder.getTotalBytesLoaded();
-			String pre = ReikaEngLibrary.getSIPrefix(amt);
-			double base = ReikaMathLibrary.getThousandBase(amt);
-			String sg = String.format("%.3f %sbytes in texture data", base, pre);
-			Minecraft mc = Minecraft.getMinecraft();
-			int len = FMLCommonHandler.instance().getBrandings(false).size();
-			mc.ingameGUI.drawString(mc.fontRenderer, sg, mc.displayWidth/2-10-mc.fontRenderer.getStringWidth(sg), 73+(len-4)*(2+mc.fontRenderer.FONT_HEIGHT), 0xffffff);
+			this.showF3Extras();
 		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	private void showF3Extras() {
+		long amt = ReikaTextureHelper.binder.getTotalBytesLoaded();
+		String pre = ReikaEngLibrary.getSIPrefix(amt);
+		double base = ReikaMathLibrary.getThousandBase(amt);
+		String sg = String.format("%.3f %sbytes in texture data", base, pre);
+		Minecraft mc = Minecraft.getMinecraft();
+		int len = FMLCommonHandler.instance().getBrandings(false).size();
+		mc.ingameGUI.drawString(mc.fontRenderer, sg, mc.displayWidth/ReikaRenderHelper.getGUIScale()-10-mc.fontRenderer.getStringWidth(sg), 73+(len-4)*(2+mc.fontRenderer.FONT_HEIGHT), 0xffffff);
 	}
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void xmasFog(EntityViewRenderEvent.FogColors evt) {
-		if (SpecialDayTracker.instance.loadXmasTextures()) {
+		if (SpecialDayTracker.instance.loadXmasTextures() && !PlanetDimensionHandler.isOtherWorld(Minecraft.getMinecraft().theWorld)) {
 			int c0 = ReikaColorAPI.RGBtoHex((int)(evt.red*255), (int)(evt.green*255), (int)(evt.blue*255));
 			int c1 = 0x425766;
 
@@ -157,16 +164,18 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void xmasSky(SkyColorEvent evt) {
-		if (SpecialDayTracker.instance.loadXmasTextures()) {
+		if (SpecialDayTracker.instance.loadXmasTextures() && !PlanetDimensionHandler.isOtherWorld(Minecraft.getMinecraft().theWorld)) {
 			evt.color = ReikaColorAPI.mixColors(0x688499, evt.color, SpecialDayTracker.instance.getXmasWeatherStrength(Minecraft.getMinecraft().theWorld));
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void forceFramebuffer(SettingsEvent.Save evt) {
 		evt.settings.fboEnable = true;
 	}
 
+	@SideOnly(Side.CLIENT)
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void forceFramebuffer(SettingsEvent.Load evt) {
 		evt.settings.fboEnable = true;

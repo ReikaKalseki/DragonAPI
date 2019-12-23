@@ -77,6 +77,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	private static boolean generalLighting;
 
 	private static ScratchFramebuffer tempBuffer;
+	private static ScratchScaledResolution resolution;
 
 	public static enum RenderDistance {
 		FAR(),
@@ -525,7 +526,10 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	public static int getGUIScale() {
 		Minecraft mc = Minecraft.getMinecraft();
-		return new ScaledResolution(mc, mc.displayWidth, mc.displayHeight).getScaleFactor();
+		if (resolution == null || resolution.width != mc.displayWidth || resolution.height != mc.displayHeight) {
+			resolution = new ScratchScaledResolution(mc, mc.displayWidth, mc.displayHeight);
+		}
+		return resolution.getScaleFactor();
 	}
 
 	public static boolean prepareAmbientOcclusion(IBlockAccess iba, int x, int y, int z, Block b, RenderBlocks rb, ForgeDirection dir, float red, float green, float blue) {
@@ -1877,6 +1881,19 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		Matrix4f mat = new Matrix4f();
 		mat.load(buf);
 		return mat;
+	}
+
+	private static class ScratchScaledResolution extends ScaledResolution {
+
+		private final int width;
+		private final int height;
+
+		public ScratchScaledResolution(Minecraft mc, int w, int h) {
+			super(mc, w, h);
+			width = w;
+			height = h;
+		}
+
 	}
 
 }

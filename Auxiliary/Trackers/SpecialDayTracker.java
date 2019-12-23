@@ -40,7 +40,7 @@ public class SpecialDayTracker {
 	}
 
 	public boolean isHalloween() {
-		return (calendar.get(Calendar.MONTH) == Calendar.OCTOBER && calendar.get(Calendar.DAY_OF_MONTH) >= 30);
+		return calendar.get(Calendar.MONTH) == Calendar.OCTOBER && calendar.get(Calendar.DAY_OF_MONTH) >= 30;
 	}
 
 }
