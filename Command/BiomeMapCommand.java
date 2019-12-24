@@ -75,7 +75,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 					set.add(new SeedBiomes(Long.parseLong(s)));
 				}
 			}
-			else if (args[0].contains("-")) {
+			else if (!(args[0].startsWith("-")) && args[0].contains("-")) {
 				String[] parts = args[0].split("\\-");
 				long s1 = Long.parseLong(parts[0]);
 				long s2 = Long.parseLong(parts[1]);
@@ -97,7 +97,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 			args = nargs;
 		}
 		if (args.length < 2) {
-			this.sendChatToSender(ics, EnumChatFormatting.RED.toString()+"Illegal arguments. Use <seed> [range] [resolution] <grid> <fullGrid>.");
+			this.sendChatToSender(ics, EnumChatFormatting.RED.toString()+"Illegal arguments. Use [seed=<seed>] [range] [resolution] <grid> <fullGrid>.");
 			return;
 		}
 		int range = Integer.parseInt(args[0]);
