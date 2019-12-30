@@ -20,13 +20,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Interpolation;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Interfaces.ObjectToNBTSerializer;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 
 public class WeightedRandom<V> {
 
-	private final Random rand = new Random();
+	private Random rand = new Random();
 
 	private final HashMap<V, Double> data = new HashMap();
 	private double maxWeight = 0;
@@ -174,8 +175,30 @@ public class WeightedRandom<V> {
 		return w;
 	}
 
+	public static WeightedRandom<Double> fromInterpolation(Interpolation lin, double dstep) {
+		double k = lin.getLowestKey();
+		WeightedRandom<Double> ret = new WeightedRandom();
+		for (double d = k; d <= lin.getHighestKey(); d += dstep) {
+			ret.addEntry(d, lin.getValue(d));
+		}
+		return ret;
+	}
+
+	public static WeightedRandom<Integer> fromIntInterpolation(Interpolation lin) {
+		double k = lin.getLowestKey();
+		WeightedRandom<Integer> ret = new WeightedRandom();
+		for (int d = (int)k; d <= lin.getHighestKey(); d++) {
+			ret.addEntry(d, lin.getValue(d));
+		}
+		return ret;
+	}
+
 	public Set<V> getValues() {
 		return Collections.unmodifiableSet(data.keySet());
+	}
+
+	public void setRNG(Random r) {
+		rand = r;
 	}
 
 	public void writeToNBT(String s, NBTTagCompound tag, ObjectToNBTSerializer<V> serializer) {

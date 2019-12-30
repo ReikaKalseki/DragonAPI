@@ -91,6 +91,7 @@ import Reika.DragonAPI.Extras.ReplacementSmeltingHandler;
 import Reika.DragonAPI.Extras.SanityCheckNotification;
 import Reika.DragonAPI.Extras.TemporaryCodeCalls;
 import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
+import Reika.DragonAPI.Instantiable.Data.Collections.EventRecipeList;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.LagWarningFilter;
@@ -306,6 +307,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		}
 		 */
 		ReplacementCraftingHandler.fireEventsForVanillaRecipes();
+		((EventRecipeList)CraftingManager.getInstance().getRecipeList()).filterVanillaRecipes();
 		ReplacementSmeltingHandler.fireEventsForVanillaRecipes();
 		/* Not needed anymore since overwrite of vanilla system
 		HashMap<ItemStack, Object[]> map = new HashMap();

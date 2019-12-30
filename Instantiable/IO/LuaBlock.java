@@ -160,7 +160,7 @@ public abstract class LuaBlock {
 	}
 
 	public boolean hasChild(String s) {
-		return children.containsKey(s);
+		return children.containsKey(this.createKey(s));
 	}
 
 	public final Collection<LuaBlock> getChildren() {
@@ -169,10 +169,10 @@ public abstract class LuaBlock {
 
 	private String inherit(String key) {
 		LuaBlock b = this;
-		Collection<String> steps = new ArrayList();
+		Collection<LuaBlockKey> steps = new ArrayList();
 		LuaBlock orig = b;
 		while (!b.data.containsKey("inherit") && b.parent != null) {
-			steps.add(b.name);
+			steps.add(this.createKey(b.name));
 			b = b.parent;
 		}
 		String inherit = b.data.get("inherit");
@@ -181,7 +181,7 @@ public abstract class LuaBlock {
 		LuaBlock lb = tree.getBlock(inherit);
 		if (lb == null)
 			return "[NULL PARENT INHERIT]";
-		for (String s : steps) {
+		for (LuaBlockKey s : steps) {
 			if (lb.children.containsKey(s))
 				lb = lb.children.get(s);
 			else
@@ -196,16 +196,16 @@ public abstract class LuaBlock {
 	}
 
 	public final LuaBlock getChild(String s) {
-		LuaBlockKey key = new LuaBlockKey(s);
+		LuaBlockKey key = this.createKey(s);
 		return children.containsKey(key) ? children.get(key) : this.inheritChild(s);
 	}
 
 	private LuaBlock inheritChild(String sg) {
 		LuaBlock b = this;
-		Collection<String> steps = new ArrayList();
+		Collection<LuaBlockKey> steps = new ArrayList();
 		while (!b.data.containsKey("inherit") && b.parent != null) {
 			if (b != this)
-				steps.add(b.name);
+				steps.add(this.createKey(b.name));
 			b = b.parent;
 		}
 		String inherit = b.data.get("inherit");
@@ -214,10 +214,10 @@ public abstract class LuaBlock {
 		LuaBlock lb = tree.getBlock(inherit);
 		if (lb == null)
 			return null;
-		for (String s : steps) {
+		for (LuaBlockKey s : steps) {
 			lb = lb.children.get(s);
 		}
-		LuaBlockKey key = new LuaBlockKey(sg);
+		LuaBlockKey key = this.createKey(sg);
 		return lb.children.containsKey(key) ? lb.children.get(key) : null;
 	}
 

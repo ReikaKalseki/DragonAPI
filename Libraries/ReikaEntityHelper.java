@@ -1324,49 +1324,57 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	public static int damageArmor(EntityLivingBase e, int amt, BiFunction<ItemStack, Integer, Integer> handle) {
 		int ret = 0;
 		for (int i = 1; i < 5; i++) {
-			ItemStack arm = e.getEquipmentInSlot(i);
-			if (arm != null && canDamageArmorOf(e)) {
-				if (handle != null) {
-					Integer get = handle.apply(arm, amt);
-					if (get != null) {
-						ret += get.intValue();
-						continue;
-					}
-				}
-				Item item = arm.getItem();
-				if (InterfaceCache.MUSEELECTRICITEM.instanceOf(item)) {
-					MuseElectricItem ms = (MuseElectricItem)item;
-					ret += ms.extractEnergy(arm, amt*300, false);
-				}
-				else if (InterfaceCache.RFENERGYITEM.instanceOf(item)) {
-					IEnergyContainerItem ie = (IEnergyContainerItem)item;
-					ret += ie.extractEnergy(arm, amt*300, false);
-				}
-				else if (InterfaceCache.IELECTRICITEM.instanceOf(item)) {
-					ret += ElectricItem.manager.discharge(arm, amt*250, Integer.MAX_VALUE, true, false, false);
-				}
-				else if (InterfaceCache.GASITEM.instanceOf(item)) {
-					IGasItem ie = (IGasItem)item;
-					GasStack gas = ie.getGas(arm);
-					if (gas != null && gas.amount > 0)
-						gas = ie.removeGas(arm, Math.max(amt, gas.amount*amt/400));
-					ret += gas != null ? gas.amount : 0;
-				}
-				else if (item instanceof UnbreakableArmor && !((UnbreakableArmor)item).canBeDamaged()) {
-					//do nothing
-				}
-				else {
-					arm.damageItem(amt, e);
-					if (arm.getItemDamage() > arm.getMaxDamage() || arm.stackSize <= 0) {
-						arm = null;
-						e.setCurrentItemOrArmor(i, null);
-					}
-					e.playSound("random.break", 0.1F, 0.8F);
-					ret += amt;
-				}
-			}
+			ret += damageArmorItem(e, i, amt, handle);
 		}
 		return ret;
+	}
+
+	private static int damageArmorItem(EntityLivingBase e, int slot, int amt, BiFunction<ItemStack, Integer, Integer> handle) {
+		ItemStack arm = e.getEquipmentInSlot(slot);
+		if (arm != null && canDamageArmorOf(e)) {
+			ItemStack pre = arm.copy();
+			int ret = 0;
+			if (handle != null) {
+				Integer get = handle.apply(arm, amt);
+				if (get != null) {
+					ret += get.intValue();
+				}
+			}
+			Item item = arm.getItem();
+			if (InterfaceCache.MUSEELECTRICITEM.instanceOf(item)) {
+				MuseElectricItem ms = (MuseElectricItem)item;
+				ret += ms.extractEnergy(arm, amt*300, false);
+			}
+			else if (InterfaceCache.RFENERGYITEM.instanceOf(item)) {
+				IEnergyContainerItem ie = (IEnergyContainerItem)item;
+				ret += ie.extractEnergy(arm, amt*300, false);
+			}
+			else if (InterfaceCache.IELECTRICITEM.instanceOf(item)) {
+				ret += ElectricItem.manager.discharge(arm, amt*250, Integer.MAX_VALUE, true, false, false);
+			}
+			else if (InterfaceCache.GASITEM.instanceOf(item)) {
+				IGasItem ie = (IGasItem)item;
+				GasStack gas = ie.getGas(arm);
+				if (gas != null && gas.amount > 0)
+					gas = ie.removeGas(arm, Math.max(amt, gas.amount*amt/400));
+				ret += gas != null ? gas.amount : 0;
+			}
+			else if (item instanceof UnbreakableArmor && !((UnbreakableArmor)item).canBeDamaged()) {
+				//do nothing
+			}
+			else {
+				arm.damageItem(amt, e);
+				if (arm.getItemDamage() > arm.getMaxDamage() || arm.stackSize <= 0) {
+					arm = null;
+					e.setCurrentItemOrArmor(slot, null);
+				}
+				e.playSound("random.break", 0.1F, 0.8F);
+				ret += amt;
+			}
+			ItemStack post = e.getEquipmentInSlot(slot);
+			return ItemStack.areItemStacksEqual(pre, post) ? 0 : ret;
+		}
+		return 0;
 	}
 
 	private static boolean canDamageArmorOf(EntityLivingBase target) {
@@ -1395,7 +1403,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	public static void doSetHealthDamage(EntityLivingBase e, DamageSource src, float amt) {
 		if (amt >= e.getHealth()) { //kill
 			e.setHealth(0.1F);
-			e.attackEntityFrom(src, Float.MAX_VALUE);
+			e.hurtResistantTime = 0;
+			e.attackEntityFrom(src, 100);
 		}
 		else
 			e.setHealth(e.getHealth()-amt);

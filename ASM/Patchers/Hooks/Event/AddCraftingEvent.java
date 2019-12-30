@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,7 +10,11 @@
 package Reika.DragonAPI.ASM.Patchers.Hooks.Event;
 
 import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnList;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
@@ -35,5 +39,16 @@ public class AddCraftingEvent extends Patcher {
 
 		type.desc = s;
 		cons.owner = s;
+
+		AbstractInsnNode ain = cons.getNext();
+		AbstractInsnNode end = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.RETURN);
+		InsnList enable = new InsnList();
+		InsnList disable = new InsnList();
+		enable.add(new InsnNode(Opcodes.ICONST_1));
+		enable.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Reika/DragonAPI/Instantiable/Event/AddRecipeEvent", "isVanillaPass", "Z"));
+		disable.add(new InsnNode(Opcodes.ICONST_0));
+		disable.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Reika/DragonAPI/Instantiable/Event/AddRecipeEvent", "isVanillaPass", "Z"));
+		m.instructions.insert(ain, enable);
+		m.instructions.insertBefore(end, disable);
 	}
 }

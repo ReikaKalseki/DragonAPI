@@ -162,6 +162,7 @@ public class ReplacementCraftingHandler {
 
 	public static void fireEventsForVanillaRecipes() {
 		AddRecipeEvent.isVanillaPass = true;
+		//DragonAPICore.log("Filtering "+getRecipeList().size()+" pre-init recipes through event");
 		for (IRecipe r : getRecipeList()) {
 			removeRecipe(r);
 			if (ReikaRecipeHelper.verifyRecipe(r)) {
@@ -176,6 +177,7 @@ public class ReplacementCraftingHandler {
 				DragonAPICore.logError("Found an invalid recipe in the list, with either nulled inputs or outputs! This is invalid! Class="+r.getClass());
 			}
 		}
+		//DragonAPICore.log("Done filtering");
 		AddRecipeEvent.isVanillaPass = false;
 	}
 

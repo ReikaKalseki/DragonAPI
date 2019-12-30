@@ -66,6 +66,7 @@ public enum ModList implements ModEntry, Dependency {
 	TINKERER("TConstruct", "tconstruct.world.TinkerWorld"), //tconstruct.library.TConstructRegistry.getBlock/Item
 	THERMALEXPANSION("ThermalExpansion", new String[]{"thermalexpansion.block.TEBlocks", "cofh.thermalexpansion.block.TEBlocks"}, new String[]{"thermalexpansion.item.TEItems", "cofh.thermalexpansion.item.TEItems"}),
 	THERMALFOUNDATION("ThermalFoundation", new String[]{"thermalfoundation.block.TFBlocks", "cofh.thermalfoundation.block.TFBlocks"}, new String[]{"thermalfoundation.item.TFItems", "cofh.thermalfoundation.item.TFItems"}),
+	THERMALDYNAMICS("ThermalDynamics", new String[]{"thermaldynamics.block.TDBlocks", "cofh.thermaldynamics.block.TDBlocks"}, new String[]{"thermaldynamics.item.TDItems", "cofh.thermaldynamics.item.TDItems"}),
 	MEKANISM("Mekanism", "mekanism.common.MekanismBlocks", "mekanism.common.MekanismItems"),
 	MEKTOOLS("MekanismTools", "mekanism.tools.common.ToolsItems"),
 	RAILCRAFT("Railcraft", "mods.railcraft.common.blocks.RailcraftBlocks", new String[0]), //items spread over half a dozen classes

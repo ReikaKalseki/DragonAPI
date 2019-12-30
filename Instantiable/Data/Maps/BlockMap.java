@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -61,7 +61,7 @@ public final class BlockMap<V> {
 		return this.put(BlockKey.getAt(world, x, y, z), obj);
 	}
 
-	private boolean containsKey(BlockKey bk) {
+	public boolean containsKey(BlockKey bk) {
 		return data.containsKey(bk);
 	}
 

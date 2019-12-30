@@ -64,7 +64,8 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	REROUTEEYES("Reroute Ender Eyes to Stronghold Entrances", false),
 	WORLDSIZE("Expected Approximate Maximum World Size (Radius)", 5000),
 	WORLDCENTERX("Expected Approximate World Center Location X", 0),
-	WORLDCENTERZ("Expected Approximate World Center Location Z", 0);
+	WORLDCENTERZ("Expected Approximate World Center Location Z", 0),
+	NORAINFX("Disable rain sound and particles", false);
 	;
 
 	private String label;
@@ -179,6 +180,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 			case TABNBT:
 			case PARTICLELIMIT:
 			case DEBUGKEY:
+			case NORAINFX:
 				return true;
 			default:
 				return false;

@@ -93,6 +93,12 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		}
 	}
 
+	public static interface ReplacementCallback {
+
+		void onReplaced(IRecipe ir, int slot, Object from, Object to);
+
+	}
+
 	static {
 		try {
 			shapedOreHeight = ShapedOreRecipe.class.getDeclaredField("height");
@@ -509,6 +515,10 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	}
 
 	public static boolean replaceIngredientInRecipe(ItemStack ingredient, Object replacement, IRecipe ir) {
+		return replaceIngredientInRecipe(ingredient, replacement, ir, null);
+	}
+
+	public static boolean replaceIngredientInRecipe(ItemStack ingredient, Object replacement, IRecipe ir, ReplacementCallback rc) {
 		if (ir == null)
 			return false;
 		boolean flag = false;
@@ -526,6 +536,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			for (int i = 0; i < s.recipeItems.length; i++) {
 				if (ReikaItemHelper.matchStacks(ingredient, s.recipeItems[i])) {
 					flag = true;
+					if (rc != null)
+						rc.onReplaced(ir, i, s.recipeItems[i], replacement);
 					s.recipeItems[i] = (ItemStack)replacement;
 				}
 			}
@@ -539,6 +551,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			for (int i = 0; i < in.size(); i++) {
 				if (ReikaItemHelper.matchStacks(ingredient, in.get(i))) {
 					flag = true;
+					if (rc != null)
+						rc.onReplaced(ir, i, in.get(i), replacement);
 					in.set(i, (ItemStack)replacement);
 				}
 			}
@@ -549,10 +563,14 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			for (int i = 0; i < in.length; i++) {
 				if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
 					flag = true;
+					if (rc != null)
+						rc.onReplaced(ir, i, in[i], replacement);
 					in[i] = replacement;
 				}
 				else if (in[i] instanceof List && ReikaItemHelper.collectionContainsItemStack((List<ItemStack>)in[i], ingredient)) {
 					flag = true;
+					if (rc != null)
+						rc.onReplaced(ir, i, in[i], replacement);
 					in[i] = replacement;
 				}
 			}
@@ -563,10 +581,14 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			for (int i = 0; i < in.size(); i++) {
 				if (in.get(i) instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in.get(i))) {
 					flag = true;
+					if (rc != null)
+						rc.onReplaced(ir, i, in.get(i), replacement);
 					in.set(i, replacement);
 				}
 				else if (in.get(i) instanceof List && ReikaItemHelper.collectionContainsItemStack((List<ItemStack>)in.get(i), ingredient)) {
 					flag = true;
+					if (rc != null)
+						rc.onReplaced(ir, i, in.get(i), replacement);
 					in.set(i, replacement);
 				}
 			}
@@ -577,10 +599,14 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				for (int i = 0; i < in.length; i++) {
 					if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
 						flag = true;
+						if (rc != null)
+							rc.onReplaced(ir, i, in[i], replacement);
 						in[i] = replacement;
 					}
 					else if (in[i] instanceof IRecipeInput && ((IRecipeInput)in[i]).matches(ingredient)) {
 						flag = true;
+						if (rc != null)
+							rc.onReplaced(ir, i, in[i], replacement);
 						in[i] = replacement;
 					}
 					else if (in[i] instanceof Iterable) {
@@ -597,6 +623,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 						}
 						if (repl) {
 							flag = true;
+							if (rc != null)
+								rc.onReplaced(ir, i, in[i], replacement);
 							in[i] = replacement;
 						}
 					}
@@ -606,10 +634,14 @@ public class ReikaRecipeHelper extends DragonAPICore {
 					for (int i = 0; i < in2.length; i++) {
 						if (in2[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in2[i])) {
 							flag = true;
+							if (rc != null)
+								rc.onReplaced(ir, i, in2[i], replacement);
 							in2[i] = replacement;
 						}
 						else if (in2[i] instanceof IRecipeInput && ((IRecipeInput)in2[i]).matches(ingredient)) {
 							flag = true;
+							if (rc != null)
+								rc.onReplaced(ir, i, in2[i], replacement);
 							in2[i] = replacement;
 						}
 						else if (in2[i] instanceof Iterable) {
@@ -626,6 +658,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 							}
 							if (repl) {
 								flag = true;
+								if (rc != null)
+									rc.onReplaced(ir, i, in2[i], replacement);
 								in2[i] = replacement;
 							}
 						}
@@ -642,10 +676,14 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				for (int i = 0; i < in.length; i++) {
 					if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
 						flag = true;
+						if (rc != null)
+							rc.onReplaced(ir, i, in[i], replacement);
 						in[i] = replacement;
 					}
 					else if (in[i] instanceof IRecipeInput && ((IRecipeInput)in[i]).matches(ingredient)) {
 						flag = true;
+						if (rc != null)
+							rc.onReplaced(ir, i, in[i], replacement);
 						in[i] = replacement;
 					}
 					else if (in[i] instanceof Iterable) {
@@ -662,6 +700,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 						}
 						if (repl) {
 							flag = true;
+							if (rc != null)
+								rc.onReplaced(ir, i, in[i], replacement);
 							in[i] = replacement;
 						}
 					}

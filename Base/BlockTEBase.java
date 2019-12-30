@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
@@ -20,7 +21,10 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
+import Reika.DragonAPI.Interfaces.TileEntity.BreakAction;
+import Reika.DragonAPI.Interfaces.TileEntity.MultiPageInventory;
 import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
 
 import framesapi.IMoveCheck;
@@ -106,6 +110,21 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 	@Override
 	public boolean canMove(World world, int x, int y, int z) {
 		return !FrameBlacklist.instance.fireFrameEvent(world, x, y, z);
+	}
+
+	@Override
+	public void breakBlock(World world, int x, int y, int z, Block par5, int par6) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		boolean drops = te instanceof IInventory;
+		if (te instanceof MultiPageInventory) {
+			drops &= ((MultiPageInventory)te).dropsInventoryOnBroken();
+		}
+		if (drops)
+			ReikaItemHelper.dropInventory(world, x, y, z);
+		if (te instanceof BreakAction) {
+			((BreakAction)te).breakBlock();
+		}
+		super.breakBlock(world, x, y, z, par5, par6);
 	}
 
 }

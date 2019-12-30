@@ -63,4 +63,12 @@ public class Interpolation {
 		return this.getValue(data.lastValue());
 	}
 
+	public double getLowestKey() {
+		return data.firstValue();
+	}
+
+	public double getHighestKey() {
+		return data.lastValue();
+	}
+
 }

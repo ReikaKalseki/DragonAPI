@@ -20,6 +20,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.shader.Framebuffer;
@@ -47,6 +48,7 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Auxiliary.Trackers.SpecialDayTracker;
 import Reika.DragonAPI.Extras.ReikaShader;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderDomain;
@@ -60,14 +62,34 @@ import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
 
+	@SideOnly(Side.CLIENT)
+	public static void addRainParticlesAndSound(EntityRenderer er) {
+		if (SpecialDayTracker.instance.loadXmasTextures())
+			return;
+		if (DragonOptions.NORAINFX.getState())
+			return;
+		er.addRainParticles();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static boolean shouldRenderRainInsteadOfSnow(WorldClient world, BiomeGenBase biome, int x, int y, int z, float biomeTemp, int precipHeight) {
+		if (SpecialDayTracker.instance.loadXmasTextures())
+			return false;
+		return world.getWorldChunkManager().getTemperatureAtHeight(biomeTemp, precipHeight) >= 0.15F;
+	}
+
+	@SideOnly(Side.CLIENT)
 	public static void onCallChunkRenderLists(RenderGlobal rg, int pass, double ptick) {
 		rg.renderAllRenderLists(pass, ptick);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void onRenderWorld(EntityRenderer er, float ptick, long systime) {
 		er.renderWorld(ptick, systime);
 		Minecraft mc = Minecraft.getMinecraft();
@@ -75,6 +97,7 @@ public class ASMCalls {
 		ShaderRegistry.runShaderDomain(mc.getFramebuffer(), mc.displayWidth, mc.displayHeight, ShaderDomain.GLOBALNOGUI);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void onRenderFrameBuffer(Framebuffer fb, int w, int h) {
 		ShaderRegistry.runShaderDomain(fb, w, h, ShaderDomain.GLOBAL);
 		ReikaRenderHelper.setRenderTarget(null);
@@ -140,6 +163,7 @@ public class ASMCalls {
 		return a.getItem() == b.getItem() && b.stackSize >= a.stackSize && ((a.getItem() instanceof MetadataSpecificTrade || b.getItem() instanceof MetadataSpecificTrade) ? a.getItemDamage() == b.getItemDamage() : true);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void preTessellatorStart() {
 		GL11.glAlphaFunc(GL11.GL_GEQUAL, 2/255F);
 	}
