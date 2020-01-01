@@ -243,7 +243,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	}
 
 	@SubscribeEvent
-	public void unloadMonster(WorldEvent.Unload evt) {
+	public void unloadDestroyableEntities(WorldEvent.Unload evt) {
 		for (Entity e : ((List<Entity>)evt.world.loadedEntityList)) {
 			if (e instanceof DestroyOnUnload) {
 				((DestroyOnUnload)e).destroy();

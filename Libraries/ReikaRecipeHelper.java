@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
@@ -47,6 +48,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.ASMCalls;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Recipe.RecipePattern;
 import Reika.DragonAPI.Interfaces.CustomToStringRecipe;
@@ -205,6 +207,15 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return li;
 	}
 	 */
+	public static boolean isUniformInput(IRecipe ir) {
+		HashSet<KeyedItemStack> set = new HashSet();
+		for (ItemStack is : getAllItemsInRecipe(ir)) {
+			KeyedItemStack ks = new KeyedItemStack(is).setSimpleHash(true);
+			set.add(ks);
+		}
+		return set.size() == 1;
+	}
+
 	/** Returns the item in a shaped recipe at x, y in the grid. */
 	public static ItemStack getItemInRecipeAtXY(ShapedRecipes r, int x, int y) {
 		int xy = x+r.recipeWidth*y;
@@ -532,6 +543,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			if (!(replacement instanceof ItemStack)) {
 				throw new MisuseException("You cannot put non-single-stack entries into a basic recipe type!");
 			}
+			if (ReikaItemHelper.matchStacks(ingredient, replacement)) //not replacing self with self
+				return false;
 			ShapedRecipes s = (ShapedRecipes) ir;
 			for (int i = 0; i < s.recipeItems.length; i++) {
 				if (ReikaItemHelper.matchStacks(ingredient, s.recipeItems[i])) {
@@ -546,6 +559,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			if (!(replacement instanceof ItemStack)) {
 				throw new MisuseException("You cannot put non-single-stack entries into a basic recipe type!");
 			}
+			if (ReikaItemHelper.matchStacks(ingredient, replacement)) //not replacing self with self
+				return false;
 			ShapelessRecipes s = (ShapelessRecipes) ir;
 			List<ItemStack> in = s.recipeItems;
 			for (int i = 0; i < in.size(); i++) {
@@ -562,13 +577,15 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			Object[] in = s.getInput();
 			for (int i = 0; i < in.length; i++) {
 				if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
+					if (replacement instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, replacement))
+						continue;
 					flag = true;
 					if (rc != null)
 						rc.onReplaced(ir, i, in[i], replacement);
 					in[i] = replacement;
 				}
 				else if (in[i] instanceof List && ReikaItemHelper.collectionContainsItemStack((List<ItemStack>)in[i], ingredient)) {
-					flag = true;
+					flag = ((List)in[i]).size() != 1;
 					if (rc != null)
 						rc.onReplaced(ir, i, in[i], replacement);
 					in[i] = replacement;
@@ -580,13 +597,15 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			ArrayList in = s.getInput();
 			for (int i = 0; i < in.size(); i++) {
 				if (in.get(i) instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in.get(i))) {
+					if (replacement instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, replacement))
+						continue;
 					flag = true;
 					if (rc != null)
 						rc.onReplaced(ir, i, in.get(i), replacement);
 					in.set(i, replacement);
 				}
 				else if (in.get(i) instanceof List && ReikaItemHelper.collectionContainsItemStack((List<ItemStack>)in.get(i), ingredient)) {
-					flag = true;
+					flag = ((List)in.get(i)).size() != 1;
 					if (rc != null)
 						rc.onReplaced(ir, i, in.get(i), replacement);
 					in.set(i, replacement);
@@ -1247,6 +1266,35 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return true;
 	}
 
+	public static Object[] decode1DArray(Object[] array, int w, int h) {
+		if (array.length != w*h)
+			throw new IllegalArgumentException("Recipe size does not match array length!");
+		ArrayList li = new ArrayList();
+		char[][] input = new char[h][w];
+		for (int i = 0; i < w; i++) {
+			for (int k = 0; k < h; k++) {
+				int idx = i+k*w;
+				Object at = array[idx];
+				char c = at == null ? ' ' : (char)('a'+idx);
+				input[k][i] = c;
+				if (at != null) {
+					li.add(c);
+					li.add(at);
+				}
+			}
+		}
+		ArrayList<String> shape = new ArrayList();
+		for (char[] line : input) {
+			StringBuilder sb = new StringBuilder();
+			for (char c : line) {
+				sb.append(c);
+			}
+			shape.add(sb.toString());
+		}
+		li.addAll(0, shape);
+		return li.toArray(new Object[li.size()]);
+	}
+
 	public static Object[] decode2DArray(Object[][] array) {
 		String[] input = new String[array.length];
 		ArrayList objects = new ArrayList();
@@ -1275,5 +1323,73 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			throw new MisuseException("Too many input items!");
 		RecipePattern ic = new RecipePattern(in);
 		return CraftingManager.getInstance().findMatchingRecipe(ic, ReikaWorldHelper.getBasicReferenceWorld());
+	}
+
+	public static IRecipe copyRecipe(IRecipe ire) {
+		if (ire instanceof ShapedRecipes) {
+			ShapedRecipes r = (ShapedRecipes)ire;
+			return getShapedRecipeFor(ire.getRecipeOutput(), decode1DArray(r.recipeItems, r.recipeWidth, r.recipeHeight));
+		}
+		else if (ire instanceof ShapedOreRecipe) {
+			ShapedOreRecipe so = (ShapedOreRecipe)ire;
+			return getShapedRecipeFor(ire.getRecipeOutput(), decode1DArray(so.getInput(), getOreRecipeWidth(so), getOreRecipeHeight(so)));
+		}
+		else if (ire instanceof ShapelessRecipes) {
+			ShapelessRecipes sr = (ShapelessRecipes)ire;
+			return new ShapelessRecipes(ire.getRecipeOutput(), sr.recipeItems);
+		}
+		else if (ire instanceof ShapelessOreRecipe) {
+			ShapelessOreRecipe sr = (ShapelessOreRecipe)ire;
+			return new ShapelessOreRecipe(ire.getRecipeOutput(), sr.getInput());
+		}
+		return null;
+	}
+
+	public static boolean matchRecipes(IRecipe r1, IRecipe r2) {
+		if (r1.getClass() != r2.getClass())
+			return false;
+		if (!ItemStack.areItemStacksEqual(r1.getRecipeOutput(), r2.getRecipeOutput()))
+			return false;
+		if (r1 instanceof ShapedRecipes) {
+			ShapedRecipes sr1 = (ShapedRecipes)r1;
+			ShapedRecipes sr2 = (ShapedRecipes)r2;
+			return ReikaItemHelper.matchStackCollections(Arrays.asList(sr1.recipeItems), Arrays.asList(sr2.recipeItems));
+		}
+		else if (r1 instanceof ShapedOreRecipe) {
+			ShapedOreRecipe so1 = (ShapedOreRecipe)r1;
+			ShapedOreRecipe so2 = (ShapedOreRecipe)r2;
+			return matchIngredientCollections(Arrays.asList(so1.getInput()), Arrays.asList(so2.getInput()));
+		}
+		else if (r1 instanceof ShapelessRecipes) {
+			ShapelessRecipes sr1 = (ShapelessRecipes)r1;
+			ShapelessRecipes sr2 = (ShapelessRecipes)r2;
+			return ReikaItemHelper.matchStackCollections(sr1.recipeItems, sr2.recipeItems);
+		}
+		else if (r1 instanceof ShapelessOreRecipe) {
+			ShapelessOreRecipe sr1 = (ShapelessOreRecipe)r1;
+			ShapelessOreRecipe sr2 = (ShapelessOreRecipe)r2;
+			return matchIngredientCollections(sr1.getInput(), sr2.getInput());
+		}
+		return false;
+	}
+
+	private static boolean matchIngredientCollections(List<Object> input, List<Object> input2) {
+		if (input.size() != input2.size())
+			return false;
+		for (int i = 0; i < input.size(); i++) {
+			Object o1 = input.get(i);
+			Object o2 = input2.get(i);
+			if (o1.getClass() != o2.getClass())
+				return false;
+			if (o1 instanceof ItemStack) {
+				if (!ReikaItemHelper.matchStacks((ItemStack)o1, (ItemStack)o2))
+					return false;
+			}
+			else { //if (o1 instanceof Collection || o1 instanceof String)
+				if (!o1.equals(o2))
+					return false;
+			}
+		}
+		return true;
 	}
 }

@@ -672,6 +672,20 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return li;
 	}
 
+	public static boolean matchStackCollections(Collection<ItemStack> c1, Collection<ItemStack> c2) {
+		if (c1.size() != c2.size())
+			return false;
+		ArrayList<ItemStack> li = new ArrayList(c1);
+		ArrayList<ItemStack> li2 = new ArrayList(c2);
+		for (int i = 0; i < li.size(); i++) {
+			ItemStack o1 = li.get(i);
+			ItemStack o2 = li2.get(i);
+			if (!matchStacks(o1, o2))
+				return false;
+		}
+		return true;
+	}
+
 	public static ItemStack lookupItem(String s) {
 		String[] parts = s.split(":");
 		int m = 0;

@@ -40,6 +40,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
@@ -137,6 +138,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		classShortcuts.put("FluidStack", FluidStack.class);
 		classShortcuts.put("FluidRegistry", FluidRegistry.class);
 		classShortcuts.put("GameRegistry", GameRegistry.class);
+		classShortcuts.put("OreDictionary", OreDictionary.class);
 
 		classShortcuts.put("ASMHelper", ReikaASMHelper.class);
 		classShortcuts.put("ReflectionHelper", ReikaReflectionHelper.class);

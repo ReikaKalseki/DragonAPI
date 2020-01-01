@@ -36,6 +36,8 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.ShapedOreRecipe;
+import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -44,6 +46,7 @@ import Reika.DragonAPI.Instantiable.Data.Maps.TierMap;
 import Reika.DragonAPI.Instantiable.Formula.MathExpression;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
 import Reika.DragonAPI.Interfaces.ObjectToNBTSerializer;
+import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.ModInteract.CustomThaumResearch;
@@ -61,6 +64,8 @@ import thaumcraft.api.aspects.AspectList;
 import thaumcraft.api.crafting.CrucibleRecipe;
 import thaumcraft.api.crafting.IArcaneRecipe;
 import thaumcraft.api.crafting.InfusionRecipe;
+import thaumcraft.api.crafting.ShapedArcaneRecipe;
+import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.api.research.ResearchPage;
@@ -988,6 +993,14 @@ public class ReikaThaumHelper {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static ShapelessOreRecipe getShapelessArcaneAsShapelessRecipe(ShapelessArcaneRecipe r) {
+		return new ShapelessOreRecipe(r.getRecipeOutput(), r.getInput());
+	}
+
+	public static ShapedOreRecipe getShapedArcaneAsShapedRecipe(ShapedArcaneRecipe r) {
+		return new ShapedOreRecipe(r.getRecipeOutput(), ReikaRecipeHelper.decode1DArray(r.input, r.width, r.height));
 	}
 }
 

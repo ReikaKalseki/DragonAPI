@@ -705,4 +705,18 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		}
 		return ret;
 	}
+
+	public static Object[] deepCopyArray(Object[] dat) {
+		Object[] ret = new Object[dat.length];
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = ReikaJavaLibrary.copyObject(dat[i]);
+		}
+		return ret;
+	}
+
+	public static <E> E[] convertArray(Object[] array, Class<E> type) {
+		E[] ret = (E[])Array.newInstance(type, array.length);
+		System.arraycopy(array, 0, ret, 0, ret.length);
+		return ret;
+	}
 }

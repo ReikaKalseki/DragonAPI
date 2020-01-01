@@ -34,6 +34,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
+import java.util.TreeMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
@@ -44,6 +45,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import com.google.common.reflect.ClassPath;
 
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -1051,5 +1053,27 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 	/** Order agnostic */
 	public static <E> boolean collectionsHaveSameValues(Collection<E> c1, Collection<E> c2) {
 		return new HashSet(c1).equals(new HashSet(c2));
+	}
+
+	public static Object copyObject(Object o) {
+		if (o instanceof Object[])
+			return ReikaArrayHelper.deepCopyArray((Object[])o);
+		if (o instanceof ArrayList)
+			return new ArrayList((ArrayList)o);
+		if (o instanceof LinkedList)
+			return new LinkedList((LinkedList)o);
+		if (o instanceof HashMap)
+			return new HashMap((HashMap)o);
+		if (o instanceof TreeMap)
+			return new TreeMap((TreeMap)o);
+		if (o instanceof HashSet)
+			return new HashSet((HashSet)o);
+		if (o instanceof Map)
+			return new HashMap((Map)o);
+		if (o instanceof Collection)
+			return new ArrayList((Collection)o);
+		if (o instanceof ItemStack)
+			return ((ItemStack)o).copy();
+		return o;
 	}
 }
