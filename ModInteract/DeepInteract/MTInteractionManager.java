@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -34,6 +34,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.ModContainer;
+import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.GameRegistry.UniqueIdentifier;
 import minetweaker.util.IEventHandler;
@@ -514,6 +515,7 @@ public final class MTInteractionManager {
 			instance.scanAndRemove(); //Do not reload, because inf loop
 
 			ReplacementSmeltingHandler.prepareForMinetweakerChanges();
+			MinecraftForge.EVENT_BUS.post(new MTReloadEvent(Phase.START));
 		}
 	}
 
@@ -523,7 +525,7 @@ public final class MTInteractionManager {
 		public void handle(Object r) {
 			ReplacementSmeltingHandler.applyMinetweakerChanges();
 			ReikaDyeHelper.buildItemCache();
-			MinecraftForge.EVENT_BUS.post(new MTReloadEvent());
+			MinecraftForge.EVENT_BUS.post(new MTReloadEvent(Phase.END));
 		}
 
 	}

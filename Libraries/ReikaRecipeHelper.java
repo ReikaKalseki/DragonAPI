@@ -1274,7 +1274,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		for (int i = 0; i < w; i++) {
 			for (int k = 0; k < h; k++) {
 				int idx = i+k*w;
-				Object at = array[idx];
+				Object at = parseIngredient(array[idx]);
 				char c = at == null ? ' ' : (char)('a'+idx);
 				input[k][i] = c;
 				if (at != null) {
@@ -1293,6 +1293,23 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		}
 		li.addAll(0, shape);
 		return li.toArray(new Object[li.size()]);
+	}
+
+	public static Object parseIngredient(Object o) {
+		if (o instanceof Collection) {
+			Collection<ItemStack> c = (Collection)o;
+			if (c.isEmpty())
+				throw new IllegalArgumentException("Recipe had an empty collection ingredient?!");
+			ItemStack is = c.iterator().next();
+			HashSet<String> set = ReikaItemHelper.getOreNames(is);
+			for (ItemStack is2 : c) {
+				set.retainAll(ReikaItemHelper.getOreNames(is2));
+			}
+			if (set.isEmpty())
+				throw new IllegalArgumentException("Recipe had a collection ingredient, with no shared ore tags?!");
+			return set.iterator().next();
+		}
+		return o;
 	}
 
 	public static Object[] decode2DArray(Object[][] array) {
@@ -1326,26 +1343,41 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	}
 
 	public static IRecipe copyRecipe(IRecipe ire) {
-		if (ire instanceof ShapedRecipes) {
-			ShapedRecipes r = (ShapedRecipes)ire;
-			return getShapedRecipeFor(ire.getRecipeOutput(), decode1DArray(r.recipeItems, r.recipeWidth, r.recipeHeight));
+		try {
+			if (ire instanceof ShapedRecipes) {
+				ShapedRecipes r = (ShapedRecipes)ire;
+				return getShapedRecipeFor(ire.getRecipeOutput(), decode1DArray(r.recipeItems, r.recipeWidth, r.recipeHeight));
+			}
+			else if (ire instanceof ShapedOreRecipe) {
+				ShapedOreRecipe so = (ShapedOreRecipe)ire;
+				return new ShapedOreRecipe(ire.getRecipeOutput(), decode1DArray(so.getInput(), getOreRecipeWidth(so), getOreRecipeHeight(so)));
+			}
+			else if (ire instanceof ShapelessRecipes) {
+				ShapelessRecipes sr = (ShapelessRecipes)ire;
+				return new ShapelessRecipes(ire.getRecipeOutput(), new ArrayList(sr.recipeItems));
+			}
+			else if (ire instanceof ShapelessOreRecipe) {
+				ShapelessOreRecipe sr = (ShapelessOreRecipe)ire;
+				ArrayList<Object> in = sr.getInput();
+				Object[] ingredients = new Object[in.size()];
+				for (int i = 0; i < in.size(); i++) {
+					ingredients[i] = parseIngredient(in.get(i));
+				}
+				return new ShapelessOreRecipe(ire.getRecipeOutput(), ingredients);
+			}
 		}
-		else if (ire instanceof ShapedOreRecipe) {
-			ShapedOreRecipe so = (ShapedOreRecipe)ire;
-			return getShapedRecipeFor(ire.getRecipeOutput(), decode1DArray(so.getInput(), getOreRecipeWidth(so), getOreRecipeHeight(so)));
-		}
-		else if (ire instanceof ShapelessRecipes) {
-			ShapelessRecipes sr = (ShapelessRecipes)ire;
-			return new ShapelessRecipes(ire.getRecipeOutput(), sr.recipeItems);
-		}
-		else if (ire instanceof ShapelessOreRecipe) {
-			ShapelessOreRecipe sr = (ShapelessOreRecipe)ire;
-			return new ShapelessOreRecipe(ire.getRecipeOutput(), sr.getInput());
+		catch (Exception e) {
+			DragonAPICore.logError("Could not copy recipe "+toString(ire));
+			e.printStackTrace();
 		}
 		return null;
 	}
 
 	public static boolean matchRecipes(IRecipe r1, IRecipe r2) {
+		if (r1 == null && r2 == null)
+			return true;
+		if (r1 == null || r2 == null)
+			return false;
 		if (r1.getClass() != r2.getClass())
 			return false;
 		if (!ItemStack.areItemStacksEqual(r1.getRecipeOutput(), r2.getRecipeOutput()))
@@ -1379,6 +1411,10 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		for (int i = 0; i < input.size(); i++) {
 			Object o1 = input.get(i);
 			Object o2 = input2.get(i);
+			if (o1 == null && o2 == null)
+				continue;
+			if (o1 == null || o2 == null)
+				return false;
 			if (o1.getClass() != o2.getClass())
 				return false;
 			if (o1 instanceof ItemStack) {

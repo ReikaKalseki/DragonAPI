@@ -26,12 +26,16 @@ import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 public class ThirdPersonDistanceDispatch extends Patcher {
 
+	private static final boolean betweenlands = ReikaASMHelper.checkForClass("thebetweenlands.TheBetweenlands");
+
 	public ThirdPersonDistanceDispatch() {
 		super("net.minecraft.client.renderer.EntityRenderer", "blt");
 	}
 
 	@Override
 	protected void apply(ClassNode cn) {
+		if (betweenlands)
+			return;
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_78467_g", "orientCamera", "(F)V");
 
 		AbstractInsnNode ain = ReikaASMHelper.getFirstFieldCallByName(cn, m, FMLForgePlugin.RUNTIME_DEOBF ? "field_78490_B" : "thirdPersonDistance");
