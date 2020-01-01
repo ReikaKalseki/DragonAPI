@@ -43,9 +43,9 @@ import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.HashType;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaFormatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.MathSci.ReikaDateHelper;
 
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -345,7 +345,7 @@ public abstract class DragonAPIMod {
 			if (time == -1)
 				throw new IllegalStateException(mod.getTechnicalName()+" cannot stop profiling before it starts!");
 			time = -1;
-			String s = ReikaFormatHelper.millisToHMSms(duration);
+			String s = ReikaDateHelper.millisToHMSms(duration);
 			ReikaJavaLibrary.pConsole(mod.getTechnicalName()+": Completed loading phase "+phase+" in "+duration+" ms ("+s+").");
 			if (duration > 1800000) { //30 min
 				ReikaJavaLibrary.pConsole("Loading time exceeded thirty minutes, indicating very weak hardware. Beware of low framerates.");
@@ -355,7 +355,7 @@ public abstract class DragonAPIMod {
 			}
 			total += duration;
 			if (phase == LoadPhase.POSTLOAD)
-				ReikaJavaLibrary.pConsole("Total mod loading time: "+total+" ms ("+ReikaFormatHelper.millisToHMSms(total)+").");
+				ReikaJavaLibrary.pConsole("Total mod loading time: "+total+" ms ("+ReikaDateHelper.millisToHMSms(total)+").");
 			phase = null;
 		}
 

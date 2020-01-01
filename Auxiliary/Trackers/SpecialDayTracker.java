@@ -32,11 +32,15 @@ public class SpecialDayTracker {
 	}
 
 	public float getXmasWeatherStrength(World world) {
-		if (!this.loadXmasTextures())
+		if (!this.isWinterEnabled())
 			return 0;
 		double val = weatherNoise.getValue(world.getTotalWorldTime()/6000D, world.provider.dimensionId*200);
 		float norm = (float)Math.sqrt(ReikaMathLibrary.normalizeToBounds(val, 0, 1));
 		return MathHelper.clamp_float(norm*1.1F, 0, 1);
+	}
+
+	private boolean isWinterEnabled() {
+		return this.loadXmasTextures();
 	}
 
 	public boolean isHalloween() {

@@ -72,6 +72,8 @@ public class ASMCalls {
 	public static void addRainParticlesAndSound(EntityRenderer er) {
 		if (SpecialDayTracker.instance.loadXmasTextures())
 			return;
+		if (SpecialDayTracker.instance.getXmasWeatherStrength(Minecraft.getMinecraft().theWorld) >= 0.5)
+			return;
 		if (DragonOptions.NORAINFX.getState())
 			return;
 		er.addRainParticles();
@@ -80,6 +82,8 @@ public class ASMCalls {
 	@SideOnly(Side.CLIENT)
 	public static boolean shouldRenderRainInsteadOfSnow(WorldClient world, BiomeGenBase biome, int x, int y, int z, float biomeTemp, int precipHeight) {
 		if (SpecialDayTracker.instance.loadXmasTextures())
+			return false;
+		if (SpecialDayTracker.instance.getXmasWeatherStrength(world) >= 0.5)
 			return false;
 		return world.getWorldChunkManager().getTemperatureAtHeight(biomeTemp, precipHeight) >= 0.15F;
 	}

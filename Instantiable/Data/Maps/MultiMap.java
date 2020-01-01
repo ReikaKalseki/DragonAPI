@@ -95,6 +95,13 @@ public final class MultiMap<K, V> {
 		return this.addValue(key, value, false);
 	}
 
+	public boolean addValues(K key, Collection<V> values) {
+		boolean flag = false;
+		for (V v : values)
+			flag |= this.addValue(key, v, false);
+		return flag;
+	}
+
 	public boolean addValue(K key, V value, boolean allowCopies) {
 		return this.addValue(key, value, true, allowCopies);
 	}

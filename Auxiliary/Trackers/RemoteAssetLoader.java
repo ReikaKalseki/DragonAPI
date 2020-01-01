@@ -36,8 +36,8 @@ import Reika.DragonAPI.IO.ReikaFileReader.FileWriteException;
 import Reika.DragonAPI.IO.ReikaFileReader.HashType;
 import Reika.DragonAPI.IO.ReikaFileReader.WriteCallback;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
-import Reika.DragonAPI.Libraries.IO.ReikaFormatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.Libraries.MathSci.ReikaDateHelper;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -123,7 +123,7 @@ public class RemoteAssetLoader {
 				this.tryDownload(a.data, 5);
 			}
 			long duration = System.currentTimeMillis()-time;
-			DragonAPICore.log("All asset downloads complete. Elapsed time: "+ReikaFormatHelper.millisToHMSms(duration));
+			DragonAPICore.log("All asset downloads complete. Elapsed time: "+ReikaDateHelper.millisToHMSms(duration));
 			isComplete = true;
 			MinecraftForge.EVENT_BUS.post(new RemoteAssetsDownloadCompleteEvent(instance.downloadingAssets, totalSize));
 		}
@@ -188,7 +188,7 @@ public class RemoteAssetLoader {
 			ReikaFileReader.copyFile(in, out, 4096, this);
 			long duration = System.currentTimeMillis()-time;
 
-			String s = "Download of '"+dat.getDisplayName()+"' to '"+dat.asset.getLocalPath()+"' complete. Elapsed time: "+ReikaFormatHelper.millisToHMSms(duration);
+			String s = "Download of '"+dat.getDisplayName()+"' to '"+dat.asset.getLocalPath()+"' complete. Elapsed time: "+ReikaDateHelper.millisToHMSms(duration);
 			/*dat.asset.mod.getModLogger()*/DragonAPICore.log(s);
 			DragonAPICore.log("Remote asset downloads now "+String.format("%.2f", Math.min(100, this.getTotalCompletion()*100))+"% complete.");
 			dat.asset.downloaded = true;
