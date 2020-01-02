@@ -925,4 +925,8 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	public final boolean hasATank() {
 		return this instanceof PartialTank ? ((PartialTank)this).hasTank() : this instanceof IFluidHandler;
 	}
+
+	public final int getAmbientTemperature() {
+		return ReikaWorldHelper.getAmbientTemperatureAt(worldObj, xCoord, yCoord, zCoord);
+	}
 }

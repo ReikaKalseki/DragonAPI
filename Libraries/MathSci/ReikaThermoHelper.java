@@ -14,6 +14,9 @@ public class ReikaThermoHelper {
 	public static final double WATER_HEAT = 4.18;
 	public static final double GRAPHITE_HEAT = 0.71;
 
+	public static final double STEEL_HEAT = 0.481;
+	public static final double COPPER_HEAT = 0.386;
+
 	public static final double SODIUM_HEAT = 1.23;
 	public static final double CO2_HEAT = 1.168;
 	public static final double LIFBE_HEAT = 1.102;

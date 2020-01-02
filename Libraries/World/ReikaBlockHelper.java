@@ -506,4 +506,13 @@ public final class ReikaBlockHelper extends DragonAPICore {
 			world.playSoundEffect(x+0.5, y+0.5, z+0.5, "tile.piston.out", 0.5F, world.rand.nextFloat()*0.25F+0.6F);
 		}
 	}
+
+	public static double getBlockVolume(World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		b.setBlockBoundsBasedOnState(world, x, y, z);
+		double dx = b.getBlockBoundsMaxX()-b.getBlockBoundsMinX();
+		double dy = b.getBlockBoundsMaxY()-b.getBlockBoundsMinY();
+		double dz = b.getBlockBoundsMaxZ()-b.getBlockBoundsMinZ();
+		return dx*dy*dz;
+	}
 }
