@@ -325,6 +325,9 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 		else if (evt.Name == null || evt.Name.isEmpty())
 			throw new WTFException("Someone registered "+evt.Ore+" under a null or empty OreDict name!", true);
 		else {
+			if (evt.Name.equals("transdimBlock") && evt.Ore.getItemDamage() > 0) { //prevent 4k lines from ender chests
+				return;
+			}
 			DragonAPICore.log("Logged OreDict registration of "+evt.Ore+" as '"+evt.Name+"'.");
 		}
 	}

@@ -108,11 +108,11 @@ public class ReikaDateHelper {
 		return dayc;
 	}
 
-	public static boolean isCurrentlyWithin(int month1, int month2, int day1, int day2) {
-		return isDateWithin(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), month1, month2, day1, day2);
+	public static boolean isCurrentlyWithin(int month1, int day1, int month2, int day2) {
+		return isDateWithin(calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), month1, day1, month2, day2);
 	}
 
-	public static boolean isDateWithin(int month, int day, int month1, int month2, int day1, int day2) {
+	public static boolean isDateWithin(int month, int day, int month1, int day1, int month2, int day2) {
 		return month >= month1 && month <= month2 && day >= day1 && day <= day2;
 	}
 

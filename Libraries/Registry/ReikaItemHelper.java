@@ -912,4 +912,13 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 
 	}
+
+	public static int getIndexOf(List li, ItemStack is) {
+		for (int i = 0; i < li.size(); i++) {
+			Object o = li.get(i);
+			if (o instanceof ItemStack && matchStacks((ItemStack)o, is))
+				return i;
+		}
+		return -1;
+	}
 }

@@ -1428,4 +1428,103 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		}
 		return true;
 	}
+
+	public static double getRecipeSimilarityValue(IRecipe r1, IRecipe r2) {
+		if (r1.getClass() != r2.getClass())
+			return 0;
+		double score = 0;
+		if (r1 instanceof ShapedRecipes) {
+			ShapedRecipes sr1 = (ShapedRecipes)r1;
+			ShapedRecipes sr2 = (ShapedRecipes)r2;
+			if (sr1.recipeHeight != sr2.recipeHeight || sr1.recipeWidth != sr2.recipeWidth)
+				return 0;
+			for (int i = 0; i < sr1.recipeWidth; i++) {
+				for (int k = 0; k < sr1.recipeHeight; k++) {
+					ItemStack is1 = sr1.recipeItems[i+k*sr1.recipeWidth];
+					ItemStack is2 = sr2.recipeItems[i+k*sr2.recipeWidth];
+					if (ReikaItemHelper.matchStacks(is1, is2)) {
+						score += 5;
+					}
+				}
+			}
+			return score/(sr1.recipeHeight*sr1.recipeWidth);
+		}
+		else if (r1 instanceof ShapedOreRecipe) {
+			ShapedOreRecipe so1 = (ShapedOreRecipe)r1;
+			ShapedOreRecipe so2 = (ShapedOreRecipe)r2;
+			int h1 = getOreRecipeHeight(so1);
+			int w1 = getOreRecipeWidth(so1);
+			if (h1 != getOreRecipeHeight(so2) || w1 != getOreRecipeWidth(so2))
+				return 0;
+			for (int i = 0; i < w1; i++) {
+				for (int k = 0; k < h1; k++) {
+					Object is1 = so1.getInput()[i+k*w1];
+					Object is2 = so2.getInput()[i+k*w1];
+					if (is1 == is2)
+						score += 5;
+					if (is1 == null || is2 == null)
+						continue;
+					if (is1.getClass() != is2.getClass())
+						continue;
+					if (is1 instanceof ItemStack) {
+						if (ReikaItemHelper.matchStacks((ItemStack)is1, (ItemStack)is2)) {
+							score += 5;
+						}
+					}
+					else if (is1 instanceof Collection) {
+						Collection<ItemStack> c1 = (Collection<ItemStack>)is1;
+						Collection<ItemStack> c2 = (Collection<ItemStack>)is2;
+						HashSet<KeyedItemStack> s1 = new HashSet();
+						HashSet<KeyedItemStack> s2 = new HashSet();
+						for (ItemStack is : c1) {
+							s1.add(new KeyedItemStack(is).setIgnoreNBT(true).setSized(false).setIgnoreMetadata(false).setSimpleHash(true));
+						}
+						for (ItemStack is : c2) {
+							s2.add(new KeyedItemStack(is).setIgnoreNBT(true).setSized(false).setIgnoreMetadata(false).setSimpleHash(true));
+						}
+						if (s1.equals(s2))
+							score += 5;
+					}
+				}
+			}
+			return score/(h1*w1);
+		}
+		else if (r1 instanceof ShapelessRecipes) {
+			ShapelessRecipes sr1 = (ShapelessRecipes)r1;
+			ShapelessRecipes sr2 = (ShapelessRecipes)r2;
+			ArrayList<ItemStack> c1 = new ArrayList(sr1.recipeItems);
+			ArrayList<ItemStack> c2 = new ArrayList(sr2.recipeItems);
+			ArrayList<ItemStack> lg = c1.size() > c2.size() ? c1 : c2;
+			ArrayList<ItemStack> sm = c1.size() > c2.size() ? c2 : c1;
+			for (ItemStack is : lg) {
+				int idx = ReikaItemHelper.getIndexOf(sm, is);
+				if (idx >= 0) {
+					score += 5;
+					sm.remove(idx);
+				}
+			}
+			return score/lg.size();
+		}
+		else if (r1 instanceof ShapelessOreRecipe) {
+			ShapelessOreRecipe sr1 = (ShapelessOreRecipe)r1;
+			ShapelessOreRecipe sr2 = (ShapelessOreRecipe)r2;
+			ArrayList<Object> c1 = new ArrayList(sr1.getInput());
+			ArrayList<Object> c2 = new ArrayList(sr2.getInput());
+			ArrayList<Object> lg = c1.size() > c2.size() ? c1 : c2;
+			ArrayList<Object> sm = c1.size() > c2.size() ? c2 : c1;
+			for (Object o : lg) {
+				int idx = -1;
+				if (o instanceof ItemStack)
+					idx = ReikaItemHelper.getIndexOf(sm, (ItemStack)o);
+				else
+					idx = sm.indexOf(o);
+				if (idx >= 0) {
+					score += 5;
+					sm.remove(idx);
+				}
+			}
+			return score/lg.size();
+		}
+		return 0;
+	}
 }
