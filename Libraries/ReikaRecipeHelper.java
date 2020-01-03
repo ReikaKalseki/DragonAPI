@@ -53,6 +53,7 @@ import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Recipe.RecipePattern;
 import Reika.DragonAPI.Interfaces.CustomToStringRecipe;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
@@ -81,6 +82,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 	private static Field shapedIc2Input;
 	private static Field shapedIc2InputMirror;
+	private static Field shapedIc2Height;
+	private static Field shapedIc2Width;
 	private static Field shapelessIc2Input;
 
 	private static class RecipeCache {
@@ -118,6 +121,12 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 					shapedIc2Input = ic2ShapedClass.getDeclaredField("input");
 					shapedIc2Input.setAccessible(true);
+
+					shapedIc2Width = ic2ShapedClass.getDeclaredField("inputWidth");
+					shapedIc2Width.setAccessible(true);
+
+					shapedIc2Height = ic2ShapedClass.getDeclaredField("inputHeight");
+					shapedIc2Height.setAccessible(true);
 
 					shapedIc2InputMirror = ic2ShapedClass.getDeclaredField("inputMirrored");
 					shapedIc2InputMirror.setAccessible(true);
@@ -313,7 +322,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		RecipeCache cache = map.get(ir);
 		if (cache == null) {
 			cache = calculateRecipeToItemStackArray(ir, client);
-			map.put(ir, cache);
+			if (!ReikaObfuscationHelper.isDeObfEnvironment())
+				map.put(ir, cache);
 		}
 		return cache;
 	}
@@ -480,6 +490,42 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			}
 			w = so.getRecipeSize() >= 3 ? 3 : so.getRecipeSize();
 			h = (so.getRecipeSize()+2)/3;
+		}
+		else if (ire.getClass() == ic2ShapedClass) {
+			try {
+				Object[] in = (Object[])shapedIc2Input.get(ire);
+				w = Math.min(3, shapedIc2Width.getInt(ire));
+				h = Math.min(3, shapedIc2Height.getInt(ire));
+				for (int i = 0; i < in.length; i++) {
+					Object o = in[i];
+					if (o instanceof ItemStack)
+						isin[i] = getRecipeItemStack((ItemStack)o, client);
+					else if (o instanceof List)
+						isin[i] = getRecipeItemStacks((List<ItemStack>)o, client);
+					else if (o instanceof IRecipeInput)
+						isin[i] = getRecipeItemStacks(((IRecipeInput)o).getInputs(), client);
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ire.getClass() == ic2ShapelessClass) {
+			try {
+				Object[] in = (Object[])shapelessIc2Input.get(ire);
+				for (int i = 0; i < in.length; i++) {
+					Object o = in[i];
+					if (o instanceof ItemStack)
+						isin[i] = getRecipeItemStack((ItemStack)o, client);
+					else if (o instanceof List)
+						isin[i] = getRecipeItemStacks((List<ItemStack>)o, client);
+					else if (o instanceof IRecipeInput)
+						isin[i] = getRecipeItemStacks(((IRecipeInput)o).getInputs(), client);
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 
 		return new RecipeCache(isin, w, h);
@@ -1024,6 +1070,42 @@ public class ReikaRecipeHelper extends DragonAPICore {
 					out[i] = new ArrayList((List)o);
 			}
 		}
+		else if (ire.getClass() == ic2ShapedClass) {
+			try {
+				Object[] in = (Object[])shapedIc2Input.get(ire);
+				int w = Math.min(3, shapedIc2Width.getInt(ire));
+				int h = Math.min(3, shapedIc2Height.getInt(ire));
+				for (int i = 0; i < w; i++) {
+					for (int k = 0; k < h; k++) {
+						int idx = i*w+k;
+						int idx2 = i*3+k;
+						Object o = in[idx];
+						if (o instanceof ItemStack)
+							out[idx2] = ((ItemStack)o).copy();
+						else if (o instanceof List)
+							out[idx2] = new ArrayList((List)o);
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ire.getClass() == ic2ShapelessClass) {
+			try {
+				Object[] in = (Object[])shapelessIc2Input.get(ire);
+				for (int i = 0; i < in.length; i++) {
+					Object o = in[i];
+					if (o instanceof ItemStack)
+						out[i] = ((ItemStack)o).copy();
+					else if (o instanceof List)
+						out[i] = new ArrayList((List)o);
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		return out;
 	}
 
@@ -1365,6 +1447,28 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				}
 				return new ShapelessOreRecipe(ire.getRecipeOutput(), ingredients);
 			}
+			else if (ire.getClass() == ic2ShapedClass) {
+				try {
+					Object[] in = (Object[])shapedIc2Input.get(ire);
+					return new ShapedOreRecipe(ire.getRecipeOutput(), decode1DArray(in, shapedIc2Width.getInt(ire), shapedIc2Height.getInt(ire)));
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else if (ire.getClass() == ic2ShapelessClass) {
+				try {
+					Object[] in = (Object[])shapelessIc2Input.get(ire);
+					Object[] ingredients = new Object[in.length];
+					for (int i = 0; i < in.length; i++) {
+						ingredients[i] = parseIngredient(in[i]);
+					}
+					return new ShapelessOreRecipe(ire.getRecipeOutput(), ingredients);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		catch (Exception e) {
 			DragonAPICore.logError("Could not copy recipe "+toString(ire));
@@ -1401,6 +1505,26 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			ShapelessOreRecipe sr1 = (ShapelessOreRecipe)r1;
 			ShapelessOreRecipe sr2 = (ShapelessOreRecipe)r2;
 			return matchIngredientCollections(sr1.getInput(), sr2.getInput());
+		}
+		else if (r1.getClass() == ic2ShapedClass) {
+			try {
+				Object[] in1 = (Object[])shapedIc2Input.get(r1);
+				Object[] in2 = (Object[])shapedIc2Input.get(r2);
+				return matchIngredientCollections(Arrays.asList(in1), Arrays.asList(in2));
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (r1.getClass() == ic2ShapelessClass) {
+			try {
+				Object[] in1 = (Object[])shapelessIc2Input.get(r1);
+				Object[] in2 = (Object[])shapelessIc2Input.get(r2);
+				return matchIngredientCollections(Arrays.asList(in1), Arrays.asList(in2));
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 		return false;
 	}
