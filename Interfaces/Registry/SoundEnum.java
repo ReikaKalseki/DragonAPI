@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Interfaces.Registry;
 
 import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 import cpw.mods.fml.relauncher.Side;
@@ -34,6 +35,8 @@ public interface SoundEnum {
 	public boolean canOverlap();
 
 	public void playSound(World world, double x, double y, double z, float volume, float pitch);
+
+	public void playSound(Entity e, float volume, float pitch);
 
 	public void playSound(World world, double x, double y, double z, float volume, float pitch, boolean attenuate);
 

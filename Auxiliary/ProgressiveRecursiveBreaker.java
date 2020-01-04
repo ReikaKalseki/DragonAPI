@@ -89,12 +89,14 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		public boolean dropFluids = true;
 		public boolean breakAir = false;
 		private final Collection<Coordinate> path = new HashSet();
+		private final Collection<Coordinate> excluded = new HashSet();
 		public boolean taxiCabDistance = false;
 		//public final BlockMap<BlockKey> looseMatches = new BlockMap();
 		public final int originX;
 		public final int originY;
 		public final int originZ;
 		public boolean causeUpdates = true;
+		public boolean doBreak = true;
 
 		private ProgressiveBreaker(World world, int x, int y, int z, int depth, List<BlockKey> ids) {
 			this.world = world;
@@ -153,6 +155,14 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			for (int i = 0; i < keys.length; i++) {
 				ids.add(keys[i]);
 			}
+		}
+
+		public void exclude(int x, int y, int z) {
+			excluded.add(new Coordinate(x, y, z));
+		}
+
+		public void exclude(Coordinate c) {
+			excluded.add(c);
 		}
 
 		private void tick() {
@@ -228,7 +238,10 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private boolean canSpreadTo(World world, int x, int y, int z) {
 			if (taxiCabDistance && Math.abs(x-originX)+Math.abs(y-originY)+Math.abs(z-originZ) > maxDepth)
 				return false;
-			if (pathTracking && path.contains(new Coordinate(x, y, z)))
+			Coordinate c = new Coordinate(x, y, z);
+			if (!excluded.isEmpty() && excluded.contains(c))
+				return false;
+			if (pathTracking && path.contains(c))
 				return false;
 			if (!bounds.isBlockInside(x, y, z))
 				return false;
@@ -247,7 +260,7 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 		private void dropBlock(World world, int x, int y, int z) {
 			Block id = world.getBlock(x, y, z);
 			int meta = world.getBlockMetadata(x, y, z);
-			boolean pass = passthrough.contains(new BlockKey(id, meta));
+			boolean pass = !doBreak || passthrough.contains(new BlockKey(id, meta));
 			if (!pass && id != Blocks.air) {
 				if (drops) {
 					ArrayList<ItemStack> drops = new ArrayList();

@@ -23,6 +23,7 @@ import org.apache.commons.lang3.ArrayUtils;
 
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.CraftingManager;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -85,7 +86,6 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 	private static Class ic2ShapedClass;
 	private static Class ic2ShapelessClass;
-
 	private static Field shapedIc2Input;
 	private static Field shapedIc2InputMirror;
 	private static Field shapedIc2Height;
@@ -93,7 +93,21 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	private static Field ic2MasksField;
 	private static Field shapelessIc2Input;
 
+	private static Class aeShapedClass;
+	private static Class aeShapelessClass;
+	private static Field shapedAEInput;
+	private static Field shapelessAEInput;
+	private static Field shapedAEHeight;
+	private static Field shapedAEWidth;
+
+	private static Class computerTurtleClass;
+	private static Field computerTurtleInput;
+
+	private static Class teNEIClass;
+	private static Field teNEIWrappedRecipe;
+
 	private static class RecipeCache {
+
 		private final List<ItemStack>[] items;
 		private final int width;
 		private final int height;
@@ -104,6 +118,15 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			height = h;
 		}
 	}
+
+	private static class UnparsableRecipeCache extends RecipeCache {
+
+		private UnparsableRecipeCache() {
+			super(new List[0], 0, 0);
+		}
+
+	}
+
 
 	public static interface ReplacementCallback {
 
@@ -120,39 +143,89 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			shapedOreHeight.setAccessible(true);
 			shapedOreWidth.setAccessible(true);
 			shapedOreInput.setAccessible(true);
-
-			if (ModList.IC2.isLoaded()) {
-				try {
-					ic2ShapedClass = Class.forName("ic2.core.AdvRecipe");
-					ic2ShapelessClass = Class.forName("ic2.core.AdvShapelessRecipe");
-
-					shapedIc2Input = ic2ShapedClass.getDeclaredField("input");
-					shapedIc2Input.setAccessible(true);
-
-					shapedIc2Width = ic2ShapedClass.getDeclaredField("inputWidth");
-					shapedIc2Width.setAccessible(true);
-
-					shapedIc2Height = ic2ShapedClass.getDeclaredField("inputHeight");
-					shapedIc2Height.setAccessible(true);
-
-					shapedIc2InputMirror = ic2ShapedClass.getDeclaredField("inputMirrored");
-					shapedIc2InputMirror.setAccessible(true);
-
-					ic2MasksField = ic2ShapedClass.getDeclaredField("masks");
-					ic2MasksField.setAccessible(true);
-
-					shapelessIc2Input = ic2ShapelessClass.getDeclaredField("input");
-					shapelessIc2Input.setAccessible(true);
-				}
-				catch (Exception e) {
-					e.printStackTrace();
-					DragonAPICore.logError("Could not load IC2 recipe handling!");
-					ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.IC2, e);
-				}
-			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+
+		if (ModList.IC2.isLoaded()) {
+			try {
+				ic2ShapedClass = Class.forName("ic2.core.AdvRecipe");
+				ic2ShapelessClass = Class.forName("ic2.core.AdvShapelessRecipe");
+
+				shapedIc2Input = ic2ShapedClass.getDeclaredField("input");
+				shapedIc2Input.setAccessible(true);
+
+				shapedIc2Width = ic2ShapedClass.getDeclaredField("inputWidth");
+				shapedIc2Width.setAccessible(true);
+
+				shapedIc2Height = ic2ShapedClass.getDeclaredField("inputHeight");
+				shapedIc2Height.setAccessible(true);
+
+				shapedIc2InputMirror = ic2ShapedClass.getDeclaredField("inputMirrored");
+				shapedIc2InputMirror.setAccessible(true);
+
+				ic2MasksField = ic2ShapedClass.getDeclaredField("masks");
+				ic2MasksField.setAccessible(true);
+
+				shapelessIc2Input = ic2ShapelessClass.getDeclaredField("input");
+				shapelessIc2Input.setAccessible(true);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				DragonAPICore.logError("Could not load IC2 recipe handling!");
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.IC2, e);
+			}
+		}
+
+		if (ModList.THERMALEXPANSION.isLoaded()) {
+			try {
+				teNEIClass = Class.forName("cofh.thermalexpansion.plugins.nei.handlers.NEIRecipeWrapper");
+				teNEIWrappedRecipe = teNEIClass.getDeclaredField("recipe");
+				teNEIWrappedRecipe.setAccessible(true);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				DragonAPICore.logError("Could not load TE recipe handling!");
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THERMALEXPANSION, e);
+			}
+		}
+
+		if (ModList.COMPUTERCRAFT.isLoaded()) {
+			try {
+				computerTurtleClass = Class.forName("dan200.computercraft.shared.turtle.recipes.TurtleRecipe");
+				computerTurtleInput = computerTurtleClass.getDeclaredField("m_recipe");
+				computerTurtleInput.setAccessible(true);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				DragonAPICore.logError("Could not load ComputerCraft recipe handling!");
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.COMPUTERCRAFT, e);
+			}
+		}
+
+		if (ModList.APPENG.isLoaded()) {
+			try {
+				aeShapedClass = Class.forName("appeng.recipes.game.ShapedRecipe");
+				aeShapelessClass = Class.forName("appeng.recipes.game.ShapelessRecipe");
+
+				shapedAEInput = aeShapedClass.getDeclaredField("input");
+				shapedAEInput.setAccessible(true);
+
+				shapedAEWidth = aeShapedClass.getDeclaredField("width");
+				shapedAEWidth.setAccessible(true);
+
+				shapedAEHeight = aeShapedClass.getDeclaredField("height");
+				shapedAEHeight.setAccessible(true);
+
+				shapelessAEInput = ic2ShapelessClass.getDeclaredField("input");
+				shapelessAEInput.setAccessible(true);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				DragonAPICore.logError("Could not load AE recipe handling!");
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.APPENG, e);
+			}
 		}
 	}
 
@@ -372,8 +445,11 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	/** Turns a recipe into a 3x3 itemstack array. Args: Recipe */
 	public static List<ItemStack>[] getRecipeArray(IRecipe ir) {
 		List<ItemStack>[] lists = new List[9];
+		RecipeCache c = getRecipeCacheObject(ir, false);
+		if (c instanceof UnparsableRecipeCache)
+			return null;
 		for (int i = 0; i < 9; i++) {
-			List li = getRecipeCacheObject(ir, false).items[i];
+			List li = c.items[i];
 			if (li != null && !li.isEmpty())
 				lists[i] = Collections.unmodifiableList(li);
 		}
@@ -384,6 +460,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	@SideOnly(Side.CLIENT)
 	public static ItemStack[] getPermutedRecipeArray(IRecipe ir) {
 		RecipeCache r = getRecipeCacheObject(ir, true);
+		if (r instanceof UnparsableRecipeCache)
+			return null;
 		List<ItemStack>[] isin = r.items;
 
 		long ttick = System.currentTimeMillis();
@@ -473,6 +551,9 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			ReikaJavaLibrary.dumpStack();
 			return null;
 		}
+
+		ire = getTEWrappedRecipe(ire);
+
 		if (ire instanceof ShapedRecipes) {
 			ShapedRecipes r = (ShapedRecipes)ire;
 			num = r.recipeItems.length;
@@ -585,6 +666,72 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				e.printStackTrace();
 			}
 		}
+		else if (ire.getClass() == aeShapedClass) {
+			try {
+				Object[] in = (Object[])shapedAEInput.get(ire);
+				w = Math.min(3, shapedAEWidth.getInt(ire));
+				h = Math.min(3, shapedAEHeight.getInt(ire));
+				for (int i = 0; i < in.length; i++) {
+					Object o = in[i];
+					if (o == null)
+						continue;
+					if (o instanceof ItemStack)
+						isin[i] = getRecipeItemStack((ItemStack)o, client);
+					else if (o instanceof List)
+						isin[i] = getRecipeItemStacks((List)o, client);
+					else if (o instanceof IAEItemStack)
+						isin[i] = getRecipeItemStack(((IAEItemStack)o).getItemStack(), client);
+					else {
+						DragonAPICore.log("Could not parse ingredient type "+o.getClass()+" with value "+o.toString());
+						isin[i] = Arrays.asList(new ItemStack(Blocks.fire));
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ire.getClass() == aeShapelessClass) {
+			try {
+				Object[] in = (Object[])shapelessAEInput.get(ire);
+				for (int i = 0; i < in.length; i++) {
+					Object o = in[i];
+					if (o == null)
+						continue;
+					if (o instanceof ItemStack)
+						isin[i] = getRecipeItemStack((ItemStack)o, client);
+					else if (o instanceof List)
+						isin[i] = getRecipeItemStacks((List)o, client);
+					else if (o instanceof IAEItemStack)
+						isin[i] = getRecipeItemStack(((IAEItemStack)o).getItemStack(), client);
+					else {
+						DragonAPICore.log("Could not parse ingredient type "+o.getClass()+" with value "+o.toString());
+						isin[i] = Arrays.asList(new ItemStack(Blocks.fire));
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ire.getClass() == computerTurtleClass) {
+			try {
+				Item[] in = (Item[])computerTurtleInput.get(ire);
+				for (int i = 0; i < 3; i++) {
+					for (int k = 0; k < 3; k++) {
+						int idx = i*3+k;
+						isin[idx] = getRecipeItemStack(new ItemStack(in[idx]), client);
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			DragonAPICore.logError("Recipe "+toString(ire)+" could not be parsed!");
+			return new UnparsableRecipeCache();
+		}
 
 		return new RecipeCache(isin, w, h);
 	}
@@ -604,6 +751,19 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			}
 		}
 		return li.toArray(new Object[li.size()]);
+	}
+
+	@ModDependent(ModList.THERMALEXPANSION)
+	public static IRecipe getTEWrappedRecipe(IRecipe ir) {
+		if (ir.getClass() == teNEIClass) {
+			try {
+				ir = (IRecipe)teNEIWrappedRecipe.get(ir);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return ir;
 	}
 
 	/** Get the smelting recipe of an item by output. Args: output */
@@ -659,6 +819,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 		if (replacement instanceof String)
 			replacement = OreDictionary.getOres((String)replacement);
+
+		ir = getTEWrappedRecipe(ir);
 
 		if (ir instanceof ShapedRecipes) {
 			if (!(replacement instanceof ItemStack)) {
@@ -843,6 +1005,73 @@ public class ReikaRecipeHelper extends DragonAPICore {
 							if (rc != null)
 								rc.onReplaced(ir, i, in[i], replacement);
 							in[i] = replacement;
+						}
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ir.getClass() == aeShapedClass) {
+			try {
+				Object[] in = (Object[])shapedAEInput.get(ir);
+				for (int i = 0; i < in.length; i++) {
+					if (in[i] instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in[i])) {
+						if (replacement instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, replacement))
+							continue;
+						flag = true;
+						if (rc != null)
+							rc.onReplaced(ir, i, in[i], replacement);
+						in[i] = replacement;
+					}
+					else if (in[i] instanceof List && ReikaItemHelper.collectionContainsItemStack((List<ItemStack>)in[i], ingredient)) {
+						flag = ((List)in[i]).size() != 1;
+						if (rc != null)
+							rc.onReplaced(ir, i, in[i], replacement);
+						in[i] = replacement;
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ir.getClass() == aeShapelessClass) {
+			try {
+				ArrayList in = (ArrayList)shapelessAEInput.get(ir);
+				for (int i = 0; i < in.size(); i++) {
+					if (in.get(i) instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, (ItemStack) in.get(i))) {
+						if (replacement instanceof ItemStack && ReikaItemHelper.matchStacks(ingredient, replacement))
+							continue;
+						flag = true;
+						if (rc != null)
+							rc.onReplaced(ir, i, in.get(i), replacement);
+						in.set(i, replacement);
+					}
+					else if (in.get(i) instanceof List && ReikaItemHelper.collectionContainsItemStack((List<ItemStack>)in.get(i), ingredient)) {
+						flag = ((List)in.get(i)).size() != 1;
+						if (rc != null)
+							rc.onReplaced(ir, i, in.get(i), replacement);
+						in.set(i, replacement);
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ir.getClass() == computerTurtleClass) {
+			try {
+				Item[] in = (Item[])computerTurtleInput.get(ir);
+				for (int i = 0; i < 3; i++) {
+					for (int k = 0; k < 3; k++) {
+						int idx = i*3+k;
+						if (in[idx] == ingredient.getItem()) {
+							flag = true;
+							if (rc != null)
+								rc.onReplaced(ir, i, in[i], replacement);
+							in[idx] = ((ItemStack)replacement).getItem();
 						}
 					}
 				}
@@ -1099,6 +1328,9 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 	public static Object[] getInputArrayCopy(IRecipe ire) {
 		Object[] out = new Object[9];
+
+		ire = getTEWrappedRecipe(ire);
+
 		if (ire instanceof ShapedRecipes) {
 			ShapedRecipes r = (ShapedRecipes)ire;
 			for (int i = 0; i < Math.min(3, r.recipeWidth); i++) {
@@ -1182,6 +1414,56 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				e.printStackTrace();
 			}
 		}
+		else if (ire.getClass() == aeShapedClass) {
+			try {
+				Object[] in = (Object[])shapedAEInput.get(ire);
+				int w = Math.min(3, shapedAEWidth.getInt(ire));
+				int h = Math.min(3, shapedAEHeight.getInt(ire));
+				for (int i = 0; i < w; i++) {
+					for (int k = 0; k < h; k++) {
+						int idx = i*w+k;
+						int idx2 = i*3+k;
+						Object o = in[idx];
+						if (o instanceof ItemStack)
+							out[idx2] = ((ItemStack)o).copy();
+						else if (o instanceof List)
+							out[idx2] = new ArrayList((List)o);
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ire.getClass() == aeShapelessClass) {
+			try {
+				List<Object> in = (List<Object>)shapelessAEInput.get(ire);
+				for (int i = 0; i < in.size(); i++) {
+					Object o = in.get(i);
+					if (o instanceof ItemStack)
+						out[i] = ((ItemStack)o).copy();
+					else if (o instanceof List)
+						out[i] = new ArrayList((List)o);
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ire.getClass() == computerTurtleClass) {
+			try {
+				Item[] in = (Item[])computerTurtleInput.get(ire);
+				for (int i = 0; i < 3; i++) {
+					for (int k = 0; k < 3; k++) {
+						int idx = i*3+k;
+						out[idx] = new ItemStack(in[idx]);
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		return out;
 	}
 
@@ -1238,6 +1520,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	public static Collection<Integer> getRecipeLocationIndices(IRecipe ir, ItemStack is) {
 		Collection<Integer> c = new ArrayList();
 		RecipeCache r = getRecipeCacheObject(ir, false);
+		if (r instanceof UnparsableRecipeCache)
+			return c;
 		for (int i = 0; i < 9; i++) {
 			List<ItemStack> li = r.items[i];
 			if (li != null && ReikaItemHelper.collectionContainsItemStack(li, is))
@@ -1250,6 +1534,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	public static ItemHashMap<Integer> getItemCountsForDisplay(IRecipe ir) {
 		ItemHashMap<Integer> map = new ItemHashMap();
 		ItemStack[] items = ReikaRecipeHelper.getPermutedRecipeArray(ir);
+		if (items == null)
+			return map;
 		for (int i = 0; i < 9; i++) {
 			ItemStack is = items[i];
 			if (is != null) {
@@ -1265,7 +1551,10 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		if (r == null) {
 			return "<NULL>";
 		}
-		else if (r instanceof ShapedRecipes) {
+
+		r = getTEWrappedRecipe(r);
+
+		if (r instanceof ShapedRecipes) {
 			return "Shaped "+Arrays.toString(((ShapedRecipes)r).recipeItems)+" > "+r.getRecipeOutput();
 		}
 		else if (r instanceof ShapelessRecipes) {
@@ -1291,6 +1580,36 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			try {
 				Object[] in = (Object[])shapelessIc2Input.get(r);
 				return "Shapeless IC2 "+Arrays.deepToString(in)+" > "+r.getRecipeOutput();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return e.toString();
+			}
+		}
+		else if (r.getClass() == aeShapedClass) {
+			try {
+				Object[] in = (Object[])shapedAEInput.get(r);
+				return "Shaped AE "+Arrays.deepToString(in)+" > "+r.getRecipeOutput();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return e.toString();
+			}
+		}
+		else if (r.getClass() == aeShapelessClass) {
+			try {
+				List<Object> in = (List<Object>)shapelessAEInput.get(r);
+				return "Shapeless AE "+in.toString()+" > "+r.getRecipeOutput();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return e.toString();
+			}
+		}
+		else if (r.getClass() == computerTurtleClass) {
+			try {
+				Item[] in = (Item[])computerTurtleInput.get(r);
+				return "CC Turtle "+Arrays.deepToString(in)+" > "+r.getRecipeOutput();
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -1533,6 +1852,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	@Deprecated
 	public static IRecipe copyRecipe(IRecipe ire) {
 		try {
+			ire = getTEWrappedRecipe(ire);
 			if (ire instanceof ShapedRecipes) {
 				ShapedRecipes r = (ShapedRecipes)ire;
 				return getShapedRecipeFor(ire.getRecipeOutput(), decode1DArray(r.recipeItems, r.recipeWidth, r.recipeHeight));
@@ -1582,6 +1902,39 @@ public class ReikaRecipeHelper extends DragonAPICore {
 					e.printStackTrace();
 				}
 			}
+			else if (ire.getClass() == aeShapedClass) {
+				try {
+					Object[] in = (Object[])shapedAEInput.get(ire);
+					int w = shapedAEWidth.getInt(ire);
+					int h = shapedAEHeight.getInt(ire);
+					return new ShapedOreRecipe(ire.getRecipeOutput(), decode1DArray(in, w, h));
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else if (ire.getClass() == aeShapelessClass) {
+				try {
+					ArrayList<Object> in = (ArrayList<Object>)shapelessAEInput.get(ire);
+					Object[] ingredients = new Object[in.size()];
+					for (int i = 0; i < in.size(); i++) {
+						ingredients[i] = parseIngredient(in.get(i));
+					}
+					return new ShapelessOreRecipe(ire.getRecipeOutput(), ingredients);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			else if (ire.getClass() == computerTurtleClass) {
+				try {
+					Item[] in = (Item[])computerTurtleInput.get(ire);
+					return getShapedRecipeFor(ire.getRecipeOutput(), decode1DArray(in, 3, 3));
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		catch (Exception e) {
 			DragonAPICore.logError("Could not copy recipe "+toString(ire));
@@ -1597,6 +1950,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			return false;
 		if (r1.getClass() != r2.getClass())
 			return false;
+		r1 = getTEWrappedRecipe(r1);
+		r2 = getTEWrappedRecipe(r2);
 		if (!ItemStack.areItemStacksEqual(r1.getRecipeOutput(), r2.getRecipeOutput()))
 			return false;
 		if (r1 instanceof ShapedRecipes) {
@@ -1636,6 +1991,42 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				Object[] in1 = (Object[])shapelessIc2Input.get(r1);
 				Object[] in2 = (Object[])shapelessIc2Input.get(r2);
 				return matchIngredientCollections(Arrays.asList(in1), Arrays.asList(in2));
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (r1.getClass() == aeShapedClass) {
+			try {
+				Object[] in1 = (Object[])shapedAEInput.get(r1);
+				Object[] in2 = (Object[])shapedAEInput.get(r2);
+				return matchIngredientCollections(Arrays.asList(in1), Arrays.asList(in2));
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (r1.getClass() == aeShapelessClass) {
+			try {
+				List<Object> in1 = (List<Object>)shapelessAEInput.get(r1);
+				List<Object> in2 = (List<Object>)shapelessAEInput.get(r2);
+				return matchIngredientCollections(in1, in2);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (r1.getClass() == computerTurtleClass) {
+			try {
+				Item[] in1 = (Item[])computerTurtleInput.get(r1);
+				Item[] in2 = (Item[])computerTurtleInput.get(r2);
+				if (in1.length != in2.length)
+					return false;
+				for (int i = 0; i < in1.length; i++) {
+					if (in1[i] != in2[i])
+						return false;
+				}
+				return true;
 			}
 			catch (Exception e) {
 				e.printStackTrace();

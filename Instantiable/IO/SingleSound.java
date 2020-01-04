@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.IO;
 
 import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
@@ -65,6 +66,11 @@ public final class SingleSound implements SoundEnum {
 	}
 
 	public void playSoundNoAttenuation(World world, double x, double y, double z, float vol, float pitch, int broadcast) {
+
+	}
+
+	@Override
+	public void playSound(Entity e, float volume, float pitch) {
 
 	}
 

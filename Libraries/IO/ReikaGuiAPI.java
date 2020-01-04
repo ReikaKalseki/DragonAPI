@@ -353,6 +353,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 		IRecipe ire = ir instanceof WrappedRecipe ? ((WrappedRecipe)ir).getRecipe() : (IRecipe)ir;
 		ItemStack isout = ire.getRecipeOutput();
 		ItemStack[] in = ReikaRecipeHelper.getPermutedRecipeArray(ire);
+		if (in == null)
+			return;
 		//ReikaJavaLibrary.pConsole(Arrays.toString(in)+" to "+isout);
 		boolean noshape = false;
 		if (ire instanceof ShapelessRecipes)
@@ -375,6 +377,8 @@ public final class ReikaGuiAPI extends GuiScreen {
 		IRecipe ire = lr.get(((int)(System.nanoTime()/2000000000))%lr.size());
 		ItemStack isout = ire.getRecipeOutput();
 		ItemStack[] in = ReikaRecipeHelper.getPermutedRecipeArray(ire);
+		if (in == null)
+			return;
 		boolean noshape = false;
 		if (ire instanceof ShapelessRecipes)
 			noshape = true;
