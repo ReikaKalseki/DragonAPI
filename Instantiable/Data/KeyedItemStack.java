@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -17,8 +17,9 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
-public final class KeyedItemStack {
+public final class KeyedItemStack implements Comparable<KeyedItemStack> {
 
 	private final ItemStack item;
 	private final boolean[] enabledCriteria = new boolean[Criteria.list.length];
@@ -230,6 +231,11 @@ public final class KeyedItemStack {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public int compareTo(KeyedItemStack o) {
+		return ReikaItemHelper.comparator.compare(item, o.item);
 	}
 
 }
