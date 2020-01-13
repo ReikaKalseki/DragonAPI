@@ -21,7 +21,7 @@ public class FrameBufferHook extends Patcher {
 	protected void apply(ClassNode cn) {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_71411_J", "runGameLoop", "()V");
 		MethodInsnNode min = ReikaASMHelper.getFirstMethodCallByName(cn, m, FMLForgePlugin.RUNTIME_DEOBF ? "func_147615_c" : "framebufferRender");
-		min.owner = "Reika/DragonAPI/ASM/ASMCalls";
+		min.owner = "Reika/DragonAPI/ASM/ASMCallsClient";
 		min.name = "onRenderFrameBuffer";
 		min.setOpcode(Opcodes.INVOKESTATIC);
 		ReikaASMHelper.addLeadingArgument(min, "Lnet/minecraft/client/shader/Framebuffer;");

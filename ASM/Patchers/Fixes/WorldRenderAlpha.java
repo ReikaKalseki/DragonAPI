@@ -44,7 +44,7 @@ public class WorldRenderAlpha extends Patcher {
 
 
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_78371_b", "startDrawing", "(I)V");
-		m.instructions.insert(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/ASMCalls", "preTessellatorStart", "()V", false));
+		m.instructions.insert(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/ASMCallsClient", "preTessellatorStart", "()V", false));
 	}
 
 }

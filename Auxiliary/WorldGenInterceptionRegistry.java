@@ -120,7 +120,7 @@ public class WorldGenInterceptionRegistry {
 		if (PlanetDimensionHandler.isGalacticWorld(evt.world)) //it is his world anyways, and this just breaks there
 			return;
 		for (InterceptionException e : exceptions)
-			if (e.doesExceptionApply(evt.world, evt.xCoord, evt.yCoord, evt.zCoord))
+			if (e.doesExceptionApply(evt.world, evt.xCoord, evt.yCoord, evt.zCoord, evt.newBlock, evt.newMeta))
 				return;
 		Coordinate c = new Coordinate(evt.xCoord, evt.yCoord, evt.zCoord);
 		data.put(c, new BlockSetData(c, evt.currentBlock, evt.currentMeta, evt.newBlock, evt.newMeta));
@@ -230,7 +230,7 @@ public class WorldGenInterceptionRegistry {
 
 	public static interface InterceptionException {
 
-		public boolean doesExceptionApply(World world, int x, int y, int z);
+		public boolean doesExceptionApply(World world, int x, int y, int z, Block set, int meta);
 
 	}
 

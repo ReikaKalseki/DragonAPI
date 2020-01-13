@@ -27,7 +27,7 @@ public class WorldRenderCallLists extends Patcher {
 	protected void apply(ClassNode cn) {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_72724_a", "renderSortedRenderers", "(IIID)I");
 		MethodInsnNode min = (MethodInsnNode)ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.INVOKEVIRTUAL);
-		min.owner = "Reika/DragonAPI/ASM/ASMCalls";
+		min.owner = "Reika/DragonAPI/ASM/ASMCallsClient";
 		min.name = "onCallChunkRenderLists";
 		min.setOpcode(Opcodes.INVOKESTATIC);
 		ReikaASMHelper.addLeadingArgument(min, ReikaASMHelper.convertClassName(cn, true));

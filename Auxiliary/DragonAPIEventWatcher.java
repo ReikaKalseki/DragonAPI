@@ -76,6 +76,7 @@ import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SettingsEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SkyColorEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.WinterColorsEvent;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
 import Reika.DragonAPI.Interfaces.TileEntity.PlayerBreakHook;
@@ -150,12 +151,12 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void xmasFog(EntityViewRenderEvent.FogColors evt) {
-		if (SpecialDayTracker.instance.loadXmasTextures()) {
+		float f = SpecialDayTracker.instance.getXmasWeatherStrength(Minecraft.getMinecraft().theWorld);
+		if (f > 0) {
 			World world = Minecraft.getMinecraft().theWorld;
 			if (!world.provider.hasNoSky && !PlanetDimensionHandler.isOtherWorld(Minecraft.getMinecraft().theWorld)) {
 				int c0 = ReikaColorAPI.RGBtoHex((int)(evt.red*255), (int)(evt.green*255), (int)(evt.blue*255));
-				int c1 = 0x425766;
-				float f = SpecialDayTracker.instance.getXmasWeatherStrength(Minecraft.getMinecraft().theWorld);
+				int c1 = WinterColorsEvent.getFogColor();
 				f *= world.getSunBrightnessBody(ReikaRenderHelper.getPartialTickTime());
 				int c = ReikaColorAPI.mixColors(c1, c0, f);
 
@@ -169,10 +170,11 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
 	public void xmasSky(SkyColorEvent evt) {
-		if (SpecialDayTracker.instance.loadXmasTextures()) {
+		float f = SpecialDayTracker.instance.getXmasWeatherStrength(Minecraft.getMinecraft().theWorld);
+		if (f > 0) {
 			World world = Minecraft.getMinecraft().theWorld;
 			if (!world.provider.hasNoSky && !PlanetDimensionHandler.isOtherWorld(Minecraft.getMinecraft().theWorld)) {
-				evt.color = ReikaColorAPI.mixColors(0x688499, evt.color, SpecialDayTracker.instance.getXmasWeatherStrength(Minecraft.getMinecraft().theWorld));
+				evt.color = ReikaColorAPI.mixColors(WinterColorsEvent.getSkyColor(), evt.color, f);
 			}
 		}
 	}

@@ -21,19 +21,16 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Auxiliary.ModularLogger;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldChunk;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public final class TileEntityCache<V> {
 
-	private static final String LOGGER_ID = "TileCache";
+	//private static final String LOGGER_ID = "TileCache";
 
 	private final NestedMap<WorldChunk, WorldLocation, V> data = new NestedMap();
 
@@ -42,7 +39,7 @@ public final class TileEntityCache<V> {
 	}
 
 	static {
-		ModularLogger.instance.addLogger(DragonAPIInit.instance, LOGGER_ID);
+		//ModularLogger.instance.addLogger(DragonAPIInit.instance, LOGGER_ID);
 	}
 
 	public V put(World world, int x, int y, int z, V value) {
@@ -208,8 +205,8 @@ public final class TileEntityCache<V> {
 			for (int k = -nzn; k <= nzp; k++) {
 				WorldChunk pos = new WorldChunk(loc.dimensionID, (cx >> 4)+i, (cz >> 4)+k);
 				Collection<WorldLocation> locs = data.getAllKeysIn(pos);
-				if (ModularLogger.instance.isEnabled(LOGGER_ID) && radius > 16)
-					ReikaJavaLibrary.pConsole(loc+" ->@ "+dx+","+dz+" in "+cx+","+cz+"; "+nxn+" > "+nxp+", "+nzn+" > "+nzp+" pos["+pos+"]= "+locs+" of "+data);
+				//if (ModularLogger.instance.isEnabled(LOGGER_ID) && radius > 16)
+				//	ReikaJavaLibrary.pConsole(loc+" ->@ "+dx+","+dz+" in "+cx+","+cz+"; "+nxn+" > "+nxp+", "+nzn+" > "+nzp+" pos["+pos+"]= "+locs+" of "+data);
 				if (locs != null) {
 					ret.addAll(locs);
 				}

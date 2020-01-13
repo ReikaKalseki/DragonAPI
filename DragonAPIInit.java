@@ -573,10 +573,10 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	private void initFlowerSeedsRegistration() {
 		if (ModList.BOP.isLoaded() && BoPBlockHandler.getInstance().initializedProperly()) {
-			for (int i = 0; i < BoPBlockHandler.flower1Types.length; i++) {
+			for (int i = 0; i < BoPBlockHandler.Flower1Types.values().length; i++) {
 				OreDictionary.registerOre("flower", new ItemStack(BoPBlockHandler.getInstance().flower1, 1, i));
 			}
-			for (int i = 0; i < BoPBlockHandler.flower2Types.length; i++) {
+			for (int i = 0; i < BoPBlockHandler.Flower2Types.values().length; i++) {
 				OreDictionary.registerOre("flower", new ItemStack(BoPBlockHandler.getInstance().flower2, 1, i));
 			}
 		}

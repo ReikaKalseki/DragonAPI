@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -19,6 +19,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 
 public class ModifiableBigTree extends WorldGenAbstractTree {
@@ -153,7 +154,8 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 						++j1;
 					}
 					else {
-						this.setBlockAndNotifyAdequately(world, pos2[0], pos2[1], pos2[2], this.getLeafBlock(pos2[0], pos2[1], pos2[2]), this.getLeafMetadata(pos2[0], pos2[1], pos2[2]));
+						BlockKey leaf = this.getLeafBlock(pos2[0], pos2[1], pos2[2]);
+						this.setBlockAndNotifyAdequately(world, pos2[0], pos2[1], pos2[2], leaf.blockID, leaf.metadata);
 						++j1;
 					}
 				}
@@ -161,20 +163,12 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 		}
 	}
 
-	public Block getLogBlock(int x, int y, int z) {
-		return ReikaTreeHelper.OAK.getLogID();
+	protected BlockKey getLogBlock(int x, int y, int z) {
+		return new BlockKey(ReikaTreeHelper.OAK.getLogID(), ReikaTreeHelper.OAK.getBaseLogMeta());
 	}
 
-	public int getLogMetadata(int x, int y, int z) {
-		return ReikaTreeHelper.OAK.getBaseLogMeta();
-	}
-
-	public Block getLeafBlock(int x, int y, int z) {
-		return ReikaTreeHelper.OAK.getLeafID();
-	}
-
-	public int getLeafMetadata(int x, int y, int z) {
-		return ReikaTreeHelper.OAK.getBaseLeafMeta();
+	protected BlockKey getLeafBlock(int x, int y, int z) {
+		return new BlockKey(ReikaTreeHelper.OAK.getLeafID(), ReikaTreeHelper.OAK.getBaseLeafMeta());
 	}
 
 	/**
@@ -254,7 +248,8 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 				pos3[b1] = MathHelper.floor_double(pos1[b1] + i + 0.5D);
 				pos3[b2] = MathHelper.floor_double(pos1[b2] + i * d0 + 0.5D);
 				pos3[b3] = MathHelper.floor_double(pos1[b3] + i * d1 + 0.5D);
-				byte b5 = (byte)this.getLogMetadata(pos3[0], pos3[1], pos3[2]);
+				BlockKey log = this.getLogBlock(pos3[0], pos3[1], pos3[2]);
+				byte b5 = (byte)log.metadata;
 				int k = Math.abs(pos3[0] - pos1[0]);
 				int l = Math.abs(pos3[2] - pos1[2]);
 				int i1 = Math.max(k, l);
@@ -268,7 +263,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 					}
 				}
 
-				this.setBlockAndNotifyAdequately(world, pos3[0], pos3[1], pos3[2], this.getLogBlock(pos3[0], pos3[1], pos3[2]), b5);
+				this.setBlockAndNotifyAdequately(world, pos3[0], pos3[1], pos3[2], log.blockID, b5);
 			}
 		}
 	}

@@ -203,7 +203,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		Block b = world.getBlock(x, y, z);
 		if (b == Blocks.air)
 			return false;
-		return (b.getCollisionBoundingBoxFromPool(world, x, y, z) != null && !BlockProperties.isNonSolid(b));
+		return (b.getCollisionBoundingBoxFromPool(world, x, y, z) != null && b.getMaterial().blocksMovement() && !BlockProperties.isNonSolid(b));
 	}
 
 	/** Tests if a block is a dirt-type one, such that non-farm plants can grow on it. Args: id, metadata, material */

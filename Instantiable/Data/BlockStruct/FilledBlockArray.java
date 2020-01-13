@@ -16,6 +16,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -57,6 +58,15 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 	public FilledBlockArray(World world) {
 		super(world);
+	}
+
+	@Override
+	public void copyTo(BlockArray copy) {
+		super.copyTo(copy);
+		if (copy instanceof FilledBlockArray) {
+			((FilledBlockArray)copy).data.putAll(data);
+			((FilledBlockArray)copy).placementOverrides.putAll(placementOverrides);
+		}
 	}
 
 	public void loadBlock(int x, int y, int z) {
@@ -179,17 +189,34 @@ public class FilledBlockArray extends StructuredBlockArray {
 	}
 
 	public void placeExcept(Coordinate e, int flags) {
-		for (Coordinate c : data.keySet()) {
+		for (Entry<Coordinate, BlockCheck> et : data.entrySet()) {
 			//Block b = this.getBlock(x, y, z);
 			//int meta = this.getBlockMetadata(x, y, z);
 			//world.setBlock(x, y, z, b, meta, 3);
+			Coordinate c = et.getKey();
 			if (!c.equals(e)) {
 				BlockKey po = placementOverrides.get(c);
 				if (po != null) {
 					po.place(world, c.xCoord, c.yCoord, c.zCoord, flags);
 				}
 				else {
-					data.get(c).place(world, c.xCoord, c.yCoord, c.zCoord, flags);
+					et.getValue().place(world, c.xCoord, c.yCoord, c.zCoord, flags);
+				}
+			}
+		}
+	}
+
+	public void placeExcept(int flags, PlacementExclusionHook h) {
+		for (Entry<Coordinate, BlockCheck> et : data.entrySet()) {
+			Coordinate c = et.getKey();
+			BlockCheck bc = et.getValue();
+			if (!h.skipPlacement(c, bc)) {
+				BlockKey po = placementOverrides.get(c);
+				if (po != null) {
+					po.place(world, c.xCoord, c.yCoord, c.zCoord, flags);
+				}
+				else {
+					bc.place(world, c.xCoord, c.yCoord, c.zCoord, flags);
 				}
 			}
 		}
@@ -724,6 +751,12 @@ public class FilledBlockArray extends StructuredBlockArray {
 	public static interface BlockMatchFailCallback {
 
 		public void onBlockFailure(World world, int x, int y, int z, BlockCheck seek);
+
+	}
+
+	public static interface PlacementExclusionHook {
+
+		public boolean skipPlacement(Coordinate c, BlockCheck bc);
 
 	}
 

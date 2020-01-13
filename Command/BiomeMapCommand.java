@@ -60,8 +60,14 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 	public static final int PACKET_COMPILE = 2048; //packet size in bytes = 4*(1+n*3)
 
+	private static BiomeMapCommand instance;
+
 	private static final Random rand = new Random();
 	private final static HashMap<Integer, BiomeMap> activeMaps = new HashMap();
+
+	public BiomeMapCommand() {
+		instance = this;
+	}
 
 	@Override
 	public void processCommand(ICommandSender ics, String[] args) {
@@ -112,10 +118,18 @@ public class BiomeMapCommand extends DragonCommandBase {
 			set.add(new WorldBiomes(ep.worldObj));
 
 		for (BiomeProvider bp : set)
-			this.generateMap(bp, ep, start, x, z, range, res, grid, fullGrid);
+			this.generateMap(bp, ep, start, x, z, range, res, grid, fullGrid, null);
 	}
 
-	private void generateMap(BiomeProvider bp, EntityPlayerMP ep, long start, int x, int z, int range, int res, int grid, boolean fullGrid) {
+	public static void triggerBiomeMap(EntityPlayerMP ep, int x, int z, int range, int res, int grid, MapCompleteCallback call) {
+		instance.generateMap(new WorldBiomes(ep.worldObj), ep, System.currentTimeMillis(), x, z, range, res, grid, false, call);
+	}
+
+	public static void triggerBiomeMap(EntityPlayerMP ep, int range, int res, int grid) {
+		instance.processCommand(ep, new String[] {String.valueOf(range), String.valueOf(res), String.valueOf(grid)});
+	}
+
+	private void generateMap(BiomeProvider bp, EntityPlayerMP ep, long start, int x, int z, int range, int res, int grid, boolean fullGrid, MapCompleteCallback callback) {
 		int hash = rand.nextInt();
 
 		int dim = bp instanceof WorldBiomes ? 0 : ep.worldObj.provider.dimensionId;
@@ -174,6 +188,10 @@ public class BiomeMapCommand extends DragonCommandBase {
 				dat.clear();
 				dat.add(hash);
 			}
+		}
+		if (callback != null) {
+			callback.onComplete();
+			callback = null;
 		}
 		if (DragonAPICore.isSinglePlayer()) {
 			this.finishCollectingAndMakeImage(hash);
@@ -468,6 +486,12 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 			return c;
 		}
+
+	}
+
+	public static interface MapCompleteCallback {
+
+		public void onComplete();
 
 	}
 

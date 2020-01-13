@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -18,6 +18,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenTrees;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 
 
@@ -97,7 +98,8 @@ public class ModifiableSmallTrees extends WorldGenTrees {
 									Block block1 = world.getBlock(i2, k1, k2);
 
 									if (block1.isAir(world, i2, k1, k2) || block1.isLeaves(world, i2, k1, k2)) {
-										this.setBlockAndNotifyAdequately(world, i2, k1, k2, this.getLeafBlock(i2, k1, k2), this.getLeafMetadata(i2, k1, k2));
+										BlockKey leaf = this.getLeafBlock(i2, k1, k2);
+										this.setBlockAndNotifyAdequately(world, i2, k1, k2, leaf.blockID, leaf.metadata);
 									}
 								}
 							}
@@ -108,7 +110,8 @@ public class ModifiableSmallTrees extends WorldGenTrees {
 						block = world.getBlock(x, y+k1, z);
 
 						if (block.isAir(world, x, y+k1, z) || block.isLeaves(world, x, y+k1, z)) {
-							this.setBlockAndNotifyAdequately(world, x, y+k1, z, this.getLogBlock(x, y+k1, z), this.getLogMetadata(x, y+k1, z));
+							BlockKey log = this.getLogBlock(x, y+k1, z);
+							this.setBlockAndNotifyAdequately(world, x, y+k1, z, log.blockID, log.metadata);
 						}
 					}
 
@@ -124,20 +127,12 @@ public class ModifiableSmallTrees extends WorldGenTrees {
 		}
 	}
 
-	protected Block getLogBlock(int x, int y, int z) {
-		return ReikaTreeHelper.OAK.getLogID();
+	protected BlockKey getLogBlock(int x, int y, int z) {
+		return new BlockKey(ReikaTreeHelper.OAK.getLogID(), ReikaTreeHelper.OAK.getBaseLogMeta());
 	}
 
-	protected int getLogMetadata(int x, int y, int z) {
-		return ReikaTreeHelper.OAK.getBaseLogMeta();
-	}
-
-	protected Block getLeafBlock(int x, int y, int z) {
-		return ReikaTreeHelper.OAK.getLeafID();
-	}
-
-	protected int getLeafMetadata(int x, int y, int z) {
-		return ReikaTreeHelper.OAK.getBaseLeafMeta();
+	protected BlockKey getLeafBlock(int x, int y, int z) {
+		return new BlockKey(ReikaTreeHelper.OAK.getLeafID(), ReikaTreeHelper.OAK.getBaseLeafMeta());
 	}
 
 }

@@ -16,17 +16,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.multiplayer.WorldClient;
-import net.minecraft.client.renderer.EntityRenderer;
-import net.minecraft.client.renderer.RenderGlobal;
-import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
@@ -48,64 +42,23 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
-import Reika.DragonAPI.Auxiliary.Trackers.SpecialDayTracker;
-import Reika.DragonAPI.Extras.ReikaShader;
-import Reika.DragonAPI.IO.Shaders.ShaderRegistry;
-import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderDomain;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Worldgen.VillageBuilding.PerVillageWeight;
 import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
 import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Interfaces.Item.MetadataSpecificTrade;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
 
-	@SideOnly(Side.CLIENT)
-	public static void addRainParticlesAndSound(EntityRenderer er) {
-		if (SpecialDayTracker.instance.loadXmasTextures())
-			return;
-		if (SpecialDayTracker.instance.getXmasWeatherStrength(Minecraft.getMinecraft().theWorld) >= 0.5)
-			return;
-		if (DragonOptions.NORAINFX.getState())
-			return;
-		er.addRainParticles();
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static boolean shouldRenderRainInsteadOfSnow(WorldClient world, BiomeGenBase biome, int x, int y, int z, float biomeTemp, int precipHeight) {
-		if (SpecialDayTracker.instance.loadXmasTextures())
-			return false;
-		if (SpecialDayTracker.instance.getXmasWeatherStrength(world) >= 0.5)
-			return false;
-		return world.getWorldChunkManager().getTemperatureAtHeight(biomeTemp, precipHeight) >= 0.15F;
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static void onCallChunkRenderLists(RenderGlobal rg, int pass, double ptick) {
-		rg.renderAllRenderLists(pass, ptick);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static void onRenderWorld(EntityRenderer er, float ptick, long systime) {
-		er.renderWorld(ptick, systime);
-		Minecraft mc = Minecraft.getMinecraft();
-		ReikaShader.instance.render(mc);
-		ShaderRegistry.runShaderDomain(mc.getFramebuffer(), mc.displayWidth, mc.displayHeight, ShaderDomain.GLOBALNOGUI);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static void onRenderFrameBuffer(Framebuffer fb, int w, int h) {
-		ShaderRegistry.runShaderDomain(fb, w, h, ShaderDomain.GLOBAL);
-		ReikaRenderHelper.setRenderTarget(null);
-		fb.framebufferRender(w, h);
+	public static Object getUnregisteredOreStackIdentification(ItemStack is) {
+		if (is.getItem() == null)
+			return "Stack of null";
+		return "toString() = "+is+"; ID = "+Item.getIdFromItem(is.getItem())+"; class = "+is.getItem().getClass();
 	}
 
 	public static HashMap<Character, Object> parseItemMappings(int i, boolean ore, Object[] in) {
@@ -165,11 +118,6 @@ public class ASMCalls {
 
 	private static boolean matchItem(ItemStack a, ItemStack b) {
 		return a.getItem() == b.getItem() && b.stackSize >= a.stackSize && ((a.getItem() instanceof MetadataSpecificTrade || b.getItem() instanceof MetadataSpecificTrade) ? a.getItemDamage() == b.getItemDamage() : true);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static void preTessellatorStart() {
-		GL11.glAlphaFunc(GL11.GL_GEQUAL, 2/255F);
 	}
 
 	public static List buildVillageStructureList(Random rand, int val, MapGenVillage.Start s) {

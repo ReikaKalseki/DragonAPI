@@ -44,6 +44,8 @@ public enum ModList implements ModEntry, Dependency {
 	CHROMATICRAFT("ChromatiCraft", "Reika.ChromatiCraft.Registry.ChromaBlocks", "Reika.ChromatiCraft.Registry.ChromaItems"),
 	TERRITORYZONE("TerritoryZone"),
 	CONDENSEDORES("CondensedOres"),
+	TREECLIMBING("TreeClimbing"),
+	ARCHISECTIONS("ArchiSections"),
 	LOOTTWEAKS("LootTweaks"),
 	BUILDCRAFT("BuildCraft|Core", "buildcraft.BuildCraftCore"),
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),

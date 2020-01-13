@@ -17,6 +17,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -567,6 +568,10 @@ public class ReikaFileReader extends DragonAPICore {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	public static void copyFile(File in, File out, int size) throws FileReadException, FileWriteException, FileNotFoundException {
+		copyFile(new FileInputStream(in), new FileOutputStream(out), size, null);
 	}
 
 	public static void copyFile(InputStream in, OutputStream out, int size) throws FileReadException, FileWriteException {

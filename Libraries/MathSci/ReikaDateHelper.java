@@ -113,7 +113,24 @@ public class ReikaDateHelper {
 	}
 
 	public static boolean isDateWithin(int month, int day, int month1, int day1, int month2, int day2) {
-		return month >= month1 && month <= month2 && day >= day1 && day <= day2;
+		if (month1 > month2) { //spans the new year
+			month2 += 12;
+			month += 12;
+		}
+		if (month < month1 || month > month2)
+			return false;
+		if (month > month1 && month < month2) {
+			return true;
+		}
+		else if (month == month1) {
+			return day >= day1;
+		}
+		else if (month == month2) {
+			return day <= day2;
+		}
+		else {
+			return false;
+		}
 	}
 
 }

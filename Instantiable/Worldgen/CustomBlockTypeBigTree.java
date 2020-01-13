@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -29,22 +29,12 @@ public final class CustomBlockTypeBigTree extends ModifiableBigTree {
 	}
 
 	@Override
-	public Block getLogBlock(int x, int y, int z) {
-		return wood.blockID;
+	public BlockKey getLogBlock(int x, int y, int z) {
+		return wood;
 	}
 
 	@Override
-	public int getLogMetadata(int x, int y, int z) {
-		return wood.metadata;
-	}
-
-	@Override
-	public Block getLeafBlock(int x, int y, int z) {
-		return leaves.blockID;
-	}
-
-	@Override
-	public int getLeafMetadata(int x, int y, int z) {
-		return leaves.metadata;
+	public BlockKey getLeafBlock(int x, int y, int z) {
+		return leaves;
 	}
 }

@@ -42,7 +42,7 @@ public class SnowRainRenderChoice extends Patcher {
 		li.add(ReikaASMHelper.copyInstruction(z));
 		li.add(ReikaASMHelper.copyInstruction(temp));
 		li.add(ReikaASMHelper.copyInstruction(height));
-		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/ASMCalls", "shouldRenderRainInsteadOfSnow", "(Lnet/minecraft/client/multiplayer/WorldClient;Lnet/minecraft/world/biome/BiomeGenBase;IIIFI)Z", false));
+		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/ASMCallsClient", "shouldRenderRainInsteadOfSnow", "(Lnet/minecraft/client/multiplayer/WorldClient;Lnet/minecraft/world/biome/BiomeGenBase;IIIFI)Z", false));
 
 		JumpInsnNode jump = (JumpInsnNode)ReikaASMHelper.getFirstOpcodeAfter(m.instructions, m.instructions.indexOf(min), Opcodes.IFLT);
 		ReikaASMHelper.deleteFrom(cn, m.instructions, world, jump.getPrevious());

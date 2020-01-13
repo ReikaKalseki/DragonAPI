@@ -62,6 +62,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
+import appeng.api.recipes.IIngredient;
 import appeng.api.storage.data.IAEItemStack;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -218,7 +219,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				shapedAEHeight = aeShapedClass.getDeclaredField("height");
 				shapedAEHeight.setAccessible(true);
 
-				shapelessAEInput = ic2ShapelessClass.getDeclaredField("input");
+				shapelessAEInput = aeShapelessClass.getDeclaredField("input");
 				shapelessAEInput.setAccessible(true);
 			}
 			catch (Exception e) {
@@ -681,6 +682,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 						isin[i] = getRecipeItemStacks((List)o, client);
 					else if (o instanceof IAEItemStack)
 						isin[i] = getRecipeItemStack(((IAEItemStack)o).getItemStack(), client);
+					else if (o instanceof IIngredient)
+						isin[i] = getRecipeItemStacks(Arrays.asList(((IIngredient)o).getItemStackSet()), client);
 					else {
 						DragonAPICore.log("Could not parse ingredient type "+o.getClass()+" with value "+o.toString());
 						isin[i] = Arrays.asList(new ItemStack(Blocks.fire));
@@ -704,6 +707,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 						isin[i] = getRecipeItemStacks((List)o, client);
 					else if (o instanceof IAEItemStack)
 						isin[i] = getRecipeItemStack(((IAEItemStack)o).getItemStack(), client);
+					else if (o instanceof IIngredient)
+						isin[i] = getRecipeItemStacks(Arrays.asList(((IIngredient)o).getItemStackSet()), client);
 					else {
 						DragonAPICore.log("Could not parse ingredient type "+o.getClass()+" with value "+o.toString());
 						isin[i] = Arrays.asList(new ItemStack(Blocks.fire));
@@ -1815,6 +1820,24 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	private static Object parseAEIngredient(Object o) {
 		if (o instanceof IAEItemStack) {
 			return ((IAEItemStack)o).getItemStack();
+		}
+		if (o instanceof IIngredient) {
+			IIngredient ii = (IIngredient)o;
+			ItemStack[] is;
+			try {
+				is = ii.getItemStackSet();
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return o;
+			}
+			if (is.length == 1) {
+				return is[0];
+			}
+			else {
+				List<ItemStack> li = Arrays.asList(is);
+				return getOreNameForCollection(li);
+			}
 		}
 		return o;
 	}

@@ -174,6 +174,8 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 				BlockArray next = new BlockArray();
 				for (int i = 0; i < start.getSize() && !isDone; i++) {
 					Coordinate c = start.getNthBlock(i);
+					if (excluded.contains(c))
+						continue;
 					int x = c.xCoord;
 					int y = c.yCoord;
 					int z = c.zCoord;

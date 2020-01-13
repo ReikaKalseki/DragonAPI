@@ -12,6 +12,7 @@ package Reika.DragonAPI.Libraries.World;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -56,6 +57,24 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	private static final HashMap<String, BiomeGenBase> nameMap = new HashMap();
 
 	private static final HashMap<BiomeGenBase, BiomeTemperatures> temperatures = new HashMap();
+
+	public static final Comparator<BiomeGenBase> biomeIDSorter = new Comparator<BiomeGenBase>() {
+
+		@Override
+		public int compare(BiomeGenBase o1, BiomeGenBase o2) {
+			return Integer.compare(o1.biomeID, o2.biomeID);
+		}
+
+	};
+
+	public static final Comparator<BiomeGenBase> biomeNameSorter = new Comparator<BiomeGenBase>() {
+
+		@Override
+		public int compare(BiomeGenBase o1, BiomeGenBase o2) {
+			return o1.biomeName.compareToIgnoreCase(o2.biomeName);
+		}
+
+	};
 
 	static {
 		addChildBiome(BiomeGenBase.desert, BiomeGenBase.desertHills);

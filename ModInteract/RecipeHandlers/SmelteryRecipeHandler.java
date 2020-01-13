@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -11,6 +11,7 @@ package Reika.DragonAPI.ModInteract.RecipeHandlers;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.block.Block;
@@ -37,6 +38,7 @@ public class SmelteryRecipeHandler {
 	private static Method addCasting;
 	private static Method addBlockCasting;
 	private static Method getAllRecipes;
+	private static Method addAlloying;
 	private static Object castingInstance;
 	private static Object castingBasinInstance;
 	private static Object smelteryInstance;
@@ -61,6 +63,12 @@ public class SmelteryRecipeHandler {
 		if (fluid == null)
 			throw new MisuseException("You cannot melt items into a null fluid!");
 		addMelting(is, render, temp, new FluidStack(fluid, fluidAmount));
+	}
+
+	public static void addBlockMelting(ItemStack is, int temp, Fluid fluid) {
+		if (fluid == null)
+			throw new MisuseException("You cannot melt items into a null fluid!");
+		addMelting(is, is, temp, new FluidStack(fluid, INGOT_AMOUNT*9));
 	}
 
 	public static void addMelting(ItemStack is, ItemStack render, int temp, FluidStack fluid) {
@@ -141,6 +149,12 @@ public class SmelteryRecipeHandler {
 		addBlockCasting(block, new FluidStack(fluid, fluidAmount), delay);
 	}
 
+	public static void addBlockCasting(ItemStack block, Fluid fluid, int delay) {
+		if (fluid == null)
+			throw new MisuseException("You cannot cast blocks from a null fluid!");
+		addBlockCasting(block, new FluidStack(fluid, INGOT_AMOUNT*9), delay);
+	}
+
 	public static void addBlockCasting(ItemStack block, FluidStack fluid, int delay) {
 		if (!(block.getItem() instanceof ItemBlock))
 			throw new MisuseException("You cannot cast a non-block as a block!");
@@ -152,6 +166,19 @@ public class SmelteryRecipeHandler {
 		}
 		catch (Exception e) {
 			DragonAPICore.logError("Could not add Block Casting Recipe for "+fluidToString(fluid)+" to "+block+"!");
+			e.printStackTrace();
+		}
+	}
+
+	public static void addAlloying(FluidStack out, FluidStack... in) {
+		if (!isLoaded)
+			return;
+		try {
+			addAlloying.invoke(smelteryInstance, out, in);
+			DragonAPICore.log("Adding alloying of "+Arrays.toString(in)+" to "+fluidToString(out)+".");
+		}
+		catch (Exception e) {
+			DragonAPICore.logError("Could not add alloying of "+Arrays.toString(in)+" to "+fluidToString(out)+".");
 			e.printStackTrace();
 		}
 	}
@@ -245,6 +272,7 @@ public class SmelteryRecipeHandler {
 				smelteryInstance = inst.get(null);
 
 				addMelting = smeltery.getMethod("addMelting", ItemStack.class, Block.class, int.class, int.class, FluidStack.class);
+				addAlloying = smeltery.getMethod("addAlloyMixing", FluidStack.class, FluidStack[].class);
 
 				Class casting = Class.forName("tconstruct.library.crafting.LiquidCasting");
 				addCasting = casting.getMethod("addCastingRecipe", ItemStack.class, FluidStack.class, ItemStack.class, int.class);

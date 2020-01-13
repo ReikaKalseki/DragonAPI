@@ -23,7 +23,9 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaThermoHelper;
 
 public class ReikaRailCraftHelper extends DragonAPICore {
 
-	private static Class tileClass;
+	private static Class sharedClass;
+	private static Class solidClass;
+	private static Class fluidClass;
 	private static Field boiler;
 	//private static Field lit;
 	private static Field boilerBurnTime;
@@ -60,16 +62,27 @@ public class ReikaRailCraftHelper extends DragonAPICore {
 	}
 
 	public static boolean isFirebox(TileEntity te) {
-		return te != null && te.getClass() == tileClass;
+		return te != null && sharedClass.isAssignableFrom(te.getClass());
+	}
+
+	public static boolean isSolidFirebox(TileEntity te) {
+		return te != null && solidClass == te.getClass();
+	}
+
+	public static boolean isFluidFirebox(TileEntity te) {
+		return te != null && fluidClass == te.getClass();
 	}
 
 	static {
 		if (ModList.RAILCRAFT.isLoaded()) {
 			try {
-				tileClass = Class.forName("mods.railcraft.common.blocks.machine.beta.TileBoilerFirebox");
-				boiler = tileClass.getDeclaredField("boiler");
+				sharedClass = Class.forName("mods.railcraft.common.blocks.machine.beta.TileBoilerFirebox");
+				boiler = sharedClass.getDeclaredField("boiler");
 				boiler.setAccessible(true);
 				//lit = tileClass.getDeclaredField("wasLit");
+
+				solidClass = Class.forName("mods.railcraft.common.blocks.machine.beta.TileBoilerFireboxSolid");
+				fluidClass = Class.forName("mods.railcraft.common.blocks.machine.beta.TileBoilerFireboxFluid");
 
 				Class c2 = Class.forName("mods.railcraft.common.util.steam.SteamBoiler");
 				boilerBurnTime = c2.getDeclaredField("burnTime");

@@ -27,7 +27,7 @@ public class WorldRenderHook extends Patcher {
 			if (ain.getOpcode() == Opcodes.INVOKEVIRTUAL) {
 				MethodInsnNode min = (MethodInsnNode)ain;
 				if (min.name.equals(seek)) {
-					min.owner = "Reika/DragonAPI/ASM/ASMCalls";
+					min.owner = "Reika/DragonAPI/ASM/ASMCallsClient";
 					min.name = "onRenderWorld";
 					min.setOpcode(Opcodes.INVOKESTATIC);
 					ReikaASMHelper.addLeadingArgument(min, ReikaASMHelper.convertClassName(cn, true));

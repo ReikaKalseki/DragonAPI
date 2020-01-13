@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 
 public class BoPBlockHandler extends ModHandlerBase {
 
@@ -32,55 +33,101 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 	public final Block foliage;
 
-	public static final String[] flower1Types = {
-		"clover",
-		"swampflower",
-		"deadbloom",
-		"glowflower",
-		"hydrangea",
-		"cosmos",
-		"daffodil",
-		"wildflower",
-		"violet",
-		"anemone",
-		"lilyflower",
-		"enderlotus",
-		"bromeliad",
-		"eyebulbbottom",
-		"eyebulbtop",
-		"dandelion"
-	};
+	private final Block[] basicLeaves = new Block[4];
+	private final Block[] colorLeaves = new Block[2];
 
-	public static final String[] flower2Types = {
-		"hibiscus",
-		"lilyofthevalley",
-		"burningblossom",
-		"lavender",
-		"goldenrod",
-		"bluebells",
-		"minersdelight",
-		"icyiris",
-		"rose"
-	};
+	public static enum Flower1Types {
+		clover,
+		swampflower,
+		deadbloom,
+		glowflower,
+		hydrangea,
+		cosmos,
+		daffodil,
+		wildflower,
+		violet,
+		anemone,
+		lilyflower,
+		enderlotus,
+		bromeliad,
+		eyebulbbottom,
+		eyebulbtop,
+		dandelion
+	}
 
-	public static final String[] foliageTypes = {
-		"duckweed",
-		"shortgrass",
-		"mediumgrass",
-		"flaxbottom",
-		"bush",
-		"sprout",
-		"flaxtop",
-		"poisonivy",
-		"berrybush",
-		"shrub",
-		"wheatgrass",
-		"dampgrass",
-		"koru",
-		"cloverpatch",
-		"leafpile",
-		"deadleafpile"
-	};
+	public static enum Flower2Types {
+		hibiscus,
+		lilyofthevalley,
+		burningblossom,
+		lavender,
+		goldenrod,
+		bluebells,
+		minersdelight,
+		icyiris,
+		rose
+	}
+
+	public static enum FoliageTypes {
+		duckweed,
+		shortgrass,
+		mediumgrass,
+		flaxbottom,
+		bush,
+		sprout,
+		flaxtop,
+		poisonivy,
+		berrybush,
+		shrub,
+		wheatgrass,
+		dampgrass,
+		koru,
+		cloverpatch,
+		leafpile,
+		deadleafpile
+	}
+
+	public static enum LeafTypes {
+		yellowautumn(false, 1, 0),
+		bamboo(false, 1, 1),
+		magic(false, 1, 2),
+		dark(false, 1, 3),
+		dead(false, 2, 0),
+		fir(false, 2, 1),
+		ethereal(false, 2, 2),
+		orangeautumn(false, 2, 3),
+		origin(false, 3, 0),
+		pinkcherry(false, 3, 1),
+		maple(false, 3, 2),
+		whitecherry(false, 3, 3),
+		hellbark(false, 4, 0),
+		jacaranda(false, 4, 1),
+
+		//colorized
+		sacredoak(true, 1, 0),
+		mangrove(true, 1, 1),
+		palm(true, 1, 2),
+		redwood(true, 1, 3),
+		willow(true, 2, 0),
+		pine(true, 2, 1),
+		mahogany(true, 2, 2),
+		flowering(true, 2, 3)
+		;
+
+		private final boolean isColorized;
+		private final int blockIndex;
+		private final int blockMeta;
+
+		private LeafTypes(boolean color, int idx, int meta) {
+			isColorized = color;
+			blockIndex = idx-1;
+			blockMeta = meta;
+		}
+
+		public BlockKey getBlock() {
+			Block b = isColorized ? instance.colorLeaves[blockIndex] : instance.basicLeaves[blockIndex];
+			return new BlockKey(b, blockMeta);
+		}
+	}
 
 	private BoPBlockHandler() {
 		super();
@@ -118,6 +165,16 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 				Field fol = blocks.getField("foliage");
 				idfoliage = ((Block)fol.get(null));
+
+				for (int i = 0; i < basicLeaves.length; i++) {
+					Field leaf = blocks.getField("leaves"+(i+1));
+					basicLeaves[i] = ((Block)leaf.get(null));
+				}
+
+				for (int i = 0; i < basicLeaves.length; i++) {
+					Field leaf = blocks.getField("colorizedLeaves"+(i+1));
+					colorLeaves[i] = ((Block)leaf.get(null));
+				}
 			}
 			catch (NoSuchFieldException e) {
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());

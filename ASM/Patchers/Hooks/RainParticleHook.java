@@ -21,7 +21,7 @@ public class RainParticleHook extends Patcher {
 	protected void apply(ClassNode cn) {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_78464_a", "updateRenderer", "()V");
 		MethodInsnNode min = ReikaASMHelper.getFirstMethodCallByName(cn, m, FMLForgePlugin.RUNTIME_DEOBF ? "func_78484_h" : "addRainParticles");
-		min.owner = "Reika/DragonAPI/ASM/ASMCalls";
+		min.owner = "Reika/DragonAPI/ASM/ASMCallsClient";
 		min.name = "addRainParticlesAndSound";
 		min.setOpcode(Opcodes.INVOKESTATIC);
 		ReikaASMHelper.addLeadingArgument(min, ReikaASMHelper.convertClassName(cn, true));
