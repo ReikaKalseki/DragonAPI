@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
@@ -223,7 +224,15 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		boolean removeTop = !args[0].startsWith("&");
 		if (!removeTop)
 			args[0] = args[0].substring(1);
-		Opcodes o = Opcodes.valueOf(args[0].toUpperCase(Locale.ENGLISH));
+		Opcodes o = null;
+		try {
+			o = Opcodes.valueOf(args[0].toUpperCase(Locale.ENGLISH));
+		}
+		catch (Exception e) {
+			this.error(ics, "No such opcode: "+args[0]);
+			this.sendChatToSender(ics, "Valid opcodes: "+Arrays.toString(Opcodes.values()));
+			return;
+		}
 		args = Arrays.copyOfRange(args, 1, args.length);
 		if (program != null) {
 			program.instructions.add(new ByteCodeInstruction(o, args));
@@ -560,6 +569,8 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		GETARRAY(),
 		SETARRAY(),
 		DECOMPOSE(),
+		CONCAT(),
+		ITERATE(),
 		OUTPUT(),
 		WRITE(),
 		FLUSH();
@@ -627,6 +638,17 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 				}
 				case LDC:
 					s.push(cmd.parseObject(args[0]));
+					break;
+				case CONCAT:
+					String s2 = String.valueOf(s.pop());
+					String s1 = String.valueOf(s.pop());
+					s.push(s1+s2);
+					break;
+				case ITERATE:
+					Collection list = (Collection)s.pop();
+					for (Object o : list) {
+
+					}
 					break;
 				case NEW: {
 					Class c = cmd.findClass(args[0]);

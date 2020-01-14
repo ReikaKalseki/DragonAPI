@@ -276,7 +276,7 @@ public enum ModList implements ModEntry, Dependency {
 	}
 
 	public boolean isReikasMod() {
-		return this.ordinal() <= CONDENSEDORES.ordinal();
+		return this.ordinal() <= ARCHISECTIONS.ordinal();
 	}
 
 	public void registerHandler(ModHandlerBase h, String id) {

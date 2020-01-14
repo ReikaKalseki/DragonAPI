@@ -921,4 +921,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 		return -1;
 	}
+
+	public static void setStackItem(ItemStack is, Item item, int meta) {
+		is.func_150996_a(item); //setItem
+		is.setItemDamage(meta);
+	}
 }
