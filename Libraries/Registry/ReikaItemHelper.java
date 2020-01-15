@@ -926,4 +926,24 @@ public final class ReikaItemHelper extends DragonAPICore {
 		is.func_150996_a(item); //setItem
 		is.setItemDamage(meta);
 	}
+
+	public static boolean isOreIngot(ItemStack is) {
+		for (int id : OreDictionary.getOreIDs(is)) {
+			String s = OreDictionary.getOreName(id);
+			if (s.startsWith("ingot")) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	public static boolean isOreDust(ItemStack is) {
+		for (int id : OreDictionary.getOreIDs(is)) {
+			String s = OreDictionary.getOreName(id);
+			if (s.startsWith("dust")) {
+				return true;
+			}
+		}
+		return false;
+	}
 }

@@ -19,8 +19,10 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
+import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.Auxiliary.Trackers.WorldgenProfiler;
@@ -28,6 +30,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Event.ChunkGenerationEvent;
 import Reika.DragonAPI.Instantiable.Event.ChunkPopulationEvent;
 import Reika.DragonAPI.Instantiable.Event.ChunkRequestEvent;
+import Reika.DragonAPI.Instantiable.Event.ChunkRequestEvent.ChunkRequestWatcher;
 import Reika.DragonAPI.Instantiable.Event.SetBlockEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.ModInteract.DeepInteract.PlanetDimensionHandler;
@@ -37,7 +40,7 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.registry.GameRegistry;
 
 
-public class WorldGenInterceptionRegistry {
+public class WorldGenInterceptionRegistry implements ChunkRequestWatcher {
 
 	public static final WorldGenInterceptionRegistry instance = new WorldGenInterceptionRegistry();
 
@@ -58,6 +61,7 @@ public class WorldGenInterceptionRegistry {
 
 	private WorldGenInterceptionRegistry() {
 		MinecraftForge.EVENT_BUS.register(this);
+		ChunkRequestEvent.addListener(this);
 	}
 
 	public void addWatcher(BlockSetWatcher w) {
@@ -76,12 +80,10 @@ public class WorldGenInterceptionRegistry {
 		exceptions.add(e);
 	}
 
-	@SubscribeEvent
-	public void chunkRequested(ChunkRequestEvent evt) {
+	@Override
+	public void onChunkRequested(WorldServer w, ChunkProviderServer p, int cx2, int cz2) {
 		if (WorldgenProfiler.profilingEnabled()) {
-			int cx2 = evt.chunkX;
-			int cz2 = evt.chunkZ;
-			boolean gen = !evt.chunkIsLoaded() && !evt.chunkExistsOnDisk();
+			boolean gen = !ChunkRequestEvent.chunkIsLoaded() && !ChunkRequestEvent.chunkExistsOnDisk();
 			if (gen) {
 				WorldgenProfiler.startChunk(cx2, cz2);
 			}
@@ -95,7 +97,7 @@ public class WorldGenInterceptionRegistry {
 					WorldgenProfiler.onChunkSpills(spiller, cx, cz, cx2, cz2, time, gen);
 				}
 				//long dur = System.nanoTime()-time;
-				//Wor													ldgenProfiler.subtractTime(spiller, dur);
+				//WorldgenProfiler.subtractTime(spiller, dur);
 			}
 		}
 	}

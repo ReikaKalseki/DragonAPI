@@ -107,6 +107,8 @@ public class ReikaRailCraftHelper extends DragonAPICore {
 		private final long tileID;
 
 		public double temperature;
+		private boolean isBurning;
+		private double burnTime;
 
 		public FireboxWrapper(TileEntity te) {
 			if (!isFirebox(te))
@@ -122,12 +124,19 @@ public class ReikaRailCraftHelper extends DragonAPICore {
 			try {
 				Object obj = boiler.get(te);
 				temperature = boilerHeat.getDouble(obj);
+				burnTime = boilerBurnTime.getDouble(obj);
+				isBurning = boilerBurning.getBoolean(obj);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Error running Firebox Handling!");
 				e.printStackTrace();
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.RAILCRAFT, e);
 			}
+		}
+
+		public void setBurning(int ticks) {
+			isBurning = true;
+			burnTime = Math.max(ticks, burnTime);
 		}
 
 		/** Call this to write the data to the TileEntity. */
@@ -137,10 +146,8 @@ public class ReikaRailCraftHelper extends DragonAPICore {
 			try {
 				Object obj = boiler.get(te);
 				boilerHeat.setDouble(obj, temperature);
-				boilerBurning.setBoolean(obj, temperature > 20);
-				if (temperature > 20) {
-					boilerBurnTime.setDouble(obj, 20);
-				}
+				boilerBurning.setBoolean(obj, isBurning);
+				boilerBurnTime.setDouble(obj, burnTime);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Error running Firebox Handling!");

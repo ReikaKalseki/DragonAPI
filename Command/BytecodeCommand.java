@@ -241,12 +241,10 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		}
 		else {
 			try {
-				o.call(this, ics, args, this.getStack(ics), removeTop);
-				for (EntityPlayer ep : ReikaPlayerAPI.getOps()) {
-					if (ep != ics) {
-						ReikaChatHelper.sendChatToPlayer(ep, "Player "+ics+" ran bytecode command: "+Arrays.toString(args));
-					}
-				}
+				Stack s = this.getStack(ics);
+				o.call(this, ics, args, s, removeTop);
+				if (DragonOptions.NOTIFYBYTEEXEC.getState())
+					this.notifyOtherAdmins(ics, o, s, args);
 				if (o != Opcodes.OUTPUT)
 					Opcodes.OUTPUT.call(this, ics, null, this.getStack(ics), false);
 			}
@@ -274,6 +272,14 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 			catch (Exception e) {
 				this.error(ics, "Could not execute: "+e);
 				e.printStackTrace();
+			}
+		}
+	}
+
+	private void notifyOtherAdmins(ICommandSender ics, Opcodes o, Stack s, String[] args) {
+		for (EntityPlayer ep : ReikaPlayerAPI.getOps()) {
+			if (ep != ics) {
+				ReikaChatHelper.sendChatToPlayer(ep, "Player "+ics+" ran bytecode command: "+o.name()+" args "+Arrays.toString(args)+" resulting in stack "+s);
 			}
 		}
 	}

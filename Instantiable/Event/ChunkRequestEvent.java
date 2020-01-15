@@ -1,51 +1,64 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
+import java.util.ArrayList;
+
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.ChunkProviderServer;
-import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
-
-import cpw.mods.fml.common.eventhandler.Event;
 
 
 /** This is fired BEFORE the chunk is actually provided (and generated/loaded from disk if necessary! DO NOT attempt to access
  * the chunk's data! */
-public class ChunkRequestEvent extends Event {
+public class ChunkRequestEvent {
 
-	public final WorldServer world;
-	private final ChunkProviderServer provider;
-	public final int chunkX;
-	public final int chunkZ;
+	private static final ArrayList<ChunkRequestWatcher> listeners = new ArrayList();
 
-	public ChunkRequestEvent(WorldServer world, ChunkProviderServer p, int x, int z) {
-		chunkX = x;
-		chunkZ = z;
-		this.world = world;
-		provider = p;
+	private static WorldServer world;
+	private static ChunkProviderServer provider;
+	private static int chunkX;
+	private static int chunkZ;
+
+	public static void addListener(ChunkRequestWatcher l) {
+		listeners.add(l);
 	}
 
-	public boolean chunkIsLoaded() {
+	public static boolean chunkIsLoaded() {
 		return provider.loadedChunkHashMap.getValueByKey(ChunkCoordIntPair.chunkXZ2Int(chunkX, chunkZ)) != null;
 	}
 
 	/** i.e. does NOT need to be generated/decorated. */
-	public boolean chunkExistsOnDisk() {
+	public static boolean chunkExistsOnDisk() {
 		return ReikaWorldHelper.isChunkGeneratedChunkCoords(world, chunkX, chunkZ);
 	}
 
-	public static void fire(WorldServer world, ChunkProviderServer provider, int x, int z) {
-		MinecraftForge.EVENT_BUS.post(new ChunkRequestEvent(world, provider, x, z));
+	public static void fire(WorldServer w, ChunkProviderServer p, int x, int z) {
+		world = w;
+		provider = p;
+		chunkX = x;
+		chunkZ = z;
+		for (ChunkRequestWatcher l : listeners) {
+			l.onChunkRequested(w, p, x, z);
+		}
+		world = null;
+		provider = null;
+		chunkX = chunkZ = 0;
+	}
+
+	public static interface ChunkRequestWatcher {
+
+		void onChunkRequested(WorldServer w, ChunkProviderServer p, int x, int z);
+
 	}
 
 }

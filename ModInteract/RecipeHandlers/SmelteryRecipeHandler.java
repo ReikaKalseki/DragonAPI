@@ -197,6 +197,20 @@ public class SmelteryRecipeHandler {
 		}
 	}
 
+	public static List getBlockCastingRecipes() {
+		if (!isLoaded)
+			return null;
+		try {
+			List li = (List)getAllRecipes.invoke(castingBasinInstance);
+			return li;
+		}
+		catch (Exception e) {
+			DragonAPICore.logError("Could not fetch TiC Casting Recipes!");
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static ItemStack getRecipeOutput(Object recipe) {
 		if (!isLoaded)
 			return null;

@@ -758,9 +758,9 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return li.toArray(new Object[li.size()]);
 	}
 
-	@ModDependent(ModList.THERMALEXPANSION)
+	//@ModDependent(ModList.THERMALEXPANSION)
 	public static IRecipe getTEWrappedRecipe(IRecipe ir) {
-		if (ir.getClass() == teNEIClass) {
+		if (ModList.THERMALEXPANSION.isLoaded() && ir.getClass() == teNEIClass) {
 			try {
 				ir = (IRecipe)teNEIWrappedRecipe.get(ir);
 			}

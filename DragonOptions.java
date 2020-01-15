@@ -65,7 +65,8 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	WORLDSIZE("Expected Approximate Maximum World Size (Radius)", 5000),
 	WORLDCENTERX("Expected Approximate World Center Location X", 0),
 	WORLDCENTERZ("Expected Approximate World Center Location Z", 0),
-	NORAINFX("Disable rain sound and particles", false);
+	NORAINFX("Disable rain sound and particles", false),
+	NOTIFYBYTEEXEC("Bytecodeexec command notifies other admins", false),
 	;
 
 	private String label;
