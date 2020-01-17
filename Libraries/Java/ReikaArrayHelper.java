@@ -394,6 +394,16 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		return true;
 	}
 
+	public static void shuffleArray(char[] a) {
+		int mid = a.length / 2;
+		for (int i = mid; i < a.length; i++) {
+			int lo = rand.nextInt(mid);
+			char buffer = a[lo];
+			a[lo] = a[i];
+			a[i] = buffer;
+		}
+	}
+
 	public static void shuffleArray(int[] a) {
 		int mid = a.length / 2;
 		for (int i = mid; i < a.length; i++) {

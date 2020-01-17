@@ -98,6 +98,10 @@ public class ReikaThaumHelper {
 
 	private static Field wispTarget;
 
+	private static Class alchemicalFurnaceClass;
+	private static Field furnaceBurn;
+	private static Field itemBurn;
+
 	private static Object proxy; //auto-sides to correct side
 
 	private static final TierMap<Aspect> aspectTiers = new TierMap();
@@ -844,6 +848,19 @@ public class ReikaThaumHelper {
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
 			}
 
+			try {
+				alchemicalFurnaceClass = Class.forName("thaumcraft.common.tiles.TileAlchemyFurnace");
+				furnaceBurn = alchemicalFurnaceClass.getDeclaredField("furnaceBurnTime");
+				furnaceBurn.setAccessible(true);
+				itemBurn = alchemicalFurnaceClass.getDeclaredField("currentItemBurnTime");
+				itemBurn.setAccessible(true);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Could not load ThaumCraft Alchemical Furnace Handler!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.THAUMCRAFT, e);
+			}
+
 			if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 				try {
 					Class clip = Class.forName("thaumcraft.client.ClientProxy");
@@ -1001,6 +1018,20 @@ public class ReikaThaumHelper {
 
 	public static ShapedOreRecipe getShapedArcaneAsShapedRecipe(ShapedArcaneRecipe r) {
 		return new ShapedOreRecipe(r.getRecipeOutput(), ReikaRecipeHelper.decode1DArray(r.input, r.width, r.height));
+	}
+
+	public static boolean isAlchemicalFurnace(TileEntity te) {
+		return te != null && te.getClass() == alchemicalFurnaceClass;
+	}
+
+	public static void setAlchemicalBurnTime(TileEntity te, int ticks) {
+		try {
+			furnaceBurn.setInt(te, ticks);
+			itemBurn.setInt(te, ticks);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
 

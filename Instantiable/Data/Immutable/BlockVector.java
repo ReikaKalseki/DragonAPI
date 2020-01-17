@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -61,6 +61,10 @@ public final class BlockVector {
 		int z = tag.getInteger("z");
 		ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[tag.getInteger("dir")];
 		return new BlockVector(x, y, z, dir);
+	}
+
+	public Coordinate getCoord() {
+		return new Coordinate(xCoord, yCoord, zCoord);
 	}
 
 }

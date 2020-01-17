@@ -527,4 +527,10 @@ public class ReikaStringParser extends DragonAPICore {
 		}
 		return s;
 	}
+
+	public static String shuffle(String s) {
+		char[] arr = s.toCharArray();
+		ReikaArrayHelper.shuffleArray(arr);
+		return new String(arr);
+	}
 }

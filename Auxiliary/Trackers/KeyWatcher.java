@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -117,7 +117,7 @@ public class KeyWatcher {
 		ATTACK(Minecraft.getMinecraft().gameSettings.keyBindAttack),
 		USE(Minecraft.getMinecraft().gameSettings.keyBindUseItem),
 		CHAT(Minecraft.getMinecraft().gameSettings.keyBindChat),
-		LCTRL(Minecraft.isRunningOnMac ? Keyboard.KEY_LMETA : Keyboard.KEY_LCONTROL),
+		LCTRL(isCtrlSneak() ? Keyboard.KEY_LSHIFT : getLCtrl()), //swap them
 		PGUP(Keyboard.KEY_PRIOR),
 		PGDN(Keyboard.KEY_NEXT),
 		TAB(Keyboard.KEY_TAB),
@@ -151,7 +151,7 @@ public class KeyWatcher {
 		}
 
 		public int keyID() {
-			return key.getKeyCode();
+			return key != null ? key.getKeyCode() : keyInt;
 		}
 
 		public Key getServerKey() {
@@ -176,6 +176,14 @@ public class KeyWatcher {
 				ReikaPacketHelper.sendRawPacket(DragonAPIInit.packetChannel, bytes);
 			else
 				DragonAPICore.log("Could not send key "+this+" packet, as it was malformed.");
+		}
+
+		private static int getLCtrl() {
+			return Minecraft.isRunningOnMac ? Keyboard.KEY_LMETA : Keyboard.KEY_LCONTROL;
+		}
+
+		private static boolean isCtrlSneak() {
+			return Minecraft.getMinecraft().gameSettings.keyBindSneak.getKeyCode() == getLCtrl();
 		}
 	}
 

@@ -171,7 +171,7 @@ public class BoPBlockHandler extends ModHandlerBase {
 					basicLeaves[i] = ((Block)leaf.get(null));
 				}
 
-				for (int i = 0; i < basicLeaves.length; i++) {
+				for (int i = 0; i < colorLeaves.length; i++) {
 					Field leaf = blocks.getField("colorizedLeaves"+(i+1));
 					colorLeaves[i] = ((Block)leaf.get(null));
 				}
