@@ -17,8 +17,11 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -48,12 +51,42 @@ import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
 import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Interfaces.Item.MetadataSpecificTrade;
+import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
 
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
+
+	public static boolean canSpawnCreature(EnumCreatureType type, World world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		Block below = world.getBlock(x, y-1, z);
+		if (type.getCreatureMaterial() == Material.water) {
+			return b.getMaterial().isLiquid() && below.getMaterial().isLiquid() && !world.getBlock(x, y+1, z).isNormalCube();
+		}
+		else if (!World.doesBlockHaveSolidTopSurface(world, x, y-1, z)) {
+			return false;
+		}
+		else {
+			boolean spawnBlock = below.canCreatureSpawn(type, world, x, y-1, z);
+			boolean ret = spawnBlock && below != Blocks.bedrock && !b.isNormalCube() && !b.getMaterial().isLiquid() && !world.getBlock(x, y+1, z).isNormalCube();
+			if (ret && type == EnumCreatureType.monster && DragonOptions.PLAYERMOBCAP.getState()) {
+				if (world.playerEntities.isEmpty() || wouldViolatePlayerCap(world, x, y, z))
+					return false;
+			}
+			return ret;
+		}
+	}
+
+	private static boolean wouldViolatePlayerCap(World world, int x, int y, int z) {
+		EntityPlayer ep = world.getClosestPlayer(x+0.5, y+0.5, z+0.5, 128);
+		if (ep == null) {
+			return true;
+		}
+		int mobs = world.getEntitiesWithinAABB(EnumCreatureType.monster.getCreatureClass(), ReikaAABBHelper.getEntityCenteredAABB(ep, 128)).size();
+		return mobs >= 60;
+	}
 
 	public static Object getUnregisteredOreStackIdentification(ItemStack is) {
 		if (is.getItem() == null)

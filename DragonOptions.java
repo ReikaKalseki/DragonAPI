@@ -67,6 +67,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	WORLDCENTERZ("Expected Approximate World Center Location Z", 0),
 	NORAINFX("Disable rain sound and particles", false),
 	NOTIFYBYTEEXEC("Bytecodeexec command notifies other admins", false),
+	PLAYERMOBCAP("Player-Specific Mob Caps", false),
 	;
 
 	private String label;

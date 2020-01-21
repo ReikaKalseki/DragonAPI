@@ -472,4 +472,8 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			clientProfile = null;
 		return clientProfile;
 	}
+
+	public static Collection<EntityPlayer> getAllPlayers() {
+		return MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+	}
 }

@@ -27,6 +27,8 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.UUID;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
@@ -131,6 +133,19 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 				EntityPlayer ep = this.getCommandSenderAsPlayer(ics);
 				this.getStack(ics).push(ep);
 				this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Loaded self onto the stack.");
+			}
+			else {
+				this.sendChatToSender(ics, EnumChatFormatting.RED+"You do not have permission to use this command in this way.");
+			}
+			return;
+		}
+		else if (args[0].equalsIgnoreCase("getplayer")) {
+			if (admin) {
+				EntityPlayer ep = ReikaPlayerAPI.getPlayerByNameAnyWorld(args[1]);
+				if (ep != null) {
+					this.getStack(ics).push(ep);
+					this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Loaded "+ep.getCommandSenderName()+" onto the stack.");
+				}
 			}
 			else {
 				this.sendChatToSender(ics, EnumChatFormatting.RED+"You do not have permission to use this command in this way.");
@@ -572,6 +587,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		SETFIELD(),
 		//THROW(),
 		INSTANCEOF(),
+		MAKEARRAY(),
 		GETARRAY(),
 		SETARRAY(),
 		DECOMPOSE(),
@@ -714,6 +730,17 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 					Object obj = s.pop();
 					Object type = s.pop();
 					s.push(((Class)type).isAssignableFrom(obj.getClass()));
+					break;
+				}
+				case MAKEARRAY: {
+					int amt = Integer.parseInt(args[0]);
+					if (s.size() < amt)
+						throw new IllegalArgumentException("Operand stack underflow");
+					Object[] arr = new Object[amt];
+					for (int i = 0; i < arr.length; i++) {
+						arr[i] = s.pop();
+					}
+					ArrayUtils.reverse(arr); //to match stack
 					break;
 				}
 				case GETARRAY: {

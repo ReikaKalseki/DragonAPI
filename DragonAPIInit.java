@@ -20,6 +20,7 @@ import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFlower;
+import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -85,6 +86,7 @@ import Reika.DragonAPI.Command.DragonCommandBase;
 import Reika.DragonAPI.Command.GetLatencyCommand;
 import Reika.DragonAPI.Command.ToggleBlockChangePacketCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
+import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Extras.ReplacementCraftingHandler;
 import Reika.DragonAPI.Extras.ReplacementSmeltingHandler;
@@ -105,6 +107,7 @@ import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaOreHelper;
@@ -564,6 +567,16 @@ public class DragonAPIInit extends DragonAPIMod {
 		if (DragonOptions.BIOMEFIRE.getState()) {
 			BiomeGenBase.desert.rainfall = BiomeGenBase.desertHills.rainfall; //to differentiate hell and desert
 			BiomeGenBase.ocean.rainfall = BiomeGenBase.deepOcean.rainfall = 1F;
+		}
+
+		if (DragonOptions.PLAYERMOBCAP.getState()) {
+			String f = ReikaObfuscationHelper.isDeObfEnvironment() ? "maxNumberOfCreature" : "field_75606_e";
+			try {
+				ReikaReflectionHelper.setFinalField(EnumCreatureType.class, f, EnumCreatureType.monster, Integer.MAX_VALUE);
+			}
+			catch (Exception e) {
+				throw new RegistrationException(this, "Could not set mob spawn cap!", e);
+			}
 		}
 
 		FluidRegistry.WATER.setBlock(Blocks.water); //needs to be re-set due to CoFH overwriting

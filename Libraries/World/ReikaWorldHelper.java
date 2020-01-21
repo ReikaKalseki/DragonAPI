@@ -268,17 +268,17 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Search for a specific block in a range. Returns true if found. Cannot identify if
-	 *found more than one, or where the found one(s) is/are. May be CPU-intensive. Args: World, this.x,y,z, search range, target id, meta */
-	public static boolean findNearBlock(World world, int x, int y, int z, int range, Block id, int meta) {
+	 *found more than one. May be CPU-intensive. Args: World, this.x,y,z, search range, target id, meta */
+	public static Coordinate findNearBlock(World world, int x, int y, int z, int range, Block id, int meta) {
 		for (int i = -range; i <= range; i++) {
 			for (int j = -range; j <= range; j++) {
 				for (int k = -range; k <= range; k++) {
 					if (world.getBlock(x+i, y+j, z+k) == id && world.getBlockMetadata(x+i, y+j, z+k) == meta)
-						return true;
+						return new Coordinate(x+i, y+j, z+k);
 				}
 			}
 		}
-		return false;
+		return null;
 	}
 
 	/** Search for a specific block in a range. Returns number found. Cannot identify where they
@@ -2386,7 +2386,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int z1 = (z >> 4)+r;
 		for (int dx = x0; dx <= x1; dx++) {
 			for (int dz = z0; dz <= z1; dz++) {
-				if (!world.getChunkProvider().chunkExists(dx, dx))
+				if (!world.getChunkProvider().chunkExists(dx, dz))
 					return false;
 			}
 		}

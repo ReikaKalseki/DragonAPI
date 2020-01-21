@@ -24,6 +24,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
@@ -103,6 +104,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 
 		classShortcuts.put("String", String.class);
 		classShortcuts.put("Object", Object.class);
+		classShortcuts.put("Enum", Enum.class);
 		classShortcuts.put("ArrayList", ArrayList.class);
 		classShortcuts.put("HashMap", HashMap.class);
 
@@ -118,6 +120,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		classShortcuts.put("Entity", Entity.class);
 		classShortcuts.put("EntityLivingBase", EntityLivingBase.class);
 		classShortcuts.put("EntityPlayer", EntityPlayer.class);
+		classShortcuts.put("EntityPlayerMP", EntityPlayerMP.class);
 		classShortcuts.put("TileEntity", TileEntity.class);
 		classShortcuts.put("Block", Block.class);
 		classShortcuts.put("Item", Item.class);

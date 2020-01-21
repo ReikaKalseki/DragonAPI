@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -38,6 +38,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import forestry.api.apiculture.EnumBeeChromosome;
 import forestry.api.apiculture.EnumBeeType;
+import forestry.api.apiculture.IAlleleBeeEffect;
 import forestry.api.apiculture.IAlleleBeeSpecies;
 import forestry.api.apiculture.IBeeGenome;
 import forestry.api.apiculture.IBeeHousing;
@@ -436,7 +437,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	public abstract IAllele getFlowerAllele();
-	public abstract IAllele getEffectAllele();
+	public abstract IAlleleBeeEffect getEffectAllele();
 	public abstract Speeds getProductionSpeed();
 	public abstract Fertility getFertility();
 	public abstract Flowering getFloweringRate();

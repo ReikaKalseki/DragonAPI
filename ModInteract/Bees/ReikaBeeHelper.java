@@ -9,7 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.Bees;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,6 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -74,6 +77,7 @@ import forestry.api.genetics.IAlleleTolerance;
 import forestry.api.genetics.IChromosome;
 import forestry.api.genetics.IGenome;
 import forestry.api.genetics.IIndividual;
+import forestry.api.genetics.ISpeciesRoot;
 import forestry.api.lepidopterology.ButterflyManager;
 import forestry.api.lepidopterology.EnumButterflyChromosome;
 import forestry.api.lepidopterology.EnumFlutterType;
@@ -87,6 +91,11 @@ public class ReikaBeeHelper {
 	private static Field beeHealth;
 	private static final HashSet<String> allBees = new HashSet();
 
+	private static Class geneTemplate;
+	private static Method addSample;
+	private static Class geneSample;
+	private static Constructor geneSampleCtr;
+
 	static {
 		if (ModList.FORESTRY.isLoaded()) {
 			try {
@@ -96,6 +105,23 @@ public class ReikaBeeHelper {
 			catch (Exception e) {
 				DragonAPICore.logError("Could not find forestry bee life parameter!");
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
+				e.printStackTrace();
+			}
+		}
+
+		if (ModList.GENDUSTRY.isLoaded()) {
+			try {
+				geneSample = Class.forName("net.bdew.gendustry.forestry.GeneSampleInfo");
+				geneSampleCtr = geneSample.getDeclaredConstructor(ISpeciesRoot.class, int.class, IAllele.class);
+				geneSampleCtr.setAccessible(true);
+
+				geneTemplate = Class.forName("net.bdew.gendustry.items.GeneTemplate");
+				addSample = geneTemplate.getDeclaredMethod("addSample", ItemStack.class, geneSample);
+				addSample.setAccessible(true);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Could not find GenDustry sample data!");
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.GENDUSTRY, e);
 				e.printStackTrace();
 			}
 		}
@@ -660,5 +686,30 @@ public class ReikaBeeHelper {
 		for (int i = 0; i < ret.length; i++)
 			ret[i] *= f;
 		return ret;
+	}
+
+	public static void getGeneTemplate(ItemStack template, BeeSpecies bee) {
+		getGeneTemplate(template, bee.getSpeciesTemplate(), getBeeRoot());
+	}
+
+	public static void getGeneTemplate(ItemStack template, IIndividual ii) {
+		getGeneTemplate(template, getBeeRoot().getTemplate(ii.getIdent()), AlleleManager.alleleRegistry.getSpeciesRoot(ii.getClass()));
+	}
+
+	private static void getGeneTemplate(ItemStack template, IAllele[] genes, ISpeciesRoot root) {
+		if (template.getItem().getClass() != geneTemplate)
+			throw new MisuseException("You can only put genes on a template!");
+		for (int i = 0; i < genes.length; i++) {
+			IAllele gene = genes[i];
+			if (gene != null) { //skip the empty slots, eg for bee climate
+				try {
+					Object sample = geneSampleCtr.newInstance(root, i, gene);
+					addSample.invoke(template.getItem(), template, sample);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 }
