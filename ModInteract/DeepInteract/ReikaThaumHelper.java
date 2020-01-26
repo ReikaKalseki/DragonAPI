@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -1028,6 +1029,20 @@ public class ReikaThaumHelper {
 		try {
 			furnaceBurn.setInt(te, ticks);
 			itemBurn.setInt(te, ticks);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/** Bypasses his function because he ignores the stack size which is explicitly listed as modifiable  */
+	public static void addSmeltingBonusWithStackSize(ItemStack in, ItemStack out) {
+		try {
+			Field f = ThaumcraftApi.class.getDeclaredField("smeltingBonus");
+			f.setAccessible(true);
+			HashMap<Object, ItemStack> map = (HashMap<Object, ItemStack>)f.get(null);
+			List key = Arrays.asList(in.getItem(), in.getItemDamage());
+			map.put(key, out.copy());
 		}
 		catch (Exception e) {
 			e.printStackTrace();

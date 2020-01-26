@@ -304,6 +304,32 @@ public final class ScheduledTickEvent extends Event implements FreezableTimer {
 
 	}
 
+	public static final class ScheduledStringPacket implements ScheduledEvent {
+
+		public final String channel;
+		public final int packetID;
+		private final PacketTarget target;
+		private final String data;
+
+		public ScheduledStringPacket(String ch, int id, PacketTarget pt, String data) {
+			channel = ch;
+			packetID = id;
+			target = pt;
+			this.data = data;
+		}
+
+		@Override
+		public void fire() {
+			ReikaPacketHelper.sendStringPacket(channel, packetID, data, target);
+		}
+
+		@Override
+		public boolean runOnSide(Side s) {
+			return s == Side.SERVER;
+		}
+
+	}
+
 	public static interface ScheduledEvent {
 
 		public abstract void fire();

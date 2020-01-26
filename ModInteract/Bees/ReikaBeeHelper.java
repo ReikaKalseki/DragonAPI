@@ -115,7 +115,7 @@ public class ReikaBeeHelper {
 				geneSampleCtr = geneSample.getDeclaredConstructor(ISpeciesRoot.class, int.class, IAllele.class);
 				geneSampleCtr.setAccessible(true);
 
-				geneTemplate = Class.forName("net.bdew.gendustry.items.GeneTemplate");
+				geneTemplate = Class.forName("net.bdew.gendustry.items.GeneTemplate$");
 				addSample = geneTemplate.getDeclaredMethod("addSample", ItemStack.class, geneSample);
 				addSample.setAccessible(true);
 			}

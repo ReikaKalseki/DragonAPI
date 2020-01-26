@@ -319,7 +319,7 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 		this.triggerCrafting(world, is, amt, callback, callback2);
 	}
 
-	/** Triggers the native crafting system to craft a given amount of a given item. Callbacks is optional. */
+	/** Triggers the native crafting system to craft a given amount of a given item. Callbacks are optional. */
 	public void triggerCrafting(World world, ItemStack is, long amt, ICraftingCallback callback, CraftCompleteCallback callback2) {
 		if (node == null || node.getGrid() == null)
 			return;
