@@ -12,6 +12,7 @@ package Reika.DragonAPI.ASM;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -59,6 +60,8 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 /** The methods called by ASMed-in hooks */
 public class ASMCalls {
 
+	private static final HashSet<Item> tracedUnregItems = new HashSet();
+
 	public static boolean canSpawnCreature(EnumCreatureType type, World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		Block below = world.getBlock(x, y-1, z);
@@ -91,6 +94,10 @@ public class ASMCalls {
 	public static Object getUnregisteredOreStackIdentification(ItemStack is) {
 		if (is.getItem() == null)
 			return "Stack of null";
+		if (!tracedUnregItems.contains(is.getItem())) {
+			Thread.dumpStack();
+			tracedUnregItems.add(is.getItem());
+		}
 		return "toString() = "+is+"; ID = "+Item.getIdFromItem(is.getItem())+"; class = "+is.getItem().getClass();
 	}
 

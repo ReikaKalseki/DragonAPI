@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -75,6 +75,7 @@ public final class LoginHandler implements PlayerTracker {
 
 		}
 
+		ReikaPlayerAPI.clearHeadCache();
 		PlayerFirstTimeTracker.checkPlayer(ep);
 		CommandableUpdateChecker.instance.notifyPlayer(ep);
 		if (ep instanceof EntityPlayerMP) {
@@ -89,6 +90,7 @@ public final class LoginHandler implements PlayerTracker {
 
 	@Override
 	public void onPlayerLogout(EntityPlayer ep) {
+		ReikaPlayerAPI.clearHeadCache();
 		if (ep instanceof EntityPlayerMP) {
 			EntityPlayerMP emp = (EntityPlayerMP)ep;
 			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.LOGOUT.ordinal(), emp);

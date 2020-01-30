@@ -75,6 +75,8 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 
 	private BytecodeProgram program;
 
+	public static BytecodeCommand instance;
+
 	public BytecodeCommand() {
 		for (String s : DragonOptions.BYTECODELIST.getStringArray()) {
 			try {
@@ -84,6 +86,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 				throw new InstallationException(DragonAPIInit.instance, "Invalid UUID in whitelist for "+this.getCommandString()+": "+s);
 			}
 		}
+		instance = this;
 	}
 
 	@Override
@@ -378,7 +381,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		return BytecodeProgram.readFile(f);
 	}
 
-	private Stack getStack(ICommandSender ics) {
+	public Stack getStack(ICommandSender ics) {
 		UUID id = this.getUID(ics);
 		Stack s = objectStack.get(id);
 		if (s == null) {
@@ -582,8 +585,10 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 		SWAP(),
 		INVOKESTATIC(),
 		INVOKEVIRTUAL(),
+		OBJMETHOD(),
 		GETSTATIC(),
 		GETFIELD(),
+		OBJFIELD(),
 		SETFIELD(),
 		//THROW(),
 		INSTANCEOF(),
@@ -607,6 +612,15 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 				case GETFIELD: {
 					Class c = cmd.findClass(args[0]);
 					Field f = c.getDeclaredField(cmd.deSRG(c, args[1]));
+					f.setAccessible(true);
+					if (s.isEmpty())
+						throw new IllegalArgumentException("Operand stack underflow");
+					s.push(f.get(removeTop ? s.pop() : s.peek()));
+					break;
+				}
+				case OBJFIELD: {
+					Object o = s.peek();
+					Field f = ReikaReflectionHelper.getProtectedInheritedField(o, args[0]);
 					f.setAccessible(true);
 					if (s.isEmpty())
 						throw new IllegalArgumentException("Operand stack underflow");
@@ -656,6 +670,39 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 						vals[i] = s.pop();
 					}
 					s.push(m.invoke(removeTop ? s.pop() : s.peek(), vals));
+					break;
+				}
+				case OBJMETHOD: {
+					Object o = s.peek();
+					Method[] arr = o.getClass().getMethods();
+					Method call = null;
+					for (Method m : arr) {
+						if (m.getName().equals(args[0])) {
+							call = m;
+							break;
+						}
+					}
+					if (call == null) {
+						arr = o.getClass().getDeclaredMethods();
+						for (Method m : arr) {
+							if (m.getName().equals(args[0])) {
+								call = m;
+								break;
+							}
+						}
+					}
+					if (call == null)
+						throw new IllegalArgumentException("No such method");
+					call.setAccessible(true);
+					if (s.isEmpty())
+						throw new IllegalArgumentException("Operand stack underflow");
+					Object[] vals = new Object[call.getParameterCount()];
+					if (vals.length+1 > s.size())
+						throw new IllegalArgumentException("Operand stack underflow");
+					for (int i = vals.length-1; i >= 0; i--) {
+						vals[i] = s.pop();
+					}
+					s.push(call.invoke(removeTop ? s.pop() : s.peek(), vals));
 					break;
 				}
 				case LDC:

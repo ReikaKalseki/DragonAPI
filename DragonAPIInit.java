@@ -99,6 +99,7 @@ import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Instantiable.IO.LagWarningFilter;
 import Reika.DragonAPI.Instantiable.IO.ModLogger;
 import Reika.DragonAPI.Instantiable.IO.SyncPacket;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.ReikaPotionHelper;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaCommandHelper;
@@ -785,6 +786,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	@EventHandler
 	public void singlePlayerLogout(FMLServerStoppedEvent evt) {
+		ReikaPlayerAPI.clearHeadCache();
 		if (evt.getSide() == Side.CLIENT) {
 			MinecraftForge.EVENT_BUS.post(new SinglePlayerLogoutEvent());
 		}

@@ -33,6 +33,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.play.server.S20PacketEntityProperties;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
@@ -52,6 +53,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BlockArray;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Maps.PlayerMap;
 import Reika.DragonAPI.Instantiable.Event.GetPlayerLookEvent;
 import Reika.DragonAPI.Instantiable.Event.PlayerHasItemEvent;
 import Reika.DragonAPI.Instantiable.Event.RemovePlayerItemEvent;
@@ -71,6 +73,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	//private static final HashMap<String, FakePlayer> fakePlayers = new HashMap();
 	private static final HashMap<String, UUID> uuidMap = new HashMap();
+	private static final PlayerMap<TileEntitySkull> headCache = new PlayerMap();
 
 	/** Transfers a player's entire inventory to an inventory. Args: Player, Inventory */
 	public static void transferInventoryToChest(EntityPlayer ep, ItemStack[] inv) {
@@ -475,5 +478,27 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 
 	public static Collection<EntityPlayerMP> getAllPlayers() {
 		return MinecraftServer.getServer().getConfigurationManager().playerEntityList;
+	}
+
+	public static TileEntitySkull getPlayerHead(World world, GameProfile p) {
+		TileEntitySkull te = headCache.directGet(p.getId());
+		if (te == null) {
+			te = new TileEntitySkull();
+			te.worldObj = world;
+			if (p != null)
+				populateHeadData(te, p);
+			headCache.directPut(p.getId(), te);
+		}
+		return te;
+	}
+
+	private static void populateHeadData(TileEntitySkull te, GameProfile p) {
+		if (MinecraftServer.getServer() != null)
+			te.func_152106_a(p);
+		//TODO what about on clients?
+	}
+
+	public static void clearHeadCache() {
+		headCache.clear();
 	}
 }
