@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -54,6 +54,9 @@ public class AppEngHandler extends ModHandlerBase {
 	private Item cell4k;
 	private Item cell16k;
 	private Item cell64k;
+
+	private ItemStack blankPattern;
+	private Item encodedPattern;
 
 	public final Block skystone;
 	public final Block quartzGlass;
@@ -109,6 +112,9 @@ public class AppEngHandler extends ModHandlerBase {
 				cell4k = this.getItem("itemCell4k");
 				cell16k = this.getItem("itemCell16k");
 				cell64k = this.getItem("itemCell64k");
+
+				blankPattern = this.getMaterial("materialBlankPattern");
+				encodedPattern = this.getItem("itemEncodedPattern");
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Cannot read AE class contents!");
@@ -304,6 +310,14 @@ public class AppEngHandler extends ModHandlerBase {
 
 	public Item get64KCell() {
 		return cell64k;
+	}
+
+	public ItemStack getBlankPattern() {
+		return blankPattern != null ? blankPattern.copy() : null;
+	}
+
+	public Item getEncodedPattern() {
+		return encodedPattern;
 	}
 
 }

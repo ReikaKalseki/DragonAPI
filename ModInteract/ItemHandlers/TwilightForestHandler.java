@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -68,7 +68,9 @@ public class TwilightForestHandler extends ModHandlerBase {
 		TOWERKEY("towerKey"),
 		FEATHER("feather"),
 		CARMINITE("carminite"),
-		TRANSFORMDUST("transformPowder");
+		TRANSFORMDUST("transformPowder"),
+		LIVEROOT("liveRoot"),
+		;
 
 
 		private final String tag;

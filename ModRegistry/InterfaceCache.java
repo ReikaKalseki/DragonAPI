@@ -46,6 +46,7 @@ public enum InterfaceCache {
 	RECONFIGURABLEFACE("cofh.api.tileentity.IReconfigurableFacing"),
 	IPLANETWORLD("zmaster587.advancedRocketry.api.IPlanetaryProvider"),
 	BCPIPE("buildcraft.api.transport.IPipeTile"),
+	AEPATTERN("appeng.api.implementations.ICraftingPatternItem"),
 	;
 
 	private final String classpath;

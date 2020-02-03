@@ -94,9 +94,17 @@ public class FilledBlockArray extends StructuredBlockArray {
 		this.setBlock(x, y, z , new BasicTileEntityCheck(tile, tags));
 	}
 	 */
+
 	public void setFluid(int x, int y, int z, Fluid f) {
+		this.setFluid(x, y, z, f, true, true);
+	}
+
+	public void setFluid(int x, int y, int z, Fluid f, boolean needSource, boolean allowSource) {
 		super.addBlockCoordinate(x, y, z);
-		data.put(new Coordinate(x, y, z), new FluidCheck(f));
+		FluidCheck fc = new FluidCheck(f);
+		fc.needsSourceBlock = needSource;
+		fc.allowSourceBlock = allowSource;
+		data.put(new Coordinate(x, y, z), fc);
 	}
 
 	public void setBlock(int x, int y, int z, BlockCheck bk) {
@@ -538,6 +546,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 		public final Fluid fluid;
 		public boolean needsSourceBlock = true;
+		public boolean allowSourceBlock = true;
 
 		private FluidCheck(Fluid f) {
 			if (!f.canBePlacedInWorld())
@@ -552,12 +561,27 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 		@Override
 		public boolean match(Block b, int meta) {
-			return ((b instanceof BlockFluidBase && ((BlockFluidBase)b).getFluid() == fluid) || FluidRegistry.lookupFluidForBlock(b) == fluid) && (!needsSourceBlock || (b instanceof BlockFluidFinite ? meta == 7 : meta == 0));
+			boolean fmatch = (b instanceof BlockFluidBase && ((BlockFluidBase)b).getFluid() == fluid) || FluidRegistry.lookupFluidForBlock(b) == fluid;
+			if (!fmatch)
+				return false;
+			if (allowSourceBlock) {
+				if (needsSourceBlock)
+					return this.isSource(b, meta);
+				else
+					return true;
+			}
+			else {
+				return !this.isSource(b, meta);
+			}
+		}
+
+		private boolean isSource(Block b, int meta) {
+			return b instanceof BlockFluidFinite ? meta == 7 : meta == 0;
 		}
 
 		@Override
 		public void place(World world, int x, int y, int z, int flags) {
-			world.setBlock(x, y, z, this.getBlock(), 0, flags);
+			world.setBlock(x, y, z, this.getBlock(), allowSourceBlock ? 0 : 1, flags);
 		}
 
 		private Block getBlock() {

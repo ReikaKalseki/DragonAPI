@@ -581,7 +581,8 @@ public class ReikaThaumHelper {
 		ItemStack out = (ItemStack)ir.getRecipeOutput();
 		AspectList aspects = new AspectList();
 		for (Aspect a : ir.getAspects().aspects.keySet()) {
-			aspects.add(a, Math.max(1, (int)(cost.evaluate(ir.getAspects().getAmount(a)))));
+			int amt = cost != null ? (int)(cost.evaluate(ir.getAspects().getAmount(a))) : ir.getAspects().getAmount(a);
+			aspects.add(a, Math.max(1, amt));
 		}
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);

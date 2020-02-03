@@ -946,4 +946,12 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 		return false;
 	}
+
+	public static ItemStack[] createStackArray(Item... items) {
+		ItemStack[] ret = new ItemStack[items.length];
+		for (int i = 0; i < ret.length; i++) {
+			ret[i] = new ItemStack(items[i]);
+		}
+		return ret;
+	}
 }

@@ -1872,6 +1872,24 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return CraftingManager.getInstance().findMatchingRecipe(ic, ReikaWorldHelper.getBasicReferenceWorld());
 	}
 
+	public static IRecipe convertRecipeToOre(IRecipe ire) {
+		ire = getTEWrappedRecipe(ire);
+		if (ire instanceof ShapedRecipes) {
+			ShapedRecipes r = (ShapedRecipes)ire;
+			return new ShapedOreRecipe(ire.getRecipeOutput(), decode1DArray(r.recipeItems, r.recipeWidth, r.recipeHeight));
+		}
+		else if (ire instanceof ShapelessRecipes) {
+			ShapelessRecipes sr = (ShapelessRecipes)ire;
+			List<Object> in = sr.recipeItems;
+			Object[] ingredients = new Object[in.size()];
+			for (int i = 0; i < in.size(); i++) {
+				ingredients[i] = parseIngredient(in.get(i));
+			}
+			return new ShapelessOreRecipe(ire.getRecipeOutput(), ingredients);
+		}
+		return ire;
+	}
+
 	@Deprecated
 	public static IRecipe copyRecipe(IRecipe ire) {
 		try {
