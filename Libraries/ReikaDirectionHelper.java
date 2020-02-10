@@ -17,8 +17,10 @@ import java.util.HashSet;
 import java.util.Random;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -378,6 +380,33 @@ public class ReikaDirectionHelper extends DragonAPICore {
 			ret.add(ForgeDirection.DOWN);
 		}
 		return ret;
+	}
+
+	public static ForgeDirection getFromLookDirection(EntityLivingBase ep, boolean vertical) {
+		if (!vertical || MathHelper.abs(ep.rotationPitch) < 60) {
+			int i = MathHelper.floor_double((ep.rotationYaw * 4F) / 360F + 0.5D);
+			while (i > 3)
+				i -= 4;
+			while (i < 0)
+				i += 4;
+			switch (i) {
+				case 0:
+					return ForgeDirection.SOUTH;
+				case 1:
+					return ForgeDirection.WEST;
+				case 2:
+					return ForgeDirection.NORTH;
+				case 3:
+					return ForgeDirection.EAST;
+			}
+			return ForgeDirection.UNKNOWN;
+		}
+		else {
+			if (ep.rotationPitch > 0)
+				return ForgeDirection.DOWN;
+			else
+				return ForgeDirection.UP;
+		}
 	}
 
 }

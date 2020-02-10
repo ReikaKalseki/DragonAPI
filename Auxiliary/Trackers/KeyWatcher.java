@@ -72,6 +72,7 @@ public class KeyWatcher {
 		ATTACK(),
 		USE(),
 		CHAT(),
+		LSHIFT(),
 		LCTRL(),
 		LALT(),
 		PGUP(),
@@ -117,6 +118,7 @@ public class KeyWatcher {
 		ATTACK(Minecraft.getMinecraft().gameSettings.keyBindAttack),
 		USE(Minecraft.getMinecraft().gameSettings.keyBindUseItem),
 		CHAT(Minecraft.getMinecraft().gameSettings.keyBindChat),
+		LSHIFT(isCtrlSneak() ? getLCtrl() : Keyboard.KEY_LSHIFT),
 		LCTRL(isCtrlSneak() ? Keyboard.KEY_LSHIFT : getLCtrl()), //swap them
 		PGUP(Keyboard.KEY_PRIOR),
 		PGDN(Keyboard.KEY_NEXT),

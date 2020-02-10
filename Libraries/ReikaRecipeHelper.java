@@ -238,7 +238,7 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return ic2ShapelessClass;
 	}
 
-	private static void overwriteShapedOreRecipeInput(ShapedOreRecipe s, Object[] in, int height, int width) {
+	public static void overwriteShapedOreRecipeInput(ShapedOreRecipe s, Object[] in, int height, int width) {
 		try {
 			shapedOreInput.set(s, in);
 			shapedOreHeight.set(s, height);

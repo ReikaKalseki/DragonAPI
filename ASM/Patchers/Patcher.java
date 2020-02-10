@@ -100,8 +100,14 @@ public abstract class Patcher {
 	protected abstract void apply(ClassNode cn);
 
 	public final boolean isEnabled() {
-		String tag = "-DragonAPI_disable_ASM_" + this.name();
-		return !ReikaJVMParser.isArgumentPresent(tag);
+		String key = this.isDisabledByDefault() ? "enable" : "disable";
+		String tag = "-DragonAPI_"+key+"_ASM_" + this.name();
+		boolean arg = ReikaJVMParser.isArgumentPresent(tag);
+		return this.isDisabledByDefault() ? arg : !arg;
+	}
+
+	public boolean isDisabledByDefault() {
+		return false;
 	}
 
 	public final boolean isExceptionThrowing() {

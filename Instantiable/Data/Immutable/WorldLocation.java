@@ -276,12 +276,20 @@ public class WorldLocation {
 		return this.getDistanceTo(src.xCoord, src.yCoord, src.zCoord);
 	}
 
+	public double getCylinderDistanceTo(double x, double z) {
+		return ReikaMathLibrary.py3d(x-xCoord, 0, z-zCoord);
+	}
+
 	public double getDistanceTo(double x, double y, double z) {
 		return ReikaMathLibrary.py3d(x-xCoord, y-yCoord, z-zCoord);
 	}
 
 	public double getDistanceTo(Entity e) {
 		return this.getDistanceTo(e.posX, e.posY, e.posZ);
+	}
+
+	public double getCylinderDistanceTo(Entity e) {
+		return this.getCylinderDistanceTo(e.posX, e.posZ);
 	}
 
 	public double getSquareDistanceTo(double x, double y, double z) {

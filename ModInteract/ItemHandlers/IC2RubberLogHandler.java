@@ -12,9 +12,12 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 
+import com.google.common.collect.HashBiMap;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -27,8 +30,10 @@ public class IC2RubberLogHandler extends CropHandlerBase {
 
 	//meta%6: 0: hand-placed; 1: grown; 2+:
 
-	private final Block logBlock;
+	public final Block logBlock;
 	private final ItemStack resin;
+
+	private final HashBiMap<ForgeDirection, Integer> directions = HashBiMap.create();
 
 	private IC2RubberLogHandler() {
 		super();
@@ -41,6 +46,11 @@ public class IC2RubberLogHandler extends CropHandlerBase {
 
 		logBlock = this.getFieldBlock("rubberWood");
 		resin = this.getField("resin");
+
+		directions.put(ForgeDirection.WEST, 4);
+		directions.put(ForgeDirection.EAST, 5);
+		directions.put(ForgeDirection.SOUTH, 3);
+		directions.put(ForgeDirection.NORTH, 2);
 	}
 
 	private Block getFieldBlock(String s) {
@@ -84,7 +94,10 @@ public class IC2RubberLogHandler extends CropHandlerBase {
 
 	@Override
 	public boolean isRipeCrop(World world, int x, int y, int z) {
-		int meta = world.getBlockMetadata(x, y, z);
+		return this.isRipeCrop(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
+	}
+
+	public boolean isRipeCrop(Block b, int meta) {
 		return this.isValidMeta(meta) && meta < 6;
 	}
 
@@ -137,5 +150,13 @@ public class IC2RubberLogHandler extends CropHandlerBase {
 	public CropFormat getShape() {
 		return CropFormat.BLOCKSIDE;
 	}*/
+
+	public int getMeta(ForgeDirection dir) {
+		return directions.get(dir);
+	}
+
+	public ForgeDirection getForMeta(int meta) {
+		return directions.inverse().get(meta);
+	}
 
 }

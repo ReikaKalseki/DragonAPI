@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -28,9 +28,11 @@ import Reika.DragonAPI.Exception.MisuseException;
 public class TinkerSmelteryHandler {
 
 	private static Class tileClass;
+
 	private static Field fuel;
 	private static Field temperatures;
 	private static Field internal;
+
 	private static Field use;
 	private static Field use2;
 	private static Field tank;
@@ -39,6 +41,16 @@ public class TinkerSmelteryHandler {
 	private static Field coordX;
 	private static Field coordY;
 	private static Field coordZ;
+
+	private static Class drainClass;
+	private static Method getDrainDirection;
+	private static Class basinClass;
+	private static Class tableClass;
+	private static Class castingLogicClass;
+
+	private static Field castingDelay;
+	private static Field castingRecipe;
+	private static Field castingCapacity;
 
 	static {
 		if (ModList.TINKERER.isLoaded()) {
@@ -65,6 +77,20 @@ public class TinkerSmelteryHandler {
 				coordY.setAccessible(true);
 				coordZ = coord.getDeclaredField("z");
 				coordZ.setAccessible(true);
+
+				drainClass = Class.forName("tconstruct.smeltery.logic.SmelteryDrainLogic");
+				getDrainDirection = drainClass.getDeclaredMethod("getForgeDirection");
+				getDrainDirection.setAccessible(true);
+
+				tableClass = Class.forName("tconstruct.smeltery.logic.CastingTableLogic");
+				basinClass = Class.forName("tconstruct.smeltery.logic.CastingBasinLogic");
+				castingLogicClass = Class.forName("tconstruct.smeltery.logic.CastingBlockLogic");
+				castingDelay = castingLogicClass.getDeclaredField("castingDelay");
+				castingDelay.setAccessible(true);
+				castingRecipe = castingLogicClass.getDeclaredField("liquidCasting");
+				castingRecipe.setAccessible(true);
+				castingCapacity = castingLogicClass.getDeclaredField("capacity");
+				castingCapacity.setAccessible(true);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Error loading Smeltery Handling!");
@@ -76,6 +102,10 @@ public class TinkerSmelteryHandler {
 
 	public static boolean isSmelteryController(TileEntity te) {
 		return te != null && te.getClass() == tileClass;
+	}
+
+	public static boolean isCastingBlock(TileEntity te) {
+		return te != null && castingLogicClass != null && castingLogicClass.isAssignableFrom(te.getClass());
 	}
 
 	public static class SmelteryWrapper {
@@ -137,6 +167,49 @@ public class TinkerSmelteryHandler {
 
 	}
 
+	public static class CastingBlockWrapper {
+
+		public int timer;
+
+		private final long tileID;
+
+		public CastingBlockWrapper(TileEntity te) {
+			if (!isCastingBlock(te))
+				throw new MisuseException("Tile is not a casting block!");
+			tileID = System.identityHashCode(te);
+			this.load(te);
+		}
+
+		/** Rerun this to reload the data from the tile. */
+		public void load(TileEntity te) {
+			if (System.identityHashCode(te) != tileID)
+				throw new MisuseException("You cannot reuse a CastingWrapper instance for different TileEntities!");
+			try {
+				timer = castingDelay.getInt(te);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Error running casting block Handling!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TINKERER, e);
+			}
+		}
+
+		/** Call this to write the data to the TileEntity. */
+		public void write(TileEntity te) {
+			if (System.identityHashCode(te) != tileID)
+				throw new MisuseException("You cannot reuse a CastingWrapper instance for different TileEntities!");
+			try {
+				castingDelay.setInt(te, timer);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Error running casting block Handling!");
+				e.printStackTrace();
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.TINKERER, e);
+			}
+		}
+
+	}
+
 	public static IFluidHandler getActiveTank(TileEntity te) {
 		try {
 			Object coord = tank.get(te);
@@ -170,5 +243,27 @@ public class TinkerSmelteryHandler {
 		}
 		te.markDirty();
 		te.updateEntity();
+	}
+
+	public static Class drainClass() {
+		return drainClass;
+	}
+
+	public static Class basinClass() {
+		return basinClass;
+	}
+
+	public static Class tableClass() {
+		return tableClass;
+	}
+
+	public static ForgeDirection getDrainDirection(TileEntity te) {
+		try {
+			return te.getClass() == drainClass ? (ForgeDirection)getDrainDirection.invoke(te) : ForgeDirection.UNKNOWN;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return ForgeDirection.UNKNOWN;
+		}
 	}
 }
