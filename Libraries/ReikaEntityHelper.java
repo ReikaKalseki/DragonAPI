@@ -1404,7 +1404,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (amt >= e.getHealth()) { //kill
 			e.setHealth(0.1F);
 			e.hurtResistantTime = 0;
-			e.attackEntityFrom(src, 100);
+			e.attackEntityFrom(src, Integer.MAX_VALUE); //some mods stop damage less than this
 		}
 		else
 			e.setHealth(e.getHealth()-amt);

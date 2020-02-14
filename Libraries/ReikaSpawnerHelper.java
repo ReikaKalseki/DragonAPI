@@ -141,6 +141,7 @@ public class ReikaSpawnerHelper {
 			if (force || !is.stackTagCompound.hasKey("logic")) {
 				NBTTagCompound tag = new NBTTagCompound();
 				lgc.writeToNBT(tag);
+				tag.removeTag("Delay"); //causes nonstacking
 				is.stackTagCompound.setTag("logic", tag);
 			}
 		}

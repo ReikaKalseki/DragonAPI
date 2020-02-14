@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -11,12 +11,14 @@ package Reika.DragonAPI.Libraries.World;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRedstoneDiode;
+import net.minecraft.block.BlockRedstoneWire;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Interfaces.Block.WireBlock;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 
 public final class ReikaRedstoneHelper extends DragonAPICore {
@@ -33,17 +35,26 @@ public final class ReikaRedstoneHelper extends DragonAPICore {
 
 	/** Returns true on the postive redstone edge on a side. Args: World, x, y, z, last power state, last repeater-power state, side */
 	public static boolean isPositiveEdgeOnSide(World world, int x, int y, int z, boolean lastPower, boolean lastRepeat, ForgeDirection side) {
-		boolean sided = world.getIndirectPowerOutput(x+side.offsetX, y+side.offsetY, z+side.offsetZ, side.getOpposite().ordinal());
-		boolean repeat = false;
-		repeat = false;
-		boolean pwr = world.isBlockIndirectlyGettingPowered(x, y, z);
+		boolean pwr = isPoweredOnSide(world, x, y, z, side);
 		boolean rpt = isReceivingPowerFromRepeater(world, x, y, z, side);
 		//DragonAPICore.log(((sided || repeat) && pwr && !lastPower)+" for "+lastPower);
-		return ((sided && pwr) || rpt) && !lastPower && !lastRepeat;
+		return (pwr || rpt) && !lastPower && !lastRepeat;
 	}
 
 	public static boolean isPoweredOnSide(World world, int x, int y, int z, ForgeDirection side) {
-		return world.getIndirectPowerOutput(x+side.offsetX, y+side.offsetY, z+side.offsetZ, side.ordinal());
+		int dx = x+side.offsetX;
+		int dy = y+side.offsetY;
+		int dz = z+side.offsetZ;
+		if (BlockRedstoneWire.func_150176_g(world, x, y, z, side.ordinal())) {
+			Block b = world.getBlock(dx, dy, dz);
+			if (b instanceof WireBlock) {
+				return ((WireBlock)b).isConnectedTo(world, dx, dy, dz, side.getOpposite().ordinal()) && ((WireBlock)b).getPowerState(world, dx, dy, dz) > 0;
+			}
+			else if (b instanceof BlockRedstoneWire) {
+				return world.getBlockMetadata(dx, dy, dz) > 0;
+			}
+		}
+		return world.getIndirectPowerOutput(dx, dy, dz, side.ordinal());
 	}
 
 	/** Is the block receiving power from a repeater on a side. Args: World, x, y, z, side */
