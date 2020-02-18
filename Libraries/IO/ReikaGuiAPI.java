@@ -569,6 +569,53 @@ public final class ReikaGuiAPI extends GuiScreen {
 			tooltips.addItem(s, mx, my+8, f.getStringWidth(s)+24, f.FONT_HEIGHT+8);
 	}
 
+	public void drawSplitTooltipAt(FontRenderer f, List<String> li, int mx, int my) {
+		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		GL11.glDisable(GL11.GL_BLEND);
+		GL11.glDisable(GL11.GL_LIGHTING);
+		int k = -1;
+		for (String s : li) {
+			k = Math.max(k, f.getStringWidth(DelegateFontRenderer.stripFlags(s)));
+		}
+		int j2 = mx + 12;
+		int k2 = my - 12;
+		int i1 = 8*li.size()+(2*li.size()-1)-1;
+
+		if (j2 + k > width)
+			j2 -= 28 + k;
+
+		if (k2 + i1 + 6 > height)
+			;//k2 = height - i1 - 6;
+
+		zLevel = 300.0F;
+		itemRender.zLevel = 300.0F;
+		int j1 = -267386864;
+		this.drawGradientRect(j2 - 3, k2 - 4, j2 + k + 3, k2 - 3, j1, j1);
+		this.drawGradientRect(j2 - 3, k2 + i1 + 3, j2 + k + 3, k2 + i1 + 4, j1, j1);
+		this.drawGradientRect(j2 - 3, k2 - 3, j2 + k + 3, k2 + i1 + 3, j1, j1);
+		this.drawGradientRect(j2 - 4, k2 - 3, j2 - 3, k2 + i1 + 3, j1, j1);
+		this.drawGradientRect(j2 + k + 3, k2 - 3, j2 + k + 4, k2 + i1 + 3, j1, j1);
+		int k1 = 1347420415;
+		int l1 = (k1 & 16711422) >> 1 | k1 & -16777216;
+			this.drawGradientRect(j2 - 3, k2 - 3 + 1, j2 - 3 + 1, k2 + i1 + 3 - 1, k1, l1);
+			this.drawGradientRect(j2 + k + 2, k2 - 3 + 1, j2 + k + 3, k2 + i1 + 3 - 1, k1, l1);
+			this.drawGradientRect(j2 - 3, k2 - 3, j2 + k + 3, k2 - 3 + 1, k1, k1);
+			this.drawGradientRect(j2 - 3, k2 + i1 + 2, j2 + k + 3, k2 + i1 + 3, l1, l1);
+
+			GL11.glEnable(GL11.GL_TEXTURE_2D);
+
+			for (int i = 0; i < li.size(); i++) {
+				String s = li.get(i);
+				f.drawStringWithShadow(s, j2, k2+i*10, 0xffffffff);
+				if (cacheRenders)
+					tooltips.addItem(s, mx, my+8+i*10, f.getStringWidth(s)+24, f.FONT_HEIGHT+8);
+			}
+
+			GL11.glPopAttrib();
+	}
+
 	public Map<String, Rectangle> getTooltips() {
 		return tooltips.view();
 	}

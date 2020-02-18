@@ -1076,4 +1076,10 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 			return ((ItemStack)o).copy();
 		return o;
 	}
+
+	public static String getPackageName(Class c) {
+		String name = c.getName();
+		int idx = name.lastIndexOf('.');
+		return name.substring(0, idx);
+	}
 }

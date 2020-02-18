@@ -782,6 +782,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	/** Intelligently decrements a stack in an inventory, setting it to null if necessary.
 	 * Also performs sanity checks. Args: Inventory, Slot */
 	public static void decrStack(int slot, ItemStack[] inv) {
+		decrStack(slot, inv, 1);
+	}
+
+	public static void decrStack(int slot, ItemStack[] inv, int amt) {
 		if (slot >= inv.length) {
 			ReikaChatHelper.write("Tried to access Slot "+slot+", which is larger than the inventory.");
 			return;
@@ -796,10 +800,10 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			return;
 		}
 		if (in.getItem() instanceof ActivatedInventoryItem) {
-			((ActivatedInventoryItem)in.getItem()).decrementSlot(in, slot);
+			((ActivatedInventoryItem)in.getItem()).decrementSlot(in, slot, amt);
 		}
-		else if (in.stackSize > 1)
-			in.stackSize--;
+		else if (in.stackSize > amt)
+			in.stackSize -= amt;
 		else
 			inv[slot] = null;
 	}
@@ -815,13 +819,17 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			ReikaChatHelper.write("Tried to access Slot "+slot+", which is < 0.");
 			return;
 		}
-		if (inv.getStackInSlot(slot) == null) {
+		ItemStack in = inv.getStackInSlot(slot);
+		if (in == null) {
 			ReikaChatHelper.write("Tried to access Slot "+slot+", which is empty.");
 			return;
 		}
 		//ReikaJavaLibrary.pConsole("pre: "+inv.getStackInSlot(slot)+" w "+amount);
-		if (inv.getStackInSlot(slot).stackSize > amount)
-			inv.getStackInSlot(slot).stackSize -= amount;
+		if (in.getItem() instanceof ActivatedInventoryItem) {
+			((ActivatedInventoryItem)in.getItem()).decrementSlot(in, slot, amount);
+		}
+		else if (in.stackSize > amount)
+			in.stackSize -= amount;
 		else
 			inv.setInventorySlotContents(slot, null);
 		//ReikaJavaLibrary.pConsole("post: "+inv.getStackInSlot(slot)+" w "+amount);

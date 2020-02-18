@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -18,9 +18,8 @@ import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Cancelable
 @SideOnly(Side.CLIENT)
-public class TileEntityRenderEvent extends Event {
+public abstract class TileEntityRenderEvent extends Event {
 
 	public final TileEntitySpecialRenderer tesr;
 	public final TileEntity tileEntity;
@@ -39,9 +38,27 @@ public class TileEntityRenderEvent extends Event {
 	}
 
 	public static void fire(TileEntitySpecialRenderer tesr, TileEntity te, double par2, double par4, double par6, float par8) {
-		if (!MinecraftForge.EVENT_BUS.post(new TileEntityRenderEvent(tesr, te, par2, par4, par6, par8))) {
+		if (!MinecraftForge.EVENT_BUS.post(new TileEntityRenderEvent.Pre(tesr, te, par2, par4, par6, par8))) {
 			tesr.renderTileEntityAt(te, par2, par4, par6, par8);
+			MinecraftForge.EVENT_BUS.post(new TileEntityRenderEvent.Post(tesr, te, par2, par4, par6, par8));
 		}
+	}
+
+	@Cancelable
+	public static class Pre extends TileEntityRenderEvent {
+
+		public Pre(TileEntitySpecialRenderer tesr, TileEntity te, double par2, double par4, double par6, float par8) {
+			super(tesr, te, par2, par4, par6, par8);
+		}
+
+	}
+
+	public static class Post extends TileEntityRenderEvent {
+
+		public Post(TileEntitySpecialRenderer tesr, TileEntity te, double par2, double par4, double par6, float par8) {
+			super(tesr, te, par2, par4, par6, par8);
+		}
+
 	}
 
 }

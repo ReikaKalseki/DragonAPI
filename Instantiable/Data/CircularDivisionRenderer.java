@@ -58,7 +58,7 @@ public abstract class CircularDivisionRenderer<F> {
 	@SideOnly(Side.CLIENT)
 	public abstract void render(Map<F, Integer> colorMap);
 
-	protected final void resetColors() {
+	public final void resetColors() {
 		this.entryColors.clear();
 	}
 
@@ -167,6 +167,20 @@ public abstract class CircularDivisionRenderer<F> {
 	public static interface ColorCallback {
 
 		public int getColor(Object key);
+
+	}
+
+	public static class IntColorCallback implements ColorCallback {
+
+		public final int color;
+
+		public IntColorCallback(int c) {
+			color = c;
+		}
+
+		public int getColor(Object key) {
+			return color;
+		}
 
 	}
 

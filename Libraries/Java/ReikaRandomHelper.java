@@ -40,6 +40,25 @@ public class ReikaRandomHelper extends DragonAPICore {
 		return doWithChance(num, rand);
 	}
 
+	public static boolean doWithPercentChance(double num) {
+		return doWithPercentChance(num, rand);
+	}
+
+	public static boolean doWithPercentChance(double num, Random r) {
+		//ReikaJavaLibrary.pConsole(num, Side.SERVER);
+		if (num >= 100)
+			return true;
+		if (num <= 0)
+			return false;
+		num /= 100D;
+
+		if (num < 10e-15) { //to help precision
+			return r.nextDouble()*10e12 < num*10e12;
+		}
+
+		return r.nextDouble() < num;
+	}
+
 	/** Returns true with a percentage probability. Args: chance (out of 1 or a %), Rand */
 	public static boolean doWithChance(double num, Random r) {
 		//ReikaJavaLibrary.pConsole(num, Side.SERVER);
