@@ -30,6 +30,8 @@ public class Proportionality<F> extends CircularDivisionRenderer<F> {
 	private final Map<F, Double> data;
 	private double totalValue = 0;
 
+	public boolean drawSeparationLines = false;
+
 	public Proportionality() {
 		this(null);
 	}
@@ -102,11 +104,11 @@ public class Proportionality<F> extends CircularDivisionRenderer<F> {
 		double d = ReikaMathLibrary.py3d(x-centerX, y-centerY, 0);
 		if (d > renderRadius)
 			return null;
-		double relAng = (Math.toDegrees(Math.atan2(y-centerY, x-centerX))+360)%360;
-		double ang = renderOrigin;
+		double relAng = (Math.toDegrees(Math.atan2(y-centerY, x-centerX))+360)%360-renderOrigin;
+		relAng = ((relAng%360)+360)%360;
+		double ang = 0;
 		for (F o : data.keySet()) {
 			double angw = 360D*this.getFraction(o);
-			//ReikaJavaLibrary.pConsole(o+" > "+ang+" - "+(ang+angw)+" @ "+relAng);
 			if (ang <= relAng && ang+angw >= relAng) {
 				return o;
 			}
@@ -139,6 +141,35 @@ public class Proportionality<F> extends CircularDivisionRenderer<F> {
 			v5.draw();
 
 			ang += angw;
+		}
+
+		if (drawSeparationLines && data.size() > 1) {
+			v5.startDrawing(GL11.GL_LINES);
+			v5.setColorOpaque_I(0x000000);
+			for (F o : data.keySet()) {
+				double angw = 360D*this.getFraction(o);
+				if (innerRadius == 0) {
+					v5.addVertex(centerX, centerY, 0);
+					double d2 = Math.toRadians(ang);
+					double r2 = this.getOuterRadiusAt(d2);
+					double dx = centerX+r2*Math.cos(d2);
+					double dy = centerY+r2*Math.sin(d2);
+					v5.addVertex(dx, dy, 0);
+				}
+				else {
+					double d2 = Math.toRadians(ang);
+					double r1 = this.getInnerRadiusAt(d2);
+					double r2 = this.getOuterRadiusAt(d2);
+					double dx1 = centerX+r1*Math.cos(d2);
+					double dy1 = centerY+r1*Math.sin(d2);
+					double dx2 = centerX+r2*Math.cos(d2);
+					double dy2 = centerY+r2*Math.sin(d2);
+					v5.addVertex(dx1, dy1, 0);
+					v5.addVertex(dx2, dy2, 0);
+				}
+				ang += angw;
+			}
+			v5.draw();
 		}
 		GL11.glPopAttrib();
 	}

@@ -48,7 +48,7 @@ public enum ModCropList implements ModCrop {
 	COTTON(ModList.NATURA, 0xE366F5, "crops", "seeds", 0, 4, 6, 8, VarType.INSTANCE),
 	FLAX(ModList.BLUEPOWER, 0xD9C482, "flax_crop", "flax_seeds", 0, 0, 0, 8, VarType.INSTANCE),
 	MAGIC(ModList.MAGICCROPS, 0x6F9165, (CropHandlerBase)ModList.MAGICCROPS.getHandler("Handler")),
-	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 3, VarType.INSTANCE),
+	MANA(ModList.THAUMCRAFT, 0x55aaff, "blockManaPod", "itemManaBean", 0, 0, 0, 7, VarType.INSTANCE),
 	BERRY(ModList.NATURA, 0x55ff33, BerryBushHandler.getInstance()),
 	OREBERRY(ModList.TINKERER, 0xcccccc, OreBerryBushHandler.getInstance()),
 	PAM(ModList.HARVESTCRAFT, 0x22aa22, HarvestCraftHandler.getInstance()),
