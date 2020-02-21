@@ -687,6 +687,7 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 
 	public static enum MatchMode {
 		EXACT(0xffcc00, "Exact Match"),
+		EXACTNONBT(0xA5FF00, "Exact Match, Ignore NBT"),
 		FUZZY(0x00aaff, "Fuzzy Match"),
 		FUZZYORE(0x00ff00, "Fuzzy/Ore Match"),
 		FUZZYNBT(0xaa00ff, "Fuzzy/Ore Match, Ignore NBT");
@@ -705,6 +706,8 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 			switch(this) {
 				case EXACT:
 					return net.getItemCount(is, true);
+				case EXACTNONBT:
+					return net.getItemCount(is, false);
 				case FUZZY:
 					return net.getFuzzyItemCount(is, FuzzyMode.IGNORE_ALL, false, true);
 				case FUZZYORE:
@@ -717,9 +720,14 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 
 		public ExtractedItemGroup removeItems(MESystemReader net, ItemStack is, boolean simulate, boolean allowMultiple) {
 			switch(this) {
-				case EXACT:
+				case EXACT: {
 					long amt = net.removeItem(is, simulate, true);
 					return amt != 0 ? new ExtractedItemGroup(new ExtractedItem(is, amt)) : null;
+				}
+				case EXACTNONBT: {
+					long amt = net.removeItem(is, simulate, false);
+					return amt != 0 ? new ExtractedItemGroup(new ExtractedItem(is, amt)) : null;
+				}
 				case FUZZY:
 					return net.removeItemFuzzy(is, simulate, FuzzyMode.IGNORE_ALL, false, true, allowMultiple);
 				case FUZZYORE:
@@ -738,6 +746,8 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 			switch(this) {
 				case EXACT:
 					return ReikaItemHelper.matchStacks(is1, is2) && ItemStack.areItemStackTagsEqual(is1, is2);
+				case EXACTNONBT:
+					return ReikaItemHelper.matchStacks(is1, is2);
 				case FUZZY:
 					return is1.getItem() == is2.getItem() && ItemStack.areItemStackTagsEqual(is1, is2);
 				case FUZZYNBT:

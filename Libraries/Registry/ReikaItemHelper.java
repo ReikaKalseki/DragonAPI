@@ -52,6 +52,7 @@ import net.minecraftforge.oredict.OreDictionary;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.ItemFilter;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
@@ -194,6 +195,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 		else if (b instanceof String) {
 			return ReikaItemHelper.listContainsItemStack(OreDictionary.getOres((String)b), a, false);
+		}
+		else if (b instanceof ItemFilter) {
+			return ((ItemFilter)b).matches(a);
 		}
 		else {
 			return false;
