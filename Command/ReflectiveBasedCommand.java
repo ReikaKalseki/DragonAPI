@@ -243,12 +243,33 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 	}
 
 	protected final Class[] parseTypes(String arg) throws ClassNotFoundException {
+		if (arg.charAt(0) == '(')
+			return this.parseASMTypes(arg);
 		String[] parts = arg.split(";");
 		Class[] types = new Class[parts.length];
 		for (int i = 0; i < types.length; i++) {
 			types[i] = this.parseType(parts[i]);
 		}
 		return types;
+	}
+
+	private Class[] parseASMTypes(String arg) throws ClassNotFoundException {
+		ArrayList<String> li = ReikaASMHelper.parseMethodSignature(arg);
+		li.remove(li.size()-1);
+		Class[] types = new Class[li.size()];
+		for (int i = 0; i < types.length; i++) {
+			types[i] = this.parseASMType(li.get(i));
+		}
+		return types;
+	}
+
+	private Class parseASMType(String s) throws ClassNotFoundException {
+		if (s.startsWith("L#")) {
+			Class ret = this.findClass(s.substring(1, s.length()-1));
+			if (ret != null)
+				return ret;
+		}
+		return ReikaASMHelper.parseClass(s);
 	}
 
 	protected final Class parseType(String s) throws ClassNotFoundException {

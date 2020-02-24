@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -20,6 +20,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
+import Reika.ChromatiCraft.TileEntity.AOE.Defence.TileEntityExplosionShield;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Interfaces.Block.SemiUnbreakable;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -68,6 +69,8 @@ public class FlyingBlocksExplosion extends Explosion {
 			for (int i = x-r; i <= x+r; i++) {
 				for (int j = y-r; j <= y+r; j++) {
 					for (int k = z-r; k <= z+r; k++) {
+						if (TileEntityExplosionShield.isLocationProtected(world, x, y, z, explosionSize))
+							continue;
 						Block b = world.getBlock(i, j, k);
 						int meta = world.getBlockMetadata(i, j, k);
 						Effect e = this.calcEffect(world, i, j, k, b, meta);

@@ -639,6 +639,14 @@ public class ReikaBeeHelper {
 		return ig != null ? ig.getPrimary() : null;
 	}
 
+	public static boolean isDefaultJubilance(IBeeGenome ibg, IBeeHousing ibh) {
+		return isDefaultJubilance(ibg.getPrimary(), ibg, ibh);
+	}
+
+	public static boolean isDefaultJubilance(IAlleleBeeSpecies ias, IBeeGenome ibg, IBeeHousing ibh) {
+		return BeeManager.jubilanceFactory.getDefault().isJubilant(ias, ibg, ibh);
+	}
+
 	public static float getTemperatureRangeCenter(EnumTemperature t) {
 		switch(t) {
 			case ICY:

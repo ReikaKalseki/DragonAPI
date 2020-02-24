@@ -80,6 +80,7 @@ import li.cil.oc.api.machine.Context;
 import li.cil.oc.api.network.Environment;
 import li.cil.oc.api.network.Message;
 import li.cil.oc.api.network.Node;
+import li.cil.oc.api.network.SidedEnvironment;
 import li.cil.oc.api.network.Visibility;
 
 @Injectable(value = {"dan200.computercraft.api.peripheral.IPeripheral", "li.cil.oc.api.network.Environment",
@@ -250,14 +251,48 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			NBT.setString("placeUUID", placerUUID.toString());
 
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
-			if (node != null)
-				((Node)node).save(NBT);
+			this.saveOCNodes(NBT);
 		}
 
 		NBT.setBoolean("no_drops", unharvestable);
 		NBT.setBoolean("no_mine", unmineable);
 
 		NBT.setLong("age_ticks", tileAge);
+	}
+
+	@ModDependent(ModList.OPENCOMPUTERS)
+	private void saveOCNodes(NBTTagCompound NBT) {
+		if (this instanceof SidedEnvironment) {
+			for (int i = 0; i < 6; i++) {
+				Node n = ((SidedEnvironment)this).sidedNode(dirs[i]);
+				if (n != null) {
+					NBTTagCompound tag = new NBTTagCompound();
+					n.save(tag);
+					NBT.setTag("sided_node_"+i, tag);
+				}
+			}
+		}
+		else {
+			if (node != null)
+				((Node)node).save(NBT);
+		}
+	}
+
+	@ModDependent(ModList.OPENCOMPUTERS)
+	private void loadOCNodes(NBTTagCompound NBT) {
+		if (this instanceof SidedEnvironment) {
+			for (int i = 0; i < 6; i++) {
+				Node n = ((SidedEnvironment)this).sidedNode(dirs[i]);
+				if (n != null) {
+					NBTTagCompound tag = NBT.getCompoundTag("sided_node_"+i);
+					n.load(tag);
+				}
+			}
+		}
+		else {
+			if (node != null)
+				((Node)node).load(NBT);
+		}
 	}
 
 	@Override
@@ -270,8 +305,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			placerUUID = UUID.fromString(NBT.getString("placeUUID"));
 
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
-			if (node != null)
-				((Node)node).load(NBT);
+			this.loadOCNodes(NBT);
 		}
 
 		unharvestable = NBT.getBoolean("no_drops");
@@ -629,14 +663,29 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			for (int i = 0; i < 6; i++)
 				this.updateCache(dirs[i]);
 			if (ModList.OPENCOMPUTERS.isLoaded()) {
-				if (node != null && ((Node)node).network() == null)
-					Network.joinOrCreateNetwork(this);
+				this.initOCNodes();
 			}
 			this.onFirstTick(worldObj, xCoord, yCoord, zCoord);
 			redstoneInput = worldObj.isBlockIndirectlyGettingPowered(xCoord, yCoord, zCoord);
 		}
 		if (!worldObj.isRemote && this.getTicksExisted()%8 == 0)
 			comparatorTracker.update(this);
+	}
+
+	@ModDependent(ModList.OPENCOMPUTERS)
+	private void initOCNodes() {
+		if (this instanceof SidedEnvironment) {
+			boolean flag = true;
+			for (int i = 0; i < 6; i++) {
+				Node n = ((SidedEnvironment)this).sidedNode(dirs[i]);
+				flag |= n != null && n.network() != null;
+			}
+			Network.joinOrCreateNetwork(this);
+		}
+		else {
+			if (node != null && ((Node)node).network() == null)
+				Network.joinOrCreateNetwork(this);
+		}
 	}
 
 	protected void onFirstTick(World world, int x, int y, int z) {
@@ -864,8 +913,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			adjTEMap[i] = null;
 
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
-			if (node != null)
-				((Node)node).remove();
+			this.unloadOCNodes();
 		}
 
 		this.onInvalidateOrUnload(worldObj, xCoord, yCoord, zCoord, false);
@@ -879,11 +927,24 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			adjTEMap[i] = null;
 
 		if (ModList.OPENCOMPUTERS.isLoaded()) {
-			if (node != null)
-				((Node)node).remove();
+			this.unloadOCNodes();
 		}
 
 		this.onInvalidateOrUnload(worldObj, xCoord, yCoord, zCoord, true);
+	}
+
+	@ModDependent(ModList.OPENCOMPUTERS)
+	private void unloadOCNodes() {
+		if (node != null)
+			((Node)node).remove();
+		if (this instanceof SidedEnvironment) {
+			for (int i = 0; i < 6; i++) {
+				Node n = ((SidedEnvironment)this).sidedNode(dirs[i]);
+				if (n != null) {
+					n.remove();
+				}
+			}
+		}
 	}
 
 	protected void onInvalidateOrUnload(World world, int x, int y, int z, boolean invalid) {
@@ -907,7 +968,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 	}
 
 	@ModDependent(ModList.OPENCOMPUTERS)
-	public Node node() {
+	public final Node node() {
 		return (Node)node;
 	}
 

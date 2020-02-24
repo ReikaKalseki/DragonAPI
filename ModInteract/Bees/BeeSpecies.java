@@ -344,7 +344,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		this.addBreeding((IAlleleBeeSpecies)parent1, (IAlleleBeeSpecies)parent2, chance);
 	}
 
-	private final void addBreeding(IAlleleBeeSpecies p1, IAlleleBeeSpecies p2, int chance) {
+	public final void addBreeding(IAlleleBeeSpecies p1, IAlleleBeeSpecies p2, int chance) {
 		if (!isRegistered)
 			throw new MisuseException("You must register a bee before adding breeding pairs!");
 		if (p1 == null || p2 == null)
