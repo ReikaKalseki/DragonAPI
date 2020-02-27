@@ -615,10 +615,10 @@ public class BlockArray implements Iterable<Coordinate> {
 	}
 
 	public void recursiveAddWithBoundsMetadata(IBlockAccess world, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
-		this.recursiveAddWithBoundsMetadata(world, x, y, z, x, y, z, id, meta, x1, y1, z1, x2, y2, z2, 0);
+		this.recursiveAddWithBoundsMetadata(world, x, y, z, x, y, z, id, meta, x1, y1, z1, x2, y2, z2, 0, new HashMap());
 	}
 
-	private void recursiveAddWithBoundsMetadata(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2, int depth) {
+	private void recursiveAddWithBoundsMetadata(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2, int depth, HashMap<Coordinate, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -631,22 +631,27 @@ public class BlockArray implements Iterable<Coordinate> {
 			return;
 		}
 		if (this.hasBlock(x, y, z))
+			;//return;
+		Coordinate c = new Coordinate(x, y, z);
+		if (map.containsKey(c) && depth >= map.get(c)) {
 			return;
+		}
 		this.addBlockCoordinate(x, y, z);
+		map.put(c, depth);
 		try {
 			if (extraSpread) {
 				for (int i = -1; i <= 1; i++)
 					for (int j = -1; j <= 1; j++)
 						for (int k = -1; k <= 1; k++)
-							this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x+i, y+j, z+k, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
+							this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x+i, y+j, z+k, id, meta, x1, y1, z1, x2, y2, z2, depth+1, map);
 			}
 			else {
-				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
-				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
-				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y+1, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
-				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
-				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
-				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2, depth+1);
+				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1, map);
+				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1, map);
+				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y+1, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1, map);
+				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2, depth+1, map);
+				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2, depth+1, map);
+				this.recursiveAddWithBoundsMetadata(world, x0, y0, z0, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2, depth+1, map);
 			}
 		}
 		catch (StackOverflowError e) {
@@ -656,10 +661,10 @@ public class BlockArray implements Iterable<Coordinate> {
 	}
 
 	public void recursiveAddCallbackWithBounds(IBlockAccess world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f) {
-		this.recursiveAddCallbackWithBounds(world, x, y, z, x, y, z, x1, y1, z1, x2, y2, z2, f, 0);
+		this.recursiveAddCallbackWithBounds(world, x, y, z, x, y, z, x1, y1, z1, x2, y2, z2, f, 0, new HashMap());
 	}
 
-	private void recursiveAddCallbackWithBounds(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f, int depth) {
+	private void recursiveAddCallbackWithBounds(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f, int depth, HashMap<Coordinate, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)
@@ -672,22 +677,27 @@ public class BlockArray implements Iterable<Coordinate> {
 			return;
 		}
 		if (this.hasBlock(x, y, z))
+			;//return;
+		Coordinate c = new Coordinate(x, y, z);
+		if (map.containsKey(c) && depth >= map.get(c)) {
 			return;
+		}
 		this.addBlockCoordinate(x, y, z);
+		map.put(c, depth);
 		try {
 			if (extraSpread) {
 				for (int i = -1; i <= 1; i++)
 					for (int j = -1; j <= 1; j++)
 						for (int k = -1; k <= 1; k++)
-							this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x+i, y+j, z+k, x1, y1, z1, x2, y2, z2, f, depth+1);
+							this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x+i, y+j, z+k, x1, y1, z1, x2, y2, z2, f, depth+1, map);
 			}
 			else {
-				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x+1, y, z, x1, y1, z1, x2, y2, z2, f, depth+1);
-				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x-1, y, z, x1, y1, z1, x2, y2, z2, f, depth+1);
-				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y+1, z, x1, y1, z1, x2, y2, z2, f, depth+1);
-				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y-1, z, x1, y1, z1, x2, y2, z2, f, depth+1);
-				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y, z+1, x1, y1, z1, x2, y2, z2, f, depth+1);
-				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y, z-1, x1, y1, z1, x2, y2, z2, f, depth+1);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x+1, y, z, x1, y1, z1, x2, y2, z2, f, depth+1, map);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x-1, y, z, x1, y1, z1, x2, y2, z2, f, depth+1, map);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y+1, z, x1, y1, z1, x2, y2, z2, f, depth+1, map);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y-1, z, x1, y1, z1, x2, y2, z2, f, depth+1, map);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y, z+1, x1, y1, z1, x2, y2, z2, f, depth+1, map);
+				this.recursiveAddCallbackWithBounds(world, x0, y0, z0, x, y, z-1, x1, y1, z1, x2, y2, z2, f, depth+1, map);
 			}
 		}
 		catch (StackOverflowError e) {
@@ -1101,6 +1111,16 @@ public class BlockArray implements Iterable<Coordinate> {
 		for (Coordinate c : arr.blocks) {
 			if (!keys.contains(c)) {
 				this.addBlockCoordinate(c.xCoord, c.yCoord, c.zCoord);
+			}
+		}
+	}
+
+	public void addAll(BlockBox box) {
+		for (int x = box.minX; x <= box.maxX; x++) {
+			for (int z = box.minZ; z <= box.maxZ; z++) {
+				for (int y = box.minY; y <= box.maxY; y++) {
+					this.addBlockCoordinate(x, y, z);
+				}
 			}
 		}
 	}

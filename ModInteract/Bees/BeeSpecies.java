@@ -49,6 +49,7 @@ import forestry.api.core.EnumTemperature;
 import forestry.api.core.IIconProvider;
 import forestry.api.genetics.AlleleManager;
 import forestry.api.genetics.IAllele;
+import forestry.api.genetics.IAlleleFlowers;
 import forestry.api.genetics.IAlleleSpecies;
 import forestry.api.genetics.IClassification;
 import forestry.api.genetics.IIndividual;
@@ -436,7 +437,7 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	}
 
-	public abstract IAllele getFlowerAllele();
+	public abstract IAlleleFlowers getFlowerAllele();
 	public abstract IAlleleBeeEffect getEffectAllele();
 	public abstract Speeds getProductionSpeed();
 	public abstract Fertility getFertility();

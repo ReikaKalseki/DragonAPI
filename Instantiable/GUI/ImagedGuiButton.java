@@ -152,8 +152,9 @@ public class ImagedGuiButton extends GuiButton {
 	}
 
 	@Override
-	public final void drawButton(Minecraft mc, int mx, int my)
-	{
+	public final void drawButton(Minecraft mc, int mx, int my) {
+		this.updateVisibility();
+
 		if (visible && !invisible) {
 			field_146123_n = this.isPositionWithin(mx, my);
 			int k = this.getHoverState(field_146123_n);
@@ -197,6 +198,10 @@ public class ImagedGuiButton extends GuiButton {
 			}
 			ticks++;
 		}
+	}
+
+	protected void updateVisibility() {
+
 	}
 
 	protected void renderButton() {

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -99,7 +99,7 @@ public final class BlockKey implements BlockCheck, Comparable<BlockKey> {
 		return b == blockID && (!this.hasMetadata() || meta == metadata);
 	}
 
-	public boolean matchInWorld(World world, int x, int y, int z) {
+	public boolean matchInWorld(IBlockAccess world, int x, int y, int z) {
 		return this.match(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 	}
 

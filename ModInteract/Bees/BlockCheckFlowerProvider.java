@@ -34,8 +34,6 @@ public abstract class BlockCheckFlowerProvider implements IFlowerProvider, IFlow
 	public final BlockCheck block;
 	private final String id;
 
-	//private final List<IFlower> flowers = new ArrayList();
-
 	public BlockCheckFlowerProvider(Block b, String id) {
 		this(b, -1, id);
 	}
@@ -48,6 +46,7 @@ public abstract class BlockCheckFlowerProvider implements IFlowerProvider, IFlow
 		block = bk;
 		this.id = id;
 
+		FlowerManager.flowerRegistry.registerAcceptableFlower(block.asBlockKey().blockID, block.asBlockKey().metadata, this.id);
 		FlowerManager.flowerRegistry.registerAcceptableFlowerRule(this, this.id);
 	}
 

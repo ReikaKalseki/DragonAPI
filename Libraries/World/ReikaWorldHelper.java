@@ -1718,7 +1718,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return maxdist;
 	}
 
-	public static boolean isExposedToAir(World world, int x, int y, int z) {
+	public static boolean isExposedToAir(IBlockAccess world, int x, int y, int z) {
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
 			int dx = x+dir.offsetX;
@@ -1729,7 +1729,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				return true;
 			if (b == null)
 				return true;
-			if (b.getCollisionBoundingBoxFromPool(world, dx, dy, dz) == null)
+			if (world instanceof World && b.getCollisionBoundingBoxFromPool((World)world, dx, dy, dz) == null)
 				return true;
 			Material mat = b.getMaterial();
 			if (mat != null) {
