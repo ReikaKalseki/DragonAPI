@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
@@ -125,7 +124,7 @@ public class Search {
 
 	public static interface PropagationCondition {
 
-		public boolean isValidLocation(IBlockAccess world, int x, int y, int z);
+		public boolean isValidLocation(World world, int x, int y, int z);
 
 	}
 
@@ -138,7 +137,7 @@ public class Search {
 		}
 
 		@Override
-		public boolean isValidLocation(IBlockAccess world, int x, int y, int z) {
+		public boolean isValidLocation(World world, int x, int y, int z) {
 			return world.getBlock(x, y, z).isAir(world, x, y, z);
 		}
 

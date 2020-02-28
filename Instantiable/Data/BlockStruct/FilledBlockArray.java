@@ -29,7 +29,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
@@ -493,7 +492,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 
 		@Override
-		public boolean matchInWorld(IBlockAccess world, int x, int y, int z) {
+		public boolean matchInWorld(World world, int x, int y, int z) {
 			for (BlockCheck b : keys) {
 				if (b.matchInWorld(world, x, y, z))
 					return true;
@@ -556,7 +555,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 
 		@Override
-		public boolean matchInWorld(IBlockAccess world, int x, int y, int z) {
+		public boolean matchInWorld(World world, int x, int y, int z) {
 			return this.match(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 		}
 
@@ -623,7 +622,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 
 		@Override
-		public boolean matchInWorld(IBlockAccess world, int x, int y, int z) {
+		public boolean matchInWorld(World world, int x, int y, int z) {
 			Block b = world.getBlock(x, y, z);
 			if (exceptions.contains(b))
 				return false;
@@ -631,7 +630,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 				return true;
 			if (allowSoft && ReikaWorldHelper.softBlocks(world, x, y, z))
 				return true;
-			if (allowNonSolid && world instanceof World && b.getCollisionBoundingBoxFromPool((World)world, x, y, z) == null)
+			if (allowNonSolid && b.getCollisionBoundingBoxFromPool(world, x, y, z) == null)
 				return true;
 			return false;
 		}
@@ -724,7 +723,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 			return b == block.blockID && (!block.hasMetadata() || meta == block.metadata);
 		}
 
-		public boolean matchInWorld(IBlockAccess world, int x, int y, int z) {
+		public boolean matchInWorld(World world, int x, int y, int z) {
 			return this.match(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z)) && this.matchTile(world.getTileEntity(x, y, z));
 		}
 

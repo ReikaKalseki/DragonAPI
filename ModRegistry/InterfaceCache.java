@@ -43,10 +43,16 @@ public enum InterfaceCache {
 	BOPBIOME("biomesoplenty.api.biome.BOPBiome"),
 	PAINTABLE("crazypants.enderio.machine.painter.IPaintableTileEntity"),
 	EIOCONDUIT("crazypants.enderio.conduit.IConduitBundle"),
+	EIOCONDUITBLOCK("crazypants.enderio.conduit.BlockConduitBundle"),
 	RECONFIGURABLEFACE("cofh.api.tileentity.IReconfigurableFacing"),
 	IPLANETWORLD("zmaster587.advancedRocketry.api.IPlanetaryProvider"),
 	BCPIPE("buildcraft.api.transport.IPipeTile"),
+	BCPIPEBLOCK("buildcraft.transport.BlockGenericPipe"),
 	AEPATTERN("appeng.api.implementations.ICraftingPatternItem"),
+	TDDUCT("cofh.thermaldynamics.block.TileTDBase"),
+	TDDUCTBLOCK("cofh.thermaldynamics.block.BlockTDBase"),
+	AECABLE("appeng.tile.networking.TileCableBus"),
+	AECABLEBLOCK("appeng.block.networking.BlockCableBus"),
 	;
 
 	private final String classpath;

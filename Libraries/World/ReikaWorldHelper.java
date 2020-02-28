@@ -107,6 +107,7 @@ import Reika.DragonAPI.ModInteract.AtmosphereHandler;
 import Reika.DragonAPI.ModInteract.DeepInteract.PlanetDimensionHandler;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.NaturaBlockHandler;
+import Reika.DragonAPI.ModRegistry.InterfaceCache;
 import Reika.DragonAPI.ModRegistry.ModCropList;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -1718,28 +1719,40 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return maxdist;
 	}
 
-	public static boolean isExposedToAir(IBlockAccess world, int x, int y, int z) {
+	public static boolean isExposedToAir(World world, int x, int y, int z) {
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
 			int dx = x+dir.offsetX;
 			int dy = y+dir.offsetZ;
 			int dz = z+dir.offsetY;
-			Block b = world.getBlock(dx, dy, dz);
-			if (b == Blocks.air)
+			if (!world.checkChunksExist(dx, dy, dz, dx, dy, dz))
+				continue;
+			if (countsAsAirExposure(world, dx, dy, dz)) {
 				return true;
-			if (b == null)
-				return true;
-			if (world instanceof World && b.getCollisionBoundingBoxFromPool((World)world, dx, dy, dz) == null)
-				return true;
-			Material mat = b.getMaterial();
-			if (mat != null) {
-				if (mat == Material.circuits || mat == Material.air || mat == Material.cactus || mat == Material.fire)
-					return true;
-				if (mat == Material.plants || mat == Material.portal || mat == Material.vine || mat == Material.web)
-					return true;
-				if (!mat.isSolid())
-					return true;
 			}
+		}
+		return false;
+	}
+
+	public static boolean countsAsAirExposure(World world, int dx, int dy, int dz) {
+		Block b = world.getBlock(dx, dy, dz);
+		if (b == Blocks.air)
+			return true;
+		if (b == null)
+			return true;
+		if (b.getCollisionBoundingBoxFromPool(world, dx, dy, dz) == null)
+			return true;
+		if (InterfaceCache.EIOCONDUITBLOCK.instanceOf(b) || InterfaceCache.BCPIPEBLOCK.instanceOf(b) || InterfaceCache.TDDUCTBLOCK.instanceOf(b) || InterfaceCache.AECABLEBLOCK.instanceOf(b)) {
+			return true;
+		}
+		Material mat = b.getMaterial();
+		if (mat != null) {
+			if (mat == Material.circuits || mat == Material.air || mat == Material.cactus || mat == Material.fire)
+				return true;
+			if (mat == Material.plants || mat == Material.portal || mat == Material.vine || mat == Material.web)
+				return true;
+			if (!mat.isSolid())
+				return true;
 		}
 		return false;
 	}
@@ -1755,20 +1768,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			Block b = world.getBlock(dx, dy, dz);
 			if (b == ex)
 				continue;
-			if (b == Blocks.air)
+			if (countsAsAirExposure(world, dx, dy, dz)) {
 				return true;
-			if (b == null)
-				return true;
-			if (b.getCollisionBoundingBoxFromPool(world, dx, dy, dz) == null)
-				return true;
-			Material mat = b.getMaterial();
-			if (mat != null) {
-				if (mat == Material.circuits || mat == Material.air || mat == Material.cactus || mat == Material.fire)
-					return true;
-				if (mat == Material.plants || mat == Material.portal || mat == Material.vine || mat == Material.web)
-					return true;
-				if (!mat.isSolid())
-					return true;
 			}
 		}
 		return false;

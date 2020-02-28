@@ -660,11 +660,11 @@ public class BlockArray implements Iterable<Coordinate> {
 		}
 	}
 
-	public void recursiveAddCallbackWithBounds(IBlockAccess world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f) {
+	public void recursiveAddCallbackWithBounds(World world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f) {
 		this.recursiveAddCallbackWithBounds(world, x, y, z, x, y, z, x1, y1, z1, x2, y2, z2, f, 0, new HashMap());
 	}
 
-	private void recursiveAddCallbackWithBounds(IBlockAccess world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f, int depth, HashMap<Coordinate, Integer> map) {
+	private void recursiveAddCallbackWithBounds(World world, int x0, int y0, int z0, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f, int depth, HashMap<Coordinate, Integer> map) {
 		if (overflow)
 			return;
 		if (depth > maxDepth)

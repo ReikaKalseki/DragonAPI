@@ -1,7 +1,7 @@
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
 import net.minecraft.block.Block;
-import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
@@ -20,7 +20,7 @@ public class OpenPathFinder implements PropagationCondition {
 	}
 
 	@Override
-	public boolean isValidLocation(IBlockAccess world, int x, int y, int z) {
+	public boolean isValidLocation(World world, int x, int y, int z) {
 		if (startLocation.equals(x, y, z) || endLocation.equals(x, y, z))
 			return true;
 		if (!startLocation.isWithinDistOnAllCoords(x, y, z, searchRadius))

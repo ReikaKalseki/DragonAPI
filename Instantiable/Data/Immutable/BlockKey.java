@@ -99,7 +99,7 @@ public final class BlockKey implements BlockCheck, Comparable<BlockKey> {
 		return b == blockID && (!this.hasMetadata() || meta == metadata);
 	}
 
-	public boolean matchInWorld(IBlockAccess world, int x, int y, int z) {
+	public boolean matchInWorld(World world, int x, int y, int z) {
 		return this.match(world.getBlock(x, y, z), world.getBlockMetadata(x, y, z));
 	}
 
