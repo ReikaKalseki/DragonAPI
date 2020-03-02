@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -42,6 +42,10 @@ public class ForestryHandler extends ModHandlerBase {
 		PROPOLIS("forestry.apiculture.items.ItemRegistryApiculture", "propolis"),
 		WAX("forestry.core.items.ItemRegistryCore", "beeswax"),
 		REFWAX("forestry.core.items.ItemRegistryCore", "refractoryWax"),
+		PHOSPHOR("forestry.core.items.ItemRegistryCore", "phosphor"),
+		MULCH("forestry.core.items.ItemRegistryCore", "mulch"),
+		PEAT("forestry.core.items.ItemRegistryCore", "peat"),
+		ASH("forestry.core.items.ItemRegistryCore", "ash"),
 		POLLEN("forestry.apiculture.items.ItemRegistryApiculture", "pollenCluster"),
 		TREEPOLLEN("forestry.arboriculture.items.ItemRegistryArboriculture", "pollenFertile"),
 		QUEEN("forestry.apiculture.items.ItemRegistryApiculture", "beeQueenGE"),
