@@ -53,6 +53,7 @@ public enum InterfaceCache {
 	TDDUCTBLOCK("cofh.thermaldynamics.block.BlockTDBase"),
 	AECABLE("appeng.tile.networking.TileCableBus"),
 	AECABLEBLOCK("appeng.block.networking.BlockCableBus"),
+	ESSENTIADISTILL("tuhljin.automagy.api.essentia.IEssentiaDistillery"),
 	;
 
 	private final String classpath;

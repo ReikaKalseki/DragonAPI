@@ -56,6 +56,7 @@ import Reika.DragonAPI.Instantiable.ItemFilter;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
+import Reika.DragonAPI.Instantiable.Recipe.ItemMatch;
 import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaEngLibrary;
@@ -187,7 +188,13 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static boolean matchStacks(ItemStack a, Object b) {
-		if (b instanceof ItemStack) {
+		if (a == b) {
+			return true;
+		}
+		else if (a == null || b == null) {
+			return false;
+		}
+		else if (b instanceof ItemStack) {
 			return matchStacks(a, (ItemStack)b);
 		}
 		else if (b instanceof Collection) {
@@ -198,6 +205,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 		else if (b instanceof ItemFilter) {
 			return ((ItemFilter)b).matches(a);
+		}
+		else if (b instanceof ItemMatch) {
+			return ((ItemMatch)b).match(a);
 		}
 		else {
 			return false;

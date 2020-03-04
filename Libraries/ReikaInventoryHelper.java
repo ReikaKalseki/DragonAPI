@@ -799,10 +799,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			ReikaChatHelper.write("Tried to access Slot "+slot+", which is empty.");
 			return;
 		}
-		if (in.getItem() instanceof ActivatedInventoryItem) {
-			((ActivatedInventoryItem)in.getItem()).decrementSlot(in, slot, amt);
-		}
-		else if (in.stackSize > amt)
+		if (in.stackSize > amt)
 			in.stackSize -= amt;
 		else
 			inv[slot] = null;
@@ -825,10 +822,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			return;
 		}
 		//ReikaJavaLibrary.pConsole("pre: "+inv.getStackInSlot(slot)+" w "+amount);
-		if (in.getItem() instanceof ActivatedInventoryItem) {
-			((ActivatedInventoryItem)in.getItem()).decrementSlot(in, slot, amount);
-		}
-		else if (in.stackSize > amount)
+		if (in.stackSize > amount)
 			in.stackSize -= amount;
 		else
 			inv.setInventorySlotContents(slot, null);

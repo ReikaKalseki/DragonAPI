@@ -233,14 +233,6 @@ public class WorldLocation {
 		return data;
 	}
 
-	public static final WorldLocation readTag(NBTTagCompound data) {
-		int x = data.getInteger("x");
-		int y = data.getInteger("y");
-		int z = data.getInteger("z");
-		int dim = data.getInteger("dim");
-		return new WorldLocation(dim, x, y, z);
-	}
-
 	public WorldLocation copy() {
 		return new WorldLocation(this);
 	}
