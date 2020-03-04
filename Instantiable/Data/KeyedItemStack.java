@@ -238,4 +238,8 @@ public final class KeyedItemStack implements Comparable<KeyedItemStack> {
 		return ReikaItemHelper.comparator.compare(item, o.item);
 	}
 
+	public String getDisplayName() {
+		return item.getDisplayName();
+	}
+
 }

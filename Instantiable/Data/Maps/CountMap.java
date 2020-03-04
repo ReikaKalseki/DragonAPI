@@ -9,7 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Maps;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -45,6 +47,14 @@ public class CountMap<V> {
 		for (V val : map.data.keySet()) {
 			this.increment(val, map.data.get(val));
 		}
+	}
+
+	public void subtract(V key, int num) {
+		int has = this.get(key);
+		if (num >= has)
+			this.remove(key);
+		else
+			this.increment(key, -num);
 	}
 
 	public void set(V key, int num) {
@@ -118,6 +128,10 @@ public class CountMap<V> {
 
 	public boolean isEmpty() {
 		return data.isEmpty();
+	}
+
+	public Map<V, Integer> view() {
+		return Collections.unmodifiableMap(data);
 	}
 
 	public void readFromNBT(NBTTagCompound tag, NBTIO<V> converter) {
