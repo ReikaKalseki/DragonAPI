@@ -642,7 +642,7 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		return !worldObj.isRemote;
 	}
 
-	protected void writeError(Throwable e) {
+	public void writeError(Throwable e) {
 		if (DragonOptions.CHATERRORS.getState()) {
 			ReikaChatHelper.write(this+" ["+FMLCommonHandler.instance().getEffectiveSide()+"] is throwing "+e.getClass()+" on update: "+e.getMessage());
 			ReikaChatHelper.write(Arrays.toString(e.getStackTrace()));

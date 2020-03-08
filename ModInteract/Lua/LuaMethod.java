@@ -167,6 +167,12 @@ public abstract class LuaMethod {
 						}
 					}
 				}
+				if (c.isAnnotationPresent(ModDependentMethod.class)) {
+					ModList mod = ((ModDependentMethod)c.getAnnotation(ModDependentMethod.class)).value();
+					if (!mod.isLoaded()) {
+						continue;
+					}
+				}
 				c.newInstance();
 			}
 		}
@@ -217,6 +223,12 @@ public abstract class LuaMethod {
 	@Target({ElementType.TYPE})
 	public static @interface ModTileDependent {
 		String[] value();
+	}
+
+	@Retention(RetentionPolicy.RUNTIME)
+	@Target({ElementType.TYPE})
+	public static @interface ModDependentMethod {
+		ModList value();
 	}
 
 	public final class LuaMethodException extends Exception {

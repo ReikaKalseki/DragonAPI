@@ -411,7 +411,7 @@ public final class MTInteractionManager {
 			else if (s.startsWith("val") || s.startsWith("var")) { //variable
 				int eq = s.indexOf("=");
 				if (eq < 0) {
-					this.logError(s, "is a variable declaration that lacks a variable definition.");
+					//this.logError(s, "is a variable declaration that lacks a variable definition.");
 				}
 				else {
 					String name = s.substring(3, eq);
@@ -427,7 +427,7 @@ public final class MTInteractionManager {
 						set.add(val);
 					}
 					else {
-						this.logError(s, "is a variable definition with no item specified.");
+						//this.logError(s, "is a variable definition with no item specified.");
 					}
 				}
 				return false;

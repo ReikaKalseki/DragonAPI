@@ -838,15 +838,16 @@ public class ReikaASMHelper {
 		return m;
 	}
 
-	public static void removeMethod(ClassNode cn, String name, String sig) {
+	public static MethodNode removeMethod(ClassNode cn, String name, String sig) {
 		Iterator<MethodNode> it = cn.methods.iterator();
 		while (it.hasNext()) {
 			MethodNode m = it.next();
 			if (m.name.equals(name) && m.desc.equals(sig)) {
 				it.remove();
-				return;
+				return m;
 			}
 		}
+		return null;
 	}
 
 	public static void addField(ClassNode cn, String name, String type, int flags, Object init) {

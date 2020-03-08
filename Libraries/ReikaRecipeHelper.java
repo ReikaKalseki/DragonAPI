@@ -52,6 +52,7 @@ import Reika.DragonAPI.ASM.ASMCalls;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.BasicModEntry;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Recipe.RecipePattern;
@@ -64,6 +65,7 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 import appeng.api.recipes.IIngredient;
 import appeng.api.storage.data.IAEItemStack;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -104,6 +106,17 @@ public class ReikaRecipeHelper extends DragonAPICore {
 	private static Class computerTurtleClass;
 	private static Field computerTurtleInput;
 
+	private static Class fairyComponentClass;
+	private static Field fairyComponentInput;
+	private static Field fairyComponentOutput;
+	private static Field fairyComponentHeight;
+	private static Field fairyComponentWidth;
+	private static Class fairyStringClass;
+	private static Field fairyStringInput;
+	public static Field fairyStringOutput;
+	private static Field fairyStringHeight;
+	private static Field fairyStringWidth;
+
 	private static Class teNEIClass;
 	private static Field teNEIWrappedRecipe;
 
@@ -133,6 +146,24 @@ public class ReikaRecipeHelper extends DragonAPICore {
 
 		void onReplaced(IRecipe ir, int slot, Object from, Object to);
 
+	}
+
+	public static Class fairyComponentClass() {
+		return fairyComponentClass;
+	}
+
+	public static Class fairyStringClass() {
+		return fairyStringClass;
+	}
+
+	public static ItemStack getFairyLightOutput(IRecipe ir) {
+		try {
+			return ir != null && ir.getClass() == fairyComponentClass ? (ItemStack)fairyComponentOutput.get(ir) : null;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 	static {
@@ -226,6 +257,35 @@ public class ReikaRecipeHelper extends DragonAPICore {
 				e.printStackTrace();
 				DragonAPICore.logError("Could not load AE recipe handling!");
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.APPENG, e);
+			}
+		}
+
+		if (Loader.isModLoaded("fairylights")) {
+			try {
+				fairyComponentClass = Class.forName("com.pau101.fairylights.item.crafting.RecipeDyeColorNBT");
+				fairyComponentInput = fairyComponentClass.getDeclaredField("recipeItems");
+				fairyComponentInput.setAccessible(true);
+				fairyComponentOutput = fairyComponentClass.getDeclaredField("recipeOutput");
+				fairyComponentOutput.setAccessible(true);
+				fairyComponentHeight = fairyComponentClass.getDeclaredField("recipeHeight");
+				fairyComponentHeight.setAccessible(true);
+				fairyComponentWidth = fairyComponentClass.getDeclaredField("recipeWidth");
+				fairyComponentWidth.setAccessible(true);
+
+				fairyStringClass = Class.forName("com.pau101.fairylights.item.crafting.RecipeFairyLights");
+				fairyStringInput = fairyStringClass.getDeclaredField("recipeItems");
+				fairyStringInput.setAccessible(true);
+				fairyStringOutput = fairyStringClass.getDeclaredField("recipeOutput");
+				fairyStringOutput.setAccessible(true);
+				fairyStringHeight = fairyStringClass.getDeclaredField("recipeHeight");
+				fairyStringHeight.setAccessible(true);
+				fairyStringWidth = fairyStringClass.getDeclaredField("recipeWidth");
+				fairyStringWidth.setAccessible(true);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				DragonAPICore.logError("Could not load FairyLights recipe handling!");
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(new BasicModEntry("fairylights"), e);
 			}
 		}
 	}
@@ -392,6 +452,27 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		else {
 			return ReikaJavaLibrary.makeListFrom(is);
 		}
+	}
+
+	private static List<ItemStack> getRecipeItemStacks(Object[] c, boolean client) {
+		ArrayList<ItemStack> ret = new ArrayList();
+		for (Object o : c) {
+			if (o == null)
+				continue;
+			if (o instanceof ItemStack) {
+				ItemStack is = (ItemStack)o;
+				if (is.getItemDamage() == OreDictionary.WILDCARD_VALUE && client) {
+					ret.addAll(ReikaItemHelper.getAllMetadataPermutations(is.getItem()));
+				}
+				else {
+					ret.add(is);
+				}
+			}
+			else if (o instanceof Collection) {
+				ret.addAll((Collection<? extends ItemStack>)o);
+			}
+		}
+		return ret;
 	}
 
 	private static List<ItemStack> getRecipeItemStacks(Collection c, boolean client) {
@@ -726,6 +807,54 @@ public class ReikaRecipeHelper extends DragonAPICore {
 					for (int k = 0; k < 3; k++) {
 						int idx = i*3+k;
 						isin[idx] = getRecipeItemStack(new ItemStack(in[idx]), client);
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ire.getClass() == fairyComponentClass) {
+			try {
+				Object[] in = (Object[])fairyComponentInput.get(ire);
+				w = Math.min(3, fairyComponentWidth.getInt(ire));
+				h = Math.min(3, fairyComponentHeight.getInt(ire));
+				for (int i = 0; i < in.length; i++) {
+					Object o = in[i];
+					if (o == null)
+						continue;
+					if (o instanceof ItemStack)
+						isin[i] = getRecipeItemStack((ItemStack)o, client);
+					else if (o instanceof List)
+						isin[i] = getRecipeItemStacks((List)o, client);
+					else {
+						DragonAPICore.log("Could not parse ingredient type "+o.getClass()+" with value "+o.toString());
+						isin[i] = Arrays.asList(new ItemStack(Blocks.fire));
+					}
+				}
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		else if (ire.getClass() == fairyStringClass) {
+			try {
+				Object[] in = (Object[])fairyStringInput.get(ire);
+				w = Math.min(3, fairyStringWidth.getInt(ire));
+				h = Math.min(3, fairyStringHeight.getInt(ire));
+				for (int i = 0; i < in.length; i++) {
+					Object o = in[i];
+					if (o == null)
+						continue;
+					if (o instanceof ItemStack)
+						isin[i] = getRecipeItemStack((ItemStack)o, client);
+					else if (o instanceof Object[])
+						isin[i] = getRecipeItemStacks((Object[])o, client);
+					else if (o instanceof List)
+						isin[i] = getRecipeItemStacks((List)o, client);
+					else {
+						DragonAPICore.log("Could not parse ingredient type "+o.getClass()+" with value "+o.toString());
+						isin[i] = Arrays.asList(new ItemStack(Blocks.fire));
 					}
 				}
 			}
