@@ -47,6 +47,7 @@ public class ThaumItemHelper {
 		ELDRITCHEYE("ItemEldritchObject"),
 		BALANCED("ItemShard", 6),
 		PHIAL("ItemEssence", 0),
+		FILLEDPHIAL("ItemEssence", 1),
 		CRYSTALESSENCE("ItemCrystalEssence", 0),
 		NUGGETCLUSTER("ItemNugget", 0),
 		LOOTBAG1("ItemLootBag", 0),
@@ -141,6 +142,12 @@ public class ThaumItemHelper {
 
 	public static boolean isVoidMetalArmor(ItemStack is) {
 		return is != null && is.getItem().getClass().getName().startsWith("thaumcraft.common.items.armor.ItemVoid");
+	}
+
+	public static ItemStack getPhialEssentia(Aspect a) {
+		ItemStack is = ItemEntry.FILLEDPHIAL.getItem();
+		((IEssentiaContainerItem)is.getItem()).setAspects(is, new AspectList().add(a, 8));
+		return is;
 	}
 
 	public static ItemStack getCrystallizedEssentia(Aspect a) {

@@ -93,6 +93,7 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 	private final IdentityHashMap<Future<ICraftingJob>, CraftCompleteCallback> crafting = new IdentityHashMap();
 	private final MultiMap<CraftCompleteCallback, ICraftingLink> craftingLinks = new MultiMap().setNullEmpty();
 	private final MultiMap<KeyedItemStack, ChangeCallback> changeCallbacks = new MultiMap();
+	private final ArrayList<ChangeCallback> globalChangeCallbacks = new ArrayList();
 
 	private Object monitorToken = new Object();
 
@@ -136,8 +137,15 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 		return this;
 	}
 
+	public MESystemReader addGlobalCallback(ChangeCallback call) {
+		globalChangeCallbacks.add(call);
+		this.getStorage().addListener(this, monitorToken);
+		return this;
+	}
+
 	public void clearCallbacks() {
 		changeCallbacks.clear();
+		globalChangeCallbacks.clear();
 	}
 
 	private IMEMonitor<IAEItemStack> getStorage() {
@@ -399,6 +407,9 @@ public class MESystemReader implements IMEMonitorHandlerReceiver<IAEItemStack> {
 
 	@Override
 	public void postChange(IBaseMonitor<IAEItemStack> monitor, Iterable<IAEItemStack> change, BaseActionSource actionSource) {
+		for (ChangeCallback cc : globalChangeCallbacks) {
+			cc.onItemChange(null);
+		}
 		for (IAEItemStack iae : change) {
 			KeyedItemStack ks = new KeyedItemStack(iae.getItemStack()).setSimpleHash(true).setIgnoreNBT(true);
 			Collection<ChangeCallback> c = changeCallbacks.get(ks);
