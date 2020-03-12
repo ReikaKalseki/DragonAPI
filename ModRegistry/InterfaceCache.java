@@ -54,6 +54,7 @@ public enum InterfaceCache {
 	AECABLE("appeng.tile.networking.TileCableBus"),
 	AECABLEBLOCK("appeng.block.networking.BlockCableBus"),
 	ESSENTIADISTILL("tuhljin.automagy.api.essentia.IEssentiaDistillery"),
+	WARPGEAR("thaumcraft.api.IWarpingGear"),
 	;
 
 	private final String classpath;

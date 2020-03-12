@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -30,6 +30,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import Reika.DragonAPI.Auxiliary.ModularLogger;
 import Reika.DragonAPI.Auxiliary.PacketTypes;
 import Reika.DragonAPI.Auxiliary.PopupWriter;
+import Reika.DragonAPI.Auxiliary.PopupWriter.Warning;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.ConfigMatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
@@ -441,7 +442,7 @@ public class APIPacketHandler implements PacketHandler {
 					Minecraft.getMinecraft().currentScreen.initGui();
 				break;
 			case POPUP:
-				PopupWriter.instance.addMessage(sg);
+				PopupWriter.instance.addMessage(new Warning(sg, data[0]));
 				break;
 			case SENDLATENCY:
 				long t3 = System.currentTimeMillis();
@@ -579,6 +580,8 @@ public class APIPacketHandler implements PacketHandler {
 					return 3;
 				case ENTITYVERIFYFAIL:
 					return 2;
+				case POPUP:
+					return 1;
 				default:
 					return 0;
 			}

@@ -24,6 +24,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.ModLockController;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerFirstTimeTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler.PlayerTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.SettingInterferenceTracker;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -78,6 +79,7 @@ public final class LoginHandler implements PlayerTracker {
 		ReikaPlayerAPI.clearHeadCache();
 		PlayerFirstTimeTracker.checkPlayer(ep);
 		CommandableUpdateChecker.instance.notifyPlayer(ep);
+		SettingInterferenceTracker.instance.onLogin(ep);
 		if (ep instanceof EntityPlayerMP) {
 			EntityPlayerMP emp = (EntityPlayerMP)ep;
 			ModLockController.instance.syncPlayer(emp);

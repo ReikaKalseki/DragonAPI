@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -42,7 +42,7 @@ public class PopupWriter {
 
 	public static final PopupWriter instance = new PopupWriter();
 
-	private final ArrayList<String> list = new ArrayList();
+	private final ArrayList<Warning> list = new ArrayList();
 
 	private int buttonX;
 	private int buttonY;
@@ -50,28 +50,32 @@ public class PopupWriter {
 
 	private boolean ungrabbed = false;
 
-	private final ArrayList<String> serverMessages = new ArrayList();
+	private final ArrayList<Warning> serverMessages = new ArrayList();
 
 	private PopupWriter() {
 		MinecraftForge.EVENT_BUS.register(this);
 		FMLCommonHandler.instance().bus().register(this);
 	}
 
-	public void addMessage(String s) {
+	public void addMessage(String w) {
+		this.addMessage(new Warning(w));
+	}
+
+	public void addMessage(Warning w) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.SERVER) {
-			serverMessages.add(s);
+			serverMessages.add(w);
 		}
 		else {
 			//sb.append(" CTRL-ALT-click to close this message.");
-			String sg = s+" Hold CTRL to be able to click this message.";
-			list.add(sg);
+			String sg = w.text+" Hold CTRL to be able to click this message.";
+			list.add(new Warning(sg, w.width));
 		}
 	}
 
 	public void sendServerMessages(EntityPlayerMP ep) {
 		PacketTarget pt = new PacketTarget.PlayerTarget(ep);
-		for (String s : serverMessages) {
-			ReikaPacketHelper.sendStringPacket(DragonAPIInit.packetChannel, PacketIDs.POPUP.ordinal(), s, pt);
+		for (Warning s : serverMessages) {
+			ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.POPUP.ordinal(), pt, s.text, s.width);
 		}
 	}
 
@@ -79,18 +83,18 @@ public class PopupWriter {
 	@SideOnly(Side.CLIENT)
 	public void drawOverlay(RenderGameOverlayEvent evt) {
 		if (!list.isEmpty() && evt.type == ElementType.HELMET) {
-			String s = list.get(0);
+			Warning s = list.get(0);
 			int x = 2;
 			int y = 2;
-			int w = 192;
+			int w = s.width;
 			int sw = w-25;
 			FontRenderer fr = Minecraft.getMinecraft().fontRenderer;
-			int lines = fr.listFormattedStringToWidth(s, sw).size();
+			int lines = fr.listFormattedStringToWidth(s.text, sw).size();
 			int h = 7+(lines)*(fr.FONT_HEIGHT);
 			Gui.drawRect(x, y, x+w, y+h, 0xff4a4a4a);
 			ReikaGuiAPI.instance.drawRectFrame(x, y, w, h, 0xb0b0b0);
 			ReikaGuiAPI.instance.drawRectFrame(x+2, y+2, w-4, h-4, 0xcfcfcf);
-			fr.drawSplitString(s, x+4, y+4, sw, 0xffffff);
+			fr.drawSplitString(s.text, x+4, y+4, sw, 0xffffff);
 
 			Tessellator v5 = Tessellator.instance;
 			GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -167,5 +171,33 @@ public class PopupWriter {
 				}
 			}
 		}
+	}
+
+	public static class Warning {
+
+		public final String text;
+		public final int width;
+
+		public Warning(String s) {
+			this(s, Math.max(calcMinSizeForText(s), 192));
+		}
+
+		private static int calcMinSizeForText(String s) { //at w=192, 74 chars becomes 4 lines, or about 18 chars a line (1 char = 11px); ideally keep line count <= 6
+			int w = 192;
+			int c = 18;
+			int lines = s.length()/c;
+			while (lines > 6) {
+				w += 16;
+				c += 2;
+				lines = s.length()/c;
+			}
+			return w;
+		}
+
+		public Warning(String s, int w) {
+			text = s;
+			width = Math.min(300, w);
+		}
+
 	}
 }
