@@ -1049,5 +1049,13 @@ public class ReikaThaumHelper {
 			e.printStackTrace();
 		}
 	}
+
+	public static boolean aspectListContains(AspectList list, AspectList has) {
+		for (Aspect a : has.aspects.keySet()) {
+			if (list.getAmount(a) < has.getAmount(a))
+				return false;
+		}
+		return true;
+	}
 }
 

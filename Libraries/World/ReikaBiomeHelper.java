@@ -630,4 +630,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	private static BiomeDecorator getBOPDecorator(BiomeGenBase b) {
 		return ((BOPBiome)b).theBiomeDecorator;
 	}
+
+	public static boolean doesBiomeHavePrecipitation(BiomeGenBase b) {
+		return b.canSpawnLightningBolt() || b.getEnableSnow();
+	}
 }

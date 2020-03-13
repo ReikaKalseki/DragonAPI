@@ -97,6 +97,7 @@ public class IC2Handler extends ModHandlerBase {
 		BRONZELEGGINGS("bronzeLeggings"),
 		BRONZEBOOTS("bronzeBoots"),
 		BIOCHAFF("biochaff"),
+		PLANTBALL("plantBall"),
 		U235("Uran235"),
 		U238("Uran238"),
 		Pu239("Plutonium"),

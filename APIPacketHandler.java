@@ -37,6 +37,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.Trackers.ModFileVersionChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.ModLockController;
+import Reika.DragonAPI.Auxiliary.Trackers.SettingInterferenceTracker;
 import Reika.DragonAPI.Base.TileEntityBase;
 import Reika.DragonAPI.Command.BiomeMapCommand;
 import Reika.DragonAPI.Command.EntityListCommand;
@@ -419,6 +420,7 @@ public class APIPacketHandler implements PacketHandler {
 				break;
 			case LOGIN:
 				MinecraftForge.EVENT_BUS.post(new ClientLoginEvent(player, data[0] > 0));
+				SettingInterferenceTracker.instance.onLogin(player);
 				break;
 			case LOGOUT:
 				MinecraftForge.EVENT_BUS.post(new ClientLogoutEvent(player));
