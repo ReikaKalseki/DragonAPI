@@ -12,8 +12,8 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.PopupWriter;
+import Reika.DragonAPI.Extras.EnvironmentPackager;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent.ProfileEventWatcher;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
@@ -163,11 +163,11 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 				default:
 					return true;
 				case VERSION:
-					return VersionTransitionTracker.instance.updated(DragonAPIInit.instance);
+					return VersionTransitionTracker.instance.haveModsUpdated();
 				case SETTINGVALS:
-					return SettingInterferenceTracker.instance.matchAndUpdateSettingsCache(f);
+					return EnvironmentPackager.instance.checkAndUpdateSettingsCache();
 				case ONCE:
-					return !f.exists();
+					return !EnvironmentPackager.instance.hasSettingsCache();
 			}
 		}
 	}

@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import org.lwjgl.opengl.GL11;
 
@@ -27,6 +28,7 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Instantiable.Data.Maps.PlayerMap;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -52,6 +54,8 @@ public class PopupWriter {
 
 	private final ArrayList<Warning> serverMessages = new ArrayList();
 
+	private final PlayerMap<Collection<Warning>> alreadySent = new PlayerMap();
+
 	private PopupWriter() {
 		MinecraftForge.EVENT_BUS.register(this);
 		FMLCommonHandler.instance().bus().register(this);
@@ -74,9 +78,17 @@ public class PopupWriter {
 
 	public void sendServerMessages(EntityPlayerMP ep) {
 		PacketTarget pt = new PacketTarget.PlayerTarget(ep);
-		for (Warning s : serverMessages) {
-			ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.POPUP.ordinal(), pt, s.text, s.width);
+		Collection<Warning> c = alreadySent.get(ep);
+		if (c == null) {
+			c = new ArrayList();
 		}
+		for (Warning s : serverMessages) {
+			if (c.contains(s))
+				continue;
+			ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.POPUP.ordinal(), pt, s.text, s.width);
+			c.add(s);
+		}
+		alreadySent.put(ep, c);
 	}
 
 	@SubscribeEvent
@@ -197,6 +209,16 @@ public class PopupWriter {
 		public Warning(String s, int w) {
 			text = s;
 			width = Math.min(300, w);
+		}
+
+		@Override
+		public int hashCode() {
+			return text.hashCode();
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			return o instanceof Warning && text.equals(((Warning)o).text);
 		}
 
 	}

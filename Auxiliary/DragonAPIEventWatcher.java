@@ -57,6 +57,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
 import Reika.DragonAPI.Auxiliary.Trackers.SpecialDayTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.VersionTransitionTracker;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.ChangePacketRenderer;
@@ -135,6 +136,11 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 		if (tag.equals("debug")) {
 			this.showF3Extras();
 		}
+	}
+
+	@SubscribeEvent
+	public void checkModChanges(WorldEvent.Load evt) {
+		VersionTransitionTracker.instance.onWorldLoad(evt.world);
 	}
 
 	@SideOnly(Side.CLIENT)
