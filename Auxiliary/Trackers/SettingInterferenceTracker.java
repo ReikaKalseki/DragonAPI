@@ -154,7 +154,10 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 	}
 
 	private boolean settingsMatchCache() {
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(this.getSettingCacheFile(), true);
+		File f = this.getSettingCacheFile();
+		if (!f.exists())
+			return false;
+		ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
 		HashSet<SettingInterference> set = new HashSet();
 		HashSet<SettingInterference> set2 = new HashSet();
 		for (String s : li) {
@@ -212,7 +215,7 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 
 	public static enum WarningPersistence {
 		EVERYLOAD(),
-		SETTINGVALS(),
+		SETTINGCHANGE(),
 		VERSION(),
 		ONCE();
 
@@ -223,7 +226,7 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 					return true;
 				case VERSION:
 					return VersionTransitionTracker.instance.haveModsUpdated();
-				case SETTINGVALS:
+				case SETTINGCHANGE:
 					return !instance.settingsMatchCache();//EnvironmentPackager.instance.checkAndUpdateSettingsCache();
 				case ONCE:
 					return !instance.getSettingCacheFile().exists();//EnvironmentPackager.instance.hasSettingsCache();
