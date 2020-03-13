@@ -24,6 +24,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.ModLockController;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerFirstTimeTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.PlayerHandler.PlayerTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.VersionTransitionTracker;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -81,6 +82,7 @@ public final class LoginHandler implements PlayerTracker {
 		if (ep instanceof EntityPlayerMP) {
 			EntityPlayerMP emp = (EntityPlayerMP)ep;
 			ModLockController.instance.syncPlayer(emp);
+			VersionTransitionTracker.instance.notifyPlayerOfVersionChanges(emp);
 			PopupWriter.instance.sendServerMessages(emp);
 			syncPlayer(emp);
 			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.LOGIN.ordinal(), emp, 1);

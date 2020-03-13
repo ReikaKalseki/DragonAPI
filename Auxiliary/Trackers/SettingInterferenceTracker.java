@@ -12,8 +12,8 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Auxiliary.PopupWriter;
-import Reika.DragonAPI.Instantiable.Event.ProfileEvent;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent.ProfileEventWatcher;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
@@ -75,7 +75,7 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 	private final ArrayList<SettingInterference> settings = new ArrayList();
 
 	private SettingInterferenceTracker() {
-		ProfileEvent.registerHandler("gui", this);
+		//ProfileEvent.registerHandler("gui", this);
 	}
 
 	public void registerSettingHandler(SettingInterference s) {
@@ -93,8 +93,10 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 		if (!li.isEmpty()) {
 			String s0 = "You have one or more game settings configured in a manner that is likely to cause gameplay problems in some situations; consider changing them, and please do not report any issues that would not have arisen without that setting. See the next messages for more details.";
 			PopupWriter.instance.addMessage(s0);
+			DragonAPICore.log(s0);
 			for (String s : li) {
 				PopupWriter.instance.addMessage(s);
+				DragonAPICore.log(s);
 			}
 		}
 	}
@@ -147,6 +149,27 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 
 		public String getDescription();
 
+	}
+
+	public static enum WarningPersistence {
+		EVERYLOAD(),
+		SETTINGVALS(),
+		VERSION(),
+		ONCE();
+
+		public boolean isActive() {
+			switch(this) {
+				case EVERYLOAD:
+				default:
+					return true;
+				case VERSION:
+					return VersionTransitionTracker.instance.updated(DragonAPIInit.instance);
+				case SETTINGVALS:
+					return SettingInterferenceTracker.instance.matchAndUpdateSettingsCache(f);
+				case ONCE:
+					return !f.exists();
+			}
+		}
 	}
 
 }

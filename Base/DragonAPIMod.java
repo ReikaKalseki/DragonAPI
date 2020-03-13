@@ -14,6 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -117,6 +119,10 @@ public abstract class DragonAPIMod {
 
 	public static DragonAPIMod getByName(String name) {
 		return mods.get(name);
+	}
+
+	public static Collection<DragonAPIMod> getAllMods() {
+		return Collections.unmodifiableCollection(mods.values());
 	}
 
 	@EventHandler
