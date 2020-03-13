@@ -68,6 +68,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	NORAINFX("Disable rain sound and particles", false),
 	NOTIFYBYTEEXEC("Bytecodeexec command notifies other admins", false),
 	PLAYERMOBCAP("Player-Specific Mob Caps", false),
+	SETTINGWARN("Setting Warning Persistence (EVERYLOAD/SETTINGCHANGE/VERSION/ONCE)", "SETTINGCHANGE"),
 	;
 
 	private String label;
@@ -183,6 +184,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 			case PARTICLELIMIT:
 			case DEBUGKEY:
 			case NORAINFX:
+			case SETTINGWARN:
 				return true;
 			default:
 				return false;

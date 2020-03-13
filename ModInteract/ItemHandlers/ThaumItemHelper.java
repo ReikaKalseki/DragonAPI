@@ -54,6 +54,7 @@ public class ThaumItemHelper {
 		LOOTBAG2("ItemLootBag", 1),
 		LOOTBAG3("ItemLootBag", 2),
 		MANABEAN("ItemManaBean"),
+		DEFUNCTBRAIN("ItemResource", 5),
 		ZOMBIEBRAIN("ItemZombieBrain"),
 		WISP("ItemWispEssence"),
 		RESEARCH("ItemResearchNotes"),

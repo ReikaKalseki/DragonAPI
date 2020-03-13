@@ -1,7 +1,10 @@
 package Reika.DragonAPI.Auxiliary.Trackers;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
 
 import org.lwjgl.opengl.GL11;
 
@@ -12,8 +15,9 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Auxiliary.PopupWriter;
-import Reika.DragonAPI.Extras.EnvironmentPackager;
+import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent.ProfileEventWatcher;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
@@ -70,22 +74,32 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 			return "Sounds are muted, despite being used as indicators or warnings in many situations.";
 		}
 
+		public String getID() {
+			return "soundmute";
+		}
+
 	};
 
-	private final ArrayList<SettingInterference> settings = new ArrayList();
+	private final HashMap<String, SettingInterference> settings = new HashMap();
+
+	private WarningPersistence persistence = WarningPersistence.EVERYLOAD;
 
 	private SettingInterferenceTracker() {
 		//ProfileEvent.registerHandler("gui", this);
+		persistence = WarningPersistence.valueOf(DragonOptions.SETTINGWARN.getString());
 	}
 
 	public void registerSettingHandler(SettingInterference s) {
-		if (!settings.contains(s))
-			settings.add(s);
+		if (!settings.containsKey(s.getID()))
+			settings.put(s.getID(), s);
 	}
 
 	public void onLogin(EntityPlayer ep) {
+		if (!persistence.isActive())
+			return;
+		this.cacheSettings();
 		ArrayList<String> li = new ArrayList();
-		for (SettingInterference si : settings) {
+		for (SettingInterference si : settings.values()) {
 			if (si.isSetToInterfere()) {
 				li.add(si.getDescription());
 			}
@@ -125,13 +139,56 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 			int x = 2;
 			int y = 2;
 			int size = 16;
-			for (SettingInterference s : settings) {
+			for (SettingInterference s : settings.values()) {
 				if (s.isSetToInterfere() && s.isCurrentlyRelevant()) {
 					s.drawIcon(v5, x, y, size);
 					x += size+4;
 				}
 			}
 			GL11.glPopAttrib();
+		}
+	}
+
+	private File getSettingCacheFile() {
+		return new File(new File(DragonAPICore.getMinecraftDirectory(), "DragonAPI"), "setting_interference_cache.dat");
+	}
+
+	private boolean settingsMatchCache() {
+		ArrayList<String> li = ReikaFileReader.getFileAsLines(this.getSettingCacheFile(), true);
+		HashSet<SettingInterference> set = new HashSet();
+		HashSet<SettingInterference> set2 = new HashSet();
+		for (String s : li) {
+			SettingInterference si = settings.get(s);
+			if (si != null) {
+				set.add(si);
+			}
+		}
+		for (SettingInterference s : settings.values()) {
+			if (s.isSetToInterfere()) {
+				set2.add(s);
+			}
+		}
+		return set.equals(set2);
+	}
+
+	private void cacheSettings() {
+		try {
+			File f = this.getSettingCacheFile();
+			f.delete();
+			f.getParentFile().mkdirs();
+			f.createNewFile();
+
+			ArrayList<String> li = new ArrayList();
+			for (SettingInterference s : settings.values()) {
+				if (s.isSetToInterfere()) {
+					li.add(s.getID());
+				}
+			}
+
+			ReikaFileReader.writeLinesToFile(f, li, true);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -149,6 +206,8 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 
 		public String getDescription();
 
+		public String getID();
+
 	}
 
 	public static enum WarningPersistence {
@@ -165,9 +224,9 @@ public class SettingInterferenceTracker implements ProfileEventWatcher {
 				case VERSION:
 					return VersionTransitionTracker.instance.haveModsUpdated();
 				case SETTINGVALS:
-					return EnvironmentPackager.instance.checkAndUpdateSettingsCache();
+					return !instance.settingsMatchCache();//EnvironmentPackager.instance.checkAndUpdateSettingsCache();
 				case ONCE:
-					return !EnvironmentPackager.instance.hasSettingsCache();
+					return !instance.getSettingCacheFile().exists();//EnvironmentPackager.instance.hasSettingsCache();
 			}
 		}
 	}
