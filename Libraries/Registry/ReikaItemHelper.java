@@ -778,15 +778,15 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return is1 != null && is2 != null && matchStacks(is1, is2) && ItemStack.areItemStackTagsEqual(is1, is2) && is1.stackSize+is2.stackSize <= limit;
 	}
 
-	public static ItemStack parseItem(Object o) {
+	public static ItemStack parseItem(Object o, boolean useWildcards) {
 		if (o instanceof ItemStack) {
 			return ((ItemStack)o).copy();
 		}
 		else if (o instanceof Item) {
-			return new ItemStack((Item)o);
+			return new ItemStack((Item)o, 1, useWildcards ? OreDictionary.WILDCARD_VALUE : 0);
 		}
 		else if (o instanceof Block) {
-			return new ItemStack((Block)o);
+			return new ItemStack((Block)o, 1, useWildcards ? OreDictionary.WILDCARD_VALUE : 0);
 		}
 		else if (o instanceof String) {
 			return lookupItem((String)o);

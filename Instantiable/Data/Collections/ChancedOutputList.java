@@ -238,7 +238,7 @@ public final class ChancedOutputList {
 			throw new MisuseException("Every item must have a specified chance!");
 		ChancedOutputList c = new ChancedOutputList(allowOver100);
 		for (int i = 0; i < arr.length; i += 2) {
-			ItemStack is = ReikaItemHelper.parseItem(arr[i]);
+			ItemStack is = ReikaItemHelper.parseItem(arr[i], false);
 			if (is != null) {
 				Object chance = arr[i+1];
 				if (chance instanceof Integer)

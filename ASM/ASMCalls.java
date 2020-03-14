@@ -117,7 +117,7 @@ public class ASMCalls {
 				}
 			}
 			if (is == null)
-				is = ReikaItemHelper.parseItem(o);
+				is = ReikaItemHelper.parseItem(o, true);
 			if (is == null) {
 				throw new IllegalArgumentException("Invalid ingredient object type "+o.getClass()+" with value "+o.toString()+" for char "+c);
 			}

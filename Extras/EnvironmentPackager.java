@@ -3,7 +3,9 @@ package Reika.DragonAPI.Extras;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -11,7 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.profiler.PlayerUsageSnooper;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
@@ -45,22 +47,21 @@ public class EnvironmentPackager {
 			f.getParentFile().mkdirs();
 			f.createNewFile();
 
-			ArrayList<String> data = new ArrayList();
-			data.addAll(ReikaFileReader.getFileAsLines(this.getSettingsFile(), true));
-			Collections.sort(data);
-			data.add(this.getDivider());
+			ArrayList<DataSection> data = new ArrayList();
+			DataSection sec = new DataSection(DataSections.OPTIONS);
+			sec.addAll(ReikaFileReader.getFileAsLines(this.getSettingsFile(), true));
+			data.add(sec);
+			sec = new DataSection(DataSections.MODS);
 			for (ModContainer mc : Loader.instance().getActiveModList()) {
-				data.add(mc.getModId()+" # "+mc.getVersion());
+				sec.add(mc.getModId()+" # "+mc.getVersion());
 			}
-			data.add(this.getDivider());
-			data.addAll(DragonAPIInit.config.getSettingsAsLines());
+			data.add(sec);
 			for (ControlledConfig cfg : ControlledConfig.getConfigs()) {
-				if (cfg.configMod == DragonAPIInit.instance)
-					continue;
-				data.add(this.getDivider());
-				data.addAll(cfg.getSettingsAsLines());
+				sec = new ConfigDataSection(cfg);
+				data.add(sec);
+				sec.addAll(cfg.getSettingsAsLines());
 			}
-			data.add(this.getDivider());
+			sec = new DataSection(DataSections.JVM);
 			/*
 			data.add("OS: "+System.getProperty("os.name")+" - "+System.getProperty("os.version"));
 			data.add("CPUs: "+Runtime.getRuntime().availableProcessors());
@@ -70,13 +71,26 @@ public class EnvironmentPackager {
 			PlayerUsageSnooper snooper = Minecraft.getMinecraft().getPlayerUsageSnooper();
 			Map<String, String> map = snooper.getCurrentStats();
 			for (Entry<String, String> e : map.entrySet()) {
-				data.add(e.getKey()+" = "+e.getValue());
+				sec.add(e.getKey()+" = "+e.getValue());
 			}
-			data.add(this.getDivider());
-			data.add("Checksum:");
-			data.add(this.computeHash(data));
+			data.add(sec);
+			Collections.sort(data);
 
-			ReikaFileReader.writeLinesToFile(f, data, true);
+			ArrayList<String> li = new ArrayList();
+
+			for (DataSection s : data) {
+				li.add(this.getDivider());
+				li.add(s.title());
+				li.add(this.getDivider());
+				li.addAll(s.data);
+				li.add("");
+				li.add("");
+			}
+
+			li.add("Checksum:");
+			li.add(this.computeHash(li));
+
+			ReikaFileReader.writeLinesToFile(f, li, true);
 
 			return f;
 		}
@@ -88,22 +102,93 @@ public class EnvironmentPackager {
 	}
 
 	private String getDivider() {
-		return ReikaStringParser.getNOf("=", 20);
+		return ReikaStringParser.getNOf("-", 20);
 	}
 
-	private String computeHash(ArrayList<String> data) {
-		return data.toString();
+	private String computeHash(ArrayList<String> li) {
+		return li.toString();
 	}
 
-	private static class DataSection {
+	private static class ConfigDataSection extends DataSection {
 
-		private final String title;
-		private final ArrayList<String> data = new ArrayList();
+		private final DragonAPIMod modname;
 
-		private DataSection(String s) {
-			title = s;
+		protected ConfigDataSection(ControlledConfig cfg) {
+			super(DataSections.CONFIGS);
+			modname = cfg.configMod;
 		}
 
+		@Override
+		public String title() {
+			return super.title()+modname.getDisplayName();
+		}
+
+		@Override
+		public int compareTo(DataSection o) {
+			if (o instanceof ConfigDataSection) { //same type
+				return this.compareMods(modname, ((ConfigDataSection)o).modname);
+			}
+			else {
+				return super.compareTo(o);
+			}
+		}
+
+		private int compareMods(DragonAPIMod mod1, DragonAPIMod mod2) {
+			String id1 = mod1.getModContainer().getModId().toLowerCase(Locale.ENGLISH);
+			String id2 = mod2.getModContainer().getModId().toLowerCase(Locale.ENGLISH);
+			if (id1.equals(id2))
+				return 0;
+			else if (id1.equals("dragonapi"))
+				return -1;
+			else if (id2.equals("dragonapi"))
+				return 1;
+			else
+				return id1.compareToIgnoreCase(id2);
+		}
+
+	}
+
+	private static class DataSection implements Comparable<DataSection> {
+
+		private final DataSections type;
+		private final ArrayList<String> data = new ArrayList();
+
+		protected DataSection(DataSections s) {
+			type = s;
+		}
+
+		protected final void add(String s) {
+			data.add(s);
+			Collections.sort(data);
+		}
+
+		protected final void addAll(Collection<String> c) {
+			data.addAll(c);
+			Collections.sort(data);
+		}
+
+		@Override
+		public int compareTo(DataSection o) {
+			return type.compareTo(o.type);
+		}
+
+		public String title() {
+			return type.title;
+		}
+
+	}
+
+	private static enum DataSections {
+		OPTIONS("Game Settings"),
+		MODS("Mods"),
+		CONFIGS("Config - "),
+		JVM("JVM/OS Parameters");
+
+		public final String title;
+
+		private DataSections(String s) {
+			title = s;
+		}
 	}
 
 }
