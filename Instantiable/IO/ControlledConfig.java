@@ -70,7 +70,7 @@ public class ControlledConfig {
 	private int readID;
 	protected File configFile;
 
-	protected final DragonAPIMod configMod;
+	public final DragonAPIMod configMod;
 
 	private ConfigList[] optionList;
 	private IDRegistry[] IDList;
@@ -195,6 +195,17 @@ public class ControlledConfig {
 
 	public final Collection<String> getExtraFiles() {
 		return Collections.unmodifiableCollection(extraFiles.keySet());
+	}
+
+	public final ArrayList<String> getSettingsAsLines() {
+		ArrayList<String> li = new ArrayList();
+		for (int i = 0; i < optionList.length; i++) {
+			ConfigList c = optionList[i];
+			Object val = controls[i];
+			String s = c.getLabel()+" = "+val;
+			li.add(s);
+		}
+		return li;
 	}
 
 	public final Object getControl(int i) {
@@ -767,6 +778,10 @@ public class ControlledConfig {
 
 	public static ControlledConfig getForMod(String mod) {
 		return configs.get(mod);
+	}
+
+	public static Collection<ControlledConfig> getConfigs() {
+		return Collections.unmodifiableCollection(configs.values());
 	}
 
 	public static void reloadAll() {

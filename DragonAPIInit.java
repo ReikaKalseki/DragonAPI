@@ -83,6 +83,7 @@ import Reika.DragonAPI.Base.ModHandlerBase.VersionIgnore;
 import Reika.DragonAPI.Command.ClearParticlesCommand;
 import Reika.DragonAPI.Command.DragonClientCommand;
 import Reika.DragonAPI.Command.DragonCommandBase;
+import Reika.DragonAPI.Command.ExportEnvironmentCommand;
 import Reika.DragonAPI.Command.GetLatencyCommand;
 import Reika.DragonAPI.Command.ToggleBlockChangePacketCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
@@ -563,6 +564,7 @@ public class DragonAPIInit extends DragonAPIMod {
 			ClientCommandHandler.instance.registerCommand(new ToggleBlockChangePacketCommand());
 			ClientCommandHandler.instance.registerCommand(new GetLatencyCommand());
 			ClientCommandHandler.instance.registerCommand(new ClearParticlesCommand());
+			ClientCommandHandler.instance.registerCommand(new ExportEnvironmentCommand());
 		}
 
 		if (DragonOptions.BIOMEFIRE.getState()) {
