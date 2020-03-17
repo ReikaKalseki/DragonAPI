@@ -15,7 +15,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.profiler.PlayerUsageSnooper;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.HashType;
@@ -31,6 +30,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class EnvironmentPackager {
 
 	public static final EnvironmentPackager instance = new EnvironmentPackager();
+
+	private static final String HASH_SALT = "@HASH_SALT@";
 
 	private EnvironmentPackager() {
 
@@ -122,7 +123,7 @@ public class EnvironmentPackager {
 			maxlen = Math.max(maxlen, s.length());
 		}
 		long[] hashes = new long[maxlen];
-		Random rand = new Random(DragonAPIInit.instance.getModVersion().toString().hashCode());
+		Random rand = new Random(HASH_SALT.hashCode());
 		rand.nextBoolean();
 		rand.nextBoolean();
 		for (int i = 0; i < hashes.length; i++) {
