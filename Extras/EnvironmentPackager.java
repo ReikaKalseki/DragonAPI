@@ -2,19 +2,23 @@ package Reika.DragonAPI.Extras;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Random;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.profiler.PlayerUsageSnooper;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.IO.ReikaFileReader.HashType;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
@@ -106,7 +110,40 @@ public class EnvironmentPackager {
 	}
 
 	private String computeHash(ArrayList<String> li) {
-		return li.toString();
+		/*
+		StringBuilder mid = new StringBuilder();
+		for (String s : li) {
+			mid.append(HashType.SHA256.hash(s));
+		}
+		return HashType.SHA256.hash(mid.toString());*/
+
+		int maxlen = -1;
+		for (String s : li) {
+			maxlen = Math.max(maxlen, s.length());
+		}
+		long[] hashes = new long[maxlen];
+		Random rand = new Random(DragonAPIInit.instance.getModVersion().toString().hashCode());
+		rand.nextBoolean();
+		rand.nextBoolean();
+		for (int i = 0; i < hashes.length; i++) {
+			hashes[i] = rand.nextLong();
+		}
+		int rotate = 0;
+		for (String s : li) {
+			for (int i = 0; i < Math.min(s.length(), hashes.length); i++) {
+				int c = s.charAt(i) & 127;
+				c = Integer.rotateLeft(c, rotate);
+				rotate += 3;
+				int high = (i%4)*8;
+				int val = c << high;
+				hashes[i] ^= val;
+			}
+		}
+		ByteBuffer buf = ByteBuffer.allocate(hashes.length*8);
+		for (long val : hashes) {
+			buf.putLong(val);
+		}
+		return HashType.SHA256.hash(buf.array());
 	}
 
 	private static class ConfigDataSection extends DataSection {

@@ -21,15 +21,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
+import Reika.DragonAPI.Instantiable.Event.TileEntityMoveEvent;
 import Reika.DragonAPI.Interfaces.TileEntity.BreakAction;
 import Reika.DragonAPI.Interfaces.TileEntity.MultiPageInventory;
 import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.ModInteract.DeepInteract.FrameBlacklist;
 
 import framesapi.IMoveCheck;
 
-@Strippable("framesapi.IMoveCheck")
+@Strippable(value = {"framesapi.IMoveCheck", "vazkii.botania.api.mana.ILaputaImmobile"})
 public abstract class BlockTEBase extends Block implements IMoveCheck {
 
 	public BlockTEBase(Material mat) {
@@ -109,7 +109,7 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 
 	@Override
 	public boolean canMove(World world, int x, int y, int z) {
-		return !FrameBlacklist.instance.fireFrameEvent(world, x, y, z);
+		return !TileEntityMoveEvent.fireTileMoveEvent(world, x, y, z);
 	}
 
 	@Override

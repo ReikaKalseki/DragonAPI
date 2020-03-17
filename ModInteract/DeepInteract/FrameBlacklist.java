@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -24,10 +24,9 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
 import Reika.DragonAPI.ASM.DependentMethodStripper.SmartStrip;
+import Reika.DragonAPI.Instantiable.Event.TileEntityMoveEvent;
 
 import cpw.mods.fml.common.Loader;
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 
 public class FrameBlacklist {
 
@@ -39,7 +38,7 @@ public class FrameBlacklist {
 	}
 
 	private boolean isBlacklisted(World world, int x, int y, int z, Block b, int meta, TileEntity te) {
-		return MinecraftForge.EVENT_BUS.post(new FrameUsageEvent(world, x, y, z, b, meta, te));
+		return MinecraftForge.EVENT_BUS.post(new TileEntityMoveEvent(world, x, y, z, b, meta, te));
 	}
 
 	@Strippable("com.amadornes.framez.api.movement.IMovementHandler")
@@ -71,34 +70,6 @@ public class FrameBlacklist {
 		@Override
 		public boolean canHandle(World world, int x, int y, int z) {
 			return true;
-		}
-
-	}
-
-	public boolean fireFrameEvent(World world, int x, int y, int z) {
-		return MinecraftForge.EVENT_BUS.post(new FrameUsageEvent(world, x, y, z, world.getBlock(x, y, z), world.getBlockMetadata(x, y, z), world.getTileEntity(x, y, z)));
-	}
-
-	@Cancelable
-	public static class FrameUsageEvent extends Event {
-
-		public final World world;
-		public final int xCoord;
-		public final int yCoord;
-		public final int zCoord;
-
-		public final Block block;
-		public final int metadata;
-		public final TileEntity tile;
-
-		private FrameUsageEvent(World w, int x, int y, int z, Block b, int meta, TileEntity te) {
-			world = w;
-			xCoord = x;
-			yCoord = y;
-			zCoord = z;
-			block = b;
-			metadata = meta;
-			tile = te;
 		}
 
 	}

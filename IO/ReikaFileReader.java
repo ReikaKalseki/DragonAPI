@@ -35,7 +35,6 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -451,7 +450,8 @@ public class ReikaFileReader extends DragonAPICore {
 			try {
 				MessageDigest messageDigest = MessageDigest.getInstance(tag);
 				messageDigest.update(bytes);
-				return new String(messageDigest.digest(), StandardCharsets.UTF_8);
+				//return new String(messageDigest.digest(), StandardCharsets.UTF_8);
+				return javax.xml.bind.DatatypeConverter.printHexBinary(messageDigest.digest());
 			}
 			catch (NoSuchAlgorithmException e) {
 				return null; //never happens
@@ -461,11 +461,20 @@ public class ReikaFileReader extends DragonAPICore {
 		private byte[] getBytes(Object o) {
 			if (o instanceof byte[])
 				return (byte[])o;
-			if (o instanceof Integer)
+			else if (o instanceof Integer)
 				return ReikaJavaLibrary.splitIntToHexChars((int)o);
-			if (o instanceof String)
+			else if (o instanceof Long) {
+				int[] split = ReikaJavaLibrary.splitLong((long)o);
+				byte[] res = new byte[8];
+				byte[] low = ReikaJavaLibrary.splitIntToHexChars(split[0]);
+				byte[] high = ReikaJavaLibrary.splitIntToHexChars(split[1]);
+				System.arraycopy(low, 0, res, 0, low.length);
+				System.arraycopy(high, 0, res, 4, high.length);
+				return res;
+			}
+			else if (o instanceof String)
 				return ((String)o).getBytes();
-			if (o instanceof Serializable) {
+			else if (o instanceof Serializable) {
 				try {
 					ByteArrayOutputStream buf = new ByteArrayOutputStream();
 					ObjectOutputStream oo = new ObjectOutputStream(buf);
