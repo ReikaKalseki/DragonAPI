@@ -2,8 +2,12 @@ package Reika.DragonAPI.Extras;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
@@ -12,13 +16,20 @@ import java.util.Map.Entry;
 import java.util.Random;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.profiler.PlayerUsageSnooper;
+import net.minecraftforge.common.ForgeVersion;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.IO.ReikaFileReader.HashType;
 import Reika.DragonAPI.Instantiable.IO.ControlledConfig;
+import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 import cpw.mods.fml.common.Loader;
@@ -53,7 +64,31 @@ public class EnvironmentPackager {
 			f.createNewFile();
 
 			ArrayList<DataSection> data = new ArrayList();
-			DataSection sec = new DataSection(DataSections.OPTIONS);
+			DataSection sec = new DataSection(DataSections.INFO);
+			sec.add("Game Version: "+Loader.MC_VERSION);
+			sec.add("Forge Version: "+ForgeVersion.getVersion());
+			sec.add("Java Version: "+ReikaJVMParser.getFullJavaInfo());
+			sec.add("Current Time: "+new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z").format(Calendar.getInstance().getTime()));
+			sec.add("Is Dev Env: "+ReikaObfuscationHelper.isDeObfEnvironment());
+			sec.add("Server Mode: "+(DragonAPICore.isSinglePlayerFromClient() ? "Singleplayer" : "Server"));
+			sec.add("JVM Args: "+ReikaJVMParser.getAllArguments());
+			sec.add("Launcher: "+ReikaJVMParser.getLauncher());
+			sec.add("Root Classloader: "+LaunchClassLoader.class.getClassLoader());
+			sec.add("Game Classloader: "+LaunchClassLoader.getSystemClassLoader());
+			sec.add("Engine Overhauls: "+CoreModDetection.getStatus());
+			data.add(sec);
+			sec = new DataSection(DataSections.CRASHREP);
+
+			CrashReport report = CrashReport.makeCrashReport(new Throwable() {
+				@Override public String getMessage(){ return "Generating game environment data..."; }
+				@Override public void printStackTrace(final PrintWriter s) { }
+				@Override public void printStackTrace(final PrintStream s) { }
+			}, "Environment Dump");
+
+			String[] split = report.getCompleteReport().split("\\\\n");
+			sec.addAll(ReikaJavaLibrary.makeListFromArray(split));
+			data.add(sec);
+			sec = new DataSection(DataSections.OPTIONS);
 			sec.addAll(ReikaFileReader.getFileAsLines(this.getSettingsFile(), true));
 			data.add(sec);
 			sec = new DataSection(DataSections.MODS);
@@ -197,12 +232,14 @@ public class EnvironmentPackager {
 
 		protected final void add(String s) {
 			data.add(s);
-			Collections.sort(data);
+			if (type.isSorted())
+				Collections.sort(data);
 		}
 
 		protected final void addAll(Collection<String> c) {
 			data.addAll(c);
-			Collections.sort(data);
+			if (type.isSorted())
+				Collections.sort(data);
 		}
 
 		@Override
@@ -217,6 +254,8 @@ public class EnvironmentPackager {
 	}
 
 	private static enum DataSections {
+		INFO("General Info"),
+		CRASHREP("System Report"),
 		OPTIONS("Game Settings"),
 		MODS("Mods"),
 		CONFIGS("Config - "),
@@ -226,6 +265,17 @@ public class EnvironmentPackager {
 
 		private DataSections(String s) {
 			title = s;
+		}
+
+		public boolean isSorted() {
+			switch(this) {
+				case OPTIONS:
+				case MODS:
+				case CONFIGS:
+					return true;
+				default:
+					return false;
+			}
 		}
 	}
 

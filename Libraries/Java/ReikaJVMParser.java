@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,10 +10,17 @@
 package Reika.DragonAPI.Libraries.Java;
 
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+
+import net.minecraft.client.Minecraft;
+
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class ReikaJVMParser {
 
@@ -95,6 +102,27 @@ public class ReikaJVMParser {
 	/** 0 for major (7, 8, etc), and 2 for release (eg 55 for 1.7_55) */
 	public static int getJavaVersion(int subindex) {
 		return version[subindex];
+	}
+
+	public static String getFullJavaInfo() {
+		return System.getProperty("java.version")+" "+System.getProperty("java.vm.name") + " (" + System.getProperty("java.vm.info") + "), " + System.getProperty("java.vm.vendor");
+	}
+
+	public static String getLauncher() {
+		return FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? getLauncherClient() : "Server";
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static String getLauncherClient() {
+		try {
+			Field f = Minecraft.class.getDeclaredField("launchedVersion");
+			f.setAccessible(true);
+			return (String)f.get(Minecraft.getMinecraft());
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return e.toString();
+		}
 	}
 
 }

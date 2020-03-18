@@ -17,6 +17,7 @@ import java.net.URL;
 import java.util.Random;
 import java.util.UUID;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.PropertyManager;
 import net.minecraftforge.common.ForgeVersion;
@@ -155,6 +156,11 @@ public class DragonAPICore {
 
 	public static boolean isOnActualServer() {
 		return getSide() == Side.SERVER && FMLCommonHandler.instance().getMinecraftServerInstance().isDedicatedServer();
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static boolean isSinglePlayerFromClient() {
+		return Minecraft.getMinecraft().isSingleplayer();
 	}
 
 	public static boolean isSinglePlayer() {
