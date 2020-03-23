@@ -69,6 +69,8 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	NOTIFYBYTEEXEC("Bytecodeexec command notifies other admins", false),
 	PLAYERMOBCAP("Player-Specific Mob Caps", false),
 	SETTINGWARN("Setting Warning Persistence (EVERYLOAD/SETTINGCHANGE/VERSION/ONCE)", "SETTINGCHANGE"),
+	CHARGEDCERTUS("Allow charged certus to be recognized as normal certus ore", false),
+	STOPUNLOADSPREAD("Prevent block spreading near unloaded chunks", true),
 	;
 
 	private String label;

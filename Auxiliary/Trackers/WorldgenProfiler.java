@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2018
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -27,6 +27,7 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.event.terraingen.ChunkProviderEvent.ReplaceBiomeBlocks;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ASM.Patchers.Hooks.Event.World.ChunkRequestEvent;
 import Reika.DragonAPI.Auxiliary.Trackers.EventProfiler.EventProfile;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
@@ -49,6 +50,8 @@ public class WorldgenProfiler {
 	//private static final LinkedList<GeneratorProfile> currentlyRunning = new LinkedList();
 
 	public static boolean enableProfiling(World world) { //what about non-IWG time (vanilla & modded WorldGenerators, CC biome smoothing, etc?)
+		if (!ChunkRequestEvent.patch.isEnabled())
+			return false;
 		if (enableProfiling) {
 			return false;
 		}

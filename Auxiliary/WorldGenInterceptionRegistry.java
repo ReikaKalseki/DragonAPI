@@ -81,6 +81,11 @@ public class WorldGenInterceptionRegistry implements ChunkRequestWatcher {
 	}
 
 	@Override
+	public int watcherSortIndex() {
+		return 0;
+	}
+
+	@Override
 	public void onChunkRequested(WorldServer w, ChunkProviderServer p, int cx2, int cz2) {
 		if (WorldgenProfiler.profilingEnabled()) {
 			boolean gen = !ChunkRequestEvent.chunkIsLoaded() && !ChunkRequestEvent.chunkExistsOnDisk();

@@ -11,13 +11,14 @@ import forestry.api.multiblock.IMultiblockController;
 
 public class ForestryMultiblockControllerHandling {
 
+	private static Class controllerBase;
 	private static Method tickMethod;
 
 	static {
 		if (ModList.FORESTRY.isLoaded()) {
 			try {
-				Class c = Class.forName("forestry.core.multiblock.MultiblockControllerBase");
-				tickMethod = c.getDeclaredMethod("updateMultiblockEntity");
+				controllerBase = Class.forName("forestry.core.multiblock.MultiblockControllerBase");
+				tickMethod = controllerBase.getDeclaredMethod("updateMultiblockEntity");
 				tickMethod.setAccessible(true);
 			}
 			catch (Exception e) {
@@ -27,6 +28,10 @@ public class ForestryMultiblockControllerHandling {
 			}
 		}
 
+	}
+
+	public static boolean isMultiblockController(IMultiblockController imc) {
+		return controllerBase.isAssignableFrom(imc.getClass());
 	}
 
 	public static void tickMultiblock(IMultiblockController imc, Object caller) {

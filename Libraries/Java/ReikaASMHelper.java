@@ -1401,6 +1401,7 @@ public class ReikaASMHelper {
 					patchCount++;
 					Patcher p = (Patcher)c.newInstance();
 					if (p.isEnabled()) {
+						p.activate();
 						enabledCount++;
 						String s = !FMLForgePlugin.RUNTIME_DEOBF ? p.deobfName : p.obfName;
 						ret.addValue(s, p);

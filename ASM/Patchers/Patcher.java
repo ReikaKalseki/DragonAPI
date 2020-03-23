@@ -10,6 +10,9 @@
 package Reika.DragonAPI.ASM.Patchers;
 
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Locale;
 
 import org.objectweb.asm.ClassReader;
@@ -33,6 +36,8 @@ public abstract class Patcher {
 
 	public static final boolean genClasses = ReikaJVMParser.isArgumentPresent("-DragonAPI_exportASM");
 
+	private static final HashSet<Patcher> activePatches = new HashSet();
+
 	public Patcher(String s) {
 		this(s, s);
 	}
@@ -46,6 +51,11 @@ public abstract class Patcher {
 		if (Strings.isNullOrEmpty(obf) || Strings.isNullOrEmpty(deobf)) {
 			throw new MisuseException("Empty class specification! If you want to disable the patcher, mark it deprecated!");
 		}
+	}
+
+	public Patcher activate() {
+		activePatches.add(this);
+		return this;
 	}
 
 	public final byte[] apply(byte[] data) {
@@ -159,6 +169,10 @@ public abstract class Patcher {
 			return "Error running Patcher '"+Patcher.this.name()+":\n"+super.getMessage();
 		}*/
 
+	}
+
+	public static Collection<Patcher> getActivePatchers() {
+		return Collections.unmodifiableCollection(activePatches);
 	}
 
 }

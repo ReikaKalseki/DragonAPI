@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2018
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -45,6 +45,11 @@ public class EventPrePost extends Patcher {
 		String sig = "(Lcpw/mods/fml/common/eventhandler/Event;Lcpw/mods/fml/common/eventhandler/IEventListener;)V";
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Auxiliary/Trackers/EventProfiler", pre ? "firePre" : "firePost", sig, false));
 		return li;
+	}
+
+	@Override
+	public boolean isDisabledByDefault() {
+		return true;
 	}
 
 }

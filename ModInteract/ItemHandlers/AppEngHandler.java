@@ -60,6 +60,7 @@ public class AppEngHandler extends ModHandlerBase {
 
 	public final Block skystone;
 	public final Block quartzGlass;
+	public final Block chargedCertusOre;
 
 	private Object itemList;
 	private Object matList;
@@ -79,6 +80,7 @@ public class AppEngHandler extends ModHandlerBase {
 		super();
 		Block sky = null;
 		Block glass = null;
+		Block ore = null;
 		if (this.hasMod()) {
 			try {
 				this.initGetters();
@@ -107,6 +109,7 @@ public class AppEngHandler extends ModHandlerBase {
 
 				sky = this.getBlock("blockSkyStone");
 				glass = this.getBlock("blockQuartzGlass");
+				ore = this.getBlock("blockQuartzOreCharged");
 
 				cell1k = this.getItem("itemCell1k");
 				cell4k = this.getItem("itemCell4k");
@@ -127,6 +130,7 @@ public class AppEngHandler extends ModHandlerBase {
 		}
 		skystone = sky;
 		quartzGlass = glass;
+		chargedCertusOre = ore;
 	}
 
 	private void initGetters() throws Exception {

@@ -10,11 +10,14 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.ChunkProviderServer;
 
+import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers;
+import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers.EventWatcher;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 
@@ -31,6 +34,7 @@ public class ChunkRequestEvent {
 
 	public static void addListener(ChunkRequestWatcher l) {
 		listeners.add(l);
+		Collections.sort(listeners, EventWatchers.comparator);
 	}
 
 	public static boolean chunkIsLoaded() {
@@ -55,7 +59,7 @@ public class ChunkRequestEvent {
 		chunkX = chunkZ = 0;
 	}
 
-	public static interface ChunkRequestWatcher {
+	public static interface ChunkRequestWatcher extends EventWatcher {
 
 		void onChunkRequested(WorldServer w, ChunkProviderServer p, int x, int z);
 

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2018
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -43,7 +43,7 @@ public class WorldGenProfilerCommand extends DragonCommandBase {
 				if (WorldgenProfiler.enableProfiling(world))
 					this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Profiling started in world #"+world.provider.dimensionId+".");
 				else
-					this.sendChatToSender(ics, EnumChatFormatting.RED+"Profiling already running!");
+					this.sendChatToSender(ics, EnumChatFormatting.RED+"Profiling already running or its hooks are not enabled!");
 				break;
 			case "display":
 				int worldid = WorldgenProfiler.getWorld();

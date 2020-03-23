@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,6 +15,8 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+
+import Reika.DragonAPI.DragonOptions;
 
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 
@@ -63,6 +65,9 @@ public class BlockSpreadEvent extends PositionEvent {
 
 	public static void fire(World world, int x, int y, int z, Random rand, Block b) {
 		if (!world.isRemote) {
+			if (DragonOptions.STOPUNLOADSPREAD.getState() && !world.checkChunksExist(x-6, y-6, z-6, x+6, y+6, z+6)) {
+				return;
+			}
 			if (shouldDie(world, x, y, z, b)) {
 				world.setBlock(x, y, z, Blocks.dirt);
 			}

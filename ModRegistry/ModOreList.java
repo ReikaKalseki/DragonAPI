@@ -24,12 +24,14 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
@@ -50,7 +52,7 @@ public enum ModOreList implements OreType {
 	ALUMINUM("Aluminum", 0xF1F1F1, OreRarity.COMMON, getAluminumName(), 1, "oreAluminum", "oreAluminium", "oreNaturalAluminum"), //...Why??
 	IRIDIUM("Iridium", 0xC1E2D3, OreRarity.RARE, "ingotIridium", 1, "oreIridium"),
 	FIRESTONE("Firestone", 0xE19636, OreRarity.RARE, "shardFirestone", 1, "oreFirestone"),
-	CERTUSQUARTZ("Certus Quartz", 0xC4CEFF, OreRarity.AVERAGE, "crystalCertusQuartz", 2, "oreCertusQuartz"),
+	CERTUSQUARTZ("Certus Quartz", 0xC4CEFF, OreRarity.AVERAGE, "crystalCertusQuartz", 2, getCertusOreNames()),
 	URANIUM("Uranium", 0x4CFF00, OreRarity.SCATTERED, "ingotUranium", 1, "oreUranium", "oreYellorite", "oreUraninite"),
 	CINNABAR("Mercury", 0x811A1A, OreRarity.SCATTERED, "itemQuicksilver", 1, "oreCinnabar"),
 	AMBER("Amber", 0xB17F17, OreRarity.SCATTERED, "gemAmber", 1, "oreAmber"),
@@ -165,6 +167,13 @@ public enum ModOreList implements OreType {
 		rarity = r;
 
 		DragonAPICore.log("Adding ore entries for "+this.toString()+" (Ore Names: "+Arrays.toString(ore)+")");
+	}
+
+	private static String[] getCertusOreNames() {
+		ArrayList<String> li = ReikaJavaLibrary.makeListFrom("oreCertusQuartz");
+		if (DragonOptions.CHARGEDCERTUS.getState())
+			li.add("oreChargedCertusQuartz");
+		return li.toArray(new String[li.size()]);
 	}
 
 	private static String getAluminumName() {

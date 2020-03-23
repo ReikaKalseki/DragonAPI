@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -25,8 +25,11 @@ import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 public class ChunkRequestEvent extends Patcher {
 
+	public static ChunkRequestEvent patch;
+
 	public ChunkRequestEvent() {
 		super("net.minecraft.world.gen.ChunkProviderServer", "ms");
+		patch = this;
 	}
 
 	@Override
@@ -41,6 +44,11 @@ public class ChunkRequestEvent extends Patcher {
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/ChunkRequestEvent", "fire", "(Lnet/minecraft/world/WorldServer;Lnet/minecraft/world/gen/ChunkProviderServer;II)V", false));
 		m.instructions.insert(li);
 		//ReikaJavaLibrary.pConsole(ReikaASMHelper.clearString(m.instructions));
+	}
+
+	@Override
+	public boolean isDisabledByDefault() {
+		return true;
 	}
 
 }

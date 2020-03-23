@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2018
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -29,7 +29,6 @@ import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
 import Reika.DragonAPI.Instantiable.Event.EntityAboutToRayTraceEvent;
 import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.SetBlockEvent;
-import Reika.DragonAPI.Instantiable.Event.TileUpdateEvent;
 
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.IEventListener;
@@ -58,7 +57,7 @@ public class EventProfiler {
 		addShortcut(SetBlockEvent.class);
 		addShortcut(BlockTickEvent.class);
 		addShortcut(EntityAboutToRayTraceEvent.class);
-		addShortcut(TileUpdateEvent.class);
+		//addShortcut(TileUpdateEvent.class);
 		addShortcut(ItemUpdateEvent.class);
 	}
 
