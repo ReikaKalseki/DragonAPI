@@ -2353,4 +2353,12 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		}
 		return ret;
 	}
+
+	public static Object[] createRecipeArgsFromShapeAndMats(Object[] mats, String... shape) {
+		ArrayList<Object> li = ReikaJavaLibrary.makeListFrom(shape);
+		for (Object o : mats) {
+			li.add(o);
+		}
+		return li.toArray(new Object[li.size()]);
+	}
 }

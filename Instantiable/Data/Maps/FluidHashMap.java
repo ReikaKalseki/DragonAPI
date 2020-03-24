@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -56,7 +56,7 @@ public final class FluidHashMap<V> {
 	private V putKey(FluidStack is, V value) {
 		ThresholdMapping<V> map = this.data.get(is.getFluid().getName());
 		if (map == null) {
-			map = new ThresholdMapping(new ReikaJavaLibrary.ReverseComparator());
+			map = new ThresholdMapping();
 			this.data.put(is.getFluid().getName(), map);
 		}
 		return map.addMapping(is.amount, value);
@@ -70,6 +70,15 @@ public final class FluidHashMap<V> {
 					return map.getForValue(key, false);
 				}
 			}
+		}
+		return null;
+	}
+
+	public V getForValue(FluidStack is) {
+		ThresholdMapping<V> map = this.data.get(is.getFluid().getName());
+		if (map != null) {
+			V ret = map.getForValue(is.amount, false);
+			return ret;
 		}
 		return null;
 	}

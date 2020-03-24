@@ -18,6 +18,8 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
+import cpw.mods.fml.common.Loader;
+
 public class IC2Handler extends ModHandlerBase {
 
 	private static final IC2Handler instance = new IC2Handler();
@@ -142,7 +144,7 @@ public class IC2Handler extends ModHandlerBase {
 	}
 
 	public boolean isIC2Classic() {
-		return ModList.IC2.getRegisteredName().equals("Industrial Craft Classic");
+		return ModList.IC2.getRegisteredName().equals("Industrial Craft Classic") || Loader.isModLoaded("IC2-Classic-Spmod");
 	}
 
 }

@@ -23,11 +23,15 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
+import cpw.mods.fml.common.Loader;
+
 public class ForestryHandler extends ModHandlerBase {
 
 	private boolean init = false;
 
 	private Field crateList;
+
+	public final Block extraTreeLog;
 
 	private static final ForestryHandler instance = new ForestryHandler();
 
@@ -132,6 +136,7 @@ public class ForestryHandler extends ModHandlerBase {
 
 	private ForestryHandler() {
 		super();
+		Block extra = null;
 		if (this.hasMod()) {
 			for (int i = 0; i < ItemEntry.list.length; i++) {
 				ItemEntry ie = ItemEntry.list[i];
@@ -220,10 +225,45 @@ public class ForestryHandler extends ModHandlerBase {
 			}
 
 			init = true;
+
+			if (Loader.isModLoaded("ExtraTrees")) {
+				try {
+					Class c = Class.forName("binnie.extratrees.ExtraTrees");
+					Field f = c.getDeclaredField("blockLog");
+					f.setAccessible(true);
+					extra = (Block)f.get(null);
+				}
+				catch (ClassNotFoundException e) {
+					DragonAPICore.logError(this.getMod()+" class not found! "+e.getMessage());
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (NoSuchFieldException e) {
+					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (IllegalArgumentException e) {
+					DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (IllegalAccessException e) {
+					DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+				catch (NullPointerException e) {
+					DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					e.printStackTrace();
+					this.logFailure(e);
+				}
+			}
 		}
 		else {
 			this.noMod();
 		}
+		extraTreeLog = extra;
 	}
 
 	public static ForestryHandler getInstance() {
@@ -295,6 +335,10 @@ public class ForestryHandler extends ModHandlerBase {
 			e.printStackTrace();
 			return new ArrayList();
 		}
+	}
+
+	public boolean isLog(Block b) {
+		return b == BlockEntry.LOG.getBlock() || (b != null && b == extraTreeLog);
 	}
 
 }
