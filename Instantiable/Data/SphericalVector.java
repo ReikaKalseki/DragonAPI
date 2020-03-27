@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -24,8 +24,9 @@ public class SphericalVector {
 	}
 
 	public static SphericalVector fromCartesian(double dx, double dy, double dz) {
-		double[] dat = ReikaPhysicsHelper.cartesianToPolar(dx, dy, dz);
-		return new SphericalVector(dat[0], dat[1], dat[2]);
+		SphericalVector ret = new SphericalVector(0, 0, 0);
+		ret.aimFrom(dx, dy, dz, 0, 0, 0);
+		return ret;
 	}
 
 	public double[] getCartesian() {

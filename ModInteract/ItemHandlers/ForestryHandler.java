@@ -56,6 +56,8 @@ public class ForestryHandler extends ModHandlerBase {
 		PRINCESS("forestry.apiculture.items.ItemRegistryApiculture", "beePrincessGE"),
 		DRONE("forestry.apiculture.items.ItemRegistryApiculture", "beeDroneGE"),
 		LARVA("forestry.apiculture.items.ItemRegistryApiculture", "beeLarvaeGE"),
+		BUTTERFLY("forestry.lepidopterology.items.ItemRegistryLepidopterology", "butterflyGE"),
+		CATERPILLAR("forestry.lepidopterology.items.ItemRegistryLepidopterology", "caterpillarGE"),
 		CRAFTING("forestry.core.items.ItemRegistryCore", "craftingMaterial"),
 		BASICFRAME("forestry.apiculture.items.ItemRegistryApiculture", "frameUntreated"),
 		IMPREGFRAME("forestry.apiculture.items.ItemRegistryApiculture", "frameImpregnated"),
@@ -91,6 +93,7 @@ public class ForestryHandler extends ModHandlerBase {
 		SAPLING("forestry.arboriculture.blocks.BlockRegistryArboriculture", "saplingGE"),
 		LEAF("forestry.arboriculture.blocks.BlockRegistryArboriculture", "leaves"),
 		LOG("forestry.arboriculture.blocks.BlockRegistryArboriculture", "logs"),
+		FIRELOG("forestry.arboriculture.blocks.BlockRegistryArboriculture", "logsFireproof"),
 		HIVE("forestry.apiculture.blocks.BlockRegistryApiculture", "beehives"),
 		SOIL("forestry.core.blocks.BlockRegistryCore", "soil");
 
@@ -338,7 +341,7 @@ public class ForestryHandler extends ModHandlerBase {
 	}
 
 	public boolean isLog(Block b) {
-		return b == BlockEntry.LOG.getBlock() || (b != null && b == extraTreeLog);
+		return b == BlockEntry.LOG.getBlock() || b == BlockEntry.FIRELOG.getBlock() || (b != null && b == extraTreeLog);
 	}
 
 }

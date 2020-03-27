@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -437,12 +437,14 @@ public final class CustomRecipeList {
 							case FIRE_RESIST:
 								ia = ReikaBeeHelper.getBooleanAllele(data.getBoolean(key));
 								break;
+							case METABOLISM:
+								ia = ReikaBeeHelper.getIntegerAllele(data.getInt(key));
+								break;
 							case EFFECT:
 							case TERRITORY:
 							case FERTILITY:
 							case FLOWER_PROVIDER:
 							case LIFESPAN:
-							case METABOLISM:
 							case SIZE:
 							case SPEED:
 								String val = data.getString(key);

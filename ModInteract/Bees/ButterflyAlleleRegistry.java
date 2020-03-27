@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -39,7 +39,7 @@ public class ButterflyAlleleRegistry {
 		classTypes.put(EnumButterflyChromosome.SIZE, Size.class);
 		classTypes.put(EnumButterflyChromosome.LIFESPAN, Life.class);
 		classTypes.put(EnumButterflyChromosome.FERTILITY, Fertility.class);
-		classTypes.put(EnumButterflyChromosome.METABOLISM, Metabolisms.class);
+		//classTypes.put(EnumButterflyChromosome.METABOLISM, Metabolisms.class);
 		classTypes.put(EnumButterflyChromosome.FLOWER_PROVIDER, Flower.class);
 		classTypes.put(EnumButterflyChromosome.TERRITORY, Territory.class);
 		classTypes.put(EnumButterflyChromosome.TEMPERATURE_TOLERANCE, Tolerance.class);
@@ -116,7 +116,7 @@ public class ButterflyAlleleRegistry {
 		}
 
 		private Size(String pre, String s) {
-			tag = pre+"."+"speed"+s;
+			tag = pre+"."+"size"+s;
 			register(this, tag);
 		}
 
@@ -124,11 +124,11 @@ public class ButterflyAlleleRegistry {
 			return (IAlleleFloat)AlleleManager.alleleRegistry.getAllele(tag);
 		}
 
-		public static Speeds createNew(String id, float speed, boolean dominant) {
+		public static Size createNew(String id, float size, boolean dominant) {
 			id = ReikaStringParser.capFirstChar(id);
-			IAlleleFloat allele = AlleleManager.alleleFactory.createFloat("dragonapi", "size", id, speed, dominant, EnumButterflyChromosome.SIZE);
+			IAlleleFloat allele = AlleleManager.alleleFactory.createFloat("dragonapi", "size", id, size, dominant, EnumButterflyChromosome.SIZE);
 			AlleleManager.alleleRegistry.registerAllele(allele, EnumButterflyChromosome.SIZE);
-			return EnumHelper.addEnum(Speeds.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
+			return EnumHelper.addEnum(Size.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
 		}
 
 		@Override
@@ -168,6 +168,13 @@ public class ButterflyAlleleRegistry {
 		@Override
 		public ButterflyGene oneBetter() {
 			return this == MAXIMUM ? null : values()[this.ordinal()+1];
+		}
+
+		public static Fertility getFromAllele(IAllele gene) {
+			for (Fertility f : values())
+				if (f.tag.equals(gene.getUID()))
+					return f;
+			return null;
 		}
 	}
 
@@ -281,7 +288,7 @@ public class ButterflyAlleleRegistry {
 			return null;
 		}
 	}
-
+	/*
 	public static enum Metabolisms implements ButterflyGene {
 		SLOWEST("Slowest"),
 		SLOWER("Slower"),
@@ -317,8 +324,15 @@ public class ButterflyAlleleRegistry {
 		public ButterflyGene oneBetter() {
 			return null;
 		}
-	}
 
+		public static Metabolisms getFromAllele(IAllele gene) {
+			for (Metabolisms f : values())
+				if (f.tag.equals(gene.getUID()))
+					return f;
+			return null;
+		}
+	}
+	 */
 	public static enum Tolerance implements ButterflyGene {
 		UP("Up"),
 		DOWN("Down"),

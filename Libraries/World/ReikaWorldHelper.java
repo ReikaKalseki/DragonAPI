@@ -1276,19 +1276,19 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (b == Blocks.air)
 			return new ArrayList();
 		int meta = world.getBlockMetadata(x, y, z);
+		ThreadLocal harvesters = (ThreadLocal)ReikaObfuscationHelper.get("harvesters", b);
+		harvesters.set(ep);
 		ArrayList<ItemStack> li = b.getDrops(world, x, y, z, meta, fortune);
 		if (ep != null) {
 			if (b instanceof BlockTieredResource) {
 				BlockTieredResource bt = (BlockTieredResource)b;
 				li = new ArrayList(bt.isPlayerSufficientTier(world, x, y, z, ep) ? bt.getHarvestResources(world, x, y, z, fortune, ep) : bt.getNoHarvestResources(world, x, y, z, fortune, ep));
 			}
-			ThreadLocal harvesters = (ThreadLocal)ReikaObfuscationHelper.get("harvesters", b);
-			harvesters.set(ep);
 			HarvestDropsEvent evt = new HarvestDropsEvent(x, y, z, world, b, meta, fortune, 1F, li, ep, false);
 			MinecraftForge.EVENT_BUS.post(evt);
 			li = evt.drops;
-			harvesters.set(null);
 		}
+		harvesters.set(null);
 		return li;
 	}
 
