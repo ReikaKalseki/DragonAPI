@@ -21,6 +21,7 @@ import org.apache.commons.lang3.text.WordUtils;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
@@ -28,6 +29,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -63,6 +65,7 @@ import forestry.api.arboriculture.EnumTreeChromosome;
 import forestry.api.arboriculture.IAlleleFruit;
 import forestry.api.arboriculture.IAlleleGrowth;
 import forestry.api.arboriculture.IAlleleTreeSpecies;
+import forestry.api.arboriculture.ITree;
 import forestry.api.arboriculture.ITreeGenome;
 import forestry.api.arboriculture.ITreeRoot;
 import forestry.api.arboriculture.TreeManager;
@@ -100,6 +103,9 @@ public class ReikaBeeHelper {
 	private static Class geneSample;
 	private static Constructor geneSampleCtr;
 
+	private static Method setTreeLeaf;
+	private static Method getTreeLeaf;
+
 	static {
 		if (ModList.FORESTRY.isLoaded()) {
 			try {
@@ -108,6 +114,19 @@ public class ReikaBeeHelper {
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not find forestry bee life parameter!");
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
+				e.printStackTrace();
+			}
+
+			try {
+				Class c = Class.forName("forestry.arboriculture.tiles.TileTreeContainer");
+				setTreeLeaf = c.getDeclaredMethod("setTree", ITree.class);
+				setTreeLeaf.setAccessible(true);
+				getTreeLeaf = c.getDeclaredMethod("getTree");
+				getTreeLeaf.setAccessible(true);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Could not find forestry leaf tree parameters!");
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
 				e.printStackTrace();
 			}
@@ -236,7 +255,7 @@ public class ReikaBeeHelper {
 	}
 
 	public static boolean isGenedItem(ItemStack is) {
-		return isBee(is) || isTree(is) || isPollen(is) || isButterfly(is) || isCaterpillar(is);
+		return BeeManager.beeRoot.getType(is) != EnumBeeType.NONE || TreeManager.treeRoot.getType(is) != EnumGermlingType.NONE || ButterflyManager.butterflyRoot.getType(is) != EnumFlutterType.NONE;
 	}
 
 	public static boolean isBee(ItemStack is) {
@@ -412,7 +431,7 @@ public class ReikaBeeHelper {
 	}
 
 	public static IAlleleInteger getIntegerAllele(int value) { //exact same as forestry code
-		return (IAlleleInteger)AlleleManager.alleleRegistry.getAllele("forestry.i"+value);
+		return (IAlleleInteger)AlleleManager.alleleRegistry.getAllele("forestry.i"+value+"d");
 	}
 
 	public static void setBeeMate(IBee ii, IBee repl) {
@@ -844,6 +863,27 @@ public class ReikaBeeHelper {
 					e.printStackTrace();
 				}
 			}
+		}
+	}
+
+	@ModDependent(ModList.FORESTRY)
+	public static void setTree(TileEntity leaf, ITree tree) {
+		try {
+			setTreeLeaf.invoke(leaf, tree);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@ModDependent(ModList.FORESTRY)
+	public static ITree getTree(TileEntity leaf) {
+		try {
+			return (ITree)getTreeLeaf.invoke(leaf);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 }

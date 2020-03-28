@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -40,7 +40,6 @@ public class TreeAlleleRegistry {
 		classTypes.put(EnumTreeChromosome.SAPPINESS, Sappiness.class);
 		classTypes.put(EnumTreeChromosome.YIELD, Yield.class);
 		classTypes.put(EnumTreeChromosome.FRUITS, Fruit.class);
-		classTypes.put(EnumTreeChromosome.GIRTH, Girth.class);
 		classTypes.put(EnumTreeChromosome.MATURATION, Maturation.class);
 		classTypes.put(EnumTreeChromosome.TERRITORY, Territory.class);
 		classTypes.put(EnumTreeChromosome.GROWTH, Growth.class);
@@ -232,44 +231,6 @@ public class TreeAlleleRegistry {
 		}
 	}
 
-	public static enum Girth implements TreeGene {
-		SLOWEST("Slowest"),
-		SLOWER("Slower"),
-		SLOW("Slow"),
-		AVERAGE("Average"),
-		FAST("Fast"),
-		FASTER("Faster"),
-		FASTEST("Fastest"),
-		MAXIMUM("Maximum");
-
-		public final String tag;
-
-		private Girth(String s) {
-			this("forestry", s);
-		}
-
-		private Girth(String pre, String s) {
-			tag = pre+"."+"flowering"+s;
-			register(this, tag);
-		}
-
-		public IAlleleInteger getAllele() {
-			return (IAlleleInteger)AlleleManager.alleleRegistry.getAllele(tag);
-		}
-
-		public static Girth createNew(String id, int value, boolean dominant) {
-			id = ReikaStringParser.capFirstChar(id);
-			IAlleleInteger allele = AlleleManager.alleleFactory.createInteger("dragonapi", "girth", id, value, dominant, EnumTreeChromosome.GIRTH);
-			AlleleManager.alleleRegistry.registerAllele(allele, EnumTreeChromosome.GIRTH);
-			return EnumHelper.addEnum(Girth.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
-		}
-
-		@Override
-		public TreeGene oneBetter() {
-			return this == MAXIMUM ? null : values()[this.ordinal()+1];
-		}
-	}
-
 	public static enum Maturation implements TreeGene {
 		SLOWEST("Slowest"),
 		SLOWER("Slower"),
@@ -287,7 +248,7 @@ public class TreeAlleleRegistry {
 		}
 
 		private Maturation(String pre, String s) {
-			tag = pre+"."+"flowering"+s;
+			tag = pre+"."+"maturation"+s;
 			register(this, tag);
 		}
 
