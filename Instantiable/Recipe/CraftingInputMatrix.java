@@ -26,7 +26,10 @@ public class CraftingInputMatrix extends InventoryCrafting {
 		hasItems = false;
 		for (int i = 0; i < 9; i++) {
 			ItemStack in = tile.getStackInSlot(i+gridSlotOffset);
-			this.setInventorySlotContents(i, in);
+			ItemStack has = this.getStackInSlot(i);
+			if (!ItemStack.areItemStacksEqual(in, has)) {
+				this.setInventorySlotContents(i, in);
+			}
 			hasItems |= in != null;
 		}
 	}
