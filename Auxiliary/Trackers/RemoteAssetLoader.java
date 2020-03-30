@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -103,7 +103,7 @@ public class RemoteAssetLoader {
 		}
 	}
 
-	public static class AssetDownloader implements Runnable, WriteCallback {
+	private static class AssetDownloader implements Runnable, WriteCallback {
 
 		private long totalSize = 0;
 		private long downloaded = 0;
@@ -207,11 +207,11 @@ public class RemoteAssetLoader {
 
 	public static class AssetData {
 
-		private final RemoteAsset asset;
-		private final String name;
-		private final String path;
-		private final long size;
-		private final String hash;
+		protected final RemoteAsset asset;
+		protected final String name;
+		protected final String path;
+		protected final long size;
+		protected final String hash;
 
 		public AssetData(RemoteAsset a, String p, String n, String h, long s) {
 			asset = a;
@@ -226,7 +226,7 @@ public class RemoteAssetLoader {
 			return f.exists() ? ReikaFileReader.getHash(f, HashType.MD5) : "";
 		}
 
-		private boolean match() {
+		protected boolean match() {
 			return this.getLocalHash().equalsIgnoreCase(hash);
 		}
 
