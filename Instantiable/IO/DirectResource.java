@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -31,7 +31,7 @@ public class DirectResource implements IResource {
 	}
 
 	@Override
-	public InputStream getInputStream() {
+	public final InputStream getInputStream() {
 		//ReikaJavaLibrary.pConsole("Loading "+path+", data="+data);
 		if (data == null) {
 			InputStream st = this.calcStream();
@@ -43,7 +43,7 @@ public class DirectResource implements IResource {
 		return new ByteArrayInputStream(data);
 	}
 
-	private InputStream calcStream() {
+	protected InputStream calcStream() {
 		File f = new File(path);
 		if (f.exists()) {
 			try {
@@ -58,12 +58,12 @@ public class DirectResource implements IResource {
 	}
 
 	@Override
-	public boolean hasMetadata() {
+	public final boolean hasMetadata() {
 		return false;
 	}
 
 	@Override
-	public IMetadataSection getMetadata(String p_110526_1_) {
+	public final IMetadataSection getMetadata(String p_110526_1_) {
 		return null;
 	}
 

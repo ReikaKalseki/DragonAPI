@@ -27,6 +27,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
@@ -61,6 +62,10 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 public class ASMCalls {
 
 	private static final HashSet<Item> tracedUnregItems = new HashSet();
+
+	public static int getChunkCoordHash(ChunkCoordinates cc) {
+		return Coordinate.coordHash(cc.posX, cc.posY, cc.posZ);
+	}
 
 	public static boolean canSpawnCreature(EnumCreatureType type, World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);

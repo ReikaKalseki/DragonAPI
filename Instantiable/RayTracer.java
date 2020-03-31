@@ -16,7 +16,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.MovingObjectPosition.MovingObjectType;
@@ -249,8 +251,97 @@ public final class RayTracer {
 		return trace;
 	}
 
+	public static RayTracerWithCache getVisualLOSForRenderCulling() {
+		RayTracer ret = getVisualLOS();
+		return new RayTracerWithCache(ret);
+	}
+
+	public static <V> RayTracerWithCache getMultipointVisualLOSForRenderCulling(MultipointChecker<V> mc) {
+		RayTracer ret = getVisualLOS();
+		return new MultipointRayTracerWithCache(ret, mc);
+	}
+
 	public double getLength() {
 		return ReikaMathLibrary.py3d(originX-targetX, originY-targetY, originZ-targetZ);
+	}
+
+	private static class MultipointRayTracerWithCache<V> extends RayTracerWithCache<V> {
+
+		private final MultipointChecker<V> checker;
+
+		private MultipointRayTracerWithCache(RayTracer ret, MultipointChecker<V> mc) {
+			super(ret);
+			checker = mc;
+		}
+
+		@Override
+		protected boolean getLOS(V focus, World world) {
+			return checker.isClearLineOfSight(focus, trace, world);
+		}
+
+	}
+
+	public static interface MultipointChecker<V> {
+
+		public boolean isClearLineOfSight(V focus, RayTracer trace, World world);
+
+	}
+
+	public static class RayTracerWithCache<V> {
+
+		protected final RayTracer trace;
+
+		private Boolean cachedRaytrace;
+		private long lastTraceTick;
+		private int lastTraceTileHash;
+
+		private RayTracerWithCache(RayTracer ret) {
+			trace = ret;
+		}
+
+		public final void setOrigins(double x1, double y1, double z1, double x2, double y2, double z2) {
+			trace.setOrigins(x1, y1, z1, x2, y2, z2);
+		}
+
+		public final boolean isClearLineOfSight(Entity e) {
+			return this.isClearLineOfSight((V)e, e.worldObj);
+		}
+
+		public final boolean isClearLineOfSight(TileEntity e) {
+			return this.isClearLineOfSight((V)e, e.worldObj);
+		}
+
+		public final boolean isClearLineOfSight(V focus, World world) {
+			this.update(focus, world);
+			if (cachedRaytrace == null)
+				cachedRaytrace = this.getLOS(focus, world);
+			return cachedRaytrace.booleanValue();
+		}
+
+		protected boolean getLOS(V focus, World world) {
+			return trace.isClearLineOfSight(world);
+		}
+		/*
+		public final void update(TileEntity te) {
+			this.update(te, te.worldObj);
+		}
+
+		public final void update(Entity te) {
+			this.update(te, te.worldObj);
+		}
+		 */
+		private final void update(Object focus, World world) {
+			if (cachedRaytrace == null)
+				return;
+			long time = world.getTotalWorldTime();
+			int hash = System.identityHashCode(focus);
+			if (time-lastTraceTick > 5 || hash != lastTraceTileHash) {
+				cachedRaytrace = null;
+				lastTraceTileHash = hash;
+				lastTraceTick = time;
+			}
+		}
+
 	}
 
 }

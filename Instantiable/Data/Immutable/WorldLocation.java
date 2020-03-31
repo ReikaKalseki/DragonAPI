@@ -244,7 +244,7 @@ public class WorldLocation {
 
 	@Override
 	public int hashCode() {
-		return xCoord + (zCoord << 8) + (yCoord << 16) + (dimensionID << 24);
+		return Coordinate.coordHash(xCoord, yCoord, zCoord) + (dimensionID << 24);//xCoord + (zCoord << 8) + (yCoord << 16) + (dimensionID << 24);
 	}
 
 	@Override

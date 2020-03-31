@@ -154,7 +154,7 @@ public final class DecimalPosition implements Comparable<DecimalPosition> {
 
 	@Override
 	public int hashCode() {
-		return (int)(xCoord + (zCoord * 256) + (yCoord * 65536));
+		return Coordinate.coordHash((int)(xCoord*1000), (int)(yCoord*1000), (int)(zCoord*1000));//(int)(xCoord + (zCoord * 256) + (yCoord * 65536));
 	}
 
 	@Override

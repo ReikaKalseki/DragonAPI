@@ -172,7 +172,17 @@ public final class Coordinate implements Comparable<Coordinate> {
 
 	@Override
 	public int hashCode() {
-		return xCoord + (zCoord << 8) + (yCoord << 16);
+		return coordHash(xCoord, yCoord, zCoord);
+	}
+
+	public static int coordHash(int x, int y, int z) {
+		//return xCoord + (zCoord << 8) + (yCoord << 16);
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + x;
+		result = prime * result + y;
+		result = prime * result + z;
+		return result;
 	}
 
 	@Override
@@ -210,6 +220,10 @@ public final class Coordinate implements Comparable<Coordinate> {
 
 	public int getTaxicabDistanceTo(Coordinate c) {
 		return Math.abs(c.xCoord-xCoord)+Math.abs(c.yCoord-yCoord)+Math.abs(c.zCoord-zCoord);
+	}
+
+	public int getTaxicabDistanceTo(double x, double y, double z) {
+		return Math.abs(MathHelper.floor_double(x)-xCoord)+Math.abs(MathHelper.floor_double(y)-yCoord)+Math.abs(MathHelper.floor_double(z)-zCoord);
 	}
 
 	public int[] toArray() {
