@@ -1,17 +1,22 @@
 package Reika.DragonAPI.Instantiable.IO;
 
-import java.util.Collection;
-
+import Reika.DragonAPI.IO.DirectResourceManager;
+import Reika.DragonAPI.Instantiable.IO.RemoteSourcedAsset.RemoteSourcedAssetRepository;
+import Reika.DragonAPI.Interfaces.Registry.DynamicSound;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 
 public class DynamicSoundLoader extends SoundLoader {
 
-	public DynamicSoundLoader(Collection<SoundEnum> sounds) {
+	private final RemoteSourcedAssetRepository dataSource;
+
+	public DynamicSoundLoader(DynamicSound[] sounds, RemoteSourcedAssetRepository repo) {
 		super(sounds);
+		dataSource = repo;
 	}
 
-	public DynamicSoundLoader(SoundEnum... sounds) {
-		super(sounds);
+	@Override
+	protected void onRegister(SoundEnum e, String p) {
+		DirectResourceManager.getInstance().registerDynamicAsset(p, dataSource.createAsset(((DynamicSound)e).getRelativePath()));
 	}
 
 }

@@ -172,7 +172,7 @@ public class RemoteSourcedAsset {
 			ReikaFileReader.copyFile(in, out, 4096);
 			long duration = System.currentTimeMillis()-time;
 
-			String s = "Download of '"+remotePath+"' to '"+localPath+"' complete. Elapsed time: "+ReikaDateHelper.millisToHMSms(duration);
+			String s = "Download of '"+remotePath+"' to '"+localPath+"' complete. Elapsed time: "+ReikaDateHelper.millisToHMSms(duration)+". Filesize: "+targetFile.length();
 			/*dat.asset.mod.getModLogger()*/DragonAPICore.log(s);
 			isComplete = true;
 

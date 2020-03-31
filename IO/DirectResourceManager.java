@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -32,10 +32,13 @@ import net.minecraft.util.ResourceLocation;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.IO.DirectResource;
+import Reika.DragonAPI.Instantiable.IO.DynamicDirectResource;
+import Reika.DragonAPI.Instantiable.IO.RemoteSourcedAsset;
 
 public class DirectResourceManager implements IResourceManager, IResourceManagerReloadListener {
 
 	private final HashMap<String, SoundEventAccessorComposite> accessors = new HashMap();
+	private final HashMap<String, RemoteSourcedAsset> dynamicAssets = new HashMap();
 
 	private static final DirectResourceManager instance = new DirectResourceManager();
 
@@ -59,11 +62,16 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 		String dom = loc.getResourceDomain();
 		//if (dom.equals("custom_path")) {
 		String path = loc.getResourcePath();
-		return new DirectResource(path);
+		RemoteSourcedAsset rem = dynamicAssets.get(path);
+		return rem != null ? new DynamicDirectResource(rem) : new DirectResource(path);
 		//}
 		//else {
 		//	return original.getResource(loc);
 		//}
+	}
+
+	public void registerDynamicAsset(String path, RemoteSourcedAsset a) {
+		dynamicAssets.put(path, a);
 	}
 
 	public void registerCustomPath(String path, SoundCategory cat, boolean streaming) {

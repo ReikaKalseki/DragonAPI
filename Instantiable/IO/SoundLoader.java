@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,6 +12,8 @@ package Reika.DragonAPI.Instantiable.IO;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+
+import net.minecraft.client.resources.IResource;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.IO.DirectResourceManager;
@@ -30,12 +32,14 @@ public class SoundLoader {
 		soundList = ReikaJavaLibrary.makeListFrom(sounds);
 	}
 
-	public void register() {
+	public final void register() {
 		for (SoundEnum e : soundList) {
-			DirectResourceManager.getInstance().registerCustomPath(e.getPath(), e.getCategory(), false);
+			String p = e.getPath();
+			DirectResourceManager.getInstance().registerCustomPath(p, e.getCategory(), false);
+			this.onRegister(e, p);
 			if (e.preload()) {
 				try {
-					DirectResourceManager.getInstance().getResource(DirectResourceManager.getResource(e.getPath()));
+					IResource res = DirectResourceManager.getInstance().getResource(DirectResourceManager.getResource(p));
 				}
 				catch (IOException ex) {
 					DragonAPICore.logError("Caught error when preloading sound '"+e+"':");
@@ -43,5 +47,9 @@ public class SoundLoader {
 				}
 			}
 		}
+	}
+
+	protected void onRegister(SoundEnum e, String p) {
+
 	}
 }
