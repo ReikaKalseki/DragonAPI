@@ -105,7 +105,7 @@ public class TreeAlleleRegistry {
 		LOW("Low"),
 		HIGH("High"),
 		HIGHER("Higher"),
-		HIGHEST("Highest");
+		HIGHEST("Highest"); //10% = 0.1
 
 		public final String tag;
 
@@ -139,7 +139,7 @@ public class TreeAlleleRegistry {
 		LOWEST("Lowest"),
 		LOWER("Lower"),
 		LOW("Low"),
-		HIGH("High"),
+		HIGH("High"), //highest naturally obtainable
 		HIGHER("Higher"),
 		HIGHEST("Highest");
 
@@ -175,7 +175,7 @@ public class TreeAlleleRegistry {
 		LOWEST("Lowest"),
 		LOWER("Lower"),
 		LOW("Low"),
-		HIGH("High"),
+		HIGH("High"), //highest naturally obtainable
 		HIGHER("Higher"),
 		HIGHEST("Highest");
 
@@ -237,9 +237,8 @@ public class TreeAlleleRegistry {
 		SLOW("Slow"),
 		AVERAGE("Average"),
 		FAST("Fast"),
-		FASTER("Faster"),
-		FASTEST("Fastest"),
-		MAXIMUM("Maximum");
+		FASTER("Faster"), //highest naturally obtainable
+		FASTEST("Fastest"); //1 tick
 
 		public final String tag;
 
@@ -265,7 +264,7 @@ public class TreeAlleleRegistry {
 
 		@Override
 		public TreeGene oneBetter() {
-			return this == MAXIMUM ? null : values()[this.ordinal()+1];
+			return this == FASTEST ? null : values()[this.ordinal()+1];
 		}
 	}
 

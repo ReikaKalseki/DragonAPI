@@ -40,6 +40,7 @@ import forestry.api.apiculture.EnumBeeChromosome;
 import forestry.api.apiculture.EnumBeeType;
 import forestry.api.apiculture.IAlleleBeeEffect;
 import forestry.api.apiculture.IAlleleBeeSpecies;
+import forestry.api.apiculture.IBee;
 import forestry.api.apiculture.IBeeGenome;
 import forestry.api.apiculture.IBeeHousing;
 import forestry.api.apiculture.IBeeMutation;
@@ -353,6 +354,10 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		beeRoot.registerMutation(new BeeBreeding(p1, p2, chance, this));
 	}
 
+	public final IBee constructIndividual() {
+		return beeRoot.templateAsIndividual(template);
+	}
+
 	private static final class BeeBreeding implements IBeeMutation {
 
 		public final IAlleleBeeSpecies parent1;
@@ -469,15 +474,6 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		return 0xffff00;
 	}
 
-	private final IAllele getGeneForBoolean(boolean b) {
-		String s = b ? "forestry.boolTrue" : "forestry.boolFalse";
-		return AlleleManager.alleleRegistry.getAllele(s);
-	}
-
-	private final IAllele getGeneForInt(int i) {
-		return AlleleManager.alleleRegistry.getAllele(String.format("i%dd", i));
-	}
-
 	protected final IAllele[] getSpeciesTemplate() {
 		IAllele[] alleles = beeRoot.getDefaultTemplate();
 		alleles[EnumBeeChromosome.SPECIES.ordinal()] = this;
@@ -488,11 +484,11 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		alleles[EnumBeeChromosome.FLOWERING.ordinal()] = this.getFloweringRate().getAllele();
 		alleles[EnumBeeChromosome.FERTILITY.ordinal()] = this.getFertility().getAllele();
 		alleles[EnumBeeChromosome.EFFECT.ordinal()] = this.getEffectAllele();
-		alleles[EnumBeeChromosome.NOCTURNAL.ordinal()] = this.getGeneForBoolean(this.isNocturnal());
-		alleles[EnumBeeChromosome.CAVE_DWELLING.ordinal()] = this.getGeneForBoolean(this.isCaveDwelling());
+		alleles[EnumBeeChromosome.NOCTURNAL.ordinal()] = ReikaBeeHelper.getBooleanAllele(this.isNocturnal());
+		alleles[EnumBeeChromosome.CAVE_DWELLING.ordinal()] = ReikaBeeHelper.getBooleanAllele(this.isCaveDwelling());
 		alleles[EnumBeeChromosome.TEMPERATURE_TOLERANCE.ordinal()] = ReikaBeeHelper.getToleranceGene(this.getTemperatureToleranceDir(), this.getTemperatureTolerance());
 		alleles[EnumBeeChromosome.HUMIDITY_TOLERANCE.ordinal()] = ReikaBeeHelper.getToleranceGene(this.getHumidityToleranceDir(), this.getHumidityTolerance());
-		alleles[EnumBeeChromosome.TOLERANT_FLYER.ordinal()] = this.getGeneForBoolean(this.isTolerantFlyer());
+		alleles[EnumBeeChromosome.TOLERANT_FLYER.ordinal()] = ReikaBeeHelper.getBooleanAllele(this.isTolerantFlyer());
 		return alleles;
 	}
 

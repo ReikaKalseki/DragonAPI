@@ -25,6 +25,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
+import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -33,6 +34,7 @@ import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.BeeGene;
@@ -78,6 +80,7 @@ import forestry.api.genetics.IAlleleArea;
 import forestry.api.genetics.IAlleleBoolean;
 import forestry.api.genetics.IAlleleFloat;
 import forestry.api.genetics.IAlleleInteger;
+import forestry.api.genetics.IAllelePlantType;
 import forestry.api.genetics.IAlleleSpecies;
 import forestry.api.genetics.IAlleleTolerance;
 import forestry.api.genetics.IChromosome;
@@ -105,6 +108,7 @@ public class ReikaBeeHelper {
 
 	private static Method setTreeLeaf;
 	private static Method getTreeLeaf;
+	private static Field deco;
 
 	static {
 		if (ModList.FORESTRY.isLoaded()) {
@@ -124,6 +128,9 @@ public class ReikaBeeHelper {
 				setTreeLeaf.setAccessible(true);
 				getTreeLeaf = c.getDeclaredMethod("getTree");
 				getTreeLeaf.setAccessible(true);
+				c = Class.forName("forestry.arboriculture.tiles.TileLeaves");
+				deco = c.getDeclaredField("isDecorative");
+				deco.setAccessible(true);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not find forestry leaf tree parameters!");
@@ -645,11 +652,11 @@ public class ReikaBeeHelper {
 				break;
 			case YIELD:
 				tag = "for.gui.yield";
-				val += " ("+((IAlleleFloat)gene).getValue()/Yield.HIGH.getAllele().getValue()+"x)";
+				val += " ("+((IAlleleFloat)gene).getValue()/Yield.LOW.getAllele().getValue()+"x)";
 				break;
 			case SAPPINESS:
 				tag = "for.gui.sappiness";
-				val += " ("+((IAlleleFloat)gene).getValue()/Sappiness.HIGH.getAllele().getValue()+"x)";
+				val += " ("+((IAlleleFloat)gene).getValue()/Sappiness.LOW.getAllele().getValue()+"x)";
 				break;
 			case GIRTH:
 				tag = "for.gui.girth";
@@ -877,6 +884,16 @@ public class ReikaBeeHelper {
 	}
 
 	@ModDependent(ModList.FORESTRY)
+	public static void setTreeLeafDecorative(TileEntity leaf, boolean decor) {
+		try {
+			deco.setBoolean(leaf, decor);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@ModDependent(ModList.FORESTRY)
 	public static ITree getTree(TileEntity leaf) {
 		try {
 			return (ITree)getTreeLeaf.invoke(leaf);
@@ -885,5 +902,10 @@ public class ReikaBeeHelper {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	@ModDependent(ModList.FORESTRY)
+	public static IAllelePlantType getAlleleForPlantType(EnumPlantType plantType) {
+		return (IAllelePlantType)AlleleManager.alleleRegistry.getAllele("forestry.plantType"+ReikaStringParser.capFirstChar(plantType.name()));
 	}
 }

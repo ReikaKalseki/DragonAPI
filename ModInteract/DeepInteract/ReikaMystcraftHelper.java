@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -45,9 +45,11 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.ChunkProviderServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fluids.Fluid;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -76,6 +78,8 @@ public class ReikaMystcraftHelper {
 
 	private static final Class biomeWrapper;
 	private static final Field parentBiome;
+
+	private static final Field pagesField;
 
 	private static APIInstanceProvider apiProvider;
 	private static final int API_VERSION = 1;
@@ -116,6 +120,41 @@ public class ReikaMystcraftHelper {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static ArrayList<IAgeSymbol> getPagesInBook(ItemStack is, boolean readBookDirectly) {
+		readBookDirectly = false; //book does not actually store anything
+		ArrayList<IAgeSymbol> li = new ArrayList();
+		if (readBookDirectly) {
+			IItemPageProvider ii = (IItemPageProvider)is.getItem();
+			List<ItemStack> ret = ii.getPageList(null, is);
+			for (ItemStack in : ret) {
+				IAgeSymbol ia = getSymbolFromPage(in);
+				if (ia != null) {
+					li.add(ia);
+				}
+			}
+		}
+		else {
+			ILinkInfo link = getLinkbookLink(is);
+			if (link != null) {
+				Integer dim = link.getDimensionUID();
+				if (dim != null && DimensionManager.isDimensionRegistered(dim)) {
+					DimensionManager.initDimension(dim);
+					WorldServer age = DimensionManager.getWorld(dim);
+					if (age != null) {
+						for (String s : getAgeSymbolsOrdered(age)) {
+							IAgeSymbol ia = ((SymbolAPI)getAPI(APISegment.SYMBOL)).getSymbol(s);
+							//ReikaJavaLibrary.pConsole(s+" > "+ia);
+							if (ia != null) {
+								li.add(ia);
+							}
+						}
+					}
+				}
+			}
+		}
+		return li;
 	}
 
 	public static int getTargetDimensionIDFromPortalBlock(World world, int x, int y, int z) {
@@ -187,6 +226,13 @@ public class ReikaMystcraftHelper {
 		return new HashSet();
 	}
 
+	public static List<String> getAgeSymbolsOrdered(World world) {
+		if (AgeInterface.loadedCorrectly && isMystAge(world)) {
+			return getOrCreateInterface(world).getSymbolsOrdered();
+		}
+		return new ArrayList();
+	}
+
 	/*
 	public static boolean setStabilityForAge(World world, int stability) {
 		if (!loadedCorrectly)
@@ -247,6 +293,7 @@ public class ReikaMystcraftHelper {
 		private Object instabilityController; //InstabilityController
 		private Object ageData; //AgeData class
 		private HashSet<String> ageSymbols;
+		private ArrayList<String> ageSymbolsOrdered;
 
 		private AgeInterface(World world) {
 			if (!isMystAge(world))
@@ -257,7 +304,8 @@ public class ReikaMystcraftHelper {
 				ageController = age_controller.get(provider);
 				instabilityController = instability_controller.get(ageController);
 				ageData = data.get(ageController);
-				ageSymbols = new HashSet((List<String>)symbolList.get(ageData));
+				ageSymbolsOrdered = new ArrayList((List<String>)symbolList.get(ageData));
+				ageSymbols = new HashSet(ageSymbolsOrdered);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -377,6 +425,10 @@ public class ReikaMystcraftHelper {
 			return Collections.unmodifiableSet(ageSymbols);
 		}
 
+		public List<String> getSymbolsOrdered() {
+			return Collections.unmodifiableList(ageSymbolsOrdered);
+		}
+
 		public boolean symbolExists(String s) {
 			return ageSymbols.contains(s);
 		}
@@ -475,6 +527,25 @@ public class ReikaMystcraftHelper {
 			li.add(getSymbolPage(a));
 		}
 		return li;
+	}
+
+	public static String getSymbolIdFromPage(ItemStack is) {
+		PageAPI api = getAPI(APISegment.PAGE);
+		if (api != null) {
+			return api.getPageSymbol(is);
+		}
+		return null;
+	}
+
+	public static IAgeSymbol getSymbolFromPage(ItemStack is) {
+		String id = getSymbolIdFromPage(is);
+		if (id == null)
+			return null;
+		SymbolAPI api = getAPI(APISegment.SYMBOL);
+		if (api != null) {
+			return api.getSymbol(id);
+		}
+		return null;
 	}
 
 	public static ItemStack getSymbolPage(IAgeSymbol a) {
@@ -621,6 +692,7 @@ public class ReikaMystcraftHelper {
 		Method link = null;
 		Class biome = null;
 		Field base = null;
+		Field pages = null;
 
 		boolean load = true;
 
@@ -638,6 +710,9 @@ public class ReikaMystcraftHelper {
 				biome = Class.forName("com.xcompwiz.mystcraft.world.biome.BiomeWrapperMyst");
 				base = biome.getDeclaredField("baseBiome");
 				base.setAccessible(true);
+				Class binder = Class.forName("com.xcompwiz.mystcraft.tileentity.TileEntityBookBinder");
+				pages = binder.getDeclaredField("pages");
+				pages.setAccessible(true);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Error loading Mystcraft linkbook interfacing!");
@@ -655,6 +730,7 @@ public class ReikaMystcraftHelper {
 		getLink = link;
 		biomeWrapper = biome;
 		parentBiome = base;
+		pagesField = pages;
 	}
 
 	public static IAgeSymbol createIWorldGeneratorPage(IWorldGenerator gen, String[] poem, int instability) {
@@ -765,6 +841,34 @@ public class ReikaMystcraftHelper {
 		catch (Exception e) {
 			e.printStackTrace();
 			return b;
+		}
+	}
+
+	public static boolean setBookBinderPages(TileEntity te, ArrayList<IAgeSymbol> li) {
+		return setBookBinderItemPages(te, getPagesAsItems(li));
+	}
+
+	private static ArrayList<ItemStack> getPagesAsItems(ArrayList<IAgeSymbol> li) {
+		ArrayList<ItemStack> ret = new ArrayList();
+		for (IAgeSymbol ia : li) {
+			ret.add(getSymbolPage(ia));
+		}
+		return ret;
+	}
+
+	private static boolean setBookBinderItemPages(TileEntity te, ArrayList<ItemStack> pages) {
+		List<ItemStack> li;
+		try {
+			li = (List<ItemStack>)pagesField.get(te);
+			if (li == null || !li.isEmpty())
+				return false;
+			li.addAll(pages);
+			te.worldObj.markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
+			return true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
 		}
 	}
 
