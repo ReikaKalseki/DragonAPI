@@ -112,8 +112,8 @@ public class ReikaTextureHelper {
 			Integer gl = textures.get(id);
 			if (gl == null) {
 				DragonAPICore.log("Loading dynamically sourced asset "+rem.path);
-				try {
-					gl = bindRawDataTexture(rem.getData());
+				try(InputStream data = rem.getData()) {
+					gl = bindRawDataTexture(data);
 				}
 				catch (IOException e) {
 					DragonAPICore.logError("Could not load asset!");
@@ -383,9 +383,8 @@ public class ReikaTextureHelper {
 		boolean loaded = false;
 		for (int k = 0; k < li.size(); k++) {
 			AbstractResourcePack pack = (AbstractResourcePack)li.get(k);
-			try {
-				String path = "Reika/DragonAPI/dyecolor.txt";
-				InputStream in = getStreamFromTexturePack(path, pack);
+			String path = "Reika/DragonAPI/dyecolor.txt";
+			try(InputStream in = getStreamFromTexturePack(path, pack)) {
 				if (in != null) {
 					BufferedReader p = new BufferedReader(new InputStreamReader(in));
 					for (int i = 0; i < 16; i++) {

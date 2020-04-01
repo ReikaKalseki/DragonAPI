@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -66,33 +66,32 @@ public abstract class NBTFile {
 	}
 
 	private void encryptFileData(File f, boolean unpack) throws IOException {
-		InputStream in = new FileInputStream(f);
-		ArrayList<Byte> data = new ArrayList();
-		int dat = in.read();
-		while (dat != -1) {
-			data.add((byte)dat);
-			dat = in.read();
+		try (InputStream in = new FileInputStream(f)) {
+			ArrayList<Byte> data = new ArrayList();
+			int dat = in.read();
+			while (dat != -1) {
+				data.add((byte)dat);
+				dat = in.read();
+			}
+			//ReikaJavaLibrary.cycleList(data, unpack ? -8 : 8);
+			Collections.reverse(data);
+			OutputStream out = new FileOutputStream(f);
+			for (byte b : data) {
+				out.write(b);
+			}
+			out.flush();
+			out.close();
 		}
-		in.close();
-		//ReikaJavaLibrary.cycleList(data, unpack ? -8 : 8);
-		Collections.reverse(data);
-		OutputStream out = new FileOutputStream(f);
-		for (byte b : data) {
-			out.write(b);
-		}
-		out.flush();
-		out.close();
 	}
 
 	public final void load() throws IOException {
 		if (reference != null) {
-			InputStream in = reference.getResourceAsStream(filepath);
-
-			if (encryptData)
-				in = this.encryptStreamData(in, true);
-
-			NBTTagCompound tag = compressData ? CompressedStreamTools.readCompressed(in) : ReikaFileReader.readUncompressedNBT(in);
-			this.setDataFromLines(tag);
+			try(InputStream in = reference.getResourceAsStream(filepath)) {
+				try(InputStream in2 = encryptData ? this.encryptStreamData(in, true) : in) {
+					NBTTagCompound tag = compressData ? CompressedStreamTools.readCompressed(in) : ReikaFileReader.readUncompressedNBT(in);
+					this.setDataFromLines(tag);
+				}
+			}
 		}
 		else {
 			File f = new File(filepath);
@@ -102,8 +101,10 @@ public abstract class NBTFile {
 			if (encryptData)
 				this.encryptFileData(f, true);
 
-			NBTTagCompound tag = compressData ? CompressedStreamTools.readCompressed(new FileInputStream(f)) : ReikaFileReader.readUncompressedNBT(f);
-			this.setDataFromLines(tag);
+			try (InputStream in = new FileInputStream(f)) {
+				NBTTagCompound tag = compressData ? CompressedStreamTools.readCompressed(in) : ReikaFileReader.readUncompressedNBT(in);
+				this.setDataFromLines(tag);
+			}
 		}
 	}
 

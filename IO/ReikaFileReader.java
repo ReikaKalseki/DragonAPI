@@ -47,6 +47,10 @@ import java.util.jar.JarFile;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
+import com.google.common.base.Throwables;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTSizeTracker;
 import net.minecraft.nbt.NBTTagCompound;
@@ -76,6 +80,7 @@ public class ReikaFileReader extends DragonAPICore {
 		return len;
 	}
 
+	/** Make sure you close this! */
 	public static BufferedReader getReader(File f) {
 		try {
 			return new BufferedReader(new InputStreamReader(new FileInputStream(f)));
@@ -86,6 +91,7 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
+	/** Make sure you close this! */
 	public static BufferedReader getReader(InputStream in) {
 		try {
 			return new BufferedReader(new InputStreamReader(in));
@@ -96,6 +102,7 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
+	/** Make sure you close this! */
 	public static BufferedReader getReader(String path) {
 		try {
 			return new BufferedReader(new InputStreamReader(new FileInputStream(path)));
@@ -106,6 +113,7 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
+	/** Make sure you close this! */
 	public static BufferedReader getReader(URL url, int timeout, ConnectionErrorHandler ch, DataFetcher f) {
 		if (!isInternetAccessible(timeout)) {
 			if (ch != null)
@@ -206,36 +214,40 @@ public class ReikaFileReader extends DragonAPICore {
 	public static ArrayList<File> getAllFilesInFolder(File f) {
 		return getAllFilesInFolder(f, null);
 	}
-
+	/*
 	public static String readTextFile(Class root, String path) {
-		InputStream in = root.getResourceAsStream(path);
-		StringBuilder sb = new StringBuilder();
-		BufferedReader p;
-		try {
-			p = new BufferedReader(new InputStreamReader(in));
-		}
-		catch (NullPointerException e) {
-			DragonAPICore.logError("File "+path+" does not exist!");
+		try(InputStream in = root.getResourceAsStream(path)) {
+			if (in == null) {
+				DragonAPICore.logError("File "+path+" does not exist!");
+				return "";
+			}
+			StringBuilder sb = new StringBuilder();
+			BufferedReader p;
+			try {
+				p = new BufferedReader(new InputStreamReader(in));
+			}
+			catch (NullPointerException e) {
+				return sb.toString();
+			}
+			int i = 0;
+			try {
+				String line = null;
+				while((line = p.readLine()) != null) {
+					if (!line.isEmpty()) {
+						sb.append(line);
+						i++;
+						sb.append("\n");
+					}
+				}
+				p.close();
+			}
+			catch (Exception e) {
+				DragonAPICore.logError(e.getMessage()+" on loading line "+i);
+			}
 			return sb.toString();
 		}
-		int i = 0;
-		try {
-			String line = null;
-			while((line = p.readLine()) != null) {
-				if (!line.isEmpty()) {
-					sb.append(line);
-					i++;
-					sb.append("\n");
-				}
-			}
-			p.close();
-		}
-		catch (Exception e) {
-			DragonAPICore.logError(e.getMessage()+" on loading line "+i);
-		}
-		return sb.toString();
 	}
-
+	 */
 	public static ArrayList<String> getFileAsLines(String path, boolean printStackTrace) {
 		return getFileAsLines(getReader(path), printStackTrace);
 	}
@@ -267,11 +279,18 @@ public class ReikaFileReader extends DragonAPICore {
 					li.add(line);
 				}
 			}
-			r.close();
 		}
 		catch (Exception e) {
 			if (printStackTrace)
 				e.printStackTrace();
+		}
+		finally {
+			try {
+				r.close();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return li;
 	}
@@ -285,11 +304,18 @@ public class ReikaFileReader extends DragonAPICore {
 				li.add(b);
 				b = (byte)r.read();
 			}
-			r.close();
 		}
 		catch (Exception e) {
 			if (printStackTrace)
 				e.printStackTrace();
+		}
+		finally {
+			try {
+				r.close();
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		return li;
 	}
@@ -378,8 +404,8 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static String getHash(File file, HashType type) {
-		try {
-			return getHash(new FileInputStream(file), type);
+		try(FileInputStream in = new FileInputStream(file)) {
+			return getHash(in, type);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -387,7 +413,7 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static String getHash(InputStream is, HashType type) {
+	private static String getHash(InputStream is, HashType type) {
 		StringBuffer sb = new StringBuffer();
 		try {
 			byte[] buffer = new byte[1024];
@@ -502,8 +528,7 @@ public class ReikaFileReader extends DragonAPICore {
 		protected abstract String getReplacementLine(String s, String newline, int idx);
 
 		public final boolean performChanges(File f) {
-			try {
-				BufferedReader r = new BufferedReader(new FileReader(f));
+			try(BufferedReader r = ReikaFileReader.getReader(f)) {
 				String sep = System.getProperty("line.separator");
 				String line = r.readLine();
 				StringBuilder out = new StringBuilder();
@@ -520,7 +545,6 @@ public class ReikaFileReader extends DragonAPICore {
 					line = r.readLine();
 					idx++;
 				}
-				r.close();
 				FileOutputStream os = new FileOutputStream(f);
 				os.write(out.toString().getBytes());
 				os.close();
@@ -583,29 +607,45 @@ public class ReikaFileReader extends DragonAPICore {
 		copyFile(new FileInputStream(in), new FileOutputStream(out), size, null);
 	}
 
+	/** Closes the streams for you. */
 	public static void copyFile(InputStream in, OutputStream out, int size) throws FileReadException, FileWriteException {
 		copyFile(in, out, size, null);
 	}
 
+	/** Closes the streams for you. */
 	public static void copyFile(InputStream in, OutputStream out, int chunkSize, WriteCallback call) throws FileReadException, FileWriteException {
-		byte[] bytes = new byte[chunkSize];
-		int count = 0;
-		while (count != -1) {
-			if (count > 0) {
+		try {
+			byte[] bytes = new byte[chunkSize];
+			int count = 0;
+			while (count != -1) {
+				if (count > 0) {
+					try {
+						out.write(bytes, 0, count);
+						if (call != null)
+							call.onWrite(bytes);
+					}
+					catch (IOException e) {
+						throw new FileWriteException(e);
+					}
+				}
 				try {
-					out.write(bytes, 0, count);
-					if (call != null)
-						call.onWrite(bytes);
+					count = in.read(bytes, 0, bytes.length);
 				}
 				catch (IOException e) {
-					throw new FileWriteException(e);
+					throw new FileReadException(e);
 				}
 			}
+		}
+		catch (Exception e) {
+			Throwables.propagate(e);
+		}
+		finally {
 			try {
-				count = in.read(bytes, 0, bytes.length);
+				in.close();
+				out.close();
 			}
 			catch (IOException e) {
-				throw new FileReadException(e);
+				e.printStackTrace();
 			}
 		}
 	}
@@ -654,19 +694,20 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static NBTTagCompound readUncompressedNBT(InputStream in) throws IOException {
-		return CompressedStreamTools.func_152456_a(new DataInputStream(in), NBTSizeTracker.field_152451_a);
+		try(DataInputStream data = new DataInputStream(in)) {
+			return CompressedStreamTools.func_152456_a(data, NBTSizeTracker.field_152451_a);
+		}
 	}
 
 	public static boolean isEmpty(File f) throws IOException {
-		BufferedReader br = new BufferedReader(new FileReader(f));
-		String line = br.readLine();
-		if (line == null || (line.length() == 0 && br.readLine() == null)) {
-			br.close();
-			return true;
-		}
-		else {
-			br.close();
-			return false;
+		try (BufferedReader br = getReader(f)) {
+			String line = br.readLine();
+			if (line == null || (line.length() == 0 && br.readLine() == null)) {
+				return true;
+			}
+			else {
+				return false;
+			}
 		}
 	}
 
@@ -790,5 +831,15 @@ public class ReikaFileReader extends DragonAPICore {
 		for (byte b : data)
 			bin.write(b);
 		return new ByteArrayInputStream(bin.toByteArray());
+	}
+
+	public static JsonElement readJSON(File f) {
+		try(BufferedReader r = getReader(f)) {
+			return new JsonParser().parse(r);
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 }

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -63,14 +63,13 @@ public final class ReikaImageLoader {
 	 * Args: Root class, filepath */
 	public static BufferedImage readImage(Class root, String name, ImageEditor editor) {
 		DragonAPICore.log("Pipelining texture from "+root.getCanonicalName()+" to "+name);
-		InputStream inputfile = root.getResourceAsStream(name);
 
-		if (inputfile == null) {
-			DragonAPICore.logError("Image filepath at "+name+" not found. Loading \"MissingTexture\".");
-			return missingtex;
-		}
-		BufferedImage bufferedimage = null;
-		try {
+		try(InputStream inputfile = root.getResourceAsStream(name)) {
+			if (inputfile == null) {
+				DragonAPICore.logError("Image filepath at "+name+" not found. Loading \"MissingTexture\".");
+				return missingtex;
+			}
+			BufferedImage bufferedimage = null;
 			BufferedImage img = ImageIO.read(inputfile);
 			if (editor != null) {
 				for (int x = 0; x < img.getWidth(); x++) {
@@ -91,12 +90,11 @@ public final class ReikaImageLoader {
 	public static BufferedImage getImageFromResourcePack(String path, IResourcePack res, ImageEditor editor) {
 		DragonAPICore.log("Loading image at "+path+" from resourcepack "+res.getPackName());
 		AbstractResourcePack pack = (AbstractResourcePack)res;
-		InputStream in = ReikaTextureHelper.getStreamFromTexturePack(path, pack);
-		if (in == null) {
-			DragonAPICore.logError("Texture pack image at "+path+" not found in "+res.getPackName()+".");
-			return null;
-		}
-		try {
+		try(InputStream in = ReikaTextureHelper.getStreamFromTexturePack(path, pack)) {
+			if (in == null) {
+				DragonAPICore.logError("Texture pack image at "+path+" not found in "+res.getPackName()+".");
+				return null;
+			}
 			return ImageIO.read(in);
 		}
 		catch (IOException e) {
@@ -108,9 +106,8 @@ public final class ReikaImageLoader {
 
 	/** Reads a hard-coded image file. */
 	public static BufferedImage readHardPathImage(String path) {
-		try {
-			DragonAPICore.log("Loading image at \n"+path);
-			InputStream in = new FileInputStream(path);
+		DragonAPICore.log("Loading image at \n"+path);
+		try(InputStream in = new FileInputStream(path)) {
 			return ImageIO.read(in);
 		}
 		catch (IOException e) {
@@ -133,18 +130,16 @@ public final class ReikaImageLoader {
 	}*/
 
 	public static boolean imageFileExists(Class root, String name) {
-		InputStream inputfile = root.getResourceAsStream(name);
-		if (inputfile == null) {
-			return false;
-		}
-		BufferedImage bufferedimage = null;
-		try {
-			bufferedimage = ImageIO.read(inputfile);
+		try(InputStream inputfile = root.getResourceAsStream(name)) {
+			if (inputfile == null) {
+				return false;
+			}
+			BufferedImage bufferedimage = ImageIO.read(inputfile);
+			return true;
 		}
 		catch (IOException e) {
 			return false;
 		}
-		return true;
 	}
 
 	public static BufferedImage getMissingTex() {
@@ -231,10 +226,16 @@ public final class ReikaImageLoader {
 			BufferedImage image;
 			try {
 				IResource res = manager.getResource(new ResourceLocation(location.getResourceDomain(), fileName));
-				image = ImageIO.read(res.getInputStream());
+				try(InputStream in = res.getInputStream()) {
+					image = ImageIO.read(in);
+				}
+				catch (IOException ex) {
+					DragonAPICore.logError("Failed to load sub-texture from "+fileName+": "+ex.getLocalizedMessage());
+					return true;
+				}
 			}
 			catch (IOException ex) {
-				DragonAPICore.logError("Failed to load sub-texture from "+fileName+": "+ex.getLocalizedMessage());
+				DragonAPICore.logError("Failed to parse sub-texture from "+fileName+": "+ex.getLocalizedMessage());
 				return true;
 			}
 			int size = image.getHeight() / rowCount;

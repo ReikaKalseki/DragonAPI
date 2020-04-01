@@ -1527,4 +1527,20 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 		return true;
 	}
+
+	public static ItemStack getSmallestStack(ItemStack[] inv) {
+		return getSmallestStack(inv, 0, inv.length-1);
+	}
+
+	public static ItemStack getSmallestStack(ItemStack[] inv, int min, int max) {
+		ItemStack smallest = null;
+		for (int i = min; i <= max; i++) {
+			ItemStack in = inv[i];
+			if (in != null) {
+				if (smallest == null || smallest.stackSize < in.stackSize)
+					smallest = in;
+			}
+		}
+		return smallest;
+	}
 }

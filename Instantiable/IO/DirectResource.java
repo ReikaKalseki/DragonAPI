@@ -13,6 +13,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 
 import net.minecraft.client.resources.IResource;
@@ -34,10 +35,14 @@ public class DirectResource implements IResource {
 	public final InputStream getInputStream() {
 		//ReikaJavaLibrary.pConsole("Loading "+path+", data="+data);
 		if (data == null) {
-			InputStream st = this.calcStream();
-			if (st == null)
-				throw new RuntimeException("Resource not found at "+path);
-			data = ReikaJavaLibrary.streamToBytes(st);
+			try(InputStream st = this.calcStream()) {
+				if (st == null)
+					throw new RuntimeException("Resource not found at "+path);
+				data = ReikaJavaLibrary.streamToBytes(st);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		//ReikaJavaLibrary.pConsole("Loaded "+path+", data="+data);
 		return new ByteArrayInputStream(data);

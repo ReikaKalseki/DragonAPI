@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -11,15 +11,12 @@ package Reika.DragonAPI.ModInteract;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
@@ -96,51 +93,51 @@ public final class BannedItemReader {
 			this.parseJSONFile(f);
 		}
 		else {
-			BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(f)));
-			String line = in.readLine();
-			while (line != null) {
-				String oline = line;
-				boolean flag = false;
+			try (BufferedReader in = ReikaFileReader.getReader(f)) {
+				String line = in.readLine();
+				while (line != null) {
+					String oline = line;
+					boolean flag = false;
 
-				while(!line.isEmpty() && !Character.isDigit(line.charAt(0))) {
-					line = line.substring(1);
-				}
+					while(!line.isEmpty() && !Character.isDigit(line.charAt(0))) {
+						line = line.substring(1);
+					}
 
-				if (!line.isEmpty()) {
-					String[] parts = line.split(":");
-					if (parts != null && parts.length > 1) {
-						try {
-							String id = parts[0];
-							String meta = parts[1];
+					if (!line.isEmpty()) {
+						String[] parts = line.split(":");
+						if (parts != null && parts.length > 1) {
 							try {
-								int intid = Integer.parseInt(id);
-								int intmeta = meta.equals("*") ? -1 : Integer.parseInt(meta);
-								Item item = Item.getItemById(intid);
-								allEntries.add(intmeta >= 0 ? this.createKey(new ItemStack(item, intmeta)) : this.createKey(new ItemStack(item)));
-								flag = true;
-							}
-							catch (NumberFormatException e) {
+								String id = parts[0];
+								String meta = parts[1];
+								try {
+									int intid = Integer.parseInt(id);
+									int intmeta = meta.equals("*") ? -1 : Integer.parseInt(meta);
+									Item item = Item.getItemById(intid);
+									allEntries.add(intmeta >= 0 ? this.createKey(new ItemStack(item, intmeta)) : this.createKey(new ItemStack(item)));
+									flag = true;
+								}
+								catch (NumberFormatException e) {
 
+								}
 							}
-						}
-						catch (Exception e) {
-							//e.printStackTrace();
+							catch (Exception e) {
+								//e.printStackTrace();
+							}
 						}
 					}
-				}
 
-				if (!flag && !oline.isEmpty()) {
-					allEntries.add(this.createKey(ReikaItemHelper.lookupItem(oline)));
-				}
+					if (!flag && !oline.isEmpty()) {
+						allEntries.add(this.createKey(ReikaItemHelper.lookupItem(oline)));
+					}
 
-				line = in.readLine();
+					line = in.readLine();
+				}
 			}
-			in.close();
 		}
 	}
 
 	private void parseJSONFile(File f) {
-		JsonElement e = new JsonParser().parse(ReikaFileReader.getReader(f));
+		JsonElement e = ReikaFileReader.readJSON(f);
 		if (e instanceof JsonObject) {
 			JsonObject j = (JsonObject)e;
 			for (Entry<String, JsonElement> entry : j.entrySet()) {

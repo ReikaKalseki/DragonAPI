@@ -27,6 +27,8 @@ import javax.sound.midi.Sequence;
 import javax.sound.midi.ShortMessage;
 import javax.sound.midi.Track;
 
+import com.google.common.base.Throwables;
+
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.MusicScore;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMusicHelper.MusicKey;
@@ -44,12 +46,12 @@ public final class ReikaMIDIReader {
 
 	public static Sequence getMIDIFromFile(Class root, String path) {
 		DragonAPICore.log("Reading MIDI at "+path);
-		InputStream input = root.getResourceAsStream(path);
-		if (input == null) {
-			DragonAPICore.logError("File at "+path+" not found. Aborting.");
-			return null;
-		}
 		try {
+			InputStream input = root.getResourceAsStream(path);
+			if (input == null) {
+				DragonAPICore.logError("File at "+path+" not found. Aborting.");
+				return null;
+			}
 			return readMIDIFromFile(input);
 		}
 		catch (IOException e) {
@@ -62,8 +64,12 @@ public final class ReikaMIDIReader {
 	}
 
 	public static Sequence getMIDIFromFile(File f) {
+		if (!f.exists()) {
+			DragonAPICore.logError("File at "+f.getAbsolutePath()+" not found. Aborting.");
+			return null;
+		}
 		try {
-			return readMIDIFromFile(new FileInputStream(f));
+			return getMIDIFromFile(new FileInputStream(f));
 		}
 		catch (IOException e) {
 			DragonAPICore.logError("MIDI File at "+f.getAbsolutePath()+" unreadable.");
@@ -74,15 +80,15 @@ public final class ReikaMIDIReader {
 		return null;
 	}
 
-	public static Sequence getMIDIFromFile(InputStream in) {
+	public static Sequence getMIDIFromFile(InputStream in) throws IOException, InvalidMidiDataException {
 		try {
 			return readMIDIFromFile(in);
 		}
-		catch (IOException e) {
-			DragonAPICore.logError("MIDI File unreadable.");
+		catch (Exception e) {
+			Throwables.propagate(e);
 		}
-		catch (InvalidMidiDataException e) {
-			DragonAPICore.logError("MIDI File invalid.");
+		finally {
+			in.close();
 		}
 		return null;
 	}

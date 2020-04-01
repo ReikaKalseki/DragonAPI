@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Rendering;
 
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,8 +48,8 @@ public final class HorizontalIcon extends TextureAtlasSprite {
 	public boolean load(IResourceManager manager, ResourceLocation location)
 	{
 		List<int[][]> data = new ArrayList();
-		try {
-			BufferedImage img = ImageIO.read(reference.getResourceAsStream(path));
+		try(InputStream in = reference.getResourceAsStream(path)) {
+			BufferedImage img = ImageIO.read(in);
 			int w = img.getWidth();
 			int h = img.getHeight();
 			int cols = w/width;

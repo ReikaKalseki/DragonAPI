@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Data;
 
 import java.awt.image.BufferedImage;
+import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
@@ -36,8 +37,8 @@ public class BumpMap {
 	}
 
 	private void load() {
-		try {
-			BufferedImage img = ImageIO.read(reference.getResourceAsStream(path));
+		try(InputStream in = reference.getResourceAsStream(path)) {
+			BufferedImage img = ImageIO.read(in);
 			data = new int[img.getWidth()][img.getHeight()];
 			for (int i = 0; i < img.getWidth(); i++) {
 				for (int k = 0; k < img.getHeight(); k++) {

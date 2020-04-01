@@ -32,6 +32,7 @@ public class RemoteSourcedAsset {
 		localRemote = loc;
 	}
 
+	/** Make sure you close this! */
 	public InputStream getData() throws IOException {
 		InputStream main = this.getPrimary();
 		if (main != null) {
@@ -61,14 +62,18 @@ public class RemoteSourcedAsset {
 	}
 
 	public void load() {
-		InputStream main = this.getPrimary();
-		if (main != null) {
-			return;
+		try (InputStream main = this.getPrimary()) {
+			if (main != null) {
+				return;
+			}
+			File f = new File(this.getLocalAssetPath());
+			if (!f.exists()) {
+				DragonAPICore.log("Downloading dynamic asset "+path+" from remote, as its local copy does not exist.");
+				this.queueDownload();
+			}
 		}
-		File f = new File(this.getLocalAssetPath());
-		if (!f.exists()) {
-			DragonAPICore.log("Downloading dynamic asset "+path+" from remote, as its local copy does not exist.");
-			this.queueDownload();
+		catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 

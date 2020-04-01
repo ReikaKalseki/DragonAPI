@@ -80,8 +80,10 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		if (programID != 0) {
 			GL20.glDeleteShader(programID);
 		}
-		vertexID = ShaderRegistry.constructShader(owner, identifier, this.getShaderData(ShaderTypes.VERTEX), ShaderTypes.VERTEX);
-		fragmentID = ShaderRegistry.constructShader(owner, identifier, this.getShaderData(ShaderTypes.FRAGMENT), ShaderTypes.FRAGMENT);
+		try (InputStream vin = this.getShaderData(ShaderTypes.VERTEX); InputStream fin = this.getShaderData(ShaderTypes.FRAGMENT)) {
+			vertexID = ShaderRegistry.constructShader(owner, identifier, vin, ShaderTypes.VERTEX);
+			fragmentID = ShaderRegistry.constructShader(owner, identifier, fin, ShaderTypes.FRAGMENT);
+		}
 		this.register();
 	}
 

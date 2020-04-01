@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -67,21 +67,21 @@ public class PackModificationTracker {
 			if (!f.exists())
 				this.createDataFile(f, mod);
 
-			BufferedReader p = ReikaFileReader.getReader(f);
-			String line = "";
-			while (line != null) {
-				line = p.readLine();
-				if (line != null && !line.isEmpty() && !line.startsWith("//")) {
-					PackModification entry = this.parseString(line);
-					if (entry != null) {
-						this.addEntry(mod, entry);
-					}
-					else {
-						throw new IllegalArgumentException("Invalid modification entry formatting: '"+line+"'");
+			try(BufferedReader p = ReikaFileReader.getReader(f)) {
+				String line = "";
+				while (line != null) {
+					line = p.readLine();
+					if (line != null && !line.isEmpty() && !line.startsWith("//")) {
+						PackModification entry = this.parseString(line);
+						if (entry != null) {
+							this.addEntry(mod, entry);
+						}
+						else {
+							throw new IllegalArgumentException("Invalid modification entry formatting: '"+line+"'");
+						}
 					}
 				}
 			}
-			p.close();
 		}
 		catch (Exception e) {
 			throw new RuntimeException("Invalid pack modification file: "+e.getLocalizedMessage(), e);
@@ -142,12 +142,12 @@ public class PackModificationTracker {
 		String[] parts = s.split(":");
 		int n = parts.length-1;
 		switch(n) {
-		case 0:
-			return new PackModification(s);
-		case 1:
-			return new PackModification(parts[0], parts[1]);
-		default:
-			throw new IllegalArgumentException("Invalid line formatting: '"+s+"' has too many ("+n+") separators!");
+			case 0:
+				return new PackModification(s);
+			case 1:
+				return new PackModification(parts[0], parts[1]);
+			default:
+				throw new IllegalArgumentException("Invalid line formatting: '"+s+"' has too many ("+n+") separators!");
 		}
 	}
 

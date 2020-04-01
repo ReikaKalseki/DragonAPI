@@ -30,9 +30,9 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Territory;
-import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Saplings;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Heights;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Maturation;
+import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Saplings;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Sappiness;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Yield;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ForestryHandler;
@@ -76,6 +76,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 	private final String name;
 	private boolean isRegistered = false;
 	private final IAllele[] template = new IAllele[EnumTreeChromosome.values().length];
+	private final ITreeGenerator generator = new ForestryTreeGenerator();
 
 	static {
 		treeRoot = ReikaBeeHelper.getTreeRoot();
@@ -265,6 +266,10 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 		return treeRoot.templateAsIndividual(template);
 	}
 
+	public final void setLeaves(ITreeGenome genome, World world, GameProfile owner, int x, int y, int z, boolean decorative) {
+		generator.setLeaves(genome, world, owner, x, y, z, decorative);
+	}
+
 	private static final class TreeBreeding implements ITreeMutation {
 
 		public final IAlleleTreeSpecies parent1;
@@ -390,7 +395,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 
 	@Override
 	public final ITreeGenerator getGenerator() {
-		return new ForestryTreeGenerator();
+		return generator;
 	}
 
 	public abstract IAlleleFruit getFruitAllele();

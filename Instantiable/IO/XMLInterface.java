@@ -84,13 +84,12 @@ public class XMLInterface {
 	}
 
 	public XMLInterface init() {
-		try {
-			InputStream in = loadData.getInputStream();
-			if (isEncrypted)
-				in = ReikaFileReader.decryptInputStream(in);
-			doc = ReikaXMLBase.getXMLDocument(in);
-			this.readFileToMap();
-			hasLoaded = true;
+		try(InputStream in = loadData.getInputStream()) {
+			try (InputStream in2 = isEncrypted ? ReikaFileReader.decryptInputStream(in) : in) {
+				doc = ReikaXMLBase.getXMLDocument(in2);
+				this.readFileToMap();
+				hasLoaded = true;
+			}
 		}
 		catch (FileNotFoundException e) {
 			if (requireFile)
