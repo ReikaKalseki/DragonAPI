@@ -30,7 +30,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Territory;
-import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Fertility;
+import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Saplings;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Heights;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Maturation;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Sappiness;
@@ -401,7 +401,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 	public abstract int getGirth();
 	public abstract Sappiness getSappiness();
 	public abstract Maturation getMaturation();
-	public abstract Fertility getFertility();
+	public abstract Saplings getSaplingRate();
 	public abstract Territory getTerritorySize();
 	public abstract boolean isFireproof();
 
@@ -414,7 +414,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 		alleles[EnumTreeChromosome.TERRITORY.ordinal()] = this.getTerritorySize().getAllele();
 		alleles[EnumTreeChromosome.SAPPINESS.ordinal()] = this.getSappiness().getAllele();
 		alleles[EnumTreeChromosome.HEIGHT.ordinal()] = this.getHeight().getAllele();
-		alleles[EnumTreeChromosome.FERTILITY.ordinal()] = this.getFertility().getAllele();
+		alleles[EnumTreeChromosome.FERTILITY.ordinal()] = this.getSaplingRate().getAllele();
 		alleles[EnumTreeChromosome.EFFECT.ordinal()] = this.getEffectAllele();
 		alleles[EnumTreeChromosome.GIRTH.ordinal()] = ReikaBeeHelper.getIntegerAllele(this.getGirth());
 		alleles[EnumTreeChromosome.PLANT.ordinal()] = ReikaBeeHelper.getAlleleForPlantType(this.getPlantType());

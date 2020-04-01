@@ -36,7 +36,7 @@ public class TreeAlleleRegistry {
 
 	static {
 		classTypes.put(EnumTreeChromosome.HEIGHT, Heights.class);
-		classTypes.put(EnumTreeChromosome.FERTILITY, Fertility.class);
+		classTypes.put(EnumTreeChromosome.FERTILITY, Saplings.class);
 		classTypes.put(EnumTreeChromosome.SAPPINESS, Sappiness.class);
 		classTypes.put(EnumTreeChromosome.YIELD, Yield.class);
 		classTypes.put(EnumTreeChromosome.FRUITS, Fruit.class);
@@ -99,22 +99,22 @@ public class TreeAlleleRegistry {
 		}
 	}
 
-	public static enum Fertility implements TreeGene {
+	public static enum Saplings implements TreeGene {
 		LOWEST("Lowest"),
 		LOWER("Lower"),
 		LOW("Low"),
-		HIGH("High"),
+		HIGH("High"), //10% = 0.1, highest normally obtainable
 		HIGHER("Higher"),
-		HIGHEST("Highest"); //10% = 0.1
+		HIGHEST("Highest"); //30%
 
 		public final String tag;
 
-		private Fertility(String s) {
+		private Saplings(String s) {
 			this("forestry", s);
 		}
 
-		private Fertility(String pre, String s) {
-			tag = pre+"."+"fertility"+s;
+		private Saplings(String pre, String s) {
+			tag = pre+"."+"saplings"+s;
 			register(this, tag);
 		}
 
@@ -122,11 +122,11 @@ public class TreeAlleleRegistry {
 			return (IAlleleFloat)AlleleManager.alleleRegistry.getAllele(tag);
 		}
 
-		public static Fertility createNew(String id, float speed, boolean dominant) {
+		public static Saplings createNew(String id, float speed, boolean dominant) {
 			id = ReikaStringParser.capFirstChar(id);
 			IAlleleFloat allele = AlleleManager.alleleFactory.createFloat("dragonapi", "fertility", id, speed, dominant, EnumTreeChromosome.FERTILITY);
 			AlleleManager.alleleRegistry.registerAllele(allele, EnumTreeChromosome.FERTILITY);
-			return EnumHelper.addEnum(Fertility.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
+			return EnumHelper.addEnum(Saplings.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
 		}
 
 		@Override

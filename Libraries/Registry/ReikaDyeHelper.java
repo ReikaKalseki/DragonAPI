@@ -30,6 +30,7 @@ import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -151,22 +152,18 @@ public enum ReikaDyeHelper {
 		return ReikaTextureHelper.getColorOverride(this);
 	}
 
-	@SideOnly(Side.CLIENT)
 	public Color getJavaColor() {
-		return Color.decode(String.valueOf(this.getColor()));
+		return Color.decode(String.valueOf(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? this.getColor() : color));
 	}
 
-	@SideOnly(Side.CLIENT)
 	public int getRed() {
 		return this.getJavaColor().getRed();
 	}
 
-	@SideOnly(Side.CLIENT)
 	public int getBlue() {
 		return this.getJavaColor().getBlue();
 	}
 
-	@SideOnly(Side.CLIENT)
 	public int getGreen() {
 		return this.getJavaColor().getGreen();
 	}
