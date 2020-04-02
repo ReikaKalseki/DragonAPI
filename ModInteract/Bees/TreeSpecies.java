@@ -521,6 +521,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 			if (world.setBlock(x, y, z, ForestryHandler.BlockEntry.LEAF.getBlock())) {
 				TileEntity te = world.getTileEntity(x, y, z);
 				ReikaBeeHelper.setTree(te, TreeManager.treeRoot.getTree(world, genome));
+				ReikaBeeHelper.setTreeOwner(te, owner);
 				ReikaBeeHelper.setTreeLeafDecorative(te, decorative);
 			}
 		}

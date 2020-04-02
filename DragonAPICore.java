@@ -54,7 +54,7 @@ public class DragonAPICore {
 	public static final String dependencies = MINFORGE+"after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;"+
 			"after:powersuits;after:GalacticCraft;after:Mystcraft;after:UniversalElectricity;after:Forestry;after:MagicBees;"+
 			"after:ExtraBees;after:Natura;after:TConstruct;after:ProjRed|Core;after:bluepower;after:Waila;after:funkylocomotion;after:chisel;"+
-			"after:ComputerCraft;after:ThermalFoundation;after:CarpentersBlocks;after:AgriCraft;after:MineFactoryReloaded";
+			"after:ComputerCraft;after:ThermalFoundation;after:CarpentersBlocks;after:AgriCraft;after:MineFactoryReloaded;after:ImmersiveEngineering";
 
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
 	public static final UUID Reika_UUID = UUID.fromString("e5248026-6874-4954-9a02-aa8910d08f31");

@@ -19,6 +19,8 @@ import java.util.Set;
 
 import org.apache.commons.lang3.text.WordUtils;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -107,6 +109,7 @@ public class ReikaBeeHelper {
 	private static Constructor geneSampleCtr;
 
 	private static Method setTreeLeaf;
+	private static Method setTreeLeafOwner;
 	private static Method getTreeLeaf;
 	private static Field deco;
 
@@ -126,6 +129,8 @@ public class ReikaBeeHelper {
 				Class c = Class.forName("forestry.arboriculture.tiles.TileTreeContainer");
 				setTreeLeaf = c.getDeclaredMethod("setTree", ITree.class);
 				setTreeLeaf.setAccessible(true);
+				setTreeLeafOwner = c.getDeclaredMethod("setOwner", GameProfile.class);
+				setTreeLeafOwner.setAccessible(true);
 				getTreeLeaf = c.getDeclaredMethod("getTree");
 				getTreeLeaf.setAccessible(true);
 				c = Class.forName("forestry.arboriculture.tiles.TileLeaves");
@@ -877,6 +882,16 @@ public class ReikaBeeHelper {
 	public static void setTree(TileEntity leaf, ITree tree) {
 		try {
 			setTreeLeaf.invoke(leaf, tree);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	@ModDependent(ModList.FORESTRY)
+	public static void setTreeOwner(TileEntity leaf, GameProfile owner) {
+		try {
+			setTreeLeafOwner.invoke(leaf, owner);
 		}
 		catch (Exception e) {
 			e.printStackTrace();

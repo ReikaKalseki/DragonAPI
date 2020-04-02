@@ -88,7 +88,7 @@ public abstract class NBTFile {
 		if (reference != null) {
 			try(InputStream in = reference.getResourceAsStream(filepath)) {
 				try(InputStream in2 = encryptData ? this.encryptStreamData(in, true) : in) {
-					NBTTagCompound tag = compressData ? CompressedStreamTools.readCompressed(in) : ReikaFileReader.readUncompressedNBT(in);
+					NBTTagCompound tag = compressData ? CompressedStreamTools.readCompressed(in2) : ReikaFileReader.readUncompressedNBT(in2);
 					this.setDataFromLines(tag);
 				}
 			}
