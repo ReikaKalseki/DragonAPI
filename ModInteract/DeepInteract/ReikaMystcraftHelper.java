@@ -164,7 +164,7 @@ public class ReikaMystcraftHelper {
 
 	public static boolean isMystAge(World world) {
 		int id = world.provider.dimensionId;
-		if (id == 0 || id == 1 || id == -1 || id == ReikaTwilightHelper.getDimensionID() || id == ExtraUtilsHandler.getInstance().darkID)
+		if (id == 0 || id == 1 || id == -1 || (id == ReikaTwilightHelper.getDimensionID() && ModList.TWILIGHT.isLoaded()) || (id == ExtraUtilsHandler.getInstance().darkID && ModList.EXTRAUTILS.isLoaded()))
 			return false;
 		DimensionAPI d = (DimensionAPI)getAPI(APISegment.DIMENSION);
 		return world.provider.getClass().getSimpleName().equals("WorldProviderMyst");//d != null && d.isMystcraftAge(id);

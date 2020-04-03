@@ -25,7 +25,6 @@ import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
@@ -91,12 +90,17 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 		this.uid = uid;
 	}
 
-	public void register() {
+	public final void register() {
 		System.arraycopy(this.getSpeciesTemplate(), 0, template, 0, template.length);
 		AlleleManager.alleleRegistry.registerAllele(this, EnumTreeChromosome.SPECIES);
 		treeRoot.registerTemplate(template);
 		//AlleleManager.alleleRegistry.getClassification("family.apidae").addMemberGroup(branch);
 		isRegistered = true;
+		this.onRegister();
+	}
+
+	protected void onRegister() {
+
 	}
 
 	@Override
@@ -214,40 +218,6 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 
 	public final IAlleleGrowth getLightGrowth() {
 		return (IAlleleGrowth)AlleleManager.alleleRegistry.getAllele("forestry.growthLightlevel");
-	}
-
-	public final void addBreeding(String parent1, String parent2, int chance) {
-		IAlleleTreeSpecies p1 = (IAlleleTreeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.tree"+parent1);
-		IAlleleTreeSpecies p2 = (IAlleleTreeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.tree"+parent2);
-		if (p1 == null)
-			throw new MisuseException("Error breeding from "+parent1+": You cannot breed a tree from null!");
-		if (p2 == null)
-			throw new MisuseException("Error breeding from "+parent2+": You cannot breed a tree from null!");
-		this.addBreeding(p1, p2, chance);
-	}
-
-	public final void addBreeding(String parent1, ModList mod1, String parent2, ModList mod2, int chance) {
-		IAlleleTreeSpecies p1 = (IAlleleTreeSpecies)AlleleManager.alleleRegistry.getAllele(mod1.modLabel.toLowerCase(Locale.ENGLISH)+".tree"+parent1);
-		IAlleleTreeSpecies p2 = (IAlleleTreeSpecies)AlleleManager.alleleRegistry.getAllele(mod2.modLabel.toLowerCase(Locale.ENGLISH)+".tree"+parent2);
-		if (p1 == null)
-			throw new MisuseException("Error breeding from "+parent1+": You cannot breed a tree from null!");
-		if (p2 == null)
-			throw new MisuseException("Error breeding from "+parent2+": You cannot breed a tree from null!");
-		this.addBreeding(p1, p2, chance);
-	}
-
-	public final void addBreeding(String parent1, ModList mod1, TreeSpecies parent2, int chance) {
-		IAlleleTreeSpecies p1 = (IAlleleTreeSpecies)AlleleManager.alleleRegistry.getAllele(mod1.modLabel.toLowerCase(Locale.ENGLISH)+".tree"+parent1);
-		if (p1 == null)
-			throw new MisuseException("Error breeding from "+parent1+": You cannot breed a tree from null!");
-		this.addBreeding(p1, parent2, chance);
-	}
-
-	public final void addBreeding(String parent1, TreeSpecies parent2, int chance) {
-		IAlleleTreeSpecies p1 = (IAlleleTreeSpecies)AlleleManager.alleleRegistry.getAllele("forestry.tree"+parent1);
-		if (p1 == null)
-			throw new MisuseException("Error breeding from "+parent1+": You cannot breed a tree from null!");
-		this.addBreeding(p1, parent2, chance);
 	}
 
 	public final void addBreeding(TreeSpecies parent1, TreeSpecies parent2, int chance) {
@@ -591,6 +561,61 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 		@Override
 		public boolean isCounted() {
 			return false;
+		}
+
+	}
+
+	public abstract static class TraitsTree extends TreeSpecies {
+
+		protected final TreeTraits traits;
+
+		protected TraitsTree(String name, String uid, String latinName, String creator, IClassification g, TreeTraits traits) {
+			super(name, uid, latinName, creator, g);
+			this.traits = traits;
+		}
+
+		public final EnumPlantType getPlantType() {
+			return traits.plant;
+		}
+
+		@Override
+		public final Yield getYield() {
+			return traits.yield;
+		}
+
+		@Override
+		public final Heights getHeight() {
+			return traits.height;
+		}
+
+		@Override
+		public final int getGirth() {
+			return traits.girth;
+		}
+
+		@Override
+		public final Sappiness getSappiness() {
+			return traits.sappiness;
+		}
+
+		@Override
+		public final Maturation getMaturation() {
+			return traits.maturation;
+		}
+
+		@Override
+		public final Saplings getSaplingRate() {
+			return traits.fertility;
+		}
+
+		@Override
+		public final Territory getTerritorySize() {
+			return traits.area;
+		}
+
+		@Override
+		public final boolean isFireproof() {
+			return traits.isFireproof;
 		}
 
 	}

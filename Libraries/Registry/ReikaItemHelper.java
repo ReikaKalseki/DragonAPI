@@ -17,6 +17,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
 import java.util.UUID;
 import java.util.regex.Matcher;
@@ -674,8 +675,13 @@ public final class ReikaItemHelper extends DragonAPICore {
 			int val = get != null ? get.intValue() : 0;
 			vals.put(ks, val+is.stackSize);
 		}
-		for (KeyedItemStack is : vals.keySet()) {
-			int val = vals.get(is);
+		for (Entry<KeyedItemStack, Integer> e : vals.entrySet()) {
+			KeyedItemStack is = e.getKey();
+			Integer val = e.getValue();
+			if (val == null) {
+				DragonAPICore.logError("Item "+is+" was mapped to null!");
+				continue;
+			}
 			while (val > 0) {
 				int amt = Math.min(val, is.getItemStack().getMaxStackSize());
 				ItemStack copy = getSizedItemStack(is.getItemStack(), amt);
