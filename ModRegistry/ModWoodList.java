@@ -29,6 +29,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
@@ -336,12 +337,12 @@ public enum ModWoodList implements TreeType {
 		return exists && this.getParentMod().isLoaded();
 	}
 
-	public ItemStack getItem() {
-		return new ItemStack(blockID, 1, blockMeta[0]);
+	public BlockKey getItem() {
+		return new BlockKey(blockID, blockMeta[0]);
 	}
 
-	public ItemStack getLogItemWithOffset(int i) {
-		return new ItemStack(blockID, 1, blockMeta[i]);
+	public BlockKey getLogItemWithOffset(int i) {
+		return new BlockKey(blockID, blockMeta[i]);
 	}
 
 	public boolean isLogBlock(ItemStack block) {
@@ -455,8 +456,8 @@ public enum ModWoodList implements TreeType {
 		return e;
 	}
 
-	public ItemStack getBasicLeaf() {
-		return new ItemStack(leafID, 1, leafMeta[0]);
+	public BlockKey getBasicLeaf() {
+		return new BlockKey(leafID, leafMeta[0]);
 	}
 
 	public ArrayList<ItemStack> getAllLeaves() {

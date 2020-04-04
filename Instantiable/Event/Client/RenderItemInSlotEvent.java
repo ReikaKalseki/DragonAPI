@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,6 +15,7 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 
@@ -73,6 +74,30 @@ public class RenderItemInSlotEvent extends Event {
 
 	public IInventory getSlotInventory() {
 		return slot.inventory;
+	}
+
+	public static void firePre(GuiContainer gc, Slot s) {
+		MinecraftForge.EVENT_BUS.post(new Pre(gc, s));
+	}
+
+	public static void firePost(GuiContainer gc, Slot s) {
+		MinecraftForge.EVENT_BUS.post(new Post(gc, s));
+	}
+
+	public static class Pre extends RenderItemInSlotEvent {
+
+		public Pre(GuiContainer c, Slot s) {
+			super(c, s);
+		}
+
+	}
+
+	public static class Post extends RenderItemInSlotEvent {
+
+		public Post(GuiContainer c, Slot s) {
+			super(c, s);
+		}
+
 	}
 
 }

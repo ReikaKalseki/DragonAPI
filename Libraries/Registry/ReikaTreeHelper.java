@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -20,6 +20,7 @@ import net.minecraft.world.World;
 
 import Reika.DragonAPI.Base.BlockCustomLeaf;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
@@ -110,24 +111,24 @@ public enum ReikaTreeHelper implements TreeType {
 		return this.getTreeFromSapling(id, meta) != null;
 	}
 
-	public ItemStack getLog() {
-		return new ItemStack(log, 1, logMeta[0]);
+	public BlockKey getLog() {
+		return new BlockKey(log, logMeta[0]);
 	}
 
-	public ItemStack getLeaf() {
-		return new ItemStack(leaf, 1, leafMeta[0]);
+	public BlockKey getLeaf() {
+		return new BlockKey(leaf, leafMeta[0]);
 	}
 
-	public ItemStack getSapling() {
-		return new ItemStack(sapling, 1, saplingMeta);
+	public BlockKey getSapling() {
+		return new BlockKey(sapling, saplingMeta);
 	}
 
-	public ItemStack getDamagedLog(int dmg) {
-		return new ItemStack(log, 1, logMeta[dmg]);
+	public BlockKey getDamagedLog(int dmg) {
+		return new BlockKey(log, logMeta[dmg]);
 	}
 
-	public ItemStack getDamagedLeaf(int dmg) {
-		return new ItemStack(leaf, 1, leafMeta[dmg]);
+	public BlockKey getDamagedLeaf(int dmg) {
+		return new BlockKey(leaf, leafMeta[dmg]);
 	}
 
 	public int getBaseLeafMeta() {
@@ -152,13 +153,13 @@ public enum ReikaTreeHelper implements TreeType {
 	}
 
 	@Override
-	public ItemStack getItem() {
-		return new ItemStack(log, 1, logMeta[0]);
+	public BlockKey getItem() {
+		return new BlockKey(log, logMeta[0]);
 	}
 
 	@Override
-	public ItemStack getBasicLeaf() {
-		return new ItemStack(leaf, 1, leafMeta[0]);
+	public BlockKey getBasicLeaf() {
+		return new BlockKey(leaf, leafMeta[0]);
 	}
 
 	@Override

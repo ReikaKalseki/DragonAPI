@@ -214,7 +214,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static boolean isAirBlock(World world, int x, int y, int z) {
 		return world.getBlock(x, y, z).isAir(world, x, y, z);
 	}
-
+	/*
 	public static void setBlock(World world, int x, int y, int z, ItemStack is) {
 		setBlock(world, x, y, z, is, 3);
 	}
@@ -222,7 +222,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static void setBlock(World world, int x, int y, int z, ItemStack is, int flag) {
 		world.setBlock(x, y, z, Block.getBlockFromItem(is.getItem()), is.getItemDamage(), flag);
 	}
-
+	 */
 	public static int findFluidSurface(World world, int x, int y, int z) {
 		return findFluidSurface(world, x, y, z, null);
 	}

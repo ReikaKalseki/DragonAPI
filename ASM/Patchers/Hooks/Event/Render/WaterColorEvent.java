@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -17,15 +17,10 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
-import net.minecraft.world.IBlockAccess;
-
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 
 public class WaterColorEvent extends Patcher {
@@ -56,27 +51,5 @@ public class WaterColorEvent extends Patcher {
 	@Override
 	public boolean runsOnSide(Side s) {
 		return s == Side.CLIENT;
-	}
-
-	class test extends Block {
-		protected test(Material p_i45394_1_) {
-			super(p_i45394_1_);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		@SideOnly(Side.CLIENT)
-		public int colorMultiplier(IBlockAccess iba, int x, int y, int z)
-		{
-			if (blockMaterial != Material.water)
-			{
-				return 16777215;
-			}
-			else
-			{
-				return Reika.DragonAPI.Instantiable.Event.Client.WaterColorEvent.fire(iba, x, y, z);
-			}
-		}
-
 	}
 }

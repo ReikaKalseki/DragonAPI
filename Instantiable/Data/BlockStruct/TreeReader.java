@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,11 +13,11 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import net.minecraft.block.Block;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 
 import Reika.ChromatiCraft.API.TreeGetter;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.Registry.ReikaDyeHelper;
@@ -234,12 +234,12 @@ public final class TreeReader extends BlockArray {
 		return 12;
 	}
 
-	public ItemStack getSapling() {
+	public BlockKey getSapling() {
 		if (isDyeTree)
-			return new ItemStack(dyeSaplingID, 1, dyeMeta);
+			return new BlockKey(dyeSaplingID, dyeMeta);
 		if (isRainbowTree)
-			return new ItemStack(rainbowSaplingID);
-		return tree != null ? new ItemStack(tree.getSaplingID(), 1, tree.getSaplingMeta()) : null;
+			return new BlockKey(rainbowSaplingID);
+		return tree != null ? new BlockKey(tree.getSaplingID(), tree.getSaplingMeta()) : null;
 	}
 
 	@Override
