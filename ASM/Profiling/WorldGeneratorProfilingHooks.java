@@ -27,6 +27,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 
+import Reika.DragonAPI.ASM.Patchers.Hooks.Event.World.ChunkRequestEvent;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.Interfaces.Subgenerator;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
@@ -50,6 +51,9 @@ public class WorldGeneratorProfilingHooks implements IClassTransformer {
 		if (bytes == null) {
 			return null;
 		}
+
+		if (!ChunkRequestEvent.patch.isEnabled())
+			return bytes;
 
 		ClassNode cn = new ClassNode();
 		ClassReader classReader = new ClassReader(bytes);

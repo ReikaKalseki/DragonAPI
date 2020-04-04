@@ -24,6 +24,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 
+import Reika.DragonAPI.ASM.Patchers.Hooks.Event.World.ChunkRequestEvent;
 import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
@@ -38,6 +39,9 @@ public class ChunkInitProfilingHooks implements IClassTransformer {
 		if (bytes == null) {
 			return null;
 		}
+
+		if (!ChunkRequestEvent.patch.isEnabled())
+			return bytes;
 
 		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(bytes);
