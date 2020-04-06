@@ -17,15 +17,20 @@ import java.util.Collections;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Interfaces.Registry.CropHandler;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.ModInteract.Bees.ReikaBeeHelper;
 
 import cpw.mods.fml.common.Loader;
+import forestry.api.arboriculture.ITree;
 
-public class ForestryHandler extends ModHandlerBase {
+public class ForestryHandler extends ModHandlerBase implements CropHandler {
 
 	private boolean init = false;
 
@@ -342,6 +347,77 @@ public class ForestryHandler extends ModHandlerBase {
 
 	public boolean isLog(Block b) {
 		return b == BlockEntry.LOG.getBlock() || b == BlockEntry.FIRELOG.getBlock() || (b != null && b == extraTreeLog);
+	}
+
+	@Override
+	public int getHarvestedMeta(World world, int x, int y, int z) {
+		return 0;
+	}
+
+	@Override
+	public boolean isCrop(Block id, int meta) {
+		return id == BlockEntry.LEAF.getBlock();
+	}
+
+	@Override
+	public boolean isRipeCrop(World world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		return te != null && ReikaBeeHelper.hasFruit(te);
+	}
+
+	@Override
+	public void makeRipe(World world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		if (te != null)
+			ReikaBeeHelper.setTreeRipeness(te, -1);
+	}
+
+	@Override
+	public int getGrowthState(World world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		return te != null ? ReikaBeeHelper.getTreeRipeness(te) : 0;
+	}
+
+	@Override
+	public boolean isSeedItem(ItemStack is) {
+		return false;
+	}
+
+	@Override
+	public ArrayList<ItemStack> getDropsOverride(World world, int x, int y, int z, Block id, int meta, int fortune) {
+		ArrayList<ItemStack> ret = new ArrayList();
+		TileEntity te = world.getTileEntity(x, y, z);
+		if (te != null) {
+			ITree tree = ReikaBeeHelper.getTree(te);
+			if (tree != null) {
+				ItemStack[] fruit = tree.getProduceList();
+				for (ItemStack is : fruit)
+					ret.add(is);
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public ArrayList<ItemStack> getAdditionalDrops(World world, int x, int y, int z, Block id, int meta, int fortune) {
+		return null;
+	}
+
+	@Override
+	public void editTileDataForHarvest(World world, int x, int y, int z) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		if (te != null)
+			ReikaBeeHelper.setTreeRipeness(te, 0);
+	}
+
+	@Override
+	public boolean neverDropsSecondSeed() {
+		return true;
+	}
+
+	@Override
+	public boolean isTileEntity() {
+		return true;
 	}
 
 }

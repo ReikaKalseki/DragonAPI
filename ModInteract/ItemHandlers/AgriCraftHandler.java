@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -141,6 +141,11 @@ public class AgriCraftHandler extends CropHandlerBase {
 			return null;
 		APIv2 apiv2 = (APIv2)api;
 		return apiv2.getCropPlant(world, x, y, z);
+	}
+
+	@Override
+	public boolean isTileEntity() {
+		return false;
 	}
 
 	static {

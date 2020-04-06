@@ -25,6 +25,7 @@ import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.TerminationCondition;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
+import Reika.DragonAPI.Instantiable.Event.LeafDecayEvent;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -125,7 +126,9 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 		//ReikaJavaLibrary.pConsole(Block.getIdFromBlock(this)+" @ "+x+", "+y+", "+z+" : "+this.decays()+"&"+this.shouldTryDecay(world, x, y, z, meta));
 		boolean flag = false;
 		if (this.decays() && this.shouldTryDecay(world, x, y, z, meta)) {
-			flag = this.decay(world, x, y, z, par5Random);
+			if (!LeafDecayEvent.fire(this, world, x, y, z)) {
+				flag = this.decay(world, x, y, z, par5Random);
+			}
 		}
 		if (!flag)
 			this.onRandomUpdate(world, x, y, z, par5Random);
@@ -180,6 +183,11 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 			icon[i][0] = ico.registerIcon(this.getFancyGraphicsIcon(i));
 			icon[i][1] = ico.registerIcon(this.getFastGraphicsIcon(i));
 		}
+	}
+
+	@Override
+	public final boolean isLeaves(IBlockAccess world, int x, int y, int z) {
+		return true;
 	}
 
 	public abstract String getFastGraphicsIcon(int meta);

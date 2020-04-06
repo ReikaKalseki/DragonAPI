@@ -111,7 +111,11 @@ public class ReikaBeeHelper {
 	private static Method setTreeLeaf;
 	private static Method setTreeLeafOwner;
 	private static Method getTreeLeaf;
+	private static Method treeHasFruit;
+	private static Method updatePacket;
 	private static Field deco;
+	private static Field treeRipeness;
+	private static Field treeRipeTime;
 
 	static {
 		if (ModList.FORESTRY.isLoaded()) {
@@ -136,6 +140,14 @@ public class ReikaBeeHelper {
 				c = Class.forName("forestry.arboriculture.tiles.TileLeaves");
 				deco = c.getDeclaredField("isDecorative");
 				deco.setAccessible(true);
+				treeRipeness = c.getDeclaredField("ripeningTime");
+				treeRipeness.setAccessible(true);
+				treeRipeTime = c.getDeclaredField("ripeningPeriod");
+				treeRipeTime.setAccessible(true);
+				treeHasFruit = c.getDeclaredMethod("hasFruit");
+				treeHasFruit.setAccessible(true);
+				updatePacket = c.getDeclaredMethod("sendNetworkUpdate");
+				updatePacket.setAccessible(true);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not find forestry leaf tree parameters!");
@@ -882,6 +894,8 @@ public class ReikaBeeHelper {
 	public static void setTree(TileEntity leaf, ITree tree) {
 		try {
 			setTreeLeaf.invoke(leaf, tree);
+			updatePacket.invoke(leaf);
+			leaf.worldObj.markBlockRangeForRenderUpdate(leaf.xCoord, leaf.yCoord, leaf.zCoord, leaf.xCoord, leaf.yCoord, leaf.zCoord);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -892,6 +906,8 @@ public class ReikaBeeHelper {
 	public static void setTreeOwner(TileEntity leaf, GameProfile owner) {
 		try {
 			setTreeLeafOwner.invoke(leaf, owner);
+			updatePacket.invoke(leaf);
+			leaf.worldObj.markBlockRangeForRenderUpdate(leaf.xCoord, leaf.yCoord, leaf.zCoord, leaf.xCoord, leaf.yCoord, leaf.zCoord);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -902,6 +918,8 @@ public class ReikaBeeHelper {
 	public static void setTreeLeafDecorative(TileEntity leaf, boolean decor) {
 		try {
 			deco.setBoolean(leaf, decor);
+			updatePacket.invoke(leaf);
+			leaf.worldObj.markBlockRangeForRenderUpdate(leaf.xCoord, leaf.yCoord, leaf.zCoord, leaf.xCoord, leaf.yCoord, leaf.zCoord);
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -916,6 +934,38 @@ public class ReikaBeeHelper {
 		catch (Exception e) {
 			e.printStackTrace();
 			return null;
+		}
+	}
+
+	public static boolean hasFruit(TileEntity leaf) {
+		try {
+			return (boolean)treeHasFruit.invoke(leaf) && treeRipeness.getInt(leaf) >= treeRipeTime.getShort(leaf);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public static void setTreeRipeness(TileEntity leaf, int val) {
+		try {
+			if (val == -1)
+				val = treeRipeTime.getShort(leaf);
+			treeRipeness.setInt(leaf, val);
+			updatePacket.invoke(leaf);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static int getTreeRipeness(TileEntity leaf) {
+		try {
+			return treeRipeness.getInt(leaf);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return 0;
 		}
 	}
 

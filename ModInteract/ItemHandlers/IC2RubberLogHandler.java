@@ -159,4 +159,9 @@ public class IC2RubberLogHandler extends CropHandlerBase {
 		return directions.inverse().get(meta);
 	}
 
+	@Override
+	public boolean isTileEntity() {
+		return false;
+	}
+
 }

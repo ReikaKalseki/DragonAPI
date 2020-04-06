@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -152,6 +152,11 @@ public class BerryBushHandler extends CropHandlerBase {
 	@Override
 	public boolean neverDropsSecondSeed() {
 		return true;
+	}
+
+	@Override
+	public boolean isTileEntity() {
+		return false;
 	}
 
 }

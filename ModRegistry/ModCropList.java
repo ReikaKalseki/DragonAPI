@@ -34,6 +34,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModInteract.ItemHandlers.AgriCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.FluxedCrystalHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ForestryHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.IC2RubberLogHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.OreBerryBushHandler;
@@ -59,6 +60,7 @@ public enum ModCropList implements ModCrop {
 	AGRICRAFT(ModList.AGRICRAFT, 0x7E9612, AgriCraftHandler.getInstance()),
 	ASPECT(ModList.THAUMICTINKER, 0xC591D8, "infusedGrainBlock", "infusedGrain", 0, 0, 0, 7, VarType.REGISTRY),
 	RUBBERLOG(ModList.IC2, 0xC66902, IC2RubberLogHandler.getInstance()/*"rubberWood", "resin", 0, 0, 0, 7, VarType.ITEMSTACK*/),
+	FORTREE(ModList.FORESTRY, 0x15A53C, ForestryHandler.getInstance()),
 	;
 
 	private final ModEntry mod;
@@ -365,7 +367,7 @@ public enum ModCropList implements ModCrop {
 	}
 
 	public boolean isTileEntityUsedForGrowth() {
-		return handler instanceof CustomCropHandler ? ((CustomCropHandler)handler).isTileEntity() : false;
+		return handler.isTileEntity();
 	}
 
 	public void setHarvested(World world, int x, int y, int z) {
