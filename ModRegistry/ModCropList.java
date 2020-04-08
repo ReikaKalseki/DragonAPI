@@ -367,7 +367,7 @@ public enum ModCropList implements ModCrop {
 	}
 
 	public boolean isTileEntityUsedForGrowth() {
-		return handler.isTileEntity();
+		return handler != null && handler.isTileEntity();
 	}
 
 	public void setHarvested(World world, int x, int y, int z) {
