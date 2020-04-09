@@ -11,6 +11,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
+import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 import cpw.mods.fml.relauncher.Side;
@@ -42,6 +43,11 @@ public class SettingsEvents extends Patcher {
 	@Override
 	public boolean runsOnSide(Side s) {
 		return s == Side.CLIENT;
+	}
+
+	@Override
+	public boolean runWithCoreMod(CoreModDetection c) {
+		return c != CoreModDetection.VIVE;
 	}
 
 }

@@ -71,6 +71,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	SETTINGWARN("Setting Warning Persistence (EVERYLOAD/SETTINGCHANGE/VERSION/ONCE)", "SETTINGCHANGE"),
 	CHARGEDCERTUS("Allow charged certus to be recognized as normal certus ore", false),
 	STOPUNLOADSPREAD("Prevent block spreading near unloaded chunks", true),
+	GRASSMEAL("Make bonemeal generate biome-correct foliage instead of tall grass", true),
 	;
 
 	private String label;

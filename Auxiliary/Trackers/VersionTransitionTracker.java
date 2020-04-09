@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
+import com.google.common.base.Strings;
+
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
@@ -83,7 +85,8 @@ public class VersionTransitionTracker {
 	}
 
 	private String parseModVersion(ModContainer mc) {
-		return mc.getMod() instanceof DragonAPIMod ? ((DragonAPIMod)mc.getMod()).getModVersion().toString() : mc.getVersion();
+		String ret = mc.getMod() instanceof DragonAPIMod ? ((DragonAPIMod)mc.getMod()).getModVersion().toString() : mc.getVersion();
+		return Strings.isNullOrEmpty(ret) ? "[NONE]" : ret;
 	}
 
 	private String getDisplayName(ModContainer mc) {

@@ -21,11 +21,13 @@ public class InfusionEnchantmentHandler {
 	private final MultiMap<ModEntry, Enchantment> enchantments = new MultiMap();
 
 	private InfusionEnchantmentHandler() {
-		this.loadThaumcraft();
+		if (ModList.THAUMCRAFT.isLoaded())
+			this.loadThaumcraft();
 		if (ModList.THAUMICTINKER.isLoaded())
 			this.loadTTinkerer();
 	}
 
+	@ModDependent(ModList.THAUMCRAFT)
 	private void loadThaumcraft() {
 		enchantments.addValue(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantFrugal]);
 		enchantments.addValue(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantHaste]);

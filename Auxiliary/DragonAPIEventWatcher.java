@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -23,6 +24,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
@@ -32,6 +34,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
 import net.minecraftforge.client.event.RenderWorldEvent;
 import net.minecraftforge.client.event.sound.SoundSetupEvent;
@@ -135,6 +138,28 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	public void onCall(String tag) {
 		if (tag.equals("debug")) {
 			this.showF3Extras();
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.HIGHEST)
+	public void doCorrectBiomeFoliage(PlayerInteractEvent ev) {
+		if (ev.action == Action.RIGHT_CLICK_BLOCK && DragonOptions.GRASSMEAL.getState()) {
+			ItemStack is = ev.entityPlayer.getCurrentEquippedItem();
+			if (ReikaItemHelper.matchStacks(is, ReikaItemHelper.bonemeal) && !ev.world.isRemote) {
+				Block b = ev.world.getBlock(ev.x, ev.y, ev.z);
+				int meta = ev.world.getBlockMetadata(ev.x, ev.y, ev.z);
+				if (b == Blocks.grass) {
+					BiomeGenBase biome = ev.world.getBiomeGenForCoords(ev.x, ev.z);
+					WorldGenerator grass = biome.getRandomWorldGenForGrass(ev.world.rand);
+					if (grass != null) {
+						if (grass.generate(ev.world, ev.world.rand, ev.x, ev.y, ev.z)) {
+							if (!ev.entityPlayer.capabilities.isCreativeMode)
+								ev.entityPlayer.getCurrentEquippedItem().stackSize--;
+							//ev.setCanceled(true);
+						}
+					}
+				}
+			}
 		}
 	}
 
