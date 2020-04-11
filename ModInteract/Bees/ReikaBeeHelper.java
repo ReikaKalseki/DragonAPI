@@ -146,7 +146,7 @@ public class ReikaBeeHelper {
 				treeRipeTime.setAccessible(true);
 				treeHasFruit = c.getDeclaredMethod("hasFruit");
 				treeHasFruit.setAccessible(true);
-				updatePacket = c.getDeclaredMethod("sendNetworkUpdate");
+				updatePacket = c.getDeclaredMethod("sendNetworkUpdateRipening");
 				updatePacket.setAccessible(true);
 			}
 			catch (Exception e) {
