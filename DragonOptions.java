@@ -72,6 +72,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	CHARGEDCERTUS("Allow charged certus to be recognized as normal certus ore", false),
 	STOPUNLOADSPREAD("Prevent block spreading near unloaded chunks", true),
 	GRASSMEAL("Make bonemeal generate biome-correct foliage instead of tall grass", true),
+	VERSIONCHANGEWARN("Version Change Warning Level (0 = None, 1 = ReikaMods only, 2 = All)", 2),
 	;
 
 	private String label;

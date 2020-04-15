@@ -6,6 +6,6 @@ public interface NonIFluidTank {
 
 	boolean allowAutomation();
 
-	int addFluid(Fluid fluid, int amount, boolean simulate);
+	int addFluid(Fluid fluid, int amount, boolean doFill);
 
 }

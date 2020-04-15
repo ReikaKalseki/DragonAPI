@@ -13,6 +13,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.world.World;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Auxiliary.PopupWriter;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;
@@ -36,7 +37,7 @@ public class VersionTransitionTracker {
 	}
 
 	public void onWorldLoad(World world) {
-		if (world.provider.dimensionId == 0 && !world.isRemote) {
+		if (world.provider.dimensionId == 0 && !world.isRemote && DragonOptions.VERSIONCHANGEWARN.getValue() > 0) {
 			this.loadCacheAndUpdate(world);
 			this.saveCache(world);
 		}
@@ -98,6 +99,16 @@ public class VersionTransitionTracker {
 	}
 
 	public boolean updated(ModContainer mod) {
+		if (DragonOptions.VERSIONCHANGEWARN.getValue() == 1) {
+			Object modo = mod.getMod();
+			if (modo instanceof DragonAPIMod) {
+				if (!((DragonAPIMod)modo).isReikasMod())
+					return false;
+			}
+			else {
+				return false;
+			}
+		}
 		return !this.parseModVersion(mod).equals(this.getPreviousModVersion(mod));
 	}
 

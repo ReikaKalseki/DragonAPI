@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -360,7 +360,7 @@ public class BeeAlleleRegistry {
 		geneMap.put(g.getClass(), n, g);
 	}
 
-	public static BeeGene getEnum(IAllele allele, Class<? extends BeeGene> type) {
-		return geneMap.get(type, allele.getUID());
+	public static <T> T getEnum(IAllele allele, Class<? extends BeeGene> type) {
+		return (T)geneMap.get(type, allele.getUID());
 	}
 }

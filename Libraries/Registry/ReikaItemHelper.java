@@ -974,4 +974,20 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 		return ret;
 	}
+
+	public static Collection<ItemStack> makeListOf(Item... in) {
+		Collection<ItemStack> ret = new ArrayList();
+		for (Item i : in) {
+			ret.add(new ItemStack(i));
+		}
+		return ret;
+	}
+
+	public static Collection<ItemStack> makeListOf(Block... in) {
+		Collection<ItemStack> ret = new ArrayList();
+		for (Block i : in) {
+			ret.add(new ItemStack(i));
+		}
+		return ret;
+	}
 }

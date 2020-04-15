@@ -560,7 +560,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 
 		@Override
 		public boolean isCounted() {
-			return false;
+			return true;
 		}
 
 	}

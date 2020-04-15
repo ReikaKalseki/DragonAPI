@@ -362,7 +362,7 @@ public class TreeAlleleRegistry {
 		geneMap.put(g.getClass(), n, g);
 	}
 
-	public static TreeGene getEnum(IAllele allele, Class<? extends TreeGene> type) {
-		return geneMap.get(type, allele.getUID());
+	public static <T> T getEnum(IAllele allele, Class<? extends TreeGene> type) {
+		return (T)geneMap.get(type, allele.getUID());
 	}
 }

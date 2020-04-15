@@ -15,29 +15,40 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang3.text.WordUtils;
 
 import com.mojang.authlib.GameProfile;
 
+import net.minecraft.block.Block;
+import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
 import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
-import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.SphericalVector;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.BeeGene;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Effect;
@@ -93,8 +104,10 @@ import forestry.api.lepidopterology.ButterflyManager;
 import forestry.api.lepidopterology.EnumButterflyChromosome;
 import forestry.api.lepidopterology.EnumFlutterType;
 import forestry.api.lepidopterology.IAlleleButterflySpecies;
+import forestry.api.lepidopterology.IButterfly;
 import forestry.api.lepidopterology.IButterflyGenome;
 import forestry.api.lepidopterology.IButterflyRoot;
+import forestry.api.lepidopterology.IEntityButterfly;
 import forestry.api.multiblock.IAlvearyController;
 
 
@@ -117,6 +130,10 @@ public class ReikaBeeHelper {
 	private static Field treeRipeness;
 	private static Field treeRipeTime;
 
+	private static Class butterflyStateEnum;
+	private static Class butterfly;
+	private static Field butterflyState;
+
 	static {
 		if (ModList.FORESTRY.isLoaded()) {
 			try {
@@ -125,6 +142,18 @@ public class ReikaBeeHelper {
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not find forestry bee life parameter!");
+				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
+				e.printStackTrace();
+			}
+
+			try {
+				butterflyStateEnum = Class.forName("forestry.lepidopterology.entities.EnumButterflyState");
+				butterfly = Class.forName("forestry.lepidopterology.entities.EntityButterfly");
+				butterflyState = butterfly.getDeclaredField("state");
+				butterflyState.setAccessible(true);
+			}
+			catch (Exception e) {
+				DragonAPICore.logError("Could not find forestry butterfly parameters!");
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
 				e.printStackTrace();
 			}
@@ -150,7 +179,7 @@ public class ReikaBeeHelper {
 				updatePacket.setAccessible(true);
 			}
 			catch (Exception e) {
-				DragonAPICore.logError("Could not find forestry leaf tree parameters!");
+				DragonAPICore.logError("Could not find forestry leaf parameters!");
 				ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.FORESTRY, e);
 				e.printStackTrace();
 			}
@@ -776,6 +805,10 @@ public class ReikaBeeHelper {
 		return (ITreeRoot)AlleleManager.alleleRegistry.getSpeciesRoot("rootTrees");
 	}
 
+	public static IButterflyRoot getButterflyRoot() {
+		return ButterflyManager.butterflyRoot;
+	}
+
 	public static boolean isPristine(ItemStack is) {
 		IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
 		return bee instanceof IBee && ((IBee)bee).isNatural();
@@ -890,7 +923,6 @@ public class ReikaBeeHelper {
 		}
 	}
 
-	@ModDependent(ModList.FORESTRY)
 	public static void setTree(TileEntity leaf, ITree tree) {
 		try {
 			setTreeLeaf.invoke(leaf, tree);
@@ -902,7 +934,6 @@ public class ReikaBeeHelper {
 		}
 	}
 
-	@ModDependent(ModList.FORESTRY)
 	public static void setTreeOwner(TileEntity leaf, GameProfile owner) {
 		try {
 			setTreeLeafOwner.invoke(leaf, owner);
@@ -914,7 +945,6 @@ public class ReikaBeeHelper {
 		}
 	}
 
-	@ModDependent(ModList.FORESTRY)
 	public static void setTreeLeafDecorative(TileEntity leaf, boolean decor) {
 		try {
 			deco.setBoolean(leaf, decor);
@@ -926,7 +956,6 @@ public class ReikaBeeHelper {
 		}
 	}
 
-	@ModDependent(ModList.FORESTRY)
 	public static ITree getTree(TileEntity leaf) {
 		try {
 			return (ITree)getTreeLeaf.invoke(leaf);
@@ -969,8 +998,77 @@ public class ReikaBeeHelper {
 		}
 	}
 
-	@ModDependent(ModList.FORESTRY)
 	public static IAllelePlantType getAlleleForPlantType(EnumPlantType plantType) {
 		return (IAllelePlantType)AlleleManager.alleleRegistry.getAllele("forestry.plantType"+ReikaStringParser.capFirstChar(plantType.name()));
+	}
+
+	public static void attractButterflies(World world, double x, double y, double z, double r) {
+		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(x-r, y-r, z-r, x+r, y+r, z+r);
+		for (EntityCreature e : ((List<EntityCreature>)world.getEntitiesWithinAABB(IEntityButterfly.class, box))) {
+			setButterflyState(e, "FLYING");
+			double dx = x-e.posX;
+			double dy = y-e.posY;
+			double dz = z-e.posZ;
+			double dd = ReikaMathLibrary.py3d(dx, dy, dz);
+			SphericalVector vec = SphericalVector.fromCartesian(dx, dy, dz);
+			e.rotationPitch = (float)vec.inclination;
+			e.rotationYaw = e.rotationYawHead = (float)vec.rotation;
+			double v = 0.125;
+			double vx = v*dx/dd;
+			double vy = v*dy/dd;
+			double vz = v*dz/dd;
+			int idx = MathHelper.floor_double(e.posX+vx*5);
+			int idy = MathHelper.floor_double(e.posY+vy*5);
+			int idz = MathHelper.floor_double(e.posZ+vz*5);
+			Block b = world.getBlock(idx, idy, idz);
+			if (b.getMaterial().blocksMovement() && b.getCollisionBoundingBoxFromPool(world, idx, idy, idz) != null) {
+				vx *= -1;
+				vz *= -1;
+				vy += 0.25;
+			}
+			e.motionX = vx;
+			e.motionY = vy;
+			e.motionZ = vz;
+			e.velocityChanged = true;
+		}
+	}
+
+	private static void setButterflyState(EntityCreature e, String val) {
+		try {
+			Object entry = Enum.valueOf(butterflyStateEnum, val);
+			butterflyState.set(e, entry);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+
+	public static void collectButterflies(World world, AxisAlignedBB box, EntityPlayer ep) {
+		for (IEntityButterfly e : ((List<IEntityButterfly>)world.getEntitiesWithinAABB(IEntityButterfly.class, box))) {
+			if (e.getEntity().isDead || e.getEntity().getHealth() <= 0)
+				continue;
+			IButterfly fly = e.getButterfly();
+			if (fly == null)
+				continue;
+			ItemStack is = ButterflyManager.butterflyRoot.getMemberStack(fly, EnumFlutterType.BUTTERFLY.ordinal());
+			if (is != null) {
+				e.getEntity().setDead();
+				ReikaSoundHelper.playSoundAtEntity(world, e.getEntity(), "random.pop", 0.5F, 2F);
+				is = is.copy();
+				if (ep != null) {
+					if (MinecraftForge.EVENT_BUS.post(new EntityItemPickupEvent(ep, new EntityItem(ep.worldObj, ep.posX, ep.posY, ep.posZ, is)))) {
+						continue;
+					}
+					ReikaPlayerAPI.addOrDropItem(is, ep);
+				}
+				else {
+					ReikaItemHelper.dropItem(e.getEntity(), is);
+				}
+			}
+		}
+	}
+
+	public static Class getButterflyClass() {
+		return butterfly;
 	}
 }

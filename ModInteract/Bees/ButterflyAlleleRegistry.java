@@ -169,12 +169,14 @@ public class ButterflyAlleleRegistry {
 		public ButterflyGene oneBetter() {
 			return this == MAXIMUM ? null : values()[this.ordinal()+1];
 		}
+		/*
+		public static Fertility getFromBee(BeeAlleleRegistry.Fertility l) {
+			return BeeAlleleRegistry.getEnum(l.getAllele(), BeeAlleleRegistry.Fertility.class);
+		}
+		 */
 
-		public static Fertility getFromAllele(IAllele gene) {
-			for (Fertility f : values())
-				if (f.tag.equals(gene.getUID()))
-					return f;
-			return null;
+		public static Fertility createNewFromBee(BeeAlleleRegistry.Fertility l) {
+			return EnumHelper.addEnum(Fertility.class, l.name(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", ReikaStringParser.capFirstChar(l.name())});
 		}
 	}
 
@@ -283,9 +285,24 @@ public class ButterflyAlleleRegistry {
 			return EnumHelper.addEnum(Life.class, id.toUpperCase(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", id});
 		}
 
+		public static Life createNewFromBee(BeeAlleleRegistry.Life l) {
+			return EnumHelper.addEnum(Life.class, l.name(), new Class[]{String.class, String.class}, new Object[]{"dragonapi", ReikaStringParser.capFirstChar(l.name())});
+		}
+
 		@Override
 		public ButterflyGene oneBetter() {
 			return null;
+		}
+		/*
+		public static Life getFromBee(BeeAlleleRegistry.Life l) {
+			return BeeAlleleRegistry.getEnum(l.getAllele(), BeeAlleleRegistry.Life.class);
+		}
+		 */
+		public static Life getFromAllele(IAlleleInteger allele) {
+			String tag = allele.getUID().toUpperCase(Locale.ENGLISH);
+			tag = tag.substring(tag.indexOf('.'));
+			tag = tag.substring("lifespan".length());
+			return valueOf(tag);
 		}
 	}
 	/*
@@ -395,7 +412,7 @@ public class ButterflyAlleleRegistry {
 		geneMap.put(g.getClass(), n, g);
 	}
 
-	public static ButterflyGene getEnum(IAllele allele, Class<? extends ButterflyGene> type) {
-		return geneMap.get(type, allele.getUID());
+	public static <T> T getEnum(IAllele allele, Class<? extends ButterflyGene> type) {
+		return (T)geneMap.get(type, allele.getUID());
 	}
 }
