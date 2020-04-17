@@ -1,5 +1,8 @@
 package Reika.DragonAPI.Instantiable;
 
+import net.minecraft.entity.Entity;
+
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 
 public class MotionTracker {
@@ -23,6 +26,10 @@ public class MotionTracker {
 	public MotionTracker(int length, int rate) {
 		totalDistanceHistory = new double[length];
 		sampleRate = rate;
+	}
+
+	public void update(Entity e) {
+		this.update(e.posX, e.posY, e.posZ);
 	}
 
 	public void update(double x, double y, double z) {
@@ -50,6 +57,10 @@ public class MotionTracker {
 	}
 
 	public double getTotalTravelDistanceSince(int steps) {
+		if (steps > totalDistanceHistory.length) {
+			DragonAPICore.logError("You cannot get the travel history for more steps than the history is long!");
+			return 0;
+		}
 		double ret = 0;
 		for (int i = 0; i < steps; i++) {
 			ret += totalDistanceHistory[i];
