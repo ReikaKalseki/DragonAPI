@@ -25,6 +25,7 @@ import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.TerminationCondition;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Event.LeafDecayEvent;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -152,7 +153,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 		PropagationCondition c = new PropagationCondition(){
 
 			@Override
-			public boolean isValidLocation(World world, int dx, int dy, int dz) {
+			public boolean isValidLocation(World world, int dx, int dy, int dz, Coordinate from) {
 				return BlockCustomLeaf.this.isMatchingLeaf(world, x, y, z, dx, dy, dz) || BlockCustomLeaf.this.isValidLog(world, x, y, z, dx, dy, dz);
 			}
 

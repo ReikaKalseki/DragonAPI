@@ -20,7 +20,7 @@ public class OpenPathFinder implements PropagationCondition {
 	}
 
 	@Override
-	public boolean isValidLocation(World world, int x, int y, int z) {
+	public boolean isValidLocation(World world, int x, int y, int z, Coordinate from) {
 		if (startLocation.equals(x, y, z) || endLocation.equals(x, y, z))
 			return true;
 		if (!startLocation.isWithinDistOnAllCoords(x, y, z, searchRadius))

@@ -33,7 +33,8 @@ public class RoutingWeb implements EntityPathfinder {
 		pathfinder = new Search(x, y, z);
 		root = new Coordinate(x, y, z);
 		pathfinder.limit = BlockBox.block(x, y, z).expand(rx, ry, rz);
-		propagation = new CompoundPropagationCondition().addCondition().addCondition(canFly ? passableBlocks : walkableBlocks);
+		pathfinder.perCycleCalcLimit = 2048;
+		propagation = new CompoundPropagationCondition()/*.addCondition(new FartherPropagation(root))*/.addCondition(canFly ? passableBlocks : walkableBlocks);
 	}
 
 	/** Returns true when done. */
@@ -41,23 +42,58 @@ public class RoutingWeb implements EntityPathfinder {
 		return pathfinder.tick(world, propagation, null);
 	}
 
+	public BlockBox getAoE() {
+		return pathfinder.limit;
+	}
+
 	public void buildPaths() {
+		/*
+		World world = DimensionManager.getWorld(0);
+		for (int x = pathfinder.limit.minX; x <= pathfinder.limit.maxX; x++) {
+			for (int z = pathfinder.limit.minZ; z <= pathfinder.limit.maxZ; z++) {
+				for (int y = pathfinder.limit.minY; y <= pathfinder.limit.maxY; y++) {
+					world.setBlock(x, y, z, Blocks.stone);
+				}
+			}
+		}
+		 */
 		for (ArrayList<Coordinate> li : pathfinder.getPathsTried()) {
 			for (int i = 0; i < li.size(); i++) {
 				Coordinate c = li.get(i);
 				Coordinate c2 = i == 0 ? root : li.get(i-1);
 				pathMap.put(c, c2);
+				/*
+				if (c.getBlock(world) != Blocks.air)
+					c.setBlock(world, Blocks.air);
+				if (c2.getBlock(world) != Blocks.air)
+					c2.setBlock(world, Blocks.air);
+				 */
 			}
 		}
+		pathfinder.clear();
 	}
 
 	public Coordinate getNextCoordinateAlongPath(Coordinate c) {
-		return pathMap.get(c);
+		Coordinate ret = pathMap.get(c);
+		if (true || ret != null)
+			return ret;
+		Coordinate closest = null;
+		for (Coordinate c2 : pathMap.keySet()) {
+			if (closest == null || closest.getTaxicabDistanceTo(c) > c2.getTaxicabDistanceTo(c)) {
+				closest = c2;
+			}
+		}
+		return closest;
 	}
 
 	@Override
 	public Coordinate getNextWaypoint(Entity e) {
 		return this.getNextCoordinateAlongPath(new Coordinate(e));
+	}
+
+	@Override
+	public boolean isInRange(Entity e) {
+		return this.getAoE().isBlockInside(new Coordinate(e));
 	}
 
 	public boolean isDone() {

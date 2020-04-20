@@ -673,7 +673,7 @@ public class BlockArray implements Iterable<Coordinate> {
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
-		if (!f.isValidLocation(world, x, y, z)) {
+		if (!f.isValidLocation(world, x, y, z, new Coordinate(x0, y0, z0))) {
 			return;
 		}
 		if (this.hasBlock(x, y, z))

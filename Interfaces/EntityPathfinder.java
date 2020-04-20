@@ -9,4 +9,6 @@ public interface EntityPathfinder {
 	/** Return null to indicate completion or no valid path. */
 	public Coordinate getNextWaypoint(Entity e);
 
+	public boolean isInRange(Entity e);
+
 }
