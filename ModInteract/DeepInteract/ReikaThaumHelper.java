@@ -70,6 +70,7 @@ import thaumcraft.api.crafting.ShapelessArcaneRecipe;
 import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.api.research.ResearchPage;
+import thaumcraft.api.wands.ItemFocusBasic;
 import thaumcraft.common.entities.monster.EntityWisp;
 
 public class ReikaThaumHelper {
@@ -1056,6 +1057,13 @@ public class ReikaThaumHelper {
 				return false;
 		}
 		return true;
+	}
+
+	public static ItemFocusBasic getWandFocus(ItemStack is) { //easier than reflection
+		if (is.stackTagCompound == null || !is.stackTagCompound.hasKey("focus"))
+			return null;
+		ItemStack stored = ItemStack.loadItemStackFromNBT(is.stackTagCompound.getCompoundTag("focus"));
+		return stored != null && stored.getItem() instanceof ItemFocusBasic ? (ItemFocusBasic)stored.getItem() : null;
 	}
 }
 

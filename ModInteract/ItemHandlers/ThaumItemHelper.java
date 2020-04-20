@@ -58,6 +58,7 @@ public class ThaumItemHelper {
 		ZOMBIEBRAIN("ItemZombieBrain"),
 		WISP("ItemWispEssence"),
 		RESEARCH("ItemResearchNotes"),
+		WAND("WandCasting"),
 		;
 
 		public final int metadata;

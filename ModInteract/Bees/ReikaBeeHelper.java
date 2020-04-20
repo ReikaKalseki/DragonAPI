@@ -46,6 +46,7 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.AI.AITaskSeekLocation;
 import Reika.DragonAPI.Instantiable.Data.SphericalVector;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Interfaces.EntityPathfinder;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -1005,40 +1006,64 @@ public class ReikaBeeHelper {
 		return (IAllelePlantType)AlleleManager.alleleRegistry.getAllele("forestry.plantType"+ReikaStringParser.capFirstChar(plantType.name()));
 	}
 
-	public static void attractButterflies(World world, double x, double y, double z, double r) {
+	public static void attractButterflies(World world, double x, double y, double z, double r, EntityPathfinder path) {
 		AxisAlignedBB box = AxisAlignedBB.getBoundingBox(x-r, y-r, z-r, x+r, y+r, z+r);
 		for (EntityCreature e : ((List<EntityCreature>)world.getEntitiesWithinAABB(IEntityButterfly.class, box))) {
 			setButterflyState(e, "FLYING");
-			if (e.getDistanceSq(x, y, z) < 16) {
-				double dx = x-e.posX;
-				double dy = y-e.posY;
-				double dz = z-e.posZ;
-				double dd = ReikaMathLibrary.py3d(dx, dy, dz);
-				SphericalVector vec = SphericalVector.fromCartesian(dx, dy, dz);
-				e.rotationPitch = (float)vec.inclination;
-				e.rotationYaw = e.rotationYawHead = (float)vec.rotation;
-				double v = 0.125;
-				double vx = v*dx/dd;
-				double vy = v*dy/dd;
-				double vz = v*dz/dd;
-				int idx = MathHelper.floor_double(e.posX+vx*5);
-				int idy = MathHelper.floor_double(e.posY+vy*5);
-				int idz = MathHelper.floor_double(e.posZ+vz*5);
-				Block b = world.getBlock(idx, idy, idz);
-				if (b.getMaterial().blocksMovement() && b.getCollisionBoundingBoxFromPool(world, idx, idy, idz) != null) {
-					vx *= -1;
-					vz *= -1;
-					vy += 0.25;
+			boolean flag = false;
+			if (path != null) {
+				Coordinate c = path.getNextWaypoint(e);
+				if (c != null) {
+					flag = true;
+					double dx = c.xCoord-e.posX;
+					double dy = c.yCoord-e.posY;
+					double dz = c.zCoord-e.posZ;
+					double dd = ReikaMathLibrary.py3d(dx, dy, dz);
+					SphericalVector vec = SphericalVector.fromCartesian(dx, dy, dz);
+					e.rotationPitch = (float)vec.inclination;
+					e.rotationYaw = e.rotationYawHead = (float)vec.rotation;
+					double v = 0.125;
+					double vx = v*dx/dd;
+					double vy = v*dy/dd;
+					double vz = v*dz/dd;
+					e.motionX = vx;
+					e.motionY = vy;
+					e.motionZ = vz;
+					e.velocityChanged = true;
 				}
-				e.motionX = vx;
-				e.motionY = vy;
-				e.motionZ = vz;
-				e.velocityChanged = true;
 			}
-			else {
-				if (e.tasks.taskEntries.size() != 1 || !(((EntityAITaskEntry)e.tasks.taskEntries.get(0)).action instanceof AITaskSeekLocation)) {
-					e.tasks.taskEntries.clear();
-					e.tasks.addTask(0, new AITaskSeekLocation(e, 0.5, new Coordinate(x, y, z)));
+			if (!flag) {
+				if (e.getDistanceSq(x, y, z) <= 32) {
+					double dx = x-e.posX;
+					double dy = y-e.posY;
+					double dz = z-e.posZ;
+					double dd = ReikaMathLibrary.py3d(dx, dy, dz);
+					SphericalVector vec = SphericalVector.fromCartesian(dx, dy, dz);
+					e.rotationPitch = (float)vec.inclination;
+					e.rotationYaw = e.rotationYawHead = (float)vec.rotation;
+					double v = 0.125;
+					double vx = v*dx/dd;
+					double vy = v*dy/dd;
+					double vz = v*dz/dd;
+					int idx = MathHelper.floor_double(e.posX+vx*5);
+					int idy = MathHelper.floor_double(e.posY+vy*5);
+					int idz = MathHelper.floor_double(e.posZ+vz*5);
+					Block b = world.getBlock(idx, idy, idz);
+					if (b.getMaterial().blocksMovement() && b.getCollisionBoundingBoxFromPool(world, idx, idy, idz) != null) {
+						vx *= -1;
+						vz *= -1;
+						vy += 0.25;
+					}
+					e.motionX = vx;
+					e.motionY = vy;
+					e.motionZ = vz;
+					e.velocityChanged = true;
+				}
+				else {
+					if (e.tasks.taskEntries.size() != 1 || !(((EntityAITaskEntry)e.tasks.taskEntries.get(0)).action instanceof AITaskSeekLocation)) {
+						e.tasks.taskEntries.clear();
+						e.tasks.addTask(0, new AITaskSeekLocation(e, 0.5, new Coordinate(x, y, z)));
+					}
 				}
 			}
 		}

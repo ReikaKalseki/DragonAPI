@@ -18,17 +18,20 @@ import net.minecraft.world.World;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 
 
 public class Search {
 
 	private final HashSet<Coordinate> searchedCoords = new HashSet();
-	private Collection<SearchHead> activeSearches = new ArrayList();
+	private final Collection<SearchHead> activeSearches = new ArrayList();
+	private final Collection<SearchHead> exhaustedSearches = new ArrayList();
 
 	private LinkedList<Coordinate> result = new LinkedList();
 
 	public BlockBox limit = BlockBox.infinity();
 	public int depthLimit = Integer.MAX_VALUE;
+	public int perCycleCalcLimit = Integer.MAX_VALUE;
 
 	public Search(int x, int y, int z) {
 		activeSearches.add(new SearchHead(new Coordinate(x, y, z)));
@@ -39,11 +42,13 @@ public class Search {
 		Collection<SearchHead> current = new ArrayList(activeSearches);
 		activeSearches.clear();
 		for (SearchHead s : current) {
+			s.isExhausted = true;
 			Collection<Coordinate> li = s.headLocation.getAdjacentCoordinates();
 			Collection<Coordinate> li2 = new ArrayList();
 			for (Coordinate c : li) {
 				if (c.yCoord >= 0 && c.yCoord < 256 && !searchedCoords.contains(c) && propagation.isValidLocation(world, c.xCoord, c.yCoord, c.zCoord) && s.length() < depthLimit && limit.isBlockInside(c.xCoord, c.yCoord, c.zCoord)) {
-					if (terminate.isValidTerminus(world, c.xCoord, c.yCoord, c.zCoord)) {
+					s.isExhausted = false;
+					if (terminate != null && terminate.isValidTerminus(world, c.xCoord, c.yCoord, c.zCoord)) {
 						activeSearches.clear();
 						result.addAll(s.path);
 						result.add(c);
@@ -55,12 +60,27 @@ public class Search {
 					}
 				}
 			}
+			if (s.isExhausted) {
+				exhaustedSearches.add(s);
+			}
 		}
+		return this.isDone();
+	}
+
+	public boolean isDone() {
 		return activeSearches.isEmpty();
 	}
 
 	public LinkedList<Coordinate> getResult() {
 		return result;
+	}
+
+	public Collection<ArrayList<Coordinate>> getPathsTried() {
+		Collection<ArrayList<Coordinate>> ret = new ArrayList();
+		for (SearchHead s : exhaustedSearches) {
+			ret.add(new ArrayList(s.path));
+		}
+		return ret;
 	}
 
 	public void complete(World world, PropagationCondition propagation, TerminationCondition terminate) {
@@ -81,6 +101,7 @@ public class Search {
 
 		private LinkedList<Coordinate> path = new LinkedList();
 		private Coordinate headLocation;
+		private boolean isExhausted = false;
 
 		private SearchHead(Coordinate c) {
 			headLocation = c;
@@ -128,6 +149,30 @@ public class Search {
 
 	}
 
+	public static final class CompoundPropagationCondition implements PropagationCondition {
+
+		private final ArrayList<PropagationCondition> conditions = new ArrayList();
+
+		public CompoundPropagationCondition() {
+
+		}
+
+		public CompoundPropagationCondition addCondition(PropagationCondition pc) {
+			conditions.add(pc);
+			return this;
+		}
+
+		@Override
+		public boolean isValidLocation(World world, int x, int y, int z) {
+			for (PropagationCondition pc : conditions) {
+				if (!pc.isValidLocation(world, x, y, z))
+					return false;
+			}
+			return true;
+		}
+
+	}
+
 	public static final class AirPropagation implements PropagationCondition {
 
 		public static final AirPropagation instance = new AirPropagation();
@@ -139,6 +184,36 @@ public class Search {
 		@Override
 		public boolean isValidLocation(World world, int x, int y, int z) {
 			return world.getBlock(x, y, z).isAir(world, x, y, z);
+		}
+
+	}
+
+	public static final class WalkablePropagation implements PropagationCondition {
+
+		public static final WalkablePropagation instance = new WalkablePropagation();
+
+		private WalkablePropagation() {
+
+		}
+
+		@Override
+		public boolean isValidLocation(World world, int x, int y, int z) {
+			return PassablePropagation.instance.isValidLocation(world, x, y, z) && (!PassablePropagation.instance.isValidLocation(world, x, y-1, z) || !PassablePropagation.instance.isValidLocation(world, x, y-2, z));
+		}
+
+	}
+
+	public static final class PassablePropagation implements PropagationCondition {
+
+		public static final PassablePropagation instance = new PassablePropagation();
+
+		private PassablePropagation() {
+
+		}
+
+		@Override
+		public boolean isValidLocation(World world, int x, int y, int z) {
+			return !ReikaBlockHelper.isCollideable(world, x, y, z);
 		}
 
 	}
