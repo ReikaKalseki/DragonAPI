@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.Data.Immutable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
@@ -47,6 +48,23 @@ import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 
 public final class Coordinate implements Comparable<Coordinate> {
+
+	public static class DistanceComparator implements Comparator<Coordinate> {
+
+		public final Coordinate target;
+		public final boolean taxicab;
+
+		public DistanceComparator(Coordinate tg, boolean taxi) {
+			target = tg;
+			taxicab = taxi;
+		}
+
+		@Override
+		public int compare(Coordinate o1, Coordinate o2) {
+			return taxicab ? Integer.compare(o1.getTaxicabDistanceTo(target), o2.getTaxicabDistanceTo(target)) : Double.compare(o1.getDistanceTo(target), o2.getDistanceTo(target));
+		}
+
+	}
 
 	public static final NBTIO<Coordinate> nbtHandler = new NBTIO<Coordinate>() {
 

@@ -21,9 +21,9 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.TerminationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.PropagationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.TerminationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.BreadthFirstSearch;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Event.LeafDecayEvent;
@@ -159,7 +159,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 
 		};
 
-		Search s = new Search(x, y, z);
+		BreadthFirstSearch s = new BreadthFirstSearch(x, y, z);
 		s.limit = BlockBox.block(x, y, z).expand(this.getMaximumLogSearchRadius());
 		s.depthLimit = this.getMaximumLogSearchDepth();
 		s.complete(world, c, t);

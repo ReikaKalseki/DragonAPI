@@ -9,11 +9,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.CompoundPropagationCondition;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.DirectionalPropagation;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.LocationTerminus;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.TerminationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.CompoundPropagationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.LocationTerminus;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.TerminationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.BreadthFirstSearch;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.DepthFirstSearch;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Math.Spline;
@@ -44,7 +44,7 @@ public class EntityPathSpline implements EntityPathfinder {
 		if (this.isInRange(e))
 			return;
 		TerminationCondition t = new LocationTerminus(target.getCoordinate());
-		LinkedList<Coordinate> li = Search.getPath(e.worldObj, e.posX, e.posY, e.posZ, t, new CompoundPropagationCondition().addCondition(new DirectionalPropagation(target.getCoordinate(), true)).addCondition(Search.PassablePropagation.instance));
+		LinkedList<Coordinate> li = DepthFirstSearch.getPath(e.worldObj, e.posX, e.posY, e.posZ, t, new CompoundPropagationCondition()/*.addCondition(new DirectionalPropagation(target.getCoordinate(), true))*/.addCondition(BreadthFirstSearch.PassablePropagation.instance));
 		if (li != null) {
 			Spline s1 = new Spline(SplineType.CENTRIPETAL);
 			s1.addPoint(new BasicSplinePoint(new DecimalPosition(e)));

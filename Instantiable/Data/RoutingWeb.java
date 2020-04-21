@@ -7,9 +7,9 @@ import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.CompoundPropagationCondition;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.CompoundPropagationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.PropagationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.BreadthFirstSearch;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
@@ -17,11 +17,11 @@ import Reika.DragonAPI.Interfaces.EntityPathfinder;
 
 public class RoutingWeb implements EntityPathfinder {
 
-	private static final PropagationCondition passableBlocks = Search.PassablePropagation.instance;
-	private static final PropagationCondition walkableBlocks = Search.WalkablePropagation.instance;
+	private static final PropagationCondition passableBlocks = BreadthFirstSearch.PassablePropagation.instance;
+	private static final PropagationCondition walkableBlocks = BreadthFirstSearch.WalkablePropagation.instance;
 
 	private final Coordinate root;
-	private final Search pathfinder;
+	private final BreadthFirstSearch pathfinder;
 	private final PropagationCondition propagation;
 
 	private final HashMap<Coordinate, Coordinate> pathMap = new HashMap();
@@ -31,7 +31,7 @@ public class RoutingWeb implements EntityPathfinder {
 	}
 
 	public RoutingWeb(int x, int y, int z, int rx, int ry, int rz, boolean canFly) {
-		pathfinder = new Search(x, y, z);
+		pathfinder = new BreadthFirstSearch(x, y, z);
 		root = new Coordinate(x, y, z);
 		pathfinder.limit = BlockBox.block(x, y, z).expand(rx, ry, rz);
 		pathfinder.perCycleCalcLimit = 2048;

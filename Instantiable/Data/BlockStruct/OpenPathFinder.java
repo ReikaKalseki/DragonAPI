@@ -3,7 +3,7 @@ package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 import net.minecraft.block.Block;
 import net.minecraft.world.World;
 
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.PropagationCondition;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
