@@ -40,7 +40,7 @@ public class BreadthFirstSearch extends AbstractSearch {
 			Collection<Coordinate> li = s.headLocation.getAdjacentCoordinates();
 			Collection<Coordinate> li2 = new ArrayList();
 			for (Coordinate c : li) {
-				if (c.yCoord >= 0 && c.yCoord < 256 && !searchedCoords.contains(c) && propagation.isValidLocation(world, c.xCoord, c.yCoord, c.zCoord, s.headLocation) && s.length() < depthLimit && limit.isBlockInside(c.xCoord, c.yCoord, c.zCoord)) {
+				if (c.yCoord >= 0 && c.yCoord < 256 && !searchedCoords.contains(c) && this.isValidLocation(world, c.xCoord, c.yCoord, c.zCoord, s.headLocation, propagation, terminate) && s.length() < depthLimit && limit.isBlockInside(c.xCoord, c.yCoord, c.zCoord)) {
 					s.isExhausted = false;
 					if (terminate != null && terminate.isValidTerminus(world, c.xCoord, c.yCoord, c.zCoord)) {
 						activeSearches.clear();

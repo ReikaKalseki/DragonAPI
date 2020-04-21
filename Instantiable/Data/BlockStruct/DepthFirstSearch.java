@@ -32,16 +32,22 @@ public class DepthFirstSearch extends AbstractSearch {
 
 	@Override
 	public boolean tick(World world, PropagationCondition propagation, TerminationCondition terminate) {
+		if (isDone)
+			return true;
 		if (stepValue == null && terminate instanceof FixedPositionTarget)
-			stepValue = new Coordinate.DistanceComparator(((FixedPositionTarget)terminate).getTarget(), true);
+			stepValue = new Coordinate.DistanceComparator(((FixedPositionTarget)terminate).getTarget(), false);
 		Coordinate c = currentPath.getLast();
 		ArrayList<Coordinate> li = (ArrayList)c.getAdjacentCoordinates();
 		if (stepValue != null)
 			Collections.sort(li, stepValue);
 		for (Coordinate c2 : li) {
+			if (c2.yCoord < 0 || c2.yCoord >= 256)
+				continue;
 			if (searchedCoords.contains(c2))
 				continue;
-			if (!propagation.isValidLocation(world, c2.xCoord, c2.yCoord, c2.zCoord, currentPath.getLast()))
+			if (currentPath.size() > depthLimit || !limit.isBlockInside(c.xCoord, c.yCoord, c.zCoord))
+				continue;
+			if (!this.isValidLocation(world, c2.xCoord, c2.yCoord, c2.zCoord, currentPath.getLast(), propagation, terminate))
 				continue;
 			currentPath.add(c2);
 			if (terminate.isValidTerminus(world, c2.xCoord, c2.yCoord, c2.zCoord)) {
@@ -55,6 +61,10 @@ public class DepthFirstSearch extends AbstractSearch {
 			}
 		}
 		currentPath.removeLast();
+		if (currentPath.isEmpty()) {
+			isDone = true;
+			return true;
+		}
 		return false;
 	}
 

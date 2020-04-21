@@ -54,6 +54,10 @@ public abstract class AbstractSearch {
 		}
 	}
 
+	protected final boolean isValidLocation(World world, int x, int y, int z, Coordinate from, PropagationCondition p, TerminationCondition c) {
+		return p.isValidLocation(world, x, y, z, from) || c.isValidTerminus(world, x, y, z);
+	}
+
 	public static interface TerminationCondition {
 
 		public boolean isValidTerminus(World world, int x, int y, int z);
