@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
@@ -111,8 +112,8 @@ public class Search {
 		}
 	}
 
-	public static LinkedList<Coordinate> getPath(World world, int x, int y, int z, TerminationCondition t, PropagationCondition c) {
-		Search s = new Search(x, y, z);
+	public static LinkedList<Coordinate> getPath(World world, double x, double y, double z, TerminationCondition t, PropagationCondition c) {
+		Search s = new Search(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
 		while (!s.tick(world, c, t)) {
 
 		}
@@ -210,17 +211,21 @@ public class Search {
 
 	}
 
-	public static final class FartherPropagation implements PropagationCondition {
+	public static final class DirectionalPropagation implements PropagationCondition {
 
-		private final Coordinate location;
+		public final Coordinate location;
+		public final boolean requireCloser;
 
-		public FartherPropagation(Coordinate c) {
+		public DirectionalPropagation(Coordinate c, boolean cl) {
 			location = c;
+			requireCloser = cl;
 		}
 
 		@Override
 		public boolean isValidLocation(World world, int x, int y, int z, Coordinate from) {
-			return from.getTaxicabDistanceTo(location) < new Coordinate(x, y, z).getTaxicabDistanceTo(location);
+			int d0 = from.getTaxicabDistanceTo(location);
+			int d1 = new Coordinate(x, y, z).getTaxicabDistanceTo(location);
+			return requireCloser ? d1 < d0 : d0 < d1;
 		}
 
 	}

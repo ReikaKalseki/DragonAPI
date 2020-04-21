@@ -12,6 +12,7 @@ import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.CompoundPropagationC
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.Search.PropagationCondition;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Interfaces.EntityPathfinder;
 
 public class RoutingWeb implements EntityPathfinder {
@@ -87,8 +88,8 @@ public class RoutingWeb implements EntityPathfinder {
 	}
 
 	@Override
-	public Coordinate getNextWaypoint(Entity e) {
-		return this.getNextCoordinateAlongPath(new Coordinate(e));
+	public DecimalPosition getNextWaypoint(Entity e) {
+		return new DecimalPosition(this.getNextCoordinateAlongPath(new Coordinate(e)));
 	}
 
 	@Override

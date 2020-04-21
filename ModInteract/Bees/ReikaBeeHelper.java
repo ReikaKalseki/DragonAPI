@@ -39,25 +39,21 @@ import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.EntityItemPickupEvent;
 
-import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.AI.AITaskSeekLocation;
 import Reika.DragonAPI.Instantiable.Data.SphericalVector;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Interfaces.EntityPathfinder;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
-import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.BeeGene;
 import Reika.DragonAPI.ModInteract.Bees.BeeAlleleRegistry.Effect;
@@ -1018,31 +1014,20 @@ public class ReikaBeeHelper {
 			boolean flag = false;
 			if (path != null) {
 				if (path.isInRange(e)) {
-					Coordinate c = path.getNextWaypoint(e);
+					DecimalPosition c = path.getNextWaypoint(e);
 					if (c != null) {
 						flag = true;
-						double dx = c.xCoord-e.posX;
-						double dy = c.yCoord-e.posY;
-						double dz = c.zCoord-e.posZ;
-						double dd = ReikaMathLibrary.py3d(dx, dy, dz);
-						SphericalVector vec = SphericalVector.fromCartesian(dx, dy, dz);
-						e.rotationPitch = (float)vec.inclination;
-						e.rotationYaw = e.rotationYawHead = (float)vec.rotation;
-						double v = 0.25;
-						double vx = v*dx/dd;
-						double vy = v*dy/dd;
-						double vz = v*dz/dd;
-						e.motionX = vx;
-						e.motionY = vy;
-						e.motionZ = vz;
-						e.velocityChanged = true;
+						SphericalVector vec = SphericalVector.fromCartesian(x-e.posX, y-e.posY, z-e.posZ);
+						e.setLocationAndAngles(c.xCoord, c.yCoord, c.zCoord, (float)vec.rotation, (float)vec.inclination);
 					}
 					else {
 						//ReikaJavaLibrary.pConsole(e);
+						/*
 						int[] xp = ReikaJavaLibrary.splitDoubleToInts(e.posX);
 						int[] yp = ReikaJavaLibrary.splitDoubleToInts(e.posY);
 						int[] zp = ReikaJavaLibrary.splitDoubleToInts(e.posZ);
 						ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.PARTICLEWITHPOS.ordinal(), new PacketTarget.RadiusTarget(e, 32), ReikaParticleHelper.SMOKE.ordinal(), 4, xp[0], xp[1], yp[0], yp[1], zp[0], zp[1]);
+						 */
 					}
 				}
 				else {
@@ -1050,7 +1035,7 @@ public class ReikaBeeHelper {
 				}
 			}
 			if (!flag) {
-				if (e.getDistanceSq(x, y, z) <= 32) {
+				if (e.getDistanceSq(x, y, z) <= 32 || true) {
 					double dx = x-e.posX;
 					double dy = y-e.posY;
 					double dz = z-e.posZ;
