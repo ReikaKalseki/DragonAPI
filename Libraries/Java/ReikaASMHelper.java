@@ -1406,7 +1406,7 @@ public class ReikaASMHelper {
 						String s = !FMLForgePlugin.RUNTIME_DEOBF ? p.deobfName : p.obfName;
 						ret.addValue(s, p);
 					}
-					else {
+					else if (!p.isDisabledByDefault()) {
 						ReikaASMHelper.log("******************************************************************************************");
 						ReikaASMHelper.log("WARNING: ASM TRANSFORMER '"+p+"' HAS BEEN DISABLED. THIS CAN BREAK MANY THINGS.");
 						ReikaASMHelper.log("IF THIS TRANSFORMER HAS BEEN DISABLED WITHOUT GOOD REASON, TURN IT BACK ON IMMEDIATELY!");

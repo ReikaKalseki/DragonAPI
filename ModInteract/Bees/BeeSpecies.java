@@ -507,10 +507,11 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	public final void registerIcons(IIconRegister ico) {
 		String iconType = this.getIconCategory();
 		String mod = this.getIconMod();
+		String root = this.getIconFolderRoot();
 		String body = this.simplifiedIconSystem() ? "/body" : "/body1";
 
-		IIcon body1 = ico.registerIcon(mod + ":bees/" + iconType + body);
-		IIcon larva = ico.registerIcon(mod+":bees/"+iconType+"/"+EnumBeeType.LARVAE.name().toLowerCase(Locale.ENGLISH)+".body");
+		IIcon body1 = ico.registerIcon(mod + ":"+this.getIconFolderRoot()+"/" + iconType + body);
+		IIcon larva = ico.registerIcon(mod+":"+this.getIconFolderRoot()+"/"+iconType+"/"+EnumBeeType.LARVAE.name().toLowerCase(Locale.ENGLISH)+".body");
 
 		for (int i = 0; i < EnumBeeType.VALUES.length; i++) {
 			if (EnumBeeType.VALUES[i] != EnumBeeType.NONE) {
@@ -530,6 +531,10 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 
 	protected String getIconCategory() {
 		return "default";
+	}
+
+	protected String getIconFolderRoot() {
+		return "bees";
 	}
 
 	protected boolean simplifiedIconSystem() {

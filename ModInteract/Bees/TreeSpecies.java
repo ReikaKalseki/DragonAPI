@@ -67,15 +67,18 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 
 	private static final ITreeRoot treeRoot;
 
-	private final IIcon[][] icons = new IIcon[EnumGermlingType.VALUES.length][3];
 	private final IClassification branch;
 	private final String scientific;
 	private final String creator;
 	private final String uid;
 	private final String name;
-	private boolean isRegistered = false;
+
 	private final IAllele[] template = new IAllele[EnumTreeChromosome.values().length];
 	private final ITreeGenerator generator = new ForestryTreeGenerator();
+
+	private boolean isRegistered = false;
+	private final IIcon[] pollenIcons = new IIcon[2];
+	private IIcon saplingIcon;
 
 	static {
 		treeRoot = ReikaBeeHelper.getTreeRoot();
@@ -411,40 +414,33 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 
 	@Override
 	public final void registerIcons(IIconRegister ico) {
-		String iconType = this.getIconCategory();
-		String mod = this.getIconMod();
-		String body = this.simplifiedIconSystem() ? "/body" : "/body1";
-
-		IIcon body1 = ico.registerIcon(mod + ":trees/" + iconType + body);
-		IIcon larva = ico.registerIcon(mod+":trees/"+iconType+"/"+EnumGermlingType.POLLEN.name().toLowerCase(Locale.ENGLISH)+".body");
-
-		for (int i = 0; i < EnumGermlingType.VALUES.length; i++) {
-			if (EnumGermlingType.VALUES[i] != EnumGermlingType.NONE) {
-				String type = EnumGermlingType.VALUES[i].name().toLowerCase(Locale.ENGLISH);
-				String out = EnumGermlingType.VALUES[i] != EnumGermlingType.POLLEN && this.simplifiedIconSystem() ? "outline" : type+".outline";
-				icons[i][0] = ico.registerIcon(mod+":trees/"+iconType+"/"+out);
-				icons[i][1] = EnumGermlingType.VALUES[i] == EnumGermlingType.POLLEN ? larva : body1;
-				String clas = this.simplifiedIconSystem() ? type : type+".body2";
-				icons[i][2] = ico.registerIcon(mod+":trees/"+iconType+"/"+clas);
-			}
-		}
+		saplingIcon = ico.registerIcon(this.getIconMod(false)+":"+this.getIconFolderRoot(false)+"/"+this.getSaplingIconName());
+		for (int i = 0; i < pollenIcons.length; i++)
+			pollenIcons[i] = ico.registerIcon(this.getIconMod(true)+":"+this.getIconFolderRoot(true)+"/pollen."+i);
 	}
 
-	protected String getIconMod() {
+	protected String getIconMod(boolean pollen) {
 		return "forestry";
 	}
 
-	protected String getIconCategory() {
-		return "default";
+	protected String getIconFolderRoot(boolean pollen) {
+		return "germlings";
 	}
 
-	protected boolean simplifiedIconSystem() {
-		return false;
+	protected String getSaplingIconName() {
+		return "sapling."+uid.toLowerCase(Locale.ENGLISH);
 	}
 
 	@Override
 	public final IIcon getGermlingIcon(EnumGermlingType type, int renderPass) {
-		return icons[type.ordinal()][renderPass];
+		switch(type) {
+			case SAPLING:
+				return saplingIcon;
+			case POLLEN:
+				return pollenIcons[renderPass];
+			default:
+				return ReikaTextureHelper.getMissingIcon();
+		}
 	}
 
 	@Override
