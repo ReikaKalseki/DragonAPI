@@ -517,10 +517,10 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 			if (EnumBeeType.VALUES[i] != EnumBeeType.NONE) {
 				String type = EnumBeeType.VALUES[i].name().toLowerCase(Locale.ENGLISH);
 				String out = EnumBeeType.VALUES[i] != EnumBeeType.LARVAE && this.simplifiedIconSystem() ? "outline" : type+".outline";
-				icons[i][0] = ico.registerIcon(mod+":bees/"+iconType+"/"+out);
+				icons[i][0] = ico.registerIcon(mod+":"+this.getIconFolderRoot()+"/"+iconType+"/"+out);
 				icons[i][1] = EnumBeeType.VALUES[i] == EnumBeeType.LARVAE ? larva : body1;
 				String clas = this.simplifiedIconSystem() ? type : type+".body2";
-				icons[i][2] = ico.registerIcon(mod+":bees/"+iconType+"/"+clas);
+				icons[i][2] = ico.registerIcon(mod+":"+this.getIconFolderRoot()+"/"+iconType+"/"+clas);
 			}
 		}
 	}

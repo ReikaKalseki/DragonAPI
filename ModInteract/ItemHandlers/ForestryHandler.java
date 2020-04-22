@@ -390,7 +390,7 @@ public class ForestryHandler extends ModHandlerBase implements CropHandler {
 		if (te != null) {
 			ITree tree = ReikaBeeHelper.getTree(te);
 			if (tree != null) {
-				ItemStack[] fruit = tree.getProduceList();
+				ItemStack[] fruit = tree.produceStacks(world, x, y, z, ReikaBeeHelper.getTreeRipeness(te));
 				for (ItemStack is : fruit)
 					ret.add(is);
 			}

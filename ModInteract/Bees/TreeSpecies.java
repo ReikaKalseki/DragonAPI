@@ -11,6 +11,8 @@ package Reika.DragonAPI.ModInteract.Bees;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.Locale;
 import java.util.Random;
 
@@ -75,6 +77,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 
 	private final IAllele[] template = new IAllele[EnumTreeChromosome.values().length];
 	private final ITreeGenerator generator = new ForestryTreeGenerator();
+	private final HashSet<IFruitFamily> suitableFruits = new HashSet();
 
 	private boolean isRegistered = false;
 	private final IIcon[] pollenIcons = new IIcon[2];
@@ -99,6 +102,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 		treeRoot.registerTemplate(template);
 		//AlleleManager.alleleRegistry.getClassification("family.apidae").addMemberGroup(branch);
 		isRegistered = true;
+		suitableFruits.add(this.getFruitAllele().getProvider().getFamily());
 		this.onRegister();
 	}
 
@@ -235,6 +239,10 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 		treeRoot.registerMutation(new TreeBreeding(p1, p2, chance, this));
 	}
 
+	public final void addSuitableFruit(IFruitFamily fam) {
+		suitableFruits.add(fam);
+	}
+
 	public final ITree constructIndividual() {
 		return treeRoot.templateAsIndividual(template);
 	}
@@ -363,7 +371,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 
 	@Override
 	public final Collection<IFruitFamily> getSuitableFruit() {
-		return new ArrayList();
+		return Collections.unmodifiableCollection(suitableFruits);
 	}
 
 	@Override
