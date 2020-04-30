@@ -230,4 +230,8 @@ public class ItemMatch {
 		return new ItemMatch(set, dis);
 	}
 
+	public boolean isEmpty() {
+		return items.isEmpty();
+	}
+
 }

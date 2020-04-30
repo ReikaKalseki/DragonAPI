@@ -102,7 +102,8 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 		treeRoot.registerTemplate(template);
 		//AlleleManager.alleleRegistry.getClassification("family.apidae").addMemberGroup(branch);
 		isRegistered = true;
-		suitableFruits.add(this.getFruitAllele().getProvider().getFamily());
+		if (this.getFruitAllele() != this.getNoFruit())
+			suitableFruits.add(this.getFruitAllele().getProvider().getFamily());
 		this.onRegister();
 	}
 
@@ -240,6 +241,8 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 	}
 
 	public final void addSuitableFruit(IFruitFamily fam) {
+		if (fam == null)
+			throw new MisuseException("Null is not an acceptable fruit family!");
 		suitableFruits.add(fam);
 	}
 
@@ -621,6 +624,12 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 		public final boolean isFireproof() {
 			return traits.isFireproof;
 		}
+
+	}
+
+	public static interface NoLocaleDescriptionFruit {
+
+		String getDirectDescription();
 
 	}
 

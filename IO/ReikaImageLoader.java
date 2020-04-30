@@ -32,6 +32,7 @@ import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
@@ -88,17 +89,20 @@ public final class ReikaImageLoader {
 	}
 
 	public static BufferedImage getImageFromResourcePack(String path, IResourcePack res, ImageEditor editor) {
-		DragonAPICore.log("Loading image at "+path+" from resourcepack "+res.getPackName());
+		if (DragonOptions.LOGLOADING.getState())
+			DragonAPICore.log("Loading image at "+path+" from resourcepack "+res.getPackName());
 		AbstractResourcePack pack = (AbstractResourcePack)res;
 		try(InputStream in = ReikaTextureHelper.getStreamFromTexturePack(path, pack)) {
 			if (in == null) {
-				DragonAPICore.logError("Texture pack image at "+path+" not found in "+res.getPackName()+".");
+				if (DragonOptions.LOGLOADING.getState())
+					DragonAPICore.logError("Texture pack image at "+path+" not found in "+res.getPackName()+".");
 				return null;
 			}
 			return ImageIO.read(in);
 		}
 		catch (IOException e) {
-			DragonAPICore.logError("Texture pack image at "+path+" not found in "+res.getPackName()+".");
+			if (DragonOptions.LOGLOADING.getState())
+				DragonAPICore.logError("Texture pack image at "+path+" not found in "+res.getPackName()+".");
 			//e.printStackTrace();
 			return null;
 		}

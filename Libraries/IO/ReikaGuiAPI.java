@@ -51,6 +51,7 @@ import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
+import Reika.DragonAPI.Objects.LineType;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.relauncher.Side;
@@ -211,6 +212,10 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	/** Draws a line between two points. Args: Start x,y, end x,y, color */
 	public void drawLine(int x, int y, int x2, int y2, int color) {
+		this.drawLine(x, y, x2, y2, color, LineType.SOLID);
+	}
+
+	public void drawLine(int x, int y, int x2, int y2, int color, LineType type) {
 		if (GL11.glGetFloat(GL11.GL_LINE_WIDTH) < 1.5F)
 			GL11.glLineWidth(1.5F);
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -224,6 +229,9 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
+		if (type != LineType.SOLID) {
+			type.setMode(2);
+		}
 		GL11.glBegin(GL11.GL_LINES);
 		GL11.glColor4f(red/255F, green/255F, blue/255F, alpha/255F);
 		GL11.glVertex2i(x, y);

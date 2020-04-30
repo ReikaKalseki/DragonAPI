@@ -13,7 +13,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.LocationTerminus;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.BreadthFirstSearch;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.PropagationCondition;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.DepthFirstSearch;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
@@ -42,14 +42,14 @@ public class EntityPathSpline implements EntityPathfinder {
 		target = c;
 	}
 
-	public void addEntity(Entity e) {
+	public void addEntity(Entity e, PropagationCondition propagation) {
 		if (this.isInRange(e))
 			return;
 		LocationTerminus t = new LocationTerminus(target.getCoordinate());
 		DepthFirstSearch s = new DepthFirstSearch(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ));
 		s.limit = new BlockBox(t.target.xCoord, t.target.yCoord, t.target.zCoord, s.root.xCoord, s.root.yCoord, s.root.zCoord);
 		s.limit = s.limit.expand(24);
-		while (!s.tick(e.worldObj, BreadthFirstSearch.PassablePropagation.instance, t)) {
+		while (!s.tick(e.worldObj, propagation, t)) {
 
 		}
 		LinkedList<Coordinate> li = s.getResult().isEmpty() ? null : s.getResult();

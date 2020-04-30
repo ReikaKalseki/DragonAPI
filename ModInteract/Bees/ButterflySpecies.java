@@ -247,7 +247,7 @@ public abstract class ButterflySpecies implements IAlleleButterflySpecies {
 		alleles[EnumButterflyChromosome.SPEED.ordinal()] = this.getSpeed().getAllele();
 		alleles[EnumButterflyChromosome.LIFESPAN.ordinal()] = this.getLifespan().getAllele();
 		alleles[EnumButterflyChromosome.METABOLISM.ordinal()] = ReikaBeeHelper.getIntegerAllele(this.getMetabolism());
-		alleles[EnumButterflyChromosome.FERTILITY.ordinal()] = this.getFertility().getAllele();
+		alleles[EnumButterflyChromosome.FERTILITY.ordinal()] = ReikaBeeHelper.getIntegerAllele(this.getFertility().getAllele().getValue());
 		alleles[EnumButterflyChromosome.TEMPERATURE_TOLERANCE.ordinal()] = ReikaBeeHelper.getToleranceGene(this.getTemperatureToleranceDir(), this.getTemperatureTolerance());
 		alleles[EnumButterflyChromosome.HUMIDITY_TOLERANCE.ordinal()] = ReikaBeeHelper.getToleranceGene(this.getHumidityToleranceDir(), this.getHumidityTolerance());
 		alleles[EnumButterflyChromosome.NOCTURNAL.ordinal()] = ReikaBeeHelper.getBooleanAllele(this.isNocturnal());
@@ -255,7 +255,7 @@ public abstract class ButterflySpecies implements IAlleleButterflySpecies {
 		alleles[EnumButterflyChromosome.FIRE_RESIST.ordinal()] = ReikaBeeHelper.getBooleanAllele(this.isFireproof());
 		alleles[EnumButterflyChromosome.FLOWER_PROVIDER.ordinal()] = this.getFlowerAllele();
 		alleles[EnumButterflyChromosome.EFFECT.ordinal()] = this.getEffect();
-		alleles[EnumButterflyChromosome.TERRITORY.ordinal()] = this.getTerritorySize().getAllele();
+		//alleles[EnumButterflyChromosome.TERRITORY.ordinal()] = this.getTerritorySize().getAllele();
 		return alleles;
 	}
 

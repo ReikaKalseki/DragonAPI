@@ -40,6 +40,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaImageLoader;
 import Reika.DragonAPI.IO.ReikaImageLoader.ImageEditor;
@@ -404,7 +405,8 @@ public class ReikaTextureHelper {
 					loaded = true;
 				}
 				else {
-					DragonAPICore.log("No color override found for texture pack "+pack.getPackName()+".");
+					if (DragonOptions.LOGLOADING.getState())
+						DragonAPICore.log("No color override found for texture pack "+pack.getPackName()+".");
 				}
 			}
 			catch (Exception e) {

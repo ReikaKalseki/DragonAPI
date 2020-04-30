@@ -68,6 +68,7 @@ import Reika.DragonAPI.ModInteract.Bees.BeeEvent.BeeSetHealthEvent;
 import Reika.DragonAPI.ModInteract.Bees.ButterflyAlleleRegistry.Size;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Sappiness;
 import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Yield;
+import Reika.DragonAPI.ModInteract.Bees.TreeSpecies.NoLocaleDescriptionFruit;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ForestryHandler;
 
 import forestry.api.apiculture.BeeManager;
@@ -85,6 +86,7 @@ import forestry.api.arboriculture.EnumTreeChromosome;
 import forestry.api.arboriculture.IAlleleFruit;
 import forestry.api.arboriculture.IAlleleGrowth;
 import forestry.api.arboriculture.IAlleleTreeSpecies;
+import forestry.api.arboriculture.IFruitProvider;
 import forestry.api.arboriculture.ITree;
 import forestry.api.arboriculture.ITreeGenome;
 import forestry.api.arboriculture.ITreeRoot;
@@ -718,7 +720,10 @@ public class ReikaBeeHelper {
 				break;
 			case FRUITS:
 				tag = "for.gui.fruits";
-				val = StatCollector.translateToLocal("for."+((IAlleleFruit)gene).getProvider().getDescription());
+				IFruitProvider iaf = ((IAlleleFruit)gene).getProvider();
+				val = StatCollector.translateToLocal("for."+iaf.getDescription());
+				if (iaf instanceof NoLocaleDescriptionFruit)
+					val = ((NoLocaleDescriptionFruit)iaf).getDirectDescription();
 				break;
 			case PLANT:
 				tag = "for.gui.native";

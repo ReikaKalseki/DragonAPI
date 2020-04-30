@@ -471,7 +471,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	public static GameProfile getClientProfile() {
 		if (clientProfile == null && DragonAPICore.hasGameLoaded() && Minecraft.getMinecraft().thePlayer != null && Minecraft.getMinecraft().thePlayer.ticksExisted > 100 && Minecraft.getMinecraft().getSession().getPlayerID() != null)
 			clientProfile = Minecraft.getMinecraft().getSession().func_148256_e();
-		if (clientProfile.getId() == null)
+		if (clientProfile != null && clientProfile.getId() == null)
 			clientProfile = null;
 		return clientProfile;
 	}
