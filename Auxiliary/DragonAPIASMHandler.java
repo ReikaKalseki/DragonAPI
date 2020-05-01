@@ -14,6 +14,7 @@ import java.util.Map;
 import net.minecraft.launchwrapper.Launch;
 
 import Reika.DragonAPI.ASM.APIStripper;
+import Reika.DragonAPI.ASM.ClassReparenter;
 import Reika.DragonAPI.ASM.DependentMethodStripper;
 import Reika.DragonAPI.ASM.DragonAPIClassTransformer;
 import Reika.DragonAPI.ASM.FMLItemBlockPatch;
@@ -60,6 +61,7 @@ public class DragonAPIASMHandler implements IFMLLoadingPlugin {
 				FluidNamePatch.class.getName(),
 
 				DependentMethodStripper.class.getName(),
+				ClassReparenter.class.getName(),
 
 				WorldGeneratorProfilingHooks.class.getName(),
 				MapGeneratorProfilingHooks.class.getName(),
