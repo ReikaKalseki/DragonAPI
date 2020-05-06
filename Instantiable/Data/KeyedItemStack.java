@@ -11,12 +11,14 @@ package Reika.DragonAPI.Instantiable.Data;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemEnchantedBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 public final class KeyedItemStack implements Comparable<KeyedItemStack> {
@@ -239,7 +241,10 @@ public final class KeyedItemStack implements Comparable<KeyedItemStack> {
 	}
 
 	public String getDisplayName() {
-		return item.getDisplayName();
+		String base = item.getDisplayName();
+		if (item.getItem() instanceof ItemEnchantedBook)
+			base = base+": "+ReikaEnchantmentHelper.getEnchantmentsDisplay(item);
+		return base;
 	}
 
 }

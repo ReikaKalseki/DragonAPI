@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.enchantment.EnchantmentData;
@@ -257,5 +258,21 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 				return e;
 		}
 		return null;
+	}
+
+	public static String getEnchantmentsDisplay(ItemStack item) {
+		Map<Enchantment, Integer> map = getEnchantments(item);
+		StringBuilder sb = new StringBuilder();
+		Iterator<Entry<Enchantment, Integer>> it = map.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<Enchantment, Integer> e = it.next();
+			Enchantment ench = e.getKey();
+			String name = ench.getTranslatedName(e.getValue());
+			sb.append(name);
+			if (it.hasNext())
+				sb.append(", ");
+
+		}
+		return sb.toString();
 	}
 }

@@ -39,6 +39,7 @@ import net.minecraftforge.fluids.FluidRegistry;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.IO.LuaBlock;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
@@ -533,7 +534,7 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 
 	}
-	/*
+
 	public static class ItemStackConverter implements NBTIO<ItemStack> {
 
 		public static final ItemStackConverter instance = new ItemStackConverter();
@@ -555,7 +556,28 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 
 	}
-	 */
+
+	public static class KeyedItemStackConverter implements NBTIO<KeyedItemStack> {
+
+		public static final KeyedItemStackConverter instance = new KeyedItemStackConverter();
+
+		private KeyedItemStackConverter() {
+
+		}
+
+		@Override
+		public KeyedItemStack createFromNBT(NBTBase nbt) {
+			return KeyedItemStack.readFromNBT((NBTTagCompound)nbt);
+		}
+
+		@Override
+		public NBTBase convertToNBT(KeyedItemStack obj) {
+			NBTTagCompound ret = new NBTTagCompound();
+			obj.writeToNBT(ret);
+			return ret;
+		}
+
+	}
 
 	public static class UUIDConverter implements NBTIO<UUID> {
 

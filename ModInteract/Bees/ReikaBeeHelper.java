@@ -107,6 +107,7 @@ import forestry.api.genetics.IChromosome;
 import forestry.api.genetics.IGenome;
 import forestry.api.genetics.IIndividual;
 import forestry.api.genetics.ISpeciesRoot;
+import forestry.api.genetics.ISpeciesType;
 import forestry.api.lepidopterology.ButterflyManager;
 import forestry.api.lepidopterology.EnumButterflyChromosome;
 import forestry.api.lepidopterology.EnumFlutterType;
@@ -826,7 +827,7 @@ public class ReikaBeeHelper {
 
 	public static IGenome getGenome(ItemStack is) {
 		IIndividual bee = AlleleManager.alleleRegistry.getIndividual(is);
-		return bee instanceof IBee ? ((IBee)bee).getGenome() : null;
+		return bee != null ? bee.getGenome() : null;
 	}
 
 	public static IBee getBee(ItemStack is) {
@@ -1113,5 +1114,27 @@ public class ReikaBeeHelper {
 
 	public static Class getButterflyClass() {
 		return butterfly;
+	}
+
+	public static ItemStack convertToBasicSpeciesTemplate(ItemStack is) {
+		ISpeciesRoot isr = AlleleManager.alleleRegistry.getSpeciesRoot(is);
+		if (isr != null) {
+			IIndividual ii = isr.getMember(is);
+			if (ii != null) {
+				IAlleleSpecies iae = ii.getGenome().getPrimary();
+				if (iae != null) {
+					IAllele[] genes = isr.getTemplate(iae.getUID());
+					int type = ((Enum)isr.getType(is)).ordinal();
+					ii = isr.templateAsIndividual(genes);
+					is = isr.getMemberStack(ii, type);
+				}
+			}
+		}
+		return is;
+	}
+
+	public static ISpeciesType getSpeciesType(ItemStack is) {
+		ISpeciesRoot isr = AlleleManager.alleleRegistry.getSpeciesRoot(is);
+		return isr != null ? isr.getType(is) : null;
 	}
 }

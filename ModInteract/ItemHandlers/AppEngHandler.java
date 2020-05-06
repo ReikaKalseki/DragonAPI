@@ -55,6 +55,11 @@ public class AppEngHandler extends ModHandlerBase {
 	private Item cell16k;
 	private Item cell64k;
 
+	private ItemStack storage1k;
+	private ItemStack storage4k;
+	private ItemStack storage16k;
+	private ItemStack storage64k;
+
 	private ItemStack blankPattern;
 	private Item encodedPattern;
 
@@ -115,6 +120,11 @@ public class AppEngHandler extends ModHandlerBase {
 				cell4k = this.getItem("itemCell4k");
 				cell16k = this.getItem("itemCell16k");
 				cell64k = this.getItem("itemCell64k");
+
+				storage1k = this.getMaterial("materialCell1kPart");
+				storage4k = this.getMaterial("materialCell4kPart");
+				storage16k = this.getMaterial("materialCell16kPart");
+				storage64k = this.getMaterial("materialCell64kPart");
 
 				blankPattern = this.getMaterial("materialBlankPattern");
 				encodedPattern = this.getItem("itemEncodedPattern");
@@ -314,6 +324,22 @@ public class AppEngHandler extends ModHandlerBase {
 
 	public Item get64KCell() {
 		return cell64k;
+	}
+
+	public ItemStack get1KStorage() {
+		return storage1k != null ? storage1k.copy() : null;
+	}
+
+	public ItemStack get4KStorage() {
+		return storage4k != null ? storage4k.copy() : null;
+	}
+
+	public ItemStack get16KStorage() {
+		return storage16k != null ? storage16k.copy() : null;
+	}
+
+	public ItemStack get64KStorage() {
+		return storage64k != null ? storage64k.copy() : null;
 	}
 
 	public ItemStack getBlankPattern() {

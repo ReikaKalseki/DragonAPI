@@ -101,7 +101,7 @@ public class CountMap<V> {
 	}
 
 	public Set<V> keySet() {
-		return data.keySet();
+		return Collections.unmodifiableSet(data.keySet());
 	}
 
 	public boolean containsKey(V key) {
@@ -152,7 +152,7 @@ public class CountMap<V> {
 		NBTTagList li = new NBTTagList();
 		for (V k : data.keySet()) {
 			NBTTagCompound dat = new NBTTagCompound();
-			int amt = data.get(k);
+			int amt = this.get(k);
 			dat.setTag("key", converter.convertToNBT(k));
 			dat.setInteger("value", amt);
 			li.appendTag(dat);
