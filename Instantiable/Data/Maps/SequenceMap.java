@@ -132,7 +132,11 @@ public class SequenceMap<V> {
 	}
 
 	public Topology<V> getTopology() {
-		return new Topology(this);
+		return this.getTopology(new HashMap());
+	}
+
+	public Topology<V> getTopology(Map<V, Integer> initialValues) {
+		return new Topology(this, initialValues);
 	}
 
 	public Collection valueSet() {
@@ -171,15 +175,17 @@ public class SequenceMap<V> {
 
 		private int maxDepth = 0;
 
-		private Topology(SequenceMap m) {
+		private Topology(SequenceMap m, Map<V, Integer> initialValues) {
 			map = m;
-			this.calculateDepths();
+			this.calculateDepths(initialValues);
 		}
 
-		private void calculateDepths() {
+		private void calculateDepths(Map<V, Integer> initialValues) {
 			Collection<V> c = new ArrayList(map.fullSet());
 			for (V obj : c) {
-				depths.put(obj, 0);
+				Integer base = initialValues.get(obj);
+				int val = base != null ? base.intValue() : 0;
+				depths.put(obj, val);
 			}
 
 			boolean change = false;
@@ -207,6 +213,40 @@ public class SequenceMap<V> {
 
 			for (Entry<V, Integer> e : depths.entrySet()) {
 				this.depthInverse.addValue(e.getValue(), e.getKey());
+			}
+
+			if (this.depthInverse.keySet().size() < maxDepth) {
+				//HashMap<V, Integer> old = new HashMap(depths);
+				//ReikaJavaLibrary.pConsole(this.depthInverse);
+				ArrayList<Integer> li = new ArrayList(this.depthInverse.keySet());
+				HashMap<Integer, Integer> convert = new HashMap();
+				Collections.sort(li);
+				for (int idx = 0; idx < li.size(); idx++) {
+					int val = li.get(idx);
+					if (idx != val) {
+						convert.put(val, idx);
+					}
+				}
+				if (!convert.isEmpty()) {
+					HashMap<Integer, Collection<V>> replInv = new HashMap();
+					for (Entry<Integer, Integer> e : convert.entrySet()) {
+						Collection<V> c2 = this.depthInverse.remove(e.getKey());
+						replInv.put(e.getValue(), c2);
+					}
+					for (Entry<Integer, Collection<V>> e : replInv.entrySet()) {
+						depthInverse.put(e.getKey(), e.getValue());
+					}
+					this.depths.clear();
+					for (Integer depth : depthInverse.keySet()) {
+						Collection<V> c2 = this.depthInverse.get(depth);
+						for (V v : c2) {
+							depths.put(v, depth);
+						}
+					}
+					//HashSet<V> missing = new HashSet(old.keySet());
+					//missing.removeAll(depths.keySet());
+					//ReikaJavaLibrary.pConsole(missing);
+				}
 			}
 		}
 
