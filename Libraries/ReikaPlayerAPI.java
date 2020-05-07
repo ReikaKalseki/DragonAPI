@@ -501,4 +501,8 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	public static void clearHeadCache() {
 		headCache.clear();
 	}
+
+	public static boolean isMiningWith(EntityPlayerMP ep, ItemStack is) {
+		return ep.theItemInWorldManager.isDestroyingBlock && ItemStack.areItemStacksEqual(is, ep.getCurrentEquippedItem());
+	}
 }

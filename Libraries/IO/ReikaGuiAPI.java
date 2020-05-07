@@ -685,12 +685,16 @@ public final class ReikaGuiAPI extends GuiScreen {
 	}
 
 	public void drawRectFrame(int minx, int miny, int w, int h, int color) {
+		this.drawRectFrame(minx, miny, w, h, color, LineType.SOLID);
+	}
+
+	public void drawRectFrame(int minx, int miny, int w, int h, int color, LineType type) {
 		int maxx = minx+w;
 		int maxy = miny+h;
-		this.drawLine(minx, miny, maxx, miny, color);
-		this.drawLine(minx, maxy, maxx, maxy, color);
-		this.drawLine(minx, miny, minx, maxy, color);
-		this.drawLine(maxx, miny, maxx, maxy, color);
+		this.drawLine(minx, miny, maxx, miny, color, type);
+		this.drawLine(minx, maxy, maxx, maxy, color, type);
+		this.drawLine(minx, miny, minx, maxy, color, type);
+		this.drawLine(maxx, miny, maxx, maxy, color, type);
 	}
 
 	public void drawVanillaHealthBar(EntityPlayer ep, ScaledResolution sr, int rowHeight) {
