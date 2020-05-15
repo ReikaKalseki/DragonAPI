@@ -25,13 +25,23 @@ public class ReikaRandomHelper extends DragonAPICore {
 
 	/** Gets a random double value within base +/- range. */
 	public static double getRandomPlusMinus(double base, double range) {
-		double add = -range+rand.nextDouble()*range*2;
-		return (base+add);
+		return getRandomPlusMinus(base, range, rand);
 	}
 
 	/** Gets a random integer value within base +/- range. */
 	public static int getRandomPlusMinus(int base, int range) {
-		int add = -range+rand.nextInt(range*2+1);
+		return getRandomPlusMinus(base, range, rand);
+	}
+
+	/** Gets a random double value within base +/- range. */
+	public static double getRandomPlusMinus(double base, double range, Random r) {
+		double add = -range+r.nextDouble()*range*2;
+		return (base+add);
+	}
+
+	/** Gets a random integer value within base +/- range. */
+	public static int getRandomPlusMinus(int base, int range, Random r) {
+		int add = -range+r.nextInt(range*2+1);
 		return base+add;
 	}
 
@@ -129,11 +139,19 @@ public class ReikaRandomHelper extends DragonAPICore {
 	}
 
 	public static int getRandomBetween(int min, int max) {
-		return min+rand.nextInt(1+max-min);
+		return getRandomBetween(min, max, rand);
 	}
 
 	public static double getRandomBetween(double min, double max) {
-		return min+rand.nextDouble()*(max-min);
+		return getRandomBetween(min, max, rand);
+	}
+
+	public static int getRandomBetween(int min, int max, Random r) {
+		return min+r.nextInt(1+max-min);
+	}
+
+	public static double getRandomBetween(double min, double max, Random r) {
+		return min+r.nextDouble()*(max-min);
 	}
 
 }

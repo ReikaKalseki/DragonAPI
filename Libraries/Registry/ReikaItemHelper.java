@@ -60,6 +60,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Instantiable.Recipe.ItemMatch;
 import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaEngLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
@@ -605,6 +606,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 				is.getDisplayName();
 		}
 		catch (Exception e) {
+			if (ReikaObfuscationHelper.isDeObfEnvironment())
+				e.printStackTrace();
 			return false;
 		}
 		return true;

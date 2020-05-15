@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -26,6 +26,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 
 	/** Densities in kg/m^3 */
 	public static final double patm = 101300;			// Atmosphere Sealevel pressure
+
 	public static final double rhogold = 19300;			// Gold Density
 	public static final double rhoiron = 7800;			// Iron Density
 	public static final double rhowater = 1000;			// Water density
@@ -34,6 +35,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double rhorock = 3000;			// Rock density
 	public static final double rhodiamond = 3500;		// Diamond density
 	public static final double rhographite = 2150;		// Graphite density
+	public static final double rhotungsten = 19300;
 
 	/** Shear moduli */
 	public static final double Gsteel = 79.3e9;
@@ -46,6 +48,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double Gconcrete = 79.3e9;
 	public static final double Gstone = 8e9; //varies widely
 	public static final double Ggold = 27e9;
+	public static final double Gtungsten = 161e9;
 
 	/** Elastic Moduli */
 	public static final double Esteel = 210e9;
@@ -58,6 +61,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double Econcrete = 30e9;
 	public static final double Estone = 50e9; //varies widely
 	public static final double Egold = 79e9;
+	public static final double Etungsten = 411e9;
 
 	/** Ultimate Tensile Strengths */
 	public static final double Tsteel = 400e6;
@@ -71,6 +75,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double Tconcrete_compressive = 9e7;
 	public static final double Tstone = 100e6; //varies widely
 	public static final double Tgold = 108e6;
+	public static final double Ttungsten = 980e6;
 
 	/** Ultimate Shear Strengths */
 	public static final double Ssteel = 280e6;
@@ -84,6 +89,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double Sconcrete_compressive = 5.1e7;
 	public static final double Sstone = 40e6; //varies widely
 	public static final double Sgold = 62.6e6;
+	public static final double Stungsten = 400e6;
 
 	/** Calculates an exponential decay. Args: Rate, initial value, time */
 	public static double decay(double rate, double ivp, double time) {
@@ -141,32 +147,32 @@ public final class ReikaEngLibrary extends DragonAPICore {
 			return "";
 		int log = MathHelper.floor_double(ReikaMathLibrary.logbase(val, 1000));
 		switch(log) {
-		case 1:
-			return "k";
-		case 2:
-			return "M";
-		case 3:
-			return "G";
-		case 4:
-			return "T";
-		case 5:
-			return "P";
-		case 6:
-			return "E";
+			case 1:
+				return "k";
+			case 2:
+				return "M";
+			case 3:
+				return "G";
+			case 4:
+				return "T";
+			case 5:
+				return "P";
+			case 6:
+				return "E";
 
-		case -1:
-			return "m";
-		case -2:
-			return "micro";
-		case -3:
-			return "n";
-		case -4:
-			return "p";
-		case -5:
-			return "f";
+			case -1:
+				return "m";
+			case -2:
+				return "micro";
+			case -3:
+				return "n";
+			case -4:
+				return "p";
+			case -5:
+				return "f";
 
-		default:
-			return "";
+			default:
+				return "";
 		}
 	}
 }

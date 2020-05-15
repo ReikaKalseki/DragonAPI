@@ -21,6 +21,8 @@ import net.minecraft.world.Explosion;
 import net.minecraft.world.World;
 
 import Reika.ChromatiCraft.TileEntity.AOE.Defence.TileEntityExplosionShield;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Interfaces.Block.SemiUnbreakable;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -69,7 +71,7 @@ public class FlyingBlocksExplosion extends Explosion {
 			for (int i = x-r; i <= x+r; i++) {
 				for (int j = y-r; j <= y+r; j++) {
 					for (int k = z-r; k <= z+r; k++) {
-						if (TileEntityExplosionShield.isLocationProtected(world, x, y, z, explosionSize))
+						if (ModList.CHROMATICRAFT.isLoaded() && this.isLocationProtected(x, y, z))
 							continue;
 						Block b = world.getBlock(i, j, k);
 						int meta = world.getBlockMetadata(i, j, k);
@@ -98,6 +100,11 @@ public class FlyingBlocksExplosion extends Explosion {
 
 			e.velocityChanged = true;
 		}
+	}
+
+	@ModDependent(ModList.CHROMATICRAFT)
+	private boolean isLocationProtected(int x, int y, int z) {
+		return TileEntityExplosionShield.isLocationProtected(world, x, y, z, explosionSize);
 	}
 
 	protected final Effect calcEffect(World world, int x, int y, int z, Block b, int meta) {

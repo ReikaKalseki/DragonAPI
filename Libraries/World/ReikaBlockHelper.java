@@ -347,6 +347,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		addSilkTouchDrop(Blocks.wooden_door, Items.wooden_door);
 		addSilkTouchDrop(Blocks.iron_door, Items.iron_door);
 		addSilkTouchDrop(Blocks.reeds, Items.reeds);
+		addSilkTouchDrop(Blocks.farmland, Blocks.dirt);
 	}
 
 	private static void addSilkTouchDrop(Block b, Block drop) {
