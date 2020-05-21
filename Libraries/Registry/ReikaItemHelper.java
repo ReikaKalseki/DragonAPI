@@ -57,6 +57,7 @@ import Reika.DragonAPI.Instantiable.ItemFilter;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
+import Reika.DragonAPI.Instantiable.Recipe.FlexibleIngredient;
 import Reika.DragonAPI.Instantiable.Recipe.ItemMatch;
 import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
@@ -210,6 +211,9 @@ public final class ReikaItemHelper extends DragonAPICore {
 		}
 		else if (b instanceof ItemMatch) {
 			return ((ItemMatch)b).match(a);
+		}
+		else if (b instanceof FlexibleIngredient) {
+			return ((FlexibleIngredient)b).match(a);
 		}
 		else {
 			return false;

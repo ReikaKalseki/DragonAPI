@@ -533,4 +533,17 @@ public class ReikaStringParser extends DragonAPICore {
 		ReikaArrayHelper.shuffleArray(arr);
 		return new String(arr);
 	}
+
+	public static boolean isValidVariableName(String s) {
+		if (!Character.isLetter(s.charAt(0)))
+			return false;
+		char[] arr = s.toCharArray();
+		for (int i = 0; i < arr.length; i++) {
+			char c = arr[i];
+			if (c != '_' && !Character.isLetterOrDigit(c)) {
+				return false;
+			}
+		}
+		return true;
+	}
 }

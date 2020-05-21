@@ -102,16 +102,21 @@ public final class FlexibleIngredient {
 	}
 
 	public static FlexibleIngredient parseLua(CustomRecipeList crl, LuaBlock b, boolean allowEmptyItemList) {
-		if (b == null || !b.containsKeyInherit("items"))
+		if (b == null)
 			return EMPTY;
-		Collection<ItemStack> li = crl.parseItemCollection(b.getChild("items").getDataValues(), true);
-		if (li == null) {
+		Collection<ItemStack> li = b.hasChild("items") ? crl.parseItemCollection(b.getChild("items").getDataValues(), true) : null;
+		if (li == null || li.isEmpty()) {
 			if (allowEmptyItemList)
 				return EMPTY;
 			else
 				throw new RuntimeException("Lua block "+b.name+" found no items!");
 		}
-		return new FlexibleIngredient(li, (float)b.getDouble("consumption_chance"), b.getInt("number_to_use"));
+		int num = b.getInt("number_to_use");
+		if (num <= 0)
+			throw new IllegalArgumentException("No number to use specified!");
+		if (!b.containsKeyInherit("consumption_chance"))
+			throw new IllegalArgumentException("No consumption chance specified!");
+		return new FlexibleIngredient(li, (float)b.getDouble("consumption_chance"), num);
 	}
 
 	public static interface IngredientIDHandler {
