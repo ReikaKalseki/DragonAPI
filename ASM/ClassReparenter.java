@@ -92,6 +92,7 @@ public class ClassReparenter implements IClassTransformer {
 
 	private boolean handleReparent(ClassNode cn, String[] parts) {
 		if (!ReikaASMHelper.checkForClass(parts[0])) {
+			parts[1] = parts[1].replace('.', '/');
 			cn.superName = parts[1];
 			return true;
 		}
