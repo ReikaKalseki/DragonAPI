@@ -13,6 +13,7 @@ import java.lang.ref.WeakReference;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
@@ -31,6 +32,9 @@ import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 public class WorldLocation {
 
@@ -190,7 +194,17 @@ public class WorldLocation {
 	}
 
 	public World getWorld() {
-		return isRemote && clientWorld.get() != null ? clientWorld.get() : DimensionManager.getWorld(dimensionID);
+		if (isRemote) {
+			this.initClientWorld();
+			return clientWorld.get();
+		}
+		return DimensionManager.getWorld(dimensionID);
+	}
+
+	@SideOnly(Side.CLIENT)
+	private void initClientWorld() {
+		if (clientWorld == null || clientWorld.get() == null)
+			clientWorld = new WeakReference(Minecraft.getMinecraft().theWorld);
 	}
 
 	public void writeToNBT(String tag, NBTTagCompound NBT) {

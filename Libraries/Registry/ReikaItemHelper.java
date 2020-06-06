@@ -224,18 +224,34 @@ public final class ReikaItemHelper extends DragonAPICore {
 	 * Returns true if the ids and metadata match (or both are null).
 	 * Args: ItemStacks a, b */
 	public static boolean matchStacks(ItemStack a, ItemStack b) {
+		return matchStacks(a, b, false);
+	}
+
+	/** Like .equals for comparing ItemStacks, but does not care about size or NBT tags.
+	 * Returns true if the ids and metadata match (or both are null).
+	 * Args: ItemStacks a, b, whether tool damage counts as mismatch */
+	public static boolean matchStacks(ItemStack a, ItemStack b, boolean checkDurability) {
 		if (a == null && b == null)
 			return true;
 		if (a == null || b == null)
 			return false;
 		if (a.getItem() == null || b.getItem() == null)
 			return false;
-		//if (!ItemStack.areItemStackTagsEqual(a, b))
-		//	return false;
-		if (a.getItem().getHasSubtypes() || b.getItem().getHasSubtypes())
-			return (a.getItem() == b.getItem() && (a.getItemDamage() == b.getItemDamage() || a.getItemDamage() == OreDictionary.WILDCARD_VALUE || b.getItemDamage() == OreDictionary.WILDCARD_VALUE));
-		else
-			return a.getItem() == b.getItem();
+		if (a.getItem() != b.getItem())
+			return false;
+		return areMetasCombinable(a, b, checkDurability);
+	}
+
+	private static boolean areMetasCombinable(ItemStack a, ItemStack b, boolean checkDurability) {
+		int d1 = a.getItemDamage();
+		int d2 = b.getItemDamage();
+		if (d1 == d2 || d1 == OreDictionary.WILDCARD_VALUE || d2 == OreDictionary.WILDCARD_VALUE)
+			return true;
+		if (a.getHasSubtypes())
+			return false;
+		if (checkDurability && a.getMaxDamage() > 0)
+			return false;
+		return true;
 	}
 
 	public static boolean isFireworkIngredient(Item id) {
@@ -785,10 +801,11 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return ret;
 	}
 
+	/** Pass int.max to ignore stack limits */
 	public static boolean areStacksCombinable(ItemStack is1, ItemStack is2, int limit) {
-		if (is1 != null)
+		if (is1 != null && limit != Integer.MAX_VALUE)
 			limit = Math.min(limit, is1.getMaxStackSize());
-		return is1 != null && is2 != null && matchStacks(is1, is2) && ItemStack.areItemStackTagsEqual(is1, is2) && is1.stackSize+is2.stackSize <= limit;
+		return is1 != null && is2 != null && matchStacks(is1, is2, true) && ItemStack.areItemStackTagsEqual(is1, is2) && is1.stackSize+is2.stackSize <= limit;
 	}
 
 	public static ItemStack parseItem(Object o, boolean useWildcards) {

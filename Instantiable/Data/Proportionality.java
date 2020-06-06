@@ -13,12 +13,18 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.MapDeterminator;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTIO;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 import cpw.mods.fml.relauncher.Side;
@@ -174,23 +180,31 @@ public class Proportionality<F> extends CircularDivisionRenderer<F> {
 		GL11.glPopAttrib();
 	}
 
-	/*
-	public void writeToNBT(NBTTagCompound NBT) {
+	public void writeToNBT(NBTTagCompound NBT, NBTIO<F> converter) {
 		NBT.setDouble("total", totalValue);
+		NBT.setBoolean("lines", drawSeparationLines);
 		NBTTagList li = new NBTTagList();
-		for (F o : data.keySet()) {
+		for (Entry<F, Double> e : data.entrySet()) {
 			NBTTagCompound tag = new NBTTagCompound();
-			tag.setDouble("Prop_"+o.toString(), this.getValue(o));
+			NBTBase key = converter.convertToNBT(e.getKey());
+			tag.setDouble("value", e.getValue());
+			tag.setTag("key", key);
+			li.appendTag(tag);
 		}
 		NBT.setTag("data", li);
 	}
 
-	public void readFromNBT(NBTTagCompound NBT) {
+	public void readFromNBT(NBTTagCompound NBT, NBTIO<F> converter) {
 		totalValue = NBT.getDouble("total");
+		this.drawSeparationLines = NBT.getBoolean("lines");
 		data.clear();
-
-
+		NBTTagList li = NBT.getTagList("data", NBTTypes.COMPOUND.ID);
+		for (Object o : li.tagList) {
+			NBTTagCompound tag = (NBTTagCompound)o;
+			F obj = converter.createFromNBT(tag.getTag("key"));
+			double val = tag.getDouble("value");
+			data.put(obj, val);
+		}
 	}
-	 */
 
 }

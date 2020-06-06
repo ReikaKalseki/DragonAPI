@@ -45,6 +45,8 @@ import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public final class ReikaNBTHelper extends DragonAPICore {
 
+	private static final HashMap<Class, EnumIO> enumIOMap = new HashMap();
+
 	/** Saves an inventory to NBT. Args: Inventory, NBT Tag */
 	public static void writeInvToNBT(ItemStack[] inv, NBTTagCompound NBT) {
 		NBTTagList nbttaglist = new NBTTagList();
@@ -597,5 +599,36 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			return new NBTTagString(obj.toString());
 		}
 
+	}
+
+	private static class EnumIO implements NBTIO<Enum> {
+
+		private final Enum[] objects;
+		private final Class enumType;
+
+		private EnumIO(Class<? extends Enum> c) {
+			objects = c.getEnumConstants();
+			enumType = c;
+		}
+
+		@Override
+		public Enum createFromNBT(NBTBase nbt) {
+			return objects[((NBTTagInt)nbt).func_150287_d()];
+		}
+
+		@Override
+		public NBTBase convertToNBT(Enum obj) {
+			return new NBTTagInt(obj.ordinal());
+		}
+
+	}
+
+	public static NBTIO<? extends Enum> getEnumConverter(Class<? extends Enum> c) {
+		EnumIO handler = enumIOMap.get(c);
+		if (handler == null) {
+			handler = new EnumIO(c);
+			enumIOMap.put(c, handler);
+		}
+		return handler;
 	}
 }
