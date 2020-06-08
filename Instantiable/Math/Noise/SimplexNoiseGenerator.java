@@ -1,22 +1,19 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Instantiable.Math;
-
-import java.util.ArrayList;
-import java.util.Collection;
+package Reika.DragonAPI.Instantiable.Math.Noise;
 
 import net.minecraft.util.MathHelper;
 
 /** Adapted from the Open Simplex Noise Generator by Kurt Spencer, stripped to only the 2D system and reworked for MC worldgen application.
  * All '//' comments are his. */
-public class SimplexNoiseGenerator {
+public class SimplexNoiseGenerator extends NoiseGeneratorBase {
 
 	private static final double STRETCH_CONSTANT = (1D/Math.sqrt(2D+1D)-1D)/2D;
 	private static final double SQUISH_CONSTANT = (Math.sqrt(2D+1D)-1D)/2D;
@@ -25,20 +22,11 @@ public class SimplexNoiseGenerator {
 
 	protected final int[] perm = new int[256];
 
-	protected double inputFactor = 1;
-
-	protected final Collection<Octave> octaves = new ArrayList();
-	protected double maxRange = 1;
-
-	/** As opposed to scaling */
-	public boolean clampEdge = false;
-
-	public final long seed;
-
 	//Initializes the class using a permutation array generated from a 64-bit seed.
 	//Generates a proper permutation (i.e. doesn't merely perform N successive pair swaps on a base array)
 	//Uses a simple 64-bit LCG.
 	public SimplexNoiseGenerator(long seed) {
+		super(seed);
 		int[] source = new int[256];
 		for (int i = 0; i < 256; i++)
 			source[i] = i;
@@ -53,48 +41,12 @@ public class SimplexNoiseGenerator {
 			perm[i] = source[r];
 			source[r] = source[i];
 		}
-		this.seed = seed;
-	}
-
-	public SimplexNoiseGenerator setFrequency(double f) {
-		inputFactor = f;
-		return this;
-	}
-
-	public SimplexNoiseGenerator addOctave(double relativeFrequency, double relativeAmplitude) {
-		return this.addOctave(relativeFrequency, relativeAmplitude, 0);
-	}
-
-	public SimplexNoiseGenerator addOctave(double relativeFrequency, double relativeAmplitude, double phaseShift) {
-		octaves.add(new Octave(relativeFrequency, relativeAmplitude, phaseShift));
-		maxRange += relativeAmplitude;
-		return this;
 	}
 
 	//2D OpenSimplex Noise.
 	/** Returns a value from -1 to +1 */
-	public double getValue(double x, double z) {
-
-		x *= inputFactor;
-		z *= inputFactor;
-
-		double val = this.calcValue(x, z, 1, 1);
-
-		if (!octaves.isEmpty()) {
-			for (Octave o : octaves) {
-				val += this.calcValue(x+o.phaseShift, z+o.phaseShift, o.frequency, o.amplitude);
-			}
-			if (clampEdge)
-				val = MathHelper.clamp_double(val, -1, 1);
-			else
-				val /= maxRange;
-		}
-
-		return val;
-	}
-
-	private double calcValue(double x, double z, double f, double a) {
-
+	@Override
+	protected double calcValue(double x, double y, double z, double f, double a) {
 		if (f != 1 && f > 0) {
 			x *= f;
 			z *= f;
@@ -225,23 +177,9 @@ public class SimplexNoiseGenerator {
 	//Gradients for 2D. They approximate the directions to the
 	//vertices of an octagon from the center.
 	private static int[] gradients2D = new int[] {
-		5,  2,    2,  5,
-		-5,  2,   -2,  5,
-		5, -2,    2, -5,
-		-5, -2,   -2, -5,
+			5,  2,    2,  5,
+			-5,  2,   -2,  5,
+			5, -2,    2, -5,
+			-5, -2,   -2, -5,
 	};
-
-	protected static class Octave {
-
-		protected final double frequency;
-		protected final double amplitude;
-		protected final double phaseShift;
-
-		private Octave(double f, double a, double p) {
-			amplitude = a;
-			frequency = f;
-			phaseShift = p;
-		}
-
-	}
 }

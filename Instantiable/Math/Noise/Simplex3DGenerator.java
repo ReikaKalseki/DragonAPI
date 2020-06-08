@@ -1,17 +1,15 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Instantiable.Math;
+package Reika.DragonAPI.Instantiable.Math.Noise;
 
 import net.minecraft.util.MathHelper;
-
-import Reika.DragonAPI.Exception.MisuseException;
 
 /** The 3D system from the source of the 2D system this extends. Same comments and author. */
 public class Simplex3DGenerator extends SimplexNoiseGenerator {
@@ -33,31 +31,7 @@ public class Simplex3DGenerator extends SimplexNoiseGenerator {
 	}
 
 	@Override
-	public final double getValue(double x, double z) {
-		throw new MisuseException("Use a 2D generator if you want 2D noise!");
-	}
-
-	public double getValue(double x, double y, double z) {
-		x *= inputFactor;
-		y *= inputFactor;
-		z *= inputFactor;
-
-		double val = this.calcValue(x, y, z, 1, 1);
-
-		if (!octaves.isEmpty()) {
-			for (Octave o : octaves) {
-				val += this.calcValue(x+o.phaseShift, y+o.phaseShift, z+o.phaseShift, o.frequency, o.amplitude);
-			}
-			if (clampEdge)
-				val = MathHelper.clamp_double(val, -1, 1);
-			else
-				val /= maxRange;
-		}
-
-		return val;
-	}
-
-	private double calcValue(double x, double y, double z, double f, double a) {
+	protected double calcValue(double x, double y, double z, double f, double a) {
 
 		if (f != 1 && f > 0) {
 			x *= f;
@@ -634,14 +608,14 @@ public class Simplex3DGenerator extends SimplexNoiseGenerator {
 	//that the triangular and square facets can be inscribed inside
 	//circles of the same radius.
 	private static int[] gradients3D = new int[] {
-		-11,  4,  4,     -4,  11,  4,    -4,  4,  11,
-		11,  4,  4,      4,  11,  4,     4,  4,  11,
-		-11, -4,  4,     -4, -11,  4,    -4, -4,  11,
-		11, -4,  4,      4, -11,  4,     4, -4,  11,
-		-11,  4, -4,     -4,  11, -4,    -4,  4, -11,
-		11,  4, -4,      4,  11, -4,     4,  4, -11,
-		-11, -4, -4,     -4, -11, -4,    -4, -4, -11,
-		11, -4, -4,      4, -11, -4,     4, -4, -11,
+			-11,  4,  4,     -4,  11,  4,    -4,  4,  11,
+			11,  4,  4,      4,  11,  4,     4,  4,  11,
+			-11, -4,  4,     -4, -11,  4,    -4, -4,  11,
+			11, -4,  4,      4, -11,  4,     4, -4,  11,
+			-11,  4, -4,     -4,  11, -4,    -4,  4, -11,
+			11,  4, -4,      4,  11, -4,     4,  4, -11,
+			-11, -4, -4,     -4, -11, -4,    -4, -4, -11,
+			11, -4, -4,      4, -11, -4,     4, -4, -11,
 	};
 
 }
