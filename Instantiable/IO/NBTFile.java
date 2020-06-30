@@ -173,4 +173,47 @@ public abstract class NBTFile {
 
 	protected abstract NBTTagCompound writeExtraData();
 
+	public static final class SimpleNBTFile extends NBTFile {
+
+		public NBTTagCompound data;
+
+		public SimpleNBTFile(File f) {
+			super(f);
+		}
+
+		@Override
+		protected void readHeader(NBTTagCompound header) {
+
+		}
+
+		@Override
+		protected void writeHeader(NBTTagCompound header) {
+
+		}
+
+		@Override
+		protected void readData(NBTTagList li) {
+			NBTTagCompound tag = li.getCompoundTagAt(0);
+			data = tag != null && !tag.hasNoTags() ? tag : null;
+		}
+
+		@Override
+		protected void writeData(NBTTagList li) {
+			if (data != null) {
+				li.appendTag(data.copy());
+			}
+		}
+
+		@Override
+		protected void readExtraData(NBTTagCompound extra) {
+
+		}
+
+		@Override
+		protected NBTTagCompound writeExtraData() {
+			return null;
+		}
+
+	}
+
 }

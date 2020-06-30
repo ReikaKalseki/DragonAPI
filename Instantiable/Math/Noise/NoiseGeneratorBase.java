@@ -52,6 +52,10 @@ public abstract class NoiseGeneratorBase {
 		return this;
 	}
 
+	public final double getFrequencyScale() {
+		return inputFactor;
+	}
+
 	public final NoiseGeneratorBase addOctave(double relativeFrequency, double relativeAmplitude) {
 		return this.addOctave(relativeFrequency, relativeAmplitude, 0);
 	}

@@ -93,6 +93,10 @@ public class WorldLocation {
 		this(world, vec.xCoord, vec.yCoord, vec.zCoord);
 	}
 
+	public WorldLocation(World world, DecimalPosition d) {
+		this(world, MathHelper.floor_double(d.xCoord), MathHelper.floor_double(d.yCoord), MathHelper.floor_double(d.zCoord));
+	}
+
 	public WorldLocation(World world, double x, double y, double z) {
 		this(world, MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
 	}

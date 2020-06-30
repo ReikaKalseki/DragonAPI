@@ -15,14 +15,14 @@ import cpw.mods.fml.relauncher.SideOnly;
 public abstract class MapOutput<V> {
 
 	public final String worldName;
-	private final int dimensionID;
+	protected final int dimensionID;
 
-	private final int originX;
-	private final int originZ;
-	private final int range;
+	protected final int originX;
+	protected final int originZ;
+	protected final int range;
 
-	private final int resolution;
-	private final int gridSize;
+	protected final int resolution;
+	protected final int gridSize;
 	private final boolean fullGrid;
 
 	public final long startTime;
@@ -107,10 +107,19 @@ public abstract class MapOutput<V> {
 	}
 
 	private String getFilename() {
+		String ret = this.getFilepath()+originX+", "+originZ+" "+this.getFileNameDetails();
+		return ret;
+	}
+
+	protected String getFileNameDetails() {
 		String sr = String.valueOf(range*2+1);
-		String ret = this.getClass().getSimpleName()+"/"+worldName+"/DIM"+dimensionID+"/"+originX+", "+originZ+" ("+sr+"x"+sr+"; [R="+resolution+" b-px, G="+gridSize+"-"+fullGrid+"]).png";
+		return " ("+sr+"x"+sr+"; [R="+resolution+" b-px, G="+gridSize+"-"+fullGrid+"]).png";
+	}
+
+	private String getFilepath() {
+		String ret = this.getClass().getSimpleName()+"/"+worldName+"/DIM"+dimensionID+"/";
 		if (worldName.contains("SEED=")) {
-			ret = this.getClass().getSimpleName()+"/Forced/"+worldName+"; "+originX+", "+originZ+" ("+sr+"x"+sr+"; [R="+resolution+" b-px, G="+gridSize+"-"+fullGrid+"]).png";
+			ret = this.getClass().getSimpleName()+"/Forced/"+worldName+"; ";
 		}
 		return ret;
 	}

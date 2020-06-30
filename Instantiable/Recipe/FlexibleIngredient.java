@@ -70,10 +70,10 @@ public final class FlexibleIngredient {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public ItemStack getItemForDisplay() {
+	public ItemStack getItemForDisplay(boolean size) {
 		if (!this.exists())
 			return null;
-		return ReikaItemHelper.getSizedItemStack(filter.getCycledItem(), numberToUse);
+		return ReikaItemHelper.getSizedItemStack(filter.getCycledItem(), size ? numberToUse : 1);
 	}
 
 	@Override
@@ -85,8 +85,9 @@ public final class FlexibleIngredient {
 		return this.exists() ? id.fullIDForItems(filter.getItemList())+" x"+numberToUse+"@"+chanceToUse+"%" : "Empty";
 	}
 
+	/** Does NOT check size, just identity! */
 	public boolean match(ItemStack in) {
-		return this.exists() ? filter.match(in) && in.stackSize >= numberToUse : in == null;
+		return this.exists() ? filter.match(in) : in == null;
 	}
 
 	public boolean exists() {

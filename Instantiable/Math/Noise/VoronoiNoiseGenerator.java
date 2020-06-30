@@ -1,5 +1,8 @@
 package Reika.DragonAPI.Instantiable.Math.Noise;
 
+import java.util.Collection;
+import java.util.HashSet;
+
 import net.minecraft.util.MathHelper;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
@@ -38,6 +41,8 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 	private static final double SQRT_3 = Math.sqrt(3);
 
 	public boolean calculateDistance = false;
+
+	private DecimalPosition lastCandidate;
 
 	public VoronoiNoiseGenerator(long seed) {
 		super(seed);
@@ -107,7 +112,76 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 			value = 0;
 		}
 
+		lastCandidate = candidate;
+
 		// Return the calculated distance with the displacement value applied.
 		return value+this.ValueNoise3D(MathHelper.floor_double(candidate.xCoord), MathHelper.floor_double(candidate.yCoord), MathHelper.floor_double(candidate.zCoord), 0);
+	}
+
+	public DecimalPosition getClosestRoot(double x, double y, double z) {
+		this.getValue(x, y, z);
+		return lastCandidate;
+	}
+
+	public Collection<DecimalPosition> getNeighborCellsAt(double x, double y, double z) {
+		x *= inputFactor;
+		y *= inputFactor;
+		z *= inputFactor;
+
+		HashSet<DecimalPosition> ret = new HashSet();
+
+		int xInt = MathHelper.floor_double(x);
+		int yInt = MathHelper.floor_double(y);
+		int zInt = MathHelper.floor_double(z);
+
+		for (int zCur = zInt - 2; zCur <= zInt+2; zCur++) {
+			for (int yCur = yInt - 2; yCur <= yInt+2; yCur++) {
+				for (int xCur = xInt - 2; xCur <= xInt+2; xCur++) {
+
+					double xPos = xCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed);
+					double yPos = yCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed+1);
+					double zPos = zCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed+2);
+					ret.add(new DecimalPosition(xPos/inputFactor, yPos/inputFactor, zPos/inputFactor));
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	public Collection<DecimalPosition> getCellsWithin(double x, double y, double z, double r) {
+		x *= inputFactor;
+		y *= inputFactor;
+		z *= inputFactor;
+		r *= inputFactor;
+
+		HashSet<DecimalPosition> ret = new HashSet();
+
+		int xInt = MathHelper.floor_double(x);
+		int yInt = MathHelper.floor_double(y);
+		int zInt = MathHelper.floor_double(z);
+		int dr = MathHelper.ceiling_double_int(r+2);
+
+		for (int zCur = zInt - dr; zCur <= zInt+dr; zCur++) {
+			for (int yCur = yInt - dr; yCur <= yInt+dr; yCur++) {
+				for (int xCur = xInt - dr; xCur <= xInt+dr; xCur++) {
+
+					double xPos = xCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed);
+					double yPos = yCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed+1);
+					double zPos = zCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed+2);
+					DecimalPosition d = new DecimalPosition(xPos, yPos, zPos);
+					if (d.getDistanceTo(x, y, z) <= r)
+						ret.add(new DecimalPosition(d.xCoord/inputFactor, d.yCoord/inputFactor, d.zCoord/inputFactor));
+				}
+			}
+		}
+
+		return ret;
+	}
+
+	/** Chunk is in BLOCK coords! */
+	public boolean chunkContainsCenter(int x, int z) {
+		DecimalPosition pos = this.getClosestRoot(x, 0, z);
+		return pos.xCoord >= x && pos.zCoord >= z && pos.xCoord < x+16 && pos.yCoord < z+16;
 	}
 }

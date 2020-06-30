@@ -63,4 +63,13 @@ public final class WorldChunk {
 		return "Chunk "+chunk.toString()+" in DIM"+dimensionID;
 	}
 
+	public static WorldChunk fromSerialString(String sg) {
+		String[] parts = sg.split(",");
+		return new WorldChunk(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+	}
+
+	public String toSerialString() {
+		return dimensionID+","+chunk.chunkXPos+","+chunk.chunkZPos;
+	}
+
 }
