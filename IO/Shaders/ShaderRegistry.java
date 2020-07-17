@@ -173,7 +173,7 @@ public class ShaderRegistry {
 				e.printStackTrace();
 		}
 		else {
-			throw new RegistrationException(mod, t+" "+msg, e);
+			throw new RegistrationException(mod, id+" "+t+" "+msg, e);
 		}
 	}
 

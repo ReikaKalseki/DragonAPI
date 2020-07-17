@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -39,6 +39,7 @@ import net.minecraft.network.EnumConnectionState;
 import net.minecraft.network.NetHandlerPlayServer;
 import net.minecraft.network.Packet;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 
@@ -619,6 +620,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 
 	public static void sendDataPacketWithRadius(String ch, int id, TileEntity te, int radius, int... data) {
 		sendDataPacket(ch, id, te, radius, ReikaJavaLibrary.makeIntListFromArray(data));
+	}
+
+	public static void sendDataPacketWithRadius(String ch, int id, Entity e, int radius, int... data) {
+		sendDataPacketWithRadius(ch, id, e.worldObj, MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ), radius, data);
 	}
 
 	public static void sendDataPacket(String ch, int id, PacketTarget pt, int... data) {

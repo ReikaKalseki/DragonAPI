@@ -384,4 +384,40 @@ public final class BlockBox {
 		return ReikaMathLibrary.multiMax(this.getSizeX(), this.getSizeY(), this.getSizeZ());
 	}
 
+	public int getCenterX() {
+		return (maxX-minX)/2+minX;
+	}
+
+	public int getCenterY() {
+		return (maxY-minY)/2+minY;
+	}
+
+	public int getCenterZ() {
+		return (maxZ-minZ)/2+minZ;
+	}
+
+	public Coordinate getFarthestPointFrom(int x, int y, int z) {
+		if (this.isBlockInside(x, y, z)) {
+			int dxn = x-minX;
+			int dxp = maxX-x;
+			int dyn = y-minY;
+			int dyp = maxY-y;
+			int dzn = z-minZ;
+			int dzp = maxZ-z;
+			boolean negX = Math.abs(dxn) > Math.abs(dxp);
+			boolean negY = Math.abs(dyn) > Math.abs(dyp);
+			boolean negZ = Math.abs(dzn) > Math.abs(dzp);
+			int rx = negX ? x-dxn : x+dxp;
+			int ry = negY ? y-dyn : y+dyp;
+			int rz = negZ ? z-dzn : z+dzp;
+			return new Coordinate(rx, ry, rz);
+		}
+		else {
+			int rx = x < minX ? maxX : minX;
+			int ry = y < minY ? maxY : minY;
+			int rz = z < minZ ? maxZ : minZ;
+			return new Coordinate(rx, ry, rz);
+		}
+	}
+
 }

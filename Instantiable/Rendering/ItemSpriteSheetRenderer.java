@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -16,6 +16,7 @@ import net.minecraftforge.client.IItemRenderer;
 
 import Reika.DragonAPI.Auxiliary.ReikaSpriteSheets;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Interfaces.Item.IndexedItemSprites;
 
 import cpw.mods.fml.relauncher.Side;
@@ -28,7 +29,13 @@ public class ItemSpriteSheetRenderer implements IItemRenderer {
 	private final DragonAPIMod mod;
 	protected final Class modClass;
 
+	public ItemSpriteSheetRenderer(ItemSpriteSheetRenderer ref) {
+		this(ref.mod, ref.modClass, ref.spritesheet);
+	}
+
 	public ItemSpriteSheetRenderer(DragonAPIMod mod, Class root, String file) {
+		if (file == null && this.getClass() == ItemSpriteSheetRenderer.class)
+			throw new RegistrationException(mod, "You cannot have an item sheet renderer with no texture sheet!");
 		//this.spritesheet = ReikaSpriteSheets.setupTextures(root, file);
 		//if (ReikaTextureHelper.isUsingDefaultTexturePack()) {
 		this.mod = mod;

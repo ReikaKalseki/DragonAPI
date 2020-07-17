@@ -19,10 +19,12 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Instantiable.Data.Maps.TimerMap.FreezableTimer;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
@@ -215,6 +217,36 @@ public final class ScheduledTickEvent extends Event implements FreezableTimer {
 		@Override
 		public void fire() {
 			target.attackEntityFrom(source, amount);
+		}
+
+		@Override
+		public boolean runOnSide(Side s) {
+			return s == Side.SERVER;
+		}
+
+	}
+
+	public static class DelayedKnockback implements ScheduledEvent {
+
+		private final EntityLivingBase target;
+		private final DecimalPosition position;
+		private final double amount;
+		private final double exponent;
+
+		public DelayedKnockback(EntityLivingBase e, DecimalPosition from, double amt) {
+			this(e, from, amt, 0);
+		}
+
+		public DelayedKnockback(EntityLivingBase e, DecimalPosition from, double amt, double exp) {
+			target = e;
+			amount = amt;
+			position = from;
+			exponent = exp;
+		}
+
+		@Override
+		public void fire() {
+			ReikaEntityHelper.knockbackEntityFromPos(position.xCoord, position.yCoord, position.zCoord, target, amount, exponent);
 		}
 
 		@Override

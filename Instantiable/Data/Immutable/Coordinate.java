@@ -457,4 +457,13 @@ public final class Coordinate implements Comparable<Coordinate> {
 		return Math.abs(x-xCoord) <= radius && Math.abs(y-yCoord) <= radius && Math.abs(z-zCoord) <= radius;
 	}
 
+	public String toSerialString() {
+		return String.format("%d:%d:%d", xCoord, yCoord, zCoord);
+	}
+
+	public static Coordinate fromSerialString(String s) {
+		String[] parts = s.split(":");
+		return new Coordinate(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
+	}
+
 }

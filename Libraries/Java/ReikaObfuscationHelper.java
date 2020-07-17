@@ -178,6 +178,7 @@ public class ReikaObfuscationHelper {
 		addMethod("dropRareDrop", "func_70600_l", false, EntityLivingBase.class, int.class);
 		addMethod("jump", "func_70664_aZ", false, EntityLivingBase.class);
 		addMethod("getHurtSound", "func_70621_aR", false, EntityLivingBase.class);
+		addMethod("canSpawnStructureAtCoords", "func_75047_a", false, MapGenStructure.class, int.class, int.class);
 		addMethod("getCoordList", "func_75052_o_", false, MapGenStructure.class);
 		addMethod("tryExtend", "func_150079_i", false, BlockPistonBase.class, World.class, int.class, int.class, int.class, int.class);
 		if (isClientSide()) {

@@ -36,7 +36,7 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class WorldLocation {
+public class WorldLocation implements Comparable<WorldLocation> {
 
 	private static final Random rand = new Random();
 
@@ -383,6 +383,20 @@ public class WorldLocation {
 
 	public boolean isChunkLoaded() {
 		return ReikaWorldHelper.isWorldLoaded(dimensionID) && this.getWorld().getChunkProvider().chunkExists(xCoord >> 4, zCoord >> 4);
+	}
+
+	@Override
+	public int compareTo(WorldLocation o) {
+		int ret = Integer.compare(this.hashCode(), o.hashCode());
+		if (ret != 0)
+			return ret;
+		ret = Integer.compare(xCoord, o.xCoord);
+		if (ret != 0)
+			return ret;
+		ret = Integer.compare(yCoord, o.yCoord);
+		if (ret != 0)
+			return ret;
+		return Integer.compare(zCoord, o.zCoord);
 	}
 
 }

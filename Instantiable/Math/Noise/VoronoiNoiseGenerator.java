@@ -33,14 +33,15 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
   All '//' comments (including above) are theirs. */
 public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 
-	private static final int X_NOISE_GEN = 1619;
-	private static final int Y_NOISE_GEN = 31337;
-	private static final int Z_NOISE_GEN = 6971;
-	private static final int SEED_NOISE_GEN = 1013;
+	private static final int X_NOISE_GEN = 6971;
+	private static final int Y_NOISE_GEN = 1013;
+	private static final int Z_NOISE_GEN = 1619;
+	private static final int SEED_NOISE_GEN = 31337;
 
 	private static final double SQRT_3 = Math.sqrt(3);
 
 	public boolean calculateDistance = false;
+	public double randomFactor = 1;
 
 	private DecimalPosition lastCandidate;
 
@@ -84,9 +85,9 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 
 					// Calculate the position and distance to the seed point inside of
 					// this unit cube.
-					double xPos = xCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed);
-					double yPos = yCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed+1);
-					double zPos = zCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed+2);
+					double xPos = xCur+randomFactor*this.ValueNoise3D(xCur, yCur, zCur, (int)seed);
+					double yPos = yCur+randomFactor*this.ValueNoise3D(xCur, yCur, zCur, (int)seed+1);
+					double zPos = zCur+randomFactor*this.ValueNoise3D(xCur, yCur, zCur, (int)seed+2);
 					double xDist = xPos - x;
 					double yDist = yPos - y;
 					double zDist = zPos - z;
@@ -138,9 +139,9 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 			for (int yCur = yInt - 2; yCur <= yInt+2; yCur++) {
 				for (int xCur = xInt - 2; xCur <= xInt+2; xCur++) {
 
-					double xPos = xCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed);
-					double yPos = yCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed+1);
-					double zPos = zCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed+2);
+					double xPos = xCur+randomFactor*this.ValueNoise3D(xCur, yCur, zCur, (int)seed);
+					double yPos = yCur+randomFactor*this.ValueNoise3D(xCur, yCur, zCur, (int)seed+1);
+					double zPos = zCur+randomFactor*this.ValueNoise3D(xCur, yCur, zCur, (int)seed+2);
 					ret.add(new DecimalPosition(xPos/inputFactor, yPos/inputFactor, zPos/inputFactor));
 				}
 			}
@@ -149,7 +150,7 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 		return ret;
 	}
 
-	public Collection<DecimalPosition> getCellsWithin(double x, double y, double z, double r) {
+	public Collection<DecimalPosition> getCellsWithin3D(double x, double y, double z, double r) {
 		x *= inputFactor;
 		y *= inputFactor;
 		z *= inputFactor;
@@ -166,13 +167,38 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 			for (int yCur = yInt - dr; yCur <= yInt+dr; yCur++) {
 				for (int xCur = xInt - dr; xCur <= xInt+dr; xCur++) {
 
-					double xPos = xCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed);
-					double yPos = yCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed+1);
-					double zPos = zCur+this.ValueNoise3D(xCur, yCur, zCur, (int)seed+2);
+					double xPos = xCur+randomFactor*this.ValueNoise3D(xCur, yCur, zCur, (int)seed);
+					double yPos = yCur+randomFactor*this.ValueNoise3D(xCur, yCur, zCur, (int)-seed);
+					double zPos = zCur+randomFactor*this.ValueNoise3D(xCur, yCur, zCur, (int)~seed);
 					DecimalPosition d = new DecimalPosition(xPos, yPos, zPos);
 					if (d.getDistanceTo(x, y, z) <= r)
 						ret.add(new DecimalPosition(d.xCoord/inputFactor, d.yCoord/inputFactor, d.zCoord/inputFactor));
 				}
+			}
+		}
+
+		return ret;
+	}
+
+	public Collection<DecimalPosition> getCellsWithin2D(double x, double z, double r) {
+		x *= inputFactor;
+		z *= inputFactor;
+		r *= inputFactor;
+
+		HashSet<DecimalPosition> ret = new HashSet();
+
+		int xInt = MathHelper.floor_double(x);
+		int zInt = MathHelper.floor_double(z);
+		int dr = MathHelper.ceiling_double_int(r+2);
+
+		for (int zCur = zInt - dr; zCur <= zInt+dr; zCur++) {
+			for (int xCur = xInt - dr; xCur <= xInt+dr; xCur++) {
+
+				double xPos = xCur+randomFactor*this.ValueNoise3D(xCur, 0, zCur, (int)seed);
+				double zPos = zCur+randomFactor*this.ValueNoise3D(xCur, 0, zCur, (int)~seed);
+				DecimalPosition d = new DecimalPosition(xPos, 0, zPos);
+				if (d.getDistanceTo(x, 0, z) <= r)
+					ret.add(new DecimalPosition(d.xCoord/inputFactor, 0, d.zCoord/inputFactor));
 			}
 		}
 

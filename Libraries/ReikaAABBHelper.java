@@ -147,6 +147,10 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		GL11.glEnable(GL11.GL_DEPTH_TEST);
 	}
 
+	public static AxisAlignedBB getBlockAABB(Coordinate te) {
+		return getBlockAABB(te.xCoord, te.yCoord, te.zCoord);
+	}
+
 	public static AxisAlignedBB getBlockAABB(TileEntity te) {
 		return getBlockAABB(te.xCoord, te.yCoord, te.zCoord);
 	}
