@@ -1,8 +1,10 @@
 package Reika.DragonAPI.ModInteract;
 
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import net.minecraft.block.Block;
+import net.minecraft.util.DamageSource;
 import net.minecraft.world.World;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -20,6 +22,9 @@ public class AtmosphereHandler {
 	private static Class handler;
 	private static Method lookup;
 	private static Method get;
+
+	private static DamageSource vacuum;
+	private static DamageSource o2Toxicity;
 
 	@ModDependent(ModList.ADVROCKET)
 	private static IAtmosphere getAtmo(World world, int x, int y, int z) {
@@ -70,12 +75,23 @@ public class AtmosphereHandler {
 		return 1;
 	}
 
+	public static boolean isAtmoBreathabilityDamage(DamageSource src) {
+		return src == vacuum || src == o2Toxicity;
+	}
+
 	static {
 		if (ModList.ADVROCKET.isLoaded()) {
 			try {
 				handler = Class.forName("zmaster587.advancedRocketry.atmosphere.AtmosphereHandler");
 				lookup = handler.getMethod("getOxygenHandler", int.class);
 				get = handler.getDeclaredMethod("getAtmosphereType", int.class, int.class, int.class);
+
+				Field f = handler.getDeclaredField("vacuumDamage");
+				f.setAccessible(true);
+				vacuum = (DamageSource)f.get(null);
+				f = handler.getDeclaredField("oxygenToxicityDamage");
+				f.setAccessible(true);
+				o2Toxicity = (DamageSource)f.get(null);
 			}
 			catch (Exception e) {
 				e.printStackTrace();
