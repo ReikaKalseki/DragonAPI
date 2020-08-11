@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -85,7 +86,7 @@ public class XMLInterface {
 
 	public XMLInterface init() {
 		try(InputStream in = loadData.getInputStream()) {
-			try (InputStream in2 = isEncrypted ? ReikaFileReader.decryptInputStream(in) : in) {
+			try (InputStream in2 = isEncrypted ? ReikaFileReader.decryptInputStream(in, Charset.forName("UTF-8")) : in) {
 				doc = ReikaXMLBase.getXMLDocument(in2);
 				this.readFileToMap();
 				hasLoaded = true;

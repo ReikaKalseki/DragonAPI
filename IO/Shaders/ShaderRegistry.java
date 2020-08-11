@@ -2,6 +2,7 @@ package Reika.DragonAPI.IO.Shaders;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -179,7 +180,7 @@ public class ShaderRegistry {
 
 	private static String readData(InputStream data) {
 		StringBuilder sb = new StringBuilder();
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(data, true);
+		ArrayList<String> li = ReikaFileReader.getFileAsLines(data, true, Charset.defaultCharset());
 		for (String s : li) {
 			sb.append(s);
 			sb.append("\n");

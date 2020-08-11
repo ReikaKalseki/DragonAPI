@@ -35,6 +35,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
+import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -92,9 +93,9 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	/** Make sure you close this! */
-	public static BufferedReader getReader(InputStream in) {
+	public static BufferedReader getReader(InputStream in, Charset set) {
 		try {
-			return new BufferedReader(new InputStreamReader(in));
+			return new BufferedReader(new InputStreamReader(in, set));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -264,9 +265,14 @@ public class ReikaFileReader extends DragonAPICore {
 	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace) {
 		return getFileAsLines(getReader(f), printStackTrace);
 	}
-
+	
+	@Deprecated
 	public static ArrayList<String> getFileAsLines(InputStream in, boolean printStackTrace) {
-		return getFileAsLines(getReader(in), printStackTrace);
+		return getFileAsLines(in, printStackTrace, Charset.defaultCharset());
+	}
+
+	public static ArrayList<String> getFileAsLines(InputStream in, boolean printStackTrace, Charset set) {
+		return getFileAsLines(getReader(in, set), printStackTrace);
 	}
 
 	public static ArrayList<String> getFileAsLines(BufferedReader r, boolean printStackTrace) {
@@ -295,8 +301,8 @@ public class ReikaFileReader extends DragonAPICore {
 		return li;
 	}
 
-	public static ArrayList<Byte> getFileAsBytes(InputStream in, boolean printStackTrace) {
-		BufferedReader r = getReader(in);
+	public static ArrayList<Byte> getFileAsBytes(InputStream in, boolean printStackTrace, Charset set) {
+		BufferedReader r = getReader(in, set);
 		ArrayList<Byte> li = new ArrayList();
 		try {
 			byte b = (byte)r.read();
@@ -794,8 +800,8 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static ArrayList<Byte> decryptFileBytes(InputStream in) {
-		return decryptByteList(getFileAsLines(in, true));
+	public static ArrayList<Byte> decryptFileBytes(InputStream in, Charset set) {
+		return decryptByteList(getFileAsLines(in, true, set));
 	}
 
 	public static ArrayList<Byte> decryptByteList(ArrayList<String> li2) {
@@ -825,8 +831,8 @@ public class ReikaFileReader extends DragonAPICore {
 		return li;
 	}
 
-	public static InputStream decryptInputStream(InputStream in)  {
-		ArrayList<Byte> data = decryptFileBytes(in);
+	public static InputStream decryptInputStream(InputStream in, Charset set)  {
+		ArrayList<Byte> data = decryptFileBytes(in, set);
 		ByteArrayOutputStream bin = new ByteArrayOutputStream();
 		for (byte b : data)
 			bin.write(b);

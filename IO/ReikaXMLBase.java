@@ -11,6 +11,7 @@ package Reika.DragonAPI.IO;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class ReikaXMLBase {
 	private ReikaXMLBase() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	public static Document getXMLDocument(InputStream in) throws SAXException, IOException {
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(in, true);
+		ArrayList<String> li = ReikaFileReader.getFileAsLines(in, true, Charset.forName("UTF-8"));
 		while (!li.isEmpty() && !li.get(0).startsWith("<?xml version")) { //automatically clear any header crap
 			li.remove(0);
 		}

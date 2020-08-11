@@ -17,7 +17,10 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
+import com.google.common.base.Throwables;
+
 import Reika.DragonAPI.ASM.Patchers.Patcher;
+import Reika.DragonAPI.Exception.ASMException.NoSuchASMMethodException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 import cpw.mods.fml.relauncher.Side;
@@ -31,7 +34,22 @@ public class WaterColorEvent extends Patcher {
 
 	@Override
 	protected void apply(ClassNode cn) {
-		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_149720_d", "colorMultiplier", "(Lnet/minecraft/world/IBlockAccess;III)I");
+		MethodNode m = null;
+		NoSuchASMMethodException e = null;
+		try {
+			m = ReikaASMHelper.getMethodByName(cn, "func_149720_d", "colorMultiplier", "(Lnet/minecraft/world/IBlockAccess;III)I");
+		}
+		catch (NoSuchASMMethodException ex) {
+			e = ex;
+			try {
+				m = ReikaASMHelper.getMethodByName(cn, "colorMultiplierOld", "(Lnet/minecraft/world/IBlockAccess;III)I");
+			}
+			catch (NoSuchASMMethodException ex2) {
+
+			}
+		}
+		if (m == null)
+			Throwables.propagate(e);
 
 		InsnList li = new InsnList();
 		li.add(new VarInsnNode(Opcodes.ALOAD, 1));

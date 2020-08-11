@@ -11,6 +11,7 @@ package Reika.DragonAPI.IO;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public final class ReikaCSVReader {
@@ -21,7 +22,7 @@ public final class ReikaCSVReader {
 
 	public ReikaCSVReader(Class root, String path) throws IOException {
 		try (InputStream input = root.getResourceAsStream(path)) {
-			lineData.addAll(ReikaFileReader.getFileAsLines(input, true));
+			lineData.addAll(ReikaFileReader.getFileAsLines(input, true, Charset.defaultCharset()));
 		}
 	}
 
