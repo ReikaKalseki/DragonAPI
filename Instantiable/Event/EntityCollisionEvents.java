@@ -8,9 +8,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityEvent;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
+
 public class EntityCollisionEvents {
 
-	public static class CollisionBoxEvent extends PositionEvent {
+	public static class CollisionBoxEvent extends WorldPositionEvent {
 
 		public final Entity entity;
 		public AxisAlignedBB box;

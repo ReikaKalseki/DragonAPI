@@ -15,10 +15,12 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
+
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
 @Cancelable
-public class PlayerPlaceBlockEvent extends PositionEvent {
+public class PlayerPlaceBlockEvent extends WorldPositionEvent {
 
 	public final Block block;
 	public final int metadata;

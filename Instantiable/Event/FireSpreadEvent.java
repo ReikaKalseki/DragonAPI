@@ -13,11 +13,12 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
 
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
 @Cancelable
-public class FireSpreadEvent extends PositionEvent {
+public class FireSpreadEvent extends WorldPositionEvent {
 
 	public FireSpreadEvent(World world, int x, int y, int z) {
 		super(world, x, y, z);

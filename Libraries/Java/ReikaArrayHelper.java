@@ -729,4 +729,12 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		System.arraycopy(array, 0, ret, 0, ret.length);
 		return ret;
 	}
+
+	public static int indexOf(int[] arr, int d) {
+		return ReikaJavaLibrary.makeIntListFromArray(arr).indexOf(d);
+	}
+
+	public static <E> int indexOf(E[] arr, E d) {
+		return ReikaJavaLibrary.makeListFromArray(arr).indexOf(d);
+	}
 }

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -443,6 +443,8 @@ public ArrayList<Point> polygonCorners(Hex h) {
 			this.q = q;
 			this.r = r;
 			this.s = s;
+			if (q+r+s != 0)
+				throw new IllegalArgumentException("Q, R, and S must sum to zero!");
 		}
 
 		public Hex scale(int k) {

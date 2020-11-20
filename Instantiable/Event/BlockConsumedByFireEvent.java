@@ -11,11 +11,13 @@ package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.world.World;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
+
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
 /** Fired right before a block is burned by fire. Cancel it to stop the consumption. */
 @Cancelable
-public class BlockConsumedByFireEvent extends PositionEvent {
+public class BlockConsumedByFireEvent extends WorldPositionEvent {
 
 	public BlockConsumedByFireEvent(World world, int x, int y, int z) {
 		super(world, x, y, z);

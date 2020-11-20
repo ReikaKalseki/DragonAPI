@@ -10,16 +10,16 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.block.Block;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 /** Fired both before, and when a setBlock propagates and succeeds inside a chunk. This is fired both client and server side.
  * This is called hundreds of thousands of times all over the codebase, dozens of times a tick, so you need to be efficient. */
-public abstract class SetBlockEvent extends PositionEvent {
+public abstract class SetBlockEvent extends WorldPositionEvent {
 
 	/** You can toggle this off briefly to bypass the events if you are doing a lot of block sets (eg large scale worldgen) and you do not care
 	 * about other interceptions failing. ENSURE IT IS BACK ON AFTERWARDS. */
@@ -41,22 +41,6 @@ public abstract class SetBlockEvent extends PositionEvent {
 		chunk = ch;
 		chunkLocation = new ChunkCoordIntPair(ch.xPosition, ch.zPosition);
 		isWorldgen = !ReikaWorldHelper.isChunkPastCompletelyFinishedGenerating(world, ch.xPosition, ch.zPosition);
-	}
-
-	public final boolean isAir() {
-		return this.getBlock().isAir(world, xCoord, yCoord, zCoord);
-	}
-
-	public final Block getBlock() {
-		return world.getBlock(xCoord, yCoord, zCoord);
-	}
-
-	public final int getMetadata() {
-		return world.getBlockMetadata(xCoord, yCoord, zCoord);
-	}
-
-	public final TileEntity getTileEntity() {
-		return world.getTileEntity(xCoord, yCoord, zCoord);
 	}
 
 	public static class Pre extends SetBlockEvent {

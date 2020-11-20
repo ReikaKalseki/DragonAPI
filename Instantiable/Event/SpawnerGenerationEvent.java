@@ -4,11 +4,13 @@ import net.minecraft.tileentity.TileEntityMobSpawner;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
+
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
 
 @Cancelable
-public class SpawnerGenerationEvent extends PositionEvent {
+public class SpawnerGenerationEvent extends WorldPositionEvent {
 
 	public final SpawnerSource location;
 

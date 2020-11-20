@@ -17,11 +17,13 @@ import net.minecraftforge.common.IPlantable;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
+
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 
 @HasResult
-public class GrassSustainCropEvent extends PositionEvent {
+public class GrassSustainCropEvent extends WorldPositionEvent {
 
 	public final ForgeDirection side;
 	public final IPlantable crop;

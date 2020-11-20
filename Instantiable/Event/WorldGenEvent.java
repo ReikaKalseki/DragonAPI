@@ -13,7 +13,9 @@ import java.util.Random;
 
 import net.minecraft.world.World;
 
-public abstract class WorldGenEvent extends PositionEvent {
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
+
+public abstract class WorldGenEvent extends WorldPositionEvent {
 
 	private final Random rand;
 

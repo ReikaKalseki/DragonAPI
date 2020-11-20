@@ -1331,6 +1331,10 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	}
 
 	public static void renderCrossTex(IBlockAccess world, int x, int y, int z, IIcon ico, Tessellator v5, RenderBlocks rb, double h) {
+		renderCrossTexAt(world, x, y, z, 0.5, 0, 0.5, 1, h, 1, ico, v5, rb);
+	}
+
+	public static void renderCrossTexAt(IBlockAccess world, int x, int y, int z, double dx, double dy, double dz, double sx, double sy, double sz, IIcon ico, Tessellator v5, RenderBlocks rb) {
 		ico = rb.getIconSafe(ico);
 
 		float u = ico.getMinU();
@@ -1338,25 +1342,25 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		float v = ico.getMinV();
 		float dv = ico.getMaxV();
 
-		v5.addVertexWithUV(x, y+h, z, u, v);
-		v5.addVertexWithUV(x+1, y+h, z+1, du, v);
-		v5.addVertexWithUV(x+1, y, z+1, du, dv);
-		v5.addVertexWithUV(x, y, z, u, dv);
+		v5.addVertexWithUV(x+dx-sx/2, y+dy+sy, 	z+dz-sz/2, 	u, v);
+		v5.addVertexWithUV(x+dx+sx/2, y+dy+sy, 	z+dz+sz/2, 	du, v);
+		v5.addVertexWithUV(x+dx+sx/2, y+dy, 	z+dz+sz/2, 	du, dv);
+		v5.addVertexWithUV(x+dx-sx/2, y+dy, 	z+dz-sz/2, 	u, dv);
 
-		v5.addVertexWithUV(x, y, z, u, dv);
-		v5.addVertexWithUV(x+1, y, z+1, du, dv);
-		v5.addVertexWithUV(x+1, y+h, z+1, du, v);
-		v5.addVertexWithUV(x, y+h, z, u, v);
+		v5.addVertexWithUV(x+dx-sx/2, y+dy, 	z+dz-sz/2, 	u, dv);
+		v5.addVertexWithUV(x+dx+sx/2, y+dy, 	z+dz+sz/2, 	du, dv);
+		v5.addVertexWithUV(x+dx+sx/2, y+dy+sy, 	z+dz+sz/2, 	du, v);
+		v5.addVertexWithUV(x+dx-sx/2, y+dy+sy, 	z+dz-sz/2, 	u, v);
 
-		v5.addVertexWithUV(x, y+h, z+1, u, v);
-		v5.addVertexWithUV(x+1, y+h, z, du, v);
-		v5.addVertexWithUV(x+1, y, z, du, dv);
-		v5.addVertexWithUV(x, y, z+1, u, dv);
+		v5.addVertexWithUV(x+dx-sx/2, y+dy+sy, 	z+dz+sz/2, 	u, v);
+		v5.addVertexWithUV(x+dx+sx/2, y+dy+sy, 	z+dz-sz/2, 	du, v);
+		v5.addVertexWithUV(x+dx+sx/2, y+dy, 	z+dz-sz/2, 	du, dv);
+		v5.addVertexWithUV(x+dx-sx/2, y+dy, 	z+dz+sz/2, 	u, dv);
 
-		v5.addVertexWithUV(x, y, z+1, u, dv);
-		v5.addVertexWithUV(x+1, y, z, du, dv);
-		v5.addVertexWithUV(x+1, y+h, z, du, v);
-		v5.addVertexWithUV(x, y+h, z+1, u, v);
+		v5.addVertexWithUV(x+dx-sx/2, y+dy, 	z+dz+sz/2, 	u, dv);
+		v5.addVertexWithUV(x+dx+sx/2, y+dy, 	z+dz-sz/2, 	du, dv);
+		v5.addVertexWithUV(x+dx+sx/2, y+dy+sy, 	z+dz-sz/2, 	du, v);
+		v5.addVertexWithUV(x+dx-sx/2, y+dy+sy, 	z+dz+sz/2, 	u, v);
 	}
 
 	public static void renderFlatInnerTextureOnSide(IBlockAccess world, int x, int y, int z, IIcon ico, Tessellator v5, RenderBlocks rb, ForgeDirection dir, double inset, boolean needAdj) {

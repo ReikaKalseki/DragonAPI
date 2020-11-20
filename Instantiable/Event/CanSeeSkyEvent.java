@@ -12,10 +12,12 @@ package Reika.DragonAPI.Instantiable.Event;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
+
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 
 @HasResult
-public class CanSeeSkyEvent extends PositionEvent {
+public class CanSeeSkyEvent extends WorldPositionEvent {
 
 	private final Chunk chunk;
 

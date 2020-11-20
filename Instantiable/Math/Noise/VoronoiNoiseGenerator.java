@@ -1,6 +1,8 @@
 package Reika.DragonAPI.Instantiable.Math.Noise;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 
 import net.minecraft.util.MathHelper;
@@ -43,7 +45,7 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 	public boolean calculateDistance = false;
 	public double randomFactor = 1;
 
-	private DecimalPosition lastCandidate;
+	private final ArrayList<Root> candidateList = new ArrayList();
 
 	public VoronoiNoiseGenerator(long seed) {
 		super(seed);
@@ -69,12 +71,14 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 			z *= f;
 		}
 
+		if (true || false)
+			y = 0;
+
 		int xInt = MathHelper.floor_double(x);
 		int yInt = MathHelper.floor_double(y);
 		int zInt = MathHelper.floor_double(z);
 
-		double minDist = Double.POSITIVE_INFINITY;
-		DecimalPosition candidate = null;
+		candidateList.clear();
 
 		// Inside each unit cube, there is a seed point at a random position.  Go
 		// through each of the nearby cubes until we find a cube with a seed point
@@ -93,35 +97,30 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 					double zDist = zPos - z;
 					double dist = xDist*xDist+yDist*yDist+zDist*zDist;
 
-					if (candidate == null || dist < minDist) {
-						// This seed point is closer to any others found so far, so record
-						// this seed point.
-						minDist = dist;
-						candidate = new DecimalPosition(xPos, yPos, zPos);
-					}
+					// This seed point is closer to any others found so far, so record
+					// this seed point.
+					candidateList.add(new Root(xPos, yPos, zPos, dist));
 				}
 			}
 		}
 
-		double value;
+		Collections.sort(candidateList);
+		Root candidate = candidateList.get(0);
+
+		double value = 0;
 		if (calculateDistance) {
 			// Determine the distance to the nearest seed point.
-			double dist = candidate.getDistanceTo(x, y, z);
-			value = dist*SQRT_3-1;
+			value = candidate.distance*SQRT_3-1;
 		}
-		else {
-			value = 0;
-		}
-
-		lastCandidate = candidate;
 
 		// Return the calculated distance with the displacement value applied.
-		return value+this.ValueNoise3D(MathHelper.floor_double(candidate.xCoord), MathHelper.floor_double(candidate.yCoord), MathHelper.floor_double(candidate.zCoord), 0);
+		return value+this.ValueNoise3D(MathHelper.floor_double(candidate.position.xCoord), MathHelper.floor_double(candidate.position.yCoord), MathHelper.floor_double(candidate.position.zCoord), 0);
 	}
 
 	public DecimalPosition getClosestRoot(double x, double y, double z) {
 		this.getValue(x, y, z);
-		return lastCandidate;
+		DecimalPosition raw = candidateList.get(0).position;
+		return new DecimalPosition(raw.xCoord/inputFactor, raw.yCoord/inputFactor, raw.zCoord/inputFactor);
 	}
 
 	public Collection<DecimalPosition> getNeighborCellsAt(double x, double y, double z) {
@@ -205,9 +204,73 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 		return ret;
 	}
 
+	/** RAW distance */
+	public double getEdgeRatio(double x, double z) {
+		this.getValue(x, 0, z);
+
+		DecimalPosition candidate1 = candidateList.get(0).position;
+		DecimalPosition candidate2 = candidateList.get(1).position;
+
+		double cx = (candidate1.xCoord+candidate2.xCoord)/(2*inputFactor);
+		double cy = (candidate1.zCoord+candidate2.zCoord)/(2*inputFactor);
+		double dx = (candidate2.xCoord-candidate1.xCoord)/inputFactor;
+		double dy = (candidate2.zCoord-candidate1.zCoord)/inputFactor;
+		double invslope = -dx/dy;
+		double mpx = cx+1;
+		double mpy = cy+invslope;
+		double dLx = mpx-cx;
+		double dLy = mpy-cy;
+
+		// dist from point to line defined by two points: https://wikimedia.org/api/rest_v1/media/math/render/svg/be2ab4a9d9d77f1623a2723891f652028a7a328d
+		double num = dLy*x-dLx*z+mpx*cy-mpy*cx;
+		double denom = dLx*dLx+dLy*dLy;
+		double dist = Math.abs(num)/Math.sqrt(denom);
+		return dist;
+
+		/*
+		double xCandidate = candidate1.xCoord;
+		double yCandidate = candidate1.zCoord;
+		double xCandidate2 = candidate2.xCoord;
+		double yCandidate2 = candidate2.zCoord;
+
+		double midX = (xCandidate+xCandidate2)/2D;
+		double midY = (yCandidate+yCandidate2)/2D;
+		double dx = xCandidate2-xCandidate;
+		double dy = yCandidate2-yCandidate;
+		double invslope = -dx/dy;
+		double midp2X = midX+1;
+		double midp2Y = midY+invslope;
+		double dLx = midp2X-midX;
+		double dLy = midp2Y-midY;
+
+		double num = dLy*x*inputFactor-dLx*z*inputFactor+midp2X*midY-midp2Y*midX;
+		double denom = dLx*dLx+dLy*dLy;
+		double dist = Math.abs(num)/Math.sqrt(denom);
+
+		// Return the calculated distance with the displacement value applied.
+		return dist;*/
+	}
+
 	/** Chunk is in BLOCK coords! */
 	public boolean chunkContainsCenter(int x, int z) {
 		DecimalPosition pos = this.getClosestRoot(x, 0, z);
 		return pos.xCoord >= x && pos.zCoord >= z && pos.xCoord < x+16 && pos.yCoord < z+16;
+	}
+
+	private static final class Root implements Comparable<Root> {
+
+		private final DecimalPosition position;
+		private final double distance;
+
+		private Root(double x, double y, double z, double d) {
+			position = new DecimalPosition(x, y, z);
+			distance = d;
+		}
+
+		@Override
+		public int compareTo(Root o) {
+			return Double.compare(distance, o.distance);
+		}
+
 	}
 }

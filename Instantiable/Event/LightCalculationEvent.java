@@ -13,11 +13,13 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
+
 import cpw.mods.fml.common.eventhandler.Cancelable;
 
 @Cancelable
 @Deprecated
-public class LightCalculationEvent extends PositionEvent {
+public class LightCalculationEvent extends WorldPositionEvent {
 
 	public final EnumSkyBlock lightType;
 

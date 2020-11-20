@@ -161,6 +161,24 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		}
 	}
 
+	public static ForgeDirection getByHeading(double ang) {
+		ang += 360;
+		ang %= 360;
+		int a = (int)(ang/90);
+		switch(a) {
+			case 0:
+				return ForgeDirection.NORTH;
+			case 1:
+				return ForgeDirection.EAST;
+			case 2:
+				return ForgeDirection.SOUTH;
+			case 3:
+				return ForgeDirection.WEST;
+			default:
+				return ForgeDirection.UNKNOWN;
+		}
+	}
+
 	public static double getCompassHeading(double dx, double dz) {
 		double phi = ReikaPhysicsHelper.cartesianToPolar(dx, 0, -dz)[2];
 		phi += 90; //since phi=0 is EAST

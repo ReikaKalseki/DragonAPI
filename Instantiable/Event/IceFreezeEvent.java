@@ -12,10 +12,12 @@ package Reika.DragonAPI.Instantiable.Event;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
+
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 
 @HasResult
-public class IceFreezeEvent extends PositionEvent {
+public class IceFreezeEvent extends WorldPositionEvent {
 
 	public final boolean needsEdge;
 

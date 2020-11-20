@@ -13,9 +13,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
 
 
-public class FireChanceEvent extends PositionEvent {
+
+public class FireChanceEvent extends WorldPositionEvent {
 
 	/** An arbitrarily large number (ie not a 0-1 decimal); higher means more chance to spread. Values of 400 or so guarantee a spread event. */
 	public int spreadChance;

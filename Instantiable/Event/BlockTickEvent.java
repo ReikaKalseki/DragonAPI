@@ -13,8 +13,10 @@ import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
 
-public class BlockTickEvent extends PositionEvent {
+
+public class BlockTickEvent extends WorldPositionEvent {
 
 	public final Block block;
 

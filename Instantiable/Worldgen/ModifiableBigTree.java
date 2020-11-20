@@ -28,28 +28,43 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	 * and 2 for 1, and 0 and 1 for 2.
 	 */
 	private static final byte[] otherCoordPairs = new byte[] {(byte)2, (byte)0, (byte)0, (byte)1, (byte)2, (byte)1};
+
+	protected static final double BASE_ATTENUATION = 0.618;
+	protected static final double BASE_SLOPE = 0.381;
+
 	/** random seed for GenBigTree */
 	protected final Random rand = new Random();
-	/** Reference to the World object. */
-	private int[] basePos = new int[] {0, 0, 0};
+
+	protected double heightAttenuation = BASE_ATTENUATION;
+	protected double branchSlope = BASE_SLOPE;
+	protected double branchDensity = 1.0D;
+	protected double scaleWidth = 1.0D;
+	protected double leafDensity = 1.0D;
+
 	private int heightLimit;
 	private int height;
-	private double heightAttenuation = 0.618D;
-	private double branchDensity = 1.0D;
-	private double branchSlope = 0.381D;
-	private double scaleWidth = 1.0D;
-	private double leafDensity = 1.0D;
-	/** Currently always 1, can be set to 2 in the class constructor to generate a double-sized tree trunk for big trees. */
-	private int trunkSize = 1;
-	/** Sets the limit of the random value used to initialize the height limit. */
-	private int heightLimitLimit = 12;
-	/** Sets the distance limit for how far away the generator will populate leaves from the base leaf node. */
-	private int leafDistanceLimit = 4;
+
 	/** Contains a list of a points at which to generate groups of leaves. */
 	private int[][] leafNodes;
+	private int[] basePos = new int[] {0, 0, 0};
+
+	protected int[] globalOffset = new int[] {0, 0, 0};
+
+	protected int trunkSize = 1;
+	/** Sets the limit of the random value used to initialize the height limit. */
+	protected int heightLimitLimit = 12;
+	/** Sets the distance limit for how far away the generator will populate leaves from the base leaf node. */
+	protected int leafDistanceLimit = 4;
+	/** How far above the bottom log block the branches must stay. */
+	//protected int minBranchHeight;
+	/** The minimum height of the tree. */
+	protected int minHeight = 5;
+
+	private final boolean doUpdates;
 
 	public ModifiableBigTree(boolean updates) {
 		super(updates);
+		doUpdates = updates;
 	}
 
 	/**
@@ -62,64 +77,64 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 			height = heightLimit - 1;
 		}
 
-		int i = (int)(1.382D + Math.pow(leafDensity * heightLimit / 13.0D, 2.0D));
+		int i = (int)((1.382D + Math.pow(leafDensity * heightLimit / 13.0D, 2.0D))*branchDensity);
 
 		if (i < 1) {
 			i = 1;
 		}
 
 		int[][] aint = new int[i * heightLimit][4];
-		int j = basePos[1] + heightLimit - leafDistanceLimit;
+		int ry = basePos[1] + heightLimit - leafDistanceLimit;
 		int k = 1;
 		int l = basePos[1] + height;
-		int i1 = j - basePos[1];
+		int yh = ry - basePos[1];
 		aint[0][0] = basePos[0];
-		aint[0][1] = j;
+		aint[0][1] = ry;
 		aint[0][2] = basePos[2];
 		aint[0][3] = l;
-		--j;
+		--ry;
 
-		while (i1 >= 0) {
+		while (yh >= 0) {
 			int j1 = 0;
-			float f = this.layerSize(i1);
+			float f = this.layerSize(yh);
 
 			if (f < 0.0F) {
-				--j;
-				--i1;
+				--ry;
+				--yh;
 			}
 			else {
 				for (double d0 = 0.5D; j1 < i; ++j1) {
 					double d1 = scaleWidth * f * (rand.nextFloat() + 0.328D);
 					double d2 = rand.nextFloat() * 2.0D * Math.PI;
-					int k1 = MathHelper.floor_double(d1 * Math.sin(d2) + basePos[0] + d0);
-					int l1 = MathHelper.floor_double(d1 * Math.cos(d2) + basePos[2] + d0);
-					int[] aint1 = new int[] {k1, j, l1};
-					int[] aint2 = new int[] {k1, j + leafDistanceLimit, l1};
+					int rx = MathHelper.floor_double(d1 * Math.sin(d2) + basePos[0] + d0);
+					int rz = MathHelper.floor_double(d1 * Math.cos(d2) + basePos[2] + d0);
+					int[] pos1 = new int[] {rx, ry, rz};
+					int[] pos2 = new int[] {rx, ry + leafDistanceLimit, rz};
 
-					if (this.checkBlockLine(world, aint1, aint2) == -1) {
+					if (this.checkBlockLine(world, pos1, pos2) == -1) {
 						int[] aint3 = new int[] {basePos[0], basePos[1], basePos[2]};
-						double d3 = Math.sqrt(Math.pow(Math.abs(basePos[0] - aint1[0]), 2.0D) + Math.pow(Math.abs(basePos[2] - aint1[2]), 2.0D));
+						double d3 = Math.sqrt(Math.pow(Math.abs(basePos[0] - pos1[0]), 2.0D) + Math.pow(Math.abs(basePos[2] - pos1[2]), 2.0D));
 						double d4 = d3 * branchSlope;
 
-						if (aint1[1] - d4 > l) {
+						if (pos1[1] - d4 > l) {
 							aint3[1] = l;
 						}
 						else {
-							aint3[1] = (int)(aint1[1] - d4);
+							aint3[1] = (int)(pos1[1] - d4);
 						}
 
-						if (this.checkBlockLine(world, aint3, aint1) == -1) {
-							aint[k][0] = k1;
-							aint[k][1] = j;
-							aint[k][2] = l1;
+						if (this.checkBlockLine(world, aint3, pos1) == -1) {
+							aint[k][0] = rx;
+							aint[k][1] = ry;
+							aint[k][2] = rz;
 							aint[k][3] = aint3[1];
 							++k;
 						}
 					}
 				}
 
-				--j;
-				--i1;
+				--ry;
+				--yh;
 			}
 		}
 
@@ -127,8 +142,8 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 		System.arraycopy(aint, 0, leafNodes, 0, k);
 	}
 
-	private void func_150529_a(World world, int x, int y, int z, float p_150529_4_, byte p_150529_5_) {
-		int l = (int)(p_150529_4_ + 0.618D);
+	private void placeLeafNode(World world, int x, int y, int z, float size, byte p_150529_5_) {
+		int l = (int)(size + 0.618D);
 		byte b1 = otherCoordPairs[p_150529_5_];
 		byte b2 = otherCoordPairs[p_150529_5_ + 3];
 		int[] pos1 = new int[] {x, y, z};
@@ -143,7 +158,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 			while (j1 <= l) {
 				double d0 = Math.pow(Math.abs(i1) + 0.5D, 2.0D) + Math.pow(Math.abs(j1) + 0.5D, 2.0D);
 
-				if (d0 > p_150529_4_ * p_150529_4_) {
+				if (d0 > size * size) {
 					++j1;
 				}
 				else {
@@ -171,11 +186,9 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 		return new BlockKey(ReikaTreeHelper.OAK.getLeafID(), ReikaTreeHelper.OAK.getBaseLeafMeta());
 	}
 
-	/**
-	 * Gets the rough size of a layer of the tree.
-	 */
-	private float layerSize(int layer) {
-		if (layer < (heightLimit) * 0.3D) {
+	/** Gets the rough size of a layer of the tree. */
+	protected float layerSize(int layer) {
+		if (layer < (heightLimit) * 0.3D) { //TODO is this trunk height?
 			return -1.618F;
 		}
 		else {
@@ -198,8 +211,8 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 		}
 	}
 
-	private float leafSize(int p_76495_1_) {
-		return p_76495_1_ >= 0 && p_76495_1_ < leafDistanceLimit ? (p_76495_1_ != 0 && p_76495_1_ != leafDistanceLimit - 1 ? 3.0F : 2.0F) : -1.0F;
+	protected float leafSize(int r) {
+		return r >= 0 && r < leafDistanceLimit ? (r != 0 && r != leafDistanceLimit - 1 ? 3.0F : 2.0F) : -1.0F;
 	}
 
 	/**
@@ -210,48 +223,48 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 
 		for (int i1 = y + leafDistanceLimit; l < i1; ++l) {
 			float f = this.leafSize(l - y);
-			this.func_150529_a(world, x, l, z, f, (byte)1);
+			this.placeLeafNode(world, x, l, z, f, (byte)1);
 		}
 	}
 
-	private void func_150530_a(World world, int[] pos1, int[] pos2) {
-		int[] aint2 = new int[] {0, 0, 0};
-		byte b0 = 0;
-		byte b1;
+	private void generateTrunkColumn(World world, int[] root, int[] top) {
+		int[] pos = new int[] {0, 0, 0};
+		byte axis = 0;
+		byte mainAxis;
 
-		for (b1 = 0; b0 < 3; ++b0) {
-			aint2[b0] = pos2[b0] - pos1[b0];
+		for (mainAxis = 0; axis < 3; ++axis) {
+			pos[axis] = top[axis] - root[axis];
 
-			if (Math.abs(aint2[b0]) > Math.abs(aint2[b1])) {
-				b1 = b0;
+			if (Math.abs(pos[axis]) > Math.abs(pos[mainAxis])) {
+				mainAxis = axis;
 			}
 		}
 
-		if (aint2[b1] != 0) {
-			byte b2 = otherCoordPairs[b1];
-			byte b3 = otherCoordPairs[b1 + 3];
+		if (pos[mainAxis] != 0) {
+			byte b2 = otherCoordPairs[mainAxis];
+			byte b3 = otherCoordPairs[mainAxis + 3];
 			byte b4;
 
-			if (aint2[b1] > 0) {
+			if (pos[mainAxis] > 0) {
 				b4 = 1;
 			}
 			else {
 				b4 = -1;
 			}
 
-			double d0 = (double)aint2[b2] / (double)aint2[b1];
-			double d1 = (double)aint2[b3] / (double)aint2[b1];
+			double d0 = (double)pos[b2] / (double)pos[mainAxis];
+			double d1 = (double)pos[b3] / (double)pos[mainAxis];
 			int[] pos3 = new int[] {0, 0, 0};
 			int i = 0;
 
-			for (int j = aint2[b1] + b4; i != j; i += b4) {
-				pos3[b1] = MathHelper.floor_double(pos1[b1] + i + 0.5D);
-				pos3[b2] = MathHelper.floor_double(pos1[b2] + i * d0 + 0.5D);
-				pos3[b3] = MathHelper.floor_double(pos1[b3] + i * d1 + 0.5D);
+			for (int j = pos[mainAxis] + b4; i != j; i += b4) {
+				pos3[mainAxis] = MathHelper.floor_double(root[mainAxis] + i + 0.5D);
+				pos3[b2] = MathHelper.floor_double(root[b2] + i * d0 + 0.5D);
+				pos3[b3] = MathHelper.floor_double(root[b3] + i * d1 + 0.5D);
 				BlockKey log = this.getLogBlock(pos3[0], pos3[1], pos3[2]);
 				byte b5 = (byte)log.metadata;
-				int k = Math.abs(pos3[0] - pos1[0]);
-				int l = Math.abs(pos3[2] - pos1[2]);
+				int k = Math.abs(pos3[0] - root[0]);
+				int l = Math.abs(pos3[2] - root[2]);
 				int i1 = Math.max(k, l);
 
 				if (i1 > 0) {
@@ -290,28 +303,45 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	}
 
 	/**
-	 * Places the trunk for the big tree that is being generated. Able to generate double-sized trunks by changing a
-	 * field that is always 1 to 2.
-	 */
+	 * Places the trunk for the big tree that is being generated. */
 	private void generateTrunk(World world) {
-		int i = basePos[0];
-		int j = basePos[1];
-		int k = basePos[1] + height;
-		int l = basePos[2];
-		int[] aint = new int[] {i, j, l};
-		int[] aint1 = new int[] {i, k, l};
-		this.func_150530_a(world, aint, aint1);
+		int x = basePos[0];
+		int y0 = basePos[1];
+		int y1 = basePos[1] + height;
+		int z = basePos[2];
+		int[] root = new int[] {x, y0, z};
+		int[] top = new int[] {x, y1, z};
+		this.generateTrunkColumn(world, root, top);
 
-		if (trunkSize == 2) {
-			++aint[0];
-			++aint1[0];
-			this.func_150530_a(world, aint, aint1);
-			++aint[2];
-			++aint1[2];
-			this.func_150530_a(world, aint, aint1);
-			aint[0] += -1;
-			aint1[0] += -1;
-			this.func_150530_a(world, aint, aint1);
+		switch(trunkSize) {
+			case 2: {
+				++root[0];
+				++top[0];
+				this.generateTrunkColumn(world, root, top);
+				++root[2];
+				++top[2];
+				this.generateTrunkColumn(world, root, top);
+				root[0] += -1;
+				top[0] += -1;
+				this.generateTrunkColumn(world, root, top);
+				break;
+			}
+			case 3: {
+				for (int i = -1; i <= 1; i++) {
+					for (int k = -1; k <= 1; k++) {
+						if (i != 0 || k != 0) {
+							if (i == 0 || k == 0) {
+								root[0] = x+i;
+								root[2] = z+k;
+								top[0] = x+i;
+								top[2] = z+k;
+								this.generateTrunkColumn(world, root, top);
+							}
+						}
+					}
+				}
+				break;
+			}
 		}
 	}
 
@@ -329,7 +359,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 			int k = aint[1] - basePos[1];
 
 			if (this.leafNodeNeedsBase(k)) {
-				this.func_150530_a(world, aint, aint2);
+				this.generateTrunkColumn(world, aint, aint2);
 			}
 		}
 	}
@@ -440,7 +470,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 		basePos[2] = z;
 
 		if (heightLimit == 0) {
-			heightLimit = 5 + rand.nextInt(heightLimitLimit);
+			heightLimit = minHeight + rand.nextInt(heightLimitLimit-minHeight+5);
 		}
 
 		if (!this.validTreeLocation(world)) {
@@ -453,5 +483,14 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 			this.generateLeafNodeBases(world);
 			return true;
 		}
+	}
+
+	@Override
+	protected void setBlockAndNotifyAdequately(World world, int x, int y, int z, Block b, int meta) {
+		world.setBlock(x+globalOffset[0], y+globalOffset[1], z+globalOffset[2], b, meta, doUpdates ? 3 : 2);
+	}
+
+	protected final void resetHeight() {
+		heightLimit = 0;
 	}
 }

@@ -44,6 +44,10 @@ public class Spline {
 		anchors.add(a);
 	}
 
+	public DecimalPosition getLast() {
+		return anchors.get(anchors.size()-1).asPosition();
+	}
+
 	public List<DecimalPosition> get(int fineness, boolean closed) {
 		if (fineness < 2) {
 			throw new IllegalArgumentException("The fineness parameter must be greater than 2, since 2 points is just the linear segment.");
@@ -343,6 +347,11 @@ public class Spline {
 			return relative != null ? relative.offset(posX, posY, posZ) : new DecimalPosition(posX, posY, posZ);
 		}
 
+		@Override
+		public String toString() {
+			return this.asPosition().toString();
+		}
+
 	}
 
 	public static class BasicVariablePoint extends BasicSplinePoint {
@@ -397,6 +406,11 @@ public class Spline {
 			targetX = ReikaRandomHelper.getRandomPlusMinus(origin.xCoord, variance);
 			targetY = ReikaRandomHelper.getRandomPlusMinus(origin.yCoord, variance);
 			targetZ = ReikaRandomHelper.getRandomPlusMinus(origin.zCoord, variance);
+		}
+
+		@Override
+		public String toString() {
+			return super.toString()+" varies "+variance+"/"+velocity;
 		}
 	}
 

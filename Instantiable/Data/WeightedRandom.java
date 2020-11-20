@@ -32,6 +32,7 @@ public class WeightedRandom<V> {
 	private final HashMap<V, Double> data = new HashMap();
 	private double maxWeight = 0;
 	private double weightSum;
+	private boolean isDynamic = false;
 
 	public double addEntry(V obj, double weight) {
 		if (weight < 0)
@@ -39,7 +40,12 @@ public class WeightedRandom<V> {
 		data.put(obj, weight);
 		this.weightSum += weight;
 		this.maxWeight = Math.max(this.maxWeight, weight);
+		this.isDynamic |= obj instanceof DynamicWeight;
 		return this.weightSum;
+	}
+
+	public double addDynamicEntry(DynamicWeight wt) {
+		return this.addEntry((V)wt, wt.getWeight());
 	}
 
 	public double remove(V val) {
@@ -49,10 +55,10 @@ public class WeightedRandom<V> {
 	}
 
 	public V getRandomEntry() {
-		double d = rand.nextDouble()*this.weightSum;
+		double d = rand.nextDouble()*this.getTotalWeight();
 		double p = 0;
 		for (V obj : data.keySet()) {
-			p += data.get(obj);
+			p += this.getWeight(obj);
 			if (d <= p) {
 				return obj;
 			}
@@ -61,11 +67,11 @@ public class WeightedRandom<V> {
 	}
 
 	public V getRandomEntry(V fallback, double wt) {
-		double sum = this.weightSum+wt;
+		double sum = this.getTotalWeight()+wt;
 		double d = rand.nextDouble()*sum;
 		double p = 0;
 		for (V obj : data.keySet()) {
-			p += data.get(obj);
+			p += this.getWeight(obj);
 			if (d <= p) {
 				return obj;
 			}
@@ -74,15 +80,33 @@ public class WeightedRandom<V> {
 	}
 
 	public double getWeight(V obj) {
+		if (obj instanceof DynamicWeight)
+			return ((DynamicWeight)obj).getWeight();
 		Double get = data.get(obj);
 		return get != null ? get.doubleValue() : 0;
 	}
 
 	public double getMaxWeight() {
+		if (this.isDynamic) {
+			double max = 0;
+			for (V obj : this.data.keySet()) {
+				double wt = this.getWeight(obj);
+				max = Math.max(max, wt);
+			}
+			return max;
+		}
 		return this.maxWeight;
 	}
 
 	public double getTotalWeight() {
+		if (this.isDynamic) {
+			double sum = 0;
+			for (V obj : this.data.keySet()) {
+				double wt = this.getWeight(obj);
+				sum += wt;
+			}
+			return sum;
+		}
 		return this.weightSum;
 	}
 
@@ -143,6 +167,12 @@ public class WeightedRandom<V> {
 		public String toString() {
 			return data.toString();
 		}
+	}
+
+	public static interface DynamicWeight {
+
+		public double getWeight();
+
 	}
 
 	public static WeightedRandom<Coordinate> fromArray(int[][] arr) {
@@ -214,6 +244,7 @@ public class WeightedRandom<V> {
 		nbt.setTag("entries", li);
 		nbt.setDouble("total", weightSum);
 		nbt.setDouble("max", maxWeight);
+		nbt.setBoolean("dynamic", isDynamic);
 	}
 
 	public void readFromNBT(String s, NBTTagCompound tag, ObjectToNBTSerializer<V> serializer) {
@@ -230,6 +261,7 @@ public class WeightedRandom<V> {
 		}
 		this.weightSum = data.getDouble("total");
 		this.maxWeight = data.getDouble("max");
+		this.isDynamic = data.getBoolean("dynamic");
 	}
 
 }

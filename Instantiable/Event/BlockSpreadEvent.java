@@ -17,12 +17,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.DragonOptions;
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
 
 import cpw.mods.fml.common.eventhandler.Event.HasResult;
 
 @HasResult
 /** For grass and mycelium */
-public class BlockSpreadEvent extends PositionEvent {
+public class BlockSpreadEvent extends WorldPositionEvent {
 
 	public final Block spreadingBlock;
 	public final boolean defaultValue;
