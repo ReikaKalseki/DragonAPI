@@ -42,7 +42,7 @@ public class Proportionality<F> extends CircularDivisionRenderer<F> {
 		this(null);
 	}
 
-	public Proportionality(MapDeterminator<F, ?> md) {
+	public Proportionality(MapDeterminator<F, Double> md) {
 		data = md != null ? md.getMapType() : new HashMap();
 	}
 

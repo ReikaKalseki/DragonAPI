@@ -2,11 +2,14 @@ package Reika.DragonAPI.ASM;
 
 import org.lwjgl.opengl.GL11;
 
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.renderer.EntityRenderer;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.RenderGlobal;
 import net.minecraft.client.shader.Framebuffer;
+import net.minecraft.util.IIcon;
 import net.minecraft.world.biome.BiomeGenBase;
 
 import Reika.DragonAPI.DragonOptions;
@@ -21,6 +24,10 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
 public class ASMCallsClient {
+
+	public static IIcon getLiquidIconForRenderBlocks(RenderBlocks rb, Block b, int s, int meta, int x, int y, int z) {
+		return rb.getBlockIcon(b, rb.blockAccess, x, y, z, s);
+	}
 
 	public static void addRainParticlesAndSound(EntityRenderer er) {
 		if (SpecialDayTracker.instance.loadXmasTextures())

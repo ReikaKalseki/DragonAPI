@@ -33,6 +33,7 @@ import com.xcompwiz.mystcraft.api.item.IItemOrderablePageProvider;
 import com.xcompwiz.mystcraft.api.item.IItemPageProvider;
 import com.xcompwiz.mystcraft.api.linking.ILinkInfo;
 import com.xcompwiz.mystcraft.api.symbol.IAgeSymbol;
+import com.xcompwiz.mystcraft.api.word.WordData;
 import com.xcompwiz.mystcraft.api.world.AgeDirector;
 import com.xcompwiz.mystcraft.api.world.logic.IPopulate;
 
@@ -210,6 +211,10 @@ public class ReikaMystcraftHelper {
 		if (AgeInterface.loadedCorrectly && isMystAge(world)) {
 			getOrCreateInterface(world).addBaseInstability(amt);
 		}
+	}
+
+	public static boolean isSymbolPresent(World world, BasicPages sym) {
+		return isSymbolPresent(world, sym.ID);
 	}
 
 	public static boolean isSymbolPresent(World world, String sym) {
@@ -869,6 +874,124 @@ public class ReikaMystcraftHelper {
 		catch (Exception e) {
 			e.printStackTrace();
 			return false;
+		}
+	}
+
+	/** This is copied from com.xcompwiz.mystcraft.data.ModSymbols.initialize() */
+	public static enum BasicPages {
+		ColorCloud("ColorCloud", 1, WordData.Image, WordData.Entropy, WordData.Believe, WordData.Weave),
+		ColorCloudNatural("ColorCloudNat", 1, WordData.Image, WordData.Entropy, WordData.Believe, WordData.Nature),
+		ColorFog("ColorFog", 1, WordData.Image, WordData.Entropy, WordData.Explore, WordData.Weave),
+		ColorFogNatural("ColorFogNat", 1, WordData.Image, WordData.Entropy, WordData.Explore, WordData.Nature),
+		ColorFoliage("ColorFoliage", 1, WordData.Image, WordData.Growth, WordData.Elevate, WordData.Weave),
+		ColorFoliageNatural("ColorFoliageNat", 1, WordData.Image, WordData.Growth, WordData.Elevate, WordData.Nature),
+		ColorGrass("ColorGrass", 1, WordData.Image, WordData.Growth, WordData.Resilience, WordData.Weave),
+		ColorGrassNatural("ColorGrassNat", 1, WordData.Image, WordData.Growth, WordData.Resilience, WordData.Nature),
+		ColorSky("ColorSky", 1, WordData.Image, WordData.Celestial, WordData.Harmony, WordData.Weave),
+		ColorSkyNatural("ColorSkyNat", 1, WordData.Image, WordData.Celestial, WordData.Harmony, WordData.Nature),
+		ColorSkyNight("ColorSkyNight", 1, WordData.Image, WordData.Celestial, WordData.Contradict, WordData.Weave),
+		ColorWater("ColorWater", 1, WordData.Image, WordData.Flow, WordData.Constraint, WordData.Weave),
+		ColorWaterNatural("ColorWaterNat", 1, WordData.Image, WordData.Flow, WordData.Constraint, WordData.Nature),
+		DoodadRainbow("Rainbow", 1, WordData.Celestial, WordData.Image, WordData.Harmony, WordData.Balance),
+		HideHorizon("NoHorizon", 1, WordData.Celestial, WordData.Inhibit, WordData.Image, WordData.Void),
+		DarkMoon("MoonDark", 1, WordData.Celestial, WordData.Void, WordData.Inhibit, WordData.Wisdom),
+		MoonNormal("MoonNormal", 1, WordData.Celestial, WordData.Image, WordData.Cycle, WordData.Wisdom),
+		DarkStars("StarsDark", 1, WordData.Celestial, WordData.Void, WordData.Inhibit, WordData.Order),
+		StarsEndSky("StarsEndSky", 1, WordData.Celestial, WordData.Image, WordData.Chaos, WordData.Weave),
+		StarsNormal("StarsNormal", 1, WordData.Celestial, WordData.Harmony, WordData.Ethereal, WordData.Order),
+		StarsTwinkle("StarsTwinkle", 1, WordData.Celestial, WordData.Harmony, WordData.Ethereal, WordData.Entropy),
+		DarkSun("SunDark", 1, WordData.Celestial, WordData.Void, WordData.Inhibit, WordData.Energy),
+		SunNormal("SunNormal", 2, WordData.Celestial, WordData.Image, WordData.Stimulate, WordData.Energy),
+		BiomeControllerGrid("BioConGrid", 3, WordData.Constraint, WordData.Nature, WordData.Chain, WordData.Mutual),
+		BiomeControllerNative("BioConNative", 3, WordData.Constraint, WordData.Nature, WordData.Tradition, WordData.Sustain),
+		BiomeControllerSingle("BioConSingle", 3, WordData.Constraint, WordData.Nature, WordData.Infinite, WordData.Static),
+		BiomeControllerTiled("BioConTiled", 3, WordData.Constraint, WordData.Nature, WordData.Chain, WordData.Contradict),
+		BiomeControllerHuge("BioConHuge", 3, WordData.Constraint, WordData.Nature, WordData.Weave, "Huge"),
+		BiomeControllerLarge("BioConLarge", 3, WordData.Constraint, WordData.Nature, WordData.Weave, "Large"),
+		BiomeControllerMedium("BioConMedium", 3, WordData.Constraint, WordData.Nature, WordData.Weave, "Medium"),
+		BiomeControllerSmall("BioConSmall", 3, WordData.Constraint, WordData.Nature, WordData.Weave, "Small"),
+		BiomeControllerTiny("BioConTiny", 3, WordData.Constraint, WordData.Nature, WordData.Weave, "Tiny"),
+		NoSea("NoSea", 2, WordData.Transform, WordData.Constraint, WordData.Flow, WordData.Inhibit),
+		AntiPvP("PvPOff", -1, WordData.Chain, WordData.Chaos, WordData.Encourage, WordData.Harmony),
+		EnvAccelerated("EnvAccel", 3, WordData.Survival, WordData.Dynamic, WordData.Change, WordData.Spur),
+		EnvExplosions("EnvExplosions", 3, WordData.Survival, WordData.Sacrifice, WordData.Power, WordData.Force),
+		EnvLightning("EnvLightning", 3, WordData.Survival, WordData.Sacrifice, WordData.Power, WordData.Energy),
+		EnvMeteor("EnvMeteor", 3, WordData.Survival, WordData.Sacrifice, WordData.Power, WordData.Momentum),
+		EnvScorched("EnvScorch", 3, WordData.Survival, WordData.Sacrifice, WordData.Power, WordData.Chaos),
+		LightingBright("LightingBright", 3, WordData.Ethereal, WordData.Power, WordData.Infinite, WordData.Spur),
+		LightingDark("LightingDark", 3, WordData.Ethereal, WordData.Void, WordData.Constraint, WordData.Inhibit),
+		LightingNormal("LightingNormal", 2, WordData.Ethereal, WordData.Dynamic, WordData.Cycle, WordData.Balance),
+		North("ModNorth", 0, WordData.Transform, WordData.Flow, WordData.Motion, WordData.Control),
+		East("ModEast", 0, WordData.Transform, WordData.Flow, WordData.Motion, WordData.Tradition),
+		South("ModSouth", 0, WordData.Transform, WordData.Flow, WordData.Motion, WordData.Chaos),
+		West("ModWest", 0, WordData.Transform, WordData.Flow, WordData.Motion, WordData.Change),
+		Clear("ModClear", 0, WordData.Contradict, WordData.Transform, WordData.Change, WordData.Void),
+		Gradient("ModGradient", 0, WordData.Transform, WordData.Image, WordData.Merge, WordData.Weave),
+		HorizonColor("ColorHorizon", 0, WordData.Transform, WordData.Image, WordData.Celestial, WordData.Change),
+		ZeroLength("ModZero", 0, WordData.Transform, WordData.Time, WordData.System, WordData.Inhibit),
+		HalfLength("ModHalf", 0, WordData.Transform, WordData.Time, WordData.System, WordData.Stimulate),
+		FullLength("ModFull", 0, WordData.Transform, WordData.Time, WordData.System, WordData.Balance),
+		DoubleLength("ModDouble",  0, WordData.Transform, WordData.Time, WordData.System, WordData.Sacrifice),
+		NadirPhase("ModEnd", 0, WordData.Transform, WordData.Cycle, WordData.System, WordData.Rebirth),
+		RisingPhase("ModRising", 0, WordData.Transform, WordData.Cycle, WordData.System, WordData.Growth),
+		Noon("ModNoon", 0, WordData.Transform, WordData.Cycle, WordData.System, WordData.Harmony),
+		SettingPhase("ModSetting", 0, WordData.Transform, WordData.Cycle, WordData.System, WordData.Future),
+		Caves("Caves", 2, WordData.Terrain, WordData.Transform, WordData.Void, WordData.Flow),
+		Dungeons("Dungeons", 2, WordData.Civilization, WordData.Constraint, WordData.Chain, WordData.Resurrect),
+		FloatingIslands("FloatIslands", 3, WordData.Terrain, WordData.Transform, WordData.Form, WordData.Celestial),
+		NoLargeFeature("FeatureLargeDummy", 0, 4, WordData.Contradict, WordData.Chaos, WordData.Exist, WordData.Terrain),
+		NoMediumFeature("FeatureMediumDummy", 1000, 4, WordData.Contradict, WordData.Chaos, WordData.Exist, WordData.Balance),
+		NoSmallFeature("FeatureSmallDummy", 2000, 5, WordData.Contradict, WordData.Chaos, WordData.Exist, WordData.Form),
+		HugeTrees("HugeTrees", 2, WordData.Nature, WordData.Stimulate, WordData.Spur, WordData.Elevate),
+		LakesDeep("LakesDeep", 3, WordData.Nature, WordData.Flow, WordData.Static, WordData.Explore),
+		LakesSurface("LakesSurface", 3, WordData.Nature, WordData.Flow, WordData.Static, WordData.Elevate),
+		Mineshafts("Mineshafts", 3, WordData.Civilization, WordData.Machine, WordData.Motion, WordData.Tradition),
+		NetherFort("NetherFort", 3, WordData.Civilization, WordData.Machine, WordData.Power, WordData.Entropy),
+		Obelisks("Obelisks", 3, WordData.Civilization, WordData.Resilience, WordData.Static, WordData.Form),
+		Ravines("Ravines", 2, WordData.Terrain, WordData.Transform, WordData.Void, WordData.Weave),
+		Spheres("TerModSpheres", 2, WordData.Terrain, WordData.Transform, WordData.Form, WordData.Cycle),
+		Spikes("GenSpikes", 3, WordData.Nature, WordData.Encourage, WordData.Entropy, WordData.Static),
+		Strongholds("Strongholds", 3, WordData.Civilization, WordData.Wisdom, WordData.Future, WordData.Honor),
+		Tendrils("Tendrils", 3, WordData.Terrain, WordData.Transform, WordData.Growth, WordData.Flow),
+		Villages("Villages", 3, WordData.Civilization, WordData.Society, WordData.Harmony, WordData.Nurture),
+		CrystalFormation("CryForm", 3, WordData.Nature, WordData.Encourage, WordData.Growth, WordData.Static),
+		Skylands("Skylands", 3, WordData.Terrain, WordData.Transform, WordData.Void, WordData.Elevate),
+		StarFissure("StarFissure", 3, WordData.Nature, WordData.Harmony, WordData.Mutual, WordData.Void),
+		DenseOres("DenseOres", 5, WordData.Survival, WordData.Stimulate, WordData.Machine, WordData.Chaos),
+		WeatherAlways("WeatherOn", 3, WordData.Sustain, WordData.Static, WordData.Tradition, WordData.Stimulate),
+		WeatherCloudy("WeatherCloudy", 3, WordData.Sustain, WordData.Static, WordData.Believe, WordData.Motion),
+		WeatherFast("WeatherFast", 3, WordData.Sustain, WordData.Dynamic, WordData.Tradition, WordData.Spur),
+		WeatherNormal("WeatherNorm", 2, WordData.Sustain, WordData.Dynamic, WordData.Tradition, WordData.Balance),
+		WeatherOff("WeatherOff", 3, WordData.Sustain, WordData.Static, WordData.Stimulate, WordData.Energy),
+		WeatherRain("WeatherRain", 3, WordData.Sustain, WordData.Static, WordData.Rebirth, WordData.Growth),
+		WeatherSlow("WeatherSlow", 3, WordData.Sustain, WordData.Dynamic, WordData.Tradition, WordData.Inhibit),
+		WeatherSnow("WeatherSnow", 3, WordData.Sustain, WordData.Static, WordData.Inhibit, WordData.Energy),
+		WeatherStorm("WeatherStorm", 3, WordData.Sustain, WordData.Static, WordData.Nature, WordData.Power),
+		TerrainGenAmplified("TerrainAmplified", 3, WordData.Terrain, WordData.Form, WordData.Tradition, WordData.Spur),
+		TerrainGenEnd("TerrainEnd", 4, WordData.Terrain, WordData.Form, WordData.Ethereal, WordData.Flow),
+		TerrainGenFlat("TerrainFlat", 3, WordData.Terrain, WordData.Form, WordData.Inhibit, WordData.Motion),
+		TerrainGenNether("TerrainNether", 4, WordData.Terrain, WordData.Form, WordData.Constraint, WordData.Entropy),
+		TerrainGenNormal("TerrainNormal", 2, WordData.Terrain, WordData.Form, WordData.Tradition, WordData.Flow),
+		TerrainGenVoid("TerrainVoid", 4, WordData.Terrain, WordData.Form, WordData.Infinite, WordData.Void);
+
+		public final String ID;
+		public final String word1;
+		public final String word2;
+		public final String word3;
+		public final String word4;
+		public final int instability;
+
+		private BasicPages(String id, int rank, String w1, String w2, String w3, String w4) {
+			this(id, 0, rank, w1, w2, w3, w4);
+		}
+
+		private BasicPages(String id, int inst, int rank, String w1, String w2, String w3, String w4) {
+			ID = id;
+			word1 = w1;
+			word2 = w2;
+			word3 = w3;
+			word4 = w4;
+			instability = inst;
 		}
 	}
 

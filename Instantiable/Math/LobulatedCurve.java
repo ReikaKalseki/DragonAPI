@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,6 +10,8 @@
 package Reika.DragonAPI.Instantiable.Math;
 
 import java.util.Random;
+
+import net.minecraft.util.MathHelper;
 
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
@@ -25,6 +27,10 @@ public class LobulatedCurve {
 	private static final Random delegateRand = new Random();
 
 	private final double[] radii;
+
+	private double clampVar;
+	private double clampMin;
+	private double clampMax;
 
 	public LobulatedCurve(double r, double a, int d) {
 		this(r, a, d, 0.25);
@@ -43,8 +49,23 @@ public class LobulatedCurve {
 	}
 
 	public static LobulatedCurve fromMinMaxRadii(double min, double max, int d) {
+		return fromMinMaxRadii(min, max, d, false);
+	}
+
+	public static LobulatedCurve fromMinMaxRadii(double min, double max, int d, boolean clamp) {
 		double diff = (max-min)/2D;
-		return new LobulatedCurve(min+diff, diff/d, d);
+		LobulatedCurve ret = new LobulatedCurve(min+diff, diff/d, d);
+		if (clamp) {
+			ret = ret.setClamped(min, max);
+		}
+		return ret;
+	}
+
+	public LobulatedCurve setClamped(double min, double max) {
+		clampVar = (max-min)/2;
+		clampMin = min;
+		clampMax = max;
+		return this;
 	}
 
 	public LobulatedCurve generate() {
@@ -55,6 +76,9 @@ public class LobulatedCurve {
 		double[] amps = new double[degree];
 		for (int i = 0; i < degree; i++) {
 			amps[i] = rand.nextDouble()*amplitudeVariation;
+			if (clampVar > 0) {
+				amps[i] = clampVar*(1-i/(double)degree);
+			}
 		}
 		double phase = rand.nextDouble()*360;
 		for (int i = 0; i < radii.length; i++) {
@@ -62,6 +86,9 @@ public class LobulatedCurve {
 			double r = minRadius;
 			for (int k = 0; k < degree; k++) {
 				r += amps[k]*Math.sin(Math.toRadians(phase+k*theta));
+			}
+			if (clampVar > 0) {
+				r = MathHelper.clamp_double(r, clampMin, clampMax);
 			}
 			radii[i] = r;
 		}

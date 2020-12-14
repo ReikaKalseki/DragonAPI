@@ -224,7 +224,7 @@ public class WorldLocation implements Comparable<WorldLocation> {
 		data.setInteger("z", zCoord);
 	}
 
-	public static final WorldLocation readFromNBT(NBTTagCompound data) {
+	public static final WorldLocation readTag(NBTTagCompound data) {
 		int x = data.getInteger("x");
 		int y = data.getInteger("y");
 		int z = data.getInteger("z");
@@ -237,7 +237,7 @@ public class WorldLocation implements Comparable<WorldLocation> {
 			return null;
 		NBTTagCompound data = NBT.getCompoundTag(tag);
 		if (data != null) {
-			return readFromNBT(data);
+			return readTag(data);
 		}
 		return null;
 	}

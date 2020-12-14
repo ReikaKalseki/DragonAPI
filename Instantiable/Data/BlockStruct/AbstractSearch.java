@@ -10,8 +10,10 @@
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Set;
 
 import net.minecraft.world.World;
 
@@ -48,6 +50,10 @@ public abstract class AbstractSearch {
 		return result;
 	}
 
+	public final Set<Coordinate> getTotalSearchedCoords() {
+		return Collections.unmodifiableSet(searchedCoords);
+	}
+
 	public void complete(World world, PropagationCondition propagation, TerminationCondition terminate) {
 		while (!this.tick(world, propagation, terminate)) {
 
@@ -56,6 +62,10 @@ public abstract class AbstractSearch {
 
 	protected final boolean isValidLocation(World world, int x, int y, int z, Coordinate from, PropagationCondition p, TerminationCondition c) {
 		return p.isValidLocation(world, x, y, z, from) || c.isValidTerminus(world, x, y, z);
+	}
+
+	protected ArrayList<Coordinate> getNextSearchCoordsFor(World world, Coordinate c) {
+		return (ArrayList)c.getAdjacentCoordinates();
 	}
 
 	public static interface TerminationCondition {

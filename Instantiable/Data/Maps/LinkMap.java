@@ -122,11 +122,11 @@ public class LinkMap {
 		NBTTagList li = tag.getTagList("locs", NBTTypes.COMPOUND.ID);
 		for (Object o : li.tagList) {
 			NBTTagCompound entry = (NBTTagCompound)o;
-			WorldLocation src = WorldLocation.readFromNBT(entry);
+			WorldLocation src = WorldLocation.readTag(entry);
 			NBTTagList map = tag.getTagList("map", NBTTypes.COMPOUND.ID);
 			for (Object o2 : li.tagList) {
 				NBTTagCompound nbt = (NBTTagCompound)o2;
-				WorldLocation tg = WorldLocation.readFromNBT(nbt);
+				WorldLocation tg = WorldLocation.readTag(nbt);
 				this.addLink(src, tg);
 			}
 		}

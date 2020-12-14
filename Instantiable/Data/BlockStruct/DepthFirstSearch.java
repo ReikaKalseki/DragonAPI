@@ -37,7 +37,7 @@ public class DepthFirstSearch extends AbstractSearch {
 		if (stepValue == null && terminate instanceof FixedPositionTarget)
 			stepValue = new Coordinate.DistanceComparator(((FixedPositionTarget)terminate).getTarget(), false);
 		Coordinate c = currentPath.getLast();
-		ArrayList<Coordinate> li = (ArrayList)c.getAdjacentCoordinates();
+		ArrayList<Coordinate> li = this.getNextSearchCoordsFor(world, c);
 		if (stepValue != null)
 			Collections.sort(li, stepValue);
 		for (Coordinate c2 : li) {

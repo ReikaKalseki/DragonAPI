@@ -156,7 +156,7 @@ public final class TileEntityCache<V> {
 		NBTTagList li = tag.getTagList("locs", NBTTypes.COMPOUND.ID);
 		for (Object o : li.tagList) {
 			NBTTagCompound data = (NBTTagCompound)o;
-			WorldLocation loc = WorldLocation.readFromNBT(data);
+			WorldLocation loc = WorldLocation.readTag(data);
 			TileEntity te = loc.getTileEntity();
 			try {
 				V v = (V)te;

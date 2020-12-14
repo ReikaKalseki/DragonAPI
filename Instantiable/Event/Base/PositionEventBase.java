@@ -47,6 +47,10 @@ public abstract class PositionEventBase extends Event {
 		return access.getTileEntity(xCoord, yCoord, zCoord);
 	}
 
+	public final int getLightLevel() {
+		return access.getLightBrightnessForSkyBlocks(xCoord, yCoord, zCoord, 0);
+	}
+
 	public final boolean isAir() {
 		return this.getBlock().isAir(access, xCoord, yCoord, zCoord);
 	}

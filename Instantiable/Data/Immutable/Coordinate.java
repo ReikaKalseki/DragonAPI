@@ -96,6 +96,10 @@ public final class Coordinate implements Comparable<Coordinate> {
 		this(vec.xCoord, vec.yCoord, vec.zCoord);
 	}
 
+	public Coordinate(DecimalPosition vec) {
+		this(vec.xCoord, vec.yCoord, vec.zCoord);
+	}
+
 	public Coordinate(double x, double y, double z) {
 		this(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
 	}
@@ -139,6 +143,18 @@ public final class Coordinate implements Comparable<Coordinate> {
 
 	public Coordinate offset(Coordinate c) {
 		return this.offset(c.xCoord, c.yCoord, c.zCoord);
+	}
+
+	public Coordinate setX(int x) {
+		return new Coordinate(x, yCoord, zCoord);
+	}
+
+	public Coordinate setY(int y) {
+		return new Coordinate(xCoord, y, zCoord);
+	}
+
+	public Coordinate setZ(int z) {
+		return new Coordinate(xCoord, yCoord, z);
 	}
 
 	public void writeToNBT(String tag, NBTTagCompound NBT) {

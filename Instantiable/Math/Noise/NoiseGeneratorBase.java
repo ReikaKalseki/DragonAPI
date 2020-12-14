@@ -17,6 +17,13 @@ public abstract class NoiseGeneratorBase {
 
 	public final long seed;
 
+	private NoiseGeneratorBase xNoise;
+	private NoiseGeneratorBase yNoise;
+	private NoiseGeneratorBase zNoise;
+	private double xNoiseScale;
+	private double yNoiseScale;
+	private double zNoiseScale;
+
 	protected NoiseGeneratorBase(long s) {
 		seed = s;
 	}
@@ -30,6 +37,10 @@ public abstract class NoiseGeneratorBase {
 	}
 
 	private double calculateValues(double x, double y, double z) {
+		x += this.getXDisplacement(x, y, z);
+		y += this.getYDisplacement(x, y, z);
+		z += this.getZDisplacement(x, y, z);
+
 		double val = this.calcValue(x, y, z, 1, 1);
 
 		if (!octaves.isEmpty()) {
@@ -64,5 +75,39 @@ public abstract class NoiseGeneratorBase {
 		octaves.add(new Octave(relativeFrequency, relativeAmplitude, phaseShift));
 		maxRange += relativeAmplitude;
 		return this;
+	}
+
+	public final NoiseGeneratorBase setDisplacementSimple(long seedX, double fx, long seedZ, double fz, double s) {
+		return this.setDisplacement(new SimplexNoiseGenerator(seedX).setFrequency(fx), s, null, s, new SimplexNoiseGenerator(seedZ).setFrequency(fz), s);
+	}
+
+	public final NoiseGeneratorBase setDisplacementSimple(long seedX, double fx, long seedY, double fy, long seedZ, double fz, double s) {
+		return this.setDisplacement(new SimplexNoiseGenerator(seedX).setFrequency(fx), s, new SimplexNoiseGenerator(seedY).setFrequency(fy), s, new SimplexNoiseGenerator(seedZ).setFrequency(fz), s);
+	}
+
+	public final NoiseGeneratorBase setDisplacement(NoiseGeneratorBase x, NoiseGeneratorBase y, NoiseGeneratorBase z, double s) {
+		return this.setDisplacement(x, s, y, s, z, s);
+	}
+
+	public final NoiseGeneratorBase setDisplacement(NoiseGeneratorBase x, double xs, NoiseGeneratorBase y, double ys, NoiseGeneratorBase z, double zs) {
+		xNoise = x;
+		yNoise = y;
+		zNoise = z;
+		xNoiseScale = xs;
+		yNoiseScale = ys;
+		zNoiseScale = zs;
+		return this;
+	}
+
+	public final double getXDisplacement(double x, double y, double z) {
+		return xNoise != null ? xNoise.getValue(x, y, z)*xNoiseScale : 0;
+	}
+
+	public final double getYDisplacement(double x, double y, double z) {
+		return yNoise != null ? yNoise.getValue(x, y, z)*yNoiseScale : 0;
+	}
+
+	public final double getZDisplacement(double x, double y, double z) {
+		return zNoise != null ? zNoise.getValue(x, y, z)*zNoiseScale : 0;
 	}
 }

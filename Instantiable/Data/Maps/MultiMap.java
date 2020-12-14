@@ -280,7 +280,7 @@ public final class MultiMap<K, V> {
 
 	public static interface MapDeterminator<K, V> {
 
-		public Map<? extends K, ? extends V> getMapType();
+		public Map<K, V> getMapType();
 
 	}
 
@@ -323,16 +323,16 @@ public final class MultiMap<K, V> {
 		}
 	}
 
-	public static final class ConcurrencyDeterminator implements MapDeterminator {
+	public static final class ConcurrencyDeterminator<K, V> implements MapDeterminator<K, V> {
 
 		@Override
-		public Map getMapType() {
+		public Map<K, V> getMapType() {
 			return new ConcurrentHashMap();
 		}
 
 	}
 
-	public static final class SortedDeterminator implements MapDeterminator {
+	public static final class SortedDeterminator<K, V> implements MapDeterminator<K, V> {
 
 		private final Comparator sorter;
 
@@ -345,7 +345,7 @@ public final class MultiMap<K, V> {
 		}
 
 		@Override
-		public Map getMapType() {
+		public Map<K, V> getMapType() {
 			return new TreeMap(sorter);
 		}
 

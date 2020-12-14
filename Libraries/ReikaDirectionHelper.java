@@ -427,4 +427,18 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		}
 	}
 
+	public static boolean arePerpendicular(ForgeDirection d1, ForgeDirection d2) {
+		return !areCoaxial(d1, d2);
+	}
+
+	public static boolean areCoaxial(ForgeDirection d1, ForgeDirection d2) {
+		if (d1.offsetX != 0)
+			return Math.abs(d1.offsetX) == Math.abs(d2.offsetX);
+		if (d1.offsetY != 0)
+			return Math.abs(d1.offsetY) == Math.abs(d2.offsetY);
+		if (d1.offsetZ != 0)
+			return Math.abs(d1.offsetZ) == Math.abs(d2.offsetZ);
+		return false;
+	}
+
 }

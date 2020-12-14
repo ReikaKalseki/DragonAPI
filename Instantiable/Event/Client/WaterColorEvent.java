@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,38 +10,19 @@
 package Reika.DragonAPI.Instantiable.Event.Client;
 
 import net.minecraft.world.IBlockAccess;
-import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
 
+import Reika.DragonAPI.Instantiable.Event.Base.PositionEventBase;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 
-import cpw.mods.fml.common.eventhandler.Event;
-
-
-public class WaterColorEvent extends Event {
+public class WaterColorEvent extends PositionEventBase {
 
 	public final int originalColor;
 	public int color;
 
-	public final IBlockAccess world;
-	public final int x;
-	public final int y;
-	public final int z;
-
 	public WaterColorEvent(IBlockAccess iba, int x, int y, int z, int c) {
+		super(iba, x, y, z);
 		color = originalColor = c;
-		world = iba;
-		this.x = x;
-		this.y = y;
-		this.z = z;
-	}
-
-	public BiomeGenBase getBiome() {
-		return world.getBiomeGenForCoords(x, z);
-	}
-
-	public int getLightLevel() {
-		return world.getLightBrightnessForSkyBlocks(x, y, z, 0);
 	}
 
 	public static int fire(IBlockAccess iba, int x, int y, int z) {

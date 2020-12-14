@@ -13,6 +13,8 @@ import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 
+import cpw.mods.fml.relauncher.Side;
+
 public class GrassSideIcon extends Patcher {
 
 	public GrassSideIcon() {
@@ -46,6 +48,11 @@ public class GrassSideIcon extends Patcher {
 		li.insertBefore(min, new VarInsnNode(Opcodes.ILOAD, 2));
 		li.insertBefore(min, new VarInsnNode(Opcodes.ILOAD, 3));
 		li.insertBefore(min, new VarInsnNode(Opcodes.ILOAD, 4));
+	}
+
+	@Override
+	public boolean runsOnSide(Side s) {
+		return s == Side.CLIENT;
 	}
 
 }

@@ -33,7 +33,7 @@ public enum ModList implements ModEntry, Dependency {
 	EXPANDEDREDSTONE("ExpandedRedstone"),
 	GEOSTRATA("GeoStrata"),
 	//FURRYKINGDOMS("FurryKingdoms"),
-	CRITTERPET("CritterPet"),
+	CRITTERPET("CritterPet", "Reika.CritterPet.CritterPet"),
 	VOIDMONSTER("VoidMonster"),
 	USEFULTNT("UsefulTNT"),
 	METEORCRAFT("MeteorCraft"),

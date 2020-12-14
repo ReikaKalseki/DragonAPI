@@ -130,6 +130,12 @@ public class Spline {
 		// Test whether the shape is open or closed by checking to see if
 		// the first point intersects with the last point.  M and Z are ignored.
 		if (closed) {
+			/**
+		 	Reika fix: this algorithm above assumes that "closed" is only and always true if start and end points match, rather than just a
+			boolean flag indicating "try and close the loop". As such it needs correction, though the general logic still applies.
+			 */
+			vertices.add(vertices.get(0));
+
 			// Use the second and second from last points as control points.
 			// get the second point.
 			DecimalPosition p2 = vertices.get(1).copy();

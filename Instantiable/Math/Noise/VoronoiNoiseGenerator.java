@@ -206,7 +206,15 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 
 	/** RAW distance */
 	public double getEdgeRatio(double x, double z) {
+
+		//DecimalPosition closest = this.getClosestRoot(x, 0, z);
+		//x = closest.xCoord;
+		//z = closest.zCoord;
+
 		this.getValue(x, 0, z);
+
+		x += this.getXDisplacement(x, 0, z);
+		z += this.getZDisplacement(x, 0, z);
 
 		DecimalPosition candidate1 = candidateList.get(0).position;
 		DecimalPosition candidate2 = candidateList.get(1).position;

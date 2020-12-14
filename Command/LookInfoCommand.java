@@ -23,6 +23,7 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
@@ -55,7 +56,7 @@ public class LookInfoCommand extends DragonCommandBase {
 			TileEntity te = ep.worldObj.getTileEntity(x, y, z);
 			if (te != null) {
 				this.sendChatToSender(ics, "TileEntity: "+te.getClass());
-				if (ReikaPlayerAPI.isAdmin(ep)) {
+				if (DragonAPICore.isSinglePlayer() || ReikaPlayerAPI.isAdmin(ep)) {
 					this.sendChatToSender(ics, "Tile NBT: "+te.getClass());
 					NBTTagCompound tag = new NBTTagCompound();
 					te.writeToNBT(tag);
