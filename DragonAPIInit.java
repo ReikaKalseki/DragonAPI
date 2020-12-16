@@ -34,6 +34,7 @@ import net.minecraft.potion.Potion;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.ForgeChunkManager;
 import net.minecraftforge.common.ForgeModContainer;
@@ -88,6 +89,7 @@ import Reika.DragonAPI.Command.GetLatencyCommand;
 import Reika.DragonAPI.Command.ToggleBlockChangePacketCommand;
 import Reika.DragonAPI.Exception.InvalidBuildException;
 import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.Extras.IconPrefabs;
 import Reika.DragonAPI.Extras.LoginHandler;
 import Reika.DragonAPI.Extras.ReplacementCraftingHandler;
 import Reika.DragonAPI.Extras.ReplacementSmeltingHandler;
@@ -190,9 +192,11 @@ import cpw.mods.fml.common.event.FMLServerAboutToStartEvent;
 import cpw.mods.fml.common.event.FMLServerStartedEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppedEvent;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 @Mod(modid = "DragonAPI", version = "v@MAJOR_VERSION@@MINOR_VERSION@", certificateFingerprint = "@GET_FINGERPRINT@", dependencies=DragonAPICore.dependencies)
 public class DragonAPIInit extends DragonAPIMod {
@@ -829,6 +833,17 @@ public class DragonAPIInit extends DragonAPIMod {
 		Method inst = c.getMethod("getInstance", null);
 		ModHandlerBase h = (ModHandlerBase)inst.invoke(null);
 		mod.registerHandler(h, id);
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent
+	public void setupExtraIcons(TextureStitchEvent.Pre event) {
+		logger.log("Loading Additional Icons");
+
+		if (event.map.getTextureType() == 0) {
+			IconPrefabs.registerAll(event.map);
+		}
+
 	}
 
 	public static boolean canLoadHandlers() {
