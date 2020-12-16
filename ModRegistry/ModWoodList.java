@@ -101,7 +101,7 @@ public enum ModWoodList implements TreeType {
 	LIGHTED(ModList.CHROMATICRAFT,	0xA05F36, 0xFFD793, 10, 14, "GLOWLOG", "GLOWLEAF", "GLOWSAPLING", 0, new int[]{0,1,2,3,4}, 0, VarType.INSTANCE),
 	SLIME(ModList.TINKERER,			0x68FF7A, 0x8EFFE1, 12, 15, "slimeGel", "slimeLeaves", "slimeSapling", 1, 0, 0, VarType.INSTANCE),
 	TAINTED(ModList.FORBIDDENMAGIC,	0x40374B, 0x530D7B,	7, 12, "taintLog", "taintLeaves", "taintSapling", new int[]{0,4,8}, 0, 0, VarType.INSTANCE),
-	PINKBIRCH(ModList.CRITTERPET,	0xE5E4DB, 0xF795B5, 24, 96, "log", "leaves", null, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, 0, VarType.INSTANCE),
+	PINKBIRCH(ModList.SATISFORESTRY,0xE5E4DB, 0xF795B5, 24, 96, "LOG", "LEAVES", null, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, VarType.INSTANCE),
 	;
 
 	private ModList mod;
@@ -187,8 +187,8 @@ public enum ModWoodList implements TreeType {
 				case ITEMSTACK: {
 					ItemStack wood = this.loadItemStack(cl, blockVar);
 					ItemStack leaf = this.loadItemStack(cl, leafVar);
-					ItemStack sapling = this.loadItemStack(cl, saplingVar);
-					if (wood == null || leaf == null || sapling == null) {
+					ItemStack sapling = saplingVar == null ? null : this.loadItemStack(cl, saplingVar);
+					if (wood == null || leaf == null || (saplingVar != null && sapling == null)) {
 						DragonAPICore.logError("Error loading "+this.getLabel()+": Block not instantiated!");
 						return;
 					}
@@ -200,8 +200,8 @@ public enum ModWoodList implements TreeType {
 				case INSTANCE: {
 					Block wood_b = this.loadBlock(cl, blockVar);
 					Block leaf_b = this.loadBlock(cl, leafVar);
-					Block sapling_b = this.loadBlock(cl, saplingVar);
-					if (wood_b == null || leaf_b == null || sapling_b == null) {
+					Block sapling_b = saplingVar == null ? null : this.loadBlock(cl, saplingVar);
+					if (wood_b == null || leaf_b == null || (saplingVar != null && sapling_b == null)) {
 						DragonAPICore.logError("Error loading "+this.getLabel()+": Block not instantiated!");
 						return;
 					}
@@ -213,8 +213,8 @@ public enum ModWoodList implements TreeType {
 				case REGISTRY: {
 					Block wood_b = GameRegistry.findBlock(mod.modLabel, blockVar);
 					Block leaf_b = GameRegistry.findBlock(mod.modLabel, leafVar);
-					Block sapling_b = GameRegistry.findBlock(mod.modLabel, saplingVar);
-					if (wood_b == null || leaf_b == null || sapling_b == null) {
+					Block sapling_b = saplingVar == null ? null : GameRegistry.findBlock(mod.modLabel, saplingVar);
+					if (wood_b == null || leaf_b == null || (saplingVar != null && sapling_b == null)) {
 						DragonAPICore.logError("Error loading "+this.getLabel()+": Block not instantiated!");
 						return;
 					}
@@ -277,7 +277,8 @@ public enum ModWoodList implements TreeType {
 
 	private Block loadBlock(Class cl, String field) throws ReflectiveOperationException {
 		switch(mod) {
-			case CHROMATICRAFT: {
+			case CHROMATICRAFT:
+			case SATISFORESTRY: {
 				Field f = cl.getField(field);
 				Method block = cl.getMethod("getBlockInstance");
 				Object entry = f.get(null);
@@ -313,8 +314,10 @@ public enum ModWoodList implements TreeType {
 			sb.append(" (LOG "+blockID+":"+Arrays.toString(blockMeta)+";");
 			sb.append(" ");
 			sb.append("LEAF "+leafID+":"+Arrays.toString(leafMeta)+";");
-			sb.append(" ");
-			sb.append("SAPLING "+saplingID+":"+saplingMeta);
+			if (saplingID != null) {
+				sb.append(" ");
+				sb.append("SAPLING "+saplingID+":"+saplingMeta);
+			}
 			sb.append(")");
 		}
 		else {
@@ -471,7 +474,7 @@ public enum ModWoodList implements TreeType {
 	}
 
 	public ItemStack getCorrespondingSapling() {
-		return new ItemStack(saplingID, 1, saplingMeta);
+		return saplingID == null ? null : new ItemStack(saplingID, 1, saplingMeta);
 	}
 
 	public int getSaplingMeta() {
@@ -557,7 +560,8 @@ public enum ModWoodList implements TreeType {
 				for (int k = 0; k < leafmetas.length; k++) {
 					leafMappings.put(leaf, leafmetas[k], w);
 				}
-				saplingMappings.put(sapling, saplingMeta, w);
+				if (sapling != null)
+					saplingMappings.put(sapling, saplingMeta, w);
 
 				modMappings.addValue(w.mod, w);
 			}

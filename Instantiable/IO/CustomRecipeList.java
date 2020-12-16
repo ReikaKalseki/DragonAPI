@@ -21,6 +21,7 @@ import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
 import net.minecraftforge.oredict.OreDictionary;
@@ -65,7 +66,7 @@ public final class CustomRecipeList {
 	private LuaBlockDatabase data = new LuaBlockDatabase();
 	private final HashSet<LuaBlock> entries = new HashSet();
 
-	private final HashMap<String, Class> lookups = new HashMap();
+	private static final HashMap<String, Class> lookups = new HashMap();
 	private static final HashMap<String, DelegateLookup> delegateCalls = new HashMap();
 
 	static {
@@ -85,7 +86,7 @@ public final class CustomRecipeList {
 		recipeType = type;
 	}
 
-	public void addFieldLookup(String key, Class c) {
+	public static void addFieldLookup(String key, Class c) {
 		lookups.put(key, c);
 	}
 
@@ -142,15 +143,15 @@ public final class CustomRecipeList {
 		return ".recipes_"+recipeType;
 	}
 
-	public final Object parseObjectString(String item) {
+	public static final Object parseObjectString(String item) {
 		if (item.equals("null") || item.equals("empty") || item.equals("~") || item.equals("-"))
 			return null;
 		if (item.startsWith("ore:"))
 			return item.substring("ore:".length());
-		return this.parseItemString(item, null, true);
+		return parseItemString(item, null, true);
 	}
 
-	public final Collection<ItemStack> parseItemCollection(Collection<String> in, boolean tolerateNull) {
+	public static final Collection<ItemStack> parseItemCollection(Collection<String> in, boolean tolerateNull) {
 		Collection<ItemStack> c = new ArrayList();
 		for (String s : in) {
 			if (s.startsWith("ore:")) {
@@ -162,7 +163,7 @@ public final class CustomRecipeList {
 					c.addAll(li);
 			}
 			else {
-				ItemStack is = this.parseItemString(s, null, tolerateNull);
+				ItemStack is = parseItemString(s, null, tolerateNull);
 				if (is != null)
 					c.add(is);
 				else if (!tolerateNull)
@@ -172,7 +173,7 @@ public final class CustomRecipeList {
 		return c;
 	}
 
-	public final ItemStack parseItemString(String s, LuaBlock nbt, boolean tolerateNull) {
+	public static final ItemStack parseItemString(String s, LuaBlock nbt, boolean tolerateNull) {
 		if (Strings.isNullOrEmpty(s)) {
 			if (tolerateNull)
 				return null;
@@ -234,7 +235,7 @@ public final class CustomRecipeList {
 		return ret;
 	}
 
-	public final IRecipe parseCraftingRecipe(LuaBlock lb, ItemStack output) {
+	public static final IRecipe parseCraftingRecipe(LuaBlock lb, ItemStack output) {
 		boolean shaped = lb.getBoolean("shaped");
 		if (shaped) {
 			String input1 = lb.containsKey("input_top") ? lb.getString("input_top").replaceAll(" ", "") : null;
@@ -273,7 +274,7 @@ public final class CustomRecipeList {
 			for (int i = 0; i < rows.size(); i++) {
 				for (int k = 0; k < w; k++) {
 					String item = rows.get(i)[k];
-					array[i][k] = this.parseObjectString(item);
+					array[i][k] = parseObjectString(item);
 				}
 			}
 			return new ShapedOreRecipe(output, ReikaRecipeHelper.decode2DArray(array));
@@ -286,7 +287,7 @@ public final class CustomRecipeList {
 			Object[] inputs = new Object[parts.length];
 			for (int i = 0; i < parts.length; i++) {
 				String s = parts[i];
-				Object o = this.parseObjectString(s);
+				Object o = parseObjectString(s);
 				if (o == null) {
 					throw new IllegalArgumentException("You cannot have blank spaces in shapeless recipes!");
 				}
@@ -294,6 +295,14 @@ public final class CustomRecipeList {
 			}
 			return new ShapelessOreRecipe(output, inputs);
 		}
+	}
+
+	public static final String fullID(ItemStack is) {
+		if (is == null)
+			return "[null]";
+		else if (is.getItem() == null)
+			return "[null-item stack]";
+		return is.stackSize+"x"+Item.itemRegistry.getNameForObject(is.getItem())+"@"+is.getItemDamage()+"{"+is.stackTagCompound+"}["+ReikaItemHelper.getRegistrantMod(is)+"]";
 	}
 
 	public static interface DelegateLookup {

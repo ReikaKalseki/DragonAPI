@@ -53,6 +53,7 @@ public class LookInfoCommand extends DragonCommandBase {
 			this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Data for block at "+x+", "+y+", "+z+":");
 			this.sendChatToSender(ics, "Block ID: "+Block.getIdFromBlock(b)+" = '"+b.getUnlocalizedName()+"', C="+b.getClass());
 			this.sendChatToSender(ics, "Metadata: "+ep.worldObj.getBlockMetadata(x, y, z));
+			this.sendChatToSender(ics, "H="+b.getBlockHardness(ep.worldObj, x, y, z)+"/E="+b.getExplosionResistance(null, ep.worldObj, x, y, z, x, y, z)+"/L="+b.getLightValue(ep.worldObj, x, y, z)+"/O="+b.getLightOpacity(ep.worldObj, x, y, z));
 			TileEntity te = ep.worldObj.getTileEntity(x, y, z);
 			if (te != null) {
 				this.sendChatToSender(ics, "TileEntity: "+te.getClass());

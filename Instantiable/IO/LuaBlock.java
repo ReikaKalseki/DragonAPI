@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.IO;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -28,6 +29,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
@@ -114,7 +116,7 @@ public abstract class LuaBlock {
 	}
 
 	public final boolean getBoolean(String key) {
-		return this.containsKey(key) ? Boolean.parseBoolean(this.getString(key)) : false;
+		return this.containsKeyInherit(key) ? Boolean.parseBoolean(this.getString(key)) : false;
 	}
 
 	public final int getInt(String key) {
@@ -259,6 +261,8 @@ public abstract class LuaBlock {
 		return sb.toString();
 	}
 
+	//public abstract LuaBlock createChild(String name);
+
 	private static class BasicLuaBlock extends LuaBlock {
 
 		protected BasicLuaBlock(String n, LuaBlock lb, LuaBlockDatabase db) {
@@ -312,7 +316,7 @@ public abstract class LuaBlock {
 
 	public static class LuaBlockDatabase {
 
-		private LuaBlock block = new BasicLuaBlock("top", null, this);
+		private LuaBlock activeBlock = new BasicLuaBlock("top", null, this);
 
 		private final HashMap<String, LuaBlock> rawData = new HashMap();
 
@@ -338,14 +342,21 @@ public abstract class LuaBlock {
 					bracketLevel++;
 					if (s.endsWith(" = {"))
 						s = s.substring(0, s.length()-4);
-					block = new BasicLuaBlock(s, block, this);
+					try {
+						activeBlock = this.createChild(s, activeBlock);
+					}
+					catch (Exception e) {
+						DragonAPICore.logError("Failed to construct proper child LuaBlock for "+s+"' in "+this+": ");
+						e.printStackTrace();
+						activeBlock = new BasicLuaBlock(s, activeBlock, this);
+					}
 				}
 				else if (s.contains("}")) {
-					block = block.getParent();
+					activeBlock = activeBlock.getParent();
 					bracketLevel--;
 				}
 
-				if (!s.equals("{") && !s.equals("}") && !s.equals(block.name)) {
+				if (!s.equals("{") && !s.equals("}") && !s.equals(activeBlock.name)) {
 					s = s.replaceAll("\"", "");
 					String[] parts = s.split("=");
 					if (parts.length == 2) {
@@ -355,16 +366,23 @@ public abstract class LuaBlock {
 						String s2 = parts[1];
 						if (s2.charAt(0) == ' ')
 							s2 = s2.substring(1);
-						block.putData(s1, s2);
+						activeBlock.putData(s1, s2);
 					}
 					else
-						block.putData(String.valueOf(block.data.size()), s);
+						activeBlock.putData(String.valueOf(activeBlock.data.size()), s);
 				}
 			}
 
 			if (bracketLevel != 0) {
 				throw new IllegalArgumentException("Malformed file: bracket mismatch");
 			}
+		}
+
+		private LuaBlock createChild(String s, LuaBlock parent) throws Exception {
+			Class<? extends LuaBlock> c = parent.getChildBlockType();
+			Constructor<LuaBlock> ctr = (Constructor<LuaBlock>)c.getConstructor(String.class, LuaBlock.class, LuaBlockDatabase.class);
+			LuaBlock child = ctr.newInstance(s, parent, this);
+			return child;
 		}
 
 		private String cleanString(String s) {
@@ -400,7 +418,7 @@ public abstract class LuaBlock {
 		}
 
 		public LuaBlock getRootBlock() {
-			return block.getTopParent();
+			return activeBlock.getTopParent();
 		}
 
 		public LuaBlock createRootBlock() {
@@ -563,6 +581,10 @@ public abstract class LuaBlock {
 		if (indent == 1)
 			li.add("}");
 		return li;
+	}
+
+	public Class<? extends LuaBlock> getChildBlockType() {
+		return this.getClass();
 	}
 
 	private static class OutputSorter implements Comparator<String> {

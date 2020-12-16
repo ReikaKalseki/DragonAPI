@@ -152,8 +152,7 @@ public final class TreeReader extends BlockArray {
 			search.add(c);
 		}
 		else {
-			failed.add(c);
-		}
+			failed.add(c);		}
 	}
 
 	public int getNumberLeaves() {
@@ -239,7 +238,7 @@ public final class TreeReader extends BlockArray {
 			return new BlockKey(dyeSaplingID, dyeMeta);
 		if (isRainbowTree)
 			return new BlockKey(rainbowSaplingID);
-		return tree != null ? new BlockKey(tree.getSaplingID(), tree.getSaplingMeta()) : null;
+		return tree != null && tree.getSaplingID() != null ? new BlockKey(tree.getSaplingID(), tree.getSaplingMeta()) : null;
 	}
 
 	@Override

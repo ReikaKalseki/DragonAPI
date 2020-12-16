@@ -180,11 +180,13 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 
 	@Override
 	public void registerBlockIcons(IIconRegister ico) {
-		for (int i = 0; i < 16; i++) {
+		for (int i = 0; i < this.getMetaLimit(); i++) {
 			icon[i][0] = ico.registerIcon(this.getFancyGraphicsIcon(i));
 			icon[i][1] = ico.registerIcon(this.getFastGraphicsIcon(i));
 		}
 	}
+
+	protected abstract int getMetaLimit();
 
 	@Override
 	public final boolean isLeaves(IBlockAccess world, int x, int y, int z) {

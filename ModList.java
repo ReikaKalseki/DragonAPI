@@ -47,6 +47,7 @@ public enum ModList implements ModEntry, Dependency {
 	TREECLIMBING("TreeClimbing"),
 	ARCHISECTIONS("ArchiSections"),
 	LOOTTWEAKS("LootTweaks"),
+	SATISFORESTRY("Satisforestry", "Reika.Satisforestry.SFBlocks"),
 	BUILDCRAFT("BuildCraft|Core", "buildcraft.BuildCraftCore"),
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
 	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),
@@ -276,7 +277,7 @@ public enum ModList implements ModEntry, Dependency {
 	}
 
 	public boolean isReikasMod() {
-		return this.ordinal() <= ARCHISECTIONS.ordinal();
+		return this.ordinal() <= SATISFORESTRY.ordinal();
 	}
 
 	public void registerHandler(ModHandlerBase h, String id) {
