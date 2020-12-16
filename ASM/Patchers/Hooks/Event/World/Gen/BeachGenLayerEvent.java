@@ -13,15 +13,11 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnList;
-import org.objectweb.asm.tree.JumpInsnNode;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
-import org.objectweb.asm.tree.VarInsnNode;
-
-import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
-import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 
@@ -34,64 +30,35 @@ public class BeachGenLayerEvent extends Patcher {
 	@Override
 	protected void apply(ClassNode cn) {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_75904_a", "getInts", "(IIII)[I");
+		this.applyToMethod(cn, m);
+		m = ReikaASMHelper.getMethodByName(cn, "func_151632_a", "func_151632_a", "([I[IIIIII)V");
+		this.applyToMethod(cn, m);
+	}
 
-		//ReikaASMHelper.writeClassFile(cn, "C:/GenLayerShore_preASM");
+	private void applyToMethod(ClassNode cn, MethodNode m) {
+		for (int i = m.instructions.size()-1; i >= 0; i--) {
+			AbstractInsnNode ain = m.instructions.get(i);
+			if (ain.getOpcode() == Opcodes.IASTORE) {
+				this.addHook(cn, m, ain, i);
+			}
+		}
 		//ReikaASMHelper.log(ReikaASMHelper.clearString(m.instructions));
-
-		int version = ReikaASMHelper.forgeVersion_Build;
-
-		if (version == 1614) {
-			this.apply_1614(m);
-		}
-		else if (version == 1558) {
-			this.apply_1558(cn, m);
-		}
-		else {
-			throw new InstallationException("DragonAPI", "Unsupported Forge version! Use either 1558 or 1614!");
-		}
 	}
 
-	private void apply_1558(ClassNode cn, MethodNode m) {
-		String s = FMLForgePlugin.RUNTIME_DEOBF ? "field_150574_L" : "jungleEdge";
-		AbstractInsnNode ref = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.GETSTATIC, "net/minecraft/world/biome/BiomeGenBase", s, "Lnet/minecraft/world/biome/BiomeGenBase;");
-		int idx = m.instructions.indexOf(ref);
-		AbstractInsnNode first = ReikaASMHelper.getFirstOpcodeAfter(m.instructions, idx, Opcodes.ILOAD);
-		JumpInsnNode last = (JumpInsnNode)ReikaASMHelper.getNthOpcodeAfter(m.instructions, 3, idx, Opcodes.IF_ICMPEQ);
-
-		ReikaASMHelper.deleteFrom(cn, m.instructions, first.getNext(), last.getPrevious());
+	private int addHook(ClassNode cn, MethodNode m, AbstractInsnNode ain, int idx) {
+		AbstractInsnNode ref = ain.getPrevious(); //loading the beach ID
+		if (ref.getOpcode() == Opcodes.GETFIELD || ref.getOpcode() == Opcodes.INVOKEVIRTUAL)
+			ref = ref.getPrevious();
 		InsnList li = new InsnList();
-		//li.add(new VarInsnNode(Opcodes.ILOAD, 9));
-		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/GenLayerBeachEvent", "fire", "(I)Z", false));
-		//li.add(new JumpInsnNode(Opcodes.IFEQ, ));
-
-		last.setOpcode(Opcodes.IFEQ);
-		m.instructions.insert(first, li);
-
-		first = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.GETSTATIC);
-		ref = first.getPrevious();
-		m.instructions.remove(first.getNext());
-		m.instructions.remove(first);
-
-		li = new InsnList();
-
-		li.add(new VarInsnNode(Opcodes.ILOAD, 9));
-		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/GenLayerBeachEvent$BeachTypeEvent", "fire", "(I)I", false));
-
-		m.instructions.insert(ref, li);
-	}
-
-	private void apply_1614(MethodNode m) {
-		AbstractInsnNode ain = ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.GETFIELD);
-		AbstractInsnNode ref = ain.getNext();
-		m.instructions.remove(ain.getPrevious());
-		m.instructions.remove(ain);
-
-		InsnList li = new InsnList();
-
-		li.add(new VarInsnNode(Opcodes.ILOAD, 9));
-		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/GenLayerBeachEvent$BeachTypeEvent", "fire", "(I)I", false));
-
+		li.add(new InsnNode(Opcodes.SWAP));
+		li.add(new InsnNode(Opcodes.DUP));
+		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/GenLayerBeachEvent", "setIntCache", "([I)V", false));
+		li.add(new InsnNode(Opcodes.SWAP));
+		li.add(new InsnNode(Opcodes.DUP));
+		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/GenLayerBeachEvent", "setIntIndex", "(I)V", false));
 		m.instructions.insertBefore(ref, li);
+		m.instructions.insertBefore(ain, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/GenLayerBeachEvent", "fire", "(I)I", false));
+		return idx+li.size()+2;
 	}
 
 	/*

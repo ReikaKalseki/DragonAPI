@@ -210,7 +210,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 
 		@Override
 		public boolean isEntityApplicable(Entity e) {
-			return e.getClass() == classType;
+			return e.getClass() == classType || classType.isAssignableFrom(e.getClass());
 		}
 
 	}
@@ -296,9 +296,9 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		@Override
 		public boolean isEntityApplicable(Entity e) {
 			for (IEntitySelector ie : callers)
-				if (!ie.isEntityApplicable(e))
-					return false;
-			return true;
+				if (ie.isEntityApplicable(e))
+					return true;
+			return false;
 		}
 
 	}

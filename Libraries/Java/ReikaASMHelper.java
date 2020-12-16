@@ -387,10 +387,14 @@ public class ReikaASMHelper {
 	private static String printInsnList(Iterator<AbstractInsnNode> it) {
 		StringBuilder sb = new StringBuilder();
 		sb.append("{\n");
+		int i = 0;
 		while (it.hasNext()) {
 			AbstractInsnNode ain = it.next();
+			sb.append(i);
+			sb.append(": ");
 			sb.append(clearString(ain));
 			sb.append("");
+			i++;
 		}
 		sb.append("\n}");
 		return sb.toString();
@@ -1385,6 +1389,14 @@ public class ReikaASMHelper {
 		}
 		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ownerNew, nameNew, sig, false));
 		m.instructions.add(new InsnNode(getOpcodeForMethodReturn(m)));
+	}
+
+	public static ArrayList<AbstractInsnNode> subList(InsnList li, int from, int to) {
+		ArrayList<AbstractInsnNode> ret = new ArrayList();
+		for (int i = from; i <= to; i++) {
+			ret.add(li.get(i));
+		}
+		return ret;
 	}
 
 	public static MultiMap<String, Patcher> getPatchers(String mod, String pack) {

@@ -380,7 +380,8 @@ public abstract class LuaBlock {
 
 		private LuaBlock createChild(String s, LuaBlock parent) throws Exception {
 			Class<? extends LuaBlock> c = parent.getChildBlockType();
-			Constructor<LuaBlock> ctr = (Constructor<LuaBlock>)c.getConstructor(String.class, LuaBlock.class, LuaBlockDatabase.class);
+			Constructor<LuaBlock> ctr = (Constructor<LuaBlock>)c.getDeclaredConstructor(String.class, LuaBlock.class, LuaBlockDatabase.class);
+			ctr.setAccessible(true);
 			LuaBlock child = ctr.newInstance(s, parent, this);
 			return child;
 		}
