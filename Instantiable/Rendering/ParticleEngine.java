@@ -34,6 +34,8 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Extras.ThrottleableEffectRenderer;
 import Reika.DragonAPI.Extras.ThrottleableEffectRenderer.CustomEffectRenderer;
 import Reika.DragonAPI.Instantiable.Data.Maps.PluralMap;
+import Reika.DragonAPI.Instantiable.Effects.EntityBlurFX;
+import Reika.DragonAPI.Instantiable.Effects.EntityFloatingSeedsFX;
 import Reika.DragonAPI.Interfaces.Entity.CustomRenderFX;
 import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
@@ -65,11 +67,25 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 	private boolean isRendering;
 	private boolean isTicking;
 
+	public static final ParticleEngine defaultCustomEngine = new ParticleEngine() {
+
+		@Override
+		protected void registerClasses() {
+			ThrottleableEffectRenderer.getRegisteredInstance().registerDelegateRenderer(EntityBlurFX.class, this);
+			ThrottleableEffectRenderer.getRegisteredInstance().registerDelegateRenderer(EntityFloatingSeedsFX.class, this);
+		}
+
+	};
+
+	static {
+		defaultCustomEngine.register();
+	}
+
 	protected ParticleEngine() {
 		super(null, null);
 	}
 
-	public void register() {
+	public final void register() {
 		MinecraftForge.EVENT_BUS.register(this);
 		FMLCommonHandler.instance().bus().register(this);
 		this.registerClasses();
@@ -77,13 +93,17 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 
 	protected abstract void registerClasses();
 
+	public final void registerAdditionalClass(Class<? extends EntityFX> c) {
+		ThrottleableEffectRenderer.getRegisteredInstance().registerDelegateRenderer(c, this);
+	}
+
 	@Override
-	public String getStatistics() {
+	public final String getStatistics() {
 		return this.getParticleCount()+" Particles, "+keyMap.size()+" keys";
 	}
 
 	@Override
-	public void renderParticles(Entity entity, float frame) {
+	public final void renderParticles(Entity entity, float frame) {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -104,7 +124,7 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 	}
 
 	@Override
-	public void addEffect(EntityFX fx) {
+	public final void addEffect(EntityFX fx) {
 		//int layer = fx.getFXLayer();
 		//int dim = world.provider.dimensionId;
 		if (isRendering) {
@@ -123,7 +143,7 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 		this.addParticle(rm, fx);
 	}
 
-	private void addParticle(RenderKey rm, EntityFX fx) {
+	private final void addParticle(RenderKey rm, EntityFX fx) {
 		ParticleList li = particles.get(rm);
 		if (li == null) {
 			li = new ParticleList(rm);
@@ -132,7 +152,7 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 		li.addParticle(fx);
 	}
 
-	private RenderKey getOrCreateKey(TextureMode tex, RenderMode rm) {
+	private final RenderKey getOrCreateKey(TextureMode tex, RenderMode rm) {
 		RenderKey rk = keyMap.get(tex, rm);
 		if (rk == null) {
 			rk = new RenderKey(tex, rm);
@@ -142,7 +162,7 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 	}
 
 	@Override
-	public void updateEffects() {
+	public final void updateEffects() {
 		Minecraft mc = FMLClientHandler.instance().getClient();
 		if (mc.theWorld == null)
 			return;
@@ -161,12 +181,12 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 	}
 
 	@Override
-	public void clearEffects(World world) {
+	public final void clearEffects(World world) {
 		particles.clear();
 	}
 
 	@Override
-	public int getParticleCount() {
+	public final int getParticleCount() {
 		int ret = 0;
 		for (ParticleList li : particles.values()) {
 			ret += li.particles.size(); //not count since this is for debug
@@ -387,7 +407,7 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 
 	}
 
-	public static class RenderMode {
+	public static final class RenderMode {
 
 		private final boolean[] flags = new boolean[RenderModeFlags.list.length];
 
