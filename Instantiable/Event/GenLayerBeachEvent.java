@@ -9,55 +9,31 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.MinecraftForge;
-
-import Reika.DragonAPI.DragonAPICore;
 
 import cpw.mods.fml.common.eventhandler.Event;
 
 public class GenLayerBeachEvent extends Event {
 
-	private static int[] cachedInts;
-	private static int cachedIndex;
-	private static boolean readyToCall = true;
-
-	public final int originalBiomeID;
+	public final BiomeGenBase originalBiomeID;
 	public final int plannedBeachID;
 	public int beachIDToPlace;
 
-	public GenLayerBeachEvent(int plan) {
-		originalBiomeID = cachedInts[cachedIndex];
+	public GenLayerBeachEvent(BiomeGenBase orig, int plan) {
+		originalBiomeID = orig;
 		plannedBeachID = plan;
 		beachIDToPlace = plan;
 	}
 
 	public void deleteBeach() {
-		beachIDToPlace = originalBiomeID;
+		beachIDToPlace = originalBiomeID.biomeID;
 	}
 
-	public static synchronized void setIntCache(int[] arr) {
-		while (!readyToCall) {
-			try {
-				DragonAPICore.log("Caught concurrent shore genlayer calls, pausing to allow unstacking");
-				Thread.sleep(10);
-			}
-			catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
-		readyToCall = false;
-		cachedInts = arr;
-	}
-
-	public static synchronized void setIntIndex(int idx) {
-		readyToCall = false;
-		cachedIndex = idx;
-	}
-
-	public static synchronized int fire(int place) {
-		GenLayerBeachEvent evt = new GenLayerBeachEvent(place);
+	public static int fire(BiomeGenBase biome, int place) {
+		GenLayerBeachEvent evt = new GenLayerBeachEvent(biome, place);
 		MinecraftForge.EVENT_BUS.post(evt);
-		readyToCall = true;
+		//DragonAPICore.log("Wanted to place beach "+BiomeGenBase.biomeList[place].biomeName+" in "+biome.biomeName+", changed to "+BiomeGenBase.biomeList[evt.beachIDToPlace].biomeName);
 		return evt.beachIDToPlace;
 	}
 

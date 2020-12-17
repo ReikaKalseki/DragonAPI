@@ -50,7 +50,7 @@ public abstract class PacketTarget {
 	public static final class OtherPlayersTarget extends CompoundPlayerTarget {
 
 		public OtherPlayersTarget(EntityPlayer ep, double r) {
-			super(ep.worldObj.getEntitiesWithinAABBExcludingEntity(ep, ReikaAABBHelper.getEntityCenteredAABB(ep, r), new ReikaEntityHelper.ClassEntitySelector(EntityPlayerMP.class)));
+			super(ep.worldObj.getEntitiesWithinAABBExcludingEntity(ep, ReikaAABBHelper.getEntityCenteredAABB(ep, r), new ReikaEntityHelper.ClassEntitySelector(EntityPlayerMP.class, true)));
 		}
 
 	}

@@ -203,14 +203,16 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	public static final class ClassEntitySelector implements IEntitySelector {
 
 		private final Class classType;
+		private final boolean exactMatch;
 
-		public ClassEntitySelector(Class c) {
+		public ClassEntitySelector(Class c, boolean exact) {
 			classType = c;
+			exactMatch = exact;
 		}
 
 		@Override
 		public boolean isEntityApplicable(Entity e) {
-			return e.getClass() == classType || classType.isAssignableFrom(e.getClass());
+			return exactMatch ? e.getClass() == classType : classType.isAssignableFrom(e.getClass());
 		}
 
 	}
