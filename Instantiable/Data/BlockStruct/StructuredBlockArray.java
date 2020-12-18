@@ -9,9 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -61,8 +61,8 @@ public class StructuredBlockArray extends BlockArray {
 	}
 
 	@Override
-	public Collection<Coordinate> keySet() {
-		return Collections.unmodifiableCollection(data.keySet());
+	public Set<Coordinate> keySet() {
+		return Collections.unmodifiableSet(data.keySet());
 	}
 
 	@Override

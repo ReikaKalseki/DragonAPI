@@ -16,6 +16,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -261,8 +262,12 @@ public class BlockArray implements Iterable<Coordinate> {
 		return blocks.get(n);
 	}
 
-	public Collection<Coordinate> keySet() {
-		return Collections.unmodifiableCollection(blocks);
+	public Set<Coordinate> keySet() {
+		return Collections.unmodifiableSet(keys);
+	}
+
+	public List<Coordinate> list() {
+		return Collections.unmodifiableList(blocks);
 	}
 
 	public Coordinate getNextAndMoveOn() {

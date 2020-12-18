@@ -248,6 +248,10 @@ public final class DecimalPosition implements Comparable<DecimalPosition> {
 		return new DecimalPosition(xCoord, yCoord, zCoord);
 	}
 
+	public DecimalPosition to2D() {
+		return new DecimalPosition(xCoord, 0, zCoord);
+	}
+
 	public static DecimalPosition interpolate(DecimalPosition p1, DecimalPosition p2, double f) {
 		return interpolate(p1.xCoord, p1.yCoord, p1.zCoord, p2.xCoord, p2.yCoord, p2.zCoord, f);
 	}
