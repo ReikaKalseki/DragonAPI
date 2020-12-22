@@ -120,7 +120,18 @@ public abstract class LuaBlock {
 	}
 
 	public final int getInt(String key) {
-		return this.containsKeyInherit(key) ? Integer.parseInt(this.getString(key)) : 0;
+		return this.containsKeyInherit(key) ? this.parseInt(this.getString(key)) : 0;
+	}
+
+	private int parseInt(String s) {
+		if (s.startsWith("0x"))
+			return Integer.parseInt(s.substring(2), 16);
+		else if (s.startsWith("0b"))
+			return Integer.parseInt(s.substring(2), 2);
+		else if (s.startsWith("0o"))
+			return Integer.parseInt(s.substring(2), 8);
+		else
+			return Integer.decode(s);
 	}
 
 	public final long getLong(String key) {
@@ -145,6 +156,18 @@ public abstract class LuaBlock {
 
 	public final Collection<String> getDataValues() {
 		return Collections.unmodifiableCollection(data.values());
+	}
+
+	public final void putData(String key, boolean val) {
+		this.putData(key, String.valueOf(val));
+	}
+
+	public final void putData(String key, float val) {
+		this.putData(key, String.valueOf(val));
+	}
+
+	public final void putData(String key, int val) {
+		this.putData(key, String.valueOf(val));
 	}
 
 	public final void putData(String key, String val) {

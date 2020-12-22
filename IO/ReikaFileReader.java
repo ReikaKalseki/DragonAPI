@@ -265,7 +265,7 @@ public class ReikaFileReader extends DragonAPICore {
 	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace) {
 		return getFileAsLines(getReader(f), printStackTrace);
 	}
-	
+
 	@Deprecated
 	public static ArrayList<String> getFileAsLines(InputStream in, boolean printStackTrace) {
 		return getFileAsLines(in, printStackTrace, Charset.defaultCharset());
@@ -847,5 +847,19 @@ public class ReikaFileReader extends DragonAPICore {
 			e.printStackTrace();
 			return null;
 		}
+	}
+
+	public static File getFileByNameAnyExt(File folder, String name) {
+		for (File f : folder.listFiles()) {
+			if (f.isDirectory())
+				continue;
+			String full = f.getName();
+			int idx = full.lastIndexOf('.');
+			String ext = full.substring(idx+1);
+			String part = full.substring(0, idx);
+			if (part.equals(name))
+				return f;
+		}
+		return null;
 	}
 }

@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Base;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -142,6 +143,8 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 	public abstract boolean shouldTryDecay(World world, int x, int y, int z, int meta);
 
 	protected boolean decay(World world, final int x, final int y, final int z, Random par5Random) {
+		final int sides = this.getNumberSidesToPropagate(world, x, y, z);
+
 		TerminationCondition t = new TerminationCondition(){
 
 			@Override
@@ -159,7 +162,33 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 
 		};
 
-		BreadthFirstSearch s = new BreadthFirstSearch(x, y, z);
+		BreadthFirstSearch s = new BreadthFirstSearch(x, y, z) {
+
+			@Override
+			protected ArrayList<Coordinate> getNextSearchCoordsFor(World world, Coordinate c) {
+				ArrayList<Coordinate> li = new ArrayList();
+				switch(sides) {
+					case 0:
+					case 1:
+					case 2:
+						int r = sides == 0 ? 2 : 1;
+						for (int i = -r; i <= r; i++) {
+							for (int j = -r; j <= r; j++) {
+								for (int k = -r; k <= r; k++) {
+									if (sides != 2 || i == 0 || j == 0 || k == 0)
+										li.add(c.offset(i, j, k));
+								}
+							}
+						}
+						break;
+					case 3:
+						li.addAll(c.getAdjacentCoordinates());
+						break;
+				}
+				return li;
+			}
+
+		};
 		s.limit = BlockBox.block(x, y, z).expand(this.getMaximumLogSearchRadius());
 		s.depthLimit = this.getMaximumLogSearchDepth();
 		s.complete(world, c, t);
@@ -167,8 +196,19 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 		if (decay) {
 			this.dropBlockAsItemWithChance(world, x, y, z, world.getBlockMetadata(x, y, z), 1, 0);
 			world.setBlockToAir(x, y, z);
+			this.onLeafDecay(world, x, y, z);
 		}
 		return decay;
+	}
+
+	/** Controls how strict adjacency-for-log-support searching is, namely which blocks can be spread to from a given position.
+	 3 = adjacent only, 2 = share one axis, 1 = touching on any corner, 0 = can jump one block */
+	protected int getNumberSidesToPropagate(World world, int x, int y, int z) {
+		return 3;
+	}
+
+	protected void onLeafDecay(World world, int x, int y, int z) {
+
 	}
 
 	@Override

@@ -23,7 +23,9 @@ public class BlockStopsPrecipitationEvent extends WorldPositionEvent {
 	}
 
 	public static boolean fire(Chunk c, Block b, int x, int y, int z) {
-		BlockStopsPrecipitationEvent evt = new BlockStopsPrecipitationEvent(c.worldObj, x, y, z, b);
+		int dx = x+c.xPosition*16;
+		int dz = z+c.zPosition*16;
+		BlockStopsPrecipitationEvent evt = new BlockStopsPrecipitationEvent(c.worldObj, dx, y, dz, b);
 		MinecraftForge.EVENT_BUS.post(evt);
 		switch(evt.getResult()) {
 			case ALLOW:

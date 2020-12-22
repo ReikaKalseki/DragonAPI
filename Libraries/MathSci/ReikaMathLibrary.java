@@ -361,7 +361,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	}
 
 	public static double getDecimalPart(double d) {
-		return d-(int)d;
+		return d%1D;//-(int)d;
 	}
 
 	public static int addAndRollover(int a, int b, int min, int max) {
