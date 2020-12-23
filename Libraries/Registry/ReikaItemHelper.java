@@ -169,6 +169,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	private static final HashMap<Fluid, ItemStack> fluidContainerData = new HashMap();
 	private static final HashMap<Item, Double> itemMass = new HashMap();
 
+	public static final String PLAYER_DEATH_DROP_KEY = "PLAYER_DEATH_DROP";
+
 	private static Field oreListField;
 
 	private static final Pattern ORE_MATERIAL_PATTERN = Pattern.compile("[A-Z].*$");

@@ -71,9 +71,6 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 			z *= f;
 		}
 
-		if (true || false)
-			y = 0;
-
 		int xInt = MathHelper.floor_double(x);
 		int yInt = MathHelper.floor_double(y);
 		int zInt = MathHelper.floor_double(z);

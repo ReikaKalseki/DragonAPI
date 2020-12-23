@@ -711,6 +711,42 @@ public class BlockArray implements Iterable<Coordinate> {
 		}
 	}
 
+	public void iterativeAddCallbackWithBounds(World world, int x0, int y0, int z0, int x1, int y1, int z1, int x2, int y2, int z2, PropagationCondition f) {
+		Coordinate root = new Coordinate(x0, y0, z0);
+		if (!f.isValidLocation(world, x0, y0, z0, root))
+			return;
+		HashSet<Coordinate> next = new HashSet();
+		next.add(root);
+		while (!next.isEmpty()) {
+			HashSet<Coordinate> toNext = new HashSet();
+			for (Coordinate c : next) {
+				if (c.xCoord < x1 || c.yCoord < y1 || c.zCoord < z1 || c.xCoord > x2 || c.yCoord > y2 || c.zCoord > z2)
+					continue;
+				this.addBlockCoordinate(c.xCoord, c.yCoord, c.zCoord);
+				if (extraSpread) {
+					for (int i = -1; i <= 1; i++) {
+						for (int j = -1; j <= 1; j++) {
+							for (int k = -1; k <= 1; k++) {
+								Coordinate c2 = c.offset(i, j, k);
+								if (!keys.contains(c2) && f.isValidLocation(world, c2.xCoord, c2.yCoord, c2.zCoord, c)) {
+									toNext.add(c2);
+								}
+							}
+						}
+					}
+				}
+				else {
+					for (Coordinate c2 : c.getAdjacentCoordinates()) {
+						if (!keys.contains(c2) && f.isValidLocation(world, c2.xCoord, c2.yCoord, c2.zCoord, c)) {
+							toNext.add(c2);
+						}
+					}
+				}
+			}
+			next = toNext;
+		}
+	}
+
 	public void recursiveAddLiquidWithBounds(IBlockAccess world, int x, int y, int z, int x1, int y1, int z1, int x2, int y2, int z2, Fluid liquid) {
 		this.recursiveAddLiquidWithBounds(world, x, y, z, x, y, z, x1, y1, z1, x2, y2, z2, 0, liquid);
 	}

@@ -5,6 +5,6 @@ import net.minecraft.world.World;
 
 public interface WinterBiomeStrengthControl {
 
-	float getStrength(World world, EntityPlayer ep);
+	float getWinterSkyStrength(World world, EntityPlayer ep);
 
 }

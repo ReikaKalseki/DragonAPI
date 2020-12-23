@@ -41,6 +41,7 @@ import net.minecraftforge.client.event.sound.SoundSetupEvent;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.item.ItemTossEvent;
+import net.minecraftforge.event.entity.player.PlayerDropsEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.BlockEvent;
@@ -137,6 +138,13 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	public void onCall(String tag) {
 		if (tag.equals("debug")) {
 			this.showF3Extras();
+		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void tagDeathDrops(PlayerDropsEvent ev) {
+		for (EntityItem ei : ev.drops) {
+			ei.getEntityData().setString(ReikaItemHelper.PLAYER_DEATH_DROP_KEY, ev.entityPlayer.getUniqueID().toString());
 		}
 	}
 

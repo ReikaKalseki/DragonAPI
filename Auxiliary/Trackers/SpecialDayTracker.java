@@ -47,7 +47,7 @@ public class SpecialDayTracker {
 		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
 		BiomeGenBase biome = world.getBiomeGenForCoords(MathHelper.floor_double(ep.posX), MathHelper.floor_double(ep.posZ));
 		if (biome instanceof WinterBiomeStrengthControl)
-			norm *= ((WinterBiomeStrengthControl)biome).getStrength(world, ep);
+			norm *= ((WinterBiomeStrengthControl)biome).getWinterSkyStrength(world, ep);
 
 		return MathHelper.clamp_float(norm*1.1F, 0, 1);
 	}

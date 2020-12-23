@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.Immutable;
 
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
@@ -70,6 +71,18 @@ public final class WorldChunk {
 
 	public String toSerialString() {
 		return dimensionID+","+chunk.chunkXPos+","+chunk.chunkZPos;
+	}
+
+	public NBTTagCompound writeToTag() {
+		NBTTagCompound ret = new NBTTagCompound();
+		ret.setInteger("dimension", dimensionID);
+		ret.setInteger("xCoord", chunk.chunkXPos);
+		ret.setInteger("zCoord", chunk.chunkZPos);
+		return ret;
+	}
+
+	public static WorldChunk readFromTag(NBTTagCompound tag) {
+		return new WorldChunk(tag.getInteger("dimension"), tag.getInteger("xCoord"), tag.getInteger("zCoord"));
 	}
 
 }

@@ -60,7 +60,7 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	/** The minimum height of the tree. */
 	protected int minHeight = 5;
 
-	private final boolean doUpdates;
+	protected final boolean doUpdates;
 
 	public ModifiableBigTree(boolean updates) {
 		super(updates);
@@ -422,11 +422,13 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 	 * limit, is valid.
 	 */
 	private boolean validTreeLocation(World world) {
-		int[] aint = new int[] {basePos[0], basePos[1], basePos[2]};
-		int[] aint1 = new int[] {basePos[0], basePos[1] + heightLimit - 1, basePos[2]};
-		Block block = world.getBlock(basePos[0], basePos[1] - 1, basePos[2]);
+		return this.isValidLocation(world, basePos[0], basePos[1], basePos[2]);
+	}
 
-		boolean isSoil = block.canSustainPlant(world, basePos[0], basePos[1] - 1, basePos[2], ForgeDirection.UP, (BlockSapling)Blocks.sapling);
+	protected boolean isValidLocation(World world, int x, int y, int z) {
+		int[] aint = new int[] {x, y, z};
+		int[] aint1 = new int[] {x, y + heightLimit - 1, z};
+		boolean isSoil = this.isValidUnderBlock(world, x, y-1, z);
 		if (!isSoil) {
 			return false;
 		}
@@ -444,6 +446,10 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 				return true;
 			}
 		}
+	}
+
+	protected boolean isValidUnderBlock(World world, int x, int y, int z) {
+		return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, ForgeDirection.UP, (BlockSapling)Blocks.sapling);
 	}
 
 	/**

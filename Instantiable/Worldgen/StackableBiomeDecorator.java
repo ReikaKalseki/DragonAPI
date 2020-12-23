@@ -16,7 +16,12 @@ public abstract class StackableBiomeDecorator extends BiomeDecorator {
 	@Override
 	public final void decorateChunk(World world, Random rand, BiomeGenBase biome, int x, int z) {
 		if (!stateStack.isEmpty()) {
-			this.getLogger().logError("Already decorating in biome "+this.toString()+"! Generation will attempt to continue, but worldgen errors may occur.");
+			//this.getLogger().logError("Already decorating in biome "+this.toString()+"! Generation will attempt to continue, but worldgen errors may occur.");// State stack: "+stateStack.size()+":"+stateStack);
+		}
+
+		if (stateStack.size() >= 250) { //generally only happens on large biome worlds
+			this.getLogger().logError("STATE STACK IS TOO LARGE ["+stateStack.size()+"] TO SAFELY CONTINUE, ABORTING "+this+" DECORATION IN CHUNK "+x+", "+z);
+			return;
 		}
 
 		stateStack.addLast(new DecoState(world, rand, x, z));
@@ -49,6 +54,11 @@ public abstract class StackableBiomeDecorator extends BiomeDecorator {
 			rand = r;
 			chunkX = x;
 			chunkZ = z;
+		}
+
+		@Override
+		public String toString() {
+			return chunkX+", "+chunkZ+" in DIM"+world.provider.dimensionId;
 		}
 
 	}
