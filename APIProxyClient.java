@@ -24,6 +24,7 @@ import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.IO.VanillaOnlyResourceManager;
 import Reika.DragonAPI.Instantiable.EntityTumblingBlock;
 import Reika.DragonAPI.Instantiable.Event.Client.ResourceReloadEvent;
+import Reika.DragonAPI.Instantiable.Rendering.ParticleEngine;
 import Reika.DragonAPI.Instantiable.Rendering.RenderTumblingBlock;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 
@@ -70,6 +71,7 @@ public class APIProxyClient extends APIProxy {
 		if (ModList.NEI.isLoaded())
 			GuiDraw.fontRenderer = Minecraft.getMinecraft().fontRenderer;
 		Minecraft.getMinecraft().effectRenderer = new ThrottleableEffectRenderer(Minecraft.getMinecraft().effectRenderer);
+		ParticleEngine.defaultCustomEngine.register();
 	}
 
 	@Override

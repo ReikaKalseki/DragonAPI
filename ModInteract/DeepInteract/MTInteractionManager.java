@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Map;
 
+import org.apache.commons.codec.Charsets;
+
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -134,10 +136,10 @@ public final class MTInteractionManager {
 	private void parseFile(File f) {
 		for (Prevention p : data.keySet()) {
 			MTScriptScanner scan = new MTScriptScanner(p, f);
-			scan.performChanges(f);
+			scan.performChanges(f, Charsets.UTF_8);
 			if (!scan.extraComments.isEmpty()) {
 				scan.setPhase2();
-				scan.performChanges(f);
+				scan.performChanges(f, Charsets.UTF_8);
 			}
 		}
 	}

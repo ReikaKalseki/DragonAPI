@@ -11,7 +11,6 @@ package Reika.DragonAPI.IO;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.codec.Charsets;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -29,11 +29,11 @@ public class ReikaXMLBase {
 	private ReikaXMLBase() {throw new RuntimeException("The class "+this.getClass()+" cannot be instantiated!");}
 
 	public static Document getXMLDocument(InputStream in) throws SAXException, IOException {
-		ArrayList<String> li = ReikaFileReader.getFileAsLines(in, true, Charset.forName("UTF-8"));
+		ArrayList<String> li = ReikaFileReader.getFileAsLines(in, true, Charsets.UTF_8);
 		while (!li.isEmpty() && !li.get(0).startsWith("<?xml version")) { //automatically clear any header crap
 			li.remove(0);
 		}
-		in = ReikaFileReader.convertLinesToStream(li, true);
+		in = ReikaFileReader.convertLinesToStream(li, true, Charsets.UTF_8);
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();

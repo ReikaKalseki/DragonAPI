@@ -18,6 +18,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.codec.Charsets;
+
 import net.minecraft.util.EnumChatFormatting;
 
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -67,7 +69,7 @@ public class PackModificationTracker {
 			if (!f.exists())
 				this.createDataFile(f, mod);
 
-			try(BufferedReader p = ReikaFileReader.getReader(f)) {
+			try(BufferedReader p = ReikaFileReader.getReader(f, Charsets.UTF_8)) {
 				String line = "";
 				while (line != null) {
 					line = p.readLine();

@@ -45,6 +45,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.jar.JarFile;
 
+import org.apache.commons.codec.Charsets;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
@@ -82,9 +83,9 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	/** Make sure you close this! */
-	public static BufferedReader getReader(File f) {
+	public static BufferedReader getReader(File f, Charset set) {
 		try {
-			return new BufferedReader(new InputStreamReader(new FileInputStream(f)));
+			return new BufferedReader(new InputStreamReader(new FileInputStream(f), set));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -104,9 +105,9 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	/** Make sure you close this! */
-	public static BufferedReader getReader(String path) {
+	public static BufferedReader getReader(String path, Charset set) {
 		try {
-			return new BufferedReader(new InputStreamReader(new FileInputStream(path)));
+			return new BufferedReader(new InputStreamReader(new FileInputStream(path), set));
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -249,8 +250,8 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 	 */
-	public static ArrayList<String> getFileAsLines(String path, boolean printStackTrace) {
-		return getFileAsLines(getReader(path), printStackTrace);
+	public static ArrayList<String> getFileAsLines(String path, boolean printStackTrace, Charset set) {
+		return getFileAsLines(getReader(path, set), printStackTrace);
 	}
 
 	public static ArrayList<String> getFileAsLines(URL url, int timeout, boolean printStackTrace, ConnectionErrorHandler ch) {
@@ -263,7 +264,11 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace) {
-		return getFileAsLines(getReader(f), printStackTrace);
+		return getFileAsLines(f, printStackTrace, Charset.defaultCharset());
+	}
+
+	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace, Charset set) {
+		return getFileAsLines(getReader(f, set), printStackTrace);
 	}
 
 	@Deprecated
@@ -387,11 +392,10 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 	}
 
-	public static InputStream convertLinesToStream(ArrayList<String> li, boolean printStackTrace) {
+	public static InputStream convertLinesToStream(ArrayList<String> li, boolean printStackTrace, Charset set) {
 		String sep = System.getProperty("line.separator");
 		ByteArrayOutputStream bos = new ByteArrayOutputStream();
-		BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(bos));
-		try {
+		try(BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(bos, set))) {
 			for (String s : li)
 				writer.write(s+sep);
 			writer.close();
@@ -533,8 +537,8 @@ public class ReikaFileReader extends DragonAPICore {
 		/** The line used to replace strings that match the criteria. Args: Original line, newline separator, line index */
 		protected abstract String getReplacementLine(String s, String newline, int idx);
 
-		public final boolean performChanges(File f) {
-			try(BufferedReader r = ReikaFileReader.getReader(f)) {
+		public final boolean performChanges(File f, Charset set) {
+			try(BufferedReader r = ReikaFileReader.getReader(f, set)) {
 				String sep = System.getProperty("line.separator");
 				String line = r.readLine();
 				StringBuilder out = new StringBuilder();
@@ -706,7 +710,7 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static boolean isEmpty(File f) throws IOException {
-		try (BufferedReader br = getReader(f)) {
+		try (BufferedReader br = getReader(f, Charset.defaultCharset())) {
 			String line = br.readLine();
 			if (line == null || (line.length() == 0 && br.readLine() == null)) {
 				return true;
@@ -840,7 +844,7 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static JsonElement readJSON(File f) {
-		try(BufferedReader r = getReader(f)) {
+		try(BufferedReader r = getReader(f, Charsets.UTF_8)) {
 			return new JsonParser().parse(r);
 		}
 		catch (IOException e) {

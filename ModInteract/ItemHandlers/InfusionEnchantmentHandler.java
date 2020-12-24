@@ -7,10 +7,12 @@ import java.util.Collections;
 
 import net.minecraft.enchantment.Enchantment;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Interfaces.Registry.ModEntry;
+import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
 
 import thaumcraft.api.ThaumcraftApi;
 
@@ -29,11 +31,11 @@ public class InfusionEnchantmentHandler {
 
 	@ModDependent(ModList.THAUMCRAFT)
 	private void loadThaumcraft() {
-		enchantments.addValue(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantFrugal]);
-		enchantments.addValue(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantHaste]);
-		enchantments.addValue(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantPotency]);
-		enchantments.addValue(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantRepair]);
-		enchantments.addValue(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantWandFortune]);
+		this.registerEnchant(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantFrugal]);
+		this.registerEnchant(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantHaste]);
+		this.registerEnchant(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantPotency]);
+		this.registerEnchant(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantRepair]);
+		this.registerEnchant(ModList.THAUMCRAFT, Enchantment.enchantmentsList[ThaumcraftApi.enchantWandFortune]);
 	}
 
 	@ModDependent(ModList.THAUMICTINKER)
@@ -44,13 +46,23 @@ public class InfusionEnchantmentHandler {
 			Field[] fd = c.getDeclaredFields();
 			for (Field f : fd) {
 				if ((f.getModifiers() & Modifier.STATIC) != 0 && f.getType() == Enchantment.class) {
-					enchantments.addValue(ModList.THAUMICTINKER, (Enchantment)f.get(null));
+					this.registerEnchant(ModList.THAUMICTINKER, (Enchantment)f.get(null));
 				}
 			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void registerEnchant(ModList mod, Enchantment e) {
+		if (e.effectId == 0)
+			return;
+		if (ReikaEnchantmentHelper.isVanillaEnchant(e)) {
+			DragonAPICore.logError("Detected a ThaumCraft enchantment registered to ID "+e.effectId+", overwriting a vanilla ID!");
+			return;
+		}
+		enchantments.addValue(mod, e);
 	}
 
 	public boolean isInfusionEnchantment(Enchantment e) {

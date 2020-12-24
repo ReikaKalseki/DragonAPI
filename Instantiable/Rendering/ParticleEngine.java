@@ -77,10 +77,6 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 
 	};
 
-	static {
-		defaultCustomEngine.register();
-	}
-
 	protected ParticleEngine() {
 		super(null, null);
 	}

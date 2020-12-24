@@ -14,6 +14,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Map.Entry;
 
+import org.apache.commons.codec.Charsets;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -93,7 +95,7 @@ public final class BannedItemReader {
 			this.parseJSONFile(f);
 		}
 		else {
-			try (BufferedReader in = ReikaFileReader.getReader(f)) {
+			try (BufferedReader in = ReikaFileReader.getReader(f, Charsets.UTF_8)) {
 				String line = in.readLine();
 				while (line != null) {
 					String oline = line;

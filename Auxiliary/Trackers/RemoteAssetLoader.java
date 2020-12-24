@@ -24,6 +24,8 @@ import java.util.Collections;
 
 import javax.swing.JOptionPane;
 
+import org.apache.commons.codec.Charsets;
+
 import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -314,7 +316,7 @@ public class RemoteAssetLoader {
 
 		public final Collection<String> getAvailableResources() {
 			String file = this.getLocalPath()+"file_list.dat";
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(file, true);
+			ArrayList<String> li = ReikaFileReader.getFileAsLines(file, true, Charsets.UTF_8);
 			ArrayList<String> ret = new ArrayList();
 			for (String s : li) {
 				int idx = s.indexOf('>');

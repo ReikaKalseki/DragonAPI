@@ -42,9 +42,10 @@ public class GrassSideIcon extends Patcher {
 		min.owner = "Reika/DragonAPI/Instantiable/Event/Client/GrassIconEvent";
 		min.name = "fireSide";
 		min.desc = "(Lnet/minecraft/block/Block;Lnet/minecraft/world/IBlockAccess;III)Lnet/minecraft/util/IIcon;";
+		String field = FMLForgePlugin.RUNTIME_DEOBF ? "field_147845_a" : "blockAccess";
 		li.insertBefore(min, new VarInsnNode(Opcodes.ALOAD, 1));
 		li.insertBefore(min, new VarInsnNode(Opcodes.ALOAD, 0));
-		li.insertBefore(min, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/RenderBlocks", "blockAccess", "Lnet/minecraft/world/IBlockAccess;"));
+		li.insertBefore(min, new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/client/renderer/RenderBlocks", field, "Lnet/minecraft/world/IBlockAccess;"));
 		li.insertBefore(min, new VarInsnNode(Opcodes.ILOAD, 2));
 		li.insertBefore(min, new VarInsnNode(Opcodes.ILOAD, 3));
 		li.insertBefore(min, new VarInsnNode(Opcodes.ILOAD, 4));
