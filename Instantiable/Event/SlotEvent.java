@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -27,6 +27,32 @@ public class SlotEvent extends Event {
 	public SlotEvent(int id, IInventory ii) {
 		slotID = id;
 		inventory = ii;
+	}
+
+	/** For this one, cancel the event to prevent the normal pickup/split behavior */
+	public static class ClickSlotEvent extends SlotEvent {
+
+		public final int buttonID;
+		private final ItemStack item;
+		public final EntityPlayer player;
+
+		public ClickSlotEvent(int id, IInventory ii, ItemStack is, EntityPlayer ep, int button) {
+			super(id, ii);
+			item = is;
+			player = ep;
+			buttonID = button;
+		}
+
+		public static boolean fire(Slot s, EntityPlayer ep, int button) {
+			if (MinecraftForge.EVENT_BUS.post(new ClickSlotEvent(s.getSlotIndex(), s.inventory, s.getStack(), ep, button)))
+				return false;
+			return s.canTakeStack(ep);
+		}
+
+		public final ItemStack getItem() {
+			return item != null ? item.copy() : item;
+		}
+
 	}
 
 	public static class AddToSlotEvent extends SlotEvent {

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -17,17 +17,13 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Interfaces.ISBRH;
+import Reika.DragonAPI.Base.ISBRH;
 import Reika.DragonAPI.Interfaces.Block.WireBlock;
 
-public class CustomWireRenderer implements ISBRH {
-
-	private final int renderID;
-
-	private static final ForgeDirection[] dirs = ForgeDirection.values();
+public class CustomWireRenderer extends ISBRH {
 
 	public CustomWireRenderer(int ID) {
-		renderID = ID;
+		super(ID);
 	}
 
 	@Override
@@ -211,11 +207,6 @@ public class CustomWireRenderer implements ISBRH {
 	@Override
 	public boolean shouldRender3DInInventory(int model) {
 		return false;
-	}
-
-	@Override
-	public int getRenderId() {
-		return renderID;
 	}
 
 }

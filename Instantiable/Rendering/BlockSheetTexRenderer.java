@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -14,7 +14,7 @@ import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.world.IBlockAccess;
 
 import Reika.DragonAPI.Auxiliary.ReikaBlockRenderer;
-import Reika.DragonAPI.Interfaces.ISBRH;
+import Reika.DragonAPI.Base.ISBRH;
 import Reika.DragonAPI.Interfaces.Block.SidedTextureIndex;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
@@ -22,13 +22,14 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 @SideOnly(Side.CLIENT)
-public final class BlockSheetTexRenderer implements ISBRH {
+public final class BlockSheetTexRenderer extends ISBRH {
 
 	private String textureSheet;
 	private boolean is3D;
 	private final Class modClass;
 
-	public BlockSheetTexRenderer(Class root, String file) {
+	public BlockSheetTexRenderer(int id, Class root, String file) {
+		super(id);
 		is3D = true;
 		modClass = root;
 		//textureSheet = ReikaSpriteSheets.setupTextures(root, path);
@@ -80,11 +81,6 @@ public final class BlockSheetTexRenderer implements ISBRH {
 	@Override
 	public boolean shouldRender3DInInventory(int model) {
 		return is3D;
-	}
-
-	@Override
-	public int getRenderId() {
-		return 0;
 	}
 
 }

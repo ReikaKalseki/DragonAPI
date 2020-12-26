@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -11,6 +11,8 @@ package Reika.DragonAPI.Libraries;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -23,30 +25,35 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.SoundCategory;
+import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.util.EnumHelper;
 
+import Reika.ChromatiCraft.ChromatiCraft;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.IDCollisionTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Base.ISBRH;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.ItemBlockCustomLocalization;
 import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
 import Reika.DragonAPI.Interfaces.Registry.EnchantmentEnum;
 import Reika.DragonAPI.Interfaces.Registry.EntityEnum;
+import Reika.DragonAPI.Interfaces.Registry.ISBRHEnum;
 import Reika.DragonAPI.Interfaces.Registry.ItemEnum;
 import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.ModInteract.LegacyWailaHelper;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
 
+import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.ModContainer;
@@ -442,5 +449,59 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	public static String getActiveLoadingMod() {
 		ModContainer mc = Loader.instance().activeModContainer();
 		return mc != null ? mc.getName() : "Null";
+	}
+
+	public static void instantiateAndRegisterISBRHs(DragonAPIMod mod, ISBRHEnum[] enumr) {
+		boolean canLoad = Loader.instance().hasReachedState(LoaderState.INITIALIZATION) && !Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION);
+		if (!canLoad)
+			throw new RegistrationException(mod, "This mod is loading ISBRHs at an invalid time in the loading cycle!");
+		for (int i = 0; i < enumr.length; i++) {
+			ISBRHEnum r = enumr[i];
+			loadISBRH(mod, r);
+		}
+	}
+
+	private static void loadISBRH(DragonAPIMod mod, ISBRHEnum r) {
+		r.setRenderID(RenderingRegistry.getNextAvailableRenderId());
+		ISBRH render = constructRenderer(mod, r);
+		r.setRenderer(render);
+		RenderingRegistry.registerBlockHandler(r.getRenderID(), render);
+		if (render.shouldRender3DInInventory(r.getRenderID())) {
+			try {
+				Method m = r.getRenderClass().getDeclaredMethod("renderInventoryBlock", Block.class, int.class, int.class, RenderBlocks.class);
+			}
+			catch (NoSuchMethodException e) {
+				throw new RegistrationException(ChromatiCraft.instance, "ISBRH "+r+" is invalid - no item render method!", e);
+			}
+			catch (SecurityException e) {
+				throw new RegistrationException(ChromatiCraft.instance, "Error validating ISBRH "+r+"!", e);
+			}
+		}
+	}
+
+	private static ISBRH constructRenderer(DragonAPIMod mod, ISBRHEnum r) {
+		Constructor<ISBRH> c;
+		try {
+			c = (Constructor<ISBRH>)r.getRenderClass().getConstructor(int.class);
+			return c.newInstance(r.getRenderID());
+		}
+		catch (NoSuchMethodException e) {
+			throw new RegistrationException(mod, "Could not find constructor for ISBRH "+r+"!", e);
+		}
+		catch (SecurityException e) {
+			throw new RegistrationException(mod, "Disallowed access constructor for ISBRH "+r+"!", e);
+		}
+		catch (InstantiationException e) {
+			throw new RegistrationException(mod, "Could use constructor for ISBRH "+r+"!", e);
+		}
+		catch (IllegalAccessException e) {
+			throw new RegistrationException(mod, "Could not access constructor for ISBRH "+r+"!", e);
+		}
+		catch (IllegalArgumentException e) {
+			throw new RegistrationException(mod, "Illegal args for constructor for ISBRH "+r+"!", e);
+		}
+		catch (InvocationTargetException e) {
+			throw new RegistrationException(mod, "Errored calling constructor for ISBRH "+r+"!", e);
+		}
 	}
 }

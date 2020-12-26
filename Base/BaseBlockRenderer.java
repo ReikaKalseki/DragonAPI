@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,11 +15,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import Reika.DragonAPI.Interfaces.ISBRH;
-
-public abstract class BaseBlockRenderer implements ISBRH {
-
-	protected final ForgeDirection[] dirs = ForgeDirection.values();
+public abstract class BaseBlockRenderer extends ISBRH {
 
 	private IBlockAccess world;
 	private Block b;
@@ -28,15 +24,8 @@ public abstract class BaseBlockRenderer implements ISBRH {
 	private int z;
 	private RenderBlocks rb;
 
-	public final int renderID;
-
 	public BaseBlockRenderer(int ID) {
-		renderID = ID;
-	}
-
-	@Override
-	public final int getRenderId() {
-		return renderID;
+		super(ID);
 	}
 
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
@@ -90,32 +79,32 @@ public abstract class BaseBlockRenderer implements ISBRH {
 		int l = b.getMixedBrightnessForBlock(world, x, y, z);
 
 		switch(dir.getOpposite()) {
-		case UP:
-			v5.setBrightness(rb.renderMaxY < 1.0D ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
-			v5.setColorOpaque_F(f7*red, f8*green, f9*blue);
-			break;
-		case DOWN:
-			v5.setBrightness(rb.renderMinY > 0.0D ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
-			v5.setColorOpaque_F(f10*red, f13*green, f16*blue);
-			break;
-		case NORTH:
-			v5.setBrightness(rb.renderMinZ > 0.0D ? l : b.getMixedBrightnessForBlock(world, x, y, z - 1));
-			v5.setColorOpaque_F(f11*red, f14*green, f17*blue);
-			break;
-		case SOUTH:
-			v5.setBrightness(rb.renderMaxZ < 1.0D ? l : b.getMixedBrightnessForBlock(world, x, y, z + 1));
-			v5.setColorOpaque_F(f11*red, f14*green, f17*blue);
-			break;
-		case WEST:
-			v5.setBrightness(rb.renderMinX > 0.0D ? l : b.getMixedBrightnessForBlock(world, x - 1, y, z));
-			v5.setColorOpaque_F(f12*red, f15*green, f18*blue);
-			break;
-		case EAST:
-			v5.setBrightness(rb.renderMaxX < 1.0D ? l : b.getMixedBrightnessForBlock(world, x + 1, y, z));
-			v5.setColorOpaque_F(f12*red, f15*green, f18*blue);
-			break;
-		default:
-			break;
+			case UP:
+				v5.setBrightness(rb.renderMaxY < 1.0D ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
+				v5.setColorOpaque_F(f7*red, f8*green, f9*blue);
+				break;
+			case DOWN:
+				v5.setBrightness(rb.renderMinY > 0.0D ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
+				v5.setColorOpaque_F(f10*red, f13*green, f16*blue);
+				break;
+			case NORTH:
+				v5.setBrightness(rb.renderMinZ > 0.0D ? l : b.getMixedBrightnessForBlock(world, x, y, z - 1));
+				v5.setColorOpaque_F(f11*red, f14*green, f17*blue);
+				break;
+			case SOUTH:
+				v5.setBrightness(rb.renderMaxZ < 1.0D ? l : b.getMixedBrightnessForBlock(world, x, y, z + 1));
+				v5.setColorOpaque_F(f11*red, f14*green, f17*blue);
+				break;
+			case WEST:
+				v5.setBrightness(rb.renderMinX > 0.0D ? l : b.getMixedBrightnessForBlock(world, x - 1, y, z));
+				v5.setColorOpaque_F(f12*red, f15*green, f18*blue);
+				break;
+			case EAST:
+				v5.setBrightness(rb.renderMaxX < 1.0D ? l : b.getMixedBrightnessForBlock(world, x + 1, y, z));
+				v5.setColorOpaque_F(f12*red, f15*green, f18*blue);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -152,32 +141,32 @@ public abstract class BaseBlockRenderer implements ISBRH {
 		int l = b.getMixedBrightnessForBlock(world, x, y, z);
 
 		switch(dir.getOpposite()) {
-		case UP:
-			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
-			v5.setColorOpaque_F(f7, f8, f9);
-			break;
-		case DOWN:
-			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
-			v5.setColorOpaque_F(f10, f13, f16);
-			break;
-		case NORTH:
-			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y, z - 1));
-			v5.setColorOpaque_F(f11, f14, f17);
-			break;
-		case SOUTH:
-			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y, z + 1));
-			v5.setColorOpaque_F(f11, f14, f17);
-			break;
-		case WEST:
-			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x - 1, y, z));
-			v5.setColorOpaque_F(f12, f15, f18);
-			break;
-		case EAST:
-			v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x + 1, y, z));
-			v5.setColorOpaque_F(f12, f15, f18);
-			break;
-		default:
-			break;
+			case UP:
+				v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
+				v5.setColorOpaque_F(f7, f8, f9);
+				break;
+			case DOWN:
+				v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
+				v5.setColorOpaque_F(f10, f13, f16);
+				break;
+			case NORTH:
+				v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y, z - 1));
+				v5.setColorOpaque_F(f11, f14, f17);
+				break;
+			case SOUTH:
+				v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y, z + 1));
+				v5.setColorOpaque_F(f11, f14, f17);
+				break;
+			case WEST:
+				v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x - 1, y, z));
+				v5.setColorOpaque_F(f12, f15, f18);
+				break;
+			case EAST:
+				v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x + 1, y, z));
+				v5.setColorOpaque_F(f12, f15, f18);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -212,32 +201,32 @@ public abstract class BaseBlockRenderer implements ISBRH {
 		f18 = f6;
 
 		switch(dir.getOpposite()) {
-		case UP:
-			//v5.setBrightness(240);
-			v5.setColorOpaque_F(f7*r, f8*g, f9*b);
-			break;
-		case DOWN:
-			//v5.setBrightness(rb.renderMinY > 0.0D ? l : 1);
-			v5.setColorOpaque_F(f10*r, f13*g, f16*b);
-			break;
-		case NORTH:
-			//v5.setBrightness(rb.renderMinZ > 0.0D ? l : 1);
-			v5.setColorOpaque_F(f11*r, f14*g, f17*b);
-			break;
-		case SOUTH:
-			//v5.setBrightness(rb.renderMaxZ < 1.0D ? l : 1);
-			v5.setColorOpaque_F(f11*r, f14*g, f17*b);
-			break;
-		case WEST:
-			//v5.setBrightness(rb.renderMinX > 0.0D ? l : 1);
-			v5.setColorOpaque_F(f12*r, f15*g, f18*b);
-			break;
-		case EAST:
-			//v5.setBrightness(rb.renderMaxX < 1.0D ? l : 1);
-			v5.setColorOpaque_F(f12*r, f15*g, f18*b);
-			break;
-		default:
-			break;
+			case UP:
+				//v5.setBrightness(240);
+				v5.setColorOpaque_F(f7*r, f8*g, f9*b);
+				break;
+			case DOWN:
+				//v5.setBrightness(rb.renderMinY > 0.0D ? l : 1);
+				v5.setColorOpaque_F(f10*r, f13*g, f16*b);
+				break;
+			case NORTH:
+				//v5.setBrightness(rb.renderMinZ > 0.0D ? l : 1);
+				v5.setColorOpaque_F(f11*r, f14*g, f17*b);
+				break;
+			case SOUTH:
+				//v5.setBrightness(rb.renderMaxZ < 1.0D ? l : 1);
+				v5.setColorOpaque_F(f11*r, f14*g, f17*b);
+				break;
+			case WEST:
+				//v5.setBrightness(rb.renderMinX > 0.0D ? l : 1);
+				v5.setColorOpaque_F(f12*r, f15*g, f18*b);
+				break;
+			case EAST:
+				//v5.setBrightness(rb.renderMaxX < 1.0D ? l : 1);
+				v5.setColorOpaque_F(f12*r, f15*g, f18*b);
+				break;
+			default:
+				break;
 		}
 	}
 
@@ -272,32 +261,32 @@ public abstract class BaseBlockRenderer implements ISBRH {
 		f18 = f6*multiplier;
 
 		switch(dir.getOpposite()) {
-		case UP:
-			//v5.setBrightness(240);
-			v5.setColorOpaque_F(f7, f8, f9);
-			break;
-		case DOWN:
-			//v5.setBrightness(rb.renderMinY > 0.0D ? l : 1);
-			v5.setColorOpaque_F(f10, f13, f16);
-			break;
-		case NORTH:
-			//v5.setBrightness(rb.renderMinZ > 0.0D ? l : 1);
-			v5.setColorOpaque_F(f11, f14, f17);
-			break;
-		case SOUTH:
-			//v5.setBrightness(rb.renderMaxZ < 1.0D ? l : 1);
-			v5.setColorOpaque_F(f11, f14, f17);
-			break;
-		case WEST:
-			//v5.setBrightness(rb.renderMinX > 0.0D ? l : 1);
-			v5.setColorOpaque_F(f12, f15, f18);
-			break;
-		case EAST:
-			//v5.setBrightness(rb.renderMaxX < 1.0D ? l : 1);
-			v5.setColorOpaque_F(f12, f15, f18);
-			break;
-		default:
-			break;
+			case UP:
+				//v5.setBrightness(240);
+				v5.setColorOpaque_F(f7, f8, f9);
+				break;
+			case DOWN:
+				//v5.setBrightness(rb.renderMinY > 0.0D ? l : 1);
+				v5.setColorOpaque_F(f10, f13, f16);
+				break;
+			case NORTH:
+				//v5.setBrightness(rb.renderMinZ > 0.0D ? l : 1);
+				v5.setColorOpaque_F(f11, f14, f17);
+				break;
+			case SOUTH:
+				//v5.setBrightness(rb.renderMaxZ < 1.0D ? l : 1);
+				v5.setColorOpaque_F(f11, f14, f17);
+				break;
+			case WEST:
+				//v5.setBrightness(rb.renderMinX > 0.0D ? l : 1);
+				v5.setColorOpaque_F(f12, f15, f18);
+				break;
+			case EAST:
+				//v5.setBrightness(rb.renderMaxX < 1.0D ? l : 1);
+				v5.setColorOpaque_F(f12, f15, f18);
+				break;
+			default:
+				break;
 		}
 	}
 

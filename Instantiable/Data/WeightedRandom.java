@@ -28,6 +28,7 @@ import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 public class WeightedRandom<V> {
 
 	private Random rand = new Random();
+	private StatisticalRandom<V> weighted;
 
 	private final HashMap<V, Double> data = new HashMap();
 	private double maxWeight = 0;
@@ -55,6 +56,9 @@ public class WeightedRandom<V> {
 	}
 
 	public V getRandomEntry() {
+		if (this.weighted != null) {
+			return this.weighted.roll(this);
+		}
 		double d = rand.nextDouble()*this.getTotalWeight();
 		double p = 0;
 		for (V obj : data.keySet()) {
@@ -262,6 +266,10 @@ public class WeightedRandom<V> {
 		this.weightSum = data.getDouble("total");
 		this.maxWeight = data.getDouble("max");
 		this.isDynamic = data.getBoolean("dynamic");
+	}
+
+	public void setHistorical() {
+		weighted = new StatisticalRandom(this.data.keySet());
 	}
 
 }

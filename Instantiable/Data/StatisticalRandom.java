@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2018
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -55,24 +55,32 @@ public class StatisticalRandom<K> {
 	}
 
 	public K roll() {
-		K result = this.genRandom().getRandomEntry();
+		return this.roll(null);
+	}
+
+	public K roll(WeightedRandom<K> base) {
+		K result = this.genRandom(base).getRandomEntry();
 		data.increment(result);
 		return result;
 	}
 
-	private WeightedRandom<K> genRandom() {
+	private WeightedRandom<K> genRandom(WeightedRandom<K> base) {
 		WeightedRandom<K> w = new WeightedRandom();
 		for (K k : options) {
-			double wt = this.getWeightOf(k);
-			if (wt > 0) //very early on, ones already obtained have negative weights, so are out of selection, to ensure some of all
+			double wt = this.getWeightOf(base, k);
+			if (wt > 0) { //very early on, ones already obtained have negative weights, so are out of selection, to ensure some of all
 				w.addEntry(k, wt);
+			}
 		}
 		return w;
 	}
 
-	private double getWeightOf(K k) {
+	private double getWeightOf(WeightedRandom<K> src, K k) {
 		double base = 1D/options.size();
 		double frac = data.getFraction(k);
+		if (src != null) {
+			base *= src.getWeight(k)/src.getTotalWeight();
+		}
 		double chance = base-(frac-base);
 		return chance;
 	}
@@ -94,7 +102,7 @@ public class StatisticalRandom<K> {
 
 	@Override
 	public String toString() {
-		return data.toString()+" > "+this.genRandom().toString();
+		return data.toString()+" > "+this.genRandom(null).toString();
 	}
 
 }
