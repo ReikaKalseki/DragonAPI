@@ -24,7 +24,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 public class BeachGenLayerEvent extends Patcher {
 
 	public BeachGenLayerEvent() {
-		super("net.minecraft.world.gen.layer.GenLayer", "axb");
+		super("net.minecraft.world.gen.layer.GenLayer", "axn");
 	}
 
 	@Override

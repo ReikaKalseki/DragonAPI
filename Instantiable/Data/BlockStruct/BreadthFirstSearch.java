@@ -113,6 +113,18 @@ public class BreadthFirstSearch extends AbstractSearch {
 		return s.getResult().isEmpty() ? null : s.getResult();
 	}
 
+	public static LinkedList<Coordinate> getOpenPathBetween(World world, double x1, double y1, double z1, double x2, double y2, double z2, int r) {
+		Coordinate start = new Coordinate(x1, y1, z1);
+		Coordinate end = new Coordinate(x2, y2, z2);
+		return getOpenPathBetween(world, start, end, r);
+	}
+
+	public static LinkedList<Coordinate> getOpenPathBetween(World world, Coordinate start, Coordinate end, int r) {
+		PropagationCondition f = new OpenPathFinder(start, end, r);
+		TerminationCondition t = new LocationTerminus(end);
+		return getPath(world, start.xCoord, start.yCoord, start.zCoord, t, f);
+	}
+
 	private static class SearchHead {
 
 		private LinkedList<Coordinate> path = new LinkedList();

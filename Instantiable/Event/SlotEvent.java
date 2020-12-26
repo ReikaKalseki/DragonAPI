@@ -29,28 +29,26 @@ public class SlotEvent extends Event {
 		inventory = ii;
 	}
 
-	/** For this one, cancel the event to prevent the normal pickup/split behavior */
+	/** For this one, cancel the event to prevent the normal pickup/split/swap behavior */
 	public static class ClickSlotEvent extends SlotEvent {
 
 		public final int buttonID;
-		private final ItemStack item;
+		public final ItemStack itemInSlot;
+		public final Slot slot;
 		public final EntityPlayer player;
 
-		public ClickSlotEvent(int id, IInventory ii, ItemStack is, EntityPlayer ep, int button) {
+		public ClickSlotEvent(int id, IInventory ii, Slot s, EntityPlayer ep, int button) {
 			super(id, ii);
-			item = is;
+			slot = s;
+			itemInSlot = slot.getStack();
 			player = ep;
 			buttonID = button;
 		}
 
 		public static boolean fire(Slot s, EntityPlayer ep, int button) {
-			if (MinecraftForge.EVENT_BUS.post(new ClickSlotEvent(s.getSlotIndex(), s.inventory, s.getStack(), ep, button)))
+			if (MinecraftForge.EVENT_BUS.post(new ClickSlotEvent(s.getSlotIndex(), s.inventory, s, ep, button)))
 				return false;
 			return s.canTakeStack(ep);
-		}
-
-		public final ItemStack getItem() {
-			return item != null ? item.copy() : item;
 		}
 
 	}

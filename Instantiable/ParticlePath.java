@@ -7,11 +7,7 @@ import java.util.List;
 
 import net.minecraft.world.World;
 
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.LocationTerminus;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.PropagationCondition;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.AbstractSearch.TerminationCondition;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.BreadthFirstSearch;
-import Reika.DragonAPI.Instantiable.Data.BlockStruct.OpenPathFinder;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockVector;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
@@ -65,10 +61,7 @@ public class ParticlePath {
 	}
 
 	private static ParticlePath calculateParticlePath(World world, BlockVector from, BlockVector to, double endOffset, double forceDirection) {
-		PropagationCondition f = new OpenPathFinder(from.getCoord(), to.getCoord(), 12*2);
-		TerminationCondition t = new LocationTerminus(to.getCoord());
-		//Search s = new Search(from.xCoord, from.yCoord, from.zCoord);
-		LinkedList<Coordinate> li = BreadthFirstSearch.getPath(world, from.xCoord, from.yCoord, from.zCoord, t, f);
+		LinkedList<Coordinate> li = BreadthFirstSearch.getOpenPathBetween(world, from.getCoord(), to.getCoord(), 24);
 		if (li != null) {
 			HashSet<Coordinate> set = new HashSet();
 

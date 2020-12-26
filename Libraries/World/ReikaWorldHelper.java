@@ -112,6 +112,7 @@ import Reika.DragonAPI.ModRegistry.ModCropList;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IWorldGenerator;
+import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -1655,7 +1656,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static boolean otherDimensionsExist() {
-		return ModList.MYSTCRAFT.isLoaded() || ModList.TWILIGHT.isLoaded() || ModList.EXTRAUTILS.isLoaded();
+		return ModList.MYSTCRAFT.isLoaded() || ModList.TWILIGHT.isLoaded() || ModList.EXTRAUTILS.isLoaded() || Loader.isModLoaded("Aroma1997sDimension");
 	}
 
 	public static int getAmbientTemperatureAt(World world, int x, int y, int z) {
