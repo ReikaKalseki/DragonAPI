@@ -1656,7 +1656,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static boolean otherDimensionsExist() {
-		return ModList.MYSTCRAFT.isLoaded() || ModList.TWILIGHT.isLoaded() || ModList.EXTRAUTILS.isLoaded() || Loader.isModLoaded("Aroma1997sDimension");
+		return ModList.MYSTCRAFT.isLoaded() || ModList.TWILIGHT.isLoaded() || ModList.EXTRAUTILS.isLoaded() || Loader.isModLoaded("Aroma1997sDimension") || Loader.isModLoaded("rftools");
 	}
 
 	public static int getAmbientTemperatureAt(World world, int x, int y, int z) {
@@ -2336,7 +2336,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			Pamb *= 1+0.5*f;
 		}
 		if (y > 64 && world.getWorldInfo().getTerrainType() == WorldType.FLAT) {
-			double f = (y-128)/(192D-128D);
+			double f = (y-64)/(128D-64D);
 			Pamb *= 1-0.2*f;
 		}
 		if (y > 128) {
