@@ -32,7 +32,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraftforge.common.util.EnumHelper;
 
-import Reika.ChromatiCraft.ChromatiCraft;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
@@ -471,10 +470,10 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 				Method m = r.getRenderClass().getDeclaredMethod("renderInventoryBlock", Block.class, int.class, int.class, RenderBlocks.class);
 			}
 			catch (NoSuchMethodException e) {
-				throw new RegistrationException(ChromatiCraft.instance, "ISBRH "+r+" is invalid - no item render method!", e);
+				throw new RegistrationException(mod, "ISBRH "+r+" is invalid - no item render method!", e);
 			}
 			catch (SecurityException e) {
-				throw new RegistrationException(ChromatiCraft.instance, "Error validating ISBRH "+r+"!", e);
+				throw new RegistrationException(mod, "Error validating ISBRH "+r+"!", e);
 			}
 		}
 	}
