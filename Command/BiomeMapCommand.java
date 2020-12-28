@@ -469,7 +469,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 			int c = b.getBiomeGrassColor(x, 64, z);
 
-			if (ReikaBiomeHelper.isSnowBiome(b)) {
+			if (ReikaBiomeHelper.isSnowBiome(b) && !b.biomeName.equalsIgnoreCase("Pink Birch Forest")) {
 				c = 0xffffff;
 			}
 

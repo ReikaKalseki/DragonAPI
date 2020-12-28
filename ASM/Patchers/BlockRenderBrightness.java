@@ -10,6 +10,8 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
+import cpw.mods.fml.relauncher.Side;
+
 public abstract class BlockRenderBrightness extends Patcher {
 
 	public BlockRenderBrightness(String deobf, String obf) {
@@ -28,5 +30,10 @@ public abstract class BlockRenderBrightness extends Patcher {
 		li.add(new VarInsnNode(Opcodes.ILOAD, 6)); //block
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/LightVisualBrightnessEvent", "fireMixed", "(ILnet/minecraft/world/IBlockAccess;IIIII)I", false));
 		m.instructions.insertBefore(ain, li);
+	}
+
+	@Override
+	public final boolean runsOnSide(Side s) {
+		return s == Side.CLIENT;
 	}
 }

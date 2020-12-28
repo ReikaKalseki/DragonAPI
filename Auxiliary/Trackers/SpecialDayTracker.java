@@ -14,6 +14,9 @@ import Reika.DragonAPI.Interfaces.WinterBiomeStrengthControl;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.ModInteract.DeepInteract.PlanetDimensionHandler;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class SpecialDayTracker {
 
 	public static final SpecialDayTracker instance = new SpecialDayTracker();
@@ -36,6 +39,7 @@ public class SpecialDayTracker {
 		return (calendar.get(Calendar.MONTH) == Calendar.DECEMBER && calendar.get(Calendar.DAY_OF_MONTH) >= 18) || (calendar.get(Calendar.MONTH) == Calendar.JANUARY && calendar.get(Calendar.DAY_OF_MONTH) <= 5);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public float getXmasWeatherStrength(World world) {
 		if (!this.isWinterEnabled())
 			return 0;
