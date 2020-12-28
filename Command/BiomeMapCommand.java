@@ -454,22 +454,10 @@ public class BiomeMapCommand extends DragonCommandBase {
 			if (b.biomeName.equalsIgnoreCase("Maple Forest")) {
 				return 0x3A7F52;
 			}
-			if (b.biomeName.equalsIgnoreCase("Rainbow Forest")) {
-				return 0x8888FF;
-			}
-			if (b.biomeName.equalsIgnoreCase("Ender Forest")) {
-				return 0xC872DB;
-			}
-			if (b.biomeName.equalsIgnoreCase("Luminous Cliffs")) {
-				return 0x22aaff;
-			}
-			if (b.biomeName.equalsIgnoreCase("Luminous Cliffs Shores")) {
-				return 0x428AFF;
-			}
 
 			int c = b.getBiomeGrassColor(x, 64, z);
 
-			if (ReikaBiomeHelper.isSnowBiome(b) && !b.biomeName.equalsIgnoreCase("Pink Birch Forest")) {
+			if (ReikaBiomeHelper.isSnowBiome(b)) {
 				c = 0xffffff;
 			}
 
