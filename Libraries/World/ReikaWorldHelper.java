@@ -17,6 +17,7 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import net.minecraft.block.Block;
@@ -2393,5 +2394,15 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			}
 		}
 		return true;
+	}
+
+	public static boolean isFakeWorld(World world) {
+		String s = world.getClass().getSimpleName();
+		if (s != null && s.toLowerCase(Locale.ENGLISH).contains("fake"))
+			return true;
+		s = world.provider != null ? world.provider.getDimensionName() : "fake";
+		if (s != null && s.toLowerCase(Locale.ENGLISH).contains("fake"))
+			return true;
+		return false;
 	}
 }

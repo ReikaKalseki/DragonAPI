@@ -457,7 +457,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	}
 
 	public static void instantiateAndRegisterISBRHs(DragonAPIMod mod, ISBRHEnum[] enumr) {
-		boolean canLoad = Loader.instance().hasReachedState(LoaderState.INITIALIZATION) && !Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION);
+		boolean canLoad = Loader.instance().hasReachedState(LoaderState.INITIALIZATION);// && !Loader.instance().hasReachedState(LoaderState.POSTINITIALIZATION);
 		if (!canLoad)
 			throw new RegistrationException(mod, "This mod is loading ISBRHs at an invalid time in the loading cycle!");
 		for (int i = 0; i < enumr.length; i++) {

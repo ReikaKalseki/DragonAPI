@@ -1,4 +1,4 @@
-package Reika.DragonAPI.Instantiable.Event;
+package Reika.DragonAPI.Instantiable.Event.Client;
 
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;

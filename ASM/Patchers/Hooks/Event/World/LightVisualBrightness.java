@@ -28,7 +28,7 @@ public class LightVisualBrightness extends BlockRenderBrightness {
 		m.instructions.insertBefore(ain, li);
 		 */
 		MethodInsnNode min = (MethodInsnNode)ReikaASMHelper.getLastOpcode(m.instructions, Opcodes.INVOKEVIRTUAL);
-		min.owner = "Reika/DragonAPI/Instantiable/Event/LightVisualBrightnessEvent";
+		min.owner = "Reika/DragonAPI/Instantiable/Event/Client/LightVisualBrightnessEvent";
 		min.name = "fire";
 		min.desc = "(Lnet/minecraft/world/World;III)F";
 		min.itf = false;

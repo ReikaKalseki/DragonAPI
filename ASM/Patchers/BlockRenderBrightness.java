@@ -28,7 +28,7 @@ public abstract class BlockRenderBrightness extends Patcher {
 		li.add(new VarInsnNode(Opcodes.ILOAD, 3));
 		li.add(new VarInsnNode(Opcodes.ILOAD, 5)); //sky
 		li.add(new VarInsnNode(Opcodes.ILOAD, 6)); //block
-		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/LightVisualBrightnessEvent", "fireMixed", "(ILnet/minecraft/world/IBlockAccess;IIIII)I", false));
+		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/Client/LightVisualBrightnessEvent", "fireMixed", "(ILnet/minecraft/world/IBlockAccess;IIIII)I", false));
 		m.instructions.insertBefore(ain, li);
 	}
 
