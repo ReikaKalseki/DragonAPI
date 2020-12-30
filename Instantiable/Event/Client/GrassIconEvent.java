@@ -6,10 +6,10 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
 
-import Reika.DragonAPI.Instantiable.Event.Base.PositionEventBase;
+import Reika.DragonAPI.Instantiable.Event.Base.PositionEventClient;
 
 
-public class GrassIconEvent extends PositionEventBase {
+public class GrassIconEvent extends PositionEventClient {
 
 	public final boolean isTop;
 	public final Block blockType;

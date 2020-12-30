@@ -5,10 +5,10 @@ import net.minecraft.util.IIcon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
 
-import Reika.DragonAPI.Instantiable.Event.Base.PositionEventBase;
+import Reika.DragonAPI.Instantiable.Event.Base.PositionEventClient;
 
 
-public class LiquidBlockIconEvent extends PositionEventBase {
+public class LiquidBlockIconEvent extends PositionEventClient {
 
 	public final Block blockType;
 	public final int side;

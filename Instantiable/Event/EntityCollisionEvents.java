@@ -24,7 +24,7 @@ public class EntityCollisionEvents {
 		}
 
 		public AxisAlignedBB getDefaultAABB() {
-			return world.getBlock(xCoord, yCoord, zCoord).getCollisionBoundingBoxFromPool(world, xCoord, yCoord, zCoord);
+			return this.getBlock().getCollisionBoundingBoxFromPool(world, xCoord, yCoord, zCoord);
 		}
 
 	}

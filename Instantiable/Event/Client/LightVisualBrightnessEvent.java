@@ -7,7 +7,10 @@ import net.minecraftforge.common.MinecraftForge;
 import Reika.DragonAPI.Instantiable.Event.Base.PositionEventBase;
 import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+@SideOnly(Side.CLIENT)
 public class LightVisualBrightnessEvent extends WorldPositionEvent {
 
 	public final int lightLevel;

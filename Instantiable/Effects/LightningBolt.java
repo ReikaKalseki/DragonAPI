@@ -155,7 +155,7 @@ public class LightningBolt {
 	}
 
 	public LightningBolt setVelocity(double v) {
-		return this.setVariance(v, v, v);
+		return this.setVelocity(v, v, v);
 	}
 
 	public LightningBolt setVelocity(double vx, double vy, double vz) {

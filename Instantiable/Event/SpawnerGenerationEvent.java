@@ -20,7 +20,7 @@ public class SpawnerGenerationEvent extends WorldPositionEvent {
 	}
 
 	public TileEntityMobSpawner getSpawner() {
-		return (TileEntityMobSpawner)world.getTileEntity(xCoord, yCoord, zCoord);
+		return (TileEntityMobSpawner)this.getTileEntity();
 	}
 
 	public static void fire(World world, int x, int y, int z, SpawnerSource src) {

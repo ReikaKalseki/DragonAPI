@@ -15,37 +15,31 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
 
+import Reika.DragonAPI.Instantiable.Event.Base.PositionEventClient;
+
 import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
 
 //@HasResult
 @Cancelable
-public class RenderBlockAtPosEvent extends Event {
+public class RenderBlockAtPosEvent extends PositionEventClient {
 
 	public final WorldRenderer renderer;
 
-	public final IBlockAccess world;
 	public final RenderBlocks render;
 
 	public final Block block;
-	public final int xCoord;
-	public final int yCoord;
-	public final int zCoord;
 
 	public final int renderPass;
 
 	public boolean continueRendering = false;
 
 	public RenderBlockAtPosEvent(WorldRenderer wr, IBlockAccess iba, RenderBlocks rb, Block b, int x, int y, int z, int pass) {
+		super(iba, x, y, z);
 		renderer = wr;
 
-		world = iba;
 		render = rb;
 
 		block = b;
-		xCoord = x;
-		yCoord = y;
-		zCoord = z;
 
 		renderPass = pass;
 	}
@@ -74,10 +68,6 @@ public class RenderBlockAtPosEvent extends Event {
 		 */
 		//ReikaJavaLibrary.pConsole(b, !flag && evt.continueRendering);
 		return flag || evt.continueRendering;
-	}
-
-	public int getMetadata() {
-		return world.getBlockMetadata(xCoord, yCoord, zCoord);
 	}
 
 }

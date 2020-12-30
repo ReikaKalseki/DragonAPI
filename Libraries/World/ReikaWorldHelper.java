@@ -61,6 +61,7 @@ import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.FlatGeneratorInfo;
 import net.minecraft.world.gen.FlatLayerInfo;
 import net.minecraft.world.gen.feature.WorldGenerator;
+import net.minecraft.world.gen.layer.GenLayer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
@@ -2404,5 +2405,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (s != null && s.toLowerCase(Locale.ENGLISH).contains("fake"))
 			return true;
 		return false;
+	}
+
+	public static int getBiomeSize(World world) {
+		WorldType type = world.getWorldInfo().getTerrainType();
+		return GenLayer.getModdedBiomeSize(type, (byte)(type == WorldType.LARGE_BIOMES ? 6 : 4));
 	}
 }

@@ -14,7 +14,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.biome.BiomeGenBase;
 
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
@@ -40,12 +39,12 @@ public abstract class PositionEventBase extends Event {
 		isFakeWorld = this.isFake();
 	}
 
-	public final BiomeGenBase getBiome() {
-		return isFakeWorld ? BiomeGenBase.ocean : access.getBiomeGenForCoords(xCoord, zCoord);
+	public final Block getBlock() {
+		return this.getBlock(0, 0, 0);
 	}
 
-	public final Block getBlock() {
-		return isFakeWorld ? Blocks.air : access.getBlock(xCoord, yCoord, zCoord);
+	public final Block getBlock(int dx, int dy, int dz) {
+		return isFakeWorld ? Blocks.air : access.getBlock(xCoord+dx, yCoord+dy, zCoord+dz);
 	}
 
 	public final int getMetadata() {

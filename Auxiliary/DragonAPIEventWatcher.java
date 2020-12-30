@@ -264,7 +264,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SubscribeEvent
 	public void modifyFireSpread(FireChanceEvent evt) {
 		if (DragonOptions.BIOMEFIRE.getState()) {
-			BiomeGenBase b = evt.world.getBiomeGenForCoords(evt.xCoord, evt.zCoord);
+			BiomeGenBase b = evt.getBiome();
 			float humid = b.rainfall; //ranges from 0 (desert, nether, etc) to 1 (ocean) //ReikaBiomeHelper.getBiomeHumidity(b);
 			evt.spreadChance *= biomeHumidityFlammability.getValue(humid); //*= 2-humid*1.5;  //1F/(0.5F+humid); //doubled for 0, unchanged for 0.5, halved for 1
 		}

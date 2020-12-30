@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,16 +13,22 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.world.BlockEvent;
+
+import Reika.DragonAPI.Instantiable.Event.Base.WorldPositionEvent;
 
 
-public class BlockTillEvent extends BlockEvent {
+public class BlockTillEvent extends WorldPositionEvent {
+
+	public final Block originalBlock;
+	public final int originalMetadata;
 
 	public Block tilledBlock = Blocks.farmland;
 	public int tilledMeta = 0;
 
-	public BlockTillEvent(World world, int x, int y, int z, Block block, int metadata) {
-		super(x, y, z, world, block, metadata);
+	public BlockTillEvent(World world, int x, int y, int z, Block b, int meta) {
+		super(world, x, y, z);
+		originalBlock = b;
+		originalMetadata = meta;
 	}
 
 	public static void fire(World world, int x, int y, int z) {

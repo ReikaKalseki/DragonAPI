@@ -12,10 +12,14 @@ package Reika.DragonAPI.Instantiable.Event.Client;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
 
-import Reika.DragonAPI.Instantiable.Event.Base.PositionEventBase;
+import Reika.DragonAPI.Instantiable.Event.Base.PositionEventClient;
 import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 
-public class WaterColorEvent extends PositionEventBase {
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
+public class WaterColorEvent extends PositionEventClient {
 
 	public final int originalColor;
 	public int color;
