@@ -55,6 +55,8 @@ public abstract class LuaBlock {
 	private boolean isListEntry = false;
 	private boolean isList = false;
 
+	private HashMap<String, String> comments = new HashMap();
+
 	protected LuaBlock(String n, LuaBlock parent, LuaBlockDatabase db) {
 		if (n.equals("{")) {
 			n = Integer.toHexString(System.identityHashCode(this));
@@ -162,7 +164,7 @@ public abstract class LuaBlock {
 		this.putData(key, String.valueOf(val));
 	}
 
-	public final void putData(String key, float val) {
+	public final void putData(String key, double val) {
 		this.putData(key, String.valueOf(val));
 	}
 
@@ -282,6 +284,17 @@ public abstract class LuaBlock {
 			sb.append(rpt);
 		}
 		return sb.toString();
+	}
+
+	/** Null key for a top-level comment (ie tagging the start of this block) */
+	public void setComment(String key, String comment) {
+		HashMap<String, String> map = comments;
+		String ckey = key;
+		if (key == null && parent != null) {
+			ckey = name;
+			map = parent.comments;
+		}
+		map.put(ckey, comment);
 	}
 
 	//public abstract LuaBlock createChild(String name);
@@ -476,7 +489,17 @@ public abstract class LuaBlock {
 	public void writeData(List li) {
 		int idx = 0;
 		for (Object o : li) {
-			this.putData(String.valueOf(idx), String.valueOf(o));
+			if (o instanceof Map) {
+				LuaBlock child = new BasicLuaBlock(String.valueOf(idx), this, tree);
+				child.writeData((Map)o);
+			}
+			else if (o instanceof List) {
+				LuaBlock child = new BasicLuaBlock(String.valueOf(idx), this, tree);
+				child.writeData((List)o);
+			}
+			else {
+				this.putData(String.valueOf(idx), String.valueOf(o));
+			}
 			idx++;
 		}
 	}
@@ -578,27 +601,44 @@ public abstract class LuaBlock {
 	private ArrayList<String> writeToStrings(int indent) {
 		ArrayList<String> li = new ArrayList();
 		String pre = ReikaStringParser.getNOf("\t", indent);
-		if (indent == 1)
-			li.add("{");
+		if (indent == 1) {
+			String s = "{";
+			li.add(s);
+		}
 		ArrayList<String> keys = new ArrayList(data.keySet());
 		Collections.sort(keys, outputSorter);
 		for (String s : keys) {
 			String val = data.get(s);
 			if (this.isString(val))
 				val = "\""+val+"\"";
-			if (this.isList())
+			if (this.isList()) {
 				li.add(pre+val);
-			else
-				li.add(pre+s+" = "+val);
+			}
+			else {
+				String put = pre+s+" = "+val;
+				String comment = comments.get(s);
+				if (comment != null) {
+					put = put+" --"+comment;
+				}
+				li.add(put);
+			}
 		}
 		ArrayList<LuaBlockKey> keys2 = new ArrayList(children.keySet());
 		Collections.sort(keys2);
 		for (LuaBlockKey s : keys2) {
 			LuaBlock c = children.get(s);
-			if (this.isList() || c.isListEntry() || s.name.equals("-"))
-				li.add(pre+"{");
-			else
-				li.add(pre+s.name+" = {");
+			String put;
+			if (this.isList() || c.isListEntry() || s.name.equals("-")) {
+				put = pre+"{";
+			}
+			else {
+				put = pre+s.name+" = {";
+			}
+			String comment = comments.get(s.name);
+			if (comment != null) {
+				put = put+" --"+comment;
+			}
+			li.add(put);
 			li.addAll(c.writeToStrings(indent+1));
 			li.add(pre+"}");
 		}

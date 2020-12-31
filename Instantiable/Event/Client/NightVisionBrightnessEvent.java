@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -23,6 +23,7 @@ public class NightVisionBrightnessEvent extends Event {
 
 	public float brightness;
 
+	public final float originalBrightness;
 	public final float partialTickTime;
 	public final EntityPlayer player;
 
@@ -30,7 +31,8 @@ public class NightVisionBrightnessEvent extends Event {
 		partialTickTime = ptick;
 		player = ep;
 
-		brightness = this.getDefault();
+		originalBrightness = this.getDefault();
+		brightness = originalBrightness;
 	}
 
 	public static float fire(EntityPlayer ep, float ptick) {
