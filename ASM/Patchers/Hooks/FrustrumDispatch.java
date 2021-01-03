@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -32,7 +32,7 @@ public class FrustrumDispatch extends Patcher {
 
 		InsnList li = new InsnList();
 		li.add(new VarInsnNode(Opcodes.ALOAD, 0));
-		li.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Reika/DragonAPI/Libraries/IO/ReikaRenderHelper", "renderFrustrum", "Lnet/minecraft/client/renderer/culling/ICamera;"));
+		li.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Reika/DragonAPI/Libraries/Rendering/ReikaRenderHelper", "renderFrustrum", "Lnet/minecraft/client/renderer/culling/ICamera;"));
 		m.instructions.insert(li);
 	}
 

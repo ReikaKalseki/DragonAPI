@@ -64,7 +64,7 @@ public class ThirdPersonDistanceDispatch extends Patcher {
 
 		InsnList li = new InsnList();
 		li.add(new VarInsnNode(Opcodes.DLOAD, var));
-		li.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Reika/DragonAPI/Libraries/IO/ReikaRenderHelper", "thirdPersonDistance", "D"));
+		li.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Reika/DragonAPI/Libraries/Rendering/ReikaRenderHelper", "thirdPersonDistance", "D"));
 		m.instructions.insert(ain, li);
 	}
 

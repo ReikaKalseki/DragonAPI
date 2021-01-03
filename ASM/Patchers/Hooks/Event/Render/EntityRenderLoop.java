@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -50,7 +50,7 @@ public class EntityRenderLoop extends Patcher {
 		li = new InsnList();
 		int var = ((VarInsnNode)ReikaASMHelper.getLastOpcodeBefore(m.instructions, m.instructions.indexOf(min), Opcodes.ALOAD)).var;
 		li.add(new VarInsnNode(Opcodes.ALOAD, var));
-		li.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Reika/DragonAPI/Libraries/IO/ReikaRenderHelper", "renderFrustrum", "Lnet/minecraft/client/renderer/culling/ICamera;"));
+		li.add(new FieldInsnNode(Opcodes.PUTSTATIC, "Reika/DragonAPI/Libraries/Rendering/ReikaRenderHelper", "renderFrustrum", "Lnet/minecraft/client/renderer/culling/ICamera;"));
 		m.instructions.insert(min, li);
 		 */
 	}
