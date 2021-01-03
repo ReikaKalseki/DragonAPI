@@ -6,7 +6,7 @@ import java.util.Iterator;
 
 import net.minecraft.nbt.NBTTagCompound;
 
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 import io.netty.buffer.ByteBuf;
 

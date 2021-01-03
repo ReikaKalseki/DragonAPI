@@ -13,7 +13,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.Instantiable.Event.Base.PositionEventClient;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

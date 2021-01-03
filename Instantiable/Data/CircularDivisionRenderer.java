@@ -8,7 +8,7 @@ import java.util.Random;
 
 import net.minecraft.client.renderer.Tessellator;
 
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

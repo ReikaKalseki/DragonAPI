@@ -13,7 +13,7 @@ import net.minecraft.entity.Entity;
 
 import Reika.DragonAPI.Instantiable.Formula.MathExpression;
 import Reika.DragonAPI.Interfaces.ColorController;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 
 public class FlashColorController implements ColorController {

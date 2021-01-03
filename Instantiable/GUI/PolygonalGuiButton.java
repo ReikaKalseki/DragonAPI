@@ -15,10 +15,10 @@ import net.minecraft.client.renderer.Tessellator;
 
 import Reika.DragonAPI.Instantiable.Math.DoublePolygon;
 import Reika.DragonAPI.Instantiable.Rendering.ComplexSubdividedTexture;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
-import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Rendering.ReikaGuiAPI;
 
 public class PolygonalGuiButton extends ImagedGuiButton {
 

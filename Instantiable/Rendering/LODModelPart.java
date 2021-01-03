@@ -26,9 +26,9 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.client.MinecraftForgeClient;
 
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper.RenderDistance;
 import Reika.DragonAPI.Libraries.Java.ReikaJVMParser;
+import Reika.DragonAPI.Libraries.Rendering.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.Rendering.ReikaRenderHelper.RenderDistance;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

@@ -39,9 +39,9 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.RGB;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.MapDeterminator;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 import Reika.DragonAPI.ModInteract.DeepInteract.ModSeasonHandler;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
 

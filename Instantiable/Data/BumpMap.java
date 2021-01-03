@@ -14,7 +14,7 @@ import java.io.InputStream;
 
 import javax.imageio.ImageIO;
 
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 public class BumpMap {
 

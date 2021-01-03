@@ -29,7 +29,7 @@ import Reika.DragonAPI.Interfaces.ColorController;
 import Reika.DragonAPI.Interfaces.MotionController;
 import Reika.DragonAPI.Interfaces.PositionController;
 import Reika.DragonAPI.Interfaces.Entity.CustomRenderFX;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;

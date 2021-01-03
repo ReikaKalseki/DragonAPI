@@ -15,7 +15,7 @@ import net.minecraftforge.fluids.Fluid;
 
 import Reika.DragonAPI.Interfaces.MotionController;
 import Reika.DragonAPI.Interfaces.PositionController;
-import Reika.DragonAPI.Libraries.IO.ReikaLiquidRenderer;
+import Reika.DragonAPI.Libraries.Rendering.ReikaLiquidRenderer;
 
 public class EntityFluidFX extends EntityFX {
 

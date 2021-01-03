@@ -13,7 +13,7 @@ import java.awt.Color;
 
 import net.minecraft.client.renderer.Tessellator;
 
-import Reika.DragonAPI.Libraries.IO.ReikaRenderHelper;
+import Reika.DragonAPI.Libraries.Rendering.ReikaRenderHelper;
 
 public class PixelRenderer {
 

@@ -10,8 +10,8 @@
 package Reika.DragonAPI.Instantiable;
 
 import Reika.DragonAPI.Instantiable.Data.Maps.ThresholdMapping;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 
 public class Interpolation {

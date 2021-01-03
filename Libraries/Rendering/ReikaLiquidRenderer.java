@@ -7,7 +7,7 @@
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
-package Reika.DragonAPI.Libraries.IO;
+package Reika.DragonAPI.Libraries.Rendering;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +25,7 @@ import net.minecraftforge.fluids.FluidStack;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockModelRenderer;
 import Reika.DragonAPI.Auxiliary.BlockModelRenderer.ModelBlockInterface;
+import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 
 public class ReikaLiquidRenderer {
 

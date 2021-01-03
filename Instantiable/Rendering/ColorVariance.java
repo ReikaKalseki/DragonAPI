@@ -12,8 +12,8 @@ package Reika.DragonAPI.Instantiable.Rendering;
 import java.awt.Color;
 import java.util.Random;
 
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 
 public class ColorVariance {

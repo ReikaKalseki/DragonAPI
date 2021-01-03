@@ -17,8 +17,8 @@ import org.lwjgl.opengl.GL11;
 import net.minecraft.client.renderer.Tessellator;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 import cpw.mods.fml.relauncher.Side;

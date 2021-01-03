@@ -23,9 +23,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.Vec3;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
-import Reika.DragonAPI.Libraries.IO.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 public class HexGrid {
 

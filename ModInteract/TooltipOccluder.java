@@ -15,7 +15,7 @@ import org.lwjgl.util.Rectangle;
 
 import net.minecraft.client.gui.inventory.GuiContainer;
 
-import Reika.DragonAPI.Libraries.IO.ReikaGuiAPI;
+import Reika.DragonAPI.Libraries.Rendering.ReikaGuiAPI;
 
 import codechicken.lib.vec.Rectangle4i;
 import codechicken.nei.api.INEIGuiAdapter;
