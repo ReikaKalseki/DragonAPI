@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -45,8 +46,8 @@ public abstract class LuaBlock {
 
 	public final String name;
 	private final LuaBlock parent;
-	private final HashMap<LuaBlockKey, LuaBlock> children = new HashMap();
-	private final HashMap<String, String> data = new HashMap();
+	private final LinkedHashMap<LuaBlockKey, LuaBlock> children = new LinkedHashMap(); //linked to keep order
+	private final LinkedHashMap<String, String> data = new LinkedHashMap();
 
 	protected final LuaBlockDatabase tree;
 

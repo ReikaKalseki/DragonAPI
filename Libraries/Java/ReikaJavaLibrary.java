@@ -1082,4 +1082,16 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		int idx = name.lastIndexOf('.');
 		return name.substring(0, idx);
 	}
+
+	public static String getEnumNameList(Class<? extends Enum> e) {
+		StringBuilder sb = new StringBuilder();
+		Enum[] list = e.getEnumConstants();
+		for (int i = 0; i < list.length; i++) {
+			Enum loc = list[i];
+			sb.append(loc.name());
+			if (i < list.length-1)
+				sb.append(", ");
+		}
+		return sb.toString();
+	}
 }

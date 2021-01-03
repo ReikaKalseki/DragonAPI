@@ -217,7 +217,7 @@ public final class CustomRecipeList {
 		}
 		else {
 			ret = ReikaItemHelper.lookupItem(lookup);
-			if (ret == null) {
+			if (ret == null && !tolerateNull) {
 				throw new IllegalArgumentException("No such item '"+lookup+"'");
 			}
 		}
