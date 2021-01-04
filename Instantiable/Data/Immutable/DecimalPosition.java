@@ -13,7 +13,6 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
-import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -203,7 +202,7 @@ public final class DecimalPosition implements Comparable<DecimalPosition> {
 	}
 
 	public boolean isEmpty(World world) {
-		return this.getBlock(world) == Blocks.air;
+		return this.getBlock(world).isAir(world, MathHelper.floor_double(xCoord), MathHelper.floor_double(yCoord), MathHelper.floor_double(zCoord));
 	}
 
 	public int getBlockMetadata(World world) {

@@ -302,7 +302,7 @@ public class WorldLocation implements Comparable<WorldLocation> {
 		return this.getCylinderDistanceTo(e.posX, e.posZ);
 	}
 
-	public double getSquareDistanceTo(double x, double y, double z) {
+	public int getTaxicabDistanceTo(int x, int y, int z) {
 		return Math.abs(x-xCoord)+Math.abs(y-yCoord)+Math.abs(z-zCoord);
 	}
 
@@ -324,6 +324,10 @@ public class WorldLocation implements Comparable<WorldLocation> {
 
 	private boolean isWithinSquare(int dim, int x, int y, int z, int dx, int dy, int dz) {
 		return dim == dimensionID && Math.abs(x-xCoord) <= dx && Math.abs(y-yCoord) <= dy && Math.abs(z-zCoord) <= dz;
+	}
+
+	public int getTaxicabDistanceTo(Coordinate c) {
+		return this.getTaxicabDistanceTo(c.xCoord, c.yCoord, c.zCoord);
 	}
 
 	public DoubleWorldLocation decimalOffset(double dx, double dy, double dz) {

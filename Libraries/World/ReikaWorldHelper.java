@@ -1931,7 +1931,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int top = ch.getTopFilledSegment()+15;
 		for (int y = top; y > 0; y--) {
 			Block b = ch.getBlock(x&15, y, z&15);
-			if (!b.isAir(world, x, y, z) && (!skipClouds || b != NaturaBlockHandler.getInstance().cloudID)) {
+			if (!b.isAir(world, x&15, y, z&15) && (!skipClouds || b != NaturaBlockHandler.getInstance().cloudID)) {
 				return y;
 			}
 		}

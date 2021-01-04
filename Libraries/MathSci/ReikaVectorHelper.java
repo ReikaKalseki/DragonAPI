@@ -38,9 +38,7 @@ public final class ReikaVectorHelper extends DragonAPICore {
 	/** Returns a standard Vec3 between two specified points, rather than from the origin.
 	 * Args: start x,y,z, end x,y,z */
 	public static Vec3 getVec2Pt(double x1, double y1, double z1, double x2, double y2, double z2) {
-		Vec3 p1 = Vec3.createVectorHelper(x1, y1, z1);
-		Vec3 p2 = Vec3.createVectorHelper(x2, y2, z2);
-		return subtract(p2, p1);
+		return Vec3.createVectorHelper(x2-x1, y2-y1, z2-z1);
 	}
 
 	public static Vec3 subtract(Vec3 p1, Vec3 p2) {
@@ -156,6 +154,17 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		Vec3 v21 = getVec2Pt(x2, y2, z2, x1, y1, z1);
 		return Math.abs(v01.crossProduct(v02).lengthVector()/v21.lengthVector());
 	}
+
+	/*
+	public static boolean isPointWithinDistOfLineSegment(double x1, double y1, double z1, double x2, double y2, double z2, double x, double y, double z, double dist) {
+
+		double d01 = ReikaMathLibrary.py3d(x-x1, y-y1, z-z1);
+		double d02 = ReikaMathLibrary.py3d(x-x2, y-y2, z-z2);
+		double d12 = ReikaMathLibrary.py3d(x1-x2, y1-y2, z1-z2);
+		double l1 = ReikaMathLibrary.py3d(d01, dist, 0);
+		double l2 = ReikaMathLibrary.py3d(d02, dist, 0);
+		return d01+d02 <= l1+l2;
+	}*/
 
 	public static Vec3 scaleVector(Vec3 vec, double len) {
 		Vec3 ret = vec.normalize();
