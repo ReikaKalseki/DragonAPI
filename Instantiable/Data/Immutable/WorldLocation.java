@@ -330,24 +330,6 @@ public class WorldLocation implements Comparable<WorldLocation> {
 		return this.getTaxicabDistanceTo(c.xCoord, c.yCoord, c.zCoord);
 	}
 
-	public DoubleWorldLocation decimalOffset(double dx, double dy, double dz) {
-		return new DoubleWorldLocation(this, dx, dy, dz);
-	}
-
-	public static final class DoubleWorldLocation extends WorldLocation {
-
-		public final double offsetX;
-		public final double offsetY;
-		public final double offsetZ;
-
-		private DoubleWorldLocation(WorldLocation loc, double dx, double dy, double dz) {
-			super(loc);
-			offsetX = dx;
-			offsetY = dy;
-			offsetZ = dz;
-		}
-	}
-
 	public String toSerialString() {
 		return String.format("%d:%d:%d:%d", dimensionID, xCoord, yCoord, zCoord);
 	}
@@ -371,6 +353,13 @@ public class WorldLocation implements Comparable<WorldLocation> {
 
 	public boolean isWithinDistOnAllCoords(WorldLocation loc, int radius) {
 		return Math.abs(loc.xCoord-xCoord) <= radius && Math.abs(loc.yCoord-yCoord) <= radius && Math.abs(loc.zCoord-zCoord) <= radius;
+	}
+
+	public double getSquaredDistance(double x, double y, double z) {
+		double dx = x-xCoord;
+		double dy = y-yCoord;
+		double dz = z-zCoord;
+		return dx*dx+dy*dy+dz*dz;
 	}
 
 	public boolean canSeeTheSky() {
@@ -401,6 +390,24 @@ public class WorldLocation implements Comparable<WorldLocation> {
 		if (ret != 0)
 			return ret;
 		return Integer.compare(zCoord, o.zCoord);
+	}
+
+	public DoubleWorldLocation decimalOffset(double dx, double dy, double dz) {
+		return new DoubleWorldLocation(this, dx, dy, dz);
+	}
+
+	public static final class DoubleWorldLocation extends WorldLocation {
+
+		public final double offsetX;
+		public final double offsetY;
+		public final double offsetZ;
+
+		private DoubleWorldLocation(WorldLocation loc, double dx, double dy, double dz) {
+			super(loc);
+			offsetX = dx;
+			offsetY = dy;
+			offsetZ = dz;
+		}
 	}
 
 }
