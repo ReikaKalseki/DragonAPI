@@ -47,6 +47,7 @@ public class ShaderRegistry {
 	public static ShaderProgram createShader(DragonAPIMod mod, String id, Class root, String pathPre, ShaderDomain dom) {
 		if (!OpenGlHelper.shadersSupported)
 			return null;
+		ShaderLibrary.loadLibraries();
 		if (shaders.containsKey(id))
 			error(mod, id, "Shader id "+id+" is already in use!", null);
 		ShaderProgram sh = new ShaderProgram(mod, root, pathPre, id, dom);
@@ -138,14 +139,14 @@ public class ShaderRegistry {
 			error(mod, name, "Shader was not able to be assigned an ID!", type);
 
 		if (BASE_DATA == null) {
-			BASE_DATA = readData(DragonAPICore.class.getResourceAsStream("Resources/shaderbase.txt"));
+			BASE_DATA = readData(DragonAPIInit.instance, "base", type, DragonAPICore.class.getResourceAsStream("Resources/Shader/base.txt"));
 		}
 		String sdata = "#version "+GLSL_VERSION+"\n";
 		if (type == ShaderTypes.FRAGMENT) {
 			sdata = sdata+"uniform sampler2D bgl_RenderedTexture;\n";
 		}
 		sdata = sdata+BASE_DATA+"\n";
-		sdata = sdata+readData(data);
+		sdata = sdata+readData(mod, name, type, data);
 		GL20.glShaderSource(id, sdata);
 		GL20.glCompileShader(id);
 
@@ -174,14 +175,29 @@ public class ShaderRegistry {
 				e.printStackTrace();
 		}
 		else {
-			throw new RegistrationException(mod, id+" "+t+" "+msg, e);
+			String msg2 = msg;
+			if (type != null) {
+				msg2 = type.name()+" "+msg2;
+			}
+			if (id != null) {
+				msg2 = id+" "+msg2;
+			}
+			throw new RegistrationException(mod, msg2, e);
 		}
 	}
 
-	private static String readData(InputStream data) {
+	private static String readData(DragonAPIMod mod, String id, ShaderTypes type, InputStream data) {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> li = ReikaFileReader.getFileAsLines(data, true, Charset.defaultCharset());
 		for (String s : li) {
+			if (s.startsWith("#import")) {
+				String[] parts = s.split(" ");
+				ShaderLibrary lib = ShaderLibrary.getLibrary(parts[1]);
+				if (lib == null) {
+					error(mod, id, "Invalid import - no such library '"+lib+"'", type);
+				}
+				s = "\n\n"+lib.getCode();
+			}
 			sb.append(s);
 			sb.append("\n");
 		}

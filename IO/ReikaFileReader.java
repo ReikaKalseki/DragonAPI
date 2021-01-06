@@ -263,6 +263,7 @@ public class ReikaFileReader extends DragonAPICore {
 		return r != null ? getFileAsLines(r, printStackTrace) : null;
 	}
 
+	@Deprecated
 	public static ArrayList<String> getFileAsLines(File f, boolean printStackTrace) {
 		return getFileAsLines(f, printStackTrace, Charset.defaultCharset());
 	}

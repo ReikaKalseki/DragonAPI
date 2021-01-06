@@ -1,0 +1,27 @@
+//Angle in radians, pt in 0-1 screen coords
+vec2 rotate(vec2 pt, vec2 origin, float ang) {
+	pt.x *= float(screenWidth);
+	pt.y *= float(screenHeight);
+	origin.x *= float(screenWidth);
+	origin.y *= float(screenHeight);
+	vec2 r = pt-origin;
+	float s = sin(ang);
+	float c = cos(ang);
+	mat2 m = mat2(c, -s, s, c);
+	vec2 ret = m * r;
+	ret += origin;
+	ret.x /= float(screenWidth);
+	ret.y /= float(screenHeight);
+	return ret;
+}
+
+vec2 getScreenPos(float x, float y, float z) {
+	vec4 clipSpacePos = projection * (modelview * vec4(x, y, z, 1.0));
+	vec3 ndcSpacePos = clipSpacePos.xyz / clipSpacePos.w;
+	return ((ndcSpacePos.xy + 1.0) / 2.0);
+}
+
+//Is relative to the actual tile/entity/etc position
+vec2 getScreenPosVec(vec3 worldPos) {
+	return getScreenPos(worldPos.x, worldPos.y, worldPos.z);
+}

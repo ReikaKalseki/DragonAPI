@@ -1,0 +1,23 @@
+uniform int chunkX;
+uniform int chunkY;
+uniform int chunkZ;
+
+float getX(vec4 vert) {
+	return vert.x+float(chunkX);
+}
+
+float getY(vec4 vert) {
+	return vert.y+float(chunkY);
+}
+
+float getZ(vec4 vert) {
+	return vert.z+float(chunkZ);
+}
+
+vec3 getReal(vec4 vert) {
+	return vec3(getX(vert), getY(vert), getZ(vert));
+}
+
+vec3 getRelativeCoord(vec3 real) {
+	return real-vec3(float(chunkX), float(chunkY), float(chunkZ));
+}

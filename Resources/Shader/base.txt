@@ -1,0 +1,15 @@
+//This is a "base class" for all DragonAPI shader programs (represented Javaside with the ShaderProgram class); it has library functions and commonly used uniform values for which ShaderProgram has built-in functions.
+
+varying vec2 texcoord;
+
+//uniform sampler2D bgl_RenderedTexture;
+
+uniform int time;
+uniform int screenWidth;
+uniform int screenHeight;
+
+uniform mat4 modelview;
+uniform mat4 projection;
+uniform vec3 focus;
+
+uniform float intensity;

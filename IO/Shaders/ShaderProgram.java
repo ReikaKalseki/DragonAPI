@@ -24,6 +24,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderDomain;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderTypes;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Libraries.Rendering.ReikaRenderHelper;
 
 import cpw.mods.fml.relauncher.Side;
@@ -50,6 +51,8 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	private boolean errorChecked = false;
 
 	private boolean isEnabled = true;
+
+	private final MultiMap<ShaderTypes, ShaderLibrary> imports = new MultiMap();
 
 	private final HashMap<String, Object> variables = new HashMap();
 	private Matrix4f modelview;

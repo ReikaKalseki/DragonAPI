@@ -409,12 +409,14 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	public void onGameLoaded(GameFinishedLoadingEvent evt) throws InterruptedException {
 		this.checkRemoteAssetDownload();
 
+		Minecraft mc = Minecraft.getMinecraft();
+
 		//if (ModList.liteLoaderInstalled())
 		if (!ReikaObfuscationHelper.isDeObfEnvironment())
 			//if (ReikaJVMParser.isArgumentPresent("-DragonAPI_noAssetReload"))
 			DirectResourceManager.getInstance().initToSoundRegistry();
 		//else
-		//	Minecraft.getMinecraft().refreshResources();
+		//	mc.refreshResources();
 
 		if (ModList.NEI.isLoaded()) {
 			NEIIntercept.instance.register();
@@ -423,11 +425,13 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 		DragonAPIInit.proxy.registerSidedHandlersGameLoaded();
 		ReflectiveFailureTracker.instance.print();
 
-		Minecraft.getMinecraft().getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, 1, 0, 0, 0));
+		mc.getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, 1, 0, 0, 0));
 		Thread.sleep(100);
 		float f = (float)MusicKey.Cs5.getRatio(MusicKey.Fs4);
-		Minecraft.getMinecraft().getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, 1, 0, 0, 0));
-		Minecraft.getMinecraft().getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, f, 0, 0, 0));
+		mc.getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, 1, 0, 0, 0));
+		mc.getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, f, 0, 0, 0));
+
+		mc.resize(mc.displayWidth, mc.displayHeight);
 	}
 
 	private void checkRemoteAssetDownload() throws InterruptedException {

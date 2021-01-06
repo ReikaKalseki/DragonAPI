@@ -1,3 +1,5 @@
+#import color
+
 uniform sampler2D stencilTex;
 
 void main() {

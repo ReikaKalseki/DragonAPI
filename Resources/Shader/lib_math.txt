@@ -1,0 +1,21 @@
+//On screen distance, proportional to screen size
+float distsq(vec2 a, vec2 b) {
+	float f = float(screenHeight)/float(screenWidth);
+	float dx = (a.x-b.x);
+	float dy = (a.y-b.y)*f;
+	return dx*dx+dy*dy;
+}
+
+float roundToNearest(float val, float base) {
+	return ceil(val/base)*base;
+}
+
+float getDistance(vec3 diff) {
+	diff = abs(diff);
+	return sqrt(diff.x*diff.x+diff.y*diff.y+diff.z*diff.z);
+}
+
+float getDistanceXZ(vec3 diff) {
+	diff = abs(diff);
+	return sqrt(diff.x*diff.x+diff.z*diff.z);
+}
