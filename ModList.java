@@ -47,7 +47,7 @@ public enum ModList implements ModEntry, Dependency {
 	TREECLIMBING("TreeClimbing"),
 	ARCHISECTIONS("ArchiSections"),
 	LOOTTWEAKS("LootTweaks"),
-	SATISFORESTRY("Satisforestry", "Reika.Satisforestry.SFBlocks"),
+	SATISFORESTRY("Satisforestry", "Reika.Satisforestry.Registry.SFBlocks"),
 	BUILDCRAFT("BuildCraft|Core", "buildcraft.BuildCraftCore"),
 	BCENERGY("BuildCraft|Energy", "buildcraft.BuildCraftEnergy"),
 	BCFACTORY("BuildCraft|Factory", "buildcraft.BuildCraftFactory"),

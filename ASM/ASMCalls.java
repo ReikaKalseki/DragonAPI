@@ -32,6 +32,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.ChunkPosition;
+import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenMutated;
@@ -39,6 +40,7 @@ import net.minecraft.world.gen.structure.MapGenVillage;
 import net.minecraft.world.gen.structure.StructureStrongholdPieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraft.world.gen.structure.StructureVillagePieces.PieceWeight;
+import net.minecraft.world.storage.SaveHandler;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
@@ -54,6 +56,7 @@ import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Interfaces.Item.MetadataSpecificTrade;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 import cpw.mods.fml.common.registry.VillagerRegistry;
@@ -62,6 +65,18 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 public class ASMCalls {
 
 	private static final HashSet<Item> tracedUnregItems = new HashSet();
+
+	public static void trackSaveHandleStart(SaveHandler save, File folder, long time) {
+		ReikaJavaLibrary.pConsole("Logged open of save handle "+save+" in file "+folder.getAbsolutePath()+" with timecode of "+time);
+		Thread.dumpStack();
+		try {
+			save.checkSessionLock();
+			ReikaJavaLibrary.pConsole("Save passed session lock check.");
+		}
+		catch (MinecraftException e) {
+			ReikaJavaLibrary.pConsole("Save failed session lock check.");
+		}
+	}
 
 	public static int getChunkCoordHash(ChunkCoordinates cc) {
 		return Coordinate.coordHash(cc.posX, cc.posY, cc.posZ);
