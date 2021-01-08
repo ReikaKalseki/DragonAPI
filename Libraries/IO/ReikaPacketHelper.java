@@ -692,15 +692,16 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
-	public static void sendSoundPacket(String ch, SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
-		sendSoundPacket(ch, s, world, x, y, z, vol, pitch, atten, atten ? 20 : Integer.MAX_VALUE);
+	public static void sendSoundPacket(SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
+		sendSoundPacket(s, world, x, y, z, vol, pitch, atten, atten ? 20 : Integer.MAX_VALUE);
 	}
 
-	public static void sendSoundPacket(String ch, SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten, int range) {
+	public static void sendSoundPacket(SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten, int range) {
 		int length = 0;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 		DataOutputStream outputStream = new DataOutputStream(bos);
 		try {
+			outputStream.writeInt(ReikaSoundHelper.getSoundLibraryIndex(s));
 			outputStream.writeInt(s.ordinal());
 			outputStream.writeDouble(x);
 			outputStream.writeDouble(y);
@@ -717,7 +718,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			throw new RuntimeException("Sound Packet for "+s+" threw a packet exception!");
 		}
 
-		PacketPipeline pipe = pipelines.get(ch);
+		PacketPipeline pipe = pipelines.get(DragonAPIInit.packetChannel);
 		if (pipe == null) {
 			DragonAPICore.logError("Attempted to send a packet from an unbound channel!");
 			ReikaJavaLibrary.dumpStack();

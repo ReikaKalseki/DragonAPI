@@ -10,26 +10,42 @@
 package Reika.DragonAPI.Instantiable.IO;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
 
 import net.minecraft.client.resources.IResource;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 
 public class SoundLoader {
 
-	private Collection<SoundEnum> soundList;
+	private final Class<? extends SoundEnum> soundClass;
+	private final SoundEnum[] soundList;
 
-	public SoundLoader(Collection<SoundEnum> sounds) {
-		soundList = new ArrayList(sounds);
+	public SoundLoader(SoundEnum... ss) {
+		if (ss.length == 0)
+			throw new IllegalArgumentException("You cannot register an empty sound list!");
+		soundClass = ss[0].getClass();
+		soundList = Arrays.copyOf(ss, ss.length);
+		this.init();
 	}
 
-	public SoundLoader(SoundEnum... sounds) {
-		soundList = ReikaJavaLibrary.makeListFrom(sounds);
+	public SoundLoader(Class<? extends SoundEnum> c) {
+		soundClass = c;
+		soundList = c.getEnumConstants();
+		this.init();
+	}
+
+	private void init() {
+		if (soundClass == SingleSound.class) {
+			for (SoundEnum s : soundList)
+				ReikaSoundHelper.registerSingleSound((SingleSound)s);
+		}
+		else {
+			ReikaSoundHelper.registerSoundSet(soundClass);
+		}
 	}
 
 	public final void register() {

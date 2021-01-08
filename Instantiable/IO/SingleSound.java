@@ -23,12 +23,13 @@ public final class SingleSound implements SoundEnum {
 
 	public final String name;
 	public final String path;
-	public final SoundCategory category;
 
-	public SingleSound(String n, String p, SoundCategory cat) {
+	@SideOnly(Side.CLIENT)
+	private SoundCategory category;
+
+	public SingleSound(String n, String p) {
 		name = n;
 		path = p;
-		category = cat;
 	}
 
 	@Override
@@ -41,9 +42,15 @@ public final class SingleSound implements SoundEnum {
 		return path;
 	}
 
+	@SideOnly(Side.CLIENT)
+	public void setSoundCategory(SoundCategory cat) {
+		category = cat;
+	}
+
 	@Override
+	@SideOnly(Side.CLIENT)
 	public SoundCategory getCategory() {
-		return category;
+		return category != null ? category : SoundCategory.MASTER;
 	}
 
 	@Override

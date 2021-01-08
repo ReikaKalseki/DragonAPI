@@ -35,6 +35,10 @@ import Reika.DragonAPI.Instantiable.IO.DirectResource;
 import Reika.DragonAPI.Instantiable.IO.DynamicDirectResource;
 import Reika.DragonAPI.Instantiable.IO.RemoteSourcedAsset;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class DirectResourceManager implements IResourceManager, IResourceManagerReloadListener {
 
 	private final HashMap<String, SoundEventAccessorComposite> accessors = new HashMap();

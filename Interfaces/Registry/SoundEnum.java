@@ -26,6 +26,7 @@ public interface SoundEnum {
 
 	//public URL getURL();
 
+	@SideOnly(Side.CLIENT)
 	public SoundCategory getCategory();
 
 	//public int getTickDuration();

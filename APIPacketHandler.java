@@ -49,6 +49,7 @@ import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ClientLogoutEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.PlayerInteractEventClient;
 import Reika.DragonAPI.Interfaces.PacketHandler;
+import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -88,6 +89,16 @@ public class APIPacketHandler implements PacketHandler {
 			PacketTypes packetType = packet.getType();
 			switch(packetType) {
 				case SOUND:
+					int lib = inputStream.readInt();
+					control = inputStream.readInt();
+					SoundEnum s = ReikaSoundHelper.lookupSound(lib, control);
+					double sx = inputStream.readDouble();
+					double sy = inputStream.readDouble();
+					double sz = inputStream.readDouble();
+					float v = inputStream.readFloat();
+					float p = inputStream.readFloat();
+					boolean att = inputStream.readBoolean();
+					ReikaSoundHelper.playClientSound(s, sx, sy, sz, v, p, att);
 					return;
 				case FULLSOUND:
 					control = inputStream.readInt();

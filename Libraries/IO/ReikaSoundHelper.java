@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,6 +10,8 @@
 package Reika.DragonAPI.Libraries.IO;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -37,7 +39,9 @@ import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.IO.EnumSound;
+import Reika.DragonAPI.Instantiable.IO.SingleSound;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 import cpw.mods.fml.client.FMLClientHandler;
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -50,6 +54,8 @@ import paulscode.sound.StreamThread;
 public class ReikaSoundHelper {
 
 	private static final MultiMap<SoundEnum, SoundPlay> plays = new MultiMap();
+	private static final HashMap<Class, SoundEnumSet> soundSets = new HashMap();
+	private static final HashMap<Integer, Class> soundSetIDs = new HashMap();
 
 	private static Field soundLibraryField;
 	private static Field streamThreadField;
@@ -132,15 +138,15 @@ public class ReikaSoundHelper {
 		}
 	}
 
-	public static void playSound(SoundEnum s, String ch, World world, Entity e, float vol, float pitch) {
-		playSound(s, ch, world, e.posX, e.posY, e.posZ, vol, pitch);
+	public static void playSound(SoundEnum s, World world, Entity e, float vol, float pitch) {
+		playSound(s, world, e.posX, e.posY, e.posZ, vol, pitch);
 	}
 
-	public static void playSound(SoundEnum s, String ch, World world, double x, double y, double z, float vol, float pitch) {
-		playSound(s, ch, world, x, y, z, vol, pitch, s.attenuate());
+	public static void playSound(SoundEnum s, World world, double x, double y, double z, float vol, float pitch) {
+		playSound(s, world, x, y, z, vol, pitch, s.attenuate());
 	}
 
-	public static void playSound(SoundEnum s, String ch, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
+	public static void playSound(SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
 		long time = world.getTotalWorldTime();
 		if (!s.canOverlap()) {
 			Collection<SoundPlay> c = plays.get(s);
@@ -157,11 +163,11 @@ public class ReikaSoundHelper {
 			}
 			plays.addValue(s, new SoundPlay(time, x, y, z));
 		}
-		sendSound(ch, s, world, x, y, z, vol, pitch, atten);
+		sendSound(s, world, x, y, z, vol, pitch, atten);
 	}
 
-	private static void sendSound(String ch, SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
-		ReikaPacketHelper.sendSoundPacket(ch, s, world, x, y, z, vol, pitch, atten);
+	private static void sendSound(SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
+		ReikaPacketHelper.sendSoundPacket(s, world, x, y, z, vol, pitch, atten);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -202,26 +208,14 @@ public class ReikaSoundHelper {
 		world.playSound(x, y, z, name, vol, pitch, flag);
 	}
 
-	public static void broadcastSound(SoundEnum s, String ch, float vol, float pitch) {
+	public static void broadcastSound(SoundEnum s, float vol, float pitch) {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
 			throw new MisuseException("You cannot call this from the client!");
 		World[] worlds = DimensionManager.getWorlds();
 		for (World world : worlds) {
 			for (EntityPlayer ep : (List<EntityPlayer>)world.playerEntities) {
-				playSound(s, ch, world, ep, vol, pitch);
+				playSound(s, world, ep, vol, pitch);
 			}
-		}
-
-	}
-
-	private static class SoundPlay {
-
-		private final long time;
-		private final DecimalPosition loc;
-
-		private SoundPlay(long t, double x, double y, double z) {
-			time = t;
-			loc = new DecimalPosition(x, y, z);
 		}
 
 	}
@@ -297,6 +291,9 @@ public class ReikaSoundHelper {
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			doClientInit();
 		}
+		soundSetIDs.put(0, SingleSound.class);
+		SingleSoundSet set = new SingleSoundSet();
+		soundSets.put(SingleSound.class, set);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -305,5 +302,96 @@ public class ReikaSoundHelper {
 		for (MusicType type : MusicType.values()) {
 			musicTypes.put(type.getMusicTickerLocation(), type);
 		}
+	}
+
+	public static int getSoundLibraryIndex(SoundEnum s) {
+		SoundEnumSet set = soundSets.get(s.getClass());
+		if (set == null) {
+			DragonAPICore.logError("Tried to play an unregistered sound '"+s.getClass()+" "+s+"'!");
+			return -1;
+		}
+		return set.index;
+	}
+
+	public static SoundEnum lookupSound(int lib, int idx) {
+		Class type = soundSetIDs.get(lib);
+		SoundEnumSet set = soundSets.get(type);
+		if (type == null || set == null) {
+			DragonAPICore.logError("Tried to play an unregistered sound!");
+			return null;
+		}
+		return set.getSound(idx);
+	}
+
+	public static void registerSoundSet(Class<? extends SoundEnum> c) {
+		if (c == SingleSound.class) {
+			throw new IllegalArgumentException("You cannot register single sounds as a set!");
+		}
+		else {
+			SoundEnumSet set = soundSets.get(c);
+			if (set != null) {
+				;//throw new IllegalArgumentException("Sound set "+c+" already registered!");
+			}
+			int idx = set != null ? set.index : soundSets.size();
+			soundSetIDs.put(idx, c);
+			if (set == null)
+				set = new SoundEnumSet(c, idx);
+			soundSets.put(c, set);
+			ReikaJavaLibrary.pConsole("Registered sound set of type "+c+" with values "+Arrays.toString(set.sounds));
+		}
+	}
+
+	public static void registerSingleSound(SingleSound s) {
+		SingleSoundSet set = (SingleSoundSet)soundSets.get(SingleSound.class);
+		set.addSound(s);
+	}
+
+	private static class SoundPlay {
+
+		private final long time;
+		private final DecimalPosition loc;
+
+		private SoundPlay(long t, double x, double y, double z) {
+			time = t;
+			loc = new DecimalPosition(x, y, z);
+		}
+
+	}
+
+	private static class SingleSoundSet extends SoundEnumSet {
+
+		private final ArrayList<SingleSound> soundList = new ArrayList();
+
+		private SingleSoundSet() {
+			super(SingleSound.class, 0);
+		}
+
+		private void addSound(SingleSound s) {
+			soundList.add(s);
+		}
+
+		@Override
+		protected SoundEnum getSound(int idx) {
+			return soundList.get(idx);
+		}
+
+	}
+
+	private static class SoundEnumSet {
+
+		private final int index;
+		private final Class<? extends SoundEnum> enumClass;
+		private final SoundEnum[] sounds;
+
+		private SoundEnumSet(Class<? extends SoundEnum> c, int idx) {
+			enumClass = c;
+			sounds = c.getEnumConstants();
+			index = idx;
+		}
+
+		protected SoundEnum getSound(int idx) {
+			return sounds[idx];
+		}
+
 	}
 }
