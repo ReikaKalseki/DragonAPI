@@ -87,7 +87,8 @@ public class ReikaASMHelper {
 	public static final int forgeVersion_Build = Integer.parseInt((String)FMLInjectionData.data()[3]);
 
 	public static final String REIKA_SRGS = "C:/Users/Reika/.gradle/caches/minecraft/net/minecraftforge/forge/1.7.10-10.13.4.1614-1.7.10/reika/custom/srgs/";
-	private static HashMap<String, String> srgMap = new HashMap();
+	private static final HashMap<String, String> srgMap = new HashMap();
+	private static final HashMap<String, Integer> opcodeNames = new HashMap();
 
 	public static void log(Object o) {
 		write(activeMod+": "+o, false);
@@ -480,6 +481,19 @@ public class ReikaASMHelper {
 		for (int i = 0; i < li.size(); i++) {
 			AbstractInsnNode ain = li.get(i);
 			if (match(ain, opcode, args)) {
+				count++;
+				if (count == n)
+					return ain;
+			}
+		}
+		return null;
+	}
+
+	public static AbstractInsnNode getNthInsn(int n, InsnList li, AbstractInsnNode compare) {
+		int count = 0;
+		for (int i = 0; i < li.size(); i++) {
+			AbstractInsnNode ain = li.get(i);
+			if (match(ain, compare)) {
 				count++;
 				if (count == n)
 					return ain;
@@ -1397,6 +1411,32 @@ public class ReikaASMHelper {
 			ret.add(li.get(i));
 		}
 		return ret;
+	}
+
+	public static int getOpcodeByName(String s) {
+		if (opcodeNames.isEmpty()) {
+			try {
+				loadNames();
+			}
+			catch (Exception e) {
+				ReikaASMHelper.logError("Error loading opcode name map!");
+				e.printStackTrace();
+			}
+		}
+		return opcodeNames.get(s);
+	}
+
+	private static void loadNames() throws Exception {
+		Field[] fds = Opcodes.class.getDeclaredFields();
+		boolean primed = false;
+		for (Field f : fds) {
+			if (f.getType() == int.class) {
+				if (primed || f.getName().equals("NOP")) {
+					primed = true;
+					opcodeNames.put(f.getName(), f.getInt(null));
+				}
+			}
+		}
 	}
 
 	public static MultiMap<String, Patcher> getPatchers(String mod, String pack) {

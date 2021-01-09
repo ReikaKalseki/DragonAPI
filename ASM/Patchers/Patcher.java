@@ -126,7 +126,11 @@ public abstract class Patcher {
 	}
 
 	public final String name() {
-		return this.getClass().getSimpleName().toUpperCase(Locale.ENGLISH);
+		return this.nameKey().toUpperCase(Locale.ENGLISH);
+	}
+
+	protected String nameKey() {
+		return this.getClass().getSimpleName();
 	}
 
 	public final boolean patchesForgeCode() {
@@ -137,7 +141,7 @@ public abstract class Patcher {
 		return !this.isObfable() && !this.patchesForgeCode();
 	}
 
-	private boolean isObfable() {
+	private final boolean isObfable() {
 		return !deobfName.equals(obfName);
 	}
 
