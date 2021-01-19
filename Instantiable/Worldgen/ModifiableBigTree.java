@@ -13,6 +13,7 @@ import java.util.Random;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
+import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
@@ -22,7 +23,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 
-public class ModifiableBigTree extends WorldGenAbstractTree {
+public abstract class ModifiableBigTree extends WorldGenAbstractTree {
 	/**
 	 * Contains three sets of two values that provide complimentary indices for a given 'major' index - 1 and 2 for 0, 0
 	 * and 2 for 1, and 0 and 1 for 2.
@@ -450,6 +451,20 @@ public class ModifiableBigTree extends WorldGenAbstractTree {
 
 	protected boolean isValidUnderBlock(World world, int x, int y, int z) {
 		return world.getBlock(x, y, z).canSustainPlant(world, x, y, z, ForgeDirection.UP, (BlockSapling)Blocks.sapling);
+	}
+
+	@Override
+	protected boolean func_150523_a(Block b) {
+		Material m = b.getMaterial();
+		return m == Material.air || m == Material.leaves || b == Blocks.grass || b == Blocks.dirt || this.isMatchingLog(b) || this.isMatchingSapling(b) || b == Blocks.vine;
+	}
+
+	protected boolean isMatchingLog(Block b) {
+		return b == Blocks.log;
+	}
+
+	protected boolean isMatchingSapling(Block b) {
+		return b == Blocks.leaves;
 	}
 
 	/**

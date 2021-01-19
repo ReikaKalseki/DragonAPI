@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -28,6 +28,9 @@ public class ChunkGenerationEvent extends ChunkEvent {
 	}
 
 	public static void fire(Chunk c) {
+		if (c.xPosition == 0 && c.zPosition == 0) {
+			MinecraftForge.EVENT_BUS.post(new WorldCreationEvent(c.worldObj));
+		}
 		MinecraftForge.EVENT_BUS.post(new ChunkGenerationEvent(c));
 	}
 

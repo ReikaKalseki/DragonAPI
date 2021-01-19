@@ -516,4 +516,35 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		double dz = b.getBlockBoundsMaxZ()-b.getBlockBoundsMinZ();
 		return dx*dy*dz;
 	}
+
+	public static int getVineMetadatasFor(Collection<ForgeDirection> sides) {
+		int flags = 0;
+		for (ForgeDirection dir : sides) {
+			flags |= getVineMetadataFor(dir);
+		}
+		return flags;
+	}
+
+	public static int getVineMetadatasFor(ForgeDirection... sides) {
+		int flags = 0;
+		for (ForgeDirection dir : sides) {
+			flags |= getVineMetadataFor(dir);
+		}
+		return flags;
+	}
+
+	private static int getVineMetadataFor(ForgeDirection dir) { //BITFLAGS: west 2 east 8 north 4 south 1
+		switch(dir) {
+			case EAST:
+				return 8;
+			case NORTH:
+				return 4;
+			case SOUTH:
+				return 1;
+			case WEST:
+				return 2;
+			default:
+				return 0;
+		}
+	}
 }

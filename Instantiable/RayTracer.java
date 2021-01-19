@@ -236,6 +236,10 @@ public final class RayTracer {
 		}
 	}
 
+	public static Collection<BlockKey> getTransparentBlocks() {
+		return Collections.unmodifiableCollection(visuallyTransparent);
+	}
+
 	public static RayTracer getVisualLOS() {
 		RayTracer trace = new RayTracer(0, 0, 0, 0, 0, 0);
 		loadLastTransparent();

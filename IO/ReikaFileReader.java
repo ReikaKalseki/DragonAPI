@@ -867,4 +867,8 @@ public class ReikaFileReader extends DragonAPICore {
 		}
 		return null;
 	}
+
+	public static String getFileNameNoExtension(File f) {
+
+	}
 }

@@ -11,6 +11,7 @@ package Reika.DragonAPI.Instantiable.Data.Immutable;
 
 import java.util.Random;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
@@ -418,6 +419,22 @@ public final class BlockBox {
 			int rz = z < minZ ? maxZ : minZ;
 			return new Coordinate(rx, ry, rz);
 		}
+	}
+
+	public static BlockBox between(Entity e1, Entity e2) {
+		return new BlockBox(MathHelper.floor_double(e1.posX), MathHelper.floor_double(e1.posY), MathHelper.floor_double(e1.posZ), MathHelper.floor_double(e2.posX), MathHelper.floor_double(e2.posY), MathHelper.floor_double(e2.posZ));
+	}
+
+	public static BlockBox between(DecimalPosition e1, DecimalPosition e2) {
+		return new BlockBox(MathHelper.floor_double(e1.xCoord), MathHelper.floor_double(e1.yCoord), MathHelper.floor_double(e1.zCoord), MathHelper.floor_double(e2.xCoord), MathHelper.floor_double(e2.yCoord), MathHelper.floor_double(e2.zCoord));
+	}
+
+	private static BlockBox between(Coordinate c1, Coordinate c2) {
+		return new BlockBox(c1.xCoord, c1.yCoord, c1.zCoord, c2.xCoord, c2.yCoord, c2.zCoord);
+	}
+
+	private static BlockBox between(WorldLocation c1, WorldLocation c2) {
+		return new BlockBox(c1.xCoord, c1.yCoord, c1.zCoord, c2.xCoord, c2.yCoord, c2.zCoord);
 	}
 
 }

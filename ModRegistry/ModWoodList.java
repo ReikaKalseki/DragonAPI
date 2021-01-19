@@ -101,7 +101,7 @@ public enum ModWoodList implements TreeType {
 	LIGHTED(ModList.CHROMATICRAFT,	0xA05F36, 0xFFD793, 10, 14, "GLOWLOG", "GLOWLEAF", "GLOWSAPLING", 0, new int[]{0,1,2,3,4}, 0, VarType.INSTANCE),
 	SLIME(ModList.TINKERER,			0x68FF7A, 0x8EFFE1, 12, 15, "slimeGel", "slimeLeaves", "slimeSapling", 1, 0, 0, VarType.INSTANCE),
 	TAINTED(ModList.FORBIDDENMAGIC,	0x40374B, 0x530D7B,	7, 12, "taintLog", "taintLeaves", "taintSapling", new int[]{0,4,8}, 0, 0, VarType.INSTANCE),
-	PINKBIRCH(ModList.SATISFORESTRY,0xE5E4DB, 0xF795B5, 24, 96, "LOG", "LEAVES", null, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, VarType.INSTANCE),
+	PINKBIRCH(ModList.SATISFORESTRY,0xE5E4DB, 0xF795B5, 24, 96, "LOG", "LEAVES", "SAPLING", new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, VarType.INSTANCE),
 	;
 
 	private ModList mod;

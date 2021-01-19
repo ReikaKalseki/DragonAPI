@@ -20,15 +20,19 @@ public class OpenPathFinder implements PropagationCondition {
 	}
 
 	@Override
-	public boolean isValidLocation(World world, int x, int y, int z, Coordinate from) {
+	public final boolean isValidLocation(World world, int x, int y, int z, Coordinate from) {
 		if (startLocation.equals(x, y, z) || endLocation.equals(x, y, z))
 			return true;
 		if (!startLocation.isWithinDistOnAllCoords(x, y, z, searchRadius))
 			return false;
-		return isValidBlock(world, x, y, z);
+		return this.isValidBlock(world, x, y, z);
 	}
 
-	public static boolean isValidBlock(World world, int x, int y, int z) {
+	protected boolean isValidBlock(World world, int x, int y, int z) {
+		return isEmptyBlock(world, x, y, z);
+	}
+
+	public static boolean isEmptyBlock(World world, int x, int y, int z) {
 		Block b = world.getBlock(x, y, z);
 		return b.isAir(world, x, y, z) || ReikaWorldHelper.softBlocks(world, x, y, z);
 	}

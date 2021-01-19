@@ -212,6 +212,19 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		return neg ? -num : num;
 	}
 
+	public static long safeLongParse(String s) {
+		boolean neg = false;
+		long num = 0;
+		if (s.startsWith("-")) {
+			s = s.substring(1);
+			neg = true;
+		}
+		if (s.matches("\\d+")) {
+			num = Long.parseLong(s);
+		}
+		return neg ? -num : num;
+	}
+
 	public static void printLine(int length) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < length; i++)

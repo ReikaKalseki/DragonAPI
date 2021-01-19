@@ -17,7 +17,7 @@ import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 
 
-public final class MetadataItemBlock extends ItemBlockWithMetadata {
+public class MetadataItemBlock extends ItemBlockWithMetadata {
 
 	public MetadataItemBlock(Block b) {
 		super(b, b);

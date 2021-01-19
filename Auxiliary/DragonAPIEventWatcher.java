@@ -74,6 +74,7 @@ import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent.ProfileEventWatcher;
+import Reika.DragonAPI.Instantiable.Event.WorldCreationEvent;
 import Reika.DragonAPI.Instantiable.Event.XPUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
 import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderingLoopEvent;
@@ -104,6 +105,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Rendering.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.World.ReikaChunkHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -139,6 +141,12 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 		if (tag.equals("debug")) {
 			this.showF3Extras();
 		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void monitorNewWorld(WorldCreationEvent ev) {
+		DragonAPICore.log("Registering creation of new world "+ev.world+" in "+ev.world.getSaveHandler().getWorldDirectory());
+		ReikaWorldHelper.onWorldCreation(ev.world);
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)

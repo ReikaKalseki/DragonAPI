@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
+import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 
 
@@ -106,7 +107,14 @@ public class BreadthFirstSearch extends AbstractSearch {
 	}
 
 	public static LinkedList<Coordinate> getPath(World world, double x, double y, double z, TerminationCondition t, PropagationCondition c) {
+		return getPath(world, x, y, z, t, c, null);
+	}
+
+	public static LinkedList<Coordinate> getPath(World world, double x, double y, double z, TerminationCondition t, PropagationCondition c, BlockBox bounds) {
 		BreadthFirstSearch s = new BreadthFirstSearch(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
+		if (bounds != null) {
+			s.limit = bounds;
+		}
 		while (!s.tick(world, c, t)) {
 
 		}
@@ -120,9 +128,13 @@ public class BreadthFirstSearch extends AbstractSearch {
 	}
 
 	public static LinkedList<Coordinate> getOpenPathBetween(World world, Coordinate start, Coordinate end, int r) {
+		return getOpenPathBetween(world, start, end, r, null);
+	}
+
+	public static LinkedList<Coordinate> getOpenPathBetween(World world, Coordinate start, Coordinate end, int r, BlockBox bounds) {
 		PropagationCondition f = new OpenPathFinder(start, end, r);
 		TerminationCondition t = new LocationTerminus(end);
-		return getPath(world, start.xCoord, start.yCoord, start.zCoord, t, f);
+		return getPath(world, start.xCoord, start.yCoord, start.zCoord, t, f, bounds);
 	}
 
 	private static class SearchHead {

@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.World;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -82,6 +83,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.BlockTieredResource;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.BlockProperties;
+import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.ResettableRandom;
 import Reika.DragonAPI.Instantiable.TemperatureEffect;
 import Reika.DragonAPI.Instantiable.TemperatureEffect.TemperatureCallback;
@@ -127,7 +129,9 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	private static Method computeModdedGeneratorList;
 	private static final Random moddedGenRand_Calcer = new Random();
 	private static final ResettableRandom moddedGenRand = new ResettableRandom();
-	private static HashMap<Material, TemperatureEffect> temperatureBlockEffects = new HashMap();
+
+	private static final HashMap<Material, TemperatureEffect> temperatureBlockEffects = new HashMap();
+	private static final HashMap<File, Long> worldIDMap = new HashMap();
 
 	static {
 		try {
@@ -2410,5 +2414,33 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static int getBiomeSize(World world) {
 		WorldType type = world.getWorldInfo().getTerrainType();
 		return GenLayer.getModdedBiomeSize(type, (byte)(type == WorldType.LARGE_BIOMES ? 6 : 4));
+	}
+
+	public static long getCurrentWorldID(World world) {
+		File f = world.getSaveHandler().getWorldDirectory();
+		Long get = worldIDMap.get(f);
+		if (get == null) {
+			get = calculateWorldID(world);
+			worldIDMap.put(f, get);
+		}
+		return get;
+	}
+
+	private static long calculateWorldID(World world) {
+		Collection<File> c = ReikaFileReader.getAllFilesInFolder(getWorldMetadataFolder(world), ".wuid");
+		if (c == null || c.isEmpty())
+			return 0;
+		File f = c.iterator().next();
+		//String name = ReikaFileReader.getFileNameNoExtension(f);
+		//return ReikaJavaLibrary.safeLongParse(name);
+	}
+
+	public static File getWorldMetadataFolder(World world) {
+		return new File(world.getSaveHandler().getWorldDirectory(), "DragonAPI_Data");
+	}
+
+	public static void onWorldCreation(World world) {
+		File folder = getWorldMetadataFolder(world);
+		File f = new File(folder, ".wuid");
 	}
 }
