@@ -36,6 +36,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -858,17 +859,19 @@ public class ReikaFileReader extends DragonAPICore {
 		for (File f : folder.listFiles()) {
 			if (f.isDirectory())
 				continue;
-			String full = f.getName();
-			int idx = full.lastIndexOf('.');
-			String ext = full.substring(idx+1);
-			String part = full.substring(0, idx);
-			if (part.equals(name))
+			if (getFileNameNoExtension(f).equals(name))
 				return f;
 		}
 		return null;
 	}
 
 	public static String getFileNameNoExtension(File f) {
+		String n = f.getName();
+		int idx = n.lastIndexOf('.');
+		return idx >= 0 && idx < n.length() ? n.substring(0, idx) : n;
+	}
 
+	public static String getRelativePath(File from, File to) {
+		return Paths.get(from.toURI()).relativize(Paths.get(to.toURI())).toString();
 	}
 }

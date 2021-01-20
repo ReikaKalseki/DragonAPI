@@ -17,6 +17,8 @@ import java.net.URL;
 import java.util.Random;
 import java.util.UUID;
 
+import com.mojang.authlib.GameProfile;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.PropertyManager;
@@ -49,6 +51,9 @@ public class DragonAPICore {
 	private static boolean loaded;
 
 	private static final long launchTime = ManagementFactory.getRuntimeMXBean().getStartTime();
+
+	public static final GameProfile serverProfile = new GameProfile(UUID.fromString("b9a1b954-6651-4bb8-af54-452a4d9fd5a4"), "[SERVER]");
+	private static GameProfile sessionUser = serverProfile;
 
 	private static final String MINFORGE = "required-after:Forge@[10.13.4.1558,);"; //was 1205/1231/1291/1558
 	public static final String dependencies = MINFORGE+"after:BuildCraft|Energy;after:IC2;after:ThermalExpansion;after:Thaumcraft;"+
@@ -141,6 +146,11 @@ public class DragonAPICore {
 		return FMLCommonHandler.instance().getEffectiveSide();
 	}
 
+	@SideOnly(Side.CLIENT)
+	private static GameProfile loadSessionProfile() {
+		return Minecraft.getMinecraft().getSession().func_148256_e();
+	}
+
 	private static void validateForgeVersions() {
 		int major = ForgeVersion.majorVersion;
 		int minor = ForgeVersion.minorVersion;
@@ -206,6 +216,7 @@ public class DragonAPICore {
 		@SideOnly(Side.CLIENT)
 		public void load(GameFinishedLoadingEvent evt) {
 			loaded = true;
+			sessionUser = loadSessionProfile();
 		}
 
 	}
@@ -220,6 +231,10 @@ public class DragonAPICore {
 
 	public static long getLaunchTime() {
 		return launchTime;
+	}
+
+	public static GameProfile getLaunchingPlayer() {
+		return sessionUser;
 	}
 
 	public static int getSystemTimeAsInt() {

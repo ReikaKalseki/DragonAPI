@@ -28,9 +28,9 @@ public class ChunkGenerationEvent extends ChunkEvent {
 	}
 
 	public static void fire(Chunk c) {
-		if (c.xPosition == 0 && c.zPosition == 0) {
-			MinecraftForge.EVENT_BUS.post(new WorldCreationEvent(c.worldObj));
-		}
+		//if (ReikaChunkHelper.isSpawn(c)) {
+		//	MinecraftForge.EVENT_BUS.post(new WorldCreationEvent(c.worldObj));
+		//}
 		MinecraftForge.EVENT_BUS.post(new ChunkGenerationEvent(c));
 	}
 

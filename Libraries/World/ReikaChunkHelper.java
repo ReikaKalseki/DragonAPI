@@ -20,6 +20,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.ChunkPosition;
 import net.minecraft.world.World;
@@ -358,5 +359,10 @@ public final class ReikaChunkHelper extends DragonAPICore {
 	public static Chunk getRandomLoadedChunk(World world) {
 		ChunkCoordIntPair p = (ChunkCoordIntPair)ReikaJavaLibrary.getRandomCollectionEntry(rand, world.activeChunkSet);
 		return world.getChunkFromChunkCoords(p.chunkXPos, p.chunkZPos);
+	}
+
+	public static boolean isSpawn(Chunk c) {
+		ChunkCoordinates spawn = c.worldObj.getSpawnPoint();
+		return c.xPosition == (spawn.posX >> 4) && c.zPosition == (spawn.posZ >> 4);
 	}
 }

@@ -10,6 +10,9 @@
 package Reika.DragonAPI.Libraries.World;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -37,6 +40,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.tileentity.TileEntityMobSpawner;
@@ -96,6 +102,7 @@ import Reika.DragonAPI.Instantiable.Event.IceFreezeEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
 import Reika.DragonAPI.Interfaces.Callbacks.PositionCallable;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
@@ -117,6 +124,7 @@ import Reika.DragonAPI.ModRegistry.ModCropList;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.IWorldGenerator;
 import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.ModContainer;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
@@ -131,7 +139,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	private static final ResettableRandom moddedGenRand = new ResettableRandom();
 
 	private static final HashMap<Material, TemperatureEffect> temperatureBlockEffects = new HashMap();
-	private static final HashMap<File, Long> worldIDMap = new HashMap();
+	private static final HashMap<String, WorldID> worldIDMap = new HashMap();
 
 	static {
 		try {
@@ -2416,9 +2424,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return GenLayer.getModdedBiomeSize(type, (byte)(type == WorldType.LARGE_BIOMES ? 6 : 4));
 	}
 
-	public static long getCurrentWorldID(World world) {
-		File f = world.getSaveHandler().getWorldDirectory();
-		Long get = worldIDMap.get(f);
+	public static WorldID getCurrentWorldID(World world) {
+		if (world.isRemote)
+			throw new MisuseException("This cannot be called from the client side!");
+		String f = getWorldKey(world);
+		WorldID get = worldIDMap.get(f);
 		if (get == null) {
 			get = calculateWorldID(world);
 			worldIDMap.put(f, get);
@@ -2426,21 +2436,121 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return get;
 	}
 
-	private static long calculateWorldID(World world) {
-		Collection<File> c = ReikaFileReader.getAllFilesInFolder(getWorldMetadataFolder(world), ".wuid");
-		if (c == null || c.isEmpty())
-			return 0;
-		File f = c.iterator().next();
+	private static String getWorldKey(World world) {
+		File f = world.getSaveHandler().getWorldDirectory();
+		return ReikaFileReader.getRelativePath(DragonAPICore.getMinecraftDirectory(), f);
+	}
+
+	private static WorldID calculateWorldID(World world) {
+		File f = new File(getWorldMetadataFolder(world), "worldID.dat");
+		if (!f.exists())
+			return WorldID.NONEXISTENT;
+		return WorldID.readFile(f);
 		//String name = ReikaFileReader.getFileNameNoExtension(f);
 		//return ReikaJavaLibrary.safeLongParse(name);
 	}
 
 	public static File getWorldMetadataFolder(World world) {
-		return new File(world.getSaveHandler().getWorldDirectory(), "DragonAPI_Data");
+		if (world.isRemote)
+			throw new MisuseException("This cannot be called from the client side!");
+		File ret = new File(world.getSaveHandler().getWorldDirectory(), "DragonAPI_Data");
+		ret.mkdirs();
+		return ret;
 	}
 
 	public static void onWorldCreation(World world) {
+		if (world.isRemote)
+			throw new MisuseException("This cannot be called from the client side!");
 		File folder = getWorldMetadataFolder(world);
-		File f = new File(folder, ".wuid");
+		File f = new File(folder, "worldID.dat");
+		try {
+			f.createNewFile();
+		}
+		catch (IOException ex) {
+			ex.printStackTrace();
+		}
+		WorldID id = new WorldID(world);
+		id.writeToFile(f);
+	}
+
+	public static final class WorldID {
+
+		private static int worldsThisSession = 0;
+
+		private static final WorldID NONEXISTENT = new WorldID(0, 0, 0, "[NONEXISTENT]", "[NONEXISTENT]", new HashSet());
+
+		public final long worldCreationTime;
+		public final long sourceSessionStartTime;
+		public final long sessionWorldIndex;
+		public final String originalFolder;
+		public final String creatingPlayer;
+
+		private final HashSet<String> modList;
+
+		private WorldID(World world) {
+			this(System.currentTimeMillis(), DragonAPICore.getLaunchTime(), worldsThisSession, world.getSaveHandler().getWorldDirectory().getAbsolutePath(), getSessionName(), getModList());
+			worldsThisSession++;
+		}
+
+		private static HashSet<String> getModList() {
+			HashSet<String> ret = new HashSet();
+			for (ModContainer mc : Loader.instance().getActiveModList()) {
+				ret.add(mc.getModId());
+			}
+			return ret;
+		}
+
+		private WorldID(long time, long session, int index, String folder, String player, HashSet<String> modlist) {
+			worldCreationTime = time;
+			sourceSessionStartTime = session;
+			sessionWorldIndex = index;
+			originalFolder = folder;
+			creatingPlayer = player;
+			modList = modlist;
+		}
+
+		private static String getSessionName() {
+			return DragonAPICore.getLaunchingPlayer().getName();
+		}
+
+		public boolean isValid() {
+			return worldCreationTime > 0 && !originalFolder.equals("[NONEXISTENT]");
+		}
+
+		private void writeToFile(File f) {
+			NBTTagCompound data = new NBTTagCompound();
+			data.setLong("creationTime", worldCreationTime);
+			data.setLong("sourceSession", sourceSessionStartTime);
+			data.setLong("sessionIndex", sessionWorldIndex);
+			data.setString("originalFolder", originalFolder);
+			data.setString("creatingPlayer", creatingPlayer);
+			try(FileOutputStream out = new FileOutputStream(f)) {
+				CompressedStreamTools.writeCompressed(data, out);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		private static WorldID readFile(File f) {
+			try(FileInputStream in = new FileInputStream(f)) {
+				NBTTagCompound data = CompressedStreamTools.readCompressed(in);
+				long c = data.getLong("creationTime");
+				long s = data.getLong("sourceSession");
+				String folder = data.getString("originalFolder");
+				String player = data.getString("creatingPlayer");
+				HashSet<String> modlist = new HashSet();
+				NBTTagList li = data.getTagList("mods", NBTTypes.STRING.ID);
+				for (Object o : li.tagList) {
+					modlist.add((String)o);
+				}
+				return new WorldID(c, s, data.getInteger("sessionIndex"), folder, player, modlist);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return NONEXISTENT;
+			}
+		}
+
 	}
 }

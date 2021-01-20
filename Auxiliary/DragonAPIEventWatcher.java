@@ -47,6 +47,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent.Action;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.event.world.ChunkEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.event.world.WorldEvent.CreateSpawnPosition;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerRegisterEvent;
 import net.minecraftforge.oredict.OreDictionary.OreRegisterEvent;
@@ -74,7 +75,6 @@ import Reika.DragonAPI.Instantiable.Event.ItemUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent.ProfileEventWatcher;
-import Reika.DragonAPI.Instantiable.Event.WorldCreationEvent;
 import Reika.DragonAPI.Instantiable.Event.XPUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
 import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderingLoopEvent;
@@ -144,7 +144,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void monitorNewWorld(WorldCreationEvent ev) {
+	public void monitorNewWorld(CreateSpawnPosition ev) {
 		DragonAPICore.log("Registering creation of new world "+ev.world+" in "+ev.world.getSaveHandler().getWorldDirectory());
 		ReikaWorldHelper.onWorldCreation(ev.world);
 	}
