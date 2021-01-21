@@ -7,6 +7,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.util.EnumChatFormatting;
 
 import Reika.DragonAPI.Extras.EnvironmentPackager;
+import Reika.DragonAPI.IO.ReikaFileReader;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -27,7 +28,7 @@ public class ExportEnvironmentCommand extends DragonClientCommand {
 		}
 		else {
 			this.sendChatToSender(ics, EnumChatFormatting.GREEN+"Game environment exported to file:");
-			this.sendChatToSender(ics, f.getAbsolutePath());
+			this.sendChatToSender(ics, ReikaFileReader.getRealPath(f));
 		}
 	}
 

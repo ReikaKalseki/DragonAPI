@@ -99,7 +99,7 @@ public abstract class MapOutput<V> {
 
 		this.onImageCreate(f);
 
-		return f.getAbsolutePath();
+		return f.getCanonicalPath();
 	}
 
 	protected void onImageCreate(File f) throws IOException {

@@ -32,7 +32,7 @@ public class PackModificationTracker {
 	public static final PackModificationTracker instance = new PackModificationTracker();
 
 	private final HashMap<DragonAPIMod, ArrayList<PackModification>> data = new HashMap();
-	private final HashMap<DragonAPIMod, String> filepaths = new HashMap();
+	private final HashMap<DragonAPIMod, File> filepaths = new HashMap();
 
 	private PackModificationTracker() {
 
@@ -51,7 +51,7 @@ public class PackModificationTracker {
 		this.addMod(mod, this.getConfigFolderBasedPath(mod, cfg));
 	}
 
-	public void addMod(DragonAPIMod mod, String path) {
+	public void addMod(DragonAPIMod mod, File path) {
 		if (!filepaths.containsKey(mod))
 			filepaths.put(mod, path);
 	}
@@ -65,7 +65,7 @@ public class PackModificationTracker {
 	private void load(DragonAPIMod mod) {
 		mod.getModLogger().log("Loading pack modification log file.");
 		try {
-			File f = new File(filepaths.get(mod));
+			File f = filepaths.get(mod);
 			if (!f.exists())
 				this.createDataFile(f, mod);
 
@@ -104,8 +104,8 @@ public class PackModificationTracker {
 		return ReikaStringParser.stripSpaces(mod.getTechnicalName())+"_PackModifications.cfg";
 	}
 
-	private final String getConfigFolderBasedPath(DragonAPIMod mod, ControlledConfig cfg) {
-		return cfg.getConfigFolder().getAbsolutePath()+"/"+this.getBasicSaveFileName(mod);
+	private final File getConfigFolderBasedPath(DragonAPIMod mod, ControlledConfig cfg) {
+		return new File(cfg.getConfigFolder(), this.getBasicSaveFileName(mod));
 	}
 
 	private void createDataFile(File f, DragonAPIMod mod) throws Exception {

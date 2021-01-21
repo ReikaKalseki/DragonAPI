@@ -39,7 +39,11 @@ public abstract class NBTFile {
 	public boolean encryptData = false;
 
 	public NBTFile(File f) {
-		this(f.getName(), f.getAbsolutePath(), null);
+		this(f.getName(), f);
+	}
+
+	public NBTFile(String name, File f) {
+		this(name, f.getAbsolutePath(), null);
 	}
 
 	public NBTFile(String name, String path, Class c) {

@@ -64,18 +64,19 @@ public final class ReikaMIDIReader {
 	}
 
 	public static Sequence getMIDIFromFile(File f) {
+		String path = ReikaFileReader.getRealPath(f);
 		if (!f.exists()) {
-			DragonAPICore.logError("File at "+f.getAbsolutePath()+" not found. Aborting.");
+			DragonAPICore.logError("File at "+path+" not found. Aborting.");
 			return null;
 		}
 		try {
 			return getMIDIFromFile(new FileInputStream(f));
 		}
 		catch (IOException e) {
-			DragonAPICore.logError("MIDI File at "+f.getAbsolutePath()+" unreadable.");
+			DragonAPICore.logError("MIDI File at "+path+" unreadable.");
 		}
 		catch (InvalidMidiDataException e) {
-			DragonAPICore.logError("MIDI File at "+f.getAbsolutePath()+" invalid.");
+			DragonAPICore.logError("MIDI File at "+path+" invalid.");
 		}
 		return null;
 	}

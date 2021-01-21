@@ -51,6 +51,7 @@ import Reika.DragonAPI.Instantiable.Event.Client.PlayerInteractEventClient;
 import Reika.DragonAPI.Interfaces.PacketHandler;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper.DataPacket;
@@ -276,6 +277,9 @@ public class APIPacketHandler implements PacketHandler {
 					BaseAttributeMap map = ep.getAttributeMap();
 				}
 				break;*/
+				case PLAYERDATSYNCREQ_CLIENT:
+					ReikaPlayerAPI.syncCustomData((EntityPlayerMP)ep);
+					break;
 				case RERENDER:
 					ReikaRenderHelper.rerenderAllChunks();
 					break;
@@ -494,6 +498,7 @@ public class APIPacketHandler implements PacketHandler {
 		TILEDELETE(),
 		PLAYERDATSYNC(),
 		PLAYERDATSYNC_CLIENT(),
+		PLAYERDATSYNCREQ_CLIENT(),
 		//PLAYERATTRSYNC(),
 		RERENDER(),
 		COLOREDPARTICLE(),

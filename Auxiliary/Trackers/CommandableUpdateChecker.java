@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -237,13 +237,11 @@ public final class CommandableUpdateChecker {
 	}
 
 	private File getFile() {
-		String base = DragonAPICore.getMinecraftDirectory().getAbsolutePath();
-		File parent = new File(base+"/saves/DragonAPI");
+		File parent0 = new File(DragonAPICore.getMinecraftDirectory(), "saves");
+		File parent = new File(parent0, "DragonAPI");
 		if (!parent.exists())
 			parent.mkdirs();
-		String path = parent+"/ucheck.dat";
-		File f = new File(path);
-		return f;
+		return new File(parent, "ucheck.dat");
 	}
 
 	public void notifyPlayer(EntityPlayer ep) {
@@ -330,12 +328,11 @@ public final class CommandableUpdateChecker {
 	}
 
 	private File getHashFile() {
-		String base = DragonAPICore.getMinecraftDirectoryString();
-		File parent = new File(base+"/config/Reika");
+		File parent0 = new File(DragonAPICore.getMinecraftDirectory(), "config");
+		File parent = new File(parent0, "Reika");
 		if (!parent.exists())
 			parent.mkdirs();
-		String path = parent+"/versions.dat";
-		File f = new File(path);
+		File f = new File(parent, "versions.dat");
 		try {
 			if (!f.exists())
 				f.createNewFile();
@@ -347,7 +344,7 @@ public final class CommandableUpdateChecker {
 	}
 
 	private UpdateHash genHash(DragonAPIMod mod, EntityPlayer ep) {
-		return new UpdateHash(ep.getUniqueID(), mod.getModContainer().getSource().getAbsolutePath(), System.currentTimeMillis());
+		return new UpdateHash(ep.getUniqueID(), ReikaFileReader.getRealPath(mod.getModContainer().getSource()), System.currentTimeMillis());
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -555,7 +552,6 @@ public final class CommandableUpdateChecker {
 			player = id;
 			filepath = file;
 			timestamp = time;
-
 		}
 
 		@Override
@@ -618,12 +614,12 @@ public final class CommandableUpdateChecker {
 		}
 
 		private static final char[] chars = {
-			'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-			'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
-			'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
-			'v', 'w', 'x', 'y', 'z', '~', '`', '+', '-', '=',
-			'!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
-			'[', ']', '{', '}', ';', ':', '<', '>', ',', '.',
+				'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+				'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j',
+				'k', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+				'v', 'w', 'x', 'y', 'z', '~', '`', '+', '-', '=',
+				'!', '@', '#', '$', '%', '^', '&', '*', '(', ')',
+				'[', ']', '{', '}', ';', ':', '<', '>', ',', '.',
 		};
 
 	}

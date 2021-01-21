@@ -1,14 +1,15 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Data.BlockStruct;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,11 +47,11 @@ public class StructureExport extends NBTFile {
 	public PlacementCallback placeCallback;
 
 	public StructureExport(String name) {
-		this(name, "", null);
+		super(name, new File(DragonAPICore.getMinecraftDirectory(), "StructureData/"+name+".struct"));
 	}
 
 	public StructureExport(String name, String path, Class c) {
-		super(name, c != null ? path+"/"+name+".struct" : DragonAPICore.getMinecraftDirectoryString()+"/StructureData/"+path+"/"+name+".struct", c);
+		super(name, path+"/"+name+".struct", c);
 	}
 
 	public StructureExport addWatchedNBT(String tag) {

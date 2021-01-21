@@ -2438,7 +2438,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	private static String getWorldKey(World world) {
 		File f = world.getSaveHandler().getWorldDirectory();
-		return ReikaFileReader.getRelativePath(DragonAPICore.getMinecraftDirectory(), f);
+		return ReikaFileReader.getRealPath(f);//ReikaFileReader.getRelativePath(DragonAPICore.getMinecraftDirectory(), f);
 	}
 
 	private static WorldID calculateWorldID(World world) {
@@ -2488,7 +2488,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		private final HashSet<String> modList;
 
 		private WorldID(World world) {
-			this(System.currentTimeMillis(), DragonAPICore.getLaunchTime(), worldsThisSession, world.getSaveHandler().getWorldDirectory().getAbsolutePath(), getSessionName(), getModList());
+			this(System.currentTimeMillis(), DragonAPICore.getLaunchTime(), worldsThisSession, ReikaFileReader.getRealPath(world.getSaveHandler().getWorldDirectory()), getSessionName(), getModList());
 			worldsThisSession++;
 		}
 

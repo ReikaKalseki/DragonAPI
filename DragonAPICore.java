@@ -81,33 +81,35 @@ public class DragonAPICore {
 		return (File)FMLInjectionData.data()[6];
 	}
 
+	/*
 	public static String getMinecraftDirectoryString() {
-		String s = getMinecraftDirectory().getAbsolutePath();
+		String s = getMinecraftDirectory().getCanonicalPath();
 		if (s.endsWith("/.") || s.endsWith("\\.")) {
 			s = s.substring(0, s.length()-2);
 		}
 		s = s.replaceAll("\\\\", "/");
 		return s;
 	}
-
-	public static String getServerRootFolder() {
+	 */
+	public static File getServerRootFolder() {
+		File root = getMinecraftDirectory();
 		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
-			return getMinecraftDirectoryString();
+			return root;
 		if (MinecraftServer.getServer() != null) {
 			if (MinecraftServer.getServer().worldServers.length > 0 && MinecraftServer.getServer().worldServers[0] != null) {
-				return MinecraftServer.getServer().worldServers[0].getSaveHandler().getWorldDirectory().getAbsolutePath();
+				return MinecraftServer.getServer().worldServers[0].getSaveHandler().getWorldDirectory();
 			}
 		}
 		File props = new File("server.properties");
 		if (!props.exists()) {
-			File root = getMinecraftDirectory();
 			props = new File(root, "server.properties");
 		}
 		if (props.exists()) {
-			return new PropertyManager(props).getStringProperty("level-name", "world");
+			String name = new PropertyManager(props).getStringProperty("level-name", "world");
+			return new File(root, name);
 		}
 		else {
-			return null;
+			return root;
 		}
 	}
 

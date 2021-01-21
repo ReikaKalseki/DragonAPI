@@ -745,7 +745,7 @@ public class BytecodeCommand extends ReflectiveBasedCommand {
 						File f = new File(DragonAPICore.getMinecraftDirectory(), "/ByteCodeStackOut/"+args[0]);
 						for (Object o : s)
 							cmd.writeObjectToFile(f, s.indexOf(o), o, args.length > 1 && args[1].equalsIgnoreCase("full"));
-						sendChatToSender(ics, s.size()+" objects written to files in "+f.getAbsolutePath());
+						sendChatToSender(ics, s.size()+" objects written to files in "+f.getCanonicalPath());
 					}
 					catch (IOException e) {
 						sendChatToSender(ics, "Could not write output file: "+e.toString());

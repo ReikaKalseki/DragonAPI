@@ -168,11 +168,10 @@ public class RemoteAssetLoader {
 		}
 
 		private void download(AssetData dat) throws IOException {
-			String local = dat.asset.getLocalPath();
-			File f = new File(local);
-			if (!f.getAbsolutePath().replaceAll("\\\\", "/").startsWith(DragonAPICore.getMinecraftDirectoryString())) {
+			File f = dat.asset.getLocalPath();
+			if (!ReikaFileReader.isFileWithin(f, DragonAPICore.getMinecraftDirectory())) {
 				StringBuilder sb = new StringBuilder();
-				sb.append("Remote Asset "+dat.asset.getDisplayName()+" attempted to download to "+f.getAbsolutePath()+"!");
+				sb.append("Remote Asset "+dat.asset.getDisplayName()+" attempted to download to "+f.getCanonicalPath()+"!");
 				sb.append(" This is not in the MC directory and very likely either malicious or poorly implemented, or the remote server has been compromised!");
 				String s = sb.toString();
 				dat.asset.parent.logError(s, true);
@@ -224,7 +223,7 @@ public class RemoteAssetLoader {
 		}
 
 		private String getLocalHash() {
-			File f = new File(asset.getLocalPath());
+			File f = asset.getLocalPath();
 			return f.exists() ? ReikaFileReader.getHash(f, HashType.MD5) : "";
 		}
 
@@ -282,14 +281,13 @@ public class RemoteAssetLoader {
 
 		private void writeList() {
 			try {
-				String file = this.getLocalPath()+"file_list.dat";
-				File f = new File(file);
+				File f = new File(this.getLocalStorageFolder(), "file_list.dat");
 				f.mkdirs();
 				f.delete();
 				f.createNewFile();
 				ArrayList<String> li = new ArrayList();
 				li.add("File list for remote asset repository '"+this.getDisplayName()+"'");
-				li.add("Downloaded from "+this.getRepositoryURL()+" to "+this.getLocalPath());
+				li.add("Downloaded from "+this.getRepositoryURL()+" to "+this.getLocalStorageFolder());
 				int n = li.get(li.size()-1).length();
 				StringBuilder sb = new StringBuilder();
 				for (int i = 0; i < n; i++) {
@@ -315,7 +313,7 @@ public class RemoteAssetLoader {
 		}
 
 		public final Collection<String> getAvailableResources() {
-			String file = this.getLocalPath()+"file_list.dat";
+			File file = new File(this.getLocalStorageFolder(), "file_list.dat");
 			ArrayList<String> li = ReikaFileReader.getFileAsLines(file, true, Charsets.UTF_8);
 			ArrayList<String> ret = new ArrayList();
 			for (String s : li) {
@@ -332,7 +330,7 @@ public class RemoteAssetLoader {
 		}
 
 		public abstract String getRepositoryURL();
-		public abstract String getLocalPath();
+		public abstract File getLocalStorageFolder();
 
 		@Override
 		public final void onServerRedirected() {
@@ -392,8 +390,8 @@ public class RemoteAssetLoader {
 
 		public abstract String getDisplayName();
 
-		public final String getLocalPath() {
-			return parent.getLocalPath()+filename+"."+extension;
+		public final File getLocalPath() {
+			return new File(parent.getLocalStorageFolder(), filename+"."+extension);
 		}
 
 		@Override

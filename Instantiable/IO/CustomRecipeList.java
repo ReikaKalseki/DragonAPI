@@ -91,7 +91,7 @@ public final class CustomRecipeList {
 	}
 
 	public final void load() {
-		File folder = new File(this.getBaseFilepath());
+		File folder = this.getBaseFilepath();
 		if (!folder.exists() || !folder.isDirectory())
 			return;
 		ArrayList<File> files = ReikaFileReader.getAllFilesInFolder(folder, this.getExtension());
@@ -135,8 +135,8 @@ public final class CustomRecipeList {
 		return Collections.unmodifiableCollection(entries);
 	}
 
-	private final String getBaseFilepath() {
-		return mod.getConfigFolder().getAbsolutePath()+"/"+mod.getDisplayName()+"_CustomRecipes/";
+	private final File getBaseFilepath() {
+		return new File(mod.getConfigFolder(), mod.getDisplayName()+"_CustomRecipes");
 	}
 
 	private String getExtension() {

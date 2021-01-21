@@ -43,8 +43,12 @@ public final class BannedItemReader {
 	}
 
 	public void initWith(String dir, String file) {
+		this.initWith(new File(dir), file);
+	}
+
+	public void initWith(File dir, String file) {
 		if (file.equals("*")) {
-			File f = new File(dir);
+			File f = dir;
 			if (f.exists() && f.isDirectory()) {
 				try {
 					this.parseDirectory(f);

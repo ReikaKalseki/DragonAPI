@@ -18,7 +18,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaDateHelper;
 
 public class RemoteSourcedAsset {
 
-	private static final String mcDir = DragonAPICore.getMinecraftDirectoryString();
+	private static final File mcDir = DragonAPICore.getMinecraftDirectory();
 
 	public final Class reference;
 	public final String path;
@@ -157,9 +157,9 @@ public class RemoteSourcedAsset {
 		}
 
 		private void download() throws IOException {
-			if (!targetFile.getAbsolutePath().replaceAll("\\\\", "/").startsWith(DragonAPICore.getMinecraftDirectoryString())) {
+			if (!ReikaFileReader.isFileWithin(targetFile, DragonAPICore.getMinecraftDirectory())) {
 				StringBuilder sb = new StringBuilder();
-				sb.append("Dynamic Remote Asset "+remotePath+" attempted to download to "+targetFile.getAbsolutePath()+"!");
+				sb.append("Dynamic Remote Asset "+remotePath+" attempted to download to "+targetFile.getCanonicalPath()+"!");
 				sb.append(" This is not in the MC directory and very likely either malicious or poorly implemented, or the remote server has been compromised!");
 				String s = sb.toString();
 				DragonAPICore.logError(s);

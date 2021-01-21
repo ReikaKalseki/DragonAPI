@@ -994,29 +994,18 @@ public class ReikaASMHelper {
 		if (t != null)
 			ex.initCause(t);
 
-		printClassToFile(cn, getMinecraftDirectoryString()+"/ClassError");
+		printClassToFile(cn, new File((File)FMLInjectionData.data()[6], "ClassError"));
 
 		throw ex;
 	}
 
-	private static String getMinecraftDirectoryString() {
-		String s = ((File)FMLInjectionData.data()[6]).getAbsolutePath();
-		if (s.endsWith("/.") || s.endsWith("\\.")) {
-			s = s.substring(0, s.length()-2);
-		}
-		s = s.replaceAll("\\\\", "/");
-		return s;
-	}
-
-	public static void printClassToFile(ClassNode cn, String path) {
-		if (!path.endsWith("/"))
-			path = path+"/";
+	public static void printClassToFile(ClassNode cn, File folder) {
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
 		cn.accept(writer);
 		byte[] newdata = writer.toByteArray();
 		try {
-			File f = new File(path+cn.name+".class");
-			f.getParentFile().mkdirs();
+			File f = new File(folder, cn.name+".class");
+			folder.mkdirs();
 			f.createNewFile();
 			FileOutputStream out = new FileOutputStream(f);
 			out.write(newdata);

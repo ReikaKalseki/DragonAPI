@@ -58,15 +58,19 @@ public class ModLogger {
 		loggers.add(this);
 	}
 
-	private String parseFileString(String file) {
+	private File parseFileString(String file) {
 		if (file.charAt(0) == '*') {
-			boolean preName = file.charAt(1) == '*';
-			String pre = DragonAPICore.getMinecraftDirectoryString()+"/logs/";
-			file = file.replaceFirst("\\*", pre);
-			if (preName)
-				file = file.replaceFirst("\\*", mod.getDisplayName());
+			File log = new File(DragonAPICore.getMinecraftDirectory(), "logs");
+			file = file.substring(1);
+			boolean preName = file.charAt(0) == '*';
+			String pre = "";
+			if (preName) {
+				pre = mod.getDisplayName();
+				file = file.substring(1);
+			}
+			return new File(log, pre+file);
 		}
-		return file;
+		return new File(file);
 	}
 
 	private void reloadConfigs() {
@@ -75,18 +79,17 @@ public class ModLogger {
 	}
 
 	/** Preface with '*' to use the log folder as a parent and preface with an additional '*' to preface the mod name. */
-	public ModLogger setOutput(String file) {
-		file = this.parseFileString(file);
+	public ModLogger setOutput(String name) {
+		File f = this.parseFileString(name);
 		try {
 			this.flushOutput();
-			File f = new File(file);
 			if (f.exists())
 				f.delete();
 			File par = new File(f.getParent());
 			if (!par.exists())
 				par.mkdirs();
 			f.createNewFile();
-			destination = f.getAbsolutePath();
+			destination = f.getCanonicalPath();
 			this.setOutput(new BufferedWriter(new PrintWriter(f)));
 		}
 		catch (IOException e) {

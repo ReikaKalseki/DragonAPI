@@ -60,7 +60,7 @@ public class XMLInterface {
 	}
 
 	public XMLInterface(File path, boolean crashIfNull) {
-		this(LoadFormat.FILE, path, path.getAbsolutePath(), crashIfNull);
+		this(LoadFormat.FILE, path, ReikaFileReader.getRealPath(path), crashIfNull);
 	}
 
 	public XMLInterface(Class root, String path) {

@@ -859,19 +859,33 @@ public class ReikaFileReader extends DragonAPICore {
 		for (File f : folder.listFiles()) {
 			if (f.isDirectory())
 				continue;
-			if (getFileNameNoExtension(f).equals(name))
+			if (getFileNameNoExtension(f, false, false).equals(name))
 				return f;
 		}
 		return null;
 	}
 
-	public static String getFileNameNoExtension(File f) {
-		String n = f.getName();
+	public static String getFileNameNoExtension(File f, boolean full, boolean real) {
+		String n = full ? (real ? getRealPath(f) : f.getAbsolutePath()) : f.getName();
 		int idx = n.lastIndexOf('.');
 		return idx >= 0 && idx < n.length() ? n.substring(0, idx) : n;
 	}
 
 	public static String getRelativePath(File from, File to) {
 		return Paths.get(from.toURI()).relativize(Paths.get(to.toURI())).toString();
+	}
+
+	public static String getRealPath(File f) {
+		try {
+			return f.exists() ? f.toPath().toRealPath().toString() : f.getCanonicalPath();
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return f.getAbsolutePath();
+		}
+	}
+
+	public static boolean isFileWithin(File f, File dir) throws IOException {
+		return f.getCanonicalPath().startsWith(dir.getCanonicalPath());
 	}
 }

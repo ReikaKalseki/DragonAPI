@@ -293,7 +293,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		BannedItemReader.instance.initWith(BannedItemReader.PLUGIN_PATH+"/TekkitCustomizerData", "*");
 		BannedItemReader.instance.initWith(BannedItemReader.PLUGIN_PATH+"/TekkitCustomizer", "*");
 		BannedItemReader.instance.initWith(DragonAPICore.getServerRootFolder(), "ItemBlacklist.json");
-		BannedItemReader.instance.initWith(Loader.instance().getConfigDir().getAbsolutePath(), "ItemBlacklist.json");
+		BannedItemReader.instance.initWith(Loader.instance().getConfigDir(), "ItemBlacklist.json");
 	}
 
 	private void rebuildAndRegisterVanillaRecipes() {

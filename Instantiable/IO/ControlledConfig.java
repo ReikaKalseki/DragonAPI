@@ -186,7 +186,7 @@ public class ControlledConfig {
 	}
 
 	private final String getConfigPath() {
-		return configFile.getAbsolutePath().substring(0, configFile.getAbsolutePath().length()-4);
+		return ReikaFileReader.getFileNameNoExtension(configFile, true, true);//configFile.getAbsolutePath().substring(0, configFile.getAbsolutePath().length()-4);
 	}
 
 	public final File getConfigFolder() {
@@ -295,7 +295,7 @@ public class ControlledConfig {
 	private String parseFileString(String s) {
 		if (s.charAt(0) == '*') {
 			String suffix = s.replaceAll("\\*", "");
-			s = configFile.getAbsolutePath()+"*"+suffix;
+			s = ReikaFileReader.getRealPath(configFile)+"*"+suffix;
 		}
 		String ext = s.substring(s.lastIndexOf('.'));
 		int post = ext.indexOf('*');
