@@ -1324,16 +1324,20 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Adds an ItemStack to an inventory and returns how many items were successfully added. */
 	public static int addStackAndReturnCount(ItemStack stack, IInventory ii) {
+		return addStackAndReturnCount(stack, ii, 0, ii.getSizeInventory()-1);
+	}
+
+	public static int addStackAndReturnCount(ItemStack stack, IInventory ii, int slotMin, int slotMax) {
 		int transferred = 0;
-		for (int i = 0; i < ii.getSizeInventory() && stack.stackSize > 0; i++) {
+		for (int i = slotMin; i <= slotMax && stack.stackSize > 0; i++) {
 			ItemStack is = ii.getStackInSlot(i);
 			if (is == null) {
-				ii.setInventorySlotContents(i, stack);
+				ii.setInventorySlotContents(i, stack.copy());
 				transferred += stack.stackSize;
 				stack.stackSize = 0;
 			}
 			else {
-				if (ItemStack.areItemStacksEqual(stack, is)) {
+				if (ReikaItemHelper.areStacksCombinable(stack, is, ii.getInventoryStackLimit())) {
 					int max = Math.min(stack.getMaxStackSize(), ii.getInventoryStackLimit());
 					int space = max-is.stackSize;
 					if (space > 0) {

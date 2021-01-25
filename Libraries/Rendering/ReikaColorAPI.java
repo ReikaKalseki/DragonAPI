@@ -44,6 +44,10 @@ public class ReikaColorAPI {
 		return RGBtoHex(R, G, B, 255);
 	}
 
+	public static int RGBFtoHex(float r, float g, float b) {
+		return RGBtoHex((int)(r*255), (int)(g*255), (int)(b*255), 255);
+	}
+
 	public static int GStoHex(int GS) {
 		return RGBtoHex(GS, GS, GS);
 	}

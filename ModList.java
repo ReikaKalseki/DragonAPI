@@ -125,7 +125,9 @@ public enum ModList implements ModEntry, Dependency {
 	MAGICBEES("MagicBees", "magicbees.main.Config"),
 	IMMERSIVEENG("ImmersiveEngineering", "blusunrize.immersiveengineering.common.IEContent"),
 	FORBIDDENMAGIC("ForbiddenMagic", "fox.spiteful.forbidden.blocks.ForbiddenBlocks", "fox.spiteful.forbidden.items.ForbiddenItems"),
-	ADVROCKET("advancedRocketry");
+	ADVROCKET("advancedRocketry"),
+	HEXCRAFT("hexcraft", "com.celestek.hexcraft"),
+	;
 
 	private final boolean condition;
 	public final String modLabel;

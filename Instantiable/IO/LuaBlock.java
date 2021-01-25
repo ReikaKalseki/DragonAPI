@@ -54,7 +54,7 @@ public abstract class LuaBlock {
 	protected final HashSet<String> requiredElements = new HashSet();
 
 	private boolean isListEntry = false;
-	private boolean isList = false;
+	private boolean isList = true;
 
 	private HashMap<String, String> comments = new HashMap();
 
@@ -70,7 +70,6 @@ public abstract class LuaBlock {
 			throw new MisuseException("You cannot create a LuaBlock without a containing tree!");
 		if (parent != null) {
 			parent.children.put(this.createKey(name), this);
-			parent.checkListType();
 		}
 
 		requiredElements.add("type");
@@ -80,26 +79,8 @@ public abstract class LuaBlock {
 		return tree.hasDuplicateKeys ? new LuaBlockKey(n, n+"_"+parent.children.size()) : new LuaBlockKey(n);
 	}
 
-	private void checkListType() {
-		if (!data.isEmpty()) {
-			isList = false;
-			return;
-		}
-		for (LuaBlock lb : children.values()) {
-			if (!lb.isListEntry()) {
-				isList = false;
-				return;
-			}
-		}
-		isList = true;
-	}
-
 	public final boolean isList() {
 		return isList;
-	}
-
-	public final boolean isListEntry() {
-		return isListEntry;
 	}
 
 	public final LuaBlock getParent() {
@@ -404,9 +385,11 @@ public abstract class LuaBlock {
 						if (s2.charAt(0) == ' ')
 							s2 = s2.substring(1);
 						activeBlock.putData(s1, s2);
+						activeBlock.isList = false;
 					}
-					else
+					else {
 						activeBlock.putData(String.valueOf(activeBlock.data.size()), s);
+					}
 				}
 			}
 
@@ -532,7 +515,7 @@ public abstract class LuaBlock {
 	}
 
 	private Object getObject(LuaBlock b) {
-		return b.isListEntry() && b.data.size() == 1 && b.children.isEmpty() ? this.parseObject(b.data.values().iterator().next()) : b.isList() ? b.asList() : b.asHashMap();
+		return b.isList() && b.data.size() == 1 && b.children.isEmpty() ? this.parseObject(b.data.values().iterator().next()) : b.isList() ? b.asList() : b.asHashMap();
 	}
 
 	private Object parseObject(String s) {
@@ -629,7 +612,7 @@ public abstract class LuaBlock {
 		for (LuaBlockKey s : keys2) {
 			LuaBlock c = children.get(s);
 			String put;
-			if (this.isList() || c.isListEntry() || s.name.equals("-")) {
+			if (this.isList() || s.name.equals("-")) {
 				put = pre+"{";
 			}
 			else {
