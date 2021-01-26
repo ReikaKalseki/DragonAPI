@@ -399,6 +399,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return (val >> bits) << bits;
 	}
 
+	/** Whole wave! */
 	public static double cosInterpolation(double min, double max, double val) {
 		if (!isValueInsideBoundsIncl(min, max, val))
 			return 0;
@@ -412,8 +413,16 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		}
 	}
 
+	/** Whole wave! */
 	public static double cosInterpolation(double min, double max, double val, double y1, double y2) {
 		return y1+(y2-y1)*cosInterpolation(min, max, val);
+	}
+
+	/** Half a wave rather than the whole one */
+	public static double cosInterpolation2(double min, double max, double val, double y1, double y2) {
+		double dx = max-min;
+		double mm = min+dx*2;
+		return y1+(y2-y1)*cosInterpolation(min, mm, val);
 	}
 
 	public static int toggleBit(int num, int bit) {

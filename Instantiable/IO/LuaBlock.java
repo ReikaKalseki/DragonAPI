@@ -612,7 +612,7 @@ public abstract class LuaBlock {
 		for (LuaBlockKey s : keys2) {
 			LuaBlock c = children.get(s);
 			String put;
-			if (this.isList() || s.name.equals("-")) {
+			if (c.isListEntry || s.name.equals("-")) {
 				put = pre+"{";
 			}
 			else {

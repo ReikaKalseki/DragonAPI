@@ -10,17 +10,99 @@
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
+import java.util.Collection;
+import java.util.EnumSet;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Interfaces.Registry.OreType;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public class BoPBlockHandler extends ModHandlerBase {
 
 	private static final BoPBlockHandler instance = new BoPBlockHandler();
+
+	public static final class GemOreType implements OreType {
+
+		public final GemTypes type;
+
+		private GemOreType(GemTypes g) {
+			type = g;
+		}
+
+		@Override
+		public boolean existsInGame() {
+			return ModList.BOP.isLoaded();
+		}
+
+		@Override
+		public OreRarity getRarity() {
+			return OreRarity.SCARCE;
+		}
+
+		@Override
+		public String[] getOreDictNames() {
+			return new String[] {"ore"+type.name()};
+		}
+
+		@Override
+		public String getProductOreDictName() {
+			return "gem"+type.name();
+		}
+
+		@Override
+		public Collection<ItemStack> getAllOreBlocks() {
+			return ReikaJavaLibrary.makeListFrom(type.getBlock().asItemStack());
+		}
+
+		@Override
+		public ItemStack getFirstOreBlock() {
+			return type.getBlock().asItemStack();
+		}
+
+		@Override
+		public EnumSet<OreLocation> getOreLocations() {
+			return EnumSet.of(OreLocation.OVERWORLD, OreLocation.OTHER);
+		}
+
+		@Override
+		public boolean canGenerateIn(Block b) {
+			return b == Blocks.stone;
+		}
+
+		@Override
+		public int getDropCount() {
+			return 1;
+		}
+
+		@Override
+		public int ordinal() {
+			return 0;
+		}
+
+		@Override
+		public String name() {
+			return "BOP "+type.name();
+		}
+
+		@Override
+		public int getDisplayColor() {
+			return type.color;
+		}
+
+		@Override
+		public String getDisplayName() {
+			return "BoP Gem: "+type.name();
+		}
+
+	};
 
 	public final Block coral1;
 	public final Block coral2;
@@ -35,6 +117,10 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 	private final Block[] basicLeaves = new Block[4];
 	private final Block[] colorLeaves = new Block[2];
+
+	public final Block gemBlock;
+
+	public final Item gemItem;
 
 	public static enum Flower1Types {
 		clover,
@@ -129,6 +215,33 @@ public class BoPBlockHandler extends ModHandlerBase {
 		}
 	}
 
+	public static enum GemTypes {
+		Amethyst(0xEE4BFC),
+		Ruby(0xDD1753),
+		Peridot(0x80B62A),
+		Topaz(0xD36500),
+		Tanzanite(0x7700D3),
+		Malachite(0x0EB094),
+		Sapphire(0x1B84DC),
+		Amber(0xDC860C);
+
+		public final GemOreType ore;
+		public final int color;
+
+		private GemTypes(int c) {
+			ore = new GemOreType(this);
+			color = c;
+		}
+
+		public BlockKey getBlock() {
+			return new BlockKey(instance.gemBlock, this.ordinal()*2);
+		}
+
+		public ItemStack getItem() {
+			return new ItemStack(instance.gemItem, this.ordinal());
+		}
+	}
+
 	private BoPBlockHandler() {
 		super();
 		Block idcoral1 = null;
@@ -141,6 +254,10 @@ public class BoPBlockHandler extends ModHandlerBase {
 		Block iddirt = null;
 
 		Block idfoliage = null;
+
+		Block idgem = null;
+
+		Item idgemitem = null;
 
 		if (this.hasMod()) {
 			try {
@@ -175,6 +292,13 @@ public class BoPBlockHandler extends ModHandlerBase {
 					Field leaf = blocks.getField("colorizedLeaves"+(i+1));
 					colorLeaves[i] = ((Block)leaf.get(null));
 				}
+
+				Field gem = blocks.getField("gemOre");
+				idgem = ((Block)gem.get(null));
+
+				Class items = this.getMod().getItemClass();
+				Field gemitem = items.getField("gems");
+				idgemitem = ((Item)gemitem.get(null));
 			}
 			catch (NoSuchFieldException e) {
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
@@ -216,6 +340,10 @@ public class BoPBlockHandler extends ModHandlerBase {
 		newGrass = idgrass;
 
 		foliage = idfoliage;
+
+		gemBlock = idgem;
+
+		gemItem = idgemitem;
 	}
 
 	public static BoPBlockHandler getInstance() {
