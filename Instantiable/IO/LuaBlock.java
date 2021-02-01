@@ -80,7 +80,7 @@ public abstract class LuaBlock {
 	}
 
 	public final boolean isList() {
-		return isList;
+		return isList && !(data.isEmpty() && !children.isEmpty());
 	}
 
 	public final LuaBlock getParent() {

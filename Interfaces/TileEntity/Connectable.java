@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -19,8 +19,8 @@ public interface Connectable {
 
 	public void resetOther();
 
-	public boolean setSource(World world, int x, int y, int z);
+	//public boolean setSource(World world, int x, int y, int z);
 
-	public boolean setTarget(World world, int x, int y, int z);
+	public boolean tryConnect(World world, int x, int y, int z);
 
 }

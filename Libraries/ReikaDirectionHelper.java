@@ -84,22 +84,6 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		return getDirectionBetween(from.x, 0, from.y, to.x, 0, to.y);
 	}
 
-	public static int getDirectionIndex(ForgeDirection dir) {
-		switch (dir) {
-			case EAST:
-			case WEST:
-				return 0;
-			case DOWN:
-			case UP:
-				return 1;
-			case NORTH:
-			case SOUTH:
-				return 2;
-			default:
-				return -1;
-		}
-	}
-
 	/** Returns the two positive direction vectors perpendicular to the supplied direction. */
 	public static ArrayList<ForgeDirection> getPerpendicularDirections(ForgeDirection dir) {
 		ArrayList<ForgeDirection> dirs = new ArrayList();

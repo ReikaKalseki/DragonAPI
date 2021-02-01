@@ -126,7 +126,7 @@ public enum ModList implements ModEntry, Dependency {
 	IMMERSIVEENG("ImmersiveEngineering", "blusunrize.immersiveengineering.common.IEContent"),
 	FORBIDDENMAGIC("ForbiddenMagic", "fox.spiteful.forbidden.blocks.ForbiddenBlocks", "fox.spiteful.forbidden.items.ForbiddenItems"),
 	ADVROCKET("advancedRocketry"),
-	HEXCRAFT("hexcraft", "com.celestek.hexcraft"),
+	HEXCRAFT("hexcraft", "com.celestek.hexcraft.HexBlocks", "com.celestek.hexcraft.init.HexItems"),
 	;
 
 	private final boolean condition;

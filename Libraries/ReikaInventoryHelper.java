@@ -1324,15 +1324,25 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Adds an ItemStack to an inventory and returns how many items were successfully added. */
 	public static int addStackAndReturnCount(ItemStack stack, IInventory ii) {
+		return addStackAndReturnCount(stack, ii, null);
+	}
+
+	public static int addStackAndReturnCount(ItemStack stack, IInventory ii, ForgeDirection side) {
 		return addStackAndReturnCount(stack, ii, 0, ii.getSizeInventory()-1);
 	}
 
 	public static int addStackAndReturnCount(ItemStack stack, IInventory ii, int slotMin, int slotMax) {
+		return addStackAndReturnCount(stack, ii, slotMin, slotMax, null);
+	}
+
+	public static int addStackAndReturnCount(ItemStack stack, IInventory ii, int slotMin, int slotMax, ForgeDirection side) {
+		int[] slots = side != null && ii instanceof ISidedInventory ? ((ISidedInventory)ii).getAccessibleSlotsFromSide(side.ordinal()) : ReikaArrayHelper.getLinearArray(slotMin, slotMax);
 		int transferred = 0;
-		for (int i = slotMin; i <= slotMax && stack.stackSize > 0; i++) {
-			ItemStack is = ii.getStackInSlot(i);
+		for (int idx = 0; idx < slots.length && stack.stackSize > 0; idx++) {
+			int slot = slots[idx];
+			ItemStack is = ii.getStackInSlot(slot);
 			if (is == null) {
-				ii.setInventorySlotContents(i, stack.copy());
+				ii.setInventorySlotContents(slot, stack.copy());
 				transferred += stack.stackSize;
 				stack.stackSize = 0;
 			}

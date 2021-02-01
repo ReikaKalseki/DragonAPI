@@ -463,8 +463,12 @@ public final class ReikaArrayHelper extends DragonAPICore {
 	}
 
 	public static int[] getLinearArray(int size) {
-		int[] n = new int[size];
-		for (int i = 0; i < n.length; i++)
+		return getLinearArray(0, size-1);
+	}
+
+	public static int[] getLinearArray(int from, int to) {
+		int[] n = new int[to-from+1];
+		for (int i = from; i <= to; i++)
 			n[i] = i;
 		return n;
 	}
