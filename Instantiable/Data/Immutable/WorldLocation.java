@@ -24,10 +24,12 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.ChunkCoordIntPair;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import Reika.DragonAPI.Interfaces.Location;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -36,7 +38,7 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class WorldLocation implements Comparable<WorldLocation> {
+public class WorldLocation implements Location, Comparable<WorldLocation> {
 
 	private static final Random rand = new Random();
 
@@ -106,7 +108,7 @@ public class WorldLocation implements Comparable<WorldLocation> {
 		return world != null ? world.getBlock(xCoord, yCoord, zCoord) : null;
 	}
 
-	public Block getBlock(World world) {
+	public Block getBlock(IBlockAccess world) {
 		return world != null ? world.getBlock(xCoord, yCoord, zCoord) : null;
 	}
 
@@ -119,7 +121,7 @@ public class WorldLocation implements Comparable<WorldLocation> {
 		return world != null ? world.getBlockMetadata(xCoord, yCoord, zCoord) : -1;
 	}
 
-	public int getBlockMetadata(World world) {
+	public int getBlockMetadata(IBlockAccess world) {
 		return world != null ? world.getBlockMetadata(xCoord, yCoord, zCoord) : -1;
 	}
 
@@ -127,8 +129,8 @@ public class WorldLocation implements Comparable<WorldLocation> {
 		return this.getTileEntity(null);
 	}
 
-	public TileEntity getTileEntity(World call) {
-		World world = call != null ? call : this.getWorld();
+	public TileEntity getTileEntity(IBlockAccess call) {
+		IBlockAccess world = call != null ? call : this.getWorld();
 		return world != null ? world.getTileEntity(xCoord, yCoord, zCoord) : null;
 	}
 
@@ -213,11 +215,11 @@ public class WorldLocation implements Comparable<WorldLocation> {
 
 	public void writeToNBT(String tag, NBTTagCompound NBT) {
 		NBTTagCompound data = new NBTTagCompound();
-		this.writeToNBT(data);
+		this.writeToTag(data);
 		NBT.setTag(tag, data);
 	}
 
-	public void writeToNBT(NBTTagCompound data) {
+	public void writeToTag(NBTTagCompound data) {
 		data.setInteger("dim", dimensionID);
 		data.setInteger("x", xCoord);
 		data.setInteger("y", yCoord);

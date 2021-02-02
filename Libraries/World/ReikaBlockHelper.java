@@ -547,4 +547,25 @@ public final class ReikaBlockHelper extends DragonAPICore {
 				return 0;
 		}
 	}
+
+	public static double getBlockEdgeGap(Block b, World world, int x, int y, int z, ForgeDirection dir) {
+		b.setBlockBoundsBasedOnState(world, x, y, z);
+		switch(dir) {
+			case DOWN:
+				return b.getBlockBoundsMinY();
+			case UP:
+				return 1-b.getBlockBoundsMaxY();
+			case WEST:
+				return b.getBlockBoundsMinX();
+			case EAST:
+				return 1-b.getBlockBoundsMaxX();
+			case NORTH:
+				return b.getBlockBoundsMinZ();
+			case SOUTH:
+				return 1-b.getBlockBoundsMaxZ();
+			case UNKNOWN:
+				break;
+		}
+		return Double.POSITIVE_INFINITY;
+	}
 }

@@ -145,7 +145,7 @@ public final class TileEntityCache<V> {
 		NBTTagList li = new NBTTagList();
 		for (WorldLocation loc : data.innerSet()) {
 			NBTTagCompound data = new NBTTagCompound();
-			loc.writeToNBT(data);
+			loc.writeToTag(data);
 			li.appendTag(data);
 		}
 		tag.setTag("locs", li);

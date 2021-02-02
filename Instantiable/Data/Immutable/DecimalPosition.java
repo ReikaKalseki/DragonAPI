@@ -20,15 +20,17 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import Reika.DragonAPI.Interfaces.Location;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
 import io.netty.buffer.ByteBuf;
 
-public final class DecimalPosition implements Comparable<DecimalPosition> {
+public final class DecimalPosition implements Location, Comparable<DecimalPosition> {
 
 	private static final Random rand = new Random();
 
@@ -108,10 +110,14 @@ public final class DecimalPosition implements Comparable<DecimalPosition> {
 
 	public void writeToNBT(String tag, NBTTagCompound NBT) {
 		NBTTagCompound data = new NBTTagCompound();
+		this.writeToTag(data);
+		NBT.setTag(tag, data);
+	}
+
+	public void writeToTag(NBTTagCompound data) {
 		data.setDouble("x", xCoord);
 		data.setDouble("y", yCoord);
 		data.setDouble("z", zCoord);
-		NBT.setTag(tag, data);
 	}
 
 	public static final DecimalPosition readFromNBT(String tag, NBTTagCompound NBT) {
@@ -197,19 +203,19 @@ public final class DecimalPosition implements Comparable<DecimalPosition> {
 		return new Coordinate(MathHelper.floor_double(xCoord), MathHelper.floor_double(yCoord), MathHelper.floor_double(zCoord));
 	}
 
-	public Block getBlock(World world) {
+	public Block getBlock(IBlockAccess world) {
 		return world != null ? this.getCoordinate().getBlock(world) : null;
 	}
 
-	public boolean isEmpty(World world) {
+	public boolean isEmpty(IBlockAccess world) {
 		return this.getBlock(world).isAir(world, MathHelper.floor_double(xCoord), MathHelper.floor_double(yCoord), MathHelper.floor_double(zCoord));
 	}
 
-	public int getBlockMetadata(World world) {
+	public int getBlockMetadata(IBlockAccess world) {
 		return world != null ? this.getCoordinate().getBlockMetadata(world) : -1;
 	}
 
-	public TileEntity getTileEntity(World world) {
+	public TileEntity getTileEntity(IBlockAccess world) {
 		return world != null ? this.getCoordinate().getTileEntity(world) : null;
 	}
 

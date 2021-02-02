@@ -37,6 +37,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent.UpdateFlags;
 import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerationCache;
+import Reika.DragonAPI.Interfaces.Location;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTIO;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
@@ -47,7 +48,7 @@ import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import io.netty.buffer.ByteBuf;
 
-public final class Coordinate implements Comparable<Coordinate> {
+public final class Coordinate implements Location, Comparable<Coordinate> {
 
 	public static class DistanceComparator implements Comparator<Coordinate> {
 

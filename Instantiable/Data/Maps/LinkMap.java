@@ -104,12 +104,12 @@ public class LinkMap {
 		NBTTagList li = new NBTTagList();
 		for (WorldLocation src : data.keySet()) {
 			NBTTagCompound entry = new NBTTagCompound();
-			src.writeToNBT(entry);
+			src.writeToTag(entry);
 			NBTTagList map = new NBTTagList();
 			HashMap<WorldLocation, Double> dat = data.get(src);
 			for (WorldLocation tg : dat.keySet()) {
 				NBTTagCompound nbt = new NBTTagCompound();
-				tg.writeToNBT(nbt);
+				tg.writeToTag(nbt);
 				map.appendTag(nbt);
 			}
 			entry.setTag("map", map);
