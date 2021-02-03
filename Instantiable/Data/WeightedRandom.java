@@ -272,4 +272,8 @@ public class WeightedRandom<V> {
 		weighted = new StatisticalRandom(this.data.keySet());
 	}
 
+	public double getProbability(V val) {
+		return this.getWeight(val)/this.getTotalWeight();
+	}
+
 }

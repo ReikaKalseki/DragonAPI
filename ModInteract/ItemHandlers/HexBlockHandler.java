@@ -58,6 +58,10 @@ public class HexBlockHandler extends ModHandlerBase {
 		public Item getCrystal() {
 			return crystal;
 		}
+
+		public boolean isPrimary(boolean nether) {
+			return nether ? this == WHITE || this == BLACK : !this.isPrimary(true);
+		}
 	}
 
 	private HexBlockHandler() {

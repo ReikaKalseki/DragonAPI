@@ -34,6 +34,10 @@ public class NonUniformDistribution {
 		return data.getRandomEntry();
 	}
 
+	public double getProbability(int val) {
+		return data.getProbability(val);
+	}
+
 	public static abstract class Distribution extends MathExpression {
 
 		public final int minX;
