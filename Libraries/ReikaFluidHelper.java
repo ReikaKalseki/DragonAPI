@@ -15,12 +15,14 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Locale;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.IFluidBlock;
 
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
@@ -202,6 +204,13 @@ public class ReikaFluidHelper {
 			return new ItemStack(f.getBlock());
 		ArrayList<ItemStack> li = getAllContainersFor(f);
 		return li.isEmpty() ? null : li.get(0);
+	}
+
+	public static Fluid lookupFluidForBlock(Block b) {
+		Fluid f = FluidRegistry.lookupFluidForBlock(b);
+		if (f == null && b instanceof IFluidBlock)
+			f = ((IFluidBlock)b).getFluid();
+		return f;
 	}
 
 }

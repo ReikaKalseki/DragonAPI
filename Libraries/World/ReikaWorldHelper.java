@@ -102,6 +102,7 @@ import Reika.DragonAPI.Instantiable.Event.IceFreezeEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
 import Reika.DragonAPI.Interfaces.Callbacks.PositionCallable;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
@@ -251,7 +252,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		else if (b == Blocks.flowing_lava)
 			b = Blocks.lava;
 
-		Fluid f = FluidRegistry.lookupFluidForBlock(b);
+		Fluid f = ReikaFluidHelper.lookupFluidForBlock(b);
 		if (f == null || (look != null && f != look))
 			return -1;
 
@@ -496,7 +497,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				int dx = x+side.offsetX;
 				int dy = y+side.offsetY;
 				int dz = z+side.offsetZ;
-				if (FluidRegistry.lookupFluidForBlock(world.getBlock(dx, dy, dz)) == FluidRegistry.WATER) {
+				if (getFluid(world, dx, dy, dz) == FluidRegistry.WATER) {
 					if (IceFreezeEvent.fire_IgnoreVanilla(world, dx, dy, dz))
 						changeAdjBlock(world, x, y, z, side, Blocks.ice, 0);
 				}
@@ -880,7 +881,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 					break;
 			}
 			for (float i = 0; i <= range; i += 0.25) {
-				Vec3 vec2 = ReikaVectorHelper.getVec2Pt(x+a, y+b, z+c, x0, y0, z0).normalize();
+				Vec3 vec2 = ReikaVectorHelper.getVec2Pt(x0, y0, z0, x+a, y+b, z+c).normalize();
 				vec2 = ReikaVectorHelper.scaleVector(vec2, i);
 				vec2.xCoord += x0;
 				vec2.yCoord += y0;
@@ -1257,13 +1258,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return true;
 	}
 
-	public static Fluid getFluid(World world, int x, int y, int z) {
-		Block b = world.getBlock(x, y, z);
-		if (b == Blocks.flowing_water || b == Blocks.water)
-			return FluidRegistry.WATER;
-		if (b == Blocks.flowing_lava || b == Blocks.lava)
-			return FluidRegistry.LAVA;
-		return FluidRegistry.lookupFluidForBlock(b);
+	public static Fluid getFluid(IBlockAccess world, int x, int y, int z) {
+		return ReikaFluidHelper.lookupFluidForBlock(world.getBlock(x, y, z));
 	}
 
 	/** Updates all blocks adjacent to the coordinate given. Args: World, x, y, z */
@@ -1991,7 +1987,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		else if (b instanceof BlockLiquid) {
 			if (meta != 0)
 				return null;
-			Fluid f = FluidRegistry.lookupFluidForBlock(b);
+			Fluid f = ReikaFluidHelper.lookupFluidForBlock(b);
 			return f != null ? new FluidStack(f, FluidContainerRegistry.BUCKET_VOLUME) : null;
 		}
 		else {
@@ -2377,7 +2373,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			b = Blocks.water;
 		else if (b == Blocks.flowing_lava)
 			b = Blocks.lava;
-		Fluid f = FluidRegistry.lookupFluidForBlock(b);
+		Fluid f = ReikaFluidHelper.lookupFluidForBlock(b);
 		int p = 0;
 		while (f != null && y < 256) {
 			p += f.getDensity(world, x, y, z)*ReikaPhysicsHelper.g;
@@ -2389,7 +2385,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				b = Blocks.water;
 			else if (b == Blocks.flowing_lava)
 				b = Blocks.lava;
-			f = FluidRegistry.lookupFluidForBlock(b);
+			f = ReikaFluidHelper.lookupFluidForBlock(b);
 		}
 		return p/1000D;
 	}

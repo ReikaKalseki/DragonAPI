@@ -70,7 +70,7 @@ public final class RayTracer {
 		targetZ = z2;
 	}
 
-	public void setOrigins(double x1, double y1, double z1, double x2, double y2, double z2) {
+	public RayTracer setOrigins(double x1, double y1, double z1, double x2, double y2, double z2) {
 		originX = x1;
 		originY = y1;
 		originZ = z1;
@@ -78,13 +78,14 @@ public final class RayTracer {
 		targetY = y2;
 		targetZ = z2;
 		blockRay.clear();
+		return this;
 	}
 
-	public void offset(double dx, double dy, double dz) {
-		this.offset(dx, dy, dz, dx, dy, dz);
+	public RayTracer offset(double dx, double dy, double dz) {
+		return this.offset(dx, dy, dz, dx, dy, dz);
 	}
 
-	public void offset(double dx1, double dy1, double dz1, double dx2, double dy2, double dz2) {
+	public RayTracer offset(double dx1, double dy1, double dz1, double dx2, double dy2, double dz2) {
 		originX += dx1;
 		originY += dy1;
 		originZ += dz1;
@@ -92,30 +93,34 @@ public final class RayTracer {
 		targetY += dy2;
 		targetZ += dz2;
 		blockRay.clear();
+		return this;
 	}
 
-	public void addOpaqueBlock(Block b) {
-		this.addOpaqueBlock(b, -1);
+	public RayTracer addOpaqueBlock(Block b) {
+		return this.addOpaqueBlock(b, -1);
 	}
 
-	public void addOpaqueBlock(Block b, int meta) {
+	public RayTracer addOpaqueBlock(Block b, int meta) {
 		forbiddenBlocks.add(new BlockKey(b, meta));
+		return this;
 	}
 
-	public void addTransparentBlock(Block b) {
-		this.addTransparentBlock(b, -1);
+	public RayTracer addTransparentBlock(Block b) {
+		return this.addTransparentBlock(b, -1);
 	}
 
-	public void addTransparentBlock(Block b, int meta) {
+	public RayTracer addTransparentBlock(Block b, int meta) {
 		allowedBlocks.add(new BlockKey(b, meta));
+		return this;
 	}
 
-	public void addOneTimeIgnoredBlock(Block b) {
-		this.addOneTimeIgnoredBlock(b, -1);
+	public RayTracer addOneTimeIgnoredBlock(Block b) {
+		return this.addOneTimeIgnoredBlock(b, -1);
 	}
 
-	public void addOneTimeIgnoredBlock(Block b, int meta) {
+	public RayTracer addOneTimeIgnoredBlock(Block b, int meta) {
 		allowedOneTimeBlocks.add(new BlockKey(b, meta));
+		return this;
 	}
 
 	public boolean isClearLineOfSight(World world) {

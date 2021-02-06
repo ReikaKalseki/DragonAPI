@@ -15,6 +15,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 import cpw.mods.fml.common.eventhandler.Event;
@@ -65,6 +66,10 @@ public abstract class PositionEventBase extends Event {
 
 	private final boolean isFake() {
 		return access instanceof World && ReikaWorldHelper.isFakeWorld((World)access);
+	}
+
+	public final Coordinate getCoordinate() {
+		return new Coordinate(xCoord, yCoord, zCoord);
 	}
 
 }

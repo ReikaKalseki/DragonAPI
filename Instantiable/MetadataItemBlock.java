@@ -36,4 +36,16 @@ public class MetadataItemBlock extends ItemBlockWithMetadata {
 		return super.getUnlocalizedName()+"."+is.getItemDamage();
 	}
 
+	public static class MetadataItemBlockFixedName extends MetadataItemBlock {
+
+		public MetadataItemBlockFixedName(Block b) {
+			super(b);
+		}
+
+		@Override
+		public String getUnlocalizedName(ItemStack is) {
+			return field_150939_a.getUnlocalizedName();
+		}
+	}
+
 }

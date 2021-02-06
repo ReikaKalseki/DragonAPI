@@ -483,4 +483,8 @@ public final class Coordinate implements Location, Comparable<Coordinate> {
 		return new Coordinate(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]));
 	}
 
+	public MovingObjectPosition asMovingPosition(int s, Vec3 vec) {
+		return new MovingObjectPosition(xCoord, yCoord, zCoord, s, vec);
+	}
+
 }

@@ -147,11 +147,11 @@ public class ReikaRandomHelper extends DragonAPICore {
 	}
 
 	public static int getRandomBetween(int min, int max, Random r) {
-		return min+r.nextInt(1+max-min);
+		return min == max ? min : min+r.nextInt(1+max-min);
 	}
 
 	public static double getRandomBetween(double min, double max, Random r) {
-		return min+r.nextDouble()*(max-min);
+		return min == max ? min : min+r.nextDouble()*(max-min);
 	}
 
 }

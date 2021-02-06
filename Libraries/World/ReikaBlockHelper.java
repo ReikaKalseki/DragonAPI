@@ -427,7 +427,7 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		int meta = iba.getBlockMetadata(x, y, z);
 		if (at.getMaterial() == b.getMaterial())
 			return false;
-		if (at instanceof Submergeable)
+		if (at instanceof Submergeable && ((Submergeable)at).isSubmergeable(iba, x, y, z))
 			return false;
 		if (side == 1)
 			return true;

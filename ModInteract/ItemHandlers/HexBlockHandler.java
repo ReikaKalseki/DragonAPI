@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
+import java.util.HashMap;
 
 import com.celestek.hexcraft.api.HexColor;
 import com.celestek.hexcraft.api.HexVariant;
@@ -21,6 +22,7 @@ import com.celestek.hexcraft.api.WorldGenColors;
 
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -51,6 +53,10 @@ public class HexBlockHandler extends ModHandlerBase {
 		private Item crystal;
 		private WorldGenColors color;
 
+		public static final BasicHexColors[] list = values();
+
+		private static final HashMap<Item, BasicHexColors> lookup = new HashMap();
+
 		public WorldGenColors getValue() {
 			return color;
 		}
@@ -61,6 +67,10 @@ public class HexBlockHandler extends ModHandlerBase {
 
 		public boolean isPrimary(boolean nether) {
 			return nether ? this == WHITE || this == BLACK : !this.isPrimary(true);
+		}
+
+		public static BasicHexColors getColorForItem(ItemStack is) {
+			return lookup.get(is.getItem());
 		}
 	}
 
@@ -81,11 +91,14 @@ public class HexBlockHandler extends ModHandlerBase {
 					Field item = items.getField("itemHexoriumCrystal"+ReikaStringParser.capFirstChar(hex.name()));
 					item.setAccessible(true);
 					hex.crystal = ((Item)item.get(null));
+					BasicHexColors.lookup.put(hex.crystal, hex);
 
 					hex.color = list[hex.ordinal()];
+					BasicHexColors.lookup.put(Item.getItemFromBlock(hex.color.getMonolithBlock(false)), hex);
+					BasicHexColors.lookup.put(Item.getItemFromBlock(hex.color.getMonolithBlock(true)), hex);
 				}
 
-				monolithBaseClass = Class.forName("com.celestek.hexcraft.block.BlockHexoriumMonolithBase");
+				monolithBaseClass = Class.forName("com.celestek.hexcraft.block.base.BlockHexoriumMonolithBase");
 
 				colorizedSimpleInterface = Class.forName("com.celestek.hexcraft.api.IBlockHexColorSimple");
 				variantSimpleInterface = Class.forName("com.celestek.hexcraft.api.IBlockHexVariantSimple");

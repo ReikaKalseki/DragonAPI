@@ -35,7 +35,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.event.world.BlockEvent.HarvestDropsEvent;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Auxiliary.BlockArrayComputer;
@@ -763,7 +762,7 @@ public class BlockArray implements Iterable<Coordinate> {
 		//DragonAPICore.log(liquidID+" and "+world.getBlock(x, y, z));;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
 			return;
-		Fluid f2 = FluidRegistry.lookupFluidForBlock(world.getBlock(x, y, z));
+		Fluid f2 = ReikaWorldHelper.getFluid(world, x, y, z);
 		if (f2 == null)
 			return;
 		if (liquid != null && f2 != liquid) {

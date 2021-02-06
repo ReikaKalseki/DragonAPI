@@ -51,7 +51,7 @@ public final class TileEntityCache<V> {
 	}
 
 	public V put(WorldLocation loc, V value) {
-		return data.put(this.getChunk(loc), loc, value);
+		return data.put(loc.getChunk(), loc, value);
 	}
 
 	public V put(V tile) {
@@ -74,7 +74,7 @@ public final class TileEntityCache<V> {
 	}
 
 	public V get(WorldLocation c) {
-		return data.get(this.getChunk(c), c);
+		return data.get(c.getChunk(), c);
 	}
 
 	public boolean containsKey(World world, int x, int y, int z) {
@@ -98,7 +98,7 @@ public final class TileEntityCache<V> {
 	}
 
 	public V remove(WorldLocation c) {
-		return data.remove(this.getChunk(c), c);
+		return data.remove(c.getChunk(), c);
 	}
 
 	public V remove(V tile) {
@@ -160,7 +160,7 @@ public final class TileEntityCache<V> {
 			TileEntity te = loc.getTileEntity();
 			try {
 				V v = (V)te;
-				this.data.put(this.getChunk(loc), loc, v);
+				this.data.put(loc.getChunk(), loc, v);
 			}
 			catch (ClassCastException e) { //ugly, but no other way to test if te instanceof V
 				DragonAPICore.logError("Tried to load a TileEntityCache from invalid NBT!");
@@ -175,7 +175,7 @@ public final class TileEntityCache<V> {
 	public MultiMap<V, WorldLocation> invert(CollectionType cf) {
 		MultiMap map = new MultiMap(cf);
 		for (WorldLocation loc : this.data.innerSet()) {
-			map.addValue(data.get(this.getChunk(loc), loc), loc);
+			map.addValue(data.get(loc.getChunk(), loc), loc);
 		}
 		return map;
 	}
@@ -220,11 +220,7 @@ public final class TileEntityCache<V> {
 	}
 
 	public Map<WorldLocation, V> getChunkData(WorldLocation c) {
-		return this.getChunkData(this.getChunk(c));
-	}
-
-	private static WorldChunk getChunk(WorldLocation loc) {
-		return new WorldChunk(loc.dimensionID, loc.getChunk());
+		return this.getChunkData(c.getChunk());
 	}
 
 	public WorldLocation getRandomEntry(Random rand) {

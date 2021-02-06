@@ -16,19 +16,15 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.lwjgl.util.vector.Matrix4f;
 import org.lwjgl.util.vector.Vector3f;
 
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Math.DoubleMatrix;
 import Reika.DragonAPI.Instantiable.Math.LineClipper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
-import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -54,49 +50,15 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		return xyz;
 	}
 
-	public static double[] getPlayerLookCoords(EntityPlayer ep, double scale) {
+	public static DecimalPosition getPlayerLookCoords(EntityPlayer ep, double distance) {
 		Vec3 look = ep.getLookVec();
 		double dx = ep.posX;
 		double dy = ep.posY+ep.getEyeHeight();
 		double dz = ep.posZ;
-		look.xCoord *= scale;
-		look.yCoord *= scale;
-		look.zCoord *= scale;
-		double[] xyz = {dx+look.xCoord, dy+look.yCoord, dz+look.zCoord};
-		return xyz;
-	}
-
-	public static int[] getPlayerLookBlockCoords(EntityPlayer ep, double scale) {
-		Vec3 look = ep.getLookVec();
-		double dx = ep.posX;
-		double dy = ep.posY+ep.getEyeHeight();
-		double dz = ep.posZ;
-		look.xCoord *= scale;
-		look.yCoord *= scale;
-		look.zCoord *= scale;
-		double[] xyz = {dx+look.xCoord, dy+look.yCoord, dz+look.zCoord};
-		int x = (int)Math.floor(xyz[0]);
-		int y = (int)Math.floor(xyz[1]);
-		int z = (int)Math.floor(xyz[2]);
-		return new int[]{x, y, z};
-	}
-
-	public static int[] getPlayerLookBlock(World world, EntityPlayer ep, double range, boolean passthru) {
-		int[] xyz = new int[3];
-		for (float i = 0; i <= range; i += 0.5) {
-			double[] look = getPlayerLookCoords(ep, i);
-			int x = MathHelper.floor_double(look[0]);
-			int y = MathHelper.floor_double(look[1]);
-			int z = MathHelper.floor_double(look[2]);
-			Block id = world.getBlock(x, y, z);
-			if (id != Blocks.air && !(passthru && ReikaWorldHelper.softBlocks(world, x, y, z))) {
-				xyz[0] = x;
-				xyz[1] = y;
-				xyz[2] = z;
-				return xyz;
-			}
-		}
-		return xyz;
+		look.xCoord *= distance;
+		look.yCoord *= distance;
+		look.zCoord *= distance;
+		return new DecimalPosition(dx+look.xCoord, dy+look.yCoord, dz+look.zCoord);
 	}
 
 	/** Extends two vectors to infinity and finds their intersection point. If they are

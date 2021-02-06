@@ -11,6 +11,7 @@ package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -69,10 +70,70 @@ public class IC2Handler extends ModHandlerBase {
 					exc = true;
 				}
 			}
+
+			for (int i = 0; i < IC2Ores.list.length; i++) {
+				IC2Ores s = IC2Ores.list[i];
+				try {
+					Field f = ic2.getField(s.tag);
+					s.oreBlock = Block.getBlockFromItem(((ItemStack)f.get(null)).getItem());
+				}
+				catch (NoSuchFieldException e) {
+					DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
+					e.printStackTrace();
+					this.logFailure(e);
+					exc = true;
+				}
+				catch (SecurityException e) {
+					DragonAPICore.logError("Cannot read "+this.getMod()+" (Security Exception)! "+e.getMessage());
+					e.printStackTrace();
+					this.logFailure(e);
+					exc = true;
+				}
+				catch (IllegalArgumentException e) {
+					DragonAPICore.logError("Illegal argument for reading "+this.getMod()+"!");
+					e.printStackTrace();
+					this.logFailure(e);
+					exc = true;
+				}
+				catch (IllegalAccessException e) {
+					DragonAPICore.logError("Illegal access exception for reading "+this.getMod()+"!");
+					e.printStackTrace();
+					this.logFailure(e);
+					exc = true;
+				}
+				catch (NullPointerException e) {
+					DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+					e.printStackTrace();
+					this.logFailure(e);
+					exc = true;
+				}
+			}
+
 			init = !exc;
 		}
 		else {
 			this.noMod();
+		}
+	}
+
+	public enum IC2Ores {
+		COPPER("copperOre"),
+		TIN("tinOre"),
+		LEAD("leadOre"),
+		URANIUM("uraniumOre");
+
+		private final String tag;
+
+		private Block oreBlock;
+
+		private IC2Ores(String s) {
+			tag = s;
+		}
+
+		private static final IC2Ores[] list = values();
+
+		public Block getBlock() {
+			return oreBlock;
 		}
 	}
 

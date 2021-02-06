@@ -288,7 +288,7 @@ public final class DecimalPosition implements Location, Comparable<DecimalPositi
 	}
 
 	public AxisAlignedBB getAABB(double radius) {
-		return AxisAlignedBB.getBoundingBox(xCoord, yCoord, zCoord, xCoord, yCoord, zCoord).expand(radius, radius, radius);
+		return AxisAlignedBB.getBoundingBox(xCoord-radius, yCoord-radius, zCoord-radius, xCoord+radius, yCoord+radius, zCoord+radius);
 	}
 
 	@Override
@@ -321,6 +321,10 @@ public final class DecimalPosition implements Location, Comparable<DecimalPositi
 
 	public static DecimalPosition getRandomWithin(Coordinate c, Random rand) {
 		return new DecimalPosition(c.xCoord+rand.nextDouble(), c.yCoord+rand.nextDouble(), c.zCoord+rand.nextDouble());
+	}
+
+	public MovingObjectPosition asMovingPosition(int s, Vec3 vec) {
+		return new MovingObjectPosition(MathHelper.floor_double(xCoord), MathHelper.floor_double(yCoord), MathHelper.floor_double(zCoord), s, vec);
 	}
 
 }

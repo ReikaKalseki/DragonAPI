@@ -3,6 +3,8 @@ package Reika.DragonAPI.Interfaces;
 import net.minecraft.block.Block;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.MovingObjectPosition;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 
 public interface Location {
@@ -20,4 +22,6 @@ public interface Location {
 	public int getBlockMetadata(IBlockAccess world);
 
 	public TileEntity getTileEntity(IBlockAccess world);
+
+	public MovingObjectPosition asMovingPosition(int s, Vec3 vec);
 }

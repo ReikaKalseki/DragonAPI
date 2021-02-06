@@ -34,7 +34,6 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
@@ -43,6 +42,7 @@ import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Interfaces.BlockCheck;
 import Reika.DragonAPI.Interfaces.BlockCheck.TileEntityCheck;
 import Reika.DragonAPI.Interfaces.Registry.TileEnum;
+import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -561,7 +561,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 
 		@Override
 		public boolean match(Block b, int meta) {
-			boolean fmatch = (b instanceof BlockFluidBase && ((BlockFluidBase)b).getFluid() == fluid) || FluidRegistry.lookupFluidForBlock(b) == fluid;
+			boolean fmatch = ReikaFluidHelper.lookupFluidForBlock(b) == fluid;
 			if (!fmatch)
 				return false;
 			if (allowSourceBlock) {

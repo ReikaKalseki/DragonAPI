@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.Random;
 
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
@@ -32,6 +33,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.village.MerchantRecipe;
 import net.minecraft.village.MerchantRecipeList;
 import net.minecraft.world.ChunkPosition;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.MinecraftException;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
@@ -45,6 +47,7 @@ import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
+import net.minecraftforge.fluids.IFluidBlock;
 import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -56,6 +59,7 @@ import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
 import Reika.DragonAPI.Interfaces.Item.MetadataSpecificTrade;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
+import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
@@ -271,7 +275,7 @@ public class ASMCalls {
 						dy = c.yCoord;
 						dz = c.zCoord;
 					}
-					Fluid f = FluidRegistry.lookupFluidForBlock(b);
+					Fluid f = ReikaFluidHelper.lookupFluidForBlock(b);
 					if (f == FluidRegistry.LAVA || (f != null && f.getTemperature(world, dx, dy, dz) >= FluidRegistry.LAVA.getTemperature(world, dx, dy, dz))) {
 						return true;
 					}
@@ -280,6 +284,21 @@ public class ASMCalls {
 		}
 
 		return false;
+	}
+
+	public static int getDensityOverride(IBlockAccess world, int x, int y, int z) {
+		Block b = world.getBlock(x, y, z);
+		if (b instanceof IFluidBlock || b instanceof BlockLiquid) {
+			Fluid f = ReikaFluidHelper.lookupFluidForBlock(b);
+			if (f == null && b.getMaterial() == Material.water)
+				f = FluidRegistry.WATER;
+			if (f == null && b.getMaterial() == Material.lava)
+				f = FluidRegistry.LAVA;
+			if (f != null) {
+				return world instanceof World ? f.getDensity((World)world, x, y, z) : f.getDensity();
+			}
+		}
+		return Integer.MAX_VALUE;
 	}
 
 	public static boolean allowMobSleeping(List<EntityMob> li) {

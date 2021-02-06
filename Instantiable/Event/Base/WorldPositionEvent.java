@@ -13,6 +13,7 @@ import net.minecraft.block.Block;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 
+import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 
@@ -47,6 +48,10 @@ public abstract class WorldPositionEvent extends PositionEventBase {
 
 	public final int dimensionID() {
 		return world.provider != null ? world.provider.dimensionId : 0;
+	}
+
+	public final WorldLocation getLocation() {
+		return new WorldLocation(world, xCoord, yCoord, zCoord);
 	}
 
 }

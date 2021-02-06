@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import net.machinemuse.api.electricity.MuseElectricItem;
 import net.minecraft.client.renderer.entity.Render;
@@ -787,33 +788,15 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return e.getCreatureAttribute() == EnumCreatureAttribute.UNDEAD;
 	}
 
-	/** If the entity is wearing a any piece of this armor material. */
-	public static boolean isEntityWearingArmorOf(EntityLivingBase e, ArmorMaterial type) {
-		for (int i = 1; i <= 4; i++) {
-			ItemStack is = e.getEquipmentInSlot(i);
-			if (is != null && is.getItem() instanceof ItemArmor) {
-				ItemArmor a = (ItemArmor)is.getItem();
-				if (a.getArmorMaterial() == type)
-					return true;
-			}
-			else {
-				return false;
-			}
-		}
-		return false;
+	public static boolean isEntityWearingFullSuitOf(EntityLivingBase e, ArmorMaterial type) {
+		return isEntityWearingFullSuitOf(e, (ItemStack is) -> is.getItem() instanceof ItemArmor && ((ItemArmor)is.getItem()).getArmorMaterial() == type);
 	}
 
-	public static boolean isEntityWearingFullSuitOf(EntityLivingBase e, ArmorMaterial type) {
+	public static boolean isEntityWearingFullSuitOf(EntityLivingBase e, Function<ItemStack, Boolean> func) {
 		for (int i = 1; i <= 4; i++) {
 			ItemStack is = e.getEquipmentInSlot(i);
-			if (is != null && is.getItem() instanceof ItemArmor) {
-				ItemArmor a = (ItemArmor)is.getItem();
-				if (a.getArmorMaterial() != type)
-					return false;
-			}
-			else {
+			if (is == null || !func.apply(is))
 				return false;
-			}
 		}
 		return true;
 	}

@@ -36,6 +36,7 @@ import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemShears;
@@ -1015,5 +1016,13 @@ public final class ReikaItemHelper extends DragonAPICore {
 			ret.add(new ItemStack(i));
 		}
 		return ret;
+	}
+
+	public static boolean isDenseArmor(ItemStack is) {
+		if (is.getItem() instanceof ItemArmor) {
+			ArmorMaterial am = ((ItemArmor)is.getItem()).getArmorMaterial();
+			return am == ArmorMaterial.GOLD || am.getDamageReductionAmount(1) >= 6; //gold or at least 3 hearts worth from chestplate
+		}
+		return false;
 	}
 }

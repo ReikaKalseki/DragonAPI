@@ -23,7 +23,6 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -101,6 +100,10 @@ public class WorldLocation implements Location, Comparable<WorldLocation> {
 
 	public WorldLocation(World world, double x, double y, double z) {
 		this(world, MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
+	}
+
+	public WorldChunk getChunk() {
+		return new WorldChunk(dimensionID, xCoord >> 4, zCoord >> 4);
 	}
 
 	public Block getBlock() {
@@ -341,10 +344,6 @@ public class WorldLocation implements Location, Comparable<WorldLocation> {
 		return new WorldLocation(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
 	}
 
-	public ChunkCoordIntPair getChunk() {
-		return new ChunkCoordIntPair(xCoord >> 4, zCoord >> 4);
-	}
-
 	public BlockKey getBlockKey() {
 		return new BlockKey(this.getBlock(), this.getBlockMetadata());
 	}
@@ -396,6 +395,10 @@ public class WorldLocation implements Location, Comparable<WorldLocation> {
 
 	public DoubleWorldLocation decimalOffset(double dx, double dy, double dz) {
 		return new DoubleWorldLocation(this, dx, dy, dz);
+	}
+
+	public MovingObjectPosition asMovingPosition(int s, Vec3 vec) {
+		return new MovingObjectPosition(xCoord, yCoord, zCoord, s, vec);
 	}
 
 	public static final class DoubleWorldLocation extends WorldLocation {
