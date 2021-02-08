@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,7 +32,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class MusicScore {
 
-	private final TreeMap<Integer, NoteData>[] music;
+	private final ScoreTrack[] music;
 	private final HashSet<Integer> activeTracks = new HashSet();
 	private final int channelCount;
 
@@ -46,7 +45,7 @@ public class MusicScore {
 
 	public MusicScore(int channels) {
 		channelCount = channels;
-		music = new TreeMap[channels];
+		music = new ScoreTrack[channels];
 	}
 
 	public void addNote(int time, int channel, MusicKey note, int voice, int vol, int len, boolean perc) {
@@ -55,9 +54,9 @@ public class MusicScore {
 
 	private void addNote(int channel, int time, Note note) {
 		if (music[channel] == null) {
-			music[channel] = new TreeMap();
+			music[channel] = new ScoreTrack();
 		}
-		NoteData c = music[channel].get(time);
+		NoteData c = music[channel].getNoteAt(time);
 		if (c == null) {
 			c = new NoteData(time);
 			music[channel].put(time, c);
@@ -81,7 +80,7 @@ public class MusicScore {
 	public Collection<Note> getNotes(int time) {
 		Collection<Note> li = new ArrayList();
 		for (int i = 0; i < channelCount; i++) {
-			NoteData n = music[i] != null ? music[i].get(time) : null;
+			NoteData n = music[i] != null ? music[i].getNoteAt(time) : null;
 			if (n != null) {
 				li.addAll(n.notes.values());
 			}
@@ -90,13 +89,13 @@ public class MusicScore {
 	}
 
 	public Collection<Note> getNotes(int channel, int time) {
-		NoteData c = music[channel] != null ? music[channel].get(time) : null;
+		NoteData c = music[channel] != null ? music[channel].getNoteAt(time) : null;
 		return c != null ? Collections.unmodifiableCollection(c.notes.values()) : null;
 	}
 
 	public void backspace(int channel) {
 		if (music[channel] != null && !music[channel].isEmpty()) {
-			if (music[channel].remove(music[channel].lastKey()) != null) {
+			if (music[channel].remove(music[channel].lastNoteTime()) != null) {
 				noteCount--;
 				if (music[channel].isEmpty())
 					activeTracks.remove(channel);
@@ -104,12 +103,12 @@ public class MusicScore {
 		}
 	}
 
-	public SortedMap<Integer, NoteData> getTrack(int channel) {
-		return music[channel] != null ? Collections.unmodifiableSortedMap(music[channel]) : new TreeMap();
+	public ScoreTrack getTrack(int channel) {
+		return music[channel] != null ? music[channel] : null;
 	}
 
 	public int getLatestPos(int channel) {
-		return music[channel] != null && !music[channel].isEmpty() ? music[channel].lastKey() : 0;
+		return music[channel] != null && !music[channel].isEmpty() ? music[channel].lastNoteTime() : 0;
 	}
 
 	public int getLatestPos() {
@@ -200,10 +199,9 @@ public class MusicScore {
 		for (int i = 0; i < channelCount; i++) {
 			NBTTagCompound nbt = new NBTTagCompound();
 			if (music[i] != null) {
-				for (int time : music[i].keySet()) {
-					NoteData c = music[i].get(time);
-					NBTTagList li = c.writeToNBT();
-					nbt.setTag(String.valueOf(time), li);
+				for (Entry<Integer, NoteData> e : music[i].entrySet()) {
+					NBTTagList li = e.getValue().writeToNBT();
+					nbt.setTag(String.valueOf(e.getKey()), li);
 				}
 			}
 			tag.setTag("Ch_"+i, nbt);
@@ -216,7 +214,7 @@ public class MusicScore {
 
 		for (int i = 0; i < mus.channelCount; i++) {
 			if (tag.hasKey("Ch_"+i)) {
-				mus.music[i] = new TreeMap();
+				mus.music[i] = new ScoreTrack();
 				NBTTagCompound nbt = tag.getCompoundTag("Ch_"+i);
 				for (Object o : nbt.func_150296_c()) {
 					String s = (String)o;
@@ -245,7 +243,7 @@ public class MusicScore {
 	}
 
 	public void clearChannel(int channel) {
-		noteCount -= music[channel].size();
+		noteCount -= music[channel].noteCount();
 		music[channel] = null;
 		activeTracks.remove(channel);
 	}
@@ -259,7 +257,7 @@ public class MusicScore {
 		MusicScore mus = new MusicScore(channelCount);
 		for (int i = 0; i < channelCount; i++) {
 			if (music[i] != null) {
-				mus.music[i] = new TreeMap();
+				mus.music[i] = new ScoreTrack();
 				mus.music[i].putAll(music[i]);
 			}
 		}
@@ -267,13 +265,79 @@ public class MusicScore {
 		return mus;
 	}
 
+	public static class ScoreTrack {
+
+		private final TreeMap<Integer, NoteData> notes = new TreeMap();
+
+		private ScoreTrack() {
+
+		}
+
+		public NoteData getNoteAt(int time) {
+			return notes.get(time);
+		}
+
+		public int firstNoteTime() {
+			return notes.firstKey();
+		}
+
+		public int lastNoteTime() {
+			return notes.lastKey();
+		}
+
+		public int getLengthInTicks() {
+			int last = this.lastNoteTime();
+			NoteData note = this.getNoteAt(last);
+			return last+note.length();
+		}
+
+		public boolean isEmpty() {
+			return notes.isEmpty();
+		}
+
+		public int noteCount() {
+			return notes.size();
+		}
+
+		private Collection<Entry<Integer, NoteData>> entrySet() {
+			return notes.entrySet();
+		}
+
+		public Collection<Entry<Integer, NoteData>> entryView() {
+			return Collections.unmodifiableMap(notes).entrySet();
+		}
+
+		private Collection<Integer> keySet() {
+			return notes.keySet();
+		}
+
+		private void put(int time, NoteData data) {
+			notes.put(time, data);
+		}
+
+		private void putAll(ScoreTrack s) {
+			notes.putAll(s.notes);
+		}
+
+		private NoteData remove(int time) {
+			return notes.remove(time);
+		}
+
+	}
+
 	public static class NoteData {
 
 		private final HashMap<MusicKey, Note> notes = new HashMap();
 		private final long tick;
 
+		private int longestNote = 0;
+
 		private NoteData(long t) {
 			tick = t;
+		}
+
+		public int length() {
+			return longestNote;
 		}
 
 		public NoteData transpose(int semitones) {
@@ -306,6 +370,7 @@ public class MusicScore {
 
 		private void add(Note note) {
 			notes.put(note.key, note);
+			longestNote = Math.max(longestNote, note.length);
 		}
 
 		public Collection<Note> notes() {
