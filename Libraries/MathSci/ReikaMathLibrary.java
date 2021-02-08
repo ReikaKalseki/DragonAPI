@@ -326,7 +326,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	}
 
 	public static int roundToNearestX(int multiple, int val) {
-		return ((val+multiple/2)/multiple)*multiple;
+		return ((val+multiple/2*(int)Math.signum(val))/multiple)*multiple;
 	}
 
 	public static double[] splitNumberByDigits(long num, int base) {

@@ -405,6 +405,9 @@ public final class ReikaMIDIReader {
 						case NOTE_ON:
 							key = sm.getData1();
 							int vol = sm.getData2();
+							if (lastOn[channel][key] != null) {
+								DragonAPICore.log("WARNING: MIDI has stacked notes on channel "+(channel+1)+" note "+key+" @ "+tick+"! This will cause truncation!");
+							}
 							lastOn[channel][key] = new MIDINote(tick, key, instru, vol);
 							//ReikaJavaLibrary.pConsole("ON: "+key+" @ "+time+": "+lastOn[channel][key]);
 							break;
@@ -453,7 +456,10 @@ public final class ReikaMIDIReader {
 					int timeOn = getTimeAtTick(seq, tempoCurve, n.tickOn);
 					int timeOff = getTimeAtTick(seq, tempoCurve, n.tickOff);
 					MusicKey note = MusicKey.getKeyFromMIDI(n.pitch);
-					data.addNote(timeOn, i, note, n.voice, n.velocity, timeOff-timeOn, i == 9);
+					if (note == null)
+						DragonAPICore.log("WARNING: MIDI has note out of range (> C8): "+n.toString());
+					else
+						data.addNote(timeOn, i, note, n.voice, n.velocity, timeOff-timeOn, i == 9);
 				}
 			}
 		}

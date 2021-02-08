@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 
@@ -22,6 +23,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMusicHelper.MusicKey;
 
 import cpw.mods.fml.relauncher.Side;
@@ -33,6 +35,9 @@ public class MusicScore {
 	private final TreeMap<Integer, NoteData>[] music;
 	private final int channelCount;
 	private int length;
+
+	private MusicKey lowest;
+	private MusicKey highest;
 
 	public MusicScore(int channels) {
 		channelCount = channels;
@@ -57,6 +62,12 @@ public class MusicScore {
 		}
 		c.add(note);
 		length = Math.max(length, time);
+		if (note.key == null)
+			return;
+		if (lowest == null || lowest.ordinal() > note.key.ordinal())
+			lowest = note.key;
+		if (highest == null || highest.ordinal() < note.key.ordinal())
+			highest = note.key;
 	}
 
 	public Collection<Note> getNotes(int time) {
@@ -101,8 +112,9 @@ public class MusicScore {
 
 		for (int i = 0; i < channelCount; i++) {
 			if (music[i] != null) {
-				for (int time : music[i].keySet()) {
-					NoteData c = music[i].get(time);
+				for (Entry<Integer, NoteData> e : music[i].entrySet()) {
+					int time = e.getKey();
+					NoteData c = e.getValue();
 					if (c != null)
 						for (Note n : c.notes.values())
 							mus.addNote(i, (int)(time/factor), n);
@@ -111,6 +123,46 @@ public class MusicScore {
 		}
 
 		return mus;
+	}
+
+	public void transpose(int semitones) {
+		if (semitones == 0)
+			return;
+		for (int i = 0; i < channelCount; i++) {
+			if (music[i] != null) {
+				for (Entry<Integer, NoteData> e : music[i].entrySet()) {
+					int time = e.getKey();
+					NoteData c = e.getValue();
+					if (c != null) {
+						e.setValue(c.transpose(semitones));
+					}
+				}
+			}
+		}
+	}
+
+	public MusicKey getLowest() {
+		return lowest;
+	}
+
+	public MusicKey getHighest() {
+		return highest;
+	}
+
+	public void normalizeToRange(MusicKey min, MusicKey max) {
+		int under = min.ordinal()-lowest.ordinal();
+		int over = highest.ordinal()-max.ordinal();
+		int ounder = ReikaMathLibrary.roundToNearestX(12, under);
+		int oover = ReikaMathLibrary.roundToNearestX(12, over);
+		if ((oover <= 0 && ounder <= 0) || (oover == ounder)) {
+			return;
+		}
+		else if (oover > ounder) {
+			this.transpose(-12*Math.round((oover-ounder)/24F));
+		}
+		else {
+			this.transpose(12*Math.round((ounder-oover)/24F));
+		}
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {
@@ -183,6 +235,14 @@ public class MusicScore {
 			tick = t;
 		}
 
+		public NoteData transpose(int semitones) {
+			NoteData ret = new NoteData(tick);
+			for (Note n : notes.values()) {
+				ret.add(n.transpose(semitones));
+			}
+			return ret;
+		}
+
 		private static NoteData readFromNBT(long t, NBTTagList li) {
 			NoteData dat = new NoteData(t);
 			for (Object o2 : li.tagList) {
@@ -238,6 +298,10 @@ public class MusicScore {
 			volume = vol;
 			length = len;
 			percussion = perc;
+		}
+
+		public Note transpose(int semitones) {
+			return new Note(key.getInterval(semitones), voice, volume, length, percussion);
 		}
 
 		public void writeToNBT(NBTTagCompound nbt) {
