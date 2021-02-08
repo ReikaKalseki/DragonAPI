@@ -14,9 +14,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import net.minecraft.nbt.NBTTagCompound;
@@ -33,11 +34,15 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class MusicScore {
 
 	private final TreeMap<Integer, NoteData>[] music;
+	private final HashSet<Integer> activeTracks = new HashSet();
 	private final int channelCount;
+
 	private int length;
+	private int noteCount;
 
 	private MusicKey lowest;
 	private MusicKey highest;
+	private int firstNoteTime = Integer.MAX_VALUE;
 
 	public MusicScore(int channels) {
 		channelCount = channels;
@@ -60,8 +65,11 @@ public class MusicScore {
 		else {
 			//ReikaJavaLibrary.pConsole("Adding "+note+" @ C"+channel+" : "+time+" to "+c);
 		}
+		activeTracks.add(channel);
+		noteCount++;
 		c.add(note);
 		length = Math.max(length, time);
+		firstNoteTime = Math.min(firstNoteTime, time);
 		if (note.key == null)
 			return;
 		if (lowest == null || lowest.ordinal() > note.key.ordinal())
@@ -87,12 +95,17 @@ public class MusicScore {
 	}
 
 	public void backspace(int channel) {
-		if (music[channel] != null && !music[channel].isEmpty())
-			music[channel].remove(music[channel].lastKey());
+		if (music[channel] != null && !music[channel].isEmpty()) {
+			if (music[channel].remove(music[channel].lastKey()) != null) {
+				noteCount--;
+				if (music[channel].isEmpty())
+					activeTracks.remove(channel);
+			}
+		}
 	}
 
-	public Map<Integer, NoteData> getTrack(int channel) {
-		return music[channel] != null ? Collections.unmodifiableMap(music[channel]) : new HashMap();
+	public SortedMap<Integer, NoteData> getTrack(int channel) {
+		return music[channel] != null ? Collections.unmodifiableSortedMap(music[channel]) : new TreeMap();
 	}
 
 	public int getLatestPos(int channel) {
@@ -107,8 +120,10 @@ public class MusicScore {
 		return music.length;
 	}
 
-	public MusicScore scaleSpeed(float factor) {
+	public MusicScore scaleSpeed(float factor, boolean alignToZero) {
 		MusicScore mus = new MusicScore(channelCount);
+
+		int shift = alignToZero ? (int)(-firstNoteTime/factor) : 0;
 
 		for (int i = 0; i < channelCount; i++) {
 			if (music[i] != null) {
@@ -117,11 +132,27 @@ public class MusicScore {
 					NoteData c = e.getValue();
 					if (c != null)
 						for (Note n : c.notes.values())
-							mus.addNote(i, (int)(time/factor), n);
+							mus.addNote(i, (int)(time/factor)+shift, n);
 				}
 			}
 		}
 
+		return mus;
+	}
+
+	public MusicScore alignToZero() {
+		MusicScore mus = new MusicScore(channelCount);
+		for (int i = 0; i < channelCount; i++) {
+			if (music[i] != null) {
+				for (Entry<Integer, NoteData> e : music[i].entrySet()) {
+					int time = e.getKey();
+					NoteData c = e.getValue();
+					if (c != null)
+						for (Note n : c.notes.values())
+							mus.addNote(i, time-firstNoteTime, n);
+				}
+			}
+		}
 		return mus;
 	}
 
@@ -205,8 +236,18 @@ public class MusicScore {
 		return Arrays.toString(music);
 	}
 
+	public int noteCount() {
+		return noteCount;
+	}
+
+	public Set<Integer> getActiveTracks() {
+		return Collections.unmodifiableSet(activeTracks);
+	}
+
 	public void clearChannel(int channel) {
+		noteCount -= music[channel].size();
 		music[channel] = null;
+		activeTracks.remove(channel);
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -273,6 +314,11 @@ public class MusicScore {
 
 		public Set<MusicKey> keys() {
 			return Collections.unmodifiableSet(notes.keySet());
+		}
+
+		@Override
+		public String toString() {
+			return notes.values().toString();
 		}
 
 	}
