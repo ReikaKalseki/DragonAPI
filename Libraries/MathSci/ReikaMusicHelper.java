@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -71,6 +71,10 @@ public class ReikaMusicHelper {
 					pureNotes.add(n);
 				}
 			}
+		}
+
+		public static Note getNoteByName(String s) {
+			return Note.valueOf(s.replace("#", "SHARP").replace("b", "FLAT"));
 		}
 	}
 
@@ -183,11 +187,14 @@ public class ReikaMusicHelper {
 		;
 
 		public final int pitch;
+		public final int octaveNumber;
 
 		private static final MusicKey[] list = values();
 
 		private MusicKey(int f) {
 			pitch = f;
+
+			octaveNumber = Integer.parseInt(this.name().substring(this.name().length()-1));
 		}
 
 		public MusicKey getMinorThird() {

@@ -54,7 +54,7 @@ public class MusicScore {
 
 	private void addNote(int channel, int time, Note note) {
 		if (music[channel] == null) {
-			music[channel] = new ScoreTrack();
+			music[channel] = new ScoreTrack(channel);
 		}
 		NoteData c = music[channel].getNoteAt(time);
 		if (c == null) {
@@ -131,7 +131,7 @@ public class MusicScore {
 					NoteData c = e.getValue();
 					if (c != null)
 						for (Note n : c.notes.values())
-							mus.addNote(i, (int)(time/factor)+shift, n);
+							mus.addNote(i, (int)(time/factor)+shift, n.scaleSpeed(factor));
 				}
 			}
 		}
@@ -214,7 +214,7 @@ public class MusicScore {
 
 		for (int i = 0; i < mus.channelCount; i++) {
 			if (tag.hasKey("Ch_"+i)) {
-				mus.music[i] = new ScoreTrack();
+				mus.music[i] = new ScoreTrack(i);
 				NBTTagCompound nbt = tag.getCompoundTag("Ch_"+i);
 				for (Object o : nbt.func_150296_c()) {
 					String s = (String)o;
@@ -257,8 +257,7 @@ public class MusicScore {
 		MusicScore mus = new MusicScore(channelCount);
 		for (int i = 0; i < channelCount; i++) {
 			if (music[i] != null) {
-				mus.music[i] = new ScoreTrack();
-				mus.music[i].putAll(music[i]);
+				mus.music[i] = music[i].copy();
 			}
 		}
 		mus.length = length;
@@ -269,8 +268,29 @@ public class MusicScore {
 
 		private final TreeMap<Integer, NoteData> notes = new TreeMap();
 
-		private ScoreTrack() {
+		public final int channel;
 
+		private MusicKey lowest;
+		private MusicKey highest;
+		private int firstNoteTime = Integer.MAX_VALUE;
+
+		private ScoreTrack(int ch) {
+			channel = ch;
+		}
+
+		public ScoreTrack copy() {
+			ScoreTrack ret = new ScoreTrack(channel);
+			ret.putAll(this);
+			return ret;
+		}
+
+		public ScoreTrack alignToGrid(int step) {
+			ScoreTrack ret = new ScoreTrack(channel);
+			for (Entry<Integer, NoteData> e : notes.entrySet()) {
+				int tick = ReikaMathLibrary.roundDownToX(step, e.getKey());
+				ret.put(tick, e.getValue().setTick(tick));
+			}
+			return ret;
 		}
 
 		public NoteData getNoteAt(int time) {
@@ -278,14 +298,24 @@ public class MusicScore {
 		}
 
 		public int firstNoteTime() {
-			return notes.firstKey();
+			return notes.isEmpty() ? -1 : notes.firstKey();
 		}
 
 		public int lastNoteTime() {
-			return notes.lastKey();
+			return notes.isEmpty() ? -1 : notes.lastKey();
+		}
+
+		public MusicKey getLowest() {
+			return lowest;
+		}
+
+		public MusicKey getHighest() {
+			return highest;
 		}
 
 		public int getLengthInTicks() {
+			if (this.isEmpty())
+				return 0;
 			int last = this.lastNoteTime();
 			NoteData note = this.getNoteAt(last);
 			return last+note.length();
@@ -313,14 +343,58 @@ public class MusicScore {
 
 		private void put(int time, NoteData data) {
 			notes.put(time, data);
+
+			for (Note n : data.notes())
+				this.onAddNote(time, n);
 		}
 
 		private void putAll(ScoreTrack s) {
 			notes.putAll(s.notes);
+
+			firstNoteTime = Math.min(firstNoteTime, s.firstNoteTime);
+			if (lowest == null || lowest.ordinal() > s.lowest.ordinal()) {
+				lowest = s.lowest;
+			}
+			if (highest == null || highest.ordinal() < s.highest.ordinal()) {
+				highest = s.highest;
+			}
+		}
+
+		private void onAddNote(int time, Note n) {
+			firstNoteTime = Math.min(firstNoteTime, time);
+			if (lowest == null || lowest.ordinal() > n.key.ordinal())
+				lowest = n.key;
+			if (highest == null || highest.ordinal() < n.key.ordinal())
+				highest = n.key;
 		}
 
 		private NoteData remove(int time) {
 			return notes.remove(time);
+		}
+
+		public Collection<NoteData> getNotes() {
+			return Collections.unmodifiableCollection(notes.values());
+		}
+
+		@Override
+		public String toString() {
+			return notes.toString();
+		}
+
+		public Collection<Note> getActiveNotesAt(int tick) {
+			Collection<Note> ret = new ArrayList();
+			Integer prev = notes.floorKey(tick);
+			while (prev != null) {
+				NoteData nd = notes.get(prev);
+				for (Note n : nd.notes.values()) {
+					int end = nd.tick+n.length;
+					if (end > tick)
+						ret.add(n);
+				}
+
+				prev = notes.lowerKey(prev);
+			}
+			return ret;
 		}
 
 	}
@@ -328,12 +402,19 @@ public class MusicScore {
 	public static class NoteData {
 
 		private final HashMap<MusicKey, Note> notes = new HashMap();
-		private final long tick;
+		public final int tick;
 
 		private int longestNote = 0;
 
-		private NoteData(long t) {
+		private NoteData(int t) {
 			tick = t;
+		}
+
+		public NoteData setTick(int newtick) {
+			NoteData ret = new NoteData(newtick);
+			ret.notes.putAll(notes);
+			ret.longestNote = longestNote;
+			return ret;
 		}
 
 		public int length() {
@@ -348,7 +429,7 @@ public class MusicScore {
 			return ret;
 		}
 
-		private static NoteData readFromNBT(long t, NBTTagList li) {
+		private static NoteData readFromNBT(int t, NBTTagList li) {
 			NoteData dat = new NoteData(t);
 			for (Object o2 : li.tagList) {
 				NBTTagCompound val = (NBTTagCompound)o2;
@@ -383,7 +464,7 @@ public class MusicScore {
 
 		@Override
 		public String toString() {
-			return notes.values().toString();
+			return notes.values().toString()+" @ "+tick;
 		}
 
 	}
@@ -409,6 +490,10 @@ public class MusicScore {
 			volume = vol;
 			length = len;
 			percussion = perc;
+		}
+
+		public Note scaleSpeed(float speed) {
+			return new Note(key, voice, volume, (int)(length/speed), percussion);
 		}
 
 		public Note transpose(int semitones) {
