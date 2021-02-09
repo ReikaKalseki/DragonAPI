@@ -51,6 +51,8 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.IDConflictException;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.HybridTank;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 import Reika.DragonAPI.Instantiable.IO.PacketPipeline;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget.PlayerTarget;
@@ -301,7 +303,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 	}
 
-	public static void sendDataPacket(String ch, int id, TileEntity te, int radius, List<Integer> data) {
+	public static void sendDataPacket(String ch, int id, World world, int x, int y, int z, int radius, List<Integer> data) {
 		int npars;
 		if (data == null)
 			npars = 4;
@@ -316,9 +318,9 @@ public final class ReikaPacketHelper extends DragonAPICore {
 				for (int i = 0; i < data.size(); i++) {
 					outputStream.writeInt(data.get(i));
 				}
-			outputStream.writeInt(te.xCoord);
-			outputStream.writeInt(te.yCoord);
-			outputStream.writeInt(te.zCoord);
+			outputStream.writeInt(x);
+			outputStream.writeInt(y);
+			outputStream.writeInt(z);
 
 		}
 		catch (Exception ex) {
@@ -342,7 +344,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		if (side == Side.SERVER) {
 			//PacketDispatcher.sendPacketToAllInDimension(packet, world.provider.dimensionId);
 
-			PacketTarget pt = new PacketTarget.RadiusTarget(te, radius);
+			PacketTarget pt = new PacketTarget.RadiusTarget(world, x+0.5, y+0.5, z+0.5, radius);
 			pt.dispatch(pipe, pack);
 		}
 		else if (side == Side.CLIENT) {
@@ -618,8 +620,16 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, PacketTarget.server, ReikaJavaLibrary.makeIntListFromArray(data));
 	}
 
+	public static void sendDataPacketWithRadius(String ch, int id, World world, Coordinate c, int radius, int... data) {
+		sendDataPacket(ch, id, world, c.xCoord, c.yCoord, c.zCoord, radius, ReikaJavaLibrary.makeIntListFromArray(data));
+	}
+
+	public static void sendDataPacketWithRadius(String ch, int id, WorldLocation c, int radius, int... data) {
+		sendDataPacket(ch, id, c.getWorld(), c.xCoord, c.yCoord, c.zCoord, radius, ReikaJavaLibrary.makeIntListFromArray(data));
+	}
+
 	public static void sendDataPacketWithRadius(String ch, int id, TileEntity te, int radius, int... data) {
-		sendDataPacket(ch, id, te, radius, ReikaJavaLibrary.makeIntListFromArray(data));
+		sendDataPacket(ch, id, te.worldObj, te.xCoord, te.yCoord, te.zCoord, radius, ReikaJavaLibrary.makeIntListFromArray(data));
 	}
 
 	public static void sendDataPacketWithRadius(String ch, int id, Entity e, int radius, int... data) {

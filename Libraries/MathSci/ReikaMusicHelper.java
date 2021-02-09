@@ -24,31 +24,51 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 public class ReikaMusicHelper {
 
 	public static enum Note {
-		C("C"),
+		C("C", 0),
 		CSHARP("C#"),
-		D("D"),
+		D("D", 1),
 		EFLAT("Eb"),
-		E("E"),
-		F("F"),
+		E("E", 2),
+		F("F", 3),
 		FSHARP("F#"),
-		G("G"),
+		G("G", 4),
 		GSHARP("G#"),
-		A("A"),
+		A("A", 5),
 		BFLAT("Bb"),
-		B("B");
+		B("B", 6);
 
 		public final String name;
+		/** Semitone offset. Zero for 'pure' notes */
+		public final int semitone;
+		public final int keyIndex;
 
-		private static final ArrayList<Note> pureNotes = new ArrayList();
+		private static final HashSet<Note> pureNotes = new HashSet();
 
 		private static final Note[] notes = values();
 
 		private Note(String s) {
+			this(s, -1);
+		}
+
+		private Note(String s, int idx) {
 			name = s;
+			char c = s.charAt(s.length()-1);
+			switch(c) {
+				case '#':
+					semitone = 1;
+					break;
+				case 'b':
+					semitone = -1;
+					break;
+				default:
+					semitone = 0;
+					break;
+			}
+			keyIndex = idx;
 		}
 
 		public boolean isPure() {
-			return this.name().length() == 1;//pureNotes.contains(this); do not use this, causes empty list due to list using this to populate
+			return semitone == 0;
 		}
 
 		public Note getFlat() {
