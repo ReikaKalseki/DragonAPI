@@ -13,8 +13,10 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 
@@ -40,7 +42,10 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.IO.EnumSound;
 import Reika.DragonAPI.Instantiable.IO.SingleSound;
+import Reika.DragonAPI.Instantiable.IO.SoundVariant;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
+import Reika.DragonAPI.Interfaces.Registry.VariableSound;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 import cpw.mods.fml.client.FMLClientHandler;
@@ -304,13 +309,12 @@ public class ReikaSoundHelper {
 		}
 	}
 
-	public static int getSoundLibraryIndex(SoundEnum s) {
+	public static SoundEnumSet getSoundLibrary(SoundEnum s) {
 		SoundEnumSet set = soundSets.get(s.getClass());
 		if (set == null) {
 			DragonAPICore.logError("Tried to play an unregistered sound '"+s.getClass()+" "+s+"'!");
-			return -1;
 		}
-		return set.index;
+		return set;
 	}
 
 	public static SoundEnum lookupSound(int lib, int idx) {
@@ -334,9 +338,18 @@ public class ReikaSoundHelper {
 			}
 			int idx = set != null ? set.index : soundSets.size();
 			soundSetIDs.put(idx, c);
-			if (set == null)
-				set = new SoundEnumSet(c, idx);
+			if (set == null) {
+				if (VariableSound.class.isAssignableFrom(c))
+					set = new SoundEnumSetWithVariants((Class<? extends VariableSound>)c, idx);
+				else
+					set = new SoundEnumSet(c, idx);
+			}
 			soundSets.put(c, set);
+			if (set instanceof SoundEnumSetWithVariants) {
+				for (Class c2 : ((SoundEnumSetWithVariants)set).variantClasses) {
+					soundSets.put(c2, set);
+				}
+			}
 			ReikaJavaLibrary.pConsole("Registered sound set of type "+c+" with values "+Arrays.toString(set.sounds));
 		}
 	}
@@ -375,13 +388,82 @@ public class ReikaSoundHelper {
 			return soundList.get(idx);
 		}
 
+		@Override
+		public int getSoundIndex(SoundEnum s) {
+			return soundList.indexOf(s);
+		}
+
 	}
 
-	private static class SoundEnumSet {
+	private static class SoundEnumSetWithVariants extends SoundEnumSet {
 
-		private final int index;
-		private final Class<? extends SoundEnum> enumClass;
-		private final SoundEnum[] sounds;
+		private static final Comparator<SoundVariant> sorter = new Comparator<SoundVariant>() {
+
+			@Override
+			public int compare(SoundVariant o1, SoundVariant o2) {
+				return String.CASE_INSENSITIVE_ORDER.compare(o1.getName(), o2.getName());
+			}
+
+		};
+
+		private final HashMap<SoundEnum, SoundVariant[]> variants = new HashMap();
+		private final HashSet<Class> variantClasses = new HashSet();
+
+		private SoundEnumSetWithVariants(Class<? extends VariableSound> c, int idx) {
+			super(c, idx);
+
+			for (SoundEnum e : sounds) {
+				VariableSound v = (VariableSound)e;
+				Collection<SoundVariant> cv = v.getVariants();
+				if (cv != null && !cv.isEmpty()) {
+					SoundVariant[] arr = cv.toArray(new SoundVariant[cv.size()]);
+					Arrays.sort(arr, sorter);
+					variants.put(e, arr);
+					for (SoundVariant sv : arr) {
+						variantClasses.add(sv.getClass());
+					}
+				}
+			}
+		}
+
+		@Override
+		protected SoundEnum getSound(int idx) {
+			int base = idx & 32767;
+			int variant = (idx >> 16) & 32767;
+			SoundEnum e = super.getSound(base);
+			if (variant > 0) {
+				SoundVariant[] arr = variants.get(e);
+				e = arr[variant-1];
+			}
+			return e;
+		}
+
+		@Override
+		public int getSoundIndex(SoundEnum s) {
+			SoundEnum parent = s;
+			boolean var = s instanceof SoundVariant;
+			if (var) {
+				parent = ((SoundVariant)s).root;
+			}
+			int val = super.getSoundIndex(parent);
+			if (var) {
+				SoundVariant[] arr = variants.get(parent);
+				int offset = arr == null ? 0 : 1+ReikaArrayHelper.indexOf(arr, s);
+				if (offset == 0) {
+					DragonAPICore.logError("Could not find variant index for "+s+" in "+Arrays.toString(arr)+" from "+parent);
+				}
+				val |= (offset << 16);
+			}
+			return val;
+		}
+
+	}
+
+	public static class SoundEnumSet {
+
+		public final int index;
+		public final Class<? extends SoundEnum> enumClass;
+		protected final SoundEnum[] sounds;
 
 		private SoundEnumSet(Class<? extends SoundEnum> c, int idx) {
 			enumClass = c;
@@ -391,6 +473,10 @@ public class ReikaSoundHelper {
 
 		protected SoundEnum getSound(int idx) {
 			return sounds[idx];
+		}
+
+		public int getSoundIndex(SoundEnum s) {
+			return s.ordinal();
 		}
 
 	}

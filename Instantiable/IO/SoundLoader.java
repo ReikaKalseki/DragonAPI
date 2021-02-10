@@ -19,6 +19,7 @@ import net.minecraft.util.ResourceLocation;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
+import Reika.DragonAPI.Interfaces.Registry.VariableSound;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 
 public class SoundLoader {
@@ -31,7 +32,7 @@ public class SoundLoader {
 			throw new IllegalArgumentException("You cannot register an empty sound list!");
 		soundClass = ss[0].getClass();
 		for (SoundEnum s : ss) {
-			soundMap.put(s, new SoundResource(s));
+			this.addToMap(s);
 		}
 		this.init();
 	}
@@ -39,9 +40,18 @@ public class SoundLoader {
 	public SoundLoader(Class<? extends SoundEnum> c) {
 		soundClass = c;
 		for (SoundEnum s : c.getEnumConstants()) {
-			soundMap.put(s, new SoundResource(s));
+			this.addToMap(s);
 		}
 		this.init();
+	}
+
+	private void addToMap(SoundEnum s) {
+		soundMap.put(s, new SoundResource(s));
+		if (s instanceof VariableSound) {
+			for (SoundVariant var : ((VariableSound)s).getVariants()) {
+				this.addToMap(var);
+			}
+		}
 	}
 
 	private void init() {
@@ -56,19 +66,21 @@ public class SoundLoader {
 
 	public final void register() {
 		for (Entry<SoundEnum, SoundResource> et : soundMap.entrySet()) {
-			SoundEnum e = et.getKey();
-			String p = e.getPath();
-			DirectResourceManager.getInstance().registerCustomPath(p, e.getCategory(), false);
-			this.onRegister(e, p);
-			if (e.preload()) {
-				try {
-					SoundResource sr = et.getValue();
-					sr.resource = DirectResourceManager.getInstance().getResource(sr.reference);
-				}
-				catch (IOException ex) {
-					DragonAPICore.logError("Caught error when preloading sound '"+e+"':");
-					ex.printStackTrace();
-				}
+			this.registerSound(et.getKey(), et.getValue());
+		}
+	}
+
+	private void registerSound(SoundEnum e, SoundResource sr) {
+		String p = e.getPath();
+		DirectResourceManager.getInstance().registerCustomPath(p, e.getCategory(), false);
+		this.onRegister(e, p);
+		if (e.preload()) {
+			try {
+				sr.resource = DirectResourceManager.getInstance().getResource(sr.reference);
+			}
+			catch (IOException ex) {
+				DragonAPICore.logError("Caught error when preloading sound '"+e+"':");
+				ex.printStackTrace();
 			}
 		}
 	}

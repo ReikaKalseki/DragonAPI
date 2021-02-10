@@ -59,6 +59,7 @@ import Reika.DragonAPI.Instantiable.IO.PacketTarget.PlayerTarget;
 import Reika.DragonAPI.Interfaces.PacketHandler;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper.SoundEnumSet;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 
@@ -710,9 +711,15 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		int length = 0;
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(length);
 		DataOutputStream outputStream = new DataOutputStream(bos);
+		SoundEnumSet lib = ReikaSoundHelper.getSoundLibrary(s);
+		if (lib == null) {
+			DragonAPICore.logError("Could not find a sound library for "+s+"!");
+			ReikaJavaLibrary.dumpStack();
+			return;
+		}
 		try {
-			outputStream.writeInt(ReikaSoundHelper.getSoundLibraryIndex(s));
-			outputStream.writeInt(s.ordinal());
+			outputStream.writeInt(lib.index);
+			outputStream.writeInt(lib.getSoundIndex(s));
 			outputStream.writeDouble(x);
 			outputStream.writeDouble(y);
 			outputStream.writeDouble(z);
@@ -725,7 +732,6 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		}
 		catch (Exception ex) {
 			ex.printStackTrace();
-			throw new RuntimeException("Sound Packet for "+s+" threw a packet exception!");
 		}
 
 		PacketPipeline pipe = pipelines.get(DragonAPIInit.packetChannel);
