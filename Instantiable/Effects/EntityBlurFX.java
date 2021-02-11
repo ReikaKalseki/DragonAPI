@@ -254,6 +254,10 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 		return this;
 	}
 
+	public int getMaxAge() {
+		return particleMaxAge;
+	}
+
 	@Override
 	public void onUpdate() {
 		ticksExisted = particleAge;
@@ -395,7 +399,19 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 		}
 
 		if (colorController != null) {
-			this.setColor(colorController.getColor(this));
+			int rgb = colorController.getColor(this);
+			float f = 1;
+			if (alphaFade) {
+				if (rapidExpand) {
+					f = (particleMaxAge/age >= 12 ? age*12F/particleMaxAge : 1-age/(float)particleMaxAge);
+				}
+				else {
+					f = MathHelper.sin((float)Math.toRadians(180D*age/particleMaxAge));
+				}
+			}
+			particleRed = ReikaColorAPI.getRed(rgb)*f/255F;
+			particleGreen = ReikaColorAPI.getGreen(rgb)*f/255F;
+			particleBlue = ReikaColorAPI.getBlue(rgb)*f/255F;
 			colorController.update(this);
 		}
 	}

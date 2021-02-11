@@ -207,6 +207,11 @@ public class MusicScore {
 			tag.setTag("Ch_"+i, nbt);
 		}
 		tag.setInteger("numchan", channelCount);
+		tag.setInteger("len", length);
+		tag.setInteger("first", firstNoteTime);
+		tag.setInteger("count", noteCount);
+		tag.setInteger("lowest", lowest != null ? lowest.ordinal() : -1);
+		tag.setInteger("highest", highest != null ? highest.ordinal() : -1);
 	}
 
 	public static MusicScore readFromNBT(NBTTagCompound tag) {
@@ -223,8 +228,20 @@ public class MusicScore {
 					NoteData c = NoteData.readFromNBT(time, li);
 					mus.music[i].put(time, c);
 				}
+				if (mus.music[i].isEmpty())
+					mus.music[i] = null;
+				else
+					mus.activeTracks.add(i);
 			}
 		}
+
+		mus.length = tag.getInteger("len");
+		mus.firstNoteTime = tag.getInteger("first");
+		mus.noteCount = tag.getInteger("count");
+		int low = tag.getInteger("lowest");
+		mus.lowest = low == -1 ? null : MusicKey.getByIndex(low);
+		int high = tag.getInteger("highest");
+		mus.highest = high == -1 ? null : MusicKey.getByIndex(high);
 
 		return mus;
 	}
