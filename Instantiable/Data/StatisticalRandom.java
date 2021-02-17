@@ -47,7 +47,7 @@ public class StatisticalRandom<K> {
 			throw new MisuseException("You can only specify enum types via a class reference!");
 		K[] data = set.getEnumConstants();
 		options.addAll(ReikaJavaLibrary.makeListFromArray(data));
-		this.setNBTConverter(new EnumNBTConverter((Class<? extends Enum>)set));
+		this.setNBTConverter((NBTIO<K>)new EnumNBTConverter((Class<? extends Enum>)set));
 	}
 
 	public void setNBTConverter(NBTIO<K> c) {

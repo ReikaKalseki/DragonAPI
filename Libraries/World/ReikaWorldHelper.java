@@ -1747,9 +1747,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	public static boolean countsAsAirExposure(World world, int dx, int dy, int dz) {
 		Block b = world.getBlock(dx, dy, dz);
-		if (b == Blocks.air)
-			return true;
-		if (b == null)
+		if (b == null || b == Blocks.air || b.isAir(world, dx, dy, dz))
 			return true;
 		if (b.getCollisionBoundingBoxFromPool(world, dx, dy, dz) == null)
 			return true;
@@ -2418,6 +2416,18 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static int getBiomeSize(World world) {
 		WorldType type = world.getWorldInfo().getTerrainType();
 		return GenLayer.getModdedBiomeSize(type, (byte)(type == WorldType.LARGE_BIOMES ? 6 : 4));
+	}
+
+	public static void blockRain(World world, int ticks, boolean thunder) {
+		//world.provider.resetRainAndThunder();
+		world.getWorldInfo().setRaining(false);
+		world.getWorldInfo().setThundering(false);
+		if (thunder) {
+			world.getWorldInfo().setThunderTime(ticks);
+		}
+		else {
+			world.getWorldInfo().setRainTime(ticks);
+		}
 	}
 
 	public static WorldID getCurrentWorldID(World world) {

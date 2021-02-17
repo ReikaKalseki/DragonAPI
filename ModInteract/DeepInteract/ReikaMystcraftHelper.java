@@ -213,6 +213,11 @@ public class ReikaMystcraftHelper {
 		}
 	}
 
+	public static void removeInstabilityForAge(World world) {
+		if (AgeInterface.loadedCorrectly && isMystAge(world))
+			getOrCreateInterface(world).setZeroInstability();
+	}
+
 	public static boolean isSymbolPresent(World world, BasicPages sym) {
 		return isSymbolPresent(world, sym.ID);
 	}
@@ -275,245 +280,6 @@ public class ReikaMystcraftHelper {
 			ageData.put(world.provider.dimensionId, ii);
 		}
 		return ii;
-	}
-
-	private static final class AgeInterface {
-
-		private static final Field age_controller;
-		private static final Field instability_controller;
-		//private static final Field stabilization;
-		private static final Field data;
-		private static final Field instabilityNumber;
-		private static final Field blockInstabilityNumber;
-		private static final Field baseInstability;
-		private static final Field symbolList;
-		private static final Method getScore;
-		private static final Method getGroundLevel;
-
-		private static boolean loadedCorrectly;
-
-		public final int dimensionID;
-		private final WorldProvider provider;
-		private Object ageController; //AgeController class
-		private Object instabilityController; //InstabilityController
-		private Object ageData; //AgeData class
-		private HashSet<String> ageSymbols;
-		private ArrayList<String> ageSymbolsOrdered;
-
-		private AgeInterface(World world) {
-			if (!isMystAge(world))
-				throw new IllegalArgumentException("Dimension "+world.provider.dimensionId+" is not a MystCraft age!");
-			provider = world.provider;
-			dimensionID = world.provider.dimensionId;
-			try {
-				ageController = age_controller.get(provider);
-				instabilityController = instability_controller.get(ageController);
-				ageData = data.get(ageController);
-				ageSymbolsOrdered = new ArrayList((List<String>)symbolList.get(ageData));
-				ageSymbols = new HashSet(ageSymbolsOrdered);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		public int getBlockInstability() {
-			try {
-				Integer get = (Integer)blockInstabilityNumber.get(ageController);
-				return get != null ? get.intValue() : 0;
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return 0;
-			}
-		}
-
-		public int getSymbolInstability() {
-			try {
-				return instabilityNumber.getInt(ageController);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return 0;
-			}
-		}
-
-		public short getBaseInstability() {
-			try {
-				return baseInstability.getShort(ageData);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return 0;
-			}
-		}
-
-		public int getInstabilityScore() {
-			try {
-				return (Integer)getScore.invoke(ageController);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return 0;
-			}
-		}
-
-		public void addBaseInstability(short amt) {
-			short base = this.getBaseInstability();
-			this.setBaseInstability((short)(amt+base));
-		}
-
-		public int decrInstability(int amt) {
-			int symbol = this.getSymbolInstability();
-			if (symbol >= amt) {
-				this.setSymbolInstability(symbol-amt);
-				return 0;
-			}
-			else {
-				this.setSymbolInstability(0);
-				int rem = amt-symbol;
-				int block = this.getBlockInstability();
-				if (block >= rem) {
-					this.setBlockInstability(block-rem);
-					return 0;
-				}
-				else {
-					int rem2 = rem-block;
-					this.setBlockInstability(0);
-					short base = this.getBaseInstability();
-					if (base >= rem2) {
-						this.setBaseInstability((short)(base-rem2));
-						return 0;
-					}
-					else {
-						this.setBaseInstability((short)0);
-						return rem2-base;
-					}
-				}
-			}
-		}
-
-		private void setBaseInstability(short amt) {
-			if (amt < 0)
-				amt = 0;
-			try {
-				baseInstability.set(ageData, amt);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		private void setBlockInstability(int amt) {
-			if (amt < 0)
-				amt = 0;
-			try {
-				blockInstabilityNumber.set(ageController, Integer.valueOf(amt));
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		private void setSymbolInstability(int amt) {
-			if (amt < 0)
-				amt = 0;
-			try {
-				instabilityNumber.set(ageController, amt);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-
-		public Set<String> getSymbols() {
-			return Collections.unmodifiableSet(ageSymbols);
-		}
-
-		public List<String> getSymbolsOrdered() {
-			return Collections.unmodifiableList(ageSymbolsOrdered);
-		}
-
-		public boolean symbolExists(String s) {
-			return ageSymbols.contains(s);
-		}
-
-		public boolean symbolExists(IAgeSymbol s) {
-			return ageSymbols.contains(s.identifier());
-		}
-
-		public int getGroundLevel() {
-			try {
-				return (int)getGroundLevel.invoke(ageController);
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return 64;
-			}
-		}
-
-		static {
-			Field cont = null;
-			Field insta = null;
-			//Field stable = null;
-			Field num = null;
-			Field numblock = null;
-			Field base = null;
-			Field adata = null;
-			Field sym = null;
-			Method score = null;
-			Method level = null;
-			boolean load = true;
-			if (ModList.MYSTCRAFT.isLoaded()) {
-				try {
-					Class prov = Class.forName("com.xcompwiz.mystcraft.world.WorldProviderMyst");
-					cont = prov.getDeclaredField("controller");
-					cont.setAccessible(true);
-					Class age = Class.forName("com.xcompwiz.mystcraft.world.AgeController");
-					insta = age.getDeclaredField("instabilityController");
-					insta.setAccessible(true);
-					level = age.getDeclaredMethod("getAverageGroundLevel");
-					level.setAccessible(true);
-					Class controller = Class.forName("com.xcompwiz.mystcraft.instability.InstabilityController");
-					//stable = controller.getDeclaredField("stabilization");*
-					//stable.setAccessible(true);
-					num = age.getDeclaredField("symbolinstability");
-					num.setAccessible(true);
-					numblock = age.getDeclaredField("blockinstability");
-					numblock.setAccessible(true);
-					Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
-					base = data.getDeclaredField("instability");
-					base.setAccessible(true);
-					sym = data.getDeclaredField("symbols");
-					sym.setAccessible(true);
-					score = age.getDeclaredMethod("getInstabilityScore");
-					score.setAccessible(true);
-					adata = age.getDeclaredField("agedata");
-					adata.setAccessible(true);
-					loadedCorrectly = true;
-				}
-				catch (Exception e) {
-					DragonAPICore.logError("Error loading Mystcraft instability interfacing!");
-					e.printStackTrace();
-					load = false;
-					ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
-				}
-			}
-			else {
-				load = false;
-			}
-			age_controller = cont;
-			instability_controller = insta;
-			//stabilization = stable;
-			instabilityNumber = num;
-			blockInstabilityNumber = numblock;
-			getScore = score;
-			baseInstability = base;
-			symbolList = sym;
-			data = adata;
-			getGroundLevel = level;
-		}
-
 	}
 
 	public static ArrayList<IAgeSymbol> getAllSymbols() {
@@ -659,6 +425,62 @@ public class ReikaMystcraftHelper {
 		if (registries.contains(p))
 			throw new MisuseException("You cannot register a MystCraft page provider twice!");
 		registries.add(p);
+	}
+
+	public static List<ItemStack> getPagesInFolder(EntityPlayer ep, ItemStack is, boolean clear) {
+		List<ItemStack> li = ((IItemPageProvider)is.getItem()).getPageList(ep, is);
+		if (clear) {
+			for (int i = 0; i < li.size(); i++) {
+				((IItemOrderablePageProvider)is.getItem()).removePage(ep, is, i);
+			}
+		}
+		return li;
+	}
+
+	public static int getFlatWorldThickness(World world) {
+		AgeInterface a = getOrCreateInterface(world);
+		return a != null ? a.getGroundLevel() : world.provider.getAverageGroundLevel();
+	}
+
+	public static BiomeGenBase getMystParentBiome(BiomeGenBase b) {
+		if (b.getClass() != biomeWrapper) {
+			return b;
+		}
+		try {
+			return (BiomeGenBase)parentBiome.get(b);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return b;
+		}
+	}
+
+	public static boolean setBookBinderPages(TileEntity te, ArrayList<IAgeSymbol> li) {
+		return setBookBinderItemPages(te, getPagesAsItems(li));
+	}
+
+	private static ArrayList<ItemStack> getPagesAsItems(ArrayList<IAgeSymbol> li) {
+		ArrayList<ItemStack> ret = new ArrayList();
+		for (IAgeSymbol ia : li) {
+			ret.add(getSymbolPage(ia));
+		}
+		return ret;
+	}
+
+	private static boolean setBookBinderItemPages(TileEntity te, ArrayList<ItemStack> pages) {
+		List<ItemStack> li;
+		try {
+			li = (List<ItemStack>)pagesField.get(te);
+			if (li == null || !li.isEmpty())
+				return false;
+			li.addAll(pages);
+			te.worldObj.markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
+			return true;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 	public static interface MystcraftPageRegistry {
@@ -821,60 +643,249 @@ public class ReikaMystcraftHelper {
 
 	}
 
-	public static List<ItemStack> getPagesInFolder(EntityPlayer ep, ItemStack is, boolean clear) {
-		List<ItemStack> li = ((IItemPageProvider)is.getItem()).getPageList(ep, is);
-		if (clear) {
-			for (int i = 0; i < li.size(); i++) {
-				((IItemOrderablePageProvider)is.getItem()).removePage(ep, is, i);
+	private static final class AgeInterface {
+
+		private static final Field age_controller;
+		private static final Field instability_controller;
+		//private static final Field stabilization;
+		private static final Field data;
+		private static final Field instabilityNumber;
+		private static final Field blockInstabilityNumber;
+		private static final Field baseInstability;
+		private static final Field symbolList;
+		private static final Method getScore;
+		private static final Method getGroundLevel;
+
+		private static boolean loadedCorrectly;
+
+		public final int dimensionID;
+		private final WorldProvider provider;
+		private Object ageController; //AgeController class
+		private Object instabilityController; //InstabilityController
+		private Object ageData; //AgeData class
+		private HashSet<String> ageSymbols;
+		private ArrayList<String> ageSymbolsOrdered;
+
+		private AgeInterface(World world) {
+			if (!isMystAge(world))
+				throw new IllegalArgumentException("Dimension "+world.provider.dimensionId+" is not a MystCraft age!");
+			provider = world.provider;
+			dimensionID = world.provider.dimensionId;
+			try {
+				ageController = age_controller.get(provider);
+				instabilityController = instability_controller.get(ageController);
+				ageData = data.get(ageController);
+				ageSymbolsOrdered = new ArrayList((List<String>)symbolList.get(ageData));
+				ageSymbols = new HashSet(ageSymbolsOrdered);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
-		return li;
-	}
 
-	public static int getFlatWorldThickness(World world) {
-		AgeInterface a = getOrCreateInterface(world);
-		return a != null ? a.getGroundLevel() : world.provider.getAverageGroundLevel();
-	}
+		public int getBlockInstability() {
+			try {
+				Integer get = (Integer)blockInstabilityNumber.get(ageController);
+				return get != null ? get.intValue() : 0;
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return 0;
+			}
+		}
 
-	public static BiomeGenBase getMystParentBiome(BiomeGenBase b) {
-		if (b.getClass() != biomeWrapper) {
-			return b;
+		public int getSymbolInstability() {
+			try {
+				return instabilityNumber.getInt(ageController);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return 0;
+			}
 		}
-		try {
-			return (BiomeGenBase)parentBiome.get(b);
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return b;
-		}
-	}
 
-	public static boolean setBookBinderPages(TileEntity te, ArrayList<IAgeSymbol> li) {
-		return setBookBinderItemPages(te, getPagesAsItems(li));
-	}
+		public short getBaseInstability() {
+			try {
+				return baseInstability.getShort(ageData);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return 0;
+			}
+		}
 
-	private static ArrayList<ItemStack> getPagesAsItems(ArrayList<IAgeSymbol> li) {
-		ArrayList<ItemStack> ret = new ArrayList();
-		for (IAgeSymbol ia : li) {
-			ret.add(getSymbolPage(ia));
+		public int getInstabilityScore() {
+			try {
+				return (Integer)getScore.invoke(ageController);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return 0;
+			}
 		}
-		return ret;
-	}
 
-	private static boolean setBookBinderItemPages(TileEntity te, ArrayList<ItemStack> pages) {
-		List<ItemStack> li;
-		try {
-			li = (List<ItemStack>)pagesField.get(te);
-			if (li == null || !li.isEmpty())
-				return false;
-			li.addAll(pages);
-			te.worldObj.markBlockForUpdate(te.xCoord, te.yCoord, te.zCoord);
-			return true;
+		public void addBaseInstability(short amt) {
+			short base = this.getBaseInstability();
+			this.setBaseInstability((short)(amt+base));
 		}
-		catch (Exception e) {
-			e.printStackTrace();
-			return false;
+
+		public void setZeroInstability() {
+			this.setSymbolInstability(0);
+			this.setBlockInstability(0);
+			this.setBaseInstability((short)0);
 		}
+
+		public int decrInstability(int amt) {
+			int symbol = this.getSymbolInstability();
+			if (symbol >= amt) {
+				this.setSymbolInstability(symbol-amt);
+				return 0;
+			}
+			else {
+				this.setSymbolInstability(0);
+				int rem = amt-symbol;
+				int block = this.getBlockInstability();
+				if (block >= rem) {
+					this.setBlockInstability(block-rem);
+					return 0;
+				}
+				else {
+					int rem2 = rem-block;
+					this.setBlockInstability(0);
+					short base = this.getBaseInstability();
+					if (base >= rem2) {
+						this.setBaseInstability((short)(base-rem2));
+						return 0;
+					}
+					else {
+						this.setBaseInstability((short)0);
+						return rem2-base;
+					}
+				}
+			}
+		}
+
+		private void setBaseInstability(short amt) {
+			if (amt < 0)
+				amt = 0;
+			try {
+				baseInstability.set(ageData, amt);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		private void setBlockInstability(int amt) {
+			if (amt < 0)
+				amt = 0;
+			try {
+				blockInstabilityNumber.set(ageController, Integer.valueOf(amt));
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		private void setSymbolInstability(int amt) {
+			if (amt < 0)
+				amt = 0;
+			try {
+				instabilityNumber.set(ageController, amt);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		public Set<String> getSymbols() {
+			return Collections.unmodifiableSet(ageSymbols);
+		}
+
+		public List<String> getSymbolsOrdered() {
+			return Collections.unmodifiableList(ageSymbolsOrdered);
+		}
+
+		public boolean symbolExists(String s) {
+			return ageSymbols.contains(s);
+		}
+
+		public boolean symbolExists(IAgeSymbol s) {
+			return ageSymbols.contains(s.identifier());
+		}
+
+		public int getGroundLevel() {
+			try {
+				return (int)getGroundLevel.invoke(ageController);
+			}
+			catch (Exception e) {
+				e.printStackTrace();
+				return 64;
+			}
+		}
+
+		static {
+			Field cont = null;
+			Field insta = null;
+			//Field stable = null;
+			Field num = null;
+			Field numblock = null;
+			Field base = null;
+			Field adata = null;
+			Field sym = null;
+			Method score = null;
+			Method level = null;
+			boolean load = true;
+			if (ModList.MYSTCRAFT.isLoaded()) {
+				try {
+					Class prov = Class.forName("com.xcompwiz.mystcraft.world.WorldProviderMyst");
+					cont = prov.getDeclaredField("controller");
+					cont.setAccessible(true);
+					Class age = Class.forName("com.xcompwiz.mystcraft.world.AgeController");
+					insta = age.getDeclaredField("instabilityController");
+					insta.setAccessible(true);
+					level = age.getDeclaredMethod("getAverageGroundLevel");
+					level.setAccessible(true);
+					Class controller = Class.forName("com.xcompwiz.mystcraft.instability.InstabilityController");
+					//stable = controller.getDeclaredField("stabilization");*
+					//stable.setAccessible(true);
+					num = age.getDeclaredField("symbolinstability");
+					num.setAccessible(true);
+					numblock = age.getDeclaredField("blockinstability");
+					numblock.setAccessible(true);
+					Class data = Class.forName("com.xcompwiz.mystcraft.world.agedata.AgeData");
+					base = data.getDeclaredField("instability");
+					base.setAccessible(true);
+					sym = data.getDeclaredField("symbols");
+					sym.setAccessible(true);
+					score = age.getDeclaredMethod("getInstabilityScore");
+					score.setAccessible(true);
+					adata = age.getDeclaredField("agedata");
+					adata.setAccessible(true);
+					loadedCorrectly = true;
+				}
+				catch (Exception e) {
+					DragonAPICore.logError("Error loading Mystcraft instability interfacing!");
+					e.printStackTrace();
+					load = false;
+					ReflectiveFailureTracker.instance.logModReflectiveFailure(ModList.MYSTCRAFT, e);
+				}
+			}
+			else {
+				load = false;
+			}
+			age_controller = cont;
+			instability_controller = insta;
+			//stabilization = stable;
+			instabilityNumber = num;
+			blockInstabilityNumber = numblock;
+			getScore = score;
+			baseInstability = base;
+			symbolList = sym;
+			data = adata;
+			getGroundLevel = level;
+		}
+
 	}
 
 	/** This is copied from com.xcompwiz.mystcraft.data.ModSymbols.initialize() */

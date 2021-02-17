@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -414,11 +415,30 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		tag.setTag(s, dat);
 	}
 
-	public static void writeCollectionToNBT(Collection c, NBTTagCompound NBT, String key) {
+	public static <K, V> void writeMapToNBT(Map<K, V> map, NBTTagList li, NBTIO<K> converterK, NBTIO<V> converterV) {
+		for (Entry<K, V> e : map.entrySet()) {
+			NBTTagCompound entry = new NBTTagCompound();
+			entry.setTag("key", getTagForObject(e.getKey(), converterK));
+			entry.setTag("value", getTagForObject(e.getValue(), converterV));
+			li.appendTag(entry);
+		}
+	}
+
+	public static <K, V> void readMapFromNBT(Map<K, V> map, NBTTagList li, NBTIO<K> converterK, NBTIO<V> converterV) {
+		map.clear();
+		for (Object o : li.tagList) {
+			NBTTagCompound entry = (NBTTagCompound)o;
+			K key = (K)getValue(entry.getCompoundTag("key"), converterK);
+			V val = (V)getValue(entry.getCompoundTag("value"), converterV);
+			map.put(key, val);
+		}
+	}
+
+	public static <E> void writeCollectionToNBT(Collection<E> c, NBTTagCompound NBT, String key) {
 		writeCollectionToNBT(c, NBT, key, null);
 	}
 
-	public static void writeCollectionToNBT(Collection c, NBTTagCompound NBT, String key, NBTIO converter) {
+	public static <E> void writeCollectionToNBT(Collection<E> c, NBTTagCompound NBT, String key, NBTIO<E> converter) {
 		NBTTagList li = new NBTTagList();
 		for (Object o : c) {
 			NBTBase b = getTagForObject(o, converter);
@@ -429,17 +449,17 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		NBT.setTag(key, li);
 	}
 
-	public static void readCollectionFromNBT(Collection c, NBTTagCompound NBT, String key) {
+	public static <E> void readCollectionFromNBT(Collection<E> c, NBTTagCompound NBT, String key) {
 		readCollectionFromNBT(c, NBT, key, null);
 	}
 
-	public static void readCollectionFromNBT(Collection c, NBTTagCompound NBT, String key, NBTIO converter) {
+	public static <E> void readCollectionFromNBT(Collection<E> c, NBTTagCompound NBT, String key, NBTIO<E> converter) {
 		c.clear();
 		NBTTagList li = NBT.getTagList(key, NBTTypes.COMPOUND.ID);
 		for (Object o : li.tagList) {
 			NBTTagCompound tag = (NBTTagCompound)o;
 			NBTBase b = tag.getTag("value");
-			c.add(getValue(b, converter));
+			c.add((E)getValue(b, converter));
 		}
 	}
 
@@ -468,7 +488,17 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		addMapToTags(tag, lb.asHashMap());
 		return tag;
 	}
+	/*
+	public static class CompoundNBTIO {
 
+		private final HashMap<Class, NBTIO> data = new HashMap();
+
+		public <V> void addHandler(Class<? extends V> c, NBTIO<V> h) {
+			data.put(c, h);
+		}
+
+	}
+	 */
 	public interface NBTIO<V> {
 
 		public V createFromNBT(NBTBase nbt);
@@ -476,7 +506,7 @@ public final class ReikaNBTHelper extends DragonAPICore {
 
 	}
 
-	public static class EnumNBTConverter implements NBTIO {
+	public static class EnumNBTConverter implements NBTIO<Enum> {
 
 		private final List<Enum> enumData;
 
@@ -485,13 +515,13 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		}
 
 		@Override
-		public Object createFromNBT(NBTBase nbt) {
+		public Enum createFromNBT(NBTBase nbt) {
 			int idx = ((NBTTagInt)nbt).func_150287_d();
 			return idx >= 0 && idx < enumData.size() ? enumData.get(idx) : null;
 		}
 
 		@Override
-		public NBTBase convertToNBT(Object obj) {
+		public NBTBase convertToNBT(Enum obj) {
 			return new NBTTagInt(enumData.indexOf(obj));
 		}
 

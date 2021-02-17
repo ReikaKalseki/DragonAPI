@@ -36,6 +36,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double rhodiamond = 3500;		// Diamond density
 	public static final double rhographite = 2150;		// Graphite density
 	public static final double rhotungsten = 19300;
+	public static final double rhouranium = 19050;
 
 	/** Shear moduli */
 	public static final double Gsteel = 79.3e9;
@@ -76,6 +77,7 @@ public final class ReikaEngLibrary extends DragonAPICore {
 	public static final double Tstone = 100e6; //varies widely
 	public static final double Tgold = 108e6;
 	public static final double Ttungsten = 980e6;
+	public static final double Turanium = 625e6;
 
 	/** Ultimate Shear Strengths */
 	public static final double Ssteel = 280e6;

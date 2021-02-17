@@ -431,6 +431,10 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		return placer;
 	}
 
+	public final UUID getPlacerID() {
+		return placerUUID;
+	}
+
 	public final EntityPlayer getPlacer() {
 		if (placer == null || placer.isEmpty())
 			return null;

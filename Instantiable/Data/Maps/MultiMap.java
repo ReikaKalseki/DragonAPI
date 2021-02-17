@@ -17,11 +17,17 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+
 import Reika.DragonAPI.Instantiable.Data.Collections.ThreadSafeSet;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTIO;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
 public final class MultiMap<K, V> {
@@ -275,6 +281,26 @@ public final class MultiMap<K, V> {
 	public void removeValue(V val) {
 		for (K key : this.keySet()) {
 			this.remove(key, val);
+		}
+	}
+
+	public void writeToNBT(NBTTagList li, NBTIO<K> converterK, NBTIO<V> converterV) {
+		for (Entry<K, Collection<V>> e : data.entrySet()) {
+			NBTTagCompound entry = new NBTTagCompound();
+			entry.setTag("key", ReikaNBTHelper.getTagForObject(e.getKey(), converterK));
+			ReikaNBTHelper.writeCollectionToNBT(e.getValue(), entry, "values", converterV);
+			li.appendTag(entry);
+		}
+	}
+
+	public void readFromNBT(NBTTagList li, NBTIO<K> converterK, NBTIO<V> converterV) {
+		this.clear();
+		for (Object o : li.tagList) {
+			NBTTagCompound entry = (NBTTagCompound)o;
+			K key = (K)ReikaNBTHelper.getValue(entry.getCompoundTag("key"), converterK);
+			Collection<V> val = this.createCollection();
+			ReikaNBTHelper.readCollectionFromNBT(val, entry, "values", converterV);
+			this.put(key, val);
 		}
 	}
 
