@@ -2430,6 +2430,33 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 	}
 
+	public static void convertBiomeRegionFrom(World world, int x, int z, BiomeGenBase from, BiomeGenBase to, BiomeGenBase same, int depthLimit) {
+		HashSet<Coordinate> done = new HashSet();
+		HashSet<Coordinate> next = new HashSet();
+		HashSet<Coordinate> next2 = new HashSet();
+		next.add(new Coordinate(x, 0, z));
+		int n = 0;
+		while (!next.isEmpty() && (n < depthLimit || depthLimit == -1)) {
+			for (Coordinate c : next) {
+				BiomeGenBase put = to == null ? getNaturalGennedBiomeAt(world, c.xCoord, c.zCoord) : to;
+				if (put == from && same != null) {
+					put = same;
+				}
+				setBiomeForXZ(world, c.xCoord, c.zCoord, put);
+				for (int i = 2; i < 6; i++) {
+					ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+					Coordinate c2 = c.offset(dir, 1);
+					BiomeGenBase b = world.getBiomeGenForCoords(c2.xCoord, c2.zCoord);
+					if (b == from) {
+						next2.add(c2);
+					}
+				}
+			}
+			next = next2;
+			n++;
+		}
+	}
+
 	public static WorldID getCurrentWorldID(World world) {
 		if (world.isRemote)
 			throw new MisuseException("This cannot be called from the client side!");

@@ -229,6 +229,10 @@ public final class Coordinate implements Location, Comparable<Coordinate> {
 		return false;
 	}
 
+	public boolean equals(TileEntity te) {
+		return this.equals(te.xCoord, te.yCoord, te.zCoord);
+	}
+
 	public boolean equals(int x, int y, int z) {
 		return x == xCoord && y == yCoord && z == zCoord;
 	}

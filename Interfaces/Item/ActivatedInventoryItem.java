@@ -19,4 +19,8 @@ public interface ActivatedInventoryItem {
 
 	public boolean isSlotActive(ItemStack is, int slot);
 
+	public int getInventorySize(ItemStack is);
+
+	public ItemStack getItem(ItemStack is, int slot);
+
 }
