@@ -207,4 +207,20 @@ public class Proportionality<F> extends CircularDivisionRenderer<F> {
 		}
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		for (F f : this.data.keySet()) {
+			sb.append(f.toString());
+			sb.append(": ");
+			sb.append(String.valueOf(this.getFraction(f)*100));
+			sb.append("%; ");
+		}
+		return sb.toString();
+	}
+
+	public String mapString() {
+		return this.data.toString();
+	}
+
 }

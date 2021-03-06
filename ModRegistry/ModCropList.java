@@ -209,123 +209,129 @@ public enum ModCropList implements ModCrop {
 		Block id = null;
 		Item seed = null;
 		if (mod.isLoaded()) {
-			Class blocks = api.getBlockClass();
-			Class items = api.getItemClass();
-			if (blocks == null) {
-				DragonAPICore.logError("Error loading crop "+this+": Empty block class");
-			}
-			else if (items == null) {
-				DragonAPICore.logError("Error loading crop "+this+": Empty item class");
-			}
-			else if (blockVar == null || blockVar.isEmpty() || itemVar == null || itemVar.isEmpty()) {
-				DragonAPICore.logError("Error loading crop "+this+": Empty variable name");
+			if (blockType == VarType.REGISTRY) {
+				Item item = GameRegistry.findItem(mod.getModLabel(), itemVar);
+				if (item == null) {
+					DragonAPICore.logError("Error loading crop "+this+": Item not instantiated!");
+					exists = false;
+				}
+				else {
+					seed = item;
+					exists = true;
+				}
 			}
 			else {
-				try {
-					Field b;
-					Field i;
-					switch(blockType) {
-						case ITEMSTACK:
-							b = blocks.getField(blockVar);
-							ItemStack is = (ItemStack)b.get(null);
-							if (is == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+				Class blocks = api.getBlockClass();
+				Class items = api.getItemClass();
+				if (blocks == null) {
+					DragonAPICore.logError("Error loading crop "+this+": Empty block class");
+				}
+				else if (items == null) {
+					DragonAPICore.logError("Error loading crop "+this+": Empty item class");
+				}
+				else if (blockVar == null || blockVar.isEmpty() || itemVar == null || itemVar.isEmpty()) {
+					DragonAPICore.logError("Error loading crop "+this+": Empty variable name");
+				}
+				else {
+					try {
+						Field b;
+						Field i;
+						switch(blockType) {
+							case ITEMSTACK:
+								b = blocks.getField(blockVar);
+								ItemStack is = (ItemStack)b.get(null);
+								if (is == null) {
+									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+									exists = false;
+								}
+								else {
+									id = Block.getBlockFromItem(is.getItem());
+									exists = true;
+								}
+								break;
+							case INSTANCE: {
+								b = blocks.getField(blockVar);
+								Block block = (Block)b.get(null);
+								if (block == null) {
+									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+									exists = false;
+								}
+								else {
+									id = block;
+									exists = true;
+								}
+								break;
+							}
+							case REGISTRY: {
+								Block block = GameRegistry.findBlock(mod.getModLabel(), blockVar);
+								if (block == null) {
+									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+									exists = false;
+								}
+								else {
+									id = block;
+									exists = true;
+								}
+								break;
+							}
+							default:
+								DragonAPICore.logError("Error loading crop "+this);
+								DragonAPICore.logError("Invalid variable type for field "+blockVar);
 								exists = false;
-							}
-							else {
-								id = Block.getBlockFromItem(is.getItem());
-								exists = true;
-							}
-							break;
-						case INSTANCE: {
-							b = blocks.getField(blockVar);
-							Block block = (Block)b.get(null);
-							if (block == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
-								exists = false;
-							}
-							else {
-								id = block;
-								exists = true;
-							}
-							break;
 						}
-						case REGISTRY: {
-							Block block = GameRegistry.findBlock(mod.getModLabel(), blockVar);
-							if (block == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
+						switch(itemType) {
+							case ITEMSTACK:
+								i = items.getField(itemVar);
+								ItemStack is2 = (ItemStack)i.get(null);
+								if (is2 == null) {
+									DragonAPICore.logError("Error loading crop "+this+": Seed not instantiated!");
+									exists = false;
+								}
+								else {
+									seed = is2.getItem();
+									exists = true;
+								}
+								break;
+							case INSTANCE: {
+								i = items.getField(itemVar);
+								Item item = (Item)i.get(null);
+								if (item == null) {
+									DragonAPICore.logError("Error loading crop "+this+": Seed not instantiated!");
+									exists = false;
+								}
+								else {
+									seed = item;
+									exists = true;
+								}
+								break;
+							}
+							case REGISTRY: {
+								DragonAPICore.logError("Error loading crop "+this);
+								DragonAPICore.logError("Skipped initial registry handling?!");
+								break;
+							}
+							default:
+								DragonAPICore.logError("Error loading crop "+this);
+								DragonAPICore.logError("Invalid variable type for field "+itemVar);
 								exists = false;
-							}
-							else {
-								id = block;
-								exists = true;
-							}
-							break;
 						}
-						default:
-							DragonAPICore.logError("Error loading crop "+this);
-							DragonAPICore.logError("Invalid variable type for field "+blockVar);
-							exists = false;
 					}
-					switch(itemType) {
-						case ITEMSTACK:
-							i = items.getField(itemVar);
-							ItemStack is2 = (ItemStack)i.get(null);
-							if (is2 == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Seed not instantiated!");
-								exists = false;
-							}
-							else {
-								seed = is2.getItem();
-								exists = true;
-							}
-							break;
-						case INSTANCE: {
-							i = items.getField(itemVar);
-							Item item = (Item)i.get(null);
-							if (item == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Seed not instantiated!");
-								exists = false;
-							}
-							else {
-								seed = item;
-								exists = true;
-							}
-							break;
-						}
-						case REGISTRY: {
-							Item item = GameRegistry.findItem(mod.getModLabel(), itemVar);
-							if (item == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Item not instantiated!");
-								exists = false;
-							}
-							else {
-								seed = item;
-								exists = true;
-							}
-							break;
-						}
-						default:
-							DragonAPICore.logError("Error loading crop "+this);
-							DragonAPICore.logError("Invalid variable type for field "+itemVar);
-							exists = false;
+					catch (NoSuchFieldException e) {
+						DragonAPICore.logError("Error loading crop "+this);
+						e.printStackTrace();
 					}
-				}
-				catch (NoSuchFieldException e) {
-					DragonAPICore.logError("Error loading crop "+this);
-					e.printStackTrace();
-				}
-				catch (SecurityException e) {
-					DragonAPICore.logError("Error loading crop "+this);
-					e.printStackTrace();
-				}
-				catch (IllegalAccessException e) {
-					DragonAPICore.logError("Error loading crop "+this);
-					e.printStackTrace();
-				}
-				catch (IllegalArgumentException e) {
-					DragonAPICore.logError("Error loading crop "+this);
-					e.printStackTrace();
+					catch (SecurityException e) {
+						DragonAPICore.logError("Error loading crop "+this);
+						e.printStackTrace();
+					}
+					catch (IllegalAccessException e) {
+						DragonAPICore.logError("Error loading crop "+this);
+						e.printStackTrace();
+					}
+					catch (IllegalArgumentException e) {
+						DragonAPICore.logError("Error loading crop "+this);
+						e.printStackTrace();
+					}
 				}
 			}
 		}

@@ -693,7 +693,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			// We are on the server side.
 			//EntityPlayerMP player2 = (EntityPlayerMP) player;
 			//PacketDispatcher.sendPacketToAllAround(x, y, z, 20, world.provider.dimensionId, packet);
-			pipe.sendToAllAround(pack, world, x, y, z, 20);
+			if (scale)
+				pipe.sendToAllAround(pack, world, x, y, z, 20);
+			else
+				pipe.sendToAllOnServer(pack);
 		}
 		else if (side == Side.CLIENT) {
 
