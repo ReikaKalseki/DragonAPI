@@ -323,8 +323,9 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static SoundCategory addSoundCategory(String name, String label) {
+	public static SoundCategory addSoundCategory(String name) {
 		SoundCategory cat = null;
+		String label = name.toLowerCase(Locale.ENGLISH);
 		try {
 			cat = EnumHelper.addEnum(SoundCategory.class, name.toUpperCase(), new Class[]{String.class, int.class}, new Object[]{label, SoundCategory.values().length});
 			SoundCategory.field_147168_j.put(cat.getCategoryName(), cat);

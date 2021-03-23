@@ -28,6 +28,15 @@ import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeDecorator;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.biome.BiomeGenMutated;
+import net.minecraft.world.gen.feature.WorldGenAbstractTree;
+import net.minecraft.world.gen.feature.WorldGenBigTree;
+import net.minecraft.world.gen.feature.WorldGenCanopyTree;
+import net.minecraft.world.gen.feature.WorldGenForest;
+import net.minecraft.world.gen.feature.WorldGenMegaJungle;
+import net.minecraft.world.gen.feature.WorldGenMegaPineTree;
+import net.minecraft.world.gen.feature.WorldGenSavannaTree;
+import net.minecraft.world.gen.feature.WorldGenSwamp;
+import net.minecraft.world.gen.feature.WorldGenTaiga2;
 import net.minecraftforge.common.BiomeDictionary;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import net.minecraftforge.common.BiomeManager;
@@ -39,8 +48,10 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.RGB;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.MapDeterminator;
+import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 import Reika.DragonAPI.ModInteract.DeepInteract.ModSeasonHandler;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
@@ -57,6 +68,7 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	private static final HashMap<String, BiomeGenBase> nameMap = new HashMap();
 
 	private static final HashMap<BiomeGenBase, BiomeTemperatures> temperatures = new HashMap();
+	private static final HashMap<BiomeGenBase, TreeType> biomeTrees = new HashMap();
 
 	public static final Comparator<BiomeGenBase> biomeIDSorter = new Comparator<BiomeGenBase>() {
 
@@ -189,6 +201,38 @@ public class ReikaBiomeHelper extends DragonAPICore {
 		temperatures.put(BiomeGenBase.hell, BiomeTemperatures.FIERY);
 
 		temperatures.put(BiomeGenBase.sky, BiomeTemperatures.LUNAR);
+
+		biomeTrees.put(BiomeGenBase.coldTaiga, ReikaTreeHelper.SPRUCE);
+		biomeTrees.put(BiomeGenBase.coldTaigaHills, ReikaTreeHelper.SPRUCE);
+		biomeTrees.put(BiomeGenBase.taiga, ReikaTreeHelper.SPRUCE);
+		biomeTrees.put(BiomeGenBase.taigaHills, ReikaTreeHelper.SPRUCE);
+		biomeTrees.put(BiomeGenBase.megaTaiga, ReikaTreeHelper.SPRUCE);
+		biomeTrees.put(BiomeGenBase.megaTaigaHills, ReikaTreeHelper.SPRUCE);
+
+		biomeTrees.put(BiomeGenBase.ocean, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.forest, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.forestHills, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.swampland, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.river, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.iceMountains, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.icePlains, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.extremeHills, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.extremeHillsEdge, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.extremeHillsPlus, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.mesaPlateau, ReikaTreeHelper.OAK);
+		biomeTrees.put(BiomeGenBase.mesaPlateau_F, ReikaTreeHelper.OAK);
+
+		biomeTrees.put(BiomeGenBase.birchForest, ReikaTreeHelper.BIRCH);
+		biomeTrees.put(BiomeGenBase.birchForestHills, ReikaTreeHelper.BIRCH);
+
+		biomeTrees.put(BiomeGenBase.jungle, ReikaTreeHelper.JUNGLE);
+		biomeTrees.put(BiomeGenBase.jungleEdge, ReikaTreeHelper.JUNGLE);
+		biomeTrees.put(BiomeGenBase.jungleHills, ReikaTreeHelper.JUNGLE);
+
+		biomeTrees.put(BiomeGenBase.savanna, ReikaTreeHelper.ACACIA);
+		biomeTrees.put(BiomeGenBase.savannaPlateau, ReikaTreeHelper.ACACIA);
+
+		biomeTrees.put(BiomeGenBase.roofedForest, ReikaTreeHelper.DARKOAK);
 
 		for (int i = 0; i < BiomeGenBase.biomeList.length; i++) {
 			BiomeGenBase b = BiomeGenBase.biomeList[i];
@@ -633,5 +677,28 @@ public class ReikaBiomeHelper extends DragonAPICore {
 
 	public static boolean doesBiomeHavePrecipitation(BiomeGenBase b) {
 		return b.canSpawnLightningBolt() || b.getEnableSnow();
+	}
+
+	public static TreeType getDominantTreeType(BiomeGenBase biome) {
+		biome = getParentBiomeType(biome, false);
+		TreeType map = biomeTrees.get(biome);
+		if (map != null)
+			return map;
+		WorldGenAbstractTree gen = biome.func_150567_a(rand);
+		if (gen == null)
+			return null;
+		if (gen instanceof WorldGenBigTree || gen instanceof WorldGenSwamp)
+			return ReikaTreeHelper.OAK;
+		if (gen instanceof WorldGenForest)
+			return ReikaTreeHelper.BIRCH;
+		if (gen instanceof WorldGenTaiga2 || gen instanceof WorldGenMegaPineTree)
+			return ReikaTreeHelper.SPRUCE;
+		if (gen instanceof WorldGenMegaJungle)
+			return ReikaTreeHelper.JUNGLE;
+		if (gen instanceof WorldGenSavannaTree)
+			return ReikaTreeHelper.ACACIA;
+		if (gen instanceof WorldGenCanopyTree)
+			return ReikaTreeHelper.DARKOAK;
+		return null;
 	}
 }

@@ -314,8 +314,11 @@ public class RemoteAssetLoader {
 
 		public final Collection<String> getAvailableResources() {
 			File file = new File(this.getLocalStorageFolder(), "file_list.dat");
-			ArrayList<String> li = ReikaFileReader.getFileAsLines(file, true, Charsets.UTF_8);
 			ArrayList<String> ret = new ArrayList();
+			if (!file.exists()) {
+				return ret;
+			}
+			ArrayList<String> li = ReikaFileReader.getFileAsLines(file, true, Charsets.UTF_8);
 			for (String s : li) {
 				int idx = s.indexOf('>');
 				int idx2 = s.indexOf('{');

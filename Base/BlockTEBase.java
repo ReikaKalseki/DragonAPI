@@ -23,7 +23,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 import Reika.DragonAPI.ASM.APIStripper.Strippable;
 import Reika.DragonAPI.Instantiable.Event.TileEntityMoveEvent;
 import Reika.DragonAPI.Interfaces.TileEntity.BreakAction;
-import Reika.DragonAPI.Interfaces.TileEntity.MultiPageInventory;
+import Reika.DragonAPI.Interfaces.TileEntity.ConditionBreakDropsInventory;
 import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
@@ -116,8 +116,8 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 	public void breakBlock(World world, int x, int y, int z, Block par5, int par6) {
 		TileEntity te = world.getTileEntity(x, y, z);
 		boolean drops = te instanceof IInventory;
-		if (te instanceof MultiPageInventory) {
-			drops &= ((MultiPageInventory)te).dropsInventoryOnBroken();
+		if (te instanceof ConditionBreakDropsInventory) {
+			drops &= ((ConditionBreakDropsInventory)te).dropsInventoryOnBroken();
 		}
 		if (drops)
 			ReikaItemHelper.dropInventory(world, x, y, z);

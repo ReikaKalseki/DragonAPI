@@ -907,7 +907,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 						}
 					}
 					else {
-						return o1.stackSize-o2.stackSize;
+						return Integer.compare(o2.stackSize, o1.stackSize);
 					}
 				}
 				else {

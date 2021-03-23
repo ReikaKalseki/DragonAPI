@@ -1,24 +1,13 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.IO;
-
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
@@ -26,7 +15,6 @@ import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 
-import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.IO.DirectResourceManager;
 
 public class CustomMusic implements ISound {
@@ -110,107 +98,6 @@ public class CustomMusic implements ISound {
 		posY = (float)ep.posY;
 		posZ = (float)ep.posZ;
 		sh.playSound(this);
-	}
-
-	public void stream(MusicFinishedCallback call) {
-		Thread t = new MusicStreamer(call);
-		t.start();
-	}
-
-	public boolean resourceExists() {
-		return DragonAPIInit.class.getClassLoader().getResourceAsStream(path) != null;
-	}
-
-	public static interface MusicFinishedCallback {
-
-		public void onFinishedMusicTrack();
-
-	}
-
-	private class MusicStreamer extends Thread {
-
-		private final MusicFinishedCallback call;
-
-		public MusicStreamer(MusicFinishedCallback c) {
-			call = c;
-		}
-
-		@Override
-		public void run() {
-			AudioInputStream audioInputStream = this.verifyInputStream();
-			if (audioInputStream == null) {
-				return;
-			}
-
-			AudioFormat format = audioInputStream.getFormat();
-			SourceDataLine audioLine = this.openInputStream(format);
-
-			if (audioLine != null) {
-				audioLine.start();
-				this.playInputStream(audioInputStream, audioLine);
-			}
-
-			call.onFinishedMusicTrack();
-		}
-
-		private AudioInputStream verifyInputStream() {
-			AudioInputStream audioInputStream = null;
-			try {
-				InputStream in = DirectResourceManager.getInstance().getResource(res).getInputStream();
-				audioInputStream = AudioSystem.getAudioInputStream(in);
-			}
-			catch (UnsupportedAudioFileException e) {
-				e.printStackTrace();
-				return null;
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-				return null;
-			}
-			return audioInputStream;
-		}
-
-		private SourceDataLine openInputStream(AudioFormat format) {
-			DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);
-			SourceDataLine audioLine = null;
-			try {
-				audioLine = (SourceDataLine) AudioSystem.getLine(info);
-				audioLine.open(format);
-			}
-			catch (LineUnavailableException e) {
-				e.printStackTrace();
-				return null;
-			}
-			catch (Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-			return audioLine;
-		}
-
-		private void playInputStream(AudioInputStream audioInputStream, SourceDataLine audioLine) {
-			int externalBufferSize = (int) audioInputStream.getFrameLength() * 4;
-			int nBytesRead = 0;
-			byte[] abData = new byte[externalBufferSize];
-
-			try {
-				while (nBytesRead != -1) {
-					nBytesRead = audioInputStream.read(abData, 0, abData.length);
-					if (nBytesRead >= 0) {
-						audioLine.write(abData, 0, nBytesRead);
-					}
-				}
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-				return;
-			}
-			finally {
-				audioLine.drain();
-				audioLine.close();
-			}
-		}
-
 	}
 
 }

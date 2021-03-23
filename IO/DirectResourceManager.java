@@ -11,6 +11,7 @@ package Reika.DragonAPI.IO;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -43,6 +44,7 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 
 	private final HashMap<String, SoundEventAccessorComposite> accessors = new HashMap();
 	private final HashMap<String, RemoteSourcedAsset> dynamicAssets = new HashMap();
+	private final HashSet<String> streamedPaths = new HashSet();
 
 	private static final DirectResourceManager instance = new DirectResourceManager();
 
@@ -50,7 +52,6 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 
 	private DirectResourceManager() {
 		super();
-		//this.registerReloadListener(this);
 	}
 
 	public static DirectResourceManager getInstance() {
@@ -64,14 +65,12 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 	@Override
 	public IResource getResource(ResourceLocation loc) throws IOException {
 		String dom = loc.getResourceDomain();
-		//if (dom.equals("custom_path")) {
 		String path = loc.getResourcePath();
 		RemoteSourcedAsset rem = dynamicAssets.get(path);
-		return rem != null ? new DynamicDirectResource(rem) : new DirectResource(path);
-		//}
-		//else {
-		//	return original.getResource(loc);
-		//}
+		DirectResource ret = rem != null ? new DynamicDirectResource(rem) : new DirectResource(path);
+		if (streamedPaths.contains(ret.path))
+			ret.cacheData = false;
+		return ret;
 	}
 
 	public void registerDynamicAsset(String path, RemoteSourcedAsset a) {
@@ -85,16 +84,9 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 		SoundEventAccessorComposite cmp = new SoundEventAccessorComposite(rl, 1, 1, cat);
 		cmp.addSoundToEventPool(pos);
 		accessors.put(path, cmp);
-	}
-
-	@Deprecated
-	public void registerSound(String domain, String path, SoundCategory cat) {
-		ResourceLocation rl = new ResourceLocation(domain, path);
-		SoundPoolEntry spe = new SoundPoolEntry(rl, 1, 1, false);
-		SoundEventAccessor pos = new SoundEventAccessor(spe, 1);
-		SoundEventAccessorComposite cmp = new SoundEventAccessorComposite(rl, 1, 1, cat);
-		cmp.addSoundToEventPool(pos);
-		accessors.put(path, cmp);
+		if (streaming) {
+			streamedPaths.add(path);
+		}
 	}
 
 	public void initToSoundRegistry() {
@@ -112,18 +104,6 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 			srg.registerSound(accessors.get(path));
 		}
 	}
-	/*
-	@Override
-	public void onResourceManagerReload(IResourceManager rm) {
-		this.initToSoundRegistry();
-	}*/
-	/*
-	@Override
-	public void notifyReloadListeners() {
-		super.notifyReloadListeners();
-		original.notifyReloadListeners();
-		this.initToSoundRegistry();
-	}*/
 
 	public Set<String> getResourceDomains() {
 		return ImmutableSet.of(TAG);
@@ -138,16 +118,5 @@ public class DirectResourceManager implements IResourceManager, IResourceManager
 		((SimpleReloadableResourceManager)rm).domainResourceManagers.put(TAG, this);
 		this.initToSoundRegistry();
 	}
-
-	/*
-	public static ResourceLocation getCompletedResourcePath(TextureMap map, ResourceLocation def, int tex) {
-		if (def.getResourceDomain().equals(TAG))
-			return def;
-		if (def.getResourceDomain().equals("vanilla"))
-			return def;
-		String s = map.getTextureType() == 0 ? "textures/blocks" : "textures/items";
-		return tex == 0 ? new ResourceLocation(def.getResourceDomain(), String.format("%s/%s%s", new Object[] {s, def.getResourcePath(), ".png"})): new ResourceLocation(def.getResourceDomain(), String.format("%s/mipmaps/%s.%d%s", new Object[] {s, def.getResourcePath(), Integer.valueOf(tex), ".png"}));
-	}
-	 */
 
 }

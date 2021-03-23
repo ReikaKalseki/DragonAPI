@@ -3,6 +3,7 @@ package Reika.DragonAPI.IO.Shaders;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.Vec3;
 
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.Shaders.ShaderRegistry.ShaderDomain;
@@ -316,6 +318,51 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		else if (val instanceof Double) {
 			GL20.glUniform1f(loc, ((Double)val).floatValue());
 		}
+		else if (val instanceof Vec3) {
+			Vec3 vec = (Vec3)val;
+			GL20.glUniform3f(loc, (float)vec.xCoord, (float)vec.yCoord, (float)vec.zCoord);
+		}
+		else if (val instanceof Vec4) {
+			Vec4 vec = (Vec4)val;
+			GL20.glUniform4f(loc, vec.a, vec.b, vec.c, vec.d);
+		}
+		else if (val instanceof int[]) {
+			int[] data = (int[])val;
+			IntBuffer buf = BufferUtils.createIntBuffer(data.length);
+			buf.put(data);
+			buf.rewind();
+			GL20.glUniform1(loc, buf);
+		}
+		else if (val instanceof float[]) {
+			float[] data = (float[])val;
+			FloatBuffer buf = BufferUtils.createFloatBuffer(data.length);
+			buf.put(data);
+			buf.rewind();
+			GL20.glUniform1(loc, buf);
+		}
+		else if (val instanceof Vec3[]) {
+			Vec3[] data = (Vec3[])val;
+			FloatBuffer buf = BufferUtils.createFloatBuffer(data.length*3);
+			for (Vec3 vec : data) {
+				buf.put(vec == null ? 0 : (float)vec.xCoord);
+				buf.put(vec == null ? 0 : (float)vec.yCoord);
+				buf.put(vec == null ? 0 : (float)vec.zCoord);
+			}
+			buf.rewind();
+			GL20.glUniform3(loc, buf);
+		}
+		else if (val instanceof Vec4[]) {
+			Vec4[] data = (Vec4[])val;
+			FloatBuffer buf = BufferUtils.createFloatBuffer(data.length*4);
+			for (Vec4 vec : data) {
+				buf.put(vec == null ? 0 : vec.a);
+				buf.put(vec == null ? 0 : vec.b);
+				buf.put(vec == null ? 0 : vec.c);
+				buf.put(vec == null ? 0 : vec.d);
+			}
+			buf.rewind();
+			GL20.glUniform4(loc, buf);
+		}
 	}
 
 	public boolean hasOngoingFoci() {
@@ -356,6 +403,30 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	@Override
 	public int compareTo(ShaderProgram o) {
 		return Integer.compare(ordering, o.ordering);
+	}
+
+	public static class Vec4 {
+
+		public float a;
+		public float b;
+		public float c;
+		public float d;
+
+		public Vec4() {
+			this(0, 0, 0, 0);
+		}
+
+		public Vec4(double d1, double d2, double d3, double d4) {
+			this((float)d1, (float)d2, (float)d3, (float)d4);
+		}
+
+		public Vec4(float d1, float d2, float d3, float d4) {
+			a = d1;
+			b = d2;
+			c = d3;
+			d = d4;
+		}
+
 	}
 
 	public static class RenderState {

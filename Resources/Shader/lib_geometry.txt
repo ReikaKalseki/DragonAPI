@@ -21,6 +21,16 @@ vec2 getScreenPos(float x, float y, float z) {
 	return ((ndcSpacePos.xy + 1.0) / 2.0);
 }
 
+vec3 getScreenPosWithDepth(float x, float y, float z) {
+	vec4 clipSpacePos = projection * (modelview * vec4(x, y, z, 1.0));
+	vec3 ndcSpacePos = clipSpacePos.xyz / clipSpacePos.w;
+	return vec3(((ndcSpacePos.xy + 1.0) / 2.0), clipSpacePos.z);
+}
+
+vec3 getWorldPos(vec2 screen) {
+	return vec3(0.0); //TODO
+}
+
 //Is relative to the actual tile/entity/etc position
 vec2 getScreenPosVec(vec3 worldPos) {
 	return getScreenPos(worldPos.x, worldPos.y, worldPos.z);

@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
@@ -73,7 +74,7 @@ public class SmelteryRecipeHandler {
 
 	public static void addMelting(ItemStack is, ItemStack render, int temp, FluidStack fluid) {
 		Block b = Block.getBlockFromItem(render.getItem());
-		if (!(render.getItem() instanceof ItemBlock) || b == null)
+		if (!(render.getItem() instanceof ItemBlock) || b == Blocks.air)
 			throw new MisuseException("The render block must be a non-null block!");
 		if (!isLoaded)
 			return;

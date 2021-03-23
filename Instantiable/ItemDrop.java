@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -21,6 +22,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -53,7 +55,7 @@ public class ItemDrop {
 	public ItemDrop(ItemStack is, int min, int max) {
 		maxDrops = max;
 		minDrops = min;
-		item = is.copy();
+		item = is != null ? is.copy() : null;
 	}
 
 	public void enchant(HashMap<Enchantment, Integer> map) {
@@ -85,7 +87,7 @@ public class ItemDrop {
 
 	public ItemStack getItem(float f) {
 		int num = this.getDropCount(f);
-		ItemStack is = ReikaItemHelper.getSizedItemStack(item.copy(), num);
+		ItemStack is = ReikaItemHelper.getSizedItemStack(this.getItemStack(), num);
 		return is;
 	}
 
@@ -146,6 +148,56 @@ public class ItemDrop {
 			sb.append(EnchantmentHelper.getEnchantments(item));
 		}
 		return sb.toString();
+	}
+
+	public static class OreDrop extends ItemDrop {
+
+		public final String oreName;
+
+		public OreDrop(String key, int min, int max) {
+			super((ItemStack)null, min, max);
+			oreName = key;
+		}
+
+		@Override
+		public void enchant(HashMap<Enchantment, Integer> map) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public void enchant(Enchantment ench, int level) {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public Item getID() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public int getMetadata() {
+			throw new UnsupportedOperationException();
+		}
+
+		@Override
+		public boolean isEnchanted() {
+			return false;
+		}
+
+		@Override
+		public boolean equals(Object o) {
+			if (o instanceof OreDrop) {
+				return oreName.equals(((OreDrop)o).oreName);
+			}
+			return false;
+		}
+
+		@Override
+		public ItemStack getItemStack() {
+			ArrayList<ItemStack> li = OreDictionary.getOres(oreName);
+			return li.isEmpty() ? null : li.get(rand.nextInt(li.size()));
+		}
+
 	}
 
 }

@@ -10,6 +10,8 @@
 package Reika.DragonAPI.Libraries;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1228,8 +1230,8 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		return addOrSetStack(Item.getItemFromBlock(id), size, meta, inv, slot);
 	}
 
-	public static List<ItemStack> getWholeInventory(IInventory ii) {
-		List<ItemStack> li = new ArrayList<ItemStack>();
+	public static ArrayList<ItemStack> getWholeInventory(IInventory ii) {
+		ArrayList<ItemStack> li = new ArrayList();
 		for (int i = 0; i < ii.getSizeInventory(); i++) {
 			li.add(ii.getStackInSlot(i));
 		}
@@ -1556,5 +1558,14 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			}
 		}
 		return smallest;
+	}
+
+	public static void sortInventory(IInventory te, Comparator<ItemStack> c) {
+		ArrayList<ItemStack> li = getWholeInventory(te);
+		Collections.sort(li, c);
+		clearInventory(te);
+		for (int i = 0; i < li.size(); i++) {
+			te.setInventorySlotContents(i, li.get(i));
+		}
 	}
 }

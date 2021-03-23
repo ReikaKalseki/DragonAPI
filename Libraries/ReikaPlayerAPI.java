@@ -28,6 +28,7 @@ import net.minecraft.entity.ai.attributes.ServersideAttributeMap;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.PlayerCapabilities;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -447,7 +448,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 			return true;
 
 		Block b = Block.getBlockFromItem(is.getItem());
-		if (b != null) {
+		if (b != Blocks.air) {
 			if (b instanceof BlockLeaves) {
 				is.setItemDamage(is.getItemDamage()%4);
 			}

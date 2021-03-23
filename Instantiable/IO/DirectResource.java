@@ -25,6 +25,9 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 public class DirectResource implements IResource {
 
 	public final String path;
+
+	public boolean cacheData = true;
+
 	private byte[] data;
 
 	public DirectResource(String path) {
@@ -33,19 +36,25 @@ public class DirectResource implements IResource {
 
 	@Override
 	public final InputStream getInputStream() {
-		//ReikaJavaLibrary.pConsole("Loading "+path+", data="+data);
-		if (data == null) {
-			try(InputStream st = this.calcStream()) {
-				if (st == null)
-					throw new RuntimeException("Resource not found at "+path);
-				data = ReikaJavaLibrary.streamToBytes(st);
+		if (cacheData) {
+			//ReikaJavaLibrary.pConsole("Loading "+path+", data="+data);
+			if (data == null) {
+				try(InputStream st = this.calcStream()) {
+					if (st == null)
+						throw new RuntimeException("Resource not found at "+path);
+					data = ReikaJavaLibrary.streamToBytes(st);
+				}
+				catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
+			//ReikaJavaLibrary.pConsole("Loaded cache for "+path+", data="+data);
+			return new ByteArrayInputStream(data);
 		}
-		//ReikaJavaLibrary.pConsole("Loaded "+path+", data="+data);
-		return new ByteArrayInputStream(data);
+		else {
+			//ReikaJavaLibrary.pConsole("Skipped cache for "+path);
+			return this.calcStream();
+		}
 	}
 
 	protected InputStream calcStream() {

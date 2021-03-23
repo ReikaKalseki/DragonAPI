@@ -13,12 +13,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map.Entry;
 
-import net.minecraft.client.resources.IResource;
 import net.minecraft.util.ResourceLocation;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
+import Reika.DragonAPI.Interfaces.Registry.StreamableSound;
 import Reika.DragonAPI.Interfaces.Registry.VariableSound;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 
@@ -72,11 +72,14 @@ public class SoundLoader {
 
 	private void registerSound(SoundEnum e, SoundResource sr) {
 		String p = e.getPath();
-		DirectResourceManager.getInstance().registerCustomPath(p, e.getCategory(), false);
+		boolean stream = e instanceof StreamableSound && ((StreamableSound)e).isStreamed();
+		DirectResourceManager.getInstance().registerCustomPath(p, e.getCategory(), stream);
 		this.onRegister(e, p);
 		if (e.preload()) {
 			try {
-				sr.resource = DirectResourceManager.getInstance().getResource(sr.reference);
+				sr.resource = (DirectResource)DirectResourceManager.getInstance().getResource(sr.reference);
+				if (stream)
+					sr.resource.cacheData = false;
 			}
 			catch (IOException ex) {
 				DragonAPICore.logError("Caught error when preloading sound '"+e+"':");
@@ -98,7 +101,7 @@ public class SoundLoader {
 		private final SoundEnum sound;
 		private final ResourceLocation reference;
 
-		private IResource resource;
+		private DirectResource resource;
 
 		private SoundResource(SoundEnum s) {
 			sound = s;

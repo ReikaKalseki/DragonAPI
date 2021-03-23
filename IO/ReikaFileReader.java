@@ -284,6 +284,8 @@ public class ReikaFileReader extends DragonAPICore {
 
 	public static ArrayList<String> getFileAsLines(BufferedReader r, boolean printStackTrace) {
 		ArrayList<String> li = new ArrayList();
+		if (r == null)
+			return li;
 		String line = "";
 		try {
 			while (line != null) {

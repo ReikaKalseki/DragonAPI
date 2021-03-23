@@ -23,12 +23,11 @@ import java.util.List;
 import net.minecraft.block.Block;
 import net.minecraft.block.Block.SoundType;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
 import net.minecraft.client.audio.MusicTicker.MusicType;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -36,7 +35,6 @@ import net.minecraftforge.common.DimensionManager;
 import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
-import Reika.DragonAPI.Auxiliary.Trackers.CustomSoundHandler;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
@@ -112,37 +110,6 @@ public class ReikaSoundHelper {
 		world.playSoundEffect(x+0.5, y+0.5, z+0.5, snd, 1, 1);
 	}
 
-	@SideOnly(Side.CLIENT)
-	public static void playCustomSoundAtBlock(String file, TileEntity te) {
-		playCustomSoundAtBlock(file, te.xCoord, te.yCoord, te.zCoord);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static void playCustomSoundAtBlock(String file, int x, int y, int z) {
-		playCustomSoundAtBlock(file, x, y, z, 1, 1);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static void playCustomSoundAtBlock(String file, int x, int y, int z, float vol, float pitch) {
-		playCustomSound(file, x+0.5, y+0.5, z+0.5, vol, pitch);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static void playCustomSound(String file, Entity e, float vol, float pitch) {
-		playCustomSound(file, e.posX, e.posY, e.posZ, vol, pitch);
-	}
-
-	@SideOnly(Side.CLIENT)
-	public static void playCustomSound(String file, double x, double y, double z, float vol, float pitch) {
-		ResourceLocation rl = CustomSoundHandler.instance.getSoundResource(file);
-		try {
-			FMLClientHandler.instance().getClient().getSoundHandler().playSound(new PositionedSoundRecord(rl, (float)x, (float)y, (float)z, vol, pitch));
-		}
-		catch (ConcurrentModificationException e) {
-			e.printStackTrace();
-		}
-	}
-
 	public static void playSound(SoundEnum s, World world, Entity e, float vol, float pitch) {
 		playSound(s, world, e.posX, e.posY, e.posZ, vol, pitch);
 	}
@@ -176,21 +143,23 @@ public class ReikaSoundHelper {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void playClientSound(SoundEnum s, double x, double y, double z, float vol, float pitch) {
-		playClientSound(s, x, y, z, vol, pitch, true);
+	public static ISound playClientSound(SoundEnum s, double x, double y, double z, float vol, float pitch) {
+		return playClientSound(s, x, y, z, vol, pitch, true);
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void playClientSound(SoundEnum s, double x, double y, double z, float vol, float pitch, boolean att) {
+	public static ISound playClientSound(SoundEnum s, double x, double y, double z, float vol, float pitch, boolean att) {
 		float v = vol*s.getModulatedVolume();
 		if (v <= 0)
-			return;
+			return null;
+		EnumSound es = new EnumSound(s, x, y, z, v, pitch, att);
 		try {
-			FMLClientHandler.instance().getClient().getSoundHandler().playSound(new EnumSound(s, x, y, z, v, pitch, att));
+			FMLClientHandler.instance().getClient().getSoundHandler().playSound(es);
 		}
 		catch (ConcurrentModificationException e) {
 			e.printStackTrace();
 		}
+		return es;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -199,8 +168,8 @@ public class ReikaSoundHelper {
 	}
 
 	@SideOnly(Side.CLIENT)
-	public static void playClientSound(SoundEnum s, Entity e, float vol, float pitch, boolean att) {
-		playClientSound(s, e.posX, e.posY, e.posZ, vol, pitch, att);
+	public static ISound playClientSound(SoundEnum s, Entity e, float vol, float pitch, boolean att) {
+		return playClientSound(s, e.posX, e.posY, e.posZ, vol, pitch, att);
 	}
 
 	@SideOnly(Side.CLIENT)
