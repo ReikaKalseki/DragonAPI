@@ -5,6 +5,8 @@ import java.io.InputStream;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -86,8 +88,12 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 			GL20.glDeleteShader(programID);
 		}
 		try (InputStream vin = this.getShaderData(ShaderTypes.VERTEX); InputStream fin = this.getShaderData(ShaderTypes.FRAGMENT)) {
-			vertexID = ShaderRegistry.constructShader(owner, identifier, vin, ShaderTypes.VERTEX);
-			fragmentID = ShaderRegistry.constructShader(owner, identifier, fin, ShaderTypes.FRAGMENT);
+			Collection<ShaderLibrary> libs = new ArrayList();
+			vertexID = ShaderRegistry.constructShader(owner, identifier, vin, ShaderTypes.VERTEX, libs);
+			imports.addValues(ShaderTypes.VERTEX, libs);
+			libs = new ArrayList();
+			fragmentID = ShaderRegistry.constructShader(owner, identifier, fin, ShaderTypes.FRAGMENT, libs);
+			imports.addValues(ShaderTypes.FRAGMENT, libs);
 		}
 		this.register();
 	}
@@ -109,6 +115,10 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 	public ShaderProgram setEnabled(boolean on) {
 		isEnabled = on;
 		return this;
+	}
+
+	public Collection<ShaderLibrary> getLibraries() {
+		return Collections.unmodifiableCollection(imports.allValues(false));
 	}
 
 	public ShaderProgram setMatricesToCurrent() {

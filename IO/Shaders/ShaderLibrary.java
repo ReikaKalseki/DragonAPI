@@ -14,7 +14,7 @@ public class ShaderLibrary {
 
 	private static final HashMap<String, ShaderLibrary> libraries = new HashMap();
 
-	private final String name;
+	public final String name;
 
 	private ArrayList<String> code = new ArrayList();
 
@@ -43,7 +43,7 @@ public class ShaderLibrary {
 		name = s;
 	}
 
-	private void load() {
+	void load() {
 		try (InputStream in = DragonAPICore.class.getResourceAsStream("Resources/Shader/lib_"+name+".txt")) {
 			code = ReikaFileReader.getFileAsLines(in, true, Charset.defaultCharset());
 		}

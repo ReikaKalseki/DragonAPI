@@ -22,6 +22,7 @@ import net.minecraftforge.common.util.EnumHelper;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Base.CropHandlerBase;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Maps.BlockMap;
@@ -78,7 +79,7 @@ public enum ModCropList implements ModCrop {
 
 	public final int cropColor;
 
-	private boolean exists = false;
+	private boolean exists;
 
 	public static final ModCropList[] cropList = values();
 	private static final BlockMap<ModCropList> cropMappings = new BlockMap();
@@ -118,43 +119,36 @@ public enum ModCropList implements ModCrop {
 							b = blocks.getField(blockVar);
 							ItemStack is = (ItemStack)b.get(null);
 							if (is == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
-								exists = false;
+								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated @ "+blocks.getName()+"#"+blockVar+"!");
 							}
 							else {
 								id = Block.getBlockFromItem(is.getItem());
-								exists = true;
 							}
 							break;
 						case INSTANCE: {
 							b = blocks.getField(blockVar);
 							Block block = (Block)b.get(null);
 							if (block == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
-								exists = false;
+								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated @ "+blocks.getName()+"#"+blockVar+"!");
 							}
 							else {
 								id = block;
-								exists = true;
 							}
 							break;
 						}
 						case REGISTRY: {
 							Block block = GameRegistry.findBlock(mod.getModLabel(), blockVar);
 							if (block == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
-								exists = false;
+								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated @ GameRegistry "+mod.getModLabel()+":"+blockVar+"!");
 							}
 							else {
 								id = block;
-								exists = true;
 							}
 							break;
 						}
 						default:
 							DragonAPICore.logError("Error loading crop "+this);
 							DragonAPICore.logError("Invalid variable type for field "+blockVar);
-							exists = false;
 					}
 				}
 				catch (NoSuchFieldException e) {
@@ -178,6 +172,8 @@ public enum ModCropList implements ModCrop {
 		blockID = id;
 		seedID = Item.getItemFromBlock(blockID);
 		seedMeta = 0;
+
+		exists = blockID != null;
 	}
 
 	private ModCropList(ModEntry api, int color, CropHandler h) {
@@ -213,11 +209,9 @@ public enum ModCropList implements ModCrop {
 				Item item = GameRegistry.findItem(mod.getModLabel(), itemVar);
 				if (item == null) {
 					DragonAPICore.logError("Error loading crop "+this+": Item not instantiated!");
-					exists = false;
 				}
 				else {
 					seed = item;
-					exists = true;
 				}
 			}
 			else {
@@ -241,43 +235,36 @@ public enum ModCropList implements ModCrop {
 								b = blocks.getField(blockVar);
 								ItemStack is = (ItemStack)b.get(null);
 								if (is == null) {
-									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
-									exists = false;
+									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated @ "+blocks.getName()+"#"+blockVar+"!");
 								}
 								else {
 									id = Block.getBlockFromItem(is.getItem());
-									exists = true;
 								}
 								break;
 							case INSTANCE: {
 								b = blocks.getField(blockVar);
 								Block block = (Block)b.get(null);
 								if (block == null) {
-									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
-									exists = false;
+									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated @ "+blocks.getName()+"#"+blockVar+"!");
 								}
 								else {
 									id = block;
-									exists = true;
 								}
 								break;
 							}
 							case REGISTRY: {
 								Block block = GameRegistry.findBlock(mod.getModLabel(), blockVar);
 								if (block == null) {
-									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated!");
-									exists = false;
+									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated @ GameRegistry "+mod.getModLabel()+":"+blockVar+"!");
 								}
 								else {
 									id = block;
-									exists = true;
 								}
 								break;
 							}
 							default:
 								DragonAPICore.logError("Error loading crop "+this);
 								DragonAPICore.logError("Invalid variable type for field "+blockVar);
-								exists = false;
 						}
 						switch(itemType) {
 							case ITEMSTACK:
@@ -285,11 +272,9 @@ public enum ModCropList implements ModCrop {
 								ItemStack is2 = (ItemStack)i.get(null);
 								if (is2 == null) {
 									DragonAPICore.logError("Error loading crop "+this+": Seed not instantiated!");
-									exists = false;
 								}
 								else {
 									seed = is2.getItem();
-									exists = true;
 								}
 								break;
 							case INSTANCE: {
@@ -297,11 +282,9 @@ public enum ModCropList implements ModCrop {
 								Item item = (Item)i.get(null);
 								if (item == null) {
 									DragonAPICore.logError("Error loading crop "+this+": Seed not instantiated!");
-									exists = false;
 								}
 								else {
 									seed = item;
-									exists = true;
 								}
 								break;
 							}
@@ -337,6 +320,11 @@ public enum ModCropList implements ModCrop {
 		}
 		blockID = id;
 		seedID = seed;
+
+		exists = blockID != null;
+		if (!exists && mod.isLoaded()) {
+			ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, "Block not found for crop '"+this.name()+"'");
+		}
 	}
 
 	@Override
@@ -473,7 +461,7 @@ public enum ModCropList implements ModCrop {
 	}
 
 	public boolean existsInGame() {
-		return exists;
+		return exists && mod.isLoaded();
 	}
 
 	static {

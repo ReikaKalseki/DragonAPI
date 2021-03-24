@@ -4,6 +4,9 @@ import net.minecraft.client.audio.SoundCategory;
 
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public abstract class SoundVariant<S extends SoundEnum> implements SoundEnum {
 
 	public final S root;
@@ -31,6 +34,7 @@ public abstract class SoundVariant<S extends SoundEnum> implements SoundEnum {
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public final SoundCategory getCategory() {
 		return root.getCategory();
 	}

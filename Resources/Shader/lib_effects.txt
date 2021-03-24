@@ -1,0 +1,26 @@
+vec4 blur(vec2 uv, float radius) {
+	vec4 color = vec4(0.0);
+	color.a = 1.0;
+	int r = int(radius)+1;
+	
+	float sum = 0.0;
+  
+	for (int i = -r; i <= r; i++) {
+		for (int k = -r; k <= r; k++) {
+			float dd = float(i*i+k*k);
+			if (dd <= radius) {
+				float f = sqrt(1.0/(dd+1.0));
+				sum += f;
+				vec2 duv = uv+vec2(float(i)/float(screenWidth), float(k)/float(screenHeight));
+				vec4 get = texture2D(bgl_RenderedTexture, duv);
+				color += get*f;
+			}
+		}
+	}
+	
+	color /= sum;
+	
+	color = min(vec4(1.0), color);
+	
+	return color; 
+}

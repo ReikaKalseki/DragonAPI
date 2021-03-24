@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -82,7 +83,12 @@ public class ShaderRegistry {
 
 	public static void reloadShader(String id) throws IOException {
 		DragonAPICore.log("Reloading shader "+id);
-		shaders.get(id).load();
+		ShaderProgram sp = shaders.get(id);
+		for (ShaderLibrary lib : sp.getLibraries()) {
+			DragonAPICore.log("Reloading shader library "+lib.name);
+			lib.load();
+		}
+		sp.load();
 	}
 
 	public static void runShader(String id) {
@@ -130,7 +136,7 @@ public class ShaderRegistry {
 		currentlyRunning = null;
 	}
 
-	static int constructShader(DragonAPIMod mod, String name, InputStream data, ShaderTypes type) throws IOException {
+	static int constructShader(DragonAPIMod mod, String name, InputStream data, ShaderTypes type, Collection<ShaderLibrary> libs) throws IOException {
 		if (data == null)
 			error(mod, name, "Shader has null program data!", type);
 		int id = GL20.glCreateShader(type.glValue);
@@ -139,14 +145,14 @@ public class ShaderRegistry {
 			error(mod, name, "Shader was not able to be assigned an ID!", type);
 
 		if (BASE_DATA == null) {
-			BASE_DATA = readData(DragonAPIInit.instance, "base", type, DragonAPICore.class.getResourceAsStream("Resources/Shader/base.txt"));
+			BASE_DATA = readData(DragonAPIInit.instance, "base", type, DragonAPICore.class.getResourceAsStream("Resources/Shader/base.txt"), libs);
 		}
 		String sdata = "#version "+GLSL_VERSION+"\n";
 		if (type == ShaderTypes.FRAGMENT) {
 			sdata = sdata+"uniform sampler2D bgl_RenderedTexture;\n";
 		}
 		sdata = sdata+BASE_DATA+"\n";
-		sdata = sdata+readData(mod, name, type, data);
+		sdata = sdata+readData(mod, name, type, data, libs);
 		GL20.glShaderSource(id, sdata);
 		GL20.glCompileShader(id);
 
@@ -186,7 +192,7 @@ public class ShaderRegistry {
 		}
 	}
 
-	private static String readData(DragonAPIMod mod, String id, ShaderTypes type, InputStream data) {
+	private static String readData(DragonAPIMod mod, String id, ShaderTypes type, InputStream data, Collection<ShaderLibrary> libs) {
 		StringBuilder sb = new StringBuilder();
 		ArrayList<String> li = ReikaFileReader.getFileAsLines(data, true, Charset.defaultCharset());
 		for (String s : li) {
@@ -196,6 +202,7 @@ public class ShaderRegistry {
 				if (lib == null) {
 					error(mod, id, "Invalid import - no such library '"+lib+"'", type);
 				}
+				libs.add(lib);
 				s = "\n\n"+lib.getCode();
 			}
 			sb.append(s);
