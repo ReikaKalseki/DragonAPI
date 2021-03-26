@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -202,7 +203,7 @@ public class StructureRenderer {
 		return is;
 	}
 
-	public void drawSlice(int j, int k) {
+	public void drawSlice(int j, int k, FontRenderer fr) {
 		double s = 1;
 		int max = Math.max(array.getSizeX(), array.getSizeZ());
 		double dd = max > 16 ? Math.max(12, 28-max) : 14;
@@ -221,7 +222,7 @@ public class StructureRenderer {
 				if (is != null && is.getItem() != null) {
 					double dx = (x-array.getMidX())*dd;
 					double dz = (z-array.getMidZ())*dd;
-					ReikaGuiAPI.instance.drawItemStack(itemRender, is, (int)((j+dx+ox)/s), (int)((k+dz+oy)/s));
+					ReikaGuiAPI.instance.drawItemStackWithTooltip(itemRender, fr, is, (int)((j+dx+ox)/s), (int)((k+dz+oy)/s));
 				}
 			}
 		}

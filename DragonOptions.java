@@ -37,7 +37,6 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	GREGORES("Force Gregtech Ore Compatibility", true),
 	LOGSYNCCME("Log Sync Packet CME Avoidance", true),
 	SLOWSYNC("Slow Sync Packets - Only use this as a last resort", false),
-	NONULLITEMS("Disallow Null-Item ItemStacks to Prevent Crashes", true),
 	LAGWARNING("Minimum Delay (ms) for 'Can't Keep Up!' Log Warning", 0),
 	CHECKSANITY("Check Environment Sanity", false),
 	FIXSANITY("Attempt to Repair Environment Sanity", false),

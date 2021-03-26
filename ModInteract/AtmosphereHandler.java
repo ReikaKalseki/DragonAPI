@@ -42,6 +42,8 @@ public class AtmosphereHandler {
 		}
 	}
 
+	/** Note: Advanced Rocketry does not seal the actual blocks, only the areas bounded by them,
+	 * so give not tiles' location but at the input or output location */
 	public static boolean isNoAtmo(World world, int x, int y, int z, Block b, boolean needsO2) {
 		if (PlanetDimensionHandler.isAdvRWorld(world)) {
 			IAtmosphere atmo = getAtmo(world, x, y, z);

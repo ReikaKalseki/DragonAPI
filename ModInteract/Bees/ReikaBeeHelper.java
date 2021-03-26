@@ -27,6 +27,7 @@ import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -71,6 +72,8 @@ import Reika.DragonAPI.ModInteract.Bees.TreeAlleleRegistry.Yield;
 import Reika.DragonAPI.ModInteract.Bees.TreeSpecies.NoLocaleDescriptionFruit;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ForestryHandler;
 
+import cpw.mods.fml.common.Loader;
+import cpw.mods.fml.common.registry.GameRegistry;
 import forestry.api.apiculture.BeeManager;
 import forestry.api.apiculture.EnumBeeChromosome;
 import forestry.api.apiculture.EnumBeeType;
@@ -104,6 +107,7 @@ import forestry.api.genetics.IAllelePlantType;
 import forestry.api.genetics.IAlleleSpecies;
 import forestry.api.genetics.IAlleleTolerance;
 import forestry.api.genetics.IChromosome;
+import forestry.api.genetics.IChromosomeType;
 import forestry.api.genetics.IGenome;
 import forestry.api.genetics.IIndividual;
 import forestry.api.genetics.ISpeciesRoot;
@@ -128,6 +132,8 @@ public class ReikaBeeHelper {
 	private static Method addSample;
 	private static Class geneSample;
 	private static Constructor geneSampleCtr;
+	private static Class geneSampleItem;
+	private static Method geneSampleGetItem;
 
 	private static Method setTreeLeaf;
 	private static Method setTreeLeafOwner;
@@ -202,6 +208,10 @@ public class ReikaBeeHelper {
 				geneTemplate = Class.forName("net.bdew.gendustry.items.GeneTemplate$");
 				addSample = geneTemplate.getDeclaredMethod("addSample", ItemStack.class, geneSample);
 				addSample.setAccessible(true);
+
+				geneSampleItem = Class.forName("net.bdew.gendustry.items.GeneSample$");
+				geneSampleGetItem = geneSample.getDeclaredMethod("newStack", geneSample);
+				geneSampleGetItem.setAccessible(true);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not find GenDustry sample data!");
@@ -909,15 +919,16 @@ public class ReikaBeeHelper {
 		return ret;
 	}
 
-	public static void getGeneTemplate(ItemStack template, BeeSpecies bee) {
-		getGeneTemplate(template, bee.getSpeciesTemplate(), getBeeRoot());
+	public static ItemStack getGeneTemplate(BeeSpecies bee) {
+		return getGeneTemplate(bee.getSpeciesTemplate(), getBeeRoot());
 	}
 
-	public static void getGeneTemplate(ItemStack template, IIndividual ii) {
-		getGeneTemplate(template, getBeeRoot().getTemplate(ii.getIdent()), AlleleManager.alleleRegistry.getSpeciesRoot(ii.getClass()));
+	public static ItemStack getGeneTemplate(IIndividual ii) {
+		return getGeneTemplate(getBeeRoot().getTemplate(ii.getIdent()), AlleleManager.alleleRegistry.getSpeciesRoot(ii.getClass()));
 	}
 
-	private static void getGeneTemplate(ItemStack template, IAllele[] genes, ISpeciesRoot root) {
+	public static ItemStack getGeneTemplate(IAllele[] genes, ISpeciesRoot root) {
+		ItemStack template = ReikaItemHelper.lookupItem("gendustry:GeneTemplate");
 		if (template.getItem().getClass() != geneTemplate)
 			throw new MisuseException("You can only put genes on a template!");
 		for (int i = 0; i < genes.length; i++) {
@@ -932,6 +943,28 @@ public class ReikaBeeHelper {
 				}
 			}
 		}
+		return template;
+	}
+
+	public static ItemStack getGeneSample(IChromosomeType ic, IAllele ie) {
+		ItemStack item = ReikaItemHelper.lookupItem("gendustry:GeneSample");
+		try {
+			Object sample = geneSampleCtr.newInstance(ic.getSpeciesRoot(), ic.ordinal(), ie);
+			ItemStack ret = (ItemStack)geneSampleGetItem.invoke(item.getItem(), sample);
+			return ret;
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
+	public static Item getGendustrySampleItem() {
+		return ModList.GENDUSTRY.isLoaded() ? GameRegistry.findItem(ModList.GENDUSTRY.modLabel, "GeneSample") : null;
+	}
+
+	public static Item getBinnieSampleItem() {
+		return Loader.isModLoaded("Genetics") ? GameRegistry.findItem("Genetics", "serum") : null;
 	}
 
 	public static void setTree(TileEntity leaf, ITree tree) {

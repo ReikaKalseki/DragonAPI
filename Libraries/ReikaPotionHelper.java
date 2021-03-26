@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +36,7 @@ public final class ReikaPotionHelper extends DragonAPICore {
 	public static final int AWKWARD_META = 16;
 	public static final int POTION_BIT = 8192;
 
-	private static final ArrayList<Integer> badPotions = new ArrayList();
+	private static final HashSet<Integer> badPotions = new HashSet();
 	private static HashMap<Potion, Integer> potionDamageValues = new HashMap();
 
 	public static final Comparator effectSorter = new PotionEffectSorter();
@@ -73,7 +74,7 @@ public final class ReikaPotionHelper extends DragonAPICore {
 		return (dmg & POTION_BIT) != 0;
 	}
 
-	static {/*
+	static {
 		badPotions.add(Potion.confusion.id);
 		badPotions.add(Potion.wither.id);
 		badPotions.add(Potion.moveSlowdown.id);
@@ -82,7 +83,7 @@ public final class ReikaPotionHelper extends DragonAPICore {
 		badPotions.add(Potion.blindness.id);
 		badPotions.add(Potion.harm.id);
 		badPotions.add(Potion.hunger.id);
-		badPotions.add(Potion.poison.id);*/
+		badPotions.add(Potion.poison.id);
 
 		potionDamageValues.put(Potion.regeneration, 8193);
 		potionDamageValues.put(Potion.moveSpeed, 8194);
@@ -104,6 +105,10 @@ public final class ReikaPotionHelper extends DragonAPICore {
 			if (p != null && p.isBadEffect)
 				badPotions.add(p.id);
 		}
+	}
+
+	public static void addBadPotion(Potion p) {
+		badPotions.add(p.id);
 	}
 
 	public static Map<Potion, Integer> getPotionValues() {
@@ -210,7 +215,7 @@ public final class ReikaPotionHelper extends DragonAPICore {
 		private int getFlags(PotionEffect o) {
 			int flags = 0;
 
-			flags += o.getPotionID()*10000000;
+			flags += o.getPotionID()*1000000;
 			flags += o.getDuration()*100;
 			flags += o.getAmplifier();
 

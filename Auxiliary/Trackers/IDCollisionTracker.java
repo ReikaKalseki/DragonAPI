@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -69,7 +69,7 @@ public final class IDCollisionTracker {
 		}
 		Object obj = type.getValue(id);
 		IDData entry = this.getOrCreateData(type);
-		if (obj != null)
+		if (obj != null && obj.getClass() != c)
 			this.onConflict(null, type, id, obj.getClass(), c);
 		else if (entry.classes.containsKey(id))
 			this.onConflict(mod, type, id, entry.classes.get(id), c);

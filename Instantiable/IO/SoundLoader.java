@@ -22,6 +22,10 @@ import Reika.DragonAPI.Interfaces.Registry.StreamableSound;
 import Reika.DragonAPI.Interfaces.Registry.VariableSound;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
 public class SoundLoader {
 
 	private final Class<? extends SoundEnum> soundClass;
@@ -64,12 +68,14 @@ public class SoundLoader {
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	public final void register() {
 		for (Entry<SoundEnum, SoundResource> et : soundMap.entrySet()) {
 			this.registerSound(et.getKey(), et.getValue());
 		}
 	}
 
+	@SideOnly(Side.CLIENT)
 	private void registerSound(SoundEnum e, SoundResource sr) {
 		String p = e.getPath();
 		boolean stream = e instanceof StreamableSound && ((StreamableSound)e).isStreamed();
@@ -105,7 +111,12 @@ public class SoundLoader {
 
 		private SoundResource(SoundEnum s) {
 			sound = s;
-			reference = DirectResourceManager.getResource(s.getPath());
+			reference = FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT ? getReference(s) : null;
+		}
+
+		@SideOnly(Side.CLIENT)
+		private static ResourceLocation getReference(SoundEnum s) {
+			return DirectResourceManager.getResource(s.getPath());
 		}
 
 	}

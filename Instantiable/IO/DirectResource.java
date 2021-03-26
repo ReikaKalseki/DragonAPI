@@ -22,6 +22,10 @@ import net.minecraft.client.resources.data.IMetadataSection;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+
+@SideOnly(Side.CLIENT)
 public class DirectResource implements IResource {
 
 	public final String path;

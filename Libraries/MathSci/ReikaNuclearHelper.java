@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -42,7 +42,9 @@ public class ReikaNuclearHelper {
 	}
 
 	public static boolean shouldDecay(Isotopes iso, double multiplier) {
-		double chance = 6*multiplier*getDecayChanceFromHalflife(iso.getMCHalfLife());
+		double chance = multiplier*getDecayChanceFromHalflife(iso.getMCHalfLife());
+		//int trials = (int)Math.ceil(Math.log(0.01)/Math.log(1-chance));
+		//ReikaJavaLibrary.pConsole("@ "+multiplier+"x: "+iso+" > "+iso.getHalfLifeAsDisplay()+" > "+chance+" (averages "+trials+" trials ("+ReikaDateHelper.getSecondsAsClock(trials/20)+") for 99% chance)");
 		return ReikaRandomHelper.doWithChance(chance);
 	}
 

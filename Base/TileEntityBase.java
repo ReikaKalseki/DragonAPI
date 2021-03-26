@@ -336,6 +336,15 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		}
 	}
 
+	private void sendPacketToAll(S35PacketUpdateTileEntity p) {
+		if (!worldObj.isRemote) {
+			List<EntityPlayerMP> li = ReikaPlayerAPI.getPlayersWithin(worldObj, INFINITE_EXTENT_AABB);
+			for (EntityPlayerMP entityplayermp : li)  {
+				entityplayermp.playerNetServerHandler.sendPacket(p);
+			}
+		}
+	}
+
 	/** Can be called from the client to request a sync from the server */
 	public final void syncAllData(boolean fullNBT) {
 		if (worldObj.isRemote) {
@@ -350,7 +359,13 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 			if (fullNBT)
 				var1.setBoolean("fullData", true);
 			S35PacketUpdateTileEntity p = new S35PacketUpdateTileEntity(xCoord, yCoord, zCoord, 2, var1);
-			this.sendPacketToAllAround(p, this.getUpdatePacketRadius());
+			int r = this.getUpdatePacketRadius();
+			if (r < 0 || r == Integer.MAX_VALUE) {
+				this.sendPacketToAllAround(p, r);
+			}
+			else {
+				this.sendPacketToAllAround(p, r);
+			}
 
 			//this.syncTankData();
 

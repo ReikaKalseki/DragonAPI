@@ -44,6 +44,10 @@ public abstract class LuaBlock {
 
 	private static final Pattern TYPE_SPECIFIER = Pattern.compile("\\[(.*?)\\]");
 
+	public static final String NULL_KEY_INHERIT = "[NULL KEY INHERIT]";
+	public static final String NULL_PARENT_INHERIT = "[NULL PARENT INHERIT]";
+	public static final String NULL_DATA = "[NULL DATA]";
+
 	public final String name;
 	private final LuaBlock parent;
 	private final LinkedHashMap<LuaBlockKey, LuaBlock> children = new LinkedHashMap(); //linked to keep order
@@ -107,6 +111,18 @@ public abstract class LuaBlock {
 		return this.containsKeyInherit(key) ? this.parseInt(this.getString(key)) : 0;
 	}
 
+	public final long getLong(String key) {
+		return Long.parseLong(this.getString(key));
+	}
+
+	public final String getString(String key) {
+		if (data.containsKey(key))
+			return data.get(key);
+		if (!this.canInherit(key))
+			throw new IllegalArgumentException("Missing key '"+key+"' for '"+name+"'");
+		return this.inherit(key);
+	}
+
 	private int parseInt(String s) {
 		if (s.startsWith("0x"))
 			return Integer.parseInt(s.substring(2), 16);
@@ -118,20 +134,8 @@ public abstract class LuaBlock {
 			return Integer.decode(s);
 	}
 
-	public final long getLong(String key) {
-		return Long.parseLong(this.getString(key));
-	}
-
 	private boolean isString(String s) {
 		return !Character.isDigit(s.charAt(s.charAt(0) == '-' && s.length() > 1 ? 1 : 0)) && !s.equalsIgnoreCase("true") && !s.equalsIgnoreCase("false");
-	}
-
-	public final String getString(String key) {
-		if (data.containsKey(key))
-			return data.get(key);
-		if (!this.canInherit(key))
-			throw new IllegalArgumentException("Missing key '"+key+"' for '"+name+"'");
-		return this.inherit(key);
 	}
 
 	public final Collection<String> getKeys() {
@@ -186,10 +190,10 @@ public abstract class LuaBlock {
 		}
 		String inherit = b.data.get("inherit");
 		if (inherit == null)
-			return "[NULL KEY INHERIT]";
+			return NULL_KEY_INHERIT;
 		LuaBlock lb = tree.getBlock(inherit);
 		if (lb == null)
-			return "[NULL PARENT INHERIT]";
+			return NULL_PARENT_INHERIT;
 		for (LuaBlockKey s : steps) {
 			if (lb.children.containsKey(s))
 				lb = lb.children.get(s);
@@ -197,7 +201,7 @@ public abstract class LuaBlock {
 				throw new IllegalStateException("'"+orig.parent.name+"/"+orig.name+"' tried to inherit property '"+key+"', but could not.");
 		}
 		//ReikaJavaLibrary.pConsole("'"+b.getString("type")+"' inheriting property '"+steps+"/"+key+"' from parent '"+inherit+"'");
-		return lb.data.containsKey(key) ? lb.getString(key) : "[NULL DATA]";
+		return lb.data.containsKey(key) ? lb.getString(key) : NULL_DATA;
 	}
 
 	private boolean canInherit(String key) {
@@ -633,6 +637,10 @@ public abstract class LuaBlock {
 
 	public Class<? extends LuaBlock> getChildBlockType() {
 		return this.getClass();
+	}
+
+	public static boolean isErrorCode(String s) {
+		return NULL_DATA.equals(s) || NULL_KEY_INHERIT.equals(s) || NULL_PARENT_INHERIT.equals(s);
 	}
 
 	private static class OutputSorter implements Comparator<String> {

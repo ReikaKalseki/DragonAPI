@@ -118,8 +118,8 @@ public enum ModCropList implements ModCrop {
 						case ITEMSTACK:
 							b = blocks.getField(blockVar);
 							ItemStack is = (ItemStack)b.get(null);
-							if (is == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated @ "+blocks.getName()+"#"+blockVar+"!");
+							if (is == null || is.getItem() == null) {
+								DragonAPICore.logError("Error loading crop "+this+": Block stack not instantiated @ "+blocks.getName()+"#"+blockVar+"!");
 							}
 							else {
 								id = Block.getBlockFromItem(is.getItem());
@@ -139,7 +139,7 @@ public enum ModCropList implements ModCrop {
 						case REGISTRY: {
 							Block block = GameRegistry.findBlock(mod.getModLabel(), blockVar);
 							if (block == null) {
-								DragonAPICore.logError("Error loading crop "+this+": Block not instantiated @ GameRegistry "+mod.getModLabel()+":"+blockVar+"!");
+								DragonAPICore.logError("Error loading crop "+this+": Block not found @ GameRegistry "+mod.getModLabel()+":"+blockVar+"!");
 							}
 							else {
 								id = block;
@@ -154,18 +154,22 @@ public enum ModCropList implements ModCrop {
 				catch (NoSuchFieldException e) {
 					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
+					ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, e);
 				}
 				catch (SecurityException e) {
 					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
+					ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, e);
 				}
 				catch (IllegalAccessException e) {
 					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
+					ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, e);
 				}
 				catch (IllegalArgumentException e) {
 					DragonAPICore.logError("Error loading crop "+this);
 					e.printStackTrace();
+					ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, e);
 				}
 			}
 		}
@@ -234,8 +238,8 @@ public enum ModCropList implements ModCrop {
 							case ITEMSTACK:
 								b = blocks.getField(blockVar);
 								ItemStack is = (ItemStack)b.get(null);
-								if (is == null) {
-									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated @ "+blocks.getName()+"#"+blockVar+"!");
+								if (is == null || is.getItem() == null) {
+									DragonAPICore.logError("Error loading crop "+this+": Block stack not instantiated @ "+blocks.getName()+"#"+blockVar+"!");
 								}
 								else {
 									id = Block.getBlockFromItem(is.getItem());
@@ -255,7 +259,7 @@ public enum ModCropList implements ModCrop {
 							case REGISTRY: {
 								Block block = GameRegistry.findBlock(mod.getModLabel(), blockVar);
 								if (block == null) {
-									DragonAPICore.logError("Error loading crop "+this+": Block not instantiated @ GameRegistry "+mod.getModLabel()+":"+blockVar+"!");
+									DragonAPICore.logError("Error loading crop "+this+": Block not found @ GameRegistry "+mod.getModLabel()+":"+blockVar+"!");
 								}
 								else {
 									id = block;
@@ -302,18 +306,22 @@ public enum ModCropList implements ModCrop {
 					catch (NoSuchFieldException e) {
 						DragonAPICore.logError("Error loading crop "+this);
 						e.printStackTrace();
+						ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, e);
 					}
 					catch (SecurityException e) {
 						DragonAPICore.logError("Error loading crop "+this);
 						e.printStackTrace();
+						ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, e);
 					}
 					catch (IllegalAccessException e) {
 						DragonAPICore.logError("Error loading crop "+this);
 						e.printStackTrace();
+						ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, e);
 					}
 					catch (IllegalArgumentException e) {
 						DragonAPICore.logError("Error loading crop "+this);
 						e.printStackTrace();
+						ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, e);
 					}
 				}
 			}
@@ -322,9 +330,6 @@ public enum ModCropList implements ModCrop {
 		seedID = seed;
 
 		exists = blockID != null;
-		if (!exists && mod.isLoaded()) {
-			ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, "Block not found for crop '"+this.name()+"'");
-		}
 	}
 
 	@Override
