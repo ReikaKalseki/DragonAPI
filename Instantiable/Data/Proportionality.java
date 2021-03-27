@@ -74,7 +74,11 @@ public class Proportionality<F> extends CircularDivisionRenderer<F> {
 	}
 
 	public double getFraction(F o) {
-		return this.getValue(o)/this.totalValue;
+		return this.isEmpty() ? 0 : this.getValue(o)/this.totalValue;
+	}
+
+	public boolean isEmpty() {
+		return this.totalValue == 0 || this.data.isEmpty();
 	}
 
 	@Override

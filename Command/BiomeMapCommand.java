@@ -73,6 +73,10 @@ public class BiomeMapCommand extends DragonCommandBase {
 	public void processCommand(ICommandSender ics, String[] args) {
 		Object[] ret = this.getPlayer(ics, args);
 		Collection<BiomeProvider> set = new ArrayList();
+		if (args.length < 2) {
+			this.sendChatToSender(ics, EnumChatFormatting.RED.toString()+"Illegal arguments. Use [seed=<seed>] [range] [resolution] <grid> <fullGrid>.");
+			return;
+		}
 		if (args[0].toLowerCase(Locale.ENGLISH).startsWith("seed=")) {
 			args[0] = args[0].substring(5);
 			if (args[0].contains(",")) {
@@ -101,10 +105,6 @@ public class BiomeMapCommand extends DragonCommandBase {
 			String[] nargs = new String[args.length-1];
 			System.arraycopy(args, 1, nargs, 0, nargs.length);
 			args = nargs;
-		}
-		if (args.length < 2) {
-			this.sendChatToSender(ics, EnumChatFormatting.RED.toString()+"Illegal arguments. Use [seed=<seed>] [range] [resolution] <grid> <fullGrid>.");
-			return;
 		}
 		int range = Integer.parseInt(args[0]);
 		int res = Integer.parseInt(args[1]);

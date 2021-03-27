@@ -113,7 +113,7 @@ public class ReikaEnchantmentHelper extends DragonAPICore {
 		return true;
 	}
 
-	/** Returns true iff the new enchantment is compatible all the other enchantments. */
+	/** Returns true iff the new enchantment is compatible with all the other enchantments. */
 	public static boolean isCompatible(Collection<Enchantment> enchantments, Enchantment addition) {
 		Iterator<Enchantment> it = enchantments.iterator();
 		Iterator<Enchantment> it2 = enchantments.iterator();

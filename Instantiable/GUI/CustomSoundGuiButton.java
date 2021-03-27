@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -23,6 +23,11 @@ public class CustomSoundGuiButton extends GuiButton {
 	public CustomSoundGuiButton(int id, int x, int y, int w, int h, String s, CustomSoundGui gui) {
 		super(id, x, y, w, h, s);
 		this.gui = gui;
+	}
+
+	public CustomSoundGuiButton disable() {
+		enabled = false;
+		return this;
 	}
 
 	@Override

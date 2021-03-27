@@ -21,9 +21,11 @@ public class ReikaThermoHelper {
 	public static final double CO2_HEAT = 1.168;
 	public static final double LIFBE_HEAT = 1.102;
 	public static final double OXYGEN_HEAT = 0.92;
+	public static final double NITROGEN_HEAT = 1.04;
 
 	public static final double WATER_BOIL_ENTHALPY = 2260; // kJ/kg
 	public static final double OXYGEN_BOIL_ENTHALPY = 3.41/32; // kJ/kg
+	public static final double NITROGEN_BOIL_ENTHALPY = 2.793; // kJ/kg
 
 	/** Heat energy in one block */
 	public static final double WATER_BLOCK_HEAT = 4.18e6;
