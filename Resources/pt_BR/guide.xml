@@ -1,0 +1,163 @@
+<!--
+  @author Reika Kalseki
+  
+  Copyright 2018
+  
+  All rights reserved.
+  Distribution of the software in any form is only allowed with
+  explicit, prior permission from the owner.
+-->
+<?xml version="1.0"?>
+<dragonapi>
+	<rotarycraft>
+		<info>
+			RotaryCraft é um mod estilo tecno-industrial que usa potência de eixo para rodar as máquinas. Motores genram potência de rotação - torque e velocidade, sendo a potência o produto dos dois. RotaryCraft foi desenhado para ser realístico, desde requirementos para o funcionamento das máquinas até os eventos, como falhas, superaquecimento e etc. RotaryCraft não tem outras dependências além do DragonAPI, mas pode interagir com outros mods.
+		</info>
+		<tutorial>
+			RotaryCraft não foi desenhado para ser usado imediatamente após começar um novo mundo; grandes quantidades de ferro são necessárias para construir a maioria das máquinas e uma forte base de recursos é recomendada. Também é altamente recomendado seguir a árvore tecnológica; atalhos, quando possíveis, são caros e difíceis, especialmente para novos players.
+		</tutorial>
+		<tips>
+			Quando for fazer qualquer coisa, use e abuse do senso comum. Não use lava em máquinas que fervem água, nem use gravetos para tentar transmitir a potência de uma Turbina a Jato.
+		</tips>
+		<notes>
+			RotaryCraft tem um manual com informações detalhadas de todo o mod. Use-o muito! Também, é extremamente recomendado "esquecer" como outros mods técnicos funcionam, visto que RotaryCraft é radicalmente diferente.
+		</notes>
+	</rotarycraft>
+	<reactorcraft>
+		<info>
+			ReactorCraft é um addon para o RotaryCraft que adiciona reatores nucleares que geram energia. Diferente de outros mods de reator, ReactorCraft requer um design de reator realístico com hastes de combustível, hastes de controle, caldeiras, turbinas, condensadores e bombas.
+		</info>
+		<tutorial>
+			ReactorCraft NÃO é um mod para o começo do jogo. Urânio é meio raro e o processamento e uso do urânio é muito complexo. Um design básico de reator envolve arranjar um número de hastes de combustível de maneira que elas estejam em linha uma com a outra. Misture caldeiras nesse arranjo, bombeie água por baixo; Extraia o vapor por cima até uma Grade de Vapor, que pode ser colocada abaixo de uma turbina e use condensadores para coletar o vapor utilizado e para retorná-lo para as caldeiras.
+		</tutorial>
+		<tips>
+			Fluorita de qualquer cor pode ser usada no processador de urânio, mas apenas a fluorita branca pode ser processada por máquinas do RotaryCraft.
+
+			Fique de olho nas temperaturas do reator. Se ele ficar muito quente, vai derreter e, possivelmente, explodir. Isso vai gerar radiação numa área signficante, e roupas anti-radiação não poderão protegê-lo.
+		</tips>
+		<notes>
+			ReactorCraft, sendo um addon para RotaryCraft, é completamente dependente dele. ReactorCraft adiciona novos minérios em todas as três dimensões do vanilla, então, em mundos antigos, será necessário explorar áreas novas para que seja gerado novas chunks com os novos minérios.
+		</notes>	
+	</reactorcraft>
+	<dyetrees>
+		<info>
+			DyeTrees adiciona uma cor de árvore para cada corante. Essas árvores desovam no mundo, um pouco raramente, e podem ser geradas com qualquer material de tronco de vanilla. Eles se comportam e muitas vezes se parecem com carvalhos, deixando cair mudas ocasionalmente e raramente maçãs. No entanto, eles também têm a chance de soltar corante de suas folhas, permitindo que os corantes sejam cultivados.
+      Há também um novo bioma, a Floresta do Arco-Íris.
+		</info>
+		<tutorial>
+			Não deve exigir muito esforço encontrar sua primeira árvore de tingimento. Basta colher como um carvalho normal e esperar obter uma muda ou tintura.
+		</tutorial>
+		<tips>
+			Árvores de tintura geram igualmente em todas as cores, mas não em todos os biomas; como regra geral, quanto mais densa a folhagem, mais densas são as árvores de tintura.
+
+      Árvores azuis, brancas e pretas tendem a ser mais úteis.
+		</tips>
+		<notes>
+			Se a geração mundial das árvores for desativada, tanto para a Floresta do Arco-íris quanto para as árvores em outros biomas, as mudas de tintura podem ser criadas com uma muda de tintura e uma de carvalho.
+		</notes>		
+	</dyetrees>
+	<expandedredstone>	
+		<info>
+			Expanded Redstone adiciona funcionalidade ao redstone vanilla por meio de algumas máquinas e circuitos simples. Não é um mod técnico, mas sim um addon que funciona tanto no mundo vanilla quanto no mundo com mods.
+		</info>
+		<tutorial>
+			Basta usar os dispositivos em seu lazer; nenhum deles é particularmente caro ou complexo.
+		</tutorial>
+		<tips>
+			Certifique-se de conhecer o comportamento do redstone vanilla.
+		</tips>
+		<notes>
+			Alguns itens requerem quartzo inferior, portanto, uma viagem ao Nether pode ser necessária.
+		</notes>
+	</expandedredstone>
+	<geostrata>		
+		<info>
+			GeoStrata adiciona vários tipos de rochas do mundo real que sobrescrevem 10-20% da pedra do vanilla. Essas rochas são geradas em profundidades realistas e em biomas realistas (por exemplo, mais xisto e calcário nos oceanos). O mod também adiciona "Cistais de Caverna" - pequenos cristais que podem ser gerados em cavernas. Ficar perto de um cristal dará às entidades vivas pequenos efeitos de estatísticas (por exemplo, o cristal vermelho dá 10s de resistência). Fragmentos de cristal também podem ser usados para preparar poções, algumas das quais (como boost de salto) não estão disponíveis normalmente.
+		</info>
+		<tutorial>
+			Para encontrar um cristal, apenas explore uma caverna; eles podem ser detectados pela luz que emitem e pelos ruídos agudos que emitem.
+		</tutorial>
+		<tips>
+			O comportamento do cristal depende da dimensão. Desconfie de cristais em dimensões "malignas" como o Nether
+		</tips>
+		<notes>
+			Os cristais são gerados igualmente em todas as cores, mas não em todos os biomas; oceanos têm uma taxa de desova aumentada, e biomas mágicos como a Twilight Forest o têm uma taxa de desova fortemente aumentada.
+		</notes>
+	</geostrata>
+	<realbiomes>	
+		<info>
+			RealBiomes adiciona uma série de biomas do mundo real ao mundo do Minecraft. Este mod ainda não está disponível.
+		</info>
+		<tutorial>
+		</tutorial>
+		<tips>
+		</tips>
+		<notes>
+		</notes>	
+	</realbiomes>
+	<furrykingdoms>	
+		<info>
+			FurryKingdoms adiciona uma nova dimensão, povoada por várias civilizações. Este mod ainda não está disponível.
+		</info>
+		<tutorial>
+		</tutorial>
+		<tips>
+		</tips>
+		<notes>
+		</notes>
+	</furrykingdoms>
+	<spiderpet>		
+		<info>
+			Spider Pet permite que você doma quatro tipos diferentes de aranhas - vanilla, Natura Heatscar e Twilight Forest King e Hedge spiders. Essas aranhas podem ser montadas e usadas para transporte ou combate. Enquanto monta a aranha, você pode ter efeitos de estatísticas absorvidos da aranha.
+		</info>
+		<tutorial>
+			Simplesmente crie um dispositivo para domar e carregue-o com os itens apropriados. Clique com o botão direito em uma aranha normalmente hostil com esta ferramenta e ela será domesticada por você.
+		</tutorial>
+		<tips>
+			Como sempre, tome cuidado ao se aproximar de uma aranha hostil.
+		</tips>
+		<notes>
+      Aranhas do anilla requerem carne podre, as aranhas HeatScars requerem pó de chama, as king spiders requerem um lingote de ouro e as hedge spiders requerem uma fatia de melão.
+    </note>
+	</spiderpet>
+	<enderforest>	
+		<info>
+			Ender Forests adiciona um novo bioma ao mundo. É topograficamente idêntico a um bioma florestal - embora com árvores ligeiramente esparsas - mas neste bioma, Endermen spawnam com mais frequência e poças de ender líquido podem ser encontradas ao redor da paisagem.
+		</info>
+		<tutorial>
+			As florestas ender não são difíceis de encontrar, mas são uma grande vantagem quando grandes quantidades de material relacionado a ender são necessárias.
+		</tutorial>
+		<tips>
+			Outros mobs hostis ainda podem surgir neste bioma, então não baixe a guarda.
+		</tips>
+		<notes>
+			O ender líquido que gera será o Ender ressonante de expansão térmica se esse mod for instalado.
+		</notes>	
+	</enderforest>
+	<voidmonster>	
+		<info>
+			O void monster é uma criatura misteriosa que vive no abismo abaixo do mundo Minecraft. Normalmente, sua presença só pode ser detectada por meio de seus gritos, audíveis nas cavernas profundas.
+		</info>
+		<tutorial>
+		</tutorial>
+		<tips>
+			Se você matar este monstro, uma infinidade de itens valiosos e XP o aguarda.
+		</tips>
+		<notes>
+		</notes>	
+	</voidmonster>
+	<usefultnt>
+		<info>
+			UsefulTNT fornece um item que, quando usado no TNT, aciona o TNT de uma forma mais útil para a mineração - ele sempre descarta itens e não destrói itens existentes ou XP, e não se conecta com outro TNT.
+		</info>
+		<tutorial>
+			Para usar a ferramenta, simplesmente clique com o botão direito em um bloco de TNT. Você não receberá danos da explosão resultante.
+		</tutorial>
+		<tips>
+			Tome cuidado ao usar muito isso; grandes quantidades de itens descartados podem causar um grande atraso.
+		</tips>
+		<notes>
+			O item não tem durabilidade e não é consumido; pode ser usado quantas vezes desejar.
+		</notes>		
+	</usefultnt>
+</dragonapi>
