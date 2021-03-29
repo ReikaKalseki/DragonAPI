@@ -48,6 +48,7 @@ public abstract class LuaBlock {
 	public static final String NULL_PARENT_INHERIT = "[NULL PARENT INHERIT]";
 	public static final String NULL_DATA = "[NULL DATA]";
 
+	public final boolean isRoot;
 	public final String name;
 	private final LuaBlock parent;
 	private final LinkedHashMap<LuaBlockKey, LuaBlock> children = new LinkedHashMap(); //linked to keep order
@@ -63,6 +64,7 @@ public abstract class LuaBlock {
 	private HashMap<String, String> comments = new HashMap();
 
 	protected LuaBlock(String n, LuaBlock parent, LuaBlockDatabase db) {
+		isRoot = parent == null;
 		if (n.equals("{")) {
 			n = Integer.toHexString(System.identityHashCode(this));
 			isListEntry = true;
@@ -84,7 +86,7 @@ public abstract class LuaBlock {
 	}
 
 	public final boolean isList() {
-		return isList && !(data.isEmpty() && !children.isEmpty());
+		return isList && !isRoot && !(data.isEmpty() && !children.isEmpty());
 	}
 
 	public final LuaBlock getParent() {
@@ -160,6 +162,13 @@ public abstract class LuaBlock {
 
 	public final void putData(String key, String val) {
 		data.put(key, val);
+		isList = false;
+	}
+
+	public final void addListData(String val) {
+		if (!this.isList)
+			throw new MisuseException("You can only add list data to list-type entries!");
+			data.put(String.valueOf(data.size()), val);
 	}
 
 	public final boolean containsKey(String key) {
@@ -389,10 +398,9 @@ public abstract class LuaBlock {
 						if (s2.charAt(0) == ' ')
 							s2 = s2.substring(1);
 						activeBlock.putData(s1, s2);
-						activeBlock.isList = false;
 					}
 					else {
-						activeBlock.putData(String.valueOf(activeBlock.data.size()), s);
+						activeBlock.addListData(s);
 					}
 				}
 			}

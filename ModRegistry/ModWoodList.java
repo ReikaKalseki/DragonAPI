@@ -102,6 +102,25 @@ public enum ModWoodList implements TreeType {
 	SLIME(ModList.TINKERER,			0x68FF7A, 0x8EFFE1, 12, 15, "slimeGel", "slimeLeaves", "slimeSapling", 1, 0, 0, VarType.INSTANCE),
 	TAINTED(ModList.FORBIDDENMAGIC,	0x40374B, 0x530D7B,	7, 12, "taintLog", "taintLeaves", "taintSapling", new int[]{0,4,8}, 0, 0, VarType.INSTANCE),
 	PINKBIRCH(ModList.SATISFORESTRY,0xE5E4DB, 0xF795B5, 24, 96, "LOG", "LEAVES", "SAPLING", new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, VarType.INSTANCE),
+	WEEDWOOD(ModList.BETWEENLANDS,	0x6B7A30, 0x94A843, 8, 14, "weedwoodLog", "weedwoodLeaves", "saplingWeedwood", VarType.INSTANCE),
+	SAPTREE(ModList.BETWEENLANDS,	0x6B7A30, 0x94A843, 8, 14, "sapTreeLog", "sapTreeLeaves", "saplingSapTree", VarType.INSTANCE),
+	BETWEENRUBBER(ModList.BETWEENLANDS,0x6B7A30, 0x94A843, 8, 14, "weedwoodLog", "rubberTreeLeaves", "saplingRubberTree", VarType.INSTANCE),
+	TROPIPALM(ModList.TROPICRAFT,	0x965A33, 0x20c020, 6, 12, "logs", "palmLeaves", "saplings", new int[]{0, 2, 4, 6, 8, 10, 12, 14}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, VarType.INSTANCE),
+	TROPIMAHOGANY(ModList.TROPICRAFT,0x7C3631, 0x20c020, 9, 20, "logs", "rainforestLeaves", "saplings", new int[] {1, 3, 5, 7, 9, 11, 13, 15}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 1, VarType.INSTANCE),
+	NETHERPAM(ModList.NETHERPAM,	0xa02020, 0xcf4040, 4, 4, "netherLog", "netherLeaves", "netherSapling", VarType.INSTANCE),
+	//SKYROOTG(ModList.AETHER,		0x00ff00, 0x00ff00, 8, 14, "AetherLog", "GreenSkyrootLeaves", "GreenSkyrootSapling", new int[] {0, 1}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, VarType.INSTANCE),
+	//SKYROOTB(ModList.AETHER,		0x0000ff, 0x0000ff, 8, 14, "AetherLog", "BlueSkyrootLeaves", "BlueSkyrootSapling", new int[] {0, 1}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, VarType.INSTANCE),
+	//SKYROOTD(ModList.AETHER,		0x000070, 0x000070, 8, 14, "AetherLog", "DarkBlueSkyrootLeaves", "DarkBlueSkyrootSapling", new int[] {0, 1}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, VarType.INSTANCE),
+	//PURPLECRYSTAL(ModList.AETHER,	0xa000ff, 0xa000ff, 8, 14, "AetherLog", "DarkBlueSkyrootLeaves", "DarkBlueSkyrootSapling", new int[] {0, 1}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, VarType.INSTANCE),,
+	GOLDOAK(ModList.AETHER,			0xE4CB64, 0xE4CB64, 8, 14, "AetherLog", "GoldenOakLeaves", "GoldenOakSapling", new int[] {2, 3}, new int[]{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15}, 0, VarType.INSTANCE),
+	BAOBAB(ModList.EREBUS,			0x000000, 0x000000, 12, 14, "Baobab_Log",		"Baobab_Leaves",		"Baobab_Sapling", VarType.INSTANCE),
+	EREBEUCALYPTUS(ModList.EREBUS,	0x000000, 0x000000, 20, 60, "Eucalyptus_Log",	"Eucalyptus_Leaves",	"Eucalyptus_Sapling", VarType.INSTANCE),
+	EREBMAHOGANY(ModList.EREBUS,	0x000000, 0x000000, 12, 18, "Mahogany_Log",		"Mahogany_Leaves",		"Mahogany_Sapling", VarType.INSTANCE),
+	MOSSBARK(ModList.EREBUS,		0x000000, 0x000000, 12, 14, "Mossbark_Log",		"Mossbark_Leaves",		"Mossbark_Sapling", VarType.INSTANCE),
+	ASPER(ModList.EREBUS,			0x000000, 0x000000, 12, 14, "Asper_Log",		"Asper_Leaves",			"Asper_Sapling", VarType.INSTANCE),
+	CYPRESS(ModList.EREBUS,			0x000000, 0x000000, 8, 16, "Cypress_Log",		"Cypress_Leaves",		"Cypress_Sapling", VarType.INSTANCE),
+	SAP(ModList.EREBUS,				0x000000, 0x000000, 12, 14, "Sap_Log",			"Sap_Leaves",			"Sap_Sapling", VarType.INSTANCE),
+	MARSHWOOD(ModList.EREBUS,		0x000000, 0x000000, 12, 14, "Marshwood_Log",	"Marshwood_Leaves",		"Marshwood_Sapling", VarType.INSTANCE),
 	;
 
 	private ModList mod;
@@ -281,6 +300,15 @@ public enum ModWoodList implements TreeType {
 			case SATISFORESTRY: {
 				Field f = cl.getField(field);
 				Method block = cl.getMethod("getBlockInstance");
+				Object entry = f.get(null);
+				return (Block)block.invoke(entry);
+			}
+			case EREBUS: {
+				cl = Class.forName("erebus.lib.EnumWood");
+				int idx = field.indexOf('_');
+				String type = field.substring(idx+1);
+				Field f = cl.getField(field.substring(0, idx));
+				Method block = cl.getMethod("get"+type);
 				Object entry = f.get(null);
 				return (Block)block.invoke(entry);
 			}

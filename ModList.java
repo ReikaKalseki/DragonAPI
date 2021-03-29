@@ -127,6 +127,11 @@ public enum ModList implements ModEntry, Dependency {
 	FORBIDDENMAGIC("ForbiddenMagic", "fox.spiteful.forbidden.blocks.ForbiddenBlocks", "fox.spiteful.forbidden.items.ForbiddenItems"),
 	ADVROCKET("advancedRocketry"),
 	HEXCRAFT("hexcraft", "com.celestek.hexcraft.HexBlocks", "com.celestek.hexcraft.init.HexItems"),
+	TROPICRAFT("tropicraft", "net.tropicraft.registry.TCBlockRegistry", "net.tropicraft.registry.TCItemRegistry"),
+	EREBUS("erebus", "erebus.ModBlocks", "erebus.ModItems"),
+	BETWEENLANDS("thebetweenlands", "thebetweenlands.blocks.BLBlockRegistry", "thebetweenlands.items.BLItemRegistry"),
+	NETHERPAM("harvestthenether", "com.pam.harvestthenether.BlockRegistry", "com.pam.harvestthenether.ItemRegistry"),
+	AETHER("aether", "net.aetherteam.aether.blocks.AetherBlocks", "net.aetherteam.aether.items.AetherItems"),
 	;
 
 	private final boolean condition;

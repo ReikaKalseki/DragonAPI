@@ -54,7 +54,7 @@ public class LineClipper {
 		return code;
 	}
 
-	// Cohen–Sutherland clipping algorithm clips a line from
+	// Cohen-Sutherland clipping algorithm clips a line from
 	// P0 = (x0, y0) to P1 = (x1, y1) against a rectangle with
 	// diagonal from (minX, minY) to (maxX, maxY).
 	public ImmutablePair<Point, Point> clip(int x0, int y0, int x1, int y1) {
