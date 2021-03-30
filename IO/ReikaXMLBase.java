@@ -18,10 +18,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.Charsets;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 public class ReikaXMLBase {
@@ -33,15 +35,22 @@ public class ReikaXMLBase {
 		while (!li.isEmpty() && !li.get(0).startsWith("<?xml version")) { //automatically clear any header crap
 			li.remove(0);
 		}
+		li.set(0, getHeader(li.get(0)));
 		in = ReikaFileReader.convertLinesToStream(li, true, Charsets.UTF_8);
 		try {
 			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder builder = factory.newDocumentBuilder();
-			return builder.parse(in);
+			InputSource is = new InputSource(in);
+			is.setEncoding(CharEncoding.UTF_8);
+			return builder.parse(is);
 		}
 		catch (ParserConfigurationException e) {
 			throw new RuntimeException("Could not initialize XML Parser!", e);
 		}
+	}
+
+	private static String getHeader(String s) {
+		return "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
 	}
 
 	public static Node getNamedNode(String name, NodeList li) {

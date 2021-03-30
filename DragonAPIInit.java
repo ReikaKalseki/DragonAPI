@@ -78,6 +78,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.VanillaIntegrityTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Base.DragonAPIMod.LoadProfiler.LoadPhase;
 import Reika.DragonAPI.Base.ModHandlerBase;
+import Reika.DragonAPI.Base.ModHandlerBase.ClassVersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.SearchVersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionHandler;
 import Reika.DragonAPI.Base.ModHandlerBase.VersionIgnore;
@@ -143,6 +144,7 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.GalacticCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.GregOreHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HarvestCraftHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HexBlockHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.HexBlockHandlerSimple;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HungerOverhaulHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.IC2Handler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.LegacyMagicCropHandler;
@@ -772,7 +774,8 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.registerHandler(ModList.CHISEL, ChiselBlockHandler.class, "Handler");
 		this.registerHandler(ModList.GREGTECH, GregOreHandler.class, "Ore Handler");
 		this.registerHandler(ModList.NATURA, NaturaBlockHandler.class, "Block Handler");
-		this.registerHandler(ModList.HEXCRAFT, HexBlockHandler.class, "Block Handler");
+		if (!this.registerHandler(ModList.HEXCRAFT, HexBlockHandler.class, "Block Handler", new ClassVersionHandler("com.celestek.hexcraft.api.WorldGenColors")))
+			this.registerHandler(ModList.HEXCRAFT, HexBlockHandlerSimple.class, "Block Handler");
 
 		ReikaJavaLibrary.initClass(ModOreList.class);
 		ReikaJavaLibrary.initClass(ModWoodList.class);
@@ -804,29 +807,34 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.registerHandler(mod, c, id, new VersionIgnore());
 	}
 
-	private void registerHandler(ModList mod, Class<? extends ModHandlerBase> c, String id, VersionHandler vh) {
+	private boolean registerHandler(ModList mod, Class<? extends ModHandlerBase> c, String id, VersionHandler vh) {
 		if (mod.isLoaded()) {
 			try {
 				String ver = mod.getVersion();
 				if (vh.acceptVersion(ver)) {
 					this.initHandler(mod, c, id);
 					logger.log("Loading handler "+c+" for mod "+mod+" "+ver+".");
+					return true;
 				}
 				else {
 					logger.log("Not loading handler "+c+" for "+mod.getDisplayName()+"; Version "+ver+" not compatible with "+vh.toString()+".");
+					return false;
 				}
 			}
 			catch (Exception e) {
 				logger.logError("Could not load handler for "+mod.name());
 				e.printStackTrace();
+				return false;
 			}
 			catch (LinkageError e) {
 				logger.logError("Class version mismatch error! Could not load handler for "+mod.name());
 				e.printStackTrace();
+				return false;
 			}
 		}
 		else {
 			logger.log("Not loading handler for "+mod.getDisplayName()+"; Mod not present.");
+			return false;
 		}
 	}
 

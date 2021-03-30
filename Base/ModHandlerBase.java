@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,6 +15,7 @@ import java.util.Random;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.Java.SemanticVersionParser;
 
@@ -98,6 +99,26 @@ public abstract class ModHandlerBase {
 		@Override
 		public String toString() {
 			return (minimum != null ? minimum : "")+" - "+(maximum != null ? maximum : "");
+		}
+
+	}
+
+	public static final class ClassVersionHandler implements VersionHandler {
+
+		private final String className;
+
+		public ClassVersionHandler(String key) {
+			className = key;
+		}
+
+		@Override
+		public boolean acceptVersion(String version) {
+			return ReikaJavaLibrary.doesClassExist(className);
+		}
+
+		@Override
+		public String toString() {
+			return "[Class '"+className+"' exists]";
 		}
 
 	}

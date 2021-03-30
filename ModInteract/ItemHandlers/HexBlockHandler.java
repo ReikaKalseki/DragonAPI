@@ -30,11 +30,12 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.ModInteract.ItemHandlers.HexcraftHandler.HexHandler;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class HexBlockHandler extends ModHandlerBase {
+public class HexBlockHandler extends ModHandlerBase implements HexHandler {
 
 	private static final HexBlockHandler instance = new HexBlockHandler();
 
@@ -133,6 +134,8 @@ public class HexBlockHandler extends ModHandlerBase {
 				e.printStackTrace();
 				this.logFailure(e);
 			}
+
+			HexcraftHandler.setHandler(this);
 		}
 		else {
 			this.noMod();
