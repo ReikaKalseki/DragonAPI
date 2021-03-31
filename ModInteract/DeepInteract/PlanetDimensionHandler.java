@@ -11,6 +11,9 @@ import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
 
 import micdoodle8.mods.galacticraft.api.world.IGalacticraftWorldProvider;
+import micdoodle8.mods.galacticraft.api.world.ISolarLevel;
+import zmaster587.advancedRocketry.api.AdvancedRocketryAPI;
+import zmaster587.advancedRocketry.api.dimension.IDimensionProperties;
 
 public class PlanetDimensionHandler {
 
@@ -46,6 +49,28 @@ public class PlanetDimensionHandler {
 		}
 		else if (isAdvRWorld(world)) {
 
+		}
+		return 1;
+	}
+
+	public static double getSunIntensity(World world) {
+		if (isGalacticWorld(world)) {
+			if (InterfaceCache.ISOLARLEVEL.instanceOf(world.provider)) {
+				ISolarLevel isl = (ISolarLevel)world.provider;
+				return isl.getSolarEnergyMultiplier();
+			}
+			else {
+				return ((IGalacticraftWorldProvider)world.provider).getSolarSize();
+			}
+		}
+		else if (isAdvRWorld(world)) {
+			IDimensionProperties dim = AdvancedRocketryAPI.dimensionManager.getDimensionProperties(world.provider.dimensionId);
+			double peak = dim.getPeakInsolationMultiplier();
+			double lim = Math.min(0.1, peak);
+			peak -= (dim.getAtmosphereDensity()-80)/120D;
+			if (peak < lim)
+				peak = lim;
+			return peak;
 		}
 		return 1;
 	}

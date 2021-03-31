@@ -32,6 +32,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.IO.LuaBlock.LuaBlockDatabase;
+import Reika.DragonAPI.Instantiable.IO.LuaBlock.NBTLuaBlock;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -58,13 +59,15 @@ import forestry.api.lepidopterology.EnumFlutterType;
 import forestry.api.lepidopterology.IButterflyGenome;
 
 
-public final class CustomRecipeList {
+public class CustomRecipeList {
 
 	private final DragonAPIMod mod;
 	public final String recipeType;
 
 	private LuaBlockDatabase data = new LuaBlockDatabase();
 	private final HashSet<LuaBlock> entries = new HashSet();
+
+	private final LuaBlock exampleBlock = new ExampleLuaBlock("exampleRoot", null, new LuaBlockDatabase());
 
 	private static final HashMap<String, Class> lookups = new HashMap();
 	private static final HashMap<String, DelegateLookup> delegateCalls = new HashMap();
@@ -90,27 +93,57 @@ public final class CustomRecipeList {
 		lookups.put(key, c);
 	}
 
-	public final void load() {
+	public final boolean load() {
 		File folder = this.getBaseFilepath();
 		if (!folder.exists() || !folder.isDirectory())
-			return;
+			return false;
 		ArrayList<File> files = ReikaFileReader.getAllFilesInFolder(folder, this.getExtension());
 		this.load(files);
+		return true;
 	}
 
-	public final void load(File f) {
+	public final void createFolders() {
+		File folder = this.getBaseFilepath();
+		folder.mkdirs();
+	}
+
+	public final LuaBlock createExample(String s) {
+		return new ExampleLuaBlock(s, exampleBlock, exampleBlock.tree);
+	}
+	/*
+	public final void addToExample(LuaBlock b) {
+		exampleBlock.addChild(b.name);
+	}
+	 */
+	public final void createExampleFile() {
+		try {
+			File f = new File(this.getBaseFilepath(), "example"+this.getExtension());
+			f.createNewFile();
+			ReikaFileReader.writeLinesToFile(f, exampleBlock.writeToStrings(), true);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public final boolean load(File f) {
+		if (!f.exists())
+			return false;
 		this.load(ReikaJavaLibrary.makeListFrom(f));
+		return true;
 	}
 
 	public final void load(Collection<File> files) {
 		this.clear();
 		for (File f : files) {
+			if (ReikaFileReader.getFileNameNoExtension(f, false, false).equals("example"))
+				continue;
 			data.loadFromFile(f);
 		}
 		this.parseLuaBlocks();
 	}
 
-	public void clear() {
+	public final void clear() {
 		data = new LuaBlockDatabase();
 		entries.clear();
 	}
@@ -128,18 +161,23 @@ public final class CustomRecipeList {
 				e.printStackTrace();
 			}
 		}
-		mod.getModLogger().log("All custom "+recipeType+" recipe entries parsed.");
+		if (!Strings.isNullOrEmpty(recipeType))
+			mod.getModLogger().log("All custom "+recipeType+" recipe entries parsed.");
 	}
 
-	public Collection<LuaBlock> getEntries() {
+	public final Collection<LuaBlock> getEntries() {
 		return Collections.unmodifiableCollection(entries);
 	}
 
 	private final File getBaseFilepath() {
-		return new File(mod.getConfigFolder(), mod.getDisplayName()+"_CustomRecipes");
+		return new File(mod.getConfigFolder(), mod.getDisplayName()+"_"+this.getFolderName());
 	}
 
-	private String getExtension() {
+	protected String getFolderName() {
+		return "CustomRecipes";
+	}
+
+	protected String getExtension() {
 		return ".recipes_"+recipeType;
 	}
 
@@ -149,6 +187,17 @@ public final class CustomRecipeList {
 		if (item.startsWith("ore:"))
 			return item.substring("ore:".length());
 		return parseItemString(item, null, true);
+	}
+
+	public static final void writeItem(LuaBlock lb, ItemStack is) {
+		String base = Item.itemRegistry.getNameForObject(is.getItem());
+		if (is.stackSize > 1) {
+			base = base+"*"+is.stackSize;
+		}
+		lb.putData("item", base);
+		if (is.stackTagCompound != null) {
+			new NBTLuaBlock("item_nbt", lb, lb.tree, is.stackTagCompound, false);
+		}
 	}
 
 	public static final Collection<ItemStack> parseItemCollection(Collection<String> in, boolean tolerateNull) {
@@ -303,6 +352,14 @@ public final class CustomRecipeList {
 		else if (is.getItem() == null)
 			return "[null-item stack]";
 		return is.stackSize+"x"+Item.itemRegistry.getNameForObject(is.getItem())+"@"+is.getItemDamage()+"{"+is.stackTagCompound+"}["+ReikaItemHelper.getRegistrantMod(is)+"]";
+	}
+
+	private static class ExampleLuaBlock extends LuaBlock {
+
+		protected ExampleLuaBlock(String n, LuaBlock lb, LuaBlockDatabase db) {
+			super(n, lb, db);
+		}
+
 	}
 
 	public static interface DelegateLookup {

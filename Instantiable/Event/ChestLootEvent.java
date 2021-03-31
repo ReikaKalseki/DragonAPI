@@ -1,20 +1,11 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.inventory.IInventory;
-import net.minecraft.world.gen.feature.WorldGenDungeons;
-import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces.DesertPyramid;
-import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces.JunglePyramid;
-import net.minecraft.world.gen.structure.StructureMineshaftPieces.Corridor;
-import net.minecraft.world.gen.structure.StructureNetherBridgePieces.Piece;
-import net.minecraft.world.gen.structure.StructureStrongholdPieces.ChestCorridor;
-import net.minecraft.world.gen.structure.StructureStrongholdPieces.Crossing;
-import net.minecraft.world.gen.structure.StructureStrongholdPieces.Library;
-import net.minecraft.world.gen.structure.StructureStrongholdPieces.RoomCrossing;
-import net.minecraft.world.gen.structure.StructureVillagePieces.House2;
 import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.DragonAPICore;
-import Reika.DragonAPI.Instantiable.Worldgen.LootController.Location;
+import Reika.DragonAPI.Instantiable.Worldgen.LootController;
+import Reika.DragonAPI.Instantiable.Worldgen.LootController.ChestGenLootLocation;
 
 import cpw.mods.fml.common.eventhandler.Event;
 
@@ -40,27 +31,8 @@ public class ChestLootEvent extends Event {
 	}
 
 	private static String calculateTable(Object struct) {
-		if (struct instanceof WorldGenDungeons)
-			return Location.DUNGEON.tag;
-		if (struct instanceof Piece)
-			return "netherFortress";
-		else if (struct instanceof Corridor)
-			return Location.MINESHAFT.tag;
-		else if (struct instanceof Crossing || struct instanceof RoomCrossing)
-			return Location.STRONGHOLD_CROSSING.tag;
-		else if (struct instanceof Library)
-			return Location.STRONGHOLD_LIBRARY.tag;
-		else if (struct instanceof ChestCorridor)
-			return Location.STRONGHOLD_HALLWAY.tag;
-		else if (struct instanceof JunglePyramid)
-			return Location.JUNGLE_PUZZLE.tag;
-		else if (struct instanceof DesertPyramid)
-			return Location.PYRAMID.tag;
-		else if (struct instanceof House2)
-			return Location.VILLAGE.tag;
-		else if (struct.getClass().getSimpleName().contains("WizardTower")) //ThaumCraft
-			return "ThaumVillageTower";
-		return null;
+		ChestGenLootLocation find = LootController.getLocationForStructure(struct);
+		return find != null ? find.getTag() : null;
 	}
 
 }

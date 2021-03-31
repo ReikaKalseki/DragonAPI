@@ -166,9 +166,9 @@ public abstract class LuaBlock {
 	}
 
 	public final void addListData(String val) {
-		if (!this.isList)
+		if (!isList)
 			throw new MisuseException("You can only add list data to list-type entries!");
-			data.put(String.valueOf(data.size()), val);
+		data.put(String.valueOf(data.size()), val);
 	}
 
 	public final boolean containsKey(String key) {
@@ -314,15 +314,17 @@ public abstract class LuaBlock {
 			if (writeSize)
 				this.putData("stack_size", String.valueOf(is.stackSize));
 			this.putData("display_name", is.getDisplayName());
-			LuaBlock nbt = is.stackTagCompound != null ? new NBTLuaBlock("nbt", this, tree, is.stackTagCompound) : null;
+			LuaBlock nbt = is.stackTagCompound != null ? new NBTLuaBlock("nbt", this, tree, is.stackTagCompound, true) : null;
 		}
 	}
 
 	public static final class NBTLuaBlock extends LuaBlock {
 
-		public NBTLuaBlock(String n, LuaBlock parent, LuaBlockDatabase db, NBTTagCompound tag) {
+		public NBTLuaBlock(String n, LuaBlock parent, LuaBlockDatabase db, NBTTagCompound tag, boolean parseEnchants) {
 			super(n, parent, db);
-			HashMap<String, ?> map = this.parseEnchantments(ReikaNBTHelper.readMapFromNBT(tag));
+			HashMap<String, ?> map = ReikaNBTHelper.readMapFromNBT(tag);
+			if (parseEnchants)
+				map = this.parseEnchantments(map);
 			this.writeData(map);
 		}
 

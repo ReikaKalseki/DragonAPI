@@ -9,17 +9,87 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Worldgen;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.WeightedRandomChestContent;
+import net.minecraft.world.gen.feature.WorldGenDungeons;
+import net.minecraft.world.gen.structure.ComponentScatteredFeaturePieces;
+import net.minecraft.world.gen.structure.StructureMineshaftPieces;
+import net.minecraft.world.gen.structure.StructureNetherBridgePieces;
+import net.minecraft.world.gen.structure.StructureStrongholdPieces;
+import net.minecraft.world.gen.structure.StructureVillagePieces;
 import net.minecraftforge.common.ChestGenHooks;
 
+import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.Instantiable.BasicModEntry;
+import Reika.DragonAPI.Interfaces.Registry.ModEntry;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaGenHelper;
 
 public class LootController {
+
+	private static final HashMap<String, ChestGenLootLocation> locationsByID = new HashMap();
+	private static final HashMap<String, ChestGenLootLocation> locationsByObject = new HashMap();
+
+	private static Field chestTable;
+	private static Field chestContents;
+
+	public static ChestGenLootLocation netherFortress = new ChestGenLootLocation() {
+
+		@Override
+		public String getTag() {
+			return "netherFortress";
+		}
+
+		@Override
+		public WeightedRandomChestContent[] getContents() throws Exception {
+			return StructureNetherBridgePieces.Piece.field_111019_a;
+		}
+
+		@Override
+		public void setContents(WeightedRandomChestContent[] items) throws Exception {
+			StructureNetherBridgePieces.Piece.field_111019_a = items;
+		}
+
+	};
+
+	static {
+		try {
+			chestTable = ChestGenHooks.class.getDeclaredField("chestInfo");
+			chestTable.setAccessible(true);
+
+			chestContents = ChestGenHooks.class.getDeclaredField("contents");
+			chestContents.setAccessible(true);
+		}
+		catch (Exception e) {
+			throw new RuntimeException(e);
+		}
+
+		locationsByObject.put(WorldGenDungeons.class.getName(), Location.DUNGEON);
+		locationsByObject.put(StructureNetherBridgePieces.Piece.class.getName(), netherFortress);
+		locationsByObject.put(StructureMineshaftPieces.Corridor.class.getName(), Location.MINESHAFT);
+		locationsByObject.put(StructureStrongholdPieces.Crossing.class.getName(), Location.STRONGHOLD_CROSSING);
+		locationsByObject.put(StructureStrongholdPieces.RoomCrossing.class.getName(), Location.STRONGHOLD_CROSSING);
+		locationsByObject.put(StructureStrongholdPieces.Library.class.getName(), Location.STRONGHOLD_LIBRARY);
+		locationsByObject.put(StructureStrongholdPieces.ChestCorridor.class.getName(), Location.STRONGHOLD_HALLWAY);
+		locationsByObject.put(ComponentScatteredFeaturePieces.JunglePyramid.class.getName(), Location.JUNGLE_PUZZLE);
+		locationsByObject.put(ComponentScatteredFeaturePieces.DesertPyramid.class.getName(), Location.PYRAMID);
+		locationsByObject.put(StructureVillagePieces.House2.class.getName(), Location.VILLAGE);
+
+		locationsByID.put("netherFortress", netherFortress);
+	}
 
 	private List<LootStack> items = new ArrayList();
 
@@ -100,7 +170,49 @@ public class LootController {
 		}
 	}
 
-	public enum Location {
+	public static ChestGenLootLocation getLocationForStructure(Object struct) {
+		return struct == null ? null : locationsByObject.get(struct.getClass().getName());
+	}
+
+	public static ChestGenLootLocation getLocationForID(String id) {
+		return locationsByID.get(id);
+	}
+
+	public static ArrayList<WeightedRandomChestContent> getCGHItems(String tag) throws Exception {
+		return getCGHItems(ChestGenHooks.getInfo(tag));
+	}
+
+	public static ArrayList<WeightedRandomChestContent> getCGHItems(ChestGenHooks entry) throws Exception {
+		return (ArrayList<WeightedRandomChestContent>)chestContents.get(entry);
+	}
+
+	public static void setCGHItems(String tag, WeightedRandomChestContent[] items) throws Exception {
+		setCGHItems(ChestGenHooks.getInfo(tag), items);
+	}
+
+	public static void setCGHItems(ChestGenHooks entry, WeightedRandomChestContent[] items) throws Exception {
+		chestContents.set(entry, ReikaJavaLibrary.makeListFromArray(items));
+	}
+
+	public static ChestGenHooks getChestEntry(String tag) throws Exception {
+		return ((Map<String, ChestGenHooks>)chestTable.get(null)).get(tag);
+	}
+
+	public static Set<String> getAllIDs() {
+		return Collections.unmodifiableSet(locationsByID.keySet());
+	}
+
+	public static interface ChestGenLootLocation {
+
+		public String getTag();
+
+		public WeightedRandomChestContent[] getContents() throws Exception;
+
+		public void setContents(WeightedRandomChestContent[] items) throws Exception;
+
+	}
+
+	public enum Location implements ChestGenLootLocation {
 		BONUS(ChestGenHooks.BONUS_CHEST),
 		VILLAGE(ChestGenHooks.VILLAGE_BLACKSMITH),
 		DUNGEON(ChestGenHooks.DUNGEON_CHEST),
@@ -116,7 +228,117 @@ public class LootController {
 
 		private Location(String sg) {
 			tag = sg;
+			locationsByID.put(tag, this);
 		}
+
+		@Override
+		public String getTag() {
+			return tag;
+		}
+
+		@Override
+		public WeightedRandomChestContent[] getContents() throws Exception {
+			return ChestGenHooks.getItems(tag, DragonAPICore.rand);
+		}
+
+		@Override
+		public void setContents(WeightedRandomChestContent[] items) throws Exception {
+			setCGHItems(tag, items);
+		}
+	}
+
+	public static enum ModdedStructures implements ChestGenLootLocation {
+		THAUMTOWER(ModList.THAUMCRAFT, "thaumcraft.common.lib.world.ComponentWizardTower", "towerChestContents", ReferenceType.FIELD),
+		APIARIST(ModList.FORESTRY, "forestry.apiculture.worldgen.ComponentVillageBeeHouse", "naturalistChest", ReferenceType.TABLE),
+		TINKERVILLAGE(ModList.TINKERER, "tconstruct.world.village.ComponentToolWorkshop", "TinkerHouse", ReferenceType.TABLE),
+		APOTHECARY(ModList.WITCHERY, "com.emoniph.witchery.worldgen.ComponentVillageApothecary", "villageApothecaryChestContents", ReferenceType.FIELD),
+		BOOKSHOP(ModList.WITCHERY, "com.emoniph.witchery.worldgen.ComponentVillageBookShop", "bookshopChestContents", ReferenceType.FIELD),
+		WKEEP(ModList.WITCHERY, "com.emoniph.witchery.worldgen.ComponentVillageKeep", "villageTowerChestContents", ReferenceType.FIELD),
+		PHOTOSHOP(new BasicModEntry("WitchingGadgets"), "witchinggadgets.common.world.VillageComponentPhotoshop", "WG:PHOTOWORKSHOP", ReferenceType.TABLE),
+		;
+
+		private final ModEntry sourceMod;
+		private final ReferenceType dataType;
+		private final String className;
+		private final String tableID;
+		private final Class reference;
+
+		private ModdedStructures(ModEntry mod, String partName, String lootTable, ReferenceType type) {
+			sourceMod = mod;
+			dataType = type;
+			className = partName;
+			tableID = lootTable;
+			if (mod.isLoaded()) {
+				locationsByID.put(this.getTag(), this);
+				locationsByObject.put(partName, this);
+				Class c = null;
+				try {
+					c = Class.forName(className);
+				}
+				catch (Exception e) {
+					e.printStackTrace();
+					ReflectiveFailureTracker.instance.logModReflectiveFailure(mod, e);
+				}
+				reference = c;
+			}
+			else {
+				reference = null;
+			}
+		}
+
+		public String getTag() {
+			switch(dataType) {
+				case TABLE:
+					return tableID;
+				default:
+					return ReikaStringParser.capFirstChar(this.name());
+			}
+		}
+
+		public WeightedRandomChestContent[] getContents() throws Exception {
+			if (!sourceMod.isLoaded())
+				throw new IllegalStateException("Mod '"+sourceMod.getDisplayName()+"' is not loaded!");
+			return dataType.getData(reference, tableID);
+		}
+
+		@Override
+		public void setContents(WeightedRandomChestContent[] items) throws Exception {
+			if (!sourceMod.isLoaded())
+				throw new IllegalStateException("Mod '"+sourceMod.getDisplayName()+"' is not loaded!");
+			dataType.setData(reference, tableID, items);
+		}
+	}
+
+	private static enum ReferenceType {
+
+		FIELD,
+		TABLE;
+
+		private WeightedRandomChestContent[] getData(Class c, String name) throws Exception {
+			switch(this) {
+				case FIELD:
+					Field f = c.getDeclaredField(name);
+					f.setAccessible(true);
+					return (WeightedRandomChestContent[])f.get(null);
+				case TABLE:
+					return ChestGenHooks.getItems(name, DragonAPICore.rand);
+			}
+			return null;
+		}
+
+		private void setData(Class c, String name, WeightedRandomChestContent[] items) throws Exception {
+			switch(this) {
+				case FIELD:
+					Field f = c.getDeclaredField(name);
+					f.setAccessible(true);
+					f.set(null, items);
+					break;
+				case TABLE:
+					setCGHItems(name, items);
+					break;
+			}
+		}
+
 	}
 
 }
