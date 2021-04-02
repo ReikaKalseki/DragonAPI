@@ -290,8 +290,25 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		for (Object o : tag2.func_150296_c()) {
 			String s = (String)o;
 			NBTBase key = tag2.getTag(s);
-			tag1.setTag(s, key.copy());
+			tag1.setTag(s, combineTags(tag1.getTag(s), key.copy()));
 		}
+	}
+
+	private static NBTBase combineTags(NBTBase a, NBTBase b) {
+		if (a != null && b == null)
+			return a;
+		if (a == null || a.getClass() != b.getClass())
+			return b;
+		if (a instanceof NBTTagCompound) {
+			combineNBT((NBTTagCompound)a, (NBTTagCompound)b);
+			return a;
+		}
+		if (a instanceof NBTTagList) {
+			for (Object o : ((NBTTagList)b).tagList) {
+				((NBTTagList)a).appendTag((NBTBase)o);
+			}
+		}
+		return b;
 	}
 
 	public static void clearTagCompound(NBTTagCompound dat) {

@@ -6,131 +6,38 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 
 public class ThreadSafeSet<E> implements Set<E> {
 
 	protected final Set<E> data = Collections.synchronizedSet(new HashSet<E>());
 
-	@FunctionalInterface
-	public static interface IterationHandle<E> {
-
-		public IterationResult handle(E entry);
-
-	}
-
-	public static interface IterationResult {
-
-		public boolean removeFromSet();
-		public boolean continueIterating();
-		public Object getReturnValue();
-
-	}
-
-	public static class ReturnValue implements IterationResult {
-
-		public Object returnedValue;
-		public boolean removeFromSet = false;
-
-		public ReturnValue(Object o) {
-			returnedValue = o;
-		}
-
-		public ReturnValue(Object o, boolean rem) {
-			this(o);
-			removeFromSet = rem;
-		}
-
-		@Override
-		public boolean removeFromSet() {
-			return removeFromSet;
-		}
-
-		@Override
-		public boolean continueIterating() {
-			return false;
-		}
-
-		@Override
-		public Object getReturnValue() {
-			return returnedValue;
-		}
-
-	}
-
-	public static enum DefaultIterationResult implements IterationResult {
-		CONTINUE,
-		REMOVEANDCONTINUE,
-		REMOVEANDBREAK,
-		BREAK,
-		RETURNTRUE,
-		RETURNFALSE,
-		RETURN0,
-		RETURN1;
-
-		@Override
-		public boolean removeFromSet() {
-			switch(this) {
-				case REMOVEANDBREAK:
-				case REMOVEANDCONTINUE:
-					return true;
-				default:
-					return false;
-			}
-		}
-
-		@Override
-		public boolean continueIterating() {
-			switch(this) {
-				case CONTINUE:
-				case REMOVEANDCONTINUE:
-					return true;
-				default:
-					return false;
-			}
-		}
-
-		@Override
-		public Object getReturnValue() {
-			switch(this) {
-				case RETURNTRUE:
-					return true;
-				case RETURNFALSE:
-					return false;
-				case RETURN0:
-					return 0;
-				case RETURN1:
-					return 1;
-				default:
-					return null;
-			}
+	/** Iterates the set, so you do not need to write a sync block. */
+	public final <R> R iterate(Function<Iterator<E>, R> func) {
+		synchronized(data) {
+			return func.apply(data.iterator());
 		}
 	}
 
 	/** Iterates the set, so you do not need to write a sync block. */
-	public Object iterate(IterationHandle<E> func) {
+	public final void simpleIterate(Consumer<E> func) {
+		/*
 		synchronized (data) {
-			Iterator<E> it = data.iterator(); // Must be in the synchronized block
-			while (it.hasNext()) {
-				E val = it.next();
-				IterationResult res = func.handle(val);
-				if (res.removeFromSet()) {
-					it.remove();
-				}
-				if (!res.continueIterating()) {
-					return res.getReturnValue();
-				}
+			for (E e : data) {
+				func.accept(e);
 			}
-		}
-		return null;
+		}*/
+		data.forEach(func);
 	}
 
-	public E iterateAsSearch(Function<E, Boolean> check) {
+	public final E iterateAsSearch(Function<E, Boolean> check) {
 		return this.iterateAsSearch(check, null);
 	}
 
-	public E iterateAsSearch(Function<E, Boolean> check, Function<E, Boolean> validity) {
+	public final E iterateAsSearch(Function<E, Boolean> check, Function<E, Boolean> validity) {
 		synchronized (data) {
 			Iterator<E> it = data.iterator(); // Must be in the synchronized block
 			while (it.hasNext()) {
@@ -147,6 +54,30 @@ public class ThreadSafeSet<E> implements Set<E> {
 			}
 		}
 		return null;
+	}
+
+	/** Return true in the function to remove */
+	public final void filterElements(Predicate<E> check) {
+		//synchronized (data) {
+		/*
+			Iterator<E> it = data.iterator(); // Must be in the synchronized block
+			while (it.hasNext()) {
+				E val = it.next();
+				if (check.apply(val)) {
+					it.remove();
+				}
+			}
+		 */
+		data.removeIf(check);
+		//}
+	}
+
+	public final boolean removeIf(Predicate<? super E> filter) {
+		return data.removeIf(filter);
+	}
+
+	public final void forEach(Consumer<? super E> filter) {
+		data.forEach(filter);
 	}
 
 	public final void copyTo(ArrayList<E> li) {

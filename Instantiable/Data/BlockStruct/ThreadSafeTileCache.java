@@ -9,7 +9,7 @@ import Reika.DragonAPI.Instantiable.Data.Collections.ThreadSafeSet;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldLocation;
 
 
-public class ThreadSafeTileCache extends ThreadSafeSet<WorldLocation> {
+public final class ThreadSafeTileCache extends ThreadSafeSet<WorldLocation> {
 
 	/** The class tiles at the locations have to extend to be valid. May be null to indicate even no tile is valid. */
 	public Class tileClass = TileEntity.class;
@@ -17,6 +17,18 @@ public class ThreadSafeTileCache extends ThreadSafeSet<WorldLocation> {
 	public ThreadSafeTileCache setTileClass(Class<? extends TileEntity> c) {
 		tileClass = c;
 		return this;
+	}
+
+	public void filterInvalidTiles(World world, boolean skipOtherDimension) {
+		if (world.isRemote || tileClass == null)
+			return;
+		this.filterElements((WorldLocation val) -> {
+			boolean other = val.dimensionID != world.provider.dimensionId;
+			if (skipOtherDimension && other)
+				return false;
+			TileEntity te = other ? val.getTileEntity() : val.getTileEntity(world);
+			return te == null || !tileClass.isAssignableFrom(te.getClass());
+		});
 	}
 
 	public boolean lookForMatch(World world, boolean skipOtherDimension, TileEntityMatchCheck check) {

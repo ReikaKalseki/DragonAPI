@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -207,6 +208,10 @@ public class ReikaFluidHelper {
 	}
 
 	public static Fluid lookupFluidForBlock(Block b) {
+		if (b == Blocks.lava || b == Blocks.flowing_lava)
+			return FluidRegistry.LAVA;
+		if (b == Blocks.water || b == Blocks.flowing_water)
+			return FluidRegistry.WATER;
 		Fluid f = FluidRegistry.lookupFluidForBlock(b);
 		if (f == null && b instanceof IFluidBlock)
 			f = ((IFluidBlock)b).getFluid();
