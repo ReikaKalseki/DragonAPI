@@ -269,6 +269,8 @@ public abstract class DragonAPIMod {
 
 	public abstract URL getDocumentationSite();
 
+	public abstract URL getBugSite();
+
 	public abstract String getWiki();
 
 	public abstract File getConfigFolder();

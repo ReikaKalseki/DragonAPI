@@ -12,8 +12,10 @@ package Reika.DragonAPI.Base;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.world.IBlockAccess;
@@ -41,6 +43,15 @@ public abstract class BlockTEBase extends Block implements IMoveCheck {
 
 	@Override
 	public abstract TileEntity createTileEntity(World world, int meta);
+
+	@Override
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase e, ItemStack is) {
+		if (e instanceof EntityPlayer) {
+			TileEntityBase te = (TileEntityBase)world.getTileEntity(x, y, z);
+			if (te != null)
+				te.setPlacer((EntityPlayer)e);
+		}
+	}
 
 	@Override
 	public final float getBlockHardness(World world, int x, int y, int z) {

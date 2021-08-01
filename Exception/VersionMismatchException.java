@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,7 +12,7 @@ package Reika.DragonAPI.Exception;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Extras.ModVersion;
 
-public class VersionMismatchException extends DragonAPIException {
+public class VersionMismatchException extends UserErrorException {
 
 	public VersionMismatchException(DragonAPIMod mod, ModVersion v, DragonAPIMod mod2, ModVersion v2, String req) {
 		this(mod, v, mod2.getDisplayName(), v2, req);
@@ -28,7 +28,7 @@ public class VersionMismatchException extends DragonAPIException {
 			message.append("Version "+v+" of "+mod.getDisplayName()+" cannot run with "+mod2+" "+v2+"\n");
 			message.append("Use "+req+" instead!\n");
 		}
-		message.append("This is not a "+mod.getDisplayName()+" bug. Do not post it to "+mod.getDocumentationSite().toString()+" unless you are really stuck.");
+		this.applyDNP(mod);
 		this.crash();
 	}
 

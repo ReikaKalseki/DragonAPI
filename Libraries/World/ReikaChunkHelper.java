@@ -32,6 +32,7 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.gen.ChunkProviderServer;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper.ClassEntitySelector;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -364,5 +365,21 @@ public final class ReikaChunkHelper extends DragonAPICore {
 	public static boolean isSpawn(Chunk c) {
 		ChunkCoordinates spawn = c.worldObj.getSpawnPoint();
 		return c.xPosition == (spawn.posX >> 4) && c.zPosition == (spawn.posZ >> 4);
+	}
+
+	public static Coordinate searchForBlock(World world, int x, int z, Block b) {
+		Chunk c = world.getChunkFromChunkCoords(x, z);
+		for (int i = 0; i < 16; i++) {
+			for (int k = 0; k < 16; k++) {
+				for (int j = 0; j < 256; j++) {
+					int idx = j+256*(i*16+k);
+					ExtendedBlockStorage exb = getStorageInChunk(c, j);
+					Block at = exb != null ? exb.getBlockByExtId(i, j & 15, k) : null;
+					if (at == b)
+						return new Coordinate(c.xPosition*16+i, j, c.zPosition*16+k);
+				}
+			}
+		}
+		return null;
 	}
 }

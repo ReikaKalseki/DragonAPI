@@ -62,6 +62,7 @@ public class DragonAPICore {
 			"after:ComputerCraft;after:ThermalFoundation;after:CarpentersBlocks;after:AgriCraft;after:MineFactoryReloaded;after:ImmersiveEngineering";
 
 	public static final String FORUM_PAGE = "http://www.minecraftforum.net/topic/1969694-";
+	public static final String GITHUB_PAGE = "https://github.com/ReikaKalseki/Reika_Mods_Issues/issues?q=";
 	public static final UUID Reika_UUID = UUID.fromString("e5248026-6874-4954-9a02-aa8910d08f31");
 
 	public static URL getReikaForumPage() {
@@ -70,6 +71,15 @@ public class DragonAPICore {
 		}
 		catch (MalformedURLException e) {
 			throw new RegistrationException(DragonAPIInit.instance, "Reika's mods provided a malformed URL for their documentation site!", e);
+		}
+	}
+
+	public static URL getReikaGithubPage() {
+		try {
+			return new URL(GITHUB_PAGE);
+		}
+		catch (MalformedURLException e) {
+			throw new RegistrationException(DragonAPIInit.instance, "Reika's mods provided a malformed URL for their github site!", e);
 		}
 	}
 

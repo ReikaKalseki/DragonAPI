@@ -689,7 +689,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	/** Breaks a contiguous area of blocks recursively (akin to a fill tool in image editors).
 	 *Args: World, start x, start y, start z, id, metadata (-1 for any) */
-	public static void recursiveBreak(World world, int x, int y, int z, Block id, int meta) {
+	public static void recursiveBreak(World world, int x, int y, int z, Block id, int meta, int fortune) {
 		if (id == Blocks.air)
 			return;
 		if (world.getBlock(x, y, z) != id)
@@ -697,21 +697,25 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
-		ReikaItemHelper.dropItems(world, x, y, z, id.getDrops(world, x, y, z, metad, 0));
+		ReikaItemHelper.dropItems(world, x, y, z, id.getDrops(world, x, y, z, metad, fortune));
 		ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 		world.setBlockToAir(x, y, z);
 		world.markBlockForUpdate(x, y, z);
-		recursiveBreak(world, x+1, y, z, id, meta);
-		recursiveBreak(world, x-1, y, z, id, meta);
-		recursiveBreak(world, x, y+1, z, id, meta);
-		recursiveBreak(world, x, y-1, z, id, meta);
-		recursiveBreak(world, x, y, z+1, id, meta);
-		recursiveBreak(world, x, y, z-1, id, meta);
+		recursiveBreak(world, x+1, y, z, id, meta, fortune);
+		recursiveBreak(world, x-1, y, z, id, meta, fortune);
+		recursiveBreak(world, x, y+1, z, id, meta, fortune);
+		recursiveBreak(world, x, y-1, z, id, meta, fortune);
+		recursiveBreak(world, x, y, z+1, id, meta, fortune);
+		recursiveBreak(world, x, y, z-1, id, meta, fortune);
+	}
+
+	public static void recursiveBreakWithinSphere(World world, int x, int y, int z, Block id, int meta, int x0, int y0, int z0, double r) {
+		recursiveBreakWithinSphere(world, x, y, z, id, meta, x0, y0, z0, r, 0);
 	}
 
 	/** Like the ordinary recursive break but with a spherical bounded volume. Args: World, x, y, z,
 	 *id to replace, metadata to replace (-1 for any), origin x,y,z, max radius */
-	public static void recursiveBreakWithinSphere(World world, int x, int y, int z, Block id, int meta, int x0, int y0, int z0, double r) {
+	public static void recursiveBreakWithinSphere(World world, int x, int y, int z, Block id, int meta, int x0, int y0, int z0, double r, int fortune) {
 		if (id == Blocks.air)
 			return;
 		if (world.getBlock(x, y, z) != id)
@@ -721,21 +725,21 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (ReikaMathLibrary.py3d(x-x0, y-y0, z-z0) > r)
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
-		ReikaItemHelper.dropItems(world, x, y, z, id.getDrops(world, x, y, z, metad, 0));
+		ReikaItemHelper.dropItems(world, x, y, z, id.getDrops(world, x, y, z, metad, fortune));
 		ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 		world.setBlockToAir(x, y, z);
 		world.markBlockForUpdate(x, y, z);
-		recursiveBreakWithinSphere(world, x+1, y, z, id, meta, x0, y0, z0, r);
-		recursiveBreakWithinSphere(world, x-1, y, z, id, meta, x0, y0, z0, r);
-		recursiveBreakWithinSphere(world, x, y+1, z, id, meta, x0, y0, z0, r);
-		recursiveBreakWithinSphere(world, x, y-1, z, id, meta, x0, y0, z0, r);
-		recursiveBreakWithinSphere(world, x, y, z+1, id, meta, x0, y0, z0, r);
-		recursiveBreakWithinSphere(world, x, y, z-1, id, meta, x0, y0, z0, r);
+		recursiveBreakWithinSphere(world, x+1, y, z, id, meta, x0, y0, z0, r, fortune);
+		recursiveBreakWithinSphere(world, x-1, y, z, id, meta, x0, y0, z0, r, fortune);
+		recursiveBreakWithinSphere(world, x, y+1, z, id, meta, x0, y0, z0, r, fortune);
+		recursiveBreakWithinSphere(world, x, y-1, z, id, meta, x0, y0, z0, r, fortune);
+		recursiveBreakWithinSphere(world, x, y, z+1, id, meta, x0, y0, z0, r, fortune);
+		recursiveBreakWithinSphere(world, x, y, z-1, id, meta, x0, y0, z0, r, fortune);
 	}
 
 	/** Like the ordinary recursive break but with a bounded volume. Args: World, x, y, z,
 	 *id to replace, metadata to replace (-1 for any), min x,y,z, max x,y,z */
-	public static void recursiveBreakWithBounds(World world, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2) {
+	public static void recursiveBreakWithBounds(World world, int x, int y, int z, Block id, int meta, int x1, int y1, int z1, int x2, int y2, int z2, int fortune) {
 		if (id == Blocks.air)
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
@@ -745,16 +749,16 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (meta != world.getBlockMetadata(x, y, z) && meta != -1)
 			return;
 		int metad = world.getBlockMetadata(x, y, z);
-		ReikaItemHelper.dropItems(world, x, y, z, id.getDrops(world, x, y, z, metad, 0));
+		ReikaItemHelper.dropItems(world, x, y, z, id.getDrops(world, x, y, z, metad, fortune));
 		ReikaSoundHelper.playBreakSound(world, x, y, z, id);
 		world.setBlockToAir(x, y, z);
 		world.markBlockForUpdate(x, y, z);
-		recursiveBreakWithBounds(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
-		recursiveBreakWithBounds(world, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2);
-		recursiveBreakWithBounds(world, x, y+1, z, id, meta, x1, y1, z1, x2, y2, z2);
-		recursiveBreakWithBounds(world, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2);
-		recursiveBreakWithBounds(world, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2);
-		recursiveBreakWithBounds(world, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2);
+		recursiveBreakWithBounds(world, x+1, y, z, id, meta, x1, y1, z1, x2, y2, z2, fortune);
+		recursiveBreakWithBounds(world, x-1, y, z, id, meta, x1, y1, z1, x2, y2, z2, fortune);
+		recursiveBreakWithBounds(world, x, y+1, z, id, meta, x1, y1, z1, x2, y2, z2, fortune);
+		recursiveBreakWithBounds(world, x, y-1, z, id, meta, x1, y1, z1, x2, y2, z2, fortune);
+		recursiveBreakWithBounds(world, x, y, z+1, id, meta, x1, y1, z1, x2, y2, z2, fortune);
+		recursiveBreakWithBounds(world, x, y, z-1, id, meta, x1, y1, z1, x2, y2, z2, fortune);
 	}
 
 	/** Recursively fills a contiguous area of one block type with another, akin to a fill tool.

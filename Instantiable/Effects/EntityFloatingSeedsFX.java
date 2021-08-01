@@ -44,6 +44,8 @@ public class EntityFloatingSeedsFX extends EntityBlurFX {
 	public EntityFloatingSeedsFX(World world, double x, double y, double z, double windAng, double climbAng, IIcon icon) {
 		super(world, x, y, z, icon);
 
+		this.setColor(0xffffff);
+
 		windAngle = windAng;
 		climbAngle = climbAng;
 

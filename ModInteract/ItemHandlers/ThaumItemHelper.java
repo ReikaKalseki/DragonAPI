@@ -42,6 +42,7 @@ public class ThaumItemHelper {
 		CHARM("ItemResource", 15),
 		VOIDMETAL("ItemResource", 16),
 		VOIDSEED("ItemResource", 17),
+		COIN("ItemResource", 18),
 		PRIMALFOCUS("FocusPrimal"),
 		SALTS("ItemBathSalts"),
 		ELDRITCHEYE("ItemEldritchObject"),

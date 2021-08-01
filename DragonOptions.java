@@ -58,7 +58,7 @@ public enum DragonOptions implements IntegerConfig, BooleanConfig, StringArrayCo
 	BIOMEFIRE("Biome Humidity Dependent Fire Spread", true),
 	ADMINPROFILERS("Restrict profiling abilities to admins", true),
 	BYTECODELIST("Bytecodeexec command user UUID whitelist", new String[0]),
-	CTRLCOLLECT("Automatic Collection of Inventories; set to 'NULL' to disable", Key.LCTRL.name()),
+	CTRLCOLLECT("Automatic Collection of Inventories; set to 'NULL' to disable", Key.LCTRL.name()), //TypeHelper to Website Generator: String
 	AFK("AFK Timer Threshold (Seconds); Set to 0 to Disable", 120), //2 min
 	REROUTEEYES("Reroute Ender Eyes to Stronghold Entrances", false),
 	WORLDSIZE("Expected Approximate Maximum World Size (Radius)", 5000),

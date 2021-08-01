@@ -18,7 +18,7 @@ public class ShuffledGrid {
 		maxDeviation = dev;
 		averageSeparation = sep;
 
-		if (sep >= dev/2) {
+		if (dev >= sep/2) {
 			DragonAPICore.log("Warning, shuffled grid may have row overlap!");
 			Thread.dumpStack();
 		}
