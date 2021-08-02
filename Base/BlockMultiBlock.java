@@ -30,7 +30,7 @@ import Reika.ChromatiCraft.API.Interfaces.UnCopyableBlock;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.RotaryCraft.API.Interfaces.Transducerable;
 
-public abstract class BlockMultiBlock extends Block implements Transducerable, UnCopyableBlock {
+public abstract class BlockMultiBlock<R> extends Block implements Transducerable, UnCopyableBlock {
 
 	private final IIcon[] icons = new IIcon[this.getNumberTextures()];
 	protected static final ForgeDirection[] dirs = ForgeDirection.values();
@@ -41,7 +41,7 @@ public abstract class BlockMultiBlock extends Block implements Transducerable, U
 
 	public abstract int getNumberTextures();
 
-	public abstract boolean checkForFullMultiBlock(World world, int x, int y, int z, ForgeDirection dir);
+	public abstract R checkForFullMultiBlock(World world, int x, int y, int z, ForgeDirection dir);
 
 	@Override
 	public final void onNeighborBlockChange(World world, int x, int y, int z, Block idn) {
@@ -67,10 +67,16 @@ public abstract class BlockMultiBlock extends Block implements Transducerable, U
 	@Override
 	public final void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase e, ItemStack is) {
 		if (!world.isRemote && this.canTriggerMultiBlockCheck(world, x, y, z, world.getBlockMetadata(x, y, z))) {
-			if (e instanceof EntityPlayer)
-				if (this.checkForFullMultiBlock(world, x, y, z, ReikaEntityHelper.getDirectionFromEntityLook(e, false)))
-					this.onCreateFullMultiBlock(world, x, y, z);
+			if (e instanceof EntityPlayer) {
+				R ret = this.checkForFullMultiBlock(world, x, y, z, ReikaEntityHelper.getDirectionFromEntityLook(e, false));
+				if (this.evaluate(ret))
+					this.onCreateFullMultiBlock(world, x, y, z, ret);
+			}
 		}
+	}
+
+	protected boolean evaluate(R ret) {
+		return ret != null && (ret instanceof Boolean ? (boolean)ret : true);
 	}
 
 	@Override
@@ -88,7 +94,7 @@ public abstract class BlockMultiBlock extends Block implements Transducerable, U
 		super.breakBlock(world, x, y, z, oldid, oldmeta);
 	}
 
-	protected abstract void onCreateFullMultiBlock(World world, int x, int y, int z);
+	protected abstract void onCreateFullMultiBlock(World world, int x, int y, int z, R ret);
 
 	public abstract int getNumberVariants();
 
