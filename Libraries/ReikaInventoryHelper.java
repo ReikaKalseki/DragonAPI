@@ -994,7 +994,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 					return true;
 				}
 				else {
-					if (ReikaItemHelper.matchStacks(is, in) && ItemStack.areItemStackTagsEqual(is, in)) {
+					if (ReikaItemHelper.areStacksCombinable(is, in, max)) {
 						int space = max-in.stackSize;
 						int added = Math.min(is.stackSize, space);
 						is.stackSize -= added;
@@ -1165,7 +1165,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 
 	/** Fill-in so one does not need to constantly rewrite the IInventory method */
 	public static ItemStack getStackInSlotOnClosing(IInventory ii, int slot) {
-		if (ii.getStackInSlot(slot) != null){
+		if (ii.getStackInSlot(slot) != null) {
 			ItemStack itemstack = ii.getStackInSlot(slot);
 			ii.setInventorySlotContents(slot, null);
 			return itemstack;

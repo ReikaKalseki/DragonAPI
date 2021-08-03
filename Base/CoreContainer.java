@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -50,19 +50,18 @@ public class CoreContainer extends Container {
 
 	private ArrayList<InventorySlot> relaySlots = new ArrayList();
 
-	public CoreContainer(EntityPlayer player, TileEntity te)
-	{
+	public CoreContainer(EntityPlayer player, TileEntity te) {
+		this(player, te, te instanceof IInventory ? (IInventory)te : null);
+	}
+
+	protected CoreContainer(EntityPlayer player, TileEntity te, IInventory i) {
 		tile = te;
 		posX = tile.xCoord;
 		posY = tile.yCoord;
 		posZ = tile.zCoord;
 		ep = player;
 		//this.detectAndSendChanges();
-
-		if (te instanceof IInventory)
-			ii = (IInventory)te;
-		else
-			ii = null;
+		ii = i;
 	}
 
 	public CoreContainer setAlwaysInteractable() {

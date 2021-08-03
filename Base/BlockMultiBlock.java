@@ -17,6 +17,7 @@ import net.minecraft.client.renderer.texture.IIconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
@@ -28,6 +29,7 @@ import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.ChromatiCraft.API.Interfaces.UnCopyableBlock;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
+import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.RotaryCraft.API.Interfaces.Transducerable;
 
 public abstract class BlockMultiBlock<R> extends Block implements Transducerable, UnCopyableBlock {
@@ -80,7 +82,11 @@ public abstract class BlockMultiBlock<R> extends Block implements Transducerable
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z, Block oldid, int oldmeta) {
+	public final void breakBlock(World world, int x, int y, int z, Block oldid, int oldmeta) {
+		TileEntity te = world.getTileEntity(x, y, z);
+		if (te instanceof IInventory) {
+			ReikaItemHelper.dropInventory(world, x, y, z);
+		}
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = dirs[i];
 			int dx = x+dir.offsetX;
