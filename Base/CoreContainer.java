@@ -309,9 +309,13 @@ public class CoreContainer extends Container {
 	}
 
 	protected void addSlotNoClick(int i, int x, int y) {
+		this.addSlotNoClick(i, x, y, false, true);
+	}
+
+	protected void addSlotNoClick(int i, int x, int y, boolean add, boolean take) {
 		if (ii == null)
 			return;
-		this.addSlotToContainer(new SlotNoClick(ii, i, x, y));
+		this.addSlotToContainer(new SlotNoClick(ii, i, x, y, add, take));
 	}
 
 	@Override

@@ -167,6 +167,9 @@ public class IC2Handler extends ModHandlerBase {
 		U235_TINY("smallUran235"),
 		Pu239_TINY("smallPlutonium"),
 		REFINEDIRON("advIronIngot"),
+		OVERCLOCK("overclockerUpgrade"),
+		TRANSFORMER("transformerUpgrade"),
+		CAPACITY("energyStorageUpgrade"),
 		//RSH(),
 		//LZH(),
 		;

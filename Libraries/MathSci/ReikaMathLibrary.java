@@ -348,8 +348,24 @@ public final class ReikaMathLibrary extends DragonAPICore {
 		return min;
 	}
 
+	public static float multiMin(float... vals) {
+		float min = vals[0];
+		for (int i = 1; i < vals.length; i++) {
+			min = Math.min(min, vals[i]);
+		}
+		return min;
+	}
+
 	public static int multiMax(int... vals) {
 		int max = vals[0];
+		for (int i = 1; i < vals.length; i++) {
+			max = Math.max(max, vals[i]);
+		}
+		return max;
+	}
+
+	public static float multiMax(float... vals) {
+		float max = vals[0];
 		for (int i = 1; i < vals.length; i++) {
 			max = Math.max(max, vals[i]);
 		}
