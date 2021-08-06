@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -16,11 +16,10 @@ import net.minecraft.block.Block;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 
-import Reika.ChromatiCraft.API.TreeGetter;
+import Reika.ChromatiCraft.API.ChromatiAPI;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -150,7 +149,7 @@ public class BlockReplaceCommand extends DragonCommandBase {
 
 		@Override
 		protected boolean replace(Block b, int meta) {
-			return ReikaTreeHelper.getTree(b, meta) != null || ReikaTreeHelper.getTreeFromLeaf(b, meta) != null || ModWoodList.isModWood(b, meta) || ModWoodList.isModLeaf(b, meta) || TreeGetter.isDyeLeaf(new ItemStack(b, 1, meta)) || TreeGetter.isRainbowLeaf(new ItemStack(b, 1, meta));
+			return ReikaTreeHelper.getTree(b, meta) != null || ReikaTreeHelper.getTreeFromLeaf(b, meta) != null || ModWoodList.isModWood(b, meta) || ModWoodList.isModLeaf(b, meta) || ChromatiAPI.trees.isCCLeaf(b);
 		}
 
 	}
