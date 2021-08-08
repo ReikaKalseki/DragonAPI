@@ -43,6 +43,7 @@ import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.item.ItemTool;
+import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
@@ -1024,5 +1025,10 @@ public final class ReikaItemHelper extends DragonAPICore {
 			return am == ArmorMaterial.GOLD || am.getDamageReductionAmount(1) >= 6; //gold or at least 3 hearts worth from chestplate
 		}
 		return false;
+	}
+
+	public static ItemStack cookFood(ItemStack food) {
+		ItemStack smelted = FurnaceRecipes.smelting().getSmeltingResult(food);
+		return smelted != null ? smelted : food;
 	}
 }

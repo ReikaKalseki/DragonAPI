@@ -1392,14 +1392,17 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return ret;
 	}
 
-	public static void doSetHealthDamage(EntityLivingBase e, DamageSource src, float amt) {
+	public static boolean doSetHealthDamage(EntityLivingBase e, DamageSource src, float amt) {
 		if (amt >= e.getHealth()) { //kill
 			e.setHealth(0.1F);
 			e.hurtResistantTime = 0;
 			e.attackEntityFrom(src, Integer.MAX_VALUE); //some mods stop damage less than this
+			return true;
 		}
-		else
+		else {
 			e.setHealth(e.getHealth()-amt);
+			return false;
+		}
 	}
 
 	public static boolean isInWorld(Entity e) {

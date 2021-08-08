@@ -152,7 +152,8 @@ public final class TreeReader extends BlockArray {
 			search.add(c);
 		}
 		else {
-			failed.add(c);		}
+			failed.add(c);
+		}
 	}
 
 	public int getNumberLeaves() {
@@ -226,6 +227,12 @@ public final class TreeReader extends BlockArray {
 					return 15;
 				case FIR:
 					return 50;
+				case PINKBIRCH:
+					return 15;
+				case GIANTPINKTREE:
+					return 160;
+				case REDJUNGLE:
+					return 18;
 				default:
 					return 12;
 			}

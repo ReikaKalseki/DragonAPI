@@ -210,7 +210,7 @@ public class ReikaBeeHelper {
 				addSample.setAccessible(true);
 
 				geneSampleItem = Class.forName("net.bdew.gendustry.items.GeneSample$");
-				geneSampleGetItem = geneSample.getDeclaredMethod("newStack", geneSample);
+				geneSampleGetItem = geneSampleItem.getDeclaredMethod("newStack", geneSample);
 				geneSampleGetItem.setAccessible(true);
 			}
 			catch (Exception e) {
