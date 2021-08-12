@@ -254,6 +254,10 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 		return this;
 	}
 
+	protected boolean isAlphaFade() {
+		return alphaFade;
+	}
+
 	public int getMaxAge() {
 		return particleMaxAge;
 	}

@@ -160,7 +160,7 @@ public class ChunkManager implements LoadingCallback {
 		return ticket;
 	}
 
-	private void forceTicketChunks(Ticket ticket, Collection<ChunkCoordIntPair> chunks) {
+	private synchronized void forceTicketChunks(Ticket ticket, Collection<ChunkCoordIntPair> chunks) {
 		ImmutableSet<ChunkCoordIntPair> ticketChunks = ticket.getChunkList();
 		//ReikaJavaLibrary.pConsole("Parsing ticket "+ticket+", world="+ticket.world+", mod="+ticket.getModId()+", chunks="+chunks);
 		for (ChunkCoordIntPair coord : ticketChunks) {

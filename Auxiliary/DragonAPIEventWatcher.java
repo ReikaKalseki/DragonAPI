@@ -77,6 +77,7 @@ import Reika.DragonAPI.Instantiable.Event.ProfileEvent;
 import Reika.DragonAPI.Instantiable.Event.ProfileEvent.ProfileEventWatcher;
 import Reika.DragonAPI.Instantiable.Event.XPUpdateEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.ChatEvent.ChatEventPost;
+import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderingLoopEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
@@ -414,6 +415,13 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
 	@SubscribeEvent
 	@SideOnly(Side.CLIENT)
+	public void onPlayerLogin(ClientLoginEvent evt) {
+		Minecraft mc = Minecraft.getMinecraft();
+		mc.resize(mc.displayWidth, mc.displayHeight); //shader pipeline fix
+	}
+
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
 	public void onGameLoaded(GameFinishedLoadingEvent evt) throws InterruptedException {
 		this.checkRemoteAssetDownload();
 
@@ -439,7 +447,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 		mc.getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, 1, 0, 0, 0));
 		mc.getSoundHandler().playSound(new PositionedSoundRecord(new ResourceLocation("note.harp"), 1, f, 0, 0, 0));
 
-		mc.resize(mc.displayWidth, mc.displayHeight);
+		//move to load a world mc.resize(mc.displayWidth, mc.displayHeight);
 	}
 
 	private void checkRemoteAssetDownload() throws InterruptedException {

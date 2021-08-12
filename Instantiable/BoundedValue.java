@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
+
+import Reika.DragonAPI.Instantiable.IO.LuaBlock;
 
 
 public class BoundedValue<N extends Number> {
@@ -114,6 +116,15 @@ public class BoundedValue<N extends Number> {
 	public static BoundedValue readFromNBT(NBTTagCompound tag) {
 		try {
 			return new BoundedValue(tag.getDouble("min"), tag.getDouble("max"), tag.getDouble("val"), tag.getDouble("step"), tag.getBoolean("decimal"), Class.forName(tag.getString("type")));
+		}
+		catch (Exception e) {
+			return null;
+		}
+	}
+
+	public static BoundedValue readFromLuaBlock(LuaBlock lb) {
+		try {
+			return new BoundedValue(lb.getDouble("min"), lb.getDouble("max"), lb.getDouble("val"), lb.getDouble("step"), lb.getBoolean("decimal"), Class.forName(lb.getString("type")));
 		}
 		catch (Exception e) {
 			return null;
