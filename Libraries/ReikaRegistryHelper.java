@@ -42,6 +42,7 @@ import Reika.DragonAPI.Base.ISBRH;
 import Reika.DragonAPI.Exception.InstallationException;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Instantiable.ItemBlockCustomLocalization;
+import Reika.DragonAPI.Interfaces.Block.Submergeable;
 import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
 import Reika.DragonAPI.Interfaces.Registry.EnchantmentEnum;
 import Reika.DragonAPI.Interfaces.Registry.EntityEnum;
@@ -108,11 +109,20 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 			if (ModList.WAILA.isLoaded() && InterfaceCache.WAILA.instanceOf(r.getObjectClass())) {
 				LegacyWailaHelper.registerLegacyWAILACompat(r);
 			}
+			validateBlock(mod, r, b);
 		}
 		else {
 			mod.getModLogger().log("Not instantiating Item "+r.getBasicName()+", as it is dummied out.");
 		}
 		return b;
+	}
+
+	private static void validateBlock(DragonAPIMod mod, BlockEnum r, Block b) {
+		if (b instanceof Submergeable && ((Submergeable)b).renderLiquid(0)) {
+			Submergeable s = (Submergeable)b;
+			if (s.getRenderBlockPass() == 0)
+				throw new RegistrationException(mod, "Block "+r+" is submergeable and fillable with liquid but does not render in pass 1!");
+		}
 	}
 
 	/** Instantiates all items and registers them to the game. Uses an Enum[] that implements RegistrationList.

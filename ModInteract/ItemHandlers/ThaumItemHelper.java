@@ -100,6 +100,8 @@ public class ThaumItemHelper {
 		TOTEMNODE("blockAiry", 4),
 		GREATWOODPLANKS("blockWoodenDevice", 6),
 		SILVERWOODPLANKS("blockWoodenDevice", 7),
+		TAINT("blockTaint"),
+		TENDRILS("blockTaintFibres"),
 		;
 
 		public final int metadata;

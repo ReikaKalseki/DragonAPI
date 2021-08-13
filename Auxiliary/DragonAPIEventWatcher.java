@@ -18,6 +18,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -31,7 +33,9 @@ import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -81,10 +85,12 @@ import Reika.DragonAPI.Instantiable.Event.Client.ClientLoginEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderingLoopEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.RenderBlockAtPosEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SettingsEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SkyColorEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.WinterColorsEvent;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
+import Reika.DragonAPI.Interfaces.Block.Submergeable;
 import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
 import Reika.DragonAPI.Interfaces.TileEntity.PlayerBreakHook;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
@@ -141,6 +147,54 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	public void onCall(String tag) {
 		if (tag.equals("debug")) {
 			this.showF3Extras();
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void renderSubmergeable(RenderBlockAtPosEvent evt) {
+		if (evt.block instanceof Submergeable) {
+			Submergeable s = (Submergeable)evt.block;
+			int meta = evt.getMetadata();
+			if (s.isSubmergeable(evt.access, evt.xCoord, evt.yCoord, evt.zCoord) && s.renderLiquid(meta)) {
+				if (evt.renderPass == 1)
+					this.renderWaterInBlock(evt.access, evt.xCoord, evt.yCoord, evt.zCoord, evt.block, meta, Tessellator.instance);
+			}
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	private void renderWaterInBlock(IBlockAccess world, int x, int y, int z, Block block, int meta, Tessellator v5) {
+		Block above = world.getBlock(x, y+1, z);
+		if (above != Blocks.water && above != Blocks.flowing_water && (above != block || world.getBlockMetadata(x, y+1, z) != meta)) {
+			boolean flag = ReikaWorldHelper.hasAdjacentWater(world, x, y, z, false, false);
+			if (!flag) {
+				for (int i = 2; i < 6 && !flag; i++) {
+					ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+					int dx = x+dir.offsetX;
+					int dy = y+dir.offsetY;
+					int dz = z+dir.offsetZ;
+					flag = flag || ReikaWorldHelper.hasAdjacentWater(world, dx, dy, dz, false, true);
+				}
+			}
+			if (flag) {
+				IIcon ico = Blocks.water.getIcon(world, x, y, z, 1);
+				float u = ico.getMinU();
+				float v = ico.getMinV();
+				float du = ico.getMaxU();
+				float dv = ico.getMaxV();
+				//double h = 0.888;
+				RenderBlocks.getInstance().blockAccess = world;
+				double d2 = RenderBlocks.getInstance().getLiquidHeight(x, y, z, Material.water);
+				double d3 = RenderBlocks.getInstance().getLiquidHeight(x, y, z + 1, Material.water);
+				double d4 = RenderBlocks.getInstance().getLiquidHeight(x + 1, y, z + 1, Material.water);
+				double d5 = RenderBlocks.getInstance().getLiquidHeight(x + 1, y, z, Material.water);
+				v5.setColorOpaque_I(Blocks.water.colorMultiplier(world, x, y, z));
+				v5.addVertexWithUV(x, y+d3, z+1, u, dv);
+				v5.addVertexWithUV(x+1, y+d4, z+1, du, dv);
+				v5.addVertexWithUV(x+1, y+d5, z, du, v);
+				v5.addVertexWithUV(x, y+d2, z, u, v);
+			}
 		}
 	}
 
