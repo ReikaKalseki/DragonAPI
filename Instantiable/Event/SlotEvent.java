@@ -128,8 +128,7 @@ public class SlotEvent extends Event {
 		}
 
 		public static boolean fire(Container c, int idx, int button, int modifiers, EntityPlayer ep) {
-			MinecraftForge.EVENT_BUS.post(new InitialClickEvent(c, idx, button, modifiers, ep));
-			cancel?
+			return MinecraftForge.EVENT_BUS.post(new InitialClickEvent(c, idx, button, modifiers, ep));
 		}
 
 	}

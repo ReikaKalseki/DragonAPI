@@ -15,6 +15,7 @@ import net.minecraft.client.shader.Framebuffer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraftforge.common.MinecraftForge;
 
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Auxiliary.Trackers.SpecialDayTracker;
@@ -33,6 +34,7 @@ public class ASMCallsClient {
 	public static void renderCursorStack(GuiContainer gui, ItemStack is, int x, int y, String subtext, RenderItem ir, FontRenderer font, ItemStack drag) {
 		//gui.drawItemStack(is, x, y, subtext);
 		RenderCursorStackEvent evt = new RenderCursorStackEvent(gui, is, x, y);
+		MinecraftForge.EVENT_BUS.post(evt);
 		is = evt.itemToRender;
 
 		GL11.glTranslatef(0.0F, 0.0F, 32.0F);
