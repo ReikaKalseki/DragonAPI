@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -51,6 +51,8 @@ public class LODModelPart extends ModelRenderer {
 	private int textureZ;
 
 	private int displayList = -1;
+
+	private double renderDistanceScalar = 1;
 
 	public LODModelPart(ModelBase baseModel, int textureX, int textureZ) {
 		super(baseModel, textureX, textureZ);
@@ -107,8 +109,7 @@ public class LODModelPart extends ModelRenderer {
 				super.addBox(par1, par2, par3, par4, par5, par6);
 			}
 		}
-		float size = this.calculateVolume();
-		renderDistanceSqr = this.calculateRenderDistance(size);
+		renderDistanceSqr = -1;
 	}
 
 	public final void addBox(LODModelPart model) {
@@ -127,8 +128,7 @@ public class LODModelPart extends ModelRenderer {
 			//ReikaJavaLibrary.pConsole(b+" moves to "+b2+" rot "+b2.rotationX+", "+b2.rotationY+", "+b2.rotationZ, (model.rotateAngleX != 0 || model.rotateAngleY != 0 || model.rotateAngleZ != 0));
 			cubeList.add(b2);
 		}
-		float size = this.calculateVolume();
-		renderDistanceSqr = this.calculateRenderDistance(size);
+		renderDistanceSqr = -1;
 	}
 
 	@Override
@@ -145,6 +145,12 @@ public class LODModelPart extends ModelRenderer {
 		return (ModelBox)cubeList.get(idx);
 	}
 
+	public final LODModelPart setRenderDistanceScalar(double d) {
+		renderDistanceScalar = d;
+		renderDistanceSqr = -1;
+		return this;
+	}
+
 	private final float calculateVolume() {
 		ModelBox box = this.getBox(cubeList.size()-1);
 		float x = box.posX1-box.posX2;
@@ -153,7 +159,8 @@ public class LODModelPart extends ModelRenderer {
 		return Math.abs(x*y*z);
 	}
 
-	private double calculateRenderDistance(float size) {
+	private double calculateRenderDistance() {
+		float size = this.calculateVolume();
 		int d = 0;
 		if (size > 1024) {
 			d = 16384;
@@ -179,10 +186,12 @@ public class LODModelPart extends ModelRenderer {
 		else {
 			d = 0;
 		}
-		return Math.max(renderDistanceSqr, d);
+		return Math.max(renderDistanceSqr, d)*renderDistanceScalar;
 	}
 
 	public final boolean shouldRender(double dist_squared) {
+		if (renderDistanceSqr < 0)
+			renderDistanceSqr = this.calculateRenderDistance();
 		return GuiScreen.isCtrlKeyDown() || renderDistanceSqr*this.getDistanceMultiplier() >= dist_squared;
 	}
 

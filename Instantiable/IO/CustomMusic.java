@@ -100,4 +100,9 @@ public class CustomMusic implements ISound {
 		sh.playSound(this);
 	}
 
+	@Override
+	public final String toString() {
+		return "Music "+path+" = "+this.getClass().getName();
+	}
+
 }

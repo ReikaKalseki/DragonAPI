@@ -24,6 +24,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.builtbroken.mc.api.items.energy.IEnergyItem;
+import com.google.common.base.Strings;
 
 import net.machinemuse.api.electricity.MuseElectricItem;
 import net.minecraft.block.Block;
@@ -284,7 +285,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 		return false;
 	}
 
-	public static ItemStack getSizedItemStack(ItemStack is, int num) {
+	public static ItemStack getSizedItemStack(ItemStack is, int num) {/*
 		if (is == null)
 			return null;
 		if (is.getItem() == null)
@@ -294,6 +295,11 @@ public final class ReikaItemHelper extends DragonAPICore {
 		ItemStack is2 = new ItemStack(is.getItem(), num, is.getItemDamage());
 		if (is.stackTagCompound != null)
 			is2.stackTagCompound = (NBTTagCompound)is.stackTagCompound.copy();
+		return is2;*/
+		if (is == null || is.getItem() == null || num <= 0)
+			return null;
+		ItemStack is2 = is.copy();
+		is2.stackSize = num;
 		return is2;
 	}
 
@@ -734,6 +740,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static ItemStack lookupItem(String s) {
+		if (Strings.isNullOrEmpty(s))
+			throw new IllegalArgumentException("Invalid item string lookup os null or empty");
 		String[] parts = s.split(":");
 		int m = 0;
 		if (parts.length == 3) {

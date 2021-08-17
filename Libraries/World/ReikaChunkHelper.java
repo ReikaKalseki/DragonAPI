@@ -382,4 +382,14 @@ public final class ReikaChunkHelper extends DragonAPICore {
 		}
 		return null;
 	}
+
+	public static ArrayList<Coordinate> getChunkCoords(int x, int z) {
+		ArrayList<Coordinate> ret = new ArrayList();
+		for (int i = 0; i < 16; i++) {
+			for (int k = 0; k < 16; k++) {
+				ret.add(new Coordinate(x+i, 0, z+k));
+			}
+		}
+		return ret;
+	}
 }

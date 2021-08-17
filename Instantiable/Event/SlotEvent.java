@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Event;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
@@ -97,6 +98,38 @@ public class SlotEvent extends Event {
 
 		public final ItemStack getItem() {
 			return removed != null ? removed.copy() : removed;
+		}
+
+	}
+
+	@Cancelable
+	public static class InitialClickEvent extends SlotEvent {
+
+		public final Container container;
+		public final EntityPlayer player;
+		public final int mouseButton;
+		public final int modifiers;
+
+		public InitialClickEvent(Container c, int id, int b, int m, EntityPlayer ep) {
+			super(id, getInvFromSlot(c, id));
+			container = c;
+			player = ep;
+			mouseButton = b;
+			modifiers = m;
+		}
+
+		private static IInventory getInvFromSlot(Container c, int id) {
+			if (id < 0)
+				return null;
+			if (id >= c.inventorySlots.size())
+				return null;
+			Slot s = c.getSlot(id);
+			return s != null ? s.inventory : null;
+		}
+
+		public static boolean fire(Container c, int idx, int button, int modifiers, EntityPlayer ep) {
+			MinecraftForge.EVENT_BUS.post(new InitialClickEvent(c, idx, button, modifiers, ep));
+			cancel?
 		}
 
 	}

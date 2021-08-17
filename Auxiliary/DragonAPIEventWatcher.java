@@ -88,10 +88,13 @@ import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.RenderBlockAtPosEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SettingsEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SkyColorEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.SoundAttenuationDistanceEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.WinterColorsEvent;
+import Reika.DragonAPI.Instantiable.IO.EnumSound;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Interfaces.Block.Submergeable;
 import Reika.DragonAPI.Interfaces.Entity.DestroyOnUnload;
+import Reika.DragonAPI.Interfaces.Registry.CustomDistanceSound;
 import Reika.DragonAPI.Interfaces.TileEntity.PlayerBreakHook;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.ReikaEnchantmentHelper;
@@ -152,6 +155,19 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
 	@SideOnly(Side.CLIENT)
 	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void soundEnumDistance(SoundAttenuationDistanceEvent evt) {
+		if (evt.sound instanceof EnumSound) {
+			EnumSound es = (EnumSound)evt.sound;
+			if (es.sound instanceof CustomDistanceSound) {
+				float dist = ((CustomDistanceSound)es.sound).getAudibleDistance();
+				if (dist > 0)
+					evt.distance = dist;
+			}
+		}
+	}
+
+	@SideOnly(Side.CLIENT)
+	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void renderSubmergeable(RenderBlockAtPosEvent evt) {
 		if (evt.block instanceof Submergeable) {
 			Submergeable s = (Submergeable)evt.block;
@@ -166,7 +182,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SideOnly(Side.CLIENT)
 	private void renderWaterInBlock(IBlockAccess world, int x, int y, int z, Block block, int meta, Tessellator v5) {
 		Block above = world.getBlock(x, y+1, z);
-		if (above != Blocks.water && above != Blocks.flowing_water && (above != block || world.getBlockMetadata(x, y+1, z) != meta)) {
+		if (above != Blocks.water && above != Blocks.flowing_water && !ReikaWorldHelper.hasAdjacentWater(world, x, y+1, z, false, false)) {
 			boolean flag = ReikaWorldHelper.hasAdjacentWater(world, x, y, z, false, false);
 			if (!flag) {
 				for (int i = 2; i < 6 && !flag; i++) {

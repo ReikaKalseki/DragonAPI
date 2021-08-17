@@ -2,7 +2,6 @@ package Reika.DragonAPI.Instantiable.Data;
 
 import java.util.Random;
 
-import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
 public class ShuffledGrid {
@@ -14,16 +13,23 @@ public class ShuffledGrid {
 	private final boolean[][] data;
 
 	public ShuffledGrid(int size, int dev, int sep) {
+		this(size, dev, sep, false);
+	}
+
+	public ShuffledGrid(int size, int dev, int sep, boolean allowOverlap) {
 		gridSize = size;
 		maxDeviation = dev;
 		averageSeparation = sep;
 
-		if (dev >= sep/2) {
-			DragonAPICore.log("Warning, shuffled grid may have row overlap!");
-			Thread.dumpStack();
+		if (dev >= sep/2 && !allowOverlap) {
+			throw new IllegalArgumentException("Shuffled grid may have row overlap: "+sep+" +/- "+dev+"!");
 		}
 
 		data = new boolean[size][size];
+	}
+
+	public void calculate(long seed) {
+		this.calculate(new Random(seed));
 	}
 
 	public void calculate(Random rand) {

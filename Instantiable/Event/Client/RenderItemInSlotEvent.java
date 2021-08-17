@@ -31,7 +31,7 @@ public class RenderItemInSlotEvent extends Event {
 	public final int slotX;
 	public final int slotY;
 	private final GuiContainer gui;
-	private final Slot slot;
+	public final Slot slot;
 
 	public RenderItemInSlotEvent(GuiContainer c, Slot s) {
 		item = s.getStack();
@@ -40,6 +40,15 @@ public class RenderItemInSlotEvent extends Event {
 		slotY = s.yDisplayPosition;
 		gui = c;
 		slot = s;
+	}
+
+	protected RenderItemInSlotEvent(GuiContainer c, ItemStack is, int x, int y) {
+		item = is;
+		slotIndex = -1;
+		slotX = x;
+		slotY = y;
+		gui = c;
+		slot = null;
 	}
 
 	public ItemStack getItem() {
@@ -80,6 +89,12 @@ public class RenderItemInSlotEvent extends Event {
 		MinecraftForge.EVENT_BUS.post(new Pre(gc, s));
 	}
 
+	public static ItemStack fireMid(ItemStack is, GuiContainer gc, Slot s) {
+		Mid mid = new Mid(gc, s, is);
+		MinecraftForge.EVENT_BUS.post(mid);
+		return mid.itemToRender;
+	}
+
 	public static void firePost(GuiContainer gc, Slot s) {
 		MinecraftForge.EVENT_BUS.post(new Post(gc, s));
 	}
@@ -88,6 +103,17 @@ public class RenderItemInSlotEvent extends Event {
 
 		public Pre(GuiContainer c, Slot s) {
 			super(c, s);
+		}
+
+	}
+
+	public static class Mid extends RenderItemInSlotEvent {
+
+		public ItemStack itemToRender;
+
+		public Mid(GuiContainer c, Slot s, ItemStack is) {
+			super(c, s);
+			itemToRender = is;
 		}
 
 	}
