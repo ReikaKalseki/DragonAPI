@@ -28,7 +28,6 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityFlying;
 import net.minecraft.entity.EntityList;
-import net.minecraft.entity.EntityList.EntityEggInfo;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
@@ -836,7 +835,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	public static boolean isTameHostile(String mob) {
 		return TameHostile.class.isAssignableFrom((Class)EntityList.stringToClassMapping.get(mob));
 	}
-
+	/*
 	@Deprecated //Too easy to #%$^ up
 	public static void overrideEntity(Class mobClass, String name, int entityID) {
 		EntityEggInfo info = (EntityEggInfo)EntityList.entityEggs.get(entityID);
@@ -877,7 +876,7 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		EntityList.entityEggs.remove(entityID);
 		EntityList.IDtoClassMapping.remove(entityID);
 	}
-
+	 */
 	private static EntityCreeper dummy;
 
 	public static EntityLivingBase getDummyMob(World world, double x, double y, double z) {

@@ -14,8 +14,11 @@ import java.util.Arrays;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 import Reika.DragonAPI.Libraries.ReikaInventoryHelper;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 
 public abstract class BasicInventory implements IInventory {
 
@@ -94,6 +97,40 @@ public abstract class BasicInventory implements IInventory {
 
 	public final ItemStack[] getItems() {
 		return Arrays.copyOf(inv, inv.length);
+	}
+
+	public void writeToNBT(NBTTagCompound root, String tag) {
+		NBTTagCompound NBT = new NBTTagCompound();
+		NBTTagList nbttaglist = new NBTTagList();
+
+		for (int i = 0; i < inv.length; i++) {
+			if (inv[i] != null) {
+				NBTTagCompound nbttagcompound = new NBTTagCompound();
+				nbttagcompound.setByte("Slot", (byte)i);
+				inv[i].writeToNBT(nbttagcompound);
+				nbttaglist.appendTag(nbttagcompound);
+			}
+		}
+
+		NBT.setTag("Items", nbttaglist);
+		root.setTag(tag, NBT);
+	}
+
+	public void readFromNBT(NBTTagCompound root, String tag) {
+		inv = new ItemStack[this.getSizeInventory()];
+		NBTTagCompound NBT = root.getCompoundTag(tag);
+		if (NBT == null || NBT.hasNoTags())
+			return;
+		NBTTagList nbttaglist = NBT.getTagList("Items", NBTTypes.COMPOUND.ID);
+
+		for (int i = 0; i < nbttaglist.tagCount(); i++) {
+			NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+			byte byte0 = nbttagcompound.getByte("Slot");
+
+			if (byte0 >= 0 && byte0 < inv.length) {
+				inv[byte0] = ItemStack.loadItemStackFromNBT(nbttagcompound);
+			}
+		}
 	}
 
 }

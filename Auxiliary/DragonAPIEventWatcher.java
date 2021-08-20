@@ -70,6 +70,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.VersionTransitionTracker;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Exception.WTFException;
 import Reika.DragonAPI.Extras.ChangePacketRenderer;
+import Reika.DragonAPI.Extras.WorldAccessHooks;
 import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Interpolation;
 import Reika.DragonAPI.Instantiable.Event.AddRecipeEvent;
@@ -151,6 +152,11 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 		if (tag.equals("debug")) {
 			this.showF3Extras();
 		}
+	}
+
+	@SubscribeEvent
+	public void addWorldHooks(WorldEvent.Load evt) {
+		evt.world.addWorldAccess(new WorldAccessHooks(evt.world));
 	}
 
 	@SideOnly(Side.CLIENT)

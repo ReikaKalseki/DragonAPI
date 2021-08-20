@@ -78,7 +78,7 @@ public abstract class BlockMultiBlock<R> extends Block implements Transducerable
 	}
 
 	protected boolean evaluate(R ret) {
-		return ret != null && (ret instanceof Boolean ? (boolean)ret : true);
+		return ret != null && (ret instanceof Boolean ? (Boolean)ret : true);
 	}
 
 	@Override

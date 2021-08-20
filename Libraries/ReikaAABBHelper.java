@@ -295,4 +295,12 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		box.minZ = Math.min(box.minZ, nz);
 	}
 
+	public static AxisAlignedBB getPointAABB(double x, double y, double z, double r) {
+		return getPointAABB(x, y, z, r, r);
+	}
+
+	public static AxisAlignedBB getPointAABB(double x, double y, double z, double rxz, double ry) {
+		return AxisAlignedBB.getBoundingBox(x-rxz, y-ry, z-rxz, x+rxz, y+ry, z+rxz);
+	}
+
 }

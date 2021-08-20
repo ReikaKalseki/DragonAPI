@@ -279,7 +279,7 @@ public final class MultiMap<K, V> {
 	}
 
 	public void removeValue(V val) {
-		for (K key : this.keySet()) {
+		for (K key : new ArrayList<K>(this.keySet())) {
 			this.remove(key, val);
 		}
 	}

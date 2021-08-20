@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.Java;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -304,19 +305,31 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 		return f;
 	}
 
-	public static Method getProtectedInheritedMethod(Object o, String method, Class... types) {
+	public static Executable getProtectedInheritedMethod(Object o, String method, Class... types) {
 		return getProtectedInheritedMethod(o.getClass(), method, types);
 	}
 
 	/** Gets a nonvisible Method that may be inherited by any of the superclasses. Returns null if none exists. */
-	public static Method getProtectedInheritedMethod(Class c, String method, Class... types) {
-		Method f = null;
-		while (f == null && c != null) {
-			try {
-				f = c.getDeclaredMethod(method, types);
+	public static Executable getProtectedInheritedMethod(Class c, String method, Class... types) {
+		Executable f = null;
+		if (method.equals("<init>")) {
+			while (f == null && c != null) {
+				try {
+					f = c.getDeclaredConstructor(types);
+				}
+				catch (NoSuchMethodException e2) {
+					c = c.getSuperclass();
+				}
 			}
-			catch (NoSuchMethodException e2) {
-				c = c.getSuperclass();
+		}
+		else {
+			while (f == null && c != null) {
+				try {
+					f = c.getDeclaredMethod(method, types);
+				}
+				catch (NoSuchMethodException e2) {
+					c = c.getSuperclass();
+				}
 			}
 		}
 		return f;

@@ -1,14 +1,15 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
+import java.lang.reflect.Executable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -66,7 +67,11 @@ public class ReflectionCommand extends ReflectiveBasedCommand {
 				this.error(ics, e.toString());
 				return;
 			}
-			m = ReikaReflectionHelper.getProtectedInheritedMethod(c, args[1], types);
+			Executable e = ReikaReflectionHelper.getProtectedInheritedMethod(c, args[1], types);
+			if (e instanceof Method)
+				m = (Method)e;
+			else
+				this.error(ics, "Method is not a method (eg is a constructor)");
 		}
 
 		if (f == null && m == null) {
