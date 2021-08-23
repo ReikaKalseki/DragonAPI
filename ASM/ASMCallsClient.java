@@ -72,11 +72,13 @@ public class ASMCallsClient {
 	}
 
 	public static void onCallChunkRenderLists(RenderGlobal rg, int pass, double ptick) {
+		ShaderRegistry.flagShaderDomain(ShaderDomain.WORLD);
 		rg.renderAllRenderLists(pass, ptick);
 	}
 
 	public static void onRenderWorld(EntityRenderer er, float ptick, long systime) {
 		er.renderWorld(ptick, systime);
+		ShaderRegistry.completeActiveShaderType();
 		Minecraft mc = Minecraft.getMinecraft();
 		ReikaShader.instance.render(mc);
 		ShaderRegistry.runShaderDomain(mc.getFramebuffer(), mc.displayWidth, mc.displayHeight, ShaderDomain.GLOBALNOGUI);

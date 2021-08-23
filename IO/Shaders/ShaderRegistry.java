@@ -43,7 +43,10 @@ public class ShaderRegistry {
 
 	private static String BASE_DATA;
 
+	private static WorldShaderHandler worldShaderSystem;
+
 	private static ShaderProgram currentlyRunning;
+	private static ShaderDomain activeType;
 
 	public static ShaderProgram createShader(DragonAPIMod mod, String id, Class root, String pathPre, ShaderDomain dom) {
 		if (!OpenGlHelper.shadersSupported)
@@ -211,7 +214,31 @@ public class ShaderRegistry {
 		return sb.toString();
 	}
 
+	public static void flagShaderDomain(ShaderDomain sd) {
+		activeType = sd;
+		if (sd == ShaderDomain.WORLD && worldShaderSystem != null) {
+			worldShaderSystem.onPreWorldRender();
+		}
+	}
+
+	public static void completeActiveShaderType() {
+		if (activeType != null) {
+			if (activeType == ShaderDomain.WORLD) {
+				if (worldShaderSystem != null)
+					worldShaderSystem.onPostWorldRender();
+			}
+			activeType = null;
+		}
+	}
+
+	public static void registerWorldShaderSystem(WorldShaderHandler ws) {
+		if (worldShaderSystem != null)
+			throw new RegistrationException(ws.getMod(), "A world shader system ("+worldShaderSystem+") is already registered, so another ("+ws+") cannot be.");
+		worldShaderSystem = ws;
+	}
+
 	public static void runShaderDomain(Framebuffer fb, int w, int h, ShaderDomain sd) {
+		flagShaderDomain(sd);
 		ArrayList<ShaderProgram> li = shaderSets.get(sd);
 		if (li != null) {
 			//Matrix4f model = ReikaRenderHelper.getModelviewMatrix();
@@ -220,6 +247,7 @@ public class ShaderRegistry {
 				ReikaRenderHelper.renderFrameBufferToItself(fb, w, h, s);
 			}
 		}
+		completeActiveShaderType();
 	}
 
 	public static String parseError(int programID) {
@@ -227,7 +255,8 @@ public class ShaderRegistry {
 	}
 
 	public static enum ShaderDomain {
-		BLOCK, /** note there can only be one active "WORLD" shader! */
+		//BLOCK,
+		/** note there can only be one active "WORLD" shader! */
 		WORLD,
 		TESR,
 		ENTITY,
@@ -248,6 +277,15 @@ public class ShaderRegistry {
 			glValue = id;
 			extension = s;
 		}
+	}
+
+	public static interface WorldShaderHandler {
+
+		public DragonAPIMod getMod();
+
+		public void onPreWorldRender();
+		public void onPostWorldRender();
+
 	}
 
 }
