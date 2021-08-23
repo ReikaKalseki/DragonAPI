@@ -15,12 +15,14 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockSapling;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
+import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaTreeHelper;
 
 public abstract class ModifiableBigTree extends WorldGenAbstractTree {
@@ -60,6 +62,14 @@ public abstract class ModifiableBigTree extends WorldGenAbstractTree {
 	//protected int minBranchHeight;
 	/** The minimum height of the tree. */
 	protected int minHeight = 5;
+
+	protected int trunkBottom = 256;
+	protected int trunkTop = -1;
+
+	protected int topLeaf = -1;
+	protected int bottomLeaf = 256;
+
+	private final AxisAlignedBB boundingBox = AxisAlignedBB.getBoundingBox(Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY, Double.NEGATIVE_INFINITY);
 
 	protected final boolean doUpdates;
 
@@ -172,11 +182,35 @@ public abstract class ModifiableBigTree extends WorldGenAbstractTree {
 					else {
 						BlockKey leaf = this.getLeafBlock(pos2[0], pos2[1], pos2[2]);
 						this.setBlockAndNotifyAdequately(world, pos2[0], pos2[1], pos2[2], leaf.blockID, leaf.metadata);
+						this.addCoord(pos2);
+						int dy = pos2[1]+globalOffset[1];
+						topLeaf = Math.max(dy, topLeaf);
+						bottomLeaf = Math.min(dy, bottomLeaf);
 						++j1;
 					}
 				}
 			}
 		}
+	}
+
+	private void addCoord(int[] pos) {
+		int x = pos[0]+globalOffset[0];
+		int y = pos[1]+globalOffset[1];
+		int z = pos[2]+globalOffset[2];
+		boundingBox.minX = Math.min(boundingBox.minX, x);
+		boundingBox.maxX = Math.min(boundingBox.maxX, x);
+		boundingBox.minY = Math.min(boundingBox.minY, y);
+		boundingBox.maxY = Math.min(boundingBox.maxY, y);
+		boundingBox.minZ = Math.min(boundingBox.minY, z);
+		boundingBox.maxZ = Math.min(boundingBox.maxY, z);
+	}
+
+	protected final AxisAlignedBB getBoundingBox() {
+		return ReikaAABBHelper.copyAABB(boundingBox);
+	}
+
+	protected final double getHeightFraction(int y) {
+		return (y-boundingBox.minY)/(boundingBox.maxY-boundingBox.minY);
 	}
 
 	protected BlockKey getLogBlock(int x, int y, int z) {
@@ -278,6 +312,10 @@ public abstract class ModifiableBigTree extends WorldGenAbstractTree {
 				}
 
 				this.setBlockAndNotifyAdequately(world, pos3[0], pos3[1], pos3[2], log.blockID, b5);
+				this.addCoord(pos3);
+				int y = pos3[1]+globalOffset[1];
+				trunkTop = Math.max(y, trunkTop);
+				trunkBottom = Math.min(y, trunkBottom);
 			}
 		}
 	}

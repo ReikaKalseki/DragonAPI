@@ -23,7 +23,7 @@ public class SlotClickToTakeEvent extends Patcher {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_75144_a", "slotClick", "(IIILnet/minecraft/entity/player/EntityPlayer;)Lnet/minecraft/item/ItemStack;");
 		MethodInsnNode min = ReikaASMHelper.getNthMethodCallByName(cn, m, FMLForgePlugin.RUNTIME_DEOBF ? "func_82869_a" : "canTakeStack", 2);
 		min.setOpcode(Opcodes.INVOKESTATIC);
-		min.owner = "Reika/DragonAPI/Instantiable/Event/SlotEvent$ClickSlotEvent";
+		min.owner = "Reika/DragonAPI/Instantiable/Event/SlotEvent$ClickItemInSlotEvent";
 		min.name = "fire";
 		min.desc = "(Lnet/minecraft/inventory/Slot;Lnet/minecraft/entity/player/EntityPlayer;I)Z";
 		m.instructions.insertBefore(min, new VarInsnNode(Opcodes.ILOAD, 2));

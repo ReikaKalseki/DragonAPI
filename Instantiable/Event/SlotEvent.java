@@ -19,7 +19,6 @@ import net.minecraftforge.common.MinecraftForge;
 import cpw.mods.fml.common.eventhandler.Cancelable;
 import cpw.mods.fml.common.eventhandler.Event;
 
-@Cancelable
 public class SlotEvent extends Event {
 
 	public final int slotID;
@@ -30,15 +29,17 @@ public class SlotEvent extends Event {
 		inventory = ii;
 	}
 
-	/** For this one, cancel the event to prevent the normal pickup/split/swap behavior */
-	public static class ClickSlotEvent extends SlotEvent {
+	/** Fired when trying to remove a stack from a slot.
+	 Cancel the event to prevent the normal pickup/split/swap behavior */
+	@Cancelable
+	public static class ClickItemInSlotEvent extends SlotEvent {
 
 		public final int buttonID;
 		public final ItemStack itemInSlot;
 		public final Slot slot;
 		public final EntityPlayer player;
 
-		public ClickSlotEvent(int id, IInventory ii, Slot s, EntityPlayer ep, int button) {
+		public ClickItemInSlotEvent(int id, IInventory ii, Slot s, EntityPlayer ep, int button) {
 			super(id, ii);
 			slot = s;
 			itemInSlot = slot.getStack();
@@ -47,7 +48,7 @@ public class SlotEvent extends Event {
 		}
 
 		public static boolean fire(Slot s, EntityPlayer ep, int button) {
-			if (MinecraftForge.EVENT_BUS.post(new ClickSlotEvent(s.getSlotIndex(), s.inventory, s, ep, button)))
+			if (MinecraftForge.EVENT_BUS.post(new ClickItemInSlotEvent(s.getSlotIndex(), s.inventory, s, ep, button)))
 				return false;
 			return s.canTakeStack(ep);
 		}

@@ -392,10 +392,11 @@ public class ProgressiveRecursiveBreaker implements TickHandler {
 			depth = 200;
 		if (tree == ModWoodList.DARKWOOD)
 			depth = 32;
-		if (tree == ModWoodList.PINKBIRCH)
-			depth = 240;
+		if (tree == ModWoodList.GIANTPINKTREE)
+			depth = 180;
 		ProgressiveBreaker b = new ProgressiveBreaker(world, x, y, z, depth, ids);
 		b.extraSpread = true;
+		b.bounds = tree.getTypicalMaximumSize().offset(x, y, z);
 		return b;
 	}
 

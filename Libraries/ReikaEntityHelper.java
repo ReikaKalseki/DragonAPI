@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
@@ -1515,6 +1516,14 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		NBTTagCompound tag = new NBTTagCompound();
 		e.writeEntityToNBT(tag);
 		return tag.getInteger("Anger") > 0;
+	}
+
+	public static Entity getEntityByUID(World world, UUID uid) {
+		for (Entity e : ((List<Entity>)world.loadedEntityList)) {
+			if (e.getUniqueID().equals(uid))
+				return e;
+		}
+		return null;
 	}
 
 }
