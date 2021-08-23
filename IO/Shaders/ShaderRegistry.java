@@ -2,6 +2,7 @@ package Reika.DragonAPI.IO.Shaders;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.IntBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -43,10 +44,16 @@ public class ShaderRegistry {
 
 	private static String BASE_DATA;
 
-	private static WorldShaderHandler worldShaderSystem;
+	private static WorldShaderSystem worldShaderSystem;
 
 	private static ShaderProgram currentlyRunning;
 	private static ShaderDomain activeType;
+
+	public static void registerWorldShaderSystem(WorldShaderSystem ws) {
+		if (worldShaderSystem != null)
+			throw new RegistrationException(ws.getMod(), "A world shader system ("+worldShaderSystem+") is already registered, so another ("+ws+") cannot be.");
+		worldShaderSystem = ws;
+	}
 
 	public static ShaderProgram createShader(DragonAPIMod mod, String id, Class root, String pathPre, ShaderDomain dom) {
 		if (!OpenGlHelper.shadersSupported)
@@ -231,10 +238,10 @@ public class ShaderRegistry {
 		}
 	}
 
-	public static void registerWorldShaderSystem(WorldShaderHandler ws) {
-		if (worldShaderSystem != null)
-			throw new RegistrationException(ws.getMod(), "A world shader system ("+worldShaderSystem+") is already registered, so another ("+ws+") cannot be.");
-		worldShaderSystem = ws;
+	public static void applyWorldShaders(IntBuffer lists) {
+		if (worldShaderSystem == null || !worldShaderSystem.apply(lists)) {
+			GL11.glCallLists(lists);
+		}
 	}
 
 	public static void runShaderDomain(Framebuffer fb, int w, int h, ShaderDomain sd) {
@@ -279,11 +286,12 @@ public class ShaderRegistry {
 		}
 	}
 
-	public static interface WorldShaderHandler {
+	public static interface WorldShaderSystem {
 
 		public DragonAPIMod getMod();
 
 		public void onPreWorldRender();
+		public boolean apply(IntBuffer lists);
 		public void onPostWorldRender();
 
 	}

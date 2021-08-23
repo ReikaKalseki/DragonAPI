@@ -1,5 +1,7 @@
 package Reika.DragonAPI.ASM;
 
+import java.nio.IntBuffer;
+
 import org.lwjgl.opengl.GL11;
 
 import net.minecraft.block.Block;
@@ -74,6 +76,10 @@ public class ASMCallsClient {
 	public static void onCallChunkRenderLists(RenderGlobal rg, int pass, double ptick) {
 		ShaderRegistry.flagShaderDomain(ShaderDomain.WORLD);
 		rg.renderAllRenderLists(pass, ptick);
+	}
+
+	public static void callWorldGlLists(IntBuffer lists) {
+		ShaderRegistry.applyWorldShaders(lists);
 	}
 
 	public static void onRenderWorld(EntityRenderer er, float ptick, long systime) {
