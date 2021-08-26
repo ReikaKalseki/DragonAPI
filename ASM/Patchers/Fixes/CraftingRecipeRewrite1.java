@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -19,6 +19,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaASMHelper.PrimitiveType;
 
 @Deprecated
 public class CraftingRecipeRewrite1 extends Patcher {
@@ -47,7 +48,7 @@ public class CraftingRecipeRewrite1 extends Patcher {
 		m.instructions.clear();
 		int i = 1;
 		for (String s : ReikaASMHelper.parseMethodArguments(m)) {
-			m.instructions.add(new VarInsnNode(ReikaASMHelper.getLoadOpcodeForArgument(s), i));
+			m.instructions.add(new VarInsnNode(PrimitiveType.getFromSig(s).loadCode, i));
 			i++;
 		}
 		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Extras/ReplacementCraftingHandler", newname, m.desc, false));

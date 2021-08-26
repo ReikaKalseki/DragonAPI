@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -30,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Extras.ReplacementSmeltingHandler;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaASMHelper.PrimitiveType;
 
 
 public class FurnaceRecipeRewrite extends Patcher {
@@ -95,7 +96,7 @@ public class FurnaceRecipeRewrite extends Patcher {
 					InsnList args = new InsnList();
 					int i = 1;
 					for (String s : ReikaASMHelper.parseMethodArguments(m)) {
-						args.add(new VarInsnNode(ReikaASMHelper.getLoadOpcodeForArgument(s), i));
+						args.add(new VarInsnNode(PrimitiveType.getFromSig(s).loadCode, i));
 						i++;
 					}
 

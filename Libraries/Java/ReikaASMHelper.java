@@ -251,6 +251,14 @@ public class ReikaASMHelper {
 		return false;
 	}
 
+	public static boolean isReturn(AbstractInsnNode ain) {
+		if (ain instanceof InsnNode) {
+			int code = ain.getOpcode();
+			return code == Opcodes.RETURN || code == Opcodes.IRETURN || code == Opcodes.LRETURN || code == Opcodes.FRETURN || code == Opcodes.DRETURN || code == Opcodes.ARETURN;
+		}
+		return false;
+	}
+
 	public static void insertNAfter(MethodNode m, AbstractInsnNode root, AbstractInsnNode arg, int n) {
 		for (int i = 0; i < n; i++) {
 			root = root.getNext();
@@ -410,6 +418,10 @@ public class ReikaASMHelper {
 		t.print(new PrintWriter(sw));
 		t.getText().clear();
 		return sw.toString();
+	}
+
+	public static String clearString(MethodNode m) {
+		return m.name+" "+m.desc+" ["+Integer.toBinaryString(m.access)+"]";
 	}
 
 	public static void changeOpcode(AbstractInsnNode ain, int opcode) {
@@ -957,10 +969,10 @@ public class ReikaASMHelper {
 		OBJECT("L*;",		Object.class,		Opcodes.ARETURN, 	Opcodes.ALOAD, 			Opcodes.ASTORE);
 
 		public final String id;
-		private final Class classType;
-		private final int returnCode;
-		private final int loadCode;
-		private final int storeCode;
+		public final Class classType;
+		public final int returnCode;
+		public final int loadCode;
+		public final int storeCode;
 
 		private static final HashMap<String, PrimitiveType> map = new HashMap();
 
@@ -972,7 +984,7 @@ public class ReikaASMHelper {
 			storeCode = storecode;
 		}
 
-		private static PrimitiveType getFromSig(String id) {
+		public static PrimitiveType getFromSig(String id) {
 			return map.containsKey(id) ? map.get(id) : OBJECT;
 		}
 
@@ -1163,7 +1175,7 @@ public class ReikaASMHelper {
 		}
 		return Opcodes.ARETURN;
 	}
-
+	/*
 	public static int getLoadOpcodeForArgument(String type) {
 		PrimitiveType p = PrimitiveType.getFromSig(type);
 		if (p != null) {
@@ -1179,7 +1191,7 @@ public class ReikaASMHelper {
 		}
 		return Opcodes.ASTORE;
 	}
-
+	 */
 	public static InsnList getIntReturnInsnList(int val) {
 		InsnList li = new InsnList();
 		li.add(getInsnForNum(val));
@@ -1374,24 +1386,30 @@ public class ReikaASMHelper {
 		m.access = m.access | Modifier.PUBLIC;
 	}
 
-	public static void rerouteMethod(ClassNode cn, String name, String ownerNew, String nameNew, String sig, boolean loadSelf) {
+	public static MethodInsnNode rerouteMethod(ClassNode cn, String name, String ownerNew, String nameNew, String sig) {
 		MethodNode m = getMethodByName(cn, name, sig);
+		return rerouteMethod(cn, m, ownerNew, nameNew);
+	}
+
+	public static MethodInsnNode rerouteMethod(ClassNode cn, MethodNode m, String ownerNew, String nameNew) {
 		m.instructions.clear();
 		ArrayList<String> args = parseMethodArguments(m);
 		String ret = getMethodReturnType(m);
 		boolean stat = (m.access & Modifier.STATIC) != 0;
 		int idx = stat ? 0 : 1;
-		if (loadSelf) {
-			if (stat)
-				throw new IllegalArgumentException("You cannot load 'this' in a static method!");
+		String self = m.desc;
+		if (!stat) {
 			m.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
+			self = ReikaASMHelper.addLeadingArgument(m.desc, convertClassName(cn, true));
 		}
 		for (String s : args) {
-			m.instructions.add(new VarInsnNode(getLoadOpcodeForArgument(s), idx));
+			m.instructions.add(new VarInsnNode(PrimitiveType.getFromSig(s).loadCode, idx));
 			idx++;
 		}
-		m.instructions.add(new MethodInsnNode(Opcodes.INVOKESTATIC, ownerNew, nameNew, sig, false));
+		MethodInsnNode call = new MethodInsnNode(Opcodes.INVOKESTATIC, ownerNew, nameNew, self, false);
+		m.instructions.add(call);
 		m.instructions.add(new InsnNode(getOpcodeForMethodReturn(m)));
+		return call;
 	}
 
 	public static ArrayList<AbstractInsnNode> subList(InsnList li, int from, int to) {
