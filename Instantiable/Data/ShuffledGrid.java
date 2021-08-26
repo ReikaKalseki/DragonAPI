@@ -35,10 +35,12 @@ public class ShuffledGrid {
 	public void calculate(Random rand) {
 		rand.nextBoolean();
 		rand.nextBoolean();
-		for (int x = maxDeviation; x < gridSize-maxDeviation; x += averageSeparation) {
-			for (int z = maxDeviation; z < gridSize-maxDeviation; z += averageSeparation) {
+		for (int x = 0; x < gridSize; x += averageSeparation) {
+			for (int z = 0; z < gridSize; z += averageSeparation) {
 				int x2 = ReikaRandomHelper.getRandomPlusMinus(x, maxDeviation, rand);
 				int z2 = ReikaRandomHelper.getRandomPlusMinus(z, maxDeviation, rand);
+				x2 = (x2+gridSize)%gridSize;
+				z2 = (z2+gridSize)%gridSize;
 				data[x2][z2] = true;
 			}
 		}

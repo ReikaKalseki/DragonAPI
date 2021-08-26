@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -39,6 +39,9 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 		texpos[1] = v;
 
 		modClass = mod;
+		motionX = vx;
+		motionY = vy;
+		motionZ = vz;
 	}
 
 	public ReikaModelledBreakFX(World world, double x, double y, double z, double vx, double vy, double vz, Block b, int meta, int side) {
@@ -46,6 +49,9 @@ public class ReikaModelledBreakFX extends EntityDiggingFX {
 		tex = null;
 		modClass = null;
 		this.setParticleIcon(getBlock(b).getIcon(side, meta));
+		motionX = vx;
+		motionY = vy;
+		motionZ = vz;
 	}
 
 	private static Block getBlock(Block b) {

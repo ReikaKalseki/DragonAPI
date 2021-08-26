@@ -65,7 +65,22 @@ public class ScrollingButtonList {
 	}
 
 	public void reset() {
-		allButtons = 0;
 		currentScroll = 0;
+	}
+
+	public void clear() {
+		this.reset();
+		allButtons = 0;
+		maxScroll = 0;
+	}
+
+	public int[] getPositionOf(int idx) {
+		if (idx < 0 || idx >= allButtons)
+			return null;
+		int row = idx/maxCols-currentScroll;
+		if (row < 0 || row >= maxRows)
+			return null;
+		int col = idx%maxCols;
+		return new int[] {col, row};
 	}
 }

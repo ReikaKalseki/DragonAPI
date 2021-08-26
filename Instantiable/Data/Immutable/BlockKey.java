@@ -21,7 +21,10 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Interfaces.BlockCheck;
+import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
+import Reika.DragonAPI.Interfaces.Registry.RegistryEntry;
 import Reika.DragonAPI.Interfaces.Registry.TileEnum;
+import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
 
 public final class BlockKey implements BlockCheck, Comparable<BlockKey> {
 
@@ -118,6 +121,11 @@ public final class BlockKey implements BlockCheck, Comparable<BlockKey> {
 	}
 
 	public String getLocalized() {
+		RegistryEntry reg = ReikaRegistryHelper.getRegistryForObject(blockID);
+		if (reg instanceof BlockEnum) {
+			BlockEnum be = (BlockEnum)reg;
+			return this.hasMetadata() && be.hasMultiValuedName() ? be.getMultiValuedName(metadata) : be.getBasicName();
+		}
 		return blockID.getLocalizedName()+":"+metadata;
 	}
 
