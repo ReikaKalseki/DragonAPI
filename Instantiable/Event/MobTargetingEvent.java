@@ -1,14 +1,18 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
@@ -64,6 +68,28 @@ public class MobTargetingEvent extends Event {
 		MobTargetingEvent.Post evt = new MobTargetingEvent.Post(world, x, y, z, r);
 		MinecraftForge.EVENT_BUS.post(evt);
 		return evt.forcedResult;
+	}
+
+	public static boolean fireAIPre(boolean orig, EntityAINearestAttackableTarget ai, Entity e) {
+		if (e instanceof EntityPlayer) {
+			EntityCreature src = ai.taskOwner;
+			switch(firePre((EntityPlayer)e, src.worldObj, src.posX, src.posY, src.posZ, Double.POSITIVE_INFINITY)) {
+				case ALLOW:
+					return true;
+				case DEFAULT:
+				default:
+					return orig;
+				case DENY:
+					return false;
+			}
+		}
+		return orig;
+	}
+
+	public static EntityLivingBase fireAIPost(EntityLivingBase e, EntityAINearestAttackableTarget ai) {
+		EntityCreature src = ai.taskOwner;
+		EntityPlayer ep = firePost(src.worldObj, src.posX, src.posY, src.posZ, Double.POSITIVE_INFINITY);
+		return ep != null ? ep : e;
 	}
 
 	@HasResult

@@ -34,6 +34,9 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.EnumCreatureAttribute;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.attributes.ModifiableAttributeInstance;
 import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.item.EntityBoat;
@@ -1522,6 +1525,24 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		for (Entity e : ((List<Entity>)world.loadedEntityList)) {
 			if (e.getUniqueID().equals(uid))
 				return e;
+		}
+		return null;
+	}
+
+	public static Collection<AttributeModifier> getAttributeByName(IAttributeInstance iai, String n) {
+		if (iai instanceof ModifiableAttributeInstance) {
+			ModifiableAttributeInstance mai = (ModifiableAttributeInstance)iai;
+			/*
+			for (int i = 0; i <= 2; i++) {
+				List<AttributeModifier> li = (List<AttributeModifier>)mai.getModifiersByOperation(i);
+				for (AttributeModifier am : li) {
+					if (n.equals(am.getName())) {
+						return am;
+					}
+				}
+			}
+			 */
+			return (Collection<AttributeModifier>)mai.mapByName.get(n);
 		}
 		return null;
 	}
