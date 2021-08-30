@@ -69,6 +69,7 @@ public final class ReikaAABBHelper extends DragonAPICore {
 			var5.draw();
 		if (line) {
 			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setBrightness(240);
 			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
 			var5.addVertex(px2, py2, pz);
 			var5.addVertex(px, py2, pz);
@@ -76,6 +77,7 @@ public final class ReikaAABBHelper extends DragonAPICore {
 			var5.addVertex(px2, py2, pz2);
 			var5.draw();
 			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setBrightness(240);
 			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
 			var5.addVertex(px2, py, pz);
 			var5.addVertex(px, py, pz);
@@ -83,21 +85,25 @@ public final class ReikaAABBHelper extends DragonAPICore {
 			var5.addVertex(px2, py, pz2);
 			var5.draw();
 			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setBrightness(240);
 			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
 			var5.addVertex(px, py, pz);
 			var5.addVertex(px, py2, pz);
 			var5.draw();
 			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setBrightness(240);
 			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
 			var5.addVertex(px2, py, pz);
 			var5.addVertex(px2, py2, pz);
 			var5.draw();
 			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setBrightness(240);
 			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
 			var5.addVertex(px2, py, pz2);
 			var5.addVertex(px2, py2, pz2);
 			var5.draw();
 			var5.startDrawing(GL11.GL_LINE_LOOP);
+			var5.setBrightness(240);
 			var5.setColorRGBA(color[0], color[1], color[2], color[3]);
 			var5.addVertex(px, py, pz2);
 			var5.addVertex(px, py2, pz2);
@@ -106,6 +112,7 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		if (filled)
 		{
 			var5.startDrawing(GL11.GL_QUADS);
+			var5.setBrightness(240);
 			//var5.setBrightness(255);
 			var5.setColorRGBA(color[0], color[1], color[2], (int)(color[3]*0.375F));
 

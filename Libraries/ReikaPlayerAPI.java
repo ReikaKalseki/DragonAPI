@@ -378,6 +378,15 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 		return null;
 	}
 
+	public static EntityPlayerMP getPlayerByIDAnyWorld(UUID uid) {
+		for (World world : DimensionManager.getWorlds()) {
+			EntityPlayerMP ep = (EntityPlayerMP)world.func_152378_a(uid);
+			if (ep != null)
+				return ep;
+		}
+		return null;
+	}
+
 	public static boolean isFakeOrNotInteractable(EntityPlayer ep, double x, double y, double z, double dist) {
 		return isFake(ep) || ep.getDistanceSq(x, y, z) >= dist*dist;
 	}

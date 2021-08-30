@@ -72,6 +72,7 @@ public class BlockArray implements Iterable<Coordinate> {
 	private int maxZ = Integer.MIN_VALUE;
 
 	public int maxDepth = DEPTH_LIMIT;
+	public boolean clampToChunkLoad = false;
 	public boolean extraSpread = false;
 	public boolean taxiCabDistance = false;
 
@@ -630,6 +631,8 @@ public class BlockArray implements Iterable<Coordinate> {
 		if (taxiCabDistance && Math.abs(x-x0)+Math.abs(y-y0)+Math.abs(z-z0) > maxDepth)
 			return;
 		if (x < x1 || y < y1 || z < z1 || x > x2 || y > y2 || z > z2)
+			return;
+		if (clampToChunkLoad && world instanceof World && !((World)world).checkChunksExist(x, y, z, x, y, z))
 			return;
 		if (world.getBlock(x, y, z) != id || world.getBlockMetadata(x, y, z) != meta) {
 			return;
