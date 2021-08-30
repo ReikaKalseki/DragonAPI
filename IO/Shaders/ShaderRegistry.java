@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.nio.IntBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
@@ -96,7 +97,7 @@ public class ShaderRegistry {
 		ShaderProgram sp = shaders.get(id);
 		for (ShaderLibrary lib : sp.getLibraries()) {
 			DragonAPICore.log("Reloading shader library "+lib.name);
-			lib.load();
+			lib.reload();
 		}
 		sp.load();
 	}
@@ -210,10 +211,26 @@ public class ShaderRegistry {
 				String[] parts = s.split(" ");
 				ShaderLibrary lib = ShaderLibrary.getLibrary(parts[1]);
 				if (lib == null) {
-					error(mod, id, "Invalid import - no such library '"+lib+"'", type);
+					error(mod, id, "Invalid import - no such library '"+parts[1]+"'", type);
 				}
 				libs.add(lib);
 				s = "\n\n"+lib.getCode();
+			}
+			else if (s.startsWith("#generate")) {
+				String[] parts = s.split(" ");
+				ShaderLibrary lib;
+				try {
+					lib = ShaderLibrary.getCompute(parts[1], Arrays.copyOfRange(parts, 2, parts.length));
+					if (lib == null) {
+						error(mod, id, "Invalid generate - no such generator '"+parts[1]+"'", type);
+					}
+					libs.add(lib);
+					s = "\n\n"+lib.getCode();
+				}
+				catch (Exception e) {
+					error(mod, id, "Invalid generate - threw reflective error for '"+parts[1]+"': "+e.toString(), type);
+					e.printStackTrace();
+				}
 			}
 			sb.append(s);
 			sb.append("\n");
