@@ -13,6 +13,7 @@ import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 public class ShaderLibrary {
 
@@ -145,7 +146,7 @@ public class ShaderLibrary {
 			int radius = (int)params[0];
 			ArrayList<String> li = new ArrayList();
 			li.add("vec4 blur"+radius+"(vec2 uv) {");
-			
+
 			li.add("vec4 color = vec4(0.0);");
 			li.add("color.a = 1.0;");
 			li.add("float sum = 0.0;");
@@ -153,12 +154,12 @@ public class ShaderLibrary {
 			li.add("float f = 0.0;");
 			li.add("vec2 duv = vec2(0.0);");
 			li.add("vec4 get = vec4(0.0);");
-			
+
 			int r = radius+1;
 			for (int i = -r; i <= r; i++) {
 				for (int k = -r; k <= r; k++) {
-					float dd = i*i+k*k;
-					float f = dd <= radius ? (float)Math.sqrt(1D/(dd+1)) : 0;
+					float dd = (float)ReikaMathLibrary.py3d(i, 0, k);
+					float f = dd <= radius ? 1-(float)Math.sqrt(dd/radius) : 0;
 					if (f > 0) {
 						li.add("f = float("+f+");");
 						li.add("sum += f;");
@@ -170,7 +171,7 @@ public class ShaderLibrary {
 			}
 			li.add("color /= sum;");
 			li.add("color = min(vec4(1.0), color);");
-			
+
 			li.add("return color; ");
 			li.add("}");
 			return li;

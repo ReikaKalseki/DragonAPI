@@ -194,7 +194,7 @@ public class ShaderRegistry {
 		else {
 			String msg2 = msg;
 			if (type != null) {
-				msg2 = type.name()+" "+msg2;
+				msg2 = t+" "+msg2;
 			}
 			if (id != null) {
 				msg2 = id+" "+msg2;
