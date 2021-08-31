@@ -17,8 +17,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Locale;
 
 import com.google.common.base.Strings;
@@ -39,6 +42,7 @@ import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Exception.StupidIDException;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+import Reika.DragonAPI.Instantiable.Data.Maps.ValueSortedMap;
 import Reika.DragonAPI.Interfaces.Configuration.BooleanConfig;
 import Reika.DragonAPI.Interfaces.Configuration.BoundedConfig;
 import Reika.DragonAPI.Interfaces.Configuration.ConfigList;
@@ -65,7 +69,50 @@ public class ControlledConfig {
 
 	private static final int userHash = genUserHash();
 
-	protected Configuration config;
+	private final class PropertyComparator implements Comparator<String> {
+
+		private final String category;
+
+		private PropertyComparator(String s) {
+			category = s;
+		}
+
+		@Override
+		public int compare(String s1, String s2) {
+			ValueSortedMap<String, Object> data = optionMap.get(category);
+			if (data == null || data.isEmpty())
+				return s1.compareToIgnoreCase(s2);
+			Object o1 = data.get(s1);
+			Object o2 = data.get(s2);
+			if (o1 == null || o2 == null)
+				return s1.compareToIgnoreCase(s2);
+			int comp = entryComparator.compare(o1, o2);
+			return comp == 0 ? s1.compareToIgnoreCase(s2) : comp;
+		}
+
+	};
+
+	private final Comparator entryComparator = new Comparator<Object>() {
+
+		@Override
+		public int compare(Object o1, Object o2) {
+			if (o1.getClass() != o2.getClass())
+				return o1.getClass().getName().compareTo(o2.getClass().getName());
+			if (o1 instanceof Enum) {
+				return ((Enum)o1).compareTo((Enum)o2);
+			}
+			if (o1 instanceof ConfigList) {
+				return Integer.compare(((ConfigList)o1).ordinal(), ((ConfigList)o2).ordinal());
+			}
+			if (o1 instanceof Comparable) {
+				return ((Comparable)o1).compareTo(o2);
+			}
+			return 0;
+		}
+
+	};
+
+	private Configuration config;
 
 	private int readID;
 	protected File configFile;
@@ -81,8 +128,8 @@ public class ControlledConfig {
 	private final HashMap<SegmentedConfigList, String> specialFiles = new HashMap();
 	private final MultiMap<String, SegmentedConfigList> specialConfigs = new MultiMap();
 	private final HashMap<String, HashMap<String, String>> extraFiles = new HashMap();
-	private final HashMap<String, HashMap<String, Object>> optionMap = new HashMap();
-	private final HashMap<String, HashMap<String, DataElement>> additionalOptions = new HashMap();
+	private final HashMap<String, ValueSortedMap<String, Object>> optionMap = new HashMap();
+	private final HashMap<String, LinkedHashMap<String, DataElement>> additionalOptions = new HashMap();
 	private final HashSet<String> orphanExclusions = new HashSet();
 
 	private final ArrayList<String> queuedExceptions = new ArrayList();
@@ -160,9 +207,10 @@ public class ControlledConfig {
 	}
 
 	private void registerOption(String s1, String s2, Object cfg) {
-		HashMap<String, Object> map = optionMap.get(s1.toLowerCase(Locale.ENGLISH));
+		String key = s1.toLowerCase(Locale.ENGLISH);
+		ValueSortedMap<String, Object> map = optionMap.get(key);
 		if (map == null) {
-			map = new HashMap();
+			map = new ValueSortedMap().setComparator(entryComparator);
 			optionMap.put(s1.toLowerCase(Locale.ENGLISH), map);
 		}
 		map.put(s2, cfg);
@@ -312,9 +360,30 @@ public class ControlledConfig {
 		if (configFile == null)
 			throw new MisuseException("Error loading "+configMod.getDisplayName()+": You must load a config file before reading it!");
 		config = new Configuration(configFile);
-		this.onInit();
+		this.load();
+	}
+
+	public final void load() {
+		if (configFile == null)
+			throw new MisuseException("Error loading "+configMod.getDisplayName()+": You cannot load a config that is not yet configured!");
 		this.loadConfig();
-		this.afterInit();
+	}
+
+	public final void save() {
+		this.setOrder();
+		config.save();
+	}
+
+	protected final Property getProperty(String cat, String name, boolean def) {
+		return config.get(cat, name, def);
+	}
+
+	protected final Property getProperty(String cat, String name, String def) {
+		return config.get(cat, name, def);
+	}
+
+	protected final Property getProperty(String cat, String name, int def) {
+		return config.get(cat, name, def);
 	}
 
 	protected void onInit() {}
@@ -352,6 +421,7 @@ public class ControlledConfig {
 
 		/*******************************/
 		//save the data
+		this.setOrder();
 		config.save();
 
 		if (!specialFiles.isEmpty())
@@ -362,7 +432,7 @@ public class ControlledConfig {
 		HashSet<ConfigCategory> catNames = new HashSet();
 		for (String s1 : config.getCategoryNames()) {
 			ConfigCategory cat = config.getCategory(s1);
-			HashMap<String, Object> map = optionMap.get(s1.toLowerCase(Locale.ENGLISH));
+			ValueSortedMap<String, Object> map = optionMap.get(s1.toLowerCase(Locale.ENGLISH));
 			if (map == null) {
 				if (orphanExclusions.contains(s1))
 					continue;
@@ -688,6 +758,15 @@ public class ControlledConfig {
 		return prop.getInt(id.getDefaultID());
 	}
 
+	private void setOrder() {
+		for (String s : config.getCategoryNames()) {
+			ConfigCategory c = config.getCategory(s);
+			List<String> li = new ArrayList(c.keySet());
+			Collections.sort(li, new PropertyComparator(s.toLowerCase(Locale.ENGLISH)));
+			c.setPropertyOrder(li);
+		}
+	}
+
 	private final void loadAdditionalData() {
 		for (String c : additionalOptions.keySet()) {
 			HashMap<String, DataElement> map = additionalOptions.get(c);
@@ -700,12 +779,12 @@ public class ControlledConfig {
 
 	protected final <C> DataElement<C> registerAdditionalOption(String c, String n, C default_) {
 		c = c.toLowerCase(Locale.ENGLISH);
-		HashMap<String, DataElement> map = additionalOptions.get(c);
+		LinkedHashMap<String, DataElement> map = additionalOptions.get(c);
 		if (map == null) {
-			map = new HashMap();
+			map = new LinkedHashMap();
 			additionalOptions.put(c, map);
 		}
-		DataElement<C> e = new DataElement(this, c, n, default_);
+		DataElement<C> e = new DataElement(this, c, n, default_, map.size());
 		map.put(n, e);
 		this.registerOption(c, n, e);
 		return e;
@@ -719,18 +798,20 @@ public class ControlledConfig {
 		this.loadConfig();
 	}*/
 
-	protected static final class DataElement<C> {
+	protected static final class DataElement<C> implements Comparable<DataElement> {
 
 		private C data;
 		public final String category;
 		public final String name;
 		private final ControlledConfig parent;
+		private final int index;
 
-		private DataElement(ControlledConfig p, String c, String n, C default_) {
+		private DataElement(ControlledConfig p, String c, String n, C default_, int idx) {
 			parent = p;
 			category = c;
 			name = n;
 			this.data = default_;
+			index = idx;
 		}
 
 		private Object load(Configuration config) {
@@ -768,12 +849,17 @@ public class ControlledConfig {
 		public String toString() {
 			return this.category+":"+this.name+" > "+this.data.toString();
 		}
+
+		@Override
+		public int compareTo(DataElement o) {
+			return Integer.compare(this.index, o.index);
+		}
 	}
 
 	public final void reload() {
 		if (config == null)
 			throw new MisuseException("You cannot reload a config before it is initialized!");
-		this.loadConfig();
+		this.load();
 	}
 
 	public static ControlledConfig getForMod(String mod) {

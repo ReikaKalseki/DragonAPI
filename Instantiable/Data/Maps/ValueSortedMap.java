@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2018
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -19,10 +19,12 @@ import java.util.Set;
 import java.util.TreeMap;
 
 
-public class ValueSortedMap<K, V extends Comparable> {
+public class ValueSortedMap<K, V> {
 
 	private final HashMap<K, V> raw;
 	private final TreeMap<K, V> data;
+
+	private Comparator<V> comparator;
 
 	public ValueSortedMap() {
 		raw = new HashMap();
@@ -32,6 +34,11 @@ public class ValueSortedMap<K, V extends Comparable> {
 	public ValueSortedMap(Map<K, V> data) {
 		this();
 		this.putAll(data);
+	}
+
+	public ValueSortedMap setComparator(Comparator<V> c) {
+		comparator = c;
+		return this;
 	}
 
 	public int size() {
@@ -106,15 +113,15 @@ public class ValueSortedMap<K, V extends Comparable> {
 		return raw.toString();
 	}
 
-	private class ValueComparator implements Comparator<K> {
+	private class ValueComparator implements Comparator<V> {
 
 		private ValueComparator() {
 
 		}
 
 		@Override
-		public int compare(K o1, K o2) {
-			return raw.get(o1).compareTo(raw.get(o2));
+		public int compare(V o1, V o2) {
+			return comparator != null ? comparator.compare(o1, o2) : ((Comparable<V>)raw.get(o1)).compareTo(raw.get(o2));
 		}
 
 	}
