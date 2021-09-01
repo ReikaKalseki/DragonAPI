@@ -37,9 +37,14 @@ public abstract class NoiseGeneratorBase {
 	}
 
 	private double calculateValues(double x, double y, double z) {
-		x += this.getXDisplacement(x, y, z);
-		y += this.getYDisplacement(x, y, z);
-		z += this.getZDisplacement(x, y, z);
+		if (this.displaceCalculation()) {
+			double x0 = x;
+			double y0 = y;
+			double z0 = z;
+			x += this.getXDisplacement(x0, y0, z0);
+			y += this.getYDisplacement(x0, y0, z0);
+			z += this.getZDisplacement(x0, y0, z0);
+		}
 
 		double val = this.calcValue(x, y, z, 1, 1);
 
@@ -54,6 +59,10 @@ public abstract class NoiseGeneratorBase {
 		}
 
 		return val;
+	}
+
+	protected boolean displaceCalculation() {
+		return true;
 	}
 
 	protected abstract double calcValue(double x, double y, double z, double freq, double amp);

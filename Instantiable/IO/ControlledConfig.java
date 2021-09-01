@@ -169,8 +169,8 @@ public class ControlledConfig {
 
 		for (int i = 0; i < IDList.length; i++) {
 			IDRegistry cfg = IDList[i];
-			String s1 = cfg.getCategory();
-			String s2 = cfg.getConfigName();
+			String s1 = this.getCategory(cfg);
+			String s2 = this.getLabel(cfg);
 			this.registerOption(s1, s2, cfg);
 		}
 	}
@@ -739,8 +739,10 @@ public class ControlledConfig {
 			if (!Strings.isNullOrEmpty(s))
 				ret = s;
 		}
-		else if (cfg instanceof UserSpecificConfig && ((UserSpecificConfig)cfg).isUserSpecific())
+		if (cfg instanceof UserSpecificConfig && ((UserSpecificConfig)cfg).isUserSpecific())
 			ret = "Client Specific";
+		if (cfg instanceof IDRegistry)
+			ret = ((IDRegistry)cfg).getCategory();
 
 
 		return ret;
@@ -752,7 +754,7 @@ public class ControlledConfig {
 	}
 
 	private int getValueFromConfig(IDRegistry id, Configuration config) {
-		Property prop = config.get(id.getCategory(), id.getConfigName(), String.valueOf(id.getDefaultID()));
+		Property prop = config.get(this.getCategory(id), this.getLabel(id), String.valueOf(id.getDefaultID()));
 		if (!prop.isIntValue())
 			throw new StupidIDException(configMod, prop, Type.INTEGER);
 		return prop.getInt(id.getDefaultID());

@@ -64,6 +64,11 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 	}
 
 	@Override
+	protected boolean displaceCalculation() {
+		return false;
+	}
+
+	@Override
 	protected double calcValue(double x, double y, double z, double f, double a) {
 		if (f != 1 && f > 0) {
 			x *= f;
@@ -115,6 +120,12 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 	}
 
 	public DecimalPosition getClosestRoot(double x, double y, double z) {
+		double x0 = x;
+		double y0 = y;
+		double z0 = z;
+		x += this.getXDisplacement(x0, y0, z0);
+		y += this.getYDisplacement(x0, y0, z0);
+		z += this.getZDisplacement(x0, y0, z0);
 		this.getValue(x, y, z);
 		DecimalPosition raw = candidateList.get(0).position;
 		return new DecimalPosition(raw.xCoord/inputFactor, raw.yCoord/inputFactor, raw.zCoord/inputFactor);

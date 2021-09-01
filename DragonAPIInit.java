@@ -150,7 +150,7 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.IC2Handler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.LegacyMagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MFRHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MagicCropHandler;
-import Reika.DragonAPI.ModInteract.ItemHandlers.MagicaOreHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ArsMagicaHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MekToolHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MekanismHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MimicryHandler;
@@ -745,7 +745,7 @@ public class DragonAPIInit extends DragonAPIMod {
 		this.registerHandler(ModList.MEKTOOLS, MekToolHandler.class, "Tool Handler");
 		this.registerHandler(ModList.TRANSITIONAL, TransitionalOreHandler.class, "Handler");
 		this.registerHandler(ModList.IC2, IC2Handler.class, "Handler");
-		this.registerHandler(ModList.ARSMAGICA, MagicaOreHandler.class, "Ore Handler");
+		this.registerHandler(ModList.ARSMAGICA, ArsMagicaHandler.class, "Ore Handler");
 		this.registerHandler(ModList.APPENG, AppEngHandler.class, "Handler");
 		this.registerHandler(ModList.FORESTRY, ForestryHandler.class, "Item Handler");
 		this.registerHandler(ModList.FORESTRY, ForestryRecipeHelper.class, "Recipe Handler");

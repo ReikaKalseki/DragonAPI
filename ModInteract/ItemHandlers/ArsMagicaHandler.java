@@ -1,15 +1,17 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
  ******************************************************************************/
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 
 import net.minecraft.block.Block;
@@ -19,11 +21,16 @@ import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.ModRegistry.ModOreList;
 
-public final class MagicaOreHandler extends ModHandlerBase {
+import am2.api.spell.component.interfaces.ISpellComponent;
+import am2.api.spell.component.interfaces.ISpellModifier;
+import am2.api.spell.component.interfaces.ISpellShape;
+
+public final class ArsMagicaHandler extends ModHandlerBase {
 
 	public final Block oreID;
 	public final Item itemID;
@@ -55,11 +62,18 @@ public final class MagicaOreHandler extends ModHandlerBase {
 	private final ArrayList ores = new ArrayList<ItemStack>();
 	private final ArrayList items = new ArrayList<ItemStack>();
 
+	private final ArrayList<Class<? extends ISpellComponent>> spellComponents = new ArrayList();
+	private final ArrayList<Class<? extends ISpellShape>> spellShapes = new ArrayList();
+	private final ArrayList<Class<? extends ISpellModifier>> spellModifiers = new ArrayList();
+
+	private Object spellUtilInstance;
+	private Method getSpellComponents;
+
 	private boolean isOreDict = false;
 
-	private static final MagicaOreHandler instance = new MagicaOreHandler();
+	private static final ArsMagicaHandler instance = new ArsMagicaHandler();
 
-	private MagicaOreHandler() {
+	private ArsMagicaHandler() {
 		super();
 		Block idore = null;
 		Item iditem = null;
@@ -76,6 +90,25 @@ public final class MagicaOreHandler extends ModHandlerBase {
 
 				idore = oreb;
 				iditem = itemi;
+
+				for (Class c : ReikaJavaLibrary.getAllClassesFromPackage("am2.spell.components", null, false, true)) {
+					if (ISpellComponent.class.isAssignableFrom(c)) {
+						spellComponents.add(c);
+					}
+					if (ISpellShape.class.isAssignableFrom(c)) {
+						spellShapes.add(c);
+					}
+					if (ISpellModifier.class.isAssignableFrom(c)) {
+						spellModifiers.add(c);
+					}
+				}
+
+				Class util = Class.forName("am2.spell.SpellUtils");
+				getSpellComponents = util.getDeclaredMethod("getComponentsForStage", ItemStack.class, int.class);
+				getSpellComponents.setAccessible(true);
+				Field f = util.getDeclaredField("instance");
+				f.setAccessible(true);
+				spellUtilInstance = f.get(null);
 			}
 			catch (NoSuchFieldException e) {
 				DragonAPICore.logError(this.getMod()+" field not found! "+e.getMessage());
@@ -99,6 +132,21 @@ public final class MagicaOreHandler extends ModHandlerBase {
 			}
 			catch (NullPointerException e) {
 				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Was the class loaded?");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (IOException e) {
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Classes not loadable!");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (ClassNotFoundException e) {
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Class not found!");
+				e.printStackTrace();
+				this.logFailure(e);
+			}
+			catch (NoSuchMethodException e) {
+				DragonAPICore.logError("Null pointer exception for reading "+this.getMod()+"! Method not found!");
 				e.printStackTrace();
 				this.logFailure(e);
 			}
@@ -135,7 +183,7 @@ public final class MagicaOreHandler extends ModHandlerBase {
 		items.add(itemChimerite);
 	}
 
-	public static MagicaOreHandler getInstance() {
+	public static ArsMagicaHandler getInstance() {
 		return instance;
 	}
 
@@ -255,6 +303,17 @@ public final class MagicaOreHandler extends ModHandlerBase {
 		else {
 			DragonAPICore.log("Ars Magica ores already registered to ore dictionary! No action taken!");
 			ReikaJavaLibrary.dumpStack();
+		}
+	}
+
+	@ModDependent(ModList.ARSMAGICA)
+	public ISpellComponent[] getSpellComponents(ItemStack is) {
+		try {
+			return (ISpellComponent[])getSpellComponents.invoke(spellUtilInstance, is, 0);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 
