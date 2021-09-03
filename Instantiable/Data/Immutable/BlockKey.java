@@ -44,18 +44,18 @@ public final class BlockKey implements BlockCheck, Comparable<BlockKey> {
 			throw new MisuseException("Cannot create a BlockKey from a null block!");
 	}
 
-	public BlockKey(ItemStack is) {
-		this(Block.getBlockFromItem(is.getItem()), is.getItemDamage());
-		if (is.getItem() == null)
+	public BlockKey(TileEnum m) {
+		metadata = m.getBlockMetadata();
+		blockID = m.getBlock();
+	}
+
+	public static BlockKey fromItem(ItemStack is) {
+		if (is == null || is.getItem() == null)
 			throw new MisuseException("Cannot create a BlockKey from a null item!");
 		Block b = Block.getBlockFromItem(is.getItem());
 		if (b == null)
 			throw new MisuseException("Cannot create a BlockKey with an item with no block!");
-	}
-
-	public BlockKey(TileEnum m) {
-		metadata = m.getBlockMetadata();
-		blockID = m.getBlock();
+		return new BlockKey(b, is.getItemDamage());
 	}
 
 	public static BlockKey getAt(IBlockAccess world, int x, int y, int z) {

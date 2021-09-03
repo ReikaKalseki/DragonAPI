@@ -192,12 +192,12 @@ public class StructureRenderer {
 		BlockChoiceHook over = overrides.get(pos);
 		if (over != null) {
 			ItemStack at = over.getBlock(pos);
-			is = at != null ? new BlockKey(at) : null;
+			is = at != null ? BlockKey.fromItem(at) : null;
 		}
 		if (is != null && is.blockID != null) {
 			BlockChoiceHook bc = choiceHooks.get(is.blockID);
 			if (bc != null) {
-				is = new BlockKey(bc.getBlock(pos));
+				is = BlockKey.fromItem(bc.getBlock(pos));
 			}
 		}
 		return is;

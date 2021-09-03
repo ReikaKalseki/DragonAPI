@@ -301,8 +301,8 @@ public class TinkerBlockHandler extends ModHandlerBase {
 			}
 
 
-			slimeDirt = new BlockKey(ReikaItemHelper.lookupBlock(this.getMod(), "CraftedSoil", 5));
-			slimeGrass = new BlockKey(ReikaItemHelper.lookupBlock(this.getMod(), "slime.grass", 5));
+			slimeDirt = BlockKey.fromItem(ReikaItemHelper.lookupBlock(this.getMod(), "CraftedSoil", 5));
+			slimeGrass = BlockKey.fromItem(ReikaItemHelper.lookupBlock(this.getMod(), "slime.grass", 5));
 			congealedSlime = GameRegistry.findBlock(this.getMod().modLabel, "slime.gel");
 			slimeWater = GameRegistry.findBlock(this.getMod().modLabel, "liquid.slime");
 			slimeTallGrass = GameRegistry.findBlock(this.getMod().modLabel, "slime.grass.tall");

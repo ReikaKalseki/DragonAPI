@@ -124,23 +124,33 @@ public class ChunkManager implements LoadingCallback {
 	}
 
 	public void loadChunks(ChunkLoadingTile te) {
-		WorldLocation loc = new WorldLocation((TileEntity)te);
-		Ticket ticket = tileTickets.get(loc);
-		if (ticket == null) {
-			ticket = this.getNewTileTicket((TileEntity)te);
-			this.cacheTicket(loc, ticket);
+		try {
+			WorldLocation loc = new WorldLocation((TileEntity)te);
+			Ticket ticket = tileTickets.get(loc);
+			if (ticket == null) {
+				ticket = this.getNewTileTicket((TileEntity)te);
+				this.cacheTicket(loc, ticket);
+			}
+			this.forceTicketChunks(ticket, te.getChunksToLoad());
 		}
-		this.forceTicketChunks(ticket, te.getChunksToLoad());
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	public void loadChunks(ChunkLoadingEntity e) {
-		int id = ((Entity)e).getEntityId();
-		Ticket ticket = entityTickets.get(id);
-		if (ticket == null) {
-			ticket = this.getNewEntityTicket((Entity)e);
-			this.cacheTicket((Entity)e, ticket);
+		try {
+			int id = ((Entity)e).getEntityId();
+			Ticket ticket = entityTickets.get(id);
+			if (ticket == null) {
+				ticket = this.getNewEntityTicket((Entity)e);
+				this.cacheTicket((Entity)e, ticket);
+			}
+			this.forceTicketChunks(ticket, e.getChunksToLoad());
 		}
-		this.forceTicketChunks(ticket, e.getChunksToLoad());
+		catch (Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 
 	private Ticket getNewTileTicket(TileEntity te) {

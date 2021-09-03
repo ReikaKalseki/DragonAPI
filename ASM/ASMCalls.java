@@ -167,6 +167,10 @@ public class ASMCalls {
 		}
 	}
 
+	public static boolean matchTrades(MerchantRecipe r1, MerchantRecipe r2) {
+		return matchItem(r1.getItemToBuy(), r2.getItemToBuy()) && matchItem(r1.getSecondItemToBuy(), r2.getSecondItemToBuy());
+	}
+
 	private static boolean matchFirst(MerchantRecipe rec, ItemStack is1) {
 		return matchItem(rec.getItemToBuy(), is1);
 	}
@@ -181,6 +185,10 @@ public class ASMCalls {
 	}
 
 	private static boolean matchItem(ItemStack a, ItemStack b) {
+		if (a == b)
+			return true;
+		if (a == null || b == null)
+			return false;
 		return a.getItem() == b.getItem() && b.stackSize >= a.stackSize && ((a.getItem() instanceof MetadataSpecificTrade || b.getItem() instanceof MetadataSpecificTrade) ? a.getItemDamage() == b.getItemDamage() : true);
 	}
 

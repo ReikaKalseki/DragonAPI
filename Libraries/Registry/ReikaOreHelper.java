@@ -84,6 +84,8 @@ public enum ReikaOreHelper implements OreType {
 	}
 
 	public ItemStack getOreBlock() {
+		if (ore == null)
+			throw new IllegalStateException("Some mod deleted the vanilla ore block for "+this.getDisplayName()+"!");
 		return new ItemStack(ore);
 	}
 

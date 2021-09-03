@@ -15,8 +15,6 @@ import net.minecraft.village.MerchantRecipe;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
-
 
 
 public class VillagerTradeEvent extends PlayerEvent {
@@ -31,8 +29,8 @@ public class VillagerTradeEvent extends PlayerEvent {
 	}
 
 	public static void fire(IMerchant im, EntityPlayer ep, MerchantRecipe r) {
-		ReikaJavaLibrary.pConsole("Firing villager trade event from V="+im+" / P="+ep+" / T="+r);
-		Thread.dumpStack();
+		//ReikaJavaLibrary.pConsole("Firing villager trade event from V="+im+" / P="+ep+" / T="+r);
+		//Thread.dumpStack();
 		MinecraftForge.EVENT_BUS.post(new VillagerTradeEvent(im, r, ep));
 	}
 
