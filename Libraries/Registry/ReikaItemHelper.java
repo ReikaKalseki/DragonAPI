@@ -39,6 +39,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemHoe;
 import net.minecraft.item.ItemShears;
 import net.minecraft.item.ItemStack;
@@ -1036,7 +1037,15 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static ItemStack cookFood(ItemStack food) {
-		ItemStack smelted = FurnaceRecipes.smelting().getSmeltingResult(food);
+		ItemStack smelted = food.getItem() instanceof ItemFood ? FurnaceRecipes.smelting().getSmeltingResult(food) : null;
 		return smelted != null ? smelted : food;
+	}
+
+	public static Collection<ItemStack> cloneItemCollection(Collection<ItemStack> c) {
+		Collection<ItemStack> ret = new ArrayList();
+		for (ItemStack is : c) {
+			ret.add(is != null ? is.copy() : null);
+		}
+		return ret;
 	}
 }
