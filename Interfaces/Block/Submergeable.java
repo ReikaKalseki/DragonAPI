@@ -25,6 +25,7 @@ public interface Submergeable {
 
 	public boolean canRenderInPass(int pass);
 
+	@SideOnly(Side.CLIENT)
 	public boolean renderLiquid(int meta);
 
 }

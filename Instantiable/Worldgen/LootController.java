@@ -265,6 +265,8 @@ public class LootController {
 		private final String tableID;
 		private final Class reference;
 
+		//public static final ModdedStructures[] list = values();
+
 		private ModdedStructures(ModEntry mod, String partName, String lootTable, ReferenceType type) {
 			sourceMod = mod;
 			dataType = type;
@@ -288,6 +290,14 @@ public class LootController {
 			}
 		}
 
+		public boolean exists() {
+			return sourceMod.isLoaded();
+		}
+
+		public boolean isInCGHTable() {
+			return dataType == ReferenceType.TABLE;
+		}
+
 		public String getTag() {
 			switch(dataType) {
 				case TABLE:
@@ -298,14 +308,14 @@ public class LootController {
 		}
 
 		public WeightedRandomChestContent[] getContents() throws Exception {
-			if (!sourceMod.isLoaded())
+			if (!this.exists())
 				throw new IllegalStateException("Mod '"+sourceMod.getDisplayName()+"' is not loaded!");
 			return dataType.getData(reference, tableID);
 		}
 
 		@Override
 		public void setContents(WeightedRandomChestContent[] items) throws Exception {
-			if (!sourceMod.isLoaded())
+			if (!this.exists())
 				throw new IllegalStateException("Mod '"+sourceMod.getDisplayName()+"' is not loaded!");
 			dataType.setData(reference, tableID, items);
 		}
