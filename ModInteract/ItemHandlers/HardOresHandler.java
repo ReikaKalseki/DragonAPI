@@ -22,8 +22,6 @@ public class HardOresHandler {
 
 	private static final String MODID = "harderores";
 
-	public static final int BLOCK_YIELD = 16;
-
 	private final HashMap<KeyedItemStack, ItemStack> oreMap = new HashMap();
 
 	private HardOresHandler() {
@@ -86,6 +84,10 @@ public class HardOresHandler {
 
 	public Collection<ItemStack> getOresWithHardVersions() {
 		return ReikaItemHelper.cloneItemCollection(oreMap.values());
+	}
+
+	public int getYield(ItemStack is) {
+		return 1+is.getItemDamage()%16;
 	}
 
 }

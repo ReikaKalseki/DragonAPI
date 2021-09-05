@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -22,6 +22,8 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.TickRegistry.TickType;
+import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
+import Reika.DragonAPI.Instantiable.Event.BlockTickEvent.UpdateFlags;
 
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
 
@@ -63,7 +65,7 @@ public class RainTicker implements TickHandler {
 					Block block = extb.getBlockByExtId(dx, dy, dz);
 
 					if (block.getTickRandomly()) {
-						block.updateTick(world, cx + dx, cy + dy, cz + dz, world.rand);
+						BlockTickEvent.fire(block, world, cx + dx, cy + dy, cz + dz, UpdateFlags.FORCED);
 					}
 				}
 				}

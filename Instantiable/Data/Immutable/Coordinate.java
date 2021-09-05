@@ -355,9 +355,7 @@ public final class Coordinate implements Location, Comparable<Coordinate> {
 	}
 
 	public void updateTick(World world, Random r) {
-		Block b = this.getBlock(world);
-		b.updateTick(world, xCoord, yCoord, zCoord, r);
-		BlockTickEvent.fire(world, xCoord, yCoord, zCoord, b, UpdateFlags.FORCED.flag);
+		BlockTickEvent.fire(world, xCoord, yCoord, zCoord, r, UpdateFlags.FORCED);
 	}
 
 	public void scheduleUpdateTick(World world, int delay) {

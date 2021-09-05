@@ -33,7 +33,7 @@ public class MobTargetEventAIPre extends Patcher {
 		String func = FMLForgePlugin.RUNTIME_DEOBF ? "func_75296_a" : "isSuitableTarget";
 		InsnList li = new InsnList();
 		li.add(new VarInsnNode(Opcodes.ALOAD, 0));
-		li.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAINearestAttackableTarget$1", "this$0", "Lnet/minecraft/entity/ai/EntityAINearestAttackableTarget;"));
+		li.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/ai/EntityAINearestAttackableTarget$1", FMLForgePlugin.RUNTIME_DEOBF ? "field_111102_d" : "this$0", "Lnet/minecraft/entity/ai/EntityAINearestAttackableTarget;"));
 		li.add(new VarInsnNode(Opcodes.ALOAD, 1));
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/MobTargetingEvent", "fireAIPre", "(ZLnet/minecraft/entity/ai/EntityAINearestAttackableTarget;Lnet/minecraft/entity/Entity;)Z", false));
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_82704_a", "isEntityApplicable", "(Lnet/minecraft/entity/Entity;)Z");
