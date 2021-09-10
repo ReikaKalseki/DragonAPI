@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -88,6 +88,10 @@ public class HybridTank extends FluidTank {
 		if (this.getFluid() == null)
 			return 0;
 		return this.getFluid().amount;
+	}
+
+	public void removeLiquid(float amt) {
+		this.removeLiquid((int)amt);
 	}
 
 	public void removeLiquid(int amt) {

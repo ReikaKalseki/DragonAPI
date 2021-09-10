@@ -56,6 +56,15 @@ public class Proportionality<F> extends CircularDivisionRenderer<F> {
 		this.resetColors();
 	}
 
+	public double removeValue(F o) {
+		Double get = data.remove(o);
+		if (get != null) {
+			this.totalValue -= get;
+		}
+		this.resetColors();
+		return get != null ? get.doubleValue() : 0;
+	}
+
 	public void removeValue(F o, double amt) {
 		Double get = data.get(o);
 		double val = get != null ? get.doubleValue() : 0;
@@ -225,6 +234,13 @@ public class Proportionality<F> extends CircularDivisionRenderer<F> {
 
 	public String mapString() {
 		return this.data.toString();
+	}
+
+	public Proportionality<F> copy() {
+		Proportionality ret = new Proportionality();
+		ret.data.putAll(this.data);
+		ret.totalValue = this.totalValue;
+		return ret;
 	}
 
 }
