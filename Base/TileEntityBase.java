@@ -646,7 +646,12 @@ public abstract class TileEntityBase extends TileEntity implements CompoundSyncP
 		}
 		//}
 		worldObj.markTileEntityChunkModified(xCoord, yCoord, zCoord, this);
+		this.onSync();
 		forceSync = false;
+	}
+
+	protected void onSync() {
+
 	}
 
 	public int getUpdatePacketRadius() {

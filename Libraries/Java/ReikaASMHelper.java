@@ -58,6 +58,7 @@ import org.objectweb.asm.util.TraceMethodVisitor;
 import net.minecraft.launchwrapper.Launch;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
+import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Exception.ASMException.ASMConflictException;
@@ -1228,20 +1229,20 @@ public class ReikaASMHelper {
 	}
 
 	public static void writeClassFile(ClassNode cn, String path) {
-		if (FMLForgePlugin.RUNTIME_DEOBF) {
-			cn = copyClassNode(cn);
-			deobfClassFile(cn);
-		}
-
-		ClassWriter writer = new ClassWriter(0);
-		cn.accept(writer);
-		byte[] data = writer.toByteArray();
-
-		String cname = cn.name.replaceAll("\\.", "/").replaceAll("\\\\", "/");
-		if (activeMod != null)
-			cname = "[BY "+activeMod.toUpperCase(Locale.ENGLISH)+"] "+cname;
-
 		try {
+			if (FMLForgePlugin.RUNTIME_DEOBF) {
+				cn = copyClassNode(cn);
+				deobfClassFile(cn);
+			}
+
+			ClassWriter writer = new ClassWriter(0);
+			cn.accept(writer);
+			byte[] data = writer.toByteArray();
+
+			String cname = cn.name.replaceAll("\\.", "/").replaceAll("\\\\", "/");
+			if (activeMod != null)
+				cname = "[BY "+activeMod.toUpperCase(Locale.ENGLISH)+"] "+cname;
+
 			File f = new File(path, cname+".class");
 			f.getParentFile().mkdirs();
 			f.createNewFile();
@@ -1249,8 +1250,8 @@ public class ReikaASMHelper {
 			out.write(data);
 			out.close();
 		}
-		catch (Exception e) {
-			e.printStackTrace();
+		catch (Throwable t) {
+			t.printStackTrace();
 		}
 	}
 
@@ -1307,6 +1308,10 @@ public class ReikaASMHelper {
 
 	private static void loadSRGs() {
 		File f = new File(REIKA_SRGS+"mcp-srg.srg");
+		if (!f.exists()) {
+			DragonAPICore.log("SRGs do not exist. Cannot apply deobf.");
+			return;
+		}
 		ArrayList<String> li = ReikaFileReader.getFileAsLines(f, true);
 		for (String s : li) {
 			if (!s.startsWith("CL")) {

@@ -149,7 +149,7 @@ public class BlockReplaceCommand extends DragonCommandBase {
 
 		@Override
 		protected boolean replace(Block b, int meta) {
-			return ReikaTreeHelper.getTree(b, meta) != null || ReikaTreeHelper.getTreeFromLeaf(b, meta) != null || ModWoodList.isModWood(b, meta) || ModWoodList.isModLeaf(b, meta) || ChromatiAPI.trees.isCCLeaf(b);
+			return ReikaTreeHelper.getTree(b, meta) != null || ReikaTreeHelper.getTreeFromLeaf(b, meta) != null || ModWoodList.isModWood(b, meta) || ModWoodList.isModLeaf(b, meta) || ChromatiAPI.getAPI().trees().isCCLeaf(b);
 		}
 
 	}

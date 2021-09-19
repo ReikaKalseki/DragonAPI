@@ -1209,6 +1209,10 @@ public final class ReikaPacketHelper extends DragonAPICore {
 		sendPositionPacket(ch, id, e.worldObj, e.posX, e.posY, e.posZ, pt, data);
 	}
 
+	public static void sendPositionPacket(String ch, int id, World world, double x, double y, double z, double r, int... data) {
+		sendPositionPacket(ch, id, world, x, y, z, new PacketTarget.RadiusTarget(world, x, y, z, r), data);
+	}
+
 	public static void sendPositionPacket(String ch, int id, World world, double x, double y, double z, PacketTarget pt, int... data) {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(16+4*data.length);
 		DataOutputStream outputStream = new DataOutputStream(bos);

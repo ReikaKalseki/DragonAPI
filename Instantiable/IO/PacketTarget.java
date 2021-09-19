@@ -81,25 +81,25 @@ public abstract class PacketTarget {
 		private final double x;
 		private final double y;
 		private final double z;
-		private final int radius;
+		private final double radius;
 
-		public RadiusTarget(WorldLocation loc, int r) {
+		public RadiusTarget(WorldLocation loc, double r) {
 			this(loc.dimensionID, loc.xCoord, loc.yCoord, loc.zCoord, r);
 		}
 
-		public RadiusTarget(Entity e, int r) {
+		public RadiusTarget(Entity e, double r) {
 			this(e.worldObj, e.posX, e.posY, e.posZ, r);
 		}
 
-		public RadiusTarget(TileEntity te, int r) {
+		public RadiusTarget(TileEntity te, double r) {
 			this(te.worldObj, te.xCoord+0.5, te.yCoord+0.5, te.zCoord+0.5, r);
 		}
 
-		public RadiusTarget(World world, double x, double y, double z, int r) {
+		public RadiusTarget(World world, double x, double y, double z, double r) {
 			this(world.provider.dimensionId, x, y, z, r);
 		}
 
-		private RadiusTarget(int world, double x, double y, double z, int r) {
+		private RadiusTarget(int world, double x, double y, double z, double r) {
 			dim = world;
 			this.x = x;
 			this.y = y;

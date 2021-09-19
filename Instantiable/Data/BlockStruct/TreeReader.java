@@ -16,6 +16,7 @@ import net.minecraft.block.Block;
 import net.minecraft.world.IBlockAccess;
 
 import Reika.ChromatiCraft.API.ChromatiAPI;
+import Reika.ChromatiCraft.API.DyeTreeAPI;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
@@ -46,10 +47,11 @@ public final class TreeReader extends BlockArray {
 	public TreeReader() {
 		super();
 		if (ModList.CHROMATICRAFT.isLoaded()) {
-			dyeLeafID = ChromatiAPI.trees.getDyeLeaf(true);
-			rainbowLeafID = ChromatiAPI.trees.getRainbowLeaf();
-			rainbowSaplingID = ChromatiAPI.trees.getRainbowSapling();
-			dyeSaplingID = ChromatiAPI.trees.getDyeSapling();
+			DyeTreeAPI api = ChromatiAPI.getAPI().trees();
+			dyeLeafID = api.getDyeLeaf(true);
+			rainbowLeafID = api.getRainbowLeaf();
+			rainbowSaplingID = api.getRainbowSapling();
+			dyeSaplingID = api.getDyeSapling();
 		}
 		else {
 			dyeLeafID = null;
