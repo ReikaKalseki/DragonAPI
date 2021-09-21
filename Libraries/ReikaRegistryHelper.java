@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -343,7 +344,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 			SoundCategory.field_147168_j.put(cat.getCategoryName(), cat);
 			SoundCategory.field_147169_k.put(Integer.valueOf(cat.getCategoryId()), cat);
 
-			EnumMap<SoundCategory, Float> map = (EnumMap<SoundCategory, Float>)Minecraft.getMinecraft().gameSettings.mapSoundLevels;
+			Map<SoundCategory, Float> map = Minecraft.getMinecraft().gameSettings.mapSoundLevels;
 			Minecraft.getMinecraft().gameSettings.mapSoundLevels = useSoundHashMap() ? new HashMap() : new EnumMap(SoundCategory.class);
 			for (SoundCategory c : map.keySet()) {
 				Minecraft.getMinecraft().gameSettings.mapSoundLevels.put(c, map.get(c));
@@ -352,7 +353,7 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 		}
 		catch (Exception e) {
 			if (e instanceof ArrayIndexOutOfBoundsException) {
-				throw new InstallationException(DragonAPIInit.instance, "Could not add sound category "+name+"! Use the Sound HashMap config!");
+				throw new InstallationException(DragonAPIInit.instance, "Could not add sound category "+name+"! Use the Sound HashMap config!", e);
 			}
 			else {
 				throw new RuntimeException("Could not add sound category "+name+"!", e);

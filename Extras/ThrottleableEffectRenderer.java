@@ -39,7 +39,11 @@ import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Rendering.ReikaRenderHelper;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
+
+@SideOnly(Side.CLIENT)
 public class ThrottleableEffectRenderer extends EffectRenderer {
 
 	public static boolean renderParticles = true;

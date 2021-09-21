@@ -167,6 +167,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	public static final BlockKey chiseledQuartz = new BlockKey(Blocks.quartz_block, 1);
 	public static final BlockKey quartzPillar = new BlockKey(Blocks.quartz_block, 2);
 
+	public static final ItemStack charcoal = new ItemStack(Items.coal, 1, 1);
+
 	public static final Comparator<ItemStack> comparator = new ItemComparator();
 	public static final Comparator<Object> itemListComparator = new ItemListComparator();
 

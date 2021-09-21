@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -34,6 +34,7 @@ public class MystCraftHandler extends ModHandlerBase {
 
 	public final Item folderID;
 	public final Item sealedBookID;
+	public final Item bookID;
 
 	private MystCraftHandler() {
 		super();
@@ -43,6 +44,7 @@ public class MystCraftHandler extends ModHandlerBase {
 
 		Item idfolder = null;
 		Item idnotebook = null;
+		Item idbook = null;
 
 		if (this.hasMod()) {
 			/*
@@ -68,6 +70,7 @@ public class MystCraftHandler extends ModHandlerBase {
 
 			idfolder = (Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.folder);
 			idnotebook = (Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.booster);
+			idbook = (Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.linkbook);
 
 			ReikaJavaLibrary.initClass(ReikaMystcraftHelper.class);
 		}
@@ -80,6 +83,7 @@ public class MystCraftHandler extends ModHandlerBase {
 		crystalID = idcrystal;
 		folderID = idfolder;
 		sealedBookID = idnotebook;
+		bookID = idbook;
 	}
 
 	private Block getBlockInstance(String name) throws ModReflectionException {

@@ -101,7 +101,7 @@ public class ItemMaterialController {
 		this.addVanillaItem(Items.gold_ingot, ItemMaterial.GOLD);
 
 		this.addVanillaItem(Items.coal, ItemMaterial.COAL);
-		this.addVanillaItem(new ItemStack(Items.coal, 1, 1), ItemMaterial.COAL);
+		this.addVanillaItem(ReikaItemHelper.charcoal, ItemMaterial.COAL);
 		this.addVanillaItem(Blocks.coal_block, ItemMaterial.COAL);
 	}
 

@@ -91,6 +91,8 @@ public final class FlexibleIngredient {
 	}
 
 	public boolean isSufficient(ItemStack is) {
+		if (is == null)
+			return false;
 		return this.exists() ? is.stackSize >= numberToUse : true;
 	}
 

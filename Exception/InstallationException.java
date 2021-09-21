@@ -15,11 +15,7 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 public class InstallationException extends UserErrorException {
 
 	public InstallationException(DragonAPIMod mod, String msg) {
-		message.append(mod.getDisplayName()+" was not installed correctly:\n");
-		message.append(msg+"\n");
-		message.append("Try consulting "+mod.getDocumentationSite().toString()+"for information.\n");
-		this.applyDNP(mod);
-		this.crash();
+		this(mod, msg, null);
 	}
 
 	public InstallationException(String modname, String msg) {
@@ -40,6 +36,15 @@ public class InstallationException extends UserErrorException {
 	public InstallationException(DragonAPIMod mod, Exception e) {
 		super(e);
 		message.append(mod.getDisplayName()+" was not installed correctly:\n");
+	}
+
+	public InstallationException(DragonAPIMod mod, String msg, Exception e) {
+		super(e);
+		message.append(mod.getDisplayName()+" was not installed correctly:\n");
+		message.append(msg+"\n");
+		message.append("Try consulting "+mod.getDocumentationSite().toString()+"for information.\n");
+		this.applyDNP(mod);
+		this.crash();
 	}
 
 }
