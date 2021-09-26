@@ -90,10 +90,12 @@ public final class FlexibleIngredient {
 		return this.exists() ? filter.match(in) : in == null;
 	}
 
-	public boolean isSufficient(ItemStack is) {
-		if (is == null)
-			return false;
+	private boolean checkSize(ItemStack is) {
 		return this.exists() ? is.stackSize >= numberToUse : true;
+	}
+
+	public boolean matchWithSize(ItemStack in) {
+		return this.match(in) && this.checkSize(in);
 	}
 
 	public boolean exists() {

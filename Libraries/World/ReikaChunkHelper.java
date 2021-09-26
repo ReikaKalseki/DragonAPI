@@ -369,9 +369,10 @@ public final class ReikaChunkHelper extends DragonAPICore {
 
 	public static Coordinate searchForBlock(World world, int x, int z, Block b) {
 		Chunk c = world.getChunkFromChunkCoords(x, z);
-		for (int i = 0; i < 16; i++) {
-			for (int k = 0; k < 16; k++) {
-				for (int j = 0; j < 256; j++) {
+		int top = c.getTopFilledSegment()+15;
+		for (int j = 0; j < 256 && j <= top; j++) {
+			for (int i = 0; i < 16; i++) {
+				for (int k = 0; k < 16; k++) {
 					int idx = j+256*(i*16+k);
 					ExtendedBlockStorage exb = getStorageInChunk(c, j);
 					Block at = exb != null ? exb.getBlockByExtId(i, j & 15, k) : null;

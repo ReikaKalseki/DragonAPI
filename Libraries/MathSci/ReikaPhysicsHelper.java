@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -50,8 +50,8 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 
 	public static double[] polarToCartesianFast(double mag, double theta, double phi) {
 		double[] coords = new double[3];
-		theta = degToRad(theta);
-		phi = degToRad(phi);
+		theta = Math.toRadians(theta);
+		phi = Math.toRadians(phi);
 		double ct = MathHelper.cos((float)theta);
 		coords[0] = mag*ct*MathHelper.cos((float)phi);
 		coords[1] = mag*MathHelper.sin((float)theta);
@@ -62,8 +62,8 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 	/** Converts 3D polar coordinates into cartesian ones. Use angles in degrees. Args: magnitude, theta, phi */
 	public static double[] polarToCartesian(double mag, double theta, double phi) {
 		double[] coords = new double[3];
-		theta = degToRad(theta);
-		phi = degToRad(phi);
+		theta = Math.toRadians(theta);
+		phi = Math.toRadians(phi);
 		coords[0] = mag*Math.cos(theta)*Math.cos(phi);
 		coords[1] = mag*Math.sin(theta);
 		coords[2] = mag*Math.cos(theta)*Math.sin(phi);
@@ -75,8 +75,8 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 		coords[0] = ReikaMathLibrary.py3d(x, y, z); //length
 		coords[1] = Math.acos(y/coords[0]);
 		coords[2] = Math.atan2(x, z);
-		coords[1] = radToDeg(coords[1]);
-		coords[2] = 180+radToDeg(coords[2]);
+		coords[1] = Math.toDegrees(coords[1]);
+		coords[2] = 180+Math.toDegrees(coords[2]);
 		return coords;
 	}
 
@@ -87,23 +87,23 @@ public final class ReikaPhysicsHelper extends DragonAPICore {
 		coords[0] = ReikaMathLibrary.py3d(x, y, z); //length
 		coords[1] = Math.acos(y/coords[0]);
 		coords[2] = Math.atan2(x, z);
-		coords[1] = radToDeg(coords[1]);
-		coords[2] = 180+radToDeg(coords[2]);
+		coords[1] = Math.toDegrees(coords[1]);
+		coords[2] = 180+Math.toDegrees(coords[2]);
 		//if (is90to270) {
 		//	coords[2] *= -1;
 		//}
 		return coords;
 	}
 
-	/** Converts a degree angle to a radian one. Args: Angle */
+	/** Converts a degree angle to a radian one. Args: Angle *//*
 	public static double degToRad(double ang) {
 		return ang*DEG_TO_RAD;
 	}
 
-	/** Converts a degree angle to a radian one. Args: Angle */
+	/** Converts a degree angle to a radian one. Args: Angle *//*
 	public static double radToDeg(double ang) {
 		return ang*RAD_TO_DEG;
-	}
+	}*/
 
 	/** Calculates the required velocity (in xyz cartesian coordinates) required to travel in
 	 * projectile motion from point A to point B. Args: start x,y,z end x,y,z, double g */

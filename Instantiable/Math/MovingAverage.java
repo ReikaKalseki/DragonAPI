@@ -9,37 +9,41 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Math;
 
+import java.util.ArrayDeque;
+
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagDouble;
 import net.minecraft.nbt.NBTTagList;
 
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
-import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 
 
 public class MovingAverage {
 
-	private final double[] data;
+	private final int size;
+	private final ArrayDeque<Double> data;
 
 	public MovingAverage(int dataPoints) {
-		data = new double[dataPoints];
+		size = dataPoints;
+		data = new ArrayDeque(dataPoints);
 	}
 
 	public MovingAverage addValue(double val) {
-		ReikaArrayHelper.cycleArray(data, val);
+		data.add(val);
+		data.remove();
 		return this;
 	}
 
 	public double getAverage() {
 		double avg = 0;
-		for (int i = 0; i < data.length; i++) {
-			avg += data[i];
+		for (double d : data) {
+			avg += d;
 		}
-		return avg/data.length;
+		return avg/size;
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {
-		tag.setInteger("size", data.length);
+		tag.setInteger("size", size);
 		NBTTagList li = new NBTTagList();
 
 		for (double d : data) {
@@ -54,7 +58,7 @@ public class MovingAverage {
 		MovingAverage mv = new MovingAverage(size);
 		NBTTagList li = tag.getTagList("data", NBTTypes.DOUBLE.ID);
 		for (int i = 0; i < li.tagCount(); i++) {
-			mv.data[i] = ((NBTTagDouble)li.tagList.get(i)).func_150286_g();
+			mv.data.add(((NBTTagDouble)li.tagList.get(i)).func_150286_g());
 		}
 		return mv;
 	}

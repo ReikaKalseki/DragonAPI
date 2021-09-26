@@ -63,7 +63,6 @@ import Reika.DragonAPI.Interfaces.TileEntity.RenderFetcher;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 import Reika.DragonAPI.Libraries.World.ReikaBiomeHelper;
 
 import cpw.mods.fml.common.gameevent.TickEvent.Phase;
@@ -140,7 +139,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		var5.setColorRGBA_I(rgba, rgba >> 24 & 255);
 		for (int i = 0; i < 360; i += step) {
 			int sign = 1;
-			double h = r*Math.cos(ReikaPhysicsHelper.degToRad(i));
+			double h = r*Math.cos(Math.toRadians(i));
 			if (i >= 180)
 				sign = -1;
 			var5.addVertex(x-Math.sin(Math.toRadians(phi))*(sign)*(Math.sqrt(r*r-h*h)), y+r*Math.cos(Math.toRadians(i)), z+r*Math.sin(Math.toRadians(i))*Math.cos(Math.toRadians(phi)));

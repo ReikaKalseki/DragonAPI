@@ -51,7 +51,6 @@ import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaTextureHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
-import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 import Reika.DragonAPI.Objects.LineType;
 
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
@@ -206,17 +205,12 @@ public final class ReikaGuiAPI extends GuiScreen {
 		}
 	}
 
-	/** Draws a dashed line between two points. Args: start x,y, end x,y, thickness, color */
-	public void dashedLine(int x, int y, int x2, int y2, int t, int color) {
-
-	}
-
 	/** Draws a line between two points. Args: Start x,y, end x,y, color */
-	public void drawLine(int x, int y, int x2, int y2, int color) {
+	public void drawLine(double x, double y, double x2, double y2, int color) {
 		this.drawLine(x, y, x2, y2, color, LineType.SOLID);
 	}
 
-	public void drawLine(int x, int y, int x2, int y2, int color, LineType type) {
+	public void drawLine(double x, double y, double x2, double y2, int color, LineType type) {
 		if (GL11.glGetFloat(GL11.GL_LINE_WIDTH) < 1.5F)
 			GL11.glLineWidth(1.5F);
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
@@ -235,36 +229,13 @@ public final class ReikaGuiAPI extends GuiScreen {
 		}
 		GL11.glBegin(GL11.GL_LINES);
 		GL11.glColor4f(red/255F, green/255F, blue/255F, alpha/255F);
-		GL11.glVertex2i(x, y);
-		GL11.glVertex2i(x2, y2);
-		GL11.glEnd();
-		GL11.glPopAttrib();
-	}
-
-	/** Draws a line between two points. Args: Start x,y, end x,y, color */
-	public void drawLine_Double(double x, double y, double x2, double y2, int color) {
-		if (GL11.glGetFloat(GL11.GL_LINE_WIDTH) < 1.5F)
-			GL11.glLineWidth(1.5F);
-		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
-		int alpha = ReikaColorAPI.getAlpha(color);
-		if (alpha == 0)
-			alpha = 255;
-		int red = ReikaColorAPI.getRed(color);
-		int green = ReikaColorAPI.getGreen(color);
-		int blue = ReikaColorAPI.getBlue(color);
-		GL11.glDisable(GL11.GL_LIGHTING);
-		//GL11.glDisable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL11.GL_BLEND);
-		GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glBegin(GL11.GL_LINES);
-		GL11.glColor4f(red/255F, green/255F, blue/255F, alpha/255F);
 		GL11.glVertex2d(x, y);
 		GL11.glVertex2d(x2, y2);
 		GL11.glEnd();
 		GL11.glPopAttrib();
 	}
 
-	public void drawCircle(int x, int y, double radius, int color) {
+	public void drawCircle(double x, double y, double radius, int color) {
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		int alpha = ReikaColorAPI.getAlpha(color);
 		if (alpha == 0)
@@ -279,7 +250,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glBegin(GL11.GL_LINE_LOOP);
 		GL11.glColor4f(red/255F, green/255F, blue/255F, alpha/255F);
 		for (int i = 0; i < 360; i++) {
-			GL11.glVertex2f(x+(float)(radius*Math.cos(ReikaPhysicsHelper.degToRad(i))), y+(float)(radius*Math.sin(ReikaPhysicsHelper.degToRad(i))));
+			GL11.glVertex2d(x+radius*Math.cos(Math.toRadians(i)), y+radius*Math.sin(Math.toRadians(i)));
 		}
 		GL11.glEnd();
 		GL11.glPopAttrib();
@@ -608,21 +579,21 @@ public final class ReikaGuiAPI extends GuiScreen {
 		this.drawGradientRect(j2 + k + 3, k2 - 3, j2 + k + 4, k2 + i1 + 3, j1, j1);
 		int k1 = 1347420415;
 		int l1 = (k1 & 16711422) >> 1 | k1 & -16777216;
-			this.drawGradientRect(j2 - 3, k2 - 3 + 1, j2 - 3 + 1, k2 + i1 + 3 - 1, k1, l1);
-			this.drawGradientRect(j2 + k + 2, k2 - 3 + 1, j2 + k + 3, k2 + i1 + 3 - 1, k1, l1);
-			this.drawGradientRect(j2 - 3, k2 - 3, j2 + k + 3, k2 - 3 + 1, k1, k1);
-			this.drawGradientRect(j2 - 3, k2 + i1 + 2, j2 + k + 3, k2 + i1 + 3, l1, l1);
+		this.drawGradientRect(j2 - 3, k2 - 3 + 1, j2 - 3 + 1, k2 + i1 + 3 - 1, k1, l1);
+		this.drawGradientRect(j2 + k + 2, k2 - 3 + 1, j2 + k + 3, k2 + i1 + 3 - 1, k1, l1);
+		this.drawGradientRect(j2 - 3, k2 - 3, j2 + k + 3, k2 - 3 + 1, k1, k1);
+		this.drawGradientRect(j2 - 3, k2 + i1 + 2, j2 + k + 3, k2 + i1 + 3, l1, l1);
 
-			GL11.glEnable(GL11.GL_TEXTURE_2D);
+		GL11.glEnable(GL11.GL_TEXTURE_2D);
 
-			for (int i = 0; i < li.size(); i++) {
-				String s = li.get(i);
-				f.drawStringWithShadow(s, j2, k2+i*10, 0xffffffff);
-				if (cacheRenders)
-					tooltips.addItem(s, mx, my+8+i*10, f.getStringWidth(s)+24, f.FONT_HEIGHT+8);
-			}
+		for (int i = 0; i < li.size(); i++) {
+			String s = li.get(i);
+			f.drawStringWithShadow(s, j2, k2+i*10, 0xffffffff);
+			if (cacheRenders)
+				tooltips.addItem(s, mx, my+8+i*10, f.getStringWidth(s)+24, f.FONT_HEIGHT+8);
+		}
 
-			GL11.glPopAttrib();
+		GL11.glPopAttrib();
 	}
 
 	public Map<String, Rectangle> getTooltips() {

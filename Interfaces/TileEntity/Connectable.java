@@ -9,11 +9,9 @@
  ******************************************************************************/
 package Reika.DragonAPI.Interfaces.TileEntity;
 
-import net.minecraft.world.World;
-
 import Reika.DragonAPI.Interfaces.Location;
 
-public interface Connectable<L extends Location> extends BreakAction {
+public interface Connectable<L extends Location> extends BreakAction, SimpleConnection {
 
 	public boolean isEmitting();
 
@@ -24,7 +22,5 @@ public interface Connectable<L extends Location> extends BreakAction {
 	public L getConnection();
 
 	public boolean hasValidConnection();
-
-	public boolean tryConnect(World world, int x, int y, int z);
 
 }
