@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -28,6 +28,16 @@ public final class RecipePattern extends InventoryCrafting {
 		public final boolean canInteractWith(EntityPlayer player) {return false;}
 		@Override
 		public final void onContainerClosed(EntityPlayer par1EntityPlayer) {}
+	}
+
+	public RecipePattern(IInventory ii, int from) {
+		super(craft, 3, 3);
+		for (int i = 0; i < 3; i++) {
+			for (int j = 0; j < 3; j++) {
+				int idx = i*3+j;
+				this.setInventorySlotContents(i*3+j, ii.getStackInSlot(idx+from)); //no//since will otherwise add vertically
+			}
+		}
 	}
 
 	public RecipePattern(ItemStack... items) {

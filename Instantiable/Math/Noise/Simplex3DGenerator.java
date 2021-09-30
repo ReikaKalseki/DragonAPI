@@ -31,7 +31,7 @@ public class Simplex3DGenerator extends SimplexNoiseGenerator {
 	}
 
 	@Override
-	protected double calcValue(double x, double y, double z, double f, double a) {
+	protected double calcValue(double x, double y, double z, double f, double a, Object obj) {
 
 		if (f != 1 && f > 0) {
 			x *= f;

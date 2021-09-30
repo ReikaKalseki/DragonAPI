@@ -29,14 +29,20 @@ public abstract class NoiseGeneratorBase {
 	}
 
 	public final double getValue(double x, double z) {
-		return this.calculateValues(x*inputFactor, 0, z*inputFactor);
+		return this.calculateValues(x*inputFactor, 0, z*inputFactor, null);
 	}
 
 	public final double getValue(double x, double y, double z) {
-		return this.calculateValues(x*inputFactor, y*inputFactor, z*inputFactor);
+		return this.calculateValues(x*inputFactor, y*inputFactor, z*inputFactor, null);
 	}
 
-	private double calculateValues(double x, double y, double z) {
+	public final Object populateData(double x, double y, double z) {
+		Object obj = this.constructObjectStorage();
+		this.calculateValues(x*inputFactor, y*inputFactor, z*inputFactor, obj);
+		return obj;
+	}
+
+	private double calculateValues(double x, double y, double z, Object obj) {
 		if (this.displaceCalculation()) {
 			double x0 = x;
 			double y0 = y;
@@ -46,11 +52,11 @@ public abstract class NoiseGeneratorBase {
 			z += this.getZDisplacement(x0, y0, z0);
 		}
 
-		double val = this.calcValue(x, y, z, 1, 1);
+		double val = this.calcValue(x, y, z, 1, 1, obj);
 
 		if (!octaves.isEmpty()) {
 			for (Octave o : octaves) {
-				val += this.calcValue(x+o.phaseShift, y+o.phaseShift, z+o.phaseShift, o.frequency, o.amplitude);
+				val += this.calcValue(x+o.phaseShift, y+o.phaseShift, z+o.phaseShift, o.frequency, o.amplitude, obj);
 			}
 			if (clampEdge)
 				val = MathHelper.clamp_double(val, -1, 1);
@@ -65,7 +71,11 @@ public abstract class NoiseGeneratorBase {
 		return true;
 	}
 
-	protected abstract double calcValue(double x, double y, double z, double freq, double amp);
+	protected Object constructObjectStorage() {
+		return null;
+	}
+
+	protected abstract double calcValue(double x, double y, double z, double freq, double amp, Object obj);
 
 	public final NoiseGeneratorBase setFrequency(double f) {
 		inputFactor = f;

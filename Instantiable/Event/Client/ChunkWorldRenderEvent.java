@@ -42,6 +42,7 @@ public class ChunkWorldRenderEvent {
 		return ret;
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static interface ChunkWorldRenderWatcher {
 
 		/** Return true to cancel the chunk render. WR's posX, posY, posZ are block coords of the subchunk origin. */

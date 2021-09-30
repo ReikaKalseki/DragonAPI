@@ -126,6 +126,8 @@ import Reika.DragonAPI.ModRegistry.InterfaceCache;
 
 import WayofTime.alchemicalWizardry.api.spell.EntitySpellProjectile;
 import cofh.api.energy.IEnergyContainerItem;
+import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry.EntityRegistration;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import ic2.api.item.ElectricItem;
@@ -833,7 +835,13 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	}
 
 	public static String getEntityDisplayName(String name) {
-		return StatCollector.translateToLocal("entity."+name+".name");
+		String ret = StatCollector.translateToLocal("entity."+name+".name");
+		ret = ret.startsWith("entity.") ? StatCollector.translateToLocal(name) : ret;
+		EntityRegistration reg = EntityRegistry.instance().lookupModSpawn((Class<? extends Entity>)EntityList.stringToClassMapping.get(name), true);
+		if (reg != null && reg.getContainer() != null) {
+			ret = ret.replace(reg.getContainer().getModId()+".", "");
+		}
+		return ret;
 	}
 
 	public static boolean isTameHostile(String mob) {

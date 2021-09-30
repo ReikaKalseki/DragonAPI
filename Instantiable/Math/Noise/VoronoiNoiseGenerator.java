@@ -45,8 +45,6 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 	public boolean calculateDistance = false;
 	public double randomFactor = 1;
 
-	private final ArrayList<Root> candidateList = new ArrayList();
-
 	public VoronoiNoiseGenerator(long seed) {
 		super(seed);
 	}
@@ -69,7 +67,12 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 	}
 
 	@Override
-	protected double calcValue(double x, double y, double z, double f, double a) {
+	protected Object constructObjectStorage() {
+		return new Candidates();
+	}
+
+	@Override
+	protected double calcValue(double x, double y, double z, double f, double a, Object obj) {
 		if (f != 1 && f > 0) {
 			x *= f;
 			y *= f;
@@ -80,7 +83,7 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 		int yInt = MathHelper.floor_double(y);
 		int zInt = MathHelper.floor_double(z);
 
-		candidateList.clear();
+		((Candidates)obj).candidateList.clear();
 
 		// Inside each unit cube, there is a seed point at a random position.  Go
 		// through each of the nearby cubes until we find a cube with a seed point
@@ -101,13 +104,13 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 
 					// This seed point is closer to any others found so far, so record
 					// this seed point.
-					candidateList.add(new Root(xPos, yPos, zPos, dist));
+					((Candidates)obj).candidateList.add(new Root(xPos, yPos, zPos, dist));
 				}
 			}
 		}
 
-		Collections.sort(candidateList);
-		Root candidate = candidateList.get(0);
+		((Candidates)obj).sort();
+		Root candidate = ((Candidates)obj).getClosest();
 
 		double value = 0;
 		if (calculateDistance) {
@@ -126,8 +129,8 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 		x += this.getXDisplacement(x0, y0, z0);
 		y += this.getYDisplacement(x0, y0, z0);
 		z += this.getZDisplacement(x0, y0, z0);
-		this.getValue(x, y, z);
-		DecimalPosition raw = candidateList.get(0).position;
+		Candidates c = (Candidates)this.populateData(x, y, z);
+		DecimalPosition raw = c.getClosest().position;
 		return new DecimalPosition(raw.xCoord/inputFactor, raw.yCoord/inputFactor, raw.zCoord/inputFactor);
 	}
 
@@ -219,13 +222,13 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 		//x = closest.xCoord;
 		//z = closest.zCoord;
 
-		this.getValue(x, 0, z);
+		Candidates c = (Candidates)this.populateData(x, 0, z);
 
 		x += this.getXDisplacement(x, 0, z);
 		z += this.getZDisplacement(x, 0, z);
 
-		DecimalPosition candidate1 = candidateList.get(0).position;
-		DecimalPosition candidate2 = candidateList.get(1).position;
+		DecimalPosition candidate1 = c.candidateList.get(0).position;
+		DecimalPosition candidate2 = c.candidateList.get(1).position;
 
 		double cx = (candidate1.xCoord+candidate2.xCoord)/(2*inputFactor);
 		double cy = (candidate1.zCoord+candidate2.zCoord)/(2*inputFactor);
@@ -271,6 +274,20 @@ public class VoronoiNoiseGenerator extends NoiseGeneratorBase {
 	public boolean chunkContainsCenter(int x, int z) {
 		DecimalPosition pos = this.getClosestRoot(x, 0, z);
 		return pos.xCoord >= x && pos.zCoord >= z && pos.xCoord < x+16 && pos.yCoord < z+16;
+	}
+
+	private static class Candidates {
+
+		private final ArrayList<Root> candidateList = new ArrayList();
+
+		private void sort() {
+			Collections.sort(candidateList);
+		}
+
+		private Root getClosest() {
+			return candidateList.isEmpty() ? null : candidateList.get(0);
+		}
+
 	}
 
 	private static final class Root implements Comparable<Root> {

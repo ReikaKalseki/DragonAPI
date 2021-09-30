@@ -46,7 +46,7 @@ public class SimplexNoiseGenerator extends NoiseGeneratorBase {
 	//2D OpenSimplex Noise.
 	/** Returns a value from -1 to +1 */
 	@Override
-	protected double calcValue(double x, double y, double z, double f, double a) {
+	protected double calcValue(double x, double y, double z, double f, double a, Object obj) {
 		if (f != 1 && f > 0) {
 			x *= f;
 			z *= f;
