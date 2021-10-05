@@ -306,6 +306,25 @@ public final class ScheduledTickEvent extends Event implements FreezableTimer {
 		}
 	}
 
+	public static class ScheduledEntitySpawn implements ScheduledEvent {
+
+		private final Entity entity;
+
+		public ScheduledEntitySpawn(Entity e) {
+			entity = e;
+		}
+
+		@Override
+		public void fire() {
+			entity.worldObj.spawnEntityInWorld(entity);
+		}
+
+		@Override
+		public boolean runOnSide(Side s) {
+			return s == Side.SERVER;
+		}
+	}
+
 	public static final class ScheduledPacket implements ScheduledEvent {
 
 		public final String channel;

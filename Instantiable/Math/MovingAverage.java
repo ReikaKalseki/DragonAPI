@@ -26,11 +26,17 @@ public class MovingAverage {
 	public MovingAverage(int dataPoints) {
 		size = dataPoints;
 		data = new ArrayDeque(dataPoints);
+		for (int i = 0; i < size; i++) {
+			data.add(0D);
+		}
+		//ReikaJavaLibrary.pConsole("ctr"+data, Side.SERVER);
 	}
 
 	public MovingAverage addValue(double val) {
+		//ReikaJavaLibrary.pConsole("pre"+data, Side.SERVER);
 		data.add(val);
 		data.remove();
+		//ReikaJavaLibrary.pConsole("post"+data, Side.SERVER);
 		return this;
 	}
 
@@ -56,10 +62,14 @@ public class MovingAverage {
 	public static MovingAverage readFromNBT(NBTTagCompound tag) {
 		int size = tag.getInteger("size");
 		MovingAverage mv = new MovingAverage(size);
+		mv.data.clear();
 		NBTTagList li = tag.getTagList("data", NBTTypes.DOUBLE.ID);
 		for (int i = 0; i < li.tagCount(); i++) {
 			mv.data.add(((NBTTagDouble)li.tagList.get(i)).func_150286_g());
 		}
+		while (mv.data.size() < mv.size)
+			mv.data.add(0D);
+		//ReikaJavaLibrary.pConsole("nbt"+mv.data, Side.SERVER);
 		return mv;
 	}
 

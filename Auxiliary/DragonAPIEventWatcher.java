@@ -66,6 +66,7 @@ import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Auxiliary.Trackers.RemoteAssetLoader;
 import Reika.DragonAPI.Auxiliary.Trackers.SpecialDayTracker;
+import Reika.DragonAPI.Auxiliary.Trackers.TickScheduler;
 import Reika.DragonAPI.Auxiliary.Trackers.VersionTransitionTracker;
 import Reika.DragonAPI.Command.ClearItemsCommand;
 import Reika.DragonAPI.Exception.WTFException;
@@ -88,6 +89,7 @@ import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.RenderBlockAtPosEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SettingsEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SkyColorEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SoundAttenuationDistanceEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.WinterColorsEvent;
@@ -123,6 +125,7 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event.Result;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServerEvent;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import paulscode.sound.SoundSystemConfig;
@@ -152,6 +155,16 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 		if (tag.equals("debug")) {
 			this.showF3Extras();
 		}
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void clearScheduledEvents(SinglePlayerLogoutEvent evt) {
+		TickScheduler.instance.clear();
+	}
+
+	@SubscribeEvent(priority = EventPriority.LOWEST)
+	public void clearScheduledEvents(ClientDisconnectionFromServerEvent evt) {
+		TickScheduler.instance.clear();
 	}
 
 	@SubscribeEvent

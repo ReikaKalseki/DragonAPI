@@ -18,9 +18,11 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import com.google.common.base.Strings;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
@@ -344,6 +346,18 @@ public class CustomRecipeList {
 			}
 			return new ShapelessOreRecipe(output, inputs);
 		}
+	}
+
+	public static final String fullID(Object o) {
+		if (o instanceof ItemStack)
+			return fullID((ItemStack)o);
+		if (o instanceof Collection)
+			return ((Collection)o).stream().map(e -> fullID(e)).collect(Collectors.toList()).toString();
+		if (o instanceof Item)
+			return Item.itemRegistry.getNameForObject(o)+"["+ReikaItemHelper.getRegistrantMod((Item)o)+"]";
+		if (o instanceof Block)
+			return Block.blockRegistry.getNameForObject(o)+"["+ReikaItemHelper.getRegistrantMod((Block)o)+"]";
+		return String.valueOf(o);
 	}
 
 	public static final String fullID(ItemStack is) {

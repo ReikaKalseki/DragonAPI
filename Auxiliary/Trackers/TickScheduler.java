@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -35,8 +35,18 @@ public class TickScheduler implements TickHandler {
 	@Override
 	public void tick(TickType type, Object... tickData) {
 		synchronized(lock) {
-			TimerMap<ScheduledTickEvent> data = type == TickType.SERVER ? serverData : clientData;
-			data.tick();
+			this.getData(type).tick();
+		}
+	}
+
+	private TimerMap<ScheduledTickEvent> getData(TickType type) {
+		return type == TickType.SERVER ? serverData : clientData;
+	}
+
+	public void clear() {
+		synchronized(lock) {
+			serverData.clear();
+			clientData.clear();
 		}
 	}
 

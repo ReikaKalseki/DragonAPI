@@ -537,7 +537,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static boolean isVanillaBlock(Block b) {
-		return isVanillaItem(Item.getItemFromBlock(b));
+		return isVanillaItem(Item.getItemFromBlock(b)) || Block.getIdFromBlock(b) <= Block.getIdFromBlock(Blocks.double_plant);
 	}
 
 	public static boolean isVanillaItem(ItemStack is) {
@@ -567,9 +567,20 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static String getRegistrantMod(ItemStack is) {
-		if (isVanillaItem(is))
+		return getRegistrantMod(is.getItem());
+	}
+
+	public static String getRegistrantMod(Block b) {
+		if (isVanillaBlock(b))
 			return "Minecraft";
-		UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(is.getItem());
+		UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(b);
+		return id != null ? id.modId : "[No Mod]";
+	}
+
+	public static String getRegistrantMod(Item i) {
+		if (isVanillaItem(i))
+			return "Minecraft";
+		UniqueIdentifier id = GameRegistry.findUniqueIdentifierFor(i);
 		return id != null ? id.modId : "[No Mod]";
 	}
 
