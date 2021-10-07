@@ -29,6 +29,7 @@ import Reika.DragonAPI.Interfaces.ColorController;
 import Reika.DragonAPI.Interfaces.MotionController;
 import Reika.DragonAPI.Interfaces.PositionController;
 import Reika.DragonAPI.Interfaces.Entity.CustomRenderFX;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 import cpw.mods.fml.relauncher.Side;
@@ -46,6 +47,7 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 	private AxisAlignedBB bounds = null;
 	private double collideAngle;
 	private boolean colliding = false;
+	private int clearOnCollide = -1;
 
 	private int lifeFreeze;
 
@@ -163,14 +165,28 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 	}
 
 	public final EntityBlurFX setColliding() {
-		return this.setColliding(rand.nextDouble()*360);
+		return this.setColliding(-1);
+	}
+
+	public final EntityBlurFX setColliding(int clear) {
+		return this.setColliding(rand.nextDouble()*360, clear);
 	}
 
 	public final EntityBlurFX setColliding(double ang) {
+		return this.setColliding(ang, -1);
+	}
+
+	public final EntityBlurFX setColliding(double ang, int clear) {
 		noClip = false;
 		colliding = true;
 		collideAngle = ang;
+		clearOnCollide = clear;
+		this.onSetColliding();
 		return this;
+	}
+
+	protected void onSetColliding() {
+
 	}
 
 	public final EntityBlurFX markDestination(int x, int y, int z) {
@@ -254,12 +270,16 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 		return this;
 	}
 
-	protected boolean isAlphaFade() {
+	protected final boolean isAlphaFade() {
 		return alphaFade;
 	}
 
-	public int getMaxAge() {
+	public final int getMaxAge() {
 		return particleMaxAge;
+	}
+
+	public final int getMaximumSizeAge() {
+		return rapidExpand ? particleMaxAge/12 : particleMaxAge/2;
 	}
 
 	@Override
@@ -271,12 +291,23 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 		if (colliding) {
 			if (isCollidedVertically) {
 				double v = rand.nextDouble()*0.0625;
-				motionX = v*Math.sin(Math.toRadians(collideAngle));
-				motionZ = v*Math.cos(Math.toRadians(collideAngle));
+				if (Double.isFinite(collideAngle)) {
+					motionX = v*Math.sin(Math.toRadians(collideAngle));
+					motionZ = v*Math.cos(Math.toRadians(collideAngle));
+				}
+				else {
+					double vel = ReikaMathLibrary.py3d(motionX, 0, motionZ);
+					motionX = motionX*v/vel;
+					motionZ = motionZ*v/vel;
+				}
 				colliding = false;
 				this.setNoSlowdown();
-				lifeFreeze = 20;
+				if (clearOnCollide != Integer.MIN_VALUE) {
+					lifeFreeze = clearOnCollide >= 0 ? Math.min(clearOnCollide, 20) : 20;
+				}
 				particleGravity *= 4;
+				if (clearOnCollide >= 0)
+					this.setLife(Math.max(1, clearOnCollide-lifeFreeze));
 				this.onCollision();
 			}
 			if (isCollidedHorizontally) {

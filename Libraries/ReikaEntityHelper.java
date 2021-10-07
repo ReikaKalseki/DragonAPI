@@ -678,12 +678,22 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		knockbackEntityFromPos(a.posX, a.posY, a.posZ, b, power);
 	}
 
+	/** Knocks one entity away from another. Args: Attacker, target, power, ypowerscale */
+	public static void knockbackEntity(Entity a, Entity b, double power, double yscale) {
+		knockbackEntityFromPos(a.posX, a.posY, a.posZ, b, power, 0, yscale);
+	}
+
 	public static void knockbackEntityFromPos(double x, double y, double z, Entity ent, double power) {
 		knockbackEntityFromPos(x, y, z, ent, power, 0);
 	}
 
 	/** Knocks an entity away from a position. Args: x, y, z, entity, power, distance scale exponent */
 	public static void knockbackEntityFromPos(double x, double y, double z, Entity ent, double power, double distanceScale) {
+		knockbackEntityFromPos(x, y, z, ent, power, distanceScale, 1);
+	}
+
+	/** Knocks an entity away from a position. Args: x, y, z, entity, power, distance scale exponent, y scalar */
+	public static void knockbackEntityFromPos(double x, double y, double z, Entity ent, double power, double distanceScale, double yscale) {
 		double dx = x-ent.posX;
 		//double dy = y-ent.posY;
 		double dz = z-ent.posZ;
