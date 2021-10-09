@@ -221,7 +221,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		int green = ReikaColorAPI.getGreen(color);
 		int blue = ReikaColorAPI.getBlue(color);
 		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		//GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		if (type != LineType.SOLID) {
@@ -244,7 +244,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		int green = ReikaColorAPI.getGreen(color);
 		int blue = ReikaColorAPI.getBlue(color);
 		GL11.glDisable(GL11.GL_LIGHTING);
-		GL11.glDisable(GL11.GL_DEPTH_TEST);
+		//GL11.glDisable(GL11.GL_DEPTH_TEST);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		GL11.glBegin(GL11.GL_LINE_LOOP);

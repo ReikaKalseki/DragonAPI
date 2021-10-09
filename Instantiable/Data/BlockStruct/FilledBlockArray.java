@@ -370,6 +370,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 		}
 		data.clear();
 		data.putAll(map);
+		this.recalcLimits();
 		return this;
 	}
 

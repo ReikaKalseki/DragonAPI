@@ -18,6 +18,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 import Reika.DragonAPI.Instantiable.Data.WeightedRandom;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTIO;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 
@@ -141,7 +142,7 @@ public class CountMap<V> {
 		NBTTagList li = tag.getTagList("data", NBTTypes.COMPOUND.ID);
 		for (Object o : li.tagList) {
 			NBTTagCompound dat = (NBTTagCompound)o;
-			V key = converter.createFromNBT(dat.getTag("key"));
+			V key = (V)ReikaNBTHelper.getValue(dat.getTag("key"), converter);
 			int amt = dat.getInteger("value");
 			data.put(key, amt);
 		}
@@ -153,7 +154,7 @@ public class CountMap<V> {
 		for (V k : data.keySet()) {
 			NBTTagCompound dat = new NBTTagCompound();
 			int amt = this.get(k);
-			dat.setTag("key", converter.convertToNBT(k));
+			dat.setTag("key", ReikaNBTHelper.getTagForObject(k, converter));
 			dat.setInteger("value", amt);
 			li.appendTag(dat);
 		}

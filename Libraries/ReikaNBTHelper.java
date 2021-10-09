@@ -445,8 +445,8 @@ public final class ReikaNBTHelper extends DragonAPICore {
 		map.clear();
 		for (Object o : li.tagList) {
 			NBTTagCompound entry = (NBTTagCompound)o;
-			K key = (K)getValue(entry.getCompoundTag("key"), converterK);
-			V val = (V)getValue(entry.getCompoundTag("value"), converterV);
+			K key = (K)getValue(entry.getTag("key"), converterK);
+			V val = (V)getValue(entry.getTag("value"), converterV);
 			map.put(key, val);
 		}
 	}
