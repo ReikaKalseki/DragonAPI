@@ -25,6 +25,8 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.Charsets;
+
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -120,9 +122,16 @@ public abstract class LuaBlock {
 	public final String getString(String key) {
 		if (data.containsKey(key))
 			return data.get(key);
+		String fallback = this.getFallbackValue(key);
+		if (fallback != null)
+			return fallback;
 		if (!this.canInherit(key))
 			throw new IllegalArgumentException("Missing key '"+key+"' for '"+name+"'");
 		return this.inherit(key);
+	}
+
+	protected String getFallbackValue(String key) {
+		return null;
 	}
 
 	private int parseInt(String s) {
@@ -213,7 +222,7 @@ public abstract class LuaBlock {
 		return lb.data.containsKey(key) ? lb.getString(key) : NULL_DATA;
 	}
 
-	private boolean canInherit(String key) {
+	protected boolean canInherit(String key) {
 		return /*!requiredElements.contains(name) && */!requiredElements.contains(key) && !key.equals("inherit");
 	}
 
@@ -354,13 +363,14 @@ public abstract class LuaBlock {
 		private final HashMap<String, LuaBlock> rawData = new HashMap();
 
 		public boolean hasDuplicateKeys = false;
+		public Class<? extends LuaBlock> defaultBlockType;
 
 		public LuaBlockDatabase() {
 			//this.addBlock("top", block);
 		}
 
 		public final void loadFromFile(File f) {
-			this.loadFromLines(ReikaFileReader.getFileAsLines(f, false));
+			this.loadFromLines(ReikaFileReader.getFileAsLines(f, false, Charsets.UTF_8));
 		}
 
 		public final void loadFromLines(ArrayList<String> li) {
@@ -385,6 +395,9 @@ public abstract class LuaBlock {
 					}
 				}
 				else if (s.contains("}")) {
+					if (activeBlock.containsKey("type") && activeBlock.parent != null && activeBlock.parent.isRoot)
+						this.addBlock(activeBlock.getString("type"), activeBlock);
+					activeBlock.onFinish();
 					activeBlock = activeBlock.getParent();
 					bracketLevel--;
 				}
@@ -414,6 +427,8 @@ public abstract class LuaBlock {
 
 		private LuaBlock createChild(String s, LuaBlock parent) throws Exception {
 			Class<? extends LuaBlock> c = parent.getChildBlockType();
+			if (parent.isRoot && defaultBlockType != null)
+				c = defaultBlockType;
 			Constructor<LuaBlock> ctr = (Constructor<LuaBlock>)c.getDeclaredConstructor(String.class, LuaBlock.class, LuaBlockDatabase.class);
 			ctr.setAccessible(true);
 			LuaBlock child = ctr.newInstance(s, parent, this);
@@ -474,6 +489,10 @@ public abstract class LuaBlock {
 			ret.put(s.lookupKey, this.getObject(b));
 		}
 		return ret;
+	}
+
+	protected void onFinish() {
+
 	}
 
 	public final WeightedRandom<String> asWeightedRandom() {

@@ -2487,7 +2487,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		//return ReikaJavaLibrary.safeLongParse(name);
 	}
 
-	public static File getWorldMetadataFolder(World world) {
+	private static File getWorldMetadataFolder(World world) {
 		if (world.isRemote)
 			throw new MisuseException("This cannot be called from the client side!");
 		File ret = new File(world.getSaveHandler().getWorldDirectory(), "DragonAPI_Data");

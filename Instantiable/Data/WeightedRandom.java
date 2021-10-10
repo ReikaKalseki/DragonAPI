@@ -133,6 +133,8 @@ public class WeightedRandom<V> {
 
 	public void setSeed(long seed) {
 		rand.setSeed(seed);
+		rand.nextBoolean();
+		rand.nextBoolean();
 	}
 
 	public void clear() {
