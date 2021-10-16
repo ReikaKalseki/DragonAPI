@@ -171,7 +171,7 @@ public class LootController {
 	}
 
 	public static ChestGenLootLocation getLocationForStructure(Object struct) {
-		if (struct instanceof StructureNetherBridgePieces)
+		if (struct instanceof StructureNetherBridgePieces || struct instanceof StructureNetherBridgePieces.Piece)
 			return getLocationForID("netherFortress");
 		return struct == null ? null : locationsByObject.get(struct.getClass().getName());
 	}

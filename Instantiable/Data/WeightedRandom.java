@@ -15,6 +15,7 @@ import java.util.NavigableMap;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.function.Function;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -22,6 +23,7 @@ import net.minecraft.nbt.NBTTagList;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Interpolation;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
+import Reika.DragonAPI.Instantiable.Data.Maps.CountMap;
 import Reika.DragonAPI.Interfaces.ObjectToNBTSerializer;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 
@@ -225,6 +227,19 @@ public class WeightedRandom<V> {
 		WeightedRandom<Integer> ret = new WeightedRandom();
 		for (int d = (int)k; d <= lin.getHighestKey(); d++) {
 			ret.addEntry(d, lin.getValue(d));
+		}
+		return ret;
+	}
+
+	public static <E> WeightedRandom<E> fromMap(CountMap<E> map) {
+		return fromMap(map, null);
+	}
+
+	public static <E> WeightedRandom<E> fromMap(CountMap<E> map, Function<Integer, Double> calc) {
+		WeightedRandom<E> ret = new WeightedRandom();
+		for (E e : map.keySet()) {
+			int amt = map.get(e);
+			ret.addEntry(e, calc == null ? amt : calc.apply(amt));
 		}
 		return ret;
 	}

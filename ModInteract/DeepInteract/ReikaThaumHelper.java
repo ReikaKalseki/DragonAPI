@@ -94,6 +94,7 @@ public class ReikaThaumHelper {
 
 	private static Method researchComplete;
 	private static Method createNote;
+	private static Method getMix;
 
 	private static SimpleNetworkWrapper packetHandlerInstance;
 	private static Constructor<IMessage> aspectPacketConstructor;
@@ -833,6 +834,7 @@ public class ReikaThaumHelper {
 				Class mgr = Class.forName("thaumcraft.common.lib.research.ResearchManager");
 				researchComplete = mgr.getMethod("isResearchComplete", String.class, String.class);
 				createNote = mgr.getMethod("createNote", ItemStack.class, String.class, World.class);
+				getMix = mgr.getMethod("getCombinationResult", Aspect.class, Aspect.class);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not load ThaumCraft Research Handler!");
@@ -1012,6 +1014,16 @@ public class ReikaThaumHelper {
 		}
 		catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	public static Aspect getAspectCombinationResult(Aspect a1, Aspect a2) {
+		try {
+			return (Aspect)getMix.invoke(null, a1, a2);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
 		}
 	}
 

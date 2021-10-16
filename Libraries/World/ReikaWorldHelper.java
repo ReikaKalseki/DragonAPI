@@ -491,6 +491,11 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	/** Applies temperature effects to the environment. Args: World, x, y, z, temperature */
 	public static void temperatureEnvironment(World world, int x, int y, int z, int temperature, TemperatureCallback callback) {
+		temperatureEnvironment(world, x, y, z, temperature, false, callback);
+	}
+
+	/** Applies temperature effects to the environment. Args: World, x, y, z, temperature */
+	public static void temperatureEnvironment(World world, int x, int y, int z, int temperature, boolean corners, TemperatureCallback callback) {
 		if (temperature < 0) {
 			for (int i = 0; i < 6; i++) {
 				ForgeDirection side = ForgeDirection.VALID_DIRECTIONS[i];
@@ -503,16 +508,33 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				}
 			}
 		}
-		for (int i = 0; i < 6; i++) {
-			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
-			for (int d = 1; d < 4; d++) {
-				int dx = x+dir.offsetX*d;
-				int dy = y+dir.offsetY*d;
-				int dz = z+dir.offsetZ*d;
-				Material mat = getMaterial(world, dx, dy, dz);
-				TemperatureEffect eff = temperatureBlockEffects.get(mat);
-				if (eff != null && temperature >= eff.minimumTemperature) {
-					eff.apply(world, dx, dy, dz, temperature, callback);
+		if (corners) {
+			for (int i = -4; i < 4; i++) {
+				for (int k = -4; k < 4; k++) {
+					if (Math.abs(i)+Math.abs(k) <= 4) {
+						int dx = x+i;
+						int dz = z+k;
+						Material mat = getMaterial(world, dx, y, dz);
+						TemperatureEffect eff = temperatureBlockEffects.get(mat);
+						if (eff != null && temperature >= eff.minimumTemperature) {
+							eff.apply(world, dx, y, dz, temperature, callback);
+						}
+					}
+				}
+			}
+		}
+		else {
+			for (int i = 0; i < 6; i++) {
+				ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
+				for (int d = 1; d < 4; d++) {
+					int dx = x+dir.offsetX*d;
+					int dy = y+dir.offsetY*d;
+					int dz = z+dir.offsetZ*d;
+					Material mat = getMaterial(world, dx, dy, dz);
+					TemperatureEffect eff = temperatureBlockEffects.get(mat);
+					if (eff != null && temperature >= eff.minimumTemperature) {
+						eff.apply(world, dx, dy, dz, temperature, callback);
+					}
 				}
 			}
 		}
@@ -557,23 +579,14 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			world.setBlock(x, y, z+1, Blocks.fire, meta, 3);
 	}
 
-	/** Returns the number of water blocks directly and continuously above the passed coordinates.
+	/** Returns the number of flui blocks directly and continuously above the passed coordinates.
 	 *Returns -1 if invalid liquid specified. Args: World, x, y, z */
-	public static int getDepth(World world, int x, int y, int z, String liq) {
-		int i = 1;
-		if (liq.equals("water")) {
-			while (world.getBlock(x, y+i, z) == Blocks.flowing_water || world.getBlock(x, y+i, z) == Blocks.water) {
-				i++;
-			}
-			return (i-1);
+	public static int getDepthFromBelow(World world, int x, int y, int z, Fluid f) {
+		int i = 0;
+		while (ReikaFluidHelper.lookupFluidForBlock(world.getBlock(x, y+1+i, z)) == f) {
+			i++;
 		}
-		if (liq.equals("lava")) {
-			while (world.getBlock(x, y+i, z) == Blocks.flowing_lava || world.getBlock(x, y+i, z) == Blocks.lava) {
-				i++;
-			}
-			return (i-1);
-		}
-		return -1;
+		return i;
 	}
 
 	/** Returns true if the block ID is one associated with caves, like air, cobwebs,
