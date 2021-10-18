@@ -20,6 +20,7 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
 
 import com.google.common.base.Strings;
+import com.google.common.base.Throwables;
 
 import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Exception.ASMException;
@@ -78,7 +79,14 @@ public abstract class Patcher {
 		ClassNode cn = new ClassNode();
 		ClassReader classReader = new ClassReader(data);
 		classReader.accept(cn, 0);
-		this.apply(cn);
+		try {
+			this.apply(cn);
+		}
+		catch (Exception e) {
+			ReikaASMHelper.log("ASM handler "+this+" threw "+e+" during application; class bytecode is below");
+			ReikaASMHelper.log("\n"+ReikaASMHelper.clearString(cn));
+			Throwables.propagate(e);
+		}
 		ReikaASMHelper.log("Successfully applied " + this + " ASM handler!");
 		int flags = ClassWriter.COMPUTE_MAXS;
 		if (this.computeFrames())

@@ -208,6 +208,10 @@ public final class ReikaItemHelper extends DragonAPICore {
 		else if (b instanceof ItemStack) {
 			return matchStacks(a, (ItemStack)b);
 		}
+		else if (b instanceof BlockKey) {
+			BlockKey bk = (BlockKey)b;
+			return matchStackWithBlock(a, bk.blockID) && (!bk.hasMetadata() || a.getItemDamage() == bk.metadata);
+		}
 		else if (b instanceof Collection) {
 			return ReikaItemHelper.listContainsItemStack((Collection<ItemStack>)b, a, false);
 		}

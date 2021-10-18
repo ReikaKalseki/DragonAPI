@@ -386,6 +386,27 @@ public class ReikaASMHelper {
 			m.attrs.clear();
 	}
 
+	public static String clearString(ClassNode cn) {
+		StringBuilder sb = new StringBuilder();
+		for (FieldNode f : cn.fields) {
+			sb.append("==FIELD==\n");
+			sb.append(f.name);
+			sb.append(" ");
+			sb.append(f.desc);
+			sb.append("\n=======\n\n");
+		}
+		for (MethodNode m : cn.methods) {
+			sb.append("==METHOD==\n");
+			sb.append(m.name);
+			sb.append(" ");
+			sb.append(m.desc);
+			sb.append("\n");
+			sb.append(clearString(m.instructions));
+			sb.append("\n=======\n\n");
+		}
+		return sb.toString();
+	}
+
 	public static String clearString(InsnList c) {
 		return printInsnList(c.iterator());
 	}

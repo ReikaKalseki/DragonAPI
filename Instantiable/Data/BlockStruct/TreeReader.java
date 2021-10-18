@@ -230,11 +230,11 @@ public final class TreeReader extends BlockArray {
 				case FIR:
 					return 50;
 				case PINKBIRCH:
-					return 15;
+					return 18;
 				case GIANTPINKTREE:
 					return 160;
 				case REDJUNGLE:
-					return 18;
+					return 24;
 				default:
 					return 12;
 			}

@@ -489,4 +489,8 @@ public final class Coordinate implements Location, Comparable<Coordinate> {
 		return new MovingObjectPosition(xCoord, yCoord, zCoord, s, vec);
 	}
 
+	public boolean canBeReplacedByLeaves(World world) {
+		return this.getBlock(world).canBeReplacedByLeaves(world, xCoord, yCoord, zCoord);
+	}
+
 }

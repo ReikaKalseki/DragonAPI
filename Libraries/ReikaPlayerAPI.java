@@ -25,6 +25,7 @@ import net.minecraft.block.BlockRotatedPillar;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.ai.attributes.ServersideAttributeMap;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.player.PlayerCapabilities;
@@ -440,7 +441,9 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	}
 
 	public static void addOrDropItem(ItemStack is, EntityPlayer ep) {
-		if (!ReikaInventoryHelper.addToIInv(is, ep.inventory))
+		if (ReikaInventoryHelper.addToIInv(is, ep.inventory))
+			ep.onItemPickup(new EntityItem(ep.worldObj, ep.posX, ep.posY, ep.posZ, is), is.stackSize);
+		else
 			ReikaItemHelper.dropItem(ep, is);
 	}
 

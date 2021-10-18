@@ -13,11 +13,8 @@ import java.lang.reflect.Field;
 import java.util.Collection;
 import java.util.Map;
 
-import org.apache.commons.lang3.tuple.ImmutablePair;
-
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -42,7 +39,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 	}
 
 	private final ItemHashMap<ChancedOutputList> centrifuge = new ItemHashMap();
-	private final ItemHashMap<ImmutablePair<ChancedOutputList, FluidStack>> squeezer = new ItemHashMap();
+	private final ItemHashMap<ISqueezerRecipe> squeezer = new ItemHashMap();
 
 	private Field centrifugeOutputs;
 
@@ -74,12 +71,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 					ItemStack[] items = in.getResources();
 					if (items.length == 1 && !FluidContainerRegistry.isFilledContainer(items[0])) {
 						ChancedOutputList out = null;
-						if (in.getRemnants() != null) {
-							out = new ChancedOutputList(false);
-							out.addItem(in.getRemnants(), in.getRemnantsChance()*100);
-						}
-						FluidStack fs = in.getFluidOutput();
-						squeezer.put(items[0], new ImmutablePair(out, fs));
+						squeezer.put(items[0], in);
 					}
 				}
 			}
@@ -167,7 +159,7 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 		return centrifuge.get(in).copy();
 	}
 
-	public ImmutablePair<ChancedOutputList, FluidStack> getSqueezerOutput(ItemStack in) {
+	public ISqueezerRecipe getSqueezerOutput(ItemStack in) {
 		return squeezer.get(in);
 	}
 	/*
