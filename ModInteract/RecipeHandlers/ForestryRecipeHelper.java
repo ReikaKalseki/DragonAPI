@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModInteract.RecipeHandlers;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import forestry.api.recipes.ICentrifugeRecipe;
+import forestry.api.recipes.IFermenterRecipe;
 import forestry.api.recipes.ISqueezerRecipe;
 import forestry.api.recipes.RecipeManagers;
 
@@ -40,8 +42,12 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 
 	private final ItemHashMap<ChancedOutputList> centrifuge = new ItemHashMap();
 	private final ItemHashMap<ISqueezerRecipe> squeezer = new ItemHashMap();
+	private final ItemHashMap<IFermenterRecipe> fermenter = new ItemHashMap();
 
 	private Field centrifugeOutputs;
+
+	private Method addFermenter;
+	private Enum[] fluids;
 
 	private ForestryRecipeHelper() {
 		super();
@@ -70,10 +76,19 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 				for (ISqueezerRecipe in : RecipeManagers.squeezerManager.recipes()) {
 					ItemStack[] items = in.getResources();
 					if (items.length == 1 && !FluidContainerRegistry.isFilledContainer(items[0])) {
-						ChancedOutputList out = null;
 						squeezer.put(items[0], in);
 					}
 				}
+
+				for (IFermenterRecipe in : RecipeManagers.fermenterManager.recipes()) {
+					fermenter.put(in.getResource(), in);
+				}
+
+				Class fluids = Class.forName("forestry.core.fluids.Fluids");
+				this.fluids = (Enum[])fluids.getEnumConstants();
+
+				Class util = Class.forName("forestry.core.recipes.RecipeUtil");
+				addFermenter = util.getDeclaredMethod("addFermenterRecipes", ItemStack.class, int.class, fluids);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not initialize Forestry recipe helper!");
@@ -155,12 +170,20 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 		return squeezer.keySet();
 	}
 
+	public Collection<ItemStack> getFermenterRecipes() {
+		return fermenter.keySet();
+	}
+
 	public ChancedOutputList getCentrifugeOutput(ItemStack in) {
 		return centrifuge.get(in).copy();
 	}
 
 	public ISqueezerRecipe getSqueezerOutput(ItemStack in) {
 		return squeezer.get(in);
+	}
+
+	public IFermenterRecipe getFermenterOutput(ItemStack in) {
+		return fermenter.get(in);
 	}
 	/*
 	/** Chances are in percentages! *//*
@@ -187,6 +210,24 @@ public class ForestryRecipeHelper extends ModHandlerBase {
 	@Override
 	public ModList getMod() {
 		return ModList.FORESTRY;
+	}
+
+	public void addStandardFermenterRecipes(ItemStack resource, int fermentationValue) {
+		try {
+			Object f = this.getFluidByName("biomass");
+			addFermenter.invoke(null, resource, fermentationValue, f);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public Object getFluidByName(String s) {
+		for (Enum e : fluids) {
+			if (e.name().equalsIgnoreCase(s))
+				return e;
+		}
+		return null;
 	}
 
 }

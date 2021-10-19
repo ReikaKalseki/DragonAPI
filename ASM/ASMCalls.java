@@ -20,13 +20,19 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
+import net.minecraft.enchantment.EnumEnchantmentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemBow;
+import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemSword;
+import net.minecraft.item.ItemTool;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
@@ -69,6 +75,46 @@ import cpw.mods.fml.common.registry.VillagerRegistry;
 public class ASMCalls {
 
 	private static final HashSet<Item> tracedUnregItems = new HashSet();
+
+	public static boolean isEnchantTypeValidForItem(EnumEnchantmentType e, Item i) {
+		if (e == EnumEnchantmentType.all) {
+			return true;
+		}
+		else if (e == EnumEnchantmentType.breakable && i.isDamageable()) {
+			return true;
+		}
+		else if (i instanceof ItemArmor) {
+			if (e == EnumEnchantmentType.armor) {
+				return true;
+			}
+			else {
+				ItemArmor itemarmor = (ItemArmor)i;
+				switch(itemarmor.armorType) {
+					case 0:
+						return e == EnumEnchantmentType.armor_head;
+					case 1:
+						return e == EnumEnchantmentType.armor_torso;
+					case 2:
+						return e == EnumEnchantmentType.armor_legs;
+					case 3:
+						return e == EnumEnchantmentType.armor_feet;
+					default:
+						return false;
+				}
+			}
+		}
+		else {
+			if (i instanceof ItemSword)
+				return e == EnumEnchantmentType.weapon;
+			else if (i instanceof ItemBow)
+				return e == EnumEnchantmentType.bow;
+			else if (i instanceof ItemFishingRod)
+				return e == EnumEnchantmentType.fishing_rod;
+			else if (i instanceof ItemTool)
+				return e == EnumEnchantmentType.digger;
+			return false;
+		}
+	}
 
 	public static void trackSaveHandleStart(SaveHandler save, File folder, long time) {
 		ReikaJavaLibrary.pConsole("Logged open of save handle "+save+" in file "+folder.getAbsolutePath()+" with timecode of "+time);

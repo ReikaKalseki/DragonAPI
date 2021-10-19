@@ -938,11 +938,11 @@ public final class ReikaItemHelper extends DragonAPICore {
 					}
 				}
 				else {
-					return o1.getItemDamage()-o2.getItemDamage();
+					return Integer.compare(o1.getItemDamage(), o2.getItemDamage());
 				}
 			}
 			else {
-				return Item.getIdFromItem(o1.getItem())-Item.getIdFromItem(o2.getItem());
+				return Integer.compare(Item.getIdFromItem(o1.getItem()), Item.getIdFromItem(o2.getItem()));
 			}
 		}
 

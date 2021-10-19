@@ -336,7 +336,7 @@ public final class ReikaNBTHelper extends DragonAPICore {
 			return 1;
 		}
 		else {
-			return o1.hashCode()-o2.hashCode();
+			return Integer.compare(o1.hashCode(), o2.hashCode());
 		}
 	}
 
