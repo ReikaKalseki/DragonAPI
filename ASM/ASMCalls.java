@@ -20,19 +20,14 @@ import java.util.Random;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.material.Material;
-import net.minecraft.enchantment.EnumEnchantmentType;
+import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EnumCreatureType;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemArmor;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemFishingRod;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemSword;
-import net.minecraft.item.ItemTool;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.MathHelper;
@@ -63,6 +58,7 @@ import Reika.DragonAPI.Instantiable.Worldgen.VillageBuilding.PerVillageWeight;
 import Reika.DragonAPI.Interfaces.Block.CollisionDelegate;
 import Reika.DragonAPI.Interfaces.Block.CustomSnowAccumulation;
 import Reika.DragonAPI.Interfaces.Entity.TameHostile;
+import Reika.DragonAPI.Interfaces.Item.CustomEnchantingCategory;
 import Reika.DragonAPI.Interfaces.Item.MetadataSpecificTrade;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.ReikaFluidHelper;
@@ -76,7 +72,7 @@ public class ASMCalls {
 
 	private static final HashSet<Item> tracedUnregItems = new HashSet();
 
-	public static boolean isEnchantTypeValidForItem(EnumEnchantmentType e, Item i) {
+	public static boolean isEnchantValidForItem(Enchantment e, ItemStack is) {/*
 		if (e == EnumEnchantmentType.all) {
 			return true;
 		}
@@ -113,7 +109,12 @@ public class ASMCalls {
 			else if (i instanceof ItemTool)
 				return e == EnumEnchantmentType.digger;
 			return false;
+		}*/
+		Item i = is.getItem();
+		if (i instanceof CustomEnchantingCategory) {
+			return e.type == ((CustomEnchantingCategory)i).getEnchantingCategory();
 		}
+		return e.type.canEnchantItem(i);
 	}
 
 	public static void trackSaveHandleStart(SaveHandler save, File folder, long time) {

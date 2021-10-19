@@ -18,6 +18,9 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+
+import com.google.common.base.Throwables;
 
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.Enchantment;
@@ -34,6 +37,19 @@ import Reika.DragonAPI.Interfaces.Registry.RegistrationList;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 
 public final class ReikaReflectionHelper extends DragonAPICore {
+
+	private static Field unmodifiableList;
+
+	static {
+		try {
+			Class li = Class.forName("java.util.Collections$UnmodifiableList");
+			unmodifiableList = li.getDeclaredField("list");
+			unmodifiableList.setAccessible(true);
+		}
+		catch (Exception e) {
+			Throwables.propagate(e);
+		}
+	}
 
 	private static final PluralMap<Method> methodCache = new PluralMap(2);
 
@@ -469,6 +485,15 @@ public final class ReikaReflectionHelper extends DragonAPICore {
 			arr[i] = args[i].getClass();
 		}
 		return arr;
+	}
+
+	public static <E> List<E> getUnmodifiableListInner(List<E> unmodifiable) {
+		try {
+			return (List<E>)unmodifiableList.get(unmodifiable);
+		}
+		catch (Exception e) {
+			throw Throwables.propagate(e);
+		}
 	}
 
 }
