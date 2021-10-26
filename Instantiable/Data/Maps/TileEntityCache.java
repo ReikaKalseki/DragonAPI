@@ -55,8 +55,10 @@ public final class TileEntityCache<V> {
 	}
 
 	public V put(V tile) {
+		if (tile instanceof LocationEntry)
+			return this.put(((LocationEntry)tile).getLocation(), tile);
 		if (!(tile instanceof TileEntity))
-			throw new MisuseException("You cannot self-put an entry if it is not a TileEntity!");
+			throw new MisuseException("You cannot self-put an entry if it is not a TileEntity or LocationEntry!");
 		TileEntity te = (TileEntity)tile;
 		return this.put(te.worldObj, te.xCoord, te.yCoord, te.zCoord, tile);
 	}
@@ -102,8 +104,10 @@ public final class TileEntityCache<V> {
 	}
 
 	public V remove(V tile) {
+		if (tile instanceof LocationEntry)
+			return this.remove(((LocationEntry)tile).getLocation());
 		if (!(tile instanceof TileEntity))
-			throw new MisuseException("You cannot self-remove an entry if it is not a TileEntity!");
+			throw new MisuseException("You cannot self-remove an entry if it is not a TileEntity or LocationEntry!");
 		TileEntity te = (TileEntity)tile;
 		return this.remove(te.worldObj, te.xCoord, te.yCoord, te.zCoord);
 	}
@@ -225,6 +229,12 @@ public final class TileEntityCache<V> {
 
 	public WorldLocation getRandomEntry(Random rand) {
 		return data.getRandomInnerKey(rand);
+	}
+
+	public static interface LocationEntry {
+
+		public WorldLocation getLocation();
+
 	}
 
 }

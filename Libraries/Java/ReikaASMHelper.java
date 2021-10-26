@@ -694,8 +694,12 @@ public class ReikaASMHelper {
 	}
 
 	public static MethodInsnNode getNthMethodCallByName(ClassNode cn, MethodNode m, String name, int n) {
+		return getNthMethodCallByName(cn, m, name, n, 0);
+	}
+
+	public static MethodInsnNode getNthMethodCallByName(ClassNode cn, MethodNode m, String name, int n, int index) {
 		int counter = 0;
-		for (int i = 0; i < m.instructions.size(); i++) {
+		for (int i = index; i < m.instructions.size(); i++) {
 			AbstractInsnNode ain = m.instructions.get(i);
 			if (ain instanceof MethodInsnNode) {
 				MethodInsnNode min = (MethodInsnNode)ain;

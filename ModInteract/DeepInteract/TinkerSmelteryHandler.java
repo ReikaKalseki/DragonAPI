@@ -47,6 +47,7 @@ public class TinkerSmelteryHandler {
 	private static Class basinClass;
 	private static Class tableClass;
 	private static Class castingLogicClass;
+	private static Class faucetClass;
 
 	private static Field castingDelay;
 	private static Field castingRecipe;
@@ -91,6 +92,8 @@ public class TinkerSmelteryHandler {
 				castingRecipe.setAccessible(true);
 				castingCapacity = castingLogicClass.getDeclaredField("capacity");
 				castingCapacity.setAccessible(true);
+
+				faucetClass = Class.forName("tconstruct.smeltery.logic.FaucetLogic");
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Error loading Smeltery Handling!");
@@ -255,6 +258,10 @@ public class TinkerSmelteryHandler {
 
 	public static Class tableClass() {
 		return tableClass;
+	}
+
+	public static Class faucetClass() {
+		return faucetClass;
 	}
 
 	public static ForgeDirection getDrainDirection(TileEntity te) {

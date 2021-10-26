@@ -1335,8 +1335,16 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	}
 
 	public static int damageArmor(EntityLivingBase e, int amt, BiFunction<ItemStack, Integer, Integer> handle) {
+		return damageArmor(e, amt, (s -> true), handle);
+	}
+
+	public static int damageArmor(EntityLivingBase e, int amt, int slot) {
+		return damageArmor(e, amt, (s -> s == slot), null);
+	}
+
+	public static int damageArmor(EntityLivingBase e, int amt, Function<Integer, Boolean> apply, BiFunction<ItemStack, Integer, Integer> handle) {
 		int ret = 0;
-		for (int i = 1; i < 5; i++) {
+		for (int i = 1; i <= 4; i++) {
 			ret += damageArmorItem(e, i, amt, handle);
 		}
 		return ret;

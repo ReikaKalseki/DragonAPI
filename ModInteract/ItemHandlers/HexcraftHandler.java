@@ -1,6 +1,7 @@
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import net.minecraft.block.Block;
+import net.minecraft.item.Item;
 
 import Reika.DragonAPI.Exception.MisuseException;
 
@@ -22,6 +23,17 @@ public class HexcraftHandler {
 
 		boolean isMonolith(Block id);
 
+		public BasicHexColor[] getColors();
+
+	}
+
+	public static interface BasicHexColor {
+
+		public Item getCrystal();
+
+		public Block getMonolith(boolean nether);
+
+		public boolean isPrimary(boolean nether);
 	}
 
 }

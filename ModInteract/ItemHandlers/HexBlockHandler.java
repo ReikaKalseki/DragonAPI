@@ -30,6 +30,7 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
+import Reika.DragonAPI.ModInteract.ItemHandlers.HexcraftHandler.BasicHexColor;
 import Reika.DragonAPI.ModInteract.ItemHandlers.HexcraftHandler.HexHandler;
 
 import cpw.mods.fml.relauncher.Side;
@@ -43,7 +44,7 @@ public class HexBlockHandler extends ModHandlerBase implements HexHandler {
 	private Class colorizedSimpleInterface;
 	private Class variantSimpleInterface;
 
-	public static enum BasicHexColors {
+	public static enum BasicHexColors implements BasicHexColor {
 		RED,
 		GREEN,
 		BLUE,
@@ -64,6 +65,10 @@ public class HexBlockHandler extends ModHandlerBase implements HexHandler {
 
 		public Item getCrystal() {
 			return crystal;
+		}
+
+		public Block getMonolith(boolean nether) {
+			return color.getMonolithBlock(nether);
 		}
 
 		public boolean isPrimary(boolean nether) {
@@ -194,6 +199,11 @@ public class HexBlockHandler extends ModHandlerBase implements HexHandler {
 		else {
 			return null;
 		}
+	}
+
+	@Override
+	public BasicHexColor[] getColors() {
+		return BasicHexColors.list;
 	}
 
 }

@@ -332,7 +332,7 @@ public class BiomeMapCommand extends DragonCommandBase {
 
 		@Override
 		protected int getColor(int x, int z, Integer data) {
-			return this.getBiomeColor(x, z, BiomeGenBase.biomeList[data.intValue()]);
+			return getBiomeColor(x, z, BiomeGenBase.biomeList[data.intValue()]);
 		}
 
 		private void createLegend(File f) throws IOException {
@@ -371,110 +371,110 @@ public class BiomeMapCommand extends DragonCommandBase {
 			g.drawString(biome.biomeName+" ["+biome.biomeID+"]", x+hpb+4, y+hpb/2+4);
 			for (int i = -1; i <= hpb; i++) {
 				for (int k = -1; k <= hpb; k++) {
-					int clr = i == -1 || k == -1 || i == hpb || k == hpb ? 0xff000000 : 0xff000000 | this.getBiomeColor(i*12, k*12, biome);
+					int clr = i == -1 || k == -1 || i == hpb || k == hpb ? 0xff000000 : 0xff000000 | getBiomeColor(i*12, k*12, biome);
 					img.setRGB(x+i, y+k, clr);
 				}
 			}
 		}
 
-		@SideOnly(Side.CLIENT)
-		private int getBiomeColor(int x, int z, BiomeGenBase b) {
-			if (b == null)
-				return 0x000000; //should never happen
+	}
 
-			if (b instanceof CustomMapColorBiome)
-				return ((CustomMapColorBiome)b).getMapColor(Minecraft.getMinecraft().theWorld, x, z);
+	@SideOnly(Side.CLIENT)
+	public static int getBiomeColor(int x, int z, BiomeGenBase b) {
+		if (b == null)
+			return 0x000000; //should never happen
 
-			boolean mutate = b instanceof BiomeGenMutated;
-			if (mutate) {
-				b = ((BiomeGenMutated)b).baseBiome;
-			}
+		if (b instanceof CustomMapColorBiome)
+			return ((CustomMapColorBiome)b).getMapColor(Minecraft.getMinecraft().theWorld, x, z);
 
-			if (b == BiomeGenBase.hell) {
-				return 0xC12603;
-			}
-			if (b == BiomeGenBase.sky) {
-				return 0xFFE9A3;
-			}
-
-			if (b == BiomeGenBase.frozenOcean) {
-				return 0x00ffff;
-			}
-			if (b.biomeID == BiomeGenBase.icePlains.biomeID+128) { //Ice Spikes
-				return 0x7FFFFF;
-			}
-			if (b == BiomeGenBase.iceMountains) {
-				return 0xd0d0d0;
-			}
-
-			//Because some BoP forests secretly identify as ocean-kin
-			if (b.biomeName.equalsIgnoreCase("Shield")) {
-				return 0x387F4D;
-			}
-			else if (b.biomeName.equalsIgnoreCase("Tropics")) {
-				return 0x00ff00;
-			}
-			else if (b.biomeName.equalsIgnoreCase("Lush Swamp")) {
-				return 0x009000;
-			}
-			else if (b.biomeName.equalsIgnoreCase("Bayou")) {
-				return 0x7B7F4F; //Eew
-			}
-			else if (ReikaBiomeHelper.isOcean(b)) {
-				if (b == BiomeGenBase.deepOcean)
-					return 0x0000b0;
-				return 0x0000ff;
-			}
-
-			if (b instanceof BiomeGenRiver)
-				return 0x22aaff;
-
-			if (b instanceof BiomeGenMesa) {
-				return mutate ? 0xCE7352 : 0xC4542B;
-			}
-
-			if (b instanceof BiomeGenMushroomIsland) {
-				return 0x965471;
-			}
-
-			if (b == BiomeGenBase.megaTaiga || b == BiomeGenBase.megaTaigaHills) {
-				return 0x9B6839;
-			}
-
-			if (b.topBlock == Blocks.sand) {
-				return 0xE2C995;
-			}
-			if (b.topBlock == Blocks.stone) {
-				return 0x808080;
-			}
-
-			if (b.biomeName.equalsIgnoreCase("Coniferous Forest")) {
-				return 0x007F42;
-			}
-			if (b.biomeName.equalsIgnoreCase("Maple Forest")) {
-				return 0x3A7F52;
-			}
-
-			int c = b.getBiomeGrassColor(x, 64, z);
-
-			if (ReikaBiomeHelper.isSnowBiome(b)) {
-				c = 0xffffff;
-			}
-
-			if (b == BiomeGenBase.coldTaiga) {
-				c = 0xADFFCB;
-			}
-
-			if (mutate) {
-				c = ReikaColorAPI.getColorWithBrightnessMultiplier(c, 0.875F);
-			}
-			else if (ReikaBiomeHelper.isChildBiome(b)) {
-				c = c == 0xffffff ? 0xd0d0d0 : ReikaColorAPI.getColorWithBrightnessMultiplier(c, 1.125F);
-			}
-
-			return c;
+		boolean mutate = b instanceof BiomeGenMutated;
+		if (mutate) {
+			b = ((BiomeGenMutated)b).baseBiome;
 		}
 
+		if (b == BiomeGenBase.hell) {
+			return 0xC12603;
+		}
+		if (b == BiomeGenBase.sky) {
+			return 0xFFE9A3;
+		}
+
+		if (b == BiomeGenBase.frozenOcean) {
+			return 0x00ffff;
+		}
+		if (b.biomeID == BiomeGenBase.icePlains.biomeID+128) { //Ice Spikes
+			return 0x7FFFFF;
+		}
+		if (b == BiomeGenBase.iceMountains) {
+			return 0xd0d0d0;
+		}
+
+		//Because some BoP forests secretly identify as ocean-kin
+		if (b.biomeName.equalsIgnoreCase("Shield")) {
+			return 0x387F4D;
+		}
+		else if (b.biomeName.equalsIgnoreCase("Tropics")) {
+			return 0x00ff00;
+		}
+		else if (b.biomeName.equalsIgnoreCase("Lush Swamp")) {
+			return 0x009000;
+		}
+		else if (b.biomeName.equalsIgnoreCase("Bayou")) {
+			return 0x7B7F4F; //Eew
+		}
+		else if (ReikaBiomeHelper.isOcean(b)) {
+			if (b == BiomeGenBase.deepOcean)
+				return 0x0000b0;
+			return 0x0000ff;
+		}
+
+		if (b instanceof BiomeGenRiver)
+			return 0x22aaff;
+
+		if (b instanceof BiomeGenMesa) {
+			return mutate ? 0xCE7352 : 0xC4542B;
+		}
+
+		if (b instanceof BiomeGenMushroomIsland) {
+			return 0x965471;
+		}
+
+		if (b == BiomeGenBase.megaTaiga || b == BiomeGenBase.megaTaigaHills) {
+			return 0x9B6839;
+		}
+
+		if (b.topBlock == Blocks.sand) {
+			return 0xE2C995;
+		}
+		if (b.topBlock == Blocks.stone) {
+			return 0x808080;
+		}
+
+		if (b.biomeName.equalsIgnoreCase("Coniferous Forest")) {
+			return 0x007F42;
+		}
+		if (b.biomeName.equalsIgnoreCase("Maple Forest")) {
+			return 0x3A7F52;
+		}
+
+		int c = b.getBiomeGrassColor(x, 64, z);
+
+		if (ReikaBiomeHelper.isSnowBiome(b)) {
+			c = 0xffffff;
+		}
+
+		if (b == BiomeGenBase.coldTaiga) {
+			c = 0xADFFCB;
+		}
+
+		if (mutate) {
+			c = ReikaColorAPI.getColorWithBrightnessMultiplier(c, 0.875F);
+		}
+		else if (ReikaBiomeHelper.isChildBiome(b)) {
+			c = c == 0xffffff ? 0xd0d0d0 : ReikaColorAPI.getColorWithBrightnessMultiplier(c, 1.125F);
+		}
+
+		return c;
 	}
 
 	public static interface MapCompleteCallback {

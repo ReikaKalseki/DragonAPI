@@ -19,6 +19,7 @@ import org.lwjgl.input.Mouse;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
@@ -87,7 +88,7 @@ public class GuiPainter {
 				if (p != null) {
 					int dx = posX+i*pixelSize;
 					int dy = posY+k*pixelSize;
-					p.draw(dx, dy, pixelSize);
+					p.draw(i, k, dx, dy, pixelSize, false);
 				}
 			}
 		}
@@ -151,7 +152,7 @@ public class GuiPainter {
 		int dy = y;
 		for (PaintElement p : locations.keySet()) {
 			int s = 7;
-			p.draw(x, dy, s);
+			p.draw(0, 0, x, dy, s, true);
 			ReikaGuiAPI.instance.drawRectFrame(x, dy, s, s, 0xffffff);
 			f.drawString(p.getName(), x+s+2, dy, 0xffffff);
 			dy += f.FONT_HEIGHT+4;
@@ -168,7 +169,7 @@ public class GuiPainter {
 
 	public static interface PaintElement {
 
-		public abstract void draw(int x, int y, int s);
+		public abstract void draw(int i, int k, int x, int y, int s, boolean legend);
 
 		public abstract String getName();
 
@@ -234,7 +235,7 @@ public class GuiPainter {
 					c.add(new Point(0, 0));
 					break;
 				case SPRAY:
-					int n = 5+rand.nextInt(4);
+					int n = GuiScreen.isShiftKeyDown() ? 18 : 5+rand.nextInt(4);
 					for (int i = 0; i < n; i++) {
 						c.add(new Point(ReikaRandomHelper.getRandomPlusMinus(0, 4), ReikaRandomHelper.getRandomPlusMinus(0, 4)));
 					}
