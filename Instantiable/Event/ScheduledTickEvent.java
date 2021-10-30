@@ -306,11 +306,11 @@ public final class ScheduledTickEvent extends Event implements FreezableTimer {
 		}
 	}
 
-	public static class ScheduledEntitySpawn implements ScheduledEvent {
+	public static class ScheduledEntitySpawn<E extends Entity> implements ScheduledEvent {
 
-		private final Entity entity;
+		protected final E entity;
 
-		public ScheduledEntitySpawn(Entity e) {
+		public ScheduledEntitySpawn(E e) {
 			entity = e;
 		}
 

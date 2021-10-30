@@ -502,7 +502,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				int dx = x+side.offsetX;
 				int dy = y+side.offsetY;
 				int dz = z+side.offsetZ;
-				if (getFluid(world, dx, dy, dz) == FluidRegistry.WATER) {
+				if (getFluid(world, dx, dy, dz) == FluidRegistry.WATER && !InterfaceCache.STREAM.instanceOf(world.getBlock(dx, dy, dz))) {
 					if (IceFreezeEvent.fire_IgnoreVanilla(world, dx, dy, dz))
 						changeAdjBlock(world, x, y, z, side, Blocks.ice, 0);
 				}
