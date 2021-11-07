@@ -15,7 +15,7 @@ public interface AnimatedSpritesheet extends IndexedItemSprites {
 
 	public boolean useAnimatedRender(ItemStack is);
 
-	public int getFrameSpeed();
+	public int getFrameSpeed(ItemStack is);
 
 	public int getColumn(ItemStack is);
 

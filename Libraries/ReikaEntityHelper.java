@@ -1114,12 +1114,12 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		//	return IBossDisplayData.class;
 		else if (e instanceof EntityEnderman || e instanceof EntityPigZombie)
 			return e.getClass();
+		else if (e instanceof EntitySlime)
+			return EntitySlime.class;
 		else if (e instanceof EntityMob)
 			return EntityMob.class;
 		else if (e instanceof EntityAnimal)
 			return EntityAnimal.class;
-		else if (e instanceof EntitySlime)
-			return EntitySlime.class;
 		else if (e instanceof EntityFlying)
 			return EntityFlying.class;
 		else

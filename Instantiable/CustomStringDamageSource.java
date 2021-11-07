@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -28,8 +28,12 @@ public class CustomStringDamageSource extends DamageSource {
 
 	@Override
 	public final IChatComponent func_151519_b(EntityLivingBase e) {
-		IChatComponent ch = new ChatComponentTranslation(e.getCommandSenderName()+" "+message);
+		IChatComponent ch = new ChatComponentTranslation(e.getCommandSenderName()+" "+this.getMessage());
 		return ch;
+	}
+
+	protected String getMessage() {
+		return message;
 	}
 
 	@Override

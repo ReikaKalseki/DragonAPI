@@ -34,6 +34,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
+import net.minecraft.world.gen.ChunkProviderGenerate;
+import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraftforge.classloading.FMLForgePlugin;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -90,6 +92,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		addSRGMapping(EntityPlayer.class, "getCurrentEquippedItem", "func_71045_bC");
 		addSRGMapping(ItemStack.class, "getItem", "func_77973_b");
 		addSRGMapping(ItemStack.class, "getItemDamage", "func_77960_j");
+		addSRGMapping(ItemStack.class, "stackSize", "field_77994_a");
 		addSRGMapping(TileEntity.class, "worldObj", "field_145850_b");
 		addSRGMapping(TileEntity.class, "xCoord", "field_145851_c");
 		addSRGMapping(TileEntity.class, "yCoord", "field_145848_d");
@@ -131,6 +134,8 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		classShortcuts.put("BiomeGenBase", BiomeGenBase.class);
 		classShortcuts.put("Server", MinecraftServer.class);
 		classShortcuts.put("MinecraftServer", MinecraftServer.class);
+		classShortcuts.put("ChunkProviderServer", ChunkProviderServer.class);
+		classShortcuts.put("ChunkProviderGenerate", ChunkProviderGenerate.class);
 
 		classShortcuts.put("DimensionManager", DimensionManager.class);
 		classShortcuts.put("FML", FMLCommonHandler.class);

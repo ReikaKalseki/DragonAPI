@@ -48,8 +48,7 @@ public enum ReikaCropHelper implements CropType {
 	}
 
 	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int fortune) {
-		int meta = world.getBlockMetadata(x, y, z);
-		return blockID.getDrops(world, x, y, z, meta, fortune);
+		return blockID.getDrops(world, x, y, z, world.getBlockMetadata(x, y, z), fortune);
 	}
 
 	public static ReikaCropHelper getCrop(Block id) {

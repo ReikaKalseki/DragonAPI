@@ -386,7 +386,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	}
 
 	@SubscribeEvent
-	public void unloadChunkLightnings(ChunkEvent.Unload evt) {
+	public void unloadChunkEntities(ChunkEvent.Unload evt) {
 		ReikaChunkHelper.clearUnloadableEntities(evt.getChunk());
 	}
 
