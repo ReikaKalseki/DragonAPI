@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -26,6 +26,8 @@ import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.InnerClassNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import com.google.common.base.Throwables;
+
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
@@ -40,7 +42,7 @@ public class DependentMethodStripper implements IClassTransformer {
 
 	private static final String baseString = "LReika/DragonAPI/ASM/DependentMethodStripper$";
 	private static final boolean DEBUG = true;
-	private static final boolean runInDev = ReikaJVMParser.isArgumentPresent("-DragonAPI_ForceMethodStrip");
+	static final boolean runInDev = ReikaJVMParser.isArgumentPresent("-DragonAPI_ForceMethodStrip");
 
 	@Override
 	public byte[] transform(String name, String transformedName, byte[] bytes) {
@@ -52,56 +54,57 @@ public class DependentMethodStripper implements IClassTransformer {
 		ClassReader classReader = new ClassReader(bytes);
 		classReader.accept(classNode, 0);
 
-		boolean smartStripClass = ReikaASMHelper.memberHasAnnotationOfType(classNode, "LReika/DragonAPI/ASM/DependentMethodStripper$SmartStrip");
-		if (smartStripClass) {
-			Iterator<FieldNode> fields = classNode.fields.iterator();
-			while(fields.hasNext()) {
-				FieldNode field = fields.next();
-				if (processSmart(field, false)) {
-					if (DEBUG) {
-						ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Field: '%s.%s'; Reason: %s", classNode.name, field.name, "Refers to non-present class"));
+		try {
+			boolean smartStripClass = ReikaASMHelper.memberHasAnnotationOfType(classNode, "LReika/DragonAPI/ASM/DependentMethodStripper$SmartStrip");
+			if (smartStripClass) {
+				Iterator<FieldNode> fields = classNode.fields.iterator();
+				while(fields.hasNext()) {
+					FieldNode field = fields.next();
+					if (processSmart(field, false)) {
+						if (DEBUG) {
+							ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Field: '%s.%s'; Reason: %s", classNode.name, field.name, "Refers to non-present class"));
+						}
+						fields.remove();
 					}
-					fields.remove();
+				}
+				Iterator<MethodNode> methods = classNode.methods.iterator();
+				while(methods.hasNext()) {
+					MethodNode method = methods.next();
+					if (processSmart(method, false)) {
+						if (DEBUG) {
+							ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Method: '%s.%s'; Reason: %s", classNode.name, method.name, "Refers to non-present class"));
+						}
+						methods.remove();
+					}
 				}
 			}
-			Iterator<MethodNode> methods = classNode.methods.iterator();
-			while(methods.hasNext()) {
-				MethodNode method = methods.next();
-				if (processSmart(method, false)) {
-					if (DEBUG) {
-						ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Method: '%s.%s'; Reason: %s", classNode.name, method.name, "Refers to non-present class"));
+			else {
+				Iterator<FieldNode> fields = classNode.fields.iterator();
+				while(fields.hasNext()) {
+					FieldNode field = fields.next();
+					AnnotationFail a = this.remove(classNode, field);
+					if (a != null) {
+						if (DEBUG) {
+							ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Field: '%s.%s'; Reason: %s", classNode.name, field.name, a.text));
+						}
+						fields.remove();
 					}
-					methods.remove();
 				}
-			}
-		}
-		else {
-			Iterator<FieldNode> fields = classNode.fields.iterator();
-			while(fields.hasNext()) {
-				FieldNode field = fields.next();
-				AnnotationFail a = this.remove(classNode, field);
-				if (a != null) {
-					if (DEBUG) {
-						ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Field: '%s.%s'; Reason: %s", classNode.name, field.name, a.text));
+				Iterator<MethodNode> methods = classNode.methods.iterator();
+				while(methods.hasNext()) {
+					MethodNode method = methods.next();
+					AnnotationFail a = this.remove(classNode, method);
+					if (a != null) {
+						if (DEBUG) {
+							ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Method: '%s.%s%s'; Reason: %s", classNode.name, method.name, method.desc, a.text));
+						}
+						methods.remove();
 					}
-					fields.remove();
 				}
-			}
-			Iterator<MethodNode> methods = classNode.methods.iterator();
-			while(methods.hasNext()) {
-				MethodNode method = methods.next();
-				AnnotationFail a = this.remove(classNode, method);
-				if (a != null) {
-					if (DEBUG) {
-						ReikaJavaLibrary.pConsole(String.format("DRAGONAPI ASM: Removing Method: '%s.%s%s'; Reason: %s", classNode.name, method.name, method.desc, a.text));
-					}
-					methods.remove();
-				}
-			}
-			Iterator<InnerClassNode> classes = classNode.innerClasses.iterator();
-			while(classes.hasNext()) {
-				InnerClassNode method = classes.next();
-				/*
+				Iterator<InnerClassNode> classes = classNode.innerClasses.iterator();
+				while(classes.hasNext()) {
+					InnerClassNode method = classes.next();
+					/*
 			AnnotationFail a = this.remove(classNode, method);
 			if (a != null) {
 				if (DEBUG) {
@@ -109,8 +112,12 @@ public class DependentMethodStripper implements IClassTransformer {
 				}
 				methods.remove();
 			}
-				 */
+					 */
+				}
 			}
+		}
+		catch (Exception e) {
+			Throwables.propagate(e);
 		}
 
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS);
@@ -154,18 +161,30 @@ public class DependentMethodStripper implements IClassTransformer {
 			Object key = ann.values.get(x);
 			Object values = ann.values.get(x+1);
 			if (key instanceof String && key.equals("value")) {
-				if (values instanceof String[]) { //Enum
-					String[] value = (String[])values;
-					if (a.remove(value[1])) {
-						return new AnnotationFail(a, value[1]);
-					}
-				}
-				else if (values instanceof String) { //Normal string arg
-					String sg = (String)values;
-					if (a.remove(sg)) {
-						return new AnnotationFail(a, sg);
-					}
-				}
+				return this.parseAnnotationEntry(cn, a, values);
+			}
+		}
+		return null;
+	}
+
+	private AnnotationFail parseAnnotationEntry(ClassNode cn, Annotations a, Object values) {
+		if (values instanceof ArrayList) { //Enum
+			for (Object o : ((ArrayList)values)) {
+				AnnotationFail ret = this.parseAnnotationEntry(cn, a, o);
+				if (ret != null)
+					return ret;
+			}
+		}
+		if (values instanceof String[]) { //Enum
+			String[] value = (String[])values;
+			if (a.remove(value[1])) {
+				return new AnnotationFail(a, value[1]);
+			}
+		}
+		else if (values instanceof String) { //Normal string arg
+			String sg = (String)values;
+			if (a.remove(sg)) {
+				return new AnnotationFail(a, sg);
 			}
 		}
 		return null;
@@ -266,7 +285,7 @@ public class DependentMethodStripper implements IClassTransformer {
 	@Retention(RetentionPolicy.RUNTIME)
 	@Target({ElementType.METHOD, ElementType.FIELD})
 	public static @interface ModDependent {
-		ModList value();
+		ModList[] value();
 	}
 
 	@Retention(RetentionPolicy.RUNTIME)

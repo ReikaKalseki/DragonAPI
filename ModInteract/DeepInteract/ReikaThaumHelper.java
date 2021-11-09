@@ -43,6 +43,7 @@ import net.minecraftforge.oredict.ShapelessOreRecipe;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
+import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Instantiable.Data.Maps.TierMap;
 import Reika.DragonAPI.Instantiable.Formula.MathExpression;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
@@ -71,6 +72,8 @@ import thaumcraft.api.research.ResearchCategories;
 import thaumcraft.api.research.ResearchItem;
 import thaumcraft.api.research.ResearchPage;
 import thaumcraft.api.wands.ItemFocusBasic;
+import thaumcraft.api.wands.WandCap;
+import thaumcraft.api.wands.WandRod;
 import thaumcraft.common.entities.monster.EntityWisp;
 
 public class ReikaThaumHelper {
@@ -93,8 +96,12 @@ public class ReikaThaumHelper {
 	private static Method clearWandInUse;
 
 	private static Method researchComplete;
+	private static Method getData;
 	private static Method createNote;
 	private static Method getMix;
+
+	private static Field dataKey;
+	private static Field dataComplete;
 
 	private static SimpleNetworkWrapper packetHandlerInstance;
 	private static Constructor<IMessage> aspectPacketConstructor;
@@ -565,6 +572,17 @@ public class ReikaThaumHelper {
 		}
 	}
 
+	public static String getResearchForItem(ItemStack is) {
+		try {
+			Object data = getData.invoke(null, is);
+			return (String)dataKey.get(data);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+
 	public static boolean isResearchComplete(EntityPlayer ep, String research) {
 		return ThaumcraftApiHelper.isResearchComplete(ep.getCommandSenderName(), research);
 	}
@@ -579,7 +597,15 @@ public class ReikaThaumHelper {
 		ResearchCategories.registerCategory(name, icon, rl2);
 	}
 
-	public static ResearchItem addInfusionRecipeBookEntryViaXML(String id, String desc, String category, InfusionRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
+	public static ResearchItem addBasicBookEntryViaXML(DragonAPIMod mod, String id, String name, String desc, String category, AspectList aspects, int row, int col, Class root, String path, ResourceLocation ico) {
+		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, ico).setName(name);
+		res.setDescription(desc);
+		XMLResearch xml = new XMLResearch(mod, id.toLowerCase(Locale.ENGLISH), root, path);
+		res.setPages(xml.getPages());
+		return res.registerResearchItem();
+	}
+
+	public static ResearchItem addInfusionRecipeBookEntryViaXML(DragonAPIMod mod, String id, String desc, String category, InfusionRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
 		ItemStack out = (ItemStack)ir.getRecipeOutput();
 		AspectList aspects = new AspectList();
 		for (Aspect a : ir.getAspects().aspects.keySet()) {
@@ -589,12 +615,12 @@ public class ReikaThaumHelper {
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
-		XMLResearch xml = new XMLResearch(id.toLowerCase(Locale.ENGLISH), root, path, ir, 2);
+		XMLResearch xml = new XMLResearch(mod, id.toLowerCase(Locale.ENGLISH), root, path, ir);
 		res.setPages(xml.getPages());
 		return res.registerResearchItem();
 	}
 
-	public static ResearchItem addCrucibleRecipeBookEntryViaXML(String id, String desc, String category, CrucibleRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
+	public static ResearchItem addCrucibleRecipeBookEntryViaXML(DragonAPIMod mod, String id, String desc, String category, CrucibleRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
 		ItemStack out = ir.getRecipeOutput();
 		AspectList aspects = new AspectList();
 		for (Aspect a : ir.aspects.aspects.keySet()) {
@@ -603,12 +629,12 @@ public class ReikaThaumHelper {
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
-		XMLResearch xml = new XMLResearch(id.toLowerCase(Locale.ENGLISH), root, path, ir, 2);
+		XMLResearch xml = new XMLResearch(mod, id.toLowerCase(Locale.ENGLISH), root, path, ir);
 		res.setPages(xml.getPages());
 		return res.registerResearchItem();
 	}
 
-	public static ResearchItem addArcaneRecipeBookEntryViaXML(String id, String desc, String category, IArcaneRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
+	public static ResearchItem addArcaneRecipeBookEntryViaXML(DragonAPIMod mod, String id, String desc, String category, IArcaneRecipe ir, MathExpression cost, int row, int col, Class root, String path) {
 		ItemStack out = ir.getRecipeOutput();
 		AspectList aspects = new AspectList();
 		for (Aspect a : ir.getAspects().aspects.keySet()) {
@@ -617,46 +643,37 @@ public class ReikaThaumHelper {
 		String name = out.getDisplayName();
 		CustomThaumResearch res = new CustomThaumResearch(id, category, aspects, col, row, 0, out).setName(name);
 		res.setDescription(desc);
-		XMLResearch xml = new XMLResearch(id.toLowerCase(Locale.ENGLISH), root, path, ir, 2);
+		XMLResearch xml = new XMLResearch(mod, id.toLowerCase(Locale.ENGLISH), root, path, ir);
 		res.setPages(xml.getPages());
 		return res.registerResearchItem();
 	}
 
-	public static ResearchItem addResearchForMultipleRecipesViaXML(String name, ItemStack icon, String id, String desc, String category, Class root, String path, int row, int col, Object[] recipes, int numPagesEach, int leadingText, AspectList al) {
-		XMLResearch xml = getResearchForMultipleRecipes(id.toLowerCase(Locale.ENGLISH), root, path, leadingText, numPagesEach, recipes);
+	public static ResearchItem addResearchForMultipleRecipesViaXML(DragonAPIMod mod, String name, ItemStack icon, String id, String desc, String category, Class root, String path, int row, int col, Object[] recipes, AspectList al) {
+		XMLResearch xml = getResearchForMultipleRecipes(mod, id.toLowerCase(Locale.ENGLISH), root, path, recipes);
 		CustomThaumResearch res = new CustomThaumResearch(id, category, al, col, row, 0, icon).setName(name);
 		res.setDescription(desc);
 		res.setPages(xml.getPages());
 		return res.registerResearchItem();
 	}
 
-	private static XMLResearch getResearchForMultipleRecipes(String name, Class root, String path, int leadingText, int numPagesEach, Object[] recipes) {
-		XMLResearch res = new XMLResearch(name, root, path);
-		int id = 0;
-		for (int n = 0; n < leadingText; n++) {
-			res.pages.add(new XMLPage(res, id));
-			id++;
-		}
-		for (int i = 0; i < recipes.length; i++) {
-			for (int n = 0; n < numPagesEach; n++) {
-				XMLPage p = n == 0 ? XMLPage.getPageForObject(res, recipes[i], id) : new XMLPage(res, id);
-				res.pages.add(p);
-				id++;
-			}
+	private static XMLResearch getResearchForMultipleRecipes(DragonAPIMod mod, String name, Class root, String path, Object[] recipes) {
+		XMLResearch res = new XMLResearch(mod, name, root, path);
+		for (Object r : recipes) {
+			res.addRecipePage(r);
 		}
 		return res;
 	}
 
 	public static class XMLResearch {
 
+		private final DragonAPIMod mod;
 		private final XMLInterface info;
-		private final ArrayList<ResearchPage> pages = new ArrayList();
+		private final ArrayList<XMLPage> pages = new ArrayList();
 		public final String name;
 
-		private XMLResearch(String name, Class root, String path) {
-			info = loadData(root, path);
-			this.name = name;
-		}
+		private int maxPage = -1;
+		private final HashSet<Integer> textPages = new HashSet();
+		private final ArrayList<Integer> recipePages = new ArrayList();
 
 		private static XMLInterface loadData(Class root, String path) {
 			XMLInterface xml = new XMLInterface(root, path, !ReikaObfuscationHelper.isDeObfEnvironment());
@@ -665,36 +682,49 @@ public class ReikaThaumHelper {
 			return xml;
 		}
 
-		private XMLResearch(String name, Class root, String path, InfusionRecipe recipe, int num) {
-			this(name, root, path);
-			XMLPage page = new XMLPage(this, recipe, 0);
-			pages.add(page);
-			for (int i = 1; i < num; i++) {
-				pages.add(new XMLPage(this, i));
+		private XMLResearch(DragonAPIMod mod, String name, Class root, String path) {
+			this.mod = mod;
+			info = loadData(root, path);
+			this.name = name;
+			for (String key : info.getNodesWithin("researches:"+name)) {
+				int id = Integer.parseInt(key.substring(key.lastIndexOf("page")+"page".length()));
+				maxPage = Math.max(maxPage, id);
+				pages.add(new XMLPage(this, id));
+				textPages.add(id);
+			}
+			for (int i = 0; i <= maxPage; i++) {
+				if (!textPages.contains(i))
+					recipePages.add(i);
 			}
 		}
 
-		private XMLResearch(String name, Class root, String path, IArcaneRecipe recipe, int num) {
-			this(name, root, path);
-			XMLPage page = new XMLPage(this, recipe, 0);
-			pages.add(page);
-			for (int i = 1; i < num; i++) {
-				pages.add(new XMLPage(this, i));
+		private void addRecipePage(Object recipe) {
+			int idx = -1;
+			if (recipePages.isEmpty()) {
+				maxPage++;
+				idx = maxPage;
+				//recipePages.add(idx);
 			}
+			else {
+				idx = recipePages.remove(0);
+			}
+			pages.add(XMLPage.getPageForObject(this, recipe, idx));
+			Collections.sort(pages);
 		}
 
-		private XMLResearch(String name, Class root, String path, CrucibleRecipe recipe, int num) {
-			this(name, root, path);
-			XMLPage page = new XMLPage(this, recipe, 0);
-			pages.add(page);
-			for (int i = 1; i < num; i++) {
-				pages.add(new XMLPage(this, i));
-			}
+		private XMLResearch(DragonAPIMod mod, String name, Class root, String path, InfusionRecipe recipe) {
+			this(mod, name, root, path);
+			this.addRecipePage(recipe);
 		}
 
-		public void addPage() {
-			int num = pages.size();
-			pages.add(new XMLPage(this, num));
+		private XMLResearch(DragonAPIMod mod, String name, Class root, String path, IArcaneRecipe recipe) {
+			this(mod, name, root, path);
+			this.addRecipePage(recipe);
+		}
+
+		private XMLResearch(DragonAPIMod mod, String name, Class root, String path, CrucibleRecipe recipe) {
+			this(mod, name, root, path);
+			this.addRecipePage(recipe);
 		}
 
 		public ResearchPage[] getPages() {
@@ -706,7 +736,7 @@ public class ReikaThaumHelper {
 		}
 	}
 
-	private static class XMLPage extends ResearchPage {
+	private static class XMLPage extends ResearchPage implements Comparable<XMLPage> {
 
 		private final XMLResearch research;
 		private final int page;
@@ -756,6 +786,11 @@ public class ReikaThaumHelper {
 				return new XMLPage(r, (CrucibleRecipe)o, id);
 			}
 			return new XMLPage(r, id);
+		}
+
+		@Override
+		public int compareTo(XMLPage o) {
+			return Integer.compare(page, o.page);
 		}
 	}
 
@@ -833,8 +868,13 @@ public class ReikaThaumHelper {
 			try {
 				Class mgr = Class.forName("thaumcraft.common.lib.research.ResearchManager");
 				researchComplete = mgr.getMethod("isResearchComplete", String.class, String.class);
+				getData = mgr.getMethod("getData", ItemStack.class);
 				createNote = mgr.getMethod("createNote", ItemStack.class, String.class, World.class);
 				getMix = mgr.getMethod("getCombinationResult", Aspect.class, Aspect.class);
+
+				Class data = Class.forName("thaumcraft.common.lib.research.ResearchNoteData");
+				dataKey = data.getField("key");
+				dataComplete = data.getField("complete");
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not load ThaumCraft Research Handler!");
@@ -1076,6 +1116,22 @@ public class ReikaThaumHelper {
 			return null;
 		ItemStack stored = ItemStack.loadItemStackFromNBT(is.stackTagCompound.getCompoundTag("focus"));
 		return stored != null && stored.getItem() instanceof ItemFocusBasic ? (ItemFocusBasic)stored.getItem() : null;
+	}
+
+	public static ItemStack getWandFocusStack(ItemStack is) { //easier than reflection
+		if (is.stackTagCompound == null || !is.stackTagCompound.hasKey("focus"))
+			return null;
+		return ItemStack.loadItemStackFromNBT(is.stackTagCompound.getCompoundTag("focus"));
+	}
+
+	public static WandRod getWandRod(ItemStack is) { //easier than reflection
+		String key = is != null && is.stackTagCompound != null && is.stackTagCompound.hasKey("rod") ? is.stackTagCompound.getString("rod") : "wood";
+		return WandRod.rods.get(key);
+	}
+
+	public static WandCap getWandCap(ItemStack is) { //easier than reflection
+		String key = is != null && is.stackTagCompound != null && is.stackTagCompound.hasKey("cap") ? is.stackTagCompound.getString("cap") : "iron";
+		return WandCap.caps.get(key);
 	}
 }
 

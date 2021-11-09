@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -26,6 +26,7 @@ import org.objectweb.asm.tree.MethodNode;
 
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.Exception.ASMException;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
@@ -47,6 +48,9 @@ public class InterfaceInjector implements IClassTransformer {
 		if (bytes == null) {
 			return null;
 		}
+
+		if (!FMLForgePlugin.RUNTIME_DEOBF && !DependentMethodStripper.runInDev)
+			return bytes;
 
 		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(bytes);
