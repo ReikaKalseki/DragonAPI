@@ -60,6 +60,7 @@ public class ThaumItemHelper {
 		WISP("ItemWispEssence"),
 		RESEARCH("ItemResearchNotes"),
 		WAND("WandCasting"),
+		THAUMOMETER("ItemThaumometer"),
 		;
 
 		public final int metadata;

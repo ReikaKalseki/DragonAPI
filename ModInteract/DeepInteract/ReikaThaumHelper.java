@@ -44,6 +44,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Data.Maps.TierMap;
 import Reika.DragonAPI.Instantiable.Formula.MathExpression;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
@@ -96,6 +97,7 @@ public class ReikaThaumHelper {
 	private static Method clearWandInUse;
 
 	private static Method researchComplete;
+	private static Method completeResearch;
 	private static Method getData;
 	private static Method createNote;
 	private static Method getMix;
@@ -113,6 +115,8 @@ public class ReikaThaumHelper {
 	private static Field itemBurn;
 
 	private static Object proxy; //auto-sides to correct side
+
+	private static Field researchManager;
 
 	private static final TierMap<Aspect> aspectTiers = new TierMap();
 
@@ -587,13 +591,39 @@ public class ReikaThaumHelper {
 		return ThaumcraftApiHelper.isResearchComplete(ep.getCommandSenderName(), research);
 	}
 
+	public static boolean hasResearchPrereqs(EntityPlayer ep, String research) {
+		for (String p : ResearchCategories.getResearch(research).parents) {
+			if (!ThaumcraftApiHelper.isResearchComplete(ep.getCommandSenderName(), p))
+				return false;
+		}
+		return true;
+	}
+
+	public static void completeResearch(EntityPlayer ep, String research) {
+		try {
+			completeResearch.invoke(getResearchManager(), ep, research);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public static boolean isNativeThaumResearch(ResearchItem ri) {
 		return nativeCategories.contains(ri.category);
+	}
+
+	private static Object getResearchManager() throws Exception {
+		return researchManager.get(proxy);
 	}
 
 	/** Your lang file will have to include an entry tc.research_category.[name]=[Localized Name] entry. */
 	public static void addBookCategory(ResourceLocation icon, String name) {
 		ResourceLocation rl2 = new ResourceLocation("thaumcraft", "textures/gui/gui_researchback.png");
+		ResearchCategories.registerCategory(name, icon, rl2);
+	}
+
+	public static void addBookCategory(ResourceLocation icon, String name, String tex) {
+		ResourceLocation rl2 = DirectResourceManager.getResource(tex);
 		ResearchCategories.registerCategory(name, icon, rl2);
 	}
 
@@ -811,6 +841,7 @@ public class ReikaThaumHelper {
 
 				Class cp = Class.forName("thaumcraft.common.CommonProxy");
 				Field kn = cp.getField("playerKnowledge");
+				researchManager = cp.getField("researchManager");
 				Object knowledge = kn.get(proxy);
 				Class ck = Class.forName("thaumcraft.common.lib.research.PlayerKnowledge");
 				Field res = ck.getField("researchCompleted");
@@ -868,6 +899,7 @@ public class ReikaThaumHelper {
 			try {
 				Class mgr = Class.forName("thaumcraft.common.lib.research.ResearchManager");
 				researchComplete = mgr.getMethod("isResearchComplete", String.class, String.class);
+				completeResearch = mgr.getMethod("completeResearch", EntityPlayer.class, String.class);
 				getData = mgr.getMethod("getData", ItemStack.class);
 				createNote = mgr.getMethod("createNote", ItemStack.class, String.class, World.class);
 				getMix = mgr.getMethod("getCombinationResult", Aspect.class, Aspect.class);
