@@ -22,10 +22,12 @@ import com.mojang.authlib.GameProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.dedicated.PropertyManager;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.ForgeVersion;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Exception.RegistrationException;
+import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
@@ -258,5 +260,17 @@ public class DragonAPICore {
 		Class oclass = Class.forName("java.awt.Desktop");
 		Object object = oclass.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
 		oclass.getMethod("browse", new Class[] {URI.class}).invoke(object, new Object[] {new URI(url)});
+	}
+
+	public static ResourceLocation getDirectResource(String path) {
+		if (FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT)
+			return loadDirectResource(path);
+		else
+			return new ResourceLocation("custom_path", path);
+	}
+
+	@SideOnly(Side.CLIENT)
+	private static ResourceLocation loadDirectResource(String path) {
+		return DirectResourceManager.getResource(path);
 	}
 }

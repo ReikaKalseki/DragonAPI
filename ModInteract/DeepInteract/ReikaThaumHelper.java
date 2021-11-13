@@ -44,7 +44,6 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
-import Reika.DragonAPI.IO.DirectResourceManager;
 import Reika.DragonAPI.Instantiable.Data.Maps.TierMap;
 import Reika.DragonAPI.Instantiable.Formula.MathExpression;
 import Reika.DragonAPI.Instantiable.IO.XMLInterface;
@@ -623,7 +622,7 @@ public class ReikaThaumHelper {
 	}
 
 	public static void addBookCategory(ResourceLocation icon, String name, String tex) {
-		ResourceLocation rl2 = DirectResourceManager.getResource(tex);
+		ResourceLocation rl2 = DragonAPICore.getDirectResource(tex);
 		ResearchCategories.registerCategory(name, icon, rl2);
 	}
 

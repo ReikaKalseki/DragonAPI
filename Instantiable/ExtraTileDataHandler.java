@@ -1,6 +1,7 @@
 package Reika.DragonAPI.Instantiable;
 
 import java.lang.reflect.Modifier;
+import java.util.function.Function;
 
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -31,6 +32,10 @@ public abstract class ExtraTileDataHandler {
 	public abstract void readNBT(TileEntity tile, NBTTagCompound NBT);
 
 	public static final InsnList injectHandler(ClassNode cn, Class<? extends ExtraTileDataHandler> object, boolean construct, boolean addNBT) {
+		return injectHandler(cn, object, construct, addNBT, null);
+	}
+
+	public static final InsnList injectHandler(ClassNode cn, Class<? extends ExtraTileDataHandler> object, boolean construct, boolean addNBT, Function<String, String> nbtFunc) {
 		String n2 = ReikaASMHelper.convertClassName(object, true);
 		ReikaASMHelper.addField(cn, FIELD_NAME, n2, Modifier.PRIVATE, null);
 		InsnList get = getLoadOfHandler(cn, object);
@@ -55,36 +60,55 @@ public abstract class ExtraTileDataHandler {
 			}
 		}
 		if (addNBT) {
-			injectNBTHandling(cn, object, get);
+			injectNBTHandling(cn, object, get, nbtFunc);
 		}
 		return get;
 	}
 
-	private static final void injectNBTHandling(ClassNode cn, Class<? extends ExtraTileDataHandler> object, InsnList get) {
+	private static final void injectNBTHandling(ClassNode cn, Class<? extends ExtraTileDataHandler> object, InsnList get, Function<String, String> nbtFunc) {
 		String n = ReikaASMHelper.convertClassName(object, false);
 		String sig = "(Lnet/minecraft/nbt/NBTTagCompound;)V";
 		String sig2 = ReikaASMHelper.addLeadingArgument("(Lnet/minecraft/nbt/NBTTagCompound;)V", "Lnet/minecraft/tileentity/TileEntity;");
-		MethodNode write = ReikaASMHelper.getMethodByName(cn, "func_145841_b", "writeToNBT", sig);
-		MethodNode read = ReikaASMHelper.getMethodByName(cn, "func_145839_a", "readFromNBT", sig);
+
+		MethodNode write = getMethodByName(cn, "func_145841_b", "writeToNBT", sig, nbtFunc);
 
 		InsnList save = new InsnList();
-		InsnList load = new InsnList();
-
 		save.add(ReikaASMHelper.copyInsnList(get));
 		save.add(new VarInsnNode(Opcodes.ALOAD, 0));
 		save.add(new VarInsnNode(Opcodes.ALOAD, 1));
 		save.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, n, "writeNBT", sig2, false));
 
+		AbstractInsnNode loc1 = ReikaASMHelper.getFirstInsnAfter(write.instructions, 0, Opcodes.ALOAD, 1);
+		write.instructions.insertBefore(loc1, save);
+
+		MethodNode read = getMethodByName(cn, "func_145839_a", "readFromNBT", sig, nbtFunc);
+
+		InsnList load = new InsnList();
 		load.add(ReikaASMHelper.copyInsnList(get));
 		load.add(new VarInsnNode(Opcodes.ALOAD, 0));
 		load.add(new VarInsnNode(Opcodes.ALOAD, 1));
 		load.add(new MethodInsnNode(Opcodes.INVOKEVIRTUAL, n, "readNBT", sig2, false));
 
-		AbstractInsnNode loc1 = ReikaASMHelper.getFirstInsnAfter(write.instructions, 0, Opcodes.ALOAD, 1);
 		AbstractInsnNode loc2 = ReikaASMHelper.getFirstInsnAfter(read.instructions, 0, Opcodes.ALOAD, 1);
-
-		write.instructions.insertBefore(loc1, save);
 		read.instructions.insertBefore(loc2, load);
+	}
+
+	private static MethodNode getMethodByName(ClassNode cn, String obf, String deobf, String sig, Function<String, String> nbtFunc) {
+		if (nbtFunc != null) {
+			deobf = nbtFunc.apply(deobf);
+			obf = nbtFunc.apply(obf);
+		}
+		int idx = deobf.indexOf('|');
+		if (idx >= 0) {
+			String args = deobf.substring(idx+1);
+			String[] parts = args.split(",");
+			for (String arg : parts) {
+				sig = ReikaASMHelper.addTrailingArgument(sig, arg);
+			}
+			deobf = deobf.substring(0, idx);
+			obf = obf.substring(0, obf.indexOf('|'));
+		}
+		return ReikaASMHelper.getMethodByName(cn, obf, deobf, sig);
 	}
 
 	private static final InsnList getLoadOfHandler(ClassNode cn, Class<? extends ExtraTileDataHandler> object) {
