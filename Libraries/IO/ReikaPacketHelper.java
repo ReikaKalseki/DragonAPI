@@ -57,6 +57,7 @@ import Reika.DragonAPI.Instantiable.IO.PacketPipeline;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget;
 import Reika.DragonAPI.Instantiable.IO.PacketTarget.PlayerTarget;
 import Reika.DragonAPI.Interfaces.PacketHandler;
+import Reika.DragonAPI.Interfaces.Registry.CustomDistanceSound;
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
 import Reika.DragonAPI.Libraries.ReikaAABBHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper.SoundEnumSet;
@@ -707,7 +708,17 @@ public final class ReikaPacketHelper extends DragonAPICore {
 	}
 
 	public static void sendSoundPacket(SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
-		sendSoundPacket(s, world, x, y, z, vol, pitch, atten, atten ? 20 : Integer.MAX_VALUE);
+		sendSoundPacket(s, world, x, y, z, vol, pitch, atten, getSoundDistance(atten, s));
+	}
+
+	private static int getSoundDistance(boolean atten, SoundEnum s) {
+		if (atten) {
+			float d = s instanceof CustomDistanceSound ? ((CustomDistanceSound)s).getAudibleDistance() : 16;
+			return (int)Math.max(10, Math.max(d+3, Math.min(d+8, d*1.25)));
+		}
+		else {
+			return Integer.MAX_VALUE;
+		}
 	}
 
 	public static void sendSoundPacket(SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten, int range) {
@@ -754,7 +765,7 @@ public final class ReikaPacketHelper extends DragonAPICore {
 			// We are on the server side.
 			//EntityPlayerMP player2 = (EntityPlayerMP) player;
 			//PacketDispatcher.sendPacketToAllAround(x, y, z, 20, world.provider.dimensionId, packet);
-			pipe.sendToAllAround(pack, world, x, y, z, Math.min(range, atten ? 20 : Integer.MAX_VALUE));
+			pipe.sendToAllAround(pack, world, x, y, z, range);
 		}
 		else if (side == Side.CLIENT) {
 			// We are on the client side.
