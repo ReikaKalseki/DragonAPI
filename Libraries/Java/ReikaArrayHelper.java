@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Libraries.Java;
 
 import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -740,5 +741,22 @@ public final class ReikaArrayHelper extends DragonAPICore {
 
 	public static <E> int indexOf(E[] arr, E d) {
 		return ReikaJavaLibrary.makeListFromArray(arr).indexOf(d);
+	}
+
+	public static <E> E[] addToFastArray(E[] arr, E te) {
+		int size = arr == null ? 0 : arr.length;
+		size++;
+		E[] repl = (E[])Array.newInstance(te.getClass(), size);
+		if (arr != null)
+			System.arraycopy(arr, 0, repl, 0, arr.length);
+		arr[arr.length-1] = te;
+		return arr;
+	}
+
+	public static <E> E[] removeFromFastArray(E[] arr, E te) {
+		ArrayList<E> li = ReikaJavaLibrary.makeListFromArray(arr);
+		li.remove(te);
+		arr = li.isEmpty() ? null : li.toArray((E[])Array.newInstance(te.getClass(), li.size()));
+		return arr;
 	}
 }

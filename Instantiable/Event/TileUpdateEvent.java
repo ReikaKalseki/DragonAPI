@@ -9,12 +9,10 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
-import java.util.ArrayList;
-
 import net.minecraft.tileentity.TileEntity;
 
 import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers.EventWatcher;
-import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 
 public class TileUpdateEvent {
 
@@ -22,19 +20,12 @@ public class TileUpdateEvent {
 	private static int watcherSize = 0;
 
 	public static void addWatcher(TileUpdateWatcher te) {
-		int size = watchers == null ? 0 : watchers.length;
-		size++;
-		TileUpdateWatcher[] repl = new TileUpdateWatcher[size];
-		if (watchers != null)
-			System.arraycopy(watchers, 0, repl, 0, watchers.length);
-		watchers[watchers.length-1] = te;
+		watchers = ReikaArrayHelper.addToFastArray(watchers, te);
 		watcherSize = watchers != null ? watchers.length : 0;
 	}
 
 	public static void removeWatcher(TileUpdateWatcher te) {
-		ArrayList<TileUpdateWatcher> li = ReikaJavaLibrary.makeListFromArray(watchers);
-		li.remove(te);
-		watchers = li.isEmpty() ? null : li.toArray(new TileUpdateWatcher[li.size()]);
+		watchers = ReikaArrayHelper.removeFromFastArray(watchers, te);
 		watcherSize = watchers != null ? watchers.length : 0;
 	}
 
