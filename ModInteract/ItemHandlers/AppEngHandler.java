@@ -286,6 +286,22 @@ public class AppEngHandler extends ModHandlerBase {
 		return li;
 	}
 
+	public ItemStack getSiliconPress() {
+		return siliconPress != null ? siliconPress.copy() : null;
+	}
+
+	public ItemStack getLogicPress() {
+		return logicPress != null ? logicPress.copy() : null;
+	}
+
+	public ItemStack getCalcPress() {
+		return calcPress != null ? calcPress.copy() : null;
+	}
+
+	public ItemStack getEngPress() {
+		return engPress != null ? engPress.copy() : null;
+	}
+
 	public ItemStack getBasicChipPattern() {
 		return basicChipPattern != null ? basicChipPattern.copy() : null;
 	}

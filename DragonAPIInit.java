@@ -128,6 +128,7 @@ import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaThaumHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.TwilightForestLootHooks;
 import Reika.DragonAPI.ModInteract.ItemHandlers.AppEngHandler;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ArsMagicaHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BCMachineHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BCPipeHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.BerryBushHandler;
@@ -150,7 +151,6 @@ import Reika.DragonAPI.ModInteract.ItemHandlers.IC2Handler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.LegacyMagicCropHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MFRHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MagicCropHandler;
-import Reika.DragonAPI.ModInteract.ItemHandlers.ArsMagicaHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MekToolHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MekanismHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MimicryHandler;
@@ -525,6 +525,8 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		this.loadHandlers();
 		this.initFlowerSeedsRegistration();
+		if (ModList.BOP.isLoaded())
+			BoPBlockHandler.getInstance().registerOreDict();
 
 		if (ReikaObfuscationHelper.isDeObfEnvironment())
 			TemporaryCodeCalls.postload(evt);

@@ -17,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -24,6 +25,7 @@ import Reika.DragonAPI.Base.ModHandlerBase;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Interfaces.Registry.OreType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
+import Reika.DragonAPI.ModRegistry.ModOreList;
 
 public class BoPBlockHandler extends ModHandlerBase {
 
@@ -59,12 +61,12 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 		@Override
 		public Collection<ItemStack> getAllOreBlocks() {
-			return ReikaJavaLibrary.makeListFrom(type.getBlock().asItemStack());
+			return ReikaJavaLibrary.makeListFrom(type.getOreBlock().asItemStack());
 		}
 
 		@Override
 		public ItemStack getFirstOreBlock() {
-			return type.getBlock().asItemStack();
+			return type.getOreBlock().asItemStack();
 		}
 
 		@Override
@@ -225,20 +227,35 @@ public class BoPBlockHandler extends ModHandlerBase {
 		Sapphire(0x1B84DC),
 		Amber(0xDC860C);
 
-		public final GemOreType ore;
+		public final OreType ore;
 		public final int color;
 
 		private GemTypes(int c) {
-			ore = new GemOreType(this);
+			ore = this.ordinal() == 0 ? ModOreList.AMETHYST : new GemOreType(this);
 			color = c;
 		}
 
-		public BlockKey getBlock() {
-			return new BlockKey(instance.gemBlock, this.ordinal()*2);
+		public BlockKey getOreBlock() {
+			return new BlockKey(instance.gemBlock, this.index());
+		}
+
+		public BlockKey getCompressedBlock() {
+			return new BlockKey(instance.gemBlock, this.index()+1);
+		}
+
+		private int index() {
+			return this.ordinal()*2;
 		}
 
 		public ItemStack getItem() {
-			return new ItemStack(instance.gemItem, this.ordinal());
+			return new ItemStack(instance.gemItem, 1, this.ordinal());
+		}
+
+		private void register() {
+			OreDictionary.registerOre(ore.getProductOreDictName(), this.getItem());
+			OreDictionary.registerOre("block"+this.name(), this.getCompressedBlock().asItemStack());
+			for (String s : ore.getOreDictNames())
+				OreDictionary.registerOre(s, this.getOreBlock().asItemStack());
 		}
 	}
 
@@ -348,6 +365,12 @@ public class BoPBlockHandler extends ModHandlerBase {
 
 	public static BoPBlockHandler getInstance() {
 		return instance;
+	}
+
+	public void registerOreDict() {
+		for (GemTypes g : GemTypes.values()) {
+			g.register();
+		}
 	}
 
 	@Override

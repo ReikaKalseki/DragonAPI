@@ -45,6 +45,7 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 	private boolean alphaFade = false;
 
 	private AxisAlignedBB bounds = null;
+	private int bounceAction = 0;
 	private double collideAngle;
 	private boolean colliding = false;
 	private int clearOnCollide = -1;
@@ -159,8 +160,9 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 		return this.setColor(c1);
 	}
 
-	public final EntityBlurFX bound(AxisAlignedBB box) {
+	public final EntityBlurFX bound(AxisAlignedBB box, boolean bounce, boolean cull) {
 		bounds = box;
+		bounceAction = (bounce ? 1 : 0) | (cull ? 2 : 0);
 		return this;
 	}
 
@@ -388,14 +390,22 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 		}
 
 		if (bounds != null) {
+			boolean bounce = (bounceAction & 1) != 0;
+			boolean cull = (bounceAction & 2) != 0;
 			if ((posX <= bounds.minX && motionX < 0) || (posX >= bounds.maxX && motionX > 0)) {
-				motionX = -motionX;
+				motionX = bounce ? -motionX : 0;
+				if (cull)
+					this.setDead();
 			}
 			if ((posY <= bounds.minY && motionY < 0) || (posY >= bounds.maxY && motionY > 0)) {
-				motionY = -motionY;
+				motionY = bounce ? -motionY : 0;
+				if (cull)
+					this.setDead();
 			}
 			if ((posZ <= bounds.minZ && motionZ < 0) || (posZ >= bounds.maxZ && motionZ > 0)) {
-				motionZ = -motionZ;
+				motionZ = bounce ? -motionZ : 0;
+				if (cull)
+					this.setDead();
 			}
 		}
 

@@ -50,6 +50,9 @@ public class DependentMethodStripper implements IClassTransformer {
 			return null;
 		}
 
+		if (!FMLForgePlugin.RUNTIME_DEOBF && !runInDev) //prevents needing to always reload game in dev env (ASM not run on src edit, so Eclipse thinks new methods)
+			return bytes;
+
 		ClassNode classNode = new ClassNode();
 		ClassReader classReader = new ClassReader(bytes);
 		classReader.accept(classNode, 0);
@@ -138,8 +141,6 @@ public class DependentMethodStripper implements IClassTransformer {
 		if (anns == null) {
 			return null;
 		}
-		if (!FMLForgePlugin.RUNTIME_DEOBF && !runInDev) //prevents needing to always reload game in dev env (ASM not run on src edit, so Eclipse thinks new methods)
-			return null;
 		for (AnnotationNode ann : anns) {
 			if (isDependencyAnnotation(ann)) {
 				if (ann.values != null) {

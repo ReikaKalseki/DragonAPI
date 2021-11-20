@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -12,6 +12,7 @@ package Reika.DragonAPI.Instantiable.IO;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 
 import net.minecraft.nbt.NBTBase;
@@ -61,15 +62,20 @@ public final class SyncPacket extends S35PacketUpdateTileEntity implements DataS
 		changes.clear();
 		Collection c = NBT.func_150296_c();
 		Iterator<String> it = c.iterator();
+		HashSet<String> unused = new HashSet(data.keySet());
 		while (it.hasNext()) {
 			String name = it.next();
 			if (name == null) {
 				DragonAPICore.logError("An NBT tag with a null key is being sent to the sync packet from "+te);
 			}
 			else {
+				unused.remove(name);
 				NBTBase tag = NBT.getTag(name);
 				this.addData(name, tag, force);
 			}
+		}
+		for (String s : unused) {
+			this.addData(s, null, force);
 		}
 	}
 

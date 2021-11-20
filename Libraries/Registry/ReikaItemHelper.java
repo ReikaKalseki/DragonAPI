@@ -826,6 +826,8 @@ public final class ReikaItemHelper extends DragonAPICore {
 	}
 
 	public static ItemStack getAnyMetaStack(ItemStack is) {
+		if (is == null)
+			return is;
 		ItemStack ret = is.copy();
 		ret.setItemDamage(OreDictionary.WILDCARD_VALUE);
 		return ret;
