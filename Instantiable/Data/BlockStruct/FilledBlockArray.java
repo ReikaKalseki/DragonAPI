@@ -56,6 +56,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 	private final HashMap<Coordinate, BlockCheck> data = new HashMap();
 	private final HashMap<Coordinate, BlockKey> placementOverrides = new HashMap();
 
+	public static boolean logMismatches;
+
 	public FilledBlockArray(World world) {
 		super(world);
 	}
@@ -257,7 +259,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 			int z = c.zCoord;
 			BlockCheck bk = this.getBlockKey(x, y, z);
 			if (!bk.matchInWorld(world, x, y, z)) {
-				//ReikaJavaLibrary.pConsole(x+","+y+","+z+" > Wanted ["+bk.getClass().getSimpleName()+"] "+bk.asBlockKey().blockID.getLocalizedName()+":"+bk.asBlockKey().metadata+", found "+world.getBlock(x, y, z).getLocalizedName()+":"+world.getBlockMetadata(x, y, z));
+				if (logMismatches)
+					ReikaJavaLibrary.pConsole(x+","+y+","+z+" > Wanted ["+bk.getClass().getSimpleName()+"] "+bk.asBlockKey().blockID.getLocalizedName()+":"+bk.asBlockKey().metadata+", found "+world.getBlock(x, y, z).getLocalizedName()+":"+world.getBlockMetadata(x, y, z));
 				//bk.place(world, x, y, z, 3);
 				//world.setBlock(x, y, z, Blocks.brick_block);
 				if (call != null)
@@ -266,6 +269,22 @@ public class FilledBlockArray extends StructuredBlockArray {
 			}
 		}
 		return true;
+	}
+
+	public int countErrors() {
+		if (world.isRemote)
+			return 0;
+		int ret = 0;
+		for (Coordinate c : data.keySet()) {
+			int x = c.xCoord;
+			int y = c.yCoord;
+			int z = c.zCoord;
+			BlockCheck bk = this.getBlockKey(x, y, z);
+			if (!bk.matchInWorld(world, x, y, z)) {
+				ret++;
+			}
+		}
+		return ret;
 	}
 
 	@Override
@@ -616,7 +635,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 		public final boolean allowSoft;
 		private final Collection<Block> exceptions;
 
-		private EmptyCheck(boolean soft, boolean nonsolid, Block... exc) {
+		public EmptyCheck(boolean soft, boolean nonsolid, Block... exc) {
 			allowNonSolid = nonsolid;
 			allowSoft = soft;
 			exceptions = ReikaJavaLibrary.makeListFromArray(exc);

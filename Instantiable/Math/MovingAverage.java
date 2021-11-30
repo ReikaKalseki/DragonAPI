@@ -41,9 +41,19 @@ public class MovingAverage {
 	}
 
 	public double getAverage() {
+		return this.getAverage(0);
+	}
+
+	public double getAverage(double agePenalty) {
 		double avg = 0;
+		int i = 0;
 		for (double d : data) {
+			if (d > 0 && agePenalty > 0) {
+				d = Math.max(0, d*(1-i*agePenalty/size));
+				//ReikaJavaLibrary.pConsole(d);
+			}
 			avg += d;
+			i++;
 		}
 		return avg/size;
 	}
@@ -71,6 +81,11 @@ public class MovingAverage {
 			mv.data.add(0D);
 		//ReikaJavaLibrary.pConsole("nbt"+mv.data, Side.SERVER);
 		return mv;
+	}
+
+	@Override
+	public String toString() {
+		return this.getAverage()+"="+data.toString();
 	}
 
 }

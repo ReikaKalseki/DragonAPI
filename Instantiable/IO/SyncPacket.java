@@ -177,7 +177,10 @@ public final class SyncPacket extends S35PacketUpdateTileEntity implements DataS
 		while (keys.hasNext()) {
 			String key = keys.next();
 			NBTBase val = changes.get(key);
-			toSend.setTag(key, val);
+			if (val == null)
+				toSend.removeTag(key);
+			else
+				toSend.setTag(key, val);
 		}
 	}
 

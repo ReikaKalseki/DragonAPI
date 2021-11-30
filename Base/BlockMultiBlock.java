@@ -28,6 +28,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.ChromatiCraft.API.Interfaces.UnCopyableBlock;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.FilledBlockArray.BlockMatchFailCallback;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.RotaryCraft.API.Interfaces.Transducerable;
@@ -43,7 +44,7 @@ public abstract class BlockMultiBlock<R> extends Block implements Transducerable
 
 	public abstract int getNumberTextures();
 
-	public abstract R checkForFullMultiBlock(World world, int x, int y, int z, ForgeDirection dir);
+	public abstract R checkForFullMultiBlock(World world, int x, int y, int z, ForgeDirection dir, BlockMatchFailCallback call);
 
 	@Override
 	public final void onNeighborBlockChange(World world, int x, int y, int z, Block idn) {
@@ -70,7 +71,7 @@ public abstract class BlockMultiBlock<R> extends Block implements Transducerable
 	public final void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase e, ItemStack is) {
 		if (!world.isRemote && this.canTriggerMultiBlockCheck(world, x, y, z, world.getBlockMetadata(x, y, z))) {
 			if (e instanceof EntityPlayer) {
-				R ret = this.checkForFullMultiBlock(world, x, y, z, ReikaEntityHelper.getDirectionFromEntityLook(e, false));
+				R ret = this.checkForFullMultiBlock(world, x, y, z, ReikaEntityHelper.getDirectionFromEntityLook(e, false), null);
 				if (this.evaluate(ret))
 					this.onCreateFullMultiBlock(world, x, y, z, ret);
 			}

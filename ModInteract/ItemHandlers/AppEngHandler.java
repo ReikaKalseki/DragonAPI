@@ -15,9 +15,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.launchwrapper.Launch;
+import net.minecraft.world.World;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
@@ -81,6 +83,9 @@ public class AppEngHandler extends ModHandlerBase {
 	private Method itemstackGet;
 	private Method blockGet;
 
+	private Class placeType;
+	private Method partPlace;
+
 	private AppEngHandler() {
 		super();
 		Block sky = null;
@@ -128,6 +133,10 @@ public class AppEngHandler extends ModHandlerBase {
 
 				blankPattern = this.getMaterial("materialBlankPattern");
 				encodedPattern = this.getItem("itemEncodedPattern");
+
+				Class c = Class.forName("appeng.parts.PartPlacement");
+				placeType = Class.forName("appeng.parts.PartPlacement$PlaceType");
+				partPlace = c.getDeclaredMethod("place", ItemStack.class, int.class, int.class, int.class, int.class, EntityPlayer.class, World.class, placeType, int.class);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Cannot read AE class contents!");
@@ -364,6 +373,16 @@ public class AppEngHandler extends ModHandlerBase {
 
 	public Item getEncodedPattern() {
 		return encodedPattern;
+	}
+
+	public boolean tryRightClick(ItemStack is, int x, int y, int z, int sideHit, EntityPlayer player, World world, int depth) {
+		try {
+			return (boolean)partPlace.invoke(null, is, x, y, z, sideHit, player, world, Enum.valueOf(placeType, "INTERACT_FIRST_PASS"), depth);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+			return false;
+		}
 	}
 
 }

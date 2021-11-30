@@ -326,6 +326,7 @@ public class StructureRenderer {
 		GL11.glPushMatrix();
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		GL11.glEnable(GL11.GL_BLEND);
+		GL11.glEnable(GL11.GL_DEPTH_TEST);
 
 		//GL11.glFrontFace(GL11.GL_CW);
 

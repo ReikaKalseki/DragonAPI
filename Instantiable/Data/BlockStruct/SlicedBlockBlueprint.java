@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -18,6 +18,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.FilledBlockArray.BlockMatchFailCallback;
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.FilledBlockArray.EmptyCheck;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockKey;
 import Reika.DragonAPI.Libraries.ReikaDirectionHelper;
 
@@ -194,7 +196,7 @@ public class SlicedBlockBlueprint {
 		return sb.toString();
 	}
 
-	public boolean checkAgainst(World world, int x, int y, int z, int xref, int yref, ForgeDirection plane, int slice) {
+	public boolean checkAgainst(World world, int x, int y, int z, int xref, int yref, ForgeDirection plane, int slice, BlockMatchFailCallback call) {
 		//ReikaJavaLibrary.pConsole(slice+": "+this.getString(slice));
 		Block[][] ids = IDs.get(slice);
 		int[][] metas = metadatas.get(slice);
@@ -215,11 +217,13 @@ public class SlicedBlockBlueprint {
 					if (id != null) {
 						if (id == id2) {
 							//ReikaJavaLibrary.pConsole(slice+" w aID: "+id+"&"+id2+" @ "+i+", "+k+" >> "+dx+","+dy+","+dz);
+							call.onBlockFailure(world, dx, dy, dz, new EmptyCheck(false, false));
 							return false;
 						}
 						if (meta != -1) {
 							if (meta == meta2) {
 								//ReikaJavaLibrary.pConsole(slice+" w ameta: "+meta+"%"+meta2+" @ "+i+", "+k+" >> "+dx+","+dy+","+dz);
+								call.onBlockFailure(world, dx, dy, dz, new EmptyCheck(false, false));
 								return false;
 							}
 						}
@@ -229,12 +233,14 @@ public class SlicedBlockBlueprint {
 					if (id != id2) {
 						//ReikaJavaLibrary.pConsole(slice+" w ID: "+id+"&"+id2+" @ "+i+", "+k+" >> "+dx+","+dy+","+dz);
 						//world.setBlock(dx, dy, dz, 49);
+						call.onBlockFailure(world, dx, dy, dz, new BlockKey(id, meta));
 						return false;
 					}
 					if (meta != -1) {
 						if (meta != meta2) {
 							//ReikaJavaLibrary.pConsole(slice+" w meta: "+meta+"%"+meta2+" @ "+i+", "+k+" >> "+dx+","+dy+","+dz);
 							//world.setBlock(dx, dy, dz, 49);
+							call.onBlockFailure(world, dx, dy, dz, new BlockKey(id, meta));
 							return false;
 						}
 					}

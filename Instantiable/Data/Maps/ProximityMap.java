@@ -50,6 +50,11 @@ public class ProximityMap {
 		return set;
 	}
 
+	public int getCountInSection(Coordinate c) {
+		Section s = this.getSection(c, false);
+		return s != null ? s.data.size() : 0;
+	}
+
 	private Section getSection(Coordinate c, boolean create) {
 		int x = ReikaMathLibrary.roundDownToX(sectionSize, c.xCoord);
 		int z = ReikaMathLibrary.roundDownToX(sectionSize, c.zCoord);

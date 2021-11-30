@@ -104,6 +104,8 @@ public final class ItemHashMap<V> {
 	}
 
 	public V get(ItemStack is) {
+		if (is == null)
+			return null;
 		return this.get(this.createKey(is));
 	}
 

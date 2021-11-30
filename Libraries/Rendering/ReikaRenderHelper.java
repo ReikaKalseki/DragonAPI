@@ -19,6 +19,7 @@ import java.util.List;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
+import org.lwjgl.opengl.GL30;
 import org.lwjgl.util.vector.Matrix4f;
 
 import net.minecraft.block.Block;
@@ -1788,9 +1789,22 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		}
 	}
 
+	private static long msFBError = -1;
+
 	/** Supply null to make the screen the render target. */
 	public static void setRenderTarget(Framebuffer fb) {
-		OpenGlHelper.func_153171_g(OpenGlHelper.field_153198_e, fb != null ? fb.framebufferObject : 0);
+		OpenGlHelper.func_153171_g(GL30.GL_FRAMEBUFFER, fb != null ? fb.framebufferObject : 0);
+		int err = GL11.glGetError();
+		if (err != 0) {
+			int status = GL30.glCheckFramebufferStatus(GL30.GL_FRAMEBUFFER);
+			if (System.currentTimeMillis()-msFBError >= 4000) {
+				msFBError = System.currentTimeMillis();
+				DragonAPICore.logError("GL ERROR "+err+": FB #"+(fb != null ? fb.framebufferObject : 0)+" was unrecognized (status="+status+")");
+				if (fb == null) {
+					DragonAPICore.log("This should be impossible! Driver issues?");
+				}
+			}
+		}
 	}
 
 	public static void renderTextureToFramebuffer(int texture, Framebuffer fb) {

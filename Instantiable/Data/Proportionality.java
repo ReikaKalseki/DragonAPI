@@ -115,6 +115,7 @@ public class Proportionality<F> extends CircularDivisionRenderer<F> {
 	@Override
 	public void clear() {
 		data.clear();
+		this.totalValue = 0;
 		this.resetColors();
 	}
 
