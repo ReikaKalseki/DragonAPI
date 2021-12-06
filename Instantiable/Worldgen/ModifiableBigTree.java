@@ -223,7 +223,7 @@ public abstract class ModifiableBigTree extends WorldGenAbstractTree {
 
 	/** Gets the rough size of a layer of the tree. */
 	protected float layerSize(int layer) {
-		if (layer < (heightLimit) * 0.3D) { //TODO is this trunk height?
+		if (layer < (heightLimit) * 0.3D) {
 			return -1.618F;
 		}
 		else {

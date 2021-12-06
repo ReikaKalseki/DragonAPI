@@ -378,7 +378,7 @@ public class ReikaMystcraftHelper {
 
 	@NeedsImplementation
 	public static void setRandomAgeWeight(IAgeSymbol a, float weight) {
-		//TODO
+		//TODO incomplete abandoned method
 	}
 
 	public static void registerAgeSymbol(IAgeSymbol a) {

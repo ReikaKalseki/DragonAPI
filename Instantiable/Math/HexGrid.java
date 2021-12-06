@@ -132,11 +132,11 @@ public class HexGrid {
 				case HEXAGON:
 					return Math.abs(q)+Math.abs(r)+Math.abs(s) <= diameter-1;
 				case RECTANGLE:
-					break; //TODO
+					break; //TODO Incomplete abandoned method
 				case RHOMBUS:
-					break; //TODO
+					break; //TODO Incomplete abandoned method
 				case TRIANGLE:
-					break; //TODO
+					break; //TODO Incomplete abandoned method
 			}
 			return false;
 		}

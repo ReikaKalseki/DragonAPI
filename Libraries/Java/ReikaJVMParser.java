@@ -90,13 +90,22 @@ public class ReikaJVMParser {
 	}
 
 	private static int[] getJavaVersion() {
-		String v = System.getProperty("java.version");
-		String[] parts = v.replaceAll("[^0-9\\._]", "").replaceAll("_", ".").split("\\.");
-		int[] ret = new int[parts.length-1]; //ignore the "1."
-		for (int i = 0; i < ret.length; i++) {
-			ret[i] = Integer.parseInt(parts[i+1]);
+		try {
+			String v = System.getProperty("java.version");
+			String[] parts = v.replaceAll("[^0-9\\._]", "").replaceAll("_", ".").split("\\.");
+			int[] ret = new int[parts.length-1]; //ignore the "1."
+			for (int i = 0; i < ret.length; i++) {
+				ret[i] = Integer.parseInt(parts[i+1]);
+			}
+			return ret;
 		}
-		return ret;
+		catch (Exception e) {
+			ReikaJavaLibrary.pConsole("***********************************************************************************************");
+			ReikaJavaLibrary.pConsole("UNABLE TO PARSE JAVA VERSION! ARE YOU USING A NONSTANDARD JVM? THIS IS LIKELY TO BREAK THINGS!");
+			ReikaJavaLibrary.pConsole(getFullJavaInfo());
+			ReikaJavaLibrary.pConsole("***********************************************************************************************");
+			return new int[] {-1, -1, -1};
+		}
 	}
 
 	/** 0 for major (7, 8, etc), and 2 for release (eg 55 for 1.7_55) */

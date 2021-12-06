@@ -11,7 +11,6 @@ package Reika.DragonAPI.Libraries.Java;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -42,7 +41,6 @@ public final class ReikaArrayHelper extends DragonAPICore {
 		return false;
 	}
 
-	//TODO Condense functions into accept-all-primitive designs
 	/** Returns the sum of all values in an array. Args: Array */
 	public static int sumArray(int[] arr) {
 		int sum = 0;
@@ -305,83 +303,15 @@ public final class ReikaArrayHelper extends DragonAPICore {
 	}
 
 	/** Returns true if all nonzero values in the array are equal. Args: Array */
-	//TODO Make scale for all array sizes
 	public static boolean allNonZerosEqual(long[] powers) {
-		Arrays.sort(powers);
-		if (powers[0] != 0) {
-			if (powers[1] != 0)
-				if (powers[0] != powers[1])
+		long nonZero = 0;
+		for (long l : powers) {
+			if (l != 0) {
+				if (nonZero == 0)
+					nonZero = l;
+				else if (nonZero != l)
 					return false;
-		}
-		if (powers[0] != 0) {
-			if (powers[2] != 0)
-				if (powers[0] != powers[2])
-					return false;
-		}
-		if (powers[0] != 0) {
-			if (powers[3] != 0)
-				if (powers[0] != powers[3])
-					return false;
-		}
-		if (powers[0] != 0) {
-			if (powers[4] != 0)
-				if (powers[0] != powers[4])
-					return false;
-		}
-		if (powers[0] != 0) {
-			if (powers[5] != 0)
-				if (powers[0] != powers[5])
-					return false;
-		}
-		if (powers[1] != 0) {
-			if (powers[2] != 0)
-				if (powers[1] != powers[2])
-					return false;
-		}
-		if (powers[1] != 0) {
-			if (powers[3] != 0)
-				if (powers[1] != powers[3])
-					return false;
-		}
-		if (powers[1] != 0) {
-			if (powers[4] != 0)
-				if (powers[1] != powers[4])
-					return false;
-		}
-		if (powers[1] != 0) {
-			if (powers[5] != 0)
-				if (powers[1] != powers[5])
-					return false;
-		}
-		if (powers[2] != 0) {
-			if (powers[3] != 0)
-				if (powers[2] != powers[3])
-					return false;
-		}
-		if (powers[2] != 0) {
-			if (powers[4] != 0)
-				if (powers[2] != powers[4])
-					return false;
-		}
-		if (powers[2] != 0) {
-			if (powers[5] != 0)
-				if (powers[2] != powers[5])
-					return false;
-		}
-		if (powers[3] != 0) {
-			if (powers[4] != 0)
-				if (powers[3] != powers[4])
-					return false;
-		}
-		if (powers[3] != 0) {
-			if (powers[5] != 0)
-				if (powers[3] != powers[5])
-					return false;
-		}
-		if (powers[4] != 0) {
-			if (powers[5] != 0)
-				if (powers[4] != powers[5])
-					return false;
+			}
 		}
 		return true;
 	}

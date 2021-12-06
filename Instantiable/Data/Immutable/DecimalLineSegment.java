@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -66,7 +66,7 @@ public final class DecimalLineSegment {
 
 	public DecimalPosition findIntersection(DecimalLineSegment l) {
 		//Matrix3D mat = new Matrix3D();
-		//TODO
+		//TODO Incomplete abandoned method
 		return null;
 	}
 

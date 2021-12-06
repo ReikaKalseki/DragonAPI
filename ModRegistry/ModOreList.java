@@ -460,7 +460,7 @@ public enum ModOreList implements OreType {
 		for (int i = 0; i < ores.size(); i++) {
 			ItemStack is = ores.get(i);
 			Block ore = Block.getBlockFromItem(is.getItem());
-			//TODO Not done
+			//TODO incomplete abandoned method
 		}
 		return null;
 	}

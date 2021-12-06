@@ -137,8 +137,25 @@ public class IC2Handler extends ModHandlerBase {
 		}
 	}
 
-	public enum IC2Stacks {
+	public enum IC2Cables {
+		INSCOPPER,
+		COPPER,
+		GOLD,
+		INSGOLD,
+		HV,
+		INSHV,
+		FIBER,
+		TIN,
+		METER,
+		DETECTOR,
+		INSTIN;
 
+		public ItemStack getItem() {
+			return ReikaItemHelper.lookupItem("IC2:itemCable:"+this.ordinal());
+		}
+	}
+
+	public enum IC2Stacks {
 		PURECRUSHEDU("purifiedCrushedUraniumOre"),
 		ENERGIUM("energiumDust"),
 		ADVANCEDALLOY("advancedAlloy"),
@@ -192,6 +209,8 @@ public class IC2Handler extends ModHandlerBase {
 		REACVENT("reactorVentCore"),
 		ADVENT("reactorVentDiamond"),
 		OVERVENT("reactorVentGold"),
+		CASTING("machine"),
+		ADVCASING("advancedMachine"),
 		;
 
 		private final String tag;

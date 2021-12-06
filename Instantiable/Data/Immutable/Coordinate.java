@@ -33,11 +33,13 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
 
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent;
 import Reika.DragonAPI.Instantiable.Event.BlockTickEvent.UpdateFlags;
 import Reika.DragonAPI.Instantiable.Worldgen.ChunkSplicedGenerationCache;
 import Reika.DragonAPI.Interfaces.Location;
+import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTIO;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
@@ -491,6 +493,10 @@ public final class Coordinate implements Location, Comparable<Coordinate> {
 
 	public boolean canBeReplacedByLeaves(World world) {
 		return this.getBlock(world).canBeReplacedByLeaves(world, xCoord, yCoord, zCoord);
+	}
+
+	public Fluid getFluid(World world) {
+		return ReikaFluidHelper.lookupFluidForBlock(this.getBlock(world));
 	}
 
 }

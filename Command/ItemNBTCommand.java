@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
@@ -28,6 +29,7 @@ public class ItemNBTCommand extends DragonCommandBase {
 			ReikaChatHelper.sendChatToPlayer(ep, "[No Item]");
 			return;
 		}
+		ReikaChatHelper.sendChatToPlayer(ep, Item.itemRegistry.getNameForObject(is.getItem()));
 		if (is.stackTagCompound == null) {
 			ReikaChatHelper.sendChatToPlayer(ep, "{No Tag}");
 			return;

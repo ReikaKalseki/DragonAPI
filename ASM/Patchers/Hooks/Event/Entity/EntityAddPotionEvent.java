@@ -42,58 +42,5 @@ public class EntityAddPotionEvent extends Patcher {
 		li.add(nul);
 
 		m.instructions.insertBefore(ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.ALOAD, 0), li);
-	}/*
-
-	static class test extends EntityLivingBase {
-		private HashMap<Integer, PotionEffect> activePotionsMap;
-
-		public test(World p_i1594_1_) {
-			super(p_i1594_1_);
-			// TODO Auto-generated constructor stub
-		}
-
-		@Override
-		public void addPotionEffect(PotionEffect pot)
-		{
-			pot = ApplyPotionEvent.fire(this, pot);
-			if (pot != null && this.isPotionApplicable(pot))
-			{
-				if (activePotionsMap.containsKey(Integer.valueOf(pot.getPotionID())))
-				{
-					activePotionsMap.get(Integer.valueOf(pot.getPotionID())).combine(pot);
-					this.onChangedPotionEffect(activePotionsMap.get(Integer.valueOf(pot.getPotionID())), true);
-				}
-				else
-				{
-					activePotionsMap.put(Integer.valueOf(pot.getPotionID()), pot);
-					this.onNewPotionEffect(pot);
-				}
-			}
-		}
-
-		@Override
-		public ItemStack getHeldItem() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public ItemStack getEquipmentInSlot(int p_71124_1_) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void setCurrentItemOrArmor(int p_70062_1_, ItemStack p_70062_2_) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public ItemStack[] getLastActiveItems() {
-			// TODO Auto-generated method stub
-			return null;
-		}
 	}
-	 */
 }

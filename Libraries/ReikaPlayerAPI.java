@@ -513,7 +513,7 @@ public final class ReikaPlayerAPI extends DragonAPICore {
 	private static void populateHeadData(TileEntitySkull te, GameProfile p) {
 		if (MinecraftServer.getServer() != null)
 			te.func_152106_a(p);
-		//TODO what about on clients?
+		//FIXME what about on clients?
 	}
 
 	public static void clearHeadCache() {

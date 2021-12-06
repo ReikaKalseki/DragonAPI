@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -30,7 +30,7 @@ public class Orbit {
 		zeroAng = Math.toRadians(theta);
 	}
 
-	//TODO
+	//TODO Incomplete abandoned method
 	public DecimalPosition getPosition(double x0, double y0, double z0, double time, double mu) {
 		double dtheta = 0; //incomplete
 		return this.getPosition(x0, y0, z0, time, mu);
