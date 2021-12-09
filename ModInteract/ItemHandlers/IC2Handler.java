@@ -137,17 +137,44 @@ public class IC2Handler extends ModHandlerBase {
 		}
 	}
 
+	public enum IC2Materials {
+		COPPER,
+		TIN,
+		BRONZE,
+		GOLD,
+		IRON,
+		REFIRON,
+		LEAD,
+		OBSIDIAN,
+		LAPIS;
+
+		public ItemStack getDensePlate() {
+			return ReikaItemHelper.lookupItem("IC2:itemDensePlates:"+this.ordinal());
+		}
+
+		public ItemStack getPlate() {
+			return ReikaItemHelper.lookupItem("IC2:itemPlates:"+this.ordinal());
+		}
+
+		public ItemStack getCasing() {
+			return this == OBSIDIAN || this == LAPIS ? null : ReikaItemHelper.lookupItem("IC2:itemCasing:"+this.ordinal());
+		}
+	}
+
 	public enum IC2Cables {
 		INSCOPPER,
 		COPPER,
 		GOLD,
 		INSGOLD,
+		UNUSED,
 		HV,
 		INSHV,
+		UNUSED2,
+		UNUSED3,
 		FIBER,
 		TIN,
-		METER,
 		DETECTOR,
+		SPLITTER,
 		INSTIN;
 
 		public ItemStack getItem() {
