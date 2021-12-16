@@ -137,6 +137,8 @@ public class CoreContainer extends Container {
 	public final void putStackInSlot(int slot, ItemStack is)
 	{
 		//DragonAPICore.log("RECEIVE: "+slot+":"+is);
+		if (inventorySlots.size() == 0)
+			return;
 		super.putStackInSlot(slot, is);
 	}
 
@@ -319,9 +321,9 @@ public class CoreContainer extends Container {
 	}
 
 	@Override
-	public ItemStack slotClick(int ID, int par2, int par3, EntityPlayer ep) {
+	public ItemStack slotClick(int ID, int button, int par3, EntityPlayer ep) {
 		//DragonAPICore.log(ID, Side.SERVER);
-		ItemStack is = super.slotClick(ID, par2, par3, ep);
+		ItemStack is = super.slotClick(ID, button, par3, ep);
 		if (ii != null && tile instanceof XPProducer) {
 			if (ID < ii.getSizeInventory()) {
 				float xp = ((XPProducer) tile).getXP();

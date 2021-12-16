@@ -121,6 +121,8 @@ public final class BlockKey implements BlockCheck, Comparable<BlockKey> {
 	}
 
 	public String getLocalized() {
+		if (blockID == Blocks.air)
+			return "Air";
 		RegistryEntry reg = ReikaRegistryHelper.getRegistryForObject(blockID);
 		if (reg instanceof BlockEnum) {
 			BlockEnum be = (BlockEnum)reg;

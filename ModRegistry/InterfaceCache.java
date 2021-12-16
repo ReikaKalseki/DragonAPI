@@ -56,6 +56,8 @@ public enum InterfaceCache {
 	ESSENTIADISTILL("tuhljin.automagy.api.essentia.IEssentiaDistillery"),
 	WARPGEAR("thaumcraft.api.IWarpingGear"),
 	BREWITEM("vazkii.botania.api.brew.IBrewItem"),
+	IC2NUKE("ic2.api.reactor.IReactor"),
+	IC2NUKECHAMBER("ic2.api.reactor.IReactorChamber"),
 	;
 
 	private final String classpath;

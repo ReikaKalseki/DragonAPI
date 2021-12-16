@@ -157,6 +157,18 @@ public final class KeyedItemStack implements Comparable<KeyedItemStack> {
 		return sb.toString();
 	}
 
+	public boolean hasMeta() {
+		return enabledCriteria[Criteria.METADATA.ordinal()];
+	}
+
+	public boolean isSized() {
+		return enabledCriteria[Criteria.SIZE.ordinal()];
+	}
+
+	public boolean hasNBT() {
+		return enabledCriteria[Criteria.NBT.ordinal()];
+	}
+
 	private static enum Criteria {
 		ID(true, EnumChatFormatting.RESET), //none
 		METADATA(true, EnumChatFormatting.LIGHT_PURPLE),

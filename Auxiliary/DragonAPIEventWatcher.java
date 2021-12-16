@@ -221,9 +221,9 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 				//double h = 0.888;
 				RenderBlocks.getInstance().blockAccess = world;
 				double d2 = RenderBlocks.getInstance().getLiquidHeight(x, y, z, Material.water);
-				double d3 = RenderBlocks.getInstance().getLiquidHeight(x, y, z + 1, Material.water);
-				double d4 = RenderBlocks.getInstance().getLiquidHeight(x + 1, y, z + 1, Material.water);
-				double d5 = RenderBlocks.getInstance().getLiquidHeight(x + 1, y, z, Material.water);
+				double d3 = world.getBlock(x, y, z+1).getMaterial() == Material.water ? RenderBlocks.getInstance().getLiquidHeight(x, y, z + 1, Material.water) : 0.8875;
+				double d4 = world.getBlock(x+1, y, z+1).getMaterial() == Material.water ? RenderBlocks.getInstance().getLiquidHeight(x + 1, y, z + 1, Material.water) : 0.8875;
+				double d5 = world.getBlock(x+1, y, z).getMaterial() == Material.water ? RenderBlocks.getInstance().getLiquidHeight(x + 1, y, z, Material.water) : 0.8875;
 				v5.setColorOpaque_I(Blocks.water.colorMultiplier(world, x, y, z));
 				v5.addVertexWithUV(x, y+d3, z+1, u, dv);
 				v5.addVertexWithUV(x+1, y+d4, z+1, du, dv);

@@ -86,6 +86,7 @@ import Reika.DragonAPI.APIPacketHandler.PacketIDs;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.Auxiliary.Trackers.SpecialDayTracker;
 import Reika.DragonAPI.Base.BlockTieredResource;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.BlockProperties;
@@ -1689,6 +1690,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	public static int getAmbientTemperatureAt(World world, int x, int y, int z) {
 		int Tamb = ReikaBiomeHelper.getBiomeTemp(world, x, z);
 		float temp = Tamb;
+
+		if (SpecialDayTracker.instance.isWinterEnabled()) {
+			temp -= 10;
+		}
 
 		if (!world.provider.hasNoSky) {
 			if (world.canBlockSeeTheSky(x, y+1, z)) {
