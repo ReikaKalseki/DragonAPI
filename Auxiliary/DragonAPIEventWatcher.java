@@ -61,6 +61,7 @@ import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher;
 import Reika.DragonAPI.Auxiliary.Trackers.KeyWatcher.Key;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
@@ -119,7 +120,10 @@ import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Rendering.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.World.ReikaChunkHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.ModInteract.DeepInteract.ItemCustomFocus;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
+import Reika.DragonAPI.ModInteract.DeepInteract.ReikaThaumHelper;
+import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumItemHelper;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.Event.Result;
@@ -129,6 +133,7 @@ import cpw.mods.fml.common.network.FMLNetworkEvent.ClientDisconnectionFromServer
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import paulscode.sound.SoundSystemConfig;
+import thaumcraft.api.wands.ItemFocusBasic;
 
 public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
@@ -154,6 +159,21 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	public void onCall(String tag) {
 		if (tag.equals("debug")) {
 			this.showF3Extras();
+		}
+	}
+
+	@SubscribeEvent
+	@ModDependent(ModList.THAUMCRAFT)
+	public void handleFocusLeftClick(PlayerInteractEvent evt) {
+		if (evt.action == Action.LEFT_CLICK_BLOCK) {
+			ItemStack hold = evt.entityPlayer.getCurrentEquippedItem();
+			if (hold != null && hold.getItem() == ThaumItemHelper.ItemEntry.WAND.getItem().getItem()) {
+				ItemFocusBasic focus = ReikaThaumHelper.getWandFocus(hold);
+				if (focus instanceof ItemCustomFocus) {
+					if (((ItemCustomFocus)focus).onLeftClick(evt.world, evt.x, evt.y, evt.z, evt.entityPlayer, hold, ForgeDirection.VALID_DIRECTIONS[evt.face]))
+						evt.setCanceled(true);
+				}
+			}
 		}
 	}
 

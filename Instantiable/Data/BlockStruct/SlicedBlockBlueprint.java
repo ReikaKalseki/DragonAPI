@@ -217,13 +217,15 @@ public class SlicedBlockBlueprint {
 					if (id != null) {
 						if (id == id2) {
 							//ReikaJavaLibrary.pConsole(slice+" w aID: "+id+"&"+id2+" @ "+i+", "+k+" >> "+dx+","+dy+","+dz);
-							call.onBlockFailure(world, dx, dy, dz, new EmptyCheck(false, false));
+							if (call != null)
+								call.onBlockFailure(world, dx, dy, dz, new EmptyCheck(false, false));
 							return false;
 						}
 						if (meta != -1) {
 							if (meta == meta2) {
 								//ReikaJavaLibrary.pConsole(slice+" w ameta: "+meta+"%"+meta2+" @ "+i+", "+k+" >> "+dx+","+dy+","+dz);
-								call.onBlockFailure(world, dx, dy, dz, new EmptyCheck(false, false));
+								if (call != null)
+									call.onBlockFailure(world, dx, dy, dz, new EmptyCheck(false, false));
 								return false;
 							}
 						}
@@ -233,14 +235,16 @@ public class SlicedBlockBlueprint {
 					if (id != id2) {
 						//ReikaJavaLibrary.pConsole(slice+" w ID: "+id+"&"+id2+" @ "+i+", "+k+" >> "+dx+","+dy+","+dz);
 						//world.setBlock(dx, dy, dz, 49);
-						call.onBlockFailure(world, dx, dy, dz, new BlockKey(id, meta));
+						if (call != null)
+							call.onBlockFailure(world, dx, dy, dz, new BlockKey(id, meta));
 						return false;
 					}
 					if (meta != -1) {
 						if (meta != meta2) {
 							//ReikaJavaLibrary.pConsole(slice+" w meta: "+meta+"%"+meta2+" @ "+i+", "+k+" >> "+dx+","+dy+","+dz);
 							//world.setBlock(dx, dy, dz, 49);
-							call.onBlockFailure(world, dx, dy, dz, new BlockKey(id, meta));
+							if (call != null)
+								call.onBlockFailure(world, dx, dy, dz, new BlockKey(id, meta));
 							return false;
 						}
 					}

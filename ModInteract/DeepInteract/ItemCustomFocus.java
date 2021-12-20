@@ -1,8 +1,11 @@
 package Reika.DragonAPI.ModInteract.DeepInteract;
 
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.ClassReparenter.Reparent;
@@ -60,5 +63,9 @@ public abstract class ItemCustomFocus extends ItemFocusBasic {
 
 	@Override
 	public abstract FocusUpgradeType[] getPossibleUpgradesByRank(ItemStack focusstack, int rank);
+
+	public boolean onLeftClick(World world, int x, int y, int z, EntityPlayer ep, ItemStack wand, ForgeDirection side) {
+		return false;
+	}
 
 }

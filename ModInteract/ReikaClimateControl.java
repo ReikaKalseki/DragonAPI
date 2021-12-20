@@ -15,16 +15,20 @@ import java.util.ArrayList;
 import net.minecraft.world.biome.BiomeGenBase;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.ClassReparenter.Reparent;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 
 import climateControl.api.BiomeSettings;
 import climateControl.api.ClimateControlRules;
 import climateControl.utils.Mutable;
 
+@Reparent(value = {"climateControl.api.BiomeSettings", "Reika.DragonAPI.ModInteract.DummyBiomeSettings"})
 public class ReikaClimateControl extends BiomeSettings {
 
 	public static final String biomeCategory = "ReikasBiome";
 	public static final String reikasCategory = "ReikasSettings";
-	public final Category reikasSettings = new Category(reikasCategory);
+	private final Category reikasSettings = new Category(reikasCategory);
 
 	private static final ArrayList<ElementDelegate> biomes = new ArrayList();
 
@@ -36,10 +40,11 @@ public class ReikaClimateControl extends BiomeSettings {
 
 	static final String biomesOnName = "ReikasBiomesOn";
 
-	public final Mutable<Boolean> biomesFromConfig = climateControlCategory.booleanSetting(biomesOnName, "", false);
 
 	static final String configName = "Reikas";
-	public final Mutable<Boolean> biomesInNewWorlds = climateControlCategory.booleanSetting(this.startBiomesName(configName), "Use biome in new worlds and dimensions", true);
+
+	private Object biomesFromConfig = climateControlCategory.booleanSetting(biomesOnName, "", false);
+	private Object biomesInNewWorlds = climateControlCategory.booleanSetting(this.startBiomesName(configName), "Use biome in new worlds and dimensions", true);
 
 	public ReikaClimateControl() {
 		super(biomeCategory);
@@ -51,7 +56,16 @@ public class ReikaClimateControl extends BiomeSettings {
 		for (ElementDelegate e : biomes) {
 			new Element(e.name, e.ID, e.incidence, e.hasVillages, e.climate);
 		}
+		if (ModList.CLIMATECONTROL.isLoaded()) {
+			this.loadConfig();
+		}
 		DragonAPICore.log("Constructing updated ClimateControl config with "+biomes.size()+" entries: "+biomes);
+	}
+
+	@ModDependent(ModList.CLIMATECONTROL)
+	private void loadConfig() {
+		biomesFromConfig = climateControlCategory.booleanSetting(biomesOnName, "", false);
+		biomesInNewWorlds = climateControlCategory.booleanSetting(this.startBiomesName(configName), "Use biome in new worlds and dimensions", true);
 	}
 
 	public static void registerBiome(BiomeGenBase b, int incidence, boolean hasVillages, String climate) {
@@ -83,13 +97,15 @@ public class ReikaClimateControl extends BiomeSettings {
 	}
 
 	@Override
+	@ModDependent(ModList.CLIMATECONTROL)
 	public void onNewWorld() {
-		biomesFromConfig.set(biomesInNewWorlds);
+		((Mutable<Boolean>)biomesFromConfig).set((Mutable<Boolean>)biomesInNewWorlds);
 	}
 
 	@Override
+	@ModDependent(ModList.CLIMATECONTROL)
 	public boolean biomesAreActive() {
-		return biomesFromConfig.value();
+		return ((Mutable<Boolean>)biomesFromConfig).value();
 	}
 	/*
 	private UpdatedReikaSettings nativeIDs(File configDirectory) {

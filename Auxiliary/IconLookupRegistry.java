@@ -2,6 +2,10 @@ package Reika.DragonAPI.Auxiliary;
 
 import java.util.HashMap;
 
+import net.minecraft.util.IIcon;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
+
 import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.Exception.RegistrationException;
 import Reika.DragonAPI.Interfaces.IconEnum;
@@ -33,8 +37,32 @@ public class IconLookupRegistry {
 	}
 
 	public IconEnum getIcon(String s) {
+		if (s.startsWith("forgefluid_")) {
+			Fluid f = FluidRegistry.getFluid(s.substring("forgefluid_".length()));
+			return f != null ? new FluidDelegate(f) : null;
+		}
 		Class c = enums.get(s);
 		return c != null ? (IconEnum)Enum.valueOf(c, s) : null;
+	}
+
+	public static class FluidDelegate implements IconEnum {
+
+		public final Fluid fluid;
+
+		public FluidDelegate(Fluid f) {
+			fluid = f;
+		}
+
+		@Override
+		public String name() {
+			return "forgefluid_"+fluid.getName();
+		}
+
+		@Override
+		public IIcon getIcon() {
+			return fluid.getStillIcon();
+		}
+
 	}
 
 }

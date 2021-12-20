@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -15,6 +15,7 @@ import net.minecraftforge.fluids.Fluid;
 
 import Reika.DragonAPI.Interfaces.MotionController;
 import Reika.DragonAPI.Interfaces.PositionController;
+import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Rendering.ReikaLiquidRenderer;
 
 public class EntityFluidFX extends EntityFX {
@@ -23,6 +24,8 @@ public class EntityFluidFX extends EntityFX {
 
 	private MotionController motionController;
 	private PositionController positionController;
+
+	private boolean colliding = false;
 
 	public EntityFluidFX(World world, double x, double y, double z, Fluid f) {
 		this(world, x, y, z, 0, 0, 0, f);
@@ -36,6 +39,12 @@ public class EntityFluidFX extends EntityFX {
 		motionX = vx;
 		motionY = vy;
 		motionZ = vz;
+	}
+
+	public final EntityFluidFX setColliding() {
+		noClip = false;
+		colliding = true;
+		return this;
 	}
 
 	public EntityFluidFX setGravity(float g) {
@@ -78,6 +87,26 @@ public class EntityFluidFX extends EntityFX {
 	@Override
 	public void onUpdate() {
 		super.onUpdate();
+
+		if (colliding) {
+			if (isCollidedVertically) {
+				double v = rand.nextDouble()*0.0625;
+				double vel = ReikaMathLibrary.py3d(motionX, 0, motionZ);
+				motionX = motionX*v/vel;
+				motionY = 0;
+				motionZ = motionZ*v/vel;
+				colliding = false;
+				particleGravity *= 4;
+			}
+			if (isCollidedHorizontally) {
+
+			}
+		}
+
+		int fadeTicks = Math.min(particleMaxAge/2, 8);
+		if (particleMaxAge-particleAge <= fadeTicks) {
+			particleAlpha -= 1D/fadeTicks;
+		}
 
 		if (motionController != null) {
 			motionX = motionController.getMotionX(this);

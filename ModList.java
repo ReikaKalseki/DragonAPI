@@ -132,6 +132,7 @@ public enum ModList implements ModEntry, Dependency {
 	BETWEENLANDS("thebetweenlands", "thebetweenlands.blocks.BLBlockRegistry", "thebetweenlands.items.BLItemRegistry"),
 	NETHERPAM("harvestthenether", "com.pam.harvestthenether.BlockRegistry", "com.pam.harvestthenether.ItemRegistry"),
 	AETHER("aether", "net.aetherteam.aether.blocks.AetherBlocks", "net.aetherteam.aether.items.AetherItems"),
+	CLIMATECONTROL("climatecontrol"),
 	;
 
 	private final boolean condition;

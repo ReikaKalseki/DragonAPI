@@ -71,7 +71,7 @@ public abstract class BlockMultiBlock<R> extends Block implements Transducerable
 	public final void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase e, ItemStack is) {
 		if (!world.isRemote && this.canTriggerMultiBlockCheck(world, x, y, z, world.getBlockMetadata(x, y, z))) {
 			if (e instanceof EntityPlayer) {
-				R ret = this.checkForFullMultiBlock(world, x, y, z, ReikaEntityHelper.getDirectionFromEntityLook(e, false), null);
+				R ret = this.checkForFullMultiBlock(world, x, y, z, ReikaEntityHelper.getDirectionFromEntityLook(e, false), null); //TODO: dummy callback?
 				if (this.evaluate(ret))
 					this.onCreateFullMultiBlock(world, x, y, z, ret);
 			}
