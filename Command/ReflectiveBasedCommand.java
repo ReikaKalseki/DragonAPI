@@ -183,7 +183,7 @@ public abstract class ReflectiveBasedCommand extends DragonCommandBase {
 		return Collections.unmodifiableMap(classShortcuts);
 	}
 
-	protected final Class findClass(String name) throws ClassNotFoundException {
+	public static final Class findClass(String name) throws ClassNotFoundException {
 		Class c = name.startsWith("#") ? classShortcuts.get(name.substring(1)) : null;
 		name = name.replaceAll("/", ".");
 		if (c == null)

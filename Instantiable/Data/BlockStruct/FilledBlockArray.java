@@ -21,10 +21,10 @@ import java.util.Map.Entry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockLiquid;
+import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
@@ -146,9 +146,9 @@ public class FilledBlockArray extends StructuredBlockArray {
 		BlockCheck bc = data.get(c);
 		if (bc == null || bc instanceof EmptyCheck) {
 			MultiKey mk = new MultiKey();
-			mk.add(bk);
 			if (bc != null)
 				mk.add(bc);
+			mk.add(bk);
 			data.put(c, mk);
 			bc = mk;
 		}
@@ -342,6 +342,8 @@ public class FilledBlockArray extends StructuredBlockArray {
 		for (BlockCheck bc : data.values()) {
 			ItemStack key = bc.asItemStack();
 			if (this.count(key)) {
+				if (Block.getBlockFromItem(key.getItem()) instanceof BlockStairs)
+					key.setItemDamage(0);
 				Integer get = map.get(key);
 				int has = get != null ? get.intValue() : 0;
 				map.put(key, has+1);
@@ -356,15 +358,13 @@ public class FilledBlockArray extends StructuredBlockArray {
 		Item it = is.getItem();
 		if (it == null)
 			return false;
-		if (it instanceof ItemBlock) {
-			Block b = Block.getBlockFromItem(it);
-			if (b instanceof BlockLiquid || b instanceof BlockFluidBase) {
-				if (is.getItemDamage() > 0)
-					return false;
-			}
-			if (b != null && b.getMaterial() == Material.air)
+		Block b = Block.getBlockFromItem(it);
+		if (b instanceof BlockLiquid || b instanceof BlockFluidBase) {
+			if (is.getItemDamage() != 0)
 				return false;
 		}
+		if (b != null && b.getMaterial() == Material.air)
+			return false;
 		return true;
 	}
 

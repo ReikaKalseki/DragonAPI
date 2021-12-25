@@ -37,7 +37,7 @@ public class EntityLockMotionController implements MotionController {
 	}
 
 	public void update(Entity e) {
-		accelerationY = -1*0.125*(e.posY-target.posY-0.5);
+		accelerationY = -1*0.125*(e.posY-(target.posY-target.height/2)-0.5);
 		velocityY += accelerationY;
 		velocityY = MathHelper.clamp_double(velocityY, -maxVelocityY, maxVelocityY);
 		maxVelocityY *= damping;
@@ -51,7 +51,7 @@ public class EntityLockMotionController implements MotionController {
 
 	@Override
 	public double getMotionY(Entity e) {
-		return -(e.posY-target.posY-target.height/2F)*velocityXZ/e.getDistanceToEntity(target);
+		return -(e.posY-(target.posY-target.height/2))*velocityXZ/e.getDistanceToEntity(target);
 	}
 
 	@Override
