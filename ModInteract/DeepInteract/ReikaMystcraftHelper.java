@@ -282,6 +282,10 @@ public class ReikaMystcraftHelper {
 		return ii;
 	}
 
+	public static void clearCache() {
+		ageData.clear();
+	}
+
 	public static ArrayList<IAgeSymbol> getAllSymbols() {
 		ArrayList<IAgeSymbol> c = new ArrayList();
 		SymbolAPI api = getAPI(APISegment.SYMBOL);

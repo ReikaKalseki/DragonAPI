@@ -20,8 +20,11 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import Reika.DragonAPI.ASM.DependentMethodStripper.ClassDependent;
 import Reika.DragonAPI.Interfaces.BlockCheck;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
+
+import buildcraft.api.core.IAreaProvider;
 
 public final class BlockBox {
 
@@ -435,6 +438,11 @@ public final class BlockBox {
 
 	private static BlockBox between(WorldLocation c1, WorldLocation c2) {
 		return new BlockBox(c1.xCoord, c1.yCoord, c1.zCoord, c2.xCoord, c2.yCoord, c2.zCoord);
+	}
+
+	@ClassDependent("buildcraft.api.core.IAreaProvider")
+	public static BlockBox getFromIAP(IAreaProvider iap) {
+		return new BlockBox(iap.xMin(), iap.yMin(), iap.zMin(), iap.xMax()+1, iap.yMax()+1, iap.zMax()+1);
 	}
 
 }

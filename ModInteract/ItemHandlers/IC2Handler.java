@@ -238,6 +238,7 @@ public class IC2Handler extends ModHandlerBase {
 		OVERVENT("reactorVentGold"),
 		CASTING("machine"),
 		ADVCASING("advancedMachine"),
+		COOLANT6("reactorCoolantSix"),
 		;
 
 		private final String tag;

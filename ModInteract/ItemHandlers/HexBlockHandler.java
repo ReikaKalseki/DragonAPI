@@ -41,6 +41,7 @@ public class HexBlockHandler extends ModHandlerBase implements HexHandler {
 	private static final HexBlockHandler instance = new HexBlockHandler();
 
 	private Class monolithBaseClass;
+	private Class worldGenClass;
 	private Class colorizedSimpleInterface;
 	private Class variantSimpleInterface;
 
@@ -105,6 +106,7 @@ public class HexBlockHandler extends ModHandlerBase implements HexHandler {
 				}
 
 				monolithBaseClass = Class.forName("com.celestek.hexcraft.block.base.BlockHexoriumMonolithBase");
+				worldGenClass = Class.forName("com.celestek.hexcraft.block.BlockHexoriumMonolithWorldGen");
 
 				colorizedSimpleInterface = Class.forName("com.celestek.hexcraft.api.IBlockHexColorSimple");
 				variantSimpleInterface = Class.forName("com.celestek.hexcraft.api.IBlockHexVariantSimple");
@@ -163,6 +165,10 @@ public class HexBlockHandler extends ModHandlerBase implements HexHandler {
 
 	public boolean isMonolith(Block b) {
 		return monolithBaseClass != null && monolithBaseClass.isAssignableFrom(b.getClass());
+	}
+
+	public boolean isWorldGenMonolith(Block b) {
+		return worldGenClass != null && worldGenClass.isAssignableFrom(b.getClass());
 	}
 
 	public boolean isColorized(Block b) {

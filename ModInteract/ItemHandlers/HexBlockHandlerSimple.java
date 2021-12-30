@@ -145,6 +145,10 @@ public class HexBlockHandlerSimple extends ModHandlerBase implements HexHandler 
 		return false;
 	}
 
+	public boolean isWorldGenMonolith(Block b) {
+		return this.isMonolith(b);
+	}
+
 	@Override
 	public BasicHexColor[] getColors() {
 		return BasicHexColors.list;

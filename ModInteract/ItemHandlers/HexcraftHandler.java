@@ -23,6 +23,8 @@ public class HexcraftHandler {
 
 		boolean isMonolith(Block id);
 
+		boolean isWorldGenMonolith(Block id);
+
 		public BasicHexColor[] getColors();
 
 	}

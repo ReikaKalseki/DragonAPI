@@ -122,6 +122,7 @@ import Reika.DragonAPI.Libraries.World.ReikaChunkHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.ItemCustomFocus;
 import Reika.DragonAPI.ModInteract.DeepInteract.NEIIntercept;
+import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaThaumHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ThaumItemHelper;
 
@@ -180,11 +181,15 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clearScheduledEvents(SinglePlayerLogoutEvent evt) {
 		TickScheduler.instance.clear();
+		if (ModList.MYSTCRAFT.isLoaded())
+			ReikaMystcraftHelper.clearCache();
 	}
 
 	@SubscribeEvent(priority = EventPriority.LOWEST)
 	public void clearScheduledEvents(ClientDisconnectionFromServerEvent evt) {
 		TickScheduler.instance.clear();
+		if (ModList.MYSTCRAFT.isLoaded())
+			ReikaMystcraftHelper.clearCache();
 	}
 
 	@SubscribeEvent
