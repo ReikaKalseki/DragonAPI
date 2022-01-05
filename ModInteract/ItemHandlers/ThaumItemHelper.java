@@ -103,6 +103,7 @@ public class ThaumItemHelper {
 		SILVERWOODPLANKS("blockWoodenDevice", 7),
 		TAINT("blockTaint"),
 		TENDRILS("blockTaintFibres"),
+		HOLE("blockHole"),
 		;
 
 		public final int metadata;

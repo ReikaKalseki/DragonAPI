@@ -13,6 +13,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
@@ -343,13 +344,25 @@ public class ReikaSoundHelper {
 	private static class SingleSoundSet extends SoundEnumSet {
 
 		private final ArrayList<SingleSound> soundList = new ArrayList();
+		private final HashSet<String> nameSet = new HashSet();
+		private final Comparator<SingleSound> sorter = new Comparator<SingleSound>() {
+
+			@Override
+			public int compare(SingleSound o1, SingleSound o2) {
+				return String.CASE_INSENSITIVE_ORDER.compare(o1.name, o2.name);
+			}
+
+		};
 
 		private SingleSoundSet() {
 			super(SingleSound.class, 0);
 		}
 
 		private void addSound(SingleSound s) {
+			if (!nameSet.add(s.name))
+				throw new MisuseException("Sound name '"+s.name+"' already occupied!");
 			soundList.add(s);
+			Collections.sort(soundList, sorter);
 		}
 
 		@Override

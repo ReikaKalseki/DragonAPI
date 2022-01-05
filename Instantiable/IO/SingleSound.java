@@ -14,6 +14,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
 import Reika.DragonAPI.Interfaces.Registry.SoundEnum;
+import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
+import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -65,15 +67,15 @@ public final class SingleSound implements SoundEnum {
 
 	@Override
 	public void playSound(World world, double x, double y, double z, float volume, float pitch) {
-
+		ReikaSoundHelper.playSound(this, world, x, y, z, volume, pitch);
 	}
 
 	public void playSound(World world, double x, double y, double z, float vol, float pitch, boolean attenuate) {
-
+		ReikaSoundHelper.playSound(this, world, x, y, z, vol, pitch, attenuate);
 	}
 
 	public void playSoundNoAttenuation(World world, double x, double y, double z, float vol, float pitch, int broadcast) {
-
+		ReikaPacketHelper.sendSoundPacket(this, world, x, y, z, vol, pitch, false, broadcast);
 	}
 
 	@Override

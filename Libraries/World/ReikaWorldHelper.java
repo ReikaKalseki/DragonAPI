@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFalling;
 import net.minecraft.block.BlockLiquid;
@@ -101,6 +103,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 import Reika.DragonAPI.Instantiable.Data.Immutable.WorldChunk;
 import Reika.DragonAPI.Instantiable.Event.IceFreezeEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
+import Reika.DragonAPI.Instantiable.Math.Noise.Simplex3DGenerator;
 import Reika.DragonAPI.Interfaces.Callbacks.PositionCallable;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaFluidHelper;
@@ -117,6 +120,7 @@ import Reika.DragonAPI.Libraries.Registry.ReikaCropHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaPlantHelper;
 import Reika.DragonAPI.ModInteract.AtmosphereHandler;
+import Reika.DragonAPI.ModInteract.DeepInteract.EnderIOFacadeHandler;
 import Reika.DragonAPI.ModInteract.DeepInteract.PlanetDimensionHandler;
 import Reika.DragonAPI.ModInteract.DeepInteract.ReikaMystcraftHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.NaturaBlockHandler;
@@ -142,6 +146,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 	private static final HashMap<Material, TemperatureEffect> temperatureBlockEffects = new HashMap();
 	private static final HashMap<String, WorldID> worldIDMap = new HashMap();
+
+	private static final HashMap<ImmutablePair<Integer, Long>, Simplex3DGenerator> tempNoise = new HashMap();
+
+	private static final double TEMP_NOISE_BASE = 10;
 
 	static {
 		try {
@@ -170,6 +178,18 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		catch (Exception e) {
 			throw new RuntimeException("Could not find GameRegistry IWorldGenerator data!", e);
 		}
+	}
+
+	private static Simplex3DGenerator getOrCreateTemperatureNoise(World world) {
+		ImmutablePair<Integer, Long> pair = new ImmutablePair(world.provider.dimensionId, world.getSeed());
+		Simplex3DGenerator gen = tempNoise.get(pair);
+		if (gen == null | true) {
+			gen = new Simplex3DGenerator(world.getSeed());
+			gen.setFrequency(1/20D);
+			//gen.addOctave(3.7, 0.17, 117.6);
+			tempNoise.put(pair, gen);
+		}
+		return gen;
 	}
 
 	public static boolean softBlocks(IBlockAccess world, int x, int y, int z) {
@@ -1688,11 +1708,21 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static int getAmbientTemperatureAt(World world, int x, int y, int z) {
+		return getAmbientTemperatureAt(world, x, y, z, 1);
+	}
+
+	public static int getAmbientTemperatureAt(World world, int x, int y, int z, float varFactor) {
 		int Tamb = ReikaBiomeHelper.getBiomeTemp(world, x, z);
 		float temp = Tamb;
 
 		if (SpecialDayTracker.instance.isWinterEnabled()) {
 			temp -= 10;
+		}
+
+		if (varFactor > 0) {
+			Simplex3DGenerator gen = getOrCreateTemperatureNoise(world);
+			//ReikaJavaLibrary.pConsole(new Coordinate(x, y, z)+" > "+gen.getValue(x, y, z));
+			temp += gen.getValue(x, y, z)*varFactor*TEMP_NOISE_BASE;
 		}
 
 		if (!world.provider.hasNoSky) {
@@ -1773,8 +1803,16 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			return true;
 		if (b.getCollisionBoundingBoxFromPool(world, dx, dy, dz) == null)
 			return true;
-		if (InterfaceCache.EIOCONDUITBLOCK.instanceOf(b) || InterfaceCache.BCPIPEBLOCK.instanceOf(b) || InterfaceCache.TDDUCTBLOCK.instanceOf(b) || InterfaceCache.AECABLEBLOCK.instanceOf(b)) {
+		if (InterfaceCache.BCPIPEBLOCK.instanceOf(b) || InterfaceCache.TDDUCTBLOCK.instanceOf(b) || InterfaceCache.AECABLEBLOCK.instanceOf(b)) {
 			return true;
+		}
+		if (InterfaceCache.EIOCONDUITBLOCK.instanceOf(b)) {
+			TileEntity te = world.getTileEntity(dx, dy, dz);
+			Block f = EnderIOFacadeHandler.instance.getFacade(te);
+			if (f == null)
+				return true;
+			int mf = EnderIOFacadeHandler.instance.getFacadeMeta(te);
+			b = f;
 		}
 		Material mat = b.getMaterial();
 		if (mat != null) {

@@ -310,4 +310,8 @@ public final class ReikaAABBHelper extends DragonAPICore {
 		return AxisAlignedBB.getBoundingBox(x-rxz, y-ry, z-rxz, x+rxz, y+ry, z+rxz);
 	}
 
+	public static boolean fullyContains(AxisAlignedBB outer, AxisAlignedBB inner) {
+		return outer.minX <= inner.minX && outer.maxX >= inner.maxX && outer.minY <= inner.minY && outer.maxY >= inner.maxY && outer.minZ <= inner.minZ && outer.maxZ >= inner.maxZ;
+	}
+
 }

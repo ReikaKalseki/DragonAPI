@@ -298,6 +298,14 @@ public class ReikaRecipeHelper extends DragonAPICore {
 		return ic2ShapelessClass;
 	}
 
+	public static Class getAEShapedClass() {
+		return aeShapedClass;
+	}
+
+	public static Class getAEShapelessClass() {
+		return aeShapelessClass;
+	}
+
 	public static void overwriteShapedOreRecipeInput(ShapedOreRecipe s, Object[] in, int height, int width) {
 		try {
 			shapedOreInput.set(s, in);

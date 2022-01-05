@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -43,7 +43,7 @@ public class SetBlockLight extends Patcher {
 			min.setOpcode(Opcodes.INVOKESTATIC);
 			m.instructions.insertBefore(min, new VarInsnNode(Opcodes.ALOAD, 0));
 			m.instructions.insertBefore(min, new VarInsnNode(Opcodes.ILOAD, 5));
-			ReikaASMHelper.log("Applied " + this + " ASM handler 1!");
+			ReikaASMHelper.log("Applied " + this + " ASM handler 1a!");
 		}
 
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147451_t", "func_147451_t", "(III)Z");

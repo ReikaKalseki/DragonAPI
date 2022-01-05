@@ -568,4 +568,14 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		}
 		return Double.POSITIVE_INFINITY;
 	}
+
+	public static Block getHardestBlock() {
+		Block ret = null;
+		for (Object o : Block.blockRegistry.getKeys()) {
+			Block b = Block.getBlockFromName((String)o);
+			if (ret == null || b.blockHardness > ret.blockHardness)
+				ret = b;
+		}
+		return ret;
+	}
 }

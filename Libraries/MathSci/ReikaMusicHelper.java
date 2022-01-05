@@ -267,6 +267,11 @@ public class ReikaMusicHelper {
 			return li;
 		}
 
+		public static MusicKey getKeyFromNote(Note n, int octave) {
+			int offset = n.ordinal();
+			return getByIndex(12*(octave-1)+offset);
+		}
+
 		public static MusicKey getKeyFromMIDI(int key) {
 			int index = key-ReikaMIDIReader.MIDI_C5+C5.ordinal();
 			return index >= 0 && index < list.length ? list[index] : null;

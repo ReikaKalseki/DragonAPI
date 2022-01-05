@@ -42,6 +42,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -59,6 +60,7 @@ import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Extras.NeedsImplementation;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
 import Reika.DragonAPI.ModInteract.ItemHandlers.MystCraftHandler;
@@ -124,13 +126,24 @@ public class ReikaMystcraftHelper {
 	}
 
 	public static ArrayList<IAgeSymbol> getPagesInBook(ItemStack is, boolean readBookDirectly) {
-		readBookDirectly = false; //book does not actually store anything
 		ArrayList<IAgeSymbol> li = new ArrayList();
 		if (readBookDirectly) {
+			/*
 			IItemPageProvider ii = (IItemPageProvider)is.getItem();
 			List<ItemStack> ret = ii.getPageList(null, is);
 			for (ItemStack in : ret) {
 				IAgeSymbol ia = getSymbolFromPage(in);
+				if (ia != null) {
+					li.add(ia);
+				}
+			}*/
+			if (is.stackTagCompound == null)
+				return li;
+			NBTTagList list = is.stackTagCompound.getTagList("Pages", NBTTypes.COMPOUND.ID);
+			for (Object o : list.tagList) {
+				NBTTagCompound tag = (NBTTagCompound)o;
+				ItemStack page = ItemStack.loadItemStackFromNBT(tag);
+				IAgeSymbol ia = getSymbolFromPage(page);
 				if (ia != null) {
 					li.add(ia);
 				}

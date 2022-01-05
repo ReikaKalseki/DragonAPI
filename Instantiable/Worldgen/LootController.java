@@ -257,6 +257,7 @@ public class LootController {
 		BOOKSHOP(ModList.WITCHERY, "com.emoniph.witchery.worldgen.ComponentVillageBookShop", "bookshopChestContents", ReferenceType.FIELD),
 		WKEEP(ModList.WITCHERY, "com.emoniph.witchery.worldgen.ComponentVillageKeep", "villageTowerChestContents", ReferenceType.FIELD),
 		PHOTOSHOP(new BasicModEntry("WitchingGadgets"), "witchinggadgets.common.world.VillageComponentPhotoshop", "WG:PHOTOWORKSHOP", ReferenceType.TABLE),
+		LIBRARY(ModList.MYSTCRAFT, "com.xcompwiz.mystcraft.world.gen.structure.ComponentScatteredFeatureSmallLibrary", "mystcraftTreasure", ReferenceType.TABLE),
 		;
 
 		private final ModEntry sourceMod;

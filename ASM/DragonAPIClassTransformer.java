@@ -15,6 +15,7 @@ import net.minecraft.item.Item;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Auxiliary.CoreModDetection;
@@ -48,8 +49,14 @@ public class DragonAPIClassTransformer implements IClassTransformer {
 		return flag;
 	}
 
+	public static void updateSetBlockRelight(Chunk c, int x, int y, int z, int flags) {
+		if ((flags & 8) == 0 && !WorldGenInterceptionRegistry.skipLighting) {
+			c.relightBlock(x, y, z);
+		}
+	}
+
 	public static boolean updateSetBlockLighting(int x, int y, int z, World world, int flags) {
-		if ((flags & 8) == 0) {
+		if ((flags & 8) == 0 && !WorldGenInterceptionRegistry.skipLighting) {
 			return /*CoreModDetection.fastCraftInstalled() ? (boolean)ReikaReflectionHelper.cacheAndInvokeMethod("fastcraft.J", "d", world, x, y, z) : */world.func_147451_t(x, y, z);
 		}
 		else {
