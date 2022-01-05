@@ -14,6 +14,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -32,6 +33,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
@@ -127,6 +129,8 @@ public class ReikaBeeHelper {
 
 	private static Field beeHealth;
 	private static final HashSet<String> allBees = new HashSet();
+
+	private static final HashMap<ChunkCoordinates, CachedTerritory> territoryCache = new HashMap();
 
 	private static Class geneTemplate;
 	private static Method addSample;
@@ -908,7 +912,7 @@ public class ReikaBeeHelper {
 		return is.getItem() == ForestryHandler.ItemEntry.CATERPILLAR.getItem();
 	}
 
-	public static int[] getFinalTerritory(IBeeGenome ibg, IBeeHousing ibh) {
+	private static int[] getFinalTerritory(IBeeGenome ibg, IBeeHousing ibh) {
 		float f = 1;
 		for (IBeeModifier ibm : ibh.getBeeModifiers()) {
 			f *= ibm.getTerritoryModifier(ibg, f);
@@ -1169,5 +1173,34 @@ public class ReikaBeeHelper {
 	public static ISpeciesType getSpeciesType(ItemStack is) {
 		ISpeciesRoot isr = AlleleManager.alleleRegistry.getSpeciesRoot(is);
 		return isr != null ? isr.getType(is) : null;
+	}
+
+	public static int[] getEffectiveTerritory(IBeeHousing ibh, ChunkCoordinates c, IBeeGenome ibg, long time) {
+		CachedTerritory t = territoryCache.get(c);
+		if (t == null || t.territory == null || t.age >= 20) {
+			if (t == null) {
+				t = new CachedTerritory();
+				territoryCache.put(c, t);
+			}
+			t.recalculate(ibg, ibh);
+		}
+		else if (time > t.lastTick) {
+			t.lastTick = time;
+			t.age++;
+		}
+		return t.territory;
+	}
+
+	private static class CachedTerritory {
+
+		private int[] territory;
+		private int age;
+		private long lastTick;
+
+		private void recalculate(IBeeGenome ibg, IBeeHousing ibh) {
+			age = 0;
+			territory = getFinalTerritory(ibg, ibh);
+		}
+
 	}
 }

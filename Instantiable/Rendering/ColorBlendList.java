@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Instantiable.Rendering;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
@@ -30,6 +31,12 @@ public class ColorBlendList {
 	public ColorBlendList(float speed, int... colors) {
 		this(speed);
 		this.addAll(colors);
+	}
+
+	public ColorBlendList(float f, List<Integer> li) {
+		this(f);
+		for (int c : li)
+			this.addColor(c);
 	}
 
 	public ColorBlendList addAll(int... colors) {

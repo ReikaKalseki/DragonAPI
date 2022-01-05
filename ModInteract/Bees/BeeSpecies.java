@@ -351,21 +351,25 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 			throw new MisuseException("You must register a bee before adding breeding pairs!");
 		if (p1 == null || p2 == null)
 			throw new MisuseException("You cannot breed a bee from null!");
-		beeRoot.registerMutation(new BeeBreeding(p1, p2, chance, this));
+		beeRoot.registerMutation(this.createBreeding(p1, p2, chance));
 	}
 
 	public final IBee constructIndividual() {
 		return beeRoot.templateAsIndividual(template);
 	}
 
-	private static final class BeeBreeding implements IBeeMutation {
+	protected BeeBreeding createBreeding(IAlleleBeeSpecies p1, IAlleleBeeSpecies p2, int chance) {
+		return new BeeBreeding(p1, p2, chance, this);
+	}
+
+	public static class BeeBreeding implements IBeeMutation {
 
 		public final IAlleleBeeSpecies parent1;
 		public final IAlleleBeeSpecies parent2;
 		public final int chance;
 		private final BeeSpecies bee;
 
-		private BeeBreeding(IAlleleBeeSpecies p1, IAlleleBeeSpecies p2, int chance, BeeSpecies bee) {
+		protected BeeBreeding(IAlleleBeeSpecies p1, IAlleleBeeSpecies p2, int chance, BeeSpecies bee) {
 			parent1 = p1;
 			parent2 = p2;
 			this.chance = chance;
@@ -373,22 +377,22 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		}
 
 		@Override
-		public IAlleleSpecies getAllele0() {
+		public final IAlleleSpecies getAllele0() {
 			return parent1;
 		}
 
 		@Override
-		public IAlleleSpecies getAllele1() {
+		public final IAlleleSpecies getAllele1() {
 			return parent2;
 		}
 
 		@Override
-		public IAllele[] getTemplate() {
+		public final IAllele[] getTemplate() {
 			return bee.template;
 		}
 
 		@Override
-		public float getBaseChance() {
+		public final float getBaseChance() {
 			return chance;
 		}
 
@@ -398,12 +402,12 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		}
 
 		@Override
-		public boolean isPartner(IAllele ia) {
+		public final boolean isPartner(IAllele ia) {
 			return parent1.getUID().equals(ia.getUID()) || parent2.getUID().equals(ia.getUID());
 		}
 
 		@Override
-		public IAllele getPartner(IAllele ia) {
+		public final IAllele getPartner(IAllele ia) {
 			IAllele val = parent1;
 			if (val.getUID().equals(ia.getUID()))
 				val = parent2;
@@ -411,21 +415,29 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 		}
 
 		@Override
-		public boolean isSecret() {
+		public final boolean isSecret() {
 			return bee.isSecret();
 		}
 
 		@Override
-		public IBeeRoot getRoot() {
+		public final IBeeRoot getRoot() {
 			return bee.getRoot();
 		}
 
 		@Override
 		public final float getChance(IBeeHousing ibh, IAlleleBeeSpecies ia1, IAlleleBeeSpecies ia2, IBeeGenome ig1, IBeeGenome ig2) {
-			return this.isValidParents(ia1, ia2) ? chance : 0;
+			return this.isValidParents(ia1, ia2) && this.canBeBred(ibh, ig1, ig2) ? this.getModifiedChance(ibh, ig1, ig2) : 0;
 		}
 
-		private boolean isValidParents(IAllele ia1, IAllele ia2) {
+		protected boolean canBeBred(IBeeHousing ibh, IBeeGenome ig1, IBeeGenome ig2) {
+			return true;
+		}
+
+		protected int getModifiedChance(IBeeHousing ibh, IBeeGenome ig1, IBeeGenome ig2) {
+			return chance;
+		}
+
+		protected final boolean isValidParents(IAllele ia1, IAllele ia2) {
 			if (ia1.getUID().equals(parent1.getUID()) && ia2.getUID().equals(parent2.getUID()))
 				return true;
 			if (ia1.getUID().equals(parent2.getUID()) && ia2.getUID().equals(parent1.getUID()))
