@@ -160,6 +160,14 @@ public final class Coordinate implements Location, Comparable<Coordinate> {
 		return new Coordinate(xCoord, yCoord, z);
 	}
 
+	public Coordinate scale(double s) {
+		return this.scale(s, s, s);
+	}
+
+	public Coordinate scale(double x, double y, double z) {
+		return new Coordinate(xCoord*x, yCoord*y, zCoord*z);
+	}
+
 	public void writeToNBT(String tag, NBTTagCompound NBT) {
 		NBTTagCompound data = new NBTTagCompound();
 		data.setInteger("x", xCoord);

@@ -13,12 +13,17 @@ import net.minecraft.client.particle.EntityFX;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 
+import Reika.DragonAPI.Instantiable.Rendering.ParticleEngine;
+import Reika.DragonAPI.Instantiable.Rendering.ParticleEngine.RenderMode;
+import Reika.DragonAPI.Instantiable.Rendering.ParticleEngine.RenderModeFlags;
+import Reika.DragonAPI.Instantiable.Rendering.ParticleEngine.TextureMode;
 import Reika.DragonAPI.Interfaces.MotionController;
 import Reika.DragonAPI.Interfaces.PositionController;
+import Reika.DragonAPI.Interfaces.Entity.CustomRenderFX;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 import Reika.DragonAPI.Libraries.Rendering.ReikaLiquidRenderer;
 
-public class EntityFluidFX extends EntityFX {
+public class EntityFluidFX extends EntityFX implements CustomRenderFX {
 
 	private Fluid type;
 
@@ -26,6 +31,10 @@ public class EntityFluidFX extends EntityFX {
 	private PositionController positionController;
 
 	private boolean colliding = false;
+
+	private boolean renderOverLimit = false;
+
+	private static final RenderMode renderMode = new RenderMode().setFlag(RenderModeFlags.ADDITIVE, false).setFlag(RenderModeFlags.DEPTH, true).setFlag(RenderModeFlags.LIGHT, false).setFlag(RenderModeFlags.ALPHACLIP, false);
 
 	public EntityFluidFX(World world, double x, double y, double z, Fluid f) {
 		this(world, x, y, z, 0, 0, 0, f);
@@ -69,6 +78,11 @@ public class EntityFluidFX extends EntityFX {
 
 	public EntityFluidFX setPositionController(PositionController m) {
 		positionController = m;
+		return this;
+	}
+
+	public final EntityFluidFX forceIgnoreLimits() {
+		renderOverLimit = true;
 		return this;
 	}
 
@@ -121,6 +135,20 @@ public class EntityFluidFX extends EntityFX {
 			posZ = positionController.getPositionZ(this);
 			positionController.update(this);
 		}
+	}
+
+	public boolean rendersOverLimit() {
+		return renderOverLimit;
+	}
+
+	@Override
+	public RenderMode getRenderMode() {
+		return renderMode;
+	}
+
+	@Override
+	public TextureMode getTexture() {
+		return ParticleEngine.blockTex;
 	}
 
 }

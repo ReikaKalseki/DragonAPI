@@ -21,6 +21,6 @@ public interface CustomRenderFX {
 
 	public boolean rendersOverLimit();
 
-	public double getRenderRange();
+	//public double getRenderRange();
 
 }

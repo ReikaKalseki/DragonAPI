@@ -25,7 +25,6 @@ import com.xcompwiz.mystcraft.api.MystObjects;
 import com.xcompwiz.mystcraft.api.exception.APIUndefined;
 import com.xcompwiz.mystcraft.api.exception.APIVersionRemoved;
 import com.xcompwiz.mystcraft.api.exception.APIVersionUndefined;
-import com.xcompwiz.mystcraft.api.hook.DimensionAPI;
 import com.xcompwiz.mystcraft.api.hook.PageAPI;
 import com.xcompwiz.mystcraft.api.hook.SymbolAPI;
 import com.xcompwiz.mystcraft.api.hook.SymbolValuesAPI;
@@ -59,7 +58,6 @@ import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Exception.MisuseException;
-import Reika.DragonAPI.Extras.NeedsImplementation;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.ModInteract.ReikaTwilightHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.ExtraUtilsHandler;
@@ -75,14 +73,19 @@ public class ReikaMystcraftHelper {
 
 	private static final HashMap<Integer, AgeInterface> ageData = new HashMap();
 
-	private static final Method getTile;
-	private static final Method getBook;
-	private static final Method getLink;
+	private static Method getTile;
+	private static Method getBook;
+	private static Method getLink;
 
-	private static final Class biomeWrapper;
-	private static final Field parentBiome;
+	private static Class biomeWrapper;
+	private static Field parentBiome;
 
-	private static final Field pagesField;
+	private static Field pagesField;
+
+	private static Class grammarRule;
+	private static Class symbolRules;
+	private static Method addRule;
+	private static Method makeRule;
 
 	private static APIInstanceProvider apiProvider;
 	private static final int API_VERSION = 1;
@@ -158,10 +161,16 @@ public class ReikaMystcraftHelper {
 					WorldServer age = DimensionManager.getWorld(dim);
 					if (age != null) {
 						for (String s : getAgeSymbolsOrdered(age)) {
-							IAgeSymbol ia = ((SymbolAPI)getAPI(APISegment.SYMBOL)).getSymbol(s);
-							//ReikaJavaLibrary.pConsole(s+" > "+ia);
-							if (ia != null) {
-								li.add(ia);
+							SymbolAPI api = (SymbolAPI)getAPI(APISegment.SYMBOL);
+							if (api != null) {
+								IAgeSymbol ia = api.getSymbol(s);
+								//ReikaJavaLibrary.pConsole(s+" > "+ia);
+								if (ia != null) {
+									li.add(ia);
+								}
+							}
+							else {
+								error("Could not find symbol API to get symbol "+s);
 							}
 						}
 					}
@@ -180,7 +189,7 @@ public class ReikaMystcraftHelper {
 		int id = world.provider.dimensionId;
 		if (id == 0 || id == 1 || id == -1 || (id == ReikaTwilightHelper.getDimensionID() && ModList.TWILIGHT.isLoaded()) || (id == ExtraUtilsHandler.getInstance().darkID && ModList.EXTRAUTILS.isLoaded()))
 			return false;
-		DimensionAPI d = (DimensionAPI)getAPI(APISegment.DIMENSION);
+		//DimensionAPI d = (DimensionAPI)getAPI(APISegment.DIMENSION);
 		return world.provider.getClass().getSimpleName().equals("WorldProviderMyst");//d != null && d.isMystcraftAge(id);
 	}
 	/*
@@ -305,6 +314,9 @@ public class ReikaMystcraftHelper {
 		if (api != null) {
 			c.addAll(api.getAllRegisteredSymbols());
 		}
+		else {
+			error("Could not find symbol API to get symbol list");
+		}
 		return c;
 	}
 
@@ -322,6 +334,9 @@ public class ReikaMystcraftHelper {
 		if (api != null) {
 			return api.getPageSymbol(is);
 		}
+		else {
+			error("Could not find page API to get id of "+is.stackTagCompound);
+		}
 		return null;
 	}
 
@@ -332,6 +347,9 @@ public class ReikaMystcraftHelper {
 		SymbolAPI api = getAPI(APISegment.SYMBOL);
 		if (api != null) {
 			return api.getSymbol(id);
+		}
+		else {
+			error("Could not find symbol API to get symbol from "+is.stackTagCompound);
 		}
 		return null;
 	}
@@ -347,6 +365,9 @@ public class ReikaMystcraftHelper {
 				return is;
 			}
 		}
+		else {
+			error("Could not find page API to get page of "+a.displayName());
+		}
 		return null;
 	}
 
@@ -354,22 +375,26 @@ public class ReikaMystcraftHelper {
 		PageAPI api = getAPI(APISegment.PAGE);
 		if (api != null) {
 			SymbolAPI api2 = getAPI(APISegment.SYMBOL);
-			IAgeSymbol ias = api2.getSymbol(id);
-			if (ias == null)
-				throw new IllegalArgumentException("No such symbol '"+id+"'!");
-			ItemStack is = new ItemStack((Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.page));
-			if (is != null && is.getItem() != null) {
-				is.stackTagCompound = new NBTTagCompound();
-				//is.stackTagCompound.setTag("symbol", new NBTTagCompound());
-				api.setPageSymbol(is, id);
-				return is;
+			if (api2 != null) {
+				IAgeSymbol ias = api2.getSymbol(id);
+				if (ias == null)
+					throw new IllegalArgumentException("No such symbol '"+id+"'!");
+				ItemStack is = new ItemStack((Item)Item.itemRegistry.getObject(ModList.MYSTCRAFT.modLabel+":"+MystObjects.Items.page));
+				if (is != null && is.getItem() != null) {
+					is.stackTagCompound = new NBTTagCompound();
+					//is.stackTagCompound.setTag("symbol", new NBTTagCompound());
+					api.setPageSymbol(is, id);
+					return is;
+				}
+			}
+			else {
+				error("Could not find symbol API to get symbol of "+id);
 			}
 		}
+		else {
+			error("Could not find page API to get symbol page "+id);
+		}
 		return null;
-	}
-
-	public static int getSymbolRank(IAgeSymbol ia) {
-		return (int)((SymbolValuesAPI)getAPI(APISegment.SYMBOLVALUES)).getSymbolItemWeight(ia.identifier());
 	}
 
 	public static IAgeSymbol getRandomPage() {
@@ -383,6 +408,9 @@ public class ReikaMystcraftHelper {
 		if (api != null) {
 			return api.getSymbolItemWeight(a.identifier());
 		}
+		else {
+			error("Could not find symbol values API to get item weight of "+a.displayName());
+		}
 		return 0;
 	}
 
@@ -391,11 +419,25 @@ public class ReikaMystcraftHelper {
 		if (api != null) {
 			api.setSymbolCardRank(a, rank);
 		}
+		else {
+			error("Could not find symbol values API to set rank of "+a.displayName());
+		}
 	}
 
-	@NeedsImplementation
-	public static void setRandomAgeWeight(IAgeSymbol a, float weight) {
-		//TODO incomplete abandoned method
+	/** Set rank to -1 to disable appearance in random ages. */
+	public static void setRandomAgeWeight(IAgeSymbol a, int rank) {
+		registerGrammarRule(a, rank >= 0 ? rank : null);
+	}
+
+	public static void registerGrammarRule(IAgeSymbol a, Integer rank, String... pieces) {
+		try {
+			Object rule = makeRule.invoke(null, rank, a.identifier(), pieces);
+			addRule.invoke(null, a.identifier(), rule);
+		}
+		catch (Exception e) {
+			error("Could not register grammar rule for "+a.displayName()+":");
+			e.printStackTrace();
+		}
 	}
 
 	public static void registerAgeSymbol(IAgeSymbol a) {
@@ -406,12 +448,16 @@ public class ReikaMystcraftHelper {
 				DragonAPICore.log("Registering MystCraft page '"+a.displayName()+"' ("+a.getClass()+"')");
 			}
 			else {
-				DragonAPICore.logError("Could not register MystCraft page '"+a.displayName()+"' ("+a.getClass()+"')");
+				error("Could not register MystCraft page '"+a.displayName()+"' ("+a.getClass()+"')");
 			}
 		}
 		else {
-			DragonAPICore.logError("Could not register MystCraft page '"+a.displayName()+"' ("+a.getClass()+"'); API object was null.");
+			error("Could not register MystCraft page '"+a.displayName()+"' ("+a.getClass()+"'); API object was null.");
 		}
+	}
+
+	private static void error(String s) {
+		DragonAPICore.logError("MystcraftHelper: "+s);
 	}
 
 	@ModDependent(ModList.MYSTCRAFT)
@@ -531,32 +577,31 @@ public class ReikaMystcraftHelper {
 	}
 
 	static {
-		Method tile = null;
-		Method book = null;
-		Method link = null;
-		Class biome = null;
-		Field base = null;
-		Field pages = null;
-
 		boolean load = true;
 
 		if (ModList.MYSTCRAFT.isLoaded()) {
 			try {
 				Class portal = Class.forName("com.xcompwiz.mystcraft.portal.PortalUtils");
-				tile = portal.getDeclaredMethod("getTileEntity", IBlockAccess.class, int.class, int.class, int.class);
-				tile.setAccessible(true);
+				getTile = portal.getDeclaredMethod("getTileEntity", IBlockAccess.class, int.class, int.class, int.class);
+				getTile.setAccessible(true);
 				Class booktile = Class.forName("com.xcompwiz.mystcraft.tileentity.TileEntityBook");
-				book = booktile.getDeclaredMethod("getBook");
-				book.setAccessible(true);
+				getBook = booktile.getDeclaredMethod("getBook");
+				getBook.setAccessible(true);
 				Class item = Class.forName("com.xcompwiz.mystcraft.item.ItemLinking");
-				link = item.getDeclaredMethod("getLinkInfo", ItemStack.class);
-				link.setAccessible(true);
-				biome = Class.forName("com.xcompwiz.mystcraft.world.biome.BiomeWrapperMyst");
-				base = biome.getDeclaredField("baseBiome");
-				base.setAccessible(true);
+				getLink = item.getDeclaredMethod("getLinkInfo", ItemStack.class);
+				getLink.setAccessible(true);
+				biomeWrapper = Class.forName("com.xcompwiz.mystcraft.world.biome.BiomeWrapperMyst");
+				parentBiome = biomeWrapper.getDeclaredField("baseBiome");
+				parentBiome.setAccessible(true);
 				Class binder = Class.forName("com.xcompwiz.mystcraft.tileentity.TileEntityBookBinder");
-				pages = binder.getDeclaredField("pages");
-				pages.setAccessible(true);
+				pagesField = binder.getDeclaredField("pages");
+				pagesField.setAccessible(true);
+				grammarRule = Class.forName("com.xcompwiz.mystcraft.grammar.GrammarGenerator$Rule");
+				symbolRules = Class.forName("com.xcompwiz.mystcraft.data.SymbolRules");
+				addRule = symbolRules.getDeclaredMethod("addRule", String.class, grammarRule);
+				makeRule = symbolRules.getDeclaredMethod("buildRule", Integer.class, String.class, String[].class);
+				addRule.setAccessible(true);
+				makeRule.setAccessible(true);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Error loading Mystcraft linkbook interfacing!");
@@ -568,13 +613,6 @@ public class ReikaMystcraftHelper {
 		else {
 			load = false;
 		}
-
-		getTile = tile;
-		getBook = book;
-		getLink = link;
-		biomeWrapper = biome;
-		parentBiome = base;
-		pagesField = pages;
 	}
 
 	public static IAgeSymbol createIWorldGeneratorPage(IWorldGenerator gen, String[] poem, int instability) {

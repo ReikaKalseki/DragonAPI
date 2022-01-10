@@ -20,18 +20,17 @@ import java.util.Map.Entry;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
-import net.minecraft.block.BlockLiquid;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.BlockFluidBase;
 import net.minecraftforge.fluids.BlockFluidFinite;
 import net.minecraftforge.fluids.Fluid;
 
@@ -46,6 +45,7 @@ import Reika.DragonAPI.Libraries.ReikaFluidHelper;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
+import Reika.DragonAPI.Libraries.World.ReikaBlockHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 import cpw.mods.fml.relauncher.Side;
@@ -359,11 +359,11 @@ public class FilledBlockArray extends StructuredBlockArray {
 		if (it == null)
 			return false;
 		Block b = Block.getBlockFromItem(it);
-		if (b instanceof BlockLiquid || b instanceof BlockFluidBase) {
-			if (is.getItemDamage() != 0)
+		if (ReikaBlockHelper.isLiquid(b)) {
+			if (is.getItemDamage() != (b instanceof BlockFluidFinite ? /*((BlockFluidFinite)b).quantaPerBlock*/8 : 0))
 				return false;
 		}
-		if (b != null && b.getMaterial() == Material.air)
+		if (it instanceof ItemBlock && b != null && b.getMaterial() == Material.air)
 			return false;
 		return true;
 	}

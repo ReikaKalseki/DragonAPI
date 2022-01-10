@@ -1199,8 +1199,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			inv.setInventorySlotContents(slot, is.copy());
 			return true;
 		}
-		int max = at.getMaxStackSize();
-		if (!(ReikaItemHelper.matchStacks(is, at) && ItemStack.areItemStackTagsEqual(is, at)) || at.stackSize+is.stackSize > max)
+		if (!ReikaItemHelper.areStacksCombinable(is, at, Math.min(inv.getInventoryStackLimit(), is.getMaxStackSize())))
 			return false;
 		at.stackSize += is.stackSize;
 		return true;
@@ -1213,8 +1212,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			inv[slot] = is.copy();
 			return true;
 		}
-		int max = inv[slot].getMaxStackSize();
-		if (!(ReikaItemHelper.matchStacks(is, inv[slot]) && ItemStack.areItemStackTagsEqual(is, inv[slot])) || inv[slot].stackSize+is.stackSize > max)
+		if (!ReikaItemHelper.areStacksCombinable(is, inv[slot], is.getMaxStackSize()))
 			return false;
 		inv[slot].stackSize += is.stackSize;
 		return true;

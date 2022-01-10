@@ -550,10 +550,10 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 	public boolean rendersOverLimit() {
 		return renderOverLimit;
 	}
-
+	/*
 	@Override
 	public double getRenderRange() {
 		return scale*96;
 	}
-
+	 */
 }
