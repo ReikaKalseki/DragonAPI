@@ -578,4 +578,26 @@ public final class ReikaBlockHelper extends DragonAPICore {
 		}
 		return ret;
 	}
+
+	public static ForgeDirection getColumnBlockDirection(int meta) {
+		switch(meta&12) {
+			case 0:
+			default:
+				return ForgeDirection.UP;
+			case 4:
+				return ForgeDirection.EAST;
+			case 8:
+				return ForgeDirection.SOUTH;
+		}
+	}
+
+	public static int getColumnBlockMeta(int metaBase, ForgeDirection dir) {
+		if (dir.offsetY != 0)
+			return metaBase;
+		if (dir.offsetX != 0)
+			return metaBase+4;
+		if (dir.offsetZ != 0)
+			return metaBase+8;
+		return metaBase;
+	}
 }

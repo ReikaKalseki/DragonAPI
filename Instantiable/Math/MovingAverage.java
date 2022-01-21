@@ -22,6 +22,8 @@ public class MovingAverage {
 
 	private final int size;
 	private final ArrayDeque<Double> data;
+	private Double averageCache;
+	private double lastPenalty = 0;
 
 	public MovingAverage(int dataPoints) {
 		size = dataPoints;
@@ -29,6 +31,7 @@ public class MovingAverage {
 		for (int i = 0; i < size; i++) {
 			data.add(0D);
 		}
+		averageCache = null;
 		//ReikaJavaLibrary.pConsole("ctr"+data, Side.SERVER);
 	}
 
@@ -37,6 +40,7 @@ public class MovingAverage {
 		data.add(val);
 		data.remove();
 		//ReikaJavaLibrary.pConsole("post"+data, Side.SERVER);
+		averageCache = null;
 		return this;
 	}
 
@@ -45,6 +49,10 @@ public class MovingAverage {
 	}
 
 	public double getAverage(double agePenalty) {
+		if (agePenalty != lastPenalty)
+			averageCache = null;
+		if (averageCache != null)
+			return averageCache.doubleValue();
 		double avg = 0;
 		int i = 0;
 		for (double d : data) {
@@ -55,7 +63,8 @@ public class MovingAverage {
 			avg += d;
 			i++;
 		}
-		return avg/size;
+		averageCache = avg/size;
+		return averageCache.doubleValue();
 	}
 
 	public void writeToNBT(NBTTagCompound tag) {
@@ -79,6 +88,7 @@ public class MovingAverage {
 		}
 		while (mv.data.size() < mv.size)
 			mv.data.add(0D);
+		mv.averageCache = null;
 		//ReikaJavaLibrary.pConsole("nbt"+mv.data, Side.SERVER);
 		return mv;
 	}

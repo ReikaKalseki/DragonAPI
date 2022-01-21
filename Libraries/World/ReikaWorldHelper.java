@@ -147,6 +147,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	private static final HashMap<Material, TemperatureEffect> temperatureBlockEffects = new HashMap();
 	private static final HashMap<String, WorldID> worldIDMap = new HashMap();
 
+	private static final HashMap<Class, Boolean> fakeWorldTypes = new HashMap();
+
 	private static final HashMap<ImmutablePair<Integer, Long>, Simplex3DGenerator> tempNoise = new HashMap();
 
 	private static final double TEMP_NOISE_BASE = 10;
@@ -1715,7 +1717,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		int Tamb = ReikaBiomeHelper.getBiomeTemp(world, x, z);
 		float temp = Tamb;
 
-		if (SpecialDayTracker.instance.isWinterEnabled()) {
+		if (SpecialDayTracker.instance.isWinterEnabled() && world.provider.dimensionId != -1) {
 			temp -= 10;
 		}
 
@@ -1725,31 +1727,42 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			temp += gen.getValue(x, y, z)*varFactor*TEMP_NOISE_BASE;
 		}
 
-		if (!world.provider.hasNoSky) {
-			if (world.canBlockSeeTheSky(x, y+1, z)) {
-				float sun = getSunIntensity(world, true, 0);
-				int mult = world.isRaining() ? 10 : 20;
-				temp += (sun-0.75F)*mult;
+		if (world.provider.dimensionId == -1) {
+			if (y > 128) {
+				temp -= 50;
 			}
-			if (!isVoidWorld(world, x, z)) {
-				int h = world.provider.getAverageGroundLevel();
-				int dy = h-y;
-				if (dy > 0) {
-					if (dy < 20) {
-						temp -= dy;
-						temp = Math.max(temp, Tamb-20);
-					}
-					else if (dy < 25) {
-						temp -= 2*(25-dy);
-						temp = Math.max(temp, Tamb-20);
-					}
-					else {
-						temp += 100*(dy-20)/h;
-						temp = Math.min(temp, Tamb+70);
-					}
+			if (y < 45) {
+				int d = y <= 30 ? 15 : 45-y;
+				temp += 20*d;
+			}
+		}
+		else {
+			if (!world.provider.hasNoSky) {
+				if (world.canBlockSeeTheSky(x, y+1, z)) {
+					float sun = getSunIntensity(world, true, 0);
+					int mult = world.isRaining() ? 10 : 20;
+					temp += (sun-0.75F)*mult;
 				}
-				if (y > 96) {
-					temp -= (y-96)/4;
+				if (!isVoidWorld(world, x, z)) {
+					int h = world.provider.getAverageGroundLevel();
+					int dy = h-y;
+					if (dy > 0) {
+						if (dy < 20) {
+							temp -= dy;
+							temp = Math.max(temp, Tamb-20);
+						}
+						else if (dy < 25) {
+							temp -= 2*(25-dy);
+							temp = Math.max(temp, Tamb-20);
+						}
+						else {
+							temp += 100*(dy-20)/h;
+							temp = Math.min(temp, Tamb+70);
+						}
+					}
+					if (y > 96) {
+						temp -= (y-96)/4;
+					}
 				}
 			}
 		}
@@ -2464,6 +2477,15 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static boolean isFakeWorld(World world) {
+		Boolean fake = fakeWorldTypes.get(world.getClass());
+		if (fake == null) {
+			fake = calcFakeWorld(world);
+			fakeWorldTypes.put(world.getClass(), fake);
+		}
+		return fake.booleanValue();
+	}
+
+	private static boolean calcFakeWorld(World world) {
 		String s = world.getClass().getSimpleName();
 		if (s != null && s.toLowerCase(Locale.ENGLISH).contains("fake"))
 			return true;

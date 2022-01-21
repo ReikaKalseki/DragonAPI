@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.function.Function;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
@@ -500,6 +501,37 @@ public class FilledBlockArray extends StructuredBlockArray {
 			}
 		}
 		return true;
+	}
+
+	public void cutToQuarter() {
+		int x = this.getMidX();
+		int z = this.getMidZ();
+		List<Coordinate> li = new ArrayList(this.keySet());
+		for (Coordinate c : li) {
+			if (c.xCoord > x || c.zCoord > z) {
+				this.remove(c.xCoord, c.yCoord, c.zCoord);
+			}
+		}
+	}
+
+	public void cutToCenter() {
+		int x = this.getMidX();
+		int z = this.getMidZ();
+		List<Coordinate> li = new ArrayList(this.keySet());
+		for (Coordinate c : li) {
+			if (c.xCoord != x || c.zCoord != z) {
+				this.remove(c.xCoord, c.yCoord, c.zCoord);
+			}
+		}
+	}
+
+	public void cutTo(Function<Coordinate, Boolean> func) {
+		List<Coordinate> li = new ArrayList(this.keySet());
+		for (Coordinate c : li) {
+			if (!func.apply(c)) {
+				this.remove(c.xCoord, c.yCoord, c.zCoord);
+			}
+		}
 	}
 
 	public static class MultiKey implements BlockCheck {

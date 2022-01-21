@@ -197,12 +197,12 @@ public class ControlledConfig {
 	private String getLabel(ConfigList cfg) {
 		String s = cfg.getLabel();
 		if (cfg instanceof UserSpecificConfig && ((UserSpecificConfig)cfg).isUserSpecific()) {
-			s = "["+Character.toUpperCase(s.charAt(0))+this.getUserHash(cfg, s)+"] "+s; //First char prefix is to keep original sorting
+			s = "["+Character.toUpperCase(s.charAt(0))+this.getUserHash(s)+"] "+s; //First char prefix is to keep original sorting
 		}
 		return s;
 	}
 
-	private String getUserHash(ConfigList cfg, String s) {
+	public static String getUserHash(String s) {
 		return Strings.padStart(Integer.toHexString(userHash - s.hashCode()).toUpperCase(Locale.ENGLISH), 8, '0');
 	}
 

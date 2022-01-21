@@ -121,6 +121,7 @@ import Reika.DragonAPI.Libraries.MathSci.ReikaPhysicsHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaVectorHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
+import Reika.DragonAPI.ModInteract.Bees.ReikaBeeHelper;
 import Reika.DragonAPI.ModInteract.ItemHandlers.DartItemHandler;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
 
@@ -1503,6 +1504,8 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		if (name.equalsIgnoreCase("EntityTFMobileFirefly"))
 			return false;
 		if (name.equalsIgnoreCase("EntityWisp"))
+			return false;
+		if (ModList.FORESTRY.isLoaded() && ReikaBeeHelper.isButterfly(e))
 			return false;
 		return true;
 	}

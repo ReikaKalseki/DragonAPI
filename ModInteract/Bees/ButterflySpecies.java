@@ -44,7 +44,7 @@ import forestry.api.lepidopterology.IAlleleButterflySpecies;
 import forestry.api.lepidopterology.IButterfly;
 import forestry.api.lepidopterology.IButterflyRoot;
 
-public abstract class ButterflySpecies implements IAlleleButterflySpecies {
+public abstract class ButterflySpecies extends GeneBase implements IAlleleButterflySpecies {
 
 	protected final Random rand = new Random();
 
@@ -53,8 +53,6 @@ public abstract class ButterflySpecies implements IAlleleButterflySpecies {
 	private final IClassification branch;
 	private final String scientific;
 	private final String creator;
-	private final String uid;
-	private final String name;
 	private boolean isRegistered = false;
 	private final IAllele[] template = new IAllele[EnumButterflyChromosome.values().length];
 
@@ -66,12 +64,11 @@ public abstract class ButterflySpecies implements IAlleleButterflySpecies {
 	}
 
 	protected ButterflySpecies(String name, String uid, String latinName, String creator, IClassification g) {
+		super(uid, name, EnumButterflyChromosome.SPECIES);
 		branch = g;
 
-		this.name = name;
 		this.creator = creator;
 		scientific = latinName;
-		this.uid = uid;
 	}
 
 	public final void register() {
@@ -96,11 +93,6 @@ public abstract class ButterflySpecies implements IAlleleButterflySpecies {
 	}
 
 	@Override
-	public final String getUnlocalizedName() {
-		return uid;
-	}
-
-	@Override
 	public final String getBinomial() {
 		return scientific;
 	}
@@ -108,16 +100,6 @@ public abstract class ButterflySpecies implements IAlleleButterflySpecies {
 	@Override
 	public final String getAuthority() {
 		return creator;
-	}
-
-	@Override
-	public final String getUID() {
-		return uid;
-	}
-
-	@Override
-	public final String getName() {
-		return name;
 	}
 
 	@Override

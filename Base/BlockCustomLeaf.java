@@ -97,6 +97,10 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 		return icon[par2][this.getOpacityIndex()];
 	}
 
+	public final IIcon getIcon(int meta, boolean fancy) {
+		return icon[meta][fancy ? 0 : 1];
+	}
+
 	protected final int getOpacityIndex() {
 		field_150121_P = Minecraft.getMinecraft().gameSettings.fancyGraphics;
 		return field_150121_P ? 0 : 1;

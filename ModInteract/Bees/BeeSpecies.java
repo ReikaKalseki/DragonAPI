@@ -55,7 +55,7 @@ import forestry.api.genetics.IAlleleSpecies;
 import forestry.api.genetics.IClassification;
 import forestry.api.genetics.IIndividual;
 
-public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
+public abstract class BeeSpecies extends GeneBase implements IAlleleBeeSpecies, IIconProvider {
 
 	protected final Random rand = new Random();
 
@@ -68,8 +68,6 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	private final String scientific;
 	private final String genus;
 	private final String creator;
-	private final String uid;
-	private final String name;
 	private boolean isRegistered = false;
 	private final IAllele[] template = new IAllele[EnumBeeChromosome.values().length];
 
@@ -78,9 +76,9 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	protected BeeSpecies(String name, String uid, String latinName, String creator, IClassification g) {
+		super(uid, name, EnumBeeChromosome.SPECIES);
 		branch = g;
 
-		this.name = name;
 		this.creator = creator;
 
 		String[] s = latinName.split(" ");
@@ -92,7 +90,6 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 			scn = scn+" "+s[i];
 		}
 		scientific = scn;
-		this.uid = uid;
 	}
 
 	public void register() {
@@ -104,11 +101,6 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	}
 
 	@Override
-	public final String getUnlocalizedName() {
-		return uid;
-	}
-
-	@Override
 	public final String getBinomial() {
 		return scientific;
 	}
@@ -116,16 +108,6 @@ public abstract class BeeSpecies implements IAlleleBeeSpecies, IIconProvider {
 	@Override
 	public final String getAuthority() {
 		return creator;
-	}
-
-	@Override
-	public final String getUID() {
-		return uid;
-	}
-
-	@Override
-	public final String getName() {
-		return name;
 	}
 
 	public final void addSpecialty(ItemStack item, float chance) {

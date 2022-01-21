@@ -63,7 +63,7 @@ import forestry.api.genetics.IFruitFamily;
 import forestry.api.genetics.IIndividual;
 import forestry.api.world.ITreeGenData;
 
-public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
+public abstract class TreeSpecies extends GeneBase implements IAlleleTreeSpecies, IIconProvider {
 
 	protected final Random rand = new Random();
 
@@ -72,8 +72,6 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 	private final IClassification branch;
 	private final String scientific;
 	private final String creator;
-	private final String uid;
-	private final String name;
 
 	private final IAllele[] template = new IAllele[EnumTreeChromosome.values().length];
 	private final ITreeGenerator generator = new ForestryTreeGenerator();
@@ -88,12 +86,11 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 	}
 
 	protected TreeSpecies(String name, String uid, String latinName, String creator, IClassification g) {
+		super(uid, name, EnumTreeChromosome.SPECIES);
 		branch = g;
 
-		this.name = name;
 		this.creator = creator;
 		scientific = latinName;
-		this.uid = uid;
 	}
 
 	public final void register() {
@@ -112,11 +109,6 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 	}
 
 	@Override
-	public final String getUnlocalizedName() {
-		return uid;
-	}
-
-	@Override
 	public final String getBinomial() {
 		return scientific;
 	}
@@ -124,16 +116,6 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 	@Override
 	public final String getAuthority() {
 		return creator;
-	}
-
-	@Override
-	public final String getUID() {
-		return uid;
-	}
-
-	@Override
-	public final String getName() {
-		return name;
 	}
 
 	@Override
@@ -487,7 +469,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 
 		@Override
 		public void setLogBlock(ITreeGenome genome, World world, int x, int y, int z, ForgeDirection facing) {
-			BlockKey bk = TreeSpecies.this.getLogBlock(genome, world, x, y, z, rand, data);
+			BlockKey bk = TreeSpecies.this.getLogBlock(genome, world, x, y, z, rand, data, facing);
 			if (bk != null) {
 				bk.place(world, x, y, z);
 			}
@@ -520,7 +502,7 @@ public abstract class TreeSpecies implements IAlleleTreeSpecies, IIconProvider {
 
 	}
 
-	protected abstract BlockKey getLogBlock(ITreeGenome genes, World world, int x, int y, int z, Random rand, ITreeGenData data);
+	protected abstract BlockKey getLogBlock(ITreeGenome genes, World world, int x, int y, int z, Random rand, ITreeGenData data, ForgeDirection facing);
 
 	protected abstract boolean generate(World world, int x, int y, int z, Random rand, ITreeGenData data);
 

@@ -253,7 +253,7 @@ public class DragonAPICore {
 
 	public static int getSystemTimeAsInt() {
 		long t = System.currentTimeMillis();
-		return (int)(t%(Integer.MAX_VALUE+1));
+		return (int)((t%(Integer.MAX_VALUE+1L)+Integer.MAX_VALUE)%(Integer.MAX_VALUE+1));
 	}
 
 	public static void openURL(String url) throws Exception {

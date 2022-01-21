@@ -24,6 +24,7 @@ import org.apache.commons.lang3.text.WordUtils;
 import com.mojang.authlib.GameProfile;
 
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
 import net.minecraft.entity.item.EntityItem;
@@ -37,6 +38,7 @@ import net.minecraft.util.ChunkCoordinates;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.StatCollector;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import net.minecraftforge.common.EnumPlantType;
 import net.minecraftforge.common.MinecraftForge;
@@ -151,6 +153,7 @@ public class ReikaBeeHelper {
 	private static Class butterflyStateEnum;
 	private static Class butterfly;
 	private static Field butterflyState;
+	private static Field butterflyTarget;
 
 	static {
 		if (ModList.FORESTRY.isLoaded()) {
@@ -169,6 +172,8 @@ public class ReikaBeeHelper {
 				butterfly = Class.forName("forestry.lepidopterology.entities.EntityButterfly");
 				butterflyState = butterfly.getDeclaredField("state");
 				butterflyState.setAccessible(true);
+				butterflyTarget = butterfly.getDeclaredField("flightTarget");
+				butterflyTarget.setAccessible(true);
 			}
 			catch (Exception e) {
 				DragonAPICore.logError("Could not find forestry butterfly parameters!");
@@ -912,6 +917,10 @@ public class ReikaBeeHelper {
 		return is.getItem() == ForestryHandler.ItemEntry.CATERPILLAR.getItem();
 	}
 
+	public static boolean isButterfly(Entity e) {
+		return e instanceof IEntityButterfly;
+	}
+
 	private static int[] getFinalTerritory(IBeeGenome ibg, IBeeHousing ibh) {
 		float f = 1;
 		for (IBeeModifier ibm : ibh.getBeeModifiers()) {
@@ -1202,5 +1211,14 @@ public class ReikaBeeHelper {
 			territory = getFinalTerritory(ibg, ibh);
 		}
 
+	}
+
+	public static void setButterflyTarget(IEntityButterfly butterfly, Vec3 vec) {
+		try {
+			butterflyTarget.set(butterfly, vec);
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
