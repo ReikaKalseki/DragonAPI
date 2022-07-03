@@ -154,6 +154,7 @@ public enum ModList implements ModEntry, Dependency {
 		modLabel = label;
 		itemClasses = items;
 		blockClasses = blocks;
+		tryDetection();
 	}
 
 	private ModList(String label, String modClass) {
