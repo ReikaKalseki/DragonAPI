@@ -14,6 +14,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 import Reika.DragonAPI.Auxiliary.Trackers.ReflectiveFailureTracker;
 import Reika.DragonAPI.Base.DragonAPIMod;
@@ -135,7 +136,7 @@ public enum ModList implements ModEntry, Dependency {
 	CLIMATECONTROL("climatecontrol"),
 	;
 
-	private final boolean condition;
+	private Optional<Boolean> condition;
 	public final String modLabel;
 	private final String[] itemClasses;
 	private final String[] blockClasses;
@@ -151,22 +152,8 @@ public enum ModList implements ModEntry, Dependency {
 
 	private ModList(String label, String[] blocks, String[] items) {
 		modLabel = label;
-		condition = Loader.isModLoaded(modLabel);
 		itemClasses = items;
 		blockClasses = blocks;
-		if (condition) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" detected in the MC installation. Adjusting behavior accordingly.");
-		}
-		else
-			ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" not detected in the MC installation. No special action taken.");
-
-		if (condition) {
-			ReikaJavaLibrary.pConsole("DRAGONAPI: Attempting to load data from "+this);
-			if (blocks == null)
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not block class for "+this+": Specified class was null. This may not be an error.");
-			if (items == null)
-				ReikaJavaLibrary.pConsole("DRAGONAPI: Could not item class for "+this+": Specified class was null. This may not be an error.");
-		}
 	}
 
 	private ModList(String label, String modClass) {
@@ -191,6 +178,28 @@ public enum ModList implements ModEntry, Dependency {
 
 	private ModList(String label) {
 		this(label, (String)null);
+	}
+
+	private void tryDetection() {
+		try {
+			condition = Optional.of(Loader.isModLoaded(modLabel));
+			if (condition.get()) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" detected in the MC installation. Adjusting behavior accordingly.");
+			}
+			else
+				ReikaJavaLibrary.pConsole("DRAGONAPI: "+this+" not detected in the MC installation. No special action taken.");
+
+			if (condition.get()) {
+				ReikaJavaLibrary.pConsole("DRAGONAPI: Attempting to load data from "+this);
+				if (blockClasses == null)
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Could not block class for "+this+": Specified class was null. This may not be an error.");
+				if (itemClasses == null)
+					ReikaJavaLibrary.pConsole("DRAGONAPI: Could not item class for "+this+": Specified class was null. This may not be an error.");
+			}
+		} catch (NullPointerException e) {
+			//Too early, most likely SpongePowered Mixins calling getClassBytes
+			condition = Optional.empty();
+		}
 	}
 
 	private Class findClass(String s) {
@@ -251,7 +260,13 @@ public enum ModList implements ModEntry, Dependency {
 	}
 
 	public boolean isLoaded() {
-		return condition;
+		if (condition.isPresent()) {
+			return condition.get();
+		} else {
+			//Try loading again, it might still be a mixin calling getClassBytes
+			tryDetection();
+			return condition.orElse(false);
+		}
 	}
 
 	public String getModLabel() {
