@@ -278,6 +278,10 @@ public class ShaderRegistry {
 		return GL20.glGetShaderInfoLog(programID, GL20.glGetShaderi(programID, GL20.GL_INFO_LOG_LENGTH));
 	}
 
+	public static String parseProgramError(int programID) {
+		return GL20.glGetProgramInfoLog(programID, GL20.glGetProgrami(programID, GL20.GL_INFO_LOG_LENGTH));
+	}
+
 	public static enum ShaderDomain {
 		//BLOCK,
 		/** note there can only be one active "WORLD" shader! */

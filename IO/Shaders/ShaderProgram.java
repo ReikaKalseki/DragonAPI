@@ -86,7 +86,7 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		if (fragmentID != 0)
 			GL20.glDeleteShader(fragmentID);
 		if (programID != 0) {
-			GL20.glDeleteShader(programID);
+			GL20.glDeleteProgram(programID);
 		}
 		try (InputStream vin = this.getShaderData(ShaderTypes.VERTEX); InputStream fin = this.getShaderData(ShaderTypes.FRAGMENT)) {
 			Collection<ShaderLibrary> libs = new ArrayList();
@@ -388,12 +388,12 @@ public final class ShaderProgram implements Comparable<ShaderProgram> {
 		GL20.glAttachShader(programID, vertexID);
 		GL20.glAttachShader(programID, fragmentID);
 		GL20.glLinkProgram(programID);
-		if (GL20.glGetShaderi(programID, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
-			ShaderRegistry.error(owner, identifier, "Shader was not linked properly: "+ShaderRegistry.parseError(programID), null);
+		if (GL20.glGetProgrami(programID, GL20.GL_LINK_STATUS) == GL11.GL_FALSE) {
+			ShaderRegistry.error(owner, identifier, "Shader was not linked properly: "+ShaderRegistry.parseProgramError(programID), null);
 		}
 		GL20.glValidateProgram(programID);
-		if (GL20.glGetShaderi(programID, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
-			ShaderRegistry.error(owner, identifier, "Shader failed to validate: "+ShaderRegistry.parseError(programID), null);
+		if (GL20.glGetProgrami(programID, GL20.GL_VALIDATE_STATUS) == GL11.GL_FALSE) {
+			ShaderRegistry.error(owner, identifier, "Shader failed to validate: "+ShaderRegistry.parseProgramError(programID), null);
 		}
 	}
 
