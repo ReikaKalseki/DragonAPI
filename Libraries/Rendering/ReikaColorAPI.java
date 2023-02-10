@@ -112,7 +112,8 @@ public class ReikaColorAPI {
 
 	public static int getShiftedHue(int rgb, float hueShift) {
 		float[] hsb = RGBtoHSB(rgb);
-		hsb[0] += hueShift/360F%1F;
+		hsb[0] += hueShift/360F;
+		hsb[0] %= 1F;
 		return Color.HSBtoRGB(hsb[0], hsb[1], hsb[2]);
 	}
 

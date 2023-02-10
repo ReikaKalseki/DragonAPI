@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -176,7 +176,7 @@ public class TinkerMaterialHelper {
 			instance.addNativeToolMaterial(18, "PigIron", 3, 250, 600, 2, 1.3F, 1, 0.0F, EnumChatFormatting.RED.toString(), 15771812);
 
 			if (ModList.THAUMCRAFT.isLoaded())
-				instance.addNativeToolMaterial(31, "Thaumium", 3, 400, 700, 2, 1.3F, 0, 0.0F, "§5", 5325692);
+				instance.addNativeToolMaterial(31, "Thaumium", 3, 400, 700, 2, 1.3F, 0, 0.0F, "\u00a75", 5325692);
 		}
 		catch (Exception e) {
 			DragonAPICore.logError("Could not load Tool Material Handler!");

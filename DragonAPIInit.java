@@ -85,6 +85,7 @@ import Reika.DragonAPI.Base.ModHandlerBase.VersionIgnore;
 import Reika.DragonAPI.Command.ClearParticlesCommand;
 import Reika.DragonAPI.Command.DragonClientCommand;
 import Reika.DragonAPI.Command.DragonCommandBase;
+import Reika.DragonAPI.Command.DumpTextureBufferCommand;
 import Reika.DragonAPI.Command.ExportEnvironmentCommand;
 import Reika.DragonAPI.Command.GetLatencyCommand;
 import Reika.DragonAPI.Command.ToggleBlockChangePacketCommand;
@@ -201,7 +202,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Mod(modid = "DragonAPI", version = "v@MAJOR_VERSION@@MINOR_VERSION@", certificateFingerprint = "@GET_FINGERPRINT@", dependencies=DragonAPICore.dependencies)
+@Mod(modid = "DragonAPI", version = "v@MAJOR_VERSION@@MINOR_VERSION@", acceptedMinecraftVersions = "[1.7.10]", certificateFingerprint = "@GET_FINGERPRINT@", dependencies=DragonAPICore.dependencies)
 public class DragonAPIInit extends DragonAPIMod {
 
 	public static final String packetChannel = "DragonAPIData";
@@ -574,6 +575,7 @@ public class DragonAPIInit extends DragonAPIMod {
 			ClientCommandHandler.instance.registerCommand(new GetLatencyCommand());
 			ClientCommandHandler.instance.registerCommand(new ClearParticlesCommand());
 			ClientCommandHandler.instance.registerCommand(new ExportEnvironmentCommand());
+			ClientCommandHandler.instance.registerCommand(new DumpTextureBufferCommand());
 		}
 
 		if (DragonOptions.BIOMEFIRE.getState()) {
@@ -842,7 +844,7 @@ public class DragonAPIInit extends DragonAPIMod {
 
 	private void initHandler(ModList mod, Class<? extends ModHandlerBase> c, String id) throws Exception {
 		ReikaJavaLibrary.initClass(c);
-		Method inst = c.getMethod("getInstance", null);
+		Method inst = c.getMethod("getInstance");
 		ModHandlerBase h = (ModHandlerBase)inst.invoke(null);
 		mod.registerHandler(h, id);
 	}

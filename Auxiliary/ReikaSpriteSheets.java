@@ -28,6 +28,7 @@ import net.minecraftforge.client.MinecraftForgeClient;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Instantiable.InertItem;
+import Reika.DragonAPI.Instantiable.Event.Client.ItemEffectRenderEvent;
 import Reika.DragonAPI.Interfaces.Item.AnimatedSpritesheet;
 import Reika.DragonAPI.Interfaces.Item.BlendedColor;
 import Reika.DragonAPI.Interfaces.Item.GradientBlend;
@@ -346,7 +347,7 @@ public final class ReikaSpriteSheets {
 		int par4 = 0;
 		int par5 = 0;
 
-		if (is.hasEffect(pass))
+		if (ItemEffectRenderEvent.fire(is, pass))
 		{
 			if (ir == ItemRenderType.INVENTORY) {
 				renderEffect(Minecraft.getMinecraft().renderEngine, 5, 5);

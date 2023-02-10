@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -26,19 +26,15 @@ public class CommandOwnerCommand extends DragonCommandBase {
 		if (args.length == 0) {
 			Collection<ICommand> li = ReikaCommandHelper.getCommandList();
 			for (ICommand c : li) {
-				this.printCommand(ics, c);
+				this.sendChatToSender(ics, "Command '"+c+"'");
 			}
 		}
 		else if (args.length == 1) {
-			List<ICommand> li = MinecraftServer.getServer().getCommandManager().getPossibleCommands(ics, args[0]);
-			for (ICommand c : li) {
-				this.printCommand(ics, c);
+			List<String> li = MinecraftServer.getServer().getCommandManager().getPossibleCommands(ics, args[0]);
+			for (String c : li) {
+				this.sendChatToSender(ics, "Command '"+c+"'");
 			}
 		}
-	}
-
-	private void printCommand(ICommandSender ics, ICommand c) {
-		this.sendChatToSender(ics, "Command '"+c.getCommandName()+"': "+c);
 	}
 
 	@Override

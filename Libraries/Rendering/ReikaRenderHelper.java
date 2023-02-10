@@ -1773,8 +1773,6 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	}
 
 	private static void exportFramebuffer(Framebuffer fb, int pass, ShaderProgram p) {
-		if (!p.identifier.contains("reika"))
-			return;
 		try {
 			File root = new File(Minecraft.getMinecraft().mcDataDir, "FramebufferExport");
 			String name = pass == -1 ? p.identifier+"_end" : pass == 0 ? p.identifier+"_begin" : p.identifier+"_c_pass_"+pass;
