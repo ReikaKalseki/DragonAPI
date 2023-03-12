@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Level;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.DragonOptions;
 import Reika.DragonAPI.Base.DragonAPIMod;
+import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 
@@ -81,16 +82,15 @@ public class ModLogger {
 	/** Preface with '*' to use the log folder as a parent and preface with an additional '*' to preface the mod name. */
 	public ModLogger setOutput(String name) {
 		File f = this.parseFileString(name);
-		try {
+		if (f.exists())
+			f.delete();
+		try (BufferedWriter p = ReikaFileReader.getPrintWriterForNewFile(f)) {
 			this.flushOutput();
-			if (f.exists())
-				f.delete();
 			File par = new File(f.getParent());
 			if (!par.exists())
 				par.mkdirs();
-			f.createNewFile();
 			destination = f.getCanonicalPath();
-			this.setOutput(new BufferedWriter(new PrintWriter(f)));
+			this.setOutput(p);
 		}
 		catch (IOException e) {
 			e.printStackTrace();

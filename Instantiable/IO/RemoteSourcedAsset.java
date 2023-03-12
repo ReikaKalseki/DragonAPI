@@ -170,19 +170,15 @@ public class RemoteSourcedAsset {
 			targetFile.delete();
 			targetFile.createNewFile();
 			URLConnection c = new URL(remotePath).openConnection();
-			InputStream in = c.getInputStream();
-			OutputStream out = new FileOutputStream(targetFile);
+			try (InputStream in = c.getInputStream(); OutputStream out = new FileOutputStream(targetFile)) {
+				long time = System.currentTimeMillis();
+				ReikaFileReader.copyFile(in, out, 4096);
+				long duration = System.currentTimeMillis()-time;
 
-			long time = System.currentTimeMillis();
-			ReikaFileReader.copyFile(in, out, 4096);
-			long duration = System.currentTimeMillis()-time;
-
-			String s = "Download of '"+remotePath+"' to '"+localPath+"' complete. Elapsed time: "+ReikaDateHelper.millisToHMSms(duration)+". Filesize: "+targetFile.length();
-			/*dat.asset.mod.getModLogger()*/DragonAPICore.log(s);
-			isComplete = true;
-
-			in.close();
-			out.close();
+				String s = "Download of '"+remotePath+"' to '"+localPath+"' complete. Elapsed time: "+ReikaDateHelper.millisToHMSms(duration)+". Filesize: "+targetFile.length();
+				/*dat.asset.mod.getModLogger()*/DragonAPICore.log(s);
+				isComplete = true;
+			}
 		}
 
 	}

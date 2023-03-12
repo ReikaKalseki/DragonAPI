@@ -213,11 +213,9 @@ public final class CommandableUpdateChecker {
 				}
 			}
 			li.add(name+":"+enable+":"+latest);
-			try {
-				PrintWriter p = new PrintWriter(f);
+			try(PrintWriter p = new PrintWriter(f)) {
 				for (int i = 0; i < li.size(); i++)
 					p.append(li.get(i)+"\n");
-				p.close();
 			}
 			catch (IOException e) {
 
@@ -226,7 +224,11 @@ public final class CommandableUpdateChecker {
 		else {
 			try {
 				f.createNewFile();
-				PrintWriter p = new PrintWriter(f);
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+			try(PrintWriter p = new PrintWriter(f)) {
 				p.append(name+":"+enable+":"+latest);
 				p.close();
 			}
@@ -309,18 +311,14 @@ public final class CommandableUpdateChecker {
 		ArrayList<String> data = ReikaFileReader.getFileAsLines(f, true);
 		String tag = mod.getDisplayName()+"=";
 		data.add(tag+uh.toString());
-		try {
-			BufferedReader r = new BufferedReader(new FileReader(f));
+		try(BufferedReader r = new BufferedReader(new FileReader(f)); FileOutputStream os = new FileOutputStream(f)) {
 			String sep = System.getProperty("line.separator");
 			String line = r.readLine();
 			StringBuilder out = new StringBuilder();
 			for (String l : data) {
 				out.append(l+sep);
 			}
-			r.close();
-			FileOutputStream os = new FileOutputStream(f);
 			os.write(out.toString().getBytes());
-			os.close();
 		}
 		catch (IOException e) {
 			e.printStackTrace();

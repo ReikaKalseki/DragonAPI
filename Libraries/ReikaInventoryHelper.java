@@ -1476,6 +1476,15 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 	}
 
+	public static void removeFromInventory(IInventory ii, ItemStack rem) {
+		for (int i = 0; i < ii.getSizeInventory(); i++) {
+			ItemStack in = ii.getStackInSlot(i);
+			if (ReikaItemHelper.matchStacks(rem, in)) {
+				ii.setInventorySlotContents(i, null);
+			}
+		}
+	}
+
 	public static void generateMultipliedLoot(int bonus, Random r, String s, IInventory te) {
 		for (int n = 0; n < bonus; n++) {
 			TemporaryInventory ii = new TemporaryInventory(te.getSizeInventory());

@@ -182,20 +182,16 @@ public class RemoteAssetLoader {
 			f.delete();
 			f.createNewFile();
 			URLConnection c = new URL(dat.path).openConnection();
-			InputStream in = c.getInputStream();
-			OutputStream out = new FileOutputStream(f);
+			try(InputStream in = c.getInputStream(); OutputStream out = new FileOutputStream(f)) {
+				long time = System.currentTimeMillis();
+				ReikaFileReader.copyFile(in, out, 4096, this);
+				long duration = System.currentTimeMillis()-time;
 
-			long time = System.currentTimeMillis();
-			ReikaFileReader.copyFile(in, out, 4096, this);
-			long duration = System.currentTimeMillis()-time;
-
-			String s = "Download of '"+dat.getDisplayName()+"' to '"+dat.asset.getLocalPath()+"' complete. Elapsed time: "+ReikaDateHelper.millisToHMSms(duration);
-			/*dat.asset.mod.getModLogger()*/DragonAPICore.log(s);
-			DragonAPICore.log("Remote asset downloads now "+String.format("%.2f", Math.min(100, this.getTotalCompletion()*100))+"% complete.");
-			dat.asset.downloaded = true;
-
-			in.close();
-			out.close();
+				String s = "Download of '"+dat.getDisplayName()+"' to '"+dat.asset.getLocalPath()+"' complete. Elapsed time: "+ReikaDateHelper.millisToHMSms(duration);
+				/*dat.asset.mod.getModLogger()*/DragonAPICore.log(s);
+				DragonAPICore.log("Remote asset downloads now "+String.format("%.2f", Math.min(100, this.getTotalCompletion()*100))+"% complete.");
+				dat.asset.downloaded = true;
+			}
 		}
 
 		@Override

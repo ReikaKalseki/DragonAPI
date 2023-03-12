@@ -9,6 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Libraries.Java;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -1041,13 +1042,10 @@ public class ReikaASMHelper {
 		ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_MAXS/* | ClassWriter.COMPUTE_FRAMES*/);
 		cn.accept(writer);
 		byte[] newdata = writer.toByteArray();
-		try {
-			File f = new File(folder, cn.name+".class");
+		File f = new File(folder, cn.name+".class");
+		try (BufferedWriter p = ReikaFileReader.getPrintWriterForNewFile(f); FileOutputStream out = new FileOutputStream(f)) {
 			folder.mkdirs();
-			f.createNewFile();
-			FileOutputStream out = new FileOutputStream(f);
 			out.write(newdata);
-			out.close();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -1254,26 +1252,23 @@ public class ReikaASMHelper {
 	}
 
 	public static void writeClassFile(ClassNode cn, String path) {
-		try {
-			if (FMLForgePlugin.RUNTIME_DEOBF) {
-				cn = copyClassNode(cn);
-				deobfClassFile(cn);
-			}
+		if (FMLForgePlugin.RUNTIME_DEOBF) {
+			cn = copyClassNode(cn);
+			deobfClassFile(cn);
+		}
 
-			ClassWriter writer = new ClassWriter(0);
-			cn.accept(writer);
-			byte[] data = writer.toByteArray();
+		ClassWriter writer = new ClassWriter(0);
+		cn.accept(writer);
+		byte[] data = writer.toByteArray();
 
-			String cname = cn.name.replaceAll("\\.", "/").replaceAll("\\\\", "/");
-			if (activeMod != null)
-				cname = "[BY "+activeMod.toUpperCase(Locale.ENGLISH)+"] "+cname;
+		String cname = cn.name.replaceAll("\\.", "/").replaceAll("\\\\", "/");
+		if (activeMod != null)
+			cname = "[BY "+activeMod.toUpperCase(Locale.ENGLISH)+"] "+cname;
 
-			File f = new File(path, cname+".class");
-			f.getParentFile().mkdirs();
-			f.createNewFile();
-			FileOutputStream out = new FileOutputStream(f);
+		File f = new File(path, cname+".class");
+		f.getParentFile().mkdirs();
+		try (BufferedWriter p = ReikaFileReader.getPrintWriterForNewFile(f); FileOutputStream out = new FileOutputStream(f)) {
 			out.write(data);
-			out.close();
 		}
 		catch (Throwable t) {
 			t.printStackTrace();

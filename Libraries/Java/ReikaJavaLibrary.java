@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintWriter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -51,6 +50,8 @@ import net.minecraft.world.World;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.Exception.MisuseException;
+import Reika.DragonAPI.IO.ReikaFileReader;
+import Reika.DragonAPI.IO.ReikaFileReader.SimpleLineWriter;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
 import cpw.mods.fml.common.FMLCommonHandler;
@@ -361,13 +362,10 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 
 	public static void printClassMetadata(String path, Class c) {
 		String filename = "FailedClasses/"+path+".classdata";
-		try {
-			File f = new File(filename);
-			f.getParentFile().mkdirs();
-			f.createNewFile();
-			BufferedWriter p = new BufferedWriter(new PrintWriter(f));
+		File f = new File(filename);
+		f.getParentFile().mkdirs();
+		try (BufferedWriter p = ReikaFileReader.getPrintWriterForNewFile(f)) {
 			printClassMetadata(p, c);
-			p.close();
 		}
 		catch (IOException e) {
 			pConsole("DRAGONAPI: Error printing class data!");
@@ -492,10 +490,8 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		reader.accept(classNode,0);
 		final List<MethodNode> methods = classNode.methods;
 		String filename = path+".asm";
-		try {
-			File f = new File(filename);
-			f.createNewFile();
-			BufferedWriter p = new BufferedWriter(new PrintWriter(f));
+		File f = new File(filename);
+		try (SimpleLineWriter p = ReikaFileReader.getPrintWriterForNewFile(f)) {
 			for (MethodNode m : methods) {
 				InsnList inList = m.instructions;
 				p.write(m.name);
@@ -547,10 +543,8 @@ public final class ReikaJavaLibrary extends DragonAPICore {
 		data = out.toByteArray() */
 
 		String filename = path+".class";
-		try {
-			FileOutputStream fos = new FileOutputStream(filename);
+		try(FileOutputStream fos = new FileOutputStream(filename)) {
 			fos.write(data);
-			fos.close();
 		}
 		catch (IOException e) {
 			pConsole("DRAGONAPI: Error printing class!");

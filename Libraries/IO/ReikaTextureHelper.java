@@ -391,16 +391,16 @@ public class ReikaTextureHelper {
 			String path = "Reika/DragonAPI/dyecolor.txt";
 			try(InputStream in = getStreamFromTexturePack(path, pack)) {
 				if (in != null) {
-					BufferedReader p = new BufferedReader(new InputStreamReader(in));
-					for (int i = 0; i < 16; i++) {
-						String line = p.readLine();
-						String[] s = line.split(":");
-						int c = Color.decode(s[1]).getRGB();
-						Integer color = new Integer(c);
-						ReikaDyeHelper dye = ReikaDyeHelper.dyes[i];
-						colorOverrides.put(dye, color);
+					try (BufferedReader p = new BufferedReader(new InputStreamReader(in))) {
+						for (int i = 0; i < 16; i++) {
+							String line = p.readLine();
+							String[] s = line.split(":");
+							int c = Color.decode(s[1]).getRGB();
+							Integer color = new Integer(c);
+							ReikaDyeHelper dye = ReikaDyeHelper.dyes[i];
+							colorOverrides.put(dye, color);
+						}
 					}
-					p.close();
 					DragonAPICore.log("Found color override text file for texture pack "+pack.getPackName()+".");
 					loaded = true;
 				}

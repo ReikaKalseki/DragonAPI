@@ -50,6 +50,8 @@ public class ShaderRegistry {
 	private static ShaderProgram currentlyRunning;
 	private static ShaderDomain activeType;
 
+	private static boolean reloadKeyPressed = false;
+
 	public static void registerWorldShaderSystem(WorldShaderSystem ws) {
 		if (worldShaderSystem != null)
 			throw new RegistrationException(ws.getMod(), "A world shader system ("+worldShaderSystem+") is already registered, so another ("+ws+") cannot be.");
@@ -114,12 +116,18 @@ public class ShaderRegistry {
 		if (currentlyRunning != null && currentlyRunning != sh)
 			error(sh.owner, sh.identifier, "Cannot start one shader while another is running!", null);
 		if (reloadKey()) {
-			try {
-				reloadShader(sh.identifier);
+			if (!reloadKeyPressed) {
+				reloadKeyPressed = true;
+				try {
+					reloadShader(sh.identifier);
+				}
+				catch (IOException e) {
+					error(sh.owner, sh.identifier, "Shader threw IOException during reload!", null, e);
+				}
 			}
-			catch (IOException e) {
-				error(sh.owner, sh.identifier, "Shader threw IOException during reload!", null, e);
-			}
+		}
+		else {
+			reloadKeyPressed = false;
 		}
 		currentlyRunning = sh;
 		if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_LMENU) && Keyboard.isKeyDown(Keyboard.KEY_C) && ReikaObfuscationHelper.isDeObfEnvironment()) {
@@ -275,7 +283,7 @@ public class ShaderRegistry {
 	}
 
 	public static String parseError(int programID) {
-		return GL20.glGetShaderInfoLog(programID, GL20.glGetShaderi(programID, GL20.GL_INFO_LOG_LENGTH));
+		return GL20.glGetShaderInfoLog(programID, GL20.glGetProgrami(programID, GL20.GL_INFO_LOG_LENGTH));
 	}
 
 	public static enum ShaderDomain {

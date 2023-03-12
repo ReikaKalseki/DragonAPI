@@ -70,7 +70,7 @@ public abstract class NBTFile {
 	}
 
 	private void encryptFileData(File f, boolean unpack) throws IOException {
-		try (InputStream in = new FileInputStream(f)) {
+		try (InputStream in = new FileInputStream(f); OutputStream out = new FileOutputStream(f)) {
 			ArrayList<Byte> data = new ArrayList();
 			int dat = in.read();
 			while (dat != -1) {
@@ -79,7 +79,6 @@ public abstract class NBTFile {
 			}
 			//ReikaJavaLibrary.cycleList(data, unpack ? -8 : 8);
 			Collections.reverse(data);
-			OutputStream out = new FileOutputStream(f);
 			for (byte b : data) {
 				out.write(b);
 			}

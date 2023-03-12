@@ -20,6 +20,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,6 +30,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.Writer;
 import java.net.ConnectException;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
@@ -70,11 +72,9 @@ public class ReikaFileReader extends DragonAPICore {
 
 	public static int getFileLength(File f) {
 		int len;
-		try {
-			LineNumberReader lnr = new LineNumberReader(new FileReader(f));
+		try(LineNumberReader lnr = new LineNumberReader(new FileReader(f))) {
 			lnr.skip(Long.MAX_VALUE);
 			len = lnr.getLineNumber()+1+1;
-			lnr.close();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -311,9 +311,8 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static ArrayList<Byte> getFileAsBytes(InputStream in, boolean printStackTrace, Charset set) {
-		BufferedReader r = getReader(in, set);
 		ArrayList<Byte> li = new ArrayList();
-		try {
+		try(BufferedReader r = getReader(in, set)) {
 			byte b = (byte)r.read();
 			while (b != -1) {
 				li.add(b);
@@ -323,14 +322,6 @@ public class ReikaFileReader extends DragonAPICore {
 		catch (Exception e) {
 			if (printStackTrace)
 				e.printStackTrace();
-		}
-		finally {
-			try {
-				r.close();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
 		return li;
 	}
@@ -350,8 +341,8 @@ public class ReikaFileReader extends DragonAPICore {
 	}
 
 	public static void writeLinesToFile(File f, ArrayList<String> li, boolean printStackTrace) {
-		try {
-			writeLinesToFile(new BufferedWriter(new PrintWriter(f)), li, printStackTrace);
+		try(BufferedWriter p = new BufferedWriter(new PrintWriter(f))) {
+			writeLinesToFile(p, li, printStackTrace);
 		}
 		catch (IOException e) {
 			if (printStackTrace) {
@@ -381,8 +372,13 @@ public class ReikaFileReader extends DragonAPICore {
 			f.delete();
 			f.getParentFile().mkdirs();
 			f.createNewFile();
-			FileOutputStream fos = new FileOutputStream(f);
-			BufferedWriter p = new BufferedWriter(new OutputStreamWriter(fos));
+		}
+		catch (IOException e) {
+			if (printStackTrace) {
+				e.printStackTrace();
+			}
+		}
+		try(FileOutputStream fos = new FileOutputStream(f); BufferedWriter p = new BufferedWriter(new OutputStreamWriter(fos))) {
 			for (byte b : li) {
 				p.write(b);
 			}
@@ -491,7 +487,7 @@ public class ReikaFileReader extends DragonAPICore {
 				MessageDigest messageDigest = MessageDigest.getInstance(tag);
 				messageDigest.update(bytes);
 				//return new String(messageDigest.digest(), StandardCharsets.UTF_8);
-				return javax.xml.bind.DatatypeConverter.printHexBinary(messageDigest.digest());
+				return org.apache.commons.codec.binary.Hex.encodeHexString(messageDigest.digest());
 			}
 			catch (NoSuchAlgorithmException e) {
 				return null; //never happens
@@ -542,7 +538,7 @@ public class ReikaFileReader extends DragonAPICore {
 		protected abstract String getReplacementLine(String s, String newline, int idx);
 
 		public final boolean performChanges(File f, Charset set) {
-			try(BufferedReader r = ReikaFileReader.getReader(f, set)) {
+			try(BufferedReader r = ReikaFileReader.getReader(f, set); FileOutputStream os = new FileOutputStream(f)) {
 				String sep = System.getProperty("line.separator");
 				String line = r.readLine();
 				StringBuilder out = new StringBuilder();
@@ -559,7 +555,6 @@ public class ReikaFileReader extends DragonAPICore {
 					line = r.readLine();
 					idx++;
 				}
-				FileOutputStream os = new FileOutputStream(f);
 				os.write(out.toString().getBytes());
 				os.close();
 				return true;
@@ -889,5 +884,27 @@ public class ReikaFileReader extends DragonAPICore {
 
 	public static boolean isFileWithin(File f, File dir) throws IOException {
 		return f.getCanonicalPath().startsWith(dir.getCanonicalPath());
+	}
+
+	public static SimpleLineWriter getPrintWriterForNewFile(File f) throws IOException {
+		f.createNewFile();
+		return new SimpleLineWriter(new FileWriter(f));
+	}
+
+	public static final class SimpleLineWriter extends BufferedWriter {
+
+		private SimpleLineWriter(Writer w) {
+			super(w);
+		}
+
+		public void println(String s) {
+			try {
+				this.write(s+System.getProperty("line.separator"));
+			}
+			catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
 	}
 }

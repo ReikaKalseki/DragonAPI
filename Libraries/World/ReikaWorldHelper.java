@@ -2379,14 +2379,16 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		return world.getBiomeGenForCoords(x0, z0) == b || world.getBiomeGenForCoords(x1, z0) == b || world.getBiomeGenForCoords(x0, z1) == b || world.getBiomeGenForCoords(x1, z1) == b;
 	}
 
-	public static boolean isAdjacentToCrop(IBlockAccess iba, int x, int y, int z) {
+	public static boolean isAdjacentToCrop(World world, int x, int y, int z) {
 		for (int i = 2; i < 6; i++) {
 			ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
 			int dx = x+dir.offsetX;
 			int dz = z+dir.offsetZ;
-			Block id = iba.getBlock(dx, y, dz);
-			if (ReikaCropHelper.getCrop(id) != null || ModCropList.getModCrop(id, iba.getBlockMetadata(dx, y, dz)) != null) {
-				return true;
+			if (world.checkChunksExist(dx, y, dz, dx, y, dz)) {
+				Block id = world.getBlock(dx, y, dz);
+				if (ReikaCropHelper.getCrop(id) != null || ModCropList.getModCrop(id, world.getBlockMetadata(dx, y, dz)) != null) {
+					return true;
+				}
 			}
 		}
 		return false;

@@ -240,13 +240,11 @@ public class ThrottleableEffectRenderer extends EffectRenderer {
 		CrashReport crashreport = CrashReport.makeCrashReport(throwable, "Rendering Particle");
 		CrashReportCategory crashreportcategory = crashreport.makeCategory("Particle being rendered");
 		crashreportcategory.addCrashSectionCallable("Particle", new Callable() {
-			private static final String __OBFID = "CL_00000918";
 			public String call() {
 				return fx.toString();
 			}
 		});
 		crashreportcategory.addCrashSectionCallable("Particle Type", new Callable() {
-			private static final String __OBFID = "CL_00000919";
 			public String call() {
 				return i == 0 ? "MISC_TEXTURE" : (i == 1 ? "TERRAIN_TEXTURE" : (i == 2 ? "ITEM_TEXTURE" : (i == 3 ? "ENTITY_PARTICLE_TEXTURE" : "Unknown - " + i)));
 			}
