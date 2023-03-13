@@ -9,44 +9,42 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event.Client;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
-import net.minecraftforge.common.MinecraftForge;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
+import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers;
+import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers.EventWatcher;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@Cancelable
-@SideOnly(Side.CLIENT)
-public class EntityRenderEvent extends Event {
+public class EntityRenderEvent {
 
-	public final Render renderer;
-	public final Entity entity;
-	public final double renderPosX;
-	public final double renderPosY;
-	public final double renderPosZ;
-	public final float partialTickTime;
+	private static final ArrayList<EntityRenderWatcher> listeners = new ArrayList();
 
-	public final float float2;
-
-	public EntityRenderEvent(Render r, Entity e, double par2, double par4, double par6, float par8, float par9) {
-		renderer = r;
-		entity = e;
-		renderPosX = par2;
-		renderPosY = par4;
-		renderPosZ = par6;
-		partialTickTime = par8;
-
-		float2 = par9;
+	public static void addListener(EntityRenderWatcher l) {
+		listeners.add(l);
+		Collections.sort(listeners, EventWatchers.comparator);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void fire(Render r, Entity e, double par2, double par4, double par6, float par8, float par9) {
-		EntityRenderEvent evt = new EntityRenderEvent(r, e, par2, par4, par6, par8, par9);
-		if (!MinecraftForge.EVENT_BUS.post(evt)) {
-			r.doRender(e, par2, par4, par6, par8, par9);
+		for (EntityRenderWatcher l : listeners) {
+			if (l.tryRenderEntity(r, e, par2, par4, par6, par8, par9)) {
+				return;
+			}
 		}
+		r.doRender(e, par2, par4, par6, par8, par9);
+	}
+
+	public static interface EntityRenderWatcher extends EventWatcher {
+
+		@SideOnly(Side.CLIENT)
+		boolean tryRenderEntity(Render r, Entity e, double par2, double par4, double par6, float par8, float par9);
+
 	}
 
 }

@@ -569,4 +569,13 @@ public final class ReikaMathLibrary extends DragonAPICore {
 			return 0;
 		return String.valueOf(dec).split("\\.")[1].length();
 	}
+
+	public static int sumDigits(long val) {
+		int sum = 0;
+		while (val > 0) {
+			sum += (int)(val%10);
+			val /= 10;
+		}
+		return sum;
+	}
 }

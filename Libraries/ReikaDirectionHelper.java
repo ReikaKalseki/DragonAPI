@@ -425,4 +425,19 @@ public class ReikaDirectionHelper extends DragonAPICore {
 		return false;
 	}
 
+	public static ForgeDirection getApproximateDirection(int x, int y, int z, int x2, int y2, int z2, boolean vertical) {
+		int dx = x2-x;
+		int dy = y2-y;
+		int dz = z2-z;
+		int magx = Math.abs(dx);
+		int magy = Math.abs(dy);
+		int magz = Math.abs(dz);
+		if (vertical && magy > magz && magy > magz)
+			return dy > 0 ? ForgeDirection.UP : ForgeDirection.DOWN;
+		else if (magx > magz)
+			return dx > 0 ? ForgeDirection.EAST : ForgeDirection.WEST;
+		else
+			return dz > 0 ? ForgeDirection.SOUTH : ForgeDirection.NORTH;
+	}
+
 }

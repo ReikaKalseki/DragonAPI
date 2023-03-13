@@ -9,65 +9,47 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event.Client;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.MinecraftForge;
 
-import Reika.DragonAPI.Instantiable.Event.Base.PositionEventClient;
+import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers;
+import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers.EventWatcher;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
-//@HasResult
-@Cancelable
-public class RenderBlockAtPosEvent extends PositionEventClient {
+public class RenderBlockAtPosEvent {
 
-	public final WorldRenderer renderer;
+	private static final ArrayList<BlockRenderWatcher> listeners = new ArrayList();
 
-	public final RenderBlocks render;
+	public static boolean continueRendering = false;
 
-	public final Block block;
-
-	public final int renderPass;
-
-	public boolean continueRendering = false;
-
-	public RenderBlockAtPosEvent(WorldRenderer wr, IBlockAccess iba, RenderBlocks rb, Block b, int x, int y, int z, int pass) {
-		super(iba, x, y, z);
-		renderer = wr;
-
-		render = rb;
-
-		block = b;
-
-		renderPass = pass;
+	public static void addListener(BlockRenderWatcher l) {
+		listeners.add(l);
+		Collections.sort(listeners, EventWatchers.comparator);
 	}
 
-	@Override
-	public void setCanceled(boolean cancel) {
-		super.setCanceled(cancel);
-		continueRendering = !cancel;
-	}
-
+	@SideOnly(Side.CLIENT)
 	public static boolean fire(RenderBlocks rb, Block b, int x, int y, int z, WorldRenderer wr, int pass) {
-		RenderBlockAtPosEvent evt = new RenderBlockAtPosEvent(wr, rb.blockAccess, rb, b, x, y, z, pass);
-		boolean flag = !MinecraftForge.EVENT_BUS.post(evt);
-		if (flag)
-			flag &= rb.renderBlockByRenderType(b, x, y, z);
-		/*
-		switch(evt.getResult()) {
-			case ALLOW:
-				return true;
-			case DENY:
+		for (BlockRenderWatcher l : listeners) {
+			if (l.onBlockTriedRender(b, x, y, z, wr, rb, pass)) {
+				continueRendering = false;
 				return false;
-			case DEFAULT:
-			default:
-				return flag;
+			}
 		}
-		 */
-		//ReikaJavaLibrary.pConsole(b, !flag && evt.continueRendering);
-		return flag || evt.continueRendering;
+		return rb.renderBlockByRenderType(b, x, y, z) || continueRendering;
+	}
+
+	public static interface BlockRenderWatcher extends EventWatcher {
+
+		/** Return true to act like an event cancel */
+		@SideOnly(Side.CLIENT)
+		boolean onBlockTriedRender(Block b, int x, int y, int z, WorldRenderer wr, RenderBlocks rb, int pass);
+
 	}
 
 }

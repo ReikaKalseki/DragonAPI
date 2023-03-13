@@ -29,6 +29,7 @@ import Reika.DragonAPI.Libraries.ReikaPlayerAPI;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 import cpw.mods.fml.common.eventhandler.Event;
 
@@ -86,6 +87,7 @@ public final class LoginHandler implements PlayerTracker {
 			PopupWriter.instance.sendServerMessages(emp);
 			syncPlayer(emp);
 			ReikaPacketHelper.sendDataPacket(DragonAPIInit.packetChannel, PacketIDs.LOGIN.ordinal(), emp, 1);
+			ReikaWorldHelper.getCurrentWorldID(ep.worldObj).sendClientPacket(emp);
 		}
 		MinecraftForge.EVENT_BUS.post(new PlayerEnteredDimensionEvent(ep, ep.worldObj.provider.dimensionId));
 	}

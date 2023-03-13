@@ -20,6 +20,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
@@ -89,6 +90,7 @@ import Reika.DragonAPI.Instantiable.Event.Client.EntityRenderingLoopEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.GameFinishedLoadingEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.HotbarKeyEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.RenderBlockAtPosEvent;
+import Reika.DragonAPI.Instantiable.Event.Client.RenderBlockAtPosEvent.BlockRenderWatcher;
 import Reika.DragonAPI.Instantiable.Event.Client.SettingsEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SinglePlayerLogoutEvent;
 import Reika.DragonAPI.Instantiable.Event.Client.SkyColorEvent;
@@ -136,7 +138,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import paulscode.sound.SoundSystemConfig;
 import thaumcraft.api.wands.ItemFocusBasic;
 
-public class DragonAPIEventWatcher implements ProfileEventWatcher {
+public class DragonAPIEventWatcher implements ProfileEventWatcher, BlockRenderWatcher {
 
 	public static final DragonAPIEventWatcher instance = new DragonAPIEventWatcher();
 
@@ -146,6 +148,7 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 
 	private DragonAPIEventWatcher() {
 		ProfileEvent.registerHandler("debug", this);
+		RenderBlockAtPosEvent.addListener(this);
 
 		biomeHumidityFlammability.addPoint(0, 3);
 		biomeHumidityFlammability.addPoint(0.1, 2);
@@ -210,17 +213,18 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 		}
 	}
 
+	@Override
 	@SideOnly(Side.CLIENT)
-	@SubscribeEvent(priority = EventPriority.LOWEST)
-	public void renderSubmergeable(RenderBlockAtPosEvent evt) {
-		if (evt.block instanceof Submergeable) {
-			Submergeable s = (Submergeable)evt.block;
-			int meta = evt.getMetadata();
-			if (s.isSubmergeable(evt.access, evt.xCoord, evt.yCoord, evt.zCoord) && s.renderLiquid(meta)) {
-				if (evt.renderPass == 1)
-					this.renderWaterInBlock(evt.access, evt.xCoord, evt.yCoord, evt.zCoord, evt.block, meta, Tessellator.instance);
+	public boolean onBlockTriedRender(Block block, int x, int y, int z, WorldRenderer wr, RenderBlocks rb, int pass) {
+		if (block instanceof Submergeable) {
+			Submergeable s = (Submergeable)block;
+			int meta = rb.blockAccess.getBlockMetadata(x, y, z);
+			if (s.isSubmergeable(rb.blockAccess, x, y, z) && s.renderLiquid(meta)) {
+				if (pass == 1)
+					this.renderWaterInBlock(rb.blockAccess, x, y, z, block, meta, Tessellator.instance);
 			}
 		}
+		return false;
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -730,6 +734,11 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher {
 				}
 			}
 		}
+	}
+
+	@Override
+	public int watcherSortIndex() {
+		return Integer.MAX_VALUE;
 	}
 
 }

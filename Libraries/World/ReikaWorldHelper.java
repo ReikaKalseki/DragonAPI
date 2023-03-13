@@ -39,6 +39,7 @@ import net.minecraft.entity.item.EntityFallingBlock;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityXPOrb;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
@@ -111,6 +112,7 @@ import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.ReikaSpawnerHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaPacketHelper;
 import Reika.DragonAPI.Libraries.IO.ReikaSoundHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
@@ -152,6 +154,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	private static final HashMap<ImmutablePair<Integer, Long>, Simplex3DGenerator> tempNoise = new HashMap();
 
 	private static final double TEMP_NOISE_BASE = 10;
+
+	public static WorldIDBase clientWorldID;
 
 	static {
 		try {
@@ -2590,16 +2594,32 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		id.writeToFile(f);
 	}
 
-	public static final class WorldID {
-
-		private static int worldsThisSession = 0;
-
-		private static final WorldID NONEXISTENT = new WorldID(0, 0, 0, "[NONEXISTENT]", "[NONEXISTENT]", new HashSet());
+	public static class WorldIDBase {
 
 		public final long worldCreationTime;
 		public final long sourceSessionStartTime;
 		public final long sessionWorldIndex;
 		public final String originalFolder;
+
+		public WorldIDBase(long time, long session, int index, String folder) {
+			worldCreationTime = time;
+			sourceSessionStartTime = session;
+			sessionWorldIndex = index;
+			originalFolder = folder;
+		}
+
+		public long getUniqueHash() {
+			return worldCreationTime ^ ((((long)originalFolder.hashCode()) << 32) | sessionWorldIndex);
+		}
+
+	}
+
+	public static final class WorldID extends WorldIDBase {
+
+		private static int worldsThisSession = 0;
+
+		private static final WorldID NONEXISTENT = new WorldID(0, 0, 0, "[NONEXISTENT]", "[NONEXISTENT]", new HashSet());
+
 		public final String creatingPlayer;
 
 		private final HashSet<String> modList;
@@ -2618,10 +2638,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 
 		private WorldID(long time, long session, int index, String folder, String player, HashSet<String> modlist) {
-			worldCreationTime = time;
-			sourceSessionStartTime = session;
-			sessionWorldIndex = index;
-			originalFolder = folder;
+			super(time, session, index, folder);
 			creatingPlayer = player;
 			modList = modlist;
 		}
@@ -2667,6 +2684,13 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				e.printStackTrace();
 				return NONEXISTENT;
 			}
+		}
+
+		public void sendClientPacket(EntityPlayerMP ep) {
+			int[] timeInts = ReikaJavaLibrary.splitLong(worldCreationTime);
+			int[] sessionInts = ReikaJavaLibrary.splitLong(sourceSessionStartTime);
+			int[] indexInts = ReikaJavaLibrary.splitLong(sessionWorldIndex);
+			ReikaPacketHelper.sendStringIntPacket(DragonAPIInit.packetChannel, PacketIDs.WORLDID.ordinal(), ep, originalFolder, timeInts[0], timeInts[1], sessionInts[0], sessionInts[1], indexInts[0], indexInts[1]);
 		}
 
 	}

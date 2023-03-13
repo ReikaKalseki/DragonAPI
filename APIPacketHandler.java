@@ -61,6 +61,7 @@ import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaParticleHelper;
 import Reika.DragonAPI.Libraries.Rendering.ReikaRenderHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
+import Reika.DragonAPI.Libraries.World.ReikaWorldHelper.WorldIDBase;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -398,6 +399,8 @@ public class APIPacketHandler implements PacketHandler {
 					break;
 				case OREDUMP:
 					break;
+				case WORLDID:
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -481,6 +484,9 @@ public class APIPacketHandler implements PacketHandler {
 			case OREDUMP:
 				OreDumpCommand.dumpClientside(sg);
 				break;
+			case WORLDID:
+				ReikaWorldHelper.clientWorldID = new WorldIDBase(data[0], data[1], data[2], sg);
+				break;
 			default:
 				break;
 		}
@@ -534,7 +540,9 @@ public class APIPacketHandler implements PacketHandler {
 		ENTITYVERIFYFAIL(),
 		CLEARCHAT(),
 		MODLOCK(),
-		OREDUMP();
+		OREDUMP(),
+		WORLDID(),
+		;
 
 		public static PacketIDs getEnum(int index) {
 			return PacketIDs.values()[index];
@@ -600,6 +608,8 @@ public class APIPacketHandler implements PacketHandler {
 					return 2;
 				case POPUP:
 					return 1;
+				case WORLDID:
+					return 6;
 				default:
 					return 0;
 			}

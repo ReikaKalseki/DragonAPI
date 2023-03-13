@@ -9,55 +9,47 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event.Client;
 
+import java.util.ArrayList;
+import java.util.Collections;
+
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.MinecraftForge;
 
-import cpw.mods.fml.common.eventhandler.Cancelable;
-import cpw.mods.fml.common.eventhandler.Event;
+import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers;
+import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers.EventWatcher;
+
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-@SideOnly(Side.CLIENT)
-public abstract class TileEntityRenderEvent extends Event {
+public abstract class TileEntityRenderEvent {
 
-	public final TileEntitySpecialRenderer tesr;
-	public final TileEntity tileEntity;
-	public final double renderPosX;
-	public final double renderPosY;
-	public final double renderPosZ;
-	public final float partialTickTime;
+	private static final ArrayList<TileRenderWatcher> listeners = new ArrayList();
 
-	public TileEntityRenderEvent(TileEntitySpecialRenderer tesr, TileEntity te, double par2, double par4, double par6, float par8) {
-		tileEntity = te;
-		renderPosX = par2;
-		renderPosY = par4;
-		renderPosZ = par6;
-		partialTickTime = par8;
-		this.tesr = tesr;
+	public static void addListener(TileRenderWatcher l) {
+		listeners.add(l);
+		Collections.sort(listeners, EventWatchers.comparator);
 	}
 
+	@SideOnly(Side.CLIENT)
 	public static void fire(TileEntitySpecialRenderer tesr, TileEntity te, double par2, double par4, double par6, float par8) {
-		if (!MinecraftForge.EVENT_BUS.post(new TileEntityRenderEvent.Pre(tesr, te, par2, par4, par6, par8))) {
-			tesr.renderTileEntityAt(te, par2, par4, par6, par8);
-			MinecraftForge.EVENT_BUS.post(new TileEntityRenderEvent.Post(tesr, te, par2, par4, par6, par8));
+		for (TileRenderWatcher l : listeners) {
+			if (l.preTileRender(tesr, te, par2, par4, par6, par8)) {
+				return;
+			}
+		}
+		tesr.renderTileEntityAt(te, par2, par4, par6, par8);
+		for (TileRenderWatcher l : listeners) {
+			l.postTileRender(tesr, te, par2, par4, par6, par8);
 		}
 	}
 
-	@Cancelable
-	public static class Pre extends TileEntityRenderEvent {
+	public static interface TileRenderWatcher extends EventWatcher {
 
-		public Pre(TileEntitySpecialRenderer tesr, TileEntity te, double par2, double par4, double par6, float par8) {
-			super(tesr, te, par2, par4, par6, par8);
-		}
-
-	}
-
-	public static class Post extends TileEntityRenderEvent {
-
-		public Post(TileEntitySpecialRenderer tesr, TileEntity te, double par2, double par4, double par6, float par8) {
-			super(tesr, te, par2, par4, par6, par8);
-		}
+		/** Return true to act like an event cancel */
+		@SideOnly(Side.CLIENT)
+		boolean preTileRender(TileEntitySpecialRenderer tesr, TileEntity te, double par2, double par4, double par6, float par8);
+		@SideOnly(Side.CLIENT)
+		void postTileRender(TileEntitySpecialRenderer tesr, TileEntity te, double par2, double par4, double par6, float par8);
 
 	}
 
