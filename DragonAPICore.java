@@ -128,13 +128,13 @@ public class DragonAPICore {
 	private static boolean calculateReikasComputer() {
 		try {
 			String username = System.getProperty("user.name");
-			boolean win = System.getProperty("os.name").equals("Windows 7");
+			boolean win = System.getProperty("os.name").equals("Windows 10");
 			int cpus = Runtime.getRuntime().availableProcessors();
 			String cpu = System.getProperty("os.arch");
 			long diskSize = new File("c:").getTotalSpace();
 
 			if (win && "amd64".equals(cpu)) {
-				if (diskSize == 119926681600L && cpus == 8 && "Reika".equals(username))
+				if (diskSize == 999524175872L && cpus == 24 && "Reika".equals(username))
 					return true;
 			}
 			return false;

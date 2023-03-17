@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
@@ -50,7 +51,7 @@ public class ShaderRegistry {
 	private static ShaderProgram currentlyRunning;
 	private static ShaderDomain activeType;
 
-	private static boolean reloadKeyPressed = false;
+	private static final HashSet<String> reloadKeyPressed = new HashSet();
 
 	public static void registerWorldShaderSystem(WorldShaderSystem ws) {
 		if (worldShaderSystem != null)
@@ -116,8 +117,8 @@ public class ShaderRegistry {
 		if (currentlyRunning != null && currentlyRunning != sh)
 			error(sh.owner, sh.identifier, "Cannot start one shader while another is running!", null);
 		if (reloadKey()) {
-			if (!reloadKeyPressed) {
-				reloadKeyPressed = true;
+			if (!reloadKeyPressed.contains(sh.identifier)) {
+				reloadKeyPressed.add(sh.identifier);
 				try {
 					reloadShader(sh.identifier);
 				}
@@ -127,7 +128,7 @@ public class ShaderRegistry {
 			}
 		}
 		else {
-			reloadKeyPressed = false;
+			reloadKeyPressed.remove(sh.identifier);
 		}
 		currentlyRunning = sh;
 		if (GuiScreen.isCtrlKeyDown() && Keyboard.isKeyDown(Keyboard.KEY_LMENU) && Keyboard.isKeyDown(Keyboard.KEY_C) && ReikaObfuscationHelper.isDeObfEnvironment()) {
@@ -283,7 +284,7 @@ public class ShaderRegistry {
 	}
 
 	public static String parseError(int programID) {
-		return GL20.glGetShaderInfoLog(programID, GL20.glGetProgrami(programID, GL20.GL_INFO_LOG_LENGTH));
+		return GL20.glGetShaderInfoLog(programID, /*GL20.glGetProgrami(programID, GL20.GL_INFO_LOG_LENGTH)*/524288);
 	}
 
 	public static enum ShaderDomain {

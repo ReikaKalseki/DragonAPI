@@ -98,8 +98,12 @@ public class StructureRenderer {
 	}
 
 	public StructureRenderer(FilledBlockArray structure, HashSet<Coordinate> alpha) {
+		this(structure, alpha, null);
+	}
+
+	public StructureRenderer(FilledBlockArray structure, HashSet<Coordinate> alpha, HashMap<Coordinate, BiomeGenBase> biomes) {
 		array = structure;
-		access = new RenderAccess(array, alpha);
+		access = new RenderAccess(array, alpha, biomes);
 		renderer = new RenderBlocks(access);
 		this.reset();
 	}
@@ -510,14 +514,18 @@ public class StructureRenderer {
 		protected final Coordinate negativeCorner;
 		protected final Coordinate offset;
 
+		private final HashMap<Coordinate, BiomeGenBase> biomeCoords;
+
 		private boolean hasAnyAlpha = false;
 
-		private RenderAccess(FilledBlockArray arr, HashSet<Coordinate> alpha) {
+		private RenderAccess(FilledBlockArray arr, HashSet<Coordinate> alpha, HashMap<Coordinate, BiomeGenBase> biomes) {
 			offset = new Coordinate(-arr.getMidX(), -arr.getMidY(), -arr.getMidZ());
 			arr.offset(offset.xCoord, offset.yCoord, offset.zCoord);
 
 			data = new PositionData[arr.getSizeX()][arr.getSizeY()][arr.getSizeZ()];
 			negativeCorner = new Coordinate(arr.getMinX(), arr.getMinY(), arr.getMinZ());
+
+			biomeCoords = biomes;
 
 			int axo = Integer.MAX_VALUE;
 			int ayo = Integer.MAX_VALUE;
@@ -605,7 +613,8 @@ public class StructureRenderer {
 		@Override
 		@SideOnly(Side.CLIENT)
 		public BiomeGenBase getBiomeGenForCoords(int x, int z) {
-			return BiomeGenBase.ocean;
+			BiomeGenBase b = biomeCoords == null ? null : biomeCoords.get(new Coordinate(x, 0, z));
+			return b != null ? b : BiomeGenBase.ocean;
 		}
 
 		@Override
