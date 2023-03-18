@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -53,6 +53,11 @@ public class StopChunkLoadWorld extends Patcher {
 			m.instructions.insertBefore(toAddBefore, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Auxiliary/Trackers/PlayerChunkTracker", "shouldStopChunkloadingFor", "(Lnet/minecraft/entity/player/EntityPlayer;)Z", false));
 			m.instructions.insertBefore(toAddBefore, new JumpInsnNode(Opcodes.IFNE, jmpLabel));
 		}
+	}
+
+	@Override
+	public boolean computeFrames() {
+		return true;
 	}
 
 }

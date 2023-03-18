@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -16,6 +16,7 @@ import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.server.management.PlayerManager;
 
 import cpw.mods.fml.common.gameevent.TickEvent;
 
@@ -113,6 +114,11 @@ public class PlayerChunkTracker implements TickRegistry.TickHandler {
 	@Override
 	public String getLabel() {
 		return "Player Chunk Tracker";
+	}
+
+	public static void tryUpdatePlayerPertinentChunks(PlayerManager pm, EntityPlayerMP mp) {
+		if (!instance.shouldStopChunkloadingFor(mp))
+			pm.updatePlayerPertinentChunks(mp);
 	}
 
 	public static class TrackerEntry {

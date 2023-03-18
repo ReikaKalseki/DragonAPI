@@ -13,10 +13,11 @@ import org.objectweb.asm.tree.ClassNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 
+@Deprecated
 public class AddSmeltingEvent extends Patcher {
 
 	public AddSmeltingEvent() {
-		super("net.minecraft.item.crafting.FurnaceRecipes", "afa");
+		super("net.minecraft.item.crafting.FurnaceRecipes$", "afa");
 	}
 
 	@Override

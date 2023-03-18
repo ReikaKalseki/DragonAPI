@@ -135,7 +135,7 @@ public class FurnaceRecipeRewrite extends Patcher {
 
 	@Override
 	public boolean computeFrames() {
-		return super.computeFrames();//true;
+		return true;
 	}
 
 	public void addRecipe(ItemStack in, ItemStack out, float xp) {

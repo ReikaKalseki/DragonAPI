@@ -9,8 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.WorldServer;
@@ -18,6 +17,7 @@ import net.minecraft.world.gen.ChunkProviderServer;
 
 import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers;
 import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers.EventWatcher;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
 
@@ -25,7 +25,7 @@ import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
  * the chunk's data! */
 public class ChunkRequestEvent {
 
-	private static final ArrayList<ChunkRequestWatcher> listeners = new ArrayList();
+	private static ChunkRequestWatcher[] listeners = null;
 
 	private static WorldServer world;
 	private static ChunkProviderServer provider;
@@ -33,8 +33,8 @@ public class ChunkRequestEvent {
 	private static int chunkZ;
 
 	public static void addListener(ChunkRequestWatcher l) {
-		listeners.add(l);
-		Collections.sort(listeners, EventWatchers.comparator);
+		listeners = ReikaArrayHelper.addToFastArray(listeners, l, ChunkRequestWatcher.class);
+		Arrays.sort(listeners, EventWatchers.comparator);
 	}
 
 	public static boolean chunkIsLoaded() {
@@ -47,6 +47,8 @@ public class ChunkRequestEvent {
 	}
 
 	public static void fire(WorldServer w, ChunkProviderServer p, int x, int z) {
+		if (listeners == null)
+			return;
 		world = w;
 		provider = p;
 		chunkX = x;

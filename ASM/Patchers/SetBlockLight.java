@@ -58,6 +58,11 @@ public class SetBlockLight extends Patcher {
 	}
 
 	@Override
+	public boolean computeFrames() {
+		return true;
+	}
+
+	@Override
 	public boolean runWithCoreMod(CoreModDetection c) {
 		return true;//c != CoreModDetection.FASTCRAFT;
 	}

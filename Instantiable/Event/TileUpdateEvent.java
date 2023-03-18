@@ -20,7 +20,7 @@ public class TileUpdateEvent {
 	private static int watcherSize = 0;
 
 	public static void addWatcher(TileUpdateWatcher te) {
-		watchers = ReikaArrayHelper.addToFastArray(watchers, te);
+		watchers = ReikaArrayHelper.addToFastArray(watchers, te, TileUpdateWatcher.class);
 		watcherSize = watchers != null ? watchers.length : 0;
 	}
 

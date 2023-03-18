@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,8 +10,11 @@
 package Reika.DragonAPI.Auxiliary.Trackers;
 
 import net.minecraft.crash.CrashReport;
+import net.minecraft.crash.CrashReportCategory;
 
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
+
+import cpw.mods.fml.common.FMLCommonHandler;
 
 
 
@@ -42,6 +45,11 @@ public class CrashNotifications {
 			if (s != null)
 				c.getCategory().addCrashSection(n.getLabel(), s);
 		}
+	}
+
+	public static void fire(FMLCommonHandler fml, CrashReport c, CrashReportCategory cat) {
+		instance.notifyCrash(c);
+		fml.enhanceCrashReport(c, cat);
 	}
 
 	public static interface CrashNotification {

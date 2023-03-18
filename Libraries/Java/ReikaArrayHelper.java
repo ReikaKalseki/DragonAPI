@@ -674,13 +674,17 @@ public final class ReikaArrayHelper extends DragonAPICore {
 	}
 
 	public static <E> E[] addToFastArray(E[] arr, E te) {
+		return addToFastArray(arr, te, te.getClass());
+	}
+
+	public static <E> E[] addToFastArray(E[] arr, E te, Class arrayType) {
 		int size = arr == null ? 0 : arr.length;
 		size++;
-		E[] repl = (E[])Array.newInstance(te.getClass(), size);
-		if (arr != null)
+		E[] repl = (E[])Array.newInstance(arrayType, size);
+		if (arr != null && arr.length > 0)
 			System.arraycopy(arr, 0, repl, 0, arr.length);
-		arr[arr.length-1] = te;
-		return arr;
+		repl[repl.length-1] = te;
+		return repl;
 	}
 
 	public static <E> E[] removeFromFastArray(E[] arr, E te) {

@@ -9,8 +9,7 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Event.Client;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
@@ -18,27 +17,30 @@ import net.minecraft.client.renderer.WorldRenderer;
 
 import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers;
 import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers.EventWatcher;
+import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
 public class RenderBlockAtPosEvent {
 
-	private static final ArrayList<BlockRenderWatcher> listeners = new ArrayList();
+	private static BlockRenderWatcher[] listeners = null;
 
 	public static boolean continueRendering = false;
 
 	public static void addListener(BlockRenderWatcher l) {
-		listeners.add(l);
-		Collections.sort(listeners, EventWatchers.comparator);
+		listeners = ReikaArrayHelper.addToFastArray(listeners, l, BlockRenderWatcher.class);
+		Arrays.sort(listeners, EventWatchers.comparator);
 	}
 
 	@SideOnly(Side.CLIENT)
 	public static boolean fire(RenderBlocks rb, Block b, int x, int y, int z, WorldRenderer wr, int pass) {
-		for (BlockRenderWatcher l : listeners) {
-			if (l.onBlockTriedRender(b, x, y, z, wr, rb, pass)) {
-				continueRendering = false;
-				return false;
+		if (listeners != null) {
+			for (BlockRenderWatcher l : listeners) {
+				if (l.onBlockTriedRender(b, x, y, z, wr, rb, pass)) {
+					continueRendering = false;
+					return false;
+				}
 			}
 		}
 		return rb.renderBlockByRenderType(b, x, y, z) || continueRendering;
