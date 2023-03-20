@@ -108,6 +108,10 @@ public class HybridTank extends FluidTank {
 		}
 	}
 
+	public void addLiquid(FluidStack fs) {
+		this.addLiquid(fs.amount, fs.getFluid());
+	}
+
 	public void addLiquid(int amt, Fluid type) {
 		if (type == null)
 			return;

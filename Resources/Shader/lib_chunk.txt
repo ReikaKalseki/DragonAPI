@@ -21,3 +21,10 @@ vec3 getReal(vec4 vert) {
 vec3 getRelativeCoord(vec3 real) {
 	return real-vec3(float(chunkX), float(chunkY), float(chunkZ));
 }
+
+vec3 getDistanceToBlockEdge(vec3 real) {
+	float dx = abs(real.x-real.x);
+	float dy = abs(real.y-real.y);
+	float dz = abs(real.z-real.z);
+	return vec3(dx, dy, dz);
+}

@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -10,6 +10,7 @@
 package Reika.DragonAPI.ModInteract.ItemHandlers;
 
 import java.lang.reflect.Field;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Locale;
 
@@ -19,15 +20,14 @@ import net.minecraft.tileentity.TileEntity;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Base.ModHandlerBase;
 
-import buildcraft.transport.Pipe;
-import buildcraft.transport.PipeTransport;
 import buildcraft.transport.TileGenericPipe;
 
 public class BCPipeHandler extends ModHandlerBase {
 
-	public static enum Types {
+	public static enum Materials {
 		WOOD(),
 		STONE(),
 		COBBLESTONE(),
@@ -39,49 +39,58 @@ public class BCPipeHandler extends ModHandlerBase {
 		QUARTZ(),
 		LAPIS(),
 		DIAMOND(),
-		OBSIDIAN();
+		OBSIDIAN(),
+		DAIZULI();
 
-		public static final Types[] pipeList = values();
+		public static final Materials[] list = values();
 	}
 
-	private static final String[] fluidPipes = {
-		"pipeFluidsWood",
-		"pipeFluidsCobblestone",
-		"pipeFluidsStone",
-		"pipeFluidsIron",
-		"pipeFluidsGold",
-		"pipeFluidsVoid",
-		"pipeFluidsSandstone",
-		"pipeFluidsEmerald",
-	};
+	public static enum Pipes {
+		pipeFluidsWood(Materials.WOOD),
+		pipeFluidsCobblestone(Materials.COBBLESTONE),
+		pipeFluidsStone(Materials.STONE),
+		pipeFluidsIron(Materials.IRON),
+		pipeFluidsGold(Materials.GOLD),
+		pipeFluidsVoid(Materials.VOID),
+		pipeFluidsSandstone(Materials.SANDSTONE),
+		pipeFluidsDiamond(Materials.DIAMOND),
+		pipeFluidsEmerald(Materials.EMERALD),
 
-	private static final String[] itemPipes = {
-		"pipeItemsWood",
-		"pipeItemsEmerald",
-		"pipeItemsStone",
-		"pipeItemsCobblestone",
-		"pipeItemsIron",
-		"pipeItemsQuartz",
-		"pipeItemsGold",
-		"pipeItemsDiamond",
-		"pipeItemsObsidian",
-		"pipeItemsLapis",
-		"pipeItemsDaizuli",
-		"pipeItemsVoid",
-		"pipeItemsSandstone",
-	};
+		pipeItemsWood(Materials.WOOD),
+		pipeItemsEmerald(Materials.EMERALD),
+		pipeItemsStone(Materials.STONE),
+		pipeItemsCobblestone(Materials.COBBLESTONE),
+		pipeItemsIron(Materials.IRON),
+		pipeItemsQuartz(Materials.QUARTZ),
+		pipeItemsGold(Materials.GOLD),
+		pipeItemsDiamond(Materials.DIAMOND),
+		pipeItemsObsidian(Materials.OBSIDIAN),
+		pipeItemsLapis(Materials.LAPIS),
+		pipeItemsDaizuli(Materials.DAIZULI),
+		pipeItemsVoid(Materials.VOID),
+		pipeItemsSandstone(Materials.SANDSTONE),
 
-	private static final String[] powerPipes = {
-		"pipePowerWood",
-		"pipePowerCobblestone",
-		"pipePowerStone",
-		"pipePowerQuartz",
-		"pipePowerGold",
-		"pipePowerIron",
-		"pipePowerDiamond",
-	};
+		pipePowerWood(Materials.WOOD),
+		pipePowerCobblestone(Materials.COBBLESTONE),
+		pipePowerStone(Materials.STONE),
+		pipePowerQuartz(Materials.QUARTZ),
+		pipePowerGold(Materials.GOLD),
+		pipePowerIron(Materials.IRON),
+		pipePowerDiamond(Materials.DIAMOND),
+		pipePowerEmerald(Materials.EMERALD),
+		;
 
-	private final HashMap<String, Item> itemIDs = new HashMap();
+		public static Pipes[] list = values();
+
+		public final Materials material;
+
+		private Pipes(Materials m) {
+			material = m;
+		}
+	}
+
+	private final EnumMap<Pipes, Item> itemIDs = new EnumMap(Pipes.class);
+	private final HashMap<Item, Pipes> reverseIDs = new HashMap();
 
 	private static final BCPipeHandler instance = new BCPipeHandler();
 
@@ -93,20 +102,10 @@ public class BCPipeHandler extends ModHandlerBase {
 		Block idpipe = null;
 		if (this.hasMod()) {
 			Class transport = this.getMod().getBlockClass();
-			for (int i = 0; i < fluidPipes.length; i++) {
-				String varname = fluidPipes[i];
-				Item id = this.getPipeItemID(transport, varname);
-				itemIDs.put(fluidPipes[i], id);
-			}
-			for (int i = 0; i < itemPipes.length; i++) {
-				String varname = itemPipes[i];
-				Item id = this.getPipeItemID(transport, varname);
-				itemIDs.put(itemPipes[i], id);
-			}
-			for (int i = 0; i < powerPipes.length; i++) {
-				String varname = powerPipes[i];
-				Item id = this.getPipeItemID(transport, varname);
-				itemIDs.put(powerPipes[i], id);
+			for (int i = 0; i < Pipes.list.length; i++) {
+				Item id = this.getPipeItemID(transport, Pipes.list[i].name());
+				itemIDs.put(Pipes.list[i], id);
+				reverseIDs.put(id, Pipes.list[i]);
 			}
 			try {
 				Field pipe = transport.getField("genericPipeBlock");
@@ -193,66 +192,36 @@ public class BCPipeHandler extends ModHandlerBase {
 		return ModList.BCTRANSPORT;
 	}
 
-	public Types getPipeType(TileEntity te) {
-		if (!this.initializedProperly())
+	public Materials getPipeType(TileEntity te) {
+		if (!this.initializedProperly() || !ModList.BCTRANSPORT.isLoaded())
 			return null;
-		try {
-			Class test = Class.forName("buildcraft.transport.TileGenericPipe");
-		}
-		catch (ClassNotFoundException e) {
-			DragonAPICore.logError("Pipe reader failed! Class not found!");
-			e.printStackTrace();
-			this.logFailure(e);
-			return null;
-		}
-		try {
-			if (te instanceof TileGenericPipe) {
-				TileGenericPipe tp = (TileGenericPipe)te;
-				Pipe p = tp.pipe;
-				Item id = p.item;
-				PipeTransport pt = p.transport;
-				switch(pt.getPipeType()) {
-					case FLUID:
-						return this.getType(id, fluidPipes);
-					case ITEM:
-						return this.getType(id, itemPipes);
-					case POWER:
-						return this.getType(id, powerPipes);
-					default:
-						return null;
-				}
-			}
-		}
-		catch (Exception e) {
-			DragonAPICore.logError("DRAGONAPI: Pipe reader failed!");
-			e.printStackTrace();
-			this.logFailure(e);
-			return null;
+		return this.doGetPipeType(te);
+	}
+
+	@ModDependent(ModList.BCTRANSPORT)
+	public Materials doGetPipeType(TileEntity te) {
+		if (te instanceof TileGenericPipe) {
+			TileGenericPipe tp = (TileGenericPipe)te;
+			Pipes p = reverseIDs.get(tp.pipe.item);
+			return p == null ? null : p.material;
 		}
 		return null;
 	}
 
-	private Types getType(Item id, String[] names) {
-		for (int i = 0; i < names.length; i++) {
-			String sg = names[i];
-			Item item = itemIDs.get(sg);
-			if (id == item) {
-				return this.getType(sg);
-			}
-		}
-		return null;
+	public Item getPipe(Pipes p) {
+		return itemIDs.get(p);
 	}
 
-	private Types getType(String sg) {
+	private Materials getType(String sg) {
 		sg = sg.toLowerCase(Locale.ENGLISH);
 		sg = sg.replaceAll("pipe", "");
 		sg = sg.replaceAll("items", "");
 		sg = sg.replaceAll("fluids", "");
 		sg = sg.replaceAll("power", "");
-		for (int i = 0; i < Types.pipeList.length; i++) {
-			String type = Types.pipeList[i].name().toLowerCase(Locale.ENGLISH);
+		for (int i = 0; i < Materials.list.length; i++) {
+			String type = Materials.list[i].name().toLowerCase(Locale.ENGLISH);
 			if (type.equals(sg))
-				return Types.pipeList[i];
+				return Materials.list[i];
 		}
 		return null;
 	}

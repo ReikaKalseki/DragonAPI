@@ -14,6 +14,7 @@ import net.minecraft.tileentity.TileEntity;
 import Reika.DragonAPI.Interfaces.Callbacks.EventWatchers.EventWatcher;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 
+/** Do NOT register global or persistent handlers here, or you will make ALL TEs run through it and hurt performance! */
 public class TileUpdateEvent {
 
 	private static TileUpdateWatcher[] watchers = null;

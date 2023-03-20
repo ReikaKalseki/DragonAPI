@@ -29,7 +29,7 @@ public class StopChunkLoadWorld extends Patcher {
 	}
 
 	@Override
-	public void apply(ClassNode cn) {
+	public void apply(ClassNode cn) { //TODO could do by redirecting func_152379_p and making it return -1 (so the loops never run)
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_72903_x", "setActivePlayerChunksAndCheckLight", "()V");
 
 		AbstractInsnNode checkCastPlayer = ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.CHECKCAST);

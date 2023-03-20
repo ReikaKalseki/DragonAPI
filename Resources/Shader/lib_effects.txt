@@ -1,0 +1,111 @@
+//YOU NEED TO ALSO IMPORT #COLOR FOR THIS TO WORK
+
+vec4 getGrayscaledPixel(vec2 coord, float dx, float dy) {
+	vec4 color = texture2D(bgl_RenderedTexture, coord);
+	return vec4(getGrayscaledColor(color.rgb), 1.0);
+}
+
+vec4 getBlurredPixel(vec2 coord, float dx, float dy) {
+	vec4 color = texture2D(bgl_RenderedTexture, coord);
+	color += texture2D(bgl_RenderedTexture, coord+vec2(dx, 0));
+	color += texture2D(bgl_RenderedTexture, coord-vec2(dx, 0));
+	color += texture2D(bgl_RenderedTexture, coord+vec2(0, dy));
+	color += texture2D(bgl_RenderedTexture, coord-vec2(0, dy));
+	color *= 0.2;
+	return color;
+}
+
+vec4 getGrayBlurredPixel(vec2 coord, float dx, float dy) {
+	return vec4(getGrayscaledColor(getBlurredPixel(coord, dx, dy).rgb), 1.0);
+}
+
+void makeGrayBlurredKernel(inout vec4 n[9], vec2 coord) {
+	float w = 1.0 / float(screenWidth);
+	float h = 1.0 / float(screenHeight);
+
+	n[0] = getGrayBlurredPixel(coord + vec2( -w, -h), w, h);
+	n[1] = getGrayBlurredPixel(coord + vec2(0.0, -h), w, h);
+	n[2] = getGrayBlurredPixel(coord + vec2(  w, -h), w, h);
+	n[3] = getGrayBlurredPixel(coord + vec2( -w, 0.0), w, h);
+	n[4] = getGrayBlurredPixel(coord, w, h);
+	n[5] = getGrayBlurredPixel(coord + vec2(  w, 0.0), w, h);
+	n[6] = getGrayBlurredPixel(coord + vec2( -w, h), w, h);
+	n[7] = getGrayBlurredPixel(coord + vec2(0.0, h), w, h);
+	n[8] = getGrayBlurredPixel(coord + vec2(  w, h), w, h);
+}
+
+void makeGrayKernel(inout vec4 n[9], vec2 coord) {
+	float w = 1.0 / float(screenWidth);
+	float h = 1.0 / float(screenHeight);
+
+	n[0] = getGrayscaledPixel(coord + vec2( -w, -h), w, h);
+	n[1] = getGrayscaledPixel(coord + vec2(0.0, -h), w, h);
+	n[2] = getGrayscaledPixel(coord + vec2(  w, -h), w, h);
+	n[3] = getGrayscaledPixel(coord + vec2( -w, 0.0), w, h);
+	n[4] = getGrayscaledPixel(coord, w, h);
+	n[5] = getGrayscaledPixel(coord + vec2(  w, 0.0), w, h);
+	n[6] = getGrayscaledPixel(coord + vec2( -w, h), w, h);
+	n[7] = getGrayscaledPixel(coord + vec2(0.0, h), w, h);
+	n[8] = getGrayscaledPixel(coord + vec2(  w, h), w, h);
+}
+
+void makeBlurredKernel(inout vec4 n[9], vec2 coord) {
+	float w = 1.0 / float(screenWidth);
+	float h = 1.0 / float(screenHeight);
+
+	n[0] = getBlurredPixel(coord + vec2( -w, -h), w, h);
+	n[1] = getBlurredPixel(coord + vec2(0.0, -h), w, h);
+	n[2] = getBlurredPixel(coord + vec2(  w, -h), w, h);
+	n[3] = getBlurredPixel(coord + vec2( -w, 0.0), w, h);
+	n[4] = getBlurredPixel(coord, w, h);
+	n[5] = getBlurredPixel(coord + vec2(  w, 0.0), w, h);
+	n[6] = getBlurredPixel(coord + vec2( -w, h), w, h);
+	n[7] = getBlurredPixel(coord + vec2(0.0, h), w, h);
+	n[8] = getBlurredPixel(coord + vec2(  w, h), w, h);
+}
+
+void makeKernel(inout vec4 n[9], vec2 coord) {
+	float w = 1.0 / float(screenWidth);
+	float h = 1.0 / float(screenHeight);
+
+	n[0] = texture2D(bgl_RenderedTexture, vec2(coord + vec2( -w, -h)));
+	n[1] = texture2D(bgl_RenderedTexture, vec2(coord + vec2(0.0, -h)));
+	n[2] = texture2D(bgl_RenderedTexture, vec2(coord + vec2(  w, -h)));
+	n[3] = texture2D(bgl_RenderedTexture, vec2(coord + vec2( -w, 0.0)));
+	n[4] = texture2D(bgl_RenderedTexture, coord);
+	n[5] = texture2D(bgl_RenderedTexture, vec2(coord + vec2(  w, 0.0)));
+	n[6] = texture2D(bgl_RenderedTexture, vec2(coord + vec2( -w, h)));
+	n[7] = texture2D(bgl_RenderedTexture, vec2(coord + vec2(0.0, h)));
+	n[8] = texture2D(bgl_RenderedTexture, vec2(coord + vec2(  w, h)));
+}
+
+vec3 computeSobel(vec4 n[9]) {
+	vec4 sobel_edge_h = n[2] + (2.0*n[5]) + n[8] - (n[0] + (2.0*n[3]) + n[6]);
+  	vec4 sobel_edge_v = n[0] + (2.0*n[1]) + n[2] - (n[6] + (2.0*n[7]) + n[8]);
+	vec4 sobel = sqrt((sobel_edge_h * sobel_edge_h) + (sobel_edge_v * sobel_edge_v));
+	return sobel.rgb;
+}
+
+vec3 getEdgeDetectedColor(vec2 coord) {
+	vec4 n[9];
+	makeKernel( n, texcoord );
+	return computeSobel(n);
+}
+
+vec3 getGrayscaledEdgeDetectedColor(vec2 coord) {
+	vec4 n[9];
+	makeGrayKernel( n, texcoord );
+	return computeSobel(n);
+}
+
+vec3 getBlurredEdgeDetectedColor(vec2 coord) {
+	vec4 n[9];
+	makeBlurredKernel( n, texcoord );
+	return computeSobel(n);
+}
+
+vec3 getGrayscaledBlurredEdgeDetectedColor(vec2 coord) {
+	vec4 n[9];
+	makeGrayBlurredKernel( n, texcoord );
+	return computeSobel(n);
+}

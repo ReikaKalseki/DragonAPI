@@ -18,3 +18,8 @@ vec3 hsb2rgb(vec3 c){
 float getVisualBrightness(vec3 color) {
 	return color.r*0.2989+color.g*0.5870+color.b*0.1140;
 }
+
+vec3 getGrayscaledColor(vec3 color) {
+	float br = getVisualBrightness(color);
+	return vec3(br, br, br);
+}

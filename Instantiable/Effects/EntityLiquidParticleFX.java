@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -22,6 +22,8 @@ import Reika.DragonAPI.Libraries.Rendering.ReikaLiquidRenderer;
 
 public class EntityLiquidParticleFX extends EntityFX {
 
+	private final Fluid fluid;
+
 	public EntityLiquidParticleFX(World world, double x, double y, double z, Fluid f) {
 		this(world, x, y, z, 0, 0, 0, f);
 	}
@@ -32,11 +34,11 @@ public class EntityLiquidParticleFX extends EntityFX {
 		motionY = vy;
 		motionZ = vz;
 		particleIcon = ReikaLiquidRenderer.getFluidIconSafe(f);
+		fluid = f;
 	}
 
 	@Override
-	public int getFXLayer()
-	{
+	public int getFXLayer() {
 		return 2;
 	}
 
@@ -47,10 +49,18 @@ public class EntityLiquidParticleFX extends EntityFX {
 		BlendMode.DEFAULT.apply();
 		GL11.glColor4f(1, 1, 1, 1);
 		v5.startDrawingQuads();
-		v5.setBrightness(this.getBrightnessForRender(0));
+		v5.setBrightness(fluid.getLuminosity() >= 7 ? 240 : this.getBrightnessForRender(0));
 		super.renderParticle(v5, x, y, z, a, b, c);
 		v5.draw();
 		v5.startDrawingQuads();
+	}
+
+	public void setLife(int ticks) {
+		particleMaxAge = ticks;
+	}
+
+	public void setGravity(float g) {
+		particleGravity = g;
 	}
 
 }
