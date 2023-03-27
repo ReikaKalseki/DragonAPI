@@ -211,7 +211,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 	}
 
 	public void drawLine(double x, double y, double x2, double y2, int color, LineType type) {
-		if (GL11.glGetFloat(GL11.GL_LINE_WIDTH) < 1.5F)
+		if (type != LineType.THIN && GL11.glGetFloat(GL11.GL_LINE_WIDTH) < 1.5F)
 			GL11.glLineWidth(1.5F);
 		GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
 		int alpha = ReikaColorAPI.getAlpha(color);

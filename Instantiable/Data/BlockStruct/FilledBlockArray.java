@@ -261,7 +261,7 @@ public class FilledBlockArray extends StructuredBlockArray {
 			BlockCheck bk = this.getBlockKey(x, y, z);
 			if (!bk.matchInWorld(world, x, y, z)) {
 				if (logMismatches)
-					ReikaJavaLibrary.pConsole(x+","+y+","+z+" > Wanted ["+bk.getClass().getSimpleName()+"] "+bk.asBlockKey().blockID.getLocalizedName()+":"+bk.asBlockKey().metadata+", found "+world.getBlock(x, y, z).getLocalizedName()+":"+world.getBlockMetadata(x, y, z));
+					ReikaJavaLibrary.pConsole(x+","+y+","+z+" > Wanted ["+bk.getClass().getSimpleName()+"] "+bk.asBlockKey().blockID.getLocalizedName()+":"+bk.asBlockKey().metadata+", found "+world.getBlock(x, y, z).getLocalizedName()+"["+world.getBlock(x, y, z)+"]:"+world.getBlockMetadata(x, y, z));
 				//bk.place(world, x, y, z, 3);
 				//world.setBlock(x, y, z, Blocks.brick_block);
 				if (call != null)

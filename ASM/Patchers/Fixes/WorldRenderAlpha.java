@@ -5,6 +5,8 @@ import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
+import net.minecraftforge.classloading.FMLForgePlugin;
+
 import Reika.DragonAPI.ASM.Patchers.Patcher;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
@@ -13,7 +15,8 @@ public class WorldRenderAlpha extends Patcher {
 
 	public WorldRenderAlpha() {
 		//super("net.minecraft.client.renderer.EntityRenderer", "blt");
-		super("net.minecraft.client.renderer.Tessellator", "bmh");
+		//super("net.minecraft.client.renderer.Tessellator", "bmh");
+		super("net.minecraft.client.renderer.WorldRenderer", "blo");
 	}
 
 	@Override
@@ -43,8 +46,9 @@ public class WorldRenderAlpha extends Patcher {
 
 
 
-		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_78371_b", "startDrawing", "(I)V");
-		m.instructions.insert(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/ASMCallsClient", "preTessellatorStart", "()V", false));
+		MethodNode m = ReikaASMHelper.getMethodByName(cn, "func_147890_b", "preRenderBlocks", "(I)V");
+		MethodInsnNode ref = ReikaASMHelper.getFirstMethodCallByName(cn, m, FMLForgePlugin.RUNTIME_DEOBF ? "func_78382_b" : "startDrawingQuads");
+		m.instructions.insertBefore(ref, new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/ASM/ASMCallsClient", "preTessellatorStart", "()V", false));
 	}
 
 }

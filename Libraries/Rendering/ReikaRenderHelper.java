@@ -1912,4 +1912,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 	}
 
+	public static void rockScreen(int ticks) {
+		Minecraft.getMinecraft().renderViewEntity.hurtTime = Math.max(Minecraft.getMinecraft().renderViewEntity.hurtTime, ticks);
+	}
+
 }

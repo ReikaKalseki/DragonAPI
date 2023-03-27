@@ -2601,15 +2601,20 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		public final long sessionWorldIndex;
 		public final String originalFolder;
 
-		public WorldIDBase(long time, long session, int index, String folder) {
+		public WorldIDBase(long time, long session, long index, String folder) {
 			worldCreationTime = time;
 			sourceSessionStartTime = session;
 			sessionWorldIndex = index;
 			originalFolder = folder;
 		}
 
-		public long getUniqueHash() {
+		public final long getUniqueHash() {
 			return worldCreationTime ^ ((((long)originalFolder.hashCode()) << 32) | sessionWorldIndex);
+		}
+
+		@Override
+		public final String toString() {
+			return this.getClass().getSimpleName()+" "+worldCreationTime+" in "+originalFolder+"#"+sessionWorldIndex;
 		}
 
 	}

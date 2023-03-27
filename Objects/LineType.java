@@ -6,7 +6,8 @@ public enum LineType {
 
 	SOLID((short)0xFFFF),
 	DASHED((short)0xF0F0),
-	DOTTED((short)0xAAAA);
+	DOTTED((short)0xAAAA),
+	THIN((short)0xFFFF);
 
 	private final short value;
 

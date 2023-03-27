@@ -10,6 +10,7 @@
 package Reika.DragonAPI.Auxiliary;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import org.lwjgl.opengl.GL11;
@@ -29,6 +30,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.tileentity.TileEntity;
@@ -145,6 +147,9 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher, BlockRenderWa
 	private long IDMsgCooldown = 0;
 
 	private final Interpolation biomeHumidityFlammability = new Interpolation(false);
+
+	private final HashSet<String> oreDictLogSpamReductionStrings = new HashSet();
+	private Item lastOredictedItem;
 
 	private DragonAPIEventWatcher() {
 		ProfileEvent.registerHandler("debug", this);
@@ -488,10 +493,15 @@ public class DragonAPIEventWatcher implements ProfileEventWatcher, BlockRenderWa
 		else if (evt.Name == null || evt.Name.isEmpty())
 			throw new WTFException("Someone registered "+evt.Ore+" under a null or empty OreDict name!", true);
 		else {
-			if (evt.Name.equals("transdimBlock") && evt.Ore.getItemDamage() > 0) { //prevent 4k lines from ender chests
-				return;
+			if (!oreDictLogSpamReductionStrings.contains(evt.Name)) {
+				DragonAPICore.log("Logged OreDict registration of "+evt.Ore+" as '"+evt.Name+"'.");
+				oreDictLogSpamReductionStrings.add(evt.Name);
 			}
-			DragonAPICore.log("Logged OreDict registration of "+evt.Ore+" as '"+evt.Name+"'.");
+			Item i = evt.Ore.getItem();
+			if (i != lastOredictedItem) {
+				oreDictLogSpamReductionStrings.clear();
+				lastOredictedItem = i;
+			}
 		}
 	}
 

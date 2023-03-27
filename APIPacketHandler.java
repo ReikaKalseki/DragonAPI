@@ -485,7 +485,10 @@ public class APIPacketHandler implements PacketHandler {
 				OreDumpCommand.dumpClientside(sg);
 				break;
 			case WORLDID:
-				ReikaWorldHelper.clientWorldID = new WorldIDBase(data[0], data[1], data[2], sg);
+				long time = ReikaJavaLibrary.buildLong(data[0], data[1]);
+				long session = ReikaJavaLibrary.buildLong(data[2], data[3]);
+				long index = ReikaJavaLibrary.buildLong(data[4], data[5]);
+				ReikaWorldHelper.clientWorldID = new WorldIDBase(time, session, index, sg);
 				break;
 			default:
 				break;

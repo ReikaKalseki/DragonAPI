@@ -571,6 +571,7 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	}
 
 	public static int sumDigits(long val) {
+		val = Math.abs(val);
 		int sum = 0;
 		while (val > 0) {
 			sum += (int)(val%10);

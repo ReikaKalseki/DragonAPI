@@ -29,6 +29,7 @@ import net.minecraft.client.audio.MusicTicker.MusicType;
 import net.minecraft.client.audio.SoundHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
@@ -141,6 +142,11 @@ public class ReikaSoundHelper {
 
 	private static void sendSound(SoundEnum s, World world, double x, double y, double z, float vol, float pitch, boolean atten) {
 		ReikaPacketHelper.sendSoundPacket(s, world, x, y, z, vol, pitch, atten);
+	}
+
+	@SideOnly(Side.CLIENT)
+	public static ISound playClientSound(SoundEnum s, TileEntity te, float vol, float pitch) {
+		return playClientSound(s, te.xCoord+0.5, te.yCoord+0.5, te.zCoord+0.5, vol, pitch, true);
 	}
 
 	@SideOnly(Side.CLIENT)
