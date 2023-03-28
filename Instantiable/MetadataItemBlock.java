@@ -9,12 +9,19 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable;
 
+import java.util.List;
+
 import net.minecraft.block.Block;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlockWithMetadata;
 import net.minecraft.item.ItemStack;
 
 import Reika.DragonAPI.Interfaces.Registry.BlockEnum;
 import Reika.DragonAPI.Libraries.ReikaRegistryHelper;
+
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 
 
 public class MetadataItemBlock extends ItemBlockWithMetadata {
@@ -34,6 +41,20 @@ public class MetadataItemBlock extends ItemBlockWithMetadata {
 	@Override
 	public String getUnlocalizedName(ItemStack is) {
 		return super.getUnlocalizedName()+"."+is.getItemDamage();
+	}
+
+	@Override
+	@SideOnly(Side.CLIENT)
+	public void getSubItems(Item it, CreativeTabs tab, List li) {
+		BlockEnum e = (BlockEnum)ReikaRegistryHelper.getRegistryForObject(field_150939_a);
+		if (e == null) {
+			super.getSubItems(it, tab, li);
+		}
+		else {
+			for (int i = 0; i < e.getNumberMetadatas(); i++) {
+				li.add(new ItemStack(it, 1, i));
+			}
+		}
 	}
 
 	public static class MetadataItemBlockFixedName extends MetadataItemBlock {

@@ -53,6 +53,7 @@ public class ImagedGuiButton extends GuiButton {
 	public float hoverFadeSpeedUp = 0.08F;
 	public float hoverFadeSpeedDown = 0.15F;
 	private int ticks = 0;
+	private boolean isClicked;
 
 	public IIcon icon = null;
 	public int iconWidth = width;
@@ -188,6 +189,9 @@ public class ImagedGuiButton extends GuiButton {
 				this.onHoverTo();
 			}
 
+			if (!field_146123_n)
+				isClicked = false;
+
 			lastHover = field_146123_n;
 			hoverTicks = lastHover ? hoverTicks+1 : 0;
 			if (lastHover) {
@@ -198,10 +202,20 @@ public class ImagedGuiButton extends GuiButton {
 			}
 			ticks++;
 		}
+		else {
+			isClicked = false;
+		}
+		if (!enabled)
+			isClicked = false;
 	}
 
 	protected void updateVisibility() {
 
+	}
+
+	@Override
+	public final void mouseReleased(int x, int y) {
+		isClicked = false;
 	}
 
 	protected void renderButton() {
@@ -213,7 +227,20 @@ public class ImagedGuiButton extends GuiButton {
 
 	@Override
 	public final boolean mousePressed(Minecraft mc, int x, int y) {
-		return enabled && visible && this.isPositionWithin(x, y);
+		if (visible && this.isPositionWithin(x, y)) {
+			if (enabled) {
+				isClicked = true;
+				return true;
+			}
+			else {
+				this.onFailedClick();
+			}
+		}
+		return false;
+	}
+
+	protected void onFailedClick() {
+
 	}
 
 	protected boolean isPositionWithin(int mx, int my) {
@@ -291,6 +318,10 @@ public class ImagedGuiButton extends GuiButton {
 
 	public float getHoverFade() {
 		return hoverFade;
+	}
+
+	public boolean isClicked() {
+		return isClicked;
 	}
 
 	public static enum TextAlign {
