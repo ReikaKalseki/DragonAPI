@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -19,7 +19,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.IIcon;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
 import Reika.DragonAPI.DragonAPICore;
@@ -65,11 +64,7 @@ public class ReikaLiquidRenderer {
 	}
 
 	public static void bindFluidTexture(Fluid fluid) {
-		if (fluid.equals(FluidRegistry.WATER) || fluid.equals(FluidRegistry.LAVA) || fluid.canBePlacedInWorld())
-			ReikaTextureHelper.bindTerrainTexture();
-		else
-			//ReikaTextureHelper.bindItemTexture();
-			ReikaTextureHelper.bindTerrainTexture(); //required to mesh with BuildCraft rendering
+		ReikaTextureHelper.bindTerrainTexture();
 	}
 
 	public static int[] getGLLists(FluidStack fluidStack, World world, boolean flowing) {

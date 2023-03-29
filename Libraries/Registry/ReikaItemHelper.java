@@ -759,7 +759,7 @@ public final class ReikaItemHelper extends DragonAPICore {
 
 	public static ItemStack lookupItem(String s) {
 		if (Strings.isNullOrEmpty(s))
-			throw new IllegalArgumentException("Invalid item string lookup os null or empty");
+			throw new IllegalArgumentException("Invalid item string lookup is null or empty");
 		String[] parts = s.split(":");
 		int m = 0;
 		if (parts.length == 3) {

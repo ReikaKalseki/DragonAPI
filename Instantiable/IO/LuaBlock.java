@@ -491,6 +491,23 @@ public abstract class LuaBlock {
 		return ret;
 	}
 
+	public NBTTagCompound asNBT() {
+		return this.asNBT(false);
+	}
+
+	private NBTTagCompound asNBT(boolean allowList) {
+		if (!allowList && this.isList())
+			throw new IllegalArgumentException("The top-level LuaBlock must be a map type (root NBTTagCompound)!");
+		NBTTagCompound tag = new NBTTagCompound();
+		for (String s : data.keySet()) {
+			tag.setTag(s, ReikaNBTHelper.getTagForObject(this.parseObject(data.get(s))));
+		}
+		for (LuaBlockKey s : children.keySet()) {
+			--append recursive
+		}
+		return tag;
+	}
+
 	protected void onFinish() {
 
 	}

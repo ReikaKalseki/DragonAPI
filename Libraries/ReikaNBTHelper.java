@@ -41,7 +41,6 @@ import net.minecraftforge.fluids.FluidRegistry;
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
-import Reika.DragonAPI.Instantiable.IO.LuaBlock;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
 
 public final class ReikaNBTHelper extends DragonAPICore {
@@ -496,14 +495,6 @@ public final class ReikaNBTHelper extends DragonAPICore {
 	public static void replaceTag(NBTTagList NBT, int idx, NBTBase tag) {
 		NBT.tagList.remove(idx);
 		NBT.tagList.add(idx, tag);
-	}
-
-	public static NBTTagCompound constructNBT(LuaBlock lb) {
-		if (lb.isList())
-			throw new IllegalArgumentException("The top-level LuaBlock must be a map type (root NBTTagCompound)!");
-		NBTTagCompound tag = new NBTTagCompound();
-		addMapToTags(tag, lb.asHashMap());
-		return tag;
 	}
 	/*
 	public static class CompoundNBTIO {

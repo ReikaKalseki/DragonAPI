@@ -26,6 +26,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.IRecipe;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
@@ -35,7 +36,6 @@ import Reika.DragonAPI.Base.DragonAPIMod;
 import Reika.DragonAPI.IO.ReikaFileReader;
 import Reika.DragonAPI.Instantiable.IO.LuaBlock.LuaBlockDatabase;
 import Reika.DragonAPI.Instantiable.IO.LuaBlock.NBTLuaBlock;
-import Reika.DragonAPI.Libraries.ReikaNBTHelper;
 import Reika.DragonAPI.Libraries.ReikaRecipeHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -276,7 +276,7 @@ public class CustomRecipeList {
 		ret = ReikaItemHelper.getSizedItemStack(ret, amt);
 
 		if (ret != null && nbt != null) {
-			ret.stackTagCompound = ReikaNBTHelper.constructNBT(nbt);
+			ret.stackTagCompound = (NBTTagCompound)nbt.asNBT();
 		}
 
 		if (ret == null && !tolerateNull) {
