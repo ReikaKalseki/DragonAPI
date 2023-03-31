@@ -30,7 +30,9 @@ import org.apache.commons.io.Charsets;
 import net.minecraft.enchantment.Enchantment;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 
 import Reika.DragonAPI.DragonAPICore;
 import Reika.DragonAPI.Exception.MisuseException;
@@ -492,20 +494,29 @@ public abstract class LuaBlock {
 	}
 
 	public NBTTagCompound asNBT() {
-		return this.asNBT(false);
+		return (NBTTagCompound)this.asNBT(false);
 	}
 
-	private NBTTagCompound asNBT(boolean allowList) {
+	private NBTBase asNBT(boolean allowList) {
 		if (!allowList && this.isList())
 			throw new IllegalArgumentException("The top-level LuaBlock must be a map type (root NBTTagCompound)!");
-		NBTTagCompound tag = new NBTTagCompound();
-		for (String s : data.keySet()) {
-			tag.setTag(s, ReikaNBTHelper.getTagForObject(this.parseObject(data.get(s))));
+		if (isList && !isRoot && allowList) {
+			NBTTagList tag = new NBTTagList();
+			for (LuaBlock e : children.values()) {
+				tag.appendTag(e.asNBT(false));
+			}
+			return tag;
 		}
-		for (LuaBlockKey s : children.keySet()) {
-			--append recursive
+		else {
+			NBTTagCompound tag = new NBTTagCompound();
+			for (String s : data.keySet()) {
+				tag.setTag(s, ReikaNBTHelper.getTagForObject(this.parseObject(data.get(s))));
+			}
+			for (Entry<LuaBlockKey, LuaBlock> e : children.entrySet()) {
+				tag.setTag(e.getKey().lookupKey, e.getValue().asNBT(true));
+			}
+			return tag;
 		}
-		return tag;
 	}
 
 	protected void onFinish() {

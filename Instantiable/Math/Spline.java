@@ -18,8 +18,8 @@ import net.minecraft.client.renderer.Tessellator;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
 import Reika.DragonAPI.Libraries.Java.ReikaGLHelper.BlendMode;
-import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
+import Reika.DragonAPI.Libraries.Rendering.ReikaColorAPI;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -50,7 +50,7 @@ public class Spline {
 
 	public List<DecimalPosition> get(int fineness, boolean closed) {
 		if (fineness < 2) {
-			throw new IllegalArgumentException("The fineness parameter must be greater than 2, since 2 points is just the linear segment.");
+			throw new IllegalArgumentException("The fineness parameter must be greater than 2 (current "+fineness+"), since 2 points is just the linear segment.");
 		}
 		return this.interpolate(fineness, closed);
 	}

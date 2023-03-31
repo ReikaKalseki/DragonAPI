@@ -222,7 +222,10 @@ public final class ReikaGuiAPI extends GuiScreen {
 		int blue = ReikaColorAPI.getBlue(color);
 		GL11.glDisable(GL11.GL_LIGHTING);
 		//GL11.glDisable(GL11.GL_DEPTH_TEST);
-		GL11.glEnable(GL11.GL_BLEND);
+		if (alpha == 255)
+			GL11.glDisable(GL11.GL_BLEND);
+		else
+			GL11.glEnable(GL11.GL_BLEND);
 		GL11.glDisable(GL11.GL_TEXTURE_2D);
 		if (type != LineType.SOLID) {
 			type.setMode(2);
@@ -476,12 +479,13 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glTranslatef(0.0F, 0.0F, -64.0F);
 	}
 
-	public void drawMultilineTooltip(List<String> li, int x, int y) {
+	public void drawMultilineTooltip(List<String> li, int x, int y, int spacing, boolean center) {
 		GL11.glTranslatef(0.0F, 0.0F, 64.0F);
 		int dy = y;
 		for (String s : li) {
-			this.drawTooltipAt(mc.fontRenderer, s, x, dy);
-			dy += 17;
+			int dx = center ? x+mc.fontRenderer.getStringWidth(s)/2 : x;
+			this.drawTooltipAt(mc.fontRenderer, s, dx, dy);
+			dy += spacing;
 		}
 		GL11.glTranslatef(0.0F, 0.0F, -64.0F);
 	}
@@ -491,7 +495,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 			List<String> li = new ArrayList();
 			li.add(is.getDisplayName());
 			is.getItem().addInformation(is, Minecraft.getMinecraft().thePlayer, li, true);
-			this.drawMultilineTooltip(li, x, y);
+			this.drawMultilineTooltip(li, x, y, 17, false);
 		}
 	}
 

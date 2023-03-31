@@ -14,6 +14,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Random;
+import java.util.function.Consumer;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -190,8 +191,7 @@ public final class TileEntityCache<V> {
 
 	/** Note that this returns everything in all chunks intersected by the radius. Distances to the actual WorldLocs may be somewhat larger than
 	 * the radius, and as such a normal pythagorean distance check is still required. */
-	public Collection<WorldLocation> getAllLocationsNear(WorldLocation loc, double radius) {
-		Collection<WorldLocation> ret = new HashSet();
+	private void applyNear(WorldLocation loc, double radius, Consumer<WorldChunk> call) {
 		int cx = ReikaMathLibrary.bitRound(loc.xCoord, 4);
 		int cz = ReikaMathLibrary.bitRound(loc.zCoord, 4);
 		int dx = loc.xCoord-cx;
@@ -208,14 +208,35 @@ public final class TileEntityCache<V> {
 		for (int i = -nxn; i <= nxp; i++) {
 			for (int k = -nzn; k <= nzp; k++) {
 				WorldChunk pos = new WorldChunk(loc.dimensionID, (cx >> 4)+i, (cz >> 4)+k);
-				Collection<WorldLocation> locs = data.getAllKeysIn(pos);
 				//if (ModularLogger.instance.isEnabled(LOGGER_ID) && radius > 16)
 				//	ReikaJavaLibrary.pConsole(loc+" ->@ "+dx+","+dz+" in "+cx+","+cz+"; "+nxn+" > "+nxp+", "+nzn+" > "+nzp+" pos["+pos+"]= "+locs+" of "+data);
-				if (locs != null) {
-					ret.addAll(locs);
-				}
+				call.accept(pos);
 			}
 		}
+	}
+
+	/** Note that this returns everything in all chunks intersected by the radius. Distances to the actual WorldLocs may be somewhat larger than
+	 * the radius, and as such a normal pythagorean distance check is still required. */
+	public Collection<WorldLocation> getAllLocationsNear(WorldLocation loc, double radius) {
+		Collection<WorldLocation> ret = new HashSet();
+		this.applyNear(loc, radius, pos -> {
+			Collection<WorldLocation> locs = data.getAllKeysIn(pos);
+			if (locs != null) {
+				ret.addAll(locs);
+			}
+		});
+		return ret;
+	}
+
+	/** Note that this returns everything in all chunks intersected by the radius. Distances to the actual positions may be somewhat larger than the radius */
+	public Collection<V> getAllValuesNear(WorldLocation loc, double radius) {
+		Collection<V> ret = new HashSet();
+		this.applyNear(loc, radius, pos -> {
+			Collection<V> vals = data.getAllValuesIn(pos);
+			if (vals != null) {
+				ret.addAll(vals);
+			}
+		});
 		return ret;
 	}
 

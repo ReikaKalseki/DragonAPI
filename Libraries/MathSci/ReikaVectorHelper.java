@@ -207,6 +207,16 @@ public final class ReikaVectorHelper extends DragonAPICore {
 		return multiplyVectorByMatrix(vec, mat);
 	}
 
+	public static Vec3 rotatePointAroundAxisByAngle(double x, double y, double z, double x1, double y1, double z1, double x2, double y2, double z2, double ang) {
+		double a = Math.toRadians(ang);
+		double m1 = 1-Math.cos(a);
+		Vec3 axis = getVec2Pt(x1, y1, z1, x2, y2, z2).normalize();
+		double x0 = axis.xCoord*(axis.xCoord*x+axis.yCoord*y+axis.zCoord*z)*m1+x*Math.cos(a)+(-axis.zCoord*y+axis.yCoord*z)*Math.sin(a);
+		double y0 = axis.yCoord*(axis.xCoord*x+axis.yCoord*y+axis.zCoord*z)*m1+y*Math.cos(a)+(axis.zCoord*x-axis.xCoord*z)*Math.sin(a);
+		double z0 = axis.zCoord*(axis.xCoord*x+axis.yCoord*y+axis.zCoord*z)*m1+z*Math.cos(a)+(-axis.yCoord*x+axis.xCoord*y)*Math.sin(a);
+		return Vec3.createVectorHelper(x0, y0, z0);
+	}
+
 	public static HashSet<Coordinate> getCoordsAlongVector(double x1, double y1, double z1, double x2, double y2, double z2) {
 		HashSet<Coordinate> set = new HashSet();
 		double dd = ReikaMathLibrary.py3d(x2-x1, y2-y1, z2-z1);
@@ -241,7 +251,7 @@ public final class ReikaVectorHelper extends DragonAPICore {
 	}
 
 	/** Will return a result relative to the origin of the vector; if 'vec' is a speed vector, that is relative to 0,0,0. */
-	public static Vec3 getPointAroundVector(Vec3 vec, double r, double ang) { //P(t) = (acost)U + (asint)V + (bt)W
+	public static Vec3 getPointAroundVector(Vec3 vec, double r, double ang) { //P(t) = (acost)U+(asint)V+(bt)W
 		Vec3 w = vec.normalize();
 		Vec3 u = w.crossProduct(Vec3.createVectorHelper(1, 0, 0));
 		Vec3 v = w.crossProduct(u);

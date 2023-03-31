@@ -153,6 +153,11 @@ public class NestedMap<K, M, V> {
 		return map != null ? map.keySet() : null;
 	}
 
+	public Collection<V> getAllValuesIn(K key) {
+		HashMap<M, V> map = this.data.get(key);
+		return map != null ? map.values() : null;
+	}
+
 	public Map<M, V> getMap(K key) {
 		HashMap<M, V> map = this.data.get(key);
 		return map != null ? Collections.unmodifiableMap(map) : null;

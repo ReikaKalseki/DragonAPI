@@ -9,9 +9,13 @@
  ******************************************************************************/
 package Reika.DragonAPI.Instantiable.Effects;
 
+import java.util.List;
 import java.util.Random;
 
 import Reika.DragonAPI.Instantiable.Data.Immutable.DecimalPosition;
+import Reika.DragonAPI.Instantiable.Math.Spline;
+import Reika.DragonAPI.Instantiable.Math.Spline.BasicSplinePoint;
+import Reika.DragonAPI.Instantiable.Math.Spline.SplineType;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 import Reika.DragonAPI.Libraries.MathSci.ReikaMathLibrary;
 
@@ -136,6 +140,14 @@ public class LightningBolt {
 		}
 		sb.append("];");
 		return sb.toString();
+	}
+
+	public List<DecimalPosition> spline(SplineType type, int points) {
+		Spline path = new Spline(type);
+		for (int i = 0; i <= nsteps; i++) {
+			path.addPoint(new BasicSplinePoint(this.getPosition(i)));
+		}
+		return path.get(points, false);
 	}
 
 	public LightningBolt setRandom(Random r) {
