@@ -442,41 +442,6 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 				RenderModeFlags.list[i].apply(flags[i]);
 			}
 		}
-
-		/*
-		private void apply() {
-			if (useLighting) {
-				GL11.glEnable(GL11.GL_LIGHTING);
-				ReikaRenderHelper.enableEntityLighting();
-			}
-			else {
-				GL11.glDisable(GL11.GL_LIGHTING);
-				ReikaRenderHelper.disableEntityLighting();
-			}
-
-			if (useAlpha) {
-				GL11.glEnable(GL11.GL_BLEND);
-			}
-			else {
-				GL11.glDisable(GL11.GL_BLEND);
-			}
-
-			if (additiveBlend) {
-				BlendMode.ADDITIVEDARK.apply();
-			}
-			else {
-				BlendMode.DEFAULT.apply();
-			}
-
-			if (depthTest) {
-				GL11.glEnable(GL11.GL_DEPTH_TEST);
-			}
-			else {
-				GL11.glDisable(GL11.GL_DEPTH_TEST);
-			}
-		}
-		 */
-
 	}
 
 	public static enum RenderModeFlags {
@@ -484,7 +449,9 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 		LIGHT(true),
 		ADDITIVE(false),
 		DEPTH(true),
-		ALPHACLIP(true);
+		ALPHACLIP(true),
+		FOG(true),
+		;
 
 		private final boolean defaultValue;
 
@@ -544,6 +511,15 @@ public abstract class ParticleEngine extends EffectRenderer implements CustomEff
 					}
 					else {
 						GL11.glDisable(GL11.GL_ALPHA_TEST);
+					}
+					break;
+
+				case FOG:
+					if (set) {
+						GL11.glEnable(GL11.GL_FOG);
+					}
+					else {
+						GL11.glDisable(GL11.GL_FOG);
 					}
 					break;
 			}
