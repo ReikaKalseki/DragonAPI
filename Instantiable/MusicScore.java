@@ -180,6 +180,8 @@ public class MusicScore {
 	}
 
 	public void normalizeToRange(MusicKey min, MusicKey max) {
+		if (noteCount == 0)
+			return;
 		int under = min.ordinal()-lowest.ordinal();
 		int over = highest.ordinal()-max.ordinal();
 		int ounder = ReikaMathLibrary.roundToNearestX(12, under);

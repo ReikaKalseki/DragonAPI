@@ -47,6 +47,7 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.DragonAPIInit;
 import Reika.DragonAPI.ModList;
 import Reika.DragonAPI.ASM.ASMCalls;
 import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
@@ -60,6 +61,7 @@ import Reika.DragonAPI.Interfaces.CustomToStringRecipe;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaObfuscationHelper;
+import Reika.DragonAPI.Libraries.Java.ReikaReflectionHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.DragonAPI.Libraries.World.ReikaWorldHelper;
 
@@ -659,8 +661,8 @@ public class ReikaRecipeHelper extends DragonAPICore {
 			ShapedOreRecipe so = (ShapedOreRecipe)ire;
 			Object[] objin = so.getInput();
 			//DragonAPICore.log(Arrays.toString(objin));
-			w = 3;
-			h = 3;
+			w = ReikaReflectionHelper.getPrivateInteger(so, "width", DragonAPIInit.instance.getModLogger());
+			h = ReikaReflectionHelper.getPrivateInteger(so, "height", DragonAPIInit.instance.getModLogger());
 			for (int i = 0; i < objin.length; i++) {
 				if (objin[i] instanceof ItemStack) {
 					ItemStack is = (ItemStack)objin[i];

@@ -847,6 +847,10 @@ public class ControlledConfig {
 			return data;
 		}
 
+		public void setData(C val) {
+			data = val;
+		}
+
 		@Override
 		public String toString() {
 			return this.category+":"+this.name+" > "+this.data.toString();

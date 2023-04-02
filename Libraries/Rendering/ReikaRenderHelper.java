@@ -1428,8 +1428,11 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	}
 
 	public static void renderCropTypeTex(IBlockAccess world, int x, int y, int z, IIcon ico, Tessellator v5, RenderBlocks rb, double space, double h) {
-		ico = rb.getIconSafe(ico);
+		renderCropTypeTex(world, x, y, z, ico, v5, rb, space, h, 0.5);
+	}
 
+	public static void renderCropTypeTex(IBlockAccess world, int x, int y, int z, IIcon ico, Tessellator v5, RenderBlocks rb, double space, double h, double s) {
+		ico = rb.getIconSafe(ico);
 		float u = ico.getMinU();
 		float du = ico.getMaxU();
 		float v = ico.getMinV();
@@ -1437,8 +1440,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 
 		double d7 = x+0.5D-space;
 		double d8 = x+0.5D+space;
-		double d9 = z+0.5D-0.5D;
-		double d10 = z+0.5D+0.5D;
+		double d9 = z+0.5D-s;
+		double d10 = z+0.5D+s;
 
 		double dy = y-0.0625;
 
@@ -1458,8 +1461,8 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		v5.addVertexWithUV(d8, dy+0, d9, u, dv);
 		v5.addVertexWithUV(d8, dy+0, d10, du, dv);
 		v5.addVertexWithUV(d8, dy+h, d10, du, v);
-		d7 = x+0.5D-0.5D;
-		d8 = x+0.5D+0.5D;
+		d7 = x+0.5D-s;
+		d8 = x+0.5D+s;
 		d9 = z+0.5D-space;
 		d10 = z+0.5D+space;
 		v5.addVertexWithUV(d7, dy+h, d9, u, v);
