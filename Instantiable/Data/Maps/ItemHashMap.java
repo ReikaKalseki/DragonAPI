@@ -19,13 +19,17 @@ import net.minecraft.block.Block;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.Exception.MisuseException;
 import Reika.DragonAPI.Instantiable.Data.Immutable.ImmutableItemStack;
 import Reika.DragonAPI.Interfaces.Matcher;
 import Reika.DragonAPI.Libraries.ReikaNBTHelper;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTIO;
+import Reika.DragonAPI.Libraries.ReikaNBTHelper.NBTTypes;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 
@@ -341,6 +345,39 @@ public final class ItemHashMap<V> {
 				ret.put(ik, res);
 		}
 		return ret;
+	}
+
+	public void writeToNBT(NBTTagCompound NBT, NBTIO<V> conv) {
+		NBTTagList li = new NBTTagList();
+		ReikaNBTHelper.writeMapToNBT(this.data, li, KeyConverter.instance, conv);
+		NBT.setTag("data", li);
+	}
+
+	public void readFromNBT(NBTTagCompound NBT, NBTIO<V> conv) {
+		NBTTagList li = NBT.getTagList("data", NBTTypes.COMPOUND.ID);
+		ReikaNBTHelper.readMapFromNBT(this.data, li, KeyConverter.instance, conv);
+	}
+
+	public static class KeyConverter implements NBTIO<ItemKey> {
+
+		public static final KeyConverter instance = new KeyConverter();
+
+		private KeyConverter() {
+
+		}
+
+		@Override
+		public ItemKey createFromNBT(NBTBase nbt) {
+			return new ItemKey(ItemStack.loadItemStackFromNBT((NBTTagCompound)nbt));
+		}
+
+		@Override
+		public NBTBase convertToNBT(ItemKey obj) {
+			NBTTagCompound ret = new NBTTagCompound();
+			obj.asItemStack().writeToNBT(ret);
+			return ret;
+		}
+
 	}
 
 }

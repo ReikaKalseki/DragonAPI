@@ -77,30 +77,31 @@ public abstract class BaseBlockRenderer extends ISBRH {
 		f18 = f6;
 
 		int l = b.getMixedBrightnessForBlock(world, x, y, z);
+		int op = b.getLightOpacity(world, x, y, z);
 
-		switch(dir.getOpposite()) {
-			case UP:
-				v5.setBrightness(rb.renderMaxY < 1.0D ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
+		switch(dir) {
+			case DOWN:
+				v5.setBrightness(rb.renderMaxY < 1.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
 				v5.setColorOpaque_F(f7*red, f8*green, f9*blue);
 				break;
-			case DOWN:
-				v5.setBrightness(rb.renderMinY > 0.0D ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
+			case UP:
+				v5.setBrightness(rb.renderMinY > 0.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
 				v5.setColorOpaque_F(f10*red, f13*green, f16*blue);
 				break;
 			case NORTH:
-				v5.setBrightness(rb.renderMinZ > 0.0D ? l : b.getMixedBrightnessForBlock(world, x, y, z - 1));
+				v5.setBrightness(rb.renderMinZ > 0.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y, z - 1));
 				v5.setColorOpaque_F(f11*red, f14*green, f17*blue);
 				break;
 			case SOUTH:
-				v5.setBrightness(rb.renderMaxZ < 1.0D ? l : b.getMixedBrightnessForBlock(world, x, y, z + 1));
+				v5.setBrightness(rb.renderMaxZ < 1.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y, z + 1));
 				v5.setColorOpaque_F(f11*red, f14*green, f17*blue);
 				break;
 			case WEST:
-				v5.setBrightness(rb.renderMinX > 0.0D ? l : b.getMixedBrightnessForBlock(world, x - 1, y, z));
+				v5.setBrightness(rb.renderMinX > 0.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x - 1, y, z));
 				v5.setColorOpaque_F(f12*red, f15*green, f18*blue);
 				break;
 			case EAST:
-				v5.setBrightness(rb.renderMaxX < 1.0D ? l : b.getMixedBrightnessForBlock(world, x + 1, y, z));
+				v5.setBrightness(rb.renderMaxX < 1.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x + 1, y, z));
 				v5.setColorOpaque_F(f12*red, f15*green, f18*blue);
 				break;
 			default:
@@ -141,11 +142,11 @@ public abstract class BaseBlockRenderer extends ISBRH {
 		int l = b.getMixedBrightnessForBlock(world, x, y, z);
 
 		switch(dir.getOpposite()) {
-			case UP:
+			case DOWN:
 				v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
 				v5.setColorOpaque_F(f7, f8, f9);
 				break;
-			case DOWN:
+			case UP:
 				v5.setBrightness(!b.isOpaqueCube() ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
 				v5.setColorOpaque_F(f10, f13, f16);
 				break;

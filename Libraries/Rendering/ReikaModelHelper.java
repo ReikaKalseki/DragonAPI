@@ -55,6 +55,7 @@ public class ReikaModelHelper {
 		return idx >= 0 ? box.quadList[idx] : null;
 	}
 
+	@SuppressWarnings("incomplete-switch")
 	private static void flipFace(TexturedQuad quad, ForgeDirection face, boolean x, boolean y, boolean z) {
 		/*
 		if (x) {

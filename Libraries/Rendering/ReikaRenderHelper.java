@@ -1572,7 +1572,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 		rb.renderMaxY = rb.renderMinY+sy/16;
 		rb.renderMaxZ = rb.renderMinZ+sz/16;
 		rb.partialRenderBounds = true;
-		rb.renderStandardBlockWithAmbientOcclusion(b, x, y, z, 1, 1, 1);
+		rb.renderStandardBlockWithColorMultiplier(b, x, y, z, 1, 1, 1);
 		rb.setRenderBounds(0, 0, 0, 1, 1, 1);
 		rb.renderAllFaces = flag;
 	}

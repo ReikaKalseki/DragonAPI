@@ -167,8 +167,12 @@ public class ReikaASMHelper {
 		}
 	}
 
+	public static boolean classContainsMethod(ClassNode cn, String name, String desc) {
+		return getMethodByNameAndSig(cn, name, desc) != null;
+	}
+
 	public static boolean classContainsMethod(ClassNode cn, MethodNode mn) {
-		return getMethodByNameAndSig(cn, mn.name, mn.desc) != null;
+		return classContainsMethod(cn, mn.name, mn.desc);
 	}
 
 	public static boolean classContainsMethod(Class c, MethodNode mn) {
