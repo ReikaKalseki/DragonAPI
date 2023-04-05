@@ -1565,12 +1565,12 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	public static void renderBlockSubCube(int x, int y, int z, double dx, double dy, double dz, double sx, double sy, double sz, Tessellator v5, RenderBlocks rb, Block b, int meta) {
 		boolean flag = rb.renderAllFaces;
 		rb.renderAllFaces = true;
-		rb.renderMinX = dx/16;
-		rb.renderMinY = dy/16;
-		rb.renderMinZ = dz/16;
-		rb.renderMaxX = rb.renderMinX+sx/16;
-		rb.renderMaxY = rb.renderMinY+sy/16;
-		rb.renderMaxZ = rb.renderMinZ+sz/16;
+		rb.renderMinX = dx/16+0.001; //offset is to force light from center
+		rb.renderMinY = dy/16+0.001;
+		rb.renderMinZ = dz/16+0.001;
+		rb.renderMaxX = rb.renderMinX+sx/16-0.001;
+		rb.renderMaxY = rb.renderMinY+sy/16-0.001;
+		rb.renderMaxZ = rb.renderMinZ+sz/16-0.001;
 		rb.partialRenderBounds = true;
 		rb.renderStandardBlockWithColorMultiplier(b, x, y, z, 1, 1, 1);
 		rb.setRenderBounds(0, 0, 0, 1, 1, 1);
