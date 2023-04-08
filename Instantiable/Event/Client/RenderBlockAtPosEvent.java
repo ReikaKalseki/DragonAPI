@@ -45,12 +45,27 @@ public class RenderBlockAtPosEvent {
 		}
 		return rb.renderBlockByRenderType(b, x, y, z) || continueRendering;
 	}
-
+	/*
+	@SideOnly(Side.CLIENT)
+	public static int getMixedBrightnessForBlock(Block b, IBlockAccess iba, int x, int y, int z) {
+		if (listeners != null) {
+			for (BlockRenderWatcher l : listeners) {
+				if (l.onBlockTriedRender(b, x, y, z, wr, rb, pass)) {
+					continueRendering = false;
+					return false;
+				}
+			}
+		}
+		return rb.renderBlockByRenderType(b, x, y, z) || continueRendering;
+	}
+	 */
 	public static interface BlockRenderWatcher extends EventWatcher {
 
 		/** Return true to act like an event cancel */
 		@SideOnly(Side.CLIENT)
 		boolean onBlockTriedRender(Block b, int x, int y, int z, WorldRenderer wr, RenderBlocks rb, int pass);
+
+		//boolean getMixedBrightnessForBlock(Block b, IBlockAccess iba, int x, int y, int z);
 
 	}
 

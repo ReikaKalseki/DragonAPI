@@ -538,6 +538,7 @@ public class ReikaFileReader extends DragonAPICore {
 		protected abstract String getReplacementLine(String s, String newline, int idx);
 
 		public final boolean performChanges(File f, Charset set) {
+			lines.clear();
 			try(BufferedReader r = ReikaFileReader.getReader(f, set); FileOutputStream os = new FileOutputStream(f)) {
 				String sep = System.getProperty("line.separator");
 				String line = r.readLine();
@@ -555,6 +556,8 @@ public class ReikaFileReader extends DragonAPICore {
 					line = r.readLine();
 					idx++;
 				}
+				if (out.toString().isEmpty() && !lines.isEmpty())
+					DragonAPICore.log("Warning: LineEditor "+this.getClass()+" emptied a file: "+f.getAbsolutePath());
 				os.write(out.toString().getBytes());
 				os.close();
 				return true;

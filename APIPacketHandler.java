@@ -227,7 +227,7 @@ public class APIPacketHandler implements PacketHandler {
 					}
 					break;
 				case BIOMECHANGE:
-					ReikaWorldHelper.setBiomeForXZ(world, x, z, BiomeGenBase.biomeList[data[0]]);
+					ReikaWorldHelper.setBiomeForXZ(world, x, z, BiomeGenBase.biomeList[data[0]], false);
 					world.markBlockRangeForRenderUpdate(x, 0, z, x, world.provider.getActualHeight(), z);
 					break;
 				case KEYUPDATE:

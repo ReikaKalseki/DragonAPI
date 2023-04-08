@@ -408,6 +408,14 @@ public final class ReikaMathLibrary extends DragonAPICore {
 	}
 
 	public static double linterpolate(double x, double x1, double x2, double y1, double y2) {
+		return linterpolate(x, x1, x2, y1, y2, false);
+	}
+
+	public static double linterpolate(double x, double x1, double x2, double y1, double y2, boolean clamp) {
+		if (clamp && x <= x1)
+			return y1;
+		if (clamp && x >= x2)
+			return y2;
 		return y1+(x-x1)/(x2-x1)*(y2-y1);
 	}
 

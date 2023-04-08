@@ -30,10 +30,10 @@ public abstract class WorldPositionEvent extends PositionEventBase {
 		return isFakeWorld ? BiomeGenBase.ocean : world.getBiomeGenForCoords(xCoord, zCoord);
 	}
 
-	public final void setBiome(BiomeGenBase b) {
+	public final void setBiome(BiomeGenBase b, boolean applyEnv) {
 		if (isFakeWorld)
 			return;
-		ReikaWorldHelper.setBiomeForXZ(world, xCoord, zCoord, b);
+		ReikaWorldHelper.setBiomeForXZ(world, xCoord, zCoord, b, applyEnv);
 	}
 
 	public final boolean setBlock(Block b) {

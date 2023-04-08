@@ -282,7 +282,8 @@ public class BiomeMapCommand extends DragonCommandBase {
 			if (world.provider instanceof CustomBiomeDistributionWorld) {
 				return ((CustomBiomeDistributionWorld)world.provider).getBiomeID(world, x, z);
 			}
-			return world.getWorldChunkManager().getBiomeGenAt(x, z).biomeID;
+			BiomeGenBase b = world.getChunkProvider().chunkExists(x >> 4, z >> 4) ? world.getBiomeGenForCoords(x, z) : world.getWorldChunkManager().getBiomeGenAt(x, z);
+			return b.biomeID;
 		}
 
 		@Override

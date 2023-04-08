@@ -105,6 +105,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.WorldChunk;
 import Reika.DragonAPI.Instantiable.Event.IceFreezeEvent;
 import Reika.DragonAPI.Instantiable.Event.MobTargetingEvent;
 import Reika.DragonAPI.Instantiable.Math.Noise.Simplex3DGenerator;
+import Reika.DragonAPI.Interfaces.CustomTemperatureBiome;
 import Reika.DragonAPI.Interfaces.Callbacks.PositionCallable;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.ReikaFluidHelper;
@@ -1360,7 +1361,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Sets the biome type at an xz column. Args: World, x, z, biome */
-	public static void setBiomeForXZ(World world, int x, int z, BiomeGenBase biome) {
+	public static void setBiomeForXZ(World world, int x, int z, BiomeGenBase biome, boolean applyEnvironment) {
 		Chunk ch = world.getChunkFromBlockCoords(x, z);
 
 		int ax = x-ch.xPosition*16;
@@ -1375,8 +1376,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
 		ch.setChunkModified();
-		for (int i = 0; i < 256; i++)
-			temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(world, biome));
+		if (applyEnvironment) {
+			for (int i = 0; i < 256; i++)
+				temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(world, biome));
+		}
 
 		if (!world.isRemote) {
 			int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
@@ -1391,7 +1394,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	/** Sets the biome type at an xz column and mimics its generation. Args: World, x, z, biome */
-	public static void setBiomeAndBlocksForXZ(World world, int x, int z, BiomeGenBase biome) {
+	public static void setBiomeAndBlocksForXZ(World world, int x, int z, BiomeGenBase biome, boolean applyEnvironment) {
 		Chunk ch = world.getChunkFromBlockCoords(x, z);
 
 		int ax = x-ch.xPosition*16;
@@ -1408,8 +1411,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 
 		biomes[index] = (byte)biome.biomeID;
 		ch.setBiomeArray(biomes);
-		for (int i = 0; i < 256; i++)
-			temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(world, biome));
+		if (applyEnvironment) {
+			for (int i = 0; i < 256; i++)
+				temperatureEnvironment(world, x, i, z, ReikaBiomeHelper.getBiomeTemp(world, biome));
+		}
 
 		if (!world.isRemote) {
 			int packet = APIPacketHandler.PacketIDs.BIOMECHANGE.ordinal();
@@ -1542,7 +1547,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 	}
 
-	/** Get the sun brightness as a fraction from 0-1. Args: World, whether to apply weather modulation */
+	/** Get the sun brightness as a fraction from 0 to 1. Args: World, whether to apply weather modulation */
 	public static float getSunIntensity(World world, boolean weather, float ptick) {
 		float ang = world.getCelestialAngle(ptick);
 		float base = 1.0F-(MathHelper.cos(ang*(float)Math.PI*2.0F)*2.0F+0.2F);
@@ -1558,7 +1563,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			base = (float)(base*(1.0D-world.getRainStrength(ptick)*5.0F / 16.0D));
 			base = (float)(base*(1.0D-world.getWeightedThunderStrength(ptick)*5.0F / 16.0D));
 		}
-		return base*0.8F+0.2F;
+		return base;
 	}
 
 	/** Returns the sun's declination, clamped to 0-90. Args: World */
@@ -1718,7 +1723,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 	}
 
 	public static int getAmbientTemperatureAt(World world, int x, int y, int z, float varFactor) {
-		int Tamb = ReikaBiomeHelper.getBiomeTemp(world, x, z);
+		BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
+		int Tamb = ReikaBiomeHelper.getBiomeTemp(world, biome);
 		float temp = Tamb;
 
 		if (SpecialDayTracker.instance.isWinterEnabled() && world.provider.dimensionId != -1) {
@@ -1728,6 +1734,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		if (varFactor > 0) {
 			Simplex3DGenerator gen = getOrCreateTemperatureNoise(world);
 			//ReikaJavaLibrary.pConsole(new Coordinate(x, y, z)+" > "+gen.getValue(x, y, z));
+			if (biome instanceof CustomTemperatureBiome)
+				varFactor *= ((CustomTemperatureBiome)biome).getNoiseVariationStrength(world, x, y, z, varFactor);
 			temp += gen.getValue(x, y, z)*varFactor*TEMP_NOISE_BASE;
 		}
 
@@ -1744,8 +1752,10 @@ public final class ReikaWorldHelper extends DragonAPICore {
 			if (!world.provider.hasNoSky) {
 				if (world.canBlockSeeTheSky(x, y+1, z)) {
 					float sun = getSunIntensity(world, true, 0);
-					int mult = world.isRaining() ? 10 : 20;
-					temp += (sun-0.75F)*mult;
+					if (biome instanceof CustomTemperatureBiome)
+						temp += ((CustomTemperatureBiome)biome).getSurfaceTemperatureModifier(world, x, y, z, temp, sun);
+					else
+						temp += (sun-0.75F)*(world.isRaining() ? 10 : 20);
 				}
 				if (!isVoidWorld(world, x, z)) {
 					int h = world.provider.getAverageGroundLevel();
@@ -1766,6 +1776,8 @@ public final class ReikaWorldHelper extends DragonAPICore {
 					}
 					if (y > 96) {
 						temp -= (y-96)/4;
+						if (biome instanceof CustomTemperatureBiome)
+							temp += ((CustomTemperatureBiome)biome).getAltitudeTemperatureModifier(world, x, y, z, temp, -dy);
 					}
 				}
 			}
@@ -2518,7 +2530,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 		}
 	}
 
-	public static void convertBiomeRegionFrom(World world, int x, int z, BiomeGenBase from, BiomeGenBase to, BiomeGenBase same, int depthLimit) {
+	public static void convertBiomeRegionFrom(World world, int x, int z, BiomeGenBase from, BiomeGenBase to, BiomeGenBase same, int depthLimit, boolean applyEnv) {
 		HashSet<Coordinate> done = new HashSet();
 		HashSet<Coordinate> next = new HashSet();
 		HashSet<Coordinate> next2 = new HashSet();
@@ -2530,7 +2542,7 @@ public final class ReikaWorldHelper extends DragonAPICore {
 				if (put == from && same != null) {
 					put = same;
 				}
-				setBiomeForXZ(world, c.xCoord, c.zCoord, put);
+				setBiomeForXZ(world, c.xCoord, c.zCoord, put, applyEnv);
 				for (int i = 2; i < 6; i++) {
 					ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[i];
 					Coordinate c2 = c.offset(dir, 1);

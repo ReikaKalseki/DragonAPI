@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -35,6 +35,8 @@ public class AddSmeltingEvent extends Event {
 	public AddSmeltingEvent(ItemStack in, ItemStack out, float xp, boolean v) {
 		input = in;
 		output = out;
+		if (in == null || out == null || in.getItem() == null || out.getItem() == null)
+			throw new IllegalArgumentException("You cannot add null ("+toString(in)+">"+toString(out)+") to smelting recipes!");
 
 		originalXP = xp;
 		experienceValue = xp;
@@ -73,10 +75,14 @@ public class AddSmeltingEvent extends Event {
 
 	/** Returns true if recipe was added. */
 	public static boolean fire(ItemStack in, ItemStack out, float xp) {
-		if (in == null || out == null)
-			throw new IllegalArgumentException("You cannot add null to smelting recipes!");
+		if (in == null || out == null || in.getItem() == null || out.getItem() == null)
+			throw new IllegalArgumentException("You cannot add null ("+toString(in)+">"+toString(out)+") to smelting recipes!");
 		AddSmeltingEvent evt = new AddSmeltingEvent(in, out, xp);
 		return !MinecraftForge.EVENT_BUS.post(evt);
+	}
+
+	private static String toString(ItemStack in) {
+		return in == null ? "null" : (in.getItem() == null ? "null-item" : in.toString());
 	}
 
 }

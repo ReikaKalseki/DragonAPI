@@ -48,6 +48,7 @@ import Reika.DragonAPI.Instantiable.Data.Immutable.RGB;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.CollectionType;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap.MapDeterminator;
+import Reika.DragonAPI.Interfaces.CustomTemperatureBiome;
 import Reika.DragonAPI.Interfaces.Registry.TreeType;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaStringParser;
@@ -442,13 +443,19 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	 * Args: biome */
 	public static int getBiomeTemp(World world, BiomeGenBase biome) {
 		biome = getParentBiomeType(biome, false);
-		BiomeTemperatures temp = temperatures.get(biome);
-		if (temp == null) {
-			temp = calcBiomeTemp(biome);
-			temperatures.put(biome, temp);
+		int Tamb;
+		BiomeTemperatures temp = null;
+		if (biome instanceof CustomTemperatureBiome) {
+			Tamb = ((CustomTemperatureBiome)biome).getBaseAmbientTemperature();
 		}
-
-		int Tamb = temp.ambientTemperature;
+		else {
+			temp = temperatures.get(biome);
+			if (temp == null) {
+				temp = calcBiomeTemp(biome);
+				temperatures.put(biome, temp);
+			}
+			Tamb = temp.ambientTemperature;
+		}
 
 		if (ModSeasonHandler.isLoaded()) { //account for seasons
 			Tamb += getBiomeSeasonStrength(biome, temp)*ModSeasonHandler.getSeasonTemperatureModifier(world);
@@ -458,6 +465,8 @@ public class ReikaBiomeHelper extends DragonAPICore {
 	}
 
 	private static float getBiomeSeasonStrength(BiomeGenBase biome, BiomeTemperatures temp) {
+		if (biome instanceof CustomTemperatureBiome)
+			return ((CustomTemperatureBiome)biome).getSeasonStrength();
 		if (temp == BiomeTemperatures.FIERY || temp == BiomeTemperatures.LUNAR)
 			return 0;
 		if (BiomeDictionary.isBiomeOfType(biome, Type.SANDY))

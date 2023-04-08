@@ -98,6 +98,7 @@ import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.Teleporter;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraft.world.biome.BiomeGenBase;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.common.util.ForgeDirection;
 
@@ -1236,7 +1237,11 @@ public final class ReikaEntityHelper extends DragonAPICore {
 	}
 
 	public static boolean isNearSkylight(Entity e) {
-		return e.worldObj.getSavedLightValue(EnumSkyBlock.Sky, MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ)) > 0;
+		return getSkyLightAt(e) > 0;
+	}
+
+	public static int getSkyLightAt(Entity e) {
+		return e.worldObj.getSavedLightValue(EnumSkyBlock.Sky, MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY+e.height/2), MathHelper.floor_double(e.posZ));
 	}
 
 	public static boolean isEntityWearingPoweredArmor(EntityLivingBase e) {
@@ -1574,6 +1579,10 @@ public final class ReikaEntityHelper extends DragonAPICore {
 			return (Collection<AttributeModifier>)mai.mapByName.get(n);
 		}
 		return null;
+	}
+
+	public static boolean isInBiome(Entity e, BiomeGenBase b) {
+		return b != null && e.worldObj.getBiomeGenForCoords(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posZ)) == b;
 	}
 
 }
