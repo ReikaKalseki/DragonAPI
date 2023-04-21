@@ -1368,6 +1368,14 @@ public class ReikaASMHelper {
 		return compileSignature(li);
 	}
 
+	public static void addLeadingArgument(MethodNode min, String arg) {
+		min.desc = addLeadingArgument(min.desc, arg);
+	}
+
+	public static void addTrailingArgument(MethodNode min, String arg) {
+		min.desc = addTrailingArgument(min.desc, arg);
+	}
+
 	public static void addLeadingArgument(MethodInsnNode min, String arg) {
 		min.desc = addLeadingArgument(min.desc, arg);
 	}

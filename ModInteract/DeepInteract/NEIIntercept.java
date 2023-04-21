@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -73,7 +73,9 @@ public class NEIIntercept implements IContainerInputHandler {
 	}
 
 	@Override
-	public boolean keyTyped(GuiContainer gui, char keyChar, int keyCode) {return false;}
+	public boolean keyTyped(GuiContainer gui, char keyChar, int keyCode) {
+		return gui instanceof KeyConsumingGui && ((KeyConsumingGui)gui).consumeKey(keyChar);
+	}
 
 	@Override
 	public void onKeyTyped(GuiContainer gui, char keyChar, int keyID) {}
@@ -143,6 +145,12 @@ public class NEIIntercept implements IContainerInputHandler {
 				}
 			}
 		}
+	}
+
+	public static interface KeyConsumingGui {
+
+		boolean consumeKey(char keyChar);
+
 	}
 
 }

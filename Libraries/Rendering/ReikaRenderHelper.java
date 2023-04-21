@@ -432,12 +432,12 @@ public final class ReikaRenderHelper extends DragonAPICore {
 	public static void rerenderAllChunksLazily() {
 		World world = Minecraft.getMinecraft().theWorld;
 		EntityPlayer ep = Minecraft.getMinecraft().thePlayer;
-		int r = 192;
+		int r = 512;
 		int x1 = MathHelper.floor_double(ep.posX-r);
 		int x2 = MathHelper.floor_double(ep.posX+r);
 		int z1 = MathHelper.floor_double(ep.posZ-r);
 		int z2 = MathHelper.floor_double(ep.posZ+r);
-		world.markBlockRangeForRenderUpdate(x1, 0, z1, x2, world.provider.getHeight()-1, z2);
+		Minecraft.getMinecraft().renderGlobal.markBlocksForUpdate(x1, 0, z1, x2, world.provider.getHeight()-1, z2);
 	}
 
 	public static int getFPS() {

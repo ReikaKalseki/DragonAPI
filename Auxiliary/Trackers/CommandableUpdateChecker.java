@@ -65,7 +65,7 @@ public final class CommandableUpdateChecker {
 
 	public static final CommandableUpdateChecker instance = new CommandableUpdateChecker();
 
-	public static final String reikaURL = "http://server.techjargaming.com/Reika/versions";
+	public static final String reikaURL = "https://reikasminecraft.overminddl1.com/versions";
 
 	private final HashMap<DragonAPIMod, ModVersion> latestVersions = new OneWayMap();
 	private final Collection<UpdateChecker> checkers = new OneWayList();

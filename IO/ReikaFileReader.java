@@ -53,6 +53,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 
 import com.google.common.base.Throwables;
+import com.google.common.io.Files;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -539,7 +540,8 @@ public class ReikaFileReader extends DragonAPICore {
 
 		public final boolean performChanges(File f, Charset set) {
 			lines.clear();
-			try(BufferedReader r = ReikaFileReader.getReader(f, set); FileOutputStream os = new FileOutputStream(f)) {
+			File f2 = new File(f.getParentFile(), f.getName()+"_lineedit");
+			try(BufferedReader r = ReikaFileReader.getReader(f, set); FileOutputStream os = new FileOutputStream(f2)) {
 				String sep = System.getProperty("line.separator");
 				String line = r.readLine();
 				StringBuilder out = new StringBuilder();
@@ -559,7 +561,7 @@ public class ReikaFileReader extends DragonAPICore {
 				if (out.toString().isEmpty() && !lines.isEmpty())
 					DragonAPICore.log("Warning: LineEditor "+this.getClass()+" emptied a file: "+f.getAbsolutePath());
 				os.write(out.toString().getBytes());
-				os.close();
+				Files.move(f2, f);
 				return true;
 			}
 			catch (IOException e) {

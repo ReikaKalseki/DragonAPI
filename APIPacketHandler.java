@@ -282,7 +282,10 @@ public class APIPacketHandler implements PacketHandler {
 					ReikaPlayerAPI.syncCustomData((EntityPlayerMP)ep);
 					break;
 				case RERENDER:
-					ReikaRenderHelper.rerenderAllChunks();
+					if (data[0] > 0)
+						ReikaRenderHelper.rerenderAllChunksLazily();
+					else
+						ReikaRenderHelper.rerenderAllChunks();
 					break;
 				case COLOREDPARTICLE:
 					ReikaParticleHelper.spawnColoredParticlesWithOutset(world, x, y, z, data[0], data[1], data[2], data[3], data[4]/16D);
@@ -613,6 +616,8 @@ public class APIPacketHandler implements PacketHandler {
 					return 1;
 				case WORLDID:
 					return 6;
+				case RERENDER:
+					return 1;
 				default:
 					return 0;
 			}

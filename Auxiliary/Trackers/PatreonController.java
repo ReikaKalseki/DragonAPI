@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -31,7 +31,7 @@ public final class PatreonController {
 
 	public static final PatreonController instance = new PatreonController();
 
-	public static final String reikaURL = "http://server.techjargaming.com/Reika/Donator/patreon_";
+	public static final String reikaURL = "https://reikasminecraft.overminddl1.com/Donator/patreon_";
 
 	private final HashMap<String, Patrons> data = new HashMap();
 

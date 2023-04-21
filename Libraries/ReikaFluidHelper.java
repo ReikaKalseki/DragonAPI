@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidContainerRegistry;
@@ -24,6 +25,7 @@ import net.minecraftforge.fluids.FluidContainerRegistry.FluidContainerData;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.IFluidBlock;
+import net.minecraftforge.fluids.IFluidContainerItem;
 
 import Reika.DragonAPI.Instantiable.HybridTank;
 import Reika.DragonAPI.Instantiable.Data.Maps.MultiMap;
@@ -216,6 +218,22 @@ public class ReikaFluidHelper {
 		if (f == null && b instanceof IFluidBlock)
 			f = ((IFluidBlock)b).getFluid();
 		return f;
+	}
+
+	public static FluidStack getFluidForItem(ItemStack is) {
+		Item item = is == null ? null : is.getItem();
+		if (item == null)
+			return null;
+		if (item instanceof IFluidContainerItem)
+			return ((IFluidContainerItem)item).getFluid(is);
+		FluidStack fill = FluidContainerRegistry.getFluidForFilledItem(is);
+		if (fill != null)
+			return fill;
+		Block b = Block.getBlockFromItem(item);
+		if (b == null)
+			return null;
+		Fluid f = lookupFluidForBlock(b);
+		return f == null ? null : new FluidStack(f, FluidContainerRegistry.BUCKET_VOLUME);
 	}
 
 }
