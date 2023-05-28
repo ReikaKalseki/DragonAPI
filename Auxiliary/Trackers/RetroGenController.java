@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -56,9 +56,9 @@ public class RetroGenController {
 		retrogens.put(e.id, e);
 	}
 
-	public void addHybridGenerator(RetroactiveGenerator gen, int weight, boolean retro) {
+	public void addHybridGenerator(RetroactiveGenerator gen, int weight) {
 		GameRegistry.registerWorldGenerator(gen, weight);
-		if (retro)
+		if (false)
 			this.addRetroGenerator(gen, weight);
 	}
 

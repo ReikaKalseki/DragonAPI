@@ -56,6 +56,7 @@ import Reika.DragonAPI.Auxiliary.NEI_DragonAPI_Config;
 import Reika.DragonAPI.Auxiliary.ProgressiveRecursiveBreaker;
 import Reika.DragonAPI.Auxiliary.RainTicker;
 import Reika.DragonAPI.Auxiliary.RebootScheduler;
+import Reika.DragonAPI.Auxiliary.VillageTradeHandler;
 import Reika.DragonAPI.Auxiliary.Trackers.ChunkPregenerator;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker;
 import Reika.DragonAPI.Auxiliary.Trackers.CommandableUpdateChecker.CheckerDisableCommand;
@@ -199,6 +200,7 @@ import cpw.mods.fml.common.event.FMLServerStoppedEvent;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
+import cpw.mods.fml.common.registry.VillagerRegistry;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -470,6 +472,11 @@ public class DragonAPIInit extends DragonAPIMod {
 
 		BiomeGenBase.ocean.rainfall = Math.max(1, BiomeGenBase.ocean.rainfall);
 		BiomeGenBase.deepOcean.rainfall = Math.max(1, BiomeGenBase.deepOcean.rainfall);
+
+		for (int i = 0; i < 4; i++)
+			VillagerRegistry.instance().registerVillageTradeHandler(i, VillageTradeHandler.instance);
+		for (int i : VillagerRegistry.instance().getRegisteredVillagers())
+			VillagerRegistry.instance().registerVillageTradeHandler(i, VillageTradeHandler.instance);
 
 		TickRegistry.instance.registerTickHandler(ProgressiveRecursiveBreaker.instance);
 		TickRegistry.instance.registerTickHandler(TickScheduler.instance);

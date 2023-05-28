@@ -1585,4 +1585,13 @@ public final class ReikaEntityHelper extends DragonAPICore {
 		return b != null && e.worldObj.getBiomeGenForCoords(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posZ)) == b;
 	}
 
+	public static int countEntities(World world, IEntitySelector sel) {
+		int c = 0;
+		for (Entity e : ((List<Entity>)world.loadedEntityList)) {
+			if (sel == null || sel.isEntityApplicable(e))
+				c++;
+		}
+		return c;
+	}
+
 }

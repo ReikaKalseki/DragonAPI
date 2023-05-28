@@ -133,6 +133,7 @@ public enum ModList implements ModEntry, Dependency {
 	NETHERPAM("harvestthenether", "com.pam.harvestthenether.BlockRegistry", "com.pam.harvestthenether.ItemRegistry"),
 	AETHER("aether", "net.aetherteam.aether.blocks.AetherBlocks", "net.aetherteam.aether.items.AetherItems"),
 	CLIMATECONTROL("climatecontrol"),
+	STORAGEDRAWERS("StorageDrawers"),
 	;
 
 	private final boolean condition;

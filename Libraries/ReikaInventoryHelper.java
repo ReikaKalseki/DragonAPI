@@ -17,6 +17,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 
+import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawer;
+import com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup;
+
 import net.minecraft.block.Block;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.InventoryPlayer;
@@ -27,6 +30,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.WeightedRandomChestContent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ChestGenHooks;
@@ -34,11 +38,15 @@ import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 
 import Reika.DragonAPI.DragonAPICore;
+import Reika.DragonAPI.ModList;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ClassDependent;
+import Reika.DragonAPI.ASM.DependentMethodStripper.ModDependent;
 import Reika.DragonAPI.Instantiable.TemporaryInventory;
 import Reika.DragonAPI.Instantiable.Data.KeyedItemStack;
 import Reika.DragonAPI.Instantiable.Data.Maps.ItemHashMap;
 import Reika.DragonAPI.Instantiable.Recipe.ItemMatch;
 import Reika.DragonAPI.Interfaces.Item.ActivatedInventoryItem;
+import Reika.DragonAPI.Interfaces.TileEntity.InertIInv;
 import Reika.DragonAPI.Libraries.IO.ReikaChatHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaArrayHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
@@ -668,7 +676,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		}
 		return left;
 	}
-
+	/*
 	public static boolean addToDSU(IDeepStorageUnit dsu, ItemStack stack, boolean simulate) {
 		ItemStack in = dsu.getStoredItemType();
 		if (in != null && !ReikaItemHelper.matchStacks(in, stack))
@@ -685,7 +693,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			return false;
 		}
 	}
-
+	 */
 	public static int addToDSUWithLeftover(IDeepStorageUnit dsu, ItemStack stack, boolean simulate) {
 		ItemStack in = dsu.getStoredItemType();
 		if (in != null && !ReikaItemHelper.matchStacks(in, stack))
@@ -972,9 +980,13 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 	}
 
 	/** Returns true iff succeeded; adds iff can fit whole stack */
-	public static boolean addToIInv(ItemStack is, IInventory ii, boolean overrideValid, int firstSlot, int maxSlot) {
+	public static boolean addToIInv(ItemStack is, IInventory ii, boolean overrideValid, int firstSlot, int maxSlot) {/*
 		if (InterfaceCache.DSU.instanceOf(ii))
-			return addToDSU((IDeepStorageUnit)ii, is, false);
+			return addToDSU((IDeepStorageUnit)ii, is, false);*/
+		InventoryHandle h = getHandle(ii);
+		if (h != iInventory || (firstSlot == 0 && maxSlot == ii.getSizeInventory())) {
+			return h.addItem(ii, is, true, true) > 0;
+		}
 		is = is.copy();
 		if (!hasSpaceFor(is, ii, overrideValid, firstSlot, maxSlot)) {
 			return false;
@@ -1575,4 +1587,234 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 			te.setInventorySlotContents(i, li.get(i));
 		}
 	}
+
+	public static boolean isAutomatableInventory(TileEntity te) {
+		return te instanceof IInventory && !(te instanceof InertIInv) && !isBlacklistedInvTE(te);
+	}
+
+	private static boolean isBlacklistedInvTE(TileEntity te) {
+		//if (InterfaceCache.DRAWER.instanceOf(te))
+		//	return true;
+		//Class c = te.getClass();
+
+		return false;
+	}
+
+	public static InventoryHandle getHandle(IInventory ii) {
+		if (InterfaceCache.DSU.instanceOf(ii))
+			return dsuInventory;
+		if (InterfaceCache.DRAWER.instanceOf(ii))
+			return drawerInventory;
+		return iInventory;
+	}
+
+	public static interface InventoryHandle<I> {
+
+		/** Returns how many were added. */
+		public int addItem(I obj, ItemStack is, boolean requireWholeFit, boolean doAdd);
+
+		/** Returns the removed stack. */
+		public ItemStack takeItem(I obj, ItemMatch find, int amt, boolean doRemove);
+
+	}
+
+	public static final InventoryHandle arrayInventory = new InventoryHandle<ItemStack[]>() {
+
+		@Override
+		public int addItem(ItemStack[] obj, ItemStack is, boolean requireWholeFit, boolean doAdd) {
+			is = is.copy();
+			int max = is.getMaxStackSize();
+			int added = 0;
+			for (int i = 0; i < obj.length; i++) {
+				ItemStack in = obj[i];
+				if (in == null) {
+					int add = Math.min(is.stackSize, max);
+					added += add;
+					is.stackSize -= add;
+					if (doAdd)
+						obj[i] = ReikaItemHelper.getSizedItemStack(is, add);
+				}
+				else {
+					if (ReikaItemHelper.areStacksCombinable(is, in, max)) {
+						int space = max-in.stackSize;
+						if (!requireWholeFit || space >= is.stackSize) {
+							int add = Math.min(is.stackSize, space);
+							added += add;
+							is.stackSize -= add;
+							if (doAdd)
+								obj[i].stackSize += add;
+						}
+					}
+				}
+				if (is.stackSize <= 0)
+					break;
+			}
+			return added;
+		}
+
+		@Override
+		public ItemStack takeItem(ItemStack[] obj, ItemMatch find, int amt, boolean doRemove) {
+			for (int i = 0; i < obj.length; i++) {
+				ItemStack in = obj[i];
+				if (in != null && find.match(in)) {
+					int take = Math.min(amt, in.stackSize);
+					if (doRemove) {
+						if (take >= in.stackSize)
+							obj[i] = null;
+						else
+							in.stackSize -= take;
+					}
+					return ReikaItemHelper.getSizedItemStack(in, take);
+				}
+			}
+			return null;
+		}
+
+	};
+
+	public static final InventoryHandle iInventory = new InventoryHandle<IInventory>() {
+
+		@Override
+		public int addItem(IInventory ii, ItemStack is, boolean requireWholeFit, boolean doAdd) {
+			is = is.copy();
+			int max = Math.min(ii.getInventoryStackLimit(), is.getMaxStackSize());
+			int added = 0;
+			for (int i = 0; i < ii.getSizeInventory(); i++) {
+				if (ii.isItemValidForSlot(i, is)) {
+					if (ii instanceof InventoryPlayer && !(is.getItem() instanceof ItemArmor)) {
+						if (i >= ((InventoryPlayer)ii).mainInventory.length)
+							continue;
+					}
+					ItemStack in = ii.getStackInSlot(i);
+					if (in == null) {
+						int add = Math.min(is.stackSize, max);
+						added += add;
+						is.stackSize -= add;
+						if (doAdd)
+							ii.setInventorySlotContents(i, ReikaItemHelper.getSizedItemStack(is, add));
+					}
+					else {
+						if (ReikaItemHelper.areStacksCombinable(is, in, max)) {
+							int space = max-in.stackSize;
+							if (!requireWholeFit || space >= is.stackSize) {
+								int add = Math.min(is.stackSize, space);
+								added += add;
+								is.stackSize -= add;
+								if (doAdd)
+									ii.getStackInSlot(i).stackSize += add;
+							}
+						}
+					}
+				}
+				if (is.stackSize <= 0)
+					break;
+			}
+			return added;
+		}
+
+		@Override
+		public ItemStack takeItem(IInventory ii, ItemMatch find, int amt, boolean doRemove) {
+			for (int i = 0; i < ii.getSizeInventory(); i++) {
+				ItemStack in = ii.getStackInSlot(i);
+				if (in != null && find.match(in)) {
+					int take = Math.min(amt, in.stackSize);
+					if (doRemove) {
+						if (take >= in.stackSize)
+							ii.setInventorySlotContents(i, null);
+						else
+							in.stackSize -= take;
+					}
+					return ReikaItemHelper.getSizedItemStack(in, take);
+				}
+			}
+			return null;
+		}
+
+	};
+
+	public static final InventoryHandle dsuInventory = new InventoryHandle<IDeepStorageUnit>() {
+
+		@Override
+		@ClassDependent("powercrystals.minefactoryreloaded.api.IDeepStorageUnit")
+		public int addItem(IDeepStorageUnit obj, ItemStack is, boolean requireWholeFit, boolean doAdd) {
+			ItemStack in = obj.getStoredItemType();
+			if (in == null || ItemStack.areItemStacksEqual(in, is)) {
+				int amt = in == null ? 0 : in.stackSize;
+				int space = obj.getMaxStoredCount()-amt;
+				int add = Math.min(space, is.stackSize);
+				if (requireWholeFit && add < is.stackSize)
+					return 0;
+				if (doAdd)
+					obj.setStoredItemType(is, amt+add);
+				return add;
+			}
+			return 0;
+		}
+
+		@Override
+		@ClassDependent("powercrystals.minefactoryreloaded.api.IDeepStorageUnit")
+		public ItemStack takeItem(IDeepStorageUnit obj, ItemMatch find, int amt, boolean doRemove) {
+			ItemStack in = obj.getStoredItemType();
+			if (in == null || !find.match(in))
+				return null;
+			int take = Math.min(in.stackSize, amt);
+			if (take <= 0)
+				return null;
+			if (doRemove)
+				obj.setStoredItemCount(in.stackSize-take);
+			return ReikaItemHelper.getSizedItemStack(in, take);
+		}
+
+	};
+
+	public static final InventoryHandle drawerInventory = new InventoryHandle<IDrawerGroup>() {
+
+		@Override
+		@ModDependent(ModList.STORAGEDRAWERS)
+		public int addItem(IDrawerGroup obj, ItemStack is, boolean requireWholeFit, boolean doAdd) {
+			for (int i = 0; i < obj.getDrawerCount(); i++) {
+				IDrawer dwr = obj.getDrawer(i);
+				if (!dwr.canItemBeStored(is))
+					continue;
+				if (dwr.isEmpty() || ReikaItemHelper.areStacksCombinable(dwr.getStoredItemPrototype(), is, Integer.MAX_VALUE)) {
+					int space = dwr.isEmpty() ? dwr.getMaxCapacity(is) : dwr.getRemainingCapacity();
+					if (space > 0 && (!requireWholeFit || space >= is.stackSize)) {
+						int add = Math.min(space, is.stackSize);
+						int has = dwr.getStoredItemCount();
+						if (doAdd) {
+							int amt = has+add;
+							if (dwr.isEmpty())
+								dwr.setStoredItem(is, amt);
+							else
+								dwr.setStoredItemCount(amt);
+						}
+						return add;
+					}
+				}
+			}
+			return 0;
+		}
+
+		@Override
+		@ModDependent(ModList.STORAGEDRAWERS)
+		public ItemStack takeItem(IDrawerGroup obj, ItemMatch find, int amt, boolean doRemove) {
+			for (int i = 0; i < obj.getDrawerCount(); i++) {
+				IDrawer dwr = obj.getDrawer(i);
+				if (dwr.isEmpty())
+					continue;
+				ItemStack in = dwr.getStoredItemPrototype();
+				if (!find.match(in))
+					continue;
+				if (!dwr.canItemBeExtracted(in))
+					continue;
+				int has = dwr.getStoredItemCount();
+				int take = Math.min(has, amt);
+				if (doRemove)
+					dwr.setStoredItemCount(has-take);
+				return ReikaItemHelper.getSizedItemStack(in, take);
+			}
+			return null;
+		}
+
+	};
 }

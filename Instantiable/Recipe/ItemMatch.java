@@ -41,7 +41,7 @@ public class ItemMatch {
 
 	private ArrayList<ItemStack> displayList = new ArrayList();
 
-	private ItemMatch() {
+	public ItemMatch() {
 
 	}
 

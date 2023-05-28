@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 
+import Reika.DragonAPI.Instantiable.Data.BlockStruct.OpenPathFinder.PassRules;
 import Reika.DragonAPI.Instantiable.Data.Immutable.BlockBox;
 import Reika.DragonAPI.Instantiable.Data.Immutable.Coordinate;
 
@@ -121,18 +122,19 @@ public class BreadthFirstSearch extends AbstractSearch {
 		return s.getResult().isEmpty() ? null : s.getResult();
 	}
 
-	public static LinkedList<Coordinate> getOpenPathBetween(World world, double x1, double y1, double z1, double x2, double y2, double z2, int r) {
+	public static LinkedList<Coordinate> getOpenPathBetween(World world, double x1, double y1, double z1, double x2, double y2, double z2, int r, Collection<PassRules> rules) {
 		Coordinate start = new Coordinate(x1, y1, z1);
 		Coordinate end = new Coordinate(x2, y2, z2);
-		return getOpenPathBetween(world, start, end, r);
+		return getOpenPathBetween(world, start, end, r, rules);
 	}
 
-	public static LinkedList<Coordinate> getOpenPathBetween(World world, Coordinate start, Coordinate end, int r) {
-		return getOpenPathBetween(world, start, end, r, null);
+	public static LinkedList<Coordinate> getOpenPathBetween(World world, Coordinate start, Coordinate end, int r, Collection<PassRules> rules) {
+		return getOpenPathBetween(world, start, end, r, null, rules);
 	}
 
-	public static LinkedList<Coordinate> getOpenPathBetween(World world, Coordinate start, Coordinate end, int r, BlockBox bounds) {
-		PropagationCondition f = new OpenPathFinder(start, end, r);
+	public static LinkedList<Coordinate> getOpenPathBetween(World world, Coordinate start, Coordinate end, int r, BlockBox bounds, Collection<PassRules> rules) {
+		OpenPathFinder f = new OpenPathFinder(start, end, r);
+		f.rules.addAll(rules);
 		TerminationCondition t = new LocationTerminus(end);
 		return getPath(world, start.xCoord, start.yCoord, start.zCoord, t, f, bounds);
 	}

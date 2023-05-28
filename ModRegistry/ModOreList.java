@@ -373,6 +373,13 @@ public enum ModOreList implements OreType {
 		return ores.get(0);
 	}
 
+	public ItemStack getFirstProduct() {
+		if (!this.existsInGame())
+			return null;
+		ArrayList<ItemStack> li = OreDictionary.getOres(product);
+		return li.isEmpty() ? null : li.get(0);
+	}
+
 	public ItemStack getRandomOreBlock() {
 		if (!this.existsInGame())
 			return null;

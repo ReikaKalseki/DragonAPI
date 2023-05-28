@@ -58,6 +58,7 @@ public enum InterfaceCache {
 	BREWITEM("vazkii.botania.api.brew.IBrewItem"),
 	IC2NUKE("ic2.api.reactor.IReactor"),
 	IC2NUKECHAMBER("ic2.api.reactor.IReactorChamber"),
+	DRAWER("com.jaquadro.minecraft.storagedrawers.api.storage.IDrawerGroup"),
 	;
 
 	private final String classpath;
