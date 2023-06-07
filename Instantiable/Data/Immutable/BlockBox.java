@@ -432,11 +432,11 @@ public final class BlockBox {
 		return new BlockBox(MathHelper.floor_double(e1.xCoord), MathHelper.floor_double(e1.yCoord), MathHelper.floor_double(e1.zCoord), MathHelper.floor_double(e2.xCoord), MathHelper.floor_double(e2.yCoord), MathHelper.floor_double(e2.zCoord));
 	}
 
-	private static BlockBox between(Coordinate c1, Coordinate c2) {
+	public static BlockBox between(Coordinate c1, Coordinate c2) {
 		return new BlockBox(c1.xCoord, c1.yCoord, c1.zCoord, c2.xCoord, c2.yCoord, c2.zCoord);
 	}
 
-	private static BlockBox between(WorldLocation c1, WorldLocation c2) {
+	public static BlockBox between(WorldLocation c1, WorldLocation c2) {
 		return new BlockBox(c1.xCoord, c1.yCoord, c1.zCoord, c2.xCoord, c2.yCoord, c2.zCoord);
 	}
 

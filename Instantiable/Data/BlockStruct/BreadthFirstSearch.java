@@ -29,12 +29,12 @@ public class BreadthFirstSearch extends AbstractSearch {
 
 	public int perCycleCalcLimit = Integer.MAX_VALUE;
 
-	public BreadthFirstSearch(int x, int y, int z) {
-		super(x, y, z);
+	public BreadthFirstSearch(int x, int y, int z, PropagationCondition p, TerminationCondition t) {
+		super(x, y, z, p, t);
 		activeSearches.add(new SearchHead(root));
 	}
 
-	private boolean calculateCurrentQueue(World world, PropagationCondition propagation, TerminationCondition terminate) {
+	private boolean calculateCurrentQueue(World world) {
 		int cycles = 0;
 		while (!currentlyCalculating.isEmpty() && cycles < perCycleCalcLimit) {
 			SearchHead s = currentlyCalculating.remove(0);
@@ -42,12 +42,12 @@ public class BreadthFirstSearch extends AbstractSearch {
 			Collection<Coordinate> li = this.getNextSearchCoordsFor(world, s.headLocation);
 			Collection<Coordinate> li2 = new ArrayList();
 			for (Coordinate c : li) {
-				if (c.yCoord >= 0 && c.yCoord < 256 && !searchedCoords.contains(c) && this.isValidLocation(world, c.xCoord, c.yCoord, c.zCoord, s.headLocation, propagation, terminate) && s.length() < depthLimit && limit.isBlockInside(c.xCoord, c.yCoord, c.zCoord)) {
+				if (c.yCoord >= 0 && c.yCoord < 256 && !searchedCoords.contains(c) && this.isValidLocation(world, c.xCoord, c.yCoord, c.zCoord, s.headLocation) && s.length() < depthLimit && limit.isBlockInside(c.xCoord, c.yCoord, c.zCoord)) {
 					s.isExhausted = false;
-					if (terminate != null && terminate.isValidTerminus(world, c.xCoord, c.yCoord, c.zCoord)) {
+					if (termination != null && termination.isValidTerminus(world, c.xCoord, c.yCoord, c.zCoord)) {
 						activeSearches.clear();
-						this.getResult().addAll(s.path);
-						this.getResult().add(c);
+						result.addAll(s.path);
+						result.add(c);
 						return true;
 					}
 					else {
@@ -66,12 +66,12 @@ public class BreadthFirstSearch extends AbstractSearch {
 
 	/** Note that the propagation condition must include the termination condition, or it will never be moved into! */
 	@Override
-	public boolean tick(World world, PropagationCondition propagation, TerminationCondition terminate) {
+	public boolean tick(World world) {
 		if (currentlyCalculating.isEmpty()) {
 			currentlyCalculating.addAll(activeSearches);
 			activeSearches.clear();
 		}
-		if (this.calculateCurrentQueue(world, propagation, terminate)) {
+		if (this.calculateCurrentQueue(world)) {
 			return true;
 		}
 		return this.isDone();
@@ -88,7 +88,7 @@ public class BreadthFirstSearch extends AbstractSearch {
 		activeSearches.clear();
 		exhaustedSearches.clear();
 		currentlyCalculating.clear();
-		this.getResult().clear();
+		result.clear();
 		System.gc();
 	}
 
@@ -101,38 +101,38 @@ public class BreadthFirstSearch extends AbstractSearch {
 	}
 
 	@Override
-	public void complete(World world, PropagationCondition propagation, TerminationCondition terminate) {
-		while (!this.tick(world, propagation, terminate)) {
+	public void complete(World world) {
+		while (!this.tick(world)) {
 
 		}
 	}
 
-	public static LinkedList<Coordinate> getPath(World world, double x, double y, double z, TerminationCondition t, PropagationCondition c) {
+	public static FoundPath getPath(World world, double x, double y, double z, TerminationCondition t, PropagationCondition c) {
 		return getPath(world, x, y, z, t, c, null);
 	}
 
-	public static LinkedList<Coordinate> getPath(World world, double x, double y, double z, TerminationCondition t, PropagationCondition c, BlockBox bounds) {
-		BreadthFirstSearch s = new BreadthFirstSearch(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
+	public static FoundPath getPath(World world, double x, double y, double z, TerminationCondition t, PropagationCondition c, BlockBox bounds) {
+		BreadthFirstSearch s = new BreadthFirstSearch(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z), c, t);
 		if (bounds != null) {
 			s.limit = bounds;
 		}
-		while (!s.tick(world, c, t)) {
+		while (!s.tick(world)) {
 
 		}
-		return s.getResult().isEmpty() ? null : s.getResult();
+		return s.getResult();
 	}
 
-	public static LinkedList<Coordinate> getOpenPathBetween(World world, double x1, double y1, double z1, double x2, double y2, double z2, int r, Collection<PassRules> rules) {
+	public static FoundPath getOpenPathBetween(World world, double x1, double y1, double z1, double x2, double y2, double z2, int r, Collection<PassRules> rules) {
 		Coordinate start = new Coordinate(x1, y1, z1);
 		Coordinate end = new Coordinate(x2, y2, z2);
 		return getOpenPathBetween(world, start, end, r, rules);
 	}
 
-	public static LinkedList<Coordinate> getOpenPathBetween(World world, Coordinate start, Coordinate end, int r, Collection<PassRules> rules) {
+	public static FoundPath getOpenPathBetween(World world, Coordinate start, Coordinate end, int r, Collection<PassRules> rules) {
 		return getOpenPathBetween(world, start, end, r, null, rules);
 	}
 
-	public static LinkedList<Coordinate> getOpenPathBetween(World world, Coordinate start, Coordinate end, int r, BlockBox bounds, Collection<PassRules> rules) {
+	public static FoundPath getOpenPathBetween(World world, Coordinate start, Coordinate end, int r, BlockBox bounds, Collection<PassRules> rules) {
 		OpenPathFinder f = new OpenPathFinder(start, end, r);
 		f.rules.addAll(rules);
 		TerminationCondition t = new LocationTerminus(end);

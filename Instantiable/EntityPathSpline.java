@@ -46,14 +46,14 @@ public class EntityPathSpline implements EntityPathfinder {
 		if (this.isInRange(e))
 			return;
 		LocationTerminus t = new LocationTerminus(target.getCoordinate());
-		DepthFirstSearch s = new DepthFirstSearch(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ));
+		DepthFirstSearch s = new DepthFirstSearch(MathHelper.floor_double(e.posX), MathHelper.floor_double(e.posY), MathHelper.floor_double(e.posZ), propagation, t);
 		s.limit = new BlockBox(t.target.xCoord, t.target.yCoord, t.target.zCoord, s.root.xCoord, s.root.yCoord, s.root.zCoord);
 		s.limit = s.limit.expand(24);
-		while (!s.tick(e.worldObj, propagation, t)) {
+		while (!s.tick(e.worldObj)) {
 
 		}
-		LinkedList<Coordinate> li = s.getResult().isEmpty() ? null : s.getResult();
-		if (li != null) {
+		LinkedList<Coordinate> li = s.getResult().getPath();
+		if (li != null && !li.isEmpty()) {
 			ArrayList<Coordinate> lic = new ArrayList(li);
 			boolean flag = true;
 			while (flag) {

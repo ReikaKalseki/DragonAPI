@@ -411,6 +411,10 @@ public final class ReikaGuiAPI extends GuiScreen {
 
 	/** Note that this must be called after any and all texture and text rendering, as the lighting conditions are left a bit off */
 	public void drawItemStack(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y) {
+		this.drawItemStack(renderer, fr, is, x, y, false);
+	}
+
+	public void drawItemStack(RenderItem renderer, FontRenderer fr, ItemStack is, int x, int y, boolean forceStackSize) {
 		FontRenderer font = null;
 		if (is == null)
 			return;
@@ -441,7 +445,7 @@ public final class ReikaGuiAPI extends GuiScreen {
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 
 		renderer.renderItemAndEffectIntoGUI(font, mc.renderEngine, is, x, y);
-		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, null);
+		renderer.renderItemOverlayIntoGUI(font, mc.renderEngine, is, x, y, forceStackSize ? String.valueOf(is.stackSize) : null);
 
 		if (cacheRenders)
 			items.addRegionByWH(x, y, 16, 16, is.copy());

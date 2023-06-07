@@ -25,17 +25,17 @@ public class DepthFirstSearch extends AbstractSearch {
 	private Comparator stepValue;
 	private boolean isDone;
 
-	public DepthFirstSearch(int x, int y, int z) {
-		super(x, y, z);
+	public DepthFirstSearch(int x, int y, int z, PropagationCondition p, TerminationCondition t) {
+		super(x, y, z, p, t);
 		currentPath.add(root);
 	}
 
 	@Override
-	public boolean tick(World world, PropagationCondition propagation, TerminationCondition terminate) {
+	public boolean tick(World world) {
 		if (isDone)
 			return true;
-		if (stepValue == null && terminate instanceof FixedPositionTarget)
-			stepValue = new Coordinate.DistanceComparator(((FixedPositionTarget)terminate).getTarget(), false);
+		if (stepValue == null && termination instanceof FixedPositionTarget)
+			stepValue = new Coordinate.DistanceComparator(((FixedPositionTarget)termination).getTarget(), false);
 		Coordinate c = currentPath.getLast();
 		ArrayList<Coordinate> li = this.getNextSearchCoordsFor(world, c);
 		if (stepValue != null)
@@ -47,11 +47,11 @@ public class DepthFirstSearch extends AbstractSearch {
 				continue;
 			if (currentPath.size() > depthLimit || !limit.isBlockInside(c.xCoord, c.yCoord, c.zCoord))
 				continue;
-			if (!this.isValidLocation(world, c2.xCoord, c2.yCoord, c2.zCoord, currentPath.getLast(), propagation, terminate))
+			if (!this.isValidLocation(world, c2.xCoord, c2.yCoord, c2.zCoord, currentPath.getLast()))
 				continue;
 			currentPath.add(c2);
-			if (terminate.isValidTerminus(world, c2.xCoord, c2.yCoord, c2.zCoord)) {
-				this.getResult().addAll(currentPath);
+			if (termination.isValidTerminus(world, c2.xCoord, c2.yCoord, c2.zCoord)) {
+				result.addAll(currentPath);
 				isDone = true;
 				return true;
 			}
@@ -77,16 +77,16 @@ public class DepthFirstSearch extends AbstractSearch {
 	public void clear() {
 		searchedCoords.clear();
 		currentPath.clear();
-		this.getResult().clear();
+		result.clear();
 		System.gc();
 	}
 
 	public static LinkedList<Coordinate> getPath(World world, double x, double y, double z, TerminationCondition t, PropagationCondition c) {
-		DepthFirstSearch s = new DepthFirstSearch(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z));
-		while (!s.tick(world, c, t)) {
+		DepthFirstSearch s = new DepthFirstSearch(MathHelper.floor_double(x), MathHelper.floor_double(y), MathHelper.floor_double(z), c, t);
+		while (!s.tick(world)) {
 
 		}
-		return s.getResult().isEmpty() ? null : s.getResult();
+		return s.result.isEmpty() ? null : s.getResult().getPath();
 	}
 
 }

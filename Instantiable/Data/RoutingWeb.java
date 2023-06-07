@@ -31,16 +31,16 @@ public class RoutingWeb implements EntityPathfinder {
 	}
 
 	public RoutingWeb(int x, int y, int z, int rx, int ry, int rz, boolean canFly) {
-		pathfinder = new BreadthFirstSearch(x, y, z);
+		propagation = new CompoundPropagationCondition()/*.addCondition(new FartherPropagation(root))*/.addCondition(canFly ? passableBlocks : walkableBlocks);
+		pathfinder = new BreadthFirstSearch(x, y, z, propagation, null);
 		root = new Coordinate(x, y, z);
 		pathfinder.limit = BlockBox.block(x, y, z).expand(rx, ry, rz);
 		pathfinder.perCycleCalcLimit = 2048;
-		propagation = new CompoundPropagationCondition()/*.addCondition(new FartherPropagation(root))*/.addCondition(canFly ? passableBlocks : walkableBlocks);
 	}
 
 	/** Returns true when done. */
 	public boolean runCalc(World world) {
-		return pathfinder.tick(world, propagation, null);
+		return pathfinder.tick(world);
 	}
 
 	public BlockBox getAoE() {

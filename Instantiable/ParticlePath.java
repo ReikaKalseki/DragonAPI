@@ -63,7 +63,7 @@ public class ParticlePath {
 	}
 
 	private static ParticlePath calculateParticlePath(World world, BlockVector from, BlockVector to, double endOffset, double forceDirection) {
-		LinkedList<Coordinate> li = BreadthFirstSearch.getOpenPathBetween(world, from.getCoord(), to.getCoord(), 24, EnumSet.of(PassRules.SOFT, PassRules.SMALLNONSOLID));
+		LinkedList<Coordinate> li = BreadthFirstSearch.getOpenPathBetween(world, from.getCoord(), to.getCoord(), 24, EnumSet.of(PassRules.SOFT, PassRules.SMALLNONSOLID)).getPath();
 		if (li != null) {
 			HashSet<Coordinate> set = new HashSet();
 

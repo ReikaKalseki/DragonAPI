@@ -33,6 +33,8 @@ public class RenderItemInSlotEvent extends Event {
 	private final GuiContainer gui;
 	public final Slot slot;
 
+	private static long currentHoveredRenderItem;
+
 	public RenderItemInSlotEvent(GuiContainer c, Slot s) {
 		item = s.getStack();
 		slotIndex = s.getSlotIndex();
@@ -40,6 +42,8 @@ public class RenderItemInSlotEvent extends Event {
 		slotY = s.yDisplayPosition;
 		gui = c;
 		slot = s;
+		if (item != null && this.isHovered())
+			currentHoveredRenderItem = System.identityHashCode(item);
 	}
 
 	protected RenderItemInSlotEvent(GuiContainer c, ItemStack is, int x, int y) {
@@ -57,6 +61,10 @@ public class RenderItemInSlotEvent extends Event {
 
 	public boolean hasItem() {
 		return item != null;
+	}
+
+	public static boolean isRenderingStackHovered(ItemStack is) {
+		return is != null && System.identityHashCode(is) == currentHoveredRenderItem;
 	}
 
 	public boolean isHovered() {
@@ -122,6 +130,7 @@ public class RenderItemInSlotEvent extends Event {
 
 		public Post(GuiContainer c, Slot s) {
 			super(c, s);
+			currentHoveredRenderItem = 0;
 		}
 
 	}

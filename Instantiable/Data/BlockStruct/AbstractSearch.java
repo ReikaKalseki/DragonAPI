@@ -31,37 +31,42 @@ public abstract class AbstractSearch {
 	public BlockBox limit = BlockBox.infinity();
 	public int depthLimit = Integer.MAX_VALUE;
 
-	private LinkedList<Coordinate> result = new LinkedList();
+	protected final LinkedList<Coordinate> result = new LinkedList();
 
-	public AbstractSearch(int x, int y, int z) {
+	protected PropagationCondition propagation;
+	protected TerminationCondition termination;
+
+	public AbstractSearch(int x, int y, int z, PropagationCondition p, TerminationCondition t) {
 		root = new Coordinate(x, y, z);
 		searchedCoords.add(root);
+		propagation = p;
+		termination = t;
 	}
 
 	/** Note that the propagation condition must include the termination condition, or it will never be moved into! */
-	public abstract boolean tick(World world, PropagationCondition propagation, TerminationCondition terminate);
+	public abstract boolean tick(World world);
 
 	/** Whether a path is found or no valid paths exist. */
 	public abstract boolean isDone();
 
 	public abstract void clear();
 
-	public final LinkedList<Coordinate> getResult() {
-		return result;
+	public final FoundPath getResult() {
+		return result == null || result.isEmpty() ? new FoundPath(null) : new FoundPath(result);
 	}
 
 	public final Set<Coordinate> getTotalSearchedCoords() {
 		return Collections.unmodifiableSet(searchedCoords);
 	}
 
-	public void complete(World world, PropagationCondition propagation, TerminationCondition terminate) {
-		while (!this.tick(world, propagation, terminate)) {
+	public void complete(World world) {
+		while (!this.tick(world)) {
 
 		}
 	}
 
-	protected final boolean isValidLocation(World world, int x, int y, int z, Coordinate from, PropagationCondition p, TerminationCondition c) {
-		return p.isValidLocation(world, x, y, z, from) || c.isValidTerminus(world, x, y, z);
+	protected final boolean isValidLocation(World world, int x, int y, int z, Coordinate from) {
+		return propagation.isValidLocation(world, x, y, z, from) || termination.isValidTerminus(world, x, y, z);
 	}
 
 	protected ArrayList<Coordinate> getNextSearchCoordsFor(World world, Coordinate c) {
@@ -190,6 +195,36 @@ public abstract class AbstractSearch {
 		@Override
 		public boolean isValidLocation(World world, int x, int y, int z, Coordinate from) {
 			return !ReikaBlockHelper.isCollideable(world, x, y, z);
+		}
+
+	}
+
+	public class FoundPath {
+
+		private final LinkedList<Coordinate> path;
+
+		private FoundPath(LinkedList<Coordinate> li) {
+			path = li;
+		}
+
+		public LinkedList<Coordinate> getPath() {
+			return new LinkedList(path);
+		}
+
+		public boolean isValid(World world) {
+			return !this.isEmpty() && this.validatePath(world);
+		}
+
+		public boolean isEmpty() {
+			return path == null || path.isEmpty();
+		}
+
+		private boolean validatePath(World world) {
+			for (Coordinate c : path) {
+				if (!AbstractSearch.this.isValidLocation(world, c.xCoord, c.yCoord, c.zCoord, root))
+					return false;
+			}
+			return true;
 		}
 
 	}

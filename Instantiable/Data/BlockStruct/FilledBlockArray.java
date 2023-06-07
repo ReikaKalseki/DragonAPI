@@ -339,9 +339,15 @@ public class FilledBlockArray extends StructuredBlockArray {
 	}
 
 	public ItemHashMap<Integer> tally() {
+		return this.tally(null);
+	}
+
+	public ItemHashMap<Integer> tally(Function<Coordinate, Boolean> validity) {
 		ItemHashMap<Integer> map = new ItemHashMap();
-		for (BlockCheck bc : data.values()) {
-			ItemStack key = bc.asItemStack();
+		for (Entry<Coordinate, BlockCheck> e : data.entrySet()) {
+			if (validity != null && !validity.apply(e.getKey()))
+				continue;
+			ItemStack key = e.getValue().asItemStack();
 			if (this.count(key)) {
 				if (Block.getBlockFromItem(key.getItem()) instanceof BlockStairs)
 					key.setItemDamage(0);

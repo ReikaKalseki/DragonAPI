@@ -293,4 +293,8 @@ public class WeightedRandom<V> {
 		return this.getWeight(val)/this.getTotalWeight();
 	}
 
+	public double getNormalizedWeight(V val) {
+		return this.getWeight(val)/this.getMaxWeight();
+	}
+
 }

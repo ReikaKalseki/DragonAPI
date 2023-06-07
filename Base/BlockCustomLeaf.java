@@ -166,7 +166,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 
 		};
 
-		BreadthFirstSearch s = new BreadthFirstSearch(x, y, z) {
+		BreadthFirstSearch s = new BreadthFirstSearch(x, y, z, c, t) {
 
 			@Override
 			protected ArrayList<Coordinate> getNextSearchCoordsFor(World world, Coordinate c) {
@@ -195,7 +195,7 @@ public abstract class BlockCustomLeaf extends BlockLeaves {
 		};
 		s.limit = BlockBox.block(x, y, z).expand(this.getMaximumLogSearchRadius());
 		s.depthLimit = this.getMaximumLogSearchDepth();
-		s.complete(world, c, t);
+		s.complete(world);
 		boolean decay = s.getResult().isEmpty();
 		if (decay) {
 			this.dropBlockAsItemWithChance(world, x, y, z, world.getBlockMetadata(x, y, z), 1, 0);

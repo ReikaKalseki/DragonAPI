@@ -31,7 +31,7 @@ public class ImagedGuiButton extends GuiButton {
 	private int color;
 	private boolean shadow = true;
 	private String filepath;
-	protected final boolean hasToolTip;
+	protected boolean hasToolTip;
 	protected final Class modClass;
 
 	public String sound = "gui.button.press";
@@ -273,9 +273,14 @@ public class ImagedGuiButton extends GuiButton {
 
 	@Override
 	public void drawTexturedModalRect(int x, int y, int u, int v, int w, int h) {
+		this.drawTexturedModalRect(x, y, u, v, w, h, 0xffffff, 255);
+	}
+
+	public void drawTexturedModalRect(int x, int y, int u, int v, int w, int h, int c, int a) {
 		float f = 1F/textureSize;
 		Tessellator v5 = Tessellator.instance;
 		v5.startDrawingQuads();
+		v5.setColorRGBA_I(c, a);
 		v5.addVertexWithUV(x+0, y+h, zLevel, (u+0)*f, (v+h)*f);
 		v5.addVertexWithUV(x+w, y+h, zLevel, (u+w)*f, (v+h)*f);
 		v5.addVertexWithUV(x+w, y+0, zLevel, (u+w)*f, (v+0)*f);
@@ -316,7 +321,7 @@ public class ImagedGuiButton extends GuiButton {
 		ReikaTextureHelper.bindFontTexture();
 	}
 
-	public float getHoverFade() {
+	public final float getHoverFade() {
 		return hoverFade;
 	}
 

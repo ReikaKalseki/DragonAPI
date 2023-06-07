@@ -58,12 +58,11 @@ public class RetroGenController {
 
 	public void addHybridGenerator(RetroactiveGenerator gen, int weight) {
 		GameRegistry.registerWorldGenerator(gen, weight);
-		if (false)
-			this.addRetroGenerator(gen, weight);
+		//this.addRetroGenerator(gen, weight);
 	}
 
 	public Set<String> getActiveRetroGenerators() {
-		return Collections.unmodifiableSet(retrogens.keySet());
+		return Collections.unmodifiableSet(/*activeRetrogens.stream().map(r -> r.id).collect(Collectors.toSet())*/retrogens.keySet());
 	}
 
 	public void excludeWorld(int dim) {
@@ -88,8 +87,8 @@ public class RetroGenController {
 		DataCache cache = this.getOrCreateCache(c.worldObj);
 		if (cache == null)
 			return;
-		for (GeneratorEntry e : retrogens.values()) {
-			cache.generatedChunks.addValue(e.id, new ChunkCoordIntPair(c.xPosition, c.zPosition));
+		for (String s : retrogens.keySet()) {
+			cache.generatedChunks.addValue(s, new ChunkCoordIntPair(c.xPosition, c.zPosition));
 		}
 	}
 
@@ -106,9 +105,8 @@ public class RetroGenController {
 		DataCache cache = this.getOrCreateCache(world);
 		ChunkCoordIntPair p = new ChunkCoordIntPair(c.xPosition, c.zPosition);
 		ArrayList<GeneratorEntry> toGen = new ArrayList();
-		for (String s : retrogens.keySet()) {
-			GeneratorEntry e = retrogens.get(s);
-			Collection<ChunkCoordIntPair> exclude = cache.generatedChunks.get(s);
+		for (GeneratorEntry e : retrogens.values()) {
+			Collection<ChunkCoordIntPair> exclude = cache.generatedChunks.get(e.id);
 			if (exclude.contains(p))
 				continue;
 			//ReikaJavaLibrary.pConsole(p);
