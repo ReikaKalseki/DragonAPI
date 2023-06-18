@@ -984,7 +984,7 @@ public final class ReikaInventoryHelper extends DragonAPICore {
 		if (InterfaceCache.DSU.instanceOf(ii))
 			return addToDSU((IDeepStorageUnit)ii, is, false);*/
 		InventoryHandle h = getHandle(ii);
-		if (h != iInventory || (firstSlot == 0 && maxSlot == ii.getSizeInventory())) {
+		if (h != iInventory || (!overrideValid && firstSlot == 0 && maxSlot == ii.getSizeInventory())) {
 			return h.addItem(ii, is, true, true) > 0;
 		}
 		is = is.copy();

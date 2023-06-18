@@ -1,8 +1,8 @@
 /*******************************************************************************
  * @author Reika Kalseki
- * 
+ *
  * Copyright 2017
- * 
+ *
  * All rights reserved.
  * Distribution of the software in any form is only allowed with
  * explicit, prior permission from the owner.
@@ -18,6 +18,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
+import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 
@@ -30,11 +31,17 @@ public class ChunkGenerationEvent extends Patcher {
 	@Override
 	protected void apply(ClassNode cn) {
 		MethodNode m = ReikaASMHelper.getMethodByName(cn, "originalLoadChunk", "(II)Lnet/minecraft/world/chunk/Chunk;");
-		AbstractInsnNode ain = ReikaASMHelper.getLastInsn(m.instructions, Opcodes.ASTORE, 5);
+		int var = 5;
+		if (CoreModDetection.BUKKIT.isInstalled())
+			var = ((VarInsnNode)m.instructions.getLast().getPrevious().getPrevious()).var;
+		AbstractInsnNode ain = ReikaASMHelper.getLastInsn(m.instructions, Opcodes.ASTORE, var);
 		InsnList li = new InsnList();
 		li.add(new VarInsnNode(Opcodes.ALOAD, 5));
 		li.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "Reika/DragonAPI/Instantiable/Event/ChunkGenerationEvent", "fire", "(Lnet/minecraft/world/chunk/Chunk;)V", false));
-		m.instructions.insert(ain, li);
+		if (CoreModDetection.BUKKIT.isInstalled())
+			m.instructions.insertBefore(ain, li);
+		else
+			m.instructions.insert(ain, li);
 	}
 
 }

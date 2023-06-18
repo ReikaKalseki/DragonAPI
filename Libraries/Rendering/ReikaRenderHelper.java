@@ -312,7 +312,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			double overy = py+ReikaModelledBreakFX.pw-p[2];
 			if (overy > 0)
 				py -= overy;
-			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), file, px, py, mod));
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -0.1+rand.nextDouble()*0.2, 0.2, -0.1+rand.nextDouble()*0.2, b, 0, world.getBlockMetadata(x, y, z), file, px, py, mod));
 		}
 		return true;
 	}
@@ -349,7 +349,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			double overy = py+ReikaModelledBreakFX.pw-p[2];
 			if (overy > 0)
 				py -= overy;
-			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), file, px, py, mod));
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -0.1+rand.nextDouble()*0.2, 0.2, -0.1+rand.nextDouble()*0.2, b, 0, world.getBlockMetadata(x, y, z), file, px, py, mod));
 		}
 		return true;
 	}
@@ -369,7 +369,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			double overy = py+ReikaModelledBreakFX.pw-p[2];
 			if (overy > 0)
 				py -= overy;
-			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), texture, px, py, mod));
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -0.1+rand.nextDouble()*0.2, 0.2, -0.1+rand.nextDouble()*0.2, b, 0, world.getBlockMetadata(x, y, z), texture, px, py, mod));
 		}
 		return true;
 	}
@@ -395,7 +395,7 @@ public final class ReikaRenderHelper extends DragonAPICore {
 			double overy = py+ReikaModelledBreakFX.pw-p[2];
 			if (overy > 0)
 				py -= overy;
-			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -1+rand.nextDouble()*2, 2, -1+rand.nextDouble()*2, b, 0, world.getBlockMetadata(x, y, z), texture, px, py, mod));
+			eff.addEffect(new ReikaModelledBreakFX(world, x+rand.nextDouble(), y+rand.nextDouble(), z+rand.nextDouble(), -0.1+rand.nextDouble()*0.2, 0.2, -0.1+rand.nextDouble()*0.2, b, 0, world.getBlockMetadata(x, y, z), texture, px, py, mod));
 		}
 		return true;
 	}

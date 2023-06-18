@@ -404,6 +404,9 @@ public class APIPacketHandler implements PacketHandler {
 					break;
 				case WORLDID:
 					break;
+				case SETAIR:
+					world.setBlockToAir(data[0], data[1], data[2]);
+					break;
 			}
 			if (world.isRemote)
 				this.clientHandle(world, x, y, z, pack, data, stringdata, ep);
@@ -548,6 +551,7 @@ public class APIPacketHandler implements PacketHandler {
 		MODLOCK(),
 		OREDUMP(),
 		WORLDID(),
+		SETAIR(),
 		;
 
 		public static PacketIDs getEnum(int index) {
@@ -618,6 +622,8 @@ public class APIPacketHandler implements PacketHandler {
 					return 6;
 				case RERENDER:
 					return 1;
+				case SETAIR:
+					return 3;
 				default:
 					return 0;
 			}

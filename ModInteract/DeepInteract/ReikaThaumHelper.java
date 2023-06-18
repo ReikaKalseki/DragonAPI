@@ -310,7 +310,7 @@ public class ReikaThaumHelper {
 		return li;
 	}
 
-	public static Collection<? extends Aspect> getAllAspects() {
+	public static Collection<Aspect> getAllAspects() {
 		return Aspect.aspects.values();//Collections.unmodifiableCollection(allAspects);
 	}
 

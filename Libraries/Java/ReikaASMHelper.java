@@ -563,6 +563,15 @@ public class ReikaASMHelper {
 		return ain.getOpcode() == opcode ? ain : null;
 	}
 
+	public static JumpInsnNode getFirstJumpFromLabel(InsnList li, int index, LabelNode jumpTo) {
+		for (AbstractInsnNode ain = li.get(index); index < li.size(); index++) {
+			ain = li.get(index);
+			if (ain instanceof JumpInsnNode && ((JumpInsnNode)ain).label == jumpTo)
+				return (JumpInsnNode) ain;
+		}
+		return null;
+	}
+
 	public static AbstractInsnNode getLastJumpBefore(InsnList li, int index) {
 		AbstractInsnNode ain = li.get(index-1);
 		while (!(ain instanceof JumpInsnNode) && index > 0) {
@@ -1227,12 +1236,20 @@ public class ReikaASMHelper {
 		return li;
 	}
 
+	public static LabelNode getFirstLabelBefore(InsnList li, int idx) {
+		for (int i = idx; i >= 0; i--) {
+			AbstractInsnNode ain = li.get(i);
+			if (ain instanceof LabelNode)
+				return (LabelNode)ain;
+		}
+		return null;
+	}
+
 	public static LabelNode getFirstLabelAfter(InsnList li, int idx) {
 		for (int i = idx; i < li.size(); i++) {
 			AbstractInsnNode ain = li.get(i);
-			if (ain instanceof LabelNode) {
+			if (ain instanceof LabelNode)
 				return (LabelNode)ain;
-			}
 		}
 		return null;
 	}

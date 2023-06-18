@@ -180,6 +180,11 @@ public class ReikaSoundHelper {
 	}
 
 	@SideOnly(Side.CLIENT)
+	public static ISound playClientSound(SoundEnum s, TileEntity e, float vol, float pitch, boolean att) {
+		return playClientSound(s, e.xCoord, e.yCoord, e.zCoord, vol, pitch, att);
+	}
+
+	@SideOnly(Side.CLIENT)
 	public static void playClientSound(SoundEnum s, Entity e, float vol, float pitch) {
 		playClientSound(s, e.posX, e.posY, e.posZ, vol, pitch, true);
 	}

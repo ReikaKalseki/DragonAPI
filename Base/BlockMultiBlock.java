@@ -27,13 +27,13 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.ForgeDirection;
 
-import Reika.ChromatiCraft.API.Interfaces.UnCopyableBlock;
+import Reika.ChromatiCraft.API.Interfaces.CustomCopyBehavior;
 import Reika.DragonAPI.Instantiable.Data.BlockStruct.FilledBlockArray.BlockMatchFailCallback;
 import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.Registry.ReikaItemHelper;
 import Reika.RotaryCraft.API.Interfaces.Transducerable;
 
-public abstract class BlockMultiBlock<R> extends Block implements Transducerable, UnCopyableBlock {
+public abstract class BlockMultiBlock<R> extends Block implements Transducerable, CustomCopyBehavior {
 
 	private final IIcon[] icons = new IIcon[this.getNumberTextures()];
 	protected static final ForgeDirection[] dirs = ForgeDirection.values();
@@ -154,8 +154,18 @@ public abstract class BlockMultiBlock<R> extends Block implements Transducerable
 	protected abstract TileEntity getTileEntityForPosition(World world, int x, int y, int z);
 
 	@Override
-	public final boolean disallowCopy(int meta) {
+	public final boolean allowCopy(int meta) {
 		return true;
+	}
+
+	@Override
+	public final Block getBlock(int meta) {
+		return this;
+	}
+
+	@Override
+	public final int getMeta(int meta) {
+		return meta%8;
 	}
 
 }

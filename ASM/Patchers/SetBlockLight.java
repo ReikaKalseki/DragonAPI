@@ -37,6 +37,8 @@ public class SetBlockLight extends Patcher {
 			String func = /*CoreModDetection.fastCraftInstalled() ? "d" : */"func_147451_t";
 			String sig = /*CoreModDetection.fastCraftInstalled() ? "(Lnet/minecraft/world/World;III)Z" : */"(III)Z";
 			MethodInsnNode min = ReikaASMHelper.getFirstMethodCall(cn, m, cl, func, sig);
+			if (CoreModDetection.BUKKIT.isInstalled())
+				m.instructions.remove(min.getPrevious().getPrevious().getPrevious().getPrevious());
 			min.owner = "Reika/DragonAPI/ASM/DragonAPIClassTransformer";
 			min.name = "updateSetBlockLighting";
 			min.desc = "(IIILnet/minecraft/world/World;I)Z";

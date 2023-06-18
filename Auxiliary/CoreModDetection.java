@@ -12,6 +12,8 @@ package Reika.DragonAPI.Auxiliary;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.google.common.base.Strings;
+
 import net.minecraft.launchwrapper.Launch;
 
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
@@ -23,7 +25,9 @@ public enum CoreModDetection {
 	LITELOADER("com.mumfrey.liteloader.core.LiteLoader", "sounds and textures", "Try reloading resources (F3+T) to fix this."),
 	FASTCRAFT(Launch.blackboard.get("fcVersion") != null, "render and block changes", ""),
 	VIVE("com.mtbs3d.minecrift.api.IRoomscaleAdapter", "rendering and interface", ""),
-	COLOREDLIGHTS("coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin", "rendering", "");
+	COLOREDLIGHTS("coloredlightscore.src.asm.ColoredLightsCoreLoadingPlugin", "rendering", ""),
+	BUKKIT("org.bukkit.BanEntry", "low-level patches", ""),
+	;
 
 	private final Class refClass;
 	private final boolean isLoaded;
@@ -61,7 +65,8 @@ public enum CoreModDetection {
 			if (c.isInstalled()) {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+c+" detected. Loading compatibility features.");
 				ReikaJavaLibrary.pConsole("\t\tNote that some parts of the game, especially "+c.warning+", may error out.");
-				ReikaJavaLibrary.pConsole("\t\t"+c.message);
+				if (!Strings.isNullOrEmpty(c.message))
+					ReikaJavaLibrary.pConsole("\t\t"+c.message);
 			}
 			else {
 				ReikaJavaLibrary.pConsole("DRAGONAPI: "+c+" not detected.");

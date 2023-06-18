@@ -18,6 +18,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
+import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 public class FireSpreadChance extends Patcher {
@@ -30,7 +31,7 @@ public class FireSpreadChance extends Patcher {
 	protected void apply(ClassNode cn) {
 		MethodNode m = null;
 		m = ReikaASMHelper.getMethodByName(cn, "tryCatchFire", "(Lnet/minecraft/world/World;IIIILjava/util/Random;ILnet/minecraftforge/common/util/ForgeDirection;)V");
-		AbstractInsnNode ain = ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.ISTORE, 9);
+		AbstractInsnNode ain = CoreModDetection.BUKKIT.isInstalled() ? ReikaASMHelper.getFirstOpcode(m.instructions, Opcodes.ISTORE) : ReikaASMHelper.getFirstInsnAfter(m.instructions, 0, Opcodes.ISTORE, 9);
 
 		InsnList li = new InsnList();
 

@@ -280,6 +280,10 @@ public class EntityBlurFX extends EntityFX implements CustomRenderFX {
 		return particleMaxAge;
 	}
 
+	public final float getGravity() {
+		return particleGravity;
+	}
+
 	public final int getMaximumSizeAge() {
 		return rapidExpand ? particleMaxAge/12 : particleMaxAge/2;
 	}
