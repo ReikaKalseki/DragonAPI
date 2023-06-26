@@ -19,6 +19,7 @@ import org.objectweb.asm.tree.VarInsnNode;
 import net.minecraftforge.classloading.FMLForgePlugin;
 
 import Reika.DragonAPI.ASM.Patchers.Patcher;
+import Reika.DragonAPI.Auxiliary.CoreModDetection;
 import Reika.DragonAPI.Libraries.Java.ReikaASMHelper;
 
 public class RenderBlockEvent extends Patcher {
@@ -79,13 +80,29 @@ public class RenderBlockEvent extends Patcher {
 		m.instructions.insertBefore(checkpass, new VarInsnNode(Opcodes.ILOAD, y.var)); //y "l2"
 		m.instructions.insertBefore(checkpass, new VarInsnNode(Opcodes.ILOAD, z.var)); //z "i3"
 
-		checkpass = ReikaASMHelper.getFirstMethodCallByName(cn, m, "canRenderInPass");
-		checkpass.desc = "(Lnet/minecraft/block/Block;IIII)Z";
-		checkpass.name = "checkCanRenderPass";
-		checkpass.owner = evt;
-		checkpass.setOpcode(Opcodes.INVOKESTATIC);
-		m.instructions.insertBefore(checkpass, new VarInsnNode(Opcodes.ILOAD, x.var)); //x "j3"
-		m.instructions.insertBefore(checkpass, new VarInsnNode(Opcodes.ILOAD, y.var)); //y "l2"
-		m.instructions.insertBefore(checkpass, new VarInsnNode(Opcodes.ILOAD, z.var)); //z "i3"
+		String call = "checkCanRenderPass";
+		String sig = "(Lnet/minecraft/block/Block;IIII)Z";
+		if (CoreModDetection.OPTIFINE.isInstalled()) {
+			AbstractInsnNode ref = ReikaASMHelper.getFirstFieldCallByName(cn, m, "ForgeBlock_canRenderInPass");
+			ref = ReikaASMHelper.getFirstInsnAfter(m.instructions, m.instructions.indexOf(ref), Opcodes.ALOAD, 25);
+			AbstractInsnNode ref2 = ReikaASMHelper.getFirstInsnAfter(m.instructions, m.instructions.indexOf(ref), Opcodes.ISTORE, 28);
+			ReikaASMHelper.deleteFrom(cn, m.instructions, ref.getNext(), ref2.getPrevious());
+			m.instructions.insertBefore(ref2, new VarInsnNode(Opcodes.ILOAD, pass)); //pass
+			m.instructions.insertBefore(ref2, new VarInsnNode(Opcodes.ILOAD, x.var)); //x "j3"
+			m.instructions.insertBefore(ref2, new VarInsnNode(Opcodes.ILOAD, y.var)); //y "l2"
+			m.instructions.insertBefore(ref2, new VarInsnNode(Opcodes.ILOAD, z.var)); //z "i3"
+			m.instructions.insertBefore(ref2, new MethodInsnNode(Opcodes.INVOKESTATIC, evt, call, sig, false));
+
+		}
+		else {
+			checkpass = ReikaASMHelper.getFirstMethodCallByName(cn, m, "canRenderInPass");
+			checkpass.desc = sig;
+			checkpass.name = call;
+			checkpass.owner = evt;
+			checkpass.setOpcode(Opcodes.INVOKESTATIC);
+			m.instructions.insertBefore(checkpass, new VarInsnNode(Opcodes.ILOAD, x.var)); //x "j3"
+			m.instructions.insertBefore(checkpass, new VarInsnNode(Opcodes.ILOAD, y.var)); //y "l2"
+			m.instructions.insertBefore(checkpass, new VarInsnNode(Opcodes.ILOAD, z.var)); //z "i3"
+		}
 	}
 }

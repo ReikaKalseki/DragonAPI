@@ -47,6 +47,10 @@ public class CrashNotifications {
 		}
 	}
 
+	public static void fireOF(CrashReport c) {
+		instance.notifyCrash(c);
+	}
+
 	public static void fire(FMLCommonHandler fml, CrashReport c, CrashReportCategory cat) {
 		instance.notifyCrash(c);
 		fml.enhanceCrashReport(c, cat);

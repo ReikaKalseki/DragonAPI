@@ -73,6 +73,7 @@ import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntitySquid;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.passive.EntityVillager;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -1592,6 +1593,10 @@ public final class ReikaEntityHelper extends DragonAPICore {
 				c++;
 		}
 		return c;
+	}
+
+	public static boolean isTamed(Entity e) {
+		return e instanceof TameHostile || (e instanceof EntityTameable && ((EntityTameable)e).isTamed());
 	}
 
 }

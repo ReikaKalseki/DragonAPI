@@ -74,7 +74,7 @@ public class NEIIntercept implements IContainerInputHandler {
 
 	@Override
 	public boolean keyTyped(GuiContainer gui, char keyChar, int keyCode) {
-		return gui instanceof KeyConsumingGui && ((KeyConsumingGui)gui).consumeKey(keyChar);
+		return gui instanceof KeyConsumingGui && ((KeyConsumingGui)gui).consumeKey(keyChar, keyCode);
 	}
 
 	@Override
@@ -149,7 +149,7 @@ public class NEIIntercept implements IContainerInputHandler {
 
 	public static interface KeyConsumingGui {
 
-		boolean consumeKey(char keyChar);
+		boolean consumeKey(char keyChar, int keyCode);
 
 	}
 

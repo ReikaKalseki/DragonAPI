@@ -87,36 +87,51 @@ public final class CommandableUpdateChecker {
 	}
 
 	public void checkAll() {
-		this.getOverrides();
-		for (UpdateChecker c : checkers) {
-			DragonAPIMod mod = c.mod;
-			if (this.shouldCheck(mod)) {
-				ModVersion version = c.version;
-				ModVersion latest = latestVersions.get(mod);
-				//if (version.isCompiled()) {
-				if (latest == ModVersion.timeout) {
-					this.markUpdate(mod, version, latest);
-					ReikaJavaLibrary.pConsole("-----------------------"+mod.getTechnicalName()+"-----------------------");
-					ReikaJavaLibrary.pConsole("Could not connect to version server. Please check your internet settings,");
-					ReikaJavaLibrary.pConsole("and if the server is unavailable please contact "+mod.getModAuthorName()+".");
-					ReikaJavaLibrary.pConsole("------------------------------------------------------------------------");
+		Runnable r = () -> {
+			for (UpdateChecker c : checkers) {
+				ModVersion latest = c.fetchLatestVersion();
+				if (latest == null) {
+					c.mod.getModLogger().logError("Could not access online version reference. Please notify "+c.mod.getModAuthorName());
+					return;
 				}
-				else if (version.compareTo(latest) < 0) {
-					this.markUpdate(mod, version, latest);
-					ReikaJavaLibrary.pConsole("-----------------------"+mod.getTechnicalName()+"-----------------------");
-					ReikaJavaLibrary.pConsole("This version of the mod ("+version+") is out of date.");
-					ReikaJavaLibrary.pConsole("This version is likely to contain bugs, crashes, and/or exploits.");
-					ReikaJavaLibrary.pConsole("No technical support whatsoever will be provided for this version.");
-					ReikaJavaLibrary.pConsole("Update to "+latest+" as soon as possible; there is no good reason not to.");
-					ReikaJavaLibrary.pConsole("------------------------------------------------------------------------");
-					ReikaJavaLibrary.pConsole("");
+				else {
+					c.mod.getModLogger().log("Found latest mod version: "+latest+" compared to current "+c.mod.getModVersion());
 				}
-				//}
-				//else {
-				//
-				//}
+				latestVersions.put(c.mod, latest);
 			}
-		}
+			this.getOverrides();
+			for (UpdateChecker c : checkers) {
+				DragonAPIMod mod = c.mod;
+				if (this.shouldCheck(mod)) {
+					ModVersion version = c.version;
+					ModVersion latest = latestVersions.get(mod);
+					//if (version.isCompiled()) {
+					if (latest == ModVersion.timeout) {
+						this.markUpdate(mod, version, latest);
+						ReikaJavaLibrary.pConsole("-----------------------"+mod.getTechnicalName()+"-----------------------");
+						ReikaJavaLibrary.pConsole("Could not connect to version server. Please check your internet settings,");
+						ReikaJavaLibrary.pConsole("and if the server is unavailable please contact "+mod.getModAuthorName()+".");
+						ReikaJavaLibrary.pConsole("------------------------------------------------------------------------");
+					}
+					else if (version.compareTo(latest) < 0) {
+						this.markUpdate(mod, version, latest);
+						ReikaJavaLibrary.pConsole("-----------------------"+mod.getTechnicalName()+"-----------------------");
+						ReikaJavaLibrary.pConsole("This version of the mod ("+version+") is out of date.");
+						ReikaJavaLibrary.pConsole("This version is likely to contain bugs, crashes, and/or exploits.");
+						ReikaJavaLibrary.pConsole("No technical support whatsoever will be provided for this version.");
+						ReikaJavaLibrary.pConsole("Update to "+latest+" as soon as possible; there is no good reason not to.");
+						ReikaJavaLibrary.pConsole("------------------------------------------------------------------------");
+						ReikaJavaLibrary.pConsole("");
+					}
+					//}
+					//else {
+					//
+					//}
+				}
+			}
+		};
+		Thread t = new Thread(r, "DragonAPI Update Checks");
+		t.start();
 	}
 
 	private void markUpdate(DragonAPIMod mod, ModVersion version, ModVersion latest) {
@@ -140,7 +155,7 @@ public final class CommandableUpdateChecker {
 	public void registerMod(DragonAPIMod mod) {
 		ModVersion version = mod.getModVersion();
 		if (version == ModVersion.source) {
-			mod.getModLogger().log("Mod is in source code form. Not checking versions.");
+			mod.getModLogger().log("Mod is in source code form. Not checking version.");
 			return;
 		}
 		if (mod.getUpdateCheckURL() == null)
@@ -152,12 +167,6 @@ public final class CommandableUpdateChecker {
 			return;
 		}
 		UpdateChecker c = new UpdateChecker(mod, version, file);
-		ModVersion latest = c.getLatestVersion();
-		if (latest == null) {
-			mod.getModLogger().logError("Could not access online version reference. Please notify "+mod.getModAuthorName());
-			return;
-		}
-		latestVersions.put(mod, latest);
 		checkers.add(c);
 		String label = ReikaStringParser.stripSpaces(mod.getDisplayName().toLowerCase(Locale.ENGLISH));
 		modNames.put(label, mod);
@@ -478,7 +487,7 @@ public final class CommandableUpdateChecker {
 			checkURL = url;
 		}
 
-		private ModVersion getLatestVersion() {
+		private ModVersion fetchLatestVersion() {
 			try {
 				ArrayList<String> lines = ReikaFileReader.getFileAsLines(checkURL, 10000, false, this, this);
 				if (lines == null || lines.isEmpty())

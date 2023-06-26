@@ -9,22 +9,22 @@
  ******************************************************************************/
 package Reika.DragonAPI.Command;
 
-import java.util.List;
+import java.util.ArrayList;
 
 import net.minecraft.command.ICommandSender;
+import net.minecraft.command.IEntitySelector;
 import net.minecraft.command.server.CommandBlockLogic;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.world.World;
 
-import Reika.DragonAPI.Interfaces.Entity.TameHostile;
+import Reika.DragonAPI.Libraries.ReikaEntityHelper;
 import Reika.DragonAPI.Libraries.Java.ReikaJavaLibrary;
 import Reika.DragonAPI.Libraries.Java.ReikaRandomHelper;
 
@@ -54,8 +54,12 @@ public class SelectiveKillCommand extends DragonCommandBase {
 				sendChatToSender(ics, sg);
 				return;
 			}
-			int amt = this.killEntity(world, c, percentage);
-			String sg = EnumChatFormatting.GREEN+"Killed "+amt+" of "+c+".";
+			int amt = this.killEntities(world, c, percentage);
+			String sg;
+			if (percentage < 0)
+				sg = EnumChatFormatting.GREEN+"Killed all but "+amt+" of "+c+".";
+			else
+				sg = EnumChatFormatting.GREEN+"Killed "+amt+" of "+c+".";
 			sendChatToSender(ics, sg);
 		}
 		else {
@@ -66,84 +70,45 @@ public class SelectiveKillCommand extends DragonCommandBase {
 		}
 	}
 
-	private int killEntity(World world, String name, int percentage) {
-		List<Entity> li = world.loadedEntityList;
-		boolean isMobs = name.equals("EntityMob");
-		boolean isAnimals = name.equals("EntityAnimal");
-		boolean isCreatures = name.equals("EntityCreature");
-		boolean allLiving = name.equals("EntityLiving");
-		boolean all = name.equals("Entity");
+	private int killEntities(World world, String name, int percentage) {
+		ArrayList<Entity> li = new ArrayList(world.loadedEntityList);
+		IEntitySelector sel = this.getFilter(name);
+		li.removeIf(e -> !sel.isEntityApplicable(e));
+		if (li.isEmpty())
+			return 0;
 		int killed = 0;
-		for (int i = 0; i < li.size(); i++) {
-			Entity e = li.get(i);
-			if (all) {
-				if (!(e instanceof EntityPlayer)) {
-					if (ReikaRandomHelper.doWithChance(percentage)) {
-						e.setDead();
-						killed++;
-					}
-				}
+		if (percentage < 0) {
+			for (int i = 0; i < percentage && !li.isEmpty(); i++) {
+				li.remove(world.rand.nextInt(li.size()));
 			}
-			else if (allLiving) {
-				if (e instanceof EntityLiving) {
-					boolean protect = false;
-					if (e instanceof EntityTameable) {
-						protect = ((EntityTameable)e).isTamed();
-					}
-					if (e instanceof TameHostile)
-						protect = true;
-					if (!protect) {
-						if (ReikaRandomHelper.doWithChance(percentage)) {
-							e.setDead();
-							killed++;
-						}
-					}
-				}
-			}
-			else if (isMobs) {
-				if (e instanceof EntityMob && !(e instanceof TameHostile)) {
-					if (ReikaRandomHelper.doWithChance(percentage)) {
-						e.setDead();
-						killed++;
-					}
-				}
-			}
-			else if (isAnimals) {
-				if (e instanceof EntityAnimal) {
-					boolean protect = false;
-					if (e instanceof EntityTameable) {
-						protect = ((EntityTameable)e).isTamed();
-					}
-					if (!protect) {
-						if (ReikaRandomHelper.doWithChance(percentage)) {
-							e.setDead();
-							killed++;
-						}
-					}
-				}
-			}
-			else if (isCreatures) {
-				if (e instanceof EntityCreature) {
-					boolean protect = false;
-					if (e instanceof EntityTameable) {
-						protect = ((EntityTameable)e).isTamed();
-					}
-					if (!protect) {
-						if (ReikaRandomHelper.doWithChance(percentage)) {
-							e.setDead();
-							killed++;
-						}
-					}
-				}
-			}
-			else if (e.getClass().getSimpleName().equals(name)) {
-				if (ReikaRandomHelper.doWithChance(percentage)) {
-					e.setDead();
-					killed++;
-				}
+			percentage = 100;
+		}
+		for (Entity e : li) {
+			if (ReikaRandomHelper.doWithChance(percentage)) {
+				e.setDead();
+				killed++;
 			}
 		}
 		return killed;
+	}
+
+	private IEntitySelector getFilter(String name) {
+		switch(name) {
+			case "Tamed":
+				return e -> ReikaEntityHelper.isTamed(e);
+			case "EntityMob":
+				return e -> e instanceof EntityMob && !ReikaEntityHelper.isTamed(e);
+			case "EntityAnimal":
+				return e -> e instanceof EntityAnimal && !ReikaEntityHelper.isTamed(e);
+			case "EntityCreature":
+				return e -> e instanceof EntityCreature && !ReikaEntityHelper.isTamed(e);
+			case "EntityLiving":
+				return e -> e instanceof EntityLiving && !ReikaEntityHelper.isTamed(e);
+			case "Entity":
+				return e -> !(e instanceof EntityPlayer);
+			default:
+				return e -> e.getClass().getSimpleName().equals(name);
+		}
 	}
 
 	@Override

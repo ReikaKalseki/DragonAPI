@@ -47,6 +47,10 @@ public abstract class BaseBlockRenderer extends ISBRH {
 	}
 
 	protected final void faceBrightnessColor(ForgeDirection dir, Tessellator v5, float red, float green, float blue) {
+		faceBrightnessColor(dir, v5, red, green, blue, world, x, y, z, b, rb);
+	}
+
+	public static final void faceBrightnessColor(ForgeDirection dir, Tessellator v5, float red, float green, float blue, IBlockAccess world, int x, int y, int z, Block b, RenderBlocks rb) {
 		float f3 = 0.5F;
 		float f4 = 1.0F;
 		float f5 = 0.8F;
@@ -81,27 +85,27 @@ public abstract class BaseBlockRenderer extends ISBRH {
 
 		switch(dir) {
 			case DOWN:
-				v5.setBrightness(rb.renderMaxY < 1.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
+				v5.setBrightness((rb != null && rb.renderMaxY < 1.0D) || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y+1, z));
 				v5.setColorOpaque_F(f7*red, f8*green, f9*blue);
 				break;
 			case UP:
-				v5.setBrightness(rb.renderMinY > 0.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
+				v5.setBrightness((rb != null && rb.renderMinY > 0.0D) || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y-1, z));
 				v5.setColorOpaque_F(f10*red, f13*green, f16*blue);
 				break;
 			case NORTH:
-				v5.setBrightness(rb.renderMinZ > 0.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y, z - 1));
+				v5.setBrightness((rb != null && rb.renderMinZ > 0.0D) || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y, z - 1));
 				v5.setColorOpaque_F(f11*red, f14*green, f17*blue);
 				break;
 			case SOUTH:
-				v5.setBrightness(rb.renderMaxZ < 1.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y, z + 1));
+				v5.setBrightness((rb != null && rb.renderMaxZ < 1.0D) || op == 0 ? l : b.getMixedBrightnessForBlock(world, x, y, z + 1));
 				v5.setColorOpaque_F(f11*red, f14*green, f17*blue);
 				break;
 			case WEST:
-				v5.setBrightness(rb.renderMinX > 0.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x - 1, y, z));
+				v5.setBrightness((rb != null && rb.renderMinX > 0.0D) || op == 0 ? l : b.getMixedBrightnessForBlock(world, x - 1, y, z));
 				v5.setColorOpaque_F(f12*red, f15*green, f18*blue);
 				break;
 			case EAST:
-				v5.setBrightness(rb.renderMaxX < 1.0D || op == 0 ? l : b.getMixedBrightnessForBlock(world, x + 1, y, z));
+				v5.setBrightness((rb != null && rb.renderMaxX < 1.0D) || op == 0 ? l : b.getMixedBrightnessForBlock(world, x + 1, y, z));
 				v5.setColorOpaque_F(f12*red, f15*green, f18*blue);
 				break;
 			default:

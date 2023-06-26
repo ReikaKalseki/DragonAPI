@@ -56,6 +56,7 @@ import Reika.DragonAPI.ModInteract.LegacyWailaHelper;
 import Reika.DragonAPI.ModRegistry.InterfaceCache;
 
 import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Loader;
 import cpw.mods.fml.common.LoaderState;
 import cpw.mods.fml.common.ModContainer;
@@ -120,12 +121,13 @@ public final class ReikaRegistryHelper extends DragonAPICore {
 	}
 
 	private static void validateBlock(DragonAPIMod mod, BlockEnum r, Block b) {
-		if (ReikaObfuscationHelper.isDeObfEnvironment())
+		if (ReikaObfuscationHelper.isDeObfEnvironment() && FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
 			if (b instanceof Submergeable && ((Submergeable)b).renderLiquid(0)) {
 				Submergeable s = (Submergeable)b;
 				if (s.getRenderBlockPass() == 0)
 					throw new RegistrationException(mod, "Block "+r+" is submergeable and fillable with liquid but does not render in pass 1!");
 			}
+		}
 	}
 
 	/** Instantiates all items and registers them to the game. Uses an Enum[] that implements RegistrationList.

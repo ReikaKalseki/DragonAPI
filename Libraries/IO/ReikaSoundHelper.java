@@ -112,6 +112,14 @@ public class ReikaSoundHelper {
 		world.playSoundEffect(x+0.5, y+0.5, z+0.5, snd, 1, 1);
 	}
 
+	public static void playSoundAtBlock(TileEntity te, String snd) {
+		playSoundAtBlock(te, snd, 1, 1);
+	}
+
+	public static void playSoundAtBlock(TileEntity te, String snd, float v, float p) {
+		playSoundAtBlock(te.worldObj, te.xCoord, te.yCoord, te.zCoord, snd, v, p);
+	}
+
 	public static void playSound(SoundEnum s, World world, Entity e, float vol, float pitch) {
 		playSound(s, world, e.posX, e.posY, e.posZ, vol, pitch);
 	}
@@ -214,8 +222,8 @@ public class ReikaSoundHelper {
 		world.playSoundEffect(e.posX, e.posY, e.posZ, snd, vol, p);
 	}
 
-	public static void playSoundFromServer(World world, double x, double y, double z, String name, float vol, float pitch, boolean scale) {
-		ReikaPacketHelper.writeDirectSound(DragonAPIInit.packetChannel, PacketIDs.SERVERSOUND.ordinal(), world, x, y, z, name, vol, pitch, scale);
+	public static void playSoundFromServer(World world, double x, double y, double z, String name, float vol, float pitch, boolean atten) {
+		ReikaPacketHelper.writeDirectSound(DragonAPIInit.packetChannel, PacketIDs.SERVERSOUND.ordinal(), world, x, y, z, name, vol, pitch, atten);
 	}
 
 	public static void playSoundFromServerAtBlock(World world, int x, int y, int z, String name, float vol, float pitch, boolean scale) {
